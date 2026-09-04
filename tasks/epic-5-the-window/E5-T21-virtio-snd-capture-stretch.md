@@ -4,7 +4,7 @@ epic: 5
 title: Microphone capture stream (stretch) — rxq, getUserMedia, permission UX
 priority: 521
 status: pending
-depends_on: [E5-T20]
+depends_on: [E5-T20e]
 estimate: M
 capstone: false
 ---

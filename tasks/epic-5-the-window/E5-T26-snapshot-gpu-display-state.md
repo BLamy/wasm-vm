@@ -4,7 +4,7 @@ epic: 5
 title: Desktop-aware snapshots — GPU, input, and sound state across suspend/resume
 priority: 526
 status: pending
-depends_on: [E5-T18, E5-T20]
+depends_on: [E5-T18, E5-T20e]
 estimate: L
 capstone: false
 ---

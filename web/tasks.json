@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 226,
-    "total": 387
+    "total": 392
   },
   "epics": [
     {
@@ -18057,8 +18057,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t19d): mark guest playback verified",
             "test(e5-t19d): record assembled sound proof",
             "chore(e5-t19d): activate snd guest playback proof"
           ]
@@ -18066,7 +18067,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T20",
@@ -18074,14 +18075,20 @@
       "epicKey": "5",
       "title": "AudioWorklet playback — SAB ring buffer, underrun accounting, autoplay unlock",
       "priority": 520,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T19d"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T20a",
+        "E5-T20b",
+        "E5-T20c",
+        "E5-T20d",
+        "E5-T20e"
+      ],
       "estimate": "M",
       "capstone": false,
-      "goal": "Guest PCM reaches the speakers: an `AudioSink` implementation that pushes T19's frames\ninto a SharedArrayBuffer ring buffer consumed by an `AudioWorkletProcessor`, with the\naudio clock fed back as the device's pacing source, measured latency, counted\nunderruns, and a clean autoplay-policy unlock flow.",
+      "goal": "> **DECOMPOSED 2026-09-03.** This M-sized AudioWorklet container is cancelled before\n> implementation as required by task policy and replaced by five ordered S slices. E5-T20a owns\n> the atomic ring contract, E5-T20b owns the real-time worklet consumer and underrun accounting,\n> E5-T20c owns the producer/clock/latency integration, E5-T20d owns autoplay unlock and pre-unlock\n> policy, and E5-T20e owns the final guest-to-tab playback proof. E5-T21 is rewired to E5-T20e.\n\nGuest PCM reaches the speakers: an `AudioSink` implementation that pushes T19's frames\ninto a SharedArrayBuffer ring buffer consumed by an `AudioWorkletProcessor`, with the\naudio clock fed back as the device's pacing source, measured latency, counted\nunderruns, and a clean autoplay-policy unlock flow.",
       "criteria": [
         {
           "text": "`speaker-test -tsine` in the guest is audibly a clean tone; loopback capture of the browser tab (getDisplayMedia w/ audio, or OS loopback where available — method documented) shows a spectrally pure sine, no periodic clicks (gaps at ring wrap = the classic off-by-one).",
@@ -18106,9 +18113,205 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis M-sized AudioWorklet planning container is cancelled before implementation and replaced by five\nordered S tasks with one boundary and one deterministic acceptance command each. The children split\nthe lock-free ring protocol, worklet consumer/underrun accounting, producer and AudioContext clock,\nautoplay policy, and final measured guest playback proof. E5-T21 now depends on E5-T20e, the final\nAudioWorklet sign-off slice.",
       "adversarial": "Measure, don't listen: record 30 s of tab audio during guest playback of a reference\nramp file and machine-diff for dropped/duplicated 128-frame blocks (spectral +\nsample-level; a click every ring-length seconds refutes). Attack the clock loop:\nbackground the tab (Chrome throttles timers but not the audio thread) — playback must\ncontinue clean for 5 min; then hard-block the VM worker 500 ms (test hook) and verify\nXRUN is reported to the guest and ALSA recovers (`aplay` finishes, no hung stream).\nForce `AudioContext.sampleRate` 44100 via constructor rejection (some hardware) and\nverify PCM_INFO follows reality. Two tabs of the VM playing simultaneously must not\nshare/corrupt rings. Any `process()` call taking > 128-frame budget (perf-marked)\nunder load refutes the no-blocking claim.",
       "file": "tasks/epic-5-the-window/E5-T20-audioworklet-output.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T20a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Audio SAB ring buffer protocol and deterministic indices",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T19d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Define the lock-free producer/consumer buffer that carries interleaved stereo f32 PCM between the\nVM worker and an AudioWorklet without blocking the audio thread or losing ring-boundary samples.",
+      "criteria": [
+        {
+          "text": "Producer and consumer agree on the header offsets and never overwrite unread frames or read an unwritten frame, including wrap and exact-fill boundaries.",
+          "checked": false
+        },
+        {
+          "text": "A simulated consumer can drain 128-frame quanta while a producer wraps repeatedly with no dropped, duplicated, or reordered samples; fill is always in `[0, 4096]`.",
+          "checked": false
+        },
+        {
+          "text": "All index reads/writes use the declared atomic cells and the ring helpers allocate no work in the consumer path.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Run independent producer/consumer schedules with fixed seeds, force write/read counters across\n`2^32` wrap, and mutate capacity by one frame. Any stale index, overwrite, or non-atomic fill\ncalculation is a failure.",
+      "file": "tasks/epic-5-the-window/E5-T20a-audio-ring-buffer.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T20b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "AudioWorklet consumer and underrun accounting",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T20a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Consume the T20a ring on the real-time audio rendering thread in fixed 128-frame quanta, producing\nsilence and an atomic underrun count when a quantum is unavailable.",
+      "criteria": [
+        {
+          "text": "Full, partial, and empty 128-frame quanta produce the expected sample-for-sample output; empty reads output silence and increment underruns exactly once.",
+          "checked": false
+        },
+        {
+          "text": "A ring wrap at a quantum boundary produces no click-inducing duplicate or missing sample.",
+          "checked": false
+        },
+        {
+          "text": "The processor never calls a blocking primitive and remains bounded to one quantum per `process()` invocation.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Starve the producer for alternating quanta, present a one-frame-short ring, and run 10,000\nsimulated `process()` calls across wrap boundaries. Inspect every output block and the underrun\ncounter for exact accounting and no state drift.",
+      "file": "tasks/epic-5-the-window/E5-T20b-audio-worklet-underruns.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T20c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "AudioWorklet producer, AudioContext clock, and latency metrics",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T20b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Connect T19's S16 `AudioSink` to the ring/worklet pair and make the AudioContext's consumed-frame\nprogress the pacing source, with honest fill and latency telemetry.",
+      "criteria": [
+        {
+          "text": "A reference S16 ramp reaches the ring as exact interleaved f32 values and each sink instance owns a distinct ring.",
+          "checked": false
+        },
+        {
+          "text": "AudioContext sample-rate negotiation advertises 48 kHz when honored and the actual context rate when the constructor falls back; no implicit resampler is introduced.",
+          "checked": false
+        },
+        {
+          "text": "Reported latency includes ring fill plus available context latency and stays below 120 ms at the default 4096-frame configuration.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Force 44.1 kHz, alternate empty/full ring states, pause the consumer for 500 ms, and instantiate\ntwo sinks in one page. The rate, fill, underrun, and latency reports must remain isolated and\nmonotonic with the injected clock.",
+      "file": "tasks/epic-5-the-window/E5-T20c-audio-sink-clock.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T20d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Audio autoplay unlock and pre-unlock discard policy",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T20c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make browser autoplay behavior explicit: the guest keeps progressing before user interaction, the\ntab shows that audio is muted, and the first click or keydown unlocks the AudioContext safely.",
+      "criteria": [
+        {
+          "text": "Before a gesture, the page has no unexpected console errors, the badge is visible, and PCM is consumed/discarded at the negotiated rate rather than burst-drained after unlock.",
+          "checked": false
+        },
+        {
+          "text": "The first valid click or keydown resumes the context exactly once, clears the badge, and keeps playback pacing continuous; repeated gestures are harmless.",
+          "checked": false
+        },
+        {
+          "text": "A rejected resume leaves a visible actionable state and does not wedge the guest or ring.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Dispatch gestures before and during a suspended context, reject `resume()`, reload with a queued\nperiod, and background/foreground the page. Assert no duplicate listeners, burst drain, or stuck\nmuted state.",
+      "file": "tasks/epic-5-the-window/E5-T20d-audio-autoplay-policy.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T20e",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "AudioWorklet guest playback and measured browser proof",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T20d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Freeze the end-to-end T20 contract: guest PCM traverses the real virtio-snd path, ring, and\nAudioWorklet into a measurable browser capture with no dropped or duplicated blocks.",
+      "criteria": [
+        {
+          "text": "A 30-second browser capture of the reference ramp has no dropped/duplicated 128-frame blocks, no periodic ring-wrap click, and a clean sine spectrum at the requested rate.",
+          "checked": false
+        },
+        {
+          "text": "Foreground playback reports latency ≤120 ms with stable fill and zero natural underruns; induced starvation increments XRUN/underrun counters and recovers so guest playback finishes.",
+          "checked": false
+        },
+        {
+          "text": "Pre-unlock and post-unlock playback both finish at wall-clock pace, and the final Chromium recording has zero unexpected console/request errors.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Run the reference ramp across ring wrap, background the tab for five minutes, hard-block the VM\nworker for 500 ms, force a 44.1 kHz context, and open two tabs. Compare all captures sample-for-\nsample and fail on any shared-ring state, repeated period, latency-budget breach, or unrecovered\nXRUN. WebKit and independent-machine legs remain waived by the current user direction.",
+      "file": "tasks/epic-5-the-window/E5-T20e-audio-browser-proof.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
@@ -18122,7 +18325,7 @@
       "priority": 521,
       "status": "pending",
       "depends_on": [
-        "E5-T20"
+        "E5-T20e"
       ],
       "decomposed_into": [],
       "estimate": "M",
@@ -18356,7 +18559,7 @@
       "status": "pending",
       "depends_on": [
         "E5-T18",
-        "E5-T20"
+        "E5-T20e"
       ],
       "decomposed_into": [],
       "estimate": "L",
@@ -18451,7 +18654,7 @@
         "E5-T13c",
         "E5-T15",
         "E5-T18",
-        "E5-T20",
+        "E5-T20e",
         "E5-T24",
         "E5-T25"
       ],
