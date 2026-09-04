@@ -1,0 +1,13 @@
+E5-T19a verifier attack transcript
+tested_head=ae3d641
+commands:
+  cargo test -p wasm-vm-core --test virtio_snd --release --quiet
+  for n in {1..25}; do cargo test -p wasm-vm-core --test virtio_snd --quiet; done
+
+observed:
+  optimized run: 6 passed, 0 failed
+  repeated debug runs: 25 consecutive invocations, 6 passed and 0 failed in every invocation
+  exercised cases: all 30 state/request oracle cells, exact info bytes, malformed/truncated
+    requests, unsupported selectors, invalid stream/format/rate/size/alignment fields, reset,
+    and legal prepare/start/stop/resume/release lifecycle
+  findings: none
