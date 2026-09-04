@@ -27,6 +27,13 @@ function positiveSafeInteger(value, name) {
   return value;
 }
 
+function nonNegativeSafeInteger(value, name) {
+  if (!Number.isSafeInteger(value) || value < 0) {
+    throw new RangeError(`${name} must be a non-negative safe integer`);
+  }
+  return value;
+}
+
 /** Validate a canvas size and return its exact byte budget. */
 export function validateCanvasSize(width, height) {
   const checkedWidth = positiveSafeInteger(width, "canvas width");
@@ -45,8 +52,8 @@ export function validatePresentRect(rect, canvasWidth, canvasHeight) {
     throw new TypeError("present rect must be an object");
   }
   const bounds = validateCanvasSize(canvasWidth, canvasHeight);
-  const x = positiveSafeInteger(rect.x + 1, "rect x + 1") - 1;
-  const y = positiveSafeInteger(rect.y + 1, "rect y + 1") - 1;
+  const x = nonNegativeSafeInteger(rect.x, "rect x");
+  const y = nonNegativeSafeInteger(rect.y, "rect y");
   const width = positiveSafeInteger(rect.width, "rect width");
   const height = positiveSafeInteger(rect.height, "rect height");
   if (x < 0 || y < 0 || x + width > bounds.width || y + height > bounds.height) {

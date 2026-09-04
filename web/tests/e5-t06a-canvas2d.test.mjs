@@ -266,6 +266,7 @@ test("plain source and browser projection stay byte-identical", () => {
 test("invalid damage and pixel counts fail before a Canvas2D write", () => {
   const canvas = new FakeCanvas(4, 4);
   const backend = new Canvas2DBackend(canvas);
+  assert.throws(() => backend.present({ x: -1, y: 0, width: 1, height: 1 }, new Uint32Array(16)), RangeError);
   assert.throws(() => backend.present({ x: 1, y: 1, width: 4, height: 1 }, new Uint32Array(4)), RangeError);
   assert.throws(() => backend.present({ x: 0, y: 0, width: 2, height: 2 }, new Uint32Array(3)), RangeError);
   assert.equal(canvas.context.puts.length, 0);
