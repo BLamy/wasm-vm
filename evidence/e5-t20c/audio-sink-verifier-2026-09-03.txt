@@ -1,0 +1,52 @@
+E5-T20c exact-head worker/verifier evidence
+============================================
+
+Recorded: 2026-09-03
+Repository: /Users/blamy/Documents/Codex/wasm-vm
+Commit: 49f3bc508df325381c788893cfb2bd3bf87a8dc6
+
+Command:
+  env -i PATH="$PATH" node --test web/tests/audio-sink.test.mjs
+
+Result: exit 0
+  ✔ S16 stereo ramp converts exactly and each sink owns a distinct ring
+  ✔ requested 48 kHz is advertised when honored and actual fallback rate rejects resampling
+  ✔ connect loads the stable worklet with this sink's ring
+  ✔ stats include ring fill plus exposed context latency and stay under 120 ms
+  ✔ AudioContext time and the atomic consumed-frame cursor provide a monotonic clock
+  ✔ full ring returns bounded backpressure instead of spinning or resampling
+  ℹ tests 6
+  ℹ pass 6
+  ℹ fail 0
+
+Stability:
+  for i in {1..20}; do node --test --test-reporter=dot web/tests/audio-sink.test.mjs; done
+  result: sink-repeat-runs=20 exit=0
+  node --test web/tests/audio-worklet.test.mjs web/tests/audio-ring.test.mjs
+  result: dependent-audio-tests=13 passed exit=0
+
+Coverage and adversarial observations:
+  - S16 extrema and stereo ramp samples arrive in the private ring as exact `sample / 32768`
+    f32 values; two sinks have distinct SharedArrayBuffers.
+  - A requested 48 kHz context reports 48 kHz; a constructor rejection retries without a rate,
+    reports 44.1 kHz, accepts only 44.1 kHz PCM, and rejects 48 kHz without resampling.
+  - Full and empty ring telemetry, a manually incremented atomic underrun, and a fake 500 ms
+    context-time advance remain isolated and latency remains monotonic.
+  - Full default fill plus 10 ms base and 20 ms output latency reports about 115.3 ms, below 120 ms.
+
+Packaging:
+  cmp web/src/audio/sink.js web/dist/src/audio/sink.js
+  cmp web/src/audio/ring.js web/dist/src/audio/ring.js
+  cmp web/src/audio/worklet.js web/dist/src/audio/worklet.js
+  result: all source/deploy pairs identical
+
+SHA-256:
+  web/src/audio/sink.js          f2f8790160b6b6593d174426320354fb732a2fd2f05154ca15c14007f2d3b259
+  web/tests/audio-sink.test.mjs  4903b6eeee44abc63f55c80f0163bf26550153a838afebea0df013690c675422
+  docs/audio.md                  3d874085e12582a6c985cf5a04c749d3b92527227d68b52f8f010d51f8d3b1e3
+  web/dist/src/audio/sink.js     f2f8790160b6b6593d174426320354fb732a2fd2f05154ca15c14007f2d3b259
+
+The exact-head run proves the producer-side bridge has no implicit resampler, keeps rate/fill/
+underrun telemetry honest, bases pacing on consumed AudioContext time/read progress, and keeps
+simultaneous sink instances disjoint. WebKit and independent-machine legs are waived by user
+direction; this slice is validated by deterministic Node and deploy-bundle checks.

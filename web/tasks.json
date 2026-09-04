@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 228,
+    "verified": 229,
     "total": 392
   },
   "epics": [
@@ -18228,7 +18228,7 @@
       "epicKey": "5",
       "title": "AudioWorklet producer, AudioContext clock, and latency metrics",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T20b"
       ],
@@ -18252,13 +18252,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- Commit: `49f3bc508df325381c788893cfb2bd3bf87a8dc6`.\n- Exact-head acceptance: `env -i PATH=\"$PATH\" node --test web/tests/audio-sink.test.mjs` — 6\n  passed, 0 failed.\n- The tests cover exact S16 stereo conversion, disjoint rings, honored 48 kHz, 44.1 kHz fallback\n  and no-resampler rejection, stable worklet connection, full/empty fill and latency telemetry,\n  monotonic consumed-frame/context clock, and bounded full-ring backpressure.\n- Stability: 20 repeated sink-only runs passed; dependent T20a/T20b suites passed 13/13.\n- Packaging: `make web-dist` succeeded and the source/deploy copies of ring, worklet, and sink\n  are byte-identical. Evidence transcript:\n  `evidence/e5-t20c/audio-sink-verifier-2026-09-03.txt` (SHA-256\n  `e0fc26bbc19e9ff41f936ddb78b94659d9679ff4688f63329da2da9073bdbd90`).\n\nThe recording demonstrates that T19-style S16 frames reach a private shared ring with exact\nstereo normalization, the actual AudioContext rate is the only advertised/input rate, the\nconsumed-frame clock stays monotonic under an injected context pause, and `vm.stats.audio`\nincludes ring fill, atomic underruns, and exposed context latency within the 120 ms budget.\n\n### 2026-09-03 — verifier — VERDICT: verified\n\n- **S16 conversion and isolation — HELD.** Predicted exact extrema/ramp conversion and no shared\n  storage between two simultaneous sinks. The 6-test acceptance run held both predictions.\n- **Rate negotiation — HELD.** Predicted 48 kHz when honored, actual 44.1 kHz after constructor\n  fallback, and a hard failure rather than an implicit resampler for mismatched input. All three\n  branches held.\n- **Clock and telemetry — HELD.** Predicted that full→empty ring transitions, atomic underrun\n  updates, and an injected 500 ms context-time advance would keep `fill`, `underruns`, and\n  `latency_ms` honest and monotonic. The stats and clock tests held; full fill plus 30 ms context\n  latency reported about 115.3 ms.\n- **Coverage and reproducibility — HELD.** The acceptance suite passed in a scrubbed environment,\n  20 repeated sink-only runs passed, and dependent ring/worklet suites passed 13/13. Evidence:\n  [`audio-sink-verifier-2026-09-03.txt`](../../evidence/e5-t20c/audio-sink-verifier-2026-09-03.txt),\n  SHA-256 `e0fc26bbc19e9ff41f936ddb78b94659d9679ff4688f63329da2da9073bdbd90`.\n- Findings: none. The task is verified.",
       "adversarial": "Force 44.1 kHz, alternate empty/full ring states, pause the consumer for 500 ms, and instantiate\ntwo sinks in one page. The rate, fill, underrun, and latency reports must remain isolated and\nmonotonic with the injected clock.",
       "file": "tasks/epic-5-the-window/E5-T20c-audio-sink-clock.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t20c): activate audio sink clock"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T20d",
