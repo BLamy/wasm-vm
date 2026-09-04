@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T09b** — Virtio-gpu dirty-tile upload planner
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -356,7 +355,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `508` [E5-T08](epic-5-the-window/E5-T08-console-toggle-and-capture.md) — Host chrome — serial console toggle beside the display, screenshot and recording *(deps: E5-T07d)*
 - [-] `509` [E5-T09](epic-5-the-window/E5-T09-damage-tracking-frame-pacing.md) — Damage-rect coalescing, dirty tiling, and rAF-paced presentation *(deps: E5-T06d, E5-T07d)*
 - [x] `509.1` [E5-T09a](epic-5-the-window/E5-T09a-damage-coalescer.md) — Core virtio-gpu damage coalescer *(deps: E5-T07d)*
-- [ ] `509.2` [E5-T09b](epic-5-the-window/E5-T09b-dirty-tiles.md) — Virtio-gpu dirty-tile upload planner *(deps: E5-T09a)*
+- [~] `509.2` [E5-T09b](epic-5-the-window/E5-T09b-dirty-tiles.md) — Virtio-gpu dirty-tile upload planner *(deps: E5-T09a)*
 - [ ] `509.3` [E5-T09c](epic-5-the-window/E5-T09c-raf-present-scheduler.md) — Latest-wins requestAnimationFrame presentation scheduler *(deps: E5-T09b)*
 - [ ] `509.4` [E5-T09d](epic-5-the-window/E5-T09d-hidden-present-metrics.md) — Hidden-tab presentation fallback and metrics surface *(deps: E5-T09c)*
 - [ ] `509.5` [E5-T09e](epic-5-the-window/E5-T09e-integration-proof.md) — Damage tiling and frame-pacing integration proof *(deps: E5-T09d)*

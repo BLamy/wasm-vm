@@ -17124,15 +17124,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t09a): record damage coalescer evidence",
             "chore(e5-t09a): activate damage coalescer"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T09b",
@@ -17140,7 +17141,7 @@
       "epicKey": "5",
       "title": "Virtio-gpu dirty-tile upload planner",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T09a"
       ],

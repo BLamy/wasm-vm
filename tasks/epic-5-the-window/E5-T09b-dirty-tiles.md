@@ -3,7 +3,7 @@ id: E5-T09b
 epic: 5
 title: Virtio-gpu dirty-tile upload planner
 priority: 509.2
-status: pending
+status: in-progress
 depends_on: [E5-T09a]
 estimate: S
 risk: high
