@@ -2288,6 +2288,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "wasm-vm-agent-protocol"
+version = "0.0.1"
+
+[[package]]
 name = "wasm-vm-cli"
 version = "0.0.1"
 dependencies = [
