@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 236,
-    "total": 397
+    "total": 402
   },
   "epics": [
     {
@@ -18652,15 +18652,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t21e): record microphone capture proof",
             "chore(e5-t21e): activate microphone capture proof"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T22",
@@ -18715,14 +18716,20 @@
       "epicKey": "5",
       "title": "virtio-console agent channel and static Rust guest agent",
       "priority": 523,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T05c"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T23a",
+        "E5-T23b",
+        "E5-T23c",
+        "E5-T23d",
+        "E5-T23e"
+      ],
       "estimate": "M",
       "capstone": false,
-      "goal": "A private host⇄guest control channel: a virtio-console (device ID 3) multiport device\nexposing a named port, and a small static Rust agent in the guest speaking a versioned,\nframed protocol over it — the extension point that clipboard (T24), resolution\nnotifications, and future integrations plug into without inventing new devices.",
+      "goal": "> **DECOMPOSED 2026-09-04.** This M-sized channel container is cancelled before\n> implementation as required by task policy and replaced by five ordered S slices. E5-T23a\n> freezes the shared framing protocol, E5-T23b adds the virtio-console multiport transport,\n> E5-T23c builds and services the static guest agent, E5-T23d adds the host Channel lifecycle,\n> and E5-T23e owns the end-to-end boot, fuzz, reconnect, and documentation proof.\n\nA private host⇄guest control channel: a virtio-console (device ID 3) multiport device\nexposing a named port, and a small static Rust agent in the guest speaking a versioned,\nframed protocol over it — the extension point that clipboard (T24), resolution\nnotifications, and future integrations plug into without inventing new devices.",
       "criteria": [
         {
           "text": "Boot T17 image: `/dev/virtio-ports/org.wasmvm.agent` exists; agent service runs; host receives HELLO with version+caps within 2 s of boot; PING round-trip p50 < 20 ms measured from the host.",
@@ -18747,9 +18754,205 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — coordinator — decomposed\n\nThis M-sized high-risk container is cancelled before implementation as required by task policy and\nreplaced by five ordered S tasks with one boundary and one deterministic acceptance command each.\nThe dependency chain is protocol → virtio-console transport → static guest service → host Channel →\nend-to-end proof. E5-T24 is rewired to the final proof slice so clipboard work cannot bypass any\nchannel layer.",
       "adversarial": "Attack the framing: byte-dribble a valid frame (1 byte per write), coalesce 10 frames\nin one write, split a frame across port-open/close, inject random garbage mid-stream —\nthe agent and host must resync or reset the connection per the documented policy; any\nhang or desync-forever refutes. Attack flow control: host sends 10k PINGs without\nreading responses — bounded memory on both sides (virtqueue backpressure, not\nunbounded Vec). Kill -9 the agent 100x in a loop: no host leak (Channel listener\ncount flat), no guest zombie pile-up. Version skew drill: bump the protocol version on\nthe host only — HELLO must negotiate down or fail explicitly per the doc, not\nhalf-work with wrong framing. Confirm the serial console (T08) is unaffected while the\nagent channel is saturated.",
       "file": "tasks/epic-5-the-window/E5-T23-guest-agent-channel.md",
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T23a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Shared guest-agent protocol and bounded framing",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T05c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Freeze the versioned, length-prefixed wire contract shared by the host Channel and the static\nguest agent before either transport endpoint is implemented.",
+      "criteria": [
+        {
+          "text": "Valid HELLO/PING/NAK frames encode and decode byte-exactly on native host tests and a no-std guest build.",
+          "checked": false
+        },
+        {
+          "text": "The incremental parser accepts one-byte-at-a-time and ten-frame coalesced input, rejects `len = 0xFFFFFFFF` before allocation, and never desynchronizes after a truncated frame.",
+          "checked": false
+        },
+        {
+          "text": "HELLO negotiation returns the protocol/capability intersection; unknown message types are represented as NAK-able events without terminating the parser.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Feed random bytes between valid frames, split headers at every byte boundary, and repeat oversized\nlength prefixes under a fixed seed. Assert bounded parser storage, no panic, and either documented\nresynchronization or an explicit connection-reset result.",
+      "file": "tasks/epic-5-the-window/E5-T23a-agent-protocol-framing.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T23b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Virtio-console multiport agent transport",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T23a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Expose the shared protocol through a real virtio-console device ID 3 with one named\n`org.wasmvm.agent` port while keeping the existing serial console independent.",
+      "criteria": [
+        {
+          "text": "A negotiated device publishes exactly one named `org.wasmvm.agent` port and rejects malformed control descriptors without an out-of-bounds read or host panic.",
+          "checked": false
+        },
+        {
+          "text": "Data written to the agent port completes through its queues with bounded backpressure and preserves frame bytes; a full agent queue never consumes serial-console descriptors.",
+          "checked": false
+        },
+        {
+          "text": "Port add/open/close/reopen transitions are deterministic and leave no stale queue ownership.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Dribble control messages, coalesce ten data chains, close a port between split descriptors, and\nsend 10,000 PING-sized payloads without reading. Check descriptor bounds, bounded queue memory,\nserial output continuity, and clean reopen after a forced transport reset.",
+      "file": "tasks/epic-5-the-window/E5-T23b-virtio-console-multiport.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T23c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Static riscv64 guest agent and OpenRC service",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T23b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Build the poll-driven Rust guest agent for `riscv64gc-unknown-linux-musl`, install it in the T17\nimage, and keep it alive as an OpenRC service with no dynamic runtime dependencies.",
+      "criteria": [
+        {
+          "text": "The cross-built stripped agent is ≤1 MiB and `file`/`ldd` prove it is a static riscv64 executable with no shared-library dependency.",
+          "checked": false
+        },
+        {
+          "text": "The service opens `/dev/virtio-ports/org.wasmvm.agent`, answers HELLO/PING, and exits or retries cleanly when the port disappears; it never spins without a poll bound.",
+          "checked": false
+        },
+        {
+          "text": "Rebuilding the T17 image installs the exact agent digest and service links without changing the existing serial getty path.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Kill the agent repeatedly, remove/recreate the port, feed byte-dribbled and oversized frames, and\nhold the peer write queue full. Assert no zombie pile-up, no unbounded allocations, bounded restart\nlatency, and unchanged serial-console output.",
+      "file": "tasks/epic-5-the-window/E5-T23c-static-agent-service.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T23d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Host agent Channel API and reconnect lifecycle",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T23c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Provide the page/worker-side `Channel` service that negotiates the guest agent, exposes typed\nsubscribe/send operations, and makes restart gaps explicit and recoverable.",
+      "criteria": [
+        {
+          "text": "A Channel reaches ready only after HELLO intersection and exposes negotiated capabilities; PING round trips correlate correctly even when replies arrive out of order.",
+          "checked": false
+        },
+        {
+          "text": "Agent termination rejects every in-flight send exactly once, reconnects, and re-negotiates HELLO without duplicate listeners or stale subscriptions.",
+          "checked": false
+        },
+        {
+          "text": "Ten thousand bounded PING attempts cannot grow pending memory without backpressure, and a send during the gap returns a documented disconnected error.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Inject version skew, kill the transport during each handshake phase, replay a stale HELLO, and\ndeliver replies in reverse order. Inspect pending counts and listener cardinality after 100 restart\ncycles; any silent send loss or duplicate callback is a finding.",
+      "file": "tasks/epic-5-the-window/E5-T23d-host-channel-reconnect.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T23e",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "End-to-end guest agent channel proof and documentation",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T23d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Freeze the complete virtio-console agent channel with a measured T17 boot, restart recovery,\nprotocol attack coverage, and the documented extension contract for clipboard and future features.",
+      "criteria": [
+        {
+          "text": "A T17 boot creates `/dev/virtio-ports/org.wasmvm.agent`, the agent HELLO arrives within 2 s, and measured host PING p50 is below 20 ms.",
+          "checked": false
+        },
+        {
+          "text": "`wasmvm-agent` restart reconnects and re-negotiates automatically; in-flight sends fail explicitly, unknown types NAK without killing either endpoint, and the serial console stays usable while the agent channel is saturated.",
+          "checked": false
+        },
+        {
+          "text": "Static size/dependency, oversized-frame, fuzz, and browser/request/console evidence are recorded at one exact head with no unexplained unexecuted changed hunk.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Byte-dribble valid frames, coalesce ten, inject garbage, split across close/open, flood 10,000\nPINGs, kill the agent 100 times, and bump the host version. Run two simultaneous tabs and compare\nlistener counts, pending memory, HELLO negotiation, serial output, and all reconnect/fuzz digests.",
+      "file": "tasks/epic-5-the-window/E5-T23e-agent-channel-proof.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
@@ -18764,7 +18967,7 @@
       "status": "pending",
       "depends_on": [
         "E5-T18",
-        "E5-T23"
+        "E5-T23e"
       ],
       "decomposed_into": [],
       "estimate": "M",

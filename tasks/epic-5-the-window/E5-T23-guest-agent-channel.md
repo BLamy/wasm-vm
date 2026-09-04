@@ -3,17 +3,39 @@ id: E5-T23
 epic: 5
 title: virtio-console agent channel and static Rust guest agent
 priority: 523
-status: pending
+status: cancelled
 depends_on: [E5-T05c]
 estimate: M
+risk: high
 capstone: false
+decomposed_into: [E5-T23a, E5-T23b, E5-T23c, E5-T23d, E5-T23e]
 ---
 
 ## Goal
+> **DECOMPOSED 2026-09-04.** This M-sized channel container is cancelled before
+> implementation as required by task policy and replaced by five ordered S slices. E5-T23a
+> freezes the shared framing protocol, E5-T23b adds the virtio-console multiport transport,
+> E5-T23c builds and services the static guest agent, E5-T23d adds the host Channel lifecycle,
+> and E5-T23e owns the end-to-end boot, fuzz, reconnect, and documentation proof.
+
 A private host⇄guest control channel: a virtio-console (device ID 3) multiport device
 exposing a named port, and a small static Rust agent in the guest speaking a versioned,
 framed protocol over it — the extension point that clipboard (T24), resolution
 notifications, and future integrations plug into without inventing new devices.
+
+## Execution slices
+
+1. **E5-T23a — shared protocol and incremental framing.** Define the no-std-compatible frame
+   header, HELLO/PING/NAK messages, capability negotiation, bounded parser, and host/guest tests.
+2. **E5-T23b — virtio-console multiport transport.** Implement device ID 3, control-queue port
+   lifecycle, the `org.wasmvm.agent` named port, and isolation from the serial console.
+3. **E5-T23c — static guest agent and service.** Build the poll-driven riscv64-musl agent,
+   enforce static size/dependency checks, install it into the T17 image, and start it with OpenRC.
+4. **E5-T23d — host Channel lifecycle.** Add typed send/subscribe APIs, bounded in-flight state,
+   reconnect/re-negotiation, and explicit errors for sends during an agent restart.
+5. **E5-T23e — end-to-end proof and protocol documentation.** Exercise boot HELLO, PING latency,
+   restart recovery, unknown types, fuzz/oversize rejection, flow control, and serial isolation;
+   record the evidence and publish `docs/agent-protocol.md`.
 
 ## Context
 virtio-console multiport gives us named streams with zero kernel work:
@@ -66,4 +88,11 @@ half-work with wrong framing. Confirm the serial console (T08) is unaffected whi
 agent channel is saturated.
 
 ## Verification log
-(empty)
+
+### 2026-09-04 — coordinator — decomposed
+
+This M-sized high-risk container is cancelled before implementation as required by task policy and
+replaced by five ordered S tasks with one boundary and one deterministic acceptance command each.
+The dependency chain is protocol → virtio-console transport → static guest service → host Channel →
+end-to-end proof. E5-T24 is rewired to the final proof slice so clipboard work cannot bypass any
+channel layer.

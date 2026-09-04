@@ -4,7 +4,7 @@ epic: 5
 title: Bidirectional clipboard sync through the guest agent
 priority: 524
 status: pending
-depends_on: [E5-T18, E5-T23]
+depends_on: [E5-T18, E5-T23e]
 estimate: M
 capstone: false
 ---
