@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T19d** — virtio-snd Linux guest integration and playback proof
 1. **E5-T23** — virtio-console agent channel and static Rust guest agent **[DECOMPOSE BEFORE START]**
 
 
@@ -376,7 +375,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `519.1` [E5-T19a](epic-5-the-window/E5-T19a-snd-control-state.md) — virtio-snd control protocol and PCM state machine *(deps: E5-T05c)*
 - [x] `519.2` [E5-T19b](epic-5-the-window/E5-T19b-snd-playback-pacing.md) — virtio-snd paced playback and native audio sinks *(deps: E5-T19a)*
 - [x] `519.3` [E5-T19c](epic-5-the-window/E5-T19c-snd-queue-xrun-hardening.md) — virtio-snd queue errors, XRUN events, and reset hardening *(deps: E5-T19b)*
-- [ ] `519.4` [E5-T19d](epic-5-the-window/E5-T19d-snd-guest-playback-proof.md) — virtio-snd Linux guest integration and playback proof *(deps: E5-T19c)*
+- [~] `519.4` [E5-T19d](epic-5-the-window/E5-T19d-snd-guest-playback-proof.md) — virtio-snd Linux guest integration and playback proof *(deps: E5-T19c)*
 - [ ] `520` [E5-T20](epic-5-the-window/E5-T20-audioworklet-output.md) — AudioWorklet playback — SAB ring buffer, underrun accounting, autoplay unlock *(deps: E5-T19d)*
 - [ ] `521` [E5-T21](epic-5-the-window/E5-T21-virtio-snd-capture-stretch.md) — Microphone capture stream (stretch) — rxq, getUserMedia, permission UX *(deps: E5-T20)*
 - [ ] `522` [E5-T22](epic-5-the-window/E5-T22-display-resize-end-to-end.md) — Display resize end-to-end — canvas size to guest mode change and back *(deps: E5-T04, E5-T18)*

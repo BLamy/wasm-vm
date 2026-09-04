@@ -3,7 +3,7 @@ id: E5-T19d
 epic: 5
 title: virtio-snd Linux guest integration and playback proof
 priority: 519.4
-status: pending
+status: in-progress
 depends_on: [E5-T19c]
 estimate: S
 risk: medium

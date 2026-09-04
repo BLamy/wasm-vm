@@ -18009,8 +18009,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t19c): mark queue hardening verified",
             "test(e5-t19c): record queue recovery evidence",
             "chore(e5-t19c): activate snd queue xrun hardening"
           ]
@@ -18018,7 +18019,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T19d",
@@ -18026,7 +18027,7 @@
       "epicKey": "5",
       "title": "virtio-snd Linux guest integration and playback proof",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T19c"
       ],
