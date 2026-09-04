@@ -18945,15 +18945,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t23d): record channel lifecycle evidence",
             "chore(e5-t23d): activate host channel task"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T23e",
@@ -18961,7 +18962,7 @@
       "epicKey": "5",
       "title": "End-to-end guest agent channel proof and documentation",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T23d"
       ],

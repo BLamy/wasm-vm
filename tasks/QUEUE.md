@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T23e** — End-to-end guest agent channel proof and documentation
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -394,7 +393,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `523.2` [E5-T23b](epic-5-the-window/E5-T23b-virtio-console-multiport.md) — Virtio-console multiport agent transport *(deps: E5-T23a)*
 - [x] `523.3` [E5-T23c](epic-5-the-window/E5-T23c-static-agent-service.md) — Static riscv64 guest agent and OpenRC service *(deps: E5-T23b)*
 - [x] `523.4` [E5-T23d](epic-5-the-window/E5-T23d-host-channel-reconnect.md) — Host agent Channel API and reconnect lifecycle *(deps: E5-T23c)*
-- [ ] `523.5` [E5-T23e](epic-5-the-window/E5-T23e-agent-channel-proof.md) — End-to-end guest agent channel proof and documentation *(deps: E5-T23d)*
+- [~] `523.5` [E5-T23e](epic-5-the-window/E5-T23e-agent-channel-proof.md) — End-to-end guest agent channel proof and documentation *(deps: E5-T23d)*
 - [ ] `524` [E5-T24](epic-5-the-window/E5-T24-clipboard-sync.md) — Bidirectional clipboard sync through the guest agent *(deps: E5-T18, E5-T23e)*
 - [ ] `525` [E5-T25](epic-5-the-window/E5-T25-perf-fps-latency-harness.md) — Performance harness — window-drag FPS and input-to-photon latency, measured *(deps: E5-T09, E5-T18)*
 - [ ] `526` [E5-T26](epic-5-the-window/E5-T26-snapshot-gpu-display-state.md) — Desktop-aware snapshots — GPU, input, and sound state across suspend/resume *(deps: E5-T18, E5-T20e)*

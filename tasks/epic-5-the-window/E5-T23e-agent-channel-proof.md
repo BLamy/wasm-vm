@@ -3,7 +3,7 @@ id: E5-T23e
 epic: 5
 title: End-to-end guest agent channel proof and documentation
 priority: 523.5
-status: pending
+status: in-progress
 depends_on: [E5-T23d]
 estimate: S
 risk: high
