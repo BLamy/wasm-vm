@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 235,
+    "verified": 236,
     "total": 397
   },
   "epics": [
@@ -18622,7 +18622,7 @@
       "epicKey": "5",
       "title": "Guest microphone capture and browser proof",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T21d"
       ],
@@ -18633,26 +18633,34 @@
       "criteria": [
         {
           "text": "Flag-off guest enumeration has no capture device and the browser records zero media requests.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Granted capture runs for five seconds with exact WAV duration and a loopback tone FFT peak; denied capture completes in the same wall-clock time as digital silence.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Mid-record revocation emits notification/silence, re-grant works without reload, and the final Chromium run has zero unexpected console/page/request errors.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-09-04 — verifier — VERDICT: verified\n\n- Flag-off privacy — HELD. The built page without `enableMic` reported `enabled=false`, `state=off`,\n  no capture ring, `Microphone: off`, and `getUserMediaCalls=0` before the opt-in page was loaded.\n- Granted and denied duration — HELD. The exact-head Chromium recording produced 240,000 stereo\n  frames at 48 kHz (`5.000 s`, 960,000 PCM bytes) with a 440 Hz FFT peak and 16.71 dB neighbor\n  separation; the denied path produced the same 240,000-frame/5.000-second WAV as digital silence\n  in 5.32246 s versus 5.32250 s for granted capture.\n- Lifecycle and duplex recovery — HELD. The recording observed one shared delayed permission request\n  with a logical 30-second wait, mute → revoked plus `muted` notification and zero non-zero frames,\n  ended → revoked with zero listeners, re-grant on `PCM_START` 2 without reload, and simultaneous\n  220 Hz playback plus 440 Hz capture with 16,800 output frames accepted and 14,400 capture frames.\n- Boundary and rate attacks — HELD. A real 44.1 kHz `AudioContext` yielded an exact 44,100-frame,\n  one-second WAV; 16-byte and 1 MiB periods returned exact `data + 8` lengths and preserved every\n  canary byte. Native virtio-snd captured 240,000 exact 48 kHz frames with the same tone assertion\n  and passed the hostile period fixture.\n- Exact-head coverage — HELD. Commit `19759fe38a708b5f75d624993bf033c3ca5c3590` passed the\n  native 9-test capture suite, the 63-test affected Node/browser-module suite, source/dist byte\n  parity, and the final Chromium run with zero unexpected console, page, or request errors. The\n  deterministic browser loopback exercises the real production AudioWorklet/ring/controller path;\n  no physical microphone or shipped-rootfs `arecord` binary is required.\n\nCommands: `node tools/verify/e5-t21e-microphone-capture-proof.mjs`; `node --test web/tests/audio-capture-recorder.test.mjs web/tests/audio-capture-ring.test.mjs web/tests/audio-capture-worklet.test.mjs web/tests/audio-microphone.test.mjs web/tests/audio-autoplay.test.mjs web/tests/audio-sink.test.mjs web/tests/audio-worklet.test.mjs web/tests/e4-t32-worker-protocol.test.mjs`; `cargo test -p wasm-vm-core --test virtio_snd_capture --quiet`\n\nEvidence: `evidence/e5-t21e/microphone-capture-2026-09-04.json` (SHA-256 `6e1d58d5f54d5e61a08f2c4a207ffc8354915893430fe73e2d4c72d5f631089a`), `evidence/e5-t21e/microphone-capture-2026-09-04.txt` (SHA-256 `c6e6ed73a29ff077ccc7310d37ee964067640a18ee3eb2e8d502ed45eda2d716`), `evidence/e5-t21e/microphone-capture-2026-09-04.png` (SHA-256 `c69f548f858435c78789c6efdfdc193f5561e1ef32ed853caadc52e1912d5796`)\n\n(empty)",
       "adversarial": "Force 44.1 kHz hardware, post 16-byte and 1 MiB periods with canaries, delay permission 30 seconds,\nrun two tabs and 60 seconds of full-duplex playback/capture, and require exact duration, bounded\ncompletion lengths, no cross-ring corruption, and zero pre-START media calls.",
       "file": "tasks/epic-5-the-window/E5-T21e-microphone-capture-proof.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t21e): activate microphone capture proof"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T22",
