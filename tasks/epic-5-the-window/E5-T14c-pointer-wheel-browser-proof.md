@@ -3,7 +3,7 @@ id: E5-T14c
 epic: 5
 title: pointer wheel capture and browser proof
 priority: 514.3
-status: implemented
+status: verified
 depends_on: [E5-T14b, E5-T13c]
 estimate: S
 risk: medium
@@ -73,3 +73,29 @@ Evidence: `evidence/e5-t14c/pointer-wheel-browser-2026-09-03.json`, SHA-256
 `bbb6145092b9512c55db8d8f71eebcd13bc1f8c9170eabfa62283bcc58d9c7bd`; guest transcript
 `evidence/e5-t14c/guest-evtest-2026-09-03.txt`, SHA-256
 `a3cd5f1d311a9c5b23da1897f848533be521dc1c1c677ade5f591883918f119e`.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Wheel normalization — HELD.** Predicted one signed `REL_WHEEL` event for the real browser
+  detent, one more for the LINE fixture, and exactly 25 negative detents from 1000 `+3px`
+  events; the exact-head recording observed those frames, zero remainder, and no sign flip.
+- **Capture and balance — HELD.** Predicted a drag that leaves the pointer surface would retain
+  movement and deliver a balanced button pair; the recording observed three drag frames with
+  button values `[1, 0]` and an empty held-button ledger.
+- **Lifecycle recovery — HELD.** Predicted pointer-lock loss, blur, reserved view toggle,
+  Escape-style relative exit, pointer cancel, and lock denial would all fail closed to absolute
+  mode without pointer or keyboard state; all six recorded paths ended absolute with empty ledgers,
+  and denial emitted the expected diagnostic.
+- **Coverage and adversarial attack — HELD.** The 200 mixed-direction wheel-cycle attack, exact
+  cancellation pair, oversized finite deltas, and invalid-mode probe passed; native guest fixture
+  passed 3/3; pointer tests passed 12/12; source/JS/dist projections and all three evidence hashes
+  matched. Changed runtime hunks were exercised by the focused fixtures or the built-page recording;
+  docs and the proof harness were inspected and used directly.
+- **Policy and suite — HELD.** The local guest/native/Chromium proof is authoritative here;
+  host rr, WebKit, and independent-machine checks remain waived by repository policy and user
+  direction. Retain the deterministic pointer tests, guest transcript, browser harness, and exact
+  JSON/screenshot evidence.
+
+Commands: `npm run test:pointer`; `cargo test -p wasm-vm-core --test virtio_pointer --quiet`;
+source/dist `cmp`; evidence SHA-256 checks; and the bounded 200-cycle mixed-direction wheel,
+cancellation, oversized-input, and invalid-mode probe.
