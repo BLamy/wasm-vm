@@ -3,7 +3,7 @@ id: E5-T19b
 epic: 5
 title: virtio-snd paced playback and native audio sinks
 priority: 519.2
-status: implemented
+status: verified
 depends_on: [E5-T19a]
 estimate: S
 risk: medium
@@ -51,3 +51,15 @@ injected monotonic clock controls 0.5x/1x/2x completion cadence, and that each c
 bounded `latency_bytes` status and preserves FIFO used-ring order. It also exercises a bit-exact
 STOP/START ramp through the native WAV sink, sink and stream-ID errors, RELEASE flushing, and an
 eight-second 48 kHz 440 Hz sine capture with an FFT peak within 1 Hz and exact period joins.
+
+### 2026-09-03 — verifier — VERDICT: verified
+
+- Predictions: a held clock leaves all posted periods out of the used ring; advancing one period
+  completes exactly one FIFO descriptor with bounded latency; STOP/START neither duplicates nor
+  drops samples; sink and wrong-stream failures complete with `IO_ERR`.
+- Observed: the optimized playback suite passed 7/7, and 25 consecutive debug invocations passed
+  7/7 each. The WAV ramp was sample-for-sample, the sine FFT peak was within 1 Hz of 440 Hz, and
+  the used-ring/status assertions held.
+- Evidence: [`snd-playback-verifier-2026-09-03.txt`](../../evidence/e5-t19b/snd-playback-verifier-2026-09-03.txt),
+  SHA-256 `174e80ffc97d6b387348d54ddcdd95a29293ccc5d3573e75007ed6b5272bbc01`.
+- Findings: none. The task is verified.
