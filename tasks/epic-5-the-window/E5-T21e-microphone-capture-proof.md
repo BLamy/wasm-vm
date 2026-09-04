@@ -3,7 +3,7 @@ id: E5-T21e
 epic: 5
 title: Guest microphone capture and browser proof
 priority: 521.5
-status: pending
+status: in-progress
 depends_on: [E5-T21d]
 estimate: S
 risk: high

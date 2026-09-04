@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T21e** — Guest microphone capture and browser proof
 1. **E5-T23** — virtio-console agent channel and static Rust guest agent **[DECOMPOSE BEFORE START]**
 
 
@@ -388,7 +387,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `521.2` [E5-T21b](epic-5-the-window/E5-T21b-virtio-snd-capture-config.md) — Config-gated virtio-snd capture advertisement *(deps: E5-T21a)*
 - [x] `521.3` [E5-T21c](epic-5-the-window/E5-T21c-audio-capture-ring-worklet.md) — Capture SAB ring and AudioWorklet producer *(deps: E5-T21b)*
 - [x] `521.4` [E5-T21d](epic-5-the-window/E5-T21d-microphone-permission-lifecycle.md) — Lazy microphone permission and silence fallback *(deps: E5-T21c)*
-- [ ] `521.5` [E5-T21e](epic-5-the-window/E5-T21e-microphone-capture-proof.md) — Guest microphone capture and browser proof *(deps: E5-T21d)*
+- [~] `521.5` [E5-T21e](epic-5-the-window/E5-T21e-microphone-capture-proof.md) — Guest microphone capture and browser proof *(deps: E5-T21d)*
 - [ ] `522` [E5-T22](epic-5-the-window/E5-T22-display-resize-end-to-end.md) — Display resize end-to-end — canvas size to guest mode change and back *(deps: E5-T04, E5-T18)*
 - [ ] `523` [E5-T23](epic-5-the-window/E5-T23-guest-agent-channel.md) — virtio-console agent channel and static Rust guest agent *(deps: E5-T05c)*
 - [ ] `524` [E5-T24](epic-5-the-window/E5-T24-clipboard-sync.md) — Bidirectional clipboard sync through the guest agent *(deps: E5-T18, E5-T23)*
