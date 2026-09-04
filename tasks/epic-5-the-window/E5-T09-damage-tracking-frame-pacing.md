@@ -3,10 +3,12 @@ id: E5-T09
 epic: 5
 title: Damage-rect coalescing, dirty tiling, and rAF-paced presentation
 priority: 509
-status: pending
-depends_on: [E5-T06d, E5-T07]
+status: cancelled
+depends_on: [E5-T06d, E5-T07d]
 estimate: L
+risk: high
 capstone: false
+decomposed_into: [E5-T09a, E5-T09b, E5-T09c, E5-T09d, E5-T09e]
 ---
 
 ## Goal
@@ -58,4 +60,22 @@ Backgrounded-tab audio/serial must keep flowing while presents are timer-paced. 
 stuck cursor blink (damage marked but never presented after rAF resume) refutes.
 
 ## Verification log
-(empty)
+### 2026-09-04 — coordinator — decomposed
+
+This L-sized presentation container is cancelled before implementation as required by task policy.
+The work is split into ordered S tickets with one boundary and one deterministic acceptance command
+each:
+
+1. **E5-T09a — damage coalescer.** Implement and test the core per-scanout damage accumulator,
+   including the 16-rect union policy and 17th-rect bounding-box spill.
+2. **E5-T09b — dirty tiles.** Add the 64x64 TRANSFER-to-upload planner and byte counters, with
+   exact tile-boundary and resize tests.
+3. **E5-T09c — rAF pacing.** Add the page-owned latest-wins scheduler that drains one present per
+   animation frame without allowing the guest callback queue to grow.
+4. **E5-T09d — hidden fallback and metrics.** Add the hidden-tab timer fallback and expose the
+   presentation counters to the page and performance harness.
+5. **E5-T09e — integration proof and documentation.** Run the scroll/cursor/A-B correctness and
+   240-rect responsiveness proof, then publish the measured presentation appendix.
+
+WebKit, independent-machine, and host-layer rr coverage remain outside these slices per the
+repository evidence policy and the user's direction.

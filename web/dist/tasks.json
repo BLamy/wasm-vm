@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 255,
-    "total": 414
+    "total": 419
   },
   "epics": [
     {
@@ -17031,15 +17031,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t08): mark host capture verified",
             "chore(e5-t08): activate console capture slice"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T09",
@@ -17047,12 +17048,18 @@
       "epicKey": "5",
       "title": "Damage-rect coalescing, dirty tiling, and rAF-paced presentation",
       "priority": 509,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T06d",
-        "E5-T07"
+        "E5-T07d"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T09a",
+        "E5-T09b",
+        "E5-T09c",
+        "E5-T09d",
+        "E5-T09e"
+      ],
       "estimate": "L",
       "capstone": false,
       "goal": "The present pipeline stops being \"one JS call per guest flush\": damage rects from\nRESOURCE_FLUSH are coalesced per frame, uploads are restricted to dirty tiles, and\npresentation is paced by `requestAnimationFrame` with at most one upload+draw per\ndisplay refresh — cutting bytes-per-frame and decoupling guest flush rate from vsync.",
@@ -17080,9 +17087,140 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — coordinator — decomposed\n\nThis L-sized presentation container is cancelled before implementation as required by task policy.\nThe work is split into ordered S tickets with one boundary and one deterministic acceptance command\neach:\n\n1. **E5-T09a — damage coalescer.** Implement and test the core per-scanout damage accumulator,\n   including the 16-rect union policy and 17th-rect bounding-box spill.\n2. **E5-T09b — dirty tiles.** Add the 64x64 TRANSFER-to-upload planner and byte counters, with\n   exact tile-boundary and resize tests.\n3. **E5-T09c — rAF pacing.** Add the page-owned latest-wins scheduler that drains one present per\n   animation frame without allowing the guest callback queue to grow.\n4. **E5-T09d — hidden fallback and metrics.** Add the hidden-tab timer fallback and expose the\n   presentation counters to the page and performance harness.\n5. **E5-T09e — integration proof and documentation.** Run the scroll/cursor/A-B correctness and\n   240-rect responsiveness proof, then publish the measured presentation appendix.\n\nWebKit, independent-machine, and host-layer rr coverage remain outside these slices per the\nrepository evidence policy and the user's direction.",
       "adversarial": "Refute correctness first: run the fuzz workload (random TRANSFER+FLUSH sequences, 10k\niterations, seeded) and CRC-compare final shadows/screens against the A/B disabled path\n— any pixel diff refutes. Then starve it: point a 4x-CPU-throttled Chrome at a\nfull-screen `glxgears`-style fbdev animation and prove latest-wins skipping (no\never-growing damage queue; heap flat over 5 min). Attack the tile math with rects that\ntouch tile boundaries exactly (x=63,w=2) and rects clipped by a mid-frame resize.\nBackgrounded-tab audio/serial must keep flowing while presents are timer-paced. A\nstuck cursor blink (damage marked but never presented after rAF resume) refutes.",
       "file": "tasks/epic-5-the-window/E5-T09-damage-tracking-frame-pacing.md",
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T09a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Core virtio-gpu damage coalescer",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T07d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Add a deterministic per-scanout damage accumulator so multiple RESOURCE_FLUSH rectangles can be\nrepresented as one bounded present plan without changing guest completion timing.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Feed seeded random rectangles, including repeated edge-touching and out-of-bounds inputs, and\ncompare the accumulator's covered-pixel mask with a simple independent reference mask after every\ninsert and drain.",
+      "file": "tasks/epic-5-the-window/E5-T09a-damage-coalescer.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T09b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Virtio-gpu dirty-tile upload planner",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T09a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Track which 64x64 tiles became dirty through TRANSFER_TO_HOST_2D and intersect them with the\ncoalesced flush plan so a cursor blink or one-cell update uploads only the necessary bytes.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Run 10,000 seeded transfer/flush sequences with random resource sizes and compare selected upload\nregions and final shadow bytes against a reference planner; fail on any stale tile or byte-count\ndrift.",
+      "file": "tasks/epic-5-the-window/E5-T09b-dirty-tiles.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T09c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Latest-wins requestAnimationFrame presentation scheduler",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T09b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Decouple guest flush callbacks from display refresh with a page-owned latest-wins scheduler that\nperforms at most one upload and draw per requestAnimationFrame.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Use a deterministic fake clock with a 4x-slow backend and random enqueue order; assert no unbounded\nqueue growth, no duplicate present, and eventual latest-frame delivery after the backend catches up.",
+      "file": "tasks/epic-5-the-window/E5-T09c-raf-present-scheduler.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T09d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Hidden-tab presentation fallback and metrics surface",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T09c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Keep guest output and serial progress alive when the document is hidden by switching the presentation\ndrain from rAF to a bounded 250 ms timer, and expose the scheduler/tile counters to the page.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Alternate forced hidden/visible state on every callback for 1,000 cycles, inject a delayed timer,\nand assert bounded pending work, monotonic counters, and a presented final cursor frame.",
+      "file": "tasks/epic-5-the-window/E5-T09d-hidden-present-metrics.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T09e",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Damage tiling and frame-pacing integration proof",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T09d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Close T09 with one end-to-end proof that tiled/coalesced presentation is pixel-correct, latest-wins\nunder load, and documented with measured counters.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Run the seeded 10,000-sequence A/B fuzz, exact tile-boundary and resize cases, a 4x CPU-throttled\nlatest-wins run, and a cursor update immediately after visibility resume. Any CRC mismatch, queue\ngrowth, dropped final cursor, or long-task violation refutes the proof.",
+      "file": "tasks/epic-5-the-window/E5-T09e-integration-proof.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
@@ -19636,7 +19774,7 @@
       "priority": 525,
       "status": "pending",
       "depends_on": [
-        "E5-T09",
+        "E5-T09e",
         "E5-T18"
       ],
       "decomposed_into": [],
