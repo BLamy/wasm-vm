@@ -130,7 +130,7 @@ export const ROADMAP = [
       { name: "Audio autoplay unlock + pre-unlock pacing", status: "verified", evidence: "E5-T20d: visible muted state, idempotent click/keydown resume, bounded clock-rate discard, and retryable rejection" },
       { name: "Guest PCM → AudioWorklet capture", status: "verified", evidence: "E5-T20e: WasmLinux ring attachment, 48/44.1 kHz rate truth, 30-second sample/digest proof, measured latency, and starvation recovery" },
       { name: "Config-gated virtio-snd microphone advertisement", status: "verified", evidence: "E5-T21b: creation-time enableMic gate, fixed 48 kHz INPUT metadata, reset/recreation fixture, and Chromium construction proof" },
-      { name: "Microphone capture SAB ring + AudioWorklet producer", status: "partial", evidence: "E5-T21c: reversed SPSC publication, bounded 128-frame quanta, mono/stereo conversion, and 44.1/48 kHz pacing" },
+      { name: "Microphone capture SAB ring + AudioWorklet producer", status: "verified", evidence: "E5-T21c: reversed SPSC publication, bounded 128-frame quanta, mono/stereo conversion, 44.1/48 kHz pacing, and Chromium AudioWorklet proof" },
       { name: "virtio-gpu control + resource queues", status: "pending" },
       { name: "Scanout transfer + flush", status: "pending" },
       { name: "EDID / display info", status: "pending" },

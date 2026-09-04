@@ -1,0 +1,70 @@
+E5-T21c capture SAB ring and AudioWorklet producer — exact-head evidence
+Date: 2026-09-04
+Runtime implementation head: 8c36917e4bd9cb6ded7216c57e7df2ee2c7606b7
+
+Acceptance command (scrubbed environment):
+  env -i PATH="$PATH" node --test web/tests/audio-capture-ring.test.mjs web/tests/audio-capture-worklet.test.mjs
+  12 passed, 0 failed
+
+Adversarial stability:
+  for i in {1..25}; do env -i PATH="$PATH" node --test \
+    web/tests/audio-capture-ring.test.mjs web/tests/audio-capture-worklet.test.mjs >/dev/null || exit "$i"; done
+  25 consecutive repetitions passed.
+
+Dependent audio regression command (scrubbed environment):
+  env -i PATH="$PATH" node --test web/tests/audio-ring.test.mjs web/tests/audio-worklet.test.mjs \
+    web/tests/audio-sink.test.mjs web/tests/audio-autoplay.test.mjs
+  27 passed, 0 failed
+
+Static/runtime checks:
+  node --check web/src/audio/ring.js
+  node --check web/src/audio/capture-ring.js
+  node --check web/src/audio/capture-worklet.js
+  node --check web/tests/audio-capture-ring.test.mjs
+  node --check web/tests/audio-capture-worklet.test.mjs
+  node --check web/tests/e5-t21c-capture-worklet.spec.js
+  cargo fmt --all -- --check
+  cargo clippy -p wasm-vm-core --all-targets -- -D warnings
+  cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings
+  cargo check -p wasm-vm-cli
+  cargo check -p wasm-vm-wasm
+  make web-build
+  make web-dist
+  git diff --check
+  All listed checks passed.
+
+Source/deploy parity:
+  cmp web/src/audio/ring.js web/dist/src/audio/ring.js
+  cmp web/src/audio/capture-ring.js web/dist/src/audio/capture-ring.js
+  cmp web/src/audio/capture-worklet.js web/dist/src/audio/capture-worklet.js
+  cmp web/roadmap.js web/dist/roadmap.js
+  cmp web/tasks.json web/dist/tasks.json
+  All listed comparisons passed.
+
+Chromium acceptance:
+  From web/:
+    PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8151 PLAYWRIGHT_REUSE_SERVER=0 \
+      ./node_modules/.bin/playwright test tests/e5-t21c-capture-worklet.spec.js --workers=1
+  Result: 1 passed (2.0s); crossOriginIsolated=true; sampleRateHz=48000; read > 0;
+  constant stereo samples [0.25, 0.25]; droppedFrames=0; unexpected console errors=0.
+  Screenshot: evidence/e5-t21c/capture-worklet-2026-09-04.png
+
+Full workspace clippy note:
+  cargo clippy --workspace --all-targets --all-features -- -D warnings was attempted and remains
+  red on pre-existing macOS-incompatible Linux-only libc calls in crates/wvseccomp/src/main.rs
+  (prctl, PR_SET_NO_NEW_PRIVS, SYS_seccomp, and syscall type) plus unrelated pre-existing
+  wasm-vm-core dead-code warnings. T21c changes no Rust code; the affected crate and wasm-target
+  clippy/checks above pass.
+
+SHA-256:
+  1f56f0b5736c5ea7246b9b92517126171157ad05b949f5650da656dac2895893  web/src/audio/ring.js
+  d9d1bcd50e2c7d6b6019aa15e77d4a9e01edd1167929f096c47c7b7c5eed1176  web/src/audio/capture-ring.js
+  1254466ad6982f51b14c48e265b42a555daf95791ad1d349120d702562d3698a  web/src/audio/capture-worklet.js
+  1f56f0b5736c5ea7246b9b92517126171157ad05b949f5650da656dac2895893  web/dist/src/audio/ring.js
+  d9d1bcd50e2c7d6b6019aa15e77d4a9e01edd1167929f096c47c7b7c5eed1176  web/dist/src/audio/capture-ring.js
+  1254466ad6982f51b14c48e265b42a555daf95791ad1d349120d702562d3698a  web/dist/src/audio/capture-worklet.js
+  01104922677b88e3b9cb61c8091d83c795d9545f771d36611623b79038968fc4  web/roadmap.js
+  01104922677b88e3b9cb61c8091d83c795d9545f771d36611623b79038968fc4  web/dist/roadmap.js
+  065e59ffd9120af731b811c28c04eac2b7a95db5d8ef70d5f260559638753fa5  web/tasks.json
+  065e59ffd9120af731b811c28c04eac2b7a95db5d8ef70d5f260559638753fa5  web/dist/tasks.json
+  b638904654b11f20bdbd739b15f64f994e9ffae36aac053b3b7bd48b48fbce03  evidence/e5-t21c/capture-worklet-2026-09-04.png

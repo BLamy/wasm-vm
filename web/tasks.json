@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 233,
+    "verified": 234,
     "total": 397
   },
   "epics": [
@@ -18528,7 +18528,7 @@
       "epicKey": "5",
       "title": "Capture SAB ring and AudioWorklet producer",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T21b"
       ],
@@ -18552,13 +18552,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — verifier — VERDICT: verified (user-directed)\n\n- **Reversed SPSC publication — HELD.** Predicted that the capture worklet-owned producer would\n  publish complete frames in order, that the VM consumer would observe only published fill, and\n  that explicit slot cursors would survive repeated non-power-of-two wraps and a `uint32` counter\n  rollover. The focused ring suite held this across 12,345 frames at capacity 7 and a real worker\n  producer/consumer race at capacity 4,095; no duplicate, missing, or unpublished frame was\n  observed.\n- **Backpressure and overflow — HELD.** Predicted that a full ring would return immediately with\n  only the available prefix committed, preserve unread frames, and saturate the shared dropped\n  frame counter rather than wrap it. Full/empty tests held the prefix and later-frame ordering;\n  the counter remained `0xffff_ffff` after further drops.\n- **Channel conversion and missing input — HELD.** Predicted exact stereo preservation, deterministic\n  mono duplication into the ring's two advertised channels, and zero-fill for short or absent\n  input channels. The capture worklet suite held all three paths, including a 128-frame bound for\n  oversized input.\n- **Rate and real-time boundary — HELD.** Predicted fixed 128-frame quanta with correct 44,100 Hz\n  and 48,000 Hz duration metadata, no promises/timers/locks/`Atomics.wait`, and no per-quantum\n  allocation helper in `process()`. Both supported rates, the shared frame clock, duration\n  calculation, and source guard held.\n- **Browser path and coverage — HELD.** The real Chromium AudioWorklet module loaded from the\n  built page under cross-origin isolation, consumed a one-channel constant source into the SAB,\n  duplicated it to stereo, and reported `read > 0`, `droppedFrames = 0`, with zero unexpected\n  console errors. The roadmap capability is marked verified and source/deploy copies are byte\n  identical.\n- **Suite — HELD.** The exact-head focused command passed 12/12; 25 scrubbed repetitions passed;\n  the dependent T20a–T20d audio suites passed 27/27; `cargo fmt`, affected-crate clippy, wasm\n  clippy/checks, `make web-build`, `make web-dist`, and `git diff --check` passed. The workspace\n  clippy wall remains blocked by pre-existing macOS-incompatible `wvseccomp` Linux syscalls and\n  unrelated pre-existing `wasm-vm-core` dead-code warnings; no T21c Rust code was changed.\n- **Evidence:** [`audio-capture-worklet-2026-09-04.txt`](../../evidence/e5-t21c/audio-capture-worklet-2026-09-04.txt),\n  [`capture-worklet-2026-09-04.png`](../../evidence/e5-t21c/capture-worklet-2026-09-04.png).\n- Findings: none. The task is verified.",
       "adversarial": "Run seeded producer/consumer schedules through counter wrap, starve and flood the consumer, switch\nbetween mono and stereo, force 44.1 kHz, and inspect every frame/counter plus the process source guard.",
       "file": "tasks/epic-5-the-window/E5-T21c-audio-capture-ring-worklet.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t21c): activate capture ring worklet task"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T21d",
