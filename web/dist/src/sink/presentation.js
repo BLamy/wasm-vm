@@ -2,6 +2,7 @@
 
 import { Canvas2DBackend } from "./canvas2d.js";
 import { WebGL2Backend } from "./webgl.js";
+import { FrameScheduler } from "./frame-scheduler.js";
 
 const DEFAULT_WIDTH = 1280;
 const DEFAULT_HEIGHT = 800;
@@ -126,6 +127,15 @@ export class PresentationController {
     this._fallbacks = 0;
     this._contextLosses = 0;
     this._contextRestores = 0;
+    this._scheduler = options.scheduleFrames
+      ? new FrameScheduler({
+        present: (frame) => this._deliver(frame),
+        requestFrame: options.requestFrame,
+        cancelFrame: options.cancelFrame,
+        onError: options.onSchedulerError
+          ?? ((error) => this._errors.push(`scheduled present: ${String(error?.message || error)}`)),
+      })
+      : null;
     this._attachCanvasListeners();
     this._ensureCanvasSize();
     this._activateWithFallback(defaultBackend);
@@ -288,14 +298,21 @@ export class PresentationController {
       this.resize(checked.resourceWidth, checked.resourceHeight);
     }
     this._latest = checked;
-    return this._deliver(checked);
+    return this._scheduler ? this._scheduler.enqueue(checked) : this._deliver(checked);
   }
 
   /** Resize the visible target and backend resource. */
   resize(width, height) {
     if (this._disposed) throw new Error("PresentationController is disposed");
-    this._width = checkedDimension(Number(width), "canvas width");
-    this._height = checkedDimension(Number(height), "canvas height");
+    const nextWidth = checkedDimension(Number(width), "canvas width");
+    const nextHeight = checkedDimension(Number(height), "canvas height");
+    if (this._scheduler && (nextWidth !== this._width || nextHeight !== this._height)) {
+      // A queued frame contains a full-resource pixel view. It cannot be presented after the
+      // backend has changed dimensions, so retire it before resizing the target.
+      this._scheduler.discardPending();
+    }
+    this._width = nextWidth;
+    this._height = nextHeight;
     if (this._backend) {
       this._backend.resize(this._width, this._height);
     } else {
@@ -319,6 +336,7 @@ export class PresentationController {
       contextRestores: this._contextRestores,
       fallbacks: this._fallbacks,
       listenerCount: this._listenerCanvas ? 2 : 0,
+      scheduler: this._scheduler?.snapshot() ?? null,
       latest: this._latest
         ? { rect: this._latest.rect, resourceWidth: this._latest.resourceWidth, resourceHeight: this._latest.resourceHeight }
         : null,
@@ -345,9 +363,19 @@ export class PresentationController {
   dispose() {
     if (this._disposed) return;
     this._disposed = true;
+    this._scheduler?.dispose();
     this._detachCanvasListeners();
     this._disposeBackend();
     this._latest = null;
+  }
+
+  /** Pause/resume the optional page-owned display drain without affecting guest frame receipt. */
+  pause() {
+    return this._scheduler?.pause() ?? false;
+  }
+
+  resume() {
+    return this._scheduler?.resume() ?? false;
   }
 
   get backendName() {

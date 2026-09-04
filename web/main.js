@@ -52,15 +52,18 @@ const TAILSCALE_STATE_KEY = "wasm-vm.tailscale-state.v1";
 const NETWORK_CONFIG_KEY = "wasm-vm.network-config.v1";
 const NETWORK_PROVIDERS = new Set(["offline", "websocket", "tailscale", "headscale", "relay"]);
 
-// E5-T06d: the page owns the visible canvas and receives synchronous FrameSink projections from
-// either the direct loader or the whole-machine worker. The controller records a private latest
-// frame so a WebGL context loss can replay it through Canvas2D without re-entering the guest.
+// E5-T09c: the page owns the visible canvas and drains FrameSink projections through a bounded,
+// latest-wins requestAnimationFrame scheduler. The controller records a private latest frame so a
+// WebGL context loss can replay it through Canvas2D without re-entering the guest.
 const displayCanvas = document.getElementById("ide-display-canvas");
 const displayStatusEl = document.getElementById("ide-display-status");
 let presentation = null;
 if (displayCanvas) {
   try {
-    presentation = new PresentationController(displayCanvas, { defaultBackend: "canvas2d" });
+    presentation = new PresentationController(displayCanvas, {
+      defaultBackend: "canvas2d",
+      scheduleFrames: true,
+    });
   } catch (error) {
     if (displayStatusEl) {
       displayStatusEl.textContent = `display unavailable: ${String(error?.message || error)}`;

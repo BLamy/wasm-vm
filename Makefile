@@ -604,6 +604,16 @@ verify-E5-T09b:
 	node tools/verify/e5-t09b-dirty-tiles.mjs --output evidence/e5-t09b/dirty-tiles.json
 	@echo "verify-E5-T09b (dirty-tile upload planner): OK"
 
+.PHONY: verify-E5-T09c
+verify-E5-T09c:
+	# Browser-side bounded scheduler proof: fake rAF, latest-wins, reentrancy, teardown, and the
+	# opt-in PresentationController seam. Hidden-tab fallback and the end-to-end workload are later slices.
+	node --check web/src/sink/frame-scheduler.js
+	node --check web/src/sink/presentation.js
+	node --check tools/verify/e5-t09c-present-scheduler.mjs
+	node tools/verify/e5-t09c-present-scheduler.mjs --output evidence/e5-t09c/present-scheduler.json
+	@echo "verify-E5-T09c (latest-wins rAF scheduler): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
