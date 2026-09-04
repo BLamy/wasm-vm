@@ -17913,8 +17913,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t19a): mark snd control verified",
             "test(e5-t19a): record control contract evidence",
             "chore(e5-t19a): activate snd control state"
           ]
@@ -17922,7 +17923,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T19b",
@@ -17930,7 +17931,7 @@
       "epicKey": "5",
       "title": "virtio-snd paced playback and native audio sinks",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T19a"
       ],

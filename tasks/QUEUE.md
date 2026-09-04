@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T19b** — virtio-snd paced playback and native audio sinks
 1. **E5-T23** — virtio-console agent channel and static Rust guest agent **[DECOMPOSE BEFORE START]**
 
 
@@ -374,7 +373,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [ ] `518` [E5-T18](epic-5-the-window/E5-T18-boot-to-desktop-bringup.md) — Boot-to-desktop bring-up — seat/udev/permissions debugged, playbook written *(deps: E5-T08, E5-T15, E5-T17)*
 - [-] `519` [E5-T19](epic-5-the-window/E5-T19-virtio-snd-pcm-device.md) — virtio-snd device — control plane and PCM playback stream machine *(deps: E5-T05c)*
 - [x] `519.1` [E5-T19a](epic-5-the-window/E5-T19a-snd-control-state.md) — virtio-snd control protocol and PCM state machine *(deps: E5-T05c)*
-- [ ] `519.2` [E5-T19b](epic-5-the-window/E5-T19b-snd-playback-pacing.md) — virtio-snd paced playback and native audio sinks *(deps: E5-T19a)*
+- [~] `519.2` [E5-T19b](epic-5-the-window/E5-T19b-snd-playback-pacing.md) — virtio-snd paced playback and native audio sinks *(deps: E5-T19a)*
 - [ ] `519.3` [E5-T19c](epic-5-the-window/E5-T19c-snd-queue-xrun-hardening.md) — virtio-snd queue errors, XRUN events, and reset hardening *(deps: E5-T19b)*
 - [ ] `519.4` [E5-T19d](epic-5-the-window/E5-T19d-snd-guest-playback-proof.md) — virtio-snd Linux guest integration and playback proof *(deps: E5-T19c)*
 - [ ] `520` [E5-T20](epic-5-the-window/E5-T20-audioworklet-output.md) — AudioWorklet playback — SAB ring buffer, underrun accounting, autoplay unlock *(deps: E5-T19d)*

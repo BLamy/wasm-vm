@@ -3,7 +3,7 @@ id: E5-T19b
 epic: 5
 title: virtio-snd paced playback and native audio sinks
 priority: 519.2
-status: pending
+status: in-progress
 depends_on: [E5-T19a]
 estimate: S
 risk: medium
