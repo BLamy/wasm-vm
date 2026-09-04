@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 246,
+    "verified": 247,
     "total": 410
   },
   "epics": [
@@ -16591,7 +16591,7 @@
       "epicKey": "5",
       "title": "Canvas2D presentation backend and present contract",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T03c"
       ],
@@ -16619,13 +16619,21 @@
       ],
       "criteriaTotal": 4,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — worker — implemented\n\n- **Presentation contract — HELD.** Added the shared browser-side `PresentBackend` contract and\n  a Canvas2D implementation that consumes the T03 full resource-sized BGRA word view, validates\n  the canvas/damage bounds, extracts the damaged rows with the resource width as stride, and\n  copies explicit RGBA bytes into private non-shared staging before `putImageData`.\n- **Deterministic coverage — HELD.** Added five golden readback patterns, explicit alpha-zero and\n  opaque checks, x=1/width=3 partial damage, a right-edge odd-width rectangle spanning every\n  row, invalid-input rejection, JavaScript/.ts projection parity, and 1,000 resize/present\n  cycles with a staging-capacity bound.\n\nImplementation commits: `a78a698`, `db6e81e`, `ebb7cd9`, `6688bea`.\n\nEvidence: `evidence/e5-t06a/canvas2d-proof-2026-09-04.json` (SHA-256\n`503d21f99421ea362bcfe071851cce773b36952686ccb4314de02b93e7a4c78f`) and\n`evidence/e5-t06a/canvas2d-proof-2026-09-04.txt` (SHA-256\n`a4f70d0f5dc2891e650f93d27a0447849657875a6f059d9d95e579bf5661520e`).\n\nCommand: `env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR\n-u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS make verify-E5-T06a` — 2 syntax checks,\n10 tests passed, 0 failed.\n\n### 2026-09-04 — verifier — VERDICT: verified (user-directed)\n\n- **Acceptance — HELD.** The exact-head run reads back all five golden patterns pixel-identically,\n  preserves transparent alpha bytes, updates only partial damage, and keeps the odd-width\n  x=1/width=3 and right-edge row-spanning cases correctly aligned.\n- **Coverage — HELD.** The changed validation, full-resource stride extraction, channel mapping,\n  ImageData copy, resize reset, and error paths execute in the focused suite; the .ts and\n  deployable `web/dist` projections are byte-identical and checked.\n- **Adversarial matrix — HELD.** The suite covers 1x1, the largest stress fixture (128x64),\n  alternating transparent/opaque pixels, a damage rectangle crossing every row boundary, and\n  1,000 alternating resizes with a per-iteration staging bound.\n- **Evidence integrity — HELD.** Evidence digest `503d21f99421ea362bcfe071851cce773b36952686ccb4314de02b93e7a4c78f`\n  matches the checked-in proof artifact for exact head `6688beaeae0ff73af0021159ef0459ddf949cdd3`.\n\nE5-T06a is verified; E5-T06b is the next eligible stack layer. Independent-machine, WebKit,\nand host-layer rr runs remain excluded per the user's direction and repository evidence policy.",
       "adversarial": "Present a 1x1 and a maximum supported canvas, use a damage rect crossing every row boundary,\nalternate opaque and alpha-zero pixels, and reuse the same backend for 1,000 resizes. Assert\nreadback outside the rect and staging capacity never exceed the documented bound.",
       "file": "tasks/epic-5-the-window/E5-T06a-canvas2d-presentation.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t06a): activate Canvas2D slice"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T06b",

@@ -1,0 +1,63 @@
+{
+  "task": "E5-T06a",
+  "recorded_at": "2026-09-04",
+  "implementation_commit": "6688beaeae0ff73af0021159ef0459ddf949cdd3",
+  "commands": [
+    "env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS make verify-E5-T06a",
+    "git diff --check HEAD",
+    "cmp source and .ts projections; cmp source and web/dist projections"
+  ],
+  "result": {
+    "node_checks": 2,
+    "tests": 10,
+    "passed": 10,
+    "failed": 0,
+    "make_target": "verify-E5-T06a (Canvas2D presentation backend and contract): OK"
+  },
+  "predictions": [
+    {
+      "prediction": "A little-endian 0xAARRGGBB word is read back as RGBA bytes [R,G,B,A].",
+      "observed": "Golden patterns 1-4 and the independent readback oracle agree, including distinct multi-row and odd-width values."
+    },
+    {
+      "prediction": "A partial update uses the full resource width as its source stride and changes only the requested rectangle.",
+      "observed": "Pattern 5, the x=1 width=3 case, and the right-edge x=6 width=3 rectangle spanning all five rows agree with the full-canvas oracle; outside pixels remain unchanged."
+    },
+    {
+      "prediction": "Alpha 0x00 is copied as a byte and cannot be replaced by stale staging data.",
+      "observed": "Pattern 3 and both partial patterns read back alternating transparent and opaque alpha bytes exactly."
+    },
+    {
+      "prediction": "Staging capacity never exceeds the current canvas byte budget after repeated resize/present cycles.",
+      "observed": "The 1,000-cycle stress test alternates 1x1, 17x9, and 128x64 canvases, asserts the bound every iteration, and observes a maximum of 32,768 bytes."
+    }
+  ],
+  "adversarial": {
+    "one_pixel_canvas": "1x1 golden pattern",
+    "largest_stress_fixture": "128x64",
+    "row_boundary_attack": "9x5 canvas, right-edge x=6 width=3 rect spanning every row",
+    "resize_cycles": 1000,
+    "malformed_inputs": "negative origin, outside rect, and short pixel view rejected before putImageData"
+  },
+  "coverage": {
+    "web/src/sink/present-backend.js": "contract stubs, size/rect/pixel validation, and full-resource stride extraction are exercised by the focused suite; base-class throws are interface-only declarations",
+    "web/src/sink/canvas2d.js": "constructor, resize, present, channel conversion, ImageData copy, damage placement, staging growth/reset, counters, and error path are exercised",
+    "web/src/sink/*.ts": "byte-identical browser projections verified against the JavaScript sources",
+    "web/dist/src/sink/*": "deployable projections verified byte-identical to web/src/sink/*"
+  },
+  "environment": {
+    "proof_layer": "local deterministic guest/browser seam harness",
+    "independent_machines": "waived by user",
+    "webkit": "waived by user",
+    "host_rr": "waived by repository evidence policy"
+  },
+  "sha256": {
+    "web/src/sink/present-backend.js": "40cd5f39ccc4b4298cb35df3edd33e6db993ee5acff9082fca91b5e9663164a6",
+    "web/src/sink/present-backend.ts": "40cd5f39ccc4b4298cb35df3edd33e6db993ee5acff9082fca91b5e9663164a6",
+    "web/src/sink/canvas2d.js": "719b95ae13dbda214ed8b123ae6a72cdf459f88806c0d52832f56e6a96233936",
+    "web/src/sink/canvas2d.ts": "719b95ae13dbda214ed8b123ae6a72cdf459f88806c0d52832f56e6a96233936",
+    "web/tests/e5-t06a-canvas2d.test.mjs": "463f82b9e2578158cf5bf6ba6a87519f8880c673197293de8d44fc5687df8651",
+    "web/dist/src/sink/present-backend.js": "40cd5f39ccc4b4298cb35df3edd33e6db993ee5acff9082fca91b5e9663164a6",
+    "web/dist/src/sink/canvas2d.js": "719b95ae13dbda214ed8b123ae6a72cdf459f88806c0d52832f56e6a96233936"
+  }
+}
