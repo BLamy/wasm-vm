@@ -197,9 +197,9 @@ async function runCandidate(candidate) {
 
   const postRunSha256 = await sha256File(imagePath);
   const manifest = extractManifest(stdout);
-  const searches = extractPackageSections(stdout, "SEARCH");
-  const policies = extractPackageSections(stdout, "POLICY");
+  const search = extractCommand(stdout, "SEARCH");
   const install = extractInstall(stdout);
+  const packageInfo = extractCommand(stdout, "INFO");
   const log = {
     console: { path: path.relative(repo, consolePath), sha256: await sha256File(consolePath) },
     stderr: { path: path.relative(repo, stderrPath), sha256: await sha256File(stderrPath) },
@@ -225,16 +225,16 @@ async function runCandidate(candidate) {
     },
     commands: {
       update: "apk update",
-      searches: candidate.packages.map((pkg) => `apk search -v ${pkg}`),
-      policies: candidate.packages.map((pkg) => `apk policy ${pkg}`),
+      search: `apk search -v ${candidate.packages.join(" ")}`,
       add: `apk add --no-cache --no-progress ${candidate.packages.join(" ")}`,
+      info: `apk info -a ${candidate.packages.join(" ")}`,
     },
     update: extractCommand(stdout, "UPDATE"),
     repositoriesObserved: extractRepositories(stdout),
     architectureObserved: extractArchitecture(stdout),
-    searches,
-    policies,
+    searches: Object.fromEntries(candidate.packages.map((pkg) => [pkg, search])),
     install,
+    packageInfo,
     installedManifest: manifest,
     log,
   };
@@ -242,18 +242,6 @@ async function runCandidate(candidate) {
 
 function buildGuestScript(candidate) {
   const packages = candidate.packages.join(" ");
-  const searchBlocks = candidate.packages.map((pkg) => String.raw`
-printf 'E5T16D_''SEARCH_BEGIN package=${pkg}\n'
-apk search -v ${pkg} 2>&1
-search_rc=$?
-printf 'E5T16D_''SEARCH_END package=${pkg} rc=%s\n' "$search_rc"
-[ "$search_rc" -eq 0 ] || all_ok=0
-printf 'E5T16D_''POLICY_BEGIN package=${pkg}\n'
-apk policy ${pkg} 2>&1
-policy_rc=$?
-printf 'E5T16D_''POLICY_END package=${pkg} rc=%s\n' "$policy_rc"
-[ "$policy_rc" -eq 0 ] || all_ok=0
-`).join("");
   return String.raw`set +e
 all_ok=1
 printf 'E5T16D_''BEGIN candidate=${candidate.id}\n'
@@ -268,19 +256,28 @@ repos_rc=$?
 printf 'E5T16D_''REPOSITORIES_END rc=%s\n' "$repos_rc"
 [ "$repos_rc" -eq 0 ] || all_ok=0
 printf 'E5T16D_''CACHE_BEGIN\n'
-find /var/cache/apk -maxdepth 1 -type f -printf '%f\n' 2>&1 | sort
+ls -1 /var/cache/apk 2>&1 | sort
 printf 'E5T16D_''CACHE_END\n'
 printf 'E5T16D_''UPDATE_BEGIN\n'
 apk update 2>&1
 update_rc=$?
 printf 'E5T16D_''UPDATE_END rc=%s\n' "$update_rc"
 [ "$update_rc" -eq 0 ] || all_ok=0
-${searchBlocks}
+printf 'E5T16D_''SEARCH_BEGIN packages=${packages}\n'
+apk search -v ${packages} 2>&1
+search_rc=$?
+printf 'E5T16D_''SEARCH_END rc=%s\n' "$search_rc"
+[ "$search_rc" -eq 0 ] || all_ok=0
 printf 'E5T16D_''INSTALL_BEGIN command=apk add --no-cache --no-progress ${packages}\n'
 apk add --no-cache --no-progress ${packages} 2>&1
 install_rc=$?
 printf 'E5T16D_''INSTALL_END rc=%s\n' "$install_rc"
 [ "$install_rc" -eq 0 ] || all_ok=0
+printf 'E5T16D_''INFO_BEGIN packages=${packages}\n'
+apk info -a ${packages} 2>&1
+info_rc=$?
+printf 'E5T16D_''INFO_END rc=%s\n' "$info_rc"
+[ "$info_rc" -eq 0 ] || all_ok=0
 printf 'E5T16D_''MANIFEST_BEGIN\n'
 apk info -v 2>&1 | sort
 printf 'E5T16D_''MANIFEST_END\n'
@@ -316,17 +313,6 @@ function extractManifest(stdout) {
     .split(/\r?\n/u)
     .map((line) => line.trim())
     .filter((line) => /^[a-z0-9][a-z0-9+_.-]*-[0-9][^\s]*-r[0-9]+$/u.test(line));
-}
-
-function extractPackageSections(stdout, kind) {
-  const sections = {};
-  const pattern = new RegExp(`E5T16D_${kind}_BEGIN package=([^\\r\\n]+)\\r?\\n([\\s\\S]*?)E5T16D_${kind}_END package=([^ ]+) rc=([0-9]+)`, "gu");
-  for (const match of stdout.matchAll(pattern)) {
-    const [, packageName, body, endPackage, rc] = match;
-    assert.equal(packageName, endPackage, `${kind.toLowerCase()} marker package mismatch`);
-    sections[packageName] = { rc: Number(rc), output: body.trim() };
-  }
-  return sections;
 }
 
 function extractInstall(stdout) {

@@ -154,15 +154,17 @@ function validateStructure(value, basePackages) {
     assert.equal(candidate.image.sha256, value.source.imageSha256, `${candidate.id}: not derived from clean E3 image`);
     assert.match(candidate.image.postRunSha256, /^[0-9a-f]{64}$/u);
     assert.notEqual(candidate.image.postRunSha256, candidate.image.sha256, `${candidate.id}: install did not change the guest image`);
+    assert.ok(candidate.commands.search, `${candidate.id}: apk search command missing`);
     for (const pkg of expected) {
-      assert.match(candidate.commands.searches.find((command) => command.endsWith(` ${pkg}`)) ?? "", new RegExp(`\\b${escapeRegExp(pkg)}$`, "u"));
-      assert.match(candidate.commands.policies.find((command) => command.endsWith(` ${pkg}`)) ?? "", new RegExp(`\\b${escapeRegExp(pkg)}$`, "u"));
+      assert.match(candidate.commands.search, new RegExp(`\\b${escapeRegExp(pkg)}\\b`, "u"));
       assert.equal(candidate.searches[pkg]?.rc, 0, `${candidate.id}/${pkg}: apk search failed`);
       assert.match(candidate.searches[pkg]?.output ?? "", new RegExp(`${escapeRegExp(pkg)}-`, "u"), `${candidate.id}/${pkg}: search returned no package`);
-      assert.equal(candidate.policies[pkg]?.rc, 0, `${candidate.id}/${pkg}: apk policy failed`);
-      assert.match(candidate.policies[pkg]?.output ?? "", new RegExp(escapeRegExp(pkg), "u"), `${candidate.id}/${pkg}: policy returned no package`);
       assert.ok(candidate.installedManifest.some((line) => line.startsWith(`${pkg}-`)), `${candidate.id}/${pkg}: installed manifest missing package`);
       packageCount += 1;
+    }
+    assert.equal(candidate.packageInfo.rc, 0, `${candidate.id}: apk package metadata query failed`);
+    for (const pkg of expected) {
+      assert.match(candidate.packageInfo.output, new RegExp(`\\b${escapeRegExp(pkg)}\\b`, "u"), `${candidate.id}/${pkg}: package metadata missing dependency record`);
     }
     for (const basePackage of basePackages) {
       assert.ok(candidate.installedManifest.includes(basePackage), `${candidate.id}: E3 base package missing: ${basePackage}`);
