@@ -16625,15 +16625,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t06a): record Canvas2D presentation proof",
             "chore(e5-t06a): activate Canvas2D slice"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T06b",
@@ -16641,7 +16642,7 @@
       "epicKey": "5",
       "title": "WebGL2 presentation backend",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T06a"
       ],

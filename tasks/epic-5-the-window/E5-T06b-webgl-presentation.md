@@ -3,7 +3,7 @@ id: E5-T06b
 epic: 5
 title: WebGL2 presentation backend
 priority: 506.2
-status: pending
+status: in-progress
 depends_on: [E5-T06a]
 estimate: S
 risk: medium
