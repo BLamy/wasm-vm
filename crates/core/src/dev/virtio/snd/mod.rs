@@ -8,6 +8,7 @@
 
 use alloc::collections::VecDeque;
 use alloc::rc::Rc;
+use alloc::vec;
 use alloc::vec::Vec;
 use core::cell::RefCell;
 
@@ -32,9 +33,14 @@ pub const NUM_QUEUES: u32 = 4;
 /// this slot, preserving the established device slots rather than silently replacing one.
 pub const VIRTIO_SND_SLOT: usize = 6;
 
-/// This first sound device exposes one output jack, one output stream, and one channel map.
+/// This first sound device exposes one output jack, one output stream, and one channel map. The
+/// optional input stream uses [`CAPTURE_STREAM_ID`] and is enabled by a later configuration slice.
 pub const JACK_COUNT: u32 = 1;
 pub const PCM_STREAM_COUNT: u32 = 1;
+/// Stream identifier reserved for the optional input/capture stream.
+pub const CAPTURE_STREAM_ID: u32 = 1;
+/// Stream count when the optional input stream is enabled.
+pub const PCM_STREAM_COUNT_WITH_CAPTURE: u32 = 2;
 pub const CHMAP_COUNT: u32 = 1;
 const CONFIG_SIZE: usize = 12;
 
@@ -180,6 +186,46 @@ pub enum AudioSinkError {
 pub trait AudioSink {
     /// Consume `frames` at `sample_rate_hz`. The slice is interleaved left/right S16 samples.
     fn push(&mut self, frames: &[i16], sample_rate_hz: u32) -> Result<(), AudioSinkError>;
+}
+
+/// Errors collapsed by the host-independent capture-source boundary.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AudioCaptureError {
+    /// The source could not provide the requested capture quantum.
+    Failed,
+}
+
+/// Host-independent source for one interleaved S16 capture batch. The implementation writes at
+/// most `frames.len()` samples and returns the number of complete frames produced. The core
+/// zero-fills any short read before completing the bounded guest buffer, so a denied or starved
+/// host source can remain clock-paced without wedging an ALSA reader.
+pub trait AudioCaptureSource {
+    /// Fill an interleaved S16 buffer for `channels` at `sample_rate_hz` and return frame count.
+    fn pull(
+        &mut self,
+        frames: &mut [i16],
+        sample_rate_hz: u32,
+        channels: u8,
+    ) -> Result<usize, AudioCaptureError>;
+}
+
+/// Deterministic silence source used by headless callers and permission-denied fallbacks.
+#[derive(Debug, Default)]
+pub struct NullCaptureSource;
+
+impl AudioCaptureSource for NullCaptureSource {
+    fn pull(
+        &mut self,
+        frames: &mut [i16],
+        _sample_rate_hz: u32,
+        channels: u8,
+    ) -> Result<usize, AudioCaptureError> {
+        if channels == 0 || !frames.len().is_multiple_of(channels as usize) {
+            return Err(AudioCaptureError::Failed);
+        }
+        frames.fill(0);
+        Ok(frames.len() / channels as usize)
+    }
 }
 
 /// No-op sink used by default and by pacing-only callers.
@@ -453,6 +499,24 @@ impl PcmInfo {
         Self::output_with_rates(SUPPORTED_PCM_RATE_MASK)
     }
 
+    /// The optional mono/stereo S16 input stream with a caller-selected rate bitmap.
+    pub const fn input_with_rates(rates: u64) -> Self {
+        Self {
+            hda_fn_nid: 0,
+            features: VIRTIO_SND_PCM_F_EVT_XRUNS,
+            formats: 1u64 << VIRTIO_SND_PCM_FMT_S16,
+            rates,
+            direction: VIRTIO_SND_D_INPUT,
+            channels_min: 1,
+            channels_max: 2,
+        }
+    }
+
+    /// The optional input capability before a host capture backend narrows the rate.
+    pub const fn input() -> Self {
+        Self::input_with_rates(SUPPORTED_PCM_RATE_MASK)
+    }
+
     /// Encode the exact 32-byte `virtio_snd_pcm_info` layout with zero padding.
     pub fn to_bytes(self) -> [u8; PCM_INFO_SIZE] {
         let mut out = [0u8; PCM_INFO_SIZE];
@@ -568,18 +632,26 @@ impl PcmParams {
         })
     }
 
-    /// Validate every field against the single stream advertised by [`PcmInfo::output`].
+    /// Validate every field against the stereo output stream advertised by [`PcmInfo::output`].
     pub const fn is_valid(self) -> bool {
-        self.stream_id == 0
-            && self.buffer_bytes >= PCM_FRAME_BYTES
+        self.is_valid_for(0, 2, 2)
+    }
+
+    /// Validate parameters against one stream's identifier, channel range, and supported rates.
+    pub const fn is_valid_for(self, stream_id: u32, channels_min: u8, channels_max: u8) -> bool {
+        let frame_bytes = (self.channels as u32).saturating_mul(2);
+        self.stream_id == stream_id
+            && self.channels >= channels_min
+            && self.channels <= channels_max
+            && frame_bytes != 0
+            && self.buffer_bytes >= frame_bytes
             && self.buffer_bytes <= MAX_PCM_BUFFER_BYTES
-            && self.period_bytes >= PCM_FRAME_BYTES
+            && self.period_bytes >= frame_bytes
             && self.period_bytes <= self.buffer_bytes
-            && self.buffer_bytes.is_multiple_of(PCM_FRAME_BYTES)
-            && self.period_bytes.is_multiple_of(PCM_FRAME_BYTES)
+            && self.buffer_bytes.is_multiple_of(frame_bytes)
+            && self.period_bytes.is_multiple_of(frame_bytes)
             && self.buffer_bytes.is_multiple_of(self.period_bytes)
             && self.features == 0
-            && self.channels == 2
             && self.format == VIRTIO_SND_PCM_FMT_S16
             && matches!(
                 self.rate,
@@ -713,12 +785,48 @@ pub struct PlaybackReport {
     pub event_descriptors_completed: u32,
 }
 
+/// Result of one clock-paced capture rxq service boundary.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub struct CaptureReport {
+    /// Number of well-formed receive buffers held for their capture deadline.
+    pub queued: u32,
+    /// Number of descriptors published to the used ring.
+    pub completed: u32,
+    /// Number of malformed or failed source buffers completed with `IO_ERR`.
+    pub errors: u32,
+    /// Number of PCM frames written into guest capture buffers.
+    pub frames_pulled: u64,
+    /// Number of PCM data bytes written into guest capture buffers.
+    pub bytes_written: u64,
+    /// Number of capture XRUN notifications generated at this boundary.
+    pub xrun_events: u32,
+    /// Number of eventq descriptors completed at this boundary.
+    pub event_descriptors_completed: u32,
+    /// Bytes still waiting for the capture clock after this boundary.
+    pub pending_bytes: u32,
+    /// Deadline of the first pending capture transfer, if any.
+    pub next_deadline_ns: Option<u64>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct PendingPcm {
     head: u16,
     frames: Vec<i16>,
     status_segments: Vec<Segment>,
     sample_rate_hz: u32,
+    duration_ns: u64,
+    deadline_ns: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct PendingCapture {
+    head: u16,
+    data_segments: Vec<Segment>,
+    status_segments: Vec<Segment>,
+    frame_count: usize,
+    channels: u8,
+    sample_rate_hz: u32,
+    period_bytes: u32,
     duration_ns: u64,
     deadline_ns: u64,
 }
@@ -765,6 +873,39 @@ impl PlaybackQueue {
                 .map(|transfer| transfer.deadline_ns.saturating_add(period_duration_ns))
                 .unwrap_or_else(|| now_ns.saturating_add(period_duration_ns)),
         );
+    }
+}
+
+#[derive(Debug, Default)]
+struct CaptureQueue {
+    pending: VecDeque<PendingCapture>,
+    observed_epoch: u64,
+    release_pending: bool,
+}
+
+impl CaptureQueue {
+    fn pending_bytes(&self) -> u32 {
+        self.pending.iter().fold(0u32, |total, transfer| {
+            total.saturating_add(transfer.period_bytes)
+        })
+    }
+
+    fn reschedule(&mut self, now_ns: u64) {
+        let mut deadline = now_ns;
+        for transfer in &mut self.pending {
+            deadline = deadline.saturating_add(transfer.duration_ns);
+            transfer.deadline_ns = deadline;
+        }
+    }
+
+    fn clear_schedule(&mut self) {
+        for transfer in &mut self.pending {
+            transfer.deadline_ns = u64::MAX;
+        }
+    }
+
+    fn set_running_schedule(&mut self, now_ns: u64) {
+        self.reschedule(now_ns);
     }
 }
 
@@ -950,9 +1091,24 @@ impl PcmStream {
 
     /// Apply SET_PARAMS against the rates currently supported by the host output backend.
     pub fn set_params_with_rate_mask(&mut self, params: PcmParams, rate_mask: u64) -> SndStatus {
+        self.set_params_with_profile(params, rate_mask, 0, 2, 2)
+    }
+
+    /// Apply SET_PARAMS against a stream-specific channel profile and rate mask.
+    pub fn set_params_with_profile(
+        &mut self,
+        params: PcmParams,
+        rate_mask: u64,
+        stream_id: u32,
+        channels_min: u8,
+        channels_max: u8,
+    ) -> SndStatus {
         let result = transition(self.state, PcmControl::SetParams);
         let rate_supported = params.rate < 64 && (rate_mask & (1u64 << params.rate)) != 0;
-        if result.status != SndStatus::Ok || !params.is_valid() || !rate_supported {
+        if result.status != SndStatus::Ok
+            || !params.is_valid_for(stream_id, channels_min, channels_max)
+            || !rate_supported
+        {
             return SndStatus::BadMsg;
         }
         self.params = Some(params);
@@ -982,11 +1138,15 @@ impl PcmStream {
 /// Shared sound state between the transport-facing half and later queue services.
 pub struct SndState {
     pub stream: PcmStream,
+    capture_stream: PcmStream,
+    capture_enabled: bool,
     pcm_rate_mask: u64,
     kicked: [bool; NUM_QUEUES as usize],
     reset_pending: bool,
     lifecycle_epoch: u64,
+    capture_lifecycle_epoch: u64,
     playback: PlaybackQueue,
+    capture: CaptureQueue,
     events: EventState,
 }
 
@@ -994,11 +1154,15 @@ impl Default for SndState {
     fn default() -> Self {
         Self {
             stream: PcmStream::default(),
+            capture_stream: PcmStream::default(),
+            capture_enabled: false,
             pcm_rate_mask: SUPPORTED_PCM_RATE_MASK,
             kicked: [false; NUM_QUEUES as usize],
             reset_pending: false,
             lifecycle_epoch: 0,
+            capture_lifecycle_epoch: 0,
             playback: PlaybackQueue::default(),
+            capture: CaptureQueue::default(),
             events: EventState::default(),
         }
     }
@@ -1008,6 +1172,48 @@ impl SndState {
     /// Construct a reset sound state.
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Enable or disable the optional input stream without creating a host media handle. The
+    /// configuration-facing slice owns when this hook is called; keeping it explicit lets the
+    /// rxq fixture exercise the guest contract while the default device remains playback-only.
+    pub fn set_capture_enabled(&mut self, enabled: bool) {
+        if self.capture_enabled == enabled {
+            return;
+        }
+        self.capture_enabled = enabled;
+        self.capture_stream.reset();
+        self.capture = CaptureQueue::default();
+        self.capture_lifecycle_epoch = self.capture_lifecycle_epoch.wrapping_add(1);
+    }
+
+    /// Whether the optional input stream is guest-visible.
+    pub const fn capture_enabled(&self) -> bool {
+        self.capture_enabled
+    }
+
+    /// Number of PCM streams currently exposed through the device configuration.
+    pub const fn pcm_stream_count(&self) -> u32 {
+        if self.capture_enabled {
+            PCM_STREAM_COUNT_WITH_CAPTURE
+        } else {
+            PCM_STREAM_COUNT
+        }
+    }
+
+    /// Current lifecycle state of the optional input stream.
+    pub const fn capture_stream_state(&self) -> PcmState {
+        self.capture_stream.state()
+    }
+
+    /// Current parameters of the optional input stream.
+    pub const fn capture_stream_params(&self) -> Option<PcmParams> {
+        self.capture_stream.params()
+    }
+
+    /// Number of input buffers held for clock-paced completion.
+    pub fn capture_pending_count(&self) -> usize {
+        self.capture.pending.len()
     }
 
     /// Restrict the guest-visible output capability to the rate provided by the host sink. The
@@ -1035,12 +1241,7 @@ impl SndState {
                 JACK_INFO_SIZE,
                 &JackInfo::output().to_bytes(),
             ),
-            VIRTIO_SND_R_PCM_INFO => self.handle_query(
-                request,
-                VIRTIO_SND_R_PCM_INFO,
-                PCM_INFO_SIZE,
-                &PcmInfo::output_with_rates(self.pcm_rate_mask).to_bytes(),
-            ),
+            VIRTIO_SND_R_PCM_INFO => self.handle_pcm_info(request),
             VIRTIO_SND_R_CHMAP_INFO => self.handle_query(
                 request,
                 VIRTIO_SND_R_CHMAP_INFO,
@@ -1054,13 +1255,29 @@ impl SndState {
                 let Some(params) = PcmParams::from_bytes(request) else {
                     return response(SndStatus::BadMsg, &[]);
                 };
-                if !self.playback.pending.is_empty() {
-                    return response(SndStatus::BadMsg, &[]);
+                if params.stream_id == CAPTURE_STREAM_ID {
+                    if !self.capture_enabled || !self.capture.pending.is_empty() {
+                        return response(SndStatus::BadMsg, &[]);
+                    }
+                    response(
+                        self.apply_stream_control(
+                            CAPTURE_STREAM_ID,
+                            PcmControl::SetParams,
+                            Some(params),
+                        ),
+                        &[],
+                    )
+                } else if params.stream_id == 0 {
+                    if !self.playback.pending.is_empty() {
+                        return response(SndStatus::BadMsg, &[]);
+                    }
+                    response(
+                        self.apply_stream_control(0, PcmControl::SetParams, Some(params)),
+                        &[],
+                    )
+                } else {
+                    response(SndStatus::BadMsg, &[])
                 }
-                response(
-                    self.apply_stream_control(PcmControl::SetParams, Some(params)),
-                    &[],
-                )
             }
             VIRTIO_SND_R_PCM_PREPARE
             | VIRTIO_SND_R_PCM_START
@@ -1086,36 +1303,89 @@ impl SndState {
         }
     }
 
+    fn handle_pcm_info(&self, request: &[u8]) -> Vec<u8> {
+        let Some(query) = QueryInfo::from_bytes(request) else {
+            return response(SndStatus::BadMsg, &[]);
+        };
+        let stream_count = self.pcm_stream_count();
+        let valid = request.len() == QUERY_INFO_SIZE
+            && query.code == VIRTIO_SND_R_PCM_INFO
+            && query.size == PCM_INFO_SIZE as u32
+            && query.count != 0
+            && query.start_id < stream_count
+            && query.count <= stream_count.saturating_sub(query.start_id);
+        if !valid {
+            return response(SndStatus::BadMsg, &[]);
+        }
+
+        let mut payload = Vec::with_capacity(query.count as usize * PCM_INFO_SIZE);
+        for stream_id in query.start_id..query.start_id + query.count {
+            let info = if stream_id == CAPTURE_STREAM_ID {
+                PcmInfo::input_with_rates(self.pcm_rate_mask)
+            } else {
+                PcmInfo::output_with_rates(self.pcm_rate_mask)
+            };
+            payload.extend_from_slice(&info.to_bytes());
+        }
+        response(SndStatus::Ok, &payload)
+    }
+
     fn handle_pcm_lifecycle(&mut self, request: &[u8], code: u32) -> Vec<u8> {
-        if request.len() != PCM_HDR_SIZE
-            || read_u32(request, 0) != Some(code)
-            || read_u32(request, 4) != Some(0)
-        {
+        if request.len() != PCM_HDR_SIZE || read_u32(request, 0) != Some(code) {
+            return response(SndStatus::BadMsg, &[]);
+        }
+        let Some(stream_id) = read_u32(request, 4) else {
+            return response(SndStatus::BadMsg, &[]);
+        };
+        if stream_id != 0 && (stream_id != CAPTURE_STREAM_ID || !self.capture_enabled) {
             return response(SndStatus::BadMsg, &[]);
         }
         let Some(control) = PcmControl::from_code(code) else {
             return response(SndStatus::NotSupp, &[]);
         };
-        response(self.apply_stream_control(control, None), &[])
+        response(self.apply_stream_control(stream_id, control, None), &[])
     }
 
     fn apply_stream_control(
         &mut self,
+        stream_id: u32,
         control: PcmControl,
         params: Option<PcmParams>,
     ) -> SndStatus {
-        let status = match (control, params) {
-            (PcmControl::SetParams, Some(params)) => self
-                .stream
-                .set_params_with_rate_mask(params, self.pcm_rate_mask),
-            (PcmControl::SetParams, None) => SndStatus::BadMsg,
-            (_, Some(_)) => SndStatus::BadMsg,
-            (control, None) => self.stream.apply(control),
+        let capture = stream_id == CAPTURE_STREAM_ID;
+        if capture && !self.capture_enabled {
+            return SndStatus::BadMsg;
+        }
+        let status = if capture {
+            match (control, params) {
+                (PcmControl::SetParams, Some(params)) => self
+                    .capture_stream
+                    .set_params_with_profile(params, self.pcm_rate_mask, CAPTURE_STREAM_ID, 1, 2),
+                (PcmControl::SetParams, None) => SndStatus::BadMsg,
+                (_, Some(_)) => SndStatus::BadMsg,
+                (control, None) => self.capture_stream.apply(control),
+            }
+        } else {
+            match (control, params) {
+                (PcmControl::SetParams, Some(params)) => self
+                    .stream
+                    .set_params_with_rate_mask(params, self.pcm_rate_mask),
+                (PcmControl::SetParams, None) => SndStatus::BadMsg,
+                (_, Some(_)) => SndStatus::BadMsg,
+                (control, None) => self.stream.apply(control),
+            }
         };
         if status == SndStatus::Ok && control != PcmControl::Info {
-            self.lifecycle_epoch = self.lifecycle_epoch.wrapping_add(1);
-            if control == PcmControl::Release {
-                self.playback.release_pending = true;
+            if capture {
+                self.capture_lifecycle_epoch = self.capture_lifecycle_epoch.wrapping_add(1);
+                if control == PcmControl::Release {
+                    self.capture.release_pending = true;
+                }
+            } else {
+                self.lifecycle_epoch = self.lifecycle_epoch.wrapping_add(1);
+                if control == PcmControl::Release {
+                    self.playback.release_pending = true;
+                }
             }
         }
         status
@@ -1204,6 +1474,68 @@ impl SndState {
         Ok(self.finish_report(report))
     }
 
+    /// Service one rxq boundary using an injected clock and capture source.
+    ///
+    /// Receive descriptors contain a readable stream-id header followed by writable PCM storage
+    /// and a writable status tail. A valid buffer is held until its configured period deadline,
+    /// filled without exceeding its writable data range, and published with used length equal to
+    /// PCM bytes plus [`PCM_STATUS_SIZE`]. A short or failed source is zero-filled and generates a
+    /// bounded input XRUN event so guest recording remains clock-paced.
+    pub fn service_capture(
+        &mut self,
+        queue: &mut Virtqueue,
+        bus: &mut SystemBus,
+        clock: &dyn AudioClock,
+        source: &mut dyn AudioCaptureSource,
+    ) -> Result<CaptureReport, Violation> {
+        let now_ns = clock.now_ns();
+        self.sync_capture_lifecycle(now_ns);
+        let mut report = CaptureReport::default();
+
+        if self.capture.release_pending {
+            self.flush_capture_released(queue, bus, &mut report)?;
+            self.capture.release_pending = false;
+        }
+
+        if !self.capture_enabled || self.capture_stream.state() != PcmState::Running {
+            return Ok(self.finish_capture_report(report));
+        }
+        let Some(params) = self.capture_stream.params() else {
+            return Ok(self.finish_capture_report(report));
+        };
+        let Some(sample_rate_hz) = params.sample_rate_hz() else {
+            return Ok(self.finish_capture_report(report));
+        };
+
+        self.complete_capture_ready(queue, bus, now_ns, source, &mut report)?;
+        while self.capture.pending.len() < usize::from(queue.size()) {
+            let Some(chain) = queue.pop(bus)? else {
+                break;
+            };
+            match self.decode_capture_transfer(&chain, bus, params, sample_rate_hz, now_ns)? {
+                Ok(transfer) => {
+                    self.capture.pending.push_back(transfer);
+                    report.queued = report.queued.saturating_add(1);
+                }
+                Err(status_segments) => {
+                    let written = write_pcm_status(
+                        bus,
+                        &status_segments,
+                        PcmStatus {
+                            status: SndStatus::IoErr,
+                            latency_bytes: self.capture.pending_bytes(),
+                        },
+                    )?;
+                    queue.push_used(bus, chain.head, written)?;
+                    report.completed = report.completed.saturating_add(1);
+                    report.errors = report.errors.saturating_add(1);
+                }
+            }
+        }
+        self.complete_capture_ready(queue, bus, now_ns, source, &mut report)?;
+        Ok(self.finish_capture_report(report))
+    }
+
     fn sync_playback_lifecycle(&mut self, now_ns: u64) {
         if self.playback.observed_epoch == self.lifecycle_epoch {
             return;
@@ -1229,6 +1561,19 @@ impl SndState {
             PcmState::Stopped => self.playback.clear_schedule(),
             PcmState::Released | PcmState::SetParams | PcmState::Prepared => {
                 self.playback.clear_schedule()
+            }
+        }
+    }
+
+    fn sync_capture_lifecycle(&mut self, now_ns: u64) {
+        if self.capture.observed_epoch == self.capture_lifecycle_epoch {
+            return;
+        }
+        self.capture.observed_epoch = self.capture_lifecycle_epoch;
+        match self.capture_stream.state() {
+            PcmState::Running => self.capture.set_running_schedule(now_ns),
+            PcmState::Stopped | PcmState::Released | PcmState::SetParams | PcmState::Prepared => {
+                self.capture.clear_schedule()
             }
         }
     }
@@ -1297,6 +1642,166 @@ impl SndState {
             duration_ns,
             deadline_ns,
         }))
+    }
+
+    fn decode_capture_transfer(
+        &self,
+        chain: &DescriptorChain,
+        bus: &mut SystemBus,
+        params: PcmParams,
+        sample_rate_hz: u32,
+        now_ns: u64,
+    ) -> Result<Result<PendingCapture, Vec<Segment>>, Violation> {
+        let (data_segments, status_segments) = split_writable_tail(chain, PCM_STATUS_SIZE)?;
+        if chain.readable_len() != PCM_XFER_HDR_SIZE as u64 {
+            return Ok(Err(status_segments));
+        }
+        let mut header = [0u8; PCM_XFER_HDR_SIZE];
+        let mut offset = 0usize;
+        for segment in chain.readable() {
+            for byte_offset in 0..u64::from(segment.len) {
+                if offset == header.len() {
+                    break;
+                }
+                let address = segment
+                    .addr
+                    .checked_add(byte_offset)
+                    .ok_or(Violation::BadAddress)?;
+                header[offset] = bus.load8(address).map_err(|_| Violation::BadAddress)?;
+                offset += 1;
+            }
+        }
+        let Some(xfer) = PcmXfer::from_bytes(&header) else {
+            return Ok(Err(status_segments));
+        };
+        let frame_bytes = u32::from(params.channels).saturating_mul(2);
+        let data_bytes = chain.writable_len().saturating_sub(PCM_STATUS_SIZE as u64);
+        if xfer.stream_id != CAPTURE_STREAM_ID
+            || frame_bytes == 0
+            || !params.is_valid_for(CAPTURE_STREAM_ID, 1, 2)
+            || data_bytes < u64::from(params.period_bytes)
+            || !params.period_bytes.is_multiple_of(frame_bytes)
+        {
+            return Ok(Err(status_segments));
+        }
+        let frame_count = usize::try_from(params.period_bytes / frame_bytes)
+            .map_err(|_| Violation::BadAddress)?;
+        let duration_ns = frame_duration_ns(frame_count, sample_rate_hz);
+        let deadline_ns = self
+            .capture
+            .pending
+            .back()
+            .map(|last| last.deadline_ns.saturating_add(last.duration_ns))
+            .unwrap_or_else(|| now_ns.saturating_add(duration_ns));
+        Ok(Ok(PendingCapture {
+            head: chain.head,
+            data_segments,
+            status_segments,
+            frame_count,
+            channels: params.channels,
+            sample_rate_hz,
+            period_bytes: params.period_bytes,
+            duration_ns,
+            deadline_ns,
+        }))
+    }
+
+    fn complete_capture_ready(
+        &mut self,
+        queue: &mut Virtqueue,
+        bus: &mut SystemBus,
+        now_ns: u64,
+        source: &mut dyn AudioCaptureSource,
+        report: &mut CaptureReport,
+    ) -> Result<(), Violation> {
+        loop {
+            let ready = self
+                .capture
+                .pending
+                .front()
+                .is_some_and(|transfer| transfer.deadline_ns <= now_ns);
+            if !ready {
+                break;
+            }
+            let transfer = self.capture.pending.pop_front().expect("checked above");
+            let sample_count = transfer
+                .frame_count
+                .checked_mul(usize::from(transfer.channels))
+                .ok_or(Violation::BadAddress)?;
+            let mut frames = vec![0i16; sample_count];
+            let (status, pulled_frames, xrun) =
+                match source.pull(&mut frames, transfer.sample_rate_hz, transfer.channels) {
+                    Ok(count) if count <= transfer.frame_count => {
+                        (SndStatus::Ok, count, count != transfer.frame_count)
+                    }
+                    Ok(_) | Err(AudioCaptureError::Failed) => (SndStatus::IoErr, 0, true),
+                };
+            if xrun {
+                self.enqueue_xrun_event(CAPTURE_STREAM_ID, &mut report.xrun_events);
+            }
+            if status != SndStatus::Ok {
+                report.errors = report.errors.saturating_add(1);
+            }
+            let data_written = write_capture_frames(bus, &transfer.data_segments, &frames)?;
+            let status_written = write_pcm_status(
+                bus,
+                &transfer.status_segments,
+                PcmStatus {
+                    status,
+                    latency_bytes: self.capture.pending_bytes(),
+                },
+            )?;
+            queue.push_used(
+                bus,
+                transfer.head,
+                data_written.saturating_add(status_written),
+            )?;
+            report.completed = report.completed.saturating_add(1);
+            report.frames_pulled = report.frames_pulled.saturating_add(pulled_frames as u64);
+            report.bytes_written = report.bytes_written.saturating_add(u64::from(data_written));
+        }
+        Ok(())
+    }
+
+    fn enqueue_xrun_event(&mut self, stream_id: u32, report_count: &mut u32) {
+        if self.events.pending.len() < MAX_PENDING_SND_EVENTS {
+            self.events.pending.push_back(SndEvent::pcm_xrun(stream_id));
+            *report_count = (*report_count).saturating_add(1);
+        } else {
+            self.events.dropped_xruns = self.events.dropped_xruns.saturating_add(1);
+        }
+    }
+
+    fn flush_capture_released(
+        &mut self,
+        queue: &mut Virtqueue,
+        bus: &mut SystemBus,
+        report: &mut CaptureReport,
+    ) -> Result<(), Violation> {
+        while let Some(transfer) = self.capture.pending.pop_front() {
+            let written = write_pcm_status(
+                bus,
+                &transfer.status_segments,
+                PcmStatus {
+                    status: SndStatus::IoErr,
+                    latency_bytes: self.capture.pending_bytes(),
+                },
+            )?;
+            queue.push_used(bus, transfer.head, written)?;
+            report.completed = report.completed.saturating_add(1);
+            report.errors = report.errors.saturating_add(1);
+        }
+        Ok(())
+    }
+
+    fn finish_capture_report(&self, mut report: CaptureReport) -> CaptureReport {
+        report.pending_bytes = self.capture.pending_bytes();
+        report.next_deadline_ns = self
+            .capture
+            .pending
+            .front()
+            .map(|transfer| transfer.deadline_ns);
+        report
     }
 
     fn refresh_xrun_schedule(&mut self, now_ns: u64, period_duration_ns: u64) {
@@ -1456,13 +1961,18 @@ impl SndState {
     /// Reset stream and deferred transport state.
     pub fn reset(&mut self) {
         let pcm_rate_mask = self.pcm_rate_mask;
+        let capture_enabled = self.capture_enabled;
         self.stream.reset();
+        self.capture_stream.reset();
         self.kicked = [false; NUM_QUEUES as usize];
         self.reset_pending = true;
         self.lifecycle_epoch = 0;
+        self.capture_lifecycle_epoch = 0;
         self.playback = PlaybackQueue::default();
+        self.capture = CaptureQueue::default();
         self.events = EventState::default();
         self.pcm_rate_mask = pcm_rate_mask;
+        self.capture_enabled = capture_enabled;
     }
 }
 
@@ -1514,10 +2024,11 @@ impl VirtioSnd {
         self.state.borrow().stream.params()
     }
 
-    fn config_bytes() -> [u8; CONFIG_SIZE] {
+    fn config_bytes(&self) -> [u8; CONFIG_SIZE] {
         let mut out = [0u8; CONFIG_SIZE];
         out[0..4].copy_from_slice(&JACK_COUNT.to_le_bytes());
-        out[4..8].copy_from_slice(&PCM_STREAM_COUNT.to_le_bytes());
+        let stream_count = self.state.borrow().pcm_stream_count();
+        out[4..8].copy_from_slice(&stream_count.to_le_bytes());
         out[8..12].copy_from_slice(&CHMAP_COUNT.to_le_bytes());
         out
     }
@@ -1548,7 +2059,7 @@ impl VirtioDevice for VirtioSnd {
     }
 
     fn config_read(&mut self, offset: u64, width: u8) -> u64 {
-        let bytes = Self::config_bytes();
+        let bytes = self.config_bytes();
         let mut value = 0u64;
         for byte_index in 0..usize::from(width.min(8)) {
             let Some(index) = offset
@@ -1583,6 +2094,108 @@ pub fn service(
     bus: &mut SystemBus,
 ) -> PlaybackReport {
     service_internal(slot, None, None, tx_vq, state, clock, sink, bus)
+}
+
+/// Run-loop service for the capture rxq without eventq delivery. The injected source keeps this
+/// boundary deterministic; browser permission and shared-memory adapters implement the same trait
+/// in later slices.
+pub fn service_capture(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    rx_vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<SndState>>,
+    clock: &dyn AudioClock,
+    source: &mut dyn AudioCaptureSource,
+    bus: &mut SystemBus,
+) -> CaptureReport {
+    service_capture_internal(slot, None, rx_vq, state, clock, source, bus)
+}
+
+/// Run-loop service for the capture rxq and asynchronous eventq. A capture source that reports a
+/// short or failed quantum leaves an XRUN event pending until a valid eventq buffer is available.
+pub fn service_capture_with_eventq(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    eventq: &mut Option<Virtqueue>,
+    rx_vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<SndState>>,
+    clock: &dyn AudioClock,
+    source: &mut dyn AudioCaptureSource,
+    bus: &mut SystemBus,
+) -> CaptureReport {
+    service_capture_internal(slot, Some(eventq), rx_vq, state, clock, source, bus)
+}
+
+fn service_capture_internal(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    mut eventq: Option<&mut Option<Virtqueue>>,
+    rx_vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<SndState>>,
+    clock: &dyn AudioClock,
+    source: &mut dyn AudioCaptureSource,
+    bus: &mut SystemBus,
+) -> CaptureReport {
+    let (reset, rx_kicked, event_kicked, active_capture, active_events) = {
+        let mut state = state.borrow_mut();
+        let reset = state.take_reset_pending();
+        let rx_kicked = state.take_queue_kick(RX_QUEUE);
+        let event_kicked = state.take_queue_kick(EVENT_QUEUE);
+        let active_capture = state.capture_enabled
+            && (state.capture_stream.state() == PcmState::Running
+                || !state.capture.pending.is_empty()
+                || state.capture.release_pending);
+        let active_events = !state.events.pending.is_empty();
+        (
+            reset,
+            rx_kicked,
+            event_kicked,
+            active_capture,
+            active_events,
+        )
+    };
+    if reset {
+        *rx_vq = None;
+        if let Some(eventq) = eventq.as_deref_mut() {
+            *eventq = None;
+        }
+    }
+    if !rx_kicked && !event_kicked && !active_capture && !active_events {
+        return CaptureReport::default();
+    }
+
+    let mut report = CaptureReport::default();
+    if (rx_kicked || active_capture)
+        && matches!(
+            prepare_queue(slot, rx_vq, RX_QUEUE),
+            QueuePreparation::Ready
+        )
+    {
+        let result = state.borrow_mut().service_capture(
+            rx_vq.as_mut().expect("rxq was prepared"),
+            bus,
+            clock,
+            source,
+        );
+        let Ok(capture) = result else {
+            slot.borrow_mut().protocol_violation();
+            *rx_vq = None;
+            return CaptureReport::default();
+        };
+        report = capture;
+        if report.completed != 0
+            && rx_vq
+                .as_ref()
+                .is_some_and(|queue| queue.interrupt_needed(bus))
+        {
+            slot.borrow_mut().raise_used_irq();
+        }
+    }
+    if let Some(eventq) = eventq
+        && (event_kicked || state.borrow().pending_event_count() != 0)
+    {
+        let mut event_report = PlaybackReport::default();
+        service_eventq(slot, eventq, state, bus, &mut event_report);
+        report.event_descriptors_completed = event_report.event_descriptors_completed;
+    }
+    report
 }
 
 /// Run-loop service for the guest controlq, eventq, and playback txq. The control queue is the
@@ -1953,6 +2566,90 @@ fn frame_duration_ns(frame_count: usize, sample_rate_hz: u32) -> u64 {
     let numerator = (frame_count as u64).saturating_mul(1_000_000_000);
     numerator.saturating_add(u64::from(sample_rate_hz).saturating_sub(1))
         / u64::from(sample_rate_hz)
+}
+
+/// Split a device-writable capture chain into PCM storage and its final status tail. The split is
+/// length-based rather than descriptor-based because virtio drivers may put the status structure
+/// in the last few bytes of a shared writable segment.
+fn split_writable_tail(
+    chain: &DescriptorChain,
+    tail_bytes: usize,
+) -> Result<(Vec<Segment>, Vec<Segment>), Violation> {
+    let writable: Vec<Segment> = chain.writable().copied().collect();
+    let total = chain.writable_len();
+    if total < tail_bytes as u64 {
+        return Ok((Vec::new(), writable));
+    }
+    let data_bytes = total - tail_bytes as u64;
+    let mut data = Vec::new();
+    let mut status = Vec::new();
+    let mut remaining_data = data_bytes;
+    for segment in writable {
+        let data_len = remaining_data.min(u64::from(segment.len)) as u32;
+        if data_len != 0 {
+            data.push(Segment {
+                addr: segment.addr,
+                len: data_len,
+                writable: true,
+            });
+            remaining_data -= u64::from(data_len);
+        }
+        let status_len = segment.len.saturating_sub(data_len);
+        if status_len != 0 {
+            let status_addr = segment
+                .addr
+                .checked_add(u64::from(data_len))
+                .ok_or(Violation::BadAddress)?;
+            status.push(Segment {
+                addr: status_addr,
+                len: status_len,
+                writable: true,
+            });
+        }
+    }
+    Ok((data, status))
+}
+
+fn write_capture_frames(
+    bus: &mut SystemBus,
+    segments: &[Segment],
+    frames: &[i16],
+) -> Result<u32, Violation> {
+    let bytes = frames.len().checked_mul(2).ok_or(Violation::BadAddress)?;
+    if segments
+        .iter()
+        .map(|segment| segment.len as usize)
+        .sum::<usize>()
+        < bytes
+    {
+        return Ok(0);
+    }
+    let mut written = 0usize;
+    for sample in frames {
+        let sample_bytes = sample.to_le_bytes();
+        for byte in sample_bytes {
+            let address = segment_address(segments, written)?;
+            bus.store8(address, byte)
+                .map_err(|_| Violation::BadAddress)?;
+            written += 1;
+        }
+    }
+    Ok(written as u32)
+}
+
+fn segment_address(segments: &[Segment], offset: usize) -> Result<u64, Violation> {
+    let mut remaining = offset;
+    for segment in segments {
+        let len = segment.len as usize;
+        if remaining < len {
+            return segment
+                .addr
+                .checked_add(remaining as u64)
+                .ok_or(Violation::BadAddress);
+        }
+        remaining -= len;
+    }
+    Err(Violation::BadAddress)
 }
 
 fn write_pcm_status(
