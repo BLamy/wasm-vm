@@ -749,6 +749,22 @@ verify-E5-T16c:
 	  --capture evidence/e5-t16c/weston-capture.json --self-test
 	@echo "verify-E5-T16c (weston/pixman riscv64 emulator workload): OK"
 
+.PHONY: verify-E5-T16d
+verify-E5-T16d:
+	# Audit both finalists from clean copies of the committed E3 base image. All apk commands run
+	# inside the riscv64 guest against the real Alpine repositories; there is no host package lookup,
+	# independent-machine leg, or WebKit leg in this package-availability slice.
+	cargo fmt --check -p wasm-vm-cli
+	cargo clippy -p wasm-vm-cli --bin wasm-vm -- -D warnings
+	cargo test -p wasm-vm-cli --bin wasm-vm
+	cargo build --release -p wasm-vm-cli
+	node --check tools/run-e5-t16d-package-audit.mjs
+	node --check tools/verify/e5-t16d-package-audit.mjs
+	node tools/run-e5-t16d-package-audit.mjs
+	node tools/verify/e5-t16d-package-audit.mjs
+	node tools/verify/e5-t16d-package-audit.mjs --self-test
+	@echo "verify-E5-T16d (Alpine riscv64 display package audit): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
