@@ -19,8 +19,12 @@ pub const CMD_SET_SCANOUT: u32 = 0x0105;
 pub const CMD_TRANSFER_TO_HOST_2D: u32 = 0x0106;
 /// `VIRTIO_GPU_CMD_RESOURCE_FLUSH` in the device's GPU command table.
 pub const CMD_RESOURCE_FLUSH: u32 = 0x0107;
+/// `VIRTIO_GPU_CMD_GET_EDID` in the device's GPU command table.
+pub const CMD_GET_EDID: u32 = 0x0108;
 /// Successful `GET_DISPLAY_INFO` response.
 pub const RESP_OK_DISPLAY_INFO: u32 = 0x1101;
+/// Successful `GET_EDID` response.
+pub const RESP_OK_EDID: u32 = 0x1102;
 /// Successful command with no response payload.
 pub const RESP_OK_NODATA: u32 = 0x1100;
 /// Generic unsupported/malformed-command response (used by E5-T01c).
@@ -28,6 +32,7 @@ pub const RESP_ERR_UNSPEC: u32 = 0x1200;
 /// Resource command errors (virtio-gpu spec §5.7.6.4).
 pub const RESP_ERR_OUT_OF_MEMORY: u32 = 0x1201;
 pub const RESP_ERR_INVALID_RESOURCE_ID: u32 = 0x1203;
+pub const RESP_ERR_INVALID_SCANOUT_ID: u32 = 0x1204;
 pub const RESP_ERR_INVALID_PARAMETER: u32 = 0x1205;
 /// Request/response fence flag.
 pub const FLAG_FENCE: u32 = 1 << 0;
@@ -73,6 +78,8 @@ pub const SET_SCANOUT_SIZE: usize = CTRL_HDR_SIZE + RECT_SIZE + 8;
 pub const TRANSFER_TO_HOST_2D_SIZE: usize = CTRL_HDR_SIZE + RECT_SIZE + 16;
 /// Wire size of `virtio_gpu_resource_flush`.
 pub const RESOURCE_FLUSH_SIZE: usize = CTRL_HDR_SIZE + RECT_SIZE + 8;
+/// Wire size of `virtio_gpu_get_edid`.
+pub const GET_EDID_REQUEST_SIZE: usize = CTRL_HDR_SIZE + 4;
 /// Wire size of one `virtio_gpu_mem_entry`.
 pub const RESOURCE_MEM_ENTRY_SIZE: usize = 16;
 /// Wire size of one `virtio_gpu_display_one`.
@@ -80,6 +87,8 @@ pub const DISPLAY_MODE_SIZE: usize = 24;
 /// Wire size of `virtio_gpu_resp_display_info`.
 pub const DISPLAY_INFO_RESPONSE_SIZE: usize =
     CTRL_HDR_SIZE + DISPLAY_MODE_COUNT * DISPLAY_MODE_SIZE;
+/// Wire size of `virtio_gpu_resp_edid`.
+pub const EDID_RESPONSE_SIZE: usize = CTRL_HDR_SIZE + 128;
 
 /// `virtio_gpu_ctrl_hdr`, encoded as le32/le32/le64/le32/u8/u8[3].
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
@@ -118,6 +127,62 @@ impl CtrlHeader {
             ring_idx: bytes[20],
             padding: [bytes[21], bytes[22], bytes[23]],
         })
+    }
+}
+
+/// `virtio_gpu_get_edid`, containing the scanout whose base block is requested.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct GetEdid {
+    pub header: CtrlHeader,
+    pub scanout_id: u32,
+}
+
+impl GetEdid {
+    /// Decode a complete GET_EDID request.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < GET_EDID_REQUEST_SIZE {
+            return None;
+        }
+        Some(Self {
+            header: CtrlHeader::from_bytes(&bytes[..CTRL_HDR_SIZE])?,
+            scanout_id: u32::from_le_bytes(bytes[24..28].try_into().ok()?),
+        })
+    }
+
+    /// Encode the exact 28-byte GET_EDID request layout.
+    pub fn to_bytes(self) -> [u8; GET_EDID_REQUEST_SIZE] {
+        let mut out = [0u8; GET_EDID_REQUEST_SIZE];
+        out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
+        out[24..28].copy_from_slice(&self.scanout_id.to_le_bytes());
+        out
+    }
+}
+
+/// `virtio_gpu_resp_edid`, a control header followed by one 128-byte EDID base block.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct EdidResponse {
+    pub header: CtrlHeader,
+    pub edid: [u8; 128],
+}
+
+impl EdidResponse {
+    /// Encode the exact 152-byte GET_EDID response layout.
+    pub fn to_bytes(self) -> [u8; EDID_RESPONSE_SIZE] {
+        let mut out = [0u8; EDID_RESPONSE_SIZE];
+        out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
+        out[CTRL_HDR_SIZE..].copy_from_slice(&self.edid);
+        out
+    }
+
+    /// Decode a complete EDID response.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < EDID_RESPONSE_SIZE {
+            return None;
+        }
+        let header = CtrlHeader::from_bytes(&bytes[..CTRL_HDR_SIZE])?;
+        let mut edid = [0u8; 128];
+        edid.copy_from_slice(&bytes[CTRL_HDR_SIZE..EDID_RESPONSE_SIZE]);
+        Some(Self { header, edid })
     }
 }
 
@@ -471,10 +536,15 @@ pub struct DisplayInfoResponse {
 impl DisplayInfoResponse {
     /// Build the initial one-scanout response.  Later modes remain disabled and zeroed.
     pub fn new(header: CtrlHeader) -> Self {
+        Self::new_with_mode(header, 1280, 800)
+    }
+
+    /// Build a one-scanout response using the current host display dimensions.
+    pub fn new_with_mode(header: CtrlHeader, width: u32, height: u32) -> Self {
         let mut modes = [DisplayMode::default(); DISPLAY_MODE_COUNT];
         modes[0] = DisplayMode {
-            width: 1280,
-            height: 800,
+            width,
+            height,
             enabled: 1,
             ..DisplayMode::default()
         };
@@ -512,3 +582,5 @@ impl DisplayInfoResponse {
 pub type VirtioGpuCtrlHdr = CtrlHeader;
 pub type VirtioGpuDisplayOne = DisplayMode;
 pub type VirtioGpuRespDisplayInfo = DisplayInfoResponse;
+pub type VirtioGpuGetEdid = GetEdid;
+pub type VirtioGpuRespEdid = EdidResponse;

@@ -48,6 +48,12 @@ pub trait VirtioDevice {
     fn queue_notify(&mut self, queue: u32) {
         let _ = queue;
     }
+    /// Consume a backend-originated configuration-change request.  The transport latches the
+    /// request into `InterruptStatus.CONFIG_CHANGE` at its next host/device boundary, keeping
+    /// backend host APIs independent of transport pointers.
+    fn take_config_irq(&mut self) -> bool {
+        false
+    }
     /// Full device reset (Status write of 0): drop in-flight state.
     fn reset(&mut self) {}
 }

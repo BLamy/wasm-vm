@@ -163,6 +163,29 @@ impl VirtioMmio {
         self.int_status != 0
     }
 
+    /// Whether the driver has successfully negotiated all bits in `feature`.
+    pub fn driver_has_feature(&self, feature: u64) -> bool {
+        self.status & STATUS_FEATURES_OK != 0 && self.driver_features & feature == feature
+    }
+
+    /// The raw feature set last written by the driver, exposed for deterministic device tests.
+    pub fn driver_features(&self) -> u64 {
+        self.driver_features
+    }
+
+    /// Latch a backend-originated configuration change into the transport's config interrupt.
+    /// Returns `true` exactly when this call consumed a pending backend request.
+    pub fn sync_backend_config_irq(&mut self) -> bool {
+        let pending = self
+            .dev
+            .as_mut()
+            .is_some_and(|device| device.take_config_irq());
+        if pending {
+            self.raise_config_irq();
+        }
+        pending
+    }
+
     /// Backend signal: buffers were used → interrupt the driver (E2-T09+ calls this).
     pub fn raise_used_irq(&mut self) {
         self.int_status |= INT_USED_RING;

@@ -6,7 +6,9 @@ use wasm_bindgen_test::wasm_bindgen_test;
 use wasm_vm_core::Machine;
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::dev::virtio::gpu::Rect;
+use wasm_vm_core::dev::virtio::gpu::VIRTIO_GPU_EVENT_DISPLAY;
 use wasm_vm_core::dev::virtio::gpu::VirtioGpu;
+use wasm_vm_core::dev::virtio::gpu::edid::{EDID_BLOCK_SIZE, edid_for};
 use wasm_vm_core::dev::virtio::gpu::protocol::{
     CTRL_HDR_SIZE, CtrlHeader, DISPLAY_INFO_RESPONSE_SIZE, DISPLAY_MODE_COUNT, DISPLAY_MODE_SIZE,
     DisplayInfoResponse, RESP_OK_DISPLAY_INFO,
@@ -53,6 +55,35 @@ fn gpu_mmio_identity_and_config_on_wasm32() {
     assert_eq!(machine.bus_mut().load32(base + 0x08).unwrap(), 16);
     assert_eq!(machine.bus_mut().load32(base + 0x108).unwrap(), 1);
     assert_eq!(machine.bus_mut().load32(base + 0x10c).unwrap(), 0);
+}
+
+#[wasm_bindgen_test]
+fn gpu_edid_resize_fixture_on_wasm32() {
+    let initial = edid_for(1280, 800, 60);
+    assert_eq!(initial.len(), EDID_BLOCK_SIZE);
+    assert_eq!(
+        initial[..8],
+        [0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00]
+    );
+    assert_eq!(initial[18..20], [1, 4]);
+    assert_eq!(
+        initial
+            .iter()
+            .fold(0u8, |sum, byte| sum.wrapping_add(*byte)),
+        0
+    );
+
+    let mut gpu = VirtioGpu::new();
+    gpu.set_display(1365, 769);
+    assert_eq!(gpu.display_size(), (1365, 769));
+    assert_eq!(gpu.events_read(), VIRTIO_GPU_EVENT_DISPLAY);
+    assert_ne!(gpu.edid(), initial);
+    assert_eq!(
+        gpu.edid()
+            .iter()
+            .fold(0u8, |sum, byte| sum.wrapping_add(*byte)),
+        0
+    );
 }
 
 fn reference_crc32(pixels: &[u32]) -> u32 {

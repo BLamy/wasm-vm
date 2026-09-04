@@ -4,6 +4,7 @@
 //! registers, and keeps the protocol wire formats in [`protocol`]. E5-T02a adds the first
 //! host-owned resource store and CREATE_2D command; later slices add backing and presentation.
 
+pub mod edid;
 pub mod protocol;
 pub mod resources;
 
@@ -128,6 +129,16 @@ impl FrameSink for NullSink {
 
 /// Virtio device type assigned to a GPU (virtio spec 1.2 §5.7).
 pub const VIRTIO_GPU_DEVICE_ID: u32 = 16;
+/// `VIRTIO_GPU_F_EDID`: the device implements the GET_EDID command.
+pub const VIRTIO_GPU_F_EDID: u64 = 1 << 1;
+/// `VIRTIO_GPU_EVENT_DISPLAY`: the display configuration changed.
+pub const VIRTIO_GPU_EVENT_DISPLAY: u32 = 1 << 0;
+/// Initial virtual canvas width.
+pub const DEFAULT_DISPLAY_WIDTH: u32 = 1280;
+/// Initial virtual canvas height.
+pub const DEFAULT_DISPLAY_HEIGHT: u32 = 800;
+/// Initial virtual canvas refresh rate.
+pub const DEFAULT_DISPLAY_REFRESH_HZ: u32 = edid::DEFAULT_REFRESH_HZ;
 /// The initial device has one scanout; later display work may make this configurable.
 pub const DEFAULT_NUM_SCANOUTS: u32 = 1;
 /// E5-T01a exposes no 3D capsets.
@@ -138,6 +149,11 @@ const CONFIG_LEN: usize = 16;
 /// Shared state between the transport-facing device and the run-loop service.
 pub struct GpuState {
     events_read: u32,
+    display_width: u32,
+    display_height: u32,
+    display_refresh_hz: u32,
+    edid: [u8; edid::EDID_BLOCK_SIZE],
+    config_irq_pending: bool,
     kicked: bool,
     reset_pending: bool,
     /// Host-owned 2D resource store. Backing entries are added by E5-T02b.
@@ -150,6 +166,92 @@ pub struct GpuState {
     pub frame_sink: Box<dyn FrameSink>,
     /// Number of valid GET_DISPLAY_INFO requests completed by the service.
     pub commands_served: u64,
+}
+
+impl GpuState {
+    fn new(sink: Box<dyn FrameSink>) -> Self {
+        Self {
+            events_read: 0,
+            display_width: DEFAULT_DISPLAY_WIDTH,
+            display_height: DEFAULT_DISPLAY_HEIGHT,
+            display_refresh_hz: DEFAULT_DISPLAY_REFRESH_HZ,
+            edid: edid::edid_for(
+                DEFAULT_DISPLAY_WIDTH,
+                DEFAULT_DISPLAY_HEIGHT,
+                DEFAULT_DISPLAY_REFRESH_HZ,
+            ),
+            config_irq_pending: false,
+            kicked: false,
+            reset_pending: false,
+            resources: resources::ResourceMap::new(),
+            scanout_resource: None,
+            frame_sink: sink,
+            commands_served: 0,
+        }
+    }
+
+    /// Current width and height advertised in pmode 0 and the preferred EDID timing.
+    pub fn display_size(&self) -> (u32, u32) {
+        (self.display_width, self.display_height)
+    }
+
+    /// Current preferred refresh rate in hertz.
+    pub fn display_refresh_hz(&self) -> u32 {
+        self.display_refresh_hz
+    }
+
+    /// Copy the current EDID base block for host-side inspection.
+    pub fn edid(&self) -> [u8; edid::EDID_BLOCK_SIZE] {
+        self.edid
+    }
+
+    /// Apply a host display-size change and coalesce its config interrupt until the guest clears
+    /// `EVENT_DISPLAY`.  The final dimensions/EDID are always retained even when several changes
+    /// arrive before the transport gets a chance to signal the first one.
+    pub fn set_display(&mut self, width: u32, height: u32) {
+        let width = width.clamp(1, edid::MAX_EDID_DIMENSION);
+        let height = height.clamp(1, edid::MAX_EDID_DIMENSION);
+        let already_pending = self.events_read & VIRTIO_GPU_EVENT_DISPLAY != 0;
+        self.display_width = width;
+        self.display_height = height;
+        self.display_refresh_hz = DEFAULT_DISPLAY_REFRESH_HZ;
+        self.edid = edid::edid_for(width, height, self.display_refresh_hz);
+        self.events_read |= VIRTIO_GPU_EVENT_DISPLAY;
+        if !already_pending {
+            self.config_irq_pending = true;
+        }
+    }
+
+    fn raise_event(&mut self, bits: u32) {
+        if bits & VIRTIO_GPU_EVENT_DISPLAY != 0 && self.events_read & VIRTIO_GPU_EVENT_DISPLAY == 0
+        {
+            self.config_irq_pending = true;
+        }
+        self.events_read |= bits;
+    }
+
+    fn take_config_irq(&mut self) -> bool {
+        let pending = self.config_irq_pending;
+        self.config_irq_pending = false;
+        pending
+    }
+
+    fn reset(&mut self) {
+        self.events_read = 0;
+        self.display_width = DEFAULT_DISPLAY_WIDTH;
+        self.display_height = DEFAULT_DISPLAY_HEIGHT;
+        self.display_refresh_hz = DEFAULT_DISPLAY_REFRESH_HZ;
+        self.edid = edid::edid_for(
+            DEFAULT_DISPLAY_WIDTH,
+            DEFAULT_DISPLAY_HEIGHT,
+            DEFAULT_DISPLAY_REFRESH_HZ,
+        );
+        self.config_irq_pending = false;
+        self.kicked = false;
+        self.resources = resources::ResourceMap::new();
+        self.scanout_resource = None;
+        self.reset_pending = true;
+    }
 }
 
 /// A minimal virtio-gpu device.  Queue state remains owned by the generic virtio-mmio transport;
@@ -176,15 +278,7 @@ impl VirtioGpu {
 
     /// Construct a device and shared state using an injected core presentation sink.
     pub fn new_with_sink_state(sink: Box<dyn FrameSink>) -> (Self, Rc<RefCell<GpuState>>) {
-        let state = Rc::new(RefCell::new(GpuState {
-            events_read: 0,
-            kicked: false,
-            reset_pending: false,
-            resources: resources::ResourceMap::new(),
-            scanout_resource: None,
-            frame_sink: sink,
-            commands_served: 0,
-        }));
+        let state = Rc::new(RefCell::new(GpuState::new(sink)));
         (
             Self {
                 state: Rc::clone(&state),
@@ -203,9 +297,31 @@ impl VirtioGpu {
         self.state.borrow().events_read
     }
 
+    /// Shared host handle for a GPU installed into a virtio-mmio slot.
+    pub fn state_handle(&self) -> Rc<RefCell<GpuState>> {
+        Rc::clone(&self.state)
+    }
+
+    /// Current display dimensions advertised by GET_DISPLAY_INFO and the preferred EDID timing.
+    pub fn display_size(&self) -> (u32, u32) {
+        self.state.borrow().display_size()
+    }
+
+    /// Copy the current preferred EDID base block.
+    pub fn edid(&self) -> [u8; edid::EDID_BLOCK_SIZE] {
+        self.state.borrow().edid()
+    }
+
+    /// Change the host-visible virtual display mode.  The transport latches one config interrupt
+    /// at its next boundary; repeated changes before `events_clear` update the final mode without
+    /// creating an interrupt storm.
+    pub fn set_display(&mut self, width: u32, height: u32) {
+        self.state.borrow_mut().set_display(width, height);
+    }
+
     /// Raise display event bits without exposing host pointers to the transport.
     pub fn raise_event(&mut self, bits: u32) {
-        self.state.borrow_mut().events_read |= bits;
+        self.state.borrow_mut().raise_event(bits);
     }
 
     fn config_bytes(&self) -> [u8; CONFIG_LEN] {
@@ -227,6 +343,10 @@ impl Default for VirtioGpu {
 impl VirtioDevice for VirtioGpu {
     fn device_id(&self) -> u32 {
         VIRTIO_GPU_DEVICE_ID
+    }
+
+    fn device_features(&self) -> u64 {
+        VIRTIO_GPU_F_EDID
     }
 
     fn num_queues(&self) -> u32 {
@@ -274,16 +394,19 @@ impl VirtioDevice for VirtioGpu {
                 clear |= (((value >> shift) & 0xff) as u32) << ((index as usize - 4) * 8);
             }
         }
-        self.state.borrow_mut().events_read &= !clear;
+        let mut state = self.state.borrow_mut();
+        state.events_read &= !clear;
+        if clear & VIRTIO_GPU_EVENT_DISPLAY != 0 {
+            state.config_irq_pending = false;
+        }
     }
 
     fn reset(&mut self) {
-        let mut state = self.state.borrow_mut();
-        state.events_read = 0;
-        state.kicked = false;
-        state.resources = resources::ResourceMap::new();
-        state.scanout_resource = None;
-        state.reset_pending = true;
+        self.state.borrow_mut().reset();
+    }
+
+    fn take_config_irq(&mut self) -> bool {
+        self.state.borrow_mut().take_config_irq()
     }
 }
 
@@ -378,6 +501,25 @@ fn response_header(request: protocol::CtrlHeader, ty: u32) -> protocol::CtrlHead
         ring_idx: request.ring_idx,
         padding: [0; 3],
     }
+}
+
+/// Decode a negotiated GET_EDID request and return the scanout-indexed current base block.
+fn get_edid(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    slot: &Rc<RefCell<VirtioMmio>>,
+    state: &Rc<RefCell<GpuState>>,
+) -> Result<[u8; edid::EDID_BLOCK_SIZE], u32> {
+    let request = read_request::<{ protocol::GET_EDID_REQUEST_SIZE }>(chain, bus)
+        .and_then(|bytes| protocol::GetEdid::from_bytes(&bytes))
+        .ok_or(protocol::RESP_ERR_INVALID_PARAMETER)?;
+    if !slot.borrow().driver_has_feature(VIRTIO_GPU_F_EDID) {
+        return Err(protocol::RESP_ERR_UNSPEC);
+    }
+    if request.scanout_id >= DEFAULT_NUM_SCANOUTS {
+        return Err(protocol::RESP_ERR_INVALID_SCANOUT_ID);
+    }
+    Ok(state.borrow().edid())
 }
 
 fn create_error_response(error: resources::CreateError) -> u32 {
@@ -636,6 +778,9 @@ pub fn service(
     state: &Rc<RefCell<GpuState>>,
     bus: &mut SystemBus,
 ) {
+    // Host APIs retain only the GPU state handle.  Let the transport turn a pending state change
+    // into its latched config interrupt before queue work (or an early no-kick return) is handled.
+    slot.borrow_mut().sync_backend_config_irq();
     {
         let mut state = state.borrow_mut();
         if state.reset_pending {
@@ -678,16 +823,43 @@ pub fn service(
 
         let written = match read_header(&chain, bus) {
             Some(request) if request.ty == protocol::CMD_GET_DISPLAY_INFO => {
-                let response = protocol::DisplayInfoResponse::new(response_header(
-                    request,
-                    protocol::RESP_OK_DISPLAY_INFO,
-                ))
+                let (width, height) = state.borrow().display_size();
+                let response = protocol::DisplayInfoResponse::new_with_mode(
+                    response_header(request, protocol::RESP_OK_DISPLAY_INFO),
+                    width,
+                    height,
+                )
                 .to_bytes();
                 match write_prefix(&chain, bus, &response) {
                     Ok(written) => {
                         state.borrow_mut().commands_served += 1;
                         written
                     }
+                    Err(()) => {
+                        slot.borrow_mut().protocol_violation();
+                        *vq = None;
+                        return;
+                    }
+                }
+            }
+            Some(request) if request.ty == protocol::CMD_GET_EDID => {
+                let result = get_edid(&chain, bus, slot, state);
+                let written = match result {
+                    Ok(edid) => {
+                        let response = protocol::EdidResponse {
+                            header: response_header(request, protocol::RESP_OK_EDID),
+                            edid,
+                        }
+                        .to_bytes();
+                        write_prefix(&chain, bus, &response)
+                    }
+                    Err(response_type) => {
+                        let response = response_header(request, response_type).to_bytes();
+                        write_prefix(&chain, bus, &response)
+                    }
+                };
+                match written {
+                    Ok(written) => written,
                     Err(()) => {
                         slot.borrow_mut().protocol_violation();
                         *vq = None;
@@ -845,15 +1017,17 @@ mod tests {
 
     use super::*;
     use crate::bus::Bus;
-    use crate::dev::virtio::mmio::{QueueState, VirtioMmio};
+    use crate::dev::virtio::mmio::{INT_CONFIG_CHANGE, QueueState, VirtioMmio};
     use crate::mmio::{MmioDevice, SystemBus, Width};
     use crate::platform::virt::DRAM_BASE;
     use crate::ram::Ram;
     use protocol::{
-        CMD_RESOURCE_FLUSH, CMD_SET_SCANOUT, CMD_TRANSFER_TO_HOST_2D, CTRL_HDR_SIZE, CtrlHeader,
-        DISPLAY_INFO_RESPONSE_SIZE, DISPLAY_MODE_COUNT, DISPLAY_MODE_SIZE, DisplayInfoResponse,
-        DisplayMode, RESOURCE_FLUSH_SIZE, RESP_OK_DISPLAY_INFO, Rect, ResourceFlush,
-        SET_SCANOUT_SIZE, SetScanout, TRANSFER_TO_HOST_2D_SIZE, TransferToHost2d,
+        CMD_GET_EDID, CMD_RESOURCE_FLUSH, CMD_SET_SCANOUT, CMD_TRANSFER_TO_HOST_2D, CTRL_HDR_SIZE,
+        CtrlHeader, DISPLAY_INFO_RESPONSE_SIZE, DISPLAY_MODE_COUNT, DISPLAY_MODE_SIZE,
+        DisplayInfoResponse, DisplayMode, EDID_RESPONSE_SIZE, GET_EDID_REQUEST_SIZE,
+        RESOURCE_FLUSH_SIZE, RESP_ERR_INVALID_SCANOUT_ID, RESP_ERR_UNSPEC, RESP_OK_DISPLAY_INFO,
+        RESP_OK_EDID, Rect, ResourceFlush, SET_SCANOUT_SIZE, SetScanout, TRANSFER_TO_HOST_2D_SIZE,
+        TransferToHost2d,
     };
 
     const CONFIG_SPACE: u64 = 0x100;
@@ -912,6 +1086,17 @@ mod tests {
             rect,
             resource_id,
             padding: 0,
+        }
+        .to_bytes()
+    }
+
+    fn edid_request(scanout_id: u32) -> [u8; GET_EDID_REQUEST_SIZE] {
+        protocol::GetEdid {
+            header: CtrlHeader {
+                ty: CMD_GET_EDID,
+                ..CtrlHeader::default()
+            },
+            scanout_id,
         }
         .to_bytes()
     }
@@ -1063,6 +1248,20 @@ mod tests {
         slot.write(offset, Width::B4, u64::from(value)).unwrap();
     }
 
+    fn negotiate_gpu_edid(slot: &mut VirtioMmio) {
+        write32(slot, STATUS, STATUS_ACKNOWLEDGE | STATUS_DRIVER);
+        write32(slot, DRIVER_FEATURES_SEL, 0);
+        write32(slot, DRIVER_FEATURES, VIRTIO_GPU_F_EDID as u32);
+        write32(slot, DRIVER_FEATURES_SEL, 1);
+        write32(slot, DRIVER_FEATURES, 1);
+        write32(
+            slot,
+            STATUS,
+            STATUS_ACKNOWLEDGE | STATUS_DRIVER | STATUS_FEATURES_OK,
+        );
+        assert_ne!(read32(slot, STATUS) & STATUS_FEATURES_OK, 0);
+    }
+
     #[test]
     fn gpu_protocol_wire_fixtures() {
         let header = CtrlHeader {
@@ -1122,7 +1321,11 @@ mod tests {
 
         write32(&mut slot, STATUS, STATUS_ACKNOWLEDGE | STATUS_DRIVER);
         write32(&mut slot, DEVICE_FEATURES_SEL, 0);
-        assert_eq!(read32(&mut slot, DEVICE_FEATURES), 0);
+        assert_eq!(
+            read32(&mut slot, DEVICE_FEATURES),
+            VIRTIO_GPU_F_EDID as u32,
+            "EDID offered"
+        );
         write32(&mut slot, DEVICE_FEATURES_SEL, 1);
         assert_eq!(read32(&mut slot, DEVICE_FEATURES), 1, "VERSION_1 offered");
 
@@ -1173,6 +1376,167 @@ mod tests {
         assert_eq!(gpu.events_read(), 0b1011);
         gpu.config_write(4, 1, 0b0001);
         assert_eq!(gpu.events_read(), 0b1010);
+    }
+
+    #[test]
+    fn set_display_updates_mode_and_coalesces_config_interrupts() {
+        let (mut gpu, state) = VirtioGpu::new_with_state();
+        gpu.set_display(1025, 777);
+        assert_eq!(gpu.display_size(), (1025, 777));
+        assert_eq!(gpu.events_read(), VIRTIO_GPU_EVENT_DISPLAY);
+        assert_eq!(gpu.edid(), state.borrow().edid());
+
+        // The device can be installed after a host resize.  The transport consumes the pending
+        // request once, even though the state handle remains usable after installation.
+        let slot = Rc::new(RefCell::new(VirtioMmio::new(Box::new(gpu))));
+        let generation = read32(&mut slot.borrow_mut(), 0x0fc);
+        assert!(slot.borrow_mut().sync_backend_config_irq());
+        assert_eq!(
+            read32(&mut slot.borrow_mut(), 0x060) & INT_CONFIG_CHANGE,
+            INT_CONFIG_CHANGE
+        );
+        assert_eq!(read32(&mut slot.borrow_mut(), 0x0fc), generation + 1);
+
+        // A second host change before the guest clears EVENT_DISPLAY updates the advertised final
+        // state but does not create a second config interrupt.
+        state.borrow_mut().set_display(1367, 901);
+        assert_eq!(state.borrow().display_size(), (1367, 901));
+        assert!(!slot.borrow_mut().sync_backend_config_irq());
+        assert_eq!(read32(&mut slot.borrow_mut(), 0x0fc), generation + 1);
+        assert_eq!(
+            read32(&mut slot.borrow_mut(), CONFIG_SPACE),
+            VIRTIO_GPU_EVENT_DISPLAY
+        );
+
+        // ACK the transport interrupt, clear only EVENT_DISPLAY, then prove the next resize arms
+        // exactly one fresh config notification.
+        write32(&mut slot.borrow_mut(), 0x064, INT_CONFIG_CHANGE);
+        write32(
+            &mut slot.borrow_mut(),
+            CONFIG_SPACE + 4,
+            VIRTIO_GPU_EVENT_DISPLAY,
+        );
+        assert_eq!(read32(&mut slot.borrow_mut(), CONFIG_SPACE), 0);
+        state.borrow_mut().set_display(1441, 901);
+        assert!(slot.borrow_mut().sync_backend_config_irq());
+        assert_eq!(read32(&mut slot.borrow_mut(), 0x0fc), generation + 2);
+        assert_eq!(state.borrow().display_size(), (1441, 901));
+    }
+
+    #[test]
+    fn set_display_stress_preserves_final_mode_and_bounds_config_irqs() {
+        let (gpu, state) = VirtioGpu::new_with_state();
+        let slot = Rc::new(RefCell::new(VirtioMmio::new(Box::new(gpu))));
+        let mut irq_count = 0u32;
+        let mut final_size = (0, 0);
+
+        for index in 0..1_000u32 {
+            final_size = (640 + index % 3_000, 480 + index % 2_000);
+            state.borrow_mut().set_display(final_size.0, final_size.1);
+            if slot.borrow_mut().sync_backend_config_irq() {
+                irq_count += 1;
+            }
+            assert_eq!(
+                read32(&mut slot.borrow_mut(), 0x060) & INT_CONFIG_CHANGE,
+                INT_CONFIG_CHANGE,
+                "resize {index} must be observable before its clear"
+            );
+            write32(&mut slot.borrow_mut(), 0x064, INT_CONFIG_CHANGE);
+            write32(
+                &mut slot.borrow_mut(),
+                CONFIG_SPACE + 4,
+                VIRTIO_GPU_EVENT_DISPLAY,
+            );
+            assert_eq!(read32(&mut slot.borrow_mut(), CONFIG_SPACE), 0);
+        }
+
+        assert_eq!(irq_count, 1_000, "one clear permits one fresh config IRQ");
+        assert_eq!(state.borrow().display_size(), final_size);
+        assert_eq!(
+            state.borrow().edid(),
+            edid::edid_for(final_size.0, final_size.1, DEFAULT_DISPLAY_REFRESH_HZ)
+        );
+        assert_eq!(read32(&mut slot.borrow_mut(), 0x060), 0);
+    }
+
+    #[test]
+    fn get_edid_requires_negotiation_and_is_scanout_indexed() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let request = edid_request(0);
+        write_bytes(&mut bus, REQUEST, &request);
+        let (slot, state, mut vq) = queue_for_test(
+            &mut bus,
+            &[
+                (REQUEST, GET_EDID_REQUEST_SIZE as u32, 1, 1),
+                (RESPONSE, EDID_RESPONSE_SIZE as u32, 2, 0),
+            ],
+        );
+        state.borrow_mut().set_display(1281, 801);
+        negotiate_gpu_edid(&mut slot.borrow_mut());
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load32(RESPONSE).unwrap(), RESP_OK_EDID);
+        assert_eq!(bus.load16(USED + 2).unwrap(), 1);
+        assert_eq!(
+            bus.load32(USED + 8).unwrap(),
+            EDID_RESPONSE_SIZE as u32,
+            "full EDID response written"
+        );
+        let mut bytes = [0u8; EDID_RESPONSE_SIZE];
+        for (offset, byte) in bytes.iter_mut().enumerate() {
+            *byte = bus.load8(RESPONSE + offset as u64).unwrap();
+        }
+        let response = protocol::EdidResponse::from_bytes(&bytes).unwrap();
+        assert_eq!(response.header.ty, RESP_OK_EDID);
+        assert_eq!(response.edid, state.borrow().edid());
+        assert_eq!(
+            response
+                .edid
+                .iter()
+                .fold(0u8, |sum, byte| sum.wrapping_add(*byte)),
+            0
+        );
+
+        // Out-of-range scanouts are rejected after negotiation, without exposing another block.
+        let invalid = edid_request(1);
+        write_bytes(&mut bus, REQUEST + 0x100, &invalid);
+        bus.store16(AVAIL + 2, 2).unwrap();
+        bus.store16(AVAIL + 4 + 2, 1).unwrap();
+        write32(&mut slot.borrow_mut(), 0x050, 0);
+        // Reuse the same queue with descriptor 1 as request and descriptor 2 as the short response.
+        write_desc(
+            &mut bus,
+            1,
+            REQUEST + 0x100,
+            GET_EDID_REQUEST_SIZE as u32,
+            1,
+            2,
+        );
+        write_desc(&mut bus, 2, RESPONSE + 0x100, CTRL_HDR_SIZE as u32, 2, 0);
+        service(&slot, &mut vq, &state, &mut bus);
+        assert_eq!(
+            bus.load32(RESPONSE + 0x100).unwrap(),
+            RESP_ERR_INVALID_SCANOUT_ID
+        );
+    }
+
+    #[test]
+    fn get_edid_without_feature_returns_unspec() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let request = edid_request(0);
+        write_bytes(&mut bus, REQUEST, &request);
+        let (slot, state, mut vq) = queue_for_test(
+            &mut bus,
+            &[
+                (REQUEST, GET_EDID_REQUEST_SIZE as u32, 1, 1),
+                (RESPONSE, EDID_RESPONSE_SIZE as u32, 2, 0),
+            ],
+        );
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+        service(&slot, &mut vq, &state, &mut bus);
+        assert_eq!(bus.load32(RESPONSE).unwrap(), RESP_ERR_UNSPEC);
+        assert_eq!(bus.load32(USED + 8).unwrap(), CTRL_HDR_SIZE as u32);
     }
 
     #[test]
@@ -1673,6 +2037,7 @@ mod tests {
     #[test]
     fn gpu_resources_lifecycle_device_reset_releases_resource_state() {
         let (mut gpu, state) = VirtioGpu::new_with_state();
+        state.borrow_mut().set_display(1921, 1081);
         state
             .borrow_mut()
             .resources
@@ -1686,6 +2051,15 @@ mod tests {
         assert!(state.resources.is_empty());
         assert_eq!(state.resources.accounted_bytes(), 0);
         assert_eq!(state.scanout_resource, None);
+        assert_eq!(
+            state.display_size(),
+            (DEFAULT_DISPLAY_WIDTH, DEFAULT_DISPLAY_HEIGHT)
+        );
+        assert_eq!(
+            state.edid(),
+            edid::edid_for(1280, 800, DEFAULT_DISPLAY_REFRESH_HZ)
+        );
+        assert_eq!(state.events_read, 0);
     }
 
     #[test]
@@ -1708,6 +2082,7 @@ mod tests {
                 (RESPONSE, 408, 2, 0),
             ],
         );
+        state.borrow_mut().set_display(1601, 901);
         slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
 
         service(&slot, &mut vq, &state, &mut bus);
@@ -1728,6 +2103,8 @@ mod tests {
             "unfenced response has no fence id"
         );
         assert_eq!(response.header.ctx_id, request.ctx_id);
+        assert_eq!(response.modes[0].width, 1601);
+        assert_eq!(response.modes[0].height, 901);
         assert_eq!(state.borrow().commands_served, 1);
     }
 

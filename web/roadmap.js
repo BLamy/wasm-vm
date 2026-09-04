@@ -137,7 +137,7 @@ export const ROADMAP = [
       { name: "Bidirectional clipboard sync", status: "verified", evidence: "E5-T24d: Chromium guest↔host round trips, exact UTF-8/CRLF and 256 KiB bounds, 100-copy echo attack, focus privacy, permission staging, and guest helper recovery" },
       { name: "virtio-gpu control + resource queues", status: "pending" },
       { name: "Scanout transfer + flush", status: "pending" },
-      { name: "EDID / display info", status: "pending" },
+      { name: "EDID / display info", status: "verified", evidence: "E5-T04: decoder-checked 128-byte EDID 1.4 blocks, dynamic pmode/EDID regeneration, negotiated GET_EDID, and coalesced display config IRQs" },
     ],
   },
   {

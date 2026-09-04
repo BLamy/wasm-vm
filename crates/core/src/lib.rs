@@ -3727,6 +3727,13 @@ impl Machine {
             // just-crossed timer fires and a raised `mtimecmp` clears MTIP with no CSR access.
             #[cfg(not(feature = "zicsr-stub"))]
             if sample_boundary {
+                // E5-T04: host-owned virtio devices may have requested a config change through a
+                // retained state handle (for example a GPU canvas resize).  Latch those requests
+                // before mirroring InterruptStatus into the PLIC so the guest sees one precise
+                // config IRQ at this boundary, even when no queue was kicked.
+                for (slot, _) in &self.virtio {
+                    slot.borrow_mut().sync_backend_config_irq();
+                }
                 // E4-T24: in WallClock mode, recompute `mtime` from the host clock BEFORE sync_clint
                 // samples the MTIP level, so a just-elapsed wall deadline fires this boundary. No-op on
                 // the default ICount path.

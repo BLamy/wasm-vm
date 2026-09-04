@@ -469,6 +469,19 @@ verify-E5-T24d:
 	node tools/verify/e5-t24d-clipboard-proof.mjs
 	@echo "verify-E5-T24d (bidirectional clipboard browser and guest proof): OK"
 
+.PHONY: verify-E5-T04
+verify-E5-T04:
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib --tests -- -D warnings
+	cargo test -p wasm-vm-core --lib
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	@command -v wasm-pack >/dev/null 2>&1 || { \
+		echo "error: wasm-pack is not installed."; \
+		echo "  install with: cargo install wasm-pack   (or: brew install wasm-pack)"; \
+		exit 1; }
+	wasm-pack test --node crates/wasm --test gpu_protocol
+	@echo "verify-E5-T04 (EDID, display info, and hotplug events): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
