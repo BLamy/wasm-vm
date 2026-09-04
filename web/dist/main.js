@@ -51,6 +51,11 @@ const SYS_EXIT = 93n;
 const TAILSCALE_STATE_KEY = "wasm-vm.tailscale-state.v1";
 const NETWORK_CONFIG_KEY = "wasm-vm.network-config.v1";
 const NETWORK_PROVIDERS = new Set(["offline", "websocket", "tailscale", "headscale", "relay"]);
+const pageVm = globalThis.vm && typeof globalThis.vm === "object" && !Array.isArray(globalThis.vm)
+  ? globalThis.vm
+  : {};
+if (!pageVm.stats || typeof pageVm.stats !== "object" || Array.isArray(pageVm.stats)) pageVm.stats = {};
+globalThis.vm = pageVm;
 
 // E5-T09c: the page owns the visible canvas and drains FrameSink projections through a bounded,
 // latest-wins requestAnimationFrame scheduler. The controller records a private latest frame so a
@@ -63,6 +68,8 @@ if (displayCanvas) {
     presentation = new PresentationController(displayCanvas, {
       defaultBackend: "canvas2d",
       scheduleFrames: true,
+      visibilityTarget: document,
+      vm: pageVm,
     });
   } catch (error) {
     if (displayStatusEl) {
@@ -93,6 +100,7 @@ try {
   window.__presentation = {
     controller: () => presentation,
     state: () => presentation?.snapshot?.() ?? null,
+    gpuStats: () => presentation?.snapshot?.().gpu ?? null,
     readPixels: () => presentation?.readPixels?.() ?? null,
     dispose: () => presentation?.dispose?.(),
   };
@@ -397,6 +405,7 @@ function installAudioAutoplayPolicy() {
   }
   try {
     const candidate = new AudioSink({
+      vm: pageVm,
       requestedSampleRateHz: audioRequestedSampleRateHz,
       capture: audioCaptureEnabled,
       onCapture: (block) => {

@@ -614,6 +614,16 @@ verify-E5-T09c:
 	node tools/verify/e5-t09c-present-scheduler.mjs --output evidence/e5-t09c/present-scheduler.json
 	@echo "verify-E5-T09c (latest-wins rAF scheduler): OK"
 
+.PHONY: verify-E5-T09d
+verify-E5-T09d:
+	# Hidden-tab drain proof: a bounded 250 ms timer, visibility cancellation/resume, 1,000 mode
+	# transitions, and scalar vm.stats.gpu. The integrated guest workload is E5-T09e.
+	node --check web/src/sink/visibility-scheduler.js
+	node --check web/src/sink/presentation.js
+	node --check tools/verify/e5-t09d-hidden-present.mjs
+	node tools/verify/e5-t09d-hidden-present.mjs --output evidence/e5-t09d/hidden-present.json
+	@echo "verify-E5-T09d (hidden present fallback and metrics): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

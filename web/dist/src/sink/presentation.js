@@ -3,6 +3,7 @@
 import { Canvas2DBackend } from "./canvas2d.js";
 import { WebGL2Backend } from "./webgl.js";
 import { FrameScheduler } from "./frame-scheduler.js";
+import { VisibilityFrameScheduler } from "./visibility-scheduler.js";
 
 const DEFAULT_WIDTH = 1280;
 const DEFAULT_HEIGHT = 800;
@@ -127,15 +128,35 @@ export class PresentationController {
     this._fallbacks = 0;
     this._contextLosses = 0;
     this._contextRestores = 0;
+    this._uploadedBytes = 0;
+    this._statsOwner = options.vm ?? null;
+    if (this._statsOwner !== null && (typeof this._statsOwner !== "object" || Array.isArray(this._statsOwner))) {
+      throw new TypeError("PresentationController vm must be an object");
+    }
+    const schedulerOptions = {
+      present: (frame) => this._deliver(frame),
+      requestFrame: options.requestFrame,
+      cancelFrame: options.cancelFrame,
+      onError: options.onSchedulerError
+        ?? ((error) => this._errors.push(`scheduled present: ${String(error?.message || error)}`)),
+    };
     this._scheduler = options.scheduleFrames
-      ? new FrameScheduler({
-        present: (frame) => this._deliver(frame),
-        requestFrame: options.requestFrame,
-        cancelFrame: options.cancelFrame,
-        onError: options.onSchedulerError
-          ?? ((error) => this._errors.push(`scheduled present: ${String(error?.message || error)}`)),
-      })
+      ? options.visibilityTarget
+        ? new VisibilityFrameScheduler({
+          present: schedulerOptions.present,
+          visibilityTarget: options.visibilityTarget,
+          isHidden: options.isHidden,
+          requestAnimationFrame: options.requestAnimationFrame ?? options.requestFrame,
+          cancelAnimationFrame: options.cancelAnimationFrame ?? options.cancelFrame,
+          setTimeout: options.setTimeout,
+          clearTimeout: options.clearTimeout,
+          now: options.now,
+          timerMs: options.timerMs,
+          onError: schedulerOptions.onError,
+        })
+        : new FrameScheduler(schedulerOptions)
       : null;
+    this._installStatsSurface();
     this._attachCanvasListeners();
     this._ensureCanvasSize();
     this._activateWithFallback(defaultBackend);
@@ -271,6 +292,7 @@ export class PresentationController {
     try {
       this._backend.present(frame.rect, frame.pixels);
       this._successfulPresents += 1;
+      this._uploadedBytes += frame.rect.width * frame.rect.height * 4;
       if (replay) this._replayedFrames += 1;
       this._lossDropCounted = false;
       return true;
@@ -287,6 +309,42 @@ export class PresentationController {
       this._droppedFrames += 1;
       return false;
     }
+  }
+
+  _installStatsSurface() {
+    if (!this._statsOwner) return;
+    if (!this._statsOwner.stats || typeof this._statsOwner.stats !== "object") this._statsOwner.stats = {};
+    const stats = this._statsOwner.stats;
+    try {
+      Object.defineProperty(stats, "gpu", {
+        configurable: true,
+        enumerable: true,
+        get: () => this._gpuStats(),
+      });
+    } catch {
+      // A host may provide a non-configurable stats object. Keep the public value useful without
+      // retaining a backend/canvas reference in the serialized snapshot.
+      stats.gpu = this._gpuStats();
+    }
+  }
+
+  _gpuStats() {
+    const scheduler = this._scheduler?.snapshot();
+    return {
+      framesReceived: this._framesReceived,
+      enqueued: scheduler?.enqueued ?? this._framesReceived,
+      coalesced: scheduler?.coalesced ?? 0,
+      presented: scheduler?.presented ?? this._successfulPresents,
+      successfulPresents: this._successfulPresents,
+      skipped: scheduler?.skipped ?? this._droppedFrames,
+      droppedFrames: this._droppedFrames,
+      overruns: scheduler?.overruns ?? 0,
+      pending: scheduler?.pending ?? 0,
+      maxPending: scheduler?.maxPending ?? 0,
+      uploadedBytes: this._uploadedBytes,
+      width: this._width,
+      height: this._height,
+    };
   }
 
   /** Publish one full-resource frame and return whether it reached a backend. */
@@ -337,6 +395,7 @@ export class PresentationController {
       fallbacks: this._fallbacks,
       listenerCount: this._listenerCanvas ? 2 : 0,
       scheduler: this._scheduler?.snapshot() ?? null,
+      gpu: this._gpuStats(),
       latest: this._latest
         ? { rect: this._latest.rect, resourceWidth: this._latest.resourceWidth, resourceHeight: this._latest.resourceHeight }
         : null,
@@ -376,6 +435,10 @@ export class PresentationController {
 
   resume() {
     return this._scheduler?.resume() ?? false;
+  }
+
+  visibilityChanged() {
+    return this._scheduler?.visibilityChanged?.() ?? false;
   }
 
   get backendName() {
