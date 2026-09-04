@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T23a** — Shared guest-agent protocol and bounded framing
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -390,7 +389,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `521.5` [E5-T21e](epic-5-the-window/E5-T21e-microphone-capture-proof.md) — Guest microphone capture and browser proof *(deps: E5-T21d)*
 - [ ] `522` [E5-T22](epic-5-the-window/E5-T22-display-resize-end-to-end.md) — Display resize end-to-end — canvas size to guest mode change and back *(deps: E5-T04, E5-T18)*
 - [-] `523` [E5-T23](epic-5-the-window/E5-T23-guest-agent-channel.md) — virtio-console agent channel and static Rust guest agent *(deps: E5-T05c)*
-- [ ] `523.1` [E5-T23a](epic-5-the-window/E5-T23a-agent-protocol-framing.md) — Shared guest-agent protocol and bounded framing *(deps: E5-T05c)*
+- [~] `523.1` [E5-T23a](epic-5-the-window/E5-T23a-agent-protocol-framing.md) — Shared guest-agent protocol and bounded framing *(deps: E5-T05c)*
 - [ ] `523.2` [E5-T23b](epic-5-the-window/E5-T23b-virtio-console-multiport.md) — Virtio-console multiport agent transport *(deps: E5-T23a)*
 - [ ] `523.3` [E5-T23c](epic-5-the-window/E5-T23c-static-agent-service.md) — Static riscv64 guest agent and OpenRC service *(deps: E5-T23b)*
 - [ ] `523.4` [E5-T23d](epic-5-the-window/E5-T23d-host-channel-reconnect.md) — Host agent Channel API and reconnect lifecycle *(deps: E5-T23c)*

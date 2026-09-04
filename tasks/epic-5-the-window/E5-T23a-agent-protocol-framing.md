@@ -3,7 +3,7 @@ id: E5-T23a
 epic: 5
 title: Shared guest-agent protocol and bounded framing
 priority: 523.1
-status: pending
+status: in-progress
 depends_on: [E5-T05c]
 estimate: S
 risk: high

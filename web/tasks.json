@@ -18774,7 +18774,7 @@
       "epicKey": "5",
       "title": "Shared guest-agent protocol and bounded framing",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T05c"
       ],
