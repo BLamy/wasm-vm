@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 250,
-    "total": 410
+    "total": 414
   },
   "epics": [
     {
@@ -16779,15 +16779,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "chore(e5-t06d): verify presentation integration",
             "chore(e5-t06d): activate presentation integration"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T07",
@@ -16795,13 +16796,18 @@
       "epicKey": "5",
       "title": "First light — kernel fbcon text console rendered on the canvas",
       "priority": 507,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T03c",
         "E5-T05c",
         "E5-T06d"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T07a",
+        "E5-T07b",
+        "E5-T07c",
+        "E5-T07d"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "Boot the T05 kernel against the T01–T03 device and the T06 sink and watch the Linux boot\nlog scroll *on the canvas*: virtio-gpu probes, DRM registers card0, fbdev emulation\ncreates fb0, fbcon takes over tty0, and every printk is real pixels — the epic's\nfirst user-visible milestone, before any input exists.",
@@ -16829,9 +16835,117 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — coordinator — decomposed\n\nThis M-sized fbcon/DRM first-light container is cancelled before implementation as required by\ntask policy and replaced by four ordered S tickets. The replacements isolate guest command tracing,\nbrowser boot rendering, tty0 damage behavior, and native parity/stress so each active lane has one\nfalsifiable boundary.",
       "adversarial": "Refute by stress and comparison: run `cat /dev/urandom | head -c 1000000 | hexdump -C`\non tty0 — a full-speed fbcon scroll for 30 s must not deadlock the controlq, leak\nresources (resource count returns to baseline), or corrupt rows (screenshot vs a QEMU\nrun of the same kernel/rootfs: text content must match line-for-line at the same VT\nsize). VT switch stress: `chvt 2; chvt 1` in a loop 100x (kernel VTs) — any stuck blank\nscreen refutes. Kill the tab mid-scroll and reload: device must re-probe cleanly.\nCompare dmesg against QEMU virtio-gpu-device boot of the identical kernel — unexplained\ndivergence in probe lines is a refutation.",
       "file": "tasks/epic-5-the-window/E5-T07-fbcon-drm-first-light.md",
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T07a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Guest virtio-gpu fbcon probe and command trace",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T03c",
+        "E5-T05c",
+        "E5-T06d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove the rebuilt Linux graphics stack drives the production virtio-gpu control queue through its\nfbcon probe and initial framebuffer setup, with a deterministic native command trace that the later\nbrowser slices can compare.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Run the probe with the control queue delayed at each command boundary and with one malformed\ndescriptor in each request class. The guest must continue making progress or report the specified\nerror, and the trace must never claim a flush that did not publish a used-ring entry.",
+      "file": "tasks/epic-5-the-window/E5-T07a-fbcon-probe-trace.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T07b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Browser fbcon first-light boot on the display canvas",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T07a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Wire the proven guest probe into a focused browser boot path and show Linux fbcon text as the first\nreal user-visible frame on the display canvas.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Run once with WebGL2 disabled and once with the normal Canvas2D default; the guest must keep\nretiring instructions and the canvas must remain live. Reload during the boot transfer and confirm\nthe replacement run re-probes without reusing a stale frame or listener.",
+      "file": "tasks/epic-5-the-window/E5-T07b-browser-first-light.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T07c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "tty0 output and fbcon damage-rectangle delivery",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T07b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove that serial-console commands targeting `/dev/tty0` appear on the visible fbcon surface and\nthat cursor blinking/partial updates publish only the changed damage rectangle.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Alternate full-line output and cursor updates at the flush boundary, including an update at each\nedge and an odd-width rectangle. The final visible frame must match the independent reference\nbuffer and every used-ring completion must be accounted for exactly once.",
+      "file": "tasks/epic-5-the-window/E5-T07c-tty0-damage-output.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T07d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Native fbcon parity and first-light stress proof",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T07c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Close the first-light integration with a native null-sink parity check and bounded scroll, VT, and\nreload stress against the browser trace fixture.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Repeat the stress harness with independent seeds and a forced queue delay at each flush. Compare the\nfinal screenshot/readback against the reference renderer and reject any unexplained divergence from\nthe T07a fixture.",
+      "file": "tasks/epic-5-the-window/E5-T07d-native-parity-stress.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,

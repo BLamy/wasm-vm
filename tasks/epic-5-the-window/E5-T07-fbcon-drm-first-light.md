@@ -3,10 +3,12 @@ id: E5-T07
 epic: 5
 title: First light — kernel fbcon text console rendered on the canvas
 priority: 507
-status: pending
+status: cancelled
 depends_on: [E5-T03c, E5-T05c, E5-T06d]
 estimate: M
+risk: high
 capstone: false
+decomposed_into: [E5-T07a, E5-T07b, E5-T07c, E5-T07d]
 ---
 
 ## Goal
@@ -56,5 +58,27 @@ screen refutes. Kill the tab mid-scroll and reload: device must re-probe cleanly
 Compare dmesg against QEMU virtio-gpu-device boot of the identical kernel — unexplained
 divergence in probe lines is a refutation.
 
+## Execution slices
+
+This M-sized integration container is cancelled before implementation as required by task policy.
+The work is split into ordered S tickets with one boundary and one deterministic acceptance command
+each:
+
+1. **E5-T07a — guest probe and command trace.** Add the native guest-facing probe trace and prove
+   the rebuilt kernel reaches a live virtio-gpu controlq through `GET_DISPLAY_INFO`, EDID, resource
+   setup, scanout binding, transfer, and flush.
+2. **E5-T07b — browser first-light boot.** Expose a focused browser boot route that renders the
+   fbcon canvas and records the cold-boot frame, backend, dmesg markers, and browser errors.
+3. **E5-T07c — tty0 output and damage behavior.** Prove serial-triggered tty0 output reaches the
+   visible canvas and that cursor/partial updates stay damage-bounded without duplicate callbacks.
+4. **E5-T07d — native parity and stress.** Compare the native null-sink probe sequence against the
+   browser trace fixture and run bounded scroll/VT/reload stress with resource and queue checks.
+
 ## Verification log
-(empty)
+
+### 2026-09-04 — coordinator — decomposed
+
+This M-sized fbcon/DRM first-light container is cancelled before implementation as required by
+task policy and replaced by four ordered S tickets. The replacements isolate guest command tracing,
+browser boot rendering, tty0 damage behavior, and native parity/stress so each active lane has one
+falsifiable boundary.
