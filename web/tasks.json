@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 254,
+    "verified": 255,
     "total": 414
   },
   "epics": [
@@ -16993,7 +16993,7 @@
       "epicKey": "5",
       "title": "Host chrome — serial console toggle beside the display, screenshot and recording",
       "priority": 508,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T07d"
       ],
@@ -17025,13 +17025,21 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — verifier — VERDICT: verified\n- P1 visibility continuity — HELD. Predicted that switching to Serial would change only host\n  visibility while guest delivery continued; Chromium 131 recorded 16 frames and 1,954 serial\n  bytes during the hidden window, and Firefox 132 recorded 13 frames and 1,954 serial bytes.\n  Both observed the deterministic hidden `/dev/tty0` flush marker, returned to Display, and ended\n  with the Canvas2D surface visible. Evidence: `evidence/e5-t08/console-capture.json`.\n- P2 reserved keyboard chord — HELD. Predicted one capture-phase `Ctrl+Alt+Backquote` toggle with\n  no guest-forwarded codes or residual reserved keys; both browsers observed exactly one toggle,\n  `forwardedCodes: []`, and `reservedCodesAfter: []`.\n- P3 screenshot readback — HELD. Predicted a same-generation PNG whose decoded RGBA bytes matched\n  `getImageData()` exactly; both browsers recorded `mismatchBytes: 0`, `pixelIdentical: true`, and\n  equal SHA-256 digests at flush generations 24 (Chromium) and 21 (Firefox).\n- P4 bounded recording — HELD. Predicted a non-empty WebM containing frames while Serial was\n  active and stopping at the 10 s cap; Chromium decoded `video/webm;codecs=vp9` at 1280×800 for\n  10,138 ms with 632 frames, and Firefox decoded `video/webm;codecs=vp8` at 1280×800 for\n  12,536 ms with 80 frames. Both recorded `stopReason: duration-cap` and `playable: true`.\n- P5 rapid-toggle/leak boundary — HELD. Predicted 50 transitions with the fixed two button\n  listeners; both browsers recorded `transitionsAdded: 50`, `listenerCountBefore: 2`,\n  `listenerCountAfter: 2`, zero dropped frames, zero presentation errors, and 500M+ retired\n  guest instructions.\n- COVERAGE — HELD. The exact-head browser proof at commit\n  `d6756fa128fc4743f9e2855abd71a5aadcf84a8d` exercised the route, host controller, keyboard\n  policy, presentation path, screenshot decoder, recorder, serial scroll, lifecycle cleanup, and\n  deploy projection. Source/dist parity was checked for the route, host module, and roadmap.\n- Commands: `node --check web/src/host/console-capture.js`; `node --check web/console-capture.js`;\n  `node --check tools/verify/e5-t08-console-capture.mjs`; `node --test\n  web/tests/console-capture.test.mjs web/tests/capture-policy.test.mjs web/tests/held-keys.test.mjs`\n  (17 passed); `make web-build`; `node tools/verify/e5-t08-console-capture.mjs --output\n  evidence/e5-t08/console-capture.json` (Chromium 131 + Firefox 132, zero console/page/request\n  errors). WebKit, independent machines, and host rr are outside this task's agreed scope.",
       "adversarial": "Attack focus routing: toggle views while holding a guest key down — prove no stuck key\nlands in either view (pairs with T13, pre-verify the host side: held-key set is flushed\non view switch). Attack capture: screenshot immediately after a partial damage flush —\nthe PNG must contain the *composited* frame, not a stale or torn buffer (compare against\nreadback). On the WebGL backend, take a screenshot with `preserveDrawingBuffer:false`\nand prove it isn't black. Start recording, switch to serial view, stop — the WebM must\ncontain the frames drawn while hidden or the doc must explicitly state it doesn't.\nLeak-check with 100 record start/stops (heap snapshot delta < 5 MB).",
       "file": "tasks/epic-5-the-window/E5-T08-console-toggle-and-capture.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t08): activate console capture slice"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T09",

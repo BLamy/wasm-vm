@@ -3,7 +3,7 @@ id: E5-T08
 epic: 5
 title: Host chrome — serial console toggle beside the display, screenshot and recording
 priority: 508
-status: in-progress
+status: verified
 depends_on: [E5-T07d]
 estimate: S
 risk: medium
@@ -56,4 +56,33 @@ contain the frames drawn while hidden or the doc must explicitly state it doesn'
 Leak-check with 100 record start/stops (heap snapshot delta < 5 MB).
 
 ## Verification log
-(empty)
+### 2026-09-04 — verifier — VERDICT: verified
+- P1 visibility continuity — HELD. Predicted that switching to Serial would change only host
+  visibility while guest delivery continued; Chromium 131 recorded 16 frames and 1,954 serial
+  bytes during the hidden window, and Firefox 132 recorded 13 frames and 1,954 serial bytes.
+  Both observed the deterministic hidden `/dev/tty0` flush marker, returned to Display, and ended
+  with the Canvas2D surface visible. Evidence: `evidence/e5-t08/console-capture.json`.
+- P2 reserved keyboard chord — HELD. Predicted one capture-phase `Ctrl+Alt+Backquote` toggle with
+  no guest-forwarded codes or residual reserved keys; both browsers observed exactly one toggle,
+  `forwardedCodes: []`, and `reservedCodesAfter: []`.
+- P3 screenshot readback — HELD. Predicted a same-generation PNG whose decoded RGBA bytes matched
+  `getImageData()` exactly; both browsers recorded `mismatchBytes: 0`, `pixelIdentical: true`, and
+  equal SHA-256 digests at flush generations 24 (Chromium) and 21 (Firefox).
+- P4 bounded recording — HELD. Predicted a non-empty WebM containing frames while Serial was
+  active and stopping at the 10 s cap; Chromium decoded `video/webm;codecs=vp9` at 1280×800 for
+  10,138 ms with 632 frames, and Firefox decoded `video/webm;codecs=vp8` at 1280×800 for
+  12,536 ms with 80 frames. Both recorded `stopReason: duration-cap` and `playable: true`.
+- P5 rapid-toggle/leak boundary — HELD. Predicted 50 transitions with the fixed two button
+  listeners; both browsers recorded `transitionsAdded: 50`, `listenerCountBefore: 2`,
+  `listenerCountAfter: 2`, zero dropped frames, zero presentation errors, and 500M+ retired
+  guest instructions.
+- COVERAGE — HELD. The exact-head browser proof at commit
+  `d6756fa128fc4743f9e2855abd71a5aadcf84a8d` exercised the route, host controller, keyboard
+  policy, presentation path, screenshot decoder, recorder, serial scroll, lifecycle cleanup, and
+  deploy projection. Source/dist parity was checked for the route, host module, and roadmap.
+- Commands: `node --check web/src/host/console-capture.js`; `node --check web/console-capture.js`;
+  `node --check tools/verify/e5-t08-console-capture.mjs`; `node --test
+  web/tests/console-capture.test.mjs web/tests/capture-policy.test.mjs web/tests/held-keys.test.mjs`
+  (17 passed); `make web-build`; `node tools/verify/e5-t08-console-capture.mjs --output
+  evidence/e5-t08/console-capture.json` (Chromium 131 + Firefox 132, zero console/page/request
+  errors). WebKit, independent machines, and host rr are outside this task's agreed scope.
