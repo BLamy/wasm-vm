@@ -276,6 +276,32 @@ test("10,000 PING attempts are backpressured at the pending bound", async () => 
   assert.equal(channel.pendingCount, 0);
 });
 
+test("a failed connector retries with bounded backoff and a PING timeout retires only itself", async () => {
+  const h = connector();
+  let attempts = 0;
+  const channel = new Channel({
+    connect: () => {
+      attempts += 1;
+      if (attempts === 1) throw new Error("transient connector failure");
+      return h.connect();
+    },
+    reconnectMinDelayMs: 0,
+    reconnectMaxDelayMs: 0,
+    pingTimeoutMs: 5,
+  });
+  const states = [];
+  channel.subscribeState((event) => states.push(event.state));
+  channel.start();
+  await channel.ready;
+  assert.equal(attempts, 2);
+  assert.ok(states.includes(CHANNEL_STATE.DISCONNECTED), "connector failure enters the explicit gap");
+  assert.equal(states.at(-1), CHANNEL_STATE.READY);
+  await assert.rejects(channel.ping(0x55n), (error) => error.code === "TIMEOUT");
+  assert.equal(channel.pendingCount, 0);
+  channel.close();
+  assert.equal(states.at(-1), CHANNEL_STATE.CLOSED);
+});
+
 test("stale HELLO and no-common-version peers fail explicitly", async () => {
   const h = connector({ peerVersion: 0 });
   const channel = new Channel({ connect: h.connect, reconnect: false });
