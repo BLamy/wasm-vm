@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T16c** — Measure weston with the pixman renderer inside the emulator
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -388,7 +387,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [-] `516` [E5-T16](epic-5-the-window/E5-T16-display-server-decision.md) — Display server decision — Wayland (labwc/weston) vs X11 under emulation, measured *(deps: E5-T07d, E5-T09e, E5-T13c, E5-T14c, E5-T15d)*
 - [x] `516.1` [E5-T16a](epic-5-the-window/E5-T16a-display-server-workload-harness.md) — Display-server finalist workload and guest metric harness *(deps: E5-T07d, E5-T09e, E5-T13c, E5-T14c, E5-T15d)*
 - [x] `516.2` [E5-T16b](epic-5-the-window/E5-T16b-labwc-pixman-measurement.md) — Measure labwc with the pixman renderer inside the emulator *(deps: E5-T16a)*
-- [ ] `516.3` [E5-T16c](epic-5-the-window/E5-T16c-weston-pixman-measurement.md) — Measure weston with the pixman renderer inside the emulator *(deps: E5-T16b)*
+- [~] `516.3` [E5-T16c](epic-5-the-window/E5-T16c-weston-pixman-measurement.md) — Measure weston with the pixman renderer inside the emulator *(deps: E5-T16b)*
 - [ ] `516.4` [E5-T16d](epic-5-the-window/E5-T16d-alpine-display-package-audit.md) — Audit Alpine riscv64 display-stack packages and installability *(deps: E5-T16c)*
 - [ ] `516.5` [E5-T16e](epic-5-the-window/E5-T16e-display-server-decision.md) — Publish measured display-server decision and T17 handoff *(deps: E5-T16d)*
 - [ ] `517` [E5-T17](epic-5-the-window/E5-T17-alpine-desktop-image.md) — Alpine riscv64 desktop disk image — reproducible build within size budget *(deps: E5-T16e)*

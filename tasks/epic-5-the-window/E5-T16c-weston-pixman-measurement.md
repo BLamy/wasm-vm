@@ -3,7 +3,7 @@ id: E5-T16c
 epic: 5
 title: Measure weston with the pixman renderer inside the emulator
 priority: 516.3
-status: pending
+status: in-progress
 depends_on: [E5-T16b]
 estimate: S
 risk: medium

@@ -18514,18 +18514,18 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 4,
+          "commits": 5,
           "labels": [
+            "chore(e5-t16b): verify idle-budget rework",
             "chore(e5-t16b): resubmit verifier hardening",
             "chore(e5-t16b): record adversarial verification findings",
-            "chore(e5-t16b): record native verification evidence",
-            "chore(e5-t16b): activate labwc pixman measurement"
+            "chore(e5-t16b): record native verification evidence"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 4
+      "commitCount": 5
     },
     {
       "id": "E5-T16c",
@@ -18533,7 +18533,7 @@
       "epicKey": "5",
       "title": "Measure weston with the pixman renderer inside the emulator",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T16b"
       ],
