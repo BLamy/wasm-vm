@@ -1,0 +1,50 @@
+E5-T24c host clipboard service — exact-head worker evidence
+Recorded: 2026-09-04
+Implementation head: 9efe610 (feat(e5-t24c): add host clipboard service)
+
+Scope and claim
+---------------
+`web/clipboard-service.js` provides the host-side service on top of the verified Channel. It
+validates the shared 256 KiB UTF-8 contract, sends focused paste data as CLIP_SET before invoking
+the caller's key-ready callback, never inspects clipboardData while the target is unfocused, and
+never polls the asynchronous clipboard-read API. Guest CLIP_SET values write immediately when the
+browser accepts them; permission failures retain one bounded value and expose staged/denied state
+until a gesture calls flushStaged(). A two-entry direction/generation/content-hash history consumes
+only the expected host-to-guest echo, so a different or expired identical copy remains a real copy.
+
+Exact commands and results
+--------------------------
+1. env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR \
+     -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS \
+     make verify-E5-T24c
+   PASS: syntax checks and 6 clipboard-service tests, 6 passed, 0 failed.
+
+2. node --test web/tests/agent-channel.test.mjs
+   PASS: existing Channel regression suite, 14 tests passed, 0 failed.
+
+3. `make web-dist`
+   PASS: deployable `web/dist/clipboard-service.js` generated. Source and dist SHA-256 are both
+   8e564d1f1696e7f0362878d056adabd44262040b253e96b0b1bbbb3126e815d6; the existing agent-channel
+   source/dist pair is also identical at 1b527f025e92b725ea088168ea4b889c70a6e198efa8a438a50f70a4b06292c3.
+
+Coverage map
+------------
+- guest CLIP_SET writes when allowed, stages denial, and flushes only from a gesture: immediate
+  permitted write, bounded staged value, honest DENIED UI state, and successful gesture retry.
+- focused paste sends CLIP_SET before the key-ready barrier and unfocused paste never reads data:
+  capture ordering, capability option, preventDefault/stopImmediatePropagation, and a clipboardData
+  getter spy that remains untouched while focus is absent.
+- host and guest directions use bounded, generation-aware echo history: same-content expected echo
+  suppression, different-content delivery, expired identical-content delivery, and history <= 2.
+- paste and guest payload limits reject without reading the asynchronous clipboard API: exact rejection
+  for 257 KiB and invalid UTF-8 with no frame or host write.
+- gesture listeners are idempotent and detach preserves the caller-owned Channel: one paste/gesture
+  listener set, one retained staged value, and clean removal without closing transport state.
+- channel generation changes invalidate a stale expected echo: reconnect generation cannot suppress a
+  copy from an older transport.
+
+Environment waiver
+------------------
+The host rr/independent-machine and WebKit portions are waived per the user instruction. The
+authoritative evidence is the deterministic Node service/Channel suite, injected clipboard API,
+fake DOM focus/event surface, and generated source/dist parity.
