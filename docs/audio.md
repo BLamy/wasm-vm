@@ -131,6 +131,42 @@ node --test web/tests/audio-autoplay.test.mjs
 It covers the no-gesture state, clock-rate discard, a delayed/backgrounding gap, first click,
 keydown/click coalescing, repeated gestures, resume rejection and retry, and listener cleanup.
 
+## Guest microphone capture and privacy proof (E5-T21e)
+
+Microphone capture is opt-in. Without `enableMic` in the page query, the guest advertises no input
+device, the page allocates no capture ring, and the lazy permission controller makes zero
+`getUserMedia` calls. With `enableMic`, the page creates the capture SAB and still waits for the
+guest's successful `PCM_START` before asking the browser for permission. A delayed permission
+response therefore cannot create a host graph or publish frames ahead of the guest timeline.
+
+The browser producer is a real `AudioWorkletProcessor` writing interleaved stereo f32 frames to the
+reversed SPSC ring. The bounded `GuestCaptureRecorder` in
+`web/src/audio/capture-recorder.js` consumes that same ring as a guest `arecord` loop: each period
+is stereo PCM16, carries an eight-byte virtio status after its data, and is paced against the
+negotiated 44.1 or 48 kHz clock. It emits only the exact PCM bytes in the finalized WAV; status and
+capacity bytes are never included. The recorder's direct 400–480 Hz spectrum check makes the
+deterministic 440 Hz loopback measurable rather than trusting a non-empty buffer.
+
+Permission denial, no-device, mute, and ended tracks remain recoverable: the consumer drains stale
+frames, the guest-shaped periods zero-fill while wall-clock duration continues, and eventq
+notifications distinguish `denied`, `muted`, and `revoked`. A later `PCM_START` re-grants without a
+reload and removes the retired track's listeners. Playback and capture can run together; the
+full-duplex proof keeps the page's output sink active while recording the input ring.
+
+The exact Chromium/native proof is:
+
+```sh
+node tools/verify/e5-t21e-microphone-capture-proof.mjs
+```
+
+It records machine-readable output, a screenshot, and a transcript under `evidence/e5-t21e/`.
+The 2026-09-04 run checks flag-off privacy, a five-second 48 kHz WAV with a 440 Hz peak, equally
+paced five-second denied silence, mute/revoke/regrant, an exact one-second 44.1 kHz WAV, hostile
+16-byte and 1 MiB periods with canaries, simultaneous playback/capture, source/dist parity, and
+zero unexpected Chromium console, page, or request errors. The final evidence uses a deterministic
+loopback stream at the browser permission seam; it does not require a physical microphone or an
+ALSA `arecord` binary in the shipped rootfs.
+
 ## Deterministic proof
 
 Run the focused contract suite with:

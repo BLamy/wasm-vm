@@ -8,16 +8,16 @@ use std::rc::Rc;
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::dev::virtio::mmio::VirtioMmio;
 use wasm_vm_core::dev::virtio::snd::{
-    self, AudioCaptureError, AudioCaptureSource, CaptureReport, ManualAudioClock, PcmParams,
-    PcmState, PcmStatus, RX_QUEUE, SndStatus, VIRTIO_SND_EVT_PCM_XRUN, VIRTIO_SND_R_PCM_INFO,
-    VIRTIO_SND_R_PCM_PREPARE, VIRTIO_SND_R_PCM_RELEASE, VIRTIO_SND_R_PCM_START,
-    VIRTIO_SND_R_PCM_STOP, VIRTIO_SND_S_BAD_MSG, VIRTIO_SND_S_OK,
+    self, AudioCaptureError, AudioCaptureSource, AudioClock, CaptureReport, ManualAudioClock,
+    PcmParams, PcmState, PcmStatus, RX_QUEUE, SndStatus, VIRTIO_SND_EVT_PCM_XRUN,
+    VIRTIO_SND_R_PCM_INFO, VIRTIO_SND_R_PCM_PREPARE, VIRTIO_SND_R_PCM_RELEASE,
+    VIRTIO_SND_R_PCM_START, VIRTIO_SND_R_PCM_STOP, VIRTIO_SND_S_BAD_MSG, VIRTIO_SND_S_OK,
 };
 use wasm_vm_core::mmio::{MmioDevice, SystemBus, Width};
 use wasm_vm_core::platform::virt::DRAM_BASE;
 use wasm_vm_core::ram::Ram;
 
-const RAM_BYTES: usize = 8 * 1024 * 1024;
+const RAM_BYTES: usize = 32 * 1024 * 1024;
 const QUEUE_SIZE: u16 = 16;
 const STATUS: u64 = 0x070;
 const QUEUE_SEL: u64 = 0x030;
@@ -83,6 +83,47 @@ impl AudioCaptureSource for ShortSource {
             return Err(AudioCaptureError::Failed);
         }
         Ok(0)
+    }
+}
+
+#[derive(Debug)]
+struct SineSource {
+    next_frame: usize,
+    sample_rate_hz: u32,
+    frequency_hz: f64,
+}
+
+impl SineSource {
+    fn new(sample_rate_hz: u32, frequency_hz: f64) -> Self {
+        Self {
+            next_frame: 0,
+            sample_rate_hz,
+            frequency_hz,
+        }
+    }
+}
+
+impl AudioCaptureSource for SineSource {
+    fn pull(
+        &mut self,
+        frames: &mut [i16],
+        sample_rate_hz: u32,
+        channels: u8,
+    ) -> Result<usize, AudioCaptureError> {
+        if sample_rate_hz != self.sample_rate_hz || channels != 2 || !frames.len().is_multiple_of(2)
+        {
+            return Err(AudioCaptureError::Failed);
+        }
+        for frame in 0..frames.len() / 2 {
+            let phase =
+                2.0 * std::f64::consts::PI * self.frequency_hz * (self.next_frame + frame) as f64
+                    / self.sample_rate_hz as f64;
+            let sample = (phase.sin() * 32_767.0).round() as i16;
+            frames[frame * 2] = sample;
+            frames[frame * 2 + 1] = sample;
+        }
+        self.next_frame += frames.len() / 2;
+        Ok(frames.len() / 2)
     }
 }
 
@@ -559,4 +600,129 @@ fn one_megabyte_period_is_bounded_by_the_posted_writable_buffer() {
     assert_eq!(rig.used_len(0), 8);
     assert_eq!(rig.status(malformed.status).status, SndStatus::IoErr);
     assert_eq!(rig.bus.load8(malformed.data + 1024).unwrap(), 0x5a);
+}
+
+#[test]
+fn five_second_capture_has_exact_pcm16_duration_and_sine_peak() {
+    const SAMPLE_RATE_HZ: u32 = 48_000;
+    const PERIOD_FRAMES: usize = 480;
+    const PERIOD_BYTES: u32 = (PERIOD_FRAMES * 4) as u32;
+    const PERIODS: usize = 500;
+
+    let mut rig = Rig::new(false);
+    rig.start(params(PERIOD_BYTES, 2));
+    let clock = ManualAudioClock::new();
+    let mut source = SineSource::new(SAMPLE_RATE_HZ, 440.0);
+    let mut captured = Vec::with_capacity(PERIODS * PERIOD_FRAMES * 2);
+
+    for period in 0..PERIODS {
+        let posted = rig.post_rx(1, 4, PERIOD_BYTES, snd::PCM_STATUS_SIZE as u32);
+        rig.kick(RX_QUEUE);
+        assert_eq!(
+            rig.service(&clock, &mut source).queued,
+            1,
+            "period {period} not queued"
+        );
+        clock.advance_ns(10_000_000);
+        let report = rig.service(&clock, &mut source);
+        assert_eq!(report.completed, 1, "period {period} not completed");
+        assert_eq!(report.errors, 0, "period {period} returned IO_ERR");
+        assert_eq!(rig.status(posted.status).status, SndStatus::Ok);
+        for sample in 0..PERIOD_FRAMES * 2 {
+            captured.push(rig.bus.load16(posted.data + 2 * sample as u64).unwrap() as i16);
+        }
+    }
+
+    let frame_count = captured.len() / 2;
+    let pcm_bytes = frame_count * 4;
+    assert_eq!(frame_count, SAMPLE_RATE_HZ as usize * 5);
+    assert_eq!(pcm_bytes, SAMPLE_RATE_HZ as usize * 5 * 4);
+    assert_eq!(
+        frame_count as u64 * 1_000_000_000 / SAMPLE_RATE_HZ as u64,
+        5_000_000_000
+    );
+    assert_eq!(clock.now_ns(), 5_000_000_000);
+
+    let inspect = 8_192.min(frame_count);
+    let mut powers = Vec::new();
+    for frequency in 400i32..=480i32 {
+        let mut real = 0.0;
+        let mut imaginary = 0.0;
+        for frame in 0..inspect {
+            let angle = 2.0 * std::f64::consts::PI * frequency as f64 * frame as f64
+                / SAMPLE_RATE_HZ as f64;
+            let sample = captured[frame * 2] as f64;
+            real += sample * angle.cos();
+            imaginary -= sample * angle.sin();
+        }
+        powers.push((frequency, real * real + imaginary * imaginary));
+    }
+    powers.sort_by(|left, right| right.1.total_cmp(&left.1));
+    let (peak_hz, peak_power) = powers[0];
+    let neighbor_power = powers
+        .iter()
+        .filter(|(frequency, _)| (*frequency - peak_hz).unsigned_abs() > 2)
+        .map(|(_, power)| *power)
+        .sum::<f64>()
+        / 76.0;
+    let separation_db = 10.0 * (peak_power / neighbor_power.max(1.0)).log10();
+    assert!(
+        (439..=441).contains(&peak_hz),
+        "unexpected peak {peak_hz} Hz"
+    );
+    assert!(
+        separation_db > 12.0,
+        "weak tone separation: {separation_db} dB"
+    );
+}
+
+#[test]
+fn sixteen_byte_and_one_megabyte_periods_keep_rxq_canaries() {
+    let mut small = Rig::new(false);
+    let small_params = params(16, 2);
+    small.start(small_params);
+    let small_buf = small.post_rx(1, 4, 16, 8);
+    let mut source = RampSource::new();
+    let clock = ManualAudioClock::new();
+    small.kick(RX_QUEUE);
+    assert_eq!(small.service(&clock, &mut source).queued, 1);
+    clock.advance_ns(PERIOD_NS);
+    assert_eq!(small.service(&clock, &mut source).completed, 1);
+    assert_eq!(small.used_len(0), 24);
+    assert_eq!(small.bus.load8(small_buf.data + 16).unwrap(), 0x5a);
+    assert_eq!(small.bus.load8(small_buf.status + 8).unwrap(), 0x5a);
+
+    let mut large = Rig::new(false);
+    let large_params = PcmParams {
+        stream_id: 1,
+        buffer_bytes: 4 * 1024 * 1024,
+        period_bytes: 1024 * 1024,
+        channels: 2,
+        ..PcmParams::default()
+    };
+    large.start(large_params);
+    let large_buf = large.post_rx(1, 4, large_params.period_bytes, 8);
+    let mut silent = ShortSource;
+    let large_clock = ManualAudioClock::new();
+    large.kick(RX_QUEUE);
+    assert_eq!(large.service(&large_clock, &mut silent).queued, 1);
+    large_clock.set_now_ns(6_000_000_000);
+    let report = large.service(&large_clock, &mut silent);
+    assert_eq!(report.completed, 1);
+    assert_eq!(
+        report.errors, 0,
+        "short host capture must complete with silence"
+    );
+    assert_eq!(report.frames_pulled, 0);
+    assert_eq!(report.bytes_written, u64::from(large_params.period_bytes));
+    assert_eq!(large.used_len(0), large_params.period_bytes + 8);
+    assert_eq!(large.bus.load8(large_buf.data).unwrap(), 0);
+    assert_eq!(
+        large
+            .bus
+            .load8(large_buf.data + u64::from(large_params.period_bytes))
+            .unwrap(),
+        0x5a
+    );
+    assert_eq!(large.bus.load8(large_buf.status + 8).unwrap(), 0x5a);
 }
