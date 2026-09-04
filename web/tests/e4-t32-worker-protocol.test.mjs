@@ -275,6 +275,36 @@ test("capture PCM_START lifecycle notification crosses the worker boundary", asy
   await controller.whenDone;
 });
 
+test("display FrameSink projections cross the worker boundary with private pixel ownership", async () => {
+  const events = [];
+  const { page, worker } = endpointPair(events);
+  let resolveDone;
+  const done = new Promise((resolve) => { resolveDone = resolve; });
+  let resolveDisplay;
+  const display = new Promise((resolve) => { resolveDisplay = resolve; });
+  createLinuxWorkerRuntime(worker, {
+    startBoot: async (opts) => {
+      const source = Uint32Array.of(0x11223344, 0x55667788);
+      opts.onDisplayFrame({
+        scanout: 0,
+        rect: { x: 1, y: 0, width: 1, height: 1 },
+        resourceWidth: 2,
+        resourceHeight: 1,
+        pixels: source,
+      });
+      source[0] = 0;
+      return fakeController(events, done);
+    },
+  });
+  const client = createLinuxWorkerClient(page, { onDisplayFrame: resolveDisplay });
+  const controller = await client.boot({});
+  const frame = await display;
+  assert.deepEqual(frame.rect, { x: 1, y: 0, width: 1, height: 1 });
+  assert.deepEqual([...frame.pixels], [0x11223344, 0x55667788]);
+  resolveDone("stopped");
+  await controller.whenDone;
+});
+
 test("RPC ids correlate out-of-order results and arbitrary methods are not exposed", async () => {
   const { page, worker } = endpointPair();
   const client = createLinuxWorkerClient(page);

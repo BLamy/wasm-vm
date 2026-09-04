@@ -10,7 +10,11 @@ globalThis.__wasmVmTailscaleEvent = (message) => {
 };
 
 const runtime = createLinuxWorkerRuntime(self, {
-  startBoot: (opts) => startLinuxBoot({ ...opts, workerMode: true }),
+  startBoot: (opts) => startLinuxBoot({
+    ...opts,
+    workerMode: true,
+    onDisplayFrame: (frame) => runtime.callbacks?.onDisplayFrame?.(frame),
+  }),
   tailscaleCommand,
 });
 self.addEventListener("messageerror", () => {

@@ -251,6 +251,15 @@ pub struct Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
         dev::plic::IrqLine,
     )>,
+    /// E5-T06d: virtio-gpu service state (shared presentation sink + deferred controlq view) and
+    /// its selected optional slot. The sink is replaced by a browser callback after assembly;
+    /// headless/native machines retain the GPU with [`dev::virtio::gpu::NullSink`].
+    #[allow(clippy::type_complexity)]
+    gpu: Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+        usize,
+    )>,
     /// E2-T11: virtio-blk service state (shared backend state + the persistent ring view),
     /// when [`Self::enable_virtio_blk`] plugged a backend into slot 0. Serviced at every
     /// instruction boundary the guest has kicked.
@@ -714,6 +723,7 @@ impl Machine {
             prof_total_ns: 0,
             syscon: None,
             virtio: alloc::vec::Vec::new(),
+            gpu: None,
             blk: None,
             extra_blk: alloc::vec::Vec::new(),
             net: None,
@@ -1304,6 +1314,71 @@ impl Machine {
         self.extra_blk
             .push((alloc::rc::Rc::clone(&state), None, slot));
         state
+    }
+
+    /// E5-T06d: attach the virtio-gpu control queue to the preferred optional slot. The
+    /// established eight-slot platform has two optional positions (6 and 7); choose slot 7 when
+    /// available so the existing sound device keeps its standard slot 6, and use slot 6 only when
+    /// slot 7 is already occupied. Returning `None` lets callers with all optional positions
+    /// consumed keep their existing headless device set without replacing another backend.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_gpu(
+        &mut self,
+        sink: alloc::boxed::Box<dyn dev::virtio::gpu::FrameSink>,
+    ) -> Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,
+    )> {
+        assert!(
+            self.virtio.len() > dev::virtio::gpu::VIRTIO_GPU_SLOT,
+            "enable_virtio_slots/enable_virtio_blk before enable_virtio_gpu"
+        );
+        assert!(self.gpu.is_none(), "virtio-gpu is already enabled");
+        let slot_index = [
+            dev::virtio::gpu::VIRTIO_GPU_SLOT,
+            dev::virtio::gpu::VIRTIO_GPU_SLOT - 1,
+        ]
+        .into_iter()
+        .find(|&index| self.virtio[index].0.borrow().device_id() == 0)?;
+        let (device, state) = dev::virtio::gpu::VirtioGpu::new_with_sink_state(sink);
+        assert!(
+            self.virtio[slot_index]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(device))
+                .is_ok(),
+            "virtio slot {slot_index} already has a device"
+        );
+        self.gpu = Some((alloc::rc::Rc::clone(&state), None, slot_index));
+        Some((alloc::rc::Rc::clone(&self.virtio[slot_index].0), state))
+    }
+
+    /// E5-T06d: replace the host presentation callback after assembly. The guest-visible GPU
+    /// device and queue state remain untouched, so attaching a browser sink cannot reset or stall
+    /// a running guest.
+    pub fn replace_virtio_gpu_sink(
+        &mut self,
+        sink: alloc::boxed::Box<dyn dev::virtio::gpu::FrameSink>,
+    ) -> bool {
+        let Some((state, _, _)) = self.gpu.as_ref() else {
+            return false;
+        };
+        state.borrow_mut().frame_sink = sink;
+        true
+    }
+
+    /// E5-T06d: report the selected virtio-gpu slot and shared state, if the display capability was
+    /// installed. Hosts use the handle only for diagnostics; queue servicing stays in `run`.
+    #[allow(clippy::type_complexity)]
+    pub fn virtio_gpu(
+        &self,
+    ) -> Option<(
+        usize,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,
+    )> {
+        self.gpu
+            .as_ref()
+            .map(|(state, _, slot)| (*slot, alloc::rc::Rc::clone(state)))
     }
 
     /// E3-T13: attach a virtio-net device (DeviceID 1) backed by `backend` in slot 1. The
@@ -3799,6 +3874,13 @@ impl Machine {
                         &self.virtio[dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT].0,
                     );
                     dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
+                }
+                // E5-T06d: service the deferred virtio-gpu control queue at the same boundary as
+                // the other guest devices. RESOURCE_FLUSH invokes the retained host sink only
+                // after guest backing has been validated and copied into the resource shadow.
+                if let Some((state, vq, slot_index)) = &mut self.gpu {
+                    let slot = alloc::rc::Rc::clone(&self.virtio[*slot_index].0);
+                    dev::virtio::gpu::service(&slot, vq, state, &mut self.bus);
                 }
                 // E5-T19d: service sound controlq before eventq/txq so a Linux snd_virtio probe
                 // receives its QEMU-shaped responses at the same guest-visible boundary that it

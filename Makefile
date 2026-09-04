@@ -502,6 +502,17 @@ verify-E5-T06c:
 	node tools/verify/e5-t06c-present-bench.mjs
 	@echo "verify-E5-T06c (measured Canvas2D/WebGL2 presentation benchmark): OK"
 
+.PHONY: verify-E5-T06d
+verify-E5-T06d:
+	node --check web/src/sink/presentation.js
+	node --check web/linux-worker-protocol.js
+	node --check web/linux-worker.js
+	node --check tools/verify/e5-t06d-present-integration.mjs
+	node --test web/tests/e4-t32-worker-protocol.test.mjs web/tests/e5-t06d-presentation.test.mjs
+	cargo test -p wasm-vm-core --test virtio_gpu_machine
+	node tools/verify/e5-t06d-present-integration.mjs --output evidence/e5-t06d/presentation-integration.json
+	@echo "verify-E5-T06d (presentation selection and context-loss integration): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

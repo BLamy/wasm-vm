@@ -267,6 +267,21 @@ export function createLinuxWorkerClient(endpoint, callbacks = {}) {
       case "writer": callbacks.onWriterStatus?.(message.info); break;
       case "quota": callbacks.onQuota?.(message.info); break;
       case "capture-start": callbacks.onCaptureStart?.(message.info); break;
+      case "display": {
+        const frame = message.frame;
+        if (!frame || !(frame.pixels instanceof ArrayBuffer)) {
+          fail(new Error("invalid Linux worker display frame"));
+          break;
+        }
+        callbacks.onDisplayFrame?.({
+          scanout: frame.scanout ?? null,
+          rect: frame.rect,
+          resourceWidth: frame.resourceWidth,
+          resourceHeight: frame.resourceHeight,
+          pixels: new Uint32Array(frame.pixels),
+        });
+        break;
+      }
       case "tailscale-event":
         // Tailscale status persistence is ancillary UI work. localStorage/security failures must not
         // terminate the emulated machine or poison the controller protocol.
@@ -651,6 +666,24 @@ export function createLinuxWorkerRuntime(endpoint, {
     onWriterStatus: (info) => send({ type: "writer", info }),
     onQuota: (info) => send({ type: "quota", info }),
     onCaptureStart: (info) => send({ type: "capture-start", info }),
+    onDisplayFrame: (frame) => {
+      try {
+        const source = frame?.pixels;
+        const pixels = source instanceof Uint32Array ? source.slice() : Uint32Array.from(source ?? []);
+        send({
+          type: "display",
+          frame: {
+            scanout: frame?.scanout ?? null,
+            rect: frame?.rect,
+            resourceWidth: frame?.resourceWidth,
+            resourceHeight: frame?.resourceHeight,
+            pixels: pixels.buffer,
+          },
+        }, [pixels.buffer]);
+      } catch (error) {
+        send({ type: "error", error: String(error?.message || error) });
+      }
+    },
   };
 
   const handleBoot = async (message) => {

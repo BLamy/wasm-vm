@@ -143,6 +143,10 @@ pub const DEFAULT_DISPLAY_REFRESH_HZ: u32 = edid::DEFAULT_REFRESH_HZ;
 pub const DEFAULT_NUM_SCANOUTS: u32 = 1;
 /// E5-T01a exposes no 3D capsets.
 pub const DEFAULT_NUM_CAPSETS: u32 = 0;
+/// Preferred virtio-mmio slot for the browser display. Slot 6 is the first optional slot;
+/// callers may fall back to slot 6 when the preferred slot is already occupied by another
+/// optional device (the machine keeps the established eight-slot platform unchanged).
+pub const VIRTIO_GPU_SLOT: usize = 7;
 
 const CONFIG_LEN: usize = 16;
 

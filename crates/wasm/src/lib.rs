@@ -1480,6 +1480,7 @@ struct LinuxInner {
     machine: Machine,
     audio_attached: bool,
     capture_attached: bool,
+    display_attached: bool,
     uart: std::rc::Rc<RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
     out: std::rc::Rc<RefCell<Vec<u8>>>,
     output: js_sys::Function,
@@ -1611,6 +1612,57 @@ struct BufSink {
 impl ConsoleSink for BufSink {
     fn put_byte(&mut self, b: u8) {
         self.buf.borrow_mut().push(b);
+    }
+}
+
+/// E5-T06d: synchronous browser presentation adapter. The GPU service owns the guest-backed
+/// pixels only for the duration of this call; the page-side PresentationController immediately
+/// copies the typed view before returning, so replay never retains a borrowed wasm-memory slice.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+struct JsFrameSink {
+    callback: js_sys::Function,
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl wasm_vm_core::dev::virtio::gpu::FrameSink for JsFrameSink {
+    fn flush(
+        &mut self,
+        scanout: Option<u32>,
+        rect: wasm_vm_core::dev::virtio::gpu::Rect,
+        resource_width: u32,
+        resource_height: u32,
+        pixels: &[u32],
+    ) {
+        let frame = js_sys::Object::new();
+        let rect_object = js_sys::Object::new();
+        let set = |object: &js_sys::Object, name: &str, value: u32| {
+            let _ = js_sys::Reflect::set(
+                object,
+                &JsValue::from_str(name),
+                &JsValue::from_f64(value as f64),
+            );
+        };
+        set(&rect_object, "x", rect.x);
+        set(&rect_object, "y", rect.y);
+        set(&rect_object, "width", rect.width);
+        set(&rect_object, "height", rect.height);
+        let _ = js_sys::Reflect::set(
+            &frame,
+            &JsValue::from_str("scanout"),
+            &scanout
+                .map(|value| JsValue::from_f64(value as f64))
+                .unwrap_or(JsValue::NULL),
+        );
+        let _ = js_sys::Reflect::set(&frame, &JsValue::from_str("rect"), rect_object.as_ref());
+        set(&frame, "resourceWidth", resource_width);
+        set(&frame, "resourceHeight", resource_height);
+        // `view` is safe here because the callback is synchronous and the page copies the view
+        // before it returns. A copy at this boundary would double the full-frame allocation.
+        let pixel_view = unsafe { js_sys::Uint32Array::view(pixels) };
+        let _ = js_sys::Reflect::set(&frame, &JsValue::from_str("pixels"), pixel_view.as_ref());
+        // FrameSink cannot surface a JS exception. The controller owns the error/fallback policy;
+        // ignoring an exception here keeps a guest presentation fault from aborting the emulator.
+        let _ = self.callback.call1(&JsValue::NULL, &frame);
     }
 }
 
@@ -2099,6 +2151,11 @@ impl WasmLinux {
             Box::new(wasm_vm_core::dev::virtio::snd::NullSink::new()),
             enable_mic,
         );
+        // E5-T06d: preserve the established sound slot, then use the remaining optional
+        // virtio-mmio slot for the browser display. A fully occupied legacy layout simply keeps
+        // the GPU absent; attachDisplay reports that fact to the loader without replacing a
+        // working device.
+        let _ = machine.enable_virtio_gpu(Box::new(wasm_vm_core::dev::virtio::gpu::NullSink));
         machine.enable_builtin_sbi();
         let out = std::rc::Rc::new(RefCell::new(Vec::new()));
         machine.sbi_set_console(Box::new(BufSink { buf: out.clone() }));
@@ -2110,6 +2167,7 @@ impl WasmLinux {
                 machine,
                 audio_attached: false,
                 capture_attached: false,
+                display_attached: false,
                 uart,
                 out,
                 output,
@@ -2151,6 +2209,31 @@ impl WasmLinux {
         } else {
             Err(JsError::new("virtio-snd is not assembled"))
         }
+    }
+
+    /// E5-T06d: attach the page-owned presentation callback after the machine has been assembled.
+    /// The callback receives `{ scanout, rect, resourceWidth, resourceHeight, pixels }`, where
+    /// `pixels` is a temporary `Uint32Array` view over wasm memory. The browser sink must copy it
+    /// synchronously before returning so context-loss replay owns its latest frame.
+    #[wasm_bindgen(js_name = attachDisplay)]
+    pub fn attach_display(&self, callback: js_sys::Function) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner
+            .machine
+            .replace_virtio_gpu_sink(Box::new(JsFrameSink { callback }))
+        {
+            inner.display_attached = true;
+            Ok(true)
+        } else {
+            Ok(false)
+        }
+    }
+
+    /// E5-T06d: report whether a page presentation callback owns the assembled GPU sink.
+    #[wasm_bindgen(js_name = displayReady)]
+    pub fn display_ready(&self) -> Result<bool, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner.display_attached)
     }
 
     /// E5-T20e: report whether this guest owns the page-provided ring sink. Kept separate from

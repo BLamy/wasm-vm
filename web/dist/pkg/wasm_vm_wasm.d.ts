@@ -45,6 +45,13 @@ export class WasmLinux {
      */
     attachAudioOutput(shared_buffer: SharedArrayBuffer, clock_buffer: SharedArrayBuffer, capacity_frames: number, sample_rate_hz: number): void;
     /**
+     * E5-T06d: attach the page-owned presentation callback after the machine has been assembled.
+     * The callback receives `{ scanout, rect, resourceWidth, resourceHeight, pixels }`, where
+     * `pixels` is a temporary `Uint32Array` view over wasm memory. The browser sink must copy it
+     * synchronously before returning so context-loss replay owns its latest frame.
+     */
+    attachDisplay(callback: Function): boolean;
+    /**
      * E5-T21d: report whether this guest owns the page-provided capture ring.
      */
     audioCaptureReady(): boolean;
@@ -71,6 +78,10 @@ export class WasmLinux {
     closeStorage(): void;
     dismissFileDownload(id: number): boolean;
     dismissFileUpload(stream: number): boolean;
+    /**
+     * E5-T06d: report whether a page presentation callback owns the assembled GPU sink.
+     */
+    displayReady(): boolean;
     /**
      * E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
      * arm tier-up. The accelerated interpreter remains the fallback for cold/untranslatable blocks;
@@ -575,6 +586,7 @@ export interface InitOutput {
     readonly wasmlinux_advanceOverlayGeneration: (a: number) => [number, number, number];
     readonly wasmlinux_attachAudioCapture: (a: number, b: any, c: number, d: number) => [number, number];
     readonly wasmlinux_attachAudioOutput: (a: number, b: any, c: any, d: number, e: number) => [number, number];
+    readonly wasmlinux_attachDisplay: (a: number, b: any) => [number, number, number];
     readonly wasmlinux_audioCaptureReady: (a: number) => [number, number, number];
     readonly wasmlinux_audioOutputReady: (a: number) => [number, number, number];
     readonly wasmlinux_beginFileUpload: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number, number];
@@ -584,6 +596,7 @@ export interface InitOutput {
     readonly wasmlinux_closeStorage: (a: number) => [number, number];
     readonly wasmlinux_dismissFileDownload: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_dismissFileUpload: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_displayReady: (a: number) => [number, number, number];
     readonly wasmlinux_enableJit: (a: number, b: number) => [number, number];
     readonly wasmlinux_enableJitWithPolicy: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_fetchPending: (a: number) => any;

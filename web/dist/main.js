@@ -42,6 +42,7 @@ import {
   createWasmPointerAdapter,
   POINTER_MODES,
 } from "./src/input/pointer.js";
+import { PresentationController } from "./src/sink/presentation.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
@@ -50,6 +51,49 @@ const SYS_EXIT = 93n;
 const TAILSCALE_STATE_KEY = "wasm-vm.tailscale-state.v1";
 const NETWORK_CONFIG_KEY = "wasm-vm.network-config.v1";
 const NETWORK_PROVIDERS = new Set(["offline", "websocket", "tailscale", "headscale", "relay"]);
+
+// E5-T06d: the page owns the visible canvas and receives synchronous FrameSink projections from
+// either the direct loader or the whole-machine worker. The controller records a private latest
+// frame so a WebGL context loss can replay it through Canvas2D without re-entering the guest.
+const displayCanvas = document.getElementById("ide-display-canvas");
+const displayStatusEl = document.getElementById("ide-display-status");
+let presentation = null;
+if (displayCanvas) {
+  try {
+    presentation = new PresentationController(displayCanvas, { defaultBackend: "canvas2d" });
+  } catch (error) {
+    if (displayStatusEl) {
+      displayStatusEl.textContent = `display unavailable: ${String(error?.message || error)}`;
+      displayStatusEl.dataset.state = "error";
+    }
+  }
+}
+function handleDisplayFrame(frame) {
+  if (!presentation) return false;
+  try {
+    const reached = presentation.present(frame);
+    if (displayStatusEl) {
+      const state = presentation.snapshot();
+      displayStatusEl.textContent = `${state.backend || "none"} · ${state.width}×${state.height} · ${state.successfulPresents} presents`;
+      displayStatusEl.dataset.state = reached ? "ready" : "degraded";
+    }
+    return reached;
+  } catch (error) {
+    if (displayStatusEl) {
+      displayStatusEl.textContent = `display error: ${String(error?.message || error)}`;
+      displayStatusEl.dataset.state = "error";
+    }
+    return false;
+  }
+}
+try {
+  window.__presentation = {
+    controller: () => presentation,
+    state: () => presentation?.snapshot?.() ?? null,
+    readPixels: () => presentation?.readPixels?.() ?? null,
+    dispose: () => presentation?.dispose?.(),
+  };
+} catch { /* worker/test scope */ }
 
 const networkProviderEl = document.getElementById("network-provider");
 const networkWebsocketEl = document.getElementById("network-websocket-url");
@@ -1186,6 +1230,9 @@ async function runLinuxBootOwned(opts, banner, request) {
       onCaptureStart: (info) => {
         void microphoneCapture.onPcmStart(info);
       },
+      // E5-T06d: keep display rendering on the page even when the guest machine itself runs in a
+      // worker; the worker protocol copies each frame once before this callback sees it.
+      onDisplayFrame: handleDisplayFrame,
       onState: (s) => {
         // E4 restore-on-first-load: a visible stopwatch instead of the "booting" progress bar when
         // the shipped boot snapshot is being restored.

@@ -211,6 +211,9 @@ export async function startLinuxBoot(opts = {}) {
     // E5-T21d: emitted once per successful guest capture PCM_START edge. The page owns the
     // permission adapter; this callback is only a lifecycle notification and never opens media.
     onCaptureStart = () => {},
+    // E5-T06d: synchronous virtio-gpu FrameSink projection. The callback must copy the temporary
+    // pixels view before returning; the page PresentationController owns that copy/replay policy.
+    onDisplayFrame = null,
     // Instructions per synchronous run slice. Kept modest so a slice is only a few ms of main-thread
     // time — short enough that the browser paints/handles input between slices (smooth page/animation).
     // Combined with the no-clamp MessageChannel yield (see yieldToMain), throughput stays high. A larger
@@ -498,6 +501,16 @@ export async function startLinuxBoot(opts = {}) {
       machine = WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, emitOutput, enableMic);
     } else {
       machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, emitOutput, enableMic);
+    }
+
+    // E5-T06d: attach the page-owned display sink only after the complete machine exists. This
+    // leaves the core's headless NullSink as the safe constructor default and keeps the same
+    // callback seam available to direct and whole-machine-worker boot paths.
+    if (typeof onDisplayFrame === "function" && typeof machine.attachDisplay === "function") {
+      // Older/custom device layouts may have consumed both optional virtio slots. The display is
+      // an enhancement in that case; preserve boot and the guest queue instead of turning an
+      // unavailable optional sink into a machine-fatal attach error.
+      machine.attachDisplay(onDisplayFrame);
     }
 
     // E5-T20e: swap the assembly's default NullSink for the page-owned AudioWorklet producer only
