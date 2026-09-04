@@ -1,7 +1,12 @@
 fb1a82d26a100db2bffb85ab8f256418b777dba7f902764328a37d0d7424454b 0755 /etc/init.d/wasm-vm-file-agent
+a417aa7b622f81634ca4af63d7514a1d5de6efd5c77b0a7b262f0b99c13f99ec 0755 /etc/init.d/wasmvm-agent
 7a085c85612a4fc7142ff679f2f36a06b0414d7422c25dc930696e3726d5aa3f 0644 /etc/wasm-vm/file-transfer.conf
+974d8ba41b9d897c0034644ec5c830acfde7c96b1f1202945d4f27d026468b51 0644 /root/.tmux.conf
+040c891096bd71c3cd7b0f624db50684600c8ab9f106f15d8e217430c6edce01 0644 /root/.vimrc
 377e7536fc217b9aaa2fc84d33614f4c536fbb13c2c06e3c79efbda56aaaa0e6 0755 /usr/bin/vm-download
-131ae68fc0d1df6b9a7db5a8885fed4176121ae0824fd98e217d0763b99aaffe 0755 /usr/libexec/wasm-vm/wvft-agent
+c5feb0c04db680d1ae813d0fd85bd599ee29adb51fdc64dc329f66793d1f6851 0755 /usr/libexec/wasm-vm/wasmvm-agent
+5baf72e2d8dba14e2f606fc1a50d595159ba21919a8c67009227cbae70c52ee2 0755 /usr/libexec/wasm-vm/wvft-agent
+4c5ddf24aa3dc34f1e1e1e64bd5198a88abda1529e850b9be62539fd9105e3c0 0755 /usr/local/bin/osc52-copy
 directory 0750 /var/lib/wasm-vm/transfer
 directory 0750 /var/lib/wasm-vm/transfer/inbox
 directory 0750 /var/lib/wasm-vm/transfer/outbox

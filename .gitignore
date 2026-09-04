@@ -52,6 +52,7 @@ releases/rootfs/*.ext4
 releases/rootfs/MANIFEST.new
 releases/rootfs/FILE-MANIFEST.new
 releases/wvft-agent-riscv64
+releases/wasmvm-agent-riscv64
 
 # Playwright test artifacts (E2-T21)
 web/test-results/

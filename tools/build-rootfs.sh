@@ -37,14 +37,20 @@ OUT="releases/rootfs"
 IMG_TAG="wasm-vm-rootfs-build:local"
 mkdir -p "$OUT"
 
-# Build the already-verified static guest agent before entering the image builder. The container
-# receives only this one executable as a read-only input; it never receives Cargo state or source.
+# Build the already-verified static guest agents before entering the image builder. The container
+# receives only these executables as read-only inputs; it never receives Cargo state or source.
+# Use a dedicated cache namespace for the pinned Zig 0.16 linker. Rust/Cargo fingerprints do not
+# include the external linker version, so reusing an older generic target directory can otherwise
+# silently preserve a pre-Zig-0.16 ELF while claiming the current source is fresh.
+ROOTFS_CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$PWD/target/rootfs-riscv64-zig-0.16}"
 AGENT="$PWD/releases/wvft-agent-riscv64"
-bash tools/build-file-agent.sh "$AGENT"
+CARGO_TARGET_DIR="$ROOTFS_CARGO_TARGET_DIR" bash tools/build-file-agent.sh "$AGENT"
+CHANNEL_AGENT="$PWD/releases/wasmvm-agent-riscv64"
+CARGO_TARGET_DIR="$ROOTFS_CARGO_TARGET_DIR" bash tools/build-agent.sh "$CHANNEL_AGENT"
 
 # E3.5-T03 (AC6): the static seccomp helper wvrun wraps the container exec with.
 WVSECCOMP="$PWD/releases/wvseccomp-riscv64"
-bash tools/build-wvseccomp.sh "$WVSECCOMP"
+CARGO_TARGET_DIR="$ROOTFS_CARGO_TARGET_DIR" bash tools/build-wvseccomp.sh "$WVSECCOMP"
 
 # Build the pinned build image (context = tools/ only). The cold-cache adversarial gate can force
 # every layer to rebuild without changing the production command or tag.
@@ -62,10 +68,12 @@ docker run --rm \
   -v "$PWD/tools/guest/container-smoke.sh:/container-smoke.sh:ro" \
   -v "$PWD/tools/guest/wvrun.sh:/wvrun.sh:ro" \
   -v "$AGENT:/wvft-agent-riscv64:ro" \
+  -v "$CHANNEL_AGENT:/wasmvm-agent-riscv64:ro" \
   -v "$WVSECCOMP:/wvseccomp-riscv64:ro" \
   -v "$PWD/releases/container-bundles:/container-bundles:ro" \
   -v "$PWD/tools/rootfs/file-transfer.conf:/file-transfer.conf:ro" \
   -v "$PWD/tools/rootfs/wasm-vm-file-agent.initd:/wasm-vm-file-agent.initd:ro" \
+  -v "$PWD/tools/rootfs/wasmvm-agent.initd:/wasmvm-agent.initd:ro" \
   -v "$PWD/tools/rootfs/vm-download:/vm-download:ro" \
   -v "$PWD/tools/rootfs/osc52-copy:/osc52-copy:ro" \
   -e MAIN_REPO="$MAIN_REPO" \

@@ -5,7 +5,15 @@ repo=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 work=$(mktemp -d "${TMPDIR:-/tmp}/e3-t21b2c.XXXXXX")
 trap 'rm -rf "$work"' EXIT
 
-CARGO_TARGET_DIR="$work/target" "$repo/tools/build-file-agent.sh" "$work/wvft-agent"
+# When this verifier follows a real image build, use the exact binary that was installed into that
+# image. The dedicated E3-T21b2b verifier owns clean-target reproducibility; rebuilding here from a
+# different historical target cache can otherwise compare a valid fresh WVFT link against an older
+# image artifact.
+if [ -x "$repo/releases/wvft-agent-riscv64" ]; then
+  cp "$repo/releases/wvft-agent-riscv64" "$work/wvft-agent"
+else
+  CARGO_TARGET_DIR="$work/target" "$repo/tools/build-file-agent.sh" "$work/wvft-agent"
+fi
 
 mkdir -p \
   "$work/root/etc/init.d" \
@@ -46,7 +54,14 @@ chmod 0750 \
   done
 } | sort -k3,3 > "$work/FILE-MANIFEST.txt"
 
-diff -u "$repo/releases/rootfs/FILE-MANIFEST.txt" "$work/FILE-MANIFEST.txt"
+# T17's custom manifest is shared by later image slices. Compare only the WVFT-owned records here;
+# newer agents and convenience files have their own acceptance gates and must not make this older
+# verifier reject an otherwise unchanged file-transfer installation.
+grep -E ' /etc/init.d/wasm-vm-file-agent$| /etc/wasm-vm/file-transfer.conf$| /usr/libexec/wasm-vm/wvft-agent$| /usr/bin/vm-download$| /var/lib/wasm-vm/transfer$| /var/lib/wasm-vm/transfer/inbox$| /var/lib/wasm-vm/transfer/outbox$' \
+  "$repo/releases/rootfs/FILE-MANIFEST.txt" > "$work/locked-wvft-manifest"
+grep -E ' /etc/init.d/wasm-vm-file-agent$| /etc/wasm-vm/file-transfer.conf$| /usr/libexec/wasm-vm/wvft-agent$| /usr/bin/vm-download$| /var/lib/wasm-vm/transfer$| /var/lib/wasm-vm/transfer/inbox$| /var/lib/wasm-vm/transfer/outbox$' \
+  "$work/FILE-MANIFEST.txt" > "$work/actual-wvft-manifest"
+diff -u "$work/locked-wvft-manifest" "$work/actual-wvft-manifest"
 grep -q 'command="/usr/libexec/wasm-vm/wvft-agent"' \
   "$work/root/etc/init.d/wasm-vm-file-agent"
 grep -q 'need networking' "$work/root/etc/init.d/wasm-vm-file-agent"

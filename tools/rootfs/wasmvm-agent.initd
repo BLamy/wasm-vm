@@ -1,0 +1,15 @@
+#!/sbin/openrc-run
+
+name="wasm-vm virtio agent"
+description="Bounded guest peer for the wasm-vm virtio-console agent port"
+command="/usr/libexec/wasm-vm/wasmvm-agent"
+pidfile="/run/wasmvm-agent.pid"
+supervisor="supervise-daemon"
+respawn_delay=1
+respawn_max=5
+respawn_period=60
+
+depend() {
+	need localmount
+	after bootmisc
+}
