@@ -11,14 +11,22 @@ import {
   CAP_CLIPBOARD,
   CAP_DISPLAY,
   CAP_PING,
+  ClipboardError,
   CHANNEL_STATE,
   Channel,
   createMessageTransport,
+  decodeClipboardGet,
+  decodeClipboardSet,
   DisconnectedError,
+  encodeClipboardGet,
+  encodeClipboardSet,
   NegotiationError,
+  MAX_CLIPBOARD_BYTES,
   NAK_UNKNOWN_TYPE,
   ProtocolError,
   TYPE_HELLO,
+  TYPE_CLIP_GET,
+  TYPE_CLIP_SET,
   TYPE_NAK,
   TYPE_PING,
   TYPE_PONG,
@@ -162,6 +170,108 @@ test("Channel is not ready until HELLO intersects, then correlates reverse-order
   assert.equal(await first, 0x0102n);
   assert.equal(await second, 0x0304n);
   assert.equal(channel.pendingCount, 0);
+  channel.close();
+});
+
+test("clipboard messages negotiate and preserve strict bounded UTF-8 bytes", async () => {
+  const h = connector({ peerCapabilities: CAP_PING | CAP_CLIPBOARD });
+  const channel = new Channel({
+    connect: h.connect,
+    capabilities: CAP_PING | CAP_CLIPBOARD,
+    reconnect: false,
+  });
+  channel.start();
+  await channel.ready;
+  assert.equal(channel.supports(CAP_CLIPBOARD), true);
+  channel.close();
+
+  const text = "abc\r\n🦀";
+  const set = decodeOne(encodeClipboardSet(text));
+  assert.equal(set.type, TYPE_CLIP_SET);
+  assert.deepEqual(decodeClipboardSet(set.payload), {
+    text,
+    bytes: new TextEncoder().encode(text),
+  });
+
+  const boundary = new Uint8Array(MAX_CLIPBOARD_BYTES).fill(0x61);
+  const boundaryFrame = decodeOne(encodeClipboardSet(boundary));
+  assert.equal(decodeClipboardSet(boundaryFrame.payload).bytes.byteLength, MAX_CLIPBOARD_BYTES);
+  assert.throws(
+    () => encodeClipboardSet(new Uint8Array(MAX_CLIPBOARD_BYTES + 1)),
+    (error) => error instanceof ClipboardError && error.code === "CLIPBOARD_TOO_LARGE",
+  );
+  assert.throws(
+    () => decodeClipboardSet(Uint8Array.of(0xff)),
+    (error) => error instanceof ClipboardError && error.code === "CLIPBOARD_INVALID_UTF8",
+  );
+  assert.throws(
+    () => decodeClipboardSet(new Uint8Array(MAX_CLIPBOARD_BYTES + 1)),
+    (error) => error instanceof ClipboardError && error.code === "CLIPBOARD_TOO_LARGE",
+  );
+  assert.throws(
+    () => encodeClipboardSet("\ud800"),
+    (error) => error instanceof ClipboardError && error.code === "CLIPBOARD_INVALID_UTF8",
+  );
+  assert.throws(
+    () => encodeClipboardSet("\udc00"),
+    (error) => error instanceof ClipboardError && error.code === "CLIPBOARD_INVALID_UTF8",
+  );
+
+  const get = decodeOne(encodeClipboardGet());
+  assert.equal(get.type, TYPE_CLIP_GET);
+  assert.deepEqual(decodeClipboardGet(get.payload), {});
+  assert.throws(() => decodeClipboardGet(Uint8Array.of(0)), (error) => error.code === "CLIP_GET_LENGTH");
+});
+
+test("clipboard frames survive byte dribble and coalescing", () => {
+  const messages = Array.from({ length: 10 }, (_, index) => (
+    index % 2 === 0 ? encodeClipboardSet(`clip-${index}`) : encodeClipboardGet()
+  ));
+  const wire = new Uint8Array(messages.reduce((length, message) => length + message.byteLength, 0));
+  let offset = 0;
+  for (const message of messages) {
+    wire.set(message, offset);
+    offset += message.byteLength;
+  }
+
+  const dribbledDecoder = new AgentFrameDecoder();
+  const dribbled = [];
+  for (const byte of wire) dribbledDecoder.push(Uint8Array.of(byte), (frame) => dribbled.push(frame));
+  const coalescedDecoder = new AgentFrameDecoder();
+  const coalesced = [];
+  coalescedDecoder.push(wire, (frame) => coalesced.push(frame));
+
+  assert.deepEqual(dribbled, coalesced);
+  assert.equal(dribbled.length, 10);
+  assert.deepEqual(
+    dribbled.map((frame) => frame.type),
+    messages.map((message) => decodeOne(message).type),
+  );
+  for (let index = 0; index < dribbled.length; index += 1) {
+    if (index % 2 === 0) assert.equal(decodeClipboardSet(dribbled[index].payload).text, `clip-${index}`);
+    else assert.deepEqual(decodeClipboardGet(dribbled[index].payload), {});
+  }
+});
+
+test("clipboard messages stay compatible with peers that only advertise PING", async () => {
+  const h = connector({
+    peerCapabilities: CAP_PING,
+    respondPing: (transport, nonce) => transport.emit(pingFrame(TYPE_PONG, nonce)),
+  });
+  const channel = new Channel({
+    connect: h.connect,
+    capabilities: CAP_PING | CAP_CLIPBOARD,
+    reconnect: false,
+  });
+  channel.start();
+  await channel.ready;
+  assert.equal(channel.supports(CAP_CLIPBOARD), false);
+
+  h.transports[0].emit(encodeClipboardSet("legacy peer"));
+  await eventually(() => h.transports[0].sent.some((bytes) => decodeOne(bytes).type === TYPE_NAK));
+  const nak = decodeOne(h.transports[0].sent.find((bytes) => decodeOne(bytes).type === TYPE_NAK));
+  assert.deepEqual([...nak.payload], [TYPE_CLIP_SET, 0, NAK_UNKNOWN_TYPE, 0]);
+  assert.equal(await channel.ping(0x55n), 0x55n, "unsupported clipboard traffic must not break PING");
   channel.close();
 });
 

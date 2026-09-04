@@ -32,6 +32,8 @@ answered with `NAK`, keeping the session alive.
 | `PING` | `1` | `u64 nonce` |
 | `PONG` | `2` | `u64 nonce` copied from `PING` |
 | `NAK` | `3` | `u16 rejected_type`, `u16 code` |
+| `CLIP_SET` | `4` | raw UTF-8 `text/plain`, at most 256 KiB |
+| `CLIP_GET` | `5` | empty |
 
 All integer fields are little-endian. The current protocol version is `1`. Capability bits are
 registered in the shared Rust crate and mirrored by `web/agent-channel.js`: `CAP_PING = 1 << 0`,
@@ -43,7 +45,15 @@ The endpoint sends `HELLO` as soon as it opens a fresh port incarnation. Each si
 intersection. A peer version of zero has no common version and fails the connection. A later
 `HELLO` with a lower version than the negotiated version is stale and also fails the connection.
 `NAK_UNKNOWN_TYPE = 1` identifies an unknown message type. NAK payloads are themselves fixed-size
-and malformed payloads are connection-fatal.
+and malformed payloads are connection-fatal. `CAP_CLIPBOARD` authorizes `CLIP_SET` and
+`CLIP_GET`; an endpoint that does not advertise the bit remains compatible and should NAK those
+types rather than guessing at their payload.
+
+`CLIP_SET` is the only clipboard data message in v1. Its payload is the exact UTF-8 byte sequence
+for `text/plain`, with a separate 256 KiB limit (`MAX_CLIPBOARD_BYTES`) below the general 1 MiB
+frame limit. `CLIP_GET` has an empty payload and asks the peer to answer with its current
+`CLIP_SET`. Invalid UTF-8, an unpaired UTF-16 surrogate supplied by a JavaScript caller, or a
+payload larger than 256 KiB is rejected before the clipboard value is delivered.
 
 ## Queue, size, and reset policy
 

@@ -21,6 +21,7 @@ use core::fmt;
 
 pub const FRAME_HEADER_BYTES: usize = 8;
 pub const MAX_PAYLOAD_BYTES: usize = 1 << 20;
+pub const MAX_CLIPBOARD_BYTES: usize = 256 << 10;
 pub const MAX_FRAME_BYTES: usize = FRAME_HEADER_BYTES + MAX_PAYLOAD_BYTES;
 pub const PROTOCOL_VERSION: u16 = 1;
 
@@ -28,6 +29,8 @@ pub const TYPE_HELLO: u16 = 0;
 pub const TYPE_PING: u16 = 1;
 pub const TYPE_PONG: u16 = 2;
 pub const TYPE_NAK: u16 = 3;
+pub const TYPE_CLIP_SET: u16 = 4;
+pub const TYPE_CLIP_GET: u16 = 5;
 
 pub const FLAG_NONE: u16 = 0;
 pub const NAK_UNKNOWN_TYPE: u16 = 1;
@@ -201,6 +204,94 @@ impl Nak {
             rejected_type: get_u16(&payload[0..2]),
             code: get_u16(&payload[2..4]),
         })
+    }
+}
+
+/// A validated text/plain clipboard update. The type tag supplies the content type, so the wire
+/// payload is exactly the UTF-8 bytes and has no second length or encoding field.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ClipboardSet {
+    text: Vec<u8>,
+}
+
+impl ClipboardSet {
+    pub fn new(text: &[u8]) -> Result<Self, ClipboardError> {
+        if text.len() > MAX_CLIPBOARD_BYTES {
+            return Err(ClipboardError::TooLarge { length: text.len() });
+        }
+        core::str::from_utf8(text).map_err(|_| ClipboardError::InvalidUtf8)?;
+        Ok(Self {
+            text: text.to_vec(),
+        })
+    }
+
+    pub fn from_payload(payload: &[u8]) -> Result<Self, ClipboardError> {
+        Self::new(payload)
+    }
+
+    pub fn encode_payload(&self, output: &mut [u8]) -> Result<usize, EncodeError> {
+        if output.len() < self.text.len() {
+            return Err(EncodeError::BufferTooSmall {
+                required: self.text.len(),
+                available: output.len(),
+            });
+        }
+        output[..self.text.len()].copy_from_slice(&self.text);
+        Ok(self.text.len())
+    }
+
+    pub fn as_bytes(&self) -> &[u8] {
+        &self.text
+    }
+}
+
+/// A request for the peer's current text/plain clipboard. Its payload is always empty.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct ClipboardGet;
+
+impl ClipboardGet {
+    pub const PAYLOAD_BYTES: usize = 0;
+
+    pub const fn new() -> Self {
+        Self
+    }
+
+    pub fn encode_payload(self, _output: &mut [u8]) -> Result<usize, EncodeError> {
+        Ok(0)
+    }
+
+    pub fn from_payload(payload: &[u8]) -> Result<Self, PayloadError> {
+        if !payload.is_empty() {
+            return Err(PayloadError::WrongLength {
+                expected: Self::PAYLOAD_BYTES,
+                actual: payload.len(),
+            });
+        }
+        Ok(Self)
+    }
+}
+
+impl Default for ClipboardGet {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum ClipboardError {
+    TooLarge { length: usize },
+    InvalidUtf8,
+}
+
+impl fmt::Display for ClipboardError {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::TooLarge { length } => write!(
+                formatter,
+                "clipboard payload is {length} bytes; maximum is {MAX_CLIPBOARD_BYTES}"
+            ),
+            Self::InvalidUtf8 => formatter.write_str("clipboard payload is not valid UTF-8"),
+        }
     }
 }
 
@@ -485,7 +576,7 @@ fn get_u64(input: &[u8]) -> u64 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloc::{vec, vec::Vec};
+    use alloc::{string::ToString, vec, vec::Vec};
 
     fn encoded(message_type: u16, flags: u16, payload: &[u8]) -> Vec<u8> {
         let mut bytes = vec![0; FRAME_HEADER_BYTES + payload.len()];
@@ -611,6 +702,95 @@ mod tests {
         assert_eq!(
             Hello::new(0, 1).negotiate(Hello::new(1, 1)),
             Err(NegotiationError::NoCommonVersion { local: 0, peer: 1 })
+        );
+    }
+
+    #[test]
+    fn clipboard_payloads_are_strictly_bounded_and_byte_exact() {
+        let text = "abc\r\n🦀".as_bytes();
+        let clipboard = ClipboardSet::new(text).unwrap();
+        assert_eq!(clipboard.as_bytes(), text);
+        let mut encoded_payload = vec![0; text.len()];
+        assert_eq!(
+            clipboard.encode_payload(&mut encoded_payload),
+            Ok(text.len())
+        );
+        assert_eq!(
+            ClipboardSet::from_payload(&encoded_payload),
+            Ok(clipboard.clone())
+        );
+
+        let boundary = vec![b'a'; MAX_CLIPBOARD_BYTES];
+        assert_eq!(ClipboardSet::new(&boundary).unwrap().as_bytes(), boundary);
+        assert_eq!(
+            ClipboardSet::new(&vec![b'a'; MAX_CLIPBOARD_BYTES + 1]),
+            Err(ClipboardError::TooLarge {
+                length: MAX_CLIPBOARD_BYTES + 1
+            })
+        );
+        assert_eq!(ClipboardSet::new(&[0xff]), Err(ClipboardError::InvalidUtf8));
+        assert_eq!(
+            ClipboardError::InvalidUtf8.to_string(),
+            "clipboard payload is not valid UTF-8"
+        );
+        assert!(
+            ClipboardError::TooLarge {
+                length: MAX_CLIPBOARD_BYTES + 1
+            }
+            .to_string()
+            .contains("maximum is 262144")
+        );
+
+        assert_eq!(
+            clipboard.encode_payload(&mut []),
+            Err(EncodeError::BufferTooSmall {
+                required: text.len(),
+                available: 0
+            })
+        );
+
+        let get = ClipboardGet::default();
+        assert_eq!(get.encode_payload(&mut []), Ok(0));
+        assert_eq!(ClipboardGet::from_payload(&[]), Ok(get));
+        assert_eq!(
+            ClipboardGet::from_payload(&[0]),
+            Err(PayloadError::WrongLength {
+                expected: ClipboardGet::PAYLOAD_BYTES,
+                actual: 1
+            })
+        );
+    }
+
+    #[test]
+    fn clipboard_frames_survive_dribble_and_coalescing() {
+        let set = encoded(TYPE_CLIP_SET, FLAG_NONE, b"abc");
+        let get = encoded(TYPE_CLIP_GET, FLAG_NONE, &[]);
+        let wire = [set, get].concat();
+
+        let mut dribble_decoder = FrameDecoder::new();
+        let mut dribble = Vec::new();
+        for byte in &wire {
+            dribble_decoder
+                .push(core::slice::from_ref(byte), |frame| dribble.push(frame))
+                .unwrap();
+        }
+        let mut coalesced_decoder = FrameDecoder::new();
+        let mut coalesced = Vec::new();
+        coalesced_decoder
+            .push(&wire, |frame| coalesced.push(frame))
+            .unwrap();
+
+        assert_eq!(dribble, coalesced);
+        assert_eq!(dribble.len(), 2);
+        assert_eq!(
+            ClipboardSet::from_payload(&dribble[0].payload)
+                .unwrap()
+                .as_bytes(),
+            b"abc"
+        );
+        assert_eq!(
+            ClipboardGet::from_payload(&dribble[1].payload),
+            Ok(ClipboardGet::new())
         );
     }
 

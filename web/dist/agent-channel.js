@@ -6,12 +6,15 @@
 
 export const FRAME_HEADER_BYTES = 8;
 export const MAX_PAYLOAD_BYTES = 1 << 20;
+export const MAX_CLIPBOARD_BYTES = 256 << 10;
 export const PROTOCOL_VERSION = 1;
 
 export const TYPE_HELLO = 0;
 export const TYPE_PING = 1;
 export const TYPE_PONG = 2;
 export const TYPE_NAK = 3;
+export const TYPE_CLIP_SET = 4;
+export const TYPE_CLIP_GET = 5;
 
 export const FLAG_NONE = 0;
 export const NAK_UNKNOWN_TYPE = 1;
@@ -83,6 +86,12 @@ export class RequestTimeoutError extends AgentChannelError {
 export class NakError extends AgentChannelError {
   constructor(message = "agent rejected the channel request", options = {}) {
     super(message, "NAK", options);
+  }
+}
+
+export class ClipboardError extends AgentChannelError {
+  constructor(message = "invalid clipboard payload", code = "CLIPBOARD_INVALID_UTF8", options = {}) {
+    super(message, code, options);
   }
 }
 
@@ -219,6 +228,86 @@ function decodeNak(payload) {
     rejectedType: view.getUint16(0, true),
     code: view.getUint16(2, true),
   });
+}
+
+function assertWellFormedString(value) {
+  for (let index = 0; index < value.length; index += 1) {
+    const code = value.charCodeAt(index);
+    if (code >= 0xd800 && code <= 0xdbff) {
+      const next = value.charCodeAt(index + 1);
+      if (Number.isNaN(next) || next < 0xdc00 || next > 0xdfff) {
+        throw new ClipboardError("clipboard string contains an unpaired UTF-16 surrogate");
+      }
+      index += 1;
+    } else if (code >= 0xdc00 && code <= 0xdfff) {
+      throw new ClipboardError("clipboard string contains an unpaired UTF-16 surrogate");
+    }
+  }
+}
+
+/** Encode or validate one text/plain clipboard payload without applying the 1 MiB frame limit. */
+export function encodeClipboardText(value) {
+  let bytes;
+  if (typeof value === "string") {
+    assertWellFormedString(value);
+    bytes = new TextEncoder().encode(value);
+  } else {
+    bytes = viewBytes(value, "clipboard payload");
+    try {
+      new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+    } catch (error) {
+      throw new ClipboardError("clipboard payload is not valid UTF-8", "CLIPBOARD_INVALID_UTF8", { cause: error });
+    }
+  }
+  if (bytes.byteLength > MAX_CLIPBOARD_BYTES) {
+    throw new ClipboardError(
+      `clipboard payload exceeds ${MAX_CLIPBOARD_BYTES} bytes`,
+      "CLIPBOARD_TOO_LARGE",
+    );
+  }
+  return bytes.slice();
+}
+
+/** Decode a text/plain clipboard payload; rejected input is not copied or delivered. */
+export function decodeClipboardText(payload) {
+  const bytes = viewBytes(payload, "clipboard payload");
+  if (bytes.byteLength > MAX_CLIPBOARD_BYTES) {
+    throw new ClipboardError(
+      `clipboard payload exceeds ${MAX_CLIPBOARD_BYTES} bytes`,
+      "CLIPBOARD_TOO_LARGE",
+    );
+  }
+  let text;
+  try {
+    text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch (error) {
+    throw new ClipboardError("clipboard payload is not valid UTF-8", "CLIPBOARD_INVALID_UTF8", { cause: error });
+  }
+  return Object.freeze({ text, bytes: bytes.slice() });
+}
+
+/** Encode a CLIP_SET frame carrying exactly one bounded UTF-8 text/plain payload. */
+export function encodeClipboardSet(value, flags = FLAG_NONE) {
+  return encodeFrame(TYPE_CLIP_SET, encodeClipboardText(value), flags);
+}
+
+/** Decode the payload of a CLIP_SET frame into text and owned UTF-8 bytes. */
+export function decodeClipboardSet(payload) {
+  return decodeClipboardText(payload);
+}
+
+/** Encode a CLIP_GET request; its payload is always empty. */
+export function encodeClipboardGet(flags = FLAG_NONE) {
+  return encodeFrame(TYPE_CLIP_GET, new Uint8Array(), flags);
+}
+
+/** Validate the payload of a CLIP_GET request. */
+export function decodeClipboardGet(payload) {
+  const bytes = viewBytes(payload, "CLIP_GET payload");
+  if (bytes.byteLength !== 0) {
+    throw new ProtocolError(`CLIP_GET payload has ${bytes.byteLength} bytes; expected 0`, "CLIP_GET_LENGTH");
+  }
+  return Object.freeze({});
 }
 
 /**
