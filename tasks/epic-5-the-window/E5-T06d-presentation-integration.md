@@ -3,7 +3,7 @@ id: E5-T06d
 epic: 5
 title: Presentation selection, context-loss fallback, and VM integration
 priority: 506.4
-status: pending
+status: in-progress
 depends_on: [E5-T06c]
 estimate: S
 risk: medium

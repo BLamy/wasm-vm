@@ -16728,15 +16728,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "chore(e5-t06c): verify presentation benchmark",
             "chore(e5-t06c): activate presentation benchmark slice"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T06d",
@@ -16744,7 +16745,7 @@
       "epicKey": "5",
       "title": "Presentation selection, context-loss fallback, and VM integration",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T06c"
       ],

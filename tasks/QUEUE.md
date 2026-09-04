@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T06d** — Presentation selection, context-loss fallback, and VM integration
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -347,7 +346,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `506.1` [E5-T06a](epic-5-the-window/E5-T06a-canvas2d-presentation.md) — Canvas2D presentation backend and present contract *(deps: E5-T03c)*
 - [x] `506.2` [E5-T06b](epic-5-the-window/E5-T06b-webgl-presentation.md) — WebGL2 presentation backend *(deps: E5-T06a)*
 - [x] `506.3` [E5-T06c](epic-5-the-window/E5-T06c-presentation-benchmark.md) — Presentation benchmark and measured backend decision *(deps: E5-T06a, E5-T06b)*
-- [ ] `506.4` [E5-T06d](epic-5-the-window/E5-T06d-presentation-integration.md) — Presentation selection, context-loss fallback, and VM integration *(deps: E5-T06c)*
+- [~] `506.4` [E5-T06d](epic-5-the-window/E5-T06d-presentation-integration.md) — Presentation selection, context-loss fallback, and VM integration *(deps: E5-T06c)*
 - [ ] `507` [E5-T07](epic-5-the-window/E5-T07-fbcon-drm-first-light.md) — First light — kernel fbcon text console rendered on the canvas *(deps: E5-T03c, E5-T05c, E5-T06d)*
 - [ ] `508` [E5-T08](epic-5-the-window/E5-T08-console-toggle-and-capture.md) — Host chrome — serial console toggle beside the display, screenshot and recording *(deps: E5-T07)*
 - [ ] `509` [E5-T09](epic-5-the-window/E5-T09-damage-tracking-frame-pacing.md) — Damage-rect coalescing, dirty tiling, and rAF-paced presentation *(deps: E5-T06d, E5-T07)*
