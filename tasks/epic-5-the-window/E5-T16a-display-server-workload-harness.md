@@ -3,7 +3,7 @@ id: E5-T16a
 epic: 5
 title: Display-server finalist workload and guest metric harness
 priority: 516.1
-status: in-progress
+status: implemented
 depends_on: [E5-T07d, E5-T09e, E5-T13c, E5-T14c, E5-T15d]
 estimate: S
 risk: medium
@@ -55,4 +55,19 @@ result is included in the evidence scope.
 
 ## Verification log
 
-(empty)
+### 2026-09-04 — worker — IMPLEMENTED
+
+- Commit: `e6bc4d4aa53b053e4b99541c7d9272592fdf4f1c`.
+- Exact submission gate: `make verify-E5-T16a` — JavaScript syntax, five contract tests, the
+  driver/image-digest round trip, typed failure mutants, and the deterministic evidence recorder
+  all passed.
+- Evidence: [`evidence/e5-t16a/workload-harness-2026-09-04.json`](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t16a/workload-harness-2026-09-04.json),
+  SHA-256 `e35a0ba843213c73dcee79603f8b7c7293fcf1285bc411003ffd629598a34aeb`.
+- The frozen plan has six ordered markers, exactly 100 typing characters, a 300 px/30-step drag,
+  and a 900 ms accepted idle floor. The normalized capture recomputes guest-instruction deltas,
+  upload bytes, peak RSS, idle wakeups/s, and typing upload bytes from cumulative phase points;
+  the harness owns the supplied image digest and requires guest-scoped metric sources.
+- Claim: E5-T16b/c can now supply real labwc and weston emulator captures through one strict,
+  comparable protocol. The fixture values are contract data only and are not finalist measurements;
+  candidate selection and package availability remain E5-T16b–e. Independent machines, WebKit,
+  and host rr are outside the requested/repository scope.

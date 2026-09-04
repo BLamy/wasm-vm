@@ -18457,7 +18457,7 @@
       "epicKey": "5",
       "title": "Display-server finalist workload and guest metric harness",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T07d",
         "E5-T09e",
@@ -18472,13 +18472,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — worker — IMPLEMENTED\n\n- Commit: `e6bc4d4aa53b053e4b99541c7d9272592fdf4f1c`.\n- Exact submission gate: `make verify-E5-T16a` — JavaScript syntax, five contract tests, the\n  driver/image-digest round trip, typed failure mutants, and the deterministic evidence recorder\n  all passed.\n- Evidence: [`evidence/e5-t16a/workload-harness-2026-09-04.json`](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t16a/workload-harness-2026-09-04.json),\n  SHA-256 `e35a0ba843213c73dcee79603f8b7c7293fcf1285bc411003ffd629598a34aeb`.\n- The frozen plan has six ordered markers, exactly 100 typing characters, a 300 px/30-step drag,\n  and a 900 ms accepted idle floor. The normalized capture recomputes guest-instruction deltas,\n  upload bytes, peak RSS, idle wakeups/s, and typing upload bytes from cumulative phase points;\n  the harness owns the supplied image digest and requires guest-scoped metric sources.\n- Claim: E5-T16b/c can now supply real labwc and weston emulator captures through one strict,\n  comparable protocol. The fixture values are contract data only and are not finalist measurements;\n  candidate selection and package availability remain E5-T16b–e. Independent machines, WebKit,\n  and host rr are outside the requested/repository scope.",
       "adversarial": "Run with a missing terminal marker, a stalled drag, a counter that wraps, and a candidate that\nexits before idle. Each must fail with a named phase/error and never report a passing zero. Check\nthat the capture proves it ran inside the emulator and that no WebKit or independent-machine\nresult is included in the evidence scope.",
       "file": "tasks/epic-5-the-window/E5-T16a-display-server-workload-harness.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t16a): activate display workload harness"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T16b",
