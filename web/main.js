@@ -32,6 +32,8 @@ import { createKeyboardBridge, createWasmKeyboardAdapter } from "./src/input/key
 import { attachKeyboardCapture, createKeyboardCapturePolicy } from "./src/input/capture.js";
 import { attachHeldKeyLifecycle } from "./src/input/held-keys.js";
 import { createKeyboardReconciler } from "./src/input/reconciliation.js";
+import { createAutoplayPolicy } from "./src/audio/autoplay.js";
+import { AudioSink } from "./src/audio/sink.js";
 import {
   attachPointerBridge,
   createPointerBridge,
@@ -276,6 +278,59 @@ document.getElementById("tailscale-logout")?.addEventListener("click", async () 
 // in terminal.js. `term` is the raw xterm.js instance the ELF-console paths keep writing to.
 const ui = createLinuxTerminal(document.getElementById("term"));
 const term = ui.term;
+
+// E5-T20d: construct the shared audio context/ring early so guest PCM can be discarded while the
+// browser keeps the context suspended. T20e connects the same sink to the guest's producer path;
+// this layer owns only the visible autoplay state and the one gesture → resume transition.
+const audioAutoplayBadge = document.getElementById("audio-autoplay-badge");
+let audioSink = null;
+let audioAutoplayPolicy = null;
+
+function showAudioAutoplayUnavailable() {
+  if (!audioAutoplayBadge) return;
+  audioAutoplayBadge.dataset.audioState = "unavailable";
+  audioAutoplayBadge.textContent = "Audio unavailable — use a browser with AudioContext support.";
+  audioAutoplayBadge.hidden = false;
+}
+
+function installAudioAutoplayPolicy() {
+  if (typeof globalThis.AudioContext !== "function") {
+    showAudioAutoplayUnavailable();
+    return;
+  }
+  try {
+    audioSink = new AudioSink();
+    audioAutoplayPolicy = createAutoplayPolicy({
+      context: audioSink.context,
+      ring: audioSink.ring,
+      sampleRateHz: audioSink.sampleRateHz,
+      badge: audioAutoplayBadge,
+      target: document,
+    });
+    audioAutoplayPolicy.start();
+  } catch {
+    // A browser may expose AudioContext but with no SharedArrayBuffer/audio-worklet support. Keep
+    // the unlock UX honest and still testable by falling back to a context-only policy; T20e will
+    // report the unavailable sink rather than silently pretending that PCM is playing.
+    audioSink = null;
+    try {
+      const context = new globalThis.AudioContext({ sampleRate: 48_000 });
+      audioAutoplayPolicy = createAutoplayPolicy({
+        context,
+        sampleRateHz: Number(context.sampleRate) || 48_000,
+        badge: audioAutoplayBadge,
+        target: document,
+      });
+      audioAutoplayPolicy.start();
+    } catch {
+      showAudioAutoplayUnavailable();
+    }
+  }
+}
+
+installAudioAutoplayPolicy();
+window.__audioAutoplayPolicy = audioAutoplayPolicy;
+window.__audioSink = audioSink;
 const fileTransferUI = createFileTransferUI({
   root: document.getElementById("file-transfer"),
   FileSha256,
@@ -1570,6 +1625,9 @@ async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl, bootProfile
 
 window.wvmDemo = {
   isGuestUp: () => !!linuxCtl,
+  // E5-T20d/T20e: inspect the real context/ring pair without exposing a second unlock path.
+  audioAutoplay: () => audioAutoplayPolicy,
+  audioSink: () => audioSink,
   // Subscribe to the real guest console stream (Uint8Array chunks). Returns an unsubscribe fn.
   onConsole(fn) { consoleSubscribers.add(fn); return () => consoleSubscribers.delete(fn); },
   // Inject bytes through the REAL terminal input bridge — the same backpressure queue → ttyS0 RX

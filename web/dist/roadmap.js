@@ -127,6 +127,7 @@ export const ROADMAP = [
     caps: [
       { name: "Virtio input pointer routing", status: "partial", evidence: "E5-T14a/b: deterministic tablet/mouse devices with browser mode routing" },
       { name: "Virtio-snd guest playback path", status: "verified", evidence: "E5-T19d: real MMIO controlq/txq assembly, paced capture, malformed recovery, and STOP/START proof" },
+      { name: "Audio autoplay unlock + pre-unlock pacing", status: "verified", evidence: "E5-T20d: visible muted state, idempotent click/keydown resume, bounded clock-rate discard, and retryable rejection" },
       { name: "virtio-gpu control + resource queues", status: "pending" },
       { name: "Scanout transfer + flush", status: "pending" },
       { name: "EDID / display info", status: "pending" },

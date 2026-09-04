@@ -79,6 +79,29 @@ or explicit `stats()` call with `latency_ms`, `underruns`, and `fill`; exposed `
 frames at 48 kHz, a 10 ms base plus 20 ms output latency reports about 115.3 ms at full fill,
 below the 120 ms acceptance budget.
 
+## Autoplay unlock and suspended-context policy (E5-T20d)
+
+`web/src/audio/autoplay.js` owns the browser's single gesture-to-resume transition. The main page
+shows an accessible muted badge immediately, attaches one `click` and one `keydown` listener, and
+shares one in-flight `AudioContext.resume()` promise between simultaneous gestures. A successful
+resume hides the badge and cancels the suspended-context reader. A rejected resume keeps the badge
+visible with an actionable retry message and leaves the ring reader/listeners usable.
+
+While the context is locked, the policy's pre-unlock consumer uses the negotiated sample rate to
+accumulate clock credit and consumes at most one 128-frame quantum per pump. Timer/background gaps
+therefore cannot turn into a burst drain on foreground or unlock; the consumer reads into one
+preallocated stereo scratch block. T20e connects the already-created sink/ring to the guest PCM
+producer.
+
+The focused Node/DOM proof is:
+
+```sh
+node --test web/tests/audio-autoplay.test.mjs
+```
+
+It covers the no-gesture state, clock-rate discard, a delayed/backgrounding gap, first click,
+keydown/click coalescing, repeated gestures, resume rejection and retry, and listener cleanup.
+
 ## Deterministic proof
 
 Run the focused contract suite with:
