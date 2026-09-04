@@ -134,6 +134,7 @@ export const ROADMAP = [
       { name: "Lazy microphone permission + silence fallback", status: "verified", evidence: "E5-T21d: PCM_START-gated getUserMedia, delayed grant, denial/no-device, mute/end revocation, eventq notification, and retry lifecycle proof" },
       { name: "Guest microphone capture + WAV/FFT proof", status: "verified", evidence: "E5-T21e: exact 48/44.1 kHz WAV duration and 440 Hz loopback peak, privacy silence, revocation/retry, hostile periods, full duplex, and clean Chromium transcript" },
       { name: "End-to-end virtio-console guest agent channel", status: "verified", evidence: "E5-T23e: T17 named-port boot, HELLO/PING/NAK, 10k flow-control bound, restart/re-negotiation, serial isolation, framing, and browser proof" },
+      { name: "Bidirectional clipboard sync", status: "verified", evidence: "E5-T24d: Chromium guest↔host round trips, exact UTF-8/CRLF and 256 KiB bounds, 100-copy echo attack, focus privacy, permission staging, and guest helper recovery" },
       { name: "virtio-gpu control + resource queues", status: "pending" },
       { name: "Scanout transfer + flush", status: "pending" },
       { name: "EDID / display info", status: "pending" },

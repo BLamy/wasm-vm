@@ -462,6 +462,13 @@ verify-E5-T24c:
 	node --test web/tests/clipboard-service.test.mjs
 	@echo "verify-E5-T24c (host clipboard permissions and gesture ordering): OK"
 
+.PHONY: verify-E5-T24d
+verify-E5-T24d:
+	node --check tools/verify/e5-t24d-clipboard-proof.mjs
+	node --test web/tests/clipboard-service.test.mjs
+	node tools/verify/e5-t24d-clipboard-proof.mjs
+	@echo "verify-E5-T24d (bidirectional clipboard browser and guest proof): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
