@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 232,
+    "verified": 233,
     "total": 397
   },
   "epics": [
@@ -18481,7 +18481,7 @@
       "epicKey": "5",
       "title": "Config-gated virtio-snd capture advertisement",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T21a"
       ],
@@ -18505,13 +18505,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — verifier — VERDICT: verified (user-directed)\n\n- **Playback-only compatibility — HELD.** Predicted `enable_mic=false` would keep one output PCM\n  stream, preserve the existing stream-0 rate contract, and leave the established virtio slot\n  layout unchanged. The exact-head native fixture held: slot 6 remains sound after blk/net/keyboard/\n  pointer, stream 1 selectors return `S_BAD_MSG`, and playback still accepts 44.1 kHz.\n- **Capture advertisement and metadata — HELD.** Predicted `enable_mic=true` would advertise exactly\n  stream 1 in every selector order with INPUT direction, S16-only format, mono-or-stereo channels,\n  and a 48 kHz-only rate bit. Native PCM_INFO byte assertions and the built Chromium WASM\n  construction proof held those exact values.\n- **Malformed/non-mutating paths — HELD.** Predicted unsupported 44.1 kHz capture, a three-channel\n  request, zero-count/out-of-range/multi-stream selectors, and a short item size would return\n  `S_BAD_MSG` without changing either stream's lifecycle or parameters. The fixture held all\n  predictions, then accepted a valid mono 48 kHz capture request.\n- **Reset, construction, and privacy boundary — HELD.** Predicted reset would clear lifecycle\n  state but preserve the selected capture gate, and repeated fresh construction would reproduce\n  the same configuration without a host media handle. Native reset/recreation assertions held;\n  Chromium's `getUserMedia` spy observed zero calls while assembling paused with `enableMic:true`.\n- **Coverage and reproducibility — HELD.** At implementation head\n  `306c598412dcc4e2a49ac11110a70f82564a03f6`, the acceptance test passed 4/4, 25 consecutive\n  focused reruns passed 4/4, affected sound suites passed 29/29, core/CLI/WASM lint and wasm32\n  builds passed, and the Chromium construction spec passed with zero unexpected console errors.\n  Evidence transcript: [`virtio-snd-capture-config-2026-09-04.txt`](../../evidence/e5-t21b/virtio-snd-capture-config-2026-09-04.txt),\n  screenshot: [`virtio-snd-capture-config-2026-09-04.png`](../../evidence/e5-t21b/virtio-snd-capture-config-2026-09-04.png).\n- **SUITE — HELD.** Retain the native creation/config fixtures and browser construction proof;\n  host capture, permission lifecycle, rings, and end-to-end recording remain in E5-T21c–e.\n- Findings: none. The task is verified.",
       "adversarial": "Query stream IDs and selectors in every order, toggle the flag across fresh machine construction and\nreset, request unsupported rate/channel combinations, and assert that playback descriptors and\nguest-visible slot ordering never change.",
       "file": "tasks/epic-5-the-window/E5-T21b-virtio-snd-capture-config.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t21b): activate capture config task"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T21c",
