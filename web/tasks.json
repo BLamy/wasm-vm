@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 260,
-    "total": 419
+    "total": 423
   },
   "epics": [
     {
@@ -17260,15 +17260,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t09e): record integration evidence",
             "chore(e5-t09e): activate integration proof"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T10",
@@ -18201,12 +18202,17 @@
       "epicKey": "5",
       "title": "Hardware cursor plane — cursorq UPDATE/MOVE_CURSOR with DOM-overlay presentation",
       "priority": 515,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
-        "E5-T03",
+        "E5-T03c",
         "E5-T14c"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T15a",
+        "E5-T15b",
+        "E5-T15c",
+        "E5-T15d"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "The cursorq comes alive: `VIRTIO_GPU_CMD_UPDATE_CURSOR` and `MOVE_CURSOR` are\nimplemented with a host presentation strategy that keeps the guest cursor a separate\nplane (DOM overlay / CSS cursor image) instead of compositing it into the framebuffer —\nzero-latency cursor movement independent of frame uploads.",
@@ -18234,9 +18240,116 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — coordinator — decomposed\n\nThis M-sized cursor-plane container is cancelled before implementation as required by task policy.\nThe work is split into ordered S tickets with one protocol or browser boundary per ticket:\n\n1. **E5-T15a — cursorq core state.** Parse UPDATE_CURSOR and MOVE_CURSOR, validate resource and\n   hotspot/position fields, maintain per-scanout cursor state, and expose a canvas-free callback.\n2. **E5-T15b — cursor-resource sink conversion.** Convert a checked cursor resource to RGBA PNG/CSS\n   syntax, preserve alpha and hotspot, and retain the bounded overlay fallback for large images.\n3. **E5-T15c — mode wiring and lifecycle.** Select CSS cursor versus relative-mode DOM overlay, hide\n   resource 0, keep software-fbcon host cursor behavior unchanged, and avoid layout work on moves.\n4. **E5-T15d — integration proof.** Exercise checkerboard/hotspot/move/hide/lifecycle cases and the\n   500 Hz transform-only path, with a committed Chromium/native evidence envelope.\n\nDownstream desktop work must depend on E5-T15d, not this cancelled planning container.",
       "adversarial": "Refute latency and drift claims: in absolute mode under T18's desktop, park the host\ncursor at 20 screen positions and screenshot — guest-rendered UI hover highlights must\nsit under the host cursor at every position and every DPR (offset drift refutes; this\ncatches hotspot sign errors). Refute plane independence: run a window drag (heavy frame\nuploads) while wiggling the cursor — cursor motion must stay smooth even if frames drop\n(measure overlay update rate vs present rate). Attack lifecycle: guest UNREFs the\ncursor resource while it's active (must not crash or show garbage); UPDATE_CURSOR with\nresource dims 256x256 (must take the overlay fallback); alternate UPDATE/MOVE 1000x for\nleak of data-URLs (heap snapshot flat).",
       "file": "tasks/epic-5-the-window/E5-T15-virtio-gpu-cursor-plane.md",
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T15a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Cursorq core state and command handling",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T03c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make virtio-gpu cursorq UPDATE_CURSOR and MOVE_CURSOR real, bounded, and canvas-free by maintaining\nvalidated per-scanout cursor state and notifying the host sink when that state changes.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Feed truncated, oversized, and repeated UPDATE/MOVE chains, alternate hide/show 1,000 times, and\nattempt to move an unbound scanout. Any state leak, callback reordering, or guest-memory read past\nthe checked descriptor refutes the slice.",
+      "file": "tasks/epic-5-the-window/E5-T15a-cursorq-core.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T15b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Cursor-resource RGBA conversion and CSS/overlay sink",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T15a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Turn a checked cursor resource into a bounded RGBA image for browser presentation, preserving alpha\nand hotspot coordinates while providing an overlay fallback when CSS cursor limits are exceeded.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Attack odd dimensions, transparent pixels, maximum/negative hotspots, zero-sized resources, and\nmalformed pixel lengths. Repeat conversion 1,000 times and inspect that no data URL or source buffer\ngrows without bound.",
+      "file": "tasks/epic-5-the-window/E5-T15b-cursor-resource-sink.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T15c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Cursor mode wiring and lifecycle",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T15b",
+        "E5-T14c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Wire cursor state into absolute CSS-cursor and relative pointer-lock overlay modes without coupling\ncursor movement to framebuffer frame pacing or changing software-fbcon host cursor behavior.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Alternate modes and UPDATE/MOVE/hide/UNREF 1,000 times, inject moves during a framebuffer upload,\nand spy on layout reads/writes. Any stale cursor, layout read, duplicate listener, or host-cursor\nmutation without cursorq state refutes the slice.",
+      "file": "tasks/epic-5-the-window/E5-T15c-cursor-mode-wiring.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T15d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Cursor plane integration and transform-only proof",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T15c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Close the cursor-plane slice with one deterministic integration proof covering pixel/alpha conversion,\nhotspot placement, mode behavior, hide/lifecycle safety, and high-rate movement under frame load.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Run the seeded lifecycle sequence 10,000 times, add a delayed framebuffer present, alternate DPR 1/2\nmath, and sample the final hotspot after visibility resume. Any drift, dropped final move, layout read,\nor unbounded data-URL retention refutes the integration claim.",
+      "file": "tasks/epic-5-the-window/E5-T15d-cursor-integration-proof.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
@@ -18345,7 +18458,7 @@
       "status": "pending",
       "depends_on": [
         "E5-T08",
-        "E5-T15",
+        "E5-T15d",
         "E5-T17"
       ],
       "decomposed_into": [],
@@ -19959,10 +20072,10 @@
       "status": "pending",
       "depends_on": [
         "E5-T13c",
-        "E5-T15",
+        "E5-T15d",
         "E5-T18",
         "E5-T20e",
-        "E5-T24",
+        "E5-T24d",
         "E5-T25"
       ],
       "decomposed_into": [],

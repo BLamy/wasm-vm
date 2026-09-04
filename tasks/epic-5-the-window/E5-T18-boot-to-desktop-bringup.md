@@ -4,7 +4,7 @@ epic: 5
 title: Boot-to-desktop bring-up — seat/udev/permissions debugged, playbook written
 priority: 518
 status: pending
-depends_on: [E5-T08, E5-T15, E5-T17]
+depends_on: [E5-T08, E5-T15d, E5-T17]
 estimate: L
 capstone: false
 ---

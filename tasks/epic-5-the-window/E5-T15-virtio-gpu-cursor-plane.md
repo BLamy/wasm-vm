@@ -3,10 +3,12 @@ id: E5-T15
 epic: 5
 title: Hardware cursor plane — cursorq UPDATE/MOVE_CURSOR with DOM-overlay presentation
 priority: 515
-status: pending
-depends_on: [E5-T03, E5-T14c]
+status: cancelled
+depends_on: [E5-T03c, E5-T14c]
 estimate: M
+risk: high
 capstone: false
+decomposed_into: [E5-T15a, E5-T15b, E5-T15c, E5-T15d]
 ---
 
 ## Goal
@@ -66,4 +68,19 @@ resource dims 256x256 (must take the overlay fallback); alternate UPDATE/MOVE 10
 leak of data-URLs (heap snapshot flat).
 
 ## Verification log
-(empty)
+
+### 2026-09-04 — coordinator — decomposed
+
+This M-sized cursor-plane container is cancelled before implementation as required by task policy.
+The work is split into ordered S tickets with one protocol or browser boundary per ticket:
+
+1. **E5-T15a — cursorq core state.** Parse UPDATE_CURSOR and MOVE_CURSOR, validate resource and
+   hotspot/position fields, maintain per-scanout cursor state, and expose a canvas-free callback.
+2. **E5-T15b — cursor-resource sink conversion.** Convert a checked cursor resource to RGBA PNG/CSS
+   syntax, preserve alpha and hotspot, and retain the bounded overlay fallback for large images.
+3. **E5-T15c — mode wiring and lifecycle.** Select CSS cursor versus relative-mode DOM overlay, hide
+   resource 0, keep software-fbcon host cursor behavior unchanged, and avoid layout work on moves.
+4. **E5-T15d — integration proof.** Exercise checkerboard/hotspot/move/hide/lifecycle cases and the
+   500 Hz transform-only path, with a committed Chromium/native evidence envelope.
+
+Downstream desktop work must depend on E5-T15d, not this cancelled planning container.
