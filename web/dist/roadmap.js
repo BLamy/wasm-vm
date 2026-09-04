@@ -133,6 +133,7 @@ export const ROADMAP = [
       { name: "Microphone capture SAB ring + AudioWorklet producer", status: "verified", evidence: "E5-T21c: reversed SPSC publication, bounded 128-frame quanta, mono/stereo conversion, 44.1/48 kHz pacing, and Chromium AudioWorklet proof" },
       { name: "Lazy microphone permission + silence fallback", status: "verified", evidence: "E5-T21d: PCM_START-gated getUserMedia, delayed grant, denial/no-device, mute/end revocation, eventq notification, and retry lifecycle proof" },
       { name: "Guest microphone capture + WAV/FFT proof", status: "verified", evidence: "E5-T21e: exact 48/44.1 kHz WAV duration and 440 Hz loopback peak, privacy silence, revocation/retry, hostile periods, full duplex, and clean Chromium transcript" },
+      { name: "End-to-end virtio-console guest agent channel", status: "verified", evidence: "E5-T23e: T17 named-port boot, HELLO/PING/NAK, 10k flow-control bound, restart/re-negotiation, serial isolation, framing, and browser proof" },
       { name: "virtio-gpu control + resource queues", status: "pending" },
       { name: "Scanout transfer + flush", status: "pending" },
       { name: "EDID / display info", status: "pending" },

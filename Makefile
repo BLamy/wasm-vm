@@ -428,6 +428,19 @@ verify-E5-T23d:
 	node --test web/tests/agent-channel.test.mjs
 	@echo "verify-E5-T23d (host agent Channel lifecycle + reconnect): OK"
 
+.PHONY: verify-E5-T23e
+verify-E5-T23e:
+	cargo fmt --check -p wasm-vm-agent-protocol -p wasm-vm-guest-agent -p wasm-vm-cli
+	cargo clippy -p wasm-vm-agent-protocol -p wasm-vm-guest-agent -p wasm-vm-cli --bin wasm-vm -- -D warnings
+	cargo test -p wasm-vm-agent-protocol
+	cargo test -p wasm-vm-guest-agent
+	cargo test -p wasm-vm-core virtio_console
+	node --test web/tests/agent-channel.test.mjs
+	cargo build --release -p wasm-vm-cli
+	$(MAKE) web-dist
+	node tools/verify/e5-t23e-agent-channel-proof.mjs
+	@echo "verify-E5-T23e (end-to-end guest agent channel proof): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

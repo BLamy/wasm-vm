@@ -26,6 +26,8 @@ use wasm_vm_core::{Machine, RunOutcome, platform};
 
 use crate::file_backend;
 
+mod agent_proof;
+
 /// E4-T15: an opt-in retirement sink that counts the DYNAMIC share of F/D floating-point
 /// instructions in a real guest run, to ground the JIT FP-translation policy decision in a
 /// measured number rather than an assertion. Enabled only when `WASM_VM_FP_HISTOGRAM` is set in
@@ -215,6 +217,11 @@ pub struct BootArgs {
     /// of long Linux boots where a full multi-billion-line canonical trace is impractical.
     #[arg(long)]
     pub evidence: Option<PathBuf>,
+    /// E5-T23e: run the bounded native end-to-end agent proof and write its JSON report here.
+    /// This is a proof harness flag; normal boots do not assemble virtio-console or drive the
+    /// guest service unless it is present.
+    #[arg(long, value_name = "PATH")]
+    pub agent_proof: Option<PathBuf>,
     /// E3-T12c4: take a whole-machine resume snapshot (`Machine::save_resume`) the first time the
     /// guest console prints `--snapshot-trigger`, write it to this path, and exit 0. The snapshot
     /// quiesces the virtio-blk in-flight set first (E3-T12c2) and refuses (exit 103, no file) if it
@@ -551,10 +558,19 @@ pub fn boot(a: BootArgs) -> ExitCode {
         if boot_num > 1 {
             eprintln!("wasm-vm: --- reboot #{} ---", boot_num - 1);
         }
-        let (mut m, uart) = match assemble(&a, &kernel, &initrd, &console) {
+        let (mut m, uart, agent_state) = match assemble(&a, &kernel, &initrd, &console) {
             Ok(v) => v,
             Err(code) => return code,
         };
+        let mut agent_proof = agent_state.map(|state| {
+            agent_proof::AgentProof::new(
+                state,
+                a.agent_proof
+                    .as_ref()
+                    .expect("agent proof state requires an output path")
+                    .clone(),
+            )
+        });
         // E3-T12c4: restore a snapshot into the freshly-assembled machine BEFORE running — the
         // coherence header is validated first (E3-T12c3); RAM/CPU/CLINT/virtio transport are
         // overwritten from the blob (the cold kernel placement above is discarded, intentionally).
@@ -622,6 +638,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 profiler.as_mut().filter(|_| boot_num == 1),
                 snap.as_mut(),
                 keyboard_proof.as_mut(),
+                agent_proof.as_mut(),
                 &mut fp,
             );
             let pct = if fp.total == 0 {
@@ -645,6 +662,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 profiler.as_mut().filter(|_| boot_num == 1),
                 snap.as_mut(),
                 keyboard_proof.as_mut(),
+                agent_proof.as_mut(),
                 &mut hash,
             )
         } else {
@@ -659,6 +677,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 profiler.as_mut().filter(|_| boot_num == 1),
                 snap.as_mut(),
                 keyboard_proof.as_mut(),
+                agent_proof.as_mut(),
                 &mut null,
             )
         };
@@ -725,6 +744,12 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 );
                 return ExitCode::from(74);
             }
+        }
+
+        if let Some(proof) = agent_proof.as_mut()
+            && !proof.finish(&outcome)
+        {
+            return ExitCode::from(1);
         }
 
         if a.keyboard_proof && keyboard_proof.as_ref().is_some_and(|proof| !proof.injected) {
@@ -804,18 +829,18 @@ fn open_drive_backend(spec: &str) -> Result<Box<dyn wasm_vm_core::block::BlockBa
     })
 }
 
+type AssembledMachine = (
+    Machine,
+    Rc<std::cell::RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
+    Option<Rc<std::cell::RefCell<wasm_vm_core::dev::virtio::console::ConsoleState>>>,
+);
+
 fn assemble(
     a: &BootArgs,
     kernel: &[u8],
     initrd: &Option<Vec<u8>>,
     console: &SharedStdout,
-) -> Result<
-    (
-        Machine,
-        Rc<std::cell::RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
-    ),
-    ExitCode,
-> {
+) -> Result<AssembledMachine, ExitCode> {
     let ram_bytes = a.ram_mib.saturating_mul(1024 * 1024);
     let mut m = Machine::new(ram_bytes);
     m.set_storm_detect(!a.no_storm_detect); // E2-T20
@@ -910,6 +935,7 @@ fn assemble(
         Box::new(wasm_vm_core::dev::virtio::snd::NullSink::new()),
         a.enable_mic,
     );
+    let agent_state = a.agent_proof.as_ref().map(|_| m.enable_virtio_console().1);
 
     // Built-in SBI firmware + its console channel (earlycon=sbi / legacy putchar).
     m.enable_builtin_sbi();
@@ -960,7 +986,7 @@ fn assemble(
         layout.dtb_addr,
         a.ram_mib,
     );
-    Ok((m, uart))
+    Ok((m, uart, agent_state))
 }
 
 /// Run one assembled machine to its terminal [`RunOutcome`], executing in quanta while pumping
@@ -1179,6 +1205,7 @@ fn run_machine<T: TraceSink>(
     profiler: Option<&mut BootProfiler>,
     mut snap: Option<&mut SnapshotOnMarker>,
     mut keyboard_proof: Option<&mut KeyboardProof>,
+    mut agent_proof: Option<&mut agent_proof::AgentProof>,
     sink: &mut T,
 ) -> RunOutcome {
     let mut profiler = profiler;
@@ -1195,6 +1222,9 @@ fn run_machine<T: TraceSink>(
         if let Some(proof) = keyboard_proof.as_deref_mut() {
             proof.feed(&out, m);
             proof.observe(m);
+        }
+        if let Some(proof) = agent_proof.as_deref_mut() {
+            proof.pump(&out, uart);
         }
         // E2-T25: feed the console stream + retired count to the profiler so it can stamp the
         // wall time + retired count at each guest phase marker's first sighting.

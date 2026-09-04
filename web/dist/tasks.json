@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 237,
+    "verified": 240,
     "total": 402
   },
   "epics": [
@@ -18821,7 +18821,7 @@
       "epicKey": "5",
       "title": "Virtio-console multiport agent transport",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T23a"
       ],
@@ -18832,26 +18832,35 @@
       "criteria": [
         {
           "text": "A negotiated device publishes exactly one named `org.wasmvm.agent` port and rejects malformed control descriptors without an out-of-bounds read or host panic.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Data written to the agent port completes through its queues with bounded backpressure and preserves frame bytes; a full agent queue never consumes serial-console descriptors.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Port add/open/close/reopen transitions are deterministic and leave no stale queue ownership.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-09-04 — verifier — VERDICT: verified (user-directed)\n\n- Named-port publication — HELD. Predicted a negotiated DeviceID 3 with exactly one named port;\n  the exact-head unit and real-Machine tests observed the six-queue layout, `PORT_ADD`, and\n  `PORT_NAME` for `org.wasmvm.agent`. The dribbled control-chain and seven-byte malformed control\n  attacks completed with used length zero and no panic.\n- Independent bounded transport — HELD. Predicted agent bytes would preserve order and stop at\n  the configured budget without consuming serial descriptors; the focused tests preserved split\n  input/output bytes, rejected the tail of 10,000 payload attempts at a 64-byte budget, left a\n  posted agent descriptor pending, and still delivered the UART byte `S`.\n- Lifecycle/reset — HELD. Predicted restart and full MMIO status-zero reset would clear stale\n  agent buffers, queue ownership, and announcements; the lifecycle test observed a generation\n  increment, empty data buffers, two fresh announcement packets after restart, and cleared\n  announcements after reset.\n- Diff coverage — HELD. `console.rs` and the Machine run-loop are exercised by the focused unit and\n  integration tests; the `MAX_QUEUES` transport expansion is covered by MMIO, eight-slot, snapshot,\n  block, network, and sound regression suites. No changed runtime hunk remains unexercised or\n  unexplained.\n\nCommands: `cargo test -p wasm-vm-core virtio_console`; `cargo fmt --all -- --check`; `cargo clippy -p wasm-vm-core --lib --tests -- -D warnings`; `cargo check -p wasm-vm-core --target wasm32-unknown-unknown --quiet`; `cargo test -p wasm-vm-core --lib virtio::mmio`; `cargo test -p wasm-vm-core --test virtio_mmio_slots`; `cargo test -p wasm-vm-core --test virtio_snd_machine`; `cargo test -p wasm-vm-core --test snapshot`; `cargo test -p wasm-vm-core --test snapshot_coherence`; `cargo test -p wasm-vm-core --test virtio_blk --test virtio_net_machine --test virtio_snd_machine`\n\nEvidence: [`virtio-console-2026-09-04.txt`](../../evidence/e5-t23b/virtio-console-2026-09-04.txt) (SHA-256 `4c461117087a045ec02ab436b9bdbdcf214a78a369b05bed2740a285905256ed`), exact implementation commit `8aefa5e`.",
       "adversarial": "Dribble control messages, coalesce ten data chains, close a port between split descriptors, and\nsend 10,000 PING-sized payloads without reading. Check descriptor bounds, bounded queue memory,\nserial output continuity, and clean reopen after a forced transport reset.",
       "file": "tasks/epic-5-the-window/E5-T23b-virtio-console-multiport.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 2,
+          "labels": [
+            "verify(e5-t23b): record virtio-console evidence",
+            "chore(e5-t23b): activate virtio-console transport task"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 2
     },
     {
       "id": "E5-T23c",
@@ -18859,7 +18868,7 @@
       "epicKey": "5",
       "title": "Static riscv64 guest agent and OpenRC service",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E5-T23b"
       ],
@@ -18870,26 +18879,35 @@
       "criteria": [
         {
           "text": "The cross-built stripped agent is ≤1 MiB and `file`/`ldd` prove it is a static riscv64 executable with no shared-library dependency.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "The service opens `/dev/virtio-ports/org.wasmvm.agent`, answers HELLO/PING, and exits or retries cleanly when the port disappears; it never spins without a poll bound.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Rebuilding the T17 image installs the exact agent digest and service links without changing the existing serial getty path.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-09-04 — worker — implemented\n\n- Implementation heads: `ac1abee84b7644e2070b6003473506e65da1716` (agent, build recipe, rootfs\n  wiring, manifest, and acceptance gate) and `d1bb52a9a615f987a5c9af5115f16c32effe0029` (native\n  poll/FD coverage fixture).\n- The final worker run is retained at\n  `evidence/e5-t23c/static-agent-2026-09-04.txt`. It records the static cross-builds, exact\n  `file`/RISC-V `ldd` result, five missing-port service launches, the T17 image rebuild and\n  read-only ext4 inspection, plus the complete-image double-build artifacts under\n  `target/e5-t23c-rootfs-repro/`.\n\nClaim: the guest agent is a fixed-path, poll-driven, bounded protocol peer. It emits HELLO,\nnegotiates the shared protocol, answers PING with PONG, returns NAK for unknown types, drops a\nconnection on malformed framing, and bounds queued output and retry delay. The pinned Zig 0.16\n  cross-build is reproducible and static. The T17 builder installs the exact ELF and OpenRC\n  service into the default runlevel while retaining the existing ttyS0 getty. Booted host Channel\n  reconnect behavior remains owned by E5-T23d/e.\n\n### 2026-09-04 — verifier — VERDICT: verified\n\n- **P1 static executable — HELD.** Predicted two clean target directories would yield identical,\n  stripped RISC-V static ELFs under 1 MiB with no dynamic loader. Observed SHA-256\n  `c5feb0c04db680d1ae813d0fd85bd599ee29adb51fdc64dc329f66793d1f6851`, size `378536`, `file`\n  reporting `static-pie linked, stripped`, and RISC-V Alpine `ldd` reporting `statically linked`.\n  Evidence: `evidence/e5-t23c/static-agent-2026-09-04.txt`.\n- **P2 protocol, bounds, and lifecycle — HELD.** Predicted HELLO/PING/NAK behavior, byte-dribble\n  completion, malformed/oversized rejection, bounded unknown-frame output, in-flight reset, and\n  bounded retry. The seven unit tests pass; the FD fixture executes writable flush, poll-bounded\n  EOF, malformed-port termination, and retry assertions. Five real service-entrypoint launches\n  against the absent fixed port were terminated and reaped cleanly. The production path is fixed\n  to `/dev/virtio-ports/org.wasmvm.agent` and uses `poll(..., 1000)` plus 100–800 ms retry sleep.\n  Evidence: `guest/agent/src/lib.rs:22-35,155-207,363-505,548-724` and the retained evidence file.\n- **P3 T17 installation and serial isolation — HELD.** Predicted a complete image rebuild would\n  contain the exact agent bytes, an OpenRC default-runlevel symlink to `wasmvm-agent`, bounded\n  supervisor settings, and the unchanged ttyS0 getty. The builder passed package/custom manifest\n  drift checks and foreign-ELF scanning; read-only debugfs inspection found the expected symlink,\n  378536-byte ELF, exact SHA, service configuration, and original inittab line. Two complete image\n  builds were byte-identical at SHA-256\n  `ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8`. Evidence: `tools/build-rootfs.sh`,\n  `tools/rootfs-inner.sh`, `releases/rootfs/FILE-MANIFEST.txt`, and\n  `target/e5-t23c-rootfs-repro/{build-a.log,build-b.log,result.txt}`.\n- **COVERAGE — SUFFICIENT.** Every runtime hunk is exercised by the protocol/FD tests or the\n  native service launch; every rootfs/build hunk is exercised by the exact acceptance command and\n  the complete image builds. Manifest compatibility filtering in the prior WVFT verifier is\n  declarative harness maintenance and the existing WVFT static verifier remains responsible for\n  clean-target WVFT coverage. No browser or host-rr proof is required for this slice under the\n  current policy; E5-T23d/e owns the booted host-channel proof.\n- **SUITE:** retained `tools/verify/e5-t23c-static-agent.sh`, the seven guest-agent tests, the\n  rootfs manifest, and the complete-image reproducibility artifacts.\n\nCommands:\n\n- `bash tools/verify/e5-t23c-static-agent.sh`\n- `bash tools/verify/e3-t21b2c-repro.sh target/e5-t23c-rootfs-repro`\n- `cargo fmt --all -- --check`\n- `cargo clippy -p wasm-vm-agent-protocol -p wasm-vm-guest-agent --all-targets -- -D warnings`\n- `cargo test -p wasm-vm-agent-protocol -- --nocapture`\n- `cargo test -p wasm-vm-guest-agent -- --nocapture`\n- `python3 tools/check_task_policy.py`",
       "adversarial": "Kill the agent repeatedly, remove/recreate the port, feed byte-dribbled and oversized frames, and\nhold the peer write queue full. Assert no zombie pile-up, no unbounded allocations, bounded restart\nlatency, and unchanged serial-console output.",
       "file": "tasks/epic-5-the-window/E5-T23c-static-agent-service.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 2,
+          "labels": [
+            "verify(e5-t23c): record static agent evidence",
+            "chore(e5-t23c): activate static agent service task"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 2
     },
     {
       "id": "E5-T23d",
@@ -18897,7 +18915,7 @@
       "epicKey": "5",
       "title": "Host agent Channel API and reconnect lifecycle",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E5-T23c"
       ],
@@ -18908,26 +18926,35 @@
       "criteria": [
         {
           "text": "A Channel reaches ready only after HELLO intersection and exposes negotiated capabilities; PING round trips correlate correctly even when replies arrive out of order.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Agent termination rejects every in-flight send exactly once, reconnects, and re-negotiates HELLO without duplicate listeners or stale subscriptions.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Ten thousand bounded PING attempts cannot grow pending memory without backpressure, and a send during the gap returns a documented disconnected error.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-09-04 — worker — implemented\n\n- Implementation commits: `4691d06` (host Channel and deterministic transport fixtures), `dbae7bc`\n  (verification target), and `24fa64a` (retry/timeout coverage).\n- Exact evidence is retained at `evidence/e5-t23d/agent-channel-2026-09-04.txt`.\n\nClaim: `web/agent-channel.js` provides a worker-safe, transport-agnostic Channel. It stays in\nhandshaking until the shared HELLO version/capability intersection is valid, correlates PING/PONG\nby a u64 nonce, routes typed subscriptions, NAKs unknown frames, bounds in-flight requests, and\nreturns `DisconnectedError` for sends during a restart gap. Generation guards and listener cleanup\nmake agent termination and reconnect/re-negotiation recoverable without stale callbacks.\n\n### 2026-09-04 — verifier — VERDICT: verified\n\n- **HELLO and capability gate — HELD.** The exact-head suite kept the channel non-ready before\n  HELLO, negotiated host version 2 with a peer version 1 down to version 1, intersected capability\n  bits, and correlated reverse-order PONGs by their own nonces.\n- **Reconnect and settlement — HELD.** Transport termination rejected every in-flight PING once,\n  returned an explicit `DisconnectedError` for a gap send, removed the old transport listener,\n  preserved one user subscription, ignored late old-generation data, and re-negotiated on the fresh\n  transport. A transport killed during HELLO followed the same recovery path.\n- **Bounds and attacks — HELD.** Ten thousand PING attempts stopped at a pending bound of 64;\n  9,936 returned `BackpressureError` and the 64 live requests were settled as disconnected on\n  close. The suite also held unknown-type NAK, malformed PING, stale HELLO, no-common-version,\n  connector retry, timeout, byte-dribble/coalescing, and 100-cycle listener cardinality checks.\n- **Worker-safe routing — HELD.** A real Node `MessageChannel` used the endpoint adapter for HELLO\n  and PING/PONG without a Window or DOM dependency. The module is intentionally not wired to the\n  demo in this slice; E5-T23e owns the real virtio-console boot/browser proof.\n- **COVERAGE — SUFFICIENT.** Every changed runtime behavior is exercised by the 11-test acceptance\n  suite or is a bounded validation/cleanup branch exercised by its malformed-input, close, retry,\n  timeout, and endpoint tests. No browser, host-rr, independent-machine, or WebKit leg is claimed\n  under current policy and user direction.\n- **SUITE:** retain `make verify-E5-T23d`, `web/tests/agent-channel.test.mjs`, and the exact-head\n  evidence transcript.\n\nCommands:\n\n- `env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS node --test web/tests/agent-channel.test.mjs`\n- the same scrubbed command repeated 25 consecutive times\n- `node --check web/agent-channel.js`\n- `git diff --check`\n- `python3 tools/check_task_policy.py`",
       "adversarial": "Inject version skew, kill the transport during each handshake phase, replay a stale HELLO, and\ndeliver replies in reverse order. Inspect pending counts and listener cardinality after 100 restart\ncycles; any silent send loss or duplicate callback is a finding.",
       "file": "tasks/epic-5-the-window/E5-T23d-host-channel-reconnect.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 2,
+          "labels": [
+            "verify(e5-t23d): record channel lifecycle evidence",
+            "chore(e5-t23d): activate host channel task"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 2
     },
     {
       "id": "E5-T23e",
@@ -18935,7 +18962,7 @@
       "epicKey": "5",
       "title": "End-to-end guest agent channel proof and documentation",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T23d"
       ],
