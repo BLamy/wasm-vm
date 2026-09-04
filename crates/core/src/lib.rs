@@ -134,6 +134,21 @@ const PROF_STRIDE_BASE: u32 = 1021;
 #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
 const PROF_STRIDE_JITTER: u32 = 128;
 
+/// Persistent queue views for the six-queue virtio-console multiport device.  Keeping the views
+/// in the Machine (rather than rebuilding them on every instruction) preserves the shared
+/// virtqueue shadows across bounded run calls while reset/reconfiguration can explicitly discard
+/// them through the console service.
+struct VirtioConsoleService {
+    slot_index: usize,
+    state: alloc::rc::Rc<core::cell::RefCell<dev::virtio::console::ConsoleState>>,
+    port0_receiveq: Option<dev::virtio::queue::Virtqueue>,
+    port0_transmitq: Option<dev::virtio::queue::Virtqueue>,
+    control_receiveq: Option<dev::virtio::queue::Virtqueue>,
+    control_transmitq: Option<dev::virtio::queue::Virtqueue>,
+    agent_receiveq: Option<dev::virtio::queue::Virtqueue>,
+    agent_transmitq: Option<dev::virtio::queue::Virtqueue>,
+}
+
 pub struct Machine {
     hart: Hart,
     bus: SystemBus,
@@ -318,6 +333,10 @@ pub struct Machine {
         alloc::boxed::Box<dyn dev::virtio::snd::AudioSink>,
         alloc::boxed::Box<dyn dev::virtio::snd::AudioCaptureSource>,
     )>,
+    /// E5-T23b: virtio-console port-0/control/agent ring views and the bounded host-side channel.
+    /// The agent uses port 1 (queues 4 and 5); the UART/SBI console is intentionally not routed
+    /// through this state.
+    console: Option<VirtioConsoleService>,
     /// E3-T12c3: the snapshot coherence binding — the base disk image this machine is running against
     /// (`base_image_hash`), the emulator build (`core_hash`), and the monotonic overlay-commit
     /// generation. `save_resume` stamps all three into the blob header; `load_resume` validates them
@@ -705,6 +724,7 @@ impl Machine {
             tablet: None,
             mouse: None,
             snd: None,
+            console: None,
             coherence: SnapshotCoherence::default(),
             // E4-T05: default the toggle to the `predecode` feature (OFF in the normal build);
             // the differential harness flips it at runtime via `set_block_cache`.
@@ -1641,6 +1661,54 @@ impl Machine {
         self.snd
             .as_ref()
             .map(|(slot, state, _, _, _, _, _, _, _)| (*slot, alloc::rc::Rc::clone(state)))
+    }
+
+    /// E5-T23b: attach the six-queue virtio-console device (DeviceID 3) in the reserved final
+    /// slot.  Port 0 keeps the standard virtio-console queue pair; port 1 is the named
+    /// `org.wasmvm.agent` channel.  The existing UART/SBI console remains at its original MMIO
+    /// address and has no shared queue or buffer with this device.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_console(
+        &mut self,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::console::ConsoleState>>,
+    ) {
+        let slot_index = dev::virtio::console::VIRTIO_CONSOLE_SLOT;
+        assert!(
+            self.virtio.len() > slot_index,
+            "enable_virtio_slots/enable_virtio_blk before enable_virtio_console"
+        );
+        assert!(self.console.is_none(), "virtio-console is already enabled");
+        let (device, state) = dev::virtio::console::VirtioConsole::new_with_state();
+        assert!(
+            self.virtio[slot_index]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(device))
+                .is_ok(),
+            "virtio slot {slot_index} already has a device"
+        );
+        self.console = Some(VirtioConsoleService {
+            slot_index,
+            state: alloc::rc::Rc::clone(&state),
+            port0_receiveq: None,
+            port0_transmitq: None,
+            control_receiveq: None,
+            control_transmitq: None,
+            agent_receiveq: None,
+            agent_transmitq: None,
+        });
+        (alloc::rc::Rc::clone(&self.virtio[slot_index].0), state)
+    }
+
+    /// Current guest-facing virtio-console state, if the E5 agent transport is assembled.
+    pub fn virtio_console(
+        &self,
+    ) -> Option<alloc::rc::Rc<core::cell::RefCell<dev::virtio::console::ConsoleState>>> {
+        self.console
+            .as_ref()
+            .map(|console| alloc::rc::Rc::clone(&console.state))
     }
 
     /// E2-T16: attach the goldfish RTC at [`platform::virt::RTC_BASE`], wired to PLIC IRQ 11,
@@ -3743,6 +3811,23 @@ impl Machine {
                         state,
                         clock.as_ref(),
                         sink.as_mut(),
+                        &mut self.bus,
+                    );
+                }
+                // E5-T23b: service the independent virtio-console port-0/control/agent queues.
+                // Control transitions run before agent data so a freshly opened port can carry
+                // bytes at this same device boundary; the UART/SBI path above remains untouched.
+                if let Some(console) = &mut self.console {
+                    let slot = alloc::rc::Rc::clone(&self.virtio[console.slot_index].0);
+                    dev::virtio::console::service(
+                        &slot,
+                        &mut console.port0_receiveq,
+                        &mut console.port0_transmitq,
+                        &mut console.control_receiveq,
+                        &mut console.control_transmitq,
+                        &mut console.agent_receiveq,
+                        &mut console.agent_transmitq,
+                        &console.state,
                         &mut self.bus,
                     );
                 }

@@ -4,6 +4,7 @@
 //! backend is pure device logic.
 
 pub mod blk;
+pub mod console;
 pub mod gpu;
 pub mod input;
 pub mod mmio;

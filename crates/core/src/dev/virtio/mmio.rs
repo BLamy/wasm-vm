@@ -70,8 +70,10 @@ pub const STATUS_FAILED: u32 = 128;
 pub const INT_USED_RING: u32 = 1;
 pub const INT_CONFIG_CHANGE: u32 = 2;
 
-/// The most queues any backend may expose through one slot.
-pub const MAX_QUEUES: usize = 4;
+/// The most queues any backend may expose through one slot.  Virtio-console multiport uses
+/// queues 0..=5 (port 0, the control pair, and one additional port); the extra two entries keep
+/// that device from aliasing its agent queues onto the sound device's four-queue ceiling.
+pub const MAX_QUEUES: usize = 8;
 
 /// Per-virtqueue transport state (addresses become *usable* only while `ready`).
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
