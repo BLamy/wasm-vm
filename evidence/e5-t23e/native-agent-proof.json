@@ -1,0 +1,57 @@
+{
+  "attacks": {
+    "one_mib_boundary_nak": true,
+    "one_mib_boundary_payload": 1048576,
+    "partial_inflight_discarded": true,
+    "unknown_nak": true
+  },
+  "bounds": {
+    "max_agent_input_bytes": 16384,
+    "max_agent_output_bytes": 80,
+    "max_pending_pings": 10000,
+    "protocol_payload_limit": 1048576
+  },
+  "elapsed_ms": 510423.055834,
+  "failures": [],
+  "hello": {
+    "capabilities": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "count": 5,
+    "latency_ms": 23.765917,
+    "reconnect_seen": true,
+    "reconnected_negotiation": true,
+    "version_bump_accepted": true,
+    "versions": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "within_2s": true
+  },
+  "named_port": "/dev/virtio-ports/org.wasmvm.agent",
+  "outcome": "exited:0",
+  "ping": {
+    "basic_count": 8,
+    "basic_pongs": 8,
+    "flood_attempted": 10000,
+    "flood_pongs": 10000,
+    "p50_ms": 18.844,
+    "under_20ms": true
+  },
+  "port_open_seen": true,
+  "schema": "e5-t23e-agent-channel-proof-v1",
+  "serial": {
+    "port_marker": true,
+    "saturation_command_sent": true,
+    "usable_under_saturation": true
+  },
+  "stage": "Stopping",
+  "success": true
+}

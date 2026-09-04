@@ -18962,7 +18962,7 @@
       "epicKey": "5",
       "title": "End-to-end guest agent channel proof and documentation",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T23d"
       ],
@@ -18973,26 +18973,34 @@
       "criteria": [
         {
           "text": "A T17 boot creates `/dev/virtio-ports/org.wasmvm.agent`, the agent HELLO arrives within 2 s, and measured host PING p50 is below 20 ms.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "`wasmvm-agent` restart reconnects and re-negotiates automatically; in-flight sends fail explicitly, unknown types NAK without killing either endpoint, and the serial console stays usable while the agent channel is saturated.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Static size/dependency, oversized-frame, fuzz, and browser/request/console evidence are recorded at one exact head with no unexplained unexecuted changed hunk.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-09-04 — worker — implemented\n\n- Implementation heads: `333a1c5` (proof-only native host driver, documentation, corpus, browser\n  verifier, roadmap capability, and deployable dist) and `eefdca2` (safe native evidence-stream\n  completion in the verifier).\n- Final worker command, with the prescribed environment scrub, was:\n  `env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR -u CARGO_BUILD_RUSTFLAGS\n  -u CARGO_ENCODED_RUSTFLAGS node tools/verify/e5-t23e-agent-channel-proof.mjs`.\n- Exact-head machine-readable evidence is\n  [`agent-channel-proof-2026-09-04.json`](../../evidence/e5-t23e/agent-channel-proof-2026-09-04.json),\n  SHA-256 `eec2718768ad9feb5a41b731f1ed59fa0fc8a793878ef4c3a0e156b7309211a`; native guest\n  evidence is `evidence/e5-t23e/native-agent-proof.json` plus\n  `evidence/e5-t23e/native-agent-guest-evidence.txt`, and the recorded Chromium capture is\n  `evidence/e5-t23e/agent-channel-browser-2026-09-04.png`.\n\nClaim: the pinned T17 Alpine guest exposes the fixed agent port, negotiates HELLO/capabilities,\nanswers basic and 10,000-flood PING traffic, NAKs unknown and exact-boundary frames, discards a\npartial in-flight frame across an agent restart, re-negotiates after reconnect, and leaves the\nserial console usable while agent input is queued. The same exact-head run records the static\n378536-byte RISC-V static agent and its two-node dependency tree, deterministic framing attacks,\ntwo simultaneous Chromium MessagePort channels with request/console capture, and source/dist\nSHA-256 hashes. The changed runtime hunks are exercised by the native proof, Node framing/channel\nattacks, or both browser pages; the Makefile recipe is declarative and each of its commands was\nrun individually in this submission.\n\nCommands:\n\n- `cargo fmt --all -- --check`\n- `cargo clippy -p wasm-vm-agent-protocol -p wasm-vm-guest-agent -p wasm-vm-cli --bin wasm-vm -- -D warnings`\n- `cargo test -p wasm-vm-agent-protocol`\n- `cargo test -p wasm-vm-guest-agent`\n- `cargo test -p wasm-vm-core virtio_console`\n- `node --test web/tests/agent-channel.test.mjs`\n- `cargo build --release -p wasm-vm-cli`\n- `make web-dist`\n- `env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS node tools/verify/e5-t23e-agent-channel-proof.mjs`",
       "adversarial": "Byte-dribble valid frames, coalesce ten, inject garbage, split across close/open, flood 10,000\nPINGs, kill the agent 100 times, and bump the host version. Run two simultaneous tabs and compare\nlistener counts, pending memory, HELLO negotiation, serial output, and all reconnect/fuzz digests.",
       "file": "tasks/epic-5-the-window/E5-T23e-agent-channel-proof.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t23e): activate agent channel proof task"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T24",
