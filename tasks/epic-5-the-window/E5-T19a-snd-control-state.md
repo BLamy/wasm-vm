@@ -3,7 +3,7 @@ id: E5-T19a
 epic: 5
 title: virtio-snd control protocol and PCM state machine
 priority: 519.1
-status: pending
+status: in-progress
 depends_on: [E5-T05c]
 estimate: S
 risk: medium

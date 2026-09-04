@@ -17619,8 +17619,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t14c): mark pointer wheel verified",
             "test(e5-t14c): record pointer wheel evidence",
             "chore(e5-t14c): activate pointer completion"
           ]
@@ -17628,7 +17629,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T15",
@@ -17882,7 +17883,7 @@
       "epicKey": "5",
       "title": "virtio-snd control protocol and PCM state machine",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T05c"
       ],
