@@ -413,6 +413,62 @@ fn malformed_event_buffer_is_returned_without_consuming_the_event() {
 }
 
 #[test]
+fn legacy_tx_only_service_does_not_replay_event_buffers() {
+    let mut rig = Rig::new();
+    rig.start();
+    let mut sink = NullSink::new();
+    let clock = ManualAudioClock::new();
+    assert_eq!(
+        snd::service(
+            &rig.slot,
+            &mut rig.txq,
+            &rig.state,
+            &clock,
+            &mut sink,
+            &mut rig.bus,
+        )
+        .xrun_events,
+        0
+    );
+    clock.set_now_ns(PERIOD_NS + 1);
+    assert_eq!(
+        snd::service(
+            &rig.slot,
+            &mut rig.txq,
+            &rig.state,
+            &clock,
+            &mut sink,
+            &mut rig.bus,
+        )
+        .xrun_events,
+        1
+    );
+    let event_buffer = rig.post_event_buffer(true, SND_EVENT_SIZE as u32);
+    rig.kick(EVENT_QUEUE);
+    let legacy_report = snd::service(
+        &rig.slot,
+        &mut rig.txq,
+        &rig.state,
+        &clock,
+        &mut sink,
+        &mut rig.bus,
+    );
+    assert_eq!(legacy_report.event_descriptors_completed, 0);
+    assert_eq!(rig.used_idx(EVENT_USED), 0);
+    assert_eq!(rig.state.borrow().pending_event_count(), 1);
+
+    let report = rig.service(&clock, &mut sink);
+    assert_eq!(report.event_descriptors_completed, 1);
+    assert_eq!(rig.used_idx(EVENT_USED), 1);
+    assert_eq!(rig.state.borrow().pending_event_count(), 0);
+    let mut bytes = [0u8; SND_EVENT_SIZE];
+    for (offset, byte) in bytes.iter_mut().enumerate() {
+        *byte = rig.bus.load8(event_buffer + offset as u64).unwrap();
+    }
+    assert_eq!(SndEvent::from_bytes(&bytes), Some(SndEvent::pcm_xrun(0)));
+}
+
+#[test]
 fn fifty_release_reset_re_setup_cycles_reclaim_pending_descriptors() {
     let mut rig = Rig::new();
     let mut sink = NullSink::new();
