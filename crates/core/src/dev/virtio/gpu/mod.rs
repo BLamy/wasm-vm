@@ -69,12 +69,23 @@ const COMMAND_TRACE_CAPACITY: usize = 65_536;
 #[derive(Clone, Default)]
 pub struct TestSink {
     records: Rc<RefCell<Vec<FlushRecord>>>,
+    track_damage: bool,
 }
 
 impl TestSink {
     /// Construct an empty recording sink.
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Construct a test sink that asks the GPU resource path to narrow later flushes to pixels
+    /// changed by a transfer.  The default sink keeps the exact protocol rectangle for the
+    /// historical T03 golden contract.
+    pub fn with_damage_tracking() -> Self {
+        Self {
+            records: Rc::new(RefCell::new(Vec::new())),
+            track_damage: true,
+        }
     }
 
     /// Return an owned snapshot so callers cannot mutate the sink's records through an alias.
@@ -94,6 +105,10 @@ impl TestSink {
 }
 
 impl FrameSink for TestSink {
+    fn tracks_transferred_damage(&self) -> bool {
+        self.track_damage
+    }
+
     fn flush(
         &mut self,
         scanout: Option<u32>,
@@ -136,6 +151,14 @@ fn crc32_pixels(pixels: &[u32]) -> u32 {
 /// conversion and presentation scheduling belong to the sink implementation, not this trait.
 /// `format` is the virtio-gpu resource format that describes the pixel words.
 pub trait FrameSink {
+    /// Whether the sink can consume a rectangle narrowed from transferred pixel changes.
+    ///
+    /// The default is false so core sinks retain the exact guest-requested rectangle. Browser
+    /// sinks opt in because they preserve the full resource and upload only the changed area.
+    fn tracks_transferred_damage(&self) -> bool {
+        false
+    }
+
     /// Publish one validated damage rectangle and its resource-sized pixel view.
     fn flush(
         &mut self,
@@ -936,16 +959,30 @@ fn resource_flush(
         ..
     } = &mut *state_ref;
     let scanout = (*scanout_resource == Some(request.resource_id)).then_some(0);
+    let (resource_width, resource_height) = {
+        let resource = resources
+            .get(request.resource_id)
+            .ok_or(FlushError::InvalidResourceId)?;
+        (resource.width, resource.height)
+    };
+    if !rect_within(request.rect, resource_width, resource_height) {
+        return Err(FlushError::InvalidParameter);
+    }
+    let track_changes = frame_sink.tracks_transferred_damage();
+    let effective_rect = resources
+        .get_mut(request.resource_id)
+        .ok_or(FlushError::InvalidResourceId)?
+        .flush_rect(request.rect, track_changes);
     let resource = resources
         .get(request.resource_id)
         .ok_or(FlushError::InvalidResourceId)?;
-    if !rect_within(request.rect, resource.width, resource.height) {
+    if !rect_within(effective_rect, resource.width, resource.height) {
         return Err(FlushError::InvalidParameter);
     }
     frame_sink.flush(
         scanout,
         resource.format,
-        request.rect,
+        effective_rect,
         resource.width,
         resource.height,
         &resource.host_pixels,
@@ -3043,6 +3080,122 @@ mod tests {
                 resource_height: 2,
                 crc32: reference_crc32(&[0x0102_0304, 0xAABB_CCDD, 0x1122_3344, 0x5566_7788,]),
             }]
+        );
+    }
+
+    #[test]
+    fn gpu_flush_tracking_sink_publishes_changed_transfer_bounds() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let source_addr = DRAM_BASE + 0x70_000;
+        let width = 5u32;
+        let height = 4u32;
+        let full = Rect {
+            x: 0,
+            y: 0,
+            width,
+            height,
+        };
+        let mut source = alloc::vec![0u8; (width * height * 4) as usize];
+        for index in 0..(width * height) {
+            source[index as usize * 4..index as usize * 4 + 4]
+                .copy_from_slice(&(0x1100_0000u32 | index).to_le_bytes());
+        }
+        let mut changed = source.clone();
+        let set_pixel = |bytes: &mut [u8], x: u32, y: u32, value: u32| {
+            let offset = ((y * width + x) * 4) as usize;
+            bytes[offset..offset + 4].copy_from_slice(&value.to_le_bytes());
+        };
+        set_pixel(&mut changed, 1, 0, 0xCAFE_0101);
+        set_pixel(&mut changed, 3, 2, 0xCAFE_0302);
+        bus.ram_mut().write_slice(source_addr, &source).unwrap();
+
+        let transfer = || {
+            TransferToHost2d {
+                header: CtrlHeader {
+                    ty: CMD_TRANSFER_TO_HOST_2D,
+                    ..CtrlHeader::default()
+                },
+                rect: full,
+                offset: 0,
+                resource_id: 1,
+                padding: 0,
+            }
+            .to_bytes()
+        };
+        let flush = || flush_request(1, full);
+        let request_addrs = [REQUEST, REQUEST + 0x100, REQUEST + 0x200, REQUEST + 0x300];
+        let response_addrs = [
+            RESPONSE,
+            RESPONSE + 0x100,
+            RESPONSE + 0x200,
+            RESPONSE + 0x300,
+        ];
+        write_bytes(&mut bus, request_addrs[0], &transfer());
+        write_bytes(&mut bus, request_addrs[1], &flush());
+
+        let mut descriptors = alloc::vec::Vec::new();
+        for index in 0..4 {
+            descriptors.push((
+                request_addrs[index],
+                if index % 2 == 0 {
+                    TRANSFER_TO_HOST_2D_SIZE as u32
+                } else {
+                    RESOURCE_FLUSH_SIZE as u32
+                },
+                1,
+                (index * 2 + 1) as u16,
+            ));
+            descriptors.push((response_addrs[index], 24, 2, 0));
+        }
+        let (slot, state, mut vq) = queue_for_test(&mut bus, &descriptors);
+        set_avail_heads(&mut bus, &[0, 2, 4, 6]);
+        let sink = TestSink::with_damage_tracking();
+        {
+            let mut state_ref = state.borrow_mut();
+            state_ref
+                .resources
+                .create(1, protocol::FORMAT_B8G8R8A8_UNORM, width, height)
+                .unwrap();
+            state_ref
+                .resources
+                .attach_backing(1, alloc::vec![(source_addr, source.len() as u32)])
+                .unwrap();
+            state_ref.frame_sink = Box::new(sink.clone());
+        }
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        set_avail_heads(&mut bus, &[0, 2]);
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(
+            bus.load16(USED + 2).unwrap(),
+            2,
+            "initial commands completed once"
+        );
+        assert_eq!(sink.len(), 1);
+        assert_eq!(sink.records()[0].rect, full);
+
+        bus.ram_mut().write_slice(source_addr, &changed).unwrap();
+        write_bytes(&mut bus, request_addrs[2], &transfer());
+        write_bytes(&mut bus, request_addrs[3], &flush());
+        set_avail_heads(&mut bus, &[0, 2, 4, 6]);
+        state.borrow_mut().kicked = true;
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(
+            bus.load16(USED + 2).unwrap(),
+            4,
+            "each command completed once"
+        );
+        assert_eq!(sink.len(), 2);
+        assert_eq!(
+            sink.records()[1].rect,
+            Rect {
+                x: 1,
+                y: 0,
+                width: 3,
+                height: 3,
+            }
         );
     }
 

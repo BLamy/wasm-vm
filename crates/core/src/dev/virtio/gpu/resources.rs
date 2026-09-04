@@ -38,12 +38,87 @@ pub struct Resource {
     pub host_pixels: Box<[u32]>,
     /// Guest backing entries are populated by E5-T02b.  CREATE_2D always starts detached.
     pub backing: Vec<(GuestAddr, u32)>,
+    /// Pixels changed by transfers since the last flush.  This is deliberately a single
+    /// bounding rectangle: the virtio-gpu protocol carries one rectangle per flush, and the
+    /// browser sink can cheaply upload the union without retaining a second full-frame copy.
+    pending_damage: Option<protocol::Rect>,
+    /// The first browser presentation must establish the whole surface.  Later transfers may be
+    /// narrowed to `pending_damage` when the sink opts into change tracking.
+    presented: bool,
 }
 
 impl Resource {
     /// Number of bytes in the host shadow buffer.
     pub fn accounted_bytes(&self) -> u64 {
         (self.host_pixels.len() as u64) * core::mem::size_of::<u32>() as u64
+    }
+
+    fn note_damage(damage: &mut Option<protocol::Rect>, x: u32, y: u32) {
+        *damage = Some(match *damage {
+            Some(previous) => Self::rect_union(
+                previous,
+                protocol::Rect {
+                    x,
+                    y,
+                    width: 1,
+                    height: 1,
+                },
+            ),
+            None => protocol::Rect {
+                x,
+                y,
+                width: 1,
+                height: 1,
+            },
+        });
+    }
+
+    fn rect_contains(outer: protocol::Rect, inner: protocol::Rect) -> bool {
+        u64::from(inner.x) >= u64::from(outer.x)
+            && u64::from(inner.y) >= u64::from(outer.y)
+            && u64::from(inner.x) + u64::from(inner.width)
+                <= u64::from(outer.x) + u64::from(outer.width)
+            && u64::from(inner.y) + u64::from(inner.height)
+                <= u64::from(outer.y) + u64::from(outer.height)
+    }
+
+    fn rect_union(left: protocol::Rect, right: protocol::Rect) -> protocol::Rect {
+        let x = left.x.min(right.x);
+        let y = left.y.min(right.y);
+        let right_edge = left
+            .x
+            .saturating_add(left.width)
+            .max(right.x.saturating_add(right.width));
+        let bottom_edge = left
+            .y
+            .saturating_add(left.height)
+            .max(right.y.saturating_add(right.height));
+        protocol::Rect {
+            x,
+            y,
+            width: right_edge.saturating_sub(x),
+            height: bottom_edge.saturating_sub(y),
+        }
+    }
+
+    /// Record one transfer result and return the rectangle to publish at the next flush.
+    ///
+    /// A non-tracking sink retains the exact protocol request for the historical core contract.
+    /// A tracking sink receives the first requested rectangle in full, then the bounding box of
+    /// pixels whose transferred values differ from the previously flushed resource.
+    pub fn flush_rect(&mut self, requested: protocol::Rect, track_changes: bool) -> protocol::Rect {
+        let published = if track_changes && self.presented {
+            match self.pending_damage.take() {
+                Some(pending) if Self::rect_contains(requested, pending) => pending,
+                Some(pending) => Self::rect_union(requested, pending),
+                None => requested,
+            }
+        } else {
+            self.pending_damage = None;
+            requested
+        };
+        self.presented = true;
+        published
     }
 }
 
@@ -375,7 +450,11 @@ impl ResourceMap {
             .map_err(|_| TransferError::OutOfMemory)?;
         row.resize(row_len, 0);
 
-        let backing = resource.backing.as_slice();
+        let (host_pixels, backing, pending_damage) = (
+            &mut resource.host_pixels,
+            resource.backing.as_slice(),
+            &mut resource.pending_damage,
+        );
         let mut reader = BackingReader::new(backing);
         reader.seek(first_row)?;
         for row_index in 0..rect.height {
@@ -389,11 +468,19 @@ impl ResourceMap {
                 let index = destination
                     .checked_add(pixel)
                     .ok_or(TransferError::InvalidParameter)?;
-                resource.host_pixels[index] = u32::from_le_bytes(
+                let value = u32::from_le_bytes(
                     bytes
                         .try_into()
                         .map_err(|_| TransferError::InvalidParameter)?,
                 );
+                if host_pixels[index] != value {
+                    host_pixels[index] = value;
+                    Resource::note_damage(
+                        pending_damage,
+                        rect.x + pixel as u32,
+                        rect.y + row_index,
+                    );
+                }
             }
             if row_index + 1 < rect.height {
                 reader.skip(stride - row_bytes)?;
@@ -452,6 +539,8 @@ impl ResourceMap {
             height,
             host_pixels: pixels.into_boxed_slice(),
             backing: Vec::new(),
+            pending_damage: None,
+            presented: false,
         };
         self.accounted_bytes += pixel_bytes;
         self.resources.insert(resource_id, resource);
@@ -946,5 +1035,92 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn gpu_transfer_tracks_changed_pixel_bounds_until_flush() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let width = 5u32;
+        let height = 4u32;
+        let source_addr = DRAM_BASE + 0x50_000;
+        let full = protocol::Rect {
+            x: 0,
+            y: 0,
+            width,
+            height,
+        };
+        let mut source = source_bytes(width, height);
+        bus.ram_mut().write_slice(source_addr, &source).unwrap();
+
+        let mut map = ResourceMap::new();
+        map.create(1, FORMATS[0], width, height).unwrap();
+        map.attach_backing(1, alloc::vec![(source_addr, source.len() as u32)])
+            .unwrap();
+        map.transfer_to_host_2d(1, full, 0, &bus).unwrap();
+        assert_eq!(map.get_mut(1).unwrap().flush_rect(full, true), full);
+
+        // Two changes make an odd-width, non-origin damage rectangle.
+        set_pixel(&mut source, width, 1, 0, 0xCAFE_0101);
+        set_pixel(&mut source, width, 3, 2, 0xCAFE_0302);
+        bus.ram_mut().write_slice(source_addr, &source).unwrap();
+        map.transfer_to_host_2d(1, full, 0, &bus).unwrap();
+        assert_eq!(
+            map.get_mut(1).unwrap().flush_rect(full, true),
+            protocol::Rect {
+                x: 1,
+                y: 0,
+                width: 3,
+                height: 3,
+            }
+        );
+
+        // An edge-only update remains a one-pixel rectangle.
+        set_pixel(&mut source, width, 4, 3, 0xCAFE_0403);
+        bus.ram_mut().write_slice(source_addr, &source).unwrap();
+        map.transfer_to_host_2d(1, full, 0, &bus).unwrap();
+        assert_eq!(
+            map.get_mut(1).unwrap().flush_rect(full, true),
+            protocol::Rect {
+                x: 4,
+                y: 3,
+                width: 1,
+                height: 1,
+            }
+        );
+
+        // A narrow request cannot hide a pending change outside that request.
+        set_pixel(&mut source, width, 0, 0, 0xCAFE_0000);
+        bus.ram_mut().write_slice(source_addr, &source).unwrap();
+        map.transfer_to_host_2d(1, full, 0, &bus).unwrap();
+        assert_eq!(
+            map.get_mut(1).unwrap().flush_rect(
+                protocol::Rect {
+                    x: 4,
+                    y: 3,
+                    width: 1,
+                    height: 1,
+                },
+                true,
+            ),
+            full
+        );
+
+        // Identical transfers have no pending damage and preserve the exact odd-width request.
+        map.transfer_to_host_2d(1, full, 0, &bus).unwrap();
+        let odd_request = protocol::Rect {
+            x: 1,
+            y: 1,
+            width: 3,
+            height: 1,
+        };
+        assert_eq!(
+            map.get_mut(1).unwrap().flush_rect(odd_request, true),
+            odd_request
+        );
+    }
+
+    fn set_pixel(source: &mut [u8], width: u32, x: u32, y: u32, value: u32) {
+        let offset = ((y * width + x) * core::mem::size_of::<u32>() as u32) as usize;
+        source[offset..offset + 4].copy_from_slice(&value.to_le_bytes());
     }
 }

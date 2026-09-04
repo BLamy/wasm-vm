@@ -1615,9 +1615,11 @@ impl ConsoleSink for BufSink {
     }
 }
 
-/// E5-T06d: synchronous browser presentation adapter. The GPU service owns the guest-backed
-/// pixels only for the duration of this call; the page-side PresentationController immediately
-/// copies the typed view before returning, so replay never retains a borrowed wasm-memory slice.
+/// E5-T06d/E5-T07c: synchronous browser presentation adapter. The GPU service owns the
+/// guest-backed pixels only for the duration of this call; the page-side PresentationController
+/// immediately copies the typed view before returning, so replay never retains a borrowed
+/// wasm-memory slice. The core may narrow `rect` to the changed transfer bounds after the first
+/// full frame; `resourceWidth`/`resourceHeight` and `format` still describe the complete resource.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 struct JsFrameSink {
     callback: js_sys::Function,
@@ -1625,6 +1627,10 @@ struct JsFrameSink {
 
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 impl wasm_vm_core::dev::virtio::gpu::FrameSink for JsFrameSink {
+    fn tracks_transferred_damage(&self) -> bool {
+        true
+    }
+
     fn flush(
         &mut self,
         scanout: Option<u32>,
