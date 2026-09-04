@@ -59,6 +59,26 @@ At 48 kHz, 4096 stereo frames hold about 85.3 ms of PCM. At 44.1 kHz they hold a
 The later sink/clock slice adds the device and scheduling margin; this ring's only latency
 contribution is `fillFrames / sampleRate`.
 
+## S16 sink and clock bridge (E5-T20c)
+
+`web/src/audio/sink.js` implements the host side of T19's interleaved stereo S16 sink. Each sink
+allocates its own ring, converts samples with the exact `sample / 32768` mapping, and returns a
+bounded `{ acceptedFrames, droppedFrames, complete, sampleRateHz }` result instead of waiting when
+the ring is full. Input at any rate other than the constructed context's actual `sampleRate` is
+rejected; the bridge never inserts an implicit resampler.
+
+Construction requests 48 kHz. If the browser honors it, the advertised PCM rate is 48 kHz. If the
+constructor rejects the option or returns another rate, that actual context rate becomes the
+advertised rate and callers must supply PCM at that rate. `connect()` loads the stable T20b
+processor and passes only this sink's `SharedArrayBuffer` to its node.
+
+`audioClockNowNs()` uses `AudioContext.currentTime` as the consumed-frame clock and falls back to
+the atomic `READ_INDEX` delta at the negotiated rate. `vm.stats.audio` is refreshed on each push
+or explicit `stats()` call with `latency_ms`, `underruns`, and `fill`; exposed `baseLatency` and
+`outputLatency` values are included and added to the ring-fill latency. With the default 4096
+frames at 48 kHz, a 10 ms base plus 20 ms output latency reports about 115.3 ms at full fill,
+below the 120 ms acceptance budget.
+
 ## Deterministic proof
 
 Run the focused contract suite with:
