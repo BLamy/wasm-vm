@@ -16905,10 +16905,18 @@
       "verificationLog": "(empty)",
       "adversarial": "Run once with WebGL2 disabled and once with the normal Canvas2D default; the guest must keep\nretiring instructions and the canvas must remain live. Reload during the boot transfer and confirm\nthe replacement run re-probes without reusing a stale frame or listener.",
       "file": "tasks/epic-5-the-window/E5-T07b-browser-first-light.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t07b): activate browser first-light"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T07c",
