@@ -3,7 +3,7 @@ id: E5-T21d
 epic: 5
 title: Lazy microphone permission and silence fallback
 priority: 521.4
-status: pending
+status: in-progress
 depends_on: [E5-T21c]
 estimate: S
 risk: high
