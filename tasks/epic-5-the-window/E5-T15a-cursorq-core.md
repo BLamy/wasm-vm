@@ -3,7 +3,7 @@ id: E5-T15a
 epic: 5
 title: Cursorq core state and command handling
 priority: 515.1
-status: in-progress
+status: verified
 depends_on: [E5-T03c]
 estimate: S
 risk: high
@@ -64,3 +64,18 @@ the checked descriptor refutes the slice.
   transitions with one bounded callback per command. Cursor handling retains ids/coordinates only and
   never retains guest buffers. Independent-machine, WebKit, and host-rr checks are waived per the
   repository policy and the user's explicit direction.
+
+### 2026-09-04 — verifier — VERDICT: verified
+
+- Falsification prediction: the eight-command queue should publish exactly eight used entries, three
+  callbacks in order, and leave the hidden state `(resource=0, position=(42,52))` after the rejected
+  commands. HELD: native and wasm32 Machine-boundary tests observed those exact values; see evidence
+  observations and `crates/core/tests/virtio_gpu_machine.rs` / `crates/wasm/tests/gpu_protocol.rs`.
+- Validation prediction: truncated input, hidden MOVE, bad hotspot, invalid scanout, oversized cursor,
+  and repeated hide/show must either return the specified protocol error or complete without leaking
+  state. HELD: the native direct queue suite checks all errors and the 1,000-transition bound; the
+  eight-command wasm32 replay matched the same callback/state result.
+- Coverage: HELD. Protocol encoding/decoding, queue dispatch, validation, callback publication,
+  reset cleanup, and machine run-loop wiring are all exercised by the recorded tests. The evidence
+  digest is `8da5232b92e9e2052c499abd18a8df28cf89f3914e42997ef64a42aface8ad83`; no unexecuted runtime
+  hunk remains. SUITE: the native and wasm deterministic tests plus `verify-E5-T15a` are retained.
