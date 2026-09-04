@@ -1,0 +1,50 @@
+E5-T19d worker final validation
+tested_head=ad55ed0b73c3d001fe7212b0050a80a4761ab1d3
+
+commands:
+  cargo fmt --all --check
+  cargo test -p wasm-vm-core --test virtio_snd_machine --test virtio_snd --test virtio_snd_playback --test virtio_snd_queue --no-fail-fast -- --nocapture
+  cargo test -p wasm-vm-core --lib --quiet
+  cargo clippy -p wasm-vm-core --all-targets -- -D warnings
+  cargo clippy -p wasm-vm-cli --all-targets -- -D warnings
+  cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown --lib -- -D warnings
+  cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release
+  cargo check -p wasm-vm-core --no-default-features
+  cargo run -p wasm-vm-cli --bin wasm-vm -- run guest/prebuilt/hello.elf --max-instrs 10000 --dump-state --stats
+  make web-build
+  make web-dist
+  git diff --check
+
+results:
+  virtio_snd: 6 passed, 0 failed
+  virtio_snd_machine: 3 passed, 0 failed
+  virtio_snd_playback: 7 passed, 0 failed
+  virtio_snd_queue: 5 passed, 0 failed
+  core library: 238 passed, 0 failed
+  core and CLI clippy: passed with -D warnings
+  wasm library clippy, no-default-features check, and release wasm build: passed
+  native hello assembly: exited after 83 retired instructions with state sha256=df49438130a9da1733bd689ccf2327837ac09385f8e91ea685359f1b915ceb05
+  web build/dist: passed; generated deploy wasm sha256=7db180b12afbf7a83b09aae9f4432fdbed4829606361f6242e941fa6f8fc57fa
+  diff check: passed
+
+browser_smoke:
+  fresh local Chromium against web/dist/app.html
+  ready=true; Virtio-snd guest playback path pip class=cap-pip verified
+  unexpected console errors=0; unexpected HTTP errors=0
+  expected ignored probes: favicon.ico 404 and local-only artifacts-alpine.json 404
+  screenshot=evidence/e5-t19d/browser-assembly-2026-09-03.png
+  screenshot_sha256=9aaf5fa313c79c268722b80aa43a7efe6dd31882be301578ee7767fa8b32efd1
+
+coverage:
+  The real Machine fixture configures controlq and txq through virtio-mmio QueueNotify writes,
+  verifies the unchanged blk/net/input slot identities, checks exact PCM_INFO response bytes
+  (including zero padding), reclaims a malformed control request before accepting a valid query,
+  holds a four-frame ramp until the 48 kHz sample deadline, and resumes it exactly once across
+  STOP/START. A second fixture proves slot 7 is selected only when slot 6 is occupied. The dependent
+  T19b WavSink fixture supplies the bit-exact native WAV ramp and clean 440 Hz reference sine; the
+  T19c queue fixture supplies malformed-transfer recovery and fifty reset/re-setup cycles.
+
+scope:
+  This exact-head local guest/wasm proof is the acceptance evidence for the assembled transport.
+  Independent machines and WebKit are waived by user direction; the browser sound sink remains the
+  headless NullSink until E5-T20's AudioWorklet layer.
