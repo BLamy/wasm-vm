@@ -1,0 +1,651 @@
+{
+  "task": "E5-T20e",
+  "command": "node tools/verify/e5-t20e-audio-proof.mjs",
+  "generatedAt": "2026-09-04T03:39:08.328Z",
+  "gitHead": "1732012e5aeba4b41a9c359103ea87e958cc72ca",
+  "browser": {
+    "name": "chromium",
+    "version": "152.0.7977.76",
+    "headless": true
+  },
+  "sourceDist": {
+    "parity": [
+      {
+        "source": "web/main.js",
+        "dist": "web/dist/main.js",
+        "sourceSha256": "ba47d37f9bf3fa278aff6e6029aaffc1ac8c16782d46dd1223ef59dcc51c6739",
+        "distSha256": "ba47d37f9bf3fa278aff6e6029aaffc1ac8c16782d46dd1223ef59dcc51c6739",
+        "equal": true
+      },
+      {
+        "source": "web/loader.js",
+        "dist": "web/dist/loader.js",
+        "sourceSha256": "f25939c1b689a8d9fe92124ca1b09b8b65b5ecd4142c5dd919a4269f082574d9",
+        "distSha256": "f25939c1b689a8d9fe92124ca1b09b8b65b5ecd4142c5dd919a4269f082574d9",
+        "equal": true
+      },
+      {
+        "source": "web/linux-worker-protocol.js",
+        "dist": "web/dist/linux-worker-protocol.js",
+        "sourceSha256": "e89b8a36dae0ecb9bea16eab52248c072795c5b9597e5e7574f447d4a4229338",
+        "distSha256": "e89b8a36dae0ecb9bea16eab52248c072795c5b9597e5e7574f447d4a4229338",
+        "equal": true
+      },
+      {
+        "source": "web/roadmap.js",
+        "dist": "web/dist/roadmap.js",
+        "sourceSha256": "dac8a2bc26959b70ff7a1069387a09a56e7f47208630ebcbd8d6a3a3c3ebb716",
+        "distSha256": "dac8a2bc26959b70ff7a1069387a09a56e7f47208630ebcbd8d6a3a3c3ebb716",
+        "equal": true
+      },
+      {
+        "source": "web/src/audio/ring.js",
+        "dist": "web/dist/src/audio/ring.js",
+        "sourceSha256": "2bc77d769c90fef81c9e866e38b71b034d56573281a70bac811f93da997f73eb",
+        "distSha256": "2bc77d769c90fef81c9e866e38b71b034d56573281a70bac811f93da997f73eb",
+        "equal": true
+      },
+      {
+        "source": "web/src/audio/autoplay.js",
+        "dist": "web/dist/src/audio/autoplay.js",
+        "sourceSha256": "d6f9982a0310c16a67a9c58d0b65f20c214e35429eb60c286766cfafc6ffa9c2",
+        "distSha256": "d6f9982a0310c16a67a9c58d0b65f20c214e35429eb60c286766cfafc6ffa9c2",
+        "equal": true
+      },
+      {
+        "source": "web/src/audio/sink.js",
+        "dist": "web/dist/src/audio/sink.js",
+        "sourceSha256": "1eb73a14bb3b3308e61a793c84d963ac75204c3f03dcb9d2ed220473081f6417",
+        "distSha256": "1eb73a14bb3b3308e61a793c84d963ac75204c3f03dcb9d2ed220473081f6417",
+        "equal": true
+      },
+      {
+        "source": "web/src/audio/worklet.js",
+        "dist": "web/dist/src/audio/worklet.js",
+        "sourceSha256": "8e1c3f0d6b05c6a800d78e9912e987a6adc994a7eaa5dbb0916ab7cfa2440b21",
+        "distSha256": "8e1c3f0d6b05c6a800d78e9912e987a6adc994a7eaa5dbb0916ab7cfa2440b21",
+        "equal": true
+      }
+    ],
+    "generated": [
+      {
+        "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+        "sha256": "bc479239c30aef7ea0f521d5b4d8216d0b6748e3c907dfbd01ad0bc36428bfee",
+        "bytes": 1360755
+      }
+    ]
+  },
+  "stages": {
+    "ready": {
+      "ready": true,
+      "pipeline": true,
+      "rate": 48000,
+      "requestedRate": 48000,
+      "capacityFrames": 4096,
+      "nodeBeforeUnlock": false
+    },
+    "guestAttach": {
+      "boot": {
+        "ok": true
+      },
+      "elapsedMs": 18156,
+      "guestReady": true,
+      "audioOutputReady": true
+    },
+    "preUnlock": {
+      "state": "locked",
+      "node": false,
+      "clockDelta": 7168,
+      "discardedDelta": 256,
+      "fill": 0,
+      "captures": 0
+    },
+    "unlock": {
+      "captureStart": 0,
+      "clockBefore": 516352,
+      "clockAtUnlock": 516352,
+      "seed": {
+        "acceptedFrames": 4096,
+        "droppedFrames": 0,
+        "complete": true,
+        "sampleRateHz": 48000
+      },
+      "captureAfterWarmup": [
+        {
+          "frames": 128,
+          "samples": [
+            -32768,
+            -32768,
+            -32767,
+            -32767
+          ]
+        },
+        {
+          "frames": 128,
+          "samples": [
+            -32640,
+            -32640,
+            -32639,
+            -32639
+          ]
+        },
+        {
+          "frames": 128,
+          "samples": [
+            -32512,
+            -32512,
+            -32511,
+            -32511
+          ]
+        }
+      ]
+    },
+    "ramp": {
+      "producer": {
+        "rate": 48000,
+        "captureStart": 0,
+        "cursor": 1444096,
+        "targetFrames": 1440000,
+        "acceptedFrames": 1440000,
+        "droppedFrames": 0,
+        "pushes": 5627,
+        "postStarveFrames": 0,
+        "elapsedMs": 29986.04500001669,
+        "stats": {
+          "latency_ms": 114.66666666666667,
+          "underruns": 0,
+          "fill": 4096,
+          "sampleRateHz": 48000,
+          "baseLatency": 0.005333333333333333,
+          "outputLatency": 0.024
+        },
+        "renderedFrames": 1956352
+      },
+      "capture": {
+        "blockCount": 11252,
+        "capturedFrames": 1440256,
+        "framesInspected": 1440000,
+        "mismatches": 0,
+        "sequenceErrors": 0,
+        "zeroFrames": 0,
+        "preview": [
+          {
+            "frame": 0,
+            "left": -32768,
+            "right": -32768,
+            "expected": -32768
+          },
+          {
+            "frame": 1,
+            "left": -32767,
+            "right": -32767,
+            "expected": -32767
+          },
+          {
+            "frame": 2,
+            "left": -32766,
+            "right": -32766,
+            "expected": -32766
+          },
+          {
+            "frame": 3,
+            "left": -32765,
+            "right": -32765,
+            "expected": -32765
+          },
+          {
+            "frame": 4,
+            "left": -32764,
+            "right": -32764,
+            "expected": -32764
+          },
+          {
+            "frame": 5,
+            "left": -32763,
+            "right": -32763,
+            "expected": -32763
+          },
+          {
+            "frame": 6,
+            "left": -32762,
+            "right": -32762,
+            "expected": -32762
+          },
+          {
+            "frame": 7,
+            "left": -32761,
+            "right": -32761,
+            "expected": -32761
+          }
+        ],
+        "captureDigest": "1643c63f2e47c549ae0e721bc0641f6069ff3a86f108f3b49f765075aa56c6d3",
+        "peakHz": null,
+        "peakToBandRatio": null,
+        "peakToNeighborDb": null,
+        "tailFrames": 0,
+        "tailNonZero": 0,
+        "tailTransitions": 0
+      },
+      "after": {
+        "stats": {
+          "latency_ms": 93.33333333333334,
+          "underruns": 0,
+          "fill": 3072,
+          "sampleRateHz": 48000,
+          "baseLatency": 0.005333333333333333,
+          "outputLatency": 0.024
+        },
+        "renderedDelta": 1441024,
+        "policy": "unlocked",
+        "contextState": "running"
+      },
+      "elapsedMs": 30019
+    },
+    "sine": {
+      "unlock": {
+        "captureStart": 0,
+        "clockBefore": 256,
+        "clockAtUnlock": 512,
+        "seed": {
+          "acceptedFrames": 4096,
+          "droppedFrames": 0,
+          "complete": true,
+          "sampleRateHz": 48000
+        },
+        "captureAfterWarmup": [
+          {
+            "frames": 128,
+            "samples": [
+              0,
+              0,
+              1886,
+              1886
+            ]
+          },
+          {
+            "frames": 128,
+            "samples": [
+              29038,
+              29038,
+              29864,
+              29864
+            ]
+          },
+          {
+            "frames": 128,
+            "samples": [
+              26907,
+              26907,
+              25785,
+              25785
+            ]
+          }
+        ]
+      },
+      "producer": {
+        "rate": 48000,
+        "captureStart": 0,
+        "cursor": 52096,
+        "targetFrames": 48000,
+        "acceptedFrames": 48000,
+        "droppedFrames": 0,
+        "pushes": 188,
+        "postStarveFrames": 0,
+        "elapsedMs": 985.4850000143051,
+        "stats": {
+          "latency_ms": 112,
+          "underruns": 0,
+          "fill": 3968,
+          "sampleRateHz": 48000,
+          "baseLatency": 0.005333333333333333,
+          "outputLatency": 0.024
+        },
+        "renderedFrames": 48384
+      },
+      "capture": {
+        "blockCount": 378,
+        "capturedFrames": 48384,
+        "framesInspected": 48000,
+        "mismatches": 0,
+        "sequenceErrors": 0,
+        "zeroFrames": 0,
+        "preview": [
+          {
+            "frame": 0,
+            "left": 0,
+            "right": 0,
+            "expected": 0
+          },
+          {
+            "frame": 1,
+            "left": 1886,
+            "right": 1886,
+            "expected": 1886
+          },
+          {
+            "frame": 2,
+            "left": 3766,
+            "right": 3766,
+            "expected": 3766
+          },
+          {
+            "frame": 3,
+            "left": 5634,
+            "right": 5634,
+            "expected": 5634
+          },
+          {
+            "frame": 4,
+            "left": 7482,
+            "right": 7482,
+            "expected": 7482
+          },
+          {
+            "frame": 5,
+            "left": 9306,
+            "right": 9306,
+            "expected": 9306
+          },
+          {
+            "frame": 6,
+            "left": 11099,
+            "right": 11099,
+            "expected": 11099
+          },
+          {
+            "frame": 7,
+            "left": 12856,
+            "right": 12856,
+            "expected": 12856
+          }
+        ],
+        "captureDigest": "18d303eb7d35251948aee56cb30bcc931c374ab133f6012095f858f965752453",
+        "peakHz": 440,
+        "peakToBandRatio": 0.17298213464679385,
+        "peakToNeighborDb": 16.707302489523276,
+        "tailFrames": 0,
+        "tailNonZero": 0,
+        "tailTransitions": 0
+      }
+    },
+    "starvation": {
+      "unlock": {
+        "captureStart": 0,
+        "clockBefore": 256,
+        "clockAtUnlock": 512,
+        "seed": {
+          "acceptedFrames": 4096,
+          "droppedFrames": 0,
+          "complete": true,
+          "sampleRateHz": 48000
+        },
+        "captureAfterWarmup": [
+          {
+            "frames": 128,
+            "samples": [
+              -32768,
+              -32768,
+              -32767,
+              -32767
+            ]
+          },
+          {
+            "frames": 128,
+            "samples": [
+              -32640,
+              -32640,
+              -32639,
+              -32639
+            ]
+          },
+          {
+            "frames": 128,
+            "samples": [
+              -32512,
+              -32512,
+              -32511,
+              -32511
+            ]
+          }
+        ]
+      },
+      "producer": {
+        "rate": 48000,
+        "captureStart": 0,
+        "cursor": 100096,
+        "targetFrames": 96000,
+        "acceptedFrames": 96000,
+        "droppedFrames": 0,
+        "pushes": 375,
+        "postStarveFrames": 75776,
+        "elapsedMs": 2391.064999997616,
+        "stats": {
+          "latency_ms": 114.66666666666667,
+          "underruns": 156,
+          "fill": 4096,
+          "sampleRateHz": 48000,
+          "baseLatency": 0.005333333333333333,
+          "outputLatency": 0.024
+        },
+        "renderedFrames": 116224
+      },
+      "capture": {
+        "blockCount": 908,
+        "capturedFrames": 116224,
+        "framesInspected": 96000,
+        "mismatches": 71679,
+        "sequenceErrors": 19969,
+        "zeroFrames": 19968,
+        "preview": [
+          {
+            "frame": 0,
+            "left": -32768,
+            "right": -32768,
+            "expected": -32768
+          },
+          {
+            "frame": 1,
+            "left": -32767,
+            "right": -32767,
+            "expected": -32767
+          },
+          {
+            "frame": 2,
+            "left": -32766,
+            "right": -32766,
+            "expected": -32766
+          },
+          {
+            "frame": 3,
+            "left": -32765,
+            "right": -32765,
+            "expected": -32765
+          },
+          {
+            "frame": 4,
+            "left": -32764,
+            "right": -32764,
+            "expected": -32764
+          },
+          {
+            "frame": 5,
+            "left": -32763,
+            "right": -32763,
+            "expected": -32763
+          },
+          {
+            "frame": 6,
+            "left": -32762,
+            "right": -32762,
+            "expected": -32762
+          },
+          {
+            "frame": 7,
+            "left": -32761,
+            "right": -32761,
+            "expected": -32761
+          }
+        ],
+        "captureDigest": "dc5e58bb35756b204a5b86b8ed55a6da94e51be7deb24a0b061c475d77ab3f87",
+        "peakHz": null,
+        "peakToBandRatio": null,
+        "peakToNeighborDb": null,
+        "tailFrames": 2048,
+        "tailNonZero": 2048,
+        "tailTransitions": 2047
+      },
+      "after": {
+        "stats": {
+          "latency_ms": 98.66666666666667,
+          "underruns": 156,
+          "fill": 3328,
+          "sampleRateHz": 48000,
+          "baseLatency": 0.005333333333333333,
+          "outputLatency": 0.024
+        },
+        "underrunDelta": 156
+      },
+      "elapsedMs": 3758
+    },
+    "rate44100": {
+      "url": "http://127.0.0.1:58480/index.html?guest=busybox&nosw=1&testHooks=1&noAutoBoot=1&jit=0&audioCapture=1&quantum=50000&audioRate=44100#ide",
+      "ready": {
+        "rate": 44100,
+        "requestedRate": 44100,
+        "nodeBeforeUnlock": false
+      },
+      "unlock": {
+        "captureStart": 0,
+        "clockBefore": 256,
+        "clockAtUnlock": 512,
+        "seed": {
+          "acceptedFrames": 4096,
+          "droppedFrames": 0,
+          "complete": true,
+          "sampleRateHz": 44100
+        },
+        "captureAfterWarmup": [
+          {
+            "frames": 128,
+            "samples": [
+              -32768,
+              -32768,
+              -32767,
+              -32767
+            ]
+          },
+          {
+            "frames": 128,
+            "samples": [
+              -32640,
+              -32640,
+              -32639,
+              -32639
+            ]
+          },
+          {
+            "frames": 128,
+            "samples": [
+              -32512,
+              -32512,
+              -32511,
+              -32511
+            ]
+          }
+        ]
+      },
+      "producer": {
+        "rate": 44100,
+        "captureStart": 0,
+        "cursor": 12288,
+        "targetFrames": 8192,
+        "acceptedFrames": 8192,
+        "droppedFrames": 0,
+        "pushes": 33,
+        "postStarveFrames": 0,
+        "elapsedMs": 165.63499999046326,
+        "stats": {
+          "latency_ms": 119.32879818594104,
+          "underruns": 0,
+          "fill": 3968,
+          "sampleRateHz": 44100,
+          "baseLatency": 0.005351473922902495,
+          "outputLatency": 0.024
+        },
+        "renderedFrames": 8576
+      },
+      "capture": {
+        "blockCount": 67,
+        "capturedFrames": 8576,
+        "framesInspected": 8192,
+        "mismatches": 0,
+        "sequenceErrors": 0,
+        "zeroFrames": 0,
+        "preview": [
+          {
+            "frame": 0,
+            "left": -32768,
+            "right": -32768,
+            "expected": -32768
+          },
+          {
+            "frame": 1,
+            "left": -32767,
+            "right": -32767,
+            "expected": -32767
+          },
+          {
+            "frame": 2,
+            "left": -32766,
+            "right": -32766,
+            "expected": -32766
+          },
+          {
+            "frame": 3,
+            "left": -32765,
+            "right": -32765,
+            "expected": -32765
+          },
+          {
+            "frame": 4,
+            "left": -32764,
+            "right": -32764,
+            "expected": -32764
+          },
+          {
+            "frame": 5,
+            "left": -32763,
+            "right": -32763,
+            "expected": -32763
+          },
+          {
+            "frame": 6,
+            "left": -32762,
+            "right": -32762,
+            "expected": -32762
+          },
+          {
+            "frame": 7,
+            "left": -32761,
+            "right": -32761,
+            "expected": -32761
+          }
+        ],
+        "captureDigest": "ee8d38557457425beaccaa965c8baf5e09c407e1d946815febc291b5ce958fd1",
+        "peakHz": null,
+        "peakToBandRatio": null,
+        "peakToNeighborDb": null,
+        "tailFrames": 0,
+        "tailNonZero": 0,
+        "tailTransitions": 0
+      }
+    }
+  },
+  "errors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "ok": true,
+  "url": "http://127.0.0.1:58480/index.html?guest=busybox&nosw=1&testHooks=1&noAutoBoot=1&jit=0&audioCapture=1&quantum=50000#ide"
+}
