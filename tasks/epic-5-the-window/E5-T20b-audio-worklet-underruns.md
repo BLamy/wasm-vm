@@ -3,7 +3,7 @@ id: E5-T20b
 epic: 5
 title: AudioWorklet consumer and underrun accounting
 priority: 520.2
-status: implemented
+status: verified
 depends_on: [E5-T20a]
 estimate: S
 risk: high
@@ -71,3 +71,20 @@ copies stereo f32 frames into caller-owned planar output, zero-fills every missi
 increments the shared underrun counter exactly once per starved quantum. It also proves the
 dependent ring contract remains ordered through wraps and concurrent publication, with the
 deployable source copy byte-identical to the tested module.
+
+### 2026-09-03 — verifier — VERDICT: verified
+
+- **Quantum output — HELD.** Predicted exact sample preservation for a full 128-frame render and
+  zero-fill for every missing frame in partial and empty renders. The focused run held both cases,
+  including the one-frame-short adversarial input.
+- **Underrun accounting — HELD.** Predicted exactly one atomic counter increment per starved
+  `process()` call. Alternating starvation held for 10,000 simulated calls with the expected
+  count and zero residual fill.
+- **Wrap and real-time boundary — HELD.** Predicted no duplicate or missing frames at a
+  quantum-sized ring wrap and no blocking/allocation primitive in `process()`. The wrap test and
+  source guard held; the dependent ring suite also held the concurrent SPSC publication contract.
+- **Coverage and reproducibility — HELD.** The exact-head suite passed 13/13 in a scrubbed
+  environment, the worklet suite passed in 20 repeated runs, and source/deploy copies matched by
+  digest. Evidence: [`audio-worklet-verifier-2026-09-03.txt`](../../evidence/e5-t20b/audio-worklet-verifier-2026-09-03.txt),
+  SHA-256 `fb51b1ca831e785f203ac431afba61251b039240929a1cf641b0e5c31b2c8bc4`.
+- Findings: none. The task is verified.

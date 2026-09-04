@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 227,
+    "verified": 228,
     "total": 392
   },
   "epics": [
@@ -18181,7 +18181,7 @@
       "epicKey": "5",
       "title": "AudioWorklet consumer and underrun accounting",
       "priority": null,
-      "status": "implemented",
+      "status": "verified",
       "depends_on": [
         "E5-T20a"
       ],
@@ -18205,19 +18205,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- Commit: `c96bd1ef2458c9d5d7f3eb516a6a72d04b006a14`.\n- Exact-head acceptance: `env -i PATH=\"$PATH\" node --test web/tests/audio-worklet.test.mjs\n  web/tests/audio-ring.test.mjs` — 13 passed, 0 failed.\n- The worklet cases exercise full, one-frame-short, empty, quantum-boundary wrap, alternating\n  starvation over 10,000 simulated `process()` calls, and the no-blocking/no-allocation source\n  guard. The dependent ring suite carries forward the exact-fill, non-power-of-two wrap, 2^32\n  rollover, concurrent worker, capacity mutation, and malformed-input coverage.\n- Stability: `env -i PATH=\"$PATH\" node --test web/tests/audio-worklet.test.mjs` passed 5/5, and\n  20 repeated worklet-only runs all exited 0.\n- Packaging: `make web-dist` succeeded; both `cmp web/src/audio/ring.js\n  web/dist/src/audio/ring.js` and `cmp web/src/audio/worklet.js web/dist/src/audio/worklet.js`\n  passed. Evidence transcript:\n  `evidence/e5-t20b/audio-worklet-verifier-2026-09-03.txt` (SHA-256\n  `fb51b1ca831e785f203ac431afba61251b039240929a1cf641b0e5c31b2c8bc4`).\n\nThe recording demonstrates that the real processor path drains at most one 128-frame quantum,\ncopies stereo f32 frames into caller-owned planar output, zero-fills every missing frame, and\nincrements the shared underrun counter exactly once per starved quantum. It also proves the\ndependent ring contract remains ordered through wraps and concurrent publication, with the\ndeployable source copy byte-identical to the tested module.",
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- Commit: `c96bd1ef2458c9d5d7f3eb516a6a72d04b006a14`.\n- Exact-head acceptance: `env -i PATH=\"$PATH\" node --test web/tests/audio-worklet.test.mjs\n  web/tests/audio-ring.test.mjs` — 13 passed, 0 failed.\n- The worklet cases exercise full, one-frame-short, empty, quantum-boundary wrap, alternating\n  starvation over 10,000 simulated `process()` calls, and the no-blocking/no-allocation source\n  guard. The dependent ring suite carries forward the exact-fill, non-power-of-two wrap, 2^32\n  rollover, concurrent worker, capacity mutation, and malformed-input coverage.\n- Stability: `env -i PATH=\"$PATH\" node --test web/tests/audio-worklet.test.mjs` passed 5/5, and\n  20 repeated worklet-only runs all exited 0.\n- Packaging: `make web-dist` succeeded; both `cmp web/src/audio/ring.js\n  web/dist/src/audio/ring.js` and `cmp web/src/audio/worklet.js web/dist/src/audio/worklet.js`\n  passed. Evidence transcript:\n  `evidence/e5-t20b/audio-worklet-verifier-2026-09-03.txt` (SHA-256\n  `fb51b1ca831e785f203ac431afba61251b039240929a1cf641b0e5c31b2c8bc4`).\n\nThe recording demonstrates that the real processor path drains at most one 128-frame quantum,\ncopies stereo f32 frames into caller-owned planar output, zero-fills every missing frame, and\nincrements the shared underrun counter exactly once per starved quantum. It also proves the\ndependent ring contract remains ordered through wraps and concurrent publication, with the\ndeployable source copy byte-identical to the tested module.\n\n### 2026-09-03 — verifier — VERDICT: verified\n\n- **Quantum output — HELD.** Predicted exact sample preservation for a full 128-frame render and\n  zero-fill for every missing frame in partial and empty renders. The focused run held both cases,\n  including the one-frame-short adversarial input.\n- **Underrun accounting — HELD.** Predicted exactly one atomic counter increment per starved\n  `process()` call. Alternating starvation held for 10,000 simulated calls with the expected\n  count and zero residual fill.\n- **Wrap and real-time boundary — HELD.** Predicted no duplicate or missing frames at a\n  quantum-sized ring wrap and no blocking/allocation primitive in `process()`. The wrap test and\n  source guard held; the dependent ring suite also held the concurrent SPSC publication contract.\n- **Coverage and reproducibility — HELD.** The exact-head suite passed 13/13 in a scrubbed\n  environment, the worklet suite passed in 20 repeated runs, and source/deploy copies matched by\n  digest. Evidence: [`audio-worklet-verifier-2026-09-03.txt`](../../evidence/e5-t20b/audio-worklet-verifier-2026-09-03.txt),\n  SHA-256 `fb51b1ca831e785f203ac431afba61251b039240929a1cf641b0e5c31b2c8bc4`.\n- Findings: none. The task is verified.",
       "adversarial": "Starve the producer for alternating quanta, present a one-frame-short ring, and run 10,000\nsimulated `process()` calls across wrap boundaries. Inspect every output block and the underrun\ncounter for exact accounting and no state drift.",
       "file": "tasks/epic-5-the-window/E5-T20b-audio-worklet-underruns.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "test(e5-t20b): record worklet proof"
+          ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E5-T20c",
