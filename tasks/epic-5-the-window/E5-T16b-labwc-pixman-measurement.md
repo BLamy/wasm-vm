@@ -3,7 +3,7 @@ id: E5-T16b
 epic: 5
 title: Measure labwc with the pixman renderer inside the emulator
 priority: 516.2
-status: pending
+status: in-progress
 depends_on: [E5-T16a]
 estimate: S
 risk: medium

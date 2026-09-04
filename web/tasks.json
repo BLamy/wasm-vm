@@ -18478,8 +18478,9 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 3,
+          "commits": 4,
           "labels": [
+            "chore(e5-t16a): align verified evidence digest",
             "chore(e5-t16a): verify display workload harness",
             "test(e5-t16a): record workload harness evidence",
             "chore(e5-t16a): activate display workload harness"
@@ -18488,7 +18489,7 @@
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E5-T16b",
@@ -18496,7 +18497,7 @@
       "epicKey": "5",
       "title": "Measure labwc with the pixman renderer inside the emulator",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T16a"
       ],
