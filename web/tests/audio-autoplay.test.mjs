@@ -15,9 +15,11 @@ import { AudioRingBuffer, CHANNELS } from "../src/audio/ring.js";
 class FakeTarget {
   constructor() {
     this.listeners = new Map();
+    this.addCalls = new Map();
   }
 
   addEventListener(type, listener) {
+    this.addCalls.set(type, (this.addCalls.get(type) ?? 0) + 1);
     const listeners = this.listeners.get(type) ?? new Set();
     listeners.add(listener);
     this.listeners.set(type, listeners);
@@ -33,6 +35,10 @@ class FakeTarget {
 
   count(type) {
     return this.listeners.get(type)?.size ?? 0;
+  }
+
+  added(type) {
+    return this.addCalls.get(type) ?? 0;
   }
 }
 
@@ -127,6 +133,8 @@ test("no gesture shows the muted badge and discards at the negotiated clock rate
   assert.match(h.badge.textContent, /muted until interaction/);
   assert.equal(h.target.count("click"), 1);
   assert.equal(h.target.count("keydown"), 1);
+  assert.equal(h.target.added("click"), 1);
+  assert.equal(h.target.added("keydown"), 1);
   assert.equal(h.context.resumeCalls, 0);
 
   assert.equal(h.producer.write(frames(0, 128)), 128);
@@ -162,6 +170,8 @@ test("first click resumes exactly once, clears the badge, and repeated gestures 
   assert.equal(h.badge.hidden, true);
   assert.equal(h.target.count("click"), 1);
   assert.equal(h.target.count("keydown"), 1);
+  assert.equal(h.target.added("click"), 1);
+  assert.equal(h.target.added("keydown"), 1);
   assert.equal(h.scheduler.pending().length, 0);
 
   h.target.dispatch("keydown");
