@@ -647,6 +647,14 @@ verify-E5-T15a:
 	wasm-pack test --node crates/wasm --test gpu_protocol
 	@echo "verify-E5-T15a (bounded cursorq core state and command handling): OK"
 
+.PHONY: verify-E5-T15b
+verify-E5-T15b:
+	# Browser-side cursor conversion proof: alpha-safe PNG round-trip, exact hotspot CSS, bounded
+	# overlay fallback, malformed-input rejection, and 1,000 repeated updates with no sink history.
+	node --check web/src/sink/cursor.js
+	node --test web/tests/e5-t15b-cursor-sink.test.mjs
+	@echo "verify-E5-T15b (bounded cursor resource sink): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
