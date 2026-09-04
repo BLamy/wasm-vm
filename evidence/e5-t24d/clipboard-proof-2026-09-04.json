@@ -1,7 +1,7 @@
 {
   "schema": "e5-t24d-clipboard-proof-v1",
   "capturedOn": "2026-09-04 America/New_York",
-  "runtimeHead": "92b44ec6ed88e211385d0282b54e1dfff0fa2037",
+  "runtimeHead": "86c074e1d986ec6df855d4266e99222f58558198",
   "recording": {
     "browser": "Playwright Chromium headless",
     "browserVersion": "131.0.6778.33",
