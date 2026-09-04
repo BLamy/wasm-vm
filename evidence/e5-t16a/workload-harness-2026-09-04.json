@@ -2,7 +2,7 @@
   "schema": "wasm-vm.e5-t16a.display-server-workload-evidence.v1",
   "task": "E5-T16a",
   "command": "make verify-E5-T16a",
-  "gitHead": "e6bc4d4aa53b053e4b99541c7d9272592fdf4f1c",
+  "gitHead": "07948a052b36e05a9dda62f204d5e9d2bd632442",
   "plan": {
     "sha256": "b0abe0eb129f072f7e12abacaa07bb3c4b7cc55eab0c663272c76897bb8612d0",
     "phaseCount": 6,
@@ -74,6 +74,7 @@
       "deterministicNormalization": true,
       "missingMarker": true,
       "counterOrder": true,
+      "sourceContract": true,
       "typingShape": true,
       "preIdleExit": true
     }

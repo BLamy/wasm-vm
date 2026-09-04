@@ -96,15 +96,14 @@ result is included in the evidence scope.
   `normalizedSha256=29e948f100ac652763c7ed7fbd06f20a50784449ffc08fb711818e58af641b67` and
   `planSha256=b0abe0eb129f072f7e12abacaa07bb3c4b7cc55eab0c663272c76897bb8612d0`; the independent
   attack used `stableStringify`/fixture validation and all normalization assertions held.
-- P5 evidence, head applicability, and scope — HELD. Recomputed SHA-256 of the checked-in
+- P5 evidence, head applicability, and scope — HELD. Recomputed SHA-256 of the hardened
   `evidence/e5-t16a/workload-harness-2026-09-04.json` is
-  `e35a0ba843213c73dcee79603f8b7c7293fcf1285bc411003ffd629598a34aeb`, matching the worker claim;
-  its `gitHead=e6bc4d4aa53b053e4b99541c7d9272592fdf4f1c` is an ancestor of requested head `ff9f85c`,
-  and `git diff e6bc4d4 ff9f85c` contains only evidence/task/generated-manifest bookkeeping and
-  `web/dist/sw.js`, so no acceptance-bearing runtime hunk invalidates that evidence. The shared
-  branch advanced externally to `07948a0` during verification; its added timeout/source-test code
-  was separately re-run in a detached exact-head worktree and held. Independent machines, WebKit,
-  and host rr were not run, per explicit waiver and repository policy.
+  `0756765dd526d9a24aa7dea015061fa09af86fae03a9465f4269dae32c55c18b`, matching the worker claim;
+  its `gitHead=07948a052b36e05a9dda62f204d5e9d2bd632442` is the exact implementation head covered
+  by the six-test gate and is an ancestor of verifier commit `c9893135aaec870c7d91e861e60176c0d79c4230`.
+  The verifier's detached checks and bounded attacks exercised the added timeout/source-contract
+  code, so no acceptance-bearing runtime hunk invalidates that evidence. Independent machines,
+  WebKit, and host rr were not run, per explicit waiver and repository policy.
 - COVERAGE: HELD. The implementation hunks in `e6bc4d4` were exercised by the clean gate and the
   bounded attack; the later `07948a0` timeout/source hunks were exercised by its six-test gate and
   timeout/source attacks. Schema/docs/verifier/generated-manifest hunks were inspected or directly
@@ -114,6 +113,6 @@ result is included in the evidence scope.
 Commands: `make verify-E5-T16a` at detached `ff9f85c` and detached `07948a0`; bounded inline Node
 `runDriver`/`validateCapture` attack matrix for marker order, workload shape, counter wrap, idle
 floor, source/plan tampering, malformed/extra stdout, image digest ownership, and current-head
-timeout; `git show HEAD:evidence/e5-t16a/workload-harness-2026-09-04.json | shasum -a 256`; and
-`git diff --name-status e6bc4d4 ff9f85c`. No implementation code, tests, evidence envelope, or
+timeout; `shasum -a 256 evidence/e5-t16a/workload-harness-2026-09-04.json`; and
+`git diff --name-status e6bc4d4 ff9f85c`. No implementation code, tests, or
 unrelated dirty file was modified by verification.
