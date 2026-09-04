@@ -3,7 +3,7 @@ id: E5-T15d
 epic: 5
 title: Cursor plane integration and transform-only proof
 priority: 515.4
-status: implemented
+status: verified
 depends_on: [E5-T15c]
 estimate: S
 risk: medium
@@ -67,3 +67,58 @@ or unbounded data-URL retention refutes the integration claim.
   framebuffer load, the PNG bytes match an independent decoder/reference, and hide/fallback paths
   leave no stale DOM or host-cursor ownership. Independent-machine, WebKit, and host-rr runs are
   excluded per the user's direction and repository policy.
+
+### 2026-09-04 — verifier — VERDICT: verified
+
+- P1 native cursorq integration — HELD. Predicted one UPDATE with the 64×64 payload, 500
+  state-only MOVE callbacks, one 256×256 update, canonical resource-0 hide, and used-ring progress
+  503. The checked-in marker records exactly `updates=3 moves=500 final_x=600 final_y=580
+  checker_crc=29eaa715 oversized_pixels=65536 hidden_resource=0 used=503`
+  (`evidence/e5-t15d/cursor-integration-2026-09-04.json:48-51`); the fresh targeted machine-boundary
+  test passed and its assertions cover the changed test body (`crates/core/tests/virtio_gpu_machine.rs:530-657`).
+- P2 pixels, alpha, hotspot, fallback, hide — HELD. Predicted the independent all-byte RGBA
+  reference would have zero mismatches, hotspot `(10,3)`, CSS selection for 64×64, bounded overlay
+  fallback for 256×256, and a clean resource-0 state. Observed `mismatchBytes=0`, the expected
+  samples, and the exact CSS/overlay/hide descriptors (`evidence/e5-t15d/cursor-integration-2026-09-04.json:193-229`),
+  with source/dist hashes matching for all six proof inputs (`evidence/e5-t15d/cursor-integration-2026-09-04.json:13-47`). The fresh T15b/T15c
+  regression tests passed 11/11, including every-byte conversion, hotspot placement, 256×256
+  bounds, mode transitions, hide/reset, and 1,000 alternating transitions.
+- P3 delayed frame load and transform-only movement — HELD. Predicted all 500 requested moves
+  would complete with zero layout reads and exactly 500 transform writes while delayed framebuffer
+  work coalesces safely and drains. Observed final position `(619,579)`, transform
+  `translate3d(609px, 576px, 0px)`, `layoutReads=0`, `transformWrites=500`, 160/160 delayed
+  deliveries, 140 coalesced frames, scheduler `maxPending=1`, no pending/scheduled work, and no
+  presentation errors (`evidence/e5-t15d/cursor-integration-2026-09-04.json:94-192`).
+- P4 adversarial lifecycle and ownership — HELD. A fresh Chromium attack ran the seeded lifecycle
+  10,000 times, alternating DPR 1/2, with 9,900 small CSS transitions and 100 oversized overlay
+  transitions: zero move failures, one overlay maximum, maximum data URL 350,006 chars, delayed
+  presentation visibility pause/resume drained successfully, final hotspot transform
+  `translate3d(1299px, 855px, 0px)`, stale-resource MOVE was rejected without changing the active
+  image/transform, and disposal left no overlay or host-cursor ownership. This directly exercises
+  the cursor move/cleanup paths (`web/src/sink/cursor-controller.js:249-360,377-430`) and visibility
+  scheduler paths (`web/src/sink/visibility-scheduler.js:34-154`); Chromium reported no non-favicon
+  console/page/request errors. The checked-in proof independently records clean browser health,
+  DPR-2 math, and resource-0 teardown (`evidence/e5-t15d/cursor-integration-2026-09-04.json:203-263`).
+- P5 evidence digest, head, and scope — HELD. The checked-in envelope SHA-256 is
+  `95d2e5ca9483246a0aa9287e88df49ed9f89f95b684d20a51c872e0234cafabf` and the screenshot SHA-256 is
+  `50344f1689f1a97e57bf2b58507d6b6ddb13425d58e92fcfdd032c197839c341`; both recomputed exactly,
+  and the PNG was visually inspected. The envelope records `gitHead=94c5176` while current HEAD
+  is `73ce19f`; inspection of `git diff 94c5176 73ce19f` found only the envelope/PNG, task
+  status/log/queue, generated task manifests, and generated `web/dist/sw.js`—no acceptance-bearing
+  runtime source changed after recording. The recorded implementation-head evidence therefore
+  remains applicable to current HEAD; independent machines, WebKit, and host rr remain waived as
+  authorized (`evidence/e5-t15d/cursor-integration-2026-09-04.json:259-264`).
+- COVERAGE: HELD. The native proof assertions, browser verifier success path, route contract tests,
+  source/dist parity, generated route, and screenshot were exercised or hash-checked. The verifier's
+  error branches and cleanup-on-failure branches are defensive harness/diagnostic paths, not
+  acceptance behavior, and are waived; docs, Makefile/manifest metadata, generated SW version, and
+  evidence files are non-runtime bookkeeping or directly inspected artifacts. No changed
+  acceptance-bearing hunk remained unexercised.
+- Commands: `node --check web/cursor-integration.js && node --check tools/verify/e5-t15d-cursor-integration.mjs`;
+  `node --test web/tests/e5-t15d-cursor-integration.test.mjs`;
+  `node --test web/tests/e5-t15b-cursor-sink.test.mjs web/tests/e5-t15c-cursor-mode.test.mjs`;
+  `cargo fmt --check -p wasm-vm-core`;
+  `cargo clippy -p wasm-vm-core --test virtio_gpu_machine -- -D warnings`;
+  `cargo test -p wasm-vm-core --test virtio_gpu_machine gpu_cursor_plane_integration_preserves_pixels_and_transform_only_moves -- --nocapture`;
+  checked-in SHA/parity checks; and the fresh Chromium 10,000-iteration bounded attack described
+  above. No implementation code or checked-in evidence envelope was modified by verification.
