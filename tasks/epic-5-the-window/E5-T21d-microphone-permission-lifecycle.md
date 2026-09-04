@@ -3,7 +3,7 @@ id: E5-T21d
 epic: 5
 title: Lazy microphone permission and silence fallback
 priority: 521.4
-status: in-progress
+status: verified
 depends_on: [E5-T21c]
 estimate: S
 risk: high
@@ -48,4 +48,17 @@ listener cardinality after each transition.
 
 ## Verification log
 
-(empty)
+### 2026-09-04 — verifier — VERDICT: verified
+- Lazy permission — HELD. The exact-head harness observed zero `getUserMedia` calls and `off` before
+  capture PCM_START, then one shared request through a logical 30-second delay with zero queued
+  frames before grant; duplicate start observations did not duplicate the stream or listeners.
+- Failure/recovery lifecycle — HELD. Native capture evidence completed short source periods with
+  zero-filled PCM, `Ok` status, and a bounded input PCM_XRUN event. Chromium and the deterministic
+  browser harness held denial/no-device as `denied`, mute/end as drained `revoked`, removed all
+  three track listeners on end, and re-granted on the next guest start generation without an
+  uncaught host exception.
+- Exact-head coverage — HELD. The recorded run exercised the new PCM_START edge, capture SAB
+  attachment, worker notification path, permission controller, UI indicator, mute/end/retry paths,
+  and the generated `web/dist` artifacts. Source/dist parity and all affected checks passed.
+Commands: `env -i PATH="$PATH" node tools/verify/e5-t21d-microphone-permission.mjs`; `cargo test -p wasm-vm-core --test virtio_snd_capture --test virtio_snd_capture_config`; `PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8151 PLAYWRIGHT_REUSE_SERVER=0 ./node_modules/.bin/playwright test tests/e5-t21d-microphone-permission.spec.js --workers=1`
+Evidence: [microphone-permission-2026-09-04.txt](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t21d/microphone-permission-2026-09-04.txt), [microphone-permission-2026-09-04.png](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t21d/microphone-permission-2026-09-04.png)
