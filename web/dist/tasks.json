@@ -17588,7 +17588,7 @@
       "epicKey": "5",
       "title": "pointer wheel capture and browser proof",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T14b",
         "E5-T13c"
@@ -17613,13 +17613,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation is frozen at `bc9b69ba0e0c23902c3389e20fa75e64c170f2d8`. It completes the\nbyte-identical TypeScript/browser pointer bridge with signed per-axis PIXEL/LINE/PAGE wheel\ndetents, bounded fractional remainders, horizontal `REL_HWHEEL`, vertical `REL_WHEEL` inversion,\nwheel debug state, captured drag-outside handling, pointer-cancel cleanup, and blur/hidden/view\ntoggle/Pointer Lock-loss cleanup. It adds the guest-side signed wheel/button fixture and transcript,\nthe documented browser Pointer Lock and wheel policy, and the reproducible built-page proof harness.\n\nFocused gates passed at the frozen implementation head: `cargo fmt --all -- --check`; `cargo test\n-p wasm-vm-core --test virtio_pointer --quiet` (3/3); `cargo clippy -p wasm-vm-wasm\n--target wasm32-unknown-unknown -- -D warnings`; `npm run test:pointer` (12/12);\n`npm run test:keyboard-hardening` (14/14); `node --test web/tests/e4-t32-worker-protocol.test.mjs`\n(22/22); JS syntax, source/dist parity, and diff checks; and `make web-dist`.\n\nThe exact-head local Chromium recording ran `node tools/verify/e5-t14c-pointer-wheel-browser-proof.mjs`\nagainst the built demo and booted the real busybox guest to `guestReady`. It exercised six\nDPR/zoom configurations across the four corners and center, a real `page.mouse` drag outside the\nsurface with button values `[1, 0]`, a real browser wheel event producing `REL_WHEEL -1`, a LINE\ndetent plus 1000 `+3px` PIXEL events producing 26 deterministic wheel frames with zero remainder,\nand pointer-lock-change, blur, view-toggle, Escape-style exit, pointer-cancel, and denial recovery.\nThe final UI was absolute with no held pointer or keyboard buttons; console, page, and request\nerrors were empty.\n\nEvidence: `evidence/e5-t14c/pointer-wheel-browser-2026-09-03.json`, SHA-256\n`9de229469e3d33b1927fbd8b5766d114a533c0e38415dad0d08194e69a0bce7e`; screenshot\n`evidence/e5-t14c/pointer-wheel-browser-2026-09-03.png`, SHA-256\n`bbb6145092b9512c55db8d8f71eebcd13bc1f8c9170eabfa62283bcc58d9c7bd`; guest transcript\n`evidence/e5-t14c/guest-evtest-2026-09-03.txt`, SHA-256\n`a3cd5f1d311a9c5b23da1897f848533be521dc1c1c677ade5f591883918f119e`.",
       "adversarial": "Send 1000 `+3px` wheel events and compare the total to the accumulator contract. Combine a held\nbutton with Pointer Lock denial, Escape, blur, view toggles, and pointer capture outside the canvas;\nthen type/inspect a guest event stream and require no stuck button or modifier. Re-run the corner,\ncenter, DPR, and CSS-zoom matrix through the built page.",
       "file": "tasks/epic-5-the-window/E5-T14c-pointer-wheel-browser-proof.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t14c): activate pointer completion"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T15",
