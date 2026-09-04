@@ -27,7 +27,7 @@ surrogate is rejected locally and never reaches the guest, Wayland helper, or br
 | --- | --- | --- | --- |
 | Chromium on the served demo | `clipboard-write` permission or a permitted user gesture | `paste` event on the focused guest surface | The automated proof grants the Chromium clipboard permissions and still verifies focus, ordering, bounds, and zero console errors. |
 | Chromium with write permission denied | First write is staged and reported as blocked | Paste still sends only from a focused surface | A pointer/keyboard gesture retries the retained value once; failure remains visible. |
-| Firefox | Use the focused paste event for host → guest; browser permission prompts may vary by profile | Guest → host may require the browser's explicit user gesture/prompt | The Chromium proof is the deterministic gate. Firefox is a manual follow-up check because permission-prompt behavior is profile-dependent. |
+| Firefox | Guest → host may require the browser's explicit user gesture/prompt | Use the focused paste event for host → guest; browser permission prompts may vary by profile | The Chromium proof is the deterministic gate. Firefox is a manual follow-up check because permission-prompt behavior is profile-dependent. |
 | WebKit/Safari or an embedded web view | Treat clipboard permission and event behavior as host-specific | Do not assume Chromium permission semantics | Not part of the current acceptance gate; verify manually when that target is supported. |
 
 The proof uses the local Chromium permission context, not a system clipboard daemon or a second
