@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 264,
-    "total": 423
+    "total": 428
   },
   "epics": [
     {
@@ -18383,8 +18383,9 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t15d): verify cursor integration proof",
             "test(e5-t15d): record cursor integration evidence",
             "chore(e5-t15d): activate cursor integration proof"
           ]
@@ -18392,7 +18393,7 @@
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T16",
@@ -18400,13 +18401,21 @@
       "epicKey": "5",
       "title": "Display server decision — Wayland (labwc/weston) vs X11 under emulation, measured",
       "priority": 516,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
-        "E5-T07",
+        "E5-T07d",
+        "E5-T09e",
         "E5-T13c",
-        "E5-T14c"
+        "E5-T14c",
+        "E5-T15d"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T16a",
+        "E5-T16b",
+        "E5-T16c",
+        "E5-T16d",
+        "E5-T16e"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "A written, measured decision on the guest display server for the flagship desktop image:\ncandidates evaluated *inside the emulator* on CPU cost, damage quality, memory, cursor\nplane use, clipboard tooling, and Alpine riscv64 package availability — ending in one\ncommitted choice and a recorded rationale others can re-litigate with data.",
@@ -18443,6 +18452,135 @@
       "commitCount": 0
     },
     {
+      "id": "E5-T16a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Display-server finalist workload and guest metric harness",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T07d",
+        "E5-T09e",
+        "E5-T13c",
+        "E5-T14c",
+        "E5-T15d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Provide one candidate-neutral, deterministic workload and capture envelope that can measure\ndisplay-server finalists inside the riscv64 emulator with the same phase boundaries and counters.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Run with a missing terminal marker, a stalled drag, a counter that wraps, and a candidate that\nexits before idle. Each must fail with a named phase/error and never report a passing zero. Check\nthat the capture proves it ran inside the emulator and that no WebKit or independent-machine\nresult is included in the evidence scope.",
+      "file": "tasks/epic-5-the-window/E5-T16a-display-server-workload-harness.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T16b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Measure labwc with the pixman renderer inside the emulator",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T16a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Bring up labwc as the first T16 finalist on a throwaway Alpine riscv64 image and record an honest\nend-to-end result from cold start through the shared desktop workload.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Inspect the compositor command line and renderer diagnostics before trusting the numbers. Force\nthe scripted workload through a clean cold boot, repeat the drag and typing phases, and verify\nthat a missing cursorq event is reported as a capability gap rather than silently inferred from\nlabwc's configuration. A GL failure followed by a pixman measurement without the pixman setting\nbeing visible is a refutation.",
+      "file": "tasks/epic-5-the-window/E5-T16b-labwc-pixman-measurement.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T16c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Measure weston with the pixman renderer inside the emulator",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T16b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Bring up weston as the second T16 finalist on a throwaway Alpine riscv64 image and record the\nidentical end-to-end workload under weston's software pixman renderer.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Check the weston command line and startup log for `--renderer=pixman`, then repeat the typing and\ndrag workload after a cold reset. Remove the renderer flag in a test copy and ensure the harness\nrejects the result instead of accepting a possibly-GL or failed-start capture. Verify all damage\nbytes come from T09 counters for this run.",
+      "file": "tasks/epic-5-the-window/E5-T16c-weston-pixman-measurement.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T16d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Audit Alpine riscv64 display-stack packages and installability",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T16c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove the real Alpine riscv64 repository and install surface for the measured finalist stacks and\ntheir terminal, clipboard, seat, and XKB support before the decision is written.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Clear the package cache and rerun against the configured riscv64 mirrors. Attempt each proposed\n`apk add` on a clean image, including the clipboard and terminal packages; a package that only\nexists on x86 or only succeeds with `--allow-untrusted` refutes the candidate's availability claim.\nCompare package versions and repository labels against the captured architecture metadata.",
+      "file": "tasks/epic-5-the-window/E5-T16d-alpine-display-package-audit.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T16e",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Publish measured display-server decision and T17 handoff",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T16d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Turn the two inside-emulator finalist captures and package audit into a re-litigable display-server\ndecision, with winner variance, damage recomputation, revisit triggers, and an unambiguous T17 handoff.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Re-run the winner twice from cold state, compare variance to the runner-up margin, and recompute\ntyping upload bytes from raw T09 counters rather than the summary JSON. Inspect weston's pixman\nproof, labwc's cursorq proof if applicable, and every selected package install on a clean E3-derived\nriscv64 image. Any undocumented GL/fbdev substitution, stale evidence head, or ambiguous T17\nmanifest refutes the decision.",
+      "file": "tasks/epic-5-the-window/E5-T16e-display-server-decision.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
       "id": "E5-T17",
       "epic": "5",
       "epicKey": "5",
@@ -18450,7 +18588,7 @@
       "priority": 517,
       "status": "pending",
       "depends_on": [
-        "E5-T16"
+        "E5-T16e"
       ],
       "decomposed_into": [],
       "estimate": "L",

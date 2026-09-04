@@ -4,7 +4,7 @@ epic: 5
 title: Alpine riscv64 desktop disk image — reproducible build within size budget
 priority: 517
 status: pending
-depends_on: [E5-T16]
+depends_on: [E5-T16e]
 estimate: L
 capstone: false
 ---
