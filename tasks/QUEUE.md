@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T07d** — Native fbcon parity and first-light stress proof
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -352,7 +351,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `507.1` [E5-T07a](epic-5-the-window/E5-T07a-fbcon-probe-trace.md) — Guest virtio-gpu fbcon probe and command trace *(deps: E5-T03c, E5-T05c, E5-T06d)*
 - [x] `507.2` [E5-T07b](epic-5-the-window/E5-T07b-browser-first-light.md) — Browser fbcon first-light boot on the display canvas *(deps: E5-T07a)*
 - [x] `507.3` [E5-T07c](epic-5-the-window/E5-T07c-tty0-damage-output.md) — tty0 output and fbcon damage-rectangle delivery *(deps: E5-T07b)*
-- [ ] `507.4` [E5-T07d](epic-5-the-window/E5-T07d-native-parity-stress.md) — Native fbcon parity and first-light stress proof *(deps: E5-T07c)*
+- [~] `507.4` [E5-T07d](epic-5-the-window/E5-T07d-native-parity-stress.md) — Native fbcon parity and first-light stress proof *(deps: E5-T07c)*
 - [ ] `508` [E5-T08](epic-5-the-window/E5-T08-console-toggle-and-capture.md) — Host chrome — serial console toggle beside the display, screenshot and recording *(deps: E5-T07)*
 - [ ] `509` [E5-T09](epic-5-the-window/E5-T09-damage-tracking-frame-pacing.md) — Damage-rect coalescing, dirty tiling, and rAF-paced presentation *(deps: E5-T06d, E5-T07)*
 - [-] `510` [E5-T10](epic-5-the-window/E5-T10-virtio-input-device-core.md) — virtio-input device core — config space, eventq/statusq, event injection API *(deps: E5-T05c)*

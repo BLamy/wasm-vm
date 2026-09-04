@@ -16942,15 +16942,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t07c): record tty0 damage proof",
             "chore(e5-t07c): activate tty0 damage proof"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T07d",
@@ -16958,7 +16959,7 @@
       "epicKey": "5",
       "title": "Native fbcon parity and first-light stress proof",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T07c"
       ],

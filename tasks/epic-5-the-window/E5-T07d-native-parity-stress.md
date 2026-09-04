@@ -3,7 +3,7 @@ id: E5-T07d
 epic: 5
 title: Native fbcon parity and first-light stress proof
 priority: 507.4
-status: pending
+status: in-progress
 depends_on: [E5-T07c]
 estimate: S
 risk: high
