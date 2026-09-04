@@ -18211,15 +18211,16 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t20b): mark worklet verified",
             "test(e5-t20b): record worklet proof"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T20c",
@@ -18227,7 +18228,7 @@
       "epicKey": "5",
       "title": "AudioWorklet producer, AudioContext clock, and latency metrics",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T20b"
       ],

@@ -3,7 +3,7 @@ id: E5-T20c
 epic: 5
 title: AudioWorklet producer, AudioContext clock, and latency metrics
 priority: 520.3
-status: pending
+status: in-progress
 depends_on: [E5-T20b]
 estimate: S
 risk: high
