@@ -37,17 +37,21 @@ answered with `NAK`, keeping the session alive.
 
 All integer fields are little-endian. The current protocol version is `1`. Capability bits are
 registered in the shared Rust crate and mirrored by `web/agent-channel.js`: `CAP_PING = 1 << 0`,
-`CAP_CLIPBOARD = 1 << 1`, and `CAP_DISPLAY = 1 << 2`. The guest currently advertises only
-`CAP_PING`.
+`CAP_CLIPBOARD = 1 << 1`, and `CAP_DISPLAY = 1 << 2`. The guest advertises `CAP_PING` and
+`CAP_CLIPBOARD`; when the fixed Wayland helper is unavailable it keeps the agent session alive
+and reports `NAK_CLIPBOARD_UNAVAILABLE` for clipboard work that cannot be applied.
 
 The endpoint sends `HELLO` as soon as it opens a fresh port incarnation. Each side sends its own
 `HELLO`; the negotiated version is the lower non-zero version and capabilities are the bitwise
 intersection. A peer version of zero has no common version and fails the connection. A later
 `HELLO` with a lower version than the negotiated version is stale and also fails the connection.
 `NAK_UNKNOWN_TYPE = 1` identifies an unknown message type. NAK payloads are themselves fixed-size
-and malformed payloads are connection-fatal. `CAP_CLIPBOARD` authorizes `CLIP_SET` and
-`CLIP_GET`; an endpoint that does not advertise the bit remains compatible and should NAK those
-types rather than guessing at their payload.
+and malformed payloads are connection-fatal. `NAK_INVALID_PAYLOAD = 2` rejects a well-framed
+message whose typed payload is invalid, `NAK_CAPABILITY = 3` rejects a message whose capability
+was not negotiated, and `NAK_CLIPBOARD_UNAVAILABLE = 4` reports a valid clipboard message when
+the guest desktop helper is unavailable. `CAP_CLIPBOARD` authorizes `CLIP_SET` and `CLIP_GET`; an
+endpoint that does not advertise the bit remains compatible and should NAK those types rather
+than guessing at their payload.
 
 `CLIP_SET` is the only clipboard data message in v1. Its payload is the exact UTF-8 byte sequence
 for `text/plain`, with a separate 256 KiB limit (`MAX_CLIPBOARD_BYTES`) below the general 1 MiB
@@ -57,8 +61,9 @@ payload larger than 256 KiB is rejected before the clipboard value is delivered.
 
 ## Queue, size, and reset policy
 
-The guest agent uses a 16 KiB read buffer and a 64 KiB response queue. The host-side virtio-console
-state keeps each direction within its configured data budget (1 MiB by default). A producer may
+The guest agent uses a 16 KiB read buffer and a `256 KiB + 64 byte` response queue. The host-side
+virtio-console state keeps each direction within its configured data budget (1 MiB by default). A
+producer may
 accept a prefix and must retain the rejected suffix for later retry; it must never block the
 emulator or silently reorder bytes. The host `Channel` uses a separate pending-request bound and
 rejects excess requests with an explicit backpressure error.
@@ -69,7 +74,8 @@ The stream contract is:
 2. **Coalescing:** decode every complete frame in order from one read.
 3. **Garbage/unknown type:** decode the valid frame, send `NAK_UNKNOWN_TYPE`, and keep the port.
 4. **Malformed length, malformed fixed payload, or close with a partial frame:** discard the
-   decoder, reject in-flight requests as disconnected, and reconnect.
+   decoder, reject in-flight requests as disconnected, and reconnect. Clipboard typed-payload
+   errors are well-framed and receive `NAK_INVALID_PAYLOAD` without touching the serial path.
 5. **Port close/recreate:** discard all in-flight application bytes. Re-open the fixed path, send a
    fresh `HELLO`, and do not replay a partially written frame.
 

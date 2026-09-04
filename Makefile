@@ -447,6 +447,14 @@ verify-E5-T24a:
 	node --test web/tests/agent-channel.test.mjs
 	@echo "verify-E5-T24a (bounded clipboard protocol): OK"
 
+.PHONY: verify-E5-T24b
+verify-E5-T24b:
+	cargo fmt --check -p wasm-vm-agent-protocol -p wasm-vm-guest-agent
+	cargo clippy -p wasm-vm-agent-protocol -p wasm-vm-guest-agent --all-targets -- -D warnings
+	cargo test -p wasm-vm-agent-protocol
+	cargo test -p wasm-vm-guest-agent -- --nocapture
+	@echo "verify-E5-T24b (bounded guest clipboard bridge): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

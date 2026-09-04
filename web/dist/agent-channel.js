@@ -18,6 +18,9 @@ export const TYPE_CLIP_GET = 5;
 
 export const FLAG_NONE = 0;
 export const NAK_UNKNOWN_TYPE = 1;
+export const NAK_INVALID_PAYLOAD = 2;
+export const NAK_CAPABILITY = 3;
+export const NAK_CLIPBOARD_UNAVAILABLE = 4;
 
 export const CAP_PING = 1n << 0n;
 export const CAP_CLIPBOARD = 1n << 1n;

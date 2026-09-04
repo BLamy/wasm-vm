@@ -109,15 +109,20 @@ else
   exit 2
 fi
 
-# This slice is a fixed named-port service. Keep the capability boundary obvious and reject
-# accidental networking, command execution, or user-supplied path configuration in the binary.
+# The named-port service still rejects networking, shell execution, URL access, and caller-supplied
+# paths. E5-T24b intentionally adds only the two fixed Wayland helper commands; keep those paths
+# explicit so this older static-agent gate remains useful after the clipboard bridge lands.
 grep -Fq 'pub const PORT_PATH: &str = "/dev/virtio-ports/org.wasmvm.agent"' \
   "$repo/guest/agent/src/lib.rs"
-if rg -n 'TcpListener|UdpSocket|Command::|std::env::args|/bin/(sh|bash)|https?://' \
+if rg -n 'TcpListener|UdpSocket|std::env::args|/bin/(sh|bash)|https?://' \
   "$repo/guest/agent/src"; then
   echo "guest agent contains an out-of-scope listener, command, or path capability" >&2
   exit 1
 fi
+grep -Fq 'pub const WL_PASTE_PATH: &str = "/usr/bin/wl-paste"' \
+  "$repo/guest/agent/src/lib.rs"
+grep -Fq 'pub const WL_COPY_PATH: &str = "/usr/bin/wl-copy"' \
+  "$repo/guest/agent/src/lib.rs"
 
 # Recreate the image-builder's custom install surface in a disposable root. This keeps the exact
 # path/link assertions easy to inspect alongside the authoritative image build above.

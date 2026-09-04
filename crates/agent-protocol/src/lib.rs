@@ -34,6 +34,9 @@ pub const TYPE_CLIP_GET: u16 = 5;
 
 pub const FLAG_NONE: u16 = 0;
 pub const NAK_UNKNOWN_TYPE: u16 = 1;
+pub const NAK_INVALID_PAYLOAD: u16 = 2;
+pub const NAK_CAPABILITY: u16 = 3;
+pub const NAK_CLIPBOARD_UNAVAILABLE: u16 = 4;
 
 pub const CAP_PING: u64 = 1 << 0;
 pub const CAP_CLIPBOARD: u64 = 1 << 1;
@@ -243,10 +246,14 @@ impl ClipboardSet {
     pub fn as_bytes(&self) -> &[u8] {
         &self.text
     }
+
+    pub fn into_bytes(self) -> Vec<u8> {
+        self.text
+    }
 }
 
 /// A request for the peer's current text/plain clipboard. Its payload is always empty.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct ClipboardGet;
 
 impl ClipboardGet {
@@ -268,12 +275,6 @@ impl ClipboardGet {
             });
         }
         Ok(Self)
-    }
-}
-
-impl Default for ClipboardGet {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
@@ -749,7 +750,7 @@ mod tests {
             })
         );
 
-        let get = ClipboardGet::default();
+        let get = ClipboardGet::new();
         assert_eq!(get.encode_payload(&mut []), Ok(0));
         assert_eq!(ClipboardGet::from_payload(&[]), Ok(get));
         assert_eq!(
