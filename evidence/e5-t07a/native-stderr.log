@@ -2,17 +2,17 @@ wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), 
 
 === E2-T25 boot profile ===
 phase              wall_ms   d_wall_ms   d_retired      phase_MIPS
-console-up           33267       33267   272589617            8.19
-init-handoff         41651        8384    69199624            8.25
-busybox-userland     43667        2016    16598759            8.23
-total: 43667 ms, 358388000 retired, overall 8.21 MIPS
+console-up           33220       33220   272589617            8.21
+init-handoff         41286        8066    66199638            8.21
+busybox-userland     43300        2014    16598764            8.24
+total: 43300 ms, 355388019 retired, overall 8.21 MIPS
 
 per-device MMIO accesses:
   clint                     0  (@ 0x2000000)
-  plic                    358  (@ 0xc000000)
+  plic                    352  (@ 0xc000000)
   goldfish-rtc              9  (@ 0x101000)
   other                     0  (@ 0x100000)
-  uart16550              5374  (@ 0x10000000)
+  uart16550              5274  (@ 0x10000000)
   virtio-mmio               3  (@ 0x10001000)
   virtio-mmio               3  (@ 0x10002000)
   virtio-mmio               3  (@ 0x10003000)
@@ -22,5 +22,5 @@ per-device MMIO accesses:
   virtio-mmio              79  (@ 0x10007000)
   virtio-mmio              71  (@ 0x10008000)
 
-PROFILE_JSON {"total_ms":43667,"total_retired":358388000,"overall_mips":8.21,"phases":[{"phase":"console-up","wall_ms":33267,"retired":272589617,"phase_mips":8.19},{"phase":"init-handoff","wall_ms":41651,"retired":341789241,"phase_mips":8.25},{"phase":"busybox-userland","wall_ms":43667,"retired":358388000,"phase_mips":8.23}],"devices":[{"device":"clint","base":"0x2000000","accesses":0},{"device":"plic","base":"0xc000000","accesses":358},{"device":"goldfish-rtc","base":"0x101000","accesses":9},{"device":"other","base":"0x100000","accesses":0},{"device":"uart16550","base":"0x10000000","accesses":5374},{"device":"virtio-mmio","base":"0x10001000","accesses":3},{"device":"virtio-mmio","base":"0x10002000","accesses":3},{"device":"virtio-mmio","base":"0x10003000","accesses":3},{"device":"virtio-mmio","base":"0x10004000","accesses":153},{"device":"virtio-mmio","base":"0x10005000","accesses":3},{"device":"virtio-mmio","base":"0x10006000","accesses":3},{"device":"virtio-mmio","base":"0x10007000","accesses":79},{"device":"virtio-mmio","base":"0x10008000","accesses":71}]}
+PROFILE_JSON {"total_ms":43300,"total_retired":355388019,"overall_mips":8.21,"phases":[{"phase":"console-up","wall_ms":33220,"retired":272589617,"phase_mips":8.21},{"phase":"init-handoff","wall_ms":41286,"retired":338789255,"phase_mips":8.21},{"phase":"busybox-userland","wall_ms":43300,"retired":355388019,"phase_mips":8.24}],"devices":[{"device":"clint","base":"0x2000000","accesses":0},{"device":"plic","base":"0xc000000","accesses":352},{"device":"goldfish-rtc","base":"0x101000","accesses":9},{"device":"other","base":"0x100000","accesses":0},{"device":"uart16550","base":"0x10000000","accesses":5274},{"device":"virtio-mmio","base":"0x10001000","accesses":3},{"device":"virtio-mmio","base":"0x10002000","accesses":3},{"device":"virtio-mmio","base":"0x10003000","accesses":3},{"device":"virtio-mmio","base":"0x10004000","accesses":153},{"device":"virtio-mmio","base":"0x10005000","accesses":3},{"device":"virtio-mmio","base":"0x10006000","accesses":3},{"device":"virtio-mmio","base":"0x10007000","accesses":79},{"device":"virtio-mmio","base":"0x10008000","accesses":71}]}
 wasm-vm: profile complete (stopped at userland marker)

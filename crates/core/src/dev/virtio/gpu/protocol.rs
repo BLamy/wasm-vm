@@ -87,8 +87,8 @@ pub const SET_SCANOUT_SIZE: usize = CTRL_HDR_SIZE + RECT_SIZE + 8;
 pub const TRANSFER_TO_HOST_2D_SIZE: usize = CTRL_HDR_SIZE + RECT_SIZE + 16;
 /// Wire size of `virtio_gpu_resource_flush`.
 pub const RESOURCE_FLUSH_SIZE: usize = CTRL_HDR_SIZE + RECT_SIZE + 8;
-/// Wire size of `virtio_gpu_get_edid`.
-pub const GET_EDID_REQUEST_SIZE: usize = CTRL_HDR_SIZE + 4;
+/// Wire size of `virtio_gpu_cmd_get_edid` (scanout plus required padding).
+pub const GET_EDID_REQUEST_SIZE: usize = CTRL_HDR_SIZE + 8;
 /// Wire size of one `virtio_gpu_mem_entry`.
 pub const RESOURCE_MEM_ENTRY_SIZE: usize = 16;
 /// Wire size of one `virtio_gpu_display_one`.
@@ -96,8 +96,8 @@ pub const DISPLAY_MODE_SIZE: usize = 24;
 /// Wire size of `virtio_gpu_resp_display_info`.
 pub const DISPLAY_INFO_RESPONSE_SIZE: usize =
     CTRL_HDR_SIZE + DISPLAY_MODE_COUNT * DISPLAY_MODE_SIZE;
-/// Wire size of `virtio_gpu_resp_edid`.
-pub const EDID_RESPONSE_SIZE: usize = CTRL_HDR_SIZE + 128;
+/// Wire size of `virtio_gpu_resp_edid` (size, padding, and the 1024-byte EDID payload).
+pub const EDID_RESPONSE_SIZE: usize = CTRL_HDR_SIZE + 8 + 1024;
 
 /// `virtio_gpu_ctrl_hdr`, encoded as le32/le32/le64/le32/u8/u8[3].
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
@@ -158,7 +158,7 @@ impl GetEdid {
         })
     }
 
-    /// Encode the exact 28-byte GET_EDID request layout.
+    /// Encode the exact 32-byte GET_EDID request layout, leaving the required padding zeroed.
     pub fn to_bytes(self) -> [u8; GET_EDID_REQUEST_SIZE] {
         let mut out = [0u8; GET_EDID_REQUEST_SIZE];
         out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
@@ -167,7 +167,7 @@ impl GetEdid {
     }
 }
 
-/// `virtio_gpu_resp_edid`, a control header followed by one 128-byte EDID base block.
+/// `virtio_gpu_resp_edid`, with a size/padding pair followed by the EDID payload area.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct EdidResponse {
     pub header: CtrlHeader,
@@ -175,11 +175,16 @@ pub struct EdidResponse {
 }
 
 impl EdidResponse {
-    /// Encode the exact 152-byte GET_EDID response layout.
+    /// Encode the exact 1056-byte GET_EDID response layout. The device returns one 128-byte base
+    /// block and reports that size; the remaining payload area is zero-filled as required by the
+    /// fixed-size virtio-gpu response structure.
     pub fn to_bytes(self) -> [u8; EDID_RESPONSE_SIZE] {
         let mut out = [0u8; EDID_RESPONSE_SIZE];
         out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
-        out[CTRL_HDR_SIZE..].copy_from_slice(&self.edid);
+        out[CTRL_HDR_SIZE..CTRL_HDR_SIZE + 4]
+            .copy_from_slice(&(self.edid.len() as u32).to_le_bytes());
+        let edid_start = CTRL_HDR_SIZE + 8;
+        out[edid_start..edid_start + self.edid.len()].copy_from_slice(&self.edid);
         out
     }
 
@@ -189,8 +194,14 @@ impl EdidResponse {
             return None;
         }
         let header = CtrlHeader::from_bytes(&bytes[..CTRL_HDR_SIZE])?;
+        let size = u32::from_le_bytes(bytes[CTRL_HDR_SIZE..CTRL_HDR_SIZE + 4].try_into().ok()?);
+        if size < 128 || size as usize > 1024 {
+            return None;
+        }
         let mut edid = [0u8; 128];
-        edid.copy_from_slice(&bytes[CTRL_HDR_SIZE..EDID_RESPONSE_SIZE]);
+        let edid_start = CTRL_HDR_SIZE + 8;
+        let edid_len = edid.len();
+        edid.copy_from_slice(&bytes[edid_start..edid_start + edid_len]);
         Some(Self { header, edid })
     }
 }

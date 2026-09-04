@@ -140,41 +140,40 @@
 [    2.591148] [drm] features: -context_init
 [    2.592084] [drm] number of scanouts: 1
 [    2.592201] [drm] number of cap sets: 0
-[    2.593191] EDID has corrupt header
-[    2.598222] [drm] Initialized virtio_gpu 0.1.0 0 for 10008000.virtio_mmio on minor 0
-[    2.777800] Console: switching to colour frame buffer device 160x50
-[    2.895401] virtio-mmio 10008000.virtio_mmio: [drm] fb0: virtio_gpudrmfb frame buffer device
-[    2.933412] loop: module loaded
-[    2.951259] mousedev: PS/2 mouse device common for all mice
-[    2.955238] goldfish_rtc 101000.rtc: registered as rtc0
-[    2.955446] goldfish_rtc 101000.rtc: setting system clock to 2026-09-04T12:08:55 UTC (1788523735)
-[    2.958498] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
-[    2.958815] syscon-poweroff: probe of poweroff failed with error -16
-[    2.961269] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
-[    2.964228] sdhci: Secure Digital Host Controller Interface driver
-[    2.964378] sdhci: Copyright(c) Pierre Ossman
-[    2.965446] sdhci-pltfm: SDHCI platform and OF driver helper
-[    2.976423] IPVS: Registered protocols (TCP, UDP)
-[    2.976586] IPVS: Connection hash table configured (size=4096, memory=32Kbytes)
-[    2.977835] IPVS: ipvs loaded.
-[    2.977965] IPVS: [rr] scheduler registered.
-[    2.979746] Initializing XFRM netlink socket
-[    2.980122] NET: Registered PF_INET6 protocol family
-[    2.987037] Segment Routing with IPv6
-[    2.987658] In-situ OAM (IOAM) with IPv6
-[    2.988719] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
-[    2.992848] NET: Registered PF_PACKET protocol family
-[    2.993200] Bridge firewalling registered
-[    2.993610] 8021q: 802.1Q VLAN Support v1.8
-[    2.994190] 9pnet: Installing 9P2000 support
-[    2.994751] Key type dns_resolver registered
-[    3.240066] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
-[    3.252250] Btrfs loaded, zoned=no, fsverity=no
-[    3.255308] Legacy PMU implementation is available
-[    3.256611] clk: Disabling unused clocks
-[    3.256779] ALSA device list:
-[    3.256875]   #0: VirtIO SoundCard at platform/10007000.virtio_mmio/virtio1
-[    3.272236] Freeing unused kernel image (initmem) memory: 2200K
-[    3.272388] Run /init as init process
+[    2.597715] [drm] Initialized virtio_gpu 0.1.0 0 for 10008000.virtio_mmio on minor 0
+[    2.767275] Console: switching to colour frame buffer device 160x50
+[    2.884853] virtio-mmio 10008000.virtio_mmio: [drm] fb0: virtio_gpudrmfb frame buffer device
+[    2.922909] loop: module loaded
+[    2.940659] mousedev: PS/2 mouse device common for all mice
+[    2.944626] goldfish_rtc 101000.rtc: registered as rtc0
+[    2.944834] goldfish_rtc 101000.rtc: setting system clock to 2026-09-04T12:16:43 UTC (1788524203)
+[    2.947948] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+[    2.948195] syscon-poweroff: probe of poweroff failed with error -16
+[    2.950649] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+[    2.953636] sdhci: Secure Digital Host Controller Interface driver
+[    2.953787] sdhci: Copyright(c) Pierre Ossman
+[    2.954952] sdhci-pltfm: SDHCI platform and OF driver helper
+[    2.965881] IPVS: Registered protocols (TCP, UDP)
+[    2.966043] IPVS: Connection hash table configured (size=4096, memory=32Kbytes)
+[    2.967333] IPVS: ipvs loaded.
+[    2.967463] IPVS: [rr] scheduler registered.
+[    2.969199] Initializing XFRM netlink socket
+[    2.969575] NET: Registered PF_INET6 protocol family
+[    2.976447] Segment Routing with IPv6
+[    2.977067] In-situ OAM (IOAM) with IPv6
+[    2.978129] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    2.982258] NET: Registered PF_PACKET protocol family
+[    2.982610] Bridge firewalling registered
+[    2.983058] 8021q: 802.1Q VLAN Support v1.8
+[    2.983638] 9pnet: Installing 9P2000 support
+[    2.984498] Key type dns_resolver registered
+[    3.210297] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
+[    3.222483] Btrfs loaded, zoned=no, fsverity=no
+[    3.231198] Legacy PMU implementation is available
+[    3.232407] clk: Disabling unused clocks
+[    3.232574] ALSA device list:
+[    3.232671]   #0: VirtIO SoundCard at platform/10007000.virtio_mmio/virtio1
+[    3.242859] Freeing unused kernel image (initmem) memory: 2200K
+[    3.243012] Run /init as init process
 
 wasm-vm initramfs: busybox userland up (PID 1 = 1)

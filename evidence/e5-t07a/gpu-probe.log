@@ -1,6 +1,6 @@
 wasm-vm virtio-gpu command trace v1
 records=15 dropped=0
-seq=0 command=GET_EDID(0x0000010a) response=RESP_OK_EDID(0x00001104) scanout=0 resource=- dimensions=1280x800 avail=1 used=1 head=0 len=152
+seq=0 command=GET_EDID(0x0000010a) response=RESP_OK_EDID(0x00001104) scanout=0 resource=- dimensions=1280x800 avail=1 used=1 head=0 len=1056
 seq=1 command=GET_DISPLAY_INFO(0x00000100) response=RESP_OK_DISPLAY_INFO(0x00001101) scanout=0 resource=- dimensions=1280x800 avail=2 used=2 head=2 len=408
 seq=2 command=RESOURCE_CREATE_2D(0x00000101) response=RESP_OK_NODATA(0x00001100) scanout=- resource=2 dimensions=1280x800 avail=3 used=3 head=2 len=24
 seq=3 command=RESOURCE_ATTACH_BACKING(0x00000106) response=RESP_OK_NODATA(0x00001100) scanout=- resource=2 dimensions=1280x800 avail=4 used=4 head=0 len=24

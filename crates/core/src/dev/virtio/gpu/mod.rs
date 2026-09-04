@@ -1780,6 +1780,16 @@ mod tests {
         assert_eq!(bus.load32(RESPONSE).unwrap(), RESP_OK_EDID);
         assert_eq!(bus.load16(USED + 2).unwrap(), 1);
         assert_eq!(
+            bus.load32(RESPONSE + CTRL_HDR_SIZE as u64).unwrap(),
+            128,
+            "EDID base-block size is reported in the response payload"
+        );
+        assert_eq!(
+            bus.load32(RESPONSE + CTRL_HDR_SIZE as u64 + 4).unwrap(),
+            0,
+            "EDID response padding is zero"
+        );
+        assert_eq!(
             bus.load32(USED + 8).unwrap(),
             EDID_RESPONSE_SIZE as u32,
             "full EDID response written"
