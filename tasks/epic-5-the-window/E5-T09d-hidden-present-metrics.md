@@ -3,7 +3,7 @@ id: E5-T09d
 epic: 5
 title: Hidden-tab presentation fallback and metrics surface
 priority: 509.4
-status: in-progress
+status: verified
 depends_on: [E5-T09c]
 estimate: S
 risk: medium
@@ -46,4 +46,26 @@ and assert bounded pending work, monotonic counters, and a presented final curso
 
 ## Verification log
 
-(empty)
+### 2026-09-04 — verifier — VERDICT: verified
+
+- P1 hidden drain — HELD. Predicted that a hidden queued frame would remain bounded to one pending
+  plan, drain through one 250 ms timer, and let producer/serial work continue; the recorded test
+  passed with the hidden timer path and continued producer progress.
+- P2 visibility transition — HELD. Predicted that a visibility flip with a stale timer or rAF callback
+  pending would invalidate the old chain, schedule exactly one chain in the new mode, and deliver the
+  latest plan; the recorded transition test passed.
+- P3 adversarial lifecycle — HELD. Predicted that 1,000 alternating hidden/visible callbacks with a
+  delayed timer injection would keep pending work bounded, counters monotonic, and the final cursor
+  delivered; the recorded adversarial test passed.
+- P4 metrics surface — HELD. Predicted that `vm.stats.gpu` would expose fresh JSON-safe numeric fields
+  for presents, coalescing, uploaded bytes, skips, overruns, pending work, and dimensions without
+  canvas or backend references; the recorded controller test passed.
+- P5 coverage — HELD. The exact final implementation head was
+  `47ef46df0c7d55eeff0365006f2e505e0504e458`; `node tools/verify/e5-t09d-hidden-present.mjs`
+  ran the four-test suite with 4 passed and 0 failed. Evidence is
+  `evidence/e5-t09d/hidden-present.json`, SHA-256
+  `dfae15366423484f869b58cfdd028b12f261f9e53a284dc6ce70dde89e029c1f`.
+
+The user explicitly waived independent-machine and WebKit coverage; host rr is also waived by the
+repository evidence policy. The remaining end-to-end cursor/scroll and performance appendix are the
+scope of E5-T09e.
