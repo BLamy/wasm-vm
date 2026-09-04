@@ -562,14 +562,18 @@ async function runNativeProof() {
   const stderr = createWriteStream(stderrPath);
   child.stdout.pipe(stdout);
   child.stderr.pipe(stderr);
+  // Register stream-close observers before awaiting the child.  A fast failure or a completed
+  // proof can close the piped streams before the child `close` event is observed; attaching these
+  // listeners afterward leaves the top-level await unsettled and makes Node exit with code 13.
+  const streamsClosed = Promise.all([
+    new Promise((resolve) => stdout.once("close", resolve)),
+    new Promise((resolve) => stderr.once("close", resolve)),
+  ]);
   const exitCode = await new Promise((resolve, reject) => {
     child.once("error", reject);
     child.once("close", (code, signal) => resolve({ code, signal }));
   });
-  await Promise.all([
-    new Promise((resolve) => stdout.once("close", resolve)),
-    new Promise((resolve) => stderr.once("close", resolve)),
-  ]);
+  await streamsClosed;
   await rm(image, { force: true });
   const report = JSON.parse(await readFile(nativeReportPath, "utf8"));
   assert.equal(exitCode.code, 0, `native proof exited ${JSON.stringify(exitCode)}: ${JSON.stringify(report)}`);
