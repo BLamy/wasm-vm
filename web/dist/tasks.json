@@ -18330,7 +18330,7 @@
       "epicKey": "5",
       "title": "Cursor mode wiring and lifecycle",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T15b",
         "E5-T14c"
@@ -18342,13 +18342,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — worker — IMPLEMENTED\n\n- Commit: `9c0060864d87ebde262182a860441eaf2eba884c`.\n- Exact submission gate: `make verify-E5-T15c` — passed syntax checks, the 31-test cursor/machine\n  protocol matrix, the Chromium production-page smoke, Rust formatting/clippy, 267 core tests, 3\n  machine-boundary tests, and the wasm32 build.\n- Implementation: the core now emits a distinct `cursor_move` callback without borrowing cursor\n  pixels; the wasm sink labels UPDATE/MOVE events and provides an empty MOVE view; direct and\n  whole-machine worker loaders route cursor events around framebuffer presentation; and the page\n  owns one bounded CSS/overlay controller with pointer-lock-aware host-cursor restoration,\n  transform-only movement, replacement/hide cleanup, and a no-traffic default-cursor path.\n- Evidence: [`evidence/e5-t15c/cursor-mode-browser-2026-09-04.json`](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t15c/cursor-mode-browser-2026-09-04.json),\n  SHA-256 `43436209af48affe8e95c65de14163bb9f267169d8024544981b65ba4ea2d7c1`; screenshot\n  [`evidence/e5-t15c/cursor-mode-browser-2026-09-04.png`](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t15c/cursor-mode-browser-2026-09-04.png),\n  SHA-256 `bff503494b4e7cad24d9b9089676ca348f7cee8c795a23f9749f86f1d76b889b`.\n- Claim: the deterministic fixtures hold absolute CSS versus relative overlay mode, hide and\n  replacement/unref lifecycle, 500 MOVE callbacks with no layout reads and only transform writes,\n  1,000 alternating bounded transitions, and worker-side private UPDATE ownership with empty MOVE\n  payloads. The Chromium recording additionally proves source/dist identity, a clean production\n  page, exact hotspot CSS `(10,3)`, final transform `(689,796)`, 500 moves, and no stale overlay\n  after resource 0. The real guest checkerboard/delayed-frame workload remains E5-T15d.\n- Independent-machine and WebKit coverage were excluded per the user's direction; host rr is waived\n  by the repository evidence policy.",
       "adversarial": "Alternate modes and UPDATE/MOVE/hide/UNREF 1,000 times, inject moves during a framebuffer upload,\nand spy on layout reads/writes. Any stale cursor, layout read, duplicate listener, or host-cursor\nmutation without cursorq state refutes the slice.",
       "file": "tasks/epic-5-the-window/E5-T15c-cursor-mode-wiring.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t15c): activate cursor mode wiring"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T15d",
