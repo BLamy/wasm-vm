@@ -377,7 +377,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `519.3` [E5-T19c](epic-5-the-window/E5-T19c-snd-queue-xrun-hardening.md) — virtio-snd queue errors, XRUN events, and reset hardening *(deps: E5-T19b)*
 - [x] `519.4` [E5-T19d](epic-5-the-window/E5-T19d-snd-guest-playback-proof.md) — virtio-snd Linux guest integration and playback proof *(deps: E5-T19c)*
 - [-] `520` [E5-T20](epic-5-the-window/E5-T20-audioworklet-output.md) — AudioWorklet playback — SAB ring buffer, underrun accounting, autoplay unlock *(deps: E5-T19d)*
-- [~] `520.1` [E5-T20a](epic-5-the-window/E5-T20a-audio-ring-buffer.md) — Audio SAB ring buffer protocol and deterministic indices *(deps: E5-T19d)*
+- [?] `520.1` [E5-T20a](epic-5-the-window/E5-T20a-audio-ring-buffer.md) — Audio SAB ring buffer protocol and deterministic indices *(deps: E5-T19d)*
 - [ ] `520.2` [E5-T20b](epic-5-the-window/E5-T20b-audio-worklet-underruns.md) — AudioWorklet consumer and underrun accounting *(deps: E5-T20a)*
 - [ ] `520.3` [E5-T20c](epic-5-the-window/E5-T20c-audio-sink-clock.md) — AudioWorklet producer, AudioContext clock, and latency metrics *(deps: E5-T20b)*
 - [ ] `520.4` [E5-T20d](epic-5-the-window/E5-T20d-audio-autoplay-policy.md) — Audio autoplay unlock and pre-unlock discard policy *(deps: E5-T20c)*

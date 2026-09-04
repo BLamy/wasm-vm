@@ -3,7 +3,7 @@ id: E5-T20a
 epic: 5
 title: Audio SAB ring buffer protocol and deterministic indices
 priority: 520.1
-status: in-progress
+status: implemented
 depends_on: [E5-T19d]
 estimate: S
 risk: high
@@ -49,4 +49,22 @@ calculation is a failure.
 
 ## Verification log
 
-(empty)
+### 2026-09-03 — worker — implemented
+
+- Commit: `6eb6d9da3ad5ec5ae46f9b4a9be10fd02e65264d`.
+- Exact-head acceptance: `node --test web/tests/audio-ring.test.mjs` — 7 passed, 0 failed.
+- Adversarial repeat: the same suite ran 20 additional times with `--test-reporter=dot` — all
+  runs exited 0. The suite covers exact-fill/backpressure, empty and partial reads, repeated
+  128-frame drains across a 4095-frame ring, a 2^32 counter wrap on a 7-frame ring, capacity
+  metadata mutation fail-closed behavior, a real 30,000-frame Node worker producer/consumer race,
+  and the consumer allocation guard.
+- Packaging: `make web-dist` succeeded; `cmp web/src/audio/ring.js web/dist/src/audio/ring.js`
+  passed. Evidence transcript:
+  `evidence/e5-t20a/audio-ring-native-2026-09-03.txt` (SHA-256
+  `e61899dab8ec713e1d35c9d762cdb6a121cd12a0c00aab1bb7932f1aa0eacfbe`).
+
+The recording demonstrates that the exact-head SPSC contract publishes only complete stereo f32
+frames, applies atomic fill/index publication and consumption, preserves order through repeated
+non-power-of-two wraps and uint32 counter rollover, rejects a capacity mismatch without silent
+endpoint divergence, and remains correct under an actual concurrent Node worker schedule. The
+deployable source copy is byte-identical to the tested module.

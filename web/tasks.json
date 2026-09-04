@@ -18133,7 +18133,7 @@
       "epicKey": "5",
       "title": "Audio SAB ring buffer protocol and deterministic indices",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T19d"
       ],
@@ -18157,13 +18157,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- Commit: `6eb6d9da3ad5ec5ae46f9b4a9be10fd02e65264d`.\n- Exact-head acceptance: `node --test web/tests/audio-ring.test.mjs` — 7 passed, 0 failed.\n- Adversarial repeat: the same suite ran 20 additional times with `--test-reporter=dot` — all\n  runs exited 0. The suite covers exact-fill/backpressure, empty and partial reads, repeated\n  128-frame drains across a 4095-frame ring, a 2^32 counter wrap on a 7-frame ring, capacity\n  metadata mutation fail-closed behavior, a real 30,000-frame Node worker producer/consumer race,\n  and the consumer allocation guard.\n- Packaging: `make web-dist` succeeded; `cmp web/src/audio/ring.js web/dist/src/audio/ring.js`\n  passed. Evidence transcript:\n  `evidence/e5-t20a/audio-ring-native-2026-09-03.txt` (SHA-256\n  `e61899dab8ec713e1d35c9d762cdb6a121cd12a0c00aab1bb7932f1aa0eacfbe`).\n\nThe recording demonstrates that the exact-head SPSC contract publishes only complete stereo f32\nframes, applies atomic fill/index publication and consumption, preserves order through repeated\nnon-power-of-two wraps and uint32 counter rollover, rejects a capacity mismatch without silent\nendpoint divergence, and remains correct under an actual concurrent Node worker schedule. The\ndeployable source copy is byte-identical to the tested module.",
       "adversarial": "Run independent producer/consumer schedules with fixed seeds, force write/read counters across\n`2^32` wrap, and mutate capacity by one frame. Any stale index, overwrite, or non-atomic fill\ncalculation is a failure.",
       "file": "tasks/epic-5-the-window/E5-T20a-audio-ring-buffer.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t20a): activate audio ring buffer"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T20b",
