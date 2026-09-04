@@ -9,7 +9,7 @@ use alloc::boxed::Box;
 use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
 
-use super::protocol;
+use super::{damage::DamageAccumulator, protocol};
 use crate::bus::Bus;
 use crate::mmio::SystemBus;
 
@@ -38,10 +38,10 @@ pub struct Resource {
     pub host_pixels: Box<[u32]>,
     /// Guest backing entries are populated by E5-T02b.  CREATE_2D always starts detached.
     pub backing: Vec<(GuestAddr, u32)>,
-    /// Pixels changed by transfers since the last flush.  This is deliberately a single
-    /// bounding rectangle: the virtio-gpu protocol carries one rectangle per flush, and the
-    /// browser sink can cheaply upload the union without retaining a second full-frame copy.
-    pending_damage: Option<protocol::Rect>,
+    /// Pixels changed by transfers since the last flush. The bounded plan preserves separate
+    /// regions for the later tile/presentation slices while this resource API still publishes one
+    /// protocol rectangle today.
+    pending_damage: DamageAccumulator,
     /// The first browser presentation must establish the whole surface.  Later transfers may be
     /// narrowed to `pending_damage` when the sink opts into change tracking.
     presented: bool,
@@ -53,54 +53,6 @@ impl Resource {
         (self.host_pixels.len() as u64) * core::mem::size_of::<u32>() as u64
     }
 
-    fn note_damage(damage: &mut Option<protocol::Rect>, x: u32, y: u32) {
-        *damage = Some(match *damage {
-            Some(previous) => Self::rect_union(
-                previous,
-                protocol::Rect {
-                    x,
-                    y,
-                    width: 1,
-                    height: 1,
-                },
-            ),
-            None => protocol::Rect {
-                x,
-                y,
-                width: 1,
-                height: 1,
-            },
-        });
-    }
-
-    fn rect_contains(outer: protocol::Rect, inner: protocol::Rect) -> bool {
-        u64::from(inner.x) >= u64::from(outer.x)
-            && u64::from(inner.y) >= u64::from(outer.y)
-            && u64::from(inner.x) + u64::from(inner.width)
-                <= u64::from(outer.x) + u64::from(outer.width)
-            && u64::from(inner.y) + u64::from(inner.height)
-                <= u64::from(outer.y) + u64::from(outer.height)
-    }
-
-    fn rect_union(left: protocol::Rect, right: protocol::Rect) -> protocol::Rect {
-        let x = left.x.min(right.x);
-        let y = left.y.min(right.y);
-        let right_edge = left
-            .x
-            .saturating_add(left.width)
-            .max(right.x.saturating_add(right.width));
-        let bottom_edge = left
-            .y
-            .saturating_add(left.height)
-            .max(right.y.saturating_add(right.height));
-        protocol::Rect {
-            x,
-            y,
-            width: right_edge.saturating_sub(x),
-            height: bottom_edge.saturating_sub(y),
-        }
-    }
-
     /// Record one transfer result and return the rectangle to publish at the next flush.
     ///
     /// A non-tracking sink retains the exact protocol request for the historical core contract.
@@ -108,13 +60,13 @@ impl Resource {
     /// pixels whose transferred values differ from the previously flushed resource.
     pub fn flush_rect(&mut self, requested: protocol::Rect, track_changes: bool) -> protocol::Rect {
         let published = if track_changes && self.presented {
-            match self.pending_damage.take() {
-                Some(pending) if Self::rect_contains(requested, pending) => pending,
-                Some(pending) => Self::rect_union(requested, pending),
+            match self.pending_damage.take().bounds() {
+                Some(pending) if DamageAccumulator::contains(requested, pending) => pending,
+                Some(pending) => DamageAccumulator::union(requested, pending),
                 None => requested,
             }
         } else {
-            self.pending_damage = None;
+            self.pending_damage.clear();
             requested
         };
         self.presented = true;
@@ -475,11 +427,12 @@ impl ResourceMap {
                 );
                 if host_pixels[index] != value {
                     host_pixels[index] = value;
-                    Resource::note_damage(
-                        pending_damage,
-                        rect.x + pixel as u32,
-                        rect.y + row_index,
-                    );
+                    pending_damage.push(protocol::Rect {
+                        x: rect.x + pixel as u32,
+                        y: rect.y + row_index,
+                        width: 1,
+                        height: 1,
+                    });
                 }
             }
             if row_index + 1 < rect.height {
@@ -539,7 +492,7 @@ impl ResourceMap {
             height,
             host_pixels: pixels.into_boxed_slice(),
             backing: Vec::new(),
-            pending_damage: None,
+            pending_damage: DamageAccumulator::new(width, height),
             presented: false,
         };
         self.accounted_bytes += pixel_bytes;

@@ -590,6 +590,13 @@ verify-E5-T08:
 	node tools/verify/e5-t08-console-capture.mjs --output evidence/e5-t08/console-capture.json
 	@echo "verify-E5-T08 (display/serial host chrome and capture): OK"
 
+.PHONY: verify-E5-T09a
+verify-E5-T09a:
+	# Guest-side bounded damage proof: deterministic unit/integration tests plus the wasm target.
+	node --check tools/verify/e5-t09a-damage-coalescer.mjs
+	node tools/verify/e5-t09a-damage-coalescer.mjs --output evidence/e5-t09a/damage-coalescer.json
+	@echo "verify-E5-T09a (bounded damage coalescer): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

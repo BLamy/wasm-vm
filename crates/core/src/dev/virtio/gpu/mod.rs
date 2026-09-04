@@ -4,6 +4,7 @@
 //! registers, and keeps the protocol wire formats in [`protocol`]. E5-T02a adds the first
 //! host-owned resource store and CREATE_2D command; later slices add backing and presentation.
 
+pub mod damage;
 pub mod edid;
 pub mod protocol;
 pub mod resources;
