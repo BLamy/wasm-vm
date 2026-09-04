@@ -3,7 +3,7 @@ id: E5-T20a
 epic: 5
 title: Audio SAB ring buffer protocol and deterministic indices
 priority: 520.1
-status: implemented
+status: verified
 depends_on: [E5-T19d]
 estimate: S
 risk: high
@@ -68,3 +68,23 @@ frames, applies atomic fill/index publication and consumption, preserves order t
 non-power-of-two wraps and uint32 counter rollover, rejects a capacity mismatch without silent
 endpoint divergence, and remains correct under an actual concurrent Node worker schedule. The
 deployable source copy is byte-identical to the tested module.
+
+### 2026-09-03 — verifier — VERDICT: verified
+
+- **Publication and ordering — HELD.** Predicted that the producer would publish complete stereo
+  frames only after payload writes and that the consumer would never read beyond published fill.
+  The focused suite held this through empty, partial, exact-fill, backpressure, repeated 128-frame
+  drains, and the 30,000-frame worker race; see
+  [`audio-ring-verifier-2026-09-03.txt`](../../evidence/e5-t20a/audio-ring-verifier-2026-09-03.txt).
+- **Wrap arithmetic — HELD.** Predicted that explicit slot cursors would preserve order for
+  capacities that do not divide 2^32. The independent fixed schedule held for capacities 1, 2, 3,
+  5, 7, 31, and 4095, each seeded at `0xfffffff0` and run for 300 schedules.
+- **Hardening and coverage — HELD.** The promoted test covers malformed header cells, capacity
+  mutation, invalid caller storage, and invalid frame ranges; the consumer source guard confirms
+  no allocation helpers. No changed runtime hunk is dead; the impossible oversized-allocation
+  guard is waived as defensive `Number.isSafeInteger` protection.
+- **Reproducibility — HELD.** The acceptance suite passed from a scrubbed environment and in 20
+  repeated runs. The tested source and deployable `web/dist` copy have identical SHA-256 digests.
+- Evidence: [`audio-ring-verifier-2026-09-03.txt`](../../evidence/e5-t20a/audio-ring-verifier-2026-09-03.txt),
+  SHA-256 `5145dea53fc4832ba7b6efefd80242fa780fc538b64ac110c84b1bfbf82ae834`.
+- Findings: none. The task is verified.

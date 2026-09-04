@@ -1,0 +1,38 @@
+E5-T20a exact-head verifier evidence
+=====================================
+
+Verified: 2026-09-03
+Repository: /Users/blamy/Documents/Codex/wasm-vm
+Runtime head: c7d558a712a50c892c61b8d8064d8fcdf202760f
+
+Prediction 1 — the focused acceptance suite remains green from a scrubbed environment.
+Command:
+  env -i PATH="$PATH" node --test web/tests/audio-ring.test.mjs
+Result: exit 0; 8 tests passed, 0 failed.
+
+Prediction 2 — repeated schedules cannot expose a stale or non-atomic cursor race.
+Command:
+  for i in {1..20}; do node --test --test-reporter=dot web/tests/audio-ring.test.mjs; done
+Result: verifier-repeat-runs=20 exit=0.
+
+Prediction 3 — capacities that do not divide 2^32 remain ordered while counters cross rollover.
+Independent command used a fixed schedule over capacities [1, 2, 3, 5, 7, 31, 4095], seeded
+at write/read counter 0xfffffff0, for 300 producer/consumer schedules per capacity, checking
+every stereo sample and fill bound.
+Result: `novel-capacity-sweep=7 capacities x 300 schedules; exit=0`.
+
+Coverage audit:
+  - Header initialization, atomic index/slot/fill publication, empty/partial/exact/full paths,
+    non-power-of-two slot wrap, and 2^32 counter rollover are exercised by the focused suite.
+  - `fromSharedBuffer` is exercised by the worker producer; capacity mutation, malformed magic /
+    version / channel / capacity cells, invalid typed arrays, and invalid frame ranges are covered
+    by the promoted malformed-header test.
+  - The only intentionally unexecuted branch is the impossible oversized allocation guard; it is
+    defensive `Number.isSafeInteger` protection and cannot be reached without attempting an
+    unallocatable SharedArrayBuffer. No changed runtime hunk is dead or unproven.
+
+SHA-256 at this head:
+  web/src/audio/ring.js          b0bef33c0d873951324eec3c59ba136bac493738a5a7f73b0ac2ddb1410f2592
+  web/tests/audio-ring.test.mjs  c42db9284e45e66880c9390e7d283eaae0bd25d50123d70d69b1caa124eaecfb
+  docs/audio.md                  596880911185edf0545052abdc1985fd4298ce8a608a8d70ba68da7f6b79652f
+  web/dist/src/audio/ring.js     b0bef33c0d873951324eec3c59ba136bac493738a5a7f73b0ac2ddb1410f2592
