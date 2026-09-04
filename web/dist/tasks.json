@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 229,
+    "verified": 230,
     "total": 392
   },
   "epics": [
@@ -18275,7 +18275,7 @@
       "epicKey": "5",
       "title": "Audio autoplay unlock and pre-unlock discard policy",
       "priority": null,
-      "status": "implemented",
+      "status": "verified",
       "depends_on": [
         "E5-T20c"
       ],
@@ -18299,21 +18299,22 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\n- Implementation commit: `1c3ba8c33f6025b0899d7ec424092064c41fa342`.\n- Exact-head acceptance: `env -i PATH=\"$PATH\" node --test web/tests/audio-autoplay.test.mjs` — 5\n  passed, 0 failed.\n- Dependent regression: `env -i PATH=\"$PATH\" node --test web/tests/audio-sink.test.mjs\n  web/tests/audio-worklet.test.mjs web/tests/audio-ring.test.mjs` — 19 passed, 0 failed.\n- Stability: the autoplay suite passed 20/20 repeated scrubbed runs; the dependent audio suites\n  passed 5/5 repeated scrubbed runs.\n- Browser: after `make web-dist` (which includes `make web-build`), local Chromium loaded\n  `http://localhost:8139/index.html?noAutoBoot=1&testHooks=1` with the muted badge visible in the\n  locked state. A click on the Demo tab changed the badge to hidden `data-audio-state=unlocked`;\n  the browser reported zero error/warning entries. The locked-state screenshot was emitted in the\n  CUA verification record.\n- Packaging: source and deploy copies of `autoplay.js`, `main.js`, and `roadmap.js` are byte-identical;\n  `node --check` passed for the changed JS entry points and `git diff --check` passed. The roadmap\n  manifest now exposes “Audio autoplay unlock + pre-unlock pacing” as verified.\n- Evidence transcript: `evidence/e5-t20d/autoplay-policy-2026-09-03.txt`, SHA-256\n  `4702b4d08708d049892de106c122ee617aa115d785a9e02826748bcac98da781`.\n\nThe final recording demonstrates that the main page starts with an honest, accessible muted state;\nthe policy consumes queued stereo frames against the negotiated AudioContext rate with a bounded\none-quantum pump; click and keydown gestures share one idempotent resume path; successful unlock\nstops the pre-unlock reader and clears the badge; and a rejected resume keeps the UI actionable\nwhile the ring remains usable for retry. Host rr, independent-machine, and WebKit legs are waived\nby the current repository policy and user direction.",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\n- Implementation commit: `1c3ba8c33f6025b0899d7ec424092064c41fa342`.\n- Final exact-head proof commit: `e718499efacaee2200f9ee5d49fca2e06afa66a1` (test-only listener\n  cardinality assertion added after the implementation commit).\n- Exact-head acceptance: `env -i PATH=\"$PATH\" node --test web/tests/audio-autoplay.test.mjs` — 5\n  passed, 0 failed.\n- Dependent regression: `env -i PATH=\"$PATH\" node --test web/tests/audio-sink.test.mjs\n  web/tests/audio-worklet.test.mjs web/tests/audio-ring.test.mjs` — 19 passed, 0 failed.\n- Stability: the autoplay suite passed 20/20 repeated scrubbed runs; the dependent audio suites\n  passed 5/5 repeated scrubbed runs.\n- Browser: after `make web-dist` (which includes `make web-build`), local Chromium loaded\n  `http://localhost:8139/index.html?noAutoBoot=1&testHooks=1` with the muted badge visible in the\n  locked state. A click on the Demo tab changed the badge to hidden `data-audio-state=unlocked`;\n  the browser reported zero error/warning entries. The locked-state screenshot was emitted in the\n  CUA verification record.\n- Packaging: source and deploy copies of `autoplay.js`, `main.js`, and `roadmap.js` are byte-identical;\n  `node --check` passed for the changed JS entry points and `git diff --check` passed. The roadmap\n  manifest now exposes “Audio autoplay unlock + pre-unlock pacing” as verified.\n- Evidence transcript: `evidence/e5-t20d/autoplay-policy-2026-09-03.txt`, SHA-256\n  `f7eda73f478cc5883edd6df7ff1731a85ca26b34a3feb631bd4cdc7ebac47239`.\n\nThe final recording demonstrates that the main page starts with an honest, accessible muted state;\nthe policy consumes queued stereo frames against the negotiated AudioContext rate with a bounded\none-quantum pump; click and keydown gestures share one idempotent resume path; successful unlock\nstops the pre-unlock reader and clears the badge; and a rejected resume keeps the UI actionable\nwhile the ring remains usable for retry. Host rr, independent-machine, and WebKit legs are waived\nby the current repository policy and user direction.\n\n### 2026-09-03 — verifier — VERDICT: verified\n\n- **Pre-gesture pacing — HELD.** Predicted a visible locked badge, no resume attempt before a\n  gesture, and clock-budgeted consumption capped at one 128-frame quantum even after a 5-second\n  delayed/background interval. The exact-head test held the locked badge, zero resume calls, a\n  128-frame negotiated-rate discard, and 128 frames remaining after the delayed pump.\n- **Unlock idempotence — HELD.** Predicted that the first click would enter `unlocking`, concurrent\n  click/keydown events would share one `resume()` call, success would hide the badge and cancel the\n  timer, and later gestures would be harmless. The focused suite held the state transition, one\n  resume call, hidden `data-audio-state=unlocked`, zero pending timer entries, and one registration\n  call per event type.\n- **Rejected resume — HELD.** Predicted a rejected `resume()` would resolve to a retryable locked\n  state without removing listeners or wedging the ring. The test observed the original error,\n  actionable badge text, continued 32-frame discard, and a successful second gesture with exactly\n  two total resume attempts.\n- **Coverage and packaging — HELD.** The diff audit covers the locked, unlocking, success,\n  rejection, delayed-clock, listener-attach/detach, and main-page badge paths. The exact source and\n  deploy copies match for `autoplay.js`, `main.js`, and `roadmap.js`; the browser capture loaded the\n  page with no error/warning entries and showed the locked→unlocked badge transition. Unsupported\n  AudioContext fallback remains defensive and is waived under the user's standard-Chrome scope.\n- **Reproducibility — HELD.** At exact proof head `e718499efacaee2200f9ee5d49fca2e06afa66a1`, the\n  focused suite passed 5/5, the dependent audio suites passed 19/19, the focused suite repeated\n  20/20, `cargo fmt --all --check`, the wasm32 check, JS syntax checks, and `git diff --check`\n  passed. Evidence: `evidence/e5-t20d/autoplay-policy-2026-09-03.txt`, SHA-256\n  `f7eda73f478cc5883edd6df7ff1731a85ca26b34a3feb631bd4cdc7ebac47239`.\n- **SUITE — HELD.** Retain the deterministic autoplay/DOM test, the bounded delayed-clock attack,\n  the rejection/retry test, and the locked-state Chromium screenshot as the permanent proof.\n- Findings: none. The task is verified.",
       "adversarial": "Dispatch gestures before and during a suspended context, reject `resume()`, reload with a queued\nperiod, and background/foreground the page. Assert no duplicate listeners, burst drain, or stuck\nmuted state.",
       "file": "tasks/epic-5-the-window/E5-T20d-audio-autoplay-policy.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t20d): record autoplay proof",
             "chore(e5-t20d): activate autoplay policy"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T20e",

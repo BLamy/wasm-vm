@@ -3,7 +3,7 @@ id: E5-T20d
 epic: 5
 title: Audio autoplay unlock and pre-unlock discard policy
 priority: 520.4
-status: implemented
+status: verified
 depends_on: [E5-T20c]
 estimate: S
 risk: medium
@@ -50,6 +50,8 @@ muted state.
 ### 2026-09-03 — worker — IMPLEMENTED
 
 - Implementation commit: `1c3ba8c33f6025b0899d7ec424092064c41fa342`.
+- Final exact-head proof commit: `e718499efacaee2200f9ee5d49fca2e06afa66a1` (test-only listener
+  cardinality assertion added after the implementation commit).
 - Exact-head acceptance: `env -i PATH="$PATH" node --test web/tests/audio-autoplay.test.mjs` — 5
   passed, 0 failed.
 - Dependent regression: `env -i PATH="$PATH" node --test web/tests/audio-sink.test.mjs
@@ -65,7 +67,7 @@ muted state.
   `node --check` passed for the changed JS entry points and `git diff --check` passed. The roadmap
   manifest now exposes “Audio autoplay unlock + pre-unlock pacing” as verified.
 - Evidence transcript: `evidence/e5-t20d/autoplay-policy-2026-09-03.txt`, SHA-256
-  `4702b4d08708d049892de106c122ee617aa115d785a9e02826748bcac98da781`.
+  `f7eda73f478cc5883edd6df7ff1731a85ca26b34a3feb631bd4cdc7ebac47239`.
 
 The final recording demonstrates that the main page starts with an honest, accessible muted state;
 the policy consumes queued stereo frames against the negotiated AudioContext rate with a bounded
@@ -73,3 +75,32 @@ one-quantum pump; click and keydown gestures share one idempotent resume path; s
 stops the pre-unlock reader and clears the badge; and a rejected resume keeps the UI actionable
 while the ring remains usable for retry. Host rr, independent-machine, and WebKit legs are waived
 by the current repository policy and user direction.
+
+### 2026-09-03 — verifier — VERDICT: verified
+
+- **Pre-gesture pacing — HELD.** Predicted a visible locked badge, no resume attempt before a
+  gesture, and clock-budgeted consumption capped at one 128-frame quantum even after a 5-second
+  delayed/background interval. The exact-head test held the locked badge, zero resume calls, a
+  128-frame negotiated-rate discard, and 128 frames remaining after the delayed pump.
+- **Unlock idempotence — HELD.** Predicted that the first click would enter `unlocking`, concurrent
+  click/keydown events would share one `resume()` call, success would hide the badge and cancel the
+  timer, and later gestures would be harmless. The focused suite held the state transition, one
+  resume call, hidden `data-audio-state=unlocked`, zero pending timer entries, and one registration
+  call per event type.
+- **Rejected resume — HELD.** Predicted a rejected `resume()` would resolve to a retryable locked
+  state without removing listeners or wedging the ring. The test observed the original error,
+  actionable badge text, continued 32-frame discard, and a successful second gesture with exactly
+  two total resume attempts.
+- **Coverage and packaging — HELD.** The diff audit covers the locked, unlocking, success,
+  rejection, delayed-clock, listener-attach/detach, and main-page badge paths. The exact source and
+  deploy copies match for `autoplay.js`, `main.js`, and `roadmap.js`; the browser capture loaded the
+  page with no error/warning entries and showed the locked→unlocked badge transition. Unsupported
+  AudioContext fallback remains defensive and is waived under the user's standard-Chrome scope.
+- **Reproducibility — HELD.** At exact proof head `e718499efacaee2200f9ee5d49fca2e06afa66a1`, the
+  focused suite passed 5/5, the dependent audio suites passed 19/19, the focused suite repeated
+  20/20, `cargo fmt --all --check`, the wasm32 check, JS syntax checks, and `git diff --check`
+  passed. Evidence: `evidence/e5-t20d/autoplay-policy-2026-09-03.txt`, SHA-256
+  `f7eda73f478cc5883edd6df7ff1731a85ca26b34a3feb631bd4cdc7ebac47239`.
+- **SUITE — HELD.** Retain the deterministic autoplay/DOM test, the bounded delayed-clock attack,
+  the rejection/retry test, and the locked-state Chromium screenshot as the permanent proof.
+- Findings: none. The task is verified.

@@ -1,6 +1,6 @@
 E5-T20d autoplay unlock and pre-unlock discard policy
 Date: 2026-09-03
-Exact implementation head: 1c3ba8c33f6025b0899d7ec424092064c41fa342
+Exact proof head: e718499efacaee2200f9ee5d49fca2e06afa66a1
 
 Acceptance command (scrubbed environment):
   env -i PATH="$PATH" node --test web/tests/audio-autoplay.test.mjs
