@@ -1,9 +1,9 @@
 //! virtio-snd control plane and one paced playback stream (E5-T19a/E5-T19b).
 //!
 //! This module owns the guest-visible identity, configuration queries, PCM capability contract,
-//! lifecycle validation, and clock-paced output path for the first stream. Event delivery and
-//! malformed-queue hardening remain in T19c; guest integration remains in T19d. Wire helpers use
-//! explicit little-endian encoding so native and wasm callers observe the same bytes.
+//! lifecycle validation, clock-paced output path, bounded event delivery, and malformed-queue
+//! recovery for the first stream. Guest integration remains in T19d. Wire helpers use explicit
+//! little-endian encoding so native and wasm callers observe the same bytes.
 
 use alloc::collections::VecDeque;
 use alloc::rc::Rc;
@@ -70,12 +70,18 @@ impl SndStatus {
 pub const VIRTIO_SND_D_OUTPUT: u8 = 0;
 pub const VIRTIO_SND_D_INPUT: u8 = 1;
 
-/// PCM feature bits. This device advertises none in T19a; event/XRUN support belongs to T19c.
+/// PCM feature bits from virtio-snd §5.14.6.4.
 pub const VIRTIO_SND_PCM_F_SHMEM_HOST: u32 = 1 << 0;
 pub const VIRTIO_SND_PCM_F_SHMEM_GUEST: u32 = 1 << 1;
 pub const VIRTIO_SND_PCM_F_MSG_POLLING: u32 = 1 << 2;
 pub const VIRTIO_SND_PCM_F_EVT_SHMEM_PERIODS: u32 = 1 << 3;
 pub const VIRTIO_SND_PCM_F_EVT_XRUNS: u32 = 1 << 4;
+
+/// Asynchronous virtio-snd event types from §5.14.7.1.
+pub const VIRTIO_SND_EVT_JACK_CONNECTED: u32 = 0x100;
+pub const VIRTIO_SND_EVT_JACK_DISCONNECTED: u32 = 0x101;
+pub const VIRTIO_SND_EVT_PCM_PERIOD_ELAPSED: u32 = 0x110;
+pub const VIRTIO_SND_EVT_PCM_XRUN: u32 = 0x111;
 
 /// Supported PCM sample format and rate enum values from virtio-snd.
 pub const VIRTIO_SND_PCM_FMT_S16: u8 = 5;
@@ -99,6 +105,12 @@ pub const PCM_SET_PARAMS_SIZE: usize = 24;
 pub const PCM_XFER_HDR_SIZE: usize = 4;
 /// The device-written output-queue status is `{ status, latency_bytes }`.
 pub const PCM_STATUS_SIZE: usize = 8;
+/// The device-written eventq record is `{ event, data }`.
+pub const SND_EVENT_SIZE: usize = 8;
+/// Spec-named alias for [`SND_EVENT_SIZE`].
+pub const VIRTIO_SND_EVENT_SIZE: usize = SND_EVENT_SIZE;
+/// Maximum number of asynchronous sound events retained while the guest is not polling eventq.
+pub const MAX_PENDING_SND_EVENTS: usize = 256;
 
 /// One normalized stereo S16 frame is four bytes.
 pub const PCM_FRAME_BYTES: u32 = 4;
@@ -407,11 +419,12 @@ pub struct PcmInfo {
 }
 
 impl PcmInfo {
-    /// The one stereo S16 output stream, limited to 44.1 kHz and 48 kHz.
+    /// The one stereo S16 output stream, limited to 44.1 kHz and 48 kHz. XRUN notifications are
+    /// delivered through eventq when the guest has negotiated the corresponding PCM capability.
     pub const fn output() -> Self {
         Self {
             hda_fn_nid: 0,
-            features: 0,
+            features: VIRTIO_SND_PCM_F_EVT_XRUNS,
             formats: 1u64 << VIRTIO_SND_PCM_FMT_S16,
             rates: (1u64 << VIRTIO_SND_PCM_RATE_44100) | (1u64 << VIRTIO_SND_PCM_RATE_48000),
             direction: VIRTIO_SND_D_OUTPUT,
@@ -617,6 +630,46 @@ impl PcmStatus {
     }
 }
 
+/// One asynchronous virtio-snd event, encoded as two little-endian u32 fields.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SndEvent {
+    /// Event type, such as [`VIRTIO_SND_EVT_PCM_XRUN`].
+    pub event: u32,
+    /// Event-specific data; for PCM events this is the stream identifier.
+    pub data: u32,
+}
+
+impl SndEvent {
+    /// Construct a stream-zero PCM XRUN notification.
+    pub const fn pcm_xrun(stream_id: u32) -> Self {
+        Self {
+            event: VIRTIO_SND_EVT_PCM_XRUN,
+            data: stream_id,
+        }
+    }
+
+    /// Encode the exact `virtio_snd_event` layout.
+    pub fn to_bytes(self) -> [u8; SND_EVENT_SIZE] {
+        let mut out = [0u8; SND_EVENT_SIZE];
+        out[0..4].copy_from_slice(&self.event.to_le_bytes());
+        out[4..8].copy_from_slice(&self.data.to_le_bytes());
+        out
+    }
+
+    /// Decode one complete event record without reading beyond the provided bytes.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        Some(Self {
+            event: read_u32(bytes, 0)?,
+            data: read_u32(bytes, 4)?,
+        })
+    }
+}
+
+/// Descriptive alias for callers that name the wire record after the PCM event path.
+pub type PcmEvent = SndEvent;
+/// Spec-oriented alias for [`SndEvent`].
+pub type VirtioSndEvent = SndEvent;
+
 /// Result of one paced playback service boundary.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub struct PlaybackReport {
@@ -634,6 +687,10 @@ pub struct PlaybackReport {
     pub pending_bytes: u32,
     /// Deadline of the first pending transfer, if any.
     pub next_deadline_ns: Option<u64>,
+    /// Number of XRUN events generated at this service boundary.
+    pub xrun_events: u32,
+    /// Number of eventq descriptors completed at this service boundary.
+    pub event_descriptors_completed: u32,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -651,6 +708,10 @@ struct PlaybackQueue {
     pending: VecDeque<PendingPcm>,
     observed_epoch: u64,
     release_pending: bool,
+    /// Expected completion time of the next period when no transfer is pending.
+    next_xrun_ns: Option<u64>,
+    /// Duration of one configured period, used to count missed periods without a loop per tick.
+    period_duration_ns: u64,
 }
 
 impl PlaybackQueue {
@@ -672,7 +733,25 @@ impl PlaybackQueue {
         for transfer in &mut self.pending {
             transfer.deadline_ns = u64::MAX;
         }
+        self.next_xrun_ns = None;
     }
+
+    fn set_running_schedule(&mut self, now_ns: u64, period_duration_ns: u64) {
+        self.period_duration_ns = period_duration_ns;
+        self.reschedule(now_ns);
+        self.next_xrun_ns = Some(
+            self.pending
+                .back()
+                .map(|transfer| transfer.deadline_ns.saturating_add(period_duration_ns))
+                .unwrap_or_else(|| now_ns.saturating_add(period_duration_ns)),
+        );
+    }
+}
+
+#[derive(Debug, Default)]
+struct EventState {
+    pending: VecDeque<SndEvent>,
+    dropped_xruns: u64,
 }
 
 /// The five observable states of the one output PCM stream.
@@ -881,6 +960,7 @@ pub struct SndState {
     reset_pending: bool,
     lifecycle_epoch: u64,
     playback: PlaybackQueue,
+    events: EventState,
 }
 
 impl Default for SndState {
@@ -891,6 +971,7 @@ impl Default for SndState {
             reset_pending: false,
             lifecycle_epoch: 0,
             playback: PlaybackQueue::default(),
+            events: EventState::default(),
         }
     }
 }
@@ -1002,6 +1083,16 @@ impl SndState {
         self.playback.pending.len()
     }
 
+    /// Number of asynchronous events waiting for a guest eventq buffer.
+    pub fn pending_event_count(&self) -> usize {
+        self.events.pending.len()
+    }
+
+    /// Number of XRUN notifications discarded after the bounded event budget filled.
+    pub fn dropped_xrun_events(&self) -> u64 {
+        self.events.dropped_xruns
+    }
+
     /// Service one txq boundary using an injected clock and sink.
     ///
     /// Available transfers are copied out of guest RAM and retained until their individual audio
@@ -1031,8 +1122,13 @@ impl SndState {
             let Some(sample_rate_hz) = params.sample_rate_hz() else {
                 return Ok(self.finish_report(report));
             };
+            let period_duration_ns = frame_duration_ns(
+                (params.period_bytes / PCM_FRAME_BYTES) as usize,
+                sample_rate_hz,
+            );
 
             self.complete_ready(queue, bus, now_ns, sink, &mut report)?;
+            self.enqueue_missed_xruns(now_ns, &mut report);
             while self.playback.pending.len() < usize::from(queue.size()) {
                 let Some(chain) = queue.pop(bus)? else {
                     break;
@@ -1057,7 +1153,9 @@ impl SndState {
                     }
                 }
             }
+            self.refresh_xrun_schedule(now_ns, period_duration_ns);
             self.complete_ready(queue, bus, now_ns, sink, &mut report)?;
+            self.enqueue_missed_xruns(now_ns, &mut report);
         }
 
         Ok(self.finish_report(report))
@@ -1069,7 +1167,22 @@ impl SndState {
         }
         self.playback.observed_epoch = self.lifecycle_epoch;
         match self.stream.state() {
-            PcmState::Running => self.playback.reschedule(now_ns),
+            PcmState::Running => {
+                let Some(params) = self.stream.params() else {
+                    self.playback.clear_schedule();
+                    return;
+                };
+                let Some(sample_rate_hz) = params.sample_rate_hz() else {
+                    self.playback.clear_schedule();
+                    return;
+                };
+                let period_duration_ns = frame_duration_ns(
+                    (params.period_bytes / PCM_FRAME_BYTES) as usize,
+                    sample_rate_hz,
+                );
+                self.playback
+                    .set_running_schedule(now_ns, period_duration_ns);
+            }
             PcmState::Stopped => self.playback.clear_schedule(),
             PcmState::Released | PcmState::SetParams | PcmState::Prepared => {
                 self.playback.clear_schedule()
@@ -1087,6 +1200,12 @@ impl SndState {
     ) -> Result<Result<PendingPcm, Vec<Segment>>, Violation> {
         let status_segments: Vec<Segment> = chain.writable().copied().collect();
         if chain.writable_len() < PCM_STATUS_SIZE as u64 {
+            return Ok(Err(status_segments));
+        }
+        let readable_len = chain.readable_len();
+        if readable_len < PCM_XFER_HDR_SIZE as u64
+            || readable_len > u64::from(params.buffer_bytes) + PCM_XFER_HDR_SIZE as u64
+        {
             return Ok(Err(status_segments));
         }
 
@@ -1110,7 +1229,7 @@ impl SndState {
         if xfer.stream_id != 0
             || pcm.is_empty()
             || !pcm_bytes.is_multiple_of(PCM_FRAME_BYTES)
-            || pcm_bytes > params.buffer_bytes
+            || pcm_bytes != params.period_bytes
         {
             return Ok(Err(status_segments));
         }
@@ -1135,6 +1254,48 @@ impl SndState {
             duration_ns,
             deadline_ns,
         }))
+    }
+
+    fn refresh_xrun_schedule(&mut self, now_ns: u64, period_duration_ns: u64) {
+        self.playback.period_duration_ns = period_duration_ns;
+        if let Some(last) = self.playback.pending.back() {
+            self.playback.next_xrun_ns = Some(last.deadline_ns.saturating_add(period_duration_ns));
+        } else if self.playback.next_xrun_ns.is_none() {
+            self.playback.next_xrun_ns = Some(now_ns.saturating_add(period_duration_ns));
+        }
+    }
+
+    fn enqueue_missed_xruns(&mut self, now_ns: u64, report: &mut PlaybackReport) {
+        if self.stream.state() != PcmState::Running || !self.playback.pending.is_empty() {
+            return;
+        }
+        let Some(mut deadline_ns) = self.playback.next_xrun_ns else {
+            return;
+        };
+        let period_duration_ns = self.playback.period_duration_ns;
+        if period_duration_ns == 0 || now_ns < deadline_ns {
+            return;
+        }
+
+        let missed = now_ns
+            .saturating_sub(deadline_ns)
+            .checked_div(period_duration_ns)
+            .unwrap_or(0)
+            .saturating_add(1);
+        let available = MAX_PENDING_SND_EVENTS.saturating_sub(self.events.pending.len()) as u64;
+        let emit = missed.min(available);
+        for _ in 0..emit {
+            self.events.pending.push_back(SndEvent::pcm_xrun(0));
+        }
+        self.events.dropped_xruns = self
+            .events
+            .dropped_xruns
+            .saturating_add(missed.saturating_sub(emit));
+        report.xrun_events = report
+            .xrun_events
+            .saturating_add(emit.min(u64::from(u32::MAX)) as u32);
+        deadline_ns = deadline_ns.saturating_add(period_duration_ns.saturating_mul(missed));
+        self.playback.next_xrun_ns = Some(deadline_ns);
     }
 
     fn complete_ready(
@@ -1213,6 +1374,18 @@ impl SndState {
         report
     }
 
+    fn next_event(&self) -> Option<SndEvent> {
+        self.events.pending.front().copied()
+    }
+
+    fn complete_event(&mut self, event: SndEvent) -> bool {
+        if self.events.pending.front().copied() != Some(event) {
+            return false;
+        }
+        self.events.pending.pop_front();
+        true
+    }
+
     /// Mark a queue kick for later service at a free bus boundary.
     pub fn mark_queue_kick(&mut self, queue: u32) {
         if let Some(kicked) = self.kicked.get_mut(queue as usize) {
@@ -1244,10 +1417,11 @@ impl SndState {
         self.reset_pending = true;
         self.lifecycle_epoch = 0;
         self.playback = PlaybackQueue::default();
+        self.events = EventState::default();
     }
 }
 
-/// Transport-facing virtio-snd device. Event delivery and guest integration are later slices.
+/// Transport-facing virtio-snd device. Guest integration is the later T19d slice.
 pub struct VirtioSnd {
     state: Rc<RefCell<SndState>>,
 }
@@ -1351,6 +1525,9 @@ impl VirtioDevice for VirtioSnd {
 
 /// Run-loop service for the playback txq. The caller supplies the clock and sink, so the core
 /// remains deterministic and browser/OS audio policy stays outside the device implementation.
+///
+/// This compatibility entry point keeps the T19b tx-only API. Callers that have an eventq should
+/// use [`service_with_eventq`] so pending XRUN notifications can be delivered to the guest.
 pub fn service(
     slot: &Rc<RefCell<VirtioMmio>>,
     tx_vq: &mut Option<Virtqueue>,
@@ -1359,54 +1536,200 @@ pub fn service(
     sink: &mut dyn AudioSink,
     bus: &mut SystemBus,
 ) -> PlaybackReport {
-    let (reset, kicked, active) = {
-        let mut state = state.borrow_mut();
-        let reset = state.take_reset_pending();
-        let kicked = state.take_queue_kick(TX_QUEUE);
-        let active = state.stream.state() == PcmState::Running
-            || !state.playback.pending.is_empty()
-            || state.playback.release_pending;
-        (reset, kicked, active)
-    };
-    if reset {
-        *tx_vq = None;
-    }
-    if !kicked && !active {
-        return PlaybackReport::default();
-    }
+    service_internal(slot, None, tx_vq, state, clock, sink, bus)
+}
 
-    let queue_state = *slot.borrow().queue(TX_QUEUE as usize);
+enum QueuePreparation {
+    Ready,
+    NotReady,
+    Violation,
+}
+
+fn prepare_queue(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    vq: &mut Option<Virtqueue>,
+    queue_index: u32,
+) -> QueuePreparation {
+    let queue_state = *slot.borrow().queue(queue_index as usize);
     if !queue_state.ready {
-        *tx_vq = None;
-        return PlaybackReport::default();
+        *vq = None;
+        return QueuePreparation::NotReady;
     }
-    if tx_vq.is_none() {
+    if vq
+        .as_ref()
+        .is_some_and(|queue| !queue.matches_state(&queue_state))
+    {
+        *vq = None;
+    }
+    if vq.is_none() {
         match Virtqueue::new(&queue_state, 256) {
-            Ok(queue) => *tx_vq = Some(queue),
+            Ok(queue) => *vq = Some(queue),
             Err(_) => {
                 slot.borrow_mut().protocol_violation();
-                return PlaybackReport::default();
+                *vq = None;
+                return QueuePreparation::Violation;
             }
         }
     }
+    QueuePreparation::Ready
+}
 
-    let result = state.borrow_mut().service_playback(
-        tx_vq.as_mut().expect("just constructed"),
-        bus,
-        clock,
-        sink,
-    );
-    let Ok(report) = result else {
-        slot.borrow_mut().protocol_violation();
-        *tx_vq = None;
-        return PlaybackReport::default();
-    };
-    if report.completed != 0
-        && tx_vq
-            .as_ref()
-            .is_some_and(|queue| queue.interrupt_needed(bus))
-    {
+fn write_event(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    event: SndEvent,
+) -> Result<u32, Violation> {
+    // eventq is device-to-guest. A short or wrongly-directed buffer is consumed with a zero-length
+    // used entry and the event stays pending for a later valid buffer; no partial event escapes.
+    if chain.readable_len() != 0 || chain.writable_len() < SND_EVENT_SIZE as u64 {
+        return Ok(0);
+    }
+    let bytes = event.to_bytes();
+    let mut written = 0usize;
+    for segment in chain.writable() {
+        for offset in 0..u64::from(segment.len) {
+            if written == bytes.len() {
+                return Ok(written as u32);
+            }
+            let address = segment
+                .addr
+                .checked_add(offset)
+                .ok_or(Violation::BadAddress)?;
+            bus.store8(address, bytes[written])
+                .map_err(|_| Violation::BadAddress)?;
+            written += 1;
+        }
+    }
+    Ok(written as u32)
+}
+
+fn service_eventq(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    eventq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<SndState>>,
+    bus: &mut SystemBus,
+    report: &mut PlaybackReport,
+) {
+    if !matches!(
+        prepare_queue(slot, eventq, EVENT_QUEUE),
+        QueuePreparation::Ready
+    ) {
+        return;
+    }
+    let queue = eventq.as_mut().expect("eventq was prepared");
+    loop {
+        let Some(event) = state.borrow().next_event() else {
+            break;
+        };
+        let chain = match queue.pop(bus) {
+            Ok(Some(chain)) => chain,
+            Ok(None) => break,
+            Err(_) => {
+                slot.borrow_mut().protocol_violation();
+                *eventq = None;
+                return;
+            }
+        };
+        let written = match write_event(&chain, bus, event) {
+            Ok(written) => written,
+            Err(_) => {
+                slot.borrow_mut().protocol_violation();
+                *eventq = None;
+                return;
+            }
+        };
+        if written == SND_EVENT_SIZE as u32 {
+            state.borrow_mut().complete_event(event);
+        }
+        if queue.push_used(bus, chain.head, written).is_err() {
+            slot.borrow_mut().protocol_violation();
+            *eventq = None;
+            return;
+        }
+        report.event_descriptors_completed = report.event_descriptors_completed.saturating_add(1);
+    }
+    if report.event_descriptors_completed != 0 && queue.interrupt_needed(bus) {
         slot.borrow_mut().raise_used_irq();
+    }
+}
+
+/// Run-loop service for the playback txq and asynchronous eventq. The caller supplies the clock
+/// and sink, so the core remains deterministic and browser/OS audio policy stays outside the
+/// device implementation. Both queue views are discarded when the guest resets or reconfigures
+/// their transport addresses, preventing stale ring indices from replaying or stranding buffers.
+pub fn service_with_eventq(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    eventq: &mut Option<Virtqueue>,
+    tx_vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<SndState>>,
+    clock: &dyn AudioClock,
+    sink: &mut dyn AudioSink,
+    bus: &mut SystemBus,
+) -> PlaybackReport {
+    service_internal(slot, Some(eventq), tx_vq, state, clock, sink, bus)
+}
+
+fn service_internal(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    mut eventq: Option<&mut Option<Virtqueue>>,
+    tx_vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<SndState>>,
+    clock: &dyn AudioClock,
+    sink: &mut dyn AudioSink,
+    bus: &mut SystemBus,
+) -> PlaybackReport {
+    let (reset, tx_kicked, event_kicked, active_audio, active_events) = {
+        let mut state = state.borrow_mut();
+        let reset = state.take_reset_pending();
+        let tx_kicked = state.take_queue_kick(TX_QUEUE);
+        let event_kicked = state.take_queue_kick(EVENT_QUEUE);
+        let active_audio = state.stream.state() == PcmState::Running
+            || !state.playback.pending.is_empty()
+            || state.playback.release_pending;
+        let active_events = !state.events.pending.is_empty();
+        (reset, tx_kicked, event_kicked, active_audio, active_events)
+    };
+    if reset {
+        *tx_vq = None;
+        if let Some(eventq) = eventq.as_deref_mut() {
+            *eventq = None;
+        }
+    }
+    if !tx_kicked && !event_kicked && !active_audio && !active_events {
+        return PlaybackReport::default();
+    }
+
+    let mut report = PlaybackReport::default();
+    if (tx_kicked || active_audio)
+        && matches!(
+            prepare_queue(slot, tx_vq, TX_QUEUE),
+            QueuePreparation::Ready
+        )
+    {
+        let result = state.borrow_mut().service_playback(
+            tx_vq.as_mut().expect("txq was prepared"),
+            bus,
+            clock,
+            sink,
+        );
+        let Ok(playback) = result else {
+            slot.borrow_mut().protocol_violation();
+            *tx_vq = None;
+            return PlaybackReport::default();
+        };
+        report = playback;
+        if report.completed != 0
+            && tx_vq
+                .as_ref()
+                .is_some_and(|queue| queue.interrupt_needed(bus))
+        {
+            slot.borrow_mut().raise_used_irq();
+        }
+    }
+    if let Some(eventq) = eventq
+        && (event_kicked || state.borrow().pending_event_count() != 0)
+    {
+        service_eventq(slot, eventq, state, bus, &mut report);
     }
     report
 }

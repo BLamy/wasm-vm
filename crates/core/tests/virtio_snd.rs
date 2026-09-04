@@ -23,7 +23,7 @@ const EXPECTED_JACK_INFO: [u8; JACK_INFO_SIZE] = [
 
 const EXPECTED_PCM_INFO: [u8; PCM_INFO_SIZE] = [
     0, 0, 0, 0, // hda_fn_nid
-    0, 0, 0, 0, // features
+    0x10, 0, 0, 0, // features: VIRTIO_SND_PCM_F_EVT_XRUNS
     0x20, 0, 0, 0, 0, 0, 0, 0, // formats: S16
     0xc0, 0, 0, 0, 0, 0, 0, 0, // rates: 44.1 kHz + 48 kHz
     0, 2, 2, 0, 0, 0, 0, 0, // direction, channel range, reserved

@@ -2,8 +2,8 @@
 
 The first sound device is virtio device ID 25. It exposes four queues in the standard order:
 `controlq`, `eventq`, `txq`, and `rxq`. Its configuration is one output jack, one output PCM
-stream, and one output channel map. T19a does not advertise optional PCM features; timing, sinks,
-queue data, and XRUN events are owned by T19b--T19d.
+stream, and one output channel map. The PCM advertises `VIRTIO_SND_PCM_F_EVT_XRUNS`; timing, sinks,
+queue data, and recovery are implemented by T19b--T19d.
 
 The PCM stream accepts interleaved stereo S16 frames at only 44.1 kHz or 48 kHz. `buffer_bytes`
 and `period_bytes` are non-zero, frame-aligned, `period_bytes` divides `buffer_bytes`, and the
@@ -47,3 +47,17 @@ silently dropping their descriptors.
 The deterministic playback fixture is `crates/core/tests/virtio_snd_playback.rs`: it checks held
 clock pacing at 0.5x/1x/2x, exact used-ring order and status latency, a STOP/START ramp capture, and
 an eight-second 48 kHz sine capture whose FFT peak is within 1 Hz of 440 Hz.
+
+## T19c queue recovery and XRUN events
+
+`SndEvent::pcm_xrun(stream_id)` serializes the eight-byte `virtio_snd_event` record with event type
+`0x111` and the stream identifier in `data`. The running stream counts each elapsed period with no
+pending txq transfer as one XRUN. Events are retained in a 256-record bounded queue while eventq is
+not polled; excess notifications are counted as dropped rather than growing host memory.
+
+Malformed but structurally valid txq transfers (truncated/header-only, zero PCM, a non-period-sized
+PCM payload, undersized status, or the wrong stream) are completed with `IO_ERR`; the ring then
+continues to the next descriptor. Short or wrongly-directed eventq buffers are returned with
+`used.len = 0` while the event remains pending for a later writable buffer. Reset clears both
+queue views and pending host state, and a changed transport queue layout causes a fresh ring view to
+be built on the next service boundary.
