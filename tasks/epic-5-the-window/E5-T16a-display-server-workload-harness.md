@@ -3,7 +3,7 @@ id: E5-T16a
 epic: 5
 title: Display-server finalist workload and guest metric harness
 priority: 516.1
-status: pending
+status: in-progress
 depends_on: [E5-T07d, E5-T09e, E5-T13c, E5-T14c, E5-T15d]
 estimate: S
 risk: medium

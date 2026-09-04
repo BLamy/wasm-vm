@@ -18457,7 +18457,7 @@
       "epicKey": "5",
       "title": "Display-server finalist workload and guest metric harness",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T07d",
         "E5-T09e",
