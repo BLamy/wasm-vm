@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>wasm-vm — presentation integration proof</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        background: #090b0f;
+        color: #eef2f7;
+      }
+      body { margin: 0; min-height: 100vh; }
+      header { padding: 16px 20px; border-bottom: 1px solid #242b36; background: #0d1015; }
+      h1 { margin: 0; font-size: 16px; font-weight: 650; }
+      main { max-width: 1440px; margin: 0 auto; padding: 20px; }
+      .status, pre { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .status { margin-top: 8px; color: #53d4ff; }
+      .status[data-state="ready"] { color: #2ea043; }
+      .status[data-state="error"] { color: #f85149; }
+      .surface { display: block; width: min(100%, 1280px); height: auto; margin-top: 16px; background: #000; }
+      #serial { max-height: 24rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+      #proof { max-height: 36rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+      .test-surface { position: fixed; left: -100000px; top: 0; width: 1px; height: 1px; }
+      [hidden] { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>wasm-vm — damage tiling and frame-pacing integration proof</h1>
+      <div id="status" class="status" role="status" aria-live="polite" data-state="booting">loading proof route…</div>
+    </header>
+    <main>
+      <canvas id="integration-canvas" class="surface" width="1280" height="800" aria-label="presentation integration surface"></canvas>
+      <pre id="serial" hidden aria-label="forced-hidden boot serial output"></pre>
+      <pre id="proof">waiting for the verifier…</pre>
+    </main>
+    <script type="module" src="./present-integration.js"></script>
+  </body>
+</html>

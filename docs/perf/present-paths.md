@@ -84,3 +84,25 @@ append that result before changing the runtime policy.
 The machine-readable evidence envelope records the full cells, browser fields, errors, sample
 counts, profile observations, ranking comparisons, and the baseline screenshot. The verifier
 rejects missing fields, fewer than 300 samples, non-finite timings, and browser errors.
+
+## E5-T09e integration proof
+
+The T09e integration route records the production Canvas2D readback path with the 64×64 tiled
+upload plan enabled and a full-frame A/B reference with it disabled. The exact implementation
+head, source/dist digests, browser health, and all counters are stored in
+`evidence/e5-t09e/present-integration.json`; the evidence `gitHead` is the bundle head for the
+measurements below.
+
+The local Chromium 131 proof used a 1280×800 resource (4,096,000 bytes per full frame):
+
+| Workload | Tiled result | Full-frame reference | Pixel/queue result |
+| --- | ---: | ---: | --- |
+| Cursor blink, 2 updates | 32,768 bytes total, 0.8% of one full-frame budget; 0.03 / 0.02 ms per update | 8,192,000 bytes total | CRC `cf091863`, exact readback match |
+| Full-screen scroll | 4,096,000 bytes across 260 tiles; 2.72 ms/frame | 4,096,000 bytes; 1.74 ms/frame | CRC `4017dc0a`, exact readback match |
+
+The seeded A/B boundary fuzz ran 10,000 sequences on a 257×131 resource with zero mismatched
+bytes and matching CRC `3d719f55`. Under 240 synthetic flush plans per second, the visible run
+presented 62 frames with 240 enqueued, `maxPending=1`, and no long task; the 4× CPU-throttled run
+presented 61 with the same queue bound and no long task. A forced-hidden boot used the 250 ms timer,
+presented 9 of 21 received plans, kept `maxPending=1`, and produced 58 serial bytes after the
+verification command, while the guest retired 398,987,123 instructions.

@@ -624,6 +624,16 @@ verify-E5-T09d:
 	node tools/verify/e5-t09d-hidden-present.mjs --output evidence/e5-t09d/hidden-present.json
 	@echo "verify-E5-T09d (hidden present fallback and metrics): OK"
 
+.PHONY: verify-E5-T09e
+verify-E5-T09e:
+	# Chromium integration: Canvas2D tiled/full-frame A/B readback, 10,000-sequence fuzz,
+	# visible and 4x-throttled latest-wins load, visibility resume, and forced-hidden Linux boot.
+	node --check web/present-integration.js
+	node --check tools/verify/e5-t09e-present-integration.mjs
+	$(MAKE) web-build
+	node tools/verify/e5-t09e-present-integration.mjs --output evidence/e5-t09e/present-integration.json
+	@echo "verify-E5-T09e (damage/frame-pacing integration): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
