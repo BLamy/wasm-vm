@@ -3,7 +3,7 @@ id: E5-T15b
 epic: 5
 title: Cursor-resource RGBA conversion and CSS/overlay sink
 priority: 515.2
-status: pending
+status: in-progress
 depends_on: [E5-T15a]
 estimate: S
 risk: medium

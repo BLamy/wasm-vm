@@ -18277,8 +18277,9 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t15a): mark cursorq core verified",
             "chore(e5-t15a): record cursorq evidence",
             "chore(e5-t15a): activate cursorq core"
           ]
@@ -18286,7 +18287,7 @@
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T15b",
@@ -18294,7 +18295,7 @@
       "epicKey": "5",
       "title": "Cursor-resource RGBA conversion and CSS/overlay sink",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T15a"
       ],
