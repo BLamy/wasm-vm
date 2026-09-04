@@ -3,7 +3,7 @@ id: E5-T09c
 epic: 5
 title: Latest-wins requestAnimationFrame presentation scheduler
 priority: 509.3
-status: in-progress
+status: verified
 depends_on: [E5-T09b]
 estimate: S
 risk: medium
@@ -47,4 +47,31 @@ queue growth, no duplicate present, and eventual latest-frame delivery after the
 
 ## Verification log
 
-(empty)
+### 2026-09-04 — verifier — VERDICT: verified
+
+- P1 latest-wins and scheduling idempotence — HELD. Predicted three enqueues would leave one
+  pending plan, one active callback, and only the newest value would be presented; the focused fake-
+  rAF test observed value `3`, `coalesced=2`, `skipped=2`, and no callback after the drain.
+- P2 bounded load — HELD. Predicted a deterministic 240-plans/sec producer against 60 display
+  callbacks and a four-work-unit backend would never exceed one pending plan or two active chains;
+  the seeded random enqueue order observed `maxPending=1`, `maxActive=1`, an eventually presented
+  final plan, and `presented <= displayCallbacks + 1`.
+- P3 lifecycle safety — HELD. Predicted reentrant enqueue would defer exactly one overrun, pause/
+  resume would retain only the latest plan, and callbacks captured before pause/dispose would be
+  inert; the focused tests observed `overruns=1`, one resumed chain, and zero stale presentations.
+- P4 truthful counters — HELD. Predicted a false or throwing backend delivery would increment
+  `skipped` without incrementing `presented`; the exact test observed `presented=0`, `skipped=2`,
+  and one captured error for the throwing delivery.
+- P5 controller seam and coverage — HELD. Predicted the opt-in controller would defer backend
+  work until rAF, retire a queued old-size frame on resize, and leave no callback after dispose;
+  the controller fixture observed latest-frame delivery, resize retirement, and an inert stale
+  callback. The focused suite covered the scheduler and all changed controller paths (7 passed,
+  0 failed), and `make web-dist` refreshed the deployable source tree.
+
+Exact final implementation head: `c8ca9213fa1fc6fbbc18be47b3a7c6867fcfc6e1`.
+Exact acceptance command: `make verify-E5-T09c`.
+Evidence: `evidence/e5-t09c/present-scheduler.json` (SHA-256
+`8156b10280dc8292a0469f4e808371be668b6171766ceebaf3fd5b266c5c85f8`), whose recorded head,
+proof-file digests, and passing `node --test web/tests/e5-t09c-present-scheduler.test.mjs` match
+this claim. Independent machines, WebKit, and host rr are excluded by the task boundary and user
+direction; hidden-tab fallback and the end-to-end workload remain T09d/T09e.

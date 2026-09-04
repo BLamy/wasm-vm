@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 257,
+    "verified": 258,
     "total": 419
   },
   "epics": [
@@ -17175,7 +17175,7 @@
       "epicKey": "5",
       "title": "Latest-wins requestAnimationFrame presentation scheduler",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T09b"
       ],
@@ -17186,13 +17186,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — verifier — VERDICT: verified\n\n- P1 latest-wins and scheduling idempotence — HELD. Predicted three enqueues would leave one\n  pending plan, one active callback, and only the newest value would be presented; the focused fake-\n  rAF test observed value `3`, `coalesced=2`, `skipped=2`, and no callback after the drain.\n- P2 bounded load — HELD. Predicted a deterministic 240-plans/sec producer against 60 display\n  callbacks and a four-work-unit backend would never exceed one pending plan or two active chains;\n  the seeded random enqueue order observed `maxPending=1`, `maxActive=1`, an eventually presented\n  final plan, and `presented <= displayCallbacks + 1`.\n- P3 lifecycle safety — HELD. Predicted reentrant enqueue would defer exactly one overrun, pause/\n  resume would retain only the latest plan, and callbacks captured before pause/dispose would be\n  inert; the focused tests observed `overruns=1`, one resumed chain, and zero stale presentations.\n- P4 truthful counters — HELD. Predicted a false or throwing backend delivery would increment\n  `skipped` without incrementing `presented`; the exact test observed `presented=0`, `skipped=2`,\n  and one captured error for the throwing delivery.\n- P5 controller seam and coverage — HELD. Predicted the opt-in controller would defer backend\n  work until rAF, retire a queued old-size frame on resize, and leave no callback after dispose;\n  the controller fixture observed latest-frame delivery, resize retirement, and an inert stale\n  callback. The focused suite covered the scheduler and all changed controller paths (7 passed,\n  0 failed), and `make web-dist` refreshed the deployable source tree.\n\nExact final implementation head: `c8ca9213fa1fc6fbbc18be47b3a7c6867fcfc6e1`.\nExact acceptance command: `make verify-E5-T09c`.\nEvidence: `evidence/e5-t09c/present-scheduler.json` (SHA-256\n`8156b10280dc8292a0469f4e808371be668b6171766ceebaf3fd5b266c5c85f8`), whose recorded head,\nproof-file digests, and passing `node --test web/tests/e5-t09c-present-scheduler.test.mjs` match\nthis claim. Independent machines, WebKit, and host rr are excluded by the task boundary and user\ndirection; hidden-tab fallback and the end-to-end workload remain T09d/T09e.",
       "adversarial": "Use a deterministic fake clock with a 4x-slow backend and random enqueue order; assert no unbounded\nqueue growth, no duplicate present, and eventual latest-frame delivery after the backend catches up.",
       "file": "tasks/epic-5-the-window/E5-T09c-raf-present-scheduler.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t09c): activate rAF scheduler"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T09d",
