@@ -3,7 +3,7 @@ id: E5-T09d
 epic: 5
 title: Hidden-tab presentation fallback and metrics surface
 priority: 509.4
-status: pending
+status: in-progress
 depends_on: [E5-T09c]
 estimate: S
 risk: medium

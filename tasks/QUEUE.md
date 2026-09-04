@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T09d** — Hidden-tab presentation fallback and metrics surface
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -358,7 +357,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `509.1` [E5-T09a](epic-5-the-window/E5-T09a-damage-coalescer.md) — Core virtio-gpu damage coalescer *(deps: E5-T07d)*
 - [x] `509.2` [E5-T09b](epic-5-the-window/E5-T09b-dirty-tiles.md) — Virtio-gpu dirty-tile upload planner *(deps: E5-T09a)*
 - [x] `509.3` [E5-T09c](epic-5-the-window/E5-T09c-raf-present-scheduler.md) — Latest-wins requestAnimationFrame presentation scheduler *(deps: E5-T09b)*
-- [ ] `509.4` [E5-T09d](epic-5-the-window/E5-T09d-hidden-present-metrics.md) — Hidden-tab presentation fallback and metrics surface *(deps: E5-T09c)*
+- [~] `509.4` [E5-T09d](epic-5-the-window/E5-T09d-hidden-present-metrics.md) — Hidden-tab presentation fallback and metrics surface *(deps: E5-T09c)*
 - [ ] `509.5` [E5-T09e](epic-5-the-window/E5-T09e-integration-proof.md) — Damage tiling and frame-pacing integration proof *(deps: E5-T09d)*
 - [-] `510` [E5-T10](epic-5-the-window/E5-T10-virtio-input-device-core.md) — virtio-input device core — config space, eventq/statusq, event injection API *(deps: E5-T05c)*
 - [x] `510.1` [E5-T10a](epic-5-the-window/E5-T10a-virtio-input-config.md) — virtio-input config protocol and declarative device spec *(deps: E5-T05c)*
