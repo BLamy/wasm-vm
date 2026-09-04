@@ -5,7 +5,7 @@
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
         bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc bench-runtime-workloads bench-runtime-compute bench-runtime-workloads-browser bench-runtime-compute-browser \
-        web-test-cpu-worker
+        web-test-cpu-worker verify-E5-T16a
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -688,6 +688,16 @@ verify-E5-T15d:
 	$(MAKE) web-build
 	node tools/verify/e5-t15d-cursor-integration.mjs
 	@echo "verify-E5-T15d (cursor plane integration and transform-only proof): OK"
+
+.PHONY: verify-E5-T16a
+verify-E5-T16a:
+	# Candidate-neutral display workload contract: exact phases, counters, image-owned digest, and
+	# typed failure paths. Real labwc/weston measurements are the E5-T16b/c boundaries.
+	node --check tools/display-server-workload.mjs
+	node --check tools/verify/e5-t16a-display-server-workload.mjs
+	node --test web/tests/e5-t16a-display-server-workload.test.mjs
+	node tools/verify/e5-t16a-display-server-workload.mjs
+	@echo "verify-E5-T16a (display-server workload and guest metric harness): OK"
 
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
