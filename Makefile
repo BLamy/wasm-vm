@@ -489,6 +489,13 @@ verify-E5-T06a:
 	node --test web/tests/e5-t06a-canvas2d.test.mjs
 	@echo "verify-E5-T06a (Canvas2D presentation backend and contract): OK"
 
+.PHONY: verify-E5-T06b
+verify-E5-T06b:
+	node --check web/src/sink/present-backend.js
+	node --check web/src/sink/webgl.js
+	node --test web/tests/e5-t06b-webgl.test.mjs
+	@echo "verify-E5-T06b (WebGL2 presentation backend): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
