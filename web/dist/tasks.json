@@ -18428,7 +18428,7 @@
       "epicKey": "5",
       "title": "Virtio-snd capture stream and rxq state machine",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T20e"
       ],

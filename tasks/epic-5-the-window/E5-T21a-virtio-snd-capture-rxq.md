@@ -3,7 +3,7 @@ id: E5-T21a
 epic: 5
 title: Virtio-snd capture stream and rxq state machine
 priority: 521.1
-status: pending
+status: in-progress
 depends_on: [E5-T20e]
 estimate: S
 risk: high

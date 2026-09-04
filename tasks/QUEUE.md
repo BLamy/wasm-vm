@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T21a** — Virtio-snd capture stream and rxq state machine
 1. **E5-T23** — virtio-console agent channel and static Rust guest agent **[DECOMPOSE BEFORE START]**
 
 
@@ -384,7 +383,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `520.4` [E5-T20d](epic-5-the-window/E5-T20d-audio-autoplay-policy.md) — Audio autoplay unlock and pre-unlock discard policy *(deps: E5-T20c)*
 - [x] `520.5` [E5-T20e](epic-5-the-window/E5-T20e-audio-browser-proof.md) — AudioWorklet guest playback and measured browser proof *(deps: E5-T20d)*
 - [-] `521` [E5-T21](epic-5-the-window/E5-T21-virtio-snd-capture-stretch.md) — Microphone capture stream (stretch) — rxq, getUserMedia, permission UX *(deps: E5-T20e)*
-- [ ] `521.1` [E5-T21a](epic-5-the-window/E5-T21a-virtio-snd-capture-rxq.md) — Virtio-snd capture stream and rxq state machine *(deps: E5-T20e)*
+- [~] `521.1` [E5-T21a](epic-5-the-window/E5-T21a-virtio-snd-capture-rxq.md) — Virtio-snd capture stream and rxq state machine *(deps: E5-T20e)*
 - [ ] `521.2` [E5-T21b](epic-5-the-window/E5-T21b-virtio-snd-capture-config.md) — Config-gated virtio-snd capture advertisement *(deps: E5-T21a)*
 - [ ] `521.3` [E5-T21c](epic-5-the-window/E5-T21c-audio-capture-ring-worklet.md) — Capture SAB ring and AudioWorklet producer *(deps: E5-T21b)*
 - [ ] `521.4` [E5-T21d](epic-5-the-window/E5-T21d-microphone-permission-lifecycle.md) — Lazy microphone permission and silence fallback *(deps: E5-T21c)*
