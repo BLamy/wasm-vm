@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 241,
-    "total": 402
+    "total": 406
   },
   "epics": [
     {
@@ -18992,8 +18992,9 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t23e): mark agent channel proof verified",
             "verify(e5-t23e): record end-to-end agent proof",
             "chore(e5-t23e): activate agent channel proof task"
           ]
@@ -19001,7 +19002,7 @@
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T24",
@@ -19009,7 +19010,7 @@
       "epicKey": "5",
       "title": "Bidirectional clipboard sync through the guest agent",
       "priority": 524,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T18",
         "E5-T23e"
@@ -19045,6 +19046,160 @@
       "verificationLog": "(empty)",
       "adversarial": "Attack ordering: script host-copy → immediate canvas Ctrl+Shift+V with < 50 ms gap 100x\n— any stale paste refutes (this catches the async race between CLIP_SET and key\ndelivery). Attack the guard: craft the pathological case — host and guest legitimately\ncopy identical strings in alternation — sync must still occur when a *different* string\nfollows (guard must hash content+direction+generation, not just content). Attack the\nagent's children: kill wl-paste mid-watch, copy in guest — sync must self-heal ≤ 5 s.\nPaste a 256 KiB string into a guest terminal (bracketed paste flood) — no input-queue\noverflow (T10's bounded ring must not drop *key* frames while the paste goes via\nclipboard, not keystrokes). Binary/invalid-UTF8 in the guest clipboard (wl-copy of\n/dev/urandom bytes): host must reject/sanitize per doc, never throw. Verify nothing\nsyncs while the canvas lacks focus (privacy: no background host-clipboard reads —\naudit via a clipboard-read spy).",
       "file": "tasks/epic-5-the-window/E5-T24-clipboard-sync.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T24a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Freeze bounded clipboard protocol types and UTF-8 policy",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T23e"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Define the v1 clipboard messages carried by the verified guest agent channel without changing the\nexisting frame format or transport lifecycle.",
+      "criteria": [
+        {
+          "text": "Both peers encode/decode the same CLIP_SET/CLIP_GET values and negotiate `CAP_CLIPBOARD` without changing PING/NAK behavior.",
+          "checked": false
+        },
+        {
+          "text": "UTF-8 text/plain payloads of 3 bytes and exactly 256 KiB round-trip byte-for-byte; 257 KiB and invalid UTF-8 are rejected before allocation or delivery with a stable error code.",
+          "checked": false
+        },
+        {
+          "text": "Existing protocol/channel tests remain green and the new deterministic tests cover dribble, coalescing, malformed payload, and unknown-message compatibility.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Feed one byte at a time, coalesce ten messages, cut every fixed-payload boundary, send invalid\nUTF-8 and a 257 KiB payload, and connect a version-1 peer that does not advertise clipboard. The\ndecoder must not allocate or deliver rejected bytes, and PING must remain usable.",
+      "file": "tasks/epic-5-the-window/E5-T24a-clipboard-protocol.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T24b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Add the bounded guest clipboard bridge",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T24a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Connect the static guest agent to the guest desktop clipboard with a bounded, restartable bridge\nthat emits guest copies and applies host copies without touching the serial console.",
+      "criteria": [
+        {
+          "text": "A guest clipboard change reaches the agent as one bounded CLIP_SET event and a host CLIP_SET is applied to the guest clipboard without using the serial console.",
+          "checked": false
+        },
+        {
+          "text": "3-byte, emoji/CRLF, and exactly-256 KiB text survive the guest adapter byte-exactly; 257 KiB and invalid UTF-8 follow the explicit rejection policy.",
+          "checked": false
+        },
+        {
+          "text": "Killing or removing the clipboard helper causes bounded retry and recovery within 5 seconds; no child pile-up, busy loop, or unbounded queue is possible.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Kill the watcher mid-copy, remove/recreate the display socket, flood 256 KiB through the guest\nterminal, inject invalid UTF-8, and restart the agent during an in-flight CLIP_SET. Assert recovery\nand explicit discard without dropping key frames or writing the UART.",
+      "file": "tasks/epic-5-the-window/E5-T24b-guest-clipboard-bridge.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T24c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Add host clipboard permissions and gesture-ordered sync",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T24a",
+        "E5-T24b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Implement the browser-side clipboard service on top of the verified Channel, including permission\nstaging, paste-event ordering, direction-aware echo suppression, and a visible honest state.",
+      "criteria": [
+        {
+          "text": "Host CLIP_SET reaches the guest before the corresponding canvas Ctrl+Shift+V key event, even with a sub-50 ms scheduling gap; unfocused canvases do not read or sync clipboard data.",
+          "checked": false
+        },
+        {
+          "text": "Guest CLIP_SET writes immediately when permitted and stages otherwise; a later user gesture flushes it without throwing, and denial is represented honestly in the UI state.",
+          "checked": false
+        },
+        {
+          "text": "Twenty alternating identical/different host↔guest copies do not echo; each user action emits at most one clipboard frame and 257 KiB/invalid input is rejected per T24a.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Run 100 immediate host-copy/paste pairs, alternate identical strings in both directions, deny\nclipboard permission, remove focus, and install a clipboard-read spy. Any stale paste, feedback\nloop, background read, or uncaught permission rejection is a refutation.",
+      "file": "tasks/epic-5-the-window/E5-T24c-host-clipboard-service.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T24d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Prove bidirectional clipboard sync in the browser and guest",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T24b",
+        "E5-T24c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Freeze the end-to-end clipboard claim with exact native/browser evidence and document the permission\nmatrix and operational policy.",
+      "criteria": [
+        {
+          "text": "Both clipboard directions pass in Chromium with no stale first paste, no uncaught errors, and exact UTF-8/CRLF bytes at the documented size boundaries.",
+          "checked": false
+        },
+        {
+          "text": "The 100-iteration ordering attack, pathological identical-string alternation, permission denial/staging, child kill/recovery, and focus/privacy spy all produce machine-readable held results.",
+          "checked": false
+        },
+        {
+          "text": "The proof command passes at one exact head with zero unexplained changed hunks, checked-in `docs/clipboard.md`, screenshot/transcript, and source/dist hashes.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Repeat immediate paste 100x, alternate identical content with direction changes, kill the guest\nwatcher mid-stream, deny permission, remove focus, inject invalid UTF-8/binary data, and compare\ntwo simultaneous tabs for listeners, pending requests, clipboard reads, and echo counters.",
+      "file": "tasks/epic-5-the-window/E5-T24d-clipboard-proof.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
