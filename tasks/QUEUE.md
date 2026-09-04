@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T20e** — AudioWorklet guest playback and measured browser proof
 1. **E5-T23** — virtio-console agent channel and static Rust guest agent **[DECOMPOSE BEFORE START]**
 
 
@@ -382,7 +381,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `520.2` [E5-T20b](epic-5-the-window/E5-T20b-audio-worklet-underruns.md) — AudioWorklet consumer and underrun accounting *(deps: E5-T20a)*
 - [x] `520.3` [E5-T20c](epic-5-the-window/E5-T20c-audio-sink-clock.md) — AudioWorklet producer, AudioContext clock, and latency metrics *(deps: E5-T20b)*
 - [x] `520.4` [E5-T20d](epic-5-the-window/E5-T20d-audio-autoplay-policy.md) — Audio autoplay unlock and pre-unlock discard policy *(deps: E5-T20c)*
-- [ ] `520.5` [E5-T20e](epic-5-the-window/E5-T20e-audio-browser-proof.md) — AudioWorklet guest playback and measured browser proof *(deps: E5-T20d)*
+- [~] `520.5` [E5-T20e](epic-5-the-window/E5-T20e-audio-browser-proof.md) — AudioWorklet guest playback and measured browser proof *(deps: E5-T20d)*
 - [ ] `521` [E5-T21](epic-5-the-window/E5-T21-virtio-snd-capture-stretch.md) — Microphone capture stream (stretch) — rxq, getUserMedia, permission UX *(deps: E5-T20e)*
 - [ ] `522` [E5-T22](epic-5-the-window/E5-T22-display-resize-end-to-end.md) — Display resize end-to-end — canvas size to guest mode change and back *(deps: E5-T04, E5-T18)*
 - [ ] `523` [E5-T23](epic-5-the-window/E5-T23-guest-agent-channel.md) — virtio-console agent channel and static Rust guest agent *(deps: E5-T05c)*

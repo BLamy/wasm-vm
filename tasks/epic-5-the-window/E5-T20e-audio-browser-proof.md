@@ -3,7 +3,7 @@ id: E5-T20e
 epic: 5
 title: AudioWorklet guest playback and measured browser proof
 priority: 520.5
-status: pending
+status: in-progress
 depends_on: [E5-T20d]
 estimate: S
 risk: high
