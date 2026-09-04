@@ -423,6 +423,11 @@ verify-E5-T23c:
 	bash tools/verify/e5-t23c-static-agent.sh
 	@echo "verify-E5-T23c (static virtio-console guest agent + rootfs service): OK"
 
+.PHONY: verify-E5-T23d
+verify-E5-T23d:
+	node --test web/tests/agent-channel.test.mjs
+	@echo "verify-E5-T23d (host agent Channel lifecycle + reconnect): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
