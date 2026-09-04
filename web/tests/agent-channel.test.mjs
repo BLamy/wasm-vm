@@ -149,6 +149,10 @@ test("Channel is not ready until HELLO intersects, then correlates reverse-order
   assert.equal(channel.negotiatedCapabilities, CAP_PING);
   assert.equal(channel.supports(CAP_PING), true);
   assert.equal(channel.supports(CAP_CLIPBOARD), false);
+  await assert.rejects(
+    channel.send({ type: 0x400, payload: Uint8Array.of(1), capability: CAP_CLIPBOARD }),
+    (error) => error.code === "CAPABILITY",
+  );
 
   const first = channel.ping(0x0102n);
   const second = channel.ping(0x0304n);
@@ -176,6 +180,8 @@ test("unknown frames are NAKed without killing the session and subscriptions are
 
   h.transports[0].emit(encodeFrame(0x900, Uint8Array.of(1, 2, 3)));
   assert.deepEqual(seen, [[1, 2, 3]]);
+  await channel.send(0x900, Uint8Array.of(9, 10));
+  assert.deepEqual([...decodeOne(h.transports[0].sent.at(-1)).payload], [9, 10]);
   assert.equal(channel.listenerCount(0x900), 1);
   assert.equal(unsubscribe(), true);
   assert.equal(unsubscribe(), false);

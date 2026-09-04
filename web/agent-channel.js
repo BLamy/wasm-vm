@@ -339,7 +339,7 @@ function eventData(value) {
  */
 export function createMessageTransport(endpoint) {
   if (!endpoint || typeof endpoint.postMessage !== "function") {
-    throw new TypeError("message transport endpoint must provide postMessage() ");
+    throw new TypeError("message transport endpoint must provide postMessage()");
   }
   return {
     send(bytes) {
@@ -607,6 +607,7 @@ export class Channel {
     }
     const generation = this._transportGeneration;
     return this._writeFrame(frame, generation).catch((error) => {
+      if (error instanceof BackpressureError) throw error;
       const disconnected = error instanceof DisconnectedError
         ? error
         : new DisconnectedError("agent channel disconnected while sending", { cause: error });
