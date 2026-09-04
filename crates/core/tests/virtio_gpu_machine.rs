@@ -2,6 +2,7 @@
 
 #![cfg(not(feature = "zicsr-stub"))]
 
+use std::cell::RefCell;
 use std::rc::Rc;
 
 use wasm_vm_core::Machine;
@@ -44,6 +45,107 @@ impl FrameSink for NoopSink {
         _pixels: &[u32],
     ) {
     }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct CursorProofRecord {
+    kind: u8,
+    state: CursorState,
+    format: Option<u32>,
+    width: u32,
+    height: u32,
+    pixels: usize,
+    crc32: u32,
+}
+
+#[derive(Clone, Default)]
+struct CursorProofSink {
+    records: Rc<RefCell<Vec<CursorProofRecord>>>,
+}
+
+impl CursorProofSink {
+    fn new() -> Self {
+        Self::default()
+    }
+
+    fn records(&self) -> Vec<CursorProofRecord> {
+        self.records.borrow().clone()
+    }
+}
+
+impl FrameSink for CursorProofSink {
+    fn flush(
+        &mut self,
+        _scanout: Option<u32>,
+        _format: u32,
+        _rect: wasm_vm_core::dev::virtio::gpu::Rect,
+        _resource_width: u32,
+        _resource_height: u32,
+        _pixels: &[u32],
+    ) {
+    }
+
+    fn cursor_state(
+        &mut self,
+        state: CursorState,
+        format: Option<u32>,
+        width: u32,
+        height: u32,
+        pixels: &[u32],
+    ) {
+        self.records.borrow_mut().push(CursorProofRecord {
+            kind: if state.resource_id == 0 { 0 } else { 1 },
+            state,
+            format,
+            width,
+            height,
+            pixels: pixels.len(),
+            crc32: reference_crc32(pixels),
+        });
+    }
+
+    fn cursor_move(&mut self, state: CursorState) {
+        self.records.borrow_mut().push(CursorProofRecord {
+            kind: 2,
+            state,
+            format: None,
+            width: 0,
+            height: 0,
+            pixels: 0,
+            crc32: 0,
+        });
+    }
+}
+
+/// Independent branch-based CRC-32 reference for the host-owned cursor words.
+fn reference_crc32(pixels: &[u32]) -> u32 {
+    let mut crc = 0xffff_ffff;
+    for pixel in pixels {
+        for byte in pixel.to_le_bytes() {
+            crc ^= u32::from(byte);
+            for _ in 0..8 {
+                crc = if crc & 1 == 0 {
+                    crc >> 1
+                } else {
+                    (crc >> 1) ^ 0xedb8_8320
+                };
+            }
+        }
+    }
+    !crc
+}
+
+fn cursor_proof_word(x: u32, y: u32) -> u32 {
+    let checker = (x + y).is_multiple_of(2);
+    let red = if checker { 0xe5 } else { 0x19 };
+    let green = if checker { 0x19 } else { 0xe5 };
+    let blue = if (x, y) == (10, 3) { 0xff } else { 0x44 };
+    let alpha = match (x + y) % 4 {
+        0 => 0,
+        1 => 0x80,
+        _ => 0xff,
+    };
+    ((alpha << 24) | (red << 16) | (green << 8) | blue) as u32
 }
 
 fn write_desc(machine: &mut Machine, index: u64, addr: u64, len: u32, flags: u16, next: u16) {
@@ -164,6 +266,47 @@ fn cursor_move_request(scanout_id: u32, x: u32, y: u32) -> [u8; MOVE_CURSOR_SIZE
         },
     }
     .to_bytes()
+}
+
+fn configure_cursor_queue(machine: &mut Machine, slot_base: u64) {
+    machine.bus_mut().store16(CURSOR_AVAIL, 0).unwrap();
+    machine.bus_mut().store16(CURSOR_AVAIL + 2, 0).unwrap();
+    machine.bus_mut().store16(CURSOR_USED, 0).unwrap();
+    machine.bus_mut().store16(CURSOR_USED + 2, 0).unwrap();
+
+    let write_mmio = |machine: &mut Machine, offset: u64, value: u32| {
+        machine
+            .bus_mut()
+            .store32(slot_base + offset, value)
+            .unwrap();
+    };
+    write_mmio(machine, 0x30, 1); // QueueSel = cursorq.
+    write_mmio(machine, 0x38, QUEUE_SIZE);
+    write_mmio(machine, 0x80, CURSOR_DESC as u32);
+    write_mmio(machine, 0x84, (CURSOR_DESC >> 32) as u32);
+    write_mmio(machine, 0x90, CURSOR_AVAIL as u32);
+    write_mmio(machine, 0x94, (CURSOR_AVAIL >> 32) as u32);
+    write_mmio(machine, 0xa0, CURSOR_USED as u32);
+    write_mmio(machine, 0xa4, (CURSOR_USED >> 32) as u32);
+    write_mmio(machine, 0x44, 1); // QueueReady.
+}
+
+fn kick_cursor_request(machine: &mut Machine, slot_base: u64, avail_idx: u16, request: &[u8]) {
+    write_cursor_bytes(machine, CURSOR_REQUEST, request);
+    write_cursor_desc(machine, 0, CURSOR_REQUEST, request.len() as u32, 1, 1);
+    write_cursor_desc(machine, 1, CURSOR_RESPONSE, CTRL_HDR_SIZE as u32, 2, 0);
+    machine.bus_mut().store16(CURSOR_AVAIL + 4, 0).unwrap();
+    machine
+        .bus_mut()
+        .store16(CURSOR_AVAIL + 2, avail_idx)
+        .unwrap();
+
+    machine.bus_mut().store32(slot_base + 0x50, 1).unwrap(); // QueueNotify: service at the machine boundary.
+    assert_eq!(machine.run(1), RunOutcome::MaxInstrs);
+    assert_eq!(
+        machine.bus_mut().load32(CURSOR_RESPONSE).unwrap(),
+        RESP_OK_NODATA
+    );
 }
 
 #[test]
@@ -381,4 +524,135 @@ fn gpu_cursorq_sequence_matches_wasm_through_machine_boundary() {
     ];
     assert_eq!(sink.cursor_records(), expected_callbacks);
     assert_eq!(state.borrow().cursor_state(0), Some(expected_callbacks[2]));
+}
+
+#[test]
+fn gpu_cursor_plane_integration_preserves_pixels_and_transform_only_moves() {
+    let mut machine = Machine::new(RAM);
+    machine.enable_plic();
+    let _slots = machine.enable_virtio_slots(None);
+    let sink = CursorProofSink::new();
+    let (_slot, state) = machine
+        .enable_virtio_gpu(Box::new(sink.clone()))
+        .expect("slot 7 is free");
+
+    state
+        .borrow_mut()
+        .resources
+        .create(7, FORMAT_B8G8R8A8_UNORM, 64, 64)
+        .unwrap();
+    state
+        .borrow_mut()
+        .resources
+        .create(
+            8,
+            FORMAT_B8G8R8A8_UNORM,
+            MAX_CURSOR_DIMENSION,
+            MAX_CURSOR_DIMENSION,
+        )
+        .unwrap();
+    {
+        let mut state_ref = state.borrow_mut();
+        let resource = state_ref.resources.get_mut(7).unwrap();
+        for y in 0..resource.height {
+            for x in 0..resource.width {
+                resource.host_pixels[(y * resource.width + x) as usize] = cursor_proof_word(x, y);
+            }
+        }
+    }
+
+    machine
+        .bus_mut()
+        .store32(virt::KERNEL_BASE, 0x0000_006f)
+        .unwrap();
+    machine.hart_mut().regs.pc = virt::KERNEL_BASE;
+    let slot_base = Platform::virtio_base(machine.virtio_gpu().unwrap().0 as u64);
+    configure_cursor_queue(&mut machine, slot_base);
+
+    let update = cursor_update_request(0, 100, 80, 7, 10, 3);
+    kick_cursor_request(&mut machine, slot_base, 1, &update);
+    for index in 0..500u32 {
+        let move_request = cursor_move_request(0, 101 + index, 81 + index);
+        kick_cursor_request(&mut machine, slot_base, (index + 2) as u16, &move_request);
+    }
+    let oversized = cursor_update_request(0, 601, 581, 8, 255, 255);
+    kick_cursor_request(&mut machine, slot_base, 502, &oversized);
+    let hidden = cursor_update_request(0, 602, 582, 0, u32::MAX, u32::MAX);
+    kick_cursor_request(&mut machine, slot_base, 503, &hidden);
+
+    let records = sink.records();
+    assert_eq!(records.len(), 503);
+    let first = records[0];
+    assert_eq!(first.kind, 1);
+    assert_eq!(first.state.resource_id, 7);
+    assert_eq!(first.state.hot_x, 10);
+    assert_eq!(first.state.hot_y, 3);
+    assert_eq!(first.state.pos.x, 100);
+    assert_eq!(first.state.pos.y, 80);
+    assert_eq!(first.format, Some(FORMAT_B8G8R8A8_UNORM));
+    assert_eq!((first.width, first.height, first.pixels), (64, 64, 4_096));
+    let checkerboard_crc = {
+        let state_ref = state.borrow();
+        reference_crc32(&state_ref.resources.get(7).unwrap().host_pixels)
+    };
+    assert_eq!(first.crc32, checkerboard_crc);
+
+    for (index, record) in records[1..501].iter().enumerate() {
+        assert_eq!(record.kind, 2);
+        assert_eq!(record.format, None);
+        assert_eq!(
+            (record.width, record.height, record.pixels, record.crc32),
+            (0, 0, 0, 0)
+        );
+        assert_eq!(record.state.resource_id, 7);
+        assert_eq!(record.state.hot_x, 10);
+        assert_eq!(record.state.hot_y, 3);
+        assert_eq!(record.state.pos.x, 101 + index as u32);
+        assert_eq!(record.state.pos.y, 81 + index as u32);
+    }
+
+    let large = records[501];
+    assert_eq!(large.kind, 1);
+    assert_eq!(large.format, Some(FORMAT_B8G8R8A8_UNORM));
+    assert_eq!(
+        (large.width, large.height, large.pixels),
+        (256, 256, 65_536)
+    );
+    let hidden_record = records[502];
+    assert_eq!(hidden_record.kind, 0);
+    assert_eq!(
+        hidden_record.state,
+        CursorState {
+            resource_id: 0,
+            hot_x: 0,
+            hot_y: 0,
+            pos: CursorPos {
+                scanout_id: 0,
+                x: 602,
+                y: 582,
+                padding: 0
+            },
+        }
+    );
+    assert_eq!(hidden_record.format, None);
+    assert_eq!(
+        (
+            hidden_record.width,
+            hidden_record.height,
+            hidden_record.pixels
+        ),
+        (0, 0, 0)
+    );
+    assert_eq!(state.borrow().cursor_state(0), Some(hidden_record.state));
+    assert_eq!(machine.bus_mut().load16(CURSOR_USED + 2).unwrap(), 503);
+
+    println!(
+        "E5T15D_NATIVE_PROOF updates=3 moves=500 final_x={} final_y={} checker_crc={:08x} oversized_pixels={} hidden_resource={} used={}",
+        records[500].state.pos.x,
+        records[500].state.pos.y,
+        checkerboard_crc,
+        large.pixels,
+        hidden_record.state.resource_id,
+        machine.bus_mut().load16(CURSOR_USED + 2).unwrap(),
+    );
 }

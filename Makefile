@@ -676,6 +676,19 @@ verify-E5-T15c:
 	cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
 	@echo "verify-E5-T15c (cursor mode wiring and lifecycle): OK"
 
+.PHONY: verify-E5-T15d
+verify-E5-T15d:
+	# Native cursorq payload capture plus Chromium integration: independent RGBA/alpha reference,
+	# delayed framebuffer presents, 500 requested MOVE updates, DPR math, oversized fallback, and hide.
+	node --check web/cursor-integration.js
+	node --check tools/verify/e5-t15d-cursor-integration.mjs
+	node --test web/tests/e5-t15d-cursor-integration.test.mjs
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --test virtio_gpu_machine -- -D warnings
+	$(MAKE) web-build
+	node tools/verify/e5-t15d-cursor-integration.mjs
+	@echo "verify-E5-T15d (cursor plane integration and transform-only proof): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
