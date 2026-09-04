@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T15a** — Cursorq core state and command handling
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -381,7 +380,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `514.2` [E5-T14b](epic-5-the-window/E5-T14b-pointer-mode-routing.md) — pointer mode state machine and coordinate/button routing *(deps: E5-T14a)*
 - [x] `514.3` [E5-T14c](epic-5-the-window/E5-T14c-pointer-wheel-browser-proof.md) — pointer wheel capture and browser proof *(deps: E5-T14b, E5-T13c)*
 - [-] `515` [E5-T15](epic-5-the-window/E5-T15-virtio-gpu-cursor-plane.md) — Hardware cursor plane — cursorq UPDATE/MOVE_CURSOR with DOM-overlay presentation *(deps: E5-T03c, E5-T14c)*
-- [ ] `515.1` [E5-T15a](epic-5-the-window/E5-T15a-cursorq-core.md) — Cursorq core state and command handling *(deps: E5-T03c)*
+- [~] `515.1` [E5-T15a](epic-5-the-window/E5-T15a-cursorq-core.md) — Cursorq core state and command handling *(deps: E5-T03c)*
 - [ ] `515.2` [E5-T15b](epic-5-the-window/E5-T15b-cursor-resource-sink.md) — Cursor-resource RGBA conversion and CSS/overlay sink *(deps: E5-T15a)*
 - [ ] `515.3` [E5-T15c](epic-5-the-window/E5-T15c-cursor-mode-wiring.md) — Cursor mode wiring and lifecycle *(deps: E5-T15b, E5-T14c)*
 - [ ] `515.4` [E5-T15d](epic-5-the-window/E5-T15d-cursor-integration-proof.md) — Cursor plane integration and transform-only proof *(deps: E5-T15c)*

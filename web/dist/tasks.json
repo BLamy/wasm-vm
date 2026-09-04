@@ -18260,7 +18260,7 @@
       "epicKey": "5",
       "title": "Cursorq core state and command handling",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T03c"
       ],

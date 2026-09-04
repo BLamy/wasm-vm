@@ -3,7 +3,7 @@ id: E5-T15a
 epic: 5
 title: Cursorq core state and command handling
 priority: 515.1
-status: pending
+status: in-progress
 depends_on: [E5-T03c]
 estimate: S
 risk: high
