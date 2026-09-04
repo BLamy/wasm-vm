@@ -3,7 +3,15 @@ set -euo pipefail
 
 repo=$(cd "$(dirname "$0")/../.." && pwd)
 work=$(mktemp -d "${TMPDIR:-/tmp}/e5-t23c-static-agent.XXXXXX")
-trap 'rm -rf "$work"' EXIT
+agent_pid=
+cleanup() {
+  if [ -n "$agent_pid" ] && kill -0 "$agent_pid" 2>/dev/null; then
+    kill -KILL "$agent_pid" 2>/dev/null || true
+    wait "$agent_pid" 2>/dev/null || true
+  fi
+  rm -rf "$work"
+}
+trap cleanup EXIT
 
 clean_env() {
   env \
@@ -20,6 +28,24 @@ clean_env() {
 # cross-builds. The fixture covers byte-dribbled frames, malformed/oversized input, a full
 # response queue, and a reset that discards an in-flight frame.
 clean_env cargo test -p wasm-vm-guest-agent -- --nocapture
+clean_env cargo build -p wasm-vm-guest-agent --bin wasmvm-agent
+
+# Run the real service entrypoint against the absent fixed port several times. Each run must sleep
+# and be reaped cleanly on termination; this is the native analogue of repeated port removal while
+# the later end-to-end task owns a booted virtio-console reconnect proof.
+for attempt in 1 2 3 4 5; do
+  clean_env "$repo/target/debug/wasmvm-agent" &
+  agent_pid=$!
+  sleep 0.25
+  kill -TERM "$agent_pid"
+  if wait "$agent_pid"; then
+    status=0
+  else
+    status=$?
+  fi
+  test "$status" -eq 143 || test "$status" -eq 15
+  agent_pid=
+done
 
 clean_env \
   CARGO_TARGET_DIR="$work/target-a" "$repo/tools/build-agent.sh" "$work/agent-a"

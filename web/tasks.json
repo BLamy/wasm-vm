@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 238,
+    "verified": 239,
     "total": 402
   },
   "epics": [
@@ -18868,7 +18868,7 @@
       "epicKey": "5",
       "title": "Static riscv64 guest agent and OpenRC service",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T23b"
       ],
@@ -18879,26 +18879,34 @@
       "criteria": [
         {
           "text": "The cross-built stripped agent is ≤1 MiB and `file`/`ldd` prove it is a static riscv64 executable with no shared-library dependency.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "The service opens `/dev/virtio-ports/org.wasmvm.agent`, answers HELLO/PING, and exits or retries cleanly when the port disappears; it never spins without a poll bound.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Rebuilding the T17 image installs the exact agent digest and service links without changing the existing serial getty path.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-09-04 — worker — implemented\n\n- Implementation heads: `ac1abee84b7644e2070b6003473506e65da1716` (agent, build recipe, rootfs\n  wiring, manifest, and acceptance gate) and `d1bb52a9a615f987a5c9af5115f16c32effe0029` (native\n  poll/FD coverage fixture).\n- The final worker run is retained at\n  `evidence/e5-t23c/static-agent-2026-09-04.txt`. It records the static cross-builds, exact\n  `file`/RISC-V `ldd` result, five missing-port service launches, the T17 image rebuild and\n  read-only ext4 inspection, plus the complete-image double-build artifacts under\n  `target/e5-t23c-rootfs-repro/`.\n\nClaim: the guest agent is a fixed-path, poll-driven, bounded protocol peer. It emits HELLO,\nnegotiates the shared protocol, answers PING with PONG, returns NAK for unknown types, drops a\nconnection on malformed framing, and bounds queued output and retry delay. The pinned Zig 0.16\n  cross-build is reproducible and static. The T17 builder installs the exact ELF and OpenRC\n  service into the default runlevel while retaining the existing ttyS0 getty. Booted host Channel\n  reconnect behavior remains owned by E5-T23d/e.\n\n### 2026-09-04 — verifier — VERDICT: verified\n\n- **P1 static executable — HELD.** Predicted two clean target directories would yield identical,\n  stripped RISC-V static ELFs under 1 MiB with no dynamic loader. Observed SHA-256\n  `c5feb0c04db680d1ae813d0fd85bd599ee29adb51fdc64dc329f66793d1f6851`, size `378536`, `file`\n  reporting `static-pie linked, stripped`, and RISC-V Alpine `ldd` reporting `statically linked`.\n  Evidence: `evidence/e5-t23c/static-agent-2026-09-04.txt`.\n- **P2 protocol, bounds, and lifecycle — HELD.** Predicted HELLO/PING/NAK behavior, byte-dribble\n  completion, malformed/oversized rejection, bounded unknown-frame output, in-flight reset, and\n  bounded retry. The seven unit tests pass; the FD fixture executes writable flush, poll-bounded\n  EOF, malformed-port termination, and retry assertions. Five real service-entrypoint launches\n  against the absent fixed port were terminated and reaped cleanly. The production path is fixed\n  to `/dev/virtio-ports/org.wasmvm.agent` and uses `poll(..., 1000)` plus 100–800 ms retry sleep.\n  Evidence: `guest/agent/src/lib.rs:22-35,155-207,363-505,548-724` and the retained evidence file.\n- **P3 T17 installation and serial isolation — HELD.** Predicted a complete image rebuild would\n  contain the exact agent bytes, an OpenRC default-runlevel symlink to `wasmvm-agent`, bounded\n  supervisor settings, and the unchanged ttyS0 getty. The builder passed package/custom manifest\n  drift checks and foreign-ELF scanning; read-only debugfs inspection found the expected symlink,\n  378536-byte ELF, exact SHA, service configuration, and original inittab line. Two complete image\n  builds were byte-identical at SHA-256\n  `ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8`. Evidence: `tools/build-rootfs.sh`,\n  `tools/rootfs-inner.sh`, `releases/rootfs/FILE-MANIFEST.txt`, and\n  `target/e5-t23c-rootfs-repro/{build-a.log,build-b.log,result.txt}`.\n- **COVERAGE — SUFFICIENT.** Every runtime hunk is exercised by the protocol/FD tests or the\n  native service launch; every rootfs/build hunk is exercised by the exact acceptance command and\n  the complete image builds. Manifest compatibility filtering in the prior WVFT verifier is\n  declarative harness maintenance and the existing WVFT static verifier remains responsible for\n  clean-target WVFT coverage. No browser or host-rr proof is required for this slice under the\n  current policy; E5-T23d/e owns the booted host-channel proof.\n- **SUITE:** retained `tools/verify/e5-t23c-static-agent.sh`, the seven guest-agent tests, the\n  rootfs manifest, and the complete-image reproducibility artifacts.\n\nCommands:\n\n- `bash tools/verify/e5-t23c-static-agent.sh`\n- `bash tools/verify/e3-t21b2c-repro.sh target/e5-t23c-rootfs-repro`\n- `cargo fmt --all -- --check`\n- `cargo clippy -p wasm-vm-agent-protocol -p wasm-vm-guest-agent --all-targets -- -D warnings`\n- `cargo test -p wasm-vm-agent-protocol -- --nocapture`\n- `cargo test -p wasm-vm-guest-agent -- --nocapture`\n- `python3 tools/check_task_policy.py`",
       "adversarial": "Kill the agent repeatedly, remove/recreate the port, feed byte-dribbled and oversized frames, and\nhold the peer write queue full. Assert no zombie pile-up, no unbounded allocations, bounded restart\nlatency, and unchanged serial-console output.",
       "file": "tasks/epic-5-the-window/E5-T23c-static-agent-service.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t23c): activate static agent service task"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T23d",
