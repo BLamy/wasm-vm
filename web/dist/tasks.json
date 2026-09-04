@@ -17979,7 +17979,7 @@
       "epicKey": "5",
       "title": "virtio-snd queue errors, XRUN events, and reset hardening",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T19b"
       ],
@@ -18003,13 +18003,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\n- Commit: `70f45cfb7c6244a5a40ceb272d324b568a6805e3`.\n- Commands: `cargo fmt --all -- --check`; `cargo test -p wasm-vm-core --test virtio_snd --quiet`;\n  `cargo test -p wasm-vm-core --test virtio_snd_playback --quiet`; `cargo test -p wasm-vm-core --test virtio_snd_queue --quiet`;\n  `cargo test -p wasm-vm-core --lib --quiet`; `cargo clippy -p wasm-vm-core --all-targets -- -D warnings`;\n  `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release`; `cargo check -p wasm-vm-core --no-default-features`;\n  `git diff --check`.\n- Results: `virtio_snd` 6/6, `virtio_snd_playback` 7/7, `virtio_snd_queue` 4/4, and the core\n  library 238/238 passed; clippy, the release wasm build, the no-default-features check, and the\n  diff check passed.\n- Evidence: [`snd-queue-native-2026-09-03.txt`](../../evidence/e5-t19c/snd-queue-native-2026-09-03.txt),\n  SHA-256 `03cbd620f83c152370507602139b5c46658d3f98f6a9ce3152d9d5a443bcc5db`.\n\nThe final native run covers exact event serialization, truncated/header-only/zero-PCM transfers,\nundersized status, wrong-stream recovery, later valid playback, three missed-period XRUN delivery,\na 256-event bounded backlog with overflow accounting, short and wrongly-directed eventq buffers,\nand fifty STOP/RELEASE/reset/re-setup cycles.",
       "adversarial": "Byte-dribble and truncate txq headers, mix invalid stream IDs with valid periods, fill the eventq\nwhile the guest is not polling, and reset between kicks. Verify used-ring progress, error status,\nevent count, and a clean subsequent playback period.",
       "file": "tasks/epic-5-the-window/E5-T19c-snd-queue-xrun-hardening.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t19c): activate snd queue xrun hardening"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T19d",
