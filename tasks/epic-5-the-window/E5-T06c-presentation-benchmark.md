@@ -3,7 +3,7 @@ id: E5-T06c
 epic: 5
 title: Presentation benchmark and measured backend decision
 priority: 506.3
-status: pending
+status: in-progress
 depends_on: [E5-T06a, E5-T06b]
 estimate: S
 risk: medium

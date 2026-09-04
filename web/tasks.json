@@ -16676,15 +16676,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t06b): record WebGL2 presentation proof",
             "chore(e5-t06b): activate WebGL2 presentation slice"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T06c",
@@ -16692,7 +16693,7 @@
       "epicKey": "5",
       "title": "Presentation benchmark and measured backend decision",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T06a",
         "E5-T06b"
