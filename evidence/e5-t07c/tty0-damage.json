@@ -1,0 +1,3703 @@
+{
+  "task": "E5-T07c",
+  "schema": 1,
+  "command": "node tools/verify/e5-t07c-tty0-damage.mjs",
+  "generatedAt": "2026-09-04T13:20:14.040Z",
+  "gitHead": "85d3b3688362c699c4288a0398d714ebf3c2f99c",
+  "base": "http://127.0.0.1:61784",
+  "browser": {
+    "name": "Chromium",
+    "version": "131.0.6778.33",
+    "executablePath": "Playwright Chromium"
+  },
+  "sourceDistParity": {
+    "equal": true,
+    "files": [
+      "web/dist/tty0-damage.html",
+      "web/dist/tty0-damage.js",
+      "web/dist/roadmap.js"
+    ]
+  },
+  "artifacts": {
+    "manifestSha256": "9e28ead1264e08a806ef7fd3159813163ca26d4caf85071923b20467f3fa35dc",
+    "kernel": {
+      "url": "releases/kernel/6.6.63/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "size": 24208896,
+      "actualSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "initramfs": {
+      "url": "releases/initramfs/initramfs.cpio.gz",
+      "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563",
+      "size": 1151596,
+      "actualSha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563"
+    },
+    "webBundle": {
+      "sha256": "7bf1db11530fe8ccdccb4e1a1485e2e7b55ed262940b3e259291f7d49b7863e8",
+      "files": [
+        "web/tty0-damage.html",
+        "web/tty0-damage.js",
+        "web/loader.js",
+        "web/src/sink/presentation.js",
+        "web/src/sink/canvas2d.js",
+        "web/src/sink/present-backend.js",
+        "web/pkg/wasm_vm_wasm_bg.wasm"
+      ]
+    }
+  },
+  "proof": {
+    "route": "tty0-damage",
+    "backend": "canvas2d",
+    "canvas": {
+      "width": 1280,
+      "height": 800
+    },
+    "markers": {
+      "virtioGpu": true,
+      "drm": true,
+      "fbcon": true
+    },
+    "clearCommand": "printf '\\033[2J\\033[H' > /dev/tty0",
+    "targetCommand": "echo hello > /dev/tty0",
+    "targetCommandObserved": true,
+    "promptAfterTarget": true,
+    "serialTail": "edev: PS/2 mouse device common for all mice\r\n[    2.980567] goldfish_rtc 101000.rtc: registered as rtc0\r\n[    2.981645] goldfish_rtc 101000.rtc: setting system clock to 2026-09-04T13:20:33 UTC (1788528033)\r\n[    2.986358] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off\r\n[    2.987998] syscon-poweroff: probe of poweroff failed with error -16\r\n[    2.993107] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com\r\n[    2.998856] sdhci: Secure Digital Host Controller Interface driver\r\n[    3.000146] sdhci: Copyright(c) Pierre Ossman\r\n[    3.001963] sdhci-pltfm: SDHCI platform and OF driver helper\r\n[    3.014719] IPVS: Registered protocols (TCP, UDP)\r\n[    3.015768] IPVS: Connection hash table configured (size=4096, memory=32Kbytes)\r\n[    3.018054] IPVS: ipvs loaded.\r\n[    3.018698] IPVS: [rr] scheduler registered.\r\n[    3.021216] Initializing XFRM netlink socket\r\n[    3.022317] NET: Registered PF_INET6 protocol family\r\n[    3.031008] Segment Routing with IPv6\r\n[    3.032043] In-situ OAM (IOAM) with IPv6\r\n[    3.033573] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver\r\n[    3.038365] NET: Registered PF_PACKET protocol family\r\n[    3.039580] Bridge firewalling registered\r\n[    3.040718] 8021q: 802.1Q VLAN Support v1.8\r\n[    3.042014] 9pnet: Installing 9P2000 support\r\n[    3.043165] Key type dns_resolver registered\r\n[    3.325970] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers\r\n[    3.395816] Btrfs loaded, zoned=no, fsverity=no\r\n[    3.452484] Legacy PMU implementation is available\r\n[    3.493368] clk: Disabling unused clocks\r\n[    3.532691] ALSA device list:\r\n[    3.571254]   #0: VirtIO SoundCard at platform/10007000.virtio_mmio/virtio5\r\n[    3.633490] Freeing unused kernel image (initmem) memory: 2200K\r\n[    3.672345] Run /init as init process\r\n\r\nwasm-vm initramfs: busybox userland up (PID 1 = 1)\r\n\r\n~ # printf '\\033[2J\\033[H' > /dev/tty0\r\n~ # echo hello > /dev/tty0\r\n~ # ",
+    "helloRect": {
+      "x": 0,
+      "y": 0,
+      "width": 40,
+      "height": 16
+    },
+    "helloModel": {
+      "nonBlackPixels": 142,
+      "opaquePixels": 640,
+      "brightPixels": 142,
+      "uniqueRgbColors": [
+        "170,170,170"
+      ]
+    },
+    "helloActual": {
+      "nonBlackPixels": 142,
+      "opaquePixels": 640,
+      "brightPixels": 142,
+      "uniqueRgbColors": [
+        "170,170,170"
+      ]
+    },
+    "referenceMatchesCanvas": true,
+    "mismatchBytes": 0,
+    "firstMismatch": -1,
+    "frameCount": 197,
+    "fullFrameCount": 4,
+    "partialFrameCount": 193,
+    "postTargetFrameCount": 171,
+    "postTargetPartialFrameCount": 170,
+    "largestPartialArea": 663138,
+    "fullArea": 1024000,
+    "outsideRectanglesPreserved": true,
+    "frameSequenceContiguous": true,
+    "resourceDimensionsStable": true,
+    "traceCapacity": 512,
+    "traceDropped": 0,
+    "frameTrace": [
+      {
+        "sequence": 0,
+        "timestampMs": 17575,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "area": 1024000,
+        "full": true,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 1,
+        "timestampMs": 17598,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "area": 1024000,
+        "full": true,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 2,
+        "timestampMs": 18048,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "area": 1024000,
+        "full": true,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 3,
+        "timestampMs": 18600,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 2,
+          "width": 639,
+          "height": 398
+        },
+        "area": 254322,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 4,
+        "timestampMs": 18621,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 386,
+          "width": 559,
+          "height": 30
+        },
+        "area": 16770,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 5,
+        "timestampMs": 18657,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 402,
+          "width": 759,
+          "height": 30
+        },
+        "area": 22770,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 6,
+        "timestampMs": 19035,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 418,
+          "width": 271,
+          "height": 30
+        },
+        "area": 8130,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 7,
+        "timestampMs": 19216,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 434,
+          "width": 495,
+          "height": 30
+        },
+        "area": 14850,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 8,
+        "timestampMs": 19354,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 450,
+          "width": 798,
+          "height": 78
+        },
+        "area": 62244,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 9,
+        "timestampMs": 19382,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 514,
+          "width": 759,
+          "height": 30
+        },
+        "area": 22770,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 10,
+        "timestampMs": 19474,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 530,
+          "width": 551,
+          "height": 62
+        },
+        "area": 34162,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 11,
+        "timestampMs": 19633,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 578,
+          "width": 654,
+          "height": 110
+        },
+        "area": 71940,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 12,
+        "timestampMs": 21413,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 2,
+          "width": 798,
+          "height": 798
+        },
+        "area": 636804,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 13,
+        "timestampMs": 21425,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 798,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 14,
+        "timestampMs": 22537,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 2,
+          "width": 831,
+          "height": 798
+        },
+        "area": 663138,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 15,
+        "timestampMs": 22831,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 2,
+          "width": 831,
+          "height": 781
+        },
+        "area": 649011,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 16,
+        "timestampMs": 22845,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 798,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 17,
+        "timestampMs": 23720,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 2,
+          "width": 831,
+          "height": 798
+        },
+        "area": 663138,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 18,
+        "timestampMs": 24240,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 2,
+          "width": 831,
+          "height": 781
+        },
+        "area": 649011,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 19,
+        "timestampMs": 24252,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 798,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 20,
+        "timestampMs": 25619,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 798,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 21,
+        "timestampMs": 25658,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 798,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 22,
+        "timestampMs": 25672,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 798,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 23,
+        "timestampMs": 25690,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 798,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 24,
+        "timestampMs": 26288,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 2,
+          "width": 831,
+          "height": 781
+        },
+        "area": 649011,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 25,
+        "timestampMs": 26305,
+        "afterTarget": false,
+        "rect": {
+          "x": 0,
+          "y": 14,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 26,
+        "timestampMs": 26389,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 2,
+          "width": 39,
+          "height": 14
+        },
+        "area": 546,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 27,
+        "timestampMs": 26419,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "area": 1024000,
+        "full": true,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 28,
+        "timestampMs": 26441,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 29,
+        "timestampMs": 26458,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 30,
+        "timestampMs": 26475,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 31,
+        "timestampMs": 26492,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 32,
+        "timestampMs": 26507,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 33,
+        "timestampMs": 26523,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 34,
+        "timestampMs": 26539,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 35,
+        "timestampMs": 26553,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 36,
+        "timestampMs": 26572,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 37,
+        "timestampMs": 26586,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 38,
+        "timestampMs": 26601,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 39,
+        "timestampMs": 26619,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 40,
+        "timestampMs": 26634,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 41,
+        "timestampMs": 26650,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 42,
+        "timestampMs": 26664,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 43,
+        "timestampMs": 26679,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 44,
+        "timestampMs": 26693,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 45,
+        "timestampMs": 26708,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 46,
+        "timestampMs": 26727,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 47,
+        "timestampMs": 26741,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 48,
+        "timestampMs": 26756,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 49,
+        "timestampMs": 26770,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 50,
+        "timestampMs": 26785,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 51,
+        "timestampMs": 26801,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 52,
+        "timestampMs": 26815,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 53,
+        "timestampMs": 26831,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 54,
+        "timestampMs": 26848,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 55,
+        "timestampMs": 26862,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 56,
+        "timestampMs": 26880,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 57,
+        "timestampMs": 26894,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 58,
+        "timestampMs": 26909,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 59,
+        "timestampMs": 26924,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 60,
+        "timestampMs": 26938,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 61,
+        "timestampMs": 26955,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 62,
+        "timestampMs": 26970,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 63,
+        "timestampMs": 26985,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 64,
+        "timestampMs": 26999,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 65,
+        "timestampMs": 27015,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 66,
+        "timestampMs": 27033,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 67,
+        "timestampMs": 27047,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 68,
+        "timestampMs": 27062,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 69,
+        "timestampMs": 27077,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 70,
+        "timestampMs": 27091,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 71,
+        "timestampMs": 27108,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 72,
+        "timestampMs": 27121,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 73,
+        "timestampMs": 27137,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 74,
+        "timestampMs": 27154,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 75,
+        "timestampMs": 27168,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 76,
+        "timestampMs": 27186,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 77,
+        "timestampMs": 27200,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 78,
+        "timestampMs": 27215,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 79,
+        "timestampMs": 27230,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 80,
+        "timestampMs": 27244,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 81,
+        "timestampMs": 27261,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 82,
+        "timestampMs": 27275,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 83,
+        "timestampMs": 27291,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 84,
+        "timestampMs": 27305,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 85,
+        "timestampMs": 27320,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 86,
+        "timestampMs": 27338,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 87,
+        "timestampMs": 27352,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 88,
+        "timestampMs": 27366,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 89,
+        "timestampMs": 27381,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 90,
+        "timestampMs": 27396,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 91,
+        "timestampMs": 27412,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 92,
+        "timestampMs": 27426,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 93,
+        "timestampMs": 27441,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 94,
+        "timestampMs": 27456,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 95,
+        "timestampMs": 27471,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 96,
+        "timestampMs": 27489,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 97,
+        "timestampMs": 27503,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 98,
+        "timestampMs": 27517,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 99,
+        "timestampMs": 27533,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 100,
+        "timestampMs": 27547,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 101,
+        "timestampMs": 27564,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 102,
+        "timestampMs": 27578,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 103,
+        "timestampMs": 27593,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 104,
+        "timestampMs": 27613,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 105,
+        "timestampMs": 27627,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 106,
+        "timestampMs": 27645,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 107,
+        "timestampMs": 27659,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 108,
+        "timestampMs": 27673,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 109,
+        "timestampMs": 27688,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 110,
+        "timestampMs": 27703,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 111,
+        "timestampMs": 27720,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 112,
+        "timestampMs": 27734,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 113,
+        "timestampMs": 27748,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 114,
+        "timestampMs": 27764,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 115,
+        "timestampMs": 27778,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 116,
+        "timestampMs": 27796,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 117,
+        "timestampMs": 27810,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 118,
+        "timestampMs": 27824,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 119,
+        "timestampMs": 27840,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 120,
+        "timestampMs": 27855,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 121,
+        "timestampMs": 27872,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 122,
+        "timestampMs": 27886,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 123,
+        "timestampMs": 27900,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 124,
+        "timestampMs": 27917,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 125,
+        "timestampMs": 27932,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 126,
+        "timestampMs": 27949,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 127,
+        "timestampMs": 27963,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 128,
+        "timestampMs": 27977,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 129,
+        "timestampMs": 27993,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 130,
+        "timestampMs": 28008,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 131,
+        "timestampMs": 28025,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 132,
+        "timestampMs": 28038,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 133,
+        "timestampMs": 28053,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 134,
+        "timestampMs": 28068,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 135,
+        "timestampMs": 28082,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 136,
+        "timestampMs": 28099,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 137,
+        "timestampMs": 28113,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 138,
+        "timestampMs": 28127,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 139,
+        "timestampMs": 28142,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 140,
+        "timestampMs": 28157,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 141,
+        "timestampMs": 28173,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 142,
+        "timestampMs": 28188,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 143,
+        "timestampMs": 28202,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 144,
+        "timestampMs": 28218,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 145,
+        "timestampMs": 28233,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 146,
+        "timestampMs": 28249,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 147,
+        "timestampMs": 28264,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 148,
+        "timestampMs": 28279,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 149,
+        "timestampMs": 28297,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 150,
+        "timestampMs": 28312,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 151,
+        "timestampMs": 28328,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 152,
+        "timestampMs": 28343,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 153,
+        "timestampMs": 28358,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 154,
+        "timestampMs": 28373,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 155,
+        "timestampMs": 28387,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 156,
+        "timestampMs": 28404,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 157,
+        "timestampMs": 28419,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 158,
+        "timestampMs": 28433,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 159,
+        "timestampMs": 28448,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 160,
+        "timestampMs": 28464,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 161,
+        "timestampMs": 28479,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 162,
+        "timestampMs": 28495,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 163,
+        "timestampMs": 28510,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 164,
+        "timestampMs": 28526,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 165,
+        "timestampMs": 28540,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 166,
+        "timestampMs": 28556,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 167,
+        "timestampMs": 28572,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 168,
+        "timestampMs": 28586,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 169,
+        "timestampMs": 28600,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 170,
+        "timestampMs": 28616,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 171,
+        "timestampMs": 28631,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 172,
+        "timestampMs": 28650,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 173,
+        "timestampMs": 28665,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 174,
+        "timestampMs": 28680,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 175,
+        "timestampMs": 28695,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 176,
+        "timestampMs": 28711,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 177,
+        "timestampMs": 28727,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 178,
+        "timestampMs": 28740,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 179,
+        "timestampMs": 28756,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 180,
+        "timestampMs": 28771,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 181,
+        "timestampMs": 28786,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 182,
+        "timestampMs": 28801,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 183,
+        "timestampMs": 28817,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 184,
+        "timestampMs": 28832,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 185,
+        "timestampMs": 28847,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 186,
+        "timestampMs": 28864,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 187,
+        "timestampMs": 28880,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 188,
+        "timestampMs": 28894,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 189,
+        "timestampMs": 28909,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 190,
+        "timestampMs": 28925,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 191,
+        "timestampMs": 28940,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 192,
+        "timestampMs": 28956,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 193,
+        "timestampMs": 28970,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 194,
+        "timestampMs": 28985,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 195,
+        "timestampMs": 29000,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      },
+      {
+        "sequence": 196,
+        "timestampMs": 29015,
+        "afterTarget": true,
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "area": 16,
+        "full": false,
+        "format": 2,
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "reached": true,
+        "outsidePreserved": true
+      }
+    ],
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 800,
+      "framesReceived": 197,
+      "successfulPresents": 197,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "latest": {
+        "rect": {
+          "x": 0,
+          "y": 30,
+          "width": 8,
+          "height": 2
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800
+      },
+      "errors": []
+    },
+    "duplicateCallbacks": false,
+    "input": {
+      "clearBytes": 35,
+      "targetBytes": 23,
+      "expectedBytes": 58,
+      "schedulerBytes": 58,
+      "schedulerCalls": 2
+    },
+    "queueLiveness": {
+      "retiredInstructions": 437985385,
+      "slices": 876,
+      "mainThreadYields": 877,
+      "schedulerYields": 0
+    },
+    "stateDigest": "ad40e0055acc9fb3f4d48a0b8242168b164fc20569110203b45b482776b24417",
+    "serialSha256": "6c3a1e3a2e9c01a372e15290e3c90cc24c3377dd9469817f4501a328c715628c",
+    "modelRgbaSha256": "e63f55661a7a25b6226ad3057e569399d8199a319ac384c9685d96afc44fa92d",
+    "canvasRgbaSha256": "e63f55661a7a25b6226ad3057e569399d8199a319ac384c9685d96afc44fa92d",
+    "commandStartedAt": 26315.07499998808,
+    "commandFinishedAt": 26459.819999992847,
+    "paused": true
+  },
+  "errors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t07c/tty0-damage.png"
+}

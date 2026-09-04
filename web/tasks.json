@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 252,
+    "verified": 253,
     "total": 414
   },
   "epics": [
@@ -16925,7 +16925,7 @@
       "epicKey": "5",
       "title": "tty0 output and fbcon damage-rectangle delivery",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T07b"
       ],
@@ -16936,13 +16936,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — verifier — VERDICT: verified\n- TTY0 output — HELD. Predicted the exact serial input `echo hello > /dev/tty0` would return to the\n  BusyBox prompt while changing the visible VT. Chromium observed the command and prompt, and the\n  independent 1280×800 RGBA reference found 142 non-black pixels in the expected `(0,0)-(40,16)`\n  hello cell with opaque `170,170,170` foreground; the canvas readback matched that region exactly.\n- Damage delivery — HELD. Predicted the first frame would establish the complete resource and later\n  transfer/cursor work would publish smaller rectangles without changing sampled pixels outside each\n  rectangle. The exact-head trace recorded 4 full and 193 partial frames, with 170 post-command\n  partials; the largest partial area was 663,138 versus 1,024,000, every outside sample held, and\n  the independent reference matched the final canvas with zero differing bytes.\n- Liveness/accounting — HELD. Predicted no duplicate callback, queue stall, or lost input. The run\n  recorded 197 callbacks and 197 successful presents, zero drops/errors, contiguous frame sequence,\n  58 expected and 58 scheduler-accounted input bytes across two calls, 437,985,385 retired guest\n  instructions, 876 slices, and 877 main-thread yields.\n- Coverage — HELD. The promoted native resource and control-queue tests exercise full, odd-width,\n  edge, pending-outside-request, and used-ring completion behavior; the browser route exercises the\n  production wasm FrameSink, Canvas2D readback, tty0 command, cursor updates, and source/dist parity.\n  Independent-machine, WebKit, and host-rr checks are outside this task by explicit project/user\n  scope.\nEvidence: `evidence/e5-t07c/tty0-damage.json` (SHA-256 `18768378323075a1e6c5cb8e1087aea772d5c0d8b8dd7be7523b84706a03ccc7`), `evidence/e5-t07c/tty0-damage.png` (SHA-256 `5ca12a4d07d5b7c9c3aabefd3e26441cb5cf0b5ae39964f0671f0a182dad2702`). Exact implementation head: `85d3b3688362c699c4288a0398d714ebf3c2f99c`. Commands: `make verify-E5-T07c`; exact-head `node tools/verify/e5-t07c-tty0-damage.mjs --output evidence/e5-t07c/tty0-damage.json`; `node --test web/tests/e5-t06d-presentation.test.mjs`.",
       "adversarial": "Alternate full-line output and cursor updates at the flush boundary, including an update at each\nedge and an odd-width rectangle. The final visible frame must match the independent reference\nbuffer and every used-ring completion must be accounted for exactly once.",
       "file": "tasks/epic-5-the-window/E5-T07c-tty0-damage-output.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t07c): activate tty0 damage proof"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T07d",

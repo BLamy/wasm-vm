@@ -137,7 +137,7 @@ export const ROADMAP = [
       { name: "Bidirectional clipboard sync", status: "verified", evidence: "E5-T24d: Chromium guest↔host round trips, exact UTF-8/CRLF and 256 KiB bounds, 100-copy echo attack, focus privacy, permission staging, and guest helper recovery" },
       { name: "virtio-gpu control + resource queues", status: "verified", evidence: "E5-T07a: native Linux fbcon controlq trace with EDID, resource, scanout, and queue-progress evidence" },
       { name: "Scanout transfer + flush", status: "verified", evidence: "E5-T07b: cold Chromium fbcon frame on the production Canvas2D sink with serial DRM/fbdev markers" },
-      { name: "tty0 fbcon damage rectangles", status: "in-progress", evidence: "E5-T07c: cold Chromium echo hello proof with independent readback reference and partial flush trace" },
+      { name: "tty0 fbcon damage rectangles", status: "verified", evidence: "E5-T07c: cold Chromium echo hello proof with independent readback reference and partial flush trace" },
       { name: "EDID / display info", status: "verified", evidence: "E5-T04: decoder-checked 128-byte EDID 1.4 blocks, dynamic pmode/EDID regeneration, negotiated GET_EDID, and coalesced display config IRQs" },
     ],
   },
