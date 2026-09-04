@@ -3,7 +3,7 @@ id: E5-T24b
 epic: 5
 title: Add the bounded guest clipboard bridge
 priority: 524.2
-status: pending
+status: in-progress
 depends_on: [E5-T24a]
 estimate: S
 risk: high
