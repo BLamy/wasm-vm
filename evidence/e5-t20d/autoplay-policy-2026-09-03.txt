@@ -1,0 +1,40 @@
+E5-T20d autoplay unlock and pre-unlock discard policy
+Date: 2026-09-03
+Exact implementation head: 1c3ba8c33f6025b0899d7ec424092064c41fa342
+
+Acceptance command (scrubbed environment):
+  env -i PATH="$PATH" node --test web/tests/audio-autoplay.test.mjs
+  5 tests, 5 passed, 0 failed
+
+Dependent audio regression command (scrubbed environment):
+  env -i PATH="$PATH" node --test web/tests/audio-sink.test.mjs web/tests/audio-worklet.test.mjs web/tests/audio-ring.test.mjs
+  19 tests, 19 passed, 0 failed
+
+Repeatability:
+  autoplay acceptance repeated 20/20; dependent audio suites repeated 5/5
+
+The focused proof covers the locked/no-gesture badge, negotiated-rate discard, a delayed/background
+gap limited to one 128-frame read, first click unlock, click/keydown coalescing while resume is
+pending, repeated gestures after unlock, rejected resume with an actionable retry, ring usability
+after rejection, and idempotent listener cleanup. The implementation reads into one preallocated
+stereo scratch block and stops the timer before a successful AudioWorklet consumer can run.
+
+Browser capture (local Chromium, CUA, exact source head):
+  URL: http://localhost:8139/index.html?noAutoBoot=1&testHooks=1
+  Initial DOM: #audio-autoplay-badge visible, data-audio-state=locked, text begins
+    "Audio muted until interaction — click or press a key to enable sound."
+  Gesture: clicked the Demo tab; the same badge became hidden with data-audio-state=unlocked and
+    text "Audio enabled.". Repeated gesture handling was exercised in the deterministic suite.
+  Browser console: 0 error/warning entries.
+  Screenshot: locked-state screenshot emitted in the CUA verification record immediately before
+    the gesture assertion.
+
+Packaging and parity:
+  make web-dist (includes make web-build) succeeded.
+  cmp web/src/audio/autoplay.js web/dist/src/audio/autoplay.js: OK
+  cmp web/main.js web/dist/main.js: OK
+  cmp web/roadmap.js web/dist/roadmap.js: OK
+  autoplay source/dist SHA-256: 3cf5a460ea58ecf6cac0fe75a683c40f138753dfd1aba89c0e02d58bcc110324
+  node --check web/main.js: OK
+  node --check web/src/audio/autoplay.js: OK
+  git diff --check: OK

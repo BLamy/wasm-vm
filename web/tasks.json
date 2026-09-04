@@ -18275,7 +18275,7 @@
       "epicKey": "5",
       "title": "Audio autoplay unlock and pre-unlock discard policy",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T20c"
       ],
@@ -18299,13 +18299,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\n- Implementation commit: `1c3ba8c33f6025b0899d7ec424092064c41fa342`.\n- Exact-head acceptance: `env -i PATH=\"$PATH\" node --test web/tests/audio-autoplay.test.mjs` — 5\n  passed, 0 failed.\n- Dependent regression: `env -i PATH=\"$PATH\" node --test web/tests/audio-sink.test.mjs\n  web/tests/audio-worklet.test.mjs web/tests/audio-ring.test.mjs` — 19 passed, 0 failed.\n- Stability: the autoplay suite passed 20/20 repeated scrubbed runs; the dependent audio suites\n  passed 5/5 repeated scrubbed runs.\n- Browser: after `make web-dist` (which includes `make web-build`), local Chromium loaded\n  `http://localhost:8139/index.html?noAutoBoot=1&testHooks=1` with the muted badge visible in the\n  locked state. A click on the Demo tab changed the badge to hidden `data-audio-state=unlocked`;\n  the browser reported zero error/warning entries. The locked-state screenshot was emitted in the\n  CUA verification record.\n- Packaging: source and deploy copies of `autoplay.js`, `main.js`, and `roadmap.js` are byte-identical;\n  `node --check` passed for the changed JS entry points and `git diff --check` passed. The roadmap\n  manifest now exposes “Audio autoplay unlock + pre-unlock pacing” as verified.\n- Evidence transcript: `evidence/e5-t20d/autoplay-policy-2026-09-03.txt`, SHA-256\n  `4702b4d08708d049892de106c122ee617aa115d785a9e02826748bcac98da781`.\n\nThe final recording demonstrates that the main page starts with an honest, accessible muted state;\nthe policy consumes queued stereo frames against the negotiated AudioContext rate with a bounded\none-quantum pump; click and keydown gestures share one idempotent resume path; successful unlock\nstops the pre-unlock reader and clears the badge; and a rejected resume keeps the UI actionable\nwhile the ring remains usable for retry. Host rr, independent-machine, and WebKit legs are waived\nby the current repository policy and user direction.",
       "adversarial": "Dispatch gestures before and during a suspended context, reject `resume()`, reload with a queued\nperiod, and background/foreground the page. Assert no duplicate listeners, burst drain, or stuck\nmuted state.",
       "file": "tasks/epic-5-the-window/E5-T20d-audio-autoplay-policy.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t20d): activate autoplay policy"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T20e",
