@@ -3,7 +3,7 @@ id: E5-T16d
 epic: 5
 title: Audit Alpine riscv64 display-stack packages and installability
 priority: 516.4
-status: pending
+status: in-progress
 depends_on: [E5-T16c]
 estimate: S
 risk: medium

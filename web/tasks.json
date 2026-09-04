@@ -18550,8 +18550,9 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t16c): verify weston pixman measurement",
             "chore(e5-t16c): record weston verification evidence",
             "chore(e5-t16c): activate weston pixman measurement"
           ]
@@ -18559,7 +18560,7 @@
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T16d",
@@ -18567,7 +18568,7 @@
       "epicKey": "5",
       "title": "Audit Alpine riscv64 display-stack packages and installability",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T16c"
       ],
