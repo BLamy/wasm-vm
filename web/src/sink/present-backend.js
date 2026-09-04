@@ -74,28 +74,6 @@ export function validatePixelWords(pixels, expectedLength) {
 }
 
 /**
- * Convert little-endian B8G8R8A8 words to the byte order required by ImageData.
- *
- * A word such as 0xAARRGGBB is stored by the core as bytes [B, G, R, A].  ImageData requires
- * [R, G, B, A], so the conversion is explicit and preserves alpha, including 0x00.
- */
-export function writeBgraWordsAsRgba(pixels, target) {
-  const requiredBytes = pixels.length * 4;
-  if (target.length < requiredBytes) {
-    throw new RangeError("RGBA staging buffer is too small");
-  }
-  for (let index = 0; index < pixels.length; index += 1) {
-    const word = Number(pixels[index]) >>> 0;
-    const offset = index * 4;
-    target[offset] = (word >>> 16) & 0xff;
-    target[offset + 1] = (word >>> 8) & 0xff;
-    target[offset + 2] = word & 0xff;
-    target[offset + 3] = word >>> 24;
-  }
-  return target;
-}
-
-/**
  * Copy one damage rectangle out of a full resource-sized BGRA word view as RGBA bytes.
  *
  * The source stride is the canvas width, not the damage width.  Keeping this extraction here
