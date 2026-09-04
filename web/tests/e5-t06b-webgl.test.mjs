@@ -398,17 +398,21 @@ test("partial x=1 width=3 upload uses full-frame stride and leaves surrounding p
   const damagedFrame = frameWithDamage(background, 7, damageRect, damageWords);
   backend.present({ x: 0, y: 0, width: 7, height: 4 }, background);
   backend.present(damageRect, damagedFrame);
-  assert.deepEqual(canvas.context.subImageCalls.at(-1), {
+  const upload = canvas.context.subImageCalls.at(-1);
+  assert.deepEqual({ x: upload.x, y: upload.y, width: upload.width, height: upload.height }, {
     x: 1,
     y: 1,
     width: 3,
     height: 2,
-    source: canvas.context.subImageCalls.at(-1).source,
   });
-  assert.equal(canvas.context.subImageCalls.at(-1).source instanceof Uint8Array, true);
-  assert.equal(canvas.context.subImageCalls.at(-1).source.buffer instanceof SharedArrayBuffer, false);
+  assert.equal(upload.source instanceof Uint8Array, true);
+  assert.equal(upload.source.byteLength, 7 * 4 * 4);
+  assert.equal(upload.source.buffer instanceof SharedArrayBuffer, false);
   assert.ok(canvas.context.pixelStoreCalls.some(({ parameter, value }) =>
     parameter === canvas.context.UNPACK_ROW_LENGTH && value === 7));
+  assert.equal(canvas.context.pixelStore.get(canvas.context.UNPACK_ROW_LENGTH), 0);
+  assert.equal(canvas.context.pixelStore.get(canvas.context.UNPACK_SKIP_PIXELS), 0);
+  assert.equal(canvas.context.pixelStore.get(canvas.context.UNPACK_SKIP_ROWS), 0);
   assertReadback(canvas, expectedFrame(7, 4, [
     { x: 0, y: 0, width: 7, height: 4, words: background },
     { ...damageRect, words: damageWords },
@@ -426,6 +430,24 @@ test("SharedArrayBuffer input is bulk-copied and transparent pixels do not blend
   assertReadback(canvas, rgbaReference(frame));
   assert.equal(backend.stagingCapacity, 2 * 2 * 4);
   assert.equal(canvas.context.subImageCalls.at(-1).source.buffer instanceof SharedArrayBuffer, false);
+  backend.dispose();
+});
+
+test("unavailable WebGL2 and non-word sources fail closed before an upload", () => {
+  const unavailableCanvas = {
+    width: 1,
+    height: 1,
+    getContext: () => null,
+  };
+  assert.throws(() => new WebGL2Backend(unavailableCanvas), TypeError);
+
+  const canvas = new FakeCanvas(2, 2);
+  const backend = new WebGL2Backend(canvas);
+  assert.throws(() => backend.present(
+    { x: 0, y: 0, width: 2, height: 2 },
+    new Uint8Array(2 * 2 * 4),
+  ), TypeError);
+  assert.equal(canvas.context.subImageCalls.length, 0);
   backend.dispose();
 });
 
