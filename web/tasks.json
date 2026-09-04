@@ -16908,15 +16908,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t07b): mark browser first light verified",
             "chore(e5-t07b): activate browser first-light"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T07c",
@@ -16924,7 +16925,7 @@
       "epicKey": "5",
       "title": "tty0 output and fbcon damage-rectangle delivery",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T07b"
       ],

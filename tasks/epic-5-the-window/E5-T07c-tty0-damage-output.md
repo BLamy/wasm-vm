@@ -3,7 +3,7 @@ id: E5-T07c
 epic: 5
 title: tty0 output and fbcon damage-rectangle delivery
 priority: 507.3
-status: pending
+status: in-progress
 depends_on: [E5-T07b]
 estimate: S
 risk: high
