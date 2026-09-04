@@ -68,6 +68,10 @@ export class AudioCaptureWorkletProcessor extends WorkletProcessorBase {
     return this._processedFrames;
   }
 
+  get processedDurationNs() {
+    return Math.round((this._processedFrames * 1_000_000_000) / this._sampleRateHz);
+  }
+
   get droppedFrames() {
     return this._ring.droppedFrames;
   }

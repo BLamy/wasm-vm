@@ -121,9 +121,9 @@ test("each supported sample rate advances the same quantum timeline", () => {
     const frames = AUDIO_CAPTURE_QUANTUM_FRAMES * 3;
     assert.equal(processor.sampleRateHz, sampleRateHz);
     assert.equal(processor.processedFrames, frames);
+    assert.equal(processor.processedDurationNs, Math.round((frames * 1_000_000_000) / sampleRateHz));
     assert.equal(ring.fillFrames, frames);
     assert.equal(Atomics.load(new Int32Array(clockBuffer), 0), frames);
-    assert.equal(frames / sampleRateHz, (AUDIO_CAPTURE_QUANTUM_FRAMES * 3) / sampleRateHz);
   }
 });
 
