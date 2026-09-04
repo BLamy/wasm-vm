@@ -230,6 +230,32 @@ test("host and guest directions use bounded, generation-aware echo history", asy
   assert.ok(service.snapshot().historyDepth <= MAX_ECHO_HISTORY);
 });
 
+test("100 immediate host-copy/guest-echo pairs emit once per action without feedback", async () => {
+  const channel = new FakeChannel();
+  const service = new ClipboardService({
+    channel,
+    isFocused: () => true,
+    autoAttach: false,
+  });
+
+  for (let index = 0; index < 100; index += 1) {
+    const text = index % 2 === 0 ? "identical" : `different-${index}`;
+    const result = await service.handlePasteEvent(pasteEvent(text));
+    assert.equal(result.ok, true);
+    const echo = await service.handleGuestFrame({
+      payload: encodeClipboardText(text),
+      generation: 0,
+    });
+    assert.equal(echo.suppressed, true);
+  }
+
+  assert.equal(channel.sent.length, 100, "one CLIP_SET frame per focused paste action");
+  assert.equal(service.sentFrames, 100);
+  assert.equal(service.suppressedEchoes, 100);
+  assert.equal(service.pending, false);
+  assert.equal(service.snapshot().historyDepth, 0, "consumed echoes do not accumulate history");
+});
+
 test("paste and guest payload limits reject without reading navigator.clipboard or throwing", async () => {
   const channel = new FakeChannel();
   const errors = [];

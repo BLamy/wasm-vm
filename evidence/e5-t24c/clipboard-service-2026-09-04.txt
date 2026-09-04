@@ -17,7 +17,7 @@ Exact commands and results
 1. env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR \
      -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS \
      make verify-E5-T24c
-   PASS: syntax checks and 6 clipboard-service tests, 6 passed, 0 failed.
+   PASS: syntax checks and 7 clipboard-service tests, 7 passed, 0 failed.
 
 2. node --test web/tests/agent-channel.test.mjs
    PASS: existing Channel regression suite, 14 tests passed, 0 failed.
@@ -36,6 +36,8 @@ Coverage map
   getter spy that remains untouched while focus is absent.
 - host and guest directions use bounded, generation-aware echo history: same-content expected echo
   suppression, different-content delivery, expired identical-content delivery, and history <= 2.
+- 100 immediate host-copy/guest-echo pairs: exactly one outbound CLIP_SET per focused paste, all
+  100 expected echoes suppressed, and no feedback writes.
 - paste and guest payload limits reject without reading the asynchronous clipboard API: exact rejection
   for 257 KiB and invalid UTF-8 with no frame or host write.
 - gesture listeners are idempotent and detach preserves the caller-owned Channel: one paste/gesture
