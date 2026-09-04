@@ -755,9 +755,9 @@ verify-E5-T16d:
 	# inside the riscv64 guest against the real Alpine repositories; there is no host package lookup,
 	# independent-machine leg, or WebKit leg in this package-availability slice.
 	cargo fmt --check -p wasm-vm-cli
-	cargo clippy -p wasm-vm-cli --bin wasm-vm -- -D warnings
-	cargo test -p wasm-vm-cli --bin wasm-vm
-	cargo build --release -p wasm-vm-cli
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-cli --bin wasm-vm --features gpu-trace
+	cargo build --release -p wasm-vm-cli --features gpu-trace
 	node --check tools/run-e5-t16d-package-audit.mjs
 	node --check tools/verify/e5-t16d-package-audit.mjs
 	node tools/run-e5-t16d-package-audit.mjs
