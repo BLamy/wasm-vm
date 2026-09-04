@@ -3,7 +3,7 @@ id: E5-T24a
 epic: 5
 title: Freeze bounded clipboard protocol types and UTF-8 policy
 priority: 524.1
-status: implemented
+status: verified
 depends_on: [E5-T23e]
 estimate: S
 risk: high
@@ -56,3 +56,13 @@ decoder must not allocate or deliver rejected bytes, and PING must remain usable
 - Evidence: [`evidence/e5-t24a/clipboard-protocol-2026-09-04.txt`](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t24a/clipboard-protocol-2026-09-04.txt), SHA-256 `8080bda0eac5098d6cdb47745dc78c90a5b69aed3c4cab1b33867ece5ffaa91f`.
 - The final exact-head run passed 11 Rust protocol tests and 14 JavaScript channel tests. It demonstrates shared CLIP_SET/CLIP_GET framing and CAP_CLIPBOARD negotiation, byte-exact CRLF/emoji and 3-byte values, the exact 256 KiB boundary, rejection of 257 KiB/invalid UTF-8/unpaired surrogates, dribble and ten-message coalescing, malformed CLIP_GET handling, and PING continuity with a legacy PING-only peer.
 - Coverage: new Rust and source-JavaScript protocol paths are executed by the deterministic suites; `web/dist/agent-channel.js` is the byte-identical deployable mirror (`cmp`); the Make target is executed; documentation and the generated service-worker cache stamp are declarative/generated outputs.
+
+### 2026-09-04 — verifier — VERDICT: verified (user-directed)
+
+- HELD — protocol compatibility: the scrubbed exact-head `make verify-E5-T24a` replay passed 11 Rust tests and 14 JavaScript tests, including CAP_CLIPBOARD intersection and the PING-only peer NAK/continued-PING attack.
+- HELD — bounded payload safety: the same replay covered byte-exact 3-byte, CRLF, emoji, and exact-256 KiB values plus stable rejection of 257 KiB, malformed UTF-8, unpaired UTF-16 surrogates, and non-empty CLIP_GET payloads.
+- HELD — stream framing: one-byte dribble and ten coalesced clipboard messages decoded identically; existing PING, NAK, reconnect, backpressure, malformed-frame, and MessagePort tests remained green.
+- COVERAGE HELD — the implementation diff from `309d2e680f38c13cae42388c89a7de9e5d6a0ef4` is exercised by the deterministic suites or accounted for as the byte-identical generated mirror, Make recipe, documentation, or cache stamp. Evidence digest remains `8080bda0eac5098d6cdb47745dc78c90a5b69aed3c4cab1b33867ece5ffaa91f`.
+- SUITE — retain the Rust and JavaScript deterministic acceptance target as the permanent verifier wall; no new golden trace is needed for this protocol-only slice.
+
+Commands: `env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS make verify-E5-T24a` (exit 0).
