@@ -3,7 +3,7 @@ id: E5-T15d
 epic: 5
 title: Cursor plane integration and transform-only proof
 priority: 515.4
-status: pending
+status: in-progress
 depends_on: [E5-T15c]
 estimate: S
 risk: medium

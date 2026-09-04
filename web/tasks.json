@@ -18348,8 +18348,9 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "test(e5-t15c): verify cursor mode wiring",
             "test(e5-t15c): record cursor mode evidence",
             "chore(e5-t15c): activate cursor mode wiring"
           ]
@@ -18357,7 +18358,7 @@
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T15d",
@@ -18365,7 +18366,7 @@
       "epicKey": "5",
       "title": "Cursor plane integration and transform-only proof",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T15c"
       ],
