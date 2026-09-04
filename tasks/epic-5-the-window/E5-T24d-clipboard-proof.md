@@ -3,7 +3,7 @@ id: E5-T24d
 epic: 5
 title: Prove bidirectional clipboard sync in the browser and guest
 priority: 524.4
-status: pending
+status: in-progress
 depends_on: [E5-T24b, E5-T24c]
 estimate: S
 risk: high
