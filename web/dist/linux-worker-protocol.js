@@ -55,6 +55,7 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "persistStats",
   "readOnly",
   "overlaySeedIdentity",
+  "audioOutputReady",
   "resumeAfterQuota",
   "continueReadOnly",
   "hasUnpersisted",

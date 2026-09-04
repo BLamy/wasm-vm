@@ -93,6 +93,35 @@ therefore cannot turn into a burst drain on foreground or unlock; the consumer r
 preallocated stereo scratch block. T20e connects the already-created sink/ring to the guest PCM
 producer.
 
+## Guest attachment and measured browser proof (E5-T20e)
+
+`WasmLinux.attachAudioOutput()` validates the T20a header and installs the page-owned ring and
+render clock into the assembled virtio-snd device before the guest's first scheduler slice. The
+host advertises exactly the AudioContext rate: the local proof exercised both 48,000 Hz and a forced
+44,100 Hz context, and the guest-facing PCM capability is narrowed to the selected virtio rate bit
+instead of silently resampling. The default 4096-frame ring holds 85.3 ms at 48 kHz (92.9 ms at
+44.1 kHz); this Chromium reports `baseLatency = 5.33 ms` and `outputLatency = 24.0 ms`, so a full
+48 kHz ring reports 114.67 ms total sink latency, below the 120 ms budget.
+
+The proof URL adds `audioCapture=1`. The worklet copies each rendered 128-frame stereo quantum to
+a bounded test-only message ledger; the verifier converts the captured f32 values back to S16,
+computes a SHA-256 digest, checks every ramp frame across repeated ring wraps, and computes a
+400–480 Hz direct spectrum for the 440 Hz sine. It records the pre-unlock discard clock, the
+post-unlock render clock, ring fill, context latencies, and underrun count. The output is generated
+by:
+
+```sh
+node tools/verify/e5-t20e-audio-proof.mjs
+```
+
+The browser leg uses a deterministic reference producer at the sink boundary because the shipped
+busybox rootfs has no ALSA playback utility. The same run first boots the real WasmLinux guest and
+asserts `audioOutputReady()`; the guest virtio-mmio/controlq/txq assembly and ALSA/XRUN semantics
+are covered by the T19d/T19c native evidence, while this capture proves the final browser consumer
+and its recovery behavior. A 500 ms producer gap must increment the worklet underrun counter and
+show a contiguous non-zero ramp again after production resumes. The proof also checks source/dist
+byte parity and ignores only the expected favicon 404.
+
 The focused Node/DOM proof is:
 
 ```sh

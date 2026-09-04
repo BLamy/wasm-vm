@@ -10,6 +10,8 @@ import {
 export const REQUESTED_SAMPLE_RATE_HZ = 48_000;
 export const S16_SCALE = 1 / 32_768;
 export const CONVERSION_CHUNK_FRAMES = 128;
+export const AUDIO_CLOCK_BYTES = Int32Array.BYTES_PER_ELEMENT;
+export const AUDIO_CAPTURE_CONTROL_BYTES = Int32Array.BYTES_PER_ELEMENT;
 
 function defaultAudioContextFactory(options) {
   if (typeof AudioContext !== "function") {
@@ -30,6 +32,19 @@ function validSampleRate(sampleRateHz) {
     throw new RangeError("audio sample rate must be a positive integer");
   }
   return sampleRateHz;
+}
+
+function createClockBuffer(clockBuffer) {
+  if (typeof SharedArrayBuffer === "undefined") {
+    throw new TypeError("audio clock requires SharedArrayBuffer");
+  }
+  if (clockBuffer === null || clockBuffer === undefined) {
+    return new SharedArrayBuffer(AUDIO_CLOCK_BYTES);
+  }
+  if (!(clockBuffer instanceof SharedArrayBuffer) || clockBuffer.byteLength < AUDIO_CLOCK_BYTES) {
+    throw new TypeError("audio clock must be a SharedArrayBuffer with one Int32 cell");
+  }
+  return clockBuffer;
 }
 
 function optionalLatencySeconds(context, name) {
@@ -92,6 +107,9 @@ export class AudioWorkletSink {
     workletUrl = new URL("./worklet.js", import.meta.url).href,
     workletNode = null,
     workletNodeFactory = defaultWorkletNodeFactory,
+    clockBuffer = null,
+    capture = false,
+    onCapture = null,
   } = {}) {
     this._vm = vm;
     this._requestedSampleRateHz = validSampleRate(requestedSampleRateHz);
@@ -111,6 +129,9 @@ export class AudioWorkletSink {
     this.sampleRateHz = validSampleRate(Number(this.context.sampleRate));
     this.rateRequested = created.requested;
     this.ring = ring ?? AudioRingBuffer.allocate({ capacityFrames });
+    this.clockBuffer = createClockBuffer(clockBuffer);
+    this._clock = new Int32Array(this.clockBuffer, 0, 1);
+    this._originClockFrames = Atomics.load(this._clock, 0) >>> 0;
     this._producer = this.ring.producer();
     this._conversion = new Float32Array(
       Math.min(this.ring.capacityFrames, CONVERSION_CHUNK_FRAMES) * CHANNELS,
@@ -118,6 +139,15 @@ export class AudioWorkletSink {
     this._workletUrl = workletUrl;
     this._workletNode = workletNode;
     this._workletNodeFactory = workletNodeFactory;
+    this._capture = capture === true;
+    this._onCapture = typeof onCapture === "function" ? onCapture : null;
+    this.captureReadyBuffer = this._capture
+      ? new SharedArrayBuffer(AUDIO_CAPTURE_CONTROL_BYTES)
+      : null;
+    this._captureReady = this.captureReadyBuffer
+      ? new Int32Array(this.captureReadyBuffer, 0, 1)
+      : null;
+    this._captureListener = null;
     this._originReadIndex = this.ring.readIndex;
     this._originContextTime = Number(this.context.currentTime);
     this._originContextTime = Number.isFinite(this._originContextTime) && this._originContextTime >= 0
@@ -143,6 +173,10 @@ export class AudioWorkletSink {
     return this.ring.readIndex;
   }
 
+  get renderedFrames() {
+    return Atomics.load(this._clock, 0) >>> 0;
+  }
+
   /** Load the processor module, construct the node, and connect it to the context destination. */
   async connect() {
     if (this._workletNode) return this;
@@ -153,8 +187,27 @@ export class AudioWorkletSink {
     this._workletNode = this._workletNodeFactory(
       this.context,
       AUDIO_WORKLET_PROCESSOR_NAME,
-      { processorOptions: { sharedBuffer: this.ring.sharedBuffer } },
+      {
+        numberOfInputs: 0,
+        numberOfOutputs: 1,
+        outputChannelCount: [CHANNELS],
+        processorOptions: {
+          sharedBuffer: this.ring.sharedBuffer,
+          clockBuffer: this.clockBuffer,
+          ...(this.captureReadyBuffer ? { captureReadyBuffer: this.captureReadyBuffer } : {}),
+          capture: this._capture,
+        },
+      },
     );
+    if (this._capture && this._onCapture && this._workletNode.port) {
+      this._captureListener = (event) => this._onCapture(event.data);
+      this._workletNode.port.addEventListener?.("message", this._captureListener);
+      if (!this._workletNode.port.addEventListener) this._workletNode.port.onmessage = this._captureListener;
+      this._workletNode.port.start?.();
+    }
+    // The node constructor may run one process callback before this task reaches the listener
+    // setup. Keep the consumer paused until capture can observe its first frame exactly once.
+    if (this._captureReady) Atomics.store(this._captureReady, 0, 1);
     this._workletNode.connect?.(this.context.destination);
     return this;
   }
@@ -206,9 +259,9 @@ export class AudioWorkletSink {
   }
 
   /**
-   * Return the AudioContext consumed-frame clock in nanoseconds. `currentTime` is authoritative
-   * when present; the atomic read cursor supplies a monotonic frame-derived fallback and guards
-   * against a test/fake context that reports a stale currentTime.
+   * Return the rendered audio clock in nanoseconds. The worklet (or the pre-unlock discard policy)
+   * advances the shared frame cell at the negotiated sample rate; `currentTime` and the ring read
+   * cursor remain monotonic fallbacks for older/fake contexts.
    */
   audioClockNowNs() {
     const currentTime = Number(this.context.currentTime);
@@ -219,7 +272,11 @@ export class AudioWorkletSink {
     const frameClockNs = Math.round(
       this._originContextTime * 1e9 + (consumedDelta * 1e9) / this.sampleRateHz,
     );
-    this._lastClockNs = Math.max(this._lastClockNs, contextClockNs, frameClockNs);
+    const renderedDelta = (this.renderedFrames - this._originClockFrames) >>> 0;
+    const renderedClockNs = Math.round(
+      this._originContextTime * 1e9 + (renderedDelta * 1e9) / this.sampleRateHz,
+    );
+    this._lastClockNs = Math.max(this._lastClockNs, contextClockNs, frameClockNs, renderedClockNs);
     return this._lastClockNs;
   }
 
@@ -228,6 +285,11 @@ export class AudioWorkletSink {
   }
 
   async close() {
+    if (this._captureListener && this._workletNode?.port) {
+      this._workletNode.port.removeEventListener?.("message", this._captureListener);
+      if (this._workletNode.port.onmessage === this._captureListener) this._workletNode.port.onmessage = null;
+      this._captureListener = null;
+    }
     this._workletNode?.disconnect?.();
     await this.context.close?.();
   }

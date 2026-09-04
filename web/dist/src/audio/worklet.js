@@ -21,6 +21,33 @@ export class AudioRingWorkletProcessor extends WorkletProcessorBase {
     const ring = AudioRingBuffer.fromSharedBuffer(sharedBuffer);
     this._ring = ring;
     this._consumer = ring.consumer();
+    const clockBuffer = options?.processorOptions?.clockBuffer;
+    if (clockBuffer !== undefined && clockBuffer !== null) {
+      if (typeof SharedArrayBuffer === "undefined"
+        || !(clockBuffer instanceof SharedArrayBuffer)
+        || clockBuffer.byteLength < Int32Array.BYTES_PER_ELEMENT) {
+        throw new TypeError("audio worklet clock requires a one-word SharedArrayBuffer");
+      }
+      this._clock = new Int32Array(clockBuffer, 0, 1);
+    } else {
+      this._clock = null;
+    }
+    this._capture = options?.processorOptions?.capture === true
+      && typeof this.port?.postMessage === "function";
+    const captureReadyBuffer = options?.processorOptions?.captureReadyBuffer;
+    if (this._capture) {
+      if (typeof SharedArrayBuffer === "undefined"
+        || !(captureReadyBuffer instanceof SharedArrayBuffer)
+        || captureReadyBuffer.byteLength < Int32Array.BYTES_PER_ELEMENT) {
+        throw new TypeError("captured audio worklet requires a one-word ready buffer");
+      }
+      this._captureReady = new Int32Array(captureReadyBuffer, 0, 1);
+    } else {
+      this._captureReady = null;
+    }
+    this._captureScratch = this._capture
+      ? new Float32Array(AUDIO_QUANTUM_FRAMES * CHANNELS)
+      : null;
     // The rendering thread reuses this one interleaved scratch block on every process call.
     this._scratch = new Float32Array(AUDIO_QUANTUM_FRAMES * CHANNELS);
   }
@@ -32,6 +59,11 @@ export class AudioRingWorkletProcessor extends WorkletProcessorBase {
     if (!left || !right) return true;
 
     const frameCount = Math.min(AUDIO_QUANTUM_FRAMES, left.length, right.length);
+    if (this._captureReady && Atomics.load(this._captureReady, 0) === 0) {
+      left.fill(0, 0, frameCount);
+      right.fill(0, 0, frameCount);
+      return true;
+    }
     const read = this._consumer.readInto(this._scratch, frameCount);
     for (let frame = 0; frame < frameCount; frame += 1) {
       const sampleIndex = frame * CHANNELS;
@@ -41,6 +73,15 @@ export class AudioRingWorkletProcessor extends WorkletProcessorBase {
       right[frame] = otherSample;
     }
     if (read < frameCount) this._ring.recordUnderrun();
+    if (this._clock) Atomics.add(this._clock, 0, frameCount);
+    if (this._capture) {
+      for (let frame = 0; frame < frameCount; frame += 1) {
+        const sampleIndex = frame * CHANNELS;
+        this._captureScratch[sampleIndex] = left[frame];
+        this._captureScratch[sampleIndex + 1] = right[frame];
+      }
+      this.port.postMessage({ frames: frameCount, samples: this._captureScratch });
+    }
     return true;
   }
 }

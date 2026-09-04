@@ -194,6 +194,37 @@ fn info_queries_return_exact_one_item_capabilities_and_zero_padding() {
 }
 
 #[test]
+fn host_rate_selection_narrows_info_and_rejects_the_other_rate() {
+    let (mut device, state) = new();
+    assert!(state.borrow_mut().set_output_sample_rate(44_100));
+
+    let pcm = device.handle_control(&query(VIRTIO_SND_R_PCM_INFO, PCM_INFO_SIZE));
+    assert_eq!(status(&pcm), VIRTIO_SND_S_OK);
+    assert_eq!(
+        u64::from_le_bytes(pcm[20..28].try_into().unwrap()),
+        1u64 << VIRTIO_SND_PCM_RATE_44100
+    );
+
+    let rejected = PcmParams {
+        rate: VIRTIO_SND_PCM_RATE_48000,
+        ..PcmParams::default()
+    };
+    assert_eq!(
+        status(&device.handle_control(&rejected.to_bytes())),
+        VIRTIO_SND_S_BAD_MSG
+    );
+    let accepted = PcmParams {
+        rate: VIRTIO_SND_PCM_RATE_44100,
+        ..PcmParams::default()
+    };
+    assert_eq!(
+        status(&device.handle_control(&accepted.to_bytes())),
+        VIRTIO_SND_S_OK
+    );
+    assert!(!state.borrow_mut().set_output_sample_rate(96_000));
+}
+
+#[test]
 fn malformed_and_unsupported_queries_are_deterministic_and_non_mutating() {
     let mut device = VirtioSnd::new();
     let before = device.stream_state();

@@ -69,6 +69,8 @@ export class AudioAutoplayPolicy {
     schedule = defaultSchedule,
     cancel = defaultCancel,
     quantumFrames = AUTOPLAY_QUANTUM_FRAMES,
+    clockBuffer = null,
+    onUnlocked = null,
   } = {}) {
     if (!context || typeof context.resume !== "function") {
       throw new TypeError("audio autoplay policy requires an AudioContext with resume()");
@@ -82,6 +84,9 @@ export class AudioAutoplayPolicy {
     if (ring !== null && typeof ring.consumer !== "function") {
       throw new TypeError("audio autoplay ring must expose consumer()");
     }
+    if (onUnlocked !== null && typeof onUnlocked !== "function") {
+      throw new TypeError("onUnlocked must be a function");
+    }
 
     this.context = context;
     this.ring = ring;
@@ -93,6 +98,16 @@ export class AudioAutoplayPolicy {
     this._cancel = cancel;
     this._quantumFrames = quantumFrames;
     this._quantumMs = (quantumFrames * 1_000) / this.sampleRateHz;
+    if (clockBuffer !== null && clockBuffer !== undefined) {
+      if (typeof SharedArrayBuffer === "undefined"
+        || !(clockBuffer instanceof SharedArrayBuffer)
+        || clockBuffer.byteLength < Int32Array.BYTES_PER_ELEMENT) {
+        throw new TypeError("audio autoplay clock must be a one-word SharedArrayBuffer");
+      }
+      this._clock = new Int32Array(clockBuffer, 0, 1);
+    } else {
+      this._clock = null;
+    }
     this._consumer = ring?.consumer?.() ?? null;
     // Pre-unlock discard is deliberately allocation-free after construction. The same scratch
     // block is reused by every timer tick and is never handed to the AudioWorklet.
@@ -109,6 +124,7 @@ export class AudioAutoplayPolicy {
     this._resumeAttempts = 0;
     this._resumePromise = null;
     this._lastError = null;
+    this._onUnlocked = onUnlocked;
     this._onGesture = () => { void this.unlock("gesture"); };
   }
 
@@ -191,6 +207,9 @@ export class AudioAutoplayPolicy {
     // Account for time, rather than for available payload. Silence is not carried forward as a
     // future read budget, and a resumed tab cannot turn an old timer gap into a burst drain.
     this._frameCredit -= dueFrames;
+    // Keep the guest pacing clock at wall-clock pace while the AudioContext is suspended. The
+    // worklet takes over this same cell after unlock, so no two consumers advance it concurrently.
+    if (this._clock) Atomics.add(this._clock, 0, dueFrames);
     if (!this._consumer) return 0;
     const read = this._consumer.readInto(this._discardScratch, dueFrames);
     this._discardedFrames += read;
@@ -212,6 +231,10 @@ export class AudioAutoplayPolicy {
     this._resumeAttempts += 1;
     this._state = AUTOPLAY_UNLOCKING;
     this._lastError = null;
+    // Stop the suspended-context consumer as soon as the gesture owns the transition. Keeping its
+    // timer alive while the async AudioWorklet attach runs could discard the first published PCM
+    // block before the render consumer takes over.
+    this._cancelPump();
     renderBadge(this.badge, this._state);
     let resumeResult;
     try {
@@ -219,24 +242,25 @@ export class AudioAutoplayPolicy {
     } catch (error) {
       resumeResult = Promise.reject(error);
     }
-    this._resumePromise = resumeResult.then(
-      () => {
+    const unlocked = () => {
         this._resumePromise = null;
         this._state = AUTOPLAY_UNLOCKED;
         this._frameCredit = 0;
         this._cancelPump();
         renderBadge(this.badge, this._state);
         return { ok: true, state: AUTOPLAY_UNLOCKED, reason };
-      },
-      (error) => {
+    };
+    const failed = (error) => {
         this._resumePromise = null;
         this._state = AUTOPLAY_LOCKED;
         this._lastError = error;
         renderBadge(this.badge, this._state);
         this._schedulePump();
         return { ok: false, state: AUTOPLAY_LOCKED, reason, error };
-      },
-    );
+    };
+    this._resumePromise = resumeResult
+      .then(() => this._onUnlocked?.())
+      .then(unlocked, failed);
     return this._resumePromise;
   }
 

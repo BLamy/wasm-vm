@@ -31,6 +31,19 @@ export class WasmLinux {
      * invalidates a now-inconsistent CPU/RAM snapshot.
      */
     advanceOverlayGeneration(): number;
+    /**
+     * E5-T20e: connect this assembled guest to the page-owned AudioWorklet ring and render clock.
+     * The buffers are validated against the T20a header before ownership crosses into the core;
+     * an invalid or missing sound device is a hard boot-configuration error rather than silent
+     * playback loss.
+     */
+    attachAudioOutput(shared_buffer: SharedArrayBuffer, clock_buffer: SharedArrayBuffer, capacity_frames: number, sample_rate_hz: number): void;
+    /**
+     * E5-T20e: report whether this guest owns the page-provided ring sink. Kept separate from
+     * `AudioWorkletSink.stats()` so a browser proof can distinguish an attached guest bridge from
+     * a standalone synthetic ring producer.
+     */
+    audioOutputReady(): boolean;
     beginFileUpload(slot: number, name: string, total: number, sha256_hex: string): number;
     /**
      * E3-T03 dev-mode recorder: the ordered first-touch chunk-access list of this boot as a JSON
@@ -532,6 +545,8 @@ export interface InitOutput {
     readonly seedOverlayDelta: (a: number, b: number, c: number, d: number, e: number, f: number) => any;
     readonly version: () => [number, number];
     readonly wasmlinux_advanceOverlayGeneration: (a: number) => [number, number, number];
+    readonly wasmlinux_attachAudioOutput: (a: number, b: any, c: any, d: number, e: number) => [number, number];
+    readonly wasmlinux_audioOutputReady: (a: number) => [number, number, number];
     readonly wasmlinux_beginFileUpload: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number, number];
     readonly wasmlinux_bootProfile: (a: number) => [number, number, number, number];
     readonly wasmlinux_cancelFileDownload: (a: number, b: number) => [number, number];

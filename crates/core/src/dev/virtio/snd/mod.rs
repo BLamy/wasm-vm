@@ -95,6 +95,11 @@ pub const VIRTIO_SND_PCM_RATE_44100: u8 = 6;
 pub const VIRTIO_SND_PCM_RATE_48000: u8 = 7;
 pub const VIRTIO_SND_PCM_RATE_96000: u8 = 10;
 
+/// Rate bits exposed by the first output stream. Hosts may narrow this mask to the exact rate
+/// negotiated by their playback backend without changing the wire enum or the guest transport.
+pub const SUPPORTED_PCM_RATE_MASK: u64 =
+    (1u64 << VIRTIO_SND_PCM_RATE_44100) | (1u64 << VIRTIO_SND_PCM_RATE_48000);
+
 /// Standard stereo channel positions from virtio-snd §5.14.6.9.
 pub const VIRTIO_SND_CHMAP_FL: u8 = 3;
 pub const VIRTIO_SND_CHMAP_FR: u8 = 4;
@@ -429,18 +434,23 @@ pub struct PcmInfo {
 }
 
 impl PcmInfo {
-    /// The one stereo S16 output stream, limited to 44.1 kHz and 48 kHz. XRUN notifications are
+    /// The one stereo S16 output stream with a caller-selected rate bitmap. XRUN notifications are
     /// delivered through eventq when the guest has negotiated the corresponding PCM capability.
-    pub const fn output() -> Self {
+    pub const fn output_with_rates(rates: u64) -> Self {
         Self {
             hda_fn_nid: 0,
             features: VIRTIO_SND_PCM_F_EVT_XRUNS,
             formats: 1u64 << VIRTIO_SND_PCM_FMT_S16,
-            rates: (1u64 << VIRTIO_SND_PCM_RATE_44100) | (1u64 << VIRTIO_SND_PCM_RATE_48000),
+            rates,
             direction: VIRTIO_SND_D_OUTPUT,
             channels_min: 2,
             channels_max: 2,
         }
+    }
+
+    /// The default output capability advertised before a host backend narrows the rate.
+    pub const fn output() -> Self {
+        Self::output_with_rates(SUPPORTED_PCM_RATE_MASK)
     }
 
     /// Encode the exact 32-byte `virtio_snd_pcm_info` layout with zero padding.
@@ -935,8 +945,14 @@ impl PcmStream {
 
     /// Apply a validated SET_PARAMS request without mutating state on rejection.
     pub fn set_params(&mut self, params: PcmParams) -> SndStatus {
+        self.set_params_with_rate_mask(params, SUPPORTED_PCM_RATE_MASK)
+    }
+
+    /// Apply SET_PARAMS against the rates currently supported by the host output backend.
+    pub fn set_params_with_rate_mask(&mut self, params: PcmParams, rate_mask: u64) -> SndStatus {
         let result = transition(self.state, PcmControl::SetParams);
-        if result.status != SndStatus::Ok || !params.is_valid() {
+        let rate_supported = params.rate < 64 && (rate_mask & (1u64 << params.rate)) != 0;
+        if result.status != SndStatus::Ok || !params.is_valid() || !rate_supported {
             return SndStatus::BadMsg;
         }
         self.params = Some(params);
@@ -966,6 +982,7 @@ impl PcmStream {
 /// Shared sound state between the transport-facing half and later queue services.
 pub struct SndState {
     pub stream: PcmStream,
+    pcm_rate_mask: u64,
     kicked: [bool; NUM_QUEUES as usize],
     reset_pending: bool,
     lifecycle_epoch: u64,
@@ -977,6 +994,7 @@ impl Default for SndState {
     fn default() -> Self {
         Self {
             stream: PcmStream::default(),
+            pcm_rate_mask: SUPPORTED_PCM_RATE_MASK,
             kicked: [false; NUM_QUEUES as usize],
             reset_pending: false,
             lifecycle_epoch: 0,
@@ -990,6 +1008,19 @@ impl SndState {
     /// Construct a reset sound state.
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Restrict the guest-visible output capability to the rate provided by the host sink. The
+    /// browser context is selected before the guest starts, so a successful result keeps the
+    /// control-plane advertisement and the playback sink on one exact sample rate.
+    pub fn set_output_sample_rate(&mut self, sample_rate_hz: u32) -> bool {
+        let rate = match sample_rate_hz {
+            44_100 => VIRTIO_SND_PCM_RATE_44100,
+            48_000 => VIRTIO_SND_PCM_RATE_48000,
+            _ => return false,
+        };
+        self.pcm_rate_mask = 1u64 << rate;
+        true
     }
 
     /// Dispatch a logical control request and return a status header plus any info payload.
@@ -1008,7 +1039,7 @@ impl SndState {
                 request,
                 VIRTIO_SND_R_PCM_INFO,
                 PCM_INFO_SIZE,
-                &PcmInfo::output().to_bytes(),
+                &PcmInfo::output_with_rates(self.pcm_rate_mask).to_bytes(),
             ),
             VIRTIO_SND_R_CHMAP_INFO => self.handle_query(
                 request,
@@ -1074,7 +1105,9 @@ impl SndState {
         params: Option<PcmParams>,
     ) -> SndStatus {
         let status = match (control, params) {
-            (PcmControl::SetParams, Some(params)) => self.stream.set_params(params),
+            (PcmControl::SetParams, Some(params)) => self
+                .stream
+                .set_params_with_rate_mask(params, self.pcm_rate_mask),
             (PcmControl::SetParams, None) => SndStatus::BadMsg,
             (_, Some(_)) => SndStatus::BadMsg,
             (control, None) => self.stream.apply(control),
@@ -1422,12 +1455,14 @@ impl SndState {
 
     /// Reset stream and deferred transport state.
     pub fn reset(&mut self) {
+        let pcm_rate_mask = self.pcm_rate_mask;
         self.stream.reset();
         self.kicked = [false; NUM_QUEUES as usize];
         self.reset_pending = true;
         self.lifecycle_epoch = 0;
         self.playback = PlaybackQueue::default();
         self.events = EventState::default();
+        self.pcm_rate_mask = pcm_rate_mask;
     }
 }
 

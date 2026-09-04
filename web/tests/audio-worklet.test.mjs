@@ -32,12 +32,16 @@ function assertOutput(left, right, start, count, total = AUDIO_QUANTUM_FRAMES) {
   }
 }
 
-function processorFor(capacityFrames = 512) {
+function processorFor(capacityFrames = 512, withClock = false) {
   const ring = AudioRingBuffer.allocate({ capacityFrames });
+  const clockBuffer = withClock ? new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT) : null;
   const processor = new AudioRingWorkletProcessor({
-    processorOptions: { sharedBuffer: ring.sharedBuffer },
+    processorOptions: {
+      sharedBuffer: ring.sharedBuffer,
+      ...(clockBuffer ? { clockBuffer } : {}),
+    },
   });
-  return { ring, producer: ring.producer(), processor };
+  return { clockBuffer, ring, producer: ring.producer(), processor };
 }
 
 function output() {
@@ -80,6 +84,16 @@ test("a quantum-sized ring wrap has no duplicated or missing frames", () => {
   processSyntheticQuantum(processor, left, right);
   assertOutput(left, right, AUDIO_QUANTUM_FRAMES, AUDIO_QUANTUM_FRAMES);
   assert.equal(ring.underrunCount, 0);
+});
+
+test("the render clock advances once per output quantum, including starvation", () => {
+  const { clockBuffer, producer, processor } = processorFor(256, true);
+  const [left, right] = output();
+  assert.equal(producer.write(sequence(0, AUDIO_QUANTUM_FRAMES)), AUDIO_QUANTUM_FRAMES);
+  processSyntheticQuantum(processor, left, right);
+  assert.equal(Atomics.load(new Int32Array(clockBuffer), 0), AUDIO_QUANTUM_FRAMES);
+  processSyntheticQuantum(processor, left, right);
+  assert.equal(Atomics.load(new Int32Array(clockBuffer), 0), AUDIO_QUANTUM_FRAMES * 2);
 });
 
 test("alternating starvation stays exact across 10,000 simulated process calls", () => {

@@ -102,6 +102,7 @@ function harness({ resumeImpl = () => Promise.resolve(), ring = AudioRingBuffer.
   const badge = new FakeBadge();
   const context = new FakeContext(resumeImpl);
   const scheduler = manualScheduler();
+  const clockBuffer = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT);
   let now = 0;
   const policy = new AudioAutoplayPolicy({
     context,
@@ -112,10 +113,12 @@ function harness({ resumeImpl = () => Promise.resolve(), ring = AudioRingBuffer.
     nowMs: () => now,
     schedule: scheduler.schedule,
     cancel: scheduler.cancel,
+    clockBuffer,
   });
   return {
     badge,
     context,
+    clockBuffer,
     now(value) { now = value; },
     policy,
     producer: ring.producer(),
@@ -141,6 +144,7 @@ test("no gesture shows the muted badge and discards at the negotiated clock rate
   h.now((128 / 48_000) * 1_000);
   assert.equal(h.policy.pump(), 128);
   assert.equal(h.policy.discardedFrames, 128);
+  assert.equal(Atomics.load(new Int32Array(h.clockBuffer), 0), 128);
   assert.equal(h.ring.fillFrames, 0);
 
   // A long backgrounding gap is still only one bounded read. The elapsed clock credit is not
@@ -177,6 +181,26 @@ test("first click resumes exactly once, clears the badge, and repeated gestures 
   h.target.dispatch("keydown");
   await h.policy.unlock("repeat");
   assert.equal(h.context.resumeCalls, 1);
+});
+
+test("successful unlock invokes the output-start hook after the resume", async () => {
+  const h = harness();
+  const calls = [];
+  const policy = new AudioAutoplayPolicy({
+    context: h.context,
+    ring: h.ring,
+    sampleRateHz: h.context.sampleRate,
+    badge: h.badge,
+    target: h.target,
+    schedule: h.scheduler.schedule,
+    cancel: h.scheduler.cancel,
+    nowMs: () => 0,
+    onUnlocked: () => calls.push(h.context.state),
+  });
+  policy.start();
+  const result = await policy.unlock("hook");
+  assert.equal(result.ok, true);
+  assert.deepEqual(calls, ["running"]);
 });
 
 test("gestures during a pending resume share one promise", async () => {

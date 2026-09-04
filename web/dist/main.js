@@ -283,8 +283,16 @@ const term = ui.term;
 // browser keeps the context suspended. T20e connects the same sink to the guest's producer path;
 // this layer owns only the visible autoplay state and the one gesture → resume transition.
 const audioAutoplayBadge = document.getElementById("audio-autoplay-badge");
+const audioCaptureEnabled = new URLSearchParams(location.search).has("audioCapture");
+const audioRateQuery = Number(new URLSearchParams(location.search).get("audioRate"));
+const audioRequestedSampleRateHz = [44_100, 48_000].includes(audioRateQuery)
+  ? audioRateQuery
+  : 48_000;
+const audioCaptureBlocks = [];
 let audioSink = null;
 let audioAutoplayPolicy = null;
+let audioReady = Promise.resolve(false);
+let audioPipelineReady = false;
 
 function showAudioAutoplayUnavailable() {
   if (!audioAutoplayBadge) return;
@@ -293,44 +301,91 @@ function showAudioAutoplayUnavailable() {
   audioAutoplayBadge.hidden = false;
 }
 
-function installAudioAutoplayPolicy() {
-  if (typeof globalThis.AudioContext !== "function") {
-    showAudioAutoplayUnavailable();
-    return;
-  }
+function publishAudioGlobals() {
+  window.__audioAutoplayPolicy = audioAutoplayPolicy;
+  window.__audioSink = audioSink;
+  window.__audioCapture = audioCaptureBlocks;
+}
+
+function installContextOnlyAudioPolicy(context = null) {
+  audioSink = null;
+  audioPipelineReady = false;
   try {
-    audioSink = new AudioSink();
+    const fallbackContext = context ?? new globalThis.AudioContext({ sampleRate: 48_000 });
     audioAutoplayPolicy = createAutoplayPolicy({
-      context: audioSink.context,
-      ring: audioSink.ring,
-      sampleRateHz: audioSink.sampleRateHz,
+      context: fallbackContext,
+      sampleRateHz: Number(fallbackContext.sampleRate) || 48_000,
       badge: audioAutoplayBadge,
       target: document,
     });
     audioAutoplayPolicy.start();
+    audioReady = Promise.resolve(false);
   } catch {
-    // A browser may expose AudioContext but with no SharedArrayBuffer/audio-worklet support. Keep
-    // the unlock UX honest and still testable by falling back to a context-only policy; T20e will
-    // report the unavailable sink rather than silently pretending that PCM is playing.
-    audioSink = null;
-    try {
-      const context = new globalThis.AudioContext({ sampleRate: 48_000 });
-      audioAutoplayPolicy = createAutoplayPolicy({
-        context,
-        sampleRateHz: Number(context.sampleRate) || 48_000,
-        badge: audioAutoplayBadge,
-        target: document,
-      });
-      audioAutoplayPolicy.start();
-    } catch {
-      showAudioAutoplayUnavailable();
-    }
+    audioAutoplayPolicy = null;
+    audioReady = Promise.resolve(false);
+    showAudioAutoplayUnavailable();
+  }
+  publishAudioGlobals();
+}
+
+function installAudioAutoplayPolicy() {
+  if (typeof globalThis.AudioContext !== "function") {
+    showAudioAutoplayUnavailable();
+    audioReady = Promise.resolve(false);
+    publishAudioGlobals();
+    return;
+  }
+  try {
+    const candidate = new AudioSink({
+      requestedSampleRateHz: audioRequestedSampleRateHz,
+      capture: audioCaptureEnabled,
+      onCapture: (block) => {
+        // Capture is a bounded test-only observability seam. Production pages leave it disabled;
+        // proof pages retain enough cloned worklet quanta for sample/spectrum checks without an
+        // unbounded message queue.
+        if (audioCaptureBlocks.length < 32_000 && block?.samples instanceof Float32Array) {
+          audioCaptureBlocks.push({ frames: Number(block.frames) || 0, samples: block.samples });
+        }
+      },
+    });
+    audioSink = candidate;
+    audioAutoplayPolicy = createAutoplayPolicy({
+      context: candidate.context,
+      ring: candidate.ring,
+      sampleRateHz: candidate.sampleRateHz,
+      clockBuffer: candidate.clockBuffer,
+      onUnlocked: async () => {
+        // Resume can resolve before the next page task (including a guest's first PCM fill). Wait
+        // briefly for that first published block so the AudioWorklet cannot burn an unobservable
+        // empty quantum between the gesture and the producer; an actually silent guest still gets
+        // a bounded attach rather than waiting indefinitely.
+        const deadline = performance.now() + 50;
+        while (candidate.ring.fillFrames === 0 && performance.now() < deadline) {
+          await new Promise((resolve) => setTimeout(resolve, 1));
+        }
+        await candidate.connect();
+      },
+      badge: audioAutoplayBadge,
+      target: document,
+    });
+    audioAutoplayPolicy.start();
+    // Constructing an AudioWorkletNode can run its process callback even when Chrome reports the
+    // context as running before a user gesture. Keep the node absent while locked; the policy's
+    // post-resume hook creates it on the gesture that actually unlocks audio.
+    audioReady = Promise.resolve().then(() => {
+      audioPipelineReady = true;
+      publishAudioGlobals();
+      return true;
+    });
+  } catch {
+    // A browser may expose AudioContext but no SharedArrayBuffer support. Keep the unlock UX honest
+    // and omit the audio bridge instead of silently pretending that PCM is playing.
+    installContextOnlyAudioPolicy();
   }
 }
 
 installAudioAutoplayPolicy();
-window.__audioAutoplayPolicy = audioAutoplayPolicy;
-window.__audioSink = audioSink;
+publishAudioGlobals();
 const fileTransferUI = createFileTransferUI({
   root: document.getElementById("file-transfer"),
   FileSha256,
@@ -904,6 +959,10 @@ function runLinuxBoot(opts, banner, { requestKey = opts.manifestUrl, onClaim = n
 async function runLinuxBootOwned(opts, banner, request) {
   bootBtns.forEach((b) => b && (b.disabled = true));
   term.reset();
+  // E5-T20e: do not let the guest probe virtio-snd before the AudioWorklet module has either
+  // connected successfully or been explicitly downgraded to the context-only fallback.
+  await audioReady;
+  const audioBootEnabled = audioPipelineReady && audioSink !== null;
   if (_workerRequested && !_workerAvailable) {
     term.writeln("\x1b[33m[whole-machine Worker unavailable; using explicit main-thread fallback]\x1b[0m");
   }
@@ -1038,6 +1097,12 @@ async function runLinuxBootOwned(opts, banner, request) {
       slirpDoh,
       slirpLeaseSecs: opts.slirpLeaseSecs ?? query.get("slirpLeaseSecs") ?? 86400,
       slirpMtu: opts.slirpMtu ?? query.get("slirpMtu") ?? 1500,
+      // E5-T20e: these SABs are the only audio state crossing into the whole-machine worker. The
+      // loader omits the bridge entirely on the context-only fallback path.
+      audioSharedBuffer: audioBootEnabled ? audioSink.ring.sharedBuffer : null,
+      audioClockBuffer: audioBootEnabled ? audioSink.clockBuffer : null,
+      audioCapacityFrames: audioBootEnabled ? audioSink.ring.capacityFrames : 0,
+      audioSampleRateHz: audioBootEnabled ? audioSink.sampleRateHz : 0,
       onState: (s) => {
         // E4 restore-on-first-load: a visible stopwatch instead of the "booting" progress bar when
         // the shipped boot snapshot is being restored.
@@ -1628,6 +1693,11 @@ window.wvmDemo = {
   // E5-T20d/T20e: inspect the real context/ring pair without exposing a second unlock path.
   audioAutoplay: () => audioAutoplayPolicy,
   audioSink: () => audioSink,
+  audioReady: () => audioReady,
+  audioPipelineReady: () => audioPipelineReady,
+  async audioOutputReady() {
+    return Boolean(await linuxCtl?.audioOutputReady?.());
+  },
   // Subscribe to the real guest console stream (Uint8Array chunks). Returns an unsubscribe fn.
   onConsole(fn) { consoleSubscribers.add(fn); return () => consoleSubscribers.delete(fn); },
   // Inject bytes through the REAL terminal input bridge — the same backpressure queue → ttyS0 RX

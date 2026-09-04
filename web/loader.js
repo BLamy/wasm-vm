@@ -234,6 +234,12 @@ export async function startLinuxBoot(opts = {}) {
     // Dedicated workers use timer tasks between slices so Worker "message" tasks (input/RPC/fetch
     // completions) cannot be starved by a self-perpetuating MessageChannel task source.
     workerMode = false,
+    // E5-T20e: the page-owned AudioWorklet ring and render clock are transferred into the guest
+    // before its first run slice. Null keeps direct-loader/headless callers on the NullSink path.
+    audioSharedBuffer = null,
+    audioClockBuffer = null,
+    audioCapacityFrames = 0,
+    audioSampleRateHz = 0,
   } = opts;
   let outputCalls = 0;
   let outputBytes = 0;
@@ -480,6 +486,27 @@ export async function startLinuxBoot(opts = {}) {
       machine = WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, emitOutput);
     } else {
       machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, emitOutput);
+    }
+
+    // E5-T20e: swap the assembly's default NullSink for the page-owned AudioWorklet producer only
+    // after the machine exists. This works identically on the main thread and in the whole-machine
+    // worker because SharedArrayBuffers survive structured cloning without a page callback.
+    const audioRequested = audioSharedBuffer !== null
+      || audioClockBuffer !== null
+      || audioCapacityFrames > 0
+      || audioSampleRateHz > 0;
+    if (audioRequested) {
+      if (audioSharedBuffer === null || audioClockBuffer === null
+        || audioCapacityFrames < 1 || audioSampleRateHz < 1
+        || typeof machine.attachAudioOutput !== "function") {
+        throw new Error("browser wasm build lacks a complete audio output bridge");
+      }
+      machine.attachAudioOutput(
+        audioSharedBuffer,
+        audioClockBuffer,
+        audioCapacityFrames,
+        audioSampleRateHz,
+      );
     }
 
     // E4-T30: remove the old browser default that left the proven 2.24x block-boundary batching win
@@ -993,6 +1020,9 @@ export async function startLinuxBoot(opts = {}) {
       // E4: true when this boot skipped the Linux boot by restoring a shipped boot snapshot.
       restoredFromBootSnapshot: () => restoredFromBootSnapshot,
       overlaySeedIdentity: () => overlaySeedIdentity,
+      audioOutputReady: () => (
+        typeof machine.audioOutputReady === "function" ? machine.audioOutputReady() : false
+      ),
       stateDigest: () => machine.stateDigest(),
       jitStats: () => (typeof machine.jitStats === "function" ? machine.jitStats() : null),
       profileStats: () => (typeof machine.getProfile === "function" ? machine.getProfile() : null),

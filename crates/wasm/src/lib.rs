@@ -1120,6 +1120,225 @@ impl wasm_vm_core::dev::virtio::snd::AudioClock for JsHostTimer {
     }
 }
 
+/// E5-T20e: the browser-side producer for the AudioWorklet ring. The guest transport still calls
+/// the core `AudioSink` trait with interleaved S16 frames; this adapter only marshals those frames
+/// into the already-established f32 SPSC ring and never calls back into page JavaScript.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+struct SharedAudioSink {
+    header: js_sys::Int32Array,
+    samples: js_sys::Float32Array,
+    capacity_frames: u32,
+    sample_rate_hz: u32,
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl SharedAudioSink {
+    const HEADER_WORDS: u32 = 10;
+    const HEADER_BYTES: u32 = Self::HEADER_WORDS * 4;
+    const CHANNELS: u32 = 2;
+    const MAGIC: i32 = 0x4155_5247;
+    const VERSION: i32 = 1;
+    const WRITE_INDEX: u32 = 0;
+    const READ_INDEX: u32 = 1;
+    const FILL_FRAMES: u32 = 2;
+    const CAPACITY_FRAMES: u32 = 3;
+    const WRITE_SLOT: u32 = 4;
+    const READ_SLOT: u32 = 5;
+    const MAGIC_INDEX: u32 = 6;
+    const VERSION_INDEX: u32 = 7;
+    const CHANNELS_INDEX: u32 = 8;
+
+    fn invalid(message: &str) -> JsError {
+        JsError::new(message)
+    }
+
+    fn load(header: &js_sys::Int32Array, index: u32) -> Result<i32, JsError> {
+        js_sys::Atomics::load(header, index)
+            .map_err(|_| Self::invalid("audio ring atomic load failed"))
+    }
+
+    fn new(
+        shared_buffer: js_sys::SharedArrayBuffer,
+        capacity_frames: u32,
+        sample_rate_hz: u32,
+    ) -> Result<Self, JsError> {
+        if capacity_frames == 0 || capacity_frames > i32::MAX as u32 {
+            return Err(Self::invalid(
+                "audio ring capacity is outside the supported range",
+            ));
+        }
+        if !matches!(sample_rate_hz, 44_100 | 48_000) {
+            return Err(Self::invalid(
+                "audio ring sample rate must be 44100 or 48000 Hz",
+            ));
+        }
+        let payload_bytes = capacity_frames
+            .checked_mul(Self::CHANNELS)
+            .and_then(|samples| samples.checked_mul(4))
+            .ok_or_else(|| Self::invalid("audio ring payload size overflow"))?;
+        let expected_bytes = Self::HEADER_BYTES
+            .checked_add(payload_bytes)
+            .ok_or_else(|| Self::invalid("audio ring byte length overflow"))?;
+        if shared_buffer.byte_length() != expected_bytes {
+            return Err(Self::invalid(
+                "audio ring byte length does not match capacity",
+            ));
+        }
+
+        let buffer: JsValue = shared_buffer.into();
+        let header =
+            js_sys::Int32Array::new_with_byte_offset_and_length(&buffer, 0, Self::HEADER_WORDS);
+        if Self::load(&header, Self::MAGIC_INDEX)? != Self::MAGIC
+            || Self::load(&header, Self::VERSION_INDEX)? != Self::VERSION
+            || Self::load(&header, Self::CHANNELS_INDEX)? != Self::CHANNELS as i32
+            || Self::load(&header, Self::CAPACITY_FRAMES)? != capacity_frames as i32
+        {
+            return Err(Self::invalid("audio ring header metadata does not match"));
+        }
+
+        let fill = Self::load(&header, Self::FILL_FRAMES)?;
+        let write_slot = Self::load(&header, Self::WRITE_SLOT)?;
+        let read_slot = Self::load(&header, Self::READ_SLOT)?;
+        if fill < 0
+            || fill as u32 > capacity_frames
+            || write_slot < 0
+            || write_slot as u32 >= capacity_frames
+            || read_slot < 0
+            || read_slot as u32 >= capacity_frames
+        {
+            return Err(Self::invalid("audio ring cursors are outside their bounds"));
+        }
+        let write_index = Self::load(&header, Self::WRITE_INDEX)? as u32;
+        let read_index = Self::load(&header, Self::READ_INDEX)? as u32;
+        let distance = write_index.wrapping_sub(read_index);
+        if (fill as u32 != capacity_frames && distance != fill as u32)
+            || (fill as u32 == capacity_frames && distance != 0 && distance != capacity_frames)
+        {
+            return Err(Self::invalid("audio ring counters do not match fill"));
+        }
+
+        let samples = js_sys::Float32Array::new_with_byte_offset_and_length(
+            &buffer,
+            Self::HEADER_BYTES,
+            capacity_frames
+                .checked_mul(Self::CHANNELS)
+                .ok_or_else(|| Self::invalid("audio ring sample length overflow"))?,
+        );
+        Ok(Self {
+            header,
+            samples,
+            capacity_frames,
+            sample_rate_hz,
+        })
+    }
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl wasm_vm_core::dev::virtio::snd::AudioSink for SharedAudioSink {
+    fn push(
+        &mut self,
+        frames: &[i16],
+        sample_rate_hz: u32,
+    ) -> Result<(), wasm_vm_core::dev::virtio::snd::AudioSinkError> {
+        use wasm_vm_core::dev::virtio::snd::AudioSinkError;
+
+        if sample_rate_hz != self.sample_rate_hz || !frames.len().is_multiple_of(2) {
+            return Err(AudioSinkError::Failed);
+        }
+        let frame_count = frames.len() / 2;
+        if frame_count == 0 {
+            return Ok(());
+        }
+        let Ok(fill) = js_sys::Atomics::load(&self.header, Self::FILL_FRAMES) else {
+            return Err(AudioSinkError::Failed);
+        };
+        if fill < 0 || fill as u32 > self.capacity_frames {
+            return Err(AudioSinkError::Failed);
+        }
+        let frame_count = match u32::try_from(frame_count) {
+            Ok(count) if count <= self.capacity_frames.saturating_sub(fill as u32) => count,
+            _ => return Err(AudioSinkError::Failed),
+        };
+        let Ok(mut write_slot) = js_sys::Atomics::load(&self.header, Self::WRITE_SLOT) else {
+            return Err(AudioSinkError::Failed);
+        };
+        if write_slot < 0 || write_slot as u32 >= self.capacity_frames {
+            return Err(AudioSinkError::Failed);
+        }
+
+        for frame in 0..frame_count as usize {
+            let sample_index = write_slot as u32 * Self::CHANNELS;
+            self.samples
+                .set_index(sample_index, frames[frame * 2] as f32 / 32_768.0);
+            self.samples
+                .set_index(sample_index + 1, frames[frame * 2 + 1] as f32 / 32_768.0);
+            write_slot += 1;
+            if write_slot as u32 == self.capacity_frames {
+                write_slot = 0;
+            }
+        }
+
+        let Ok(write_index) = js_sys::Atomics::load(&self.header, Self::WRITE_INDEX) else {
+            return Err(AudioSinkError::Failed);
+        };
+        if js_sys::Atomics::store(&self.header, Self::WRITE_SLOT, write_slot).is_err()
+            || js_sys::Atomics::store(
+                &self.header,
+                Self::WRITE_INDEX,
+                write_index.wrapping_add(frame_count as i32),
+            )
+            .is_err()
+            || js_sys::Atomics::add(&self.header, Self::FILL_FRAMES, frame_count as i32).is_err()
+        {
+            return Err(AudioSinkError::Failed);
+        }
+        Ok(())
+    }
+}
+
+/// E5-T20e: a render-clock view shared by the guest pacing service and the AudioWorklet. The
+/// worklet advances the frame cell after each render quantum; using the delta from attachment
+/// avoids treating the shared uint32 counter as an absolute wall-clock value.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+struct SharedAudioClock {
+    frames: js_sys::Int32Array,
+    origin_frames: u32,
+    sample_rate_hz: u32,
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl SharedAudioClock {
+    fn new(clock_buffer: js_sys::SharedArrayBuffer, sample_rate_hz: u32) -> Result<Self, JsError> {
+        if !matches!(sample_rate_hz, 44_100 | 48_000) || clock_buffer.byte_length() < 4 {
+            return Err(JsError::new("audio clock buffer or sample rate is invalid"));
+        }
+        let buffer: JsValue = clock_buffer.into();
+        let frames = js_sys::Int32Array::new_with_byte_offset_and_length(&buffer, 0, 1);
+        let origin_frames = js_sys::Atomics::load(&frames, 0)
+            .map_err(|_| JsError::new("audio clock atomic load failed"))?
+            as u32;
+        Ok(Self {
+            frames,
+            origin_frames,
+            sample_rate_hz,
+        })
+    }
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl wasm_vm_core::dev::virtio::snd::AudioClock for SharedAudioClock {
+    fn now_ns(&self) -> u64 {
+        let current = js_sys::Atomics::load(&self.frames, 0)
+            .map(|frames| frames as u32)
+            .unwrap_or(self.origin_frames);
+        let elapsed_frames = current.wrapping_sub(self.origin_frames) as u64;
+        elapsed_frames
+            .saturating_mul(1_000_000_000)
+            .checked_div(u64::from(self.sample_rate_hz))
+            .unwrap_or(u64::MAX)
+    }
+}
+
 /// E2-T21: a browser-side unmodified-Linux boot. Unlike [`WasmMachine`] (bare-metal ELF + a
 /// Uart0 stub), this assembles the full `virt` platform (CLINT/PLIC/16550/virtio/goldfish-RTC/
 /// syscon/built-in SBI) via the SHARED [`Machine::place_and_boot`] and boots a kernel `Image`
@@ -1149,6 +1368,7 @@ fn build_core_hash() -> [u8; 32] {
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 struct LinuxInner {
     machine: Machine,
+    audio_attached: bool,
     uart: std::rc::Rc<RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
     out: std::rc::Rc<RefCell<Vec<u8>>>,
     output: js_sys::Function,
@@ -1751,6 +1971,7 @@ impl WasmLinux {
         Ok(WasmLinux {
             inner: RefCell::new(LinuxInner {
                 machine,
+                audio_attached: false,
                 uart,
                 out,
                 output,
@@ -1765,6 +1986,42 @@ impl WasmLinux {
                 snapshot_write_count: std::rc::Rc::new(std::cell::Cell::new(0)),
             }),
         })
+    }
+
+    /// E5-T20e: connect this assembled guest to the page-owned AudioWorklet ring and render clock.
+    /// The buffers are validated against the T20a header before ownership crosses into the core;
+    /// an invalid or missing sound device is a hard boot-configuration error rather than silent
+    /// playback loss.
+    #[wasm_bindgen(js_name = attachAudioOutput)]
+    pub fn attach_audio_output(
+        &self,
+        shared_buffer: js_sys::SharedArrayBuffer,
+        clock_buffer: js_sys::SharedArrayBuffer,
+        capacity_frames: u32,
+        sample_rate_hz: u32,
+    ) -> Result<(), JsError> {
+        let sink = SharedAudioSink::new(shared_buffer, capacity_frames, sample_rate_hz)?;
+        let clock = SharedAudioClock::new(clock_buffer, sample_rate_hz)?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.machine.replace_virtio_snd_audio(
+            std::rc::Rc::new(clock),
+            Box::new(sink),
+            sample_rate_hz,
+        ) {
+            inner.audio_attached = true;
+            Ok(())
+        } else {
+            Err(JsError::new("virtio-snd is not assembled"))
+        }
+    }
+
+    /// E5-T20e: report whether this guest owns the page-provided ring sink. Kept separate from
+    /// `AudioWorkletSink.stats()` so a browser proof can distinguish an attached guest bridge from
+    /// a standalone synthetic ring producer.
+    #[wasm_bindgen(js_name = audioOutputReady)]
+    pub fn audio_output_ready(&self) -> Result<bool, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner.audio_attached)
     }
 
     /// E4-T30: select the production interpreter fast path for a browser Linux guest. It combines

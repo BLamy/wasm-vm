@@ -120,6 +120,8 @@ test("connect loads the stable worklet with this sink's ring", async () => {
   assert.equal(calls[0].kind, "node");
   assert.equal(calls[0].name, "wasm-vm-audio-consumer");
   assert.equal(calls[0].options.processorOptions.sharedBuffer, sink.ring.sharedBuffer);
+  assert.equal(calls[0].options.processorOptions.clockBuffer, sink.clockBuffer);
+  assert.equal(calls[0].options.processorOptions.captureReadyBuffer, undefined);
   assert.deepEqual(calls[1], { kind: "connect", destination: sink.context.destination });
 });
 
@@ -169,6 +171,16 @@ test("AudioContext time and the atomic consumed-frame cursor provide a monotonic
   assert.ok(second >= first + 2_000_000);
   sink.context.currentTime = 0;
   assert.ok(sink.audioClockNowNs() >= second);
+});
+
+test("the shared render clock follows worklet quanta and remains sample-rate based", () => {
+  const { factory } = contextFactory({ sampleRate: 44_100 });
+  const sink = new AudioWorkletSink({ audioContextFactory: factory });
+  const first = sink.audioClockNowNs();
+  Atomics.add(new Int32Array(sink.clockBuffer), 0, 128);
+  assert.equal(sink.renderedFrames, 128);
+  const second = sink.audioClockNowNs();
+  assert.ok(second >= first + Math.floor((128 * 1e9) / 44_100));
 });
 
 test("full ring returns bounded backpressure instead of spinning or resampling", () => {

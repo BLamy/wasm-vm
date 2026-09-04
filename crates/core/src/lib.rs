@@ -1553,6 +1553,27 @@ impl Machine {
         (alloc::rc::Rc::clone(&self.virtio[slot_index].0), state)
     }
 
+    /// Replace the host-side sound clock and sink after the platform has been assembled. The
+    /// browser constructs the machine before it can transfer its AudioWorklet SharedArrayBuffers;
+    /// narrowing the advertised PCM rate here keeps the subsequent guest probe consistent with
+    /// the already-negotiated AudioContext.
+    pub fn replace_virtio_snd_audio(
+        &mut self,
+        clock: alloc::rc::Rc<dyn dev::virtio::snd::AudioClock>,
+        sink: alloc::boxed::Box<dyn dev::virtio::snd::AudioSink>,
+        sample_rate_hz: u32,
+    ) -> bool {
+        let Some((_, state, _, _, _, current_clock, current_sink)) = self.snd.as_mut() else {
+            return false;
+        };
+        if !state.borrow_mut().set_output_sample_rate(sample_rate_hz) {
+            return false;
+        }
+        *current_clock = clock;
+        *current_sink = sink;
+        true
+    }
+
     /// Current guest-visible virtio-snd slot and shared state, if sound was assembled.
     #[allow(clippy::type_complexity)]
     pub fn virtio_snd(
