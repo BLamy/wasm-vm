@@ -3,16 +3,38 @@ id: E5-T06
 epic: 5
 title: Canvas presentation path — measure putImageData vs WebGL upload, pick by data
 priority: 506
-status: pending
+status: cancelled
 depends_on: [E5-T03]
 estimate: M
+risk: medium
 capstone: false
+decomposed_into: [E5-T06a, E5-T06b, E5-T06c, E5-T06d]
 ---
 
 ## Goal
 A `CanvasSink` implementing the T03 `FrameSink` trait with two presentation backends —
 2D-context `putImageData` and WebGL2 `texSubImage2D` + textured quad — plus a benchmark
 page that measures both, and a recorded, data-backed decision on the default path.
+
+> **DECOMPOSED 2026-09-04.** This M-sized presentation container is cancelled before
+> implementation as required by task policy. E5-T06a owns the Canvas2D backend and shared
+> present contract, E5-T06b owns the WebGL2 backend, E5-T06c owns the reproducible benchmark
+> and measured decision, and E5-T06d owns runtime selection, context-loss fallback, and final
+> browser integration.
+
+## Execution slices
+
+1. **E5-T06a — Canvas2D backend and contract.** Define the browser-side `PresentBackend` shape,
+   implement bounded BGRA/RGBA staging plus `putImageData`, and prove full-frame/partial-rect
+   readback against five golden patterns.
+2. **E5-T06b — WebGL2 backend.** Implement texture upload and fullscreen-quad presentation behind
+   the same contract, with odd-rect, alpha, partial-update, and readback tests.
+3. **E5-T06c — Benchmark and decision.** Add the machine-readable 1280x800/2560x1600 full-frame
+   and 64x64-damage benchmark, collect the supported browser/backend matrix, and record the
+   measured default plus fallback order in `docs/perf/present-paths.md`.
+4. **E5-T06d — Runtime integration and fallback.** Feature-detect the selected backend, handle
+   WebGL context loss with at most one dropped frame, wire the sink into the display path, and
+   finish the browser proof of the chosen default and fallback.
 
 ## Context
 This is the only hop where our pixels cross the JS boundary, and the wrong choice costs
@@ -58,4 +80,10 @@ UNPACK_SKIP_PIXELS misuse shows as shearing). Verify the SAB claim empirically i
 browsers and record which engine required the staging copy.
 
 ## Verification log
-(empty)
+### 2026-09-04 — coordinator — decomposed
+
+This M-sized presentation container is cancelled before implementation as required by task
+policy and replaced by four ordered S tickets with one browser boundary and one deterministic
+acceptance command each. The dependency chain is Canvas2D contract → WebGL2 backend → measured
+decision → runtime fallback/integration. E5-T07 and E5-T09 are rewired to the final integration
+slice so neither can bypass the presentation decision.

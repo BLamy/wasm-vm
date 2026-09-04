@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 246,
-    "total": 406
+    "total": 410
   },
   "epics": [
     {
@@ -16354,15 +16354,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t04): record EDID display proof",
             "chore(e5-t04): activate EDID display-info task"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T05",
@@ -16533,14 +16534,19 @@
       "epicKey": "5",
       "title": "Canvas presentation path — measure putImageData vs WebGL upload, pick by data",
       "priority": 506,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T03"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T06a",
+        "E5-T06b",
+        "E5-T06c",
+        "E5-T06d"
+      ],
       "estimate": "M",
       "capstone": false,
-      "goal": "A `CanvasSink` implementing the T03 `FrameSink` trait with two presentation backends —\n2D-context `putImageData` and WebGL2 `texSubImage2D` + textured quad — plus a benchmark\npage that measures both, and a recorded, data-backed decision on the default path.",
+      "goal": "A `CanvasSink` implementing the T03 `FrameSink` trait with two presentation backends —\n2D-context `putImageData` and WebGL2 `texSubImage2D` + textured quad — plus a benchmark\npage that measures both, and a recorded, data-backed decision on the default path.\n\n> **DECOMPOSED 2026-09-04.** This M-sized presentation container is cancelled before\n> implementation as required by task policy. E5-T06a owns the Canvas2D backend and shared\n> present contract, E5-T06b owns the WebGL2 backend, E5-T06c owns the reproducible benchmark\n> and measured decision, and E5-T06d owns runtime selection, context-loss fallback, and final\n> browser integration.",
       "criteria": [
         {
           "text": "Both backends render 5 golden test patterns pixel-identically (readback via `getImageData` compared to expected RGBA, catching swizzle bugs).",
@@ -16565,9 +16571,184 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — coordinator — decomposed\n\nThis M-sized presentation container is cancelled before implementation as required by task\npolicy and replaced by four ordered S tickets with one browser boundary and one deterministic\nacceptance command each. The dependency chain is Canvas2D contract → WebGL2 backend → measured\ndecision → runtime fallback/integration. E5-T07 and E5-T09 are rewired to the final integration\nslice so neither can bypass the presentation decision.",
       "adversarial": "Refute the measurement itself: re-run the bench with the tab backgrounded, DPR=2, and a\nthrottled CPU (DevTools 4x) — if the committed ranking inverts under any of these and the\ndoc doesn't note it, that's a refutation of the decision's validity. Refute correctness:\npresent a frame whose alpha bytes are 0x00 — canvas must not show through (premultiplied\nalpha bug); present odd-width rects (x=1, w=3) on the GL path (UNPACK_ROW_LENGTH /\nUNPACK_SKIP_PIXELS misuse shows as shearing). Verify the SAB claim empirically in both\nbrowsers and record which engine required the staging copy.",
       "file": "tasks/epic-5-the-window/E5-T06-presentation-path-benchmark.md",
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T06a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Canvas2D presentation backend and present contract",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T03c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Define the browser-side presentation contract and implement the Canvas2D backend that consumes\nT03 `FrameSink` pixels with bounded staging, correct channel order, resize handling, and partial\ndamage updates.",
+      "criteria": [
+        {
+          "text": "Five golden patterns read back pixel-identically through the Canvas2D backend.",
+          "checked": false
+        },
+        {
+          "text": "A partial rect changes only its target pixels; an x=1, width=3 rect is not sheared.",
+          "checked": false
+        },
+        {
+          "text": "Alpha bytes of `0x00` remain transparent in the readback rather than being dropped or replaced by a stale staging value.",
+          "checked": false
+        },
+        {
+          "text": "Repeated resize/present calls keep staging allocation bounded by the current canvas size.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Present a 1x1 and a maximum supported canvas, use a damage rect crossing every row boundary,\nalternate opaque and alpha-zero pixels, and reuse the same backend for 1,000 resizes. Assert\nreadback outside the rect and staging capacity never exceed the documented bound.",
+      "file": "tasks/epic-5-the-window/E5-T06a-canvas2d-presentation.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T06b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "WebGL2 presentation backend",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T06a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Implement the WebGL2 `PresentBackend` behind E5-T06a's contract, uploading the core pixel\nformat without a per-pixel JavaScript swizzle and rendering it through a deterministic textured\nquad.",
+      "criteria": [
+        {
+          "text": "Five golden patterns render pixel-identically to the Canvas2D oracle after readback.",
+          "checked": false
+        },
+        {
+          "text": "A partial rect updates only the rect, including x=1, width=3 on a non-power-of-two canvas.",
+          "checked": false
+        },
+        {
+          "text": "Alpha-zero pixels remain correct and do not expose prior framebuffer contents.",
+          "checked": false
+        },
+        {
+          "text": "Repeated texture resize/delete cycles leave no stale GL object or unbounded staging buffer.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Use odd canvas widths, x/y damage at each edge, a rect crossing an upload row, transparent\npixels over a nonzero background, and 1,000 alternating texture sizes. Run with WebGL debug\nvalidation enabled and fail on any GL error or readback mismatch.",
+      "file": "tasks/epic-5-the-window/E5-T06b-webgl-presentation.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T06c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Presentation benchmark and measured backend decision",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T06a",
+        "E5-T06b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Measure Canvas2D and WebGL2 on the same deterministic workloads and publish a data-backed\ndefault choice with a documented fallback order.",
+      "criteria": [
+        {
+          "text": "The benchmark emits valid machine-readable JSON for all four backend/workload combinations.",
+          "checked": false
+        },
+        {
+          "text": "The committed matrix includes the supported browser runs and at least 300 samples per cell.",
+          "checked": false
+        },
+        {
+          "text": "The default is the measured faster path for 1280x800 damage, with the margin and variance recorded in `docs/perf/present-paths.md`.",
+          "checked": false
+        },
+        {
+          "text": "Copy counts and the warm-up/sample policy are explicit, so reruns cannot hide setup cost.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Repeat with DPR=2, a backgrounded tab, and a throttled CPU. If the ranking changes, the document\nmust record the inversion and the runtime policy must remain honest. Reject runs with fewer than\n300 samples or missing backend/workload/browser fields.",
+      "file": "tasks/epic-5-the-window/E5-T06c-presentation-benchmark.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T06d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Presentation selection, context-loss fallback, and VM integration",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T06c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Wire the measured presentation backend into the browser display path, feature-detect it at\nruntime, and fall back from WebGL2 to Canvas2D without wedging the guest or losing more than one\nframe on context loss.",
+      "criteria": [
+        {
+          "text": "The selected default matches the committed E5-T06c decision and falls back when the feature is unavailable.",
+          "checked": false
+        },
+        {
+          "text": "Simulated WebGL context loss causes at most one dropped frame and leaves later presents pixel-correct through Canvas2D.",
+          "checked": false
+        },
+        {
+          "text": "Full and partial presents reach the visible canvas with no guest queue stall or duplicate frame callback.",
+          "checked": false
+        },
+        {
+          "text": "The built demo's browser proof records the backend, final frame, and zero console errors.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Disable WebGL2, lose the context during a partial update, resize during recovery, and send 1,000\nrapid presents. Assert the last frame wins, at most one frame is dropped, no promise/listener\nleaks accumulate, and a guest-visible queue remains live.",
+      "file": "tasks/epic-5-the-window/E5-T06d-presentation-integration.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
@@ -16581,9 +16762,9 @@
       "priority": 507,
       "status": "pending",
       "depends_on": [
-        "E5-T03",
+        "E5-T03c",
         "E5-T05c",
-        "E5-T06"
+        "E5-T06d"
       ],
       "decomposed_into": [],
       "estimate": "M",
@@ -16675,7 +16856,7 @@
       "priority": 509,
       "status": "pending",
       "depends_on": [
-        "E5-T06",
+        "E5-T06d",
         "E5-T07"
       ],
       "decomposed_into": [],

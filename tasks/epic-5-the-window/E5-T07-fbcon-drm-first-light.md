@@ -4,7 +4,7 @@ epic: 5
 title: First light — kernel fbcon text console rendered on the canvas
 priority: 507
 status: pending
-depends_on: [E5-T03, E5-T05c, E5-T06]
+depends_on: [E5-T03c, E5-T05c, E5-T06d]
 estimate: M
 capstone: false
 ---
