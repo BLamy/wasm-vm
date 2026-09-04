@@ -24,6 +24,9 @@ export const HEADER = Object.freeze({
   MAGIC: 6,
   VERSION: 7,
   CHANNELS: 8,
+  // The final status cell is role-specific: render underruns on the playback ring, or
+  // dropped capture frames on the reversed capture ring.
+  DROPPED_FRAMES: 9,
   UNDERRUNS: 9,
 });
 
