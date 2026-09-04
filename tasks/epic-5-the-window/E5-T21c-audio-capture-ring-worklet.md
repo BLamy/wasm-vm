@@ -3,7 +3,7 @@ id: E5-T21c
 epic: 5
 title: Capture SAB ring and AudioWorklet producer
 priority: 521.3
-status: pending
+status: in-progress
 depends_on: [E5-T21b]
 estimate: S
 risk: high
