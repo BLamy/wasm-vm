@@ -396,7 +396,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `523.5` [E5-T23e](epic-5-the-window/E5-T23e-agent-channel-proof.md) — End-to-end guest agent channel proof and documentation *(deps: E5-T23d)*
 - [-] `524` [E5-T24](epic-5-the-window/E5-T24-clipboard-sync.md) — Bidirectional clipboard sync through the guest agent *(deps: E5-T18, E5-T23e)*
 - [x] `524.1` [E5-T24a](epic-5-the-window/E5-T24a-clipboard-protocol.md) — Freeze bounded clipboard protocol types and UTF-8 policy *(deps: E5-T23e)*
-- [~] `524.2` [E5-T24b](epic-5-the-window/E5-T24b-guest-clipboard-bridge.md) — Add the bounded guest clipboard bridge *(deps: E5-T24a)*
+- [?] `524.2` [E5-T24b](epic-5-the-window/E5-T24b-guest-clipboard-bridge.md) — Add the bounded guest clipboard bridge *(deps: E5-T24a)*
 - [ ] `524.3` [E5-T24c](epic-5-the-window/E5-T24c-host-clipboard-service.md) — Add host clipboard permissions and gesture-ordered sync *(deps: E5-T24a, E5-T24b)*
 - [ ] `524.4` [E5-T24d](epic-5-the-window/E5-T24d-clipboard-proof.md) — Prove bidirectional clipboard sync in the browser and guest *(deps: E5-T24b, E5-T24c)*
 - [ ] `525` [E5-T25](epic-5-the-window/E5-T25-perf-fps-latency-harness.md) — Performance harness — window-drag FPS and input-to-photon latency, measured *(deps: E5-T09, E5-T18)*

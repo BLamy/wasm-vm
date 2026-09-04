@@ -1,0 +1,65 @@
+E5-T24b guest clipboard bridge — exact-head worker evidence
+Recorded: 2026-09-04
+Implementation head: ddfbf11 (feat(e5-t24b): bridge guest clipboard to Wayland helpers)
+
+Scope and claim
+---------------
+The static guest agent now advertises CAP_CLIPBOARD and bridges bounded CLIP_SET/CLIP_GET traffic
+through fixed /usr/bin/wl-paste and /usr/bin/wl-copy helpers. Host values are coalesced into one
+pending slot, guest changes are emitted as one byte-exact CLIP_SET, and helper failures are
+recoverable status with bounded backoff and NAK_CLIPBOARD_UNAVAILABLE. Clipboard state never uses
+the serial/UART queue. Invalid UTF-8, 257 KiB input, helper death, missing display, output pressure,
+and an in-flight session reset are covered by deterministic fixtures.
+
+Exact commands and results
+--------------------------
+1. env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR \
+     -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS \
+     make verify-E5-T24b
+   PASS: cargo fmt --check; scoped clippy with -D warnings; 11 protocol tests; 14 guest-agent
+   tests; target returned verify-E5-T24b (bounded guest clipboard bridge): OK.
+
+2. node --check web/agent-channel.js
+   node --test web/tests/agent-channel.test.mjs
+   PASS: 14 tests, 14 passed, 0 failed.
+
+3. bash -n tools/verify/e5-t23c-static-agent.sh
+   fixed-path grep for WL_PASTE_PATH and WL_COPY_PATH
+   source scan rejecting TcpListener, UdpSocket, std::env::args, shell paths, and URLs
+   PASS: guest static boundary checks: OK.
+
+4. bash tools/build-agent.sh /tmp/wasmvm-t24b/final/wasmvm-agent-riscv64
+   CARGO_TARGET_DIR=/tmp/wasmvm-t24b-target2 bash tools/build-agent.sh \
+     /tmp/wasmvm-t24b/final2/wasmvm-agent-riscv64
+   cmp /tmp/wasmvm-t24b/final/wasmvm-agent-riscv64 \
+     /tmp/wasmvm-t24b/final2/wasmvm-agent-riscv64
+   PASS: both static RISC-V binaries are 428312 bytes and have SHA-256
+   f712300fe4d8ccc10ac99a3ffe9762fd480176664f5b90c02a0671c4395df46e.
+
+5. make web-dist
+   PASS: generated web/dist/agent-channel.js matches web/agent-channel.js; deploy bundle assembled.
+   The pre-existing web/dist/artifacts*.json changes were not staged.
+
+Coverage map
+------------
+- clipboard_bridge_emits_changes_applies_host_values_and_answers_get: baseline/change detection,
+  3-byte and emoji/CRLF text, exact 256 KiB host CLIP_SET, guest CLIP_SET emission, and CLIP_GET.
+- clipboard_bridge_retries_missing_display_and_child_death_with_bounded_state: child death,
+  missing display, exponential 100/200/400 ms retry, recovery at 700 ms, and bounded pending bytes.
+- clipboard_bridge_retains_host_set_across_helper_failures_and_reports_fallback: host value
+  retention, explicit unavailable NAK, and eventual helper recovery.
+- clipboard_payload_errors_are_naked_without_touching_the_serial_session: invalid UTF-8, 257 KiB,
+  malformed CLIP_GET, capability NAK, and no clipboard slot mutation.
+- wayland_backend_contract_is_fixed_and_validates_helper_output: fixed helper paths and backend
+  UTF-8/size validation.
+- helper_children_are_reaped_and_io_is_bounded_without_a_shell: direct child invocation, nonzero
+  exit handling, bounded output, and no shell path.
+- helper_input_closes_cleanly_after_a_bounded_write: exact 256 KiB bounded nonblocking input.
+- existing session tests cover dribble/coalescing, reset/discard, malformed port input, output
+  ceiling, and absence of UART/key queue aliasing.
+
+Environment waiver
+------------------
+The host rr/independent-machine and WebKit portions are waived per the user instruction. The
+authoritative evidence here is local guest-agent execution, deterministic protocol fixtures, the
+fixed-path child-process tests, and reproducible static RISC-V builds.
