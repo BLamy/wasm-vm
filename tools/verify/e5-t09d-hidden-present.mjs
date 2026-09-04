@@ -13,6 +13,7 @@ const outputPath = parseOutputPath(process.argv.slice(2));
 const command = ["node", ["--test", "web/tests/e5-t09d-hidden-present.test.mjs"]];
 const proofFiles = [
   "Makefile",
+  "docs/timekeeping.md",
   "web/main.js",
   "web/src/sink/frame-scheduler.js",
   "web/src/sink/visibility-scheduler.js",

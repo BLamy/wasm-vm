@@ -1457,7 +1457,7 @@ async function runLinuxBootOwned(opts, banner, request) {
     }
     // A visibilitychange may have happened while _bootLinux was still awaiting READY, when linuxCtl
     // was null and the event handler had nothing to pause. Reconcile once before advertising ready.
-    if (document.hidden) {
+    if (document.hidden && !presentation?.snapshot?.().scheduler) {
       try { await ctlForRelease.pause(); } catch { /* terminal settlement owns the visible error */ }
     }
     // The shipped Node snapshot deliberately drops Linux's page cache to keep the RAM artifact
@@ -2154,12 +2154,11 @@ if (termFitBtn) {
 // Test hook: Playwright drives keyboard input + reads the backpressure high-water via this.
 window.__term = ui;
 
-// E2-T23: idle the executor while the tab is hidden. Guest `mtime` is a deterministic retire-count
-// clock, so pausing freezes guest monotonic time cleanly and it resumes with no jump/storm (see
-// docs/timekeeping.md); the Date.now goldfish RTC keeps true wall time across the gap, so on return
-// `date` is correct while `uptime` counts only executed time.
+// E2-T23 legacy fallback: without the T09d display scheduler, idle the executor while the tab is
+// hidden. The production scheduler keeps the guest live and drains display work on its bounded
+// timer, so serial output remains observable in a hidden tab.
 document.addEventListener("visibilitychange", () => {
-  if (!linuxCtl) return;
+  if (!linuxCtl || presentation?.snapshot?.().scheduler) return;
   const pending = document.hidden ? linuxCtl.pause() : linuxCtl.resume();
   void Promise.resolve(pending).catch(() => {});
 });
