@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 251,
+    "verified": 252,
     "total": 414
   },
   "epics": [
@@ -16891,7 +16891,7 @@
       "epicKey": "5",
       "title": "Browser fbcon first-light boot on the display canvas",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T07a"
       ],
@@ -16902,7 +16902,7 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — verifier — VERDICT: verified\n\n- Cold Canvas2D first light — HELD. Exact-head Chromium boot selected the measured Canvas2D default,\n  received five full-resource FrameSink presents, and read back 1,024,000 non-black pixels from the\n  1280×800 canvas. The serial stream from that same boot contains the virtio-gpu, DRM, and\n  `fb0: virtio_gpudrmfb` markers.\n- Pixel format and channel order — HELD. The guest frame carries\n  `B8G8R8X8_UNORM` (format 2); the first visible sample `0x00aaaaaa` was normalized to the expected\n  opaque RGBA `[170, 170, 170, 255]` and the browser readback matched exactly. The deterministic\n  presentation test also covers the non-gray `0x00112233 → 0xff112233` XRGB conversion.\n- Browser health and progress — HELD. The normal run retired 305,489,125 guest instructions in\n  18,480 ms, stayed within the 450,464 ms E4 budget, delivered zero dropped frames, retained two\n  listeners, and reported empty console/page/request error lists.\n- Adversarial fallback — HELD. A WebGL2-disabled Chromium run reselected Canvas2D with exactly one\n  fallback, the same live canvas/readback invariants, and no browser errors.\n- Adversarial reload — HELD. Reload during the initial boot transfer produced a fresh probe and\n  replacement first-light proof with five presents, zero drops, two listeners, and no stale frame\n  or browser errors.\n- Coverage — HELD. The changed Rust FrameSink boundary is exercised by the core library and machine\n  tests; the wasm target is rebuilt; the XRGB normalization is asserted by the focused presentation\n  test; all browser route, fallback, reload, serial-marker, readback, and source/dist parity paths\n  are exercised by the recorded Chromium verifier. Independent-machine, WebKit, and host-layer rr\n  runs are outside this task's accepted proof scope.\n\nCommit: `d4f352938bc12c8b02d791672a723b678eddc097`.\n\nCommands: `cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm`; `cargo clippy -p wasm-vm-core --lib\n--tests -- -D warnings`; `cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D\nwarnings`; `cargo test -p wasm-vm-core --lib` (249 passed); `cargo test -p wasm-vm-core --test\nvirtio_gpu_machine` (2 passed); `node --test web/tests/e5-t06d-presentation.test.mjs` (4 passed);\n`make web-build`; `node tools/verify/e5-t07b-first-light.mjs --output\nevidence/e5-t07b/first-light.json`.\n\nEvidence: [first-light.json](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t07b/first-light.json)\n(SHA-256 `67b5dd3019b741da654c2b86643dcc57c4086cd5ed88e5ceeee60349413ee80a`),\n[first-light.png](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t07b/first-light.png)\n(SHA-256 `4ba1f7c903fb5ae0e8e674aa3574ed56c36d9de0ab02c9feb40af72e2744ff35`),\n[first-light-webgl2-disabled.png](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t07b/first-light-webgl2-disabled.png)\n(SHA-256 `53382d7234551c9360d42c666f68c1de5f932522e2f350aec4cf78a37e083d36`), and\n[first-light-reload.png](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t07b/first-light-reload.png)\n(SHA-256 `40081702f6692673b8bc4904076969bfa53cc51364b617fb09a2cfc85a19c64f`). The JSON records\nChromium 131, the exact kernel/initramfs hashes, web-bundle identity, all three proofs, and empty\nbrowser error arrays.",
       "adversarial": "Run once with WebGL2 disabled and once with the normal Canvas2D default; the guest must keep\nretiring instructions and the canvas must remain live. Reload during the boot transfer and confirm\nthe replacement run re-probes without reusing a stale frame or listener.",
       "file": "tasks/epic-5-the-window/E5-T07b-browser-first-light.md",
       "activity": [
