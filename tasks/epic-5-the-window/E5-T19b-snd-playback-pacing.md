@@ -3,7 +3,7 @@ id: E5-T19b
 epic: 5
 title: virtio-snd paced playback and native audio sinks
 priority: 519.2
-status: in-progress
+status: implemented
 depends_on: [E5-T19a]
 estimate: S
 risk: medium
@@ -39,4 +39,15 @@ the output against the reference ramp for duplicate or skipped samples.
 
 ## Verification log
 
-(empty)
+### 2026-09-03 — worker — IMPLEMENTED
+
+- Commit: `2d4e77ab034d734bc3487788c45ffc396a722c8d`.
+- Commands: `cargo fmt --all -- --check`; `cargo test -p wasm-vm-core --test virtio_snd --quiet`; `cargo test -p wasm-vm-core --test virtio_snd_playback --quiet`; `cargo test -p wasm-vm-core --lib --quiet`; `cargo clippy -p wasm-vm-core --all-targets -- -D warnings`; `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release`; `cargo check -p wasm-vm-core --no-default-features`.
+- Results: T19a suite 6/6 passed; playback suite 7/7 passed; core library 238/238 passed; clippy, release wasm, and the no-default-features check passed.
+- Evidence: [`snd-playback-native-2026-09-03.txt`](../../evidence/e5-t19b/snd-playback-native-2026-09-03.txt), SHA-256 `cc4a766487f0eb1e1a85a9a4dc6f722368721d25214e57c4bd21028c45d40b65`.
+
+The recorded native run proves that txq arrival alone leaves an unripe period pending, that the
+injected monotonic clock controls 0.5x/1x/2x completion cadence, and that each completion writes a
+bounded `latency_bytes` status and preserves FIFO used-ring order. It also exercises a bit-exact
+STOP/START ramp through the native WAV sink, sink and stream-ID errors, RELEASE flushing, and an
+eight-second 48 kHz 440 Hz sine capture with an FFT peak within 1 Hz and exact period joins.
