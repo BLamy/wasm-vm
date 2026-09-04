@@ -671,4 +671,54 @@ mod tests {
         retry.reset();
         assert_eq!(retry.delay_ms(), 100);
     }
+
+    #[test]
+    fn poll_adapter_closes_an_empty_port_without_blocking() {
+        let path =
+            std::env::temp_dir().join(format!("wasmvm-agent-empty-port-{}", std::process::id()));
+        let _ = std::fs::remove_file(&path);
+        File::create(&path).unwrap();
+
+        let started = std::time::Instant::now();
+        let result = run_connection(&path);
+        let _ = std::fs::remove_file(&path);
+
+        assert!(matches!(result, Err(ConnectionError::Disconnected)));
+        assert!(started.elapsed() < Duration::from_secs(1));
+    }
+
+    #[test]
+    fn flush_adapter_retires_the_initial_hello_on_a_writable_port() {
+        let path =
+            std::env::temp_dir().join(format!("wasmvm-agent-writable-port-{}", std::process::id()));
+        let _ = std::fs::remove_file(&path);
+        File::create(&path).unwrap();
+        let mut port = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .open(&path)
+            .unwrap();
+        let mut agent = AgentSession::new();
+
+        flush_output(&mut port, &mut agent).unwrap();
+        let _ = std::fs::remove_file(&path);
+
+        assert!(!agent.has_output());
+        assert_eq!(agent.pending_output_bytes(), 0);
+    }
+
+    #[test]
+    fn malformed_port_input_terminates_the_connection() {
+        let path = std::env::temp_dir().join(format!(
+            "wasmvm-agent-malformed-port-{}",
+            std::process::id()
+        ));
+        let _ = std::fs::remove_file(&path);
+        std::fs::write(&path, [0xff; FRAME_HEADER_BYTES]).unwrap();
+
+        let result = run_connection(&path);
+        let _ = std::fs::remove_file(&path);
+
+        assert!(matches!(result, Err(ConnectionError::Protocol)));
+    }
 }
