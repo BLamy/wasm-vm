@@ -50,6 +50,8 @@ It must execute the plan against the emulator and write exactly one complete
 The harness computes the supplied image's SHA-256 and replaces any driver-provided digest, so the
 driver cannot self-report a convenient image identity. The JSON shape is also checked in as
 [`tools/display-server-workload.schema.json`](../../tools/display-server-workload.schema.json).
+Drivers are bounded to 15 minutes by default; a timeout, non-zero exit, extra stdout, missing
+marker, or counter/source failure is a typed harness error.
 
 The contract self-test is the deterministic acceptance gate for this slice:
 

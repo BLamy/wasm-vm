@@ -59,6 +59,7 @@ test("normalizes cumulative counters and recomputes the summary", () => {
 test("rejects missing markers, non-monotonic counters, and workload-shape lies", () => {
   assert.equal(errorCode((value) => value.observations.markerSequence.pop()), "MARKER_SEQUENCE");
   assert.equal(errorCode((value) => { value.phases[2].end.guestInstructions = 0; }), "COUNTER_ORDER");
+  assert.equal(errorCode((value) => { value.sources.uploadedBytes = "host-native"; }), "SOURCE_CONTRACT");
   assert.equal(errorCode((value) => { value.phases[3].details.characters = 99; }), "WORKLOAD_SHAPE");
   assert.equal(errorCode((value) => { value.phases[1].outcome = "failed"; }), "PHASE_OUTCOME");
   assert.equal(errorCode((value) => { value.phases[1].end.wallMs = 300; }), "IDLE_INTERVAL");
@@ -104,6 +105,24 @@ test("driver failures are typed and cannot become zero-filled evidence", async (
         runner: [process.execPath, "-e", "process.stderr.write('candidate stopped before idle'); process.exit(7);"],
       }),
       (error) => error.code === "DRIVER_EXIT" && error.message.includes("candidate stopped before idle"),
+    );
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("a hung driver is bounded and reported as a timeout", async () => {
+  const directory = await mkdtemp(path.join(os.tmpdir(), "wasm-vm-e5-t16a-timeout-"));
+  const imagePath = path.join(directory, "scratch.img");
+  await writeFile(imagePath, "deterministic scratch image");
+  try {
+    await assert.rejects(
+      runDriver({
+        imagePath,
+        timeoutMs: 25,
+        runner: [process.execPath, "-e", "setTimeout(() => {}, 10_000);"],
+      }),
+      (error) => error.code === "DRIVER_TIMEOUT" && error.message.includes("25 ms"),
     );
   } finally {
     await rm(directory, { recursive: true, force: true });

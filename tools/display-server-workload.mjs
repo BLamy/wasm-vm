@@ -19,6 +19,7 @@ export const WORKLOAD_TASK = "E5-T16a";
 export const WORKLOAD_ENVIRONMENT = "emulator";
 export const WORKLOAD_ARCHITECTURE = "riscv64";
 export const DRIVER_OUTPUT_LIMIT = 2 * 1024 * 1024;
+export const DRIVER_TIMEOUT_MS = 15 * 60 * 1_000;
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SHA256 = /^[0-9a-f]{64}$/u;
@@ -394,6 +395,7 @@ export function runSelfTest() {
     deterministicNormalization: true,
     missingMarker: expectedFailure((value) => { value.observations.markerSequence.pop(); }, "MARKER_SEQUENCE"),
     counterOrder: expectedFailure((value) => { value.phases[2].end.guestInstructions = 0; }, "COUNTER_ORDER"),
+    sourceContract: expectedFailure((value) => { value.sources.uploadedBytes = "host-native"; }, "SOURCE_CONTRACT"),
     typingShape: expectedFailure((value) => { value.phases[3].details.characters = 99; }, "WORKLOAD_SHAPE"),
     preIdleExit: expectedFailure((value) => { value.phases[1].outcome = "failed"; }, "PHASE_OUTCOME"),
   };
@@ -440,11 +442,19 @@ function childExit(child) {
  * Execute a candidate driver without a shell. The driver receives the frozen plan on stdin and
  * must emit one complete capture on stdout. The harness owns the image digest and target fields.
  */
-export async function runDriver({ imagePath, runner, outputPath = null, cwd = REPO, env = process.env }) {
+export async function runDriver({
+  imagePath,
+  runner,
+  outputPath = null,
+  cwd = REPO,
+  env = process.env,
+  timeoutMs = DRIVER_TIMEOUT_MS,
+}) {
   if (!Array.isArray(runner) || runner.length === 0 || runner.some((item) => typeof item !== "string" || item.length === 0)) {
     fail("DRIVER", "runner", "expected a non-empty executable/argument array");
   }
   if (typeof imagePath !== "string" || imagePath.length === 0) fail("IMAGE", "imagePath", "an image path is required");
+  if (!Number.isSafeInteger(timeoutMs) || timeoutMs <= 0) fail("DRIVER", "timeoutMs", "expected a positive safe integer");
   const resolvedImage = path.resolve(cwd, imagePath);
   const imageDigest = sha256(await readFile(resolvedImage));
   const plan = buildWorkloadPlan();
@@ -461,7 +471,25 @@ export async function runDriver({ imagePath, runner, outputPath = null, cwd = RE
   const stdoutPromise = collectOutput(child.stdout, "driver.stdout");
   const stderrPromise = collectOutput(child.stderr, "driver.stderr");
   child.stdin.end(`${stableStringify(plan)}\n`);
-  const [exit, stdout, stderr] = await Promise.all([childExit(child), stdoutPromise, stderrPromise]);
+  let timedOut = false;
+  let killTimer = null;
+  const timeout = setTimeout(() => {
+    timedOut = true;
+    try { child.kill("SIGTERM"); } catch { /* child may have exited at the boundary */ }
+    killTimer = setTimeout(() => {
+      try { child.kill("SIGKILL"); } catch { /* child may have exited after SIGTERM */ }
+    }, 1_000);
+  }, timeoutMs);
+  let exit;
+  let stdout;
+  let stderr;
+  try {
+    [exit, stdout, stderr] = await Promise.all([childExit(child), stdoutPromise, stderrPromise]);
+  } finally {
+    clearTimeout(timeout);
+    if (killTimer !== null) clearTimeout(killTimer);
+  }
+  if (timedOut) fail("DRIVER_TIMEOUT", "driver", `driver exceeded ${timeoutMs} ms`);
   if (exit.code !== 0 || exit.signal !== null) {
     fail("DRIVER_EXIT", "driver", `driver exited code=${exit.code ?? "null"} signal=${exit.signal ?? "none"}: ${stderr.trim()}`);
   }
