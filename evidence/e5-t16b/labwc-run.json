@@ -1,0 +1,268 @@
+{
+  "task": "E5-T16b",
+  "command": "tools/run-labwc-pixman.mjs",
+  "image": {
+    "id": "alpine-rootfs.ext4",
+    "sha256": "fd5e1a4d93458ded651d4fc243318d754f1911960e1bd3796a7cfdfa4e43661a"
+  },
+  "imagePostRun": {
+    "id": "alpine-rootfs.ext4",
+    "sha256": "352c36c12c77c73ad5955e89c83e766576acba34cc04ab881d54ec43364bf64f"
+  },
+  "imageManifest": {
+    "packagePath": "target/e5-t16b/labwc-image/MANIFEST.txt",
+    "packageSha256": "21e2f121ae14deecc6efcfd50a843f04f355d148bc3fdfea80a0da090c6f0383",
+    "filePath": "target/e5-t16b/labwc-image/FILE-MANIFEST.txt",
+    "fileSha256": "de0762c635675db5c00fbc5281fb73c594b1d94b4d66ec4814e71cc20c3a0b40"
+  },
+  "renderer": {
+    "backend": "drm",
+    "renderer": "pixman",
+    "log": "E5T16B_LAUNCH"
+  },
+  "guestEvidence": {
+    "path": "evidence/e5-t16b/labwc-guest-evidence.txt",
+    "sha256": "6f81e309665b389dce93861fe0e1d99cdddd23212f77c2e96243bfdbf796dfe1"
+  },
+  "gpuTrace": {
+    "path": "evidence/e5-t16b/labwc-gpu-trace.log",
+    "sha256": "48c3eb4ad2c0666d9da4bc379d932ee4fb994610ae964dd263eb842884fa7545"
+  },
+  "console": {
+    "path": "evidence/e5-t16b/labwc-console.log",
+    "sha256": "959bafdf3a0cd17f05d75926ca9cbf1aeb45933d765a987bdfbfd7de87596a2b"
+  },
+  "stderr": {
+    "path": "evidence/e5-t16b/labwc-stderr.log",
+    "sha256": "5c251cddec38d5cf9101b9dc7b8d2cf52f3e739d82c8f15edd0b7cc4b563d933"
+  },
+  "capture": {
+    "schema": "wasm-vm.e5-t16a.display-server-workload.v1",
+    "task": "E5-T16a",
+    "environment": "emulator",
+    "architecture": "riscv64",
+    "candidate": {
+      "id": "labwc-pixman",
+      "server": "drm",
+      "wm": "labwc",
+      "terminal": "foot",
+      "renderer": "pixman",
+      "clipboard": "wl-clipboard"
+    },
+    "image": {
+      "id": "alpine-rootfs.ext4",
+      "sha256": "fd5e1a4d93458ded651d4fc243318d754f1911960e1bd3796a7cfdfa4e43661a"
+    },
+    "sources": {
+      "guestInstructions": "guest-e4-minstret",
+      "uploadedBytes": "guest-t09-vm-stats-gpu-bytesUploaded",
+      "peakRssBytes": "guest-proc-status-vmHWM",
+      "idleWakeups": "guest-proc-interrupts-idle-delta",
+      "cursorqEvents": "guest-virtio-gpu-cursorq-trace"
+    },
+    "plan": {
+      "drag": {
+        "axis": "x",
+        "deltaPx": 300,
+        "from": {
+          "x": 100,
+          "y": 100
+        },
+        "phase": "drag-300",
+        "steps": 30,
+        "to": {
+          "x": 400,
+          "y": 100
+        }
+      },
+      "idle": {
+        "minimumMs": 900,
+        "requestedMs": 1000
+      },
+      "phases": [
+        {
+          "id": "cold-start",
+          "marker": "E5T16A_COLD_START_DONE"
+        },
+        {
+          "id": "idle",
+          "marker": "E5T16A_IDLE_DONE"
+        },
+        {
+          "id": "open-terminal",
+          "marker": "E5T16A_OPEN_TERMINAL_DONE"
+        },
+        {
+          "id": "type-100",
+          "marker": "E5T16A_TYPE_100_DONE"
+        },
+        {
+          "id": "drag-300",
+          "marker": "E5T16A_DRAG_300_DONE"
+        },
+        {
+          "id": "close",
+          "marker": "E5T16A_CLOSE_DONE"
+        }
+      ],
+      "terminal": {
+        "closePhase": "close",
+        "openPhase": "open-terminal",
+        "typedCharacters": 100,
+        "typingText": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:;!?-_abcdefghijklmnopqrstuvwxyzABC",
+        "typingTextSha256": "1c8868568b4eea1c33a76556a1bc9acd4bf56f5c7c2f26b6cd628d61a44f9e68"
+      },
+      "version": 1
+    },
+    "observations": {
+      "cursorqEvents": 0,
+      "cursorqStatus": "capability-gap: labwc submitted no cursorq chain during this run",
+      "errors": [],
+      "markerSequence": [
+        "E5T16A_COLD_START_DONE",
+        "E5T16A_IDLE_DONE",
+        "E5T16A_OPEN_TERMINAL_DONE",
+        "E5T16A_TYPE_100_DONE",
+        "E5T16A_DRAG_300_DONE",
+        "E5T16A_CLOSE_DONE"
+      ]
+    },
+    "phases": [
+      {
+        "details": {},
+        "end": {
+          "guestInstructions": 3448722934,
+          "idleWakeups": 10378,
+          "uploadedBytes": 12288064,
+          "wallMs": 491094.899541
+        },
+        "id": "cold-start",
+        "marker": "E5T16A_COLD_START_DONE",
+        "outcome": "passed",
+        "peakRssBytes": 1048576,
+        "start": {
+          "guestInstructions": 0,
+          "idleWakeups": 0,
+          "uploadedBytes": 0,
+          "wallMs": 0
+        }
+      },
+      {
+        "details": {
+          "measuredMs": 2799.3618750000023,
+          "requestedMs": 1000
+        },
+        "end": {
+          "guestInstructions": 3468119573,
+          "idleWakeups": 10815,
+          "uploadedBytes": 12288064,
+          "wallMs": 493894.261416
+        },
+        "id": "idle",
+        "marker": "E5T16A_IDLE_DONE",
+        "outcome": "passed",
+        "peakRssBytes": 1048576,
+        "start": {
+          "guestInstructions": 3448722934,
+          "idleWakeups": 10378,
+          "uploadedBytes": 12288064,
+          "wallMs": 491094.899541
+        }
+      },
+      {
+        "details": {
+          "compositor": "labwc",
+          "renderer": "pixman",
+          "terminal": "foot"
+        },
+        "end": {
+          "guestInstructions": 4023872561,
+          "idleWakeups": 15822,
+          "uploadedBytes": 26025112,
+          "wallMs": 573235.104083
+        },
+        "id": "open-terminal",
+        "marker": "E5T16A_OPEN_TERMINAL_DONE",
+        "outcome": "passed",
+        "peakRssBytes": 20512768,
+        "start": {
+          "guestInstructions": 3468119573,
+          "idleWakeups": 10815,
+          "uploadedBytes": 12288064,
+          "wallMs": 493894.261416
+        }
+      },
+      {
+        "details": {
+          "characters": 100,
+          "frames": 200,
+          "rejectedEvents": 0,
+          "textSha256": "1c8868568b4eea1c33a76556a1bc9acd4bf56f5c7c2f26b6cd628d61a44f9e68"
+        },
+        "end": {
+          "guestInstructions": 4077461094,
+          "idleWakeups": 17640,
+          "uploadedBytes": 26025112,
+          "wallMs": 580963.799291
+        },
+        "id": "type-100",
+        "marker": "E5T16A_TYPE_100_DONE",
+        "outcome": "passed",
+        "peakRssBytes": 20512768,
+        "start": {
+          "guestInstructions": 4023872561,
+          "idleWakeups": 15822,
+          "uploadedBytes": 26025112,
+          "wallMs": 573235.104083
+        }
+      },
+      {
+        "details": {
+          "axis": "x",
+          "deltaPx": 300,
+          "frames": 32,
+          "rejectedEvents": 0,
+          "steps": 30
+        },
+        "end": {
+          "guestInstructions": 4111055029,
+          "idleWakeups": 18427,
+          "uploadedBytes": 26025112,
+          "wallMs": 585802.331125
+        },
+        "id": "drag-300",
+        "marker": "E5T16A_DRAG_300_DONE",
+        "outcome": "passed",
+        "peakRssBytes": 20512768,
+        "start": {
+          "guestInstructions": 4077461094,
+          "idleWakeups": 17640,
+          "uploadedBytes": 26025112,
+          "wallMs": 580963.799291
+        }
+      },
+      {
+        "details": {
+          "applicationExited": true,
+          "compositorExited": true
+        },
+        "end": {
+          "guestInstructions": 4246036068,
+          "idleWakeups": 21534,
+          "uploadedBytes": 47954800,
+          "wallMs": 605315.327833
+        },
+        "id": "close",
+        "marker": "E5T16A_CLOSE_DONE",
+        "outcome": "passed",
+        "peakRssBytes": 1179648,
+        "start": {
+          "guestInstructions": 4111055029,
+          "idleWakeups": 18427,
+          "uploadedBytes": 26025112,
+          "wallMs": 585802.331125
+        }
+      }
+    ]
+  }
+}

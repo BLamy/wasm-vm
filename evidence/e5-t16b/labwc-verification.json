@@ -1,0 +1,57 @@
+{
+  "task": "E5-T16b",
+  "command": "make verify-E5-T16b",
+  "capture": "evidence/e5-t16b/labwc-capture.json",
+  "image": {
+    "path": "target/e5-t16b/labwc-image/alpine-rootfs.ext4",
+    "sha256": "fd5e1a4d93458ded651d4fc243318d754f1911960e1bd3796a7cfdfa4e43661a",
+    "postRunSha256": "352c36c12c77c73ad5955e89c83e766576acba34cc04ab881d54ec43364bf64f",
+    "packageManifest": "target/e5-t16b/labwc-image/MANIFEST.txt",
+    "packageManifestSha256": "21e2f121ae14deecc6efcfd50a843f04f355d148bc3fdfea80a0da090c6f0383",
+    "fileManifest": "target/e5-t16b/labwc-image/FILE-MANIFEST.txt",
+    "fileManifestSha256": "de0762c635675db5c00fbc5281fb73c594b1d94b4d66ec4814e71cc20c3a0b40"
+  },
+  "renderer": {
+    "backend": "drm",
+    "renderer": "pixman",
+    "proof": "E5T16B_LAUNCH"
+  },
+  "idle": {
+    "durationMs": 2799.3618750000023,
+    "guestInstructions": 19396639,
+    "totalGuestInstructions": 4246036068,
+    "instructionRatio": 0.0045681757501264825,
+    "budget": "<=2% unless charter justification"
+  },
+  "typing": {
+    "characters": 100,
+    "uploadedBytes": 0
+  },
+  "drag": {
+    "axis": "x",
+    "deltaPx": 300,
+    "steps": 30
+  },
+  "cursorq": {
+    "events": 0,
+    "status": "capability-gap: labwc submitted no cursorq chain during this run"
+  },
+  "artifacts": {
+    "console": {
+      "path": "evidence/e5-t16b/labwc-console.log",
+      "sha256": "959bafdf3a0cd17f05d75926ca9cbf1aeb45933d765a987bdfbfd7de87596a2b"
+    },
+    "stderr": {
+      "path": "evidence/e5-t16b/labwc-stderr.log",
+      "sha256": "5c251cddec38d5cf9101b9dc7b8d2cf52f3e739d82c8f15edd0b7cc4b563d933"
+    },
+    "guestEvidence": {
+      "path": "evidence/e5-t16b/labwc-guest-evidence.txt",
+      "sha256": "6f81e309665b389dce93861fe0e1d99cdddd23212f77c2e96243bfdbf796dfe1"
+    },
+    "gpuTrace": {
+      "path": "evidence/e5-t16b/labwc-gpu-trace.log",
+      "sha256": "48c3eb4ad2c0666d9da4bc379d932ee4fb994610ae964dd263eb842884fa7545"
+    }
+  }
+}

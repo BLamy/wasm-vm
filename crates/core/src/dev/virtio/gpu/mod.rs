@@ -318,6 +318,11 @@ pub struct GpuState {
     command_trace_sequence: u64,
     #[cfg(feature = "gpu-trace")]
     command_trace_dropped: u64,
+    /// E5-T16b: number of cursorq chains completed while the proof recorder is armed.  This is
+    /// kept beside the bounded controlq trace so a finalist capture can distinguish real guest
+    /// cursor traffic from a compositor configuration that merely mentions a hardware cursor.
+    #[cfg(feature = "gpu-trace")]
+    cursorq_commands: u64,
 }
 
 impl GpuState {
@@ -349,6 +354,8 @@ impl GpuState {
             command_trace_sequence: 0,
             #[cfg(feature = "gpu-trace")]
             command_trace_dropped: 0,
+            #[cfg(feature = "gpu-trace")]
+            cursorq_commands: 0,
         }
     }
 
@@ -434,6 +441,7 @@ impl GpuState {
         self.command_trace.clear();
         self.command_trace_sequence = 0;
         self.command_trace_dropped = 0;
+        self.cursorq_commands = 0;
     }
 
     /// E5-T07a: return an owned snapshot of the bounded command trace.
@@ -447,6 +455,14 @@ impl GpuState {
     #[cfg(feature = "gpu-trace")]
     pub fn command_trace_dropped(&self) -> u64 {
         self.command_trace_dropped
+    }
+
+    /// E5-T16b: return the number of completed cursorq chains observed by the proof recorder.
+    /// The count includes rejected cursor requests because they are still guest cursorq traffic;
+    /// the finalist harness reports the count separately from compositor success/failure.
+    #[cfg(feature = "gpu-trace")]
+    pub fn cursorq_commands(&self) -> u64 {
+        self.cursorq_commands
     }
 
     #[cfg(feature = "gpu-trace")]
@@ -1698,6 +1714,14 @@ pub fn service_cursor(
             *vq = None;
             return;
         }
+        #[cfg(feature = "gpu-trace")]
+        {
+            // Count the completed chain after publishing its used entry.  This makes the
+            // observation a transport fact, independent of whether the cursor command itself
+            // was accepted by the state validator.
+            let mut state_ref = state.borrow_mut();
+            state_ref.cursorq_commands = state_ref.cursorq_commands.saturating_add(1);
+        }
         delivered_work = true;
     }
 
@@ -2325,6 +2349,7 @@ mod tests {
             },
         ];
         assert_eq!(sink.cursor_records(), expected_callbacks);
+        assert_eq!(state.borrow().cursorq_commands(), requests.len() as u64);
         assert_eq!(state.borrow().cursor_state(0), Some(expected_callbacks[2]));
         assert_eq!(state.borrow().cursor_state(1), None);
         assert_eq!(state.borrow().resources.len(), 2);

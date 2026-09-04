@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # E2-T18 in-container build: cross-install + configure the Alpine riscv64 root and pack it into
 # an ext4 image. Runs inside tools/rootfs.Dockerfile (host-arch Alpine); env from build-rootfs.sh:
-#   MAIN_REPO COMMUNITY_REPO FS_UUID SOURCE_DATE_EPOCH IMG_SIZE PKGS EXTRA_PKGS
+#   MAIN_REPO COMMUNITY_REPO FS_UUID SOURCE_DATE_EPOCH IMG_SIZE PKGS EXTRA_PKGS DISPLAY_CANDIDATE
 #   LOCKED_INSTALL ALPINE_BRANCH
 set -euo pipefail
 ROOT=/rootfs
@@ -164,6 +164,101 @@ for s in modules hwclock swap hostname bootmisc syslog seedrng; do link_svc boot
 link_svc default networking
 for s in killprocs savecache mount-ro; do link_svc shutdown "$s"; done
 
+# E5-T16b: the labwc finalist is a disposable measurement profile, not the production desktop
+# image.  Keep it opt-in so the E2/E3 base image remains byte-for-byte on its existing path.  The
+# profile still uses the real riscv64 APK packages and the emulator's DRM/input devices; it only
+# adds the minimum user/runtime/configuration needed to launch one measured compositor session.
+if [ -n "${DISPLAY_CANDIDATE:-}" ]; then
+  [ "$DISPLAY_CANDIDATE" = labwc ] || {
+    echo "unknown DISPLAY_CANDIDATE=$DISPLAY_CANDIDATE (expected labwc)" >&2
+    exit 2
+  }
+
+  # eudev owns /dev event discovery when present.  Do not run mdev and udev together in the
+  # scratch profile: both can race over the same device nodes and make a result non-replayable.
+  if [ -e "$ROOT/etc/init.d/udev" ]; then
+    rm -f "$ROOT/etc/runlevels/sysinit/mdev"
+    link_svc sysinit udev
+    link_svc boot udev-trigger
+  fi
+  link_svc default seatd
+
+  # Cross-install deliberately skips APK post-install scripts, so create the measurement user
+  # and group memberships explicitly.  Existing numeric ids are preserved; a missing named
+  # group gets a stable private id instead of inheriting the host's account database.
+  grep -q '^desktop:' "$ROOT/etc/passwd" 2>/dev/null || \
+    printf 'desktop:x:1000:1000:wasm-vm display:/home/desktop:/bin/sh\n' >> "$ROOT/etc/passwd"
+  grep -q '^desktop:' "$ROOT/etc/group" 2>/dev/null || \
+    printf 'desktop:x:1000:\n' >> "$ROOT/etc/group"
+  add_display_member() {
+    group="$1"
+    fallback_gid="$2"
+    group_file="$ROOT/etc/group"
+    group_tmp="$ROOT/etc/group.e5-t16b"
+    awk -F: -v OFS=: -v wanted="$group" -v member=desktop -v fallback="$fallback_gid" '
+      $1 == wanted {
+        found = 1
+        if ($4 == "") $4 = member
+        else if ($4 !~ "(^|,)" member "(,|$)") $4 = $4 "," member
+      }
+      { print }
+      END { if (!found) print wanted, "x", fallback, member }
+    ' "$group_file" > "$group_tmp"
+    mv "$group_tmp" "$group_file"
+  }
+  add_display_member video 18
+  add_display_member input 997
+  add_display_member audio 63
+  add_display_member seat 996
+  install -d -m0700 -o 1000 -g 1000 "$ROOT/home/desktop" "$ROOT/run/user/1000"
+
+  # A fixed launcher makes the renderer choice and the DRM backend visible in every transcript.
+  # Keep the compositor and terminal in the same desktop session: Wayland creates its socket with
+  # the compositor user's ownership, so launching labwc as root would strand the desktop client.
+  install -d -m0755 "$ROOT/etc/xdg/labwc" "$ROOT/usr/local/bin"
+  cat > "$ROOT/usr/local/bin/e5-t16b-start-labwc" <<'LABWC'
+#!/bin/sh
+set -eu
+export WLR_BACKENDS=drm
+export WLR_RENDERER=pixman
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/1000}
+mkdir -p "$XDG_RUNTIME_DIR"
+chmod 700 "$XDG_RUNTIME_DIR"
+chown desktop:desktop "$XDG_RUNTIME_DIR"
+printf '%s\n' "E5T16B_LAUNCH WLR_BACKENDS=$WLR_BACKENDS WLR_RENDERER=$WLR_RENDERER"
+exec runuser -u desktop -- env \
+  WLR_BACKENDS="$WLR_BACKENDS" \
+  WLR_RENDERER="$WLR_RENDERER" \
+  XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+  labwc -d 2>&1
+LABWC
+  chmod 0755 "$ROOT/usr/local/bin/e5-t16b-start-labwc"
+  cat > "$ROOT/usr/local/bin/e5-t16b-open-terminal" <<'TERMINAL'
+#!/bin/sh
+set -eu
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/1000}
+export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+mkdir -p "$XDG_RUNTIME_DIR"
+chmod 700 "$XDG_RUNTIME_DIR"
+chown desktop:desktop "$XDG_RUNTIME_DIR"
+cd /home/desktop
+exec runuser -u desktop -- env \
+  HOME=/home/desktop \
+  XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+  WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \
+  foot "$@"
+TERMINAL
+  chmod 0755 "$ROOT/usr/local/bin/e5-t16b-open-terminal"
+  cat > "$ROOT/etc/xdg/labwc/rc.xml" <<'RCXML'
+<?xml version="1.0"?>
+<labwc_config>
+  <core>
+    <adaptiveSync>no</adaptiveSync>
+  </core>
+</labwc_config>
+RCXML
+fi
+
 # E5-T23c: the static virtio-console agent. It owns only the named agent port and retries inside
 # the process when the kernel removes/recreates that port; no serial-console service is changed.
 install -Dm755 /wasmvm-agent-riscv64 "$ROOT/usr/libexec/wasm-vm/wasmvm-agent"
@@ -199,11 +294,34 @@ link_svc default wasm-vm-file-agent
     digest=$(sha256sum "$ROOT$path" | awk '{print $1}')
     printf '%s 0%s %s\n' "$digest" "$mode" "$path"
   done
+  # E5-T16b's disposable finalist profile is present only when DISPLAY_CANDIDATE=labwc.  Include
+  # every launcher/config file in the custom-input lock when it exists, while leaving the base
+  # image's historical manifest unchanged.
+  for path in \
+    /usr/local/bin/e5-t16b-start-labwc \
+    /usr/local/bin/e5-t16b-open-terminal \
+    /etc/xdg/labwc/rc.xml
+  do
+    [ -e "$ROOT$path" ] || continue
+    mode=$(stat -c '%a' "$ROOT$path")
+    digest=$(sha256sum "$ROOT$path" | awk '{print $1}')
+    printf '%s 0%s %s\n' "$digest" "$mode" "$path"
+  done
+  if [ -n "${DISPLAY_CANDIDATE:-}" ]; then
+    for path in /etc/passwd /etc/group; do
+      mode=$(stat -c '%a' "$ROOT$path")
+      digest=$(sha256sum "$ROOT$path" | awk '{print $1}')
+      printf '%s 0%s %s\n' "$digest" "$mode" "$path"
+    done
+  fi
   for path in \
     /var/lib/wasm-vm/transfer \
     /var/lib/wasm-vm/transfer/inbox \
-    /var/lib/wasm-vm/transfer/outbox
+    /var/lib/wasm-vm/transfer/outbox \
+    /home/desktop \
+    /run/user/1000
   do
+    [ -e "$ROOT$path" ] || continue
     mode=$(stat -c '%a' "$ROOT$path")
     printf '%s 0%s %s\n' directory "$mode" "$path"
   done

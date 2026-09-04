@@ -699,6 +699,29 @@ verify-E5-T16a:
 	node tools/verify/e5-t16a-display-server-workload.mjs
 	@echo "verify-E5-T16a (display-server workload and guest metric harness): OK"
 
+.PHONY: verify-E5-T16b
+verify-E5-T16b:
+	# Real Alpine riscv64 finalist proof: build the disposable signed image, run the exact T16a
+	# workload in the native emulator, then inspect the renderer/phase/evidence bindings. This
+	# slice intentionally has no independent-machine or WebKit leg.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-cli
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --features gpu-trace --lib
+	cargo test -p wasm-vm-core --features gpu-trace --test virtio_gpu_machine
+	cargo test -p wasm-vm-cli --bin wasm-vm --features gpu-trace
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	node --check tools/run-labwc-pixman.mjs
+	node --check tools/verify/e5-t16b-labwc-pixman.mjs
+	bash tools/build-labwc-scratch.sh
+	node tools/display-server-workload.mjs run \
+	  --image target/e5-t16b/labwc-image/alpine-rootfs.ext4 \
+	  --output evidence/e5-t16b/labwc-capture.json -- \
+	  node tools/run-labwc-pixman.mjs
+	node tools/verify/e5-t16b-labwc-pixman.mjs \
+	  --capture evidence/e5-t16b/labwc-capture.json
+	@echo "verify-E5-T16b (labwc/pixman riscv64 emulator workload): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

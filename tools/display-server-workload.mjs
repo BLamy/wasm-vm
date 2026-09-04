@@ -19,7 +19,10 @@ export const WORKLOAD_TASK = "E5-T16a";
 export const WORKLOAD_ENVIRONMENT = "emulator";
 export const WORKLOAD_ARCHITECTURE = "riscv64";
 export const DRIVER_OUTPUT_LIMIT = 2 * 1024 * 1024;
-export const DRIVER_TIMEOUT_MS = 15 * 60 * 1_000;
+// A cold Alpine riscv64 boot is a deliberately bounded macro run; the browser reference is
+// roughly 15.3 minutes, so leave headroom for native JIT translation without making the driver
+// unbounded.
+export const DRIVER_TIMEOUT_MS = 30 * 60 * 1_000;
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SHA256 = /^[0-9a-f]{64}$/u;
@@ -206,6 +209,9 @@ function validatePhaseDetails(phase, location) {
 function validateObservations(value) {
   const observations = object(value, "observations");
   const cursorqEvents = nonNegativeInteger(observations.cursorqEvents, "observations.cursorqEvents");
+  const cursorqStatus = observations.cursorqStatus === undefined
+    ? undefined
+    : string(observations.cursorqStatus, "observations.cursorqStatus");
   if (!Array.isArray(observations.markerSequence)) fail("MARKERS", "observations.markerSequence", "expected an array");
   exact(
     observations.markerSequence,
@@ -218,6 +224,7 @@ function validateObservations(value) {
   }
   return {
     cursorqEvents,
+    ...(cursorqStatus === undefined ? {} : { cursorqStatus }),
     markerSequence: [...observations.markerSequence],
     errors: [],
   };

@@ -33,7 +33,7 @@ PKGS="$BASE_PKGS ${EXTRA_PKGS:-}"
 LOCKED_INSTALL=1
 if [ "${UPDATE_MANIFEST:-0}" = 1 ]; then LOCKED_INSTALL=0; fi
 
-OUT="releases/rootfs"
+OUT="${ROOTFS_OUT:-releases/rootfs}"
 IMG_TAG="wasm-vm-rootfs-build:local"
 mkdir -p "$OUT"
 
@@ -85,6 +85,7 @@ docker run --rm \
   -e EXTRA_PKGS="${EXTRA_PKGS:-}" \
   -e LOCKED_INSTALL="$LOCKED_INSTALL" \
   -e ALPINE_BRANCH="$ALPINE_BRANCH" \
+  -e DISPLAY_CANDIDATE="${DISPLAY_CANDIDATE:-}" \
   "$IMG_TAG" /rootfs-inner.sh
 
 # MANIFEST drift gate (critic #3): apk resolves "latest within v3.20", so a mirror-side

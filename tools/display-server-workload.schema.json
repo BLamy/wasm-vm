@@ -85,6 +85,7 @@
       "required": ["cursorqEvents", "markerSequence", "errors"],
       "properties": {
         "cursorqEvents": { "type": "integer", "minimum": 0 },
+        "cursorqStatus": { "type": "string", "minLength": 1 },
         "markerSequence": { "type": "array", "minItems": 6, "maxItems": 6, "items": { "type": "string" } },
         "errors": { "const": [] }
       }

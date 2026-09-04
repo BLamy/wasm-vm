@@ -21,6 +21,11 @@ use std::process::ExitCode;
 use std::rc::Rc;
 use std::sync::mpsc;
 
+#[cfg(feature = "gpu-trace")]
+use serde_json::json;
+#[cfg(feature = "gpu-trace")]
+use sha2::{Digest, Sha256};
+
 use clap::Args;
 use wasm_vm_core::dev::console::ConsoleSink;
 use wasm_vm_core::trace::{HashSink, NullSink, TraceSink};
@@ -86,6 +91,45 @@ impl TraceSink for FpShareSink {
                 self.fp_compute += 1;
             }
         }
+    }
+}
+
+/// E5-T16b: native proof sink for the labwc finalist.  The browser presentation sink accounts
+/// the same `rect.width * rect.height * 4` T09 bytes; keeping the counter at the core's validated
+/// flush boundary prevents a host-side estimate from entering the finalist capture.
+#[cfg(feature = "gpu-trace")]
+#[derive(Default)]
+struct DisplayMetrics {
+    uploaded_bytes: u64,
+    flushes: u64,
+}
+
+#[cfg(feature = "gpu-trace")]
+struct DisplaySink {
+    metrics: Rc<std::cell::RefCell<DisplayMetrics>>,
+}
+
+#[cfg(feature = "gpu-trace")]
+impl wasm_vm_core::dev::virtio::gpu::FrameSink for DisplaySink {
+    fn tracks_transferred_damage(&self) -> bool {
+        true
+    }
+
+    fn flush(
+        &mut self,
+        _scanout: Option<u32>,
+        _format: u32,
+        rect: wasm_vm_core::dev::virtio::gpu::Rect,
+        _resource_width: u32,
+        _resource_height: u32,
+        _pixels: &[u32],
+    ) {
+        let bytes = u64::from(rect.width)
+            .saturating_mul(u64::from(rect.height))
+            .saturating_mul(4);
+        let mut metrics = self.metrics.borrow_mut();
+        metrics.uploaded_bytes = metrics.uploaded_bytes.saturating_add(bytes);
+        metrics.flushes = metrics.flushes.saturating_add(1);
     }
 }
 
@@ -230,6 +274,12 @@ pub struct BootArgs {
     #[cfg(feature = "gpu-trace")]
     #[arg(long, value_name = "PATH")]
     pub gpu_trace: Option<PathBuf>,
+    /// E5-T16b: run the frozen desktop workload against a real labwc/pixman guest.  This is an
+    /// opt-in proof mode and requires the feature-gated GPU recorder so the capture can bind its
+    /// upload and cursor observations to guest transport state.
+    #[cfg(feature = "gpu-trace")]
+    #[arg(long)]
+    pub display_workload: bool,
     /// E3-T12c4: take a whole-machine resume snapshot (`Machine::save_resume`) the first time the
     /// guest console prints `--snapshot-trigger`, write it to this path, and exit 0. The snapshot
     /// quiesces the virtio-blk in-flight set first (E3-T12c2) and refuses (exit 103, no file) if it
@@ -559,6 +609,11 @@ pub fn boot(a: BootArgs) -> ExitCode {
         _ => None,
     };
     let mut keyboard_proof = a.keyboard_proof.then(KeyboardProof::new);
+    #[cfg(feature = "gpu-trace")]
+    if a.display_workload && a.gpu_trace.is_none() {
+        eprintln!("wasm-vm: --display-workload requires --gpu-trace");
+        return ExitCode::from(2);
+    }
 
     let mut boot_num = 0u32;
     loop {
@@ -566,11 +621,29 @@ pub fn boot(a: BootArgs) -> ExitCode {
         if boot_num > 1 {
             eprintln!("wasm-vm: --- reboot #{} ---", boot_num - 1);
         }
-        let (mut m, uart, agent_state, _gpu_state) = match assemble(&a, &kernel, &initrd, &console)
-        {
-            Ok(v) => v,
-            Err(code) => return code,
+        let (mut m, uart, agent_state, _gpu_state, display_metrics) =
+            match assemble(&a, &kernel, &initrd, &console) {
+                Ok(v) => v,
+                Err(code) => return code,
+            };
+        #[cfg(feature = "gpu-trace")]
+        let mut display_workload = if a.display_workload {
+            let Some(metrics) = display_metrics else {
+                eprintln!("wasm-vm: display workload metrics were not assembled");
+                return ExitCode::from(2);
+            };
+            match DisplayWorkload::new(metrics, _gpu_state.clone(), &m) {
+                Ok(workload) => Some(workload),
+                Err(error) => {
+                    eprintln!("wasm-vm: cannot arm display workload: {error}");
+                    return ExitCode::from(2);
+                }
+            }
+        } else {
+            None
         };
+        #[cfg(not(feature = "gpu-trace"))]
+        let mut display_workload: Option<DisplayWorkload> = None;
         let mut agent_proof = agent_state.map(|state| {
             agent_proof::AgentProof::new(
                 state,
@@ -648,6 +721,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 snap.as_mut(),
                 keyboard_proof.as_mut(),
                 agent_proof.as_mut(),
+                display_workload.as_mut(),
                 &mut fp,
             );
             let pct = if fp.total == 0 {
@@ -661,19 +735,48 @@ pub fn boot(a: BootArgs) -> ExitCode {
             );
             o
         } else if a.evidence.is_some() {
-            run_machine(
-                &a,
-                &mut m,
-                &uart,
-                &console,
-                stdin_rx.as_ref(),
-                &mut pending,
-                profiler.as_mut().filter(|_| boot_num == 1),
-                snap.as_mut(),
-                keyboard_proof.as_mut(),
-                agent_proof.as_mut(),
-                &mut hash,
-            )
+            // A concrete retirement sink deliberately keeps the interpreter path active: the
+            // compiled-block executor cannot reconstruct one TraceRecord per JIT-retired
+            // instruction. The display workload only needs the authoritative guest-instruction
+            // counter from m.irq_stats().retired, so it also uses the zero-record sink to avoid
+            // making a macro boot pay the per-retirement hashing cost. Keep the evidence file
+            // honest by labeling both opt-in paths as counter-only below.
+            #[cfg(feature = "gpu-trace")]
+            let counter_only_evidence = a.jit || a.display_workload;
+            #[cfg(not(feature = "gpu-trace"))]
+            let counter_only_evidence = a.jit;
+            if counter_only_evidence {
+                let mut jit_evidence = NullSink;
+                run_machine(
+                    &a,
+                    &mut m,
+                    &uart,
+                    &console,
+                    stdin_rx.as_ref(),
+                    &mut pending,
+                    profiler.as_mut().filter(|_| boot_num == 1),
+                    snap.as_mut(),
+                    keyboard_proof.as_mut(),
+                    agent_proof.as_mut(),
+                    display_workload.as_mut(),
+                    &mut jit_evidence,
+                )
+            } else {
+                run_machine(
+                    &a,
+                    &mut m,
+                    &uart,
+                    &console,
+                    stdin_rx.as_ref(),
+                    &mut pending,
+                    profiler.as_mut().filter(|_| boot_num == 1),
+                    snap.as_mut(),
+                    keyboard_proof.as_mut(),
+                    agent_proof.as_mut(),
+                    display_workload.as_mut(),
+                    &mut hash,
+                )
+            }
         } else {
             let mut null = NullSink;
             run_machine(
@@ -687,6 +790,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 snap.as_mut(),
                 keyboard_proof.as_mut(),
                 agent_proof.as_mut(),
+                display_workload.as_mut(),
                 &mut null,
             )
         };
@@ -700,6 +804,30 @@ pub fn boot(a: BootArgs) -> ExitCode {
         // Final drain before we act on the outcome.
         let out = uart.borrow_mut().take_output();
         console.write_bytes(&out);
+        #[cfg(feature = "gpu-trace")]
+        if a.display_workload
+            && let Some(workload) = display_workload.as_ref()
+        {
+            if let Some(error) = workload.error() {
+                eprintln!("wasm-vm: T16b display workload failed: {error}");
+                return ExitCode::from(1);
+            }
+            if !workload.is_complete() {
+                eprintln!(
+                    "wasm-vm: T16b display workload stopped after {}/{} phase markers",
+                    workload.next_phase,
+                    DisplayWorkload::MARKERS.len()
+                );
+                return ExitCode::from(1);
+            }
+            match serde_json::to_string(&workload.capture()) {
+                Ok(capture) => eprintln!("E5T16B_CAPTURE_JSON {capture}"),
+                Err(error) => {
+                    eprintln!("wasm-vm: cannot serialize T16b capture: {error}");
+                    return ExitCode::from(74);
+                }
+            }
+        }
         // E3-T12c4: the snapshot-on-marker watcher stopped the run — resolve it BEFORE the normal
         // outcome match. A written blob is a clean exit (0); a refusal (non-quiesced machine or a
         // failed write, so NO blob exists) exits non-zero rather than pretend a snapshot was taken.
@@ -747,10 +875,28 @@ pub fn boot(a: BootArgs) -> ExitCode {
             }
         }
         if let Some(path) = &a.evidence {
+            #[cfg(feature = "gpu-trace")]
+            let counter_only_evidence = a.jit || a.display_workload;
+            #[cfg(not(feature = "gpu-trace"))]
+            let counter_only_evidence = a.jit;
+            let evidence_retired = if counter_only_evidence {
+                m.irq_stats().retired
+            } else {
+                hash.retired()
+            };
+            let evidence_mode = if counter_only_evidence {
+                if a.jit {
+                    "jit-retired-counter-only"
+                } else {
+                    "display-retired-counter-only"
+                }
+            } else {
+                "retirement-records"
+            };
             let evidence = format!(
-                "wasm-vm boot evidence v1\ntrace fnv64={:016x}\ntrace retired={}\n{}\noutcome={outcome:?}\n",
+                "wasm-vm boot evidence v1\ntrace fnv64={:016x}\ntrace retired={}\ntrace mode={evidence_mode}\n{}\noutcome={outcome:?}\n",
                 hash.hash(),
-                hash.retired(),
+                evidence_retired,
                 m.snapshot().state_sha256_line(),
             );
             if let Err(e) = std::fs::write(path, evidence) {
@@ -850,7 +996,14 @@ type AssembledMachine = (
     Rc<std::cell::RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
     Option<Rc<std::cell::RefCell<wasm_vm_core::dev::virtio::console::ConsoleState>>>,
     Option<Rc<std::cell::RefCell<wasm_vm_core::dev::virtio::gpu::GpuState>>>,
+    DisplayMetricHandle,
 );
+
+#[cfg(feature = "gpu-trace")]
+type DisplayMetricHandle = Option<Rc<std::cell::RefCell<DisplayMetrics>>>;
+
+#[cfg(not(feature = "gpu-trace"))]
+type DisplayMetricHandle = Option<()>;
 
 fn assemble(
     a: &BootArgs,
@@ -944,6 +1097,12 @@ fn assemble(
     // E5-T11c: the concrete keyboard is present on every native Linux boot, so the rebuilt guest
     // can bind /dev/input/event0 before the host's first key injection.
     let _ = m.enable_virtio_keyboard();
+    #[cfg(feature = "gpu-trace")]
+    if a.display_workload {
+        // T16b drives the real evdev path, so reserve the same absolute tablet and relative mouse
+        // slots as the browser assembly before sound/GPU claim the remaining virtio windows.
+        let _ = m.enable_virtio_pointer();
+    }
     // E5-T19d: reserve a free post-input virtio slot for the guest's four-queue sound device. The
     // native default is headless, but it is still paced by a monotonic clock so `aplay` exercises
     // the same non-bursting completion path as the later capture sink.
@@ -955,10 +1114,23 @@ fn assemble(
     let agent_state = a.agent_proof.as_ref().map(|_| m.enable_virtio_console().1);
 
     #[cfg(feature = "gpu-trace")]
+    let display_metrics = a
+        .display_workload
+        .then(|| Rc::new(std::cell::RefCell::new(DisplayMetrics::default())));
+    #[cfg(not(feature = "gpu-trace"))]
+    let display_metrics: DisplayMetricHandle = None;
+
+    #[cfg(feature = "gpu-trace")]
     let gpu_state = if let Some(path) = &a.gpu_trace {
-        let Some((_, state)) =
-            m.enable_virtio_gpu(Box::new(wasm_vm_core::dev::virtio::gpu::NullSink))
-        else {
+        let sink: Box<dyn wasm_vm_core::dev::virtio::gpu::FrameSink> =
+            if let Some(metrics) = &display_metrics {
+                Box::new(DisplaySink {
+                    metrics: Rc::clone(metrics),
+                })
+            } else {
+                Box::new(wasm_vm_core::dev::virtio::gpu::NullSink)
+            };
+        let Some((_, state)) = m.enable_virtio_gpu(sink) else {
             eprintln!(
                 "wasm-vm: cannot attach virtio-gpu for trace {}; slots 4..7 are occupied",
                 path.display()
@@ -1022,7 +1194,7 @@ fn assemble(
         layout.dtb_addr,
         a.ram_mib,
     );
-    Ok((m, uart, agent_state, gpu_state))
+    Ok((m, uart, agent_state, gpu_state, display_metrics))
 }
 
 #[cfg(feature = "gpu-trace")]
@@ -1311,6 +1483,508 @@ impl KeyboardProof {
     }
 }
 
+/// E5-T16b: the native side of the shared display workload.  The driver owns the serial script
+/// and supplies the exact typing text through an environment variable; this object owns only
+/// guest input injection and phase accounting.  Every counter is sampled at a guest-emitted
+/// metric line plus the core's retired-instruction/GPU counters, so no host-native finalist value
+/// is substituted for a guest observation.
+#[cfg(feature = "gpu-trace")]
+struct DisplayWorkload {
+    started: std::time::Instant,
+    tail: String,
+    line_buffer: String,
+    next_phase: usize,
+    phases: Vec<serde_json::Value>,
+    marker_sequence: Vec<String>,
+    metric: Option<DisplayGuestMetric>,
+    previous_end: Option<DisplayPoint>,
+    error: Option<String>,
+    foot_started: bool,
+    labwc_started: bool,
+    terminal_exited: bool,
+    compositor_exited: bool,
+    typing_text: String,
+    typing_text_sha256: String,
+    typing_frames: u64,
+    typing_rejected_events: u64,
+    drag_frames: u64,
+    drag_rejected_events: u64,
+    metrics: Rc<std::cell::RefCell<DisplayMetrics>>,
+    gpu_state: Option<Rc<std::cell::RefCell<wasm_vm_core::dev::virtio::gpu::GpuState>>>,
+}
+
+#[cfg(feature = "gpu-trace")]
+#[derive(Clone)]
+struct DisplayGuestMetric {
+    phase: String,
+    rss_bytes: u64,
+    interrupts: u64,
+}
+
+#[cfg(feature = "gpu-trace")]
+#[derive(Clone, Copy)]
+struct DisplayPoint {
+    wall_ms: f64,
+    guest_instructions: u64,
+    uploaded_bytes: u64,
+    idle_wakeups: u64,
+}
+
+#[cfg(feature = "gpu-trace")]
+impl DisplayWorkload {
+    const MARKERS: [&'static str; 6] = [
+        "E5T16A_COLD_START_DONE",
+        "E5T16A_IDLE_DONE",
+        "E5T16A_OPEN_TERMINAL_DONE",
+        "E5T16A_TYPE_100_DONE",
+        "E5T16A_DRAG_300_DONE",
+        "E5T16A_CLOSE_DONE",
+    ];
+    const PHASES: [&'static str; 6] = [
+        "COLD_START",
+        "IDLE",
+        "OPEN_TERMINAL",
+        "TYPE_100",
+        "DRAG_300",
+        "CLOSE",
+    ];
+
+    fn new(
+        metrics: Rc<std::cell::RefCell<DisplayMetrics>>,
+        gpu_state: Option<Rc<std::cell::RefCell<wasm_vm_core::dev::virtio::gpu::GpuState>>>,
+        machine: &Machine,
+    ) -> Result<Self, String> {
+        let typing_text = std::env::var("E5_T16B_TYPING_TEXT")
+            .map_err(|_| "E5_T16B_TYPING_TEXT is not set by the workload driver".to_string())?;
+        if typing_text.chars().count() != 100 {
+            return Err(format!(
+                "E5_T16B_TYPING_TEXT must contain 100 characters, got {}",
+                typing_text.chars().count()
+            ));
+        }
+        let expected_sha = std::env::var("E5_T16B_TYPING_TEXT_SHA256").map_err(|_| {
+            "E5_T16B_TYPING_TEXT_SHA256 is not set by the workload driver".to_string()
+        })?;
+        let actual_sha = format!("{:x}", Sha256::digest(typing_text.as_bytes()));
+        if actual_sha != expected_sha {
+            return Err(format!(
+                "typing text digest mismatch: expected {expected_sha}, computed {actual_sha}"
+            ));
+        }
+        let keyboard = machine
+            .keyboard_input()
+            .ok_or_else(|| "display workload requires the virtio keyboard".to_string())?;
+        let tablet = machine
+            .tablet_input()
+            .ok_or_else(|| "display workload requires the virtio tablet".to_string())?;
+        // A shifted key is a four-event stream (shift down/key down, then key up/shift up, each
+        // terminated by SYN_REPORT).  2,048 events leaves a fixed margin over the 100-character
+        // plan while retaining InputState's bounded whole-frame policy.
+        keyboard.borrow_mut().set_pending_event_budget(2_048);
+        tablet.borrow_mut().set_pending_event_budget(512);
+        Ok(Self {
+            started: std::time::Instant::now(),
+            tail: String::new(),
+            line_buffer: String::new(),
+            next_phase: 0,
+            phases: Vec::new(),
+            marker_sequence: Vec::new(),
+            metric: None,
+            previous_end: None,
+            error: None,
+            foot_started: false,
+            labwc_started: false,
+            terminal_exited: false,
+            compositor_exited: false,
+            typing_text,
+            typing_text_sha256: actual_sha,
+            typing_frames: 0,
+            typing_rejected_events: 0,
+            drag_frames: 0,
+            drag_rejected_events: 0,
+            metrics,
+            gpu_state,
+        })
+    }
+
+    fn error(&self) -> Option<&str> {
+        self.error.as_deref()
+    }
+
+    fn is_complete(&self) -> bool {
+        self.next_phase == Self::MARKERS.len()
+    }
+
+    fn fail(&mut self, message: impl Into<String>) {
+        if self.error.is_none() {
+            self.error = Some(message.into());
+        }
+    }
+
+    fn feed(&mut self, out: &[u8], machine: &mut Machine) {
+        if self.error.is_some() || out.is_empty() {
+            return;
+        }
+        let text = String::from_utf8_lossy(out);
+        self.line_buffer.push_str(&text);
+        while let Some(newline) = self.line_buffer.find('\n') {
+            let line = self.line_buffer[..newline]
+                .trim_end_matches('\r')
+                .to_string();
+            self.line_buffer.drain(..=newline);
+            self.observe_line(&line);
+        }
+        self.tail.push_str(&text);
+        if self.tail.len() > 8_192 {
+            let mut cut = self.tail.len() - 4_096;
+            while cut < self.tail.len() && !self.tail.is_char_boundary(cut) {
+                cut += 1;
+            }
+            self.tail = self.tail.split_off(cut);
+        }
+        loop {
+            if self.next_phase >= Self::MARKERS.len() {
+                break;
+            }
+            let expected = Self::MARKERS[self.next_phase];
+            if let Some(position) = self.tail.find(expected) {
+                let end = position + expected.len();
+                self.tail.drain(..end);
+                self.record_marker(machine, expected);
+                if self.error.is_some() {
+                    return;
+                }
+                continue;
+            }
+            if Self::MARKERS[self.next_phase + 1..]
+                .iter()
+                .any(|marker| self.tail.contains(marker))
+            {
+                self.fail(format!("phase marker out of order; expected {}", expected));
+            }
+            break;
+        }
+    }
+
+    fn observe_line(&mut self, line: &str) {
+        if line.contains("E5T16B_FOOT_STARTED=1") {
+            self.foot_started = true;
+        }
+        if line.contains("E5T16B_LABWC_STARTED=1") {
+            self.labwc_started = true;
+        }
+        if line.contains("E5T16B_APP_EXITED=1") {
+            self.terminal_exited = true;
+        }
+        if line.contains("E5T16B_WM_EXITED=1") {
+            self.compositor_exited = true;
+        }
+        let Some(metric_start) = line.find("E5T16B_METRIC phase=") else {
+            return;
+        };
+        let fields = line[metric_start..].split_whitespace();
+        let mut phase = None;
+        let mut rss_bytes = None;
+        let mut interrupts = None;
+        for field in fields {
+            if let Some(value) = field.strip_prefix("phase=") {
+                phase = Some(value.to_string());
+            } else if let Some(value) = field.strip_prefix("rss=") {
+                rss_bytes = value.parse::<u64>().ok();
+            } else if let Some(value) = field.strip_prefix("interrupts=") {
+                interrupts = value.parse::<u64>().ok();
+            }
+        }
+        match (phase, rss_bytes, interrupts) {
+            (Some(phase), Some(rss_bytes), Some(interrupts)) if rss_bytes > 0 => {
+                self.metric = Some(DisplayGuestMetric {
+                    phase,
+                    rss_bytes,
+                    interrupts,
+                });
+            }
+            (Some(_), Some(_), Some(_)) => self.fail("guest metric reported non-positive RSS"),
+            _ => {
+                // The command echo contains the printf format string, not numeric observations;
+                // ignore it.  A real phase marker without a later numeric line is rejected below.
+            }
+        }
+    }
+
+    fn point(&self, metric: &DisplayGuestMetric) -> DisplayPoint {
+        let metrics = self.metrics.borrow();
+        DisplayPoint {
+            wall_ms: self.started.elapsed().as_secs_f64() * 1_000.0,
+            guest_instructions: 0,
+            uploaded_bytes: metrics.uploaded_bytes,
+            idle_wakeups: metric.interrupts,
+        }
+    }
+
+    fn record_marker(&mut self, machine: &mut Machine, marker: &str) {
+        let index = self.next_phase;
+        let phase_name = Self::PHASES[index];
+        let Some(metric) = self.metric.clone() else {
+            self.fail(format!("{phase_name} marker has no guest metric"));
+            return;
+        };
+        if metric.phase != phase_name {
+            self.fail(format!(
+                "metric phase {} does not match marker {phase_name}",
+                metric.phase
+            ));
+            return;
+        }
+        let mut end = self.point(&metric);
+        end.guest_instructions = machine.irq_stats().retired;
+        let start = self.previous_end.unwrap_or(DisplayPoint {
+            wall_ms: 0.0,
+            guest_instructions: 0,
+            uploaded_bytes: 0,
+            idle_wakeups: 0,
+        });
+        if end.wall_ms < start.wall_ms
+            || end.guest_instructions < start.guest_instructions
+            || end.uploaded_bytes < start.uploaded_bytes
+            || end.idle_wakeups < start.idle_wakeups
+        {
+            self.fail(format!("non-monotonic counters at {phase_name}"));
+            return;
+        }
+        let details = match phase_name {
+            "COLD_START" => json!({}),
+            "IDLE" => json!({
+                "requestedMs": 1_000,
+                "measuredMs": end.wall_ms - start.wall_ms,
+            }),
+            "OPEN_TERMINAL" => {
+                if !self.labwc_started || !self.foot_started {
+                    self.fail("open-terminal marker arrived without labwc and foot start proofs");
+                    return;
+                }
+                json!({
+                    "compositor": "labwc",
+                    "terminal": "foot",
+                    "renderer": "pixman",
+                })
+            }
+            "TYPE_100" => {
+                if self.typing_frames == 0 || self.typing_rejected_events != 0 {
+                    self.fail("type-100 marker arrived without an accepted keyboard stream");
+                    return;
+                }
+                json!({
+                    "characters": 100,
+                    "textSha256": self.typing_text_sha256,
+                    "frames": self.typing_frames,
+                    "rejectedEvents": self.typing_rejected_events,
+                })
+            }
+            "DRAG_300" => {
+                if self.drag_frames != 32 || self.drag_rejected_events != 0 {
+                    self.fail("drag-300 marker arrived without the complete tablet stream");
+                    return;
+                }
+                json!({
+                    "axis": "x",
+                    "deltaPx": 300,
+                    "steps": 30,
+                    "frames": self.drag_frames,
+                    "rejectedEvents": self.drag_rejected_events,
+                })
+            }
+            "CLOSE" => {
+                if !self.terminal_exited || !self.compositor_exited {
+                    self.fail("close marker arrived without terminal/compositor exit proofs");
+                    return;
+                }
+                json!({
+                    "applicationExited": true,
+                    "compositorExited": true,
+                })
+            }
+            _ => unreachable!(),
+        };
+        self.phases.push(json!({
+            "id": phase_name.to_ascii_lowercase().replace('_', "-"),
+            "marker": marker,
+            "start": {
+                "wallMs": start.wall_ms,
+                "guestInstructions": start.guest_instructions,
+                "uploadedBytes": start.uploaded_bytes,
+                "idleWakeups": start.idle_wakeups,
+            },
+            "end": {
+                "wallMs": end.wall_ms,
+                "guestInstructions": end.guest_instructions,
+                "uploadedBytes": end.uploaded_bytes,
+                "idleWakeups": end.idle_wakeups,
+            },
+            "peakRssBytes": metric.rss_bytes,
+            "outcome": "passed",
+            "details": details,
+        }));
+        self.marker_sequence.push(marker.to_string());
+        self.previous_end = Some(end);
+        self.next_phase += 1;
+        if phase_name == "OPEN_TERMINAL" {
+            self.inject_typing(machine);
+        } else if phase_name == "TYPE_100" {
+            self.inject_drag(machine);
+        }
+    }
+
+    fn key_for(character: char) -> Option<(u16, bool)> {
+        const LETTER_CODES: [u16; 26] = [
+            30, 48, 46, 32, 18, 33, 34, 35, 23, 36, 37, 38, 50, 49, 24, 25, 16, 19, 31, 20, 22, 47,
+            17, 45, 21, 44,
+        ];
+        const DIGIT_CODES: [u16; 10] = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+        if character.is_ascii_lowercase() {
+            return Some((LETTER_CODES[(character as u8 - b'a') as usize], false));
+        }
+        if character.is_ascii_uppercase() {
+            return Some((LETTER_CODES[(character as u8 - b'A') as usize], true));
+        }
+        if character.is_ascii_digit() {
+            let index = if character == '0' {
+                9
+            } else {
+                (character as u8 - b'1') as usize
+            };
+            return Some((DIGIT_CODES[index], false));
+        }
+        Some(match character {
+            ' ' => (57, false),
+            '.' => (52, false),
+            ',' => (51, false),
+            ':' => (39, true),
+            ';' => (39, false),
+            '!' => (2, true),
+            '?' => (53, true),
+            '-' => (12, false),
+            '_' => (12, true),
+            _ => return None,
+        })
+    }
+
+    fn inject_typing(&mut self, machine: &mut Machine) {
+        use wasm_vm_core::dev::virtio::input::EV_KEY;
+        let Some(state) = machine.keyboard_input() else {
+            self.fail("keyboard disappeared before typing phase");
+            return;
+        };
+        for character in self.typing_text.chars() {
+            let Some((code, shifted)) = Self::key_for(character) else {
+                self.fail(format!(
+                    "no PC-105 mapping for typing character {character:?}"
+                ));
+                return;
+            };
+            let mut input = state.borrow_mut();
+            if shifted && !input.inject_event(EV_KEY, 42, 1) {
+                self.typing_rejected_events += 1;
+            }
+            if !input.inject_event(EV_KEY, code, 1) {
+                self.typing_rejected_events += 1;
+            }
+            input.sync();
+            drop(input);
+            let mut input = state.borrow_mut();
+            if !input.inject_event(EV_KEY, code, 0) {
+                self.typing_rejected_events += 1;
+            }
+            if shifted && !input.inject_event(EV_KEY, 42, 0) {
+                self.typing_rejected_events += 1;
+            }
+            input.sync();
+            self.typing_frames += 2;
+        }
+        eprintln!(
+            "wasm-vm: T16b injected {} keyboard frames ({} rejected events)",
+            self.typing_frames, self.typing_rejected_events
+        );
+    }
+
+    fn inject_drag(&mut self, machine: &mut Machine) {
+        use wasm_vm_core::dev::virtio::input::{EV_ABS, EV_KEY, pointer};
+        let Some(state) = machine.tablet_input() else {
+            self.fail("tablet disappeared before drag phase");
+            return;
+        };
+        let absolute = |pixels: u32, extent: u32| -> i32 {
+            ((u64::from(pixels) * 32_767 + u64::from(extent / 2)) / u64::from(extent)) as i32
+        };
+        let x0 = absolute(100, 1_280);
+        let y0 = absolute(100, 800);
+        let x1 = absolute(400, 1_280);
+        let y1 = y0;
+        let mut frame = |events: &[(u16, u16, i32)]| {
+            let mut input = state.borrow_mut();
+            for (event_type, code, value) in events {
+                let accepted = input.inject_event(*event_type, *code, *value);
+                if !accepted {
+                    self.drag_rejected_events += 1;
+                }
+            }
+            input.sync();
+            self.drag_frames += 1;
+        };
+        frame(&[
+            (EV_ABS, pointer::ABS_X, x0),
+            (EV_ABS, pointer::ABS_Y, y0),
+            (EV_KEY, pointer::BTN_LEFT, 1),
+        ]);
+        for step in 1..=30u32 {
+            let x = x0 + (((x1 - x0) as i64 * i64::from(step)) / 30) as i32;
+            frame(&[(EV_ABS, pointer::ABS_X, x), (EV_ABS, pointer::ABS_Y, y1)]);
+        }
+        frame(&[
+            (EV_ABS, pointer::ABS_X, x1),
+            (EV_ABS, pointer::ABS_Y, y1),
+            (EV_KEY, pointer::BTN_LEFT, 0),
+        ]);
+        eprintln!(
+            "wasm-vm: T16b injected {} tablet frames ({} rejected events)",
+            self.drag_frames, self.drag_rejected_events
+        );
+    }
+
+    fn capture(&self) -> serde_json::Value {
+        let cursorq_events = self
+            .gpu_state
+            .as_ref()
+            .map(|state| state.borrow().cursorq_commands())
+            .unwrap_or(0);
+        let cursorq_status = if cursorq_events > 0 {
+            "observed"
+        } else {
+            "capability-gap: labwc submitted no cursorq chain during this run"
+        };
+        json!({
+            "phases": self.phases,
+            "observations": {
+                "cursorqEvents": cursorq_events,
+                "cursorqStatus": cursorq_status,
+                "markerSequence": self.marker_sequence,
+                "errors": [],
+            },
+        })
+    }
+}
+
+#[cfg(not(feature = "gpu-trace"))]
+struct DisplayWorkload;
+
+#[cfg(not(feature = "gpu-trace"))]
+impl DisplayWorkload {
+    fn feed(&mut self, _out: &[u8], _machine: &mut Machine) {}
+
+    fn error(&self) -> Option<&str> {
+        None
+    }
+}
+
 // These references are the long-lived boot-loop state; bundling them into a one-use context solely
 // to satisfy the argument-count style lint would obscure their ownership and widen unrelated churn.
 #[allow(clippy::too_many_arguments)]
@@ -1325,6 +1999,7 @@ fn run_machine<T: TraceSink>(
     mut snap: Option<&mut SnapshotOnMarker>,
     mut keyboard_proof: Option<&mut KeyboardProof>,
     mut agent_proof: Option<&mut agent_proof::AgentProof>,
+    mut display_workload: Option<&mut DisplayWorkload>,
     sink: &mut T,
 ) -> RunOutcome {
     let mut profiler = profiler;
@@ -1344,6 +2019,12 @@ fn run_machine<T: TraceSink>(
         }
         if let Some(proof) = agent_proof.as_deref_mut() {
             proof.pump(&out, uart);
+        }
+        if let Some(workload) = display_workload.as_deref_mut() {
+            workload.feed(&out, m);
+            if workload.error().is_some() {
+                return RunOutcome::Exited(1);
+            }
         }
         // E2-T25: feed the console stream + retired count to the profiler so it can stamp the
         // wall time + retired count at each guest phase marker's first sighting.
