@@ -305,6 +305,51 @@ test("display FrameSink projections cross the worker boundary with private pixel
   await controller.whenDone;
 });
 
+test("cursor-plane update and move projections keep MOVE payloads empty and privately owned", async () => {
+  const events = [];
+  const { page, worker } = endpointPair(events);
+  let resolveDone;
+  const done = new Promise((resolve) => { resolveDone = resolve; });
+  const cursors = [];
+  createLinuxWorkerRuntime(worker, {
+    startBoot: async (opts) => {
+      const source = Uint32Array.of(0x11223344, 0x55667788);
+      opts.onCursorState({
+        type: "cursor-update",
+        state: { resourceId: 7, hotX: 1, hotY: 0, pos: { scanoutId: 0, x: 10, y: 20 } },
+        format: 1,
+        resourceWidth: 2,
+        resourceHeight: 1,
+        pixels: source,
+      });
+      source[0] = 0;
+      opts.onCursorState({
+        type: "cursor-move",
+        state: { resourceId: 7, hotX: 1, hotY: 0, pos: { scanoutId: 0, x: 11, y: 21 } },
+        format: null,
+        resourceWidth: 0,
+        resourceHeight: 0,
+        pixels: new Uint32Array(0),
+      });
+      return fakeController(events, done);
+    },
+  });
+  const client = createLinuxWorkerClient(page, { onCursorState: (frame) => cursors.push(frame) });
+  const controller = await client.boot({});
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  assert.equal(cursors.length, 2);
+  assert.equal(cursors[0].type, "cursor-update");
+  assert.deepEqual([...cursors[0].pixels], [0x11223344, 0x55667788]);
+  assert.equal(cursors[0].resourceWidth, 2);
+  assert.equal(cursors[1].type, "cursor-move");
+  assert.deepEqual(cursors[1].state.pos, { scanoutId: 0, x: 11, y: 21 });
+  assert.equal(cursors[1].format, null);
+  assert.equal(cursors[1].resourceWidth, 0);
+  assert.equal(cursors[1].pixels.byteLength, 0);
+  resolveDone("stopped");
+  await controller.whenDone;
+});
+
 test("RPC ids correlate out-of-order results and arbitrary methods are not exposed", async () => {
   const { page, worker } = endpointPair();
   const client = createLinuxWorkerClient(page);

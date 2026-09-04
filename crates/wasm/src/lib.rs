@@ -1626,6 +1626,69 @@ struct JsFrameSink {
 }
 
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl JsFrameSink {
+    fn set_u32(object: &js_sys::Object, name: &str, value: u32) {
+        let _ = js_sys::Reflect::set(
+            object,
+            &JsValue::from_str(name),
+            &JsValue::from_f64(value as f64),
+        );
+    }
+
+    /// Emit a cursor update/move through the existing synchronous display callback.  MOVE_CURSOR
+    /// passes an empty view so the page can update only transform/style state and never re-encode
+    /// the resource at pointer-reporting frequency.
+    fn emit_cursor(
+        &self,
+        event_type: &str,
+        state: wasm_vm_core::dev::virtio::gpu::CursorState,
+        format: Option<u32>,
+        resource_width: u32,
+        resource_height: u32,
+        pixels: &[u32],
+    ) {
+        let frame = js_sys::Object::new();
+        let state_object = js_sys::Object::new();
+        let pos_object = js_sys::Object::new();
+        Self::set_u32(&pos_object, "scanoutId", state.pos.scanout_id);
+        Self::set_u32(&pos_object, "x", state.pos.x);
+        Self::set_u32(&pos_object, "y", state.pos.y);
+        let _ = js_sys::Reflect::set(
+            &state_object,
+            &JsValue::from_str("resourceId"),
+            &JsValue::from_f64(state.resource_id as f64),
+        );
+        Self::set_u32(&state_object, "hotX", state.hot_x);
+        Self::set_u32(&state_object, "hotY", state.hot_y);
+        let _ = js_sys::Reflect::set(
+            &state_object,
+            &JsValue::from_str("pos"),
+            pos_object.as_ref(),
+        );
+        let _ = js_sys::Reflect::set(
+            &frame,
+            &JsValue::from_str("type"),
+            &JsValue::from_str(event_type),
+        );
+        let _ = js_sys::Reflect::set(&frame, &JsValue::from_str("state"), state_object.as_ref());
+        let _ = js_sys::Reflect::set(
+            &frame,
+            &JsValue::from_str("format"),
+            &format
+                .map(|value| JsValue::from_f64(value as f64))
+                .unwrap_or(JsValue::NULL),
+        );
+        Self::set_u32(&frame, "resourceWidth", resource_width);
+        Self::set_u32(&frame, "resourceHeight", resource_height);
+        // `view` is safe here because the callback is synchronous and the page copies update
+        // pixels before it returns. MOVE_CURSOR supplies an empty view by contract.
+        let pixel_view = unsafe { js_sys::Uint32Array::view(pixels) };
+        let _ = js_sys::Reflect::set(&frame, &JsValue::from_str("pixels"), pixel_view.as_ref());
+        let _ = self.callback.call1(&JsValue::NULL, &frame);
+    }
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 impl wasm_vm_core::dev::virtio::gpu::FrameSink for JsFrameSink {
     fn tracks_transferred_damage(&self) -> bool {
         true
@@ -1671,6 +1734,28 @@ impl wasm_vm_core::dev::virtio::gpu::FrameSink for JsFrameSink {
         // FrameSink cannot surface a JS exception. The controller owns the error/fallback policy;
         // ignoring an exception here keeps a guest presentation fault from aborting the emulator.
         let _ = self.callback.call1(&JsValue::NULL, &frame);
+    }
+
+    fn cursor_state(
+        &mut self,
+        state: wasm_vm_core::dev::virtio::gpu::CursorState,
+        format: Option<u32>,
+        resource_width: u32,
+        resource_height: u32,
+        pixels: &[u32],
+    ) {
+        self.emit_cursor(
+            "cursor-update",
+            state,
+            format,
+            resource_width,
+            resource_height,
+            pixels,
+        );
+    }
+
+    fn cursor_move(&mut self, state: wasm_vm_core::dev::virtio::gpu::CursorState) {
+        self.emit_cursor("cursor-move", state, None, 0, 0, &[]);
     }
 }
 

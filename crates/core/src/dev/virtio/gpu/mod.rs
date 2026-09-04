@@ -232,6 +232,13 @@ pub trait FrameSink {
         _pixels: &[u32],
     ) {
     }
+
+    /// Publish a MOVE_CURSOR transition without re-reading or re-encoding the resource image.
+    /// Browser sinks use this event to update only overlay transform/style state; simple sinks
+    /// retain the historical callback record through the default implementation.
+    fn cursor_move(&mut self, state: CursorState) {
+        self.cursor_state(state, None, 0, 0, &[]);
+    }
 }
 
 /// Headless sink used by default and by native boot paths that do not present a window.
@@ -388,6 +395,12 @@ impl GpuState {
                 &resource.host_pixels,
             );
         }
+    }
+
+    /// Publish a MOVE_CURSOR transition without borrowing the backing resource.  The cursor
+    /// image is unchanged, so this keeps high-frequency movement on the host's transform path.
+    fn publish_cursor_move(&mut self, cursor: CursorState) {
+        self.frame_sink.cursor_move(cursor);
     }
 
     /// Apply a host display-size change and coalesce its config interrupt until the guest clears
@@ -1118,7 +1131,7 @@ fn move_cursor(
         ..previous
     };
     state_ref.cursor_states[index] = cursor;
-    state_ref.publish_cursor_state(cursor);
+    state_ref.publish_cursor_move(cursor);
     Ok(())
 }
 

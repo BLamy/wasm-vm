@@ -14,6 +14,7 @@ const runtime = createLinuxWorkerRuntime(self, {
     ...opts,
     workerMode: true,
     onDisplayFrame: (frame) => runtime.callbacks?.onDisplayFrame?.(frame),
+    onCursorState: (frame) => runtime.callbacks?.onCursorState?.(frame),
   }),
   tailscaleCommand,
 });

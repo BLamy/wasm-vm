@@ -43,6 +43,7 @@ import {
   POINTER_MODES,
 } from "./src/input/pointer.js";
 import { PresentationController } from "./src/sink/presentation.js";
+import { CursorController } from "./src/sink/cursor-controller.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
@@ -732,6 +733,15 @@ const pointerToggle = document.getElementById("ide-pointer-toggle");
 const pointerDebugEl = document.getElementById("ide-pointer-debug");
 const pointerDiagnostics = [];
 const pointerFrames = [];
+const cursorDiagnostics = [];
+const cursorController = new CursorController({
+  target: pointerHost,
+  documentTarget: document,
+  onDiagnostic: (entry) => {
+    cursorDiagnostics.push(entry);
+    if (cursorDiagnostics.length > 256) cursorDiagnostics.shift();
+  },
+});
 const pointerControllerProxy = {
   sendTabletEvent: (...args) => linuxCtl?.sendTabletEvent?.(...args),
   syncTablet: () => linuxCtl?.syncTablet?.(),
@@ -741,6 +751,10 @@ const pointerControllerProxy = {
 
 function updatePointerIndicator(snapshot = pointerBridge?.state?.()) {
   if (!snapshot) return;
+  try { cursorController.setPointerState(snapshot); } catch (error) {
+    cursorDiagnostics.push({ reason: "cursor-pointer-state-error", error: String(error?.message || error) });
+    if (cursorDiagnostics.length > 256) cursorDiagnostics.shift();
+  }
   const relative = snapshot.mode === POINTER_MODES.RELATIVE;
   if (pointerStateEl) {
     pointerStateEl.textContent = `Pointer: ${relative ? "relative" : "absolute"}`;
@@ -802,6 +816,15 @@ try {
     frames: () => [...pointerFrames],
   };
 } catch { /* page-only diagnostics */ }
+try {
+  window.__cursor = {
+    state: () => cursorController.snapshot(),
+    descriptor: () => cursorController.descriptor(),
+    handle: (event) => cursorController.handle(event),
+    diagnostics: () => [...cursorDiagnostics],
+    reset: () => cursorController.reset(),
+  };
+} catch { /* page-only diagnostics */ }
 updatePointerIndicator();
 
 function teardownLinuxController(controller, { natural = false } = {}) {
@@ -837,6 +860,7 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   microphoneCapture.reset();
   updateMicrophoneIndicator();
   try { pointerBridge?.reset?.({ emit: false, exitLock: true }); } catch { /* pointer lock may already be gone */ }
+  try { cursorController.reset(); } catch { /* a failed controller may already be gone */ }
   updatePointerIndicator();
   ui.detachSink();
   fileTransferUI.attachController(null);
@@ -1245,6 +1269,15 @@ async function runLinuxBootOwned(opts, banner, request) {
       // E5-T06d: keep display rendering on the page even when the guest machine itself runs in a
       // worker; the worker protocol copies each frame once before this callback sees it.
       onDisplayFrame: handleDisplayFrame,
+      // E5-T15c: cursor-plane events bypass framebuffer pacing and update the page-owned CSS/
+      // overlay controller directly. The controller copies UPDATE pixels synchronously and
+      // handles MOVE with a transform-only write.
+      onCursorState: (frame) => {
+        try { cursorController.handle(frame); } catch (error) {
+          cursorDiagnostics.push({ reason: "cursor-callback-error", error: String(error?.message || error) });
+          if (cursorDiagnostics.length > 256) cursorDiagnostics.shift();
+        }
+      },
       onState: (s) => {
         // E4 restore-on-first-load: a visible stopwatch instead of the "booting" progress bar when
         // the shipped boot snapshot is being restored.

@@ -214,6 +214,9 @@ export async function startLinuxBoot(opts = {}) {
     // E5-T06d: synchronous virtio-gpu FrameSink projection. The callback must copy the temporary
     // pixels view before returning; the page PresentationController owns that copy/replay policy.
     onDisplayFrame = null,
+    // E5-T15c: cursor-plane callbacks share the synchronous GPU seam but are dispatched separately
+    // so MOVE_CURSOR never enters the framebuffer presentation scheduler.
+    onCursorState = null,
     // Instructions per synchronous run slice. Kept modest so a slice is only a few ms of main-thread
     // time — short enough that the browser paints/handles input between slices (smooth page/animation).
     // Combined with the no-clamp MessageChannel yield (see yieldToMain), throughput stays high. A larger
@@ -506,11 +509,19 @@ export async function startLinuxBoot(opts = {}) {
     // E5-T06d: attach the page-owned display sink only after the complete machine exists. This
     // leaves the core's headless NullSink as the safe constructor default and keeps the same
     // callback seam available to direct and whole-machine-worker boot paths.
-    if (typeof onDisplayFrame === "function" && typeof machine.attachDisplay === "function") {
+    if ((typeof onDisplayFrame === "function" || typeof onCursorState === "function")
+        && typeof machine.attachDisplay === "function") {
       // Older/custom device layouts may have consumed both optional virtio slots. The display is
       // an enhancement in that case; preserve boot and the guest queue instead of turning an
       // unavailable optional sink into a machine-fatal attach error.
-      machine.attachDisplay(onDisplayFrame);
+      machine.attachDisplay((frame) => {
+        const type = frame?.type;
+        if (type === "cursor-update" || type === "cursor-move") {
+          onCursorState?.(frame);
+        } else {
+          onDisplayFrame?.(frame);
+        }
+      });
     }
 
     // E5-T20e: swap the assembly's default NullSink for the page-owned AudioWorklet producer only

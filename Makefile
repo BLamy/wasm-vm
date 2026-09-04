@@ -655,6 +655,27 @@ verify-E5-T15b:
 	node --test web/tests/e5-t15b-cursor-sink.test.mjs
 	@echo "verify-E5-T15b (bounded cursor resource sink): OK"
 
+.PHONY: verify-E5-T15c
+verify-E5-T15c:
+	# Cursor mode/lifecycle proof plus the direct/worker callback seam. The guest/browser workload
+	# and delayed-frame integration proof remain the E5-T15d boundary.
+	node --check web/src/sink/cursor-controller.js
+	node --check web/loader.js
+	node --check web/linux-worker.js
+	node --check web/linux-worker-host.js
+	node --check web/linux-worker-protocol.js
+	node --check web/main.js
+	node --check tools/verify/e5-t15c-cursor-mode-browser-smoke.mjs
+	node --test web/tests/e5-t15c-cursor-mode.test.mjs web/tests/e4-t32-worker-protocol.test.mjs
+	node tools/verify/e5-t15c-cursor-mode-browser-smoke.mjs
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests -- -D warnings
+	cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib
+	cargo test -p wasm-vm-core --test virtio_gpu_machine
+	cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+	@echo "verify-E5-T15c (cursor mode wiring and lifecycle): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
