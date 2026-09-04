@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 261,
+    "verified": 262,
     "total": 423
   },
   "epics": [
@@ -18295,7 +18295,7 @@
       "epicKey": "5",
       "title": "Cursor-resource RGBA conversion and CSS/overlay sink",
       "priority": null,
-      "status": "implemented",
+      "status": "verified",
       "depends_on": [
         "E5-T15a"
       ],
@@ -18306,21 +18306,22 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-04 — worker — IMPLEMENTED\n\n- Implementation commit: `9f171ab`.\n- Exact-head checks: `node --check web/src/sink/cursor.js`; `node --test web/tests/e5-t15b-cursor-sink.test.mjs` — 5 passed, 0 failed; `make verify-E5-T15b` — passed.\n- Evidence: [`evidence/e5-t15b/cursor-sink.json`](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t15b/cursor-sink.json), SHA-256 `f086be4ac81af06e05f77ed7c90c20f86613429e2d8c9a69fa47352e3ccd8e9a`.\n- Claim: the exact-head proof copies checked virtio-gpu words into alpha-correct RGBA, round-trips a transparent/opaque 64×64 checkerboard through a deterministic PNG byte-for-byte, emits the exact `(10,3)` CSS hotspot descriptor, selects the bounded overlay path at 256×256, rejects malformed dimensions/hotspots/pixels/formats, and keeps only one bounded current descriptor across 1,001 updates.\n- Scope notes: DOM mode/lifecycle wiring is downstream in E5-T15c. Per user direction, independent-machine and WebKit proof were not run; host rr is waived by repository policy.",
+      "verificationLog": "### 2026-09-04 — worker — IMPLEMENTED\n\n- Implementation commit: `9f171ab`.\n- Exact-head checks: `node --check web/src/sink/cursor.js`; `node --test web/tests/e5-t15b-cursor-sink.test.mjs` — 5 passed, 0 failed; `make verify-E5-T15b` — passed.\n- Evidence: [`evidence/e5-t15b/cursor-sink.json`](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t15b/cursor-sink.json), SHA-256 `f086be4ac81af06e05f77ed7c90c20f86613429e2d8c9a69fa47352e3ccd8e9a`.\n- Claim: the exact-head proof copies checked virtio-gpu words into alpha-correct RGBA, round-trips a transparent/opaque 64×64 checkerboard through a deterministic PNG byte-for-byte, emits the exact `(10,3)` CSS hotspot descriptor, selects the bounded overlay path at 256×256, rejects malformed dimensions/hotspots/pixels/formats, and keeps only one bounded current descriptor across 1,001 updates.\n- Scope notes: DOM mode/lifecycle wiring is downstream in E5-T15c. Per user direction, independent-machine and WebKit proof were not run; host rr is waived by repository policy.\n\n### 2026-09-04 — verifier — VERDICT: verified\n\n- Evidence integrity — HELD. Predicted the worker artifact would match its recorded digest and implementation head; observed SHA-256 `f086be4ac81af06e05f77ed7c90c20f86613429e2d8c9a69fa47352e3ccd8e9a` for `evidence/e5-t15b/cursor-sink.json`, with current HEAD `884fc5d` containing no implementation changes after `9f171ab`.\n- Acceptance and adversarial behavior — HELD. `make verify-E5-T15b` passed with 5/5 tests; the 64×64 transparent/opaque RGBA round-trip, exact `url(\"<data-url>\") 10 3, none`, 256×256 overlay selection, explicit 65,536-pixel/262,400-filtered-byte/262,488-PNG-byte/350,006-data-URL-character limits, malformed-input rejection, and 1,001 bounded updates all held.\n- Independent PNG correctness — HELD. A fresh Node probe independently validated PNG signature, all IHDR/IDAT/IEND CRCs, zlib inflation and filter bytes at 256×256, exact maximum output bounds, all six format mappings, fallback base64, flat/snake-case state normalization, hide, and callback-error accounting.\n- Coverage — HELD. Changed source, mirror, test, Makefile target, and generated dist hunks were exercised or directly checked; DOM mode/lifecycle remains the declared T15c boundary. User-waived independent-machine and WebKit runs and policy-waived host rr were not required.\n- Commands: `node --check web/src/sink/cursor.js`; `node --test web/tests/e5-t15b-cursor-sink.test.mjs`; `make verify-E5-T15b`; independent Node PNG/format/boundary probe; independent Node branch-coverage probe; `git diff --check`.",
       "adversarial": "Attack odd dimensions, transparent pixels, maximum/negative hotspots, zero-sized resources, and\nmalformed pixel lengths. Repeat conversion 1,000 times and inspect that no data URL or source buffer\ngrows without bound.",
       "file": "tasks/epic-5-the-window/E5-T15b-cursor-resource-sink.md",
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "chore(e5-t15b): record cursor sink evidence",
             "chore(e5-t15b): activate cursor resource sink"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T15c",
