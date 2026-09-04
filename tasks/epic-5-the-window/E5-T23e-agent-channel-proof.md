@@ -3,7 +3,7 @@ id: E5-T23e
 epic: 5
 title: End-to-end guest agent channel proof and documentation
 priority: 523.5
-status: implemented
+status: verified
 depends_on: [E5-T23d]
 estimate: S
 risk: high
@@ -89,3 +89,48 @@ Commands:
 - `cargo build --release -p wasm-vm-cli`
 - `make web-dist`
 - `env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS node tools/verify/e5-t23e-agent-channel-proof.mjs`
+
+### 2026-09-04 — verifier — VERDICT: verified (user-directed)
+
+- **T17 named port and timing — HELD.** Predicted the real pinned Alpine boot would expose
+  `/dev/virtio-ports/org.wasmvm.agent`, receive HELLO within two seconds, and keep measured basic
+  host PING p50 below 20 ms. The exact-head native report records the fixed path, HELLO in
+  `23.765917 ms`, 8/8 basic PONGs, p50 `18.844 ms`, and `under_20ms: true`.
+- **Protocol and restart attacks — HELD.** Predicted byte-dribbled/coalesced framing, oversized
+  rejection before allocation, unknown-type NAK, exact 1 MiB boundary handling, bounded 10,000
+  PING traffic, explicit partial in-flight discard, and restart re-negotiation. The report records
+  512 fuzz frames with digest `a5b044401054134a1b6d1bb5287ab43423119325e440d29dc2dcaef8f55a1b8a`,
+  zero oversized allocation, boundary and unknown NAKs, 10,000/10,000 flood PONGs, a 16 KiB
+  maximum agent input, an 80-byte maximum agent output, and successful reconnect negotiation.
+- **Serial isolation — HELD.** Predicted a serial command would complete while the agent input
+  queue was non-empty. The native report records `saturation_command_sent: true` and
+  `usable_under_saturation: true`; the retained serial transcript contains `T23E_SERIAL_OK`.
+- **Browser and listener safety — HELD.** Predicted two simultaneous Chromium pages would load the
+  shipped `agent-channel.js`, negotiate v1, leave no pending requests, and retain exactly one user
+  and transport listener each. Both pages did so with zero console, page, or HTTP errors; the
+  browser request capture and screenshot are retained in the evidence directory.
+- **Static artifact and dependency boundary — HELD.** Predicted the installed guest peer would be
+  a stripped static RISC-V ELF under 1 MiB with only the shared protocol dependency. The report
+  records 378536 bytes, SHA-256
+  `c5feb0c04db680d1ae813d0fd85bd599ee29adb51fdc64dc329f66793d1f6851`, static-pie `file` output,
+  and the two-node cargo dependency tree.
+- **COVERAGE — SUFFICIENT.** The native proof exercised the CLI flag, console assembly, guest
+  boot, protocol driver, queue bounds, restart, and shutdown paths; deterministic Node attacks
+  exercised every host decoder/Channel branch named by the task; both Chromium pages exercised
+  the browser transport and request path; the docs, corpus, roadmap, and dist hashes are captured.
+  The Makefile recipe is declarative and each command was executed individually. The later worker
+  status commit changes only task/generated metadata, so the exact-head runtime evidence remains
+  valid.
+- **SUITE:** retain `make verify-E5-T23e`, the deterministic host tests, the native guest report,
+  the framing corpus, and the Chromium screenshot as the recurring proof set.
+
+Commands:
+
+- `env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS node tools/verify/e5-t23e-agent-channel-proof.mjs`
+- `cargo clippy -p wasm-vm-agent-protocol -p wasm-vm-guest-agent -p wasm-vm-cli --bin wasm-vm -- -D warnings`
+- `cargo test -p wasm-vm-agent-protocol`; `cargo test -p wasm-vm-guest-agent`; `cargo test -p wasm-vm-core virtio_console`
+- `node --test web/tests/agent-channel.test.mjs`; `git diff --check`
+
+Evidence: [`agent-channel-proof-2026-09-04.json`](../../evidence/e5-t23e/agent-channel-proof-2026-09-04.json),
+SHA-256 `eec2718768ad9feb5a41b731f1ed59fa0fc8a793878ef4c3a0e156b7309211a`, exact recorded head
+`eefdca2e8d3dff8b7cb6ad4245cb5d1ea543c911`.
