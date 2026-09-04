@@ -3,7 +3,7 @@ id: E5-T21b
 epic: 5
 title: Config-gated virtio-snd capture advertisement
 priority: 521.2
-status: pending
+status: in-progress
 depends_on: [E5-T21a]
 estimate: S
 risk: high

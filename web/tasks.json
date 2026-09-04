@@ -18465,13 +18465,15 @@
         },
         {
           "date": "2026-09-04",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "verify(e5-t21a): record capture rxq evidence"
+          ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T21b",
@@ -18479,7 +18481,7 @@
       "epicKey": "5",
       "title": "Config-gated virtio-snd capture advertisement",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T21a"
       ],
