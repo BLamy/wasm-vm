@@ -152,6 +152,7 @@ function assertProof(proof, browserName) {
   assert.ok(proof.view.framesDuringHiddenWindow > 0, `${browserName}: no frame while display hidden`);
   assert.ok(proof.view.framesWhileSerialHidden > 0, `${browserName}: hidden-display flush counter did not advance`);
   assert.ok(proof.view.serialBytesDuringHiddenWindow > 0, `${browserName}: serial stream stalled while hidden`);
+  assert.equal(proof.view.hiddenFlushMarkerObserved, true, `${browserName}: hidden flush marker missing`);
   assert.equal(proof.view.activeAtEnd, "display");
 
   assert.equal(proof.reservedHotkey.reservedToggleCount, 1, `${browserName}: reserved chord count`);

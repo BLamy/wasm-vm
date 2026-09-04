@@ -16,6 +16,8 @@ const HEIGHT = 800;
 const FULL_BYTES = WIDTH * HEIGHT * 4;
 const BOOT_TIMEOUT_MS = 450_000;
 const RECORDING_MAX_MS = 10_000;
+const HIDDEN_FLUSH_COMMAND =
+  "printf 'E5T08_HIDDEN_FRAME\\n' > /dev/tty0; echo E5T08_HIDDEN_DONE\\n";
 const SCROLL_COMMAND =
   "dd if=/dev/zero bs=1000000 count=1 of=/dev/tty0; printf 'E5T08_SCROLL_OK\\n' > /dev/tty0; " +
   "echo E5T08_SCROLL_DONE\\n";
@@ -576,7 +578,10 @@ async function runProofScenario() {
     await waitUntil(() => frameCount >= 8, "initial display frames", 120_000);
     const bootBefore = { frameCount, serialBytes, view: viewController.activeView() };
     setView("serial", "proof-boot-toggle");
-    await waitUntil(() => frameCount > bootBefore.frameCount + 3 || serialBytes > bootBefore.serialBytes, "frames/serial while display is hidden", 30_000);
+    await waitUntil(() => serialText.includes(PROMPT), "BusyBox prompt while display is hidden", BOOT_TIMEOUT_MS);
+    sendCommand(HIDDEN_FLUSH_COMMAND);
+    await waitUntil(() => serialText.includes("E5T08_HIDDEN_DONE"), "hidden display flush completion", 30_000);
+    await waitUntil(() => frameCount > bootBefore.frameCount, "frame while display is hidden", 30_000);
     const bootAfter = { frameCount, serialBytes, view: viewController.activeView() };
     setView("display", "proof-boot-return");
 
@@ -615,6 +620,7 @@ async function runProofScenario() {
         framesWhileSerialHidden,
         framesDuringHiddenWindow: Math.max(0, bootAfter.frameCount - bootBefore.frameCount),
         serialBytesDuringHiddenWindow: Math.max(0, bootAfter.serialBytes - bootBefore.serialBytes),
+        hiddenFlushMarkerObserved: serialText.includes("E5T08_HIDDEN_DONE"),
         activeAtEnd: viewController.activeView(),
       },
       reservedHotkey: reserved,

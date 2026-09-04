@@ -18,7 +18,7 @@
 
 // Replaced at build time (tools/build-web-dist.sh) with a content hash of the shipped assets; stays
 // the literal token in dev (a stable dev version). Changing it ⇒ a new cache namespace ⇒ atomic swap.
-const VERSION = "61c436ec898a";
+const VERSION = "868d1df2e5e8";
 const CACHE = `wasm-vm-shell-${VERSION}`;
 const CACHE_PREFIX = "wasm-vm-shell-";
 
