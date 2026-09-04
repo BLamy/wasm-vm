@@ -143,6 +143,17 @@ test("stats include ring fill plus exposed context latency and stay under 120 ms
   assert.equal(updated.underruns, 1);
   assert.equal(updated.fill, 4_096);
   assert.equal(vm.stats.audio.underruns, 1);
+
+  const consumer = sink.ring.consumer();
+  assert.equal(consumer.readInto(new Float32Array(4_096 * 2)), 4_096);
+  const empty = sink.stats();
+  assert.equal(empty.fill, 0);
+  assert.equal(empty.underruns, 1);
+  assert.ok(empty.latency_ms < updated.latency_ms);
+  sink.context.currentTime = 0.5;
+  const paused = sink.stats();
+  assert.equal(paused.fill, 0);
+  assert.equal(paused.latency_ms, empty.latency_ms);
 });
 
 test("AudioContext time and the atomic consumed-frame cursor provide a monotonic clock", () => {
