@@ -3,7 +3,7 @@ id: E5-T19c
 epic: 5
 title: virtio-snd queue errors, XRUN events, and reset hardening
 priority: 519.3
-status: pending
+status: in-progress
 depends_on: [E5-T19b]
 estimate: S
 risk: medium
