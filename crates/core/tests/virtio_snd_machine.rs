@@ -446,6 +446,63 @@ fn controlq_reclaims_malformed_request_then_accepts_query_and_stop_start_resumes
 }
 
 #[test]
+fn controlq_bounds_oversized_request_and_short_response_without_poisoning_next_query() {
+    let (mut machine, slot_base, _clock, _captured) = setup_machine();
+    start_transport(&mut machine, slot_base);
+
+    let oversized = vec![0xa5; snd::MAX_CONTROL_REQUEST_BYTES + 1];
+    post_control(&mut machine, 0, &oversized, 4);
+    post_control(
+        &mut machine,
+        1,
+        &snd::QueryInfo {
+            code: VIRTIO_SND_R_PCM_INFO,
+            start_id: 0,
+            count: 1,
+            size: snd::PCM_INFO_SIZE as u32,
+        }
+        .to_bytes(),
+        3,
+    );
+    post_control(
+        &mut machine,
+        2,
+        &snd::QueryInfo {
+            code: VIRTIO_SND_R_PCM_INFO,
+            start_id: 0,
+            count: 1,
+            size: snd::PCM_INFO_SIZE as u32,
+        }
+        .to_bytes(),
+        (4 + snd::PCM_INFO_SIZE) as u32,
+    );
+    machine
+        .bus_mut()
+        .store32(slot_base + QUEUE_NOTIFY, snd::CONTROL_QUEUE)
+        .unwrap();
+    assert_eq!(machine.run(4), RunOutcome::MaxInstrs);
+
+    assert_eq!(used(&mut machine, CONTROL_USED), 3);
+    assert_eq!(
+        machine.bus_mut().load32(CONTROL_DATA + 0x40),
+        Ok(VIRTIO_SND_S_BAD_MSG)
+    );
+    assert_eq!(machine.bus_mut().load32(CONTROL_USED + 16), Ok(0));
+    assert_eq!(
+        machine.bus_mut().load32(CONTROL_DATA + 0x240),
+        Ok(VIRTIO_SND_S_OK)
+    );
+    let mut info = [0u8; snd::PCM_INFO_SIZE];
+    for (offset, byte) in info.iter_mut().enumerate() {
+        *byte = machine
+            .bus_mut()
+            .load8(CONTROL_DATA + 0x240 + 4 + offset as u64)
+            .unwrap();
+    }
+    assert_eq!(info, PcmInfo::output().to_bytes());
+}
+
+#[test]
 fn sound_uses_slot_seven_only_when_slot_six_is_already_occupied() {
     let mut machine = Machine::new(RAM_BYTES);
     machine.enable_clint(10);
