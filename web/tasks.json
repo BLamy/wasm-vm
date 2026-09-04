@@ -16591,7 +16591,7 @@
       "epicKey": "5",
       "title": "Canvas2D presentation backend and present contract",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T03c"
       ],

@@ -3,7 +3,7 @@ id: E5-T06a
 epic: 5
 title: Canvas2D presentation backend and present contract
 priority: 506.1
-status: pending
+status: in-progress
 depends_on: [E5-T03c]
 estimate: S
 risk: medium

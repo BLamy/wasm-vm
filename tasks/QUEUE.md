@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T06a** — Canvas2D presentation backend and present contract
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -344,7 +343,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `505.2` [E5-T05b](epic-5-the-window/E5-T05b-kernel-artifact-rebuild.md) — Rebuild and publish the Epic 5 kernel artifact *(deps: E5-T05a)*
 - [x] `505.3` [E5-T05c](epic-5-the-window/E5-T05c-kernel-headless-boot-regression.md) — Epic 5 kernel headless boot and provenance regression *(deps: E5-T05b)*
 - [-] `506` [E5-T06](epic-5-the-window/E5-T06-presentation-path-benchmark.md) — Canvas presentation path — measure putImageData vs WebGL upload, pick by data *(deps: E5-T03)*
-- [ ] `506.1` [E5-T06a](epic-5-the-window/E5-T06a-canvas2d-presentation.md) — Canvas2D presentation backend and present contract *(deps: E5-T03c)*
+- [~] `506.1` [E5-T06a](epic-5-the-window/E5-T06a-canvas2d-presentation.md) — Canvas2D presentation backend and present contract *(deps: E5-T03c)*
 - [ ] `506.2` [E5-T06b](epic-5-the-window/E5-T06b-webgl-presentation.md) — WebGL2 presentation backend *(deps: E5-T06a)*
 - [ ] `506.3` [E5-T06c](epic-5-the-window/E5-T06c-presentation-benchmark.md) — Presentation benchmark and measured backend decision *(deps: E5-T06a, E5-T06b)*
 - [ ] `506.4` [E5-T06d](epic-5-the-window/E5-T06d-presentation-integration.md) — Presentation selection, context-loss fallback, and VM integration *(deps: E5-T06c)*
