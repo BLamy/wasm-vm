@@ -372,7 +372,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [ ] `517` [E5-T17](epic-5-the-window/E5-T17-alpine-desktop-image.md) — Alpine riscv64 desktop disk image — reproducible build within size budget *(deps: E5-T16)*
 - [ ] `518` [E5-T18](epic-5-the-window/E5-T18-boot-to-desktop-bringup.md) — Boot-to-desktop bring-up — seat/udev/permissions debugged, playbook written *(deps: E5-T08, E5-T15, E5-T17)*
 - [-] `519` [E5-T19](epic-5-the-window/E5-T19-virtio-snd-pcm-device.md) — virtio-snd device — control plane and PCM playback stream machine *(deps: E5-T05c)*
-- [~] `519.1` [E5-T19a](epic-5-the-window/E5-T19a-snd-control-state.md) — virtio-snd control protocol and PCM state machine *(deps: E5-T05c)*
+- [?] `519.1` [E5-T19a](epic-5-the-window/E5-T19a-snd-control-state.md) — virtio-snd control protocol and PCM state machine *(deps: E5-T05c)*
 - [ ] `519.2` [E5-T19b](epic-5-the-window/E5-T19b-snd-playback-pacing.md) — virtio-snd paced playback and native audio sinks *(deps: E5-T19a)*
 - [ ] `519.3` [E5-T19c](epic-5-the-window/E5-T19c-snd-queue-xrun-hardening.md) — virtio-snd queue errors, XRUN events, and reset hardening *(deps: E5-T19b)*
 - [ ] `519.4` [E5-T19d](epic-5-the-window/E5-T19d-snd-guest-playback-proof.md) — virtio-snd Linux guest integration and playback proof *(deps: E5-T19c)*

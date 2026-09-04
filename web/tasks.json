@@ -17883,7 +17883,7 @@
       "epicKey": "5",
       "title": "virtio-snd control protocol and PCM state machine",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T05c"
       ],
@@ -17907,13 +17907,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\n- Commit: `411ac609038dfad39c8f3ad754ca445634314bfd`.\n- Commands: `cargo fmt --all -- --check`; `cargo test -p wasm-vm-core --test virtio_snd -- --nocapture`; `cargo test -p wasm-vm-core --lib --quiet`; `cargo clippy -p wasm-vm-core --all-targets -- -D warnings`; `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release`; `git diff --check`.\n- Results: focused control-plane suite 6/6 passed; core library 238/238 passed; clippy and the release wasm build passed.\n- Evidence: [`snd-control-native-2026-09-03.txt`](../../evidence/e5-t19a/snd-control-native-2026-09-03.txt), SHA-256 `133f452edb9b729b32a211a0e753c2c9bc0f2993a30aa249e197a712fa3363cc`.\n\nThe recorded native run exercises the exact JACK_INFO, PCM_INFO, and CHMAP_INFO wire payloads,\nthe five-state/six-request oracle, malformed and unsupported control requests, queue/reset\nmarkers, parameter-boundary rejection including 96 kHz, and a legal prepare/start/stop/resume/\nrelease sequence. The independent byte fixtures and state assertions show that rejected requests\ndo not mutate the stream, while the accepted setup remains usable.",
       "adversarial": "Permute control requests and selectors, repeat SET_PARAMS with boundary-sized buffers, and inject\nunknown stream IDs or truncated payloads. The oracle must show no illegal transition, panic, or\nstate mutation after a rejected request.",
       "file": "tasks/epic-5-the-window/E5-T19a-snd-control-state.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t19a): activate snd control state"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T19b",
