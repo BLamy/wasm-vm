@@ -24,6 +24,7 @@ export const HEADER = Object.freeze({
   MAGIC: 6,
   VERSION: 7,
   CHANNELS: 8,
+  UNDERRUNS: 9,
 });
 
 const UINT32_MAX = 0xffff_ffff;
@@ -131,6 +132,7 @@ function initializeHeader(sharedBuffer, {
   Atomics.store(header, HEADER.WRITE_SLOT, writeSlot);
   Atomics.store(header, HEADER.READ_SLOT, readSlot);
   Atomics.store(header, HEADER.FILL_FRAMES, fillFrames);
+  Atomics.store(header, HEADER.UNDERRUNS, 0);
   return header;
 }
 
@@ -235,6 +237,14 @@ export class AudioRingBuffer {
 
   get readIndex() {
     return Atomics.load(this._header, HEADER.READ_INDEX) >>> 0;
+  }
+
+  get underrunCount() {
+    return Atomics.load(this._header, HEADER.UNDERRUNS) >>> 0;
+  }
+
+  recordUnderrun() {
+    return (Atomics.add(this._header, HEADER.UNDERRUNS, 1) + 1) >>> 0;
   }
 
   producer() {

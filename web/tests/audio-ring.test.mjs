@@ -50,6 +50,7 @@ test("header cells are initialized and empty reads do not manufacture frames", (
   assert.equal(Atomics.load(header, HEADER.WRITE_SLOT), 0);
   assert.equal(Atomics.load(header, HEADER.READ_SLOT), 0);
   assert.equal(Atomics.load(header, HEADER.FILL_FRAMES), 0);
+  assert.equal(Atomics.load(header, HEADER.UNDERRUNS), 0);
   assert.equal(ring.consumer().readInto(new Float32Array(2)), 0);
   assert.equal(ring.fillFrames, 0);
 });

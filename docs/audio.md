@@ -23,7 +23,7 @@ update.
 | 24 | `MAGIC` | `AURG` header marker. |
 | 28 | `VERSION` | Layout version, currently `1`. |
 | 32 | `CHANNELS` | Interleaved channel count, currently `2`. |
-| 36 | reserved | Kept for future header-compatible metadata. |
+| 36 | `UNDERRUNS` | Atomic uint32 count of render quanta that did not have all requested frames. |
 
 Samples begin at byte 40. Frame `n` is stored at
 `40 + (slot * 2 + channel) * 4`, with channel 0 followed by channel 1. Capacity is intentionally
