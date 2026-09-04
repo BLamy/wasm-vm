@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>wasm-vm — display + serial host chrome</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        --bg: #090b0f;
+        --panel: #10141b;
+        --line: #242b36;
+        --text: #eef2f7;
+        --muted: #9aa6b2;
+        --green: #2ea043;
+        --red: #f85149;
+        --amber: #f2c94c;
+        --cyan: #53d4ff;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); }
+      header {
+        display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+        padding: 14px 18px; border-bottom: 1px solid var(--line); background: #0d1015;
+      }
+      h1 { margin: 0; font-size: 16px; font-weight: 650; }
+      h1 a { color: inherit; text-decoration: none; }
+      .subtitle { color: var(--muted); font: 12px ui-monospace, monospace; }
+      .status { margin-left: auto; color: var(--cyan); font: 12px ui-monospace, monospace; }
+      .status[data-state="ready"] { color: var(--green); }
+      .status[data-state="error"] { color: var(--red); }
+      main { max-width: 1500px; margin: 0 auto; padding: 18px; }
+      .host-chrome {
+        display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+        padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px 10px 0 0;
+        background: var(--panel);
+      }
+      .view-tabs { display: inline-flex; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 8px; }
+      button {
+        min-height: 32px; padding: 6px 11px; border: 1px solid var(--line); border-radius: 6px;
+        background: #1b222d; color: var(--text); cursor: pointer; font: inherit; font-size: 12px;
+      }
+      button:hover:not(:disabled) { border-color: #46627d; background: #223044; }
+      button.active { border-color: rgba(83,212,255,.7); background: #15364a; color: #fff; }
+      button.primary { border-color: #287555; background: #143c31; }
+      button.recording { border-color: #a34b4b; background: #4a2024; color: #ffd8d8; }
+      button:disabled { cursor: not-allowed; opacity: .45; }
+      .owner, .metric { color: var(--muted); font: 11px ui-monospace, monospace; white-space: nowrap; }
+      .spacer { flex: 1 1 auto; }
+      .capture-state { min-width: 180px; color: var(--muted); font: 11px ui-monospace, monospace; }
+      .capture-state[data-state="recording"] { color: var(--amber); }
+      .capture-state[data-state="ready"] { color: var(--green); }
+      .workspace { position: relative; min-height: min(74vh, 800px); border: 1px solid var(--line); border-top: 0; background: #05070a; }
+      .view-panel { min-height: min(74vh, 800px); }
+      .view-panel[hidden] { display: none; }
+      .display-head, .serial-head {
+        display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+        padding: 10px 13px; border-bottom: 1px solid var(--line); background: #0d1117;
+      }
+      h2 { margin: 0; font-size: 12px; text-transform: uppercase; }
+      .meta { color: var(--muted); font: 11px ui-monospace, monospace; }
+      .canvas-wrap { display: grid; place-items: center; min-height: calc(min(74vh, 800px) - 43px); padding: 18px; background: #000; }
+      #console-capture-canvas {
+        display: block; width: min(100%, 1280px); height: auto; aspect-ratio: 1280 / 800;
+        background: #000; image-rendering: pixelated; box-shadow: 0 0 0 1px #1c2430, 0 12px 36px rgba(0,0,0,.42);
+      }
+      #serial-terminal { height: calc(min(74vh, 800px) - 43px); min-height: 350px; padding: 12px; background: #0b0e14; }
+      #serial-terminal .xterm { height: 100%; }
+      .proof {
+        margin: 14px 0 0; padding: 12px; min-height: 90px; max-height: 30vh; overflow: auto;
+        border: 1px solid var(--line); border-radius: 8px; background: #0b0e14; color: #cdd6f4;
+        white-space: pre-wrap; overflow-wrap: anywhere; font: 11px ui-monospace, monospace;
+      }
+      .notes { margin: 10px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+      .notes code { color: #dbe5ef; font: 11px ui-monospace, monospace; }
+      @media (max-width: 760px) {
+        main { padding: 10px; }
+        .status { width: 100%; margin-left: 0; }
+        .canvas-wrap { min-height: 0; padding: 8px; }
+        #serial-terminal { height: 55vh; min-height: 280px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="./index.html">wasm-vm</a> — host chrome</h1>
+      <span class="subtitle">display + serial · live while hidden · PNG/WebM capture</span>
+      <div id="console-capture-status" class="status" role="status" aria-live="polite" data-state="booting">starting cold boot…</div>
+    </header>
+    <main id="console-capture-root" tabindex="-1">
+      <section class="host-chrome" aria-label="Display and serial host controls">
+        <div class="view-tabs" role="tablist" aria-label="Guest views">
+          <button id="console-view-display" class="active" type="button" role="tab" aria-selected="true" tabindex="0">Display</button>
+          <button id="console-view-serial" type="button" role="tab" aria-selected="false" tabindex="-1">Serial</button>
+        </div>
+        <span id="console-keyboard-owner" class="owner" role="status">Keyboard: display</span>
+        <span id="console-view-metrics" class="metric">flushes: 0 · serial: 0 B</span>
+        <span class="spacer"></span>
+        <button id="console-screenshot" class="primary" type="button" disabled>Screenshot PNG</button>
+        <button id="console-record" type="button" disabled>Record 10 s</button>
+        <span id="console-capture-state" class="capture-state" role="status" aria-live="polite">recorder idle</span>
+      </section>
+      <div class="workspace">
+        <section id="console-display-panel" class="view-panel" role="tabpanel" aria-labelledby="console-view-display">
+          <div class="display-head">
+            <h2>Guest display · virtio-gpu scanout</h2>
+            <span id="console-display-backend" class="meta">selecting Canvas2D…</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="console-capture-canvas" width="1280" height="800" tabindex="0" aria-label="RISC-V Linux display"></canvas>
+          </div>
+        </section>
+        <section id="console-serial-panel" class="view-panel" role="tabpanel" aria-labelledby="console-view-serial" hidden>
+          <div class="serial-head">
+            <h2>Serial console · ttyS0</h2>
+            <span id="console-serial-state" class="meta">waiting for guest</span>
+          </div>
+          <div id="serial-terminal" aria-label="Guest serial terminal"></div>
+        </section>
+      </div>
+      <p class="notes">Reserved view switch: <code>Ctrl+Alt+Backquote</code>. The chord is consumed in the host capture phase and view switches release any held guest keys. Display delivery and serial buffering continue while their panel is hidden.</p>
+      <pre id="console-capture-proof" class="proof" aria-live="polite">waiting for the guest and capture controls…</pre>
+    </main>
+    <script src="./node_modules/@xterm/xterm/lib/xterm.js"></script>
+    <script src="./node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
+    <script type="module" src="./console-capture.js"></script>
+  </body>
+</html>

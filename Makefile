@@ -578,6 +578,18 @@ verify-E5-T07d:
 	node tools/verify/e5-t07d-native-parity-stress.mjs --output evidence/e5-t07d/native-parity-stress.json
 	@echo "verify-E5-T07d (native parity and tty0 stress): OK"
 
+.PHONY: verify-E5-T08
+verify-E5-T08:
+	# Chromium + Firefox proof: one real cold guest, visibility-only Display/Serial tabs, the
+	# capture-phase reserved chord, readback-checked PNG, bounded WebM playback, and 50 toggles.
+	node --check web/src/host/console-capture.js
+	node --check web/console-capture.js
+	node --check tools/verify/e5-t08-console-capture.mjs
+	node --test web/tests/console-capture.test.mjs web/tests/capture-policy.test.mjs web/tests/held-keys.test.mjs
+	$(MAKE) web-build
+	node tools/verify/e5-t08-console-capture.mjs --output evidence/e5-t08/console-capture.json
+	@echo "verify-E5-T08 (display/serial host chrome and capture): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

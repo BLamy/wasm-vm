@@ -63,6 +63,13 @@
         font: 12px ui-monospace, monospace;
         white-space: nowrap;
       }
+      .host-capture-link {
+        color: var(--cyan);
+        font: 12px ui-monospace, monospace;
+        white-space: nowrap;
+        text-decoration: none;
+      }
+      .host-capture-link:hover { text-decoration: underline; }
       .audio-autoplay-badge {
         max-width: min(390px, 34vw);
         padding: 4px 8px;
@@ -1023,6 +1030,7 @@
         <button class="tab" data-tab="ide" role="tab" aria-selected="false">Demo</button>
         <button class="tab" data-tab="docs" role="tab" aria-selected="false">Docs</button>
       </nav>
+      <a class="host-capture-link" href="./console-capture.html">Display + serial</a>
       <span id="audio-autoplay-badge" class="audio-autoplay-badge" role="status" aria-live="polite">
         Audio muted until interaction — click or press a key to enable sound.
       </span>
