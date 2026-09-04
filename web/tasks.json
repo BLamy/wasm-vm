@@ -18258,15 +18258,16 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t20c): mark audio sink verified",
             "chore(e5-t20c): activate audio sink clock"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T20d",
@@ -18274,7 +18275,7 @@
       "epicKey": "5",
       "title": "Audio autoplay unlock and pre-unlock discard policy",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T20c"
       ],

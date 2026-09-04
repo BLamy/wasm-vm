@@ -3,7 +3,7 @@ id: E5-T20d
 epic: 5
 title: Audio autoplay unlock and pre-unlock discard policy
 priority: 520.4
-status: pending
+status: in-progress
 depends_on: [E5-T20c]
 estimate: S
 risk: medium
