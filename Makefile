@@ -724,6 +724,31 @@ verify-E5-T16b:
 	  --capture evidence/e5-t16b/labwc-capture.json --self-test
 	@echo "verify-E5-T16b (labwc/pixman riscv64 emulator workload): OK"
 
+.PHONY: verify-E5-T16c
+verify-E5-T16c:
+	# Real Alpine riscv64 Weston finalist proof: build the disposable signed image, run the exact
+	# T16a workload in the native emulator, then inspect the renderer/phase/evidence bindings. This
+	# slice intentionally has no independent-machine or WebKit leg.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-cli
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --features gpu-trace --lib
+	cargo test -p wasm-vm-core --features gpu-trace --test virtio_gpu_machine
+	cargo test -p wasm-vm-cli --bin wasm-vm --features gpu-trace
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	node --check tools/run-weston-pixman.mjs
+	node --check tools/verify/e5-t16c-weston-pixman.mjs
+	bash tools/build-weston-scratch.sh
+	node tools/display-server-workload.mjs run \
+	  --image target/e5-t16c/weston-image/alpine-rootfs.ext4 \
+	  --output evidence/e5-t16c/weston-capture.json -- \
+	  node tools/run-weston-pixman.mjs
+	node tools/verify/e5-t16c-weston-pixman.mjs \
+	  --capture evidence/e5-t16c/weston-capture.json
+	node tools/verify/e5-t16c-weston-pixman.mjs \
+	  --capture evidence/e5-t16c/weston-capture.json --self-test
+	@echo "verify-E5-T16c (weston/pixman riscv64 emulator workload): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

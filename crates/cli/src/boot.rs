@@ -809,21 +809,21 @@ pub fn boot(a: BootArgs) -> ExitCode {
             && let Some(workload) = display_workload.as_ref()
         {
             if let Some(error) = workload.error() {
-                eprintln!("wasm-vm: T16b display workload failed: {error}");
+                eprintln!("wasm-vm: display workload failed: {error}");
                 return ExitCode::from(1);
             }
             if !workload.is_complete() {
                 eprintln!(
-                    "wasm-vm: T16b display workload stopped after {}/{} phase markers",
+                    "wasm-vm: display workload stopped after {}/{} phase markers",
                     workload.next_phase,
                     DisplayWorkload::MARKERS.len()
                 );
                 return ExitCode::from(1);
             }
             match serde_json::to_string(&workload.capture()) {
-                Ok(capture) => eprintln!("E5T16B_CAPTURE_JSON {capture}"),
+                Ok(capture) => eprintln!("{}_CAPTURE_JSON {capture}", workload.marker_prefix),
                 Err(error) => {
-                    eprintln!("wasm-vm: cannot serialize T16b capture: {error}");
+                    eprintln!("wasm-vm: cannot serialize display capture: {error}");
                     return ExitCode::from(74);
                 }
             }
@@ -1483,7 +1483,7 @@ impl KeyboardProof {
     }
 }
 
-/// E5-T16b: the native side of the shared display workload.  The driver owns the serial script
+/// E5-T16b/c: the native side of the shared display workload. The driver owns the serial script
 /// and supplies the exact typing text through an environment variable; this object owns only
 /// guest input injection and phase accounting.  Every counter is sampled at a guest-emitted
 /// metric line plus the core's retired-instruction/GPU counters, so no host-native finalist value
@@ -1500,9 +1500,12 @@ struct DisplayWorkload {
     previous_end: Option<DisplayPoint>,
     error: Option<String>,
     foot_started: bool,
-    labwc_started: bool,
+    compositor_started: bool,
     terminal_exited: bool,
     compositor_exited: bool,
+    compositor: String,
+    compositor_marker: String,
+    marker_prefix: String,
     typing_text: String,
     typing_text_sha256: String,
     typing_frames: u64,
@@ -1554,17 +1557,19 @@ impl DisplayWorkload {
         gpu_state: Option<Rc<std::cell::RefCell<wasm_vm_core::dev::virtio::gpu::GpuState>>>,
         machine: &Machine,
     ) -> Result<Self, String> {
-        let typing_text = std::env::var("E5_T16B_TYPING_TEXT")
-            .map_err(|_| "E5_T16B_TYPING_TEXT is not set by the workload driver".to_string())?;
+        let compositor =
+            std::env::var("E5_T16_DISPLAY_COMPOSITOR").unwrap_or_else(|_| "labwc".to_string());
+        let (marker_prefix, typing_text_var, typing_sha_var) = Self::profile(&compositor)?;
+        let typing_text = std::env::var(typing_text_var)
+            .map_err(|_| format!("{typing_text_var} is not set by the workload driver"))?;
         if typing_text.chars().count() != 100 {
             return Err(format!(
-                "E5_T16B_TYPING_TEXT must contain 100 characters, got {}",
+                "{typing_text_var} must contain 100 characters, got {}",
                 typing_text.chars().count()
             ));
         }
-        let expected_sha = std::env::var("E5_T16B_TYPING_TEXT_SHA256").map_err(|_| {
-            "E5_T16B_TYPING_TEXT_SHA256 is not set by the workload driver".to_string()
-        })?;
+        let expected_sha = std::env::var(typing_sha_var)
+            .map_err(|_| format!("{typing_sha_var} is not set by the workload driver"))?;
         let actual_sha = format!("{:x}", Sha256::digest(typing_text.as_bytes()));
         if actual_sha != expected_sha {
             return Err(format!(
@@ -1593,9 +1598,12 @@ impl DisplayWorkload {
             previous_end: None,
             error: None,
             foot_started: false,
-            labwc_started: false,
+            compositor_started: false,
             terminal_exited: false,
             compositor_exited: false,
+            compositor_marker: compositor.to_ascii_uppercase(),
+            compositor,
+            marker_prefix: marker_prefix.to_string(),
             typing_text,
             typing_text_sha256: actual_sha,
             typing_frames: 0,
@@ -1605,6 +1613,24 @@ impl DisplayWorkload {
             metrics,
             gpu_state,
         })
+    }
+
+    fn profile(compositor: &str) -> Result<(&'static str, &'static str, &'static str), String> {
+        match compositor {
+            "labwc" => Ok((
+                "E5T16B",
+                "E5_T16B_TYPING_TEXT",
+                "E5_T16B_TYPING_TEXT_SHA256",
+            )),
+            "weston" => Ok((
+                "E5T16C",
+                "E5_T16C_TYPING_TEXT",
+                "E5_T16C_TYPING_TEXT_SHA256",
+            )),
+            other => Err(format!(
+                "E5_T16_DISPLAY_COMPOSITOR must be labwc or weston, got {other:?}"
+            )),
+        }
     }
 
     fn error(&self) -> Option<&str> {
@@ -1667,19 +1693,27 @@ impl DisplayWorkload {
     }
 
     fn observe_line(&mut self, line: &str) {
-        if line.contains("E5T16B_FOOT_STARTED=1") {
+        let foot_started = format!("{}_FOOT_STARTED=1", self.marker_prefix);
+        if line.contains(&foot_started) {
             self.foot_started = true;
         }
-        if line.contains("E5T16B_LABWC_STARTED=1") {
-            self.labwc_started = true;
+        let compositor_started = format!(
+            "{}_{}_STARTED=1",
+            self.marker_prefix, self.compositor_marker
+        );
+        if line.contains(&compositor_started) {
+            self.compositor_started = true;
         }
-        if line.contains("E5T16B_APP_EXITED=1") {
+        let app_exited = format!("{}_APP_EXITED=1", self.marker_prefix);
+        if line.contains(&app_exited) {
             self.terminal_exited = true;
         }
-        if line.contains("E5T16B_WM_EXITED=1") {
+        let compositor_exited = format!("{}_WM_EXITED=1", self.marker_prefix);
+        if line.contains(&compositor_exited) {
             self.compositor_exited = true;
         }
-        let Some(metric_start) = line.find("E5T16B_METRIC phase=") else {
+        let metric_marker = format!("{}_METRIC phase=", self.marker_prefix);
+        let Some(metric_start) = line.find(&metric_marker) else {
             return;
         };
         let fields = line[metric_start..].split_whitespace();
@@ -1758,12 +1792,15 @@ impl DisplayWorkload {
                 "measuredMs": end.wall_ms - start.wall_ms,
             }),
             "OPEN_TERMINAL" => {
-                if !self.labwc_started || !self.foot_started {
-                    self.fail("open-terminal marker arrived without labwc and foot start proofs");
+                if !self.compositor_started || !self.foot_started {
+                    self.fail(format!(
+                        "open-terminal marker arrived without {} and foot start proofs",
+                        self.compositor
+                    ));
                     return;
                 }
                 json!({
-                    "compositor": "labwc",
+                    "compositor": self.compositor,
                     "terminal": "foot",
                     "renderer": "pixman",
                 })
@@ -1901,8 +1938,8 @@ impl DisplayWorkload {
             self.typing_frames += 2;
         }
         eprintln!(
-            "wasm-vm: T16b injected {} keyboard frames ({} rejected events)",
-            self.typing_frames, self.typing_rejected_events
+            "wasm-vm: {} injected {} keyboard frames ({} rejected events)",
+            self.compositor, self.typing_frames, self.typing_rejected_events
         );
     }
 
@@ -1945,8 +1982,8 @@ impl DisplayWorkload {
             (EV_KEY, pointer::BTN_LEFT, 0),
         ]);
         eprintln!(
-            "wasm-vm: T16b injected {} tablet frames ({} rejected events)",
-            self.drag_frames, self.drag_rejected_events
+            "wasm-vm: {} injected {} tablet frames ({} rejected events)",
+            self.compositor, self.drag_frames, self.drag_rejected_events
         );
     }
 
@@ -1957,9 +1994,12 @@ impl DisplayWorkload {
             .map(|state| state.borrow().cursorq_commands())
             .unwrap_or(0);
         let cursorq_status = if cursorq_events > 0 {
-            "observed"
+            "observed".to_string()
         } else {
-            "capability-gap: labwc submitted no cursorq chain during this run"
+            format!(
+                "capability-gap: {} submitted no cursorq chain during this run",
+                self.compositor
+            )
         };
         json!({
             "phases": self.phases,
@@ -2179,5 +2219,31 @@ mod e4t01_symbolizer_tests {
         let t = table();
         assert_eq!(symbolize(&t, 0x7FFF_FFFF), None);
         assert_eq!(symbolize(&[], 0x8000_0000), None);
+    }
+}
+
+#[cfg(all(test, feature = "gpu-trace"))]
+mod display_workload_tests {
+    use super::DisplayWorkload;
+
+    #[test]
+    fn finalist_profiles_bind_their_marker_and_typing_contracts() {
+        assert_eq!(
+            DisplayWorkload::profile("labwc"),
+            Ok((
+                "E5T16B",
+                "E5_T16B_TYPING_TEXT",
+                "E5_T16B_TYPING_TEXT_SHA256"
+            ))
+        );
+        assert_eq!(
+            DisplayWorkload::profile("weston"),
+            Ok((
+                "E5T16C",
+                "E5_T16C_TYPING_TEXT",
+                "E5_T16C_TYPING_TEXT_SHA256"
+            ))
+        );
+        assert!(DisplayWorkload::profile("unknown").is_err());
     }
 }

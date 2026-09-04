@@ -164,17 +164,20 @@ for s in modules hwclock swap hostname bootmisc syslog seedrng; do link_svc boot
 link_svc default networking
 for s in killprocs savecache mount-ro; do link_svc shutdown "$s"; done
 
-# E5-T16b: the labwc finalist is a disposable measurement profile, not the production desktop
-# image.  Keep it opt-in so the E2/E3 base image remains byte-for-byte on its existing path.  The
+# E5-T16b/c: display finalists are disposable measurement profiles, not the production desktop
+# image. Keep them opt-in so the E2/E3 base image remains byte-for-byte on its existing path. The
 # profile still uses the real riscv64 APK packages and the emulator's DRM/input devices; it only
 # adds the minimum user/runtime/configuration needed to launch one measured compositor session.
 if [ -n "${DISPLAY_CANDIDATE:-}" ]; then
-  [ "$DISPLAY_CANDIDATE" = labwc ] || {
-    echo "unknown DISPLAY_CANDIDATE=$DISPLAY_CANDIDATE (expected labwc)" >&2
-    exit 2
-  }
+  case "$DISPLAY_CANDIDATE" in
+    labwc|weston) ;;
+    *)
+      echo "unknown DISPLAY_CANDIDATE=$DISPLAY_CANDIDATE (expected labwc or weston)" >&2
+      exit 2
+      ;;
+  esac
 
-  # eudev owns /dev event discovery when present.  Do not run mdev and udev together in the
+  # eudev owns /dev event discovery when present. Do not run mdev and udev together in the
   # scratch profile: both can race over the same device nodes and make a result non-replayable.
   if [ -e "$ROOT/etc/init.d/udev" ]; then
     rm -f "$ROOT/etc/runlevels/sysinit/mdev"
@@ -184,8 +187,8 @@ if [ -n "${DISPLAY_CANDIDATE:-}" ]; then
   link_svc default seatd
 
   # Cross-install deliberately skips APK post-install scripts, so create the measurement user
-  # and group memberships explicitly.  Existing numeric ids are preserved; a missing named
-  # group gets a stable private id instead of inheriting the host's account database.
+  # and group memberships explicitly. Existing numeric ids are preserved; a missing named group
+  # gets a stable private id instead of inheriting the host's account database.
   grep -q '^desktop:' "$ROOT/etc/passwd" 2>/dev/null || \
     printf 'desktop:x:1000:1000:wasm-vm display:/home/desktop:/bin/sh\n' >> "$ROOT/etc/passwd"
   grep -q '^desktop:' "$ROOT/etc/group" 2>/dev/null || \
@@ -194,7 +197,7 @@ if [ -n "${DISPLAY_CANDIDATE:-}" ]; then
     group="$1"
     fallback_gid="$2"
     group_file="$ROOT/etc/group"
-    group_tmp="$ROOT/etc/group.e5-t16b"
+    group_tmp="$ROOT/etc/group.e5-t16"
     awk -F: -v OFS=: -v wanted="$group" -v member=desktop -v fallback="$fallback_gid" '
       $1 == wanted {
         found = 1
@@ -211,12 +214,15 @@ if [ -n "${DISPLAY_CANDIDATE:-}" ]; then
   add_display_member audio 63
   add_display_member seat 996
   install -d -m0700 -o 1000 -g 1000 "$ROOT/home/desktop" "$ROOT/run/user/1000"
+  install -d -m0755 "$ROOT/usr/local/bin"
 
-  # A fixed launcher makes the renderer choice and the DRM backend visible in every transcript.
   # Keep the compositor and terminal in the same desktop session: Wayland creates its socket with
-  # the compositor user's ownership, so launching labwc as root would strand the desktop client.
-  install -d -m0755 "$ROOT/etc/xdg/labwc" "$ROOT/usr/local/bin"
-  cat > "$ROOT/usr/local/bin/e5-t16b-start-labwc" <<'LABWC'
+  # the compositor user's ownership, so launching either compositor as root would strand the
+  # desktop client. The candidate-specific launchers make the backend and renderer visible in every
+  # transcript and keep each scratch image's custom-input manifest self-describing.
+  if [ "$DISPLAY_CANDIDATE" = labwc ]; then
+    install -d -m0755 "$ROOT/etc/xdg/labwc"
+    cat > "$ROOT/usr/local/bin/e5-t16b-start-labwc" <<'LABWC'
 #!/bin/sh
 set -eu
 export WLR_BACKENDS=drm
@@ -232,8 +238,8 @@ exec runuser -u desktop -- env \
   XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
   labwc -d 2>&1
 LABWC
-  chmod 0755 "$ROOT/usr/local/bin/e5-t16b-start-labwc"
-  cat > "$ROOT/usr/local/bin/e5-t16b-open-terminal" <<'TERMINAL'
+    chmod 0755 "$ROOT/usr/local/bin/e5-t16b-start-labwc"
+    cat > "$ROOT/usr/local/bin/e5-t16b-open-terminal" <<'TERMINAL'
 #!/bin/sh
 set -eu
 export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/1000}
@@ -248,8 +254,8 @@ exec runuser -u desktop -- env \
   WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \
   foot "$@"
 TERMINAL
-  chmod 0755 "$ROOT/usr/local/bin/e5-t16b-open-terminal"
-  cat > "$ROOT/etc/xdg/labwc/rc.xml" <<'RCXML'
+    chmod 0755 "$ROOT/usr/local/bin/e5-t16b-open-terminal"
+    cat > "$ROOT/etc/xdg/labwc/rc.xml" <<'RCXML'
 <?xml version="1.0"?>
 <labwc_config>
   <core>
@@ -257,6 +263,41 @@ TERMINAL
   </core>
 </labwc_config>
 RCXML
+  else
+    install -d -m0755 "$ROOT/etc/xdg/weston"
+    cat > "$ROOT/usr/local/bin/e5-t16c-start-weston" <<'WESTON'
+#!/bin/sh
+set -eu
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/1000}
+export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+mkdir -p "$XDG_RUNTIME_DIR"
+chmod 700 "$XDG_RUNTIME_DIR"
+chown desktop:desktop "$XDG_RUNTIME_DIR"
+printf '%s\n' "E5T16C_LAUNCH weston --backend=drm --renderer=pixman --socket=wayland-0 --no-config"
+exec runuser -u desktop -- env \
+  HOME=/home/desktop \
+  XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+  WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \
+  weston --backend=drm --renderer=pixman --socket=wayland-0 --no-config 2>&1
+WESTON
+    chmod 0755 "$ROOT/usr/local/bin/e5-t16c-start-weston"
+    cat > "$ROOT/usr/local/bin/e5-t16c-open-terminal" <<'TERMINAL'
+#!/bin/sh
+set -eu
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/1000}
+export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+mkdir -p "$XDG_RUNTIME_DIR"
+chmod 700 "$XDG_RUNTIME_DIR"
+chown desktop:desktop "$XDG_RUNTIME_DIR"
+cd /home/desktop
+exec runuser -u desktop -- env \
+  HOME=/home/desktop \
+  XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+  WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \
+  foot "$@"
+TERMINAL
+    chmod 0755 "$ROOT/usr/local/bin/e5-t16c-open-terminal"
+  fi
 fi
 
 # E5-T23c: the static virtio-console agent. It owns only the named agent port and retries inside
@@ -294,13 +335,15 @@ link_svc default wasm-vm-file-agent
     digest=$(sha256sum "$ROOT$path" | awk '{print $1}')
     printf '%s 0%s %s\n' "$digest" "$mode" "$path"
   done
-  # E5-T16b's disposable finalist profile is present only when DISPLAY_CANDIDATE=labwc.  Include
+  # E5-T16b/c disposable finalist files are present only when DISPLAY_CANDIDATE is set. Include
   # every launcher/config file in the custom-input lock when it exists, while leaving the base
   # image's historical manifest unchanged.
   for path in \
     /usr/local/bin/e5-t16b-start-labwc \
     /usr/local/bin/e5-t16b-open-terminal \
-    /etc/xdg/labwc/rc.xml
+    /etc/xdg/labwc/rc.xml \
+    /usr/local/bin/e5-t16c-start-weston \
+    /usr/local/bin/e5-t16c-open-terminal
   do
     [ -e "$ROOT$path" ] || continue
     mode=$(stat -c '%a' "$ROOT$path")
