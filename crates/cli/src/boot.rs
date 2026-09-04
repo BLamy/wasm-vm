@@ -330,6 +330,15 @@ impl wasm_vm_core::prof::HostTimer for MonotonicTimer {
     }
 }
 
+/// E5-T19d: use the same monotonic source for native virtio-snd pacing. The sink remains
+/// host-independent here until the CLI grows an explicit capture/output policy; tests inject the
+/// native WavSink through `Machine::enable_virtio_snd_with_audio`.
+impl wasm_vm_core::dev::virtio::snd::AudioClock for MonotonicTimer {
+    fn now_ns(&self) -> u64 {
+        self.start.elapsed().as_nanos() as u64
+    }
+}
+
 /// E4-T01: parse a `System.map` (`<hex addr> <type> <name>` lines) into an address-sorted symbol
 /// table for resolving hot PCs. Malformed lines are skipped (never a panic).
 fn parse_system_map(path: &Path) -> std::io::Result<Vec<(u64, String)>> {
@@ -889,6 +898,13 @@ fn assemble(
     // E5-T11c: the concrete keyboard is present on every native Linux boot, so the rebuilt guest
     // can bind /dev/input/event0 before the host's first key injection.
     let _ = m.enable_virtio_keyboard();
+    // E5-T19d: reserve a free post-input virtio slot for the guest's four-queue sound device. The
+    // native default is headless, but it is still paced by a monotonic clock so `aplay` exercises
+    // the same non-bursting completion path as the later capture sink.
+    let _ = m.enable_virtio_snd_with_audio(
+        Rc::new(MonotonicTimer::new()),
+        Box::new(wasm_vm_core::dev::virtio::snd::NullSink::new()),
+    );
 
     // Built-in SBI firmware + its console channel (earlycon=sbi / legacy putchar).
     m.enable_builtin_sbi();

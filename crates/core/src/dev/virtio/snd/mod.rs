@@ -2,8 +2,9 @@
 //!
 //! This module owns the guest-visible identity, configuration queries, PCM capability contract,
 //! lifecycle validation, clock-paced output path, bounded event delivery, and malformed-queue
-//! recovery for the first stream. Guest integration remains in T19d. Wire helpers use explicit
-//! little-endian encoding so native and wasm callers observe the same bytes.
+//! recovery for the first stream. The Machine integration and guest-facing control queue are
+//! completed in T19d. Wire helpers use explicit little-endian encoding so native and wasm callers
+//! observe the same bytes.
 
 use alloc::collections::VecDeque;
 use alloc::rc::Rc;
@@ -25,6 +26,11 @@ pub const EVENT_QUEUE: u32 = 1;
 pub const TX_QUEUE: u32 = 2;
 pub const RX_QUEUE: u32 = 3;
 pub const NUM_QUEUES: u32 = 4;
+
+/// Stable starting slot for the sound device in the standard eight-slot virt machine. The Machine
+/// may use the next empty slot when a caller has already installed an optional secondary disk in
+/// this slot, preserving the established device slots rather than silently replacing one.
+pub const VIRTIO_SND_SLOT: usize = 6;
 
 /// This first sound device exposes one output jack, one output stream, and one channel map.
 pub const JACK_COUNT: u32 = 1;
@@ -101,6 +107,10 @@ pub const PCM_INFO_SIZE: usize = 32;
 pub const CHMAP_INFO_SIZE: usize = 24;
 pub const PCM_HDR_SIZE: usize = 8;
 pub const PCM_SET_PARAMS_SIZE: usize = 24;
+/// Largest control request accepted by the queue service. Every supported request is at most the
+/// 24-byte `PCM_SET_PARAMS` layout; bounding the copy keeps a hostile guest from turning a control
+/// kick into an unbounded host allocation.
+pub const MAX_CONTROL_REQUEST_BYTES: usize = PCM_SET_PARAMS_SIZE;
 /// The output-queue transfer header contains only the stream identifier.
 pub const PCM_XFER_HDR_SIZE: usize = 4;
 /// The device-written output-queue status is `{ status, latency_bytes }`.
@@ -1421,7 +1431,8 @@ impl SndState {
     }
 }
 
-/// Transport-facing virtio-snd device. Guest integration is the later T19d slice.
+/// Transport-facing virtio-snd device. Queue services retain the shared state handle so the
+/// Machine can process guest control/event/playback rings at instruction boundaries.
 pub struct VirtioSnd {
     state: Rc<RefCell<SndState>>,
 }
@@ -1536,7 +1547,34 @@ pub fn service(
     sink: &mut dyn AudioSink,
     bus: &mut SystemBus,
 ) -> PlaybackReport {
-    service_internal(slot, None, tx_vq, state, clock, sink, bus)
+    service_internal(slot, None, None, tx_vq, state, clock, sink, bus)
+}
+
+/// Run-loop service for the guest controlq, eventq, and playback txq. The control queue is the
+/// missing transport seam between the direct T19a oracle and a real Linux `snd_virtio` probe:
+/// requests are copied from guest-readable descriptors, dispatched by [`SndState::handle_control`],
+/// and written back to guest-writable response buffers before the used index is published.
+#[allow(clippy::too_many_arguments)]
+pub fn service_with_control_eventq(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    controlq: &mut Option<Virtqueue>,
+    eventq: &mut Option<Virtqueue>,
+    tx_vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<SndState>>,
+    clock: &dyn AudioClock,
+    sink: &mut dyn AudioSink,
+    bus: &mut SystemBus,
+) -> PlaybackReport {
+    service_internal(
+        slot,
+        Some(controlq),
+        Some(eventq),
+        tx_vq,
+        state,
+        clock,
+        sink,
+        bus,
+    )
 }
 
 enum QueuePreparation {
@@ -1572,6 +1610,118 @@ fn prepare_queue(
         }
     }
     QueuePreparation::Ready
+}
+
+/// Copy one bounded guest-readable control request. A request larger than the largest supported
+/// layout is rejected as BAD_MSG without allocating based on guest-controlled length.
+fn read_control_request(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+) -> Result<Option<Vec<u8>>, Violation> {
+    if chain.readable_len() > MAX_CONTROL_REQUEST_BYTES as u64 {
+        return Ok(None);
+    }
+    let mut request = Vec::with_capacity(chain.readable_len() as usize);
+    for segment in chain.readable() {
+        for offset in 0..u64::from(segment.len) {
+            let address = segment
+                .addr
+                .checked_add(offset)
+                .ok_or(Violation::BadAddress)?;
+            request.push(bus.load8(address).map_err(|_| Violation::BadAddress)?);
+        }
+    }
+    Ok(Some(request))
+}
+
+/// Write a complete control response or return a zero-length completion when the guest supplied
+/// too little writable space. Avoiding partial payloads keeps the status/payload pair atomic from
+/// Linux's perspective and lets the driver's next reset/re-setup recover the malformed buffer.
+fn write_control_response(
+    chain: &DescriptorChain,
+    response: &[u8],
+    bus: &mut SystemBus,
+) -> Result<u32, Violation> {
+    if chain.readable_len() == 0 || chain.writable_len() < response.len() as u64 {
+        return Ok(0);
+    }
+    let mut written = 0usize;
+    for segment in chain.writable() {
+        for offset in 0..u64::from(segment.len) {
+            if written == response.len() {
+                return Ok(written as u32);
+            }
+            let address = segment
+                .addr
+                .checked_add(offset)
+                .ok_or(Violation::BadAddress)?;
+            bus.store8(address, response[written])
+                .map_err(|_| Violation::BadAddress)?;
+            written += 1;
+        }
+    }
+    Ok(written as u32)
+}
+
+/// Drain controlq requests after the transport has observed a queue kick. Malformed but
+/// structurally valid requests are completed with a deterministic BAD_MSG response; malformed
+/// ring structure is escalated to NEEDS_RESET just like the other virtio services.
+fn service_controlq(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    controlq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<SndState>>,
+    bus: &mut SystemBus,
+) {
+    if !matches!(
+        prepare_queue(slot, controlq, CONTROL_QUEUE),
+        QueuePreparation::Ready
+    ) {
+        return;
+    }
+    let queue = controlq.as_mut().expect("controlq was prepared");
+    let mut completed = 0u32;
+    loop {
+        let chain = match queue.pop(bus) {
+            Ok(Some(chain)) => chain,
+            Ok(None) => break,
+            Err(_) => {
+                slot.borrow_mut().protocol_violation();
+                *controlq = None;
+                return;
+            }
+        };
+        let request = match read_control_request(&chain, bus) {
+            Ok(Some(request)) => request,
+            Ok(None) => Vec::new(),
+            Err(_) => {
+                slot.borrow_mut().protocol_violation();
+                *controlq = None;
+                return;
+            }
+        };
+        let response = if chain.readable_len() > MAX_CONTROL_REQUEST_BYTES as u64 {
+            response(SndStatus::BadMsg, &[])
+        } else {
+            state.borrow_mut().handle_control(&request)
+        };
+        let written = match write_control_response(&chain, &response, bus) {
+            Ok(written) => written,
+            Err(_) => {
+                slot.borrow_mut().protocol_violation();
+                *controlq = None;
+                return;
+            }
+        };
+        if queue.push_used(bus, chain.head, written).is_err() {
+            slot.borrow_mut().protocol_violation();
+            *controlq = None;
+            return;
+        }
+        completed = completed.saturating_add(1);
+    }
+    if completed != 0 && queue.interrupt_needed(bus) {
+        slot.borrow_mut().raise_used_irq();
+    }
 }
 
 fn write_event(
@@ -1666,11 +1816,13 @@ pub fn service_with_eventq(
     sink: &mut dyn AudioSink,
     bus: &mut SystemBus,
 ) -> PlaybackReport {
-    service_internal(slot, Some(eventq), tx_vq, state, clock, sink, bus)
+    service_internal(slot, None, Some(eventq), tx_vq, state, clock, sink, bus)
 }
 
+#[allow(clippy::too_many_arguments)]
 fn service_internal(
     slot: &Rc<RefCell<VirtioMmio>>,
+    mut controlq: Option<&mut Option<Virtqueue>>,
     mut eventq: Option<&mut Option<Virtqueue>>,
     tx_vq: &mut Option<Virtqueue>,
     state: &Rc<RefCell<SndState>>,
@@ -1678,28 +1830,44 @@ fn service_internal(
     sink: &mut dyn AudioSink,
     bus: &mut SystemBus,
 ) -> PlaybackReport {
-    let (reset, tx_kicked, event_kicked, active_audio, active_events) = {
+    let (reset, control_kicked, tx_kicked, event_kicked, active_audio, active_events) = {
         let mut state = state.borrow_mut();
         let reset = state.take_reset_pending();
+        let control_kicked = state.take_queue_kick(CONTROL_QUEUE);
         let tx_kicked = state.take_queue_kick(TX_QUEUE);
         let event_kicked = state.take_queue_kick(EVENT_QUEUE);
         let active_audio = state.stream.state() == PcmState::Running
             || !state.playback.pending.is_empty()
             || state.playback.release_pending;
         let active_events = !state.events.pending.is_empty();
-        (reset, tx_kicked, event_kicked, active_audio, active_events)
+        (
+            reset,
+            control_kicked,
+            tx_kicked,
+            event_kicked,
+            active_audio,
+            active_events,
+        )
     };
     if reset {
+        if let Some(controlq) = controlq.as_deref_mut() {
+            *controlq = None;
+        }
         *tx_vq = None;
         if let Some(eventq) = eventq.as_deref_mut() {
             *eventq = None;
         }
     }
-    if !tx_kicked && !event_kicked && !active_audio && !active_events {
+    if !control_kicked && !tx_kicked && !event_kicked && !active_audio && !active_events {
         return PlaybackReport::default();
     }
 
     let mut report = PlaybackReport::default();
+    if let Some(controlq) = controlq
+        && control_kicked
+    {
+        service_controlq(slot, controlq, state, bus);
+    }
     if (tx_kicked || active_audio)
         && matches!(
             prepare_queue(slot, tx_vq, TX_QUEUE),

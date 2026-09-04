@@ -300,6 +300,20 @@ pub struct Machine {
         Option<dev::virtio::queue::Virtqueue>,
         Option<dev::virtio::queue::Virtqueue>,
     )>,
+    /// E5-T19d: guest-facing virtio-snd state. The control/event/playback ring views are kept
+    /// across instruction boundaries just like the other virtio devices; the injected clock and
+    /// sink keep pacing deterministic while allowing native WavSink and browser sinks to share
+    /// the same Machine assembly seam.
+    #[allow(clippy::type_complexity)]
+    snd: Option<(
+        usize,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::snd::SndState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+        Option<dev::virtio::queue::Virtqueue>,
+        Option<dev::virtio::queue::Virtqueue>,
+        alloc::rc::Rc<dyn dev::virtio::snd::AudioClock>,
+        alloc::boxed::Box<dyn dev::virtio::snd::AudioSink>,
+    )>,
     /// E3-T12c3: the snapshot coherence binding — the base disk image this machine is running against
     /// (`base_image_hash`), the emulator build (`core_hash`), and the monotonic overlay-commit
     /// generation. `save_resume` stamps all three into the blob header; `load_resume` validates them
@@ -686,6 +700,7 @@ impl Machine {
             keyboard_leds: None,
             tablet: None,
             mouse: None,
+            snd: None,
             coherence: SnapshotCoherence::default(),
             // E4-T05: default the toggle to the `predecode` feature (OFF in the normal build);
             // the differential harness flips it at runtime via `set_block_cache`.
@@ -1478,6 +1493,77 @@ impl Machine {
         self.mouse
             .as_ref()
             .map(|(state, _, _)| alloc::rc::Rc::clone(state))
+    }
+
+    /// E5-T19d: attach the four-queue virtio-snd device to the first free sound slot. Slot 6 is
+    /// the standard location after keyboard/tablet/mouse; slot 7 is used only when an optional
+    /// secondary disk already occupies slot 6. Existing virtio slots are never replaced.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_snd(
+        &mut self,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::snd::SndState>>,
+    ) {
+        let clock = alloc::rc::Rc::new(dev::virtio::snd::ManualAudioClock::new());
+        self.enable_virtio_snd_with_audio(
+            clock,
+            alloc::boxed::Box::new(dev::virtio::snd::NullSink::new()),
+        )
+    }
+
+    /// Attach virtio-snd with a host-provided monotonic clock and output sink. The core owns both
+    /// for the life of the Machine, so a native WavSink, a browser ring sink, and the default
+    /// headless NullSink all exercise the same guest transport path.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_snd_with_audio(
+        &mut self,
+        clock: alloc::rc::Rc<dyn dev::virtio::snd::AudioClock>,
+        sink: alloc::boxed::Box<dyn dev::virtio::snd::AudioSink>,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::snd::SndState>>,
+    ) {
+        assert!(
+            self.virtio.len() > dev::virtio::snd::VIRTIO_SND_SLOT,
+            "enable_virtio_slots/enable_virtio_blk before enable_virtio_snd"
+        );
+        assert!(self.snd.is_none(), "virtio-snd is already enabled");
+        let slot_index = (dev::virtio::snd::VIRTIO_SND_SLOT..self.virtio.len())
+            .find(|&index| self.virtio[index].0.borrow().device_id() == 0)
+            .expect("no free virtio slot for virtio-snd");
+        let (device, state) = dev::virtio::snd::new();
+        assert!(
+            self.virtio[slot_index]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(device))
+                .is_ok(),
+            "virtio slot {slot_index} already has a device"
+        );
+        self.snd = Some((
+            slot_index,
+            alloc::rc::Rc::clone(&state),
+            None,
+            None,
+            None,
+            clock,
+            sink,
+        ));
+        (alloc::rc::Rc::clone(&self.virtio[slot_index].0), state)
+    }
+
+    /// Current guest-visible virtio-snd slot and shared state, if sound was assembled.
+    #[allow(clippy::type_complexity)]
+    pub fn virtio_snd(
+        &self,
+    ) -> Option<(
+        usize,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::snd::SndState>>,
+    )> {
+        self.snd
+            .as_ref()
+            .map(|(slot, state, _, _, _, _, _)| (*slot, alloc::rc::Rc::clone(state)))
     }
 
     /// E2-T16: attach the goldfish RTC at [`platform::virt::RTC_BASE`], wired to PLIC IRQ 11,
@@ -3561,6 +3647,24 @@ impl Machine {
                         &self.virtio[dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT].0,
                     );
                     dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
+                }
+                // E5-T19d: service sound controlq before eventq/txq so a Linux snd_virtio probe
+                // receives its QEMU-shaped responses at the same guest-visible boundary that it
+                // kicks the queue. Playback then uses the injected host clock/sink without changing
+                // any of the established blk/net/input slots.
+                if let Some((slot_index, state, controlq, eventq, txq, clock, sink)) = &mut self.snd
+                {
+                    let slot = alloc::rc::Rc::clone(&self.virtio[*slot_index].0);
+                    dev::virtio::snd::service_with_control_eventq(
+                        &slot,
+                        controlq,
+                        eventq,
+                        txq,
+                        state,
+                        clock.as_ref(),
+                        sink.as_mut(),
+                        &mut self.bus,
+                    );
                 }
                 // E2-T08: mirror each virtio slot's InterruptStatus level into the PLIC.
                 for (slot, line) in &self.virtio {

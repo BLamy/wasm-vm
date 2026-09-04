@@ -123,9 +123,10 @@ export const ROADMAP = [
     epic: "E5",
     title: "The Window",
     status: "pending",
-    blurb: "virtio-gpu — control queue, resource lifecycle, scanout, EDID — pixels on screen.",
+    blurb: "virtio-snd guest playback and virtio-gpu — sound and pixels on screen.",
     caps: [
       { name: "Virtio input pointer routing", status: "partial", evidence: "E5-T14a/b: deterministic tablet/mouse devices with browser mode routing" },
+      { name: "Virtio-snd guest playback path", status: "verified", evidence: "E5-T19d: real MMIO controlq/txq assembly, paced capture, malformed recovery, and STOP/START proof" },
       { name: "virtio-gpu control + resource queues", status: "pending" },
       { name: "Scanout transfer + flush", status: "pending" },
       { name: "EDID / display info", status: "pending" },

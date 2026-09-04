@@ -61,3 +61,18 @@ continues to the next descriptor. Short or wrongly-directed eventq buffers are r
 `used.len = 0` while the event remains pending for a later writable buffer. Reset clears both
 queue views and pending host state, and a changed transport queue layout causes a fresh ring view to
 be built on the next service boundary.
+
+## T19d assembled guest path
+
+`Machine::enable_virtio_snd_with_audio` installs the four-queue device in the first free slot at or
+after slot 6. The normal layout is slot 6 after the keyboard/tablet/mouse devices; slot 7 is a
+deliberate fallback when an optional secondary disk already occupies slot 6. No existing virtio
+backend is replaced. Native and browser Linux assembly both use this seam, with a monotonic host
+clock and a headless `NullSink` until T20 supplies the AudioWorklet sink.
+
+At each instruction boundary the Machine services controlq before eventq/txq. Control requests are
+copied through the real split ring, answered with the fixed specification response bytes used by
+the direct oracle, and published before the guest resumes. The T19d Machine fixture
+(`crates/core/tests/virtio_snd_machine.rs`) drives this path through actual MMIO QueueNotify writes:
+it checks preserved slot identities, malformed-control recovery, exact `PCM_INFO`, held-clock
+playback, and immediate STOP/START resumption with a bit-exact captured ramp.

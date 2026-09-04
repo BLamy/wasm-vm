@@ -1105,6 +1105,21 @@ impl wasm_vm_core::prof::HostTimer for JsHostTimer {
     }
 }
 
+/// E5-T19d: the browser's monotonic performance clock also drives virtio-snd queue pacing. It is
+/// deliberately the same realm-local source used by profiling, so a guest playback transfer can
+/// never be completed in a burst merely because the emulator yielded to JavaScript.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl wasm_vm_core::dev::virtio::snd::AudioClock for JsHostTimer {
+    fn now_ns(&self) -> u64 {
+        let ms = self.perf.now();
+        if ms <= 0.0 {
+            0
+        } else {
+            (ms * 1_000_000.0) as u64
+        }
+    }
+}
+
 /// E2-T21: a browser-side unmodified-Linux boot. Unlike [`WasmMachine`] (bare-metal ELF + a
 /// Uart0 stub), this assembles the full `virt` platform (CLINT/PLIC/16550/virtio/goldfish-RTC/
 /// syscon/built-in SBI) via the SHARED [`Machine::place_and_boot`] and boots a kernel `Image`
@@ -1711,6 +1726,22 @@ impl WasmLinux {
         // E5-T14a: keep both pointer devices guest-visible on every browser boot. T14b selects
         // which state receives DOM frames; the tablet and relative mouse remain stable peers.
         let _ = machine.enable_virtio_pointer();
+        // E5-T19d: expose the four-queue virtio-snd device after the established input slots. The
+        // browser sink is intentionally NullSink until E5-T20's AudioWorklet bridge, but the
+        // guest-facing controlq and real-time pacing already run through the production assembly.
+        let audio_clock = JsHostTimer::new()
+            .map(|clock| {
+                std::rc::Rc::new(clock)
+                    as std::rc::Rc<dyn wasm_vm_core::dev::virtio::snd::AudioClock>
+            })
+            .unwrap_or_else(|| {
+                std::rc::Rc::new(wasm_vm_core::dev::virtio::snd::ManualAudioClock::new())
+                    as std::rc::Rc<dyn wasm_vm_core::dev::virtio::snd::AudioClock>
+            });
+        let _ = machine.enable_virtio_snd_with_audio(
+            audio_clock,
+            Box::new(wasm_vm_core::dev::virtio::snd::NullSink::new()),
+        );
         machine.enable_builtin_sbi();
         let out = std::rc::Rc::new(RefCell::new(Vec::new()));
         machine.sbi_set_console(Box::new(BufSink { buf: out.clone() }));

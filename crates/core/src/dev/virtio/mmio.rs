@@ -126,6 +126,15 @@ impl VirtioMmio {
         Ok(())
     }
 
+    /// Device id currently installed in this slot, or zero for an empty slot. Machine assembly
+    /// uses this read-only view to place optional devices without disturbing established slots.
+    pub fn device_id(&self) -> u32 {
+        self.dev
+            .as_ref()
+            .map(|device| device.device_id())
+            .unwrap_or(0)
+    }
+
     fn with_backend(dev: Option<Box<dyn VirtioDevice>>) -> Self {
         Self {
             dev,
