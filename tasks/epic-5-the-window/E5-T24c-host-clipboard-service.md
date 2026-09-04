@@ -3,7 +3,7 @@ id: E5-T24c
 epic: 5
 title: Add host clipboard permissions and gesture-ordered sync
 priority: 524.3
-status: pending
+status: in-progress
 depends_on: [E5-T24a, E5-T24b]
 estimate: S
 risk: high
