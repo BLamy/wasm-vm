@@ -18,6 +18,9 @@ license.workspace = true
 default = ["std"]
 std = ["log/std"]
 trace = []
+# E5-T07a: retain a bounded, host-readable virtio-gpu controlq command log for the
+# native first-light proof. The production path never enables recording at runtime.
+gpu-trace = []
 # E4-T05: default the predecoded block cache ON at construction (the runtime `set_block_cache`
 # toggle still overrides). OFF by default so the normal build keeps the legacy decode path; the
 # differential harness flips the runtime flag in one binary to prove byte-identical traces.

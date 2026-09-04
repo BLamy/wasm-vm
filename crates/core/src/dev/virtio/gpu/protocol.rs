@@ -7,32 +7,41 @@
 pub const CMD_GET_DISPLAY_INFO: u32 = 0x0100;
 /// `VIRTIO_GPU_CMD_RESOURCE_CREATE_2D`.
 pub const CMD_RESOURCE_CREATE_2D: u32 = 0x0101;
-/// `VIRTIO_GPU_CMD_RESOURCE_ATTACH_BACKING`.
-pub const CMD_RESOURCE_ATTACH_BACKING: u32 = 0x0102;
-/// `VIRTIO_GPU_CMD_RESOURCE_DETACH_BACKING`.
-pub const CMD_RESOURCE_DETACH_BACKING: u32 = 0x0103;
 /// `VIRTIO_GPU_CMD_RESOURCE_UNREF`.
-pub const CMD_RESOURCE_UNREF: u32 = 0x0104;
-/// `VIRTIO_GPU_CMD_SET_SCANOUT` in the device's GPU command table.
-pub const CMD_SET_SCANOUT: u32 = 0x0105;
-/// `VIRTIO_GPU_CMD_TRANSFER_TO_HOST_2D` in the device's GPU command table.
-pub const CMD_TRANSFER_TO_HOST_2D: u32 = 0x0106;
-/// `VIRTIO_GPU_CMD_RESOURCE_FLUSH` in the device's GPU command table.
-pub const CMD_RESOURCE_FLUSH: u32 = 0x0107;
-/// `VIRTIO_GPU_CMD_GET_EDID` in the device's GPU command table.
-pub const CMD_GET_EDID: u32 = 0x0108;
+pub const CMD_RESOURCE_UNREF: u32 = 0x0102;
+/// `VIRTIO_GPU_CMD_SET_SCANOUT`.
+pub const CMD_SET_SCANOUT: u32 = 0x0103;
+/// `VIRTIO_GPU_CMD_RESOURCE_FLUSH`.
+pub const CMD_RESOURCE_FLUSH: u32 = 0x0104;
+/// `VIRTIO_GPU_CMD_TRANSFER_TO_HOST_2D`.
+pub const CMD_TRANSFER_TO_HOST_2D: u32 = 0x0105;
+/// `VIRTIO_GPU_CMD_RESOURCE_ATTACH_BACKING`.
+pub const CMD_RESOURCE_ATTACH_BACKING: u32 = 0x0106;
+/// `VIRTIO_GPU_CMD_RESOURCE_DETACH_BACKING`.
+pub const CMD_RESOURCE_DETACH_BACKING: u32 = 0x0107;
+/// `VIRTIO_GPU_CMD_GET_CAPSET_INFO`.
+pub const CMD_GET_CAPSET_INFO: u32 = 0x0108;
+/// `VIRTIO_GPU_CMD_GET_CAPSET`.
+pub const CMD_GET_CAPSET: u32 = 0x0109;
+/// `VIRTIO_GPU_CMD_GET_EDID`.
+pub const CMD_GET_EDID: u32 = 0x010a;
 /// Successful `GET_DISPLAY_INFO` response.
 pub const RESP_OK_DISPLAY_INFO: u32 = 0x1101;
-/// Successful `GET_EDID` response.
-pub const RESP_OK_EDID: u32 = 0x1102;
 /// Successful command with no response payload.
 pub const RESP_OK_NODATA: u32 = 0x1100;
+/// Successful `GET_CAPSET_INFO` response.
+pub const RESP_OK_CAPSET_INFO: u32 = 0x1102;
+/// Successful `GET_CAPSET` response.
+pub const RESP_OK_CAPSET: u32 = 0x1103;
+/// Successful `GET_EDID` response.
+pub const RESP_OK_EDID: u32 = 0x1104;
 /// Generic unsupported/malformed-command response (used by E5-T01c).
 pub const RESP_ERR_UNSPEC: u32 = 0x1200;
 /// Resource command errors (virtio-gpu spec §5.7.6.4).
 pub const RESP_ERR_OUT_OF_MEMORY: u32 = 0x1201;
+pub const RESP_ERR_INVALID_SCANOUT_ID: u32 = 0x1202;
 pub const RESP_ERR_INVALID_RESOURCE_ID: u32 = 0x1203;
-pub const RESP_ERR_INVALID_SCANOUT_ID: u32 = 0x1204;
+pub const RESP_ERR_INVALID_CONTEXT_ID: u32 = 0x1204;
 pub const RESP_ERR_INVALID_PARAMETER: u32 = 0x1205;
 /// Request/response fence flag.
 pub const FLAG_FENCE: u32 = 1 << 0;

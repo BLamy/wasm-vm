@@ -1,0 +1,17 @@
+wasm-vm virtio-gpu command trace v1
+records=15 dropped=0
+seq=0 command=GET_EDID(0x0000010a) response=RESP_OK_EDID(0x00001104) scanout=0 resource=- dimensions=1280x800 avail=1 used=1 head=0 len=152
+seq=1 command=GET_DISPLAY_INFO(0x00000100) response=RESP_OK_DISPLAY_INFO(0x00001101) scanout=0 resource=- dimensions=1280x800 avail=2 used=2 head=2 len=408
+seq=2 command=RESOURCE_CREATE_2D(0x00000101) response=RESP_OK_NODATA(0x00001100) scanout=- resource=2 dimensions=1280x800 avail=3 used=3 head=2 len=24
+seq=3 command=RESOURCE_ATTACH_BACKING(0x00000106) response=RESP_OK_NODATA(0x00001100) scanout=- resource=2 dimensions=1280x800 avail=4 used=4 head=0 len=24
+seq=4 command=SET_SCANOUT(0x00000103) response=RESP_OK_NODATA(0x00001100) scanout=0 resource=0 dimensions=- avail=5 used=5 head=0 len=24
+seq=5 command=TRANSFER_TO_HOST_2D(0x00000105) response=RESP_OK_NODATA(0x00001100) scanout=- resource=2 dimensions=1280x800 avail=6 used=6 head=4 len=24
+seq=6 command=SET_SCANOUT(0x00000103) response=RESP_OK_NODATA(0x00001100) scanout=0 resource=2 dimensions=1280x800 avail=7 used=7 head=3 len=24
+seq=7 command=RESOURCE_FLUSH(0x00000104) response=RESP_OK_NODATA(0x00001100) scanout=0 resource=2 dimensions=1280x800 avail=8 used=8 head=6 len=24
+seq=8 command=TRANSFER_TO_HOST_2D(0x00000105) response=RESP_OK_NODATA(0x00001100) scanout=- resource=2 dimensions=1280x800 avail=9 used=9 head=8 len=24
+seq=9 command=SET_SCANOUT(0x00000103) response=RESP_OK_NODATA(0x00001100) scanout=0 resource=2 dimensions=1280x800 avail=10 used=10 head=10 len=24
+seq=10 command=RESOURCE_FLUSH(0x00000104) response=RESP_OK_NODATA(0x00001100) scanout=0 resource=2 dimensions=1280x800 avail=11 used=11 head=12 len=24
+seq=11 command=TRANSFER_TO_HOST_2D(0x00000105) response=RESP_OK_NODATA(0x00001100) scanout=- resource=2 dimensions=1280x800 avail=12 used=12 head=14 len=24
+seq=12 command=RESOURCE_FLUSH(0x00000104) response=RESP_OK_NODATA(0x00001100) scanout=0 resource=2 dimensions=1280x800 avail=13 used=13 head=16 len=24
+seq=13 command=TRANSFER_TO_HOST_2D(0x00000105) response=RESP_OK_NODATA(0x00001100) scanout=- resource=2 dimensions=1280x800 avail=14 used=14 head=16 len=24
+seq=14 command=RESOURCE_FLUSH(0x00000104) response=RESP_OK_NODATA(0x00001100) scanout=0 resource=2 dimensions=1280x800 avail=15 used=15 head=14 len=24

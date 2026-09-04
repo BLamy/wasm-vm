@@ -513,6 +513,20 @@ verify-E5-T06d:
 	node tools/verify/e5-t06d-present-integration.mjs --output evidence/e5-t06d/presentation-integration.json
 	@echo "verify-E5-T06d (presentation selection and context-loss integration): OK"
 
+.PHONY: verify-E5-T07a
+verify-E5-T07a:
+	# Guest-facing first-light proof: the feature-gated native recorder is enabled only for this
+	# acceptance build; its final trace is compared byte-for-byte with the checked-in fixture.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-cli
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --features gpu-trace --lib
+	cargo test -p wasm-vm-core --features gpu-trace --test virtio_gpu_machine
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	node --check tools/verify/e5-t07a-fbcon-probe.mjs
+	node tools/verify/e5-t07a-fbcon-probe.mjs
+	@echo "verify-E5-T07a (native virtio-gpu fbcon probe trace): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

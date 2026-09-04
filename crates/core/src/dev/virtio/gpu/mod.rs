@@ -31,6 +31,40 @@ pub struct FlushRecord {
     pub crc32: u32,
 }
 
+/// One guest command completed by the control queue. This is compiled only for the
+/// E5-T07a proof build; the runtime flag on [`GpuState`] keeps the normal headless and
+/// browser paths allocation-free.
+#[cfg(feature = "gpu-trace")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct CommandTraceRecord {
+    /// Monotonic command number for this GPU boot.
+    pub sequence: u64,
+    /// Raw `virtio_gpu_ctrl_type` request. Zero means the chain had no complete header.
+    pub command_type: u32,
+    /// Raw response type published in the writable response buffer. Zero means that no
+    /// complete response header was available to inspect.
+    pub response_type: u32,
+    /// Scanout mentioned by the request, or the scanout receiving a flush.
+    pub scanout: Option<u32>,
+    /// Resource mentioned by the request, if the request carried one.
+    pub resource_id: Option<u32>,
+    /// Resource dimensions observed before the command ran. Display-info uses the current
+    /// display dimensions; commands without a live resource use `None`.
+    pub resource_width: Option<u32>,
+    pub resource_height: Option<u32>,
+    /// Queue shadow positions after the request was consumed and its used entry published.
+    pub avail_idx: u16,
+    pub used_idx: u16,
+    /// Used-ring entry identity and response length for the just-published completion.
+    pub used_head: u16,
+    pub response_len: u32,
+}
+
+/// A deliberately bounded trace store. A malicious guest can submit commands indefinitely, so
+/// enabling the proof recorder must not turn guest traffic into an unbounded host allocation.
+#[cfg(feature = "gpu-trace")]
+const COMMAND_TRACE_CAPACITY: usize = 65_536;
+
 /// In-memory presentation sink for deterministic native and wasm tests.
 #[derive(Clone, Default)]
 pub struct TestSink {
@@ -170,6 +204,16 @@ pub struct GpuState {
     pub frame_sink: Box<dyn FrameSink>,
     /// Number of valid GET_DISPLAY_INFO requests completed by the service.
     pub commands_served: u64,
+    /// E5-T07a: bounded controlq trace, present only in the proof feature build. The
+    /// recorder is disabled until a host explicitly arms it.
+    #[cfg(feature = "gpu-trace")]
+    command_trace: Vec<CommandTraceRecord>,
+    #[cfg(feature = "gpu-trace")]
+    command_trace_enabled: bool,
+    #[cfg(feature = "gpu-trace")]
+    command_trace_sequence: u64,
+    #[cfg(feature = "gpu-trace")]
+    command_trace_dropped: u64,
 }
 
 impl GpuState {
@@ -191,6 +235,14 @@ impl GpuState {
             scanout_resource: None,
             frame_sink: sink,
             commands_served: 0,
+            #[cfg(feature = "gpu-trace")]
+            command_trace: Vec::new(),
+            #[cfg(feature = "gpu-trace")]
+            command_trace_enabled: false,
+            #[cfg(feature = "gpu-trace")]
+            command_trace_sequence: 0,
+            #[cfg(feature = "gpu-trace")]
+            command_trace_dropped: 0,
         }
     }
 
@@ -226,6 +278,71 @@ impl GpuState {
         }
     }
 
+    /// E5-T07a: arm the bounded guest command trace. Recording is opt-in even when the
+    /// `gpu-trace` feature is compiled, so normal native and browser boots retain the
+    /// null-sink behavior and do not allocate trace storage.
+    #[cfg(feature = "gpu-trace")]
+    pub fn enable_command_trace(&mut self) {
+        self.command_trace_enabled = true;
+    }
+
+    /// E5-T07a: clear a previously captured command trace and restart its sequence number.
+    #[cfg(feature = "gpu-trace")]
+    pub fn clear_command_trace(&mut self) {
+        self.command_trace.clear();
+        self.command_trace_sequence = 0;
+        self.command_trace_dropped = 0;
+    }
+
+    /// E5-T07a: return an owned snapshot of the bounded command trace.
+    #[cfg(feature = "gpu-trace")]
+    pub fn command_trace(&self) -> Vec<CommandTraceRecord> {
+        self.command_trace.clone()
+    }
+
+    /// Number of completed commands omitted after the bounded trace reached its cap or a
+    /// host allocation was refused.
+    #[cfg(feature = "gpu-trace")]
+    pub fn command_trace_dropped(&self) -> u64 {
+        self.command_trace_dropped
+    }
+
+    #[cfg(feature = "gpu-trace")]
+    fn record_command(
+        &mut self,
+        meta: CommandTraceMeta,
+        response_type: u32,
+        avail_idx: u16,
+        used_idx: u16,
+        used_head: u16,
+        response_len: u32,
+    ) {
+        if !self.command_trace_enabled {
+            return;
+        }
+        let sequence = self.command_trace_sequence;
+        self.command_trace_sequence = self.command_trace_sequence.wrapping_add(1);
+        if self.command_trace.len() >= COMMAND_TRACE_CAPACITY
+            || self.command_trace.try_reserve(1).is_err()
+        {
+            self.command_trace_dropped = self.command_trace_dropped.saturating_add(1);
+            return;
+        }
+        self.command_trace.push(CommandTraceRecord {
+            sequence,
+            command_type: meta.command_type,
+            response_type,
+            scanout: meta.scanout,
+            resource_id: meta.resource_id,
+            resource_width: meta.resource_width,
+            resource_height: meta.resource_height,
+            avail_idx,
+            used_idx,
+            used_head,
+            response_len,
+        });
+    }
+
     fn raise_event(&mut self, bits: u32) {
         if bits & VIRTIO_GPU_EVENT_DISPLAY != 0 && self.events_read & VIRTIO_GPU_EVENT_DISPLAY == 0
         {
@@ -255,6 +372,8 @@ impl GpuState {
         self.resources = resources::ResourceMap::new();
         self.scanout_resource = None;
         self.reset_pending = true;
+        #[cfg(feature = "gpu-trace")]
+        self.clear_command_trace();
     }
 }
 
@@ -473,6 +592,158 @@ fn read_header(chain: &DescriptorChain, bus: &mut SystemBus) -> Option<protocol:
 /// hostile descriptor cannot turn a malformed command into an unbounded host allocation.
 fn read_request<const N: usize>(chain: &DescriptorChain, bus: &mut SystemBus) -> Option<[u8; N]> {
     read_readable_at::<N>(chain, bus, 0)
+}
+
+/// Read a small fixed-size window from the device-writable response stream. The response type is
+/// sampled before used-ring publication, but the trace itself is recorded only after publication.
+#[cfg(feature = "gpu-trace")]
+fn read_writable_at<const N: usize>(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    start: u64,
+) -> Option<[u8; N]> {
+    let end = start.checked_add(N as u64)?;
+    if end > chain.writable_len() {
+        return None;
+    }
+
+    let mut skip = start;
+    let mut copied = 0usize;
+    let mut bytes = [0u8; N];
+    for segment in chain.writable() {
+        let segment_len = u64::from(segment.len);
+        if skip >= segment_len {
+            skip -= segment_len;
+            continue;
+        }
+        let available = segment_len - skip;
+        let take = available.min((N - copied) as u64);
+        for offset in 0..take {
+            let guest_addr = segment.addr.checked_add(skip.checked_add(offset)?)?;
+            bytes[copied] = bus.load8(guest_addr).ok()?;
+            copied += 1;
+        }
+        skip = 0;
+        if copied == N {
+            return Some(bytes);
+        }
+    }
+    None
+}
+
+/// Trace-only metadata decoded from the request before it mutates the resource store. Keeping
+/// this separate from command execution means an invalid request still gets an accurate resource
+/// id/dimension annotation while the completion ordering remains owned by `service`.
+#[cfg(feature = "gpu-trace")]
+#[derive(Clone, Copy, Default)]
+struct CommandTraceMeta {
+    command_type: u32,
+    scanout: Option<u32>,
+    resource_id: Option<u32>,
+    resource_width: Option<u32>,
+    resource_height: Option<u32>,
+}
+
+#[cfg(feature = "gpu-trace")]
+fn command_trace_meta(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    state: &Rc<RefCell<GpuState>>,
+    request: Option<protocol::CtrlHeader>,
+) -> CommandTraceMeta {
+    let Some(request) = request else {
+        return CommandTraceMeta::default();
+    };
+    let mut meta = CommandTraceMeta {
+        command_type: request.ty,
+        ..CommandTraceMeta::default()
+    };
+
+    match request.ty {
+        protocol::CMD_GET_DISPLAY_INFO => {
+            meta.scanout = Some(0);
+            let (width, height) = state.borrow().display_size();
+            meta.resource_width = Some(width);
+            meta.resource_height = Some(height);
+        }
+        protocol::CMD_GET_EDID => {
+            if let Some(bytes) = read_request::<{ protocol::GET_EDID_REQUEST_SIZE }>(chain, bus)
+                && let Some(get_edid) = protocol::GetEdid::from_bytes(&bytes)
+            {
+                meta.scanout = Some(get_edid.scanout_id);
+            }
+            let (width, height) = state.borrow().display_size();
+            meta.resource_width = Some(width);
+            meta.resource_height = Some(height);
+        }
+        protocol::CMD_RESOURCE_CREATE_2D => {
+            if let Some(bytes) = read_request::<{ protocol::RESOURCE_CREATE_2D_SIZE }>(chain, bus)
+                && let Some(create) = protocol::ResourceCreate2d::from_bytes(&bytes)
+            {
+                meta.resource_id = Some(create.resource_id);
+                meta.resource_width = Some(create.width);
+                meta.resource_height = Some(create.height);
+            }
+        }
+        protocol::CMD_RESOURCE_ATTACH_BACKING => {
+            if let Some(bytes) =
+                read_request::<{ protocol::RESOURCE_ATTACH_BACKING_HEADER_SIZE }>(chain, bus)
+                && let Some(attach) = protocol::ResourceAttachBacking::from_bytes(&bytes)
+            {
+                meta.resource_id = Some(attach.resource_id);
+            }
+        }
+        protocol::CMD_RESOURCE_DETACH_BACKING => {
+            if let Some(bytes) =
+                read_request::<{ protocol::RESOURCE_DETACH_BACKING_SIZE }>(chain, bus)
+                && let Some(detach) = protocol::ResourceDetachBacking::from_bytes(&bytes)
+            {
+                meta.resource_id = Some(detach.resource_id);
+            }
+        }
+        protocol::CMD_RESOURCE_UNREF => {
+            if let Some(bytes) = read_request::<{ protocol::RESOURCE_UNREF_SIZE }>(chain, bus)
+                && let Some(unref) = protocol::ResourceUnref::from_bytes(&bytes)
+            {
+                meta.resource_id = Some(unref.resource_id);
+            }
+        }
+        protocol::CMD_SET_SCANOUT => {
+            if let Some(bytes) = read_request::<{ protocol::SET_SCANOUT_SIZE }>(chain, bus)
+                && let Some(set_scanout) = protocol::SetScanout::from_bytes(&bytes)
+            {
+                meta.scanout = Some(set_scanout.scanout_id);
+                meta.resource_id = Some(set_scanout.resource_id);
+            }
+        }
+        protocol::CMD_TRANSFER_TO_HOST_2D => {
+            if let Some(bytes) = read_request::<{ protocol::TRANSFER_TO_HOST_2D_SIZE }>(chain, bus)
+                && let Some(transfer) = protocol::TransferToHost2d::from_bytes(&bytes)
+            {
+                meta.resource_id = Some(transfer.resource_id);
+            }
+        }
+        protocol::CMD_RESOURCE_FLUSH => {
+            if let Some(bytes) = read_request::<{ protocol::RESOURCE_FLUSH_SIZE }>(chain, bus)
+                && let Some(flush) = protocol::ResourceFlush::from_bytes(&bytes)
+            {
+                meta.resource_id = Some(flush.resource_id);
+                if state.borrow().scanout_resource == Some(flush.resource_id) {
+                    meta.scanout = Some(0);
+                }
+            }
+        }
+        _ => {}
+    }
+
+    if let Some(resource_id) = meta.resource_id {
+        let state_ref = state.borrow();
+        if let Some(resource) = state_ref.resources.get(resource_id) {
+            meta.resource_width.get_or_insert(resource.width);
+            meta.resource_height.get_or_insert(resource.height);
+        }
+    }
+    meta
 }
 
 /// Write a response prefix across all device-writable descriptors. A short tail is truncated at
@@ -825,7 +1096,10 @@ pub fn service(
             }
         };
 
-        let written = match read_header(&chain, bus) {
+        let request = read_header(&chain, bus);
+        #[cfg(feature = "gpu-trace")]
+        let trace_meta = command_trace_meta(&chain, bus, state, request);
+        let written = match request {
             Some(request) if request.ty == protocol::CMD_GET_DISPLAY_INFO => {
                 let (width, height) = state.borrow().display_size();
                 let response = protocol::DisplayInfoResponse::new_with_mode(
@@ -1001,10 +1275,33 @@ pub fn service(
             _ => 0,
         };
 
+        #[cfg(feature = "gpu-trace")]
+        let response_type = if written >= 4 {
+            read_writable_at::<4>(&chain, bus, 0)
+                .map(u32::from_le_bytes)
+                .unwrap_or(0)
+        } else {
+            0
+        };
+
         if queue.push_used(bus, chain.head, written).is_err() {
             slot.borrow_mut().protocol_violation();
             *vq = None;
             return;
+        }
+        #[cfg(feature = "gpu-trace")]
+        {
+            // The trace record is deliberately emitted after push_used: its used_idx and
+            // response_len therefore prove that this command has a published completion.
+            let (avail_idx, used_idx) = queue.ring_indices();
+            state.borrow_mut().record_command(
+                trace_meta,
+                response_type,
+                avail_idx,
+                used_idx,
+                chain.head,
+                written,
+            );
         }
         delivered_work = true;
     }
@@ -2181,6 +2478,8 @@ mod tests {
             (VALID_RESPONSE, 408, 2, 0),
         ];
         let (slot, state, mut vq) = queue_for_test(&mut bus, &descriptors);
+        #[cfg(feature = "gpu-trace")]
+        state.borrow_mut().enable_command_trace();
         set_avail_heads(&mut bus, &[0, 2, 4, 5]);
         slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
 
@@ -2214,6 +2513,23 @@ mod tests {
         assert_eq!(valid_response.modes[0].enabled, 1);
         assert_eq!(valid_response.modes[0].width, 1280);
         assert_eq!(state.borrow().commands_served, 2);
+        #[cfg(feature = "gpu-trace")]
+        {
+            let trace = state.borrow().command_trace();
+            assert_eq!(trace.len(), 4);
+            assert_eq!(trace[0].command_type, 0xDEAD);
+            assert_eq!(trace[0].response_type, protocol::RESP_ERR_UNSPEC);
+            assert_eq!(trace[1].command_type, 0);
+            assert_eq!(trace[1].response_type, 0);
+            assert_eq!(trace[2].response_type, 0);
+            assert_eq!(trace[3].response_type, protocol::RESP_OK_DISPLAY_INFO);
+            for (sequence, record) in trace.iter().enumerate() {
+                assert_eq!(record.sequence, sequence as u64);
+                assert_eq!(record.avail_idx, sequence as u16 + 1);
+                assert_eq!(record.used_idx, sequence as u16 + 1);
+                assert_eq!(record.used_head, [0, 2, 4, 5][sequence]);
+            }
+        }
     }
 
     #[test]
@@ -2265,7 +2581,7 @@ mod tests {
             resource_id: 0x1122_3344,
         };
         let expected = [
-            0x05, 0x01, 0x00, 0x00, // type
+            0x03, 0x01, 0x00, 0x00, // type
             0x44, 0x33, 0x22, 0x11, // flags
             0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, // fence_id
             0xD4, 0xC3, 0xB2, 0xA1, // ctx_id
@@ -2516,7 +2832,7 @@ mod tests {
             padding: 0xAABB_CCDD,
         };
         let expected = [
-            0x07, 0x01, 0x00, 0x00, // type
+            0x04, 0x01, 0x00, 0x00, // type
             0x44, 0x33, 0x22, 0x11, // flags
             0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, // fence_id
             0xD4, 0xC3, 0xB2, 0xA1, // ctx_id
@@ -2555,7 +2871,7 @@ mod tests {
             padding: 0xAABB_CCDD,
         };
         let expected = [
-            0x06, 0x01, 0x00, 0x00, // type
+            0x05, 0x01, 0x00, 0x00, // type
             0x44, 0x33, 0x22, 0x11, // flags
             0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, // fence_id
             0xD4, 0xC3, 0xB2, 0xA1, // ctx_id
@@ -3041,7 +3357,11 @@ mod tests {
             }
             let (slot, state, mut vq) = queue_for_test(&mut bus, &descriptors);
             let sink = TestSink::new();
-            state.borrow_mut().frame_sink = Box::new(sink.clone());
+            let mut state_ref = state.borrow_mut();
+            state_ref.frame_sink = Box::new(sink.clone());
+            #[cfg(feature = "gpu-trace")]
+            state_ref.enable_command_trace();
+            drop(state_ref);
             set_avail_heads(&mut bus, &[0, 2, 4, 6, 8]);
             slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
 
@@ -3086,6 +3406,38 @@ mod tests {
                 }],
                 "sink record {index}"
             );
+
+            #[cfg(feature = "gpu-trace")]
+            {
+                let trace = state.borrow().command_trace();
+                assert_eq!(trace.len(), 5, "command count for pattern {index}");
+                assert_eq!(
+                    trace
+                        .iter()
+                        .map(|record| record.command_type)
+                        .collect::<alloc::vec::Vec<_>>(),
+                    alloc::vec![
+                        protocol::CMD_RESOURCE_CREATE_2D,
+                        protocol::CMD_RESOURCE_ATTACH_BACKING,
+                        protocol::CMD_SET_SCANOUT,
+                        protocol::CMD_TRANSFER_TO_HOST_2D,
+                        protocol::CMD_RESOURCE_FLUSH,
+                    ],
+                    "command sequence for pattern {index}"
+                );
+                assert!(trace.iter().all(|record| {
+                    record.response_type == protocol::RESP_OK_NODATA
+                        && record.avail_idx == record.sequence as u16 + 1
+                        && record.used_idx == record.sequence as u16 + 1
+                        && record.used_head == record.sequence as u16 * 2
+                }));
+                assert_eq!(trace[0].resource_width, Some(WIDTH));
+                assert_eq!(trace[0].resource_height, Some(HEIGHT));
+                assert_eq!(trace[4].scanout, Some(0));
+                assert_eq!(trace[4].resource_id, Some(1));
+                assert_eq!(trace[4].resource_width, Some(WIDTH));
+                assert_eq!(trace[4].resource_height, Some(HEIGHT));
+            }
 
             // Guest backing is not the sink's pixel view: mutating the source after TRANSFER and
             // FLUSH cannot alter either the host shadow or the already-owned record.

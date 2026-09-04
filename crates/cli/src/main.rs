@@ -49,6 +49,7 @@ struct Cli {
 }
 
 #[derive(Subcommand)]
+#[allow(clippy::large_enum_variant)]
 enum Cmd {
     /// Load a bare-metal rv64 ELF and execute it.
     Run(RunArgs),

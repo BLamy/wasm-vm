@@ -13,6 +13,8 @@
 //! interactive. Nothing here is a new device — it is glue over [`wasm_vm_core`].
 
 use std::cell::Cell;
+#[cfg(feature = "gpu-trace")]
+use std::fmt::Write as _;
 use std::io::{self, Read, Write};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
@@ -222,6 +224,12 @@ pub struct BootArgs {
     /// guest service unless it is present.
     #[arg(long, value_name = "PATH")]
     pub agent_proof: Option<PathBuf>,
+    /// E5-T07a: attach the headless virtio-gpu and write its bounded, used-ring-ordered controlq
+    /// trace at exit. Available in the proof build (`--features gpu-trace`); normal boots do not
+    /// assemble a display device.
+    #[cfg(feature = "gpu-trace")]
+    #[arg(long, value_name = "PATH")]
+    pub gpu_trace: Option<PathBuf>,
     /// E3-T12c4: take a whole-machine resume snapshot (`Machine::save_resume`) the first time the
     /// guest console prints `--snapshot-trigger`, write it to this path, and exit 0. The snapshot
     /// quiesces the virtio-blk in-flight set first (E3-T12c2) and refuses (exit 103, no file) if it
@@ -558,7 +566,8 @@ pub fn boot(a: BootArgs) -> ExitCode {
         if boot_num > 1 {
             eprintln!("wasm-vm: --- reboot #{} ---", boot_num - 1);
         }
-        let (mut m, uart, agent_state) = match assemble(&a, &kernel, &initrd, &console) {
+        let (mut m, uart, agent_state, _gpu_state) = match assemble(&a, &kernel, &initrd, &console)
+        {
             Ok(v) => v,
             Err(code) => return code,
         };
@@ -681,6 +690,13 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 &mut null,
             )
         };
+        #[cfg(feature = "gpu-trace")]
+        if let (Some(path), Some(state)) = (&a.gpu_trace, _gpu_state.as_ref())
+            && let Err(e) = write_gpu_trace(path, state)
+        {
+            eprintln!("wasm-vm: cannot write GPU trace {}: {e}", path.display());
+            return ExitCode::from(74);
+        }
         // Final drain before we act on the outcome.
         let out = uart.borrow_mut().take_output();
         console.write_bytes(&out);
@@ -833,6 +849,7 @@ type AssembledMachine = (
     Machine,
     Rc<std::cell::RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
     Option<Rc<std::cell::RefCell<wasm_vm_core::dev::virtio::console::ConsoleState>>>,
+    Option<Rc<std::cell::RefCell<wasm_vm_core::dev::virtio::gpu::GpuState>>>,
 );
 
 fn assemble(
@@ -937,6 +954,25 @@ fn assemble(
     );
     let agent_state = a.agent_proof.as_ref().map(|_| m.enable_virtio_console().1);
 
+    #[cfg(feature = "gpu-trace")]
+    let gpu_state = if let Some(path) = &a.gpu_trace {
+        let Some((_, state)) =
+            m.enable_virtio_gpu(Box::new(wasm_vm_core::dev::virtio::gpu::NullSink))
+        else {
+            eprintln!(
+                "wasm-vm: cannot attach virtio-gpu for trace {}; slots 4..7 are occupied",
+                path.display()
+            );
+            return Err(ExitCode::from(2));
+        };
+        state.borrow_mut().enable_command_trace();
+        Some(state)
+    } else {
+        None
+    };
+    #[cfg(not(feature = "gpu-trace"))]
+    let gpu_state = None;
+
     // Built-in SBI firmware + its console channel (earlycon=sbi / legacy putchar).
     m.enable_builtin_sbi();
     m.sbi_set_console(Box::new(console.clone()));
@@ -986,7 +1022,90 @@ fn assemble(
         layout.dtb_addr,
         a.ram_mib,
     );
-    Ok((m, uart, agent_state))
+    Ok((m, uart, agent_state, gpu_state))
+}
+
+#[cfg(feature = "gpu-trace")]
+fn gpu_command_name(command: u32) -> &'static str {
+    use wasm_vm_core::dev::virtio::gpu::protocol as p;
+    match command {
+        p::CMD_GET_DISPLAY_INFO => "GET_DISPLAY_INFO",
+        p::CMD_GET_EDID => "GET_EDID",
+        p::CMD_GET_CAPSET_INFO => "GET_CAPSET_INFO",
+        p::CMD_GET_CAPSET => "GET_CAPSET",
+        p::CMD_RESOURCE_CREATE_2D => "RESOURCE_CREATE_2D",
+        p::CMD_RESOURCE_ATTACH_BACKING => "RESOURCE_ATTACH_BACKING",
+        p::CMD_RESOURCE_DETACH_BACKING => "RESOURCE_DETACH_BACKING",
+        p::CMD_RESOURCE_UNREF => "RESOURCE_UNREF",
+        p::CMD_SET_SCANOUT => "SET_SCANOUT",
+        p::CMD_TRANSFER_TO_HOST_2D => "TRANSFER_TO_HOST_2D",
+        p::CMD_RESOURCE_FLUSH => "RESOURCE_FLUSH",
+        0 => "INVALID_HEADER",
+        _ => "UNKNOWN",
+    }
+}
+
+#[cfg(feature = "gpu-trace")]
+fn gpu_response_name(response: u32) -> &'static str {
+    use wasm_vm_core::dev::virtio::gpu::protocol as p;
+    match response {
+        p::RESP_OK_NODATA => "RESP_OK_NODATA",
+        p::RESP_OK_DISPLAY_INFO => "RESP_OK_DISPLAY_INFO",
+        p::RESP_OK_CAPSET_INFO => "RESP_OK_CAPSET_INFO",
+        p::RESP_OK_CAPSET => "RESP_OK_CAPSET",
+        p::RESP_OK_EDID => "RESP_OK_EDID",
+        p::RESP_ERR_UNSPEC => "RESP_ERR_UNSPEC",
+        p::RESP_ERR_OUT_OF_MEMORY => "RESP_ERR_OUT_OF_MEMORY",
+        p::RESP_ERR_INVALID_RESOURCE_ID => "RESP_ERR_INVALID_RESOURCE_ID",
+        p::RESP_ERR_INVALID_SCANOUT_ID => "RESP_ERR_INVALID_SCANOUT_ID",
+        p::RESP_ERR_INVALID_PARAMETER => "RESP_ERR_INVALID_PARAMETER",
+        0 => "NO_RESPONSE",
+        _ => "UNKNOWN_RESPONSE",
+    }
+}
+
+#[cfg(feature = "gpu-trace")]
+fn write_gpu_trace(
+    path: &Path,
+    state: &Rc<std::cell::RefCell<wasm_vm_core::dev::virtio::gpu::GpuState>>,
+) -> io::Result<()> {
+    let (records, dropped) = {
+        let state = state.borrow();
+        (state.command_trace(), state.command_trace_dropped())
+    };
+    let mut output = String::new();
+    writeln!(output, "wasm-vm virtio-gpu command trace v1").unwrap();
+    writeln!(output, "records={} dropped={dropped}", records.len()).unwrap();
+    for record in records {
+        let dimensions = match (record.resource_width, record.resource_height) {
+            (Some(width), Some(height)) => format!("{width}x{height}"),
+            _ => "-".to_string(),
+        };
+        let scanout = record
+            .scanout
+            .map_or_else(|| "-".to_string(), |value| value.to_string());
+        let resource = record
+            .resource_id
+            .map_or_else(|| "-".to_string(), |value| value.to_string());
+        writeln!(
+            output,
+            "seq={} command={}({:#010x}) response={}({:#010x}) scanout={} resource={} dimensions={} avail={} used={} head={} len={}",
+            record.sequence,
+            gpu_command_name(record.command_type),
+            record.command_type,
+            gpu_response_name(record.response_type),
+            record.response_type,
+            scanout,
+            resource,
+            dimensions,
+            record.avail_idx,
+            record.used_idx,
+            record.used_head,
+            record.response_len,
+        )
+        .unwrap();
+    }
+    std::fs::write(path, output)
 }
 
 /// Run one assembled machine to its terminal [`RunOutcome`], executing in quanta while pumping

@@ -13,6 +13,7 @@
 //! | `std`        | yes   | off     | default; host integration                     |
 //! | `trace`      | no    | on      | `no_std` + instruction-trace hooks (E0-T16)   |
 //! | `std,trace`  | yes   | on      | full host + tracing                           |
+//! | `gpu-trace`  | no    | off     | bounded virtio-gpu probe trace (E5-T07a)     |
 //!
 //! Diagnostics route through the [`log`] facade (never `println!`), so hosts choose the
 //! backend (`env_logger` in the CLI, `console_log` in wasm). **Tracing is zero-cost when
@@ -1316,11 +1317,11 @@ impl Machine {
         state
     }
 
-    /// E5-T06d: attach the virtio-gpu control queue to the preferred optional slot. The
-    /// established eight-slot platform has two optional positions (6 and 7); choose slot 7 when
-    /// available so the existing sound device keeps its standard slot 6, and use slot 6 only when
-    /// slot 7 is already occupied. Returning `None` lets callers with all optional positions
-    /// consumed keep their existing headless device set without replacing another backend.
+    /// E5-T06d/E5-T07a: attach the virtio-gpu control queue to the highest free optional slot.
+    /// Slots 7 and 6 remain preferred so the browser's established device layout is unchanged;
+    /// native proof assemblies may also keep the fixed agent console in slot 7 and sound in slot
+    /// 6, in which case the GPU uses an earlier empty slot. Returning `None` lets callers with
+    /// every slot consumed keep their existing device set without replacing another backend.
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu(
         &mut self,
@@ -1334,12 +1335,9 @@ impl Machine {
             "enable_virtio_slots/enable_virtio_blk before enable_virtio_gpu"
         );
         assert!(self.gpu.is_none(), "virtio-gpu is already enabled");
-        let slot_index = [
-            dev::virtio::gpu::VIRTIO_GPU_SLOT,
-            dev::virtio::gpu::VIRTIO_GPU_SLOT - 1,
-        ]
-        .into_iter()
-        .find(|&index| self.virtio[index].0.borrow().device_id() == 0)?;
+        let slot_index = (4..=dev::virtio::gpu::VIRTIO_GPU_SLOT)
+            .rev()
+            .find(|&index| self.virtio[index].0.borrow().device_id() == 0)?;
         let (device, state) = dev::virtio::gpu::VirtioGpu::new_with_sink_state(sink);
         assert!(
             self.virtio[slot_index]
