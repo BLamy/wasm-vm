@@ -16874,15 +16874,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t07a): mark fbcon probe verified",
             "chore(e5-t07a): activate guest probe trace"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T07b",
@@ -16890,7 +16891,7 @@
       "epicKey": "5",
       "title": "Browser fbcon first-light boot on the display canvas",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T07a"
       ],

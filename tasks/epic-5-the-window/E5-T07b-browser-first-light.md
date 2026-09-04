@@ -3,7 +3,7 @@ id: E5-T07b
 epic: 5
 title: Browser fbcon first-light boot on the display canvas
 priority: 507.2
-status: pending
+status: in-progress
 depends_on: [E5-T07a]
 estimate: S
 risk: high
