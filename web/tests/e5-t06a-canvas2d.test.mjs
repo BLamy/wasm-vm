@@ -233,6 +233,29 @@ test("partial x=1 width=3 damage changes only its target pixels", () => {
   ]));
 });
 
+test("right-edge odd-width damage crosses every row boundary without shearing", () => {
+  const canvasWidth = 9;
+  const canvasHeight = 5;
+  const rect = { x: 6, y: 0, width: 3, height: 5 };
+  const canvas = new FakeCanvas(canvasWidth, canvasHeight);
+  const backend = new Canvas2DBackend(canvas);
+  const background = new Uint32Array(canvasWidth * canvasHeight).fill(0x7f010203);
+  const damageWords = new Uint32Array([
+    0x00010203, 0xff040506, 0x80070809,
+    0x7f0a0b0c, 0x000d0e0f, 0xff101112,
+    0x80131415, 0x7f161718, 0x00191a1b,
+    0xff1c1d1e, 0x80202122, 0x7f232425,
+    0x00262728, 0xff292a2b, 0x802c2d2e,
+  ]);
+  const frame = frameWithDamage(background, canvasWidth, rect, damageWords);
+  backend.present({ x: 0, y: 0, width: canvasWidth, height: canvasHeight }, background);
+  backend.present(rect, frame);
+  assertReadback(canvas, canvasReference(canvasWidth, canvasHeight, [
+    { x: 0, y: 0, width: canvasWidth, height: canvasHeight, words: background },
+    { ...rect, words: damageWords },
+  ]));
+});
+
 test("resize discards old staging and bounds 1,000 present cycles by current canvas size", () => {
   const canvas = new FakeCanvas(1, 1);
   const backend = new Canvas2DBackend(canvas);
