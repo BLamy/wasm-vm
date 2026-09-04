@@ -3,7 +3,7 @@ id: E5-T09a
 epic: 5
 title: Core virtio-gpu damage coalescer
 priority: 509.1
-status: pending
+status: in-progress
 depends_on: [E5-T07d]
 estimate: S
 risk: high

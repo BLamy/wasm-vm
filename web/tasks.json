@@ -17107,7 +17107,7 @@
       "epicKey": "5",
       "title": "Core virtio-gpu damage coalescer",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T07d"
       ],
