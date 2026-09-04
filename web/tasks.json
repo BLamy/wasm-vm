@@ -18851,15 +18851,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t23b): record virtio-console evidence",
             "chore(e5-t23b): activate virtio-console transport task"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T23c",
@@ -18867,7 +18868,7 @@
       "epicKey": "5",
       "title": "Static riscv64 guest agent and OpenRC service",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T23b"
       ],

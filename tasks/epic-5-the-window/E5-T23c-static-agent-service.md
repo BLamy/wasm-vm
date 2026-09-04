@@ -3,7 +3,7 @@ id: E5-T23c
 epic: 5
 title: Static riscv64 guest agent and OpenRC service
 priority: 523.3
-status: pending
+status: in-progress
 depends_on: [E5-T23b]
 estimate: S
 risk: high
