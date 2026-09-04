@@ -3,7 +3,7 @@ id: E5-T09e
 epic: 5
 title: Damage tiling and frame-pacing integration proof
 priority: 509.5
-status: pending
+status: in-progress
 depends_on: [E5-T09d]
 estimate: S
 risk: medium

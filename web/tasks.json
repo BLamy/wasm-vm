@@ -17226,15 +17226,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t09d): record hidden present evidence",
             "chore(e5-t09d): activate hidden present metrics"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T09e",
@@ -17242,7 +17243,7 @@
       "epicKey": "5",
       "title": "Damage tiling and frame-pacing integration proof",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T09d"
       ],
