@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 253,
+    "verified": 254,
     "total": 414
   },
   "epics": [
@@ -16959,7 +16959,7 @@
       "epicKey": "5",
       "title": "Native fbcon parity and first-light stress proof",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T07c"
       ],
@@ -16970,13 +16970,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — verifier — VERDICT: verified\n\n- P1 native/browser probe parity — HELD. Predicted the native null-sink boot would preserve the\n  T07a terminal controlq order and 1280x800 resource dimensions; `native-probe-gpu.log:1-17`\n  contains 15 records, `dropped=0`, contiguous used-ring progress, and an exact normalized match\n  to `tests/fixtures/gpu-probe.log`. The Chromium stress proof reports the same 1280x800 surface,\n  all Linux virtio-gpu/DRM/fbcon markers, and `sourceDistParity.equal=true`.\n- P2 scroll/VT stress — HELD. Predicted the native null sink would complete the one-million-byte\n  `/dev/tty0` write and 100-switch loop with a clean shutdown; the recorded native transcript has\n  `1000000 bytes`, `E5T07D_SCROLL_OK`, `E5T07D_VT_OK`, and `reboot: Power down`, while guest\n  evidence records a positive retired count and `outcome=Exited(0)`. Chromium independently held\n  the reference buffer equal to Canvas2D (`mismatchBytes=0`), with 707 callbacks, 707 successful\n  presents, no drops, stable dimensions, preserved pixels outside every observed damage rectangle,\n  contiguous sampled callback sequence, and 216/216 scheduled input bytes.\n- P3 queue-delay attack and reload cleanup — HELD. A second Chromium run with seed `23` and a\n  forced 1 ms delay at each present also held readback equality (`mismatchBytes=0`, 690 callbacks,\n  no browser errors). The manual seed-31 run was interrupted after input call 1 and reloaded; the\n  fresh controller reached all three boot markers with `inputCalls=0`, `inputBytes=0`, and 21 new\n  framebuffer callbacks.\n- COVERAGE — HELD. The exact implementation head was\n  `742889bb5657552e0818b267d0ce7e0c4dd5d423`; the verifier exercised the native parity/stress\n  process, the browser route, delayed second seed, and interrupted reload route. Independent\n  machines, WebKit, and host rr are intentionally excluded by this task's boundary and policy.\n- SUITE: the permanent artifact is `make verify-E5-T07d`, which runs the scoped Rust gates,\n  release CLI build, Chromium-only verifier, source/dist parity, screenshot, guest evidence, and\n  normalized native trace comparison.\n\nCommands: `make verify-E5-T07d`\n\nEvidence: `evidence/e5-t07d/native-parity-stress.json` (SHA-256\n`9870c73e4958e4477533165f5fb7a8917dd264d1e0f0a70e09a571c773d01d9b`),\n`evidence/e5-t07d/native-probe-gpu.log` (SHA-256\n`06eff203f10b1583a4c4450a6e20ff56792a25b70402a22ebeaf03f62d5f4e0b`), and\n`evidence/e5-t07d/tty0-stress.png` (SHA-256\n`e57be9f2d64ba60aa37d85cbbc912aed6615d4083544456eaca89e46babf3542`).\n\nThe recording demonstrates that the checked-in kernel/initramfs reaches the same native terminal\nprobe boundary, survives the bounded tty0/VT workload, preserves the browser framebuffer against\nan independent model under normal and delayed presentation, and reconstructs a clean device after\nan interrupted tab reload.",
       "adversarial": "Repeat the stress harness with independent seeds and a forced queue delay at each flush. Compare the\nfinal screenshot/readback against the reference renderer and reject any unexplained divergence from\nthe T07a fixture.",
       "file": "tasks/epic-5-the-window/E5-T07d-native-parity-stress.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t07d): activate native parity stress proof"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T08",

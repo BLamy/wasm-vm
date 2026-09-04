@@ -138,7 +138,7 @@ export const ROADMAP = [
       { name: "virtio-gpu control + resource queues", status: "verified", evidence: "E5-T07a: native Linux fbcon controlq trace with EDID, resource, scanout, and queue-progress evidence" },
       { name: "Scanout transfer + flush", status: "verified", evidence: "E5-T07b: cold Chromium fbcon frame on the production Canvas2D sink with serial DRM/fbdev markers" },
       { name: "tty0 fbcon damage rectangles", status: "verified", evidence: "E5-T07c: cold Chromium echo hello proof with independent readback reference and partial flush trace" },
-      { name: "fbcon native parity and stress", status: "in-progress", evidence: "E5-T07d: native null-sink fixture parity, one-million-byte tty0 write, 100 VT switches, and Chromium reload cleanup" },
+      { name: "fbcon native parity and stress", status: "verified", evidence: "E5-T07d: native null-sink fixture parity, one-million-byte tty0 write, 100 VT switches, delayed Chromium readback, and reload cleanup" },
       { name: "EDID / display info", status: "verified", evidence: "E5-T04: decoder-checked 128-byte EDID 1.4 blocks, dynamic pmode/EDID regeneration, negotiated GET_EDID, and coalesced display config IRQs" },
     ],
   },
