@@ -11,7 +11,7 @@ use wasm_vm_core::dev::virtio::gpu::VirtioGpu;
 use wasm_vm_core::dev::virtio::gpu::edid::{EDID_BLOCK_SIZE, edid_for};
 use wasm_vm_core::dev::virtio::gpu::protocol::{
     CTRL_HDR_SIZE, CtrlHeader, DISPLAY_INFO_RESPONSE_SIZE, DISPLAY_MODE_COUNT, DISPLAY_MODE_SIZE,
-    DisplayInfoResponse, RESP_OK_DISPLAY_INFO,
+    DisplayInfoResponse, FORMAT_B8G8R8A8_UNORM, RESP_OK_DISPLAY_INFO,
 };
 use wasm_vm_core::dev::virtio::gpu::{FlushRecord, FrameSink, TestSink};
 use wasm_vm_core::platform::Platform;
@@ -182,7 +182,14 @@ fn gpu_flush_golden_crc_fixtures_on_wasm32() {
         }
         assert_eq!(reference_crc32(&expected), CRC32[index]);
         let mut handle = sink.clone();
-        handle.flush(Some(0), rect, WIDTH, HEIGHT, &expected);
+        handle.flush(
+            Some(0),
+            FORMAT_B8G8R8A8_UNORM,
+            rect,
+            WIDTH,
+            HEIGHT,
+            &expected,
+        );
         assert_eq!(
             sink.records().last().copied(),
             Some(FlushRecord {

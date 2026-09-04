@@ -97,6 +97,7 @@ impl FrameSink for TestSink {
     fn flush(
         &mut self,
         scanout: Option<u32>,
+        _format: u32,
         rect: Rect,
         resource_width: u32,
         resource_height: u32,
@@ -133,11 +134,13 @@ fn crc32_pixels(pixels: &[u32]) -> u32 {
 /// transfer work has completed. `scanout` is `Some(id)` when the resource is currently bound to
 /// that scanout and `None` for a legal flush of an unbound resource. Browser-specific color
 /// conversion and presentation scheduling belong to the sink implementation, not this trait.
+/// `format` is the virtio-gpu resource format that describes the pixel words.
 pub trait FrameSink {
     /// Publish one validated damage rectangle and its resource-sized pixel view.
     fn flush(
         &mut self,
         scanout: Option<u32>,
+        format: u32,
         rect: Rect,
         resource_width: u32,
         resource_height: u32,
@@ -153,6 +156,7 @@ impl FrameSink for NullSink {
     fn flush(
         &mut self,
         _scanout: Option<u32>,
+        _format: u32,
         _rect: Rect,
         _resource_width: u32,
         _resource_height: u32,
@@ -940,6 +944,7 @@ fn resource_flush(
     }
     frame_sink.flush(
         scanout,
+        resource.format,
         request.rect,
         resource.width,
         resource.height,

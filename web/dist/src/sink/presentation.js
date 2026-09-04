@@ -6,6 +6,7 @@ import { WebGL2Backend } from "./webgl.js";
 const DEFAULT_WIDTH = 1280;
 const DEFAULT_HEIGHT = 800;
 const BACKEND_NAMES = Object.freeze(["canvas2d", "webgl2"]);
+const FORMAT_B8G8R8X8_UNORM = 2;
 
 function checkedDimension(value, name) {
   if (!Number.isSafeInteger(value) || value < 1) {
@@ -20,6 +21,10 @@ function checkedFrame(frame) {
   }
   const width = checkedDimension(Number(frame.resourceWidth), "resource width");
   const height = checkedDimension(Number(frame.resourceHeight), "resource height");
+  const format = Number(frame.format ?? 1);
+  if (!Number.isSafeInteger(format) || format < 1) {
+    throw new RangeError("presentation frame format must be a positive safe integer");
+  }
   const rect = frame.rect;
   if (rect === null || typeof rect !== "object") {
     throw new TypeError("presentation frame rect is missing");
@@ -48,8 +53,15 @@ function checkedFrame(frame) {
   const pixels = frame.pixels instanceof Uint32Array
     ? new Uint32Array(frame.pixels)
     : Uint32Array.from(frame.pixels);
+  // Linux's B8G8R8X8_UNORM fbcon surface uses the high byte as padding. The guest is allowed to
+  // leave that X byte zero, but browser ImageData treats it as alpha, so normalize it to opaque at
+  // the presentation boundary before Canvas2D or WebGL2 consumes the copied frame.
+  if (format === FORMAT_B8G8R8X8_UNORM) {
+    for (let index = 0; index < pixels.length; index += 1) pixels[index] |= 0xff000000;
+  }
   return Object.freeze({
     scanout: frame.scanout == null ? null : Number(frame.scanout),
+    format,
     rect: checkedRect,
     resourceWidth: width,
     resourceHeight: height,

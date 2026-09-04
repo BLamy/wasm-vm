@@ -28,6 +28,7 @@ impl FrameSink for NoopSink {
     fn flush(
         &mut self,
         _scanout: Option<u32>,
+        _format: u32,
         _rect: wasm_vm_core::dev::virtio::gpu::Rect,
         _resource_width: u32,
         _resource_height: u32,

@@ -1628,6 +1628,7 @@ impl wasm_vm_core::dev::virtio::gpu::FrameSink for JsFrameSink {
     fn flush(
         &mut self,
         scanout: Option<u32>,
+        format: u32,
         rect: wasm_vm_core::dev::virtio::gpu::Rect,
         resource_width: u32,
         resource_height: u32,
@@ -1656,6 +1657,7 @@ impl wasm_vm_core::dev::virtio::gpu::FrameSink for JsFrameSink {
         let _ = js_sys::Reflect::set(&frame, &JsValue::from_str("rect"), rect_object.as_ref());
         set(&frame, "resourceWidth", resource_width);
         set(&frame, "resourceHeight", resource_height);
+        set(&frame, "format", format);
         // `view` is safe here because the callback is synchronous and the page copies the view
         // before it returns. A copy at this boundary would double the full-frame allocation.
         let pixel_view = unsafe { js_sys::Uint32Array::view(pixels) };

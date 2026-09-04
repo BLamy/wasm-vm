@@ -527,6 +527,22 @@ verify-E5-T07a:
 	node tools/verify/e5-t07a-fbcon-probe.mjs
 	@echo "verify-E5-T07a (native virtio-gpu fbcon probe trace): OK"
 
+.PHONY: verify-E5-T07b
+verify-E5-T07b:
+	# Cold Chromium proof: the route disables the shipped boot snapshot, attaches the production
+	# FrameSink, and records both the visible canvas and the serial DRM/fbcon boundary.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests -- -D warnings
+	cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib
+	cargo test -p wasm-vm-core --test virtio_gpu_machine
+	node --test web/tests/e5-t06d-presentation.test.mjs
+	$(MAKE) web-build
+	node --check web/first-light.js
+	node --check tools/verify/e5-t07b-first-light.mjs
+	node tools/verify/e5-t07b-first-light.mjs --output evidence/e5-t07b/first-light.json
+	@echo "verify-E5-T07b (Chromium fbcon first light): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

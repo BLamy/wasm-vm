@@ -122,7 +122,7 @@ export const ROADMAP = [
   {
     epic: "E5",
     title: "The Window",
-    status: "pending",
+    status: "in-progress",
     blurb: "virtio-snd guest playback and virtio-gpu — sound and pixels on screen.",
     caps: [
       { name: "Virtio input pointer routing", status: "partial", evidence: "E5-T14a/b: deterministic tablet/mouse devices with browser mode routing" },
@@ -135,8 +135,8 @@ export const ROADMAP = [
       { name: "Guest microphone capture + WAV/FFT proof", status: "verified", evidence: "E5-T21e: exact 48/44.1 kHz WAV duration and 440 Hz loopback peak, privacy silence, revocation/retry, hostile periods, full duplex, and clean Chromium transcript" },
       { name: "End-to-end virtio-console guest agent channel", status: "verified", evidence: "E5-T23e: T17 named-port boot, HELLO/PING/NAK, 10k flow-control bound, restart/re-negotiation, serial isolation, framing, and browser proof" },
       { name: "Bidirectional clipboard sync", status: "verified", evidence: "E5-T24d: Chromium guest↔host round trips, exact UTF-8/CRLF and 256 KiB bounds, 100-copy echo attack, focus privacy, permission staging, and guest helper recovery" },
-      { name: "virtio-gpu control + resource queues", status: "pending" },
-      { name: "Scanout transfer + flush", status: "pending" },
+      { name: "virtio-gpu control + resource queues", status: "verified", evidence: "E5-T07a: native Linux fbcon controlq trace with EDID, resource, scanout, and queue-progress evidence" },
+      { name: "Scanout transfer + flush", status: "verified", evidence: "E5-T07b: cold Chromium fbcon frame on the production Canvas2D sink with serial DRM/fbdev markers" },
       { name: "EDID / display info", status: "verified", evidence: "E5-T04: decoder-checked 128-byte EDID 1.4 blocks, dynamic pmode/EDID regeneration, negotiated GET_EDID, and coalesced display config IRQs" },
     ],
   },

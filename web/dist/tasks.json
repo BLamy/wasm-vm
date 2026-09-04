@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 249,
-    "total": 410
+    "verified": 251,
+    "total": 414
   },
   "epics": [
     {
@@ -16745,7 +16745,7 @@
       "epicKey": "5",
       "title": "Presentation selection, context-loss fallback, and VM integration",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T06c"
       ],
@@ -16756,30 +16756,39 @@
       "criteria": [
         {
           "text": "The selected default matches the committed E5-T06c decision and falls back when the feature is unavailable.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Simulated WebGL context loss causes at most one dropped frame and leaves later presents pixel-correct through Canvas2D.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Full and partial presents reach the visible canvas with no guest queue stall or duplicate frame callback.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "The built demo's browser proof records the backend, final frame, and zero console errors.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 4,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 4,
+      "verificationLog": "### 2026-09-04 — verifier — VERDICT: verified\n\n- Default/fallback — HELD. The exact-head Chromium capture selected Canvas2D as the E5-T06c\n  default and selected Canvas2D after a WebGL2 feature-disable shim, with one recorded fallback.\n- Context-loss replay — HELD. `WEBGL_lose_context.loseContext()` during a partial update produced\n  one context loss, one full-resource replay, zero dropped frames, and pixel-correct Canvas2D\n  readback; the replacement canvas retained two listeners and the old canvas retained none.\n- Queue and delivery — HELD. The native Machine test configured a real controlq descriptor chain,\n  kicked it through the MMIO notify path, and observed the `GET_DISPLAY_INFO` response and used\n  index at the production run boundary. The worker protocol test independently confirmed copied\n  FrameSink pixels cross the worker without retaining the source view.\n- Adversarial rapid/resize path — HELD. The browser capture resized during the recovered path and\n  delivered 1,000 rapid presents with the last frame visible, zero dropped frames, no listener\n  growth, and no duplicate callback.\n- Coverage — HELD. Runtime Rust paths are exercised by `virtio_gpu_machine`; worker changes by the\n  E4-T32 protocol suite; controller behavior by the focused Node tests and real Chromium capture;\n  generated `web/dist` modules match their source counterparts byte-for-byte.\n\nCommit: `4d49c888934d0afea8e4f07011e6b65978c312e8`.\n\nCommands: `cargo fmt --check`; `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`;\n`cargo clippy -p wasm-vm-core --lib --tests -- -D warnings`; `cargo clippy -p wasm-vm-wasm\n--target wasm32-unknown-unknown -- -D warnings`; `cargo test -p wasm-vm-core --lib` (249 passed);\n`make verify-E5-T06d` (27 browser/worker tests, 2 machine tests, and the prescribed Chromium\nproof).\n\nEvidence: [presentation-integration.json](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t06d/presentation-integration.json)\n(SHA-256 `a19bdb332defde0224bf1a622ef8d4e70a6a0ca4c2940ca929ec7043c6bb17f2`) and\n[presentation-integration.png](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t06d/presentation-integration.png)\n(SHA-256 `cc7990bf5c139b148a3b3fac73d61e0fd672af280ae10dd614b272b622b8041f`). The JSON records\nChromium 131, source/dist parity, Canvas2D default, WebGL2-unavailable fallback, the partial-loss\nrecovery, resize, 1,003 total frames, 0 dropped frames, and empty console/page/request errors.",
       "adversarial": "Disable WebGL2, lose the context during a partial update, resize during recovery, and send 1,000\nrapid presents. Assert the last frame wins, at most one frame is dropped, no promise/listener\nleaks accumulate, and a guest-visible queue remains live.",
       "file": "tasks/epic-5-the-window/E5-T06d-presentation-integration.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 2,
+          "labels": [
+            "chore(e5-t06d): verify presentation integration",
+            "chore(e5-t06d): activate presentation integration"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 2
     },
     {
       "id": "E5-T07",
@@ -16787,13 +16796,18 @@
       "epicKey": "5",
       "title": "First light — kernel fbcon text console rendered on the canvas",
       "priority": 507,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T03c",
         "E5-T05c",
         "E5-T06d"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T07a",
+        "E5-T07b",
+        "E5-T07c",
+        "E5-T07d"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "Boot the T05 kernel against the T01–T03 device and the T06 sink and watch the Linux boot\nlog scroll *on the canvas*: virtio-gpu probes, DRM registers card0, fbdev emulation\ncreates fb0, fbcon takes over tty0, and every printk is real pixels — the epic's\nfirst user-visible milestone, before any input exists.",
@@ -16821,9 +16835,134 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — coordinator — decomposed\n\nThis M-sized fbcon/DRM first-light container is cancelled before implementation as required by\ntask policy and replaced by four ordered S tickets. The replacements isolate guest command tracing,\nbrowser boot rendering, tty0 damage behavior, and native parity/stress so each active lane has one\nfalsifiable boundary.",
       "adversarial": "Refute by stress and comparison: run `cat /dev/urandom | head -c 1000000 | hexdump -C`\non tty0 — a full-speed fbcon scroll for 30 s must not deadlock the controlq, leak\nresources (resource count returns to baseline), or corrupt rows (screenshot vs a QEMU\nrun of the same kernel/rootfs: text content must match line-for-line at the same VT\nsize). VT switch stress: `chvt 2; chvt 1` in a loop 100x (kernel VTs) — any stuck blank\nscreen refutes. Kill the tab mid-scroll and reload: device must re-probe cleanly.\nCompare dmesg against QEMU virtio-gpu-device boot of the identical kernel — unexplained\ndivergence in probe lines is a refutation.",
       "file": "tasks/epic-5-the-window/E5-T07-fbcon-drm-first-light.md",
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T07a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Guest virtio-gpu fbcon probe and command trace",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T03c",
+        "E5-T05c",
+        "E5-T06d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove the rebuilt Linux graphics stack drives the production virtio-gpu control queue through its\nfbcon probe and initial framebuffer setup, with a deterministic native command trace that the later\nbrowser slices can compare.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-04 — verifier — VERDICT: verified\n\n- **Linux control-queue protocol — HELD.** Predicted that the native guest would complete the\n  Linux virtio-gpu probe without resource-id errors once the wire enum and EDID response layout\n  matched the virtio-gpu specification. The final trace records `GET_EDID`, `GET_DISPLAY_INFO`,\n  `RESOURCE_CREATE_2D`, `RESOURCE_ATTACH_BACKING`, `SET_SCANOUT`, `TRANSFER_TO_HOST_2D`, and\n  `RESOURCE_FLUSH` with the corrected command values (`0x10a`, `0x100`, `0x101`, `0x106`, `0x103`,\n  `0x105`, `0x104`), a 1056-byte EDID response, and successful response values. The earlier\n  invalid-resource loop and EDID warning are absent from the final console.\n- **Framebuffer first light — HELD.** Predicted a live fbcon path would expose the display mode,\n  create and attach resource 2 at `1280x800`, bind scanout 0, transfer pixels, and flush at least\n  once. The 15-record trace contains that complete path, with transfer and flush returning\n  `RESP_OK_NODATA`; the native console contains both `fb0: virtio_gpudrmfb frame buffer device`\n  and `busybox userland up`.\n- **Queue progress and trace integrity — HELD.** Predicted every recorded completion would be\n  published before tracing, with no dropped records, duplicate completion, stall, or reset. The\n  trace reports `records=15 dropped=0`; sequence numbers are contiguous 0–14 and every record has\n  `used == avail` at the corresponding one-based index. The process exited 0 at the profiler's\n  `userland up` marker.\n- **Malformed/unsupported traffic — HELD.** The feature-gated malformed-request regression and\n  the complete `wasm-vm-core` feature suite passed; `virtio_gpu_malformed_requests_make_progress_and_recover`\n  confirms an unsupported request and short/malformed traffic still publish completions and recover.\n- **Coverage — SUFFICIENT.** The exact native run exercised the corrected wire constants, feature\n  gate, trace metadata, used-ring publication boundary, display/EDID/resource/scanout/transfer/\n  flush handlers, CLI recorder, checked-in fixture, and null-sink boot path. No changed behavioral\n  hunk is dead or unproved. Independent machines, WebKit, and host-layer rr are excluded per the\n  user's direction and the repository evidence policy.\n- **SUITE:** retain `make verify-E5-T07a` and `tests/fixtures/gpu-probe.log` as the recurring proof.\n\nCommands: `make verify-E5-T07a`; `cargo test -p wasm-vm-core --lib`; `cargo test -p wasm-vm-core\n--test virtio_gpu_machine`; `cargo test -p wasm-vm-cli --bin wasm-vm`; `git diff --check`.\n\nImplementation commits: `5ada0faa4b235fed3cd7c34ec56e1ea31c266088`,\n`bd1d81f575c8dacc8527183c5b33222ae3b0030a`.\nEvidence: `evidence/e5-t07a/gpu-probe.log` and `tests/fixtures/gpu-probe.log` SHA-256\n`06eff203f10b1583a4c4450a6e20ff56792a25b70402a22ebeaf03f62d5f4e0b`; `guest-evidence.txt` SHA-256\n`9f867cc341862e94c6edd047096c75af9150821127d1ec7ce113ef3f0630e2c9`; `native-console.log` SHA-256\n`bcc49cd35bef178d02042dfebf13c3c6d768ecab788a402c853630e2fd03a8e4`; `native-stderr.log` SHA-256\n`4c269be1a992ef5f106eec7f8e36e634dddce41df4f08c924959f5e0b098adb6`.",
+      "adversarial": "Run the probe with the control queue delayed at each command boundary and with one malformed\ndescriptor in each request class. The guest must continue making progress or report the specified\nerror, and the trace must never claim a flush that did not publish a used-ring entry.",
+      "file": "tasks/epic-5-the-window/E5-T07a-fbcon-probe-trace.md",
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 2,
+          "labels": [
+            "verify(e5-t07a): mark fbcon probe verified",
+            "chore(e5-t07a): activate guest probe trace"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 2
+    },
+    {
+      "id": "E5-T07b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Browser fbcon first-light boot on the display canvas",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5-T07a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Wire the proven guest probe into a focused browser boot path and show Linux fbcon text as the first\nreal user-visible frame on the display canvas.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Run once with WebGL2 disabled and once with the normal Canvas2D default; the guest must keep\nretiring instructions and the canvas must remain live. Reload during the boot transfer and confirm\nthe replacement run re-probes without reusing a stale frame or listener.",
+      "file": "tasks/epic-5-the-window/E5-T07b-browser-first-light.md",
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t07b): activate browser first-light"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
+    },
+    {
+      "id": "E5-T07c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "tty0 output and fbcon damage-rectangle delivery",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T07b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove that serial-console commands targeting `/dev/tty0` appear on the visible fbcon surface and\nthat cursor blinking/partial updates publish only the changed damage rectangle.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Alternate full-line output and cursor updates at the flush boundary, including an update at each\nedge and an odd-width rectangle. The final visible frame must match the independent reference\nbuffer and every used-ring completion must be accounted for exactly once.",
+      "file": "tasks/epic-5-the-window/E5-T07c-tty0-damage-output.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T07d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Native fbcon parity and first-light stress proof",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T07c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Close the first-light integration with a native null-sink parity check and bounded scroll, VT, and\nreload stress against the browser trace fixture.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Repeat the stress harness with independent seeds and a forced queue delay at each flush. Compare the\nfinal screenshot/readback against the reference renderer and reject any unexplained divergence from\nthe T07a fixture.",
+      "file": "tasks/epic-5-the-window/E5-T07d-native-parity-stress.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
