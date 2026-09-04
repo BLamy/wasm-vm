@@ -3,7 +3,7 @@ id: E5-T07a
 epic: 5
 title: Guest virtio-gpu fbcon probe and command trace
 priority: 507.1
-status: pending
+status: in-progress
 depends_on: [E5-T03c, E5-T05c, E5-T06d]
 estimate: S
 risk: high

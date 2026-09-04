@@ -16855,7 +16855,7 @@
       "epicKey": "5",
       "title": "Guest virtio-gpu fbcon probe and command trace",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T03c",
         "E5-T05c",
