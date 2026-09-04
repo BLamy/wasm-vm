@@ -47,4 +47,20 @@ the checked descriptor refutes the slice.
 
 ## Verification log
 
-(empty)
+### 2026-09-04 — worker — IMPLEMENTED
+
+- Commit: `dd7b670c295fafe7aa2a90a71c309af93a2fe50a`.
+- Exact submission gate: `make verify-E5-T15a` (format check; native core clippy/tests; native
+  machine-boundary tests; wasm32 core build/clippy; and `wasm-pack test --node crates/wasm --test
+  gpu_protocol`).
+- Results: 267 native core tests passed; 3 native machine tests passed; 5 wasm GPU protocol tests
+  passed; wasm32 build and both clippy invocations passed with `-D warnings`.
+- Evidence: [`evidence/e5-t15a/cursorq-core.json`](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t15a/cursorq-core.json),
+  SHA-256 `8da5232b92e9e2052c499abd18a8df28cf89f3914e42997ef64a42aface8ad83`.
+- Claim: the recorded native and wasm32 Machine-boundary sequence exercises valid UPDATE/MOVE/hide,
+  malformed/truncated input, invalid scanout/resource dimensions/hotspots, and rejected moves without
+  state mutation. Both targets publish the same three canonical callback records and eight used-ring
+  completions; the native suite additionally exercises reset cleanup and 1,000 alternating hide/show
+  transitions with one bounded callback per command. Cursor handling retains ids/coordinates only and
+  never retains guest buffers. Independent-machine, WebKit, and host-rr checks are waived per the
+  repository policy and the user's explicit direction.

@@ -18271,13 +18271,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — worker — IMPLEMENTED\n\n- Commit: `dd7b670c295fafe7aa2a90a71c309af93a2fe50a`.\n- Exact submission gate: `make verify-E5-T15a` (format check; native core clippy/tests; native\n  machine-boundary tests; wasm32 core build/clippy; and `wasm-pack test --node crates/wasm --test\n  gpu_protocol`).\n- Results: 267 native core tests passed; 3 native machine tests passed; 5 wasm GPU protocol tests\n  passed; wasm32 build and both clippy invocations passed with `-D warnings`.\n- Evidence: [`evidence/e5-t15a/cursorq-core.json`](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t15a/cursorq-core.json),\n  SHA-256 `8da5232b92e9e2052c499abd18a8df28cf89f3914e42997ef64a42aface8ad83`.\n- Claim: the recorded native and wasm32 Machine-boundary sequence exercises valid UPDATE/MOVE/hide,\n  malformed/truncated input, invalid scanout/resource dimensions/hotspots, and rejected moves without\n  state mutation. Both targets publish the same three canonical callback records and eight used-ring\n  completions; the native suite additionally exercises reset cleanup and 1,000 alternating hide/show\n  transitions with one bounded callback per command. Cursor handling retains ids/coordinates only and\n  never retains guest buffers. Independent-machine, WebKit, and host-rr checks are waived per the\n  repository policy and the user's explicit direction.",
       "adversarial": "Feed truncated, oversized, and repeated UPDATE/MOVE chains, alternate hide/show 1,000 times, and\nattempt to move an unbound scanout. Any state leak, callback reordering, or guest-memory read past\nthe checked descriptor refutes the slice.",
       "file": "tasks/epic-5-the-window/E5-T15a-cursorq-core.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t15a): activate cursorq core"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T15b",
