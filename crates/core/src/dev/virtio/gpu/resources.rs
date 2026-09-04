@@ -9,7 +9,11 @@ use alloc::boxed::Box;
 use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
 
-use super::{damage::DamageAccumulator, protocol};
+use super::{
+    damage::DamageAccumulator,
+    protocol,
+    tiles::{DirtyTilePlanner, TilePlannerError, TileUploadPlan, UploadMode},
+};
 use crate::bus::Bus;
 use crate::mmio::SystemBus;
 
@@ -45,6 +49,8 @@ pub struct Resource {
     /// The first browser presentation must establish the whole surface.  Later transfers may be
     /// narrowed to `pending_damage` when the sink opts into change tracking.
     presented: bool,
+    /// 64x64 tiles touched by successful transfers, consumed by the later tiled upload seam.
+    dirty_tiles: DirtyTilePlanner,
 }
 
 impl Resource {
@@ -69,8 +75,27 @@ impl Resource {
             self.pending_damage.clear();
             requested
         };
+        self.dirty_tiles
+            .clear_intersecting(core::slice::from_ref(&published));
         self.presented = true;
         published
+    }
+
+    /// Select dirty upload regions intersecting a coalesced flush plan.
+    ///
+    /// The current single-rectangle [`super::FrameSink`] contract remains unchanged; the returned
+    /// plan is the stable core seam consumed by the later browser tile/scheduler slices.
+    pub fn plan_uploads(
+        &mut self,
+        flush_rects: &[protocol::Rect],
+        mode: UploadMode,
+    ) -> Result<TileUploadPlan, TilePlannerError> {
+        self.dirty_tiles.plan(flush_rects, mode)
+    }
+
+    /// Number of dirty tiles waiting for an upload plan.
+    pub fn dirty_tile_count(&self) -> u32 {
+        self.dirty_tiles.dirty_tile_count()
     }
 }
 
@@ -439,6 +464,7 @@ impl ResourceMap {
                 reader.skip(stride - row_bytes)?;
             }
         }
+        resource.dirty_tiles.mark_rect(rect);
         Ok(())
     }
 
@@ -494,6 +520,8 @@ impl ResourceMap {
             backing: Vec::new(),
             pending_damage: DamageAccumulator::new(width, height),
             presented: false,
+            dirty_tiles: DirtyTilePlanner::try_new(width, height)
+                .map_err(|_| CreateError::OutOfMemory)?,
         };
         self.accounted_bytes += pixel_bytes;
         self.resources.insert(resource_id, resource);
@@ -1011,6 +1039,7 @@ mod tests {
             .unwrap();
         map.transfer_to_host_2d(1, full, 0, &bus).unwrap();
         assert_eq!(map.get_mut(1).unwrap().flush_rect(full, true), full);
+        assert_eq!(map.get(1).unwrap().dirty_tile_count(), 0);
 
         // Two changes make an odd-width, non-origin damage rectangle.
         set_pixel(&mut source, width, 1, 0, 0xCAFE_0101);
@@ -1026,6 +1055,7 @@ mod tests {
                 height: 3,
             }
         );
+        assert_eq!(map.get(1).unwrap().dirty_tile_count(), 0);
 
         // An edge-only update remains a one-pixel rectangle.
         set_pixel(&mut source, width, 4, 3, 0xCAFE_0403);
@@ -1040,6 +1070,7 @@ mod tests {
                 height: 1,
             }
         );
+        assert_eq!(map.get(1).unwrap().dirty_tile_count(), 0);
 
         // A narrow request cannot hide a pending change outside that request.
         set_pixel(&mut source, width, 0, 0, 0xCAFE_0000);
@@ -1070,6 +1101,126 @@ mod tests {
             map.get_mut(1).unwrap().flush_rect(odd_request, true),
             odd_request
         );
+    }
+
+    #[test]
+    fn gpu_transfer_tiled_and_full_frame_plans_keep_shadow_bytes_identical() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let width = 130u32;
+        let height = 129u32;
+        let source_addr = DRAM_BASE + 0x60_000;
+        let source = source_bytes(width, height);
+        bus.ram_mut().write_slice(source_addr, &source).unwrap();
+        let backing = alloc::vec![(source_addr, source.len() as u32)];
+        let full = protocol::Rect {
+            x: 0,
+            y: 0,
+            width,
+            height,
+        };
+        let transfers = [
+            (
+                protocol::Rect {
+                    x: 1,
+                    y: 1,
+                    width: 1,
+                    height: 1,
+                },
+                alloc::vec![protocol::Rect {
+                    x: 0,
+                    y: 0,
+                    width: 64,
+                    height: 64,
+                }],
+            ),
+            (
+                protocol::Rect {
+                    x: 129,
+                    y: 128,
+                    width: 1,
+                    height: 1,
+                },
+                alloc::vec![protocol::Rect {
+                    x: 128,
+                    y: 128,
+                    width: 2,
+                    height: 1,
+                }],
+            ),
+            (
+                protocol::Rect {
+                    x: 63,
+                    y: 63,
+                    width: 2,
+                    height: 2,
+                },
+                alloc::vec![
+                    protocol::Rect {
+                        x: 0,
+                        y: 0,
+                        width: 64,
+                        height: 64,
+                    },
+                    protocol::Rect {
+                        x: 64,
+                        y: 0,
+                        width: 64,
+                        height: 64,
+                    },
+                    protocol::Rect {
+                        x: 0,
+                        y: 64,
+                        width: 64,
+                        height: 64,
+                    },
+                    protocol::Rect {
+                        x: 64,
+                        y: 64,
+                        width: 64,
+                        height: 64,
+                    },
+                ],
+            ),
+        ];
+
+        let mut tiled = ResourceMap::new();
+        tiled.create(1, FORMATS[0], width, height).unwrap();
+        tiled.attach_backing(1, backing.clone()).unwrap();
+        let mut full_frame = ResourceMap::new();
+        full_frame.create(1, FORMATS[0], width, height).unwrap();
+        full_frame.attach_backing(1, backing).unwrap();
+
+        for (transfer, expected_tiles) in transfers {
+            tiled.transfer_to_host_2d(1, transfer, 0, &bus).unwrap();
+            full_frame
+                .transfer_to_host_2d(1, transfer, 0, &bus)
+                .unwrap();
+            assert_eq!(
+                tiled.get(1).unwrap().host_pixels,
+                full_frame.get(1).unwrap().host_pixels,
+                "tiling changed the resource shadow"
+            );
+
+            let tiled_plan = tiled
+                .get_mut(1)
+                .unwrap()
+                .plan_uploads(&[full], UploadMode::Tiled)
+                .unwrap();
+            let full_plan = full_frame
+                .get_mut(1)
+                .unwrap()
+                .plan_uploads(&[full], UploadMode::FullFrame)
+                .unwrap();
+            assert_eq!(tiled_plan.rects(), expected_tiles.as_slice());
+            assert_eq!(full_plan.rects(), &[full]);
+            assert_eq!(
+                tiled_plan.stats().full_frame_bytes,
+                full_plan.stats().full_frame_bytes
+            );
+            assert!(tiled_plan.stats().uploaded_bytes <= full_plan.stats().uploaded_bytes);
+            assert_eq!(tiled.get(1).unwrap().dirty_tile_count(), 0);
+            assert_eq!(full_frame.get(1).unwrap().dirty_tile_count(), 0);
+        }
     }
 
     fn set_pixel(source: &mut [u8], width: u32, x: u32, y: u32, value: u32) {

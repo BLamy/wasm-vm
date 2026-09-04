@@ -597,6 +597,13 @@ verify-E5-T09a:
 	node tools/verify/e5-t09a-damage-coalescer.mjs --output evidence/e5-t09a/damage-coalescer.json
 	@echo "verify-E5-T09a (bounded damage coalescer): OK"
 
+.PHONY: verify-E5-T09b
+verify-E5-T09b:
+	# Guest-side bounded tile proof: deterministic unit/integration tests plus the wasm target.
+	node --check tools/verify/e5-t09b-dirty-tiles.mjs
+	node tools/verify/e5-t09b-dirty-tiles.mjs --output evidence/e5-t09b/dirty-tiles.json
+	@echo "verify-E5-T09b (dirty-tile upload planner): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

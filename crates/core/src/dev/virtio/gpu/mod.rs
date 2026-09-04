@@ -8,6 +8,7 @@ pub mod damage;
 pub mod edid;
 pub mod protocol;
 pub mod resources;
+pub mod tiles;
 
 use alloc::boxed::Box;
 use alloc::rc::Rc;
