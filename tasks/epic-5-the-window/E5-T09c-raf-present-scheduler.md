@@ -3,7 +3,7 @@ id: E5-T09c
 epic: 5
 title: Latest-wins requestAnimationFrame presentation scheduler
 priority: 509.3
-status: pending
+status: in-progress
 depends_on: [E5-T09b]
 estimate: S
 risk: medium
