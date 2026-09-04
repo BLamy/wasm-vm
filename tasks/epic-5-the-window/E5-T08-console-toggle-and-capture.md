@@ -3,9 +3,10 @@ id: E5-T08
 epic: 5
 title: Host chrome — serial console toggle beside the display, screenshot and recording
 priority: 508
-status: pending
-depends_on: [E5-T07]
+status: in-progress
+depends_on: [E5-T07d]
 estimate: S
+risk: medium
 capstone: false
 ---
 

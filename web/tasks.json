@@ -16976,15 +16976,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t07d): record native parity stress proof",
             "chore(e5-t07d): activate native parity stress proof"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T08",
@@ -16992,9 +16993,9 @@
       "epicKey": "5",
       "title": "Host chrome — serial console toggle beside the display, screenshot and recording",
       "priority": 508,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
-        "E5-T07"
+        "E5-T07d"
       ],
       "decomposed_into": [],
       "estimate": "S",
