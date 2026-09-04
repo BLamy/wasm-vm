@@ -14,6 +14,7 @@ import { fileURLToPath } from "node:url";
 import { validateCapture } from "../../tools/display-server-workload.mjs";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const IDLE_INSTRUCTION_BUDGET = 0.02;
 const capturePath = argument("--capture");
 const capture = validateCapture(JSON.parse(await readFile(path.resolve(capturePath), "utf8")));
 assert.equal(capture.candidate.id, "labwc-pixman");
@@ -42,8 +43,29 @@ assert.equal(close.details.applicationExited, true);
 
 const idleInstructions = idle.end.guestInstructions - idle.start.guestInstructions;
 const totalInstructions = capture.summary.guestInstructions;
-const idleInstructionRatio = totalInstructions === 0 ? 0 : idleInstructions / totalInstructions;
-assert.ok(Number.isFinite(idleInstructionRatio));
+const idleInstructionRatio = enforceIdleBudget(idle, totalInstructions);
+
+if (process.argv.includes("--self-test")) {
+  const mutant = structuredClone(capture);
+  const mutantIdle = mutant.phases.find((phase) => phase.id === "idle");
+  const originalIdleInstructions = mutantIdle.end.guestInstructions - mutantIdle.start.guestInstructions;
+  const targetIdleInstructions = Math.ceil(mutant.summary.guestInstructions * 0.03);
+  const delta = targetIdleInstructions - originalIdleInstructions;
+  mutantIdle.end.guestInstructions += delta;
+  for (const phase of mutant.phases.slice(2)) {
+    phase.start.guestInstructions += delta;
+    phase.end.guestInstructions += delta;
+  }
+  mutant.summary.guestInstructions += delta;
+  const mutantRatio = idleBudgetRatio(mutantIdle, mutant.summary.guestInstructions);
+  assert.ok(mutantRatio > IDLE_INSTRUCTION_BUDGET);
+  assert.throws(
+    () => enforceIdleBudget(mutantIdle, mutant.summary.guestInstructions),
+    /exceeds 2% budget/u,
+    "idle-budget mutant was accepted",
+  );
+  process.stdout.write("E5T16B_SELF_TEST=idle-budget-rejected\n");
+}
 
 const evidenceDir = path.join(repo, "evidence/e5-t16b");
 const consolePath = path.join(evidenceDir, "labwc-console.log");
@@ -127,4 +149,20 @@ function phase(id) {
   const value = capture.phases.find((item) => item.id === id);
   assert.ok(value, `missing phase ${id}`);
   return value;
+}
+
+function enforceIdleBudget(idlePhase, totalGuestInstructions) {
+  const ratio = idleBudgetRatio(idlePhase, totalGuestInstructions);
+  assert.ok(
+    ratio <= IDLE_INSTRUCTION_BUDGET,
+    `idle instruction ratio ${ratio} exceeds 2% budget and has no charter justification`,
+  );
+  return ratio;
+}
+
+function idleBudgetRatio(idlePhase, totalGuestInstructions) {
+  const idleGuestInstructions = idlePhase.end.guestInstructions - idlePhase.start.guestInstructions;
+  const ratio = totalGuestInstructions === 0 ? 0 : idleGuestInstructions / totalGuestInstructions;
+  assert.ok(Number.isFinite(ratio), "idle instruction ratio is not finite");
+  return ratio;
 }

@@ -720,6 +720,8 @@ verify-E5-T16b:
 	  node tools/run-labwc-pixman.mjs
 	node tools/verify/e5-t16b-labwc-pixman.mjs \
 	  --capture evidence/e5-t16b/labwc-capture.json
+	node tools/verify/e5-t16b-labwc-pixman.mjs \
+	  --capture evidence/e5-t16b/labwc-capture.json --self-test
 	@echo "verify-E5-T16b (labwc/pixman riscv64 emulator workload): OK"
 
 .PHONY: verify-E3-T12a
