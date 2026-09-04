@@ -3,7 +3,7 @@ id: E5-T23d
 epic: 5
 title: Host agent Channel API and reconnect lifecycle
 priority: 523.4
-status: pending
+status: in-progress
 depends_on: [E5-T23c]
 estimate: S
 risk: high

@@ -18898,15 +18898,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t23c): record static agent evidence",
             "chore(e5-t23c): activate static agent service task"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T23d",
@@ -18914,7 +18915,7 @@
       "epicKey": "5",
       "title": "Host agent Channel API and reconnect lifecycle",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T23c"
       ],
