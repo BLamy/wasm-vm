@@ -392,7 +392,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `516.5` [E5-T16e](epic-5-the-window/E5-T16e-display-server-decision.md) — Publish measured display-server decision and T17 handoff *(deps: E5-T16d)*
 - [-] `517` [E5-T17](epic-5-the-window/E5-T17-alpine-desktop-image.md) — Alpine riscv64 desktop disk image — reproducible build within size budget *(deps: E5-T16e)*
 - [x] `517.1` [E5-T17a](epic-5-the-window/E5-T17a-desktop-package-manifest.md) — Freeze signed Alpine desktop package manifest and offline profile *(deps: E5-T16e)*
-- [?] `517.2` [E5-T17b](epic-5-the-window/E5-T17b-desktop-image-assembly.md) — Assemble Alpine desktop image and startup configuration *(deps: E5-T17a)*
+- [~] `517.2` [E5-T17b](epic-5-the-window/E5-T17b-desktop-image-assembly.md) — Assemble Alpine desktop image and startup configuration *(deps: E5-T17a)*
 - [ ] `517.3` [E5-T17c](epic-5-the-window/E5-T17c-desktop-image-reproducibility.md) — Prove desktop image reproducibility, size budget, and chunk deduplication *(deps: E5-T17b)*
 - [ ] `517.4` [E5-T17d](epic-5-the-window/E5-T17d-desktop-boot-order.md) — Prove headless desktop boot ordering and seat runtime *(deps: E5-T17c)*
 - [ ] `517.5` [E5-T17e](epic-5-the-window/E5-T17e-desktop-persistence-publication.md) — Prove desktop image persistence and publish the final artifact handoff *(deps: E5-T17d)*
