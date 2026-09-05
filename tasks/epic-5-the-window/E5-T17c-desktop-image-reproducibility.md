@@ -3,7 +3,7 @@ id: E5-T17c
 epic: 5
 title: Prove desktop image reproducibility, size budget, and chunk deduplication
 priority: 517.3
-status: in-progress
+status: implemented
 depends_on: [E5-T17b]
 estimate: S
 risk: high
@@ -47,4 +47,9 @@ detected or rejected.
 
 ## Verification log
 
-(empty)
+### 2026-09-05 — worker — IMPLEMENTED
+
+- Commit: `10e4b5866225d8a61c0fda8a20fc25c8464137e7` (`feat(e5-t17c): prove desktop image reproducibility`).
+- Exact submission command: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17c`.
+- Evidence: [`evidence/e5-t17c/desktop-image-reproducibility.json`](../../evidence/e5-t17c/desktop-image-reproducibility.json), SHA-256 `df531f72268c01ee9968667fd13d88f8681dcc2265d768768099ca9ba29f842c`.
+- The run passed `cargo fmt --check`, the affected CLI `cargo clippy -- -D warnings`, release build, shell/Node syntax checks, the T17a profile check, two fresh 1 GiB desktop image builds in distinct output directories, the T17b startup verifier, ext4 inspection, and `wasm-vm chunk`/`chunk-verify`. Both images are byte-identical at SHA-256 `99cede87db8ffec8b68933862f5f1aa8abfb30d9c4968b7127a30e7b79bad785`; normalized package and custom-file manifests remain equal after timestamp perturbation. The real allocated ext4 delta is 103,636,992 bytes and the conservative content/chunk delta is 105,250,816 bytes, both below the 367,001,600-byte (350 MiB) budget. The E3 comparison reuses 3,211 of 4,096 base positions (0.7839 ratio), identifies 803 new objects, and rejects full-base upload, base-index deletion, package/config mutations, and a sparse non-ext4 file. The evidence uses only local native tooling and Docker e2fsprogs; independent machines, WebKit, SSH/rr are intentionally waived per the active verification policy/user direction.

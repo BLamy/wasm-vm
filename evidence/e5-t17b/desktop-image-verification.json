@@ -9,12 +9,12 @@
   },
   "image": {
     "path": "target/e5-t17b/desktop-image/alpine-rootfs.ext4",
-    "sha256": "5680ac904ff93e474358abfe50e7c7c68d1832824b2f128788df4fbdfac98adb",
+    "sha256": "99cede87db8ffec8b68933862f5f1aa8abfb30d9c4968b7127a30e7b79bad785",
     "size": 1073741824
   },
   "packageManifest": {
     "path": "target/e5-t17b/desktop-image/MANIFEST.txt",
-    "sha256": "225b8d35f7375c084075ca60edac5ea8fbf7ef46f1fd09a7e3a5d40bb074aae1"
+    "sha256": "ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908"
   },
   "fileManifest": {
     "path": "target/e5-t17b/desktop-image/FILE-MANIFEST.txt",
