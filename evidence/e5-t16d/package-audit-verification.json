@@ -1,0 +1,66 @@
+{
+  "schema": "wasm-vm.e5-t16d.package-audit-verification.v1",
+  "task": "E5-T16d",
+  "command": "make verify-E5-T16d",
+  "audit": {
+    "path": "evidence/e5-t16d/package-audit.json",
+    "sha256": "c08fced3877b9aab3bb7b37d044232f9b23e01482612f40093e76266591e574b"
+  },
+  "architecture": "riscv64",
+  "repositories": [
+    "https://dl-cdn.alpinelinux.org/alpine/v3.20/main",
+    "https://dl-cdn.alpinelinux.org/alpine/v3.20/community"
+  ],
+  "base": {
+    "imageSha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8",
+    "packageManifestSha256": "3997342a7adbf096c6ab4cbbe03b529fbc70da75d3b8d2877dee4d720cd568e2",
+    "fileManifestSha256": "39c25610a5c8ae1978afb340e951282a7539b5fa9d596732050826b99d58f46b"
+  },
+  "candidates": [
+    {
+      "id": "labwc-pixman",
+      "imageSha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8",
+      "postRunSha256": "ffd9bbbc9e7882ed586f83503b93477238fa32202732ac3f35bf6ed78603af54",
+      "installedRequestedPackages": [
+        "labwc-0.7.2-r0",
+        "foot-1.17.2-r0",
+        "seatd-0.8.0-r0",
+        "eudev-3.2.14-r2",
+        "udev-init-scripts-35-r1",
+        "pixman-0.43.2-r0",
+        "xkeyboard-config-2.41-r0",
+        "wlr-randr-0.4.1-r0",
+        "wl-clipboard-2.2.0-r1",
+        "font-dejavu-2.37-r5"
+      ],
+      "logDigests": {
+        "evidence/e5-t16d/labwc-pixman-console.log": "81140414fa095ad4ca8982764ef0f98db04f5a34ae34b92a3dcbdff0b4f8426e",
+        "evidence/e5-t16d/labwc-pixman-stderr.log": "973262609e35e70d1932a1d7eca5746467aafa40f9a0dc55d8cc5eacfc460e60",
+        "evidence/e5-t16d/labwc-pixman-guest-evidence.txt": "6257a8a1c8c477684eb58bec43d9ce824c900aeed70452ad99e96c87feddbc89"
+      }
+    },
+    {
+      "id": "weston-pixman",
+      "imageSha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8",
+      "postRunSha256": "a5446f5b838d4a54674f35f95438c8cc7a7f046cc045076d9c7760baa5e3f3c9",
+      "installedRequestedPackages": [
+        "weston-12.0.4-r0",
+        "weston-backend-drm-12.0.4-r0",
+        "weston-shell-desktop-12.0.4-r0",
+        "foot-1.17.2-r0",
+        "seatd-0.8.0-r0",
+        "eudev-3.2.14-r2",
+        "udev-init-scripts-35-r1",
+        "pixman-0.43.2-r0",
+        "xkeyboard-config-2.41-r0",
+        "wl-clipboard-2.2.0-r1",
+        "font-dejavu-2.37-r5"
+      ],
+      "logDigests": {
+        "evidence/e5-t16d/weston-pixman-console.log": "7aa15f22e75f98ffbebe8493580154b6ba6aac0a97e2704ad7b2642c3519634b",
+        "evidence/e5-t16d/weston-pixman-stderr.log": "fa9037fc6df62edd115384488ef2fd8676635bdf2a89a2efdeb430f4fb3539aa",
+        "evidence/e5-t16d/weston-pixman-guest-evidence.txt": "3ae328db12138297a436a541b4f449e24b7b3143b3cb3a9869d59f423057c8d0"
+      }
+    }
+  ]
+}
