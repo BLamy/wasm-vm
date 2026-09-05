@@ -3,7 +3,7 @@ id: E5-T17b
 epic: 5
 title: Assemble Alpine desktop image and startup configuration
 priority: 517.2
-status: pending
+status: in-progress
 depends_on: [E5-T17a]
 estimate: S
 risk: high
