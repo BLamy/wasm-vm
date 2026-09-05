@@ -201,7 +201,15 @@ const report = {
       persistedAcrossReloads: true,
     },
     sentinel: { path: sentinelPath, value: sentinel.trim(), sha256: sentinelSha256, bytes: sentinelBytes },
-    coherence: { coreId, baseId, sameDriveAcrossPhases: true, syncBeforeEverySnapshot: true },
+    coherence: {
+      coreId: "0".repeat(64),
+      baseId: "0".repeat(64),
+      publicationCoreId: coreId,
+      publicationBaseId: baseId,
+      identityMode: "native-default-zero; publication binding recorded separately",
+      sameDriveAcrossPhases: true,
+      syncBeforeEverySnapshot: true,
+    },
     reloadCount: 2,
     phases: [phaseA, phaseB, phaseC],
     state: { preSnapshot: stateA, reloadOne: stateB, reloadTwo: stateC },
@@ -393,7 +401,7 @@ async function runPhase(name, options, drive) {
     "--no-reboot", "--block-cache", "--interrupt-batching",
     "--max-instrs", maxInstrs, "--quantum", quantum,
   ];
-  if (options.snapshotOut) args.push("--snapshot-trigger", options.snapshotTrigger, "--snapshot-out", options.snapshotOut, "--snapshot-core-id", coreId, "--snapshot-base-id", baseId);
+  if (options.snapshotOut) args.push("--snapshot-trigger", options.snapshotTrigger, "--snapshot-out", options.snapshotOut);
   if (options.resumeFrom) args.push("--resume-from", options.resumeFrom);
   if (options.evidencePath) args.push("--evidence", options.evidencePath);
   const stdoutLog = createWriteStream(consolePath);

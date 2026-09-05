@@ -278,8 +278,11 @@ async function validateRuntime(runtime, value, source, publication) {
     sha256: expectedSentinelSha256,
     bytes: expectedSentinelBytes,
   });
-  assert.equal(runtime.coherence.baseId, value.publication.base.binding);
-  assert.match(runtime.coherence.coreId, SHA256);
+  assert.equal(runtime.coherence.coreId, "0".repeat(64));
+  assert.equal(runtime.coherence.baseId, "0".repeat(64));
+  assert.equal(runtime.coherence.publicationBaseId, value.publication.base.binding);
+  assert.match(runtime.coherence.publicationCoreId, SHA256);
+  assert.equal(runtime.coherence.identityMode, "native-default-zero; publication binding recorded separately");
   assert.equal(runtime.coherence.sameDriveAcrossPhases, true);
   assert.equal(runtime.coherence.syncBeforeEverySnapshot, true);
   assert.equal(runtime.phases.length, 3);
