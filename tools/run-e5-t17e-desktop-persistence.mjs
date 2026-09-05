@@ -547,7 +547,7 @@ function installCommand() {
   return [
     "apk update >/tmp/e5-t17e-apk-update.log 2>&1; update_rc=$?",
     "printf 'T17E_APK_UPDATE_RC=%s\\n' \"$update_rc\"",
-    `apk add --no-scripts --no-progress ${packageName} >/tmp/e5-t17e-apk-add.log 2>&1; add_rc=$?`,
+    `add_rc=1; for attempt in 1 2 3; do apk add --no-scripts --no-progress ${packageName} >/tmp/e5-t17e-apk-add.log 2>&1 && add_rc=0 && break; sleep 1; done`,
     "printf 'T17E_APK_ADD_RC=%s\\n' \"$add_rc\"",
     `if [ \"$add_rc\" -eq 0 ] && apk info -e ${packageName} >/dev/null 2>&1; then printf '%s\\n' T17E\"APK\"PRESENT; else printf '%s\\n' T17E\"APK\"MISSING; fi`,
     `printf 'E5T17E-SENTINEL-%s\\n' \"$((6*7))\" > ${sentinelPath}`,
