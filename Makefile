@@ -765,6 +765,24 @@ verify-E5-T16d:
 	node tools/verify/e5-t16d-package-audit.mjs --self-test
 	@echo "verify-E5-T16d (Alpine riscv64 display package audit): OK"
 
+.PHONY: verify-E5-T16e
+verify-E5-T16e:
+	# Publish the measured Weston decision from two fresh native-emulator replays, with the
+	# T16d signed package audit as the exact T17 handoff. This slice has no independent-machine
+	# or WebKit leg, and it does not rebuild web/dist because no browser-facing source changed.
+	cargo fmt --check -p wasm-vm-cli
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-cli --bin wasm-vm --features gpu-trace
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	node --check tools/run-weston-pixman.mjs
+	node --check tools/run-e5-t16e-weston-reruns.mjs
+	node --check tools/verify/e5-t16e-display-server-decision.mjs
+	E5_T16C_OUT=target/e5-t16e/weston-image E5_T16C_UPDATE_MANIFEST=1 bash tools/build-weston-scratch.sh
+	node tools/run-e5-t16e-weston-reruns.mjs
+	node tools/verify/e5-t16e-display-server-decision.mjs
+	node tools/verify/e5-t16e-display-server-decision.mjs --self-test
+	@echo "verify-E5-T16e (measured display-server decision and T17 handoff): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

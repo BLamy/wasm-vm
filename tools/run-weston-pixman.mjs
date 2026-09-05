@@ -24,7 +24,7 @@ const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const cli = path.join(repo, "target/release/wasm-vm");
 const kernel = path.join(repo, "releases/kernel/6.6.63/Image");
 const image = path.resolve(process.env.E5_T16A_IMAGE || "");
-const evidenceDir = path.join(repo, "evidence/e5-t16c");
+const evidenceDir = path.join(repo, process.env.E5_T16C_EVIDENCE_DIR || "evidence/e5-t16c");
 const manifest = path.join(path.dirname(image), "MANIFEST.txt");
 const fileManifest = path.join(path.dirname(image), "FILE-MANIFEST.txt");
 // Match the shared harness bound. Cold Alpine boots can exceed 15 minutes before login on the
