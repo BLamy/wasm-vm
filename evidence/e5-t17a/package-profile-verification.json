@@ -1,0 +1,92 @@
+{
+  "schema": "wasm-vm.e5-t17a.desktop-package-profile-verification.v1",
+  "task": "E5-T17a",
+  "command": "make verify-E5-T17a",
+  "profile": {
+    "path": "tools/image/e5-t17a-desktop-packages.json",
+    "sha256": "a73d142d942e06e568964675323a77ccd04dceae8d51de742a13cdd753d8a3a7"
+  },
+  "sourceEvidence": {
+    "decision": {
+      "path": "evidence/e5-t16e/display-server-decision.json",
+      "sha256": "d7e7c3b4a18f09af7d9132f7b75f1dfe0a6b3d191eed6e9db52182ca24029b18"
+    },
+    "packageAudit": {
+      "path": "evidence/e5-t16d/package-audit.json",
+      "sha256": "c08fced3877b9aab3bb7b37d044232f9b23e01482612f40093e76266591e574b"
+    },
+    "packageAuditVerification": {
+      "path": "evidence/e5-t16d/package-audit-verification.json",
+      "sha256": "e76b1a52ec8428d92f906842285a55fb1c1a14a32d2ed7c67ece0228a7ce207d"
+    }
+  },
+  "architecture": "riscv64",
+  "repositories": [
+    "https://dl-cdn.alpinelinux.org/alpine/v3.20/main",
+    "https://dl-cdn.alpinelinux.org/alpine/v3.20/community"
+  ],
+  "resolutionMode": "online-or-offline",
+  "packages": [
+    {
+      "name": "weston",
+      "packageId": "weston-12.0.4-r0",
+      "version": "12.0.4-r0"
+    },
+    {
+      "name": "weston-backend-drm",
+      "packageId": "weston-backend-drm-12.0.4-r0",
+      "version": "12.0.4-r0"
+    },
+    {
+      "name": "weston-shell-desktop",
+      "packageId": "weston-shell-desktop-12.0.4-r0",
+      "version": "12.0.4-r0"
+    },
+    {
+      "name": "foot",
+      "packageId": "foot-1.17.2-r0",
+      "version": "1.17.2-r0"
+    },
+    {
+      "name": "seatd",
+      "packageId": "seatd-0.8.0-r0",
+      "version": "0.8.0-r0"
+    },
+    {
+      "name": "eudev",
+      "packageId": "eudev-3.2.14-r2",
+      "version": "3.2.14-r2"
+    },
+    {
+      "name": "udev-init-scripts",
+      "packageId": "udev-init-scripts-35-r1",
+      "version": "35-r1"
+    },
+    {
+      "name": "pixman",
+      "packageId": "pixman-0.43.2-r0",
+      "version": "0.43.2-r0"
+    },
+    {
+      "name": "xkeyboard-config",
+      "packageId": "xkeyboard-config-2.41-r0",
+      "version": "2.41-r0"
+    },
+    {
+      "name": "wl-clipboard",
+      "packageId": "wl-clipboard-2.2.0-r1",
+      "version": "2.2.0-r1"
+    },
+    {
+      "name": "font-dejavu",
+      "packageId": "font-dejavu-2.37-r5",
+      "version": "2.37-r5"
+    }
+  ],
+  "offlineCache": {
+    "root": "cache/alpine/v3.20/riscv64",
+    "missingInputPolicy": "fail-closed",
+    "checkedPath": null
+  },
+  "result": "passed"
+}
