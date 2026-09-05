@@ -3,7 +3,7 @@ id: E5-T17d
 epic: 5
 title: Prove headless desktop boot ordering and seat runtime
 priority: 517.4
-status: pending
+status: in-progress
 depends_on: [E5-T17c]
 estimate: S
 risk: high

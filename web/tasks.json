@@ -18846,8 +18846,9 @@
       "activity": [
         {
           "date": "2026-09-05",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t17c): record fresh reproducibility verdict",
             "chore(e5-t17c): submit reproducibility evidence",
             "chore(e5-t17c): activate reproducibility proof"
           ]
@@ -18855,7 +18856,7 @@
       ],
       "firstActivity": "2026-09-05",
       "lastActivity": "2026-09-05",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T17d",
@@ -18863,7 +18864,7 @@
       "epicKey": "5",
       "title": "Prove headless desktop boot ordering and seat runtime",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T17c"
       ],
