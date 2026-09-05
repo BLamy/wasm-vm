@@ -5,7 +5,7 @@
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
         bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc bench-runtime-workloads bench-runtime-compute bench-runtime-workloads-browser bench-runtime-compute-browser \
-        web-test-cpu-worker verify-E5-T16a
+        web-test-cpu-worker verify-E5-T16a verify-E5-T18a
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -878,6 +878,14 @@ verify-E5-T17e:
 	node tools/run-e5-t17e-desktop-persistence.mjs
 	node tools/verify/e5-t17e-desktop-persistence.mjs --self-test
 	@echo "verify-E5-T17e (desktop persistence, publication, and reload proof): OK"
+
+.PHONY: verify-E5-T18a
+verify-E5-T18a:
+	@set -eu; \
+	  command -v node >/dev/null; \
+	  test -d target/e5-t17c/chunks/desktop-b; \
+	  make web-build; \
+	  node tools/verify/e5-t18a-desktop-cold-boot.mjs
 
 .PHONY: verify-E3-T12a
 verify-E3-T12a:

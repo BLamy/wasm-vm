@@ -142,6 +142,7 @@ export const ROADMAP = [
       { name: "Display/serial host chrome + PNG/WebM capture", status: "verified", evidence: "E5-T08: Chromium 131 + Firefox 132 live view toggle, reserved hotkey, readback-checked PNG, bounded WebM, and 50-toggle proof" },
       { name: "EDID / display info", status: "verified", evidence: "E5-T04: decoder-checked 128-byte EDID 1.4 blocks, dynamic pmode/EDID regeneration, negotiated GET_EDID, and coalesced display config IRQs" },
       { name: "Hardware cursor plane mode/lifecycle", status: "verified", evidence: "E5-T15d: independent checkerboard/hotspot, transform-only 500 Hz MOVE, delayed-present coalescing, oversize fallback, hide, and lifecycle proof" },
+      { name: "Desktop cold boot — wallpaper/panel/WM menu", status: "partial", evidence: "E5-T18a: local Chromium cache-disabled desktop readiness proof" },
     ],
   },
   {

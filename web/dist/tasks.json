@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 265,
-    "total": 428
+    "verified": 274,
+    "total": 438
   },
   "epics": [
     {
@@ -56,7 +56,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-09-04"
+    "end": "2026-09-05"
   },
   "tasks": [
     {
@@ -18497,7 +18497,7 @@
       "epicKey": "5",
       "title": "Measure labwc with the pixman renderer inside the emulator",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T16a"
       ],
@@ -18508,13 +18508,24 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — worker — IMPLEMENTED\n\n- Implementation/evidence commit: `0a7455ce68e7780adc421647f6ca483344417b6f`.\n- Submission commands (the expanded `make verify-E5-T16b` gate): `cargo fmt --check -p\n  wasm-vm-core -p wasm-vm-cli`; GPU-trace clippy for core and CLI with `-D warnings`; native\n  core library, `virtio_gpu_machine`, and CLI tests; `cargo build --release -p wasm-vm-cli\n  --features gpu-trace`; both Node syntax checks; `bash tools/build-labwc-scratch.sh`; the exact\n  native capture command `node tools/display-server-workload.mjs run --image\n  target/e5-t16b/labwc-image/alpine-rootfs.ext4 --output evidence/e5-t16b/labwc-capture.json --\n  node tools/run-labwc-pixman.mjs`; and `node tools/verify/e5-t16b-labwc-pixman.mjs --capture\n  evidence/e5-t16b/labwc-capture.json`.\n- Native gates passed: 267 core tests, 4 virtio-GPU integration tests, 53 CLI tests, release\n  build, image fsck, signed package-lock validation, and foreign-ELF scan.\n- Evidence: capture [`evidence/e5-t16b/labwc-capture.json`](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t16b/labwc-capture.json),\n  SHA-256 `3aaf96d67891ae4a2b5569e77248511043f9f097ffcf508293f1c82390a1ad32`; replay summary\n  [`evidence/e5-t16b/labwc-run.json`](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t16b/labwc-run.json),\n  SHA-256 `4874fa730377e73d8513cb1c1821bb6fb38010673290ad267b1a35cc54c3e81d`; verifier result\n  [`evidence/e5-t16b/labwc-verification.json`](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t16b/labwc-verification.json),\n  SHA-256 `eee185e7ccfd76ea56597a9361da7974f9bda80cce6987eccba5903c578f62fb`.\n- The exact input image was bound before boot as `fd5e1a4d93458ded651d4fc243318d754f1911960e1bd3796a7cfdfa4e43661a`,\n  with package manifest SHA-256 `21e2f121ae14deecc6efcfd50a843f04f355d148bc3fdfea80a0da090c6f0383`\n  and file manifest SHA-256 `de0762c635675db5c00fbc5281fb73c594b1d94b4d66ec4814e71cc20c3a0b40`.\n  The post-run image digest is retained separately because OpenRC mutates the guest ext4 during\n  boot. Console, guest evidence, and GPU trace are recorded in the same summary.\n- Claim: the native riscv64 guest ran labwc on the DRM backend with `WLR_RENDERER=pixman`,\n  created a foot window, completed all six ordered T16a phases, typed exactly 100 characters in\n  200 accepted keyboard frames, dragged exactly 300 px in 30 steps/32 accepted tablet frames,\n  exited both application and compositor, and powered down cleanly. The capture reports a\n  2,799 ms idle interval at 0.4568% of total guest instructions, cumulative typing upload bytes\n  of 0 for this run (the required field is present and not extrapolated), and zero cursorq events\n  explicitly classified as `capability-gap: labwc submitted no cursorq chain during this run`.\n  Scope is the native emulator only; independent machines, WebKit, and host rr are waived per\n  the task/session instructions.\n\n### 2026-09-04 — verifier — VERDICT: refuted\n\n- P1 renderer provenance — HELD. Predicted that a clean native riscv64 boot would expose the\n  compositor command and renderer diagnostics before the workload was credited. The fresh local\n  `make verify-E5-T16b` run passed, and its saved console shows\n  `E5T16B_LAUNCH WLR_BACKENDS=drm WLR_RENDERER=pixman`, wlroots loading `pixman`, and creating the\n  pixman renderer (`/tmp/e5-t16b-fresh-run/labwc-console.log:308-331`); no GL renderer token was\n  present. The committed capture also has the same renderer proof at\n  `evidence/e5-t16b/labwc-console.log:309-332`.\n- P2 end-to-end workload and counter provenance — HELD. Predicted six ordered passed phases,\n  explicit counters, exact typing/drag shapes, clean exits, and a guest power-down. The committed\n  capture records the ordered markers and all phase counter points\n  (`evidence/e5-t16b/labwc-capture.json:79-213,216-243`); the console records labwc/foot start,\n  both exits, and `reboot: Power down` (`evidence/e5-t16b/labwc-console.log:423-458,597`). The\n  fresh repeat independently passed with image digest `e236ad222b666bc30fe82172ba6921be8a59cb851984095b4fcbf5a5c6ce7cc5`,\n  idle ratio `0.004513443843453826`, 100 characters/200 keyboard frames, 300 px/30 drag steps,\n  and zero rejected events (`/tmp/e5-t16b-fresh-run/labwc-capture.json:79-243`).\n- P3 cursorq capability accounting — HELD. Predicted zero cursorq traffic would be reported as a\n  capability gap rather than inferred from configuration. The capture reports\n  `cursorqEvents: 0` and `cursorqStatus: capability-gap: labwc submitted no cursorq chain during\n  this run` (`evidence/e5-t16b/labwc-capture.json:216-227`), while the GPU trace has\n  `records=88 dropped=0` (`evidence/e5-t16b/labwc-gpu-trace.log:1-2`). The fresh repeat preserved\n  the same explicit gap (`/tmp/e5-t16b-fresh-run/labwc-capture.json:216-227`).\n- P4 worker evidence digest — FAILED. Predicted the SHA-256 written in the worker Verification log\n  would equal the committed verifier artifact. The worker claims `4a9bdb0ffc93d979edf49b91b995fc6fa6b9cd153765afb89a625a8f92f9f589`\n  (`tasks/epic-5-the-window/E5-T16b-labwc-pixman-measurement.md:72-74`), but\n  `shasum -a 256 evidence/e5-t16b/labwc-verification.json` returns\n  `eee185e7ccfd76ea56597a9361da7974f9bda80cce6987eccba5903c578f62fb`, matching the committed\n  artifact, not the claim. Correct the digest claim and re-record the verification metadata.\n- P5 idle-budget enforcement — INSUFFICIENT. Predicted a bounded capture with idle cost above the\n  2% charter budget would be rejected or require an explicit justification. A temporary mutant\n  changed only the idle and subsequent guest-instruction points, producing\n  `instructionRatio=0.027472537533482798` in `/tmp/e5-t16b-verifier-42634/evidence/e5-t16b/labwc-verification.json:19-24`.\n  `node /tmp/e5-t16b-verifier-42634/tools/verify/e5-t16b-labwc-pixman.mjs --capture /tmp/e5-t16b-idle-budget-attack.json`\n  nevertheless exited 0 with `E5T16B_VERIFIED`; the verifier only checks finiteness at\n  `tools/verify/e5-t16b-labwc-pixman.mjs:43-46` and never enforces `<=2%` or a justification. Add\n  the budget assertion and a regression mutant, then rerun the acceptance gate.\n- COVERAGE — HELD for the current happy path. `make verify-E5-T16b` passed formatting, GPU-trace\n  clippy, 267 core tests, 4 virtio-GPU integration tests, 53 CLI tests, release build, scratch\n  image fsck/package/file-manifest checks, native capture, and the task verifier. `make\n  verify-E5-T16a` passed its 6/6 contract suite in the detached scratch checkout. The display\n  workload, GPU cursor counter, scratch profile, schema normalization, and task verifier hunks\n  were exercised by these runs; the verifier gap and stale digest prevent promotion to verified.\n- SUITE: n/a until P4/P5 are fixed and re-recorded. Independent machines, WebKit, and host rr were\n  not run, per the explicit session waiver and repository policy.\n\nCommands: `make verify-E5-T16b`; `make verify-E5-T16a` in `/tmp/e5-t16b-verifier-42634`;\n`shasum -a 256 evidence/e5-t16b/*`; `node /tmp/e5-t16b-verifier-42634/tools/verify/e5-t16b-labwc-pixman.mjs\n--capture /tmp/e5-t16b-idle-budget-attack.json`; and `git diff --name-status\n0a7455ce68e7780adc421647f6ca483344417b6f a5112cc68883f17c4dc3e8fe8276e0495169bd4a`.\nNo implementation code, harnesses, fixtures, or repository evidence remain modified by\nverification; only this log/status and its generated metadata are to be committed.\n\n### 2026-09-04 — worker — REWORK SUBMITTED\n\n- Rework commit: `0c2c83fd2ce73ff6f17d36904aff2a6ef6a6dee4`. The verifier now rejects any idle\n  instruction ratio above the task's 2% budget unless a future task-specific justification is\n  added, and `--self-test` mutates a valid capture to a 3% idle ratio and requires rejection.\n- Corrected the previous worker metadata typo from `4a9bdb0ffc93d979edf49b91b995fc6fa6b9cd153765afb89a625a8f92f9f589`\n  to the actual committed verifier artifact SHA-256 `eee185e7ccfd76ea56597a9361da7974f9bda80cce6987eccba5903c578f62fb`.\n  The runtime implementation and recorded guest evidence are unchanged by this verifier-only fix.\n- Incremental commands: `node --check tools/verify/e5-t16b-labwc-pixman.mjs`; `node\n  tools/verify/e5-t16b-labwc-pixman.mjs --capture evidence/e5-t16b/labwc-capture.json`; and the\n  same command with `--self-test`. The fresh critic's native `make verify-E5-T16b` happy path\n  already passed on the unchanged runtime/evidence head.\n- Claim: the committed labwc/pixman capture still proves all six native riscv64 workload phases,\n  and the verifier now enforces the idle budget that the critic's bounded mutant exposed. No\n  independent-machine, WebKit, or host-rr leg is included, per scope.\n\n### 2026-09-04 — verifier — VERDICT: verified\n\n- P1 renderer provenance — HELD. Predicted that the unchanged committed guest evidence would\n  still show an explicit DRM launch with `WLR_RENDERER=pixman`, pixman diagnostics, and no GL\n  fallback. The prior fresh native `make verify-E5-T16b` result remains applicable: the runtime and\n  evidence boundary is unchanged, confirmed by an empty `git diff --quiet\n  0a7455ce68e7780adc421647f6ca483344417b6f 010539884613afb92a5e3c41623c45b0d019018e -- src\n  crates tools/display-server-workload.mjs evidence target`; the committed console proof is at\n  `evidence/e5-t16b/labwc-console.log:309-332` and the verifier enforces it at\n  `tools/verify/e5-t16b-labwc-pixman.mjs:86-92`.\n- P2 workload and metric acceptance — HELD. Predicted that all six ordered T16a phases, terminal\n  and compositor exits, power-down, explicit metric fields, 100 accepted characters/200 keyboard\n  frames, and 300 px/30-step drag would remain valid. The prior fresh native gate held this claim;\n  the unchanged capture records the phase points at\n  `evidence/e5-t16b/labwc-capture.json:79-243`, and the current verifier passed against a temporary\n  mirror of that exact capture with `node tools/verify/e5-t16b-labwc-pixman.mjs --capture ...`.\n- P3 cursorq capability accounting — HELD. Predicted zero cursorq traffic would remain an explicit\n  capability gap rather than an inferred success. The unchanged capture has\n  `cursorqEvents: 0` and `cursorqStatus: capability-gap: ...` at\n  `evidence/e5-t16b/labwc-capture.json:216-227`; the current guard remains at\n  `tools/verify/e5-t16b-labwc-pixman.mjs:96-100`.\n- P4 corrected worker digest — HELD. Predicted the corrected metadata would equal the committed\n  verifier artifact. `shasum -a 256 evidence/e5-t16b/labwc-verification.json` returned\n  `eee185e7ccfd76ea56597a9361da7974f9bda80cce6987eccba5903c578f62fb`, matching the claim at\n  `tasks/epic-5-the-window/E5-T16b-labwc-pixman-measurement.md:72-74`.\n- P5 idle-budget guard and regression self-test — HELD. Predicted the valid capture’s ratio would\n  be accepted below 2%, while a 3% mutant would be rejected. In temporary mirror\n  `/tmp/e5-t16b-current-verifier.7Unot0`, the normal command passed with ratio\n  `0.0045681757501264825`; `--self-test` passed with\n  `E5T16B_SELF_TEST=idle-budget-rejected`. The guard and self-test are exercised at\n  `tools/verify/e5-t16b-labwc-pixman.mjs:17,46-67,154-167`, and the committed output records\n  the same ratio and `budget: \"<=2% unless charter justification\"` at\n  `evidence/e5-t16b/labwc-verification.json:19-24`.\n- Bounded novel artifact-binding attack — HELD. Predicted tampering the recorded run’s capture\n  image digest would be rejected. After changing only the temporary mirror’s\n  `evidence/e5-t16b/labwc-run.json:capture.image.sha256` to all zeroes, the current verifier exited\n  status 1 with `run summary capture digest disagrees with the harness` at\n  `/tmp/e5-t16b-current-verifier.7Unot0/tools/verify/e5-t16b-labwc-pixman.mjs:104`.\n- COVERAGE — HELD. The prior native happy path and T16a schema evidence carry forward because\n  runtime/evidence hashes and dependency boundaries are unchanged. The new budget branch and\n  self-test branch were directly executed in the temporary mirror; the added Makefile line is\n  declarative wiring for that exact self-test command and was inspected at `Makefile:723-724`.\n  No acceptance-bearing changed hunk remains unexecuted or unexplained.\n- SUITE — HELD. The committed `--self-test` mutant is a permanent regression check for the prior\n  verifier gap; no implementation code, harness, fixture, or repository evidence was modified by\n  this verification.\n\nCommands: `git rev-parse HEAD`; `git diff --name-status` and the runtime/evidence boundary check\nabove; `shasum -a 256 evidence/e5-t16b/labwc-verification.json evidence/e5-t16b/labwc-capture.json\nevidence/e5-t16b/labwc-run.json target/e5-t16b/labwc-image/MANIFEST.txt\ntarget/e5-t16b/labwc-image/FILE-MANIFEST.txt`; `node --check\ntools/verify/e5-t16b-labwc-pixman.mjs`; normal and `--self-test` verifier runs in\n`/tmp/e5-t16b-current-verifier.7Unot0`; the temporary artifact-binding mutation and verifier run\nthere; and static inspection of `0c2c83f`/`0105398` plus `git diff --stat\n0a7455ce68e7780adc421647f6ca483344417b6f 010539884613afb92a5e3c41623c45b0d019018e`. Per the\nexplicit session waiver, no independent machine, WebKit, rr, or `ssh dev` run was performed.",
       "adversarial": "Inspect the compositor command line and renderer diagnostics before trusting the numbers. Force\nthe scripted workload through a clean cold boot, repeat the drag and typing phases, and verify\nthat a missing cursorq event is reported as a capability gap rather than silently inferred from\nlabwc's configuration. A GL failure followed by a pixman measurement without the pixman setting\nbeing visible is a refutation.",
       "file": "tasks/epic-5-the-window/E5-T16b-labwc-pixman-measurement.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 5,
+          "labels": [
+            "chore(e5-t16b): verify idle-budget rework",
+            "chore(e5-t16b): resubmit verifier hardening",
+            "chore(e5-t16b): record adversarial verification findings",
+            "chore(e5-t16b): record native verification evidence"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 5
     },
     {
       "id": "E5-T16c",
@@ -18522,7 +18533,7 @@
       "epicKey": "5",
       "title": "Measure weston with the pixman renderer inside the emulator",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E5-T16b"
       ],
@@ -18533,13 +18544,23 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — worker — IMPLEMENTED\n\n- Implementation commit: `b658d3cc62ffc8b2150eab0262526a46c2bb606c`.\n- Exact-head command: `make verify-E5-T16c`.\n- The gate passed `cargo fmt --check`, clippy for core and CLI with `gpu-trace`, 267 core\n  library tests, 4 GPU integration tests, 54 CLI tests, the release CLI build, Node syntax\n  checks, and a fresh signed Alpine riscv64 Weston scratch image containing 194 packages.\n- The native emulator workload passed all six shared phases in order: cold-start, idle,\n  open-terminal, type-100, drag-300, and close. The final capture reports Weston DRM with\n  the Pixman renderer, foot, and wl-clipboard; 100 typed characters / 200 frames / 0 rejected,\n  a 300 px x-axis drag over 30 steps / 32 frames / 0 rejected, 5,332,024,187 retired guest\n  instructions, 18,612,224-byte peak RSS, 427 idle wakeups (149.663/s), 36,864,000 typing\n  upload bytes, and a 0.3638% idle instruction ratio. The capture records the expected\n  capability gap of zero cursorq chains for this Weston run.\n- Renderer evidence is bound to `E5T16C_LAUNCH weston --backend=drm --renderer=pixman`\n  and `Using Pixman renderer`; the verifier rejects a 3% idle-budget mutant and a console\n  capture with all ` --renderer=pixman` flags removed. The image was unchanged by the guest\n  run except for the expected runtime filesystem state, with pre-run image digest\n  `9176a631e0b2d572f2cb87dde5a8e6916ecca60d4829afb8f1eef6045b92e382` and post-run digest\n  `d57ce5bf2d9cb68b20ba7df381703090024634fd7db633772e2690d60a57a80e`; package manifest\n  digest `225b8d35f7375c084075ca60edac5ea8fbf7ef46f1fd09a7e3a5d40bb074aae1` and file\n  manifest digest `b2b4964035b5a348be808afddc83b91d007c5cb3e5fbfcf1854b6f85d5d51552`.\n- Evidence files and SHA-256 digests: `evidence/e5-t16c/weston-capture.json`\n  (`9cba30d5c916a1c263e32dcc68284a2dbef4449fe06119ec8408b799c18da30b`),\n  `weston-run.json` (`9b87ab0f1c8ab15a2cb6c2d4a48feba5892e9b4f887b87ee1fc7bc944f972aa9`),\n  `weston-verification.json` (`319f68b2179173368d171bc9255751d0a666841aea0f5c7ce45fcc98d1707df0`),\n  `weston-console.log` (`74345c4bdc226284dfbc9bfe2a1ddb4b9a91115bfec27d85b79413373e17c6b0`),\n  `weston-stderr.log` (`b0f127518f241359279976b1a2665ea69cad9bc2b9e7abd11b33ee41a0a0f11b`),\n  `weston-guest-evidence.txt` (`e3a7c159faafb2736c3b87bc3b2d0ee0e5126bf8a5bf048769d83bf2ece0c8ae`),\n  and `weston-gpu-trace.log` (`a07aea671a61945a0c754816aa1f63125551e47a3cba03cf38012f424584d3b2`).\n- This is an emulator-only, guest-evidence submission as scoped by the task and user; no\n  independent-machine or WebKit leg was added.\n\n### 2026-09-04 — verifier — VERDICT: verified\n\n- P1 exact-head/evidence binding — HELD. `f68f6879a8ac14735a46e160475cf5e1ec467687` has\n  `b658d3cc62ffc8b2150eab0262526a46c2bb606c` as its direct parent. The committed evidence\n  hashes in `evidence/e5-t16c/weston-verification.json` and this log match fresh `sha256sum`\n  results for all seven committed evidence files; the image pre-run digest is `9176…e382`,\n  post-run digest is `d57c…a80e`, and both manifest digests match the files regenerated by the\n  scratch builder.\n- P2 real Weston DRM/pixman startup — HELD. Predicted the console would contain both the exact\n  `E5T16C_LAUNCH weston --backend=drm --renderer=pixman` command and Weston’s `Using Pixman\n  renderer` diagnostic, with no GL renderer selection. Observed both in\n  `evidence/e5-t16c/weston-console.log` (the launch appears at the Weston log begin/end blocks,\n  and the runtime log reports DRM output plus Pixman); the committed verifier and the fresh\n  cold replay both rejected the renderer-flag mutant.\n- P3 six phases and measured counters — HELD. Predicted the normalized capture would contain the\n  six T16a markers in order, monotonic guest-instruction/upload/wakeup counters, and passed\n  close proofs. `evidence/e5-t16c/weston-capture.json` records cold-start, idle, open-terminal,\n  type-100, drag-300, and close in order, with no observation errors; the capture reports 100\n  characters / 200 frames / 0 rejected, a 300 px x-axis drag over 30 steps / 32 frames / 0\n  rejected, 18,612,224-byte peak RSS, 36,864,000 typing upload bytes, 427 idle wakeups, and\n  0.3638% idle instructions. A fresh `make verify-E5-T16c` cold reset independently completed\n  the same workload with 100/200/0 typing, 300/30/32/0 drag, and a 0.3605% idle ratio.\n- P4 guest-only provenance and T09 damage bytes — HELD. Predicted the capture would identify\n  the emulator/riscv64 target and source uploads as\n  `guest-t09-vm-stats-gpu-bytesUploaded`, with a lossless GPU trace. Observed those exact schema\n  fields, `records=116 dropped=0` in `weston-gpu-trace.log`, and the same deterministic GPU\n  trace digest after the cold reset; no host-native or extrapolated measurement entered the\n  capture. The guest evidence records a clean `Exited(0)` and the console reaches `reboot: Power\n  down`.\n- P5 image/package/file manifest bindings — HELD. Predicted the Weston package set would contain\n  `weston`, `weston-backend-drm`, and `weston-shell-desktop`, while the file manifest would bind\n  both E5-T16c launchers. The committed manifest has 194 signed packages and those exact entries;\n  its digest is `225b…aae1`, the file-manifest digest is `b2b4…1552`, and the fresh builder\n  reproduced both hashes before the cold replay. The run summary binds the capture’s pre-run\n  image digest to the harness input and records a distinct post-run runtime-filesystem digest.\n- P6 cursorq capability gap — HELD. Predicted zero cursorq chains would be disclosed rather than\n  treated as success. Observed `cursorqEvents: 0` with\n  `capability-gap: weston submitted no cursorq chain during this run` in the capture and\n  verification summary; the GPU trace has no dropped records. This is a disclosed capability\n  gap, not a failed Weston workload phase.\n- P7 adversarial attacks — HELD. The committed verifier self-test rejected both its 3% idle\n  budget mutant and renderer-flag removal mutant. An independent bounded attack changed\n  `type-100.details.frames` from 200 to 199 in a temporary capture; the verifier rejected it at\n  `tools/verify/e5-t16c-weston-pixman.mjs:33` with `199 !== 200`. The fresh `make verify-E5-T16c`\n  also reran the workload after a newly built cold reset and exited `OK`.\n- COVERAGE — HELD. The fresh run exercised the Weston image builder, Weston launcher, native\n  compositor profile, marker parsing, all six phase records, keyboard/tablet injection, T09\n  upload accounting, cursorq observation, GPU trace writing, clean close, and the verifier\n  output. The added labwc compatibility arm in `tools/rootfs-inner.sh` was not part of this\n  Weston run, but only preserves the already-verified E5-T16b path; it is waived as predecessor\n  compatibility coverage rather than a new T16c behavior. No changed T16c hunk was dead or\n  unproven for this task’s acceptance claim.\n- SUITE: the committed deterministic verifier, the fresh native replay, the verifier self-test,\n  and the bounded novel attack are retained as the proof suite. Independent-machine and WebKit\n  legs remain explicitly waived by the user; host rr/ssh dev remains waived by repository policy.\n\nCommands:\n\n`node tools/verify/e5-t16c-weston-pixman.mjs --capture evidence/e5-t16c/weston-capture.json`\n\n`node tools/verify/e5-t16c-weston-pixman.mjs --capture evidence/e5-t16c/weston-capture.json --self-test`\n\n`make verify-E5-T16c`",
       "adversarial": "Check the weston command line and startup log for `--renderer=pixman`, then repeat the typing and\ndrag workload after a cold reset. Remove the renderer flag in a test copy and ensure the harness\nrejects the result instead of accepting a possibly-GL or failed-start capture. Verify all damage\nbytes come from T09 counters for this run.",
       "file": "tasks/epic-5-the-window/E5-T16c-weston-pixman-measurement.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 3,
+          "labels": [
+            "chore(e5-t16c): verify weston pixman measurement",
+            "chore(e5-t16c): record weston verification evidence",
+            "chore(e5-t16c): activate weston pixman measurement"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 3
     },
     {
       "id": "E5-T16d",
@@ -18547,7 +18568,7 @@
       "epicKey": "5",
       "title": "Audit Alpine riscv64 display-stack packages and installability",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E5-T16c"
       ],
@@ -18558,13 +18579,23 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — worker — IMPLEMENTED (commit `835b780`)\n\n- Fast gates: `cargo fmt --check -p wasm-vm-cli`; `cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings`; `cargo test -p wasm-vm-cli --bin wasm-vm --features gpu-trace` (54 passed); `cargo build --release -p wasm-vm-cli --features gpu-trace`; and Node syntax checks for both audit scripts.\n- Final guest recording: `node tools/run-e5-t16d-package-audit.mjs` ran two fresh copies of the E3-derived `releases/rootfs/alpine-rootfs.ext4` through the native riscv64 emulator with `--net-slirp`, `--virtio-rng`, `--jit --jit-threshold 100`, and `--interrupt-batching`. Each guest recorded `apk --print-arch`, the v3.20 main/community repository file, `apk update`, one combined `apk search -v`, a successful full dependency `apk add --simulate`, the signed `apk add --no-scripts --no-progress` transaction, `apk info -a`, and the installed manifest before `poweroff -f`.\n- The labwc/pixman candidate installed all 10 requested packages (the resolver selected 93 packages; final installed manifest has 177 entries) and the weston/pixman candidate installed all 11 requested packages (resolver selected 106 packages; final installed manifest has 190 entries). Both guests reported `riscv64`, repository update `rc=0`, install `rc=0` with `OK:`, and emulator `outcome=Exited(0)`; no `--allow-untrusted` or host package database was used.\n- Evidence: `evidence/e5-t16d/package-audit.json` and `package-audit-verification.json`; guest traces `labwc-pixman-guest-evidence.txt` and `weston-pixman-guest-evidence.txt`; complete console/stderr logs for both candidates. Base image SHA-256 is `ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8`; guest retired counts are `22769225470` and `25121966141`. The final `835b780` parser-only fix decodes interleaved serial echoes without changing the recorded guest run; the verifier and four negative self-tests pass against the resulting audit artifact.\n\n### 2026-09-04 — verifier — VERDICT: verified (commit `5421bce`)\n\n- Predictions held. Independent hashes match the captured E3 base image and both manifests (`package-audit.json:2-20`, `package-audit-verification.json:7-17`); both finalists have the same clean-copy hash and distinct post-run hash (`package-audit-verification.json:21-45`).\n- Both local guest recordings show riscv64 Alpine v3.20 main/community fetches, `rc=0` search/simulation/install/info markers, signed `apk add` `OK:` output, complete manifests, `E5T16D_PACKAGE_PASS=1`, and `outcome=Exited(0)` (`labwc-pixman-console.log:299-306,357,461,565,1310,1493-1499`; `weston-pixman-console.log:303-310,377,495,613,1460,1656-1662`; guest evidence line 6). Exact versions for all 21 requested packages are independently joined across search, simulation, install, info, and manifest outputs; the verification artifact records the two stacks separately (`package-audit-verification.json:21-57`).\n- No untrusted install or host-architecture path occurs in the recordings; the sole `--allow-untrusted` text is the intentional forbidden-policy declaration. Existing verifier self-tests pass for untrusted flag, wrong architecture, missing repository, and failed install. A bounded copied-artifact mutation removing `labwc` from the installed manifest exited 1 at verifier line 164, proving the missing-package guard fires.\n- Coverage: both candidate happy paths exercise the runner’s changed collection/parsing and pass/exit/hash code; the four self-tests plus the novel manifest mutation exercise the fail-closed criteria. Defensive missing-marker/error branches are waived as validation guards not reachable on a successful recording. `node` syntax/build/verifier gates pass. `make verify-E5-T16d` was also attempted, but stopped at the unrelated pre-existing OCI test `crates/cli/src/oci/pull/tests.rs:286` (53 passed, 1 failed) before reaching the audit runner; no E5-T16d hunk is involved.\n- Commands: `cargo build --release -p wasm-vm-cli --features gpu-trace`; both `node --check` commands; `node tools/verify/e5-t16d-package-audit.mjs`; `node tools/verify/e5-t16d-package-audit.mjs --self-test`; exact package/hash/unsafe-marker check; novel copied-manifest mutation.",
       "adversarial": "Clear the package cache and rerun against the configured riscv64 mirrors. Attempt each proposed\n`apk add` on a clean image, including the clipboard and terminal packages; a package that only\nexists on x86 or only succeeds with `--allow-untrusted` refutes the candidate's availability claim.\nCompare package versions and repository labels against the captured architecture metadata.",
       "file": "tasks/epic-5-the-window/E5-T16d-alpine-display-package-audit.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 3,
+          "labels": [
+            "chore(e5-t16d): verify package audit",
+            "chore(e5-t16d): submit package audit evidence",
+            "chore(e5-t16d): activate Alpine display package audit"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 3
     },
     {
       "id": "E5-T16e",
@@ -18572,7 +18603,7 @@
       "epicKey": "5",
       "title": "Publish measured display-server decision and T17 handoff",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E5-T16d"
       ],
@@ -18583,13 +18614,31 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-05 — worker — IMPLEMENTED\n\n- Commit: `64abae1b813ea9eda66a3dee5887d5e93ec33d1e`.\n- Command: `make verify-E5-T16e` (passed). This ran the CLI fmt/clippy/test/build gates, built a\n  fresh signed Alpine v3.20 riscv64 Weston/Pixman image, replayed the frozen six-phase T16a\n  workload twice from clean copies, synthesized the decision, and passed the variance/damage\n  mutation self-test.\n- Decision: Weston DRM/Pixman with foot and wl-clipboard. The prior end-to-end captures measure\n  labwc idle ratio `0.4568175750%`, Weston idle ratio `0.3637762568%`, and a winning margin of\n  `0.0009304131819650491` ratio (`0.0930` percentage points); both candidates are below the 2%\n  idle budget. Labwc reports `cursorqEvents: 0` with a capability-gap status, so the selected\n  stack does not rely on an unproven cursor plane.\n- Independent T09 damage recomputation from raw `type-100` counters: labwc `0` bytes and Weston\n  `36,864,000` bytes for 100 characters. Fresh Weston idle ratios were `0.0036462359033466426`\n  and `0.0036463767176481247`; maximum deviation from their mean was\n  `0.00000007040715074109125`, below the winning margin.\n- Fresh source identity: image `27bbdc06f63fd611fbb2c071d56b5ec1bbfd696a8d9180c81c33a45e5ed5ed95`,\n  package manifest `225b8d35f7375c084075ca60edac5ea8fbf7ef46f1fd09a7e3a5d40bb074aae1`, and file\n  manifest `b2b4964035b5a348be808afddc83b91d007c5cb3e5fbfcf1854b6f85d5d51552`. Both reruns used\n  that exact source image; their post-run image digests were distinct (`d1b726d49225b28511f378e1f581c27213c48c4481f9436bbdd3db53b8688e4a` and\n  `7291ff674d6db690ff5eb7606dc2e5515065331865a44c65bb2e9849708230ee`).\n- Evidence: `evidence/e5-t16e/winner-reruns.json` (SHA-256\n  `5f7ad616a147eec62bbd0a609ad6fcdb3bbd7fd6a498851137299e5b20eab1d5`),\n  `evidence/e5-t16e/display-server-decision.json` (SHA-256\n  `d7e7c3b4a18f09af7d9132f7b75f1dfe0a6b3d191eed6e9db52182ca24029b18`), and\n  `docs/decisions/display-server.md` (SHA-256\n  `9e5ab89e22a8ff6f045919a4681d888388a2caff0cc6f4a5fdf8016f62ba3540`). The per-run console,\n  guest-evidence, GPU-trace, stderr, and normalized run JSON files are listed and hashed in the\n  rerun artifact. Independent-machine, WebKit, and host-rr legs are intentionally out of scope.\n\n### 2026-09-05 — verifier — VERDICT: verified\n\n- P1 exact head and stale bindings — HELD. Predicted the evidence would either bind to the exact\n  acceptance-bearing implementation or fail as stale. `evidence/e5-t16e/winner-reruns.json:6-20`\n  binds the reruns to implementation head `64abae1b813ea9eda66a3dee5887d5e93ec33d1e` and the\n  clean source image, package-manifest, and file-manifest digests. `HEAD` is publication commit\n  `c34dfaca4b1159d15c9d77799b9ca51e3051ccf5`, whose direct parent is that implementation head;\n  the parent-to-HEAD diff contains only docs, evidence, task log, queue, and generated task\n  metadata, with no acceptance-bearing source or harness hunk. Recomputed artifact hashes match\n  `winner-reruns.json:31-55,81-105`, so the implementation-head binding is not stale.\n- P2 decision table and no extrapolation — HELD. Predicted both measured finalists would have all\n  required fields and raw-capture provenance. `docs/decisions/display-server.md:11-26` contains\n  labwc/Pixman and Weston/Pixman rows for cold start, guest instructions, idle instructions/ratio,\n  type-100 damage, RSS, idle wakeups/rate, cursorq, and workload outcome, with links to the raw\n  captures; the same measured values are present in\n  `evidence/e5-t16e/display-server-decision.json:21-55`.\n- P3 raw T09 damage — HELD. Predicted independent `uploadedBytes` deltas would match each summary.\n  Labwc raw type-100 counters at `evidence/e5-t16b/labwc-capture.json:145-160` recompute to `0`\n  bytes and Weston counters at `evidence/e5-t16c/weston-capture.json:145-160` recompute to\n  `57,344,064 - 20,480,064 = 36,864,000` bytes; both summaries record those results at each\n  file's `:229-243`. The two fresh Weston reruns repeat the same raw calculation at\n  `evidence/e5-t16e/weston-rerun-1-capture.json:145-160` and\n  `evidence/e5-t16e/weston-rerun-2-capture.json:145-160`. The validator independently enforces\n  this recomputation at `tools/verify/e5-t16e-display-server-decision.mjs:128-135`.\n- P4 fresh winner reruns — HELD. Predicted two cold reruns would use byte-identical source images\n  and produce distinct post-run images. `winner-reruns.json:25-29` and `:75-79` show identical\n  preimage digests equal to the source, while the two post-run digests are distinct from the source\n  and from each other. The six-phase captures have no recorded errors; the source, preimage,\n  postimage, and artifact-digest checks are fail-closed in\n  `tools/verify/e5-t16e-display-server-decision.mjs:187-217`.\n- P5 Weston DRM/Pixman/no-GL and trace cleanliness — HELD. Predicted both winner reruns would use\n  the exact DRM/Pixman path and finish with clean guest/GPU evidence. The exact launch, `riscv64`\n  guest, and `Using Pixman renderer` proof appear at\n  `evidence/e5-t16e/weston-rerun-1/weston-console.log:309-331` and\n  `evidence/e5-t16e/weston-rerun-2/weston-console.log:309-331`, with no GL renderer/flag match. Guest\n  evidence ends `outcome=Exited(0)` at each `weston-guest-evidence.txt:1-6`; GPU traces report\n  `records=121 dropped=0` and `records=116 dropped=0` at each `weston-gpu-trace.log:1-2`. The\n  capture error and exact launch assertions are enforced at\n  `tools/verify/e5-t16e-display-server-decision.mjs:197-217`.\n- P6 idle, winner margin, and variance — HELD. Predicted all candidates and reruns would stay at\n  or below the 2% idle budget and that winner variance would be strictly below the runner-up\n  margin. `evidence/e5-t16e/display-server-decision.json:5-18` records margin\n  `0.0009304131819650491`, rerun spread `1.408143014821825e-7`, and maximum absolute deviation\n  `7.040715074109125e-8`; the candidate and rerun ratios at `:21-55` are below 2%. The documented\n  comparison and variance method agree at `docs/decisions/display-server.md:39-46`.\n- P7 T16d signed riscv64 package closure — HELD. Predicted every selected Weston/foot/clipboard/\n  seat/udev/font/Pixman/XKB package would have successful riscv64 search, signed native install,\n  and exact installed version. The verified T16d handoff lists all 11 Weston packages and versions\n  at `evidence/e5-t16d/package-audit-verification.json:42-63`; the audit policy requires default\n  signature verification and forbids `--allow-untrusted` at\n  `evidence/e5-t16d/package-audit.json:19-23`. The raw Weston audit shows riscv64 repository and\n  search setup at `weston-pixman-console.log:303-315,375-377`, clean `apk add --no-scripts\n  --no-progress` installation and `OK` at `:500-613`, and package info, complete manifest, and pass\n  marker at `:618-620,1460-1662`. The independent T16d validator and all of its negative\n  self-tests passed.\n- P8 bounded attack, self-test, and changed-hunk coverage — HELD. Predicted a rerun capture\n  mutation with its claimed SHA-256 left unchanged would be rejected before semantic acceptance.\n  In a temporary copy, changing only rerun-1 `peakRssBytes` caused verifier exit `1` with\n  `capture digest drifted`, exercising `tools/verify/e5-t16e-display-server-decision.mjs:200-203`.\n  The committed variance/damage mutant self-test passed with\n  `E5T16E_SELF_TEST=variance-and-damage-rejected`. The rerun harness is covered by\n  `winner-reruns.json:31-128`, the per-run evidence-directory change is covered by the two run\n  artifacts from `tools/run-weston-pixman.mjs:27`, and the validator/Make wiring is covered by\n  `tools/verify/e5-t16e-display-server-decision.mjs:176-239` and `Makefile:768-784`. Defensive\n  rejection branches are fail-closed guards, not unproven acceptance behavior.\n- Deterministic gates and scope — HELD. All three task scripts passed `node --check`; T16e normal\n  verification and self-test passed; T16d normal verification and self-test passed; fmt, clippy\n  with `-D warnings`, and the release build passed. The full guest replay was not repeated because\n  the exact implementation-head evidence is neither stale nor contradicted. The native CLI test\n  command was attempted and hit the pre-existing OCI failure at\n  `crates/cli/src/oci/pull/tests.rs:286` (53 passed, 1 failed), already recorded by the prior T16d\n  verifier at `tasks/epic-5-the-window/E5-T16d-alpine-display-package-audit.md:64-70`; that code is\n  outside this task's implementation diff and does not refute E5-T16e. Independent-machine,\n  WebKit, and host-rr legs were omitted per the explicit scope and repository policy.\n\nCommands: `git rev-parse HEAD`; `git diff --name-only dffb17336fa53277419dd0634e734bb5f79b9897 HEAD`;\n`node --check tools/run-weston-pixman.mjs tools/run-e5-t16e-weston-reruns.mjs tools/verify/e5-t16e-display-server-decision.mjs`;\n`node tools/verify/e5-t16e-display-server-decision.mjs`; `node tools/verify/e5-t16e-display-server-decision.mjs --self-test`;\n`node tools/verify/e5-t16d-package-audit.mjs`; `node tools/verify/e5-t16d-package-audit.mjs --self-test`;\n`cargo fmt --check -p wasm-vm-cli`; `cargo clippy -p wasm-vm-cli --features gpu-trace -- -D warnings`;\n`cargo test -p wasm-vm-cli --bin wasm-vm --features gpu-trace` (unrelated pre-existing OCI failure\nnoted above); `cargo build --release -p wasm-vm-cli --features gpu-trace`.",
       "adversarial": "Re-run the winner twice from cold state, compare variance to the runner-up margin, and recompute\ntyping upload bytes from raw T09 counters rather than the summary JSON. Inspect weston's pixman\nproof, labwc's cursorq proof if applicable, and every selected package install on a clean E3-derived\nriscv64 image. Any undocumented GL/fbdev substitution, stale evidence head, or ambiguous T17\nmanifest refutes the decision.",
       "file": "tasks/epic-5-the-window/E5-T16e-display-server-decision.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 2,
+          "labels": [
+            "chore(e5-t16e): activate display server decision",
+            "E5-T16e: add measured decision verification harness"
+          ]
+        },
+        {
+          "date": "2026-09-05",
+          "commits": 3,
+          "labels": [
+            "chore(e5-t16e): correct evidence citations",
+            "chore(e5-t16e): record adversarial verification",
+            "E5-T16e: publish Weston display decision"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-05",
+      "commitCount": 5
     },
     {
       "id": "E5-T17",
@@ -18597,14 +18646,20 @@
       "epicKey": "5",
       "title": "Alpine riscv64 desktop disk image — reproducible build within size budget",
       "priority": 517,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T16e"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T17a",
+        "E5-T17b",
+        "E5-T17c",
+        "E5-T17d",
+        "E5-T17e"
+      ],
       "estimate": "L",
       "capstone": false,
-      "goal": "A reproducible, scripted build of the desktop disk image: Epic 3's Alpine rootfs plus\nthe T16-chosen display stack, terminal, fonts, seat/udev machinery, and an autostart\npath — within a hard size budget so the streamed-chunk loading from Epic 3 stays\ntolerable on first visit.",
+      "goal": "A reproducible, scripted build of the desktop disk image: Epic 3's Alpine rootfs plus\nthe T16-chosen display stack, terminal, fonts, seat/udev machinery, and an autostart\npath — within a hard size budget so the streamed-chunk loading from Epic 3 stays\ntolerable on first visit.\n\n> **DECOMPOSED 2026-09-05.** This L-sized image container is cancelled before implementation as\n> required by task policy and replaced by five ordered S slices. E5-T17a freezes the signed package\n> manifest and offline profile; E5-T17b assembles the image and startup configuration; E5-T17c\n> proves reproducibility, budget, and chunk deduplication; E5-T17d proves headless boot ordering;\n> and E5-T17e proves E3 persistence and publishes the final artifact/documentation handoff.\n\n> **DECOMPOSED 2026-09-05.** This L-sized image container is cancelled before implementation as\n> required by task policy and replaced by five ordered S slices. E5-T17a freezes the signed package\n> manifest and offline profile; E5-T17b assembles the image and startup configuration; E5-T17c\n> proves reproducibility, budget, and chunk deduplication; E5-T17d proves headless boot ordering;\n> and E5-T17e proves E3 persistence and publishes the final artifact/documentation handoff.",
       "criteria": [
         {
           "text": "Two consecutive builds from the same manifest produce images whose file listings and package versions are identical (`diff` of `apk info -v` and `find -type f` manifests; timestamps excluded).",
@@ -18629,13 +18684,282 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-05 — coordinator — decomposed\n\nThis L-sized desktop-image planning container is cancelled before implementation as required by\ntask policy and replaced by five ordered S tickets. The chain is package profile → image/config →\nreproducibility/budget/chunks → boot ordering → persistence/publication; E5-T18 is rewired to the\nfinal proof slice so bring-up cannot bypass the image's persistence and artifact handoff.",
       "adversarial": "Refute reproducibility: build on a second machine / clean container from the committed\nmanifest with the package cache — any content divergence beyond the documented exclusion\nlist refutes. Refute the budget: `du` the real ext4 delta, not the sparse file size;\ncheck the chunk manifest actually dedupes against E3 base chunks (a full re-upload of\nunchanged base chunks refutes the streaming claim). Attack boot ordering: boot 20 times\nand check seatd is up before the autologin shell runs `start-desktop` every time (an\nOpenRC race here becomes T18's \"sometimes black screen\"). Verify no leftover build\nartifacts (apk cache, /root history) bloat the image. Attempt `apk add` of one extra\npackage in the running guest to prove the E3 network+persistence path still functions\non this image.",
       "file": "tasks/epic-5-the-window/E5-T17-alpine-desktop-image.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 1,
+          "labels": [
+            "E5-T17: decompose desktop image task"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 1
+    },
+    {
+      "id": "E5-T17a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Freeze signed Alpine desktop package manifest and offline profile",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T16e"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Turn the E5-T16e Weston decision into one pinned, machine-readable Alpine riscv64 package profile\nthat the desktop image builder can consume online or from a committed offline cache.",
+      "criteria": [
+        {
+          "text": "The validator resolves every required package to the T16e decision/audit and rejects a missing version, repository, architecture, digest, or signature policy.",
+          "checked": false
+        },
+        {
+          "text": "The profile has an explicit online/offline mode and fails closed when a required cached APK or its trusted index/key is absent.",
+          "checked": false
+        },
+        {
+          "text": "The exact requested package set has no silent dependency substitution; optional T22 tooling is separately labelled and pinned if included.",
+          "checked": false
+        },
+        {
+          "text": "`make verify-E5-T17a` passes from a scrubbed environment and the profile contains no `--allow-untrusted` token.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-05 — worker — IMPLEMENTED\n\n- Commits: `9df46b08243624905e4e472657e26f31125ff678` (profile/validator) and\n  `3ab104b05f305a5719476402be40e52f31ecaa52` (artifact/index digest pinning).\n- Commands: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17a`.\n- Evidence: `evidence/e5-t17a/package-profile-verification.json` (SHA-256 `6a58a03a26cf762e63d82ff9ae6afacfc35755796678ae4db8e38a9643c3e715`); frozen profile `tools/image/e5-t17a-desktop-packages.json` (SHA-256 `177d2f563f92efc37ac92f78aade7801a7d03110580cbe48328f90c9f903b1d7`); package artifact source digest manifest `evidence/e5-t17a/package-artifact-digests.json` (SHA-256 `c647a1af6079c17fc7380493ac400309ae67e49902565f104f9ee9aef6f34c94`).\n- Source bindings checked by the validator: T16e decision SHA-256 `d7e7c3b4a18f09af7d9132f7b75f1dfe0a6b3d191eed6e9db52182ca24029b18`, T16d package-audit SHA-256 `c08fced3877b9aab3bb7b37d044232f9b23e01482612f40093e76266591e574b`, and T16d audit-verification SHA-256 `e76b1a52ec8428d92f906842285a55fb1c1a14a32d2ed7c67ece0228a7ce207d`.\n- The recorded run proves the exact 11-package Weston DRM/Pixman profile is bound to Alpine v3.20 riscv64 main/community repositories, pins every APK's repository, size, and SHA-256, pins both signed-tar APKINDEX digests, checks the embedded trusted signature member and riscv64 trusted-key directory, contains no `--allow-untrusted` token, declares explicit online-or-offline resolution, and refuses missing or tampered cached APKs/indexes/keys. The validator's deterministic self-test rejected wrong architecture, repository, missing/drifted package version and digest, package source/trust/artifact provenance drift, non-fail-closed cache, missing offline APK, and invalidated index mutations before image assembly.\n\n### 2026-09-05 — fresh verifier — VERDICT: refuted\n\n- P1 trusted-key identity — FAILED. Predicted that offline mode would reject a cache whose required\n  `keys/riscv64` directory no longer contained the trusted key. Starting from a disposable cache\n  populated with the recorded Alpine v3.20/riscv64 indexes and all 11 APKs, I moved the key out of\n  the directory and left only `README`; `node tools/verify/e5-t17a-desktop-package-manifest.mjs\n  --offline-cache <cache>` returned `TRUSTED_KEY_REPLACED_BY_README=UNEXPECTED_PASS`. The changed\n  validator only checks `readdir(keyDir).length > 0` at\n  `tools/verify/e5-t17a-desktop-package-manifest.mjs:312-314`, so missing/invalid key material is\n  accepted. Require the checked-in trusted key member(s), valid key material, and a signature\n  verification bound to those keys; add a negative test for replacement by unrelated files.\n- P1 embedded index signer — FAILED. Predicted that an invalid signer member would not satisfy the\n  offline signature policy. The bounded mutation `.SIGN.RSA.attacker.rsa.pub` was accepted by the\n  exact pattern used at `tools/verify/e5-t17a-desktop-package-manifest.mjs:325-332`:\n  `{\"member\":\".SIGN.RSA.attacker.rsa.pub\",\"requiredMemberPattern\":\"^\\\\.SIGN\\\\.RSA\\\\..+\\\\.rsa\\\\.pub$\",\"validatorPatternAccepts\":true}`.\n  The check requires only a filename-shaped member and does not compare it with the recorded\n  `.SIGN.RSA.alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub` signer or verify the member using\n  trusted key material. Bind the required member/signature to the artifact evidence and verify it\n  cryptographically (or fail closed on any non-exact member), with a mutation test.\n- HELD: the intact-cache replay passed against the recorded artifact sizes/digests; missing APK,\n  missing index, wrong APK, digest-tampered index, and an empty trusted-key directory were rejected.\n  `make verify-E5-T17a` also passed from the worker's scrubbed environment, and the profile/package\n  cross-checks matched the T16e handoff and T16d `weston-pixman` list. These held results do not clear\n  the trust-boundary failures above. No runtime or unrelated files were changed.\n\nCommands: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17a`; local disposable-cache replay with `node tools/verify/e5-t17a-desktop-package-manifest.mjs --offline-cache <cache>` and the two bounded mutations above.\n\n### 2026-09-05 — worker — REMEDIATION\n\n- Commit: `5dbd4c9e23db84b90cdff48f473899211382d986`.\n- Command: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17a`.\n- Evidence: profile SHA-256 `5e0ede77a0fe30fe2268a2a3b9bc322146e67cf128d9b15e6808cfa69cfb1a67`, artifact/key evidence SHA-256 `fdfb37b68a96456f4b0935895e278bc5e1b89830afd4fa1567dea67710ae3a01`, and verification output SHA-256 `06db58ea0a80189b5493df39f35d4fa60e8a18881592d3941c9b17d77d9c0d74`.\n- The remediation binds offline mode to the exact `alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub` key path, size, SHA-256, and PEM format, rejects symlink/unrelated-file replacements, and requires exactly that signer member in each signed APKINDEX tar. The self-test now covers trusted-key replacement, attacker signer-member substitution, missing APK, and index-byte tampering; the bounded gate passes without independent-machine, WebKit, or host-rr legs.\n\n### 2026-09-05 — fresh verifier — VERDICT: verified\n\n- Exact-head proof — HELD. Verified at pre-metadata HEAD `95f6fc13e674e7a73d59e22633669bafd8e233c9`; the current profile, artifact/key evidence, and generated verification output hashes are respectively `5e0ede77a0fe30fe2268a2a3b9bc322146e67cf128d9b15e6808cfa69cfb1a67`, `fdfb37b68a96456f4b0935895e278bc5e1b89830afd4fa1567dea67710ae3a01`, and `06db58ea0a80189b5493df39f35d4fa60e8a18881592d3941c9b17d77d9c0d74`.\n- T16e/T16d pins — HELD. The scrubbed `make verify-E5-T17a` gate passed; an independent read-only comparison matched all 11 package IDs/order and T16e names/versions to T16d, and matched each repository, size, and SHA-256 artifact pin plus all four provenance digests. The validator enforces these bindings at `tools/verify/e5-t17a-desktop-package-manifest.mjs:175-232` and `:251-320`; independent order/name/version/repository/size/SHA/provenance/signature/trust mutations all failed.\n- Prior trust findings — HELD. Against a disposable cache containing the real pinned Alpine indexes/APKs and the exact 451-byte key, `node ... --offline-cache <cache>` passed intact and rejected missing key, README replacement, wrong key bytes, missing/wrong APK, missing/tampered/malformed index, and the attacker/extra-signer mutations. The exact-key path/size/hash/PEM and symlink rejection are enforced at `tools/verify/e5-t17a-desktop-package-manifest.mjs:350-361`; the exact single signer rule is enforced at `:372-380` and independently passed only the pinned `.SIGN.RSA.alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub` member. The symlink-key case was the bounded novel mutation.\n- Offline fail-closed and coverage — HELD. Offline validation performs only root-contained path checks, `stat`/`lstat`, SHA-256 checks, and local `tar` member inspection at `tools/verify/e5-t17a-desktop-package-manifest.mjs:332-369`; the self-test exercises the profile mutations and fail-closed fixtures at `:58-114`. The target commands at `Makefile:786-794` all ran. Declarative profile/evidence and generated queue/tasks metadata hunks are covered by the validator output or waived as metadata; unrelated dirty files were unchanged.\n\nCommands: `git rev-parse HEAD`; `git diff --name-status 272cd71..HEAD`; `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17a`; independent real-cache/profile mutation harnesses; direct `validateSignedIndex` signer/malformed-tar harness; read-only T16e/T16d/artifact/provenance comparison.",
+      "adversarial": "Copy the profile and mutate one version, repository, architecture, digest, or trust flag; the\nvalidator must fail before image assembly. Remove one cached APK and invalidate one index signature;\noffline mode must refuse to proceed rather than silently reaching the network or selecting a newer\npackage.",
+      "file": "tasks/epic-5-the-window/E5-T17a-desktop-package-manifest.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 9,
+          "labels": [
+            "chore(e5-t17a): record verified trust-boundary remediation",
+            "E5-T17a: record trust-boundary remediation",
+            "chore(e5-t17a): record verifier refutation",
+            "E5-T17a: submit verification evidence"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 9
+    },
+    {
+      "id": "E5-T17b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Assemble Alpine desktop image and startup configuration",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T17a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Build one E3-derived Alpine riscv64 desktop image with the pinned Weston/Pixman stack, correct\ndesktop identity, and an explicit serial-safe startup configuration.",
+      "criteria": [
+        {
+          "text": "A single `make verify-E5-T17b` build consumes only the T17a profile and emits an inspectable riscv64 ext4 image plus package/file manifests.",
+          "checked": false
+        },
+        {
+          "text": "The image contains the selected package set, a desktop user in `video,input,seat,audio`, seatd enabled in the intended runlevel, and an idempotent runtime-directory init path.",
+          "checked": false
+        },
+        {
+          "text": "tty1 autologin invokes a bounded `start-desktop` path with logs; it cannot hang init if Weston cannot open the guest display.",
+          "checked": false
+        },
+        {
+          "text": "Startup configuration names Weston DRM/Pixman explicitly and contains no GL/fbdev fallback hidden behind an automatic renderer choice.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-05 — worker — IMPLEMENTED\n\n- Commit: `7802897d1ac593cc189f63122436ad4ab5e58753`.\n- Commands: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17b`; then the same scrubbed environment with `E5_T17B_OUT=target/e5-t17b/desktop-image bash tools/image/desktop.sh` followed by `node tools/verify/e5-t17b-desktop-image.mjs --out target/e5-t17b/desktop-image --self-test` for the second same-output build.\n- Evidence: `evidence/e5-t17b/desktop-image-verification.json` (SHA-256 `a24b9c6a0231290ce25fd8ff990ecf7a78020a753dabd33c298586b7f34bb432`) and `evidence/e5-t17b/desktop-image-repeat.json` (SHA-256 `549cb1baefa74cf3ceff2151158544c04b82026fce860def760c7a32437cb2ce`). Final image SHA-256 is `b5bf37b9c2a3dbafb5faab7b25987ed015ba070ccc82d8ccb6d4f03125782671`, package manifest SHA-256 is `225b8d35f7375c084075ca60edac5ea8fbf7ef46f1fd09a7e3a5d40bb074aae1`, and custom-file manifest SHA-256 is `29f9069e7a99bae65f691fb394392663ca6e52faa6c1aedd6bfd95bebba74803`.\n- The final local run passed formatting, clippy, 54 native tests, release compilation, the T17a profile validator, signed Alpine v3.20 riscv64 assembly of 194 packages, and read-only Docker/debugfs inspection. It demonstrates the exact T17a profile feeding an inspectable 1 GiB ext4 image with a desktop user in `video,input,seat,audio`, seatd/udev ordering, private runtime directories, tty1 autologin, bounded Weston DRM/Pixman plus foot launch/log paths, clipboard wrappers, locked root credentials, and no root/APK-cache residue. The second same-output build and inspection passed with identical package/file manifests and duplicate-entry checks; ext4 byte reproducibility, size, and chunk accounting remain explicitly owned by E5-T17c. No independent-machine, WebKit, or host-rr leg was used.\n\n### 2026-09-05 — fresh verifier — VERDICT: refuted\n\n- P1 bounded Weston/Pixman startup — FAILED. Predicted that a fake `weston` which records invocation and sleeps would be launched by the assembled `/usr/local/bin/start-desktop`, then be stopped by the 30-second bound with `E5T17B_WESTON_NOT_READY=1`. On the current generated image (`target/e5-t17b/desktop-image/alpine-rootfs.ext4`, SHA-256 `f3cdc19e5938de09dbc82dcef7e55d2d98fc74cb60878103ea072528df3f1e51`), Docker/debugfs extraction and execution returned in about 1 second, the fake invocation marker was absent, and `weston.log` contained `timeout: unrecognized option: t` followed by BusyBox's usage `timeout ... SECS PROG ARGS`. The changed launcher emits the invalid form at `tools/rootfs-inner.sh:368-370` and repeats it for foot at `:392-393`; the image's BusyBox is v1.36.1 and accepts a positional seconds argument, not `-t`. This means the desktop path never launches Weston or foot, so acceptance criteria 3 and 4 are not met. Replace both forms with the image-supported timeout syntax and add an execution-level negative-display test; the current verifier's regex at `tools/verify/e5-t17b-desktop-image.mjs:234-235` is insufficient because it blesses the invalid command.\n- HELD: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17b` passed with 54 native tests, release build, 194-package riscv64 assembly, ext4 fsck, foreign-ELF scan, and the existing verifier. Read-only Docker/debugfs checks on the current image also confirmed the 11 T17a desktop packages, exact-once desktop/group/service/config entries, locked root shadow, empty APK cache, and private `/run/user/1000`, `/home/desktop`, and desktop state directories. The same-output rerun produced identical package/file manifests and a different image hash; T17c/T17d boundaries were not used to excuse the launcher failure.\n\nCommands: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17b`; same scrubbed environment with `E5_T17B_OUT=target/e5-t17b/desktop-image bash tools/image/desktop.sh` followed by `node tools/verify/e5-t17b-desktop-image.mjs --out target/e5-t17b/desktop-image --self-test`; local Docker/debugfs extraction of `/usr/local/bin/start-desktop` with a fake sleeping Weston; read-only package, manifest-duplicate, credential/cache, mode, service-link, and ext4/fsck inspections. No independent-machine, WebKit, ssh, or rr leg was used.\n\n### 2026-09-05 — worker — REMEDIATION\n\n- Commit: `0a64512` (`fix(e5-t17b): use supported timeout syntax`), on top of verifier refutation commit `690bfa9`.\n- Commands: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17b`; then the same scrubbed environment with `E5_T17B_OUT=target/e5-t17b/desktop-image bash tools/image/desktop.sh` followed by `node tools/verify/e5-t17b-desktop-image.mjs --out target/e5-t17b/desktop-image --self-test` for the second same-output build.\n- Evidence: refreshed `evidence/e5-t17b/desktop-image-verification.json` (SHA-256 `2409458fdfd436a5c600ddbefe7cba465c2382f0636e46a671daea7a988e648a`) and `evidence/e5-t17b/desktop-image-repeat.json` (SHA-256 `e43cda8a18d602628fdf51a1893cc34857ed35d2de39102de5c18fff4dedaedb`). Final image SHA-256 is `59780504eaef13b093053b5bb99d556058b96af8ed226baa89fb20d132f4ddf1`, package manifest SHA-256 is `225b8d35f7375c084075ca60edac5ea8fbf7ef46f1fd09a7e3a5d40bb074aae1`, and custom-file manifest SHA-256 is `c66d92365bdbb8b59a3aa63ade045e7da7096afd51039cfb36bc6b32fbee05ea`.\n- The corrected launcher uses Alpine BusyBox's positional `timeout 30` syntax for both Weston and foot. The rebuilt image passed native formatting/clippy/tests, release compilation, signed profile-driven assembly, ext4 fsck/foreign-ELF checks, read-only image inspection, duplicate-entry checks, and the execution-level no-display test: a fake sleeping Weston was invoked and the bounded path produced `E5T17B_WESTON_NOT_READY=1` before returning. The same-output rebuild also passed with identical package/file manifests; byte reproducibility, size, and chunk accounting remain T17c scope. No independent-machine, WebKit, or host-rr leg was used.\n\nVERDICT: verified\n\n### 2026-09-05 — independent fresh verifier\n\n- P1 prior timeout refutation — HELD after remediation. Prediction: a fake Weston that sleeps beyond the display wait must be invoked by the assembled launcher, the launcher must return at the 30-second bound, and `weston.log` must contain `E5T17B_WESTON_NOT_READY=1`. Observed on the current generated image (`target/e5-t17b/desktop-image/alpine-rootfs.ext4`, SHA-256 `5680ac904ff93e474358abfe50e7c7c68d1832824b2f128788df4fbdfac98adb`): the fake was invoked, the command returned in `30s`, and the log contained `E5T17B_WESTON_INVOKED=1` plus `E5T17B_WESTON_NOT_READY=1`; no BusyBox `unrecognized option: t` output occurred. This exercises `tools/rootfs-inner.sh:368-388`, so the fix is behavioral rather than regex-only.\n- P2 ready-socket/foot bound — HELD. Prediction: when fake Weston creates the requested Wayland socket and sleeps, fake foot must be invoked through the ready path and the compositor/terminal session must still return at the 30-second bound. Observed in local Docker in `30s`: `E5T17B_FAKE_WESTON_INVOKED=1`, `E5T17B_WESTON_READY=1`, `E5T17B_FAKE_FOOT_INVOKED=1`, and `E5T17B_WESTON_EXIT=143`. This executes both current positional BusyBox forms at `tools/rootfs-inner.sh:368` and `:392`.\n- P3 acceptance/coverage — HELD. Prediction: the current target must remain a 194-package riscv64 ext4 image driven by the 11-entry T17a profile, with exact-once desktop identity/groups/services/configuration, explicit DRM/Pixman startup, locked credentials, empty APK/root-history surfaces, and private runtime directories. `make verify-E5-T17b` passed at the frozen head: fmt, clippy, 54 native tests, release build, profile validation, 194-package signed assembly, clean ext4 fsck, riscv64-only ELF scan, debugfs inspection, manifest checksums, duplicate-path checks, and verifier self-tests. Direct checks found 194 package-manifest lines, all 11 profile package IDs, 33 custom-file entries with no duplicate paths, `desktop` uid/gid 1000 in `video,input,seat,audio`, seatd/default plus udev ordering, tty1 autologin, DRM/Pixman-only Weston configuration, locked root, no APK/root-history residue, and mode 0700 for `/run/user/1000`, `/home/desktop`, and desktop state.\n- P4 post-install idempotence — HELD. Prediction: two executions of the post-install script against one root tree must not duplicate the tty1 line. In a disposable local Docker build container, two `/rootfs-inner.sh` invocations both exited 0 and the final count was `E5T17B_TTY1_COUNT=1`; the ordinary same-output rebuild plus verifier also passed. The runtime-directory initializer is likewise guarded by `mkdir -p`, mode reset, and ownership reset.\n- Carried forward only unchanged HELD results from the prior verifier for the profile/manifests, identity/groups, seatd/udev ordering, autologin, credentials/cache cleanup, private directories, and duplicate-entry inspection; the previously FAILED timeout claim was re-executed above. T17c-owned byte reproducibility, size/chunk accounting, repeated boot races, persistence, independent machines, WebKit, and host rr were not used.\n\nCommands: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17b`; the same scrubbed environment with `E5_T17B_OUT=target/e5-t17b/desktop-image bash tools/image/desktop.sh` followed by `node tools/verify/e5-t17b-desktop-image.mjs --out target/e5-t17b/desktop-image --self-test`; local Docker/debugfs content inspection; local Docker fake-sleeping-Weston no-display execution (35-second fake, observed 30-second return); local Docker fake-ready-Weston/fake-foot execution (both 35-second fakes, observed 30-second return); and a disposable local Docker container running `/rootfs-inner.sh` twice against one root tree (both exit 0, tty1 count 1). Evidence refreshed at `evidence/e5-t17b/desktop-image-verification.json`; generated target manifests are `target/e5-t17b/desktop-image/MANIFEST.txt`, `FILE-MANIFEST.txt`, and `SHA256SUMS`.",
+      "adversarial": "Run the builder twice in the same disposable output location and inspect the resulting rootfs for\nroot history, APK cache, credentials, world-writable runtime directories, or an autologin shell\nthat runs before seatd is configured. Re-run the post-install step and check that it does not\nduplicate users, services, or config lines.",
+      "file": "tasks/epic-5-the-window/E5-T17b-desktop-image-assembly.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 5,
+          "labels": [
+            "chore(e5-t17b): record verifier verdict",
+            "chore(e5-t17b): submit timeout remediation",
+            "chore(e5-t17b): record verifier refutation",
+            "chore(e5-t17b): submit desktop image evidence"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 5
+    },
+    {
+      "id": "E5-T17c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Prove desktop image reproducibility, size budget, and chunk deduplication",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T17b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove that the T17 desktop builder is reproducible from its committed profile and that the real\nuncompressed image delta and streamed chunks stay within the E3 budget.",
+      "criteria": [
+        {
+          "text": "Two consecutive builds from the same profile have identical normalized package versions and file listings; the verifier reports any content divergence with the first differing entry.",
+          "checked": false
+        },
+        {
+          "text": "The builder fails when the real uncompressed ext4 delta exceeds 350 MiB, and the passing build records the current delta in machine-readable evidence.",
+          "checked": false
+        },
+        {
+          "text": "The chunk manifest deduplicates unchanged E3 base chunks and identifies every new desktop chunk; a sparse-file size or full-base re-upload cannot satisfy the check.",
+          "checked": false
+        },
+        {
+          "text": "`make verify-E5-T17c` passes from a scrubbed environment without relying on timestamps, host paths, or an undeclared package cache.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-05 — worker — IMPLEMENTED\n\n- Commit: `10e4b5866225d8a61c0fda8a20fc25c8464137e7` (`feat(e5-t17c): prove desktop image reproducibility`).\n- Exact submission command: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17c`.\n- Evidence: [`evidence/e5-t17c/desktop-image-reproducibility.json`](../../evidence/e5-t17c/desktop-image-reproducibility.json), SHA-256 `df531f72268c01ee9968667fd13d88f8681dcc2265d768768099ca9ba29f842c`.\n- The run passed `cargo fmt --check`, the affected CLI `cargo clippy -- -D warnings`, release build, shell/Node syntax checks, the T17a profile check, two fresh 1 GiB desktop image builds in distinct output directories, the T17b startup verifier, ext4 inspection, and `wasm-vm chunk`/`chunk-verify`. Both images are byte-identical at SHA-256 `99cede87db8ffec8b68933862f5f1aa8abfb30d9c4968b7127a30e7b79bad785`; normalized package and custom-file manifests remain equal after timestamp perturbation. The real allocated ext4 delta is 103,636,992 bytes and the conservative content/chunk delta is 105,250,816 bytes, both below the 367,001,600-byte (350 MiB) budget. The E3 comparison reuses 3,211 of 4,096 base positions (0.7839 ratio), identifies 803 new objects, and rejects full-base upload, base-index deletion, package/config mutations, and a sparse non-ext4 file. The evidence uses only local native tooling and Docker e2fsprogs; independent machines, WebKit, SSH/rr are intentionally waived per the active verification policy/user direction.\n\n### 2026-09-05 — verifier — VERDICT: verified\n\n- Predictions held: evidence is bound to `10e4b5866225d8a61c0fda8a20fc25c8464137e7`, result `passed`, both images share SHA-256 `99cede87db8ffec8b68933862f5f1aa8abfb30d9c4968b7127a30e7b79bad785`, and normalized package/file manifests plus portable metadata paths match.\n- Ext4 accounted delta `105250816 <= 367001600`; sparse rejection is recorded. Chunks are 131072 bytes (128 KiB), with 3211 unchanged positions and 803 new objects; full-base upload rejection is recorded. All five mutation self-tests are recorded.\n- Bounded novel attack: replacing build-B `desktop-info.json` with build-A metadata was rejected (exit 1) on the exact wrong-image-path assertion. Original metadata was restored; no implementation code was modified.\n- Commands: short jq assertions/path inspection; metadata-swap verifier invocation; `python3 tools/check_task_policy.py`; `python3 tools/build_queue.py`; `make tasks-json`.",
+      "adversarial": "Touch files without changing content, vary build timestamps and output directories, and compare\nagain; normalized manifests must remain equal. Replace one byte in a package/config file, remove a\nbase chunk from the dedupe index, and feed a sparse image to the size check; each mutation must be\ndetected or rejected.",
+      "file": "tasks/epic-5-the-window/E5-T17c-desktop-image-reproducibility.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 3,
+          "labels": [
+            "verify(e5-t17c): record fresh reproducibility verdict",
+            "chore(e5-t17c): submit reproducibility evidence",
+            "chore(e5-t17c): activate reproducibility proof"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 3
+    },
+    {
+      "id": "E5-T17d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Prove headless desktop boot ordering and seat runtime",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T17c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Show that the final Alpine desktop image reaches a serial autologin reliably, starts seatd before\nthe desktop command, and creates the correct desktop runtime directory without hanging init.",
+      "criteria": [
+        {
+          "text": "All 20 cold serial boots reach the expected autologin user without an init hang or timeout.",
+          "checked": false
+        },
+        {
+          "text": "Every boot proves seatd is running before autologin invokes `start-desktop`, and records the desktop user's `/run/user/1000` as mode 0700 with the correct owner.",
+          "checked": false
+        },
+        {
+          "text": "A deliberate compositor-start failure exits/logs within the bound and leaves init usable; it does not deadlock tty1 or hide the failure.",
+          "checked": false
+        },
+        {
+          "text": "`make verify-E5-T17d` passes using only the final T17c image/chunk handoff and produces replayable serial evidence.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-05 — verifier — VERDICT: verified\n\n- Prediction: all 20 cold native-emulator boots reach the serial login boundary and fixed\n  post-login stop without timeout; observed `ok=true`, `{code:102, signal:null}`, login and\n  `MaxInstrs` markers for every run, with positive retired counts in\n  `evidence/e5-t17d/boot-01-guest-evidence.txt` through `boot-20-guest-evidence.txt`.\n- Prediction: every boot preserves seatd-before-runtime-before-start-desktop ordering, live\n  seatd state, `/run/user/1000` mode `0700` uid/gid `1000`, bounded compositor failure, and a\n  usable return; all 20 embedded logs and their Docker/debugfs extractions held, including\n  `E5T17B_WESTON_NOT_READY=1`, `E5T17D_COMPOSITOR_FAILURE_BOUNDED=30`, and\n  `E5T17D_DESKTOP_RETURNED=0`. All 60 raw console/stderr/guest-evidence hashes and 40 embedded\n  guest-log hashes matched `evidence/e5-t17d/boot-order.json`.\n- Prediction: the report is bound to the final T17c handoff; held at image sha256\n  `467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e`, package manifest\n  `ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908`, file manifest\n  `c82b20c083d808a797bd8db9c080a2be0c3ef7859d29e5b818bbfa99d8427cf0`, and the 8,192-entry\n  split chunk manifest with 3,211 reused positions and 803 new objects.\n- Bounded novel sabotage: copied the report to `target/e5-t17d/boot-order-sabotage.json`, changed\n  boot-01's runtime marker to `gid=999` and recomputed its embedded hash; the verifier rejected\n  it with `boot-01: missing runtime-directory readiness`. The built-in self-test also rejected\n  ordering inversion, owner mutation, zombie state, and timeout.\n- Incremental re-verification: `f187ec5..f0b88bd` changes only verifier parsing captures for\n  runtime owners; prior 20-boot runtime evidence was carried forward unchanged.\n\nCommands: `node tools/verify/e5-t17d-desktop-boot-order.mjs --self-test`; Docker/debugfs extraction\nof all 20 `target/e5-t17d/boots/*/alpine-rootfs.ext4` images; raw artifact/hash/marker audit;\nT17c handoff/chunk-manifest audit; `E5_T17D_EVIDENCE=target/e5-t17d/boot-order-sabotage.json\nnode tools/verify/e5-t17d-desktop-boot-order.mjs` (expected rejection).",
+      "adversarial": "Delay service readiness, perturb boot timing with independent fixed seeds, and kill the first\ndesktop process. Look specifically for an autologin race, stale runtime-directory ownership, seatd\nzombies, or an init process waiting forever. A single ordering inversion or unbounded failure is\na refutation.",
+      "file": "tasks/epic-5-the-window/E5-T17d-desktop-boot-order.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 2,
+          "labels": [
+            "chore(e5-t17d): record verified boot-order evidence",
+            "chore(e5-t17d): activate desktop boot-order proof"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 2
+    },
+    {
+      "id": "E5-T17e",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Prove desktop image persistence and publish the final artifact handoff",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T17d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Close the T17 image lane by proving E3 overlay persistence on the desktop image and publishing a\nclean, documented artifact/chunk handoff for E5-T18 and later desktop work.",
+      "criteria": [
+        {
+          "text": "The desktop image's writable overlay survives snapshot/reload with a sentinel file and its package database intact; the smoke test records matching pre/post state.",
+          "checked": false
+        },
+        {
+          "text": "One extra signed `apk add` in the running riscv64 guest succeeds through the E3 network and persists after reload, without changing the committed base profile.",
+          "checked": false
+        },
+        {
+          "text": "Published artifact/chunk manifests identify the final image and dedupe against E3; docs record the measured delta, package profile, startup path, and exact rebuild command.",
+          "checked": false
+        },
+        {
+          "text": "Final-image inspection finds no leftover build cache, `/root` history, credentials, or other undeclared payload, and `make verify-E5-T17e` passes.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-05 — worker — implemented\n\n- Implementation commit: `8a49a9a73d304845c45975dc3065ec7aac900b58`. Added the deterministic\n  `make verify-E5-T17e` target, the native guest persistence runner/verifier, and `docs/images.md`.\n  The runner keeps the T17c publication image read-only, boots a clean copy through the local\n  riscv64 emulator, installs signed `htop` through the guest slirp network, writes a sentinel,\n  and saves/reloads the machine twice before a final `poweroff -f`.\n- Exact worker gates: `cargo fmt --check -p wasm-vm-cli`; `cargo clippy -p wasm-vm-cli --bin\n  wasm-vm --features gpu-trace -- -D warnings`; `cargo build --release -p wasm-vm-cli\n  --features gpu-trace`; shell/JS syntax checks; `make verify-E5-T17c`; and\n  `node tools/run-e5-t17e-desktop-persistence.mjs`. The standalone verifier also passed\n  `node tools/verify/e5-t17e-desktop-persistence.mjs --self-test`.\n- Evidence: `evidence/e5-t17e/desktop-persistence.json` and its console/stderr logs,\n  `evidence/e5-t17e/reload-two-guest-evidence.txt`, and\n  `evidence/e5-t17e/final-image-inspection.log`. The final image is\n  `target/e5-t17c/repro-b/alpine-rootfs.ext4`, SHA-256\n  `467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e`; the publication record\n  independently matched the E3 base and desktop chunk manifests, including 3,211 reused positions\n  and 803 new objects. The guest recorded `htop` present plus identical sentinel and\n  `/lib/apk/db/installed` hashes before and after both reloads; the malformed unsigned package\n  probe returned 99 and was rejected.\n- Claim: the final T17c desktop artifact is cleanly published through the E3 chunk flow, the\n  writable overlay preserves a guest package mutation and sentinel across repeated native\n  save/resume cycles, and the final image's root credentials/cache/history hygiene remains intact.\n  This local guest proof intentionally has no independent-machine, WebKit, or host-rr leg.\n\n### 2026-09-05 — verifier — VERDICT: verified\n\n- P1 persistence — HELD. Predicted the same sentinel bytes/hash and APK database hash after both\n  reloads; `evidence/e5-t17e/desktop-persistence.json:194-217` records\n  `E5T17E-SENTINEL-42`, 19 bytes, sentinel SHA-256 `c07685d3…0c99a`, and APK DB SHA-256\n  `0b2e52ba…00b21` identically in pre-snapshot, reload-one, and reload-two state. The native\n  transcripts corroborate this at `cold-install-snapshot-console.log:201-207`,\n  `reload-one-snapshot-console.log:11-12`, and `reload-two-poweroff-console.log:12-13`.\n- P2 signed package/network/profile boundary — HELD. Predicted successful network update and\n  signed `htop` install, persistence, and no base-profile mutation; the cold transcript records\n  `T17ENETREADY`, update/add return codes 0, `htop=present`, and unsigned return code 99 with\n  rejection (`cold-install-snapshot-console.log:181,201-207`), while the report binds the package\n  contract and `profileMutation:false` (`desktop-persistence.json:95-100,225-231`).\n- P3 publication/docs/hash resolution — HELD. Predicted the exact tested image and chunk manifests\n  would match their objects and the E3 dedupe accounting. The report records image SHA-256\n  `467306a5…5a5c1e`, desktop/base manifest SHA-256 `1be3c299…fb4827` / `bf6a2c61…c8c46`,\n  3,211 reused positions, 19 reused objects, 803 new objects, and 105,250,816 fetched bytes\n  (`desktop-persistence.json:34-78`); independent `sha256sum` resolution matched all of them.\n  `docs/images.md:9-22,36-55` documents the profile, startup path, measured delta, budget, and\n  exact `make verify-E5-T17e` rebuild command.\n- P4 hygiene/acceptance gate — HELD. Predicted no root credential/history, APK cache, or build\n  debris and a passing deterministic verifier; `final-image-inspection.log:1-65` shows locked\n  root, empty `/root` history-sensitive entries, empty APK cache and `/tmp`, expected startup/\n  repositories, and an intact installed database. The required verifier self-test exited 0 and\n  reported all five mutation checks rejected. The Makefile recipe is a harness only\n  (`Makefile:865-880`); its behavior-bearing runner/verifier commands are covered by the submitted\n  exact-head run and the fresh verifier run.\n- Adversarial attacks — HELD. Repeated reload state held at both boundaries; the verifier's\n  self-tests rejected chunk truncation, full-upload accounting mutation, sentinel truncation,\n  unsigned acceptance, and hygiene mutation (`tools/verify/e5-t17e-desktop-persistence.mjs:402-425`).\n  The independent bounded sabotage copied the report to a temporary path, changed only\n  `publication.desktopChunkManifest.sha256`, and the evidence-mode verifier rejected it with\n  exit 1: `AssertionError [ERR_ASSERTION]: desktop chunk manifest digest is stale`. The source\n  validator also rejects `htop` leaking into the committed base manifest\n  (`tools/verify/e5-t17e-desktop-persistence.mjs:68-91`).\n- Coverage — HELD. The runner's phase/publication/persistence paths are exercised by the exact-head\n  native evidence (`tools/run-e5-t17e-desktop-persistence.mjs:76-161,238-355`), the verifier's\n  evidence path and adversarial checks are exercised fresh (`tools/verify/e5-t17e-desktop-persistence.mjs:29-47,68-425`),\n  and the `Exited(0)` compatibility hunk is exercised by `reload-two-guest-evidence.txt:6`.\n  Documentation, task/queue JSON, and Makefile orchestration are metadata/harness and are waived\n  as runtime coverage; no changed implementation hunk is unaccounted for.\n\nCommands: `node tools/verify/e5-t17e-desktop-persistence.mjs --self-test`; independent temporary\nreport sabotage with `--evidence <temp-report>` (expected exit 1); direct SHA-256/path audit;\n`python3 tools/check_task_policy.py`; `python3 tools/build_queue.py`; `make tasks-json`.",
+      "adversarial": "Reload repeatedly at the snapshot boundary, corrupt/truncate the sentinel, attempt an unsigned\nextra package, and compare the published chunk manifest against the actual image. Verify that a\nfull re-upload or a package mutation outside the profile fails closed, and that the documented\nartifact hashes resolve to the exact image under test.",
+      "file": "tasks/epic-5-the-window/E5-T17e-desktop-persistence-publication.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 3,
+          "labels": [
+            "chore(e5-t17e): record verified persistence verdict",
+            "chore(e5-t17e): submit persistence evidence",
+            "chore(e5-t17e): activate persistence publication proof"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 3
     },
     {
       "id": "E5-T18",
@@ -18643,16 +18967,22 @@
       "epicKey": "5",
       "title": "Boot-to-desktop bring-up — seat/udev/permissions debugged, playbook written",
       "priority": 518,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T08",
         "E5-T15d",
-        "E5-T17"
+        "E5-T17e"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T18a",
+        "E5-T18b",
+        "E5-T18c",
+        "E5-T18d",
+        "E5-T18e"
+      ],
       "estimate": "L",
       "capstone": false,
-      "goal": "Cold page load boots all the way into the T17 desktop with a working cursor, focusable\nwindows, and a terminal launchable from the WM menu — plus a written debugging playbook\ncapturing every failure mode found on the way (this task *is* mostly debugging; the\nplaybook is how that work compounds).",
+      "goal": "> **DECOMPOSED 2026-09-05.** This L-sized bring-up container is cancelled before\n> implementation as required by task policy and replaced by five ordered S slices. E5-T18a\n> freezes the local cold-boot desktop contract, E5-T18b proves WM terminal/input, E5-T18c\n> proves cursor/focus/DPR hit-testing, E5-T18d hardens compositor restart/getty fallback, and\n> E5-T18e consolidates the debug playbook and final boot proof.\n\nCold page load boots all the way into the T17 desktop with a working cursor, focusable\nwindows, and a terminal launchable from the WM menu — plus a written debugging playbook\ncapturing every failure mode found on the way (this task *is* mostly debugging; the\nplaybook is how that work compounds).",
       "criteria": [
         {
           "text": "Fresh browser profile, cold load: desktop wallpaper + panel/menu visible, no manual serial intervention, 10/10 consecutive boots.",
@@ -18677,12 +19007,240 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-05 — coordinator — decomposed\n\nThis L-sized bring-up planning container is cancelled before implementation as required by task\npolicy and replaced by five ordered S tickets. The dependency chain is cold boot → terminal/input\n→ cursor and DPR hit-testing → compositor recovery → playbook and rebuilt-artifact proof. The\nchildren use local Chromium/native guest evidence only, consistent with the user waiver for\nindependent machines, WebKit, and host rr.",
       "adversarial": "Refute the 10/10 claim: 25 scripted cold boots with cache disabled; any hang, black\nscreen, or missing cursor refutes. Attack ordering: add a 500 ms artificial delay to\nseatd start (test hook) — boot must still succeed or fail *with the playbook's\ndocumented symptom*, not a novel one. Break it on purpose: remove the user from\n`video`, delete XDG_RUNTIME_DIR init, force `WLR_RENDERER=gles2` — each must produce\nthe playbook's predicted symptom and be diagnosable in ≤ 5 min using only the playbook\n(have someone other than the implementer run this drill). Verify no dirty-image cheats:\nrebuild the T17 image from the committed manifest and re-run the 25-boot gauntlet on\nthe rebuilt artifact.",
       "file": "tasks/epic-5-the-window/E5-T18-boot-to-desktop-bringup.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T18a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Prove the local cold-boot desktop contract",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5-T08",
+        "E5-T15d",
+        "E5-T17e"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make the T17 desktop artifact reach a visible, ready desktop from a clean local browser load.",
+      "criteria": [
+        {
+          "text": "In a fresh local Chromium context with cache disabled, ten consecutive loads reach the wallpaper, panel, and WM menu with no manual serial intervention.",
+          "checked": false
+        },
+        {
+          "text": "The harness records cold and warm boot-to-desktop timings and fails on a timeout, black screen, missing panel/menu, unexpected console error, or hidden readiness marker.",
+          "checked": false
+        },
+        {
+          "text": "The run exercises the committed image publication path and leaves the read-only source artifact unchanged.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis S slice isolates the first user-visible desktop boundary so later input and recovery work\ncannot hide a cold-boot regression.",
+      "adversarial": "Run 25 local Chromium cold boots with cache disabled and independent fresh contexts. Add the\n500 ms seatd-start test delay; the boot must still reach the same readiness contract or produce\nthe documented bounded failure marker. A hang, black screen, missing cursor/menu readiness, or\nmanual intervention refutes this slice. WebKit and independent machines are out of scope.",
+      "file": "tasks/epic-5-the-window/E5-T18a-desktop-cold-boot.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T18b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Prove WM terminal launch and keyboard input",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T18a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove that a user can launch the configured terminal from the WM menu and type a command\nthrough the existing guest input path.",
+      "criteria": [
+        {
+          "text": "The local desktop harness selects Terminal from the WM menu and opens the configured foot/xterm window.",
+          "checked": false
+        },
+        {
+          "text": "The focused terminal accepts a deterministic command through the T12 input path and renders the expected ls output without dropped, duplicated, or reordered keystrokes.",
+          "checked": false
+        },
+        {
+          "text": "Repeating the open/type/close flow leaves the desktop responsive and produces no unexpected console or guest errors.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis S slice freezes the typed-terminal user path on top of the cold-boot contract.",
+      "adversarial": "Repeat the menu/open/type/close flow with focus changes and a rapid but bounded input burst.\nVerify that a terminal opened after another window was focused still receives the complete\ncommand and output. A silent focus loss, missing character, or stale terminal window refutes\nthe slice. WebKit and independent machines are out of scope.",
+      "file": "tasks/epic-5-the-window/E5-T18b-desktop-terminal-input.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T18c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Prove desktop cursor alignment and DPR hit-testing",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T18b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Freeze pointer geometry and focus hit-testing for the ready desktop at device-pixel ratios one\nand two.",
+      "criteria": [
+        {
+          "text": "Moving the host cursor to the tested control produces the matching guest hover highlight at both DPR 1 and DPR 2, with no one-pixel or scale-dependent offset.",
+          "checked": false
+        },
+        {
+          "text": "Close and maximize buttons hit-test the intended window at both DPR values and do not activate an adjacent control.",
+          "checked": false
+        },
+        {
+          "text": "The pointer/focus run is deterministic across repeated local Chromium contexts and has no unexpected console errors.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis S slice isolates pointer scaling and focus geometry after the terminal path is known to be\nusable.",
+      "adversarial": "Run the hit-test matrix at fractional canvas offsets and at coordinates immediately adjacent\nto each button boundary. Repeat after opening and maximizing a second window. Any DPR-dependent\nmiss, neighboring-control activation, or cursor/hover divergence refutes the slice. WebKit and\nindependent machines are out of scope.",
+      "file": "tasks/epic-5-the-window/E5-T18c-desktop-cursor-dpr-hit-testing.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T18d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Harden compositor restart and tty1 getty fallback",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T18c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make compositor failure bounded, observable, and recoverable without hanging init.",
+      "criteria": [
+        {
+          "text": "Killing the compositor with the local serial test hook causes an automatic restart and a timestamped log entry without an init hang.",
+          "checked": false
+        },
+        {
+          "text": "Three bounded crashes stop retrying and leave tty1 at getty with a visible error banner.",
+          "checked": false
+        },
+        {
+          "text": "A broken-config boot exercises the fallback path, preserves the diagnostic log, and does not silently claim desktop readiness.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis S slice isolates process supervision and the failure boundary needed by the final bring-up\nplaybook.",
+      "adversarial": "Inject the 500 ms seatd delay, remove the video device, delete XDG_RUNTIME_DIR initialization,\nand force WLR_RENDERER=gles2 in separate local fixtures. Each case must terminate with its\npredicted bounded symptom/log path; no new hang or unbounded restart loop is acceptable.\nWebKit and independent machines are out of scope.",
+      "file": "tasks/epic-5-the-window/E5-T18d-desktop-crash-restart-fallback.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T18e",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Publish the desktop bring-up playbook and final boot proof",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T18d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Turn the completed local bring-up work into a reproducible, reviewed operating playbook and\nfinal rebuilt-artifact proof.",
+      "criteria": [
+        {
+          "text": "The playbook covers every failure recorded by E5-T18a-d, including seatd/udev/permissions, runtime-directory, renderer, input/XKB, restart, and getty-fallback symptoms.",
+          "checked": false
+        },
+        {
+          "text": "The exact rebuilt artifact is hash-bound in the report, and the local cache-disabled 25-boot gauntlet has no hang, black screen, missing cursor, or missing menu.",
+          "checked": false
+        },
+        {
+          "text": "The report records cold and warm boot-to-desktop timings and the final verifier passes from the committed manifest with no undeclared hand edits to the image.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis final S slice makes the debugging knowledge and exact rebuilt-boot proof durable before\ndownstream resize, performance, and capstone work can depend on T18.",
+      "adversarial": "Have the fresh verifier run the documented failure drills using only the playbook: remove the\nvideo device, delete runtime-directory initialization, force gles2, and trigger three crashes.\nEach diagnosis must complete in five minutes and match a documented symptom/fix. Mutate the\npublished image or manifest after the rebuild; the verifier must reject the stale hash rather\nthan accepting dirty-image evidence. WebKit and independent machines are out of scope.",
+      "file": "tasks/epic-5-the-window/E5-T18e-desktop-bringup-playbook.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
       "commitCount": 0
     },
     {

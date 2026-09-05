@@ -1,0 +1,176 @@
+{
+  "schema": "wasm-vm.e5-t18a.desktop-cold-boot-evidence.v1",
+  "task": "E5-T18a",
+  "command": "make verify-E5-T18a",
+  "scope": {
+    "browser": "local Chromium",
+    "webkit": false,
+    "independentMachines": false,
+    "hostRr": false
+  },
+  "image": {
+    "path": "target/e5-t17c/repro-b/alpine-rootfs.ext4",
+    "sha256": "467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e",
+    "size": 1073741824,
+    "chunkManifest": "target/e5-t17c/chunks/desktop-b/manifest.json",
+    "chunkManifestSha256": "1be3c29945747184c3ed868f51add1829e97bfd3945f456d4676d5f035fb4827",
+    "chunkSize": 131072,
+    "chunkCount": 8192
+  },
+  "browser": {
+    "name": "chromium",
+    "version": "152.0.7977.76",
+    "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+  },
+  "acceptance": {
+    "freshContexts": true,
+    "cacheDisabled": true,
+    "runCount": 10,
+    "noSerialInput": true
+  },
+  "timings": {
+    "cold": {
+      "count": 10,
+      "minMs": 505829,
+      "maxMs": 513291,
+      "meanMs": 508946,
+      "valuesMs": [
+        508336,
+        509023,
+        513291,
+        507216,
+        505829,
+        506319,
+        510917,
+        510756,
+        509503,
+        508274
+      ]
+    },
+    "warm": {
+      "prime": {
+        "bootToDesktopMs": 514956,
+        "fetchedBytes": 49414144
+      },
+      "reload": {
+        "bootToDesktopMs": 515739,
+        "fetchedBytes": 48889856
+      }
+    }
+  },
+  "runs": [
+    {
+      "label": "cold-01",
+      "cacheDisabled": true,
+      "elapsedMs": 508465,
+      "bootToDesktopMs": 508336,
+      "fetchedChunks": 373,
+      "fetchedBytes": 48889856,
+      "stateDigest": "1e2c88fb7b80252cd6ab47c320679a44bf5f8440a7362ae1bfa309e262bec601"
+    },
+    {
+      "label": "cold-02",
+      "cacheDisabled": true,
+      "elapsedMs": 509078,
+      "bootToDesktopMs": 509023,
+      "fetchedChunks": 377,
+      "fetchedBytes": 49414144,
+      "stateDigest": "7373c2ef5e60401c77dfc7fb42912ff6aad8aa152b6bc136fe6a2981ddb1a528"
+    },
+    {
+      "label": "cold-03",
+      "cacheDisabled": true,
+      "elapsedMs": 513335,
+      "bootToDesktopMs": 513291,
+      "fetchedChunks": 377,
+      "fetchedBytes": 49414144,
+      "stateDigest": "72de2b95fbaa12f58cc06cedb4c7022f5d3292d777e35d170724d1f03e4f1c2b"
+    },
+    {
+      "label": "cold-04",
+      "cacheDisabled": true,
+      "elapsedMs": 507277,
+      "bootToDesktopMs": 507216,
+      "fetchedChunks": 374,
+      "fetchedBytes": 49020928,
+      "stateDigest": "ad18cf4a31a655a58785f067ce6ddfdcbff5d4832f87dc986e34b1d9fd9e8923"
+    },
+    {
+      "label": "cold-05",
+      "cacheDisabled": true,
+      "elapsedMs": 505881,
+      "bootToDesktopMs": 505829,
+      "fetchedChunks": 377,
+      "fetchedBytes": 49414144,
+      "stateDigest": "ee72cd7d09f54c7997080e6b1e7fb1b59bb179b6c463a20113b1a4e6b064fd17"
+    },
+    {
+      "label": "cold-06",
+      "cacheDisabled": true,
+      "elapsedMs": 506363,
+      "bootToDesktopMs": 506319,
+      "fetchedChunks": 375,
+      "fetchedBytes": 49152000,
+      "stateDigest": "917e600ee9c59fdb002feeaef54507c9434606af4ba512f4997c70a291a9881e"
+    },
+    {
+      "label": "cold-07",
+      "cacheDisabled": true,
+      "elapsedMs": 510984,
+      "bootToDesktopMs": 510917,
+      "fetchedChunks": 374,
+      "fetchedBytes": 49020928,
+      "stateDigest": "b576b362c2105d3e6755330c08de16bf0403947872236d66d499cb0fed30c9be"
+    },
+    {
+      "label": "cold-08",
+      "cacheDisabled": true,
+      "elapsedMs": 510832,
+      "bootToDesktopMs": 510756,
+      "fetchedChunks": 377,
+      "fetchedBytes": 49414144,
+      "stateDigest": "21440324da4f76d6860446b75598f54c1cb10041cbdfbe995c551eb324459fbc"
+    },
+    {
+      "label": "cold-09",
+      "cacheDisabled": true,
+      "elapsedMs": 509552,
+      "bootToDesktopMs": 509503,
+      "fetchedChunks": 372,
+      "fetchedBytes": 48758784,
+      "stateDigest": "b016041cecc9e8db552e953c7069a36ba207cf250505dead22fbda7f01f4ef02"
+    },
+    {
+      "label": "cold-10",
+      "cacheDisabled": true,
+      "elapsedMs": 508843,
+      "bootToDesktopMs": 508274,
+      "fetchedChunks": 374,
+      "fetchedBytes": 49020928,
+      "stateDigest": "ebd6ce5afab752113f9d8a22e9adf226d6d722c41531e1376459202f97ffb419"
+    }
+  ],
+  "screenshot": {
+    "path": "evidence/e5-t18a/desktop-cold-boot.png",
+    "sha256": "a6d864d255ba8aea89889311b4c2e5d2b795f4ba8eb6a4723bfdda9e5ef71114"
+  },
+  "sourceUnchanged": true,
+  "sourceDistParity": {
+    "equal": true,
+    "files": [
+      {
+        "path": "web/desktop.html",
+        "sha256": "53e893646b103de66224a5d8f2fd174f7c517a3d3c2cac545bf615e7e3c0ed25"
+      },
+      {
+        "path": "web/desktop.js",
+        "sha256": "da7f0be85fcfc73142dd63e5d19f109cc451fd6843c6c5c1520f53d68a2695a4"
+      }
+    ]
+  },
+  "transcript": {
+    "path": "evidence/e5-t18a/desktop-browser-console.log",
+    "sha256": "eab300085f57a275e76776d526e44807ec95d2b580797849e19478e0de5bcfd5"
+  },
+  "result": "passed"
+}

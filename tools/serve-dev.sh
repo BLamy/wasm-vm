@@ -20,6 +20,13 @@ if NODE_ASSET_ROOT:
         raise SystemExit(f"E4T32_NODE_ASSET_DIR has no manifest.json: {NODE_ASSET_ROOT}")
     if not os.path.isdir(os.path.join(NODE_ASSET_ROOT, "chunks")):
         raise SystemExit(f"E4T32_NODE_ASSET_DIR has no chunks/: {NODE_ASSET_ROOT}")
+DESKTOP_ASSET_ROOT = os.environ.get("E5_T18A_DESKTOP_ASSET_DIR", "").strip()
+if DESKTOP_ASSET_ROOT:
+    DESKTOP_ASSET_ROOT = os.path.realpath(DESKTOP_ASSET_ROOT)
+    if not os.path.isfile(os.path.join(DESKTOP_ASSET_ROOT, "manifest.json")):
+        raise SystemExit(f"E5_T18A_DESKTOP_ASSET_DIR has no manifest.json: {DESKTOP_ASSET_ROOT}")
+    if not os.path.isdir(os.path.join(DESKTOP_ASSET_ROOT, "chunks")):
+        raise SystemExit(f"E5_T18A_DESKTOP_ASSET_DIR has no chunks/: {DESKTOP_ASSET_ROOT}")
 WARM_ASSET_ROOT = os.environ.get("E4T34_WARM_ASSET_DIR", "").strip()
 if WARM_ASSET_ROOT:
     WARM_ASSET_ROOT = os.path.realpath(WARM_ASSET_ROOT)
@@ -50,6 +57,15 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             if rel == "manifest.json" or re.fullmatch(r"chunks/[0-9a-f]{64}\.bin", rel):
                 return os.path.join(NODE_ASSET_ROOT, *rel.split("/"))
             return os.path.join(NODE_ASSET_ROOT, ".not-found")
+        # E5-T18a: serve the exact T17 desktop chunk publication selected by the verifier. Keep
+        # this route closed to the manifest, optional boot profile, and content-addressed chunks;
+        # an arbitrary path must never turn the dev server into a file browser.
+        desktop_prefix = "/e5t18a-desktop/"
+        if DESKTOP_ASSET_ROOT and p.startswith(desktop_prefix):
+            rel = p[len(desktop_prefix):]
+            if rel in ("manifest.json", "boot-profile.json") or re.fullmatch(r"chunks/[0-9a-f]{64}\.bin", rel):
+                return os.path.join(DESKTOP_ASSET_ROOT, *rel.split("/"))
+            return os.path.join(DESKTOP_ASSET_ROOT, ".not-found")
         warm_prefix = "/e4t34-warm-assets/"
         if WARM_ASSET_ROOT and p.startswith(warm_prefix):
             rel = p[len(warm_prefix):]
@@ -73,7 +89,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         # guess_type() below already emits the one authoritative Content-Type. Adding it here too
         # produces a comma-joined duplicate that Chromium rejects for instantiateStreaming().
         # Content-hashed artifacts + the wasm bundle are immutable → cache hard.
-        if path.startswith(("/releases/", "/e4t32-node-assets/", "/e4t34-warm-assets/")) or path.endswith((".wasm", "_bg.wasm")):
+        if path.startswith(("/releases/", "/e4t32-node-assets/", "/e5t18a-desktop/", "/e4t34-warm-assets/")) or path.endswith((".wasm", "_bg.wasm")):
             self.send_header("Cache-Control", "public, max-age=31536000, immutable")
         super().end_headers()
 
@@ -86,6 +102,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 httpd = http.server.ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
 extra = f" + E4-T32 Node assets from {NODE_ASSET_ROOT}" if NODE_ASSET_ROOT else ""
+if DESKTOP_ASSET_ROOT:
+    extra += f" + E5-T18a desktop assets from {DESKTOP_ASSET_ROOT}"
 if WARM_ASSET_ROOT:
     extra += f" + E4-T34 warm candidate from {WARM_ASSET_ROOT}"
 print(f"serving web/ (+ /releases){extra} at http://localhost:{PORT}/  (Ctrl-C to stop)")
