@@ -862,6 +862,23 @@ verify-E5-T17d:
 	node tools/verify/e5-t17d-desktop-boot-order.mjs --self-test
 	@echo "verify-E5-T17d (twenty cold desktop boot-order replays): OK"
 
+.PHONY: verify-E5-T17e
+verify-E5-T17e:
+	# Recreate the committed T17c publication, inspect the final image, then run the real local
+	# riscv64 guest through signed apk installation and two save_resume/reload boundaries. The
+	# evidence policy for this slice excludes independent machines, WebKit, and host rr.
+	cargo fmt --check -p wasm-vm-cli
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	bash -n tools/image/desktop.sh
+	bash -n tools/rootfs-inner.sh
+	node --check tools/run-e5-t17e-desktop-persistence.mjs
+	node --check tools/verify/e5-t17e-desktop-persistence.mjs
+	$(MAKE) verify-E5-T17c
+	node tools/run-e5-t17e-desktop-persistence.mjs
+	node tools/verify/e5-t17e-desktop-persistence.mjs --self-test
+	@echo "verify-E5-T17e (desktop persistence, publication, and reload proof): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
