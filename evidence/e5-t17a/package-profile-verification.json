@@ -4,7 +4,7 @@
   "command": "make verify-E5-T17a",
   "profile": {
     "path": "tools/image/e5-t17a-desktop-packages.json",
-    "sha256": "a73d142d942e06e568964675323a77ccd04dceae8d51de742a13cdd753d8a3a7"
+    "sha256": "177d2f563f92efc37ac92f78aade7801a7d03110580cbe48328f90c9f903b1d7"
   },
   "sourceEvidence": {
     "decision": {
@@ -18,6 +18,10 @@
     "packageAuditVerification": {
       "path": "evidence/e5-t16d/package-audit-verification.json",
       "sha256": "e76b1a52ec8428d92f906842285a55fb1c1a14a32d2ed7c67ece0228a7ce207d"
+    },
+    "packageArtifacts": {
+      "path": "evidence/e5-t17a/package-artifact-digests.json",
+      "sha256": "c647a1af6079c17fc7380493ac400309ae67e49902565f104f9ee9aef6f34c94"
     }
   },
   "architecture": "riscv64",
@@ -30,62 +34,117 @@
     {
       "name": "weston",
       "packageId": "weston-12.0.4-r0",
-      "version": "12.0.4-r0"
+      "version": "12.0.4-r0",
+      "repository": "community",
+      "size": 585706,
+      "sha256": "3f8704b56617f481023c3d8cbedb371cb609a84b183095d26781caa6c0ef2768"
     },
     {
       "name": "weston-backend-drm",
       "packageId": "weston-backend-drm-12.0.4-r0",
-      "version": "12.0.4-r0"
+      "version": "12.0.4-r0",
+      "repository": "community",
+      "size": 63075,
+      "sha256": "ad4eb4f027d65410812ddd193dbb5c86f607e9a6078a022cbc66243ba2c69cb7"
     },
     {
       "name": "weston-shell-desktop",
       "packageId": "weston-shell-desktop-12.0.4-r0",
-      "version": "12.0.4-r0"
+      "version": "12.0.4-r0",
+      "repository": "community",
+      "size": 27667,
+      "sha256": "1f63ddd2fbad1c37fb8197b2e900ca3411fc5ca389b16cdeabbbfcfe98f47e3d"
     },
     {
       "name": "foot",
       "packageId": "foot-1.17.2-r0",
-      "version": "1.17.2-r0"
+      "version": "1.17.2-r0",
+      "repository": "community",
+      "size": 225670,
+      "sha256": "080b09887f0f1e41aae51ead0f2f324e7ad5405db764abc96d38bccca2f898ea"
     },
     {
       "name": "seatd",
       "packageId": "seatd-0.8.0-r0",
-      "version": "0.8.0-r0"
+      "version": "0.8.0-r0",
+      "repository": "community",
+      "size": 19222,
+      "sha256": "d9c9aa339a7206502d5cf948b9cad210203249115749d2c0789d156920cc9975"
     },
     {
       "name": "eudev",
       "packageId": "eudev-3.2.14-r2",
-      "version": "3.2.14-r2"
+      "version": "3.2.14-r2",
+      "repository": "main",
+      "size": 273549,
+      "sha256": "07ff0c2409eb7bedd87fae2e1bf8e4a9b3859f024706c0ceef86a9c99e8afe87"
     },
     {
       "name": "udev-init-scripts",
       "packageId": "udev-init-scripts-35-r1",
-      "version": "35-r1"
+      "version": "35-r1",
+      "repository": "main",
+      "size": 1199,
+      "sha256": "5d39012a6defa48b0ac1f1129c6ee3eb8b4bbdc1bcee4ad4913b03d88fec90ef"
     },
     {
       "name": "pixman",
       "packageId": "pixman-0.43.2-r0",
-      "version": "0.43.2-r0"
+      "version": "0.43.2-r0",
+      "repository": "main",
+      "size": 164903,
+      "sha256": "f628991d6e6300588909f4ca460d3809b09a9d268dc28d781452570c1d387df6"
     },
     {
       "name": "xkeyboard-config",
       "packageId": "xkeyboard-config-2.41-r0",
-      "version": "2.41-r0"
+      "version": "2.41-r0",
+      "repository": "main",
+      "size": 576338,
+      "sha256": "21919be54c72edf8ed685723f5fca593979063217bca82d7f400fec321ff6889"
     },
     {
       "name": "wl-clipboard",
       "packageId": "wl-clipboard-2.2.0-r1",
-      "version": "2.2.0-r1"
+      "version": "2.2.0-r1",
+      "repository": "community",
+      "size": 28081,
+      "sha256": "e71f266c891551c07d7cc15e6ef6c3bac399201d11a29926d08f1bf5a60cd9f9"
     },
     {
       "name": "font-dejavu",
       "packageId": "font-dejavu-2.37-r5",
-      "version": "2.37-r5"
+      "version": "2.37-r5",
+      "repository": "main",
+      "size": 5394703,
+      "sha256": "83f678fae792e59fe800fa8723d053f2d75319e4009edee31463e2724618fe8e"
     }
   ],
   "offlineCache": {
     "root": "cache/alpine/v3.20/riscv64",
     "missingInputPolicy": "fail-closed",
+    "requiredIndexFiles": [
+      "main/APKINDEX.tar.gz",
+      "community/APKINDEX.tar.gz"
+    ],
+    "indexDigests": [
+      {
+        "repository": "main",
+        "path": "main/APKINDEX.tar.gz",
+        "size": 465418,
+        "sha256": "62a97335803979e784ff668142e19dc7051de40e5d139ae4fba401b2f90cec4a"
+      },
+      {
+        "repository": "community",
+        "path": "community/APKINDEX.tar.gz",
+        "size": 1569704,
+        "sha256": "d8beda4c3dede08f3c8658f33ab7c302a991b94e6b32ac43c7ffcff879764c47"
+      }
+    ],
+    "indexSignature": {
+      "format": "apk-signed-tar",
+      "requiredMemberPattern": "^\\.SIGN\\.RSA\\..+\\.rsa\\.pub$"
+    },
     "checkedPath": null
   },
   "result": "passed"
