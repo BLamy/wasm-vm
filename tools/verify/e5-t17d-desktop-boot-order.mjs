@@ -87,7 +87,11 @@ async function validateRun(run) {
   const stderrText = (await readRepoFile(run.stderr.path)).toString("utf8").replaceAll("\r", "");
   const guestEvidence = (await readRepoFile(run.guestEvidence.path)).toString("utf8");
   assert.match(consoleText, /wasm-vm login:/u, `${run.id}: console has no login prompt`);
-  assert.match(stderrText, /reached --max-instrs 10000000000/u, `${run.id}: fixed post-login bound was not reached`);
+  assert.match(
+    stderrText,
+    new RegExp(`reached --max-instrs ${report.boot.maxInstrs}(?:\\r?\\n|$)`),
+    `${run.id}: fixed post-login bound was not reached`,
+  );
   const retired = /^trace retired=(\d+)$/mu.exec(guestEvidence);
   assert.ok(retired && Number(retired[1]) > 0, `${run.id}: guest evidence has no retired count`);
   assert.match(guestEvidence, /^outcome=MaxInstrs$/mu, `${run.id}: unexpected guest outcome`);

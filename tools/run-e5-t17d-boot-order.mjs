@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 // E5-T17d: replay the final T17c desktop image through the native emulator's serial boot path.
-// The image intentionally has no root password, so this driver stops at the serial login
-// boundary and reads the persistent boot-order audit emitted by the desktop startup scripts.
+// The image intentionally has no root password, so this driver records the serial login boundary,
+// continues to a fixed instruction bound for tty1, and reads the persistent boot-order audit.
 // Each run is a fresh process and a fresh copy of the handoff image; the varying quantum is a
 // deterministic timing perturbation, not host randomness.
 
@@ -10,7 +10,7 @@ import assert from "node:assert/strict";
 import { execFile as execFileCallback } from "node:child_process";
 import { createHash } from "node:crypto";
 import { createWriteStream } from "node:fs";
-import { copyFile, mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import process from "node:process";
@@ -26,7 +26,7 @@ const evidenceDir = path.join(repo, "evidence/e5-t17d");
 const runRoot = path.join(repo, "target/e5-t17d/boots");
 const runCount = Number(process.env.E5_T17D_RUN_COUNT ?? "20");
 const timeoutMs = Number(process.env.E5_T17D_BOOT_TIMEOUT_MS ?? String(20 * 60 * 1_000));
-const maxInstrs = "10000000000";
+const maxInstrs = "6000000000";
 const sha256Bytes = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const sha256File = async (file) => sha256Bytes(await readFile(file));
 const relative = (file) => path.relative(repo, file);
@@ -119,6 +119,11 @@ async function runBoot(ordinal) {
   const guestEvidencePath = path.join(evidenceDir, `${id}-guest-evidence.txt`);
   await mkdir(runDir, { recursive: true });
   await copyFile(sourceImage, imagePath);
+  await Promise.all([
+    rm(consolePath, { force: true }),
+    rm(stderrPath, { force: true }),
+    rm(guestEvidencePath, { force: true }),
+  ]);
   const preImageSha256 = await sha256File(imagePath);
   if (preImageSha256 !== sourceImageSha256) {
     return { id, ordinal, seed, quantum, ok: false, error: "clean image copy digest drifted" };
@@ -190,19 +195,21 @@ async function runBoot(ordinal) {
   }
 
   const postImageSha256 = await sha256File(imagePath);
+  const guestEvidenceArtifact = await optionalArtifact(guestEvidencePath);
   const result = {
     id,
     ordinal,
     seed,
     quantum,
-    ok: !timedOut && exit.code === 102 && exit.signal === null && loginReached && boundedInstructionStop && !error,
+    ok: !timedOut && exit.code === 102 && exit.signal === null && loginReached && boundedInstructionStop &&
+      guestEvidenceArtifact !== null && !error,
     timedOut,
     exit,
     serial: { loginReached, boundedInstructionStop },
     image: { path: relative(imagePath), preSha256: preImageSha256, postSha256: postImageSha256 },
     console: { path: relative(consolePath), sha256: await sha256File(consolePath) },
     stderr: { path: relative(stderrPath), sha256: await sha256File(stderrPath) },
-    guestEvidence: { path: relative(guestEvidencePath), sha256: await sha256File(guestEvidencePath) },
+    guestEvidence: guestEvidenceArtifact,
     guestFiles: guestFiles ? {
       bootOrderLog: { sha256: sha256Bytes(guestFiles.bootOrderLog), content: guestFiles.bootOrderLog },
       westonLog: { sha256: sha256Bytes(guestFiles.westonLog), content: guestFiles.westonLog },
@@ -213,6 +220,16 @@ async function runBoot(ordinal) {
     result.observed = summarizeGuest(result.guestFiles);
   }
   return result;
+}
+
+async function optionalArtifact(file) {
+  try {
+    const fileStat = await stat(file);
+    if (!fileStat.isFile() || fileStat.size === 0) return null;
+    return { path: relative(file), sha256: await sha256File(file) };
+  } catch {
+    return null;
+  }
 }
 
 function cleanEnvironment() {

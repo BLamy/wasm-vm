@@ -1,7 +1,7 @@
 # Desktop boot-order proof
 
 E5-T17d's native headless proof uses a fresh copy of the T17c desktop image for every run. The
-native CLI runs with `--no-input` to the fixed `--max-instrs 10000000000` bound: it records the
+native CLI runs with `--no-input` to the fixed `--max-instrs 6000000000` bound: it records the
 serial `ttyS0` login prompt, then leaves enough guest execution for tty1 autologin and the bounded
 desktop launcher before stopping. Root remains locked in the production image, so the proof does
 not add a debug credential or mutate the boot configuration.
