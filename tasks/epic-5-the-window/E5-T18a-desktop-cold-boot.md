@@ -3,7 +3,7 @@ id: E5-T18a
 epic: 5
 title: Prove the local cold-boot desktop contract
 priority: 518.1
-status: pending
+status: in-progress
 depends_on: [E5-T08, E5-T15d, E5-T17e]
 estimate: S
 risk: high

@@ -19027,7 +19027,7 @@
       "epicKey": "5",
       "title": "Prove the local cold-boot desktop contract",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T08",
         "E5-T15d",
