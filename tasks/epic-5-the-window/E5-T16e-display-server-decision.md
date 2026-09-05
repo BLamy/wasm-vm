@@ -122,8 +122,8 @@ manifest refutes the decision.
 - P5 Weston DRM/Pixman/no-GL and trace cleanliness — HELD. Predicted both winner reruns would use
   the exact DRM/Pixman path and finish with clean guest/GPU evidence. The exact launch, `riscv64`
   guest, and `Using Pixman renderer` proof appear at
-  `evidence/e5-t16e/weston-rerun-1-console.log:309-331` and
-  `evidence/e5-t16e/weston-rerun-2-console.log:309-331`, with no GL renderer/flag match. Guest
+  `evidence/e5-t16e/weston-rerun-1/weston-console.log:309-331` and
+  `evidence/e5-t16e/weston-rerun-2/weston-console.log:309-331`, with no GL renderer/flag match. Guest
   evidence ends `outcome=Exited(0)` at each `weston-guest-evidence.txt:1-6`; GPU traces report
   `records=121 dropped=0` and `records=116 dropped=0` at each `weston-gpu-trace.log:1-2`. The
   capture error and exact launch assertions are enforced at
