@@ -6,7 +6,7 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { execFile as execFileCallback } from "node:child_process";
-import { mkdtemp, mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { lstat, mkdtemp, mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import process from "node:process";
@@ -83,6 +83,26 @@ if (process.argv.includes("--self-test")) {
     await assert.rejects(() => validateOfflineCache(fixture.profile, fixtureRoot), /missing offline package/u);
     await writeFile(missingPackage, fixture.packageContents[fixture.profile.packages[0].packageId]);
 
+    const keyFile = path.join(fixtureRoot, fixture.profile.offlineCache.requiredTrustedKey.path);
+    const keyContent = await readFile(keyFile);
+    await rm(keyFile);
+    await writeFile(path.join(path.dirname(keyFile), "README"), "not a trusted key\n");
+    await assert.rejects(() => validateOfflineCache(fixture.profile, fixtureRoot), /trusted key material/u);
+    await writeFile(keyFile, keyContent);
+
+    const attackerProfile = structuredClone(fixture.profile);
+    await createSignedIndexFixture(
+      fixtureRoot,
+      attackerProfile.offlineCache.indexDigests[0],
+      ".SIGN.RSA.attacker.rsa.pub",
+    );
+    await assert.rejects(() => validateOfflineCache(attackerProfile, fixtureRoot), /pinned trusted member/u);
+    await createSignedIndexFixture(
+      fixtureRoot,
+      fixture.profile.offlineCache.indexDigests[0],
+      fixture.profile.offlineCache.indexSignature.requiredMember,
+    );
+
     const invalidIndex = path.join(fixtureRoot, "main/APKINDEX.tar.gz");
     const invalidIndexBytes = await readFile(invalidIndex);
     invalidIndexBytes[invalidIndexBytes.length - 1] ^= 1;
@@ -91,7 +111,7 @@ if (process.argv.includes("--self-test")) {
   } finally {
     await rm(fixtureRoot, { recursive: true, force: true });
   }
-  process.stdout.write(`E5T17A_SELF_TEST=${cases.map(([name]) => name.replaceAll(" ", "-")).join(",")},offline-cache-fail-closed,offline-index-signature-fail-closed\n`);
+  process.stdout.write(`E5T17A_SELF_TEST=${cases.map(([name]) => name.replaceAll(" ", "-")).join(",")},offline-cache-fail-closed,offline-trusted-key-fail-closed,offline-index-signer-fail-closed,offline-index-signature-fail-closed\n`);
 }
 
 await mkdir(evidenceDir, { recursive: true });
@@ -132,6 +152,7 @@ const output = {
     requiredIndexFiles: profile.offlineCache.requiredIndexFiles,
     indexDigests: profile.offlineCache.indexDigests,
     indexSignature: profile.offlineCache.indexSignature,
+    requiredTrustedKey: profile.offlineCache.requiredTrustedKey,
     checkedPath: offlineCacheChecked,
   },
   result: "passed",
@@ -162,6 +183,18 @@ function buildExpectedSources({
   assert.deepEqual(artifactValue.indexSignature, {
     format: "apk-signed-tar",
     member: ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub",
+  });
+  assert.deepEqual(artifactValue.trustedKey, {
+    path: "keys/riscv64/alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub",
+    size: 451,
+    sha256: "db0b49163f07ffba64a5ca198bcf1688610b0bd1f0d8d5afeaf78559d73f2278",
+    sourcePackage: {
+      packageId: "alpine-keys-2.4-r1",
+      repository: "main",
+      url: "https://dl-cdn.alpinelinux.org/alpine/v3.20/main/riscv64/alpine-keys-2.4-r1.apk",
+      size: 12334,
+      sha256: "d174c84afe8e073d66708f255356582944c8f9f52817e872e16187f2ff75052c",
+    },
   });
   const selected = auditValue.candidates.find((candidate) => candidate.id === "weston-pixman");
   const selectedVerification = verificationValue.candidates.find((candidate) => candidate.id === "weston-pixman");
@@ -237,10 +270,15 @@ function validateProfile(value, source) {
   assert.deepEqual(value.offlineCache.indexDigests, source.artifactIndexes);
   assert.deepEqual(value.offlineCache.indexSignature, {
     format: "apk-signed-tar",
-    requiredMemberPattern: "^\\.SIGN\\.RSA\\..+\\.rsa\\.pub$",
+    requiredMember: source.artifactEvidence.indexSignature.member,
   });
   assert.equal(value.offlineCache.packageFileTemplate, "{repository}/{packageId}.apk");
   assert.equal(value.offlineCache.requiredTrustedKeyDir, "keys/riscv64");
+  assert.deepEqual(value.offlineCache.requiredTrustedKey, {
+    path: source.artifactEvidence.trustedKey.path,
+    size: source.artifactEvidence.trustedKey.size,
+    sha256: source.artifactEvidence.trustedKey.sha256,
+  });
   assert.equal(value.offlineCache.missingInputPolicy, "fail-closed");
 
   for (const [label, reference, expectedHash] of [
@@ -307,11 +345,20 @@ async function validateOfflineCache(value, cacheRoot) {
     assert.ok(fileStat?.isFile() && fileStat.size > 0, `missing offline index: ${relativePath}`);
     assert.equal(fileStat.size, expectedIndex.size, `offline index size mismatch: ${relativePath}`);
     assert.equal(await sha256File(file), expectedIndex.sha256, `offline index digest mismatch: ${relativePath}`);
-    await validateSignedIndex(file, value.offlineCache.indexSignature.requiredMemberPattern);
+    await validateSignedIndex(file, value.offlineCache.indexSignature.requiredMember);
   }
   const keyDir = inside(value.offlineCache.requiredTrustedKeyDir);
-  const keyEntries = await readdir(keyDir).catch(() => []);
-  assert.ok(keyEntries.length > 0, "missing offline trusted key material");
+  const keyDirStat = await stat(keyDir).catch(() => null);
+  assert.ok(keyDirStat?.isDirectory(), "missing offline trusted key directory");
+  const keySpec = value.offlineCache.requiredTrustedKey;
+  assert.ok(keySpec.path.startsWith(`${value.offlineCache.requiredTrustedKeyDir}/`), "trusted key escapes its directory");
+  const keyFile = inside(keySpec.path);
+  const keyFileStat = await lstat(keyFile).catch(() => null);
+  assert.ok(keyFileStat?.isFile(), "missing offline trusted key material");
+  assert.equal(keyFileStat.size, keySpec.size, "offline trusted key size mismatch");
+  assert.equal(await sha256File(keyFile), keySpec.sha256, "offline trusted key digest mismatch");
+  const keyText = await readFile(keyFile, "utf8");
+  assert.match(keyText, /^-----BEGIN PUBLIC KEY-----\n[\s\S]+\n-----END PUBLIC KEY-----\n?$/u, "offline trusted key is not PEM public-key material");
   for (const pkg of value.packages) {
     const relativePath = `${pkg.repository}/${pkg.packageId}.apk`;
     const file = inside(relativePath);
@@ -322,35 +369,29 @@ async function validateOfflineCache(value, cacheRoot) {
   }
 }
 
-async function validateSignedIndex(file, requiredMemberPattern) {
+async function validateSignedIndex(file, requiredMember) {
   const { stdout } = await execFile("tar", ["-tzf", file]);
   const members = stdout.split(/\r?\n/u).filter(Boolean);
   assert.ok(members.includes("APKINDEX"), `offline index has no APKINDEX member: ${file}`);
+  const signatureMembers = members.filter((member) => member.startsWith(".SIGN.RSA."));
   assert.ok(
-    members.some((member) => new RegExp(requiredMemberPattern, "u").test(member)),
-    `offline index has no trusted signature member: ${file}`,
+    signatureMembers.length === 1 && signatureMembers[0] === requiredMember,
+    `offline index signer is not the pinned trusted member: ${file} (members=${JSON.stringify(signatureMembers)}, required=${JSON.stringify(requiredMember)})`,
   );
 }
 
 async function createCompleteOfflineFixture(value, cacheRoot) {
   const fixture = structuredClone(value);
   for (const index of fixture.offlineCache.indexDigests) {
-    const sourceDir = path.join(cacheRoot, ".index-source", index.repository);
-    const signatureMember = ".SIGN.RSA.fixture.rsa.pub";
-    await mkdir(sourceDir, { recursive: true });
-    await writeFile(path.join(sourceDir, signatureMember), "fixture signature\n");
-    await writeFile(path.join(sourceDir, "DESCRIPTION"), "fixture index\n");
-    await writeFile(path.join(sourceDir, "APKINDEX"), "fixture package index\n");
-    const file = path.join(cacheRoot, index.path);
-    await mkdir(path.dirname(file), { recursive: true });
-    await execFile("tar", ["-czf", file, "-C", sourceDir, signatureMember, "DESCRIPTION", "APKINDEX"]);
-    const fileStat = await stat(file);
-    index.size = fileStat.size;
-    index.sha256 = await sha256File(file);
+    await createSignedIndexFixture(cacheRoot, index, fixture.offlineCache.indexSignature.requiredMember);
   }
   const keyFile = path.join(cacheRoot, fixture.offlineCache.requiredTrustedKeyDir, "alpine.rsa.pub");
   await mkdir(path.dirname(keyFile), { recursive: true });
-  await writeFile(keyFile, "trusted-key\n");
+  const keyContent = Buffer.from("-----BEGIN PUBLIC KEY-----\nfixture trusted key\n-----END PUBLIC KEY-----\n");
+  await writeFile(keyFile, keyContent);
+  fixture.offlineCache.requiredTrustedKey.path = path.relative(cacheRoot, keyFile);
+  fixture.offlineCache.requiredTrustedKey.size = keyContent.length;
+  fixture.offlineCache.requiredTrustedKey.sha256 = createHash("sha256").update(keyContent).digest("hex");
   const packageContents = {};
   for (const pkg of fixture.packages) {
     const content = Buffer.from(`${pkg.packageId}\n`);
@@ -362,4 +403,18 @@ async function createCompleteOfflineFixture(value, cacheRoot) {
     packageContents[pkg.packageId] = content;
   }
   return { profile: fixture, packageContents };
+}
+
+async function createSignedIndexFixture(cacheRoot, index, signatureMember) {
+  const sourceDir = path.join(cacheRoot, ".index-source", index.repository);
+  await mkdir(sourceDir, { recursive: true });
+  await writeFile(path.join(sourceDir, signatureMember), "fixture signature\n");
+  await writeFile(path.join(sourceDir, "DESCRIPTION"), "fixture index\n");
+  await writeFile(path.join(sourceDir, "APKINDEX"), "fixture package index\n");
+  const file = path.join(cacheRoot, index.path);
+  await mkdir(path.dirname(file), { recursive: true });
+  await execFile("tar", ["-czf", file, "-C", sourceDir, signatureMember, "DESCRIPTION", "APKINDEX"]);
+  const fileStat = await stat(file);
+  index.size = fileStat.size;
+  index.sha256 = await sha256File(file);
 }

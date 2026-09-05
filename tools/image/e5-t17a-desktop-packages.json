@@ -23,7 +23,7 @@
     },
     "packageArtifacts": {
       "path": "evidence/e5-t17a/package-artifact-digests.json",
-      "sha256": "c647a1af6079c17fc7380493ac400309ae67e49902565f104f9ee9aef6f34c94"
+      "sha256": "fdfb37b68a96456f4b0935895e278bc5e1b89830afd4fa1567dea67710ae3a01"
     },
     "verifiedBaseImageSha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8"
   },
@@ -57,9 +57,14 @@
     "packageFileTemplate": "{repository}/{packageId}.apk",
     "indexSignature": {
       "format": "apk-signed-tar",
-      "requiredMemberPattern": "^\\.SIGN\\.RSA\\..+\\.rsa\\.pub$"
+      "requiredMember": ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub"
     },
     "requiredTrustedKeyDir": "keys/riscv64",
+    "requiredTrustedKey": {
+      "path": "keys/riscv64/alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub",
+      "size": 451,
+      "sha256": "db0b49163f07ffba64a5ca198bcf1688610b0bd1f0d8d5afeaf78559d73f2278"
+    },
     "missingInputPolicy": "fail-closed"
   },
   "packages": [

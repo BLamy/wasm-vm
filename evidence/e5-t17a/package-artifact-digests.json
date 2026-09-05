@@ -13,6 +13,18 @@
     "format": "apk-signed-tar",
     "member": ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub"
   },
+  "trustedKey": {
+    "path": "keys/riscv64/alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub",
+    "size": 451,
+    "sha256": "db0b49163f07ffba64a5ca198bcf1688610b0bd1f0d8d5afeaf78559d73f2278",
+    "sourcePackage": {
+      "packageId": "alpine-keys-2.4-r1",
+      "repository": "main",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.20/main/riscv64/alpine-keys-2.4-r1.apk",
+      "size": 12334,
+      "sha256": "d174c84afe8e073d66708f255356582944c8f9f52817e872e16187f2ff75052c"
+    }
+  },
   "indexes": [
     {
       "repository": "main",
