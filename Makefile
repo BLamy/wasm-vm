@@ -810,6 +810,41 @@ verify-E5-T17b:
 	node tools/verify/e5-t17b-desktop-image.mjs --out target/e5-t17b/desktop-image --self-test
 	@echo "verify-E5-T17b (profile-driven Alpine desktop image assembly): OK"
 
+.PHONY: verify-E5-T17c
+verify-E5-T17c:
+	# Rebuild the T17b image in two distinct output directories, then prove byte/image-manifest
+	# reproducibility, ext4 used-block delta, and content-addressed E3 chunk reuse. The second build
+	# consumes the first build's resolved output lock for the drift gate while both builds install the
+	# same exact input transaction; there is no undeclared package cache,
+	# independent-machine, WebKit, or host-rr leg in this local proof.
+	rm -rf target/e5-t17b/desktop-image target/e5-t17c/repro-b target/e5-t17c/chunks
+	# T17c changes only the image-builder and its verifier. Keep the inherited CLI test suite out of
+	# this target's critical path; the current T17b gate already recorded its full suite, while one
+	# unrelated OCI tamper test is presently flaky on this checkout.
+	cargo fmt --check -p wasm-vm-cli
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	bash -n tools/build-rootfs.sh
+	bash -n tools/image/desktop.sh
+	bash -n tools/rootfs-inner.sh
+	node --check tools/verify/e5-t17a-desktop-package-manifest.mjs
+	node --check tools/verify/e5-t17b-desktop-image.mjs
+	node --check tools/verify/e5-t17c-desktop-image-reproducibility.mjs
+	node tools/verify/e5-t17a-desktop-package-manifest.mjs
+	E5_T17B_OUT=target/e5-t17b/desktop-image bash tools/image/desktop.sh
+	node tools/verify/e5-t17b-desktop-image.mjs --out target/e5-t17b/desktop-image --self-test
+	E5_T17B_OUT=target/e5-t17c/repro-b \
+	E5_T17B_PACKAGE_LOCK=target/e5-t17b/desktop-image/MANIFEST.txt \
+	bash tools/image/desktop.sh
+	touch -t 200001010101 target/e5-t17b/desktop-image/FILE-MANIFEST.txt target/e5-t17c/repro-b/MANIFEST.txt
+	node --check tools/verify/e5-t17c-desktop-image-reproducibility.mjs
+	node tools/verify/e5-t17c-desktop-image-reproducibility.mjs \
+		--out-a target/e5-t17b/desktop-image \
+		--out-b target/e5-t17c/repro-b \
+		--base-image releases/rootfs/alpine-rootfs.ext4 \
+		--cli target/release/wasm-vm --self-test
+	@echo "verify-E5-T17c (desktop reproducibility, ext4 delta, and E3 chunk dedupe): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

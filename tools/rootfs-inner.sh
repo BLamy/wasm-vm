@@ -13,7 +13,13 @@ mkdir -p "$ROOT"
 # 60ac2099, which lives under /usr/share/apk/keys/riscv64 (NOT the default /etc/apk/keys), so
 # without this apk reports "UNTRUSTED signature". We do NOT use --allow-untrusted (critic #1):
 # a MITM/mirror-compromise now fails closed.
-if [ "${LOCKED_INSTALL:-0}" = 1 ] && [ -s /out/MANIFEST.txt ]; then
+if [ -s /out/INSTALL-MANIFEST.txt ]; then
+  # Profile-driven builds keep the requested base+desktop package constraints in a small,
+  # deterministic input lock. The resolved MANIFEST.txt is still the output lock; using it as the
+  # apk world on a second build would change /etc/apk/world when the first build installed the
+  # desktop extension as a separate transaction.
+  mapfile -t INSTALL_PKGS < <(sed -E 's/-([0-9][^-]*-r[0-9]+)$/=\1/' /out/INSTALL-MANIFEST.txt)
+elif [ "${LOCKED_INSTALL:-0}" = 1 ] && [ -s /out/MANIFEST.txt ]; then
   # Convert `name-version-rN` to apk's exact constraint `name=version-rN`. Package names may
   # contain dashes, so split only at the final version beginning with a digit.
   mapfile -t INSTALL_PKGS < <(sed -E 's/-([0-9][^-]*-r[0-9]+)$/=\1/' /out/MANIFEST.txt)
@@ -594,11 +600,13 @@ rm -f /out/alpine-rootfs.ext4
 mke2fs -q -t ext4 -O ^metadata_csum -L root -U "$FS_UUID" -E "root_owner=0:0,hash_seed=$FS_UUID" -d "$ROOT" /out/alpine-rootfs.ext4 "$IMG_SIZE"
 
 # `touch` pins mtime/atime but necessarily advances the SOURCE tree's ctime to the real
-# container clock. `mke2fs -d` copies that ctime into each destination inode even while
-# E2FSPROGS_FAKE_TIME correctly pins the filesystem/superblock and inode creation times.
-# The result is one changing byte at inode offset 0x0c for every imported inode — exactly
-# the residual E3-T11 drift in chunks 2-4. ext4 ctime is historical metadata here (the image
-# has never been mounted), so normalize it after population with the same pinned e2fsprogs.
+# container clock. `mke2fs -d` also reads a few source directories while copying them; the
+# container's relatime policy can therefore advance their destination atime during the copy,
+# even though the source tree was normalized first. `mke2fs` copies ctime and those atimes into
+# destination inodes while E2FSPROGS_FAKE_TIME pins the filesystem/superblock and inode creation
+# times. Normalize both fields after population with the same pinned e2fsprogs. These are
+# historical metadata on an image that has never been mounted, and leaving either field live
+# would make the byte-level reproducibility proof depend on build timing.
 #
 # Address inodes by their image path rather than by source inode number. Quoting/escaping
 # keeps the batch correct for whitespace, quotes, and backslashes; repeated hard-link paths
@@ -611,6 +619,7 @@ while IFS= read -r -d '' source_path; do
   image_path=${image_path//\\/\\\\}
   image_path=${image_path//\"/\\\"}
   printf 'set_inode_field "%s" ctime %s\n' "$image_path" "$SOURCE_DATE_EPOCH" >> "$CTIME_CMDS"
+  printf 'set_inode_field "%s" atime %s\n' "$image_path" "$SOURCE_DATE_EPOCH" >> "$CTIME_CMDS"
 done < <(find "$ROOT" -print0)
 debugfs -w -f "$CTIME_CMDS" /out/alpine-rootfs.ext4 >/tmp/debugfs-normalize-ctime.log 2>&1
 

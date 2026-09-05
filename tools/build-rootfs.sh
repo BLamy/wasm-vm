@@ -31,7 +31,11 @@ PKGS="$BASE_PKGS ${EXTRA_PKGS:-}"
 # and churn experiments deliberately re-resolve the requested world, then the host-side drift gate
 # either updates the lock or refuses/ignores it explicitly.
 LOCKED_INSTALL=1
-if [ "${UPDATE_MANIFEST:-0}" = 1 ]; then LOCKED_INSTALL=0; fi
+# A profile-driven extension can accept the newly-added desktop packages while still installing
+# every package from the committed base lock at its exact version. This keeps the first T17 build
+# independent of a mirror-side point-release bump; UPDATE_MANIFEST only controls whether the
+# resulting (base + extension) lock is accepted by the outer drift gate.
+if [ "${UPDATE_MANIFEST:-0}" = 1 ] && [ "${FORCE_LOCKED_INSTALL:-0}" != 1 ]; then LOCKED_INSTALL=0; fi
 
 OUT="${ROOTFS_OUT:-releases/rootfs}"
 IMG_TAG="wasm-vm-rootfs-build:local"
@@ -84,6 +88,7 @@ docker run --rm \
   -e PKGS="$PKGS" \
   -e EXTRA_PKGS="${EXTRA_PKGS:-}" \
   -e LOCKED_INSTALL="$LOCKED_INSTALL" \
+  -e FORCE_LOCKED_INSTALL="${FORCE_LOCKED_INSTALL:-0}" \
   -e ALPINE_BRANCH="$ALPINE_BRANCH" \
   -e DISPLAY_CANDIDATE="${DISPLAY_CANDIDATE:-}" \
   "$IMG_TAG" /rootfs-inner.sh
