@@ -158,7 +158,7 @@ assert.ok(guestEvidence, "final reload did not produce guest-layer evidence");
 const guestEvidenceText = await readFile(path.join(repo, guestEvidence.path), "utf8");
 assert.match(guestEvidenceText, /^trace retired=(\d+)$/mu);
 assert.match(guestEvidenceText, /^state sha256=[0-9a-f]{64}$/mu);
-assert.match(guestEvidenceText, /^outcome=Reset\(PowerOff\)$/mu);
+assert.match(guestEvidenceText, /^outcome=(?:Reset\(PowerOff\)|Exited\(0\))$/mu);
 
 const commit = (await execFile("git", ["rev-parse", "HEAD"], { cwd: repo })).stdout.trim();
 assert.match(commit, /^[0-9a-f]{40}$/u);

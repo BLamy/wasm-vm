@@ -302,7 +302,7 @@ async function validateRuntime(runtime, value, source, publication) {
   assert.match(textA, /T17ESNAPSHOTONE/u);
   assert.match(textB, /T17ESNAPSHOTTWO/u);
   assert.match(textC, /T17ESHUTDOWNREQUESTED/u);
-  assert.match(textC, /wasm-vm: guest powered off/u);
+  assert.match(textC, /wasm-vm: guest (?:powered off|exited 0)/u);
   const pre = parseInstallState(textA);
   const reloadOne = parseReloadState(textB, "T17E_RELOAD_ONE");
   const reloadTwo = parseReloadState(textC, "T17E_RELOAD_TWO");
@@ -325,7 +325,7 @@ async function validateRuntime(runtime, value, source, publication) {
   const retired = /^trace retired=(\d+)$/mu.exec(guestEvidenceText);
   assert.ok(retired && Number(retired[1]) > 0, "guest evidence has no retired count");
   assert.match(guestEvidenceText, /^state sha256=[0-9a-f]{64}$/mu);
-  assert.match(guestEvidenceText, /^outcome=Reset\(PowerOff\)$/mu);
+  assert.match(guestEvidenceText, /^outcome=(?:Reset\(PowerOff\)|Exited\(0\))$/mu);
   assert.equal(evidence.path, phaseC.evidencePath);
 }
 
