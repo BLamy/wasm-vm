@@ -1,0 +1,6 @@
+wasm-vm boot evidence v1
+trace fnv64=303900a11542ce2f
+trace retired=5999335640
+trace mode=retirement-records
+state sha256=deade7e8b407a10164995b2a0d88100136d80d67189b75b42647ff5d818935fc
+outcome=MaxInstrs

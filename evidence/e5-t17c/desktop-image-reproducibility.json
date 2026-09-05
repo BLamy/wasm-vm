@@ -2,7 +2,7 @@
   "schema": "wasm-vm.e5-t17c.desktop-image-reproducibility.v1",
   "task": "E5-T17c",
   "command": "make verify-E5-T17c",
-  "commit": "10e4b5866225d8a61c0fda8a20fc25c8464137e7",
+  "commit": "063676b20c2b4c51e6ad149f19c13c7aa1beeafe",
   "profile": {
     "path": "tools/image/e5-t17a-desktop-packages.json",
     "sha256": "5e0ede77a0fe30fe2268a2a3b9bc322146e67cf128d9b15e6808cfa69cfb1a67",
@@ -35,7 +35,7 @@
       "output": "target/e5-t17b/desktop-image",
       "image": {
         "path": "target/e5-t17b/desktop-image/alpine-rootfs.ext4",
-        "sha256": "99cede87db8ffec8b68933862f5f1aa8abfb30d9c4968b7127a30e7b79bad785",
+        "sha256": "467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e",
         "size": 1073741824
       },
       "packageManifest": {
@@ -236,7 +236,7 @@
       },
       "fileManifest": {
         "path": "target/e5-t17b/desktop-image/FILE-MANIFEST.txt",
-        "sha256": "c66d92365bdbb8b59a3aa63ade045e7da7096afd51039cfb36bc6b32fbee05ea",
+        "sha256": "c82b20c083d808a797bd8db9c080a2be0c3ef7859d29e5b818bbfa99d8427cf0",
         "normalized": [
           {
             "digest": "6745ed39ac391bccfbaf51f8ee55575927cb116cc293bdaec293f520312bdae6",
@@ -259,7 +259,7 @@
             "path": "/etc/hostname"
           },
           {
-            "digest": "0863c04f8de9e77ae22ded16abbb54d78c791201ee576f6101c7f235a12bb448",
+            "digest": "a1417d51bf88f771a1a1a463a839cd5767d6d0d4a3777900600f1746fab0d9be",
             "mode": "0755",
             "path": "/etc/init.d/desktop-runtime"
           },
@@ -379,7 +379,7 @@
             "path": "/usr/local/bin/osc52-copy"
           },
           {
-            "digest": "d1ce940968cd31127135ed316fda35104baf92fd81bc3b75db29e74d80434bc4",
+            "digest": "c4ed846e52b58643452962bd7987812b7789f0c779962b13dd6ae4501308575a",
             "mode": "0755",
             "path": "/usr/local/bin/start-desktop"
           },
@@ -417,7 +417,7 @@
       "output": "target/e5-t17c/repro-b",
       "image": {
         "path": "target/e5-t17c/repro-b/alpine-rootfs.ext4",
-        "sha256": "99cede87db8ffec8b68933862f5f1aa8abfb30d9c4968b7127a30e7b79bad785",
+        "sha256": "467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e",
         "size": 1073741824
       },
       "packageManifest": {
@@ -618,7 +618,7 @@
       },
       "fileManifest": {
         "path": "target/e5-t17c/repro-b/FILE-MANIFEST.txt",
-        "sha256": "c66d92365bdbb8b59a3aa63ade045e7da7096afd51039cfb36bc6b32fbee05ea",
+        "sha256": "c82b20c083d808a797bd8db9c080a2be0c3ef7859d29e5b818bbfa99d8427cf0",
         "normalized": [
           {
             "digest": "6745ed39ac391bccfbaf51f8ee55575927cb116cc293bdaec293f520312bdae6",
@@ -641,7 +641,7 @@
             "path": "/etc/hostname"
           },
           {
-            "digest": "0863c04f8de9e77ae22ded16abbb54d78c791201ee576f6101c7f235a12bb448",
+            "digest": "a1417d51bf88f771a1a1a463a839cd5767d6d0d4a3777900600f1746fab0d9be",
             "mode": "0755",
             "path": "/etc/init.d/desktop-runtime"
           },
@@ -761,7 +761,7 @@
             "path": "/usr/local/bin/osc52-copy"
           },
           {
-            "digest": "d1ce940968cd31127135ed316fda35104baf92fd81bc3b75db29e74d80434bc4",
+            "digest": "c4ed846e52b58643452962bd7987812b7789f0c779962b13dd6ae4501308575a",
             "mode": "0755",
             "path": "/usr/local/bin/start-desktop"
           },
@@ -898,6 +898,7 @@
       "0eda1d1cfb98fa305beb61f36bb22b57500fc29eaf0417883643ab70c3b8c036",
       "10265f819b4dfbb99380f82f16166ff2ae315d17b888708dd53c143082db4407",
       "1059ab37e9df6661db978a0997fd425c162738cccc1375e1c4ac758edf06b868",
+      "1062ea3734d6622c7feee1995cdb9198d4735912e57b40e5807f31e5c0d468c2",
       "10883acb813baebedc719398a7a2ab6b2899491a29821a214543383f09676ef5",
       "11080bd3b662a906ab29bdf95c305bbd843e144bd2df3e2b94031d63166f7eed",
       "1154e2f1d4330420d7a11dec08288b6bba17fb41c9688d541a41059733aa90be",
@@ -929,7 +930,6 @@
       "1735f24abede58e21853a89c92c956e0127d5630d86a4623f844c189aebf4175",
       "174ab8f9e72063e1dc4c7241ae1ac12805c3f6e62fb23a42a7fc40bdacd74d20",
       "17b919b5a5b2cc67546a39a9a60b02f98cfeff945b326aadbacec2245939a648",
-      "17e883b1078278caabff9e2db6643e7fe883e97998616daeee7a42d579fb8aed",
       "185af9fd7e2739c6e8651fea15b91e6f694ef3bda6b01cf7c669be4af8d8d92f",
       "18d3cbd938a87a99d31d85ca5c2af19b4f2c70b1e26440647476f7614ef77b80",
       "18d9af4510017821ec0bb3580baec0680242d9e702922c4b03947f8e50235622",
@@ -975,7 +975,6 @@
       "25a615042dcc420c85cfd2c4696d5c1355be00808ca373e4f56e3066542f86c8",
       "25b1a961bc0533a1433f52f7dd87d470fee02f72575d8c56233048b2af76142a",
       "26059dcb0c4bbe9655a943a1b14dd90d43c19a13ba8e943b19ed97b072d5a700",
-      "261f2a36a820eb01f90a007504f8f156da2abe0c2407e69b99caa42679083cf1",
       "265cfaadfc77fed7cad8c58f2f10fb40eed1d7442a2ddfc587bba50c110b3012",
       "26a31fad3a21b102fa5e20e0c6e34e8c70950dea026bfc8ce8f0e98dae6a370e",
       "26e7e6f1d3ddda50683cc2e5be5537e69ae767009199a06c3583f341747dd3b4",
@@ -1329,6 +1328,7 @@
       "a15f795409276d9898702c1069d28e14fb37a3cb479bad0f87911a734cdfdaf6",
       "a1bb2e4642bfa48bcf2edc87798e8490b0a5da08d1f1d3587bab434dc530daed",
       "a1d29e9bcdb5d2dd1048791631b3810726472a5e80bea1ecb6f7766a78d02b00",
+      "a20b0b34d58b6ff8a976ac2c59559834d09ee1beeb89429b823be062a9264193",
       "a20cfeab4dba51b53702fac05a624e9f39e97f736a7b581abfdc9cedd693d9e3",
       "a24fe08a8cd3b287a98a8704f81ed4dd6817e56f06762f2e36d68fdc871b42af",
       "a2cceb07c2fc2a3224a012d9893e6888881c309e241ac1c7adb232ca5f71dd28",
@@ -1439,6 +1439,7 @@
       "c134feb6850a49d62c36fe03ba7f094442ac22bed4e0bf7121c7b07eb650de95",
       "c1f495ba0bbf2631fed31c8c01cf6b2e9e6311e183257a7690ec0cf57eb761ff",
       "c22533b8728f57e85ddcb75f5ee33e087d4375da2d4e320baaa6c904ed02eadb",
+      "c232d7e4be07192749861fd5d9c4674715a01f1a81fb439de8878e3f20f117b8",
       "c260ec978ae1027676e585fc432155674d44ddc069a11b1d3a0263d126235a11",
       "c272873c5c0e0ce53b1f3a77eb07e8fa5665a2b3865643e1c67dc42fa6db8f61",
       "c30cbc644c3fa071a09799c3a3d133d3a6691e9df9e9213bcc16ff5b8e534071",
@@ -1480,13 +1481,13 @@
       "cd23efd80cd2ec03a4949bbb576640255eedbf9bfb97060a707af5709121f3d1",
       "cdc35d984f4f1388c392b30bad7ce8fa9d2073423f6e809102f731865c75a93c",
       "cde0dab1a2db86e7ba226bcee43747c0f2a972bc34988f3dbc178e1635fd6f10",
-      "cdf95a42390d7dce6e3c6d88c76aae30e2ec679d8677b809b8d9f7d87612e463",
       "cdfb39c23a500c2e317336bcf7eb48c0908246df7c362555410f2b8cf9e7bb85",
       "ce98810944798a32a1c795ec4351eba24cbf49e288c94c49a2169e9dbdbab74e",
       "cef3d5f6fdd083736074fc619e215ebafe1f202714851215bee59eacf1aa32f3",
       "cf2c842e341f61339f3000c1ed755a6219bfd2ea065a2ca51a28ad30cf287ae7",
       "cf3815ea6f082ae6ac1140e7cfcff27d72d6d0f74169a7e31b860710521ed1a9",
       "cf587e8f82fb862b900faaf68484d4667f8a47ea66881bd60150dcf00839d39d",
+      "cf5e3cc11f750df15b656ced74bf8bc070f1bc5bce4a4932ffe5a6f18bb0c1bd",
       "cfc3943ef501c708097babbdf913104144757b36097570a1951537d8899b7b32",
       "d09e07f26d79e560276c9727baf3ccb32d087e586378fa2eebbfa3bdc85b510c",
       "d0bc50d403aaff8d5b30ea1c675c0e791fee8e7ff14b8fe524c38190de69bb13",
@@ -1568,7 +1569,6 @@
       "e6312b9b251cbff793fe9c19b13d78acd083356100de640a22f3a7ff8580c1cf",
       "e6afe8f01612ab03f8ec7c09c8625b323a04f6643b428645c789f1660f79c684",
       "e6b9030ae744400bc781de61027b5a05ff94f79952753c09b791ebe4ce903f22",
-      "e6bcc3a2aab23040eca485ee9e82cae414edb6594d7cba198bfca8d942b3e3db",
       "e7fdcaf6aef3a39bdf2e475e64d02077e05c90abc33e17d463a2fde37506ea8a",
       "e82aa666a9e077279e7ad9a9157872a2064158df3f496d46ecdcb6aefc58a709",
       "e8bd659739c7873d14418e460f397547013cf0aea089d1880e0e7305852c3d3b",
@@ -1675,7 +1675,7 @@
       },
       {
         "index": 4,
-        "sha256": "cdf95a42390d7dce6e3c6d88c76aae30e2ec679d8677b809b8d9f7d87612e463"
+        "sha256": "1062ea3734d6622c7feee1995cdb9198d4735912e57b40e5807f31e5c0d468c2"
       },
       {
         "index": 5,
@@ -1687,7 +1687,7 @@
       },
       {
         "index": 7,
-        "sha256": "261f2a36a820eb01f90a007504f8f156da2abe0c2407e69b99caa42679083cf1"
+        "sha256": "c232d7e4be07192749861fd5d9c4674715a01f1a81fb439de8878e3f20f117b8"
       },
       {
         "index": 8,
@@ -1787,7 +1787,7 @@
       },
       {
         "index": 150,
-        "sha256": "17e883b1078278caabff9e2db6643e7fe883e97998616daeee7a42d579fb8aed"
+        "sha256": "a20b0b34d58b6ff8a976ac2c59559834d09ee1beeb89429b823be062a9264193"
       },
       {
         "index": 151,
@@ -3959,7 +3959,7 @@
       },
       {
         "index": 711,
-        "sha256": "e6bcc3a2aab23040eca485ee9e82cae414edb6594d7cba198bfca8d942b3e3db"
+        "sha256": "cf5e3cc11f750df15b656ced74bf8bc070f1bc5bce4a4932ffe5a6f18bb0c1bd"
       },
       {
         "index": 712,
