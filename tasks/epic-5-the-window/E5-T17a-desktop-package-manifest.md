@@ -3,7 +3,7 @@ id: E5-T17a
 epic: 5
 title: Freeze signed Alpine desktop package manifest and offline profile
 priority: 517.1
-status: in-progress
+status: verified
 depends_on: [E5-T16e]
 estimate: S
 risk: medium
@@ -90,3 +90,12 @@ Commands: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NOD
 - Command: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17a`.
 - Evidence: profile SHA-256 `5e0ede77a0fe30fe2268a2a3b9bc322146e67cf128d9b15e6808cfa69cfb1a67`, artifact/key evidence SHA-256 `fdfb37b68a96456f4b0935895e278bc5e1b89830afd4fa1567dea67710ae3a01`, and verification output SHA-256 `06db58ea0a80189b5493df39f35d4fa60e8a18881592d3941c9b17d77d9c0d74`.
 - The remediation binds offline mode to the exact `alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub` key path, size, SHA-256, and PEM format, rejects symlink/unrelated-file replacements, and requires exactly that signer member in each signed APKINDEX tar. The self-test now covers trusted-key replacement, attacker signer-member substitution, missing APK, and index-byte tampering; the bounded gate passes without independent-machine, WebKit, or host-rr legs.
+
+### 2026-09-05 — fresh verifier — VERDICT: verified
+
+- Exact-head proof — HELD. Verified at pre-metadata HEAD `95f6fc13e674e7a73d59e22633669bafd8e233c9`; the current profile, artifact/key evidence, and generated verification output hashes are respectively `5e0ede77a0fe30fe2268a2a3b9bc322146e67cf128d9b15e6808cfa69cfb1a67`, `fdfb37b68a96456f4b0935895e278bc5e1b89830afd4fa1567dea67710ae3a01`, and `06db58ea0a80189b5493df39f35d4fa60e8a18881592d3941c9b17d77d9c0d74`.
+- T16e/T16d pins — HELD. The scrubbed `make verify-E5-T17a` gate passed; an independent read-only comparison matched all 11 package IDs/order and T16e names/versions to T16d, and matched each repository, size, and SHA-256 artifact pin plus all four provenance digests. The validator enforces these bindings at `tools/verify/e5-t17a-desktop-package-manifest.mjs:175-232` and `:251-320`; independent order/name/version/repository/size/SHA/provenance/signature/trust mutations all failed.
+- Prior trust findings — HELD. Against a disposable cache containing the real pinned Alpine indexes/APKs and the exact 451-byte key, `node ... --offline-cache <cache>` passed intact and rejected missing key, README replacement, wrong key bytes, missing/wrong APK, missing/tampered/malformed index, and the attacker/extra-signer mutations. The exact-key path/size/hash/PEM and symlink rejection are enforced at `tools/verify/e5-t17a-desktop-package-manifest.mjs:350-361`; the exact single signer rule is enforced at `:372-380` and independently passed only the pinned `.SIGN.RSA.alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub` member. The symlink-key case was the bounded novel mutation.
+- Offline fail-closed and coverage — HELD. Offline validation performs only root-contained path checks, `stat`/`lstat`, SHA-256 checks, and local `tar` member inspection at `tools/verify/e5-t17a-desktop-package-manifest.mjs:332-369`; the self-test exercises the profile mutations and fail-closed fixtures at `:58-114`. The target commands at `Makefile:786-794` all ran. Declarative profile/evidence and generated queue/tasks metadata hunks are covered by the validator output or waived as metadata; unrelated dirty files were unchanged.
+
+Commands: `git rev-parse HEAD`; `git diff --name-status 272cd71..HEAD`; `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17a`; independent real-cache/profile mutation harnesses; direct `validateSignedIndex` signer/malformed-tar harness; read-only T16e/T16d/artifact/provenance comparison.
