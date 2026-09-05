@@ -106,7 +106,7 @@ const output = {
   },
   repositories,
   policy: {
-    install: "apk add --no-progress <package>",
+    install: "apk add --no-scripts --no-progress <package>",
     signatureVerification: "apk default signature verification",
     forbiddenInstallFlag: "--allow-untrusted",
     network: "native emulator riscv64 guest via --net-slirp",
@@ -226,7 +226,7 @@ async function runCandidate(candidate) {
     commands: {
       update: "apk update",
       search: `apk search -v ${candidate.packages.join(" ")}`,
-      add: `apk add --no-progress ${candidate.packages.join(" ")}`,
+      add: `apk add --no-scripts --no-progress ${candidate.packages.join(" ")}`,
       info: `apk info -a ${candidate.packages.join(" ")}`,
     },
     update: extractCommand(stdout, "UPDATE"),
@@ -268,8 +268,8 @@ apk search -v ${packages} 2>&1
 search_rc=$?
 printf 'E5T16D_''SEARCH_END rc=%s\n' "$search_rc"
 [ "$search_rc" -eq 0 ] || all_ok=0
-printf 'E5T16D_''INSTALL_BEGIN command=apk add --no-progress ${packages}\n'
-apk add --no-progress ${packages} 2>&1
+printf 'E5T16D_''INSTALL_BEGIN command=apk add --no-scripts --no-progress ${packages}\n'
+apk add --no-scripts --no-progress ${packages} 2>&1
 install_rc=$?
 printf 'E5T16D_''INSTALL_END rc=%s\n' "$install_rc"
 [ "$install_rc" -eq 0 ] || all_ok=0
