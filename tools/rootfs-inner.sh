@@ -365,7 +365,7 @@ printf '%s\n' "E5T17B_START_DESKTOP weston --backend=drm --renderer=pixman --soc
 
 # The guest display can be absent or already claimed. Both compositor and terminal are bounded;
 # the login shell returns cleanly after a failure so tty1/getty cannot block OpenRC shutdown.
-/bin/busybox timeout -t 30 weston \
+/bin/busybox timeout 30 weston \
   --backend=drm --renderer=pixman --socket="$WAYLAND_DISPLAY" --no-config \
   >"$weston_log" 2>&1 &
 weston_pid=$!
@@ -389,7 +389,7 @@ if [ "$socket_ready" -ne 1 ]; then
 fi
 
 printf '%s\n' "E5T17B_WESTON_READY=1" >>"$weston_log"
-/bin/busybox timeout -t 30 foot --title=wasm-vm \
+/bin/busybox timeout 30 foot --title=wasm-vm \
   >"$foot_log" 2>&1 &
 foot_pid=$!
 if wait "$weston_pid"; then

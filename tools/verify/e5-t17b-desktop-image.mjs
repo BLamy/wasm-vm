@@ -177,6 +177,17 @@ async function inspectImage() {
     "set -eu",
     "apk add --no-cache e2fsprogs-extra >/dev/null",
     "inspect() { label=$1; command=$2; printf 'E5T17B_INSPECT_%s_BEGIN\\n' \"$label\"; debugfs -R \"$command\" /image 2>&1; printf 'E5T17B_INSPECT_%s_END\\n' \"$label\"; }",
+    "mkdir -p /tmp/fakebin /home/desktop/.local/state/wasm-vm",
+    "printf '%s\\n' '#!/bin/sh' 'echo E5T17B_FAKE_WESTON_INVOKED=1 > /tmp/fake-weston-marker' '/bin/busybox sleep 2' > /tmp/fakebin/weston",
+    "printf '%s\\n' '#!/bin/sh' 'exit 0' > /tmp/fakebin/chown",
+    "chmod 0755 /tmp/fakebin/weston /tmp/fakebin/chown",
+    "debugfs -R 'dump /usr/local/bin/start-desktop /tmp/start-desktop' /image >/dev/null 2>&1",
+    "chmod 0755 /tmp/start-desktop",
+    "printf '%s\\n' E5T17B_RUNTIME_START_BEGIN",
+    "PATH=/tmp/fakebin:$PATH WAYLAND_DISPLAY=wayland-test /tmp/start-desktop",
+    "cat /tmp/fake-weston-marker",
+    "cat /home/desktop/.local/state/wasm-vm/weston.log",
+    "printf '%s\\n' E5T17B_RUNTIME_START_END",
     "inspect PASSWD 'cat /etc/passwd'",
     "inspect GROUP 'cat /etc/group'",
     "inspect SHADOW 'cat /etc/shadow'",
@@ -231,11 +242,12 @@ function validateInspection(value) {
   assert.match(value, /need seatd/u);
   assert.match(value, /after udev udev-trigger/u);
   assert.match(value, /E5T17B_START_DESKTOP weston --backend=drm --renderer=pixman/u);
-  assert.match(value, /\/bin\/busybox timeout -t 30 weston/u);
-  assert.match(value, /\/bin\/busybox timeout -t 30 foot/u);
+  assert.match(value, /\/bin\/busybox timeout 30 weston/u);
+  assert.match(value, /\/bin\/busybox timeout 30 foot/u);
   assert.match(value, /backend=drm-backend\.so/u);
   assert.match(value, /renderer=pixman/u);
   assert.doesNotMatch(value, /renderer=(?:auto|gl|gles2|vulkan)|fbdev/u);
+  assert.match(value, /RUNTIME_START_BEGIN[\s\S]*E5T17B_FAKE_WESTON_INVOKED=1[\s\S]*E5T17B_WESTON_NOT_READY=1[\s\S]*RUNTIME_START_END/u);
   assert.match(value, /Fast link dest: "\/etc\/init\.d\/seatd"/u);
   assert.match(value, /Fast link dest: "\/etc\/init\.d\/desktop-runtime"/u);
   assert.match(value, /Fast link dest: "\/etc\/init\.d\/udev"/u);
