@@ -3,7 +3,7 @@ id: E5-T18b
 epic: 5
 title: Prove WM terminal launch and keyboard input
 priority: 518.2
-status: pending
+status: in-progress
 depends_on: [E5-T18a]
 estimate: S
 risk: high

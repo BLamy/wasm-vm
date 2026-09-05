@@ -19059,8 +19059,9 @@
       "activity": [
         {
           "date": "2026-09-05",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t18a): record verified cold-boot verdict",
             "chore(e5-t18a): submit desktop cold-boot evidence",
             "chore(e5-t18a): start cold-boot desktop proof"
           ]
@@ -19068,7 +19069,7 @@
       ],
       "firstActivity": "2026-09-05",
       "lastActivity": "2026-09-05",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T18b",
@@ -19076,7 +19077,7 @@
       "epicKey": "5",
       "title": "Prove WM terminal launch and keyboard input",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T18a"
       ],
