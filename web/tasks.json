@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 272,
+    "verified": 273,
     "total": 433
   },
   "epics": [
@@ -18864,7 +18864,7 @@
       "epicKey": "5",
       "title": "Prove headless desktop boot ordering and seat runtime",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T17c"
       ],
@@ -18892,13 +18892,21 @@
       ],
       "criteriaTotal": 4,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-05 — verifier — VERDICT: verified\n\n- Prediction: all 20 cold native-emulator boots reach the serial login boundary and fixed\n  post-login stop without timeout; observed `ok=true`, `{code:102, signal:null}`, login and\n  `MaxInstrs` markers for every run, with positive retired counts in\n  `evidence/e5-t17d/boot-01-guest-evidence.txt` through `boot-20-guest-evidence.txt`.\n- Prediction: every boot preserves seatd-before-runtime-before-start-desktop ordering, live\n  seatd state, `/run/user/1000` mode `0700` uid/gid `1000`, bounded compositor failure, and a\n  usable return; all 20 embedded logs and their Docker/debugfs extractions held, including\n  `E5T17B_WESTON_NOT_READY=1`, `E5T17D_COMPOSITOR_FAILURE_BOUNDED=30`, and\n  `E5T17D_DESKTOP_RETURNED=0`. All 60 raw console/stderr/guest-evidence hashes and 40 embedded\n  guest-log hashes matched `evidence/e5-t17d/boot-order.json`.\n- Prediction: the report is bound to the final T17c handoff; held at image sha256\n  `467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e`, package manifest\n  `ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908`, file manifest\n  `c82b20c083d808a797bd8db9c080a2be0c3ef7859d29e5b818bbfa99d8427cf0`, and the 8,192-entry\n  split chunk manifest with 3,211 reused positions and 803 new objects.\n- Bounded novel sabotage: copied the report to `target/e5-t17d/boot-order-sabotage.json`, changed\n  boot-01's runtime marker to `gid=999` and recomputed its embedded hash; the verifier rejected\n  it with `boot-01: missing runtime-directory readiness`. The built-in self-test also rejected\n  ordering inversion, owner mutation, zombie state, and timeout.\n- Incremental re-verification: `f187ec5..f0b88bd` changes only verifier parsing captures for\n  runtime owners; prior 20-boot runtime evidence was carried forward unchanged.\n\nCommands: `node tools/verify/e5-t17d-desktop-boot-order.mjs --self-test`; Docker/debugfs extraction\nof all 20 `target/e5-t17d/boots/*/alpine-rootfs.ext4` images; raw artifact/hash/marker audit;\nT17c handoff/chunk-manifest audit; `E5_T17D_EVIDENCE=target/e5-t17d/boot-order-sabotage.json\nnode tools/verify/e5-t17d-desktop-boot-order.mjs` (expected rejection).",
       "adversarial": "Delay service readiness, perturb boot timing with independent fixed seeds, and kill the first\ndesktop process. Look specifically for an autologin race, stale runtime-directory ownership, seatd\nzombies, or an init process waiting forever. A single ordering inversion or unbounded failure is\na refutation.",
       "file": "tasks/epic-5-the-window/E5-T17d-desktop-boot-order.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t17d): activate desktop boot-order proof"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 1
     },
     {
       "id": "E5-T17e",
