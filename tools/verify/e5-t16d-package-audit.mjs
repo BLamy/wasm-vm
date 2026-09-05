@@ -116,7 +116,7 @@ function validateStructure(value, basePackages) {
   assert.match(value.source.packageManifestSha256, /^[0-9a-f]{64}$/u);
   assert.match(value.source.fileManifestSha256, /^[0-9a-f]{64}$/u);
   assert.match(value.source.derivation, /E3 base image/u);
-  assert.equal(value.policy.install, "apk add --no-cache --no-progress <package>");
+  assert.equal(value.policy.install, "apk add --no-progress <package>");
   assert.equal(value.policy.signatureVerification, "apk default signature verification");
   assert.equal(value.policy.forbiddenInstallFlag, "--allow-untrusted");
   assert.equal(value.policy.network, "native emulator riscv64 guest via --net-slirp");
