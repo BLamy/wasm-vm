@@ -18585,8 +18585,9 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t16d): verify package audit",
             "chore(e5-t16d): submit package audit evidence",
             "chore(e5-t16d): activate Alpine display package audit"
           ]
@@ -18594,7 +18595,7 @@
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T16e",
@@ -18602,7 +18603,7 @@
       "epicKey": "5",
       "title": "Publish measured display-server decision and T17 handoff",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T16d"
       ],

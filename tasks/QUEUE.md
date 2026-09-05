@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T16e** — Publish measured display-server decision and T17 handoff
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -390,7 +389,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `516.2` [E5-T16b](epic-5-the-window/E5-T16b-labwc-pixman-measurement.md) — Measure labwc with the pixman renderer inside the emulator *(deps: E5-T16a)*
 - [x] `516.3` [E5-T16c](epic-5-the-window/E5-T16c-weston-pixman-measurement.md) — Measure weston with the pixman renderer inside the emulator *(deps: E5-T16b)*
 - [x] `516.4` [E5-T16d](epic-5-the-window/E5-T16d-alpine-display-package-audit.md) — Audit Alpine riscv64 display-stack packages and installability *(deps: E5-T16c)*
-- [ ] `516.5` [E5-T16e](epic-5-the-window/E5-T16e-display-server-decision.md) — Publish measured display-server decision and T17 handoff *(deps: E5-T16d)*
+- [~] `516.5` [E5-T16e](epic-5-the-window/E5-T16e-display-server-decision.md) — Publish measured display-server decision and T17 handoff *(deps: E5-T16d)*
 - [ ] `517` [E5-T17](epic-5-the-window/E5-T17-alpine-desktop-image.md) — Alpine riscv64 desktop disk image — reproducible build within size budget *(deps: E5-T16e)*
 - [ ] `518` [E5-T18](epic-5-the-window/E5-T18-boot-to-desktop-bringup.md) — Boot-to-desktop bring-up — seat/udev/permissions debugged, playbook written *(deps: E5-T08, E5-T15d, E5-T17)*
 - [-] `519` [E5-T19](epic-5-the-window/E5-T19-virtio-snd-pcm-device.md) — virtio-snd device — control plane and PCM playback stream machine *(deps: E5-T05c)*

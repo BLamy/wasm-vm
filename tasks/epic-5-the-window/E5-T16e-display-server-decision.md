@@ -3,7 +3,7 @@ id: E5-T16e
 epic: 5
 title: Publish measured display-server decision and T17 handoff
 priority: 516.5
-status: pending
+status: in-progress
 depends_on: [E5-T16d]
 estimate: S
 risk: medium
