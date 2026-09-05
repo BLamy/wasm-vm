@@ -43,7 +43,7 @@ function validateShape(value) {
   assert.deepEqual(value.policy, { independentMachines: false, webkit: false, hostRr: false });
   assert.equal(value.boot.count, 20);
   assert.equal(value.boot.coldCopyPerRun, true);
-  assert.equal(value.boot.profileStopsAt, "serial-login-prompt");
+  assert.equal(value.boot.profileStopsAt, "fixed-instruction-bound-after-serial-login");
   assert.equal(value.boot.deviceMode, "headless-no-gpu");
   assert.match(value.boot.timingPerturbation, /fixed seed/u);
   assert.equal(value.runs.length, 20);
@@ -69,9 +69,9 @@ async function validateRun(run) {
   assert.match(run.id, /^boot-\d{2}$/u);
   assert.equal(run.ok, true, `${run.id} was not successful`);
   assert.equal(run.timedOut, false, `${run.id} timed out`);
-  assert.deepEqual(run.exit, { code: 0, signal: null }, `${run.id} did not exit cleanly`);
+  assert.deepEqual(run.exit, { code: 102, signal: null }, `${run.id} did not reach the fixed instruction bound`);
   assert.equal(run.serial.loginReached, true, `${run.id} missed serial login`);
-  assert.equal(run.serial.profileComplete, true, `${run.id} did not complete the bounded profile`);
+  assert.equal(run.serial.boundedInstructionStop, true, `${run.id} did not complete the bounded post-login run`);
   assert.ok(Number.isSafeInteger(run.seed));
   assert.ok(Number.isSafeInteger(run.quantum) && run.quantum > 0);
   assert.equal(run.image.preSha256, report.source.image.sha256, `${run.id} has no source-bound image copy`);
@@ -87,7 +87,7 @@ async function validateRun(run) {
   const stderrText = (await readRepoFile(run.stderr.path)).toString("utf8").replaceAll("\r", "");
   const guestEvidence = (await readRepoFile(run.guestEvidence.path)).toString("utf8");
   assert.match(consoleText, /wasm-vm login:/u, `${run.id}: console has no login prompt`);
-  assert.match(stderrText, /profile complete \(stopped at userland marker\)/u, `${run.id}: profile did not stop at login`);
+  assert.match(stderrText, /reached --max-instrs 10000000000/u, `${run.id}: fixed post-login bound was not reached`);
   const retired = /^trace retired=(\d+)$/mu.exec(guestEvidence);
   assert.ok(retired && Number(retired[1]) > 0, `${run.id}: guest evidence has no retired count`);
   assert.match(guestEvidence, /^outcome=MaxInstrs$/mu, `${run.id}: unexpected guest outcome`);

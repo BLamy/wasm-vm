@@ -848,8 +848,8 @@ verify-E5-T17c:
 .PHONY: verify-E5-T17d
 verify-E5-T17d:
 	# Recreate the exact T17c handoff, then run twenty fresh native-emulator boots. The production
-	# image keeps root locked; the desktop startup scripts persist only the ordering/runtime audit
-	# markers needed after the serial profile stops at ttyS0 login. There is no independent-machine,
+	# image keeps root locked; the desktop startup scripts persist ordering/runtime audit markers
+	# after the serial login prompt and before the fixed post-login instruction bound. There is no independent-machine,
 	# WebKit, or host-rr leg in this local proof.
 	cargo fmt --check -p wasm-vm-cli
 	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings

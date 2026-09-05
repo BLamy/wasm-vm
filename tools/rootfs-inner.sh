@@ -338,6 +338,7 @@ start() {
     printf '%s\n' "E5T17D_SEATD_NOT_READY=1" >>"$boot_order_log"
     chown 1000:1000 "$boot_order_log"
     chmod 600 "$boot_order_log"
+    /bin/sync
     return 1
   fi
   mkdir -p /run/user/1000
@@ -352,6 +353,7 @@ start() {
     "E5T17D_RUNTIME_READY mode=0$runtime_mode uid=$runtime_uid gid=$runtime_gid" >>"$boot_order_log"
   chown 1000:1000 "$boot_order_log"
   chmod 600 "$boot_order_log"
+  /bin/sync
 }
 DESKTOP_RUNTIME
     chmod 0755 "$ROOT/etc/init.d/desktop-runtime"
@@ -387,12 +389,14 @@ foot_log="$log_dir/foot.log"
 boot_order_log="$log_dir/boot-order.log"
 if ! pidof seatd >/dev/null 2>&1; then
   printf '%s\n' "E5T17D_START_DESKTOP_SEATD_NOT_READY=1" >>"$boot_order_log"
+  /bin/sync
   exit 1
 fi
 seatd_pid=$(pidof seatd | awk '{print $1}')
 seatd_state=$(awk '{print $3}' "/proc/$seatd_pid/stat")
 if [ "$seatd_state" = Z ]; then
   printf '%s\n' "E5T17D_START_DESKTOP_SEATD_ZOMBIE=1" >>"$boot_order_log"
+  /bin/sync
   exit 1
 fi
 runtime_mode=$(stat -c '%a' "$runtime_dir")
@@ -428,6 +432,7 @@ if [ "$socket_ready" -ne 1 ]; then
   kill "$weston_pid" 2>/dev/null || true
   wait "$weston_pid" 2>/dev/null || true
   printf '%s\n' "E5T17D_DESKTOP_RETURNED=0" >>"$boot_order_log"
+  /bin/sync
   exit 0
 fi
 
@@ -447,6 +452,7 @@ fi
 wait "$foot_pid" 2>/dev/null || true
 printf '%s\n' "E5T17B_WESTON_EXIT=$weston_status" >>"$weston_log"
 printf '%s\n' "E5T17D_DESKTOP_RETURNED=0" >>"$boot_order_log"
+/bin/sync
 exit 0
 START_DESKTOP
     chmod 0755 "$ROOT/usr/local/bin/start-desktop"

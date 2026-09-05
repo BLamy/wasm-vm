@@ -26,7 +26,7 @@ const evidenceDir = path.join(repo, "evidence/e5-t17d");
 const runRoot = path.join(repo, "target/e5-t17d/boots");
 const runCount = Number(process.env.E5_T17D_RUN_COUNT ?? "20");
 const timeoutMs = Number(process.env.E5_T17D_BOOT_TIMEOUT_MS ?? String(20 * 60 * 1_000));
-const maxInstrs = "80000000000";
+const maxInstrs = "10000000000";
 const sha256Bytes = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const sha256File = async (file) => sha256Bytes(await readFile(file));
 const relative = (file) => path.relative(repo, file);
@@ -90,7 +90,7 @@ const output = {
   boot: {
     count: runs.length,
     coldCopyPerRun: true,
-    profileStopsAt: "serial-login-prompt",
+    profileStopsAt: "fixed-instruction-bound-after-serial-login",
     timeoutMs,
     maxInstrs,
     deviceMode: "headless-no-gpu",
@@ -133,7 +133,6 @@ async function runBoot(ordinal) {
     "--kernel", kernel,
     "--drive", `file=${imagePath}`,
     "--append", "root=/dev/vda rw console=ttyS0 earlycon=sbi",
-    "--profile-boot",
     "--no-input",
     "--no-reboot",
     "--block-cache",
@@ -179,10 +178,10 @@ async function runBoot(ordinal) {
   const normalizedStdout = stdout.replaceAll("\r", "");
   const normalizedStderr = stderr.replaceAll("\r", "");
   const loginReached = normalizedStdout.includes("wasm-vm login:");
-  const profileComplete = normalizedStderr.includes("profile complete (stopped at userland marker)");
+  const boundedInstructionStop = normalizedStderr.includes(`reached --max-instrs ${maxInstrs}`);
   let guestFiles;
   let error;
-  if (!timedOut && exit.code === 0 && loginReached && profileComplete) {
+  if (!timedOut && exit.code === 102 && exit.signal === null && loginReached && boundedInstructionStop) {
     try {
       guestFiles = await inspectGuestFiles(imagePath);
     } catch (inspectionError) {
@@ -196,10 +195,10 @@ async function runBoot(ordinal) {
     ordinal,
     seed,
     quantum,
-    ok: !timedOut && exit.code === 0 && exit.signal === null && loginReached && profileComplete && !error,
+    ok: !timedOut && exit.code === 102 && exit.signal === null && loginReached && boundedInstructionStop && !error,
     timedOut,
     exit,
-    serial: { loginReached, profileComplete },
+    serial: { loginReached, boundedInstructionStop },
     image: { path: relative(imagePath), preSha256: preImageSha256, postSha256: postImageSha256 },
     console: { path: relative(consolePath), sha256: await sha256File(consolePath) },
     stderr: { path: relative(stderrPath), sha256: await sha256File(stderrPath) },

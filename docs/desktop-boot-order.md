@@ -1,11 +1,14 @@
 # Desktop boot-order proof
 
 E5-T17d's native headless proof uses a fresh copy of the T17c desktop image for every run. The
-native CLI stops at the serial `ttyS0` login prompt with `--profile-boot --no-input`; root remains
-locked in the production image, so the proof does not add a debug credential or mutate the boot
-configuration.
+native CLI runs with `--no-input` to the fixed `--max-instrs 10000000000` bound: it records the
+serial `ttyS0` login prompt, then leaves enough guest execution for tty1 autologin and the bounded
+desktop launcher before stopping. Root remains locked in the production image, so the proof does
+not add a debug credential or mutate the boot configuration.
 
-The persistent `/home/desktop/.local/state/wasm-vm/boot-order.log` is the runtime audit channel.
+The persistent `/home/desktop/.local/state/wasm-vm/boot-order.log` is the runtime audit channel;
+the launcher issues a guest `sync` after writing the terminal markers so the ext4 handoff contains
+the proof when the emulator stops at the instruction bound.
 The markers must occur in this order on every boot:
 
 ```text
