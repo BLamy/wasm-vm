@@ -30,6 +30,7 @@ const maxInstrs = "6000000000";
 const sha256Bytes = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const sha256File = async (file) => sha256Bytes(await readFile(file));
 const relative = (file) => path.relative(repo, file);
+const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 assert.ok(Number.isSafeInteger(runCount) && runCount === 20, "E5-T17d requires exactly 20 cold boots");
 assert.ok(Number.isSafeInteger(timeoutMs) && timeoutMs > 0, "E5_T17D_BOOT_TIMEOUT_MS must be positive");
@@ -186,11 +187,22 @@ async function runBoot(ordinal) {
   const boundedInstructionStop = normalizedStderr.includes(`reached --max-instrs ${maxInstrs}`);
   let guestFiles;
   let error;
+  let observed;
   if (!timedOut && exit.code === 102 && exit.signal === null && loginReached && boundedInstructionStop) {
-    try {
-      guestFiles = await inspectGuestFiles(imagePath);
-    } catch (inspectionError) {
-      error = `guest filesystem inspection failed: ${inspectionError}`;
+    let lastInspectionError;
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      try {
+        guestFiles = await inspectGuestFiles(imagePath);
+        observed = summarizeGuest(guestFiles);
+        lastInspectionError = undefined;
+        break;
+      } catch (inspectionError) {
+        lastInspectionError = inspectionError;
+        if (attempt < 3) await delay(500);
+      }
+    }
+    if (lastInspectionError) {
+      error = `guest filesystem inspection failed: ${lastInspectionError}`;
     }
   }
 
@@ -202,7 +214,7 @@ async function runBoot(ordinal) {
     seed,
     quantum,
     ok: !timedOut && exit.code === 102 && exit.signal === null && loginReached && boundedInstructionStop &&
-      guestEvidenceArtifact !== null && !error,
+      guestEvidenceArtifact !== null && observed !== undefined && !error,
     timedOut,
     exit,
     serial: { loginReached, boundedInstructionStop },
@@ -216,9 +228,7 @@ async function runBoot(ordinal) {
     } : null,
     error: error ?? (timedOut ? `boot exceeded ${timeoutMs} ms` : undefined),
   };
-  if (result.ok) {
-    result.observed = summarizeGuest(result.guestFiles);
-  }
+  if (observed !== undefined) result.observed = observed;
   return result;
 }
 
