@@ -18759,7 +18759,7 @@
       "epicKey": "5",
       "title": "Assemble Alpine desktop image and startup configuration",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T17a"
       ],
@@ -18787,13 +18787,21 @@
       ],
       "criteriaTotal": 4,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-05 — worker — IMPLEMENTED\n\n- Commit: `7802897d1ac593cc189f63122436ad4ab5e58753`.\n- Commands: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17b`; then the same scrubbed environment with `E5_T17B_OUT=target/e5-t17b/desktop-image bash tools/image/desktop.sh` followed by `node tools/verify/e5-t17b-desktop-image.mjs --out target/e5-t17b/desktop-image --self-test` for the second same-output build.\n- Evidence: `evidence/e5-t17b/desktop-image-verification.json` (SHA-256 `a24b9c6a0231290ce25fd8ff990ecf7a78020a753dabd33c298586b7f34bb432`) and `evidence/e5-t17b/desktop-image-repeat.json` (SHA-256 `549cb1baefa74cf3ceff2151158544c04b82026fce860def760c7a32437cb2ce`). Final image SHA-256 is `b5bf37b9c2a3dbafb5faab7b25987ed015ba070ccc82d8ccb6d4f03125782671`, package manifest SHA-256 is `225b8d35f7375c084075ca60edac5ea8fbf7ef46f1fd09a7e3a5d40bb074aae1`, and custom-file manifest SHA-256 is `29f9069e7a99bae65f691fb394392663ca6e52faa6c1aedd6bfd95bebba74803`.\n- The final local run passed formatting, clippy, 54 native tests, release compilation, the T17a profile validator, signed Alpine v3.20 riscv64 assembly of 194 packages, and read-only Docker/debugfs inspection. It demonstrates the exact T17a profile feeding an inspectable 1 GiB ext4 image with a desktop user in `video,input,seat,audio`, seatd/udev ordering, private runtime directories, tty1 autologin, bounded Weston DRM/Pixman plus foot launch/log paths, clipboard wrappers, locked root credentials, and no root/APK-cache residue. The second same-output build and inspection passed with identical package/file manifests and duplicate-entry checks; ext4 byte reproducibility, size, and chunk accounting remain explicitly owned by E5-T17c. No independent-machine, WebKit, or host-rr leg was used.",
       "adversarial": "Run the builder twice in the same disposable output location and inspect the resulting rootfs for\nroot history, APK cache, credentials, world-writable runtime directories, or an autologin shell\nthat runs before seatd is configured. Re-run the post-install step and check that it does not\nduplicate users, services, or config lines.",
       "file": "tasks/epic-5-the-window/E5-T17b-desktop-image-assembly.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t17b): activate desktop image assembly"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 1
     },
     {
       "id": "E5-T17c",

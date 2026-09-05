@@ -1,0 +1,28 @@
+{
+  "schema": "wasm-vm.e5-t17b.desktop-image-repeat.v1",
+  "task": "E5-T17b",
+  "implementationCommit": "7802897",
+  "commands": [
+    "env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17b",
+    "env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig E5_T17B_OUT=target/e5-t17b/desktop-image bash tools/image/desktop.sh",
+    "env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig node tools/verify/e5-t17b-desktop-image.mjs --out target/e5-t17b/desktop-image --self-test"
+  ],
+  "firstBuild": {
+    "imageSha256": "d43e7fcff0f313e424b9b0f3e50859063d49ae194ffcb21a2f2772f9b30d2f30",
+    "packageManifestSha256": "225b8d35f7375c084075ca60edac5ea8fbf7ef46f1fd09a7e3a5d40bb074aae1",
+    "fileManifestSha256": "29f9069e7a99bae65f691fb394392663ca6e52faa6c1aedd6bfd95bebba74803",
+    "result": "passed"
+  },
+  "secondBuild": {
+    "imageSha256": "b5bf37b9c2a3dbafb5faab7b25987ed015ba070ccc82d8ccb6d4f03125782671",
+    "packageManifestSha256": "225b8d35f7375c084075ca60edac5ea8fbf7ef46f1fd09a7e3a5d40bb074aae1",
+    "fileManifestSha256": "29f9069e7a99bae65f691fb394392663ca6e52faa6c1aedd6bfd95bebba74803",
+    "result": "passed"
+  },
+  "comparison": {
+    "packageManifestIdentical": true,
+    "fileManifestIdentical": true,
+    "imageIdentical": false,
+    "nextTask": "E5-T17c owns byte reproducibility, size budget, and chunk deduplication"
+  }
+}
