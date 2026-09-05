@@ -398,7 +398,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `517.5` [E5-T17e](epic-5-the-window/E5-T17e-desktop-persistence-publication.md) — Prove desktop image persistence and publish the final artifact handoff *(deps: E5-T17d)*
 - [-] `518` [E5-T18](epic-5-the-window/E5-T18-boot-to-desktop-bringup.md) — Boot-to-desktop bring-up — seat/udev/permissions debugged, playbook written *(deps: E5-T08, E5-T15d, E5-T17e)*
 - [x] `518.1` [E5-T18a](epic-5-the-window/E5-T18a-desktop-cold-boot.md) — Prove the local cold-boot desktop contract *(deps: E5-T08, E5-T15d, E5-T17e)*
-- [~] `518.2` [E5-T18b](epic-5-the-window/E5-T18b-desktop-terminal-input.md) — Prove WM terminal launch and keyboard input *(deps: E5-T18a)*
+- [?] `518.2` [E5-T18b](epic-5-the-window/E5-T18b-desktop-terminal-input.md) — Prove WM terminal launch and keyboard input *(deps: E5-T18a)*
 - [ ] `518.3` [E5-T18c](epic-5-the-window/E5-T18c-desktop-cursor-dpr-hit-testing.md) — Prove desktop cursor alignment and DPR hit-testing *(deps: E5-T18b)*
 - [ ] `518.4` [E5-T18d](epic-5-the-window/E5-T18d-desktop-crash-restart-fallback.md) — Harden compositor restart and tty1 getty fallback *(deps: E5-T18c)*
 - [ ] `518.5` [E5-T18e](epic-5-the-window/E5-T18e-desktop-bringup-playbook.md) — Publish the desktop bring-up playbook and final boot proof *(deps: E5-T18d)*
