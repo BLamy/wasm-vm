@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 269,
-    "total": 428
+    "total": 433
   },
   "epics": [
     {
@@ -18628,8 +18628,9 @@
         },
         {
           "date": "2026-09-05",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t16e): correct evidence citations",
             "chore(e5-t16e): record adversarial verification",
             "E5-T16e: publish Weston display decision"
           ]
@@ -18637,7 +18638,7 @@
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-05",
-      "commitCount": 4
+      "commitCount": 5
     },
     {
       "id": "E5-T17",
@@ -18645,14 +18646,20 @@
       "epicKey": "5",
       "title": "Alpine riscv64 desktop disk image — reproducible build within size budget",
       "priority": 517,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T16e"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T17a",
+        "E5-T17b",
+        "E5-T17c",
+        "E5-T17d",
+        "E5-T17e"
+      ],
       "estimate": "L",
       "capstone": false,
-      "goal": "A reproducible, scripted build of the desktop disk image: Epic 3's Alpine rootfs plus\nthe T16-chosen display stack, terminal, fonts, seat/udev machinery, and an autostart\npath — within a hard size budget so the streamed-chunk loading from Epic 3 stays\ntolerable on first visit.",
+      "goal": "A reproducible, scripted build of the desktop disk image: Epic 3's Alpine rootfs plus\nthe T16-chosen display stack, terminal, fonts, seat/udev machinery, and an autostart\npath — within a hard size budget so the streamed-chunk loading from Epic 3 stays\ntolerable on first visit.\n\n> **DECOMPOSED 2026-09-05.** This L-sized image container is cancelled before implementation as\n> required by task policy and replaced by five ordered S slices. E5-T17a freezes the signed package\n> manifest and offline profile; E5-T17b assembles the image and startup configuration; E5-T17c\n> proves reproducibility, budget, and chunk deduplication; E5-T17d proves headless boot ordering;\n> and E5-T17e proves E3 persistence and publishes the final artifact/documentation handoff.\n\n> **DECOMPOSED 2026-09-05.** This L-sized image container is cancelled before implementation as\n> required by task policy and replaced by five ordered S slices. E5-T17a freezes the signed package\n> manifest and offline profile; E5-T17b assembles the image and startup configuration; E5-T17c\n> proves reproducibility, budget, and chunk deduplication; E5-T17d proves headless boot ordering;\n> and E5-T17e proves E3 persistence and publishes the final artifact/documentation handoff.",
       "criteria": [
         {
           "text": "Two consecutive builds from the same manifest produce images whose file listings and package versions are identical (`diff` of `apk info -v` and `find -type f` manifests; timestamps excluded).",
@@ -18677,9 +18684,225 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-05 — coordinator — decomposed\n\nThis L-sized desktop-image planning container is cancelled before implementation as required by\ntask policy and replaced by five ordered S tickets. The chain is package profile → image/config →\nreproducibility/budget/chunks → boot ordering → persistence/publication; E5-T18 is rewired to the\nfinal proof slice so bring-up cannot bypass the image's persistence and artifact handoff.",
       "adversarial": "Refute reproducibility: build on a second machine / clean container from the committed\nmanifest with the package cache — any content divergence beyond the documented exclusion\nlist refutes. Refute the budget: `du` the real ext4 delta, not the sparse file size;\ncheck the chunk manifest actually dedupes against E3 base chunks (a full re-upload of\nunchanged base chunks refutes the streaming claim). Attack boot ordering: boot 20 times\nand check seatd is up before the autologin shell runs `start-desktop` every time (an\nOpenRC race here becomes T18's \"sometimes black screen\"). Verify no leftover build\nartifacts (apk cache, /root history) bloat the image. Attempt `apk add` of one extra\npackage in the running guest to prove the E3 network+persistence path still functions\non this image.",
       "file": "tasks/epic-5-the-window/E5-T17-alpine-desktop-image.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T17a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Freeze signed Alpine desktop package manifest and offline profile",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T16e"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Turn the E5-T16e Weston decision into one pinned, machine-readable Alpine riscv64 package profile\nthat the desktop image builder can consume online or from a committed offline cache.",
+      "criteria": [
+        {
+          "text": "The validator resolves every required package to the T16e decision/audit and rejects a missing version, repository, architecture, digest, or signature policy.",
+          "checked": false
+        },
+        {
+          "text": "The profile has an explicit online/offline mode and fails closed when a required cached APK or its trusted index/key is absent.",
+          "checked": false
+        },
+        {
+          "text": "The exact requested package set has no silent dependency substitution; optional T22 tooling is separately labelled and pinned if included.",
+          "checked": false
+        },
+        {
+          "text": "`make verify-E5-T17a` passes from a scrubbed environment and the profile contains no `--allow-untrusted` token.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Copy the profile and mutate one version, repository, architecture, digest, or trust flag; the\nvalidator must fail before image assembly. Remove one cached APK and invalidate one index signature;\noffline mode must refuse to proceed rather than silently reaching the network or selecting a newer\npackage.",
+      "file": "tasks/epic-5-the-window/E5-T17a-desktop-package-manifest.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T17b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Assemble Alpine desktop image and startup configuration",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T17a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Build one E3-derived Alpine riscv64 desktop image with the pinned Weston/Pixman stack, correct\ndesktop identity, and an explicit serial-safe startup configuration.",
+      "criteria": [
+        {
+          "text": "A single `make verify-E5-T17b` build consumes only the T17a profile and emits an inspectable riscv64 ext4 image plus package/file manifests.",
+          "checked": false
+        },
+        {
+          "text": "The image contains the selected package set, a desktop user in `video,input,seat,audio`, seatd enabled in the intended runlevel, and an idempotent runtime-directory init path.",
+          "checked": false
+        },
+        {
+          "text": "tty1 autologin invokes a bounded `start-desktop` path with logs; it cannot hang init if Weston cannot open the guest display.",
+          "checked": false
+        },
+        {
+          "text": "Startup configuration names Weston DRM/Pixman explicitly and contains no GL/fbdev fallback hidden behind an automatic renderer choice.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Run the builder twice in the same disposable output location and inspect the resulting rootfs for\nroot history, APK cache, credentials, world-writable runtime directories, or an autologin shell\nthat runs before seatd is configured. Re-run the post-install step and check that it does not\nduplicate users, services, or config lines.",
+      "file": "tasks/epic-5-the-window/E5-T17b-desktop-image-assembly.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T17c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Prove desktop image reproducibility, size budget, and chunk deduplication",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T17b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove that the T17 desktop builder is reproducible from its committed profile and that the real\nuncompressed image delta and streamed chunks stay within the E3 budget.",
+      "criteria": [
+        {
+          "text": "Two consecutive builds from the same profile have identical normalized package versions and file listings; the verifier reports any content divergence with the first differing entry.",
+          "checked": false
+        },
+        {
+          "text": "The builder fails when the real uncompressed ext4 delta exceeds 350 MiB, and the passing build records the current delta in machine-readable evidence.",
+          "checked": false
+        },
+        {
+          "text": "The chunk manifest deduplicates unchanged E3 base chunks and identifies every new desktop chunk; a sparse-file size or full-base re-upload cannot satisfy the check.",
+          "checked": false
+        },
+        {
+          "text": "`make verify-E5-T17c` passes from a scrubbed environment without relying on timestamps, host paths, or an undeclared package cache.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Touch files without changing content, vary build timestamps and output directories, and compare\nagain; normalized manifests must remain equal. Replace one byte in a package/config file, remove a\nbase chunk from the dedupe index, and feed a sparse image to the size check; each mutation must be\ndetected or rejected.",
+      "file": "tasks/epic-5-the-window/E5-T17c-desktop-image-reproducibility.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T17d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Prove headless desktop boot ordering and seat runtime",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T17c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Show that the final Alpine desktop image reaches a serial autologin reliably, starts seatd before\nthe desktop command, and creates the correct desktop runtime directory without hanging init.",
+      "criteria": [
+        {
+          "text": "All 20 cold serial boots reach the expected autologin user without an init hang or timeout.",
+          "checked": false
+        },
+        {
+          "text": "Every boot proves seatd is running before autologin invokes `start-desktop`, and records the desktop user's `/run/user/1000` as mode 0700 with the correct owner.",
+          "checked": false
+        },
+        {
+          "text": "A deliberate compositor-start failure exits/logs within the bound and leaves init usable; it does not deadlock tty1 or hide the failure.",
+          "checked": false
+        },
+        {
+          "text": "`make verify-E5-T17d` passes using only the final T17c image/chunk handoff and produces replayable serial evidence.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Delay service readiness, perturb boot timing with independent fixed seeds, and kill the first\ndesktop process. Look specifically for an autologin race, stale runtime-directory ownership, seatd\nzombies, or an init process waiting forever. A single ordering inversion or unbounded failure is\na refutation.",
+      "file": "tasks/epic-5-the-window/E5-T17d-desktop-boot-order.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T17e",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Prove desktop image persistence and publish the final artifact handoff",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T17d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Close the T17 image lane by proving E3 overlay persistence on the desktop image and publishing a\nclean, documented artifact/chunk handoff for E5-T18 and later desktop work.",
+      "criteria": [
+        {
+          "text": "The desktop image's writable overlay survives snapshot/reload with a sentinel file and its package database intact; the smoke test records matching pre/post state.",
+          "checked": false
+        },
+        {
+          "text": "One extra signed `apk add` in the running riscv64 guest succeeds through the E3 network and persists after reload, without changing the committed base profile.",
+          "checked": false
+        },
+        {
+          "text": "Published artifact/chunk manifests identify the final image and dedupe against E3; docs record the measured delta, package profile, startup path, and exact rebuild command.",
+          "checked": false
+        },
+        {
+          "text": "Final-image inspection finds no leftover build cache, `/root` history, credentials, or other undeclared payload, and `make verify-E5-T17e` passes.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Reload repeatedly at the snapshot boundary, corrupt/truncate the sentinel, attempt an unsigned\nextra package, and compare the published chunk manifest against the actual image. Verify that a\nfull re-upload or a package mutation outside the profile fails closed, and that the documented\nartifact hashes resolve to the exact image under test.",
+      "file": "tasks/epic-5-the-window/E5-T17e-desktop-persistence-publication.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
@@ -18695,7 +18918,7 @@
       "depends_on": [
         "E5-T08",
         "E5-T15d",
-        "E5-T17"
+        "E5-T17e"
       ],
       "decomposed_into": [],
       "estimate": "L",
