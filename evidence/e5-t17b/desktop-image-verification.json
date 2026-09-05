@@ -9,7 +9,7 @@
   },
   "image": {
     "path": "target/e5-t17b/desktop-image/alpine-rootfs.ext4",
-    "sha256": "b5bf37b9c2a3dbafb5faab7b25987ed015ba070ccc82d8ccb6d4f03125782671",
+    "sha256": "59780504eaef13b093053b5bb99d556058b96af8ed226baa89fb20d132f4ddf1",
     "size": 1073741824
   },
   "packageManifest": {
@@ -18,7 +18,7 @@
   },
   "fileManifest": {
     "path": "target/e5-t17b/desktop-image/FILE-MANIFEST.txt",
-    "sha256": "29f9069e7a99bae65f691fb394392663ca6e52faa6c1aedd6bfd95bebba74803"
+    "sha256": "c66d92365bdbb8b59a3aa63ade045e7da7096afd51039cfb36bc6b32fbee05ea"
   },
   "startup": {
     "backend": "drm",

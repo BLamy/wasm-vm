@@ -3,7 +3,7 @@ id: E5-T17b
 epic: 5
 title: Assemble Alpine desktop image and startup configuration
 priority: 517.2
-status: in-progress
+status: implemented
 depends_on: [E5-T17a]
 estimate: S
 risk: high
@@ -61,3 +61,10 @@ duplicate users, services, or config lines.
 - HELD: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17b` passed with 54 native tests, release build, 194-package riscv64 assembly, ext4 fsck, foreign-ELF scan, and the existing verifier. Read-only Docker/debugfs checks on the current image also confirmed the 11 T17a desktop packages, exact-once desktop/group/service/config entries, locked root shadow, empty APK cache, and private `/run/user/1000`, `/home/desktop`, and desktop state directories. The same-output rerun produced identical package/file manifests and a different image hash; T17c/T17d boundaries were not used to excuse the launcher failure.
 
 Commands: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17b`; same scrubbed environment with `E5_T17B_OUT=target/e5-t17b/desktop-image bash tools/image/desktop.sh` followed by `node tools/verify/e5-t17b-desktop-image.mjs --out target/e5-t17b/desktop-image --self-test`; local Docker/debugfs extraction of `/usr/local/bin/start-desktop` with a fake sleeping Weston; read-only package, manifest-duplicate, credential/cache, mode, service-link, and ext4/fsck inspections. No independent-machine, WebKit, ssh, or rr leg was used.
+
+### 2026-09-05 — worker — REMEDIATION
+
+- Commit: `0a64512` (`fix(e5-t17b): use supported timeout syntax`), on top of verifier refutation commit `690bfa9`.
+- Commands: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17b`; then the same scrubbed environment with `E5_T17B_OUT=target/e5-t17b/desktop-image bash tools/image/desktop.sh` followed by `node tools/verify/e5-t17b-desktop-image.mjs --out target/e5-t17b/desktop-image --self-test` for the second same-output build.
+- Evidence: refreshed `evidence/e5-t17b/desktop-image-verification.json` (SHA-256 `2409458fdfd436a5c600ddbefe7cba465c2382f0636e46a671daea7a988e648a`) and `evidence/e5-t17b/desktop-image-repeat.json` (SHA-256 `e43cda8a18d602628fdf51a1893cc34857ed35d2de39102de5c18fff4dedaedb`). Final image SHA-256 is `59780504eaef13b093053b5bb99d556058b96af8ed226baa89fb20d132f4ddf1`, package manifest SHA-256 is `225b8d35f7375c084075ca60edac5ea8fbf7ef46f1fd09a7e3a5d40bb074aae1`, and custom-file manifest SHA-256 is `c66d92365bdbb8b59a3aa63ade045e7da7096afd51039cfb36bc6b32fbee05ea`.
+- The corrected launcher uses Alpine BusyBox's positional `timeout 30` syntax for both Weston and foot. The rebuilt image passed native formatting/clippy/tests, release compilation, signed profile-driven assembly, ext4 fsck/foreign-ELF checks, read-only image inspection, duplicate-entry checks, and the execution-level no-display test: a fake sleeping Weston was invoked and the bounded path produced `E5T17B_WESTON_NOT_READY=1` before returning. The same-output rebuild also passed with identical package/file manifests; byte reproducibility, size, and chunk accounting remain T17c scope. No independent-machine, WebKit, or host-rr leg was used.
