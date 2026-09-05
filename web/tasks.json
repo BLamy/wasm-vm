@@ -18690,13 +18690,15 @@
       "activity": [
         {
           "date": "2026-09-05",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "E5-T17: decompose desktop image task"
+          ]
         }
       ],
       "firstActivity": "2026-09-05",
       "lastActivity": "2026-09-05",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E5-T17a",
@@ -18704,7 +18706,7 @@
       "epicKey": "5",
       "title": "Freeze signed Alpine desktop package manifest and offline profile",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T16e"
       ],

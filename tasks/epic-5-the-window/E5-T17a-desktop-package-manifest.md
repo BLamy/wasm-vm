@@ -3,7 +3,7 @@ id: E5-T17a
 epic: 5
 title: Freeze signed Alpine desktop package manifest and offline profile
 priority: 517.1
-status: pending
+status: in-progress
 depends_on: [E5-T16e]
 estimate: S
 risk: medium
