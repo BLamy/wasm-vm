@@ -3,7 +3,7 @@ id: E5-T18a
 epic: 5
 title: Prove the local cold-boot desktop contract
 priority: 518.1
-status: implemented
+status: verified
 depends_on: [E5-T08, E5-T15d, E5-T17e]
 estimate: S
 risk: high
@@ -74,3 +74,45 @@ cannot hide a cold-boot regression.
   page, or request errors; the report binds the published image/chunk metadata, records positive
   fetches and paused proof state, confirms source-image immutability, and confirms source/dist
   parity. Independent machines, WebKit, and host rr are intentionally outside this slice.
+
+### 2026-09-05 — verifier — VERDICT: verified
+
+- P1 exact-head schema and run contract — HELD. Predicted the committed report would parse as the
+  E5-T18a evidence schema and identify exactly ten fresh cache-disabled Chromium contexts plus a
+  warm prime/reload. At exact `HEAD` `9976654bbdb91f5521ac0a9a8e88077e1fdada79`,
+  `evidence/e5-t18a/desktop-cold-boot.json:2-10,20-29,31-59` records that schema, local
+  Chromium scope, ten cold runs, and both warm timings; `:61-151` has ten distinct cold labels,
+  positive timings/fetches, and state digests.
+- P2 visible readiness — HELD. Predicted every recorded browser label would have a final
+  wallpaper/panel/menu inspection with frames presented. The transcript’s final all-ready
+  inspections occur for cold-01..10 at lines `391,782,1173,1561,1952,2341,2729,3120,3506,3894`
+  and warm prime/reload at `4285,4318`; the screenshot visibly shows all three green markers.
+  The committed report’s cold timing vector/count is independently recomputed from
+  `desktop-cold-boot.json:31-49`.
+- P3 T17 binding and integrity — HELD. Predicted the image and split manifest bindings would
+  resolve to the exact T17 artifacts. Report lines `11-18` match the recomputed image SHA-256
+  `467306a5…5a5c1e`, manifest SHA-256 `1be3c299…fb4827`, 1 GiB image, 128 KiB chunks, and 8192
+  positions. `target/release/wasm-vm chunk-verify target/e5-t17c/chunks/desktop-b` passed; an
+  independent check verified all 822 unique object hashes, all 8192 image-chunk hashes, and the
+  full image digest.
+- P4 errors, immutability, parity, and artifact hashes — HELD. Predicted the report’s JSON,
+  transcript, and screenshot hashes would recompute exactly; they do. The transcript contains no
+  non-favicon `console.error`, `pageerror`, or `requestfailed` records. Report lines `153-173`
+  bind the screenshot/transcript digests, while `:157-169` records source immutability and
+  source/dist parity; direct `cmp` of both desktop source/dist files also passed.
+- P5 bounded novel attack — HELD. Predicted a readiness-marker mutation would be rejected. The
+  existing bounded mutant sets `panel.ready=false`; `node tools/verify/e5-t18a-desktop-cold-boot.mjs
+  --self-test` exited 0 with `E5T18A_SELF_TEST=missing-panel-rejected` (`tools/verify/e5-t18a-desktop-cold-boot.mjs:380-402`).
+- COVERAGE — HELD. The recorded browser route exercises the added desktop page/readiness logic,
+  T17 chunk route, wasm artifact, server mapping, and verifier assertions. Makefile wiring and
+  generated dist/roadmap/tasks/service-worker metadata are orchestration/parity artifacts; the
+  index discovery link is navigation metadata outside this slice’s acceptance behavior. No
+  acceptance-bearing changed hunk remains unexecuted or unexplained. WebKit, independent machines,
+  host rr, and the multi-hour 25-boot matrix were not run per explicit scope.
+
+Commands: `git rev-parse HEAD`; `git diff --name-status 3fde7ba..8067a8a`; report JSON/schema and
+timing recomputation; `sha256sum` for report/transcript/screenshot/image/manifest; `target/release/wasm-vm
+chunk-verify target/e5-t17c/chunks/desktop-b`; independent full image/manifest/object audit;
+source/dist `cmp`; transcript error sweep; `node tools/verify/e5-t18a-desktop-cold-boot.mjs --self-test`;
+`node --check`/`bash -n`; and `git diff --check`. No implementation, web, harness, or evidence
+files were modified by verification.
