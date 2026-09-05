@@ -18603,7 +18603,7 @@
       "epicKey": "5",
       "title": "Publish measured display-server decision and T17 handoff",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T16d"
       ],
@@ -18614,13 +18614,22 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-05 — worker — IMPLEMENTED\n\n- Commit: `64abae1b813ea9eda66a3dee5887d5e93ec33d1e`.\n- Command: `make verify-E5-T16e` (passed). This ran the CLI fmt/clippy/test/build gates, built a\n  fresh signed Alpine v3.20 riscv64 Weston/Pixman image, replayed the frozen six-phase T16a\n  workload twice from clean copies, synthesized the decision, and passed the variance/damage\n  mutation self-test.\n- Decision: Weston DRM/Pixman with foot and wl-clipboard. The prior end-to-end captures measure\n  labwc idle ratio `0.4568175750%`, Weston idle ratio `0.3637762568%`, and a winning margin of\n  `0.0009304131819650491` ratio (`0.0930` percentage points); both candidates are below the 2%\n  idle budget. Labwc reports `cursorqEvents: 0` with a capability-gap status, so the selected\n  stack does not rely on an unproven cursor plane.\n- Independent T09 damage recomputation from raw `type-100` counters: labwc `0` bytes and Weston\n  `36,864,000` bytes for 100 characters. Fresh Weston idle ratios were `0.0036462359033466426`\n  and `0.0036463767176481247`; maximum deviation from their mean was\n  `0.00000007040715074109125`, below the winning margin.\n- Fresh source identity: image `27bbdc06f63fd611fbb2c071d56b5ec1bbfd696a8d9180c81c33a45e5ed5ed95`,\n  package manifest `225b8d35f7375c084075ca60edac5ea8fbf7ef46f1fd09a7e3a5d40bb074aae1`, and file\n  manifest `b2b4964035b5a348be808afddc83b91d007c5cb3e5fbfcf1854b6f85d5d51552`. Both reruns used\n  that exact source image; their post-run image digests were distinct (`d1b726d49225b28511f378e1f581c27213c48c4481f9436bbdd3db53b8688e4a` and\n  `7291ff674d6db690ff5eb7606dc2e5515065331865a44c65bb2e9849708230ee`).\n- Evidence: `evidence/e5-t16e/winner-reruns.json` (SHA-256\n  `5f7ad616a147eec62bbd0a609ad6fcdb3bbd7fd6a498851137299e5b20eab1d5`),\n  `evidence/e5-t16e/display-server-decision.json` (SHA-256\n  `d7e7c3b4a18f09af7d9132f7b75f1dfe0a6b3d191eed6e9db52182ca24029b18`), and\n  `docs/decisions/display-server.md` (SHA-256\n  `9e5ab89e22a8ff6f045919a4681d888388a2caff0cc6f4a5fdf8016f62ba3540`). The per-run console,\n  guest-evidence, GPU-trace, stderr, and normalized run JSON files are listed and hashed in the\n  rerun artifact. Independent-machine, WebKit, and host-rr legs are intentionally out of scope.",
       "adversarial": "Re-run the winner twice from cold state, compare variance to the runner-up margin, and recompute\ntyping upload bytes from raw T09 counters rather than the summary JSON. Inspect weston's pixman\nproof, labwc's cursorq proof if applicable, and every selected package install on a clean E3-derived\nriscv64 image. Any undocumented GL/fbdev substitution, stale evidence head, or ambiguous T17\nmanifest refutes the decision.",
       "file": "tasks/epic-5-the-window/E5-T16e-display-server-decision.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 2,
+          "labels": [
+            "chore(e5-t16e): activate display server decision",
+            "E5-T16e: add measured decision verification harness"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 2
     },
     {
       "id": "E5-T17",

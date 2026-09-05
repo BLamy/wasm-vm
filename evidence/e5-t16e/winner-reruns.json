@@ -1,0 +1,125 @@
+{
+  "schema": "wasm-vm.e5-t16e.winner-reruns.v1",
+  "task": "E5-T16e",
+  "candidate": "weston-pixman",
+  "workload": "E5-T16a frozen six-phase workload",
+  "source": {
+    "commit": "64abae1b813ea9eda66a3dee5887d5e93ec33d1e",
+    "image": {
+      "path": "target/e5-t16e/weston-image/alpine-rootfs.ext4",
+      "sha256": "27bbdc06f63fd611fbb2c071d56b5ec1bbfd696a8d9180c81c33a45e5ed5ed95"
+    },
+    "packageManifest": {
+      "path": "target/e5-t16e/weston-image/MANIFEST.txt",
+      "sha256": "225b8d35f7375c084075ca60edac5ea8fbf7ef46f1fd09a7e3a5d40bb074aae1"
+    },
+    "fileManifest": {
+      "path": "target/e5-t16e/weston-image/FILE-MANIFEST.txt",
+      "sha256": "b2b4964035b5a348be808afddc83b91d007c5cb3e5fbfcf1854b6f85d5d51552"
+    },
+    "derivation": "fresh E5-T16c Weston scratch build, copied before each T16a workload replay"
+  },
+  "runCount": 2,
+  "runs": [
+    {
+      "id": "weston-rerun-1",
+      "image": {
+        "path": "target/e5-t16e/reruns/weston-rerun-1/alpine-rootfs.ext4",
+        "sha256": "27bbdc06f63fd611fbb2c071d56b5ec1bbfd696a8d9180c81c33a45e5ed5ed95",
+        "postRunSha256": "d1b726d49225b28511f378e1f581c27213c48c4481f9436bbdd3db53b8688e4a"
+      },
+      "capture": {
+        "path": "evidence/e5-t16e/weston-rerun-1-capture.json",
+        "sha256": "4941cdbaf749c41b4e19a9c121344a4994de6d08eabf63cf5054fbf1c1dca4ee"
+      },
+      "artifacts": {
+        "weston-console.log": {
+          "path": "evidence/e5-t16e/weston-rerun-1/weston-console.log",
+          "sha256": "5bbf2f87ea52e52068e0261112c2ca5f24ce484d61e737945e5cd37450a8d70c"
+        },
+        "weston-stderr.log": {
+          "path": "evidence/e5-t16e/weston-rerun-1/weston-stderr.log",
+          "sha256": "ce0b3fd4346d4ae846a27a65c79c4716a44de0492653fadf8b3ce2c1025bbb7a"
+        },
+        "weston-guest-evidence.txt": {
+          "path": "evidence/e5-t16e/weston-rerun-1/weston-guest-evidence.txt",
+          "sha256": "571245fe18026af84fb7f4e60b231217c65961f507769484804532e979224b55"
+        },
+        "weston-gpu-trace.log": {
+          "path": "evidence/e5-t16e/weston-rerun-1/weston-gpu-trace.log",
+          "sha256": "b270c1acf8b56001a6d32c8396adb2f080bbf3bc931e37ea6ce61abefc51a532"
+        },
+        "weston-run.json": {
+          "path": "evidence/e5-t16e/weston-rerun-1/weston-run.json",
+          "sha256": "33b3560e32921efab7f65e2685a90240ea279e9f3c4ae1faae463a80991bcffe"
+        }
+      },
+      "summary": {
+        "guestInstructions": 5319625914,
+        "uploadedBytes": 98098164,
+        "peakRssBytes": 18612224,
+        "idleWakeups": 437,
+        "idleWakeupsPerSecond": 157.60014292204917,
+        "phaseDurationsMs": {
+          "cold-start": 491808.90599999996,
+          "idle": 2772.840125000046,
+          "open-terminal": 157102.85891700006,
+          "type-100": 74194.48020799994,
+          "drag-300": 5773.29666699993,
+          "close": 21886.00250000006
+        },
+        "typingUploadedBytes": 36864000
+      }
+    },
+    {
+      "id": "weston-rerun-2",
+      "image": {
+        "path": "target/e5-t16e/reruns/weston-rerun-2/alpine-rootfs.ext4",
+        "sha256": "27bbdc06f63fd611fbb2c071d56b5ec1bbfd696a8d9180c81c33a45e5ed5ed95",
+        "postRunSha256": "7291ff674d6db690ff5eb7606dc2e5515065331865a44c65bb2e9849708230ee"
+      },
+      "capture": {
+        "path": "evidence/e5-t16e/weston-rerun-2-capture.json",
+        "sha256": "8f5dc4adc50e464fe30ea4aa1a10ab1c7bde3ea1d15fba70439f17cb4c005406"
+      },
+      "artifacts": {
+        "weston-console.log": {
+          "path": "evidence/e5-t16e/weston-rerun-2/weston-console.log",
+          "sha256": "24318696eca300b3c3eb4410f7d747b57fa089370aabe0f0fdbdc5f2952f34be"
+        },
+        "weston-stderr.log": {
+          "path": "evidence/e5-t16e/weston-rerun-2/weston-stderr.log",
+          "sha256": "59e2234cd5e1b7a243a6bd1d7432014af9912ff3e7f20522f68072b990cbd07f"
+        },
+        "weston-guest-evidence.txt": {
+          "path": "evidence/e5-t16e/weston-rerun-2/weston-guest-evidence.txt",
+          "sha256": "0c23fc95eee1869409b65061e62be4aa2e84494f1eb5f827fc5235093ed58e18"
+        },
+        "weston-gpu-trace.log": {
+          "path": "evidence/e5-t16e/weston-rerun-2/weston-gpu-trace.log",
+          "sha256": "a07aea671a61945a0c754816aa1f63125551e47a3cba03cf38012f424584d3b2"
+        },
+        "weston-run.json": {
+          "path": "evidence/e5-t16e/weston-rerun-2/weston-run.json",
+          "sha256": "7aad543110eef7a7a26e547e0f839284e23a0cc667e3d26c1b1bfc8020f313cf"
+        }
+      },
+      "summary": {
+        "guestInstructions": 5319425145,
+        "uploadedBytes": 92863832,
+        "peakRssBytes": 18743296,
+        "idleWakeups": 438,
+        "idleWakeupsPerSecond": 157.19039749700823,
+        "phaseDurationsMs": {
+          "cold-start": 491001.87504199997,
+          "idle": 2786.4297500000685,
+          "open-terminal": 159837.30716699996,
+          "type-100": 74204.006666,
+          "drag-300": 5883.253666999983,
+          "close": 21246.794292000006
+        },
+        "typingUploadedBytes": 36864000
+      }
+    }
+  ]
+}
