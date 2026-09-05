@@ -546,7 +546,7 @@ function installCommand() {
     `sentinel_value=$(cat ${sentinelPath}); sentinel_sha=$(sha256sum ${sentinelPath} | awk '{print $1}'); sentinel_bytes=$(wc -c < ${sentinelPath}); db_sha=$(sha256sum /lib/apk/db/installed | awk '{print $1}'); if apk info -e ${packageName} >/dev/null 2>&1; then htop_state=present; else htop_state=missing; fi`,
     "printf 'T17E_PRE_STATE sentinel=%s sentinel_sha=%s sentinel_bytes=%s apk_db_sha=%s htop=%s\\n' \"$sentinel_value\" \"$sentinel_sha\" \"$sentinel_bytes\" \"$db_sha\" \"$htop_state\"",
     "printf '%s\\n' 'not-an-apk' >/tmp/e5-t17e-unsigned.apk",
-    "apk add --no-progress /tmp/e5-t17e-unsigned.apk >/tmp/e5-t17e-unsigned.log 2>&1; unsigned_rc=$?",
+    "apk add --no-network --no-progress /tmp/e5-t17e-unsigned.apk >/tmp/e5-t17e-unsigned.log 2>&1; unsigned_rc=$?",
     "printf 'T17E_UNSIGNED_RC=%s\\n' \"$unsigned_rc\"",
     "if [ \"$unsigned_rc\" -ne 0 ]; then printf '%s\\n' T17E\"UNSIGNED\"REJECTED; else printf '%s\\n' T17E\"UNSIGNED\"ACCEPTED; fi",
     "sync",
