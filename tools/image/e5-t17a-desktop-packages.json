@@ -1,0 +1,127 @@
+{
+  "schema": "wasm-vm.e5-t17a.desktop-package-profile.v1",
+  "task": "E5-T17a",
+  "profileVersion": 1,
+  "architecture": "riscv64",
+  "alpineBranch": "v3.20",
+  "repositories": [
+    "https://dl-cdn.alpinelinux.org/alpine/v3.20/main",
+    "https://dl-cdn.alpinelinux.org/alpine/v3.20/community"
+  ],
+  "provenance": {
+    "decision": {
+      "path": "evidence/e5-t16e/display-server-decision.json",
+      "sha256": "d7e7c3b4a18f09af7d9132f7b75f1dfe0a6b3d191eed6e9db52182ca24029b18"
+    },
+    "packageAudit": {
+      "path": "evidence/e5-t16d/package-audit.json",
+      "sha256": "c08fced3877b9aab3bb7b37d044232f9b23e01482612f40093e76266591e574b"
+    },
+    "packageAuditVerification": {
+      "path": "evidence/e5-t16d/package-audit-verification.json",
+      "sha256": "e76b1a52ec8428d92f906842285a55fb1c1a14a32d2ed7c67ece0228a7ce207d"
+    },
+    "verifiedBaseImageSha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8"
+  },
+  "install": {
+    "updateCommand": "apk update",
+    "addCommand": "apk add --no-scripts --no-progress",
+    "signatureVerification": "apk default signature verification",
+    "trustedKeysDir": "/usr/share/apk/keys/riscv64",
+    "disallowedOptions": ["allow-untrusted"],
+    "networkArchitecture": "riscv64"
+  },
+  "resolutionMode": "online-or-offline",
+  "offlineCache": {
+    "root": "cache/alpine/v3.20/riscv64",
+    "repositoryDirs": ["main", "community"],
+    "requiredIndexFiles": [
+      "main/APKINDEX.tar.gz",
+      "main/APKINDEX.tar.gz.eds",
+      "community/APKINDEX.tar.gz",
+      "community/APKINDEX.tar.gz.eds"
+    ],
+    "packageFileTemplate": "{repository}/{packageId}.apk",
+    "requiredTrustedKeyDir": "keys/riscv64",
+    "missingInputPolicy": "fail-closed"
+  },
+  "packages": [
+    {
+      "name": "weston",
+      "version": "12.0.4-r0",
+      "packageId": "weston-12.0.4-r0",
+      "signature": "apk-default",
+      "sourceEvidence": "E5-T16d/weston-pixman"
+    },
+    {
+      "name": "weston-backend-drm",
+      "version": "12.0.4-r0",
+      "packageId": "weston-backend-drm-12.0.4-r0",
+      "signature": "apk-default",
+      "sourceEvidence": "E5-T16d/weston-pixman"
+    },
+    {
+      "name": "weston-shell-desktop",
+      "version": "12.0.4-r0",
+      "packageId": "weston-shell-desktop-12.0.4-r0",
+      "signature": "apk-default",
+      "sourceEvidence": "E5-T16d/weston-pixman"
+    },
+    {
+      "name": "foot",
+      "version": "1.17.2-r0",
+      "packageId": "foot-1.17.2-r0",
+      "signature": "apk-default",
+      "sourceEvidence": "E5-T16d/weston-pixman"
+    },
+    {
+      "name": "seatd",
+      "version": "0.8.0-r0",
+      "packageId": "seatd-0.8.0-r0",
+      "signature": "apk-default",
+      "sourceEvidence": "E5-T16d/weston-pixman"
+    },
+    {
+      "name": "eudev",
+      "version": "3.2.14-r2",
+      "packageId": "eudev-3.2.14-r2",
+      "signature": "apk-default",
+      "sourceEvidence": "E5-T16d/weston-pixman"
+    },
+    {
+      "name": "udev-init-scripts",
+      "version": "35-r1",
+      "packageId": "udev-init-scripts-35-r1",
+      "signature": "apk-default",
+      "sourceEvidence": "E5-T16d/weston-pixman"
+    },
+    {
+      "name": "pixman",
+      "version": "0.43.2-r0",
+      "packageId": "pixman-0.43.2-r0",
+      "signature": "apk-default",
+      "sourceEvidence": "E5-T16d/weston-pixman"
+    },
+    {
+      "name": "xkeyboard-config",
+      "version": "2.41-r0",
+      "packageId": "xkeyboard-config-2.41-r0",
+      "signature": "apk-default",
+      "sourceEvidence": "E5-T16d/weston-pixman"
+    },
+    {
+      "name": "wl-clipboard",
+      "version": "2.2.0-r1",
+      "packageId": "wl-clipboard-2.2.0-r1",
+      "signature": "apk-default",
+      "sourceEvidence": "E5-T16d/weston-pixman"
+    },
+    {
+      "name": "font-dejavu",
+      "version": "2.37-r5",
+      "packageId": "font-dejavu-2.37-r5",
+      "signature": "apk-default",
+      "sourceEvidence": "E5-T16d/weston-pixman"
+    }
+  ]
+}

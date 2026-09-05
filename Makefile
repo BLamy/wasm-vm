@@ -783,6 +783,16 @@ verify-E5-T16e:
 	node tools/verify/e5-t16e-display-server-decision.mjs --self-test
 	@echo "verify-E5-T16e (measured display-server decision and T17 handoff): OK"
 
+.PHONY: verify-E5-T17a
+verify-E5-T17a:
+	# Freeze the T16e-selected signed package set and prove the explicit online/offline cache
+	# contract before any desktop image assembly. This metadata/profile slice has no guest boot,
+	# independent-machine, or WebKit leg.
+	node --check tools/verify/e5-t17a-desktop-package-manifest.mjs
+	node tools/verify/e5-t17a-desktop-package-manifest.mjs
+	node tools/verify/e5-t17a-desktop-package-manifest.mjs --self-test
+	@echo "verify-E5-T17a (signed desktop package manifest and offline profile): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
