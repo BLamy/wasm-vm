@@ -793,6 +793,23 @@ verify-E5-T17a:
 	node tools/verify/e5-t17a-desktop-package-manifest.mjs --self-test
 	@echo "verify-E5-T17a (signed desktop package manifest and offline profile): OK"
 
+.PHONY: verify-E5-T17b
+verify-E5-T17b:
+	# Assemble the production desktop image from the verified T17a profile and inspect the ext4
+	# read-only through local Docker/debugfs. T17c owns the two-output reproducibility/chunk gate;
+	# this target has no independent-machine, WebKit, or host-rr leg.
+	cargo fmt --check -p wasm-vm-cli
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-cli --bin wasm-vm --features gpu-trace
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	bash -n tools/image/desktop.sh
+	bash -n tools/rootfs-inner.sh
+	node --check tools/verify/e5-t17a-desktop-package-manifest.mjs
+	node --check tools/verify/e5-t17b-desktop-image.mjs
+	E5_T17B_OUT=target/e5-t17b/desktop-image bash tools/image/desktop.sh
+	node tools/verify/e5-t17b-desktop-image.mjs --out target/e5-t17b/desktop-image --self-test
+	@echo "verify-E5-T17b (profile-driven Alpine desktop image assembly): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

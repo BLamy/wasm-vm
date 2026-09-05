@@ -170,9 +170,9 @@ for s in killprocs savecache mount-ro; do link_svc shutdown "$s"; done
 # adds the minimum user/runtime/configuration needed to launch one measured compositor session.
 if [ -n "${DISPLAY_CANDIDATE:-}" ]; then
   case "$DISPLAY_CANDIDATE" in
-    labwc|weston) ;;
+    labwc|weston|desktop) ;;
     *)
-      echo "unknown DISPLAY_CANDIDATE=$DISPLAY_CANDIDATE (expected labwc or weston)" >&2
+      echo "unknown DISPLAY_CANDIDATE=$DISPLAY_CANDIDATE (expected labwc, weston, or desktop)" >&2
       exit 2
       ;;
   esac
@@ -189,8 +189,17 @@ if [ -n "${DISPLAY_CANDIDATE:-}" ]; then
   # Cross-install deliberately skips APK post-install scripts, so create the measurement user
   # and group memberships explicitly. Existing numeric ids are preserved; a missing named group
   # gets a stable private id instead of inheriting the host's account database.
-  grep -q '^desktop:' "$ROOT/etc/passwd" 2>/dev/null || \
-    printf 'desktop:x:1000:1000:wasm-vm display:/home/desktop:/bin/sh\n' >> "$ROOT/etc/passwd"
+  desktop_shell=/bin/sh
+  if [ "$DISPLAY_CANDIDATE" = desktop ]; then desktop_shell=/usr/local/bin/start-desktop; fi
+  if grep -q '^desktop:' "$ROOT/etc/passwd" 2>/dev/null; then
+    if [ "$DISPLAY_CANDIDATE" = desktop ]; then
+      awk -F: -v OFS=: '$1 == "desktop" { $7 = "/usr/local/bin/start-desktop" } { print }' \
+        "$ROOT/etc/passwd" > "$ROOT/etc/passwd.e5-t17b"
+      mv "$ROOT/etc/passwd.e5-t17b" "$ROOT/etc/passwd"
+    fi
+  else
+    printf 'desktop:x:1000:1000:wasm-vm display:/home/desktop:%s\n' "$desktop_shell" >> "$ROOT/etc/passwd"
+  fi
   grep -q '^desktop:' "$ROOT/etc/group" 2>/dev/null || \
     printf 'desktop:x:1000:\n' >> "$ROOT/etc/group"
   add_display_member() {
@@ -263,7 +272,7 @@ TERMINAL
   </core>
 </labwc_config>
 RCXML
-  else
+  elif [ "$DISPLAY_CANDIDATE" = weston ]; then
     install -d -m0755 "$ROOT/etc/xdg/weston"
     cat > "$ROOT/usr/local/bin/e5-t16c-start-weston" <<'WESTON'
 #!/bin/sh
@@ -297,6 +306,152 @@ exec runuser -u desktop -- env \
   foot "$@"
 TERMINAL
     chmod 0755 "$ROOT/usr/local/bin/e5-t16c-open-terminal"
+  fi
+
+  if [ "$DISPLAY_CANDIDATE" = desktop ]; then
+    # Production desktop startup is deliberately separate from the disposable T16c launcher. The
+    # tty1 login invokes this bounded wrapper as desktop's shell, so a missing DRM device cannot
+    # strand init or leave a foreground Weston process with no timeout.
+    install -d -m0755 "$ROOT/etc/init.d" "$ROOT/usr/local/sbin" \
+      "$ROOT/home/desktop/.config/foot" "$ROOT/home/desktop/.local/bin" \
+      "$ROOT/etc/xdg/weston"
+    install -d -m0700 "$ROOT/home/desktop/.local/state/wasm-vm"
+    cat > "$ROOT/etc/init.d/desktop-runtime" <<'DESKTOP_RUNTIME'
+#!/sbin/openrc-run
+description="Initialize the desktop user's Wayland runtime directory"
+
+depend() {
+  need seatd
+  after udev udev-trigger
+}
+
+start() {
+  mkdir -p /run/user/1000
+  chmod 700 /run/user/1000
+  chown 1000:1000 /run/user/1000
+}
+DESKTOP_RUNTIME
+    chmod 0755 "$ROOT/etc/init.d/desktop-runtime"
+    link_svc default desktop-runtime
+
+    # tty1 autologin reaches a real desktop account but never stores a password or an interactive
+    # root credential. BusyBox getty's -n/-l path executes this fixed login helper after OpenRC's
+    # default runlevel has brought up seatd and the runtime-directory service.
+    cat > "$ROOT/usr/local/sbin/desktop-autologin" <<'DESKTOP_AUTOLOGIN'
+#!/bin/sh
+set -eu
+exec /bin/login -f desktop
+DESKTOP_AUTOLOGIN
+    chmod 0755 "$ROOT/usr/local/sbin/desktop-autologin"
+    cat >> "$ROOT/etc/inittab" <<'DESKTOP_TTY1'
+tty1::respawn:/sbin/getty -L -n -l /usr/local/sbin/desktop-autologin 115200 tty1 linux
+DESKTOP_TTY1
+
+    cat > "$ROOT/usr/local/bin/start-desktop" <<'START_DESKTOP'
+#!/bin/sh
+set -eu
+
+runtime_dir=${XDG_RUNTIME_DIR:-/run/user/1000}
+log_dir=/home/desktop/.local/state/wasm-vm
+mkdir -p "$runtime_dir" "$log_dir"
+chmod 700 "$runtime_dir" "$log_dir"
+chown desktop:desktop "$runtime_dir" "$log_dir"
+export XDG_RUNTIME_DIR="$runtime_dir"
+export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+
+weston_log="$log_dir/weston.log"
+foot_log="$log_dir/foot.log"
+printf '%s\n' "E5T17B_START_DESKTOP weston --backend=drm --renderer=pixman --socket=$WAYLAND_DISPLAY --no-config"
+
+# The guest display can be absent or already claimed. Both compositor and terminal are bounded;
+# the login shell returns cleanly after a failure so tty1/getty cannot block OpenRC shutdown.
+/bin/busybox timeout -t 30 weston \
+  --backend=drm --renderer=pixman --socket="$WAYLAND_DISPLAY" --no-config \
+  >"$weston_log" 2>&1 &
+weston_pid=$!
+socket_ready=0
+attempt=0
+while [ "$attempt" -lt 30 ]; do
+  if [ -S "$runtime_dir/$WAYLAND_DISPLAY" ]; then
+    socket_ready=1
+    break
+  fi
+  if ! kill -0 "$weston_pid" 2>/dev/null; then break; fi
+  /bin/busybox sleep 1
+  attempt=$((attempt + 1))
+done
+
+if [ "$socket_ready" -ne 1 ]; then
+  printf '%s\n' "E5T17B_WESTON_NOT_READY=1" >>"$weston_log"
+  kill "$weston_pid" 2>/dev/null || true
+  wait "$weston_pid" 2>/dev/null || true
+  exit 0
+fi
+
+printf '%s\n' "E5T17B_WESTON_READY=1" >>"$weston_log"
+/bin/busybox timeout -t 30 foot --title=wasm-vm \
+  >"$foot_log" 2>&1 &
+foot_pid=$!
+if wait "$weston_pid"; then
+  weston_status=0
+else
+  weston_status=$?
+fi
+if kill -0 "$foot_pid" 2>/dev/null; then
+  kill "$foot_pid" 2>/dev/null || true
+fi
+wait "$foot_pid" 2>/dev/null || true
+printf '%s\n' "E5T17B_WESTON_EXIT=$weston_status" >>"$weston_log"
+exit 0
+START_DESKTOP
+    chmod 0755 "$ROOT/usr/local/bin/start-desktop"
+    grep -qxF /usr/local/bin/start-desktop "$ROOT/etc/shells" 2>/dev/null || \
+      printf '%s\n' /usr/local/bin/start-desktop >> "$ROOT/etc/shells"
+
+    # Explicitly pin the compositor configuration too. The launcher uses --no-config, while this
+    # file makes the production intent inspectable to image consumers and does not permit GL/fbdev
+    # fallback through an automatic renderer selection.
+    cat > "$ROOT/etc/xdg/weston/weston.ini" <<'WESTON_INI'
+[core]
+backend=drm-backend.so
+renderer=pixman
+shell=desktop-shell.so
+WESTON_INI
+
+    cat > "$ROOT/home/desktop/.profile" <<'DESKTOP_PROFILE'
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/1000}
+export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+DESKTOP_PROFILE
+    cat > "$ROOT/home/desktop/.config/foot/foot.ini" <<'FOOT_INI'
+shell=/bin/sh
+term=xterm-256color
+scrollback-lines=10000
+FOOT_INI
+    cat > "$ROOT/home/desktop/.local/bin/clip-copy" <<'CLIP_COPY'
+#!/bin/sh
+set -eu
+exec /usr/bin/wl-copy "$@"
+CLIP_COPY
+    cat > "$ROOT/home/desktop/.local/bin/clip-paste" <<'CLIP_PASTE'
+#!/bin/sh
+set -eu
+exec /usr/bin/wl-paste "$@"
+CLIP_PASTE
+    chmod 0755 "$ROOT/home/desktop/.local/bin/clip-copy" "$ROOT/home/desktop/.local/bin/clip-paste"
+    chown -R 1000:1000 "$ROOT/home/desktop"
+
+    # The desktop image is not a root-login credential store. Remove shell histories, network
+    # credential files, and APK download residue before the deterministic manifests are written.
+    sed -i 's@^root:[^:]*:@root:!:@' "$ROOT/etc/shadow"
+    for credential in \
+      "$ROOT/root/.ash_history" "$ROOT/root/.bash_history" "$ROOT/root/.netrc" "$ROOT/root/.curlrc" \
+      "$ROOT/root/.wget-hsts" "$ROOT/home/desktop/.ash_history" "$ROOT/home/desktop/.bash_history" \
+      "$ROOT/home/desktop/.netrc" "$ROOT/home/desktop/.curlrc" "$ROOT/home/desktop/.wget-hsts"; do
+      rm -f "$credential"
+    done
+    if [ -d "$ROOT/root/.ssh" ]; then rm -rf "$ROOT/root/.ssh"; fi
+    if [ -d "$ROOT/home/desktop/.ssh" ]; then rm -rf "$ROOT/home/desktop/.ssh"; fi
+    if [ -d "$ROOT/var/cache/apk" ]; then find "$ROOT/var/cache/apk" -type f -delete; fi
   fi
 fi
 
@@ -343,7 +498,23 @@ link_svc default wasm-vm-file-agent
     /usr/local/bin/e5-t16b-open-terminal \
     /etc/xdg/labwc/rc.xml \
     /usr/local/bin/e5-t16c-start-weston \
-    /usr/local/bin/e5-t16c-open-terminal
+    /usr/local/bin/e5-t16c-open-terminal \
+    /etc/init.d/desktop-runtime \
+    /usr/local/sbin/desktop-autologin \
+    /usr/local/bin/start-desktop \
+    /etc/xdg/weston/weston.ini \
+    /home/desktop/.profile \
+    /home/desktop/.config/foot/foot.ini \
+    /home/desktop/.local/bin/clip-copy \
+    /home/desktop/.local/bin/clip-paste \
+    /etc/inittab \
+    /etc/fstab \
+    /etc/hostname \
+    /etc/securetty \
+    /etc/shadow \
+    /etc/shells \
+    /etc/apk/repositories \
+    /etc/network/interfaces
   do
     [ -e "$ROOT$path" ] || continue
     mode=$(stat -c '%a' "$ROOT$path")
@@ -362,6 +533,7 @@ link_svc default wasm-vm-file-agent
     /var/lib/wasm-vm/transfer/inbox \
     /var/lib/wasm-vm/transfer/outbox \
     /home/desktop \
+    /home/desktop/.local/state/wasm-vm \
     /run/user/1000
   do
     [ -e "$ROOT$path" ] || continue
