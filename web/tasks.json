@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 274,
-    "total": 433
+    "total": 438
   },
   "epics": [
     {
@@ -18949,8 +18949,9 @@
       "activity": [
         {
           "date": "2026-09-05",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t17e): record verified persistence verdict",
             "chore(e5-t17e): submit persistence evidence",
             "chore(e5-t17e): activate persistence publication proof"
           ]
@@ -18958,7 +18959,7 @@
       ],
       "firstActivity": "2026-09-05",
       "lastActivity": "2026-09-05",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T18",
@@ -18966,16 +18967,22 @@
       "epicKey": "5",
       "title": "Boot-to-desktop bring-up — seat/udev/permissions debugged, playbook written",
       "priority": 518,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T08",
         "E5-T15d",
         "E5-T17e"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T18a",
+        "E5-T18b",
+        "E5-T18c",
+        "E5-T18d",
+        "E5-T18e"
+      ],
       "estimate": "L",
       "capstone": false,
-      "goal": "Cold page load boots all the way into the T17 desktop with a working cursor, focusable\nwindows, and a terminal launchable from the WM menu — plus a written debugging playbook\ncapturing every failure mode found on the way (this task *is* mostly debugging; the\nplaybook is how that work compounds).",
+      "goal": "> **DECOMPOSED 2026-09-05.** This L-sized bring-up container is cancelled before\n> implementation as required by task policy and replaced by five ordered S slices. E5-T18a\n> freezes the local cold-boot desktop contract, E5-T18b proves WM terminal/input, E5-T18c\n> proves cursor/focus/DPR hit-testing, E5-T18d hardens compositor restart/getty fallback, and\n> E5-T18e consolidates the debug playbook and final boot proof.\n\nCold page load boots all the way into the T17 desktop with a working cursor, focusable\nwindows, and a terminal launchable from the WM menu — plus a written debugging playbook\ncapturing every failure mode found on the way (this task *is* mostly debugging; the\nplaybook is how that work compounds).",
       "criteria": [
         {
           "text": "Fresh browser profile, cold load: desktop wallpaper + panel/menu visible, no manual serial intervention, 10/10 consecutive boots.",
@@ -19000,12 +19007,240 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-05 — coordinator — decomposed\n\nThis L-sized bring-up planning container is cancelled before implementation as required by task\npolicy and replaced by five ordered S tickets. The dependency chain is cold boot → terminal/input\n→ cursor and DPR hit-testing → compositor recovery → playbook and rebuilt-artifact proof. The\nchildren use local Chromium/native guest evidence only, consistent with the user waiver for\nindependent machines, WebKit, and host rr.",
       "adversarial": "Refute the 10/10 claim: 25 scripted cold boots with cache disabled; any hang, black\nscreen, or missing cursor refutes. Attack ordering: add a 500 ms artificial delay to\nseatd start (test hook) — boot must still succeed or fail *with the playbook's\ndocumented symptom*, not a novel one. Break it on purpose: remove the user from\n`video`, delete XDG_RUNTIME_DIR init, force `WLR_RENDERER=gles2` — each must produce\nthe playbook's predicted symptom and be diagnosable in ≤ 5 min using only the playbook\n(have someone other than the implementer run this drill). Verify no dirty-image cheats:\nrebuild the T17 image from the committed manifest and re-run the 25-boot gauntlet on\nthe rebuilt artifact.",
       "file": "tasks/epic-5-the-window/E5-T18-boot-to-desktop-bringup.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T18a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Prove the local cold-boot desktop contract",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T08",
+        "E5-T15d",
+        "E5-T17e"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make the T17 desktop artifact reach a visible, ready desktop from a clean local browser load.",
+      "criteria": [
+        {
+          "text": "In a fresh local Chromium context with cache disabled, ten consecutive loads reach the wallpaper, panel, and WM menu with no manual serial intervention.",
+          "checked": false
+        },
+        {
+          "text": "The harness records cold and warm boot-to-desktop timings and fails on a timeout, black screen, missing panel/menu, unexpected console error, or hidden readiness marker.",
+          "checked": false
+        },
+        {
+          "text": "The run exercises the committed image publication path and leaves the read-only source artifact unchanged.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis S slice isolates the first user-visible desktop boundary so later input and recovery work\ncannot hide a cold-boot regression.",
+      "adversarial": "Run 25 local Chromium cold boots with cache disabled and independent fresh contexts. Add the\n500 ms seatd-start test delay; the boot must still reach the same readiness contract or produce\nthe documented bounded failure marker. A hang, black screen, missing cursor/menu readiness, or\nmanual intervention refutes this slice. WebKit and independent machines are out of scope.",
+      "file": "tasks/epic-5-the-window/E5-T18a-desktop-cold-boot.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T18b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Prove WM terminal launch and keyboard input",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T18a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove that a user can launch the configured terminal from the WM menu and type a command\nthrough the existing guest input path.",
+      "criteria": [
+        {
+          "text": "The local desktop harness selects Terminal from the WM menu and opens the configured foot/xterm window.",
+          "checked": false
+        },
+        {
+          "text": "The focused terminal accepts a deterministic command through the T12 input path and renders the expected ls output without dropped, duplicated, or reordered keystrokes.",
+          "checked": false
+        },
+        {
+          "text": "Repeating the open/type/close flow leaves the desktop responsive and produces no unexpected console or guest errors.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis S slice freezes the typed-terminal user path on top of the cold-boot contract.",
+      "adversarial": "Repeat the menu/open/type/close flow with focus changes and a rapid but bounded input burst.\nVerify that a terminal opened after another window was focused still receives the complete\ncommand and output. A silent focus loss, missing character, or stale terminal window refutes\nthe slice. WebKit and independent machines are out of scope.",
+      "file": "tasks/epic-5-the-window/E5-T18b-desktop-terminal-input.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T18c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Prove desktop cursor alignment and DPR hit-testing",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T18b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Freeze pointer geometry and focus hit-testing for the ready desktop at device-pixel ratios one\nand two.",
+      "criteria": [
+        {
+          "text": "Moving the host cursor to the tested control produces the matching guest hover highlight at both DPR 1 and DPR 2, with no one-pixel or scale-dependent offset.",
+          "checked": false
+        },
+        {
+          "text": "Close and maximize buttons hit-test the intended window at both DPR values and do not activate an adjacent control.",
+          "checked": false
+        },
+        {
+          "text": "The pointer/focus run is deterministic across repeated local Chromium contexts and has no unexpected console errors.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis S slice isolates pointer scaling and focus geometry after the terminal path is known to be\nusable.",
+      "adversarial": "Run the hit-test matrix at fractional canvas offsets and at coordinates immediately adjacent\nto each button boundary. Repeat after opening and maximizing a second window. Any DPR-dependent\nmiss, neighboring-control activation, or cursor/hover divergence refutes the slice. WebKit and\nindependent machines are out of scope.",
+      "file": "tasks/epic-5-the-window/E5-T18c-desktop-cursor-dpr-hit-testing.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T18d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Harden compositor restart and tty1 getty fallback",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T18c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make compositor failure bounded, observable, and recoverable without hanging init.",
+      "criteria": [
+        {
+          "text": "Killing the compositor with the local serial test hook causes an automatic restart and a timestamped log entry without an init hang.",
+          "checked": false
+        },
+        {
+          "text": "Three bounded crashes stop retrying and leave tty1 at getty with a visible error banner.",
+          "checked": false
+        },
+        {
+          "text": "A broken-config boot exercises the fallback path, preserves the diagnostic log, and does not silently claim desktop readiness.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis S slice isolates process supervision and the failure boundary needed by the final bring-up\nplaybook.",
+      "adversarial": "Inject the 500 ms seatd delay, remove the video device, delete XDG_RUNTIME_DIR initialization,\nand force WLR_RENDERER=gles2 in separate local fixtures. Each case must terminate with its\npredicted bounded symptom/log path; no new hang or unbounded restart loop is acceptable.\nWebKit and independent machines are out of scope.",
+      "file": "tasks/epic-5-the-window/E5-T18d-desktop-crash-restart-fallback.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T18e",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Publish the desktop bring-up playbook and final boot proof",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T18d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Turn the completed local bring-up work into a reproducible, reviewed operating playbook and\nfinal rebuilt-artifact proof.",
+      "criteria": [
+        {
+          "text": "The playbook covers every failure recorded by E5-T18a-d, including seatd/udev/permissions, runtime-directory, renderer, input/XKB, restart, and getty-fallback symptoms.",
+          "checked": false
+        },
+        {
+          "text": "The exact rebuilt artifact is hash-bound in the report, and the local cache-disabled 25-boot gauntlet has no hang, black screen, missing cursor, or missing menu.",
+          "checked": false
+        },
+        {
+          "text": "The report records cold and warm boot-to-desktop timings and the final verifier passes from the committed manifest with no undeclared hand edits to the image.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis final S slice makes the debugging knowledge and exact rebuilt-boot proof durable before\ndownstream resize, performance, and capstone work can depend on T18.",
+      "adversarial": "Have the fresh verifier run the documented failure drills using only the playbook: remove the\nvideo device, delete runtime-directory initialization, force gles2, and trigger three crashes.\nEach diagnosis must complete in five minutes and match a documented symptom/fix. Mutate the\npublished image or manifest after the rebuild; the verifier must reject the stale hash rather\nthan accepting dirty-image evidence. WebKit and independent machines are out of scope.",
+      "file": "tasks/epic-5-the-window/E5-T18e-desktop-bringup-playbook.md",
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
       "commitCount": 0
     },
     {
