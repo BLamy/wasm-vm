@@ -105,9 +105,9 @@ async function validateRun(run) {
 
 function validateGuestLogs(order, weston, id = "guest") {
   const seatd = /^E5T17D_SEATD_READY=1 pid=(\d+) state=([A-Z])$/mu.exec(order);
-  const runtime = /^E5T17D_RUNTIME_READY mode=(0?700) uid=1000 gid=1000$/mu.exec(order);
+  const runtime = /^E5T17D_RUNTIME_READY mode=(0?700) uid=(1000) gid=(1000)$/mu.exec(order);
   const start = /^E5T17D_START_DESKTOP_AFTER_SEATD=1 pid=(\d+) state=([A-Z])$/mu.exec(order);
-  const startRuntime = /^E5T17D_START_DESKTOP_RUNTIME mode=(0?700) uid=1000 gid=1000$/mu.exec(order);
+  const startRuntime = /^E5T17D_START_DESKTOP_RUNTIME mode=(0?700) uid=(1000) gid=(1000)$/mu.exec(order);
   assert.ok(seatd, `${id}: missing seatd readiness`);
   assert.notEqual(seatd[2], "Z", `${id}: seatd zombie at runtime service`);
   assert.ok(runtime, `${id}: missing runtime-directory readiness`);
