@@ -4,7 +4,7 @@
   "command": "make verify-E5-T17a",
   "profile": {
     "path": "tools/image/e5-t17a-desktop-packages.json",
-    "sha256": "177d2f563f92efc37ac92f78aade7801a7d03110580cbe48328f90c9f903b1d7"
+    "sha256": "5e0ede77a0fe30fe2268a2a3b9bc322146e67cf128d9b15e6808cfa69cfb1a67"
   },
   "sourceEvidence": {
     "decision": {
@@ -21,7 +21,7 @@
     },
     "packageArtifacts": {
       "path": "evidence/e5-t17a/package-artifact-digests.json",
-      "sha256": "c647a1af6079c17fc7380493ac400309ae67e49902565f104f9ee9aef6f34c94"
+      "sha256": "fdfb37b68a96456f4b0935895e278bc5e1b89830afd4fa1567dea67710ae3a01"
     }
   },
   "architecture": "riscv64",
@@ -143,7 +143,12 @@
     ],
     "indexSignature": {
       "format": "apk-signed-tar",
-      "requiredMemberPattern": "^\\.SIGN\\.RSA\\..+\\.rsa\\.pub$"
+      "requiredMember": ".SIGN.RSA.alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub"
+    },
+    "requiredTrustedKey": {
+      "path": "keys/riscv64/alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub",
+      "size": 451,
+      "sha256": "db0b49163f07ffba64a5ca198bcf1688610b0bd1f0d8d5afeaf78559d73f2278"
     },
     "checkedPath": null
   },

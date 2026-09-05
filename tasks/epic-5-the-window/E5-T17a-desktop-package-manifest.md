@@ -83,3 +83,10 @@ package.
   the trust-boundary failures above. No runtime or unrelated files were changed.
 
 Commands: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17a`; local disposable-cache replay with `node tools/verify/e5-t17a-desktop-package-manifest.mjs --offline-cache <cache>` and the two bounded mutations above.
+
+### 2026-09-05 — worker — REMEDIATION
+
+- Commit: `5dbd4c9e23db84b90cdff48f473899211382d986`.
+- Command: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u RUST_LOG -u NODE_OPTIONS -u npm_config_userconfig make verify-E5-T17a`.
+- Evidence: profile SHA-256 `5e0ede77a0fe30fe2268a2a3b9bc322146e67cf128d9b15e6808cfa69cfb1a67`, artifact/key evidence SHA-256 `fdfb37b68a96456f4b0935895e278bc5e1b89830afd4fa1567dea67710ae3a01`, and verification output SHA-256 `06db58ea0a80189b5493df39f35d4fa60e8a18881592d3941c9b17d77d9c0d74`.
+- The remediation binds offline mode to the exact `alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub` key path, size, SHA-256, and PEM format, rejects symlink/unrelated-file replacements, and requires exactly that signer member in each signed APKINDEX tar. The self-test now covers trusted-key replacement, attacker signer-member substitution, missing APK, and index-byte tampering; the bounded gate passes without independent-machine, WebKit, or host-rr legs.
