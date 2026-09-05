@@ -845,6 +845,23 @@ verify-E5-T17c:
 		--cli target/release/wasm-vm --self-test
 	@echo "verify-E5-T17c (desktop reproducibility, ext4 delta, and E3 chunk dedupe): OK"
 
+.PHONY: verify-E5-T17d
+verify-E5-T17d:
+	# Recreate the exact T17c handoff, then run twenty fresh native-emulator boots. The production
+	# image keeps root locked; the desktop startup scripts persist only the ordering/runtime audit
+	# markers needed after the serial profile stops at ttyS0 login. There is no independent-machine,
+	# WebKit, or host-rr leg in this local proof.
+	cargo fmt --check -p wasm-vm-cli
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	bash -n tools/rootfs-inner.sh
+	node --check tools/run-e5-t17d-boot-order.mjs
+	node --check tools/verify/e5-t17d-desktop-boot-order.mjs
+	$(MAKE) verify-E5-T17c
+	node tools/run-e5-t17d-boot-order.mjs
+	node tools/verify/e5-t17d-desktop-boot-order.mjs --self-test
+	@echo "verify-E5-T17d (twenty cold desktop boot-order replays): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

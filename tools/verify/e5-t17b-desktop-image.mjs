@@ -180,7 +180,10 @@ async function inspectImage() {
     "mkdir -p /tmp/fakebin /home/desktop/.local/state/wasm-vm",
     "printf '%s\\n' '#!/bin/sh' 'echo E5T17B_FAKE_WESTON_INVOKED=1 > /tmp/fake-weston-marker' '/bin/busybox sleep 2' > /tmp/fakebin/weston",
     "printf '%s\\n' '#!/bin/sh' 'exit 0' > /tmp/fakebin/chown",
-    "chmod 0755 /tmp/fakebin/weston /tmp/fakebin/chown",
+    // The production launcher refuses to run before seatd. Model a live process from this
+    // disposable execution fixture so the fake Weston still exercises the complete bounded path.
+    "printf '%s\\n' '#!/bin/sh' 'echo 1' > /tmp/fakebin/pidof",
+    "chmod 0755 /tmp/fakebin/weston /tmp/fakebin/chown /tmp/fakebin/pidof",
     "debugfs -R 'dump /usr/local/bin/start-desktop /tmp/start-desktop' /image >/dev/null 2>&1",
     "chmod 0755 /tmp/start-desktop",
     "printf '%s\\n' E5T17B_RUNTIME_START_BEGIN",

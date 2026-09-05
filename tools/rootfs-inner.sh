@@ -326,15 +326,32 @@ TERMINAL
 #!/sbin/openrc-run
 description="Initialize the desktop user's Wayland runtime directory"
 
+boot_order_log=/home/desktop/.local/state/wasm-vm/boot-order.log
+
 depend() {
   need seatd
   after udev udev-trigger
 }
 
 start() {
+  if ! pidof seatd >/dev/null 2>&1; then
+    printf '%s\n' "E5T17D_SEATD_NOT_READY=1" >>"$boot_order_log"
+    chown 1000:1000 "$boot_order_log"
+    chmod 600 "$boot_order_log"
+    return 1
+  fi
   mkdir -p /run/user/1000
   chmod 700 /run/user/1000
   chown 1000:1000 /run/user/1000
+  seatd_pid=$(pidof seatd | awk '{print $1}')
+  seatd_state=$(awk '{print $3}' "/proc/$seatd_pid/stat")
+  runtime_mode=$(stat -c '%a' /run/user/1000)
+  runtime_uid=$(stat -c '%u' /run/user/1000)
+  runtime_gid=$(stat -c '%g' /run/user/1000)
+  printf '%s\n' "E5T17D_SEATD_READY=1 pid=$seatd_pid state=$seatd_state" \
+    "E5T17D_RUNTIME_READY mode=0$runtime_mode uid=$runtime_uid gid=$runtime_gid" >>"$boot_order_log"
+  chown 1000:1000 "$boot_order_log"
+  chmod 600 "$boot_order_log"
 }
 DESKTOP_RUNTIME
     chmod 0755 "$ROOT/etc/init.d/desktop-runtime"
@@ -367,6 +384,24 @@ export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
 
 weston_log="$log_dir/weston.log"
 foot_log="$log_dir/foot.log"
+boot_order_log="$log_dir/boot-order.log"
+if ! pidof seatd >/dev/null 2>&1; then
+  printf '%s\n' "E5T17D_START_DESKTOP_SEATD_NOT_READY=1" >>"$boot_order_log"
+  exit 1
+fi
+seatd_pid=$(pidof seatd | awk '{print $1}')
+seatd_state=$(awk '{print $3}' "/proc/$seatd_pid/stat")
+if [ "$seatd_state" = Z ]; then
+  printf '%s\n' "E5T17D_START_DESKTOP_SEATD_ZOMBIE=1" >>"$boot_order_log"
+  exit 1
+fi
+runtime_mode=$(stat -c '%a' "$runtime_dir")
+runtime_uid=$(stat -c '%u' "$runtime_dir")
+runtime_gid=$(stat -c '%g' "$runtime_dir")
+printf '%s\n' "E5T17D_START_DESKTOP_AFTER_SEATD=1 pid=$seatd_pid state=$seatd_state" \
+  "E5T17D_START_DESKTOP_RUNTIME mode=0$runtime_mode uid=$runtime_uid gid=$runtime_gid" >>"$boot_order_log"
+chown desktop:desktop "$boot_order_log"
+chmod 600 "$boot_order_log"
 printf '%s\n' "E5T17B_START_DESKTOP weston --backend=drm --renderer=pixman --socket=$WAYLAND_DISPLAY --no-config"
 
 # The guest display can be absent or already claimed. Both compositor and terminal are bounded;
@@ -389,12 +424,15 @@ done
 
 if [ "$socket_ready" -ne 1 ]; then
   printf '%s\n' "E5T17B_WESTON_NOT_READY=1" >>"$weston_log"
+  printf '%s\n' "E5T17D_COMPOSITOR_FAILURE_BOUNDED=30" >>"$boot_order_log"
   kill "$weston_pid" 2>/dev/null || true
   wait "$weston_pid" 2>/dev/null || true
+  printf '%s\n' "E5T17D_DESKTOP_RETURNED=0" >>"$boot_order_log"
   exit 0
 fi
 
 printf '%s\n' "E5T17B_WESTON_READY=1" >>"$weston_log"
+printf '%s\n' "E5T17D_COMPOSITOR_READY=1" >>"$boot_order_log"
 /bin/busybox timeout 30 foot --title=wasm-vm \
   >"$foot_log" 2>&1 &
 foot_pid=$!
@@ -408,6 +446,7 @@ if kill -0 "$foot_pid" 2>/dev/null; then
 fi
 wait "$foot_pid" 2>/dev/null || true
 printf '%s\n' "E5T17B_WESTON_EXIT=$weston_status" >>"$weston_log"
+printf '%s\n' "E5T17D_DESKTOP_RETURNED=0" >>"$boot_order_log"
 exit 0
 START_DESKTOP
     chmod 0755 "$ROOT/usr/local/bin/start-desktop"
