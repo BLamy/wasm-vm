@@ -18793,18 +18793,18 @@
       "activity": [
         {
           "date": "2026-09-05",
-          "commits": 4,
+          "commits": 5,
           "labels": [
+            "chore(e5-t17b): record verifier verdict",
             "chore(e5-t17b): submit timeout remediation",
             "chore(e5-t17b): record verifier refutation",
-            "chore(e5-t17b): submit desktop image evidence",
-            "chore(e5-t17b): activate desktop image assembly"
+            "chore(e5-t17b): submit desktop image evidence"
           ]
         }
       ],
       "firstActivity": "2026-09-05",
       "lastActivity": "2026-09-05",
-      "commitCount": 4
+      "commitCount": 5
     },
     {
       "id": "E5-T17c",
@@ -18812,7 +18812,7 @@
       "epicKey": "5",
       "title": "Prove desktop image reproducibility, size budget, and chunk deduplication",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T17b"
       ],

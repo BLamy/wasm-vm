@@ -3,7 +3,7 @@ id: E5-T17c
 epic: 5
 title: Prove desktop image reproducibility, size budget, and chunk deduplication
 priority: 517.3
-status: pending
+status: in-progress
 depends_on: [E5-T17b]
 estimate: S
 risk: high
