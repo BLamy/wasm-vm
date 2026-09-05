@@ -19107,8 +19107,9 @@
       "activity": [
         {
           "date": "2026-09-05",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t18b): record verified verdict",
             "chore(e5-t18b): record implementation evidence",
             "chore(e5-t18b): activate terminal input proof"
           ]
@@ -19116,7 +19117,7 @@
       ],
       "firstActivity": "2026-09-05",
       "lastActivity": "2026-09-05",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T18c",
@@ -19124,7 +19125,7 @@
       "epicKey": "5",
       "title": "Prove desktop cursor alignment and DPR hit-testing",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T18b"
       ],
@@ -19148,7 +19149,7 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis S slice isolates pointer scaling and focus geometry after the terminal path is known to be\nusable.",
+      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis S slice isolates pointer scaling and focus geometry after the terminal path is known to be\nusable.\n\n### 2026-09-05 — worker — STARTED\n\nThe active implementation slice freezes CSS-to-guest pointer mapping and Weston window-control\nhit-testing at device scale factors 1 and 2. WebKit and independent machines remain out of scope.",
       "adversarial": "Run the hit-test matrix at fractional canvas offsets and at coordinates immediately adjacent\nto each button boundary. Repeat after opening and maximizing a second window. Any DPR-dependent\nmiss, neighboring-control activation, or cursor/hover divergence refutes the slice. WebKit and\nindependent machines are out of scope.",
       "file": "tasks/epic-5-the-window/E5-T18c-desktop-cursor-dpr-hit-testing.md",
       "activity": [

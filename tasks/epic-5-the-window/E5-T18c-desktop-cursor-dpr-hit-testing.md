@@ -3,7 +3,7 @@ id: E5-T18c
 epic: 5
 title: Prove desktop cursor alignment and DPR hit-testing
 priority: 518.3
-status: pending
+status: in-progress
 depends_on: [E5-T18b]
 estimate: S
 risk: high
@@ -53,3 +53,8 @@ independent machines are out of scope.
 
 This S slice isolates pointer scaling and focus geometry after the terminal path is known to be
 usable.
+
+### 2026-09-05 — worker — STARTED
+
+The active implementation slice freezes CSS-to-guest pointer mapping and Weston window-control
+hit-testing at device scale factors 1 and 2. WebKit and independent machines remain out of scope.
