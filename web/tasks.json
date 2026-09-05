@@ -18898,15 +18898,16 @@
       "activity": [
         {
           "date": "2026-09-05",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "chore(e5-t17d): record verified boot-order evidence",
             "chore(e5-t17d): activate desktop boot-order proof"
           ]
         }
       ],
       "firstActivity": "2026-09-05",
       "lastActivity": "2026-09-05",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T17e",
@@ -18914,7 +18915,7 @@
       "epicKey": "5",
       "title": "Prove desktop image persistence and publish the final artifact handoff",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T17d"
       ],

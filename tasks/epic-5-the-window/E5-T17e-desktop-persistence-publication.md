@@ -3,7 +3,7 @@ id: E5-T17e
 epic: 5
 title: Prove desktop image persistence and publish the final artifact handoff
 priority: 517.5
-status: pending
+status: in-progress
 depends_on: [E5-T17d]
 estimate: S
 risk: high
