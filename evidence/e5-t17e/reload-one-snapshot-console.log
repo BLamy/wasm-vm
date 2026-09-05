@@ -1,0 +1,13 @@
+
+~ # 
+~ # [6nsentinel_value=$(cat /home/desktop/.local/state/wasm-vm/e5-t17e-sentinel); s
+entinel_sha=$(sha256sum /home/desktop/.local/state/wasm-vm/e5-t17e-sentinel | aw
+k '{print $1}'); sentinel_bytes=$(wc -c < /home/desktop/.local/state/wasm-vm/e5-
+t17e-sentinel); db_sha=$(sha256sum /lib/apk/db/installed | awk '{print $1}'); if
+ apk info -e htop >/dev/null 2>&1; then htop_state=present; else htop_state=miss
+ing; fi; printf 'T17E_RELOAD_'"ONE"' sentinel=%s sentinel_sha=%s sentinel_bytes=
+%s apk_db_sha=%s htop=%s\n' "$sentinel_value" "$sentinel_sha" "$sentinel_bytes" 
+"$db_sha" "$htop_state"; sync; printf '%s\n' T17E"SNAPSHOT"TWO
+T17E_RELOAD_ONE sentinel=E5T17E-SENTINEL-42 sentinel_sha=c07685d331f40d044fd2127bd06971a8d2704d4663a980ea3d372cef0090c99a sentinel_bytes=19 apk_db_sha=0b2e52bac8129b4a8d892df3ce1bbaeb04669d4e6b54963aad6eabd3d9500b21 htop=present
+T17ESNAPSHOTTWO
+~ # [6n

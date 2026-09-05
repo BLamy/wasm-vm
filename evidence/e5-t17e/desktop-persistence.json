@@ -1,0 +1,234 @@
+{
+  "schema": "wasm-vm.e5-t17e.desktop-persistence.v1",
+  "task": "E5-T17e",
+  "command": "make verify-E5-T17e",
+  "commit": "8a49a9a73d304845c45975dc3065ec7aac900b58",
+  "environment": "native-emulator",
+  "architecture": "riscv64",
+  "policy": {
+    "independentMachines": false,
+    "webkit": false,
+    "hostRr": false
+  },
+  "source": {
+    "handoff": "evidence/e5-t17c/desktop-image-reproducibility.json",
+    "image": {
+      "path": "target/e5-t17c/repro-b/alpine-rootfs.ext4",
+      "sha256": "467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e",
+      "size": 1073741824
+    },
+    "packageManifest": {
+      "path": "target/e5-t17c/repro-b/MANIFEST.txt",
+      "sha256": "ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908"
+    },
+    "fileManifest": {
+      "path": "target/e5-t17c/repro-b/FILE-MANIFEST.txt",
+      "sha256": "c82b20c083d808a797bd8db9c080a2be0c3ef7859d29e5b818bbfa99d8427cf0"
+    },
+    "profile": {
+      "path": "tools/image/e5-t17a-desktop-packages.json",
+      "sha256": "5e0ede77a0fe30fe2268a2a3b9bc322146e67cf128d9b15e6808cfa69cfb1a67",
+      "packageCount": 11
+    }
+  },
+  "publication": {
+    "image": {
+      "path": "target/e5-t17c/repro-b/alpine-rootfs.ext4",
+      "sha256": "467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e",
+      "size": 1073741824
+    },
+    "packageManifest": {
+      "path": "target/e5-t17c/repro-b/MANIFEST.txt",
+      "sha256": "ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908"
+    },
+    "fileManifest": {
+      "path": "target/e5-t17c/repro-b/FILE-MANIFEST.txt",
+      "sha256": "c82b20c083d808a797bd8db9c080a2be0c3ef7859d29e5b818bbfa99d8427cf0"
+    },
+    "baseChunkManifest": {
+      "path": "target/e5-t17c/chunks/base/manifest.json",
+      "sha256": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+      "imageLen": 536870912,
+      "positionCount": 4096,
+      "uniqueCount": 227
+    },
+    "desktopChunkManifest": {
+      "path": "target/e5-t17c/chunks/desktop-b/manifest.json",
+      "sha256": "1be3c29945747184c3ed868f51add1829e97bfd3945f456d4676d5f035fb4827",
+      "imageLen": 1073741824,
+      "chunkSize": 131072,
+      "positionCount": 8192,
+      "uniqueCount": 822
+    },
+    "base": {
+      "binding": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+      "sha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8"
+    },
+    "dedupe": {
+      "reusedObjectCount": 19,
+      "reusedPositionCount": 3211,
+      "reusedPositionRatio": 0.783935546875,
+      "newObjectCount": 803,
+      "fetchedBytes": 105250816,
+      "fullBaseUploadRejected": true
+    },
+    "chunkVerify": {
+      "command": "target/release/wasm-vm chunk-verify target/e5-t17c/chunks/desktop-b",
+      "output": "chunk-verify: OK — 822 distinct chunks, manifest ↔ chunks/ consistent"
+    }
+  },
+  "hygiene": {
+    "path": "evidence/e5-t17e/final-image-inspection.log",
+    "sha256": "1585bcc97377cf6a35b9101b83dee21f6e4d10eac004884fa045591abd6cd45a",
+    "sourceImageUnchanged": true,
+    "noApkCache": true,
+    "noRootHistoryOrCredentials": true,
+    "declaredPayloadOnly": true
+  },
+  "runtime": {
+    "image": {
+      "path": "target/e5-t17e/runtime/desktop-overlay.ext4",
+      "sourceSha256": "467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e",
+      "postSha256": "1aec27702957d9488e306e9256a17f10261b64d283749bc55e4b5269570d8f9b",
+      "size": 1073741824
+    },
+    "package": {
+      "name": "htop",
+      "installCommand": "apk add --no-scripts --no-progress htop",
+      "signedDefaultVerification": true,
+      "profileMutation": false,
+      "persistedAcrossReloads": true
+    },
+    "sentinel": {
+      "path": "/home/desktop/.local/state/wasm-vm/e5-t17e-sentinel",
+      "value": "E5T17E-SENTINEL-42",
+      "sha256": "c07685d331f40d044fd2127bd06971a8d2704d4663a980ea3d372cef0090c99a",
+      "bytes": 19
+    },
+    "coherence": {
+      "coreId": "0000000000000000000000000000000000000000000000000000000000000000",
+      "baseId": "0000000000000000000000000000000000000000000000000000000000000000",
+      "publicationCoreId": "302e302e31000000000000000000000000000000000000000000000000000000",
+      "publicationBaseId": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+      "identityMode": "native-default-zero; publication binding recorded separately",
+      "sameDriveAcrossPhases": true,
+      "syncBeforeEverySnapshot": true
+    },
+    "reloadCount": 2,
+    "phases": [
+      {
+        "name": "cold-install-snapshot",
+        "exit": {
+          "code": 0,
+          "signal": null
+        },
+        "timedOut": false,
+        "console": {
+          "path": "evidence/e5-t17e/cold-install-snapshot-console.log",
+          "sha256": "e3aaebc8f8f6ca8bf8fe87bcbfa9dd2639ac514a5df123d145a6ae8d48737aa6"
+        },
+        "stderr": {
+          "path": "evidence/e5-t17e/cold-install-snapshot-stderr.log",
+          "sha256": "436df7d1d8c7faecb66b2e28467ae5a2f34464a9d98c3b9f70e9115503e8d276"
+        },
+        "image": {
+          "path": "target/e5-t17e/runtime/desktop-overlay.ext4",
+          "postSha256": "d577027ff09a4a1383c7ca422917b81823613ef5157203b7cffb924455e03101"
+        },
+        "snapshot": {
+          "path": "target/e5-t17e/runtime/snapshot-one.bin",
+          "sha256": "9f66a53a3e32aa758fdcd7d91cf84074471cca32601253fefb5602458db281d1",
+          "size": 99752091
+        },
+        "evidencePath": null
+      },
+      {
+        "name": "reload-one-snapshot",
+        "exit": {
+          "code": 0,
+          "signal": null
+        },
+        "timedOut": false,
+        "console": {
+          "path": "evidence/e5-t17e/reload-one-snapshot-console.log",
+          "sha256": "db23b80172ee6a60307ea52fbd4141b9d47c77d5ac6ae97f24e277a3caf132d5"
+        },
+        "stderr": {
+          "path": "evidence/e5-t17e/reload-one-snapshot-stderr.log",
+          "sha256": "0fdd5c93793385c6828f8107924dec98c1926b1391518b2e67af4fe515c238ff"
+        },
+        "image": {
+          "path": "target/e5-t17e/runtime/desktop-overlay.ext4",
+          "postSha256": "bcf78674570a9b1fd2c54133ad578743f3615069e252f5b0ba4f187d8a8dc155"
+        },
+        "snapshot": {
+          "path": "target/e5-t17e/runtime/snapshot-two.bin",
+          "sha256": "993b95b3dd22e3afb8fb49bac80a3beaa8cfa20df5f3fc5166a2652b35aa6e62",
+          "size": 97734344
+        },
+        "evidencePath": null
+      },
+      {
+        "name": "reload-two-poweroff",
+        "exit": {
+          "code": 0,
+          "signal": null
+        },
+        "timedOut": false,
+        "console": {
+          "path": "evidence/e5-t17e/reload-two-poweroff-console.log",
+          "sha256": "620663cbd79c4bbe103e791fa6da5c7129bc0b42161d3a46b0497fc93c3a6d3a"
+        },
+        "stderr": {
+          "path": "evidence/e5-t17e/reload-two-poweroff-stderr.log",
+          "sha256": "d28d5e7efb5e290aaeb9de4363966755659a05cda9e444c3f6fe0b73f2ba90c4"
+        },
+        "image": {
+          "path": "target/e5-t17e/runtime/desktop-overlay.ext4",
+          "postSha256": "1aec27702957d9488e306e9256a17f10261b64d283749bc55e4b5269570d8f9b"
+        },
+        "snapshot": null,
+        "evidencePath": "evidence/e5-t17e/reload-two-guest-evidence.txt"
+      }
+    ],
+    "state": {
+      "preSnapshot": {
+        "sentinel": "E5T17E-SENTINEL-42",
+        "sentinelSha256": "c07685d331f40d044fd2127bd06971a8d2704d4663a980ea3d372cef0090c99a",
+        "sentinelBytes": 19,
+        "packageDbSha256": "0b2e52bac8129b4a8d892df3ce1bbaeb04669d4e6b54963aad6eabd3d9500b21",
+        "packagePresent": true,
+        "unsignedRc": 99,
+        "unsignedRejected": true
+      },
+      "reloadOne": {
+        "sentinel": "E5T17E-SENTINEL-42",
+        "sentinelSha256": "c07685d331f40d044fd2127bd06971a8d2704d4663a980ea3d372cef0090c99a",
+        "sentinelBytes": 19,
+        "packageDbSha256": "0b2e52bac8129b4a8d892df3ce1bbaeb04669d4e6b54963aad6eabd3d9500b21",
+        "packagePresent": true
+      },
+      "reloadTwo": {
+        "sentinel": "E5T17E-SENTINEL-42",
+        "sentinelSha256": "c07685d331f40d044fd2127bd06971a8d2704d4663a980ea3d372cef0090c99a",
+        "sentinelBytes": 19,
+        "packageDbSha256": "0b2e52bac8129b4a8d892df3ce1bbaeb04669d4e6b54963aad6eabd3d9500b21",
+        "packagePresent": true
+      }
+    },
+    "guestEvidence": {
+      "path": "evidence/e5-t17e/reload-two-guest-evidence.txt",
+      "sha256": "8aaf58e460c5f1c7d7b5c5d7a09709402a5b4a01e55f5aabc13fdd4bd389961d",
+      "size": 204
+    }
+  },
+  "checks": {
+    "sourceUnchanged": true,
+    "signedPackageInstalled": true,
+    "unsignedPackageRejected": true,
+    "sentinelAndPackageDbPersisted": true,
+    "finalPoweroff": true,
+    "sourceImageSha256": "467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e"
+  },
+  "result": "passed"
+}

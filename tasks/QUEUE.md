@@ -395,7 +395,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `517.2` [E5-T17b](epic-5-the-window/E5-T17b-desktop-image-assembly.md) — Assemble Alpine desktop image and startup configuration *(deps: E5-T17a)*
 - [x] `517.3` [E5-T17c](epic-5-the-window/E5-T17c-desktop-image-reproducibility.md) — Prove desktop image reproducibility, size budget, and chunk deduplication *(deps: E5-T17b)*
 - [x] `517.4` [E5-T17d](epic-5-the-window/E5-T17d-desktop-boot-order.md) — Prove headless desktop boot ordering and seat runtime *(deps: E5-T17c)*
-- [~] `517.5` [E5-T17e](epic-5-the-window/E5-T17e-desktop-persistence-publication.md) — Prove desktop image persistence and publish the final artifact handoff *(deps: E5-T17d)*
+- [?] `517.5` [E5-T17e](epic-5-the-window/E5-T17e-desktop-persistence-publication.md) — Prove desktop image persistence and publish the final artifact handoff *(deps: E5-T17d)*
 - [ ] `518` [E5-T18](epic-5-the-window/E5-T18-boot-to-desktop-bringup.md) — Boot-to-desktop bring-up — seat/udev/permissions debugged, playbook written *(deps: E5-T08, E5-T15d, E5-T17e)*
 - [-] `519` [E5-T19](epic-5-the-window/E5-T19-virtio-snd-pcm-device.md) — virtio-snd device — control plane and PCM playback stream machine *(deps: E5-T05c)*
 - [x] `519.1` [E5-T19a](epic-5-the-window/E5-T19a-snd-control-state.md) — virtio-snd control protocol and PCM state machine *(deps: E5-T05c)*

@@ -18915,7 +18915,7 @@
       "epicKey": "5",
       "title": "Prove desktop image persistence and publish the final artifact handoff",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T17d"
       ],
@@ -18943,13 +18943,21 @@
       ],
       "criteriaTotal": 4,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-05 — worker — implemented\n\n- Implementation commit: `8a49a9a73d304845c45975dc3065ec7aac900b58`. Added the deterministic\n  `make verify-E5-T17e` target, the native guest persistence runner/verifier, and `docs/images.md`.\n  The runner keeps the T17c publication image read-only, boots a clean copy through the local\n  riscv64 emulator, installs signed `htop` through the guest slirp network, writes a sentinel,\n  and saves/reloads the machine twice before a final `poweroff -f`.\n- Exact worker gates: `cargo fmt --check -p wasm-vm-cli`; `cargo clippy -p wasm-vm-cli --bin\n  wasm-vm --features gpu-trace -- -D warnings`; `cargo build --release -p wasm-vm-cli\n  --features gpu-trace`; shell/JS syntax checks; `make verify-E5-T17c`; and\n  `node tools/run-e5-t17e-desktop-persistence.mjs`. The standalone verifier also passed\n  `node tools/verify/e5-t17e-desktop-persistence.mjs --self-test`.\n- Evidence: `evidence/e5-t17e/desktop-persistence.json` and its console/stderr logs,\n  `evidence/e5-t17e/reload-two-guest-evidence.txt`, and\n  `evidence/e5-t17e/final-image-inspection.log`. The final image is\n  `target/e5-t17c/repro-b/alpine-rootfs.ext4`, SHA-256\n  `467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e`; the publication record\n  independently matched the E3 base and desktop chunk manifests, including 3,211 reused positions\n  and 803 new objects. The guest recorded `htop` present plus identical sentinel and\n  `/lib/apk/db/installed` hashes before and after both reloads; the malformed unsigned package\n  probe returned 99 and was rejected.\n- Claim: the final T17c desktop artifact is cleanly published through the E3 chunk flow, the\n  writable overlay preserves a guest package mutation and sentinel across repeated native\n  save/resume cycles, and the final image's root credentials/cache/history hygiene remains intact.\n  This local guest proof intentionally has no independent-machine, WebKit, or host-rr leg.",
       "adversarial": "Reload repeatedly at the snapshot boundary, corrupt/truncate the sentinel, attempt an unsigned\nextra package, and compare the published chunk manifest against the actual image. Verify that a\nfull re-upload or a package mutation outside the profile fails closed, and that the documented\nartifact hashes resolve to the exact image under test.",
       "file": "tasks/epic-5-the-window/E5-T17e-desktop-persistence-publication.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-05",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t17e): activate persistence publication proof"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-05",
+      "lastActivity": "2026-09-05",
+      "commitCount": 1
     },
     {
       "id": "E5-T18",

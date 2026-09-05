@@ -2,7 +2,7 @@
   "schema": "wasm-vm.e5-t17c.desktop-image-reproducibility.v1",
   "task": "E5-T17c",
   "command": "make verify-E5-T17c",
-  "commit": "063676b20c2b4c51e6ad149f19c13c7aa1beeafe",
+  "commit": "9782f2c57281acd47e46f651aed9a17bf9a6dac8",
   "profile": {
     "path": "tools/image/e5-t17a-desktop-packages.json",
     "sha256": "5e0ede77a0fe30fe2268a2a3b9bc322146e67cf128d9b15e6808cfa69cfb1a67",

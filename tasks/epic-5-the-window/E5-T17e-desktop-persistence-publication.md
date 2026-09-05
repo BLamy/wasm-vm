@@ -3,7 +3,7 @@ id: E5-T17e
 epic: 5
 title: Prove desktop image persistence and publish the final artifact handoff
 priority: 517.5
-status: in-progress
+status: implemented
 depends_on: [E5-T17d]
 estimate: S
 risk: high
@@ -49,4 +49,28 @@ artifact hashes resolve to the exact image under test.
 
 ## Verification log
 
-(empty)
+### 2026-09-05 — worker — implemented
+
+- Implementation commit: `8a49a9a73d304845c45975dc3065ec7aac900b58`. Added the deterministic
+  `make verify-E5-T17e` target, the native guest persistence runner/verifier, and `docs/images.md`.
+  The runner keeps the T17c publication image read-only, boots a clean copy through the local
+  riscv64 emulator, installs signed `htop` through the guest slirp network, writes a sentinel,
+  and saves/reloads the machine twice before a final `poweroff -f`.
+- Exact worker gates: `cargo fmt --check -p wasm-vm-cli`; `cargo clippy -p wasm-vm-cli --bin
+  wasm-vm --features gpu-trace -- -D warnings`; `cargo build --release -p wasm-vm-cli
+  --features gpu-trace`; shell/JS syntax checks; `make verify-E5-T17c`; and
+  `node tools/run-e5-t17e-desktop-persistence.mjs`. The standalone verifier also passed
+  `node tools/verify/e5-t17e-desktop-persistence.mjs --self-test`.
+- Evidence: `evidence/e5-t17e/desktop-persistence.json` and its console/stderr logs,
+  `evidence/e5-t17e/reload-two-guest-evidence.txt`, and
+  `evidence/e5-t17e/final-image-inspection.log`. The final image is
+  `target/e5-t17c/repro-b/alpine-rootfs.ext4`, SHA-256
+  `467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e`; the publication record
+  independently matched the E3 base and desktop chunk manifests, including 3,211 reused positions
+  and 803 new objects. The guest recorded `htop` present plus identical sentinel and
+  `/lib/apk/db/installed` hashes before and after both reloads; the malformed unsigned package
+  probe returned 99 and was rejected.
+- Claim: the final T17c desktop artifact is cleanly published through the E3 chunk flow, the
+  writable overlay preserves a guest package mutation and sentinel across repeated native
+  save/resume cycles, and the final image's root credentials/cache/history hygiene remains intact.
+  This local guest proof intentionally has no independent-machine, WebKit, or host-rr leg.
