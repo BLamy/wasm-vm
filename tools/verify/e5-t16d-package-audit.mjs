@@ -116,7 +116,7 @@ function validateStructure(value, basePackages) {
   assert.match(value.source.packageManifestSha256, /^[0-9a-f]{64}$/u);
   assert.match(value.source.fileManifestSha256, /^[0-9a-f]{64}$/u);
   assert.match(value.source.derivation, /E3 base image/u);
-  assert.equal(value.policy.install, "apk add --no-scripts --no-progress <package>");
+  assert.equal(value.policy.install, "apk add --no-scripts --no-deps --no-progress <package>");
   assert.equal(value.policy.signatureVerification, "apk default signature verification");
   assert.equal(value.policy.forbiddenInstallFlag, "--allow-untrusted");
   assert.equal(value.policy.network, "native emulator riscv64 guest via --net-slirp");
@@ -148,6 +148,8 @@ function validateStructure(value, basePackages) {
     assert.equal(candidate.architectureObserved.trim(), "riscv64", `${candidate.id}: guest apk architecture mismatch`);
     assert.equal(candidate.update.rc, 0, `${candidate.id}: apk update failed`);
     assert.match(candidate.update.output, /(?:OK:|APKINDEX)/u, `${candidate.id}: apk update had no repository result`);
+    assert.equal(candidate.simulate.rc, 0, `${candidate.id}: full dependency resolver simulation failed`);
+    assert.match(candidate.simulate.output, /(?:package|world|install)/iu, `${candidate.id}: dependency simulation was not recorded`);
     assert.equal(candidate.install.rc, 0, `${candidate.id}: apk add failed`);
     assert.match(candidate.install.output, /OK:/u, `${candidate.id}: apk add did not report success`);
     assert.match(candidate.image.sha256, /^[0-9a-f]{64}$/u);
