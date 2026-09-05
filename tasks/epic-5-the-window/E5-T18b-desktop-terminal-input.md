@@ -3,7 +3,7 @@ id: E5-T18b
 epic: 5
 title: Prove WM terminal launch and keyboard input
 priority: 518.2
-status: implemented
+status: verified
 depends_on: [E5-T18a]
 estimate: S
 risk: high
@@ -85,3 +85,43 @@ commands through Chromium physical `KeyboardEvent` → T12 evdev frames → virt
 recorded visual markers, exact DOM/frame sequence matches, clean repeat closes, zero browser errors,
 published image/chunk bindings, and paused guest state demonstrate the acceptance criteria. WebKit,
 independent machines, and host rr are outside this slice's explicit scope.
+
+### 2026-09-05 — verifier — VERDICT: verified
+
+- P1 exact-head publication — HELD. Predicted the committed report would identify the local
+  Chromium scope and bind the run to the exact launcher-enabled image. At `HEAD` `61fd584` (runtime
+  head `115910d`), the report records the scope, result, image/file/chunk manifest bindings, and
+  `chunk-verify: OK` at [desktop-terminal-input.json](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t18b/desktop-terminal-input.json:2).
+  Fresh SHA-256 checks match the report for the image, both manifests, report, transcript, and
+  screenshot; the file manifest contains the executable `/usr/bin/weston-terminal` digest.
+- P2 launcher, focus, input, and repeat — HELD. Predicted two complete menu → terminal → focus →
+  command → Control-D cycles with no lost or reordered physical keys. The recorded interaction
+  records show two accepted launches, focuses, commands, and closes, with both markers visible and
+  `132` keyboard frames equal to `132` DOM events at lines 116-219. An independent frame audit
+  reconstructed 66 make/break pairs per command (including Enter), matched every code to the
+  command string, and found zero evdev-code mismatches across all 272 frames.
+- P3 rendering, errors, and final state — HELD. Predicted the guest would present usable desktop
+  frames and finish in a clean paused state. The report records 71/71 successful Canvas2D presents,
+  zero dropped frames, 12 pointer frames, no input diagnostics, `paused: true`, and `error: null`
+  at lines 221-224 and 2405-2531; browser console/page/request error arrays are empty at lines 55-59.
+  The transcript has only the explicitly tolerated favicon 404 at line 24, and the committed
+  screenshot hash recomputes at lines 2534-2536.
+- P4 bounded novel attack — HELD. Predicted a one-cycle proof mutant would be rejected rather than
+  accepted as the required repeated flow. `node tools/verify/e5-t18b-desktop-terminal-input.mjs
+  --self-test` exited 0 with `E5T18B_SELF_TEST=wrong-count-rejected` (`tools/verify/e5-t18b-desktop-terminal-input.mjs:474-505`).
+- COVERAGE — HELD. The browser recording exercises the added terminal route, launcher-enabled
+  image, wasm interactive keyboard budget, serialized tablet/mouse pointer path, T18b asset route,
+  and verifier main path. Source/dist parity and the deployed index link are independently bound at
+  lines 2538-2585. The native-only CLI constant call site (`crates/cli/src/boot.rs:1585-1590`),
+  legacy noninteractive foot fallback (`tools/rootfs-inner.sh:456-470`), byte-identical TypeScript
+  pointer mirror, and generated queue/dist/service-worker/index metadata are explicit waivers, not
+  acceptance claims. No acceptance-bearing changed hunk remains unexecuted or unexplained.
+
+Commands: `git rev-parse HEAD`; `git diff --name-status d133ec9..61fd584`; SHA-256 checks for the
+report/transcript/screenshot/image/manifests; `target/release/wasm-vm chunk-verify
+target/e5-t18b/chunks/desktop-v6`; independent JSON invariant, keyboard-pair/code/evdev audits;
+source/dist `cmp`; `node --check tools/verify/e5-t18b-desktop-terminal-input.mjs`; `node
+tools/verify/e5-t18b-desktop-terminal-input.mjs --self-test`; `node --test web/tests/pointer.test.mjs`;
+`bash -n tools/build-rootfs.sh tools/image/desktop.sh tools/rootfs-inner.sh tools/serve-dev.sh`; and
+scoped `git diff --check`. WebKit, independent machines, and host rr were not run per the task's
+explicit scope. No implementation, test, script, evidence, or unrelated file was modified.
