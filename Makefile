@@ -887,6 +887,15 @@ verify-E5-T18a:
 	  make web-build; \
 	  node tools/verify/e5-t18a-desktop-cold-boot.mjs
 
+.PHONY: verify-E5-T18b
+verify-E5-T18b:
+	@set -eu; \
+	  command -v node >/dev/null; \
+	  test -s target/e5-t18b/desktop-image-v6/alpine-rootfs.ext4; \
+	  test -s target/e5-t18b/chunks/desktop-v6/manifest.json; \
+	  make web-dist; \
+	  E5_T18B_IMAGE=target/e5-t18b/desktop-image-v6/alpine-rootfs.ext4 E5_T18B_DESKTOP_ASSET_DIR=target/e5-t18b/chunks/desktop-v6 node tools/verify/e5-t18b-desktop-terminal-input.mjs
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs

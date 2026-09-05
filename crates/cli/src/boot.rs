@@ -1583,9 +1583,11 @@ impl DisplayWorkload {
             .tablet_input()
             .ok_or_else(|| "display workload requires the virtio tablet".to_string())?;
         // A shifted key is a four-event stream (shift down/key down, then key up/shift up, each
-        // terminated by SYN_REPORT).  2,048 events leaves a fixed margin over the 100-character
-        // plan while retaining InputState's bounded whole-frame policy.
-        keyboard.borrow_mut().set_pending_event_budget(2_048);
+        // terminated by SYN_REPORT). The interactive keyboard budget leaves a fixed margin over
+        // the 100-character plan while retaining InputState's bounded whole-frame policy.
+        keyboard.borrow_mut().set_pending_event_budget(
+            wasm_vm_core::dev::virtio::input::keyboard::INTERACTIVE_PENDING_EVENT_BUDGET,
+        );
         tablet.borrow_mut().set_pending_event_budget(512);
         Ok(Self {
             started: std::time::Instant::now(),

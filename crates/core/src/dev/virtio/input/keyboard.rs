@@ -25,6 +25,12 @@ pub const KEYBOARD_DEVIDS: InputDevids = InputDevids {
 /// Stable virtio-mmio slot used by the keyboard when the standard slots are attached.
 pub const KEYBOARD_VIRTIO_SLOT: usize = 3;
 
+/// Bounded host-side queue budget for interactive keyboard clients. A browser key transition is
+/// one EV_KEY event plus one SYN_REPORT, so the default transport budget of 256 events covers only
+/// 128 transitions. Keep a larger but finite budget for terminal bursts and the native display
+/// workload's 100-character proof without changing the conservative default for generic devices.
+pub const INTERACTIVE_PENDING_EVENT_BUDGET: usize = 2_048;
+
 /// Linux input-event-codes.h: the canonical `KEY_A` make/break code.
 pub const KEY_A: u16 = 30;
 /// Linux input-event-codes.h: an edge code used by keyboard-map adversarial fixtures.

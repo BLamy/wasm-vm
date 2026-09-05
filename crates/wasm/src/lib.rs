@@ -2224,6 +2224,14 @@ impl WasmLinux {
         // E5-T11c: attach the guest-visible keyboard on every browser boot. The host keymap can
         // inject make/break frames through WasmLinux::sendKeyboardEvent/syncKeyboard.
         let _ = machine.enable_virtio_keyboard();
+        // A browser key transition is two bounded input events (EV_KEY + SYN_REPORT). Give the
+        // interactive path the same finite burst headroom as the native display workload so a
+        // terminal command cannot overflow the default generic-device budget and strand a key.
+        if let Some(keyboard) = machine.keyboard_input() {
+            keyboard.borrow_mut().set_pending_event_budget(
+                wasm_vm_core::dev::virtio::input::keyboard::INTERACTIVE_PENDING_EVENT_BUDGET,
+            );
+        }
         // E5-T14a: keep both pointer devices guest-visible on every browser boot. T14b selects
         // which state receives DOM frames; the tablet and relative mouse remain stable peers.
         let _ = machine.enable_virtio_pointer();

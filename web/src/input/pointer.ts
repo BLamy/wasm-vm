@@ -140,6 +140,8 @@ export function createPointerBridge(
     onDiagnostic = () => {},
     onFrame = () => {},
     onStateChange = () => {},
+    absoluteButtonDevice = "tablet",
+    serializeTransport = false,
   } = {},
 ) {
   if (typeof adapter?.sendTabletEvent !== "function" || typeof adapter?.syncTablet !== "function") {
@@ -147,6 +149,12 @@ export function createPointerBridge(
   }
   if (typeof adapter?.sendMouseEvent !== "function" || typeof adapter?.syncMouse !== "function") {
     throw new TypeError("pointer bridge requires mouse event and sync methods");
+  }
+  if (absoluteButtonDevice !== "tablet" && absoluteButtonDevice !== "mouse") {
+    throw new TypeError(`unknown absolute button device: ${String(absoluteButtonDevice)}`);
+  }
+  if (typeof serializeTransport !== "boolean") {
+    throw new TypeError("serializeTransport must be boolean");
   }
 
   let pointerTarget = target;
@@ -158,6 +166,7 @@ export function createPointerBridge(
   let pointerLockChanges = 0;
   const heldButtons = new Map();
   let wheelRemainders = { horizontal: 0, vertical: 0 };
+  let transportTail = Promise.resolve();
 
   function diagnostic(reason, extra = {}) {
     safeCallback(onDiagnostic, { reason, mode, ...extra });
@@ -201,13 +210,6 @@ export function createPointerBridge(
       ? adapter.sendTabletEvent
       : adapter.sendMouseEvent;
     const sync = device === "tablet" ? adapter.syncTablet : adapter.syncMouse;
-    try {
-      for (const event of events) send(event.eventType, event.code, event.value);
-      sync();
-    } catch (error) {
-      diagnostic("pointer-send-error", { device, error: error?.message || String(error) });
-      return null;
-    }
     const frame = {
       sequence: ++sequence,
       device,
@@ -216,7 +218,33 @@ export function createPointerBridge(
       sync: SYN_REPORT,
       ...metadata,
     };
-    safeCallback(onFrame, frame);
+    const transmit = () => {
+      try {
+        for (const event of events) send(event.eventType, event.code, event.value);
+        sync();
+      } catch (error) {
+        diagnostic("pointer-send-error", { device, error: error?.message || String(error) });
+        return false;
+      }
+      safeCallback(onFrame, frame);
+      return true;
+    };
+    const transmitSerialized = async () => {
+      try {
+        for (const event of events) await send(event.eventType, event.code, event.value);
+        await sync();
+      } catch (error) {
+        diagnostic("pointer-send-error", { device, error: error?.message || String(error) });
+        return false;
+      }
+      safeCallback(onFrame, frame);
+      return true;
+    };
+    if (serializeTransport) {
+      transportTail = transportTail.then(transmitSerialized, transmitSerialized);
+    } else {
+      transmit();
+    }
     return frame;
   }
 
@@ -338,7 +366,7 @@ export function createPointerBridge(
   }
 
   function currentDevice() {
-    return mode === POINTER_MODES.ABSOLUTE ? "tablet" : "mouse";
+    return mode === POINTER_MODES.ABSOLUTE ? absoluteButtonDevice : "mouse";
   }
 
   function wheelScale(deltaMode) {

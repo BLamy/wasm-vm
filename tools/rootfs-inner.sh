@@ -229,6 +229,10 @@ if [ -n "${DISPLAY_CANDIDATE:-}" ]; then
   add_display_member audio 63
   add_display_member seat 996
   install -d -m0700 -o 1000 -g 1000 "$ROOT/home/desktop" "$ROOT/run/user/1000"
+  if [ "${E5_T18B_INTERACTIVE:-0}" = 1 ]; then
+    install -d -m0755 "$ROOT/etc/wasm-vm"
+    printf '%s\n' 900 > "$ROOT/etc/wasm-vm/desktop-terminal-interactive"
+  fi
   install -d -m0755 "$ROOT/usr/local/bin"
 
   # Keep the compositor and terminal in the same desktop session: Wayland creates its socket with
@@ -383,6 +387,12 @@ chmod 700 "$runtime_dir" "$log_dir"
 chown desktop:desktop "$runtime_dir" "$log_dir"
 export XDG_RUNTIME_DIR="$runtime_dir"
 export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+export XKB_CONFIG_ROOT=${XKB_CONFIG_ROOT:-/usr/share/X11/xkb}
+export XKB_DEFAULT_RULES=${XKB_DEFAULT_RULES:-evdev}
+export XKB_DEFAULT_MODEL=${XKB_DEFAULT_MODEL:-pc105}
+export XKB_DEFAULT_LAYOUT=${XKB_DEFAULT_LAYOUT:-us}
+export XKB_DEFAULT_VARIANT=${XKB_DEFAULT_VARIANT:-}
+export XKB_DEFAULT_OPTIONS=${XKB_DEFAULT_OPTIONS:-}
 
 weston_log="$log_dir/weston.log"
 foot_log="$log_dir/foot.log"
@@ -406,12 +416,17 @@ printf '%s\n' "E5T17D_START_DESKTOP_AFTER_SEATD=1 pid=$seatd_pid state=$seatd_st
   "E5T17D_START_DESKTOP_RUNTIME mode=0$runtime_mode uid=$runtime_uid gid=$runtime_gid" >>"$boot_order_log"
 chown desktop:desktop "$boot_order_log"
 chmod 600 "$boot_order_log"
-printf '%s\n' "E5T17B_START_DESKTOP weston --backend=drm --renderer=pixman --socket=$WAYLAND_DISPLAY --no-config"
+printf '%s\n' "E5T17B_START_DESKTOP weston --config=/etc/xdg/weston/weston.ini --backend=drm --renderer=pixman --socket=$WAYLAND_DISPLAY"
 
 # The guest display can be absent or already claimed. Both compositor and terminal are bounded;
 # the login shell returns cleanly after a failure so tty1/getty cannot block OpenRC shutdown.
-/bin/busybox timeout 30 weston \
-  --backend=drm --renderer=pixman --socket="$WAYLAND_DISPLAY" --no-config \
+desktop_timeout=30
+if [ -r /etc/wasm-vm/desktop-terminal-interactive ]; then
+  desktop_timeout=$(cat /etc/wasm-vm/desktop-terminal-interactive)
+fi
+/bin/busybox timeout "$desktop_timeout" weston \
+  --config=/etc/xdg/weston/weston.ini \
+  --backend=drm --renderer=pixman --socket="$WAYLAND_DISPLAY" \
   >"$weston_log" 2>&1 &
 weston_pid=$!
 socket_ready=0
@@ -438,18 +453,21 @@ fi
 
 printf '%s\n' "E5T17B_WESTON_READY=1" >>"$weston_log"
 printf '%s\n' "E5T17D_COMPOSITOR_READY=1" >>"$boot_order_log"
-/bin/busybox timeout 30 foot --title=wasm-vm \
-  >"$foot_log" 2>&1 &
-foot_pid=$!
+foot_pid=
+if [ ! -r /etc/wasm-vm/desktop-terminal-interactive ]; then
+  /bin/busybox timeout "$desktop_timeout" env HOME=/home/desktop SHELL=/bin/sh /usr/bin/foot \
+    >"$foot_log" 2>&1 &
+  foot_pid=$!
+fi
 if wait "$weston_pid"; then
   weston_status=0
 else
   weston_status=$?
 fi
-if kill -0 "$foot_pid" 2>/dev/null; then
+if [ -n "$foot_pid" ] && kill -0 "$foot_pid" 2>/dev/null; then
   kill "$foot_pid" 2>/dev/null || true
 fi
-wait "$foot_pid" 2>/dev/null || true
+if [ -n "$foot_pid" ]; then wait "$foot_pid" 2>/dev/null || true; fi
 printf '%s\n' "E5T17B_WESTON_EXIT=$weston_status" >>"$weston_log"
 printf '%s\n' "E5T17D_DESKTOP_RETURNED=0" >>"$boot_order_log"
 /bin/sync
@@ -459,14 +477,26 @@ START_DESKTOP
     grep -qxF /usr/local/bin/start-desktop "$ROOT/etc/shells" 2>/dev/null || \
       printf '%s\n' /usr/local/bin/start-desktop >> "$ROOT/etc/shells"
 
-    # Explicitly pin the compositor configuration too. The launcher uses --no-config, while this
-    # file makes the production intent inspectable to image consumers and does not permit GL/fbdev
-    # fallback through an automatic renderer selection.
+    # Explicitly pin the compositor configuration too. The desktop shell reads this file for the
+    # real panel launcher, keyboard rules, and renderer; command-line flags below repeat the DRM /
+    # pixman boundary so the startup transcript remains self-describing.
     cat > "$ROOT/etc/xdg/weston/weston.ini" <<'WESTON_INI'
 [core]
 backend=drm-backend.so
 renderer=pixman
 shell=desktop-shell.so
+
+[launcher]
+icon=/usr/share/weston/icon_terminal.png
+path=/usr/bin/weston-terminal
+
+[keyboard]
+keymap_rules=evdev
+keymap_model=pc105
+keymap_layout=us
+
+[terminal]
+term=xterm-256color
 WESTON_INI
 
     cat > "$ROOT/home/desktop/.profile" <<'DESKTOP_PROFILE'
@@ -476,8 +506,27 @@ DESKTOP_PROFILE
     cat > "$ROOT/home/desktop/.config/foot/foot.ini" <<'FOOT_INI'
 shell=/bin/sh
 term=xterm-256color
-scrollback-lines=10000
 FOOT_INI
+    # Weston desktop-shell's built-in Terminal launcher execs this conventional path. Keep the
+    # launcher target inside the verified image rather than relying on the optional weston-terminal
+    # sample client, which is not part of the selected production package set.
+    cat > "$ROOT/usr/bin/weston-terminal" <<'WESTON_TERMINAL'
+#!/bin/sh
+set -eu
+export HOME=/home/desktop
+export SHELL=/bin/sh
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/1000}
+export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+export XKB_CONFIG_ROOT=${XKB_CONFIG_ROOT:-/usr/share/X11/xkb}
+export XKB_DEFAULT_RULES=${XKB_DEFAULT_RULES:-evdev}
+export XKB_DEFAULT_MODEL=${XKB_DEFAULT_MODEL:-pc105}
+export XKB_DEFAULT_LAYOUT=${XKB_DEFAULT_LAYOUT:-us}
+export XKB_DEFAULT_VARIANT=${XKB_DEFAULT_VARIANT:-}
+export XKB_DEFAULT_OPTIONS=${XKB_DEFAULT_OPTIONS:-}
+cd /home/desktop
+exec /usr/bin/foot "$@"
+WESTON_TERMINAL
+    chmod 0755 "$ROOT/usr/bin/weston-terminal"
     cat > "$ROOT/home/desktop/.local/bin/clip-copy" <<'CLIP_COPY'
 #!/bin/sh
 set -eu
@@ -554,8 +603,10 @@ link_svc default wasm-vm-file-agent
     /usr/local/sbin/desktop-autologin \
     /usr/local/bin/start-desktop \
     /etc/xdg/weston/weston.ini \
+    /etc/wasm-vm/desktop-terminal-interactive \
     /home/desktop/.profile \
     /home/desktop/.config/foot/foot.ini \
+    /usr/bin/weston-terminal \
     /home/desktop/.local/bin/clip-copy \
     /home/desktop/.local/bin/clip-paste \
     /etc/inittab \

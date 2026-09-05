@@ -78,6 +78,7 @@ ROOTFS_OUT="$out" \
 IMG_SIZE="$size" \
 EXTRA_PKGS="$profile_packages" \
 DISPLAY_CANDIDATE=desktop \
+E5_T18B_INTERACTIVE="${E5_T18B_INTERACTIVE:-0}" \
 UPDATE_MANIFEST="$update_manifest" \
 FORCE_LOCKED_INSTALL="$force_locked_install" \
 bash tools/build-rootfs.sh

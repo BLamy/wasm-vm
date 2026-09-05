@@ -91,6 +91,7 @@ docker run --rm \
   -e FORCE_LOCKED_INSTALL="${FORCE_LOCKED_INSTALL:-0}" \
   -e ALPINE_BRANCH="$ALPINE_BRANCH" \
   -e DISPLAY_CANDIDATE="${DISPLAY_CANDIDATE:-}" \
+  -e E5_T18B_INTERACTIVE="${E5_T18B_INTERACTIVE:-0}" \
   "$IMG_TAG" /rootfs-inner.sh
 
 # MANIFEST drift gate (critic #3): apk resolves "latest within v3.20", so a mirror-side
