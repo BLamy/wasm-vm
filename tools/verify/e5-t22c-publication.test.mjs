@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { execFileSync } from "node:child_process";
+import { mkdtemp, mkdir, writeFile, rm, readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { sha256 } from "./e5-t18e-publication.mjs";
-import { DISPLAY_IMAGE_INPUTS, assertDisplayBindings } from "./e5-t22c-publication.mjs";
+import { DISPLAY_IMAGE_INPUTS, assertDisplayBindings, verifyFrozenRuntime } from "./e5-t22c-publication.mjs";
 
 function fixture() {
   const sources = Object.fromEntries(DISPLAY_IMAGE_INPUTS.map(file => [file, sha256(file)]));
@@ -54,4 +58,32 @@ test("modified package or custom bytes and mismatched image metadata are rejecte
   }
   const input = fixture(); input.info.image.sha256 = sha256("different image");
   assert.throws(() => assertDisplayBindings(input), /image metadata drift/);
+});
+
+test("freeze detects stable dirty imported runtime and staged bytes, not unrelated task files", async () => {
+  const repo=await mkdtemp(path.join(tmpdir(),"e5-t22c-freeze-"));
+  const git=args=>execFileSync("git",args,{cwd:repo,stdio:"pipe"});
+  try {
+    git(["init","-q"]);
+    for(const file of ["web/dist/src/sink/presentation.js","web/loader.js","web/artifacts-alpine.json","crates/core/src/lib.rs","tasks/unrelated.md"]){
+      await mkdir(path.dirname(path.join(repo,file)),{recursive:true});await writeFile(path.join(repo,file),"original\n");
+    }
+    git(["add","."]);git(["-c","core.hooksPath=/dev/null","-c","commit.gpgsign=false","-c","user.name=Fixture","-c","user.email=fixture@example.invalid","commit","-qm","fixture"]);
+    const frozen=verifyFrozenRuntime(repo);
+    await writeFile(path.join(repo,"tasks/unrelated.md"),"unrelated user change\n");assert.deepEqual(verifyFrozenRuntime(repo),frozen);
+    for(const file of ["web/dist/src/sink/presentation.js","web/loader.js","web/artifacts-alpine.json","crates/core/src/lib.rs"]){
+      await writeFile(path.join(repo,file),"dirty before recording\n");
+      assert.throws(()=>verifyFrozenRuntime(repo),/differs from frozen HEAD/);
+      git(["add",file]);assert.throws(()=>verifyFrozenRuntime(repo),/differs from frozen HEAD/);
+      await writeFile(path.join(repo,file),"original\n");git(["add",file]);assert.deepEqual(verifyFrozenRuntime(repo),frozen);
+    }
+  } finally { await rm(repo,{recursive:true,force:true}); }
+});
+test("Make acceptance explicitly overrides inherited working-loop controls", async () => {
+  const make=await readFile(new URL("../../Makefile",import.meta.url),"utf8");
+  const target=make.split("\nverify-E5-T22c:\n")[1].split("\nverify-E5-T22e:")[0];
+  const guest=target.split("\n").find(line=>line.endsWith(" node tools/verify/e5-t22c-guest-mode.mjs"));
+  assert.ok(guest);
+  for(const assignment of ["E5_T22C_ITERATION=0","E5_T22C_IMAGE_DIR=target/e5-t22c/acceptance-image","E5_T22C_CHUNKS=target/e5-t22c/chunks/acceptance","E5_T22C_TOOLS_OUT=target/e5-t22c/display-tools","E5_T22C_OUT=evidence/e5-t22c/acceptance"])
+    assert.ok(guest.includes(assignment),`strict acceptance needs ${assignment}`);
 });

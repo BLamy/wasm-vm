@@ -192,3 +192,25 @@ or traversal paths return 404. Its disposable server is stopped afterwards;
 recording: `evidence/e5-t22c/dev-route/scripted-proof.json`. A selected asset
 directory without manifest/chunks is rejected before the server starts. These
 are local tooling checks, not a live deployment or completed resize verdict.
+
+### 2026-09-06 — worker — in-place client proof survives; timing gap remains
+
+Corrected iteration at `3970f1ed`, recorded under `evidence/e5-t22c/iteration-v4b/`,
+keeps Weston PID 961, foot PID 1018, wl_output 16, three GPU resources and identical
+terminal marker pixels through all seven final modes. Wayland, independently
+decoded DRM EDID, actual scanout and canvas agree; browser errors are empty.
+Observed release-to-paint times are 3320 ms (803x603), 2437 ms (640x480), 3775 ms
+(1280x800), 6535 ms (2560x1600), 4550 ms (801x601), 3238 ms (802x601), and 8305 ms
+(1201x801 after another request). Every sample exceeds the unchanged 2000 ms gate.
+The shadow-copy change improves large-mode time substantially but is not enough.
+
+Provisional verifier source review found three harness gaps, not a final verdict.
+The Make target now forces strict mode and its own artifact paths. The overlap
+test now pauses after a consumed-but-unfinished transition, rechecks that state,
+accepts the replacement at the real GPU with identical retired-instruction counts,
+then resumes. The old v4b overlap sample is **not** claimed to prove this stronger
+ordering. Scoped Git and per-response byte checks bind the transitive served
+runtime to the frozen commit, with kernel bytes bound to the committed manifest;
+unrelated task/deployment dirt is excluded. Regression tests cover dirty/staged
+imported code and inherited iteration controls. Final overlap/timing proof awaits
+the next real run; no acceptance lock or verified status is published yet.

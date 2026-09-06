@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { hashFile, sha256, verifyChunkStore } from "./e5-t18e-publication.mjs";
 
@@ -12,6 +13,22 @@ export const DISPLAY_IMAGE_INPUTS = Object.freeze([
   "tools/image/e5-t22c/config.h", "tools/image/e5-t22c/display-tools-packages.txt",
   "tools/image/e5-t17a-desktop-packages.json",
 ]);
+
+// Includes the transitive served runtime, not only the resize page's entrypoint.
+// Deliberately excludes deployment-local manifests and unrelated task metadata.
+const FROZEN_PATHS = [
+  "Cargo.toml", "Cargo.lock", "crates", "web/*.js", "web/src", "web/*.html",
+  "web/dist/*.js", "web/dist/pkg", "web/dist/*.html", "web/package.json", "web/package-lock.json",
+  "web/artifacts-alpine.json", "tools/serve-dev.sh", "Makefile", ...DISPLAY_IMAGE_INPUTS,
+  "tools/verify/e5-t22c*", "tools/verify/fixtures/e5-t22c*",
+  "tools/verify/e5-t18d-surface.mjs", "tools/verify/e5-t18e-publication.mjs", "tools/verify/e5-t18e-demo-smoke.mjs",
+];
+export function verifyFrozenRuntime(repo) {
+  const git = args => execFileSync("git", args, { cwd: repo, encoding: "utf8" });
+  try { git(["diff", "--quiet", "HEAD", "--", ...FROZEN_PATHS]); }
+  catch { throw Error("served runtime/harness differs from frozen HEAD"); }
+  return { head: git(["rev-parse", "HEAD"]).trim(), treeSha256: sha256(git(["ls-tree", "-r", "HEAD", "--", ...FROZEN_PATHS])) };
+}
 
 export function assertDisplayBindings({ lock, info, packages, custom, sourceDigests, moduleSha256, querySha256 }) {
   assert.equal(lock.schema, "wasm-vm.e5-t22c.image-lock.v1");
