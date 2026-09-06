@@ -3,7 +3,7 @@ id: E5-T25a
 epic: 5
 title: Freeze test-only desktop performance instrumentation and injection hooks
 priority: 525.1
-status: in-progress
+status: implemented
 depends_on: [E5-T09e, E5-T18e]
 estimate: S
 risk: medium
@@ -274,3 +274,33 @@ Commands: `make verify-E5-T25a`; `make web-build`;
   static waiver; no dead hunk. See `evidence/e5-t25a/verifier-r3/coverage-audit.md`.
 - **SUITE:** retain the existing null regression and pass-three attacks; promote the
   throwing-getter case after the fix. No merge or out-of-scope task was started.
+
+### 2026-09-06 — worker — REWORK IMPLEMENTED
+
+Daybreak Blue's pass-three verifier at
+`ea18259c072be8cd4d20212fb5d0228b29d1a99b` found one remaining failure: reading an
+object-form attribution getter happened outside the telemetry callback's try/catch,
+so a hostile getter could turn an already-drawn frame into a dropped presentation.
+The fix is `ee4879a3430e5ac387dc7a960c6033d625860aeb`
+(`fix(e5-t25a): contain hostile attribution getters`).
+
+`PresentationController` now performs callback invocation and object-property
+extraction inside the same diagnostic-only containment boundary. A throwing getter
+therefore records null/null, preserves the prior attribution baseline, retains the
+successful/drawn counters, returns true from `present()`, and reports the diagnostic
+in the controller error list. The promoted regression asserts exactly those outcomes;
+source and committed dist remain byte-identical. The release audit was tightened from
+cross-block regexes to bounded scheduler, sampler, surface, and teardown blocks.
+
+The exact-head `make verify-E5-T25a` passed nine tests, the strict release audit,
+Chromium 152.0.7977.76, and Firefox 132.0. The browser evidence hashes remain
+`f82cf35bb1c0db9e425b6bbfc37a5117304be424e1f9318777e1dc165a273d4e` for
+`evidence/e5-t25a/browser/results.json` and
+`7b77d08efbfeab64a9b46cf6b3617c86b1e81afd90781a24bf4c2b02893f5547` for
+`chromium-gated.png`. The built-page proof remains 126 passed, 0 failed, 126 done,
+with empty browser/HTTP error arrays; current JSON and PNG hashes are
+`0b786e88c8ead85e509d1b1dd09213072816f2b4d3bc35c78563b3be5cc568fd` and
+`aaef2ebff2f8abcd6ed9e825831f4299eba5914bae80cf28d8762450b9c37ab1`.
+
+Commands: `make web-build`; `make verify-E5-T25a`;
+`E5_DEMO_TASK=E5-T22g E5_DEMO_VERIFIED=1 E5_DEMO_OUT=evidence/e5-t25a/demo node tools/verify/e5-t18e-demo-smoke.mjs`.
