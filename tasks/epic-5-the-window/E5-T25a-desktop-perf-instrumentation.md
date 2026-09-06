@@ -3,7 +3,7 @@ id: E5-T25a
 epic: 5
 title: Freeze test-only desktop performance instrumentation and injection hooks
 priority: 525.1
-status: in-progress
+status: implemented
 depends_on: [E5-T09e, E5-T18e]
 estimate: S
 risk: medium
@@ -325,3 +325,33 @@ Commands: `make web-build`; `make verify-E5-T25a`;
 - **COVERAGE:** all changed hunks were executed or precisely waived; the finding is
   executed semantic coverage, not a proof gap (`verifier-r4/coverage-audit.md`). No
   merge, next task, independent machine, WebKit, ssh-dev, or host rr was used.
+
+### 2026-09-06 — worker — REWORK IMPLEMENTED
+
+Daybreak Blue's pass-four verifier at
+`80151a6d` found a second escape in the same diagnostic-only path: a thrown value
+whose `message` accessor also throws could abort error formatting and convert a
+completed draw into a dropped present. The fix is
+`800919a260df20bdc56916b888d9e531735d336f`
+(`fix(e5-t25a): make attribution diagnostics non-throwing`).
+
+Attribution error formatting now has a nested safe-string fallback. The callback,
+object-property extraction, and diagnostic conversion cannot escape the telemetry
+boundary: even a hostile thrown value records null/null, preserves the baseline,
+keeps the drawn/successful counters and `present() === true`, and stores a safe
+diagnostic. The promoted regression uses a throwing `message` getter and asserts
+zero dropped frames; source and committed dist remain byte-identical.
+
+The exact-head `make verify-E5-T25a` passed ten tests, the strict release audit,
+Chromium 152.0.7977.76, and Firefox 132.0. `make web-build` also completed; the
+existing wasm-pack fallback warning on this Mac was non-fatal. Browser evidence
+hashes remain `f82cf35bb1c0db9e425b6bbfc37a5117304be424e1f9318777e1dc165a273d4e`
+for the JSON and
+`7b77d08efbfeab64a9b46cf6b3617c86b1e81afd90781a24bf4c2b02893f5547` for the
+Chromium PNG. The built-page proof remains 126 passed, 0 failed, 126 done, with
+empty browser/HTTP error arrays; its JSON and PNG hashes are
+`0b786e88c8ead85e509d1b1dd09213072816f2b4d3bc35c78563b3be5cc568fd` and
+`aaef2ebff2f8abcd6ed9e825831f4299eba5914bae80cf28d8762450b9c37ab1`.
+
+Commands: `make web-build`; `make verify-E5-T25a`;
+`E5_DEMO_TASK=E5-T22g E5_DEMO_VERIFIED=1 E5_DEMO_OUT=evidence/e5-t25a/demo node tools/verify/e5-t18e-demo-smoke.mjs`.
