@@ -3,7 +3,7 @@ id: E5-T18c
 epic: 5
 title: Prove desktop cursor alignment and DPR hit-testing
 priority: 518.3
-status: implemented
+status: verified
 depends_on: [E5-T18b]
 estimate: S
 risk: high
@@ -29,11 +29,11 @@ to neighboring slices.
 
 ## Acceptance criteria
 
-- [ ] Moving the host cursor to the tested control produces the matching guest hover highlight
+- [x] Moving the host cursor to the tested control produces the matching guest hover highlight
       at both DPR 1 and DPR 2, with no one-pixel or scale-dependent offset.
-- [ ] Close and maximize buttons hit-test the intended window at both DPR values and do not
+- [x] Close and maximize buttons hit-test the intended window at both DPR values and do not
       activate an adjacent control.
-- [ ] The pointer/focus run is deterministic across repeated local Chromium contexts and has
+- [x] The pointer/focus run is deterministic across repeated local Chromium contexts and has
       no unexpected console errors.
 
 ## Verification command
@@ -117,3 +117,84 @@ and `cargo test -p wasm-vm-core --features gpu-trace --lib` (267 passed). The un
 this runtime claim. No Rust runtime behavior, pointer transport, or guest image changed in T18c.
 Earlier diagnostic boots are not acceptance evidence. No rr, WebKit, independent machine, or
 Omarchy work is part of this submission.
+
+### 2026-09-05 — fresh adversarial verifier — VERDICT: verified
+
+VERDICT: verified. No remaining falsification or in-scope sufficiency finding.
+
+Verified frozen implementation `4302d6b617a6f8f8cf492bf92095814fd2006cf3` against
+`33717547b7b1c97bf18817fbb13e557ce3861169`, with worker submission `23ca95b`. Independently
+checked the report and transcript in both main and the recorded pristine clone: their SHA-256
+values are respectively `347759ea9286aa9b14d6c9213fd06c9efdd8db52ae238538f00b333cdce6653c`
+and `92de568ef146aad13073bd8c8663c1c175f96cb7adb7a0f957ad1b18a93a80b6`. Rehashed all 20
+referenced PNGs in both locations and matched every report digest. Visually inspected all four
+final PNGs and representative normal, panel-clipped, and maximized hover captures. Compared the
+seven source/dist pairs, runner, and cursor reference byte-for-byte with the frozen commit;
+the worker metadata commit changed no implementation under this proof.
+
+The following predictions were made before examining final acceptance states. `report` below
+means `evidence/e5-t18c/desktop-cursor-dpr-hit-testing.json` at the digest above.
+
+- P1 CSS mapping and cursor/hover coincidence — **HELD**. Predicted identical guest pixels
+  at DPR 1/2 despite canvas origin `(80.25,84.5)`, exactly the intended highlight, and no
+  displaced hotspot. Independently recomputed all recorded CSS/guest/tablet mappings and
+  half-open hit tests. All 248 edge-hover observations matched their preceding transcript
+  predictions; all 16 center observations report the exact target hotspot and 94 opaque
+  reference pixels (report lines 2027, 6286, 21161, 25420 and the corresponding entries in
+  all four runs). The independently checked Wayland bitmap/reference remains unchanged.
+- P2 intended control activation, including the second window — **HELD**. Predicted normal
+  rectangles `(115,251,811,745)` then `(557,13,1253,507)`, panel-clipped controls, and exact
+  maximization to `(0,32,1280,800)`. All eight cycles agree. Opposite inside corners exercise
+  maximize and close; all 64 outside-titlebar presses preserve geometry. Independently
+  checked all 88 press deliveries: exactly one tablet move followed by absolute mouse
+  BTN_LEFT/272 make and break, consecutive distinct frame sequences, and exact coordinates.
+  Final held-button and pointer-diagnostic arrays are empty in every run.
+- P3 close is distinguishable from minimize — **HELD**. Each positive minimize/Super+Tab probe
+  restores its original rectangle; each close/Super+Tab probe leaves no window after at
+  least the positive probe's actual retired-instruction budget. Recomputed every
+  `after - before`, checked the required budget against its own positive control, and
+  rejected relying on the report's accepted flags alone. Counter citations: report lines
+  4203, 8462, 13770, 18029, 23337, 27596, 32904, and 37163.
+
+  | DPR / repetition / cycle | Positive retired | Close retired |
+  |---|---:|---:|
+  | 1 / 1 / 1 | 101478121 | 102976314 |
+  | 1 / 1 / 2 | 100477406 | 101975697 |
+  | 1 / 2 / 1 | 102976554 | 104975026 |
+  | 1 / 2 / 2 | 100477523 | 103476066 |
+  | 2 / 1 / 1 | 101976816 | 102976059 |
+  | 2 / 1 / 2 | 101477245 | 103975053 |
+  | 2 / 2 / 1 | 101976821 | 103975369 |
+  | 2 / 2 / 2 | 100977471 | 103974921 |
+
+- P4 repetition, clean context, and diagnostics — **HELD**. Four distinct DPR/repetition
+  records each contain two complete cycles, with equal repeated geometry and zero unexpected
+  console/page/request errors. The raw transcript's only browser error is the permitted
+  favicon 404 at line 77. All final guests are paused with state digests at report lines
+  9578, 19145, 28712, and 38279. Built-demo evidence remains HELD: 126/0, correct link,
+  appropriately partial pre-verdict pip, and the documented deployment-time Alpine manifest.
+- Incremental adversarial checks — **HELD**, carried forward without rerunning the boot.
+  The unchanged frozen harness already passed 28 targeted JS tests and its self-test. Prior
+  verifier attacks confirmed rejection of absent/one-pixel-displaced cursors, cursor-induced
+  diagonal body-edge shifts, missing press frames, duplicate button-downs, non-progressing
+  async counter reads, and insufficient/overshoot-mismatched restore budgets. The diagonal
+  fixture draws two black pixels at `(811 + floor(row/2), 264 + row)` for rows 0 through 23;
+  the window rectangle and controls remain unchanged. Unchanged T18b launch/focus evidence
+  and scoped core gates remain HELD; they are not re-litigated by this metadata-only verdict.
+- COVERAGE — live evidence exercises normal/maximized/panel-clipped body detection, boundary
+  classification, cursor matching, exact press delivery, both control transitions, matched
+  progress polling, repeated contexts, and the read-only pointer-state accessor. Invalid
+  inputs and fail-closed oracle paths are covered by the held deterministic tests/attacks.
+  Static HTML/CSS, manifest/roadmap declarations, serialization, and diagnostic-only failure
+  capture are waived from separate runtime branch proof; source/dist parity and the built
+  demo cover publication wiring. No core runtime or pointer transport change is claimed.
+- SUITE — retain the committed geometry/observer regression tests, runner self-test, cursor
+  reference, and `make verify-E5-T18c` as the permanent proof artifacts. No duplicate tests or
+  new implementation edits are needed. WebKit, independent machines, rr, process-management
+  expansion, and another cold boot remain out of scope.
+
+Verifier commands/checks: read-only Node assertions over every report cycle and corresponding
+transcript predictions; SHA-256 checks of report/transcript/log/PNGs; `git show` byte comparisons
+against the frozen head; local PNG inspection. The earlier held JS/self-test and bounded
+in-memory sabotage checks are reused unchanged. Only task status/checklists/log and generated
+queue/task JSON are changed by this verdict; final dist rebuild/deployment remains with worker.
