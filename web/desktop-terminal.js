@@ -608,6 +608,7 @@ function publicApi() {
     state: publicState,
     serial: () => serialText,
     focus: () => canvas?.focus(),
+    pointerState: () => pointerBridge?.state() ?? null,
     proof: () => finalProof,
     presentation: () => presentation?.snapshot() ?? null,
   };

@@ -5,7 +5,7 @@
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
         bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc bench-runtime-workloads bench-runtime-compute bench-runtime-workloads-browser bench-runtime-compute-browser \
-        web-test-cpu-worker verify-E5-T16a verify-E5-T18a
+        web-test-cpu-worker verify-E5-T16a verify-E5-T18a verify-E5-T18c
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -895,6 +895,22 @@ verify-E5-T18b:
 	  test -s target/e5-t18b/chunks/desktop-v6/manifest.json; \
 	  make web-dist; \
 	  E5_T18B_IMAGE=target/e5-t18b/desktop-image-v6/alpine-rootfs.ext4 E5_T18B_DESKTOP_ASSET_DIR=target/e5-t18b/chunks/desktop-v6 node tools/verify/e5-t18b-desktop-terminal-input.mjs
+
+.PHONY: verify-E5-T18c
+E5_T18C_IMAGE ?= target/e5-t18b/desktop-image-v6/alpine-rootfs.ext4
+E5_T18C_DESKTOP_ASSET_DIR ?= target/e5-t18b/chunks/desktop-v6
+E5_T18C_CLI ?= target/release/wasm-vm
+verify-E5-T18c:
+	@set -eu; \
+	  command -v node >/dev/null; \
+	  test -s "$(E5_T18C_IMAGE)"; \
+	  test -s "$(E5_T18C_DESKTOP_ASSET_DIR)/manifest.json"; \
+	  node --test web/tests/pointer.test.mjs; \
+	  node --test web/tests/e5-t18c-desktop-geometry.test.mjs; \
+	  node --test web/tests/e5-t18c-desktop-cursor.test.mjs; \
+	  node tools/verify/e5-t18c-desktop-cursor-dpr-hit-testing.mjs --self-test; \
+	  make web-dist; \
+	  E5_T18C_DPRS=1,2 E5_T18C_IMAGE="$(E5_T18C_IMAGE)" E5_T18C_DESKTOP_ASSET_DIR="$(E5_T18C_DESKTOP_ASSET_DIR)" E5_T18C_CLI="$(E5_T18C_CLI)" node tools/verify/e5-t18c-desktop-cursor-dpr-hit-testing.mjs
 
 .PHONY: verify-E3-T12a
 verify-E3-T12a:

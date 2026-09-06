@@ -144,6 +144,7 @@ export const ROADMAP = [
       { name: "Hardware cursor plane mode/lifecycle", status: "verified", evidence: "E5-T15d: independent checkerboard/hotspot, transform-only 500 Hz MOVE, delayed-present coalescing, oversize fallback, hide, and lifecycle proof" },
       { name: "Desktop cold boot — wallpaper/panel/WM menu", status: "partial", evidence: "E5-T18a: local Chromium cache-disabled desktop readiness proof" },
       { name: "Desktop Terminal launcher + T12 keyboard", status: "verified", evidence: "E5-T18b: local Chromium menu/open/type/close proof" },
+      { name: "Desktop cursor alignment + DPR hit-testing", status: "partial", evidence: "E5-T18c: local Chromium hover/maximize/close proof at DPR 1 and 2" },
     ],
   },
   {
