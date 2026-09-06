@@ -137,6 +137,8 @@ export class PresentationController {
     this._presentationSequence = 0;
     this._onPresent = typeof options.onPresent === "function" ? options.onPresent : null;
     this._now = typeof options.now === "function" ? options.now : null;
+    this._guestInstructions = typeof options.guestInstructions === "function" ? options.guestInstructions : null;
+    this._lastGuestInstructions = null;
     this._statsOwner = options.vm ?? null;
     if (this._statsOwner !== null && (typeof this._statsOwner !== "object" || Array.isArray(this._statsOwner))) {
       throw new TypeError("PresentationController vm must be an object");
@@ -263,6 +265,27 @@ export class PresentationController {
     }
   }
 
+  _guestInstructionAttribution() {
+    if (!this._guestInstructions) return { total: null, delta: null };
+    let raw;
+    try {
+      raw = this._guestInstructions();
+    } catch (error) {
+      this._errors.push(`guest instruction telemetry: ${String(error?.message || error)}`);
+      return { total: null, delta: null };
+    }
+    const value = raw !== null && typeof raw === "object"
+      ? raw.retiredInstructions ?? raw.guestInstructions
+      : raw;
+    const total = Number(value);
+    if (!Number.isSafeInteger(total) || total < 0) return { total: null, delta: null };
+    const delta = this._lastGuestInstructions === null
+      ? total
+      : total >= this._lastGuestInstructions ? total - this._lastGuestInstructions : null;
+    this._lastGuestInstructions = total;
+    return { total, delta };
+  }
+
   _disposeBackend() {
     const backend = this._backend;
     this._backend = null;
@@ -321,6 +344,7 @@ export class PresentationController {
         this._drawnPresents += 1;
         this._drawnBytes += bytes;
       }
+      const guest = this._guestInstructionAttribution();
       if (replay) this._replayedFrames += 1;
       this._lossDropCounted = false;
       if (this._onPresent) {
@@ -337,6 +361,8 @@ export class PresentationController {
           resourceWidth: frame.resourceWidth,
           resourceHeight: frame.resourceHeight,
           bytes,
+          guestInstructions: guest.delta,
+          guestInstructionsTotal: guest.total,
         });
         try {
           this._onPresent(record);

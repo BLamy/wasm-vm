@@ -39,6 +39,13 @@ export function createDesktopPerfInput(controller, { enabled = false } = {}) {
   requireController(controller);
   let sequence = 0;
   const pressed = new Set();
+  let queue = Promise.resolve();
+
+  function enqueue(operation) {
+    const result = queue.then(operation);
+    queue = result.catch(() => {});
+    return result;
+  }
 
   async function emit(device, events, sync, noop = false) {
     const record = {
@@ -60,18 +67,25 @@ export function createDesktopPerfInput(controller, { enabled = false } = {}) {
   }
 
   function emitButton(device, code, pressedValue, sync) {
-    const key = `${device}:${code}`;
-    if (!pressedValue && !pressed.has(key)) return emit(device, [], sync, true);
-    if (pressedValue && pressed.has(key)) return emit(device, [], sync, true);
-    if (pressedValue) pressed.add(key); else pressed.delete(key);
-    return emit(device, [{ eventType: EV_KEY, code, value: pressedValue ? 1 : 0 }], sync);
+    return enqueue(async () => {
+      const key = `${device}:${code}`;
+      if (!pressedValue && !pressed.has(key)) return emit(device, [], sync, true);
+      if (pressedValue && pressed.has(key)) return emit(device, [], sync, true);
+      const record = await emit(device, [{ eventType: EV_KEY, code, value: pressedValue ? 1 : 0 }], sync);
+      if (pressedValue) pressed.add(key); else pressed.delete(key);
+      return record;
+    });
   }
 
   return Object.freeze({
-    moveAbsolute: (x, y) => emit("tablet", [
-      { eventType: EV_ABS, code: ABS_X, value: checkedInt(x, "x", ABS_MIN, ABS_MAX) },
-      { eventType: EV_ABS, code: ABS_Y, value: checkedInt(y, "y", ABS_MIN, ABS_MAX) },
-    ], "syncTablet"),
+    moveAbsolute: (x, y) => {
+      const checkedX = checkedInt(x, "x", ABS_MIN, ABS_MAX);
+      const checkedY = checkedInt(y, "y", ABS_MIN, ABS_MAX);
+      return enqueue(() => emit("tablet", [
+        { eventType: EV_ABS, code: ABS_X, value: checkedX },
+        { eventType: EV_ABS, code: ABS_Y, value: checkedY },
+      ], "syncTablet"));
+    },
     button: (code, pressedValue) => emitButton(
       "tablet",
       checkedInt(code, "button code", 0, 0xffff),

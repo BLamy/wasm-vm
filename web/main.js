@@ -22,6 +22,8 @@ const _workerRequested = !_singleThreadForced;
 const _useCpuWorker = _workerRequested && _workerAvailable;
 const _desktopPerfHooksRequested = _startupQuery.has("testHooks") && _startupQuery.has("perfHooks");
 const _desktopPerfPresentRecords = [];
+let _desktopPerfGuestInstructions = null;
+let _desktopPerfStatsTimer = null;
 if (_workerRequested && !_workerAvailable) {
   console.warn("wasm-vm: whole-machine Worker unavailable; using the main-thread fallback");
 }
@@ -82,6 +84,7 @@ if (displayCanvas) {
         }
         : undefined,
       now: _desktopPerfHooksRequested ? () => globalThis.performance?.now?.() ?? Date.now() : undefined,
+      guestInstructions: _desktopPerfHooksRequested ? () => _desktopPerfGuestInstructions : undefined,
     });
   } catch (error) {
     if (displayStatusEl) {
@@ -899,8 +902,13 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   fileTransferUI.attachController(null);
   if (diagnosticJitStatsTimer !== null) {
     clearInterval(diagnosticJitStatsTimer);
-    diagnosticJitStatsTimer = null;
+  diagnosticJitStatsTimer = null;
   }
+  if (_desktopPerfStatsTimer !== null) {
+    clearInterval(_desktopPerfStatsTimer);
+    _desktopPerfStatsTimer = null;
+  }
+  _desktopPerfGuestInstructions = null;
   // Quota/read-only controls are controller capabilities, not ordinary page chrome. Destroy their
   // children and generation marker when the owner retires so a visible or retained old button can
   // never act on whichever controller happens to occupy the global slot next.
@@ -1505,7 +1513,21 @@ async function runLinuxBootOwned(opts, banner, request) {
           : "JIT disabled by caller";
     term.writeln(`\x1b[90m[execution: ${backend}; ${interpreter} interpreter; ${jitLabel}; quantum ${selectedQuantum}]\x1b[0m`);
     window.__jitStats = async () => await linuxCtl?.jitStats?.() ?? null;
-    window.__schedulerStats = async () => await linuxCtl?.schedulerStats?.() ?? null;
+    const readSchedulerStats = async () => {
+      const stats = await linuxCtl?.schedulerStats?.() ?? null;
+      const retired = Number(stats?.retiredInstructions);
+      if (Number.isSafeInteger(retired) && retired >= 0) _desktopPerfGuestInstructions = retired;
+      return stats;
+    };
+    window.__schedulerStats = readSchedulerStats;
+    if (_desktopPerfHooksRequested) {
+      const sampleGuestInstructions = async () => {
+        if (linuxCtl !== ctlForRelease) return;
+        try { await readSchedulerStats(); } catch { /* perf attribution is diagnostic-only */ }
+      };
+      void sampleGuestInstructions();
+      _desktopPerfStatsTimer = setInterval(sampleGuestInstructions, 50);
+    }
     window.__workerRpcStats = async () => await linuxCtl?.workerRpcStats?.() ?? null;
     // Test-only bridge for the worker's existing stats RPC. The browser automation surface runs
     // in an isolated world and cannot read page-owned expando functions such as __jitStats, so a

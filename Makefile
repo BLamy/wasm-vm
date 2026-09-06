@@ -987,6 +987,7 @@ verify-E5-T22g:
 verify-E5-T25a:
 	node --check web/bench/desktop-perf-hooks.js
 	node --check web/src/sink/presentation.js
+	node --check web/main.js
 	node --test web/tests/e5-t25a-perf-hooks.test.mjs web/tests/e5-t06d-presentation.test.mjs
 	node tools/verify/e5-t25a-release-audit.mjs
 	node tools/verify/e5-t25a-browser.mjs

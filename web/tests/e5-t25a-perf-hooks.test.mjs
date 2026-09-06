@@ -98,23 +98,54 @@ test("perf input is opt-in and emits bounded ordered evdev frames", async () => 
   for (const repetition of repetitions.slice(1)) assert.deepEqual(repetition, repetitions[0]);
 });
 
+test("concurrent perf frames are serialized through their sync boundaries", async () => {
+  const calls = [];
+  const controller = {
+    sendTabletEvent: async (...args) => { calls.push(["sendTabletEvent", ...args]); await Promise.resolve(); },
+    syncTablet: async () => { calls.push(["syncTablet"]); await Promise.resolve(); },
+    sendKeyboardEvent: async () => {},
+    syncKeyboard: async () => {},
+  };
+  const input = createDesktopPerfInput(controller, { enabled: true });
+  const [move, button] = await Promise.all([
+    input.moveAbsolute(11, 12),
+    input.leftButton(true),
+  ]);
+  assert.equal(move.sequence, 1);
+  assert.equal(button.sequence, 2);
+  assert.deepEqual(calls, [
+    ["sendTabletEvent", 3, 0, 11], ["sendTabletEvent", 3, 1, 12], ["syncTablet"],
+    ["sendTabletEvent", 1, 0x110, 1], ["syncTablet"],
+  ]);
+});
+
 test("presentation telemetry records drawn damage and does not trust a null sink", () => {
   const records = [];
+  let guestInstructions = 100;
   const controller = new PresentationController(new Canvas(), {
     backendFactories: factories(true),
     onPresent: (record) => records.push(record),
     now: () => 15,
+    guestInstructions: () => guestInstructions,
   });
   controller.present(frame());
   assert.equal(records.length, 1);
   assert.deepEqual(records[0], {
     sequence: 1, timestamp: 15, backend: "canvas2d", drawn: true, replay: false,
     rect: { x: 0, y: 0, width: 2, height: 2 }, resourceWidth: 2, resourceHeight: 2, bytes: 16,
+    guestInstructions: 100, guestInstructionsTotal: 100,
+  });
+  guestInstructions = 175;
+  controller.present(frame());
+  assert.deepEqual(records[1], {
+    sequence: 2, timestamp: 15, backend: "canvas2d", drawn: true, replay: false,
+    rect: { x: 0, y: 0, width: 2, height: 2 }, resourceWidth: 2, resourceHeight: 2, bytes: 16,
+    guestInstructions: 75, guestInstructionsTotal: 175,
   });
   assert.deepEqual(controller.snapshot().gpu, {
-    framesReceived: 1, enqueued: 1, coalesced: 0, presented: 1, successfulPresents: 1,
-    skipped: 0, droppedFrames: 0, overruns: 0, pending: 0, maxPending: 0, uploadedBytes: 16,
-    drawnPresents: 1, drawnBytes: 16, width: 2, height: 2,
+    framesReceived: 2, enqueued: 2, coalesced: 0, presented: 2, successfulPresents: 2,
+    skipped: 0, droppedFrames: 0, overruns: 0, pending: 0, maxPending: 0, uploadedBytes: 32,
+    drawnPresents: 2, drawnBytes: 32, width: 2, height: 2,
   });
   assert.throws(() => controller.present({
     ...frame(), rect: { x: 1, y: 1, width: 2, height: 2 },
