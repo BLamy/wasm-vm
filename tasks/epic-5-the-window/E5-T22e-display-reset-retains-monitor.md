@@ -136,3 +136,14 @@ display_reset_verifier_reconfigured_rings_reject_stale_resources -- --nocapture`
 single disposable-copy sabotage run with filter `display_reset_`;
 `cargo fmt --check -p wasm-vm-core`; standalone promoted-test rustfmt check.
 No runtime fix, other task-status edit, push, merge, or deployment.
+
+### 2026-09-06 — coordinator — verified demo handoff
+
+After the independent `ef9dea06` verdict, update the capability pip and rebuild
+`web/dist`. One built-demo load reaches 126 passed, zero failed/errors and shows
+E5-T22e VERIFIED; eight direct/worker reset fixtures still pass. Evidence is
+`evidence/e5-t22e/verified-demo/browser-proof.json`, with screenshot SHA256
+`7da9b2a478e5e3fb223cc1cf14b9882eb7c324e3bfdec4ecec81ea04ce812999`.
+The production Wasm digest remains `c1c854b8bb3b5cfbcc5a6a6f45199fca2151d7d949e7c707b546343504d7cb0f`.
+PR #329 is ready, left open. Deployment and merges remain held for the user's
+Epic 5 milestone, before Omarchy and before any Epic 6 work.
