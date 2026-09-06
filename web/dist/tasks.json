@@ -20166,10 +20166,18 @@
       "verificationLog": "(empty)",
       "adversarial": "Race it: script a resize *during* the guest's reaction to the previous one (fire at\n100 ms intervals, under 4x CPU throttle) 200 times — any stuck letterbox, torn frame\n(screenshot shear detector: row-wise autocorrelation), guest OOM from leaked\nframebuffers, or dmesg WARN refutes. Attack the in-flight window: hold the debounce at\n0 ms (test hook) and force host-size change between a guest TRANSFER and its FLUSH —\nprove no OOB write into the resized canvas staging buffer (ASAN natively; bounds\nasserts in wasm). Shrink to 640x480 with 10 windows open, then grow — windows must be\nreachable (compositor's problem, but a hang is ours to detect). Verify EDID actually\nupdated: `edid-decode` in-guest after resize shows the new preferred mode. Reload the\ntab mid-resize: boot must come up at the *current* canvas size, not the pre-resize one.",
       "file": "tasks/epic-5-the-window/E5-T22-display-resize-end-to-end.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-06",
+          "commits": 1,
+          "labels": [
+            "fix(e5-t22c): fail-stop partial backend failures and isolate reset prerequisite"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-06",
+      "lastActivity": "2026-09-06",
+      "commitCount": 1
     },
     {
       "id": "E5-T22a",
@@ -20323,8 +20331,9 @@
       "activity": [
         {
           "date": "2026-09-06",
-          "commits": 3,
+          "commits": 4,
           "labels": [
+            "fix(e5-t22c): fail-stop partial backend failures and isolate reset prerequisite",
             "feat(e5-t22c): switch pinned Weston modes in place and bound ownership",
             "test(e5-t22c): preserve observed Weston mode adoption failure",
             "task(e5-t22c): start real guest mode adaptation boundary"
@@ -20333,7 +20342,7 @@
       ],
       "firstActivity": "2026-09-06",
       "lastActivity": "2026-09-06",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E5-T22d",
@@ -20401,7 +20410,7 @@
       "epicKey": "5",
       "title": "Preserve the host monitor mode across guest GPU reset",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T22a",
         "E5-T22b"
@@ -20420,7 +20429,7 @@
           "checked": false
         },
         {
-          "text": "Repeated resets and repeated/new host mode requests remain deterministic. A fresh independent machine still starts at the unchanged default mode.",
+          "text": "Repeated resets and repeated/new host mode requests remain deterministic. A fresh second VM instance still starts at the unchanged default mode.",
           "checked": false
         },
         {
@@ -20430,19 +20439,21 @@
       ],
       "criteriaTotal": 4,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-06 — coordinator — prerequisite discovered\n\nT22c's first non-default initial-mode boot requests 901x701 before guest execution,\nthen stalls on an actual 1280x800 resource. VirtioGpu::reset restores monitor\ndefaults along with guest-owned resources. Preserve that reproduction under\n`evidence/e5-t22c/initial-mode-reset-v3/`. This new S task separates the core reset\nboundary from the blocked compositor adaptation work.",
-      "adversarial": "Reset during a pending host config event with live resources/cursor; verify stale\ninterrupts and resource references are gone while monitor identity remains.\nProbe two resets in succession, new mode after reset, min/max/odd sizes, and a\nfresh second machine to catch accidental shared monitor state. Independently\nread EDID rather than accepting width/height counters alone. Sabotage preservation\nonce. Carry unchanged host-argument and stale-frame proofs from T22a/b forward.",
+      "verificationLog": "### 2026-09-06 — coordinator — prerequisite discovered\n\nT22c's first non-default initial-mode boot requests 901x701 before guest execution,\nthen stalls on an actual 1280x800 resource. VirtioGpu::reset restores monitor\ndefaults along with guest-owned resources. Preserve that reproduction under\n`evidence/e5-t22c/initial-mode-reset-v3/`. This new S task separates the core reset\nboundary from the blocked compositor adaptation work.\n\n### 2026-09-06 — worker — in-progress\n\nActivate the isolated reset prerequisite above the blocked T22c work-in-progress\nbranch. T22a/b dependencies remain independently verified. First record the\nodd-mode reset regression against the old code, then make the ownership-only\nreset change and prove native, actual-Wasm, browser-worker and fresh-VM behavior.",
+      "adversarial": "Reset during a pending host config event with live resources/cursor; verify stale\ninterrupts and resource references are gone while monitor identity remains.\nProbe two resets in succession, new mode after reset, min/max/odd sizes, and a\nfresh second VM instance to catch accidental shared monitor state. Independently\nread EDID rather than accepting width/height counters alone. Sabotage preservation\nonce. Carry unchanged host-argument and stale-frame proofs from T22a/b forward.",
       "file": "tasks/epic-5-the-window/E5-T22e-display-reset-retains-monitor.md",
       "activity": [
         {
           "date": "2026-09-06",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "fix(e5-t22c): fail-stop partial backend failures and isolate reset prerequisite"
+          ]
         }
       ],
       "firstActivity": "2026-09-06",
       "lastActivity": "2026-09-06",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E5-T23",

@@ -3,7 +3,7 @@ id: E5-T22e
 epic: 5
 title: Preserve the host monitor mode across guest GPU reset
 priority: 522.25
-status: pending
+status: in-progress
 depends_on: [E5-T22a, E5-T22b]
 estimate: S
 risk: high
@@ -29,7 +29,7 @@ JIT, snapshot format, or guest-image change belongs to this slice.
 - [ ] Resources, backing accounting, scanout, cursor, queue kick state and pending
       device events/IRQ are cleared; no old guest resource remains usable.
 - [ ] Repeated resets and repeated/new host mode requests remain deterministic.
-      A fresh independent machine still starts at the unchanged default mode.
+      A fresh second VM instance still starts at the unchanged default mode.
 - [ ] Record the actual guest reset instruction trace and state digest; the built
       browser worker reads the preserved mode after executing the reset fixture,
       and the normal built demo still reaches 126 passed, zero failed/errors.
@@ -43,7 +43,7 @@ make verify-E5-T22e
 Reset during a pending host config event with live resources/cursor; verify stale
 interrupts and resource references are gone while monitor identity remains.
 Probe two resets in succession, new mode after reset, min/max/odd sizes, and a
-fresh second machine to catch accidental shared monitor state. Independently
+fresh second VM instance to catch accidental shared monitor state. Independently
 read EDID rather than accepting width/height counters alone. Sabotage preservation
 once. Carry unchanged host-argument and stale-frame proofs from T22a/b forward.
 
@@ -56,3 +56,10 @@ then stalls on an actual 1280x800 resource. VirtioGpu::reset restores monitor
 defaults along with guest-owned resources. Preserve that reproduction under
 `evidence/e5-t22c/initial-mode-reset-v3/`. This new S task separates the core reset
 boundary from the blocked compositor adaptation work.
+
+### 2026-09-06 — worker — in-progress
+
+Activate the isolated reset prerequisite above the blocked T22c work-in-progress
+branch. T22a/b dependencies remain independently verified. First record the
+odd-mode reset regression against the old code, then make the ownership-only
+reset change and prove native, actual-Wasm, browser-worker and fresh-VM behavior.
