@@ -4,8 +4,8 @@ epic: 5
 title: Apply guest desktop hotplug modes without restarting the compositor
 priority: 522.3
 status: blocked
-depends_on: [E5-T22b, E5-T22e, E5-T22f]
-blocked_on: E5-T22f cached-code PMP privilege-transition cost
+depends_on: [E5-T22b, E5-T22e, E5-T22f, E5-T22g]
+blocked_on: E5-T22g browser-JIT entry timer cost
 estimate: S
 risk: high
 capstone: false
