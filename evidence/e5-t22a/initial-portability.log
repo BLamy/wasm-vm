@@ -1,0 +1,812 @@
+0fe393ed9bac81a88ae454b68fe813b2cd209c0a
+   Compiling libc v0.2.186
+    Checking smallvec v1.15.2
+    Checking bitflags v2.13.0
+    Checking crypto-common v0.1.7
+    Checking digest v0.10.7
+    Checking rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+    Checking cpufeatures v0.2.17
+    Checking sha2 v0.10.9
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.86s
+    Blocking waiting for file lock on build directory
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+    Checking cfg-if v1.0.4
+   Compiling version_check v0.9.5
+   Compiling rustversion v1.0.22
+    Checking typenum v1.20.1
+   Compiling bumpalo v3.20.3
+    Checking once_cell v1.21.4
+    Checking futures-core v0.3.32
+    Checking pin-project-lite v0.2.17
+    Checking slab v0.4.12
+    Checking futures-task v0.3.32
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling serde_core v1.0.228
+   Compiling heapless v0.9.3
+    Checking byteorder v1.5.0
+    Checking bitflags v2.13.0
+    Checking log v0.4.33
+   Compiling zmij v1.0.21
+    Checking smallvec v1.15.2
+    Checking futures-util v0.3.32
+   Compiling serde v1.0.228
+   Compiling smoltcp v0.13.1
+    Checking hash32 v0.3.1
+    Checking stable_deref_trait v1.2.1
+   Compiling serde_json v1.0.150
+    Checking tinyvec_macros v0.1.1
+    Checking bitflags v1.3.2
+    Checking tinyvec v1.12.0
+   Compiling generic-array v0.14.7
+    Checking itoa v1.0.18
+    Checking managed v0.8.0
+    Checking memchr v2.8.2
+    Checking unicode-normalization v0.1.25
+    Checking wasm-vm-wasm-emit v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/wasm-emit)
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+   Compiling wasm-bindgen-macro v0.2.126
+    Checking wasm-vm-storage v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/storage)
+    Checking wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/slirp)
+    Checking wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/jit-translate)
+    Checking js-sys v0.3.103
+    Checking console_error_panic_hook v0.1.7
+    Checking web-sys v0.3.103
+    Checking wasm-bindgen-futures v0.4.76
+    Checking getrandom v0.2.17
+    Checking console_log v1.0.0
+    Checking wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 17.06s
+
+added 7 packages in 391ms
+npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn install-scripts   fsevents@2.3.2 (install: (install scripts present))
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+cargo test -p wasm-vm-core --features gpu-trace dev::virtio::gpu::tests::set_display -- --nocapture
+    Blocking waiting for file lock on build directory
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.31s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 2 tests
+test dev::virtio::gpu::tests::set_display_updates_mode_and_coalesces_config_interrupts ... ok
+test dev::virtio::gpu::tests::set_display_stress_preserves_final_mode_and_bounds_config_irqs ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 265 filtered out; finished in 0.00s
+
+     Running tests/async_compile_pipeline.rs (target/debug/deps/async_compile_pipeline-f336f26e7723a52e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/boot_contract.rs (target/debug/deps/boot_contract-e1dcaa4486e61f23)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/clint.rs (target/debug/deps/clint-85c55a4fe8fca9be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/console.rs (target/debug/deps/console-fb500b5726822112)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/cpu_resume.rs (target/debug/deps/cpu_resume-6c64fcb637644f66)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/critic_storm_hostile.rs (target/debug/deps/critic_storm_hostile-9203b214c1b1ebf6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/csr.rs (target/debug/deps/csr-7e9d012816fbc99b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/decode_golden.rs (target/debug/deps/decode_golden-d3f0644960297b64)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/decode_props.rs (target/debug/deps/decode_props-faa258409892f69b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 26 filtered out; finished in 0.00s
+
+     Running tests/determinism.rs (target/debug/deps/determinism-a544510fe1c9f733)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/exhaustive.rs (target/debug/deps/exhaustive-181bc291322f98a5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/fdt_emit.rs (target/debug/deps/fdt_emit-21a49e4319143af0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/golden_run.rs (target/debug/deps/golden_run-0b9d379371bd2b53)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/hart_control.rs (target/debug/deps/hart_control-302ef39866b55c08)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/hart_memory.rs (target/debug/deps/hart_memory-1929ddbac4691baf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+     Running tests/hart_semantics.rs (target/debug/deps/hart_semantics-56e5516817da139e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 15 filtered out; finished in 0.00s
+
+     Running tests/hot_path.rs (target/debug/deps/hot_path-13bc3541e0b2c38e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/hotness_discovery.rs (target/debug/deps/hotness_discovery-f7ced3dbde81b6ca)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/htif_run.rs (target/debug/deps/htif_run-c0c77a984b3ef65e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/interrupts.rs (target/debug/deps/interrupts-e0867d55257a6cf8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+     Running tests/isa_scan.rs (target/debug/deps/isa_scan-add2f598243c41f1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/loader_elf.rs (target/debug/deps/loader_elf-5b08d6b7d52a8cdc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/no_stdout_in_core.rs (target/debug/deps/no_stdout_in_core-d0d266ff8629ce3d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/perf_baseline.rs (target/debug/deps/perf_baseline-496c5dc6b7847393)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/plic.rs (target/debug/deps/plic-8869c5593ecf4d14)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/pmp.rs (target/debug/deps/pmp-6c9a21263417be40)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/precise_exceptions.rs (target/debug/deps/precise_exceptions-48974866cb3f3a01)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/predecode_batching.rs (target/debug/deps/predecode_batching-71219ecd206a0ebb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/predecode_diff.rs (target/debug/deps/predecode_diff-1166c5687b9ef244)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/predecode_entry_safety.rs (target/debug/deps/predecode_entry_safety-6f46767f2d07ee40)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/predecode_smc_diff.rs (target/debug/deps/predecode_smc_diff-e1d5819dcb9c0589)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/privilege.rs (target/debug/deps/privilege-743d2a0b9eaf2cf2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/prof_sampling.rs (target/debug/deps/prof_sampling-6cab8f7541c01240)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/prof_time_accounting.rs (target/debug/deps/prof_time_accounting-4111e9f342d4359d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/reset.rs (target/debug/deps/reset-9dfa25e71448b203)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/restore_decision.rs (target/debug/deps/restore_decision-114da0bafeab4836)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/riscv_tests.rs (target/debug/deps/riscv_tests-b8d6e981732e02c1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/riscv_tests_f.rs (target/debug/deps/riscv_tests_f-b2021a580b5b81c8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/riscv_tests_mi.rs (target/debug/deps/riscv_tests_mi-be53939150ae3fc6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/riscv_tests_suite.rs (target/debug/deps/riscv_tests_suite-56f47dfca22e14b0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/rv64a.rs (target/debug/deps/rv64a-44e2a9d06bf9c70f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+     Running tests/rv64c.rs (target/debug/deps/rv64c-f746a2fc32e137d6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/rv64d.rs (target/debug/deps/rv64d-3b028e211b767a7e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/rv64f.rs (target/debug/deps/rv64f-534a12002ea789ea)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/rv64m.rs (target/debug/deps/rv64m-0ea3b50a1906fa7f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/sbi_console.rs (target/debug/deps/sbi_console-8ae9c2715e344357)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/sbi_ipi_hsm.rs (target/debug/deps/sbi_ipi_hsm-66a7652ded0a8a79)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/sbi_rfence_stale_tlb.rs (target/debug/deps/sbi_rfence_stale_tlb-a01bb0114629583f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/sbi_timer.rs (target/debug/deps/sbi_timer-89839449c4a7e2f8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/sbi_timer_fuzz.rs (target/debug/deps/sbi_timer_fuzz-26e043f770bfa53f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/sbi_timer_opensbi_diff.rs (target/debug/deps/sbi_timer_opensbi_diff-b7282855b6a76afc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/signature.rs (target/debug/deps/signature-f40e084584e3aa31)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/snapshot.rs (target/debug/deps/snapshot-ce0454bd7a7efc56)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/snapshot_coherence.rs (target/debug/deps/snapshot_coherence-1932df21462b55c0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/softfloat.rs (target/debug/deps/softfloat-01c984e8fba0145d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/storm_detection.rs (target/debug/deps/storm_detection-e82195b2a237e434)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/sv39.rs (target/debug/deps/sv39-fb6185422f16f95a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/sv39_e2e.rs (target/debug/deps/sv39_e2e-ab9e592aef802753)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/sv48.rs (target/debug/deps/sv48-7d246eb37cda6a76)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/tlb.rs (target/debug/deps/tlb-16cb33b3576110c7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 15 filtered out; finished in 0.00s
+
+     Running tests/torture_data.rs (target/debug/deps/torture_data-d8670e0f1b0fd806)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/trace_golden.rs (target/debug/deps/trace_golden-513069889bf5b8d0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/trace_mem_exec.rs (target/debug/deps/trace_mem_exec-b40305b9270f492d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/trace_retire.rs (target/debug/deps/trace_retire-318c6314389b93a5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/triggers.rs (target/debug/deps/triggers-3efea33e38b8a991)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/uart16550_irq.rs (target/debug/deps/uart16550_irq-ade64c66e1a63df8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verifier_e0t04.rs (target/debug/deps/verifier_e0t04-7a295cce1e9c5e01)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/verifier_e0t05.rs (target/debug/deps/verifier_e0t05-21101dc20cf33eb5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/verifier_e0t06_angles.rs (target/debug/deps/verifier_e0t06_angles-add4dc4ffc009d52)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/verifier_e0t06_golden.rs (target/debug/deps/verifier_e0t06_golden-1cde82c66b369115)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/verifier_e0t07_angles.rs (target/debug/deps/verifier_e0t07_angles-48b463e7208349b9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verifier_e0t07_diff.rs (target/debug/deps/verifier_e0t07_diff-4f692a4db44af7b7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/verifier_e0t07_novel.rs (target/debug/deps/verifier_e0t07_novel-790a8a0296c9627b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verifier_e0t08_attacks.rs (target/debug/deps/verifier_e0t08_attacks-8acd901a74e2f7ab)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/verifier_e0t08_diff.rs (target/debug/deps/verifier_e0t08_diff-2f407ebf99a0c666)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/verifier_e0t09_angles.rs (target/debug/deps/verifier_e0t09_angles-2adfe51fd5159177)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/verifier_e0t10.rs (target/debug/deps/verifier_e0t10-2401c659b7b38d36)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/verifier_e0t11_attacks.rs (target/debug/deps/verifier_e0t11_attacks-3b8947d2bed2a1d5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/verifier_e0t12.rs (target/debug/deps/verifier_e0t12-50a82568d7b6c530)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+     Running tests/verifier_e2_sweep.rs (target/debug/deps/verifier_e2_sweep-36985ba7cde25196)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/verifier_fuzz.rs (target/debug/deps/verifier_fuzz-32eee71a35736d37)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/verifier_genuine.rs (target/debug/deps/verifier_genuine-b88e2f0ab2c30c7f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/virtio_blk.rs (target/debug/deps/virtio_blk-6f820e0f3110f26f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/virtio_blk_flush.rs (target/debug/deps/virtio_blk_flush-0406750624e9b703)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/virtio_blk_quiesce.rs (target/debug/deps/virtio_blk_quiesce-9fe385d383dc4fa2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/virtio_blk_torture.rs (target/debug/deps/virtio_blk_torture-1d41b16ce321b514)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/virtio_console.rs (target/debug/deps/virtio_console-0259a65cbd855805)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/virtio_gpu_machine.rs (target/debug/deps/virtio_gpu_machine-66c4d4de0b545f59)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/virtio_keyboard.rs (target/debug/deps/virtio_keyboard-64bde47432231593)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/virtio_keyboard_guest_stream.rs (target/debug/deps/virtio_keyboard_guest_stream-ebd8635f54341431)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/virtio_mmio_slots.rs (target/debug/deps/virtio_mmio_slots-7f4ecb9a797bbac0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/virtio_net.rs (target/debug/deps/virtio_net-42226e6781386470)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/virtio_net_critic.rs (target/debug/deps/virtio_net_critic-ab48571b338d3a21)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/virtio_net_machine.rs (target/debug/deps/virtio_net_machine-fb23c339fa1efe16)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/virtio_net_wiring_probes.rs (target/debug/deps/virtio_net_wiring_probes-7198b5a23a69bbb4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/virtio_pointer.rs (target/debug/deps/virtio_pointer-7cb578e840be9bb9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/virtio_snd.rs (target/debug/deps/virtio_snd-de1ffef3fd7fa143)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/virtio_snd_capture.rs (target/debug/deps/virtio_snd_capture-872af32819f214f8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/virtio_snd_capture_config.rs (target/debug/deps/virtio_snd_capture_config-04fe169a4df760e1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/virtio_snd_machine.rs (target/debug/deps/virtio_snd_machine-713695add90ee6e7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/virtio_snd_playback.rs (target/debug/deps/virtio_snd_playback-95fd32732c26675d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/virtio_snd_queue.rs (target/debug/deps/virtio_snd_queue-e3c12d50b1e64ce6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/virtqueue.rs (target/debug/deps/virtqueue-0130da9c3d5cde19)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/wfi_fast_forward_critic.rs (target/debug/deps/wfi_fast_forward_critic-3e6f4ad0ca77fb80)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/zicntr.rs (target/debug/deps/zicntr-551df93b890ef7df)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+wasm-pack test --node crates/wasm --lib -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.04s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-9581999851bd4c84.wasm)
+running 4 tests
+Invoking test: display_tests::display_hotplug_strict_validation_is_atomic
+test display_tests::display_hotplug_strict_validation_is_atomic ... ok
+Invoking test: display_tests::display_hotplug_storm_preserves_actual_old_resource
+E5-T22a actual-device storm stats: {"advertisedWidth":750,"advertisedHeight":531,"refreshHz":60,"pendingEvents":1,"edid":{"0":0,"1":255,"2":255,"3":255,"4":255,"5":255,"6":255,"7":0,"8":94,"9":205,"10":1,"11":0,"12":1,"13":0,"14":0,"15":0,"16":1,"17":30,"18":1,"19":4,"20":165,"21":20,"22":14,"23":120,"24":10,"25":150,"26":5,"27":163,"28":84,"29":76,"30":153,"31":38,"32":15,"33":80,"34":84,"35":0,"36":0,"37":0,"38":1,"39":1,"40":1,"41":1,"42":1,"43":1,"44":1,"45":1,"46":1,"47":1,"48":1,"49":1,"50":1,"51":1,"52":1,"53":1,"54":247,"55":11,"56":238,"57":160,"58":32,"59":19,"60":30,"61":32,"62":40,"63":20,"64":115,"65":0,"66":200,"67":140,"68":0,"69":0,"70":0,"71":26,"72":0,"73":0,"74":0,"75":253,"76":0,"77":30,"78":120,"79":15,"80":250,"81":60,"82":1,"83":10,"84":32,"85":32,"86":32,"87":32,"88":32,"89":32,"90":0,"91":0,"92":0,"93":252,"94":0,"95":87,"96":65,"97":83,"98":77,"99":32,"100":86,"101":77,"102":10,"103":32,"104":32,"105":32,"106":32,"107":32,"108":0,"109":0,"110":0,"111":255,"112":0,"113":87,"114":86,"115":77,"116":45,"117":48,"118":48,"119":48,"120":49,"121":10,"122":32,"123":32,"124":32,"125":32,"126":0,"127":57},"resourceCount":0,"resourceBytes":0,"scanoutResource":null,"scanoutWidth":null,"scanoutHeight":null}
+test display_tests::display_hotplug_storm_preserves_actual_old_resource ... ok
+Invoking test: display_tests::display_hotplug_guest_trace_reads_event_after_request
+E5-T22a guest event trace:
+core 0: 0x0000000080200000 (0x100082b7) x5 0x0000000010008000
+core 0: 0x0000000080200004 (0x1002a503) x10 0x0000000000000001 mem 0x0000000010008100
+state digest=79535a41dc7da0934c91fc17c441210501714ba5b1d52fc243491a659676696e
+test display_tests::display_hotplug_guest_trace_reads_event_after_request ... ok
+Invoking test: display_tests::display_hotplug_absence_and_reentrancy_fail_boundedly
+test display_tests::display_hotplug_absence_and_reentrancy_fail_boundedly ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 filtered out; finished in 1.13s
+
+node --test web/tests/e4-t32-worker-protocol.test.mjs
+✔ loader task quiescence joins held persistence and permanently closes scheduling (0.87725ms)
+✔ explicit surface, FIFO input/RPC, exact transferable ownership, Tailscale, and stop order (4.529167ms)
+✔ every explicit controller method crosses the runtime and no-provider Tailscale is false/nonfatal (2.740708ms)
+✔ capture PCM_START lifecycle notification crosses the worker boundary (1.618125ms)
+✔ display FrameSink projections cross the worker boundary with private pixel ownership (1.870292ms)
+✔ cursor-plane update and move projections keep MOVE payloads empty and privately owned (2.872667ms)
+✔ RPC ids correlate out-of-order results and arbitrary methods are not exposed (0.246458ms)
+✔ version mismatch/fatal rejects boot, pending and future calls exactly once (0.179042ms)
+✔ fatal after ready rejects pending, whenDone, stats, and future RPCs once (0.177083ms)
+✔ worker rejects an unknown method without executing it and propagates controller rejections (1.865708ms)
+✔ unknown frames fail closed and Tailscale events remain versioned (1.651083ms)
+✔ DONE rejects pending RPCs and DONE-before-READY rejects boot (0.218292ms)
+✔ byte RPC encoding errors reject asynchronously (0.169083ms)
+✔ silent termination is detected before and after READY and rejects pending work (54.198375ms)
+✔ heartbeat bypasses long async RPCs and visibility suspension shifts its deadline (83.272166ms)
+✔ visibility suspension pauses the pre-READY boot deadline (61.907875ms)
+✔ stateDigest gets method-scoped heartbeat grace and the controller remains live afterward (60.885666ms)
+✔ every bulk snapshot RPC emits BUSY/IDLE and survives the scoped heartbeat grace (425.564708ms)
+✔ natural completion emits a scoped terminal digest before DONE (1.619041ms)
+✔ natural completion waits behind a held snapshot RPC before terminal BUSY and cleanup (1.496166ms)
+✔ fatal input during natural cleanup wins over clean DONE (1.470333ms)
+✔ stop and fatal cleanup are bounded when a dependency never settles (32.511167ms)
+✔ stop timeout fails closed without releasing storage under a live loader pump (25.214208ms)
+✔ Tailscale UI exceptions are non-fatal (1.397458ms)
+✔ backend-neutral stop closes main storage but does not RPC after worker termination (0.222208ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 804.411292
+node tools/verify/e5-t22a-display-hotplug.mjs
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   '404 http://127.0.0.1:59735/artifacts-alpine.json',
++   'Failed to load resource: the server responded with a status of 404 (Not Found)'
++ ]
+- []
+
+    at file:///Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/tools/verify/e5-t22a-display-hotplug.mjs:129:10 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [
+    '404 http://127.0.0.1:59735/artifacts-alpine.json',
+    'Failed to load resource: the server responded with a status of 404 (Not Found)'
+  ],
+  expected: [],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0
+make: *** [verify-E5-T22a] Error 1

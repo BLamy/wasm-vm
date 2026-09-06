@@ -422,7 +422,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `521.4` [E5-T21d](epic-5-the-window/E5-T21d-microphone-permission-lifecycle.md) — Lazy microphone permission and silence fallback *(deps: E5-T21c)*
 - [x] `521.5` [E5-T21e](epic-5-the-window/E5-T21e-microphone-capture-proof.md) — Guest microphone capture and browser proof *(deps: E5-T21d)*
 - [-] `522` [E5-T22](epic-5-the-window/E5-T22-display-resize-end-to-end.md) — Display resize end-to-end — canvas size to guest mode change and back *(deps: E5-T04, E5-T18e)*
-- [~] `522.1` [E5-T22a](epic-5-the-window/E5-T22a-browser-display-hotplug.md) — Expose bounded display hotplug and actual GPU state to browser controllers *(deps: E5-T04, E5-T18e)*
+- [?] `522.1` [E5-T22a](epic-5-the-window/E5-T22a-browser-display-hotplug.md) — Expose bounded display hotplug and actual GPU state to browser controllers *(deps: E5-T04, E5-T18e)*
 - [ ] `522.2` [E5-T22b](epic-5-the-window/E5-T22b-viewport-letterboxing.md) — Debounce viewport and DPR changes with stale-frame letterboxing *(deps: E5-T22a)*
 - [ ] `522.3` [E5-T22c](epic-5-the-window/E5-T22c-guest-mode-adaptation.md) — Apply guest desktop hotplug modes without restarting the compositor *(deps: E5-T22b)*
 - [ ] `522.4` [E5-T22d](epic-5-the-window/E5-T22d-resize-torture.md) — Prove end-to-end resize storms, resource cleanup and reload boundaries *(deps: E5-T22c)*
