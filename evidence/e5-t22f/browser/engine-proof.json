@@ -1,0 +1,73 @@
+{
+  "frozen": {
+    "head": "844948819f3fd8839cb4edd38e1ec4a0218d70d9",
+    "treeSha256": "d3ed29d77ae49e1a089847e76cb29e1500e8f96b19afb7534641018b9d79bca3"
+  },
+  "fixture": {
+    "schema": "wasm-vm.e5-t22f.unchanged-desktop-fixture.v1",
+    "imageSha256": "811267cbf96c1e055e31063829580432d5e5e343cff1a975f5fc10664cc2e00e",
+    "packageManifestSha256": "ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908",
+    "fileManifestSha256": "a85af9915e53c9ab315ebfc9d9f2c29902b7207d4e75096045fc496a07af6f6b",
+    "chunkManifestSha256": "935a9fe2bf6022b01ac6147665b9ca59736930b6e265e33069318e4d9cc2ccaa",
+    "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+  },
+  "resultSha256": "4544a7aae035d3500170eba4416e16acbaf20fc585bd3fd706dad8a02c2ce4ea",
+  "wasmSha256": "360646c69fd0be878d47acfe212fc63353fdd80ccd5d690bd6e2bfc5da8f28bb",
+  "modes": [
+    {
+      "width": 803,
+      "height": 603,
+      "firstPaintMs": 2144.8050000071526,
+      "completeMs": 2191.810000002384
+    },
+    {
+      "width": 640,
+      "height": 480,
+      "firstPaintMs": 1471.8849999904633,
+      "completeMs": 1574.839999973774
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "firstPaintMs": 2146.3650000095367,
+      "completeMs": 3113.2950000166893
+    },
+    {
+      "width": 2560,
+      "height": 1600,
+      "firstPaintMs": 5508.555000007153,
+      "completeMs": 8648.725000023842
+    },
+    {
+      "width": 801,
+      "height": 601,
+      "firstPaintMs": 2817.860000014305,
+      "completeMs": 2894.689999997616
+    },
+    {
+      "width": 802,
+      "height": 601,
+      "firstPaintMs": 1829.875,
+      "completeMs": 1870.2649999856949
+    },
+    {
+      "width": 1201,
+      "height": 801,
+      "firstPaintMs": 2313.0550000071526,
+      "completeMs": 3425.274999976158
+    }
+  ],
+  "separateResizeGaps": [
+    "803x603: 2144.81ms exceeds 2000ms",
+    "803x603: complete desktop 2191.81ms exceeds 2000ms",
+    "1280x800: 2146.37ms exceeds 2000ms",
+    "1280x800: complete desktop 3113.30ms exceeds 2000ms",
+    "2560x1600: 5508.56ms exceeds 2000ms",
+    "2560x1600: complete desktop 8648.73ms exceeds 2000ms",
+    "801x601: 2817.86ms exceeds 2000ms",
+    "801x601: complete desktop 2894.69ms exceeds 2000ms",
+    "1201x801: 2313.06ms exceeds 2000ms",
+    "1201x801: complete desktop 3425.27ms exceeds 2000ms"
+  ],
+  "certifiesE5T22c": false
+}

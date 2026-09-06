@@ -3,7 +3,7 @@ id: E5-T22f
 epic: 5
 title: Avoid redundant cached-code PMP audits across S/U transitions
 priority: 522.29
-status: in-progress
+status: implemented
 depends_on: [E5-T22e]
 estimate: S
 risk: high
@@ -145,3 +145,41 @@ The broader historical `self_check.sh` still flags pre-existing Makefile
 cleanup and multiline-option recipes; this task does not change those paths.
 The engine/runtime and immutable desktop fixture are unchanged. Repeat final
 acceptance from the new committed head in a shared `/Users` scratch child.
+
+### 2026-09-06 — worker — implemented; frozen submission
+
+Implementation `41d9ce2c`, frozen complete acceptance head
+`844948819f3fd8839cb4edd38e1ec4a0218d70d9`. Command:
+`tools/verify/cold_clone.sh --keep --parent
+/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22f/cold verify-E5-T22f`.
+The retained pristine clone is `target/e5-t22f/cold/wasm-vm-cold.GK28Soed/repo`.
+The complete command exits zero; raw log
+`evidence/e5-t22f/cold-clone-final.log` has SHA256
+`886c3cc534514a1c2ae9a9718c8ad9207f7d1b2b3b3091b8c97d07a1ede3ef32`.
+
+Scoped fmt/clippy, 275 core unit tests, 70 affected integration tests, 34 existing
+actual-Wasm JIT tests (one pre-existing long churn test ignored), five new
+actual-Wasm tests and six Node harness tests pass. The no-default-features core
+Wasm build passes. The image is rebuilt from pinned packages and committed
+sources, yielding the exact unchanged v7 ext4 and custom-file manifest; the
+production Wasm is byte-identical to the worker's `360646c6...` build.
+
+The same clone executes all seven real browser modes without either profiler.
+Wayland/EDID/scanout/canvas agree, the initial 901x701 mode is retained through
+boot, Weston 961 and foot 1018 survive, the terminal marker bytes are unchanged,
+and the consumed-but-incomplete paused overlap assertion holds. All eight edge
+patches fill at the maximum mode; the native-size screenshot was inspected.
+No browser errors. Full-desktop times in order are 2192, 1575, 3113, 8649, 2895,
+1870 and 3425 ms. This proves F's permission optimization with unchanged client
+behavior, **not** C's two-second requirement. C's gap remains recorded intact.
+
+Proof: `evidence/e5-t22f/browser/engine-proof.json` SHA256
+`c0d90fcc0a9c267520791f65f46587a987f40f69c398d0fcaf8b132c84c50aea`, binding
+the frozen source tree, image/kernel/chunks, and `results.json` SHA256
+`4544a7aae035d3500170eba4416e16acbaf20fc585bd3fd706dad8a02c2ce4ea`.
+The built-demo single load passes 126/126 with zero console/HTTP errors, showing
+F in progress rather than prematurely verified. Capture:
+`evidence/e5-t22f/demo/demo-suite.png` SHA256
+`c17233283d2b6f26e4ffb969de2e889851cb9163f9475c67751ed3aa241ba408`.
+Submit the diff and these immutable recordings to the fresh verifier. No merge,
+production deployment, Omarchy image mutation, or Epic 6 work has occurred.
