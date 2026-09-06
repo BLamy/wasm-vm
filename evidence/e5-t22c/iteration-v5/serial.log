@@ -1,0 +1,558 @@
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.000000] efi: UEFI not found.
+[    0.000000] Zone ranges:
+[    0.000000]   DMA32    [mem 0x0000000080000000-0x000000008fffffff]
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x000000008fffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x000000008fffffff]
+[    0.000000] SBI HSM extension detected
+[    0.000000] Falling back to deprecated "riscv,isa"
+[    0.000000] riscv: base ISA extensions acdfim
+[    0.000000] riscv: ELF capabilities acdfim
+[    0.000000] percpu: Embedded 18 pages/cpu s42104 r0 d31624 u73728
+[    0.000000] Kernel command line: root=/dev/vda rw console=ttyS0 earlycon=sbi wasmvm.desktop_test=1
+[    0.000000] Dentry cache hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 16384 (order: 5, 131072 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 64512
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]       fixmap : 0xff1bfffffea00000 - 0xff1bffffff000000   (6144 kB)
+[    0.000000]       pci io : 0xff1bffffff000000 - 0xff1c000000000000   (  16 MB)
+[    0.000000]      vmemmap : 0xff1c000000000000 - 0xff20000000000000   (1024 TB)
+[    0.000000]      vmalloc : 0xff20000000000000 - 0xff60000000000000   (16384 TB)
+[    0.000000]      modules : 0xffffffff0179e000 - 0xffffffff80000000   (2024 MB)
+[    0.000000]       lowmem : 0xff60000000000000 - 0xff60000010000000   ( 256 MB)
+[    0.000000]       kernel : 0xffffffff80000000 - 0xffffffffffffffff   (2047 MB)
+[    0.000000] Memory: 216560K/262144K available (10367K kernel code, 5056K rwdata, 4096K rodata, 2201K init, 539K bss, 45584K reserved, 0K cma-reserved)
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=1.
+[    0.000000] rcu: 	RCU debug extended QS entry/exit.
+[    0.000000] 	Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=1
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] riscv-intc: 64 local interrupts mapped
+[    0.000000] plic: plic@c000000: mapped 95 interrupts with 1 handlers for 2 contexts.
+[    0.000000] riscv: providing IPIs using SBI IPI extension
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff max_cycles: 0x24e6a1710, max_idle_ns: 440795202120 ns
+[    0.000002] sched_clock: 64 bits at 10MHz, resolution 100ns, wraps every 4398046511100ns
+[    0.001287] Console: colour dummy device 80x25
+[    0.001486] Calibrating delay loop (skipped), value calculated using timer frequency.. 20.00 BogoMIPS (lpj=40000)
+[    0.001644] pid_max: default: 32768 minimum: 301
+[    0.002151] LSM: initializing lsm=capability,integrity
+[    0.002878] Mount-cache hash table entries: 512 (order: 0, 4096 bytes, linear)
+[    0.003012] Mountpoint-cache hash table entries: 512 (order: 0, 4096 bytes, linear)
+[    0.014500] RCU Tasks Trace: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.
+[    0.015202] riscv: ELF compat mode unsupported
+[    0.015283] ASID allocator using 16 bits (65536 entries)
+[    0.016150] rcu: Hierarchical SRCU implementation.
+[    0.016224] rcu: 	Max phase no-delay instances is 1000.
+[    0.017835] EFI services will not be available.
+[    0.018675] smp: Bringing up secondary CPUs ...
+[    0.018783] smp: Brought up 1 node, 1 CPU
+[    0.021287] devtmpfs: initialized
+[    0.031918] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.032071] futex hash table entries: 256 (order: 2, 16384 bytes, linear)
+[    0.033112] pinctrl core: initialized pinctrl subsystem
+[    0.042725] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.047168] DMA: preallocated 128 KiB GFP_KERNEL pool for atomic allocations
+[    0.047380] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    0.047706] audit: initializing netlink subsys (disabled)
+[    0.050995] thermal_sys: Registered thermal governor 'step_wise'
+[    0.051165] audit: type=2000 audit(0.044:1): state=initialized audit_enabled=0 res=1
+[    0.051406] cpuidle: using governor menu
+[    0.073191] cpu0: Ratio of byte access time to unaligned word access is 7.98, unaligned accesses are fast
+[    0.094088] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.094185] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.162065] raid6: int64x8  gen()    42 MB/s
+[    0.230636] raid6: int64x4  gen()    57 MB/s
+[    0.298974] raid6: int64x2  gen()    58 MB/s
+[    0.367571] raid6: int64x1  gen()    52 MB/s
+[    0.367653] raid6: using algorithm int64x2 gen() 58 MB/s
+[    0.436244] raid6: .... xor() 32 MB/s, rmw enabled
+[    0.436325] raid6: using intx1 recovery algorithm
+[    0.437299] ACPI: Interpreter disabled.
+[    0.438066] iommu: Default domain type: Translated
+[    0.438147] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.441688] SCSI subsystem initialized
+[    0.445080] Advanced Linux Sound Architecture Driver Initialized.
+[    0.451199] clocksource: Switched to clocksource riscv_clocksource
+[    0.453436] pnp: PnP ACPI: disabled
+[    0.515358] NET: Registered PF_INET protocol family
+[    0.516759] IP idents hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.525922] tcp_listen_portaddr_hash hash table entries: 128 (order: 0, 4096 bytes, linear)
+[    0.526114] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.526269] TCP established hash table entries: 2048 (order: 2, 16384 bytes, linear)
+[    0.526642] TCP bind hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.527869] TCP: Hash tables configured (established 2048 bind 2048)
+[    0.528243] UDP hash table entries: 256 (order: 2, 24576 bytes, linear)
+[    0.528625] UDP-Lite hash table entries: 256 (order: 2, 24576 bytes, linear)
+[    0.529622] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.532638] RPC: Registered named UNIX socket transport module.
+[    0.532726] RPC: Registered udp transport module.
+[    0.532805] RPC: Registered tcp transport module.
+[    0.532885] RPC: Registered tcp-with-tls transport module.
+[    0.532970] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    0.533302] kvm [1]: hypervisor extension not available
+[    0.538694] workingset: timestamp_bits=46 max_order=16 bucket_order=0
+[    0.542252] NFS: Registering the id_resolver key type
+[    0.542695] Key type id_resolver registered
+[    0.542772] Key type id_legacy registered
+[    0.542977] nfs4filelayout_init: NFSv4 File Layout Driver Registering...
+[    0.543108] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver Registering...
+[    0.544281] 9p: Installing v9fs 9p2000 file system support
+[    1.697175] NET: Registered PF_ALG protocol family
+[    1.697277] xor: measuring software checksum speed
+[    1.716175]    8regs           :   174 MB/sec
+[    1.735065]    8regs_prefetch  :   174 MB/sec
+[    1.753973]    32regs          :   174 MB/sec
+[    1.772918]    32regs_prefetch :   173 MB/sec
+[    1.773002] xor: using function: 32regs (174 MB/sec)
+[    1.773303] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 246)
+[    1.773406] io scheduler mq-deadline registered
+[    1.773490] io scheduler kyber registered
+[    1.773644] io scheduler bfq registered
+[    1.794847] input: wasm-vm virtio keyboard as /devices/platform/soc/10004000.virtio_mmio/virtio3/input/input0
+[    1.797438] input: wasm-vm virtio tablet as /devices/platform/soc/10005000.virtio_mmio/virtio4/input/input1
+[    1.799950] input: wasm-vm virtio mouse as /devices/platform/soc/10006000.virtio_mmio/virtio5/input/input2
+[    2.187234] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+[    2.200932] printk: console [ttyS0] disabled
+[    2.203209] 10000000.serial: ttyS0 at MMIO 0x10000000 (irq = 15, base_baud = 230400) is a 16550A
+[    2.203421] printk: console [ttyS0] enabled
+[    2.203595] printk: bootconsole [sbi0] disabled
+[    2.203421] printk: console [ttyS0] enabled
+[    2.203595] printk: bootconsole [sbi0] disabled
+[    2.206149] SuperH (H)SCI(F) driver initialized
+[    2.209679] random: crng init done
+[    2.216516] [drm] features: -virgl +edid -resource_blob -host_visible
+[    2.216566] [drm] features: -context_init
+[    2.217550] [drm] number of scanouts: 1
+[    2.217666] [drm] number of cap sets: 0
+[    2.222829] [drm] Initialized virtio_gpu 0.1.0 0 for 10008000.virtio_mmio on minor 0
+[    2.329379] Console: switching to colour frame buffer device 112x43
+[    2.401992] virtio-mmio 10008000.virtio_mmio: [drm] fb0: virtio_gpudrmfb frame buffer device
+[    2.437033] loop: module loaded
+[    2.437373] virtio_blk virtio0: 1/0/0 default/read/poll queues
+[    2.438640] virtio_blk virtio0: [vda] 2097152 512-byte logical blocks (1.07 GB/1.00 GiB)
+[    2.486650] mousedev: PS/2 mouse device common for all mice
+[    2.491579] goldfish_rtc 101000.rtc: registered as rtc0
+[    2.491761] goldfish_rtc 101000.rtc: setting system clock to 2026-09-06T10:30:21 UTC (1788690621)
+[    2.494913] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+[    2.495231] syscon-poweroff: probe of poweroff failed with error -16
+[    2.497415] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+[    2.500292] sdhci: Secure Digital Host Controller Interface driver
+[    2.500442] sdhci: Copyright(c) Pierre Ossman
+[    2.501495] sdhci-pltfm: SDHCI platform and OF driver helper
+[    2.511578] IPVS: Registered protocols (TCP, UDP)
+[    2.511751] IPVS: Connection hash table configured (size=4096, memory=32Kbytes)
+[    2.512838] IPVS: ipvs loaded.
+[    2.512942] IPVS: [rr] scheduler registered.
+[    2.514750] Initializing XFRM netlink socket
+[    2.515124] NET: Registered PF_INET6 protocol family
+[    2.520904] Segment Routing with IPv6
+[    2.521198] In-situ OAM (IOAM) with IPv6
+[    2.522099] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    2.525934] NET: Registered PF_PACKET protocol family
+[    2.526299] Bridge firewalling registered
+[    2.526709] 8021q: 802.1Q VLAN Support v1.8
+[    2.527345] 9pnet: Installing 9P2000 support
+[    2.527725] Key type dns_resolver registered
+[    2.754605] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
+[    2.766443] Btrfs loaded, zoned=no, fsverity=no
+[    2.774129] Legacy PMU implementation is available
+[    2.775216] clk: Disabling unused clocks
+[    2.775358] ALSA device list:
+[    2.775454]   #0: VirtIO SoundCard at platform/10007000.virtio_mmio/virtio6
+[    4.315123] EXT4-fs (vda): mounted filesystem a11ce000-0e2f-4c18-b007-f50000000018 r/w with ordered data mode. Quota mode: disabled.
+[    4.315455] VFS: Mounted root (ext4 filesystem) on device 254:0.
+[    4.316097] devtmpfs: mounted
+[    4.322647] Freeing unused kernel image (initmem) memory: 2200K
+[    4.322814] Run /sbin/init as init process
+
+   OpenRC 0.54 is starting up Linux 6.6.63 (riscv64)
+
+ * Mounting /proc ... [ ok ]
+ * Mounting /run ... [ ok ]
+ * /run/openrc: creating directory
+ * /run/lock: creating directory
+ * /run/lock: correcting owner
+ * Caching service dependencies ... [ ok ]
+ * Remounting devtmpfs on /dev ... [ ok ]
+ * Mounting /dev/mqueue ... [ ok ]
+ * Mounting /dev/pts ... [ ok ]
+ * Mounting /dev/shm ... [ ok ]
+ * Mounting /sys ... [ ok ]
+ * Mounting security filesystem ... [ ok ]
+ * Mounting debug filesystem ... [ ok ]
+ * Starting udev ... [ ok ]
+ * Generating a rule to create a /dev/root symlink ... [ ok ]
+ * Populating /dev with existing devices through uevents ... [ ok ]
+ * Loading hardware drivers ...modprobe: can't change directory to '/lib/modules': No such file or directory
+ [ ok ]
+ * Loading modules ...modprobe: can't change directory to '/lib/modules': No such file or directory
+modprobe: can't change directory to '/lib/modules': No such file or directory
+ [ ok ]
+ * Setting system clock using the hardware clock [UTC] ... [ ok ]
+ * Checking local filesystems  ... [ ok ]
+ * Remounting filesystems ... [ ok ]
+ * Activating swap devices ... [ ok ]
+ * Mounting local filesystems ... [ ok ]
+ * Migrating /var/lock to /run/lock ... [ ok ]
+ * Creating user login records ... [ ok ]
+ * Cleaning /tmp directory ... [ ok ]
+ * Setting hostname ... [ ok ]
+ * Seeding random number generator ... * Saving 256 bits of creditable seed for next boot
+ [ ok ]
+ * Starting busybox syslog ... [ ok ]
+ * Starting seatd ... [ ok ]
+ * Waiting for uevents to be processed ... [ ok ]
+ * Starting networking ... *   lo ... [ ok ]
+ *   eth0 ...udhcpc: started, v1.36.1
+udhcpc: broadcasting discover
+udhcpc: broadcasting discover
+udhcpc: broadcasting discover
+udhcpc: broadcasting discover
+udhcpc: broadcasting discover
+udhcpc failed to get a DHCP lease
+udhcpc: no lease, forking to background
+ [ ok ]
+ * Starting wasm-vm file transfer agent ... [ ok ]
+ * Starting wasm-vm virtio agent ... [ ok ]
+
+E5T18D_TEST_CONSOLE_READY
+E5T18D_STATUS_BEGIN
+desktop.attempts=1
+desktop.ready=1 961
+desktop.failed=absent
+weston.pid=961
+2026-09-06T10:34:54Z E5T18D event=boot-runtime-ready
+2026-09-06T10:35:17Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman
+2026-09-06T10:35:17Z E5T18D event=started attempt=1 pid=961
+2026-09-06T10:35:20Z E5T18D event=ready attempt=1 pid=961
+E5T18D_STATUS_END
+E5T22C_DISPLAY_BEGIN
+WV_DISPLAY ns=97687070300 id=16 name=Virtual-1 width=901 height=701 refresh=60006 scale=1 edid_width=901 edid_height=701 edid=00ffffffffffff005ecd010001000000011e0104a51813780a9605a3544c99260f5054000000010101010101010101010101010101012e1285a030bd1e2028147300f0be0000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a202020200047
+E5T22C_DISPLAY_END
+E5T18D_LOG_BEGIN
+Date: 2026-09-06 UTC
+[10:35:17.790] weston 12.0.4
+               https://wayland.freedesktop.org
+               Bug reports to: https://gitlab.freedesktop.org/wayland/weston/issues/
+               Build: 12.0.4
+[10:35:17.790] Command line: weston --config=/etc/xdg/weston/weston.ini --backend=drm --renderer=pixman --socket=wayland-0
+[10:35:17.791] OS: Linux, 6.6.63, #1 SMP Thu Nov 14 2024, riscv64
+[10:35:17.791] Flight recorder: enabled
+[10:35:17.792] Using config file '/etc/xdg/weston/weston.ini'
+[10:35:17.800] Output repaint window is 7 ms maximum.
+[10:35:17.862] Loading module '/usr/lib/libweston-12/drm-backend.so'
+[10:35:18.259] initializing drm backend
+[10:35:18.259] Trying libseat launcher...
+[10:35:18.260] [libseat/libseat.c:73] Seat opened with backend 'seatd'
+[10:35:18.261] [libseat/backend/seatd.c:212] Enabling seat
+[10:35:18.261] libseat: session control granted
+[10:35:18.271] using /dev/dri/card0
+[10:35:18.272] DRM: supports atomic modesetting
+[10:35:18.272] DRM: does not support GBM modifiers
+[10:35:18.272] DRM: does not support async page flipping
+[10:35:18.272] DRM: supports picture aspect ratio
+[10:35:18.272] Using Pixman renderer
+[10:35:18.476] event0  - wasm-vm virtio keyboard: is tagged by udev as: Keyboard
+[10:35:18.482] event0  - wasm-vm virtio keyboard: device is a keyboard
+[10:35:18.521] event1  - wasm-vm virtio tablet: is tagged by udev as: Mouse
+[10:35:18.540] event1  - wasm-vm virtio tablet: device is a pointer
+[10:35:18.575] event2  - wasm-vm virtio mouse: is tagged by udev as: Mouse
+[10:35:18.584] event2  - wasm-vm virtio mouse: device is a pointer
+[10:35:19.527] libinput: configuring device "wasm-vm virtio keyboard".
+[10:35:19.528] libinput: configuring device "wasm-vm virtio tablet".
+[10:35:19.528] input device event1 has no enabled output associated (none named), skipping calibration for now.
+[10:35:19.528] libinput: configuring device "wasm-vm virtio mouse".
+[10:35:19.530] DRM: head 'Virtual-1' found, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[10:35:19.531] Registered plugin API 'weston_drm_output_api_v1' of size 40
+[10:35:19.532] Registered plugin API 'weston_drm_virtual_output_api_v2' of size 48
+[10:35:19.532] Color manager: no-op
+[10:35:19.532] Output 'Virtual-1' attempts EOTF mode: SDR
+[10:35:19.532] Output 'Virtual-1' using color profile: built-in default sRGB SDR profile
+[10:35:19.595] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:35:19.595] Output Virtual-1 (crtc 33) video modes:
+               901x701@60.0, preferred, current, 46.5 MHz
+[10:35:19.595] associating input device event0 with output Virtual-1 (none by udev)
+[10:35:19.595] associating input device event1 with output Virtual-1 (none by udev)
+[10:35:19.598] associating input device event2 with output Virtual-1 (none by udev)
+[10:35:19.599] Output 'Virtual-1' enabled with head(s) Virtual-1
+[10:35:19.599] Compositor capabilities:
+               arbitrary surface rotation: yes
+               screen capture uses y-flip: no
+               cursor planes: yes
+               arbitrary resolutions: no
+               view mask clipping: yes
+               explicit sync: no
+               color operations: no
+               presentation clock: CLOCK_MONOTONIC, id 1
+               presentation clock resolution: 0.000000001 s
+[10:35:19.601] Loading module '/usr/lib/weston/desktop-shell.so'
+[10:35:19.607] Loading module '/usr/lib/weston/wv-display-resize.so'
+[10:35:19.608] WV_DISPLAY enabled bounded 10ms EDID watcher
+[10:35:19.609] launching '/usr/libexec/weston-keyboard'
+[10:35:19.624] launching '/usr/libexec/weston-desktop-shell'
+could not load cursor 'dnd-move'
+could not load cursor 'dnd-copy'
+could not load cursor 'dnd-none'
+could not load cursor 'dnd-move'
+could not load cursor 'dnd-copy'
+could not load cursor 'dnd-none'
+E5T18D_LOG_END
+WV_DISPLAY ns=98293599800 id=16 name=Virtual-1 width=901 height=701 refresh=60006 scale=1 edid_width=901 edid_height=701 edid=00ffffffffffff005ecd010001000000011e0104a51813780a9605a3544c99260f5054000000010101010101010101010101010101012e1285a030bd1e2028147300f0be0000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a202020200047
+[33mwarn[0m: [2mwayland.c:1542: [0mno primary selection available
+[33mwarn[0m: [2mwayland.c:1545: [0mno XDG activation support; bell.urgent will fall back to coloring the window margins red
+[33mwarn[0m: [2mwayland.c:1551: [0mfractional scaling not available
+[33mwarn[0m: [2mwayland.c:1554: [0mno server-side cursors available, falling back to client-side cursors
+[33mwarn[0m: [2mwayland.c:1565: [0mtext input interface not implemented by compositor; IME will be disabled
+[33mwarn[0m: [2mwayland.c:1770: [0mno decoration manager available - using CSDs unconditionally
+E5T22C_DISPLAY_BEGIN
+WV_DISPLAY ns=101243988600 id=16 name=Virtual-1 width=901 height=701 refresh=60006 scale=1 edid_width=901 edid_height=701 edid=00ffffffffffff005ecd010001000000011e0104a51813780a9605a3544c99260f5054000000010101010101010101010101010101012e1285a030bd1e2028147300f0be0000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a202020200047
+WV_CLIENT pid=1018 exe=/usr/bin/foot
+WV_CLIENT_STATE State:	S (sleeping)
+WV_CLIENT_STATE VmRSS:	    9280 kB
+WV_CLIENT_STATE Threads:	2
+E5T22C_DISPLAY_END
+WV_DISPLAY ns=101790544700 id=16 name=Virtual-1 width=803 height=603 refresh=59992 scale=1 edid_width=803 edid_height=603 edid=00ffffffffffff005ecd010001000000011e0104a51510780a9605a3544c99260f505400000001010101010101010101010101010101490e23a0305b1e2028147300d2a00000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a202020200036
+E5T22C_DISPLAY_BEGIN
+WV_DISPLAY ns=102135628500 id=16 name=Virtual-1 width=803 height=603 refresh=59992 scale=1 edid_width=803 edid_height=603 edid=00ffffffffffff005ecd010001000000011e0104a51510780a9605a3544c99260f505400000001010101010101010101010101010101490e23a0305b1e2028147300d2a00000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a202020200036
+WV_CLIENT pid=1018 exe=/usr/bin/foot
+WV_CLIENT_STATE State:	S (sleeping)
+WV_CLIENT_STATE VmRSS:	    9280 kB
+WV_CLIENT_STATE Threads:	2
+E5T22C_DISPLAY_END
+E5T18D_STATUS_BEGIN
+desktop.attempts=1
+desktop.ready=1 961
+desktop.failed=absent
+weston.pid=961
+2026-09-06T10:34:54Z E5T18D event=boot-runtime-ready
+2026-09-06T10:35:17Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman
+2026-09-06T10:35:17Z E5T18D event=started attempt=1 pid=961
+2026-09-06T10:35:20Z E5T18D event=ready attempt=1 pid=961
+E5T18D_STATUS_END
+WV_DISPLAY ns=103441457500 id=16 name=Virtual-1 width=640 height=480 refresh=60000 scale=1 edid_width=640 edid_height=480 edid=00ffffffffffff005ecd010001000000011e0104a5110d780a9605a3544c99260f505400000001010101010101010101010101010101900980a020e01e1028147300aa820000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a20202020007f
+E5T22C_DISPLAY_BEGIN
+WV_DISPLAY ns=103751059600 id=16 name=Virtual-1 width=640 height=480 refresh=60000 scale=1 edid_width=640 edid_height=480 edid=00ffffffffffff005ecd010001000000011e0104a5110d780a9605a3544c99260f505400000001010101010101010101010101010101900980a020e01e1028147300aa820000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a20202020007f
+WV_CLIENT pid=1018 exe=/usr/bin/foot
+WV_CLIENT_STATE State:	S (sleeping)
+WV_CLIENT_STATE VmRSS:	    9280 kB
+WV_CLIENT_STATE Threads:	2
+E5T22C_DISPLAY_END
+E5T18D_STATUS_BEGIN
+desktop.attempts=1
+desktop.ready=1 961
+desktop.failed=absent
+weston.pid=961
+2026-09-06T10:34:54Z E5T18D event=boot-runtime-ready
+2026-09-06T10:35:17Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman
+2026-09-06T10:35:17Z E5T18D event=started attempt=1 pid=961
+2026-09-06T10:35:20Z E5T18D event=ready attempt=1 pid=961
+E5T18D_STATUS_END
+WV_DISPLAY ns=105182518000 id=16 name=Virtual-1 width=1280 height=800 refresh=59998 scale=1 edid_width=1280 edid_height=800 edid=00ffffffffffff005ecd010001000000011e0104a52215780a9605a3544c99260f505400000001010101010101010101010101010101031c00a050201e302814730054d21000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a2020202000c6
+E5T22C_DISPLAY_BEGIN
+WV_DISPLAY ns=105584615400 id=16 name=Virtual-1 width=1280 height=800 refresh=59998 scale=1 edid_width=1280 edid_height=800 edid=00ffffffffffff005ecd010001000000011e0104a52215780a9605a3544c99260f505400000001010101010101010101010101010101031c00a050201e302814730054d21000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a2020202000c6
+WV_CLIENT pid=1018 exe=/usr/bin/foot
+WV_CLIENT_STATE State:	S (sleeping)
+WV_CLIENT_STATE VmRSS:	    9280 kB
+WV_CLIENT_STATE Threads:	2
+E5T22C_DISPLAY_END
+E5T18D_STATUS_BEGIN
+desktop.attempts=1
+desktop.ready=1 961
+desktop.failed=absent
+weston.pid=961
+2026-09-06T10:34:54Z E5T18D event=boot-runtime-ready
+2026-09-06T10:35:17Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman
+2026-09-06T10:35:17Z E5T18D event=started attempt=1 pid=961
+2026-09-06T10:35:20Z E5T18D event=ready attempt=1 pid=961
+E5T18D_STATUS_END
+WV_DISPLAY ns=107356645300 id=16 name=Virtual-1 width=2560 height=1600 refresh=60000 scale=1 edid_width=2560 edid_height=1600 edid=00ffffffffffff005ecd010001000000011e0104a5442a780a9605a3544c99260f505400000001010101010101010101010101010101606f0040a14032605028c600a8a42100001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a2020202000c4
+E5T22C_DISPLAY_BEGIN
+WV_DISPLAY ns=107713049900 id=16 name=Virtual-1 width=2560 height=1600 refresh=60000 scale=1 edid_width=2560 edid_height=1600 edid=00ffffffffffff005ecd010001000000011e0104a5442a780a9605a3544c99260f505400000001010101010101010101010101010101606f0040a14032605028c600a8a42100001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a2020202000c4
+WV_CLIENT pid=1018 exe=/usr/bin/foot
+WV_CLIENT_STATE State:	S (sleeping)
+WV_CLIENT_STATE VmRSS:	    9280 kB
+WV_CLIENT_STATE Threads:	2
+E5T22C_DISPLAY_END
+E5T18D_STATUS_BEGIN
+desktop.attempts=1
+desktop.ready=1 961
+desktop.failed=absent
+weston.pid=961
+2026-09-06T10:34:54Z E5T18D event=boot-runtime-ready
+2026-09-06T10:35:17Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman
+2026-09-06T10:35:17Z E5T18D event=started attempt=1 pid=961
+2026-09-06T10:35:20Z E5T18D event=ready attempt=1 pid=961
+E5T18D_STATUS_END
+WV_DISPLAY ns=109089260400 id=16 name=Virtual-1 width=801 height=601 refresh=59994 scale=1 edid_width=801 edid_height=601 edid=00ffffffffffff005ecd010001000000011e0104a51510780a9605a3544c99260f505400000001010101010101010101010101010101360e21a030591e2028147300d2a00000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a20202020004d
+E5T22C_DISPLAY_BEGIN
+WV_DISPLAY ns=109614079300 id=16 name=Virtual-1 width=801 height=601 refresh=59994 scale=1 edid_width=801 edid_height=601 edid=00ffffffffffff005ecd010001000000011e0104a51510780a9605a3544c99260f505400000001010101010101010101010101010101360e21a030591e2028147300d2a00000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a20202020004d
+WV_CLIENT pid=1018 exe=/usr/bin/foot
+WV_CLIENT_STATE State:	S (sleeping)
+WV_CLIENT_STATE VmRSS:	    9280 kB
+WV_CLIENT_STATE Threads:	2
+E5T22C_DISPLAY_END
+E5T18D_STATUS_BEGIN
+desktop.attempts=1
+desktop.ready=1 961
+desktop.failed=absent
+weston.pid=961
+2026-09-06T10:34:54Z E5T18D event=boot-runtime-ready
+2026-09-06T10:35:17Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman
+2026-09-06T10:35:17Z E5T18D event=started attempt=1 pid=961
+2026-09-06T10:35:20Z E5T18D event=ready attempt=1 pid=961
+E5T18D_STATUS_END
+WV_DISPLAY ns=111054550700 id=16 name=Virtual-1 width=802 height=601 refresh=59998 scale=1 edid_width=802 edid_height=601 edid=00ffffffffffff005ecd010001000000011e0104a51510780a9605a3544c99260f5054000000010101010101010101010101010101013a0e22a030591e2028147300d2a00000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a202020200048
+E5T22C_DISPLAY_BEGIN
+WV_DISPLAY ns=111410000900 id=16 name=Virtual-1 width=802 height=601 refresh=59998 scale=1 edid_width=802 edid_height=601 edid=00ffffffffffff005ecd010001000000011e0104a51510780a9605a3544c99260f5054000000010101010101010101010101010101013a0e22a030591e2028147300d2a00000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a202020200048
+WV_CLIENT pid=1018 exe=/usr/bin/foot
+WV_CLIENT_STATE State:	S (sleeping)
+WV_CLIENT_STATE VmRSS:	    9280 kB
+WV_CLIENT_STATE Threads:	2
+E5T22C_DISPLAY_END
+E5T18D_STATUS_BEGIN
+desktop.attempts=1
+desktop.ready=1 961
+desktop.failed=absent
+weston.pid=961
+2026-09-06T10:34:54Z E5T18D event=boot-runtime-ready
+2026-09-06T10:35:17Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman
+2026-09-06T10:35:17Z E5T18D event=started attempt=1 pid=961
+2026-09-06T10:35:20Z E5T18D event=ready attempt=1 pid=961
+E5T18D_STATUS_END
+WV_DISPLAY ns=112854509300 id=16 name=Virtual-1 width=1201 height=801 refresh=60000 scale=1 edid_width=1201 edid_height=801 edid=00ffffffffffff005ecd010001000000011e0104a52015780a9605a3544c99260f505400000001010101010101010101010101010101821ab1a040211e302814730040d21000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a2020202000bd
+E5T22C_DISPLAY_BEGIN
+WV_DISPLAY ns=113246255300 id=16 name=Virtual-1 width=1201 height=801 refresh=60000 scale=1 edid_width=1201 edid_height=801 edid=00ffffffffffff005ecd010001000000011e0104a52015780a9605a3544c99260f505400000001010101010101010101010101010101821ab1a040211e302814730040d21000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a2020202000bd
+WV_CLIENT pid=1018 exe=/usr/bin/foot
+WV_CLIENT_STATE State:	S (sleeping)
+WV_CLIENT_STATE VmRSS:	    9280 kB
+WV_CLIENT_STATE Threads:	2
+E5T22C_DISPLAY_END
+E5T18D_STATUS_BEGIN
+desktop.attempts=1
+desktop.ready=1 961
+desktop.failed=absent
+weston.pid=961
+2026-09-06T10:34:54Z E5T18D event=boot-runtime-ready
+2026-09-06T10:35:17Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman
+2026-09-06T10:35:17Z E5T18D event=started attempt=1 pid=961
+2026-09-06T10:35:20Z E5T18D event=ready attempt=1 pid=961
+E5T18D_STATUS_END
+E5T18D_LOG_BEGIN
+Date: 2026-09-06 UTC
+[10:35:17.790] weston 12.0.4
+               https://wayland.freedesktop.org
+               Bug reports to: https://gitlab.freedesktop.org/wayland/weston/issues/
+               Build: 12.0.4
+[10:35:17.790] Command line: weston --config=/etc/xdg/weston/weston.ini --backend=drm --renderer=pixman --socket=wayland-0
+[10:35:17.791] OS: Linux, 6.6.63, #1 SMP Thu Nov 14 2024, riscv64
+[10:35:17.791] Flight recorder: enabled
+[10:35:17.792] Using config file '/etc/xdg/weston/weston.ini'
+[10:35:17.800] Output repaint window is 7 ms maximum.
+[10:35:17.862] Loading module '/usr/lib/libweston-12/drm-backend.so'
+[10:35:18.259] initializing drm backend
+[10:35:18.259] Trying libseat launcher...
+[10:35:18.260] [libseat/libseat.c:73] Seat opened with backend 'seatd'
+[10:35:18.261] [libseat/backend/seatd.c:212] Enabling seat
+[10:35:18.261] libseat: session control granted
+[10:35:18.271] using /dev/dri/card0
+[10:35:18.272] DRM: supports atomic modesetting
+[10:35:18.272] DRM: does not support GBM modifiers
+[10:35:18.272] DRM: does not support async page flipping
+[10:35:18.272] DRM: supports picture aspect ratio
+[10:35:18.272] Using Pixman renderer
+[10:35:18.476] event0  - wasm-vm virtio keyboard: is tagged by udev as: Keyboard
+[10:35:18.482] event0  - wasm-vm virtio keyboard: device is a keyboard
+[10:35:18.521] event1  - wasm-vm virtio tablet: is tagged by udev as: Mouse
+[10:35:18.540] event1  - wasm-vm virtio tablet: device is a pointer
+[10:35:18.575] event2  - wasm-vm virtio mouse: is tagged by udev as: Mouse
+[10:35:18.584] event2  - wasm-vm virtio mouse: device is a pointer
+[10:35:19.527] libinput: configuring device "wasm-vm virtio keyboard".
+[10:35:19.528] libinput: configuring device "wasm-vm virtio tablet".
+[10:35:19.528] input device event1 has no enabled output associated (none named), skipping calibration for now.
+[10:35:19.528] libinput: configuring device "wasm-vm virtio mouse".
+[10:35:19.530] DRM: head 'Virtual-1' found, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[10:35:19.531] Registered plugin API 'weston_drm_output_api_v1' of size 40
+[10:35:19.532] Registered plugin API 'weston_drm_virtual_output_api_v2' of size 48
+[10:35:19.532] Color manager: no-op
+[10:35:19.532] Output 'Virtual-1' attempts EOTF mode: SDR
+[10:35:19.532] Output 'Virtual-1' using color profile: built-in default sRGB SDR profile
+[10:35:19.595] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:35:19.595] Output Virtual-1 (crtc 33) video modes:
+               901x701@60.0, preferred, current, 46.5 MHz
+[10:35:19.595] associating input device event0 with output Virtual-1 (none by udev)
+[10:35:19.595] associating input device event1 with output Virtual-1 (none by udev)
+[10:35:19.598] associating input device event2 with output Virtual-1 (none by udev)
+[10:35:19.599] Output 'Virtual-1' enabled with head(s) Virtual-1
+[10:35:19.599] Compositor capabilities:
+               arbitrary surface rotation: yes
+               screen capture uses y-flip: no
+               cursor planes: yes
+               arbitrary resolutions: no
+               view mask clipping: yes
+               explicit sync: no
+               color operations: no
+               presentation clock: CLOCK_MONOTONIC, id 1
+               presentation clock resolution: 0.000000001 s
+[10:35:19.601] Loading module '/usr/lib/weston/desktop-shell.so'
+[10:35:19.607] Loading module '/usr/lib/weston/wv-display-resize.so'
+[10:35:19.608] WV_DISPLAY enabled bounded 10ms EDID watcher
+[10:35:19.609] launching '/usr/libexec/weston-keyboard'
+[10:35:19.624] launching '/usr/libexec/weston-desktop-shell'
+could not load cursor 'dnd-move'
+could not load cursor 'dnd-copy'
+could not load cursor 'dnd-none'
+could not load cursor 'dnd-move'
+could not load cursor 'dnd-copy'
+could not load cursor 'dnd-none'
+[10:35:35.394] DRM: head 'Virtual-1' updated, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[10:35:35.397] Detected a monitor change on head 'Virtual-1', not bothering to do anything about it.
+[10:35:35.491] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:35:35.491] WV_DISPLAY_APPLIED output=Virtual-1 width=803 height=603
+[10:35:37.052] DRM: head 'Virtual-1' updated, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[10:35:37.052] Detected a monitor change on head 'Virtual-1', not bothering to do anything about it.
+[10:35:37.149] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:35:37.150] WV_DISPLAY_APPLIED output=Virtual-1 width=640 height=480
+[10:35:38.671] DRM: head 'Virtual-1' updated, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[10:35:38.672] Detected a monitor change on head 'Virtual-1', not bothering to do anything about it.
+[10:35:38.894] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:35:38.896] WV_DISPLAY_APPLIED output=Virtual-1 width=1280 height=800
+[10:35:40.521] DRM: head 'Virtual-1' updated, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[10:35:40.527] Detected a monitor change on head 'Virtual-1', not bothering to do anything about it.
+[10:35:41.068] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:35:41.069] WV_DISPLAY_APPLIED output=Virtual-1 width=2560 height=1600
+[10:35:42.588] DRM: head 'Virtual-1' updated, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[10:35:42.588] Detected a monitor change on head 'Virtual-1', not bothering to do anything about it.
+[10:35:42.793] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:35:42.794] WV_DISPLAY_APPLIED output=Virtual-1 width=801 height=601
+[10:35:44.766] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:35:44.767] WV_DISPLAY_APPLIED output=Virtual-1 width=802 height=601
+[10:35:46.316] DRM: head 'Virtual-1' updated, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[10:35:46.317] Detected a monitor change on head 'Virtual-1', not bothering to do anything about it.
+[10:35:46.566] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:35:46.568] WV_DISPLAY_APPLIED output=Virtual-1 width=1201 height=801
+E5T18D_LOG_END

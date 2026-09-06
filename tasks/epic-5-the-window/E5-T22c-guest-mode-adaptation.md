@@ -233,3 +233,22 @@ The actual-adapter ASan/UBSan harness passes 232,494 checks, including the new
 idle and one-pixel trigger cases (`idle-poll/green.log`). This removes measured
 unnecessary calls, not yet a claim that the real two-second target is met; build
 a new immutable v5 image and re-record the guest after this runtime change.
+
+### 2026-09-06 — worker — idle optimization does not close timing; visual gap found
+
+Iteration at `9a381d1e`, preserved in `evidence/e5-t22c/iteration-v5/`, boots
+image SHA256 `573329db31046341990e39aefe94023d1b6147270faed3e7a065656e1912426c`.
+All seven requested modes agree across Wayland/EDID/scanout/canvas, retaining
+Weston 961, foot 1018 and the exact terminal marker pixels. The corrected paused
+overlap check passes, and browser errors are empty. Resize takes 3351, 2705,
+4069, 6445, 4561, 2933 and 4180 ms respectively: the idle optimization does
+**not** close the two-second gap. Do not label this acceptance.
+
+Visual inspection of `2560x1600.png` reveals another insufficiency: wallpaper
+and panel occupy only the original 901x701 area, with black beyond it. The same
+defect is visible in v4b. Dimension agreement and a retained client alone do not
+prove a fully repainted desktop. Add a native-canvas edge coverage check, its
+old-size-desktop/black-padding negative regression, and a bounded real wait to
+distinguish late shell drawing from a permanently stale surface. No runtime
+fix or new performance waiver is claimed; the unchanged image is investigated
+first. The existing host/reset/client-identity results remain held.

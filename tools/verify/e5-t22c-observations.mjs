@@ -54,3 +54,21 @@ export function inspectResizeContent() {
   for(let y=top;y<=bottom;y++)rgba.push(...data.subarray(4*(y*canvas.width+left),4*(y*canvas.width+right+1)));
   return {visible:true,left,top,width,height,background,foreground,rgba};
 }
+
+// A matching scanout can still contain the old desktop in one corner and an
+// unpainted black remainder. Probe native pixels along every edge, away from the
+// CSS border. This is a coverage check for the selected non-black Weston theme,
+// not a claim that any particular wallpaper pattern or glyph was rendered.
+export function inspectDesktopEdges() {
+  const canvas=document.getElementById("desktop-canvas");
+  const context=canvas.getContext("2d"),width=canvas.width,height=canvas.height;
+  const points=[[4,4],[Math.floor(width/2),4],[width-8,4],
+    [4,Math.floor(height/2)],[width-8,Math.floor(height/2)],
+    [4,height-8],[Math.floor(width/2),height-8],[width-8,height-8]];
+  const samples=points.map(([x,y])=>{
+    const {data}=context.getImageData(x,y,4,4);let painted=0;
+    for(let i=0;i<data.length;i+=4)if(data[i+3]===255&&Math.max(data[i],data[i+1],data[i+2])>8)painted++;
+    return {x,y,painted};
+  });
+  return {width,height,complete:samples.every(s=>s.painted===16),samples};
+}

@@ -8,7 +8,7 @@ import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { inspectRecoveryCanvas } from "./e5-t18d-surface.mjs";
-import { assertDisplayAgreement, inspectResizeContent } from "./e5-t22c-observations.mjs";
+import { assertDisplayAgreement, inspectResizeContent, inspectDesktopEdges } from "./e5-t22c-observations.mjs";
 import { hashFile, verifyChunkStore } from "./e5-t18e-publication.mjs";
 import { verifyDisplayPublication, verifyFrozenRuntime } from "./e5-t22c-publication.mjs";
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"../..");
@@ -127,6 +127,13 @@ try{
     const elapsed=paint.ms-started;
     const afterScheduler=await page.evaluate(()=>desktopResize.controller().schedulerStats());
     if(elapsed>2000)gaps.push(`${width}x${height}: ${elapsed.toFixed(2)}ms exceeds 2000ms`);
+    const initialEdges=await page.evaluate(inspectDesktopEdges);
+    await writeFile(path.join(out,`${width}x${height}-initial-edges.json`),JSON.stringify(initialEdges,null,2)+"\n");
+    // A dimensions-only first frame is not sufficient if the shell has not
+    // painted the newly exposed desktop. Keep that first-frame timing separate.
+    const edges=await until(async()=>{const e=await page.evaluate(inspectDesktopEdges);return e.width===width&&e.height===height&&e.complete?e:null;},"desktop fills "+width+"x"+height,120000);
+    const completeMs=await page.evaluate(()=>performance.now());
+    if(completeMs-started>2000)gaps.push(`${width}x${height}: complete desktop ${(completeMs-started).toFixed(2)}ms exceeds 2000ms`);
     const guest=await command("display"),gpu=await gpuState(),state=await page.evaluate(()=>desktopResize.state());
     const observation=assertDisplayAgreement({guest,gpu,state,width,height,outputId:firstMode.id});
     const status=await command("status","STATUS");assert.equal(pid(status),pid(initial.status),"same compositor process");
@@ -134,7 +141,7 @@ try{
     const marker=await content();assert.equal(marker.visible,true,"live terminal text visible");
     assert.equal(marker.sha256,originalContent.sha256,"identical retained terminal text pixels");
     const screenshot=await page.screenshot({path:path.join(out,`${width}x${height}.png`),fullPage:true});
-    const result={width,height,started,paint,elapsed,pendingFrom,replacementBeforeResume,beforeScheduler,afterScheduler,guest,gpu,state,observation,status,marker,screenshotSha256:sha(screenshot)};
+    const result={width,height,started,paint,elapsed,initialEdges,edges,completeMs,pendingFrom,replacementBeforeResume,beforeScheduler,afterScheduler,guest,gpu,state,observation,status,marker,screenshotSha256:sha(screenshot)};
     results.push(result);console.log(JSON.stringify({mode:[width,height],elapsed,pid:pid(status),foot:clientPids(guest),marker:marker.sha256}));
     await writeFile(path.join(out,"results.json"),JSON.stringify({iteration,head,frozen,sources,servedRuntime,publication,metadata,initial,client,originalContent,results,gaps,errors},null,2)+"\n");
   }
@@ -176,7 +183,7 @@ try{
 }catch(error){
   await writeFile(path.join(out,"failure.json"),JSON.stringify({phase,error:String(error),errors,results},null,2)+"\n");
   await page.screenshot({path:path.join(out,"failure.png")}).catch(()=>{});
-  try{await writeFile(path.join(out,"failure-display.json"),JSON.stringify({gpu:await gpuState(),state:await page.evaluate(()=>desktopResize.state()),content:await content(),guest:await command("display"),status:await command("status","STATUS")},null,2)+"\n");}catch{}
+  try{await writeFile(path.join(out,"failure-display.json"),JSON.stringify({gpu:await gpuState(),state:await page.evaluate(()=>desktopResize.state()),edges:await page.evaluate(inspectDesktopEdges),content:await content(),guest:await command("display"),status:await command("status","STATUS")},null,2)+"\n");}catch{}
   try{await writeFile(path.join(out,"last-compositor.log"),await command("log","LOG"));}catch{}
   throw error;
 }finally{clearInterval(timer);await writeFile(path.join(out,"serial.log"),await page.evaluate(()=>desktopResize.serial()).catch(()=>""));await browser.close();await new Promise(r=>server.close(r));}

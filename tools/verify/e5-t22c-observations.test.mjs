@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {readFileSync} from "node:fs";
-import {decodeEdid,displayObservations,assertDisplayAgreement,inspectResizeContent} from "./e5-t22c-observations.mjs";
+import {decodeEdid,displayObservations,assertDisplayAgreement,inspectResizeContent,inspectDesktopEdges} from "./e5-t22c-observations.mjs";
 const baseline=JSON.parse(readFileSync(new URL("../../evidence/e5-t22c/baseline/baseline.json",import.meta.url)));
 const edid=baseline.samples.at(-1).gpu.edid;
 const hex=Buffer.from(edid).toString("hex");
@@ -39,5 +39,22 @@ test("content oracle reads native pixels, rejects absence and locates moved text
     for(let y=10;y<20;y++)for(let x=7;x<27;x++)if((x+y)%3===0)bytes.set([245,40,80,255],4*(y*width+x));
     assert.equal(inspectResizeContent().visible,false,"unrelated red strokes are not the requested foreground");
     bytes.fill(0);assert.equal(inspectResizeContent().visible,false);
+  }finally{delete globalThis.document;}
+});
+test("matching-size canvas with old-size desktop and black padding is incomplete",()=>{
+  let fillWidth=901,fillHeight=701;
+  globalThis.document={getElementById:()=>({width:2560,height:1600,getContext:()=>({getImageData:(x,y,w,h)=>{
+    const data=new Uint8ClampedArray(w*h*4);
+    for(let dy=0;dy<h;dy++)for(let dx=0;dx<w;dx++){
+      const rgb=x+dx<fillWidth&&y+dy<fillHeight?90:0;
+      data.set([rgb,rgb,rgb,255],4*(dy*w+dx));
+    }
+    return {data};
+  }})})};
+  try{
+    assert.equal(inspectDesktopEdges().complete,false);
+    fillWidth=2560;assert.equal(inspectDesktopEdges().complete,false,"black bottom is incomplete");
+    fillHeight=1600;assert.equal(inspectDesktopEdges().complete,true);
+    fillWidth=901;assert.equal(inspectDesktopEdges().complete,false,"black right is incomplete");
   }finally{delete globalThis.document;}
 });
