@@ -1,0 +1,46 @@
+E5T18D_IMAGE=e75b04caadd9616915b323497c92df1d5a9d11d55c877afcc95d208dde302416
+E5T18D_BOOT=three-crashes
+E5T18D_BOOT=broken-config
+E5T18D_PROGRESS=broken-config frames=4 retired=431978935 serial= /proc ... [ ok ]  * Mounting /run ... [ ok ]  * /run/openrc: creating directory  * /run/lock: creating directory  * /run/lock: correcting owner 
+E5T18D_PROGRESS=three-crashes frames=4 retired=428479134 serial= /proc ... [ ok ]  * Mounting /run ... [ ok ]  * /run/openrc: creating directory  * /run/lock: creating directory  * /run/lock: correcting owner 
+E5T18D_PROGRESS=broken-config frames=4 retired=702459987 serial= /proc ... [ ok ]  * Mounting /run ... [ ok ]  * /run/openrc: creating directory  * /run/lock: creating directory  * /run/lock: correcting owner 
+E5T18D_PROGRESS=three-crashes frames=4 retired=698460325 serial= /proc ... [ ok ]  * Mounting /run ... [ ok ]  * /run/openrc: creating directory  * /run/lock: creating directory  * /run/lock: correcting owner 
+E5T18D_PROGRESS=broken-config frames=4 retired=955440403 serial=]  * Mounting /dev/shm ... [ ok ]  * Mounting /sys ... [ ok ]  * Mounting security filesystem ... [ ok ]  * Mounting debug filesystem ... [ ok ] 
+E5T18D_PROGRESS=three-crashes frames=4 retired=955940252 serial=shm ... [ ok ]  * Mounting /sys ... [ ok ]  * Mounting security filesystem ... [ ok ]  * Mounting debug filesystem ... [ ok ]  * Starting udev ...
+E5T18D_PROGRESS=broken-config frames=4 retired=1179420415 serial= Starting udev ... [ ok ]  * Generating a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ...
+E5T18D_PROGRESS=three-crashes frames=4 retired=1184419465 serial= Starting udev ... [ ok ]  * Generating a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ...
+E5T18D_PROGRESS=broken-config frames=4 retired=1386895538 serial= udev ... [ ok ]  * Generating a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ] 
+E5T18D_PROGRESS=three-crashes frames=4 retired=1399394470 serial= udev ... [ ok ]  * Generating a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ] 
+E5T18D_PROGRESS=broken-config frames=4 retired=1598871257 serial= a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ]  * Loading hardware drivers ...
+E5T18D_PROGRESS=three-crashes frames=4 retired=1615870348 serial= a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ]  * Loading hardware drivers ...
+E5T18D_PROGRESS=broken-config frames=4 retired=1854350730 serial= a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ]  * Loading hardware drivers ...
+E5T18D_PROGRESS=three-crashes frames=4 retired=1869849957 serial= a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ]  * Loading hardware drivers ...
+E5T18D_PROGRESS=broken-config frames=4 retired=2106329165 serial= a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ]  * Loading hardware drivers ...
+E5T18D_PROGRESS=three-crashes frames=4 retired=2124827742 serial= a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ]  * Loading hardware drivers ...
+E5T18D_PROGRESS=broken-config frames=4 retired=2350305703 serial= [ ok ]  * Loading hardware drivers ...modprobe: can't change directory to '/lib/modules': No such file or directory  [ ok ]  * Loading modules ...
+E5T18D_PROGRESS=three-crashes frames=4 retired=2377304522 serial=hange directory to '/lib/modules': No such file or directory modprobe: can't change directory to '/lib/modules': No such file or directory  [ ok ] 
+E5T18D_PROGRESS=broken-config frames=4 retired=2595785447 serial=et the system clock  [ !! ]  * Checking local filesystems  ... [ ok ]  * Remounting filesystems ... [ ok ]  * Activating swap devices ... [ ok ] 
+E5T18D_PROGRESS=three-crashes frames=4 retired=2625283829 serial=local filesystems  ... [ ok ]  * Remounting filesystems ... [ ok ]  * Activating swap devices ... [ ok ]  * Mounting local filesystems ... [ ok ] 
+E5T18D_PROGRESS=broken-config frames=4 retired=2839765700 serial=ctory ... [ ok ]  * Setting hostname ... [ ok ]  * Seeding random number generator ... * Saving 256 bits of creditable seed for next boot  [ ok ] 
+E5T18D_PROGRESS=three-crashes frames=4 retired=2875263515 serial=ostname ... [ ok ]  * Seeding random number generator ... * Saving 256 bits of creditable seed for next boot  [ ok ]  * Starting busybox syslog ...
+E5T18D_PROGRESS=broken-config frames=4 retired=3083744482 serial=umber generator ... * Saving 256 bits of creditable seed for next boot  [ ok ]  * Starting busybox syslog ... [ ok ]  * Starting seatd ... [ ok ] 
+E5T18D_PROGRESS=three-crashes frames=4 retired=3115741661 serial= seed for next boot  [ ok ]  * Starting busybox syslog ... [ ok ]  * Starting seatd ... [ ok ]  * Waiting for uevents to be processed ... [ ok ] 
+E5T18D_PROGRESS=broken-config frames=4 retired=3333724315 serial=roadcasting discover udhcpc failed to get a DHCP lease udhcpc: no lease, forking to background  [ ok ]  * Starting wasm-vm file transfer agent ...
+E5T18D_PROGRESS=three-crashes frames=4 retired=3367721717 serial=ng discover udhcpc failed to get a DHCP lease udhcpc: no lease, forking to background  [ ok ]  * Starting wasm-vm file transfer agent ... [ ok ] 
+E5T18D_CASE_PASS=broken-config
+E5T18D_PROGRESS=three-crashes frames=14 retired=3591701628 serial==1 backend=drm renderer=pixman 2026-09-06T04:28:51Z E5T18D event=started attempt=1 pid=968 E5T18D_STATUS_END E5T18D_STATUS_BEGIN desktop.attempts=
+E5T18D_PROGRESS=three-crashes frames=15 retired=3888182552 serial=er=pixman 2026-09-06T04:28:51Z E5T18D event=started attempt=1 pid=968 2026-09-06T04:28:55Z E5T18D event=ready attempt=1 pid=968 E5T18D_STATUS_END 
+E5T18D_PROGRESS=three-crashes frames=15 retired=4181667646 serial=er=pixman 2026-09-06T04:28:51Z E5T18D event=started attempt=1 pid=968 2026-09-06T04:28:55Z E5T18D event=ready attempt=1 pid=968 E5T18D_STATUS_END 
+E5T18D_PROGRESS=three-crashes frames=17 retired=4723152661 serial=er=pixman 2026-09-06T04:28:51Z E5T18D event=started attempt=1 pid=968 2026-09-06T04:28:55Z E5T18D event=ready attempt=1 pid=968 E5T18D_STATUS_END 
+E5T18D_READY attempt=1 pid=968
+E5T18D_PROGRESS=three-crashes frames=32 retired=5076632868 serial=:08Z E5T18D event=restart next=2 E5T18D_STATUS_END E5T18D_STATUS_BEGIN desktop.attempts=2 desktop.ready=absent desktop.failed=absent weston.pid=
+E5T18D_PROGRESS=three-crashes frames=33 retired=5378112809 serial==pixman 2026-09-06T04:29:09Z E5T18D event=started attempt=2 pid=1111 2026-09-06T04:29:11Z E5T18D event=ready attempt=2 pid=1111 E5T18D_STATUS_END 
+E5T18D_PROGRESS=three-crashes frames=33 retired=5945098008 serial==pixman 2026-09-06T04:29:09Z E5T18D event=started attempt=2 pid=1111 2026-09-06T04:29:11Z E5T18D event=ready attempt=2 pid=1111 E5T18D_STATUS_END 
+E5T18D_READY attempt=2 pid=1111
+E5T18D_PROGRESS=three-crashes frames=48 retired=6341579835 serial=pt=2 pid=1111 status=137 2026-09-06T04:29:22Z E5T18D event=restart next=3 E5T18D_STATUS_END E5T18D_STATUS_BEGIN desktop.attempts=3 desktop.ready=
+E5T18D_PROGRESS=three-crashes frames=50 retired=6609558323 serial=23Z E5T18D event=started attempt=3 pid=1236 E5T18D_STATUS_END E5T18D_STATUS_BEGIN desktop.attempts=3 desktop.ready=3 1236 desktop.failed=absent 
+E5T18D_PROGRESS=three-crashes frames=51 retired=7065042992 serial==pixman 2026-09-06T04:29:23Z E5T18D event=started attempt=3 pid=1236 2026-09-06T04:29:25Z E5T18D event=ready attempt=3 pid=1236 E5T18D_STATUS_END 
+E5T18D_READY attempt=3 pid=1236
+E5T18D_PROGRESS=three-crashes frames=64 retired=7627025406 serial=RASH pid=1236 signal=KILL E5T18D_STATUS_BEGIN desktop.attempts=3 desktop.ready=absent desktop.failed=restart-budget-exhausted weston.pid=absent 
+E5T18D_CASE_PASS=three-crashes
+E5T18D_PASS=2

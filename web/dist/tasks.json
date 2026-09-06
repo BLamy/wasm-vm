@@ -56,7 +56,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-09-05"
+    "end": "2026-09-06"
   },
   "tasks": [
     {
@@ -19173,7 +19173,7 @@
       "epicKey": "5",
       "title": "Harden compositor restart and tty1 getty fallback",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T18c"
       ],
@@ -19197,7 +19197,7 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis S slice isolates process supervision and the failure boundary needed by the final bring-up\nplaybook.\n\n### 2026-09-05 — worker — STARTED\n\nImplement bounded compositor supervision, a boot-latched tty1 getty fallback, and local-only\nserial failure drills. Reuse the verified desktop package profile; no Omarchy or Epic 6 work\nstarts in this slice. Final evidence will distinguish a successful restart from stale readiness\nand prove repeated failure cannot re-enter an unbounded init/autologin loop.",
+      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis S slice isolates process supervision and the failure boundary needed by the final bring-up\nplaybook.\n\n### 2026-09-05 — worker — STARTED\n\nImplement bounded compositor supervision, a boot-latched tty1 getty fallback, and local-only\nserial failure drills. Reuse the verified desktop package profile; no Omarchy or Epic 6 work\nstarts in this slice. Final evidence will distinguish a successful restart from stale readiness\nand prove repeated failure cannot re-enter an unbounded init/autologin loop.\n\n### 2026-09-06 — worker — IMPLEMENTED\n\nFrozen runtime/image inputs: `c01edca99d3e6a227f51fbca882312b1ed802913`.\nFrozen observer: `5ff7f85727352781f297fff70ba10263ff8646ae`. The latter changes only\nthe visual observer, three observer unit tests, and their Makefile invocation; no\nruntime, guest image, or source/dist behavior changed after the cold-clone build.\n\nThe final browser command ran in the initially pristine shared-folder clone\n`/Users/blamy/Documents/Codex/e5-t18d-final.YlijDe/repo`, with `RUSTFLAGS`, `RUST_LOG`,\nand all `CARGO_*` variables removed:\n\n```sh\nE5_T18D_REQUIRE_HEAD=5ff7f85727352781f297fff70ba10263ff8646ae \\\n  E5_T18D_IMAGE_DIR=/Users/blamy/Documents/Codex/wasm-vm/target/e5-t18d/desktop-image-v5 \\\n  E5_T18D_DESKTOP_ASSET_DIR=/Users/blamy/Documents/Codex/wasm-vm/target/e5-t18d/chunks/desktop-v5 \\\n  E5_T18D_EVIDENCE_DIR=target/e5-t18d-final-proof \\\n  node tools/verify/e5-t18d-desktop-recovery.mjs\n```\n\nResult: exit 0, `E5T18D_PASS=2`, Chromium `152.0.7977.76`. Two separate fresh\ncache-disabled contexts used nonpersistent overlays over the same hash-checked image.\nThe normal guest rendered three successive desktops with PIDs `968`, `1111`, and\n`1236`. Each fixed serial crash produced exit status `137`, a timestamped log, and\nfresh readiness; only the first two crashes restarted. The third latched\n`restart-budget-exhausted`, cleared readiness/PID, and left real tty1 getty PID `1361`\nwith the visible error banner and login prompt. After at least ten million further\nretired instructions, the log still contains exactly three attempts. The separate\nbroken-config boot reached tty1 getty PID `992`, preserved its log, and never emitted\n`event=started` or `event=ready`. Both fallback screenshots are visibly rendered\ntext consoles; all three ready screenshots show the patterned wallpaper and panel.\nThere were no unexpected browser console errors. The harness verified every served\nchunk and reconstructed the complete image digest before boot, then checked that its\nHEAD and all source hashes were unchanged at completion.\n\nEvidence (copied byte-for-byte from the clone):\n\n- `evidence/e5-t18d/desktop-recovery.json`, SHA-256\n  `6e84713050debf24782dd042795d87dea9747fc638a59cf5f1d82e13669bd00a`;\n  per-case JSON, serial logs, five PNG captures, and `browser-final.log` are adjacent.\n- Guest fallback state digests: broken config\n  `da907371852e4c761700380a5047df5cd89765be2a65a72e1602431b121c49a9`, three crashes\n  `73e5abd08a72d492b244a64deb5de128a7d51e3a339533561aee11b0abe7fc85`.\n- Image SHA-256 `e75b04caadd9616915b323497c92df1d5a9d11d55c877afcc95d208dde302416`;\n  chunk manifest `4ee9976955d30915ba2ed154c14475303070db9b6902491cae9d16ae25241b55`;\n  custom-file manifest `ab73efab8eac885690def228e3d2080d4ed9f57801e642037f12fd0186e7e2d5`;\n  package manifest `ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908`.\n- `runtime-artifacts.json` records byte-identical workspace/cold-clone artifacts,\n  including the freshly built WASM SHA-256\n  `f661a1f50299db159eee89fe92981da1749d23f2aff815210efb53e06b3aa239`.\n- `demo-in-progress.json`/PNG: one built-demo load, 126 passed, zero failed, zero\n  unexpected console/HTTP errors, visible T18d task panel (correctly still in progress\n  before submission). The deployment-time Alpine manifest was staged as the normal\n  Cloudflare script does. Production publication is held for the user's explicit\n  completed-Omarchy delivery milestone, before which Epic 5's open PRs must be merged.\n\nRisk-tier prechecks: scoped fmt/clippy passed with `-D warnings`; 267 core library\ntests with `gpu-trace` passed. The cold-clone `make verify-E5-T18d` run passed shell\nsyntax, four recovery-policy tests, 25 worker-protocol tests, ten Linux supervisor\nfixtures, nine promoted state-boundary tests, and the from-source WASM/dist build.\nIts original colorful-wallpaper observer was wrong and is preserved as a failed\nobservation in `cold-clone-prechecks-and-superseded-observer.log`, not counted as an\noverall pass. After the observer-only correction, its three new tests and the full\ntwo-guest browser recording above passed. Unchanged runtime gates carry forward\nunder incremental re-verification; `README.md` documents the complete provenance.\n\nThe fresh critic's earlier FIFO/symlink findings were fixed before runtime freeze:\nroot-owned diagnostics drop to the desktop UID before bounded reads, and BusyBox's\nwatchdog directly owns the reader instead of orphaning it behind `runuser`. The\nbrowser proof also exposed a dropped XRGB format field in the worker protocol;\nthe two message directions now preserve it and the protocol test asserts it. These\nare real fixes, not waived failures. Existing Linux-only `wvseccomp` macOS build\nlimitations and unrelated E6 dirt remain outside this diff. No rr, independent\nmachine, WebKit, Omarchy, or Epic 6 implementation is claimed here.",
       "adversarial": "Inject the 500 ms seatd delay, remove the video device, delete XDG_RUNTIME_DIR initialization,\nand force WLR_RENDERER=gles2 in separate local fixtures. Each case must terminate with its\npredicted bounded symptom/log path; no new hang or unbounded restart loop is acceptable.\nWebKit and independent machines are out of scope.",
       "file": "tasks/epic-5-the-window/E5-T18d-desktop-crash-restart-fallback.md",
       "activity": [
@@ -19207,10 +19207,15 @@
           "labels": [
             "chore(e5-t18d): activate compositor recovery slice"
           ]
+        },
+        {
+          "date": "2026-09-06",
+          "commits": 0,
+          "labels": []
         }
       ],
       "firstActivity": "2026-09-05",
-      "lastActivity": "2026-09-05",
+      "lastActivity": "2026-09-06",
       "commitCount": 1
     },
     {

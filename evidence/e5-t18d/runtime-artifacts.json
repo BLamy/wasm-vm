@@ -1,0 +1,112 @@
+{
+  "head": "c01edca99d3e6a227f51fbca882312b1ed802913",
+  "observerHead": "5ff7f85727352781f297fff70ba10263ff8646ae",
+  "incrementalChange": "Observer/tests only; every listed runtime artifact is unchanged",
+  "coldClone": "/Users/blamy/Documents/Codex/e5-t18d-final.YlijDe/repo",
+  "scrubbedEnvironment": [
+    "RUSTFLAGS",
+    "RUST_LOG",
+    "CARGO_*"
+  ],
+  "files": [
+    {
+      "path": "web/pkg/wasm_vm_wasm_bg.wasm",
+      "workspace": {
+        "sha256": "f661a1f50299db159eee89fe92981da1749d23f2aff815210efb53e06b3aa239",
+        "size": 1433192
+      },
+      "coldClone": {
+        "sha256": "f661a1f50299db159eee89fe92981da1749d23f2aff815210efb53e06b3aa239",
+        "size": 1433192
+      }
+    },
+    {
+      "path": "web/pkg/wasm_vm_wasm.js",
+      "workspace": {
+        "sha256": "991e850ee778719008cd0f296ef995fabc1a694faa075c9d478dc5dbbd691bba",
+        "size": 108871
+      },
+      "coldClone": {
+        "sha256": "991e850ee778719008cd0f296ef995fabc1a694faa075c9d478dc5dbbd691bba",
+        "size": 108871
+      }
+    },
+    {
+      "path": "web/linux-worker-protocol.js",
+      "workspace": {
+        "sha256": "4b451386529d2e5d2f98f2a30e8b9b42e9cb04d324a426645a4edb17be805421",
+        "size": 29577
+      },
+      "coldClone": {
+        "sha256": "4b451386529d2e5d2f98f2a30e8b9b42e9cb04d324a426645a4edb17be805421",
+        "size": 29577
+      }
+    },
+    {
+      "path": "web/linux-worker-host.js",
+      "workspace": {
+        "sha256": "3e1586d97418702a9c9c1f1a82b1163001fd27f3a9bf31ef9e3b0562a66506a9",
+        "size": 3159
+      },
+      "coldClone": {
+        "sha256": "3e1586d97418702a9c9c1f1a82b1163001fd27f3a9bf31ef9e3b0562a66506a9",
+        "size": 3159
+      }
+    },
+    {
+      "path": "web/loader.js",
+      "workspace": {
+        "sha256": "e36108bd764d5fab94327471d51286c8b42051278ff2e5f3a8da56508419c15e",
+        "size": 69471
+      },
+      "coldClone": {
+        "sha256": "e36108bd764d5fab94327471d51286c8b42051278ff2e5f3a8da56508419c15e",
+        "size": 69471
+      }
+    },
+    {
+      "path": "web/src/sink/presentation.js",
+      "workspace": {
+        "sha256": "9233e963240094de98389174b629f2b8b659fc8793e60c28cd2a96f4c5a42426",
+        "size": 17450
+      },
+      "coldClone": {
+        "sha256": "9233e963240094de98389174b629f2b8b659fc8793e60c28cd2a96f4c5a42426",
+        "size": 17450
+      }
+    },
+    {
+      "path": "web/src/sink/canvas2d.js",
+      "workspace": {
+        "sha256": "719b95ae13dbda214ed8b123ae6a72cdf459f88806c0d52832f56e6a96233936",
+        "size": 3751
+      },
+      "coldClone": {
+        "sha256": "719b95ae13dbda214ed8b123ae6a72cdf459f88806c0d52832f56e6a96233936",
+        "size": 3751
+      }
+    },
+    {
+      "path": "web/desktop-recovery.js",
+      "workspace": {
+        "sha256": "9056d7c7d8e85a619302c272220bb326a058c2d513c3b9bd914186f4e583c654",
+        "size": 3521
+      },
+      "coldClone": {
+        "sha256": "9056d7c7d8e85a619302c272220bb326a058c2d513c3b9bd914186f4e583c654",
+        "size": 3521
+      }
+    },
+    {
+      "path": "web/src/input/desktop-recovery-policy.js",
+      "workspace": {
+        "sha256": "50d0487057012c2f5de28c23a8dffd75c9bda7f3c6e4773afcc9fd931372c85f",
+        "size": 741
+      },
+      "coldClone": {
+        "sha256": "50d0487057012c2f5de28c23a8dffd75c9bda7f3c6e4773afcc9fd931372c85f",
+        "size": 741
+      }
+    }
+  ]
+}
