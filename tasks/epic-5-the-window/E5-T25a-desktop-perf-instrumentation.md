@@ -3,7 +3,7 @@ id: E5-T25a
 epic: 5
 title: Freeze test-only desktop performance instrumentation and injection hooks
 priority: 525.1
-status: in-progress
+status: implemented
 depends_on: [E5-T09e, E5-T18e]
 estimate: S
 risk: medium
@@ -101,6 +101,39 @@ input-to-photon latency belongs to E5-T25c.
 Commands: `make verify-E5-T25a`; `make web-build`;
 `E5_DEMO_TASK=E5-T22g E5_DEMO_VERIFIED=1 E5_DEMO_OUT=evidence/e5-t25a/demo node tools/verify/e5-t18e-demo-smoke.mjs`;
 `shasum -a 256 evidence/e5-t25a/browser/results.json evidence/e5-t25a/browser/chromium-gated.png evidence/e5-t25a/demo/demo-suite.json evidence/e5-t25a/demo/demo-suite.png`.
+
+### 2026-09-06 — worker — REWORK IMPLEMENTED
+
+Daybreak Blue's fresh verifier at `47b489e8a86351994a6399bbfe8691979d0c7c5b`
+refuted the first submission on two concrete points: asynchronous public input calls
+could interleave before their `SYN_REPORT`, and the promised guest-instruction
+attribution was absent from each presentation record. Those findings are retained in
+`evidence/e5-t25a/verifier/verifier-report.md` and were fixed in
+`76ed2b4a` (`fix(e5-t25a): serialize perf frames and attribute guest work`).
+
+The helper now serializes every public operation through one queue, allocating its
+sequence number and completing all device events plus sync before the next operation;
+failed operations release the queue for later calls. Presentation telemetry now
+records `guestInstructions` as the non-negative retired-instruction delta since the
+previous present and `guestInstructionsTotal` as the cumulative attribution. The page
+perf gate samples the existing scheduler's `retiredInstructions` RPC into that
+callback, while normal pages do not install the sampler. Tests cover the two-call
+concurrency attack, a 100→175 instruction delta, the null sink, stale/duplicate
+input no-ops, out-of-bounds damage, five identical full records, and JS/TS byte
+parity.
+
+Final `make verify-E5-T25a` passed at `76ed2b4a`: eight tests, the release audit,
+and actual Chromium 152.0.7977.76 and Firefox 132.0 gated-browser checks. The
+browser evidence remains `evidence/e5-t25a/browser/results.json` SHA-256
+`f82cf35bb1c0db9e425b6bbfc37a5117304be424e1f9318777e1dc165a273d4e` and
+`chromium-gated.png` SHA-256
+`7b77d08efbfeab64a9b46cf6b3617c86b1e81afd90781a24bf4c2b02893f5547`. The rebuilt
+page proof remains 126/126 with zero browser/HTTP errors; its refreshed JSON and
+PNG hashes are `48fd7146cefc6ba84976f9d8a602ada2a4d032b6033e3360d06d375434206572`
+and `08f0868eab3a05b160505ce9c8596a0783374b7216a2c8b02b2d252983f62513`.
+
+Commands: `make web-build`; `make verify-E5-T25a`;
+`E5_DEMO_TASK=E5-T22g E5_DEMO_VERIFIED=1 E5_DEMO_OUT=evidence/e5-t25a/demo node tools/verify/e5-t18e-demo-smoke.mjs`.
 
 ### 2026-09-06 — verifier (Daybreak Blue) — VERDICT: refuted
 
