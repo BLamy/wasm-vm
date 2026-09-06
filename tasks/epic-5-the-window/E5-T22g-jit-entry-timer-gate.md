@@ -3,7 +3,7 @@ id: E5-T22g
 epic: 5
 title: Gate browser-JIT entry timing behind explicit profiling
 priority: 522.295
-status: implemented
+status: verified
 depends_on: [E5-T22f]
 estimate: S
 risk: high
@@ -107,3 +107,49 @@ These timings deliberately do **not** satisfy E5-T22c, which remains blocked.
 Finally, `evidence/e5-t22g/cold/demo/demo-suite.json` (SHA256
 `4d79c86ecd6a41a664a91e670ca2d39bb2607efdba4e7d20337f613ea69ddbe4`)
 records 126 passed, zero failed, zero page/console/HTTP errors.
+
+### 2026-09-06 — verifier — VERDICT: verified
+
+- **P1–P7 entry gate and parity — HELD.** Exact-hash immutable evidence and a
+  fresh scrubbed-environment replay in Chromium 152 and Firefox 132 each showed
+  dedicated-Worker compiled execution at 400,000 retires per phase: default-off
+  had 3,175 host entries, 6,350 copy calls and zero reads/ns; profiling-before and
+  -after executor, disable/re-enable, and enabled replacement had the predicted
+  independent read deltas; toggled and always-off controls both retired 1,600,000
+  with identical registers and RAM digest. Both engines rejected the forced
+  default-on sabotage at the intended profiling-off assertion. Citations:
+  `evidence/e5-t22g/cold/browser/results.json:13-409,431-827` and
+  `evidence/e5-t22g/verifier/fresh-browser/results.json` (SHA256
+  `de1b0e3ec88b44861306e23ae2d2348b8f36006490c7c25e9d245a5af685a2d7`).
+- **P8 isolation and coverage — HELD.** Task-scoped diff audit found the new bit
+  only in the executor entry-cost ledger and machine installation/profiling
+  propagation; no guest/device/scheduler clock, retirement, translation, cache,
+  chaining, or format route changed. The real desktop exercised 120,820,545 host
+  entries and 249,952 device boundaries with zero timer reads/ns
+  (`evidence/e5-t22g/cold/desktop/runtime-stats.json:80-92`). Every behavioral
+  hunk is executed or, for the one-line WasmLinux delegation and generated/
+  declarative artifacts, explicitly waived in
+  `evidence/e5-t22g/verifier/verifier-report.md`.
+- **P9 novel attack — HELD.** Verifier-only actual-Worker runs forced
+  `performance.now()` to nanosecond zero and replaced an already-installed
+  executor while profiling was off. In both browsers the off replacement and
+  disabled phase retained compiled work with zero reads; enabled and re-enabled
+  phases each counted 19,056 reads while all ns fields remained zero. Citation:
+  `evidence/e5-t22g/verifier/zero-time-results.json:5-95` (SHA256
+  `bba44f4d3659abf601c395ac137b45d913c7dbb756b988796907dbf392f7aaf7`).
+- **P10 cold/demo/T22c boundary — HELD.** All claimed hashes recomputed. The
+  retained clone is exact `9c7861d2`, has empty tracked/staged diffs, and its
+  original results byte-match committed evidence. Demo is 126/126 with no
+  non-favicon errors. All seven unprofiled v7 final modes retain PID/client,
+  EDID/GPU/scanout/canvas agreement and pixel digest; four modes remain above
+  two seconds (`evidence/e5-t22g/cold/desktop/results.json:3-6,334-5748`).
+  E5-T22c remains blocked and is not verified here.
+- **Commands:** exact `shasum -a 256` checks; retained-clone `rev-parse`,
+  tracked/staged `diff --exit-code`, and reflog inspection; scrubbed-env dual-
+  browser acceptance replay; `cargo test -p wasm-vm-core --test
+  jit_entry_timing --test prof_time_accounting -- --nocapture`; verifier zero-
+  time dual-browser attack; source/diff routing and ignore/mock searches.
+- **SUITE:** retain the deterministic lifecycle test and dual-browser harness;
+  retain the zero-time/off-replacement verifier artifact as golden attack
+  evidence. No further test-tree promotion is needed or permitted by this
+  verification scope.

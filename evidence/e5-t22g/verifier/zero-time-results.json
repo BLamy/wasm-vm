@@ -1,0 +1,99 @@
+{
+  "schema": "wasm-vm-e5-t22g-verifier-zero-time-v1",
+  "results": [
+    {
+      "browser": "chromium",
+      "version": "152.0.7977.76",
+      "realm": "dedicated-worker",
+      "performanceNow": 0,
+      "fixedRetiredPerPhase": 400000,
+      "replacementOff": {
+        "timingEnabled": false,
+        "timerReads": 0,
+        "hostEntries": 3176,
+        "stateCopyCalls": 6352,
+        "stateCopyBytes": 77504,
+        "stateCopyNs": 0,
+        "engineEntryNs": 0,
+        "deviceBoundaryNs": 0
+      },
+      "enabledZeroTime": {
+        "timingEnabled": true,
+        "timerReads": 19056,
+        "hostEntries": 3176,
+        "stateCopyCalls": 6352,
+        "stateCopyBytes": 77760,
+        "stateCopyNs": 0,
+        "engineEntryNs": 0,
+        "deviceBoundaryNs": 0
+      },
+      "disabledAgain": {
+        "timingEnabled": false,
+        "timerReads": 0,
+        "hostEntries": 3176,
+        "stateCopyCalls": 6352,
+        "stateCopyBytes": 77504,
+        "stateCopyNs": 0,
+        "engineEntryNs": 0,
+        "deviceBoundaryNs": 0
+      },
+      "reenabledZeroTime": {
+        "timingEnabled": true,
+        "timerReads": 19056,
+        "hostEntries": 3176,
+        "stateCopyCalls": 6352,
+        "stateCopyBytes": 77504,
+        "stateCopyNs": 0,
+        "engineEntryNs": 0,
+        "deviceBoundaryNs": 0
+      }
+    },
+    {
+      "browser": "firefox",
+      "version": "132.0",
+      "realm": "dedicated-worker",
+      "performanceNow": 0,
+      "fixedRetiredPerPhase": 400000,
+      "replacementOff": {
+        "timingEnabled": false,
+        "timerReads": 0,
+        "hostEntries": 3176,
+        "stateCopyCalls": 6352,
+        "stateCopyBytes": 77504,
+        "stateCopyNs": 0,
+        "engineEntryNs": 0,
+        "deviceBoundaryNs": 0
+      },
+      "enabledZeroTime": {
+        "timingEnabled": true,
+        "timerReads": 19056,
+        "hostEntries": 3176,
+        "stateCopyCalls": 6352,
+        "stateCopyBytes": 77760,
+        "stateCopyNs": 0,
+        "engineEntryNs": 0,
+        "deviceBoundaryNs": 0
+      },
+      "disabledAgain": {
+        "timingEnabled": false,
+        "timerReads": 0,
+        "hostEntries": 3176,
+        "stateCopyCalls": 6352,
+        "stateCopyBytes": 77504,
+        "stateCopyNs": 0,
+        "engineEntryNs": 0,
+        "deviceBoundaryNs": 0
+      },
+      "reenabledZeroTime": {
+        "timingEnabled": true,
+        "timerReads": 19056,
+        "hostEntries": 3176,
+        "stateCopyCalls": 6352,
+        "stateCopyBytes": 77504,
+        "stateCopyNs": 0,
+        "engineEntryNs": 0,
+        "deviceBoundaryNs": 0
+      }
+    }
+  ]
+}
