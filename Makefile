@@ -913,14 +913,17 @@ verify-E5-T18c:
 	  E5_T18C_DPRS=1,2 E5_T18C_IMAGE="$(E5_T18C_IMAGE)" E5_T18C_DESKTOP_ASSET_DIR="$(E5_T18C_DESKTOP_ASSET_DIR)" E5_T18C_CLI="$(E5_T18C_CLI)" node tools/verify/e5-t18c-desktop-cursor-dpr-hit-testing.mjs
 
 .PHONY: verify-E5-T18d
-E5_T18D_IMAGE_DIR ?= target/e5-t18d/desktop-image-v4
-E5_T18D_DESKTOP_ASSET_DIR ?= target/e5-t18d/chunks/desktop-v4
+E5_T18D_IMAGE_DIR ?= target/e5-t18d/desktop-image-v5
+E5_T18D_DESKTOP_ASSET_DIR ?= target/e5-t18d/chunks/desktop-v5
 verify-E5-T18d:
 	sh -n tools/rootfs/start-desktop tools/rootfs/desktop-autologin tools/rootfs/desktop-runtime.initd tools/rootfs/desktop-test-console
 	bash -n tools/build-rootfs.sh tools/rootfs-inner.sh tools/image/desktop.sh tools/serve-dev.sh
 	node --test web/tests/e5-t18d-desktop-recovery.test.mjs
+	node --test web/tests/e4-t32-worker-protocol.test.mjs
 	node --check tools/verify/e5-t18d-desktop-recovery.mjs
 	docker run --rm -v "$(CURDIR):/repo:ro" wasm-vm-kernel-build:local python3 /repo/tools/verify/e5-t18d-local-fixtures.py
+	docker run --rm --network none --cap-add SYS_PTRACE -v "$(CURDIR):/repo:ro" wasm-vm-kernel-build:local python3 /repo/tools/verify/e5-t18d-state-boundaries.py --disposable
+	$(MAKE) web-dist
 	E5_T18D_IMAGE_DIR="$(E5_T18D_IMAGE_DIR)" E5_T18D_DESKTOP_ASSET_DIR="$(E5_T18D_DESKTOP_ASSET_DIR)" node tools/verify/e5-t18d-desktop-recovery.mjs
 
 .PHONY: verify-E3-T12a

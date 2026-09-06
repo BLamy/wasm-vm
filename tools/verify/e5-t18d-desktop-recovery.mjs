@@ -11,8 +11,8 @@ import { createServer } from "node:net";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 process.chdir(repo);
-const imageDir = path.resolve(process.env.E5_T18D_IMAGE_DIR || "target/e5-t18d/desktop-image-v4");
-const chunkDir = path.resolve(process.env.E5_T18D_DESKTOP_ASSET_DIR || "target/e5-t18d/chunks/desktop-v4");
+const imageDir = path.resolve(process.env.E5_T18D_IMAGE_DIR || "target/e5-t18d/desktop-image-v5");
+const chunkDir = path.resolve(process.env.E5_T18D_DESKTOP_ASSET_DIR || "target/e5-t18d/chunks/desktop-v5");
 const out = path.resolve(process.env.E5_T18D_EVIDENCE_DIR || "evidence/e5-t18d");
 const timeout = Number(process.env.E5_T18D_TIMEOUT_MS || 900_000);
 const chrome = process.env.E5_T18D_CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
@@ -130,6 +130,10 @@ try {
     sources[file] = await hashFile(file);
   }
   const metadata = JSON.parse(await readFile(path.join(imageDir, "desktop-info.json"), "utf8"));
+  sources["web/linux-worker-protocol.js"] = await hashFile("web/linux-worker-protocol.js");
+  for (const file of ["desktop-recovery.js", "desktop-recovery.html", "linux-worker-protocol.js", "src/input/desktop-recovery-policy.js"]) {
+    assert.equal(await hashFile(`web/dist/${file}`), await hashFile(`web/${file}`), `built-page source drift: ${file}`);
+  }
   assert.equal(await hashFile(path.join(imageDir, "alpine-rootfs.ext4")), metadata.image.sha256);
   const customFiles = await readFile(path.join(imageDir, "FILE-MANIFEST.txt"), "utf8");
   for (const [source, destination] of Object.entries({

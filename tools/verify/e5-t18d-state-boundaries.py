@@ -261,7 +261,7 @@ exec {real_date} "$@"
         text, _ = self.invoke('hook', 'status\nlog\n')
         self.assertIn('desktop.ready=2 1234\n', text)
         payload = text.split('E5T18D_LOG_BEGIN\n', 1)[1].split('E5T18D_LOG_END', 1)[0]
-        self.assertEqual(payload, 'x' * 16384)
+        self.assertEqual(payload, ('x' * 20000 + '\n')[-16384:])
 
     def test_hook_pid_post_check_fifo_swap_is_bounded(self):
         self.state_file('weston.pid', '1\n')

@@ -1,7 +1,7 @@
 {
   "schema": "wasm-vm.e5-t18d.image-lock.v1",
-  "imageSha256": "791b8597042409b60d24d6a7fce4fc22be336003586ea8d74baa9df7c8061d7f",
-  "chunkManifestSha256": "63034852abcbab801e506dd1a9f166658a2df26abebf5488ac4f5e20727c170d",
-  "fileManifestSha256": "d1111cda46a3f2d67379a3f6fe42b8377c98d3f95e1aa357de89cbfa9cef57b1",
+  "imageSha256": "e75b04caadd9616915b323497c92df1d5a9d11d55c877afcc95d208dde302416",
+  "chunkManifestSha256": "4ee9976955d30915ba2ed154c14475303070db9b6902491cae9d16ae25241b55",
+  "fileManifestSha256": "ab73efab8eac885690def228e3d2080d4ed9f57801e642037f12fd0186e7e2d5",
   "packageManifestSha256": "ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908"
 }

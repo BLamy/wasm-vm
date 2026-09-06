@@ -275,6 +275,7 @@ export function createLinuxWorkerClient(endpoint, callbacks = {}) {
         }
         callbacks.onDisplayFrame?.({
           scanout: frame.scanout ?? null,
+          format: frame.format ?? 1,
           rect: frame.rect,
           resourceWidth: frame.resourceWidth,
           resourceHeight: frame.resourceHeight,
@@ -691,6 +692,7 @@ export function createLinuxWorkerRuntime(endpoint, {
           type: "display",
           frame: {
             scanout: frame?.scanout ?? null,
+            format: frame?.format ?? 1,
             rect: frame?.rect,
             resourceWidth: frame?.resourceWidth,
             resourceHeight: frame?.resourceHeight,

@@ -11,11 +11,14 @@ state=/home/desktop/.local/state/wasm-vm
 read_state() {
   # User-controlled paths never inherit root's read authority; reject special nodes and links.
   # The timeout also bounds a race that swaps a regular file for a FIFO after the type check.
-  timeout -s KILL 2 runuser -u desktop -- /bin/sh -c '
+  # Run the watchdog AFTER dropping privilege and exec the reader in its direct child. BusyBox
+  # timeout kills one process, not a process group: killing runuser would orphan a FIFO reader
+  # holding the command-substitution pipe open. No shell/pipeline may remain around that reader.
+  runuser -u desktop -- timeout -s KILL 2 /bin/sh -c '
     if [ -f "$1" ] && [ ! -L "$1" ]; then
       case "$2" in
-        head) head -c "$3" "$1" ;;
-        tail) tail -n "$3" "$1" | head -c 16384 ;;
+        head) exec head -c "$3" "$1" ;;
+        tail) exec tail -c "$3" "$1" ;;
       esac
     else printf "absent\n"; fi
   ' sh "$state/$1" "$2" "$3" 2>/dev/null || printf 'unavailable\n'
@@ -49,7 +52,7 @@ while IFS= read -r command; do
         printf '%s=' "$name"
         read_state "$name" head 128
       done
-      read_state desktop.log tail 80
+      read_state desktop.log tail 16384
       printf 'E5T18D_STATUS_END\n'
       ;;
     crash) crash ;;
@@ -63,7 +66,7 @@ while IFS= read -r command; do
       ;;
     log)
       printf 'E5T18D_LOG_BEGIN\n'
-      read_state weston.log tail 100
+      read_state weston.log tail 16384
       printf 'E5T18D_LOG_END\n'
       ;;
     tty)

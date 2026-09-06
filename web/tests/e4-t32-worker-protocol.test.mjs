@@ -287,6 +287,7 @@ test("display FrameSink projections cross the worker boundary with private pixel
       const source = Uint32Array.of(0x11223344, 0x55667788);
       opts.onDisplayFrame({
         scanout: 0,
+        format: 2,
         rect: { x: 1, y: 0, width: 1, height: 1 },
         resourceWidth: 2,
         resourceHeight: 1,
@@ -299,6 +300,7 @@ test("display FrameSink projections cross the worker boundary with private pixel
   const client = createLinuxWorkerClient(page, { onDisplayFrame: resolveDisplay });
   const controller = await client.boot({});
   const frame = await display;
+  assert.equal(frame.format, 2, "XRGB padding must not become transparent alpha at the page sink");
   assert.deepEqual(frame.rect, { x: 1, y: 0, width: 1, height: 1 });
   assert.deepEqual([...frame.pixels], [0x11223344, 0x55667788]);
   resolveDone("stopped");
