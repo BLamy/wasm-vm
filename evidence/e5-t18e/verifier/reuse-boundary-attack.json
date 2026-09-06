@@ -1,0 +1,1307 @@
+{
+  "candidate": "5506f2a514a6a7b90d83eafe8cf39e6d3ff4fd1b",
+  "at": "2026-09-06T06:01:58.996Z",
+  "sourceSha256": "bbd686c740157b58520cb64c61b1b9bbdaeeca18a63d67c94477ca48114fb37e",
+  "extractedReuseBranchSha256": "15d0abd27037e67dc74ec443cb8d8f18d0958dc68ed7bd3647dc703245971bbb",
+  "scratch": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp",
+  "scope": "Actual extracted reuse branch and HEAD source guard, real fs/git on disposable fixtures; no image/browser/build invocation",
+  "onlyStub": "Final npm ci observer install",
+  "observations": [
+    {
+      "label": "unchanged-positive",
+      "expectedAccepted": true,
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/unchanged-positive",
+      "committedAnchorSha256": "323491d45032d7078389f5233dd64d31e4a5aa7f4342051f097c1077b92a4019",
+      "workingAnchorSha256": "323491d45032d7078389f5233dd64d31e4a5aa7f4342051f097c1077b92a4019",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/unchanged-positive/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/unchanged-positive/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "7afffb76ffa50f2769750b1fc59aa78cbff414c7",
+              "sourceBindingSha256": "4e6ad90c52250ace5e87473b0fb937b3d8830345b58c7133befbc491501985d3",
+              "publicationRecordSha256": "323491d45032d7078389f5233dd64d31e4a5aa7f4342051f097c1077b92a4019",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/unchanged-positive/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/unchanged-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "7afffb76ffa50f2769750b1fc59aa78cbff414c7",
+                "e4ed69cc99666a30da6775dae6c4577b9124eca9",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "7afffb76ffa50f2769750b1fc59aa78cbff414c7:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/unchanged-positive/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        },
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/unchanged-positive/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/unchanged-positive/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "7afffb76ffa50f2769750b1fc59aa78cbff414c7",
+              "sourceBindingSha256": "4e6ad90c52250ace5e87473b0fb937b3d8830345b58c7133befbc491501985d3",
+              "publicationRecordSha256": "323491d45032d7078389f5233dd64d31e4a5aa7f4342051f097c1077b92a4019",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/unchanged-positive/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/unchanged-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "7afffb76ffa50f2769750b1fc59aa78cbff414c7",
+                "e4ed69cc99666a30da6775dae6c4577b9124eca9",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "7afffb76ffa50f2769750b1fc59aa78cbff414c7:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/unchanged-positive/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "tracked-crate-negative",
+      "expectedAccepted": false,
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/tracked-crate-negative",
+      "committedAnchorSha256": "1350000da0ce72c5b96376e25df4e4e9d233cbb9707d63493dd8d416d6779b36",
+      "workingAnchorSha256": "1350000da0ce72c5b96376e25df4e4e9d233cbb9707d63493dd8d416d6779b36",
+      "currentStatus": " M crates/fixture/src/lib.rs\n",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock releases web tools/image tools/rootfs tools/rootfs.Dockerfile tools/rootfs-inner.sh tools/build-rootfs.sh tools/build-web-dist.sh tools/serve-dev.sh",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/tracked-crate-negative/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "b3836ac9139e3d1528510e1800832eaa34b54e88",
+                "5b45d5dfc0902b3b4edf0e563918cfde2c6d83ff",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/tracked-crate-negative/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/tracked-crate-negative/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock releases web tools/image tools/rootfs tools/rootfs.Dockerfile tools/rootfs-inner.sh tools/build-rootfs.sh tools/build-web-dist.sh tools/serve-dev.sh",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/tracked-crate-negative/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "b3836ac9139e3d1528510e1800832eaa34b54e88",
+                "5b45d5dfc0902b3b4edf0e563918cfde2c6d83ff",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/tracked-crate-negative/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/tracked-crate-negative/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "dirty-wvrun-input",
+      "expectedAccepted": false,
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/dirty-wvrun-input",
+      "committedAnchorSha256": "9e4b8e183873118664a0a4b7d255801747a1830c2489c0e90daa77e6bd537b06",
+      "workingAnchorSha256": "9e4b8e183873118664a0a4b7d255801747a1830c2489c0e90daa77e6bd537b06",
+      "currentStatus": " M tools/guest/wvrun.sh\n",
+      "results": [
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/dirty-wvrun-input/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/dirty-wvrun-input/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "f7a35a204fe738869fa10b428b8aea30f6bf1ecc",
+              "sourceBindingSha256": "d2497fb1ddc1786a7315bcba48dc5e6a9e5660f9fa00de456e260cacfadf331d",
+              "publicationRecordSha256": "9e4b8e183873118664a0a4b7d255801747a1830c2489c0e90daa77e6bd537b06",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/dirty-wvrun-input/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/dirty-wvrun-input/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "f7a35a204fe738869fa10b428b8aea30f6bf1ecc",
+                "576142adf03970c4aeae3c57ed4e77047e71b666",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/dirty-wvrun-input/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/dirty-wvrun-input/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "f7a35a204fe738869fa10b428b8aea30f6bf1ecc:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/dirty-wvrun-input/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        },
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/dirty-wvrun-input/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/dirty-wvrun-input/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "f7a35a204fe738869fa10b428b8aea30f6bf1ecc",
+              "sourceBindingSha256": "d2497fb1ddc1786a7315bcba48dc5e6a9e5660f9fa00de456e260cacfadf331d",
+              "publicationRecordSha256": "9e4b8e183873118664a0a4b7d255801747a1830c2489c0e90daa77e6bd537b06",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/dirty-wvrun-input/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/dirty-wvrun-input/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "f7a35a204fe738869fa10b428b8aea30f6bf1ecc",
+                "576142adf03970c4aeae3c57ed4e77047e71b666",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/dirty-wvrun-input/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/dirty-wvrun-input/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "f7a35a204fe738869fa10b428b8aea30f6bf1ecc:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/dirty-wvrun-input/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        }
+      ],
+      "prediction": "FAILED"
+    },
+    {
+      "label": "committed-builder-input",
+      "expectedAccepted": false,
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/committed-builder-input",
+      "committedAnchorSha256": "62090ca4a5e2fa22c7936a82de30054482d3e8b785d836e9fa75b6b5a8c70755",
+      "workingAnchorSha256": "62090ca4a5e2fa22c7936a82de30054482d3e8b785d836e9fa75b6b5a8c70755",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/committed-builder-input/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/committed-builder-input/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "9314d047b607bed5c2aefa3ff47d58eae63aef58",
+              "sourceBindingSha256": "808b45e330b90eb7bac2a8537f6d0d125367df7132fa02567fcaa02a68863044",
+              "publicationRecordSha256": "62090ca4a5e2fa22c7936a82de30054482d3e8b785d836e9fa75b6b5a8c70755",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/committed-builder-input/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/committed-builder-input/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "9314d047b607bed5c2aefa3ff47d58eae63aef58",
+                "8e1509c0fd972014546e030c97fd3ad52de51463",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/committed-builder-input/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/committed-builder-input/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "9314d047b607bed5c2aefa3ff47d58eae63aef58:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/committed-builder-input/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        },
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/committed-builder-input/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/committed-builder-input/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "9314d047b607bed5c2aefa3ff47d58eae63aef58",
+              "sourceBindingSha256": "808b45e330b90eb7bac2a8537f6d0d125367df7132fa02567fcaa02a68863044",
+              "publicationRecordSha256": "62090ca4a5e2fa22c7936a82de30054482d3e8b785d836e9fa75b6b5a8c70755",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/committed-builder-input/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/committed-builder-input/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "9314d047b607bed5c2aefa3ff47d58eae63aef58",
+                "8e1509c0fd972014546e030c97fd3ad52de51463",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/committed-builder-input/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/committed-builder-input/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "9314d047b607bed5c2aefa3ff47d58eae63aef58:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/committed-builder-input/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        }
+      ],
+      "prediction": "FAILED"
+    },
+    {
+      "label": "working-publication-anchor-replaced",
+      "expectedAccepted": false,
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/working-publication-anchor-replaced",
+      "committedAnchorSha256": "92dfa2ef9e46c4aba821d06a744cde4f237d5082efe57a64c30fc8736a405865",
+      "workingAnchorSha256": "fc17a411c0b47a3bcb5686572e002ca31ac5ff94b964ed42d8a97b7149a8a019",
+      "currentStatus": " M evidence/e5-t18e/initial/publication.json\n",
+      "results": [
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/working-publication-anchor-replaced/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/working-publication-anchor-replaced/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "4341aa1a9f7b3295e1463fcb3735322ebd66c1ff",
+              "sourceBindingSha256": "0d86b53c855072f679340d38099f169729fc3bf450ea377df5bca9e87d4ac4a0",
+              "publicationRecordSha256": "fc17a411c0b47a3bcb5686572e002ca31ac5ff94b964ed42d8a97b7149a8a019",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/working-publication-anchor-replaced/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/working-publication-anchor-replaced/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "4341aa1a9f7b3295e1463fcb3735322ebd66c1ff",
+                "b919718e35687983a74904541c8c6cf0c4b49fe7",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/working-publication-anchor-replaced/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/working-publication-anchor-replaced/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "4341aa1a9f7b3295e1463fcb3735322ebd66c1ff:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/working-publication-anchor-replaced/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        },
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/working-publication-anchor-replaced/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/working-publication-anchor-replaced/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "4341aa1a9f7b3295e1463fcb3735322ebd66c1ff",
+              "sourceBindingSha256": "0d86b53c855072f679340d38099f169729fc3bf450ea377df5bca9e87d4ac4a0",
+              "publicationRecordSha256": "fc17a411c0b47a3bcb5686572e002ca31ac5ff94b964ed42d8a97b7149a8a019",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/working-publication-anchor-replaced/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/working-publication-anchor-replaced/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "4341aa1a9f7b3295e1463fcb3735322ebd66c1ff",
+                "b919718e35687983a74904541c8c6cf0c4b49fe7",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/working-publication-anchor-replaced/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/working-publication-anchor-replaced/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "4341aa1a9f7b3295e1463fcb3735322ebd66c1ff:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/working-publication-anchor-replaced/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        }
+      ],
+      "prediction": "FAILED"
+    },
+    {
+      "label": "old-source-byte-negative",
+      "expectedAccepted": false,
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-source-byte-negative",
+      "committedAnchorSha256": "812b453f3d26763d84c0c77a28e91999648d448854a64935a077cdd075824ba4",
+      "workingAnchorSha256": "812b453f3d26763d84c0c77a28e91999648d448854a64935a077cdd075824ba4",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: reused build source drift: tools/rootfs/start-desktop\n+ actual - expected\n\n+ 'b9175e09b23642fa0b1123a60e461b313007f4d3850e6ed741bc05035601bf43'\n- '0c01e6a78db26d925cd97ab428ff3a9ed6a2bac9b2555c6b732af68c519770ac'\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-source-byte-negative/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "e0bd767e9a60158e6d29901c18d75c9e472011f6",
+                "7872952a6a79c9d662a7976b6c307a7c3e9d5f80",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-source-byte-negative/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-source-byte-negative/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: reused build source drift: tools/rootfs/start-desktop\n+ actual - expected\n\n+ 'b9175e09b23642fa0b1123a60e461b313007f4d3850e6ed741bc05035601bf43'\n- '0c01e6a78db26d925cd97ab428ff3a9ed6a2bac9b2555c6b732af68c519770ac'\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-source-byte-negative/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "e0bd767e9a60158e6d29901c18d75c9e472011f6",
+                "7872952a6a79c9d662a7976b6c307a7c3e9d5f80",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-source-byte-negative/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-source-byte-negative/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "old-wasm-byte-negative",
+      "expectedAccepted": false,
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-wasm-byte-negative",
+      "committedAnchorSha256": "6f6efebb547358ac55018131519464f5ae753e1bb3cc23bd03cdfc303348866f",
+      "workingAnchorSha256": "6f6efebb547358ac55018131519464f5ae753e1bb3cc23bd03cdfc303348866f",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: reused runtime drift: pkg/wasm_vm_wasm_bg.wasm\n+ actual - expected\n\n+ '76c0bef5f7317dd2410dd6445cbfd12f4b53b2b20794ca6ab4f976b8490586a9'\n- 'ae621a5b4ece64dc7c7fd4ce842beb779bd5af2c073b07dd60f581542c4d815a'\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-wasm-byte-negative/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "5640558039b33c38311039b1d30eef3995e7383f",
+                "a2e34b214dccd70fb55e992b465d85a783437b69",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-wasm-byte-negative/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-wasm-byte-negative/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: reused runtime drift: pkg/wasm_vm_wasm_bg.wasm\n+ actual - expected\n\n+ '76c0bef5f7317dd2410dd6445cbfd12f4b53b2b20794ca6ab4f976b8490586a9'\n- 'ae621a5b4ece64dc7c7fd4ce842beb779bd5af2c073b07dd60f581542c4d815a'\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-wasm-byte-negative/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "5640558039b33c38311039b1d30eef3995e7383f",
+                "a2e34b214dccd70fb55e992b465d85a783437b69",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-wasm-byte-negative/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-wasm-byte-negative/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "old-inline-jit-byte-negative",
+      "expectedAccepted": false,
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-inline-jit-byte-negative",
+      "committedAnchorSha256": "ff93d3cc1466dbd7860ab362951b3151c46073f1d99b2863e2dc2c8b7222d448",
+      "workingAnchorSha256": "ff93d3cc1466dbd7860ab362951b3151c46073f1d99b2863e2dc2c8b7222d448",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'd7a2acb582a573cc6f658f8c51d6d36d48ec6014c149dbc6304de82647e2400a'\n- 'ecd1f3782c831694f91cf0b6aeec919fbb32ac8d3c9ec69729db369ad9221836'\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-inline-jit-byte-negative/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "b831aa9865dc9be84468393caa9a393943acd5ad",
+                "d744176b008557683f5579c8c37ef06d306843f6",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-inline-jit-byte-negative/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-inline-jit-byte-negative/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "b831aa9865dc9be84468393caa9a393943acd5ad:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-inline-jit-byte-negative/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'd7a2acb582a573cc6f658f8c51d6d36d48ec6014c149dbc6304de82647e2400a'\n- 'ecd1f3782c831694f91cf0b6aeec919fbb32ac8d3c9ec69729db369ad9221836'\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-inline-jit-byte-negative/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "b831aa9865dc9be84468393caa9a393943acd5ad",
+                "d744176b008557683f5579c8c37ef06d306843f6",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-inline-jit-byte-negative/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                "releases",
+                "web",
+                "tools/image",
+                "tools/rootfs",
+                "tools/rootfs.Dockerfile",
+                "tools/rootfs-inner.sh",
+                "tools/build-rootfs.sh",
+                "tools/build-web-dist.sh",
+                "tools/serve-dev.sh"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-inline-jit-byte-negative/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "b831aa9865dc9be84468393caa9a393943acd5ad:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-critic-Z0Rmfp/old-inline-jit-byte-negative/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    }
+  ]
+}

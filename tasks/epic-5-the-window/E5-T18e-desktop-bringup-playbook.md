@@ -3,7 +3,7 @@ id: E5-T18e
 epic: 5
 title: Publish the desktop bring-up playbook and final boot proof
 priority: 518.5
-status: implemented
+status: verified
 depends_on: [E5-T18d]
 estimate: S
 risk: high
@@ -31,11 +31,11 @@ input, or pointer behavior.
 
 ## Acceptance criteria
 
-- [ ] The playbook covers every failure recorded by E5-T18a-d, including seatd/udev/permissions,
+- [x] The playbook covers every failure recorded by E5-T18a-d, including seatd/udev/permissions,
       runtime-directory, renderer, input/XKB, restart, and getty-fallback symptoms.
-- [ ] The exact rebuilt artifact is hash-bound in the report, and the local cache-disabled
+- [x] The exact rebuilt artifact is hash-bound in the report, and the local cache-disabled
       25-boot gauntlet has no hang, black screen, missing cursor, or missing menu.
-- [ ] The report records cold and warm boot-to-desktop timings and the final verifier passes
+- [x] The report records cold and warm boot-to-desktop timings and the final verifier passes
       from the committed manifest with no undeclared hand edits to the image.
 
 ## Verification command
@@ -132,3 +132,30 @@ faults from post-readiness removal. Existing runtime/recovery verification carri
 forward unchanged. Await the fresh critic's final aggregate/PNG/cache audit;
 the worker does not set `verified`. Production deployment and all merges remain
 held until the requested Epic 5 completion milestone.
+
+### 2026-09-06 — fresh FINAL verifier — VERDICT: verified
+
+Reviewed the task diff through `4f803aeadb9f61a55b5d9472b4df0b5e905e49b2`.
+Predeclared V1–V5 all HELD; full prediction/point citations, incremental carry,
+coverage and waivers are in `evidence/e5-t18e/verifier/final-verdict.md`.
+The read-only command
+`node evidence/e5-t18e/verifier/audit-final-v2.mjs /Users/blamy/Documents/Codex/e5-t18e-cache-final.BHmnqG/repo`
+exited 0. Its output `final-v2-audit.json` has SHA-256
+`c32f5c2bb22ae8ef34a345c6ff9ceadb3f1a3f17dbab9eabbd2fa56f757a1df1`.
+
+Independently matched all 115 frozen raw files, 31 source and 15 runtime bindings,
+27 exact case labels, 54 PNG/framebuffer pairs, 27 reference 94-pixel cursors,
+UART byte counts/digests, positive retirement and distinct recorded guest states.
+Inspected representatives of all 11 distinct PNG groups; desktop and opened foot
+windows are visible (`final-v2-visual.json`). All 9478 cold worker fetches are
+network transfers with zero cached/unknown responses; warm reload is 313 cached
+plus 66 network. Recomputed all timings and checked final acceptance.log:163 and
+the unchanged 30-pass guard log. The final report/binding remain the worker's
+`e056f3ef…aacd31` / `d6ad7a2a…dd290` values above.
+
+Carried Kant's hash-preserved image/build, drills, publication, documentation,
+cache/sabotage and repaired-reuse results HELD. Historical initial functional
+proof remains explicitly qualified as not proving cache policy; completed v2
+closes that gap. No guest boot, image build or unrelated suite was rerun.
+No outstanding T18e findings. Parent owns the roadmap capability pip, single
+built 126/0 verified-task smoke, PR work and later milestone deployment.

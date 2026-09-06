@@ -1,0 +1,1768 @@
+{
+  "schema": "wasm-vm.e5-t18e.final-evidence-audit.v2",
+  "auditedAt": "2026-09-06T06:49:21.182Z",
+  "auditScriptSha256": "04370ef6b8344cdf82a42a766c37c94d4b2798bca8f58a22b84b307cc3deeade",
+  "clone": "/Users/blamy/Documents/Codex/e5-t18e-cache-final.BHmnqG/repo",
+  "mainHead": "4f803aeadb9f61a55b5d9472b4df0b5e905e49b2",
+  "frozenHead": "5506f2a514a6a7b90d83eafe8cf39e6d3ff4fd1b",
+  "reportSha256": "e056f3ef0f3e0a4c682eb6e40138f8f2c4e30cceb56bcd19fc0a6d6ad9aacd31",
+  "publicationRecordSha256": "28e61dd927209dd347d0401fbe903161db3433ba2096bedb1330b8fd016d1ab9",
+  "sourceBindingSha256": "d6ad7a2abba368bea58142ad8cb0d6f8881916dd048e4fdd4136c5dcb84dd290",
+  "frozenSourceFiles": 31,
+  "runtimeFiles": 15,
+  "sourceDifferences": [
+    {
+      "file": "tools/verify/e5-t18e-desktop-bringup.mjs",
+      "frozenSha256": "bbd686c740157b58520cb64c61b1b9bbdaeeca18a63d67c94477ca48114fb37e",
+      "currentSha256": "e4aba2537476b5ed093cf729991693f1dd0adf581dcaa390f8284620566df816"
+    },
+    {
+      "file": "docs/desktop-bringup.md",
+      "frozenSha256": "d67998e46e69911ac3ce0d02fd7a22200dc91d4231c52b9e186f8ca6f6e4b124",
+      "currentSha256": "ab7da8e5680bc00f76c56c113d4e7ce532d55c73f7954183a698edde84a31453"
+    }
+  ],
+  "buildProvenance": {
+    "mode": "incremental-proof-repair",
+    "head": "9ed9e0d1c57daf64f6362193bc30b79482dd3258",
+    "sourceBindingSha256": "0e41e0d9f9fa9ccc3277867fc0146d5c4d856959e92b5de947bd52ded7a149c2",
+    "publicationRecordSha256": "c0ae77aa9eb3680153802bc22fd05ca0d379ca73179165912ee5ce9c7673a3c5",
+    "buildInputsUnchanged": true,
+    "sourceDirectory": "/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo"
+  },
+  "publication": {
+    "schema": "wasm-vm.e5-t18d.image-lock.v1",
+    "imageSha256": "e75b04caadd9616915b323497c92df1d5a9d11d55c877afcc95d208dde302416",
+    "chunkManifestSha256": "4ee9976955d30915ba2ed154c14475303070db9b6902491cae9d16ae25241b55",
+    "fileManifestSha256": "ab73efab8eac885690def228e3d2080d4ed9f57801e642037f12fd0186e7e2d5",
+    "packageManifestSha256": "ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908",
+    "positions": 8192,
+    "uniqueObjects": 823,
+    "imageBytes": 1073741824,
+    "imageDir": "../../e5-t18e-final.20gEr1/repo/target/e5-t18e/run-CaaCRb/image",
+    "chunkDir": "../../e5-t18e-final.20gEr1/repo/target/e5-t18e/run-CaaCRb/chunks"
+  },
+  "carriedDigests": 47,
+  "rawCopies": [
+    {
+      "file": "browser-console.log",
+      "sha256": "f8508ec8bbdc431dd12953c8b5ecc8985cac8481ea76714aa173174b0a3166dd"
+    },
+    {
+      "file": "build.log",
+      "sha256": "37bd017b90f2ae2f1bb8fc8eb7d00bcf92361249f18716b35816a59ec3c24131"
+    },
+    {
+      "file": "cache-calibration.json",
+      "sha256": "3c72119e8c0656cff92da450bfc033a68dcd1efb6d3b38aa168512d52e6f1028"
+    },
+    {
+      "file": "cold-01-serial.log",
+      "sha256": "e62a2835bdabb257db0f99c2790e3d2ed89e5df8aecc5a105e455bc714747727"
+    },
+    {
+      "file": "cold-01-terminal.png",
+      "sha256": "ffd8507b215bd181c338d82884d4a291e76f5011d6168f75facc8eafe0f93a9e"
+    },
+    {
+      "file": "cold-01.json",
+      "sha256": "2cd00572b38ac3479e7f11191d1b7e028cc90b7b4666ef758baf80261ec3a721"
+    },
+    {
+      "file": "cold-01.png",
+      "sha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e"
+    },
+    {
+      "file": "cold-02-serial.log",
+      "sha256": "f681fd82af8b04a096c230ecded2039092137e15d500e70fa444ca65e0e4e88b"
+    },
+    {
+      "file": "cold-02-terminal.png",
+      "sha256": "ffd8507b215bd181c338d82884d4a291e76f5011d6168f75facc8eafe0f93a9e"
+    },
+    {
+      "file": "cold-02.json",
+      "sha256": "6a98dd8a285e629a353ec7cd4123cdf0ced3a1778afe497bb1d3190edddd0550"
+    },
+    {
+      "file": "cold-02.png",
+      "sha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e"
+    },
+    {
+      "file": "cold-03-serial.log",
+      "sha256": "682d4862c6ccfb136ceb0fff43660f5a4bc2b5c1140721069ff576e66b8fe84c"
+    },
+    {
+      "file": "cold-03-terminal.png",
+      "sha256": "ffd8507b215bd181c338d82884d4a291e76f5011d6168f75facc8eafe0f93a9e"
+    },
+    {
+      "file": "cold-03.json",
+      "sha256": "6ee06716b0da4326b2c59b445c562864a431a295279aa8f4632452e7f5bbce09"
+    },
+    {
+      "file": "cold-03.png",
+      "sha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e"
+    },
+    {
+      "file": "cold-04-serial.log",
+      "sha256": "cc5cc12fd1dfbae2f0c114f2dfb8619d467fe6e6cfd07235ef4d3cd9d7285213"
+    },
+    {
+      "file": "cold-04-terminal.png",
+      "sha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d"
+    },
+    {
+      "file": "cold-04.json",
+      "sha256": "001ab8ab1e897a0ecb7a0f29210ab151b4fac4ded9096e420edabf2df8133b23"
+    },
+    {
+      "file": "cold-04.png",
+      "sha256": "d621d31188c2a93dfd8f6c15752bb62232caaa2f51c64cee93f875ba512b2c87"
+    },
+    {
+      "file": "cold-05-serial.log",
+      "sha256": "f83f797289e7dddc149c1068fb49fe99f681db81c836f67bfbaebdc4d9e8b790"
+    },
+    {
+      "file": "cold-05-terminal.png",
+      "sha256": "87995a5c8b354c5c81a7e681806a752fafbd713863cc92241a5637ceabc59d7a"
+    },
+    {
+      "file": "cold-05.json",
+      "sha256": "0aec7020a9e29f710e4802780416640409b2208e12d80bf57d89069e3fee31f8"
+    },
+    {
+      "file": "cold-05.png",
+      "sha256": "31bb8258c3f175d0e8ec4e318d74a9f328a50eb9e29db090147f6b53529e294d"
+    },
+    {
+      "file": "cold-06-serial.log",
+      "sha256": "4750a9540e55e26307eb9fcb04ed3d6579afd5b62dbd2430131df73b2b9144c3"
+    },
+    {
+      "file": "cold-06-terminal.png",
+      "sha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d"
+    },
+    {
+      "file": "cold-06.json",
+      "sha256": "443939f5d24f75dbbe0eba7f86288e74fb72982f921bcd14aa4d13dc0e1c5d75"
+    },
+    {
+      "file": "cold-06.png",
+      "sha256": "d621d31188c2a93dfd8f6c15752bb62232caaa2f51c64cee93f875ba512b2c87"
+    },
+    {
+      "file": "cold-07-serial.log",
+      "sha256": "c43906bb2ac89a34043d3892085f91dcd0835d270447bc0f8725b1e2635c3ac8"
+    },
+    {
+      "file": "cold-07-terminal.png",
+      "sha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d"
+    },
+    {
+      "file": "cold-07.json",
+      "sha256": "747585ca0de00137befca2be5a8f78d3e5d9040f034e05ec8ed4ec8a0775c8f0"
+    },
+    {
+      "file": "cold-07.png",
+      "sha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e"
+    },
+    {
+      "file": "cold-08-serial.log",
+      "sha256": "968a385c79eb9fbc4cdfbfdb468e7c498e46f01fab0e047f604f04aad26f7d3a"
+    },
+    {
+      "file": "cold-08-terminal.png",
+      "sha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d"
+    },
+    {
+      "file": "cold-08.json",
+      "sha256": "222117f07ff53bac57af0da9fcba9c63dd712f8077cdbbf36b7ad8460517b02b"
+    },
+    {
+      "file": "cold-08.png",
+      "sha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e"
+    },
+    {
+      "file": "cold-09-serial.log",
+      "sha256": "de0bd374e089af561fffe06b6a6bf9ccfd9e89e05e26a28c8152a14a39577dc7"
+    },
+    {
+      "file": "cold-09-terminal.png",
+      "sha256": "04f9e27babdbb449508dec97a77458cf197396cdce3e120f96184986d578d582"
+    },
+    {
+      "file": "cold-09.json",
+      "sha256": "f32c96d3070f1cbd70b9ee295aa164419924018ea2a248e9c57a683f91628459"
+    },
+    {
+      "file": "cold-09.png",
+      "sha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e"
+    },
+    {
+      "file": "cold-10-serial.log",
+      "sha256": "8464b14fb1a033d1d3c1a6adbc115523eb07ab52f1e2ce48feeca875a5da5bf2"
+    },
+    {
+      "file": "cold-10-terminal.png",
+      "sha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d"
+    },
+    {
+      "file": "cold-10.json",
+      "sha256": "902bb5a83f9398b78a403407ac0f9483d860ce2c45a1f44258d0b3f254d73f60"
+    },
+    {
+      "file": "cold-10.png",
+      "sha256": "d621d31188c2a93dfd8f6c15752bb62232caaa2f51c64cee93f875ba512b2c87"
+    },
+    {
+      "file": "cold-11-serial.log",
+      "sha256": "a0eb127c3412b8e82cb35d4e49ea2468d17b9aba675574705bf67858b8125210"
+    },
+    {
+      "file": "cold-11-terminal.png",
+      "sha256": "ffd8507b215bd181c338d82884d4a291e76f5011d6168f75facc8eafe0f93a9e"
+    },
+    {
+      "file": "cold-11.json",
+      "sha256": "8374d983940f1c00e0e8b1fd2d60cdef79f28ed3cececccb28bcbd1921851d63"
+    },
+    {
+      "file": "cold-11.png",
+      "sha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e"
+    },
+    {
+      "file": "cold-12-serial.log",
+      "sha256": "b9f844b365599e197e589720e6bef4754f6c7fc402c63272a90d50a03edd9586"
+    },
+    {
+      "file": "cold-12-terminal.png",
+      "sha256": "ffd8507b215bd181c338d82884d4a291e76f5011d6168f75facc8eafe0f93a9e"
+    },
+    {
+      "file": "cold-12.json",
+      "sha256": "d176835ae3b4d3453206889f003376da83af1d63a6c5f5841a0b7fc47e2b6958"
+    },
+    {
+      "file": "cold-12.png",
+      "sha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e"
+    },
+    {
+      "file": "cold-13-serial.log",
+      "sha256": "8da59cfea972513d4b00578f0ebe99cbbbc2bbf1db00e85c6f43011c3b603635"
+    },
+    {
+      "file": "cold-13-terminal.png",
+      "sha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d"
+    },
+    {
+      "file": "cold-13.json",
+      "sha256": "d2f2ac8994e9cdbda1f9d439b386681f6d0f808d2d17ece1053b0b132b3b0643"
+    },
+    {
+      "file": "cold-13.png",
+      "sha256": "d621d31188c2a93dfd8f6c15752bb62232caaa2f51c64cee93f875ba512b2c87"
+    },
+    {
+      "file": "cold-14-serial.log",
+      "sha256": "d543e414f7933c2bb14c51baa04ce66bc89e1502f708f094380b90e44ff4341a"
+    },
+    {
+      "file": "cold-14-terminal.png",
+      "sha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f"
+    },
+    {
+      "file": "cold-14.json",
+      "sha256": "cf5c9f6f3aa38c1c73714a259699a3ecc90d024ad3fb4df9ab5cc50b04f9d109"
+    },
+    {
+      "file": "cold-14.png",
+      "sha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3"
+    },
+    {
+      "file": "cold-15-serial.log",
+      "sha256": "6bf8d9ff74036da4dd5c4b69ab50d624e7b59941f553c4a805059ea0b037c5f6"
+    },
+    {
+      "file": "cold-15-terminal.png",
+      "sha256": "2d44af22b2a25babe519c21b51b7767beeaefc022fba004493a107c62c50ddcb"
+    },
+    {
+      "file": "cold-15.json",
+      "sha256": "e794050c7fe2756a61e4e8aa9d0a71503882f66b2402be9e8e09365bfc22d0f6"
+    },
+    {
+      "file": "cold-15.png",
+      "sha256": "627a47801ba11aba131a6ebab199ca861b02f5a10c1be1228e8dcb6fa11c9bdc"
+    },
+    {
+      "file": "cold-16-serial.log",
+      "sha256": "68c73537803a4b882dab2fb982568ecb8f51fc7386c21cc9743262820fe8f89e"
+    },
+    {
+      "file": "cold-16-terminal.png",
+      "sha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f"
+    },
+    {
+      "file": "cold-16.json",
+      "sha256": "59017599aff2184fbcd2db21181e55ca3ac5b29f3539a622e2823b363da54fde"
+    },
+    {
+      "file": "cold-16.png",
+      "sha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3"
+    },
+    {
+      "file": "cold-17-serial.log",
+      "sha256": "124ccc2ff6da6fee3bfc01e2a3be4c041bd52afc62f73c561d9bb9ad74ea3b40"
+    },
+    {
+      "file": "cold-17-terminal.png",
+      "sha256": "2d44af22b2a25babe519c21b51b7767beeaefc022fba004493a107c62c50ddcb"
+    },
+    {
+      "file": "cold-17.json",
+      "sha256": "30069fd1b43a7805f422d6080e1d7f1ac470d915515c7e21097de7e66b4e814b"
+    },
+    {
+      "file": "cold-17.png",
+      "sha256": "627a47801ba11aba131a6ebab199ca861b02f5a10c1be1228e8dcb6fa11c9bdc"
+    },
+    {
+      "file": "cold-18-serial.log",
+      "sha256": "d77456b8e8ea567cdfd541d01d6afaea621c4ce3596357a45c06828bff3308f1"
+    },
+    {
+      "file": "cold-18-terminal.png",
+      "sha256": "2d44af22b2a25babe519c21b51b7767beeaefc022fba004493a107c62c50ddcb"
+    },
+    {
+      "file": "cold-18.json",
+      "sha256": "30c895b9b04e8d226786b664d48d271ce177af43f99cf239c5a6a052a31764d0"
+    },
+    {
+      "file": "cold-18.png",
+      "sha256": "627a47801ba11aba131a6ebab199ca861b02f5a10c1be1228e8dcb6fa11c9bdc"
+    },
+    {
+      "file": "cold-19-serial.log",
+      "sha256": "164d486ede3f6118dd2e3192632701255ac9d48e621170aa97f0acb75cca6972"
+    },
+    {
+      "file": "cold-19-terminal.png",
+      "sha256": "2d44af22b2a25babe519c21b51b7767beeaefc022fba004493a107c62c50ddcb"
+    },
+    {
+      "file": "cold-19.json",
+      "sha256": "58112857b4fdc5ace8303328eb6bd176954cbc154abfeae4e9c12a82b57a8c70"
+    },
+    {
+      "file": "cold-19.png",
+      "sha256": "627a47801ba11aba131a6ebab199ca861b02f5a10c1be1228e8dcb6fa11c9bdc"
+    },
+    {
+      "file": "cold-20-serial.log",
+      "sha256": "099f2322b9b874c7d83be966d7c1c51f68ece19885d8bc92b60acb4e2892c101"
+    },
+    {
+      "file": "cold-20-terminal.png",
+      "sha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f"
+    },
+    {
+      "file": "cold-20.json",
+      "sha256": "18cff621bd0af84c70e269c6a777d29ed678f407b995da5f172a74c56bfc313f"
+    },
+    {
+      "file": "cold-20.png",
+      "sha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3"
+    },
+    {
+      "file": "cold-21-serial.log",
+      "sha256": "3e02403f42383d4e5ff6206a4ebf7d4ddb48c59cc4414b9b00799ce2e7f94255"
+    },
+    {
+      "file": "cold-21-terminal.png",
+      "sha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f"
+    },
+    {
+      "file": "cold-21.json",
+      "sha256": "64fa0c647e8eccaed114237da09a02f5335e24f1315cc929e3c0f67bab340327"
+    },
+    {
+      "file": "cold-21.png",
+      "sha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3"
+    },
+    {
+      "file": "cold-22-serial.log",
+      "sha256": "eed5ee788e3a09eb6e9584d4e0557d210ccdf45d23e0712fb5b637fd827c4301"
+    },
+    {
+      "file": "cold-22-terminal.png",
+      "sha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f"
+    },
+    {
+      "file": "cold-22.json",
+      "sha256": "676629adcbafd2e5a71224e2f9c746cdd376b75b1ee8046807f2987e0b477d12"
+    },
+    {
+      "file": "cold-22.png",
+      "sha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3"
+    },
+    {
+      "file": "cold-23-serial.log",
+      "sha256": "5c1b6b24cd99f06c1314bb9034832ea30b9d623e54de07cc146251d1d3c88d8b"
+    },
+    {
+      "file": "cold-23-terminal.png",
+      "sha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f"
+    },
+    {
+      "file": "cold-23.json",
+      "sha256": "ec4a61b8431afe8c0ece048c1b096b470528b8d3e5f22d70a4d293ac5689f2a9"
+    },
+    {
+      "file": "cold-23.png",
+      "sha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3"
+    },
+    {
+      "file": "cold-24-serial.log",
+      "sha256": "2460e55f10a34accf679865cada4b084e01f45b726dbbd763b1b57f2b68320d3"
+    },
+    {
+      "file": "cold-24-terminal.png",
+      "sha256": "2d44af22b2a25babe519c21b51b7767beeaefc022fba004493a107c62c50ddcb"
+    },
+    {
+      "file": "cold-24.json",
+      "sha256": "09889199120b41d94850ee8b4c470e49da1509b64f588d303f79120079a2c68a"
+    },
+    {
+      "file": "cold-24.png",
+      "sha256": "627a47801ba11aba131a6ebab199ca861b02f5a10c1be1228e8dcb6fa11c9bdc"
+    },
+    {
+      "file": "cold-25-serial.log",
+      "sha256": "27889d70336010b1ae57f0c9205698f7c184d9b72080203de9d59fcf954365ed"
+    },
+    {
+      "file": "cold-25-terminal.png",
+      "sha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f"
+    },
+    {
+      "file": "cold-25.json",
+      "sha256": "00b02e6ea28c23eadf92761f97e67d2297b19056277613b76280272418b40493"
+    },
+    {
+      "file": "cold-25.png",
+      "sha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3"
+    },
+    {
+      "file": "desktop-bringup.json",
+      "sha256": "e056f3ef0f3e0a4c682eb6e40138f8f2c4e30cceb56bcd19fc0a6d6ad9aacd31"
+    },
+    {
+      "file": "progress.json",
+      "sha256": "a5bd189c9018495573f1336eb3f1ab854f7460b43267714dd2769185287688df"
+    },
+    {
+      "file": "publication.json",
+      "sha256": "28e61dd927209dd347d0401fbe903161db3433ba2096bedb1330b8fd016d1ab9"
+    },
+    {
+      "file": "warm-prime-serial.log",
+      "sha256": "3579218cf4f309307552f43b7821422aae3aa9e5443b87383d64ba2cf319ed66"
+    },
+    {
+      "file": "warm-prime-terminal.png",
+      "sha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d"
+    },
+    {
+      "file": "warm-prime.json",
+      "sha256": "6fb2359009cf136ce5693158c92273389d1ca054a4e0fe52b5223a5cfa4a9173"
+    },
+    {
+      "file": "warm-prime.png",
+      "sha256": "d621d31188c2a93dfd8f6c15752bb62232caaa2f51c64cee93f875ba512b2c87"
+    },
+    {
+      "file": "warm-reload-serial.log",
+      "sha256": "e080915268500b7d2948d6b56556c4e35e3d857ba333ed74140b3a1b768b9265"
+    },
+    {
+      "file": "warm-reload-terminal.png",
+      "sha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f"
+    },
+    {
+      "file": "warm-reload.json",
+      "sha256": "d5156657d6770fd6c2c74971f392f51153b599e38c4e41895a4cf67826d47bc1"
+    },
+    {
+      "file": "warm-reload.png",
+      "sha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3"
+    },
+    {
+      "file": "acceptance.log",
+      "sha256": "7889452d5f062aff7a29b625ab62065f6e9db1f0ac0d3f07cc504dfaea4049e6"
+    }
+  ],
+  "canvasExtraction": {
+    "x": 80,
+    "y": 84,
+    "width": 1280,
+    "height": 800
+  },
+  "selectedCases": 27,
+  "cases": [
+    {
+      "label": "cold-01",
+      "workerCache": {
+        "chunkRequests": 379,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 379,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "2cd00572b38ac3479e7f11191d1b7e028cc90b7b4666ef758baf80261ec3a721",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 885351,
+      "totalMs": 939725,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-01.png",
+          "screenshotSha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e",
+          "framebufferSha256": "125da4df14b4883afb58728251b2a3fe6c771749735dceff664903a0fbf3356c",
+          "guestStateDigest": "6900a53a2d21d5557de7fe064cfe71af9786517fdaf24cc74b04f209d12279b4",
+          "retiredInstructions": 4781662924,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-01-terminal.png",
+          "screenshotSha256": "ffd8507b215bd181c338d82884d4a291e76f5011d6168f75facc8eafe0f93a9e",
+          "framebufferSha256": "42457aa92a09ce7439bf2d67068c6f18e168870b6d297676b036381aabcaf2a3",
+          "guestStateDigest": "ad58296a216a6c8e769698725b03fc812901c1759e27e00e4d0ad2b4d84f8f2c",
+          "retiredInstructions": 5053150085,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "e62a2835bdabb257db0f99c2790e3d2ed89e5df8aecc5a105e455bc714747727",
+      "acceptanceLogLine": 117,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-02",
+      "workerCache": {
+        "chunkRequests": 380,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 380,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "6a98dd8a285e629a353ec7cd4123cdf0ced3a1778afe497bb1d3190edddd0550",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 873714,
+      "totalMs": 929130,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-02.png",
+          "screenshotSha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e",
+          "framebufferSha256": "125da4df14b4883afb58728251b2a3fe6c771749735dceff664903a0fbf3356c",
+          "guestStateDigest": "d2a0084d0b9f8c73cac4ba7e2df7072450c8f999225856d222501ff342e4eb3d",
+          "retiredInstructions": 4771163751,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-02-terminal.png",
+          "screenshotSha256": "ffd8507b215bd181c338d82884d4a291e76f5011d6168f75facc8eafe0f93a9e",
+          "framebufferSha256": "42457aa92a09ce7439bf2d67068c6f18e168870b6d297676b036381aabcaf2a3",
+          "guestStateDigest": "c487059d2943e47746a4555a9af65ea5f5da47475d68d652e06f951ac5acdff3",
+          "retiredInstructions": 5040650577,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "f681fd82af8b04a096c230ecded2039092137e15d500e70fa444ca65e0e4e88b",
+      "acceptanceLogLine": 102,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-03",
+      "workerCache": {
+        "chunkRequests": 378,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 378,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "6ee06716b0da4326b2c59b445c562864a431a295279aa8f4632452e7f5bbce09",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 878299,
+      "totalMs": 933557,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-03.png",
+          "screenshotSha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e",
+          "framebufferSha256": "125da4df14b4883afb58728251b2a3fe6c771749735dceff664903a0fbf3356c",
+          "guestStateDigest": "e1e62fc054c0023f7f7c3d90fdeff386f359de499f4cd8fd952a7f436a24a158",
+          "retiredInstructions": 4777163280,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-03-terminal.png",
+          "screenshotSha256": "ffd8507b215bd181c338d82884d4a291e76f5011d6168f75facc8eafe0f93a9e",
+          "framebufferSha256": "42457aa92a09ce7439bf2d67068c6f18e168870b6d297676b036381aabcaf2a3",
+          "guestStateDigest": "ecf5479ec5891debd11a348da8685053bf81a98a69bdbe5e596d1039487294c9",
+          "retiredInstructions": 5053648331,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "682d4862c6ccfb136ceb0fff43660f5a4bc2b5c1140721069ff576e66b8fe84c",
+      "acceptanceLogLine": 108,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-04",
+      "workerCache": {
+        "chunkRequests": 378,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 378,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "001ab8ab1e897a0ecb7a0f29210ab151b4fac4ded9096e420edabf2df8133b23",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 873346,
+      "totalMs": 927731,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-04.png",
+          "screenshotSha256": "d621d31188c2a93dfd8f6c15752bb62232caaa2f51c64cee93f875ba512b2c87",
+          "framebufferSha256": "0712b8f97094bb1fec9e34dfd215d9f43c6d9b12cceb8fed787dfc0675f9c23a",
+          "guestStateDigest": "bf331cd49f6df079f9d4f1f4c197e54c6514468b6e9ca07be01e35de1727679c",
+          "retiredInstructions": 4782162221,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-04-terminal.png",
+          "screenshotSha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d",
+          "framebufferSha256": "623de6f740d5e5c9b1a43f0610bf1f57f244f41ac6dba7433356099ec2564921",
+          "guestStateDigest": "87e24510a523ebb117962a0e228e8b133c21114860e594b247eb18bac1c7e4d6",
+          "retiredInstructions": 5047650331,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "cc5cc12fd1dfbae2f0c114f2dfb8619d467fe6e6cfd07235ef4d3cd9d7285213",
+      "acceptanceLogLine": 99,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-05",
+      "workerCache": {
+        "chunkRequests": 379,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 379,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "0aec7020a9e29f710e4802780416640409b2208e12d80bf57d89069e3fee31f8",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 878827,
+      "totalMs": 934247,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-05.png",
+          "screenshotSha256": "31bb8258c3f175d0e8ec4e318d74a9f328a50eb9e29db090147f6b53529e294d",
+          "framebufferSha256": "665041ec70dcccf2a7127596d24b459bab172ccdd0a642c04d8a566d11a7463f",
+          "guestStateDigest": "3ebc78f9fcdaae9a704813d70cd61840a13e3def2e0ebadddcbde29a003bc955",
+          "retiredInstructions": 4785162740,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-05-terminal.png",
+          "screenshotSha256": "87995a5c8b354c5c81a7e681806a752fafbd713863cc92241a5637ceabc59d7a",
+          "framebufferSha256": "861f14324caf6051733eff754f33a585cc38fd17d8d5fddaefe0eebd31c30aea",
+          "guestStateDigest": "84f09325934c17cd5ce45ccb8e490ff450ada06e691c1d8fa05c665d6d92aca1",
+          "retiredInstructions": 5060148318,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14255,
+      "serialSha256": "f83f797289e7dddc149c1068fb49fe99f681db81c836f67bfbaebdc4d9e8b790",
+      "acceptanceLogLine": 110,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-06",
+      "workerCache": {
+        "chunkRequests": 379,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 379,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "443939f5d24f75dbbe0eba7f86288e74fb72982f921bcd14aa4d13dc0e1c5d75",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 874551,
+      "totalMs": 925167,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-06.png",
+          "screenshotSha256": "d621d31188c2a93dfd8f6c15752bb62232caaa2f51c64cee93f875ba512b2c87",
+          "framebufferSha256": "0712b8f97094bb1fec9e34dfd215d9f43c6d9b12cceb8fed787dfc0675f9c23a",
+          "guestStateDigest": "f169c8721fe57ca591bd72d2cfa44a0e2de718b7e7fbd48af2544255dbc4c0ea",
+          "retiredInstructions": 4782162841,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-06-terminal.png",
+          "screenshotSha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d",
+          "framebufferSha256": "623de6f740d5e5c9b1a43f0610bf1f57f244f41ac6dba7433356099ec2564921",
+          "guestStateDigest": "785cc675fec9719b51d43eb5f4fbea31bb1ff510f4c0c3939fd5b58a2f8c4b8f",
+          "retiredInstructions": 5046151768,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "4750a9540e55e26307eb9fcb04ed3d6579afd5b62dbd2430131df73b2b9144c3",
+      "acceptanceLogLine": 93,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-07",
+      "workerCache": {
+        "chunkRequests": 379,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 379,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "747585ca0de00137befca2be5a8f78d3e5d9040f034e05ec8ed4ec8a0775c8f0",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 882138,
+      "totalMs": 938328,
+      "actualCursorPixels": 94,
+      "changedPixels": 344418,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-07.png",
+          "screenshotSha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e",
+          "framebufferSha256": "125da4df14b4883afb58728251b2a3fe6c771749735dceff664903a0fbf3356c",
+          "guestStateDigest": "db3aefd48677182852974e7d221ab325e816d85ddada89b75cdcf8ef1f79b1ba",
+          "retiredInstructions": 4777663087,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-07-terminal.png",
+          "screenshotSha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d",
+          "framebufferSha256": "623de6f740d5e5c9b1a43f0610bf1f57f244f41ac6dba7433356099ec2564921",
+          "guestStateDigest": "9f5cafeb6cc0de59cfe4cedb1b207dd8b9a49a5e5188761203467e4268b79953",
+          "retiredInstructions": 5048151258,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "c43906bb2ac89a34043d3892085f91dcd0835d270447bc0f8725b1e2635c3ac8",
+      "acceptanceLogLine": 115,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-08",
+      "workerCache": {
+        "chunkRequests": 380,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 380,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "222117f07ff53bac57af0da9fcba9c63dd712f8077cdbbf36b7ad8460517b02b",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 880818,
+      "totalMs": 933466,
+      "actualCursorPixels": 94,
+      "changedPixels": 344418,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-08.png",
+          "screenshotSha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e",
+          "framebufferSha256": "125da4df14b4883afb58728251b2a3fe6c771749735dceff664903a0fbf3356c",
+          "guestStateDigest": "173bec135cf54aead4255466426c08785abfad5a1d468502468608543995a1c0",
+          "retiredInstructions": 4779162525,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-08-terminal.png",
+          "screenshotSha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d",
+          "framebufferSha256": "623de6f740d5e5c9b1a43f0610bf1f57f244f41ac6dba7433356099ec2564921",
+          "guestStateDigest": "f79c2da5ecf8a1f9ef3b4fdcc592fd0ba8d601f1a6669fff2d2621eb61566348",
+          "retiredInstructions": 5055648831,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "968a385c79eb9fbc4cdfbfdb468e7c498e46f01fab0e047f604f04aad26f7d3a",
+      "acceptanceLogLine": 107,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-09",
+      "workerCache": {
+        "chunkRequests": 380,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 380,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "f32c96d3070f1cbd70b9ee295aa164419924018ea2a248e9c57a683f91628459",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 871458,
+      "totalMs": 921631,
+      "actualCursorPixels": 94,
+      "changedPixels": 344418,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-09.png",
+          "screenshotSha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e",
+          "framebufferSha256": "125da4df14b4883afb58728251b2a3fe6c771749735dceff664903a0fbf3356c",
+          "guestStateDigest": "05bfcb26c2f8f61e0a435b63b8bf1379cf9f232a773b480d06b74bafeb4b8842",
+          "retiredInstructions": 4775163449,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-09-terminal.png",
+          "screenshotSha256": "04f9e27babdbb449508dec97a77458cf197396cdce3e120f96184986d578d582",
+          "framebufferSha256": "0669eae994dd7d770995bbc9f571d8337b46841abf4930e6842248b42b81213a",
+          "guestStateDigest": "ae5ebb94dfd3e4ef8a0e4715dc9fb3206680ea3a880f1266ed363303c95a6c08",
+          "retiredInstructions": 5040152272,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "de0bd374e089af561fffe06b6a6bf9ccfd9e89e05e26a28c8152a14a39577dc7",
+      "acceptanceLogLine": 91,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-10",
+      "workerCache": {
+        "chunkRequests": 379,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 379,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "902bb5a83f9398b78a403407ac0f9483d860ce2c45a1f44258d0b3f254d73f60",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 877422,
+      "totalMs": 929145,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-10.png",
+          "screenshotSha256": "d621d31188c2a93dfd8f6c15752bb62232caaa2f51c64cee93f875ba512b2c87",
+          "framebufferSha256": "0712b8f97094bb1fec9e34dfd215d9f43c6d9b12cceb8fed787dfc0675f9c23a",
+          "guestStateDigest": "c3858a54d21b4732f435a814190e7b5dfc2734f7253709f0df3143fb0a5234ae",
+          "retiredInstructions": 4784162110,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-10-terminal.png",
+          "screenshotSha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d",
+          "framebufferSha256": "623de6f740d5e5c9b1a43f0610bf1f57f244f41ac6dba7433356099ec2564921",
+          "guestStateDigest": "c3d6b933305106bbec0507e58cd37e32aba4d12071224985ab4bed7db9f48228",
+          "retiredInstructions": 5050150174,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "8464b14fb1a033d1d3c1a6adbc115523eb07ab52f1e2ce48feeca875a5da5bf2",
+      "acceptanceLogLine": 103,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-11",
+      "workerCache": {
+        "chunkRequests": 379,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 379,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "8374d983940f1c00e0e8b1fd2d60cdef79f28ed3cececccb28bcbd1921851d63",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 879610,
+      "totalMs": 934227,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-11.png",
+          "screenshotSha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e",
+          "framebufferSha256": "125da4df14b4883afb58728251b2a3fe6c771749735dceff664903a0fbf3356c",
+          "guestStateDigest": "f6a905c86601489753753046924218fa8fb52c6f812cb062f1463bb873de42da",
+          "retiredInstructions": 4775663624,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-11-terminal.png",
+          "screenshotSha256": "ffd8507b215bd181c338d82884d4a291e76f5011d6168f75facc8eafe0f93a9e",
+          "framebufferSha256": "42457aa92a09ce7439bf2d67068c6f18e168870b6d297676b036381aabcaf2a3",
+          "guestStateDigest": "aa87da2aa16ef781f974a6bd4828553e85394a077cd3823a4e04ea3f8adb12ca",
+          "retiredInstructions": 5051649267,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "a0eb127c3412b8e82cb35d4e49ea2468d17b9aba675574705bf67858b8125210",
+      "acceptanceLogLine": 109,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-12",
+      "workerCache": {
+        "chunkRequests": 379,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 379,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "d176835ae3b4d3453206889f003376da83af1d63a6c5f5841a0b7fc47e2b6958",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 871960,
+      "totalMs": 925285,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-12.png",
+          "screenshotSha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e",
+          "framebufferSha256": "125da4df14b4883afb58728251b2a3fe6c771749735dceff664903a0fbf3356c",
+          "guestStateDigest": "3d4ae96c40f39e669c8b2d46095b4e9dd0ebc3af06e4223e942bc0c339ea4617",
+          "retiredInstructions": 4780163018,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-12-terminal.png",
+          "screenshotSha256": "ffd8507b215bd181c338d82884d4a291e76f5011d6168f75facc8eafe0f93a9e",
+          "framebufferSha256": "42457aa92a09ce7439bf2d67068c6f18e168870b6d297676b036381aabcaf2a3",
+          "guestStateDigest": "fc9277558eac6e2b86e9b47407170e84c2fc917b9b0d1d839cb1ab31383482ac",
+          "retiredInstructions": 5047151031,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "b9f844b365599e197e589720e6bef4754f6c7fc402c63272a90d50a03edd9586",
+      "acceptanceLogLine": 96,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-13",
+      "workerCache": {
+        "chunkRequests": 379,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 379,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "d2f2ac8994e9cdbda1f9d439b386681f6d0f808d2d17ece1053b0b132b3b0643",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 874724,
+      "totalMs": 929128,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-13.png",
+          "screenshotSha256": "d621d31188c2a93dfd8f6c15752bb62232caaa2f51c64cee93f875ba512b2c87",
+          "framebufferSha256": "0712b8f97094bb1fec9e34dfd215d9f43c6d9b12cceb8fed787dfc0675f9c23a",
+          "guestStateDigest": "2a35f2ee225a371b67800225aa5be98506ae0574f7c54119a91dee291448c7bf",
+          "retiredInstructions": 4780162959,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-13-terminal.png",
+          "screenshotSha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d",
+          "framebufferSha256": "623de6f740d5e5c9b1a43f0610bf1f57f244f41ac6dba7433356099ec2564921",
+          "guestStateDigest": "4dcea8b96a536db16b763972c4048fa2d70ddd4d17c46a78bdcee866abd7738f",
+          "retiredInstructions": 5050650791,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "8da59cfea972513d4b00578f0ebe99cbbbc2bbf1db00e85c6f43011c3b603635",
+      "acceptanceLogLine": 101,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-14",
+      "workerCache": {
+        "chunkRequests": 379,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 379,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "cf5c9f6f3aa38c1c73714a259699a3ecc90d024ad3fb4df9ab5cc50b04f9d109",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 893313,
+      "totalMs": 943457,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-14.png",
+          "screenshotSha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3",
+          "framebufferSha256": "7210c05da5d726fee77cce9299a7463f2c33e8803c2592a830565c91ef46ab14",
+          "guestStateDigest": "d147816a33592e5f9b3a1487dd6b9cdc256f57a3fff77794ad3fea76a5dccda9",
+          "retiredInstructions": 4781662456,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-14-terminal.png",
+          "screenshotSha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f",
+          "framebufferSha256": "7cd84f10414322f0bfe93cbfb00cee3940a557ad1ac70ab7df9a717600e4eb2e",
+          "guestStateDigest": "d4d2508c901eefca0b90720b1991eed0949f0a0057183525a13728e77b4a368a",
+          "retiredInstructions": 5047650835,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "d543e414f7933c2bb14c51baa04ce66bc89e1502f708f094380b90e44ff4341a",
+      "acceptanceLogLine": 149,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-15",
+      "workerCache": {
+        "chunkRequests": 380,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 380,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "e794050c7fe2756a61e4e8aa9d0a71503882f66b2402be9e8e09365bfc22d0f6",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 893648,
+      "totalMs": 943069,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-15.png",
+          "screenshotSha256": "627a47801ba11aba131a6ebab199ca861b02f5a10c1be1228e8dcb6fa11c9bdc",
+          "framebufferSha256": "9626eadf86458192232cf9d7c38f50f09b5244d731810b5d74ec8d04a570b655",
+          "guestStateDigest": "9412fabfb7715095d1eb7739973135afd6ddfcd615e1f11d6c2fa2d0a4698d06",
+          "retiredInstructions": 4782663277,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-15-terminal.png",
+          "screenshotSha256": "2d44af22b2a25babe519c21b51b7767beeaefc022fba004493a107c62c50ddcb",
+          "framebufferSha256": "e104d5109e8ae6f8b32317fa90869a948fc019cb45cec4392252286a25ba8db2",
+          "guestStateDigest": "280821ba43d5df3963a732018070af6bd0c26e6891d61118b277afd6f512c7d4",
+          "retiredInstructions": 5047152047,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14255,
+      "serialSha256": "6bf8d9ff74036da4dd5c4b69ab50d624e7b59941f553c4a805059ea0b037c5f6",
+      "acceptanceLogLine": 152,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-16",
+      "workerCache": {
+        "chunkRequests": 379,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 379,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "59017599aff2184fbcd2db21181e55ca3ac5b29f3539a622e2823b363da54fde",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 894574,
+      "totalMs": 942572,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-16.png",
+          "screenshotSha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3",
+          "framebufferSha256": "7210c05da5d726fee77cce9299a7463f2c33e8803c2592a830565c91ef46ab14",
+          "guestStateDigest": "9a12e6a60f39125aa8f11445461f3be99b2e2c1b8df87359ba274a2b1f85f0a5",
+          "retiredInstructions": 4779163606,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-16-terminal.png",
+          "screenshotSha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f",
+          "framebufferSha256": "7cd84f10414322f0bfe93cbfb00cee3940a557ad1ac70ab7df9a717600e4eb2e",
+          "guestStateDigest": "4147ac42cec31479aa4ffbcab98beb839fca091deacc8d7f598715121e48366b",
+          "retiredInstructions": 5044152967,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "68c73537803a4b882dab2fb982568ecb8f51fc7386c21cc9743262820fe8f89e",
+      "acceptanceLogLine": 153,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-17",
+      "workerCache": {
+        "chunkRequests": 378,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 378,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "30069fd1b43a7805f422d6080e1d7f1ac470d915515c7e21097de7e66b4e814b",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 894261,
+      "totalMs": 943688,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-17.png",
+          "screenshotSha256": "627a47801ba11aba131a6ebab199ca861b02f5a10c1be1228e8dcb6fa11c9bdc",
+          "framebufferSha256": "9626eadf86458192232cf9d7c38f50f09b5244d731810b5d74ec8d04a570b655",
+          "guestStateDigest": "f94643d37773a157fd68f9619da658bef9e850950aa140faa7a4dafa6437a3ec",
+          "retiredInstructions": 4780163374,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-17-terminal.png",
+          "screenshotSha256": "2d44af22b2a25babe519c21b51b7767beeaefc022fba004493a107c62c50ddcb",
+          "framebufferSha256": "e104d5109e8ae6f8b32317fa90869a948fc019cb45cec4392252286a25ba8db2",
+          "guestStateDigest": "fbdd7ece3e2dc1d7c18e48f719e04f9d3aead584ebd510207e129a9013de8b4e",
+          "retiredInstructions": 5046152303,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14255,
+      "serialSha256": "124ccc2ff6da6fee3bfc01e2a3be4c041bd52afc62f73c561d9bb9ad74ea3b40",
+      "acceptanceLogLine": 157,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-18",
+      "workerCache": {
+        "chunkRequests": 379,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 379,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "30c895b9b04e8d226786b664d48d271ce177af43f99cf239c5a6a052a31764d0",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 886695,
+      "totalMs": 936287,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-18.png",
+          "screenshotSha256": "627a47801ba11aba131a6ebab199ca861b02f5a10c1be1228e8dcb6fa11c9bdc",
+          "framebufferSha256": "9626eadf86458192232cf9d7c38f50f09b5244d731810b5d74ec8d04a570b655",
+          "guestStateDigest": "07899280b8e300fa803ec1f290b05d5daebd82806c4bfb9db382b53be9a3fef2",
+          "retiredInstructions": 4776162945,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-18-terminal.png",
+          "screenshotSha256": "2d44af22b2a25babe519c21b51b7767beeaefc022fba004493a107c62c50ddcb",
+          "framebufferSha256": "e104d5109e8ae6f8b32317fa90869a948fc019cb45cec4392252286a25ba8db2",
+          "guestStateDigest": "d074e6dc24b3e56d3ae945464b8e3670fde5fa23083edd305032341fdf6d75e4",
+          "retiredInstructions": 5040651708,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14255,
+      "serialSha256": "d77456b8e8ea567cdfd541d01d6afaea621c4ce3596357a45c06828bff3308f1",
+      "acceptanceLogLine": 151,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-19",
+      "workerCache": {
+        "chunkRequests": 380,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 380,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "58112857b4fdc5ace8303328eb6bd176954cbc154abfeae4e9c12a82b57a8c70",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 885083,
+      "totalMs": 935300,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-19.png",
+          "screenshotSha256": "627a47801ba11aba131a6ebab199ca861b02f5a10c1be1228e8dcb6fa11c9bdc",
+          "framebufferSha256": "9626eadf86458192232cf9d7c38f50f09b5244d731810b5d74ec8d04a570b655",
+          "guestStateDigest": "dd5e59736e8184ddc7c5eb5169504b6dd6860f952f93c13e6d6a6068bd8679cc",
+          "retiredInstructions": 4778663541,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-19-terminal.png",
+          "screenshotSha256": "2d44af22b2a25babe519c21b51b7767beeaefc022fba004493a107c62c50ddcb",
+          "framebufferSha256": "e104d5109e8ae6f8b32317fa90869a948fc019cb45cec4392252286a25ba8db2",
+          "guestStateDigest": "38be11c2f2643973cb0ea6c5655bd1bdbe2252cd25a714be4136b951ed05968c",
+          "retiredInstructions": 5043151952,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14255,
+      "serialSha256": "164d486ede3f6118dd2e3192632701255ac9d48e621170aa97f0acb75cca6972",
+      "acceptanceLogLine": 150,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-20",
+      "workerCache": {
+        "chunkRequests": 379,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 379,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "18cff621bd0af84c70e269c6a777d29ed678f407b995da5f172a74c56bfc313f",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 890669,
+      "totalMs": 939545,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-20.png",
+          "screenshotSha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3",
+          "framebufferSha256": "7210c05da5d726fee77cce9299a7463f2c33e8803c2592a830565c91ef46ab14",
+          "guestStateDigest": "7aed27d65025663f088b3ba4e95107762004c7508bd841b4818233d2c9b5d5b7",
+          "retiredInstructions": 4778163426,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-20-terminal.png",
+          "screenshotSha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f",
+          "framebufferSha256": "7cd84f10414322f0bfe93cbfb00cee3940a557ad1ac70ab7df9a717600e4eb2e",
+          "guestStateDigest": "2104696e36e648d55c419da345f93de87b6d2d1a208c924ca59994b2d3d2f7e6",
+          "retiredInstructions": 5043651187,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "099f2322b9b874c7d83be966d7c1c51f68ece19885d8bc92b60acb4e2892c101",
+      "acceptanceLogLine": 155,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-21",
+      "workerCache": {
+        "chunkRequests": 379,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 379,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "64fa0c647e8eccaed114237da09a02f5335e24f1315cc929e3c0f67bab340327",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 905866,
+      "totalMs": 946953,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-21.png",
+          "screenshotSha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3",
+          "framebufferSha256": "7210c05da5d726fee77cce9299a7463f2c33e8803c2592a830565c91ef46ab14",
+          "guestStateDigest": "ffa595ddd2ed4b3137deb539702c1791955dc801adb0e182b2867723c3294b38",
+          "retiredInstructions": 4772163601,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-21-terminal.png",
+          "screenshotSha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f",
+          "framebufferSha256": "7cd84f10414322f0bfe93cbfb00cee3940a557ad1ac70ab7df9a717600e4eb2e",
+          "guestStateDigest": "1b3b5d425014cd34244969d9987b978a828693865b1ad3a39225bf818647da03",
+          "retiredInstructions": 5037151541,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "3e02403f42383d4e5ff6206a4ebf7d4ddb48c59cc4414b9b00799ce2e7f94255",
+      "acceptanceLogLine": 162,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-22",
+      "workerCache": {
+        "chunkRequests": 380,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 380,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "676629adcbafd2e5a71224e2f9c746cdd376b75b1ee8046807f2987e0b477d12",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 892656,
+      "totalMs": 938748,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-22.png",
+          "screenshotSha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3",
+          "framebufferSha256": "7210c05da5d726fee77cce9299a7463f2c33e8803c2592a830565c91ef46ab14",
+          "guestStateDigest": "9487a2fc07342866dd5fd7b57fcef3ac26b2c6ca9325fc3b76bcbd869f89791c",
+          "retiredInstructions": 4775663573,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-22-terminal.png",
+          "screenshotSha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f",
+          "framebufferSha256": "7cd84f10414322f0bfe93cbfb00cee3940a557ad1ac70ab7df9a717600e4eb2e",
+          "guestStateDigest": "8f872f8af442c3b793198fba16214d48aa33e22f9696bf4a6da8df8fcabcf1fe",
+          "retiredInstructions": 5037652081,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "eed5ee788e3a09eb6e9584d4e0557d210ccdf45d23e0712fb5b637fd827c4301",
+      "acceptanceLogLine": 160,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-23",
+      "workerCache": {
+        "chunkRequests": 378,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 378,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "ec4a61b8431afe8c0ece048c1b096b470528b8d3e5f22d70a4d293ac5689f2a9",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 884452,
+      "totalMs": 933831,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-23.png",
+          "screenshotSha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3",
+          "framebufferSha256": "7210c05da5d726fee77cce9299a7463f2c33e8803c2592a830565c91ef46ab14",
+          "guestStateDigest": "840557571600ebf402410d63df351d8e71b6b6fab09741070ee80150ab5830e1",
+          "retiredInstructions": 4775663794,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-23-terminal.png",
+          "screenshotSha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f",
+          "framebufferSha256": "7cd84f10414322f0bfe93cbfb00cee3940a557ad1ac70ab7df9a717600e4eb2e",
+          "guestStateDigest": "a635ec98f75d82a9e3bd744f7760d2416df6f3d3e733fd007500f5ddf7d2d3d2",
+          "retiredInstructions": 5038653119,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "5c1b6b24cd99f06c1314bb9034832ea30b9d623e54de07cc146251d1d3c88d8b",
+      "acceptanceLogLine": 154,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-24",
+      "workerCache": {
+        "chunkRequests": 379,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 379,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "09889199120b41d94850ee8b4c470e49da1509b64f588d303f79120079a2c68a",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 892520,
+      "totalMs": 938218,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-24.png",
+          "screenshotSha256": "627a47801ba11aba131a6ebab199ca861b02f5a10c1be1228e8dcb6fa11c9bdc",
+          "framebufferSha256": "9626eadf86458192232cf9d7c38f50f09b5244d731810b5d74ec8d04a570b655",
+          "guestStateDigest": "51c3236fe59bb88fcd3df722eb80bcb4422189b51a1605d44f2360b1ecffce1d",
+          "retiredInstructions": 4776163444,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-24-terminal.png",
+          "screenshotSha256": "2d44af22b2a25babe519c21b51b7767beeaefc022fba004493a107c62c50ddcb",
+          "framebufferSha256": "e104d5109e8ae6f8b32317fa90869a948fc019cb45cec4392252286a25ba8db2",
+          "guestStateDigest": "76d8d69627cdddffd627f33fffd0124f7778b0584453bd54627d3b6176cab7a3",
+          "retiredInstructions": 5041652405,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14255,
+      "serialSha256": "2460e55f10a34accf679865cada4b084e01f45b726dbbd763b1b57f2b68320d3",
+      "acceptanceLogLine": 159,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-25",
+      "workerCache": {
+        "chunkRequests": 380,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 380,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "00b02e6ea28c23eadf92761f97e67d2297b19056277613b76280272418b40493",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 892787,
+      "totalMs": 937512,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-25.png",
+          "screenshotSha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3",
+          "framebufferSha256": "7210c05da5d726fee77cce9299a7463f2c33e8803c2592a830565c91ef46ab14",
+          "guestStateDigest": "bdf54c3d68b70838b7ffcd18420e2f8ee92603e97cccae8281607b8a0ca4ebdc",
+          "retiredInstructions": 4778163194,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-25-terminal.png",
+          "screenshotSha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f",
+          "framebufferSha256": "7cd84f10414322f0bfe93cbfb00cee3940a557ad1ac70ab7df9a717600e4eb2e",
+          "guestStateDigest": "f5e52815e8dd88cbaedb7575bf0989a08d32bb939e83c2dd8dac7be1b198be34",
+          "retiredInstructions": 5043151991,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "27889d70336010b1ae57f0c9205698f7c184d9b72080203de9d59fcf954365ed",
+      "acceptanceLogLine": 161,
+      "checksHeld": true
+    },
+    {
+      "label": "warm-prime",
+      "workerCache": {
+        "chunkRequests": 380,
+        "cachedChunkRequests": 8,
+        "networkChunkRequests": 372,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "6fb2359009cf136ce5693158c92273389d1ca054a4e0fe52b5223a5cfa4a9173",
+      "cacheDisabled": false,
+      "cacheHits": 0,
+      "bootToDesktopMs": 870966,
+      "totalMs": 925260,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "warm-prime.png",
+          "screenshotSha256": "d621d31188c2a93dfd8f6c15752bb62232caaa2f51c64cee93f875ba512b2c87",
+          "framebufferSha256": "0712b8f97094bb1fec9e34dfd215d9f43c6d9b12cceb8fed787dfc0675f9c23a",
+          "guestStateDigest": "b8c27ae1186d3d47ecae95d468127820c9d1e86a8f59cae14a5b575ff48d8adf",
+          "retiredInstructions": 4779163136,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "warm-prime-terminal.png",
+          "screenshotSha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d",
+          "framebufferSha256": "623de6f740d5e5c9b1a43f0610bf1f57f244f41ac6dba7433356099ec2564921",
+          "guestStateDigest": "c3b47b4aacc719cbf11c0515ccf710c31d4c91883b41ee8e2d2336583c2ca358",
+          "retiredInstructions": 5043150614,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "3579218cf4f309307552f43b7821422aae3aa9e5443b87383d64ba2cf319ed66",
+      "acceptanceLogLine": 94,
+      "checksHeld": true
+    },
+    {
+      "label": "warm-reload",
+      "workerCache": {
+        "chunkRequests": 379,
+        "cachedChunkRequests": 313,
+        "networkChunkRequests": 66,
+        "unknownChunkRequests": 0
+      },
+      "jsonSha256": "d5156657d6770fd6c2c74971f392f51153b599e38c4e41895a4cf67826d47bc1",
+      "cacheDisabled": false,
+      "cacheHits": 0,
+      "bootToDesktopMs": 898055,
+      "totalMs": 947406,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "warm-reload.png",
+          "screenshotSha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3",
+          "framebufferSha256": "7210c05da5d726fee77cce9299a7463f2c33e8803c2592a830565c91ef46ab14",
+          "guestStateDigest": "f2dc213f0b7ba13effb775728c054748537df0b0992b92d085f2842fdb149352",
+          "retiredInstructions": 4780662964,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "warm-reload-terminal.png",
+          "screenshotSha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f",
+          "framebufferSha256": "7cd84f10414322f0bfe93cbfb00cee3940a557ad1ac70ab7df9a717600e4eb2e",
+          "guestStateDigest": "b9bc4e487d5234685266d2352afd4e76ba4f48aa2a297134104264b03243e56c",
+          "retiredInstructions": 5043151634,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "e080915268500b7d2948d6b56556c4e35e3d857ba333ed74140b3a1b768b9265",
+      "acceptanceLogLine": 156,
+      "checksHeld": true
+    }
+  ],
+  "screenshotGroups": [
+    {
+      "representative": "cold-01.png",
+      "screenshotSha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e",
+      "framebufferSha256": "125da4df14b4883afb58728251b2a3fe6c771749735dceff664903a0fbf3356c",
+      "members": [
+        "cold-01.png",
+        "cold-02.png",
+        "cold-03.png",
+        "cold-07.png",
+        "cold-08.png",
+        "cold-09.png",
+        "cold-11.png",
+        "cold-12.png"
+      ]
+    },
+    {
+      "representative": "cold-01-terminal.png",
+      "screenshotSha256": "ffd8507b215bd181c338d82884d4a291e76f5011d6168f75facc8eafe0f93a9e",
+      "framebufferSha256": "42457aa92a09ce7439bf2d67068c6f18e168870b6d297676b036381aabcaf2a3",
+      "members": [
+        "cold-01-terminal.png",
+        "cold-02-terminal.png",
+        "cold-03-terminal.png",
+        "cold-11-terminal.png",
+        "cold-12-terminal.png"
+      ]
+    },
+    {
+      "representative": "cold-04.png",
+      "screenshotSha256": "d621d31188c2a93dfd8f6c15752bb62232caaa2f51c64cee93f875ba512b2c87",
+      "framebufferSha256": "0712b8f97094bb1fec9e34dfd215d9f43c6d9b12cceb8fed787dfc0675f9c23a",
+      "members": [
+        "cold-04.png",
+        "cold-06.png",
+        "cold-10.png",
+        "cold-13.png",
+        "warm-prime.png"
+      ]
+    },
+    {
+      "representative": "cold-04-terminal.png",
+      "screenshotSha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d",
+      "framebufferSha256": "623de6f740d5e5c9b1a43f0610bf1f57f244f41ac6dba7433356099ec2564921",
+      "members": [
+        "cold-04-terminal.png",
+        "cold-06-terminal.png",
+        "cold-07-terminal.png",
+        "cold-08-terminal.png",
+        "cold-10-terminal.png",
+        "cold-13-terminal.png",
+        "warm-prime-terminal.png"
+      ]
+    },
+    {
+      "representative": "cold-05.png",
+      "screenshotSha256": "31bb8258c3f175d0e8ec4e318d74a9f328a50eb9e29db090147f6b53529e294d",
+      "framebufferSha256": "665041ec70dcccf2a7127596d24b459bab172ccdd0a642c04d8a566d11a7463f",
+      "members": [
+        "cold-05.png"
+      ]
+    },
+    {
+      "representative": "cold-05-terminal.png",
+      "screenshotSha256": "87995a5c8b354c5c81a7e681806a752fafbd713863cc92241a5637ceabc59d7a",
+      "framebufferSha256": "861f14324caf6051733eff754f33a585cc38fd17d8d5fddaefe0eebd31c30aea",
+      "members": [
+        "cold-05-terminal.png"
+      ]
+    },
+    {
+      "representative": "cold-09-terminal.png",
+      "screenshotSha256": "04f9e27babdbb449508dec97a77458cf197396cdce3e120f96184986d578d582",
+      "framebufferSha256": "0669eae994dd7d770995bbc9f571d8337b46841abf4930e6842248b42b81213a",
+      "members": [
+        "cold-09-terminal.png"
+      ]
+    },
+    {
+      "representative": "cold-14.png",
+      "screenshotSha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3",
+      "framebufferSha256": "7210c05da5d726fee77cce9299a7463f2c33e8803c2592a830565c91ef46ab14",
+      "members": [
+        "cold-14.png",
+        "cold-16.png",
+        "cold-20.png",
+        "cold-21.png",
+        "cold-22.png",
+        "cold-23.png",
+        "cold-25.png",
+        "warm-reload.png"
+      ]
+    },
+    {
+      "representative": "cold-14-terminal.png",
+      "screenshotSha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f",
+      "framebufferSha256": "7cd84f10414322f0bfe93cbfb00cee3940a557ad1ac70ab7df9a717600e4eb2e",
+      "members": [
+        "cold-14-terminal.png",
+        "cold-16-terminal.png",
+        "cold-20-terminal.png",
+        "cold-21-terminal.png",
+        "cold-22-terminal.png",
+        "cold-23-terminal.png",
+        "cold-25-terminal.png",
+        "warm-reload-terminal.png"
+      ]
+    },
+    {
+      "representative": "cold-15.png",
+      "screenshotSha256": "627a47801ba11aba131a6ebab199ca861b02f5a10c1be1228e8dcb6fa11c9bdc",
+      "framebufferSha256": "9626eadf86458192232cf9d7c38f50f09b5244d731810b5d74ec8d04a570b655",
+      "members": [
+        "cold-15.png",
+        "cold-17.png",
+        "cold-18.png",
+        "cold-19.png",
+        "cold-24.png"
+      ]
+    },
+    {
+      "representative": "cold-15-terminal.png",
+      "screenshotSha256": "2d44af22b2a25babe519c21b51b7767beeaefc022fba004493a107c62c50ddcb",
+      "framebufferSha256": "e104d5109e8ae6f8b32317fa90869a948fc019cb45cec4392252286a25ba8db2",
+      "members": [
+        "cold-15-terminal.png",
+        "cold-17-terminal.png",
+        "cold-18-terminal.png",
+        "cold-19-terminal.png",
+        "cold-24-terminal.png"
+      ]
+    }
+  ],
+  "calibration": [
+    {
+      "disabled": false,
+      "phase": "prime",
+      "chunkRequests": 2,
+      "cachedChunkRequests": 1,
+      "networkChunkRequests": 1,
+      "unknownChunkRequests": 0
+    },
+    {
+      "disabled": false,
+      "phase": "reload",
+      "chunkRequests": 2,
+      "cachedChunkRequests": 2,
+      "networkChunkRequests": 0,
+      "unknownChunkRequests": 0
+    },
+    {
+      "disabled": true,
+      "phase": "prime",
+      "chunkRequests": 2,
+      "cachedChunkRequests": 0,
+      "networkChunkRequests": 2,
+      "unknownChunkRequests": 0
+    },
+    {
+      "disabled": true,
+      "phase": "reload",
+      "chunkRequests": 2,
+      "cachedChunkRequests": 0,
+      "networkChunkRequests": 2,
+      "unknownChunkRequests": 0
+    }
+  ],
+  "coldNetwork": 9478,
+  "coldTimings": {
+    "valuesMs": [
+      885351,
+      873714,
+      878299,
+      873346,
+      878827,
+      874551,
+      882138,
+      880818,
+      871458,
+      877422,
+      879610,
+      871960,
+      874724,
+      893313,
+      893648,
+      894574,
+      894261,
+      886695,
+      885083,
+      890669,
+      905866,
+      892656,
+      884452,
+      892520,
+      892787
+    ],
+    "minMs": 871458,
+    "maxMs": 905866,
+    "meanMs": 884349.68
+  },
+  "warmTimings": [
+    {
+      "label": "warm-prime",
+      "bootToDesktopMs": 870966,
+      "cacheHits": 0
+    },
+    {
+      "label": "warm-reload",
+      "bootToDesktopMs": 898055,
+      "cacheHits": 0
+    }
+  ],
+  "acceptanceFinalLine": 163,
+  "unitTests": {
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t18e/guard-unit-tests.log",
+    "sha256": "ed56a3fba670db08b609c1961ae42b687308457772436d60bd8a982033977040",
+    "tests": 30,
+    "passed": 30,
+    "failed": 0,
+    "skipped": 0
+  },
+  "demoHelper": "identifier substitutions only; execution deferred to parent",
+  "guestDigestScope": "Well-formed recorded digests and distinct desktop/terminal states; no independent memory replay is claimed.",
+  "artifactChecks": "HELD",
+  "visualInspection": "pending separate representative inspection"
+}

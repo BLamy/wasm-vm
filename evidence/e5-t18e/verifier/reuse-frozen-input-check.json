@@ -1,0 +1,50 @@
+{
+  "at": "2026-09-06T06:03:31.688Z",
+  "head": "5506f2a514a6a7b90d83eafe8cf39e6d3ff4fd1b",
+  "repo": "/Users/blamy/Documents/Codex/e5-t18e-cache-final.BHmnqG/repo",
+  "old": "/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo",
+  "anchor": {
+    "committed": "c0ae77aa9eb3680153802bc22fd05ca0d379ca73179165912ee5ce9c7673a3c5",
+    "current": "c0ae77aa9eb3680153802bc22fd05ca0d379ca73179165912ee5ce9c7673a3c5",
+    "previous": "c0ae77aa9eb3680153802bc22fd05ca0d379ca73179165912ee5ce9c7673a3c5"
+  },
+  "inputs": [
+    {
+      "file": "tools/guest/wvrun.sh",
+      "current": "ec5d72b40cc0ab65c3a28f850994076a8a2f664c41a11147d368325a308a4672",
+      "currentGit": "ec5d72b40cc0ab65c3a28f850994076a8a2f664c41a11147d368325a308a4672",
+      "oldGit": "ec5d72b40cc0ab65c3a28f850994076a8a2f664c41a11147d368325a308a4672",
+      "oldWorking": "ec5d72b40cc0ab65c3a28f850994076a8a2f664c41a11147d368325a308a4672"
+    },
+    {
+      "file": "tools/guest/container-smoke.sh",
+      "current": "6ecbee139ad287610860e69061c773a5f00d194c6c1db3fb52ced7ae88f0c7df",
+      "currentGit": "6ecbee139ad287610860e69061c773a5f00d194c6c1db3fb52ced7ae88f0c7df",
+      "oldGit": "6ecbee139ad287610860e69061c773a5f00d194c6c1db3fb52ced7ae88f0c7df",
+      "oldWorking": "6ecbee139ad287610860e69061c773a5f00d194c6c1db3fb52ced7ae88f0c7df"
+    },
+    {
+      "file": "tools/build-file-agent.sh",
+      "current": "c16f28acb910c7e25a3a24fa2d4c02a8be1caf022e411481bc2cea18b5bd3603",
+      "currentGit": "c16f28acb910c7e25a3a24fa2d4c02a8be1caf022e411481bc2cea18b5bd3603",
+      "oldGit": "c16f28acb910c7e25a3a24fa2d4c02a8be1caf022e411481bc2cea18b5bd3603",
+      "oldWorking": "c16f28acb910c7e25a3a24fa2d4c02a8be1caf022e411481bc2cea18b5bd3603"
+    },
+    {
+      "file": "tools/build-agent.sh",
+      "current": "ca8052d39c8e656f99539513489070741f21659271b59aeaa4f1b9460a73c65a",
+      "currentGit": "ca8052d39c8e656f99539513489070741f21659271b59aeaa4f1b9460a73c65a",
+      "oldGit": "ca8052d39c8e656f99539513489070741f21659271b59aeaa4f1b9460a73c65a",
+      "oldWorking": "ca8052d39c8e656f99539513489070741f21659271b59aeaa4f1b9460a73c65a"
+    },
+    {
+      "file": "tools/build-wvseccomp.sh",
+      "current": "36976c85161a6ad9771f88744685a32925fd81e26458ae12fde192d3adb5d990",
+      "currentGit": "36976c85161a6ad9771f88744685a32925fd81e26458ae12fde192d3adb5d990",
+      "oldGit": "36976c85161a6ad9771f88744685a32925fd81e26458ae12fde192d3adb5d990",
+      "oldWorking": "36976c85161a6ad9771f88744685a32925fd81e26458ae12fde192d3adb5d990"
+    }
+  ],
+  "scope": "Read-only check that the reproduced reuse bypass conditions are absent from the actual frozen inputs",
+  "passed": true
+}

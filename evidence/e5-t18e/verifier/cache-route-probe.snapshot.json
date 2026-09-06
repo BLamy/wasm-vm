@@ -1,0 +1,108 @@
+{
+  "purpose": "Read-only observer diagnostic; not another guest boot or a replacement for recorded boot evidence",
+  "browserVersion": "152.0.7977.76",
+  "asset": "/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+  "observations": [
+    {
+      "cacheDisabled": false,
+      "phase": "prime",
+      "entries": [
+        {
+          "name": "http://127.0.0.1:61429/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+          "transferSize": 131372,
+          "encodedBodySize": 131072,
+          "decodedBodySize": 131072
+        },
+        {
+          "name": "http://127.0.0.1:61429/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+          "transferSize": 0,
+          "encodedBodySize": 131072,
+          "decodedBodySize": 131072
+        }
+      ],
+      "pageCacheEvents": 0,
+      "pageStatuses": [
+        200,
+        404,
+        200
+      ]
+    },
+    {
+      "cacheDisabled": false,
+      "phase": "reload",
+      "entries": [
+        {
+          "name": "http://127.0.0.1:61429/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+          "transferSize": 0,
+          "encodedBodySize": 131072,
+          "decodedBodySize": 131072
+        },
+        {
+          "name": "http://127.0.0.1:61429/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+          "transferSize": 0,
+          "encodedBodySize": 131072,
+          "decodedBodySize": 131072
+        }
+      ],
+      "pageCacheEvents": 0,
+      "pageStatuses": [
+        200,
+        404,
+        200,
+        304
+      ]
+    },
+    {
+      "cacheDisabled": true,
+      "phase": "prime",
+      "entries": [
+        {
+          "name": "http://127.0.0.1:61429/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+          "transferSize": 131372,
+          "encodedBodySize": 131072,
+          "decodedBodySize": 131072
+        },
+        {
+          "name": "http://127.0.0.1:61429/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+          "transferSize": 131372,
+          "encodedBodySize": 131072,
+          "decodedBodySize": 131072
+        }
+      ],
+      "pageCacheEvents": 0,
+      "pageStatuses": [
+        200,
+        200,
+        200
+      ]
+    },
+    {
+      "cacheDisabled": true,
+      "phase": "reload",
+      "entries": [
+        {
+          "name": "http://127.0.0.1:61429/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+          "transferSize": 131372,
+          "encodedBodySize": 131072,
+          "decodedBodySize": 131072
+        },
+        {
+          "name": "http://127.0.0.1:61429/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+          "transferSize": 131372,
+          "encodedBodySize": 131072,
+          "decodedBodySize": 131072
+        }
+      ],
+      "pageCacheEvents": 0,
+      "pageStatuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200
+      ]
+    }
+  ],
+  "serverLog": "127.0.0.1 - - [06/Sep/2026 01:43:46] \"GET /artifacts-alpine.json HTTP/1.1\" 200 -\n127.0.0.1 - - [06/Sep/2026 01:43:47] \"GET /artifacts-alpine.json HTTP/1.1\" 200 -\n127.0.0.1 - - [06/Sep/2026 01:43:47] code 404, message File not found\n127.0.0.1 - - [06/Sep/2026 01:43:47] \"GET /favicon.ico HTTP/1.1\" 404 -\n127.0.0.1 - - [06/Sep/2026 01:43:47] \"GET /e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin HTTP/1.1\" 200 -\n127.0.0.1 - - [06/Sep/2026 01:43:47] \"GET /artifacts-alpine.json HTTP/1.1\" 304 -\n127.0.0.1 - - [06/Sep/2026 01:43:48] \"GET /artifacts-alpine.json HTTP/1.1\" 200 -\n127.0.0.1 - - [06/Sep/2026 01:43:49] \"GET /e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin HTTP/1.1\" 200 -\n127.0.0.1 - - [06/Sep/2026 01:43:49] \"GET /e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin HTTP/1.1\" 200 -\n127.0.0.1 - - [06/Sep/2026 01:43:49] \"GET /artifacts-alpine.json HTTP/1.1\" 200 -\n127.0.0.1 - - [06/Sep/2026 01:43:49] \"GET /e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin HTTP/1.1\" 200 -\n127.0.0.1 - - [06/Sep/2026 01:43:49] \"GET /e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin HTTP/1.1\" 200 -\n"
+}

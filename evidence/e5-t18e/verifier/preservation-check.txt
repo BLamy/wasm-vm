@@ -1,0 +1,3 @@
+E5T18E_PRESERVED_EVIDENCE_CHECK=PASS
+Ten original drill logs checked; all ten state-boundary output digests match (the log-cap case is reconstructed solely to check its original digest).
+Three recovery HTTP responses and the reviewed playbook digest match.

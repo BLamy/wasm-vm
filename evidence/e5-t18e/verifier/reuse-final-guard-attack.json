@@ -1,0 +1,1611 @@
+{
+  "head": "0d966c1fb8ef31e05c2bca52e1a191d9de235af3",
+  "at": "2026-09-06T06:24:11.585Z",
+  "sourceSha256": "e4aba2537476b5ed093cf729991693f1dd0adf581dcaa390f8284620566df816",
+  "extractedReuseBranchSha256": "6c46242f344a983f67773e3957307655691b7fbbaf24656271f65f5f2521b576",
+  "scratch": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7",
+  "scope": "Final identified reuse-guard delta only; real fs/git fixtures; no build or browser",
+  "onlyStub": "Final npm ci observer install",
+  "observations": [
+    {
+      "label": "unchanged-positive",
+      "expectedAccepted": true,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive",
+      "committedAnchorSha256": "532b8d112bebb20a5855c611d11d43994aefde9387581d667e1fff16877b4a12",
+      "workingAnchorSha256": "532b8d112bebb20a5855c611d11d43994aefde9387581d667e1fff16877b4a12",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "b1eec1d4d309e8c98513e6e7b3a52f3253ce38c4",
+              "sourceBindingSha256": "c6be774aea315e51f7b9e0a12f6ed9fadec68e291ed4ff383fb21e648943cac8",
+              "publicationRecordSha256": "532b8d112bebb20a5855c611d11d43994aefde9387581d667e1fff16877b4a12",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "12fbd9e4573ba0a6ea570720a4993340fe2687ae:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "b1eec1d4d309e8c98513e6e7b3a52f3253ce38c4",
+                "12fbd9e4573ba0a6ea570720a4993340fe2687ae",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*",
+                ":!web/dist"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "b1eec1d4d309e8c98513e6e7b3a52f3253ce38c4:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "b1eec1d4d309e8c98513e6e7b3a52f3253ce38c4:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        },
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "b1eec1d4d309e8c98513e6e7b3a52f3253ce38c4",
+              "sourceBindingSha256": "c6be774aea315e51f7b9e0a12f6ed9fadec68e291ed4ff383fb21e648943cac8",
+              "publicationRecordSha256": "532b8d112bebb20a5855c611d11d43994aefde9387581d667e1fff16877b4a12",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "12fbd9e4573ba0a6ea570720a4993340fe2687ae:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "b1eec1d4d309e8c98513e6e7b3a52f3253ce38c4",
+                "12fbd9e4573ba0a6ea570720a4993340fe2687ae",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*",
+                ":!web/dist"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "b1eec1d4d309e8c98513e6e7b3a52f3253ce38c4:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "b1eec1d4d309e8c98513e6e7b3a52f3253ce38c4:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/unchanged-positive/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "old-generated-dist-positive",
+      "expectedAccepted": true,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive",
+      "committedAnchorSha256": "6721ecf9396d270ba56424824a55103e0892fcb919877698ee58f3c43df909e8",
+      "workingAnchorSha256": "6721ecf9396d270ba56424824a55103e0892fcb919877698ee58f3c43df909e8",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "ff7696c194d228b7c8b6a4f952b9dfc51d2590b2",
+              "sourceBindingSha256": "4e6193b6a28b3fcb5783eec5cc77035baf2e35b5372e5f930237232de1e5c87d",
+              "publicationRecordSha256": "6721ecf9396d270ba56424824a55103e0892fcb919877698ee58f3c43df909e8",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "bc9a3aa1bbd424afe06e31b726fe0d795ef27918:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "ff7696c194d228b7c8b6a4f952b9dfc51d2590b2",
+                "bc9a3aa1bbd424afe06e31b726fe0d795ef27918",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*",
+                ":!web/dist"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "ff7696c194d228b7c8b6a4f952b9dfc51d2590b2:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "ff7696c194d228b7c8b6a4f952b9dfc51d2590b2:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        },
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "ff7696c194d228b7c8b6a4f952b9dfc51d2590b2",
+              "sourceBindingSha256": "4e6193b6a28b3fcb5783eec5cc77035baf2e35b5372e5f930237232de1e5c87d",
+              "publicationRecordSha256": "6721ecf9396d270ba56424824a55103e0892fcb919877698ee58f3c43df909e8",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "bc9a3aa1bbd424afe06e31b726fe0d795ef27918:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "ff7696c194d228b7c8b6a4f952b9dfc51d2590b2",
+                "bc9a3aa1bbd424afe06e31b726fe0d795ef27918",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*",
+                ":!web/dist"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "ff7696c194d228b7c8b6a4f952b9dfc51d2590b2:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "ff7696c194d228b7c8b6a4f952b9dfc51d2590b2:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-generated-dist-positive/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "current-untracked-cargo-config",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-cargo-config",
+      "committedAnchorSha256": "db2943acd0e9368a3adf712b20c8bc349c0ec6eb1f9476367b9d65af89f79599",
+      "workingAnchorSha256": "db2943acd0e9368a3adf712b20c8bc349c0ec6eb1f9476367b9d65af89f79599",
+      "currentStatus": "?? .cargo/config\n",
+      "results": [
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-cargo-config/current\n+ actual - expected\n\n+ '.cargo/config'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "97f4ef0d2523cea2f72b57ecf6b452426c5d2ab7:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-cargo-config/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-cargo-config/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-cargo-config/current\n+ actual - expected\n\n+ '.cargo/config'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "97f4ef0d2523cea2f72b57ecf6b452426c5d2ab7:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-cargo-config/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-cargo-config/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "current-untracked-toolchain",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-toolchain",
+      "committedAnchorSha256": "823e5cad0025aa0436df6792ad8547a5e13cc2bda4086084da98c6f6b4ffb73a",
+      "workingAnchorSha256": "823e5cad0025aa0436df6792ad8547a5e13cc2bda4086084da98c6f6b4ffb73a",
+      "currentStatus": "?? rust-toolchain\n",
+      "results": [
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-toolchain/current\n+ actual - expected\n\n+ 'rust-toolchain'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "3df891d57a790b31a3d8219f6e9ff96fa583560d:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-toolchain/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-toolchain/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-toolchain/current\n+ actual - expected\n\n+ 'rust-toolchain'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "3df891d57a790b31a3d8219f6e9ff96fa583560d:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-toolchain/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-untracked-toolchain/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "current-ignored-cargo-config",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-cargo-config",
+      "committedAnchorSha256": "8c421f65c50c20f590d1ba3577841def7ff16923eec8aa284273240907127ee2",
+      "workingAnchorSha256": "8c421f65c50c20f590d1ba3577841def7ff16923eec8aa284273240907127ee2",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-cargo-config/current\n+ actual - expected\n\n+ '.cargo/config'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "eac6352d2c773636c39ab6e8700b175c98905bb5:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-cargo-config/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-cargo-config/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-cargo-config/current\n+ actual - expected\n\n+ '.cargo/config'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "eac6352d2c773636c39ab6e8700b175c98905bb5:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-cargo-config/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-cargo-config/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "current-ignored-toolchain",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-toolchain",
+      "committedAnchorSha256": "b35571dff3420bc2e6d30af220cf9ab6ef3064b7102830394f91df44c540ff92",
+      "workingAnchorSha256": "b35571dff3420bc2e6d30af220cf9ab6ef3064b7102830394f91df44c540ff92",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-toolchain/current\n+ actual - expected\n\n+ 'rust-toolchain'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "3598c8a96cba56f3c29514614f814f40d6bacafa:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-toolchain/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-toolchain/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-toolchain/current\n+ actual - expected\n\n+ 'rust-toolchain'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "3598c8a96cba56f3c29514614f814f40d6bacafa:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-toolchain/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/current-ignored-toolchain/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "old-untracked-cargo-config",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-cargo-config",
+      "committedAnchorSha256": "2a5c5f16050043156116d16d74344494eb47969f6caecbad20a58b399a0aab9d",
+      "workingAnchorSha256": "2a5c5f16050043156116d16d74344494eb47969f6caecbad20a58b399a0aab9d",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-cargo-config/old\n+ actual - expected\n\n+ '.cargo/config'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "471279069093b69789ed941271b87de0c6041b93:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-cargo-config/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-cargo-config/old"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-cargo-config/old\n+ actual - expected\n\n+ '.cargo/config'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "471279069093b69789ed941271b87de0c6041b93:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-cargo-config/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-cargo-config/old"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "old-untracked-toolchain",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-toolchain",
+      "committedAnchorSha256": "6be9ab226876f9ca84ac67b3587bba0fdd11a03129438276608fdc738f2e1ad4",
+      "workingAnchorSha256": "6be9ab226876f9ca84ac67b3587bba0fdd11a03129438276608fdc738f2e1ad4",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-toolchain/old\n+ actual - expected\n\n+ 'rust-toolchain'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "012b64f572e58deda948707d00cdf5fdd2524707:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-toolchain/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-toolchain/old"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-toolchain/old\n+ actual - expected\n\n+ 'rust-toolchain'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "012b64f572e58deda948707d00cdf5fdd2524707:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-toolchain/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-untracked-toolchain/old"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "old-ignored-cargo-config",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-cargo-config",
+      "committedAnchorSha256": "25c0e7c14be0f2c5353c76f34ea14660b55545b3bee2230badbb6dbe2c61c714",
+      "workingAnchorSha256": "25c0e7c14be0f2c5353c76f34ea14660b55545b3bee2230badbb6dbe2c61c714",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-cargo-config/old\n+ actual - expected\n\n+ '.cargo/config'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "3282749f5cfa9e0686d224bac2aa2e786eef7ebf:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-cargo-config/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-cargo-config/old"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-cargo-config/old\n+ actual - expected\n\n+ '.cargo/config'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "3282749f5cfa9e0686d224bac2aa2e786eef7ebf:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-cargo-config/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-cargo-config/old"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "old-ignored-toolchain",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-toolchain",
+      "committedAnchorSha256": "6601c9a14b097c6ced83dc929e61abf5cbf7cf045c3ef63d90893b189a21ee3f",
+      "workingAnchorSha256": "6601c9a14b097c6ced83dc929e61abf5cbf7cf045c3ef63d90893b189a21ee3f",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-toolchain/old\n+ actual - expected\n\n+ 'rust-toolchain'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "d89adedbd2c7d52d2019029ff44e0e65c8bb5aa7:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-toolchain/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-toolchain/old"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: untracked Cargo/toolchain build inputs: /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-toolchain/old\n+ actual - expected\n\n+ 'rust-toolchain'\n- ''\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "d89adedbd2c7d52d2019029ff44e0e65c8bb5aa7:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-toolchain/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-ignored-toolchain/old"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "old-dirty-transitive-build-script",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-dirty-transitive-build-script",
+      "committedAnchorSha256": "bd686273eeda505d1ea499ebaf2475ac5198119658454d047b0d86af7c2edc26",
+      "workingAnchorSha256": "bd686273eeda505d1ea499ebaf2475ac5198119658454d047b0d86af7c2edc26",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e* :!web/dist",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "aeb56a34603a853557ec6f9630160d7f80054eb0:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-dirty-transitive-build-script/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-dirty-transitive-build-script/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-dirty-transitive-build-script/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-dirty-transitive-build-script/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "3776d682a65fc3e020a2482c2a50fbbb511a8456",
+                "aeb56a34603a853557ec6f9630160d7f80054eb0",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-dirty-transitive-build-script/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-dirty-transitive-build-script/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*",
+                ":!web/dist"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-dirty-transitive-build-script/old"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e* :!web/dist",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "aeb56a34603a853557ec6f9630160d7f80054eb0:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-dirty-transitive-build-script/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-dirty-transitive-build-script/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-dirty-transitive-build-script/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "ls-files",
+                "--others",
+                "--",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-dirty-transitive-build-script/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "3776d682a65fc3e020a2482c2a50fbbb511a8456",
+                "aeb56a34603a853557ec6f9630160d7f80054eb0",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-dirty-transitive-build-script/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-dirty-transitive-build-script/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*",
+                ":!web/dist"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-final-guard-7Zest7/old-dirty-transitive-build-script/old"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    }
+  ],
+  "actualOldCheckout": {
+    "path": "/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo",
+    "command": [
+      "git",
+      "diff",
+      "--exit-code",
+      "HEAD",
+      "--",
+      "crates",
+      "Cargo.toml",
+      "Cargo.lock",
+      ".cargo",
+      "rust-toolchain",
+      "rust-toolchain.toml",
+      "releases",
+      "web",
+      "tools",
+      ":!tools/verify/e5-t18e*",
+      ":!web/dist"
+    ],
+    "outputBytes": 0,
+    "passed": true
+  },
+  "passed": true
+}

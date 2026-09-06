@@ -1,0 +1,35 @@
+{
+  "at": "2026-09-06T06:26:16.084Z",
+  "from": "5506f2a514a6a7b90d83eafe8cf39e6d3ff4fd1b",
+  "head": "0d966c1fb8ef31e05c2bca52e1a191d9de235af3",
+  "sourceSha256": "e4aba2537476b5ed093cf729991693f1dd0adf581dcaa390f8284620566df816",
+  "cacheSha256": "056054b90fe110a99d8847c0e3c0f944835d7a83ae6ca877a3216584a46ef845",
+  "buildInputComparison": {
+    "command": [
+      "git",
+      "diff",
+      "--exit-code",
+      "5506f2a514a6a7b90d83eafe8cf39e6d3ff4fd1b",
+      "0d966c1fb8ef31e05c2bca52e1a191d9de235af3",
+      "--",
+      "crates",
+      "Cargo.toml",
+      "Cargo.lock",
+      ".cargo",
+      "rust-toolchain",
+      "rust-toolchain.toml",
+      "releases",
+      "web",
+      "tools",
+      ":!tools/verify/e5-t18e*"
+    ],
+    "outputBytes": 0
+  },
+  "Makefile": {
+    "fromSha256": "d82faff4c5138847eb9f107693e8f2399496bc620cfbddd75834068c2dec30db",
+    "headSha256": "efdf8a03bad66be7d88f199a6ef1a3a9cc413098c9772a3a705b6d17313e7f97",
+    "nonProofSha256": "b452aa0c012134cfbb8873e8837eeaedfdffad65e65b03e361e600e17408edc7",
+    "matches": true
+  },
+  "passed": true
+}

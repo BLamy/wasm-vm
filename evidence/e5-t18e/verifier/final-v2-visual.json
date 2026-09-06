@@ -1,0 +1,72 @@
+{
+  "scope": "Manual inspection of one unedited representative per exact PNG digest group after the final artifact audit. No browser or guest execution.",
+  "result": "HELD",
+  "groups": [
+    {
+      "file": "cold-01.png",
+      "sha256": "883f6c1db1b7375c23bbd3af6d71e1bb7469146c60274df3188ce62ce97f6f7e",
+      "captures": 8,
+      "observed": "Patterned wallpaper, contrasting top panel, launcher icon and visible guest arrow."
+    },
+    {
+      "file": "cold-01-terminal.png",
+      "sha256": "ffd8507b215bd181c338d82884d4a291e76f5011d6168f75facc8eafe0f93a9e",
+      "captures": 5,
+      "observed": "Visible foot title bar, controls, client body and shell prompt over the desktop."
+    },
+    {
+      "file": "cold-04.png",
+      "sha256": "d621d31188c2a93dfd8f6c15752bb62232caaa2f51c64cee93f875ba512b2c87",
+      "captures": 5,
+      "observed": "Patterned wallpaper, contrasting top panel, launcher icon and visible guest arrow."
+    },
+    {
+      "file": "cold-04-terminal.png",
+      "sha256": "a08f90146f865a04a9de32638beb61a207faebe00792e86813d6bd9d0254307d",
+      "captures": 7,
+      "observed": "Visible foot title bar, controls, client body and shell prompt over the desktop."
+    },
+    {
+      "file": "cold-05.png",
+      "sha256": "31bb8258c3f175d0e8ec4e318d74a9f328a50eb9e29db090147f6b53529e294d",
+      "captures": 1,
+      "observed": "Patterned wallpaper, contrasting top panel, launcher icon and visible guest arrow."
+    },
+    {
+      "file": "cold-05-terminal.png",
+      "sha256": "87995a5c8b354c5c81a7e681806a752fafbd713863cc92241a5637ceabc59d7a",
+      "captures": 1,
+      "observed": "Visible foot title bar, controls, client body and shell prompt over the desktop."
+    },
+    {
+      "file": "cold-09-terminal.png",
+      "sha256": "04f9e27babdbb449508dec97a77458cf197396cdce3e120f96184986d578d582",
+      "captures": 1,
+      "observed": "Visible foot window and client body with an outline text cursor; no shell prompt asserted at this capture."
+    },
+    {
+      "file": "cold-14.png",
+      "sha256": "5fd29fa936128d6c27775984251863af6092fdc86fe299ea5ea666a65a8b5ad3",
+      "captures": 8,
+      "observed": "Patterned wallpaper, contrasting top panel, launcher icon and visible guest arrow."
+    },
+    {
+      "file": "cold-14-terminal.png",
+      "sha256": "b14bcfffd73812cd9ec5be462370a674dc731a36709510b74258e09ddc9d257f",
+      "captures": 8,
+      "observed": "Visible foot title bar, controls, client body and shell prompt over the desktop."
+    },
+    {
+      "file": "cold-15.png",
+      "sha256": "627a47801ba11aba131a6ebab199ca861b02f5a10c1be1228e8dcb6fa11c9bdc",
+      "captures": 5,
+      "observed": "Patterned wallpaper, contrasting top panel, launcher icon and visible guest arrow."
+    },
+    {
+      "file": "cold-15-terminal.png",
+      "sha256": "2d44af22b2a25babe519c21b51b7767beeaefc022fba004493a107c62c50ddcb",
+      "captures": 5,
+      "observed": "Visible foot title bar, controls, client body and shell prompt over the desktop."
+    }
+  ]
+}
