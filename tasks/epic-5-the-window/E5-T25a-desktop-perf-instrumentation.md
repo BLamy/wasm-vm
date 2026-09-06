@@ -3,7 +3,7 @@ id: E5-T25a
 epic: 5
 title: Freeze test-only desktop performance instrumentation and injection hooks
 priority: 525.1
-status: in-progress
+status: implemented
 depends_on: [E5-T09e, E5-T18e]
 estimate: S
 risk: medium
@@ -204,3 +204,38 @@ Commands: `make web-build`; `make verify-E5-T25a`;
   Independent machines, WebKit, host rr/ssh-dev, T25b/T25c, T22c, and merge are out of
   scope. No localhost listener was started in the replacement session and no merge was
   performed.
+
+### 2026-09-06 — worker — REWORK IMPLEMENTED
+
+Daybreak Blue's replacement verifier at `568159e176c52774f72b16eb26b0077fb7b68fee`
+found one remaining semantic gap: the initial scheduler sample is intentionally
+unavailable (`null`), but `Number(null)` fabricated a `0/0` attribution. The fix is
+`368feb2974b9f438fda2c6f4ea751fc31c594d21`
+(`fix(e5-t25a): reject unavailable guest attribution`).
+
+`PresentationController` now accepts only a non-negative safe numeric retired-
+instruction value; null, undefined, strings, booleans, invalid objects, and sampler
+errors remain an explicit `guestInstructions: null` /
+`guestInstructionsTotal: null` baseline and do not advance the previous total. The
+page scheduler cache applies the same type check before updating the gated sampler.
+The regression exercises unavailable → 100 → 175, asserting null/null, 100/100,
+and 75/175 in sequence. The release audit now also proves source/dist byte parity,
+the dual gate, the type-checked sampler assignment, the 50 ms sampler, and timer
+cleanup; the static lifecycle audit is deterministic because the no-boot browser
+surface cannot run a Linux controller.
+
+The frozen exact-head `make verify-E5-T25a` passed eight tests, the release audit,
+Chromium 152.0.7977.76, and Firefox 132.0. Browser evidence remains
+`evidence/e5-t25a/browser/results.json` SHA-256
+`f82cf35bb1c0db9e425b6bbfc37a5117304be424e1f9318777e1dc165a273d4e` and
+`chromium-gated.png` SHA-256
+`7b77d08efbfeab64a9b46cf6b3617c86b1e81afd90781a24bf4c2b02893f5547`.
+The rebuilt-page proof remains 126 passed, 0 failed, 126 done, with empty browser
+and HTTP error arrays. Its current JSON and PNG hashes are
+`0b786e88c8ead85e509d1b1dd09213072816f2b4d3bc35c78563b3be5cc568fd` and
+`aaef2ebff2f8abcd6ed9e825831f4299eba5914bae80cf28d8762450b9c37ab1`.
+For avoidance of ambiguity, the full browser PNG digest is the 64-character value
+above; the earlier verifier shorthand containing `...64b9a46...` was not a digest.
+
+Commands: `make verify-E5-T25a`; `make web-build`;
+`E5_DEMO_TASK=E5-T22g E5_DEMO_VERIFIED=1 E5_DEMO_OUT=evidence/e5-t25a/demo node tools/verify/e5-t18e-demo-smoke.mjs`.
