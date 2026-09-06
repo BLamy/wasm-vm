@@ -183,3 +183,14 @@ F in progress rather than prematurely verified. Capture:
 `c17233283d2b6f26e4ffb969de2e889851cb9163f9475c67751ed3aa241ba408`.
 Submit the diff and these immutable recordings to the fresh verifier. No merge,
 production deployment, Omarchy image mutation, or Epic 6 work has occurred.
+
+### 2026-09-06 — coordinator — independent verifier service blocked
+
+The fresh verifier session stopped before issuing a final verdict. Its service
+returned: "This content was flagged for possible cybersecurity risk" and pointed
+to the Trusted Access for Cyber program. This is an external review-service
+failure, not a product refutation or passing verdict. Preserve the provisional
+predictions and completed frozen-test logs under `evidence/e5-t22f/verifier/`;
+the task remains `implemented`, awaiting the required independent review.
+Do not bypass the service restriction, self-verify the worker's change, waive C's
+timing criterion, merge the unfinished milestone, or advance to Omarchy/Epic 6.
