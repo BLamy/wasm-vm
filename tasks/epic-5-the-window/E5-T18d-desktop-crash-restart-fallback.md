@@ -3,7 +3,7 @@ id: E5-T18d
 epic: 5
 title: Harden compositor restart and tty1 getty fallback
 priority: 518.4
-status: pending
+status: in-progress
 depends_on: [E5-T18c]
 estimate: S
 risk: high
@@ -51,3 +51,10 @@ WebKit and independent machines are out of scope.
 
 This S slice isolates process supervision and the failure boundary needed by the final bring-up
 playbook.
+
+### 2026-09-05 — worker — STARTED
+
+Implement bounded compositor supervision, a boot-latched tty1 getty fallback, and local-only
+serial failure drills. Reuse the verified desktop package profile; no Omarchy or Epic 6 work
+starts in this slice. Final evidence will distinguish a successful restart from stale readiness
+and prove repeated failure cannot re-enter an unbounded init/autologin loop.

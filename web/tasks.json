@@ -19155,8 +19155,9 @@
       "activity": [
         {
           "date": "2026-09-05",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t18c): accept exact-head cursor and DPR evidence",
             "test(e5-t18c): record exact-head cursor matrix evidence",
             "chore(e5-t18c): activate cursor geometry proof"
           ]
@@ -19164,7 +19165,7 @@
       ],
       "firstActivity": "2026-09-05",
       "lastActivity": "2026-09-05",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T18d",
@@ -19172,7 +19173,7 @@
       "epicKey": "5",
       "title": "Harden compositor restart and tty1 getty fallback",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T18c"
       ],
@@ -19196,7 +19197,7 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis S slice isolates process supervision and the failure boundary needed by the final bring-up\nplaybook.",
+      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis S slice isolates process supervision and the failure boundary needed by the final bring-up\nplaybook.\n\n### 2026-09-05 — worker — STARTED\n\nImplement bounded compositor supervision, a boot-latched tty1 getty fallback, and local-only\nserial failure drills. Reuse the verified desktop package profile; no Omarchy or Epic 6 work\nstarts in this slice. Final evidence will distinguish a successful restart from stale readiness\nand prove repeated failure cannot re-enter an unbounded init/autologin loop.",
       "adversarial": "Inject the 500 ms seatd delay, remove the video device, delete XDG_RUNTIME_DIR initialization,\nand force WLR_RENDERER=gles2 in separate local fixtures. Each case must terminate with its\npredicted bounded symptom/log path; no new hang or unbounded restart loop is acceptable.\nWebKit and independent machines are out of scope.",
       "file": "tasks/epic-5-the-window/E5-T18d-desktop-crash-restart-fallback.md",
       "activity": [
