@@ -19227,7 +19227,7 @@
       "epicKey": "5",
       "title": "Publish the desktop bring-up playbook and final boot proof",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T18d"
       ],
@@ -19251,7 +19251,7 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis final S slice makes the debugging knowledge and exact rebuilt-boot proof durable before\ndownstream resize, performance, and capstone work can depend on T18.\n\n### 2026-09-06 — worker — STARTED\n\nConsolidate the verified T18a-d failure inventory without changing compositor/input\nsemantics. Freeze the complete existing package/custom-file manifests, rebuild the\nT18d recovery-enabled interactive image from those committed inputs in a fresh\nshared-folder clone, and bind 25 cache-disabled browser boots plus a cache-enabled\nprime/reload timing pair to that artifact. Independent machines, WebKit, and rr\nremain out of scope. Continue stacking; merge all PRs only at the Epic 5 milestone,\nthen reuse the prepared Omarchy filesystem, deploy production, and stop before E6.",
+      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis final S slice makes the debugging knowledge and exact rebuilt-boot proof durable before\ndownstream resize, performance, and capstone work can depend on T18.\n\n### 2026-09-06 — worker — STARTED\n\nConsolidate the verified T18a-d failure inventory without changing compositor/input\nsemantics. Freeze the complete existing package/custom-file manifests, rebuild the\nT18d recovery-enabled interactive image from those committed inputs in a fresh\nshared-folder clone, and bind 25 cache-disabled browser boots plus a cache-enabled\nprime/reload timing pair to that artifact. Independent machines, WebKit, and rr\nremain out of scope. Continue stacking; merge all PRs only at the Epic 5 milestone,\nthen reuse the prepared Omarchy filesystem, deploy production, and stop before E6.\n\n### 2026-09-06 — worker — IMPLEMENTED\n\nThe committed manifest rebuilt the selected interactive/recovery image from scratch\nin `/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo` at\n`9ed9e0d1c57daf64f6362193bc30b79482dd3258`. `make verify-E5-T18e` built the\nimage, native chunk tool, and browser WASM with inherited Rust/Cargo overrides\nscrubbed. The ext4 is SHA-256\n`e75b04caadd9616915b323497c92df1d5a9d11d55c877afcc95d208dde302416`;\nboth full manifests and all 8192 chunk positions match the committed locks.\nOriginal rebuild/functional evidence is preserved in `evidence/e5-t18e/initial/`.\nIts page-only cache counter did not prove dedicated-worker cache disabling, so\nthat first run is explicitly not the final cold-cache verdict.\n\nThe corrected observer ran in the separate clean clone\n`/Users/blamy/Documents/Codex/e5-t18e-cache-final.BHmnqG/repo`, frozen at\n`5506f2a514a6a7b90d83eafe8cf39e6d3ff4fd1b`, with:\n\n```sh\nE5_T18E_REQUIRE_HEAD=5506f2a514a6a7b90d83eafe8cf39e6d3ff4fd1b \\\n  E5_T18E_REUSE_BUILD=/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo \\\n  make verify-E5-T18e\n```\n\nExit 0: `E5T18E_PASS=25_COLD_2_WARM`. All 25 cold contexts and both warm\ncases rendered the desktop, the independently specified 94-pixel cursor, and a\nTerminal opened by a real launcher click, with zero browser errors. The 9478\nobserved cold worker chunk fetches all used the network, with no missing or cached\nresponses. Warm reload recorded 313 cached and 66 network responses. Each case has\ndesktop/Terminal PNGs and framebuffer hashes, guest architectural digests,\nscheduler/fetch state, raw UART, and complete worker ResourceTiming entries.\nCold times were 871.458–905.866 s (mean 884.350 s); warm prime/reload were\n870.966/898.055 s under 13-cold-plus-warm concurrent load. This is repeatability\nevidence, not an isolated performance or cache-speedup claim.\n\nFinal record: `evidence/e5-t18e/desktop-bringup.json`, SHA-256\n`e056f3ef0f3e0a4c682eb6e40138f8f2c4e30cceb56bcd19fc0a6d6ad9aacd31`.\nSource/runtime/publication binding:\n`d6ad7a2abba368bea58142ad8cb0d6f8881916dd048e4fdd4136c5dcb84dd290`.\n`publication.json`, `acceptance.log`, `cache-calibration.json`, `build.log`, and\n`browser-console.log` are copied byte-identically from that clone alongside all\n27 case recordings. The original rebuild's binding is\n`0e41e0d9f9fa9ccc3277867fc0146d5c4d856959e92b5de947bd52ded7a149c2`.\n\nThe fresh critic found and reproduced reuse-preflight gaps, not runtime failures.\nProof-only guard head `0d966c1fb8ef31e05c2bca52e1a191d9de235af3` binds the\nreference to Git and checks transitive build inputs, non-proof Makefile changes,\nand tracked/untracked/ignored Cargo/toolchain inputs in both checkouts. The critic\nconfirmed the actual frozen run met these stronger conditions; no image/runtime\nchange or repeat guest run was needed. See its `reuse-final-guard-review.md` and\npreceding preserved findings under `evidence/e5-t18e/verifier/`.\n\nAt that guard head, the following recorded 30 passing tests in\n`evidence/e5-t18e/guard-unit-tests.log` (SHA-256\n`ed56a3fba670db08b609c1961ae42b687308457772436d60bd8a982033977040`):\n\n```sh\nnode --check tools/verify/e5-t18e-desktop-bringup.mjs\nnode --test tools/verify/e5-t18e-publication.test.mjs tools/verify/e5-t18e-verifier.test.mjs tools/verify/e5-t18e-cache.test.mjs tools/verify/e5-t18e-cache-verifier.test.mjs tools/verify/e5-t18d-surface.test.mjs\n```\n\nThe playbook inventories T18a-d failures and distinguishes cold configuration\nfaults from post-readiness removal. Existing runtime/recovery verification carries\nforward unchanged. Await the fresh critic's final aggregate/PNG/cache audit;\nthe worker does not set `verified`. Production deployment and all merges remain\nheld until the requested Epic 5 completion milestone.",
       "adversarial": "Have the fresh verifier run the documented failure drills using only the playbook: remove the\nvideo device, delete runtime-directory initialization, force gles2, and trigger three crashes.\nEach diagnosis must complete in five minutes and match a documented symptom/fix. Mutate the\npublished image or manifest after the rebuild; the verifier must reject the stale hash rather\nthan accepting dirty-image evidence. WebKit and independent machines are out of scope.",
       "file": "tasks/epic-5-the-window/E5-T18e-desktop-bringup-playbook.md",
       "activity": [
@@ -19262,13 +19262,15 @@
         },
         {
           "date": "2026-09-06",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "docs(tasks): start final desktop bring-up proof"
+          ]
         }
       ],
       "firstActivity": "2026-09-05",
       "lastActivity": "2026-09-06",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E5-T19",

@@ -1,0 +1,39 @@
+✔ neutral wallpaper with a contrasting panel counts as a desktop (32.78275ms)
+✔ black and flat-gray scanouts do not claim desktop readiness (8.421792ms)
+✔ sparse login text is not confused with a desktop (7.424417ms)
+✔ verifier: completed-fetch coverage cannot pass on an empty or truncated observer (2.920708ms)
+✔ verifier: real-worker-shaped reuse is rejected cold and admitted warm (14.341375ms)
+✔ cold worker proof requires network transfers, not page cache flags (7.02525ms)
+✔ warm reload must contain an actual worker cache hit (0.390209ms)
+✔ missing or opaque worker responses cannot count as cache proof (6.286583ms)
+✔ forged summary counters cannot hide a cached response (1.0815ms)
+✔ only chunk requests count toward completed fetch coverage (0.27525ms)
+✔ all chunk positions, including duplicate objects, reconstruct the image (78.381791ms)
+✔ one mutated published byte is rejected (18.95725ms)
+✔ a mutated published manifest is rejected (15.436375ms)
+✔ missing published object fails closed (16.58625ms)
+✔ self-consistent manifest cannot change required dimensions (6.139125ms)
+✔ reordered valid chunks cannot claim the original full-image hash (15.063416ms)
+▶ verifier: full publication rejects stale image, locks, metadata and chunk bytes
+  ✔ positive control reconstructs all 8192 positions (2985.443125ms)
+  ✔ one raw-image byte changed after publication is rejected (1418.767542ms)
+  ✔ output MANIFEST.txt changed after publication is rejected (1608.6055ms)
+  ✔ output FILE-MANIFEST.txt changed after publication is rejected (2183.611916ms)
+  ✔ committed input MANIFEST.txt changed after publication is rejected (1934.964042ms)
+  ✔ committed input FILE-MANIFEST.txt changed after publication is rejected (1474.306084ms)
+  ✔ changed served manifest is rejected (1450.404959ms)
+  ✔ changed chunk object is rejected through the full publication API (1395.189958ms)
+  ✔ stale builder image metadata is rejected (1372.424042ms)
+  ✔ builder profile cannot silently change boundedRecovery (1362.571708ms)
+  ✔ builder profile cannot silently change backend (1358.174125ms)
+  ✔ builder profile cannot silently change renderer (1434.054958ms)
+  ✔ restored fixture still passes, excluding cross-case contamination (2126.107625ms)
+✔ verifier: full publication rejects stale image, locks, metadata and chunk bytes (22858.739958ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 23097.659833

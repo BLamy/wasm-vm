@@ -170,6 +170,14 @@ exit is required. Never mutate the recorded image or refresh a lock to conceal d
 
 ## Historical timing and completion boundary
 
+The final T18e v2 recording completed all 25 cold and two warm cases. Cold boots
+took 871.458–905.866 seconds (mean 884.350); the warm prime/reload took
+870.966/898.055 seconds with 13 cold contexts plus the warm pair sharing the Mac.
+All 9478 cold worker chunk fetches used the network; warm reload reused 313 chunks
+and fetched 66. These loaded-system timings are not an isolated performance claim.
+The report SHA-256 is
+`e056f3ef0f3e0a4c682eb6e40138f8f2c4e30cceb56bcd19fc0a6d6ad9aacd31`.
+
 T18a's ten isolated cold boots took 505.829–513.291 seconds (mean 508.946); its
 cache-enabled prime/reload took 514.956/515.739 seconds. Those results bind the older
 T17 image, not the current interactive recovery image. T18e's report supplies the
