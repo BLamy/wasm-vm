@@ -77,6 +77,7 @@ while IFS= read -r command; do
         /usr/local/bin/wv-display-query
       for client_pid in $(pidof foot 2>/dev/null); do
         printf 'WV_CLIENT pid=%s exe=%s\n' "$client_pid" "$(readlink "/proc/$client_pid/exe")"
+        awk '/^(State|VmRSS|Threads):/ { print "WV_CLIENT_STATE " $0 }' "/proc/$client_pid/status" 2>/dev/null || true
       done
       printf 'E5T22C_DISPLAY_END\n'
       ;;
@@ -94,7 +95,7 @@ while IFS= read -r command; do
         runuser -u desktop -- env XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 \
           /usr/bin/foot --title=WV_RESIZE_PROOF /bin/sh -c \
           'printf "\033[48;2;20;40;80m\033[38;2;245;231;190mWV_RESIZE_CONTENT_2026\033[0m\n"; exec /bin/sh' \
-          > /dev/null 2>&1 &
+          > /dev/null &
       fi
       ;;
     tty)

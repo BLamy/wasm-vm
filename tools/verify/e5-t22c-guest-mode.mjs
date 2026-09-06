@@ -109,7 +109,7 @@ try{
   const afterRepeat=await page.evaluate(()=>desktopResize.state());
   assert.equal(afterRepeat.viewport.requests,beforeRepeat.viewport.requests,"repeat has no new host request");
   const finalLog=await command("log","LOG");
-  assert.doesNotMatch(finalLog,/cannot run at all|WV_DISPLAY_RETRY|Assertion|panic|failed to init output/);
+  assert.doesNotMatch(finalLog,/cannot run at all|WV_DISPLAY_(RETRY|FATAL)|Assertion|panic|failed to init output/);
   await writeFile(path.join(out,"final-compositor.log"),finalLog);
   await writeFile(path.join(out,"runtime-stats.json"),JSON.stringify(await page.evaluate(async()=>({scheduler:await desktopResize.controller().schedulerStats(),jit:await desktopResize.controller().jitStats(),digest:await desktopResize.controller().stateDigest()})),null,2)+"\n");
   assert.deepEqual(errors,[]);

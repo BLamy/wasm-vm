@@ -3,8 +3,9 @@ id: E5-T22c
 epic: 5
 title: Apply guest desktop hotplug modes without restarting the compositor
 priority: 522.3
-status: in-progress
-depends_on: [E5-T22b]
+status: blocked
+depends_on: [E5-T22b, E5-T22e]
+blocked_on: E5-T22e — guest device reset erases the host monitor mode before Weston starts
 estimate: S
 risk: high
 capstone: false
@@ -121,3 +122,26 @@ Native ASan/UBSan currently passes 204,314 checks: 10,000 seeded transitions,
 output destruction. The browser recorder now checks rendered terminal text,
 actual post-paint timestamps, unchanging compositor/client identities, and an
 independent Wayland/DRM/scanout/canvas comparison before it can claim acceptance.
+
+### 2026-09-06 — worker — blocked on initial-mode reset prerequisite
+
+Exact repro: build the documented v3 image and chunks, `make web-dist`, then run
+`E5_T22C_ITERATION=1 E5_T22C_OUT=target/e5-t22c/iteration-v3 node tools/verify/e5-t22c-guest-mode.mjs`.
+The recorder requests 901x701 before the first guest instruction. Its preserved
+`evidence/e5-t22c/initial-mode-reset-v3/progress.json` shows that request accepted,
+but the actual resource remains 1280x800 after desktop startup; no matching paint
+exists. Source `crates/core/src/dev/virtio/gpu/mod.rs:523-532` resets physical host
+monitor dimensions and EDID to defaults when Linux resets its guest device. The
+existing lifecycle test explicitly expects that behavior. Stop this non-progressing
+iteration after saving its state and raw serial; it is not acceptance evidence.
+
+E5-T22e isolates the device-reset correction from this compositor/guest-image
+boundary. Resume this task only after that prerequisite is independently verified.
+No guest/browser proof already held is re-litigated merely because reset failed.
+
+Separately, independent source review found that a negative native mode-switch
+return can follow partial renderer teardown. The adapter now fail-stops with
+status 70 and a fixed fatal diagnostic, without retrying or unsafe cleanup. Such
+a fault is never counted as a successful resize. The native sanitizer test
+reproduces mutation-before-error in a child and requires that exact exit; all
+202,456 checks pass. This latest fault fix requires a newly recorded final image.

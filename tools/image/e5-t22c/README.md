@@ -21,6 +21,13 @@ No output disable, compositor restart, renderer replacement or guest-image
 post-build editing is part of this path. The selected virtual GPU uses pixman
 without the optional extra shadow framebuffer copy.
 
+A negative return from the pinned backend is **fatal**, not safely retryable:
+Weston may already have freed its renderer state. The adapter writes a fixed
+diagnostic and immediately exits with status 70, without unsafe renderer cleanup
+or false success. The existing bounded supervisor handles that failed process.
+This fault path is not a successful resize and must never be counted as one;
+the acceptance run requires unchanged compositor and client process identities.
+
 The build-only sysroot is never copied into the guest. The existing 190-package
 desktop lock remains unchanged; only the two custom ELFs, explicit configuration,
 and opt-in diagnostic commands are added to the immutable image.

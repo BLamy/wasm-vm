@@ -19,8 +19,6 @@
 struct resize_slot {
     struct weston_output *output;
     struct wl_listener destroyed;
-    int failures;
-    struct wv_display_mode requested;
     // The backend owns every inserted mode and frees it on output destruction.
     // While live we prune only our own unused entries, including their KMS blob.
     struct drm_mode *owned[2];
@@ -146,11 +144,6 @@ static void apply_mode(struct resize_context *ctx, struct resize_slot *slot,
     if (!base->enabled || base->destroying || output->virtual ||
         output->destroy_pending || output->disable_pending || mode_pending(output)) return;
     prune_modes(slot,output);
-    if (slot->requested.width!=preferred.width || slot->requested.height!=preferred.height) {
-        slot->requested=preferred;
-        slot->failures=0;
-    }
-    if (slot->failures>=3) return; // Bounded failure, never an allocation/retry spin.
     if (!base->current_mode || !base->switch_mode) return;
     if (base->native_mode && base->native_mode->width==preferred.width &&
         base->native_mode->height==preferred.height) return;
@@ -162,11 +155,16 @@ static void apply_mode(struct resize_context *ctx, struct resize_slot *slot,
     int result=weston_output_mode_set_native(base,&mode->base,base->current_scale);
     if (slot->output!=base) return; // Signals may cause final output destruction.
     if (result<0) {
-        slot->failures++;
-        weston_log("WV_DISPLAY_RETRY output=%s failures=%d\n",base->name,slot->failures);
-        return;
+        // Weston 12's DRM switch can replace current_mode and tear down pixman
+        // before failing allocation. Retrying that mode is a false-success no-op;
+        // normal compositor teardown could also touch the freed renderer state.
+        // This is a fatal backend fault, never a successful resize. Fail-stop
+        // immediately, letting the existing bounded supervisor handle the exit.
+        // Successful transitions never use this path or restart the compositor.
+        static const char fatal[]="WV_DISPLAY_FATAL native mode switch failed; no retry or renderer teardown\n";
+        (void)write(STDERR_FILENO,fatal,sizeof fatal-1);
+        _exit(70);
     }
-    slot->failures=0;
     prune_modes(slot,output);
     weston_log("WV_DISPLAY_APPLIED output=%s width=%d height=%d\n",
                base->name,base->current_mode->width,base->current_mode->height);

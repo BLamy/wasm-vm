@@ -2,6 +2,7 @@
 // stubbed: this proves bounded ownership/state transitions, not guest rendering.
 #include "../../guest/wv-display-resize.c"
 #include <stdarg.h>
+#include <sys/wait.h>
 
 static unsigned calls, destroys, next_blob, checks;
 static bool fail_switch, fail_blob, destroy_in_switch, fail_timer, wrong_version, no_api;
@@ -76,7 +77,15 @@ int weston_output_mode_set_native(struct weston_output *base,struct weston_mode 
     CHECK(!mode_pending(container_of(base,struct drm_output,base)));
     CHECK(scale==1);
     if (destroy_in_switch) { destroy_output(base);return 0; }
-    if (fail_switch) return -1;
+    if (fail_switch) {
+        // Reproduce the pinned backend's mutation BEFORE failure, including its
+        // now-dangling renderer pointer. A same-mode retry must not run here.
+        CHECK(calls==1);
+        base->current_mode=mode;
+        void *renderer=malloc(64);CHECK(renderer);free(renderer);
+        base->renderer_state=renderer;
+        return -1;
+    }
     if (!base->original_mode) {
         base->current_mode=mode;base->width=mode->width;base->height=mode->height;
     }
@@ -157,13 +166,31 @@ static void test_transitions(void) {
         request(&f,w,h,true);CHECK(f.output->base.width==w&&f.output->base.height==h);
         CHECK(mode_count(&f)<=2);
     }
+    request(&f,1280,800,true);CHECK(mode_count(&f)==1);
     finish(&f);
 }
+static void test_slot_bound(void) {
+    struct resize_context shared={0};struct fixture fixtures[MAX_OUTPUTS+1];
+    for (int i=0;i<=MAX_OUTPUTS;i++) {
+        init(&fixtures[i]);
+        CHECK((slot_for(&shared,&fixtures[i].output->base)!=NULL)==(i<MAX_OUTPUTS));
+    }
+    finish(&fixtures[0]);
+    CHECK(slot_for(&shared,&fixtures[MAX_OUTPUTS].output->base)!=NULL);
+    for (int i=1;i<=MAX_OUTPUTS;i++)finish(&fixtures[i]);
+    for (int i=0;i<MAX_OUTPUTS;i++)CHECK(!shared.slots[i].output);
+}
 static void test_failures(void) {
-    struct fixture f;init(&f);fail_switch=true;
-    for (int i=0;i<1000;i++) request(&f,803,603,true);
-    CHECK(calls==3);CHECK(f.slot->failures==3);CHECK(mode_count(&f)<=2);
-    fail_switch=false;request(&f,804,603,true);CHECK(calls==4);CHECK(f.slot->failures==0);
+    struct fixture f;init(&f);
+    pid_t child=fork();CHECK(child>=0);
+    if (!child) {
+        fail_switch=true;
+        request(&f,803,603,true);
+        _exit(99); // Reaching this would falsely recover the destroyed renderer.
+    }
+    int status;CHECK(waitpid(child,&status,0)==child);
+    CHECK(WIFEXITED(status)&&WEXITSTATUS(status)==70);
+    request(&f,804,603,true);CHECK(calls==1);
     fail_blob=true;
     request(&f,805,603,true);CHECK(f.output->base.width==805);
     unsigned before=calls;
@@ -207,6 +234,21 @@ static void test_decoder(void) {
         bytes[i]^=1<<bit;mode=(struct wv_display_mode){7,9};
         CHECK(!wv_display_mode_decode(bytes,128,&mode));CHECK(mode.width==7&&mode.height==9);bytes[i]^=1<<bit;
     }
+    const uint8_t invalid[][2]={{8,0},{9,0},{18,2},{19,3},{126,1}};
+    for (size_t i=0;i<sizeof invalid/sizeof invalid[0];i++) {
+        uint8_t modified[128];memcpy(modified,bytes,128);modified[invalid[i][0]]=invalid[i][1];
+        unsigned sum=0;for (int j=0;j<127;j++)sum+=modified[j];modified[127]=(uint8_t)-sum;
+        CHECK(!wv_display_mode_decode(modified,128,&mode));
+    }
+    for (int width=0;width<=4095;width+=4095) {
+        uint8_t modified[128];memcpy(modified,bytes,128);
+        modified[56]=width;modified[58]=(modified[58]&15)|((width>>4)&240);
+        unsigned sum=0;for (int j=0;j<127;j++)sum+=modified[j];modified[127]=(uint8_t)-sum;
+        CHECK(wv_display_mode_decode(modified,128,&mode)==(width>=320));
+    }
+    uint8_t blank_clock[128];memcpy(blank_clock,bytes,128);blank_clock[54]=blank_clock[55]=0;
+    unsigned clock_sum=0;for(int i=0;i<127;i++)clock_sum+=blank_clock[i];blank_clock[127]=(uint8_t)-clock_sum;
+    CHECK(!wv_display_mode_decode(blank_clock,128,&mode));
     uint32_t seed=0x225c002;
     for (int run=0;run<100000;run++) {
         for (int i=0;i<128;i++) bytes[i]=rng(&seed);
@@ -217,7 +259,7 @@ static void test_decoder(void) {
     CHECK(!preferred_mode("../card0",&mode));CHECK(!preferred_mode("Virtual/1",&mode));CHECK(!preferred_mode("",&mode));
 }
 int main(void) {
-    test_transitions();test_failures();test_init_cleanup();test_decoder();
+    test_transitions();test_slot_bound();test_failures();test_init_cleanup();test_decoder();
     printf("PASS actual adapter ASan/UBSan: %u checks; 10000 seeded transitions; 3000 pending polls; 100000 parser seeds; %u retired KMS blobs\n",checks,destroys);
     return 0;
 }

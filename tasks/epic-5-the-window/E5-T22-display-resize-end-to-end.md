@@ -8,7 +8,7 @@ depends_on: [E5-T04, E5-T18e]
 estimate: M
 risk: high
 capstone: false
-decomposed_into: [E5-T22a, E5-T22b, E5-T22c, E5-T22d]
+decomposed_into: [E5-T22a, E5-T22b, E5-T22e, E5-T22c, E5-T22d]
 ---
 
 ## Goal
@@ -20,8 +20,10 @@ decomposed_into: [E5-T22a, E5-T22b, E5-T22c, E5-T22d]
 
 1. E5-T22a — bounded host hotplug API and actual GPU state; make verify-E5-T22a.
 2. E5-T22b — viewport/DPR debounce and stale-frame presentation; make verify-E5-T22b.
-3. E5-T22c — real in-place guest compositor mode adoption; make verify-E5-T22c.
-4. E5-T22d — final storms, lifetime, DPR and reload matrix; make verify-E5-T22d.
+3. E5-T22e — retain physical monitor state during Linux's boot-time device reset;
+   make verify-E5-T22e. Discovered by T22c's non-default initial-mode boot.
+4. E5-T22c — real in-place guest compositor mode adoption; make verify-E5-T22c.
+5. E5-T22d — final storms, lifetime, DPR and reload matrix; make verify-E5-T22d.
 
 T22d is the dependency handoff. No original acceptance or attack is waived.
 
