@@ -3,7 +3,7 @@ id: E5-T25b
 epic: 5
 title: Measure repeatable real-window drag FPS and bottleneck counters
 priority: 525.2
-status: pending
+status: in-progress
 depends_on: [E5-T25a]
 estimate: S
 risk: medium
