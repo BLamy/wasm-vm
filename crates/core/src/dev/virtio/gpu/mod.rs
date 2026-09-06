@@ -3224,6 +3224,69 @@ mod tests {
     }
 
     #[test]
+    fn display_reset_mmio_clears_latched_irqs_and_both_cached_queues() {
+        for latched in [false, true] {
+            let (gpu, state) = VirtioGpu::new_with_state();
+            let slot = Rc::new(RefCell::new(VirtioMmio::new(Box::new(gpu))));
+            let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+            let control = QueueState {
+                num: 8,
+                ready: true,
+                desc: DESC,
+                driver: AVAIL,
+                device: USED,
+            };
+            let cursor = QueueState {
+                num: 8,
+                ready: true,
+                desc: CURSOR_DESC,
+                driver: CURSOR_AVAIL,
+                device: CURSOR_USED,
+            };
+            slot.borrow_mut().set_queue_for_test(0, control);
+            slot.borrow_mut().set_queue_for_test(1, cursor);
+            let mut control_cache = Some(Virtqueue::new(&control, 256).unwrap());
+            let mut cursor_cache = Some(Virtqueue::new(&cursor, 256).unwrap());
+            bus.store32(USED, 0x1234_5678).unwrap();
+            bus.store32(CURSOR_USED, 0x9abc_def0).unwrap();
+            state.borrow_mut().set_display(901, 701);
+            let before_edid = state.borrow().edid();
+            state.borrow_mut().kicked = true;
+            state.borrow_mut().cursor_kicked = true;
+            if latched {
+                assert!(slot.borrow_mut().sync_backend_config_irq());
+                slot.borrow_mut().raise_used_irq();
+                assert_eq!(read32(&mut slot.borrow_mut(), 0x060), 3);
+                assert!(slot.borrow().irq_level());
+            }
+            write32(&mut slot.borrow_mut(), STATUS, 0);
+            assert_eq!(read32(&mut slot.borrow_mut(), 0x060), 0);
+            assert!(!slot.borrow().irq_level());
+            assert_eq!(slot.borrow().queue(0), &QueueState::default());
+            assert_eq!(slot.borrow().queue(1), &QueueState::default());
+            service_with_cursor(
+                &slot,
+                &mut control_cache,
+                &mut cursor_cache,
+                &state,
+                &mut bus,
+            );
+            assert!(control_cache.is_none() && cursor_cache.is_none());
+            assert!(!state.borrow().reset_pending);
+            assert!(!slot.borrow_mut().sync_backend_config_irq());
+            assert!(!slot.borrow().irq_level());
+            assert_eq!(bus.load32(USED).unwrap(), 0x1234_5678);
+            assert_eq!(bus.load32(CURSOR_USED).unwrap(), 0x9abc_def0);
+            assert_eq!(state.borrow().display_size(), (901, 701));
+            assert_eq!(state.borrow().edid(), before_edid);
+            state.borrow_mut().set_display(901, 701);
+            assert!(slot.borrow_mut().sync_backend_config_irq());
+            assert!(!slot.borrow_mut().sync_backend_config_irq());
+            assert_eq!(read32(&mut slot.borrow_mut(), 0x060), INT_CONFIG_CHANGE);
+        }
+    }
+
+    #[test]
     fn gpu_resources_lifecycle_device_reset_releases_resource_state() {
         let (mut gpu, state) = VirtioGpu::new_with_state();
         state.borrow_mut().set_display(1921, 1081);
