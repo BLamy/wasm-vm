@@ -71,3 +71,25 @@ T22b independently verified at `f62fec0d`, with the built demo handoff at
 `99cfa600`. Start by recording the unchanged T18e desktop image's real browser
 hotplug baseline. Only then choose the bounded Weston/pixman integration; keep
 the compositor process and live clients, and preserve the original image.
+
+### 2026-09-06 — worker — baseline reproduced
+
+`node tools/verify/e5-t22c-baseline.mjs` at `7808d8d0` boots the unchanged
+T18e image (SHA256 `e75b04caadd9616915b323497c92df1d5a9d11d55c877afcc95d208dde302416`)
+in the real browser worker. After an 803x603 request, the guest consumes the
+display event (`pendingEvents=0`) but keeps resource 3 at 1280x800 / 12,288,000
+resource bytes through the 8,479 ms final sample. Weston PID 961 is unchanged;
+its log explicitly reports ignoring the monitor change. Zero browser errors.
+Evidence: `evidence/e5-t22c/baseline/baseline.json` SHA256
+`84050d0097cd794267da3fa2aa70766261c65f55002a9930deeffb5c53105cfd`, raw serial
+and screenshot alongside it. The initial `before.edid` serialization was empty;
+all post-request samples preserve the full 128-byte EDID, and the harness has
+been corrected for future runs without rewriting this original record.
+
+Choose a small pinned in-process Weston module using its public DRM output API:
+wait for deferred disable completion before reconfiguring, re-enable the output,
+and preserve the compositor/client processes. A bounded EDID watcher also sees
+one-pixel updates which do not change rounded physical monitor dimensions.
+The independent read-only Wayland observer will compare actual output events
+and guest DRM EDID; neither the adapter nor browser target dimensions supply its
+current-mode result. This is implementation direction, not a verified claim.

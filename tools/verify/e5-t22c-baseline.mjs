@@ -54,7 +54,7 @@ try{
   await page.goto("http://127.0.0.1:"+server.address().port+"/desktop-recovery.html?recoveryTest=1&imageManifestUrl=/baseline-desktop/manifest.json&baseUrl=/baseline-desktop/&jit=1");
   await until(()=>page.evaluate(()=>window.__desktopRecovery?.serial().includes("E5T18D_TEST_CONSOLE_READY")),"test console");
   await until(async()=>(await page.evaluate(inspectRecoveryCanvas)).desktop,"actual visible desktop");
-  const before={status:await command("status","STATUS"),log:await command("log","LOG"),capture:await page.evaluate(()=>__desktopRecovery.capture()),gpu:await page.evaluate(()=>__desktopController.displayStats())};
+  const before={status:await command("status","STATUS"),log:await command("log","LOG"),capture:await page.evaluate(()=>__desktopRecovery.capture()),gpu:await page.evaluate(async()=>{const gpu=await __desktopController.displayStats();return {...gpu,edid:Array.from(gpu.edid)};})};
   const samples=await page.evaluate(async()=>{
     const start=performance.now();await __desktopController.setDisplay(803,603);
     const samples=[];
