@@ -33,6 +33,51 @@ policy and native-pixel stale-frame letterboxing. T22c owns actual in-place
 Weston/DRM mode adoption; T22d owns the complete storm/lifetime/reload matrix.
 Until those pass, a requested mode is not a verified end-to-end resize.
 
+## Viewport policy (E5-T22b)
+
+The main display and `display-resize.html` observe a dedicated viewport wrapper,
+not the canvas they resize. CSS width/height times device-pixel ratio are rounded
+to the nearest integer, then clamped to at least **320x240** and at most
+**4095x4095**. A hidden zero-size wrapper does not request a mode. DPR is observed
+with a rearmed resolution media query even if CSS dimensions do not change.
+One bounded 250 ms scalar DPR check covers scale changes that update the browser
+value without delivering the media-query event (observed in Chrome emulation).
+It does not resize or touch the GPU while the value is unchanged and is cancelled
+on disposal. The event-driven path follows the
+[documented resolution-query pattern](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio#monitoring_screen_resolution_or_zoom_level_changes).
+Requests use a **250 ms trailing debounce**; only an explicitly supplied
+`testDebounceMs: 0` constructor option bypasses it. No production URL enables it.
+
+The backing canvas follows the current viewport immediately. Its CSS size is
+backing pixels divided by DPR, so neither resizing nor a minimum/maximum clamp
+stretches guest pixels. If the target is clamped, the wrapper clips overflowing
+native pixels or supplies a black background; it does not scale them to fit.
+
+An old-size frame retains its own row stride. During the mismatch the sink
+clips its top-left native pixels or pads the right/bottom edges with opaque black.
+It retains only the established latest resource, with one bounded target-sized
+temporary fit buffer (at most 4095x4095x4 bytes). A matching resource replaces the
+whole visible image on its first frame, including when that frame's damage is
+partial; subsequent matching frames keep the normal damage fast path.
+WebGL context-loss replacement uses the same retained resource and fit policy.
+
+Pointer mapping uses the guest resource's native CSS extent, not a stretched
+target rectangle. Points in padding clamp to the old guest's edge. The diagnostic
+page exercises this through the actual tablet controller; input ownership on the
+main app's existing serial terminal remains unchanged.
+
+`accepted` in viewport diagnostics means **host GPU request accepted**, not
+guest compositor adoption. fbcon commonly ignores hotplug: **resize takes effect
+at next mode set**. The display labels an old-size frame as waiting for the guest
+mode set; the real compositor round trip and its two-second limit remain T22c-d.
+Stopping/replacing a controller cannot apply an old response to a new viewport.
+Disposal removes ResizeObserver, timer and DPR listener, including pending RPCs.
+
+The resizable diagnostic uses an explicitly labeled synthetic pixel fixture and
+a paused real GPU. “Match frame” supplies a synthetic matching-size frame; it
+never purports to be Linux repainting. Fixed-size T18 evidence pages retain their
+existing resource-following presentation policy.
+
 ## Reproduce the host proof
 
 From a clean checkout with the pinned Rust/wasm-pack toolchain and local Chrome:

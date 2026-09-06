@@ -43,6 +43,7 @@ import {
   POINTER_MODES,
 } from "./src/input/pointer.js";
 import { PresentationController } from "./src/sink/presentation.js";
+import { DisplayViewportController } from "./src/sink/viewport.js";
 import { CursorController } from "./src/sink/cursor-controller.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
@@ -64,6 +65,7 @@ globalThis.vm = pageVm;
 const displayCanvas = document.getElementById("ide-display-canvas");
 const displayStatusEl = document.getElementById("ide-display-status");
 let presentation = null;
+let displayViewport = null;
 if (displayCanvas) {
   try {
     presentation = new PresentationController(displayCanvas, {
@@ -79,13 +81,23 @@ if (displayCanvas) {
     }
   }
 }
+const displayViewportEl = document.getElementById("ide-display-viewport");
+if (presentation && displayViewportEl) {
+  displayViewport = new DisplayViewportController({ container: displayViewportEl, presentation,
+    onState: (state) => {
+      if (displayStatusEl && state.error) displayStatusEl.textContent = "display: " + state.error;
+    },
+  });
+}
 function handleDisplayFrame(frame) {
   if (!presentation) return false;
   try {
     const reached = presentation.present(frame);
+    displayViewport?.applyCanvasStyle();
     if (displayStatusEl) {
       const state = presentation.snapshot();
       displayStatusEl.textContent = `${state.backend || "none"} · ${state.width}×${state.height} · ${state.successfulPresents} presents`;
+      if (state.sizeMismatch) displayStatusEl.textContent += " · waiting for guest mode set";
       displayStatusEl.dataset.state = reached ? "ready" : "degraded";
     }
     return reached;
@@ -102,6 +114,7 @@ try {
     controller: () => presentation,
     state: () => presentation?.snapshot?.() ?? null,
     gpuStats: () => presentation?.snapshot?.().gpu ?? null,
+    viewport: () => displayViewport?.snapshot() ?? null,
     readPixels: () => presentation?.readPixels?.() ?? null,
     dispose: () => presentation?.dispose?.(),
   };
@@ -900,6 +913,7 @@ function clearLinuxControllerOwner(controller) {
   // shared UI/metadata; a late DONE from an older generation must leave the replacement untouched.
   if (!controller || linuxCtl !== controller) return false;
   linuxCtl = null;
+  displayViewport?.setController(null);
   linuxActiveRequest = null;
   try {
     if (window.__linuxCtl === controller) window.__linuxCtl = null;
@@ -1355,6 +1369,7 @@ async function runLinuxBootOwned(opts, banner, request) {
       onWriterStatus: ownerUi.onWriterStatus,
     });
     linuxCtl = bootController;
+    displayViewport?.setController(bootController);
     flushMicrophoneGuestEvents(linuxCtl);
     updatePointerIndicator();
     const ctlForRelease = bootController;

@@ -929,6 +929,14 @@ verify-E5-T18d:
 
 .PHONY: verify-E5-T18e
 .PHONY: verify-E5-T22a
+.PHONY: verify-E5-T22b
+verify-E5-T22b:
+	node --check web/src/sink/viewport.js
+	node --check web/main.js
+	node --check web/display-resize.js
+	node --test web/tests/e5-t22b-viewport.test.mjs web/tests/e5-t06a-canvas2d.test.mjs web/tests/e5-t06b-webgl.test.mjs web/tests/e5-t06d-presentation.test.mjs web/tests/e5-t09c-present-scheduler.test.mjs web/tests/e5-t09d-hidden-present.test.mjs web/tests/pointer.test.mjs
+	node tools/verify/e5-t22b-viewport.mjs
+
 verify-E5-T22a:
 	cargo test -p wasm-vm-core --features gpu-trace dev::virtio::gpu::tests::set_display -- --nocapture
 	wasm-pack test --node crates/wasm --lib -- --nocapture

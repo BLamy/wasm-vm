@@ -4,6 +4,7 @@ import { Canvas2DBackend } from "./canvas2d.js";
 import { WebGL2Backend } from "./webgl.js";
 import { FrameScheduler } from "./frame-scheduler.js";
 import { VisibilityFrameScheduler } from "./visibility-scheduler.js";
+import { checkedDisplaySize, fitFrameToViewport } from "./viewport.js";
 
 const DEFAULT_WIDTH = 1280;
 const DEFAULT_HEIGHT = 800;
@@ -116,6 +117,7 @@ export class PresentationController {
     this._backend = null;
     this._backendName = null;
     this._latest = null;
+    this._fixedViewport = false;
     this._disposed = false;
     this._contextLost = false;
     this._lossDropCounted = false;
@@ -247,7 +249,8 @@ export class PresentationController {
       // replay the retained full-resource source across the whole new surface so unchanged pixels
       // are not lost during the backend transition.
       const replay = replaced
-        ? { ...this._latest, rect: { x: 0, y: 0, width: this._width, height: this._height } }
+        ? { ...this._latest, rect: { x: 0, y: 0,
+          width: this._latest.resourceWidth, height: this._latest.resourceHeight } }
         : this._latest;
       this._deliver(replay, true);
     }
@@ -290,9 +293,10 @@ export class PresentationController {
       return false;
     }
     try {
-      this._backend.present(frame.rect, frame.pixels);
+      const fitted = this._fixedViewport ? fitFrameToViewport(frame, this._width, this._height) : frame;
+      this._backend.present(fitted.rect, fitted.pixels);
       this._successfulPresents += 1;
-      this._uploadedBytes += frame.rect.width * frame.rect.height * 4;
+      this._uploadedBytes += fitted.rect.width * fitted.rect.height * 4;
       if (replay) this._replayedFrames += 1;
       this._lossDropCounted = false;
       return true;
@@ -350,9 +354,17 @@ export class PresentationController {
   /** Publish one full-resource frame and return whether it reached a backend. */
   present(frame) {
     if (this._disposed) throw new Error("PresentationController is disposed");
-    const checked = checkedFrame(frame);
+    let checked = checkedFrame(frame);
+    if (this._fixedViewport && (!this._latest ||
+        this._latest.resourceWidth !== checked.resourceWidth ||
+        this._latest.resourceHeight !== checked.resourceHeight)) {
+      // The first frame from a replacement resource must erase old bars/pixels even when
+      // its guest damage is partial. The retained source is already a full resource copy.
+      checked = { ...checked, rect: { x: 0, y: 0,
+        width: checked.resourceWidth, height: checked.resourceHeight } };
+    }
     this._framesReceived += 1;
-    if (checked.resourceWidth !== this._width || checked.resourceHeight !== this._height) {
+    if (!this._fixedViewport && (checked.resourceWidth !== this._width || checked.resourceHeight !== this._height)) {
       this.resize(checked.resourceWidth, checked.resourceHeight);
     }
     this._latest = checked;
@@ -360,6 +372,21 @@ export class PresentationController {
   }
 
   /** Resize the visible target and backend resource. */
+  setViewport(width, height) {
+    if (this._disposed) throw new Error("PresentationController is disposed");
+    checkedDisplaySize(width, height);
+    this._fixedViewport = true;
+    if (width !== this._width || height !== this._height) {
+      this.resize(width, height);
+      if (this._latest) {
+        this._deliver({ ...this._latest, rect: { x: 0, y: 0,
+          width: this._latest.resourceWidth, height: this._latest.resourceHeight } }, true);
+      }
+    }
+    return { width, height };
+  }
+
+  /** Legacy resource-following resize; viewport users call setViewport instead. */
   resize(width, height) {
     if (this._disposed) throw new Error("PresentationController is disposed");
     const nextWidth = checkedDimension(Number(width), "canvas width");
@@ -386,6 +413,9 @@ export class PresentationController {
       defaultBackend: this.defaultBackend,
       width: this._width,
       height: this._height,
+      fixedViewport: this._fixedViewport,
+      sizeMismatch: Boolean(this._latest &&
+        (this._latest.resourceWidth !== this._width || this._latest.resourceHeight !== this._height)),
       framesReceived: this._framesReceived,
       successfulPresents: this._successfulPresents,
       replayedFrames: this._replayedFrames,
