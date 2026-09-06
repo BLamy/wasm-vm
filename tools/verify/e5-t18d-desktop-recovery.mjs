@@ -8,6 +8,7 @@ import { createReadStream } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createServer } from "node:net";
+import { inspectRecoveryCanvas } from "./e5-t18d-surface.mjs";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 process.chdir(repo);
@@ -70,17 +71,7 @@ async function stateUntil(page, predicate, label) {
 
 async function capture(page, label) {
   const state = await page.evaluate(() => window.__desktopRecovery.capture());
-  const surface = await page.evaluate(() => {
-    const canvas = document.getElementById("desktop-canvas");
-    const pixels = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
-    let black = 0, white = 0, colored = 0;
-    for (let i = 0; i < pixels.length; i += 4) {
-      if (pixels[i] < 24 && pixels[i + 1] < 24 && pixels[i + 2] < 24) black++;
-      if (pixels[i] > 140 && Math.abs(pixels[i] - pixels[i + 1]) < 10 && Math.abs(pixels[i] - pixels[i + 2]) < 10) white++;
-      if (Math.max(pixels[i], pixels[i + 1], pixels[i + 2]) - Math.min(pixels[i], pixels[i + 1], pixels[i + 2]) > 30) colored++;
-    }
-    return { black, white, colored, total: pixels.length / 4 };
-  });
+  const surface = await page.evaluate(inspectRecoveryCanvas);
   const png = await page.screenshot({ path: path.join(out, `${label}.png`) });
   return { ...state, surface, screenshot: `${label}.png`, screenshotSha256: sha(png) };
 }
@@ -131,6 +122,7 @@ try {
   }
   const metadata = JSON.parse(await readFile(path.join(imageDir, "desktop-info.json"), "utf8"));
   sources["web/linux-worker-protocol.js"] = await hashFile("web/linux-worker-protocol.js");
+  sources["tools/verify/e5-t18d-surface.mjs"] = await hashFile("tools/verify/e5-t18d-surface.mjs");
   for (const file of ["desktop-recovery.js", "desktop-recovery.html", "linux-worker-protocol.js", "src/input/desktop-recovery-policy.js"]) {
     assert.equal(await hashFile(`web/dist/${file}`), await hashFile(`web/${file}`), `built-page source drift: ${file}`);
   }
@@ -197,17 +189,10 @@ try {
           const status = await stateUntil(page, (value) => new RegExp(`desktop.ready=${attempt} \\d+\\n`).test(value), `ready attempt ${attempt}`);
           const pid = Number(status.match(/desktop\.ready=\d+ (\d+)/)[1]);
           assert.match(status, new RegExp(`\\d{4}-\\d{2}-\\d{2}T.*Z E5T18D event=ready attempt=${attempt} pid=${pid}`));
-          await waitFor(async () => page.evaluate(() => {
-            const canvas = document.getElementById("desktop-canvas");
-            const pixels = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
-            let colored = 0;
-            for (let i = 0; i < pixels.length; i += 4) {
-              if (Math.max(pixels[i], pixels[i + 1], pixels[i + 2]) - Math.min(pixels[i], pixels[i + 1], pixels[i + 2]) > 30) colored++;
-            }
-            return colored > 100_000;
-          }), `painted desktop attempt ${attempt}`, 120_000);
+          await waitFor(async () => (await page.evaluate(inspectRecoveryCanvas)).desktop,
+            `painted desktop attempt ${attempt}`, 120_000);
           const frame = await capture(page, `ready-${attempt}`);
-          assert.ok(frame.surface.colored > 100_000, "desktop wallpaper not rendered");
+          assert.ok(frame.surface.desktop, "desktop wallpaper/panel not rendered");
           attempts.push({ attempt, pid, status, frame });
           console.log(`E5T18D_READY attempt=${attempt} pid=${pid}`);
           await page.evaluate(() => window.__desktopRecovery.command("crash"));
@@ -227,6 +212,8 @@ try {
         cases.push({ label, attempts, fallback, after });
       }
       assert.deepEqual(errors, [], "browser console errors");
+      await writeFile(path.join(out, `${label}.json`), JSON.stringify({ head, publication, sources,
+        ...cases.find((result) => result.label === label), passed: true }, null, 2) + "\n");
       await writeFile(path.join(out, `${label}-serial.log`), await page.evaluate(() => window.__desktopRecovery.serial()));
       console.log(`E5T18D_CASE_PASS=${label}`);
     } catch (failure) {

@@ -919,6 +919,7 @@ verify-E5-T18d:
 	sh -n tools/rootfs/start-desktop tools/rootfs/desktop-autologin tools/rootfs/desktop-runtime.initd tools/rootfs/desktop-test-console
 	bash -n tools/build-rootfs.sh tools/rootfs-inner.sh tools/image/desktop.sh tools/serve-dev.sh
 	node --test web/tests/e5-t18d-desktop-recovery.test.mjs
+	node --test tools/verify/e5-t18d-surface.test.mjs
 	node --test web/tests/e4-t32-worker-protocol.test.mjs
 	node --check tools/verify/e5-t18d-desktop-recovery.mjs
 	docker run --rm -v "$(CURDIR):/repo:ro" wasm-vm-kernel-build:local python3 /repo/tools/verify/e5-t18d-local-fixtures.py
