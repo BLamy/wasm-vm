@@ -48,5 +48,8 @@ real browser controllers with 1,003 updates each, and one built-demo 126/0 pass.
 The guest instruction trace reads events_read through MMIO after a host request.
 The browser JSON binds the source and deployed wasm digests. The built bundle
 is committed; rebuild it with `make web-dist` after changing runtime sources.
+The local evidence server supplies the committed Alpine artifact manifest using
+the same staging input as `deploy-cloudflare.sh`; an untracked dist copy is not
+a prerequisite.
 
 Deployment is deferred until the user's Epic 5 merge and Omarchy milestones.

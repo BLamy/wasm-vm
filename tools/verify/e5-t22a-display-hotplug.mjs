@@ -13,10 +13,14 @@ const root = path.join(repo, "web/dist");
 const out = path.resolve(process.env.E5_T22A_EVIDENCE_DIR || path.join(repo, "evidence/e5-t22a"));
 const sha = (data) => createHash("sha256").update(data).digest("hex");
 const server = createServer(async (request, response) => {
-  const file = path.resolve(root, "." + decodeURIComponent(new URL(request.url, "http://localhost").pathname));
+  const pathname = decodeURIComponent(new URL(request.url, "http://localhost").pathname);
+  const file = path.resolve(root, "." + pathname);
   if (!file.startsWith(root + "/")) { response.writeHead(404).end(); return; }
   try {
-    const data = await readFile(file);
+    // deploy-cloudflare.sh:76 stages this committed manifest after build-web-dist, which
+    // intentionally excludes it. Mirror that exact input without relying on an untracked dist file.
+    const data = await readFile(pathname === "/artifacts-alpine.json"
+      ? path.join(repo, "web/artifacts-alpine.json") : file);
     const type = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript",
       ".wasm": "application/wasm", ".json": "application/json", ".css": "text/css" }[path.extname(file)];
     response.writeHead(200, { "Content-Type": type || "application/octet-stream",
@@ -130,7 +134,7 @@ try {
   const bindingPaths = ["crates/core/src/dev/virtio/gpu/mod.rs", "crates/wasm/src/lib.rs",
     "crates/wasm/src/display_tests.rs", "web/loader.js", "web/linux-worker-protocol.js",
     "web/linux-worker-host.js", "web/linux-worker.js", "web/main.js", "web/display-hotplug.js",
-    "web/display-hotplug.html", "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+    "web/display-hotplug.html", "web/artifacts-alpine.json", "web/dist/pkg/wasm_vm_wasm_bg.wasm",
     "tools/verify/e5-t22a-display-hotplug.mjs"];
   const digests = Object.fromEntries(await Promise.all(bindingPaths.map(async (file) => [file, sha(await readFile(path.join(repo, file)))])));
   const result = { schemaVersion: 1, head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(),
