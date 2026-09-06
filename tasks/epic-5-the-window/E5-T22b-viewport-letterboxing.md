@@ -133,3 +133,13 @@ evidence/e5-t22b/verifier/check-final-evidence.mjs`.
 Full report and hash audit: `evidence/e5-t22b/verifier/final-verdict.md`,
 `final-integrity.json`. Verification is incremental and scoped to the medium-risk
 browser boundary; no unrelated Rust/CI or compositor proof was rerun.
+
+### 2026-09-06 — coordinator — verified demo handoff
+
+After verifier commit `f62fec0d`, rebuilt `web/dist`, marked the viewport
+capability verified, and ran one built-demo load. It shows verified / 5-of-5
+criteria, 126 passed / 0 failed, and zero collected errors.
+`evidence/e5-t22b/verified-demo.json` binds `verified-demo.png` SHA256
+`c556952e351655a81a90acc9cf43b923db319f3a146bc5c64022d9282171b641`.
+The frozen worker/verifier recordings remain unchanged. Production deployment
+is intentionally held for the user-requested Epic 5 / merge / Omarchy milestone.
