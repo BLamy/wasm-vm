@@ -1,0 +1,32 @@
+exact head: a1c25437bed33910218eece228a77b230abfb8e9
+command: make verify-E5-T25a
+exit: 2 (browser listener restricted after all non-browser legs passed)
+
+node --check web/bench/desktop-perf-hooks.js
+node --check web/src/sink/presentation.js
+node --check web/main.js
+node --test web/tests/e5-t25a-perf-hooks.test.mjs web/tests/e5-t06d-presentation.test.mjs
+✔ Canvas2D is the measured default and unavailable WebGL2 falls back
+✔ B8G8R8X8 frames normalize the unused byte to opaque before delivery
+✔ WebGL context loss replaces the context and replays the latest frame through Canvas2D
+✔ rapid presents are synchronous, last-frame-wins, and listener ownership is bounded
+✔ perf input is opt-in and emits bounded ordered evdev frames
+✔ concurrent perf frames are serialized through their sync boundaries
+✔ presentation telemetry records drawn damage and does not trust a null sink
+✔ bench JavaScript and editor projection stay byte-identical
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+node tools/verify/e5-t25a-release-audit.mjs
+{"productionImport":false,"productionPageSurface":false,"hookVersion":"e5-t25a-v1","sourceDistByteParity":true,"samplerLifecycle":"dual-gated-type-checked-and-cleared"}
+node tools/verify/e5-t25a-browser.mjs
+Error: listen EPERM: operation not permitted 127.0.0.1
+make: *** [verify-E5-T25a] Error 1
+
+The sandbox listener restriction is documented rather than escalated, per the verifier
+request. Exact-head committed Chromium/Firefox artifacts were independently hashed,
+parsed, and visually inspected in integrity-results.json.

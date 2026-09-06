@@ -1,0 +1,4469 @@
+{
+  "exactHead": "a1c25437bed33910218eece228a77b230abfb8e9",
+  "summary": {
+    "total": 77,
+    "held": 75,
+    "failed": 2
+  },
+  "failures": [
+    {
+      "name": "throwing-getter-is-unavailable-and-recovers",
+      "held": false,
+      "actual": [
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "throwing-getter-does-not-drop-present",
+      "held": false,
+      "actual": [
+        false,
+        true,
+        true
+      ],
+      "expected": [
+        true,
+        true,
+        true
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "name": "scalar-null-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "scalar-undefined-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "scalar-numeric-string-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "scalar-boolean-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "scalar-nan-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "scalar-positive-infinity-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "scalar-negative-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "scalar-unsafe-integer-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "scalar-boxed-number-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "scalar-plain-object-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "retiredInstructions-null-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "retiredInstructions-undefined-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "retiredInstructions-numeric-string-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "retiredInstructions-boolean-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "retiredInstructions-nan-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "retiredInstructions-positive-infinity-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "retiredInstructions-negative-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "retiredInstructions-unsafe-integer-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "retiredInstructions-valid-100-175",
+      "held": true,
+      "actual": [
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "guestInstructions-null-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "guestInstructions-undefined-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "guestInstructions-numeric-string-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "guestInstructions-boolean-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "guestInstructions-nan-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "guestInstructions-positive-infinity-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "guestInstructions-negative-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "guestInstructions-unsafe-integer-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "guestInstructions-valid-100-175",
+      "held": true,
+      "actual": [
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "callback-throw-null-and-baseline-preserved",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "numeric-zero-is-valid",
+      "held": true,
+      "actual": [
+        [
+          0,
+          0
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          0,
+          0
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "throwing-getter-is-unavailable-and-recovers",
+      "held": false,
+      "actual": [
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "throwing-getter-does-not-drop-present",
+      "held": false,
+      "actual": [
+        false,
+        true,
+        true
+      ],
+      "expected": [
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "name": "null-prototype-object-rejects-coercion",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "retired-field-precedence-does-not-coerce",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "dist-unavailable-100-175",
+      "held": true,
+      "actual": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ]
+    },
+    {
+      "name": "source-dist-unavailable-byte-parity",
+      "held": true,
+      "actual": "{\"attribution\":[[null,null],[100,100],[75,175]],\"returns\":[true,true,true],\"backendCalls\":3,\"gpu\":{\"framesReceived\":3,\"enqueued\":3,\"coalesced\":0,\"presented\":3,\"successfulPresents\":3,\"skipped\":0,\"droppedFrames\":0,\"overruns\":0,\"pending\":0,\"maxPending\":0,\"uploadedBytes\":48,\"drawnPresents\":3,\"drawnBytes\":48,\"width\":2,\"height\":2},\"errors\":[]}",
+      "expected": "{\"attribution\":[[null,null],[100,100],[75,175]],\"returns\":[true,true,true],\"backendCalls\":3,\"gpu\":{\"framesReceived\":3,\"enqueued\":3,\"coalesced\":0,\"presented\":3,\"successfulPresents\":3,\"skipped\":0,\"droppedFrames\":0,\"overruns\":0,\"pending\":0,\"maxPending\":0,\"uploadedBytes\":48,\"drawnPresents\":3,\"drawnBytes\":48,\"width\":2,\"height\":2},\"errors\":[]}"
+    },
+    {
+      "name": "delayed-order-0",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-0",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "delayed-order-1",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-1",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "delayed-order-2",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-2",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "delayed-order-3",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-3",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "delayed-order-4",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-4",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "delayed-order-5",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-5",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "delayed-order-6",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-6",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "delayed-order-7",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-7",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "delayed-order-8",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-8",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "delayed-order-9",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-9",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "delayed-order-10",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-10",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "delayed-order-11",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-11",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "delayed-order-12",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-12",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "delayed-order-13",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-13",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "delayed-order-14",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-14",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "delayed-order-15",
+      "held": true,
+      "actual": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ],
+      "expected": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "name": "delayed-sequences-15",
+      "held": true,
+      "actual": [
+        1,
+        2
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "rejected-operation-queue-recovers",
+      "held": true,
+      "actual": [
+        "rejected",
+        "fulfilled",
+        "fulfilled"
+      ],
+      "expected": [
+        "rejected",
+        "fulfilled",
+        "fulfilled"
+      ]
+    },
+    {
+      "name": "rejected-operation-keeps-unique-sequences",
+      "held": true,
+      "actual": [
+        2,
+        3
+      ],
+      "expected": [
+        2,
+        3
+      ]
+    },
+    {
+      "name": "invalid-input-rejected",
+      "held": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "name": "stale-duplicate-noops",
+      "held": true,
+      "actual": [
+        true,
+        false,
+        true,
+        false,
+        true,
+        true,
+        false,
+        true,
+        false,
+        true
+      ],
+      "expected": [
+        true,
+        false,
+        true,
+        false,
+        true,
+        true,
+        false,
+        true,
+        false,
+        true
+      ]
+    },
+    {
+      "name": "state-sequences-stable",
+      "held": true,
+      "actual": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "name": "invalid-damage-does-not-corrupt-next-present",
+      "held": true,
+      "actual": [
+        true,
+        1,
+        1,
+        1,
+        16
+      ],
+      "expected": [
+        true,
+        1,
+        1,
+        1,
+        16
+      ]
+    },
+    {
+      "name": "null-sink-does-not-claim-draw",
+      "held": true,
+      "actual": [
+        1,
+        1,
+        0,
+        0,
+        false
+      ],
+      "expected": [
+        1,
+        1,
+        0,
+        0,
+        false
+      ]
+    },
+    {
+      "name": "five-records-byte-stable",
+      "held": true,
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "name": "source-dist-schema-byte-parity",
+      "held": true,
+      "actual": "{\"events\":[{\"version\":\"e5-t25a-v1\",\"sequence\":1,\"device\":\"tablet\",\"events\":[{\"eventType\":3,\"code\":0,\"value\":100},{\"eventType\":3,\"code\":1,\"value\":200}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":2,\"device\":\"tablet\",\"events\":[{\"eventType\":1,\"code\":272,\"value\":1}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":3,\"device\":\"tablet\",\"events\":[{\"eventType\":1,\"code\":272,\"value\":0}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":4,\"device\":\"keyboard\",\"events\":[{\"eventType\":1,\"code\":30,\"value\":1}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":5,\"device\":\"keyboard\",\"events\":[{\"eventType\":1,\"code\":30,\"value\":0}],\"sync\":\"SYN_REPORT\",\"noop\":false}],\"calls\":[[\"sendTabletEvent\",3,0,100],[\"sendTabletEvent\",3,1,200],[\"syncTablet\"],[\"sendTabletEvent\",1,272,1],[\"syncTablet\"],[\"sendTabletEvent\",1,272,0],[\"syncTablet\"],[\"sendKeyboardEvent\",1,30,1],[\"syncKeyboard\"],[\"sendKeyboardEvent\",1,30,0],[\"syncKeyboard\"]],\"telemetry\":[{\"sequence\":1,\"timestamp\":23,\"backend\":\"canvas2d\",\"drawn\":true,\"replay\":false,\"rect\":{\"x\":0,\"y\":0,\"width\":2,\"height\":2},\"resourceWidth\":2,\"resourceHeight\":2,\"bytes\":16,\"guestInstructions\":100,\"guestInstructionsTotal\":100}],\"gpu\":{\"framesReceived\":1,\"enqueued\":1,\"coalesced\":0,\"presented\":1,\"successfulPresents\":1,\"skipped\":0,\"droppedFrames\":0,\"overruns\":0,\"pending\":0,\"maxPending\":0,\"uploadedBytes\":16,\"drawnPresents\":1,\"drawnBytes\":16,\"width\":2,\"height\":2}}",
+      "expected": "{\"events\":[{\"version\":\"e5-t25a-v1\",\"sequence\":1,\"device\":\"tablet\",\"events\":[{\"eventType\":3,\"code\":0,\"value\":100},{\"eventType\":3,\"code\":1,\"value\":200}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":2,\"device\":\"tablet\",\"events\":[{\"eventType\":1,\"code\":272,\"value\":1}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":3,\"device\":\"tablet\",\"events\":[{\"eventType\":1,\"code\":272,\"value\":0}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":4,\"device\":\"keyboard\",\"events\":[{\"eventType\":1,\"code\":30,\"value\":1}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":5,\"device\":\"keyboard\",\"events\":[{\"eventType\":1,\"code\":30,\"value\":0}],\"sync\":\"SYN_REPORT\",\"noop\":false}],\"calls\":[[\"sendTabletEvent\",3,0,100],[\"sendTabletEvent\",3,1,200],[\"syncTablet\"],[\"sendTabletEvent\",1,272,1],[\"syncTablet\"],[\"sendTabletEvent\",1,272,0],[\"syncTablet\"],[\"sendKeyboardEvent\",1,30,1],[\"syncKeyboard\"],[\"sendKeyboardEvent\",1,30,0],[\"syncKeyboard\"]],\"telemetry\":[{\"sequence\":1,\"timestamp\":23,\"backend\":\"canvas2d\",\"drawn\":true,\"replay\":false,\"rect\":{\"x\":0,\"y\":0,\"width\":2,\"height\":2},\"resourceWidth\":2,\"resourceHeight\":2,\"bytes\":16,\"guestInstructions\":100,\"guestInstructionsTotal\":100}],\"gpu\":{\"framesReceived\":1,\"enqueued\":1,\"coalesced\":0,\"presented\":1,\"successfulPresents\":1,\"skipped\":0,\"droppedFrames\":0,\"overruns\":0,\"pending\":0,\"maxPending\":0,\"uploadedBytes\":16,\"drawnPresents\":1,\"drawnBytes\":16,\"width\":2,\"height\":2}}"
+    }
+  ],
+  "attribution": {
+    "scalar-null": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "scalar-undefined": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "scalar-numeric-string": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "scalar-boolean": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "scalar-nan": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "scalar-positive-infinity": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "scalar-negative": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "scalar-unsafe-integer": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "scalar-boxed-number": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "scalar-plain-object": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "retiredInstructions-null": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "retiredInstructions-undefined": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "retiredInstructions-numeric-string": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "retiredInstructions-boolean": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "retiredInstructions-nan": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "retiredInstructions-positive-infinity": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "retiredInstructions-negative": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "retiredInstructions-unsafe-integer": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "retiredInstructions-valid": {
+      "attribution": [
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true
+      ],
+      "backendCalls": 2,
+      "gpu": {
+        "framesReceived": 2,
+        "enqueued": 2,
+        "coalesced": 0,
+        "presented": 2,
+        "successfulPresents": 2,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 32,
+        "drawnPresents": 2,
+        "drawnBytes": 32,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "guestInstructions-null": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "guestInstructions-undefined": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "guestInstructions-numeric-string": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "guestInstructions-boolean": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "guestInstructions-nan": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "guestInstructions-positive-infinity": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "guestInstructions-negative": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "guestInstructions-unsafe-integer": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "guestInstructions-valid": {
+      "attribution": [
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true
+      ],
+      "backendCalls": 2,
+      "gpu": {
+        "framesReceived": 2,
+        "enqueued": 2,
+        "coalesced": 0,
+        "presented": 2,
+        "successfulPresents": 2,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 32,
+        "drawnPresents": 2,
+        "drawnBytes": 32,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "callbackThrow": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": [
+        "guest instruction telemetry: sample unavailable"
+      ]
+    },
+    "zero": {
+      "attribution": [
+        [
+          0,
+          0
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "throwingGetter": {
+      "attribution": [
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        false,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 1,
+        "droppedFrames": 1,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": [
+        "present via canvas2d: hostile getter"
+      ]
+    },
+    "nullPrototype": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "conflictingFields": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    },
+    "distRecovery": {
+      "attribution": [
+        [
+          null,
+          null
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          75,
+          175
+        ]
+      ],
+      "returns": [
+        true,
+        true,
+        true
+      ],
+      "backendCalls": 3,
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 48,
+        "drawnPresents": 3,
+        "drawnBytes": 48,
+        "width": 2,
+        "height": 2
+      },
+      "errors": []
+    }
+  },
+  "ordering": [
+    {
+      "iteration": 0,
+      "moveFirst": true,
+      "calls": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "iteration": 1,
+      "moveFirst": false,
+      "calls": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "iteration": 2,
+      "moveFirst": true,
+      "calls": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "iteration": 3,
+      "moveFirst": false,
+      "calls": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "iteration": 4,
+      "moveFirst": true,
+      "calls": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "iteration": 5,
+      "moveFirst": false,
+      "calls": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "iteration": 6,
+      "moveFirst": true,
+      "calls": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "iteration": 7,
+      "moveFirst": false,
+      "calls": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "iteration": 8,
+      "moveFirst": true,
+      "calls": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "iteration": 9,
+      "moveFirst": false,
+      "calls": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "iteration": 10,
+      "moveFirst": true,
+      "calls": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "iteration": 11,
+      "moveFirst": false,
+      "calls": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "iteration": 12,
+      "moveFirst": true,
+      "calls": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "iteration": 13,
+      "moveFirst": false,
+      "calls": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "iteration": 14,
+      "moveFirst": true,
+      "calls": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "iteration": 15,
+      "moveFirst": false,
+      "calls": [
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    }
+  ],
+  "queueRecovery": {
+    "statuses": [
+      "rejected",
+      "fulfilled",
+      "fulfilled"
+    ],
+    "sequences": [
+      2,
+      3
+    ],
+    "calls": [
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        1
+      ],
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        1
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendKeyboardEvent",
+        1,
+        30,
+        1
+      ],
+      [
+        "syncKeyboard"
+      ]
+    ]
+  },
+  "stateAttack": {
+    "records": [
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 1,
+        "device": "tablet",
+        "events": [],
+        "sync": "SYN_REPORT",
+        "noop": true
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 2,
+        "device": "tablet",
+        "events": [
+          {
+            "eventType": 1,
+            "code": 272,
+            "value": 1
+          }
+        ],
+        "sync": "SYN_REPORT",
+        "noop": false
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 3,
+        "device": "tablet",
+        "events": [],
+        "sync": "SYN_REPORT",
+        "noop": true
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 4,
+        "device": "tablet",
+        "events": [
+          {
+            "eventType": 1,
+            "code": 272,
+            "value": 0
+          }
+        ],
+        "sync": "SYN_REPORT",
+        "noop": false
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 5,
+        "device": "tablet",
+        "events": [],
+        "sync": "SYN_REPORT",
+        "noop": true
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 6,
+        "device": "keyboard",
+        "events": [],
+        "sync": "SYN_REPORT",
+        "noop": true
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 7,
+        "device": "keyboard",
+        "events": [
+          {
+            "eventType": 1,
+            "code": 30,
+            "value": 1
+          }
+        ],
+        "sync": "SYN_REPORT",
+        "noop": false
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 8,
+        "device": "keyboard",
+        "events": [],
+        "sync": "SYN_REPORT",
+        "noop": true
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 9,
+        "device": "keyboard",
+        "events": [
+          {
+            "eventType": 1,
+            "code": 30,
+            "value": 0
+          }
+        ],
+        "sync": "SYN_REPORT",
+        "noop": false
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 10,
+        "device": "keyboard",
+        "events": [],
+        "sync": "SYN_REPORT",
+        "noop": true
+      }
+    ],
+    "calls": [
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        1
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        0
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendKeyboardEvent",
+        1,
+        30,
+        1
+      ],
+      [
+        "syncKeyboard"
+      ],
+      [
+        "sendKeyboardEvent",
+        1,
+        30,
+        0
+      ],
+      [
+        "syncKeyboard"
+      ]
+    ]
+  },
+  "damageAttack": {
+    "records": [
+      {
+        "sequence": 1,
+        "timestamp": 19,
+        "backend": "canvas2d",
+        "drawn": true,
+        "replay": false,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 2,
+          "height": 2
+        },
+        "resourceWidth": 2,
+        "resourceHeight": 2,
+        "bytes": 16,
+        "guestInstructions": null,
+        "guestInstructionsTotal": null
+      }
+    ],
+    "gpu": {
+      "framesReceived": 1,
+      "enqueued": 1,
+      "coalesced": 0,
+      "presented": 1,
+      "successfulPresents": 1,
+      "skipped": 0,
+      "droppedFrames": 0,
+      "overruns": 0,
+      "pending": 0,
+      "maxPending": 0,
+      "uploadedBytes": 16,
+      "drawnPresents": 1,
+      "drawnBytes": 16,
+      "width": 2,
+      "height": 2
+    }
+  },
+  "nullSinkAttack": {
+    "records": [
+      {
+        "sequence": 1,
+        "timestamp": 118.062375,
+        "backend": "canvas2d",
+        "drawn": false,
+        "replay": false,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 2,
+          "height": 2
+        },
+        "resourceWidth": 2,
+        "resourceHeight": 2,
+        "bytes": 16,
+        "guestInstructions": null,
+        "guestInstructionsTotal": null
+      }
+    ],
+    "gpu": {
+      "framesReceived": 1,
+      "enqueued": 1,
+      "coalesced": 0,
+      "presented": 1,
+      "successfulPresents": 1,
+      "skipped": 0,
+      "droppedFrames": 0,
+      "overruns": 0,
+      "pending": 0,
+      "maxPending": 0,
+      "uploadedBytes": 16,
+      "drawnPresents": 0,
+      "drawnBytes": 0,
+      "width": 2,
+      "height": 2
+    }
+  },
+  "fixtureHashes": [
+    "f69e6307f1f701e81be57f27a80e0631c3bd1569400bf60bcc4c9a90c4b2222f",
+    "f69e6307f1f701e81be57f27a80e0631c3bd1569400bf60bcc4c9a90c4b2222f",
+    "f69e6307f1f701e81be57f27a80e0631c3bd1569400bf60bcc4c9a90c4b2222f",
+    "f69e6307f1f701e81be57f27a80e0631c3bd1569400bf60bcc4c9a90c4b2222f",
+    "f69e6307f1f701e81be57f27a80e0631c3bd1569400bf60bcc4c9a90c4b2222f"
+  ],
+  "distFixtureHash": "f69e6307f1f701e81be57f27a80e0631c3bd1569400bf60bcc4c9a90c4b2222f"
+}

@@ -3,7 +3,7 @@ id: E5-T25a
 epic: 5
 title: Freeze test-only desktop performance instrumentation and injection hooks
 priority: 525.1
-status: implemented
+status: in-progress
 depends_on: [E5-T09e, E5-T18e]
 estimate: S
 risk: medium
@@ -239,3 +239,38 @@ above; the earlier verifier shorthand containing `...64b9a46...` was not a diges
 
 Commands: `make verify-E5-T25a`; `make web-build`;
 `E5_DEMO_TASK=E5-T22g E5_DEMO_VERIFIED=1 E5_DEMO_OUT=evidence/e5-t25a/demo node tools/verify/e5-t18e-demo-smoke.mjs`.
+
+### 2026-09-06 — verifier (Daybreak Blue, pass 3) — VERDICT: refuted
+
+- **Unavailable/valid samples — HELD for ordinary values.** Scalar and both object
+  callback forms rejected null, undefined, coercible/unsafe/non-finite/negative values
+  without advancing the baseline, then emitted 100/100 and 75/175. Source/dist ordinary
+  paths matched (`evidence/e5-t25a/verifier-r3/attack-results.json:54-1139`).
+- **Parity/lifecycle/isolation — HELD with precise static waiver.** Main and presentation
+  source/dist plus helper JS/TS are byte-identical; the scheduler cache has one strict
+  raw-number guard; the unique sampler is dual-gated; teardown clears/nulls the timer and
+  resets the baseline; the four query combinations are false/false/false/true
+  (`evidence/e5-t25a/verifier-r3/static-audit-results.json:3-39`). The submitted release
+  audit's lifecycle regexes are over-broad, so they were not accepted as execution proof
+  (`static-audit-results.json:40-46`).
+- **Exact gate/browser/demo — HELD with listener limitation.** The exact target passed
+  syntax, 8/8 focused tests, and release audit before the sandbox rejected localhost bind
+  with EPERM. Exact-head Chromium 152/Firefox 132 artifacts and 126/126 demo were parsed,
+  hashed, and visually inspected. The full PNG SHA-256 is
+  `7b77d08efbfeab64a9b46cf6b3617c86b1e81afd90781a24bf4c2b02893f5547`;
+  demo hashes are `0b786e88c8ead85e509d1b1dd09213072816f2b4d3bc35c78563b3be5cc568fd`
+  and `aaef2ebff2f8abcd6ed9e825831f4299eba5914bae80cf28d8762450b9c37ab1`
+  (`evidence/e5-t25a/verifier-r3/integrity-results.json:3-90`).
+- **Prior attacks — HELD.** Delayed ordering, rejected-operation recovery, stale/
+  duplicate events, invalid damage, null sink, five stable records, schema parity, and
+  release-surface isolation all survived (`attack-results.json:1142-2364`).
+- **Novel invalid attribution — FAILED.** A callback returning the supported object form
+  with a throwing `retiredInstructions` getter escapes the narrow sampler try/catch. The
+  backend draws and drawn/success counters advance, but no null/null sample is emitted;
+  `present()` returns false and increments dropped frames
+  (`attack-results.json:8-50,3559-3595`; `web/src/sink/presentation.js:271-287`). Contain
+  property extraction/normalization errors, preserve the baseline, and add the regression.
+- **COVERAGE:** all changed implementation hunks executed or have a precise deterministic
+  static waiver; no dead hunk. See `evidence/e5-t25a/verifier-r3/coverage-audit.md`.
+- **SUITE:** retain the existing null regression and pass-three attacks; promote the
+  throwing-getter case after the fix. No merge or out-of-scope task was started.
