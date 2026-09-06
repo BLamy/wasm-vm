@@ -9,7 +9,8 @@ import { createHash } from "node:crypto";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const root = path.join(repo, "web/dist");
-const out = path.resolve(process.env.E5_T18E_EVIDENCE_DIR || path.join(repo, "evidence/e5-t18e"));
+const task = process.env.E5_DEMO_TASK || "E5-T18e";
+const out = path.resolve(process.env.E5_DEMO_OUT || process.env.E5_T18E_EVIDENCE_DIR || path.join(repo, "evidence/e5-t18e"));
 let server;
 let base = process.env.E5_T18E_DEMO_URL;
 if (!base) {
@@ -18,7 +19,8 @@ if (!base) {
     const file = path.resolve(root, `.${pathname}`);
     if (!file.startsWith(`${root}/`)) { response.writeHead(404).end(); return; }
     try {
-      const data = await readFile(file);
+      // Deployment stages this committed manifest after assembling web/dist.
+      const data = await readFile(pathname === "/artifacts-alpine.json" ? path.join(repo, "web/artifacts-alpine.json") : file);
       const types = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".wasm": "application/wasm", ".json": "application/json", ".css": "text/css" };
       response.writeHead(200, { "Content-Type": types[path.extname(file)] || "application/octet-stream",
         "Cross-Origin-Opener-Policy": "same-origin", "Cross-Origin-Embedder-Policy": "require-corp" });
@@ -46,11 +48,11 @@ try {
   await page.waitForFunction(() => document.querySelector("#metric-done")?.textContent.trim() === "126", null, { timeout: 120_000 });
   const metrics = await page.evaluate(() => Object.fromEntries(["metric-pass", "metric-fail", "metric-done"].map((id) => [id, document.getElementById(id)?.textContent.trim()])));
   assert.deepEqual(metrics, { "metric-pass": "126", "metric-fail": "0", "metric-done": "126" });
-  await page.locator("#rm-search").fill("E5-T18e");
-  await page.locator(".rm-g-label").filter({ hasText: "E5-T18e" }).click();
+  await page.locator("#rm-search").fill(task);
+  await page.locator(".rm-g-label").filter({ hasText: task }).click();
   await page.locator("#rm-detail").waitFor({ state: "visible" });
   const detail = await page.locator("#rm-detail").innerText();
-  if (process.env.E5_T18E_DEMO_VERIFIED === "1") await page.locator("#rm-detail .st-verified").waitFor({ state: "visible" });
+  if ((process.env.E5_DEMO_VERIFIED || process.env.E5_T18E_DEMO_VERIFIED) === "1") await page.locator("#rm-detail .st-verified").waitFor({ state: "visible" });
   assert.deepEqual(errors, []);
   assert.deepEqual(httpErrors, []);
   await mkdir(out, { recursive: true });

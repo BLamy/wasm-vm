@@ -175,3 +175,20 @@ No guest image, renderer or emulator semantics change for these harness fixes.
 A separate source rebuild into `target/e5-t22c/acceptance-image` produces exactly
 the same ext4 SHA256 as v4, and the rebuilt ELF/custom-file/source bindings pass.
 The candidate lock remains outside the acceptance path until the real run passes.
+
+### 2026-09-06 — worker — local demo and asset handoff
+
+The built app exposes Live resize and an explicitly in-progress capability.
+`E5_DEMO_TASK=E5-T22c E5_DEMO_OUT=evidence/e5-t22c/iteration-demo node
+tools/verify/e5-t18e-demo-smoke.mjs` loads the built app once: 126 passed, zero
+failed, zero console/HTTP errors. Screenshot SHA256
+`458e72fccb6e9b21a1a5aa1e075f50e2d2511b95f9bc88376f603924bb03c4f3`.
+The shared smoke tool retains its T18e defaults and stages the same committed
+Alpine manifest that deployment stages, instead of failing on its absent dist copy.
+
+`node tools/verify/e5-t22c-dev-route.mjs` confirms the selected chunk manifest
+and a content-addressed object are exact, COOP/COEP are present, and four arbitrary
+or traversal paths return 404. Its disposable server is stopped afterwards;
+recording: `evidence/e5-t22c/dev-route/scripted-proof.json`. A selected asset
+directory without manifest/chunks is rejected before the server starts. These
+are local tooling checks, not a live deployment or completed resize verdict.

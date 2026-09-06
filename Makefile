@@ -943,9 +943,11 @@ verify-E5-T22c:
 	bash tools/verify/e5-t22c-native.sh
 	cargo build --release -p wasm-vm-cli
 	target/release/wasm-vm chunk target/e5-t22c/acceptance-image/alpine-rootfs.ext4 --out target/e5-t22c/chunks/acceptance
+	node tools/verify/e5-t22c-dev-route.mjs
 	$(MAKE) web-dist
 	node tools/verify/e5-t22c-content-replay.mjs
 	node tools/verify/e5-t22c-guest-mode.mjs
+	E5_DEMO_TASK=E5-T22c E5_DEMO_OUT=evidence/e5-t22c/demo node tools/verify/e5-t18e-demo-smoke.mjs
 
 verify-E5-T22e:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm

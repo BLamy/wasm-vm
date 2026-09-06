@@ -59,6 +59,11 @@ Supply `E5_T22C_IMAGE_DIR=target/e5-t22c/desktop-image-v4` and
 The final target uses a separate `acceptance-image` output, so rebuilding final
 evidence never overwrites an image cited by a previous working-loop recording.
 
+For manual local use after building/chunking, run
+`E5_T22C_DESKTOP_ASSET_DIR=target/e5-t22c/chunks/acceptance bash tools/serve-dev.sh`
+and open `/desktop-resize.html`. That asset route serves only the manifest and
+content-addressed chunks, never arbitrary files from the selected directory.
+
 The final `make verify-E5-T22c` target refuses a missing acceptance lock, rebuilds
 the image and custom ELFs from source, checks native sanitizer and observer tests,
 rebuilds the browser assets, and records one real desktop boot. The lock binds

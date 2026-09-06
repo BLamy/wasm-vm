@@ -1,0 +1,32 @@
+{
+  "manifestSha256": "07c1ac9c4ee349978d03ad8217b8d461fde7a15a023531510d02ed5d4e2ce42f",
+  "chunkSha256": "cff9c131f4187314b558b6f02117a3148e07f1c65946bf8ff4e9f34dc8c92942",
+  "headers": {
+    "server": "SimpleHTTP/0.6 Python/3.9.6",
+    "date": "Sun, 06 Sep 2026 10:08:58 GMT",
+    "content-type": "application/json",
+    "content-length": "548948",
+    "last-modified": "Sun, 06 Sep 2026 09:54:48 GMT",
+    "cross-origin-opener-policy": "same-origin",
+    "cross-origin-embedder-policy": "require-corp",
+    "cache-control": "public, max-age=31536000, immutable"
+  },
+  "forbidden": [
+    {
+      "path": "/e5t22c-desktop/README.md",
+      "status": 404
+    },
+    {
+      "path": "/e5t22c-desktop/chunks/%2e%2e/manifest.json",
+      "status": 404
+    },
+    {
+      "path": "/e5t22c-desktop/chunks/../../MANIFEST.txt",
+      "status": 404
+    },
+    {
+      "path": "/e5t22c-desktop/chunks/not-a-hash.bin",
+      "status": 404
+    }
+  ]
+}
