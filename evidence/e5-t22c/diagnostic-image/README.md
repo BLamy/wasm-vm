@@ -22,3 +22,18 @@ This instrumented run overlaps the unchanged-v5 pixel-coverage run. Its timing
 is diagnostic, not a performance baseline or acceptance result. No debug
 protocol/screenshot authorization is enabled: the existing local log subscriber
 records protocol traffic from this disposable, fixed-content guest.
+
+## Observed result
+
+The completed recording is preserved in `../iteration-trace-v6/`. It retains
+the real compositor, foot, output identity and marker pixels through all seven
+modes, with no browser errors. Expansions again paint late (1280x800 complete
+at 28463 ms, 2560x1600 at 81390 ms); this instrumented/concurrent run is not a
+performance acceptance.
+
+The retained tail of `final-compositor.log` contains actual shell configure
+events for 802x601 at lines 22–23 and 1201x801 at lines 82–83, before each
+`WV_DISPLAY_APPLIED` log entry. Lines 128–150 later record shell buffer creation,
+attach and commit. These events support the synchronous-notification /
+asynchronous-client-redraw distinction; the bounded tail does not retain the
+full earlier maximum-size protocol exchange. Do not infer that exchange from it.
