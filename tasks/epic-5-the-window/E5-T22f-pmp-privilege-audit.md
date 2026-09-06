@@ -3,7 +3,7 @@ id: E5-T22f
 epic: 5
 title: Avoid redundant cached-code PMP audits across S/U transitions
 priority: 522.29
-status: pending
+status: in-progress
 depends_on: [E5-T22e]
 estimate: S
 risk: high
@@ -66,3 +66,10 @@ Evidence: `evidence/e5-t22c/iteration-solid-v7-cpu/cpu-summary.json`, with raw
 profiles and a section-identity-checked offline name map. C remains blocked on
 this isolated engine boundary. Do not mark C verified after this task without
 rerunning its own complete acceptance.
+
+### 2026-09-06 — worker — in-progress
+
+Activate the top eligible S prerequisite above C's preserved `03fdfb24`
+checkpoint. First instrument the existing slow audit in native unit tests and
+record the zero-work regression failing. Then add only an unchanged-revision
+S/U shortcut, preserving the slow M-mode audit and all invalidation logic.
