@@ -1,0 +1,19 @@
+{
+  "gitHead": "4302d6b617a6f8f8cf492bf92095814fd2006cf3",
+  "url": "http://127.0.0.1:50251/dist/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.76",
+  "deploymentInput": {
+    "command": "cp web/artifacts-alpine.json web/dist/artifacts-alpine.json (normal tools/deploy-cloudflare.sh staging)",
+    "sha256": "547c147ccfc57a1d5a3b6818c5c1cc74b3673de2e7dbc13300256d1a5725ff5d"
+  },
+  "passed": "126",
+  "failed": "0",
+  "done": "126",
+  "status": "complete in 6.5s",
+  "cursorLink": "./desktop-cursor.html",
+  "cursorCapability": "Desktop cursor alignment + DPR hit-testingE5-T18c: local Chromium hover/maximize/close proof at DPR 1 and 2",
+  "cursorPip": "cap-pip partial",
+  "livePips": 11,
+  "errors": [],
+  "result": "passed"
+}
