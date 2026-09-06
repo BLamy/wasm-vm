@@ -950,6 +950,22 @@ verify-E5-T22c:
 	E5_T22C_ITERATION=0 E5_T22C_IMAGE_DIR=target/e5-t22c/acceptance-image E5_T22C_CHUNKS=target/e5-t22c/chunks/acceptance E5_T22C_TOOLS_OUT=target/e5-t22c/display-tools E5_T22C_OUT=evidence/e5-t22c/acceptance node tools/verify/e5-t22c-guest-mode.mjs
 	E5_DEMO_TASK=E5-T22c E5_DEMO_OUT=evidence/e5-t22c/demo node tools/verify/e5-t18e-demo-smoke.mjs
 
+.PHONY: verify-E5-T22f
+verify-E5-T22f:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --test pmp_privilege_audit --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --test pmp_privilege_audit --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib --features gpu-trace -- --nocapture
+	cargo test -p wasm-vm-core --test pmp_privilege_audit --test predecode_entry_safety --test pmp --test privilege --test tlb --test cpu_resume --test reset --test sv39 --features trace -- --nocapture
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	wasm-pack test --node crates/wasm --test pmp_privilege_audit --test jit_browser_parity -- --nocapture
+	node --test tools/verify/e5-t22f-browser.test.mjs
+	E5_T22C_TOOLS_OUT=target/e5-t22f/display-tools E5_T17B_OUT=target/e5-t22f/desktop-image E5_T17B_IMG_SIZE=1G E5_T17B_PACKAGE_LOCK=tools/image/e5-t18e/MANIFEST.txt E5_T18B_INTERACTIVE=1 E5_T18D_RECOVERY=1 E5_T22C_RESIZE=1 bash tools/image/desktop.sh
+	cargo build --release -p wasm-vm-cli
+	target/release/wasm-vm chunk target/e5-t22f/desktop-image/alpine-rootfs.ext4 --out target/e5-t22f/chunks
+	$(MAKE) web-dist
+	node tools/verify/e5-t22f-browser.mjs
+
 verify-E5-T22e:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
 	cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings

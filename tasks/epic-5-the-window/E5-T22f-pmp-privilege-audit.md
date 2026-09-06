@@ -99,3 +99,28 @@ test ignored; this task does not change handle lifetime or eviction. The first
 plain native lib invocation hit the known unrelated missing gpu-trace method;
 `precheck-missing-gpu-trace.log` preserves it and the prescribed feature-enabled
 run is used. Runtime/browser proof and final cold clone are still pending.
+
+### 2026-09-06 — worker — respond to source review; measured cost removed
+
+The fresh source reviewer identified two proof gaps, not a runtime refutation.
+Add a cache-disabled comparator to the host/restore sequence with full CPU/RAM
+and trace equality. Add a batched mid-block case that yields with a decoded
+cursor at 0x80000004, changes both S/U mode and PMP revision, and requires zero
+retirements/x6=0 on the next access fault. This prevents a second boundary audit
+from hiding an entry-sync guard regression. The verifier retains the isolated
+revision-guard sabotage for its final attack. Effective-address and ignored
+locked-TOR cfg/own-address/neighbor-address observations are now explicit.
+The five native audit tests and five actual-Wasm fixture/JIT tests pass.
+
+Diagnostic browser run `evidence/e5-t22f/iteration-pmp-shortcut/` uses unchanged
+v7 image and new Wasm `360646c69fd0be878d47acfe212fc63353fdd80ccd5d690bd6e2bfc5da8f28bb`.
+The recorder started before the runtime commit, so its head field is the earlier
+activation `eea8a2c9`; its actual Wasm bytes match committed `41d9ce2c` exactly.
+Preserve that fact rather than relabeling it as frozen-head acceptance. Both
+profilers are enabled and some deterministic fixture builds overlap the boot.
+Seven real mode/EDID/canvas/client/marker checks pass, zero browser errors.
+Maximum full repaint is 10203 ms; 640x480 is 1709 ms and 802x601 is below 2000 ms.
+The independently section-bound CPU name map puts cached-PMP synchronization at
+0.35% for the maximum-mode window, down from 30.71% in the old diagnostic. The
+remaining C timing gap is not waived. Final acceptance will use no profiler and
+a frozen source tree in one pristine local clone.

@@ -1,0 +1,13 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.08s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 5 tests
+test pmp_audit_tests::su_pmp_effective_address_change_cannot_take_shortcut ... ok
+test pmp_audit_tests::su_pmp_ignored_locked_tor_writes_keep_revision_and_zero_work ... ok
+test pmp_audit_tests::su_pmp_revision_change_flushes_before_shortcut ... ok
+test pmp_audit_tests::m_pmp_audit_still_visits_cached_instructions ... ok
+test pmp_audit_tests::su_pmp_audit_work_is_zero_for_populated_caches ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 270 filtered out; finished in 0.01s
+

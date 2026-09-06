@@ -4,8 +4,13 @@ use super::*;
 use csr::Priv;
 
 fn populated(count: usize, mode: Priv) -> Machine {
+    populated_with(count, mode, |_| {})
+}
+
+fn populated_with(count: usize, mode: Priv, configure: impl FnOnce(&mut pmp::Pmp)) -> Machine {
     let mut m = Machine::new(0);
     m.hart.csr.pmp.allow_all();
+    configure(&mut m.hart.csr.pmp);
     m.hart.csr.mode = mode;
     m.set_block_cache_capacity(count * 4);
     m.set_block_cache(true);
@@ -75,4 +80,35 @@ fn su_pmp_revision_change_flushes_before_shortcut() {
         assert_eq!(m.pmp_revision_seen, m.hart.csr.pmp.revision());
         assert_eq!(m.pmp_mode_seen, to);
     }
+}
+
+#[test]
+fn su_pmp_ignored_locked_tor_writes_keep_revision_and_zero_work() {
+    let mut m = populated_with(16, Priv::S, |pmp| {
+        pmp.write_addr(0, 0x8000_0000 >> 2);
+        pmp.write_addr(1, 0x8000_2000 >> 2);
+        pmp.write_cfg(0, 0x8f00); // OFF entry0, locked RWX TOR entry1
+    });
+    let before = m.hart.csr.pmp.clone();
+    let revision = m.hart.csr.pmp.revision();
+    m.hart.csr.pmp.write_cfg(0, 0);
+    m.hart.csr.pmp.write_addr(0, 0); // lower bound protected by locked TOR neighbor
+    m.hart.csr.pmp.write_addr(1, 0); // locked entry's own address
+    assert_eq!(m.hart.csr.pmp, before);
+    assert_eq!(m.hart.csr.pmp.revision(), revision);
+    m.hart.csr.mode = Priv::U;
+    m.sync_pmp_code_permissions();
+    assert_eq!(m.pmp_audited_ops, 0);
+    assert_eq!(m.block_cache.live_blocks().count(), 16);
+}
+
+#[test]
+fn su_pmp_effective_address_change_cannot_take_shortcut() {
+    let mut m = populated(16, Priv::S);
+    let revision = m.hart.csr.pmp.revision();
+    m.hart.csr.pmp.write_addr(0, 0x8000_0000 >> 2);
+    assert_ne!(m.hart.csr.pmp.revision(), revision);
+    m.hart.csr.mode = Priv::U;
+    m.sync_pmp_code_permissions();
+    assert_eq!(m.block_cache.live_blocks().count(), 0);
 }

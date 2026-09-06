@@ -13,6 +13,10 @@ fn su_revision_revocation() {
     fixture::su_revision_revocation();
 }
 #[wasm_bindgen_test]
+fn su_midblock_revision_revocation() {
+    fixture::su_midblock_revision_revocation();
+}
+#[wasm_bindgen_test]
 fn su_snapshot_and_host_sequence() {
     fixture::su_snapshot_and_host_sequence();
 }
