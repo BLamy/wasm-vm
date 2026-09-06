@@ -1,0 +1,13 @@
+5f73074e9de1afb97483dc7f0cc50b35d370ae9112aa12e2ea42b717ec6de2bc  evidence/e5-t25a/verifier-r5/attack-results.json
+26b1f56b5f07da0b034ab23d64d2622184e3ea4f5c2f43a9c0ffa9bcf5c3013b  evidence/e5-t25a/verifier-r5/attacks.mjs
+6111821806217f73a80175471529f739a9785c30f40a2090601eb12785565f72  evidence/e5-t25a/verifier-r5/coverage-audit.md
+2daa0e24a01fcef099f3614f0d5764c82604d93074604eb498576f20de4cca9c  evidence/e5-t25a/verifier-r5/integrity-audit.mjs
+1286f46c85b46d675f43c49671c522928e76a06f3c404383337d1baaa2de8252  evidence/e5-t25a/verifier-r5/integrity-results.json
+02fc44d75cb6c4d12c1d5ba54f6a3d57ca3a1db877c81d4f9c31df616b3c8070  evidence/e5-t25a/verifier-r5/make-verify.log
+081b72e3a91b2231a49b2b40c8af168c0c5609faee3aee7815a2e6f593134ba5  evidence/e5-t25a/verifier-r5/predictions.md
+3bef25f2c6cb60c6dbe559d02a579bacd76538da470c5acfe08f89d4f5d56ba4  evidence/e5-t25a/verifier-r5/release-audit-sabotage.mjs
+0478eeb74ec1cda108a70c8fe0792b56273bb7b6648039ce7e3549b00244e2cd  evidence/e5-t25a/verifier-r5/release-audit-sabotage-results.json
+ea96d5cbfb5baf93f267c626e5378406a8747c3e46b91fd0228fce2262b4eaaf  evidence/e5-t25a/verifier-r5/static-audit.mjs
+77d40f4e62bbc0a957f3c0d8347c455c1d269b808d3b0c8e7067623ee8972e9e  evidence/e5-t25a/verifier-r5/static-audit-results.json
+0576f7ea44ccf27ee7dc8ff9bb6209c052e48c4166c46224cdbca43d3e1ea3c3  evidence/e5-t25a/verifier-r5/verifier-report.md
+0880a35331f71a5c1ee6e31037d5ead4d0b1e9426918890060ad277293ec3345  evidence/e5-t25a/verifier-r5/visual-inspection.md

@@ -3,7 +3,7 @@ id: E5-T25a
 epic: 5
 title: Freeze test-only desktop performance instrumentation and injection hooks
 priority: 525.1
-status: implemented
+status: verified
 depends_on: [E5-T09e, E5-T18e]
 estimate: S
 risk: medium
@@ -134,6 +134,37 @@ and `08f0868eab3a05b160505ce9c8596a0783374b7216a2c8b02b2d252983f62513`.
 
 Commands: `make web-build`; `make verify-E5-T25a`;
 `E5_DEMO_TASK=E5-T22g E5_DEMO_VERIFIED=1 E5_DEMO_OUT=evidence/e5-t25a/demo node tools/verify/e5-t18e-demo-smoke.mjs`.
+
+### 2026-09-06 — verifier (pass 5) — VERDICT: verified
+
+- **Hostile diagnostics — HELD.** Normal callback errors, throwing retired/fallback
+  getters, the pass-four hostile `message` accessor, and a novel revoked-proxy thrown
+  value all emitted explicit null/null records in source and dist, preserved the previous
+  baseline, returned true, retained successful/drawn counters, recorded zero drops, and
+  stored safe diagnostics (`evidence/e5-t25a/verifier-r5/attack-results.json:971-1294,
+  2257-2580`).
+- **Validation and prior attacks — HELD.** Invalid scalar/object values rejected without
+  numeric coercion before exact 100/100 and 75/175 recovery. Twenty-four delayed ordering
+  trials, rejected-queue recovery, stale/duplicate no-ops, invalid damage, null sink, five
+  stable records, and source/dist schema parity all held (`attack-results.json:11-970,
+  1297-2256,2583-4349`).
+- **Release/lifecycle/artifacts — HELD.** Main/presentation source-dist and helper JS/TS
+  bytes match; exact bounded gate/guard/sampler/teardown checks and the four-query truth
+  table held. Five release-audit sabotages failed as required. All retained hashes
+  recomputed, the worker log retains the full PNG and current demo digests, and the demo
+  is 126/126 with empty browser/HTTP errors (`static-audit-results.json:3-49`;
+  `release-audit-sabotage-results.json:3-30`; `integrity-results.json:3-99`).
+- **Exact gate:** syntax, 10/10 focused tests, and strict release audit passed at
+  `57c2cc828c151c830ebd7a377dc29d7bf898566d`; localhost browser bind was rejected with
+  permitted `EPERM`, so only that leg uses retained Chromium 152/Firefox 132 artifacts
+  (`make-verify.log`). No semantic attack was waived.
+- **COVERAGE/SUITE:** all changed runtime hunks executed or have precise static/generated
+  waivers; no dead hunk. Retain the promoted hostile-message regression, revoked-proxy
+  verifier attack, strict release audit, and sabotage evidence. Full report:
+  `evidence/e5-t25a/verifier-r5/verifier-report.md`.
+
+No merge, E5-T25b activation, independent-machine, WebKit, ssh-dev, or host-rr work was
+performed.
 
 ### 2026-09-06 — verifier (Daybreak Blue) — VERDICT: refuted
 

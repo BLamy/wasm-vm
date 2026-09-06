@@ -1,0 +1,49 @@
+{
+  "exactHead": "57c2cc828c151c830ebd7a377dc29d7bf898566d",
+  "checks": {
+    "mainSourceDistByteIdentical": true,
+    "presentationSourceDistByteIdentical": true,
+    "helperJsTsByteIdentical": true,
+    "exactDualGateUnique": true,
+    "strictGuardAndAssignmentUnique": true,
+    "strictGuardOwnsRawAssignment": true,
+    "samplerOwnerGuardAndTimerBounded": true,
+    "teardownClearsNullsAndResets": true,
+    "surfaceInsideExactGate": true,
+    "noProductionHelperImport": true,
+    "presentationCallbacksAndRecordCapGated": true,
+    "sinkStrictNoCoercionGuard": true,
+    "nestedDiagnosticFallbackPresent": true,
+    "auditUsesFourBoundedExactBlocks": true,
+    "auditChecksGateGuardSamplerTimerAndReset": true,
+    "exactDualQueryIsolation": true
+  },
+  "allHeld": true,
+  "queryTruthTable": [
+    {
+      "query": "",
+      "enabled": false
+    },
+    {
+      "query": "testHooks=1",
+      "enabled": false
+    },
+    {
+      "query": "perfHooks=1",
+      "enabled": false
+    },
+    {
+      "query": "testHooks=1&perfHooks=1",
+      "enabled": true
+    }
+  ],
+  "waiver": "The Linux-owner page lifecycle cannot execute in the no-boot verifier surface. Exact bounded blocks independently establish the unique dual gate, raw strict-number cache assignment, owner guard, unique 50 ms sampler, timer clear/null, attribution reset, and gated public surface; sabotage separately proves the submitted audit rejects each mutation.",
+  "hashes": {
+    "main": "6b525f0f0e0c598a3803e98367a0bd8e799d9757c98f7c930ad52ad06e93c121",
+    "distMain": "6b525f0f0e0c598a3803e98367a0bd8e799d9757c98f7c930ad52ad06e93c121",
+    "presentation": "4d378b2b6d70b5d152f76c84902fcf5a75eeac0e3b78125a1333c797e8471816",
+    "distPresentation": "4d378b2b6d70b5d152f76c84902fcf5a75eeac0e3b78125a1333c797e8471816",
+    "helper": "3ebe314a2c9fcdab59b50636547b72a54fffddc4feff57e3152486607bfdc09b",
+    "helperTs": "3ebe314a2c9fcdab59b50636547b72a54fffddc4feff57e3152486607bfdc09b"
+  }
+}
