@@ -1,0 +1,69 @@
+node --check web/src/sink/viewport.js
+node --check web/main.js
+node --check web/display-resize.js
+node --test web/tests/e5-t22b-viewport.test.mjs web/tests/e5-t06a-canvas2d.test.mjs web/tests/e5-t06b-webgl.test.mjs web/tests/e5-t06d-presentation.test.mjs web/tests/e5-t09c-present-scheduler.test.mjs web/tests/e5-t09d-hidden-present.test.mjs web/tests/pointer.test.mjs
+✔ golden pattern 1: one-pixel full frame preserves BGRA-to-RGBA order (1.394833ms)
+✔ golden pattern 2: multi-row full frame keeps each row contiguous (0.106ms)
+✔ golden pattern 3: alpha-zero and opaque pixels survive readback (0.092125ms)
+✔ golden pattern 4: odd-width full frame has no row shear (0.076041ms)
+✔ golden pattern 5: partial damage updates a non-zero origin exactly (0.125708ms)
+✔ partial x=1 width=3 damage changes only its target pixels (0.129417ms)
+✔ right-edge odd-width damage crosses every row boundary without shearing (0.131584ms)
+✔ resize discards old staging and bounds 1,000 present cycles by current canvas size (88.897708ms)
+✔ plain source and browser projection stay byte-identical (0.31175ms)
+✔ invalid damage and pixel counts fail before a Canvas2D write (0.292333ms)
+✔ golden pattern 1: one-pixel frame is vertically oriented and swizzled (1.275834ms)
+✔ golden pattern 2: multi-row frame preserves row order (0.139083ms)
+✔ golden pattern 3: alpha-zero and opaque pixels survive the shader (0.105209ms)
+✔ golden pattern 4: odd-width texture has no row shear (0.094208ms)
+✔ golden pattern 5: partial damage matches the Canvas2D oracle (0.1845ms)
+✔ partial x=1 width=3 upload uses full-frame stride and leaves surrounding pixels (0.184333ms)
+✔ SharedArrayBuffer input is bulk-copied and transparent pixels do not blend with old data (0.10625ms)
+✔ unavailable WebGL2 and non-word sources fail closed before an upload (0.199ms)
+✔ 1,000 alternating texture sizes keep staging bounded and dispose GL objects (13.611584ms)
+✔ plain source and browser projection stay byte-identical (0.31875ms)
+✔ Canvas2D is the measured default and unavailable WebGL2 falls back (0.649917ms)
+✔ B8G8R8X8 frames normalize the unused byte to opaque before delivery (0.452875ms)
+✔ WebGL context loss replaces the context and replays the latest frame through Canvas2D (0.324792ms)
+✔ rapid presents are synchronous, last-frame-wins, and listener ownership is bounded (1.895375ms)
+✔ latest-wins enqueue is idempotently scheduled and bounded to one pending plan (0.806959ms)
+✔ a 240-plans/sec producer with a 4x-slow backend never grows the queue (0.378916ms)
+✔ reentrant enqueue records one overrun and keeps one rAF chain (0.101875ms)
+✔ pause/resume preserves only the latest plan and stale callbacks cannot revive a chain (0.103667ms)
+✔ dispose drops pending work and makes both queued and stale callbacks inert (0.209459ms)
+✔ false or throwing backend delivery is skipped, never counted as presented (0.099791ms)
+✔ scheduled PresentationController presents only on rAF and retires resized work (1.1715ms)
+✔ hidden mode drains through one 250 ms timer while producer work continues (0.887667ms)
+✔ visibility transition cancels a delayed timer and resumes the latest plan on rAF (0.167459ms)
+✔ 1,000 alternating visibility callbacks keep one chain and deliver every latest frame (1.9575ms)
+✔ PresentationController exposes fresh scalar vm.stats.gpu snapshots (0.688333ms)
+✔ CSS/DPR rounding and minimum/maximum clamps are finite, hidden panes do not hotplug (1.040875ms)
+✔ 50 resizes/5 seconds send one trailing request at exactly 250ms, DPR listener rearms and disposes (2.118917ms)
+✔ in-flight requests serialize latest intent, stale replies and disposed completions cannot restore old state (0.199917ms)
+✔ scalar fallback detects silent DPR changes without CSS or media-query notification (0.161791ms)
+✔ controller replacement ignores old completion, initial binding has no duplicate timer, errors recover (0.284875ms)
+✔ native fit keeps odd resource stride and independently checks every clipped/padded pixel (0.342333ms)
+✔ presentation keeps fixed viewport on pending old frame and later matching frame (0.7465ms)
+✔ TypeScript source and no-bundler pointer projection stay byte-identical (0.5735ms)
+✔ absolute coordinates use the current CSS rect and clamp independently of DPR/backing pixels (0.368833ms)
+✔ browser button numbers map to the documented evdev codes (0.080958ms)
+✔ absolute moves target the tablet while relative moves target only the mouse (0.379958ms)
+✔ mode changes release old-device buttons before routing the next button pair (0.210917ms)
+✔ an absolute desktop can keep tablet motion and route buttons through the mouse seat (0.109041ms)
+✔ pixel and line wheel detents use signed per-axis accumulators (0.17225ms)
+✔ 1000 small pixel wheel deltas stay bounded and never change emitted sign (1.436334ms)
+✔ wheel accumulators cancel across direction changes and reject invalid modes (0.172584ms)
+✔ Pointer Lock success is accepted and denial/loss returns to neutral absolute mode (2.798625ms)
+✔ legacy Pointer Lock retries without options and explicit errors fail closed (0.176666ms)
+✔ attached surface captures buttons and suppresses the browser context menu (0.394708ms)
+✔ Wasm pointer adapter requires the complete four-method transport surface (0.223542ms)
+ℹ tests 55
+ℹ suites 0
+ℹ pass 55
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 128.930375
+node tools/verify/e5-t22b-viewport.mjs
+{"cases":6,"pixelChecks":58,"metrics":["126","0","126"],"errors":[]}

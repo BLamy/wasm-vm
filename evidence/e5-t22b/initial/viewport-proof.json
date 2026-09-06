@@ -1,0 +1,5903 @@
+{
+  "schemaVersion": 1,
+  "head": "2da168d7372dadbad60957adf622471915d8cc7d",
+  "browser": "152.0.7977.76",
+  "launchArgs": [
+    "--use-angle=swiftshader",
+    "--enable-unsafe-swiftshader"
+  ],
+  "digests": {
+    "web/src/sink/viewport.js": "252959466bacaa986d3548bd4ce862c1f68fc3521338a1d59a4272849c269faf",
+    "web/src/sink/presentation.js": "e3edd912255916b565edc8394c7420f08a87b035e28ca8c0240cd44fa6a9a5d7",
+    "web/src/sink/canvas2d.js": "719b95ae13dbda214ed8b123ae6a72cdf459f88806c0d52832f56e6a96233936",
+    "web/src/sink/webgl.js": "508adc4d731afc6fe100b4970eef969c52c350ee296c4bb7bb87b88c8c85f4b4",
+    "web/display-resize.js": "f22d8f465c6df49ccc2495e3724a756f4f554ee17bd4db83f19ed48965459f1e",
+    "web/display-resize.html": "e8742b9036f58163a5da895d1c81480de55919c8cfcebb54fdbf4b7b8e827696",
+    "web/main.js": "40c4f3e5d3a7a28f7b880e8e8433dd49ee2c12cc9fa86bcd54549b9e11ab84f2",
+    "web/ide.js": "133077d261d7e8c97396ec7d27db8d252f22efdd3962c1415943ac513276661d",
+    "web/src/input/pointer.js": "b5442e60b877e36077ee451eeec6da46da97b246d97afa8a9c94ea4e4cb231d5",
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm": "563fb01ba0eb5bcfbf5de2b0f76471881f06f165aa0ff56380edc14acb9d05fc",
+    "tools/verify/e5-t22b-viewport.mjs": "d72b2b8fc7e8be56b2b0314df8572174994aa3b74a44760291f3a7e80bdbca60"
+  },
+  "results": [
+    {
+      "backend": "canvas2d",
+      "dpr": 1,
+      "checks": [
+        {
+          "label": "initial-native",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 641,
+            "height": 481,
+            "fixedViewport": true,
+            "sizeMismatch": false,
+            "framesReceived": 2,
+            "successfulPresents": 2,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 2466568,
+              "width": 641,
+              "height": 481
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 641,
+              "height": 481,
+              "dpr": 1,
+              "cssWidth": 641,
+              "cssHeight": 481,
+              "sequence": 1
+            },
+            "requested": {
+              "width": 641,
+              "height": 481,
+              "dpr": 1,
+              "cssWidth": 641,
+              "cssHeight": 481,
+              "sequence": 1
+            },
+            "accepted": {
+              "width": 641,
+              "height": 481,
+              "dpr": 1,
+              "cssWidth": 641,
+              "cssHeight": 481,
+              "sequence": 1
+            },
+            "requests": 1,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 1233284,
+          "rgbaFnv1a": "64c89578"
+        },
+        {
+          "label": "resize-803",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 803,
+            "height": 603,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 4,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 4,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 6340240,
+              "width": 803,
+              "height": 603
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 803,
+              "height": 603,
+              "dpr": 1,
+              "cssWidth": 803,
+              "cssHeight": 603,
+              "sequence": 2
+            },
+            "requested": {
+              "width": 803,
+              "height": 603,
+              "dpr": 1,
+              "cssWidth": 803,
+              "cssHeight": 603,
+              "sequence": 2
+            },
+            "accepted": {
+              "width": 803,
+              "height": 603,
+              "dpr": 1,
+              "cssWidth": 803,
+              "cssHeight": 603,
+              "sequence": 2
+            },
+            "requests": 2,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 1936836,
+          "rgbaFnv1a": "100f7bf8"
+        },
+        {
+          "label": "resize-321",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 321,
+            "height": 241,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 4,
+            "successfulPresents": 6,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 4,
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "successfulPresents": 6,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 6959128,
+              "width": 321,
+              "height": 241
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 321,
+              "height": 241,
+              "dpr": 1,
+              "cssWidth": 321,
+              "cssHeight": 241,
+              "sequence": 3
+            },
+            "requested": {
+              "width": 321,
+              "height": 241,
+              "dpr": 1,
+              "cssWidth": 321,
+              "cssHeight": 241,
+              "sequence": 3
+            },
+            "accepted": {
+              "width": 321,
+              "height": 241,
+              "dpr": 1,
+              "cssWidth": 321,
+              "cssHeight": 241,
+              "sequence": 3
+            },
+            "requests": 3,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 309444,
+          "rgbaFnv1a": "76b3f468"
+        },
+        {
+          "label": "resize-645",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 645,
+            "height": 485,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 5,
+            "successfulPresents": 8,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 5,
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "successfulPresents": 8,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 9461728,
+              "width": 645,
+              "height": 485
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requested": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "accepted": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requests": 4,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 1251300,
+          "rgbaFnv1a": "6ad770b8"
+        },
+        {
+          "label": "matching-partial-first-frame",
+          "sourceWidth": 645,
+          "sourceHeight": 485,
+          "partial": true,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 645,
+            "height": 485,
+            "fixedViewport": true,
+            "sizeMismatch": false,
+            "framesReceived": 6,
+            "successfulPresents": 9,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 6,
+              "coalesced": 0,
+              "presented": 6,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 6,
+              "enqueued": 6,
+              "coalesced": 0,
+              "presented": 6,
+              "successfulPresents": 9,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 10713028,
+              "width": 645,
+              "height": 485
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 645,
+                "height": 485
+              },
+              "resourceWidth": 645,
+              "resourceHeight": 485
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requested": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "accepted": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requests": 4,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 1251300,
+          "rgbaFnv1a": "c2812f8c"
+        },
+        {
+          "label": "live-dpr-1.5",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 968,
+            "height": 728,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 7,
+            "successfulPresents": 11,
+            "replayedFrames": 4,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 7,
+              "coalesced": 0,
+              "presented": 7,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 7,
+              "enqueued": 7,
+              "coalesced": 0,
+              "presented": 7,
+              "successfulPresents": 11,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 16350660,
+              "width": 968,
+              "height": 728
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 5
+            },
+            "requested": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 5
+            },
+            "accepted": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 5
+            },
+            "requests": 5,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 2818816,
+          "rgbaFnv1a": "1aa9a8c5"
+        },
+        {
+          "label": "live-dpr-1",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 645,
+            "height": 485,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 8,
+            "successfulPresents": 13,
+            "replayedFrames": 5,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 8,
+              "coalesced": 0,
+              "presented": 8,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 8,
+              "enqueued": 8,
+              "coalesced": 0,
+              "presented": 8,
+              "successfulPresents": 13,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 18853260,
+              "width": 645,
+              "height": 485
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requested": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "accepted": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requests": 6,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 1251300,
+          "rgbaFnv1a": "6ad770b8"
+        },
+        {
+          "label": "storm-final",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 699,
+            "height": 539,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 9,
+            "successfulPresents": 64,
+            "replayedFrames": 55,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 9,
+              "coalesced": 0,
+              "presented": 9,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 9,
+              "enqueued": 9,
+              "coalesced": 0,
+              "presented": 9,
+              "successfulPresents": 64,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 89808004,
+              "width": 699,
+              "height": 539
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 699,
+              "height": 539,
+              "dpr": 1,
+              "cssWidth": 699,
+              "cssHeight": 539,
+              "sequence": 56
+            },
+            "requested": {
+              "width": 699,
+              "height": 539,
+              "dpr": 1,
+              "cssWidth": 699,
+              "cssHeight": 539,
+              "sequence": 56
+            },
+            "accepted": {
+              "width": 699,
+              "height": 539,
+              "dpr": 1,
+              "cssWidth": 699,
+              "cssHeight": 539,
+              "sequence": 56
+            },
+            "requests": 7,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 1507044,
+          "rgbaFnv1a": "852fa9b8"
+        }
+      ],
+      "modeStates": [
+        {
+          "width": 803,
+          "height": 603,
+          "dpr": 1,
+          "advertisedWidth": 803,
+          "advertisedHeight": 603
+        },
+        {
+          "width": 321,
+          "height": 241,
+          "dpr": 1,
+          "advertisedWidth": 321,
+          "advertisedHeight": 241
+        },
+        {
+          "width": 645,
+          "height": 485,
+          "dpr": 1,
+          "advertisedWidth": 645,
+          "advertisedHeight": 485
+        }
+      ],
+      "pointer": {
+        "sequence": 1,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 4089
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 3406
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 4089,
+          "y": 3406
+        }
+      },
+      "dprChanges": [
+        {
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 5
+            },
+            "requested": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 5
+            },
+            "accepted": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 5
+            },
+            "requests": 5,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "css": [
+            "645.333px",
+            "485.333px"
+          ]
+        },
+        {
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requested": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "accepted": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requests": 6,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "css": [
+            "645px",
+            "485px"
+          ]
+        }
+      ],
+      "storm": {
+        "before": 6,
+        "samples": [
+          {
+            "elapsedMs": 0.02499997615814209,
+            "width": 650,
+            "height": 490
+          },
+          {
+            "elapsedMs": 101.2399999499321,
+            "width": 651,
+            "height": 491
+          },
+          {
+            "elapsedMs": 202.58499997854233,
+            "width": 652,
+            "height": 492
+          },
+          {
+            "elapsedMs": 304.6399999856949,
+            "width": 653,
+            "height": 493
+          },
+          {
+            "elapsedMs": 406.6399999856949,
+            "width": 654,
+            "height": 494
+          },
+          {
+            "elapsedMs": 508.57499998807907,
+            "width": 655,
+            "height": 495
+          },
+          {
+            "elapsedMs": 610.6599999666214,
+            "width": 656,
+            "height": 496
+          },
+          {
+            "elapsedMs": 712.1299999952316,
+            "width": 657,
+            "height": 497
+          },
+          {
+            "elapsedMs": 813.375,
+            "width": 658,
+            "height": 498
+          },
+          {
+            "elapsedMs": 915.2649999856949,
+            "width": 659,
+            "height": 499
+          },
+          {
+            "elapsedMs": 1017.1849999427795,
+            "width": 660,
+            "height": 500
+          },
+          {
+            "elapsedMs": 1119.2549999952316,
+            "width": 661,
+            "height": 501
+          },
+          {
+            "elapsedMs": 1221.339999973774,
+            "width": 662,
+            "height": 502
+          },
+          {
+            "elapsedMs": 1323.0199999809265,
+            "width": 663,
+            "height": 503
+          },
+          {
+            "elapsedMs": 1424.214999973774,
+            "width": 664,
+            "height": 504
+          },
+          {
+            "elapsedMs": 1525.5449999570847,
+            "width": 665,
+            "height": 505
+          },
+          {
+            "elapsedMs": 1627.2699999809265,
+            "width": 666,
+            "height": 506
+          },
+          {
+            "elapsedMs": 1728.839999973774,
+            "width": 667,
+            "height": 507
+          },
+          {
+            "elapsedMs": 1830.5299999713898,
+            "width": 668,
+            "height": 508
+          },
+          {
+            "elapsedMs": 1931.8899999856949,
+            "width": 669,
+            "height": 509
+          },
+          {
+            "elapsedMs": 2033.9199999570847,
+            "width": 670,
+            "height": 510
+          },
+          {
+            "elapsedMs": 2135.9049999713898,
+            "width": 671,
+            "height": 511
+          },
+          {
+            "elapsedMs": 2237.014999985695,
+            "width": 672,
+            "height": 512
+          },
+          {
+            "elapsedMs": 2338.8949999809265,
+            "width": 673,
+            "height": 513
+          },
+          {
+            "elapsedMs": 2440.8599999547005,
+            "width": 674,
+            "height": 514
+          },
+          {
+            "elapsedMs": 2542.229999959469,
+            "width": 675,
+            "height": 515
+          },
+          {
+            "elapsedMs": 2643.854999959469,
+            "width": 676,
+            "height": 516
+          },
+          {
+            "elapsedMs": 2745.899999976158,
+            "width": 677,
+            "height": 517
+          },
+          {
+            "elapsedMs": 2847.5099999904633,
+            "width": 678,
+            "height": 518
+          },
+          {
+            "elapsedMs": 2948.9049999713898,
+            "width": 679,
+            "height": 519
+          },
+          {
+            "elapsedMs": 3050.574999988079,
+            "width": 680,
+            "height": 520
+          },
+          {
+            "elapsedMs": 3152.6099999547005,
+            "width": 681,
+            "height": 521
+          },
+          {
+            "elapsedMs": 3254.649999976158,
+            "width": 682,
+            "height": 522
+          },
+          {
+            "elapsedMs": 3356.5449999570847,
+            "width": 683,
+            "height": 523
+          },
+          {
+            "elapsedMs": 3458.574999988079,
+            "width": 684,
+            "height": 524
+          },
+          {
+            "elapsedMs": 3559.75,
+            "width": 685,
+            "height": 525
+          },
+          {
+            "elapsedMs": 3661.3799999952316,
+            "width": 686,
+            "height": 526
+          },
+          {
+            "elapsedMs": 3762.554999947548,
+            "width": 687,
+            "height": 527
+          },
+          {
+            "elapsedMs": 3864.199999988079,
+            "width": 688,
+            "height": 528
+          },
+          {
+            "elapsedMs": 3966.2199999690056,
+            "width": 689,
+            "height": 529
+          },
+          {
+            "elapsedMs": 4068.214999973774,
+            "width": 690,
+            "height": 530
+          },
+          {
+            "elapsedMs": 4170.274999976158,
+            "width": 691,
+            "height": 531
+          },
+          {
+            "elapsedMs": 4271.814999997616,
+            "width": 692,
+            "height": 532
+          },
+          {
+            "elapsedMs": 4373.229999959469,
+            "width": 693,
+            "height": 533
+          },
+          {
+            "elapsedMs": 4475.274999976158,
+            "width": 694,
+            "height": 534
+          },
+          {
+            "elapsedMs": 4577.2349999547005,
+            "width": 695,
+            "height": 535
+          },
+          {
+            "elapsedMs": 4678.339999973774,
+            "width": 696,
+            "height": 536
+          },
+          {
+            "elapsedMs": 4779.829999983311,
+            "width": 697,
+            "height": 537
+          },
+          {
+            "elapsedMs": 4881.889999985695,
+            "width": 698,
+            "height": 538
+          },
+          {
+            "elapsedMs": 4982.129999995232,
+            "width": 699,
+            "height": 539
+          }
+        ],
+        "elapsedMs": 5083.929999947548,
+        "after": {
+          "disposed": false,
+          "desired": {
+            "width": 699,
+            "height": 539,
+            "dpr": 1,
+            "cssWidth": 699,
+            "cssHeight": 539,
+            "sequence": 56
+          },
+          "requested": {
+            "width": 699,
+            "height": 539,
+            "dpr": 1,
+            "cssWidth": 699,
+            "cssHeight": 539,
+            "sequence": 56
+          },
+          "accepted": {
+            "width": 699,
+            "height": 539,
+            "dpr": 1,
+            "cssWidth": 699,
+            "cssHeight": 539,
+            "sequence": 56
+          },
+          "requests": 7,
+          "inFlight": false,
+          "timerPending": false,
+          "dprWatcherPending": true,
+          "debounceMs": 250,
+          "error": null
+        }
+      },
+      "contextLoss": null,
+      "afterDispose": {
+        "disposed": true,
+        "desired": {
+          "width": 699,
+          "height": 539,
+          "dpr": 1,
+          "cssWidth": 699,
+          "cssHeight": 539,
+          "sequence": 56
+        },
+        "requested": {
+          "width": 699,
+          "height": 539,
+          "dpr": 1,
+          "cssWidth": 699,
+          "cssHeight": 539,
+          "sequence": 56
+        },
+        "accepted": {
+          "width": 699,
+          "height": 539,
+          "dpr": 1,
+          "cssWidth": 699,
+          "cssHeight": 539,
+          "sequence": 56
+        },
+        "requests": 7,
+        "inFlight": false,
+        "timerPending": false,
+        "dprWatcherPending": false,
+        "debounceMs": 250,
+        "error": null
+      },
+      "screenshotName": "canvas2d-dpr-1.png",
+      "screenshotSha256": "94fb1b342c96ab1c305c01cfc7d9cfcaff220f5d4c282453b57578387df069ce"
+    },
+    {
+      "backend": "canvas2d",
+      "dpr": 1.5,
+      "checks": [
+        {
+          "label": "initial-native",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 962,
+            "height": 722,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 2,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 5556512,
+              "width": 962,
+              "height": 722
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 962,
+              "height": 722,
+              "dpr": 1.5,
+              "cssWidth": 641.3333333333334,
+              "cssHeight": 481.3333333333333,
+              "sequence": 1
+            },
+            "requested": {
+              "width": 962,
+              "height": 722,
+              "dpr": 1.5,
+              "cssWidth": 641.3333333333334,
+              "cssHeight": 481.3333333333333,
+              "sequence": 1
+            },
+            "accepted": {
+              "width": 962,
+              "height": 722,
+              "dpr": 1.5,
+              "cssWidth": 641.3333333333334,
+              "cssHeight": 481.3333333333333,
+              "sequence": 1
+            },
+            "requests": 1,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 2778256,
+          "rgbaFnv1a": "e8517065"
+        },
+        {
+          "label": "resize-803",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1205,
+            "height": 905,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 4,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 4,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 14280712,
+              "width": 1205,
+              "height": 905
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1205,
+              "height": 905,
+              "dpr": 1.5,
+              "cssWidth": 803.3333333333334,
+              "cssHeight": 603.3333333333334,
+              "sequence": 2
+            },
+            "requested": {
+              "width": 1205,
+              "height": 905,
+              "dpr": 1.5,
+              "cssWidth": 803.3333333333334,
+              "cssHeight": 603.3333333333334,
+              "sequence": 2
+            },
+            "accepted": {
+              "width": 1205,
+              "height": 905,
+              "dpr": 1.5,
+              "cssWidth": 803.3333333333334,
+              "cssHeight": 603.3333333333334,
+              "sequence": 2
+            },
+            "requests": 2,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 4362100,
+          "rgbaFnv1a": "81f8da18"
+        },
+        {
+          "label": "resize-321",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 482,
+            "height": 362,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 4,
+            "successfulPresents": 6,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 4,
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "successfulPresents": 6,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 15676584,
+              "width": 482,
+              "height": 362
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 482,
+              "height": 362,
+              "dpr": 1.5,
+              "cssWidth": 321.3333333333333,
+              "cssHeight": 241.33333333333334,
+              "sequence": 3
+            },
+            "requested": {
+              "width": 482,
+              "height": 362,
+              "dpr": 1.5,
+              "cssWidth": 321.3333333333333,
+              "cssHeight": 241.33333333333334,
+              "sequence": 3
+            },
+            "accepted": {
+              "width": 482,
+              "height": 362,
+              "dpr": 1.5,
+              "cssWidth": 321.3333333333333,
+              "cssHeight": 241.33333333333334,
+              "sequence": 3
+            },
+            "requests": 3,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 697936,
+          "rgbaFnv1a": "35e4765"
+        },
+        {
+          "label": "resize-645",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 968,
+            "height": 728,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 5,
+            "successfulPresents": 8,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 5,
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "successfulPresents": 8,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 21314216,
+              "width": 968,
+              "height": 728
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 4
+            },
+            "requested": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 4
+            },
+            "accepted": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 4
+            },
+            "requests": 4,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 2818816,
+          "rgbaFnv1a": "1aa9a8c5"
+        },
+        {
+          "label": "matching-partial-first-frame",
+          "sourceWidth": 968,
+          "sourceHeight": 728,
+          "partial": true,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 968,
+            "height": 728,
+            "fixedViewport": true,
+            "sizeMismatch": false,
+            "framesReceived": 6,
+            "successfulPresents": 9,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 6,
+              "coalesced": 0,
+              "presented": 6,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 6,
+              "enqueued": 6,
+              "coalesced": 0,
+              "presented": 6,
+              "successfulPresents": 9,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 24133032,
+              "width": 968,
+              "height": 728
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 968,
+                "height": 728
+              },
+              "resourceWidth": 968,
+              "resourceHeight": 728
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 4
+            },
+            "requested": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 4
+            },
+            "accepted": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 4
+            },
+            "requests": 4,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 2818816,
+          "rgbaFnv1a": "6b01205"
+        },
+        {
+          "label": "live-dpr-2",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1290,
+            "height": 970,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 7,
+            "successfulPresents": 11,
+            "replayedFrames": 4,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 7,
+              "coalesced": 0,
+              "presented": 7,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 7,
+              "enqueued": 7,
+              "coalesced": 0,
+              "presented": 7,
+              "successfulPresents": 11,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 34143432,
+              "width": 1290,
+              "height": 970
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 5
+            },
+            "requested": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 5
+            },
+            "accepted": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 5
+            },
+            "requests": 5,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 5005200,
+          "rgbaFnv1a": "36672b65"
+        },
+        {
+          "label": "live-dpr-1.5",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 968,
+            "height": 728,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 8,
+            "successfulPresents": 13,
+            "replayedFrames": 5,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 8,
+              "coalesced": 0,
+              "presented": 8,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 8,
+              "enqueued": 8,
+              "coalesced": 0,
+              "presented": 8,
+              "successfulPresents": 13,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 39781064,
+              "width": 968,
+              "height": 728
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 6
+            },
+            "requested": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 6
+            },
+            "accepted": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 6
+            },
+            "requests": 6,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 2818816,
+          "rgbaFnv1a": "1aa9a8c5"
+        }
+      ],
+      "modeStates": [
+        {
+          "width": 803,
+          "height": 603,
+          "dpr": 1.5,
+          "advertisedWidth": 1205,
+          "advertisedHeight": 905
+        },
+        {
+          "width": 321,
+          "height": 241,
+          "dpr": 1.5,
+          "advertisedWidth": 482,
+          "advertisedHeight": 362
+        },
+        {
+          "width": 645,
+          "height": 485,
+          "dpr": 1.5,
+          "advertisedWidth": 968,
+          "advertisedHeight": 728
+        }
+      ],
+      "pointer": {
+        "sequence": 1,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 6134
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 5109
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 6134,
+          "y": 5109
+        }
+      },
+      "dprChanges": [
+        {
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 5
+            },
+            "requested": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 5
+            },
+            "accepted": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 5
+            },
+            "requests": 5,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "css": [
+            "645px",
+            "485px"
+          ]
+        },
+        {
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 6
+            },
+            "requested": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 6
+            },
+            "accepted": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 6
+            },
+            "requests": 6,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "css": [
+            "645.333px",
+            "485.333px"
+          ]
+        }
+      ],
+      "storm": null,
+      "contextLoss": null,
+      "afterDispose": {
+        "disposed": true,
+        "desired": {
+          "width": 968,
+          "height": 728,
+          "dpr": 1.5,
+          "cssWidth": 645.3333333333334,
+          "cssHeight": 485.3333333333333,
+          "sequence": 6
+        },
+        "requested": {
+          "width": 968,
+          "height": 728,
+          "dpr": 1.5,
+          "cssWidth": 645.3333333333334,
+          "cssHeight": 485.3333333333333,
+          "sequence": 6
+        },
+        "accepted": {
+          "width": 968,
+          "height": 728,
+          "dpr": 1.5,
+          "cssWidth": 645.3333333333334,
+          "cssHeight": 485.3333333333333,
+          "sequence": 6
+        },
+        "requests": 6,
+        "inFlight": false,
+        "timerPending": false,
+        "dprWatcherPending": false,
+        "debounceMs": 250,
+        "error": null
+      },
+      "screenshotName": "canvas2d-dpr-1.5.png",
+      "screenshotSha256": "8687baaed7be6a7bb6cef752347efabac56a03b511a695f8cd0793bf3d1ffa2c"
+    },
+    {
+      "backend": "canvas2d",
+      "dpr": 2,
+      "checks": [
+        {
+          "label": "initial-native",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1282,
+            "height": 962,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 2,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 9866272,
+              "width": 1282,
+              "height": 962
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1282,
+              "height": 962,
+              "dpr": 2,
+              "cssWidth": 641,
+              "cssHeight": 481,
+              "sequence": 1
+            },
+            "requested": {
+              "width": 1282,
+              "height": 962,
+              "dpr": 2,
+              "cssWidth": 641,
+              "cssHeight": 481,
+              "sequence": 1
+            },
+            "accepted": {
+              "width": 1282,
+              "height": 962,
+              "dpr": 2,
+              "cssWidth": 641,
+              "cssHeight": 481,
+              "sequence": 1
+            },
+            "requests": 1,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 4933136,
+          "rgbaFnv1a": "8c4bd765"
+        },
+        {
+          "label": "resize-803",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1606,
+            "height": 1206,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 4,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 4,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 25360960,
+              "width": 1606,
+              "height": 1206
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1606,
+              "height": 1206,
+              "dpr": 2,
+              "cssWidth": 803,
+              "cssHeight": 603,
+              "sequence": 2
+            },
+            "requested": {
+              "width": 1606,
+              "height": 1206,
+              "dpr": 2,
+              "cssWidth": 803,
+              "cssHeight": 603,
+              "sequence": 2
+            },
+            "accepted": {
+              "width": 1606,
+              "height": 1206,
+              "dpr": 2,
+              "cssWidth": 803,
+              "cssHeight": 603,
+              "sequence": 2
+            },
+            "requests": 2,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 7747344,
+          "rgbaFnv1a": "2111ae65"
+        },
+        {
+          "label": "resize-321",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 642,
+            "height": 482,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 4,
+            "successfulPresents": 6,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 4,
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "successfulPresents": 6,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 27836512,
+              "width": 642,
+              "height": 482
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 642,
+              "height": 482,
+              "dpr": 2,
+              "cssWidth": 321,
+              "cssHeight": 241,
+              "sequence": 3
+            },
+            "requested": {
+              "width": 642,
+              "height": 482,
+              "dpr": 2,
+              "cssWidth": 321,
+              "cssHeight": 241,
+              "sequence": 3
+            },
+            "accepted": {
+              "width": 642,
+              "height": 482,
+              "dpr": 2,
+              "cssWidth": 321,
+              "cssHeight": 241,
+              "sequence": 3
+            },
+            "requests": 3,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 1237776,
+          "rgbaFnv1a": "41a4c965"
+        },
+        {
+          "label": "resize-645",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1290,
+            "height": 970,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 5,
+            "successfulPresents": 8,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 5,
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "successfulPresents": 8,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 37846912,
+              "width": 1290,
+              "height": 970
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requested": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "accepted": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requests": 4,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 5005200,
+          "rgbaFnv1a": "36672b65"
+        },
+        {
+          "label": "matching-partial-first-frame",
+          "sourceWidth": 1290,
+          "sourceHeight": 970,
+          "partial": true,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1290,
+            "height": 970,
+            "fixedViewport": true,
+            "sizeMismatch": false,
+            "framesReceived": 6,
+            "successfulPresents": 9,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 6,
+              "coalesced": 0,
+              "presented": 6,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 6,
+              "enqueued": 6,
+              "coalesced": 0,
+              "presented": 6,
+              "successfulPresents": 9,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 42852112,
+              "width": 1290,
+              "height": 970
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 1290,
+                "height": 970
+              },
+              "resourceWidth": 1290,
+              "resourceHeight": 970
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requested": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "accepted": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requests": 4,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 5005200,
+          "rgbaFnv1a": "9f8db195"
+        },
+        {
+          "label": "live-dpr-2.5",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1613,
+            "height": 1213,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 7,
+            "successfulPresents": 11,
+            "replayedFrames": 4,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 7,
+              "coalesced": 0,
+              "presented": 7,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 7,
+              "enqueued": 7,
+              "coalesced": 0,
+              "presented": 7,
+              "successfulPresents": 11,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 58504664,
+              "width": 1613,
+              "height": 1213
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1613,
+              "height": 1213,
+              "dpr": 2.5,
+              "cssWidth": 645.2,
+              "cssHeight": 485.2,
+              "sequence": 5
+            },
+            "requested": {
+              "width": 1613,
+              "height": 1213,
+              "dpr": 2.5,
+              "cssWidth": 645.2,
+              "cssHeight": 485.2,
+              "sequence": 5
+            },
+            "accepted": {
+              "width": 1613,
+              "height": 1213,
+              "dpr": 2.5,
+              "cssWidth": 645.2,
+              "cssHeight": 485.2,
+              "sequence": 5
+            },
+            "requests": 5,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 7826276,
+          "rgbaFnv1a": "ebea03b8"
+        },
+        {
+          "label": "live-dpr-2",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1290,
+            "height": 970,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 8,
+            "successfulPresents": 13,
+            "replayedFrames": 5,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 8,
+              "coalesced": 0,
+              "presented": 8,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 8,
+              "enqueued": 8,
+              "coalesced": 0,
+              "presented": 8,
+              "successfulPresents": 13,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 68515064,
+              "width": 1290,
+              "height": 970
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requested": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "accepted": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requests": 6,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 5005200,
+          "rgbaFnv1a": "36672b65"
+        }
+      ],
+      "modeStates": [
+        {
+          "width": 803,
+          "height": 603,
+          "dpr": 2,
+          "advertisedWidth": 1606,
+          "advertisedHeight": 1206
+        },
+        {
+          "width": 321,
+          "height": 241,
+          "dpr": 2,
+          "advertisedWidth": 642,
+          "advertisedHeight": 482
+        },
+        {
+          "width": 645,
+          "height": 485,
+          "dpr": 2,
+          "advertisedWidth": 1290,
+          "advertisedHeight": 970
+        }
+      ],
+      "pointer": {
+        "sequence": 1,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 8179
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 6812
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 8179,
+          "y": 6812
+        }
+      },
+      "dprChanges": [
+        {
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1613,
+              "height": 1213,
+              "dpr": 2.5,
+              "cssWidth": 645.2,
+              "cssHeight": 485.2,
+              "sequence": 5
+            },
+            "requested": {
+              "width": 1613,
+              "height": 1213,
+              "dpr": 2.5,
+              "cssWidth": 645.2,
+              "cssHeight": 485.2,
+              "sequence": 5
+            },
+            "accepted": {
+              "width": 1613,
+              "height": 1213,
+              "dpr": 2.5,
+              "cssWidth": 645.2,
+              "cssHeight": 485.2,
+              "sequence": 5
+            },
+            "requests": 5,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "css": [
+            "645.2px",
+            "485.2px"
+          ]
+        },
+        {
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requested": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "accepted": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requests": 6,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "css": [
+            "645px",
+            "485px"
+          ]
+        }
+      ],
+      "storm": null,
+      "contextLoss": null,
+      "afterDispose": {
+        "disposed": true,
+        "desired": {
+          "width": 1290,
+          "height": 970,
+          "dpr": 2,
+          "cssWidth": 645,
+          "cssHeight": 485,
+          "sequence": 6
+        },
+        "requested": {
+          "width": 1290,
+          "height": 970,
+          "dpr": 2,
+          "cssWidth": 645,
+          "cssHeight": 485,
+          "sequence": 6
+        },
+        "accepted": {
+          "width": 1290,
+          "height": 970,
+          "dpr": 2,
+          "cssWidth": 645,
+          "cssHeight": 485,
+          "sequence": 6
+        },
+        "requests": 6,
+        "inFlight": false,
+        "timerPending": false,
+        "dprWatcherPending": false,
+        "debounceMs": 250,
+        "error": null
+      },
+      "screenshotName": "canvas2d-dpr-2.png",
+      "screenshotSha256": "a4ab276fc1776ef2ab7c0d2ae0c38e7fe3b178f040275a83aeb4b5a75f2a9118"
+    },
+    {
+      "backend": "webgl2",
+      "dpr": 1,
+      "checks": [
+        {
+          "label": "initial-native",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 641,
+            "height": 481,
+            "fixedViewport": true,
+            "sizeMismatch": false,
+            "framesReceived": 2,
+            "successfulPresents": 2,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 2466568,
+              "width": 641,
+              "height": 481
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 641,
+              "height": 481,
+              "dpr": 1,
+              "cssWidth": 641,
+              "cssHeight": 481,
+              "sequence": 1
+            },
+            "requested": {
+              "width": 641,
+              "height": 481,
+              "dpr": 1,
+              "cssWidth": 641,
+              "cssHeight": 481,
+              "sequence": 1
+            },
+            "accepted": {
+              "width": 641,
+              "height": 481,
+              "dpr": 1,
+              "cssWidth": 641,
+              "cssHeight": 481,
+              "sequence": 1
+            },
+            "requests": 1,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 1233284,
+          "rgbaFnv1a": "64c89578"
+        },
+        {
+          "label": "resize-803",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 803,
+            "height": 603,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 4,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 4,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 6340240,
+              "width": 803,
+              "height": 603
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 803,
+              "height": 603,
+              "dpr": 1,
+              "cssWidth": 803,
+              "cssHeight": 603,
+              "sequence": 2
+            },
+            "requested": {
+              "width": 803,
+              "height": 603,
+              "dpr": 1,
+              "cssWidth": 803,
+              "cssHeight": 603,
+              "sequence": 2
+            },
+            "accepted": {
+              "width": 803,
+              "height": 603,
+              "dpr": 1,
+              "cssWidth": 803,
+              "cssHeight": 603,
+              "sequence": 2
+            },
+            "requests": 2,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 1936836,
+          "rgbaFnv1a": "100f7bf8"
+        },
+        {
+          "label": "resize-321",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 321,
+            "height": 241,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 4,
+            "successfulPresents": 6,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 4,
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "successfulPresents": 6,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 6959128,
+              "width": 321,
+              "height": 241
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 321,
+              "height": 241,
+              "dpr": 1,
+              "cssWidth": 321,
+              "cssHeight": 241,
+              "sequence": 3
+            },
+            "requested": {
+              "width": 321,
+              "height": 241,
+              "dpr": 1,
+              "cssWidth": 321,
+              "cssHeight": 241,
+              "sequence": 3
+            },
+            "accepted": {
+              "width": 321,
+              "height": 241,
+              "dpr": 1,
+              "cssWidth": 321,
+              "cssHeight": 241,
+              "sequence": 3
+            },
+            "requests": 3,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 309444,
+          "rgbaFnv1a": "76b3f468"
+        },
+        {
+          "label": "resize-645",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 645,
+            "height": 485,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 5,
+            "successfulPresents": 8,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 5,
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "successfulPresents": 8,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 9461728,
+              "width": 645,
+              "height": 485
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requested": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "accepted": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requests": 4,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 1251300,
+          "rgbaFnv1a": "6ad770b8"
+        },
+        {
+          "label": "matching-partial-first-frame",
+          "sourceWidth": 645,
+          "sourceHeight": 485,
+          "partial": true,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 645,
+            "height": 485,
+            "fixedViewport": true,
+            "sizeMismatch": false,
+            "framesReceived": 6,
+            "successfulPresents": 9,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 6,
+              "coalesced": 0,
+              "presented": 6,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 6,
+              "enqueued": 6,
+              "coalesced": 0,
+              "presented": 6,
+              "successfulPresents": 9,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 10713028,
+              "width": 645,
+              "height": 485
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 645,
+                "height": 485
+              },
+              "resourceWidth": 645,
+              "resourceHeight": 485
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requested": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "accepted": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requests": 4,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 1251300,
+          "rgbaFnv1a": "c2812f8c"
+        },
+        {
+          "label": "live-dpr-1.5",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 968,
+            "height": 728,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 7,
+            "successfulPresents": 11,
+            "replayedFrames": 4,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 7,
+              "coalesced": 0,
+              "presented": 7,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 7,
+              "enqueued": 7,
+              "coalesced": 0,
+              "presented": 7,
+              "successfulPresents": 11,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 16350660,
+              "width": 968,
+              "height": 728
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 5
+            },
+            "requested": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 5
+            },
+            "accepted": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 5
+            },
+            "requests": 5,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 2818816,
+          "rgbaFnv1a": "1aa9a8c5"
+        },
+        {
+          "label": "live-dpr-1",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 645,
+            "height": 485,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 8,
+            "successfulPresents": 13,
+            "replayedFrames": 5,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 8,
+              "coalesced": 0,
+              "presented": 8,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 8,
+              "enqueued": 8,
+              "coalesced": 0,
+              "presented": 8,
+              "successfulPresents": 13,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 18853260,
+              "width": 645,
+              "height": 485
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requested": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "accepted": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requests": 6,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 1251300,
+          "rgbaFnv1a": "6ad770b8"
+        },
+        {
+          "label": "context-loss-mismatch",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "webgl2",
+            "width": 645,
+            "height": 485,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 9,
+            "successfulPresents": 15,
+            "replayedFrames": 6,
+            "droppedFrames": 0,
+            "contextLosses": 1,
+            "contextRestores": 0,
+            "fallbacks": 1,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 9,
+              "coalesced": 0,
+              "presented": 9,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 9,
+              "enqueued": 9,
+              "coalesced": 0,
+              "presented": 9,
+              "successfulPresents": 15,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 21355860,
+              "width": 645,
+              "height": 485
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requested": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "accepted": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requests": 6,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 1251300,
+          "rgbaFnv1a": "6ad770b8"
+        }
+      ],
+      "modeStates": [
+        {
+          "width": 803,
+          "height": 603,
+          "dpr": 1,
+          "advertisedWidth": 803,
+          "advertisedHeight": 603
+        },
+        {
+          "width": 321,
+          "height": 241,
+          "dpr": 1,
+          "advertisedWidth": 321,
+          "advertisedHeight": 241
+        },
+        {
+          "width": 645,
+          "height": 485,
+          "dpr": 1,
+          "advertisedWidth": 645,
+          "advertisedHeight": 485
+        }
+      ],
+      "pointer": {
+        "sequence": 1,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 4089
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 3406
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 4089,
+          "y": 3406
+        }
+      },
+      "dprChanges": [
+        {
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 5
+            },
+            "requested": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 5
+            },
+            "accepted": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 5
+            },
+            "requests": 5,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "css": [
+            "645.333px",
+            "485.333px"
+          ]
+        },
+        {
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requested": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "accepted": {
+              "width": 645,
+              "height": 485,
+              "dpr": 1,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requests": 6,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "css": [
+            "645px",
+            "485px"
+          ]
+        }
+      ],
+      "storm": null,
+      "contextLoss": {
+        "replaced": true,
+        "style": [
+          "645px",
+          "485px"
+        ],
+        "state": {
+          "backend": "canvas2d",
+          "defaultBackend": "webgl2",
+          "width": 645,
+          "height": 485,
+          "fixedViewport": true,
+          "sizeMismatch": true,
+          "framesReceived": 8,
+          "successfulPresents": 14,
+          "replayedFrames": 6,
+          "droppedFrames": 0,
+          "contextLosses": 1,
+          "contextRestores": 0,
+          "fallbacks": 1,
+          "listenerCount": 2,
+          "scheduler": {
+            "enqueued": 8,
+            "coalesced": 0,
+            "presented": 8,
+            "skipped": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "paused": false,
+            "disposed": false,
+            "scheduled": false
+          },
+          "gpu": {
+            "framesReceived": 8,
+            "enqueued": 8,
+            "coalesced": 0,
+            "presented": 8,
+            "successfulPresents": 14,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "uploadedBytes": 20104560,
+            "width": 645,
+            "height": 485
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 641,
+              "height": 481
+            },
+            "resourceWidth": 641,
+            "resourceHeight": 481
+          },
+          "errors": []
+        }
+      },
+      "afterDispose": {
+        "disposed": true,
+        "desired": {
+          "width": 645,
+          "height": 485,
+          "dpr": 1,
+          "cssWidth": 645,
+          "cssHeight": 485,
+          "sequence": 6
+        },
+        "requested": {
+          "width": 645,
+          "height": 485,
+          "dpr": 1,
+          "cssWidth": 645,
+          "cssHeight": 485,
+          "sequence": 6
+        },
+        "accepted": {
+          "width": 645,
+          "height": 485,
+          "dpr": 1,
+          "cssWidth": 645,
+          "cssHeight": 485,
+          "sequence": 6
+        },
+        "requests": 6,
+        "inFlight": false,
+        "timerPending": false,
+        "dprWatcherPending": false,
+        "debounceMs": 250,
+        "error": null
+      },
+      "screenshotName": "webgl2-dpr-1.png",
+      "screenshotSha256": "d46c00a228dbbf9e073f359e6cb649f16af29a2ebd3779549d3a7930e7694d68"
+    },
+    {
+      "backend": "webgl2",
+      "dpr": 1.5,
+      "checks": [
+        {
+          "label": "initial-native",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 962,
+            "height": 722,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 2,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 5556512,
+              "width": 962,
+              "height": 722
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 962,
+              "height": 722,
+              "dpr": 1.5,
+              "cssWidth": 641.3333333333334,
+              "cssHeight": 481.3333333333333,
+              "sequence": 1
+            },
+            "requested": {
+              "width": 962,
+              "height": 722,
+              "dpr": 1.5,
+              "cssWidth": 641.3333333333334,
+              "cssHeight": 481.3333333333333,
+              "sequence": 1
+            },
+            "accepted": {
+              "width": 962,
+              "height": 722,
+              "dpr": 1.5,
+              "cssWidth": 641.3333333333334,
+              "cssHeight": 481.3333333333333,
+              "sequence": 1
+            },
+            "requests": 1,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 2778256,
+          "rgbaFnv1a": "e8517065"
+        },
+        {
+          "label": "resize-803",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 1205,
+            "height": 905,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 4,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 4,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 14280712,
+              "width": 1205,
+              "height": 905
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1205,
+              "height": 905,
+              "dpr": 1.5,
+              "cssWidth": 803.3333333333334,
+              "cssHeight": 603.3333333333334,
+              "sequence": 2
+            },
+            "requested": {
+              "width": 1205,
+              "height": 905,
+              "dpr": 1.5,
+              "cssWidth": 803.3333333333334,
+              "cssHeight": 603.3333333333334,
+              "sequence": 2
+            },
+            "accepted": {
+              "width": 1205,
+              "height": 905,
+              "dpr": 1.5,
+              "cssWidth": 803.3333333333334,
+              "cssHeight": 603.3333333333334,
+              "sequence": 2
+            },
+            "requests": 2,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 4362100,
+          "rgbaFnv1a": "81f8da18"
+        },
+        {
+          "label": "resize-321",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 482,
+            "height": 362,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 4,
+            "successfulPresents": 6,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 4,
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "successfulPresents": 6,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 15676584,
+              "width": 482,
+              "height": 362
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 482,
+              "height": 362,
+              "dpr": 1.5,
+              "cssWidth": 321.3333333333333,
+              "cssHeight": 241.33333333333334,
+              "sequence": 3
+            },
+            "requested": {
+              "width": 482,
+              "height": 362,
+              "dpr": 1.5,
+              "cssWidth": 321.3333333333333,
+              "cssHeight": 241.33333333333334,
+              "sequence": 3
+            },
+            "accepted": {
+              "width": 482,
+              "height": 362,
+              "dpr": 1.5,
+              "cssWidth": 321.3333333333333,
+              "cssHeight": 241.33333333333334,
+              "sequence": 3
+            },
+            "requests": 3,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 697936,
+          "rgbaFnv1a": "35e4765"
+        },
+        {
+          "label": "resize-645",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 968,
+            "height": 728,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 5,
+            "successfulPresents": 8,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 5,
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "successfulPresents": 8,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 21314216,
+              "width": 968,
+              "height": 728
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 4
+            },
+            "requested": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 4
+            },
+            "accepted": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 4
+            },
+            "requests": 4,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 2818816,
+          "rgbaFnv1a": "1aa9a8c5"
+        },
+        {
+          "label": "matching-partial-first-frame",
+          "sourceWidth": 968,
+          "sourceHeight": 728,
+          "partial": true,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 968,
+            "height": 728,
+            "fixedViewport": true,
+            "sizeMismatch": false,
+            "framesReceived": 6,
+            "successfulPresents": 9,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 6,
+              "coalesced": 0,
+              "presented": 6,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 6,
+              "enqueued": 6,
+              "coalesced": 0,
+              "presented": 6,
+              "successfulPresents": 9,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 24133032,
+              "width": 968,
+              "height": 728
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 968,
+                "height": 728
+              },
+              "resourceWidth": 968,
+              "resourceHeight": 728
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 4
+            },
+            "requested": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 4
+            },
+            "accepted": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 4
+            },
+            "requests": 4,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 2818816,
+          "rgbaFnv1a": "6b01205"
+        },
+        {
+          "label": "live-dpr-2",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 1290,
+            "height": 970,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 7,
+            "successfulPresents": 11,
+            "replayedFrames": 4,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 7,
+              "coalesced": 0,
+              "presented": 7,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 7,
+              "enqueued": 7,
+              "coalesced": 0,
+              "presented": 7,
+              "successfulPresents": 11,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 34143432,
+              "width": 1290,
+              "height": 970
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 5
+            },
+            "requested": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 5
+            },
+            "accepted": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 5
+            },
+            "requests": 5,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 5005200,
+          "rgbaFnv1a": "36672b65"
+        },
+        {
+          "label": "live-dpr-1.5",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 968,
+            "height": 728,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 8,
+            "successfulPresents": 13,
+            "replayedFrames": 5,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 8,
+              "coalesced": 0,
+              "presented": 8,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 8,
+              "enqueued": 8,
+              "coalesced": 0,
+              "presented": 8,
+              "successfulPresents": 13,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 39781064,
+              "width": 968,
+              "height": 728
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 6
+            },
+            "requested": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 6
+            },
+            "accepted": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 6
+            },
+            "requests": 6,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 2818816,
+          "rgbaFnv1a": "1aa9a8c5"
+        },
+        {
+          "label": "context-loss-mismatch",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "webgl2",
+            "width": 968,
+            "height": 728,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 9,
+            "successfulPresents": 15,
+            "replayedFrames": 6,
+            "droppedFrames": 0,
+            "contextLosses": 1,
+            "contextRestores": 0,
+            "fallbacks": 1,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 9,
+              "coalesced": 0,
+              "presented": 9,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 9,
+              "enqueued": 9,
+              "coalesced": 0,
+              "presented": 9,
+              "successfulPresents": 15,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 45418696,
+              "width": 968,
+              "height": 728
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 6
+            },
+            "requested": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 6
+            },
+            "accepted": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 6
+            },
+            "requests": 6,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 2818816,
+          "rgbaFnv1a": "1aa9a8c5"
+        }
+      ],
+      "modeStates": [
+        {
+          "width": 803,
+          "height": 603,
+          "dpr": 1.5,
+          "advertisedWidth": 1205,
+          "advertisedHeight": 905
+        },
+        {
+          "width": 321,
+          "height": 241,
+          "dpr": 1.5,
+          "advertisedWidth": 482,
+          "advertisedHeight": 362
+        },
+        {
+          "width": 645,
+          "height": 485,
+          "dpr": 1.5,
+          "advertisedWidth": 968,
+          "advertisedHeight": 728
+        }
+      ],
+      "pointer": {
+        "sequence": 1,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 6134
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 5109
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 6134,
+          "y": 5109
+        }
+      },
+      "dprChanges": [
+        {
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 5
+            },
+            "requested": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 5
+            },
+            "accepted": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 5
+            },
+            "requests": 5,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "css": [
+            "645px",
+            "485px"
+          ]
+        },
+        {
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 6
+            },
+            "requested": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 6
+            },
+            "accepted": {
+              "width": 968,
+              "height": 728,
+              "dpr": 1.5,
+              "cssWidth": 645.3333333333334,
+              "cssHeight": 485.3333333333333,
+              "sequence": 6
+            },
+            "requests": 6,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "css": [
+            "645.333px",
+            "485.333px"
+          ]
+        }
+      ],
+      "storm": null,
+      "contextLoss": {
+        "replaced": true,
+        "style": [
+          "645.333px",
+          "485.333px"
+        ],
+        "state": {
+          "backend": "canvas2d",
+          "defaultBackend": "webgl2",
+          "width": 968,
+          "height": 728,
+          "fixedViewport": true,
+          "sizeMismatch": true,
+          "framesReceived": 8,
+          "successfulPresents": 14,
+          "replayedFrames": 6,
+          "droppedFrames": 0,
+          "contextLosses": 1,
+          "contextRestores": 0,
+          "fallbacks": 1,
+          "listenerCount": 2,
+          "scheduler": {
+            "enqueued": 8,
+            "coalesced": 0,
+            "presented": 8,
+            "skipped": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "paused": false,
+            "disposed": false,
+            "scheduled": false
+          },
+          "gpu": {
+            "framesReceived": 8,
+            "enqueued": 8,
+            "coalesced": 0,
+            "presented": 8,
+            "successfulPresents": 14,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "uploadedBytes": 42599880,
+            "width": 968,
+            "height": 728
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 641,
+              "height": 481
+            },
+            "resourceWidth": 641,
+            "resourceHeight": 481
+          },
+          "errors": []
+        }
+      },
+      "afterDispose": {
+        "disposed": true,
+        "desired": {
+          "width": 968,
+          "height": 728,
+          "dpr": 1.5,
+          "cssWidth": 645.3333333333334,
+          "cssHeight": 485.3333333333333,
+          "sequence": 6
+        },
+        "requested": {
+          "width": 968,
+          "height": 728,
+          "dpr": 1.5,
+          "cssWidth": 645.3333333333334,
+          "cssHeight": 485.3333333333333,
+          "sequence": 6
+        },
+        "accepted": {
+          "width": 968,
+          "height": 728,
+          "dpr": 1.5,
+          "cssWidth": 645.3333333333334,
+          "cssHeight": 485.3333333333333,
+          "sequence": 6
+        },
+        "requests": 6,
+        "inFlight": false,
+        "timerPending": false,
+        "dprWatcherPending": false,
+        "debounceMs": 250,
+        "error": null
+      },
+      "screenshotName": "webgl2-dpr-1.5.png",
+      "screenshotSha256": "8687baaed7be6a7bb6cef752347efabac56a03b511a695f8cd0793bf3d1ffa2c"
+    },
+    {
+      "backend": "webgl2",
+      "dpr": 2,
+      "checks": [
+        {
+          "label": "initial-native",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 1282,
+            "height": 962,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 2,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 9866272,
+              "width": 1282,
+              "height": 962
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1282,
+              "height": 962,
+              "dpr": 2,
+              "cssWidth": 641,
+              "cssHeight": 481,
+              "sequence": 1
+            },
+            "requested": {
+              "width": 1282,
+              "height": 962,
+              "dpr": 2,
+              "cssWidth": 641,
+              "cssHeight": 481,
+              "sequence": 1
+            },
+            "accepted": {
+              "width": 1282,
+              "height": 962,
+              "dpr": 2,
+              "cssWidth": 641,
+              "cssHeight": 481,
+              "sequence": 1
+            },
+            "requests": 1,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 4933136,
+          "rgbaFnv1a": "8c4bd765"
+        },
+        {
+          "label": "resize-803",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 1606,
+            "height": 1206,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 4,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 4,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 25360960,
+              "width": 1606,
+              "height": 1206
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1606,
+              "height": 1206,
+              "dpr": 2,
+              "cssWidth": 803,
+              "cssHeight": 603,
+              "sequence": 2
+            },
+            "requested": {
+              "width": 1606,
+              "height": 1206,
+              "dpr": 2,
+              "cssWidth": 803,
+              "cssHeight": 603,
+              "sequence": 2
+            },
+            "accepted": {
+              "width": 1606,
+              "height": 1206,
+              "dpr": 2,
+              "cssWidth": 803,
+              "cssHeight": 603,
+              "sequence": 2
+            },
+            "requests": 2,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 7747344,
+          "rgbaFnv1a": "2111ae65"
+        },
+        {
+          "label": "resize-321",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 642,
+            "height": 482,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 4,
+            "successfulPresents": 6,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 4,
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "successfulPresents": 6,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 27836512,
+              "width": 642,
+              "height": 482
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 642,
+              "height": 482,
+              "dpr": 2,
+              "cssWidth": 321,
+              "cssHeight": 241,
+              "sequence": 3
+            },
+            "requested": {
+              "width": 642,
+              "height": 482,
+              "dpr": 2,
+              "cssWidth": 321,
+              "cssHeight": 241,
+              "sequence": 3
+            },
+            "accepted": {
+              "width": 642,
+              "height": 482,
+              "dpr": 2,
+              "cssWidth": 321,
+              "cssHeight": 241,
+              "sequence": 3
+            },
+            "requests": 3,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 1237776,
+          "rgbaFnv1a": "41a4c965"
+        },
+        {
+          "label": "resize-645",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": true,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 1290,
+            "height": 970,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 5,
+            "successfulPresents": 8,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 5,
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "successfulPresents": 8,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 37846912,
+              "width": 1290,
+              "height": 970
+            },
+            "latest": {
+              "rect": {
+                "x": 640,
+                "y": 480,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requested": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "accepted": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requests": 4,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 5005200,
+          "rgbaFnv1a": "36672b65"
+        },
+        {
+          "label": "matching-partial-first-frame",
+          "sourceWidth": 1290,
+          "sourceHeight": 970,
+          "partial": true,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 1290,
+            "height": 970,
+            "fixedViewport": true,
+            "sizeMismatch": false,
+            "framesReceived": 6,
+            "successfulPresents": 9,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 6,
+              "coalesced": 0,
+              "presented": 6,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 6,
+              "enqueued": 6,
+              "coalesced": 0,
+              "presented": 6,
+              "successfulPresents": 9,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 42852112,
+              "width": 1290,
+              "height": 970
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 1290,
+                "height": 970
+              },
+              "resourceWidth": 1290,
+              "resourceHeight": 970
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requested": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "accepted": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 4
+            },
+            "requests": 4,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 5005200,
+          "rgbaFnv1a": "9f8db195"
+        },
+        {
+          "label": "live-dpr-2.5",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 1613,
+            "height": 1213,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 7,
+            "successfulPresents": 11,
+            "replayedFrames": 4,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 7,
+              "coalesced": 0,
+              "presented": 7,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 7,
+              "enqueued": 7,
+              "coalesced": 0,
+              "presented": 7,
+              "successfulPresents": 11,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 58504664,
+              "width": 1613,
+              "height": 1213
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1613,
+              "height": 1213,
+              "dpr": 2.5,
+              "cssWidth": 645.2,
+              "cssHeight": 485.2,
+              "sequence": 5
+            },
+            "requested": {
+              "width": 1613,
+              "height": 1213,
+              "dpr": 2.5,
+              "cssWidth": 645.2,
+              "cssHeight": 485.2,
+              "sequence": 5
+            },
+            "accepted": {
+              "width": 1613,
+              "height": 1213,
+              "dpr": 2.5,
+              "cssWidth": 645.2,
+              "cssHeight": 485.2,
+              "sequence": 5
+            },
+            "requests": 5,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 7826276,
+          "rgbaFnv1a": "ebea03b8"
+        },
+        {
+          "label": "live-dpr-2",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 1290,
+            "height": 970,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 8,
+            "successfulPresents": 13,
+            "replayedFrames": 5,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 8,
+              "coalesced": 0,
+              "presented": 8,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 8,
+              "enqueued": 8,
+              "coalesced": 0,
+              "presented": 8,
+              "successfulPresents": 13,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 68515064,
+              "width": 1290,
+              "height": 970
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requested": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "accepted": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requests": 6,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 5005200,
+          "rgbaFnv1a": "36672b65"
+        },
+        {
+          "label": "context-loss-mismatch",
+          "sourceWidth": 641,
+          "sourceHeight": 481,
+          "partial": false,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "webgl2",
+            "width": 1290,
+            "height": 970,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 9,
+            "successfulPresents": 15,
+            "replayedFrames": 6,
+            "droppedFrames": 0,
+            "contextLosses": 1,
+            "contextRestores": 0,
+            "fallbacks": 1,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 9,
+              "coalesced": 0,
+              "presented": 9,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 9,
+              "enqueued": 9,
+              "coalesced": 0,
+              "presented": 9,
+              "successfulPresents": 15,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 78525464,
+              "width": 1290,
+              "height": 970
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 641,
+                "height": 481
+              },
+              "resourceWidth": 641,
+              "resourceHeight": 481
+            },
+            "errors": []
+          },
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requested": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "accepted": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requests": 6,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "checkedBytes": 5005200,
+          "rgbaFnv1a": "36672b65"
+        }
+      ],
+      "modeStates": [
+        {
+          "width": 803,
+          "height": 603,
+          "dpr": 2,
+          "advertisedWidth": 1606,
+          "advertisedHeight": 1206
+        },
+        {
+          "width": 321,
+          "height": 241,
+          "dpr": 2,
+          "advertisedWidth": 642,
+          "advertisedHeight": 482
+        },
+        {
+          "width": 645,
+          "height": 485,
+          "dpr": 2,
+          "advertisedWidth": 1290,
+          "advertisedHeight": 970
+        }
+      ],
+      "pointer": {
+        "sequence": 1,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 8179
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 6812
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 8179,
+          "y": 6812
+        }
+      },
+      "dprChanges": [
+        {
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1613,
+              "height": 1213,
+              "dpr": 2.5,
+              "cssWidth": 645.2,
+              "cssHeight": 485.2,
+              "sequence": 5
+            },
+            "requested": {
+              "width": 1613,
+              "height": 1213,
+              "dpr": 2.5,
+              "cssWidth": 645.2,
+              "cssHeight": 485.2,
+              "sequence": 5
+            },
+            "accepted": {
+              "width": 1613,
+              "height": 1213,
+              "dpr": 2.5,
+              "cssWidth": 645.2,
+              "cssHeight": 485.2,
+              "sequence": 5
+            },
+            "requests": 5,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "css": [
+            "645.2px",
+            "485.2px"
+          ]
+        },
+        {
+          "viewport": {
+            "disposed": false,
+            "desired": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requested": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "accepted": {
+              "width": 1290,
+              "height": 970,
+              "dpr": 2,
+              "cssWidth": 645,
+              "cssHeight": 485,
+              "sequence": 6
+            },
+            "requests": 6,
+            "inFlight": false,
+            "timerPending": false,
+            "dprWatcherPending": true,
+            "debounceMs": 250,
+            "error": null
+          },
+          "css": [
+            "645px",
+            "485px"
+          ]
+        }
+      ],
+      "storm": null,
+      "contextLoss": {
+        "replaced": true,
+        "style": [
+          "645px",
+          "485px"
+        ],
+        "state": {
+          "backend": "canvas2d",
+          "defaultBackend": "webgl2",
+          "width": 1290,
+          "height": 970,
+          "fixedViewport": true,
+          "sizeMismatch": true,
+          "framesReceived": 8,
+          "successfulPresents": 14,
+          "replayedFrames": 6,
+          "droppedFrames": 0,
+          "contextLosses": 1,
+          "contextRestores": 0,
+          "fallbacks": 1,
+          "listenerCount": 2,
+          "scheduler": {
+            "enqueued": 8,
+            "coalesced": 0,
+            "presented": 8,
+            "skipped": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "paused": false,
+            "disposed": false,
+            "scheduled": false
+          },
+          "gpu": {
+            "framesReceived": 8,
+            "enqueued": 8,
+            "coalesced": 0,
+            "presented": 8,
+            "successfulPresents": 14,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "uploadedBytes": 73520264,
+            "width": 1290,
+            "height": 970
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 641,
+              "height": 481
+            },
+            "resourceWidth": 641,
+            "resourceHeight": 481
+          },
+          "errors": []
+        }
+      },
+      "afterDispose": {
+        "disposed": true,
+        "desired": {
+          "width": 1290,
+          "height": 970,
+          "dpr": 2,
+          "cssWidth": 645,
+          "cssHeight": 485,
+          "sequence": 6
+        },
+        "requested": {
+          "width": 1290,
+          "height": 970,
+          "dpr": 2,
+          "cssWidth": 645,
+          "cssHeight": 485,
+          "sequence": 6
+        },
+        "accepted": {
+          "width": 1290,
+          "height": 970,
+          "dpr": 2,
+          "cssWidth": 645,
+          "cssHeight": 485,
+          "sequence": 6
+        },
+        "requests": 6,
+        "inFlight": false,
+        "timerPending": false,
+        "dprWatcherPending": false,
+        "debounceMs": 250,
+        "error": null
+      },
+      "screenshotName": "webgl2-dpr-2.png",
+      "screenshotSha256": "a4ab276fc1776ef2ab7c0d2ae0c38e7fe3b178f040275a83aeb4b5a75f2a9118"
+    }
+  ],
+  "metrics": [
+    "126",
+    "0",
+    "126"
+  ],
+  "detail": "E5-T22b\nIN PROGRESS\n✕ Close\nDebounce viewport and DPR changes with stale-frame letterboxing\nEpic\nE5 — The Window\nStatus\nin progress\nEstimate\nS\nDepends on\nE5-T22a\nGOAL\n\nObserve the browser display container and device-pixel ratio, request bounded\nguest pixel modes, and safely present old-size frames while the guest catches up.\n\nACCEPTANCE CRITERIA (0/5)\n○\nCSS dimensions multiplied by DPR yield rounded bounded device-pixel modes. DPR changes without CSS changes are observed. The trailing delay is 250 ms; a test-only zero-delay hook is explicitly scoped.\n○\nFifty size changes over five seconds coalesce to a bounded handful of requests and end at the final mode. Late async replies cannot restore older intent. Disposal cancels observers, timers and DPR listeners.\n○\nOld-size resource rows keep their own stride and bounds. The visible target clips or letterboxes at native pixel scale on opaque black, never stretches. A matching frame removes the mismatch state and bars.\n○\nOdd widths and DPR 1, 1.5 and 2 pass independent pixel oracles through both actual browser backends, including context loss/replacement and a pending scheduled frame at resize.\n○\nPointer coordinates map the visible target consistently; minimum-size clamping and the pre-desktop next-mode-set caveat are documented.\nVERIFICATION LOG — EVIDENCE\n### 2026-09-06 — coordinator — planned\n\nSecond ordered S replacement for E5-T22. Real guest adoption and end-to-end\nlatency/resource cleanup remain the responsibility of T22c-d.\n\n### 2026-09-06 — coordinator — in-progress\n\nT22a independently verified at dc28b514; its four held acceptance items are\nchecked off as a metadata handoff. Implement the viewport/presentation boundary\nwithout changing the guest compositor or the retained fixed-size T18 proof pages.\nADVERSARIAL VERIFICATION\nRace an old RPC response against a newer viewport intent, then dispose while an\nRPC is pending. Submit an old resource after shrinking the target, including a\npartial last-row rectangle; compare pixels to an independent stride/clipping\noracle. Lose WebGL context during the mismatch and require the replacement\ncanvas to replay the same bounded image. Add one independent odd-size sequence.\nCarry T22a and existing resource TRANSFER bounds forward unchanged.\nsource: tasks/epic-5-the-window/E5-T22b-viewport-letterboxing.md",
+  "appViewport": {
+    "disposed": false,
+    "desired": {
+      "width": 1122,
+      "height": 240,
+      "dpr": 1,
+      "cssWidth": 1122,
+      "cssHeight": 240,
+      "sequence": 1
+    },
+    "requested": null,
+    "accepted": null,
+    "requests": 0,
+    "inFlight": false,
+    "timerPending": false,
+    "dprWatcherPending": true,
+    "debounceMs": 250,
+    "error": null
+  },
+  "errors": [],
+  "demoScreenshotSha256": "a5af0407cd3fc97f0bd1b0453e5697ebc12d94857178ca3337599ede320f3c9d"
+}

@@ -20211,8 +20211,9 @@
       "activity": [
         {
           "date": "2026-09-06",
-          "commits": 3,
+          "commits": 4,
           "labels": [
+            "task(e5-t22b): start viewport and stale-frame boundary",
             "docs(e5-t22a): distinguish scoped wasm success from broad fixture failure",
             "test(e5-t22a): verify host hotplug boundary with independent attacks",
             "test(e5-t22a): submit clean-clone browser hotplug and guest event proof"
@@ -20221,7 +20222,7 @@
       ],
       "firstActivity": "2026-09-06",
       "lastActivity": "2026-09-06",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E5-T22b",
@@ -20229,7 +20230,7 @@
       "epicKey": "5",
       "title": "Debounce viewport and DPR changes with stale-frame letterboxing",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T22a"
       ],
@@ -20261,19 +20262,21 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-06 — coordinator — planned\n\nSecond ordered S replacement for E5-T22. Real guest adoption and end-to-end\nlatency/resource cleanup remain the responsibility of T22c-d.\n\n### 2026-09-06 — coordinator — in-progress\n\nT22a independently verified at dc28b514; its four held acceptance items are\nchecked off as a metadata handoff. Implement the viewport/presentation boundary\nwithout changing the guest compositor or the retained fixed-size T18 proof pages.",
+      "verificationLog": "### 2026-09-06 — coordinator — planned\n\nSecond ordered S replacement for E5-T22. Real guest adoption and end-to-end\nlatency/resource cleanup remain the responsibility of T22c-d.\n\n### 2026-09-06 — coordinator — in-progress\n\nT22a independently verified at dc28b514; its four held acceptance items are\nchecked off as a metadata handoff. Implement the viewport/presentation boundary\nwithout changing the guest compositor or the retained fixed-size T18 proof pages.\n\n### 2026-09-06 — worker — implemented\n\nFrozen runtime/harness `66bb2a48019d089756cdfaee3d5ea578f156bc28`.\n`make web-dist` rebuilt the deployable modules. Final command\n`make verify-E5-T22b > evidence/e5-t22b/acceptance.log 2>&1` exited 0: 55 tests,\n58 independent pixel checks / 183,108,328 bytes across actual Canvas2D and\nWebGL2 at DPR 1, 1.5 and 2, live DPR swaps, real mode RPCs, one extra request\nfor a 50-change / five-second storm, native pointer transport, context-loss\nreplacement, and disposal. Chrome 152 uses an explicitly recorded software\nWebGL renderer for functional proof only. Built demo: 126/0, zero collected\nerrors; main-app ownership accepts its current initial viewport through a real\npaused fixture controller. This does not claim a live compositor adopted a mode.\n\nEvidence: `evidence/e5-t22b/README.md`, `viewport-proof.json` SHA256\n`d273f19eb6f5b7ce92505d049fada88dc73ee79f02776a3be83478cd66587690`,\n`acceptance.log` SHA256\n`703d8693242638966c4c0b08d64a39a9d9b80e2ef5c7a9d039ecce24f9017a43`,\nand seven hash-bound browser captures. Unchanged WASM SHA256\n`563fb01ba0eb5bcfbf5de2b0f76471881f06f165aa0ff56380edc14acb9d05fc` carries\nT22a's verified guest trace, event/EDID semantics and resource bounds forward.\n\nThe verifier's provisional novel attack refuted the initial `2da168d7` frame\ntransition twice. Both reports and the initial worker recording are retained.\nThe fix decides required full damage at paint time, so a newer partial frame\ncannot coalesce it away; mismatch clears only after successful backend delivery.\nThe final deterministic regression and six browser cases exercise exactly that\ncomposition. Viewport timers/RPC policy and all other HELD boundaries are unchanged.\nNo full-workspace/Rust gauntlet or real guest desktop claim is made for this\nmedium-risk JavaScript-only boundary.",
       "adversarial": "Race an old RPC response against a newer viewport intent, then dispose while an\nRPC is pending. Submit an old resource after shrinking the target, including a\npartial last-row rectangle; compare pixels to an independent stride/clipping\noracle. Lose WebGL context during the mismatch and require the replacement\ncanvas to replay the same bounded image. Add one independent odd-size sequence.\nCarry T22a and existing resource TRANSFER bounds forward unchanged.",
       "file": "tasks/epic-5-the-window/E5-T22b-viewport-letterboxing.md",
       "activity": [
         {
           "date": "2026-09-06",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "task(e5-t22b): start viewport and stale-frame boundary"
+          ]
         }
       ],
       "firstActivity": "2026-09-06",
       "lastActivity": "2026-09-06",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E5-T22c",
