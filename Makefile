@@ -938,7 +938,7 @@ verify-E5-T22c:
 	sh -n tools/rootfs/desktop-test-console
 	node --check web/desktop-resize.js
 	node --check tools/verify/e5-t22c-guest-mode.mjs
-	node --test tools/verify/e5-t22c-observations.test.mjs tools/verify/e5-t22c-publication.test.mjs tools/verify/e5-t18e-publication.test.mjs
+	node --test tools/verify/e5-t22c-observations.test.mjs tools/verify/e5-t22c-publication.test.mjs tools/verify/e5-t22c-symbolize-cpu.test.mjs tools/verify/e5-t18e-publication.test.mjs
 	E5_T22C_TOOLS_OUT=target/e5-t22c/display-tools E5_T17B_OUT=target/e5-t22c/acceptance-image E5_T17B_IMG_SIZE=1G E5_T17B_PACKAGE_LOCK=tools/image/e5-t22c/MANIFEST.txt E5_T18B_INTERACTIVE=1 E5_T18D_RECOVERY=1 E5_T22C_RESIZE=1 bash tools/image/desktop.sh
 	E5_T22C_TOOLS_OUT=target/e5-t22c/display-tools bash tools/verify/e5-t22c-native.sh
 	cargo build --release -p wasm-vm-cli

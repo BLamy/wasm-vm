@@ -3,8 +3,9 @@ id: E5-T22c
 epic: 5
 title: Apply guest desktop hotplug modes without restarting the compositor
 priority: 522.3
-status: in-progress
-depends_on: [E5-T22b, E5-T22e]
+status: blocked
+depends_on: [E5-T22b, E5-T22e, E5-T22f]
+blocked_on: E5-T22f cached-code PMP privilege-transition cost
 estimate: S
 risk: high
 capstone: false
@@ -303,3 +304,33 @@ An iteration-only fixed-command stdin loop can retain this same disposable
 guest for follow-up measurements; strict acceptance cannot enable that loop or
 either profiler. No arbitrary guest/host commands or network control endpoint
 are added. Kernel debug-setting observations remain leads, not a kernel change.
+
+### 2026-09-06 — worker — isolate the measured engine prerequisite
+
+Exact repro at `9b656c7f`: `E5_T22C_ITERATION=1 E5_T22C_PROFILE=1
+E5_T22C_CPU_PROFILE=1 E5_T22C_INTERACTIVE=1
+E5_T22C_IMAGE_DIR=target/e5-t22c/desktop-image-solid-v7
+E5_T22C_CHUNKS=target/e5-t22c/chunks/desktop-solid-v7
+E5_T22C_OUT=target/e5-t22c/iteration-solid-v7-cpu
+node tools/verify/e5-t22c-guest-mode.mjs`. After the usual seven modes, fixed
+stdin commands request 1373x907, 640x480, 2560x1600, then stop. All ten real
+mode/EDID/canvas/client/marker checks hold, browser errors remain empty, and
+every timing exceeds two seconds. The first maximum-mode expansion paints at
+7617 ms and fills at 15005 ms; the repeated maximum fills at 13097 ms. Preserve
+the complete run in `evidence/e5-t22c/iteration-solid-v7-cpu/`.
+
+The focused Chrome profiles place 30.71% and 30.06% of those maximum-mode
+windows inside `Machine::sync_pmp_code_permissions`, including its callees.
+Reconstruct function names from the same release compiler output and require
+byte identity of **every non-custom Wasm section** before applying any name.
+The production Wasm remains `c1c854b8bb3b5cfbcc5a6a6f45199fca2151d7d949e7c707b546343504d7cb0f`;
+no profiling build is loaded into the guest. `cpu-summary.json` binds the names,
+raw profiles and executable sections; its README gives exact reproduction.
+
+Source inspection finds a full cached-instruction audit on S/U transitions,
+although `Csrs::pmp_ok` and `Pmp::check` treat S and U identically. Preserve the
+M-mode distinction and revision-change invalidation. This engine/security
+boundary is outside the compositor-only slice: isolate it as E5-T22f, leave C
+blocked until that prerequisite is verified, and then remeasure the same image.
+No claim that removing this cost alone will meet two seconds; no criterion is
+waived, no kernel/renderer switch, no final image lock or verified status.
