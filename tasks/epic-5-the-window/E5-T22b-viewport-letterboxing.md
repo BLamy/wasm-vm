@@ -3,7 +3,7 @@ id: E5-T22b
 epic: 5
 title: Debounce viewport and DPR changes with stale-frame letterboxing
 priority: 522.2
-status: pending
+status: in-progress
 depends_on: [E5-T22a]
 estimate: S
 risk: medium
@@ -64,3 +64,8 @@ Carry T22a and existing resource TRANSFER bounds forward unchanged.
 Second ordered S replacement for E5-T22. Real guest adoption and end-to-end
 latency/resource cleanup remain the responsibility of T22c-d.
 
+### 2026-09-06 — coordinator — in-progress
+
+T22a independently verified at dc28b514; its four held acceptance items are
+checked off as a metadata handoff. Implement the viewport/presentation boundary
+without changing the guest compositor or the retained fixed-size T18 proof pages.

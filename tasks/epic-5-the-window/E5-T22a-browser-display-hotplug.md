@@ -32,16 +32,16 @@ Do not report requested dimensions as a guest scanout mode.
 
 ## Acceptance criteria
 
-- [ ] Valid dimensions from 1 through the EDID limit update the advertised mode
+- [x] Valid dimensions from 1 through the EDID limit update the advertised mode
       and EDID through the existing GPU boundary. Invalid dimensions do not
       partially mutate either dimension, event state or resources.
-- [ ] One thousand updates retain the final mode and existing config-event
+- [x] One thousand updates retain the final mode and existing config-event
       coalescing; old resource dimensions, content and allocation accounting stay
       unchanged until the guest explicitly changes them.
-- [ ] Stats describe the actual device resource map and bound scanout, never
+- [x] Stats describe the actual device resource map and bound scanout, never
       fabricate guest adoption from a host request. An absent device returns
       false/null; reentrant access returns a bounded error rather than panicking.
-- [ ] Both actual browser direct and module-worker controllers perform the same
+- [x] Both actual browser direct and module-worker controllers perform the same
       update/read sequence and reject invalid requests. Stopped controllers
       cannot mutate the device. The built demo runs 126/0 with zero errors.
 
