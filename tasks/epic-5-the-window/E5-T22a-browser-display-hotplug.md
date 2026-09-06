@@ -92,10 +92,11 @@ Final deployed wasm bytes SHA-256
 See the evidence README for exact raw files and retained preliminary failures.
 
 Submission gates: fmt and strict scoped native/wasm library lint passed; 267
-core tests, normal wasm tests, feature builds, native ISA 127/127 and performance
+core tests, scoped wasm tests, feature builds, native ISA 127/127 and performance
 55.4 MIPS passed. Full make ci was attempted, not claimed green: unchanged
-all-feature dead code, Linux-only workspace compilation, historical zicsr-stub
-cursor test and test-only determinism-static warnings are recorded separately.
+all-feature dead code, Linux-only workspace compilation, unchanged normal-wasm
+input-queue fixture, historical zicsr-stub cursor test and test-only
+determinism-static warnings are recorded separately.
 The initial cold-clone missing deploy-staged manifest was a proof portability
 gap; only the harness was corrected and a new pristine clone passed. Runtime
 semantics did not change after the frozen head. Production remains deferred to

@@ -14,7 +14,7 @@ retained): `npm --prefix web ci --no-audit --no-fund && make verify-E5-T22a`.
   126/0 built-demo result.
 - `host-hotplug.png` and `demo-suite.png`: raw final browser screenshots.
 - `regression.log`: unchanged-runtime regression at predecessor `0fe393ed`;
-  267 core tests, the normal wasm suite and feature builds, 127/127 native ISA
+  267 core tests, scoped wasm tests and feature builds, 127/127 native ISA
   cases and 55.4 MIPS performance smoke passed.
 
 The runtime was frozen at `8c3f4e14`; subsequent commits change only the
@@ -38,7 +38,8 @@ combination. `broad-workspace-mac.log` records Linux-only wvseccomp/prctl
 compilation on macOS and the existing core test's unguarded gpu-trace getter.
 The task recipe selects the established gpu-trace test feature. The scoped core
 and wasm library strict lint checks passed in `initial-portability.log`.
-`regression.log` also preserves the old quarantined zicsr-stub cursor test
+`regression.log` also preserves the unchanged normal-wasm input-queue fixture
+failure at input_queues.rs:91 (SYN event versus expected KEY), the old quarantined zicsr-stub cursor test
 failure (0 versus 8) and the static determinism script rejecting test-only
 Instant/Duration references in unchanged GPU resource tests. No unrelated
 implementation or tests were edited to suppress these failures.
