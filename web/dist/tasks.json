@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 280,
+    "verified": 281,
     "total": 442
   },
   "epics": [
@@ -20230,7 +20230,7 @@
       "epicKey": "5",
       "title": "Debounce viewport and DPR changes with stale-frame letterboxing",
       "priority": null,
-      "status": "implemented",
+      "status": "verified",
       "depends_on": [
         "E5-T22a"
       ],
@@ -20241,42 +20241,43 @@
       "criteria": [
         {
           "text": "CSS dimensions multiplied by DPR yield rounded bounded device-pixel modes. DPR changes without CSS changes are observed. The trailing delay is 250 ms; a test-only zero-delay hook is explicitly scoped.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Fifty size changes over five seconds coalesce to a bounded handful of requests and end at the final mode. Late async replies cannot restore older intent. Disposal cancels observers, timers and DPR listeners.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Old-size resource rows keep their own stride and bounds. The visible target clips or letterboxes at native pixel scale on opaque black, never stretches. A matching frame removes the mismatch state and bars.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Odd widths and DPR 1, 1.5 and 2 pass independent pixel oracles through both actual browser backends, including context loss/replacement and a pending scheduled frame at resize.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Pointer coordinates map the visible target consistently; minimum-size clamping and the pre-desktop next-mode-set caveat are documented.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 5,
-      "criteriaDone": 0,
-      "verificationLog": "### 2026-09-06 — coordinator — planned\n\nSecond ordered S replacement for E5-T22. Real guest adoption and end-to-end\nlatency/resource cleanup remain the responsibility of T22c-d.\n\n### 2026-09-06 — coordinator — in-progress\n\nT22a independently verified at dc28b514; its four held acceptance items are\nchecked off as a metadata handoff. Implement the viewport/presentation boundary\nwithout changing the guest compositor or the retained fixed-size T18 proof pages.\n\n### 2026-09-06 — worker — implemented\n\nFrozen runtime/harness `66bb2a48019d089756cdfaee3d5ea578f156bc28`.\n`make web-dist` rebuilt the deployable modules. Final command\n`make verify-E5-T22b > evidence/e5-t22b/acceptance.log 2>&1` exited 0: 55 tests,\n58 independent pixel checks / 183,108,328 bytes across actual Canvas2D and\nWebGL2 at DPR 1, 1.5 and 2, live DPR swaps, real mode RPCs, one extra request\nfor a 50-change / five-second storm, native pointer transport, context-loss\nreplacement, and disposal. Chrome 152 uses an explicitly recorded software\nWebGL renderer for functional proof only. Built demo: 126/0, zero collected\nerrors; main-app ownership accepts its current initial viewport through a real\npaused fixture controller. This does not claim a live compositor adopted a mode.\n\nEvidence: `evidence/e5-t22b/README.md`, `viewport-proof.json` SHA256\n`d273f19eb6f5b7ce92505d049fada88dc73ee79f02776a3be83478cd66587690`,\n`acceptance.log` SHA256\n`703d8693242638966c4c0b08d64a39a9d9b80e2ef5c7a9d039ecce24f9017a43`,\nand seven hash-bound browser captures. Unchanged WASM SHA256\n`563fb01ba0eb5bcfbf5de2b0f76471881f06f165aa0ff56380edc14acb9d05fc` carries\nT22a's verified guest trace, event/EDID semantics and resource bounds forward.\n\nThe verifier's provisional novel attack refuted the initial `2da168d7` frame\ntransition twice. Both reports and the initial worker recording are retained.\nThe fix decides required full damage at paint time, so a newer partial frame\ncannot coalesce it away; mismatch clears only after successful backend delivery.\nThe final deterministic regression and six browser cases exercise exactly that\ncomposition. Viewport timers/RPC policy and all other HELD boundaries are unchanged.\nNo full-workspace/Rust gauntlet or real guest desktop claim is made for this\nmedium-risk JavaScript-only boundary.",
+      "criteriaDone": 5,
+      "verificationLog": "### 2026-09-06 — coordinator — planned\n\nSecond ordered S replacement for E5-T22. Real guest adoption and end-to-end\nlatency/resource cleanup remain the responsibility of T22c-d.\n\n### 2026-09-06 — coordinator — in-progress\n\nT22a independently verified at dc28b514; its four held acceptance items are\nchecked off as a metadata handoff. Implement the viewport/presentation boundary\nwithout changing the guest compositor or the retained fixed-size T18 proof pages.\n\n### 2026-09-06 — worker — implemented\n\nFrozen runtime/harness `66bb2a48019d089756cdfaee3d5ea578f156bc28`.\n`make web-dist` rebuilt the deployable modules. Final command\n`make verify-E5-T22b > evidence/e5-t22b/acceptance.log 2>&1` exited 0: 55 tests,\n58 independent pixel checks / 183,108,328 bytes across actual Canvas2D and\nWebGL2 at DPR 1, 1.5 and 2, live DPR swaps, real mode RPCs, one extra request\nfor a 50-change / five-second storm, native pointer transport, context-loss\nreplacement, and disposal. Chrome 152 uses an explicitly recorded software\nWebGL renderer for functional proof only. Built demo: 126/0, zero collected\nerrors; main-app ownership accepts its current initial viewport through a real\npaused fixture controller. This does not claim a live compositor adopted a mode.\n\nEvidence: `evidence/e5-t22b/README.md`, `viewport-proof.json` SHA256\n`d273f19eb6f5b7ce92505d049fada88dc73ee79f02776a3be83478cd66587690`,\n`acceptance.log` SHA256\n`703d8693242638966c4c0b08d64a39a9d9b80e2ef5c7a9d039ecce24f9017a43`,\nand seven hash-bound browser captures. Unchanged WASM SHA256\n`563fb01ba0eb5bcfbf5de2b0f76471881f06f165aa0ff56380edc14acb9d05fc` carries\nT22a's verified guest trace, event/EDID semantics and resource bounds forward.\n\nThe verifier's provisional novel attack refuted the initial `2da168d7` frame\ntransition twice. Both reports and the initial worker recording are retained.\nThe fix decides required full damage at paint time, so a newer partial frame\ncannot coalesce it away; mismatch clears only after successful backend delivery.\nThe final deterministic regression and six browser cases exercise exactly that\ncomposition. Viewport timers/RPC policy and all other HELD boundaries are unchanged.\nNo full-workspace/Rust gauntlet or real guest desktop claim is made for this\nmedium-risk JavaScript-only boundary.\n\n### 2026-09-06 — independent verifier — VERDICT: verified\n\n- F1/P3 HELD after repair at frozen runtime `66bb2a48`, worker claim `25323636`.\n  Identical independent odd-size attack now passes 45 pixel checks across both\n  actual backends and all three DPRs. Coalesced matching frames have zero wrong\n  pixels at `verifier/odd-transition-final-66bb2a48.json:395` and `:1784`\n  (plus DPR 1.5/2 cases); SHA256\n  `6484176cf7eae41d935fdb828ab58172f770ae9845e5bad8010f6c7bdcb45501`.\n- F2/F3/P4 HELD: recorded scoped test (`verifier/final-unit-tests.log:7`)\n  proves received-versus-painted mismatch and subsequent partial fast path.\n  Independent context replacement reads before any new frame have zero pixel\n  mismatches at final attack `:1847`, `:2374`, `:2901`. All changed runtime\n  hunks execute; the coverage map is in `verifier/final-verdict.md`.\n- F4 HELD: checked exact-head worker JSON/log digests cited above, all eleven\n  runtime/harness hashes and seven screenshots. Final 55 tests, 58 oracles /\n  183108328 bytes and demo 126/0/126 pass with no collected errors. Actual paused\n  main-app ownership binds 1122x240 at `viewport-proof.json:7099` and `:7134`.\n- P1/P2/P5 HELD carried unchanged: viewport/DPR debounce, async identity and\n  disposal fences, pointer mapping, clamps/caveat documentation, and T22a's\n  byte-identical WASM/architectural resource-boundary proof. All five acceptance\n  checkboxes are checked; guest compositor adoption remains T22c-d.\n- SUITE: retain the deterministic coalescing/partial-fast-path regression and\n  six browser coalescing cases in `make verify-E5-T22b`, plus the independent\n  attack and its failure/success recordings. Original reports and `initial/`\n  evidence remain unchanged. No implementation, deployment or merge.\n\nCommands (exit 0): `ATTACK_REPORT=odd-transition-final-66bb2a48.json node\nevidence/e5-t22b/verifier/odd-transition.mjs`; `node --test\nweb/tests/e5-t22b-viewport.test.mjs`; `node\nevidence/e5-t22b/verifier/check-final-evidence.mjs`.\nFull report and hash audit: `evidence/e5-t22b/verifier/final-verdict.md`,\n`final-integrity.json`. Verification is incremental and scoped to the medium-risk\nbrowser boundary; no unrelated Rust/CI or compositor proof was rerun.",
       "adversarial": "Race an old RPC response against a newer viewport intent, then dispose while an\nRPC is pending. Submit an old resource after shrinking the target, including a\npartial last-row rectangle; compare pixels to an independent stride/clipping\noracle. Lose WebGL context during the mismatch and require the replacement\ncanvas to replay the same bounded image. Add one independent odd-size sequence.\nCarry T22a and existing resource TRANSFER bounds forward unchanged.",
       "file": "tasks/epic-5-the-window/E5-T22b-viewport-letterboxing.md",
       "activity": [
         {
           "date": "2026-09-06",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "test(e5-t22b): record repaired viewport transition proof",
             "task(e5-t22b): start viewport and stale-frame boundary"
           ]
         }
       ],
       "firstActivity": "2026-09-06",
       "lastActivity": "2026-09-06",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T22c",

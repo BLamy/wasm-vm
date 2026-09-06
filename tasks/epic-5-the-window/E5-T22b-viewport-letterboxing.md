@@ -3,7 +3,7 @@ id: E5-T22b
 epic: 5
 title: Debounce viewport and DPR changes with stale-frame letterboxing
 priority: 522.2
-status: implemented
+status: verified
 depends_on: [E5-T22a]
 estimate: S
 risk: medium
@@ -29,19 +29,19 @@ This does not claim that the selected compositor has adopted a new mode.
 
 ## Acceptance criteria
 
-- [ ] CSS dimensions multiplied by DPR yield rounded bounded device-pixel modes.
+- [x] CSS dimensions multiplied by DPR yield rounded bounded device-pixel modes.
       DPR changes without CSS changes are observed. The trailing delay is 250 ms;
       a test-only zero-delay hook is explicitly scoped.
-- [ ] Fifty size changes over five seconds coalesce to a bounded handful of
+- [x] Fifty size changes over five seconds coalesce to a bounded handful of
       requests and end at the final mode. Late async replies cannot restore older
       intent. Disposal cancels observers, timers and DPR listeners.
-- [ ] Old-size resource rows keep their own stride and bounds. The visible target
+- [x] Old-size resource rows keep their own stride and bounds. The visible target
       clips or letterboxes at native pixel scale on opaque black, never stretches.
       A matching frame removes the mismatch state and bars.
-- [ ] Odd widths and DPR 1, 1.5 and 2 pass independent pixel oracles through both
+- [x] Odd widths and DPR 1, 1.5 and 2 pass independent pixel oracles through both
       actual browser backends, including context loss/replacement and a pending
       scheduled frame at resize.
-- [ ] Pointer coordinates map the visible target consistently; minimum-size
+- [x] Pointer coordinates map the visible target consistently; minimum-size
       clamping and the pre-desktop next-mode-set caveat are documented.
 
 ## Verification command
@@ -99,3 +99,37 @@ The final deterministic regression and six browser cases exercise exactly that
 composition. Viewport timers/RPC policy and all other HELD boundaries are unchanged.
 No full-workspace/Rust gauntlet or real guest desktop claim is made for this
 medium-risk JavaScript-only boundary.
+
+### 2026-09-06 — independent verifier — VERDICT: verified
+
+- F1/P3 HELD after repair at frozen runtime `66bb2a48`, worker claim `25323636`.
+  Identical independent odd-size attack now passes 45 pixel checks across both
+  actual backends and all three DPRs. Coalesced matching frames have zero wrong
+  pixels at `verifier/odd-transition-final-66bb2a48.json:395` and `:1784`
+  (plus DPR 1.5/2 cases); SHA256
+  `6484176cf7eae41d935fdb828ab58172f770ae9845e5bad8010f6c7bdcb45501`.
+- F2/F3/P4 HELD: recorded scoped test (`verifier/final-unit-tests.log:7`)
+  proves received-versus-painted mismatch and subsequent partial fast path.
+  Independent context replacement reads before any new frame have zero pixel
+  mismatches at final attack `:1847`, `:2374`, `:2901`. All changed runtime
+  hunks execute; the coverage map is in `verifier/final-verdict.md`.
+- F4 HELD: checked exact-head worker JSON/log digests cited above, all eleven
+  runtime/harness hashes and seven screenshots. Final 55 tests, 58 oracles /
+  183108328 bytes and demo 126/0/126 pass with no collected errors. Actual paused
+  main-app ownership binds 1122x240 at `viewport-proof.json:7099` and `:7134`.
+- P1/P2/P5 HELD carried unchanged: viewport/DPR debounce, async identity and
+  disposal fences, pointer mapping, clamps/caveat documentation, and T22a's
+  byte-identical WASM/architectural resource-boundary proof. All five acceptance
+  checkboxes are checked; guest compositor adoption remains T22c-d.
+- SUITE: retain the deterministic coalescing/partial-fast-path regression and
+  six browser coalescing cases in `make verify-E5-T22b`, plus the independent
+  attack and its failure/success recordings. Original reports and `initial/`
+  evidence remain unchanged. No implementation, deployment or merge.
+
+Commands (exit 0): `ATTACK_REPORT=odd-transition-final-66bb2a48.json node
+evidence/e5-t22b/verifier/odd-transition.mjs`; `node --test
+web/tests/e5-t22b-viewport.test.mjs`; `node
+evidence/e5-t22b/verifier/check-final-evidence.mjs`.
+Full report and hash audit: `evidence/e5-t22b/verifier/final-verdict.md`,
+`final-integrity.json`. Verification is incremental and scoped to the medium-risk
+browser boundary; no unrelated Rust/CI or compositor proof was rerun.
