@@ -277,8 +277,10 @@ export class PresentationController {
     const value = raw !== null && typeof raw === "object"
       ? raw.retiredInstructions ?? raw.guestInstructions
       : raw;
-    const total = Number(value);
-    if (!Number.isSafeInteger(total) || total < 0) return { total: null, delta: null };
+    if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 0) {
+      return { total: null, delta: null };
+    }
+    const total = value;
     const delta = this._lastGuestInstructions === null
       ? total
       : total >= this._lastGuestInstructions ? total - this._lastGuestInstructions : null;

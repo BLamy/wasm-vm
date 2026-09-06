@@ -121,7 +121,7 @@ test("concurrent perf frames are serialized through their sync boundaries", asyn
 
 test("presentation telemetry records drawn damage and does not trust a null sink", () => {
   const records = [];
-  let guestInstructions = 100;
+  let guestInstructions = null;
   const controller = new PresentationController(new Canvas(), {
     backendFactories: factories(true),
     onPresent: (record) => records.push(record),
@@ -133,19 +133,26 @@ test("presentation telemetry records drawn damage and does not trust a null sink
   assert.deepEqual(records[0], {
     sequence: 1, timestamp: 15, backend: "canvas2d", drawn: true, replay: false,
     rect: { x: 0, y: 0, width: 2, height: 2 }, resourceWidth: 2, resourceHeight: 2, bytes: 16,
-    guestInstructions: 100, guestInstructionsTotal: 100,
+    guestInstructions: null, guestInstructionsTotal: null,
   });
-  guestInstructions = 175;
+  guestInstructions = 100;
   controller.present(frame());
   assert.deepEqual(records[1], {
     sequence: 2, timestamp: 15, backend: "canvas2d", drawn: true, replay: false,
     rect: { x: 0, y: 0, width: 2, height: 2 }, resourceWidth: 2, resourceHeight: 2, bytes: 16,
+    guestInstructions: 100, guestInstructionsTotal: 100,
+  });
+  guestInstructions = 175;
+  controller.present(frame());
+  assert.deepEqual(records[2], {
+    sequence: 3, timestamp: 15, backend: "canvas2d", drawn: true, replay: false,
+    rect: { x: 0, y: 0, width: 2, height: 2 }, resourceWidth: 2, resourceHeight: 2, bytes: 16,
     guestInstructions: 75, guestInstructionsTotal: 175,
   });
   assert.deepEqual(controller.snapshot().gpu, {
-    framesReceived: 2, enqueued: 2, coalesced: 0, presented: 2, successfulPresents: 2,
-    skipped: 0, droppedFrames: 0, overruns: 0, pending: 0, maxPending: 0, uploadedBytes: 32,
-    drawnPresents: 2, drawnBytes: 32, width: 2, height: 2,
+    framesReceived: 3, enqueued: 3, coalesced: 0, presented: 3, successfulPresents: 3,
+    skipped: 0, droppedFrames: 0, overruns: 0, pending: 0, maxPending: 0, uploadedBytes: 48,
+    drawnPresents: 3, drawnBytes: 48, width: 2, height: 2,
   });
   assert.throws(() => controller.present({
     ...frame(), rect: { x: 1, y: 1, width: 2, height: 2 },

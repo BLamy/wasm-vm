@@ -1515,8 +1515,10 @@ async function runLinuxBootOwned(opts, banner, request) {
     window.__jitStats = async () => await linuxCtl?.jitStats?.() ?? null;
     const readSchedulerStats = async () => {
       const stats = await linuxCtl?.schedulerStats?.() ?? null;
-      const retired = Number(stats?.retiredInstructions);
-      if (Number.isSafeInteger(retired) && retired >= 0) _desktopPerfGuestInstructions = retired;
+      const retired = stats?.retiredInstructions;
+      if (typeof retired === "number" && Number.isSafeInteger(retired) && retired >= 0) {
+        _desktopPerfGuestInstructions = retired;
+      }
       return stats;
     };
     window.__schedulerStats = readSchedulerStats;
