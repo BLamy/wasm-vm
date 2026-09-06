@@ -5,7 +5,7 @@
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
         bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc bench-runtime-workloads bench-runtime-compute bench-runtime-workloads-browser bench-runtime-compute-browser \
-        web-test-cpu-worker verify-E5-T16a verify-E5-T18a verify-E5-T18c
+        web-test-cpu-worker verify-E5-T16a verify-E5-T18a verify-E5-T18c verify-E5-T25a verify-E5-T25b
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -991,6 +991,14 @@ verify-E5-T25a:
 	node --test web/tests/e5-t25a-perf-hooks.test.mjs web/tests/e5-t06d-presentation.test.mjs
 	node tools/verify/e5-t25a-release-audit.mjs
 	node tools/verify/e5-t25a-browser.mjs
+
+.PHONY: verify-E5-T25b
+verify-E5-T25b:
+	node --check web/bench/desktop-perf.js
+	node --check web/desktop-terminal.js
+	node --test web/tests/e5-t25b-desktop-perf.test.mjs
+	node tools/verify/e5-t25b-release-audit.mjs
+	node tools/verify/e5-t25b-browser.mjs
 
 verify-E5-T22e:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm

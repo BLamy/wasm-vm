@@ -20,6 +20,7 @@ const FALLBACK_IMAGE_SHA256 = "467306a5d842f95927c1f5823363271b55854517f6318576a
 const FALLBACK_CHUNK_MANIFEST_SHA256 = "1be3c29945747184c3ed868f51add1829e97bfd3945f456d4676d5f035fb4827";
 
 const query = new URLSearchParams(location.search);
+const desktopPerfHooksRequested = query.has("testHooks") && query.has("perfHooks");
 const root = document.getElementById("desktop-terminal-root");
 const canvas = document.getElementById("desktop-canvas");
 const statusEl = document.getElementById("desktop-status");
@@ -53,10 +54,15 @@ let finalProof = null;
 let displayError = null;
 let latestError = null;
 let lastObservedFrame = 0;
+let desktopPerfGuestInstructions = null;
+let desktopPerfStatsTimer = null;
+let desktopPerfInput = null;
 
 const pointerFrames = [];
 const keyboardFrames = [];
 const keyboardEvents = [];
+const desktopPerfPresentRecords = [];
+const desktopPerfPresentDurations = [];
 const diagnostics = [];
 const interactions = {
   launches: [],
@@ -317,7 +323,12 @@ async function finishReadiness() {
 function onDisplayFrame(frame) {
   if (!presentation || displayError) return false;
   try {
+    const startedAt = desktopPerfHooksRequested ? performance.now() : 0;
     const reached = presentation.present(frame);
+    if (desktopPerfHooksRequested) {
+      desktopPerfPresentDurations.push(Math.max(0, performance.now() - startedAt));
+      if (desktopPerfPresentDurations.length > 4_096) desktopPerfPresentDurations.shift();
+    }
     frameCount += 1;
     const now = performance.now();
     if (now - lastInspectionAt >= 500 || frameCount === 1) {
@@ -335,6 +346,15 @@ function onDisplayFrame(frame) {
     document.documentElement.dataset.desktopReady = "error";
     return false;
   }
+}
+
+function clearDesktopPerf() {
+  if (desktopPerfStatsTimer !== null) clearInterval(desktopPerfStatsTimer);
+  desktopPerfStatsTimer = null;
+  desktopPerfGuestInstructions = null;
+  desktopPerfInput = null;
+  desktopPerfPresentRecords.length = 0;
+  desktopPerfPresentDurations.length = 0;
 }
 
 function onOutput(bytes) {
@@ -620,6 +640,14 @@ try {
   presentation = new PresentationController(canvas, {
     defaultBackend: "canvas2d",
     canvas2dOptions: { contextAttributes: { alpha: true, willReadFrequently: true } },
+    onPresent: desktopPerfHooksRequested
+      ? (record) => {
+        desktopPerfPresentRecords.push({ ...record, rect: { ...record.rect } });
+        if (desktopPerfPresentRecords.length > 4_096) desktopPerfPresentRecords.shift();
+      }
+      : undefined,
+    now: desktopPerfHooksRequested ? () => performance.now() : undefined,
+    guestInstructions: desktopPerfHooksRequested ? () => desktopPerfGuestInstructions : undefined,
   });
   document.documentElement.dataset.desktopBackend = presentation.backendName;
 } catch (error) {
@@ -631,6 +659,22 @@ try {
 
 globalThis.__desktopTerminal = publicApi();
 globalThis.__desktopTerminalProof = () => finalProof;
+if (desktopPerfHooksRequested) {
+  globalThis.__desktopPerf = {
+    version: "e5-t25b-v1",
+    ready: () => desktopPerfInput !== null,
+    input: () => desktopPerfInput,
+    now: () => performance.now(),
+    presents: () => desktopPerfPresentRecords.map((record) => ({ ...record, rect: { ...record.rect } })),
+    presentDurations: () => [...desktopPerfPresentDurations],
+    clear: () => {
+      desktopPerfPresentRecords.length = 0;
+      desktopPerfPresentDurations.length = 0;
+    },
+    state: () => presentation?.snapshot?.() ?? null,
+    scheduler: async () => await controller?.schedulerStats?.() ?? null,
+  };
+}
 
 const bootPromise = startLinuxBootWorker({
   manifestUrl: query.get("manifestUrl") || "./artifacts-alpine.json",
@@ -662,6 +706,26 @@ const bootPromise = startLinuxBootWorker({
 bootPromise.then((value) => {
   controller = value;
   globalThis.__desktopController = controller;
+  if (desktopPerfHooksRequested) {
+    import("./bench/desktop-perf-hooks.js").then(({ createDesktopPerfInput }) => {
+      if (controller !== value) return;
+      desktopPerfInput = createDesktopPerfInput(controller, { enabled: true });
+      const sampleGuestInstructions = async () => {
+        if (controller !== value) return;
+        try {
+          const stats = await value.schedulerStats?.() ?? null;
+          const retired = stats?.retiredInstructions;
+          if (typeof retired === "number" && Number.isSafeInteger(retired) && retired >= 0) {
+            desktopPerfGuestInstructions = retired;
+          }
+        } catch { /* perf attribution is diagnostic-only */ }
+      };
+      void sampleGuestInstructions();
+      desktopPerfStatsTimer = setInterval(sampleGuestInstructions, 50);
+    }).catch((error) => {
+      diagnostics.push({ reason: "desktop-perf-hook-load-failed", error: String(error?.message || error) });
+    });
+  }
   keyboardBridge = createKeyboardBridge(createWasmKeyboardAdapter(controller), {
     onFrame: recordKeyboardFrame,
     onDiagnostic: (entry) => diagnostics.push(entry),
@@ -711,6 +775,7 @@ bootPromise.then((value) => {
 });
 
 addEventListener("beforeunload", () => {
+  clearDesktopPerf();
   detachPointer?.();
   detachKeyboard?.();
   void controller?.stop?.();
