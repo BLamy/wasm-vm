@@ -20268,8 +20268,9 @@
       "activity": [
         {
           "date": "2026-09-06",
-          "commits": 3,
+          "commits": 4,
           "labels": [
+            "web(e5-t22b): surface independently verified resize boundary",
             "verify(e5-t22b): accept repaired viewport presentation boundary",
             "test(e5-t22b): record repaired viewport transition proof",
             "task(e5-t22b): start viewport and stale-frame boundary"
@@ -20278,7 +20279,7 @@
       ],
       "firstActivity": "2026-09-06",
       "lastActivity": "2026-09-06",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E5-T22c",
@@ -20286,7 +20287,7 @@
       "epicKey": "5",
       "title": "Apply guest desktop hotplug modes without restarting the compositor",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T22b"
       ],
@@ -20314,7 +20315,7 @@
       ],
       "criteriaTotal": 4,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-06 — coordinator — planned\n\nThird ordered S replacement for E5-T22. Read-only inspection of pinned Weston\n12.0.4 found that its default compositor logs and ignores enabled-head monitor\nchanges. First reproduce the selected guest's behavior, then choose the smallest\nbounded adapter or pinned patch that satisfies the real mode-change contract.",
+      "verificationLog": "### 2026-09-06 — coordinator — planned\n\nThird ordered S replacement for E5-T22. Read-only inspection of pinned Weston\n12.0.4 found that its default compositor logs and ignores enabled-head monitor\nchanges. First reproduce the selected guest's behavior, then choose the smallest\nbounded adapter or pinned patch that satisfies the real mode-change contract.\n\n### 2026-09-06 — worker — in-progress\n\nT22b independently verified at `f62fec0d`, with the built demo handoff at\n`99cfa600`. Start by recording the unchanged T18e desktop image's real browser\nhotplug baseline. Only then choose the bounded Weston/pixman integration; keep\nthe compositor process and live clients, and preserve the original image.",
       "adversarial": "Change modes again while the previous output transition is pending. Probe odd\none-pixel changes that preserve EDID physical-size rounding, minimum/maximum\nmodes, and output replacement with live clients. Independently decode the guest\nmode/EDID and compare timestamps to host request and matching-frame delivery.\nA retained old-size frame or killed client cannot count as successful resize.\nAdd one bounded independent mode sequence; sabotage the adaptation proof once.\nCarry the established host and stale-resource boundaries forward.",
       "file": "tasks/epic-5-the-window/E5-T22c-guest-mode-adaptation.md",
       "activity": [

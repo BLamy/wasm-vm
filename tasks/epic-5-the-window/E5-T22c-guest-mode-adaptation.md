@@ -3,7 +3,7 @@ id: E5-T22c
 epic: 5
 title: Apply guest desktop hotplug modes without restarting the compositor
 priority: 522.3
-status: pending
+status: in-progress
 depends_on: [E5-T22b]
 estimate: S
 risk: high
@@ -65,3 +65,9 @@ Third ordered S replacement for E5-T22. Read-only inspection of pinned Weston
 changes. First reproduce the selected guest's behavior, then choose the smallest
 bounded adapter or pinned patch that satisfies the real mode-change contract.
 
+### 2026-09-06 — worker — in-progress
+
+T22b independently verified at `f62fec0d`, with the built demo handoff at
+`99cfa600`. Start by recording the unchanged T18e desktop image's real browser
+hotplug baseline. Only then choose the bounded Weston/pixman integration; keep
+the compositor process and live clients, and preserve the original image.

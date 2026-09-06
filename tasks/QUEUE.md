@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T22c** — Apply guest desktop hotplug modes without restarting the compositor
 1. **E5-T25** — Performance harness — window-drag FPS and input-to-photon latency, measured **[DECOMPOSE BEFORE START]**
 1. **E5-T26** — Desktop-aware snapshots — GPU, input, and sound state across suspend/resume **[DECOMPOSE BEFORE START]**
 
@@ -425,7 +424,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [-] `522` [E5-T22](epic-5-the-window/E5-T22-display-resize-end-to-end.md) — Display resize end-to-end — canvas size to guest mode change and back *(deps: E5-T04, E5-T18e)*
 - [x] `522.1` [E5-T22a](epic-5-the-window/E5-T22a-browser-display-hotplug.md) — Expose bounded display hotplug and actual GPU state to browser controllers *(deps: E5-T04, E5-T18e)*
 - [x] `522.2` [E5-T22b](epic-5-the-window/E5-T22b-viewport-letterboxing.md) — Debounce viewport and DPR changes with stale-frame letterboxing *(deps: E5-T22a)*
-- [ ] `522.3` [E5-T22c](epic-5-the-window/E5-T22c-guest-mode-adaptation.md) — Apply guest desktop hotplug modes without restarting the compositor *(deps: E5-T22b)*
+- [~] `522.3` [E5-T22c](epic-5-the-window/E5-T22c-guest-mode-adaptation.md) — Apply guest desktop hotplug modes without restarting the compositor *(deps: E5-T22b)*
 - [ ] `522.4` [E5-T22d](epic-5-the-window/E5-T22d-resize-torture.md) — Prove end-to-end resize storms, resource cleanup and reload boundaries *(deps: E5-T22c)*
 - [-] `523` [E5-T23](epic-5-the-window/E5-T23-guest-agent-channel.md) — virtio-console agent channel and static Rust guest agent *(deps: E5-T05c)*
 - [x] `523.1` [E5-T23a](epic-5-the-window/E5-T23a-agent-protocol-framing.md) — Shared guest-agent protocol and bounded framing *(deps: E5-T05c)*
