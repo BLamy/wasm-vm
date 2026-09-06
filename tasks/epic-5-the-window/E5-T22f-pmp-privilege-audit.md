@@ -3,7 +3,7 @@ id: E5-T22f
 epic: 5
 title: Avoid redundant cached-code PMP audits across S/U transitions
 priority: 522.29
-status: implemented
+status: verified
 depends_on: [E5-T22e]
 estimate: S
 risk: high
@@ -26,17 +26,17 @@ interpreter/JIT policy, snapshot format, guest image and kernel unchanged.
 
 ## Acceptance criteria
 
-- [ ] With an unchanged PMP revision, S/U transitions retain cached code without
+- [x] With an unchanged PMP revision, S/U transitions retain cached code without
       inspecting cached instructions. Deterministic audit counters prove zero
       work for repeated transitions across different populated cache sizes.
-- [ ] Transitions involving M retain the existing per-instruction permission
+- [x] Transitions involving M retain the existing per-instruction permission
       audit and fail/flush on a changed permission. A PMP revision change still
       invalidates before a cached interior instruction can execute, including
       when revision and S/U mode change at the same boundary.
-- [ ] Cache-on/off guest instruction traces and final architectural state agree
+- [x] Cache-on/off guest instruction traces and final architectural state agree
       through guest SRET/trap transitions and host-directed boundary changes;
       deterministic native and actual-Wasm tests cover the selected boundary.
-- [ ] Frozen local acceptance, one pristine-clone run, and a real browser resize
+- [x] Frozen local acceptance, one pristine-clone run, and a real browser resize
       recording on the unchanged v7 desktop image demonstrate the optimization
       without losing client/mode/EDID/canvas agreement. Report actual timings,
       keeping the separate E5-T22c performance requirement unmodified.
@@ -194,3 +194,46 @@ predictions and completed frozen-test logs under `evidence/e5-t22f/verifier/`;
 the task remains `implemented`, awaiting the required independent review.
 Do not bypass the service restriction, self-verify the worker's change, waive C's
 timing criterion, merge the unfinished milestone, or advance to Omarchy/Epic 6.
+
+### 2026-09-06 — verifier — VERDICT: verified
+
+- P1 unchanged S/U audit — HELD. Predicted zero inspected ops and retained cache
+  generation across 1/16/128/2048 blocks and 1,000 transitions; observed all
+  counter cases pass at `evidence/e5-t22f/cold-clone-final.log:427-484`, with an
+  independent five-test native rerun also passing.
+- P2/P3 M and revision boundaries — HELD. Predicted full M audits and a zero-retire
+  fault at cached interior `0x80000004` after simultaneous revision/S/U changes;
+  observed `x6=0`, zero retirements and that fault for both directions and cache
+  off/on at `cold-clone-final.log:551-556`. Focused PMP, MRET, entry-safety and
+  reset regressions passed independently.
+- P4 trace/state parity — HELD. Predicted exact cache-off/on native/actual-Wasm
+  SRET, delegated-trap, restore and host-boundary agreement; observed frozen
+  hashes/digests at `cold-clone-final.log:560-572`, actual-Wasm 5/5 at lines
+  801-814, and matching independent reruns.
+- P5/P6 independent attack — HELD. Seeds `0x91e522f06a7bc3d9` and XOR
+  `0xd1b54a32d192ed03` exercised 576 locked/unlocked TOR, PTE U/X, M/S/U,
+  cache-size, restore and reset boundaries with cache-off trace/hart/RAM oracles;
+  promoted native and actual-Wasm tests each pass with 0 ignored. See
+  `evidence/e5-t22f/verifier/daybreak-verification.md` and
+  `tests/shared/e5_t22f_verifier.rs`.
+- SABOTAGE — HELD. Removing only the new shortcut's unchanged-revision predicate
+  in a disposable `84494881` archive left the ordinary revision fixture passing
+  but made the mid-block fixture fail in native and actual-Wasm: observed
+  `MaxInstrs` instead of `InstrAccessFault { tval: 2147483652 }`. Production was
+  not modified.
+- P7 frozen/browser proof — HELD. Cold-clone log SHA-256
+  `886c3cc534514a1c2ae9a9718c8ad9207f7d1b2b3b3091b8c97d07a1ede3ef32`
+  binds `84494881` and ends in success. Recomputed engine/source/image/chunk/
+  kernel/Wasm/result/screenshot digests match; seven modes retain Weston 961,
+  foot 1018, marker, EDID/scanout/canvas agreement and painted edges with no
+  browser errors. Demo is 126/126. Actual complete times are 2191.81, 1574.84,
+  3113.30, 8648.73, 2894.69, 1870.26 and 3425.27 ms; E5-T22c remains explicitly
+  uncertified (`browser/engine-proof.json:16-72`).
+- COVERAGE — HELD. Every runtime/test/harness hunk in `03fdfb24..84494881`
+  executed or is declarative/generated and hash-bound; no acceptance-relevant
+  hunk remains unproved. Static trace constants are backed by pre-change output
+  and independent cache-disabled record/full-state comparators, not a
+  self-generated semantic oracle. No new ignored test exists.
+- SUITE: promoted the deterministic seeded attack as native and actual-Wasm
+  integration tests. Full commands and artifact checks are recorded in
+  `evidence/e5-t22f/verifier/daybreak-verification.md`.
