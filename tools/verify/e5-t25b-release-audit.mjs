@@ -59,6 +59,8 @@ assert.match(browserRunner, /schedulerBefore: before\.scheduler/);
 assert.match(browserRunner, /schedulerAfter: after\.scheduler/);
 assert.match(browserRunner, /presentDurationsMs: after\.presentDurationsMs/);
 assert.match(browserRunner, /records: after\.records/);
+assert.match(browserRunner, /assertWindowMoved\(chrome\.titlebar, chromeAfter\.titlebar, \{ direction \}\)/);
+assert.match(browserRunner, /windowDisplacementPx: displacement\.displacementPx/);
 
 const teardown = blockBetween(terminal, "function clearDesktopPerf", "function onOutput");
 assert.match(teardown, /clearInterval\(desktopPerfStatsTimer\)/);

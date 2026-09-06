@@ -7,6 +7,7 @@ import {
   DRAG_MOVE_COUNT,
   aggregateDragRuns,
   assertNullSinkRejected,
+  assertWindowMoved,
   buildDragPath,
   summarizeDragRun,
 } from "../bench/desktop-perf.js";
@@ -58,6 +59,15 @@ test("null sink is rejected instead of reporting an FPS number", () => {
     drawnPresents: 0, accepted: false, reason: "no-drawn-presents",
   });
   assert.throws(() => validRun({ records: nullRecords }), /no drawn presents/);
+});
+
+test("stationary or wrong-way windows are rejected before FPS aggregation", () => {
+  assert.deepEqual(assertWindowMoved({ left: 100 }, { left: 400 }, { direction: 1 }), {
+    deltaX: 300,
+    displacementPx: 300,
+  });
+  assert.throws(() => assertWindowMoved({ left: 100 }, { left: 100 }, { direction: 1 }), /below/);
+  assert.throws(() => assertWindowMoved({ left: 100 }, { left: 0 }, { direction: 1 }), /wrong direction/);
 });
 
 test("five-run aggregation exposes repeatability and p50/p95", () => {

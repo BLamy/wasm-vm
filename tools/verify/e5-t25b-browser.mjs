@@ -15,6 +15,7 @@ import {
   DRAG_MOVE_COUNT,
   aggregateDragRuns,
   assertNullSinkRejected,
+  assertWindowMoved,
   buildDragPath,
   summarizeDragRun,
 } from "../../web/bench/desktop-perf.js";
@@ -167,6 +168,9 @@ try {
     }));
     const pointerFramesDelta = after.pointerFrames - before.pointerFrames;
     assert.ok(pointerFramesDelta >= DRAG_MOVE_COUNT, `${index + 1}: fewer than 300 processed pointer moves`);
+    const chromeAfter = await page.evaluate(() => window.__desktopCursor.detectWindowChrome());
+    assert.ok(chromeAfter?.titlebar, `${index + 1}: Foot window chrome disappeared during drag`);
+    const displacement = assertWindowMoved(chrome.titlebar, chromeAfter.titlebar, { direction });
     if (firstRunRecords === null) firstRunRecords = after.records;
     const run = summarizeDragRun({
       runId: `drag-${String(index + 1).padStart(2, "0")}`,
@@ -186,6 +190,10 @@ try {
       pointerFrames: after.pointerFrames,
       pointerFramesDelta,
       requestedMoves: pathPoints.length,
+      windowBefore: chrome.titlebar,
+      windowAfter: chromeAfter.titlebar,
+      windowDisplacementX: displacement.deltaX,
+      windowDisplacementPx: displacement.displacementPx,
       schedulerBefore: before.scheduler,
       schedulerAfter: after.scheduler,
       presentDurationsMs: after.presentDurationsMs,

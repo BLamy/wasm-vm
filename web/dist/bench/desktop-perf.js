@@ -5,6 +5,7 @@ export const DESKTOP_PERF_HARNESS_VERSION = "e5-t25b-v1";
 export const DRAG_MOVE_COUNT = 300;
 export const DRAG_REPEAT_COUNT = 5;
 export const DRAG_CV_LIMIT_PERCENT = 15;
+export const DRAG_MIN_WINDOW_DISPLACEMENT_PX = 100;
 
 function finiteNumber(value, name) {
   if (typeof value !== "number" || !Number.isFinite(value)) throw new TypeError(`${name} must be finite`);
@@ -66,6 +67,30 @@ export function buildDragPath(
       y: Math.round(startY + ((endY - startY) * fraction)),
     };
   });
+}
+
+/** Reject a plausible-looking FPS sample unless the real window moved in the requested direction. */
+export function assertWindowMoved(
+  before,
+  after,
+  { direction = 0, minimumPx = DRAG_MIN_WINDOW_DISPLACEMENT_PX } = {},
+) {
+  const start = finiteNumber(before?.left, "windowBefore.left");
+  const end = finiteNumber(after?.left, "windowAfter.left");
+  const minimum = finiteNumber(minimumPx, "minimumPx");
+  if (minimum <= 0) throw new RangeError("minimumPx must be positive");
+  if (direction !== -1 && direction !== 0 && direction !== 1) {
+    throw new RangeError("direction must be -1, 0, or 1");
+  }
+  const deltaX = end - start;
+  const displacementPx = Math.abs(deltaX);
+  if (displacementPx < minimum) {
+    throw new Error(`window displacement ${displacementPx}px is below ${minimum}px`);
+  }
+  if (direction !== 0 && Math.sign(deltaX) !== direction) {
+    throw new Error(`window moved in the wrong direction: ${deltaX}px`);
+  }
+  return Object.freeze({ deltaX, displacementPx });
 }
 
 function recordsInWindow(records, startedAt, endedAt) {
