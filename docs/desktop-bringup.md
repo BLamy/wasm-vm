@@ -40,7 +40,8 @@ digests, console errors and screenshots are recorded rather than inferred.
 
 The default parallelism is 12 cold contexts plus the warm timing pair. These are
 repeatability timings under the recorded load, not an isolated performance claim.
-`E5_T18E_CONCURRENCY=1` selects serial measurements without reducing the 25-boot gate.
+`E5_T18E_CONCURRENCY=1` serializes the cold-boot stream without reducing the
+25-boot gate; the warm pair still runs concurrently with that stream.
 Do not compare them to an isolated run without accounting for that configuration.
 The report is `evidence/e5-t18e/desktop-bringup.json`; each completed boot also has
 its own JSON, PNG and UART log so a later failure cannot erase earlier observations.
@@ -58,8 +59,9 @@ its own JSON, PNG and UART log so a later failure cannot erase earlier observati
   `/run/seatd.sock` must be a socket, and `/dev/dri/card0` a character device.
 - A localhost-only recovery boot exposes the fixed `status`, `log`, `tty`,
   `crash`, and `config-fail` verbs. It is not a root shell. Start a server with
-  `E5_T18D_DESKTOP_ASSET_DIR=target/e5-t18d/chunks/desktop-v5 bash tools/serve-dev.sh 8000`,
-  then open `/desktop-recovery.html?recoveryTest=1`. `recoveryFault=config` adds
+  the rebuilt chunk directory from `publication.chunkDir` in the report, using
+  the command below, then open `/desktop-recovery.html?recoveryTest=1`.
+  `recoveryFault=config` adds
   a cold-boot config fault to that disposable overlay. The controls are disabled
   on production hosts. Normal boots execute the original serial getty.
 - `tty` reads actual `/dev/vcs1` bytes and getty command lines; a printed claim
@@ -71,6 +73,14 @@ its own JSON, PNG and UART log so a later failure cannot erase earlier observati
   channels, not instructions to add a password or root shell to the shipped image.
   Native GPU/input trace switches can separate device delivery from compositor
   behavior; use the CLI's `boot --help` for the current trace switches.
+
+From the checkout that ran the rebuild, start the recovery server with its recorded
+publication, not a historical task's output directory:
+
+```sh
+E5_T18D_DESKTOP_ASSET_DIR="$(node -p 'require("./evidence/e5-t18e/publication.json").publication.chunkDir')" \
+  bash tools/serve-dev.sh 8000
+```
 
 ## Symptom, diagnosis, fix
 
@@ -90,7 +100,7 @@ its own JSON, PNG and UART log so a later failure cannot erase earlier observati
 | Second window or cursor changes inferred window geometry | Inspect client-body edges below the top panel; compare cursor bitmap | Use dominant body edges, not extrema contaminated by the arrow. The second titlebar may be clipped under the 32-pixel panel. |
 | A supposed close merely minimizes | Try Super+Tab with the matched guest-instruction budget | T18c's positive minimize/restore control distinguishes close from hide; do not accept disappearance alone. |
 | Crash causes stale readiness or endless autologin | Match attempt, PID, exit and restart log entries | Remove stale readiness/socket state each attempt. Persist the at-most-three-attempt budget across getty reentry; reset only once at boot. |
-| Third crash or broken config | Use `status`, `tty`, and the visible canvas together | Latched fallback clears PID/readiness and execs real tty1 getty with `desktop-fallback.issue`. Broken config has zero started/ready events. Rebuild corrected configuration and reboot. |
+| Third crash or broken config | Use `status`, `tty`, and the visible canvas together | Latched fallback clears PID/readiness and execs real tty1 getty with `desktop-fallback.issue`. A cold-boot config fault has zero started/ready events; removing config after readiness preserves that earlier attempt in the log before fallback. Rebuild corrected configuration and reboot. |
 | Init or diagnostic read hangs on persisted state | Run the FIFO/symlink regressions; distinguish user-controlled nodes from regular files | Root diagnostics drop to UID 1000, reject links/special files, and bound reads. Init is bounded at 30 seconds and must not follow user-owned state as root. |
 | BusyBox watchdog fires but caller never returns | Inspect the blocked pipe holder and UID after the timeout | Put timeout after `runuser`, then directly exec `head`/`tail`. Killing `runuser` itself orphaned the FIFO reader holding the substitution pipe. |
 | Watcher never sees a serial marker that is visibly printed | Compare raw UART CRLF to the search string | Normalize CRLF only for parsing. Preserve the raw recording byte-for-byte. |

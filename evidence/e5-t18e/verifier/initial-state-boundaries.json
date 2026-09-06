@@ -1,0 +1,158 @@
+{
+  "provenance": "Preserved from this fresh verifier session's original tool results (chunks 994efb, f5f563, e3d846), not a rerun. Unabridged retained case outputs were checked against their original emitted digests. The normal-output log-cap sample is explicitly retained as an excerpt; its original full-output length and digest are preserved.",
+  "command": "/usr/bin/time -p docker run --rm --network none --cap-add SYS_PTRACE -v \"$PWD:/repo:ro\" wasm-vm-kernel-build:local python3 /repo/tools/verify/e5-t18d-state-boundaries.py --disposable",
+  "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+  "head": "9ed9e0d1c57daf64f6362193bc30b79482dd3258",
+  "harnessSha256": "4a4708c8eca1b8f7cd63529cf84a1824b7011f8a0f25c93558680d56d7faa4b6",
+  "exitCode": 0,
+  "hostElapsedSeconds": 32.4,
+  "testElapsedSeconds": 32.24,
+  "result": {
+    "scope": "E5-T18d deterministic Linux state-boundary probes; not guest acceptance",
+    "sourceSha256": {
+      "desktop-runtime.initd": "0d98f68ec97381a955c91c566082119b4ba33d97a923d995dc5139efea2f73be",
+      "desktop-test-console": "12c5603cbb093fb1e4c7c62804825798084e2bbd6268fd39e0003b84bc00f613"
+    },
+    "tests": 9,
+    "failures": 0,
+    "errors": 0,
+    "timeoutExecutable": "/usr/bin/timeout",
+    "timeoutSha256": "3629fa180f625d4de2e3fd3b15b12c5d42315e5733ecae6d1550b306abd7d482",
+    "externalKillFixture": true,
+    "cases": [
+      {
+        "test": "test_hook_pid_post_check_fifo_swap_is_bounded",
+        "kind": "hook",
+        "elapsedSeconds": 2.043,
+        "exitCode": 0,
+        "externalWatchdogExpired": false,
+        "outputSha256": "e7ca8755feabad0e28be16403fa5d12e9c49fc95351bde207323f1e65e833915",
+        "outputBytes": 189,
+        "swapProcesses": [
+          {
+            "pid": 29,
+            "status": [
+              "Name:\thead",
+              "State:\tZ (zombie)",
+              "PPid:\t1",
+              "Uid:\t1000\t1000\t1000\t1000"
+            ],
+            "waitChannel": "0"
+          }
+        ],
+        "output": "\nE5T18D_TEST_CONSOLE_READY\nE5T18D_HOOK_ERROR=no-compositor\nE5T18D_STATUS_BEGIN\ndesktop.attempts=absent\ndesktop.ready=absent\ndesktop.failed=absent\nweston.pid=absent\nabsent\nE5T18D_STATUS_END\n"
+      },
+      {
+        "test": "test_hook_preserves_normal_output_and_caps_logs",
+        "kind": "hook",
+        "elapsedSeconds": 0.016,
+        "exitCode": 0,
+        "externalWatchdogExpired": false,
+        "outputSha256": "e9bc9c44d4e6daae4160ec0ac10666f4cbde02377b17a766a24b591ff04566a0",
+        "outputBytes": 16573,
+        "swapProcesses": [],
+        "outputExcerpt": "\nE5T18D_TEST_CONSOLE_READY\nE5T18D_STATUS_BEGIN\ndesktop.attempts=absent\ndesktop.ready=2 1234\ndesktop.failed=absent\nweston.pid=absent\nabsent\nE5T18D_STATUS_END\nE5T18D_LOG_BEGIN\n[16383 fixture x bytes omitted]\nE5T18D_LOG_END\n",
+        "outputExcerptNotice": "Excerpt only. outputBytes and outputSha256 refer to the original full output; the original harness also printed a shortened sample."
+      },
+      {
+        "test": "test_hook_regular_root_file_still_has_no_read_authority",
+        "kind": "hook",
+        "elapsedSeconds": 0.016,
+        "exitCode": 0,
+        "externalWatchdogExpired": false,
+        "outputSha256": "32ea04e5c2735465a7cc5b1e2f2426291f6a1177b46dfaaba8c01d48b9c5853b",
+        "outputBytes": 162,
+        "swapProcesses": [],
+        "output": "\nE5T18D_TEST_CONSOLE_READY\nE5T18D_STATUS_BEGIN\ndesktop.attempts=absent\ndesktop.ready=unavailable\ndesktop.failed=absent\nweston.pid=absent\nabsent\nE5T18D_STATUS_END\n"
+      },
+      {
+        "test": "test_hook_rejects_symlinks_and_fifos",
+        "kind": "hook",
+        "elapsedSeconds": 0.032,
+        "exitCode": 0,
+        "externalWatchdogExpired": false,
+        "outputSha256": "d96bfe913cda2193f43724f10a76ec98e4f90e6048ba00dddea6e7a9e7e8b8c3",
+        "outputBytes": 358,
+        "swapProcesses": [],
+        "output": "\nE5T18D_TEST_CONSOLE_READY\nE5T18D_STATUS_BEGIN\ndesktop.attempts=absent\ndesktop.ready=absent\ndesktop.failed=absent\nweston.pid=absent\nabsent\nE5T18D_STATUS_END\nE5T18D_LOG_BEGIN\nabsent\nE5T18D_LOG_END\nE5T18D_HOOK_ERROR=no-compositor\nE5T18D_STATUS_BEGIN\ndesktop.attempts=absent\ndesktop.ready=absent\ndesktop.failed=absent\nweston.pid=absent\nabsent\nE5T18D_STATUS_END\n"
+      },
+      {
+        "test": "test_hook_signals_desktop_weston_but_not_root_weston",
+        "kind": "hook",
+        "elapsedSeconds": 0.008,
+        "exitCode": 0,
+        "externalWatchdogExpired": false,
+        "outputSha256": "92f23d01f1393e5588336347d6a8bb06884736861a2ba1c474d9e568af6d79e5",
+        "outputBytes": 58,
+        "swapProcesses": [],
+        "output": "\nE5T18D_TEST_CONSOLE_READY\nE5T18D_HOOK_ERROR=pid-identity\n"
+      },
+      {
+        "test": "test_hook_signals_desktop_weston_but_not_root_weston",
+        "kind": "hook",
+        "elapsedSeconds": 0.008,
+        "exitCode": 0,
+        "externalWatchdogExpired": false,
+        "outputSha256": "3dd9a181949bf7cd7495b2127eea894ef5937849bc39f2ea1516457f1c982585",
+        "outputBytes": 65,
+        "swapProcesses": [],
+        "output": "\nE5T18D_TEST_CONSOLE_READY\nE5T18D_HOOK_CRASH pid=152 signal=KILL\n"
+      },
+      {
+        "test": "test_runtime_fifo_is_replaced",
+        "kind": "runtime",
+        "elapsedSeconds": 0.008,
+        "exitCode": 0,
+        "externalWatchdogExpired": false,
+        "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outputBytes": 0,
+        "swapProcesses": [],
+        "output": ""
+      },
+      {
+        "test": "test_runtime_post_check_fifo_swap_is_bounded",
+        "kind": "runtime",
+        "elapsedSeconds": 30.038,
+        "exitCode": 0,
+        "externalWatchdogExpired": false,
+        "outputSha256": "b756dec7387f0d2d287e511efb231fc99aec816a7a436d0cd3577e1d87bde765",
+        "outputBytes": 70,
+        "swapProcesses": [
+          {
+            "pid": 200,
+            "status": [
+              "Name:\tsh",
+              "State:\tZ (zombie)",
+              "PPid:\t1",
+              "Uid:\t1000\t1000\t1000\t1000"
+            ],
+            "waitChannel": "0"
+          }
+        ],
+        "output": "Killed\nE5T18D_RUNTIME_STATE_UNAVAILABLE: continuing to recovery login\n"
+      },
+      {
+        "test": "test_runtime_symlink_preserves_target",
+        "kind": "runtime",
+        "elapsedSeconds": 0.017,
+        "exitCode": 0,
+        "externalWatchdogExpired": false,
+        "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outputBytes": 0,
+        "swapProcesses": [],
+        "output": ""
+      },
+      {
+        "test": "test_runtime_unavailable_state_returns_control",
+        "kind": "runtime",
+        "elapsedSeconds": 0.016,
+        "exitCode": 0,
+        "externalWatchdogExpired": false,
+        "outputSha256": "a719f24ff4f047a64f3b58fadba6962c6ede788c6201f6d969949ec501b06bec",
+        "outputBytes": 146,
+        "swapProcesses": [],
+        "output": "rm: cannot remove '/home/desktop/.local/state/wasm-vm/desktop.log': Is a directory\nE5T18D_RUNTIME_STATE_UNAVAILABLE: continuing to recovery login\n"
+      }
+    ]
+  }
+}
