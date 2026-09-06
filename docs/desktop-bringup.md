@@ -38,13 +38,35 @@ HTTP-cache behavior; it still boots a new guest, not a snapshot. Cold/warm durat
 concurrency, browser version, fetch statistics, framebuffer hashes, guest-state
 digests, console errors and screenshots are recorded rather than inferred.
 
-The default parallelism is 12 cold contexts plus the warm timing pair. These are
+The default parallelism is 13 cold contexts plus the warm timing pair. These are
 repeatability timings under the recorded load, not an isolated performance claim.
 `E5_T18E_CONCURRENCY=1` serializes the cold-boot stream without reducing the
 25-boot gate; the warm pair still runs concurrently with that stream.
 Do not compare them to an isolated run without accounting for that configuration.
 The report is `evidence/e5-t18e/desktop-bringup.json`; each completed boot also has
 its own JSON, PNG and UART log so a later failure cannot erase earlier observations.
+
+Cold contexts use Playwright context routing to disable HTTP caching in both the
+page and dedicated workers. Page-only CDP cache settings do not cover worker
+fetches, and the legacy `cacheHits` field counts page events only. Before booting,
+a real-worker calibration must show network transfers for cold requests and byte
+reuse for the warm reload. Each actual boot also records all completed worker
+chunk ResourceTiming entries: cold boots require zero cached chunks, and the warm
+reload requires at least one. A missing timing record is not accepted as a miss.
+
+The initial run in `evidence/e5-t18e/initial/` completed all desktop/launcher cases
+but exposed that page-only cache-control gap. Its clean rebuild remains valid;
+its success marker is **not** the final cache-disabled verdict. For this specific
+evidence-only correction, the following retains that recorded build while repeating
+browser proof:
+
+```sh
+E5_T18E_REUSE_BUILD=/absolute/path/to/initial/checkout make verify-E5-T18e
+```
+
+The command accepts only the committed initial publication, rehashes its sources,
+runtime, image and chunks, and rejects any changed build/runtime input. Without
+that variable, the ordinary command still performs a complete clean rebuild.
 
 ## Debug channels and access boundaries
 
@@ -105,6 +127,7 @@ E5_T18D_DESKTOP_ASSET_DIR="$(node -p 'require("./evidence/e5-t18e/publication.js
 | BusyBox watchdog fires but caller never returns | Inspect the blocked pipe holder and UID after the timeout | Put timeout after `runuser`, then directly exec `head`/`tail`. Killing `runuser` itself orphaned the FIFO reader holding the substitution pipe. |
 | Watcher never sees a serial marker that is visibly printed | Compare raw UART CRLF to the search string | Normalize CRLF only for parsing. Preserve the raw recording byte-for-byte. |
 | Async Playwright wait appears to pass immediately | Check that the predicate returns a boolean, not a Promise | Pinned Playwright 1.49 needs Node-side awaited polling for async worker RPCs. An unresolved Promise is not guest progress. |
+| Cache-enabled worker shows zero page cache hits, or a supposedly cold worker reuses bytes | Inspect worker ResourceTiming transfer/encoded body sizes, not page-only CDP counters | Configure cold context routing before creating the worker; calibrate with a real worker, then check every completed chunk request. Page-only cache disabling does not propagate to dedicated workers. |
 | Docker fixture sees an empty checkout | Check the bind mount inside the container | Use a Colima-shared checkout below `/Users/blamy/Documents/Codex`, not `/private/tmp`. This is an environment failure, not guest evidence. |
 | Built demo reports `artifacts-alpine.json` 404 | Inspect the missing URL before classifying console errors | Stage the manifest exactly as the Cloudflare deploy script does. Only favicon 404 is tolerated; no blanket error suppression. |
 

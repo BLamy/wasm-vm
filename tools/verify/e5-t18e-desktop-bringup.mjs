@@ -8,6 +8,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { hashFile, sha256, verifyPublication } from "./e5-t18e-publication.mjs";
 import { inspectRecoveryCanvas } from "./e5-t18d-surface.mjs";
+import { configureContextCache, calibrateWorkerCache, readWorkerCache, assertWorkerCache } from "./e5-t18e-cache.mjs";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 process.chdir(repo);
@@ -20,7 +21,7 @@ assert.equal(process.argv.length, 2, "unknown arguments");
 const head = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
 if (process.env.E5_T18E_REQUIRE_HEAD) assert.equal(head, process.env.E5_T18E_REQUIRE_HEAD);
 const out = path.resolve(process.env.E5_T18E_EVIDENCE_DIR || "evidence/e5-t18e");
-const concurrency = Number(process.env.E5_T18E_CONCURRENCY || 12);
+const concurrency = Number(process.env.E5_T18E_CONCURRENCY || 13);
 assert.ok(Number.isSafeInteger(concurrency) && concurrency >= 1 && concurrency <= 16);
 const timeout = Number(process.env.E5_T18E_TIMEOUT_MS || 1_800_000);
 assert.ok(Number.isSafeInteger(timeout) && timeout >= 900_000);
@@ -33,8 +34,9 @@ for (const key of Object.keys(env)) {
 await mkdir(out, { recursive: true });
 await mkdir("target/e5-t18e", { recursive: true });
 const work = await mkdtemp(path.join(repo, "target/e5-t18e/run-"));
-const imageDir = path.join(work, "image"), chunkDir = path.join(work, "chunks");
-await mkdir(imageDir);
+let imageDir = path.join(work, "image"), chunkDir = path.join(work, "chunks");
+const reuseBuild = process.env.E5_T18E_REUSE_BUILD ? path.resolve(process.env.E5_T18E_REUSE_BUILD) : null;
+let buildProvenance = { mode: "rebuilt" };
 const sources = {};
 const sourcePaths = [
   "tools/image/desktop.sh", "tools/image/e5-t17a-desktop-packages.json", "tools/image/e5-t18d-desktop-image.json",
@@ -42,6 +44,7 @@ const sourcePaths = [
   "tools/build-rootfs.sh", "tools/rootfs-inner.sh", "tools/rootfs/start-desktop", "tools/rootfs/desktop-autologin",
   "tools/rootfs/desktop-runtime.initd", "tools/rootfs/desktop-test-console", "tools/serve-dev.sh",
   "tools/verify/e5-t18e-desktop-bringup.mjs", "tools/verify/e5-t18e-publication.mjs", "tools/verify/e5-t18d-surface.mjs",
+  "tools/verify/e5-t18e-cache.mjs",
   "web/desktop-cursor.html", "web/desktop-cursor.js", "web/desktop-terminal.js", "web/linux-worker-protocol.js",
   "web/linux-worker-host.js", "web/linux-worker.js", "web/loader.js", "web/src/sink/presentation.js",
   "web/src/sink/canvas2d.js", "web/src/input/pointer.js", "web/src/input/desktop-cursor-template.js",
@@ -70,15 +73,50 @@ async function run(command, args, extra = {}) {
   await logging;
 }
 
-await copyFile("tools/image/e5-t18e/FILE-MANIFEST.txt", path.join(imageDir, "FILE-MANIFEST.txt"));
-await run("bash", ["tools/image/desktop.sh"], {
-  E5_T17B_OUT: path.relative(repo, imageDir), E5_T17B_PACKAGE_LOCK: "tools/image/e5-t18e/MANIFEST.txt",
-  E5_T18B_INTERACTIVE: "1", E5_T18D_RECOVERY: "1",
-});
-await run("cargo", ["build", "--release", "-p", "wasm-vm-cli", "--bin", "wasm-vm"]);
-await run("target/release/wasm-vm", ["chunk", path.join(imageDir, "alpine-rootfs.ext4"), "--out", chunkDir]);
+if (reuseBuild) {
+  // Incremental proof repair only: accept exactly the already recorded clean
+  // rebuild, and refuse any change to its runtime/build inputs. This is not a
+  // generic skip-build switch or a path to accept an arbitrary cached image.
+  const expected = await readFile("evidence/e5-t18e/initial/publication.json");
+  const actual = await readFile(path.join(reuseBuild, "evidence/e5-t18e/publication.json"));
+  assert.deepEqual(actual, expected, "reused build is not the committed initial rebuild");
+  const previous = JSON.parse(actual);
+  assert.equal(execFileSync("git", ["rev-parse", "HEAD"], { cwd: reuseBuild, encoding: "utf8" }).trim(), previous.head);
+  assert.equal(sha256(JSON.stringify({ head: previous.head, sources: previous.sources,
+    runtime: previous.runtime, publication: previous.publication })), previous.sourceBindingSha256);
+  const inputs = ["crates", "Cargo.toml", "Cargo.lock", "releases", "web", "tools/image",
+    "tools/rootfs", "tools/rootfs.Dockerfile", "tools/rootfs-inner.sh", "tools/build-rootfs.sh",
+    "tools/build-web-dist.sh", "tools/serve-dev.sh"];
+  execFileSync("git", ["diff", "--exit-code", previous.head, head, "--", ...inputs]);
+  execFileSync("git", ["diff", "--exit-code", "HEAD", "--", ...inputs]);
+  for (const [file, digest] of Object.entries(previous.sources)) {
+    assert.equal(await hashFile(path.join(reuseBuild, file)), digest, `reused build source drift: ${file}`);
+  }
+  for (const [file, digest] of Object.entries(previous.runtime)) {
+    assert.equal(await hashFile(path.join(reuseBuild, "web", file)), digest, `reused runtime drift: ${file}`);
+    assert.equal(await hashFile(path.join(reuseBuild, "web/dist", file)), digest, `reused dist drift: ${file}`);
+  }
+  await mkdir("web/pkg", { recursive: true });
+  for (const file of ["wasm_vm_wasm_bg.wasm", "wasm_vm_wasm.js"]) {
+    await copyFile(path.join(reuseBuild, "web/pkg", file), path.join("web/pkg", file));
+  }
+  imageDir = path.resolve(reuseBuild, previous.publication.imageDir);
+  chunkDir = path.resolve(reuseBuild, previous.publication.chunkDir);
+  buildProvenance = { mode: "incremental-proof-repair", head: previous.head,
+    sourceBindingSha256: previous.sourceBindingSha256, publicationRecordSha256: sha256(actual),
+    buildInputsUnchanged: true, sourceDirectory: reuseBuild };
+} else {
+  await mkdir(imageDir);
+  await copyFile("tools/image/e5-t18e/FILE-MANIFEST.txt", path.join(imageDir, "FILE-MANIFEST.txt"));
+  await run("bash", ["tools/image/desktop.sh"], {
+    E5_T17B_OUT: path.relative(repo, imageDir), E5_T17B_PACKAGE_LOCK: "tools/image/e5-t18e/MANIFEST.txt",
+    E5_T18B_INTERACTIVE: "1", E5_T18D_RECOVERY: "1",
+  });
+  await run("cargo", ["build", "--release", "-p", "wasm-vm-cli", "--bin", "wasm-vm"]);
+  await run("target/release/wasm-vm", ["chunk", path.join(imageDir, "alpine-rootfs.ext4"), "--out", chunkDir]);
+  await run("make", ["web-dist"]);
+}
 const publication = await verifyPublication(repo, imageDir, chunkDir);
-await run("make", ["web-dist"]);
 await copyFile("web/artifacts-alpine.json", "web/dist/artifacts-alpine.json");
 const runtime = {};
 for (const file of ["pkg/wasm_vm_wasm_bg.wasm", "pkg/wasm_vm_wasm.js", "desktop-cursor.html", "desktop-cursor.js",
@@ -88,8 +126,8 @@ for (const file of ["pkg/wasm_vm_wasm_bg.wasm", "pkg/wasm_vm_wasm.js", "desktop-
   runtime[file] = await hashFile(`web/${file}`);
   assert.equal(await hashFile(`web/dist/${file}`), runtime[file], `${file} source/dist drift`);
 }
-const sourceBindingSha256 = sha256(JSON.stringify({ head, sources, runtime, publication }));
-await writeFile(path.join(out, "publication.json"), JSON.stringify({ head, sources, runtime, publication, sourceBindingSha256 }, null, 2) + "\n");
+const sourceBindingSha256 = sha256(JSON.stringify({ head, sources, runtime, publication, buildProvenance }));
+await writeFile(path.join(out, "publication.json"), JSON.stringify({ head, sources, runtime, publication, buildProvenance, sourceBindingSha256 }, null, 2) + "\n");
 console.log(`E5T18E_REBUILT=${JSON.stringify(publication)}`);
 
 const port = await new Promise((resolve) => {
@@ -109,6 +147,10 @@ try {
   await waitFor(async () => { try { return (await fetch(`${base}/desktop-cursor.html`)).ok; } catch { return false; } }, "server", 30_000);
   const { chromium } = await import(pathToFileURL(path.join(repo, "web/node_modules/playwright/index.mjs")));
   browser = await chromium.launch({ executablePath: chrome, headless: true, args });
+  const chunkManifest = JSON.parse(await readFile(path.join(chunkDir, "manifest.json"), "utf8"));
+  const cacheCalibration = await calibrateWorkerCache(browser, base, `/e5t18b-desktop/chunks/${chunkManifest.chunks[0]}.bin`);
+  await writeFile(path.join(out, "cache-calibration.json"), JSON.stringify(cacheCalibration, null, 2) + "\n");
+  console.log("E5T18E_CACHE_CALIBRATION_PASS");
   timer = setInterval(async () => {
     const progress = [];
     for (const [label, page] of active) {
@@ -125,9 +167,13 @@ try {
 
   async function makePage(cacheDisabled) {
     const context = await browser.newContext({ viewport: { width: 1440, height: 1100 }, deviceScaleFactor: 1, serviceWorkers: "block" });
+    await configureContextCache(context, cacheDisabled);
     const page = await context.newPage(), cdp = await context.newCDPSession(page);
     await cdp.send("Network.enable"); await cdp.send("Network.setCacheDisabled", { cacheDisabled });
     const errors = [], cacheHits = [];
+    page.on("worker", (worker) => {
+      worker.evaluate(() => performance.setResourceTimingBufferSize(8192)).catch((error) => errors.push(`worker timing setup: ${error}`));
+    });
     page.on("pageerror", (error) => errors.push(String(error)));
     page.on("console", (message) => {
       transcript.push(`${page.url()} ${message.type()}: ${message.text()}\n`);
@@ -188,10 +234,16 @@ try {
       assert.deepEqual(launched.diagnostics, []);
       const terminalFrame = await capture(page, `${label}-terminal`);
       assert.deepEqual(terminalFrame.presentation.errors, []);
+      const workerCache = await waitFor(async () => {
+        const result = await readWorkerCache(page);
+        return result.chunkRequests >= terminalFrame.fetchStats.fetches ? result : null;
+      }, `${label} completed worker resource timings`, 10_000);
+      assertWorkerCache(workerCache, { disabled: cacheDisabled, warmReload: reload,
+        minimumRequests: terminalFrame.fetchStats.fetches });
       assert.deepEqual(errors, [], `${label} browser errors`);
       const record = { label, sourceBindingSha256, cacheDisabled, cacheHits: cacheHits.length - cacheStart,
         bootToDesktopMs, totalMs: Date.now() - started, readiness, surface, cursor, desktopFrame,
-        launcher: launched.launches.at(-1), terminalFrame, errors: [...errors], passed: true };
+        launcher: launched.launches.at(-1), terminalFrame, workerCache, errors: [...errors], passed: true };
       await writeFile(path.join(out, `${label}.json`), JSON.stringify(record, null, 2) + "\n");
       await writeFile(path.join(out, `${label}-serial.log`), await page.evaluate(() => window.__desktopTerminal.serial()));
       cases.push(record);
@@ -228,9 +280,10 @@ try {
   for (const [file, digest] of Object.entries(runtime)) assert.equal(await hashFile(`web/${file}`), digest, `${file} runtime drift`);
   assert.deepEqual(await verifyPublication(repo, imageDir, chunkDir), publication);
   const values = cold.map((c) => c.bootToDesktopMs);
-  const report = { schema: "wasm-vm.e5-t18e.bringup.v1", task: "E5-T18e", head, sourceBindingSha256, sources, runtime, publication,
+  const report = { schema: "wasm-vm.e5-t18e.bringup.v2", task: "E5-T18e", head, sourceBindingSha256, sources, runtime, publication, buildProvenance, cacheCalibration,
     browser: { version: browser.version(), executable: chrome, headless: true, args },
-    configuration: { coldContexts: 25, coldConcurrency: concurrency, concurrentWarmPair: true, dpr: 1, serviceWorkers: "block", persistence: false },
+    configuration: { coldContexts: 25, coldConcurrency: concurrency, concurrentWarmPair: true, dpr: 1, serviceWorkers: "block", persistence: false,
+      coldCachePolicy: "context routing disables page and dedicated-worker HTTP cache; every completed worker chunk timing checked" },
     timings: { cold: { valuesMs: values, minMs: Math.min(...values), maxMs: Math.max(...values), meanMs: values.reduce((a, b) => a + b, 0) / 25 },
       warm: cases.filter((c) => !c.cacheDisabled).map((c) => ({ label: c.label, bootToDesktopMs: c.bootToDesktopMs, cacheHits: c.cacheHits })) },
     cases, passed: true };

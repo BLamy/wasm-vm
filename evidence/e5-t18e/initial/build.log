@@ -1,0 +1,549 @@
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling libc v0.2.186
+   Compiling tinyvec_macros v0.1.1
+   Compiling cfg-if v1.0.4
+   Compiling tinyvec v1.12.0
+   Compiling generic-array v0.14.7
+   Compiling unicode-normalization v0.1.25
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-file-agent-storage v0.0.0 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/file-agent-storage)
+   Compiling wasm-vm-file-agent v0.0.0 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/file-agent)
+    Finished `release` profile [optimized + debuginfo] target(s) in 8.63s
+   Compiling wasm-vm-agent-protocol v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/agent-protocol)
+   Compiling wasm-vm-guest-agent v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/guest/agent)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.45s
+   Compiling wasm-vm-wvseccomp v0.0.0 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/wvseccomp)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.22s
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.20/community/riscv64/APKINDEX.tar.gz
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.20/main/riscv64/APKINDEX.tar.gz
+(1/190) Installing musl (1.2.5-r3)
+(2/190) Installing libeconf (0.6.3-r0)
+(3/190) Installing agetty (2.40.1-r1)
+(4/190) Installing ifupdown-ng (0.12.1-r5)
+(5/190) Installing agetty-openrc (0.54-r1)
+(6/190) Installing alpine-baselayout-data (3.6.5-r0)
+(7/190) Installing busybox (1.36.1-r31)
+(8/190) Installing busybox-binsh (1.36.1-r31)
+(9/190) Installing alpine-baselayout (3.6.5-r0)
+(10/190) Installing libcap2 (2.78-r0)
+(11/190) Installing openrc (0.54-r1)
+(12/190) Installing mdev-conf (4.7-r0)
+(13/190) Installing busybox-mdev-openrc (1.36.1-r31)
+(14/190) Installing alpine-conf (3.18.1-r1)
+(15/190) Installing alpine-keys (2.4-r1)
+(16/190) Installing alpine-release (3.20.10-r0)
+(17/190) Installing ca-certificates-bundle (20260413-r0)
+(18/190) Installing libcrypto3 (3.3.7-r0)
+(19/190) Installing libssl3 (3.3.7-r0)
+(20/190) Installing ssl_client (1.36.1-r31)
+(21/190) Installing zlib (1.3.2-r0)
+(22/190) Installing apk-tools (2.14.4-r1)
+(23/190) Installing busybox-openrc (1.36.1-r31)
+(24/190) Installing busybox-suid (1.36.1-r31)
+(25/190) Installing scanelf (1.3.7-r2)
+(26/190) Installing musl-utils (1.2.5-r3)
+(27/190) Installing alpine-base (3.20.10-r0)
+(28/190) Installing libblkid (2.40.1-r1)
+(29/190) Installing blkid (2.40.1-r1)
+(30/190) Installing brotli-libs (1.1.0-r2)
+(31/190) Installing c-ares (1.33.1-r0)
+(32/190) Installing ca-certificates (20260413-r0)
+(33/190) Installing libuuid (2.40.1-r1)
+(34/190) Installing libfdisk (2.40.1-r1)
+(35/190) Installing libmount (2.40.1-r1)
+(36/190) Installing ncurses-terminfo-base (6.4_p20240420-r2)
+(37/190) Installing libncursesw (6.4_p20240420-r2)
+(38/190) Installing libsmartcols (2.40.1-r1)
+(39/190) Installing cfdisk (2.40.1-r1)
+(40/190) Installing libunistring (1.2-r0)
+(41/190) Installing libidn2 (2.3.7-r0)
+(42/190) Installing nghttp2-libs (1.62.1-r0)
+(43/190) Installing libpsl (0.21.5-r1)
+(44/190) Installing zstd-libs (1.5.6-r0)
+(45/190) Installing libcurl (8.14.1-r2)
+(46/190) Installing curl (8.14.1-r2)
+(47/190) Installing dmesg (2.40.1-r1)
+(48/190) Installing libcom_err (1.47.0-r5)
+(49/190) Installing e2fsprogs-libs (1.47.0-r5)
+(50/190) Installing e2fsprogs (1.47.0-r5)
+(51/190) Installing udev-init-scripts (35-r1)
+(52/190) Installing udev-init-scripts-openrc (35-r1)
+(53/190) Installing eudev-libs (3.2.14-r2)
+(54/190) Installing xz-libs (5.8.3-r0)
+(55/190) Installing kmod-libs (32-r0)
+(56/190) Installing eudev (3.2.14-r2)
+(57/190) Installing eudev-openrc (3.2.14-r2)
+(58/190) Installing findmnt (2.40.1-r1)
+(59/190) Installing flock (2.40.1-r1)
+(60/190) Installing libexpat (2.8.1-r0)
+(61/190) Installing libbz2 (1.0.8-r6)
+(62/190) Installing libpng (1.6.57-r0)
+(63/190) Installing freetype (2.13.2-r0)
+(64/190) Installing fontconfig (2.15.0-r1)
+(65/190) Installing encodings (1.0.7-r1)
+(66/190) Installing libfontenc (1.1.8-r0)
+(67/190) Installing mkfontscale (1.2.2-r6)
+(68/190) Installing font-dejavu (2.37-r5)
+(69/190) Installing ncurses-terminfo (6.4_p20240420-r2)
+(70/190) Installing libffi (3.4.6-r0)
+(71/190) Installing libintl (0.22.5-r0)
+(72/190) Installing pcre2 (10.43-r0)
+(73/190) Installing glib (2.80.5-r0)
+(74/190) Installing graphite2 (1.3.14-r6)
+(75/190) Installing harfbuzz (8.5.0-r0)
+(76/190) Installing pixman (0.43.2-r0)
+(77/190) Installing utf8proc (2.9.0-r0)
+(78/190) Installing fcft (3.1.8-r0)
+(79/190) Installing wayland-libs-client (1.22.0-r4)
+(80/190) Installing wayland-libs-cursor (1.22.0-r4)
+(81/190) Installing xkeyboard-config (2.41-r0)
+(82/190) Installing libxml2 (2.12.10-r0)
+(83/190) Installing libxkbcommon (1.7.0-r0)
+(84/190) Installing foot (1.17.2-r0)
+(85/190) Installing fstrim (2.40.1-r1)
+(86/190) Installing hexdump (2.40.1-r1)
+(87/190) Installing libelf (0.191-r0)
+(88/190) Installing libmnl (1.0.5-r2)
+(89/190) Installing iproute2-minimal (6.9.0-r0)
+(90/190) Installing ifupdown-ng-iproute2 (0.12.1-r5)
+(91/190) Installing libxtables (1.8.10-r3)
+(92/190) Installing iproute2-tc (6.9.0-r0)
+(93/190) Installing iproute2-ss (6.9.0-r0)
+(94/190) Installing iproute2 (6.9.0-r0)
+(95/190) Installing libcap-ng (0.8.5-r0)
+(96/190) Installing skalibs (2.14.1.1-r0)
+(97/190) Installing utmps-libs (0.1.2.2-r1)
+(98/190) Installing linux-pam (1.6.0-r0)
+(99/190) Installing logger (2.40.1-r1)
+(100/190) Installing losetup (2.40.1-r1)
+(101/190) Installing lsblk (2.40.1-r1)
+(102/190) Installing mcookie (2.40.1-r1)
+(103/190) Installing mount (2.40.1-r1)
+(104/190) Installing nano (8.0-r0)
+(105/190) Installing partx (2.40.1-r1)
+(106/190) Installing runuser (2.40.1-r1)
+(107/190) Installing seatd (0.8.0-r0)
+(108/190) Installing seatd-openrc (0.8.0-r0)
+(109/190) Installing setarch (2.40.1-r1)
+(110/190) Installing setpriv (2.40.1-r1)
+(111/190) Installing sfdisk (2.40.1-r1)
+(112/190) Installing sqlite-libs (3.45.3-r3)
+(113/190) Installing umount (2.40.1-r1)
+(114/190) Installing util-linux (2.40.1-r1)
+(115/190) Installing util-linux-misc (2.40.1-r1)
+(116/190) Installing uuidgen (2.40.1-r1)
+(117/190) Installing wipefs (2.40.1-r1)
+(118/190) Installing util-linux-openrc (2.40.1-r1)
+(119/190) Installing mesa (24.0.9-r1)
+(120/190) Installing libxau (1.0.11-r4)
+(121/190) Installing libmd (1.1.0-r0)
+(122/190) Installing libbsd (0.12.2-r0)
+(123/190) Installing libxdmcp (1.1.5-r1)
+(124/190) Installing libxcb (1.16.1-r0)
+(125/190) Installing libx11 (1.8.9-r1)
+(126/190) Installing hwdata-pci (0.382-r0)
+(127/190) Installing libpciaccess (0.18.1-r0)
+(128/190) Installing libdrm (2.4.120-r0)
+(129/190) Installing wayland-libs-server (1.22.0-r4)
+(130/190) Installing mesa-gbm (24.0.9-r1)
+(131/190) Installing libgcc (13.2.1_git20240309-r1)
+(132/190) Installing mesa-glapi (24.0.9-r1)
+(133/190) Installing libxshmfence (1.3.2-r6)
+(134/190) Installing mesa-egl (24.0.9-r1)
+(135/190) Installing mesa-gles (24.0.9-r1)
+(136/190) Installing libxext (1.3.6-r2)
+(137/190) Installing libxrender (0.9.11-r5)
+(138/190) Installing cairo (1.18.4-r0)
+(139/190) Installing libevdev (1.13.1-r0)
+(140/190) Installing libxfixes (6.0.1-r4)
+(141/190) Installing libxxf86vm (1.1.5-r6)
+(142/190) Installing mesa-gl (24.0.9-r1)
+(143/190) Installing libxi (1.8.1-r4)
+(144/190) Installing libxv (1.0.12-r5)
+(145/190) Installing alsa-lib (1.2.11-r0)
+(146/190) Installing cdparanoia-libs (10.2-r14)
+(147/190) Installing graphene (1.10.8-r4)
+(148/190) Installing gstreamer (1.24.10-r0)
+(149/190) Installing libjpeg-turbo (3.0.3-r0)
+(150/190) Installing libogg (1.3.5-r5)
+(151/190) Installing opus (1.5.2-r0)
+(152/190) Installing orc (0.4.40-r0)
+(153/190) Installing libxft (2.3.8-r3)
+(154/190) Installing fribidi (1.0.15-r0)
+(155/190) Installing pango (1.52.2-r0)
+(156/190) Installing libtheora (1.1.1-r18)
+(157/190) Installing libvorbis (1.3.7-r2)
+(158/190) Installing wayland-libs-egl (1.22.0-r4)
+(159/190) Installing gst-plugins-base (1.24.10-r0)
+(160/190) Installing mtdev (1.1.6-r3)
+(161/190) Installing libinput-libs (1.25.0-r0)
+(162/190) Installing libinput-udev (1.25.0-r0)
+(163/190) Installing lcms2 (2.19-r0)
+(164/190) Installing dbus-libs (1.14.10-r1)
+(165/190) Installing avahi-libs (0.8-r17)
+(166/190) Installing gmp (6.3.0-r1)
+(167/190) Installing nettle (3.10.2-r0)
+(168/190) Installing libtasn1 (4.21.0-r0)
+(169/190) Installing p11-kit (0.25.3-r0)
+(170/190) Installing gnutls (3.8.13-r0)
+(171/190) Installing libstdc++ (13.2.1_git20240309-r1)
+(172/190) Installing libunwind (1.8.1-r0)
+(173/190) Installing yaml (0.2.5-r2)
+(174/190) Installing libcamera (0.3.0-r0)
+(175/190) Installing speexdsp (1.2.1-r2)
+(176/190) Installing libuv (1.48.0-r0)
+(177/190) Installing roc-toolkit-libs (0.3.0-r0)
+(178/190) Installing libflac (1.4.3-r1)
+(179/190) Installing libsndfile (1.2.2-r1)
+(180/190) Installing pipewire-libs (1.0.6-r1)
+(181/190) Installing libsharpyuv (1.3.2-r0)
+(182/190) Installing libwebp (1.3.2-r0)
+(183/190) Installing libweston (12.0.4-r0)
+(184/190) Installing weston (12.0.4-r0)
+(185/190) Installing libelogind (252.9-r5)
+(186/190) Installing libseat (0.8.0-r0)
+(187/190) Installing libva (2.21.0-r0)
+(188/190) Installing weston-backend-drm (12.0.4-r0)
+(189/190) Installing weston-shell-desktop (12.0.4-r0)
+(190/190) Installing wl-clipboard (2.2.0-r1)
+OK: 100 MiB in 190 packages
+OK: 100 MiB in 190 packages
+  busybox applets linked (/sbin/init -> /bin/busybox)
+Creating regular file /out/alpine-rootfs.ext4
+--- fsck.ext4 -f -n ---
+e2fsck 1.47.0 (5-Feb-2023)
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+root: 4719/65536 files (0.1% non-contiguous), 38601/262144 blocks
+--- foreign-ELF scan (every ELF must be RISC-V) ---
+  (clean — riscv64 only)
+Alpine riscv64 rootfs built (signatures verified, package lock enforced):
+ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908  MANIFEST.txt
+ab73efab8eac885690def228e3d2080d4ed9f57801e642037f12fd0186e7e2d5  FILE-MANIFEST.txt
+-rw-r--r--  1 blamy  staff  1073741824 Sep  6 01:04 target/e5-t18e/run-CaaCRb/image/alpine-rootfs.ext4
+E5T17B_IMAGE=target/e5-t18e/run-CaaCRb/image/alpine-rootfs.ext4
+E5T17B_IMAGE_SHA256=e75b04caadd9616915b323497c92df1d5a9d11d55c877afcc95d208dde302416
+E5T17B_PACKAGE_MANIFEST=target/e5-t18e/run-CaaCRb/image/MANIFEST.txt
+E5T17B_FILE_MANIFEST=target/e5-t18e/run-CaaCRb/image/FILE-MANIFEST.txt
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling libc v0.2.186
+   Compiling serde_core v1.0.228
+   Compiling serde v1.0.228
+   Compiling cfg-if v1.0.4
+   Compiling log v0.4.33
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v2.0.1
+   Compiling stable_deref_trait v1.2.1
+   Compiling version_check v0.9.5
+   Compiling cranelift-srcgen v0.122.0
+   Compiling bitflags v2.13.0
+   Compiling typenum v1.20.1
+   Compiling memchr v2.8.2
+   Compiling libm v0.2.16
+   Compiling hashbrown v0.17.1
+   Compiling cranelift-isle v0.122.0
+   Compiling cranelift-assembler-x64-meta v0.122.0
+   Compiling generic-array v0.14.7
+   Compiling equivalent v1.0.2
+   Compiling foldhash v0.1.5
+   Compiling cranelift-bitset v0.122.0
+   Compiling hashbrown v0.15.5
+   Compiling cranelift-codegen-shared v0.122.0
+   Compiling target-lexicon v0.13.5
+   Compiling crc32fast v1.5.0
+   Compiling allocator-api2 v0.2.21
+   Compiling anyhow v1.0.104
+   Compiling thiserror v2.0.18
+   Compiling bumpalo v3.20.3
+   Compiling arbitrary v1.4.2
+   Compiling rustc-hash v2.1.3
+   Compiling litemap v0.8.2
+   Compiling writeable v0.6.3
+   Compiling zerocopy v0.8.52
+   Compiling icu_normalizer_data v2.2.0
+   Compiling wasmparser v0.235.0
+   Compiling utf8_iter v1.0.4
+   Compiling syn v2.0.118
+   Compiling syn v3.0.3
+   Compiling cranelift-assembler-x64 v0.122.0
+   Compiling object v0.36.7
+   Compiling cranelift-control v0.122.0
+   Compiling icu_properties_data v2.2.0
+   Compiling jobserver v0.1.35
+   Compiling getrandom v0.2.17
+   Compiling cc v1.2.65
+   Compiling cpufeatures v0.2.17
+   Compiling block-buffer v0.10.4
+   Compiling displaydoc v0.2.7
+   Compiling indexmap v2.14.0
+   Compiling crypto-common v0.1.7
+   Compiling wasmtime-internal-math v35.0.0
+   Compiling digest v0.10.7
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling ring v0.17.14
+   Compiling rustix v1.1.4
+   Compiling synstructure v0.13.2
+   Compiling itoa v1.0.18
+   Compiling gimli v0.31.1
+   Compiling wasm-encoder v0.235.0
+   Compiling semver v1.0.28
+   Compiling zeroize v1.9.0
+   Compiling pkg-config v0.3.33
+   Compiling byteorder v1.5.0
+   Compiling rustls-pki-types v1.15.1
+   Compiling sha2 v0.10.9
+   Compiling zstd-sys v2.0.16+zstd.1.5.7
+   Compiling rand_core v0.6.4
+   Compiling errno v0.3.14
+   Compiling bytes v1.12.0
+   Compiling leb128fmt v0.1.0
+   Compiling termcolor v1.4.1
+   Compiling httparse v1.10.1
+   Compiling serde_derive v1.0.228
+   Compiling zerofrom-derive v0.1.7
+   Compiling yoke-derive v0.8.2
+   Compiling zerovec-derive v0.11.3
+   Compiling pulley-macros v35.0.0
+   Compiling thiserror-impl v2.0.18
+   Compiling pulley-interpreter v35.0.0
+   Compiling wasmtime-internal-versioned-export-macros v35.0.0
+   Compiling utf8parse v0.2.2
+   Compiling thiserror v1.0.69
+   Compiling anstyle-parse v1.0.0
+   Compiling zerofrom v0.1.8
+   Compiling thiserror-impl v1.0.69
+   Compiling ppv-lite86 v0.2.21
+   Compiling cranelift-codegen-meta v0.122.0
+   Compiling aho-corasick v1.1.4
+   Compiling once_cell v1.21.4
+   Compiling rand_chacha v0.3.1
+   Compiling yoke v0.8.3
+   Compiling untrusted v0.9.0
+   Compiling anstyle v1.0.14
+   Compiling anstyle-query v1.1.5
+   Compiling regex-syntax v0.8.11
+   Compiling colorchoice v1.0.5
+   Compiling zmij v1.0.21
+   Compiling pin-project-lite v0.2.17
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling wasmtime-internal-unwinder v35.0.0
+   Compiling either v1.16.0
+   Compiling heapless v0.9.3
+   Compiling regex-automata v0.4.14
+   Compiling cobs v0.3.0
+   Compiling cranelift-codegen v0.122.0
+   Compiling itertools v0.14.0
+   Compiling anstream v1.0.0
+   Compiling zerovec v0.11.6
+   Compiling zerotrie v0.2.4
+   Compiling smallvec v1.15.2
+   Compiling regalloc2 v0.12.2
+   Compiling cranelift-entity v0.122.0
+   Compiling cranelift-bforest v0.122.0
+   Compiling postcard v1.1.3
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/core)
+   Compiling rand v0.8.6
+   Compiling wasmtime v35.0.0
+   Compiling tinystr v0.8.3
+   Compiling icu_locale_core v2.2.0
+   Compiling potential_utf v0.1.5
+   Compiling icu_collections v2.2.0
+   Compiling http v1.4.2
+   Compiling tokio-macros v2.7.0
+   Compiling icu_provider v2.2.0
+   Compiling hash32 v0.3.1
+   Compiling icu_properties v2.2.0
+   Compiling icu_normalizer v2.2.0
+   Compiling sha1 v0.10.6
+   Compiling socket2 v0.6.4
+   Compiling mio v1.2.1
+   Compiling utf-8 v0.7.6
+   Compiling idna_adapter v1.2.2
+   Compiling data-encoding v2.11.0
+   Compiling rustls v0.23.42
+   Compiling adler2 v2.0.1
+   Compiling futures-task v0.3.32
+   Compiling futures-core v0.3.32
+   Compiling futures-sink v0.3.32
+   Compiling slab v0.4.12
+   Compiling serde_json v1.0.150
+   Compiling tinyvec_macros v0.1.1
+   Compiling percent-encoding v2.3.2
+   Compiling simd-adler32 v0.3.9
+   Compiling smoltcp v0.13.1
+   Compiling zstd-safe v7.2.4
+   Compiling miniz_oxide v0.8.9
+   Compiling form_urlencoded v1.2.2
+   Compiling rustls-webpki v0.103.13
+   Compiling futures-util v0.3.32
+   Compiling tinyvec v1.12.0
+   Compiling wasmprinter v0.235.0
+   Compiling tungstenite v0.24.0
+   Compiling tokio v1.52.3
+   Compiling idna v1.1.0
+   Compiling wasmtime-environ v35.0.0
+   Compiling regex v1.12.4
+   Compiling webpki-roots v1.0.9
+   Compiling wasmtime-internal-jit-icache-coherence v35.0.0
+   Compiling mach2 v0.4.3
+   Compiling wasmtime-internal-asm-macros v35.0.0
+   Compiling wasmtime-internal-slab v35.0.0
+   Compiling bitflags v1.3.2
+   Compiling clap_lex v1.1.0
+   Compiling strsim v0.11.1
+   Compiling wasm-vm-wasm-emit v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/wasm-emit)
+   Compiling subtle v2.6.1
+   Compiling heck v0.5.0
+   Compiling managed v0.8.0
+   Compiling clap_derive v4.6.1
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/jit-translate)
+   Compiling tokio-tungstenite v0.24.0
+   Compiling clap_builder v4.6.0
+   Compiling env_filter v2.0.0
+   Compiling webpki-roots v0.26.11
+   Compiling url v2.5.8
+   Compiling unicode-normalization v0.1.25
+   Compiling flate2 v1.1.9
+   Compiling xattr v1.6.1
+   Compiling filetime v0.2.29
+   Compiling jiff v0.2.31
+   Compiling base64 v0.22.1
+   Compiling ureq v2.12.1
+   Compiling tar v0.4.46
+   Compiling clap v4.6.1
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/slirp)
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/storage)
+   Compiling env_logger v0.11.11
+   Compiling memmap2 v0.9.11
+   Compiling wasm-vm-agent-protocol v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/agent-protocol)
+   Compiling zstd v0.13.3
+   Compiling cranelift-native v0.122.0
+   Compiling cranelift-frontend v0.122.0
+   Compiling wasmtime-internal-cranelift v35.0.0
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/jit-runtime)
+   Compiling wasm-vm-cli v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/cli)
+warning: unused variable: `display_metrics`
+   --> crates/cli/src/boot.rs:624:52
+    |
+624 |         let (mut m, uart, agent_state, _gpu_state, display_metrics) =
+    |                                                    ^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_display_metrics`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-cli` (bin "wasm-vm") generated 1 warning (run `cargo fix --bin "wasm-vm" -p wasm-vm-cli` to apply 1 suggestion)
+    Finished `release` profile [optimized + debuginfo] target(s) in 35.57s
+chunked 1073741824 bytes into 8192 × 131072-byte split chunks → /Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/target/e5-t18e/run-CaaCRb/chunks
+{"image_len":1073741824,"chunk_size":131072,"chunks":8192,"layout":"split"}
+bash tools/build-web-dist.sh
+[web-dist] building wasm + installing pinned deps (make web-build)…
+wasm-pack build crates/wasm --target web
+[INFO]: 🎯  Checking for the Wasm target...
+[INFO]: 🌀  Compiling to Wasm...
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling cfg-if v1.0.4
+   Compiling version_check v0.9.5
+   Compiling rustversion v1.0.22
+   Compiling bumpalo v3.20.3
+   Compiling typenum v1.20.1
+   Compiling once_cell v1.21.4
+   Compiling futures-core v0.3.32
+   Compiling futures-task v0.3.32
+   Compiling slab v0.4.12
+   Compiling pin-project-lite v0.2.17
+   Compiling serde_core v1.0.228
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling log v0.4.33
+   Compiling zmij v1.0.21
+   Compiling smallvec v1.15.2
+   Compiling heapless v0.9.3
+   Compiling bitflags v2.13.0
+   Compiling byteorder v1.5.0
+   Compiling serde v1.0.228
+   Compiling futures-util v0.3.32
+   Compiling generic-array v0.14.7
+   Compiling smoltcp v0.13.1
+   Compiling hash32 v0.3.1
+   Compiling serde_json v1.0.150
+   Compiling stable_deref_trait v1.2.1
+   Compiling tinyvec_macros v0.1.1
+   Compiling tinyvec v1.12.0
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.2
+   Compiling managed v0.8.0
+   Compiling bitflags v1.3.2
+   Compiling unicode-normalization v0.1.25
+   Compiling wasm-vm-wasm-emit v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/wasm-emit)
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/core)
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/slirp)
+   Compiling wasm-bindgen-macro v0.2.126
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/storage)
+   Compiling js-sys v0.3.103
+   Compiling console_error_panic_hook v0.1.7
+   Compiling web-sys v0.3.103
+   Compiling getrandom v0.2.17
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/wasm)
+    Finished `release` profile [optimized + debuginfo] target(s) in 13.46s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[INFO]: Optimizing wasm binaries with `wasm-opt`...
+[INFO]: License key is set in Cargo.toml but no LICENSE file(s) were found; Please add the LICENSE file(s) to your project directory
+[INFO]: ✨   Done in 14.54s
+[INFO]: 📦   Your wasm pkg is ready to publish at crates/wasm/pkg.
+cd web && npm ci --no-audit --no-fund
+
+added 7 packages in 434ms
+npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn install-scripts   fsevents@2.3.2 (install: (install scripts present))
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+mkdir -p web/pkg web/assets/riscv-tests
+cp -R crates/wasm/pkg/. web/pkg/
+cp guest/prebuilt/hello.elf guest/prebuilt/loops.elf web/assets/
+cp tests/riscv-tests-bin/* web/assets/riscv-tests/
+# Boot artifacts must live UNDER web/ (the Pages publish_dir) so they deploy with the site.
+# Paths mirror the relative URLs in web/artifacts.json (regenerated by tools/gen-web-manifest.sh).
+mkdir -p web/releases/kernel/6.6.63 web/releases/initramfs
+cp releases/kernel/6.6.63/Image web/releases/kernel/6.6.63/Image
+cp releases/initramfs/initramfs.cpio.gz web/releases/initramfs/initramfs.cpio.gz
+# E4 restore-on-first-load: the (optional) compressed busybox boot snapshot, if built. Small
+# enough to ship on Pages (deploy-cloudflare.sh keeps its URL relative, unlike kernel/initramfs).
+bash tools/gen-web-manifest.sh
+wrote web/artifacts.json:
+{
+  "generated": "content-hashed; regenerate with tools/gen-web-manifest.sh",
+  "artifacts": {
+    "kernel": { "url": "releases/kernel/6.6.63/Image", "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce", "size": 24208896 },
+    "initramfs": { "url": "releases/initramfs/initramfs.cpio.gz", "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563", "size": 1151596 },
+    "bootSnapshot": { "url": "releases/boot-snapshot/busybox-ready.snap.gz", "sha256": "ba3168696638db573173b4d266f5234acd01fb2fabe452cc5a1dfde483a61d33", "size": 10983666 }
+  }
+}
+[web-dist] assembling web/dist …
+[web-dist] deploy root: / = landing, /app.html = app
+[web-dist] stamped sw.js app-shell version=ef3a9385f573
+[web-dist] done —  34M in web/dist (boot artifacts added at deploy time)
