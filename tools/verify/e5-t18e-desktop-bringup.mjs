@@ -100,6 +100,12 @@ if (reuseBuild) {
   for (const file of ["wasm_vm_wasm_bg.wasm", "wasm_vm_wasm.js"]) {
     await copyFile(path.join(reuseBuild, "web/pkg", file), path.join("web/pkg", file));
   }
+  const snippet = "snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js";
+  const snippetDigest = sha256(execFileSync("git", ["show", `${previous.head}:web/dist/pkg/${snippet}`]));
+  assert.equal(await hashFile(path.join(reuseBuild, "web/pkg", snippet)), snippetDigest);
+  assert.equal(await hashFile(path.join("web/dist/pkg", snippet)), snippetDigest);
+  await mkdir(path.dirname(path.join("web/pkg", snippet)), { recursive: true });
+  await copyFile(path.join(reuseBuild, "web/pkg", snippet), path.join("web/pkg", snippet));
   imageDir = path.resolve(reuseBuild, previous.publication.imageDir);
   chunkDir = path.resolve(reuseBuild, previous.publication.chunkDir);
   buildProvenance = { mode: "incremental-proof-repair", head: previous.head,
@@ -120,7 +126,7 @@ if (reuseBuild) {
 const publication = await verifyPublication(repo, imageDir, chunkDir);
 await copyFile("web/artifacts-alpine.json", "web/dist/artifacts-alpine.json");
 const runtime = {};
-for (const file of ["pkg/wasm_vm_wasm_bg.wasm", "pkg/wasm_vm_wasm.js", "desktop-cursor.html", "desktop-cursor.js",
+for (const file of ["pkg/wasm_vm_wasm_bg.wasm", "pkg/wasm_vm_wasm.js", "pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js", "desktop-cursor.html", "desktop-cursor.js",
   "desktop-terminal.js", "linux-worker-protocol.js", "linux-worker-host.js", "linux-worker.js", "loader.js",
   "src/sink/presentation.js", "src/sink/canvas2d.js", "src/input/pointer.js", "src/input/desktop-cursor-template.js",
   "src/input/desktop-geometry.js"]) {
