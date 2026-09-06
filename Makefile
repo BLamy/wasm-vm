@@ -959,7 +959,7 @@ verify-E5-T22f:
 	cargo test -p wasm-vm-core --test pmp_privilege_audit --test predecode_entry_safety --test pmp --test privilege --test tlb --test cpu_resume --test reset --test sv39 --features trace -- --nocapture
 	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
 	wasm-pack test --node crates/wasm --test pmp_privilege_audit --test jit_browser_parity -- --nocapture
-	node --test tools/verify/e5-t22f-browser.test.mjs
+	node --test tools/verify/e5-t22f-browser.test.mjs tools/verify/cold-clone.test.mjs
 	E5_T22C_TOOLS_OUT=target/e5-t22f/display-tools E5_T17B_OUT=target/e5-t22f/desktop-image E5_T17B_IMG_SIZE=1G E5_T17B_PACKAGE_LOCK=tools/image/e5-t18e/MANIFEST.txt E5_T18B_INTERACTIVE=1 E5_T18D_RECOVERY=1 E5_T22C_RESIZE=1 bash tools/image/desktop.sh
 	cargo build --release -p wasm-vm-cli
 	target/release/wasm-vm chunk target/e5-t22f/desktop-image/alpine-rootfs.ext4 --out target/e5-t22f/chunks

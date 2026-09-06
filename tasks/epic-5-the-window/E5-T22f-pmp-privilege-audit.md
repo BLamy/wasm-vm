@@ -124,3 +124,24 @@ The independently section-bound CPU name map puts cached-PMP synchronization at
 0.35% for the maximum-mode window, down from 30.71% in the old diagnostic. The
 remaining C timing gap is not waived. Final acceptance will use no profiler and
 a frozen source tree in one pristine local clone.
+
+### 2026-09-06 — worker — cold-clone container mount correction
+
+The first pristine run at `fd58010a` passed the scoped native, actual-Wasm,
+clippy and engine-harness checks, then failed rebuilding the pinned image.
+`evidence/e5-t22f/cold-clone-mount-failure.log` preserves the full failure.
+Colima cannot see the default macOS `/private/var/folders/...` scratch path:
+an explicit Docker bind mount rejects it as absent, whereas the identical
+137-line package input under `/Users` mounts as a regular file. No image or
+browser acceptance was produced, and this is not counted as a passing clone.
+
+Add `cold_clone.sh --parent DIR` to choose an existing shared scratch parent,
+while retaining the default path and environment scrub. Positional shell
+arguments keep spaces and quotes literal, and one validated make target cannot
+inject shell code or make flags. Deterministic fixture tests cover both path
+modes, committed-versus-dirty input, environment scrubbing, retained evidence,
+owned-child-only cleanup, invalid arguments and nonzero make propagation.
+The broader historical `self_check.sh` still flags pre-existing Makefile
+cleanup and multiline-option recipes; this task does not change those paths.
+The engine/runtime and immutable desktop fixture are unchanged. Repeat final
+acceptance from the new committed head in a shared `/Users` scratch child.

@@ -1,0 +1,14 @@
+✔ selected parent preserves literal paths, committed input, scrub and retained proof (155.246666ms)
+✔ cleanup removes only owned clone and make failure remains a failure (228.581917ms)
+✔ default temporary directory remains supported (142.74875ms)
+✔ invalid parents, flags and nonliteral targets fail before cloning (64.717875ms)
+✔ engine acceptance owns profiler, image, output and demo controls (0.456875ms)
+✔ frozen engine proof rejects dirty or staged imported runtime and fixture inputs (397.125208ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 625.039709
