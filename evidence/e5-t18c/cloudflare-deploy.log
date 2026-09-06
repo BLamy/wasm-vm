@@ -1,0 +1,20 @@
+[deploy] repointing manifests at R2 (https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev) …
+[deploy] shipped busybox-ready.snap.gz ( 10M) on Pages
+[deploy] shipped alpine-ready.snap.gz ( 15M) on Pages
+[deploy] shipped alpine-overlay-delta.bin.gz (300K) on Pages
+[deploy] R2 already exact: boot-snapshot/sha256/f28f90de26bbe35d927a3f53767b3c0469964d1803d0ab21f2c4d5f008dce37f/node-alpine-ready.snap.gz
+[deploy] shipped node-alpine-overlay-delta.bin.gz ( 20K) on Pages
+[deploy] deploying web/dist to Cloudflare Pages project 'wasm-vm' (production)…
+
+ ⛅️ wrangler 4.129.0
+────────────────────
+Uploading... (218/275)
+Uploading... (237/275)
+Uploading... (256/275)
+Uploading... (275/275)
+✨ Success! Uploaded 57 files (218 already uploaded) (5.01 sec)
+
+✨ Uploading _headers
+🌎 Deploying...
+✨ Deployment complete! Take a peek over at https://9a560914.wasm-vm.pages.dev
+[deploy] live at https://wasm-vm.pages.dev/

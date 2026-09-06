@@ -1,0 +1,61 @@
+{
+  "gitHead": "4d65954a42122554ab439defd4149ae43fb37b71",
+  "deploymentUrl": "https://9a560914.wasm-vm.pages.dev",
+  "productionUrl": "https://wasm-vm.pages.dev/app?noAutoBoot=1",
+  "browser": "152.0.7977.76",
+  "scope": "Published app/suite/visible verified task badge, legacy capability indicator, and frozen proof-source byte parity; the recorded guest matrix uses the pinned local desktop asset server.",
+  "passed": "126",
+  "failed": "0",
+  "cursorPip": "cap-pip verified",
+  "cursorCapability": "Desktop cursor alignment + DPR hit-testingE5-T18c: four fresh local Chromium contexts, two window cycles each, exact guest cursor alignment and boundary hit-tests at DPR 1 and 2",
+  "cursorLink": "./desktop-cursor.html",
+  "livePips": 11,
+  "visibleTaskBadge": "verified",
+  "errors": [],
+  "sourceParity": [
+    {
+      "url": "https://9a560914.wasm-vm.pages.dev/desktop-cursor.html",
+      "sha256": "dd524cad2072daeff6733ba4801592b20bffc0c58899aac24554885e8cd0c57f",
+      "equal": true
+    },
+    {
+      "url": "https://9a560914.wasm-vm.pages.dev/desktop-cursor.js",
+      "sha256": "680545225f533b51a62fb8cd655f9870fac7af3ca54a9b5dbbe561e42cc38380",
+      "equal": true
+    },
+    {
+      "url": "https://9a560914.wasm-vm.pages.dev/desktop-terminal.html",
+      "sha256": "a953752cb699c7d5b5ac9569b8b39293e8eece1c40c05be665d89dca5a019f89",
+      "equal": true
+    },
+    {
+      "url": "https://9a560914.wasm-vm.pages.dev/desktop-terminal.js",
+      "sha256": "969cc06524eca6198a6ea348f62a583c05fcb63f3aa5a71ea832b9c34c9a9559",
+      "equal": true
+    },
+    {
+      "url": "https://9a560914.wasm-vm.pages.dev/src/input/desktop-geometry.js",
+      "sha256": "8029a9c8f24469adc4b6fdd690de050d2d867b4d996aee3361f1fb614cf4ebd5",
+      "equal": true
+    },
+    {
+      "url": "https://9a560914.wasm-vm.pages.dev/src/input/desktop-cursor-template.js",
+      "sha256": "a20daf8c548cc67e15869104590af19f30872cde7016a6f6126140b059aaaa71",
+      "equal": true
+    },
+    {
+      "url": "https://9a560914.wasm-vm.pages.dev/src/input/pointer.js",
+      "sha256": "b5442e60b877e36077ee451eeec6da46da97b246d97afa8a9c94ea4e4cb231d5",
+      "equal": true
+    }
+  ],
+  "screenshot": {
+    "path": "evidence/e5-t18c/live-roadmap.png",
+    "sha256": "cdc00cff4238b9d899a6842a0864acb7e949e019e2e971029dd1c3b888c010a2"
+  },
+  "deployLog": {
+    "path": "evidence/e5-t18c/cloudflare-deploy.log",
+    "sha256": "fab2c47d2eb1d7c4d93dbcd9c6eea684a14a411a4858b4fa3ae9ef0f7d71d83b"
+  },
+  "result": "passed"
+}
