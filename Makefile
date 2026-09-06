@@ -945,6 +945,7 @@ verify-E5-T22c:
 	target/release/wasm-vm chunk target/e5-t22c/acceptance-image/alpine-rootfs.ext4 --out target/e5-t22c/chunks/acceptance
 	E5_T22C_CHUNKS=target/e5-t22c/chunks/acceptance node tools/verify/e5-t22c-dev-route.mjs
 	$(MAKE) web-dist
+	node --test tools/verify/e5-t22c-cpu-profile.test.mjs
 	node tools/verify/e5-t22c-content-replay.mjs
 	E5_T22C_ITERATION=0 E5_T22C_IMAGE_DIR=target/e5-t22c/acceptance-image E5_T22C_CHUNKS=target/e5-t22c/chunks/acceptance E5_T22C_TOOLS_OUT=target/e5-t22c/display-tools E5_T22C_OUT=evidence/e5-t22c/acceptance node tools/verify/e5-t22c-guest-mode.mjs
 	E5_DEMO_TASK=E5-T22c E5_DEMO_OUT=evidence/e5-t22c/demo node tools/verify/e5-t18e-demo-smoke.mjs

@@ -283,3 +283,23 @@ to the frozen tree and require them to be Git-tracked before recording. The
 extended dirty/staged checks and an untracked-lock negative test now pass
 (`freeze-lock/green.log`). This is a harness proof repair; no guest semantics or
 existing held device-boundary result changes, and no final acceptance is claimed.
+
+### 2026-09-06 — worker — solid background reduces repaint cost; focus profiling
+
+The v7 image (`811267cbf96c1e055e31063829580432d5e5e343cff1a975f5fc10664cc2e00e`)
+at `38da087a` retains all real mode/client/marker checks with no browser errors.
+Full 1280x800 coverage takes 4756 ms and 2560x1600 14485 ms, versus roughly
+27 s and 83 s with wallpaper. This run has guest profiling enabled; it is a
+diagnostic comparison, not a final performance acceptance. All seven modes
+still exceed two seconds. Recording: `evidence/e5-t22c/iteration-solid-v7/`.
+
+The initial before/after profile pair also includes the later diagnostic status
+queries, so do not attribute its entire delta to resizing. Add separate samples
+at first paint and edge completion, before the queries. A Chrome CPU profiler
+now targets the exact owned whole-machine worker and records only the resize
+window (including bounded sampling-control overhead). Its real-worker test
+rejects a missing target and observes a known CPU probe in the chosen worker.
+An iteration-only fixed-command stdin loop can retain this same disposable
+guest for follow-up measurements; strict acceptance cannot enable that loop or
+either profiler. No arbitrary guest/host commands or network control endpoint
+are added. Kernel debug-setting observations remain leads, not a kernel change.

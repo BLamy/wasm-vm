@@ -5,15 +5,19 @@ import { createServer } from "node:http";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
+import { createInterface } from "node:readline";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { inspectRecoveryCanvas } from "./e5-t18d-surface.mjs";
 import { assertDisplayAgreement, inspectResizeContent, inspectDesktopEdges } from "./e5-t22c-observations.mjs";
 import { hashFile, verifyChunkStore } from "./e5-t18e-publication.mjs";
 import { verifyDisplayPublication, verifyFrozenRuntime } from "./e5-t22c-publication.mjs";
+import { attachWorkerProfiler } from "./e5-t22c-cpu-profile.mjs";
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"../..");
 const iteration=process.env.E5_T22C_ITERATION==="1";
 const profile=iteration&&process.env.E5_T22C_PROFILE==="1";
+const cpuProfile=iteration&&process.env.E5_T22C_CPU_PROFILE==="1";
+const interactive=iteration&&process.env.E5_T22C_INTERACTIVE==="1";
 const imageDir=path.resolve(repo,process.env.E5_T22C_IMAGE_DIR||"target/e5-t22c/acceptance-image");
 const chunks=path.resolve(repo,process.env.E5_T22C_CHUNKS||"target/e5-t22c/chunks/acceptance");
 const toolsDir=path.resolve(repo,process.env.E5_T22C_TOOLS_OUT||"target/e5-t22c/display-tools");
@@ -27,7 +31,7 @@ const sources={};
 for(const file of ["tools/guest/wv-display-resize.c","tools/guest/wv-display-mode.h","tools/guest/wv-display-query.c",
   "tools/rootfs/desktop-test-console","tools/rootfs-inner.sh","tools/build-rootfs.sh","tools/image/desktop.sh",
   "tools/image/build-display-tools.sh","tools/verify/e5-t22c-guest-mode.mjs","tools/verify/e5-t22c-observations.mjs",
-  "tools/verify/e5-t22c-publication.mjs",
+  "tools/verify/e5-t22c-publication.mjs","tools/verify/e5-t22c-cpu-profile.mjs",
   "web/desktop-resize.js","web/dist/desktop-resize.js","web/dist/pkg/wasm_vm_wasm_bg.wasm",
   "web/artifacts-alpine.json","releases/kernel/6.6.63/Image"])
   sources[file]=sha(await readFile(path.join(repo,file)));
@@ -84,6 +88,7 @@ const timer=setInterval(async()=>{if(progressBusy)return;progressBusy=true;try{
   await writeFile(path.join(out,"serial.log"),await page.evaluate(()=>desktopResize.serial()));
 }catch{}finally{progressBusy=false;}},30000);
 const results=[],gaps=[];
+let workerProfiler=null;
 const pid=s=>/weston\.pid=(\d+)/.exec(s)?.[1];
 const clientPids=s=>[...s.matchAll(/WV_CLIENT pid=(\d+) exe=\/usr\/bin\/foot/g)].map(m=>m[1]).sort();
 async function gpuState(){return page.evaluate(async()=>{const gpu=await desktopResize.controller().displayStats();return {...gpu,edid:Array.from(gpu.edid)};});}
@@ -108,10 +113,12 @@ try{
   const client=await command("display"),originalContent=await content();
   assert.equal(clientPids(client).length,1,"one live foot proof client");
   await page.screenshot({path:path.join(out,"initial-client.png"),fullPage:true});
-  async function runMode(width,height,pendingFrom=null){
+  if(cpuProfile)workerProfiler=await attachWorkerProfiler(browser,`http://127.0.0.1:${server.address().port}/linux-worker.js`);
+  async function runMode(width,height,pendingFrom=null,label=`${width}x${height}`){
     phase=`resize ${width}x${height}`;
     const beforeScheduler=await page.evaluate(()=>desktopResize.controller().schedulerStats());
     const beforeProfile=profile?await page.evaluate(()=>desktopResize.controller().profileStats()):null;
+    await workerProfiler?.start();
     const started=await page.evaluate(([w,h])=>{const el=document.getElementById("viewport");const ms=performance.now();el.style.width=w+"px";el.style.height=h+"px";return ms;},[width,height]);
     let replacementBeforeResume=null;
     if(pendingFrom){
@@ -128,13 +135,17 @@ try{
     },{width,height,started}),"matching mode "+width+"x"+height,120000);
     const elapsed=paint.ms-started;
     const afterScheduler=await page.evaluate(()=>desktopResize.controller().schedulerStats());
+    const firstPaintProfile=profile?await page.evaluate(()=>desktopResize.controller().profileStats()):null;
     if(elapsed>2000)gaps.push(`${width}x${height}: ${elapsed.toFixed(2)}ms exceeds 2000ms`);
     const initialEdges=await page.evaluate(inspectDesktopEdges);
-    await writeFile(path.join(out,`${width}x${height}-initial-edges.json`),JSON.stringify(initialEdges,null,2)+"\n");
+    await writeFile(path.join(out,`${label}-initial-edges.json`),JSON.stringify(initialEdges,null,2)+"\n");
     // A dimensions-only first frame is not sufficient if the shell has not
     // painted the newly exposed desktop. Keep that first-frame timing separate.
     const edges=await until(async()=>{const e=await page.evaluate(inspectDesktopEdges);return e.width===width&&e.height===height&&e.complete?e:null;},"desktop fills "+width+"x"+height,120000);
     const completeMs=await page.evaluate(()=>performance.now());
+    const completeProfile=profile?await page.evaluate(()=>desktopResize.controller().profileStats()):null;
+    const cpuRecording=workerProfiler?await workerProfiler.stop():null;
+    if(cpuRecording)await writeFile(path.join(out,`${label}-cpu.json`),JSON.stringify(cpuRecording)+"\n");
     if(completeMs-started>2000)gaps.push(`${width}x${height}: complete desktop ${(completeMs-started).toFixed(2)}ms exceeds 2000ms`);
     const guest=await command("display"),gpu=await gpuState(),state=await page.evaluate(()=>desktopResize.state());
     const observation=assertDisplayAgreement({guest,gpu,state,width,height,outputId:firstMode.id});
@@ -142,11 +153,11 @@ try{
     assert.deepEqual(clientPids(guest),clientPids(client),"same foot client process");
     const marker=await content();assert.equal(marker.visible,true,"live terminal text visible");
     assert.equal(marker.sha256,originalContent.sha256,"identical retained terminal text pixels");
-    const screenshot=await page.screenshot({path:path.join(out,`${width}x${height}.png`),fullPage:true});
+    const screenshot=await page.screenshot({path:path.join(out,`${label}.png`),fullPage:true});
     const afterProfile=profile?await page.evaluate(()=>desktopResize.controller().profileStats()):null;
-    const result={width,height,started,paint,elapsed,initialEdges,edges,completeMs,pendingFrom,replacementBeforeResume,beforeScheduler,afterScheduler,beforeProfile,afterProfile,guest,gpu,state,observation,status,marker,screenshotSha256:sha(screenshot)};
+    const result={width,height,label,started,paint,elapsed,initialEdges,edges,completeMs,pendingFrom,replacementBeforeResume,beforeScheduler,afterScheduler,beforeProfile,firstPaintProfile,completeProfile,afterProfile,guest,gpu,state,observation,status,marker,screenshotSha256:sha(screenshot)};
     results.push(result);console.log(JSON.stringify({mode:[width,height],elapsed,pid:pid(status),foot:clientPids(guest),marker:marker.sha256}));
-    await writeFile(path.join(out,"results.json"),JSON.stringify({iteration,profile,head,frozen,sources,servedRuntime,publication,metadata,initial,client,originalContent,results,gaps,errors},null,2)+"\n");
+    await writeFile(path.join(out,"results.json"),JSON.stringify({iteration,profile,cpuProfile,interactive,head,frozen,sources,servedRuntime,publication,metadata,initial,client,originalContent,results,gaps,errors},null,2)+"\n");
   }
   for(const [width,height] of [[803,603],[640,480],[1280,800],[2560,1600],[801,601],[802,601]])await runMode(width,height);
   // Observe a real host/guest disagreement before issuing the next DOM size.
@@ -183,10 +194,37 @@ try{
   }
   if(!iteration)assert.deepEqual(gaps,[],"real guest resize performance");
   console.log(JSON.stringify({iteration,completed:true,gaps,errors}));
+  if(interactive){
+    // Working-loop only: keep this same disposable guest for bounded follow-up
+    // measurements, not another ten-minute boot for each hypothesis. This has
+    // no network control endpoint and accepts no arbitrary guest/host command.
+    const input=createInterface({input:process.stdin});
+    let idle;
+    const ready=()=>{phase="interactive";clearTimeout(idle);idle=setTimeout(()=>input.close(),600000);
+      console.log("DIAGNOSTIC_READY: resize WIDTH HEIGHT | stats | log | stop (10 minute idle limit)");};
+    ready();
+    try{for await(const line of input){
+      clearTimeout(idle);const args=line.trim().split(/\s+/);
+      if(args.length===1&&args[0]==="stop")break;
+      if(args.length===1&&args[0]==="stats")console.log(JSON.stringify(await page.evaluate(async()=>({scheduler:await desktopResize.controller().schedulerStats(),jit:await desktopResize.controller().jitStats(),profile:await desktopResize.controller().profileStats()}))));
+      else if(args.length===1&&args[0]==="log")await writeFile(path.join(out,`extra-${results.length}-compositor.log`),await command("log","LOG"));
+      else if(args.length===3&&args[0]==="resize"&&/^\d{3,4}$/.test(args[1])&&/^\d{3,4}$/.test(args[2])){
+        const width=Number(args[1]),height=Number(args[2]);
+        if(width<320||width>4095||height<240||height>4095)throw Error("diagnostic dimensions outside viewport bounds");
+        await runMode(width,height,null,`extra-${results.length}-${width}x${height}`);
+      }else console.log("DIAGNOSTIC_ERROR: unsupported fixed command");
+      ready();
+    }}finally{clearTimeout(idle);input.close();}
+  }
 }catch(error){
   await writeFile(path.join(out,"failure.json"),JSON.stringify({phase,error:String(error),errors,results},null,2)+"\n");
   await page.screenshot({path:path.join(out,"failure.png")}).catch(()=>{});
   try{await writeFile(path.join(out,"failure-display.json"),JSON.stringify({gpu:await gpuState(),state:await page.evaluate(()=>desktopResize.state()),edges:await page.evaluate(inspectDesktopEdges),content:await content(),guest:await command("display"),status:await command("status","STATUS")},null,2)+"\n");}catch{}
   try{await writeFile(path.join(out,"last-compositor.log"),await command("log","LOG"));}catch{}
   throw error;
-}finally{clearInterval(timer);await writeFile(path.join(out,"serial.log"),await page.evaluate(()=>desktopResize.serial()).catch(()=>""));await browser.close();await new Promise(r=>server.close(r));}
+}finally{
+  clearInterval(timer);
+  try{await workerProfiler?.close();}
+  finally{await writeFile(path.join(out,"serial.log"),await page.evaluate(()=>desktopResize.serial()).catch(()=>""));
+    await browser.close();await new Promise(r=>server.close(r));}
+}

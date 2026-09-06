@@ -1,0 +1,121 @@
+{
+  "scheduler": {
+    "quantum": 500000,
+    "maxQuantum": 500000,
+    "slices": 11325,
+    "totalSliceMs": 662133.6199967861,
+    "averageSliceMs": 58.46654481207825,
+    "maxSliceMs": 555.5600000023842,
+    "sliceHistogram": [
+      {
+        "leMs": 4,
+        "count": 49
+      },
+      {
+        "leMs": 8,
+        "count": 291
+      },
+      {
+        "leMs": 16,
+        "count": 134
+      },
+      {
+        "leMs": 32,
+        "count": 658
+      },
+      {
+        "leMs": 64,
+        "count": 5852
+      },
+      {
+        "leMs": 128,
+        "count": 4257
+      },
+      {
+        "leMs": 256,
+        "count": 67
+      },
+      {
+        "leMs": 512,
+        "count": 15
+      },
+      {
+        "leMs": 1000,
+        "count": 2
+      },
+      {
+        "leMs": null,
+        "count": 0
+      }
+    ],
+    "maxStretchGapMs": 557.1200000047684,
+    "requestedInstructions": 5662500000,
+    "retiredInstructions": 5662043718,
+    "fetchWaits": 282,
+    "fetchRequestedChunks": 311,
+    "fetchWaitTotalMs": 552.0299995541573,
+    "fetchWaitMaxMs": 7.6049999594688416,
+    "outputCalls": 309,
+    "outputBytes": 37105,
+    "inputCalls": 21,
+    "inputBytes": 165,
+    "yieldMode": "scheduler.postTask",
+    "schedulerYields": 11327,
+    "timerYields": 0,
+    "mainThreadYields": 0
+  },
+  "jit": {
+    "hasExecutor": true,
+    "compiledBlocks": 93,
+    "executedBlocks": 122737529,
+    "retiredViaJit": 1599751849,
+    "directChainEntries": 297801278,
+    "directChainLinks": 175066857,
+    "dynamicLinkAttempts": 43723250,
+    "dynamicLinkHits": 16669029,
+    "dynamicLinkRefusals": 27054221,
+    "dynamicLinkRetargets": 0,
+    "dynamicLinkLiveEntries": 7,
+    "dynamicLinkInstalls": 5614848,
+    "entryCost": {
+      "hostEntries": 122737529,
+      "stateCopyCalls": 245475058,
+      "stateCopyBytes": 25182991048,
+      "stateCopyNs": 11351382227,
+      "engineEntryNs": 41818828910,
+      "indirectTableDispatches": 70797249,
+      "authorityChecks": 160408003,
+      "memorySplitExits": 4057019,
+      "deviceBoundaries": 249856,
+      "deviceBoundaryNs": 19499986
+    },
+    "jitRegionChaining": true,
+    "jitDynamicChaining": true,
+    "guestRetired": 5662543570,
+    "jitEngineCalls": 122737529,
+    "jitLogicalBlocksPerEngineCall": 2.4263261646729095,
+    "jitRetiredShare": 0.28251470902147957,
+    "chainLinksMade": 21383,
+    "chainLinksCut": 21360,
+    "chainDispatchEntries": 89464674,
+    "chainMaxDepth": 128,
+    "chainLinksFollowed": 117383814,
+    "jitResidencyPolicy": "repack-off",
+    "jitResidencyCap": 24,
+    "jitSubmittedMembers": 51458,
+    "jitCompilePauseNs": 2380510012,
+    "jitCompilePauseMaxNs": 1655000,
+    "jitCompilePauseSamples": 11318,
+    "jitCacheInstalls": 51440,
+    "jitCacheRetranslations": 45558,
+    "jitCacheEvictions": 10738,
+    "jitCacheBatches": 20,
+    "jitCacheCodeBytes": 1543431,
+    "decodedBlocksDiscarded": 253,
+    "decodedCacheFlushes": 3,
+    "discoveryGeneration": 101,
+    "blockEntryHits": 684951637,
+    "blockBuilds": 112835066
+  },
+  "digest": "ab2dda0c3cf9c8c1f04b077e3b30733ceed73aafe8ed7fa42365a486ed3e4014"
+}
