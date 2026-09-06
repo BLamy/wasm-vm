@@ -3,7 +3,7 @@ id: E5-T25a
 epic: 5
 title: Freeze test-only desktop performance instrumentation and injection hooks
 priority: 525.1
-status: pending
+status: in-progress
 depends_on: [E5-T09e, E5-T18e]
 estimate: S
 risk: medium
@@ -60,4 +60,9 @@ valid event. Audit the release artifact for the hook symbol and feature string.
 
 ## Verification log
 
-(empty)
+### 2026-09-06 — worker — in-progress
+
+Activate the first T25 slice at the top of the queue. Freeze the test-only injection
+and drawn-present telemetry boundary before implementing either drag-FPS aggregation
+or input-to-photon latency. The normal release path, null-sink honesty, and native/
+Wasm schema parity are the acceptance gates for this branch.

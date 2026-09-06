@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T25a** — Freeze test-only desktop performance instrumentation and injection hooks
 1. **E5-T26** — Desktop-aware snapshots — GPU, input, and sound state across suspend/resume **[DECOMPOSE BEFORE START]**
 
 
@@ -441,7 +440,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `524.3` [E5-T24c](epic-5-the-window/E5-T24c-host-clipboard-service.md) — Add host clipboard permissions and gesture-ordered sync *(deps: E5-T24a, E5-T24b)*
 - [x] `524.4` [E5-T24d](epic-5-the-window/E5-T24d-clipboard-proof.md) — Prove bidirectional clipboard sync in the browser and guest *(deps: E5-T24b, E5-T24c)*
 - [-] `525` [E5-T25](epic-5-the-window/E5-T25-perf-fps-latency-harness.md) — Performance harness — window-drag FPS and input-to-photon latency, measured *(deps: E5-T09e, E5-T18e)*
-- [ ] `525.1` [E5-T25a](epic-5-the-window/E5-T25a-desktop-perf-instrumentation.md) — Freeze test-only desktop performance instrumentation and injection hooks *(deps: E5-T09e, E5-T18e)*
+- [~] `525.1` [E5-T25a](epic-5-the-window/E5-T25a-desktop-perf-instrumentation.md) — Freeze test-only desktop performance instrumentation and injection hooks *(deps: E5-T09e, E5-T18e)*
 - [ ] `525.2` [E5-T25b](epic-5-the-window/E5-T25b-drag-fps-harness.md) — Measure repeatable real-window drag FPS and bottleneck counters *(deps: E5-T25a)*
 - [ ] `525.3` [E5-T25c](epic-5-the-window/E5-T25c-input-photon-latency.md) — Measure and calibrate focused-key input-to-photon latency *(deps: E5-T25a)*
 - [ ] `525.4` [E5-T25d](epic-5-the-window/E5-T25d-perf-baseline-regression-gate.md) — Publish desktop performance baselines and the regression gate *(deps: E5-T25b, E5-T25c)*
