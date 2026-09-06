@@ -13,6 +13,7 @@ import { hashFile, verifyChunkStore } from "./e5-t18e-publication.mjs";
 import { verifyDisplayPublication, verifyFrozenRuntime } from "./e5-t22c-publication.mjs";
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"../..");
 const iteration=process.env.E5_T22C_ITERATION==="1";
+const profile=iteration&&process.env.E5_T22C_PROFILE==="1";
 const imageDir=path.resolve(repo,process.env.E5_T22C_IMAGE_DIR||"target/e5-t22c/acceptance-image");
 const chunks=path.resolve(repo,process.env.E5_T22C_CHUNKS||"target/e5-t22c/chunks/acceptance");
 const toolsDir=path.resolve(repo,process.env.E5_T22C_TOOLS_OUT||"target/e5-t22c/display-tools");
@@ -88,7 +89,7 @@ const clientPids=s=>[...s.matchAll(/WV_CLIENT pid=(\d+) exe=\/usr\/bin\/foot/g)]
 async function gpuState(){return page.evaluate(async()=>{const gpu=await desktopResize.controller().displayStats();return {...gpu,edid:Array.from(gpu.edid)};});}
 async function content(){const {rgba,...marker}=await page.evaluate(inspectResizeContent);return {...marker,sha256:rgba?sha(Buffer.from(rgba)):null};}
 try{
-  await page.goto("http://127.0.0.1:"+server.address().port+"/desktop-resize.html?recoveryTest=1&width=901&height=701");
+  await page.goto("http://127.0.0.1:"+server.address().port+"/desktop-resize.html?recoveryTest=1&width=901&height=701"+(profile?"&profile=1":""));
   phase="guest boot";
   await until(()=>page.evaluate(()=>window.desktopResize?.serial().includes("E5T18D_TEST_CONSOLE_READY")),"test console");
   phase="desktop startup";
@@ -110,6 +111,7 @@ try{
   async function runMode(width,height,pendingFrom=null){
     phase=`resize ${width}x${height}`;
     const beforeScheduler=await page.evaluate(()=>desktopResize.controller().schedulerStats());
+    const beforeProfile=profile?await page.evaluate(()=>desktopResize.controller().profileStats()):null;
     const started=await page.evaluate(([w,h])=>{const el=document.getElementById("viewport");const ms=performance.now();el.style.width=w+"px";el.style.height=h+"px";return ms;},[width,height]);
     let replacementBeforeResume=null;
     if(pendingFrom){
@@ -141,9 +143,10 @@ try{
     const marker=await content();assert.equal(marker.visible,true,"live terminal text visible");
     assert.equal(marker.sha256,originalContent.sha256,"identical retained terminal text pixels");
     const screenshot=await page.screenshot({path:path.join(out,`${width}x${height}.png`),fullPage:true});
-    const result={width,height,started,paint,elapsed,initialEdges,edges,completeMs,pendingFrom,replacementBeforeResume,beforeScheduler,afterScheduler,guest,gpu,state,observation,status,marker,screenshotSha256:sha(screenshot)};
+    const afterProfile=profile?await page.evaluate(()=>desktopResize.controller().profileStats()):null;
+    const result={width,height,started,paint,elapsed,initialEdges,edges,completeMs,pendingFrom,replacementBeforeResume,beforeScheduler,afterScheduler,beforeProfile,afterProfile,guest,gpu,state,observation,status,marker,screenshotSha256:sha(screenshot)};
     results.push(result);console.log(JSON.stringify({mode:[width,height],elapsed,pid:pid(status),foot:clientPids(guest),marker:marker.sha256}));
-    await writeFile(path.join(out,"results.json"),JSON.stringify({iteration,head,frozen,sources,servedRuntime,publication,metadata,initial,client,originalContent,results,gaps,errors},null,2)+"\n");
+    await writeFile(path.join(out,"results.json"),JSON.stringify({iteration,profile,head,frozen,sources,servedRuntime,publication,metadata,initial,client,originalContent,results,gaps,errors},null,2)+"\n");
   }
   for(const [width,height] of [[803,603],[640,480],[1280,800],[2560,1600],[801,601],[802,601]])await runMode(width,height);
   // Observe a real host/guest disagreement before issuing the next DOM size.

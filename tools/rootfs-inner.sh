@@ -517,6 +517,10 @@ WESTON_INI
       # Keep the same DRM/pixman renderer, without an unnecessary extra shadow
       # framebuffer copy on this RAM-backed virtual GPU.
       sed -i '/^\[core\]$/a modules=wv-display-resize.so\npixman-shadow=false' "$ROOT/etc/xdg/weston/weston.ini"
+      # Weston represents a solid background with a one-pixel client buffer and
+      # a native Wayland viewport destination. Avoid re-rasterizing the stock
+      # wallpaper in the interpreted guest every time its output expands.
+      printf '\n[shell]\nbackground-color=0xff77716f\n' >> "$ROOT/etc/xdg/weston/weston.ini"
     fi
 
     cat > "$ROOT/home/desktop/.profile" <<'DESKTOP_PROFILE'

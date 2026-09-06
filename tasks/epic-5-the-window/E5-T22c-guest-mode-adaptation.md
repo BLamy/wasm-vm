@@ -252,3 +252,23 @@ old-size-desktop/black-padding negative regression, and a bounded real wait to
 distinguish late shell drawing from a permanently stale surface. No runtime
 fix or new performance waiver is claimed; the unchanged image is investigated
 first. The existing host/reset/client-identity results remain held.
+
+### 2026-09-06 — worker — distinguish delayed shell repaint from missing notification
+
+The unchanged v5 image, run with full-edge waiting at `3888e6b8`, eventually
+fills every requested mode correctly. The 1280x800 expansion first paints at
+4104 ms but fills at 27065 ms; 2560x1600 first paints at 8497 ms and fills at
+83303 ms. Both resulting screenshots show the expanded wallpaper and panel,
+with the original terminal marker and processes retained. This is delayed
+client repaint, not proof of a missing native resize signal. The diagnostic
+protocol-logging boot overlaps this run, so these are observed diagnostic times,
+not an uncontended performance baseline. No timing criterion is waived.
+
+Test the selected Weston's existing solid-background configuration next. Its
+client uses a one-pixel buffer with a Wayland viewport destination instead of
+rerasterizing the stock wallpaper for every expanded mode. The real output
+mode, Weston/pixman renderer, user identity, terminal and panel remain unchanged.
+This is a deliberate visual simplification inside the guest image boundary,
+not CSS scaling of the guest framebuffer. A loopback-test-only profile option
+uses the existing sampled guest profiler; strict acceptance never enables it.
+The next immutable v7 image must still earn the real browser checks.

@@ -48,6 +48,7 @@ try{
     // The selected desktop has no recorded prefetch profile. Do not request the
     // unrelated headless Alpine profile (or silently tolerate its HTTP failure).
     bootProfileUrl:null,
+    profile:test&&query.get("profile")==="1",
     bootSnapshot:false,persist:false,slirpNet:false,startPaused:true,
     fastInterpreter:true,jit:query.get("jit")!=="0",quantum:500000,
     onOutput(bytes){serial=(serial+decoder.decode(bytes,{stream:true})).slice(-1000000);document.getElementById("serial").textContent=serial.slice(-12000);},
