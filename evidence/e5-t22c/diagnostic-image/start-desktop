@@ -1,0 +1,142 @@
+#!/bin/sh
+# E5-T18d: one boot has at most three compositor attempts, even if getty re-enters.
+# This runs as the unprivileged desktop user; init/getty owns the login boundary.
+set -u
+umask 077
+
+log_dir=/home/desktop/.local/state/wasm-vm
+runtime_dir=${XDG_RUNTIME_DIR:-/run/user/1000}
+desktop_timeout=30
+weston_pid=
+mkdir -p "$log_dir" || exit 1
+log_file="$log_dir/desktop.log"
+budget_file="$log_dir/desktop.attempts"
+failed_file="$log_dir/desktop.failed"
+pid_file="$log_dir/weston.pid"
+ready_file="$log_dir/desktop.ready"
+
+log() {
+  printf '%s E5T18D %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$*" >>"$log_file"
+}
+
+alive() {
+  [ -n "$weston_pid" ] && kill -0 "$weston_pid" 2>/dev/null &&
+    [ "$(awk '{print $3}' "/proc/$weston_pid/stat" 2>/dev/null)" != Z ]
+}
+
+stop_child() {
+  if [ -n "$weston_pid" ]; then
+    kill -TERM "$weston_pid" 2>/dev/null || true
+    stop_wait=0
+    while alive && [ "$stop_wait" -lt 5 ]; do
+      sleep 1
+      stop_wait=$((stop_wait + 1))
+    done
+    if alive; then kill -KILL "$weston_pid" 2>/dev/null || true; fi
+    wait "$weston_pid" 2>/dev/null || true
+    weston_pid=
+  fi
+  rm -f "$pid_file" "$ready_file"
+}
+
+fallback() {
+  stop_child
+  printf '%s\n' "$1" >"$failed_file"
+  log "event=fallback reason=$1 attempts=$attempt"
+  sync
+  printf '\033[0m\nDESKTOP FAILED: %s\nSee %s; returning tty1 to login.\n' "$1" "$log_file"
+  exit 0
+}
+
+shutdown() {
+  log 'event=shutdown'
+  stop_child
+  exit 0
+}
+trap shutdown HUP INT TERM
+
+attempt=0
+if [ -r "$budget_file" ]; then attempt=$(cat "$budget_file"); fi
+case "$attempt" in 0|1|2|3) ;; *) attempt=3; fallback invalid-attempt-budget ;; esac
+if [ -e "$failed_file" ]; then
+  log "event=latched attempts=$attempt"
+  exit 0
+fi
+if [ "$attempt" -ge 3 ]; then fallback restart-budget-exhausted; fi
+
+# Do not recreate a missing runtime directory here: that would hide a broken OpenRC dependency.
+if [ ! -d "$runtime_dir" ] || [ -L "$runtime_dir" ]; then fallback runtime-directory-missing; fi
+if [ "$(stat -c %u "$runtime_dir")" != "$(id -u)" ] ||
+   [ "$(stat -c %a "$runtime_dir")" != 700 ]; then fallback runtime-directory-permissions; fi
+if [ ! -c /dev/dri/card0 ]; then fallback video-device-missing; fi
+case "${WLR_RENDERER:-pixman}" in pixman) ;; *) fallback unsupported-renderer ;; esac
+if [ ! -r /etc/xdg/weston/weston.ini ]; then fallback compositor-config-missing; fi
+
+export XDG_RUNTIME_DIR="$runtime_dir"
+export WAYLAND_DISPLAY=wayland-0
+export XKB_CONFIG_ROOT=/usr/share/X11/xkb
+export XKB_DEFAULT_RULES=evdev XKB_DEFAULT_MODEL=pc105 XKB_DEFAULT_LAYOUT=us
+export XKB_DEFAULT_VARIANT= XKB_DEFAULT_OPTIONS=
+
+while [ "$attempt" -lt 3 ]; do
+  # A serial fault may remove the config after the previous session became ready.
+  if [ ! -r /etc/xdg/weston/weston.ini ]; then fallback compositor-config-missing; fi
+  attempt=$((attempt + 1))
+  printf '%s\n' "$attempt" >"$budget_file"
+  rm -f "$ready_file" "$pid_file" "$runtime_dir/wayland-0" "$runtime_dir/wayland-0.lock"
+  log "event=attempt attempt=$attempt backend=drm renderer=pixman"
+
+  # A delayed seatd gets a bounded readiness window, not an immediate crash or an infinite wait.
+  seat_wait=0
+  seat_ready=0
+  while [ "$seat_wait" -lt 30 ]; do
+    # pidof cannot reliably inspect root-owned processes from this unprivileged account.
+    # Weston connects to this socket; a stale socket still fails within its startup budget.
+    if [ -S /run/seatd.sock ]; then seat_ready=1; fi
+    [ "$seat_ready" -eq 1 ] && break
+    sleep 1
+    seat_wait=$((seat_wait + 1))
+  done
+  if [ "$seat_ready" -ne 1 ]; then fallback seatd-not-ready; fi
+
+  weston --config=/etc/xdg/weston/weston.ini --backend=drm --renderer=pixman \
+    --logger-scopes=log,proto --socket=wayland-0 >>"$log_dir/weston.log" 2>&1 &
+  weston_pid=$!
+  printf '%s\n' "$weston_pid" >"$pid_file"
+  log "event=started attempt=$attempt pid=$weston_pid"
+  socket_ready=0
+  startup_wait=0
+  while [ "$startup_wait" -lt "$desktop_timeout" ] && alive; do
+    if [ -S "$runtime_dir/wayland-0" ]; then socket_ready=1; break; fi
+    sleep 1
+    startup_wait=$((startup_wait + 1))
+  done
+
+  if [ "$socket_ready" -ne 1 ]; then
+    if alive; then
+      log "event=not-ready attempt=$attempt pid=$weston_pid reason=startup-timeout"
+      stop_child
+    else
+      wait "$weston_pid" 2>/dev/null
+      child_status=$?
+      log "event=not-ready attempt=$attempt pid=$weston_pid reason=early-exit status=$child_status"
+      weston_pid=
+      rm -f "$pid_file" "$ready_file"
+    fi
+  else
+    printf '%s %s\n' "$attempt" "$weston_pid" >"$ready_file"
+    log "event=ready attempt=$attempt pid=$weston_pid"
+    # There is no healthy-session lifetime timeout. Only startup and teardown are bounded.
+    wait "$weston_pid"
+    child_status=$?
+    log "event=exit attempt=$attempt pid=$weston_pid status=$child_status"
+    weston_pid=
+    rm -f "$pid_file" "$ready_file"
+  fi
+  sync
+  if [ "$attempt" -lt 3 ]; then
+    log "event=restart next=$((attempt + 1))"
+    sleep 1
+  fi
+done
+fallback restart-budget-exhausted
