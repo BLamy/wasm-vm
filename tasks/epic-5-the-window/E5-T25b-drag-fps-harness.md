@@ -3,7 +3,8 @@ id: E5-T25b
 epic: 5
 title: Measure repeatable real-window drag FPS and bottleneck counters
 priority: 525.2
-status: evidence-needed
+status: blocked
+blocked_on: local Chromium desktopReady never becomes ready for the post-fix T25b runner
 depends_on: [E5-T25a]
 estimate: S
 risk: medium
@@ -239,3 +240,22 @@ Full report: `evidence/e5-t25b/verifier-r3/verifier-report.md`.
 Commands: hostile-env focused Node checks/tests and release audit; r2 analyzer
 attacks; verifier-r3 displacement/source/artifact audits; direct source/dist
 `cmp`; `git diff --check`; bounded exact-head headed Chrome baseline.
+
+### 2026-09-06 — worker — BLOCKED ON LOCAL BROWSER READINESS
+
+The r3 displacement fix is implemented and statically/deterministically verified,
+but the required real-browser branch cannot currently be exercised on this Mac.
+After r3, clean headed retries at the current metadata head reproduced the same
+`desktopReady` stall after the stale two-day-old Playwright Chrome process was
+removed; a separate headless Chromium retry stalled identically. The attempts were
+stopped after the bounded 15-minute runner window, with their isolated servers
+cleaned up and no successful post-fix artifact claimed. Exact repro:
+`E5_T25B_REQUIRE_HEAD=b9b213b5dd07dc6784ab8d5ac584d857ab9978df
+node tools/verify/e5-t25b-browser.mjs` (headed and with `E5_T25B_HEADLESS=1`),
+waiting at the desktop readiness guard before Foot launch.
+
+The pre-fix exact-head headed artifact remains valid for the baseline and raw
+record invariants; the new `assertWindowMoved` helper, stationary/wrong-way tests,
+source audit, and release audit all pass. T25b is parked blocked so the independent
+T25c lane can proceed; re-run the post-fix headed proof when local desktop readiness
+is available, then return this task to `implemented` for fresh verification.
