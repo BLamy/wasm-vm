@@ -3,7 +3,7 @@ id: E5-T25b
 epic: 5
 title: Measure repeatable real-window drag FPS and bottleneck counters
 priority: 525.2
-status: implemented
+status: in-progress
 depends_on: [E5-T25a]
 estimate: S
 risk: medium
@@ -167,3 +167,38 @@ Commands: `node evidence/e5-t25b/verifier-r1/analyzer-attacks.mjs`; `node
 evidence/e5-t25b/verifier-r1/retained-evidence-audit.mjs`; hostile-env Node
 checks/tests/release audit and direct source/dist `cmp`; bounded hostile-env
 `make verify-E5-T25b` (browser readiness timeout at 120000 ms).
+
+### 2026-09-06 — verifier r2 — VERDICT: refuted
+
+- **Stationary-window rejection — FAILED.** Predicted that a no-motion run
+  could not emit plausible accepted FPS. A deterministic browser-like attack
+  supplied five runs with 300 requested/processed pointers, valid positive
+  stationary drawn records, attribution, and durations. Production summary and
+  aggregation accepted mean 15 FPS, CV 0%, and `repeatabilityHeld:true`. The
+  browser runner checks Foot geometry only before each drag and checks pointer
+  count afterward; it never verifies displacement. Add and retain a before/after
+  window-motion signal, reject insufficient displacement before aggregation,
+  and add a stationary-window regression test.
+- **Retained raw evidence — HELD.** Both artifact hashes and exact producer head
+  matched. All 473 records passed sequence/timestamp, boolean, damage/byte,
+  instruction total/delta, duration, scheduler, pointer, and aggregate audits.
+  The five retained baselines themselves show 286–405 px horizontal damage
+  movement and recompute to CV `11.321151210004228%`; null sink rejects.
+- **Release/environment — HELD.** Hostile-env syntax checks, 5/5 focused tests,
+  updated release audit, source/dist parity, and scrub logic passed. Current head
+  differs from artifact head only in this task metadata, so no runtime rerecord
+  was required for that delta.
+- **Stress — ENVIRONMENT-LIMITED.** A fresh headed DPR-2 attempt timed out at
+  `tools/verify/e5-t25b-browser.mjs:111` after exactly 120000 ms waiting for
+  `desktopReady`; no drag ran and no artifact was written. Busy/4x were therefore
+  not attempted and no stress result is claimed. This is separate from the
+  stationary-window refutation.
+- **COVERAGE/SUITE.** Baseline producer paths through `a14bf545` are exercised;
+  static/mechanical hunks are precisely waived in the report. Retain the raw
+  audit and stationary sabotage, promoting the latter after the fix.
+
+Full report: `evidence/e5-t25b/verifier-r2/verifier-report.md`.
+
+Commands: verifier-r2 artifact audit and analyzer attacks; hostile-env syntax,
+focused tests, and release audit; source/dist `cmp`; `git diff --check`; image
+SHA-256 and Chrome provenance; bounded headed DPR-2 attempt.

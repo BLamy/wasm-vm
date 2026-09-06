@@ -1,0 +1,21 @@
+{
+  "head": "a14bf5453a6799a67b5f66e85b4167223580e541",
+  "observations": [
+    { "attack": "path and summary expectedMoves 299", "outcome": "accepted" },
+    { "attack": "path and summary expectedMoves 301", "outcome": "accepted" },
+    { "attack": "duplicate or regressing presentation sequence", "outcome": "accepted" },
+    { "attack": "NaN timestamp, bytes, or present duration", "outcome": "rejected" },
+    { "attack": "missing, zero, or negative guest attribution", "outcome": "rejected" },
+    { "attack": "regressing cumulative guestInstructionsTotal with supplied nonnegative deltas", "outcome": "accepted" },
+    { "attack": "missing or regressing scheduler duration attribution", "outcome": "rejected" },
+    { "attack": "null record or all-undrawn records", "outcome": "rejected" },
+    { "attack": "null-sink assertion", "outcome": "returned accepted:false/no-drawn-presents" },
+    { "attack": "four runs, six runs, or NaN aggregate FPS", "outcome": "rejected" },
+    { "attack": "duplicate run IDs or FPS-only malformed run objects", "outcome": "accepted" },
+    {
+      "attack": "five browser-like runs with 300 requested/processed pointers and stationary valid drawn damage",
+      "outcome": "accepted",
+      "result": { "runCount": 5, "meanFps": 15, "coefficientOfVariationPercent": 0, "repeatabilityHeld": true }
+    }
+  ]
+}
