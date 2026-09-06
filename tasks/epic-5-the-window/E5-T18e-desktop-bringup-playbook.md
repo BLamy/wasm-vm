@@ -3,7 +3,7 @@ id: E5-T18e
 epic: 5
 title: Publish the desktop bring-up playbook and final boot proof
 priority: 518.5
-status: pending
+status: in-progress
 depends_on: [E5-T18d]
 estimate: S
 risk: high
@@ -56,3 +56,13 @@ than accepting dirty-image evidence. WebKit and independent machines are out of 
 
 This final S slice makes the debugging knowledge and exact rebuilt-boot proof durable before
 downstream resize, performance, and capstone work can depend on T18.
+
+### 2026-09-06 — worker — STARTED
+
+Consolidate the verified T18a-d failure inventory without changing compositor/input
+semantics. Freeze the complete existing package/custom-file manifests, rebuild the
+T18d recovery-enabled interactive image from those committed inputs in a fresh
+shared-folder clone, and bind 25 cache-disabled browser boots plus a cache-enabled
+prime/reload timing pair to that artifact. Independent machines, WebKit, and rr
+remain out of scope. Continue stacking; merge all PRs only at the Epic 5 milestone,
+then reuse the prepared Omarchy filesystem, deploy production, and stop before E6.

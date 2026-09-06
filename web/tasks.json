@@ -19210,15 +19210,16 @@
         },
         {
           "date": "2026-09-06",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "docs(tasks): verify E5-T18d recovery evidence",
             "test(desktop): record exact-head restart and getty proof"
           ]
         }
       ],
       "firstActivity": "2026-09-05",
       "lastActivity": "2026-09-06",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T18e",
@@ -19226,7 +19227,7 @@
       "epicKey": "5",
       "title": "Publish the desktop bring-up playbook and final boot proof",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T18d"
       ],
@@ -19250,7 +19251,7 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis final S slice makes the debugging knowledge and exact rebuilt-boot proof durable before\ndownstream resize, performance, and capstone work can depend on T18.",
+      "verificationLog": "### 2026-09-05 — coordinator — planned\n\nThis final S slice makes the debugging knowledge and exact rebuilt-boot proof durable before\ndownstream resize, performance, and capstone work can depend on T18.\n\n### 2026-09-06 — worker — STARTED\n\nConsolidate the verified T18a-d failure inventory without changing compositor/input\nsemantics. Freeze the complete existing package/custom-file manifests, rebuild the\nT18d recovery-enabled interactive image from those committed inputs in a fresh\nshared-folder clone, and bind 25 cache-disabled browser boots plus a cache-enabled\nprime/reload timing pair to that artifact. Independent machines, WebKit, and rr\nremain out of scope. Continue stacking; merge all PRs only at the Epic 5 milestone,\nthen reuse the prepared Omarchy filesystem, deploy production, and stop before E6.",
       "adversarial": "Have the fresh verifier run the documented failure drills using only the playbook: remove the\nvideo device, delete runtime-directory initialization, force gles2, and trigger three crashes.\nEach diagnosis must complete in five minutes and match a documented symptom/fix. Mutate the\npublished image or manifest after the rebuild; the verifier must reject the stale hash rather\nthan accepting dirty-image evidence. WebKit and independent machines are out of scope.",
       "file": "tasks/epic-5-the-window/E5-T18e-desktop-bringup-playbook.md",
       "activity": [
@@ -19258,10 +19259,15 @@
           "date": "2026-09-05",
           "commits": 0,
           "labels": []
+        },
+        {
+          "date": "2026-09-06",
+          "commits": 0,
+          "labels": []
         }
       ],
       "firstActivity": "2026-09-05",
-      "lastActivity": "2026-09-05",
+      "lastActivity": "2026-09-06",
       "commitCount": 0
     },
     {
