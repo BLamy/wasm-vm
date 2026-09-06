@@ -3,7 +3,7 @@ id: E5-T25c
 epic: 5
 title: Measure and calibrate focused-key input-to-photon latency
 priority: 525.3
-status: pending
+status: in-progress
 depends_on: [E5-T25a]
 estimate: S
 risk: medium
