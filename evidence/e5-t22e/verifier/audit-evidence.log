@@ -1,0 +1,14 @@
+Command: node evidence/e5-t22e/verifier/audit-evidence.mjs
+HELD direct 901x701: fresh/default, 60 Hz, all 128 EDID bytes/checksum/decoded mode, zero guest state, subsequent 1111x777 event
+HELD direct 1x1: fresh/default, 60 Hz, all 128 EDID bytes/checksum/decoded mode, zero guest state, subsequent 1111x777 event
+HELD direct 4095x4095: fresh/default, 60 Hz, all 128 EDID bytes/checksum/decoded mode, zero guest state, subsequent 1111x777 event
+HELD direct 802x601: fresh/default, 60 Hz, all 128 EDID bytes/checksum/decoded mode, zero guest state, subsequent 1111x777 event
+HELD worker 901x701: fresh/default, 60 Hz, all 128 EDID bytes/checksum/decoded mode, zero guest state, subsequent 1111x777 event
+HELD worker 1x1: fresh/default, 60 Hz, all 128 EDID bytes/checksum/decoded mode, zero guest state, subsequent 1111x777 event
+HELD worker 4095x4095: fresh/default, 60 Hz, all 128 EDID bytes/checksum/decoded mode, zero guest state, subsequent 1111x777 event
+HELD worker 802x601: fresh/default, 60 Hz, all 128 EDID bytes/checksum/decoded mode, zero guest state, subsequent 1111x777 event
+HELD actual-Wasm trace 1x1: retired zero MMIO store/event read, RAM digest, independently decoded GPU readback
+HELD actual-Wasm trace 4095x4095: retired zero MMIO store/event read, RAM digest, independently decoded GPU readback
+HELD actual-Wasm trace 901x701: retired zero MMIO store/event read, RAM digest, independently decoded GPU readback
+HELD frozen source/artifact/log/capture hashes; cold clone 779efb7dfafc55db8ee476e3626a6d5f78b18a8c; 269 native, 5 Wasm, 8 browser resets, 126/0 demo, errors=[]
+Exit status: 0

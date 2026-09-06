@@ -1758,6 +1758,8 @@ pub fn service_with_cursor(
 
 #[cfg(test)]
 mod tests {
+    include!("reset_verifier_tests.rs");
+
     use alloc::rc::Rc;
     use core::cell::RefCell;
 

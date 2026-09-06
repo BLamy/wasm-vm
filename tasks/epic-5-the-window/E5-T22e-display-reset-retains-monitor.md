@@ -3,7 +3,7 @@ id: E5-T22e
 epic: 5
 title: Preserve the host monitor mode across guest GPU reset
 priority: 522.25
-status: implemented
+status: verified
 depends_on: [E5-T22a, E5-T22b]
 estimate: S
 risk: high
@@ -24,13 +24,13 @@ JIT, snapshot format, or guest-image change belongs to this slice.
 
 ## Acceptance criteria
 
-- [ ] Set an odd host mode, then perform a guest status=0 MMIO reset. The exact
+- [x] Set an odd host mode, then perform a guest status=0 MMIO reset. The exact
       dimensions, refresh and all EDID bytes survive, in native and actual Wasm.
-- [ ] Resources, backing accounting, scanout, cursor, queue kick state and pending
+- [x] Resources, backing accounting, scanout, cursor, queue kick state and pending
       device events/IRQ are cleared; no old guest resource remains usable.
-- [ ] Repeated resets and repeated/new host mode requests remain deterministic.
+- [x] Repeated resets and repeated/new host mode requests remain deterministic.
       A fresh second VM instance still starts at the unchanged default mode.
-- [ ] Record the actual guest reset instruction trace and state digest; the built
+- [x] Record the actual guest reset instruction trace and state digest; the built
       browser worker reads the preserved mode after executing the reset fixture,
       and the normal built demo still reaches 126 passed, zero failed/errors.
 
@@ -103,3 +103,36 @@ pending and latched transport IRQ clearing, both cached queues invalidated with
 old used-ring sentinels untouched, and same-mode event rearming. A fresh second
 VM retains default monitor identity. This is a worker claim awaiting the fresh
 verifier's reserved independent reset/reconfiguration attack and sabotage check.
+
+### 2026-09-06 — fresh independent verifier — VERDICT: verified
+
+- P1/P2/P8 HELD: frozen `779efb7d` source/artifact/evidence hashes match. Actual
+  reset store at `evidence/e5-t22e/acceptance.log:530` is followed by events=0;
+  native/actual-Wasm/direct/worker observations retain mode, refresh and all
+  128 EDID bytes. Independent EDID decoding/checksums and 126/0/errors=[] hold
+  in `evidence/e5-t22e/verifier/audit-evidence.log:2-13`. RAM digest is explicitly
+  separate from GPU state. Screenshot inspected; full frozen cold-clone pass
+  at `acceptance.log:656` is carried without a repeat.
+- P3/P4/P5/P6/P7 HELD: independent 1373x907 attack combines live resource/backing,
+  cursor, pending vs latched config+used IRQ, double MMIO reset and same-mode
+  rearming before queue reconfiguration. New rings complete 5 control + 2 cursor
+  requests; stale resource id 43 is rejected until recreated; old ring/response
+  sentinels remain intact and fresh devices retain default identity. Both cases
+  pass at `verifier/independent-attack.log:7-10`; worker IRQ/cache test also passes
+  at `acceptance.log:221`.
+- S1 HELD: one restoration of old monitor-reset assignments in a disposable
+  copy makes all three focused reset tests fail with the expected default-mode
+  mismatch (`verifier/sabotage.log:7-17`, exit 101). Shared runtime untouched.
+- COVERAGE/SUITE: promote `crates/core/src/dev/virtio/gpu/reset_verifier_tests.rs`
+  through the existing test module; formatting and focused promoted run pass
+  (`verifier/promoted-test.log`). Full prediction results, hunk coverage,
+  integrity hashes and scope limits: `evidence/e5-t22e/verifier/final-verdict.md`.
+  T22a/b HELD boundaries unchanged by this reset diff carry forward. No claim
+  about compositor adoption or unrelated broad-suite baseline failures.
+
+Commands: `node evidence/e5-t22e/verifier/audit-evidence.mjs`;
+`cargo test -p wasm-vm-core --lib --features gpu-trace
+display_reset_verifier_reconfigured_rings_reject_stale_resources -- --nocapture`;
+single disposable-copy sabotage run with filter `display_reset_`;
+`cargo fmt --check -p wasm-vm-core`; standalone promoted-test rustfmt check.
+No runtime fix, other task-status edit, push, merge, or deployment.

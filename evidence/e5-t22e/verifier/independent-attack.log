@@ -1,0 +1,11 @@
+Frozen base: 779efb7dfafc55db8ee476e3626a6d5f78b18a8c
+Disposable copy: /tmp/e5-t22e-verifier.AmU6jU/repo
+Only added test include and reset_verifier_tests.rs; runtime unchanged.
+Command: cargo test -p wasm-vm-core --lib --features gpu-trace display_reset_verifier_reconfigured_rings_reject_stale_resources -- --nocapture
+Captured test output (compilation progress omitted):
+running 1 test
+E5-T22e verifier latched=false: double reset retained 1373x907/60/128 EDID bytes; new rings completed 5 control + 2 cursor; stale id rejected then recreated; old rings/responses unchanged; fresh devices isolated
+E5-T22e verifier latched=true: double reset retained 1373x907/60/128 EDID bytes; new rings completed 5 control + 2 cursor; stale id rejected then recreated; old rings/responses unchanged; fresh devices isolated
+test dev::virtio::gpu::tests::display_reset_verifier_reconfigured_rings_reject_stale_resources ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 269 filtered out; finished in 0.02s
+Exit status: 0
