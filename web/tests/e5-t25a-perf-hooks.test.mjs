@@ -193,6 +193,26 @@ test("hostile guest attribution cannot turn a drawn present into a drop", () => 
   controller.dispose();
 });
 
+test("hostile attribution error formatting cannot turn a drawn present into a drop", () => {
+  const records = [];
+  const thrown = {};
+  Object.defineProperty(thrown, "message", {
+    get() { throw new Error("hostile message getter"); },
+  });
+  const controller = new PresentationController(new Canvas(), {
+    backendFactories: factories(true),
+    onPresent: (record) => records.push(record),
+    guestInstructions: () => { throw thrown; },
+  });
+  assert.equal(controller.present(frame()), true);
+  assert.equal(records[0].guestInstructions, null);
+  assert.equal(records[0].guestInstructionsTotal, null);
+  assert.equal(controller.snapshot().gpu.droppedFrames, 0);
+  assert.equal(controller.snapshot().gpu.drawnPresents, 1);
+  assert.match(controller.snapshot().errors[0], /guest instruction telemetry/);
+  controller.dispose();
+});
+
 test("bench JavaScript and editor projection stay byte-identical", () => {
   const directory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../bench");
   assert.equal(readFileSync(path.join(directory, "desktop-perf-hooks.js"), "utf8"),

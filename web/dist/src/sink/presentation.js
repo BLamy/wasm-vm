@@ -274,7 +274,13 @@ export class PresentationController {
         ? raw.retiredInstructions ?? raw.guestInstructions
         : raw;
     } catch (error) {
-      this._errors.push(`guest instruction telemetry: ${String(error?.message || error)}`);
+      let detail = "unavailable";
+      try {
+        detail = String(error?.message || error);
+      } catch {
+        try { detail = String(error); } catch { /* retain the safe fallback */ }
+      }
+      this._errors.push(`guest instruction telemetry: ${detail}`);
       return { total: null, delta: null };
     }
     if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 0) {
