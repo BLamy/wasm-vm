@@ -4,7 +4,7 @@ epic: 5
 title: Multi-display support (config-gated stretch) — second scanout, second canvas
 priority: 527
 status: pending
-depends_on: [E5-T22]
+depends_on: [E5-T22d]
 estimate: M
 capstone: false
 ---

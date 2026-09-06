@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 279,
-    "total": 438
+    "total": 442
   },
   "epics": [
     {
@@ -19262,8 +19262,9 @@
         },
         {
           "date": "2026-09-06",
-          "commits": 3,
+          "commits": 4,
           "labels": [
+            "web(e5-t18e): surface verified desktop bring-up on the demo",
             "test(e5-t18e): verify final desktop bring-up evidence",
             "test(e5-t18e): submit 25 cold desktop boots with worker-cache proof",
             "docs(tasks): start final desktop bring-up proof"
@@ -19272,7 +19273,7 @@
       ],
       "firstActivity": "2026-09-05",
       "lastActivity": "2026-09-06",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E5-T19",
@@ -20123,15 +20124,20 @@
       "epicKey": "5",
       "title": "Display resize end-to-end — canvas size to guest mode change and back",
       "priority": 522,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T04",
-        "E5-T18"
+        "E5-T18e"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T22a",
+        "E5-T22b",
+        "E5-T22c",
+        "E5-T22d"
+      ],
       "estimate": "M",
       "capstone": false,
-      "goal": "Resizing the browser window resizes the guest desktop: canvas-size changes flow through\nT04's display-info/EDID hotplug event, the guest compositor picks up the new mode,\nreallocates its framebuffer, and the new-size scanout lands back on a correctly-sized\ncanvas — with the whole loop debounced and storm-proof.",
+      "goal": "> Decomposed before activation on 2026-09-06. The original requirements below\n> remain intact and are assigned to the ordered S slices listed next.",
       "criteria": [
         {
           "text": "Dragging the browser window to any size between 640x480 and 2560x1600 yields, within 2 s of release, a guest desktop at exactly the canvas pixel size (wlr-randr reports w×h == canvas.width×height; screenshot has no letterbox at steady state, no blur from CSS scaling).",
@@ -20162,6 +20168,215 @@
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T22a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Expose bounded display hotplug and actual GPU state to browser controllers",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5-T04",
+        "E5-T18e"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Connect the existing verified GPU display-info/EDID hotplug boundary to WasmLinux\nand both browser controller paths, with bounded inputs and truthful device state.",
+      "criteria": [
+        {
+          "text": "Valid dimensions from 1 through the EDID limit update the advertised mode and EDID through the existing GPU boundary. Invalid dimensions do not partially mutate either dimension, event state or resources.",
+          "checked": false
+        },
+        {
+          "text": "One thousand updates retain the final mode and existing config-event coalescing; old resource dimensions, content and allocation accounting stay unchanged until the guest explicitly changes them.",
+          "checked": false
+        },
+        {
+          "text": "Stats describe the actual device resource map and bound scanout, never fabricate guest adoption from a host request. An absent device returns false/null; reentrant access returns a bounded error rather than panicking.",
+          "checked": false
+        },
+        {
+          "text": "Both actual browser direct and module-worker controllers perform the same update/read sequence and reject invalid requests. Stopped controllers cannot mutate the device. The built demo runs 126/0 with zero errors.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-06 — coordinator — in-progress\n\nFirst ordered S replacement for E5-T22. T18e is independently verified. This\nslice makes no compositor-resize or release-to-frame latency claim.",
+      "adversarial": "Send fractional, NaN, infinities, strings, booleans, null, negative, zero and\noversized dimensions, including a valid first dimension and invalid second.\nRetain a live old-size resource across a storm and inspect its pixels, dimensions\nand byte count. Attack a missing GPU and nested RefCell borrow. Use one independent\nodd-size sequence through the real worker transport. Sabotage the new acceptance\ntest once. Carry T04's unchanged transport semantics forward.",
+      "file": "tasks/epic-5-the-window/E5-T22a-browser-display-hotplug.md",
+      "activity": [
+        {
+          "date": "2026-09-06",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-06",
+      "lastActivity": "2026-09-06",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T22b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Debounce viewport and DPR changes with stale-frame letterboxing",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T22a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Observe the browser display container and device-pixel ratio, request bounded\nguest pixel modes, and safely present old-size frames while the guest catches up.",
+      "criteria": [
+        {
+          "text": "CSS dimensions multiplied by DPR yield rounded bounded device-pixel modes. DPR changes without CSS changes are observed. The trailing delay is 250 ms; a test-only zero-delay hook is explicitly scoped.",
+          "checked": false
+        },
+        {
+          "text": "Fifty size changes over five seconds coalesce to a bounded handful of requests and end at the final mode. Late async replies cannot restore older intent. Disposal cancels observers, timers and DPR listeners.",
+          "checked": false
+        },
+        {
+          "text": "Old-size resource rows keep their own stride and bounds. The visible target clips or letterboxes at native pixel scale on opaque black, never stretches. A matching frame removes the mismatch state and bars.",
+          "checked": false
+        },
+        {
+          "text": "Odd widths and DPR 1, 1.5 and 2 pass independent pixel oracles through both actual browser backends, including context loss/replacement and a pending scheduled frame at resize.",
+          "checked": false
+        },
+        {
+          "text": "Pointer coordinates map the visible target consistently; minimum-size clamping and the pre-desktop next-mode-set caveat are documented.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 5,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-06 — coordinator — planned\n\nSecond ordered S replacement for E5-T22. Real guest adoption and end-to-end\nlatency/resource cleanup remain the responsibility of T22c-d.",
+      "adversarial": "Race an old RPC response against a newer viewport intent, then dispose while an\nRPC is pending. Submit an old resource after shrinking the target, including a\npartial last-row rectangle; compare pixels to an independent stride/clipping\noracle. Lose WebGL context during the mismatch and require the replacement\ncanvas to replay the same bounded image. Add one independent odd-size sequence.\nCarry T22a and existing resource TRANSFER bounds forward unchanged.",
+      "file": "tasks/epic-5-the-window/E5-T22b-viewport-letterboxing.md",
+      "activity": [
+        {
+          "date": "2026-09-06",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-06",
+      "lastActivity": "2026-09-06",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T22c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Apply guest desktop hotplug modes without restarting the compositor",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T22b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make the selected, pinned Weston DRM/pixman desktop adopt host hotplug modes\nin place, with live clients, and record the complete guest round trip.",
+      "criteria": [
+        {
+          "text": "Requests across 640x480 through 2560x1600, including odd dimensions, yield the requested real guest output mode and scanout within two seconds after release in the stated local configuration.",
+          "checked": false
+        },
+        {
+          "text": "The current Wayland output mode, preferred DRM EDID dimensions and canvas backing dimensions agree. Use a query supported by the selected Weston guest; do not claim that the wlroots-only wlr-randr tool is present.",
+          "checked": false
+        },
+        {
+          "text": "Open foot clients survive the mode transition, retaining their content. The compositor PID remains unchanged; no renderer switch or manual image edit substitutes for the in-place output change.",
+          "checked": false
+        },
+        {
+          "text": "Initial boot uses the current requested mode. A repeat request or one-pixel change is safe; final image and browser/guest evidence are hash-bound.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-06 — coordinator — planned\n\nThird ordered S replacement for E5-T22. Read-only inspection of pinned Weston\n12.0.4 found that its default compositor logs and ignores enabled-head monitor\nchanges. First reproduce the selected guest's behavior, then choose the smallest\nbounded adapter or pinned patch that satisfies the real mode-change contract.",
+      "adversarial": "Change modes again while the previous output transition is pending. Probe odd\none-pixel changes that preserve EDID physical-size rounding, minimum/maximum\nmodes, and output replacement with live clients. Independently decode the guest\nmode/EDID and compare timestamps to host request and matching-frame delivery.\nA retained old-size frame or killed client cannot count as successful resize.\nAdd one bounded independent mode sequence; sabotage the adaptation proof once.\nCarry the established host and stale-resource boundaries forward.",
+      "file": "tasks/epic-5-the-window/E5-T22c-guest-mode-adaptation.md",
+      "activity": [
+        {
+          "date": "2026-09-06",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-06",
+      "lastActivity": "2026-09-06",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T22d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Prove end-to-end resize storms, resource cleanup and reload boundaries",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T22c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Finish the original E5-T22 acceptance and adversarial resize matrix on the actual\ndesktop, preserving the already verified host/compositor boundaries.",
+      "criteria": [
+        {
+          "text": "Ten resizes while foot runs yes reflow text without guest crash/host panic; actual GPU resource count returns to its pre-resize baseline.",
+          "checked": false
+        },
+        {
+          "text": "Fifty changes in five seconds coalesce to a bounded handful of guest mode changes; final mode is exact and dmesg/compositor logs have zero new errors.",
+          "checked": false
+        },
+        {
+          "text": "DPR 100% to 150% to 100% changes the real mode and retains sharp glyph edges without fractional CSS scaling.",
+          "checked": false
+        },
+        {
+          "text": "Two hundred 100-ms racing resizes under 4x CPU throttle finish without stuck letterbox, torn rows, leaked framebuffers, guest OOM or kernel WARN.",
+          "checked": false
+        },
+        {
+          "text": "A zero-debounce test forces host resize between guest TRANSFER and FLUSH; native sanitizer/bounds evidence and wasm bounds checks show no OOB access.",
+          "checked": false
+        },
+        {
+          "text": "Shrink to 640x480 with ten windows and grow again: clients remain reachable. Reload mid-resize boots at the current container pixel mode.",
+          "checked": false
+        },
+        {
+          "text": "The original T22 criteria are all mapped to retained T22a-c or this proof, including the two-second release-to-matching-frame bound and actual EDID.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 7,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-06 — coordinator — planned\n\nFinal ordered S replacement for E5-T22 and the dependency handoff for T27.\nNo original acceptance or adversarial requirement is removed by decomposition.",
+      "adversarial": "Independently choose a bounded odd-dimension sequence and a mid-transition reload.\nCheck screenshot rows against the no-shear oracle and compare per-resize resource\ncounts with the actual device map, not presentation counters. Reopen evidence at\nthe forced TRANSFER/FLUSH window; a new target must not alter old resource bounds.\nCarry unchanged T22a-c predictions HELD instead of restarting unrelated suites.",
+      "file": "tasks/epic-5-the-window/E5-T22d-resize-torture.md",
+      "activity": [
+        {
+          "date": "2026-09-06",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-06",
+      "lastActivity": "2026-09-06",
       "commitCount": 0
     },
     {
@@ -20709,7 +20924,7 @@
       "status": "pending",
       "depends_on": [
         "E5-T09e",
-        "E5-T18"
+        "E5-T18e"
       ],
       "decomposed_into": [],
       "estimate": "M",
@@ -20755,7 +20970,7 @@
       "priority": 526,
       "status": "pending",
       "depends_on": [
-        "E5-T18",
+        "E5-T18e",
         "E5-T20e"
       ],
       "decomposed_into": [],
@@ -20802,7 +21017,7 @@
       "priority": 527,
       "status": "pending",
       "depends_on": [
-        "E5-T22"
+        "E5-T22d"
       ],
       "decomposed_into": [],
       "estimate": "M",
@@ -20850,7 +21065,7 @@
       "depends_on": [
         "E5-T13c",
         "E5-T15d",
-        "E5-T18",
+        "E5-T18e",
         "E5-T20e",
         "E5-T24d",
         "E5-T25"

@@ -4,7 +4,7 @@ epic: 5
 title: Performance harness — window-drag FPS and input-to-photon latency, measured
 priority: 525
 status: pending
-depends_on: [E5-T09e, E5-T18]
+depends_on: [E5-T09e, E5-T18e]
 estimate: M
 capstone: false
 ---
