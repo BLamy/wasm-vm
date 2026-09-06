@@ -68,7 +68,7 @@ for (const key of Object.keys(cleanEnv)) {
 }
 const port = await freePort();
 const server = spawn("bash", ["tools/serve-dev.sh", String(port)], {
-  cwd: repo, env: cleanEnv, stdio: ["ignore", "pipe", "pipe"],
+  cwd: repo, env: cleanEnv, stdio: ["ignore", "pipe", "pipe"], detached: true,
 });
 let serverOutput = "";
 for (const stream of [server.stdout, server.stderr]) stream.on("data", (data) => { serverOutput += data.toString(); });
@@ -217,7 +217,16 @@ try {
 } finally {
   await context?.close().catch(() => {});
   await browser?.close().catch(() => {});
-  server.kill("SIGTERM");
-  await new Promise((resolve) => server.once("exit", resolve));
+  if (server.exitCode === null) {
+    const stopGroup = (signal) => {
+      try { process.kill(-server.pid, signal); } catch { server.kill(signal); }
+    };
+    stopGroup("SIGTERM");
+    const exited = await Promise.race([
+      new Promise((resolve) => server.once("exit", () => resolve(true))),
+      sleep(5_000).then(() => false),
+    ]);
+    if (!exited && server.exitCode === null) stopGroup("SIGKILL");
+  }
   if (serverOutput && process.env.E5_T25B_VERBOSE === "1") process.stderr.write(serverOutput);
 }
