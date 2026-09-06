@@ -186,6 +186,10 @@ try {
       pointerFrames: after.pointerFrames,
       pointerFramesDelta,
       requestedMoves: pathPoints.length,
+      schedulerBefore: before.scheduler,
+      schedulerAfter: after.scheduler,
+      presentDurationsMs: after.presentDurationsMs,
+      records: after.records,
     });
     direction *= -1;
   }
