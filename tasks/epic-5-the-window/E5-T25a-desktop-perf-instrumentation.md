@@ -3,7 +3,7 @@ id: E5-T25a
 epic: 5
 title: Freeze test-only desktop performance instrumentation and injection hooks
 priority: 525.1
-status: implemented
+status: in-progress
 depends_on: [E5-T09e, E5-T18e]
 estimate: S
 risk: medium
@@ -304,3 +304,24 @@ with empty browser/HTTP error arrays; current JSON and PNG hashes are
 
 Commands: `make web-build`; `make verify-E5-T25a`;
 `E5_DEMO_TASK=E5-T22g E5_DEMO_VERIFIED=1 E5_DEMO_OUT=evidence/e5-t25a/demo node tools/verify/e5-t18e-demo-smoke.mjs`.
+
+### 2026-09-06 — verifier (pass 4) — VERDICT: refuted
+
+- **Promoted getter fix — HELD.** Scalar/object invalid values, ordinary callback
+  throws, throwing retired/fallback getters, baseline recovery, source/dist parity,
+  release lifecycle checks, all prior attacks, requested artifact hashes, and the
+  126/126 empty-error demo held (`evidence/e5-t25a/verifier-r4/verifier-report.md`).
+- **Novel hostile attribution — FAILED.** A callback throwing an object whose `message`
+  accessor throws escapes while the attribution catch formats its diagnostic. Source
+  and dist both completed all backend draws but omitted the first null/null record,
+  returned false, and incremented dropped frames to one
+  (`evidence/e5-t25a/verifier-r4/attack-results.json:8-108,1442-1540`;
+  `web/src/sink/presentation.js:276-278,376-387`). Make diagnostic formatting itself
+  non-throwing and promote the exact regression.
+- **Exact gate:** syntax, 9/9 focused tests, and release audit passed; localhost browser
+  bind was rejected with `EPERM`, so the permitted retained Chromium 152/Firefox 132
+  artifacts were independently hashed and inspected (`verifier-r4/make-verify.log`;
+  `verifier-r4/integrity-results.json:3-99`).
+- **COVERAGE:** all changed hunks were executed or precisely waived; the finding is
+  executed semantic coverage, not a proof gap (`verifier-r4/coverage-audit.md`). No
+  merge, next task, independent machine, WebKit, ssh-dev, or host rr was used.

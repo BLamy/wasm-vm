@@ -1,0 +1,51 @@
+{
+  "exactHead": "f7cee38b5aa93b00509e60d7dd103f5e5c21bfe3",
+  "checks": {
+    "sourceDistMainByteParity": true,
+    "sourceDistPresentationByteParity": true,
+    "helperProjectionByteParity": true,
+    "exactDualGateUnique": true,
+    "cacheGuardUnique": true,
+    "cacheAssignmentUnique": true,
+    "cacheGuardOwnsAssignment": true,
+    "cacheReadsRawValueWithoutCoercion": true,
+    "samplerSetupInsideExactGate": true,
+    "samplerInstallUnique": true,
+    "teardownClearsInterval": true,
+    "teardownResetsBaseline": true,
+    "perfSurfaceInsideDualGate": true,
+    "noProductionHelperImport": true,
+    "sourceSinkStrictGuard": true,
+    "releaseAuditUsesBoundedBlocks": true,
+    "releaseAuditChecksStrictCacheGuard": true,
+    "releaseAuditChecksSamplerSequence": true,
+    "releaseAuditChecksTimerNullingAndBaselineReset": true,
+    "queryTruthTable": true
+  },
+  "allHeld": true,
+  "queryTruthTable": [
+    {
+      "query": "",
+      "enabled": false
+    },
+    {
+      "query": "testHooks=1",
+      "enabled": false
+    },
+    {
+      "query": "perfHooks=1",
+      "enabled": false
+    },
+    {
+      "query": "testHooks=1&perfHooks=1",
+      "enabled": true
+    }
+  ],
+  "qualification": "The submitted audit now derives scheduler, sampler, teardown, and surface slices from explicit boundaries. This verifier independently checks unique exact gate/guard/install strings inside those bounded owner blocks, ordered raw-value assignment ownership, source/dist bytes, teardown handle nulling, and baseline reset. Because main.js cannot be booted without the sandbox-rejected listener/Linux owner path, setup and teardown receive this deterministic exact static waiver rather than a false execution claim.",
+  "sourceHashes": {
+    "main": "6b525f0f0e0c598a3803e98367a0bd8e799d9757c98f7c930ad52ad06e93c121",
+    "distMain": "6b525f0f0e0c598a3803e98367a0bd8e799d9757c98f7c930ad52ad06e93c121",
+    "presentation": "30a1e5d2a2fc86dd0c219322c84b57cccf9d0fa7d32f6b42d69c7cbd1b97b27d",
+    "distPresentation": "30a1e5d2a2fc86dd0c219322c84b57cccf9d0fa7d32f6b42d69c7cbd1b97b27d"
+  }
+}

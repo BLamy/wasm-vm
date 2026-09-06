@@ -1,0 +1,31 @@
+{
+  "exactHead": "f7cee38b5aa93b00509e60d7dd103f5e5c21bfe3",
+  "allRejected": true,
+  "results": {
+    "dualGate": {
+      "exitCode": 1,
+      "rejected": true,
+      "diagnostic": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:"
+    },
+    "strictCacheGuard": {
+      "exitCode": 1,
+      "rejected": true,
+      "diagnostic": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /if \\(typeof retired === \"number\" && Number\\.isSafeInteger\\(retired\\) && retired >= 0\\) \\{\\s*_desktopPerfGuestInstructions = retired;/s. Input:"
+    },
+    "samplerSetup": {
+      "exitCode": 1,
+      "rejected": true,
+      "diagnostic": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /void sampleGuestInstructions\\(\\);\\s*_desktopPerfStatsTimer = setInterval\\(sampleGuestInstructions, 50\\);/s. Input:"
+    },
+    "timerNulling": {
+      "exitCode": 1,
+      "rejected": true,
+      "diagnostic": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /clearInterval\\(_desktopPerfStatsTimer\\);\\s*_desktopPerfStatsTimer = null;\\s*\\}/s. Input:"
+    },
+    "baselineReset": {
+      "exitCode": 1,
+      "rejected": true,
+      "diagnostic": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /_desktopPerfGuestInstructions = null;/. Input:"
+    }
+  }
+}
