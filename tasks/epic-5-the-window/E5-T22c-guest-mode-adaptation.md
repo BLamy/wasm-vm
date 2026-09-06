@@ -93,3 +93,31 @@ one-pixel updates which do not change rounded physical monitor dimensions.
 The independent read-only Wayland observer will compare actual output events
 and guest DRM EDID; neither the adapter nor browser target dimensions supply its
 current-mode result. This is implementation direction, not a verified claim.
+
+### 2026-09-06 — worker — rejected disable/re-enable iteration
+
+The first adapted image (`66ba6844ff324fb306447c1e7988f2973b50c91d7c0fa67f831704c34d66430e`)
+applied some sizes but repeatedly lost the stock desktop-shell client, triggering
+the existing bounded compositor restart policy. Preserve this failure in
+`evidence/e5-t22c/rejected-disable-v1/`; it is not acceptance evidence. Independent
+provisional review also found an attached-but-disabled frontend assertion race.
+The public disable/reconfigure/enable design is rejected, not waived.
+
+Replace it with a deliberately pinned backend-ABI integration against the actual
+upstream 12.0.4 headers. Keep the output/global enabled, wait for in-flight DRM
+work and a matching connector cache, then call the existing exported native-mode
+switch. Own at most two added mode entries and destroy unused KMS blobs on their
+owning backend descriptor. The build checks source/header/ELF digests explicitly.
+
+The second image (`9a221e3e4eb24712d464d080ae187de25a7614359fec6c29ea4e82a18e3f2bfd`)
+keeps wl_output ID 16 and foot PID 1018 through six real requested modes; resource
+count returns to three. This is still an iteration: the client has not yet been
+visually proven and observed resize time is 3,749–20,897 ms, **not** the required
+2,000 ms. The next image tests a 10 ms guest poll and pixman-shadow=false, retaining
+the same DRM/pixman renderer. No performance or task-verification claim is made.
+
+Native ASan/UBSan currently passes 204,314 checks: 10,000 seeded transitions,
+3,000 pending polls, 100,000 parser seeds, bounded failure/recovery and reentrant
+output destruction. The browser recorder now checks rendered terminal text,
+actual post-paint timestamps, unchanging compositor/client identities, and an
+independent Wayland/DRM/scanout/canvas comparison before it can claim acceptance.

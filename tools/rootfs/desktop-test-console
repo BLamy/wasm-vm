@@ -43,6 +43,8 @@ crash() {
 
 stty -echo 2>/dev/null || true
 printf '\nE5T18D_TEST_CONSOLE_READY\n'
+display_watch_started=0
+display_client_started=0
 while IFS= read -r command; do
   command=$(printf '%s' "$command" | tr -d '\r')
   case "$command" in
@@ -68,6 +70,32 @@ while IFS= read -r command; do
       printf 'E5T18D_LOG_BEGIN\n'
       read_state weston.log tail 16384
       printf 'E5T18D_LOG_END\n'
+      ;;
+    display)
+      printf 'E5T22C_DISPLAY_BEGIN\n'
+      runuser -u desktop -- env XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 \
+        /usr/local/bin/wv-display-query
+      for client_pid in $(pidof foot 2>/dev/null); do
+        printf 'WV_CLIENT pid=%s exe=%s\n' "$client_pid" "$(readlink "/proc/$client_pid/exe")"
+      done
+      printf 'E5T22C_DISPLAY_END\n'
+      ;;
+    display-watch)
+      if [ "$display_watch_started" -eq 0 ]; then
+        display_watch_started=1
+        # One read-only unprivileged observer for this explicitly opted-in guest.
+        runuser -u desktop -- env XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 \
+          /usr/local/bin/wv-display-query --watch &
+      fi
+      ;;
+    display-client)
+      if [ "$display_client_started" -eq 0 ]; then
+        display_client_started=1
+        runuser -u desktop -- env XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 \
+          /usr/bin/foot --title=WV_RESIZE_PROOF /bin/sh -c \
+          'printf "\033[48;2;20;40;80m\033[38;2;245;231;190mWV_RESIZE_CONTENT_2026\033[0m\n"; exec /bin/sh' \
+          > /dev/null 2>&1 &
+      fi
       ;;
     tty)
       printf 'E5T18D_TTY_BEGIN\n'

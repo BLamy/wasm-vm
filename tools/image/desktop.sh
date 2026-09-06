@@ -125,6 +125,7 @@ cat > "$out/desktop-info.json" <<JSON
   },
   "startup": {
     "boundedRecovery": $([ "${E5_T18D_RECOVERY:-1}" = 1 ] && printf true || printf false),
+    "inPlaceDisplayResize": $([ "${E5_T22C_RESIZE:-0}" = 1 ] && printf true || printf false),
     "backend": "drm",
     "renderer": "pixman",
     "autologinTty": "tty1",

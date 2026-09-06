@@ -56,6 +56,18 @@ CARGO_TARGET_DIR="$ROOTFS_CARGO_TARGET_DIR" bash tools/build-agent.sh "$CHANNEL_
 WVSECCOMP="$PWD/releases/wvseccomp-riscv64"
 CARGO_TARGET_DIR="$ROOTFS_CARGO_TARGET_DIR" bash tools/build-wvseccomp.sh "$WVSECCOMP"
 
+# T22c's optional desktop layer contributes only two compiled artifacts. Its
+# development sysroot is a separate pinned build input, never copied into the guest.
+display_mounts=()
+if [ "${DISPLAY_CANDIDATE:-}" = desktop ] && [ "${E5_T22C_RESIZE:-0}" = 1 ]; then
+  bash tools/image/build-display-tools.sh
+  display_tools_out="${E5_T22C_TOOLS_OUT:-target/e5-t22c/display-tools}"
+  display_mounts=(
+    -v "$PWD/$display_tools_out/wv-display-query:/wv-display-query:ro"
+    -v "$PWD/$display_tools_out/wv-display-resize.so:/wv-display-resize.so:ro"
+  )
+fi
+
 # Build the pinned build image (context = tools/ only). The cold-cache adversarial gate can force
 # every layer to rebuild without changing the production command or tag.
 if [ "${DOCKER_BUILD_NO_CACHE:-0}" = 1 ]; then
@@ -67,6 +79,7 @@ fi
 # The whole build runs in the container (tools/rootfs-inner.sh); only the finished image +
 # manifest come out through the bind mount.
 docker run --rm \
+  "${display_mounts[@]}" \
   -v "$PWD/$OUT:/out" \
   -v "$PWD/tools/rootfs-inner.sh:/rootfs-inner.sh:ro" \
   -v "$PWD/tools/guest/container-smoke.sh:/container-smoke.sh:ro" \
@@ -97,6 +110,7 @@ docker run --rm \
   -e DISPLAY_CANDIDATE="${DISPLAY_CANDIDATE:-}" \
   -e E5_T18B_INTERACTIVE="${E5_T18B_INTERACTIVE:-0}" \
   -e E5_T18D_RECOVERY="${E5_T18D_RECOVERY:-0}" \
+  -e E5_T22C_RESIZE="${E5_T22C_RESIZE:-0}" \
   "$IMG_TAG" /rootfs-inner.sh
 
 # MANIFEST drift gate (critic #3): apk resolves "latest within v3.20", so a mirror-side

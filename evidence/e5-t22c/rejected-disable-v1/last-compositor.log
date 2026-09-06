@@ -1,0 +1,271 @@
+E5T18D_LOG_BEGIN
+ sRGB SDR profile
+[08:29:28.752] DRM: output Virtual-1 uses shadow framebuffer.
+[08:29:28.752] Output Virtual-1 (crtc 33) video modes:
+               640x480@60.0, preferred, current, 24.5 MHz
+               1280x800@60.0, preferred, 71.7 MHz
+[08:29:28.753] associating input device event0 with output Virtual-1 (none by udev)
+[08:29:28.754] associating input device event1 with output Virtual-1 (none by udev)
+[08:29:28.756] associating input device event2 with output Virtual-1 (none by udev)
+[08:29:28.768] Output 'Virtual-1' enabled with head(s) Virtual-1
+[08:29:28.768] WV_DISPLAY_APPLIED output=Virtual-1 width=640 height=480
+[08:29:28.863] DRM: head 'Virtual-1' updated, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[08:29:28.863] Detected a monitor change on head 'Virtual-1', not bothering to do anything about it.
+[08:29:28.872] Disabling output Virtual-1
+[08:29:28.885] output for input device event0 removed
+[08:29:28.888] output for input device event1 removed
+[08:29:28.889] output for input device event2 removed
+[08:29:28.889] Output 'Virtual-1' attempts EOTF mode: SDR
+[08:29:28.889] Output 'Virtual-1' using color profile: built-in default sRGB SDR profile
+[08:29:29.204] DRM: output Virtual-1 uses shadow framebuffer.
+[08:29:29.205] Output Virtual-1 (crtc 33) video modes:
+               1280x800@60.0, preferred, current, 71.7 MHz
+[08:29:29.205] associating input device event0 with output Virtual-1 (none by udev)
+[08:29:29.205] associating input device event1 with output Virtual-1 (none by udev)
+[08:29:29.207] associating input device event2 with output Virtual-1 (none by udev)
+[08:29:29.208] Output 'Virtual-1' enabled with head(s) Virtual-1
+[08:29:29.215] WV_DISPLAY_APPLIED output=Virtual-1 width=1280 height=800
+[08:29:30.000] Disabling output Virtual-1
+[08:29:30.018] output for input device event0 removed
+[08:29:30.018] output for input device event1 removed
+[08:29:30.018] output for input device event2 removed
+[08:29:30.018] Output 'Virtual-1' attempts EOTF mode: SDR
+[08:29:30.019] Output 'Virtual-1' using color profile: built-in default sRGB SDR profile
+[08:29:30.396] DRM: output Virtual-1 uses shadow framebuffer.
+[08:29:30.396] Output Virtual-1 (crtc 33) video modes:
+               1280x800@60.0, preferred, current, 71.7 MHz
+[08:29:30.397] associating input device event0 with output Virtual-1 (none by udev)
+[08:29:30.397] associating input device event1 with output Virtual-1 (none by udev)
+[08:29:30.399] associating input device event2 with output Virtual-1 (none by udev)
+[08:29:30.399] Output 'Virtual-1' enabled with head(s) Virtual-1
+[08:29:30.399] WV_DISPLAY_APPLIED output=Virtual-1 width=1280 height=800
+[08:29:30.683] DRM: head 'Virtual-1' updated, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[08:29:30.683] Detected a monitor change on head 'Virtual-1', not bothering to do anything about it.
+[08:29:30.696] Disabling output Virtual-1
+[08:29:30.717] output for input device event0 removed
+[08:29:30.717] output for input device event1 removed
+[08:29:30.717] output for input device event2 removed
+[08:29:30.789] Output 'Virtual-1' attempts EOTF mode: SDR
+[08:29:30.789] Output 'Virtual-1' using color profile: built-in default sRGB SDR profile
+[08:29:31.992] DRM: output Virtual-1 uses shadow framebuffer.
+[08:29:31.992] Output Virtual-1 (crtc 33) video modes:
+               2560x1600@60.0, preferred, current, 285.1 MHz
+               1280x800@60.0, preferred, 71.7 MHz
+[08:29:31.993] associating input device event0 with output Virtual-1 (none by udev)
+[08:29:31.993] associating input device event1 with output Virtual-1 (none by udev)
+[08:29:31.995] associating input device event2 with output Virtual-1 (none by udev)
+[08:29:31.995] Output 'Virtual-1' enabled with head(s) Virtual-1
+[08:29:31.995] WV_DISPLAY_APPLIED output=Virtual-1 width=2560 height=1600
+[08:29:32.626] background surface gone
+[08:29:32.626] panel surface gone
+[08:29:32.627] background surface gone
+[08:29:32.627] panel surface gone
+[08:29:32.628] background surface gone
+[08:29:32.629] panel surface gone
+[08:29:32.629] background surface gone
+[08:29:32.630] panel surface gone
+[08:29:32.655] Error: /usr/libexec/weston-desktop-shell apparently cannot run at all.
+               Quitting...[08:29:32.655] panel surface gone
+[08:29:32.656] background surface gone
+[08:29:32.672] event0  - wasm-vm virtio keyboard: device removed
+[08:29:32.696] event1  - wasm-vm virtio tablet: device removed
+[08:29:32.708] event2  - wasm-vm virtio mouse: device removed
+Date: 2026-09-06 UTC
+[08:29:34.492] weston 12.0.4
+               https://wayland.freedesktop.org
+               Bug reports to: https://gitlab.freedesktop.org/wayland/weston/issues/
+               Build: 12.0.4
+[08:29:34.492] Command line: weston --config=/etc/xdg/weston/weston.ini --backend=drm --renderer=pixman --socket=wayland-0
+[08:29:34.493] OS: Linux, 6.6.63, #1 SMP Thu Nov 14 2024, riscv64
+[08:29:34.493] Flight recorder: enabled
+[08:29:34.494] Using config file '/etc/xdg/weston/weston.ini'
+[08:29:34.495] Output repaint window is 7 ms maximum.
+[08:29:34.496] Loading module '/usr/lib/libweston-12/drm-backend.so'
+[08:29:34.535] initializing drm backend
+[08:29:34.536] Trying libseat launcher...
+[08:29:34.537] [libseat/libseat.c:73] Seat opened with backend 'seatd'
+[08:29:34.537] [libseat/backend/seatd.c:212] Enabling seat
+[08:29:34.538] libseat: session control granted
+[08:29:34.547] using /dev/dri/card0
+[08:29:34.548] DRM: supports atomic modesetting
+[08:29:34.548] DRM: does not support GBM modifiers
+[08:29:34.548] DRM: does not support async page flipping
+[08:29:34.549] DRM: supports picture aspect ratio
+[08:29:34.549] Using Pixman renderer
+[08:29:34.673] event0  - wasm-vm virtio keyboard: is tagged by udev as: Keyboard
+[08:29:34.678] event0  - wasm-vm virtio keyboard: device is a keyboard
+[08:29:34.718] event1  - wasm-vm virtio tablet: is tagged by udev as: Mouse
+[08:29:34.736] event1  - wasm-vm virtio tablet: device is a pointer
+[08:29:34.772] event2  - wasm-vm virtio mouse: is tagged by udev as: Mouse
+[08:29:34.781] event2  - wasm-vm virtio mouse: device is a pointer
+[08:29:35.282] libinput: configuring device "wasm-vm virtio keyboard".
+[08:29:35.282] libinput: configuring device "wasm-vm virtio tablet".
+[08:29:35.282] input device event1 has no enabled output associated (none named), skipping calibration for now.
+[08:29:35.282] libinput: configuring device "wasm-vm virtio mouse".
+[08:29:35.285] DRM: head 'Virtual-1' found, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[08:29:35.286] Registered plugin API 'weston_drm_output_api_v1' of size 40
+[08:29:35.286] Registered plugin API 'weston_drm_virtual_output_api_v2' of size 48
+[08:29:35.286] Color manager: no-op
+[08:29:35.287] Output 'Virtual-1' attempts EOTF mode: SDR
+[08:29:35.287] Output 'Virtual-1' using color profile: built-in default sRGB SDR profile
+[08:29:35.709] DRM: output Virtual-1 uses shadow framebuffer.
+[08:29:35.709] Output Virtual-1 (crtc 33) video modes:
+               2560x1600@60.0, preferred, current, 285.1 MHz
+[08:29:35.709] associating input device event0 with output Virtual-1 (none by udev)
+[08:29:35.710] associating input device event1 with output Virtual-1 (none by udev)
+[08:29:35.713] associating input device event2 with output Virtual-1 (none by udev)
+[08:29:35.713] Output 'Virtual-1' enabled with head(s) Virtual-1
+[08:29:35.713] Compositor capabilities:
+               arbitrary surface rotation: yes
+               screen capture uses y-flip: no
+               cursor planes: yes
+               arbitrary resolutions: no
+               view mask clipping: yes
+               explicit sync: no
+               color operations: no
+               presentation clock: CLOCK_MONOTONIC, id 1
+               presentation clock resolution: 0.000000001 s
+[08:29:35.715] Loading module '/usr/lib/weston/desktop-shell.so'
+[08:29:35.719] Loading module '/usr/lib/weston/wv-display-resize.so'
+[08:29:35.720] WV_DISPLAY enabled bounded 100ms EDID watcher
+[08:29:35.721] launching '/usr/libexec/weston-keyboard'
+[08:29:35.736] launching '/usr/libexec/weston-desktop-shell'
+could not load cursor 'dnd-move'
+could not load cursor 'dnd-copy'
+could not load cursor 'dnd-none'
+could not load cursor 'dnd-move'
+could not load cursor 'dnd-copy'
+could not load cursor 'dnd-none'
+[08:29:37.416] Disabling output Virtual-1
+[08:29:37.732] output for input device event0 removed
+[08:29:37.732] output for input device event1 removed
+[08:29:37.732] output for input device event2 removed
+[08:29:37.733] Output 'Virtual-1' attempts EOTF mode: SDR
+[08:29:37.733] Output 'Virtual-1' using color profile: built-in default sRGB SDR profile
+[08:29:39.116] DRM: output Virtual-1 uses shadow framebuffer.
+[08:29:39.116] Output Virtual-1 (crtc 33) video modes:
+               2560x1600@60.0, preferred, current, 285.1 MHz
+[08:29:39.117] associating input device event0 with output Virtual-1 (none by udev)
+[08:29:39.117] associating input device event1 with output Virtual-1 (none by udev)
+[08:29:39.125] associating input device event2 with output Virtual-1 (none by udev)
+[08:29:39.125] Output 'Virtual-1' enabled with head(s) Virtual-1
+[08:29:39.125] WV_DISPLAY_APPLIED output=Virtual-1 width=2560 height=1600
+[08:29:39.880] DRM: head 'Virtual-1' updated, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[08:29:39.883] Detected a monitor change on head 'Virtual-1', not bothering to do anything about it.
+[08:29:39.892] background surface gone
+[08:29:39.893] panel surface gone
+[08:29:39.894] Disabling output Virtual-1
+[08:29:39.923] output for input device event0 removed
+[08:29:39.924] output for input device event1 removed
+[08:29:39.932] output for input device event2 removed
+[08:29:39.936] Error: /usr/libexec/weston-desktop-shell apparently cannot run at all.
+               Quitting...[08:29:39.968] event0  - wasm-vm virtio keyboard: device removed
+[08:29:39.988] event1  - wasm-vm virtio tablet: device removed
+[08:29:40.008] event2  - wasm-vm virtio mouse: device removed
+Date: 2026-09-06 UTC
+[08:29:41.730] weston 12.0.4
+               https://wayland.freedesktop.org
+               Bug reports to: https://gitlab.freedesktop.org/wayland/weston/issues/
+               Build: 12.0.4
+[08:29:41.731] Command line: weston --config=/etc/xdg/weston/weston.ini --backend=drm --renderer=pixman --socket=wayland-0
+[08:29:41.731] OS: Linux, 6.6.63, #1 SMP Thu Nov 14 2024, riscv64
+[08:29:41.731] Flight recorder: enabled
+[08:29:41.733] Using config file '/etc/xdg/weston/weston.ini'
+[08:29:41.734] Output repaint window is 7 ms maximum.
+[08:29:41.734] Loading module '/usr/lib/libweston-12/drm-backend.so'
+[08:29:41.774] initializing drm backend
+[08:29:41.774] Trying libseat launcher...
+[08:29:41.776] [libseat/libseat.c:73] Seat opened with backend 'seatd'
+[08:29:41.776] [libseat/backend/seatd.c:212] Enabling seat
+[08:29:41.776] libseat: session control granted
+[08:29:41.786] using /dev/dri/card0
+[08:29:41.787] DRM: supports atomic modesetting
+[08:29:41.787] DRM: does not support GBM modifiers
+[08:29:41.787] DRM: does not support async page flipping
+[08:29:41.787] DRM: supports picture aspect ratio
+[08:29:41.788] Using Pixman renderer
+[08:29:41.911] event0  - wasm-vm virtio keyboard: is tagged by udev as: Keyboard
+[08:29:41.915] event0  - wasm-vm virtio keyboard: device is a keyboard
+[08:29:41.955] event1  - wasm-vm virtio tablet: is tagged by udev as: Mouse
+[08:29:41.974] event1  - wasm-vm virtio tablet: device is a pointer
+[08:29:42.009] event2  - wasm-vm virtio mouse: is tagged by udev as: Mouse
+[08:29:42.018] event2  - wasm-vm virtio mouse: device is a pointer
+[08:29:42.516] libinput: configuring device "wasm-vm virtio keyboard".
+[08:29:42.516] libinput: configuring device "wasm-vm virtio tablet".
+[08:29:42.516] input device event1 has no enabled output associated (none named), skipping calibration for now.
+[08:29:42.517] libinput: configuring device "wasm-vm virtio mouse".
+[08:29:42.519] DRM: head 'Virtual-1' found, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[08:29:42.520] Registered plugin API 'weston_drm_output_api_v1' of size 40
+[08:29:42.521] Registered plugin API 'weston_drm_virtual_output_api_v2' of size 48
+[08:29:42.521] Color manager: no-op
+[08:29:42.521] Output 'Virtual-1' attempts EOTF mode: SDR
+[08:29:42.521] Output 'Virtual-1' using color profile: built-in default sRGB SDR profile
+[08:29:42.569] DRM: output Virtual-1 uses shadow framebuffer.
+[08:29:42.570] Output Virtual-1 (crtc 33) video modes:
+               801x601@60.0, preferred, current, 36.4 MHz
+[08:29:42.570] associating input device event0 with output Virtual-1 (none by udev)
+[08:29:42.570] associating input device event1 with output Virtual-1 (none by udev)
+[08:29:42.573] associating input device event2 with output Virtual-1 (none by udev)
+[08:29:42.574] Output 'Virtual-1' enabled with head(s) Virtual-1
+[08:29:42.574] Compositor capabilities:
+               arbitrary surface rotation: yes
+               screen capture uses y-flip: no
+               cursor planes: yes
+               arbitrary resolutions: no
+               view mask clipping: yes
+               explicit sync: no
+               color operations: no
+               presentation clock: CLOCK_MONOTONIC, id 1
+               presentation clock resolution: 0.000000001 s
+[08:29:42.576] Loading module '/usr/lib/weston/desktop-shell.so'
+[08:29:42.580] Loading module '/usr/lib/weston/wv-display-resize.so'
+[08:29:42.582] WV_DISPLAY enabled bounded 100ms EDID watcher
+[08:29:42.582] launching '/usr/libexec/weston-keyboard'
+[08:29:42.598] launching '/usr/libexec/weston-desktop-shell'
+could not load cursor 'dnd-move'
+could not load cursor 'dnd-copy'
+could not load cursor 'dnd-none'
+could not load cursor 'dnd-move'
+could not load cursor 'dnd-copy'
+could not load cursor 'dnd-none'
+[08:29:43.458] Disabling output Virtual-1
+[08:29:43.504] output for input device event0 removed
+[08:29:43.504] output for input device event1 removed
+[08:29:43.505] output for input device event2 removed
+[08:29:43.505] Output 'Virtual-1' attempts EOTF mode: SDR
+[08:29:43.505] Output 'Virtual-1' using color profile: built-in default sRGB SDR profile
+[08:29:43.676] DRM: output Virtual-1 uses shadow framebuffer.
+[08:29:43.676] Output Virtual-1 (crtc 33) video modes:
+               801x601@60.0, preferred, current, 36.4 MHz
+[08:29:43.677] associating input device event0 with output Virtual-1 (none by udev)
+[08:29:43.677] associating input device event1 with output Virtual-1 (none by udev)
+[08:29:43.679] associating input device event2 with output Virtual-1 (none by udev)
+[08:29:43.679] Output 'Virtual-1' enabled with head(s) Virtual-1
+[08:29:43.680] WV_DISPLAY_APPLIED output=Virtual-1 width=801 height=601
+[08:29:43.827] Disabling output Virtual-1
+[08:29:43.844] output for input device event0 removed
+[08:29:43.844] output for input device event1 removed
+[08:29:43.844] output for input device event2 removed
+[08:29:43.936] Output 'Virtual-1' attempts EOTF mode: SDR
+[08:29:43.936] Output 'Virtual-1' using color profile: built-in default sRGB SDR profile
+[08:29:44.088] DRM: output Virtual-1 uses shadow framebuffer.
+[08:29:44.088] Output Virtual-1 (crtc 33) video modes:
+               802x601@60.0, preferred, current, 36.4 MHz
+               801x601@60.0, preferred, 36.4 MHz
+[08:29:44.089] associating input device event0 with output Virtual-1 (none by udev)
+[08:29:44.089] associating input device event1 with output Virtual-1 (none by udev)
+[08:29:44.091] associating input device event2 with output Virtual-1 (none by udev)
+[08:29:44.091] Output 'Virtual-1' enabled with head(s) Virtual-1
+[08:29:44.092] WV_DISPLAY_APPLIED output=Virtual-1 width=802 height=601
+[08:29:44.752] Error: /usr/libexec/weston-desktop-shell apparently cannot run at all.
+               Quitting...[08:29:44.753] panel surface gone
+[08:29:44.753] background surface gone
+[08:29:44.770] event0  - wasm-vm virtio keyboard: device removed
+[08:29:44.792] event1  - wasm-vm virtio tablet: device removed
+[08:29:44.816] event2  - wasm-vm virtio mouse: device removed
+E5T18D_LOG_END

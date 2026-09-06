@@ -511,6 +511,14 @@ keymap_layout=us
 term=xterm-256color
 WESTON_INI
 
+    if [ "${E5_T22C_RESIZE:-0}" = 1 ]; then
+      install -Dm755 /wv-display-query "$ROOT/usr/local/bin/wv-display-query"
+      install -Dm755 /wv-display-resize.so "$ROOT/usr/lib/weston/wv-display-resize.so"
+      # Keep the same DRM/pixman renderer, without an unnecessary extra shadow
+      # framebuffer copy on this RAM-backed virtual GPU.
+      sed -i '/^\[core\]$/a modules=wv-display-resize.so\npixman-shadow=false' "$ROOT/etc/xdg/weston/weston.ini"
+    fi
+
     cat > "$ROOT/home/desktop/.profile" <<'DESKTOP_PROFILE'
 export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/1000}
 export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
@@ -615,6 +623,8 @@ link_svc default wasm-vm-file-agent
     /usr/local/sbin/desktop-autologin \
     /usr/local/bin/start-desktop \
     /usr/local/sbin/desktop-test-console \
+    /usr/local/bin/wv-display-query \
+    /usr/lib/weston/wv-display-resize.so \
     /etc/wasm-vm/desktop-fallback.issue \
     /etc/xdg/weston/weston.ini \
     /etc/wasm-vm/desktop-terminal-interactive \
