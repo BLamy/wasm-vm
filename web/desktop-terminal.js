@@ -21,6 +21,7 @@ const FALLBACK_CHUNK_MANIFEST_SHA256 = "1be3c29945747184c3ed868f51add1829e97bfd3
 
 const query = new URLSearchParams(location.search);
 const desktopPerfHooksRequested = query.has("testHooks") && query.has("perfHooks");
+const desktopLatencyHooksRequested = desktopPerfHooksRequested && query.has("latencyHooks");
 const root = document.getElementById("desktop-terminal-root");
 const canvas = document.getElementById("desktop-canvas");
 const statusEl = document.getElementById("desktop-status");
@@ -57,6 +58,7 @@ let lastObservedFrame = 0;
 let desktopPerfGuestInstructions = null;
 let desktopPerfStatsTimer = null;
 let desktopPerfInput = null;
+let desktopPerfPresentDelayMs = 0;
 
 const pointerFrames = [];
 const keyboardFrames = [];
@@ -374,14 +376,41 @@ function recordKeyboardFrame(frame) {
 }
 
 function recordKeyboardEvent(event) {
+  const timestamp = performance.now();
   keyboardEvents.push({
-    atMs: Math.round(performance.now() - bootStartedAt),
+    atMs: Math.round(timestamp - bootStartedAt),
+    timestamp,
     type: event?.type || "",
     code: event?.code || "",
     key: event?.key || "",
     repeat: event?.repeat === true,
   });
   if (keyboardEvents.length > 10_000) keyboardEvents.shift();
+}
+
+// T25c calibration delays the browser's test-only rAF request and then enters the real rAF path.
+// The handle carries both timers so cancellation remains correct if a queued frame is replaced.
+function delayedRequestAnimationFrame(callback) {
+  if (desktopPerfPresentDelayMs <= 0) return requestAnimationFrame(callback);
+  const handle = { timer: null, frame: null, cancelled: false };
+  handle.timer = setTimeout(() => {
+    handle.timer = null;
+    if (handle.cancelled) return;
+    handle.frame = requestAnimationFrame((timestamp) => {
+      if (!handle.cancelled) callback(timestamp);
+    });
+  }, desktopPerfPresentDelayMs);
+  return handle;
+}
+
+function delayedCancelAnimationFrame(handle) {
+  if (handle && typeof handle === "object") {
+    handle.cancelled = true;
+    if (handle.timer !== null) clearTimeout(handle.timer);
+    if (handle.frame !== null) cancelAnimationFrame(handle.frame);
+    return;
+  }
+  cancelAnimationFrame(handle);
 }
 
 function beginLaunch(label = `launch-${interactions.launches.length + 1}`) {
@@ -640,6 +669,10 @@ try {
   presentation = new PresentationController(canvas, {
     defaultBackend: "canvas2d",
     canvas2dOptions: { contextAttributes: { alpha: true, willReadFrequently: true } },
+    scheduleFrames: desktopLatencyHooksRequested,
+    visibilityTarget: desktopLatencyHooksRequested ? document : undefined,
+    requestAnimationFrame: desktopLatencyHooksRequested ? delayedRequestAnimationFrame : undefined,
+    cancelAnimationFrame: desktopLatencyHooksRequested ? delayedCancelAnimationFrame : undefined,
     onPresent: desktopPerfHooksRequested
       ? (record) => {
         desktopPerfPresentRecords.push({ ...record, rect: { ...record.rect } });
@@ -661,12 +694,24 @@ globalThis.__desktopTerminal = publicApi();
 globalThis.__desktopTerminalProof = () => finalProof;
 if (desktopPerfHooksRequested) {
   globalThis.__desktopPerf = {
-    version: "e5-t25b-v1",
+    version: desktopLatencyHooksRequested ? "e5-t25c-v1" : "e5-t25b-v1",
+    latencyHooks: desktopLatencyHooksRequested,
     ready: () => desktopPerfInput !== null,
     input: () => desktopPerfInput,
     now: () => performance.now(),
     presents: () => desktopPerfPresentRecords.map((record) => ({ ...record, rect: { ...record.rect } })),
     presentDurations: () => [...desktopPerfPresentDurations],
+    keyboardEvents: () => keyboardEvents.map((event) => ({ ...event })),
+    setPresentDelay: (milliseconds) => {
+      if (!desktopLatencyHooksRequested) throw new Error("latency hooks are disabled");
+      const value = Number(milliseconds);
+      if (!Number.isSafeInteger(value) || value < 0 || value > 1_000) {
+        throw new RangeError("present delay must be an integer in [0, 1000] ms");
+      }
+      desktopPerfPresentDelayMs = value;
+      return desktopPerfPresentDelayMs;
+    },
+    presentDelay: () => desktopPerfPresentDelayMs,
     clear: () => {
       desktopPerfPresentRecords.length = 0;
       desktopPerfPresentDurations.length = 0;

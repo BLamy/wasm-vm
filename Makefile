@@ -1000,6 +1000,16 @@ verify-E5-T25b:
 	node tools/verify/e5-t25b-release-audit.mjs
 	node tools/verify/e5-t25b-browser.mjs
 
+.PHONY: verify-E5-T25c
+verify-E5-T25c:
+	node --check web/bench/desktop-perf.js
+	node --check web/desktop-terminal.js
+	node --check tools/verify/e5-t25c-browser.mjs
+	node --test web/tests/e5-t25c-desktop-perf.test.mjs web/tests/e5-t25b-desktop-perf.test.mjs
+	node tools/verify/e5-t25c-release-audit.mjs
+	$(MAKE) web-build
+	E5_T25C_OUT=evidence/e5-t25c/browser node tools/verify/e5-t25c-browser.mjs
+
 verify-E5-T22e:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
 	cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings
