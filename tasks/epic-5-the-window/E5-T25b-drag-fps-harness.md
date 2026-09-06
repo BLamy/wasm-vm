@@ -3,7 +3,7 @@ id: E5-T25b
 epic: 5
 title: Measure repeatable real-window drag FPS and bottleneck counters
 priority: 525.2
-status: in-progress
+status: evidence-needed
 depends_on: [E5-T25a]
 estimate: S
 risk: medium
@@ -202,3 +202,40 @@ Full report: `evidence/e5-t25b/verifier-r2/verifier-report.md`.
 Commands: verifier-r2 artifact audit and analyzer attacks; hostile-env syntax,
 focused tests, and release audit; source/dist `cmp`; `git diff --check`; image
 SHA-256 and Chrome provenance; bounded headed DPR-2 attempt.
+
+### 2026-09-06 — verifier r3 — VERDICT: needs-evidence
+
+- **Stationary/wrong-way fix — HELD.** The focused suite passed 6/6. Thirteen
+  independent displacement probes rejected stationary, sub-100px, wrong-way,
+  non-finite, and invalid inputs and accepted exactly 100px in both requested
+  directions. The source audit proves pre/post titlebar geometry is compared by
+  `assertWindowMoved` before summarization/aggregation and retained in each run.
+- **Retained old baseline — HELD with accurate provenance.** JSON SHA-256
+  `8cd005bf639b7638548c18b38a0bb32938b2494b179797aa875ddc5bd70060f7`
+  and PNG SHA-256
+  `d81ba53cbe4146e0be05be40bbbd6c53d9f082910bb7595d32958301b718a059`
+  matched. All 473 records, five pointer equations, attribution/duration/counter
+  invariants, summary math, null rejection, CV `11.321151210004228%`, and
+  286–405px damage movement held. Producer head `a14bf545` predates the geometry
+  assertion, so this artifact cannot execute the rework.
+- **Current-head browser coverage — NEEDS EVIDENCE.** A hostile-env exact-head
+  baseline with `E5_T25B_TIMEOUT_MS=240000` failed after exactly 240000ms at
+  `tools/verify/e5-t25b-browser.mjs:112`, waiting for `desktopReady`. It did not
+  reach Foot readiness, the five-drag loop, the new displacement call, or the
+  readiness line changed by `6fca89a7`; no artifact was written. DPR 2, busy,
+  and 4x legs were not attempted after baseline readiness failed.
+- **Sufficiency/coverage — GAP.** Deterministic helper proof plus static producer
+  ordering is not sufficient under the changed-hunk rule: the pure analyzer still
+  accepts stationary-looking FPS if the browser guard is bypassed, while no
+  post-fix recording executes that guard. Record one successful exact-head headed
+  baseline retaining `windowBefore`, `windowAfter`, correctly signed
+  `windowDisplacementX`, and `windowDisplacementPx >= 100` for all five real drags.
+  No product behavior was contradicted.
+- **SUITE:** retain the promoted worker regression and verifier displacement,
+  source, and raw-artifact audits. No implementation or repository tests changed.
+
+Full report: `evidence/e5-t25b/verifier-r3/verifier-report.md`.
+
+Commands: hostile-env focused Node checks/tests and release audit; r2 analyzer
+attacks; verifier-r3 displacement/source/artifact audits; direct source/dist
+`cmp`; `git diff --check`; bounded exact-head headed Chrome baseline.

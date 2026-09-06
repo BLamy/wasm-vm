@@ -1,0 +1,26 @@
+Head: 6fca89a7463ee5bb932a615d62986fafadb26068
+Environment for Node checks: hostile inherited RUSTFLAGS, RUST_LOG, CARGO_HOME, and CARGO_TARGET_DIR.
+
+PASS node --check web/bench/desktop-perf.js
+PASS node --check web/desktop-terminal.js
+PASS node --check tools/verify/e5-t25b-browser.mjs
+PASS node --test web/tests/e5-t25b-desktop-perf.test.mjs
+     6 tests, 6 passed, 0 failed, including stationary/wrong-way rejection.
+PASS node tools/verify/e5-t25b-release-audit.mjs
+     source/dist byte parity, dual gate, sampler lifecycle, and record retention reported true.
+PASS node evidence/e5-t25b/verifier-r2/analyzer-attacks.mjs
+     malformed/null/no-damage/counter matrix reproduced; stationary FPS remains plausible only
+     when the browser-loop displacement guard is bypassed.
+PASS node evidence/e5-t25b/verifier-r3/displacement-attacks.mjs
+     13/13 expected outcomes: stationary, sub-100px, wrong-way, non-finite, invalid direction,
+     and invalid minimum rejected; exactly +/-100px in the requested direction accepted.
+PASS node evidence/e5-t25b/verifier-r3/source-audit.mjs
+     unique source ordering proves pre-geometry -> drag -> post-geometry -> displacement check ->
+     summary -> retention, with aggregate after the five-run loop. Readiness uses timeoutMs.
+PASS node evidence/e5-t25b/verifier-r3/retained-artifact-audit.mjs
+     hashes, all 473 raw records, five pointer equations, attribution/duration/counter invariants,
+     damage movement, summary math, CV 11.321151210004228%, and producer classification held.
+PASS cmp web/bench/desktop-perf.js web/dist/bench/desktop-perf.js
+PASS cmp web/desktop-terminal.js web/dist/desktop-terminal.js
+PASS cmp web/desktop-cursor.html web/dist/desktop-cursor.html
+PASS git diff --check b179d9cca04aac461c2e4588ae59d05307827556..HEAD
