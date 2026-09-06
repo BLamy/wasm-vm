@@ -3,7 +3,7 @@ id: E5-T25a
 epic: 5
 title: Freeze test-only desktop performance instrumentation and injection hooks
 priority: 525.1
-status: implemented
+status: in-progress
 depends_on: [E5-T09e, E5-T18e]
 estimate: S
 risk: medium
@@ -169,3 +169,38 @@ Commands: `make web-build`; `make verify-E5-T25a`;
 - **SUITE:** retain verifier evidence; no promotion until the two semantic refutations
   clear. Independent machines, WebKit, host rr/ssh-dev, T25b/T25c, and T22c are waived
   or out of scope. No merge performed.
+
+### 2026-09-06 — replacement verifier — VERDICT: refuted
+
+- **Prior P11 ordering refutation — HELD after rework.** Sixty-four independently
+  delayed concurrent move/button trials in both call orders delivered each complete
+  evdev frame through `SYN_REPORT`; a mixed five-frame tablet/keyboard burst and a
+  rejected-operation recovery attack also preserved unique sequences and queue progress
+  (`evidence/e5-t25a/verifier-r2/independent-observations.json:26-162`).
+- **Prior P10 attribution refutation — HELD for valid samples.** Source, committed dist,
+  and both object schemas emitted totals 100/175 and deltas 100/75 exactly
+  (`evidence/e5-t25a/verifier-r2/independent-observations.json:191-231`).
+- **Unavailable attribution — FAILED.** The page cache starts as null
+  (`web/main.js:25,87`), but the sink coerces `Number(null)` to zero
+  (`web/src/sink/presentation.js:277-285`), so a present before the first scheduler
+  sample falsely reports total/delta `0/0` instead of unavailable `null/null`
+  (`evidence/e5-t25a/verifier-r2/independent-observations.json:8-24,232-277`). A reviewed
+  browser artifact independently records the same `0/0` in all four gated Chromium/
+  Firefox source/dist cases (`evidence/e5-t25a/verifier-r2/surface-results.json:67-104,178-215`
+  and `evidence/e5-t25a/verifier-r2/surface-results.json:278-315,372-410`). Reject
+  null/missing values before numeric coercion,
+  preserve the baseline, and add the unavailable→100→175 regression.
+- **Required attacks/release/demo — HELD.** Stale/duplicate state, sequence uniqueness,
+  invalid damage, null sink, five stable fixture records, JS/TS and source/dist parity,
+  normal/half/full query isolation, 8/8 focused tests, Chromium 152, Firefox 132, and
+  the 126/126 zero-error demo all held. The exact log's browser PNG SHA is misstated as
+  `...64b9a46...`; the committed/fresh bytes are
+  `7b77d08efbfeab64a9b46cf6b3617c86b1e81afd90781a24bf4c2b02893f5547`.
+- **COVERAGE:** helper and sink hunks executed. The no-boot gate does not execute the
+  gated scheduler sampler/timer teardown in `web/main.js:907-911,1516-1530`; add a
+  deterministic page-level data-flow/teardown exercise with the fix. Full report:
+  `evidence/e5-t25a/verifier-r2/verifier-report.md`.
+- **SUITE:** retain verifier evidence and promote the null-sampler case after the fix.
+  Independent machines, WebKit, host rr/ssh-dev, T25b/T25c, T22c, and merge are out of
+  scope. No localhost listener was started in the replacement session and no merge was
+  performed.

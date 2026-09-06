@@ -1,0 +1,112 @@
+{
+  "exactHead": "0da96f6a5c7f323b986fe41b6f6bfb2508eec834",
+  "hashes": {
+    "workerBrowserJson": {
+      "path": "evidence/e5-t25a/browser/results.json",
+      "expected": "f82cf35bb1c0db9e425b6bbfc37a5117304be424e1f9318777e1dc165a273d4e",
+      "observed": "f82cf35bb1c0db9e425b6bbfc37a5117304be424e1f9318777e1dc165a273d4e",
+      "held": true
+    },
+    "workerBrowserPng": {
+      "path": "evidence/e5-t25a/browser/chromium-gated.png",
+      "expected": "7b77d08efbfeab64b9a46cf6b3617c86b1e81afd90781a24bf4c2b02893f5547",
+      "observed": "7b77d08efbfeab64a9b46cf6b3617c86b1e81afd90781a24bf4c2b02893f5547",
+      "held": false
+    },
+    "demoJson": {
+      "path": "evidence/e5-t25a/demo/demo-suite.json",
+      "expected": "48fd7146cefc6ba84976f9d8a602ada2a4d032b6033e3360d06d375434206572",
+      "observed": "48fd7146cefc6ba84976f9d8a602ada2a4d032b6033e3360d06d375434206572",
+      "held": true
+    },
+    "demoPng": {
+      "path": "evidence/e5-t25a/demo/demo-suite.png",
+      "expected": "08f0868eab3a05b160505ce9c8596a0783374b7216a2c8b02b2d252983f62513",
+      "observed": "08f0868eab3a05b160505ce9c8596a0783374b7216a2c8b02b2d252983f62513",
+      "held": true
+    },
+    "freshBrowserJson": {
+      "path": "evidence/e5-t25a/verifier-r2/fresh-browser/results.json",
+      "expected": "f82cf35bb1c0db9e425b6bbfc37a5117304be424e1f9318777e1dc165a273d4e",
+      "observed": "f82cf35bb1c0db9e425b6bbfc37a5117304be424e1f9318777e1dc165a273d4e",
+      "held": true
+    },
+    "freshBrowserPng": {
+      "path": "evidence/e5-t25a/verifier-r2/fresh-browser/chromium-gated.png",
+      "expected": "7b77d08efbfeab64a9b46cf6b3617c86b1e81afd90781a24bf4c2b02893f5547",
+      "observed": "7b77d08efbfeab64a9b46cf6b3617c86b1e81afd90781a24bf4c2b02893f5547",
+      "held": true
+    }
+  },
+  "demo": {
+    "metrics": {
+      "metric-pass": "126",
+      "metric-fail": "0",
+      "metric-done": "126"
+    },
+    "errors": [],
+    "httpErrors": [],
+    "faviconErrors": 1
+  },
+  "browsers": [
+    {
+      "browser": "chromium",
+      "version": "152.0.7977.76",
+      "normalSurface": false,
+      "gatedSurface": true,
+      "hookCalls": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          4
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          5
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "browser": "firefox",
+      "version": "132.0",
+      "normalSurface": false,
+      "gatedSurface": true,
+      "hookCalls": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          4
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          5
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    }
+  ],
+  "checks": {
+    "allHashesHeld": false,
+    "workerFreshBrowserJsonByteEqual": true,
+    "workerFreshBrowserPngByteEqual": true,
+    "demoScreenshotInternalHashHeld": true,
+    "demo126of126": true,
+    "demoNoBrowserOrHttpErrors": true,
+    "demoNoNonFaviconConsoleErrors": true,
+    "gateEightPassedNoSkipped": true,
+    "gateReleaseAuditHeld": true,
+    "gateBrowserResultsHeld": true
+  },
+  "allHeld": false
+}
