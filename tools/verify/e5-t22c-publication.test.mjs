@@ -65,18 +65,23 @@ test("freeze detects stable dirty imported runtime and staged bytes, not unrelat
   const git=args=>execFileSync("git",args,{cwd:repo,stdio:"pipe"});
   try {
     git(["init","-q"]);
-    for(const file of ["web/dist/src/sink/presentation.js","web/loader.js","web/artifacts-alpine.json","crates/core/src/lib.rs","tasks/unrelated.md"]){
+    const scoped=["web/dist/src/sink/presentation.js","web/loader.js","web/artifacts-alpine.json","crates/core/src/lib.rs",
+      "tools/image/e5-t22c-desktop-image.json","tools/image/e5-t22c/MANIFEST.txt","tools/image/e5-t22c/FILE-MANIFEST.txt"];
+    for(const file of [...scoped,"tasks/unrelated.md"]){
       await mkdir(path.dirname(path.join(repo,file)),{recursive:true});await writeFile(path.join(repo,file),"original\n");
     }
     git(["add","."]);git(["-c","core.hooksPath=/dev/null","-c","commit.gpgsign=false","-c","user.name=Fixture","-c","user.email=fixture@example.invalid","commit","-qm","fixture"]);
     const frozen=verifyFrozenRuntime(repo);
     await writeFile(path.join(repo,"tasks/unrelated.md"),"unrelated user change\n");assert.deepEqual(verifyFrozenRuntime(repo),frozen);
-    for(const file of ["web/dist/src/sink/presentation.js","web/loader.js","web/artifacts-alpine.json","crates/core/src/lib.rs"]){
+    for(const file of scoped){
       await writeFile(path.join(repo,file),"dirty before recording\n");
       assert.throws(()=>verifyFrozenRuntime(repo),/differs from frozen HEAD/);
       git(["add",file]);assert.throws(()=>verifyFrozenRuntime(repo),/differs from frozen HEAD/);
       await writeFile(path.join(repo,file),"original\n");git(["add",file]);assert.deepEqual(verifyFrozenRuntime(repo),frozen);
     }
+    git(["rm","--cached","tools/image/e5-t22c-desktop-image.json"]);
+    git(["-c","core.hooksPath=/dev/null","-c","commit.gpgsign=false","-c","user.name=Fixture","-c","user.email=fixture@example.invalid","commit","-qm","missing lock"]);
+    assert.throws(()=>verifyFrozenRuntime(repo),/must be committed/,"an untracked self-consistent lock cannot stand in for a frozen HEAD");
   } finally { await rm(repo,{recursive:true,force:true}); }
 });
 test("Make acceptance explicitly overrides inherited working-loop controls", async () => {

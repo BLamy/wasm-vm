@@ -272,3 +272,14 @@ This is a deliberate visual simplification inside the guest image boundary,
 not CSS scaling of the guest framebuffer. A loopback-test-only profile option
 uses the existing sampled guest profiler; strict acceptance never enables it.
 The next immutable v7 image must still earn the real browser checks.
+
+### 2026-09-06 — worker — freeze the publication inputs, not just served code
+
+A new regression edits the image lock and its package/custom-file manifests
+without changing their already-captured in-memory values. The previous runtime
+freeze omitted those paths and incorrectly accepted the dirty tree. Preserve
+the failing check in `evidence/e5-t22c/freeze-lock/red.log`; add the three paths
+to the frozen tree and require them to be Git-tracked before recording. The
+extended dirty/staged checks and an untracked-lock negative test now pass
+(`freeze-lock/green.log`). This is a harness proof repair; no guest semantics or
+existing held device-boundary result changes, and no final acceptance is claimed.

@@ -16,15 +16,19 @@ export const DISPLAY_IMAGE_INPUTS = Object.freeze([
 
 // Includes the transitive served runtime, not only the resize page's entrypoint.
 // Deliberately excludes deployment-local manifests and unrelated task metadata.
+const IMAGE_LOCK_PATHS = ["tools/image/e5-t22c-desktop-image.json",
+  "tools/image/e5-t22c/MANIFEST.txt", "tools/image/e5-t22c/FILE-MANIFEST.txt"];
 const FROZEN_PATHS = [
   "Cargo.toml", "Cargo.lock", "crates", "web/*.js", "web/src", "web/*.html",
   "web/dist/*.js", "web/dist/pkg", "web/dist/*.html", "web/package.json", "web/package-lock.json",
-  "web/artifacts-alpine.json", "tools/serve-dev.sh", "Makefile", ...DISPLAY_IMAGE_INPUTS,
+  "web/artifacts-alpine.json", "tools/serve-dev.sh", "Makefile", ...DISPLAY_IMAGE_INPUTS, ...IMAGE_LOCK_PATHS,
   "tools/verify/e5-t22c*", "tools/verify/fixtures/e5-t22c*",
   "tools/verify/e5-t18d-surface.mjs", "tools/verify/e5-t18e-publication.mjs", "tools/verify/e5-t18e-demo-smoke.mjs",
 ];
 export function verifyFrozenRuntime(repo) {
   const git = args => execFileSync("git", args, { cwd: repo, encoding: "utf8" });
+  try { git(["ls-files", "--error-unmatch", "--", ...IMAGE_LOCK_PATHS]); }
+  catch { throw Error("image lock and manifests must be committed before recording"); }
   try { git(["diff", "--quiet", "HEAD", "--", ...FROZEN_PATHS]); }
   catch { throw Error("served runtime/harness differs from frozen HEAD"); }
   return { head: git(["rev-parse", "HEAD"]).trim(), treeSha256: sha256(git(["ls-tree", "-r", "HEAD", "--", ...FROZEN_PATHS])) };

@@ -1,0 +1,31 @@
+✔ source, rebuilt ELF, installed custom files and image metadata all bind (1.076417ms)
+✔ an unchanged image cannot claim changed adapter source or compiled ELF (1.615334ms)
+✔ wrong renderer, identity or architecture cannot pass a correct image hash (0.45575ms)
+✔ self-consistent manifest hashes cannot omit or duplicate installed adapter (0.417084ms)
+✔ modified package or custom bytes and mismatched image metadata are rejected (0.210917ms)
+✖ freeze detects stable dirty imported runtime and staged bytes, not unrelated task files (496.101417ms)
+✔ Make acceptance explicitly overrides inherited working-loop controls (0.842917ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 6
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 537.853791
+
+✖ failing tests:
+
+test at tools/verify/e5-t22c-publication.test.mjs:63:1
+✖ freeze detects stable dirty imported runtime and staged bytes, not unrelated task files (496.101417ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t22c-publication.test.mjs:78:14)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /differs from frozen HEAD/,
+    operator: 'throws',
+    diff: 'simple'
+  }
