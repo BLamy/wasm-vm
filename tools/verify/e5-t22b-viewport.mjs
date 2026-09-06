@@ -11,6 +11,11 @@ const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..")
 const root = path.join(repo, "web/dist");
 const out = path.resolve(process.env.E5_T22B_EVIDENCE_DIR || path.join(repo, "evidence/e5-t22b"));
 const sha = (data) => createHash("sha256").update(data).digest("hex");
+const fixtureKernel = Buffer.from([0x13, 5, 0x10, 0, 0x6f, 0, 0, 0]);
+const fixtureManifest = { artifacts: {
+  kernel: { url: "data:application/octet-stream;base64," + fixtureKernel.toString("base64"), sha256: sha(fixtureKernel) },
+  initramfs: { url: "data:application/octet-stream;base64,", sha256: sha(Buffer.alloc(0)) },
+} };
 const server = createServer(async (request, response) => {
   const pathname = decodeURIComponent(new URL(request.url, "http://localhost").pathname);
   const file = path.resolve(root, "." + pathname);
@@ -48,16 +53,18 @@ async function settled(page) {
   }, null, { timeout: 15000 });
 }
 // Independent RGBA oracle: source has R=x, G=y, B=x XOR y, not the page's colored fixture formula.
-async function checkPixels(page, { sourceWidth = 641, sourceHeight = 481, partial = false, label }) {
-  return page.evaluate(async ({ sourceWidth, sourceHeight, partial, label }) => {
+async function checkPixels(page, { sourceWidth = 641, sourceHeight = 481, partial = false, coalesced = false, label }) {
+  return page.evaluate(async ({ sourceWidth, sourceHeight, partial, coalesced, label }) => {
     const { presentation: p, viewport: v } = viewportDemo;
     const pixels = new Uint32Array(sourceWidth * sourceHeight);
     for (let y = 0; y < sourceHeight; y++) for (let x = 0; x < sourceWidth; x++) {
       pixels[y * sourceWidth + x] = (0xff000000 | ((x & 255) << 16) | ((y & 255) << 8) | ((x ^ y) & 255)) >>> 0;
     }
-    p.present({ resourceWidth: sourceWidth, resourceHeight: sourceHeight, pixels,
+    const frame = { resourceWidth: sourceWidth, resourceHeight: sourceHeight, pixels,
       rect: partial ? { x: sourceWidth - 1, y: sourceHeight - 1, width: 1, height: 1 }
-        : { x: 0, y: 0, width: sourceWidth, height: sourceHeight } });
+        : { x: 0, y: 0, width: sourceWidth, height: sourceHeight } };
+    p.present(frame);
+    if (coalesced) p.present(frame);
     await new Promise(requestAnimationFrame);
     const state = p.snapshot(), actual = p.readPixels();
     let digest = 2166136261;
@@ -72,9 +79,9 @@ async function checkPixels(page, { sourceWidth = 641, sourceHeight = 481, partia
         digest = Math.imul((digest ^ actual[offset + channel]) >>> 0, 16777619) >>> 0;
       }
     }
-    return { label, sourceWidth, sourceHeight, partial, state, viewport: v.snapshot(),
+    return { label, sourceWidth, sourceHeight, partial, coalesced, state, viewport: v.snapshot(),
       checkedBytes: actual.length, rgbaFnv1a: digest.toString(16) };
-  }, { sourceWidth, sourceHeight, partial, label });
+  }, { sourceWidth, sourceHeight, partial, coalesced, label });
 }
 try {
   for (const backend of ["canvas2d", "webgl2"]) for (const dpr of [1, 1.5, 2]) {
@@ -112,6 +119,10 @@ try {
     assert.equal(pointer.events.find((event) => event.code === 1 && event.eventType === 3).value, Math.round(50 * dpr / 481 * 32767));
     const mode = await page.evaluate(() => viewportDemo.viewport.snapshot().desired);
     checks.push(await checkPixels(page, { sourceWidth: mode.width, sourceHeight: mode.height, partial: true, label: "matching-partial-first-frame" }));
+    assert.equal(checks.at(-1).state.sizeMismatch, false);
+    checks.push(await checkPixels(page, { label: "old-resource-before-coalesced-match", partial: true }));
+    checks.push(await checkPixels(page, { sourceWidth: mode.width, sourceHeight: mode.height,
+      partial: true, coalesced: true, label: "two-matching-partial-frames-before-raf" }));
     assert.equal(checks.at(-1).state.sizeMismatch, false);
     const cdp = await context.newCDPSession(page);
     const dprChanges = [];
@@ -194,6 +205,27 @@ try {
   await page.locator(".rm-g-label").filter({ hasText: "E5-T22b" }).click();
   const detail = await page.locator("#rm-detail").innerText();
   const demoImage = await page.screenshot({ path: path.join(out, "demo-suite.png") });
+  // Exercise the real main-app ownership path with the same explicitly paused
+  // eight-byte guest fixture, not a Linux desktop or a mocked controller.
+  await page.route("**/artifacts.json", (route) => route.fulfill({ json: fixtureManifest }));
+  await page.goto(base + "/app.html?noAutoBoot=1&testHooks=1&startPaused=1&jit=0");
+  await page.waitForFunction(() => typeof window.wvmDemo?.runBusybox === "function");
+  const appBoot = await page.evaluate(() => wvmDemo.runBusybox());
+  assert.equal(appBoot.ok, true);
+  await page.waitForFunction(() => {
+    const state = __presentation.viewport();
+    return state.accepted?.sequence === state.desired?.sequence && !state.inFlight;
+  });
+  const appOwnership = await page.evaluate(async () => ({ viewport: __presentation.viewport(),
+    gpu: await wvmDemo.displayStats(), paused: await __linuxCtl.isPaused() }));
+  assert.equal(appOwnership.paused, true);
+  assert.equal(appOwnership.gpu.advertisedWidth, appOwnership.viewport.desired.width);
+  assert.equal(appOwnership.gpu.advertisedHeight, appOwnership.viewport.desired.height);
+  assert.equal(appOwnership.gpu.scanoutResource, null);
+  await page.evaluate(async () => {
+    const { stopLinuxController } = await import("./linux-worker-host.js");
+    await stopLinuxController(window.__linuxCtl);
+  });
   assert.deepEqual(errors, []);
   const files = ["web/src/sink/viewport.js", "web/src/sink/presentation.js", "web/src/sink/canvas2d.js",
     "web/src/sink/webgl.js", "web/display-resize.js", "web/display-resize.html", "web/main.js", "web/ide.js",
@@ -201,7 +233,8 @@ try {
   const digests = Object.fromEntries(await Promise.all(files.map(async (file) => [file, sha(await readFile(path.join(repo, file)))])));
   await writeFile(path.join(out, "viewport-proof.json"), JSON.stringify({
     schemaVersion: 1, head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(),
-    browser: browser.version(), launchArgs, digests, results, metrics, detail, appViewport, errors, demoScreenshotSha256: sha(demoImage),
+    browser: browser.version(), launchArgs, digests, results, metrics, detail, appViewport,
+    appOwnership, fixtureManifest, errors, demoScreenshotSha256: sha(demoImage),
   }, null, 2) + "\n");
   console.log(JSON.stringify({ cases: results.length, pixelChecks: results.reduce((sum, result) => sum + result.checks.length, 0), metrics, errors }));
 } finally { await browser.close(); await new Promise((resolve) => server.close(resolve)); }

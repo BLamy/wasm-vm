@@ -166,9 +166,15 @@ test("presentation keeps fixed viewport on pending old frame and later matching 
   const count = received.length;
   pending.get(1)(); pending.delete(1);
   assert.equal(received.length, count, "previous scheduled callback has no stale work left");
-  p.present(source(3, 9)); pending.get(1)();
+  p.present(source(3, 9));
+  assert.equal(p.snapshot().sizeMismatch, true, "received is not painted");
+  p.present(source(3, 9));
+  pending.get(1)(); pending.delete(1);
   assert.equal(p.snapshot().sizeMismatch, false);
   assert.deepEqual(received.at(-1).rect, { x: 0, y: 0, width: 3, height: 9 });
+  assert.deepEqual(received.at(-1).pixels, [...source(3, 9).pixels], "coalescing cannot erase the required full repaint");
+  p.present(source(3, 9)); pending.get(1)(); pending.delete(1);
+  assert.deepEqual(received.at(-1).rect, source(3, 9).rect, "later same-size damage retains the partial fast path");
   assert.equal(p.snapshot().width, 3);
   assert.throws(() => p.setViewport(4, NaN));
   assert.equal(p.snapshot().width, 3);

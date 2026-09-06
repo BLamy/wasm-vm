@@ -58,7 +58,9 @@ clips its top-left native pixels or pads the right/bottom edges with opaque blac
 It retains only the established latest resource, with one bounded target-sized
 temporary fit buffer (at most 4095x4095x4 bytes). A matching resource replaces the
 whole visible image on its first frame, including when that frame's damage is
-partial; subsequent matching frames keep the normal damage fast path.
+partial. That full repaint is decided when the backend actually paints, so
+coalesced partial frames cannot discard it. Subsequent matching frames keep the
+normal damage fast path; the mismatch diagnostic clears only after a paint.
 WebGL context-loss replacement uses the same retained resource and fit policy.
 
 Pointer mapping uses the guest resource's native CSS extent, not a stretched

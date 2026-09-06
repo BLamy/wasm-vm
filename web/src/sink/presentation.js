@@ -117,6 +117,7 @@ export class PresentationController {
     this._backend = null;
     this._backendName = null;
     this._latest = null;
+    this._paintedResource = null;
     this._fixedViewport = false;
     this._disposed = false;
     this._contextLost = false;
@@ -200,6 +201,7 @@ export class PresentationController {
     const prior = this._backend;
     this._backend = candidate;
     this._backendName = name;
+    this._paintedResource = null;
     disposeQuietly(prior, this._errors);
   }
 
@@ -293,8 +295,17 @@ export class PresentationController {
       return false;
     }
     try {
-      const fitted = this._fixedViewport ? fitFrameToViewport(frame, this._width, this._height) : frame;
+      // Decide at paint time, not receipt time: the scheduler can replace any pending
+      // full repaint with a newer partial frame before its animation callback runs.
+      // Until a resource size has actually reached this backend, replay its full copy.
+      const repaint = this._fixedViewport && (!this._paintedResource ||
+        this._paintedResource.width !== frame.resourceWidth ||
+        this._paintedResource.height !== frame.resourceHeight)
+        ? { ...frame, rect: { x: 0, y: 0, width: frame.resourceWidth, height: frame.resourceHeight } }
+        : frame;
+      const fitted = this._fixedViewport ? fitFrameToViewport(repaint, this._width, this._height) : repaint;
       this._backend.present(fitted.rect, fitted.pixels);
+      this._paintedResource = { width: frame.resourceWidth, height: frame.resourceHeight };
       this._successfulPresents += 1;
       this._uploadedBytes += fitted.rect.width * fitted.rect.height * 4;
       if (replay) this._replayedFrames += 1;
@@ -354,15 +365,7 @@ export class PresentationController {
   /** Publish one full-resource frame and return whether it reached a backend. */
   present(frame) {
     if (this._disposed) throw new Error("PresentationController is disposed");
-    let checked = checkedFrame(frame);
-    if (this._fixedViewport && (!this._latest ||
-        this._latest.resourceWidth !== checked.resourceWidth ||
-        this._latest.resourceHeight !== checked.resourceHeight)) {
-      // The first frame from a replacement resource must erase old bars/pixels even when
-      // its guest damage is partial. The retained source is already a full resource copy.
-      checked = { ...checked, rect: { x: 0, y: 0,
-        width: checked.resourceWidth, height: checked.resourceHeight } };
-    }
+    const checked = checkedFrame(frame);
     this._framesReceived += 1;
     if (!this._fixedViewport && (checked.resourceWidth !== this._width || checked.resourceHeight !== this._height)) {
       this.resize(checked.resourceWidth, checked.resourceHeight);
@@ -398,6 +401,7 @@ export class PresentationController {
     }
     this._width = nextWidth;
     this._height = nextHeight;
+    this._paintedResource = null;
     if (this._backend) {
       this._backend.resize(this._width, this._height);
     } else {
@@ -415,7 +419,8 @@ export class PresentationController {
       height: this._height,
       fixedViewport: this._fixedViewport,
       sizeMismatch: Boolean(this._latest &&
-        (this._latest.resourceWidth !== this._width || this._latest.resourceHeight !== this._height)),
+        (!this._paintedResource || this._paintedResource.width !== this._width ||
+          this._paintedResource.height !== this._height)),
       framesReceived: this._framesReceived,
       successfulPresents: this._successfulPresents,
       replayedFrames: this._replayedFrames,
@@ -456,6 +461,7 @@ export class PresentationController {
     this._detachCanvasListeners();
     this._disposeBackend();
     this._latest = null;
+    this._paintedResource = null;
   }
 
   /** Pause/resume the optional page-owned display drain without affecting guest frame receipt. */
