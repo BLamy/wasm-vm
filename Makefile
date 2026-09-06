@@ -930,7 +930,7 @@ verify-E5-T18d:
 .PHONY: verify-E5-T18e
 .PHONY: verify-E5-T22a
 verify-E5-T22a:
-	cargo test -p wasm-vm-core dev::virtio::gpu::tests::set_display -- --nocapture
+	cargo test -p wasm-vm-core --features gpu-trace dev::virtio::gpu::tests::set_display -- --nocapture
 	wasm-pack test --node crates/wasm --lib -- --nocapture
 	node --test web/tests/e4-t32-worker-protocol.test.mjs
 	node tools/verify/e5-t22a-display-hotplug.mjs
