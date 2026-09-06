@@ -1,0 +1,656 @@
+cold_clone: cloning HEAD 779efb7dfafc55db8ee476e3626a6d5f78b18a8c → /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1
+cold_clone: make verify-E5-T22e (scrubbed RUSTFLAGS/CARGO_*/RUST_LOG, trusted PATH prepended)
+cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings
+   Compiling version_check v0.9.5
+    Checking typenum v1.20.1
+   Compiling libc v0.2.186
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+    Checking smallvec v1.15.2
+    Checking cfg-if v1.0.4
+    Checking bitflags v2.13.0
+    Checking log v0.4.33
+   Compiling generic-array v0.14.7
+    Checking cpufeatures v0.2.17
+    Checking block-buffer v0.10.4
+    Checking crypto-common v0.1.7
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+    Checking wasm-vm-core v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.99s
+cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+   Compiling unicode-ident v1.0.24
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+    Checking cfg-if v1.0.4
+   Compiling version_check v0.9.5
+   Compiling rustversion v1.0.22
+   Compiling bumpalo v3.20.3
+    Checking typenum v1.20.1
+    Checking once_cell v1.21.4
+    Checking futures-core v0.3.32
+    Checking pin-project-lite v0.2.17
+    Checking slab v0.4.12
+    Checking futures-task v0.3.32
+   Compiling serde_core v1.0.228
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling heapless v0.9.3
+    Checking bitflags v2.13.0
+    Checking byteorder v1.5.0
+    Checking log v0.4.33
+    Checking smallvec v1.15.2
+   Compiling zmij v1.0.21
+    Checking futures-util v0.3.32
+    Checking tinyvec_macros v0.1.1
+    Checking stable_deref_trait v1.2.1
+    Checking hash32 v0.3.1
+   Compiling smoltcp v0.13.1
+   Compiling serde v1.0.228
+   Compiling serde_json v1.0.150
+    Checking tinyvec v1.12.0
+   Compiling generic-array v0.14.7
+    Checking bitflags v1.3.2
+    Checking memchr v2.8.2
+    Checking itoa v1.0.18
+    Checking managed v0.8.0
+    Checking unicode-normalization v0.1.25
+    Checking wasm-vm-wasm-emit v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/wasm-emit)
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+    Checking block-buffer v0.10.4
+    Checking crypto-common v0.1.7
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+    Checking wasm-vm-core v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/core)
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+    Checking wasm-vm-slirp v0.0.0 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/slirp)
+    Checking wasm-vm-jit-translate v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/jit-translate)
+   Compiling wasm-bindgen-macro v0.2.126
+    Checking wasm-vm-storage v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/storage)
+    Checking js-sys v0.3.103
+    Checking console_error_panic_hook v0.1.7
+    Checking web-sys v0.3.103
+    Checking wasm-bindgen-futures v0.4.76
+    Checking getrandom v0.2.17
+    Checking console_log v1.0.0
+    Checking wasm-vm-wasm v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.92s
+cargo test -p wasm-vm-core --lib --features gpu-trace -- --nocapture
+   Compiling libc v0.2.186
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling cfg-if v1.0.4
+   Compiling zerocopy v0.8.52
+   Compiling serde_core v1.0.228
+   Compiling getrandom v0.3.4
+   Compiling crossbeam-utils v0.8.21
+   Compiling bitflags v2.13.0
+   Compiling serde v1.0.228
+   Compiling rustix v1.1.4
+   Compiling getrandom v0.4.3
+   Compiling zmij v1.0.21
+   Compiling typenum v1.20.1
+   Compiling autocfg v1.5.1
+   Compiling once_cell v1.21.4
+   Compiling regex-syntax v0.8.11
+   Compiling serde_json v1.0.150
+   Compiling either v1.16.0
+   Compiling num-traits v0.2.19
+   Compiling itoa v1.0.18
+   Compiling generic-array v0.14.7
+   Compiling memchr v2.8.2
+   Compiling clap_lex v1.1.0
+   Compiling fastrand v2.4.1
+   Compiling rayon-core v1.13.0
+   Compiling anstyle v1.0.14
+   Compiling ciborium-io v0.2.2
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling clap_builder v4.6.0
+   Compiling itertools v0.10.5
+   Compiling quick-error v1.2.3
+   Compiling fnv v1.0.7
+   Compiling cast v0.3.0
+   Compiling same-file v1.0.6
+   Compiling regex-automata v0.4.14
+   Compiling bit-vec v0.8.0
+   Compiling criterion-plot v0.5.0
+   Compiling walkdir v2.5.0
+   Compiling bit-set v0.8.0
+   Compiling digest v0.10.7
+   Compiling smallvec v1.15.2
+   Compiling clap v4.6.1
+   Compiling oorandom v11.1.5
+   Compiling anes v0.1.6
+   Compiling unarray v0.1.4
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling log v0.4.33
+   Compiling regex v1.12.4
+   Compiling syn v2.0.118
+   Compiling crossbeam-epoch v0.9.18
+   Compiling crossbeam-deque v0.8.6
+   Compiling errno v0.3.14
+   Compiling wait-timeout v0.2.1
+   Compiling is-terminal v0.4.17
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling rand_core v0.9.5
+   Compiling rand v0.9.4
+   Compiling rand_xorshift v0.4.0
+   Compiling zerocopy-derive v0.8.52
+   Compiling serde_derive v1.0.228
+   Compiling tempfile v3.27.0
+   Compiling rusty-fork v0.3.1
+   Compiling rayon v1.12.0
+   Compiling tinytemplate v1.2.1
+   Compiling half v2.7.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.9.0
+   Compiling ciborium-ll v0.2.2
+   Compiling proptest v1.11.0
+   Compiling ciborium v0.2.2
+   Compiling criterion v0.5.1
+   Compiling wasm-vm-core v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.47s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 269 tests
+test dev::plic::snapshot_tests::plic_restore_rejects_wrong_length_without_mutating ... ok
+test dev::clint::snapshot_tests::clint_state_round_trips_completely ... ok
+test block::tests::boundaries_and_errors ... ok
+test dev::clint::snapshot_tests::clint_restore_rejects_malformed_payloads_without_mutating ... ok
+test dev::plic::snapshot_tests::plic_behavioural_state_round_trips_and_drops_the_diagnostic_counter ... ok
+test dev::rtc::tests::irq_gated_by_enable ... ok
+test dev::rtc::snapshot_tests::rtc_restore_rejects_malformed_without_mutating ... ok
+test dev::rtc::tests::alarm_fires_raises_irq_and_clears ... ok
+test dev::rtc::tests::alarm_value_readable_after_fire ... ok
+test dev::rtc::tests::guest_set_time_offsets_without_touching_host ... ok
+test dev::rtc::snapshot_tests::rtc_state_round_trips_completely_and_keeps_the_host_clock ... ok
+test compile_queue::tests::cancellation_on_generation_bump_drops_stale ... ok
+test compile_queue::tests::priority_hotter_compiles_first ... ok
+test dev::console::tests::other_offset_writes_ignored_and_logged_once ... ok
+test dev::console::tests::lsr_reads_ready_thr_reads_zero_no_faults ... ok
+test dev::rtc::tests::reads_injected_time ... ok
+test compile_queue::tests::backpressure_drops_and_recounts_never_overflows ... ok
+test block::tests::five_gib_sparse_no_truncation ... ok
+test dev::rtc::tests::time_set_is_write_order_independent ... ok
+test dev::console::tests::low_byte_emitted_at_every_write_width ... ok
+test dev::syscon::tests::first_command_wins ... ok
+test dev::syscon::tests::reads_return_zero ... ok
+test dev::syscon::tests::recognized_commands_decode ... ok
+test dev::syscon::tests::unrecognized_values_are_ignored ... ok
+test dev::uart16550::snapshot_tests::uart_state_round_trips_completely ... ok
+test dev::uart16550::snapshot_tests::uart_restore_rejects_malformed_payloads_without_mutating ... ok
+test dev::uart16550::tests::dlab_banking ... ok
+test dev::uart16550::tests::char_timeout_delivers_short_input ... ok
+test dev::uart16550::tests::iir_priority_order ... ok
+test dev::uart16550::tests::overrun_caps_fifo_and_preserves_contents ... ok
+test dev::uart16550::tests::thre_interrupt_dance ... ok
+test dev::virtio::gpu::damage::tests::clipping_and_empty_input_are_bounded_and_drain_is_empty ... ok
+test dev::virtio::gpu::damage::tests::overlapping_rectangles_union_and_contained_rectangles_do_not_expand ... ok
+test dev::virtio::gpu::damage::tests::edge_adjacent_rectangles_union_but_corner_only_rectangles_remain_separate ... ok
+test dev::virtio::gpu::damage::tests::seventeenth_disjoint_rectangle_spills_to_one_bounded_box ... ok
+test dev::virtio::gpu::edid::tests::fixture_and_checksum_are_stable ... ok
+test dev::virtio::gpu::edid::tests::out_of_range_inputs_are_bounded ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_rejects_dimension_and_budget_before_allocation ... ok
+test dev::virtio::gpu::edid::tests::checksum_and_preferred_mode_cover_odd_and_large_sizes ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_rejects_id_zero_duplicate_and_bad_fields_without_mutation ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_backing_map_replacement_and_detach_are_independent ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_enforces_aggregate_budget_without_partial_insert ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_lifecycle_unref_returns_accounting_to_baseline ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_supported_formats_are_detached_and_accounted ... ok
+test dev::rtc::tests::low_high_latch_is_coherent_across_2p32_boundary ... ok
+test compile_queue::tests::never_blocks_execution_thread_under_flood ... ok
+test dev::uart16550::snapshot_tests::uart_restore_never_panics_on_random_input ... ok
+test dev::virtio::gpu::tests::display_event_clear_is_write_one_to_clear ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_scatter_gather_copies_partial_odd_x_rows ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_rejects_detached_bounds_and_offset_without_shadow_mutation ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_tiled_and_full_frame_plans_keep_shadow_bytes_identical ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_one_byte_entries_copy_a_full_frame ... ok
+test dev::virtio::gpu::tests::gpu_cursor_protocol_wire_fixtures_are_little_endian_and_bounded ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_tracks_changed_pixel_bounds_until_flush ... ok
+test dev::virtio::gpu::tests::display_reset_preserves_host_monitor_but_clears_guest_state ... ok
+test dev::virtio::gpu::tests::get_edid_requires_negotiation_and_is_scanout_indexed ... ok
+test dev::virtio::gpu::tests::get_edid_without_feature_returns_unspec ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_read_only_completion_and_reset_clear_cursor_state ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_lifecycle_10k_create_unref_cycles_have_zero_net_growth ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_updates_moves_hides_and_rejects_without_mutation ... ok
+test dev::virtio::gpu::tests::display_reset_mmio_clears_latched_irqs_and_both_cached_queues ... ok
+test dev::virtio::gpu::tests::gpu_flush_after_scanout_disable_forwards_old_resource_without_binding ... ok
+test dev::virtio::gpu::tests::gpu_flush_after_unref_rejects_old_resource_without_sink_event ... ok
+test dev::virtio::gpu::tests::gpu_flush_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_flush_controlq_calls_test_sink_with_resource_crc ... ok
+test dev::virtio::gpu::tests::gpu_mmio_identity_features_and_config ... ok
+test dev::virtio::gpu::tests::gpu_protocol_wire_fixtures ... ok
+test dev::virtio::gpu::tests::gpu_flush_default_null_sink_accepts_headless_path ... ok
+test block::tests::mem_backend_matches_reference_model ... ok
+test dev::virtio::gpu::tests::gpu_flush_rejects_unknown_short_and_out_of_bounds_requests_without_sink_event ... ok
+test dev::virtio::gpu::tests::gpu_resources_create_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_resources_lifecycle_device_reset_releases_resource_state ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_rejects_address_overflow_and_truncated_sglists ... ok
+test dev::virtio::gpu::tests::gpu_flush_tracking_sink_publishes_changed_transfer_bounds ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_controlq_validates_entries_atomically ... ok
+test dev::virtio::gpu::tests::gpu_resources_create_controlq_dispatches_and_returns_spec_errors ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_split_attach_then_detach_controlq ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_repeated_hide_show_keeps_one_bounded_state_per_scanout ... ok
+test dev::virtio::gpu::tests::gpu_resources_lifecycle_unref_clears_scanout_and_is_idempotently_rejected ... ok
+test dev::virtio::gpu::tests::gpu_transfer_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_controlq_binds_existing_resource ... ok
+test dev::virtio::gpu::tests::set_display_updates_mode_and_coalesces_config_interrupts ... ok
+test dev::virtio::gpu::tests::unsupported_feature_does_not_mutate_config ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_short_request_is_bounded ... ok
+test dev::virtio::gpu::tests::set_display_stress_preserves_final_mode_and_bounds_config_irqs ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_rejects_bad_scanout_and_rect_without_mutation ... ok
+test dev::virtio::gpu::tests::gpu_transfer_controlq_copies_sg_rows_and_echoes_fence ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_contiguous_fenced ... ok
+test dev::virtio::gpu::tiles::tests::flush_intersection_consumes_only_selected_tiles_and_resize_drops_old_state ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_zero_resource_disables_scanout ... ok
+test dev::virtio::gpu::tiles::tests::full_frame_mode_is_a_comparable_bounded_fallback ... ok
+test dev::virtio::gpu::tiles::tests::full_resource_transfer_selects_every_tile_in_row_major_order ... ok
+test dev::virtio::gpu::tiles::tests::one_pixel_transfer_selects_one_full_tile_and_exact_bytes ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_split_request_is_parsed_across_descriptors ... ok
+test dev::virtio::gpu::tiles::tests::tile_boundaries_and_partial_edges_are_clipped_without_outside_regions ... ok
+test dev::virtio::input::keyboard::tests::keyboard_identity_and_event_bitmap_tail_are_stable ... ok
+test dev::virtio::input::keyboard::tests::keyboard_led_sink_applies_only_canonical_status_events ... ok
+test dev::virtio::input::keyboard::tests::pc105_keyboard_bitmap_is_exact_and_repeat_is_absent ... ok
+test dev::virtio::input::pointer::tests::mouse_map_has_only_relative_axes_and_both_wheels ... ok
+test dev::virtio::input::pointer::tests::pointer_config_selectors_do_not_cross_contaminate ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_short_tail_is_bounded ... ok
+test dev::virtio::input::pointer::tests::tablet_absolute_injection_rejects_out_of_range_values ... ok
+test dev::virtio::input::pointer::tests::tablet_map_and_absolute_wire_metadata_are_exact ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_split_header_unfenced ... ok
+test dev::virtio::input::tests::inject_and_sync_retain_bounded_complete_frames_with_exact_drop_count ... ok
+test dev::virtio::input::tests::input_config_fixture_matches_little_endian_wire_bytes ... ok
+test dev::virtio::input::tests::input_config_selector_writes_are_width_preserving_and_resettable ... ok
+test dev::virtio::input::keyboard::tests::keyboard_config_fixture_is_exact_on_native ... ok
+test dev::virtio::input::tests::input_event_wire_layout_is_fixed_and_little_endian ... ok
+test dev::virtio::input::tests::key_transition_drop_removes_both_separate_frames ... ok
+test dev::virtio::input::tests::input_config_unsupported_queries_are_zero_and_do_not_leak_previous_payload ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_random_rect_model_oracle_10k_cases ... ok
+test dev::virtio::gpu::tests::virtio_gpu_malformed_guest_address_is_rejected_without_write ... ok
+test dev::virtio::mmio::tests::critic_advisories_pinned ... ok
+test dev::virtio::mmio::tests::driver_ok_without_features_ok_needs_reset ... ok
+test dev::virtio::mmio::tests::empty_slot_answers_and_tolerates ... ok
+test dev::virtio::mmio::tests::interrupt_ack_is_mask_clear ... ok
+test dev::virtio::gpu::tests::virtio_gpu_malformed_requests_make_progress_and_recover ... ok
+test dev::virtio::mmio::tests::lifecycle_happy_path ... ok
+test dev::virtio::mmio::tests::protocol_violation_degrades_loudly ... ok
+test dev::virtio::mmio::tests::status_zero_is_full_reset ... ok
+test dev::virtio::mmio::tests::transport_snapshot_round_trips_and_rejects_malformed ... ok
+test dev::virtio::mmio::tests::unoffered_feature_rejected ... ok
+test dev::virtio::net::switch_tests::replacing_backend_keeps_adapter_identity_and_drops_old_frames ... ok
+test dev::virtio::console::tests::virtio_console_split_control_announcement_and_coalesced_data_are_bounded ... ok
+test dev::virtio::input::tests::injected_frames_cross_eventq_without_boundary_loss ... ok
+test diag::irqstats::tests::hottest_irq_picks_the_max ... ok
+test diag::irqstats::tests::naming_uses_the_window_not_the_lifetime_leader ... ok
+test diag::irqstats::tests::quiet_windows_never_fire_and_reset_the_streak ... ok
+test diag::irqstats::tests::storm_fires_after_consecutive_hot_windows ... ok
+test diag::irqstats::tests::wfi_watchdog_fires_once_then_rearms ... ok
+test diag::irqstats::tests::wfi_watchdog_silent_when_making_progress_or_armed ... ok
+test diag::irqstats::tests::window_stays_open_until_enough_retired ... ok
+test dev::virtio::console::tests::virtio_console_lifecycle_restart_and_reset_drop_stale_agent_state ... ok
+test dispatch::tests::counter_increments_and_fires_exactly_once ... ok
+test dispatch::tests::csr_and_wfi_blocks_are_excluded ... ok
+test dispatch::tests::dedup_across_distinct_blocks ... ok
+test dispatch::tests::no_nomination_below_threshold ... ok
+test dispatch::tests::counter_map_is_bounded_under_cold_flood ... ok
+test dispatch::tests::requeue_after_invalidation_no_stale_survives ... ok
+test dispatch::tests::reset_clears_state_and_bumps_generation ... ok
+test dispatch::tests::stale_generation_alone_blocks_install_even_if_bytes_match ... ok
+test dispatch::tests::translation_request_shape ... ok
+test fdt::tests::header_is_spec_valid ... ok
+test fdt::tests::dtb_tracks_platform_and_args ... ok
+test dev::virtio::console::tests::virtio_console_advertises_multiport_device_id_config_and_six_queue_layout ... ok
+test fdt::tests::tree_has_every_required_node_and_link ... ok
+test fdt::tests::placement_top_of_dram_aligned_outside_kernel ... ok
+test hart::fregs::tests::f0_is_an_ordinary_register ... ok
+test fdt::tests::initrd_placement_between_kernel_and_dtb ... ok
+test hart::fregs::tests::non_boxed_value_reads_as_canonical_nan ... ok
+test hart::fregs::tests::registers_are_independent ... ok
+test hart::fregs::tests::write_f32_boxes_and_read_f32_unboxes ... ok
+test dev::virtio::input::tests::eventq_writes_one_event_across_split_descriptors_and_exact_used_len ... ok
+test hart::regs::tests::abi_names_match_psabi ... ok
+test hart::regs::tests::compiled_register_mask_commit_preserves_unmasked_words_and_x0 ... ok
+test hart::regs::tests::default_is_all_zero_including_pc ... ok
+test dev::virtio::input::tests::statusq_reads_split_event_and_rejects_short_or_wrong_direction ... ok
+test hart::regs::tests::dump_format_is_byte_stable ... ok
+
+thread 'hart::regs::tests::out_of_range_read_panics' (12636621) panicked at crates/core/src/hart/regs.rs:48:9:
+register index 32 out of range
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hart::regs::tests::jit_version_is_not_architectural_equality ... ok
+
+thread 'hart::regs::tests::out_of_range_write_panics' (12636622) panicked at crates/core/src/hart/regs.rs:56:9:
+register index 32 out of range
+test hart::regs::tests::interleavings_vs_oracle_lcg ... ok
+test hart::regs::tests::x0_writes_are_discarded ... ok
+test hart::regs::tests::x1_to_x31_roundtrip_distinct_values ... ok
+test jit::tests::cpu_state_handoff_pins_frozen_layout_endian_and_x0 ... ok
+test hart::regs::tests::out_of_range_read_panics - should panic ... ok
+test hart::regs::tests::out_of_range_write_panics - should panic ... ok
+test dev::virtio::input::tests::short_event_buffer_is_not_partially_written_and_ring_recovers ... ok
+test mmio::tests::attach_rejects_zero_length_and_overflow_without_panic ... ok
+test mmio::tests::attach_rejects_overlap_with_ram_and_devices ... ok
+test dispatch::tests::queue_overflow_degrades_gracefully ... ok
+test mmio::tests::device_faults_propagate ... ok
+test mmio::tests::device_read_results_are_masked_to_width ... ok
+test dev::virtio::input::tests::unsupported_queue_shape_is_bounded_and_requests_reset ... ok
+test mmio::tests::device_hits_counts_every_access_that_lands_in_the_window ... ok
+test mmio::tests::ram_accesses_pass_through_unchanged ... ok
+test mmio::tests::zero_size_ram_bus_still_routes_devices ... ok
+test platform::tests::default_platform_is_valid ... ok
+test platform::tests::irq_and_virtio_layout ... ok
+test platform::tests::overlap_and_overflow_are_caught ... ok
+test mmio::tests::straddling_window_edge_faults_and_never_invokes_device ... ok
+test mmio::tests::multiple_devices_route_independently ... ok
+test mmio::tests::unmapped_hole_faults_access_at_every_width ... ok
+test platform::tests::region_boundaries ... ok
+test prof::pause::tests::buckets_bracket_the_target ... ok
+test mmio::tests::misaligned_in_window_faults_without_invoking_device ... ok
+test prof::pause::tests::over_target_and_max_ns ... ok
+test mmio::tests::window_access_reaches_device_with_offset_width_value ... ok
+test prof::pause::tests::work_bound_tracks_max ... ok
+test prof::tests::fixed_timer_reflects_set_and_advance_monotonically ... ok
+test prof::tests::add_ns_accumulates_per_subsystem ... ok
+test dev::virtio::gpu::tests::gpu_flush_golden_five_patterns_match_independent_reference ... ok
+test mmio::tests::width_forwarding_is_exact_never_split ... ok
+test prof::tests::collisions_are_visible_not_silently_merged ... ok
+test prof::tests::records_land_in_expected_64_byte_regions ... ok
+test prof::tests::report_on_empty_profile_does_not_divide_by_zero ... ok
+test prof::tests::report_computes_pct_and_passes_total_through ... ok
+test prof::tests::report_text_contains_pc_and_subsystem_names ... ok
+test prof::tests::report_json_shape_and_contents ... ok
+test ram::resume_snapshot_tests::a_malformed_payload_is_refused_without_mutating ... ok
+test prof::tests::top_is_descending_with_low_pc_tie_break ... ok
+test prof::tests::tight_loop_concentrates ... ok
+test ram::tests::default_map_constants ... ok
+test prof::tests::weak_incumbent_is_evicted_by_newcomer ... ok
+test ram::resume_snapshot_tests::restoring_a_wrong_size_snapshot_is_refused_without_mutating ... ok
+test dev::virtio::rng::tests::fills_posted_buffer_with_entropy_and_publishes_used ... ok
+test ram::tests::little_endian_byte_order ... ok
+test ram::tests::extreme_addresses_fault_without_overflow_panics ... ok
+test ram::tests::faulting_store_leaves_ram_bit_identical ... ok
+test ram::tests::misaligned_in_range_faults_misaligned_at_every_width ... ok
+test ram::tests::zero_and_absurd_sizes_fail_cleanly ... ok
+test ram::tests::roundtrip_every_width_at_base_and_last_slot ... ok
+test resume::resume_tests::a_bad_magic_is_rejected ... ok
+test resume::resume_tests::a_component_round_trips_through_the_container_format ... ok
+test resume::resume_tests::a_huge_zero_run_length_is_rejected_without_allocating ... ok
+test ram::tests::slice_escape_hatch_bounds_and_content ... ok
+test resume::resume_tests::a_partial_trailing_section_header_is_truncated ... ok
+test ram::resume_snapshot_tests::ram_round_trips_completely ... ok
+test resume::resume_tests::a_reserved_but_unimplemented_section_is_refused_as_unsupported ... ok
+test resume::resume_tests::a_section_length_past_the_end_is_rejected_not_over_read ... ok
+test resume::resume_tests::a_too_short_blob_is_truncated_not_a_panic ... ok
+test resume::resume_tests::a_version_mismatch_is_rejected ... ok
+test ram::tests::straddling_the_end_is_access_not_panic ... ok
+test resume::resume_tests::an_unknown_section_fails_loudly ... ok
+test resume::resume_tests::decode_sparse_rejects_malformed_payloads ... ok
+test resume::resume_tests::header_round_trips_and_sections_read_back_in_order ... ok
+test resume::resume_tests::restore_decision_rejects_a_truncated_final_section ... ok
+test resume::resume_tests::the_coherence_guards_refuse_a_mismatch ... ok
+test sbi::base::tests::ids_and_unknown_fid ... ok
+test sbi::base::tests::probe_extension_per_plan ... ok
+test resume::resume_tests::zero_elision_round_trips_for_every_shape ... ok
+test sbi::base::tests::spec_version_is_2_0 ... ok
+test sbi::dbcn::tests::write_reads_guest_dram_and_reports_count ... ok
+test sbi::hsm::tests::lifecycle_answers_single_hart ... ok
+test sbi::ipi::tests::self_ipi_sets_ssip_and_masks_validate ... ok
+test sbi::legacy::tests::getchar_empty_is_minus_one_nonblocking ... ok
+test sbi::legacy::tests::putchar_emits_and_returns_zero ... ok
+test sbi::dbcn::tests::write_attack_matrix ... ok
+test sbi::srst::tests::shutdown_reboot_and_error_paths ... ok
+test sbi::dbcn::tests::read_drains_queue_nonblocking_and_write_byte ... ok
+test sbi::rfence::tests::fences_flush_and_masks_validate ... ok
+test sbi::tests::probe_set_matches_plan ... ok
+test sbi::time::tests::set_timer_replaces_and_cancels ... ok
+test tests::group_batches_coalesces_disconnected_chunks ... ok
+test tests::kernel_footprint_falls_back_to_file_len ... ok
+test sbi::tests::unknown_and_pending_eids_not_supported ... ok
+test tests::kernel_footprint_honours_image_size ... ok
+test tests::machine_allocates_requested_ram ... ok
+test tests::machine_tolerates_zero_ram ... ok
+test tests::version_matches_manifest ... ok
+test time::tests::huge_gap_jumps_with_notification ... ok
+test time::tests::icount_is_pure_function_of_retired ... ok
+test time::tests::respects_software_mtime_write_as_floor ... ok
+test time::tests::wallclock_never_steps_backward_under_jittery_host ... ok
+test dev::virtio::gpu::tiles::tests::seeded_random_transfer_flush_resize_sequences_match_reference_tiles ... ok
+test prof::tests::histogram_memory_is_fixed ... ok
+test time::tests::moderate_gap_slews_at_bounded_rate ... ok
+test resume::resume_tests::a_mostly_zero_buffer_compresses_far_under_ram_size ... ok
+test resume::resume_tests::decode_sparse_never_panics_on_random_input ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_ram_snapshot_is_far_under_ram_size ... ok
+test resume::resume_tests::the_parser_never_panics_on_any_truncation_or_flip ... ok
+test dev::virtio::console::tests::virtio_console_agent_and_port0_data_queues_keep_frame_bytes_and_backpressure_separate ... ok
+test dev::virtio::mmio::tests::register_fuzz_1e6 ... ok
+test hart::regs::proptests::writes_track_oracle_and_x0_stays_zero ... ok
+test sbi::tests::dispatcher_fuzz_1e6 ... ok
+test dev::virtio::gpu::damage::tests::seeded_random_rectangles_never_drop_reference_damage ... ok
+1280x800 transfer: 146.255583ms
+test dev::virtio::gpu::resources::tests::gpu_transfer_full_frame_native_budget ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_repeated_rejections_do_not_grow_map ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_256_mib_ram_encodes_under_15_percent_and_restores_byte_identically ... ok
+
+test result: ok. 269 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.01s
+
+wasm-pack test --node crates/wasm --lib -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling cfg-if v1.0.4
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.24
+   Compiling once_cell v1.21.4
+   Compiling futures-task v0.3.32
+   Compiling slab v0.4.12
+   Compiling futures-core v0.3.32
+   Compiling pin-project-lite v0.2.17
+   Compiling serde_core v1.0.228
+   Compiling smallvec v1.15.2
+   Compiling byteorder v1.5.0
+   Compiling log v0.4.33
+   Compiling bitflags v2.13.0
+   Compiling zmij v1.0.21
+   Compiling autocfg v1.5.1
+   Compiling memchr v2.8.2
+   Compiling libm v0.2.16
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling stable_deref_trait v1.2.1
+   Compiling itoa v1.0.18
+   Compiling futures-util v0.3.32
+   Compiling tinyvec_macros v0.1.1
+   Compiling hash32 v0.3.1
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling managed v0.8.0
+   Compiling bitflags v1.3.2
+   Compiling wasm-bindgen v0.2.126
+   Compiling tinyvec v1.12.0
+   Compiling wasm-vm-wasm-emit v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/wasm-emit)
+   Compiling heapless v0.9.3
+   Compiling async-trait v0.1.89
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling cast v0.3.0
+   Compiling nu-ansi-term v0.50.3
+   Compiling oorandom v11.1.5
+   Compiling wasm-bindgen-test-shared v0.2.126
+   Compiling unicode-normalization v0.1.25
+   Compiling num-traits v0.2.19
+   Compiling generic-array v0.14.7
+   Compiling smoltcp v0.13.1
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling console_error_panic_hook v0.1.7
+   Compiling wasm-vm-core v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/core)
+   Compiling js-sys v0.3.103
+   Compiling serde_json v1.0.150
+   Compiling serde v1.0.228
+   Compiling wasm-vm-storage v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/storage)
+   Compiling wasm-vm-slirp v0.0.0 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/slirp)
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/jit-translate)
+   Compiling web-sys v0.3.103
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling getrandom v0.2.17
+   Compiling wasm-bindgen-test v0.3.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.22s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-9581999851bd4c84.wasm)
+running 5 tests
+Invoking test: display_tests::display_reset_guest_trace_preserves_monitor_and_releases_resources
+E5-T22e reset 1x1:
+core 0: 0x0000000080200000 (0x100082b7) x5 0x0000000010008000
+core 0: 0x0000000080200004 (0x0602a823) mem 0x0000000010008070 0x00000000
+core 0: 0x0000000080200008 (0x1002a503) x10 0x0000000000000000 mem 0x0000000010008100
+state digest=4e280b0d92d2251e2d0afeb62ccc8b03b35de2aaf6eb6c75d21b6227d14c4d25
+stats={"advertisedWidth":1,"advertisedHeight":1,"refreshHz":60,"pendingEvents":0,"edid":{"0":0,"1":255,"2":255,"3":255,"4":255,"5":255,"6":255,"7":0,"8":94,"9":205,"10":1,"11":0,"12":1,"13":0,"14":0,"15":0,"16":1,"17":30,"18":1,"19":4,"20":165,"21":1,"22":1,"23":120,"24":10,"25":150,"26":5,"27":163,"28":84,"29":76,"30":153,"31":38,"32":15,"33":80,"34":84,"35":0,"36":0,"37":0,"38":1,"39":1,"40":1,"41":1,"42":1,"43":1,"44":1,"45":1,"46":1,"47":1,"48":1,"49":1,"50":1,"51":1,"52":1,"53":1,"54":30,"55":0,"56":1,"57":160,"58":0,"59":1,"60":30,"61":0,"62":40,"63":20,"64":115,"65":0,"66":10,"67":10,"68":0,"69":0,"70":0,"71":26,"72":0,"73":0,"74":0,"75":253,"76":0,"77":30,"78":120,"79":15,"80":250,"81":60,"82":1,"83":10,"84":32,"85":32,"86":32,"87":32,"88":32,"89":32,"90":0,"91":0,"92":0,"93":252,"94":0,"95":87,"96":65,"97":83,"98":77,"99":32,"100":86,"101":77,"102":10,"103":32,"104":32,"105":32,"106":32,"107":32,"108":0,"109":0,"110":0,"111":255,"112":0,"113":87,"114":86,"115":77,"116":45,"117":48,"118":48,"119":48,"120":49,"121":10,"122":32,"123":32,"124":32,"125":32,"126":0,"127":188},"resourceCount":0,"resourceBytes":0,"scanoutResource":null,"scanoutWidth":null,"scanoutHeight":null}
+E5-T22e reset 4095x4095:
+core 0: 0x0000000080200000 (0x100082b7) x5 0x0000000010008000
+core 0: 0x0000000080200004 (0x0602a823) mem 0x0000000010008070 0x00000000
+core 0: 0x0000000080200008 (0x1002a503) x10 0x0000000000000000 mem 0x0000000010008100
+state digest=4e280b0d92d2251e2d0afeb62ccc8b03b35de2aaf6eb6c75d21b6227d14c4d25
+stats={"advertisedWidth":4095,"advertisedHeight":4095,"refreshHz":60,"pendingEvents":0,"edid":{"0":0,"1":255,"2":255,"3":255,"4":255,"5":255,"6":255,"7":0,"8":94,"9":205,"10":1,"11":0,"12":1,"13":0,"14":0,"15":0,"16":1,"17":30,"18":1,"19":4,"20":165,"21":108,"22":108,"23":120,"24":10,"25":150,"26":5,"27":163,"28":84,"29":76,"30":153,"31":38,"32":15,"33":80,"34":84,"35":0,"36":0,"37":0,"38":1,"39":1,"40":1,"41":1,"42":1,"43":1,"44":1,"45":1,"46":1,"47":1,"48":1,"49":1,"50":1,"51":1,"52":1,"53":1,"54":255,"55":255,"56":255,"57":0,"58":242,"59":255,"60":128,"61":240,"62":128,"63":64,"64":0,"65":9,"66":56,"67":56,"68":68,"69":0,"70":0,"71":26,"72":0,"73":0,"74":0,"75":253,"76":0,"77":30,"78":120,"79":15,"80":250,"81":60,"82":1,"83":10,"84":32,"85":32,"86":32,"87":32,"88":32,"89":32,"90":0,"91":0,"92":0,"93":252,"94":0,"95":87,"96":65,"97":83,"98":77,"99":32,"100":86,"101":77,"102":10,"103":32,"104":32,"105":32,"106":32,"107":32,"108":0,"109":0,"110":0,"111":255,"112":0,"113":87,"114":86,"115":77,"116":45,"117":48,"118":48,"119":48,"120":49,"121":10,"122":32,"123":32,"124":32,"125":32,"126":0,"127":172},"resourceCount":0,"resourceBytes":0,"scanoutResource":null,"scanoutWidth":null,"scanoutHeight":null}
+E5-T22e reset 901x701:
+core 0: 0x0000000080200000 (0x100082b7) x5 0x0000000010008000
+core 0: 0x0000000080200004 (0x0602a823) mem 0x0000000010008070 0x00000000
+core 0: 0x0000000080200008 (0x1002a503) x10 0x0000000000000000 mem 0x0000000010008100
+state digest=4e280b0d92d2251e2d0afeb62ccc8b03b35de2aaf6eb6c75d21b6227d14c4d25
+stats={"advertisedWidth":901,"advertisedHeight":701,"refreshHz":60,"pendingEvents":0,"edid":{"0":0,"1":255,"2":255,"3":255,"4":255,"5":255,"6":255,"7":0,"8":94,"9":205,"10":1,"11":0,"12":1,"13":0,"14":0,"15":0,"16":1,"17":30,"18":1,"19":4,"20":165,"21":24,"22":19,"23":120,"24":10,"25":150,"26":5,"27":163,"28":84,"29":76,"30":153,"31":38,"32":15,"33":80,"34":84,"35":0,"36":0,"37":0,"38":1,"39":1,"40":1,"41":1,"42":1,"43":1,"44":1,"45":1,"46":1,"47":1,"48":1,"49":1,"50":1,"51":1,"52":1,"53":1,"54":46,"55":18,"56":133,"57":160,"58":48,"59":189,"60":30,"61":32,"62":40,"63":20,"64":115,"65":0,"66":240,"67":190,"68":0,"69":0,"70":0,"71":26,"72":0,"73":0,"74":0,"75":253,"76":0,"77":30,"78":120,"79":15,"80":250,"81":60,"82":1,"83":10,"84":32,"85":32,"86":32,"87":32,"88":32,"89":32,"90":0,"91":0,"92":0,"93":252,"94":0,"95":87,"96":65,"97":83,"98":77,"99":32,"100":86,"101":77,"102":10,"103":32,"104":32,"105":32,"106":32,"107":32,"108":0,"109":0,"110":0,"111":255,"112":0,"113":87,"114":86,"115":77,"116":45,"117":48,"118":48,"119":48,"120":49,"121":10,"122":32,"123":32,"124":32,"125":32,"126":0,"127":71},"resourceCount":0,"resourceBytes":0,"scanoutResource":null,"scanoutWidth":null,"scanoutHeight":null}
+test display_tests::display_reset_guest_trace_preserves_monitor_and_releases_resources ... ok
+Invoking test: display_tests::display_hotplug_strict_validation_is_atomic
+test display_tests::display_hotplug_strict_validation_is_atomic ... ok
+Invoking test: display_tests::display_hotplug_storm_preserves_actual_old_resource
+E5-T22a actual-device storm stats: {"advertisedWidth":750,"advertisedHeight":531,"refreshHz":60,"pendingEvents":1,"edid":{"0":0,"1":255,"2":255,"3":255,"4":255,"5":255,"6":255,"7":0,"8":94,"9":205,"10":1,"11":0,"12":1,"13":0,"14":0,"15":0,"16":1,"17":30,"18":1,"19":4,"20":165,"21":20,"22":14,"23":120,"24":10,"25":150,"26":5,"27":163,"28":84,"29":76,"30":153,"31":38,"32":15,"33":80,"34":84,"35":0,"36":0,"37":0,"38":1,"39":1,"40":1,"41":1,"42":1,"43":1,"44":1,"45":1,"46":1,"47":1,"48":1,"49":1,"50":1,"51":1,"52":1,"53":1,"54":247,"55":11,"56":238,"57":160,"58":32,"59":19,"60":30,"61":32,"62":40,"63":20,"64":115,"65":0,"66":200,"67":140,"68":0,"69":0,"70":0,"71":26,"72":0,"73":0,"74":0,"75":253,"76":0,"77":30,"78":120,"79":15,"80":250,"81":60,"82":1,"83":10,"84":32,"85":32,"86":32,"87":32,"88":32,"89":32,"90":0,"91":0,"92":0,"93":252,"94":0,"95":87,"96":65,"97":83,"98":77,"99":32,"100":86,"101":77,"102":10,"103":32,"104":32,"105":32,"106":32,"107":32,"108":0,"109":0,"110":0,"111":255,"112":0,"113":87,"114":86,"115":77,"116":45,"117":48,"118":48,"119":48,"120":49,"121":10,"122":32,"123":32,"124":32,"125":32,"126":0,"127":57},"resourceCount":0,"resourceBytes":0,"scanoutResource":null,"scanoutWidth":null,"scanoutHeight":null}
+test display_tests::display_hotplug_storm_preserves_actual_old_resource ... ok
+Invoking test: display_tests::display_hotplug_guest_trace_reads_event_after_request
+E5-T22a guest event trace:
+core 0: 0x0000000080200000 (0x100082b7) x5 0x0000000010008000
+core 0: 0x0000000080200004 (0x1002a503) x10 0x0000000000000001 mem 0x0000000010008100
+state digest=79535a41dc7da0934c91fc17c441210501714ba5b1d52fc243491a659676696e
+test display_tests::display_hotplug_guest_trace_reads_event_after_request ... ok
+Invoking test: display_tests::display_hotplug_absence_and_reentrancy_fail_boundedly
+test display_tests::display_hotplug_absence_and_reentrancy_fail_boundedly ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 filtered out; finished in 3.24s
+
+/Applications/Xcode.app/Contents/Developer/usr/bin/make web-dist
+bash tools/build-web-dist.sh
+[web-dist] building wasm + installing pinned deps (make web-build)…
+wasm-pack build crates/wasm --target web
+[INFO]: 🎯  Checking for the Wasm target...
+[INFO]: 🌀  Compiling to Wasm...
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling cfg-if v1.0.4
+   Compiling version_check v0.9.5
+   Compiling rustversion v1.0.22
+   Compiling bumpalo v3.20.3
+   Compiling typenum v1.20.1
+   Compiling once_cell v1.21.4
+   Compiling futures-task v0.3.32
+   Compiling futures-core v0.3.32
+   Compiling slab v0.4.12
+   Compiling pin-project-lite v0.2.17
+   Compiling serde_core v1.0.228
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling heapless v0.9.3
+   Compiling log v0.4.33
+   Compiling zmij v1.0.21
+   Compiling bitflags v2.13.0
+   Compiling futures-util v0.3.32
+   Compiling smallvec v1.15.2
+   Compiling byteorder v1.5.0
+   Compiling generic-array v0.14.7
+   Compiling hash32 v0.3.1
+   Compiling smoltcp v0.13.1
+   Compiling tinyvec_macros v0.1.1
+   Compiling serde_json v1.0.150
+   Compiling stable_deref_trait v1.2.1
+   Compiling serde v1.0.228
+   Compiling tinyvec v1.12.0
+   Compiling memchr v2.8.2
+   Compiling managed v0.8.0
+   Compiling itoa v1.0.18
+   Compiling bitflags v1.3.2
+   Compiling unicode-normalization v0.1.25
+   Compiling wasm-vm-wasm-emit v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/wasm-emit)
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/core)
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/slirp)
+   Compiling wasm-bindgen-macro v0.2.126
+   Compiling js-sys v0.3.103
+   Compiling console_error_panic_hook v0.1.7
+   Compiling wasm-vm-storage v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/storage)
+   Compiling web-sys v0.3.103
+   Compiling getrandom v0.2.17
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo/crates/wasm)
+    Finished `release` profile [optimized + debuginfo] target(s) in 13.09s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[INFO]: Optimizing wasm binaries with `wasm-opt`...
+[INFO]: License key is set in Cargo.toml but no LICENSE file(s) were found; Please add the LICENSE file(s) to your project directory
+[INFO]: ✨   Done in 14.11s
+[INFO]: 📦   Your wasm pkg is ready to publish at crates/wasm/pkg.
+cd web && npm ci --no-audit --no-fund
+
+added 7 packages in 345ms
+npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn install-scripts   fsevents@2.3.2 (install: (install scripts present))
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+mkdir -p web/pkg web/assets/riscv-tests
+cp -R crates/wasm/pkg/. web/pkg/
+cp guest/prebuilt/hello.elf guest/prebuilt/loops.elf web/assets/
+cp tests/riscv-tests-bin/* web/assets/riscv-tests/
+# Boot artifacts must live UNDER web/ (the Pages publish_dir) so they deploy with the site.
+# Paths mirror the relative URLs in web/artifacts.json (regenerated by tools/gen-web-manifest.sh).
+mkdir -p web/releases/kernel/6.6.63 web/releases/initramfs
+cp releases/kernel/6.6.63/Image web/releases/kernel/6.6.63/Image
+cp releases/initramfs/initramfs.cpio.gz web/releases/initramfs/initramfs.cpio.gz
+# E4 restore-on-first-load: the (optional) compressed busybox boot snapshot, if built. Small
+# enough to ship on Pages (deploy-cloudflare.sh keeps its URL relative, unlike kernel/initramfs).
+bash tools/gen-web-manifest.sh
+wrote web/artifacts.json:
+{
+  "generated": "content-hashed; regenerate with tools/gen-web-manifest.sh",
+  "artifacts": {
+    "kernel": { "url": "releases/kernel/6.6.63/Image", "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce", "size": 24208896 },
+    "initramfs": { "url": "releases/initramfs/initramfs.cpio.gz", "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563", "size": 1151596 },
+    "bootSnapshot": { "url": "releases/boot-snapshot/busybox-ready.snap.gz", "sha256": "ba3168696638db573173b4d266f5234acd01fb2fabe452cc5a1dfde483a61d33", "size": 10983666 }
+  }
+}
+[web-dist] assembling web/dist …
+[web-dist] deploy root: / = landing, /app.html = app
+[web-dist] stamped sw.js app-shell version=5387567da455
+[web-dist] done —  34M in web/dist (boot artifacts added at deploy time)
+node --check tools/verify/e5-t22e-display-reset.mjs
+node tools/verify/e5-t22e-display-reset.mjs
+{"backends":[{"backend":"direct","guestResets":4},{"backend":"worker","guestResets":4}],"metrics":["126","0","126"],"errors":[]}
+cold_clone: kept /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1
+cold_clone: verify-E5-T22e PASSED from a pristine clone

@@ -3,7 +3,7 @@ id: E5-T22e
 epic: 5
 title: Preserve the host monitor mode across guest GPU reset
 priority: 522.25
-status: in-progress
+status: implemented
 depends_on: [E5-T22a, E5-T22b]
 estimate: S
 risk: high
@@ -63,3 +63,43 @@ Activate the isolated reset prerequisite above the blocked T22c work-in-progress
 branch. T22a/b dependencies remain independently verified. First record the
 odd-mode reset regression against the old code, then make the ownership-only
 reset change and prove native, actual-Wasm, browser-worker and fresh-VM behavior.
+
+### 2026-09-06 — worker — implemented, frozen reset proof
+
+Runtime change: `7490e64ea6414df978a0101f628a74df5481b0bf`. Final test/head:
+`779efb7dfafc55db8ee476e3626a6d5f78b18a8c`. The later commit only strengthens the
+native IRQ/cache observation; it does not alter runtime semantics. The preserved
+old-code failure is `evidence/e5-t22e/red-native-reset.log` (expected 901x701,
+observed 1280x800).
+
+Authoritative command: `tools/verify/cold_clone.sh --keep verify-E5-T22e` from the
+frozen head, with RUSTFLAGS/RUSTDOCFLAGS/RUST_LOG/CARGO_* scrubbed. Retained clone:
+`/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.QTgy3W3bq1/repo`.
+The self-contained target rebuilds wasm and installs pinned npm dependencies;
+269 native GPU/core tests, five actual-Wasm tests, eight real guest reset fixtures
+across direct/worker controllers and the built 126/0 demo pass, zero browser
+errors. Scoped core/wasm-library strict clippy and fmt also pass. This is not a
+claim that the unrelated previously recorded broad make-ci failures are fixed.
+
+Evidence: `evidence/e5-t22e/acceptance.log` SHA256
+`76e2a911d222a6fd84cd558830c9d9fe8a5a91740168d1bcdf29155f89318237`;
+`evidence/e5-t22e/browser/browser-proof.json` SHA256
+`0664a5a4929b92d61a37a2b9389ab17619548045ed4557795d431161ee4e79d0`;
+`evidence/e5-t22e/browser/demo-suite.png` SHA256
+`d23dc60df6f059ea4e9dd3846bbf7d14610a8300cf3b3905789827fb5a5da1b3`.
+Rebuilt production wasm SHA256 is
+`c1c854b8bb3b5cfbcc5a6a6f45199fca2151d7d949e7c707b546343504d7cb0f`, identical
+in the worker checkout and the clean-clone browser proof. Initial 7490e64e results
+remain separately preserved under `evidence/e5-t22e/initial-7490e64e/`.
+
+The recorded guest executes `SW zero,112(t0)` at 0x80200004, writing zero to
+0x10008070; its next `LW` at 0x80200008 reads GPU events=0 from 0x10008100. The
+state digest `4e280b0d92d2251e2d0afeb62ccc8b03b35de2aaf6eb6c75d21b6227d14c4d25`
+is the existing RAM/snapshot digest and **excludes GPU state**. GPU preservation
+is instead established by the separately recorded, hash-bound direct observations
+of dimensions/refresh and all 128 EDID bytes, independently decoded in the browser.
+Native reset tests separately assert raw scanout/cursor/resource accounting,
+pending and latched transport IRQ clearing, both cached queues invalidated with
+old used-ring sentinels untouched, and same-mode event rearming. A fresh second
+VM retains default monitor identity. This is a worker claim awaiting the fresh
+verifier's reserved independent reset/reconfiguration attack and sabotage check.
