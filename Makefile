@@ -983,6 +983,14 @@ verify-E5-T22g:
 	E5_T22C_ITERATION=1 E5_T22C_PROFILE=0 E5_T22C_CPU_PROFILE=0 E5_T22C_IMAGE_DIR=target/e5-t22c/desktop-image-solid-v7 E5_T22C_CHUNKS=target/e5-t22c/chunks/desktop-solid-v7 E5_T22C_TOOLS_OUT=target/e5-t22c/display-tools E5_T22C_OUT=evidence/e5-t22g/desktop node tools/verify/e5-t22c-guest-mode.mjs
 	E5_DEMO_TASK=E5-T22g E5_DEMO_OUT=evidence/e5-t22g/demo node tools/verify/e5-t18e-demo-smoke.mjs
 
+.PHONY: verify-E5-T25a
+verify-E5-T25a:
+	node --check web/bench/desktop-perf-hooks.js
+	node --check web/src/sink/presentation.js
+	node --test web/tests/e5-t25a-perf-hooks.test.mjs web/tests/e5-t06d-presentation.test.mjs
+	node tools/verify/e5-t25a-release-audit.mjs
+	node tools/verify/e5-t25a-browser.mjs
+
 verify-E5-T22e:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
 	cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings

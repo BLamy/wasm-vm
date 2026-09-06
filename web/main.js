@@ -20,6 +20,8 @@ const _singleThreadForced = _workerQuery === "0" || _startupQuery.get("singlethr
 const _workerAvailable = typeof globalThis.Worker === "function";
 const _workerRequested = !_singleThreadForced;
 const _useCpuWorker = _workerRequested && _workerAvailable;
+const _desktopPerfHooksRequested = _startupQuery.has("testHooks") && _startupQuery.has("perfHooks");
+const _desktopPerfPresentRecords = [];
 if (_workerRequested && !_workerAvailable) {
   console.warn("wasm-vm: whole-machine Worker unavailable; using the main-thread fallback");
 }
@@ -73,6 +75,13 @@ if (displayCanvas) {
       scheduleFrames: true,
       visibilityTarget: document,
       vm: pageVm,
+      onPresent: _desktopPerfHooksRequested
+        ? (record) => {
+          _desktopPerfPresentRecords.push(record);
+          if (_desktopPerfPresentRecords.length > 4096) _desktopPerfPresentRecords.shift();
+        }
+        : undefined,
+      now: _desktopPerfHooksRequested ? () => globalThis.performance?.now?.() ?? Date.now() : undefined,
     });
   } catch (error) {
     if (displayStatusEl) {
@@ -119,6 +128,17 @@ try {
     dispose: () => presentation?.dispose?.(),
   };
 } catch { /* worker/test scope */ }
+if (_desktopPerfHooksRequested) {
+  try {
+    window.__desktopPerf = {
+      version: "e5-t25a-v1",
+      presents: () => _desktopPerfPresentRecords.map((record) => ({ ...record, rect: { ...record.rect } })),
+      clearPresents: () => { _desktopPerfPresentRecords.length = 0; },
+      state: () => presentation?.snapshot?.() ?? null,
+      controller: () => linuxCtl ?? null,
+    };
+  } catch { /* test-only diagnostics must never affect the page */ }
+}
 
 const networkProviderEl = document.getElementById("network-provider");
 const networkWebsocketEl = document.getElementById("network-websocket-url");

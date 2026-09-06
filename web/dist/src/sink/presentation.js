@@ -132,6 +132,11 @@ export class PresentationController {
     this._contextLosses = 0;
     this._contextRestores = 0;
     this._uploadedBytes = 0;
+    this._drawnPresents = 0;
+    this._drawnBytes = 0;
+    this._presentationSequence = 0;
+    this._onPresent = typeof options.onPresent === "function" ? options.onPresent : null;
+    this._now = typeof options.now === "function" ? options.now : null;
     this._statsOwner = options.vm ?? null;
     if (this._statsOwner !== null && (typeof this._statsOwner !== "object" || Array.isArray(this._statsOwner))) {
       throw new TypeError("PresentationController vm must be an object");
@@ -307,9 +312,38 @@ export class PresentationController {
       this._backend.present(fitted.rect, fitted.pixels);
       this._paintedResource = { width: frame.resourceWidth, height: frame.resourceHeight };
       this._successfulPresents += 1;
-      this._uploadedBytes += fitted.rect.width * fitted.rect.height * 4;
+      const bytes = fitted.rect.width * fitted.rect.height * 4;
+      this._uploadedBytes += bytes;
+      const drawn = typeof this._backend.drawsPixels === "function"
+        ? Boolean(this._backend.drawsPixels())
+        : true;
+      if (drawn) {
+        this._drawnPresents += 1;
+        this._drawnBytes += bytes;
+      }
       if (replay) this._replayedFrames += 1;
       this._lossDropCounted = false;
+      if (this._onPresent) {
+        const timestamp = this._now
+          ? Number(this._now())
+          : (typeof globalThis.performance?.now === "function" ? globalThis.performance.now() : Date.now());
+        const record = Object.freeze({
+          sequence: ++this._presentationSequence,
+          timestamp,
+          backend: this._backendName,
+          drawn,
+          replay,
+          rect: Object.freeze({ ...fitted.rect }),
+          resourceWidth: frame.resourceWidth,
+          resourceHeight: frame.resourceHeight,
+          bytes,
+        });
+        try {
+          this._onPresent(record);
+        } catch (error) {
+          this._errors.push(`present telemetry: ${String(error?.message || error)}`);
+        }
+      }
       return true;
     } catch (error) {
       this._errors.push(`present via ${this._backendName}: ${String(error?.message || error)}`);
@@ -357,6 +391,8 @@ export class PresentationController {
       pending: scheduler?.pending ?? 0,
       maxPending: scheduler?.maxPending ?? 0,
       uploadedBytes: this._uploadedBytes,
+      drawnPresents: this._drawnPresents,
+      drawnBytes: this._drawnBytes,
       width: this._width,
       height: this._height,
     };
@@ -423,6 +459,8 @@ export class PresentationController {
           this._paintedResource.height !== this._height)),
       framesReceived: this._framesReceived,
       successfulPresents: this._successfulPresents,
+      drawnPresents: this._drawnPresents,
+      drawnBytes: this._drawnBytes,
       replayedFrames: this._replayedFrames,
       droppedFrames: this._droppedFrames,
       contextLosses: this._contextLosses,
