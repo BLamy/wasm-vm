@@ -3,7 +3,7 @@ id: E5-T18d
 epic: 5
 title: Harden compositor restart and tty1 getty fallback
 priority: 518.4
-status: implemented
+status: verified
 depends_on: [E5-T18c]
 estimate: S
 risk: high
@@ -28,10 +28,10 @@ rebuilt-artifact gauntlet belong to E5-T18e.
 
 ## Acceptance criteria
 
-- [ ] Killing the compositor with the local serial test hook causes an automatic restart and a
+- [x] Killing the compositor with the local serial test hook causes an automatic restart and a
       timestamped log entry without an init hang.
-- [ ] Three bounded crashes stop retrying and leave tty1 at getty with a visible error banner.
-- [ ] A broken-config boot exercises the fallback path, preserves the diagnostic log, and does
+- [x] Three bounded crashes stop retrying and leave tty1 at getty with a visible error banner.
+- [x] A broken-config boot exercises the fallback path, preserves the diagnostic log, and does
       not silently claim desktop readiness.
 
 ## Verification command
@@ -132,3 +132,104 @@ the two message directions now preserve it and the protocol test asserts it. The
 are real fixes, not waived failures. Existing Linux-only `wvseccomp` macOS build
 limitations and unrelated E6 dirt remain outside this diff. No rr, independent
 machine, WebKit, Omarchy, or Epic 6 implementation is claimed here.
+
+### 2026-09-06 — fresh verifier — VERDICT: verified
+
+Reviewed worker submission `73a6b010af3e9fd445d3ebb0102c9d0e26c5513a` against runtime
+freeze `c01edca99d3e6a227f51fbca882312b1ed802913` and observer freeze
+`5ff7f85727352781f297fff70ba10263ff8646ae`. This is the same adversarial sidecar
+session that made the predictions before the recordings, found the FIFO/UID
+boundary failures, and rechecked their fixes; it did not implement runtime code.
+No remaining refutation or acceptance evidence gap was found. Earlier unchanged
+T18a/b/c and T18d HELD results carry forward; no guest boot was rerun for this verdict.
+
+- **P1 restart identity and rendering — HELD.** Predicted fresh readiness and a new
+  compositor PID after each of the first two serial kills. The raw serial recording
+  contains kill commands at lines 275, 331, and 407, with ready PIDs `968`, `1111`,
+  `1236` at lines 267, 318, and 389. Timestamped exits/restarts appear at lines
+  285–286 and 346–347. Independently viewed `ready-1.png`, `ready-2.png`, and
+  `ready-3.png`: each shows the neutral patterned desktop and dark panel. Their
+  hashes and capture checkpoints match `desktop-recovery.json:170–553`.
+- **P2 bounded fallback — HELD.** Predicted exactly three status-137 exits, absent
+  readiness/PID, a visible tty1 login, and no fourth attempt while execution continues.
+  `three-crashes-serial.log:408–469` records the three exits, latched
+  `restart-budget-exhausted`, getty PID `1361`, actual console contents, and the final
+  still-three-attempt status. SHA-256 of that raw log:
+  `42cb3af4a6033efc6597cacff03f97463632f3c5b27f583a5cd15c4b74146833`.
+  The frozen observer's mandatory >=10,000,000-retired-instruction wait
+  (`tools/verify/e5-t18d-desktop-recovery.mjs:205–211`) precedes the final status in
+  `desktop-recovery.json:685`; `browser-final.log:45–46` records completion.
+  The readable fallback PNG hashes to
+  `f58d7ae02a3aaf1b0b592e668ad8b203f72ee794b90b4d0e2fa8cae252ff0742`;
+  its guest checkpoint is `73e5abd08a72d492b244a64deb5de128a7d51e3a339533561aee11b0abe7fc85`.
+- **P3 broken-config cold boot — HELD, carried forward.** The separate kernel
+  command line enables the config fault (`broken-config-serial.log:24`); lines
+  239–254 show zero attempts, no readiness/PID, preserved timestamped diagnostics,
+  and tty1 getty PID `992`. No compositor started/ready event occurs in the raw log.
+  Log SHA-256 `2e6cf3273fb00e60c2af525166baa63ef6455b99861fea92d2641a427d60a832`;
+  the independently viewed banner/login PNG hashes to
+  `6e980aa3f96f910881bf2ccd34b5e962e2c9668a4d3bed3758e3f972dd7e0781`.
+- **P4 evidence and artifact identity — HELD.** Independently checked aggregate
+  SHA-256 `6e84713050debf24782dd042795d87dea9747fc638a59cf5f1d82e13669bd00a`;
+  both per-case objects equal their aggregate entries, and their status/tty strings
+  occur in the raw UART logs after CRLF normalization. All five PNG hashes match.
+  Eleven aggregate/per-case/serial/PNG/console files match the clone originals
+  byte-for-byte. All 15 recorded source hashes match the observer commit, submission
+  commit, main workspace, and clone. Independently rehashed all four image-lock
+  inputs and 823 unique chunks across 8192 positions; the reconstructed image is
+  `e75b04caadd9616915b323497c92df1d5a9d11d55c877afcc95d208dde302416`.
+  Read-only Docker/debugfs extraction of all four installed recovery scripts
+  matches frozen source, not merely FILE-MANIFEST assertions. Nine runtime artifact
+  hashes/sizes match main, clone, and clone dist. Guest checkpoint hashes and PNG
+  hashes are separate observations, not an assertion of an atomic screenshot/snapshot.
+- **P5 fault and security boundaries — HELD, carried forward.** The four prescribed
+  drills are present in `local-fixtures.json:10–24` and the cold-clone recording;
+  seatd's 500 ms delay reaches readiness, while missing video/runtime and gles2
+  produce their specific bounded fallback reasons. The ten fixtures also cover
+  reentry, config removal, early exit, startup timeout, and forced shutdown.
+  `cold-clone-prechecks-and-superseded-observer.log:99–260` records all nine promoted
+  state-boundary tests passing against the frozen init/reader hashes. Earlier
+  focused Alpine BusyBox and Debian FIFO-swap/last-16-KiB probes remain HELD
+  (2.089 s and 2.051 s respectively, caller exits and no blocked pipe holder).
+  UID-confined reads/signals and the 30-second init bound retain their earlier
+  HELD results. Original unsafe FIFO-init and root-readable-state negative controls
+  failed the promoted tests in this verifier session; the tests are not vacuous.
+- **P6 browser observation and cold build — HELD.** Reviewed the actual clean clone
+  compile transcript at `cold-clone-prechecks-and-superseded-observer.log:261–361`;
+  its later colorful-wallpaper failure remains explicitly superseded, not a pass.
+  The observer-only replacement's three unit tests passed in this verifier session;
+  four recovery-policy and 25 protocol tests are recorded at log lines 3–49.
+  `native-tests.log:271` records 267 passed, zero failed/ignored. The previously
+  reviewed built-demo JSON/PNG show 126 passed, zero failed, and the correctly
+  in-progress task before submission. Browser console errors are limited to the
+  permitted favicon 404s; optional boot-profile misses are not compositor failures.
+
+**COVERAGE disposition.** All 34 source/build/test/generated/metadata files through
+the observer freeze were reviewed, followed by the evidence-only submission delta.
+Supervisor startup, ready/crash/retry/latch/fallback and cleanup hunks are exercised
+by the two real boots plus ten Linux fixtures. Init and serial state/identity hunks
+are covered by those boots and the nine promoted boundary tests. Worker format
+transport is covered by its protocol test and visible XRGB tty1 frames. Recovery
+page/policy, the shared visual observer, capture/source-binding/per-case persistence,
+and asset-serving hunks are exercised by the focused tests and recorded browser run.
+Build installation is bound to the extracted image scripts and clean WASM/dist build.
+
+Waivers are explicit, not claims of complete branch coverage: alternate malformed/
+pre-exhausted budget, wrong-runtime-permission, and never-arriving-seatd guard outcomes
+remain source-reviewed; the bounded shared fallback/cleanup behavior is exercised.
+The unused serial `config-fail` dispatcher composes the separately exercised config
+removal and fixed crash operations; legacy non-opt-in getty, unknown-command output,
+button-event wiring, and harness error-reporting alternatives are source-only under
+the user's bounded/no-new-scenarios review. These diagnostic/defensive alternatives
+add no additional acceptance claim. Declarative mounts/defaults/banner/lock data,
+six matching source/dist copies, generated service-worker token, roadmap/task data,
+comments, and evidence packaging are waived from separate execution proof after
+content/hash review. No dead implementation or unclassified acceptance hunk remains.
+
+**SUITE.** Retain the nine promoted `e5-t18d-state-boundaries.py` regressions, ten
+process/socket fixtures, fixed-policy/protocol/surface tests, recorded guest captures
+and digests, and `make verify-E5-T18d`. No further scenario or runtime gate was added.
+Raw UART CRLF and trailing console padding are preserved and exempted only from
+whitespace checks; source/JSON and verifier metadata checks remain required.
+Production publication is explicitly held for the user's Omarchy milestone. This
+verdict authorizes neither deployment nor merging and changes no unrelated E6 work.
