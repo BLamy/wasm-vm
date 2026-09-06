@@ -1,0 +1,168 @@
+{
+  "schema": "e5-t25a-verifier-surfaces-v1",
+  "chromium": "152.0.7977.76",
+  "results": [
+    {
+      "target": "source",
+      "query": "noAutoBoot=1",
+      "observed": {
+        "hasPerf": false
+      },
+      "helperRequested": false,
+      "scopedErrors": [],
+      "excludedPreexistingErrors": []
+    },
+    {
+      "target": "source",
+      "query": "noAutoBoot=1&testHooks=1",
+      "observed": {
+        "hasPerf": false
+      },
+      "helperRequested": false,
+      "scopedErrors": [],
+      "excludedPreexistingErrors": []
+    },
+    {
+      "target": "source",
+      "query": "noAutoBoot=1&perfHooks=1",
+      "observed": {
+        "hasPerf": false
+      },
+      "helperRequested": false,
+      "scopedErrors": [],
+      "excludedPreexistingErrors": []
+    },
+    {
+      "target": "source",
+      "query": "noAutoBoot=1&testHooks=1&perfHooks=1",
+      "observed": {
+        "hasPerf": true,
+        "version": "e5-t25a-v1",
+        "keys": [
+          "clearPresents",
+          "controller",
+          "presents",
+          "state",
+          "version"
+        ],
+        "before": [],
+        "accepted": true,
+        "after": [
+          {
+            "sequence": 1,
+            "timestamp": 130.47500002384186,
+            "backend": "canvas2d",
+            "drawn": true,
+            "replay": false,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 962,
+              "height": 240
+            },
+            "resourceWidth": 962,
+            "resourceHeight": 240,
+            "bytes": 923520
+          }
+        ],
+        "cleared": [],
+        "controllerPresent": false,
+        "fixtureBytes": "{\"events\":[{\"version\":\"e5-t25a-v1\",\"sequence\":1,\"device\":\"tablet\",\"events\":[{\"eventType\":3,\"code\":0,\"value\":100},{\"eventType\":3,\"code\":1,\"value\":200}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":2,\"device\":\"tablet\",\"events\":[{\"eventType\":1,\"code\":272,\"value\":1}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":3,\"device\":\"tablet\",\"events\":[{\"eventType\":1,\"code\":272,\"value\":0}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":4,\"device\":\"keyboard\",\"events\":[{\"eventType\":1,\"code\":30,\"value\":1}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":5,\"device\":\"keyboard\",\"events\":[{\"eventType\":1,\"code\":30,\"value\":0}],\"sync\":\"SYN_REPORT\",\"noop\":false}],\"calls\":[[\"sendTabletEvent\",3,0,100],[\"sendTabletEvent\",3,1,200],[\"syncTablet\"],[\"sendTabletEvent\",1,272,1],[\"syncTablet\"],[\"sendTabletEvent\",1,272,0],[\"syncTablet\"],[\"sendKeyboardEvent\",1,30,1],[\"syncKeyboard\"],[\"sendKeyboardEvent\",1,30,0],[\"syncKeyboard\"]],\"telemetry\":[{\"sequence\":1,\"timestamp\":15,\"backend\":\"canvas2d\",\"drawn\":true,\"replay\":false,\"rect\":{\"x\":0,\"y\":0,\"width\":2,\"height\":2},\"resourceWidth\":2,\"resourceHeight\":2,\"bytes\":16}],\"gpu\":{\"framesReceived\":1,\"enqueued\":1,\"coalesced\":0,\"presented\":1,\"successfulPresents\":1,\"skipped\":0,\"droppedFrames\":0,\"overruns\":0,\"pending\":0,\"maxPending\":0,\"uploadedBytes\":16,\"drawnPresents\":1,\"drawnBytes\":16,\"width\":2,\"height\":2}}"
+      },
+      "helperRequested": false,
+      "scopedErrors": [],
+      "excludedPreexistingErrors": []
+    },
+    {
+      "target": "dist",
+      "query": "noAutoBoot=1",
+      "observed": {
+        "hasPerf": false
+      },
+      "helperRequested": false,
+      "scopedErrors": [],
+      "excludedPreexistingErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:62740/artifacts-alpine.json"
+        }
+      ]
+    },
+    {
+      "target": "dist",
+      "query": "noAutoBoot=1&testHooks=1",
+      "observed": {
+        "hasPerf": false
+      },
+      "helperRequested": false,
+      "scopedErrors": [],
+      "excludedPreexistingErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:62740/artifacts-alpine.json"
+        }
+      ]
+    },
+    {
+      "target": "dist",
+      "query": "noAutoBoot=1&perfHooks=1",
+      "observed": {
+        "hasPerf": false
+      },
+      "helperRequested": false,
+      "scopedErrors": [],
+      "excludedPreexistingErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:62740/artifacts-alpine.json"
+        }
+      ]
+    },
+    {
+      "target": "dist",
+      "query": "noAutoBoot=1&testHooks=1&perfHooks=1",
+      "observed": {
+        "hasPerf": true,
+        "version": "e5-t25a-v1",
+        "keys": [
+          "clearPresents",
+          "controller",
+          "presents",
+          "state",
+          "version"
+        ],
+        "before": [],
+        "accepted": true,
+        "after": [
+          {
+            "sequence": 1,
+            "timestamp": 680.8450000286102,
+            "backend": "canvas2d",
+            "drawn": true,
+            "replay": false,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 962,
+              "height": 240
+            },
+            "resourceWidth": 962,
+            "resourceHeight": 240,
+            "bytes": 923520
+          }
+        ],
+        "cleared": [],
+        "controllerPresent": false,
+        "fixtureBytes": null
+      },
+      "helperRequested": false,
+      "scopedErrors": [],
+      "excludedPreexistingErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:62740/artifacts-alpine.json"
+        }
+      ]
+    }
+  ]
+}

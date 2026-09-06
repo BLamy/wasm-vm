@@ -1,0 +1,23 @@
+^Dnode --check web/bench/desktop-perf-hooks.js
+node --check web/src/sink/presentation.js
+node --test web/tests/e5-t25a-perf-hooks.test.mjs web/tests/e5-t06d-presentation.test.mjs
+✔ Canvas2D is the measured default and unavailable WebGL2 falls back (0.570375ms)
+✔ B8G8R8X8 frames normalize the unused byte to opaque before delivery (0.423166ms)
+✔ WebGL context loss replaces the context and replays the latest frame through Canvas2D (0.298459ms)
+✔ rapid presents are synchronous, last-frame-wins, and listener ownership is bounded (1.637333ms)
+✔ perf input is opt-in and emits bounded ordered evdev frames (1.696333ms)
+✔ presentation telemetry records drawn damage and does not trust a null sink (0.8295ms)
+✔ bench JavaScript and editor projection stay byte-identical (0.183042ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 35.420667
+node tools/verify/e5-t25a-release-audit.mjs
+{"productionImport":false,"productionPageSurface":false,"hookVersion":"e5-t25a-v1"}
+node tools/verify/e5-t25a-browser.mjs
+{"browser":"chromium","version":"152.0.7977.76","normalSurface":false,"gatedSurface":true,"hookRecord":{"version":"e5-t25a-v1","sequence":1,"device":"tablet","events":[{"eventType":3,"code":0,"value":4},{"eventType":3,"code":1,"value":5}],"sync":"SYN_REPORT","noop":false},"hookCalls":[["sendTabletEvent",3,0,4],["sendTabletEvent",3,1,5],["syncTablet"]]}
+{"browser":"firefox","version":"132.0","normalSurface":false,"gatedSurface":true,"hookRecord":{"version":"e5-t25a-v1","sequence":1,"device":"tablet","events":[{"eventType":3,"code":0,"value":4},{"eventType":3,"code":1,"value":5}],"sync":"SYN_REPORT","noop":false},"hookCalls":[["sendTabletEvent",3,0,4],["sendTabletEvent",3,1,5],["syncTablet"]]}

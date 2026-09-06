@@ -101,3 +101,38 @@ input-to-photon latency belongs to E5-T25c.
 Commands: `make verify-E5-T25a`; `make web-build`;
 `E5_DEMO_TASK=E5-T22g E5_DEMO_VERIFIED=1 E5_DEMO_OUT=evidence/e5-t25a/demo node tools/verify/e5-t18e-demo-smoke.mjs`;
 `shasum -a 256 evidence/e5-t25a/browser/results.json evidence/e5-t25a/browser/chromium-gated.png evidence/e5-t25a/demo/demo-suite.json evidence/e5-t25a/demo/demo-suite.png`.
+
+### 2026-09-06 — verifier (Daybreak Blue) — VERDICT: refuted
+
+- **P1 exact-head gate — HELD.** At `fc7bfdf5e6aa503e853ab85e48d4ea656dbede77`,
+  `make verify-E5-T25a` passed seven Node tests, the release audit, Chromium
+  152.0.7977.76, and Firefox 132.0. The fresh browser JSON and screenshot byte-match the
+  worker evidence (`evidence/e5-t25a/verifier/make-verify-success.log:1-23`).
+- **P2–P6 fixture and required attacks — HELD.** Five complete records were byte-stable;
+  stale/duplicate pointer and key transitions were unique-sequence no-ops; invalid
+  damage left the next valid record/counters intact; and an acknowledging null sink had
+  one successful present but 0 drawn presents/bytes
+  (`evidence/e5-t25a/verifier/attack-results.json:3-242`).
+- **P7–P9 release and schema — HELD.** Source/dist normal and half-gated pages neither
+  exposed the surface nor requested the helper; both gates were required. Actual source
+  and dist presents emitted drawn telemetry, and the full deterministic Node/Chromium
+  fixture serialized byte-for-byte identically
+  (`evidence/e5-t25a/verifier/surface-results.json:5-167`). All retained JSON/PNG hashes
+  recomputed, and the stored demo is 126/126 with empty browser/HTTP error arrays.
+- **P10 guest attribution/coverage — FAILED.** Deliverable lines 30-31 require guest-
+  instruction attribution, but the sink record at `web/src/sink/presentation.js:330-340`
+  has no such field and a scoped search found none in source, tests, or dist. Implement
+  and deterministically exercise the attribution. Other behavioral hunks executed;
+  generated/declarative lines and defensive catches/caps are classified in
+  `evidence/e5-t25a/verifier/coverage-audit.md`.
+- **P11 novel deterministic-order attack — FAILED.** Concurrent calls received records
+  1 and 2 but delivered X(seq1), button(seq2), sync(seq2), Y(seq1), sync(seq1), splitting
+  sequence 1's evdev frame (`evidence/e5-t25a/verifier/attack-results.json:243-332`). The
+  failure repeated three times. Serialize helper operations through each sync, then
+  rerun the medium-risk submission because runtime semantics change.
+- **Evidence:** `evidence/e5-t25a/verifier/verifier-report.md`; attack-results SHA-256
+  `5238d640452f9dab469b766f1500bc2d030ea6223535e0ad534cbc44ef0b1aef`; surface-results
+  SHA-256 `79c07a2c1c46c9c4d68a01eaad9c4cf7737401c2b64ee238232b125df9859272`.
+- **SUITE:** retain verifier evidence; no promotion until the two semantic refutations
+  clear. Independent machines, WebKit, host rr/ssh-dev, T25b/T25c, and T22c are waived
+  or out of scope. No merge performed.
