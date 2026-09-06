@@ -3,7 +3,7 @@ id: E5-T25b
 epic: 5
 title: Measure repeatable real-window drag FPS and bottleneck counters
 priority: 525.2
-status: evidence-needed
+status: implemented
 depends_on: [E5-T25a]
 estimate: S
 risk: medium
@@ -90,6 +90,38 @@ and host-rr legs remain waived by repository policy.
 
 Commands: `make web-build`; `make verify-E5-T25b`; `shasum -a 256
 evidence/e5-t25b/browser/drag-fps.json evidence/e5-t25b/browser/drag-fps.png`.
+
+### 2026-09-06 — worker — REWORK IMPLEMENTED
+
+Daybreak Blue's fresh verifier returned `needs-evidence` because the first retained
+JSON discarded raw present records, scheduler snapshots, duration samples, pointer
+before/after deltas, and the exact head. No runtime behavior was refuted. The
+recording writer and release audit were extended in
+`a14bf5453a6799a67b5f66e85b4167223580e541` (`test(e5-t25b): retain raw drag
+evidence`) to retain and statically require those fields.
+
+The replacement exact-head headed Chromium run succeeded with
+`E5_T25B_REQUIRE_HEAD=a14bf5453a6799a67b5f66e85b4167223580e541`. Its JSON is
+`evidence/e5-t25b/browser/drag-fps.json` (SHA-256
+`8cd005bf639b7638548c18b38a0bb32938b2494b179797aa875ddc5bd70060f7`) and its
+screenshot is `evidence/e5-t25b/browser/drag-fps.png` (SHA-256
+`d81ba53cbe4146e0be05be40bbbd6c53d9f082910bb7595d32958301b718a059`). Headed
+Chromium was `152.0.7977.76`, viewport `1440x1050`, DPR `1`, and the artifact
+head matches the implementation head exactly. The five runs requested 300 moves,
+processed pointer deltas `303/302/302/302/302`, and retained raw present records
+`93/94/92/97/97`, each with a matching present-duration sample count. Guest
+instruction attribution was positive in every raw record; scheduler before/after
+counters and the full present records are in the JSON. The aggregate was FPS p50
+`4.372599578061981`, p95 `5.183019875508211`, mean `4.37681808494884`, and CV
+`11.321151210004228%` (<15%). The null sink remained rejected and browser/HTTP
+error arrays remained empty.
+
+Focused checks after the rework: `node --test
+web/tests/e5-t25b-desktop-perf.test.mjs`; `node
+tools/verify/e5-t25b-release-audit.mjs`; `node --check
+tools/verify/e5-t25b-browser.mjs`; and the exact-head browser command above.
+The previous verifier's DPR-2/busy/4x legs remain environment-limited; the fresh
+verifier should rerun them if the local desktop is ready.
 
 ### 2026-09-06 — verifier — VERDICT: needs-evidence
 
