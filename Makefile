@@ -927,6 +927,12 @@ verify-E5-T18d:
 	$(MAKE) web-dist
 	E5_T18D_IMAGE_DIR="$(E5_T18D_IMAGE_DIR)" E5_T18D_DESKTOP_ASSET_DIR="$(E5_T18D_DESKTOP_ASSET_DIR)" node tools/verify/e5-t18d-desktop-recovery.mjs
 
+.PHONY: verify-E5-T18e
+verify-E5-T18e:
+	node --check tools/verify/e5-t18e-desktop-bringup.mjs
+	node --test tools/verify/e5-t18e-publication.test.mjs tools/verify/e5-t18d-surface.test.mjs
+	node tools/verify/e5-t18e-desktop-bringup.mjs
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
