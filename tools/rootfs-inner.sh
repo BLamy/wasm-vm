@@ -474,6 +474,18 @@ printf '%s\n' "E5T17D_DESKTOP_RETURNED=0" >>"$boot_order_log"
 exit 0
 START_DESKTOP
     chmod 0755 "$ROOT/usr/local/bin/start-desktop"
+    # E5-T18d's production supervisor replaces the historical single-attempt fixture without
+    # changing its pinned image recipe when E5_T18D_RECOVERY=0 is explicitly selected.
+    if [ "${E5_T18D_RECOVERY:-0}" = 1 ]; then
+      install -Dm755 /start-desktop "$ROOT/usr/local/bin/start-desktop"
+      install -Dm755 /desktop-autologin "$ROOT/usr/local/sbin/desktop-autologin"
+      install -Dm755 /desktop-runtime.initd "$ROOT/etc/init.d/desktop-runtime"
+      install -Dm755 /desktop-test-console "$ROOT/usr/local/sbin/desktop-test-console"
+      install -d -m0755 "$ROOT/etc/wasm-vm"
+      printf '\033[0m\nDESKTOP FAILED — automatic restart budget exhausted or startup unavailable.\nLogs: /home/desktop/.local/state/wasm-vm/desktop.log\nA serial login remains available. Reboot after correcting the configuration.\n\n' \
+        >"$ROOT/etc/wasm-vm/desktop-fallback.issue"
+      sed -i 's@ttyS0::respawn:/sbin/getty -L 115200 ttyS0 vt100@ttyS0::respawn:/usr/local/sbin/desktop-test-console@' "$ROOT/etc/inittab"
+    fi
     grep -qxF /usr/local/bin/start-desktop "$ROOT/etc/shells" 2>/dev/null || \
       printf '%s\n' /usr/local/bin/start-desktop >> "$ROOT/etc/shells"
 
@@ -602,6 +614,8 @@ link_svc default wasm-vm-file-agent
     /etc/init.d/desktop-runtime \
     /usr/local/sbin/desktop-autologin \
     /usr/local/bin/start-desktop \
+    /usr/local/sbin/desktop-test-console \
+    /etc/wasm-vm/desktop-fallback.issue \
     /etc/xdg/weston/weston.ini \
     /etc/wasm-vm/desktop-terminal-interactive \
     /home/desktop/.profile \

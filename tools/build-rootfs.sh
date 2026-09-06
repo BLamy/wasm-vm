@@ -80,6 +80,10 @@ docker run --rm \
   -v "$PWD/tools/rootfs/wasmvm-agent.initd:/wasmvm-agent.initd:ro" \
   -v "$PWD/tools/rootfs/vm-download:/vm-download:ro" \
   -v "$PWD/tools/rootfs/osc52-copy:/osc52-copy:ro" \
+  -v "$PWD/tools/rootfs/start-desktop:/start-desktop:ro" \
+  -v "$PWD/tools/rootfs/desktop-autologin:/desktop-autologin:ro" \
+  -v "$PWD/tools/rootfs/desktop-runtime.initd:/desktop-runtime.initd:ro" \
+  -v "$PWD/tools/rootfs/desktop-test-console:/desktop-test-console:ro" \
   -e MAIN_REPO="$MAIN_REPO" \
   -e COMMUNITY_REPO="$COMMUNITY_REPO" \
   -e FS_UUID="$FS_UUID" \
@@ -92,6 +96,7 @@ docker run --rm \
   -e ALPINE_BRANCH="$ALPINE_BRANCH" \
   -e DISPLAY_CANDIDATE="${DISPLAY_CANDIDATE:-}" \
   -e E5_T18B_INTERACTIVE="${E5_T18B_INTERACTIVE:-0}" \
+  -e E5_T18D_RECOVERY="${E5_T18D_RECOVERY:-0}" \
   "$IMG_TAG" /rootfs-inner.sh
 
 # MANIFEST drift gate (critic #3): apk resolves "latest within v3.20", so a mirror-side

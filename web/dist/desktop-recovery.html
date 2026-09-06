@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>wasm-vm — desktop recovery</title>
+    <style>
+      :root { color-scheme: dark; font: 14px system-ui, sans-serif; background: #090b0f; color: #eef2f7; }
+      body { margin: 0; }
+      header { display: flex; gap: 20px; align-items: center; padding: 16px 24px; border-bottom: 1px solid #242b36; }
+      h1 { font-size: 18px; margin: 0; }
+      a { color: #53d4ff; }
+      main { max-width: 1320px; margin: auto; padding: 20px; }
+      canvas { display: block; width: 100%; height: auto; background: #000; border: 1px solid #242b36; }
+      #recovery-status { color: #53d4ff; }
+      #recovery-status[data-state="error"] { color: #f85149; }
+      .controls { display: flex; gap: 12px; margin: 16px 0; flex-wrap: wrap; }
+      .controls[hidden] { display: none; }
+      button { color: inherit; background: #10141b; padding: 8px 12px; border: 1px solid #394454; border-radius: 5px; }
+      pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 280px; overflow: auto; font-size: 12px; }
+      .note { color: #9aa6b2; }
+    </style>
+  </head>
+  <body>
+    <header><h1><a href="./index.html">wasm-vm</a> — desktop recovery</h1><span id="recovery-status" role="status">starting…</span></header>
+    <main>
+      <canvas id="desktop-canvas" width="1280" height="800" aria-label="Live RISC-V guest framebuffer"></canvas>
+      <div class="controls" id="recovery-controls" hidden>
+        <button data-command="status">Read recovery state</button>
+        <button data-command="crash">Crash compositor</button>
+        <button data-command="config-fail">Remove config and crash</button>
+        <button data-command="tty">Read login console</button>
+        <button data-command="log">Read compositor log</button>
+      </div>
+      <p class="note">At most three compositor attempts per boot. Repeated failure returns the guest to its login console. Fault controls require an explicit localhost-only test boot; they are unavailable on the production host.</p>
+      <pre id="recovery-serial" aria-label="Guest serial transcript"></pre>
+    </main>
+    <script type="module" src="./desktop-recovery.js"></script>
+  </body>
+</html>

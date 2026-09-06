@@ -79,6 +79,7 @@ IMG_SIZE="$size" \
 EXTRA_PKGS="$profile_packages" \
 DISPLAY_CANDIDATE=desktop \
 E5_T18B_INTERACTIVE="${E5_T18B_INTERACTIVE:-0}" \
+E5_T18D_RECOVERY="${E5_T18D_RECOVERY:-1}" \
 UPDATE_MANIFEST="$update_manifest" \
 FORCE_LOCKED_INSTALL="$force_locked_install" \
 bash tools/build-rootfs.sh
@@ -123,6 +124,7 @@ cat > "$out/desktop-info.json" <<JSON
     "sha256": "$file_manifest_sha"
   },
   "startup": {
+    "boundedRecovery": $([ "${E5_T18D_RECOVERY:-1}" = 1 ] && printf true || printf false),
     "backend": "drm",
     "renderer": "pixman",
     "autologinTty": "tty1",

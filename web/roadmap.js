@@ -145,6 +145,7 @@ export const ROADMAP = [
       { name: "Desktop cold boot — wallpaper/panel/WM menu", status: "partial", evidence: "E5-T18a: local Chromium cache-disabled desktop readiness proof" },
       { name: "Desktop Terminal launcher + T12 keyboard", status: "verified", evidence: "E5-T18b: local Chromium menu/open/type/close proof" },
       { name: "Desktop cursor alignment + DPR hit-testing", status: "verified", evidence: "E5-T18c: four fresh local Chromium contexts, two window cycles each, exact guest cursor alignment and boundary hit-tests at DPR 1 and 2" },
+      { name: "Bounded desktop recovery + tty1 fallback", status: "partial", evidence: "E5-T18d: local crash/restart and broken-config bring-up proof in progress" },
     ],
   },
   {
