@@ -978,8 +978,7 @@ verify-E5-T22g:
 	node --check tools/verify/e5-t22g-jit-entry-timer.mjs
 	test -s target/e5-t22c/desktop-image-solid-v7/alpine-rootfs.ext4
 	test -s target/e5-t22c/chunks/desktop-solid-v7/manifest.json
-	$(MAKE) tasks-json
-	$(MAKE) web-dist
+	$(MAKE) web-build
 	E5_T22G_OUT=evidence/e5-t22g/browser node tools/verify/e5-t22g-jit-entry-timer.mjs
 	E5_T22C_ITERATION=1 E5_T22C_PROFILE=0 E5_T22C_CPU_PROFILE=0 E5_T22C_IMAGE_DIR=target/e5-t22c/desktop-image-solid-v7 E5_T22C_CHUNKS=target/e5-t22c/chunks/desktop-solid-v7 E5_T22C_TOOLS_OUT=target/e5-t22c/display-tools E5_T22C_OUT=evidence/e5-t22g/desktop node tools/verify/e5-t22c-guest-mode.mjs
 	E5_DEMO_TASK=E5-T22g E5_DEMO_OUT=evidence/e5-t22g/demo node tools/verify/e5-t18e-demo-smoke.mjs
