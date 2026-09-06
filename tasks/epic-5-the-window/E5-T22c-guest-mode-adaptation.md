@@ -3,9 +3,8 @@ id: E5-T22c
 epic: 5
 title: Apply guest desktop hotplug modes without restarting the compositor
 priority: 522.3
-status: blocked
+status: in-progress
 depends_on: [E5-T22b, E5-T22e]
-blocked_on: E5-T22e — guest device reset erases the host monitor mode before Weston starts
 estimate: S
 risk: high
 capstone: false
@@ -145,3 +144,13 @@ status 70 and a fixed fatal diagnostic, without retrying or unsafe cleanup. Such
 a fault is never counted as a successful resize. The native sanitizer test
 reproduces mutation-before-error in a child and requires that exact exit; all
 202,456 checks pass. This latest fault fix requires a newly recorded final image.
+
+### 2026-09-06 — worker — resume above verified reset prerequisite
+
+E5-T22e independently verified at `ef9dea06`, with its verified built-demo handoff
+at `6e736124`. Resume this same task in a new layer above the reset fix, preserving
+the earlier C branch and its failed iterations. Boot immutable v4 image SHA256
+`4739da5d080d7ebbec70c907a3ca27e4da9e4236d0c84dff1bced5caf5e7ad2f`
+with the reset-corrected Wasm. This image includes the fail-stop fix and terminal
+startup diagnostics. Measure visible client content and real mode adoption; do
+not waive or claim the still-unproven two-second performance criterion.
