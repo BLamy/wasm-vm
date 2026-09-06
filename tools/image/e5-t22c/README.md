@@ -54,6 +54,10 @@ bash tools/image/desktop.sh
 
 The production acceptance lock is only frozen after the worker iteration passes.
 `E5_T22C_ITERATION=1` explicitly records non-verdict working-loop results.
+Supply `E5_T22C_IMAGE_DIR=target/e5-t22c/desktop-image-v4` and
+`E5_T22C_CHUNKS=target/e5-t22c/chunks/desktop-v4` to test that preserved iteration.
+The final target uses a separate `acceptance-image` output, so rebuilding final
+evidence never overwrites an image cited by a previous working-loop recording.
 
 The final `make verify-E5-T22c` target refuses a missing acceptance lock, rebuilds
 the image and custom ELFs from source, checks native sanitizer and observer tests,

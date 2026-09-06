@@ -939,10 +939,10 @@ verify-E5-T22c:
 	node --check web/desktop-resize.js
 	node --check tools/verify/e5-t22c-guest-mode.mjs
 	node --test tools/verify/e5-t22c-observations.test.mjs tools/verify/e5-t22c-publication.test.mjs tools/verify/e5-t18e-publication.test.mjs
-	E5_T17B_OUT=target/e5-t22c/desktop-image-v4 E5_T17B_PACKAGE_LOCK=tools/image/e5-t22c/MANIFEST.txt E5_T18B_INTERACTIVE=1 E5_T18D_RECOVERY=1 E5_T22C_RESIZE=1 bash tools/image/desktop.sh
+	E5_T17B_OUT=target/e5-t22c/acceptance-image E5_T17B_PACKAGE_LOCK=tools/image/e5-t22c/MANIFEST.txt E5_T18B_INTERACTIVE=1 E5_T18D_RECOVERY=1 E5_T22C_RESIZE=1 bash tools/image/desktop.sh
 	bash tools/verify/e5-t22c-native.sh
 	cargo build --release -p wasm-vm-cli
-	target/release/wasm-vm chunk target/e5-t22c/desktop-image-v4/alpine-rootfs.ext4 --out target/e5-t22c/chunks/desktop-v4
+	target/release/wasm-vm chunk target/e5-t22c/acceptance-image/alpine-rootfs.ext4 --out target/e5-t22c/chunks/acceptance
 	$(MAKE) web-dist
 	node tools/verify/e5-t22c-guest-mode.mjs
 
