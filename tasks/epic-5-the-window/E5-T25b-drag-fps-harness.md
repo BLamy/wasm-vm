@@ -3,7 +3,7 @@ id: E5-T25b
 epic: 5
 title: Measure repeatable real-window drag FPS and bottleneck counters
 priority: 525.2
-status: implemented
+status: evidence-needed
 depends_on: [E5-T25a]
 estimate: S
 risk: medium
@@ -90,3 +90,48 @@ and host-rr legs remain waived by repository policy.
 
 Commands: `make web-build`; `make verify-E5-T25b`; `shasum -a 256
 evidence/e5-t25b/browser/drag-fps.json evidence/e5-t25b/browser/drag-fps.png`.
+
+### 2026-09-06 — verifier — VERDICT: needs-evidence
+
+- **P1/P2/P3 baseline/drawn attribution — NEEDS EVIDENCE.** Predicted a
+  successful exact-head artifact with independently checkable per-run move deltas
+  and full present/attribution records. The retained artifact hashes and all
+  summary math held: five 300-request runs, drawn presents `92/94/100/100/114`,
+  CV `8.429883380318232%`, positive guest and guest/present duration attribution,
+  empty browser/HTTP errors, and null-sink rejection. Observed `head: null`, only
+  cumulative pointer-frame counts, and no raw present records, scheduler snapshots,
+  or duration samples. The current writer also omits those raw records from JSON.
+  Retain them and produce one successful exact-head headed-Chromium artifact.
+- **P4 no-window/no-damage/null sink — HELD.** The runner requires detected Foot
+  chrome and valid titlebar geometry; the pure analyzer rejects null records,
+  all-undrawn/no-damage input, missing/zero guest attribution, and regressing
+  scheduler counters. FPS is derived from drawn records over wall time.
+- **P5 counter attack — NEEDS RECORD EVIDENCE.** NaN and required-counter attacks
+  rejected, while duplicate/regressing present sequences and regressing cumulative
+  guest totals with supplied nonnegative deltas were accepted. The production
+  producer constrains these fields, but the retained artifact discarded the records
+  needed to verify that invariant. Serialize and audit them (or reject them).
+- **P6/P7 release/env — HELD.** Five deterministic tests and the release audit
+  passed under hostile inherited `RUSTFLAGS`, `RUST_LOG`, and `CARGO_*` values;
+  direct source/dist comparisons, including roadmap, matched. The runner's spawned
+  server environment deletes the required variables.
+- **P8 browser stress — ENVIRONMENT-LIMITED.** A bounded current-head headed Chrome
+  attempt reached the browser leg but timed out after 120 seconds at
+  `tools/verify/e5-t25b-browser.mjs:111`, waiting for `desktopReady`. Cleanup
+  completed, but no drag ran, so DPR 2 and busy/4x-throttle were not attempted.
+  Retained evidence covers only DPR 1/unthrottled baseline; this timeout is not a
+  behavioral refutation.
+- **COVERAGE — NEEDS EVIDENCE.** The retained success exercises the unchanged
+  runtime and analyzer paths from `765fefcb`; the fresh timeout exercises exact-head
+  lookup and `6bc03107` bounded cleanup. The `1f6517a` per-run delta assertion and
+  successful exact-head write remain unexecuted. Dist/TS/roadmap declarations were
+  waived by byte parity/static reasoning.
+- **SUITE:** retained verifier predictions and reusable pure/evidence audit scripts.
+  No implementation, test, or harness files were changed.
+
+Full report: `evidence/e5-t25b/verifier-r1/verifier-report.md`.
+
+Commands: `node evidence/e5-t25b/verifier-r1/analyzer-attacks.mjs`; `node
+evidence/e5-t25b/verifier-r1/retained-evidence-audit.mjs`; hostile-env Node
+checks/tests/release audit and direct source/dist `cmp`; bounded hostile-env
+`make verify-E5-T25b` (browser readiness timeout at 120000 ms).
