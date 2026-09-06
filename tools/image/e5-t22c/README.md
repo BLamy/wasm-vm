@@ -46,7 +46,7 @@ The native macOS run does not claim LeakSanitizer support.
 Local build:
 
 ```sh
-E5_T17B_OUT=target/e5-t22c/desktop-image-v3 \
+E5_T17B_OUT=target/e5-t22c/desktop-image-v4 \
 E5_T17B_PACKAGE_LOCK=tools/image/e5-t18e/MANIFEST.txt \
 E5_T18B_INTERACTIVE=1 E5_T18D_RECOVERY=1 E5_T22C_RESIZE=1 \
 bash tools/image/desktop.sh
@@ -54,3 +54,16 @@ bash tools/image/desktop.sh
 
 The production acceptance lock is only frozen after the worker iteration passes.
 `E5_T22C_ITERATION=1` explicitly records non-verdict working-loop results.
+
+The final `make verify-E5-T22c` target refuses a missing acceptance lock, rebuilds
+the image and custom ELFs from source, checks native sanitizer and observer tests,
+rebuilds the browser assets, and records one real desktop boot. The lock binds
+source inputs, compiled ELFs, installed custom-file entries, the unchanged package
+set, complete ext4 bytes and every served chunk. The recorder also checks that
+its frozen source/head and image remain unchanged through the recording.
+
+The browser pending-transition case records an advertised mode which differs
+from the actual scanout before another resize request. This establishes a real
+unfinished host/guest transition; it does not claim to inspect Weston internals.
+The native sanitizer harness separately covers its pageflip, atomic-completion
+and mode-switch pending flags.

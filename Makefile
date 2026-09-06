@@ -930,7 +930,22 @@ verify-E5-T18d:
 .PHONY: verify-E5-T18e
 .PHONY: verify-E5-T22a
 .PHONY: verify-E5-T22b
+.PHONY: verify-E5-T22c
 .PHONY: verify-E5-T22e
+verify-E5-T22c:
+	test -s tools/image/e5-t22c-desktop-image.json
+	bash -n tools/build-rootfs.sh tools/rootfs-inner.sh tools/image/desktop.sh tools/image/build-display-tools.sh tools/verify/e5-t22c-native.sh
+	sh -n tools/rootfs/desktop-test-console
+	node --check web/desktop-resize.js
+	node --check tools/verify/e5-t22c-guest-mode.mjs
+	node --test tools/verify/e5-t22c-observations.test.mjs tools/verify/e5-t22c-publication.test.mjs tools/verify/e5-t18e-publication.test.mjs
+	E5_T17B_OUT=target/e5-t22c/desktop-image-v4 E5_T17B_PACKAGE_LOCK=tools/image/e5-t22c/MANIFEST.txt E5_T18B_INTERACTIVE=1 E5_T18D_RECOVERY=1 E5_T22C_RESIZE=1 bash tools/image/desktop.sh
+	bash tools/verify/e5-t22c-native.sh
+	cargo build --release -p wasm-vm-cli
+	target/release/wasm-vm chunk target/e5-t22c/desktop-image-v4/alpine-rootfs.ext4 --out target/e5-t22c/chunks/desktop-v4
+	$(MAKE) web-dist
+	node tools/verify/e5-t22c-guest-mode.mjs
+
 verify-E5-T22e:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
 	cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings

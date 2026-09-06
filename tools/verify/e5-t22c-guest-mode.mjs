@@ -10,10 +10,12 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { inspectRecoveryCanvas } from "./e5-t18d-surface.mjs";
 import { assertDisplayAgreement, inspectResizeContent } from "./e5-t22c-observations.mjs";
 import { hashFile, verifyChunkStore } from "./e5-t18e-publication.mjs";
+import { verifyDisplayPublication } from "./e5-t22c-publication.mjs";
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"../..");
 const iteration=process.env.E5_T22C_ITERATION==="1";
 const imageDir=path.resolve(repo,process.env.E5_T22C_IMAGE_DIR||"target/e5-t22c/desktop-image-v4");
 const chunks=path.resolve(repo,process.env.E5_T22C_CHUNKS||"target/e5-t22c/chunks/desktop-v4");
+const toolsDir=path.resolve(repo,process.env.E5_T22C_TOOLS_OUT||"target/e5-t22c/display-tools");
 const out=path.resolve(repo,process.env.E5_T22C_OUT||"evidence/e5-t22c/acceptance");
 const root=path.join(repo,"web/dist"),sha=b=>createHash("sha256").update(b).digest("hex");
 await mkdir(out,{recursive:true});
@@ -23,6 +25,7 @@ const sources={};
 for(const file of ["tools/guest/wv-display-resize.c","tools/guest/wv-display-mode.h","tools/guest/wv-display-query.c",
   "tools/rootfs/desktop-test-console","tools/rootfs-inner.sh","tools/build-rootfs.sh","tools/image/desktop.sh",
   "tools/image/build-display-tools.sh","tools/verify/e5-t22c-guest-mode.mjs","tools/verify/e5-t22c-observations.mjs",
+  "tools/verify/e5-t22c-publication.mjs",
   "web/desktop-resize.js","web/dist/desktop-resize.js","web/dist/pkg/wasm_vm_wasm_bg.wasm"])
   sources[file]=sha(await readFile(path.join(repo,file)));
 assert.equal(sources["web/desktop-resize.js"],sources["web/dist/desktop-resize.js"],"rebuild the tested page");
@@ -31,10 +34,10 @@ const publication=iteration?{
   packageManifestSha256:metadata.packageManifest.sha256,
   fileManifestSha256:metadata.fileManifest.sha256,
   chunkManifestSha256:await hashFile(path.join(chunks,"manifest.json")),
-}:JSON.parse(await readFile(path.join(repo,"tools/image/e5-t22c-desktop-image.json")));
+}:await verifyDisplayPublication(repo,imageDir,chunks,toolsDir);
 for(const [file,key] of [["alpine-rootfs.ext4","imageSha256"],["MANIFEST.txt","packageManifestSha256"],["FILE-MANIFEST.txt","fileManifestSha256"]])
   assert.equal(await hashFile(path.join(imageDir,file)),publication[key],file+" drift");
-await verifyChunkStore(chunks,publication);
+if(iteration)await verifyChunkStore(chunks,publication);
 assert.equal(metadata.startup.renderer,"pixman");assert.equal(metadata.startup.inPlaceDisplayResize,true);
 const server=createServer(async(req,res)=>{
   const pathname=decodeURIComponent(new URL(req.url,"http://local").pathname);let file;
@@ -93,7 +96,7 @@ try{
   const client=await command("display"),originalContent=await content();
   assert.equal(clientPids(client).length,1,"one live foot proof client");
   await page.screenshot({path:path.join(out,"initial-client.png"),fullPage:true});
-  for(const [width,height] of [[803,603],[640,480],[1280,800],[2560,1600],[801,601],[802,601]]){
+  async function runMode(width,height,pendingFrom=null){
     phase=`resize ${width}x${height}`;
     const beforeScheduler=await page.evaluate(()=>desktopResize.controller().schedulerStats());
     const started=await page.evaluate(([w,h])=>{const el=document.getElementById("viewport");const ms=performance.now();el.style.width=w+"px";el.style.height=h+"px";return ms;},[width,height]);
@@ -110,12 +113,24 @@ try{
     const marker=await content();assert.equal(marker.visible,true,"live terminal text visible");
     assert.equal(marker.sha256,originalContent.sha256,"identical retained terminal text pixels");
     const screenshot=await page.screenshot({path:path.join(out,`${width}x${height}.png`),fullPage:true});
-    const result={width,height,started,paint,elapsed,beforeScheduler,afterScheduler,guest,gpu,state,observation,status,marker,screenshotSha256:sha(screenshot)};
+    const result={width,height,started,paint,elapsed,pendingFrom,beforeScheduler,afterScheduler,guest,gpu,state,observation,status,marker,screenshotSha256:sha(screenshot)};
     results.push(result);console.log(JSON.stringify({mode:[width,height],elapsed,pid:pid(status),foot:clientPids(guest),marker:marker.sha256}));
     await writeFile(path.join(out,"results.json"),JSON.stringify({iteration,head,sources,publication,metadata,initial,client,originalContent,results,gaps,errors},null,2)+"\n");
   }
+  for(const [width,height] of [[803,603],[640,480],[1280,800],[2560,1600],[801,601],[802,601]])await runMode(width,height);
+  // Observe a real host/guest disagreement before issuing the next DOM size.
+  // This is not a claim to see Weston's internal pageflip flags; native tests
+  // independently cover all three of those pending-work flags.
+  phase="pending transition";
+  await page.evaluate(()=>{const el=document.getElementById("viewport");el.style.width="1199px";el.style.height="799px";});
+  const pending=await until(async()=>{
+    const gpu=await gpuState(),state=await page.evaluate(()=>desktopResize.state());
+    return gpu.advertisedWidth===1199&&gpu.advertisedHeight===799&&
+      (gpu.scanoutWidth!==1199||gpu.scanoutHeight!==799)&&state.presentation.sizeMismatch?{gpu,state}:null;
+  },"observed unfinished transition",10000);
+  await runMode(1201,801,pending);
   const beforeRepeat=await page.evaluate(()=>desktopResize.state());
-  await page.evaluate(()=>{const el=document.getElementById("viewport");el.style.width="802px";el.style.height="601px";});
+  await page.evaluate(()=>{const el=document.getElementById("viewport");el.style.width="1201px";el.style.height="801px";});
   await sleep(2500);
   const afterRepeat=await page.evaluate(()=>desktopResize.state());
   assert.equal(afterRepeat.viewport.requests,beforeRepeat.viewport.requests,"repeat has no new host request");
@@ -124,6 +139,11 @@ try{
   await writeFile(path.join(out,"final-compositor.log"),finalLog);
   await writeFile(path.join(out,"runtime-stats.json"),JSON.stringify(await page.evaluate(async()=>({scheduler:await desktopResize.controller().schedulerStats(),jit:await desktopResize.controller().jitStats(),digest:await desktopResize.controller().stateDigest()})),null,2)+"\n");
   assert.deepEqual(errors,[]);
+  if(!iteration){
+    assert.equal(execFileSync("git",["rev-parse","HEAD"],{cwd:repo,encoding:"utf8"}).trim(),head,"head moved during recording");
+    for(const [file,digest] of Object.entries(sources))assert.equal(sha(await readFile(path.join(repo,file))),digest,`${file} moved during recording`);
+    assert.deepEqual(await verifyDisplayPublication(repo,imageDir,chunks,toolsDir),publication);
+  }
   if(!iteration)assert.deepEqual(gaps,[],"real guest resize performance");
   console.log(JSON.stringify({iteration,completed:true,gaps,errors}));
 }catch(error){
