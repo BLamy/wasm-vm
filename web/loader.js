@@ -1012,6 +1012,9 @@ export async function startLinuxBoot(opts = {}) {
 
     return {
       backend: "main-thread",
+      // Host hotplug is separate from guest mode adoption; stats come from the actual GPU map.
+      setDisplay: (width, height) => !stopped && machine.setDisplay(width, height),
+      displayStats: () => stopped ? null : machine.displayStats(),
       sendInput: (bytes) => {
         if (!stopped) {
           inputCalls += 1;

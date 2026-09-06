@@ -272,6 +272,18 @@ export class WasmLinux {
         return ret[0] !== 0;
     }
     /**
+     * Inspect actual GPU state. Advertised dimensions and bound resource dimensions are
+     * deliberately separate: only guest SET_SCANOUT can change the latter. EDID is a copy.
+     * @returns {any}
+     */
+    displayStats() {
+        const ret = wasm.wasmlinux_displayStats(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
      * arm tier-up. The accelerated interpreter remains the fallback for cold/untranslatable blocks;
      * the caller gates this on `crossOriginIsolated`.
@@ -883,6 +895,20 @@ export class WasmLinux {
      */
     setDiskReadOnly() {
         const ret = wasm.wasmlinux_setDiskReadOnly(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] !== 0;
+    }
+    /**
+     * Request a preferred display mode. This does not resize a guest resource or claim the
+     * compositor has adopted the mode. Validate both JS values before borrowing/mutating state.
+     * @param {any} width
+     * @param {any} height
+     * @returns {boolean}
+     */
+    setDisplay(width, height) {
+        const ret = wasm.wasmlinux_setDisplay(this.__wbg_ptr, width, height);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }

@@ -25,6 +25,7 @@ export const wasmlinux_closeStorage: (a: number) => [number, number];
 export const wasmlinux_dismissFileDownload: (a: number, b: number) => [number, number, number];
 export const wasmlinux_dismissFileUpload: (a: number, b: number) => [number, number, number];
 export const wasmlinux_displayReady: (a: number) => [number, number, number];
+export const wasmlinux_displayStats: (a: number) => [number, number, number];
 export const wasmlinux_enableJit: (a: number, b: number) => [number, number];
 export const wasmlinux_enableJitWithPolicy: (a: number, b: number, c: number, d: number) => [number, number];
 export const wasmlinux_fetchPending: (a: number) => any;
@@ -63,6 +64,7 @@ export const wasmlinux_sendMouseEvent: (a: number, b: number, c: number, d: numb
 export const wasmlinux_sendTabletEvent: (a: number, b: number, c: number, d: number) => [number, number];
 export const wasmlinux_setChaining: (a: number, b: number) => [number, number];
 export const wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
+export const wasmlinux_setDisplay: (a: number, b: any, c: any) => [number, number, number];
 export const wasmlinux_setDynamicChaining: (a: number, b: number) => [number, number];
 export const wasmlinux_setFastInterpreter: (a: number, b: number) => [number, number];
 export const wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];

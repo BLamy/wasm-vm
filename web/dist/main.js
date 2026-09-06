@@ -1866,6 +1866,8 @@ async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl, bootProfile
 
 window.wvmDemo = {
   isGuestUp: () => !!linuxCtl,
+  async setDisplay(width, height) { return await linuxCtl?.setDisplay?.(width, height) ?? false; },
+  async displayStats() { return await linuxCtl?.displayStats?.() ?? null; },
   // E5-T20d/T20e: inspect the real context/ring pair without exposing a second unlock path.
   audioAutoplay: () => audioAutoplayPolicy,
   audioSink: () => audioSink,

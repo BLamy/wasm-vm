@@ -1462,6 +1462,9 @@ pub struct WasmLinux {
     inner: RefCell<LinuxInner>,
 }
 
+#[cfg(all(test, target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod display_tests;
+
 /// E3-T12d build-stable snapshot identity: the crate version zero-padded into 32 bytes. Changes across
 /// releases so a snapshot taken by a different build fails the coherence guard (a `CoreHashMismatch`
 /// cold boot). A semantic change WITHIN one published version is out of scope (documented); a git-hash
@@ -2335,6 +2338,85 @@ impl WasmLinux {
     pub fn display_ready(&self) -> Result<bool, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
         Ok(inner.display_attached)
+    }
+
+    /// Request a preferred display mode. This does not resize a guest resource or claim the
+    /// compositor has adopted the mode. Validate both JS values before borrowing/mutating state.
+    #[wasm_bindgen(js_name = setDisplay)]
+    pub fn set_display(&self, width: JsValue, height: JsValue) -> Result<bool, JsError> {
+        let dimension = |value: JsValue| -> Result<u32, JsError> {
+            let max = wasm_vm_core::dev::virtio::gpu::edid::MAX_EDID_DIMENSION;
+            let number = value
+                .as_f64()
+                .ok_or_else(|| JsError::new("display dimension must be a number"))?;
+            if !number.is_finite()
+                || number.fract() != 0.0
+                || number < 1.0
+                || number > f64::from(max)
+            {
+                return Err(JsError::new(
+                    "display dimension must be an integer in 1..=4095",
+                ));
+            }
+            Ok(number as u32)
+        };
+        let (width, height) = (dimension(width)?, dimension(height)?);
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some((_, state)) = inner.machine.virtio_gpu() else {
+            return Ok(false);
+        };
+        state
+            .try_borrow_mut()
+            .map_err(|_| reentrant())?
+            .set_display(width, height);
+        Ok(true)
+    }
+
+    /// Inspect actual GPU state. Advertised dimensions and bound resource dimensions are
+    /// deliberately separate: only guest SET_SCANOUT can change the latter. EDID is a copy.
+    #[wasm_bindgen(js_name = displayStats)]
+    pub fn display_stats(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some((_, state)) = inner.machine.virtio_gpu() else {
+            return Ok(JsValue::NULL);
+        };
+        let state = state.try_borrow().map_err(|_| reentrant())?;
+        let result = js_sys::Object::new();
+        let set = |key: &str, value: JsValue| -> Result<(), JsError> {
+            js_sys::Reflect::set(&result, &key.into(), &value)
+                .map(|_| ())
+                .map_err(|_| JsError::new("display stats property failed"))
+        };
+        let (width, height) = state.display_size();
+        set("advertisedWidth", width.into())?;
+        set("advertisedHeight", height.into())?;
+        set("refreshHz", state.display_refresh_hz().into())?;
+        set("pendingEvents", state.pending_events().into())?;
+        set(
+            "edid",
+            js_sys::Uint8Array::from(state.edid().as_slice()).into(),
+        )?;
+        set("resourceCount", (state.resources.len() as f64).into())?;
+        set(
+            "resourceBytes",
+            (state.resources.accounted_bytes() as f64).into(),
+        )?;
+        let scanout = state
+            .scanout_resource
+            .and_then(|id| state.resources.get(id).map(|r| (id, r)));
+        set(
+            "scanoutResource",
+            scanout.map_or(JsValue::NULL, |(id, _)| id.into()),
+        )?;
+        set(
+            "scanoutWidth",
+            scanout.map_or(JsValue::NULL, |(_, r)| r.width.into()),
+        )?;
+        set(
+            "scanoutHeight",
+            scanout.map_or(JsValue::NULL, |(_, r)| r.height.into()),
+        )?;
+        Ok(result.into())
     }
 
     /// E5-T20e: report whether this guest owns the page-provided ring sink. Kept separate from

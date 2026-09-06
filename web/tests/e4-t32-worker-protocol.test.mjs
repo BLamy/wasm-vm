@@ -43,6 +43,9 @@ function fakeController(events, done) {
     whenDone: done,
     restoredFromBootSnapshot: () => true,
     sendInput(bytes) { events.push(["input", [...bytes]]); },
+    setDisplay: (width, height) => width === 1367 && height === 901,
+    displayStats: () => ({ advertisedWidth: 1367, advertisedHeight: 901, scanoutResource: null,
+      edid: Uint8Array.of(0, 255) }),
     sendKeyboardEvent: (eventType, code, value) => events.push(["keyboard", eventType, code, value]),
     syncKeyboard: () => events.push("keyboard-sync"),
     sendTabletEvent: (eventType, code, value) => events.push(["tablet", eventType, code, value]),
@@ -215,6 +218,7 @@ test("every explicit controller method crosses the runtime and no-provider Tails
   invoked.length = 0;
   try {
     const args = {
+      setDisplay: [1367, 901],
       sendKeyboardEvent: [1, 30, 1],
       syncKeyboard: [],
       sendTabletEvent: [3, 0, 12],
@@ -241,6 +245,9 @@ test("every explicit controller method crosses the runtime and no-provider Tails
       results.set(method, await controller[method](...(args[method] ?? [])));
     }
     assert.deepEqual([...invoked], LINUX_CONTROLLER_METHODS);
+    assert.equal(results.get("setDisplay"), true);
+    assert.deepEqual(results.get("displayStats"), { advertisedWidth: 1367, advertisedHeight: 901,
+      scanoutResource: null, edid: Uint8Array.of(0, 255) });
     assert.deepEqual(events.slice(0, 2), [["keyboard", 1, 30, 1], "keyboard-sync"]);
     assert.equal(results.get("tailscaleCommand"), false);
     assert.deepEqual([...results.get("takeFileDownloadChunk")], [9, 10]);

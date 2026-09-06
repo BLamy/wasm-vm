@@ -928,6 +928,13 @@ verify-E5-T18d:
 	E5_T18D_IMAGE_DIR="$(E5_T18D_IMAGE_DIR)" E5_T18D_DESKTOP_ASSET_DIR="$(E5_T18D_DESKTOP_ASSET_DIR)" node tools/verify/e5-t18d-desktop-recovery.mjs
 
 .PHONY: verify-E5-T18e
+.PHONY: verify-E5-T22a
+verify-E5-T22a:
+	cargo test -p wasm-vm-core dev::virtio::gpu::tests::set_display -- --nocapture
+	wasm-pack test --node crates/wasm --lib -- --nocapture
+	node --test web/tests/e4-t32-worker-protocol.test.mjs
+	node tools/verify/e5-t22a-display-hotplug.mjs
+
 verify-E5-T18e:
 	node --check tools/verify/e5-t18e-desktop-bringup.mjs
 	node --test tools/verify/e5-t18e-publication.test.mjs tools/verify/e5-t18e-verifier.test.mjs tools/verify/e5-t18e-cache.test.mjs tools/verify/e5-t18e-cache-verifier.test.mjs tools/verify/e5-t18d-surface.test.mjs

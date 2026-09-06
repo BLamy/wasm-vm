@@ -364,6 +364,11 @@ impl GpuState {
         (self.display_width, self.display_height)
     }
 
+    /// Pending guest-visible config events, without clearing or signalling them.
+    pub fn pending_events(&self) -> u32 {
+        self.events_read
+    }
+
     /// Current preferred refresh rate in hertz.
     pub fn display_refresh_hz(&self) -> u32 {
         self.display_refresh_hz

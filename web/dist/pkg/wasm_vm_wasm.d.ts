@@ -83,6 +83,11 @@ export class WasmLinux {
      */
     displayReady(): boolean;
     /**
+     * Inspect actual GPU state. Advertised dimensions and bound resource dimensions are
+     * deliberately separate: only guest SET_SCANOUT can change the latter. EDID is a copy.
+     */
+    displayStats(): any;
+    /**
      * E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
      * arm tier-up. The accelerated interpreter remains the fallback for cold/untranslatable blocks;
      * the caller gates this on `crossOriginIsolated`.
@@ -315,6 +320,11 @@ export class WasmLinux {
      * persistent path. Returns true if a disk flag was flipped.
      */
     setDiskReadOnly(): boolean;
+    /**
+     * Request a preferred display mode. This does not resize a guest resource or claim the
+     * compositor has adopted the mode. Validate both JS values before borrowing/mutating state.
+     */
+    setDisplay(width: any, height: any): boolean;
     /**
      * E4-T39: toggle generated dynamic-return (`jalr`) chaining independently of static regions.
      */
@@ -597,6 +607,7 @@ export interface InitOutput {
     readonly wasmlinux_dismissFileDownload: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_dismissFileUpload: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_displayReady: (a: number) => [number, number, number];
+    readonly wasmlinux_displayStats: (a: number) => [number, number, number];
     readonly wasmlinux_enableJit: (a: number, b: number) => [number, number];
     readonly wasmlinux_enableJitWithPolicy: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_fetchPending: (a: number) => any;
@@ -635,6 +646,7 @@ export interface InitOutput {
     readonly wasmlinux_sendTabletEvent: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_setChaining: (a: number, b: number) => [number, number];
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
+    readonly wasmlinux_setDisplay: (a: number, b: any, c: any) => [number, number, number];
     readonly wasmlinux_setDynamicChaining: (a: number, b: number) => [number, number];
     readonly wasmlinux_setFastInterpreter: (a: number, b: number) => [number, number];
     readonly wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];
