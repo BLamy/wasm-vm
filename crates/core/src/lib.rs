@@ -952,7 +952,8 @@ impl Machine {
     /// E4-T10: install a compiled-block executor (a native/browser JIT runtime). The run loop
     /// drives it once the JIT is enabled and the block cache is on. Installing a fresh executor
     /// (or replacing one) drops any previously compiled state by construction.
-    pub fn set_executor(&mut self, executor: jit::BoxedExecutor) {
+    pub fn set_executor(&mut self, mut executor: jit::BoxedExecutor) {
+        executor.set_entry_timing(self.profiling);
         self.executor = Some(executor);
     }
 
@@ -1847,6 +1848,9 @@ impl Machine {
     /// loop's sampling is a single not-taken branch per retire.
     pub fn set_profiling(&mut self, on: bool) {
         self.profiling = on;
+        if let Some(executor) = self.executor.as_mut() {
+            executor.set_entry_timing(on);
+        }
         if on {
             self.prof_countdown = PROF_STRIDE_BASE;
         }

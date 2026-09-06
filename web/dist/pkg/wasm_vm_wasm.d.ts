@@ -463,6 +463,11 @@ export class WasmMachine {
      */
     setDynamicChaining(on: boolean): void;
     /**
+     * Arm or disarm the same profiler used by the Linux wrapper. Browser-JIT entry clocks follow
+     * this state, while their deterministic structural counters remain enabled in both modes.
+     */
+    setProfiling(on: boolean): boolean;
+    /**
      * Enable or disable canonical instruction tracing (appended to an internal buffer;
      * drain it with `takeTrace`).
      */
@@ -671,6 +676,7 @@ export interface InitOutput {
     readonly wasmmachine_setChaining: (a: number, b: number) => [number, number];
     readonly wasmmachine_setConsole: (a: number, b: any) => [number, number];
     readonly wasmmachine_setDynamicChaining: (a: number, b: number) => [number, number];
+    readonly wasmmachine_setProfiling: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_setTrace: (a: number, b: number) => [number, number];
     readonly wasmmachine_stateDigest: (a: number) => [number, number, number, number];
     readonly wasmmachine_step: (a: number, b: number) => [number, number, number];

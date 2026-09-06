@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 283,
-    "total": 444
+    "total": 445
   },
   "epics": [
     {
@@ -20300,7 +20300,8 @@
       "depends_on": [
         "E5-T22b",
         "E5-T22e",
-        "E5-T22f"
+        "E5-T22f",
+        "E5-T22g"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -20332,18 +20333,18 @@
       "activity": [
         {
           "date": "2026-09-06",
-          "commits": 14,
+          "commits": 15,
           "labels": [
+            "chore(e5-t22g): activate JIT entry timer gate",
             "test(e5-t22c): bind resize CPU evidence and isolate PMP audit prerequisite",
             "test(e5-t22c): isolate resize CPU sampling and retain diagnostic guests",
-            "test(e5-t22c): freeze committed image publication inputs",
-            "perf(e5-t22c): avoid rerasterizing wallpaper on each resize"
+            "test(e5-t22c): freeze committed image publication inputs"
           ]
         }
       ],
       "firstActivity": "2026-09-06",
       "lastActivity": "2026-09-06",
-      "commitCount": 14
+      "commitCount": 15
     },
     {
       "id": "E5-T22d",
@@ -20511,6 +20512,56 @@
       "firstActivity": "2026-09-06",
       "lastActivity": "2026-09-06",
       "commitCount": 8
+    },
+    {
+      "id": "E5-T22g",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Gate browser-JIT entry timing behind explicit profiling",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5-T22f"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Remove high-frequency `performance.now()` sampling from the normal browser-JIT\nentry path while preserving the structural cost ledger and exact guest behavior.\nTiming remains available when profiling is explicitly enabled. This is a measured\nE5-T22c prerequisite, not a claim that resize now meets two seconds.",
+      "criteria": [
+        {
+          "text": "In an actual browser Web Worker with profiling off, compiled execution and all deterministic entry-work counters remain live while entry-timer reads and entry nanoseconds remain exactly zero. Prove this in Chromium and Firefox; WebKit is outside this task.",
+          "checked": false
+        },
+        {
+          "text": "Enabling profiling before or after JIT attachment arms entry timing; disabling stops new reads immediately; re-enabling resumes them. Replacing an executor preserves the machine's current profiling state.",
+          "checked": false
+        },
+        {
+          "text": "Identical fixed-retirement runs with timing off/on have equal outcomes, architectural registers and RAM digests. The default-off worker path still executes compiled blocks, and the profiling-on control records real reads.",
+          "checked": false
+        },
+        {
+          "text": "The built demo passes 126/126 with zero browser/HTTP errors. Re-run the unchanged v7 desktop without either profiler, report all seven resize timings and retain client/mode/EDID/scanout/canvas agreement. Do not mark E5-T22c verified unless its own two-second gate passes.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-06 — worker — in-progress\n\nE5-T22f is independently verified. Its profiler-enabled maximum-resize capture\nreduced PMP synchronization from 30.71% to 0.35%, then attributed 13.46% of total\nsampled CPU to `performance.now()` through the browser-JIT entry timer. Source\ninspection confirms the executor constructs and reads that timer even when the\nmachine profiler is off. Isolate that diagnostic clock behind the existing\nprofiling control; preserve C's complete timing requirement and immutable v7\ndesktop evidence.",
+      "adversarial": "Exercise profiling-before-executor, executor-before-profiling, disable/re-enable,\nand executor replacement. Require independent timer-read deltas so zero elapsed\nnanoseconds cannot masquerade as zero clock calls. Sabotage the default gate to\nenabled and require the profiling-off browser test to fail. Compare fixed guest\nstate after the same work under both timing modes, and verify that guest/device\nclocks and scheduler budgets are not routed through this diagnostic switch.",
+      "file": "tasks/epic-5-the-window/E5-T22g-jit-entry-timer-gate.md",
+      "activity": [
+        {
+          "date": "2026-09-06",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t22g): activate JIT entry timer gate"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-06",
+      "lastActivity": "2026-09-06",
+      "commitCount": 1
     },
     {
       "id": "E5-T23",

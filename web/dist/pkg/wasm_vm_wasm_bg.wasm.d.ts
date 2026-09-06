@@ -89,6 +89,7 @@ export const wasmmachine_run: (a: number, b: number) => [number, number, number]
 export const wasmmachine_setChaining: (a: number, b: number) => [number, number];
 export const wasmmachine_setConsole: (a: number, b: any) => [number, number];
 export const wasmmachine_setDynamicChaining: (a: number, b: number) => [number, number];
+export const wasmmachine_setProfiling: (a: number, b: number) => [number, number, number];
 export const wasmmachine_setTrace: (a: number, b: number) => [number, number];
 export const wasmmachine_stateDigest: (a: number) => [number, number, number, number];
 export const wasmmachine_step: (a: number, b: number) => [number, number, number];

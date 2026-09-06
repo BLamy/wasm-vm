@@ -92,26 +92,32 @@ fn new_entry_timer() -> Option<EntryTimer> {
     }
 }
 
-fn timer_now(timer: *const EntryTimer) -> u64 {
+fn timer_now(timer: *const EntryTimer, entry_cost: *mut JitEntryCostStats) -> u64 {
     #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
     {
         if timer.is_null() {
             0
         } else {
             use wasm_vm_core::prof::HostTimer;
-            // SAFETY: the pointer is borrowed from the executor for one synchronous compiled call.
-            unsafe { (&*timer).now_ns() }
+            // SAFETY: both pointers are borrowed from the executor for one synchronous compiled
+            // call. A non-null timer is published only while the entry ledger is live.
+            unsafe {
+                if !entry_cost.is_null() {
+                    (*entry_cost).timer_reads = (*entry_cost).timer_reads.saturating_add(1);
+                }
+                (&*timer).now_ns()
+            }
         }
     }
     #[cfg(any(not(target_arch = "wasm32"), feature = "zicsr-stub"))]
     {
-        let _ = timer;
+        let _ = (timer, entry_cost);
         0
     }
 }
 
-fn timer_delta(timer: *const EntryTimer, start: u64) -> u64 {
-    timer_now(timer).saturating_sub(start)
+fn timer_delta(timer: *const EntryTimer, entry_cost: *mut JitEntryCostStats, start: u64) -> u64 {
+    timer_now(timer, entry_cost).saturating_sub(start)
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -737,7 +743,7 @@ fn note_device_boundary(start_ns: u64) {
         (*entry_cost).device_boundaries = (*entry_cost).device_boundaries.saturating_add(1);
         (*entry_cost).device_boundary_ns = (*entry_cost)
             .device_boundary_ns
-            .saturating_add(timer_delta(timer, start_ns));
+            .saturating_add(timer_delta(timer, entry_cost, start_ns));
     }
 }
 
@@ -753,7 +759,10 @@ fn publish_inline_tlb(addr: u64, pa: u64, write: bool) {
 fn with_ctx_load(addr: i64, kind: i32) -> i64 {
     with_ctx(|h, b| {
         let addr = addr as u64;
-        let started = HOST.with(|context| timer_now(context.borrow().timer));
+        let started = HOST.with(|context| {
+            let context = context.borrow();
+            timer_now(context.timer, context.entry_cost)
+        });
         let value = h.jit_load(b, addr, kind)?;
         let inline = HOST.with(|context| !context.borrow().inline_tlb.is_null());
         if inline {
@@ -776,7 +785,10 @@ fn with_ctx_load(addr: i64, kind: i32) -> i64 {
 
 fn with_ctx_store(addr: i64, val: i64, width: i32) {
     let addr = addr as u64;
-    let started = HOST.with(|context| timer_now(context.borrow().timer));
+    let started = HOST.with(|context| {
+        let context = context.borrow();
+        timer_now(context.timer, context.entry_cost)
+    });
     let barrier = with_ctx(|h, b| {
         let ram_phys = h.jit_store_with_ram_phys(b, addr, val, width)?;
         // A slow-path store is the write-TLB refill. Misaligned stores deliberately do not fill:
@@ -1179,7 +1191,7 @@ impl BrowserExecutor {
             dynamic_hits: 0,
             dynamic_refusals: 0,
             entry_cost: JitEntryCostStats::default(),
-            entry_timer: new_entry_timer(),
+            entry_timer: None,
             chaining: true,
             dynamic_chaining: true,
             chain_depth_budget: CHAIN_DEPTH_BUDGET_DEFAULT,
@@ -1466,7 +1478,7 @@ impl BrowserExecutor {
         timer: *const EntryTimer,
     ) -> Option<JitExit> {
         let state_base = if let Some(state) = state {
-            let started = timer_now(timer);
+            let started = timer_now(timer, entry_cost);
             let bytes = handoff.copy_into_module(state, hart);
             if !entry_cost.is_null() {
                 // SAFETY: the caller gives us the executor-owned ledger for this synchronous call.
@@ -1477,12 +1489,12 @@ impl BrowserExecutor {
                         (*entry_cost).state_copy_bytes.saturating_add(bytes);
                     (*entry_cost).state_copy_ns = (*entry_cost)
                         .state_copy_ns
-                        .saturating_add(timer_delta(timer, started));
+                        .saturating_add(timer_delta(timer, entry_cost, started));
                 }
             }
             0
         } else {
-            let started = timer_now(timer);
+            let started = timer_now(timer, entry_cost);
             let bytes = handoff.prepare(hart);
             if !entry_cost.is_null() {
                 // SAFETY: the caller gives us the executor-owned ledger for this synchronous call.
@@ -1493,7 +1505,7 @@ impl BrowserExecutor {
                         (*entry_cost).state_copy_bytes.saturating_add(bytes);
                     (*entry_cost).state_copy_ns = (*entry_cost)
                         .state_copy_ns
-                        .saturating_add(timer_delta(timer, started));
+                        .saturating_add(timer_delta(timer, entry_cost, started));
                 }
             }
             handoff.state_base()
@@ -1528,7 +1540,7 @@ impl BrowserExecutor {
         let Some(code) = code else {
             if let Some(trap) = fault {
                 if let Some(state) = state {
-                    let started = timer_now(timer);
+                    let started = timer_now(timer, entry_cost);
                     let bytes = handoff.copy_from_module(state, hart, direct_chain);
                     if !entry_cost.is_null() {
                         // SAFETY: the caller gives us the executor-owned ledger for this synchronous call.
@@ -1539,11 +1551,11 @@ impl BrowserExecutor {
                                 (*entry_cost).state_copy_bytes.saturating_add(bytes);
                             (*entry_cost).state_copy_ns = (*entry_cost)
                                 .state_copy_ns
-                                .saturating_add(timer_delta(timer, started));
+                                .saturating_add(timer_delta(timer, entry_cost, started));
                         }
                     }
                 } else {
-                    let started = timer_now(timer);
+                    let started = timer_now(timer, entry_cost);
                     let bytes = handoff.commit_registers(hart, direct_chain);
                     if !entry_cost.is_null() {
                         // SAFETY: the caller gives us the executor-owned ledger for this synchronous call.
@@ -1554,7 +1566,7 @@ impl BrowserExecutor {
                                 (*entry_cost).state_copy_bytes.saturating_add(bytes);
                             (*entry_cost).state_copy_ns = (*entry_cost)
                                 .state_copy_ns
-                                .saturating_add(timer_delta(timer, started));
+                                .saturating_add(timer_delta(timer, entry_cost, started));
                         }
                     }
                 }
@@ -1573,7 +1585,7 @@ impl BrowserExecutor {
         };
 
         if let Some(state) = state {
-            let started = timer_now(timer);
+            let started = timer_now(timer, entry_cost);
             let bytes = handoff.copy_from_module(state, hart, direct_chain);
             if !entry_cost.is_null() {
                 // SAFETY: the caller gives us the executor-owned ledger for this synchronous call.
@@ -1584,11 +1596,11 @@ impl BrowserExecutor {
                         (*entry_cost).state_copy_bytes.saturating_add(bytes);
                     (*entry_cost).state_copy_ns = (*entry_cost)
                         .state_copy_ns
-                        .saturating_add(timer_delta(timer, started));
+                        .saturating_add(timer_delta(timer, entry_cost, started));
                 }
             }
         } else {
-            let started = timer_now(timer);
+            let started = timer_now(timer, entry_cost);
             let bytes = handoff.commit_registers(hart, direct_chain);
             if !entry_cost.is_null() {
                 // SAFETY: the caller gives us the executor-owned ledger for this synchronous call.
@@ -1599,7 +1611,7 @@ impl BrowserExecutor {
                         (*entry_cost).state_copy_bytes.saturating_add(bytes);
                     (*entry_cost).state_copy_ns = (*entry_cost)
                         .state_copy_ns
-                        .saturating_add(timer_delta(timer, started));
+                        .saturating_add(timer_delta(timer, entry_cost, started));
                 }
             }
         }
@@ -1927,10 +1939,13 @@ impl CompiledBlockExecutor for BrowserExecutor {
             .map_or(core::ptr::null_mut(), |cache| cache as *mut InlineTlbCache);
         let compiled_pages = &self.compiled_pages as *const HashMap<u64, usize>;
         let direct_chaining = self.abi.direct_chain && self.chaining && allow_chaining;
-        let entry_timer = self
-            .entry_timer
-            .as_ref()
-            .map_or(core::ptr::null(), |timer| timer as *const EntryTimer);
+        let entry_timer = if self.entry_cost.timing_enabled {
+            self.entry_timer
+                .as_ref()
+                .map_or(core::ptr::null(), |timer| timer as *const EntryTimer)
+        } else {
+            core::ptr::null()
+        };
         if self.abi.direct_chain {
             self.handoff.image.begin_chain(
                 direct_chaining,
@@ -1954,7 +1969,8 @@ impl CompiledBlockExecutor for BrowserExecutor {
             self.clock = self.clock.wrapping_add(1);
             batch.last_tick = self.clock;
             self.entry_cost.host_entries = self.entry_cost.host_entries.saturating_add(1);
-            let started = timer_now(entry_timer);
+            let entry_cost = core::ptr::from_mut(&mut self.entry_cost);
+            let started = timer_now(entry_timer, entry_cost);
             let exit = Self::invoke(
                 &compiled.run,
                 batch.state.as_ref(),
@@ -1965,13 +1981,13 @@ impl CompiledBlockExecutor for BrowserExecutor {
                 compiled_pages,
                 chain_abort,
                 self.abi.direct_chain,
-                &mut self.entry_cost,
+                entry_cost,
                 entry_timer,
             );
             self.entry_cost.engine_entry_ns = self
                 .entry_cost
                 .engine_entry_ns
-                .saturating_add(timer_delta(entry_timer, started));
+                .saturating_add(timer_delta(entry_timer, entry_cost, started));
             exit
         };
         // The generated module keeps per-invocation probe counters in the shared chain header.
@@ -2165,6 +2181,13 @@ impl CompiledBlockExecutor for BrowserExecutor {
 
     fn entry_cost_stats(&self) -> JitEntryCostStats {
         self.entry_cost
+    }
+
+    fn set_entry_timing(&mut self, on: bool) {
+        if on && self.entry_timer.is_none() {
+            self.entry_timer = new_entry_timer();
+        }
+        self.entry_cost.timing_enabled = on && self.entry_timer.is_some();
     }
 
     fn note_jit_retired(&mut self, retired: u64) {

@@ -27,6 +27,7 @@ const controls = [
 ];
 
 const costKeys = [
+  "timerReads",
   "hostEntries",
   "stateCopyCalls",
   "stateCopyBytes",
@@ -221,6 +222,7 @@ async function runControl(browser, control, index) {
     const entryCost = costDelta(after.jit, before.jit);
     if (control.jit) {
       expect(entryCost.hostEntries).toBeGreaterThan(0);
+      expect(entryCost.timerReads).toBeGreaterThan(0);
       expect(entryCost.stateCopyCalls).toBeGreaterThan(0);
       expect(entryCost.stateCopyBytes).toBeGreaterThan(0);
       expect(entryCost.engineEntryNs).toBeGreaterThan(0);

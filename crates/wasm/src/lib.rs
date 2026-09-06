@@ -625,6 +625,12 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
             &JsValue::from_f64(v as f64),
         );
     };
+    let _ = js_sys::Reflect::set(
+        &entry_cost_obj,
+        &JsValue::from_str("timingEnabled"),
+        &JsValue::from_bool(entry_cost.timing_enabled),
+    );
+    set_entry_cost("timerReads", entry_cost.timer_reads);
     set_entry_cost("hostEntries", entry_cost.host_entries);
     set_entry_cost("stateCopyCalls", entry_cost.state_copy_calls);
     set_entry_cost("stateCopyBytes", entry_cost.state_copy_bytes);
@@ -849,6 +855,15 @@ impl WasmMachine {
     ) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         enable_browser_jit(&mut inner.machine, threshold, &residency_policy)
+    }
+
+    /// Arm or disarm the same profiler used by the Linux wrapper. Browser-JIT entry clocks follow
+    /// this state, while their deterministic structural counters remain enabled in both modes.
+    #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+    #[wasm_bindgen(js_name = setProfiling)]
+    pub fn set_profiling(&self, on: bool) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        Ok(set_machine_profiling(&mut inner.machine, on))
     }
 
     /// E4-T39: toggle static region chaining without rebuilding the generated modules.
@@ -1103,6 +1118,19 @@ impl wasm_vm_core::prof::HostTimer for JsHostTimer {
             (ms * 1_000_000.0) as u64
         }
     }
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+fn set_machine_profiling(machine: &mut Machine, on: bool) -> bool {
+    if on {
+        let Some(timer) = JsHostTimer::new() else {
+            return false;
+        };
+        machine.set_host_timer(std::rc::Rc::new(timer));
+    } else {
+        machine.set_profiling(false);
+    }
+    true
 }
 
 /// E5-T19d: the browser's monotonic performance clock also drives virtio-snd queue pacing. It is
@@ -2747,18 +2775,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = setProfiling)]
     pub fn set_profiling(&self, on: bool) -> Result<bool, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        if on {
-            match JsHostTimer::new() {
-                Some(timer) => {
-                    inner.machine.set_host_timer(std::rc::Rc::new(timer));
-                    Ok(true)
-                }
-                None => Ok(false),
-            }
-        } else {
-            inner.machine.set_profiling(false);
-            Ok(true)
-        }
+        Ok(set_machine_profiling(&mut inner.machine, on))
     }
 
     /// E4-T01: the accumulated profile as a plain JS object — `{ totalNs, sampleCount, walkCount,
