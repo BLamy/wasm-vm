@@ -126,7 +126,7 @@ try {
   await page.mouse.up();
   await page.waitForFunction(() => window.__desktopTerminal.state().active.launch?.terminalRendered === true, null, { timeout: timeoutMs });
   await page.evaluate(() => window.__desktopTerminal.finishLaunch());
-  await page.waitForFunction(() => window.__desktopCursor?.detectWindowChrome?.() !== null, null, { timeout: 60_000 });
+  await page.waitForFunction(() => window.__desktopCursor?.detectWindowChrome?.() !== null, null, { timeout: timeoutMs });
   await page.waitForTimeout(250);
 
   const runs = [];
