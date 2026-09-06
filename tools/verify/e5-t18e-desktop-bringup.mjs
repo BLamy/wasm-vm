@@ -105,6 +105,7 @@ if (reuseBuild) {
   buildProvenance = { mode: "incremental-proof-repair", head: previous.head,
     sourceBindingSha256: previous.sourceBindingSha256, publicationRecordSha256: sha256(actual),
     buildInputsUnchanged: true, sourceDirectory: reuseBuild };
+  await run("npm", ["ci", "--prefix", "web", "--ignore-scripts", "--no-audit", "--no-fund"]);
 } else {
   await mkdir(imageDir);
   await copyFile("tools/image/e5-t18e/FILE-MANIFEST.txt", path.join(imageDir, "FILE-MANIFEST.txt"));
