@@ -27,6 +27,17 @@ test("content oracle reads native pixels, rejects absence and locates moved text
     for(let y=10;y<20;y++)for(let x=7;x<27;x++)bytes.set((x+y)%3?[20,40,80,255]:[245,231,190,255],4*(y*width+x));
     const found=inspectResizeContent();assert.equal(found.visible,true);assert.equal(found.left,7);assert.equal(found.top,10);
     assert.deepEqual([found.width,found.height],[20,10]);assert.equal(found.rgba.length,800);
+    // Actual small foot glyphs contain antialiased strokes, not fifty fully
+    // covered pixels. A 50% foreground/background blend is still visible text.
+    for(let y=10;y<20;y++)for(let x=7;x<27;x++)if((x+y)%3===0)bytes.set([133,136,135,255],4*(y*width+x));
+    assert.equal(inspectResizeContent().visible,true);
+    // A solid marker-colored rectangle, even with unrelated foreground text
+    // elsewhere, must not pass the content check.
+    for(let y=10;y<20;y++)for(let x=7;x<27;x++)bytes.set([20,40,80,255],4*(y*width+x));
+    for(let x=0;x<100;x++)bytes.set([245,231,190,255],4*x);
+    assert.equal(inspectResizeContent().visible,false);
+    for(let y=10;y<20;y++)for(let x=7;x<27;x++)if((x+y)%3===0)bytes.set([245,40,80,255],4*(y*width+x));
+    assert.equal(inspectResizeContent().visible,false,"unrelated red strokes are not the requested foreground");
     bytes.fill(0);assert.equal(inspectResizeContent().visible,false);
   }finally{delete globalThis.document;}
 });

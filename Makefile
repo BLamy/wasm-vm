@@ -944,6 +944,7 @@ verify-E5-T22c:
 	cargo build --release -p wasm-vm-cli
 	target/release/wasm-vm chunk target/e5-t22c/acceptance-image/alpine-rootfs.ext4 --out target/e5-t22c/chunks/acceptance
 	$(MAKE) web-dist
+	node tools/verify/e5-t22c-content-replay.mjs
 	node tools/verify/e5-t22c-guest-mode.mjs
 
 verify-E5-T22e:

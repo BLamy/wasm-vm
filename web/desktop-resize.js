@@ -45,6 +45,9 @@ try{
     manifestUrl:query.get("manifestUrl")||"./artifacts-alpine.json",mode:"chunked",
     imageManifestUrl:query.get("imageManifestUrl")||"./e5t22c-desktop/manifest.json",
     baseUrl:query.get("baseUrl")||"./e5t22c-desktop/",ramMib:256,bootargs,
+    // The selected desktop has no recorded prefetch profile. Do not request the
+    // unrelated headless Alpine profile (or silently tolerate its HTTP failure).
+    bootProfileUrl:null,
     bootSnapshot:false,persist:false,slirpNet:false,startPaused:true,
     fastInterpreter:true,jit:query.get("jit")!=="0",quantum:500000,
     onOutput(bytes){serial=(serial+decoder.decode(bytes,{stream:true})).slice(-1000000);document.getElementById("serial").textContent=serial.slice(-12000);},

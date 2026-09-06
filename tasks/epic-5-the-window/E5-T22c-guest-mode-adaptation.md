@@ -154,3 +154,24 @@ the earlier C branch and its failed iterations. Boot immutable v4 image SHA256
 with the reset-corrected Wasm. This image includes the fail-stop fix and terminal
 startup diagnostics. Measure visible client content and real mode adoption; do
 not waive or claim the still-unproven two-second performance criterion.
+
+### 2026-09-06 — worker — real initial mode held; repair antialias oracle
+
+Iteration at `f5a5d66f` boots the immutable v4 image with the reset-corrected
+Wasm. Real Wayland, all 128 DRM EDID bytes, GPU scanout and canvas agree on
+901x701; Weston PID 961 and foot PID 1018 are live. The terminal visibly prints
+WV_RESIZE_CONTENT_2026, but the recorder times out because its glyph detector
+requires 50 *exact* foreground-color pixels. The saved screenshot contains four
+fully covered pixels and 477 antialiased foreground/background mixtures. Preserve
+this non-acceptance recording in `evidence/e5-t22c/rejected-oracle-v4/`.
+
+Fix the pixel oracle to count the expected antialiased mixtures inside the exact
+marker-background bounds. Keep solid-background, unrelated outside text and
+wrong-color negative tests, plus an offline replay of the unchanged real PNG;
+the replay is not live-client or resize proof. Also disable the unrelated optional
+headless-Alpine prefetch-profile request, whose 404 was captured as an error.
+No guest image, renderer or emulator semantics change for these harness fixes.
+
+A separate source rebuild into `target/e5-t22c/acceptance-image` produces exactly
+the same ext4 SHA256 as v4, and the rebuilt ELF/custom-file/source bindings pass.
+The candidate lock remains outside the acceptance path until the real run passes.

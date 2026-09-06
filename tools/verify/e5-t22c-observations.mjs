@@ -39,9 +39,17 @@ export function inspectResizeContent() {
     if(data[i]===20&&data[i+1]===40&&data[i+2]===80){
       background++;left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);
     }
-    if(data[i]===245&&data[i+1]===231&&data[i+2]===190)foreground++;
   }
-  if(background<100||foreground<50)return {visible:false,background,foreground};
+  if(background<100)return {visible:false,background,foreground};
+  // Small glyphs may have almost no fully covered foreground pixels. Count
+  // antialiased mixtures of the two explicit terminal colors, only INSIDE the
+  // located background. Unrelated panel text cannot supply the glyph count.
+  for(let y=top;y<=bottom;y++)for(let x=left;x<=right;x++){
+    const i=4*(y*canvas.width+x);
+    const r=(data[i]-20)/225,g=(data[i+1]-40)/191,b=(data[i+2]-80)/110;
+    if(r>=.25&&r<=1.01&&Math.abs(r-g)<.12&&Math.abs(r-b)<.12)foreground++;
+  }
+  if(foreground<50)return {visible:false,background,foreground};
   const width=right-left+1,height=bottom-top+1,rgba=[];
   for(let y=top;y<=bottom;y++)rgba.push(...data.subarray(4*(y*canvas.width+left),4*(y*canvas.width+right+1)));
   return {visible:true,left,top,width,height,background,foreground,rgba};
