@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:59010/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.76",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5-T18e\nVERIFIED\n✕ Close\nPublish the desktop bring-up playbook and final boot proof\nEpic\nE5 — The Window\nStatus\nverified\nEstimate\nS\nDepends on\nE5-T18d\nGOAL\n\nTurn the completed local bring-up work into a reproducible, reviewed operating playbook and\nfinal rebuilt-artifact proof.\n\nACCEPTANCE CRITERIA (3/3)\n✓\nThe playbook covers every failure recorded by E5-T18a-d, including seatd/udev/permissions, runtime-directory, renderer, input/XKB, restart, and getty-fallback symptoms.\n✓\nThe exact rebuilt artifact is hash-bound in the report, and the local cache-disabled 25-boot gauntlet has no hang, black screen, missing cursor, or missing menu.\n✓\nThe report records cold and warm boot-to-desktop timings and the final verifier passes from the committed manifest with no undeclared hand edits to the image.\nVERIFICATION LOG — EVIDENCE\n### 2026-09-05 — coordinator — planned\n\nThis final S slice makes the debugging knowledge and exact rebuilt-boot proof durable before\ndownstream resize, performance, and capstone work can depend on T18.\n\n### 2026-09-06 — worker — STARTED\n\nConsolidate the verified T18a-d failure inventory without changing compositor/input\nsemantics. Freeze the complete existing package/custom-file manifests, rebuild the\nT18d recovery-enabled interactive image from those committed inputs in a fresh\nshared-folder clone, and bind 25 cache-disabled browser boots plus a cache-enabled\nprime/reload timing pair to that artifact. Independent machines, WebKit, and rr\nremain out of scope. Continue stacking; merge all PRs only at the Epic 5 milestone,\nthen reuse the prepared Omarchy filesystem, deploy production, and stop before E6.\n\n### 2026-09-06 — worker — IMPLEMENTED\n\nThe committed manifest rebuilt the selected interactive/recovery image from scratch\nin `/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo` at\n`9ed9e0d1c57daf64f6362193bc30b79482dd3258`. `make verify-E5-T18e` built the\nimage, native chunk tool, and browser WASM with inherited Rust/Cargo overrides\nscrubbed. The ext4 is SHA-256\n`e75b04caadd9616915b323497c92df1d5a9d11d55c877afcc95d208dde302416`;\nboth full manifests and all 8192 chunk positions match the committed locks.\nOriginal rebuild/functional evidence is preserved in `evidence/e5-t18e/initial/`.\nIts page-only cache counter did not prove dedicated-worker cache disabling, so\nthat first run is explicitly not the final cold-cache verdict.\n\nThe corrected observer ran in the separate clean clone\n`/Users/blamy/Documents/Codex/e5-t18e-cache-final.BHmnqG/repo`, frozen at\n`5506f2a514a6a7b90d83eafe8cf39e6d3ff4fd1b`, with:\n\n```sh\nE5_T18E_REQUIRE_HEAD=5506f2a514a6a7b90d83eafe8cf39e6d3ff4fd1b \\\n  E5_T18E_REUSE_BUILD=/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo \\\n  make verify-E5-T18e\n```\n\nExit 0: `E5T18E_PASS=25_COLD_2_WARM`. All 25 cold contexts and both warm\ncases rendered the desktop, the independently specified 94-pixel cursor, and a\nTerminal opened by a real launcher click, with zero browser errors. The 9478\nobserved cold worker chunk fetches all used the network, with no missing or cached\nresponses. Warm reload recorded 313 cached and 66 network responses. Each case has\ndesktop/Terminal PNGs and framebuffer hashes, guest architectural digests,\nscheduler/fetch state, raw UART, and complete worker ResourceTiming entries.\nCold times were 871.458–905.866 s (mean 884.350 s); warm prime/reload were\n870.966/898.055 s under 13-cold-plus-warm concurrent load. This is repeatability\nevidence, not an isolated performance or cache-speedup claim.\n\nFinal record: `evidence/e5-t18e/desktop-bringup.json`, SHA-256\n`e056f3ef0f3e0a4c682eb6e40138f8f2c4e30cceb56bcd19fc0a6d6ad9aacd31`.\nSource/runtime/publication binding:\n`d6ad7a2abba368bea58142ad8cb0d6f8881916dd048e4fdd4136c5dcb84dd290`.\n`publication.json`, `acceptance.log`, `cache-calibration.json`, `build.log`, and\n`browser-console.log` are copied byte-identically from that clone alongside all\n27 case recordings. The original rebuild's binding is\n`0e41e0d9f9fa9ccc3277867fc0146d5c4d856959e92b5de947bd52ded7a149c2`.\n\nThe fresh critic found and reproduced reuse-preflight gaps, not runtime failures.\nProof-only guard head `0d966c1fb8ef31e05c2bca52e1a191d9de235af3` binds the\nreference to Git and checks transitive build inputs, non-proof Makefile changes,\nand tracked/untracked/ignored Cargo/toolchain inputs in both checkouts. The critic\nconfirmed the actual frozen run met these stronger conditions; no image/runtime\nchange or repeat guest run was needed. See its `reuse-final-guard-review.md` and\npreceding preserved findings under `evidence/e5-t18e/verifier/`.\n\nAt that guard head, the following recorded 30 passing tests in\n`evidence/e5-t18e/guard-unit-tests.log` (SHA-256\n`ed56a3fba670db08b609c1961ae42b687308457772436d60bd8a982033977040`):\n\n```sh\nnode --check tools/verify/e5-t18e-desktop-bringup.mjs\nnode --test tools/verify/e5-t18e-publication.test.mjs tools/verify/e5-t18e-verifier.test.mjs tools/verify/e5-t18e-cache.test.mjs tools/verify/e5-t18e-cache-verifier.test.mjs tools/verify/e5-t18d-surface.test.mjs\n```\n\nThe playbook inventories T18a-d failures and distinguishes cold configuration\nfaults from post-readiness removal. Existing runtime/recovery verification carries\nforward unchanged. Await the fresh critic's final aggregate/PNG/cache audit;\nthe worker does not set `verified`. Production deployment and all merges remain\nheld until the requested Epic 5 completion milestone.\n\n### 2026-09-06 — fresh FINAL verifier — VERDICT: verified\n\nReviewed the task diff through `4f803aeadb9f61a55b5d9472b4df0b5e905e49b2`.\nPredeclared V1–V5 all HELD; full prediction/point citations, incremental carry,\ncoverage and waivers are in `evidence/e5-t18e/verifier/final-verdict.md`.\nThe read-only command\n`node evidence/e5-t18e/verifier/audit-final-v2.mjs /Users/blamy/Documents/Codex/e5-t18e-cache-final.BHmnqG/repo`\nexited 0. Its output `final-v2-audit.json` has SHA-256\n`c32f5c2bb22ae8ef34a345c6ff9ceadb3f1a3f17dbab9eabbd2fa56f757a1df1`.\n\nIndependently matched all 115 frozen raw files, 31 source and 15 runtime bindings,\n27 exact case labels, 54 PNG/framebuffer pairs, 27 reference 94-pixel cursors,\nUART byte counts/digests, positive retirement and distinct recorded guest states.\nInspected representatives of all 11 distinct PNG groups; desktop and opened foot\nwindows are visible (`final-v2-visual.json`). All 9478 cold worker fetches are\nnetwork transfers with zero cached/unknown responses; warm reload is 313 cached\nplus 66 network. Recomputed all timings and checked final acceptance.log:163 and\nthe unchanged 30-pass guard log. The final report/binding remain the worker's\n`e056f3ef…aacd31` / `d6ad7a2a…dd290` values above.\n\nCarried Kant's hash-preserved image/build, drills, publication, documentation,\ncache/sabotage and repaired-reuse results HELD. Historical initial functional\nproof remains explicitly qualified as not proving cache policy; completed v2\ncloses that gap. No guest boot, image build or unrelated suite was rerun.\nNo outstanding T18e findings. Parent owns the roadmap capability pip, single\nbuilt 126/0 verified-task smoke, PR work and later milestone deployment.\nADVERSARIAL VERIFICATION\nHave the fresh verifier run the documented failure drills using only the playbook: remove the\nvideo device, delete runtime-directory initialization, force gles2, and trigger three crashes.\nEach diagnosis must complete in five minutes and match a documented symptom/fix. Mutate the\npublished image or manifest after the rebuild; the verifier must reject the stale hash rather\nthan accepting dirty-image evidence. WebKit and independent machines are out of scope.\nsource: tasks/epic-5-the-window/E5-T18e-desktop-bringup-playbook.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:59010/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:59010/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:59010/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:59010/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:59010/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:59010/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:59010/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:59010/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:59010/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:59010/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:59010/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:59010/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "62ea49d63c4bdf462906a6907038d3ba25c27dec059cc2fb74bfe0a691ecff6a"
+}

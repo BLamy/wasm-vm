@@ -159,3 +159,20 @@ proof remains explicitly qualified as not proving cache policy; completed v2
 closes that gap. No guest boot, image build or unrelated suite was rerun.
 No outstanding T18e findings. Parent owns the roadmap capability pip, single
 built 126/0 verified-task smoke, PR work and later milestone deployment.
+
+### 2026-09-06 — coordinator — demo handoff complete
+
+After verifier commit `2bf5b4b3463884a051391c0a9c35347240e25e5e`, promoted
+the desktop cold-boot capability in `web/roadmap.js` to verified and rebuilt the
+deployable page with `make web-dist` (which runs `make web-build`). The WASM
+remains `f661a1f50299db159eee89fe92981da1749d23f2aff815210efb53e06b3aa239`.
+One built-page load passed:
+
+```sh
+E5_T18E_EVIDENCE_DIR=evidence/e5-t18e/verified-demo E5_T18E_DEMO_VERIFIED=1 node tools/verify/e5-t18e-demo-smoke.mjs
+```
+
+Recorded `verified-demo/demo-suite.json` and `.png`: 126 passed, 0 failed, zero
+console/page/HTTP errors; visible E5-T18e VERIFIED with 3/3 acceptance criteria.
+Deployment stays held until Epic 5 is complete and all PRs are merged, then the
+prepared Omarchy image is running. Continue with the resize slices; do not start E6.

@@ -142,7 +142,7 @@ export const ROADMAP = [
       { name: "Display/serial host chrome + PNG/WebM capture", status: "verified", evidence: "E5-T08: Chromium 131 + Firefox 132 live view toggle, reserved hotkey, readback-checked PNG, bounded WebM, and 50-toggle proof" },
       { name: "EDID / display info", status: "verified", evidence: "E5-T04: decoder-checked 128-byte EDID 1.4 blocks, dynamic pmode/EDID regeneration, negotiated GET_EDID, and coalesced display config IRQs" },
       { name: "Hardware cursor plane mode/lifecycle", status: "verified", evidence: "E5-T15d: independent checkerboard/hotspot, transform-only 500 Hz MOVE, delayed-present coalescing, oversize fallback, hide, and lifecycle proof" },
-      { name: "Desktop cold boot — wallpaper/panel/WM menu", status: "partial", evidence: "E5-T18a: local Chromium cache-disabled desktop readiness proof" },
+      { name: "Desktop cold boot — wallpaper/panel/WM menu", status: "verified", evidence: "E5-T18e: manifest-rebuilt image, 25 cache-disabled local Chromium boots plus warm prime/reload; real cursor and Terminal, all worker fetches observed, fresh verifier sign-off" },
       { name: "Desktop Terminal launcher + T12 keyboard", status: "verified", evidence: "E5-T18b: local Chromium menu/open/type/close proof" },
       { name: "Desktop cursor alignment + DPR hit-testing", status: "verified", evidence: "E5-T18c: four fresh local Chromium contexts, two window cycles each, exact guest cursor alignment and boundary hit-tests at DPR 1 and 2" },
       { name: "Bounded desktop recovery + tty1 fallback", status: "verified", evidence: "E5-T18d: three distinct rendered compositor attempts, bounded crash budget, and visible tty1 fallback in two fresh local Chromium boots; fresh verifier sign-off" },
