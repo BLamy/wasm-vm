@@ -39,6 +39,7 @@ const reuseBuild = process.env.E5_T18E_REUSE_BUILD ? path.resolve(process.env.E5
 let buildProvenance = { mode: "rebuilt" };
 const sources = {};
 const sourcePaths = [
+  "Makefile", "evidence/e5-t18e/initial/publication.json",
   "tools/image/desktop.sh", "tools/image/e5-t17a-desktop-packages.json", "tools/image/e5-t18d-desktop-image.json",
   "tools/image/e5-t18e/MANIFEST.txt", "tools/image/e5-t18e/FILE-MANIFEST.txt", "tools/rootfs.Dockerfile",
   "tools/build-rootfs.sh", "tools/rootfs-inner.sh", "tools/rootfs/start-desktop", "tools/rootfs/desktop-autologin",
@@ -77,18 +78,33 @@ if (reuseBuild) {
   // Incremental proof repair only: accept exactly the already recorded clean
   // rebuild, and refuse any change to its runtime/build inputs. This is not a
   // generic skip-build switch or a path to accept an arbitrary cached image.
-  const expected = await readFile("evidence/e5-t18e/initial/publication.json");
+  const expected = execFileSync("git", ["show", `${head}:evidence/e5-t18e/initial/publication.json`]);
+  assert.deepEqual(await readFile("evidence/e5-t18e/initial/publication.json"), expected, "working publication anchor differs from HEAD");
   const actual = await readFile(path.join(reuseBuild, "evidence/e5-t18e/publication.json"));
   assert.deepEqual(actual, expected, "reused build is not the committed initial rebuild");
   const previous = JSON.parse(actual);
   assert.equal(execFileSync("git", ["rev-parse", "HEAD"], { cwd: reuseBuild, encoding: "utf8" }).trim(), previous.head);
   assert.equal(sha256(JSON.stringify({ head: previous.head, sources: previous.sources,
     runtime: previous.runtime, publication: previous.publication })), previous.sourceBindingSha256);
-  const inputs = ["crates", "Cargo.toml", "Cargo.lock", "releases", "web", "tools/image",
-    "tools/rootfs", "tools/rootfs.Dockerfile", "tools/rootfs-inner.sh", "tools/build-rootfs.sh",
-    "tools/build-web-dist.sh", "tools/serve-dev.sh"];
+  const inputs = ["crates", "Cargo.toml", "Cargo.lock", ".cargo", "rust-toolchain", "rust-toolchain.toml",
+    "releases", "web", "tools", ":!tools/verify/e5-t18e*"];
+  // git diff cannot see newly introduced build overrides. Omit exclude-standard
+  // deliberately: ignored Cargo/toolchain files are overrides too.
+  for (const cwd of [repo, reuseBuild]) {
+    assert.equal(execFileSync("git", ["ls-files", "--others", "--", ".cargo", "rust-toolchain", "rust-toolchain.toml"],
+      { cwd, encoding: "utf8" }).trim(), "", `untracked Cargo/toolchain build inputs: ${cwd}`);
+  }
   execFileSync("git", ["diff", "--exit-code", previous.head, head, "--", ...inputs]);
   execFileSync("git", ["diff", "--exit-code", "HEAD", "--", ...inputs]);
+  // The first clean build refreshes generated dist manifests/service-worker
+  // version. Its actual reused dist files are rehashed below; source inputs in
+  // that checkout still have to match its recorded head.
+  execFileSync("git", ["diff", "--exit-code", "HEAD", "--", ...inputs, ":!web/dist"], { cwd: reuseBuild });
+  // Only this task's verification recipe may differ; image/native/web build
+  // recipes are themselves build inputs even when their called scripts match.
+  const withoutProofRecipe = (bytes) => bytes.toString("utf8").replace(/^verify-E5-T18e:\n(?:\t[^\n]*\n|\n)*/m, "verify-E5-T18e:\n");
+  assert.equal(withoutProofRecipe(execFileSync("git", ["show", `${previous.head}:Makefile`])),
+    withoutProofRecipe(await readFile("Makefile")), "non-proof Makefile build recipe changed");
   for (const [file, digest] of Object.entries(previous.sources)) {
     assert.equal(await hashFile(path.join(reuseBuild, file)), digest, `reused build source drift: ${file}`);
   }

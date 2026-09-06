@@ -930,7 +930,7 @@ verify-E5-T18d:
 .PHONY: verify-E5-T18e
 verify-E5-T18e:
 	node --check tools/verify/e5-t18e-desktop-bringup.mjs
-	node --test tools/verify/e5-t18e-publication.test.mjs tools/verify/e5-t18e-verifier.test.mjs tools/verify/e5-t18e-cache.test.mjs tools/verify/e5-t18d-surface.test.mjs
+	node --test tools/verify/e5-t18e-publication.test.mjs tools/verify/e5-t18e-verifier.test.mjs tools/verify/e5-t18e-cache.test.mjs tools/verify/e5-t18e-cache-verifier.test.mjs tools/verify/e5-t18d-surface.test.mjs
 	node tools/verify/e5-t18e-desktop-bringup.mjs
 
 .PHONY: verify-E3-T12a
