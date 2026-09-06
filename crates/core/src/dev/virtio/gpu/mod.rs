@@ -522,14 +522,9 @@ impl GpuState {
 
     fn reset(&mut self) {
         self.events_read = 0;
-        self.display_width = DEFAULT_DISPLAY_WIDTH;
-        self.display_height = DEFAULT_DISPLAY_HEIGHT;
-        self.display_refresh_hz = DEFAULT_DISPLAY_REFRESH_HZ;
-        self.edid = edid::edid_for(
-            DEFAULT_DISPLAY_WIDTH,
-            DEFAULT_DISPLAY_HEIGHT,
-            DEFAULT_DISPLAY_REFRESH_HZ,
-        );
+        // Device reset discards guest-owned queues/resources, not the physical
+        // host monitor. Linux resets the device during initial probe, after the
+        // browser has already supplied its viewport mode. Keep that mode/EDID.
         self.config_irq_pending = false;
         self.kicked = false;
         self.cursor_kicked = false;
@@ -3178,6 +3173,57 @@ mod tests {
     }
 
     #[test]
+    fn display_reset_preserves_host_monitor_but_clears_guest_state() {
+        let (mut gpu, state) = VirtioGpu::new_with_state();
+        let (_, fresh) = VirtioGpu::new_with_state();
+        let mut expected_edid = edid::edid_for(901, 701, 75);
+        for index in 0..1000 {
+            let width = 901 + index % 127;
+            let height = 701 + index % 79;
+            {
+                let mut state = state.borrow_mut();
+                state.set_display(width, height);
+                state.display_refresh_hz = 75;
+                state.edid = edid::edid_for(width, height, 75);
+                expected_edid = state.edid();
+                state
+                    .resources
+                    .create(17, protocol::FORMAT_B8G8R8A8_UNORM, 7, 5)
+                    .unwrap();
+                state
+                    .resources
+                    .attach_backing(17, alloc::vec![(DRAM_BASE + 0x1000, 140)])
+                    .unwrap();
+                state.scanout_resource = Some(17);
+                state.cursor_states[0] = CursorState {
+                    resource_id: 17,
+                    ..CursorState::hidden(0)
+                };
+                state.kicked = true;
+                state.cursor_kicked = true;
+                state.raise_event(VIRTIO_GPU_EVENT_DISPLAY);
+                assert_eq!(state.resources.accounted_bytes(), 140);
+            }
+            for _ in 0..2 {
+                VirtioDevice::reset(&mut gpu);
+                let state = state.borrow();
+                assert_eq!(state.display_size(), (width, height));
+                assert_eq!(state.display_refresh_hz, 75);
+                assert_eq!(state.edid(), expected_edid);
+                assert!(state.resources.is_empty());
+                assert_eq!(state.resources.accounted_bytes(), 0);
+                assert_eq!(state.scanout_resource, None);
+                assert_eq!(state.cursor_state(0), Some(CursorState::hidden(0)));
+                assert!(!state.kicked && !state.cursor_kicked && !state.config_irq_pending);
+                assert_eq!(state.events_read, 0);
+                assert!(state.reset_pending);
+            }
+        }
+        assert_eq!(fresh.borrow().display_size(), (1280, 800));
+        assert_ne!(fresh.borrow().edid(), expected_edid);
+    }
+
+    #[test]
     fn gpu_resources_lifecycle_device_reset_releases_resource_state() {
         let (mut gpu, state) = VirtioGpu::new_with_state();
         state.borrow_mut().set_display(1921, 1081);
@@ -3194,13 +3240,10 @@ mod tests {
         assert!(state.resources.is_empty());
         assert_eq!(state.resources.accounted_bytes(), 0);
         assert_eq!(state.scanout_resource, None);
-        assert_eq!(
-            state.display_size(),
-            (DEFAULT_DISPLAY_WIDTH, DEFAULT_DISPLAY_HEIGHT)
-        );
+        assert_eq!(state.display_size(), (1921, 1081));
         assert_eq!(
             state.edid(),
-            edid::edid_for(1280, 800, DEFAULT_DISPLAY_REFRESH_HZ)
+            edid::edid_for(1921, 1081, DEFAULT_DISPLAY_REFRESH_HZ)
         );
         assert_eq!(state.events_read, 0);
     }

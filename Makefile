@@ -930,6 +930,17 @@ verify-E5-T18d:
 .PHONY: verify-E5-T18e
 .PHONY: verify-E5-T22a
 .PHONY: verify-E5-T22b
+.PHONY: verify-E5-T22e
+verify-E5-T22e:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib --features gpu-trace -- --nocapture
+	wasm-pack test --node crates/wasm --lib -- --nocapture
+	$(MAKE) web-dist
+	node --check tools/verify/e5-t22e-display-reset.mjs
+	node tools/verify/e5-t22e-display-reset.mjs
+
 verify-E5-T22b:
 	node --check web/src/sink/viewport.js
 	node --check web/main.js

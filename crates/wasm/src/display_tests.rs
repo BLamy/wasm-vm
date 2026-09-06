@@ -178,3 +178,52 @@ fn display_hotplug_guest_trace_reads_event_after_request() {
         vm.state_digest().unwrap()
     );
 }
+
+#[wasm_bindgen_test]
+fn display_reset_guest_trace_preserves_monitor_and_releases_resources() {
+    // LUI t0,0x10008; SW zero,112(t0) resets device status; LW a0,256(t0).
+    let words = [0x1000_82b7u32, 0x0602_a823, 0x1002_a503, 0x0000_006f];
+    let kernel: Vec<u8> = words.iter().flat_map(|word| word.to_le_bytes()).collect();
+    for (width, height) in [(1, 1), (4095, 4095), (901, 701)] {
+        let vm = WasmLinux::new(
+            16,
+            &kernel,
+            &[],
+            String::new(),
+            js_sys::Function::new_no_args(""),
+            false,
+        )
+        .unwrap();
+        assert!(vm.set_display(width.into(), height.into()).unwrap());
+        let (_, gpu) = vm.inner.borrow().machine.virtio_gpu().unwrap();
+        gpu.borrow_mut()
+            .resources
+            .create(17, FORMAT_B8G8R8A8_UNORM, 7, 5)
+            .unwrap();
+        gpu.borrow_mut().scanout_resource = Some(17);
+        let edid = js_sys::Uint8Array::new(&field(&vm.display_stats().unwrap(), "edid")).to_vec();
+        let mut trace = wasm_vm_core::trace::VecSink::new();
+        vm.inner.borrow_mut().machine.run_traced(3, &mut trace);
+        assert_eq!(trace.records.len(), 3);
+        assert_eq!(trace.records[1].insn, words[1]);
+        assert_eq!(trace.records[1].mem.unwrap().addr, 0x1000_8070);
+        assert_eq!(trace.records[2].rd, Some((10, 0)));
+        let stats = vm.display_stats().unwrap();
+        assert_eq!(number(&stats, "advertisedWidth"), f64::from(width));
+        assert_eq!(number(&stats, "advertisedHeight"), f64::from(height));
+        assert_eq!(
+            js_sys::Uint8Array::new(&field(&stats, "edid")).to_vec(),
+            edid
+        );
+        assert_eq!(number(&stats, "pendingEvents"), 0.0);
+        assert_eq!(number(&stats, "resourceCount"), 0.0);
+        assert_eq!(number(&stats, "resourceBytes"), 0.0);
+        assert!(field(&stats, "scanoutResource").is_null());
+        wasm_bindgen_test::console_log!(
+            "E5-T22e reset {width}x{height}:\n{}state digest={}\nstats={}",
+            trace.canonical(),
+            vm.state_digest().unwrap(),
+            stats_json(&vm)
+        );
+    }
+}
