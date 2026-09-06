@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:59550/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.76",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5-T22g\nIN PROGRESS\n✕ Close\nGate browser-JIT entry timing behind explicit profiling\nEpic\nE5 — The Window\nStatus\nin progress\nEstimate\nS\nDepends on\nE5-T22f\nGOAL\n\nRemove high-frequency `performance.now()` sampling from the normal browser-JIT\nentry path while preserving the structural cost ledger and exact guest behavior.\nTiming remains available when profiling is explicitly enabled. This is a measured\nE5-T22c prerequisite, not a claim that resize now meets two seconds.\n\nACCEPTANCE CRITERIA (0/4)\n○\nIn an actual browser Web Worker with profiling off, compiled execution and all deterministic entry-work counters remain live while entry-timer reads and entry nanoseconds remain exactly zero. Prove this in Chromium and Firefox; WebKit is outside this task.\n○\nEnabling profiling before or after JIT attachment arms entry timing; disabling stops new reads immediately; re-enabling resumes them. Replacing an executor preserves the machine's current profiling state.\n○\nIdentical fixed-retirement runs with timing off/on have equal outcomes, architectural registers and RAM digests. The default-off worker path still executes compiled blocks, and the profiling-on control records real reads.\n○\nThe built demo passes 126/126 with zero browser/HTTP errors. Re-run the unchanged v7 desktop without either profiler, report all seven resize timings and retain client/mode/EDID/scanout/canvas agreement. Do not mark E5-T22c verified unless its own two-second gate passes.\nVERIFICATION LOG — EVIDENCE\n### 2026-09-06 — worker — in-progress\n\nE5-T22f is independently verified. Its profiler-enabled maximum-resize capture\nreduced PMP synchronization from 30.71% to 0.35%, then attributed 13.46% of total\nsampled CPU to `performance.now()` through the browser-JIT entry timer. Source\ninspection confirms the executor constructs and reads that timer even when the\nmachine profiler is off. Isolate that diagnostic clock behind the existing\nprofiling control; preserve C's complete timing requirement and immutable v7\ndesktop evidence.\nADVERSARIAL VERIFICATION\nExercise profiling-before-executor, executor-before-profiling, disable/re-enable,\nand executor replacement. Require independent timer-read deltas so zero elapsed\nnanoseconds cannot masquerade as zero clock calls. Sabotage the default gate to\nenabled and require the profiling-off browser test to fail. Compare fixed guest\nstate after the same work under both timing modes, and verify that guest/device\nclocks and scheduler budgets are not routed through this diagnostic switch.\nsource: tasks/epic-5-the-window/E5-T22g-jit-entry-timer-gate.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:59550/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:59550/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:59550/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:59550/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:59550/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:59550/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:59550/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:59550/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:59550/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:59550/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:59550/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:59550/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "086568f5e6056660edf2299c5b58805e607b85eb79232bb142816afe34a40ec6"
+}

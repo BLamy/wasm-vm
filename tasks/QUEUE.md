@@ -426,7 +426,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `522.2` [E5-T22b](epic-5-the-window/E5-T22b-viewport-letterboxing.md) — Debounce viewport and DPR changes with stale-frame letterboxing *(deps: E5-T22a)*
 - [x] `522.25` [E5-T22e](epic-5-the-window/E5-T22e-display-reset-retains-monitor.md) — Preserve the host monitor mode across guest GPU reset *(deps: E5-T22a, E5-T22b)*
 - [x] `522.29` [E5-T22f](epic-5-the-window/E5-T22f-pmp-privilege-audit.md) — Avoid redundant cached-code PMP audits across S/U transitions *(deps: E5-T22e)*
-- [~] `522.295` [E5-T22g](epic-5-the-window/E5-T22g-jit-entry-timer-gate.md) — Gate browser-JIT entry timing behind explicit profiling *(deps: E5-T22f)*
+- [?] `522.295` [E5-T22g](epic-5-the-window/E5-T22g-jit-entry-timer-gate.md) — Gate browser-JIT entry timing behind explicit profiling *(deps: E5-T22f)*
 - [b] `522.3` [E5-T22c](epic-5-the-window/E5-T22c-guest-mode-adaptation.md) — Apply guest desktop hotplug modes without restarting the compositor *(deps: E5-T22b, E5-T22e, E5-T22f, E5-T22g)*
 - [ ] `522.4` [E5-T22d](epic-5-the-window/E5-T22d-resize-torture.md) — Prove end-to-end resize storms, resource cleanup and reload boundaries *(deps: E5-T22c)*
 - [-] `523` [E5-T23](epic-5-the-window/E5-T23-guest-agent-channel.md) — virtio-console agent channel and static Rust guest agent *(deps: E5-T05c)*
