@@ -3,11 +3,19 @@ id: E5-T25
 epic: 5
 title: Performance harness — window-drag FPS and input-to-photon latency, measured
 priority: 525
-status: pending
+status: cancelled
 depends_on: [E5-T09e, E5-T18e]
 estimate: M
+risk: medium
 capstone: false
+decomposed_into: [E5-T25a, E5-T25b, E5-T25c, E5-T25d]
 ---
+
+> **DECOMPOSED 2026-09-06.** This M-sized planning container is cancelled before
+> implementation as required by task policy. The work is replaced by four ordered S
+> slices: T25a freezes the test-only instrumentation and injection boundary, T25b
+> measures drag FPS, T25c measures and calibrates input-to-photon latency, and T25d
+> publishes the baselines, bottleneck report, and regression gate.
 
 ## Goal
 Two repeatable, scripted measurements with committed baselines: (1) sustained FPS while
@@ -41,6 +49,23 @@ regressions, tolerates CI noise).
 - `docs/perf/desktop.md`: methodology, error sources (rAF quantization, compositor
   double-buffering), numbers on the dev machine.
 
+## Execution slices
+
+1. **E5-T25a — instrumentation and injection boundary.** Add the feature-gated
+   pointer/key injection hooks, present/damage telemetry, and a deterministic fixture
+   API. Prove release builds do not include the hooks.
+2. **E5-T25b — drag-FPS harness.** Drive a real Foot window through 300 smooth pointer
+   moves, count drawn presents rather than null-sink calls, and retain five runs with
+   coefficient of variation below 15% plus guest/transfer/present counters.
+3. **E5-T25c — input-to-photon harness.** Measure 100 focused-terminal keypresses to
+   the first intersecting presented damage rect, include rAF/vsync error bounds, and
+   calibrate the detector against a known 100 ms present delay and one high-frame-rate
+   screen recording.
+4. **E5-T25d — baseline and regression gate.** Combine T25b/T25c outputs into the
+   documented desktop baseline, publish the full latency histogram and bottleneck
+   attribution, and add a smoke gate that passes normally and fails under a 10x
+   present throttle.
+
 ## Acceptance criteria
 - [ ] Drag-FPS scenario runs unattended 5x with coefficient of variation < 15% on the
       dev machine (repeatability proven before any number is trusted).
@@ -69,4 +94,10 @@ bimodal distribution with a 500 ms mode that p95 happens to miss refutes the sum
 honesty; require the histogram in the report.
 
 ## Verification log
-(empty)
+
+### 2026-09-06 — coordinator — decomposed
+
+The M-sized performance container is cancelled before implementation. The children
+keep the host-observable metrics in one chain with one boundary and one deterministic
+acceptance command per slice; T25d is the only child that owns the published baseline
+and regression threshold. E5-T28 remains gated on the final T25 child.
