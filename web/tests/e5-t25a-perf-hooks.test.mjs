@@ -172,6 +172,27 @@ test("presentation telemetry records drawn damage and does not trust a null sink
   nullController.dispose();
 });
 
+test("hostile guest attribution cannot turn a drawn present into a drop", () => {
+  const records = [];
+  const controller = new PresentationController(new Canvas(), {
+    backendFactories: factories(true),
+    onPresent: (record) => records.push(record),
+    guestInstructions: () => ({
+      get retiredInstructions() { throw new Error("hostile getter"); },
+    }),
+  });
+  assert.equal(controller.present(frame()), true);
+  assert.equal(records[0].guestInstructions, null);
+  assert.equal(records[0].guestInstructionsTotal, null);
+  assert.deepEqual(controller.snapshot().gpu, {
+    framesReceived: 1, enqueued: 1, coalesced: 0, presented: 1, successfulPresents: 1,
+    skipped: 0, droppedFrames: 0, overruns: 0, pending: 0, maxPending: 0, uploadedBytes: 16,
+    drawnPresents: 1, drawnBytes: 16, width: 2, height: 2,
+  });
+  assert.match(controller.snapshot().errors[0], /hostile getter/);
+  controller.dispose();
+});
+
 test("bench JavaScript and editor projection stay byte-identical", () => {
   const directory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../bench");
   assert.equal(readFileSync(path.join(directory, "desktop-perf-hooks.js"), "utf8"),

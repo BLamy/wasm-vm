@@ -267,16 +267,16 @@ export class PresentationController {
 
   _guestInstructionAttribution() {
     if (!this._guestInstructions) return { total: null, delta: null };
-    let raw;
+    let value;
     try {
-      raw = this._guestInstructions();
+      const raw = this._guestInstructions();
+      value = raw !== null && typeof raw === "object"
+        ? raw.retiredInstructions ?? raw.guestInstructions
+        : raw;
     } catch (error) {
       this._errors.push(`guest instruction telemetry: ${String(error?.message || error)}`);
       return { total: null, delta: null };
     }
-    const value = raw !== null && typeof raw === "object"
-      ? raw.retiredInstructions ?? raw.guestInstructions
-      : raw;
     if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 0) {
       return { total: null, delta: null };
     }
