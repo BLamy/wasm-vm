@@ -4,11 +4,12 @@
 
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { spawn } from "node:child_process";
+import { execFile as execFileCallback, spawn } from "node:child_process";
 import { createServer } from "node:net";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { promisify } from "node:util";
 
 import {
   DRAG_MOVE_COUNT,
@@ -19,6 +20,7 @@ import {
 } from "../../web/bench/desktop-perf.js";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const execFile = promisify(execFileCallback);
 const out = path.resolve(process.env.E5_T25B_OUT || path.join(repo, "evidence/e5-t25b/browser"));
 const assetRoot = path.resolve(process.env.E5_T25B_ASSET_DIR || path.join(repo, "target/e5-t22c/chunks/desktop-solid-v7"));
 const imageInfoPath = path.resolve(process.env.E5_T25B_IMAGE_INFO || path.join(repo, "target/e5-t22c/desktop-image-solid-v7/desktop-info.json"));
@@ -55,6 +57,10 @@ const manifestSha256 = sha256(manifestBytes);
 const imageInfo = JSON.parse(await readFile(imageInfoPath, "utf8"));
 const imageSha256 = process.env.E5_T25B_IMAGE_SHA256 || imageInfo.image?.sha256;
 assert.match(imageSha256, /^[0-9a-f]{64}$/);
+const { stdout: headOutput } = await execFile("git", ["rev-parse", "--verify", "HEAD"], { cwd: repo });
+const head = headOutput.trim();
+assert.match(head, /^[0-9a-f]{40}$/, "runner must record an exact Git head");
+if (process.env.E5_T25B_REQUIRE_HEAD) assert.equal(head, process.env.E5_T25B_REQUIRE_HEAD);
 
 const cleanEnv = { ...process.env, E5_T18B_DESKTOP_ASSET_DIR: assetRoot };
 for (const key of Object.keys(cleanEnv)) {
@@ -159,6 +165,8 @@ try {
       presentDurationsMs: window.__desktopPerf.presentDurations(),
       pointerFrames: window.__desktopTerminal.state().pointerFrames,
     }));
+    const pointerFramesDelta = after.pointerFrames - before.pointerFrames;
+    assert.ok(pointerFramesDelta >= DRAG_MOVE_COUNT, `${index + 1}: fewer than 300 processed pointer moves`);
     if (firstRunRecords === null) firstRunRecords = after.records;
     const run = summarizeDragRun({
       runId: `drag-${String(index + 1).padStart(2, "0")}`,
@@ -172,7 +180,13 @@ try {
       deviceScaleFactor: Number(await page.evaluate(() => devicePixelRatio)),
       viewport: { width: 1440, height: 1050 },
     });
-    runs.push({ ...run, pointerFrames: after.pointerFrames, requestedMoves: pathPoints.length });
+    runs.push({
+      ...run,
+      pointerFramesBefore: before.pointerFrames,
+      pointerFrames: after.pointerFrames,
+      pointerFramesDelta,
+      requestedMoves: pathPoints.length,
+    });
     direction *= -1;
   }
   const aggregate = aggregateDragRuns(runs);
@@ -185,7 +199,7 @@ try {
   const result = {
     schema: "wasm-vm.e5-t25b-browser-v1",
     task: "E5-T25b",
-    head: process.env.E5_T25B_REQUIRE_HEAD || null,
+    head,
     browser: browser.version(),
     headed: process.env.E5_T25B_HEADLESS !== "1",
     viewport: { width: 1440, height: 1050 },
