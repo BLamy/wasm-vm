@@ -73,3 +73,29 @@ Activate the top eligible S prerequisite above C's preserved `03fdfb24`
 checkpoint. First instrument the existing slow audit in native unit tests and
 record the zero-work regression failing. Then add only an unchanged-revision
 S/U shortcut, preserving the slow M-mode audit and all invalidation logic.
+
+### 2026-09-06 — worker — narrow regression and implementation
+
+The old synchronization audits 128 instructions on the first S-to-U transition
+of a one-block cache (`evidence/e5-t22f/red-audit.log`); predicted work was zero.
+A test-only counter observes the existing audit loop and never controls a
+runtime decision. The shortcut requires both an unchanged effective PMP
+revision and exactly S-to-U or U-to-S. M-mode keeps the original audit; any
+revision change still takes full invalidation before the shortcut can apply.
+
+Three native unit tests now pass: 1000 transitions each at 1/16/128/2048 cached
+blocks do zero audit work; all four M-to/from-S/U directions inspect 2048 ops;
+simultaneous revision and S/U changes flush. Shared guest fixtures run genuine
+SRET/user-ECALL/delegated-trap cycles with byte-identical cache-on/off records,
+full hart snapshots and frozen pre-change trace hashes on native and actual
+Wasm. Revision revocation permits the entry but faults at 0x80000004 before
+x6 changes. A 1000-transition dirty-target restore sequence has matching traces.
+The additional actual-Wasm BrowserExecutor case requires compiled execution
+and identical full hart/RAM state after 1000 guest privilege cycles.
+
+Local scoped fmt/clippy and affected native/actual-Wasm suites pass. The wider
+browser-JIT suite passes 34 tests with its pre-existing long externref-churn
+test ignored; this task does not change handle lifetime or eviction. The first
+plain native lib invocation hit the known unrelated missing gpu-trace method;
+`precheck-missing-gpu-trace.log` preserves it and the prescribed feature-enabled
+run is used. Runtime/browser proof and final cold clone are still pending.

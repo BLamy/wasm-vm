@@ -1,0 +1,9 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+error[E0599]: no method named `cursorq_commands` found for struct `Ref<'_, virtio::gpu::GpuState>` in the current scope
+    --> crates/core/src/dev/virtio/gpu/mod.rs:2354:35
+     |
+2354 |         assert_eq!(state.borrow().cursorq_commands(), requests.len() as u64);
+     |                                   ^^^^^^^^^^^^^^^^ method not found in `Ref<'_, virtio::gpu::GpuState>`
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `wasm-vm-core` (lib test) due to 1 previous error

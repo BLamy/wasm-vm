@@ -379,6 +379,9 @@ pub struct Machine {
     /// are bypassed in M-mode but enforced in S/U-mode.
     pmp_revision_seen: u64,
     pmp_mode_seen: csr::Priv,
+    /// Test-only work counter; never consulted by runtime permission decisions.
+    #[cfg(all(test, not(feature = "zicsr-stub")))]
+    pmp_audited_ops: u64,
     /// E4-T08: hotness counters + translation-candidate discovery. The block cache learns to
     /// NOMINATE JIT candidates: each block entry bumps a saturating counter, and crossing the
     /// design-doc threshold enqueues a `TranslationRequest` (dedup'd, requeued after any
@@ -748,6 +751,8 @@ impl Machine {
             block_builds: 0,
             pmp_revision_seen: 0,
             pmp_mode_seen: csr::Priv::M,
+            #[cfg(all(test, not(feature = "zicsr-stub")))]
+            pmp_audited_ops: 0,
             // E4-T05 Phase C: batching is OFF by default even under `predecode` (the cache stays
             // byte-identical); it is opted in explicitly via `set_interrupt_batching`.
             interrupt_batching: false,
@@ -814,7 +819,9 @@ impl Machine {
     /// change is cheaper to audit: if every cached instruction has the same execute permission in
     /// the old and new modes, the physically keyed code remains valid and can be retained. This is
     /// the common full-grant case used by Linux; a split or mode-sensitive PMP map still takes the
-    /// conservative flush path. The check stays off the steady-state path except at mode changes.
+    /// conservative flush path. S and U have identical PMP checks, so their transition needs no
+    /// per-instruction audit while the PMP revision is unchanged. This does not skip MMU/PTE
+    /// permission checks, which still use the actual current privilege at instruction fetch.
     #[cfg(not(feature = "zicsr-stub"))]
     fn sync_pmp_code_permissions(&mut self) {
         let revision = self.hart.csr.pmp.revision();
@@ -823,10 +830,23 @@ impl Machine {
             return;
         }
         if revision == self.pmp_revision_seen
+            && matches!(
+                (self.pmp_mode_seen, mode),
+                (csr::Priv::S, csr::Priv::U) | (csr::Priv::U, csr::Priv::S)
+            )
+        {
+            self.pmp_mode_seen = mode;
+            return;
+        }
+        if revision == self.pmp_revision_seen
             && mode != self.pmp_mode_seen
             && self.block_cache.live_blocks().all(|block| {
                 let mut pc = block.phys_start;
                 block.ops.iter().all(|op| {
+                    #[cfg(test)]
+                    {
+                        self.pmp_audited_ops += 1;
+                    }
                     let len = u64::from(op.len);
                     let old_ok = self.hart.csr.pmp_ok(
                         pc,
@@ -4170,6 +4190,9 @@ fn kernel_image_footprint(bytes: &[u8]) -> u64 {
     }
     file_len
 }
+
+#[cfg(all(test, not(feature = "zicsr-stub")))]
+mod pmp_audit_tests;
 
 #[cfg(test)]
 mod tests {
