@@ -214,3 +214,22 @@ runtime to the frozen commit, with kernel bytes bound to the committed manifest;
 unrelated task/deployment dirt is excluded. Regression tests cover dirty/staged
 imported code and inherited iteration controls. Final overlap/timing proof awaits
 the next real run; no acceptance lock or verified status is published yet.
+
+### 2026-09-06 — worker — remove idle EDID filesystem polling
+
+Add a regression that calls the actual poll callback for 10,000 settled-mode
+ticks and counts its external opendir calls. Old code fails the predicted zero
+I/O assertion (`evidence/e5-t22c/idle-poll/red.log`). The adapter now uses the
+already-required, actual upstream connector cache as a cheap change trigger,
+and reads independent sysfs EDID only when that cache indicates a valid different
+native size. Pending/disabled outputs also avoid unnecessary reads; unused owned
+mode blobs still get their bounded cleanup. A cached one-pixel change prompts an
+EDID read but cannot authorize a modeset when that read fails.
+
+Pinned upstream `drm.c` refreshes the connector before considering whether the
+frontend needs a heads-changed notification, so this does not depend on physical
+size rounding. Existing switch/EDID/ownership predicates remain in force.
+The actual-adapter ASan/UBSan harness passes 232,494 checks, including the new
+idle and one-pixel trigger cases (`idle-poll/green.log`). This removes measured
+unnecessary calls, not yet a claim that the real two-second target is met; build
+a new immutable v5 image and re-record the guest after this runtime change.

@@ -84,6 +84,26 @@ static bool mode_pending(const struct drm_output *output) {
            output->mode_switch_pending;
 }
 
+static bool usable_mode_info(const drmModeModeInfo *info) {
+    return (info->type&DRM_MODE_TYPE_PREFERRED) &&
+           info->hdisplay>=320 && info->hdisplay<=4095 &&
+           info->vdisplay>=240 && info->vdisplay<=4095 && info->clock &&
+           info->htotal>info->hdisplay && info->vtotal>info->vdisplay &&
+           !(info->flags&(DRM_MODE_FLAG_INTERLACE|DRM_MODE_FLAG_DBLSCAN)) && info->vscan<=1;
+}
+
+static bool cached_resize_needed(struct weston_head *base, struct weston_output *output) {
+    struct drm_head *head=container_of(base,struct drm_head,base);
+    const drmModeConnector *conn=head->connector.conn;
+    if (!conn || !conn->modes || conn->count_modes<0 || conn->count_modes>256) return false;
+    for (int i=0;i<conn->count_modes;i++) {
+        const drmModeModeInfo *info=&conn->modes[i];
+        if (usable_mode_info(info) && (!output->native_mode ||
+            output->native_mode->width!=info->hdisplay || output->native_mode->height!=info->vdisplay)) return true;
+    }
+    return false;
+}
+
 static void prune_modes(struct resize_slot *slot, struct drm_output *output) {
     if (mode_pending(output)) return;
     for (size_t i=0; i<2; i++) {
@@ -107,13 +127,11 @@ static struct drm_mode *preferred_drm_mode(struct resize_slot *slot,
     struct weston_head *base=weston_output_get_first_head(&output->base);
     struct drm_head *head=container_of(base,struct drm_head,base);
     const drmModeConnector *conn=head->connector.conn;
-    if (!conn || conn->count_modes<0 || conn->count_modes>256) return NULL;
+    if (!conn || !conn->modes || conn->count_modes<0 || conn->count_modes>256) return NULL;
     for (int i=0; i<conn->count_modes; i++) {
         const drmModeModeInfo *info=&conn->modes[i];
-        if (!(info->type&DRM_MODE_TYPE_PREFERRED) ||
-            info->hdisplay!=preferred.width || info->vdisplay!=preferred.height ||
-            !info->clock || info->htotal<=info->hdisplay || info->vtotal<=info->vdisplay ||
-            (info->flags&(DRM_MODE_FLAG_INTERLACE|DRM_MODE_FLAG_DBLSCAN)) || info->vscan>1)
+        if (!usable_mode_info(info) ||
+            info->hdisplay!=preferred.width || info->vdisplay!=preferred.height)
             continue;
         struct drm_mode *mode;
         wl_list_for_each(mode,&output->base.mode_list,base.link)
@@ -182,10 +200,22 @@ static int poll_modes(void *data) {
         // Cloned heads need a joint modeset policy, which this module does not own.
         struct weston_head *first=weston_output_get_first_head(output);
         if (head!=first || weston_output_iterate_heads(output,first)) continue;
+        struct drm_output *drm=container_of(output,struct drm_output,base);
+        if (!output->enabled || output->destroying || drm->virtual ||
+            drm->destroy_pending || drm->disable_pending || mode_pending(drm) ||
+            !output->current_mode || !output->switch_mode) continue;
+        struct resize_slot *slot=slot_for(ctx,output);
+        if (!slot) continue;
+        prune_modes(slot,drm);
+        // The pinned backend refreshes connector.conn on every DRM hotplug,
+        // even when rounded physical dimensions emit no heads-changed signal.
+        // Inspect that in-memory cache before opening sysfs: idle 10ms polls
+        // need no directory scan/read. The cache is only a trigger; the actual
+        // EDID must still independently match before any native mode switch.
+        if (!cached_resize_needed(head,output)) continue;
         struct wv_display_mode mode;
         if (!preferred_mode(weston_head_get_name(head),&mode)) continue;
-        struct resize_slot *slot=slot_for(ctx,output);
-        if (slot) apply_mode(ctx,slot,mode);
+        apply_mode(ctx,slot,mode);
     }
     wl_event_source_timer_update(ctx->timer,POLL_MS);
     return 0;

@@ -21,6 +21,15 @@ No output disable, compositor restart, renderer replacement or guest-image
 post-build editing is part of this path. The selected virtual GPU uses pixman
 without the optional extra shadow framebuffer copy.
 
+Settled output polls inspect only the backend's in-memory preferred mode and
+retire unused owned blobs. They do not scan or read sysfs every 10 ms. In pinned
+Weston 12.0.4, `drm_backend_update_connectors` calls `drm_head_update_info` for
+each existing connector, and `drm_connector_assign_connector_info` replaces the
+cached connector even when rounded physical-size changes do not emit a frontend
+heads-changed signal. A changed cached size therefore triggers the independent
+EDID read; it never authorizes a switch without the matching EDID. This preserves
+one-pixel updates while avoiding idle guest filesystem work.
+
 A negative return from the pinned backend is **fatal**, not safely retryable:
 Weston may already have freed its renderer state. The adapter writes a fixed
 diagnostic and immediately exits with status 70, without unsafe renderer cleanup
