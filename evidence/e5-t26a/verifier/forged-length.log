@@ -1,0 +1,8 @@
+E5-T26a fresh verifier bounded novel mutation
+implementation: 5defbabf3972e3f00d6cb22e14956517fb33f04b
+evidence head: 0274285f77f4bdfcaede1460a177b0884a77471c
+attack: build a valid one-section envelope, replace its first payload_len with u32::MAX,
+        then invoke DesktopSnapshot::parse through a parse-before-mutate restore helper.
+command: cargo run --offline --quiet --manifest-path /tmp/e5-t26a-verifier.pk9lh5/Cargo.toml
+result: novel forged-length attack: section_length_overflow marker=0xfeedbeef
+verdict: exact machine-readable refusal; restore sentinel remained unchanged.
