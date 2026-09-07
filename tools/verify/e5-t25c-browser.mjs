@@ -494,19 +494,28 @@ try {
     refreshRateHz: refresh.refreshRateHz,
   });
 
-  const calibrationBaseline = summarizeKeyLatency(baselineSamples.slice(-CALIBRATION_TRIALS), {
+  // Interleave the control and delayed samples. A sequential block comparison lets slow guest
+  // scheduling drift masquerade as the known delay; adjacent pairs hold that nuisance constant.
+  const calibrationBaselineSamples = [];
+  const delayedSamples = [];
+  for (let index = 0; index < CALIBRATION_TRIALS; index += 1) {
+    await page.evaluate(() => window.__desktopPerf.setPresentDelay(0));
+    calibrationBaselineSamples.push(await runTrial({
+      label: `calibration-control-${String(index + 1).padStart(2, "0")}`,
+      cursorCell,
+    }));
+    await page.evaluate((delay) => window.__desktopPerf.setPresentDelay(delay), PRESENT_DELAY_CALIBRATION_MS);
+    delayedSamples.push(await runTrial({
+      label: `calibration-delayed-${String(index + 1).padStart(2, "0")}`,
+      cursorCell,
+    }));
+  }
+  await page.evaluate(() => window.__desktopPerf.setPresentDelay(0));
+  const calibrationBaseline = summarizeKeyLatency(calibrationBaselineSamples, {
     warmupDiscardCount: 0,
     refreshRateHz: refresh.refreshRateHz,
     expectedTrials: CALIBRATION_TRIALS,
   });
-  await page.evaluate((delay) => window.__desktopPerf.setPresentDelay(delay), PRESENT_DELAY_CALIBRATION_MS);
-  const delayedSamples = [];
-  for (let index = 0; index < CALIBRATION_TRIALS; index += 1) {
-    delayedSamples.push(await runTrial({
-      label: `calibration-${String(index + 1).padStart(2, "0")}`,
-      cursorCell,
-    }));
-  }
   const delayed = summarizeKeyLatency(delayedSamples, {
     warmupDiscardCount: 0,
     refreshRateHz: refresh.refreshRateHz,
