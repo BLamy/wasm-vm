@@ -3,7 +3,7 @@ id: E5-T26e
 epic: 5
 title: Desktop restore reconciliation for agent, scanout, and viewport
 priority: 526.5
-status: implemented
+status: in-progress
 depends_on: [E5-T26d, E5-T23e, E5-T22b]
 estimate: S
 risk: high
@@ -272,3 +272,38 @@ Claim: T26e now binds desktop restore to a fresh application-level agent handsha
 retained host viewport through the live T22 presentation owner, and gives every pre-commit or
 pre-backend refusal the same visible cold fallback. The next browser-specific round-trip,
 pixel/CRC, reload, and interaction proof belongs to T26f.
+
+### 2026-09-07 — fresh verifier — VERDICT: refuted
+- P1 fresh T23d HELLO fence — HELD. Predicted transport READY and a previously consumed
+  application HELLO would both refuse; the independent public-API harness observed
+  `agent_refused` for both, while host disconnect erased the HELLO generation
+  (`evidence/e5-t26e/verifier-r4/native-attack/src/lib.rs`; 6/6 passed). The implementation
+  requires an unconsumed host-reported HELLO at `crates/core/src/dev/virtio/console.rs:218-230`
+  and consumes it at `:337-354`.
+- P2 production T22/worker composition — NEEDS EVIDENCE. The real T22 `PresentationController`
+  attack held: dirty 640x480 state became a cleared fixed 1024x768 viewport while the report kept
+  the 1280x720 guest scanout; mismatch also cleared/refused (2/2 in
+  `evidence/e5-t26e/verifier-r4/presentation-attack.test.mjs`). The page closes over the live owner
+  at `web/main.js:2268-2277`, and wasm/source/dist checks pass. However the repository's exhaustive
+  worker-protocol integration test fails before either new RPC is dispatched: `fake must implement
+  confirmAgentHello` at `web/tests/e4-t32-worker-protocol.test.mjs:201` (42 passed, 1 failed).
+  Demand: extend that production-protocol fixture with exact confirmation/byte-owned restore
+  behavior and rerun it green so both methods demonstrably cross page → worker → loader.
+- P3 every pre-backend fallback — HELD. Predicted missing GPU/input/sound/agent would all clear a
+  dirty sink and reset available devices/agent/host. The independent harness exercised every
+  branch; its missing-agent case began with non-cold GPU/input/sound state and ended byte-exact at
+  power-on with zero retained frames. The exact T26e gate also passed 12/1/1/9/6/12/6 tests,
+  format, both clippy legs, and core wasm32 build.
+- P4 identity/coverage — FAILED on worker coverage; HELD on identity. JSON names the exact real
+  implementation `ea14c48f12a323ff60fb21744a34c10e814cd68a`, its SHA-256 is the claimed
+  `f2dcfeea18f12dcfd190ad0028e3a780b313cc80909405612bfe06101f3cffc8`, and submission head
+  `ebc9c91e` changes only task/queue/evidence metadata above it. Core, Channel, and T22 hunks are
+  covered or narrowly waived, but the changed worker allow-list/loader seam is unproven while its
+  directly impacted integration test is red. Full audit: `evidence/e5-t26e/verifier-r4/audit.md`;
+  command transcript summary: `evidence/e5-t26e/verifier-r4/results.md`.
+- Novel stale-READY attack — HELD. After one successful HELLO-backed restore, a second restore on
+  the still-open transport without decoding another application HELLO refused and cold-booted.
+- SUITE: retain the six-test native public-API harness and two-test real-presentation harness. The
+  response may be limited to the worker test fixture/evidence if runtime semantics remain
+  unchanged; WebKit, independent machines, browser CRC/reload, and host rr remain waived as
+  directed.
