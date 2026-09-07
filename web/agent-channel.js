@@ -616,6 +616,30 @@ export class Channel {
     return waiter.promise;
   }
 
+  /**
+   * Force a new transport generation and resolve only after its peer HELLO has been intersected.
+   * Desktop restore uses this instead of treating a still-open transport as application readiness.
+   */
+  async rehandshake() {
+    if (this._closed) throw new DisconnectedError("agent channel is closed");
+    if (!this._started) this.start();
+    if (this._state !== CHANNEL_STATE.READY) await this.waitUntilReady();
+    if (!this._reconnectEnabled) {
+      throw new DisconnectedError("agent channel cannot re-handshake without a reconnecting connector");
+    }
+    const waiter = deferred();
+    this._readyWaiters.add(waiter);
+    this._failConnection(
+      new DisconnectedError("desktop restore requested a fresh agent HELLO"),
+      this._transportGeneration,
+    );
+    const negotiated = await waiter.promise;
+    return Object.freeze({
+      ...negotiated,
+      generation: this._transportGeneration,
+    });
+  }
+
   supports(capability) {
     const required = asU64(capability, "capability");
     return (this.negotiatedCapabilities & required) === required;

@@ -467,6 +467,46 @@ pub struct DesktopRestoreHostState {
 
 type ViewportPlan = (DisplaySize, DisplaySize, ViewportDisposition);
 
+/// Reset the live desktop surfaces to fresh power-on state.
+///
+/// A component that is missing before a backend can be constructed must still clear the live
+/// presentation; resetting only the retained host tuple leaves a stale frame visible after an
+/// early agent/device refusal. The concrete transaction backend keeps its captured power-on
+/// snapshots separately so rollback remains tied to the restore attempt's true baseline.
+pub(crate) fn reset_live_desktop_to_cold(
+    gpu: Option<&Rc<RefCell<GpuState>>>,
+    input: Option<&Rc<RefCell<InputState>>>,
+    sound: Option<&Rc<RefCell<SndState>>>,
+    agent: Option<&Rc<RefCell<ConsoleState>>>,
+    host: &Rc<RefCell<DesktopRestoreHostState>>,
+) {
+    let (_, cold_gpu_state) = VirtioGpu::new_with_state();
+    let (_, cold_input_state) = VirtioInput::new_with_state(InputDeviceSpec::default());
+    let (_, cold_sound_state) = VirtioSnd::new_with_state();
+    let cold_gpu = cold_gpu_state.borrow().to_snapshot().ok();
+    let cold_input = cold_input_state.borrow().to_snapshot().ok();
+    let cold_sound = cold_sound_state.borrow().to_snapshot().ok();
+
+    if let (Some(target), Some(snapshot)) = (gpu, cold_gpu.as_deref()) {
+        let mut state = target.borrow_mut();
+        state.frame_sink.clear();
+        let _ = state.restore_snapshot(snapshot);
+        // Restoring a scanout can emit a repair frame. It is a device-state reset, not a
+        // host-visible presentation, so clear that frame before returning to the caller.
+        state.frame_sink.clear();
+    }
+    if let (Some(target), Some(snapshot)) = (input, cold_input.as_deref()) {
+        let _ = target.borrow_mut().restore_snapshot(snapshot);
+    }
+    if let (Some(target), Some(snapshot)) = (sound, cold_sound.as_deref()) {
+        let _ = target.borrow_mut().restore_snapshot(snapshot);
+    }
+    if let Some(agent) = agent {
+        agent.borrow_mut().restart_agent_port();
+    }
+    *host.borrow_mut() = DesktopRestoreHostState::default();
+}
+
 #[derive(Debug)]
 struct RepairFrameCounter {
     frames: Rc<RefCell<u32>>,
@@ -859,7 +899,13 @@ impl DesktopRestoreBackend for VirtioDesktopRestoreBackend {
     }
 
     fn cold_boot_fallback(&mut self) {
-        self.rollback(&self.cold_gpu, &self.cold_input, &self.cold_sound);
+        let mut gpu = self.gpu.borrow_mut();
+        gpu.frame_sink.clear();
+        let _ = gpu.restore_snapshot(&self.cold_gpu);
+        gpu.frame_sink.clear();
+        drop(gpu);
+        let _ = self.input.borrow_mut().restore_snapshot(&self.cold_input);
+        let _ = self.sound.borrow_mut().restore_snapshot(&self.cold_sound);
         if let Some(agent) = &self.agent {
             agent.borrow_mut().restart_agent_port();
         }

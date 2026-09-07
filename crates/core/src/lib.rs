@@ -1775,46 +1775,96 @@ impl Machine {
         blob: &[u8],
         host_viewport: desktop_restore::DisplaySize,
     ) -> Result<desktop_restore::DesktopRestoreReport, desktop_restore::DesktopRestoreError> {
-        let Some((gpu, _, _, _)) = self.gpu.as_ref() else {
-            *self.desktop_restore_host.borrow_mut() =
-                desktop_restore::DesktopRestoreHostState::default();
+        if self.gpu.is_none() {
+            self.cold_boot_desktop_fallback();
             return Err(desktop_restore::DesktopRestoreError::CommitRefused {
                 code: "gpu_unavailable",
             });
-        };
-        let Some((input, _, _)) = self.keyboard.as_ref() else {
-            *self.desktop_restore_host.borrow_mut() =
-                desktop_restore::DesktopRestoreHostState::default();
+        }
+        if self.keyboard.is_none() {
+            self.cold_boot_desktop_fallback();
             return Err(desktop_restore::DesktopRestoreError::CommitRefused {
                 code: "input_unavailable",
             });
-        };
-        let Some((_, sound, _, _, _, _, _, _, _)) = self.snd.as_ref() else {
-            *self.desktop_restore_host.borrow_mut() =
-                desktop_restore::DesktopRestoreHostState::default();
+        }
+        if self.snd.is_none() {
+            self.cold_boot_desktop_fallback();
             return Err(desktop_restore::DesktopRestoreError::CommitRefused {
                 code: "sound_unavailable",
             });
-        };
-        let Some(console) = self.console.as_ref() else {
-            *self.desktop_restore_host.borrow_mut() =
-                desktop_restore::DesktopRestoreHostState::default();
+        }
+        if self.console.is_none() {
+            // This is a pre-backend refusal. It must have the same visible result as a dropped
+            // agent during staging: no retained frame, no dirty device queues, and no stale host
+            // reconciliation tuple.
+            self.cold_boot_desktop_fallback();
             return Err(desktop_restore::DesktopRestoreError::CommitRefused {
                 code: "agent_unavailable",
             });
-        };
-        let mut backend = desktop_restore::VirtioDesktopRestoreBackend::new_with_agent(
-            alloc::rc::Rc::clone(gpu),
-            alloc::rc::Rc::clone(input),
-            alloc::rc::Rc::clone(sound),
+        }
+        let gpu = self
+            .gpu
+            .as_ref()
+            .map(|(state, _, _, _)| alloc::rc::Rc::clone(state))
+            .expect("GPU checked above");
+        let input = self
+            .keyboard
+            .as_ref()
+            .map(|(state, _, _)| alloc::rc::Rc::clone(state))
+            .expect("keyboard checked above");
+        let sound = self
+            .snd
+            .as_ref()
+            .map(|(_, state, _, _, _, _, _, _, _)| alloc::rc::Rc::clone(state))
+            .expect("sound checked above");
+        let console = self.console.as_ref().expect("console checked above");
+        let backend = desktop_restore::VirtioDesktopRestoreBackend::new_with_agent(
+            gpu,
+            input,
+            sound,
             alloc::rc::Rc::clone(&console.state),
             alloc::rc::Rc::clone(&self.desktop_restore_host),
-        )
-        .map_err(
-            |error| desktop_restore::DesktopRestoreError::CommitRefused { code: error.code() },
-        )?;
+        );
+        let mut backend = match backend {
+            Ok(backend) => backend,
+            Err(error) => {
+                self.cold_boot_desktop_fallback();
+                return Err(desktop_restore::DesktopRestoreError::CommitRefused {
+                    code: error.code(),
+                });
+            }
+        };
         let mut coordinator = desktop_restore::DesktopRestoreCoordinator::new();
         coordinator.restore(blob, host_viewport, &mut backend)
+    }
+
+    /// Reset every desktop surface participating in restore to a fresh power-on baseline. This is
+    /// also used before the concrete backend exists, so all early missing-device refusals clear
+    /// the live presentation instead of merely discarding host metadata.
+    fn cold_boot_desktop_fallback(&mut self) {
+        let gpu = self
+            .gpu
+            .as_ref()
+            .map(|(state, _, _, _)| alloc::rc::Rc::clone(state));
+        let input = self
+            .keyboard
+            .as_ref()
+            .map(|(state, _, _)| alloc::rc::Rc::clone(state));
+        let sound = self
+            .snd
+            .as_ref()
+            .map(|(_, state, _, _, _, _, _, _, _)| alloc::rc::Rc::clone(state));
+        let agent = self
+            .console
+            .as_ref()
+            .map(|console| alloc::rc::Rc::clone(&console.state));
+        desktop_restore::reset_live_desktop_to_cold(
+            gpu.as_ref(),
+            input.as_ref(),
+            sound.as_ref(),
+            agent.as_ref(),
+            &self.desktop_restore_host,
+        );
     }
 
     /// E5-T26e: host-facing state from the last successful desktop restore commit.
@@ -1868,6 +1918,14 @@ impl Machine {
         self.console
             .as_ref()
             .map(|console| alloc::rc::Rc::clone(&console.state))
+    }
+
+    /// Record that the host-side T23d Channel completed a fresh application HELLO intersection.
+    /// The transport/device readiness bits alone are intentionally insufficient for desktop
+    /// restore. Returns the application HELLO generation when a live named port accepted it.
+    pub fn confirm_virtio_console_agent_hello(&self) -> Option<u64> {
+        let console = self.console.as_ref()?;
+        console.state.borrow_mut().mark_application_hello()
     }
 
     /// E2-T16: attach the goldfish RTC at [`platform::virt::RTC_BASE`], wired to PLIC IRQ 11,

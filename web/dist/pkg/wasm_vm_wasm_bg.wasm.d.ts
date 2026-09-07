@@ -22,6 +22,7 @@ export const wasmlinux_bootProfile: (a: number) => [number, number, number, numb
 export const wasmlinux_cancelFileDownload: (a: number, b: number) => [number, number];
 export const wasmlinux_cancelFileUpload: (a: number, b: number) => [number, number];
 export const wasmlinux_closeStorage: (a: number) => [number, number];
+export const wasmlinux_confirmAgentHello: (a: number) => [number, number, number];
 export const wasmlinux_dismissFileDownload: (a: number, b: number) => [number, number, number];
 export const wasmlinux_dismissFileUpload: (a: number, b: number) => [number, number, number];
 export const wasmlinux_displayReady: (a: number) => [number, number, number];
@@ -55,6 +56,7 @@ export const wasmlinux_pushFileUpload: (a: number, b: number, c: number, d: numb
 export const wasmlinux_readStoredSnapshot: (a: number) => any;
 export const wasmlinux_relinquishSnapshotWriter: (a: number) => any;
 export const wasmlinux_restoreDecisionCode: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+export const wasmlinux_restoreDesktopSnapshot: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
 export const wasmlinux_restoreStoredSnapshot: (a: number) => any;
 export const wasmlinux_runChunk: (a: number, b: number, c: number) => [number, number, number];
 export const wasmlinux_saveSnapshot: (a: number) => [number, number, number];

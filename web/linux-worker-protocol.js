@@ -23,6 +23,7 @@ const LONG_RPC_GRACE_MS = Object.freeze({
   snapshotExport: 120_000,
   snapshotRestore: 120_000,
   snapshotImport: 120_000,
+  restoreDesktopSnapshot: 120_000,
   terminalStateDigest: 60_000,
 });
 
@@ -40,6 +41,8 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "resume",
   "isPaused",
   "stateDigest",
+  "confirmAgentHello",
+  "restoreDesktopSnapshot",
   "dhcpStats",
   "fileTransferReady",
   "setFileDownloadReady",
@@ -82,7 +85,7 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
 ]);
 
 const METHOD_SET = new Set(LINUX_CONTROLLER_METHODS);
-const BYTE_ARG = Object.freeze({ pushFileUpload: 1, snapshotImport: 0 });
+const BYTE_ARG = Object.freeze({ pushFileUpload: 1, snapshotImport: 0, restoreDesktopSnapshot: 0 });
 const BYTE_RESULT = new Set(["takeFileDownloadChunk", "snapshotRead", "snapshotExport"]);
 
 function errorFrom(value, fallback = "Linux worker failed") {

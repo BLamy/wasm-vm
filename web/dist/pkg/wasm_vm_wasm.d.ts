@@ -76,6 +76,12 @@ export class WasmLinux {
      * not persist afterward. No-op off the persistent path.
      */
     closeStorage(): void;
+    /**
+     * E5-T26e: acknowledge a fresh application HELLO from the host T23d Channel. The console
+     * transport must already be open; a true result is the only value accepted by the browser
+     * restore bridge before it asks the core to publish a desktop snapshot.
+     */
+    confirmAgentHello(): boolean;
     dismissFileDownload(id: number): boolean;
     dismissFileUpload(stream: number): boolean;
     /**
@@ -263,6 +269,13 @@ export class WasmLinux {
      * persistent path (no base binding) there is no snapshot to resume: always `"missing"`.
      */
     restoreDecisionCode(stored: Uint8Array | null | undefined, current_generation: number): string;
+    /**
+     * E5-T26e: restore the versioned desktop envelope after the host Channel has completed its
+     * fresh HELLO intersection. The returned JSON-safe report is consumed by the T22 viewport
+     * owner; this call never silently attests success when the live console/device composition is
+     * unavailable.
+     */
+    restoreDesktopSnapshot(blob: Uint8Array, host_width: number, host_height: number): any;
     /**
      * Load and, only when coherent, apply the persisted snapshot directly inside wasm. The stored
      * blob is held by one Rust allocation while the coherence header is checked and the machine is
@@ -609,6 +622,7 @@ export interface InitOutput {
     readonly wasmlinux_cancelFileDownload: (a: number, b: number) => [number, number];
     readonly wasmlinux_cancelFileUpload: (a: number, b: number) => [number, number];
     readonly wasmlinux_closeStorage: (a: number) => [number, number];
+    readonly wasmlinux_confirmAgentHello: (a: number) => [number, number, number];
     readonly wasmlinux_dismissFileDownload: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_dismissFileUpload: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_displayReady: (a: number) => [number, number, number];
@@ -642,6 +656,7 @@ export interface InitOutput {
     readonly wasmlinux_readStoredSnapshot: (a: number) => any;
     readonly wasmlinux_relinquishSnapshotWriter: (a: number) => any;
     readonly wasmlinux_restoreDecisionCode: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+    readonly wasmlinux_restoreDesktopSnapshot: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
     readonly wasmlinux_restoreStoredSnapshot: (a: number) => any;
     readonly wasmlinux_runChunk: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmlinux_saveSnapshot: (a: number) => [number, number, number];

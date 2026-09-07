@@ -14,7 +14,7 @@ use wasm_vm_core::dev::virtio::console::{
     VIRTIO_CONSOLE_F_MULTIPORT, VIRTIO_CONSOLE_PORT_OPEN, VIRTIO_CONSOLE_PORT_READY,
     VIRTIO_CONSOLE_SLOT,
 };
-use wasm_vm_core::dev::virtio::gpu::{NullSink, VirtioGpu, protocol};
+use wasm_vm_core::dev::virtio::gpu::{FrameSink, NullSink, Rect, VirtioGpu, protocol};
 use wasm_vm_core::dev::virtio::input::{InputDeviceSpec, VirtioInput};
 use wasm_vm_core::dev::virtio::snd::VirtioSnd;
 use wasm_vm_core::platform::{Platform, virt};
@@ -166,6 +166,9 @@ fn ready_agent(machine: &mut Machine, slot_base: u64) {
     post(machine, CONTROL_TRANSMIT_QUEUE, 2, 2);
     kick(machine, slot_base, CONTROL_TRANSMIT_QUEUE);
     one_boundary(machine);
+    machine
+        .confirm_virtio_console_agent_hello()
+        .expect("host Channel must confirm a fresh application HELLO");
 }
 
 fn desktop_snapshot() -> Vec<u8> {
@@ -437,7 +440,8 @@ fn desktop_restore_uses_live_agent_and_retains_host_reconciliation_state() {
     assert_eq!(report.viewport, ViewportDisposition::Letterbox);
     assert_eq!(report.scanout, DisplaySize::new(1280, 720));
     assert_eq!(console.borrow().generation(), 1);
-    assert!(console.borrow().agent_ready_for_restore());
+    assert!(console.borrow().agent_ready_for_host());
+    assert!(!console.borrow().agent_ready_for_restore());
     assert_eq!(
         machine.desktop_restore_host_state(),
         wasm_vm_core::desktop_restore::DesktopRestoreHostState {
@@ -451,4 +455,106 @@ fn desktop_restore_uses_live_agent_and_retains_host_reconciliation_state() {
             repair_frames: 1,
         }
     );
+}
+
+#[derive(Clone)]
+struct CountingSink {
+    frames: std::rc::Rc<std::cell::RefCell<u32>>,
+    clears: std::rc::Rc<std::cell::RefCell<u32>>,
+}
+
+impl FrameSink for CountingSink {
+    fn flush(
+        &mut self,
+        _scanout: Option<u32>,
+        _format: u32,
+        _rect: Rect,
+        _resource_width: u32,
+        _resource_height: u32,
+        _pixels: &[u32],
+    ) {
+        *self.frames.borrow_mut() += 1;
+    }
+
+    fn clear(&mut self) {
+        *self.clears.borrow_mut() += 1;
+        *self.frames.borrow_mut() = 0;
+    }
+}
+
+#[test]
+fn missing_agent_early_refusal_clears_dirty_presentation_and_restores_cold_devices() {
+    let mut machine = Machine::new(RAM);
+    machine.enable_plic();
+    machine.enable_virtio_slots(None);
+    machine.enable_virtio_keyboard();
+    machine.enable_virtio_snd();
+    let frames = std::rc::Rc::new(std::cell::RefCell::new(0));
+    let clears = std::rc::Rc::new(std::cell::RefCell::new(0));
+    let (_, gpu) = machine
+        .enable_virtio_gpu(Box::new(CountingSink {
+            frames: std::rc::Rc::clone(&frames),
+            clears: std::rc::Rc::clone(&clears),
+        }))
+        .expect("GPU should occupy the free optional slot");
+    gpu.borrow_mut().frame_sink.flush(
+        Some(0),
+        protocol::FORMAT_R8G8B8A8_UNORM,
+        Rect {
+            x: 0,
+            y: 0,
+            width: 1,
+            height: 1,
+        },
+        1,
+        1,
+        &[0xff00_0000],
+    );
+    assert_eq!(*frames.borrow(), 1);
+
+    let cold_gpu = VirtioGpu::new_with_state()
+        .1
+        .borrow()
+        .to_snapshot()
+        .unwrap();
+    let cold_input = VirtioInput::new_with_state(InputDeviceSpec::default())
+        .1
+        .borrow()
+        .to_snapshot()
+        .unwrap();
+    let cold_sound = VirtioSnd::new_with_state()
+        .1
+        .borrow()
+        .to_snapshot()
+        .unwrap();
+    let error = machine
+        .restore_desktop_snapshot(&desktop_snapshot(), DisplaySize::new(1024, 768))
+        .expect_err("missing console must refuse before staging");
+    assert_eq!(error.code(), "commit_refused");
+    assert_eq!(*frames.borrow(), 0, "early refusal must remove stale frame");
+    assert!(
+        *clears.borrow() >= 2,
+        "fallback clears before and after cold restore"
+    );
+    assert_eq!(gpu.borrow().to_snapshot().unwrap(), cold_gpu);
+    assert_eq!(
+        machine
+            .keyboard_input()
+            .unwrap()
+            .borrow()
+            .to_snapshot()
+            .unwrap(),
+        cold_input
+    );
+    assert_eq!(
+        machine
+            .virtio_snd()
+            .unwrap()
+            .1
+            .borrow()
+            .to_snapshot()
+            .unwrap(),
+        cold_sound
+    );
+    assert_eq!(machine.desktop_restore_host_state(), Default::default());
 }

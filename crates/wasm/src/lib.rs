@@ -2410,6 +2410,73 @@ impl WasmLinux {
         Ok(true)
     }
 
+    /// E5-T26e: acknowledge a fresh application HELLO from the host T23d Channel. The console
+    /// transport must already be open; a true result is the only value accepted by the browser
+    /// restore bridge before it asks the core to publish a desktop snapshot.
+    #[wasm_bindgen(js_name = confirmAgentHello)]
+    pub fn confirm_agent_hello(&self) -> Result<bool, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner.machine.confirm_virtio_console_agent_hello().is_some())
+    }
+
+    /// E5-T26e: restore the versioned desktop envelope after the host Channel has completed its
+    /// fresh HELLO intersection. The returned JSON-safe report is consumed by the T22 viewport
+    /// owner; this call never silently attests success when the live console/device composition is
+    /// unavailable.
+    #[wasm_bindgen(js_name = restoreDesktopSnapshot)]
+    pub fn restore_desktop_snapshot(
+        &self,
+        blob: Vec<u8>,
+        host_width: u32,
+        host_height: u32,
+    ) -> Result<JsValue, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let report = inner
+            .machine
+            .restore_desktop_snapshot(
+                &blob,
+                wasm_vm_core::desktop_restore::DisplaySize::new(host_width, host_height),
+            )
+            .map_err(|error| JsError::new(&format!("desktop restore {}", error.code())))?;
+        let object = js_sys::Object::new();
+        let set = |key: &str, value: JsValue| {
+            let _ = js_sys::Reflect::set(&object, &JsValue::from_str(key), &value);
+        };
+        let size = |value: wasm_vm_core::desktop_restore::DisplaySize| {
+            let pair = js_sys::Object::new();
+            let _ = js_sys::Reflect::set(
+                &pair,
+                &JsValue::from_str("width"),
+                &JsValue::from_f64(value.width as f64),
+            );
+            let _ = js_sys::Reflect::set(
+                &pair,
+                &JsValue::from_str("height"),
+                &JsValue::from_f64(value.height as f64),
+            );
+            pair.into()
+        };
+        let disposition = match report.viewport {
+            wasm_vm_core::desktop_restore::ViewportDisposition::Native => "native",
+            wasm_vm_core::desktop_restore::ViewportDisposition::Letterbox => "letterbox",
+        };
+        set("boundaryId", JsValue::from_f64(report.boundary_id as f64));
+        set("scanout", size(report.scanout));
+        set("hostViewport", size(report.host_viewport));
+        set("viewport", JsValue::from_str(disposition));
+        set("agentRehandshake", JsValue::from_bool(report.agent_rehandshake));
+        set(
+            "inputReleaseEvents",
+            JsValue::from_f64(report.input_release_events as f64),
+        );
+        set(
+            "soundXrunEvents",
+            JsValue::from_f64(report.sound_xrun_events as f64),
+        );
+        set("fullRepairFrame", JsValue::from_bool(report.full_repair_frame));
+        Ok(object.into())
+    }
+
     /// Inspect actual GPU state. Advertised dimensions and bound resource dimensions are
     /// deliberately separate: only guest SET_SCANOUT can change the latter. EDID is a copy.
     #[wasm_bindgen(js_name = displayStats)]

@@ -239,6 +239,19 @@ export class WasmLinux {
         }
     }
     /**
+     * E5-T26e: acknowledge a fresh application HELLO from the host T23d Channel. The console
+     * transport must already be open; a true result is the only value accepted by the browser
+     * restore bridge before it asks the core to publish a desktop snapshot.
+     * @returns {boolean}
+     */
+    confirmAgentHello() {
+        const ret = wasm.wasmlinux_confirmAgentHello(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] !== 0;
+    }
+    /**
      * @param {number} id
      * @returns {boolean}
      */
@@ -777,6 +790,25 @@ export class WasmLinux {
         } finally {
             wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
         }
+    }
+    /**
+     * E5-T26e: restore the versioned desktop envelope after the host Channel has completed its
+     * fresh HELLO intersection. The returned JSON-safe report is consumed by the T22 viewport
+     * owner; this call never silently attests success when the live console/device composition is
+     * unavailable.
+     * @param {Uint8Array} blob
+     * @param {number} host_width
+     * @param {number} host_height
+     * @returns {any}
+     */
+    restoreDesktopSnapshot(blob, host_width, host_height) {
+        const ptr0 = passArray8ToWasm0(blob, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_restoreDesktopSnapshot(this.__wbg_ptr, ptr0, len0, host_width, host_height);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
     /**
      * Load and, only when coherent, apply the persisted snapshot directly inside wasm. The stored

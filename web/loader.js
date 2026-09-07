@@ -1103,6 +1103,20 @@ export async function startLinuxBoot(opts = {}) {
           : false
       ),
       stateDigest: () => machine.stateDigest(),
+      // E5-T26e: the page-side T23d Channel calls confirmAgentHello only after a fresh peer HELLO;
+      // the wasm seam then arms the core's application-generation fence for one restore attempt.
+      confirmAgentHello: () => {
+        if (typeof machine.confirmAgentHello !== "function") return false;
+        return machine.confirmAgentHello();
+      },
+      // E5-T26e: restore the actual composite envelope through the production Machine boundary.
+      // The browser bridge applies the returned hostViewport through T22's PresentationController.
+      restoreDesktopSnapshot: (bytes, width, height) => {
+        if (typeof machine.restoreDesktopSnapshot !== "function") {
+          throw new Error("desktop restore is unavailable in this wasm build");
+        }
+        return machine.restoreDesktopSnapshot(bytes, width, height);
+      },
       jitStats: () => (typeof machine.jitStats === "function" ? machine.jitStats() : null),
       profileStats: () => (typeof machine.getProfile === "function" ? machine.getProfile() : null),
       schedulerStats: () => ({

@@ -49,6 +49,7 @@ import {
 import { PresentationController } from "./src/sink/presentation.js";
 import { DisplayViewportController } from "./src/sink/viewport.js";
 import { CursorController } from "./src/sink/cursor-controller.js";
+import { restoreDesktopThroughHost } from "./desktop-restore.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
@@ -2264,6 +2265,16 @@ window.__linux = {
   // E4: did this boot skip the Linux boot by restoring the shipped boot snapshot?
   restoredFromBootSnapshot: () => !!linuxCtl?.restoredFromBootSnapshot?.(),
 };
+// E5-T26e: the browser round-trip harness supplies the live T23d Channel. Keep the composition
+// boundary on the page so it can call the actual T22 PresentationController, including its clear
+// and viewport policy, while the guest transaction remains behind the worker-safe controller.
+window.__desktopRestore = (snapshot, hostViewport, agentChannel) =>
+  restoreDesktopThroughHost({
+    controller: linuxCtl,
+    agentChannel,
+    presentation,
+    viewportController: displayViewport,
+  }, snapshot, hostViewport);
 // E3-T21c proof hook: the UI must not mistake an attached controller for guest-agent readiness.
 window.__fileTransferReady = async () =>
   Promise.all([0, 1].map(async (slot) => Boolean(await linuxCtl?.fileTransferReady?.(slot))));

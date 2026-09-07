@@ -148,6 +148,12 @@ pub struct ConsoleState {
     host_connected: bool,
     guest_connected: bool,
     generation: u64,
+    /// Count of application-level HELLO intersections reported by the host Channel.  The
+    /// virtio port being open is only the transport fence; desktop restore consumes a fresh
+    /// application HELLO so an old READY bit cannot attest a new session.
+    application_hello_generation: u64,
+    /// Application HELLO generation consumed by the last successful desktop restore.
+    restored_application_hello_generation: u64,
     pending_control: VecDeque<PendingControl>,
     pending_control_bytes: usize,
     agent_input: VecDeque<PendingData>,
@@ -183,6 +189,8 @@ impl ConsoleState {
             host_connected: true,
             guest_connected: false,
             generation: 0,
+            application_hello_generation: 0,
+            restored_application_hello_generation: 0,
             pending_control: VecDeque::new(),
             pending_control_bytes: 0,
             agent_input: VecDeque::new(),
@@ -207,11 +215,19 @@ impl ConsoleState {
         self.host_connected && self.guest_connected
     }
 
-    /// True only when the virtio-console device and named agent port completed the existing T23e
-    /// device/port readiness handshake. Desktop restore uses this as its liveness fence; a
-    /// serialized generation never stands in for a live channel.
-    pub fn agent_ready_for_restore(&self) -> bool {
+    /// True only when the virtio-console device and named agent port completed the transport
+    /// readiness handshake. This is deliberately weaker than [`Self::agent_ready_for_restore`]:
+    /// a live port can still be carrying an old application session.
+    pub fn agent_ready_for_host(&self) -> bool {
         self.driver_ready && self.agent_announced && self.guest_ready && self.agent_open()
+    }
+
+    /// True only when the transport is live *and* the host-side T23d Channel has reported a fresh
+    /// application HELLO since the previous successful restore. Transport-open alone is not a
+    /// restore proof.
+    pub fn agent_ready_for_restore(&self) -> bool {
+        self.agent_ready_for_host()
+            && self.application_hello_generation != self.restored_application_hello_generation
     }
 
     pub fn agent_announced(&self) -> bool {
@@ -230,6 +246,25 @@ impl ConsoleState {
     /// cheap way to discard handles or in-flight application state from an older port incarnation.
     pub fn generation(&self) -> u64 {
         self.generation
+    }
+
+    /// Record one completed host-side T23d HELLO intersection. The host must call this only after
+    /// the Channel has reached READY on a fresh transport generation; calling it while the named
+    /// port is closed is rejected so a stale callback cannot arm desktop restore.
+    pub fn mark_application_hello(&mut self) -> Option<u64> {
+        if !self.agent_ready_for_host() {
+            return None;
+        }
+        self.application_hello_generation = self.application_hello_generation.wrapping_add(1);
+        if self.application_hello_generation == 0 {
+            self.application_hello_generation = 1;
+        }
+        Some(self.application_hello_generation)
+    }
+
+    /// Host-side application HELLO count, exposed for diagnostics and exact restore evidence.
+    pub fn application_hello_generation(&self) -> u64 {
+        self.application_hello_generation
     }
 
     pub fn pending_control_messages(&self) -> usize {
@@ -266,6 +301,8 @@ impl ConsoleState {
         }
         self.host_connected = connected;
         self.guest_connected = false;
+        self.application_hello_generation = 0;
+        self.restored_application_hello_generation = 0;
         self.clear_agent_data();
         if self.driver_ready && self.agent_announced && self.guest_ready {
             self.queue_control(PendingControl::new(
@@ -286,6 +323,8 @@ impl ConsoleState {
         self.agent_announced = false;
         self.guest_ready = false;
         self.guest_connected = false;
+        self.application_hello_generation = 0;
+        self.restored_application_hello_generation = 0;
         self.clear_agent_data();
         self.pending_control.clear();
         self.pending_control_bytes = 0;
@@ -299,6 +338,7 @@ impl ConsoleState {
         if !self.agent_ready_for_restore() {
             return None;
         }
+        self.restored_application_hello_generation = self.application_hello_generation;
         self.generation = self.generation.wrapping_add(1);
         self.clear_agent_data();
         self.pending_control.clear();
@@ -559,6 +599,8 @@ impl ConsoleState {
         self.host_connected = true;
         self.guest_connected = false;
         self.generation = self.generation.wrapping_add(1);
+        self.application_hello_generation = 0;
+        self.restored_application_hello_generation = 0;
         self.pending_control.clear();
         self.pending_control_bytes = 0;
         self.clear_agent_data();
@@ -1473,6 +1515,7 @@ mod tests {
             state.agent_announced = true;
             state.guest_ready = true;
             state.guest_connected = true;
+            assert!(state.mark_application_hello().is_some());
             state.agent_input.push_back(PendingData::new(vec![1, 2, 3]));
             state.agent_input_bytes = 3;
             state.agent_output.push_back(vec![4, 5, 6]);
@@ -1507,6 +1550,7 @@ mod tests {
             state.agent_announced = true;
             state.guest_ready = true;
             state.guest_connected = true;
+            assert!(state.mark_application_hello().is_some());
             state.agent_input.push_back(PendingData::new(vec![1, 2, 3]));
             state.agent_input_bytes = 3;
             state.agent_output.push_back(vec![4, 5, 6]);
@@ -1515,7 +1559,8 @@ mod tests {
         let before = state.borrow().generation();
         assert!(state.borrow().agent_ready_for_restore());
         assert_eq!(state.borrow_mut().restore_rehandshake(), Some(before + 1));
-        assert!(state.borrow().agent_ready_for_restore());
+        assert!(state.borrow().agent_ready_for_host());
+        assert!(!state.borrow().agent_ready_for_restore());
         assert_eq!(state.borrow().agent_input_bytes, 0);
         assert_eq!(state.borrow().agent_output_bytes, 0);
         assert_eq!(state.borrow().pending_control_messages(), 2);
