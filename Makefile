@@ -1133,6 +1133,7 @@ verify-E5-T26f:
 	cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown
 	node --check web/desktop-agent-bridge.js web/desktop-terminal.js web/main.js tools/verify/e5-t26f-browser-roundtrip.mjs
 	node --test web/tests/e4-t32-worker-protocol.test.mjs web/tests/e5-t26e-desktop-restore.test.mjs web/tests/e5-t26f-desktop-agent-bridge.test.mjs web/tests/e5-t26f-readiness.test.mjs web/tests/agent-channel.test.mjs
+	node --test tools/verify/e5-t26f-browser-roundtrip.test.mjs
 	$(MAKE) web-dist
 	E5_T26F_IMAGE=$(E5_T26F_IMAGE) E5_T26F_IMAGE_INFO=$(E5_T26F_IMAGE_INFO) E5_T26F_DESKTOP_ASSET_DIR=$(E5_T26F_DESKTOP_ASSET_DIR) node tools/verify/e5-t26f-browser-roundtrip.mjs
 	@echo "verify-E5-T26f (Chromium desktop snapshot round-trip and interaction smoke): OK"

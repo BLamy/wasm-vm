@@ -119,6 +119,137 @@ let serverOutput = "";
 const browserErrors = [];
 const httpErrors = [];
 const startedAt = Date.now();
+const milestones = {};
+
+let lastPhase = null;
+let lastProgressSample = null;
+let progressTimer = null;
+let progressProbe = null;
+
+function phaseProgress(phase, event = "start") {
+  lastPhase = { phase, event, timestamp: new Date().toISOString(), elapsedMs: Date.now() - startedAt };
+  console.error(`[e5-t26f] ${JSON.stringify(lastPhase)}`);
+}
+
+async function sampleProgress() {
+  if (!progressTimer || !page) return;
+  if (progressProbe) {
+    console.error(`[e5-t26f] ${JSON.stringify({
+      timestamp: new Date().toISOString(), phase: lastPhase?.phase, event: "probe-pending",
+      probePhase: progressProbe.phase, pendingMs: Date.now() - progressProbe.startedAt,
+    })}`);
+    return;
+  }
+  const probe = { phase: lastPhase?.phase, startedAt: Date.now() };
+  progressProbe = probe;
+  try {
+    // Only read the public page state. No worker RPC or guest control call; never serialize pixels.
+    const sample = await page.evaluate(() => {
+      const terminal = window.__desktopTerminal;
+      const state = terminal?.state?.();
+      const presentation = terminal?.presentation?.();
+      const scheduler = presentation?.scheduler;
+      const audio = terminal?.audio?.();
+      const interaction = (record) => record ? {
+        label: record.label ?? null,
+        marker: record.marker ?? null,
+        accepted: record.accepted ?? null,
+        terminalRendered: record.terminalRendered ?? null,
+        terminalMarkerSeen: record.terminalMarkerSeen ?? null,
+        visualDiffPixels: record.visualDiffPixels ?? null,
+        guestVisible: record.guestVisible ?? null,
+        pointerFrames: record.pointerFrames ?? null,
+        keyboardFrames: record.keyboardFrames ?? null,
+      } : null;
+      return {
+        ready: document.documentElement.dataset.desktopReady || null,
+        restored: document.documentElement.dataset.desktopRestored || null,
+        status: (document.querySelector("#desktop-status")?.textContent || "").slice(-160),
+        serialTail: (terminal?.serial?.() || "").slice(-240),
+        frameCount: state?.frameCount ?? null,
+        pointerFrames: state?.pointerFrames ?? null,
+        keyboardFrames: state?.keyboardFrames ?? null,
+        launch: interaction(state?.active?.launch),
+        command: interaction(state?.active?.command),
+        focus: interaction(state?.focuses?.at(-1)),
+        agent: state?.agent ? {
+          state: state.agent.state,
+          transportGeneration: state.agent.transportGeneration,
+          bytesReceived: state.agent.bytesReceived,
+          bytesSent: state.agent.bytesSent,
+          pendingBytes: state.agent.pendingBytes,
+        } : null,
+        presentation: {
+          successfulPresents: presentation?.successfulPresents ?? null,
+          scheduler: scheduler ? {
+            pending: scheduler.pending, scheduled: scheduler.scheduled,
+            paused: scheduler.paused, presented: scheduler.presented,
+          } : null,
+        },
+        audio: {
+          policy: audio?.policy?.state ?? null, context: audio?.sink?.context?.state ?? null,
+          renderedFrames: audio?.sink?.renderedFrames ?? null,
+        },
+      };
+    });
+    if (!progressTimer) return;
+    lastProgressSample = {
+      timestamp: new Date().toISOString(), phase: probe.phase, event: "sample",
+      probeMs: Date.now() - probe.startedAt, ...sample,
+    };
+    console.error(`[e5-t26f] ${JSON.stringify(lastProgressSample)}`);
+  } catch (error) {
+    if (progressTimer) console.error(`[e5-t26f] ${JSON.stringify({
+      timestamp: new Date().toISOString(), phase: probe.phase, event: "probe-error",
+      error: String(error?.message || error).slice(0, 240),
+    })}`);
+  } finally {
+    // Keep the slot until evaluate really settles, including across a reload or a stuck probe.
+    // A timeout race that releases it early would let unresolved requests accumulate.
+    progressProbe = null;
+  }
+}
+
+function startProgressSampling() {
+  if (progressTimer) return;
+  progressTimer = setInterval(() => { void sampleProgress(); }, 30_000);
+  progressTimer.unref?.();
+}
+
+function stopProgressSampling() {
+  if (progressTimer) clearInterval(progressTimer);
+  progressTimer = null;
+}
+
+function remainingInteractionMs(boundary, now) {
+  const remaining = 2_000 - (now - boundary);
+  assert.ok(Number.isFinite(boundary) && Number.isFinite(now) && now >= boundary && remaining > 0,
+    "post-restore interaction exhausted its original 2-second budget before cursor rendering");
+  return remaining;
+}
+
+async function waitForRestoredCursor(point, boundary) {
+  phaseProgress("post-restore:cursor-render");
+  const remainingMs = remainingInteractionMs(boundary, await page.evaluate(() => performance.now()));
+  const handle = await page.waitForFunction(({ point: expected, boundary: restoredAt }) => {
+    const state = window.__desktopTerminal.state();
+    const frame = [...state.pointerFrameSample].reverse().find(
+      (entry) => entry.device === "tablet" && entry.source === "pointermove" && entry.coordinates,
+    );
+    const rendered = window.__desktopCursor?.renderedCursor?.(expected);
+    const observedAt = performance.now();
+    if (!frame || !rendered || rendered.x !== expected.x || rendered.y !== expected.y ||
+        observedAt - restoredAt > 2_000) return false;
+    return { frame, rendered, observedAt, elapsedMs: observedAt - restoredAt };
+  }, { point, boundary }, { timeout: remainingMs });
+  try {
+    const sample = await handle.jsonValue();
+    phaseProgress("post-restore:cursor-render", "done");
+    return sample;
+  } finally {
+    await handle.dispose();
+  }
+}
 
 function guestPoint(box, x, y) {
   return { x: box.x + (x / 1280) * box.width, y: box.y + (y / 800) * box.height };
@@ -138,16 +269,33 @@ async function desktopBox() {
   return box;
 }
 
-async function captureFailure(label) {
+async function captureFailure(label, error = null) {
+  stopProgressSampling();
   await mkdir(out, { recursive: true });
   const diagnostic = {
     label,
+    timestamp: new Date().toISOString(),
+    head,
+    image: { imageSha256, manifestSha256 },
+    lastPhase,
+    lastProgressSample,
+    milestones,
+    error: error ? {
+      name: error.name || "Error",
+      message: String(error.message || error),
+      code: error.code || null,
+      stack: String(error.stack || "").slice(0, 8_000),
+    } : null,
+    progressProbe: progressProbe ? { ...progressProbe, pendingMs: Date.now() - progressProbe.startedAt } : null,
     url: page?.url() || null,
     state: null,
     serial: null,
     serverOutput,
   };
+  // Preserve the phase even if the subsequent browser capture itself stalls.
+  await writeFile(path.join(out, `${label}.json`), `${JSON.stringify(diagnostic, jsonReplacer, 2)}\n`);
   try {
+    if (progressProbe) throw new Error("progress probe still pending; retaining the last completed sample");
     diagnostic.state = await page.evaluate(() => ({
       terminal: window.__desktopTerminal?.state?.() || null,
       presentation: window.__desktopTerminal?.presentation?.() || null,
@@ -164,11 +312,12 @@ async function captureFailure(label) {
   } catch (error) {
     diagnostic.captureError = String(error?.message || error);
   }
-  await writeFile(path.join(out, `${label}.json`), `${JSON.stringify(diagnostic, null, 2)}\n`);
+  await writeFile(path.join(out, `${label}.json`), `${JSON.stringify(diagnostic, jsonReplacer, 2)}\n`);
   await writeFile(path.join(out, `${label}-server.log`), serverOutput);
 }
 
 async function launchTerminal(box, label) {
+  phaseProgress(`launch:${label}`);
   await page.evaluate((value) => window.__desktopTerminal.beginLaunch(value), label);
   await clickGuest(box, 24, 16);
   await page.waitForFunction(
@@ -178,9 +327,11 @@ async function launchTerminal(box, label) {
   );
   const state = await page.evaluate(() => window.__desktopTerminal.finishLaunch());
   assert.equal(state.launches.at(-1).accepted, true, `${label}: terminal launcher failed`);
+  phaseProgress(`launch:${label}`, "done");
 }
 
 async function focusTopWindow(box, label) {
+  phaseProgress(`focus:${label}`);
   await page.evaluate((value) => window.__desktopTerminal.beginFocus(value), label);
   const point = await page.evaluate(() => window.__desktopCursor?.focusGuestPoint?.());
   assert.ok(point, `${label}: no detected top-window focus point`);
@@ -196,7 +347,9 @@ async function focusTopWindow(box, label) {
   // The interpreted guest can finish the pointer RPC before Weston has consumed the click and
   // assigned keyboard focus. Match the already-proven T18b path: give the compositor one bounded
   // scheduling interval before the first physical key transition.
+  phaseProgress(`focus:${label}:first-settle`);
   await page.waitForTimeout(60_000);
+  phaseProgress(`focus:${label}:first-settle`, "done");
   // A second content click removes a rare Weston seat-focus race seen after the first desktop
   // launch; it is harmless for foot and keeps the following physical key burst deterministic.
   const secondBefore = await page.evaluate(() => window.__desktopTerminal.state().pointerFrames);
@@ -206,11 +359,14 @@ async function focusTopWindow(box, label) {
     secondBefore + 3,
     { timeout: 30_000 },
   );
+  phaseProgress(`focus:${label}:second-settle`);
   await page.waitForTimeout(30_000);
+  phaseProgress(`focus:${label}:second-settle`, "done");
   await page.evaluate(() => window.__desktopTerminal.focus());
   const state = await page.evaluate(() => window.__desktopTerminal.finishFocus());
   const focus = state.focuses.at(-1);
   assert.equal(focus.accepted, true, `${label}: terminal focus was not recorded`);
+  phaseProgress(`focus:${label}`, "done");
   return { point, pointerFrames: focus.pointerFrames };
 }
 
@@ -236,6 +392,7 @@ async function typePhysicalText(text, keyDelay = 100) {
 }
 
 async function typeCommand(command, marker, timeout = 240_000, keyDelay = 100) {
+  phaseProgress(`command:${marker}:typing`);
   await page.evaluate(({ value, expected }) => window.__desktopTerminal.beginCommand(value, expected), {
     value: command,
     expected: marker,
@@ -245,6 +402,8 @@ async function typeCommand(command, marker, timeout = 240_000, keyDelay = 100) {
   // burst records every DOM frame but can leave the foot line editor visibly mid-command.
   await typePhysicalText(command, keyDelay);
   await page.keyboard.press("Enter");
+  phaseProgress(`command:${marker}:typing`, "done");
+  phaseProgress(`command:${marker}:completion`);
   try {
     await page.waitForFunction(
       () => window.__desktopTerminal.state().active.command?.terminalMarkerSeen === true,
@@ -252,17 +411,18 @@ async function typeCommand(command, marker, timeout = 240_000, keyDelay = 100) {
       { timeout },
     );
   } catch (error) {
-    await captureFailure(`command-${marker}`);
+    await captureFailure(`command-${marker}`, error);
     throw error;
   }
   const state = await page.evaluate((expected) => window.__desktopTerminal.finishCommand(expected), marker);
   const record = state.commands.at(-1);
   assert.equal(record.accepted, true, `${marker}: command was not accepted`);
+  phaseProgress(`command:${marker}:completion`, "done");
   return record;
 }
 
 async function waitForDesktopReady(label = "desktop ready") {
-  let lastProgressLog = 0;
+  phaseProgress(`readiness:${label}`);
   let lastSample = null;
   await waitFor(async () => {
     const sample = await page.evaluate(() => ({
@@ -275,18 +435,15 @@ async function waitForDesktopReady(label = "desktop ready") {
       serialTail: (window.__desktopTerminal?.serial?.() || "").slice(-160),
     }));
     lastSample = sample;
-    const now = Date.now();
-    if (now - lastProgressLog >= 30_000) {
-      console.error(`[e5-t26f] ${JSON.stringify({ label, ...sample })}`);
-      lastProgressLog = now;
-    }
     return sample.ready === "ready";
   }, label, timeoutMs).catch((error) => {
     throw new Error(`${error.message}; last sample=${JSON.stringify(lastSample)}`, { cause: error });
   });
+  phaseProgress(`readiness:${label}`, "done");
 }
 
 async function waitForAgentReady(label = "agent channel ready") {
+  phaseProgress(`agent:${label}`);
   try {
     await page.waitForFunction(
       () => window.__desktopTerminal.state().agent?.state === "ready",
@@ -294,7 +451,7 @@ async function waitForAgentReady(label = "agent channel ready") {
       { timeout: 60_000 },
     );
   } catch (error) {
-    await captureFailure("agent-ready");
+    await captureFailure("agent-ready", error);
     const state = await page.evaluate(() => window.__desktopTerminal.state());
     throw new Error(`${label}: ${error.message}; state=${JSON.stringify({
       agent: state.agent,
@@ -302,11 +459,14 @@ async function waitForAgentReady(label = "agent channel ready") {
       diagnostics: state.diagnostics,
     })}`, { cause: error });
   }
-  return page.evaluate(() => window.__desktopTerminal.state().agent);
+  const state = await page.evaluate(() => window.__desktopTerminal.state().agent);
+  phaseProgress(`agent:${label}`, "done");
+  return state;
 }
 
-async function waitForReadyAndRestore() {
-  await waitForDesktopReady();
+async function waitForReadyAndRestore(label) {
+  await waitForDesktopReady(`${label}:desktop ready`);
+  phaseProgress(`restore:${label}:completion`);
   await page.waitForFunction(() => ["ready", "error", "none"].includes(
     document.documentElement.dataset.desktopRestored,
   ), null, { timeout: timeoutMs });
@@ -320,12 +480,14 @@ async function waitForReadyAndRestore() {
     await captureFailure(`restore-${restoreState.restored || "missing"}`);
     throw new Error(`desktop restore did not become ready: ${JSON.stringify(restoreState)}`);
   }
+  phaseProgress(`restore:${label}:completion`, "done");
+  phaseProgress(`restore:${label}:first-present`);
   await page.waitForFunction(
     () => window.__desktopTerminal.restoreObservation?.().firstPresent !== null,
     null,
     { timeout: 60_000 },
   );
-  return page.evaluate(async () => {
+  const result = await page.evaluate(async () => {
     const result = window.__desktopTerminal.restoreResult();
     const observation = window.__desktopTerminal.restoreObservation();
     const controller = window.__desktopController;
@@ -352,15 +514,20 @@ async function waitForReadyAndRestore() {
       presentation: window.__desktopTerminal.presentation(),
     };
   });
+  phaseProgress(`restore:${label}:first-present`, "done");
+  return result;
 }
 
-async function reloadWithAutoRestore(url) {
+async function reloadWithAutoRestore(url, label) {
+  phaseProgress(`reload:${label}`);
   await page.evaluate((nextUrl) => history.replaceState(null, "", nextUrl), url);
   await page.reload({ waitUntil: "domcontentloaded", timeout: timeoutMs });
-  return waitForReadyAndRestore();
+  phaseProgress(`reload:${label}`, "done");
+  return waitForReadyAndRestore(label);
 }
 
 try {
+  phaseProgress("server:startup");
   const port = await freePort();
   server = spawn("bash", ["tools/serve-dev.sh", String(port)], {
     cwd: repo,
@@ -381,7 +548,9 @@ try {
       return false;
     }
   }, "desktop server and asset route", 30_000);
+  phaseProgress("server:startup", "done");
 
+  phaseProgress("browser:launch");
   const { chromium } = await import(pathToFileURL(path.join(web, "node_modules/playwright/index.mjs")).href);
   const launchOptions = {
     headless: process.env.E5_T26F_HEADED !== "1",
@@ -395,6 +564,8 @@ try {
     serviceWorkers: "block",
   });
   page = await context.newPage();
+  startProgressSampling();
+  phaseProgress("browser:launch", "done");
   page.on("pageerror", (error) => browserErrors.push({ type: "pageerror", text: String(error) }));
   page.on("console", (message) => {
     if (message.type() === "error" && !message.location().url?.endsWith("/favicon.ico")) {
@@ -418,8 +589,11 @@ try {
   });
   const coldUrl = `${base}/desktop-cursor.html?${query}`;
   const restoreUrl = `${coldUrl}&autoRestore=1`;
+  phaseProgress("browser:initial-load");
   await page.goto(coldUrl, { waitUntil: "domcontentloaded", timeout: timeoutMs });
+  phaseProgress("browser:initial-load", "done");
   await waitForDesktopReady("initial desktop ready");
+  milestones.initialReadiness = { completedAt: new Date().toISOString() };
   await page.waitForTimeout(2_000);
   const box = await desktopBox();
 
@@ -430,8 +604,10 @@ try {
     "e5t26f-shell-ok",
   );
   assert.equal(shellProbe.redMarkerSeen, false, "guest shell probe reported failure");
+  milestones.shellProbe = shellProbe;
   const agentProbe = await waitForAgentReady();
   assert.equal(agentProbe.state, "ready", "agent channel did not complete HELLO");
+  milestones.agentProbe = agentProbe;
   // Keep the setup-and-run burst below the guest input queue's 256-event budget. The command
   // builds a deterministic 20 ms S16 stereo fixture (3840 bytes at 48 kHz), then writes a short
   // replay script whose marker is emitted only after finite aplay completion. The post-restore
@@ -441,11 +617,14 @@ try {
   const firstCommand = await typeCommand(aplayCommand, "e5t26f-aplay-ok");
   assert.equal(firstCommand.terminalMarkerSeen, true, "initial aplay was not guest-visibly completed");
   assert.ok(firstCommand.visualDiffPixels >= 2_000, "initial aplay marker did not change guest pixels");
+  milestones.initialAplay = firstCommand;
   const focusProof = await page.evaluate(() => window.__desktopTerminal.confirmGuestFocus("e5t26f-shell-ok"));
   assert.equal(focusProof.focuses.at(-1).guestVisible, true, "terminal focus was not guest-visibly used");
   await launchTerminal(box, "e5-t26f-terminal-2");
   await focusTopWindow(box, "terminal-2");
+  milestones.twoWindows = { completedAt: new Date().toISOString() };
 
+  phaseProgress("cursor:initial-render");
   const cursorPoint = { x: 720, y: 430 };
   const cursorClient = guestPoint(box, cursorPoint.x, cursorPoint.y);
   await page.mouse.move(cursorClient.x, cursorClient.y);
@@ -468,15 +647,25 @@ try {
   }, cursorPoint);
   assert.ok(cursorProof.frame, "custom cursor proof saw no tablet move");
   assert.ok(cursorProof.rendered, "custom cursor was not visible in the front buffer");
+  milestones.initialCursor = cursorProof;
+  phaseProgress("cursor:initial-render", "done");
 
+  phaseProgress("snapshot:normal");
   const preSnapshotPresents = await page.evaluate(() => window.__desktopTerminal.presentation().successfulPresents);
   const normalSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: true }));
   assert.equal(normalSnapshot.schema, "wasm-vm.e5-t26f.desktop-snapshot.v1");
   assert.match(normalSnapshot.sha256, SHA256);
   assert.ok(normalSnapshot.byteLength > 0, "normal desktop snapshot is empty");
   assert.match(normalSnapshot.preFrontBufferCrc, /^[0-9a-f]{8}$/u, "normal snapshot lacks a frozen front-buffer CRC");
+  milestones.normalSnapshot = {
+    sha256: normalSnapshot.sha256, byteLength: normalSnapshot.byteLength,
+    preFrontBufferCrc: normalSnapshot.preFrontBufferCrc, machineResume: normalSnapshot.machineResume,
+  };
+  phaseProgress("snapshot:normal", "done");
 
-  const firstRestore = await reloadWithAutoRestore(restoreUrl);
+  const firstRestore = await reloadWithAutoRestore(restoreUrl, "normal");
+  milestones.normalRestore = { result: firstRestore, checksPassed: false };
+  phaseProgress("restore:normal:checks");
   assert.equal(firstRestore.snapshotSha256, normalSnapshot.sha256, "reload restored a different snapshot");
   assert.equal(firstRestore.observation.firstPresent.crc32, normalSnapshot.preFrontBufferCrc, "first restore frame CRC changed");
   assert.equal(firstRestore.report?.fullRepairFrame, true, "restore did not publish a full repair frame");
@@ -489,7 +678,10 @@ try {
   assert.equal(firstRestore.resume.snapshotDecision, "resume", "stored whole-machine snapshot was not coherent");
   assert.equal(firstRestore.bootStates.some(({ state }) => state === "booting"), false,
     "whole-machine resume unexpectedly entered the cold guest boot state");
+  milestones.normalRestore.checksPassed = true;
+  phaseProgress("restore:normal:checks", "done");
 
+  phaseProgress("post-restore:focus-and-gesture");
   const postRestoreStart = firstRestore.completedAt;
   assert.ok(Number.isFinite(postRestoreStart), "restore did not expose a timing boundary");
   const postBox = await desktopBox();
@@ -513,18 +705,14 @@ try {
     { timeout: 2_000 },
   );
   await page.evaluate(() => window.__desktopTerminal.focus());
-  const postRestoreCursor = await page.evaluate((point) => {
-    const state = window.__desktopTerminal.state();
-    const frame = [...state.pointerFrameSample].reverse().find(
-      (entry) => entry.device === "tablet" && entry.source === "pointermove" && entry.coordinates,
-    );
-    const rendered = window.__desktopCursor?.renderedCursor?.(point);
-    return { frame, rendered };
-  }, topPoint);
+  phaseProgress("post-restore:focus-and-gesture", "done");
+  const postRestoreCursor = await waitForRestoredCursor(topPoint, postRestoreStart);
   assert.ok(postRestoreCursor.frame, "post-restore pointer did not reach the guest");
   assert.ok(postRestoreCursor.rendered, "post-restore cursor was not guest-visibly rendered");
   assert.equal(postRestoreCursor.rendered.x, topPoint.x, "post-restore cursor x is stale");
   assert.equal(postRestoreCursor.rendered.y, topPoint.y, "post-restore cursor y is stale");
+  milestones.postRestoreCursor = postRestoreCursor;
+  phaseProgress("post-restore:audio-unlock");
   const focusState = await page.evaluate(() => window.__desktopTerminal.finishFocus());
   assert.equal(focusState.focuses.at(-1).accepted, true, "post-restore host focus was not accepted");
   await page.waitForFunction(
@@ -537,6 +725,8 @@ try {
     renderedFrames: window.__desktopTerminal.audio()?.sink?.renderedFrames ?? null,
     writeIndex: window.__desktopTerminal.audio()?.pcm?.().writeIndex ?? null,
   }));
+  milestones.postRestoreAudioBefore = postAudioBefore;
+  phaseProgress("post-restore:audio-unlock", "done");
   const postAudioCommand = await typeCommand(
     "sh /tmp/a",
     "e5t26f-post-aplay",
@@ -545,6 +735,8 @@ try {
   );
   const postFocusState = await page.evaluate(() => window.__desktopTerminal.confirmGuestFocus("e5t26f-post-aplay"));
   assert.equal(postFocusState.focuses.at(-1).guestVisible, true, "post-restore typing was not guest-visible");
+  milestones.postRestoreAplay = postAudioCommand;
+  phaseProgress("post-restore:audio-pcm-and-render");
   // Capture PCM at the completion boundary. A later digital-silence write can wrap the ring and
   // erase a short fixture before a second diagnostic read, so the proof is the immediate
   // before/after delta rather than a delayed scan after the render clock catches up.
@@ -578,6 +770,9 @@ try {
   assert.ok(postAudioAfter.pcm?.writtenFrames > 0, "post-restore aplay wrote no guest PCM");
   assert.ok(postAudioAfter.pcm?.nonSilentFrames > 0 && postAudioAfter.pcm?.maxAbs > 0,
     "post-restore audio PCM was silent");
+  milestones.postRestoreAudioAfter = postAudioAfter;
+  phaseProgress("post-restore:audio-pcm-and-render", "done");
+  phaseProgress("post-restore:interaction-checks");
   const postRestoreEnd = await page.evaluate(() => performance.now());
   const postRestoreInteraction = await page.evaluate((boundary) => ({
     elapsedMs: performance.now() - boundary,
@@ -598,10 +793,13 @@ try {
       "post-restore aplay did not produce guest-visible terminal output");
     assert.ok(postRestoreEnd - postRestoreStart <= 2_000, "post-restore interaction exceeded 2 seconds");
   } catch (error) {
-    await captureFailure("post-restore");
+    await captureFailure("post-restore", error);
     throw error;
   }
+  milestones.postRestoreInteraction = postRestoreInteraction;
+  phaseProgress("post-restore:interaction-checks", "done");
 
+  phaseProgress("drag:prepare");
   const dragChrome = await page.evaluate(() => window.__desktopCursor.detectWindowChrome());
   assert.ok(dragChrome?.titlebar, "drag snapshot has no detected titlebar");
   const dragY = (dragChrome.titlebar.top + dragChrome.titlebar.bottom) / 2;
@@ -609,23 +807,41 @@ try {
   const dragEnd = guestPoint(postBox, dragChrome.titlebar.left + 180, dragY);
   await page.mouse.move(dragStart.x, dragStart.y);
   await page.waitForTimeout(100);
+  phaseProgress("drag:prepare", "done");
+  phaseProgress("snapshot:drag-before");
   const beforeDragSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: false }));
   assert.match(beforeDragSnapshot.sha256, SHA256);
+  milestones.dragBeforeSnapshot = { sha256: beforeDragSnapshot.sha256, byteLength: beforeDragSnapshot.byteLength };
+  phaseProgress("snapshot:drag-before", "done");
+  phaseProgress("snapshot:drag-held");
   await page.mouse.down();
   await page.waitForTimeout(100);
   const heldDragSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: false }));
   assert.match(heldDragSnapshot.sha256, SHA256);
+  milestones.dragHeldSnapshot = { sha256: heldDragSnapshot.sha256, byteLength: heldDragSnapshot.byteLength };
+  phaseProgress("snapshot:drag-held", "done");
+  phaseProgress("snapshot:drag-moving");
   await page.mouse.move(dragEnd.x, dragEnd.y);
   await page.waitForTimeout(100);
   const dragSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: true }));
+  milestones.dragSnapshot = {
+    sha256: dragSnapshot.sha256, byteLength: dragSnapshot.byteLength,
+    preFrontBufferCrc: dragSnapshot.preFrontBufferCrc, machineResume: dragSnapshot.machineResume,
+  };
+  phaseProgress("snapshot:drag-moving", "done");
+  phaseProgress("snapshot:drag-released");
   await page.mouse.up();
   await page.waitForTimeout(100);
   const releasedDragSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: false }));
   assert.match(releasedDragSnapshot.sha256, SHA256);
   assert.match(dragSnapshot.sha256, SHA256);
   assert.ok(dragSnapshot.byteLength > 0, "drag desktop snapshot is empty");
+  milestones.dragReleasedSnapshot = { sha256: releasedDragSnapshot.sha256, byteLength: releasedDragSnapshot.byteLength };
+  phaseProgress("snapshot:drag-released", "done");
 
-  const secondRestore = await reloadWithAutoRestore(restoreUrl);
+  const secondRestore = await reloadWithAutoRestore(restoreUrl, "drag");
+  milestones.dragRestore = { result: secondRestore, checksPassed: false };
+  phaseProgress("restore:drag:checks");
   assert.equal(secondRestore.snapshotSha256, dragSnapshot.sha256, "drag snapshot was not restored");
   assert.equal(secondRestore.report?.fullRepairFrame, true, "drag restore did not publish a repair frame");
   assert.equal(secondRestore.observation.firstPresent.crc32, dragSnapshot.preFrontBufferCrc, "drag restore frame CRC changed");
@@ -643,7 +859,10 @@ try {
   assert.deepEqual(afterDragState.pointer.heldButtons, [], "drag restore retained a pressed button");
   assert.ok(afterDragState.observation.firstPresent, "drag restore has no first-present observation");
   assert.ok(afterDragState.presentation.successfulPresents > 0, "drag restore has no presented frame");
+  milestones.dragRestore.checksPassed = true;
+  phaseProgress("restore:drag:checks", "done");
 
+  phaseProgress("evidence:write");
   await mkdir(out, { recursive: true });
   await page.screenshot({ path: path.join(out, "desktop-roundtrip.png"), fullPage: true });
   assert.deepEqual(browserErrors, [], "unexpected browser console/page errors");
@@ -703,8 +922,21 @@ try {
   };
   await writeFile(path.join(out, "desktop-roundtrip.json"), `${JSON.stringify(result, jsonReplacer, 2)}\n`);
   await writeFile(path.join(out, "desktop-roundtrip-server.log"), serverOutput);
+  phaseProgress("evidence:write", "done");
   console.log(JSON.stringify(result, jsonReplacer, 2));
+} catch (error) {
+  const phase = lastPhase?.phase || "setup";
+  phaseProgress(phase, "failed");
+  const label = `failure-${phase.replace(/[^a-zA-Z0-9_.-]/gu, "-")}`;
+  await captureFailure(label, error).catch((captureError) => {
+    console.error(`[e5-t26f] ${JSON.stringify({
+      timestamp: new Date().toISOString(), phase, event: "capture-error",
+      error: String(captureError?.message || captureError).slice(0, 240),
+    })}`);
+  });
+  throw error;
 } finally {
+  stopProgressSampling();
   await context?.close().catch(() => {});
   await browser?.close().catch(() => {});
   if (server) {
