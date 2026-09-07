@@ -18,6 +18,9 @@ use super::queue::{DescriptorChain, Segment, Violation, Virtqueue};
 use crate::bus::Bus;
 use crate::mmio::SystemBus;
 
+mod snapshot;
+pub use snapshot::{SndRestoreReport, SndSnapshotError};
+
 /// Virtio device id assigned to a sound device by virtio 1.2 §5.14.1.
 pub const VIRTIO_SND_DEVICE_ID: u32 = 25;
 
@@ -1182,6 +1185,19 @@ impl SndState {
         Self::default()
     }
 
+    /// Encode the stream configuration and bounded queue metadata for a desktop checkpoint.
+    pub fn to_snapshot(&self) -> Result<Vec<u8>, SndSnapshotError> {
+        snapshot::encode(self)
+    }
+
+    /// Restore stream configuration while dropping host audio buffers and scheduling XRUN repair.
+    pub fn restore_snapshot(
+        &mut self,
+        payload: &[u8],
+    ) -> Result<SndRestoreReport, SndSnapshotError> {
+        snapshot::restore(self, payload)
+    }
+
     /// Enable or disable the optional input stream without creating a host media handle. The
     /// configuration-facing slice owns when this hook is called; keeping it explicit lets the
     /// rxq fixture exercise the guest contract while the default device remains playback-only.
@@ -2049,6 +2065,19 @@ impl VirtioSnd {
     /// Shared state handle for the ordered playback/event slices.
     pub fn state_handle(&self) -> Rc<RefCell<SndState>> {
         Rc::clone(&self.state)
+    }
+
+    /// Encode the shared sound state for a desktop checkpoint.
+    pub fn to_snapshot(&self) -> Result<Vec<u8>, SndSnapshotError> {
+        self.state.borrow().to_snapshot()
+    }
+
+    /// Restore the shared sound state and return its XRUN/ring reconciliation report.
+    pub fn restore_snapshot(
+        &mut self,
+        payload: &[u8],
+    ) -> Result<SndRestoreReport, SndSnapshotError> {
+        self.state.borrow_mut().restore_snapshot(payload)
     }
 
     /// Dispatch one guest control request and return its complete response bytes.
