@@ -3,7 +3,7 @@ id: E5-T26c
 epic: 5
 title: Virtio-input pending rings, LEDs, and restore release-all
 priority: 526.3
-status: implemented
+status: in-progress
 depends_on: [E5-T26b]
 estimate: S
 risk: high
@@ -59,3 +59,19 @@ changed, then run evtest-style assertions for release-all, queue ordering, and f
   marking the host-held set discarded. Truncation, forged ring counts, duplicate events, and
   stale target state all fail atomically. The host-held physical ledger remains intentionally
   outside the serialized bytes for T13/T26e reconciliation.
+
+### 2026-09-06 — fresh Daybreak verifier — VERDICT: refuted
+- P1 serialized-event allocation bound — FAILED at the submitted implementation head
+  `4233b51b3b4f03186561a91df7469300d376bdc9`. A crafted state with fully-consumed frames and
+  staged work bypassed the pending-event cap and encoded a 524,376-byte payload. The exact
+  attack and prediction are recorded in `evidence/e5-t26c/verifier/attack-plan.md`; the
+  stale-head failure and remediation boundary are recorded in
+  `evidence/e5-t26c/verifier/provisional-review.md`.
+- COVERAGE — NEEDS REMEDIATION. The submitted evidence identifies only `4233b51b`; the current
+  worktree contains an uncommitted six-hunk remediation that caps combined serialized events,
+  pre-reserves the bounded payload, and checks release-frame growth before mutation. No terminal
+  verdict is claimed for that changed head.
+- SUITE: the verifier added promoted tests for multi-frame/staged ordering, malformed-header
+  atomicity, multi-key release-all pressure, fresh keyboard/tablet/mouse input, exact LED bytes,
+  and the combined serialized-event cap. The worker must freeze these tests with the remediation,
+  re-run `make verify-E5-T26c`, replace the exact-head evidence, and request a fresh recheck.
