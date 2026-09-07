@@ -3,7 +3,7 @@ id: E5-T26e
 epic: 5
 title: Desktop restore reconciliation for agent, scanout, and viewport
 priority: 526.5
-status: pending
+status: in-progress
 depends_on: [E5-T26d, E5-T23e, E5-T22b]
 estimate: S
 risk: high
@@ -40,4 +40,8 @@ force one component version refusal. Verify bounded retry/abort behavior and no 
 
 ## Verification log
 
-(empty)
+### 2026-09-07 — worker — STARTED
+- Activated on `codex/e5-t26e-restore-reconciliation` above verified T26d (`3a581ca2`).
+- Risk: high. The implementation must compose existing snapshot sections in dependency order,
+  reconcile host-facing agent/viewport/presentation state atomically, and leave a clean fallback
+  after any component refusal or dropped agent channel.
