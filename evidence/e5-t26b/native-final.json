@@ -1,0 +1,27 @@
+{
+  "task": "E5-T26b",
+  "commit": "2b985379727f10586938f11831be35dc149408a8",
+  "recorded_at": "2026-09-06",
+  "command": "make verify-E5-T26b",
+  "exit_code": 0,
+  "gates": {
+    "format_core": "passed",
+    "clippy_core_lib_gpu_trace": "passed",
+    "clippy_core_tests_gpu_trace": "passed",
+    "gpu_snapshot_tests": { "passed": 5, "failed": 0 },
+    "gpu_resource_tests": { "passed": 15, "failed": 0 },
+    "gpu_damage_tests": { "passed": 5, "failed": 0 },
+    "gpu_tile_tests": { "passed": 6, "failed": 0 },
+    "virtio_blk_quiesce_tests": { "passed": 3, "failed": 0 },
+    "cpu_resume_tests": { "passed": 6, "failed": 0 },
+    "wasm32_no_std_build": "passed"
+  },
+  "attacks": {
+    "missing_scanout_resource": "rejected_before_commit",
+    "incompatible_format": "rejected_before_commit",
+    "truncated_shadow": "rejected_without_live_resource_change",
+    "forged_shadow_run": "rejected_without_live_resource_change",
+    "cursor_hotspot_outside_image": "rejected_without_live_resource_change"
+  },
+  "claim": "The exact GPU payload round-trips a scripted non-default resource dimension and format, scanout binding, cursor hotspot/position, backing metadata, pending damage, and dirty-tile state byte-for-byte; the restored front-buffer pixels have the same CRC-32. Deterministic repeat/literal shadows report raw and encoded sizes plus ratio, bounded decompression, and reject malformed runs. Restore fully validates detached resources and bindings before the single commit point, and a valid bound scanout emits exactly one full repair frame."
+}
