@@ -621,10 +621,29 @@ pub fn encode_sparse(buf: &[u8]) -> Vec<u8> {
 /// rather than triggering an unbounded allocation.
 pub fn decode_sparse(enc: &[u8], expected_len: usize) -> Result<Vec<u8>, SnapshotError> {
     let mut out = Vec::with_capacity(expected_len.min(enc.len().saturating_mul(2)));
+    walk_sparse(enc, expected_len, |len, bytes| match bytes {
+        None => out.resize(out.len() + len, 0),
+        Some(bytes) => out.extend_from_slice(bytes),
+    })?;
+    Ok(out)
+}
+
+/// Check RAM before any live component is restored, without allocating another guest-sized
+/// buffer. Validation and decoding share the same run parser and typed errors.
+pub(crate) fn validate_sparse(enc: &[u8], expected_len: usize) -> Result<(), SnapshotError> {
+    walk_sparse(enc, expected_len, |_, _| {})
+}
+
+fn walk_sparse(
+    enc: &[u8],
+    expected_len: usize,
+    mut emit: impl FnMut(usize, Option<&[u8]>),
+) -> Result<(), SnapshotError> {
+    let mut decoded_len = 0usize;
     let mut i = 0;
     while i < enc.len() {
         // kind byte + u32 length.
-        if i + 5 > enc.len() {
+        if enc.len() - i < 5 {
             return Err(SnapshotError::BadSparseEncoding);
         }
         let kind = enc[i];
@@ -633,8 +652,7 @@ pub fn decode_sparse(enc: &[u8], expected_len: usize) -> Result<Vec<u8>, Snapsho
         // Bound the run against the declared total BEFORE allocating — an untrusted zero-run length
         // must not be able to force a multi-gigabyte resize. This uses a DISTINCT error variant from
         // the trailing length check so the guard is observable (mutation-testable).
-        let new_len = out
-            .len()
+        let new_len = decoded_len
             .checked_add(len)
             .ok_or(SnapshotError::SparseRunExceedsTotal)?;
         if new_len > expected_len {
@@ -642,23 +660,24 @@ pub fn decode_sparse(enc: &[u8], expected_len: usize) -> Result<Vec<u8>, Snapsho
         }
         match kind {
             CHUNK_ZERO => {
-                out.resize(new_len, 0);
+                emit(len, None);
             }
             CHUNK_DATA => {
                 let end = i.checked_add(len).ok_or(SnapshotError::BadSparseEncoding)?;
                 if end > enc.len() {
                     return Err(SnapshotError::BadSparseEncoding);
                 }
-                out.extend_from_slice(&enc[i..end]);
+                emit(len, Some(&enc[i..end]));
                 i = end;
             }
             _ => return Err(SnapshotError::BadSparseEncoding),
         }
+        decoded_len = new_len;
     }
-    if out.len() != expected_len {
+    if decoded_len != expected_len {
         return Err(SnapshotError::BadSparseEncoding);
     }
-    Ok(out)
+    Ok(())
 }
 
 #[inline]

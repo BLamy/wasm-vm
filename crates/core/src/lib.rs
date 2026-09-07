@@ -2824,9 +2824,9 @@ impl Machine {
             self.coherence.generation,
         )?;
         // Parse the complete TLV list before applying anything. The desktop sections below are
-        // then decoded against detached transports and throwaway codec instances, so a malformed
-        // GPU/input/sound/console section or a missing device section cannot leave CPU/RAM or an
-        // earlier desktop device half-restored.
+        // then decoded against detached transports and throwaway codec instances. Every fallible
+        // legacy component is checked too: a later CPU/RAM/device refusal must not leave an earlier
+        // desktop commit (including a host GPU repair frame) behind.
         let mut sections = alloc::vec::Vec::new();
         for sec in reader {
             sections.push(sec?);
@@ -2848,6 +2848,50 @@ impl Machine {
         }
         for sec in &sections {
             match sec.tag {
+                section::CPU => Hart::new().restore(sec.payload)?,
+                section::RAM => {
+                    crate::resume::validate_sparse(sec.payload, self.bus.ram().len())?;
+                }
+                section::CLINT => dev::clint::ClintState::default().restore(sec.payload)?,
+                section::PLIC => dev::plic::PlicState::default().restore(sec.payload)?,
+                section::UART => dev::uart16550::Uart16550::new().restore(sec.payload)?,
+                section::RTC => {
+                    dev::rtc::GoldfishRtc::new(alloc::boxed::Box::new(dev::rtc::FixedClock(0)))
+                        .restore(sec.payload)?;
+                }
+                section::CLOCK => {
+                    let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
+                    reader.u64()?;
+                    reader.u64()?;
+                    reader.u64()?;
+                    reader.finish()?;
+                }
+                section::VIRTIO_BLK | section::VIRTIO_NET => {
+                    let (slot_index, queue_count, counter_count) = if sec.tag == section::VIRTIO_BLK
+                    {
+                        (0, 1, 1)
+                    } else {
+                        (1, 2, 3)
+                    };
+                    if self.virtio.get(slot_index).is_none() {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        });
+                    }
+                    // Use the same transport decoder and field reads as the legacy commit pass,
+                    // keeping its accepted wire layout while moving all refusal ahead of writes.
+                    let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
+                    dev::virtio::mmio::VirtioMmio::empty().restore_transport(&mut reader)?;
+                    for _ in 0..queue_count {
+                        reader.bool()?;
+                        reader.u16()?;
+                        reader.u16()?;
+                    }
+                    for _ in 0..counter_count {
+                        reader.u64()?;
+                    }
+                    reader.finish()?;
+                }
                 section::VIRTIO_GPU => {
                     let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
                     let mut device = dev::virtio::gpu::VirtioGpu::new();

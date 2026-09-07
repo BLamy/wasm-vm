@@ -7,8 +7,9 @@ use std::rc::Rc;
 
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::dev::virtio::console::{
-    AGENT_PORT_ID, CONTROL_RECEIVE_QUEUE, CONTROL_TRANSMIT_QUEUE, ConsoleControl,
-    VIRTIO_CONSOLE_DEVICE_READY, VIRTIO_CONSOLE_PORT_OPEN, VIRTIO_CONSOLE_PORT_READY,
+    AGENT_PORT_ID, AGENT_TRANSMIT_QUEUE, CONTROL_RECEIVE_QUEUE, CONTROL_TRANSMIT_QUEUE,
+    ConsoleControl, PORT0_TRANSMIT_QUEUE, VIRTIO_CONSOLE_DEVICE_READY, VIRTIO_CONSOLE_PORT_OPEN,
+    VIRTIO_CONSOLE_PORT_READY,
 };
 use wasm_vm_core::dev::virtio::gpu::FrameSink;
 use wasm_vm_core::dev::virtio::gpu::protocol::{
@@ -19,7 +20,7 @@ use wasm_vm_core::dev::virtio::input::EV_KEY;
 use wasm_vm_core::dev::virtio::rng::EntropySource;
 use wasm_vm_core::dev::virtio::snd::{JACK_INFO_SIZE, QueryInfo, VIRTIO_SND_R_JACK_INFO};
 use wasm_vm_core::platform::{Platform, virt};
-use wasm_vm_core::resume::{SectionReader, SnapshotWriter, section};
+use wasm_vm_core::resume::{SectionReader, SnapshotError, SnapshotWriter, section};
 use wasm_vm_core::trace::HashSink;
 use wasm_vm_core::{Machine, RunOutcome};
 
@@ -631,4 +632,242 @@ fn headless_resume_remains_compatible_without_desktop_sections() {
     let blob = source.save_resume().unwrap();
     let mut target = Machine::new(2 * 1024 * 1024);
     target.load_resume(&blob).unwrap();
+}
+
+#[test]
+fn pending_console_transmits_survive_while_stale_host_session_is_discarded() {
+    let mut source = source_with_workload(Box::new(CountingSink(Rc::new(Cell::new(0)))));
+    let console = source.virtio_console().unwrap();
+    let transmit_queues = [PORT0_TRANSMIT_QUEUE as usize, AGENT_TRANSMIT_QUEUE as usize];
+    for (ordinal, bytes) in [b"old session".as_slice(), b"pending guest".as_slice()]
+        .into_iter()
+        .enumerate()
+    {
+        for queue in transmit_queues {
+            let (_, _, _, buffer) = queue_addresses(8, queue);
+            let data = buffer + ordinal as u64 * 0x100;
+            for (offset, &byte) in bytes.iter().enumerate() {
+                source.bus_mut().store8(data + offset as u64, byte).unwrap();
+            }
+            write_descriptor(
+                &mut source,
+                8,
+                queue,
+                ordinal as u16,
+                data,
+                bytes.len() as u32,
+                0,
+                0,
+            );
+            post_descriptor(&mut source, 8, queue, ordinal as u16, ordinal as u16);
+            kick(&mut source, 8, queue);
+        }
+        if ordinal == 0 {
+            assert_eq!(source.run(1), RunOutcome::MaxInstrs);
+            assert_eq!(console.borrow().agent_output_bytes(), bytes.len());
+            assert_eq!(console.borrow().serial_output_bytes(), bytes.len());
+        }
+    }
+    assert_eq!(
+        console
+            .borrow_mut()
+            .enqueue_agent_input(b"stale host bytes"),
+        16
+    );
+    let blob = source.save_resume().unwrap();
+    let (mut target, _) =
+        desktop_machine(0xaabb_ccdd, Box::new(CountingSink(Rc::new(Cell::new(0)))));
+    target.load_resume(&blob).unwrap();
+    let restored = target.virtio_console().unwrap();
+    assert_eq!(restored.borrow().agent_input_bytes(), 0);
+    assert_eq!(restored.borrow().agent_output_bytes(), 0);
+    assert_eq!(restored.borrow().application_hello_generation(), 0);
+    assert!(!restored.borrow().agent_ready_for_restore());
+
+    for queue in transmit_queues {
+        let (_, _, used, _) = queue_addresses(8, queue);
+        assert_eq!(target.bus_mut().load16(used + 2), Ok(1));
+    }
+    // No target QueueNotify: these notifications already happened in the saved machine.
+    assert_eq!(target.run(1), RunOutcome::MaxInstrs);
+    assert!(!restored.borrow().agent_ready_for_restore());
+    assert_eq!(
+        restored.borrow().agent_output_bytes(),
+        b"pending guest".len()
+    );
+    assert_eq!(
+        restored.borrow().serial_output_bytes(),
+        b"pending guest".len()
+    );
+    assert_eq!(target.run(1), RunOutcome::MaxInstrs);
+    for queue in transmit_queues {
+        let (_, _, used, _) = queue_addresses(8, queue);
+        assert_eq!(target.bus_mut().load16(used + 2), Ok(2));
+        assert_eq!(target.bus_mut().load32(used + 4), Ok(0));
+        assert_eq!(target.bus_mut().load32(used + 12), Ok(1));
+    }
+    assert_eq!(restored.borrow_mut().take_agent_output(), b"pending guest");
+    assert_eq!(restored.borrow_mut().take_serial_output(), b"pending guest");
+    assert!(target.confirm_virtio_console_agent_hello().is_some());
+    assert!(restored.borrow().agent_ready_for_restore());
+}
+
+fn legacy_machine(sentinel: u64, sink: Box<dyn FrameSink>) -> Machine {
+    let mut machine = Machine::new(1024 * 1024);
+    machine.enable_clint(10);
+    machine.enable_plic();
+    machine.enable_virtio_blk(Box::new(wasm_vm_core::block::MemBackend::new(vec![0; 512])));
+    machine.enable_virtio_net(Box::new(
+        wasm_vm_core::dev::virtio::net::LoopbackBackend::new(),
+    ));
+    machine.enable_uart16550();
+    machine.enable_rtc(Box::new(wasm_vm_core::dev::rtc::FixedClock(sentinel)));
+    machine.enable_virtio_gpu(sink).unwrap();
+    machine.enable_virtio_console_at(8);
+    machine.hart_mut().regs.write(5, sentinel);
+    machine
+        .bus_mut()
+        .store64(virt::DRAM_BASE, sentinel)
+        .unwrap();
+    machine
+}
+
+#[test]
+fn every_fallible_legacy_section_refuses_before_live_state_or_host_callbacks_change() {
+    let mut source = legacy_machine(0x1122_3344, Box::new(CountingSink(Rc::new(Cell::new(0)))));
+    {
+        let (_, gpu) = source.virtio_gpu().unwrap();
+        let mut gpu = gpu.borrow_mut();
+        gpu.resources
+            .create(
+                77,
+                wasm_vm_core::dev::virtio::gpu::protocol::FORMAT_B8G8R8A8_UNORM,
+                2,
+                2,
+            )
+            .unwrap();
+        gpu.scanout_resource = Some(77);
+    }
+    let blob = source.save_resume().unwrap();
+    let (header, _) = SectionReader::new(&blob).unwrap();
+    for tag in [
+        section::CPU,
+        section::RAM,
+        section::CLINT,
+        section::PLIC,
+        section::UART,
+        section::RTC,
+        section::CLOCK,
+        section::VIRTIO_BLK,
+        section::VIRTIO_NET,
+    ] {
+        let payload = SectionReader::new(&blob)
+            .unwrap()
+            .1
+            .map(Result::unwrap)
+            .find(|item| item.tag == tag)
+            .unwrap()
+            .payload;
+        let mut trailing = payload.to_vec();
+        trailing.push(0);
+        let mut corruptions = vec![
+            (
+                vec![0],
+                if tag == section::RAM {
+                    SnapshotError::BadSparseEncoding
+                } else {
+                    SnapshotError::BadComponentState { tag }
+                },
+            ),
+            (
+                trailing,
+                if tag == section::RAM {
+                    SnapshotError::BadSparseEncoding
+                } else {
+                    SnapshotError::BadComponentState { tag }
+                },
+            ),
+        ];
+        // Exercise semantic checks as well as lengths; the RAM overrun is checked without
+        // expanding its attacker-controlled zero run into an allocation.
+        if tag == section::RAM {
+            corruptions.push((
+                vec![0, 255, 255, 255, 255],
+                SnapshotError::SparseRunExceedsTotal,
+            ));
+        } else if let Some(offset) = match tag {
+            section::CPU => Some(512), // LR/SC reservation-present boolean.
+            section::CLINT => Some(16),
+            section::UART => Some(7),
+            section::RTC => Some(24),
+            section::VIRTIO_BLK | section::VIRTIO_NET => Some(277), // has_queue.
+            _ => None,
+        } {
+            let mut invalid = payload.to_vec();
+            invalid[offset] = 2;
+            corruptions.push((invalid, SnapshotError::BadComponentState { tag }));
+        }
+        for (invalid, expected) in corruptions {
+            // Put the invalid payload last: successful validation of every preceding section
+            // must still have no effect on CPU/RAM, MMIO, device state, or the host sink.
+            let mut writer = SnapshotWriter::new(
+                &header.core_hash,
+                &header.base_image_hash,
+                header.overlay_generation,
+            );
+            for item in SectionReader::new(&blob).unwrap().1 {
+                let item = item.unwrap();
+                if item.tag != tag {
+                    writer.section(item.tag, item.payload);
+                }
+            }
+            writer.section(tag, &invalid);
+            let calls = Rc::new(Cell::new(0));
+            let mut target = legacy_machine(0xaabb_ccdd, Box::new(CountingSink(Rc::clone(&calls))));
+            let baseline = target.save_resume().unwrap();
+            assert_eq!(
+                target.load_resume(&writer.finish()),
+                Err(expected),
+                "section {tag}"
+            );
+            assert_eq!(
+                calls.get(),
+                0,
+                "section {tag} refusal called the host GPU sink"
+            );
+            assert_eq!(
+                target.save_resume().unwrap(),
+                baseline,
+                "section {tag} refusal changed the machine"
+            );
+        }
+    }
+
+    // Legacy blk/net also have a fallible target-slot lookup. A well-formed payload targeting a
+    // headless machine must refuse before replacing its earlier CPU/RAM sections.
+    for tag in [section::VIRTIO_BLK, section::VIRTIO_NET] {
+        let mut writer = SnapshotWriter::new(
+            &header.core_hash,
+            &header.base_image_hash,
+            header.overlay_generation,
+        );
+        for item in SectionReader::new(&blob).unwrap().1 {
+            let item = item.unwrap();
+            if matches!(item.tag, section::CPU | section::RAM | section::CLOCK) || item.tag == tag {
+                writer.section(item.tag, item.payload);
+            }
+        }
+        let mut target = Machine::new(1024 * 1024);
+        target.hart_mut().regs.write(5, 0xaabb_ccdd);
+        target
+            .bus_mut()
+            .store64(virt::DRAM_BASE, 0xaabb_ccdd)
+            .unwrap();
+        let baseline = target.save_resume().unwrap();
+        assert_eq!(
+            target.load_resume(&writer.finish()),
+            Err(SnapshotError::BadComponentState { tag })
+        );
+        assert_eq!(target.save_resume().unwrap(), baseline);
+    }
 }

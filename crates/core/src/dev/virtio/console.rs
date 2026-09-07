@@ -406,6 +406,20 @@ impl ConsoleState {
         self.pending_control_bytes = 0;
         self.clear_agent_data();
 
+        // Guest transmit descriptors live in restored RAM, not in the discarded host queues.
+        // QueueNotify may have happened just before save (or a descriptor may have been blocked
+        // on the old host's output budget). Probe each transmit ring once from its restored
+        // cursor so that work continues without requiring the guest to notify again. Consumed
+        // heads cannot replay, and empty/unconfigured queues are harmless. This also repairs
+        // snapshots from the original lifecycle-only codec without changing its wire format.
+        for queue in [
+            PORT0_TRANSMIT_QUEUE,
+            CONTROL_TRANSMIT_QUEUE,
+            AGENT_TRANSMIT_QUEUE,
+        ] {
+            self.mark_queue_kick(queue);
+        }
+
         // The guest driver is still live in restored RAM, but the browser-side host endpoint was
         // recreated. A close/open pair makes the guest agent revisit its session boundary before
         // the new Channel's HELLO arrives; the transport remains logically open so bounded input
