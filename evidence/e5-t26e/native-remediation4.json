@@ -1,0 +1,29 @@
+{
+  "task": "E5-T26e",
+  "semanticImplementationCommit": "ea14c48f12a323ff60fb21744a34c10e814cd68a",
+  "workerFixtureCommit": "fb6c2f0b00dc5f980d12180dfb7b0712bae2aaa1",
+  "submittedHead": "fb6c2f0b00dc5f980d12180dfb7b0712bae2aaa1",
+  "verificationCommand": "node --test web/tests/e4-t32-worker-protocol.test.mjs web/tests/agent-channel.test.mjs web/tests/e5-t26e-desktop-restore.test.mjs",
+  "exitCode": 0,
+  "results": {
+    "workerProtocolAndRestoreTests": { "passed": 43, "failed": 0 },
+    "restoreRpcMethods": ["confirmAgentHello", "restoreDesktopSnapshot"],
+    "byteOwnedRestoreArgument": true,
+    "hostViewportRoundTrip": { "width": 1024, "height": 768 },
+    "priorExactNativeGate": "passed at ebc9c91ecc8d56dfbaa27d10ee12c0ca0e21c794",
+    "sourceDistParity": "unchanged and previously passed at ebc9c91ecc8d56dfbaa27d10ee12c0ca0e21c794"
+  },
+  "claim": "The existing exhaustive worker-protocol fixture now supplies and invokes the two T26e controller methods, proving page client to worker runtime to loader-controller dispatch without changing runtime semantics.",
+  "coverage": {
+    "changedFixtureHunks": [
+      "fake confirmAgentHello implementation",
+      "fake restoreDesktopSnapshot byte/viewport implementation",
+      "exhaustive argument table entries",
+      "returned hostViewport assertion"
+    ],
+    "waivers": [
+      "The semantic implementation and native exact gate are unchanged from native-remediation3; incremental re-verification reruns the touched worker harness.",
+      "Independent machines, WebKit, browser CRC/reload, and host rr remain waived by policy and user direction."
+    ]
+  }
+}

@@ -3,7 +3,7 @@ id: E5-T26e
 epic: 5
 title: Desktop restore reconciliation for agent, scanout, and viewport
 priority: 526.5
-status: in-progress
+status: implemented
 depends_on: [E5-T26d, E5-T23e, E5-T22b]
 estimate: S
 risk: high
@@ -307,3 +307,24 @@ pixel/CRC, reload, and interaction proof belongs to T26f.
   response may be limited to the worker test fixture/evidence if runtime semantics remain
   unchanged; WebKit, independent machines, browser CRC/reload, and host rr remain waived as
   directed.
+
+### 2026-09-07 — worker — REMEDIATION 4 SUBMITTED
+- The verifier's only open finding was a directly impacted test fixture: the exhaustive
+  `e4-t32-worker-protocol` matrix did not yet provide the two new T26e controller methods. Added
+  exact fake implementations for `confirmAgentHello` and byte-owned `restoreDesktopSnapshot`,
+  added their arguments to the all-method table, and asserted the returned `1024x768` host
+  viewport. No runtime implementation code changed.
+- Fixture commit / submitted head: `fb6c2f0b00dc5f980d12180dfb7b0712bae2aaa1`.
+  The semantic implementation remains `ea14c48f12a323ff60fb21744a34c10e814cd68a`.
+- Incremental exact response command: `node --test web/tests/e4-t32-worker-protocol.test.mjs
+  web/tests/agent-channel.test.mjs web/tests/e5-t26e-desktop-restore.test.mjs` — exit 0, 43
+  passed, 0 failed. The exhaustive worker test now proves both restore RPCs cross the page client,
+  worker runtime, and loader-controller fake; the prior exact native gate and wasm checks remain
+  carried forward unchanged under the incremental re-verification rule.
+- Evidence: `evidence/e5-t26e/native-remediation4.json` (SHA-256
+  `dd9244332dcdbb940c9b4facd83ed65e26f55f62acbc623e49c2637aaa5d291a`) and
+  `evidence/e5-t26e/worker-remediation4-gate.log`.
+
+Claim: the T26e worker seam is now covered end to end for both newly added restore RPCs, closing
+the verifier's only remaining evidence gap without changing the already verified runtime
+semantics. T26f still owns browser CRC/reload and interaction proof.
