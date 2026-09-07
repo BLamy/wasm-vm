@@ -60,6 +60,8 @@ assert.match(browserRunner, /findFirstIntersectingPresent/);
 assert.match(browserRunner, /runAdversarialInputChecks/);
 assert.match(browserRunner, /focused: before\.focused/);
 assert.match(browserRunner, /nextInputAt: secondAt/);
+assert.match(browserRunner, /await page\.waitForTimeout\(30_000\)/);
+assert.match(browserRunner, /window\.__desktopTerminal\.focus\(\)/);
 assert.match(browserRunner, /recordVideo: \{ dir: out/);
 assert.match(browserRunner, /Page\.startScreencast/);
 assert.match(browserRunner, /Page\.screencastFrame/);

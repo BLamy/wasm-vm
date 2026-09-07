@@ -427,7 +427,11 @@ try {
   assert.ok(focusGuest, "Foot focus point is missing");
   await clickGuest(canvasBox, focusGuest.x, focusGuest.y);
   await waitForPointerFrames(pointerBefore + 3);
-  await page.waitForTimeout(2_000);
+  // The interpreted guest can consume the click after the pointer RPC has completed. Match the
+  // established T18b focus proof: allow one bounded guest interval, then restore host canvas focus
+  // before the keyboard-latency trials begin.
+  await page.waitForTimeout(30_000);
+  await page.evaluate(() => window.__desktopTerminal.focus());
   const focus = await page.evaluate(() => window.__desktopTerminal.finishFocus());
   assert.equal(focus.focuses.at(-1).accepted, true, "terminal focus was not established");
 
