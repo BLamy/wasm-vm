@@ -3,7 +3,7 @@ id: E5-T26c
 epic: 5
 title: Virtio-input pending rings, LEDs, and restore release-all
 priority: 526.3
-status: implemented
+status: verified
 depends_on: [E5-T26b]
 estimate: S
 risk: high
@@ -127,3 +127,32 @@ changed, then run evtest-style assertions for release-all, queue ordering, and f
   snapshot tests, 6 keyboard/LED tests, 2 keyboard integration tests, and the no-default-
   features `wasm32-unknown-unknown` build. The exact release-growth regression now passes; a
   fresh Daybreak terminal recheck is required for the final status.
+
+### 2026-09-07 — fresh terminal verifier — VERDICT: verified
+- P1/P2 exact-head gate and evidence binding — HELD. At unchanged submitted HEAD `0dcc7644`, a
+  scrubbed `make verify-E5-T26c` passed 11 snapshot, 6 keyboard/LED, and 2 integration tests with
+  zero failed/ignored, both clippy modes, format, and wasm32. The working and committed evidence
+  blobs match SHA-256 `3fa79264342ebc265dda07042b4b8836c55550780c50bf6c5b6ed6c5d2a96763`,
+  identify runtime/test commit `30b7d6936a8cf06a1cd1157ccd45d6f35355c61f`, and are corroborated by the
+  independent replay.
+- P3/P4 serialized-cap remediation — HELD on both boundaries. A cap-exact fully consumed frame
+  restored over delivered `BTN_LEFT` and `KEY_A` is rejected before mutation with
+  `TooManyEvents { found: 65539, maximum: 65536 }`; encoded state and non-empty delivered and
+  suppressed ledgers remain unchanged. The verifier promoted the complement: 65,533 consumed
+  records plus the three release events succeeds at exactly 65,536, emits `BTN_LEFT`, `KEY_A`,
+  then `SYN_REPORT`, and clears both physical ledgers. A reversed-order sabotage failed before the
+  independent expectation was restored.
+- P5-P7 promoted malformed atomicity, multi-frame/index/staged ordering, release-frame protection,
+  fresh keyboard/tablet/mouse input, exact LED bytes, malformed LED refusal, and fresh LED status
+  all HELD. The final verifier-only gate passed 12 snapshot, 6 keyboard/LED, and 2 integration
+  tests plus the same format/clippy/wasm checks.
+- P8 coverage — HELD. The inclusive `4233b51^..0dcc7644` diff and both remediation commits were
+  audited. Every semantic hunk maps to the exact gate or a promoted attack; declarative/type,
+  test/evidence, task, and generated queue hunks were inspected and classified. Defensive
+  allocator-failure/host-width overflow branches are waived from deterministic fault injection;
+  no acceptance claim relies on them. Old evidence digests are historical only. Task-scoped
+  `git diff --check` passed; an unrelated pre-existing E6-T22 edit was untouched.
+- Commands, predictions, sabotage observation, hunk classifications, suite disposition, and
+  explicit independent-machine/WebKit/browser/host-rr waivers are recorded in
+  `evidence/e5-t26c/verifier/terminal-attack-plan.md` and
+  `evidence/e5-t26c/verifier/terminal-verdict.md`.

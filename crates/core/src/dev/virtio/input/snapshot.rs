@@ -1015,6 +1015,7 @@ mod tests {
             target.sync();
             drain(&mut target);
         }
+        target.suppressed_keys.insert(keyboard::KEY_F24);
         let before = target.to_snapshot().unwrap();
         let delivered_before = target.delivered_keys.clone();
         let suppressed_before = target.suppressed_keys.clone();
@@ -1029,5 +1030,46 @@ mod tests {
         assert_eq!(target.to_snapshot().unwrap(), before);
         assert_eq!(target.delivered_keys, delivered_before);
         assert_eq!(target.suppressed_keys, suppressed_before);
+    }
+
+    #[test]
+    fn verifier_release_growth_that_exactly_reaches_serialized_cap_succeeds() {
+        let mut saved = fully_consumed_frame_at_serialized_cap();
+        let frame = saved.pending_frames.front_mut().unwrap();
+        frame.events.truncate(frame.events.len() - 3);
+        frame.next = frame.events.len();
+        let payload = saved.to_snapshot().unwrap();
+        assert_eq!(
+            decode(&payload).unwrap().serialized_event_count,
+            MAX_SNAPSHOT_EVENTS as usize - 3
+        );
+
+        let mut target =
+            InputState::new_with_capabilities(Box::new(super::super::NullStatusSink), None);
+        for code in [keyboard::KEY_A, pointer::BTN_LEFT] {
+            assert!(target.inject_event(EV_KEY, code, 1));
+            target.sync();
+            drain(&mut target);
+        }
+        target.suppressed_keys.insert(keyboard::KEY_F24);
+
+        let report = target.restore_snapshot(&payload).unwrap();
+        assert_eq!(
+            report.release_events,
+            vec![
+                InputEvent::new(EV_KEY, pointer::BTN_LEFT, 0),
+                InputEvent::new(EV_KEY, keyboard::KEY_A, 0),
+                InputEvent::new(EV_SYN, SYN_REPORT, 0),
+            ]
+        );
+        assert!(target.delivered_keys.is_empty());
+        assert!(target.suppressed_keys.is_empty());
+        assert!(target.pending_frames.front().unwrap().release_all);
+        assert_eq!(
+            decode(&target.to_snapshot().unwrap())
+                .unwrap()
+                .serialized_event_count,
+            MAX_SNAPSHOT_EVENTS as usize
+        );
     }
 }
