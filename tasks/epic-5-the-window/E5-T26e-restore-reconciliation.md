@@ -3,7 +3,7 @@ id: E5-T26e
 epic: 5
 title: Desktop restore reconciliation for agent, scanout, and viewport
 priority: 526.5
-status: implemented
+status: verified
 depends_on: [E5-T26d, E5-T23e, E5-T22b]
 estimate: S
 risk: high
@@ -328,3 +328,31 @@ pixel/CRC, reload, and interaction proof belongs to T26f.
 Claim: the T26e worker seam is now covered end to end for both newly added restore RPCs, closing
 the verifier's only remaining evidence gap without changing the already verified runtime
 semantics. T26f still owns browser CRC/reload and interaction proof.
+
+### 2026-09-07 — fresh verifier — VERDICT: verified
+- P1 worker restore seam — HELD. Predicted both RPCs must cross the actual page client and worker
+  runtime into the controller fake. The repaired all-method fixture defines and records
+  `confirmAgentHello` and `restoreDesktopSnapshot`, invokes the complete allow-list, and asserts the
+  returned `1024x768` viewport (`web/tests/e4-t32-worker-protocol.test.mjs:81-94,255-266`). The
+  focused command passed 43/43 at reviewed head
+  `42f6079505522749f1e1baa2cca463b23e5e058d`.
+- P2 byte ownership — HELD. Predicted a non-zero-offset restore view could be mutated after
+  dispatch without changing worker-observed bytes or leaking adjacent sentinels. The independent
+  attack observed the original `[1,2,3]`, kept the caller buffer attached, excluded both sentinels,
+  and preserved the `1024x768` viewport (1/1 passed;
+  `evidence/e5-t26e/verifier-r5/worker-byte-ownership-attack.test.mjs`).
+- P3 prior semantic results — HELD incrementally. No core, wasm, Channel, presentation,
+  worker-protocol, loader, page, package, or dist semantic path differs from implementation
+  `ea14c48f12a323ff60fb21744a34c10e814cd68a`; remediation-3 evidence retains SHA-256
+  `f2dcfeea18f12dcfd190ad0028e3a780b313cc80909405612bfe06101f3cffc8`. Verifier r4's fresh-HELLO,
+  real T22 owner, dirty-sink/missing-device cold-fallback, and stale-READY attack results therefore
+  remain HELD. The exact native gate was not rerun under the fixture-only incremental rule.
+- P4 identity/coverage — HELD. Semantic and fixture commits resolve exactly; metadata head is the
+  direct child of fixture `fb6c2f0b00dc5f980d12180dfb7b0712bae2aaa1`; remediation-4 JSON matches
+  SHA-256 `dd9244332dcdbb940c9b4facd83ed65e26f55f62acbc623e49c2637aaa5d291a`. Every changed fixture
+  hunk executes; task/queue/evidence metadata is narrowly waived. Full audit and results:
+  `evidence/e5-t26e/verifier-r5/audit.md` and `evidence/e5-t26e/verifier-r5/results.md`.
+- Sabotage — HELD. Removing only the restore fake in an isolated worktree made the all-method test
+  fail with `fake must implement restoreDesktopSnapshot`; the worktree was then removed.
+- SUITE: retain the repaired production worker-protocol regression and the verifier's bounded
+  ownership attack. WebKit, independent machines, browser CRC/reload, and host rr remain waived.
