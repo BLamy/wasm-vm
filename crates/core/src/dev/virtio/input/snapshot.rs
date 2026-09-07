@@ -77,6 +77,7 @@ pub struct InputRestoreReport {
 struct DecodedInput {
     pending_frames: VecDeque<PendingFrame>,
     pending_event_count: usize,
+    serialized_event_count: usize,
     pending_event_budget: usize,
     staged_frame: Vec<InputEvent>,
     staged_event_count: usize,
@@ -211,6 +212,16 @@ pub(crate) fn restore(
             .checked_add(1)
             .ok_or(InputSnapshotError::LengthOverflow)?
     };
+    let serialized_event_count = decoded
+        .serialized_event_count
+        .checked_add(expected_release_count)
+        .ok_or(InputSnapshotError::LengthOverflow)?;
+    if serialized_event_count > MAX_SNAPSHOT_EVENTS as usize {
+        return Err(InputSnapshotError::TooManyEvents {
+            found: u32_len(serialized_event_count)?,
+            maximum: MAX_SNAPSHOT_EVENTS,
+        });
+    }
     let pending_event_count = expected_release_count
         .checked_add(decoded.pending_event_count)
         .ok_or(InputSnapshotError::LengthOverflow)?;
@@ -393,6 +404,7 @@ fn decode(payload: &[u8]) -> Result<DecodedInput, InputSnapshotError> {
     Ok(DecodedInput {
         pending_frames,
         pending_event_count: actual_pending as usize,
+        serialized_event_count: serialized_event_count as usize,
         pending_event_budget: pending_budget as usize,
         staged_frame,
         staged_event_count: staged_event_count as usize,
