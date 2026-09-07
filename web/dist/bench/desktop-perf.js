@@ -3,6 +3,7 @@
 
 export const DESKTOP_PERF_HARNESS_VERSION = "e5-t25b-v1";
 export const KEY_LATENCY_HARNESS_VERSION = "e5-t25c-v1";
+export const KEY_LATENCY_MEASUREMENT = "first-intersecting-drawn-present";
 export const DRAG_MOVE_COUNT = 300;
 export const DRAG_REPEAT_COUNT = 5;
 export const DRAG_CV_LIMIT_PERCENT = 15;
@@ -183,11 +184,18 @@ export function findFirstIntersectingPresent({
   inputAt,
   cursorCell,
   sequenceBefore = 0,
+  nextInputAt = null,
+  focused = true,
 }) {
   if (!Array.isArray(records)) throw new TypeError("records must be an array");
   const startedAt = finiteNumber(inputAt, "inputAt");
   const priorSequence = nonNegativeInteger(sequenceBefore, "sequenceBefore");
+  const followingInputAt = nextInputAt === null ? null : finiteNumber(nextInputAt, "nextInputAt");
+  if (followingInputAt !== null && followingInputAt <= startedAt) {
+    throw new RangeError("nextInputAt must be later than inputAt");
+  }
   const cell = checkedRect(cursorCell, "cursorCell");
+  if (focused !== true) return null;
   let lastSequence = 0;
   for (const record of records) {
     if (record === null || typeof record !== "object") throw new TypeError("present record must be an object");
@@ -197,6 +205,7 @@ export function findFirstIntersectingPresent({
     const timestamp = finiteNumber(record.timestamp, "present.timestamp");
     const damage = checkedRect(record.rect, "present.rect");
     if (sequence <= priorSequence || timestamp < startedAt || record.drawn !== true) continue;
+    if (followingInputAt !== null && timestamp >= followingInputAt) return null;
     if (!rectanglesIntersect(damage, cell)) continue;
     return Object.freeze({
       sequence,
@@ -206,6 +215,7 @@ export function findFirstIntersectingPresent({
       cursorCell: cell,
       damageRect: damage,
       drawn: true,
+      measurement: KEY_LATENCY_MEASUREMENT,
     });
   }
   return null;
@@ -246,6 +256,9 @@ export function summarizeKeyLatency(
   const measured = samples.slice(warmup);
   if (measured.length < expected) throw new RangeError(`expected ${expected} post-warm-up latency samples`);
   const values = measured.map((sample, index) => {
+    if (sample?.measurement !== KEY_LATENCY_MEASUREMENT) {
+      throw new TypeError(`samples[${index}] must come from ${KEY_LATENCY_MEASUREMENT}`);
+    }
     const latency = finiteNumber(sample?.latencyMs, `samples[${index}].latencyMs`);
     if (latency < 0) throw new RangeError(`samples[${index}].latencyMs must be non-negative`);
     return latency;
@@ -253,6 +266,7 @@ export function summarizeKeyLatency(
   const errorBoundMs = 1000 / refresh;
   return Object.freeze({
     schema: KEY_LATENCY_HARNESS_VERSION,
+    measurement: KEY_LATENCY_MEASUREMENT,
     warmupDiscardCount: warmup,
     trialCount: values.length,
     latencyP50Ms: percentile(values, 0.5),
@@ -276,6 +290,9 @@ export function calibratePresentDelay(
   const tolerance = positiveNumber(toleranceMs, "toleranceMs");
   const baselineP50 = finiteNumber(baseline?.latencyP50Ms, "baseline.latencyP50Ms");
   const delayedP50 = finiteNumber(delayed?.latencyP50Ms, "delayed.latencyP50Ms");
+  if (baseline?.measurement !== KEY_LATENCY_MEASUREMENT || delayed?.measurement !== KEY_LATENCY_MEASUREMENT) {
+    throw new TypeError(`calibration requires ${KEY_LATENCY_MEASUREMENT} summaries`);
+  }
   const shiftMs = delayedP50 - baselineP50;
   return Object.freeze({
     delayMs: expected,

@@ -545,6 +545,11 @@ export class PresentationController {
     return this._scheduler?.resume() ?? false;
   }
 
+  /** Drop a queued test or resize frame without disturbing the retained latest resource. */
+  discardPending() {
+    return this._scheduler?.discardPending() ?? false;
+  }
+
   visibilityChanged() {
     return this._scheduler?.visibilityChanged?.() ?? false;
   }

@@ -1000,6 +1000,14 @@ verify-E5-T25b:
 	node tools/verify/e5-t25b-release-audit.mjs
 	node tools/verify/e5-t25b-browser.mjs
 
+.PHONY: e5-t25c-assets
+e5-t25c-assets:
+	@if [ ! -s target/e5-t22c/desktop-image-solid-v7/desktop-info.json ] || [ ! -s target/e5-t22c/chunks/desktop-solid-v7/manifest.json ]; then \
+		E5_T22C_TOOLS_OUT=target/e5-t22c/display-tools E5_T17B_OUT=target/e5-t22c/desktop-image-solid-v7 E5_T17B_IMG_SIZE=1G E5_T17B_PACKAGE_LOCK=tools/image/e5-t18e/MANIFEST.txt E5_T18B_INTERACTIVE=1 E5_T18D_RECOVERY=1 E5_T22C_RESIZE=1 bash tools/image/desktop.sh; \
+		cargo build --release -p wasm-vm-cli; \
+		target/release/wasm-vm chunk target/e5-t22c/desktop-image-solid-v7/alpine-rootfs.ext4 --out target/e5-t22c/chunks/desktop-solid-v7; \
+	fi
+
 .PHONY: verify-E5-T25c
 verify-E5-T25c:
 	node --check web/bench/desktop-perf.js
@@ -1007,6 +1015,7 @@ verify-E5-T25c:
 	node --check tools/verify/e5-t25c-browser.mjs
 	node --test web/tests/e5-t25c-desktop-perf.test.mjs web/tests/e5-t25b-desktop-perf.test.mjs
 	node tools/verify/e5-t25c-release-audit.mjs
+	$(MAKE) e5-t25c-assets
 	$(MAKE) web-build
 	E5_T25C_OUT=evidence/e5-t25c/browser node tools/verify/e5-t25c-browser.mjs
 

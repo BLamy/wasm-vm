@@ -713,8 +713,12 @@ if (desktopPerfHooksRequested) {
     },
     presentDelay: () => desktopPerfPresentDelayMs,
     clear: () => {
+      const wasPaused = presentation?.pause?.() === true;
+      const discardedPending = presentation?.discardPending?.() === true;
+      if (wasPaused) presentation.resume();
       desktopPerfPresentRecords.length = 0;
       desktopPerfPresentDurations.length = 0;
+      return { discardedPending };
     },
     state: () => presentation?.snapshot?.() ?? null,
     scheduler: async () => await controller?.schedulerStats?.() ?? null,

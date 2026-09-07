@@ -82,6 +82,8 @@ let browser;
 let context;
 let page;
 let video;
+let screenCapture = null;
+let cdp;
 const errors = [];
 const httpErrors = [];
 
@@ -130,6 +132,61 @@ async function refreshMeasurement() {
   }));
 }
 
+async function startScreenCapture() {
+  cdp = await context.newCDPSession(page);
+  const timeOrigin = await page.evaluate(() => performance.timeOrigin);
+  screenCapture = { timeOrigin, frames: [], firstData: null, lastData: null };
+  cdp.on("Page.screencastFrame", async ({ data, metadata, sessionId }) => {
+    if (screenCapture === null) {
+      await cdp.send("Page.screencastFrameAck", { sessionId }).catch(() => {});
+      return;
+    }
+    const timestamp = typeof metadata?.timestamp === "number"
+      ? (metadata.timestamp * 1_000) - screenCapture.timeOrigin
+      : null;
+    screenCapture.frames.push({ timestamp, metadata });
+    if (screenCapture.firstData === null) screenCapture.firstData = data;
+    screenCapture.lastData = data;
+    await cdp.send("Page.screencastFrameAck", { sessionId }).catch(() => {});
+  });
+  await cdp.send("Page.startScreencast", {
+    format: "png",
+    quality: 100,
+    maxWidth: 1440,
+    maxHeight: 1050,
+    everyNthFrame: 1,
+  });
+}
+
+async function stopScreenCapture() {
+  if (!screenCapture) return null;
+  await cdp.send("Page.stopScreencast").catch(() => {});
+  await page.waitForTimeout(100);
+  const frames = screenCapture.frames.filter(({ timestamp }) => Number.isFinite(timestamp));
+  const deltas = frames.slice(1).map(({ timestamp }, index) => timestamp - frames[index].timestamp)
+    .filter((value) => value > 0);
+  const sorted = [...deltas].sort((left, right) => left - right);
+  const medianFrameMs = sorted.length ? sorted[Math.floor(sorted.length / 2)] : null;
+  const capture = {
+    schema: "wasm-vm.e5-t25c-screencast-v1",
+    setup: "headed Chromium CDP Page.startScreencast, PNG, everyNthFrame=1",
+    requestedEveryNthFrame: 1,
+    timeOrigin: screenCapture.timeOrigin,
+    frameCount: frames.length,
+    timestamps: frames.map(({ timestamp }) => timestamp),
+    medianFrameMs,
+    refreshRateHz: medianFrameMs ? 1_000 / medianFrameMs : null,
+  };
+  if (screenCapture.firstData) {
+    await writeFile(path.join(out, "screen-capture-first.png"), Buffer.from(screenCapture.firstData, "base64"));
+  }
+  if (screenCapture.lastData) {
+    await writeFile(path.join(out, "screen-capture-last.png"), Buffer.from(screenCapture.lastData, "base64"));
+  }
+  screenCapture = null;
+  return capture;
+}
+
 async function locateCursorCell() {
   return waitFor(async () => page.evaluate(() => {
     const chrome = window.__desktopCursor?.detectWindowChrome?.();
@@ -162,14 +219,114 @@ async function stopRafTrace() {
   });
 }
 
+async function waitForKeyEvent(minimum, code) {
+  const handle = await page.waitForFunction(
+    ({ minimum: lowerBound, code: expectedCode }) => window.__desktopPerf.keyboardEvents()
+      .slice(lowerBound)
+      .find((event) => event.type === "keydown" && event.code === expectedCode) || null,
+    { minimum, code },
+    { timeout: 30_000 },
+  );
+  const event = await handle.jsonValue();
+  await handle.dispose();
+  return event;
+}
+
+async function runAdversarialInputChecks(cursorCell) {
+  const unfocusedBefore = await page.evaluate(() => {
+    const canvas = document.querySelector("#desktop-canvas");
+    canvas.blur();
+    const priorPresents = window.__desktopPerf.presents();
+    const clear = window.__desktopPerf.clear();
+    return {
+      keyboardEvents: window.__desktopPerf.keyboardEvents().length,
+      inputAt: performance.now(),
+      focused: document.activeElement === canvas,
+      sequenceBefore: priorPresents.at(-1)?.sequence ?? 0,
+      clear,
+    };
+  });
+  assert.equal(unfocusedBefore.focused, false, "unfocused attack did not remove canvas focus");
+  await page.keyboard.press("ArrowRight");
+  const unfocusedEvent = await waitForKeyEvent(unfocusedBefore.keyboardEvents, "ArrowRight");
+  await page.waitForTimeout(180);
+  const unfocusedRejected = await page.evaluate(({ inputAt, sequenceBefore, cursorCell: cell }) => {
+    const records = window.__desktopPerf.presents();
+    return window.__e5t25c.findFirstIntersectingPresent({
+      records,
+      inputAt,
+      cursorCell: cell,
+      focused: false,
+      sequenceBefore,
+    }) === null;
+  }, { inputAt: unfocusedEvent.timestamp, sequenceBefore: unfocusedBefore.sequenceBefore, cursorCell });
+  assert.equal(unfocusedRejected, true, "unfocused key was attributed to a drawn present");
+
+  await page.evaluate(() => document.querySelector("#desktop-canvas").focus());
+  await page.evaluate((delay) => window.__desktopPerf.setPresentDelay(delay), PRESENT_DELAY_CALIBRATION_MS);
+  await page.keyboard.press("Home");
+  await page.waitForTimeout(80);
+  const overlapBefore = await page.evaluate(() => {
+    const priorPresents = window.__desktopPerf.presents();
+    const clear = window.__desktopPerf.clear();
+    return {
+      keyboardEvents: window.__desktopPerf.keyboardEvents().length,
+      focused: document.activeElement === document.querySelector("#desktop-canvas"),
+      sequenceBefore: priorPresents.at(-1)?.sequence ?? 0,
+      clear,
+    };
+  });
+  assert.equal(overlapBefore.focused, true, "overlap attack could not restore canvas focus");
+  await page.keyboard.press("ArrowRight");
+  const firstEvent = await waitForKeyEvent(overlapBefore.keyboardEvents, "ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  const secondEvent = await waitForKeyEvent(overlapBefore.keyboardEvents + 1, "ArrowRight");
+  await page.waitForFunction(() => window.__desktopPerf.presents().length > 0, null, { timeout: 30_000 });
+  const overlap = await page.evaluate(({ firstAt, secondAt, sequenceBefore, cursorCell: cell }) => {
+    const records = window.__desktopPerf.presents();
+    const first = window.__e5t25c.findFirstIntersectingPresent({
+      records,
+      inputAt: firstAt,
+      nextInputAt: secondAt,
+      cursorCell: cell,
+      focused: true,
+      sequenceBefore,
+    });
+    return { recordCount: records.length, firstAt, secondAt, first };
+  }, {
+    firstAt: firstEvent.timestamp,
+    secondAt: secondEvent.timestamp,
+    sequenceBefore: overlapBefore.sequenceBefore,
+    cursorCell,
+  });
+  assert.ok(overlap.recordCount > 0, "overlap attack produced no present to interrogate");
+  assert.equal(overlap.first, null, "two keys before first present were attributed to the first key");
+  await page.evaluate(() => window.__desktopPerf.setPresentDelay(0));
+  await page.keyboard.press("Home");
+  await page.waitForTimeout(80);
+  await page.evaluate(() => window.__desktopPerf.clear());
+  return {
+    unfocused: { rejected: unfocusedRejected, keyCode: unfocusedEvent.code },
+    overlapping: { rejectedFirst: overlap.first === null, recordCount: overlap.recordCount },
+  };
+}
+
 async function runTrial({ label, cursorCell, trace = false }) {
   if (trace) await startRafTrace();
   await page.keyboard.press("Home");
   await page.waitForTimeout(80);
   const before = await page.evaluate(() => {
-    window.__desktopPerf.clear();
-    return { keyboardEvents: window.__desktopPerf.keyboardEvents().length, inputAt: performance.now() };
+    const priorPresents = window.__desktopPerf.presents();
+    const clear = window.__desktopPerf.clear();
+    return {
+      keyboardEvents: window.__desktopPerf.keyboardEvents().length,
+      inputAt: performance.now(),
+      focused: document.activeElement === document.querySelector("#desktop-canvas"),
+      sequenceBefore: priorPresents.at(-1)?.sequence ?? 0,
+      clear,
+    };
   });
+  assert.equal(before.focused, true, `${label}: terminal lost focus before key injection`);
   await page.keyboard.press("ArrowRight");
   const keyEvent = await page.waitForFunction(
     (minimum) => window.__desktopPerf.keyboardEvents().slice(minimum).find((event) => event.type === "keydown" && event.code === "ArrowRight") || null,
@@ -180,23 +337,30 @@ async function runTrial({ label, cursorCell, trace = false }) {
   await keyEvent.dispose();
   assert.ok(event?.timestamp >= before.inputAt, `${label}: missing browser keydown timestamp`);
   await page.waitForFunction(
-    ({ inputAt, cursorCell }) => window.__desktopPerf.presents().some((record) => {
+    ({ inputAt, cursorCell, focused, sequenceBefore }) => window.__desktopPerf.presents().some((record) => {
       try {
         return window.__e5t25c.findFirstIntersectingPresent({
-          records: [record], inputAt, cursorCell,
+          records: [record], inputAt, cursorCell, focused, sequenceBefore,
         }) !== null;
       } catch {
         return false;
       }
     }),
-    { inputAt: event.timestamp, cursorCell },
+    { inputAt: event.timestamp, cursorCell, focused: before.focused, sequenceBefore: before.sequenceBefore },
     { timeout: 30_000 },
   );
-  const match = await page.evaluate(({ inputAt, cursorCell }) => {
+  const match = await page.evaluate(({ inputAt, cursorCell, focused, sequenceBefore }) => {
     const records = window.__desktopPerf.presents();
-    const result = window.__e5t25c.findFirstIntersectingPresent({ records, inputAt, cursorCell });
+    const result = window.__e5t25c.findFirstIntersectingPresent({
+      records, inputAt, cursorCell, focused, sequenceBefore,
+    });
     return result;
-  }, { inputAt: event.timestamp, cursorCell });
+  }, {
+    inputAt: event.timestamp,
+    cursorCell,
+    focused: before.focused,
+    sequenceBefore: before.sequenceBefore,
+  });
   assert.ok(match, `${label}: detector returned no matching present`);
   const rafTimestamps = trace ? await stopRafTrace() : [];
   return {
@@ -204,6 +368,9 @@ async function runTrial({ label, cursorCell, trace = false }) {
     ...match,
     keyCode: event.code,
     keyEventType: event.type,
+    focused: before.focused,
+    sequenceBefore: before.sequenceBefore,
+    discardedPending: before.clear?.discardedPending === true,
     rafTimestamps,
   };
 }
@@ -274,10 +441,12 @@ try {
   await page.waitForTimeout(500);
   const cursorCell = await locateCursorCell();
   assert.ok(cursorCell, "could not locate the focused Foot block cursor");
+  const adversarialInput = await runAdversarialInputChecks(cursorCell);
 
   const refresh = await refreshMeasurement();
   const baselineSamples = [];
   let crossCheck = null;
+  await startScreenCapture();
   for (let index = 0; index < KEY_LATENCY_TRIAL_COUNT + KEY_LATENCY_WARMUP_COUNT; index += 1) {
     const sample = await runTrial({
       label: `baseline-${String(index + 1).padStart(3, "0")}`,
@@ -286,7 +455,8 @@ try {
     });
     baselineSamples.push(sample);
     if (index === CROSS_CHECK_TRIAL_INDEX) {
-      const timestamps = sample.rafTimestamps;
+      const capture = await stopScreenCapture();
+      const timestamps = capture?.timestamps || [];
       const nearest = timestamps.reduce((best, timestamp) => {
         const distance = Math.abs(timestamp - sample.presentAt);
         return !best || distance < best.distance ? { timestamp, distance } : best;
@@ -295,10 +465,11 @@ try {
         inputAt: sample.inputAt,
         presentAt: sample.presentAt,
         detectorLatencyMs: sample.latencyMs,
-        recordedRafFrames: timestamps.length,
-        nearestRafTimestamp: nearest?.timestamp ?? null,
-        nearestRafDeltaMs: nearest?.distance ?? null,
+        recordedScreenFrames: timestamps.length,
+        nearestScreenTimestamp: nearest?.timestamp ?? null,
+        nearestScreenDeltaMs: nearest?.distance ?? null,
         withinOneDisplayFrame: (nearest?.distance ?? Number.POSITIVE_INFINITY) <= refresh.medianFrameMs,
+        capture,
       };
     }
   }
@@ -344,10 +515,12 @@ try {
     image: { imageSha256, manifestSha256, assetRoot },
     focus,
     cursorCell,
+    adversarialInput,
     refresh,
     baseline,
     calibration: { ...calibration, baseline: calibrationBaseline, delayed },
     crossCheck,
+    screenCapture: crossCheck?.capture ?? null,
     errors,
     httpErrors,
     screenshotSha256: sha256(screenshot),
