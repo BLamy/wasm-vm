@@ -388,17 +388,21 @@ function recordKeyboardEvent(event) {
   if (keyboardEvents.length > 10_000) keyboardEvents.shift();
 }
 
-// T25c calibration delays presentation dispatch itself. The delayed path deliberately does not
-// enter a second rAF: an rAF-only observer must not see the calibration delay as a display event.
-// The handle carries the timer so cancellation remains correct if a queued frame is replaced.
+// T25c calibration delays presentation dispatch itself. The delayed path first requests the same
+// normal rAF boundary as the control path, then holds the callback for the requested interval;
+// it deliberately does not enter a second rAF, so an rAF-only observer cannot see the delay as a
+// display event. The handle carries both timers for correct cancellation.
 function delayedRequestAnimationFrame(callback) {
   if (desktopPerfPresentDelayMs <= 0) return requestAnimationFrame(callback);
-  const handle = { timer: null, cancelled: false };
-  handle.timer = setTimeout(() => {
-    handle.timer = null;
+  const handle = { timer: null, frame: null, cancelled: false };
+  handle.frame = requestAnimationFrame(() => {
+    handle.frame = null;
     if (handle.cancelled) return;
-    callback(performance.now());
-  }, desktopPerfPresentDelayMs);
+    handle.timer = setTimeout(() => {
+      handle.timer = null;
+      if (!handle.cancelled) callback(performance.now());
+    }, desktopPerfPresentDelayMs);
+  });
   return handle;
 }
 
@@ -406,6 +410,7 @@ function delayedCancelAnimationFrame(handle) {
   if (handle && typeof handle === "object") {
     handle.cancelled = true;
     if (handle.timer !== null) clearTimeout(handle.timer);
+    if (handle.frame !== null) cancelAnimationFrame(handle.frame);
     return;
   }
   cancelAnimationFrame(handle);
