@@ -3,7 +3,7 @@ id: E5-T26h
 epic: 5
 title: Preserve desktop devices across whole-machine resume
 priority: 526.55
-status: in-progress
+status: implemented
 depends_on: [E5-T26e]
 estimate: S
 risk: high
@@ -52,6 +52,29 @@ one preserved cursor and prove the regression test detects duplicate completion.
 Check a headless snapshot independently. No new browser or host-rr requirement.
 
 ## Verification log
+
+### 2026-09-07 — worker — implemented, awaiting fresh critic
+
+Implementation: `4ed9eaa5299338e513783722808576960919604b` (Luna implementation,
+coordinator integration). Command: `make verify-E5-T26h`, exit 0; 106 checks pass,
+including strict core clippy, native resume/coherence/quiesce/component tests,
+no-default-features wasm build, and wasm wrapper check. Recorded log:
+`evidence/e5-t26h/worker-gates.log`, SHA-256
+`d406f8521396d4e5ad9fe787b2458122bfef149ebc99a03b7fd6d429833ba79f`.
+
+The fresh-target fixture starts with different RAM, no configured queues, and no
+GPU resource. Restore installs DRIVER_OK, source queue cursors, and resource bytes;
+new keyboard/GPU/sound/console descriptors complete after the recorded cursors.
+GPU repair and the next actual guest flush use the new host sink, never the old
+sink. A fully opened source console restores with no accepted application HELLO,
+and its close/open control traffic uses the preserved receive ring. The recorded
+guest continuation hash is `9865e79b681ad970` for one retired fixture instruction;
+the existing CPU continuation matrix separately checks trace equivalence across
+multiple snapshot points. Malformed/missing GPU sections leave a distinct target
+unchanged, and the no-desktop headless case remains supported. Existing component
+codec corruption/release/XRUN tests are carried in the same gate. Browser behavior
+is not claimed here: T26f owns that recording. A fresh critic must still execute
+the task's scoped adversarial attacks before setting verified.
 
 ### 2026-09-07 — coordinator — in progress
 
