@@ -1,0 +1,9 @@
+[package]
+name = "e5-t26e-verifier-r3"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+wasm-vm-core = { path = "../../../crates/core", features = ["gpu-trace"] }
+
+[workspace]

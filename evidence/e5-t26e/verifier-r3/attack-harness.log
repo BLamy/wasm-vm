@@ -1,0 +1,17 @@
+E5-T26e fresh verifier attack transcript — submitted head ac35d1d8
+
+$ env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG cargo test staged_agent_drop_uses_the_cold_fallback -- --nocapture
+running 1 test
+STAGED_AGENT_REFUSAL code=agent_refused sink=SinkState { retained_frames: 0, clears: 2 } host=DesktopRestoreHostState { agent_generation: 0, agent_ready: false, viewport: None, repair_frames: 0 }
+test staged_agent_drop_uses_the_cold_fallback ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out
+
+$ env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG cargo test missing_production_agent_must_clear_preexisting_host_frame -- --nocapture
+running 1 test
+EARLY_AGENT_REFUSAL code=commit_refused sink=SinkState { retained_frames: 1, clears: 0 } host=DesktopRestoreHostState { agent_generation: 0, agent_ready: false, viewport: None, repair_frames: 0 }
+thread 'missing_production_agent_must_clear_preexisting_host_frame' panicked at src/lib.rs: cold fallback left a stale host frame
+  left: 1
+ right: 0
+test missing_production_agent_must_clear_preexisting_host_frame ... FAILED
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1 filtered out
+exit: 101

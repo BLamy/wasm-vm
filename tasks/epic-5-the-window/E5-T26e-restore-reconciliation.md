@@ -3,7 +3,7 @@ id: E5-T26e
 epic: 5
 title: Desktop restore reconciliation for agent, scanout, and viewport
 priority: 526.5
-status: implemented
+status: in-progress
 depends_on: [E5-T26d, E5-T23e, E5-T22b]
 estimate: S
 risk: high
@@ -202,3 +202,39 @@ Claim: the second remediation closes the verifier's production-composition and r
 successful restore now requires and performs the real agent re-handshake, publishes retained host
 viewport/repair state, and a refusal clears the live presentation before restoring a genuine cold
 baseline. Browser CRC/reload behavior remains explicitly outside this task's claim.
+
+### 2026-09-07 — fresh verifier — VERDICT: refuted
+- P1 T23d agent HELLO — FAILED. Predicted success only after a fresh application HELLO; observed
+  `agent_ready_for_restore` checks virtio device/port flags only, `restore_rehandshake` returns with
+  two unconsumed PORT_OPEN controls, and commit immediately records `agent_ready = true`
+  (`crates/core/src/dev/virtio/console.rs:210-215,295-315,1499-1521`;
+  `crates/core/src/desktop_restore.rs:837-854`). Exact-head grep finds no T23d `Channel` consumer in
+  core/wasm restore code. Demand: bind success to the real host Channel's fresh HELLO intersection
+  with bounded failure/retry; transport-open is not application-ready.
+- P2 T22 canvas reconciliation — FAILED. Predicted the retained 1280x720 → 1024x768 letterbox plan
+  would reach the production canvas; the fresh Machine integration retains only a core tuple, while
+  `desktop_restore_host_state` has no wasm/web consumer and restore never calls T22
+  `PresentationController.setViewport`. Demand: retain and apply the real T22 owner; browser pixel
+  CRC/reload remains T26f scope.
+- P3 atomic early refusal — FAILED. Predicted a missing production agent would leave the same cold
+  fallback as an in-transaction drop. The public-API attack began with one retained frame and
+  observed `commit_refused`, `retained_frames: 1`, `clears: 0`; the staged-agent control observed
+  `retained_frames: 0`, `clears: 2`
+  (`evidence/e5-t26e/verifier-r3/attack-harness.log:3-16`). The early return only resets host
+  metadata (`crates/core/src/lib.rs:1799-1805`). Demand: route all pre-backend component refusals
+  through a cold fallback that clears presentation and resets live devices/agent/host state.
+- P4 detached staging, component refusal, and post-GPU rollback — HELD. The fresh scrubbed gate
+  passed 12/1/1/9/6/12/6 tests plus fmt, both clippy modes and wasm32 build; its rollback test left
+  the TestSink empty and GPU at the 1280x800 power-on baseline
+  (`evidence/e5-t26e/verifier-r3/fresh-gates.log:3-16`;
+  `crates/core/src/desktop_restore_tests.rs:508-652`). The direct source JS clear tests also passed
+  31/0 (`fresh-gates.log:18-25`).
+- COVERAGE — INSUFFICIENT. Core transaction and JS direct-clear hunks execute, but
+  `JsFrameSink::clear` and CLI `DisplaySink::clear` are compile-only, and no production hunk joins
+  restore to T23d HELLO or T22 canvas application. Full classification:
+  `evidence/e5-t26e/verifier-r3/audit.md`.
+- Evidence identity — FAILED. Submitted JSON line 3 names nonexistent
+  `41871b80f52c4d22962fc2a394be7f21c0f53a84`; the actual implementation parent is
+  `41871b809537f2195dcd6bb24f7ad593d71aee88`. Fresh gates above ran at submitted head `ac35d1d8`.
+- SUITE: retain the two-test evidence harness and promote the dirty-sink early-refusal regression
+  after repair. WebKit, independent-machine and host-rr legs remain waived as directed.
