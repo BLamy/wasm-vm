@@ -3,7 +3,7 @@ id: E5-T25c
 epic: 5
 title: Measure and calibrate focused-key input-to-photon latency
 priority: 525.3
-status: evidence-needed
+status: implemented
 depends_on: [E5-T25a]
 estimate: S
 risk: medium
@@ -104,3 +104,10 @@ must fail if the detector watches rAF alone.
   web/tests/e5-t06d-presentation.test.mjs web/tests/e5-t09d-hidden-present.test.mjs`;
   `node tools/verify/e5-t25c-release-audit.mjs`; artifact invariant/hash audit; bundled
   ffmpeg metadata inspection; `git diff --check 18246000^ 45aa9fb2`.
+
+### 2026-09-06 — worker — re-recorded evidence after capture gap
+
+- Exact code head: `97c706e13d96b0c0e4c8ce6c7ec1ed875cbf6a6a`.
+- Submission command: `E5_T25C_REQUIRE_HEAD=97c706e13d96b0c0e4c8ce6c7ec1ed875cbf6a6a make verify-E5-T25c`.
+- The full target passed its 12/12 deterministic suite, release audit, conditional asset gate, web build, and headed browser run. The final artifact is `evidence/e5-t25c/browser/input-photon.json` (SHA-256 `0fba101908d9ff0a77a4558c4101580d1ddc1063f6c653821b23ac5f5e5795f9`) with 100 real focused-key samples, p50 `50.915 ms`, p95 `133.260 ms`, zero missing samples, and empty page/HTTP error arrays.
+- The final headed CDP capture retained 10 frames at a `16.459 ms` median (`60.757 Hz`), the rAF marker advanced 16 frames, and first/last PNGs differ (`4bde7ae70745dfba8f4bc3fdbbf6d067e1a318ff499933c8e622bea74730d213` / `89a6edf0a1152ffd13c6f43c5cf4155419ea0389dffaa232736b817b5ebf2acb`); the nearest captured frame was `1.754 ms` from the detector's present and within one display frame. The unfocused and overlapping-input attacks remained rejected, and the isolated drawn-present calibration measured a `101.245 ms` shift for the known `100 ms` delay. The companion files are `screen-capture-first.png`, `screen-capture-last.png`, and `recording-path.txt` in the same evidence directory. This re-record addresses the verifier's P3 capture finding; the separate verifier must now carry forward the held predictions and issue the final verdict.
