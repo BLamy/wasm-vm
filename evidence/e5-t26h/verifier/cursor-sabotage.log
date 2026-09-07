@@ -1,0 +1,22 @@
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26h-verifier.nNaU0o/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.75s
+     Running tests/desktop_machine_resume.rs (target/debug/deps/desktop_machine_resume-a3c9bf6832e09657)
+
+running 1 test
+desktop resume continuation: hash=9865e79b681ad970, retired=1
+
+thread 'desktop_devices_resume_with_ring_continuity_and_fresh_host_state' (15244076) panicked at crates/core/tests/desktop_machine_resume.rs:541:5:
+assertion `left == right` failed
+  left: Ok(3)
+ right: Ok(2)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test desktop_devices_resume_with_ring_continuity_and_fresh_host_state ... FAILED
+
+failures:
+
+failures:
+    desktop_devices_resume_with_ring_continuity_and_fresh_host_state
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.38s
+
+error: test failed, to rerun pass `-p wasm-vm-core --test desktop_machine_resume`
