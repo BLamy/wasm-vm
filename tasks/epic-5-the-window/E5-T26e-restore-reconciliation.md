@@ -3,7 +3,7 @@ id: E5-T26e
 epic: 5
 title: Desktop restore reconciliation for agent, scanout, and viewport
 priority: 526.5
-status: implemented
+status: in-progress
 depends_on: [E5-T26d, E5-T23e, E5-T22b]
 estimate: S
 risk: high
@@ -129,3 +129,43 @@ Claim: no live device or host publication is possible until detached T26b–d co
 repair frame are ready. Successful publication returns an opaque commit proof and the concrete
 adapter's native integration test verifies the published GPU/input/sound/agent/viewport state;
 all tested refusals restore the cold baseline. Browser pixel/CRC and reload proof remains E5-T26f.
+
+### 2026-09-07 — fresh verifier — VERDICT: refuted
+- P1 pre-commit repair/token remediation — HELD. Predicted repair preparation before commit and no
+  safe external token construction; observed coordinator ordering at
+  `crates/core/src/desktop_restore.rs:411-428`, repair refusal in the 10-test exact-head gate, and
+  E0451 for both private token shapes (`evidence/e5-t26e/verifier-r2/opaque-probe.log:3-6`).
+- P2 production agent/viewport composition — FAILED. Predicted a production success must require
+  and re-handshake the real T23e agent transport and retain the T22 viewport/repair state. The
+  Machine method checks only GPU/input/sound and drops its local backend
+  (`crates/core/src/lib.rs:1771-1795`); a Machine with no virtio-console returned `Ok` with
+  `agent_rehandshake=true`, a live GPU frame, non-empty input, Running sound, and one XRUN
+  (`evidence/e5-t26e/verifier-r2/attack-harness.log:7`). Demand: compose the real agent Channel/
+  console reconnect and a retained host viewport/repair owner; refuse rather than attest success
+  when either production dependency is absent.
+- P3 rollback after GPU publication — FAILED. Predicted a failure after GPU publication would leave
+  no stale host frame and an actual cold baseline. Device bytes rolled back, but the live sink kept
+  one restored 4x2 frame with no clearing/cold publication
+  (`evidence/e5-t26e/verifier-r2/attack-harness.log:5`; publication precedes the injected failure at
+  `crates/core/src/desktop_restore.rs:757-760`, while rollback restores only device snapshots at
+  `:600-603`). A separately dirty 640x480 scanout 99 was captured as “cold” and restored unchanged
+  (`attack-harness.log:6`; constructor at `desktop_restore.rs:520-544`). Demand: make presentation
+  publication transactional or explicitly publish the cold frame/clear on rollback, and obtain a
+  real cold baseline rather than snapshotting arbitrary live state at call time.
+- P4 real payload and hostile-input attacks — HELD. The external run used a real GPU resource, a
+  non-empty T26c keyboard frame, and a Running T26d sound stream; it observed two pending input
+  events, Running sound, and one XRUN (`attack-harness.log:7`). Forward-version and trailing-byte
+  GPU/input/sound payloads all refused atomically (`attack-harness.log:8-13`); the exact gate also
+  held malformed envelope, missing section, invalid size, agent/viewport/repair refusal, and
+  component refusal.
+- COVERAGE — INSUFFICIENT FOR THE CLAIM. The Makefile, coordinator, tokens, adapter success/refusal,
+  post-GPU rollback, and all four Machine composition outcomes were executed; impossible-through-
+  coordinator guard branches are waived. There is no changed production hunk that performs T23e
+  HELLO/reconnect or retains/applies T22 host viewport state, so those acceptance claims cannot be
+  covered. Full classifications: `evidence/e5-t26e/verifier-r2/audit.md`.
+- P5 scrubbed/pristine exact-head gate — HELD. In-place and `git archive` cold runs of submitted head
+  `8c931481` both passed 10/9/6/12/6 relevant tests, format, both clippy modes, and wasm32 build
+  (`evidence/e5-t26e/verifier-r2/gates.log:4-21`). Worker evidence digest
+  `81401c4d4037fa2c463b69a1c7c4e26d7ddc00deba20e7da925101c1ee77c253` also matched.
+- SUITE: retain the evidence-only five-test public-API harness as the reproducer; no implementation
+  test promotion while the production semantics remain refuted.

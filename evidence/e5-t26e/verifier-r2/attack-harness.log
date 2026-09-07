@@ -1,0 +1,15 @@
+E5-T26e fresh verifier attack harness
+head: 8c9314817321420fb94bfdaf23ae6491723f2e80
+implementation: 58a1f46364a46985bf7750a1b3e2c8b4f4f9b139
+command: env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG cargo test --offline --manifest-path evidence/e5-t26e/verifier-r2/Cargo.toml -- --nocapture
+POST_GPU_FAILURE code=commit_refused frames=1 last_resource=Some((4, 2)) gpu_cold=true input_cold=true sound_cold=true host=DesktopRestoreHostState { agent_generation: 0, agent_ready: false, viewport: None, repair_frames: 0 }
+DIRTY_FALLBACK scanout=Some(99) display=(640, 480) equals_dirty=true
+PRODUCTION_WITHOUT_AGENT ok=true agent_rehandshake=true viewport=Letterbox frames=1 input_pending=2 sound_state=Running sound_xruns=1
+COMPONENT_ATTACK component=gpu mutation=forward error=component_refused
+COMPONENT_ATTACK component=gpu mutation=trailing error=component_refused
+COMPONENT_ATTACK component=input mutation=forward error=component_refused
+COMPONENT_ATTACK component=input mutation=trailing error=component_refused
+COMPONENT_ATTACK component=sound mutation=forward error=component_refused
+COMPONENT_ATTACK component=sound mutation=trailing error=component_refused
+production missing-device branches: gpu_unavailable, input_unavailable, sound_unavailable all returned commit_refused
+result: 5 passed; 0 failed; 0 ignored
