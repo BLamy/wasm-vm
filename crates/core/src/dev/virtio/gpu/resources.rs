@@ -45,12 +45,12 @@ pub struct Resource {
     /// Pixels changed by transfers since the last flush. The bounded plan preserves separate
     /// regions for the later tile/presentation slices while this resource API still publishes one
     /// protocol rectangle today.
-    pending_damage: DamageAccumulator,
+    pub(crate) pending_damage: DamageAccumulator,
     /// The first browser presentation must establish the whole surface.  Later transfers may be
     /// narrowed to `pending_damage` when the sink opts into change tracking.
-    presented: bool,
+    pub(crate) presented: bool,
     /// 64x64 tiles touched by successful transfers, consumed by the later tiled upload seam.
-    dirty_tiles: DirtyTilePlanner,
+    pub(crate) dirty_tiles: DirtyTilePlanner,
 }
 
 impl Resource {
@@ -128,6 +128,292 @@ pub enum UnrefError {
     InvalidResourceId,
     /// The unref request did not contain its fixed wire payload.
     InvalidParameter,
+}
+
+/// Bounded failure modes of the deterministic host-shadow codec used by T26b.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ShadowCodecError {
+    Truncated,
+    BadMagic,
+    InvalidKind,
+    ZeroLengthRun,
+    RunExceedsExpected,
+    PixelCountMismatch { declared: u32, expected: u32 },
+    TrailingBytes,
+    PixelCountOverflow,
+    OutOfMemory,
+}
+
+impl ShadowCodecError {
+    /// Stable machine-readable code for native/browser verifier logs.
+    pub const fn code(self) -> &'static str {
+        match self {
+            Self::Truncated => "truncated",
+            Self::BadMagic => "bad_magic",
+            Self::InvalidKind => "invalid_kind",
+            Self::ZeroLengthRun => "zero_length_run",
+            Self::RunExceedsExpected => "run_exceeds_expected",
+            Self::PixelCountMismatch { .. } => "pixel_count_mismatch",
+            Self::TrailingBytes => "trailing_bytes",
+            Self::PixelCountOverflow => "pixel_count_overflow",
+            Self::OutOfMemory => "out_of_memory",
+        }
+    }
+}
+
+/// Compression size report for a host shadow buffer.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ShadowCompressionStats {
+    raw_bytes: u64,
+    encoded_bytes: u64,
+    /// Encoded/raw × 1000.  Integer arithmetic keeps the report deterministic on wasm32 and
+    /// native builds alike; 1000 means 1.000× the raw size.
+    ratio_milli: u32,
+}
+
+impl ShadowCompressionStats {
+    pub const fn raw_bytes(self) -> u64 {
+        self.raw_bytes
+    }
+
+    pub const fn encoded_bytes(self) -> u64 {
+        self.encoded_bytes
+    }
+
+    pub const fn ratio_milli(self) -> u32 {
+        self.ratio_milli
+    }
+}
+
+/// A compressed host shadow plus the deterministic size report used by the proof harness.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CompressedShadow {
+    pub bytes: Vec<u8>,
+    pub stats: ShadowCompressionStats,
+}
+
+/// A complete resource record detached from the live map.  T26b serializes these records before
+/// replacing any live map, so malformed shadows or bindings cannot partially alter a resource.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct ResourceSnapshot {
+    pub(crate) format: u32,
+    pub(crate) width: u32,
+    pub(crate) height: u32,
+    pub(crate) pixels: Vec<u32>,
+    pub(crate) backing: Vec<(GuestAddr, u32)>,
+    pub(crate) pending_damage: Vec<protocol::Rect>,
+    pub(crate) pending_damage_collapsed: bool,
+    pub(crate) presented: bool,
+    pub(crate) dirty_bits: Vec<u64>,
+    pub(crate) dirty_count: u32,
+}
+
+/// Failure while reconstructing a resource map from a validated GPU snapshot payload.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ResourceSnapshotError {
+    DuplicateResourceId { resource_id: u32 },
+    InvalidResourceId { resource_id: u32 },
+    InvalidFormat { resource_id: u32, format: u32 },
+    InvalidDimensions { resource_id: u32 },
+    InvalidPixelLength { resource_id: u32 },
+    InvalidBacking { resource_id: u32 },
+    InvalidDamage { resource_id: u32 },
+    InvalidTiles { resource_id: u32 },
+    OutOfMemory { resource_id: u32 },
+}
+
+impl ResourceSnapshotError {
+    pub const fn code(self) -> &'static str {
+        match self {
+            Self::DuplicateResourceId { .. } => "duplicate_resource_id",
+            Self::InvalidResourceId { .. } => "invalid_resource_id",
+            Self::InvalidFormat { .. } => "invalid_format",
+            Self::InvalidDimensions { .. } => "invalid_dimensions",
+            Self::InvalidPixelLength { .. } => "invalid_pixel_length",
+            Self::InvalidBacking { .. } => "invalid_backing",
+            Self::InvalidDamage { .. } => "invalid_damage",
+            Self::InvalidTiles { .. } => "invalid_tiles",
+            Self::OutOfMemory { .. } => "out_of_memory",
+        }
+    }
+}
+
+const SHADOW_MAGIC: [u8; 4] = *b"GSH1";
+const SHADOW_HEADER_LEN: usize = 8;
+const SHADOW_REPEAT: u8 = 0;
+const SHADOW_LITERAL: u8 = 1;
+
+/// Encode u32 host pixels with deterministic repeat/literal chunks.  A run of three or more equal
+/// pixels uses one value; shorter runs are grouped into a literal chunk.  The decoder receives an
+/// expected pixel count and checks every run before growing its output.
+pub fn compress_shadow(pixels: &[u32]) -> Result<CompressedShadow, ShadowCodecError> {
+    let pixel_count =
+        u32::try_from(pixels.len()).map_err(|_| ShadowCodecError::PixelCountOverflow)?;
+    let mut encoded = Vec::new();
+    encoded
+        .try_reserve(SHADOW_HEADER_LEN)
+        .map_err(|_| ShadowCodecError::OutOfMemory)?;
+    encoded.extend_from_slice(&SHADOW_MAGIC);
+    encoded.extend_from_slice(&pixel_count.to_le_bytes());
+
+    let mut cursor = 0usize;
+    while cursor < pixels.len() {
+        let start = cursor;
+        let value = pixels[cursor];
+        while cursor < pixels.len() && pixels[cursor] == value {
+            cursor += 1;
+        }
+        let run_len = cursor - start;
+        if run_len >= 3 {
+            append_repeat(&mut encoded, run_len, value)?;
+            continue;
+        }
+
+        // Include adjacent short runs in one literal chunk, stopping immediately before the next
+        // compressible run. This makes the output independent of allocator/chunk boundaries.
+        let literal_start = start;
+        let mut literal_end = cursor;
+        while literal_end < pixels.len() {
+            let next_value = pixels[literal_end];
+            let mut next_end = literal_end + 1;
+            while next_end < pixels.len() && pixels[next_end] == next_value {
+                next_end += 1;
+            }
+            if next_end - literal_end >= 3 {
+                break;
+            }
+            literal_end = next_end;
+        }
+        append_literal(&mut encoded, &pixels[literal_start..literal_end])?;
+        cursor = literal_end;
+    }
+
+    let raw_bytes = (pixels.len() as u64) * core::mem::size_of::<u32>() as u64;
+    let encoded_bytes = encoded.len() as u64;
+    let ratio_milli = if raw_bytes == 0 {
+        1000
+    } else {
+        encoded_bytes
+            .saturating_mul(1000)
+            .checked_div(raw_bytes)
+            .unwrap_or(0)
+            .min(u64::from(u32::MAX)) as u32
+    };
+    Ok(CompressedShadow {
+        bytes: encoded,
+        stats: ShadowCompressionStats {
+            raw_bytes,
+            encoded_bytes,
+            ratio_milli,
+        },
+    })
+}
+
+fn append_repeat(out: &mut Vec<u8>, mut length: usize, value: u32) -> Result<(), ShadowCodecError> {
+    while length != 0 {
+        let chunk = length.min(u32::MAX as usize);
+        out.try_reserve(9)
+            .map_err(|_| ShadowCodecError::OutOfMemory)?;
+        out.push(SHADOW_REPEAT);
+        out.extend_from_slice(&(chunk as u32).to_le_bytes());
+        out.extend_from_slice(&value.to_le_bytes());
+        length -= chunk;
+    }
+    Ok(())
+}
+
+fn append_literal(out: &mut Vec<u8>, pixels: &[u32]) -> Result<(), ShadowCodecError> {
+    if pixels.is_empty() {
+        return Ok(());
+    }
+    let byte_len = pixels
+        .len()
+        .checked_mul(core::mem::size_of::<u32>())
+        .ok_or(ShadowCodecError::PixelCountOverflow)?;
+    out.try_reserve(
+        5usize
+            .checked_add(byte_len)
+            .ok_or(ShadowCodecError::PixelCountOverflow)?,
+    )
+    .map_err(|_| ShadowCodecError::OutOfMemory)?;
+    out.push(SHADOW_LITERAL);
+    out.extend_from_slice(&(pixels.len() as u32).to_le_bytes());
+    for pixel in pixels {
+        out.extend_from_slice(&pixel.to_le_bytes());
+    }
+    Ok(())
+}
+
+/// Decode a shadow only when it reconstructs exactly `expected_pixels` u32 values.
+pub fn decompress_shadow(
+    encoded: &[u8],
+    expected_pixels: usize,
+) -> Result<Vec<u32>, ShadowCodecError> {
+    if encoded.len() < SHADOW_HEADER_LEN {
+        return Err(ShadowCodecError::Truncated);
+    }
+    if encoded[..4] != SHADOW_MAGIC {
+        return Err(ShadowCodecError::BadMagic);
+    }
+    let declared = u32::from_le_bytes(encoded[4..8].try_into().unwrap());
+    let expected =
+        u32::try_from(expected_pixels).map_err(|_| ShadowCodecError::PixelCountOverflow)?;
+    if declared != expected {
+        return Err(ShadowCodecError::PixelCountMismatch { declared, expected });
+    }
+    let mut pixels = Vec::new();
+    pixels
+        .try_reserve_exact(expected_pixels)
+        .map_err(|_| ShadowCodecError::OutOfMemory)?;
+    let mut pos = SHADOW_HEADER_LEN;
+    while pos < encoded.len() {
+        if encoded.len() - pos < 5 {
+            return Err(ShadowCodecError::Truncated);
+        }
+        let kind = encoded[pos];
+        let length = u32::from_le_bytes(encoded[pos + 1..pos + 5].try_into().unwrap()) as usize;
+        pos += 5;
+        if length == 0 {
+            return Err(ShadowCodecError::ZeroLengthRun);
+        }
+        let new_len = pixels
+            .len()
+            .checked_add(length)
+            .filter(|len| *len <= expected_pixels)
+            .ok_or(ShadowCodecError::RunExceedsExpected)?;
+        match kind {
+            SHADOW_REPEAT => {
+                if encoded.len() - pos < 4 {
+                    return Err(ShadowCodecError::Truncated);
+                }
+                let value = u32::from_le_bytes(encoded[pos..pos + 4].try_into().unwrap());
+                pos += 4;
+                pixels.resize(new_len, value);
+            }
+            SHADOW_LITERAL => {
+                let bytes = length
+                    .checked_mul(core::mem::size_of::<u32>())
+                    .ok_or(ShadowCodecError::RunExceedsExpected)?;
+                let end = pos.checked_add(bytes).ok_or(ShadowCodecError::Truncated)?;
+                if end > encoded.len() {
+                    return Err(ShadowCodecError::Truncated);
+                }
+                for chunk in encoded[pos..end].chunks_exact(4) {
+                    pixels.push(u32::from_le_bytes(chunk.try_into().unwrap()));
+                }
+                pos = end;
+            }
+            _ => return Err(ShadowCodecError::InvalidKind),
+        }
+        debug_assert_eq!(pixels.len(), new_len);
+    }
+    if pixels.len() != expected_pixels {
+        return Err(ShadowCodecError::PixelCountMismatch { declared, expected });
+    }
+    if pos != encoded.len() {
+        return Err(ShadowCodecError::TrailingBytes);
+    }
+    Ok(pixels)
 }
 
 /// Why a TRANSFER_TO_HOST_2D request was rejected.
@@ -311,6 +597,103 @@ impl ResourceMap {
     /// Mutable lookup for later command slices.
     pub fn get_mut(&mut self, resource_id: u32) -> Option<&mut Resource> {
         self.resources.get_mut(&resource_id)
+    }
+
+    /// Copy every live resource into deterministic id order for the T26b snapshot transaction.
+    pub(crate) fn snapshot_records(&self) -> Vec<(u32, ResourceSnapshot)> {
+        self.resources
+            .iter()
+            .map(|(&resource_id, resource)| {
+                (
+                    resource_id,
+                    ResourceSnapshot {
+                        format: resource.format,
+                        width: resource.width,
+                        height: resource.height,
+                        pixels: resource.host_pixels.to_vec(),
+                        backing: resource.backing.clone(),
+                        pending_damage: resource.pending_damage.rects().to_vec(),
+                        pending_damage_collapsed: resource.pending_damage.is_collapsed(),
+                        presented: resource.presented,
+                        dirty_bits: resource.dirty_tiles.snapshot_bits().to_vec(),
+                        dirty_count: resource.dirty_tiles.dirty_tile_count(),
+                    },
+                )
+            })
+            .collect()
+    }
+
+    /// Build a detached resource map from already-decoded records.  The live map is not involved;
+    /// callers can therefore finish validating all scanout/cursor references before swapping it
+    /// into `GpuState`.
+    pub(crate) fn from_snapshot_records(
+        records: &[(u32, ResourceSnapshot)],
+    ) -> Result<Self, ResourceSnapshotError> {
+        let mut map = Self::new();
+        for &(resource_id, ref snapshot) in records {
+            if resource_id == 0 {
+                return Err(ResourceSnapshotError::InvalidResourceId { resource_id });
+            }
+            if map.resources.contains_key(&resource_id) {
+                return Err(ResourceSnapshotError::DuplicateResourceId { resource_id });
+            }
+            let pixel_count = u64::from(snapshot.width)
+                .checked_mul(u64::from(snapshot.height))
+                .and_then(|count| usize::try_from(count).ok())
+                .ok_or(ResourceSnapshotError::InvalidDimensions { resource_id })?;
+            if snapshot.pixels.len() != pixel_count {
+                return Err(ResourceSnapshotError::InvalidPixelLength { resource_id });
+            }
+            for &(address, length) in &snapshot.backing {
+                if length == 0 || address.checked_add(u64::from(length)).is_none() {
+                    return Err(ResourceSnapshotError::InvalidBacking { resource_id });
+                }
+            }
+            let pending_damage = DamageAccumulator::from_snapshot(
+                snapshot.width,
+                snapshot.height,
+                &snapshot.pending_damage,
+                snapshot.pending_damage_collapsed,
+            )
+            .ok_or(ResourceSnapshotError::InvalidDamage { resource_id })?;
+            let dirty_tiles = DirtyTilePlanner::from_snapshot(
+                snapshot.width,
+                snapshot.height,
+                &snapshot.dirty_bits,
+                snapshot.dirty_count,
+            )
+            .map_err(|_| ResourceSnapshotError::InvalidTiles { resource_id })?;
+
+            let resource = map
+                .create(
+                    resource_id,
+                    snapshot.format,
+                    snapshot.width,
+                    snapshot.height,
+                )
+                .map_err(|error| match error {
+                    CreateError::InvalidResourceId => {
+                        ResourceSnapshotError::DuplicateResourceId { resource_id }
+                    }
+                    CreateError::InvalidParameter => {
+                        if !protocol::is_supported_format(snapshot.format) {
+                            ResourceSnapshotError::InvalidFormat {
+                                resource_id,
+                                format: snapshot.format,
+                            }
+                        } else {
+                            ResourceSnapshotError::InvalidDimensions { resource_id }
+                        }
+                    }
+                    CreateError::OutOfMemory => ResourceSnapshotError::OutOfMemory { resource_id },
+                })?;
+            resource.host_pixels.copy_from_slice(&snapshot.pixels);
+            resource.backing = snapshot.backing.clone();
+            resource.pending_damage = pending_damage;
+            resource.presented = snapshot.presented;
+            resource.dirty_tiles = dirty_tiles;
+        }
+        Ok(map)
     }
 
     /// Atomically publish a fully decoded and validated backing list.

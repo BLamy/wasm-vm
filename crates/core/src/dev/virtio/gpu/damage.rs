@@ -68,6 +68,36 @@ impl DamageAccumulator {
         &self.rects[..self.len]
     }
 
+    /// Rebuild a damage accumulator from its canonical snapshot representation.  The caller owns
+    /// the payload framing; this helper only validates that every retained rectangle belongs to the
+    /// immutable resource bounds and that the collapsed flag has a representable shape.
+    pub(crate) fn from_snapshot(
+        width: u32,
+        height: u32,
+        rects: &[Rect],
+        collapsed: bool,
+    ) -> Option<Self> {
+        if rects.len() > MAX_RECTS || (collapsed && rects.len() != 1) {
+            return None;
+        }
+        let mut damage = Self::new(width, height);
+        for (index, &rect) in rects.iter().enumerate() {
+            let right = u64::from(rect.x) + u64::from(rect.width);
+            let bottom = u64::from(rect.y) + u64::from(rect.height);
+            if rect.width == 0
+                || rect.height == 0
+                || right > u64::from(width)
+                || bottom > u64::from(height)
+            {
+                return None;
+            }
+            damage.rects[index] = rect;
+        }
+        damage.len = rects.len();
+        damage.collapsed = collapsed;
+        Some(damage)
+    }
+
     /// Return the union of the retained plan, or `None` when it is empty.
     pub fn bounds(&self) -> Option<Rect> {
         self.rects().iter().copied().reduce(Self::union)

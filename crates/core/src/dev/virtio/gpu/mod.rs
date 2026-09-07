@@ -10,6 +10,9 @@ pub mod protocol;
 pub mod resources;
 pub mod tiles;
 
+mod snapshot;
+pub use snapshot::GpuSnapshotError;
+
 use alloc::boxed::Box;
 use alloc::rc::Rc;
 use alloc::vec::Vec;
@@ -541,6 +544,18 @@ impl GpuState {
         #[cfg(feature = "gpu-trace")]
         self.clear_command_trace();
     }
+
+    /// Serialize the host-owned GPU resources, scanout binding, cursor plane, and pending damage
+    /// into the T26b component payload.  The outer desktop envelope supplies the section version
+    /// and component digest.
+    pub fn to_snapshot(&self) -> Result<Vec<u8>, GpuSnapshotError> {
+        snapshot::encode(self)
+    }
+
+    /// Atomically restore a T26b payload and publish one full repair frame when a scanout is bound.
+    pub fn restore_snapshot(&mut self, payload: &[u8]) -> Result<(), GpuSnapshotError> {
+        snapshot::restore(self, payload)
+    }
 }
 
 /// A minimal virtio-gpu device.  Queue state remains owned by the generic virtio-mmio transport;
@@ -604,6 +619,16 @@ impl VirtioGpu {
     /// Copy the last validated cursor state for a scanout.
     pub fn cursor_state(&self, scanout_id: u32) -> Option<CursorState> {
         self.state.borrow().cursor_state(scanout_id)
+    }
+
+    /// Serialize the shared GPU state for the desktop snapshot envelope.
+    pub fn to_snapshot(&self) -> Result<Vec<u8>, GpuSnapshotError> {
+        self.state.borrow().to_snapshot()
+    }
+
+    /// Atomically restore the shared GPU state and emit one full repair frame if scanout is bound.
+    pub fn restore_snapshot(&mut self, payload: &[u8]) -> Result<(), GpuSnapshotError> {
+        self.state.borrow_mut().restore_snapshot(payload)
     }
 
     /// Change the host-visible virtual display mode.  The transport latches one config interrupt

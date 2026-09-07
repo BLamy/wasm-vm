@@ -21,6 +21,8 @@ pub enum TilePlannerError {
     InvalidDimensions,
     /// The bounded bitmap or returned plan could not be reserved.
     OutOfMemory,
+    /// A serialized dirty bitmap does not match the resource's tile geometry.
+    MalformedSnapshot,
 }
 
 /// Select the normal tiled upload path or the diagnostic full-frame A/B path.
@@ -148,6 +150,40 @@ impl DirtyTilePlanner {
     /// Number of currently dirty tiles.
     pub const fn dirty_tile_count(&self) -> u32 {
         self.dirty_count
+    }
+
+    /// Borrow the canonical dirty bitmap for the GPU snapshot codec.
+    pub(crate) fn snapshot_bits(&self) -> &[u64] {
+        &self.bits
+    }
+
+    /// Rebuild a dirty bitmap only when its word count, set-bit count, and unused tail bits agree
+    /// with the resource geometry.  The checks prevent a forged snapshot from creating phantom
+    /// dirty tiles outside the advertised resource.
+    pub(crate) fn from_snapshot(
+        width: u32,
+        height: u32,
+        bits: &[u64],
+        dirty_count: u32,
+    ) -> Result<Self, TilePlannerError> {
+        let mut planner = Self::try_new(width, height)?;
+        if bits.len() != planner.bits.len() {
+            return Err(TilePlannerError::MalformedSnapshot);
+        }
+        let actual = bits.iter().map(|word| word.count_ones()).sum::<u32>();
+        if actual != dirty_count || dirty_count > planner.tile_count() {
+            return Err(TilePlannerError::MalformedSnapshot);
+        }
+        let remainder = (planner.tile_count() as usize) % WORD_BITS;
+        if remainder != 0 {
+            let mask = (1u64 << remainder) - 1;
+            if bits.last().copied().unwrap_or(0) & !mask != 0 {
+                return Err(TilePlannerError::MalformedSnapshot);
+            }
+        }
+        planner.bits.copy_from_slice(bits);
+        planner.dirty_count = dirty_count;
+        Ok(planner)
     }
 
     /// Whether no dirty tile is pending.
