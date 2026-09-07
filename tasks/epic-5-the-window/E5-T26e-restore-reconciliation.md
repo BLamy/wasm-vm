@@ -3,7 +3,7 @@ id: E5-T26e
 epic: 5
 title: Desktop restore reconciliation for agent, scanout, and viewport
 priority: 526.5
-status: in-progress
+status: implemented
 depends_on: [E5-T26d, E5-T23e, E5-T22b]
 estimate: S
 risk: high
@@ -238,3 +238,37 @@ baseline. Browser CRC/reload behavior remains explicitly outside this task's cla
   `41871b809537f2195dcd6bb24f7ad593d71aee88`. Fresh gates above ran at submitted head `ac35d1d8`.
 - SUITE: retain the two-test evidence harness and promote the dirty-sink early-refusal regression
   after repair. WebKit, independent-machine and host-rr legs remain waived as directed.
+
+### 2026-09-07 — worker — REMEDIATION 3 SUBMITTED
+- Implementation commit: `ea14c48f12a323ff60fb21744a34c10e814cd68a`.
+- The console restore fence now distinguishes transport-open from application readiness: the core
+  accepts a restore only after the live host T23d Channel has reported a fresh application HELLO,
+  and the browser Channel's `rehandshake()` resolves only after that new transport HELLO is
+  decoded. A successful restore consumes the HELLO generation, so a later restore cannot reuse a
+  stale READY bit.
+- All Machine-level pre-backend refusals now use the same cold fallback as staged failures. The
+  fallback clears the live GPU sink, restores fresh power-on GPU/input/sound snapshots, restarts
+  the agent port when present, and resets retained host reconciliation state. The promoted native
+  regression begins with a dirty frame and a missing agent and verifies no frame or dirty device
+  state survives.
+- Added the production wasm/worker/page seam: `confirmAgentHello` and `restoreDesktopSnapshot`
+  cross the loader and worker allow-list, while `web/desktop-restore.js` composes the live T23d
+  Channel with the live T22 PresentationController (`clear`, `setViewport`, and canvas-style
+  application). Refusal or handshake loss clears the presentation again. The browser pixel/CRC,
+  reload, and full device-layout proof remain E5-T26f scope.
+- Exact-head command (exit 0): `env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u
+  CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG make verify-E5-T26e`. It passed 12 restore,
+  1 console re-handshake, 1 live Machine/console integration, 9 envelope, 6 GPU, 12 input, and
+  6 sound snapshot tests; format, both clippy modes, and the core no-default-features wasm32
+  build passed. The wrapper `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown` passed.
+- Browser composition checks passed: changed-module syntax checks, 17 focused Channel/restore
+  tests, and source/dist `cmp` checks. The exact evidence is
+  `evidence/e5-t26e/native-remediation3.json` (SHA-256
+  `f2dcfeea18f12dcfd190ad0028e3a780b313cc80909405612bfe06101f3cffc8`) and the gate transcript
+  `evidence/e5-t26e/worker-remediation3-gate.log`. Independent machines, WebKit, and host rr are
+  waived by repository policy and user direction.
+
+Claim: T26e now binds desktop restore to a fresh application-level agent handshake, carries the
+retained host viewport through the live T22 presentation owner, and gives every pre-commit or
+pre-backend refusal the same visible cold fallback. The next browser-specific round-trip,
+pixel/CRC, reload, and interaction proof belongs to T26f.
