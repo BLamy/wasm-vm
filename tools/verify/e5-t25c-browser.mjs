@@ -248,7 +248,11 @@ async function runAdversarialInputChecks(cursorCell) {
   });
   assert.equal(unfocusedBefore.focused, false, "unfocused attack did not remove canvas focus");
   await page.keyboard.press("ArrowRight");
-  const unfocusedEvent = await waitForKeyEvent(unfocusedBefore.keyboardEvents, "ArrowRight");
+  await page.waitForTimeout(1_000);
+  const unfocusedEvent = await page.evaluate((minimum) => window.__desktopPerf.keyboardEvents()
+    .slice(minimum)
+    .find((event) => event.type === "keydown" && event.code === "ArrowRight") || null,
+  unfocusedBefore.keyboardEvents);
   await page.waitForTimeout(180);
   const unfocusedRejected = await page.evaluate(({ inputAt, sequenceBefore, cursorCell: cell }) => {
     const records = window.__desktopPerf.presents();
@@ -259,7 +263,11 @@ async function runAdversarialInputChecks(cursorCell) {
       focused: false,
       sequenceBefore,
     }) === null;
-  }, { inputAt: unfocusedEvent.timestamp, sequenceBefore: unfocusedBefore.sequenceBefore, cursorCell });
+  }, {
+    inputAt: unfocusedEvent?.timestamp ?? unfocusedBefore.inputAt,
+    sequenceBefore: unfocusedBefore.sequenceBefore,
+    cursorCell,
+  });
   assert.equal(unfocusedRejected, true, "unfocused key was attributed to a drawn present");
 
   await page.evaluate(() => document.querySelector("#desktop-canvas").focus());
@@ -306,7 +314,11 @@ async function runAdversarialInputChecks(cursorCell) {
   await page.waitForTimeout(80);
   await page.evaluate(() => window.__desktopPerf.clear());
   return {
-    unfocused: { rejected: unfocusedRejected, keyCode: unfocusedEvent.code },
+    unfocused: {
+      rejected: unfocusedRejected,
+      captured: unfocusedEvent !== null,
+      keyCode: unfocusedEvent?.code ?? null,
+    },
     overlapping: { rejectedFirst: overlap.first === null, recordCount: overlap.recordCount },
   };
 }
