@@ -3,7 +3,7 @@ id: E5-T26e
 epic: 5
 title: Desktop restore reconciliation for agent, scanout, and viewport
 priority: 526.5
-status: implemented
+status: in-progress
 depends_on: [E5-T26d, E5-T23e, E5-T22b]
 estimate: S
 risk: high
@@ -70,3 +70,36 @@ stage their validated state, T23d can re-handshake the agent, and T22b can apply
 native-pixel viewport plan before one host-visible commit. Any failed component, dropped channel,
 changed/invalid viewport, or absent full repair clears transient work and selects a clean cold boot
 without publishing a half-restored desktop.
+
+### 2026-09-07 — verifier — VERDICT: refuted
+- P1 ordering/reconciliation — HELD. Predicted GPU → input → sound → agent → viewport → commit;
+  native and changed-host letterbox runs preserved the GPU-provided `1280x720` guest scanout.
+  Observed in `evidence/e5-t26e/verifier/src/lib.rs:193-219`; all ordinary refusal, malformed,
+  forward-version, invalid-dimension, agent-drop, and bounded-retry predictions also held at lines
+  158-335. The six-test attack transcript is `evidence/e5-t26e/verifier/attack-harness.log:5-13`.
+- P2 full repair before publication — FAILED. Predicted no live commit before repair success;
+  observed `commit()` is called before `full_repair_frame` is checked
+  (`crates/core/src/desktop_restore.rs:359-375`). The submitted backend sets `committed = true`
+  before returning `full_repair_frame = false`, and its cold fallback never clears it
+  (`crates/core/src/desktop_restore_tests.rs:123-142,271-294`). The independent reproducer returns
+  `commit_refused` after `cold` while live state remains committed
+  (`evidence/e5-t26e/verifier/src/lib.rs:358-374`; transcript line 7). Demand: make full-repair
+  readiness part of staging or make publication infallible only after every prerequisite, with a
+  verified rollback/cold-state postcondition.
+- P3 success attestation — FAILED. Predicted success could not be reported without publication;
+  observed a backend returning `Ok(full_repair_frame: true)` without publishing state yields an
+  `Ok` report and no fallback (`evidence/e5-t26e/verifier/src/lib.rs:339-356`; transcript line 6).
+  Demand: replace the forgeable post-commit Boolean/unchecked cleanup callbacks with a transaction
+  contract whose success and fallback states are structurally verifiable.
+- COVERAGE production composition — INSUFFICIENT. Exact-head `git grep` finds no production
+  `DesktopRestoreBackend` implementation or coordinator call site; the gate runs coordinator mocks
+  and component codecs separately (`evidence/e5-t26e/verifier/scrubbed-gate.log:8-87`). Demand: add
+  a concrete native adapter/integration run that sends real GPU/input/sound/agent payloads through
+  one detached transaction and proves refusal rollback. Browser CRC/reload remains E5-T26f scope.
+- Evidence: worker JSON digest HELD at
+  `bb329cca45cf2e20ae97a81277db033388432a1a352437e82bfaf8d50dcd7ad0`; the exact scrubbed gate
+  passed both in-place (`scrubbed-gate.log:1-92`) and from a pristine archive of `7fd0fa6d`
+  (`cold-exact-head-gate.log:164-257`). Full audit and hunk classifications:
+  `evidence/e5-t26e/verifier/audit.md`.
+- SUITE: no promotion while the semantic contract is refuted; the evidence-only six-test harness
+  is retained as the reproducer.

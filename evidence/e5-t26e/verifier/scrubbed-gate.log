@@ -1,0 +1,92 @@
+# Composite desktop restore: parse-before-mutate, GPU → input → sound staging, agent HELLO,
+# deterministic T22 viewport planning, full repair publication, and cold fallback on refusal.
+cargo fmt --check -p wasm-vm-core
+cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+cargo test -p wasm-vm-core --lib --features gpu-trace desktop_restore -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 7 tests
+test desktop_restore::desktop_restore_tests::component_refusal_clears_staging_and_cold_boots_without_commit ... ok
+test desktop_restore::desktop_restore_tests::dropped_agent_channel_never_publishes_viewport_or_device_commit ... ok
+test desktop_restore::desktop_restore_tests::changed_host_window_keeps_guest_scanout_and_selects_letterbox ... ok
+test desktop_restore::desktop_restore_tests::valid_composite_restore_stages_in_dependency_order_and_repairs ... ok
+test desktop_restore::desktop_restore_tests::invalid_host_dimensions_are_rejected_before_callbacks ... ok
+test desktop_restore::desktop_restore_tests::viewport_and_repair_failures_use_the_same_clean_fallback ... ok
+test desktop_restore::desktop_restore_tests::missing_or_malformed_composite_never_enters_component_staging ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 310 filtered out; finished in 0.00s
+
+# Carry the component-level atomicity gates forward at the cross-device boundary.
+cargo test -p wasm-vm-core --lib --features gpu-trace desktop_snapshot -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 9 tests
+test desktop_snapshot::desktop_snapshot_tests::explicit_abort_is_idempotent_and_invalid_permits_are_rejected ... ok
+test desktop_snapshot::desktop_snapshot_tests::builder_rejects_duplicate_unknown_and_forward_sections ... ok
+test desktop_snapshot::desktop_snapshot_tests::quiesce_waits_for_one_boundary_and_releases_cleanly ... ok
+test desktop_snapshot::desktop_snapshot_tests::in_flight_timeout_is_bounded_aborts_and_leaves_device_usable ... ok
+test desktop_snapshot::desktop_snapshot_tests::empty_envelope_is_byte_exact_and_stably_digested ... ok
+test desktop_snapshot::desktop_snapshot_tests::bad_magic_and_forward_envelope_version_are_machine_readable ... ok
+test desktop_snapshot::desktop_snapshot_tests::parser_rejects_trailing_table_bytes_and_component_digest_tampering ... ok
+test desktop_snapshot::desktop_snapshot_tests::malformed_sections_fail_closed_before_live_state_mutation ... ok
+test desktop_snapshot::desktop_snapshot_tests::populated_envelope_includes_versions_component_digests_and_stable_digest ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 308 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::gpu::snapshot::tests -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 6 tests
+test dev::virtio::gpu::snapshot::tests::missing_scanout_resource_and_bad_format_leave_live_state_unchanged ... ok
+test dev::virtio::gpu::snapshot::tests::valid_restore_presents_one_full_repair_frame ... ok
+test dev::virtio::gpu::snapshot::tests::shadow_codec_reports_bounded_compression_and_rejects_forged_runs ... ok
+test dev::virtio::gpu::snapshot::tests::malformed_shadow_and_truncation_fail_closed ... ok
+test dev::virtio::gpu::snapshot::tests::gpu_snapshot_round_trips_resource_scanout_cursor_damage_and_crc ... ok
+test dev::virtio::gpu::snapshot::tests::malformed_resource_metadata_fails_closed_before_live_map_swap ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 311 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::input::snapshot::tests -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 12 tests
+test dev::virtio::input::snapshot::tests::direct_release_all_is_protected_from_budget_eviction ... ok
+test dev::virtio::input::snapshot::tests::restore_discards_held_key_and_button_state_with_one_protected_release_frame ... ok
+test dev::virtio::input::snapshot::tests::verifier_multiframe_order_indices_and_staged_work_are_byte_exact ... ok
+test dev::virtio::input::snapshot::tests::malformed_ring_lengths_duplicate_events_and_truncation_are_atomic ... ok
+test dev::virtio::input::snapshot::tests::verifier_empty_restore_accepts_fresh_keyboard_tablet_and_mouse_frames ... ok
+test dev::virtio::input::snapshot::tests::verifier_release_all_precedes_saved_work_and_survives_host_pressure ... ok
+test dev::virtio::input::snapshot::tests::three_input_devices_round_trip_pending_order_and_partial_indices ... ok
+test dev::virtio::input::snapshot::tests::verifier_malformed_headers_preserve_unserialized_delivered_ledger ... ok
+test dev::virtio::input::snapshot::tests::verifier_total_serialized_event_cap_is_atomic_on_encode_and_decode ... ok
+test dev::virtio::input::snapshot::tests::verifier_release_growth_at_serialized_cap_is_atomic ... ok
+test dev::virtio::input::snapshot::tests::verifier_fully_consumed_records_still_obey_total_serialized_cap ... ok
+test dev::virtio::input::snapshot::tests::verifier_release_growth_that_exactly_reaches_serialized_cap_succeeds ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 305 filtered out; finished in 0.25s
+
+cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::snd::snapshot::tests -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 6 tests
+test dev::virtio::snd::snapshot::tests::stopped_stream_round_trip_preserves_configuration_without_xrun ... ok
+test dev::virtio::snd::snapshot::tests::malformed_restore_is_atomic_and_rejects_bad_params ... ok
+test dev::virtio::snd::snapshot::tests::pending_period_metadata_is_exact_and_atomic_for_both_streams ... ok
+test dev::virtio::snd::snapshot::tests::snapshot_header_has_stable_size_before_event_records ... ok
+test dev::virtio::snd::snapshot::tests::running_restore_discards_ephemeral_rings_and_repairs_both_streams ... ok
+test dev::virtio::snd::snapshot::tests::running_repair_respects_the_event_budget_before_mutation ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 311 filtered out; finished in 0.00s
+
+# The coordinator and callback contract remain no_std/wasm-compatible.
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.04s
+verify-E5-T26e (desktop restore reconciliation and cold fallback): OK
