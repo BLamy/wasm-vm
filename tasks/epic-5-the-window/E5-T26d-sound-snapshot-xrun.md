@@ -3,7 +3,7 @@ id: E5-T26d
 epic: 5
 title: Virtio-snd stream snapshot and XRUN restore
 priority: 526.4
-status: implemented
+status: verified
 depends_on: [E5-T26c]
 estimate: S
 risk: high
@@ -114,3 +114,23 @@ restore repeatedly and require a bounded XRUN recovery or clean failure, never a
   mutation failures; `post_restore_stall` exited 0 with 184 strict-prefix refusals, direct event
   cap refusal, and 23 elapsed XRUNs after a 500 ms empty-ring stall. No implementation code was
   changed by the verifier harness.
+
+### 2026-09-07 — verifier — VERDICT: verified
+- P6 remediation HELD: the locked public-API harness rejected all 42/42 malformed payloads
+  atomically, including the formerly accepted output/capture one-byte totals. The validator now
+  compares pending bytes with `count * configured_period_bytes` before restore assignment.
+- The bounded novel `count=2, bytes=one-period` mutation was rejected atomically for output and
+  capture. The 64-cycle loop after a 500 ms stall retained empty host rings, one replacement repair
+  XRUN per running stream, no stale completion, one fresh 1024-frame ramp, and no duplicate audio.
+- Scrubbed `make verify-E5-T26d` exited 0 with 6 snapshot, 7 control, 8 playback, 5 queue, 9
+  capture, 4 capture-config, and 4 machine tests plus the wasm32 build. `post_restore_stall` also
+  passed 184 strict-prefix refusals, event count 257 refusal, and bounded empty-ring service.
+- Provenance: implementation `2a501be6626035a6a38b75e36aa95dea0442e451`; submission
+  `fc78300294fb4e92e5d1965500f200a0fa091e4e`; submitted evidence SHA-256
+  `3263508ab45253fee95e6087811b1063c8bf2653aaa083e55963422db72a3684`; remediation diff SHA-256
+  `e89426545ce61539ebe32be7bf47b7d5f160a768d5da181e14471c9a55576d69`.
+- Prior lifecycle, ring-discard, versioning, event-budget, wrapper, malformed-input, partial-audio,
+  and coverage predictions are carried forward HELD because their implementation/dependency
+  boundary did not change. Full evidence: `evidence/e5-t26d/verifier/remediation-results.md`.
+- SUITE: retain the locked harness and novel verifier probe; the worker-promoted exact-period unit
+  regression remains in the permanent suite. Independent machines, WebKit, and host rr are waived.
