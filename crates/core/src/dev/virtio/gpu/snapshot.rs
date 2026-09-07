@@ -24,7 +24,7 @@ pub const GPU_SNAPSHOT_VERSION: u16 = 1;
 const HEADER_LEN: usize = 52;
 const RESOURCE_HEADER_LEN: usize = 44;
 const CURSOR_LEN: usize = 7 * 4;
-const NONE_RESOURCE: u32 = u32::MAX;
+const NONE_RESOURCE: u32 = resources::NONE_RESOURCE_ID;
 const MAX_SNAPSHOT_RESOURCES: u32 = 1 << 20;
 
 /// A GPU snapshot rejection.  All variants have stable [`Self::code`] values for host logs.
@@ -369,7 +369,7 @@ fn parse(bytes: &[u8]) -> Result<ParsedGpu, GpuSnapshotError> {
     for _ in 0..resource_count {
         reader.require(RESOURCE_HEADER_LEN)?;
         let resource_id = reader.u32()?;
-        if resource_id == 0 {
+        if resource_id == 0 || resource_id == resources::NONE_RESOURCE_ID {
             return Err(GpuSnapshotError::Resource {
                 resource_id,
                 reason: ResourceSnapshotError::InvalidResourceId { resource_id },
@@ -696,6 +696,7 @@ mod tests {
                 0xA500_0000 | index as u32
             };
         }
+        resource.backing.push((0x1000, 8 * 4 * 4));
         resource.pending_damage.push(protocol::Rect {
             x: 1,
             y: 1,
@@ -738,6 +739,7 @@ mod tests {
         let resource = restored.resources.get(7).unwrap();
         assert_eq!(resource.width, 8);
         assert_eq!(resource.height, 4);
+        assert_eq!(resource.backing, vec![(0x1000, 8 * 4 * 4)]);
         assert_eq!(
             resource.pending_damage.bounds(),
             Some(protocol::Rect {
@@ -838,6 +840,102 @@ mod tests {
             restore(&mut target, &forged_cursor),
             Err(GpuSnapshotError::InvalidCursorHotspot { scanout_id: 0 })
         );
+        assert_eq!(target.resources.snapshot_records(), before);
+    }
+
+    #[test]
+    fn malformed_resource_metadata_fails_closed_before_live_map_swap() {
+        let (state, _sink) = fixture_state();
+        let valid = encode(&state).unwrap();
+        let mut target = GpuState::new(Box::new(TestSink::new()));
+        target
+            .resources
+            .create(42, protocol::FORMAT_B8G8R8A8_UNORM, 1, 1)
+            .unwrap();
+        let before = target.resources.snapshot_records();
+        let resource_start = HEADER_LEN;
+        let backing_start = resource_start + RESOURCE_HEADER_LEN;
+        let damage_start = backing_start + 12;
+        let dirty_bits_start = damage_start + 16;
+
+        let mut forged_id = valid.clone();
+        forged_id[resource_start..resource_start + 4]
+            .copy_from_slice(&resources::NONE_RESOURCE_ID.to_le_bytes());
+        assert!(matches!(
+            restore(&mut target, &forged_id),
+            Err(GpuSnapshotError::Resource {
+                reason: ResourceSnapshotError::InvalidResourceId { .. },
+                ..
+            })
+        ));
+        assert_eq!(target.resources.snapshot_records(), before);
+
+        let mut zero_backing_length = valid.clone();
+        zero_backing_length[backing_start + 8..backing_start + 12]
+            .copy_from_slice(&0u32.to_le_bytes());
+        assert!(matches!(
+            restore(&mut target, &zero_backing_length),
+            Err(GpuSnapshotError::Resource {
+                reason: ResourceSnapshotError::InvalidBacking { .. },
+                ..
+            })
+        ));
+        assert_eq!(target.resources.snapshot_records(), before);
+
+        let mut out_of_bounds_damage = valid.clone();
+        out_of_bounds_damage[damage_start..damage_start + 4].copy_from_slice(&7u32.to_le_bytes());
+        assert!(matches!(
+            restore(&mut target, &out_of_bounds_damage),
+            Err(GpuSnapshotError::Resource {
+                reason: ResourceSnapshotError::InvalidDamage { .. },
+                ..
+            })
+        ));
+        assert_eq!(target.resources.snapshot_records(), before);
+
+        let (mut no_damage_state, _sink) = fixture_state();
+        no_damage_state
+            .resources
+            .get_mut(7)
+            .unwrap()
+            .pending_damage
+            .clear();
+        let no_damage = encode(&no_damage_state).unwrap();
+        let damage_collapsed_offset = resource_start + 28;
+        assert_eq!(no_damage[damage_collapsed_offset], 0);
+        let mut forged_damage_shape = no_damage;
+        forged_damage_shape[damage_collapsed_offset] = 1;
+        assert!(matches!(
+            restore(&mut target, &forged_damage_shape),
+            Err(GpuSnapshotError::Resource {
+                reason: ResourceSnapshotError::InvalidDamage { .. },
+                ..
+            })
+        ));
+        assert_eq!(target.resources.snapshot_records(), before);
+
+        let mut forged_dirty_count = valid.clone();
+        forged_dirty_count[resource_start + 36..resource_start + 40]
+            .copy_from_slice(&0u32.to_le_bytes());
+        assert!(matches!(
+            restore(&mut target, &forged_dirty_count),
+            Err(GpuSnapshotError::Resource {
+                reason: ResourceSnapshotError::InvalidTiles { .. },
+                ..
+            })
+        ));
+        assert_eq!(target.resources.snapshot_records(), before);
+
+        let mut forged_dirty_tail = valid;
+        forged_dirty_tail[dirty_bits_start..dirty_bits_start + 8]
+            .copy_from_slice(&u64::MAX.to_le_bytes());
+        assert!(matches!(
+            restore(&mut target, &forged_dirty_tail),
+            Err(GpuSnapshotError::Resource {
+                reason: ResourceSnapshotError::InvalidTiles { .. },
+                ..
+            })
+        ));
         assert_eq!(target.resources.snapshot_records(), before);
     }
 

@@ -22,6 +22,8 @@ pub type GuestAddr = u64;
 
 /// Maximum width or height accepted by `RESOURCE_CREATE_2D`.
 pub const MAX_RESOURCE_DIMENSION: u32 = 16_384;
+/// Resource id reserved by the snapshot wire format to encode an unbound scanout.
+pub const NONE_RESOURCE_ID: u32 = u32::MAX;
 /// Maximum host shadow-buffer size for one resource.
 pub const MAX_RESOURCE_BYTES: u64 = 256 * 1024 * 1024;
 /// Default aggregate host shadow-buffer budget for one GPU device.
@@ -631,7 +633,7 @@ impl ResourceMap {
     ) -> Result<Self, ResourceSnapshotError> {
         let mut map = Self::new();
         for &(resource_id, ref snapshot) in records {
-            if resource_id == 0 {
+            if resource_id == 0 || resource_id == NONE_RESOURCE_ID {
                 return Err(ResourceSnapshotError::InvalidResourceId { resource_id });
             }
             if map.resources.contains_key(&resource_id) {
@@ -862,7 +864,10 @@ impl ResourceMap {
         width: u32,
         height: u32,
     ) -> Result<&mut Resource, CreateError> {
-        if resource_id == 0 || self.resources.contains_key(&resource_id) {
+        if resource_id == 0
+            || resource_id == NONE_RESOURCE_ID
+            || self.resources.contains_key(&resource_id)
+        {
             return Err(CreateError::InvalidResourceId);
         }
         if !protocol::is_supported_format(format)
@@ -954,6 +959,10 @@ mod tests {
         let mut map = ResourceMap::new();
         assert_eq!(
             map.create(0, FORMATS[0], 1, 1).err(),
+            Some(CreateError::InvalidResourceId)
+        );
+        assert_eq!(
+            map.create(NONE_RESOURCE_ID, FORMATS[0], 1, 1).err(),
             Some(CreateError::InvalidResourceId)
         );
         assert_eq!(map.len(), 0);
