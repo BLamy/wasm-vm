@@ -3,7 +3,7 @@ id: E5-T26h
 epic: 5
 title: Preserve desktop devices across whole-machine resume
 priority: 526.55
-status: implemented
+status: verified
 depends_on: [E5-T26e]
 estimate: S
 risk: high
@@ -52,6 +52,44 @@ one preserved cursor and prove the regression test detects duplicate completion.
 Check a headless snapshot independently. No new browser or host-rr requirement.
 
 ## Verification log
+
+### 2026-09-07 — fresh verifier session fence — VERDICT: verified
+
+- H1 old-session HELLO boundary — HELD. Predicted all pre-snapshot agent-TX descriptors would be
+  completed once with used length zero but never forwarded to the fresh Channel, while a HELLO
+  posted after `load_resume` and before the first guest step would remain usable. The promoted old
+  HELLO regression and stronger empty/nonzero/wrapped/full/RAM-last/closed-port worker matrix pass
+  (`evidence/e5-t26h/verifier-session-fence/clean-exact-head-native.log:92-116`). The fence executes
+  after all restored sections and before guest execution (`crates/core/src/lib.rs:3227-3239`), and
+  the drain never reads or stages payload bytes (`crates/core/src/dev/virtio/console.rs:1016-1040`).
+- H2 malformed fence paths — HELD. The worker's valid-then-malformed descriptor case raises
+  `NEEDS_RESET`, exposes no payload, remains blocked after repair/notify, and recovers only after
+  reset (`crates/core/tests/desktop_machine_resume.rs:949-993`). The one bounded novel attack moved
+  the failure to used-ring publication with a valid old HELLO and an out-of-RAM saved used address;
+  it produced the same fail-closed behavior and post-reset recovery
+  (`evidence/e5-t26h/verifier-session-fence/used-publish-attack.log:7-16`). This directly exercises
+  the changed error/guard/reset paths at `crates/core/src/dev/virtio/console.rs:1033-1051,1061-1065,678-695`.
+- H3 evidence, coverage, and carried results — HELD. Worker evidence hashes to the claimed
+  `1978f7ac0284ab4b3d9127a84083920e1d7a0ca401bd7fc19fe2e5dbb5570349` and records 119 checks,
+  including all seven worker integration tests and the nine unchanged promoted critic tests.
+  Unready/empty, interrupting/non-interrupting completion, wrapped frontier, descriptor-pop error,
+  used-publication error, service-block, reset, RAM-last, serial/control continuity, and fresh-target
+  paths cover the new hunks. Earlier topology, every-section corruption/missing/duplicate,
+  held-input, sound/RNG cursor, legacy atomicity/shared sparse parser, headless, sabotage, and
+  no-same-state-oracle HELD results are carried forward where their boundaries are unchanged.
+- H4 clean exact-head acceptance — HELD. One clean local clone detached at
+  `2325c05f756f9a9746099051db9ab46866b874e8`, with compiler/Cargo env scrubbed, passed
+  `make verify-E5-T26h`; it remained git-clean. Record SHA-256
+  `92773b14effc7bad1c3c11481ae66a3a7d43efbedc32caba1bc5816db5dadaba`
+  (`evidence/e5-t26h/verifier-session-fence/clean-exact-head-native.log:1-337`). Current upper-layer
+  HEAD movement was ignored after confirming the three reviewed files were byte-identical to the
+  frozen commit. No browser gate was run or required for H.
+- SUITE: retained the nine promoted tests unchanged. The temporary used-publication variant was
+  discarded after recording because the permanent malformed-DMA test already locks the same
+  stable protocol-reset/session-fence policy. Predictions and full result notes are in
+  `evidence/e5-t26h/verifier-session-fence/`; prediction SHA-256
+  `87c846fd7f19199abc9a98d64806d78aef4843e85100b8e0273515390e0acfee`, novel-attack SHA-256
+  `3e869801070444326666378b9b26c44b8dc50234b892163abad87bebaf9fa3ee`.
 
 ### 2026-09-07 — worker — session fence implemented, awaiting fresh critic
 
