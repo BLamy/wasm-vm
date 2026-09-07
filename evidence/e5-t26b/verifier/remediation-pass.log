@@ -1,0 +1,23 @@
+E5-T26b incremental verifier remediation pass
+implementation: 2f1ce24a60156cefcd2343369553fed57e337652
+evidence head: a930ed96
+worker evidence sha256: c4188b3f73741f972ebff536f6701060b49072e1418eb14b9264313e10feec14
+
+Prescribed command:
+  make verify-E5-T26b
+Result:
+  PASS: fmt; clippy lib/tests; snapshot 6/6; resources 15/15; damage 5/5;
+        tiles 6/6; virtio_blk_quiesce 3/3; cpu_resume 6/6; no-std wasm32 build.
+
+Bounded public-facade command:
+  cargo run --offline --quiet --manifest-path /tmp/e5-t26b-verifier.e9gPuE/Cargo.toml
+Result:
+  compression: fbcon raw=4096 encoded=17 ratio_milli=4; desktop raw=4096 encoded=4109 ratio_milli=1003
+  public-facade attacks: valid nonempty-backing round-trip; sentinel create/record, zero-id,
+  duplicate-id, format, forged-scanout-count, and overflowing backing rejected atomically
+
+Assertions:
+  ResourceMap::create(0xffffffff, ...) == InvalidResourceId.
+  A manually forged 0xffffffff resource record returns invalid_resource with target snapshot unchanged.
+  An address u64::MAX-3 plus length 4 returns invalid_resource with target snapshot unchanged.
+  Valid two-resource/nonempty-backing payload restores and re-encodes byte-for-byte.

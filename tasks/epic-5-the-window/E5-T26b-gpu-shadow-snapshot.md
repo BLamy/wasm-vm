@@ -3,7 +3,7 @@ id: E5-T26b
 epic: 5
 title: Virtio-GPU resource, scanout, cursor, and shadow snapshot
 priority: 526.2
-status: in-progress
+status: verified
 depends_on: [E5-T26a]
 estimate: S
 risk: high
@@ -94,3 +94,43 @@ hotspot outside its image. Each must fail closed without corrupting another reso
   sentinel-collision seed. No implementation or test code was modified by the verifier.
   Commands: `git diff --check 2b985379^ 2b985379`; `make verify-E5-T26b`; two offline
   path-dependent public-facade mutation runs; worker evidence SHA-256 audit.
+
+### 2026-09-06 — verifier recheck — VERDICT: verified
+
+- P1 sentinel-safe resource/scanout round-trip — HELD after remediation. Predicted
+  `0xffff_ffff` would be rejected both at live resource creation and when forged into a snapshot
+  record, before allocation or live-map swap. The shared `NONE_RESOURCE_ID` guard now rejects it
+  in `ResourceMap::create`, detached reconstruction, and parser preflight
+  (`crates/core/src/dev/virtio/gpu/resources.rs`:23-28,631-640,856-872;
+  `crates/core/src/dev/virtio/gpu/snapshot.rs`:24-28,369-380). The committed regression leaves
+  the target unchanged (`resources.rs`:957-969; `snapshot.rs`:846-871), and the prior public-
+  facade collision attack now rejects both source creation and a forged record
+  (`evidence/e5-t26b/verifier/remediation-pass.log`).
+- P2 deterministic bounded compression — HELD, carried forward because codec semantics are
+  unchanged. Fresh tests again round-tripped both fixtures, rejected oversized runs, and reported
+  exact verifier values: fbcon `4096 -> 17` bytes (`ratio_milli=4`) and desktop
+  `4096 -> 4109` (`ratio_milli=1003`) (`snapshot.rs`:942-965;
+  `remediation-pass.log`).
+- P3 atomic malformed-input handling — HELD. Prior missing-resource, incompatible-format,
+  truncated/forged-shadow, hotspot, zero/duplicate-id, and forged-count results remain valid.
+  New evidence round-trips nonempty backing `(0x1000, 128)` byte-for-byte
+  (`snapshot.rs`:680-753), while zero-length backing, out-of-bounds damage, invalid collapsed
+  shape, dirty popcount mismatch, and dirty tail bits each return before the target records change
+  (`snapshot.rs`:846-940). A fresh overflowing-address mutation (`u64::MAX - 3` plus length 4)
+  also preserved the public target snapshot (`remediation-pass.log`).
+- P4 exact remediation head — HELD. `evidence/e5-t26b/native-final.json` names implementation
+  `2f1ce24a60156cefcd2343369553fed57e337652`; SHA-256 independently matches
+  `c4188b3f73741f972ebff536f6701060b49072e1418eb14b9264313e10feec14`.
+  Fresh `make verify-E5-T26b` passed fmt, both clippy gates, 6 snapshot, 15 resource, 5 damage,
+  6 tile, 3 block-quiesce, and 6 CPU-resume tests plus no-default-features wasm32
+  (`evidence/e5-t26b/native-final.json`:1-29; `Makefile`:1038-1053).
+- COVERAGE — HELD. Every remediation hunk executes in retained tests: sentinel declaration and
+  create/parser/detached-map guards, nonempty backing serialization, and all requested malformed
+  metadata families. The independent facade run additionally covers backing-address overflow and
+  the original sentinel attack. Allocation-failure arms, declarative error-code mappings,
+  host rr, independent machines, WebKit, browser flow, and later input/sound/agent payloads remain
+  explicitly waived/out of scope.
+- SUITE: retain the six snapshot tests, existing resource/damage/tile and resume regressions,
+  sentinel-collision seed, and remediation facade audit. No implementation code was modified.
+  Commands: `git diff --check 9f4f3d07 2f1ce24a`; `make verify-E5-T26b`; offline public-facade
+  sentinel/backing mutation run; worker evidence SHA-256 audit.
