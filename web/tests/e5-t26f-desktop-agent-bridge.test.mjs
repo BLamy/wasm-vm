@@ -28,43 +28,63 @@ function pingFrame(type, nonce) {
   return encodeFrame(type, payload);
 }
 
-test("desktop agent bridge owns controller bytes, negotiates, reconnects, and drains output", async () => {
-  const sent = [];
+test("desktop agent bridge owns queued guest bytes, negotiates, reconnects, and drains output", async () => {
+  const retainedByController = [];
   const decoder = new AgentFrameDecoder();
   let bridge = null;
   const controller = {
     sendAgentInput(bytes) {
-      const owned = bytes.slice();
-      sent.push(owned);
-      decoder.push(owned, (frame) => {
-        if (frame.type === TYPE_HELLO) queueMicrotask(() => bridge.receive(helloFrame()));
-        if (frame.type === TYPE_PING) {
-          const nonce = new DataView(frame.payload.buffer, frame.payload.byteOffset, frame.payload.byteLength)
-            .getBigUint64(0, true);
-          queueMicrotask(() => bridge.receive(pingFrame(TYPE_PONG, nonce)));
-        }
-      });
-      return bytes.byteLength;
+      // This fixture deliberately retains the exact view supplied by the bridge and only reads it
+      // on a later task. The frame encoder owns Channel.send's caller payload; the bridge-specific
+      // ownership boundary is exercised below by a guest frame queued before Channel.start().
+      retainedByController.push(bytes);
+      return new Promise((resolve) => queueMicrotask(() => {
+        decoder.push(bytes, (frame) => {
+          if (frame.type === TYPE_HELLO) queueMicrotask(() => bridge.receive(helloFrame()));
+          if (frame.type === TYPE_PING) {
+            const nonce = new DataView(frame.payload.buffer, frame.payload.byteOffset, frame.payload.byteLength)
+              .getBigUint64(0, true);
+            queueMicrotask(() => bridge.receive(pingFrame(TYPE_PONG, nonce)));
+          }
+        });
+        resolve(bytes.byteLength);
+      }));
     },
   };
 
   bridge = createDesktopAgentBridge(controller);
   const received = [];
+  const helloCapabilities = [];
+  bridge.channel.subscribe(TYPE_HELLO, ({ payload }) => {
+    helloCapabilities.push(new DataView(
+      payload.buffer,
+      payload.byteOffset,
+      payload.byteLength,
+    ).getBigUint64(2, true));
+  });
   bridge.channel.subscribe(TYPE_CLIP_SET, (payload) => received.push(payload));
+  const queuedHello = helloFrame();
+  bridge.receive(queuedHello);
+  new DataView(queuedHello.buffer, queuedHello.byteOffset, queuedHello.byteLength)
+    .setBigUint64(10, 0n, true);
   bridge.start();
   await bridge.channel.ready;
   assert.equal(bridge.channel.state, "ready");
   assert.equal(bridge.stats().negotiatedVersion, 1);
+  assert.equal(helloCapabilities[0], CAP_PING,
+    "queued guest HELLO was borrowed instead of copied before Channel.start");
 
-  const callerBytes = Uint8Array.of(1, 2, 3);
-  const sentPromise = bridge.channel.send(TYPE_CLIP_SET, callerBytes);
-  callerBytes[0] = 99;
-  await sentPromise;
-  assert.deepEqual([...sent[1].subarray(8)], [1, 2, 3]);
+  await bridge.channel.send(TYPE_CLIP_SET, Uint8Array.of(1, 2, 3));
+  assert.deepEqual([...retainedByController[1].subarray(8)], [1, 2, 3]);
 
-  bridge.receive(encodeFrame(TYPE_CLIP_SET, Uint8Array.of(7, 8)));
+  const directClip = encodeFrame(TYPE_CLIP_SET, Uint8Array.of(7, 8));
+  bridge.receive(directClip);
   assert.deepEqual([...received[0].payload], [7, 8]);
-  assert.equal(bridge.stats().bytesReceived, encodeFrame(TYPE_HELLO, new Uint8Array(10)).byteLength + 10, "received accounting is frame-byte based");
+  assert.equal(
+    bridge.stats().bytesReceived,
+    queuedHello.byteLength + helloFrame().byteLength + directClip.byteLength,
+    "received accounting is frame-byte based",
+  );
 
   await bridge.channel.ping(41n);
   const beforeReconnect = bridge.stats().transportGeneration;

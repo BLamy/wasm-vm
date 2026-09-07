@@ -221,21 +221,21 @@ const shiftedPhysicalKey = new Map([
   ["{", "["], ["}", "]"], ["|", "\\"], [":", ";"], ["\"", "'"], ["<", ","], [">", "."], ["?", "/"],
 ]);
 
-async function typePhysicalText(text) {
+async function typePhysicalText(text, keyDelay = 100) {
   for (const character of text) {
     const baseKey = shiftedPhysicalKey.get(character);
     if (baseKey) {
       await page.keyboard.down("Shift");
       await page.keyboard.press(baseKey);
       await page.keyboard.up("Shift");
-      await page.waitForTimeout(100);
+      if (keyDelay > 0) await page.waitForTimeout(keyDelay);
     } else {
-      await page.keyboard.type(character, { delay: 100 });
+      await page.keyboard.type(character, { delay: keyDelay });
     }
   }
 }
 
-async function typeCommand(command, marker, timeout = 240_000) {
+async function typeCommand(command, marker, timeout = 240_000, keyDelay = 100) {
   await page.evaluate(({ value, expected }) => window.__desktopTerminal.beginCommand(value, expected), {
     value: command,
     expected: marker,
@@ -243,7 +243,7 @@ async function typeCommand(command, marker, timeout = 240_000) {
   await page.evaluate(() => window.__desktopTerminal.focus());
   // The interpreted guest needs a bounded drain interval between physical transitions; a 10 ms
   // burst records every DOM frame but can leave the foot line editor visibly mid-command.
-  await typePhysicalText(command);
+  await typePhysicalText(command, keyDelay);
   await page.keyboard.press("Enter");
   try {
     await page.waitForFunction(
@@ -261,8 +261,52 @@ async function typeCommand(command, marker, timeout = 240_000) {
   return record;
 }
 
+async function waitForDesktopReady(label = "desktop ready") {
+  let lastProgressLog = 0;
+  let lastSample = null;
+  await waitFor(async () => {
+    const sample = await page.evaluate(() => ({
+      ready: document.documentElement.dataset.desktopReady || null,
+      restored: document.documentElement.dataset.desktopRestored || null,
+      status: document.querySelector("[data-status]")?.textContent || null,
+      bootStates: window.__desktopTerminal?.state?.().bootStates || [],
+      readiness: window.__desktopTerminal?.state?.().readiness || null,
+      diagnostics: window.__desktopTerminal?.state?.().diagnostics || [],
+      serialTail: (window.__desktopTerminal?.serial?.() || "").slice(-160),
+    }));
+    lastSample = sample;
+    const now = Date.now();
+    if (now - lastProgressLog >= 30_000) {
+      console.error(`[e5-t26f] ${JSON.stringify({ label, ...sample })}`);
+      lastProgressLog = now;
+    }
+    return sample.ready === "ready";
+  }, label, timeoutMs).catch((error) => {
+    throw new Error(`${error.message}; last sample=${JSON.stringify(lastSample)}`, { cause: error });
+  });
+}
+
+async function waitForAgentReady(label = "agent channel ready") {
+  try {
+    await page.waitForFunction(
+      () => window.__desktopTerminal.state().agent?.state === "ready",
+      null,
+      { timeout: 60_000 },
+    );
+  } catch (error) {
+    await captureFailure("agent-ready");
+    const state = await page.evaluate(() => window.__desktopTerminal.state());
+    throw new Error(`${label}: ${error.message}; state=${JSON.stringify({
+      agent: state.agent,
+      readiness: state.readiness,
+      diagnostics: state.diagnostics,
+    })}`, { cause: error });
+  }
+  return page.evaluate(() => window.__desktopTerminal.state().agent);
+}
+
 async function waitForReadyAndRestore() {
-  await page.waitForFunction(() => document.documentElement.dataset.desktopReady === "ready", null, { timeout: timeoutMs });
+  await waitForDesktopReady();
   await page.waitForFunction(() => ["ready", "error", "none"].includes(
     document.documentElement.dataset.desktopRestored,
   ), null, { timeout: timeoutMs });
@@ -281,9 +325,10 @@ async function waitForReadyAndRestore() {
     null,
     { timeout: 60_000 },
   );
-  return page.evaluate(() => {
+  return page.evaluate(async () => {
     const result = window.__desktopTerminal.restoreResult();
     const observation = window.__desktopTerminal.restoreObservation();
+    const controller = window.__desktopController;
     return {
       snapshotSha256: result?.snapshotSha256 || null,
       snapshotBytes: result?.snapshotBytes || 0,
@@ -296,6 +341,14 @@ async function waitForReadyAndRestore() {
       } : null,
       observation,
       bootStates: window.__desktopTerminal.state().bootStates,
+      diagnostics: window.__desktopTerminal.state().diagnostics,
+      machineResume: result?.machineResume || null,
+      preFrontBufferCrc: result?.preFrontBufferCrc || null,
+      resume: {
+        restored: Boolean(controller?.restoredFromBootSnapshot?.()),
+        snapshotDecision: await controller?.snapshotDecision?.() ?? null,
+        overlayGeneration: await controller?.snapshotGeneration?.() ?? null,
+      },
       presentation: window.__desktopTerminal.presentation(),
     };
   });
@@ -366,7 +419,7 @@ try {
   const coldUrl = `${base}/desktop-cursor.html?${query}`;
   const restoreUrl = `${coldUrl}&autoRestore=1`;
   await page.goto(coldUrl, { waitUntil: "domcontentloaded", timeout: timeoutMs });
-  await page.waitForFunction(() => document.documentElement.dataset.desktopReady === "ready", null, { timeout: timeoutMs });
+  await waitForDesktopReady("initial desktop ready");
   await page.waitForTimeout(2_000);
   const box = await desktopBox();
 
@@ -377,18 +430,19 @@ try {
     "e5t26f-shell-ok",
   );
   assert.equal(shellProbe.redMarkerSeen, false, "guest shell probe reported failure");
-  const agentProbe = await page.waitForFunction(
-    () => window.__desktopTerminal.state().agent?.state === "ready",
-    null,
-    { timeout: 60_000 },
-  ).then(() => page.evaluate(() => window.__desktopTerminal.state().agent));
+  const agentProbe = await waitForAgentReady();
   assert.equal(agentProbe.state, "ready", "agent channel did not complete HELLO");
-  // Keep the physical-key burst below the guest input queue's 256-event budget: this 98-character
-  // command produces 202 key/SYN events after the two shifted characters. aplay uses the
-  // advertised S16_LE/stereo/48 kHz profile for a bounded one-second raw stream, and the green
-  // marker is emitted only on success.
-  const aplayCommand = "if timeout 10 aplay -f S16_LE -t raw -d1 -r48000 -c2 /dev/zero;then printf '\\033[42mok\\033[0m\\n';fi";
+  // Keep the setup-and-run burst below the guest input queue's 256-event budget. The command
+  // builds a deterministic 20 ms S16 stereo fixture (3840 bytes at 48 kHz), then writes a short
+  // replay script whose marker is emitted only after finite aplay completion. The post-restore
+  // command is only `sh /tmp/a`, so it cannot spend the 2-second interaction budget in a full
+  // one-second /dev/urandom stream.
+  const aplayCommand = "yes \"$(printf '\\001\\000\\377\\177')\"|head -c3840 >/tmp/p;printf 'aplay -f S16_LE -t raw -r48000 -c2 /tmp/p&&printf \"\\033[42me5t26f-aplay\\033[0m\\n\"' >/tmp/a;sh /tmp/a";
   const firstCommand = await typeCommand(aplayCommand, "e5t26f-aplay-ok");
+  assert.equal(firstCommand.terminalMarkerSeen, true, "initial aplay was not guest-visibly completed");
+  assert.ok(firstCommand.visualDiffPixels >= 2_000, "initial aplay marker did not change guest pixels");
+  const focusProof = await page.evaluate(() => window.__desktopTerminal.confirmGuestFocus("e5t26f-shell-ok"));
+  assert.equal(focusProof.focuses.at(-1).guestVisible, true, "terminal focus was not guest-visibly used");
   await launchTerminal(box, "e5-t26f-terminal-2");
   await focusTopWindow(box, "terminal-2");
 
@@ -415,26 +469,41 @@ try {
   assert.ok(cursorProof.frame, "custom cursor proof saw no tablet move");
   assert.ok(cursorProof.rendered, "custom cursor was not visible in the front buffer");
 
-  const preSnapshotCrc = await page.evaluate(() => window.__desktopTerminal.frontBufferCrc());
   const preSnapshotPresents = await page.evaluate(() => window.__desktopTerminal.presentation().successfulPresents);
   const normalSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: true }));
   assert.equal(normalSnapshot.schema, "wasm-vm.e5-t26f.desktop-snapshot.v1");
   assert.match(normalSnapshot.sha256, SHA256);
   assert.ok(normalSnapshot.byteLength > 0, "normal desktop snapshot is empty");
+  assert.match(normalSnapshot.preFrontBufferCrc, /^[0-9a-f]{8}$/u, "normal snapshot lacks a frozen front-buffer CRC");
 
   const firstRestore = await reloadWithAutoRestore(restoreUrl);
   assert.equal(firstRestore.snapshotSha256, normalSnapshot.sha256, "reload restored a different snapshot");
-  assert.equal(firstRestore.observation.firstPresent.crc32, preSnapshotCrc, "first restore frame CRC changed");
+  assert.equal(firstRestore.observation.firstPresent.crc32, normalSnapshot.preFrontBufferCrc, "first restore frame CRC changed");
   assert.equal(firstRestore.report?.fullRepairFrame, true, "restore did not publish a full repair frame");
   assert.equal(firstRestore.report?.agentRehandshake, true, "restore did not re-handshake the agent");
   assert.equal(firstRestore.handshake?.version, 1, "agent protocol version");
+  assert.equal(normalSnapshot.machineResume?.persisted, true, "normal snapshot lacks a whole-machine resume");
+  assert.deepEqual(firstRestore.machineResume, normalSnapshot.machineResume, "resume metadata was not preserved through reload");
+  assert.equal(firstRestore.preFrontBufferCrc, normalSnapshot.preFrontBufferCrc, "restore lost the frozen CRC metadata");
+  assert.equal(firstRestore.resume.restored, true, "reload did not restore the whole-machine snapshot");
+  assert.equal(firstRestore.resume.snapshotDecision, "resume", "stored whole-machine snapshot was not coherent");
+  assert.equal(firstRestore.bootStates.some(({ state }) => state === "booting"), false,
+    "whole-machine resume unexpectedly entered the cold guest boot state");
 
-  const postRestoreStart = await page.evaluate(() => performance.now());
+  const postRestoreStart = firstRestore.completedAt;
+  assert.ok(Number.isFinite(postRestoreStart), "restore did not expose a timing boundary");
   const postBox = await desktopBox();
   const focusBefore = await page.evaluate(() => window.__desktopTerminal.state().pointerFrames);
   const topPoint = await page.evaluate(() => window.__desktopCursor?.focusGuestPoint?.());
   assert.ok(topPoint, "post-restore focus point is missing");
+  await page.evaluate(() => window.__desktopTerminal.beginFocus("post-restore-focus"));
   const focusClient = guestPoint(postBox, topPoint.x, topPoint.y);
+  const audioBefore = await page.evaluate(() => ({
+    policy: window.__desktopTerminal.audio()?.policy?.state || null,
+    renderedFrames: window.__desktopTerminal.audio()?.sink?.renderedFrames ?? null,
+  }));
+  assert.equal(audioBefore.policy, "locked", "audio was already unlocked before the delayed gesture");
+  await page.waitForTimeout(350);
   await page.mouse.move(focusClient.x, focusClient.y);
   await page.mouse.down();
   await page.mouse.up();
@@ -444,26 +513,74 @@ try {
     { timeout: 2_000 },
   );
   await page.evaluate(() => window.__desktopTerminal.focus());
-  const keyboardBefore = await page.evaluate(() => window.__desktopTerminal.state().keyboardFrames);
-  await page.keyboard.type("e5t26f-post-restore", { delay: 0 });
-  await page.waitForFunction(
-    (minimum) => window.__desktopTerminal.state().keyboardFrames >= minimum,
-    keyboardBefore + "e5t26f-post-restore".length * 2,
-    { timeout: 2_000 },
-  );
-  const audioBefore = await page.evaluate(() => ({
-    policy: window.__desktopTerminal.audio()?.policy?.state || null,
-    renderedFrames: window.__desktopTerminal.audio()?.sink?.renderedFrames ?? null,
-  }));
-  await page.mouse.click(postBox.x + postBox.width * 0.7, postBox.y + postBox.height * 0.55);
+  const postRestoreCursor = await page.evaluate((point) => {
+    const state = window.__desktopTerminal.state();
+    const frame = [...state.pointerFrameSample].reverse().find(
+      (entry) => entry.device === "tablet" && entry.source === "pointermove" && entry.coordinates,
+    );
+    const rendered = window.__desktopCursor?.renderedCursor?.(point);
+    return { frame, rendered };
+  }, topPoint);
+  assert.ok(postRestoreCursor.frame, "post-restore pointer did not reach the guest");
+  assert.ok(postRestoreCursor.rendered, "post-restore cursor was not guest-visibly rendered");
+  assert.equal(postRestoreCursor.rendered.x, topPoint.x, "post-restore cursor x is stale");
+  assert.equal(postRestoreCursor.rendered.y, topPoint.y, "post-restore cursor y is stale");
+  const focusState = await page.evaluate(() => window.__desktopTerminal.finishFocus());
+  assert.equal(focusState.focuses.at(-1).accepted, true, "post-restore host focus was not accepted");
   await page.waitForFunction(
     () => window.__desktopTerminal.audio()?.policy?.state === "unlocked",
     null,
     { timeout: 2_000 },
   );
+  const postAudioBefore = await page.evaluate(() => ({
+    policy: window.__desktopTerminal.audio()?.policy?.state || null,
+    renderedFrames: window.__desktopTerminal.audio()?.sink?.renderedFrames ?? null,
+    writeIndex: window.__desktopTerminal.audio()?.pcm?.().writeIndex ?? null,
+  }));
+  const postAudioCommand = await typeCommand(
+    "sh /tmp/a",
+    "e5t26f-post-aplay",
+    120_000,
+    0,
+  );
+  const postFocusState = await page.evaluate(() => window.__desktopTerminal.confirmGuestFocus("e5t26f-post-aplay"));
+  assert.equal(postFocusState.focuses.at(-1).guestVisible, true, "post-restore typing was not guest-visible");
+  // Capture PCM at the completion boundary. A later digital-silence write can wrap the ring and
+  // erase a short fixture before a second diagnostic read, so the proof is the immediate
+  // before/after delta rather than a delayed scan after the render clock catches up.
+  const postPcmAtCompletion = await page.evaluate((writeIndex) => ({
+    observedAt: performance.now(),
+    pcm: window.__desktopTerminal.audio()?.pcm?.(writeIndex) || null,
+  }), postAudioBefore.writeIndex);
+  assert.ok(postPcmAtCompletion.pcm?.writtenFrames > 0, "post-restore aplay wrote no guest PCM at completion");
+  assert.ok(postPcmAtCompletion.pcm?.nonSilentFrames > 0 && postPcmAtCompletion.pcm?.maxAbs > 0,
+    "post-restore audio PCM was silent at completion");
+  await page.waitForFunction(
+    ({ minimum }) => {
+      const frames = window.__desktopTerminal.audio()?.sink?.renderedFrames;
+      return Number.isSafeInteger(frames) && frames > minimum;
+    },
+    { minimum: postAudioBefore.renderedFrames },
+    { timeout: 2_000 },
+  );
+  const postAudioAfter = await page.evaluate(async ({ completion, writeIndex }) => ({
+    policy: window.__desktopTerminal.audio()?.policy?.state || null,
+    context: window.__desktopTerminal.audio()?.sink?.context?.state || null,
+    renderedFrames: window.__desktopTerminal.audio()?.sink?.renderedFrames ?? null,
+    pcm: completion.pcm,
+    pcmObservedAt: completion.observedAt,
+    writeIndex,
+    guestAttached: await window.__desktopController?.audioOutputReady?.() ?? false,
+  }), { completion: postPcmAtCompletion, writeIndex: postAudioBefore.writeIndex });
+  assert.ok(postAudioAfter.renderedFrames > postAudioBefore.renderedFrames,
+    "post-restore aplay did not advance rendered audio frames");
+  assert.equal(postAudioAfter.guestAttached, true, "guest audio output was not attached");
+  assert.ok(postAudioAfter.pcm?.writtenFrames > 0, "post-restore aplay wrote no guest PCM");
+  assert.ok(postAudioAfter.pcm?.nonSilentFrames > 0 && postAudioAfter.pcm?.maxAbs > 0,
+    "post-restore audio PCM was silent");
   const postRestoreEnd = await page.evaluate(() => performance.now());
-  const postRestoreInteraction = await page.evaluate(() => ({
-    elapsedMs: performance.now() - (window.__desktopTerminal.restoreResult()?.completedAt || performance.now()),
+  const postRestoreInteraction = await page.evaluate((boundary) => ({
+    elapsedMs: performance.now() - boundary,
     pointerFrames: window.__desktopTerminal.state().pointerFrames,
     keyboardFrames: window.__desktopTerminal.state().keyboardFrames,
     heldButtons: window.__desktopTerminal.pointerState()?.heldButtons || [],
@@ -472,11 +589,13 @@ try {
       context: window.__desktopTerminal.audio()?.sink?.context?.state || null,
       renderedFrames: window.__desktopTerminal.audio()?.sink?.renderedFrames ?? null,
     },
-  }));
+  }), postRestoreStart);
   try {
     assert.ok(postRestoreInteraction.pointerFrames > focusBefore, "post-restore cursor/focus did not move");
     assert.equal(postRestoreInteraction.heldButtons.length, 0, "post-restore focus left a stuck button");
     assert.equal(postRestoreInteraction.audio.policy, "unlocked", "user gesture did not unlock audio");
+    assert.ok(postAudioCommand.terminalMarkerSeen && postAudioCommand.visualDiffPixels >= 2_000,
+      "post-restore aplay did not produce guest-visible terminal output");
     assert.ok(postRestoreEnd - postRestoreStart <= 2_000, "post-restore interaction exceeded 2 seconds");
   } catch (error) {
     await captureFailure("post-restore");
@@ -490,17 +609,32 @@ try {
   const dragEnd = guestPoint(postBox, dragChrome.titlebar.left + 180, dragY);
   await page.mouse.move(dragStart.x, dragStart.y);
   await page.waitForTimeout(100);
+  const beforeDragSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: false }));
+  assert.match(beforeDragSnapshot.sha256, SHA256);
   await page.mouse.down();
+  await page.waitForTimeout(100);
+  const heldDragSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: false }));
+  assert.match(heldDragSnapshot.sha256, SHA256);
   await page.mouse.move(dragEnd.x, dragEnd.y);
-  const dragCrc = await page.evaluate(() => window.__desktopTerminal.frontBufferCrc());
+  await page.waitForTimeout(100);
   const dragSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: true }));
   await page.mouse.up();
+  await page.waitForTimeout(100);
+  const releasedDragSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: false }));
+  assert.match(releasedDragSnapshot.sha256, SHA256);
   assert.match(dragSnapshot.sha256, SHA256);
   assert.ok(dragSnapshot.byteLength > 0, "drag desktop snapshot is empty");
 
   const secondRestore = await reloadWithAutoRestore(restoreUrl);
   assert.equal(secondRestore.snapshotSha256, dragSnapshot.sha256, "drag snapshot was not restored");
   assert.equal(secondRestore.report?.fullRepairFrame, true, "drag restore did not publish a repair frame");
+  assert.equal(secondRestore.observation.firstPresent.crc32, dragSnapshot.preFrontBufferCrc, "drag restore frame CRC changed");
+  assert.equal(dragSnapshot.machineResume?.persisted, true, "drag snapshot lacks a whole-machine resume");
+  assert.deepEqual(secondRestore.machineResume, dragSnapshot.machineResume, "drag resume metadata was not preserved through reload");
+  assert.equal(secondRestore.resume.restored, true, "drag reload did not restore the whole-machine snapshot");
+  assert.equal(secondRestore.resume.snapshotDecision, "resume", "drag whole-machine snapshot was not coherent");
+  assert.equal(secondRestore.bootStates.some(({ state }) => state === "booting"), false,
+    "drag whole-machine resume unexpectedly entered the cold guest boot state");
   const afterDragState = await page.evaluate(() => ({
     pointer: window.__desktopTerminal.pointerState(),
     observation: window.__desktopTerminal.restoreObservation(),
@@ -536,8 +670,14 @@ try {
       chunkSize: manifest.chunk_size,
     },
     snapshots: {
-      normal: { sha256: normalSnapshot.sha256, byteLength: normalSnapshot.byteLength, preFrontBufferCrc: preSnapshotCrc, preSuccessfulPresents: preSnapshotPresents },
-      duringDrag: { sha256: dragSnapshot.sha256, byteLength: dragSnapshot.byteLength, preFrontBufferCrc: dragCrc },
+      normal: { sha256: normalSnapshot.sha256, byteLength: normalSnapshot.byteLength, machineResume: normalSnapshot.machineResume, preFrontBufferCrc: normalSnapshot.preFrontBufferCrc, preSuccessfulPresents: preSnapshotPresents },
+      dragPhases: {
+        before: { sha256: beforeDragSnapshot.sha256, byteLength: beforeDragSnapshot.byteLength },
+        held: { sha256: heldDragSnapshot.sha256, byteLength: heldDragSnapshot.byteLength },
+        moving: { sha256: dragSnapshot.sha256, byteLength: dragSnapshot.byteLength, machineResume: dragSnapshot.machineResume, preFrontBufferCrc: dragSnapshot.preFrontBufferCrc },
+        released: { sha256: releasedDragSnapshot.sha256, byteLength: releasedDragSnapshot.byteLength },
+      },
+      duringDrag: { sha256: dragSnapshot.sha256, byteLength: dragSnapshot.byteLength, preFrontBufferCrc: dragSnapshot.preFrontBufferCrc },
     },
     restores: {
       normal: firstRestore,
@@ -547,9 +687,13 @@ try {
       shellProbe,
       agentProbe,
       firstCommand,
+      postAudioCommand,
       cursor: cursorProof,
       postRestore: postRestoreInteraction,
       postRestoreAudioBefore: audioBefore,
+      postRestoreAudioAfter: postAudioAfter,
+      postRestoreCursor,
+      postRestoreAudioRenderedFrameDelta: postAudioAfter.renderedFrames - postAudioBefore.renderedFrames,
       postRestoreElapsedMeasuredMs: postRestoreEnd - postRestoreStart,
       dragButtonReleased: afterDragState.pointer.heldButtons.length === 0,
     },

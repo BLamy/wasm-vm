@@ -382,11 +382,15 @@ export async function startLinuxBoot(opts = {}) {
       setSlirpNet(!!opts.slirpNet || network.provider !== "offline" || !!slirpDoh);
     } catch { /* keep the default backend */ }
 
-    onState("booting");
     // disk → in-memory virtio-blk backend (whole image); chunked → a ChunkedBackend that lazily
     // HTTP-fetches chunks under baseUrl (+ E3-T05 persist: writes survive reload via IndexedDB);
     // initramfs → the image as the initrd.
     const usePersist = isChunked && persist;
+    // A persistent boot may resume a whole-machine snapshot immediately after the machine is
+    // constructed. Do not label that path as a fresh guest boot; the state is emitted below only
+    // after the stored/build-time resume candidates have been rejected. This makes the browser
+    // evidence distinguish construction of the host wrapper from Linux actually executing its
+    // cold probe sequence.
     // E3-T08: dirty-bytes threshold that forces a drain before more guest work (default 16 MiB;
     // tests set it tiny via the persistMax option to prove the backpressure path).
     const maxDirtyBytes = opts.persistMax ?? 16 * 1024 * 1024;
@@ -769,6 +773,10 @@ export async function startLinuxBoot(opts = {}) {
         restoredFromBootSnapshot = false;
       }
     }
+
+    // No resume candidate was coherent, so this machine is about to execute its cold guest boot.
+    // Persistent resume success intentionally reaches the scheduler without a booting state.
+    if (!restoredFromBootSnapshot) onState("booting");
 
     let stopped = false;
     let paused = Boolean(startPaused);

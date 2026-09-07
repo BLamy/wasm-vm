@@ -10,6 +10,7 @@ import { createKeyboardBridge, createWasmKeyboardAdapter } from "./src/input/key
 import { attachKeyboardCapture, createKeyboardCapturePolicy } from "./src/input/capture.js";
 import { createKeyboardReconciler } from "./src/input/reconciliation.js";
 import { AudioSink } from "./src/audio/sink.js";
+import { CHANNELS, HEADER_BYTES } from "./src/audio/ring.js";
 import { createAutoplayPolicy } from "./src/audio/autoplay.js";
 import { createDesktopAgentBridge } from "./desktop-agent-bridge.js";
 import { restoreDesktopThroughHost } from "./desktop-restore.js";
@@ -61,6 +62,8 @@ let latestInspection = null;
 let latestSurface = { nonBlackRatio: 0, darkRatio: 0, greenPixels: 0, redPixels: 0 };
 let desktopReady = false;
 let readinessStarted = false;
+let autoRestoreInFlight = false;
+let autoRestorePromise = null;
 let finalProof = null;
 let displayError = null;
 let latestError = null;
@@ -78,12 +81,18 @@ const desktopPerfPresentRecords = [];
 const desktopPerfPresentDurations = [];
 const diagnostics = [];
 const bootStates = [];
+const MAX_DIAGNOSTICS = 64;
 const interactions = {
   launches: [],
   focuses: [],
   commands: [],
   closes: [],
 };
+
+function recordDiagnostic(entry) {
+  diagnostics.push({ atMs: Math.round(performance.now() - bootStartedAt), ...entry });
+  if (diagnostics.length > MAX_DIAGNOSTICS) diagnostics.splice(0, diagnostics.length - MAX_DIAGNOSTICS);
+}
 
 // E5-T26f: prepare the real page-owned audio sink before the guest is assembled. The AudioContext
 // remains locked until the first user gesture; the SharedArrayBuffer is safe to transfer to the
@@ -102,7 +111,7 @@ try {
     desktopAudioPolicy.start();
   }
 } catch (error) {
-  diagnostics.push({ reason: "desktop-audio-unavailable", error: String(error?.message || error) });
+  recordDiagnostic({ reason: "desktop-audio-unavailable", error: String(error?.message || error) });
   desktopAudioSink = null;
   desktopAudioPolicy = null;
 }
@@ -303,6 +312,49 @@ function frontBufferCrc() {
   return crc32Hex(clonePixels());
 }
 
+// The render clock advances for worklet quanta even when the ring contains digital silence. Keep
+// the proof separate: this bounded read inspects only the guest-written slots since a supplied
+// producer index and therefore cannot turn a silent counter advance into a PCM success.
+function audioPcmObservation(fromWriteIndex = null) {
+  const ring = desktopAudioSink?.ring;
+  let samples = null;
+  if (ring) {
+    try {
+      // Read the public SAB payload directly; the worklet consumes slots but never rewrites them.
+      samples = new Float32Array(ring.sharedBuffer, HEADER_BYTES, ring.capacityFrames * CHANNELS);
+    } catch { /* a torn/invalid audio setup is reported as unavailable below */ }
+  }
+  if (!ring || !(samples instanceof Float32Array)) {
+    return { available: false, writtenFrames: 0, nonSilentFrames: 0, maxAbs: 0 };
+  }
+  const writeIndex = ring.writeIndex;
+  const readIndex = ring.readIndex;
+  const fillFrames = ring.fillFrames;
+  const requested = fromWriteIndex == null ? ring.capacityFrames : (writeIndex - fromWriteIndex) >>> 0;
+  const inspectedFrames = Math.min(requested, ring.capacityFrames);
+  const firstIndex = (writeIndex - inspectedFrames) >>> 0;
+  let nonSilentFrames = 0;
+  let maxAbs = 0;
+  for (let frame = 0; frame < inspectedFrames; frame += 1) {
+    const slot = (firstIndex + frame) % ring.capacityFrames;
+    const left = Math.abs(samples[slot * CHANNELS] || 0);
+    const right = Math.abs(samples[slot * CHANNELS + 1] || 0);
+    maxAbs = Math.max(maxAbs, left, right);
+    if (left > 0 || right > 0) nonSilentFrames += 1;
+  }
+  return {
+    available: true,
+    writeIndex,
+    readIndex,
+    fillFrames,
+    capacityFrames: ring.capacityFrames,
+    writtenFrames: requested,
+    inspectedFrames,
+    nonSilentFrames,
+    maxAbs,
+  };
+}
+
 function visualDiff(left, right) {
   if (!left || !right || left.length !== right.length) return 0;
   let changed = 0;
@@ -348,6 +400,18 @@ function publishInspection(inspection) {
   if (inspection.wallpaper && inspection.panel.ready && inspection.menu) {
     setStatus("desktop ready: launcher available", "ready");
     if (controller && !readinessStarted) void finishReadiness();
+  }
+}
+
+// Keep readiness inspection from owning a pause it did not create. This is deliberately small so
+// a transient optimistic inspection can return without stranding the whole-machine controller.
+async function withReadinessPause(owner, inspect) {
+  const wasPaused = await owner.isPaused?.() === true;
+  await owner.pause();
+  try {
+    return await inspect();
+  } finally {
+    if (!wasPaused) await owner.resume?.();
   }
 }
 
@@ -403,21 +467,61 @@ function storedDesktopSnapshot() {
   return { ...record, bytes };
 }
 
-async function saveDesktopSnapshot({ persist = false } = {}) {
+async function drainPresentationBeforeSnapshot() {
+  const initial = presentation?.snapshot?.().scheduler;
+  if (!initial) return null;
+  if (initial.pending === 0 && initial.scheduled === false) return initial;
+  const deadline = performance.now() + 2_000;
+  while (true) {
+    const scheduler = presentation?.snapshot?.().scheduler;
+    if (!scheduler || (scheduler.pending === 0 && scheduler.scheduled === false)) return scheduler;
+    if (performance.now() >= deadline) {
+      throw new Error(`presentation did not drain before snapshot: ${JSON.stringify(scheduler)}`);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  }
+}
+
+async function saveDesktopSnapshot({ persist = false, machinePersist = persist } = {}) {
   if (!controller || typeof controller.saveDesktopSnapshot !== "function") {
     throw new Error("desktop snapshot save is unavailable");
   }
   const wasPaused = await controller.isPaused?.() === true;
   if (!wasPaused) await controller.pause?.();
   try {
+    // A normal T26f page has no presentation scheduler. When latency hooks do enable one, drain
+    // its already-received frame before pairing the visible CRC with the paused guest snapshot.
+    await drainPresentationBeforeSnapshot();
+    // All paired evidence is taken at this paused boundary. The CRC is no longer a racy read
+    // performed by the browser harness before an unrelated snapshot RPC can run the guest.
+    if (machinePersist) await controller.persist?.();
+    const preFrontBufferCrc = frontBufferCrc();
     const value = await controller.saveDesktopSnapshot();
     const bytes = value instanceof Uint8Array ? value.slice() : new Uint8Array(value);
     const sha256 = await sha256Hex(bytes);
+    let machineResume = null;
+    if (machinePersist) {
+      if (typeof controller.snapshotSave !== "function") {
+        throw new Error("whole-machine snapshot persistence is unavailable");
+      }
+      const snapshotSaveResult = await controller.snapshotSave();
+      if (snapshotSaveResult === "not_persistent") {
+        throw new Error("whole-machine snapshot persistence is unavailable");
+      }
+      machineResume = {
+        persisted: true,
+        paused: true,
+        preFrontBufferCrc,
+        overlayGeneration: await controller.snapshotGeneration?.() ?? null,
+      };
+    }
     const record = {
       schema: "wasm-vm.e5-t26f.desktop-snapshot.v1",
       bytes: snapshotBase64(bytes),
       byteLength: bytes.byteLength,
       sha256,
+      preFrontBufferCrc,
+      machineResume,
       savedAt: new Date().toISOString(),
     };
     if (persist) sessionStorage.setItem(DESKTOP_SNAPSHOT_STORAGE_KEY, JSON.stringify(record));
@@ -457,6 +561,8 @@ async function restoreDesktopSnapshot(snapshot = null, hostViewport = null) {
       ...result,
       snapshotSha256: restoredSha256,
       snapshotBytes: record.bytes.byteLength,
+      preFrontBufferCrc: record.preFrontBufferCrc || null,
+      machineResume: record.machineResume || null,
       completedAt: performance.now(),
     };
     return lastRestoreResult;
@@ -470,34 +576,40 @@ async function restoreDesktopSnapshot(snapshot = null, hostViewport = null) {
 }
 
 async function finishReadiness() {
-  if (readinessStarted || desktopReady || !controller || !presentation) return;
+  if (readinessStarted || autoRestoreInFlight || desktopReady || !controller || !presentation) return;
   readinessStarted = true;
   try {
-    await controller.pause();
-    latestPixels = clonePixels();
-    const inspection = inspectDesktop(latestPixels);
-    if (!(inspection.wallpaper && inspection.panel.ready && inspection.menu)) {
+    await beginAutoRestoreIfRequested();
+    const inspectedReady = await withReadinessPause(controller, async () => {
+      latestPixels = clonePixels();
+      const inspection = inspectDesktop(latestPixels);
+      if (!(inspection.wallpaper && inspection.panel.ready && inspection.menu)) {
+        readinessStarted = false;
+        return false;
+      }
+      desktopReady = true;
+      setMarker(readyEl, true, "desktop ready");
+      document.documentElement.dataset.desktopReady = "ready";
+      document.documentElement.dataset.desktopWallpaper = "ready";
+      document.documentElement.dataset.desktopPanel = "ready";
+      document.documentElement.dataset.desktopMenu = "ready";
+      return true;
+    });
+    if (!inspectedReady) {
       readinessStarted = false;
       return;
     }
-    desktopReady = true;
-    setMarker(readyEl, true, "desktop ready");
-    document.documentElement.dataset.desktopReady = "ready";
-    document.documentElement.dataset.desktopWallpaper = "ready";
-    document.documentElement.dataset.desktopPanel = "ready";
-    document.documentElement.dataset.desktopMenu = "ready";
-    await controller.resume();
     // The interpreted guest can still be finishing OpenRC while the first desktop frame is
     // painted. Start the reconnecting Channel at the usable-desktop boundary so its initial HELLO
     // is not repeatedly submitted before the named virtio port has opened.
     startDesktopAgentBridge();
-    if (query.has("autoRestore")) {
+    if (query.has("autoRestore") && document.documentElement.dataset.desktopRestored !== "ready") {
       try {
         await restoreDesktopSnapshot();
         setStatus("desktop restored: snapshot and agent ready", "ready");
       } catch (error) {
         latestError = error;
-        diagnostics.push({ reason: "desktop-auto-restore", error: String(error?.message || error) });
+        recordDiagnostic({ reason: "desktop-auto-restore", error: String(error?.message || error) });
         document.documentElement.dataset.desktopRestored = "error";
         setStatus(`desktop restore failed: ${error.message || error}`, "error");
       }
@@ -575,6 +687,32 @@ function startDesktopAgentBridge() {
   if (!desktopAgentBridge) return;
   desktopAgentBridge.start();
   for (const bytes of pendingAgentOutput.splice(0)) desktopAgentBridge.receive(bytes);
+}
+
+function beginAutoRestoreIfRequested() {
+  if (!query.has("autoRestore") || autoRestorePromise) return autoRestorePromise;
+  let snapshot;
+  try {
+    snapshot = storedDesktopSnapshot();
+  } catch (error) {
+    autoRestorePromise = Promise.reject(error);
+    return autoRestorePromise;
+  }
+  if (!snapshot) {
+    document.documentElement.dataset.desktopRestored = "none";
+    return null;
+  }
+  autoRestoreInFlight = true;
+  autoRestorePromise = (async () => {
+    // A whole-machine resume may have no pending GPU damage. Start the live agent and apply the
+    // host envelope as soon as the controller exists, rather than waiting for a new guest frame to
+    // prove readiness. The restore itself publishes the full repair frame.
+    startDesktopAgentBridge();
+    return restoreDesktopSnapshot(snapshot);
+  })().finally(() => {
+    autoRestoreInFlight = false;
+  });
+  return autoRestorePromise;
 }
 
 function recordPointerFrame(frame) {
@@ -720,6 +858,18 @@ function finishFocus() {
   return publicState();
 }
 
+function confirmGuestFocus(marker) {
+  const focus = interactions.focuses.at(-1);
+  const command = [...interactions.commands].reverse().find((entry) => entry.marker === String(marker));
+  if (!focus || !command) throw new Error("guest focus proof requires a completed visible command");
+  focus.guestVisible = command.accepted && command.terminalMarkerSeen && command.visualDiffPixels >= MIN_VISUAL_DIFF;
+  focus.guestVisibleCommand = String(marker);
+  focus.guestVisiblePixels = command.visualDiffPixels;
+  focus.accepted = focus.accepted && focus.guestVisible;
+  if (!focus.accepted) throw new Error(`guest focus was not visibly used: ${JSON.stringify(focus)}`);
+  return publicState();
+}
+
 function beginCommand(command, marker) {
   if (!desktopReady || !canvas) throw new Error("desktop is not ready");
   observeInteractionPixels();
@@ -820,6 +970,11 @@ function publicState() {
     surface: { ...latestSurface },
     agent: desktopAgentBridge?.stats() || null,
     diagnostics: [...diagnostics],
+    readiness: {
+      desktopReady,
+      inspection: latestInspection ? { ...latestInspection } : null,
+      agentState: desktopAgentBridge?.stats?.().state || null,
+    },
     bootStates: [...bootStates],
     launches: interactions.launches.map(safeRecord),
     focuses: interactions.focuses.map(safeRecord),
@@ -903,6 +1058,7 @@ function publicApi() {
     finishLaunch,
     beginFocus,
     finishFocus,
+    confirmGuestFocus,
     beginCommand,
     finishCommand,
     beginClose,
@@ -927,6 +1083,7 @@ function publicApi() {
     audio: () => ({
       policy: desktopAudioPolicy,
       sink: desktopAudioSink,
+      pcm: audioPcmObservation,
       ready: Boolean(desktopAudioSink),
     }),
   };
@@ -1010,7 +1167,10 @@ const bootPromise = startLinuxBootWorker({
   ramMib: 256,
   bootargs: "root=/dev/vda rw console=ttyS0 earlycon=sbi",
   bootSnapshot: false,
-  persist: false,
+  // E5-T26f: the desktop envelope is paired with the persistent whole-machine resume snapshot.
+  // The envelope restores host-owned GPU/input/sound/agent state; the resume blob carries CPU/RAM
+  // and transport state so a reload does not execute a fresh Linux probe sequence.
+  persist: true,
   slirpNet: false,
   fastInterpreter: true,
   jit: query.get("jit") !== "0",
@@ -1042,12 +1202,17 @@ bootPromise.then((value) => {
   globalThis.__desktopController = controller;
   try {
     desktopAgentBridge = createDesktopAgentBridge(controller, {
-      onError: (error) => diagnostics.push({ reason: "agent-channel", error: String(error?.message || error) }),
+      onError: (error) => recordDiagnostic({
+        reason: "agent-channel",
+        error: String(error?.message || error),
+        channelState: desktopAgentBridge?.channel?.state || null,
+        transportGeneration: desktopAgentBridge?.stats?.().transportGeneration ?? null,
+      }),
     });
     globalThis.__desktopAgentChannel = desktopAgentBridge.channel;
   } catch (error) {
     latestError = error;
-    diagnostics.push({ reason: "agent-bridge-unavailable", error: String(error?.message || error) });
+    recordDiagnostic({ reason: "agent-bridge-unavailable", error: String(error?.message || error) });
   }
   if (desktopPerfHooksRequested) {
     import("./bench/desktop-perf-hooks.js").then(({ createDesktopPerfInput }) => {
@@ -1066,15 +1231,15 @@ bootPromise.then((value) => {
       void sampleGuestInstructions();
       desktopPerfStatsTimer = setInterval(sampleGuestInstructions, 50);
     }).catch((error) => {
-      diagnostics.push({ reason: "desktop-perf-hook-load-failed", error: String(error?.message || error) });
+      recordDiagnostic({ reason: "desktop-perf-hook-load-failed", error: String(error?.message || error) });
     });
   }
   keyboardBridge = createKeyboardBridge(createWasmKeyboardAdapter(controller), {
     onFrame: recordKeyboardFrame,
-    onDiagnostic: (entry) => diagnostics.push(entry),
+    onDiagnostic: (entry) => recordDiagnostic(entry),
   });
   keyboardReconciler = createKeyboardReconciler(keyboardBridge, {
-    onDiagnostic: (entry) => diagnostics.push(entry),
+    onDiagnostic: (entry) => recordDiagnostic(entry),
   });
   keyboardCapture = createKeyboardCapturePolicy({
     initialCaptured: true,
@@ -1082,7 +1247,7 @@ bootPromise.then((value) => {
       recordKeyboardEvent(event);
       return keyboardReconciler.handleKeyEvent(event);
     },
-    onDiagnostic: (entry) => diagnostics.push(entry),
+    onDiagnostic: (entry) => recordDiagnostic(entry),
     onStateChange: (captured) => { document.documentElement.dataset.keyboardCapture = captured ? "on" : "off"; },
   });
   detachKeyboard = attachKeyboardCapture(root, keyboardCapture, { capture: true });
@@ -1099,7 +1264,7 @@ bootPromise.then((value) => {
     serializeTransport: true,
     isReady: () => controller !== null && displayError === null,
     onFrame: recordPointerFrame,
-    onDiagnostic: (entry) => diagnostics.push(entry),
+    onDiagnostic: (entry) => recordDiagnostic(entry),
   });
   detachPointer = attachPointerBridge(canvas, pointerBridge, {
     documentTarget: document,
@@ -1109,7 +1274,33 @@ bootPromise.then((value) => {
   });
   canvas.focus();
   document.documentElement.dataset.desktopController = "ready";
-  if (latestInspection?.wallpaper && latestInspection.panel.ready && latestInspection.menu) void finishReadiness();
+  const autoRestore = beginAutoRestoreIfRequested();
+  if (autoRestore) {
+    void autoRestore.then(() => {
+      if (desktopReady || displayError) return;
+      try {
+        // A resumed guest is allowed to be visually quiescent. Inspect the repair frame emitted by
+        // the envelope restore directly so readiness does not depend on another Linux repaint.
+        latestPixels = clonePixels();
+        publishInspection(inspectDesktop(latestPixels));
+      } catch (error) {
+        latestError = error;
+        displayError = error;
+        setStatus(`desktop restore display failed: ${error.message || error}`, "error");
+        document.documentElement.dataset.desktopReady = "error";
+      }
+      if (!desktopReady && latestInspection?.wallpaper && latestInspection.panel.ready && latestInspection.menu) {
+        void finishReadiness();
+      }
+    }).catch((error) => {
+      latestError = error;
+      setStatus(`desktop restore failed: ${error.message || error}`, "error");
+      document.documentElement.dataset.desktopRestored = "error";
+      document.documentElement.dataset.desktopReady = "error";
+    });
+  } else if (latestInspection?.wallpaper && latestInspection.panel.ready && latestInspection.menu) {
+    void finishReadiness();
+  }
 }, (error) => {
   displayError = error;
   latestError = error;
