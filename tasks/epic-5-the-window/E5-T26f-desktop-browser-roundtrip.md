@@ -85,6 +85,12 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
   branches (`crates/core/src/lib.rs:1883-1933`) or the rootfs array-expansion change
   (`tools/build-rootfs.sh:82`). Add deterministic save-side refusal tests and either separately
   prove the rootfs hunk or remove it from this task's diff.
+- SABOTAGE bridge ownership — INSUFFICIENT. Predicted replacing the bridge's `Uint8Array.slice()`
+  with a borrowed pass-through would fail the new ownership test; the isolated sabotaged test still
+  passed because its fake controller immediately makes its own copy
+  (`web/tests/e5-t26f-desktop-agent-bridge.test.mjs:35-39`) before the caller mutation is observed.
+  Make the fixture retain the bridge-supplied buffer without copying (or observe it asynchronously)
+  so the changed ownership hunk at `web/desktop-agent-bridge.js:6-12` is actually falsifiable.
 - NOVEL ATTACK — HELD. A controller that accepted one byte fewer than each agent frame never
   reached READY, and queued guest bytes remained privately owned and were discarded on close.
 - Deterministic checks passed: 9 desktop-snapshot tests, 12 desktop-restore tests, 2 nine-slot MMIO
