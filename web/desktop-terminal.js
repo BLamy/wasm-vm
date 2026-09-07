@@ -59,6 +59,7 @@ let desktopPerfGuestInstructions = null;
 let desktopPerfStatsTimer = null;
 let desktopPerfInput = null;
 let desktopPerfPresentDelayMs = 0;
+let desktopPerfCalibrationPixels = null;
 
 const pointerFrames = [];
 const keyboardFrames = [];
@@ -416,6 +417,40 @@ function delayedCancelAnimationFrame(handle) {
   cancelAnimationFrame(handle);
 }
 
+function presentCalibrationFrame(rect) {
+  if (!desktopLatencyHooksRequested || !presentation) throw new Error("latency hooks are disabled");
+  const state = presentation.snapshot();
+  const checkedRect = {
+    x: Number(rect?.x),
+    y: Number(rect?.y),
+    width: Number(rect?.width),
+    height: Number(rect?.height),
+  };
+  if (!Object.values(checkedRect).every(Number.isSafeInteger) || checkedRect.x < 0 || checkedRect.y < 0 ||
+      checkedRect.width < 1 || checkedRect.height < 1 ||
+      checkedRect.x + checkedRect.width > state.width || checkedRect.y + checkedRect.height > state.height) {
+    throw new RangeError("calibration rect is outside the presentation resource");
+  }
+  const pixelCount = state.width * state.height;
+  if (!desktopPerfCalibrationPixels || desktopPerfCalibrationPixels.length !== pixelCount) {
+    desktopPerfCalibrationPixels = new Uint32Array(pixelCount);
+  }
+  // A white cursor-sized block makes the probe visibly drawn while leaving the existing desktop
+  // surface intact outside the measured damage rectangle.
+  for (let y = checkedRect.y; y < checkedRect.y + checkedRect.height; y += 1) {
+    desktopPerfCalibrationPixels.fill(0xffffffff, (y * state.width) + checkedRect.x,
+      (y * state.width) + checkedRect.x + checkedRect.width);
+  }
+  presentation.present({
+    format: 1,
+    rect: checkedRect,
+    resourceWidth: state.width,
+    resourceHeight: state.height,
+    pixels: desktopPerfCalibrationPixels,
+  });
+  return checkedRect;
+}
+
 function beginLaunch(label = `launch-${interactions.launches.length + 1}`) {
   if (!desktopReady || !presentation) throw new Error("desktop is not ready");
   observeInteractionPixels();
@@ -714,6 +749,7 @@ if (desktopPerfHooksRequested) {
       desktopPerfPresentDelayMs = value;
       return desktopPerfPresentDelayMs;
     },
+    presentCalibrationFrame: (rect) => presentCalibrationFrame(rect),
     presentDelay: () => desktopPerfPresentDelayMs,
     clear: () => {
       const wasPaused = presentation?.pause?.() === true;

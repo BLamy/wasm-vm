@@ -34,6 +34,7 @@ assert.equal(terminal.split('const desktopLatencyHooksRequested = desktopPerfHoo
 assert.match(terminal, /scheduleFrames: desktopLatencyHooksRequested/);
 assert.match(terminal, /requestAnimationFrame: desktopLatencyHooksRequested \? delayedRequestAnimationFrame : undefined/);
 assert.match(terminal, /setPresentDelay: \(milliseconds\) =>/);
+assert.match(terminal, /presentCalibrationFrame: \(rect\) => presentCalibrationFrame\(rect\)/);
 assert.match(terminal, /latencyHooks: desktopLatencyHooksRequested/);
 assert.match(terminal, /discardedPending/);
 assert.match(presentation, /discardPending\(\)/);
@@ -69,6 +70,8 @@ assert.match(browserRunner, /recordedScreenFrames/);
 assert.match(browserRunner, /screen-capture-first\.png/);
 assert.match(browserRunner, /withinOneDisplayFrame/);
 assert.match(browserRunner, /PRESENT_DELAY_CALIBRATION_MS/);
+assert.match(browserRunner, /synthetic-drawn-present-probe/);
+assert.match(browserRunner, /presentCalibrationFrame/);
 assert.match(browserRunner, /assert\.deepEqual\(errors, \[\], "browser console errors"\)/);
 assert.match(browserRunner, /assert\.deepEqual\(httpErrors, \[\], "browser HTTP errors"\)/);
 

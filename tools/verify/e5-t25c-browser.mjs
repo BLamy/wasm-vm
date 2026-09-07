@@ -387,6 +387,46 @@ async function runTrial({ label, cursorCell, trace = false }) {
   };
 }
 
+async function runCalibrationTrial({ label, cursorCell, delayMs }) {
+  await page.evaluate((delay) => window.__desktopPerf.setPresentDelay(delay), delayMs);
+  const before = await page.evaluate((rect) => {
+    const priorPresents = window.__desktopPerf.presents();
+    const clear = window.__desktopPerf.clear();
+    const inputAt = performance.now();
+    const sequenceBefore = priorPresents.at(-1)?.sequence ?? 0;
+    window.__desktopPerf.presentCalibrationFrame(rect);
+    return { inputAt, sequenceBefore, clear };
+  }, cursorCell);
+  await page.waitForFunction(
+    ({ inputAt, cursorCell: cell, sequenceBefore }) => window.__desktopPerf.presents().some((record) => {
+      try {
+        return window.__e5t25c.findFirstIntersectingPresent({
+          records: [record], inputAt, cursorCell: cell, sequenceBefore,
+        }) !== null;
+      } catch {
+        return false;
+      }
+    }),
+    { inputAt: before.inputAt, cursorCell, sequenceBefore: before.sequenceBefore },
+    { timeout: 30_000 },
+  );
+  const match = await page.evaluate(({ inputAt, cursorCell: cell, sequenceBefore }) => (
+    window.__e5t25c.findFirstIntersectingPresent({
+      records: window.__desktopPerf.presents(),
+      inputAt,
+      cursorCell: cell,
+      sequenceBefore,
+    })
+  ), { inputAt: before.inputAt, cursorCell, sequenceBefore: before.sequenceBefore });
+  assert.ok(match, `${label}: calibration probe produced no drawn present`);
+  return {
+    trial: label,
+    ...match,
+    calibrationDelayMs: delayMs,
+    discardedPending: before.clear?.discardedPending === true,
+  };
+}
+
 try {
   await waitFor(async () => {
     try { return (await fetch(`${base}/desktop-cursor.html`)).ok; } catch { return false; }
@@ -494,20 +534,22 @@ try {
     refreshRateHz: refresh.refreshRateHz,
   });
 
-  // Interleave the control and delayed samples. A sequential block comparison lets slow guest
-  // scheduling drift masquerade as the known delay; adjacent pairs hold that nuisance constant.
+  // Interleave synthetic drawn-present probes. Real guest frame arrival changes when the display
+  // drain is delayed, so using keyboard trials here would measure guest scheduling drift as well
+  // as the known delay. The probe still travels through the real canvas backend and onPresent
+  // recorder, while its enqueue time is controlled exactly by this page.
   const calibrationBaselineSamples = [];
   const delayedSamples = [];
   for (let index = 0; index < CALIBRATION_TRIALS; index += 1) {
-    await page.evaluate(() => window.__desktopPerf.setPresentDelay(0));
-    calibrationBaselineSamples.push(await runTrial({
+    calibrationBaselineSamples.push(await runCalibrationTrial({
       label: `calibration-control-${String(index + 1).padStart(2, "0")}`,
       cursorCell,
+      delayMs: 0,
     }));
-    await page.evaluate((delay) => window.__desktopPerf.setPresentDelay(delay), PRESENT_DELAY_CALIBRATION_MS);
-    delayedSamples.push(await runTrial({
+    delayedSamples.push(await runCalibrationTrial({
       label: `calibration-delayed-${String(index + 1).padStart(2, "0")}`,
       cursorCell,
+      delayMs: PRESENT_DELAY_CALIBRATION_MS,
     }));
   }
   await page.evaluate(() => window.__desktopPerf.setPresentDelay(0));
@@ -543,7 +585,12 @@ try {
     adversarialInput,
     refresh,
     baseline,
-    calibration: { ...calibration, baseline: calibrationBaseline, delayed },
+    calibration: {
+      mode: "synthetic-drawn-present-probe",
+      ...calibration,
+      baseline: calibrationBaseline,
+      delayed,
+    },
     crossCheck,
     screenCapture: crossCheck?.capture ?? null,
     errors,
