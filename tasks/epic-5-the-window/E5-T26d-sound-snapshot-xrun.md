@@ -3,7 +3,7 @@ id: E5-T26d
 epic: 5
 title: Virtio-snd stream snapshot and XRUN restore
 priority: 526.4
-status: implemented
+status: in-progress
 depends_on: [E5-T26c]
 estimate: S
 risk: high
@@ -61,3 +61,29 @@ restore repeatedly and require a bounded XRUN recovery or clean failure, never a
   block is never pushed or completed, then posts a fresh ramp that completes exactly once; the
   snapshot unit suite covers stopped/running round-trips, capture repair, malformed params, and
   event-budget atomic refusal.
+
+### 2026-09-07 — verifier — VERDICT: refuted
+- P6 invalid ring lengths — FAILED. Predicted a snapshot with one pending transfer and one pending
+  byte would be rejected because the decoded playback/capture configuration has a 4096-byte period.
+  Both output and capture payloads were accepted, returned a one-transfer discard report, and
+  replaced a distinctive prepared target (`target_unchanged=false`). The mutation points are
+  `evidence/e5-t26d/verifier/src/main.rs:275-282` and `:306-313`; the insufficient check is
+  `crates/core/src/dev/virtio/snd/snapshot.rs:602-615`, followed by mutation at `:356-378`.
+  Validate `pending_bytes == pending_count * decoded_period_bytes` with checked arithmetic for both
+  streams before assignment, then rerun the prescribed gate and verifier harness.
+- P1/P2/P3/P4/P5/P7/P8 — HELD where unchanged. The scrubbed `make verify-E5-T26d` gate passed; the
+  public-API harness preserved prepared/stopped/running and duplex configuration, emptied restored
+  host queues, emitted bounded repair XRUNs, rejected 40 other malformed ID/rate/format/header/event
+  cases atomically, and completed 64 restore/service cycles after a 500 ms clock advance with one
+  fresh 1024-frame ramp and no duplicate audio.
+- COVERAGE — the Makefile target, direct/device wrappers, lifecycle encode/restore, header/stream/
+  queue/event decoder classes, all five new unit tests, and the partial-playback integration test
+  executed. Fixed-bound arithmetic/allocation failure arms and invalid in-memory encoder states are
+  waived as unreachable defensive paths; the queue validation hunk executed and was refuted.
+- Evidence: `evidence/e5-t26d/verifier/attack-plan.md`, `results.md`, and the locked Rust harness.
+  Exact implementation `ca002004650f0f4ec6acf302db871d2308318350`; inspected branch head
+  `7e436d99d1b0cdf4b1f50295b055433908a51e16`; worker evidence SHA-256
+  `8f8bcf3f3f84b9c6adfe64b9368aec83760b2cfaf27b4118bc7907d7613d6c19`.
+- SUITE: retain the verifier harness as the remediation regression. No implementation test promoted
+  until the semantic refutation clears. Host rr, independent-machine, and WebKit runs waived by
+  repository policy and user direction.
