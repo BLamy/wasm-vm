@@ -3,7 +3,7 @@ id: E5-T26c
 epic: 5
 title: Virtio-input pending rings, LEDs, and restore release-all
 priority: 526.3
-status: in-progress
+status: implemented
 depends_on: [E5-T26b]
 estimate: S
 risk: high
@@ -116,3 +116,14 @@ changed, then run evtest-style assertions for release-all, queue ordering, and f
   `evidence/e5-t26c/verifier/remediation-verdict.md`. SUITE: retain both new cap regressions; the
   release-growth test remains red as the worker's exact semantic repro. Independent machines,
   WebKit and host rr remain waived by policy/user.
+
+### 2026-09-06 — worker — REMEDIATION 2 SUBMITTED
+- Remediation commit: `30b7d6936a8cf06a1cd1157ccd45d6f35355c61f`. Restore now adds the release
+  frame to the complete decoded serialized-record count, not merely the remaining pending count,
+  and rejects cap-exceeding growth before taking or clearing the target's held-key ledgers.
+- Exact-head evidence: `evidence/e5-t26c/native-final.json`, SHA-256
+  `3fa79264342ebc265dda07042b4b8836c55550780c50bf6c5b6ed6c5d2a96763`.
+- Fresh `make verify-E5-T26c` at the remediation head passed format, both clippy modes, 11 input
+  snapshot tests, 6 keyboard/LED tests, 2 keyboard integration tests, and the no-default-
+  features `wasm32-unknown-unknown` build. The exact release-growth regression now passes; a
+  fresh Daybreak terminal recheck is required for the final status.
