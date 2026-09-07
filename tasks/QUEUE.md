@@ -442,7 +442,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [-] `525` [E5-T25](epic-5-the-window/E5-T25-perf-fps-latency-harness.md) — Performance harness — window-drag FPS and input-to-photon latency, measured *(deps: E5-T09e, E5-T18e)*
 - [x] `525.1` [E5-T25a](epic-5-the-window/E5-T25a-desktop-perf-instrumentation.md) — Freeze test-only desktop performance instrumentation and injection hooks *(deps: E5-T09e, E5-T18e)*
 - [b] `525.2` [E5-T25b](epic-5-the-window/E5-T25b-drag-fps-harness.md) — Measure repeatable real-window drag FPS and bottleneck counters *(deps: E5-T25a)*
-- [~] `525.3` [E5-T25c](epic-5-the-window/E5-T25c-input-photon-latency.md) — Measure and calibrate focused-key input-to-photon latency *(deps: E5-T25a)*
+- [?] `525.3` [E5-T25c](epic-5-the-window/E5-T25c-input-photon-latency.md) — Measure and calibrate focused-key input-to-photon latency *(deps: E5-T25a)*
 - [ ] `525.4` [E5-T25d](epic-5-the-window/E5-T25d-perf-baseline-regression-gate.md) — Publish desktop performance baselines and the regression gate *(deps: E5-T25b, E5-T25c)*
 - [ ] `526` [E5-T26](epic-5-the-window/E5-T26-snapshot-gpu-display-state.md) — Desktop-aware snapshots — GPU, input, and sound state across suspend/resume *(deps: E5-T18e, E5-T20e)*
 - [ ] `527` [E5-T27](epic-5-the-window/E5-T27-multi-display-stretch.md) — Multi-display support (config-gated stretch) — second scanout, second canvas *(deps: E5-T22d)*
