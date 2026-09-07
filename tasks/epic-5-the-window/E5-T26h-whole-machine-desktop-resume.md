@@ -3,7 +3,7 @@ id: E5-T26h
 epic: 5
 title: Preserve desktop devices across whole-machine resume
 priority: 526.55
-status: in-progress
+status: implemented
 depends_on: [E5-T26e]
 estimate: S
 risk: high
@@ -52,6 +52,26 @@ one preserved cursor and prove the regression test detects duplicate completion.
 Check a headless snapshot independently. No new browser or host-rr requirement.
 
 ## Verification log
+
+### 2026-09-07 — worker — remediation implemented, awaiting fresh critic
+
+Frozen remediation: `611e0f34952106bbafef828c304d697d20c34da3` (over the
+recorded refutation at `daac0b99`). Exact-head command `make verify-E5-T26h`
+passed 116 test executions, strict fmt/clippy, the no-default-features wasm32
+core build, and the wasm wrapper check. Evidence:
+`evidence/e5-t26h/worker-remediation-gates.log`, SHA-256
+`07d8a5beb3e2f9ea8ddac8b5e18f380cc4e4cfbed7d538951c06b7b97b2d26ef`.
+
+All eight unchanged promoted critic tests pass. Restored console transmit rings
+are re-armed from their saved cursors, completing already-notified pending work
+once while dropping old host queues and requiring a fresh HELLO. All fallible
+legacy section decoders now run before any desktop commit; sparse RAM validation
+shares the decode parser without allocating an extra RAM-sized buffer. Added
+serial/agent transmit evidence, 25 malformed-payload cases, and two missing-slot
+cases assert byte-identical target state and no GPU callback on refusal. The
+guest continuation hash remains `9865e79b681ad970` at one retired instruction.
+The previous six held attack categories remain carried forward. Browser evidence
+is still T26f's responsibility, not a claim of this native submission.
 
 ### 2026-09-07 — worker — implemented, awaiting fresh critic
 
