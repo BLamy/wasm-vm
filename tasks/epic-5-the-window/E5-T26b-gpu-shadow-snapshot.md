@@ -46,6 +46,10 @@ hotspot outside its image. Each must fail closed without corrupting another reso
 - Command: `make verify-E5-T26b` (exit 0). The run passed format, both GPU-trace clippy gates, 5 GPU snapshot tests, 15 resource tests, 5 damage tests, 6 tile tests, 3 block-quiesce tests, 6 CPU-resume tests, and the no-default-features wasm32 build.
 - The recorded tests exercise a non-default-format 8×4 resource with scanout, cursor hotspot/position, pending damage, dirty tiles, and front-buffer CRC equality; deterministic repeat/literal shadow compression reports raw/encoded sizes and ratio. Truncated payloads, forged shadow runs, missing scanout resources, incompatible formats, and an out-of-range cursor hotspot all fail before the target resource map changes. Valid restore emits exactly one full scanout repair frame.
 
+### 2026-09-06 — worker — REMEDIATION SUBMITTED
+- Verifier refutation fixed in commit `2f1ce24a60156cefcd2343369553fed57e337652`: `0xffff_ffff` is now reserved as the no-scanout resource ID and forged records using it are rejected before detached reconstruction. The fixture now carries nonempty backing metadata, and atomic malformed backing, damage, and dirty-tile metadata regressions are covered.
+- Re-recorded exact-head evidence: `evidence/e5-t26b/native-final.json` (SHA-256 `c4188b3f73741f972ebff536f6701060b49072e1418eb14b9264313e10feec14`); `make verify-E5-T26b` passed with 6 GPU snapshot tests, 15 resource tests, 5 damage tests, 6 tile tests, 3 block-quiesce tests, 6 CPU-resume tests, clippy, format, and wasm32 build.
+
 ### 2026-09-06 — verifier — VERDICT: refuted
 
 - P1 resource/scanout round-trip — FAILED. Predicted that a live nonzero resource id would
