@@ -78,6 +78,20 @@ function fakeController(events, done) {
     audioCaptureReady: () => true,
     captureState: () => ({ enabled: true, state: "running", startCount: 1 }),
     notifyCaptureEvent: (event) => { events.push(["capture", event]); return true; },
+    confirmAgentHello: () => { events.push("agent-hello"); return true; },
+    restoreDesktopSnapshot: (bytes, width, height) => {
+      events.push(["desktop-restore", [...bytes], width, height]);
+      return {
+        boundaryId: 7,
+        scanout: { width: 1280, height: 720 },
+        hostViewport: { width, height },
+        viewport: "letterbox",
+        agentRehandshake: true,
+        inputReleaseEvents: 0,
+        soundXrunEvents: 0,
+        fullRepairFrame: true,
+      };
+    },
     resumeAfterQuota: () => true,
     continueReadOnly: () => true,
     hasUnpersisted: () => false,
@@ -238,6 +252,8 @@ test("every explicit controller method crosses the runtime and no-provider Tails
       dismissFileDownload: [9],
       snapshotImport: [Uint8Array.of(4, 5)],
       notifyCaptureEvent: ["muted"],
+      confirmAgentHello: [],
+      restoreDesktopSnapshot: [Uint8Array.of(6, 7), 1024, 768],
       tailscaleCommand: ["status"],
     };
     const results = new Map();
@@ -246,6 +262,8 @@ test("every explicit controller method crosses the runtime and no-provider Tails
     }
     assert.deepEqual([...invoked], LINUX_CONTROLLER_METHODS);
     assert.equal(results.get("setDisplay"), true);
+    assert.equal(results.get("confirmAgentHello"), true);
+    assert.deepEqual(results.get("restoreDesktopSnapshot").hostViewport, { width: 1024, height: 768 });
     assert.deepEqual(results.get("displayStats"), { advertisedWidth: 1367, advertisedHeight: 901,
       scanoutResource: null, edid: Uint8Array.of(0, 255) });
     assert.deepEqual(events.slice(0, 2), [["keyboard", 1, 30, 1], "keyboard-sync"]);
