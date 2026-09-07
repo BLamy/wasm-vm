@@ -1,6 +1,6 @@
 {
   "task": "E5-T26c",
-  "implementation_head": "4233b51b3b4f03186561a91df7469300d376bdc9",
+  "implementation_head": "7c2a61aec9fe81c46da37bbcd0db279aaaf86d73",
   "recorded_at": "2026-09-06",
   "command": "make verify-E5-T26c",
   "result": "pass",
@@ -9,17 +9,21 @@
     "clippy_lib_gpu_trace": "pass",
     "clippy_lib_tests_gpu_trace": "pass",
     "input_snapshot_tests": {
-      "passed": 4,
+      "passed": 9,
       "failed": 0,
       "coverage": [
         "three-device pending-frame order and partial queue indices",
         "restore release-all for a delivered tablet button",
         "direct release-all budget protection",
-        "truncation, forged lengths, duplicate events, and atomic refusal"
+        "truncation, forged lengths, duplicate events, and atomic refusal",
+        "multi-frame order, staged work, and public wrapper round-trip",
+        "multi-key release-all ordering and budget pressure",
+        "fresh keyboard, tablet, and mouse frames",
+        "combined staged-plus-ring serialized-event cap on encode and decode"
       ]
     },
     "keyboard_tests": {
-      "passed": 5,
+      "passed": 6,
       "failed": 0,
       "coverage": [
         "LED byte round-trip",
@@ -38,7 +42,14 @@
     "version": 1,
     "host_held_set_serialized": false,
     "restore_report_marks_host_held_set_discarded": true,
-    "restore_release_frame_protected": true
+    "restore_release_frame_protected": true,
+    "combined_serialized_event_cap": 65536,
+    "encoded_payload_pre_reserves_validated_length": true
+  },
+  "verifier_remediation": {
+    "original_gap": "fully-consumed frames could bypass the pending-event cap",
+    "fixed_by": "7c2a61aec9fe81c46da37bbcd0db279aaaf86d73",
+    "promoted_attack_report": "evidence/e5-t26c/verifier/provisional-review.md"
   },
   "waivers": [
     "host rr and independent-machine proof are waived by the repository policy",

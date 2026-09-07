@@ -3,7 +3,7 @@ id: E5-T26c
 epic: 5
 title: Virtio-input pending rings, LEDs, and restore release-all
 priority: 526.3
-status: in-progress
+status: implemented
 depends_on: [E5-T26b]
 estimate: S
 risk: high
@@ -75,3 +75,16 @@ changed, then run evtest-style assertions for release-all, queue ordering, and f
   atomicity, multi-key release-all pressure, fresh keyboard/tablet/mouse input, exact LED bytes,
   and the combined serialized-event cap. The worker must freeze these tests with the remediation,
   re-run `make verify-E5-T26c`, replace the exact-head evidence, and request a fresh recheck.
+
+### 2026-09-06 — worker — REMEDIATION SUBMITTED
+- Remediation commit: `7c2a61aec9fe81c46da37bbcd0db279aaaf86d73`. The codec now caps the combined
+  staged plus serialized pending-event records at 65,536, computes and fallibly reserves the
+  complete payload length before encoding, and rejects restore-time release-frame growth before
+  mutating the target. The verifier's five snapshot attacks and one LED attack are promoted in
+  the deterministic suite.
+- Exact-head evidence was replaced at `evidence/e5-t26c/native-final.json`, SHA-256
+  `cf3f1286da0fe022859e0e455bc11c7805ded038f91e28688303978059105d62`.
+- Fresh `make verify-E5-T26c` at the remediation head passed format, both clippy modes, 9 input
+  snapshot tests, 6 keyboard/LED tests, 2 keyboard integration tests, and the no-default-
+  features `wasm32-unknown-unknown` build. A fresh Daybreak verifier recheck is required for the
+  terminal status.
