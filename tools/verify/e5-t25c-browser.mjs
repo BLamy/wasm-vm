@@ -135,6 +135,26 @@ async function refreshMeasurement() {
 async function startScreenCapture() {
   cdp = await context.newCDPSession(page);
   const timeOrigin = await page.evaluate(() => performance.timeOrigin);
+  await page.evaluate(() => {
+    const marker = document.createElement("div");
+    marker.id = "e5t25c-capture-marker";
+    marker.style.cssText = [
+      "position:fixed", "left:8px", "top:8px", "z-index:2147483647", "width:180px", "height:24px",
+      "overflow:hidden", "color:#fff", "background:#b21f35", "font:12px monospace", "line-height:24px",
+      "text-align:center", "pointer-events:none",
+    ].join(";");
+    marker.textContent = "capture:000000";
+    document.body.append(marker);
+    const state = { active: true, frames: 0 };
+    const tick = () => {
+      if (!state.active) return;
+      state.frames += 1;
+      marker.textContent = `capture:${String(state.frames).padStart(6, "0")}`;
+      requestAnimationFrame(tick);
+    };
+    window.__e5t25cCaptureMarker = state;
+    requestAnimationFrame(tick);
+  });
   screenCapture = { timeOrigin, frames: [], firstData: null, lastData: null };
   cdp.on("Page.screencastFrame", async ({ data, metadata, sessionId }) => {
     if (screenCapture === null) {
@@ -162,6 +182,13 @@ async function stopScreenCapture() {
   if (!screenCapture) return null;
   await cdp.send("Page.stopScreencast").catch(() => {});
   await page.waitForTimeout(100);
+  const markerFrames = await page.evaluate(() => {
+    const count = window.__e5t25cCaptureMarker?.frames ?? 0;
+    window.__e5t25cCaptureMarker && (window.__e5t25cCaptureMarker.active = false);
+    document.getElementById("e5t25c-capture-marker")?.remove();
+    delete window.__e5t25cCaptureMarker;
+    return count;
+  });
   const frames = screenCapture.frames.filter(({ timestamp }) => Number.isFinite(timestamp));
   const deltas = frames.slice(1).map(({ timestamp }, index) => timestamp - frames[index].timestamp)
     .filter((value) => value > 0);
@@ -176,6 +203,9 @@ async function stopScreenCapture() {
     timestamps: frames.map(({ timestamp }) => timestamp),
     medianFrameMs,
     refreshRateHz: medianFrameMs ? 1_000 / medianFrameMs : null,
+    markerRafFrameCount: markerFrames,
+    visualChange: Boolean(screenCapture.firstData && screenCapture.lastData &&
+      screenCapture.firstData !== screenCapture.lastData),
   };
   if (screenCapture.firstData) {
     await writeFile(path.join(out, "screen-capture-first.png"), Buffer.from(screenCapture.firstData, "base64"));
@@ -527,6 +557,9 @@ try {
         withinOneDisplayFrame: (nearest?.distance ?? Number.POSITIVE_INFINITY) <= refresh.medianFrameMs,
         capture,
       };
+      assert.ok(timestamps.length >= 4, `screencast retained too few frames: ${timestamps.length}`);
+      assert.ok(capture.markerRafFrameCount >= 4, `capture marker advanced too few rAF frames: ${capture.markerRafFrameCount}`);
+      assert.equal(capture.visualChange, true, "screencast first/last frames are identical");
     }
   }
   const baseline = summarizeKeyLatency(baselineSamples, {
