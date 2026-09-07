@@ -3,13 +3,19 @@ id: E5-T28
 epic: 5
 title: "Capstone: a browser rendering surface + real GUI apps — type, hear, drag"
 priority: 528
-status: pending
-depends_on: [E5-T13c, E5-T15d, E5-T18e, E5-T20e, E5-T24d, E5-T25]
+status: cancelled
+depends_on: [E5-T13c, E5-T15d, E5-T18e, E5-T20e, E5-T24d, E5-T22d, E5-T25d, E5-T26g]
 estimate: L
-capstone: true
+capstone: false
 ---
 
 ## Goal
+Planning container replaced by the ordered S slices **E5-T28a → E5-T28b → E5-T28c**.
+The original acceptance criteria below remain the contract; only the final leaf grants
+Epic 5 completion. The cancelled T25 parent is replaced by its final T25d leaf, and
+resize/snapshot integration now depends on their final proof leaves. T27 remains an
+explicitly config-gated stretch, not a prerequisite for the single-display capstone.
+
 The Level 5 threshold — a **browser rendering surface** with **real GUI applications** on
 it, Layer E — demonstrated end-to-end from a cold start: the page boots unmodified Alpine
 riscv64 to a graphical surface (a compositor + at least one real GUI app, e.g. a terminal
@@ -75,4 +81,10 @@ wedge, stuck input, silent-audio state, or sub-threshold measured FPS in the sta
 config refutes the capstone.
 
 ## Verification log
-(empty)
+### 2026-09-07 — coordinator — decomposition, no verification claim
+
+Daybreak's final triage identified a cancelled-parent dependency and an undecomposed
+L task. Split the product entry point, active integrated run, and long-lived lifecycle
+proof into executable boundaries without reducing the 15 FPS or two-second resize
+targets. Existing recordings do not satisfy the capstone. Omarchy publication remains
+a separate milestone after Epic 5 and the explicitly authorized stack merge.
