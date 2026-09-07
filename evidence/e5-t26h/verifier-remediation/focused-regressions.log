@@ -1,0 +1,27 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/desktop_machine_resume.rs (target/debug/deps/desktop_machine_resume-a78ea839bc72b4db)
+
+running 5 tests
+test headless_resume_remains_compatible_without_desktop_sections ... ok
+test every_fallible_legacy_section_refuses_before_live_state_or_host_callbacks_change ... ok
+test malformed_desktop_section_and_missing_device_refuse_without_partial_restore ... ok
+desktop resume continuation: hash=9865e79b681ad970, retired=1
+test desktop_devices_resume_with_ring_continuity_and_fresh_host_state ... ok
+test pending_console_transmits_survive_while_stale_host_session_is_discarded ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+
+     Running tests/desktop_machine_resume_verifier.rs (target/debug/deps/desktop_machine_resume_verifier-37cbdfd441e68e16)
+
+running 8 tests
+test sound_request_kicked_before_save_completes_once_after_resume ... ok
+test console_control_request_kicked_before_save_completes_once_after_resume ... ok
+test malformed_later_machine_payload_must_not_partially_commit_desktop_state ... ok
+test rng_cursor_wrap_preserves_one_pending_completion_exactly_once ... ok
+test same_topology_in_alternate_assembly_order_restores ... ok
+test machine_save_reconciles_held_keyboard_tablet_and_mouse_state ... ok
+test source_target_topology_mismatch_is_atomic_both_directions ... ok
+test every_new_section_corruption_missing_and_duplicate_are_atomic ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.68s
+

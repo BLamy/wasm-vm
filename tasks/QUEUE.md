@@ -449,7 +449,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `526.3` [E5-T26c](epic-5-the-window/E5-T26c-input-snapshot-release-all.md) — Virtio-input pending rings, LEDs, and restore release-all *(deps: E5-T26b)*
 - [x] `526.4` [E5-T26d](epic-5-the-window/E5-T26d-sound-snapshot-xrun.md) — Virtio-snd stream snapshot and XRUN restore *(deps: E5-T26c)*
 - [x] `526.5` [E5-T26e](epic-5-the-window/E5-T26e-restore-reconciliation.md) — Desktop restore reconciliation for agent, scanout, and viewport *(deps: E5-T26d, E5-T23e, E5-T22b)*
-- [?] `526.55` [E5-T26h](epic-5-the-window/E5-T26h-whole-machine-desktop-resume.md) — Preserve desktop devices across whole-machine resume *(deps: E5-T26e)*
+- [~] `526.55` [E5-T26h](epic-5-the-window/E5-T26h-whole-machine-desktop-resume.md) — Preserve desktop devices across whole-machine resume *(deps: E5-T26e)*
 - [b] `526.6` [E5-T26f](epic-5-the-window/E5-T26f-desktop-browser-roundtrip.md) — Browser desktop snapshot round-trip and interaction smoke *(deps: E5-T26e, E5-T26h)*
 - [ ] `526.7` [E5-T26g](epic-5-the-window/E5-T26g-snapshot-hardening-proof.md) — Desktop snapshot stress, versioning, size, and portability proof *(deps: E5-T26f)*
 - [ ] `527` [E5-T27](epic-5-the-window/E5-T27-multi-display-stretch.md) — Multi-display support (config-gated stretch) — second scanout, second canvas *(deps: E5-T22d)*

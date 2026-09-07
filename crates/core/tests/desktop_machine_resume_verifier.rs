@@ -4,7 +4,8 @@
 
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::dev::virtio::console::{
-    CONTROL_TRANSMIT_QUEUE, ConsoleControl, VIRTIO_CONSOLE_DEVICE_READY, VIRTIO_CONSOLE_PORT_READY,
+    AGENT_PORT_ID, AGENT_TRANSMIT_QUEUE, CONTROL_TRANSMIT_QUEUE, ConsoleControl,
+    VIRTIO_CONSOLE_DEVICE_READY, VIRTIO_CONSOLE_PORT_OPEN, VIRTIO_CONSOLE_PORT_READY,
 };
 use wasm_vm_core::dev::virtio::gpu::NullSink;
 use wasm_vm_core::dev::virtio::gpu::protocol::FORMAT_B8G8R8A8_UNORM;
@@ -581,4 +582,98 @@ fn machine_save_reconciles_held_keyboard_tablet_and_mouse_state() {
             "restored target retained a held host input"
         );
     }
+}
+
+#[test]
+fn pending_old_session_agent_hello_cannot_attest_the_resumed_host() {
+    // A complete, valid T23d HELLO frame: {len=10,type=HELLO,flags=0,version=1,caps=7}.
+    const OLD_HELLO: [u8; 18] = [10, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7, 0, 0, 0, 0, 0, 0, 0];
+
+    let mut source = Machine::new(4 * 1024 * 1024);
+    source.enable_plic();
+    source.enable_virtio_slots(None);
+    let (_, console) = source.enable_virtio_console_at(8);
+    configure_queue(&mut source, 8, CONTROL_TRANSMIT_QUEUE as usize);
+    configure_queue(&mut source, 8, AGENT_TRANSMIT_QUEUE as usize);
+    install_nop(&mut source);
+
+    for (ordinal, control) in [
+        ConsoleControl::new(0, VIRTIO_CONSOLE_DEVICE_READY, 1),
+        ConsoleControl::new(AGENT_PORT_ID, VIRTIO_CONSOLE_PORT_READY, 1),
+        ConsoleControl::new(AGENT_PORT_ID, VIRTIO_CONSOLE_PORT_OPEN, 1),
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        if ordinal == 2 {
+            console.borrow_mut().set_host_connected(true);
+        }
+        let (_, _, _, buffer) = queue_addresses(8, CONTROL_TRANSMIT_QUEUE as usize);
+        let data = buffer + 0x100 + ordinal as u64 * 0x20;
+        for (offset, byte) in control.to_bytes().into_iter().enumerate() {
+            source.bus_mut().store8(data + offset as u64, byte).unwrap();
+        }
+        write_descriptor(
+            &mut source,
+            8,
+            CONTROL_TRANSMIT_QUEUE as usize,
+            ordinal as u16,
+            data,
+            8,
+            0,
+            0,
+        );
+        post_descriptor(
+            &mut source,
+            8,
+            CONTROL_TRANSMIT_QUEUE as usize,
+            ordinal as u16,
+            ordinal as u16,
+        );
+        kick(&mut source, 8, CONTROL_TRANSMIT_QUEUE as usize);
+        source.hart_mut().regs.pc = virt::DRAM_BASE;
+        assert_eq!(source.run(1), RunOutcome::MaxInstrs);
+    }
+    assert!(source.confirm_virtio_console_agent_hello().is_some());
+    assert!(console.borrow().agent_ready_for_restore());
+
+    let (_, _, _, agent_buffer) = queue_addresses(8, AGENT_TRANSMIT_QUEUE as usize);
+    for (offset, byte) in OLD_HELLO.into_iter().enumerate() {
+        source
+            .bus_mut()
+            .store8(agent_buffer + offset as u64, byte)
+            .unwrap();
+    }
+    write_descriptor(
+        &mut source,
+        8,
+        AGENT_TRANSMIT_QUEUE as usize,
+        0,
+        agent_buffer,
+        OLD_HELLO.len() as u32,
+        0,
+        0,
+    );
+    post_descriptor(&mut source, 8, AGENT_TRANSMIT_QUEUE as usize, 0, 0);
+    kick(&mut source, 8, AGENT_TRANSMIT_QUEUE as usize);
+    let blob = source.save_resume().unwrap();
+
+    let mut target = Machine::new(4 * 1024 * 1024);
+    target.enable_plic();
+    target.enable_virtio_slots(None);
+    let (_, restored) = target.enable_virtio_console_at(8);
+    target.load_resume(&blob).unwrap();
+    assert_eq!(restored.borrow().application_hello_generation(), 0);
+    assert!(!restored.borrow().agent_ready_for_restore());
+    target.hart_mut().regs.pc = virt::DRAM_BASE;
+    assert_eq!(target.run(1), RunOutcome::MaxInstrs);
+
+    let output = restored.borrow_mut().take_agent_output();
+    let stale_hello_accepted = output == OLD_HELLO
+        && target.confirm_virtio_console_agent_hello().is_some()
+        && restored.borrow().agent_ready_for_restore();
+    assert!(
+        !stale_hello_accepted,
+        "a pre-snapshot pending HELLO authenticated the resumed host session"
+    );
 }

@@ -3,7 +3,7 @@ id: E5-T26h
 epic: 5
 title: Preserve desktop devices across whole-machine resume
 priority: 526.55
-status: implemented
+status: in-progress
 depends_on: [E5-T26e]
 estimate: S
 risk: high
@@ -147,3 +147,39 @@ Verifier evidence digests: `attacks.log`
 `3c34620f610e5f9080ff7facea0e3b120de1eea1f4216b1f90111928bc6a1f08`;
 `cursor-sabotage.log`
 `f242c074df7fcb6e3bd986f27d4514b3d9f6f6708c1760978dce04d19325098d`.
+
+### 2026-09-07 — fresh verifier remediation — VERDICT: refuted
+
+- R1 prior refutations — HELD. Both unchanged promoted regressions pass at frozen
+  `611e0f34952106bbafef828c304d697d20c34da3`: the pre-save control-transmit request advances
+  exactly once, and malformed CPU refusal leaves GPU resource 77 absent. The focused run passes all
+  five worker integration tests plus the original eight critic tests
+  (`evidence/e5-t26h/verifier-remediation/focused-regressions.log`, SHA-256
+  `21918cf2f591ff07089bc7e62231ec51ce742a2e364726c1ef5889eb3f0e5da9`).
+- R2/R3 console pending continuity vs fresh HELLO — FAILED. Predicted that re-arming a pending
+  agent-transmit descriptor could not let bytes from the old application session attest the new
+  host. A complete valid T23d HELLO frame was posted and notified before save; after resume the new
+  `AGENT_TRANSMIT_QUEUE` probe delivered those old bytes, `confirm_virtio_console_agent_hello()`
+  accepted them, and `agent_ready_for_restore()` became true
+  (`evidence/e5-t26h/verifier-remediation/stale-pending-hello-attack.log:7-17`, SHA-256
+  `bf6bf7034b5da0f6bccec9fcd20b4a3fdec76f35af7c99667aa8be5d890490d6`). The regression is
+  `crates/core/tests/desktop_machine_resume_verifier.rs:587-679`; the cause is the unconditional
+  agent-ring re-arm at `crates/core/src/dev/virtio/console.rs:409-421` immediately after clearing
+  buffered host bytes and HELLO counters. Preserve control-transmit and serial-transmit continuity,
+  and complete/reconcile the old agent descriptor exactly once, but discard its pre-resume
+  application-session TX payload before `stage_agent_output` can forward it into the fresh Channel;
+  only a HELLO generated after resume may arm desktop restore.
+- R4/R5 legacy prevalidation and shared sparse parser — HELD. CPU, RAM, CLINT, PLIC, UART, RTC,
+  clock, blk, and net malformed/trailing/semantic payloads refuse before live state or GPU callback;
+  missing blk/net slots refuse atomically. The RAM matrix exercises truncated/wrong-length and
+  oversized zero runs, while the unchanged sparse round-trip, random-input, truncation/flip, and
+  allocation-bound checks pass in the hash-matched worker record.
+- R6 evidence/coverage — HELD for the remediation hunks. Worker record
+  `worker-remediation-gates.log` hashes to
+  `07d8a5beb3e2f9ea8ddac8b5e18f380cc4e4cfbed7d538951c06b7b97b2d26ef` and contains 116 passing
+  checks with strict fmt/clippy and wasm32 builds. Port-0 and agent transmit probes exercise two
+  re-arm branches, the prior control regression exercises the third, and the legacy matrix covers
+  every new prevalidation arm. All earlier unchanged HELD results remain carried forward.
+- SUITE: promoted `pending_old_session_agent_hello_cannot_attest_the_resumed_host` in the existing
+  critic target. Exact-head clean-copy proof is deferred until correctness is frozen again; the
+  earlier portability result remains unchanged. No browser claim or browser gate was added.
