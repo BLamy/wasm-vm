@@ -3,7 +3,7 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: pending
+status: in-progress
 depends_on: [E5-T26e]
 estimate: S
 risk: high
