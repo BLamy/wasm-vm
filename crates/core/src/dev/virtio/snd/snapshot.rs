@@ -10,8 +10,9 @@ use alloc::vec::Vec;
 
 use super::{
     CAPTURE_STREAM_ID, EVENT_QUEUE, EventState, MAX_PCM_BUFFER_BYTES, MAX_PENDING_SND_EVENTS,
-    PcmParams, PcmState, PlaybackQueue, SUPPORTED_CAPTURE_PCM_RATE_MASK, SUPPORTED_PCM_RATE_MASK,
-    SndEvent, SndState, VIRTIO_SND_EVT_PCM_XRUN, VIRTIO_SND_PCM_RATE_48000,
+    PCM_FRAME_BYTES, PcmParams, PcmState, PlaybackQueue, SUPPORTED_CAPTURE_PCM_RATE_MASK,
+    SUPPORTED_PCM_RATE_MASK, SndEvent, SndState, VIRTIO_SND_EVT_PCM_XRUN,
+    VIRTIO_SND_PCM_RATE_48000,
 };
 
 const MAGIC: [u8; 8] = *b"WVSND001";
@@ -199,11 +200,20 @@ pub(super) fn encode(state: &SndState) -> Result<Vec<u8>, SndSnapshotError> {
         .map_err(|_| SndSnapshotError::LengthOverflow)?;
     let capture_count =
         u32::try_from(state.capture.pending.len()).map_err(|_| SndSnapshotError::LengthOverflow)?;
-    validate_pending_metadata(0, playback_count, state.playback.pending_bytes())?;
+    validate_pending_metadata(
+        0,
+        playback_count,
+        state.playback.pending_bytes(),
+        state.stream.params().map(|params| params.period_bytes),
+    )?;
     validate_pending_metadata(
         CAPTURE_STREAM_ID,
         capture_count,
         state.capture.pending_bytes(),
+        state
+            .capture_stream
+            .params()
+            .map(|params| params.period_bytes),
     )?;
 
     let event_count =
@@ -445,6 +455,18 @@ fn decode(payload: &[u8]) -> Result<DecodedSnd, SndSnapshotError> {
         pcm_rate_mask,
         capture_enabled,
     )?;
+    validate_pending_metadata(
+        0,
+        playback.pending_count,
+        playback._pending_bytes,
+        output.params.map(|params| params.period_bytes),
+    )?;
+    validate_pending_metadata(
+        CAPTURE_STREAM_ID,
+        capture_queue.pending_count,
+        capture_queue._pending_bytes,
+        capture.params.map(|params| params.period_bytes),
+    )?;
     if !capture_enabled
         && (capture.state != PcmState::Released
             || capture.params.is_some()
@@ -514,7 +536,7 @@ fn decode_playback_queue(
 ) -> Result<DecodedPlaybackQueue, SndSnapshotError> {
     let pending_count = reader.u32()?;
     let pending_bytes = reader.u32()?;
-    validate_pending_metadata(0, pending_count, pending_bytes)?;
+    validate_pending_metadata(0, pending_count, pending_bytes, None)?;
     let observed_epoch = reader.u64()?;
     let release_pending = read_bool(reader, "playback_release_pending")?;
     reserved(reader, "playback_release_reserved", 3)?;
@@ -538,7 +560,7 @@ fn decode_playback_queue(
 fn decode_capture_queue(reader: &mut Reader<'_>) -> Result<DecodedCaptureQueue, SndSnapshotError> {
     let pending_count = reader.u32()?;
     let pending_bytes = reader.u32()?;
-    validate_pending_metadata(CAPTURE_STREAM_ID, pending_count, pending_bytes)?;
+    validate_pending_metadata(CAPTURE_STREAM_ID, pending_count, pending_bytes, None)?;
     let observed_epoch = reader.u64()?;
     let release_pending = read_bool(reader, "capture_release_pending")?;
     reserved(reader, "capture_release_reserved", 3)?;
@@ -599,7 +621,12 @@ fn validate_stream(
     Ok(())
 }
 
-fn validate_pending_metadata(stream: u32, count: u32, bytes: u32) -> Result<(), SndSnapshotError> {
+fn validate_pending_metadata(
+    stream: u32,
+    count: u32,
+    bytes: u32,
+    period_bytes: Option<u32>,
+) -> Result<(), SndSnapshotError> {
     if count > MAX_SNAPSHOT_PENDING_TRANSFERS {
         return Err(SndSnapshotError::TooManyPendingTransfers {
             stream,
@@ -610,6 +637,16 @@ fn validate_pending_metadata(stream: u32, count: u32, bytes: u32) -> Result<(), 
     if (count == 0) != (bytes == 0)
         || u64::from(bytes) > u64::from(count) * u64::from(MAX_PCM_BUFFER_BYTES)
     {
+        return Err(SndSnapshotError::InvalidPendingMetadata { stream });
+    }
+    if let Some(period_bytes) = period_bytes {
+        let expected = u64::from(count)
+            .checked_mul(u64::from(period_bytes))
+            .ok_or(SndSnapshotError::InvalidPendingMetadata { stream })?;
+        if expected != u64::from(bytes) {
+            return Err(SndSnapshotError::InvalidPendingMetadata { stream });
+        }
+    } else if !bytes.is_multiple_of(PCM_FRAME_BYTES) {
         return Err(SndSnapshotError::InvalidPendingMetadata { stream });
     }
     Ok(())
@@ -762,7 +799,7 @@ mod tests {
         configure_running(&mut source, CAPTURE_STREAM_ID);
         source.playback.pending.push_back(super::super::PendingPcm {
             head: 7,
-            frames: vec![1, -1, 2, -2],
+            frames: vec![1; 2048],
             status_segments: Vec::new(),
             sample_rate_hz: 48_000,
             duration_ns: 1,
@@ -822,6 +859,57 @@ mod tests {
             Err(SndSnapshotError::InvalidParams { stream: 0 })
         );
         assert_eq!(state.to_snapshot().expect("encode after rejection"), before);
+    }
+
+    #[test]
+    fn pending_period_metadata_is_exact_and_atomic_for_both_streams() {
+        let mut output_source = SndState::new();
+        configure_running(&mut output_source, 0);
+        let mut output_payload = output_source.to_snapshot().expect("encode output snapshot");
+        output_payload[PLAYBACK_QUEUE_OFFSET..PLAYBACK_QUEUE_OFFSET + 4]
+            .copy_from_slice(&1u32.to_le_bytes());
+        output_payload[PLAYBACK_QUEUE_OFFSET + 4..PLAYBACK_QUEUE_OFFSET + 8]
+            .copy_from_slice(&1u32.to_le_bytes());
+        let mut output_target = SndState::new();
+        configure_running(&mut output_target, 0);
+        let output_before = output_target.to_snapshot().expect("encode output target");
+        assert_eq!(
+            output_target.restore_snapshot(&output_payload),
+            Err(SndSnapshotError::InvalidPendingMetadata { stream: 0 })
+        );
+        assert_eq!(
+            output_target
+                .to_snapshot()
+                .expect("encode output after rejection"),
+            output_before
+        );
+
+        let mut capture_source = SndState::new();
+        capture_source.set_capture_enabled(true);
+        configure_running(&mut capture_source, CAPTURE_STREAM_ID);
+        let mut capture_payload = capture_source
+            .to_snapshot()
+            .expect("encode capture snapshot");
+        capture_payload[CAPTURE_QUEUE_OFFSET..CAPTURE_QUEUE_OFFSET + 4]
+            .copy_from_slice(&1u32.to_le_bytes());
+        capture_payload[CAPTURE_QUEUE_OFFSET + 4..CAPTURE_QUEUE_OFFSET + 8]
+            .copy_from_slice(&1u32.to_le_bytes());
+        let mut capture_target = SndState::new();
+        capture_target.set_capture_enabled(true);
+        configure_running(&mut capture_target, CAPTURE_STREAM_ID);
+        let capture_before = capture_target.to_snapshot().expect("encode capture target");
+        assert_eq!(
+            capture_target.restore_snapshot(&capture_payload),
+            Err(SndSnapshotError::InvalidPendingMetadata {
+                stream: CAPTURE_STREAM_ID
+            })
+        );
+        assert_eq!(
+            capture_target
+                .to_snapshot()
+                .expect("encode capture after rejection"),
+            capture_before
+        );
     }
 
     #[test]
