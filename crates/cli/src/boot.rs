@@ -131,6 +131,12 @@ impl wasm_vm_core::dev::virtio::gpu::FrameSink for DisplaySink {
         metrics.uploaded_bytes = metrics.uploaded_bytes.saturating_add(bytes);
         metrics.flushes = metrics.flushes.saturating_add(1);
     }
+
+    fn clear(&mut self) {
+        let mut metrics = self.metrics.borrow_mut();
+        metrics.uploaded_bytes = 0;
+        metrics.flushes = 0;
+    }
 }
 
 #[derive(Args)]

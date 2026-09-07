@@ -5,12 +5,13 @@ use super::{
     DesktopRestoreError, DesktopRestorePreparation, DisplaySize, RESTORE_COMPONENT_ORDER,
     RestoreCallbackError, ViewportDisposition, VirtioDesktopRestoreBackend,
 };
+use crate::Machine;
 use crate::desktop_snapshot::{DesktopSnapshotBuilder, FORMAT_VERSION, section};
-use crate::dev::virtio::gpu::VirtioGpu;
 use crate::dev::virtio::gpu::protocol;
+use crate::dev::virtio::gpu::{TestSink, VirtioGpu};
 use crate::dev::virtio::input::{InputDeviceSpec, VirtioInput};
 use crate::dev::virtio::snd::VirtioSnd;
-use alloc::vec::Vec;
+use alloc::{boxed::Box, vec::Vec};
 
 fn composite_snapshot() -> Vec<u8> {
     let mut builder = DesktopSnapshotBuilder::new(0x2026_0907);
@@ -623,4 +624,51 @@ fn concrete_backend_refusals_leave_all_devices_in_the_cold_state() {
             super::DesktopRestoreHostState::default()
         );
     }
+}
+
+#[test]
+fn rollback_clears_live_sink_and_uses_power_on_baseline() {
+    let snapshot = actual_snapshot();
+    let sink = TestSink::new();
+    let (_, gpu) = VirtioGpu::new_with_sink_state(Box::new(sink.clone()));
+    let (_, input) = VirtioInput::new_with_state(InputDeviceSpec::default());
+    let (_, sound) = VirtioSnd::new_with_state();
+    let mut backend = VirtioDesktopRestoreBackend::new(
+        alloc::rc::Rc::clone(&gpu),
+        alloc::rc::Rc::clone(&input),
+        alloc::rc::Rc::clone(&sound),
+    )
+    .unwrap();
+    backend.set_fail_commit_after_gpu(true);
+    assert!(
+        DesktopRestoreCoordinator::new()
+            .restore(&snapshot.blob, DisplaySize::new(1280, 720), &mut backend)
+            .is_err()
+    );
+
+    assert!(sink.is_empty(), "rollback left a stale host frame");
+    assert_eq!(gpu.borrow().scanout_resource, None);
+    assert_eq!(gpu.borrow().display_size(), (1280, 800));
+}
+
+#[test]
+fn machine_refuses_restore_without_the_production_agent_channel() {
+    let snapshot = actual_snapshot();
+    let mut machine = Machine::new(16 * 1024 * 1024);
+    machine.enable_plic();
+    machine.enable_virtio_slots(None);
+    machine.enable_virtio_keyboard();
+    machine.enable_virtio_snd();
+    machine
+        .enable_virtio_gpu(Box::new(crate::dev::virtio::gpu::NullSink))
+        .expect("GPU slot is available");
+
+    let error = machine
+        .restore_desktop_snapshot(&snapshot.blob, DisplaySize::new(1280, 720))
+        .unwrap_err();
+    assert_eq!(error.code(), "commit_refused");
+    assert_eq!(
+        machine.desktop_restore_host_state(),
+        super::DesktopRestoreHostState::default()
+    );
 }

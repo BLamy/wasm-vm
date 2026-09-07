@@ -1767,6 +1767,16 @@ impl wasm_vm_core::dev::virtio::gpu::FrameSink for JsFrameSink {
         let _ = self.callback.call1(&JsValue::NULL, &frame);
     }
 
+    fn clear(&mut self) {
+        let frame = js_sys::Object::new();
+        let _ = js_sys::Reflect::set(
+            &frame,
+            &JsValue::from_str("type"),
+            &JsValue::from_str("clear"),
+        );
+        let _ = self.callback.call1(&JsValue::NULL, &frame);
+    }
+
     fn cursor_state(
         &mut self,
         state: wasm_vm_core::dev::virtio::gpu::CursorState,

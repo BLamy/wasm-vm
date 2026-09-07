@@ -207,6 +207,13 @@ impl ConsoleState {
         self.host_connected && self.guest_connected
     }
 
+    /// True only when the virtio-console device and named agent port completed the existing T23e
+    /// device/port readiness handshake. Desktop restore uses this as its liveness fence; a
+    /// serialized generation never stands in for a live channel.
+    pub fn agent_ready_for_restore(&self) -> bool {
+        self.driver_ready && self.agent_announced && self.guest_ready && self.agent_open()
+    }
+
     pub fn agent_announced(&self) -> bool {
         self.agent_announced
     }
@@ -283,6 +290,28 @@ impl ConsoleState {
         self.pending_control.clear();
         self.pending_control_bytes = 0;
         self.announce_agent_if_ready();
+    }
+
+    /// Re-fence a live agent channel at a desktop restore commit. The endpoint stays open, but
+    /// pre-restore application bytes are discarded and a fresh generation plus close/open control
+    /// pair tells the guest agent to restart its session-level HELLO handling.
+    pub fn restore_rehandshake(&mut self) -> Option<u64> {
+        if !self.agent_ready_for_restore() {
+            return None;
+        }
+        self.generation = self.generation.wrapping_add(1);
+        self.clear_agent_data();
+        self.pending_control.clear();
+        self.pending_control_bytes = 0;
+        self.queue_control(PendingControl::new(
+            ConsoleControl::new(AGENT_PORT_ID, VIRTIO_CONSOLE_PORT_OPEN, 0),
+            Vec::new(),
+        ));
+        self.queue_control(PendingControl::new(
+            ConsoleControl::new(AGENT_PORT_ID, VIRTIO_CONSOLE_PORT_OPEN, 1),
+            Vec::new(),
+        ));
+        Some(self.generation)
     }
 
     /// Enqueue host-to-guest bytes.  A partial final chunk is accepted only up to the bounded
@@ -1464,5 +1493,31 @@ mod tests {
         );
         assert!(!state.borrow().agent_announced());
         assert_eq!(state.borrow().pending_control_messages(), 0);
+    }
+
+    #[test]
+    fn restore_rehandshake_requires_live_agent_and_fences_old_application_bytes() {
+        let (_slot, state, _bus) = fixture();
+        assert!(!state.borrow().agent_ready_for_restore());
+        assert_eq!(state.borrow_mut().restore_rehandshake(), None);
+
+        {
+            let mut state = state.borrow_mut();
+            state.driver_ready = true;
+            state.agent_announced = true;
+            state.guest_ready = true;
+            state.guest_connected = true;
+            state.agent_input.push_back(PendingData::new(vec![1, 2, 3]));
+            state.agent_input_bytes = 3;
+            state.agent_output.push_back(vec![4, 5, 6]);
+            state.agent_output_bytes = 3;
+        }
+        let before = state.borrow().generation();
+        assert!(state.borrow().agent_ready_for_restore());
+        assert_eq!(state.borrow_mut().restore_rehandshake(), Some(before + 1));
+        assert!(state.borrow().agent_ready_for_restore());
+        assert_eq!(state.borrow().agent_input_bytes, 0);
+        assert_eq!(state.borrow().agent_output_bytes, 0);
+        assert_eq!(state.borrow().pending_control_messages(), 2);
     }
 }

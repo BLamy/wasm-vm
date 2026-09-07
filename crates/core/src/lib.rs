@@ -350,6 +350,10 @@ pub struct Machine {
     /// The agent uses port 1 (queues 4 and 5); the UART/SBI console is intentionally not routed
     /// through this state.
     console: Option<VirtioConsoleService>,
+    /// E5-T26e: host-side desktop restore state persists across adapter construction so a
+    /// successful viewport/agent reconciliation cannot disappear when the call returns.
+    desktop_restore_host:
+        alloc::rc::Rc<core::cell::RefCell<desktop_restore::DesktopRestoreHostState>>,
     /// E3-T12c3: the snapshot coherence binding — the base disk image this machine is running against
     /// (`base_image_hash`), the emulator build (`core_hash`), and the monotonic overlay-commit
     /// generation. `save_resume` stamps all three into the blob header; `load_resume` validates them
@@ -742,6 +746,9 @@ impl Machine {
             mouse: None,
             snd: None,
             console: None,
+            desktop_restore_host: alloc::rc::Rc::new(core::cell::RefCell::new(
+                desktop_restore::DesktopRestoreHostState::default(),
+            )),
             coherence: SnapshotCoherence::default(),
             // E4-T05: default the toggle to the `predecode` feature (OFF in the normal build);
             // the differential harness flips it at runtime via `set_block_cache`.
@@ -1769,30 +1776,50 @@ impl Machine {
         host_viewport: desktop_restore::DisplaySize,
     ) -> Result<desktop_restore::DesktopRestoreReport, desktop_restore::DesktopRestoreError> {
         let Some((gpu, _, _, _)) = self.gpu.as_ref() else {
+            *self.desktop_restore_host.borrow_mut() =
+                desktop_restore::DesktopRestoreHostState::default();
             return Err(desktop_restore::DesktopRestoreError::CommitRefused {
                 code: "gpu_unavailable",
             });
         };
         let Some((input, _, _)) = self.keyboard.as_ref() else {
+            *self.desktop_restore_host.borrow_mut() =
+                desktop_restore::DesktopRestoreHostState::default();
             return Err(desktop_restore::DesktopRestoreError::CommitRefused {
                 code: "input_unavailable",
             });
         };
         let Some((_, sound, _, _, _, _, _, _, _)) = self.snd.as_ref() else {
+            *self.desktop_restore_host.borrow_mut() =
+                desktop_restore::DesktopRestoreHostState::default();
             return Err(desktop_restore::DesktopRestoreError::CommitRefused {
                 code: "sound_unavailable",
             });
         };
-        let mut backend = desktop_restore::VirtioDesktopRestoreBackend::new(
+        let Some(console) = self.console.as_ref() else {
+            *self.desktop_restore_host.borrow_mut() =
+                desktop_restore::DesktopRestoreHostState::default();
+            return Err(desktop_restore::DesktopRestoreError::CommitRefused {
+                code: "agent_unavailable",
+            });
+        };
+        let mut backend = desktop_restore::VirtioDesktopRestoreBackend::new_with_agent(
             alloc::rc::Rc::clone(gpu),
             alloc::rc::Rc::clone(input),
             alloc::rc::Rc::clone(sound),
+            alloc::rc::Rc::clone(&console.state),
+            alloc::rc::Rc::clone(&self.desktop_restore_host),
         )
         .map_err(
             |error| desktop_restore::DesktopRestoreError::CommitRefused { code: error.code() },
         )?;
         let mut coordinator = desktop_restore::DesktopRestoreCoordinator::new();
         coordinator.restore(blob, host_viewport, &mut backend)
+    }
+
+    /// E5-T26e: host-facing state from the last successful desktop restore commit.
+    pub fn desktop_restore_host_state(&self) -> desktop_restore::DesktopRestoreHostState {
+        *self.desktop_restore_host.borrow()
     }
 
     /// E5-T23b: attach the six-queue virtio-console device (DeviceID 3) in the reserved final

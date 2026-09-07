@@ -3,7 +3,7 @@ id: E5-T26e
 epic: 5
 title: Desktop restore reconciliation for agent, scanout, and viewport
 priority: 526.5
-status: in-progress
+status: implemented
 depends_on: [E5-T26d, E5-T23e, E5-T22b]
 estimate: S
 risk: high
@@ -169,3 +169,36 @@ all tested refusals restore the cold baseline. Browser pixel/CRC and reload proo
   `81401c4d4037fa2c463b69a1c7c4e26d7ddc00deba20e7da925101c1ee77c253` also matched.
 - SUITE: retain the evidence-only five-test public-API harness as the reproducer; no implementation
   test promotion while the production semantics remain refuted.
+
+### 2026-09-07 — worker — REMEDIATION 2 SUBMITTED
+- Implementation commit: `5946ab7552e4f7690615b45db6a8d8a1bcebeae8`.
+- Remediated the second refutation with a live production agent boundary, retained host ownership,
+  true power-on cold state, and explicit presentation rollback. `FrameSink::clear` is now required
+  by every sink implementation; rollback clears the live sink around device restoration so a
+  repair frame cannot survive a later refusal.
+- `Machine::restore_desktop_snapshot` now refuses without the real virtio-console agent channel and
+  passes the live `ConsoleState` plus a persistent `DesktopRestoreHostState` into the concrete
+  backend. The backend performs the actual restore re-handshake, records the resulting generation,
+  and retains the viewport/repair reconciliation state after commit.
+- `VirtioDesktopRestoreBackend` builds fresh headless GPU/input/sound snapshots as the cold baseline,
+  so fallback does not preserve arbitrary dirty live state. The console re-handshake requires the
+  real driver-ready/HELLO/guest-ready/open state, fences old application bytes, and emits both
+  PORT_OPEN control packets for the new generation.
+- Exact-head native gate: `env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u
+  CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG make verify-E5-T26e` passed with exit 0:
+  12 restore tests, 1 console unit test, 1 live Machine/console integration test, 9 envelope,
+  6 GPU, 12 input, and 6 sound snapshot tests; fmt, both clippy modes, and the core no-default
+  wasm32 build passed. The wrapper wasm check also passed.
+- Browser-facing source checks passed: `node --test web/tests/e5-t06d-presentation.test.mjs
+  web/tests/e4-t32-worker-protocol.test.mjs` reported 31 passed / 0 failed. `make web-build` and
+  `make web-dist` rebuilt the deployable output. Chromium loaded the rebuilt index page and showed
+  the wasm core and roadmap; the full compliance Playwright run and bounded UX spot-check did not
+  emit a result before their waits and are not claimed as 126/0. E5-T26f owns the browser desktop
+  round-trip.
+- Evidence: `evidence/e5-t26e/native-remediation2.json` and
+  `evidence/e5-t26e/worker-remediation2-gate.log`.
+
+Claim: the second remediation closes the verifier's production-composition and rollback gaps. A
+successful restore now requires and performs the real agent re-handshake, publishes retained host
+viewport/repair state, and a refusal clears the live presentation before restoring a genuine cold
+baseline. Browser CRC/reload behavior remains explicitly outside this task's claim.

@@ -6,12 +6,17 @@
 use wasm_vm_core::Machine;
 use wasm_vm_core::RunOutcome;
 use wasm_vm_core::bus::Bus;
+use wasm_vm_core::desktop_restore::{DisplaySize, ViewportDisposition};
+use wasm_vm_core::desktop_snapshot::{DesktopSnapshotBuilder, FORMAT_VERSION, section};
 use wasm_vm_core::dev::virtio::console::{
     AGENT_PORT_ID, AGENT_RECEIVE_QUEUE, AGENT_TRANSMIT_QUEUE, CONTROL_RECEIVE_QUEUE,
     CONTROL_TRANSMIT_QUEUE, ConsoleControl, VIRTIO_CONSOLE_DEVICE_READY,
     VIRTIO_CONSOLE_F_MULTIPORT, VIRTIO_CONSOLE_PORT_OPEN, VIRTIO_CONSOLE_PORT_READY,
     VIRTIO_CONSOLE_SLOT,
 };
+use wasm_vm_core::dev::virtio::gpu::{NullSink, VirtioGpu, protocol};
+use wasm_vm_core::dev::virtio::input::{InputDeviceSpec, VirtioInput};
+use wasm_vm_core::dev::virtio::snd::VirtioSnd;
 use wasm_vm_core::platform::{Platform, virt};
 
 const RAM: usize = 8 * 1024 * 1024;
@@ -93,6 +98,113 @@ fn kick(machine: &mut Machine, slot_base: u64, queue: u32) {
 
 fn one_boundary(machine: &mut Machine) {
     assert_eq!(machine.run(1), RunOutcome::MaxInstrs);
+}
+
+fn ready_agent(machine: &mut Machine, slot_base: u64) {
+    let control_tx_data = DATA_BASE + 0x800;
+    let control_rx_buffer = DATA_BASE + 0x900;
+    control(
+        machine,
+        control_tx_data,
+        ConsoleControl::new(0, VIRTIO_CONSOLE_DEVICE_READY, 1),
+    );
+    descriptor(machine, CONTROL_TRANSMIT_QUEUE, 0, control_tx_data, 8, 0, 0);
+    descriptor(
+        machine,
+        CONTROL_RECEIVE_QUEUE,
+        0,
+        control_rx_buffer,
+        64,
+        2,
+        0,
+    );
+    post(machine, CONTROL_TRANSMIT_QUEUE, 0, 0);
+    post(machine, CONTROL_RECEIVE_QUEUE, 0, 0);
+    kick(machine, slot_base, CONTROL_TRANSMIT_QUEUE);
+    kick(machine, slot_base, CONTROL_RECEIVE_QUEUE);
+    one_boundary(machine);
+
+    // Consume the named-port announcement after DEVICE_ADD.
+    post(machine, CONTROL_RECEIVE_QUEUE, 1, 0);
+    one_boundary(machine);
+
+    control(
+        machine,
+        control_tx_data + 0x20,
+        ConsoleControl::new(AGENT_PORT_ID, VIRTIO_CONSOLE_PORT_READY, 1),
+    );
+    descriptor(
+        machine,
+        CONTROL_TRANSMIT_QUEUE,
+        1,
+        control_tx_data + 0x20,
+        8,
+        0,
+        0,
+    );
+    post(machine, CONTROL_TRANSMIT_QUEUE, 1, 1);
+    kick(machine, slot_base, CONTROL_TRANSMIT_QUEUE);
+    one_boundary(machine);
+
+    // Consume the host's PORT_OPEN notification, then acknowledge it from the guest.
+    post(machine, CONTROL_RECEIVE_QUEUE, 2, 0);
+    one_boundary(machine);
+    control(
+        machine,
+        control_tx_data + 0x40,
+        ConsoleControl::new(AGENT_PORT_ID, VIRTIO_CONSOLE_PORT_OPEN, 1),
+    );
+    descriptor(
+        machine,
+        CONTROL_TRANSMIT_QUEUE,
+        2,
+        control_tx_data + 0x40,
+        8,
+        0,
+        0,
+    );
+    post(machine, CONTROL_TRANSMIT_QUEUE, 2, 2);
+    kick(machine, slot_base, CONTROL_TRANSMIT_QUEUE);
+    one_boundary(machine);
+}
+
+fn desktop_snapshot() -> Vec<u8> {
+    let (_, gpu) = VirtioGpu::new_with_state();
+    {
+        let mut state = gpu.borrow_mut();
+        state.set_display(1280, 720);
+        let resource = state
+            .resources
+            .create(7, protocol::FORMAT_R8G8B8A8_UNORM, 4, 2)
+            .unwrap();
+        resource.flush_rect(
+            protocol::Rect {
+                x: 0,
+                y: 0,
+                width: 4,
+                height: 2,
+            },
+            false,
+        );
+        state.scanout_resource = Some(7);
+    }
+    let gpu = gpu.borrow().to_snapshot().unwrap();
+    let (_, input) = VirtioInput::new_with_state(InputDeviceSpec::default());
+    let input = input.borrow().to_snapshot().unwrap();
+    let (_, sound) = VirtioSnd::new_with_state();
+    let sound = sound.borrow().to_snapshot().unwrap();
+    let mut builder = DesktopSnapshotBuilder::new(0x26e0_0003);
+    builder.section(section::GPU, FORMAT_VERSION, &gpu).unwrap();
+    builder
+        .section(section::INPUT, FORMAT_VERSION, &input)
+        .unwrap();
+    builder
+        .section(section::SOUND, FORMAT_VERSION, &sound)
+        .unwrap();
+    builder
+        .section(section::AGENT, FORMAT_VERSION, &17u64.to_le_bytes())
+        .unwrap();
+    builder.finish().unwrap()
 }
 
 #[test]
@@ -286,4 +398,57 @@ fn virtio_console_machine_registers_and_services_named_agent_port_without_uart_a
         "full agent output leaves its descriptor posted"
     );
     assert_eq!(uart.borrow_mut().take_output(), b"S");
+}
+
+#[test]
+fn desktop_restore_uses_live_agent_and_retains_host_reconciliation_state() {
+    let mut machine = Machine::new(RAM);
+    machine.enable_plic();
+    machine.enable_virtio_slots(None);
+    let (_console_slot, console) = machine.enable_virtio_console();
+    machine.enable_virtio_keyboard();
+    machine.enable_virtio_snd();
+    machine
+        .enable_virtio_gpu(Box::new(NullSink))
+        .expect("GPU uses the remaining optional slot");
+
+    let slot_base = Platform::virtio_base(VIRTIO_CONSOLE_SLOT as u64);
+    for queue in [
+        CONTROL_RECEIVE_QUEUE,
+        CONTROL_TRANSMIT_QUEUE,
+        AGENT_RECEIVE_QUEUE,
+        AGENT_TRANSMIT_QUEUE,
+    ] {
+        configure_queue(&mut machine, slot_base, queue);
+    }
+    for offset in (0..32).step_by(4) {
+        machine
+            .bus_mut()
+            .store32(virt::DRAM_BASE + offset, 0x0000_0013)
+            .unwrap();
+    }
+    machine.hart_mut().regs.pc = virt::DRAM_BASE;
+    ready_agent(&mut machine, slot_base);
+    assert!(console.borrow().agent_ready_for_restore());
+
+    let report = machine
+        .restore_desktop_snapshot(&desktop_snapshot(), DisplaySize::new(1024, 768))
+        .expect("live console and device composition should restore");
+    assert_eq!(report.viewport, ViewportDisposition::Letterbox);
+    assert_eq!(report.scanout, DisplaySize::new(1280, 720));
+    assert_eq!(console.borrow().generation(), 1);
+    assert!(console.borrow().agent_ready_for_restore());
+    assert_eq!(
+        machine.desktop_restore_host_state(),
+        wasm_vm_core::desktop_restore::DesktopRestoreHostState {
+            agent_generation: 1,
+            agent_ready: true,
+            viewport: Some((
+                DisplaySize::new(1280, 720),
+                DisplaySize::new(1024, 768),
+                ViewportDisposition::Letterbox,
+            )),
+            repair_frames: 1,
+        }
+    );
 }

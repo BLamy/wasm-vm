@@ -1092,6 +1092,8 @@ verify-E5-T26e:
 	cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings
 	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
 	cargo test -p wasm-vm-core --lib --features gpu-trace desktop_restore -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::console::tests::restore_rehandshake -- --nocapture
+	cargo test -p wasm-vm-core --test virtio_console desktop_restore_uses_live_agent_and_retains_host_reconciliation_state -- --nocapture
 	# Carry the component-level atomicity gates forward at the cross-device boundary.
 	cargo test -p wasm-vm-core --lib --features gpu-trace desktop_snapshot -- --nocapture
 	cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::gpu::snapshot::tests -- --nocapture

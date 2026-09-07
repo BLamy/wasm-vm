@@ -169,6 +169,11 @@ impl FrameSink for TestSink {
         });
     }
 
+    fn clear(&mut self) {
+        self.records.borrow_mut().clear();
+        self.cursor_records.borrow_mut().clear();
+    }
+
     fn cursor_state(
         &mut self,
         state: CursorState,
@@ -223,6 +228,9 @@ pub trait FrameSink {
         pixels: &[u32],
     );
 
+    /// Clear host-owned pixels or retained frame records after a failed live restore.
+    fn clear(&mut self);
+
     /// Publish a cursor-plane state transition.  The resource view is borrowed only for the
     /// duration of this callback; a browser sink must copy it before returning.  Hidden cursors
     /// use `format = None`, zero dimensions, and an empty pixel slice.
@@ -259,6 +267,8 @@ impl FrameSink for NullSink {
         _pixels: &[u32],
     ) {
     }
+
+    fn clear(&mut self) {}
 }
 
 /// Virtio device type assigned to a GPU (virtio spec 1.2 §5.7).

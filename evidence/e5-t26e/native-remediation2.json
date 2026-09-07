@@ -1,0 +1,54 @@
+{
+  "task": "E5-T26e",
+  "implementationCommit": "5946ab7552e4f7690615b45db6a8d8a1bcebeae8",
+  "verificationCommand": "env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG make verify-E5-T26e",
+  "exitCode": 0,
+  "results": {
+    "desktopRestoreTests": { "passed": 12, "failed": 0, "ignored": 0 },
+    "consoleRestoreUnitTests": { "passed": 1, "failed": 0, "ignored": 0 },
+    "liveAgentMachineIntegrationTests": { "passed": 1, "failed": 0, "ignored": 0 },
+    "desktopSnapshotTests": { "passed": 9, "failed": 0, "ignored": 0 },
+    "gpuSnapshotTests": { "passed": 6, "failed": 0, "ignored": 0 },
+    "inputSnapshotTests": { "passed": 12, "failed": 0, "ignored": 0 },
+    "soundSnapshotTests": { "passed": 6, "failed": 0, "ignored": 0 },
+    "format": "passed",
+    "clippy": "passed",
+    "coreWasm32NoDefaultFeaturesBuild": "passed",
+    "wasmWrapperWasm32Check": "passed",
+    "browserProtocolAndPresentationTests": { "passed": 31, "failed": 0 }
+  },
+  "implementationProof": {
+    "liveAgent": "Machine::restore_desktop_snapshot requires the production virtio-console channel; the integration test drives the real six-queue agent handshake and observes the new generation.",
+    "powerOnBaseline": "The concrete backend owns fresh headless GPU/input/sound snapshots instead of treating arbitrary live state as cold.",
+    "presentationRollback": "FrameSink::clear is required by the device contract and rollback clears the live sink before and after device restoration.",
+    "hostState": "Machine retains DesktopRestoreHostState and the integration test checks the committed viewport and repair-frame count."
+  },
+  "browserEvidence": {
+    "browser": "Chromium",
+    "builtPage": "http://127.0.0.1:8090/index.html",
+    "observed": "The rebuilt page loaded with the wasm core and roadmap in Chrome; WebKit and independent-machine runs were not used.",
+    "fullComplianceClaim": false,
+    "note": "The repository's full demo and spot-check Playwright commands did not emit a result before their bounded waits in this local environment and were stopped; browser desktop round-trip remains E5-T26f scope."
+  },
+  "coverage": {
+    "stagedOrder": ["gpu", "input", "sound", "agent", "viewport", "repair", "commit"],
+    "attacks": [
+      "changed host window size",
+      "agent channel drop during restore",
+      "production restore without an agent channel",
+      "component refusal",
+      "viewport refusal",
+      "pre-commit missing full repair frame",
+      "post-GPU commit failure with live-sink clearing and cold rollback",
+      "real T26b GPU, T26c input, T26d sound, and T23e console payloads",
+      "missing component",
+      "envelope digest corruption",
+      "forward component version",
+      "invalid host dimensions"
+    ],
+    "waivers": [
+      "The browser pixel/CRC and reload harness are owned by E5-T26f.",
+      "Independent machines, WebKit, and host rr are waived by repository policy and user direction."
+    ]
+  }
+}

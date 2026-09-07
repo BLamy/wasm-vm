@@ -45,6 +45,8 @@ impl FrameSink for NoopSink {
         _pixels: &[u32],
     ) {
     }
+
+    fn clear(&mut self) {}
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -83,6 +85,10 @@ impl FrameSink for CursorProofSink {
         _resource_height: u32,
         _pixels: &[u32],
     ) {
+    }
+
+    fn clear(&mut self) {
+        self.records.borrow_mut().clear();
     }
 
     fn cursor_state(

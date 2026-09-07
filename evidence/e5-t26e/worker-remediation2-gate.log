@@ -1,0 +1,8 @@
+E5-T26e remediation 2 exact-head native gate
+Command: env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG make verify-E5-T26e
+Result: exit 0; verify-E5-T26e (desktop restore reconciliation and cold fallback): OK
+Results: 12 desktop-restore tests, 1 console restore/rehandshake unit test, 1 live Machine/console integration test, 9 envelope/quiesce tests, 6 GPU snapshot tests, 12 input snapshot tests, 6 sound snapshot tests; all passed.
+Gates: cargo fmt --check, core clippy library and tests with gpu-trace, and core no-default-features wasm32 build all passed.
+Web checks: node --test web/tests/e5-t06d-presentation.test.mjs web/tests/e4-t32-worker-protocol.test.mjs => 31 passed, 0 failed; cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown passed.
+Browser: rebuilt page loaded in Chromium at http://127.0.0.1:8090/index.html and displayed the wasm core/roadmap. The full compliance Playwright run and bounded UX spot-check did not emit a result before their waits and are not claimed as 126/0; browser desktop round-trip is E5-T26f.
+Diff hygiene: an unscoped git diff --check reports pre-existing user whitespace in tasks/epic-6-transcendence/E6-T22-developer-image-riscv64.md; that unrelated file was preserved and not staged.

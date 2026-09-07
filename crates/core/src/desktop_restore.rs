@@ -15,6 +15,7 @@ use alloc::{boxed::Box, rc::Rc, vec::Vec};
 use core::cell::RefCell;
 
 use crate::desktop_snapshot::{DesktopSnapshot, DesktopSnapshotError, section};
+use crate::dev::virtio::console::ConsoleState;
 use crate::dev::virtio::gpu::{FrameSink, GpuState, Rect, VirtioGpu};
 use crate::dev::virtio::input::{InputDeviceSpec, InputState, VirtioInput};
 use crate::dev::virtio::snd::{SndState, VirtioSnd};
@@ -484,6 +485,10 @@ impl FrameSink for RepairFrameCounter {
         let mut frames = self.frames.borrow_mut();
         *frames = frames.saturating_add(1);
     }
+
+    fn clear(&mut self) {
+        *self.frames.borrow_mut() = 0;
+    }
 }
 
 /// Concrete native adapter for the T26b--d codecs and the T23/T22 host boundary.
@@ -510,7 +515,8 @@ pub struct VirtioDesktopRestoreBackend {
     staged_sound_xrun_events: u32,
     staged_agent_generation: Option<u64>,
     staged_viewport: Option<ViewportPlan>,
-    host: DesktopRestoreHostState,
+    host: Rc<RefCell<DesktopRestoreHostState>>,
+    agent: Option<Rc<RefCell<ConsoleState>>>,
     agent_available: bool,
     viewport_available: bool,
     fail_commit_after_gpu: bool,
@@ -523,15 +529,50 @@ impl VirtioDesktopRestoreBackend {
         input: Rc<RefCell<InputState>>,
         sound: Rc<RefCell<SndState>>,
     ) -> Result<Self, RestoreCallbackError> {
-        let cold_gpu = gpu
+        Self::new_inner(
+            gpu,
+            input,
+            sound,
+            None,
+            Rc::new(RefCell::new(DesktopRestoreHostState::default())),
+        )
+    }
+
+    /// Construct the production adapter with the live T23e agent channel and persistent host
+    /// reconciliation state owned by the machine. Success is impossible unless that channel has
+    /// completed the existing device/port HELLO sequence.
+    pub fn new_with_agent(
+        gpu: Rc<RefCell<GpuState>>,
+        input: Rc<RefCell<InputState>>,
+        sound: Rc<RefCell<SndState>>,
+        agent: Rc<RefCell<ConsoleState>>,
+        host: Rc<RefCell<DesktopRestoreHostState>>,
+    ) -> Result<Self, RestoreCallbackError> {
+        Self::new_inner(gpu, input, sound, Some(agent), host)
+    }
+
+    fn new_inner(
+        gpu: Rc<RefCell<GpuState>>,
+        input: Rc<RefCell<InputState>>,
+        sound: Rc<RefCell<SndState>>,
+        agent: Option<Rc<RefCell<ConsoleState>>>,
+        host: Rc<RefCell<DesktopRestoreHostState>>,
+    ) -> Result<Self, RestoreCallbackError> {
+        // Cold fallback means power-on state, not whatever dirty state happened to be live when
+        // the adapter was assembled. Fresh headless devices provide only those baseline payloads;
+        // the live handles retain their real sinks and queue capabilities.
+        let (_, cold_gpu_state) = VirtioGpu::new_with_state();
+        let (_, cold_input_state) = VirtioInput::new_with_state(InputDeviceSpec::default());
+        let (_, cold_sound_state) = VirtioSnd::new_with_state();
+        let cold_gpu = cold_gpu_state
             .borrow()
             .to_snapshot()
             .map_err(|_| RestoreCallbackError::new("gpu_cold_snapshot_unavailable"))?;
-        let cold_input = input
+        let cold_input = cold_input_state
             .borrow()
             .to_snapshot()
             .map_err(|_| RestoreCallbackError::new("input_cold_snapshot_unavailable"))?;
-        let cold_sound = sound
+        let cold_sound = cold_sound_state
             .borrow()
             .to_snapshot()
             .map_err(|_| RestoreCallbackError::new("sound_cold_snapshot_unavailable"))?;
@@ -552,7 +593,8 @@ impl VirtioDesktopRestoreBackend {
             staged_sound_xrun_events: 0,
             staged_agent_generation: None,
             staged_viewport: None,
-            host: DesktopRestoreHostState::default(),
+            host,
+            agent,
             agent_available: true,
             viewport_available: true,
             fail_commit_after_gpu: false,
@@ -560,8 +602,8 @@ impl VirtioDesktopRestoreBackend {
     }
 
     /// Host-facing state published by the last successful commit.
-    pub const fn host_state(&self) -> DesktopRestoreHostState {
-        self.host
+    pub fn host_state(&self) -> DesktopRestoreHostState {
+        *self.host.borrow()
     }
 
     /// Make the agent handshake refuse during a native adversarial run.
@@ -598,7 +640,14 @@ impl VirtioDesktopRestoreBackend {
     }
 
     fn rollback(&self, gpu: &[u8], input: &[u8], sound: &[u8]) {
-        let _ = self.gpu.borrow_mut().restore_snapshot(gpu);
+        let mut gpu_state = self.gpu.borrow_mut();
+        // restore_snapshot publishes a full repair frame when a scanout is bound. Clear both
+        // before and after it so a failed transaction cannot expose either the partial commit or
+        // the rollback frame through a retained browser/native surface.
+        gpu_state.frame_sink.clear();
+        let _ = gpu_state.restore_snapshot(gpu);
+        gpu_state.frame_sink.clear();
+        drop(gpu_state);
         let _ = self.input.borrow_mut().restore_snapshot(input);
         let _ = self.sound.borrow_mut().restore_snapshot(sound);
     }
@@ -671,6 +720,11 @@ impl DesktopRestoreBackend for VirtioDesktopRestoreBackend {
         let bytes: [u8; 8] = payload
             .try_into()
             .map_err(|_| Self::refusal("agent_generation_invalid"))?;
+        if let Some(agent) = &self.agent
+            && !agent.borrow().agent_ready_for_restore()
+        {
+            return Err(Self::refusal("agent_hello_incomplete"));
+        }
         self.staged_agent_generation = Some(u64::from_le_bytes(bytes));
         Ok(())
     }
@@ -780,10 +834,22 @@ impl DesktopRestoreBackend for VirtioDesktopRestoreBackend {
             return Err(error);
         }
 
-        self.host.agent_generation = agent_generation;
-        self.host.agent_ready = true;
-        self.host.viewport = self.staged_viewport;
-        self.host.repair_frames = self.host.repair_frames.saturating_add(1);
+        let agent_generation = if let Some(agent) = &self.agent {
+            let Some(generation) = agent.borrow_mut().restore_rehandshake() else {
+                self.rollback(&gpu_before, &input_before, &sound_before);
+                return Err(Self::refusal("agent_rehandshake_refused"));
+            };
+            generation
+        } else {
+            agent_generation
+        };
+        {
+            let mut host = self.host.borrow_mut();
+            host.agent_generation = agent_generation;
+            host.agent_ready = true;
+            host.viewport = self.staged_viewport;
+            host.repair_frames = host.repair_frames.saturating_add(1);
+        }
         self.clear_staged();
         Ok(DesktopRestoreCommit::new())
     }
@@ -794,7 +860,10 @@ impl DesktopRestoreBackend for VirtioDesktopRestoreBackend {
 
     fn cold_boot_fallback(&mut self) {
         self.rollback(&self.cold_gpu, &self.cold_input, &self.cold_sound);
-        self.host = DesktopRestoreHostState::default();
+        if let Some(agent) = &self.agent {
+            agent.borrow_mut().restart_agent_port();
+        }
+        *self.host.borrow_mut() = DesktopRestoreHostState::default();
         self.clear_staged();
     }
 }

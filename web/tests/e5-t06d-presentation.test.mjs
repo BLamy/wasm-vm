@@ -132,6 +132,22 @@ test("B8G8R8X8 frames normalize the unused byte to opaque before delivery", () =
   controller.dispose();
 });
 
+test("clear control drops the retained frame and resets the presentation surface", () => {
+  const instances = [];
+  const controller = new PresentationController(new FakeCanvas(2, 2), {
+    backendFactories: factories(instances),
+  });
+  controller.present(frame(0x11223344));
+  assert.equal(controller.snapshot().latest.resourceWidth, 2);
+  assert.equal(controller.present({ type: "clear" }), true);
+  assert.equal(controller.snapshot().latest, null);
+  assert.equal(controller.snapshot().sizeMismatch, false);
+  assert.equal(controller.snapshot().successfulPresents, 1);
+  controller.present(frame(0xaabbccdd));
+  assert.equal(controller.snapshot().successfulPresents, 2);
+  controller.dispose();
+});
+
 test("WebGL context loss replaces the context and replays the latest frame through Canvas2D", () => {
   const instances = [];
   const canvas = new FakeCanvas();

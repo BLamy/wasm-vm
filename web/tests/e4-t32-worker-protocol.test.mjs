@@ -314,6 +314,28 @@ test("display FrameSink projections cross the worker boundary with private pixel
   await controller.whenDone;
 });
 
+test("display clear controls cross the worker boundary without a pixel payload", async () => {
+  const events = [];
+  const { page, worker } = endpointPair(events);
+  let resolveDone;
+  const done = new Promise((resolve) => { resolveDone = resolve; });
+  let resolveClear;
+  const cleared = new Promise((resolve) => { resolveClear = resolve; });
+  createLinuxWorkerRuntime(worker, {
+    startBoot: async (opts) => {
+      opts.onDisplayFrame({ type: "clear" });
+      return fakeController(events, done);
+    },
+  });
+  const client = createLinuxWorkerClient(page, {
+    onDisplayFrame: (frame) => resolveClear(frame),
+  });
+  const controller = await client.boot({});
+  assert.deepEqual(await cleared, { type: "clear" });
+  resolveDone("stopped");
+  await controller.whenDone;
+});
+
 test("cursor-plane update and move projections keep MOVE payloads empty and privately owned", async () => {
   const events = [];
   const { page, worker } = endpointPair(events);

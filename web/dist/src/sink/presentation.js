@@ -435,6 +435,9 @@ export class PresentationController {
   /** Publish one full-resource frame and return whether it reached a backend. */
   present(frame) {
     if (this._disposed) throw new Error("PresentationController is disposed");
+    if (frame !== null && typeof frame === "object" && frame.type === "clear") {
+      return this.clear();
+    }
     const checked = checkedFrame(frame);
     this._framesReceived += 1;
     if (!this._fixedViewport && (checked.resourceWidth !== this._width || checked.resourceHeight !== this._height)) {
@@ -442,6 +445,17 @@ export class PresentationController {
     }
     this._latest = checked;
     return this._scheduler ? this._scheduler.enqueue(checked) : this._deliver(checked);
+  }
+
+  /** Clear the visible surface and discard any frame retained across a failed restore. */
+  clear() {
+    if (this._disposed) throw new Error("PresentationController is disposed");
+    this._scheduler?.discardPending();
+    this._latest = null;
+    this._paintedResource = null;
+    if (this._backend) this._backend.resize(this._width, this._height);
+    else this._ensureCanvasSize();
+    return true;
   }
 
   /** Resize the visible target and backend resource. */

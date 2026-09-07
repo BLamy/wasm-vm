@@ -271,6 +271,10 @@ export function createLinuxWorkerClient(endpoint, callbacks = {}) {
       case "capture-start": callbacks.onCaptureStart?.(message.info); break;
       case "display": {
         const frame = message.frame;
+        if (frame?.type === "clear") {
+          callbacks.onDisplayFrame?.({ type: "clear" });
+          break;
+        }
         if (!frame || !(frame.pixels instanceof ArrayBuffer)) {
           fail(new Error("invalid Linux worker display frame"));
           break;
@@ -688,6 +692,10 @@ export function createLinuxWorkerRuntime(endpoint, {
     onCaptureStart: (info) => send({ type: "capture-start", info }),
     onDisplayFrame: (frame) => {
       try {
+        if (frame?.type === "clear") {
+          send({ type: "display", frame: { type: "clear" } });
+          return;
+        }
         const source = frame?.pixels;
         const pixels = source instanceof Uint32Array ? source.slice() : Uint32Array.from(source ?? []);
         send({
