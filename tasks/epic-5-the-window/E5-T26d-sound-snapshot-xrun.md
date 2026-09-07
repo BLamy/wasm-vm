@@ -3,7 +3,7 @@ id: E5-T26d
 epic: 5
 title: Virtio-snd stream snapshot and XRUN restore
 priority: 526.4
-status: pending
+status: in-progress
 depends_on: [E5-T26c]
 estimate: S
 risk: high
@@ -39,4 +39,8 @@ restore repeatedly and require a bounded XRUN recovery or clean failure, never a
 
 ## Verification log
 
-(empty)
+### 2026-09-07 — worker — STARTED
+- Activated on `codex/e5-t26d-sound-snapshot-xrun` above verified T26c (`9a0186ad`).
+- Risk: high. The implementation must preserve stopped/prepared/running stream configuration,
+  discard host audio-ring contents on restore, and drive a bounded guest-visible XRUN recovery
+  without allowing invalid stream metadata to mutate another stream.
