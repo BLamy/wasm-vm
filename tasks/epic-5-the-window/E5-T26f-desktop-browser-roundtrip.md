@@ -3,7 +3,7 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: implemented
+status: in-progress
 depends_on: [E5-T26e]
 estimate: S
 risk: high
@@ -48,3 +48,48 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 - Command: `E5_T26F_REQUIRE_HEAD=8ce1db0e26a1cc038d3264182c74d61b33b6f4b8 E5_T26F_IMAGE=target/e5-t26f/desktop-image-aplay-noresize/alpine-rootfs.ext4 E5_T26F_IMAGE_INFO=target/e5-t26f/desktop-image-aplay-noresize/desktop-info.json E5_T26F_DESKTOP_ASSET_DIR=target/e5-t26f/chunks/desktop-aplay-noresize make verify-E5-T26f` (exit 0). The gate passed format, both clippy gates, 9 desktop-snapshot tests, 12 desktop-restore tests, 2 nine-slot MMIO tests, wasm32 build/check, 45 Node tests, and the final Chromium proof.
 - The recording demonstrates two-window desktop state with terminal text, visible custom cursor, completed `aplay` (`S16_LE`, stereo, 48 kHz), exact normal and drag snapshot hashes, first-present CRC `77f31714` matching the pre-snapshot CRC on both restores, fresh agent HELLO generation 2, full repair frames, released drag buttons, and post-restore cursor/keyboard/audio interaction in `108.91 ms`; browser and HTTP error arrays are empty. The guest reaches the Alpine login prompt with no reboot or device reprobe during restore.
 - Scope waiver: the evidence is local Chromium 152.0.7977.76 only; WebKit, independent machines, and host-layer rr are intentionally out of scope per the approved Daybreak Blue validation boundary.
+
+### 2026-09-07 — verifier — VERDICT: refuted
+
+- P1 first-present identity — HELD. Predicted the normal and mid-drag first-present CRCs would
+  equal their pre-snapshot CRCs. Both pre-snapshot values are `77f31714`
+  (`evidence/e5-t26f/desktop-roundtrip.json:29,35`) and both restored first presents are
+  `77f31714` (`:68,162`); the drag restore also reports no held button (`:324`). Carry this result
+  forward while the runtime diff and evidence digest remain unchanged, but promote the currently
+  missing explicit drag-CRC assertion in the browser harness.
+- P2 post-restore input and playback — FAILED. Pointer/keyboard delivery and the 2-second bound
+  held (`evidence/e5-t26f/desktop-roundtrip.json:308-324`), but predicted a user-gesture audio
+  playback would advance the rendered-audio counter. It is already unlocked before the alleged
+  playback and remains exactly `13,594,612` frames before and after (`:313-321`); the only `aplay`
+  command occurs before the snapshot (`tools/verify/e5-t26f-browser-roundtrip.mjs:386-391`). Run a
+  post-restore `aplay`, record successful guest completion, and assert a bounded positive frame
+  delta after the delayed gesture.
+- P3 no reboot/re-probe — FAILED. Predicted reload restoration would resume the saved desktop
+  without constructing and booting a fresh guest. Instead each restore records a new
+  `fetching -> instantiating -> booting` sequence
+  (`evidence/e5-t26f/desktop-roundtrip.json:71-83,165-177`), and the harness explicitly performs
+  `page.reload()` then waits for a newly ready desktop before auto-restore
+  (`tools/verify/e5-t26f-browser-roundtrip.mjs:304-307`;
+  `web/desktop-terminal.js:472-497`). The saved envelope contains only GPU, input, sound, and agent
+  sections (`crates/core/src/lib.rs:1880-1985`), so it cannot carry the CPU/RAM state required to
+  resume the pre-reload guest. Restore from a whole-machine snapshot (or otherwise preserve the
+  live guest across reload) and prove no fresh boot/probe states occur.
+- P4 adversarial drag/gesture coverage — NEEDS EVIDENCE. Two reloads are exercised, but the script
+  takes only one snapshot after mouse-down/move (`tools/verify/e5-t26f-browser-roundtrip.mjs:486-501`),
+  not at each drag phase, and does not implement an independently delayed gesture case. Record
+  before-drag, held/moving, and release-phase saves plus a deliberately delayed post-restore audio
+  gesture; reject every CRC mismatch, stuck button, or playback hang.
+- P5 diff coverage — INSUFFICIENT. The exact happy browser run reaches the save compositor, ninth
+  virtio window, worker RPC bridge, and source/dist mirrors (source/dist byte parity held), but no
+  cited run exercises the new `MissingComponent`, `ComponentRefused`, and `BlockNotQuiesced` save
+  branches (`crates/core/src/lib.rs:1883-1933`) or the rootfs array-expansion change
+  (`tools/build-rootfs.sh:82`). Add deterministic save-side refusal tests and either separately
+  prove the rootfs hunk or remove it from this task's diff.
+- NOVEL ATTACK — HELD. A controller that accepted one byte fewer than each agent frame never
+  reached READY, and queued guest bytes remained privately owned and were discarded on close.
+- Deterministic checks passed: 9 desktop-snapshot tests, 12 desktop-restore tests, 2 nine-slot MMIO
+  tests, the advertised-XRUN sound test, all 45 scoped Node tests, and source/dist parity. The full
+  browser target was not rerun because the exact-head recording was hash-valid and directly
+  refuted, while its current assertions omit the failed criteria above. SUITE: no promotion until
+  the semantic refutations clear. Chromium-only, independent-machine, WebKit, and host-rr waivers
+  were honored.
