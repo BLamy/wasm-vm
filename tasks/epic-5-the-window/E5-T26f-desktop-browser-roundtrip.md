@@ -3,8 +3,9 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: in-progress
-depends_on: [E5-T26e]
+status: blocked
+depends_on: [E5-T26e, E5-T26h]
+blocked_on: E5-T26h whole-machine desktop device resume
 estimate: S
 risk: high
 capstone: false
@@ -39,6 +40,24 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-07 — coordinator — isolate missing machine-resume state
+
+The resumed browser reaches `restored` at 642 ms, without a `booting` event, but
+never reaches the desktop or application HELLO. Exact reproduction:
+`E5_T26F_TIMEOUT_MS=3600000 E5_T26F_OUT=evidence/e5-t26f/remediation-fast-slice
+E5_T26F_IMAGE=target/e5-t26f/desktop-image-aplay-noresize/alpine-rootfs.ext4
+E5_T26F_IMAGE_INFO=target/e5-t26f/desktop-image-aplay-noresize/desktop-info.json
+E5_T26F_DESKTOP_ASSET_DIR=target/e5-t26f/chunks/desktop-aplay-noresize
+node tools/verify/e5-t26f-browser-roundtrip.mjs` at `683fb09d` with the uncommitted
+persistent-resume browser changes. The stalled diagnostic was stopped; it is not
+acceptance evidence.
+
+Inspection of `Machine::save_resume` shows no desktop device MMIO/ring state in
+the CPU/RAM snapshot. The guest driver state survives in RAM, while its device
+transports are newly initialized. This requires device serialization beyond
+T26f's browser-only boundary. E5-T26h owns that prerequisite, reusing the existing
+component codecs. Resume this browser proof once H is independently verified.
 
 ### 2026-09-07 — worker — IMPLEMENTED
 
