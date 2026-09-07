@@ -1,0 +1,47 @@
+{
+  "task": "E5-T26c",
+  "implementation_head": "4233b51b3b4f03186561a91df7469300d376bdc9",
+  "recorded_at": "2026-09-06",
+  "command": "make verify-E5-T26c",
+  "result": "pass",
+  "checks": {
+    "format": "cargo fmt --check -p wasm-vm-core",
+    "clippy_lib_gpu_trace": "pass",
+    "clippy_lib_tests_gpu_trace": "pass",
+    "input_snapshot_tests": {
+      "passed": 4,
+      "failed": 0,
+      "coverage": [
+        "three-device pending-frame order and partial queue indices",
+        "restore release-all for a delivered tablet button",
+        "direct release-all budget protection",
+        "truncation, forged lengths, duplicate events, and atomic refusal"
+      ]
+    },
+    "keyboard_tests": {
+      "passed": 5,
+      "failed": 0,
+      "coverage": [
+        "LED byte round-trip",
+        "non-boolean LED rejection",
+        "keyboard capability contract"
+      ]
+    },
+    "virtio_keyboard_integration": {
+      "passed": 2,
+      "failed": 0
+    },
+    "wasm32_no_default_features_build": "pass"
+  },
+  "snapshot_contract": {
+    "magic": "WVINP001",
+    "version": 1,
+    "host_held_set_serialized": false,
+    "restore_report_marks_host_held_set_discarded": true,
+    "restore_release_frame_protected": true
+  },
+  "waivers": [
+    "host rr and independent-machine proof are waived by the repository policy",
+    "WebKit proof is waived by the user; this slice has no browser-facing change"
+  ]
+}
