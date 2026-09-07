@@ -5,7 +5,7 @@
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
         bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc bench-runtime-workloads bench-runtime-compute bench-runtime-workloads-browser bench-runtime-compute-browser \
-        web-test-cpu-worker verify-E5-T16a verify-E5-T18a verify-E5-T18c verify-E5-T25a verify-E5-T25b
+        web-test-cpu-worker verify-E5-T16a verify-E5-T18a verify-E5-T18c verify-E5-T25a verify-E5-T25b verify-E5-T26a
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -1018,6 +1018,22 @@ verify-E5-T25c:
 	$(MAKE) e5-t25c-assets
 	$(MAKE) web-build
 	E5_T25C_OUT=evidence/e5-t25c/browser node tools/verify/e5-t25c-browser.mjs
+
+.PHONY: verify-E5-T26a
+verify-E5-T26a:
+	# Versioned desktop envelope: exact canonical bytes, digests, duplicate/forward-version refusal,
+	# and the bounded quiesce gate with abort-to-usable-device proof.
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --lib --features gpu-trace desktop_snapshot -- --nocapture
+	# Existing block-device quiesce and whole-machine resume paths must remain intact.
+	cargo clippy -p wasm-vm-core --test virtio_blk_quiesce -- -D warnings
+	cargo test -p wasm-vm-core --test virtio_blk_quiesce
+	cargo test -p wasm-vm-core --test cpu_resume
+	# The envelope and coordinator are no_std/wasm-compatible even though this proof is native.
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	@echo "verify-E5-T26a (versioned desktop envelope and bounded quiesce): OK"
 
 verify-E5-T22e:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
