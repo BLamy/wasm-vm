@@ -259,6 +259,28 @@ mod tests {
     }
 
     #[test]
+    fn verifier_led_bytes_and_fresh_post_restore_status_are_exact() {
+        let before = KeyboardLedState {
+            num_lock: true,
+            caps_lock: false,
+            scroll_lock: true,
+        };
+        assert_eq!(before.to_snapshot_bytes(), [1, 0, 1]);
+        assert_eq!(
+            KeyboardLedState::from_snapshot_bytes(&[1, 2, 0]),
+            Err(super::super::InputSnapshotError::InvalidBoolean {
+                field: "keyboard_led"
+            })
+        );
+        assert_eq!(before.to_snapshot_bytes(), [1, 0, 1]);
+
+        let mut restored =
+            KeyboardLedState::from_snapshot_bytes(&before.to_snapshot_bytes()).unwrap();
+        assert!(restored.apply_status_event(InputEvent::new(EV_LED, LED_CAPSL, 1)));
+        assert_eq!(restored.to_snapshot_bytes(), [1, 1, 1]);
+    }
+
+    #[test]
     fn keyboard_config_fixture_is_exact_on_native() {
         let spec = keyboard_spec();
         let mut slot = VirtioMmio::new(Box::new(VirtioInput::new(spec.clone())));

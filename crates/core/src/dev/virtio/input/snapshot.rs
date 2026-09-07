@@ -117,8 +117,41 @@ pub(crate) fn encode(state: &InputState) -> Result<Vec<u8>, InputSnapshotError> 
         });
     }
 
+    validate_events(&state.staged_frame, u32::MAX)?;
+    let mut serialized_event_count = staged_len;
+    let staged_bytes = (staged_len as usize)
+        .checked_mul(super::INPUT_EVENT_SIZE)
+        .ok_or(InputSnapshotError::LengthOverflow)?;
+    let mut encoded_len = HEADER_LEN
+        .checked_add(staged_bytes)
+        .ok_or(InputSnapshotError::LengthOverflow)?;
+    for (index, frame) in state.pending_frames.iter().enumerate() {
+        let frame_index = u32_len(index)?;
+        let event_count = u32_len(frame.events.len())?;
+        if event_count == 0 || event_count > MAX_SNAPSHOT_EVENTS {
+            return Err(InputSnapshotError::InvalidFrameLength { frame: frame_index });
+        }
+        serialized_event_count = serialized_event_count
+            .checked_add(event_count)
+            .ok_or(InputSnapshotError::LengthOverflow)?;
+        if serialized_event_count > MAX_SNAPSHOT_EVENTS {
+            return Err(InputSnapshotError::TooManyEvents {
+                found: serialized_event_count,
+                maximum: MAX_SNAPSHOT_EVENTS,
+            });
+        }
+        validate_events(&frame.events, frame_index)?;
+        let frame_bytes = (event_count as usize)
+            .checked_mul(super::INPUT_EVENT_SIZE)
+            .and_then(|bytes| bytes.checked_add(FRAME_HEADER_LEN))
+            .ok_or(InputSnapshotError::LengthOverflow)?;
+        encoded_len = encoded_len
+            .checked_add(frame_bytes)
+            .ok_or(InputSnapshotError::LengthOverflow)?;
+    }
+
     let mut out = Vec::new();
-    out.try_reserve(HEADER_LEN)
+    out.try_reserve_exact(encoded_len)
         .map_err(|_| InputSnapshotError::OutOfMemory)?;
     out.extend_from_slice(&INPUT_SNAPSHOT_MAGIC);
     out.extend_from_slice(&INPUT_SNAPSHOT_VERSION.to_le_bytes());
@@ -143,9 +176,6 @@ pub(crate) fn encode(state: &InputState) -> Result<Vec<u8>, InputSnapshotError> 
     for (index, frame) in state.pending_frames.iter().enumerate() {
         let frame_index = u32_len(index)?;
         let event_count = u32_len(frame.events.len())?;
-        if event_count == 0 || event_count > MAX_SNAPSHOT_EVENTS {
-            return Err(InputSnapshotError::InvalidFrameLength { frame: frame_index });
-        }
         let next = u32_len(frame.next)?;
         if next > event_count {
             return Err(InputSnapshotError::InvalidFrameIndex {
@@ -154,8 +184,6 @@ pub(crate) fn encode(state: &InputState) -> Result<Vec<u8>, InputSnapshotError> 
                 length: event_count,
             });
         }
-        out.try_reserve(FRAME_HEADER_LEN)
-            .map_err(|_| InputSnapshotError::OutOfMemory)?;
         push_u32(&mut out, next);
         push_u32(&mut out, event_count);
         out.push(u8::from(frame.release_all));
@@ -174,12 +202,28 @@ pub(crate) fn restore(
     payload: &[u8],
 ) -> Result<InputRestoreReport, InputSnapshotError> {
     let decoded = decode(payload)?;
+    let expected_release_count = if state.delivered_keys.is_empty() {
+        0
+    } else {
+        state
+            .delivered_keys
+            .len()
+            .checked_add(1)
+            .ok_or(InputSnapshotError::LengthOverflow)?
+    };
+    let pending_event_count = expected_release_count
+        .checked_add(decoded.pending_event_count)
+        .ok_or(InputSnapshotError::LengthOverflow)?;
+    if pending_event_count > MAX_SNAPSHOT_EVENTS as usize {
+        return Err(InputSnapshotError::TooManyEvents {
+            found: u32_len(pending_event_count)?,
+            maximum: MAX_SNAPSHOT_EVENTS,
+        });
+    }
     let release_events = state.take_release_frame();
 
     let release_count = release_events.len();
-    let pending_event_count = release_count
-        .checked_add(decoded.pending_event_count)
-        .ok_or(InputSnapshotError::LengthOverflow)?;
+    debug_assert_eq!(release_count, expected_release_count);
     let mut pending_frames = VecDeque::new();
     if !release_events.is_empty() {
         pending_frames.push_back(PendingFrame {
@@ -285,6 +329,7 @@ fn decode(payload: &[u8]) -> Result<DecodedInput, InputSnapshotError> {
     pending_frames
         .try_reserve(frame_count as usize)
         .map_err(|_| InputSnapshotError::OutOfMemory)?;
+    let mut serialized_event_count = staged_len;
     let mut actual_pending = 0u32;
     for frame_index in 0..frame_count {
         reader.require(FRAME_HEADER_LEN)?;
@@ -292,6 +337,15 @@ fn decode(payload: &[u8]) -> Result<DecodedInput, InputSnapshotError> {
         let event_count = reader.u32()?;
         if event_count == 0 || event_count > MAX_SNAPSHOT_EVENTS {
             return Err(InputSnapshotError::InvalidFrameLength { frame: frame_index });
+        }
+        serialized_event_count = serialized_event_count
+            .checked_add(event_count)
+            .ok_or(InputSnapshotError::LengthOverflow)?;
+        if serialized_event_count > MAX_SNAPSHOT_EVENTS {
+            return Err(InputSnapshotError::TooManyEvents {
+                found: serialized_event_count,
+                maximum: MAX_SNAPSHOT_EVENTS,
+            });
         }
         if next > event_count {
             return Err(InputSnapshotError::InvalidFrameIndex {
@@ -487,6 +541,15 @@ mod tests {
         state
     }
 
+    fn drain(state: &mut InputState) -> Vec<InputEvent> {
+        let mut events = Vec::new();
+        while let Some(event) = state.next_pending_event() {
+            events.push(event);
+            state.complete_pending_event(event);
+        }
+        events
+    }
+
     #[test]
     fn three_input_devices_round_trip_pending_order_and_partial_indices() {
         let mut keyboard = partially_delivered(
@@ -620,5 +683,241 @@ mod tests {
             Err(InputSnapshotError::TooManyEvents { .. })
         ));
         assert_eq!(encode(&source).unwrap(), before);
+    }
+
+    #[test]
+    fn verifier_multiframe_order_indices_and_staged_work_are_byte_exact() {
+        let mut source =
+            InputState::new_with_capabilities(Box::new(super::super::NullStatusSink), None);
+        assert!(source.inject_event(EV_KEY, 30, 1));
+        source.sync();
+        assert!(source.inject_event(super::super::EV_REL, pointer::REL_X, 7));
+        assert!(source.inject_event(super::super::EV_REL, pointer::REL_Y, -3));
+        source.sync();
+        let first = source.next_pending_event().unwrap();
+        source.complete_pending_event(first);
+        assert!(source.inject_event(super::super::EV_ABS, pointer::ABS_X, 1234));
+
+        let bytes = source.to_snapshot().unwrap();
+        let mut restored =
+            InputState::new_with_capabilities(Box::new(super::super::NullStatusSink), None);
+        let report = restored.restore_snapshot(&bytes).unwrap();
+
+        assert!(report.release_events.is_empty());
+        assert_eq!(restored.to_snapshot().unwrap(), bytes);
+        assert_eq!(restored.pending_frames.len(), 2);
+        assert_eq!(restored.pending_frames[0].next, 1);
+        assert_eq!(restored.pending_frames[1].next, 0);
+        assert_eq!(restored.staged_event_count, 1);
+        assert_eq!(
+            drain(&mut restored),
+            vec![
+                InputEvent::new(EV_SYN, SYN_REPORT, 0),
+                InputEvent::new(super::super::EV_REL, pointer::REL_X, 7),
+                InputEvent::new(super::super::EV_REL, pointer::REL_Y, -3),
+                InputEvent::new(EV_SYN, SYN_REPORT, 0),
+            ]
+        );
+    }
+
+    #[test]
+    fn verifier_malformed_headers_preserve_unserialized_delivered_ledger() {
+        let base = partially_delivered(
+            keyboard::keyboard_spec(),
+            InputEvent::new(EV_KEY, keyboard::KEY_A, 1),
+        );
+        let valid = encode(&base).unwrap();
+        let mut attacks = Vec::new();
+
+        let mut zero_frame = valid.clone();
+        zero_frame[72..76].copy_from_slice(&0u32.to_le_bytes());
+        attacks.push(zero_frame);
+        let mut next_past_end = valid.clone();
+        next_past_end[68..72].copy_from_slice(&3u32.to_le_bytes());
+        attacks.push(next_past_end);
+        let mut pending_mismatch = valid.clone();
+        pending_mismatch[16..20].copy_from_slice(&2u32.to_le_bytes());
+        attacks.push(pending_mismatch);
+        let mut invalid_bool = valid.clone();
+        invalid_bool[64] = 2;
+        attacks.push(invalid_bool);
+        let mut reserved = valid.clone();
+        reserved[67] = 1;
+        attacks.push(reserved);
+        let mut trailing = valid.clone();
+        trailing.push(0xaa);
+        attacks.push(trailing);
+        let mut truncated = valid.clone();
+        truncated.pop();
+        attacks.push(truncated);
+        let mut duplicate = valid.clone();
+        let event_start = HEADER_LEN + FRAME_HEADER_LEN;
+        let first_event =
+            duplicate[event_start..event_start + super::super::INPUT_EVENT_SIZE].to_vec();
+        duplicate[event_start + super::super::INPUT_EVENT_SIZE
+            ..event_start + 2 * super::super::INPUT_EVENT_SIZE]
+            .copy_from_slice(&first_event);
+        attacks.push(duplicate);
+
+        for payload in attacks {
+            let mut target = partially_delivered(
+                keyboard::keyboard_spec(),
+                InputEvent::new(EV_KEY, keyboard::KEY_A, 1),
+            );
+            let before = encode(&target).unwrap();
+            assert!(restore(&mut target, &payload).is_err());
+            assert_eq!(encode(&target).unwrap(), before);
+            assert_eq!(
+                target.release_all().release_events,
+                vec![
+                    InputEvent::new(EV_KEY, keyboard::KEY_A, 0),
+                    InputEvent::new(EV_SYN, SYN_REPORT, 0),
+                ],
+                "malformed restore cleared the intentionally unserialized delivered-key ledger"
+            );
+        }
+    }
+
+    #[test]
+    fn verifier_release_all_precedes_saved_work_and_survives_host_pressure() {
+        let mut target =
+            InputState::new_with_capabilities(Box::new(super::super::NullStatusSink), None);
+        for code in [keyboard::KEY_A, pointer::BTN_LEFT] {
+            assert!(target.inject_event(EV_KEY, code, 1));
+            target.sync();
+            drain(&mut target);
+        }
+
+        let mut saved =
+            InputState::new_with_capabilities(Box::new(super::super::NullStatusSink), None);
+        assert!(saved.inject_event(super::super::EV_REL, pointer::REL_X, 9));
+        saved.sync();
+        let payload = saved.to_snapshot().unwrap();
+        let report = target.restore_snapshot(&payload).unwrap();
+        let releases = vec![
+            InputEvent::new(EV_KEY, pointer::BTN_LEFT, 0),
+            InputEvent::new(EV_KEY, keyboard::KEY_A, 0),
+            InputEvent::new(EV_SYN, SYN_REPORT, 0),
+        ];
+        assert_eq!(report.release_events, releases);
+        assert!(target.delivered_keys.is_empty());
+        assert!(target.suppressed_keys.is_empty());
+        assert!(target.release_all().release_events.is_empty());
+        let reconciled = target.to_snapshot().unwrap();
+        let mut replay =
+            InputState::new_with_capabilities(Box::new(super::super::NullStatusSink), None);
+        replay.restore_snapshot(&reconciled).unwrap();
+        assert!(replay.pending_frames.front().unwrap().release_all);
+        assert_eq!(replay.to_snapshot().unwrap(), reconciled);
+
+        assert!(target.inject_event(EV_KEY, pointer::BTN_LEFT, 0));
+        target.sync();
+        assert_eq!(target.pending_frames.len(), 2);
+        assert_eq!(target.pending_frames[1].events[0].value, 9);
+        target.set_pending_event_budget(2);
+        assert!(target.pending_frames.front().unwrap().release_all);
+        assert_eq!(target.pending_frames.len(), 1);
+        assert!(target.inject_event(EV_KEY, pointer::BTN_LEFT, 1));
+        target.sync();
+        assert!(target.suppressed_keys.contains(&pointer::BTN_LEFT));
+        assert!(target.pending_frames.front().unwrap().release_all);
+        assert_eq!(drain(&mut target), releases);
+    }
+
+    #[test]
+    fn verifier_empty_restore_accepts_fresh_keyboard_tablet_and_mouse_frames() {
+        let cases = [
+            (
+                keyboard::keyboard_spec(),
+                InputEvent::new(EV_KEY, keyboard::KEY_A, 1),
+            ),
+            (
+                pointer::tablet_spec(),
+                InputEvent::new(super::super::EV_ABS, pointer::ABS_X, 32767),
+            ),
+            (
+                pointer::mouse_spec(),
+                InputEvent::new(super::super::EV_REL, pointer::REL_X, -11),
+            ),
+        ];
+        for (spec, fresh) in cases {
+            let empty = InputState::new_with_capabilities(
+                Box::new(super::super::NullStatusSink),
+                Some(spec.clone()),
+            );
+            let payload = empty.to_snapshot().unwrap();
+            let mut restored = InputState::new_with_capabilities(
+                Box::new(super::super::NullStatusSink),
+                Some(spec),
+            );
+            restored.restore_snapshot(&payload).unwrap();
+            assert!(restored.inject_event(fresh.event_type, fresh.code, fresh.value));
+            restored.sync();
+            assert_eq!(
+                drain(&mut restored),
+                vec![fresh, InputEvent::new(EV_SYN, SYN_REPORT, 0)]
+            );
+        }
+    }
+
+    #[test]
+    fn verifier_total_serialized_event_cap_is_atomic_on_encode_and_decode() {
+        const PENDING_EVENTS: usize = 32_768;
+        const STAGED_EVENTS: usize = 32_768;
+
+        let mut state =
+            InputState::new_with_capabilities(Box::new(super::super::NullStatusSink), None);
+        state.set_pending_event_budget(MAX_SNAPSHOT_BUDGET as usize);
+        for value in 0..PENDING_EVENTS - 1 {
+            assert!(state.inject_event(super::super::EV_REL, pointer::REL_X, value as i32));
+        }
+        state.sync();
+        for value in 0..STAGED_EVENTS {
+            assert!(state.inject_event(super::super::EV_REL, pointer::REL_X, value as i32));
+        }
+        let mut payload = state.to_snapshot().unwrap();
+
+        assert!(state.inject_event(super::super::EV_REL, pointer::REL_X, STAGED_EVENTS as i32));
+        match state.to_snapshot() {
+            Err(error) => assert_eq!(
+                error,
+                InputSnapshotError::TooManyEvents {
+                    found: (PENDING_EVENTS + STAGED_EVENTS + 1) as u32,
+                    maximum: MAX_SNAPSHOT_EVENTS,
+                }
+            ),
+            Ok(bytes) => panic!("oversized state encoded as {} bytes", bytes.len()),
+        }
+
+        let inserted =
+            InputEvent::new(super::super::EV_REL, pointer::REL_X, STAGED_EVENTS as i32).to_bytes();
+        let insert_at = HEADER_LEN + STAGED_EVENTS * super::super::INPUT_EVENT_SIZE;
+        payload.splice(insert_at..insert_at, inserted);
+        payload[24..28].copy_from_slice(&((STAGED_EVENTS + 1) as u32).to_le_bytes());
+        payload[28..32].copy_from_slice(&((STAGED_EVENTS + 1) as u32).to_le_bytes());
+
+        let mut target = partially_delivered(
+            keyboard::keyboard_spec(),
+            InputEvent::new(EV_KEY, keyboard::KEY_A, 1),
+        );
+        let before = target.to_snapshot().unwrap();
+        match target.restore_snapshot(&payload) {
+            Err(error) => assert_eq!(
+                error,
+                InputSnapshotError::TooManyEvents {
+                    found: (PENDING_EVENTS + STAGED_EVENTS + 1) as u32,
+                    maximum: MAX_SNAPSHOT_EVENTS,
+                }
+            ),
+            Ok(_) => panic!("oversized payload restored successfully"),
+        }
+        assert_eq!(target.to_snapshot().unwrap(), before);
+        assert_eq!(
+            target.release_all().release_events,
+            vec![
+                InputEvent::new(EV_KEY, keyboard::KEY_A, 0),
+                InputEvent::new(EV_SYN, SYN_REPORT, 0),
+            ]
+        );
     }
 }
