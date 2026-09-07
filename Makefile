@@ -1103,6 +1103,19 @@ verify-E5-T26e:
 	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
 	@echo "verify-E5-T26e (desktop restore reconciliation and cold fallback): OK"
 
+.PHONY: verify-E5-T26h
+verify-E5-T26h:
+	# Whole-machine transport/ring continuity, detached decode refusal, and existing codec gates.
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --features gpu-trace --test desktop_machine_resume --test cpu_resume --test snapshot_coherence --test virtio_blk_quiesce --test virtio_console --test desktop_snapshot_save -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace resume
+	cargo test -p wasm-vm-core --lib --features gpu-trace snapshot
+	cargo test -p wasm-vm-core --lib --features gpu-trace desktop_restore
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	cargo check -p wasm-vm-wasm --lib --target wasm32-unknown-unknown
+	@echo "verify-E5-T26h (whole-machine desktop transport and device resume): OK"
+
 .PHONY: verify-E5-T26f
 E5_T26F_IMAGE ?= target/e5-t26f/desktop-image-aplay-noresize/alpine-rootfs.ext4
 E5_T26F_IMAGE_INFO ?= target/e5-t26f/desktop-image-aplay-noresize/desktop-info.json

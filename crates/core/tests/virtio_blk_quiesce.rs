@@ -16,6 +16,7 @@ use std::rc::Rc;
 
 use wasm_vm_core::block::{BlockBackend, BlockError};
 use wasm_vm_core::bus::Bus;
+use wasm_vm_core::desktop_snapshot::DesktopSnapshotSaveError;
 use wasm_vm_core::platform::virt;
 use wasm_vm_core::resume::{QuiesceReason, SnapshotError};
 use wasm_vm_core::{Machine, RunOutcome};
@@ -183,6 +184,11 @@ fn quiesce_drains_resolvable_flush_then_snapshots_coherently() {
         m.save_resume(),
         Err(SnapshotError::NotQuiesced { .. })
     ));
+    assert_eq!(
+        m.save_desktop_snapshot(),
+        Err(DesktopSnapshotSaveError::BlockNotQuiesced),
+        "desktop save refuses the same parked block request before touching components"
+    );
 
     // The barrier clears → quiesce drains the parked FLUSH to empty and the snapshot proceeds.
     durable.set(true);

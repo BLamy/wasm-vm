@@ -177,7 +177,7 @@ pub struct ConsoleState {
 }
 
 impl ConsoleState {
-    fn new() -> Self {
+    pub(crate) fn new() -> Self {
         Self {
             kicked: [false; NUM_QUEUES as usize],
             reset_pending: false,
@@ -352,6 +352,75 @@ impl ConsoleState {
             Vec::new(),
         ));
         Some(self.generation)
+    }
+
+    /// Serialize the guest-visible lifecycle bits that are not part of the virtio-mmio transport
+    /// register file. The application bytes and host Channel bookkeeping are deliberately omitted:
+    /// a browser reload gets a new host endpoint and must perform a fresh application HELLO.
+    pub(crate) fn snapshot_resume(&self, out: &mut Vec<u8>) {
+        out.push(self.driver_ready as u8);
+        out.push(self.agent_announced as u8);
+        out.push(self.guest_ready as u8);
+        out.push(self.host_connected as u8);
+        out.push(self.guest_connected as u8);
+        out.extend_from_slice(&self.generation.to_le_bytes());
+    }
+
+    /// Restore the guest-visible lifecycle bits at a whole-machine resume boundary. Host-owned
+    /// application queues are dropped and the transport generation advances, so no bytes or HELLO
+    /// from the pre-reload Channel can be mistaken for the new host session.
+    pub(crate) fn restore_resume(
+        &mut self,
+        reader: &mut crate::resume::Reader<'_>,
+    ) -> Result<(), crate::resume::SnapshotError> {
+        let driver_ready = reader.bool()?;
+        let agent_announced = reader.bool()?;
+        let guest_ready = reader.bool()?;
+        let host_connected = reader.bool()?;
+        let guest_connected = reader.bool()?;
+        let generation = reader.u64()?;
+
+        // These lifecycle bits are a compact wire representation, but they still have the same
+        // ordering constraints as the live control protocol. Reject impossible combinations before
+        // touching the target, so a forged section cannot manufacture a half-open agent session.
+        if (agent_announced && !driver_ready)
+            || (guest_ready && !agent_announced)
+            || (guest_connected && !guest_ready)
+        {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::VIRTIO_CONSOLE,
+            });
+        }
+
+        self.kicked = [false; NUM_QUEUES as usize];
+        self.reset_pending = false;
+        self.driver_ready = driver_ready;
+        self.agent_announced = agent_announced;
+        self.guest_ready = guest_ready;
+        self.host_connected = host_connected;
+        self.guest_connected = guest_connected;
+        self.generation = generation.wrapping_add(1);
+        self.application_hello_generation = 0;
+        self.restored_application_hello_generation = 0;
+        self.pending_control.clear();
+        self.pending_control_bytes = 0;
+        self.clear_agent_data();
+
+        // The guest driver is still live in restored RAM, but the browser-side host endpoint was
+        // recreated. A close/open pair makes the guest agent revisit its session boundary before
+        // the new Channel's HELLO arrives; the transport remains logically open so bounded input
+        // cannot be dropped during that handoff.
+        if self.driver_ready && self.agent_announced && self.guest_ready && self.agent_open() {
+            self.queue_control(PendingControl::new(
+                ConsoleControl::new(AGENT_PORT_ID, VIRTIO_CONSOLE_PORT_OPEN, 0),
+                Vec::new(),
+            ));
+            self.queue_control(PendingControl::new(
+                ConsoleControl::new(AGENT_PORT_ID, VIRTIO_CONSOLE_PORT_OPEN, 1),
+                Vec::new(),
+            ));
+        }
+        Ok(())
     }
 
     /// Enqueue host-to-guest bytes.  A partial final chunk is accepted only up to the bounded

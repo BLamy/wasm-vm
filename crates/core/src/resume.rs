@@ -44,6 +44,22 @@ pub mod section {
     /// virtio-rng slot — a real device the machine can enable, whose snapshot visitor is a later
     /// increment; reserved-but-unsupported for now (its ring state matters far less than blk/net).
     pub const VIRTIO_RNG: u32 = 10;
+    /// E5-T26f: virtio-console transport and ring positions. The host-side application channel is
+    /// re-fenced after resume, but the guest-visible transport must match the restored RAM so a
+    /// reload can continue without reprobe or a cold Linux boot.
+    pub const VIRTIO_CONSOLE: u32 = 11;
+    /// E5-T26h: virtio-gpu transport, queue shadows, and the existing GPU codec payload.
+    pub const VIRTIO_GPU: u32 = 12;
+    /// E5-T26h: virtio-input keyboard transport, queue shadows, and the existing input codec.
+    pub const VIRTIO_KEYBOARD: u32 = 13;
+    /// E5-T26h: absolute tablet transport, queue shadows, and the existing input codec.
+    pub const VIRTIO_TABLET: u32 = 14;
+    /// E5-T26h: relative mouse transport, queue shadows, and the existing input codec.
+    pub const VIRTIO_MOUSE: u32 = 15;
+    /// E5-T26h: virtio-snd transport, queue shadows, and the existing sound codec.
+    pub const VIRTIO_SND: u32 = 16;
+    /// Format-family reservation for a future device visitor; intentionally unsupported here.
+    pub const RESERVED_FUTURE: u32 = 17;
 }
 
 /// Is `tag` a section number this format family reserves (the whole reserved universe, whether or
@@ -61,6 +77,13 @@ pub fn is_known_section(tag: u32) -> bool {
             | section::RTC
             | section::CLOCK
             | section::VIRTIO_RNG
+            | section::VIRTIO_CONSOLE
+            | section::VIRTIO_GPU
+            | section::VIRTIO_KEYBOARD
+            | section::VIRTIO_TABLET
+            | section::VIRTIO_MOUSE
+            | section::VIRTIO_SND
+            | section::RESERVED_FUTURE
     )
 }
 
@@ -82,6 +105,13 @@ pub fn is_supported_section(tag: u32) -> bool {
             | section::CLOCK
             | section::VIRTIO_BLK
             | section::VIRTIO_NET
+            | section::VIRTIO_CONSOLE
+            | section::VIRTIO_RNG
+            | section::VIRTIO_GPU
+            | section::VIRTIO_KEYBOARD
+            | section::VIRTIO_TABLET
+            | section::VIRTIO_MOUSE
+            | section::VIRTIO_SND
     )
 }
 
@@ -144,6 +174,13 @@ impl<'a> Reader<'a> {
         } else {
             Err(self.err())
         }
+    }
+
+    /// Consume and return the remaining component payload. Device resume visitors use this after
+    /// decoding their fixed transport/ring prefix; the outer section length already bounds it.
+    pub fn remaining_bytes(&mut self) -> Result<&'a [u8], SnapshotError> {
+        let bytes = self.take(self.buf.len().saturating_sub(self.pos))?;
+        Ok(bytes)
     }
 }
 

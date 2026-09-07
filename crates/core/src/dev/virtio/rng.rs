@@ -44,6 +44,32 @@ pub struct RngState {
     pub bytes_served: u64,
 }
 
+impl RngState {
+    /// Serialize the deferred service flags and accounting while retaining the host entropy
+    /// source itself. A resumed machine gets a fresh source handle but the guest-visible transport
+    /// and service counters remain continuous.
+    pub(crate) fn snapshot_resume(&self, out: &mut alloc::vec::Vec<u8>) {
+        out.push(self.kicked as u8);
+        out.push(self.reset_pending as u8);
+        out.extend_from_slice(&self.bytes_served.to_le_bytes());
+    }
+
+    /// Restore the small rng-side state atomically. The entropy source is deliberately not part of
+    /// the blob: host handles are recreated by the embedding on resume.
+    pub(crate) fn restore_resume(
+        &mut self,
+        reader: &mut crate::resume::Reader<'_>,
+    ) -> Result<(), crate::resume::SnapshotError> {
+        let kicked = reader.bool()?;
+        let reset_pending = reader.bool()?;
+        let bytes_served = reader.u64()?;
+        self.kicked = kicked;
+        self.reset_pending = reset_pending;
+        self.bytes_served = bytes_served;
+        Ok(())
+    }
+}
+
 /// Transport-facing half (owned by the VirtioMmio slot).
 pub struct VirtioRngDev {
     state: Rc<RefCell<RngState>>,

@@ -457,6 +457,65 @@ fn desktop_restore_uses_live_agent_and_retains_host_reconciliation_state() {
     );
 }
 
+#[test]
+fn resume_restores_console_transport_and_restarts_the_host_application_generation() {
+    let build = || {
+        let mut machine = Machine::new(RAM);
+        machine.enable_plic();
+        machine.enable_virtio_slots(None);
+        let (_slot, console) = machine.enable_virtio_console();
+        let slot_base = Platform::virtio_base(VIRTIO_CONSOLE_SLOT as u64);
+        for queue in [
+            CONTROL_RECEIVE_QUEUE,
+            CONTROL_TRANSMIT_QUEUE,
+            AGENT_RECEIVE_QUEUE,
+            AGENT_TRANSMIT_QUEUE,
+        ] {
+            configure_queue(&mut machine, slot_base, queue);
+        }
+        for offset in (0..32).step_by(4) {
+            machine
+                .bus_mut()
+                .store32(virt::DRAM_BASE + offset, 0x0000_0013)
+                .unwrap();
+        }
+        machine.hart_mut().regs.pc = virt::DRAM_BASE;
+        (machine, console, slot_base)
+    };
+
+    let (mut source, source_console, source_slot) = build();
+    ready_agent(&mut source, source_slot);
+    let blob = source.save_resume().expect("ready console is resumable");
+    assert!(source_console.borrow().agent_ready_for_restore());
+
+    let (mut resumed, resumed_console, resumed_slot) = build();
+    resumed
+        .load_resume(&blob)
+        .expect("console resume section restores");
+    assert!(resumed_console.borrow().agent_ready_for_host());
+    assert!(!resumed_console.borrow().agent_ready_for_restore());
+    assert_eq!(
+        resumed_console.borrow().generation(),
+        source_console.borrow().generation() + 1,
+        "resume advances the host transport generation"
+    );
+    assert_eq!(
+        resumed
+            .bus_mut()
+            .load32(resumed_slot + 0x70)
+            .expect("console status register"),
+        source
+            .bus_mut()
+            .load32(source_slot + 0x70)
+            .expect("source console status register"),
+        "the guest-visible console lifecycle survives resume"
+    );
+    assert!(
+        resumed.confirm_virtio_console_agent_hello().is_some(),
+        "the new host Channel can attest a fresh application HELLO after resume"
+    );
+}
+
 #[derive(Clone)]
 struct CountingSink {
     frames: std::rc::Rc<std::cell::RefCell<u32>>,

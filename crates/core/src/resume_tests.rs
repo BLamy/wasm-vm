@@ -109,14 +109,10 @@ fn an_unknown_section_fails_loudly() {
 
 #[test]
 fn a_reserved_but_unimplemented_section_is_refused_as_unsupported() {
-    // VIRTIO_RNG is a reserved format number with no restorer yet (CPU landed in E3-T12b, VIRTIO_BLK
-    // + VIRTIO_NET in E3-T12c1). The reader must recognise it yet refuse it loudly — accepting-and-
-    // skipping a section a restore loop can't apply is the half-applied hazard the format forbids —
-    // and it must be a *distinct* error from a garbage tag so the reserved-vs-unknown boundary holds.
-    // A list (currently one entry) of reserved-but-unsupported tags; it grows as reserved format
-    // numbers are added before their restorers, so keep the loop shape rather than a scalar.
-    #[allow(clippy::single_element_loop)]
-    for tag in [section::VIRTIO_RNG] {
+    // Keep one genuinely reserved tag in the format so the reserved-vs-unknown boundary remains
+    // covered as desktop visitors land incrementally.
+    {
+        let tag = section::RESERVED_FUTURE;
         assert!(super::is_known_section(tag), "reserved tag stays known");
         assert!(
             !super::is_supported_section(tag),
@@ -141,6 +137,13 @@ fn a_reserved_but_unimplemented_section_is_refused_as_unsupported() {
         section::RTC,
         section::VIRTIO_BLK,
         section::VIRTIO_NET,
+        section::VIRTIO_RNG,
+        section::VIRTIO_CONSOLE,
+        section::VIRTIO_GPU,
+        section::VIRTIO_KEYBOARD,
+        section::VIRTIO_TABLET,
+        section::VIRTIO_MOUSE,
+        section::VIRTIO_SND,
     ] {
         assert!(super::is_supported_section(tag));
         let mut w = SnapshotWriter::new(&CORE, &BASE, 0);

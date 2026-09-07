@@ -152,6 +152,82 @@ struct VirtioConsoleService {
     agent_transmitq: Option<dev::virtio::queue::Virtqueue>,
 }
 
+/// Append one device-side virtqueue shadow to a whole-machine resume section. The transport
+/// contains the guest's ring addresses; this shadow contains the device's free-running cursors.
+fn append_resume_queue(
+    out: &mut alloc::vec::Vec<u8>,
+    queue: &Option<dev::virtio::queue::Virtqueue>,
+) {
+    match queue {
+        Some(queue) => {
+            out.push(1);
+            let (last_avail, used) = queue.ring_indices();
+            out.extend_from_slice(&last_avail.to_le_bytes());
+            out.extend_from_slice(&used.to_le_bytes());
+        }
+        None => {
+            out.extend_from_slice(&[0, 0, 0, 0, 0]);
+        }
+    }
+}
+
+/// Parse the fixed transport/ring prefix shared by the desktop device visitors. Parsing is done
+/// against a detached empty transport, so malformed queue metadata is rejected before the live
+/// target's MMIO file or service cursors are changed.
+type ResumeDeviceParts<'a> = (
+    dev::virtio::mmio::VirtioMmio,
+    alloc::vec::Vec<(bool, u16, u16)>,
+    &'a [u8],
+);
+
+fn parse_resume_device_prefix(
+    payload: &[u8],
+    tag: u32,
+    queue_count: usize,
+) -> Result<ResumeDeviceParts<'_>, crate::resume::SnapshotError> {
+    let mut reader = crate::resume::Reader::new(payload, tag);
+    let mut transport = dev::virtio::mmio::VirtioMmio::empty();
+    transport.restore_transport(&mut reader)?;
+    let mut rings = alloc::vec::Vec::with_capacity(queue_count);
+    for index in 0..queue_count {
+        let has_queue = reader.bool()?;
+        let last_avail = reader.u16()?;
+        let used = reader.u16()?;
+        let queue_state = *transport.queue(index);
+        if (!has_queue && (last_avail != 0 || used != 0))
+            || (has_queue
+                && (!queue_state.ready
+                    || dev::virtio::queue::Virtqueue::new(&queue_state, 256).is_err()))
+        {
+            return Err(crate::resume::SnapshotError::BadComponentState { tag });
+        }
+        rings.push((has_queue, last_avail, used));
+    }
+    let component = reader.remaining_bytes()?;
+    Ok((transport, rings, component))
+}
+
+fn restore_resume_queues(
+    slot: &alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+    rings: &[(bool, u16, u16)],
+    tag: u32,
+) -> Result<alloc::vec::Vec<Option<dev::virtio::queue::Virtqueue>>, crate::resume::SnapshotError> {
+    let mut restored = alloc::vec::Vec::with_capacity(rings.len());
+    let transport = slot.borrow();
+    for (index, &(has_queue, last_avail, used)) in rings.iter().enumerate() {
+        if !has_queue {
+            restored.push(None);
+            continue;
+        }
+        let queue_state = *transport.queue(index);
+        let mut queue = dev::virtio::queue::Virtqueue::new(&queue_state, 256)
+            .map_err(|_| crate::resume::SnapshotError::BadComponentState { tag })?;
+        queue.set_ring_indices(last_avail, used);
+        restored.push(Some(queue));
+    }
+    Ok(restored)
+}
+
 pub struct Machine {
     hart: Hart,
     bus: SystemBus,
@@ -2595,6 +2671,123 @@ impl Machine {
             v.extend_from_slice(&st.rx_count.to_le_bytes());
             w.section(section::VIRTIO_NET, &v);
         }
+        // E5-T26h: compose each desktop codec with its live MMIO register file and service-ring
+        // cursors. Host sinks/clocks remain owned by the freshly assembled target machine; only
+        // guest-visible state and deterministic device shadows cross the resume boundary.
+        if let Some((state, vq, cursor_vq, slot_index)) = &self.gpu {
+            let mut v = alloc::vec::Vec::new();
+            self.virtio[*slot_index]
+                .0
+                .borrow()
+                .snapshot_transport(&mut v);
+            append_resume_queue(&mut v, vq);
+            append_resume_queue(&mut v, cursor_vq);
+            let payload = state.borrow().to_snapshot().map_err(|_| {
+                crate::resume::SnapshotError::BadComponentState {
+                    tag: section::VIRTIO_GPU,
+                }
+            })?;
+            v.extend_from_slice(&payload);
+            w.section(section::VIRTIO_GPU, &v);
+        }
+        if let Some((state, eventq, statusq)) = &self.keyboard {
+            // A physical key/button belongs to the old host session. Turn it into a protected
+            // release frame before encoding so a fresh target cannot inherit a stuck key.
+            state.borrow_mut().release_all();
+            let mut v = alloc::vec::Vec::new();
+            self.virtio[dev::virtio::input::keyboard::KEYBOARD_VIRTIO_SLOT]
+                .0
+                .borrow()
+                .snapshot_transport(&mut v);
+            append_resume_queue(&mut v, eventq);
+            append_resume_queue(&mut v, statusq);
+            let payload = state.borrow().to_snapshot().map_err(|_| {
+                crate::resume::SnapshotError::BadComponentState {
+                    tag: section::VIRTIO_KEYBOARD,
+                }
+            })?;
+            v.extend_from_slice(&payload);
+            w.section(section::VIRTIO_KEYBOARD, &v);
+        }
+        if let Some((state, eventq, statusq)) = &self.tablet {
+            state.borrow_mut().release_all();
+            let mut v = alloc::vec::Vec::new();
+            self.virtio[dev::virtio::input::pointer::TABLET_VIRTIO_SLOT]
+                .0
+                .borrow()
+                .snapshot_transport(&mut v);
+            append_resume_queue(&mut v, eventq);
+            append_resume_queue(&mut v, statusq);
+            let payload = state.borrow().to_snapshot().map_err(|_| {
+                crate::resume::SnapshotError::BadComponentState {
+                    tag: section::VIRTIO_TABLET,
+                }
+            })?;
+            v.extend_from_slice(&payload);
+            w.section(section::VIRTIO_TABLET, &v);
+        }
+        if let Some((state, eventq, statusq)) = &self.mouse {
+            state.borrow_mut().release_all();
+            let mut v = alloc::vec::Vec::new();
+            self.virtio[dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT]
+                .0
+                .borrow()
+                .snapshot_transport(&mut v);
+            append_resume_queue(&mut v, eventq);
+            append_resume_queue(&mut v, statusq);
+            let payload = state.borrow().to_snapshot().map_err(|_| {
+                crate::resume::SnapshotError::BadComponentState {
+                    tag: section::VIRTIO_MOUSE,
+                }
+            })?;
+            v.extend_from_slice(&payload);
+            w.section(section::VIRTIO_MOUSE, &v);
+        }
+        if let Some((slot_index, state, controlq, eventq, rxq, txq, _, _, _)) = &self.snd {
+            let mut v = alloc::vec::Vec::new();
+            self.virtio[*slot_index]
+                .0
+                .borrow()
+                .snapshot_transport(&mut v);
+            for queue in [controlq, eventq, rxq, txq] {
+                append_resume_queue(&mut v, queue);
+            }
+            let payload = state.borrow().to_snapshot().map_err(|_| {
+                crate::resume::SnapshotError::BadComponentState {
+                    tag: section::VIRTIO_SND,
+                }
+            })?;
+            v.extend_from_slice(&payload);
+            w.section(section::VIRTIO_SND, &v);
+        }
+        if let Some((state, vq)) = &self.rng {
+            let mut v = alloc::vec::Vec::new();
+            self.virtio[2].0.borrow().snapshot_transport(&mut v);
+            append_resume_queue(&mut v, vq);
+            state.borrow().snapshot_resume(&mut v);
+            w.section(section::VIRTIO_RNG, &v);
+        }
+        // E5-T26f: the guest's virtio-console driver remains live in restored RAM. Persist its
+        // transport lifecycle and device-side ring cursors as well as the small host lifecycle
+        // tuple, while intentionally dropping application bytes so the browser can establish a
+        // fresh Channel generation after reload.
+        if let Some(console) = &self.console {
+            let slot = alloc::rc::Rc::clone(&self.virtio[console.slot_index].0);
+            let mut v = alloc::vec::Vec::new();
+            slot.borrow().snapshot_transport(&mut v);
+            for q in [
+                &console.port0_receiveq,
+                &console.port0_transmitq,
+                &console.control_receiveq,
+                &console.control_transmitq,
+                &console.agent_receiveq,
+                &console.agent_transmitq,
+            ] {
+                append_resume_queue(&mut v, q);
+            }
+            console.state.borrow().snapshot_resume(&mut v);
+            w.section(section::VIRTIO_CONSOLE, &v);
+        }
         // Deterministic-clock phase (E3-T12b): the sub-`clock_div` remainder + `clock_div` itself, so
         // the next `mtime` tick lands at the identical retirement after resume (instruction-exact
         // timer placement). Machine-level state, so it has its own section.
@@ -2630,8 +2823,204 @@ impl Machine {
             &self.coherence.base_image_hash,
             self.coherence.generation,
         )?;
+        // Parse the complete TLV list before applying anything. The desktop sections below are
+        // then decoded against detached transports and throwaway codec instances, so a malformed
+        // GPU/input/sound/console section or a missing device section cannot leave CPU/RAM or an
+        // earlier desktop device half-restored.
+        let mut sections = alloc::vec::Vec::new();
         for sec in reader {
-            let sec = sec?;
+            sections.push(sec?);
+        }
+        let desktop_sections = [
+            (section::VIRTIO_GPU, self.gpu.is_some()),
+            (section::VIRTIO_KEYBOARD, self.keyboard.is_some()),
+            (section::VIRTIO_TABLET, self.tablet.is_some()),
+            (section::VIRTIO_MOUSE, self.mouse.is_some()),
+            (section::VIRTIO_SND, self.snd.is_some()),
+            (section::VIRTIO_CONSOLE, self.console.is_some()),
+            (section::VIRTIO_RNG, self.rng.is_some()),
+        ];
+        for &(tag, present) in &desktop_sections {
+            let count = sections.iter().filter(|sec| sec.tag == tag).count();
+            if count > 1 || (present != (count == 1)) {
+                return Err(crate::resume::SnapshotError::BadComponentState { tag });
+            }
+        }
+        for sec in &sections {
+            match sec.tag {
+                section::VIRTIO_GPU => {
+                    let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
+                    let mut device = dev::virtio::gpu::VirtioGpu::new();
+                    device.restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                }
+                section::VIRTIO_KEYBOARD => {
+                    let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
+                    let (_, state) = dev::virtio::input::VirtioInput::new_with_state(
+                        dev::virtio::input::keyboard::keyboard_spec(),
+                    );
+                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                }
+                section::VIRTIO_TABLET => {
+                    let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
+                    let (_, state) = dev::virtio::input::VirtioInput::new_with_state(
+                        dev::virtio::input::pointer::tablet_spec(),
+                    );
+                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                }
+                section::VIRTIO_MOUSE => {
+                    let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
+                    let (_, state) = dev::virtio::input::VirtioInput::new_with_state(
+                        dev::virtio::input::pointer::mouse_spec(),
+                    );
+                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                }
+                section::VIRTIO_SND => {
+                    let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 4)?;
+                    let mut device = dev::virtio::snd::VirtioSnd::new();
+                    device.restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                }
+                section::VIRTIO_CONSOLE => {
+                    let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 6)?;
+                    let mut state = dev::virtio::console::ConsoleState::new();
+                    let mut reader = crate::resume::Reader::new(payload, sec.tag);
+                    state.restore_resume(&mut reader)?;
+                    reader.finish()?;
+                }
+                section::VIRTIO_RNG => {
+                    let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 1)?;
+                    let mut reader = crate::resume::Reader::new(payload, sec.tag);
+                    reader.bool()?;
+                    reader.bool()?;
+                    reader.u64()?;
+                    reader.finish()?;
+                }
+                _ => {}
+            }
+        }
+        for sec in &sections {
+            match sec.tag {
+                section::VIRTIO_GPU => {
+                    let (_, rings, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
+                    let Some((state, control_vq, cursor_vq, slot_index)) = &mut self.gpu else {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        });
+                    };
+                    let slot = alloc::rc::Rc::clone(&self.virtio[*slot_index].0);
+                    let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
+                    slot.borrow_mut().restore_transport(&mut reader)?;
+                    for _ in &rings {
+                        reader.bool()?;
+                        reader.u16()?;
+                        reader.u16()?;
+                    }
+                    let mut queues = restore_resume_queues(&slot, &rings, sec.tag)?;
+                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                    *control_vq = queues.remove(0);
+                    *cursor_vq = queues.remove(0);
+                }
+                section::VIRTIO_KEYBOARD | section::VIRTIO_TABLET | section::VIRTIO_MOUSE => {
+                    let slot_index = match sec.tag {
+                        section::VIRTIO_KEYBOARD => {
+                            dev::virtio::input::keyboard::KEYBOARD_VIRTIO_SLOT
+                        }
+                        section::VIRTIO_TABLET => dev::virtio::input::pointer::TABLET_VIRTIO_SLOT,
+                        _ => dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT,
+                    };
+                    let (_, rings, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
+                    let (state, eventq, statusq) = match sec.tag {
+                        section::VIRTIO_KEYBOARD => self
+                            .keyboard
+                            .as_mut()
+                            .map(|device| (&mut device.0, &mut device.1, &mut device.2)),
+                        section::VIRTIO_TABLET => self
+                            .tablet
+                            .as_mut()
+                            .map(|device| (&mut device.0, &mut device.1, &mut device.2)),
+                        _ => self
+                            .mouse
+                            .as_mut()
+                            .map(|device| (&mut device.0, &mut device.1, &mut device.2)),
+                    }
+                    .ok_or(crate::resume::SnapshotError::BadComponentState { tag: sec.tag })?;
+                    let slot = alloc::rc::Rc::clone(&self.virtio[slot_index].0);
+                    let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
+                    slot.borrow_mut().restore_transport(&mut reader)?;
+                    for _ in &rings {
+                        reader.bool()?;
+                        reader.u16()?;
+                        reader.u16()?;
+                    }
+                    let mut queues = restore_resume_queues(&slot, &rings, sec.tag)?;
+                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                    *eventq = queues.remove(0);
+                    *statusq = queues.remove(0);
+                }
+                section::VIRTIO_SND => {
+                    let (_, rings, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 4)?;
+                    let Some((slot_index, state, controlq, eventq, rxq, txq, _, _, _)) =
+                        &mut self.snd
+                    else {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        });
+                    };
+                    let slot = alloc::rc::Rc::clone(&self.virtio[*slot_index].0);
+                    let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
+                    slot.borrow_mut().restore_transport(&mut reader)?;
+                    for _ in &rings {
+                        reader.bool()?;
+                        reader.u16()?;
+                        reader.u16()?;
+                    }
+                    let mut queues = restore_resume_queues(&slot, &rings, sec.tag)?;
+                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                    *controlq = queues.remove(0);
+                    *eventq = queues.remove(0);
+                    *rxq = queues.remove(0);
+                    *txq = queues.remove(0);
+                }
+                section::VIRTIO_RNG => {
+                    let (_, rings, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 1)?;
+                    let Some((state, vq)) = &mut self.rng else {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        });
+                    };
+                    let slot = alloc::rc::Rc::clone(&self.virtio[2].0);
+                    let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
+                    slot.borrow_mut().restore_transport(&mut reader)?;
+                    for _ in &rings {
+                        reader.bool()?;
+                        reader.u16()?;
+                        reader.u16()?;
+                    }
+                    let mut queues = restore_resume_queues(&slot, &rings, sec.tag)?;
+                    let mut state_reader = crate::resume::Reader::new(payload, sec.tag);
+                    state.borrow_mut().restore_resume(&mut state_reader)?;
+                    state_reader.finish()?;
+                    *vq = queues.remove(0);
+                }
+                _ => {}
+            }
+        }
+        for sec in sections {
             match sec.tag {
                 section::CPU => self.hart.restore(sec.payload)?,
                 section::RAM => self.bus.ram_mut().restore(sec.payload)?,
@@ -2748,6 +3137,44 @@ impl Machine {
                         st.rx_count = rx_count;
                     }
                 }
+                section::VIRTIO_CONSOLE => {
+                    let Some(console) = &mut self.console else {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: section::VIRTIO_CONSOLE,
+                        });
+                    };
+                    let (_, rings, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 6)?;
+                    let slot = alloc::rc::Rc::clone(&self.virtio[console.slot_index].0);
+                    let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
+                    slot.borrow_mut().restore_transport(&mut reader)?;
+                    for _ in &rings {
+                        reader.bool()?;
+                        reader.u16()?;
+                        reader.u16()?;
+                    }
+                    let mut restored_queues = restore_resume_queues(&slot, &rings, sec.tag)?;
+                    let mut state_reader = crate::resume::Reader::new(payload, sec.tag);
+                    console
+                        .state
+                        .borrow_mut()
+                        .restore_resume(&mut state_reader)?;
+                    state_reader.finish()?;
+                    console.port0_receiveq = restored_queues.remove(0);
+                    console.port0_transmitq = restored_queues.remove(0);
+                    console.control_receiveq = restored_queues.remove(0);
+                    console.control_transmitq = restored_queues.remove(0);
+                    console.agent_receiveq = restored_queues.remove(0);
+                    console.agent_transmitq = restored_queues.remove(0);
+                }
+                // Desktop devices are decoded and committed in the transactional passes above;
+                // skip them here so the legacy component restores retain their existing order
+                // without applying the same transport or codec twice.
+                section::VIRTIO_GPU
+                | section::VIRTIO_KEYBOARD
+                | section::VIRTIO_TABLET
+                | section::VIRTIO_MOUSE
+                | section::VIRTIO_SND
+                | section::VIRTIO_RNG => {}
                 other => {
                     return Err(crate::resume::SnapshotError::UnsupportedSection { tag: other });
                 }
