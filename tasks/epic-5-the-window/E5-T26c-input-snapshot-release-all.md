@@ -3,7 +3,7 @@ id: E5-T26c
 epic: 5
 title: Virtio-input pending rings, LEDs, and restore release-all
 priority: 526.3
-status: pending
+status: in-progress
 depends_on: [E5-T26b]
 estimate: S
 risk: high
@@ -40,4 +40,7 @@ changed, then run evtest-style assertions for release-all, queue ordering, and f
 
 ## Verification log
 
-(empty)
+### 2026-09-06 — worker — STARTED
+- Activated on `codex/e5-t26c-input-snapshot-release-all` above verified T26b (`3cf7c01f`).
+- Risk: high. The implementation must preserve ordered pending input rings and LED state while
+  discarding host-held keys and emitting deterministic release-all events before fresh input.
