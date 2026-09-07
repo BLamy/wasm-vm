@@ -69,10 +69,11 @@ time-travelable. That closed loop is the singularity condition.
   disk `/Users/blamy/Virtual Machines/Omarchy-riscv/archriscv.qcow2`; do not treat it as a
   frozen ext4 export or checksum a changing disk as acceptance evidence. Locate the existing
   export, or capture a consistent copy and export its filesystem at the Omarchy milestone.
-  GitHub rejected registering all 122 open PRs in one native stack (maximum-size validation).
+  GitHub rejected registering the complete open chain in one native stack (maximum-size validation).
   The dependency chain is preserved as native stack **#243** (90 PRs, #198 through #289,
-  rooted on `main`) and native stack **#323** (#290 through #321 and future layers, rooted
-  on #289's `codex/e5-t06c-presentation-benchmark` branch). Both remain open until Epic 5
+  rooted on `main`) and native stack **#338** (53 PRs, #290 through #346 as of 2026-09-07,
+  rooted on #289's `codex/e5-t06c-presentation-benchmark` branch). Stack #338 supersedes
+  the old #323 reference; the 143-PR chain remains open. Both remain open until Epic 5
   is complete. At that milestone, land the lower stack on `main`, then re-root the upper
   stack on updated `main` before landing it; do not merge the upper stack into its temporary
   feature-branch base or mistake a native-stack size limit for early merge authorization.
