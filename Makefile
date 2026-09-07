@@ -5,7 +5,7 @@
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
         bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc bench-runtime-workloads bench-runtime-compute bench-runtime-workloads-browser bench-runtime-compute-browser \
-        web-test-cpu-worker verify-E5-T16a verify-E5-T18a verify-E5-T18c verify-E5-T25a verify-E5-T25b verify-E5-T26a verify-E5-T26b
+        web-test-cpu-worker verify-E5-T16a verify-E5-T18a verify-E5-T18c verify-E5-T25a verify-E5-T25b verify-E5-T26a verify-E5-T26b verify-E5-T26c
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -1051,6 +1051,20 @@ verify-E5-T26b:
 	# The resource codec and GPU state facade remain no_std/wasm-compatible.
 	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
 	@echo "verify-E5-T26b (GPU resource, scanout, cursor, and shadow snapshot): OK"
+
+.PHONY: verify-E5-T26c
+verify-E5-T26c:
+	# Input queues and keyboard LEDs: byte-exact pending-ring restore, release-all reconciliation,
+	# fresh post-restore events, and bounded malformed-payload refusal.
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::input::snapshot::tests -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::input::keyboard::tests -- --nocapture
+	cargo test -p wasm-vm-core --test virtio_keyboard
+	# The input codec and LED payload helpers remain no_std/wasm-compatible.
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	@echo "verify-E5-T26c (virtio-input rings, LEDs, and restore release-all): OK"
 
 verify-E5-T22e:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
