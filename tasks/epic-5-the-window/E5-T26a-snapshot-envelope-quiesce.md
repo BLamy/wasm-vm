@@ -3,7 +3,7 @@ id: E5-T26a
 epic: 5
 title: Versioned desktop snapshot envelope and quiesce boundary
 priority: 526.1
-status: pending
+status: in-progress
 depends_on: [E5-T18e, E5-T20e]
 estimate: S
 risk: high

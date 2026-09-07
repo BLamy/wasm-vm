@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T26a** — Versioned desktop snapshot envelope and quiesce boundary
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -445,7 +444,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.3` [E5-T25c](epic-5-the-window/E5-T25c-input-photon-latency.md) — Measure and calibrate focused-key input-to-photon latency *(deps: E5-T25a)*
 - [ ] `525.4` [E5-T25d](epic-5-the-window/E5-T25d-perf-baseline-regression-gate.md) — Publish desktop performance baselines and the regression gate *(deps: E5-T25b, E5-T25c)*
 - [-] `526` [E5-T26](epic-5-the-window/E5-T26-snapshot-gpu-display-state.md) — Desktop-aware snapshots — GPU, input, and sound state across suspend/resume *(deps: E5-T18e, E5-T20e)*
-- [ ] `526.1` [E5-T26a](epic-5-the-window/E5-T26a-snapshot-envelope-quiesce.md) — Versioned desktop snapshot envelope and quiesce boundary *(deps: E5-T18e, E5-T20e)*
+- [~] `526.1` [E5-T26a](epic-5-the-window/E5-T26a-snapshot-envelope-quiesce.md) — Versioned desktop snapshot envelope and quiesce boundary *(deps: E5-T18e, E5-T20e)*
 - [ ] `526.2` [E5-T26b](epic-5-the-window/E5-T26b-gpu-shadow-snapshot.md) — Virtio-GPU resource, scanout, cursor, and shadow snapshot *(deps: E5-T26a)*
 - [ ] `526.3` [E5-T26c](epic-5-the-window/E5-T26c-input-snapshot-release-all.md) — Virtio-input pending rings, LEDs, and restore release-all *(deps: E5-T26b)*
 - [ ] `526.4` [E5-T26d](epic-5-the-window/E5-T26d-sound-snapshot-xrun.md) — Virtio-snd stream snapshot and XRUN restore *(deps: E5-T26c)*
