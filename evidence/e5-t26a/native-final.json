@@ -1,0 +1,17 @@
+{
+  "task": "E5-T26a",
+  "commit": "5defbabf",
+  "recorded_at": "2026-09-06",
+  "command": "make verify-E5-T26a",
+  "exit_code": 0,
+  "gates": {
+    "format": "passed",
+    "clippy_core_lib_gpu_trace": "passed",
+    "clippy_core_tests_gpu_trace": "passed",
+    "desktop_snapshot_tests": { "passed": 9, "failed": 0 },
+    "virtio_blk_quiesce_tests": { "passed": 3, "failed": 0 },
+    "cpu_resume_tests": { "passed": 6, "failed": 0 },
+    "wasm32_no_std_build": "passed"
+  },
+  "claim": "The exact canonical empty and populated desktop envelopes round-trip byte-for-byte with component versions and SHA-256 digests. Truncated, duplicate, unknown, forward-version, component-digest, and envelope-digest mutations fail before the live fixture changes. A queued request reaches an idle boundary within one service pass; a permanently in-flight request is bounded, aborts once, and the next ordinary request remains usable."
+}
