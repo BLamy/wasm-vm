@@ -32,6 +32,7 @@ pub mod compile_queue;
 pub mod csr;
 pub mod decode;
 pub mod decode_c;
+pub mod desktop_restore;
 pub mod desktop_snapshot;
 pub mod dev;
 pub mod diag;
