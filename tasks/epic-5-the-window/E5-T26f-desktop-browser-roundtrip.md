@@ -40,6 +40,38 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-07 — coordinator — retained failed browser candidate
+
+At `371786fc2a988381bef1a7f83fd7dca2bba07cf9`, the rebuilt session-fence WASM
+(`103425433cc23287aaf94631dd82a816a3a7a887f1ae4c021b313da28216cde7`)
+restored the actual two-window desktop without `booting`, matched first-present
+CRC `3079a40f`, and negotiated a fresh generation-2 HELLO. The cursor was visibly
+at the requested coordinates 1763.55 ms after restore completion. The new physical
+keyboard sequence ran `sh /tmp/a`; the screenshot shows its ALSA format line,
+conditional success marker, and next shell prompt. However, completion took about
+13 seconds after typing, and the browser PCM producer had advanced by zero frames
+when sampled immediately afterward. This is a failed candidate, not accepted
+playback or two-second interaction evidence. The deferred audit and drag phases
+were not reached.
+
+Command: `E5_T26F_HEADED=1
+E5_T26F_REQUIRE_HEAD=371786fc2a988381bef1a7f83fd7dca2bba07cf9
+E5_T26F_OUT=evidence/e5-t26f/deferred-audit-371786fc
+E5_T26F_IMAGE=target/e5-t26f/desktop-image-aplay-noresize/alpine-rootfs.ext4
+E5_T26F_IMAGE_INFO=target/e5-t26f/desktop-image-aplay-noresize/desktop-info.json
+E5_T26F_DESKTOP_ASSET_DIR=target/e5-t26f/chunks/desktop-aplay-noresize
+node tools/verify/e5-t26f-browser-roundtrip.mjs` (exit 1).
+
+Retained failure JSON SHA-256:
+`8d9827bc6efc79d0b26bf85768592f52c3aaadb87a0a1bb2672c62193195b65a`;
+screenshot: `965ab8b578c959dd9b6b3c8a83050dc73a660d91f949a1a1897f10d62a2d247b`.
+Both are under `evidence/e5-t26f/deferred-audit-371786fc/` with the
+`failure-post-restore-audio-pcm-and-render` prefix. Fresh Daybreak critique and
+effective bridge/audit sabotage records are in
+`evidence/e5-t26f/verifier-restoration/provisional-candidate-371786fc.md`.
+The critic carries the reached display, input, session, and no-reboot facts forward;
+the missing PCM requires localization, not a weakened assertion.
+
 ### 2026-09-07 — coordinator — resume after verified machine-state prerequisite
 
 E5-T26h is independently verified at runtime head
