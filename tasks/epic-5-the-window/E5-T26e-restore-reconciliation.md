@@ -171,7 +171,7 @@ all tested refusals restore the cold baseline. Browser pixel/CRC and reload proo
   test promotion while the production semantics remain refuted.
 
 ### 2026-09-07 — worker — REMEDIATION 2 SUBMITTED
-- Implementation commit: `5946ab7552e4f7690615b45db6a8d8a1bcebeae8`.
+- Implementation commit: `41871b80f52c4d22962fc2a394be7f21c0f53a84`.
 - Remediated the second refutation with a live production agent boundary, retained host ownership,
   true power-on cold state, and explicit presentation rollback. `FrameSink::clear` is now required
   by every sink implementation; rollback clears the live sink around device restoration so a
