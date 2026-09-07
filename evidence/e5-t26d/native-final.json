@@ -1,21 +1,22 @@
 {
   "task": "E5-T26d",
-  "implementation_head": "ca002004650f0f4ec6acf302db871d2308318350",
+  "implementation_head": "2a501be6626035a6a38b75e36aa95dea0442e451",
   "recorded_at": "2026-09-07",
-  "command": "make verify-E5-T26d",
+  "command": "env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG make verify-E5-T26d",
   "result": "pass",
   "checks": {
     "format": "cargo fmt --check -p wasm-vm-core",
     "clippy_lib_gpu_trace": "pass",
     "clippy_lib_tests_gpu_trace": "pass",
     "snapshot_tests": {
-      "passed": 5,
+      "passed": 6,
       "failed": 0,
       "coverage": [
         "versioned fixed-header size and event-record boundary",
         "stopped stream configuration round-trip without synthetic XRUN",
         "running playback and capture restore with host-ring discard and ordered XRUN repair",
         "malformed parameter payload rejected atomically",
+        "non-period output and capture ring metadata rejected atomically",
         "event-budget refusal before target mutation"
       ]
     },
@@ -34,6 +35,7 @@
     "restored_rings_empty": true,
     "running_streams_restore_xrun_pending": true,
     "serialized_pending_transfer_cap": 4096,
+    "pending_bytes_must_equal_count_times_configured_period": true,
     "pending_event_cap": 256,
     "invalid_payload_restore_is_atomic": true
   },
@@ -41,7 +43,7 @@
     "partially queued playback period is discarded and never reaches the sink",
     "fresh post-restore ramp completes once with no duplicate block",
     "running output and capture streams receive bounded XRUN repair",
-    "invalid params and full event-budget growth fail before mutation"
+    "invalid params, non-period ring metadata, and full event-budget growth fail before mutation"
   ],
   "waivers": [
     "host rr and independent-machine proof are waived by repository policy and user direction",

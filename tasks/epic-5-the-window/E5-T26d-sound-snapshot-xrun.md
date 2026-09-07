@@ -3,7 +3,7 @@ id: E5-T26d
 epic: 5
 title: Virtio-snd stream snapshot and XRUN restore
 priority: 526.4
-status: in-progress
+status: implemented
 depends_on: [E5-T26c]
 estimate: S
 risk: high
@@ -93,3 +93,24 @@ restore repeatedly and require a bounded XRUN recovery or clean failure, never a
   bounded a post-restore 500 ms empty-ring stall to 23 elapsed XRUNs. A temporary-clone sabotage
   forcing `output_running = false` made the partial-playback regression fail at
   `crates/core/tests/virtio_snd_playback.rs:355`, proving that test detects loss of repair XRUN.
+
+### 2026-09-07 — worker — REMEDIATION SUBMITTED
+- Remediation commit: `2a501be6626035a6a38b75e36aa95dea0442e451`. Snapshot encode/decode now
+  validates pending bytes against `pending_count * configured_period_bytes` with checked arithmetic
+  for both output and capture before any restore assignment; the promoted unit regression proves
+  one-byte metadata is rejected atomically in both directions.
+- Exact-head evidence was replaced at `evidence/e5-t26d/native-final.json`, SHA-256
+  `3263508ab45253fee95e6087811b1063c8bf2653aaa083e55963422db72a3684`.
+- Scrubbed command: `env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR
+  -u CARGO_BUILD_TARGET -u RUST_LOG make verify-E5-T26d` (exit 0). The gate passed format, both
+  GPU-trace clippy checks, 6 snapshot tests, 7 control tests, 8 playback tests, 5 queue tests,
+  9 capture tests, 4 capture-config tests, 4 machine tests, and the no-default-features
+  `wasm32-unknown-unknown` build.
+- The verifier's locked public-API harness remains committed under `evidence/e5-t26d/verifier/`
+  for the fresh recheck. The remediation directly closes its only failed prediction while
+  preserving the held lifecycle, 500 ms stall, bounded XRUN, empty-ring, and no-duplicate-audio
+  results; a fresh Daybreak terminal verdict is required before marking this task verified.
+- Fresh remediation harness results: `e5-t26d-verifier` exited 0 with 42 mutation cases and zero
+  mutation failures; `post_restore_stall` exited 0 with 184 strict-prefix refusals, direct event
+  cap refusal, and 23 elapsed XRUNs after a 500 ms empty-ring stall. No implementation code was
+  changed by the verifier harness.
