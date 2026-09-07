@@ -87,3 +87,9 @@ restore repeatedly and require a bounded XRUN recovery or clean failure, never a
 - SUITE: retain the verifier harness as the remediation regression. No implementation test promoted
   until the semantic refutation clears. Host rr, independent-machine, and WebKit runs waived by
   repository policy and user direction.
+- Supplemental checks: a pristine local clone at `7e436d99` passed the scrubbed prescribed gate;
+  `cargo run --offline --locked --manifest-path evidence/e5-t26d/verifier/Cargo.toml --bin
+  post_restore_stall` rejected all 184 strict prefixes and direct event count 257 atomically, then
+  bounded a post-restore 500 ms empty-ring stall to 23 elapsed XRUNs. A temporary-clone sabotage
+  forcing `output_running = false` made the partial-playback regression fail at
+  `crates/core/tests/virtio_snd_playback.rs:355`, proving that test detects loss of repair XRUN.
