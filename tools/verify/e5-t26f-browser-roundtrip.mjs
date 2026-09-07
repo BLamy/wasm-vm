@@ -487,10 +487,13 @@ async function waitForReadyAndRestore(label) {
     null,
     { timeout: 60_000 },
   );
-  const result = await page.evaluate(async () => {
+  // Keep this read synchronous: snapshotDecision reassembles the persisted whole-machine blob.
+  // Its audit belongs after the interaction measured from the original restore completedAt.
+  const result = await page.evaluate(() => {
     const result = window.__desktopTerminal.restoreResult();
     const observation = window.__desktopTerminal.restoreObservation();
     const controller = window.__desktopController;
+    const state = window.__desktopTerminal.state();
     return {
       snapshotSha256: result?.snapshotSha256 || null,
       snapshotBytes: result?.snapshotBytes || 0,
@@ -502,20 +505,48 @@ async function waitForReadyAndRestore(label) {
         capabilities: String(result.handshake.capabilities),
       } : null,
       observation,
-      bootStates: window.__desktopTerminal.state().bootStates,
-      diagnostics: window.__desktopTerminal.state().diagnostics,
+      bootStates: state.bootStates,
+      diagnostics: state.diagnostics,
       machineResume: result?.machineResume || null,
       preFrontBufferCrc: result?.preFrontBufferCrc || null,
       resume: {
         restored: Boolean(controller?.restoredFromBootSnapshot?.()),
-        snapshotDecision: await controller?.snapshotDecision?.() ?? null,
-        overlayGeneration: await controller?.snapshotGeneration?.() ?? null,
+        snapshotDecision: null,
+        overlayGeneration: null,
       },
+      coherenceAudit: { status: "deferred" },
       presentation: window.__desktopTerminal.presentation(),
     };
   });
   phaseProgress(`restore:${label}:first-present`, "done");
   return result;
+}
+
+async function auditRestoreCoherence(result, snapshot, label) {
+  phaseProgress(`restore:${label}:coherence-audit`);
+  const audit = result.coherenceAudit;
+  audit.status = "running";
+  audit.startedAt = new Date().toISOString();
+  try {
+    // Read the actual controller values before another save can replace the blob being audited.
+    result.resume.snapshotDecision = await page.evaluate(async () =>
+      await window.__desktopController?.snapshotDecision?.() ?? null);
+    result.resume.overlayGeneration = await page.evaluate(async () =>
+      await window.__desktopController?.snapshotGeneration?.() ?? null);
+    assert.equal(result.resume.restored, true, `${label} reload did not restore the whole-machine snapshot`);
+    assert.equal(result.resume.snapshotDecision, "resume", `${label} whole-machine snapshot was not coherent`);
+    assert.ok(Number.isSafeInteger(result.resume.overlayGeneration), `${label} actual overlay generation is missing`);
+    assert.equal(result.resume.overlayGeneration, snapshot.machineResume?.overlayGeneration,
+      `${label} actual overlay generation differs from the saved snapshot`);
+    audit.status = "passed";
+    phaseProgress(`restore:${label}:coherence-audit`, "done");
+  } catch (error) {
+    audit.status = "failed";
+    audit.error = String(error?.message || error);
+    throw error;
+  } finally {
+    audit.completedAt = new Date().toISOString();
+  }
 }
 
 async function reloadWithAutoRestore(url, label) {
@@ -664,8 +695,8 @@ try {
   phaseProgress("snapshot:normal", "done");
 
   const firstRestore = await reloadWithAutoRestore(restoreUrl, "normal");
-  milestones.normalRestore = { result: firstRestore, checksPassed: false };
-  phaseProgress("restore:normal:checks");
+  milestones.normalRestore = { result: firstRestore, displayChecksPassed: false, checksPassed: false };
+  phaseProgress("restore:normal:display-checks");
   assert.equal(firstRestore.snapshotSha256, normalSnapshot.sha256, "reload restored a different snapshot");
   assert.equal(firstRestore.observation.firstPresent.crc32, normalSnapshot.preFrontBufferCrc, "first restore frame CRC changed");
   assert.equal(firstRestore.report?.fullRepairFrame, true, "restore did not publish a full repair frame");
@@ -675,11 +706,10 @@ try {
   assert.deepEqual(firstRestore.machineResume, normalSnapshot.machineResume, "resume metadata was not preserved through reload");
   assert.equal(firstRestore.preFrontBufferCrc, normalSnapshot.preFrontBufferCrc, "restore lost the frozen CRC metadata");
   assert.equal(firstRestore.resume.restored, true, "reload did not restore the whole-machine snapshot");
-  assert.equal(firstRestore.resume.snapshotDecision, "resume", "stored whole-machine snapshot was not coherent");
   assert.equal(firstRestore.bootStates.some(({ state }) => state === "booting"), false,
     "whole-machine resume unexpectedly entered the cold guest boot state");
-  milestones.normalRestore.checksPassed = true;
-  phaseProgress("restore:normal:checks", "done");
+  milestones.normalRestore.displayChecksPassed = true;
+  phaseProgress("restore:normal:display-checks", "done");
 
   phaseProgress("post-restore:focus-and-gesture");
   const postRestoreStart = firstRestore.completedAt;
@@ -799,6 +829,9 @@ try {
   milestones.postRestoreInteraction = postRestoreInteraction;
   phaseProgress("post-restore:interaction-checks", "done");
 
+  await auditRestoreCoherence(firstRestore, normalSnapshot, "normal");
+  milestones.normalRestore.checksPassed = true;
+
   phaseProgress("drag:prepare");
   const dragChrome = await page.evaluate(() => window.__desktopCursor.detectWindowChrome());
   assert.ok(dragChrome?.titlebar, "drag snapshot has no detected titlebar");
@@ -840,15 +873,14 @@ try {
   phaseProgress("snapshot:drag-released", "done");
 
   const secondRestore = await reloadWithAutoRestore(restoreUrl, "drag");
-  milestones.dragRestore = { result: secondRestore, checksPassed: false };
-  phaseProgress("restore:drag:checks");
+  milestones.dragRestore = { result: secondRestore, displayChecksPassed: false, checksPassed: false };
+  phaseProgress("restore:drag:display-and-button-checks");
   assert.equal(secondRestore.snapshotSha256, dragSnapshot.sha256, "drag snapshot was not restored");
   assert.equal(secondRestore.report?.fullRepairFrame, true, "drag restore did not publish a repair frame");
   assert.equal(secondRestore.observation.firstPresent.crc32, dragSnapshot.preFrontBufferCrc, "drag restore frame CRC changed");
   assert.equal(dragSnapshot.machineResume?.persisted, true, "drag snapshot lacks a whole-machine resume");
   assert.deepEqual(secondRestore.machineResume, dragSnapshot.machineResume, "drag resume metadata was not preserved through reload");
   assert.equal(secondRestore.resume.restored, true, "drag reload did not restore the whole-machine snapshot");
-  assert.equal(secondRestore.resume.snapshotDecision, "resume", "drag whole-machine snapshot was not coherent");
   assert.equal(secondRestore.bootStates.some(({ state }) => state === "booting"), false,
     "drag whole-machine resume unexpectedly entered the cold guest boot state");
   const afterDragState = await page.evaluate(() => ({
@@ -859,8 +891,10 @@ try {
   assert.deepEqual(afterDragState.pointer.heldButtons, [], "drag restore retained a pressed button");
   assert.ok(afterDragState.observation.firstPresent, "drag restore has no first-present observation");
   assert.ok(afterDragState.presentation.successfulPresents > 0, "drag restore has no presented frame");
+  milestones.dragRestore.displayChecksPassed = true;
+  phaseProgress("restore:drag:display-and-button-checks", "done");
+  await auditRestoreCoherence(secondRestore, dragSnapshot, "drag");
   milestones.dragRestore.checksPassed = true;
-  phaseProgress("restore:drag:checks", "done");
 
   phaseProgress("evidence:write");
   await mkdir(out, { recursive: true });

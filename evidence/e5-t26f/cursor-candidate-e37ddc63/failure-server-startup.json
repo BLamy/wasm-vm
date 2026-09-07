@@ -1,0 +1,29 @@
+{
+  "label": "failure-server-startup",
+  "timestamp": "2026-09-07T23:05:13.272Z",
+  "head": "e37ddc6343db7865efc87dfe0ff34043859de36e",
+  "image": {
+    "imageSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+    "manifestSha256": "b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592"
+  },
+  "lastPhase": {
+    "phase": "server:startup",
+    "event": "failed",
+    "timestamp": "2026-09-07T23:05:13.271Z",
+    "elapsedMs": 4
+  },
+  "lastProgressSample": null,
+  "milestones": {},
+  "error": {
+    "name": "Error",
+    "message": "listen EPERM: operation not permitted 127.0.0.1",
+    "code": "EPERM",
+    "stack": "Error: listen EPERM: operation not permitted 127.0.0.1\n    at Server.setupListenHandle [as _listen2] (node:net:2302:21)\n    at listenInCluster (node:net:2433:12)\n    at node:net:2662:7\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)"
+  },
+  "progressProbe": null,
+  "url": null,
+  "state": null,
+  "serial": null,
+  "serverOutput": "",
+  "captureError": "Cannot read properties of null (reading 'evaluate')"
+}

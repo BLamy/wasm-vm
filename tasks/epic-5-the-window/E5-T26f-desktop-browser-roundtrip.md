@@ -3,9 +3,8 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: blocked
+status: in-progress
 depends_on: [E5-T26e, E5-T26h]
-blocked_on: E5-T26h whole-machine desktop device resume
 estimate: S
 risk: high
 capstone: false
@@ -40,6 +39,25 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-07 — coordinator — resume after verified machine-state prerequisite
+
+E5-T26h is independently verified at runtime head
+`2325c05f756f9a9746099051db9ab46866b874e8`; its fresh critic accepted the
+119-check exact-head clean-clone run and old-session payload fence. Resume the
+browser-only acceptance here with the rebuilt runtime.
+
+The retained diagnostic at `e37ddc6343db7865efc87dfe0ff34043859de36e`
+(`evidence/e5-t26f/cursor-candidate-e37ddc63/failure-post-restore-cursor-render.json`,
+SHA-256 `10c106394f20b3c43a39f0d48f9953e9ed7628952b7fafaa63ca5a12a78a85fb`)
+reached a real two-window restore, matching first-present CRC `b258b915`, fresh
+HELLO, and no cold-boot state. It failed before timed interaction because the
+harness spent about 20 seconds reassembling the stored snapshot for a coherence
+audit. This is failed diagnostic evidence, not an accepted roundtrip or a measured
+runtime latency failure. The audit now follows the timed interaction and precedes
+another save; the original restore timestamp, strict two-second cap, and real
+coherence checks remain. Three additional deterministic regressions cover the
+ordering, required audit completion, and stale/mismatched audit refusal.
 
 ### 2026-09-07 — coordinator — isolate missing machine-resume state
 

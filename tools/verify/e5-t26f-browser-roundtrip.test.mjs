@@ -18,6 +18,7 @@ function extractBetween(startMarker, endMarker) {
 
 const progress = extractBetween("let lastPhase =", "function guestPoint");
 const capture = extractBetween("async function captureFailure", "async function launchTerminal");
+const restoreHelpers = extractBetween("async function waitForReadyAndRestore", "\ntry {\n  phaseProgress(\"server:startup\")");
 
 function fixture() {
   const logs = [];
@@ -53,9 +54,10 @@ function fixture() {
     page: { url: () => "http://local/test" },
   };
   const context = vm.createContext(sandbox);
-  const api = vm.runInContext(progress + capture + `
+  const api = vm.runInContext(progress + capture + restoreHelpers + `
     ({ phaseProgress, sampleProgress, startProgressSampling, stopProgressSampling,
        remainingInteractionMs, waitForRestoredCursor, captureFailure,
+       waitForReadyAndRestore, auditRestoreCoherence,
        state: () => ({ lastPhase, lastProgressSample, progressProbe }) })
   `, context);
   return { api, sandbox, context, logs, timers, writes, milestones, clock };
@@ -299,4 +301,170 @@ test("top-level catch captures the phase before finally cleanup and rethrows the
   assert.match(source.slice(end), /^\} finally \{\n  stopProgressSampling\(\);/);
   assert.match(source,
     /assert\.ok\(postRestoreEnd - postRestoreStart <= 2_000, "post-restore interaction exceeded 2 seconds"\)/);
+});
+
+function deferred() {
+  let resolve;
+  const promise = new Promise((done) => { resolve = done; });
+  return { promise, resolve };
+}
+
+function restoreFixture() {
+  const f = fixture();
+  const machineResume = { persisted: true, paused: true, preFrontBufferCrc: "b258b915", overlayGeneration: 617 };
+  const restored = {
+    snapshotSha256: "saved", snapshotBytes: 2_620_726, completedAt: 1_131,
+    report: { fullRepairFrame: true, agentRehandshake: true },
+    handshake: { version: 1, generation: 2, capabilities: 1n },
+    machineResume, preFrontBufferCrc: "b258b915",
+  };
+  const state = { bootStates: [{ state: "restored", atMs: 709 }], diagnostics: [] };
+  f.clock.now = 1_263;
+  f.sandbox.timeoutMs = 900_000;
+  f.sandbox.waitForDesktopReady = async () => {};
+  f.sandbox.restoreUrl = "http://local/test?autoRestore=1";
+  f.sandbox.history = { replaceState: () => {} };
+  f.sandbox.normalSnapshot = { sha256: "saved", machineResume, preFrontBufferCrc: "b258b915" };
+  f.sandbox.window.__desktopTerminal = {
+    restoreResult: () => restored,
+    restoreObservation: () => ({ firstPresent: { crc32: "b258b915", successfulPresents: 2 } }),
+    state: () => state,
+    presentation: () => ({ successfulPresents: 2, scheduler: null }),
+  };
+  f.sandbox.window.__desktopController = { restoredFromBootSnapshot: () => true };
+  f.sandbox.page.evaluate = async (fn, argument) => fn(argument);
+  f.sandbox.page.reload = async () => {};
+  f.sandbox.page.screenshot = async () => {};
+  f.sandbox.page.waitForFunction = async (predicate, argument) => assert.ok(predicate(argument));
+  return f;
+}
+
+// Run the actual orchestration surrounding the timed interaction. Substitute only the input/audio
+// exercise; keep the runner's restore read, display checks, original deadline assertion and audit.
+const beforeTimedInteraction = extractBetween(
+  "  const firstRestore = await reloadWithAutoRestore",
+  "  phaseProgress(\"post-restore:focus-and-gesture\")",
+);
+const afterTimedInteraction = extractBetween(
+  "  milestones.postRestoreInteraction = postRestoreInteraction;",
+  "  phaseProgress(\"drag:prepare\")",
+);
+const originalTimingAssertion = source.match(
+  /assert\.ok\(postRestoreEnd - postRestoreStart <= 2_000, "post-restore interaction exceeded 2 seconds"\);/,
+)?.[0];
+assert.ok(originalTimingAssertion, "runner's original two-second gate is missing");
+
+function runRestoreSequence(f) {
+  return vm.runInContext(`
+    (async () => {
+      ${beforeTimedInteraction}
+      const postRestoreStart = firstRestore.completedAt;
+      const postRestoreEnd = await performTimedInteraction(postRestoreStart);
+      const postRestoreInteraction = { elapsedMs: postRestoreEnd - postRestoreStart };
+      ${originalTimingAssertion}
+      ${afterTimedInteraction}
+      nextSave();
+      return firstRestore;
+    })()
+  `, f.context);
+}
+
+test("a held coherence read starts after timed interaction and must finish before the next save", async () => {
+  const f = restoreFixture();
+  const timingDone = deferred();
+  const auditStarted = deferred();
+  const releaseAudit = deferred();
+  let decisionCalls = 0;
+  let generationCalls = 0;
+  let saves = 0;
+  f.sandbox.window.__desktopController.snapshotDecision = () => {
+    decisionCalls += 1;
+    auditStarted.resolve("audit");
+    return releaseAudit.promise;
+  };
+  f.sandbox.window.__desktopController.snapshotGeneration = () => { generationCalls += 1; return 617; };
+  f.sandbox.performTimedInteraction = async (boundary) => {
+    assert.equal(boundary, 1_131);
+    assert.equal(decisionCalls, 0, "coherence I/O preceded the timed interaction");
+    assert.equal(generationCalls, 0);
+    const immediate = f.milestones.normalRestore.result;
+    assert.equal(immediate.resume.restored, true);
+    assert.equal(immediate.resume.snapshotDecision, null);
+    assert.equal(immediate.resume.overlayGeneration, null);
+    assert.equal(immediate.coherenceAudit.status, "deferred");
+    f.clock.now = 2_000;
+    timingDone.resolve("timing");
+    return f.clock.now;
+  };
+  f.sandbox.nextSave = () => { saves += 1; };
+  const proof = runRestoreSequence(f);
+  try {
+    const first = await Promise.race([timingDone.promise, auditStarted.promise, proof.then(() => "proof")]);
+    assert.equal(first, "timing", "a slow coherence read blocked the timing path");
+    await Promise.race([auditStarted.promise, proof.then(() => assert.fail("proof skipped its coherence audit"))]);
+    assert.equal(saves, 0);
+    assert.equal(f.milestones.normalRestore.displayChecksPassed, true);
+    assert.equal(f.milestones.normalRestore.checksPassed, false);
+    assert.equal(f.milestones.normalRestore.result.coherenceAudit.status, "running");
+    assert.equal(f.milestones.postRestoreInteraction.elapsedMs, 869);
+    assert.equal(f.api.state().lastPhase.phase, "restore:normal:coherence-audit");
+    f.clock.now += 20_000;
+    releaseAudit.resolve("resume");
+    const result = await proof;
+    assert.equal(decisionCalls, 1);
+    assert.equal(generationCalls, 1);
+    assert.equal(result.completedAt, 1_131, "audit must not reset the restore boundary");
+    assert.equal(result.resume.snapshotDecision, "resume");
+    assert.equal(result.resume.overlayGeneration, 617);
+    assert.equal(result.coherenceAudit.status, "passed");
+    assert.equal(f.milestones.normalRestore.result, result);
+    assert.equal(f.milestones.normalRestore.checksPassed, true);
+    assert.equal(f.milestones.postRestoreInteraction.elapsedMs, 869);
+    assert.equal(saves, 1);
+  } finally {
+    releaseAudit.resolve("resume");
+    await proof.catch(() => {});
+  }
+});
+
+test("stale or mismatched actual coherence fails after timing and survives in failure milestones", async () => {
+  for (const [decision, generation, reason] of [
+    ["stale", 617, /not coherent/],
+    ["resume", 618, /actual overlay generation differs/],
+    ["resume", null, /actual overlay generation is missing/],
+  ]) {
+    const f = restoreFixture();
+    let saves = 0;
+    f.sandbox.performTimedInteraction = async () => 2_000;
+    f.sandbox.nextSave = () => { saves += 1; };
+    f.sandbox.window.__desktopController.snapshotDecision = async () => decision;
+    f.sandbox.window.__desktopController.snapshotGeneration = async () => generation;
+    let failure;
+    await assert.rejects(runRestoreSequence(f), (error) => {
+      failure = error;
+      return reason.test(error.message);
+    });
+    assert.equal(saves, 0);
+    await f.api.captureFailure("failure-coherence-audit", failure);
+    const saved = JSON.parse(f.writes.filter(({ file }) => file.endsWith(".json")).at(-1).value);
+    assert.equal(saved.milestones.normalRestore.checksPassed, false);
+    assert.equal(saved.milestones.normalRestore.displayChecksPassed, true);
+    assert.equal(saved.milestones.normalRestore.result.resume.snapshotDecision, decision);
+    assert.equal(saved.milestones.normalRestore.result.resume.overlayGeneration, generation);
+    assert.equal(saved.milestones.normalRestore.result.completedAt, 1_131);
+    assert.equal(saved.milestones.normalRestore.result.coherenceAudit.status, "failed");
+    assert.equal(saved.milestones.postRestoreInteraction.elapsedMs, 869);
+    assert.equal(saved.lastPhase.phase, "restore:normal:coherence-audit");
+    assert.match(saved.error.message, reason);
+  }
+});
+
+test("second restore performs the real coherence audit after display/button checks and before evidence", () => {
+  const sequence = extractBetween("  const secondRestore = await reloadWithAutoRestore", "  const result = {\n    schema:");
+  const buttonCheck = sequence.indexOf("assert.deepEqual(afterDragState.pointer.heldButtons, []");
+  const displayCheck = sequence.indexOf("assert.ok(afterDragState.presentation.successfulPresents > 0");
+  const audit = sequence.indexOf('await auditRestoreCoherence(secondRestore, dragSnapshot, "drag")');
+  const passed = sequence.indexOf("milestones.dragRestore.checksPassed = true");
+  const evidence = sequence.indexOf('phaseProgress("evidence:write")');
+  assert.ok(buttonCheck >= 0 && displayCheck > buttonCheck && audit > displayCheck && passed > audit && evidence > passed);
 });
