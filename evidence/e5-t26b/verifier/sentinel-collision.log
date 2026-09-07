@@ -1,0 +1,29 @@
+E5-T26b fresh verifier public-facade attack
+implementation: 2b985379727f10586938f11831be35dc149408a8
+evidence head: ef94421b6b2ba4997f980a25f89aa00b9f21c00e
+
+Command:
+  cargo run --offline --quiet --manifest-path /tmp/e5-t26b-verifier.e9gPuE/Cargo.toml
+
+Control observations from the same public VirtioGpu facade harness:
+  compression: fbcon raw=4096 encoded=17 ratio_milli=4; desktop raw=4096 encoded=4109 ratio_milli=1003
+  valid two-resource payload round-tripped byte-for-byte
+  zero-id -> invalid_resource, duplicate-id -> duplicate_resource_id,
+  unsupported format -> incompatible_format, forged cursor/scanout count -> invalid_count
+  every control rejection preserved target.to_snapshot() byte-for-byte
+
+Sentinel-collision setup:
+  1. VirtioGpu::new_with_sink_state(TestSink)
+  2. ResourceMap::create(u32::MAX, FORMAT_R8G8B8A8_UNORM, 1, 1) -> Ok
+  3. source_state.scanout_resource = Some(u32::MAX)
+  4. source.to_snapshot() -> Ok
+  5. target.restore_snapshot(snapshot) -> Ok
+
+Observed:
+  sentinel collision: source_scanout=Some(4294967295) restored_scanout=None repair_frames=0
+  assertion failed: left None, right Some(4294967295)
+  process exit: 101
+
+The payload aliases live resource id 0xffffffff with NONE_RESOURCE. Restore neither rejects the
+out-of-range/sentinel collision nor preserves the scanout binding, and therefore emits no required
+full repair frame.
