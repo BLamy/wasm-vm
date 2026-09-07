@@ -292,7 +292,8 @@ pub const MAX_CURSOR_DIMENSION: u32 = 256;
 pub const DEFAULT_NUM_CAPSETS: u32 = 0;
 /// Preferred virtio-mmio slot for the browser display. Slot 6 is the first optional slot;
 /// callers may fall back to slot 6 when the preferred slot is already occupied by another
-/// optional device (the machine keeps the established eight-slot platform unchanged).
+/// optional device (the machine keeps the established device ordering and reserves the ninth
+/// platform window for the browser agent extension).
 pub const VIRTIO_GPU_SLOT: usize = 7;
 
 const CONFIG_LEN: usize = 16;

@@ -79,6 +79,9 @@ function fakeController(events, done) {
     captureState: () => ({ enabled: true, state: "running", startCount: 1 }),
     notifyCaptureEvent: (event) => { events.push(["capture", event]); return true; },
     confirmAgentHello: () => { events.push("agent-hello"); return true; },
+    saveDesktopSnapshot: () => Uint8Array.of(11, 12),
+    sendAgentInput: (bytes) => bytes.byteLength,
+    takeAgentOutput: () => Uint8Array.of(13, 14),
     restoreDesktopSnapshot: (bytes, width, height) => {
       events.push(["desktop-restore", [...bytes], width, height]);
       return {
@@ -252,8 +255,11 @@ test("every explicit controller method crosses the runtime and no-provider Tails
       dismissFileDownload: [9],
       snapshotImport: [Uint8Array.of(4, 5)],
       notifyCaptureEvent: ["muted"],
+      saveDesktopSnapshot: [],
       confirmAgentHello: [],
-      restoreDesktopSnapshot: [Uint8Array.of(6, 7), 1024, 768],
+      sendAgentInput: [Uint8Array.of(6, 7)],
+      takeAgentOutput: [],
+      restoreDesktopSnapshot: [Uint8Array.of(8, 9), 1024, 768],
       tailscaleCommand: ["status"],
     };
     const results = new Map();
@@ -263,6 +269,9 @@ test("every explicit controller method crosses the runtime and no-provider Tails
     assert.deepEqual([...invoked], LINUX_CONTROLLER_METHODS);
     assert.equal(results.get("setDisplay"), true);
     assert.equal(results.get("confirmAgentHello"), true);
+    assert.deepEqual([...results.get("saveDesktopSnapshot")], [11, 12]);
+    assert.equal(results.get("sendAgentInput"), 2);
+    assert.deepEqual([...results.get("takeAgentOutput")], [13, 14]);
     assert.deepEqual(results.get("restoreDesktopSnapshot").hostViewport, { width: 1024, height: 768 });
     assert.deepEqual(results.get("displayStats"), { advertisedWidth: 1367, advertisedHeight: 901,
       scanoutResource: null, edid: Uint8Array.of(0, 255) });

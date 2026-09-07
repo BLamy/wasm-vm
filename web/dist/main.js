@@ -49,6 +49,7 @@ import {
 import { PresentationController } from "./src/sink/presentation.js";
 import { DisplayViewportController } from "./src/sink/viewport.js";
 import { CursorController } from "./src/sink/cursor-controller.js";
+import { createDesktopAgentBridge } from "./desktop-agent-bridge.js";
 import { restoreDesktopThroughHost } from "./desktop-restore.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
@@ -701,6 +702,18 @@ const linuxControllerTeardowns = new WeakMap();
 const bootBtns = [bootLinuxBtn, bootAlpineBtn, bootAlpineFullBtn];
 const microphoneStateEl = document.getElementById("ide-microphone-state");
 const pendingMicrophoneEvents = [];
+let desktopAgentBridge = null;
+const pendingAgentOutput = [];
+
+function onAgentOutput(bytes) {
+  const value = bytes instanceof Uint8Array ? bytes.slice() : Uint8Array.from(bytes || []);
+  if (!value.byteLength) return;
+  if (desktopAgentBridge) desktopAgentBridge.receive(value);
+  else {
+    pendingAgentOutput.push(value);
+    if (pendingAgentOutput.length > 128) pendingAgentOutput.shift();
+  }
+}
 
 function updateMicrophoneIndicator(snapshot = microphoneCapture?.snapshot?.()) {
   if (!snapshot) return;
@@ -885,6 +898,13 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   // without sending post-termination key-up RPCs; the capture policy resets transient state when
   // the next boot installs a fresh bridge.
   stopKeyboardLedPoll();
+  try { desktopAgentBridge?.close("desktop controller retired"); } catch { /* teardown may already be closed */ }
+  desktopAgentBridge = null;
+  pendingAgentOutput.length = 0;
+  try {
+    if (window.__agentChannel) window.__agentChannel = null;
+    if (window.__desktopAgentChannel) window.__desktopAgentChannel = null;
+  } catch { /* page-only diagnostic */ }
   try { keyboardBridge?.resetHeld?.(); } catch { /* a failed controller may already be gone */ }
   keyboardBridge = null;
   keyboardReconciler = null;
@@ -1365,6 +1385,7 @@ async function runLinuxBootOwned(opts, banner, request) {
           if (/[^\w][\w.-]*:~#\s*$/.test(promptText) || /[~\/]\s*#\s*$/.test(promptText)) markGuestReady();
         } catch {}
       },
+      onAgentOutput,
       onError: (e) => {
         term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`);
         bootProgress.fail(e?.message || String(e));
@@ -1398,6 +1419,18 @@ async function runLinuxBootOwned(opts, banner, request) {
       onWriterStatus: ownerUi.onWriterStatus,
     });
     linuxCtl = bootController;
+    try {
+      desktopAgentBridge = createDesktopAgentBridge(bootController, {
+        onError: (error) => console.warn("wasm-vm: desktop agent channel:", error?.message || error),
+      });
+      desktopAgentBridge.start();
+      for (const bytes of pendingAgentOutput.splice(0)) desktopAgentBridge.receive(bytes);
+      window.__agentChannel = desktopAgentBridge.channel;
+      window.__desktopAgentChannel = desktopAgentBridge.channel;
+    } catch (error) {
+      console.warn("wasm-vm: desktop agent bridge unavailable:", error?.message || error);
+      pendingAgentOutput.length = 0;
+    }
     displayViewport?.setController(bootController);
     flushMicrophoneGuestEvents(linuxCtl);
     updatePointerIndicator();
@@ -2271,7 +2304,7 @@ window.__linux = {
 window.__desktopRestore = (snapshot, hostViewport, agentChannel) =>
   restoreDesktopThroughHost({
     controller: linuxCtl,
-    agentChannel,
+    agentChannel: agentChannel ?? desktopAgentBridge?.channel,
     presentation,
     viewportController: displayViewport,
   }, snapshot, hostViewport);

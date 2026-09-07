@@ -133,6 +133,30 @@ impl DesktopSnapshotError {
     }
 }
 
+/// A failure while composing the already-versioned desktop component codecs into one envelope.
+/// The individual codecs keep ownership of their wire formats; this type only reports that a
+/// live component could not contribute a payload at the save boundary.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DesktopSnapshotSaveError {
+    /// The requested machine was assembled without one of the desktop participants.
+    MissingComponent { tag: u16 },
+    /// A participant rejected its current state as unsnapshotable.
+    ComponentRefused { tag: u16 },
+    /// The existing bounded virtio-blk quiesce gate could not drain parked work.
+    BlockNotQuiesced,
+}
+
+impl DesktopSnapshotSaveError {
+    /// Stable machine-readable code for the host/browser boundary.
+    pub const fn code(self) -> &'static str {
+        match self {
+            Self::MissingComponent { .. } => "missing_component",
+            Self::ComponentRefused { .. } => "component_refused",
+            Self::BlockNotQuiesced => "block_not_quiesced",
+        }
+    }
+}
+
 /// One fully validated, owned desktop section.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DesktopSnapshotSection {

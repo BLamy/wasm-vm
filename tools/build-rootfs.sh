@@ -79,7 +79,7 @@ fi
 # The whole build runs in the container (tools/rootfs-inner.sh); only the finished image +
 # manifest come out through the bind mount.
 docker run --rm \
-  "${display_mounts[@]}" \
+  ${display_mounts[@]+"${display_mounts[@]}"} \
   -v "$PWD/$OUT:/out" \
   -v "$PWD/tools/rootfs-inner.sh:/rootfs-inner.sh:ro" \
   -v "$PWD/tools/guest/container-smoke.sh:/container-smoke.sh:ro" \

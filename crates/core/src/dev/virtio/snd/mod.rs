@@ -31,7 +31,7 @@ pub const TX_QUEUE: u32 = 2;
 pub const RX_QUEUE: u32 = 3;
 pub const NUM_QUEUES: u32 = 4;
 
-/// Stable starting slot for the sound device in the standard eight-slot virt machine. The Machine
+/// Stable starting slot for the sound device in the standard nine-window virt machine. The Machine
 /// may use the next empty slot when a caller has already installed an optional secondary disk in
 /// this slot, preserving the established device slots rather than silently replacing one.
 pub const VIRTIO_SND_SLOT: usize = 6;
@@ -91,6 +91,11 @@ pub const VIRTIO_SND_PCM_F_SHMEM_GUEST: u32 = 1 << 1;
 pub const VIRTIO_SND_PCM_F_MSG_POLLING: u32 = 1 << 2;
 pub const VIRTIO_SND_PCM_F_EVT_SHMEM_PERIODS: u32 = 1 << 3;
 pub const VIRTIO_SND_PCM_F_EVT_XRUNS: u32 = 1 << 4;
+
+/// PCM feature bits accepted in `PCM_SET_PARAMS`. The Linux virtio-snd driver selects every
+/// advertised optional feature when it builds the request, so this must stay in lockstep with the
+/// bits exposed by [`PcmInfo::output_with_rates`] and [`PcmInfo::input_with_rates`].
+const SUPPORTED_PCM_PARAM_FEATURES: u32 = VIRTIO_SND_PCM_F_EVT_XRUNS;
 
 /// Asynchronous virtio-snd event types from §5.14.7.1.
 pub const VIRTIO_SND_EVT_JACK_CONNECTED: u32 = 0x100;
@@ -660,7 +665,7 @@ impl PcmParams {
             && self.buffer_bytes.is_multiple_of(frame_bytes)
             && self.period_bytes.is_multiple_of(frame_bytes)
             && self.buffer_bytes.is_multiple_of(self.period_bytes)
-            && self.features == 0
+            && self.features & !SUPPORTED_PCM_PARAM_FEATURES == 0
             && self.format == VIRTIO_SND_PCM_FMT_S16
             && matches!(
                 self.rate,

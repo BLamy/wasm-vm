@@ -8,7 +8,7 @@ import { restoreDesktopThroughHost } from "../desktop-restore.js";
 const viewport = { width: 1024, height: 768 };
 const snapshot = Uint8Array.of(1, 2, 3, 4);
 
-function fixture({ confirm = true, restore = true } = {}) {
+function fixture({ confirm = true, restore = true, beforeRestore = null } = {}) {
   const calls = [];
   const channel = {
     state: "ready",
@@ -36,7 +36,7 @@ function fixture({ confirm = true, restore = true } = {}) {
     },
   };
   const viewportController = { applyCanvasStyle() { calls.push("applyCanvasStyle"); } };
-  return { calls, agentChannel: channel, controller, presentation, viewportController };
+  return { calls, agentChannel: channel, controller, presentation, viewportController, beforeRestore };
 }
 
 test("desktop restore requires fresh Channel HELLO and applies T22 viewport", async () => {
@@ -52,6 +52,22 @@ test("desktop restore requires fresh Channel HELLO and applies T22 viewport", as
   ]);
   assert.equal(result.handshake.generation, 2);
   assert.deepEqual(result.appliedViewport, viewport);
+});
+
+test("desktop restore may pause only after the fresh HELLO", async () => {
+  const f = fixture();
+  f.beforeRestore = () => f.calls.push("pause-at-commit");
+  const result = await restoreDesktopThroughHost({ ...f, beforeRestore: f.beforeRestore }, snapshot, viewport);
+  assert.equal(result.report.fullRepairFrame, true);
+  assert.deepEqual(f.calls, [
+    "clear",
+    ["setViewport", 1024, 768],
+    "rehandshake",
+    "confirmAgentHello",
+    "pause-at-commit",
+    ["restore", [1, 2, 3, 4], 1024, 768],
+    "applyCanvasStyle",
+  ]);
 });
 
 test("a dropped Channel or refused restore clears the T22 surface", async () => {

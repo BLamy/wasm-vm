@@ -197,6 +197,9 @@ export async function startLinuxBoot(opts = {}) {
     onState = () => {},
     onProgress = () => {},
     onOutput = () => {},
+    // E5-T26f: guest-to-host frames from the named virtio-console agent port. The callback is
+    // page-owned on direct boots and copied through the whole-machine worker protocol otherwise.
+    onAgentOutput = () => {},
     onError = () => {},
     // E3-T09: called with { readOnly: bool } once the writer Web Lock is resolved for a
     // persistent boot — the UI shows the RO banner / retry-as-writer affordance on it.
@@ -920,6 +923,10 @@ export async function startLinuxBoot(opts = {}) {
         if (lastSliceStart) stretchMaxMs = Math.max(stretchMaxMs, sliceStart - lastSliceStart);
         lastSliceStart = sliceStart;
         res = machine.runChunk(runQuantum, usePersist ? maxDirtyBytes : undefined);
+        if (typeof machine.takeAgentOutput === "function") {
+          const agentBytes = machine.takeAgentOutput();
+          if (agentBytes?.byteLength) onAgentOutput(agentBytes);
+        }
         observeCaptureStart();
         const sliceMs = (typeof performance !== "undefined" ? performance.now() : Date.now()) - sliceStart;
         sliceCount += 1;
@@ -1022,6 +1029,11 @@ export async function startLinuxBoot(opts = {}) {
           machine.sendInput(bytes);
         }
       },
+      // E5-T26f: the T23d page Channel writes framed bytes through the named virtio-console port.
+      sendAgentInput: (bytes) => {
+        if (stopped || typeof machine.sendAgentInput !== "function") return 0;
+        return machine.sendAgentInput(bytes);
+      },
       // E5-T12b: the DOM keyboard bridge publishes physical evdev frames through the same
       // controller on both the direct and whole-machine-worker paths. Worker RPC ordering keeps
       // sendKeyboardEvent immediately ahead of its matching syncKeyboard frame.
@@ -1108,6 +1120,14 @@ export async function startLinuxBoot(opts = {}) {
       confirmAgentHello: () => {
         if (typeof machine.confirmAgentHello !== "function") return false;
         return machine.confirmAgentHello();
+      },
+      // E5-T26f: serialize the live composite desktop envelope through the same controller
+      // surface used by the page in both direct and whole-machine-worker boot modes.
+      saveDesktopSnapshot: () => {
+        if (typeof machine.saveDesktopSnapshot !== "function") {
+          throw new Error("desktop snapshot save is unavailable in this wasm build");
+        }
+        return machine.saveDesktopSnapshot();
       },
       // E5-T26e: restore the actual composite envelope through the production Machine boundary.
       // The browser bridge applies the returned hostViewport through T22's PresentationController.

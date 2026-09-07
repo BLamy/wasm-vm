@@ -583,6 +583,10 @@ export class Channel {
     return this._negotiated?.version ?? null;
   }
 
+  get transportGeneration() {
+    return this._transportGeneration;
+  }
+
   get negotiatedCapabilities() {
     return this._negotiated?.capabilities ?? 0n;
   }

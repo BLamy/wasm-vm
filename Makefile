@@ -5,7 +5,7 @@
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
         bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc bench-runtime-workloads bench-runtime-compute bench-runtime-workloads-browser bench-runtime-compute-browser \
-        web-test-cpu-worker verify-E5-T16a verify-E5-T18a verify-E5-T18c verify-E5-T25a verify-E5-T25b verify-E5-T26a verify-E5-T26b verify-E5-T26c verify-E5-T26d verify-E5-T26e
+        web-test-cpu-worker verify-E5-T16a verify-E5-T18a verify-E5-T18c verify-E5-T25a verify-E5-T25b verify-E5-T26a verify-E5-T26b verify-E5-T26c verify-E5-T26d verify-E5-T26e verify-E5-T26f
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -1102,6 +1102,27 @@ verify-E5-T26e:
 	# The coordinator and callback contract remain no_std/wasm-compatible.
 	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
 	@echo "verify-E5-T26e (desktop restore reconciliation and cold fallback): OK"
+
+.PHONY: verify-E5-T26f
+E5_T26F_IMAGE ?= target/e5-t26f/desktop-image-aplay-noresize/alpine-rootfs.ext4
+E5_T26F_IMAGE_INFO ?= target/e5-t26f/desktop-image-aplay-noresize/desktop-info.json
+E5_T26F_DESKTOP_ASSET_DIR ?= target/e5-t26f/chunks/desktop-aplay-noresize
+
+verify-E5-T26f:
+	# Browser desktop round-trip: native/wasm snapshot gates plus the exact local Chromium proof.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib --features gpu-trace desktop_snapshot -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace desktop_restore -- --nocapture
+	cargo test -p wasm-vm-core --test virtio_mmio_slots
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown
+	node --check web/desktop-agent-bridge.js web/desktop-terminal.js web/main.js tools/verify/e5-t26f-browser-roundtrip.mjs
+	node --test web/tests/e4-t32-worker-protocol.test.mjs web/tests/e5-t26e-desktop-restore.test.mjs web/tests/e5-t26f-desktop-agent-bridge.test.mjs web/tests/agent-channel.test.mjs
+	$(MAKE) web-dist
+	E5_T26F_IMAGE=$(E5_T26F_IMAGE) E5_T26F_IMAGE_INFO=$(E5_T26F_IMAGE_INFO) E5_T26F_DESKTOP_ASSET_DIR=$(E5_T26F_DESKTOP_ASSET_DIR) node tools/verify/e5-t26f-browser-roundtrip.mjs
+	@echo "verify-E5-T26f (Chromium desktop snapshot round-trip and interaction smoke): OK"
 
 verify-E5-T22e:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm

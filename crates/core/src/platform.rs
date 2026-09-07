@@ -48,14 +48,16 @@ pub mod virt {
     pub const VIRTIO_BASE: u64 = 0x1000_1000;
     pub const VIRTIO_LEN: u64 = 0x1000;
     pub const VIRTIO_STRIDE: u64 = 0x1000;
-    pub const VIRTIO_COUNT: u64 = 8;
+    /// Nine windows keep the QEMU-compatible eight-slot layout intact while reserving one
+    /// browser-only extension slot for the verified virtio-console agent channel.
+    pub const VIRTIO_COUNT: u64 = 9;
 
     // ── IRQ numbers (PLIC source ids) ────────────────────────────────────────────────
     /// UART0 interrupt line.
     pub const UART0_IRQ: u32 = 10;
     /// goldfish-rtc interrupt line.
     pub const RTC_IRQ: u32 = 11;
-    /// First virtio-mmio slot's IRQ; slot `i` (0-based) is `VIRTIO_IRQ_BASE + i` → 1..=8.
+    /// First virtio-mmio slot's IRQ; slot `i` (0-based) is `VIRTIO_IRQ_BASE + i` → 1..=9.
     pub const VIRTIO_IRQ_BASE: u32 = 1;
     /// Number of PLIC interrupt sources QEMU advertises (`riscv,ndev`). Source 0 is the
     /// "no interrupt" sentinel, so the highest usable source id is `PLIC_NDEV`.
@@ -197,7 +199,7 @@ impl Platform {
         virt::VIRTIO_BASE + i * virt::VIRTIO_STRIDE
     }
 
-    /// PLIC source id for virtio-mmio slot `i` (`0..VIRTIO_COUNT`) → 1..=8.
+    /// PLIC source id for virtio-mmio slot `i` (`0..VIRTIO_COUNT`) → 1..=9.
     pub const fn virtio_irq(i: u64) -> u32 {
         virt::VIRTIO_IRQ_BASE + i as u32
     }
@@ -314,7 +316,7 @@ mod tests {
     }
 
     /// The IRQ table matches the documented constants (refutes adversarial check (4): the doc's
-    /// table and the code must agree). virtio slots 0..8 → IRQ 1..8; distinct, ascending bases.
+    /// table and the code must agree). virtio slots 0..9 → IRQ 1..9; distinct, ascending bases.
     #[test]
     fn irq_and_virtio_layout() {
         assert_eq!(virt::UART0_IRQ, 10);
@@ -326,5 +328,7 @@ mod tests {
         // Slot 7 (last) is IRQ 8, base 0x1000_8000 — matches QEMU virt.
         assert_eq!(Platform::virtio_irq(7), 8);
         assert_eq!(Platform::virtio_base(7), 0x1000_8000);
+        assert_eq!(Platform::virtio_irq(8), 9);
+        assert_eq!(Platform::virtio_base(8), 0x1000_9000);
     }
 }

@@ -841,6 +841,18 @@ export class WasmLinux {
         return takeFromExternrefTable0(ret[0]);
     }
     /**
+     * E5-T26f: take the live GPU/input/sound/agent component state at one bounded scheduler
+     * boundary. The core composes the existing codecs; this boundary only owns the JS byte copy.
+     * @returns {any}
+     */
+    saveDesktopSnapshot() {
+        const ret = wasm.wasmlinux_saveDesktopSnapshot(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * Take a whole-machine resume snapshot and return its bytes as a `Uint8Array`. NOT async and NOT
      * persisting — kept synchronous so the `RefCell` borrow is never held across an `await` (the JS
      * caller may drive persistence itself, or use [`Self::persist_snapshot`]). `save_resume` quiesces
@@ -855,6 +867,22 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * E5-T26f: enqueue one owned host-to-guest frame on the named virtio-console agent port.
+     * Returning the accepted byte count lets the page Channel fail closed on bounded
+     * backpressure instead of silently reporting that a frame was delivered.
+     * @param {Uint8Array} bytes
+     * @returns {number}
+     */
+    sendAgentInput(bytes) {
+        const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_sendAgentInput(this.__wbg_ptr, ptr0, len0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] >>> 0;
     }
     /**
      * Queue host keystrokes for the guest's `ttyS0` (fed to the RX FIFO across `runChunk`s).
@@ -1062,6 +1090,18 @@ export class WasmLinux {
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
+    }
+    /**
+     * E5-T26f: drain complete guest-to-host agent frames after a run slice. The returned copy is
+     * transferred through the worker protocol and then decoded by the page-owned T23d Channel.
+     * @returns {Uint8Array}
+     */
+    takeAgentOutput() {
+        const ret = wasm.wasmlinux_takeAgentOutput(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
     /**
      * @param {number} id

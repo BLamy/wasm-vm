@@ -31,6 +31,7 @@ export async function restoreDesktopThroughHost({
   agentChannel,
   presentation,
   viewportController = null,
+  beforeRestore = null,
 }, snapshot, hostViewport) {
   if (!controller || typeof controller.confirmAgentHello !== "function"
       || typeof controller.restoreDesktopSnapshot !== "function") {
@@ -56,6 +57,10 @@ export async function restoreDesktopThroughHost({
     if (!await controller.confirmAgentHello()) {
       throw new Error("virtio-console rejected the fresh application HELLO");
     }
+    // The guest must be running while the fresh HELLO is transported and handled. The page
+    // owner can then pause at this exact boundary so the composite restore call is atomic with
+    // respect to the executor, without deadlocking the handshake behind a paused guest.
+    await beforeRestore?.();
     const report = await controller.restoreDesktopSnapshot(bytes, viewport.width, viewport.height);
     if (!report?.hostViewport
         || report.hostViewport.width !== viewport.width

@@ -294,6 +294,11 @@ export class WasmLinux {
      */
     runChunk(max_instrs: number, persist_max_dirty_bytes?: number | null): any;
     /**
+     * E5-T26f: take the live GPU/input/sound/agent component state at one bounded scheduler
+     * boundary. The core composes the existing codecs; this boundary only owns the JS byte copy.
+     */
+    saveDesktopSnapshot(): any;
+    /**
      * Take a whole-machine resume snapshot and return its bytes as a `Uint8Array`. NOT async and NOT
      * persisting — kept synchronous so the `RefCell` borrow is never held across an `await` (the JS
      * caller may drive persistence itself, or use [`Self::persist_snapshot`]). `save_resume` quiesces
@@ -302,6 +307,12 @@ export class WasmLinux {
      * starts with `"save_error"`.
      */
     saveSnapshot(): any;
+    /**
+     * E5-T26f: enqueue one owned host-to-guest frame on the named virtio-console agent port.
+     * Returning the accepted byte count lets the page Channel fail closed on bounded
+     * backpressure instead of silently reporting that a frame was delivered.
+     */
+    sendAgentInput(bytes: Uint8Array): number;
     /**
      * Queue host keystrokes for the guest's `ttyS0` (fed to the RX FIFO across `runChunk`s).
      */
@@ -386,6 +397,11 @@ export class WasmLinux {
      * Publish the current host absolute-tablet frame with `EV_SYN/SYN_REPORT`.
      */
     syncTablet(): void;
+    /**
+     * E5-T26f: drain complete guest-to-host agent frames after a run slice. The returned copy is
+     * transferred through the worker protocol and then decoded by the page-owned T23d Channel.
+     */
+    takeAgentOutput(): Uint8Array;
     takeFileDownloadChunk(id: number): Uint8Array;
     /**
      * E5-T21d: expose the input PCM lifecycle edge to the page. `startCount` increments only for
@@ -659,7 +675,9 @@ export interface InitOutput {
     readonly wasmlinux_restoreDesktopSnapshot: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
     readonly wasmlinux_restoreStoredSnapshot: (a: number) => any;
     readonly wasmlinux_runChunk: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmlinux_saveDesktopSnapshot: (a: number) => [number, number, number];
     readonly wasmlinux_saveSnapshot: (a: number) => [number, number, number];
+    readonly wasmlinux_sendAgentInput: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_sendKeyboardEvent: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_sendMouseEvent: (a: number, b: number, c: number, d: number) => [number, number];
@@ -676,6 +694,7 @@ export interface InitOutput {
     readonly wasmlinux_syncKeyboard: (a: number) => [number, number];
     readonly wasmlinux_syncMouse: (a: number) => [number, number];
     readonly wasmlinux_syncTablet: (a: number) => [number, number];
+    readonly wasmlinux_takeAgentOutput: (a: number) => [number, number, number];
     readonly wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_virtioSndCaptureState: (a: number) => [number, number, number];
     readonly wasmlinux_virtioSndConfig: (a: number) => [number, number, number];

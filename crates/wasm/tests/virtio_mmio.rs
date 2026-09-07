@@ -54,5 +54,5 @@ fn slots_probe_and_lifecycle_on_wasm32() {
     // Sub-width register read policy: 1-byte read of DeviceID region reads 0.
     assert_eq!(m.bus_mut().load8(b0 + 8).unwrap(), 0);
     // virtio slot addresses match the DTB the kernel will parse.
-    assert_eq!(virt::VIRTIO_COUNT, 8);
+    assert_eq!(virt::VIRTIO_COUNT, 9);
 }

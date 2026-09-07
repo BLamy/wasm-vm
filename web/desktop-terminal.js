@@ -9,6 +9,10 @@ import { createPointerBridge, createWasmPointerAdapter, attachPointerBridge } fr
 import { createKeyboardBridge, createWasmKeyboardAdapter } from "./src/input/keyboard.js";
 import { attachKeyboardCapture, createKeyboardCapturePolicy } from "./src/input/capture.js";
 import { createKeyboardReconciler } from "./src/input/reconciliation.js";
+import { AudioSink } from "./src/audio/sink.js";
+import { createAutoplayPolicy } from "./src/audio/autoplay.js";
+import { createDesktopAgentBridge } from "./desktop-agent-bridge.js";
+import { restoreDesktopThroughHost } from "./desktop-restore.js";
 
 const WIDTH = 1280;
 const HEIGHT = 800;
@@ -43,12 +47,18 @@ let keyboardBridge = null;
 let keyboardReconciler = null;
 let keyboardCapture = null;
 let detachKeyboard = null;
+let desktopAudioSink = null;
+let desktopAudioPolicy = null;
+let desktopAgentBridge = null;
+const pendingAgentOutput = [];
+let restoreObservation = null;
+let lastRestoreResult = null;
 let serialText = "";
 let frameCount = 0;
 let lastInspectionAt = 0;
 let latestPixels = null;
 let latestInspection = null;
-let latestSurface = { nonBlackRatio: 0, darkRatio: 0, greenPixels: 0 };
+let latestSurface = { nonBlackRatio: 0, darkRatio: 0, greenPixels: 0, redPixels: 0 };
 let desktopReady = false;
 let readinessStarted = false;
 let finalProof = null;
@@ -67,12 +77,35 @@ const keyboardEvents = [];
 const desktopPerfPresentRecords = [];
 const desktopPerfPresentDurations = [];
 const diagnostics = [];
+const bootStates = [];
 const interactions = {
   launches: [],
   focuses: [],
   commands: [],
   closes: [],
 };
+
+// E5-T26f: prepare the real page-owned audio sink before the guest is assembled. The AudioContext
+// remains locked until the first user gesture; the SharedArrayBuffer is safe to transfer to the
+// whole-machine worker while the autoplay policy owns the unlock boundary.
+try {
+  if (typeof globalThis.AudioContext === "function") {
+    desktopAudioSink = new AudioSink({ requestedSampleRateHz: 48_000 });
+    desktopAudioPolicy = createAutoplayPolicy({
+      context: desktopAudioSink.context,
+      ring: desktopAudioSink.ring,
+      sampleRateHz: desktopAudioSink.sampleRateHz,
+      clockBuffer: desktopAudioSink.clockBuffer,
+      target: document,
+      onUnlocked: () => desktopAudioSink.connect(),
+    });
+    desktopAudioPolicy.start();
+  }
+} catch (error) {
+  diagnostics.push({ reason: "desktop-audio-unavailable", error: String(error?.message || error) });
+  desktopAudioSink = null;
+  desktopAudioPolicy = null;
+}
 let activeLaunch = null;
 let activeCommand = null;
 let activeClose = null;
@@ -150,6 +183,17 @@ function greenPixels(bytes) {
   return count;
 }
 
+function redPixels(bytes) {
+  let count = 0;
+  for (let offset = 0; offset < bytes.length; offset += 32) {
+    const red = bytes[offset];
+    const green = bytes[offset + 1];
+    const blue = bytes[offset + 2];
+    if (red >= 72 && red > green + 20 && red > blue + 20) count += 1;
+  }
+  return count;
+}
+
 function darkRatio(bytes) {
   let dark = 0;
   let samples = 0;
@@ -170,6 +214,7 @@ function surfaceStats(bytes) {
     nonBlackRatio: nonBlackRatio(bytes),
     darkRatio: darkRatio(bytes),
     greenPixels: greenPixels(bytes),
+    redPixels: redPixels(bytes),
   };
 }
 
@@ -243,6 +288,21 @@ function clonePixels() {
   return new Uint8ClampedArray(presentation.readPixels());
 }
 
+function crc32Hex(bytes) {
+  let crc = 0xffffffff;
+  for (const byte of bytes) {
+    crc ^= byte;
+    for (let bit = 0; bit < 8; bit += 1) {
+      crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
+    }
+  }
+  return ((crc ^ 0xffffffff) >>> 0).toString(16).padStart(8, "0");
+}
+
+function frontBufferCrc() {
+  return crc32Hex(clonePixels());
+}
+
 function visualDiff(left, right) {
   if (!left || !right || left.length !== right.length) return 0;
   let changed = 0;
@@ -296,6 +356,119 @@ async function sha256Hex(bytes) {
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+const DESKTOP_SNAPSHOT_STORAGE_KEY = "wasm-vm.desktop-snapshot.v1";
+
+function snapshotBase64(bytes) {
+  let binary = "";
+  const chunkSize = 0x8000;
+  for (let offset = 0; offset < bytes.byteLength; offset += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(offset, offset + chunkSize));
+  }
+  return btoa(binary);
+}
+
+function snapshotBytesFromBase64(value) {
+  const binary = atob(value);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+  return bytes;
+}
+
+function ownedSnapshotBytes(value) {
+  if (value instanceof Uint8Array) return value.slice();
+  if (ArrayBuffer.isView(value)) {
+    return new Uint8Array(value.buffer, value.byteOffset, value.byteLength).slice();
+  }
+  if (value instanceof ArrayBuffer) return new Uint8Array(value.slice(0));
+  throw new TypeError("desktop snapshot must be bytes");
+}
+
+function normalizeDesktopSnapshot(value) {
+  if (value == null) return null;
+  if (value instanceof Uint8Array || ArrayBuffer.isView(value) || value instanceof ArrayBuffer) {
+    return { bytes: ownedSnapshotBytes(value) };
+  }
+  if (typeof value === "object" && value.bytes != null) {
+    return { ...value, bytes: ownedSnapshotBytes(value.bytes) };
+  }
+  throw new TypeError("desktop snapshot must contain bytes");
+}
+
+function storedDesktopSnapshot() {
+  const raw = sessionStorage.getItem(DESKTOP_SNAPSHOT_STORAGE_KEY);
+  if (!raw) return null;
+  const record = JSON.parse(raw);
+  if (!record || typeof record.bytes !== "string") throw new Error("stored desktop snapshot is malformed");
+  const bytes = snapshotBytesFromBase64(record.bytes);
+  return { ...record, bytes };
+}
+
+async function saveDesktopSnapshot({ persist = false } = {}) {
+  if (!controller || typeof controller.saveDesktopSnapshot !== "function") {
+    throw new Error("desktop snapshot save is unavailable");
+  }
+  const wasPaused = await controller.isPaused?.() === true;
+  if (!wasPaused) await controller.pause?.();
+  try {
+    const value = await controller.saveDesktopSnapshot();
+    const bytes = value instanceof Uint8Array ? value.slice() : new Uint8Array(value);
+    const sha256 = await sha256Hex(bytes);
+    const record = {
+      schema: "wasm-vm.e5-t26f.desktop-snapshot.v1",
+      bytes: snapshotBase64(bytes),
+      byteLength: bytes.byteLength,
+      sha256,
+      savedAt: new Date().toISOString(),
+    };
+    if (persist) sessionStorage.setItem(DESKTOP_SNAPSHOT_STORAGE_KEY, JSON.stringify(record));
+    return { ...record, bytes };
+  } finally {
+    if (!wasPaused) await controller.resume?.();
+  }
+}
+
+async function restoreDesktopSnapshot(snapshot = null, hostViewport = null) {
+  if (!controller || !desktopAgentBridge) throw new Error("desktop restore is not ready");
+  const record = snapshot == null
+    ? storedDesktopSnapshot()
+    : normalizeDesktopSnapshot(snapshot);
+  if (!record?.bytes) throw new Error("desktop snapshot is missing");
+  const viewport = hostViewport || {
+    width: presentation?.snapshot?.().width || WIDTH,
+    height: presentation?.snapshot?.().height || HEIGHT,
+  };
+  const wasPaused = await controller.isPaused?.() === true;
+  restoreObservation = {
+    baseSuccessfulPresents: presentation.snapshot().successfulPresents,
+    firstPresent: null,
+  };
+  try {
+    const result = await restoreDesktopThroughHost({
+      controller,
+      agentChannel: desktopAgentBridge.channel,
+      presentation,
+      beforeRestore: async () => {
+        if (!wasPaused) await controller.pause?.();
+      },
+    }, record.bytes, viewport);
+    const restoredSha256 = await sha256Hex(record.bytes);
+    document.documentElement.dataset.desktopRestored = "ready";
+    lastRestoreResult = {
+      ...result,
+      snapshotSha256: restoredSha256,
+      snapshotBytes: record.bytes.byteLength,
+      completedAt: performance.now(),
+    };
+    return lastRestoreResult;
+  } catch (error) {
+    restoreObservation = null;
+    lastRestoreResult = null;
+    throw error;
+  } finally {
+    if (!wasPaused) await controller.resume?.();
+  }
+}
+
 async function finishReadiness() {
   if (readinessStarted || desktopReady || !controller || !presentation) return;
   readinessStarted = true;
@@ -314,6 +487,21 @@ async function finishReadiness() {
     document.documentElement.dataset.desktopPanel = "ready";
     document.documentElement.dataset.desktopMenu = "ready";
     await controller.resume();
+    // The interpreted guest can still be finishing OpenRC while the first desktop frame is
+    // painted. Start the reconnecting Channel at the usable-desktop boundary so its initial HELLO
+    // is not repeatedly submitted before the named virtio port has opened.
+    startDesktopAgentBridge();
+    if (query.has("autoRestore")) {
+      try {
+        await restoreDesktopSnapshot();
+        setStatus("desktop restored: snapshot and agent ready", "ready");
+      } catch (error) {
+        latestError = error;
+        diagnostics.push({ reason: "desktop-auto-restore", error: String(error?.message || error) });
+        document.documentElement.dataset.desktopRestored = "error";
+        setStatus(`desktop restore failed: ${error.message || error}`, "error");
+      }
+    }
   } catch (error) {
     latestError = error;
     readinessStarted = false;
@@ -328,6 +516,13 @@ function onDisplayFrame(frame) {
   try {
     const startedAt = desktopPerfHooksRequested ? performance.now() : 0;
     const reached = presentation.present(frame);
+    if (restoreObservation && !restoreObservation.firstPresent &&
+        presentation.snapshot().successfulPresents > restoreObservation.baseSuccessfulPresents) {
+      restoreObservation.firstPresent = {
+        successfulPresents: presentation.snapshot().successfulPresents,
+        crc32: frontBufferCrc(),
+      };
+    }
     if (desktopPerfHooksRequested) {
       desktopPerfPresentDurations.push(Math.max(0, performance.now() - startedAt));
       if (desktopPerfPresentDurations.length > 4_096) desktopPerfPresentDurations.shift();
@@ -364,6 +559,22 @@ function onOutput(bytes) {
   const value = bytes instanceof Uint8Array ? bytes : Uint8Array.from(bytes || []);
   serialText += decoder.decode(value, { stream: true });
   if (serialText.length > MAX_SERIAL_BYTES) serialText = serialText.slice(-MAX_SERIAL_BYTES);
+}
+
+function onAgentOutput(bytes) {
+  const value = bytes instanceof Uint8Array ? bytes.slice() : Uint8Array.from(bytes || []);
+  if (!value.byteLength) return;
+  if (desktopAgentBridge) desktopAgentBridge.receive(value);
+  else {
+    pendingAgentOutput.push(value);
+    if (pendingAgentOutput.length > 128) pendingAgentOutput.shift();
+  }
+}
+
+function startDesktopAgentBridge() {
+  if (!desktopAgentBridge) return;
+  desktopAgentBridge.start();
+  for (const bytes of pendingAgentOutput.splice(0)) desktopAgentBridge.receive(bytes);
 }
 
 function recordPointerFrame(frame) {
@@ -522,6 +733,7 @@ function beginCommand(command, marker) {
     visualDiffPixels: 0,
     terminalMarkerSeen: false,
     greenPixelsBefore: latestSurface.greenPixels,
+    redPixelsBefore: latestSurface.redPixels,
   };
   interactions.commands.push(record);
   activeCommand = record;
@@ -536,6 +748,8 @@ function finishCommand(marker = activeCommand?.marker) {
   record.terminalMarkerSeen = record.terminalMarkerSeen ||
     (latestSurface.greenPixels >= MIN_TERMINAL_MARKER_PIXELS &&
       latestSurface.greenPixels > record.greenPixelsBefore);
+  record.redMarkerSeen = latestSurface.redPixels >= MIN_TERMINAL_MARKER_PIXELS &&
+    latestSurface.redPixels > record.redPixelsBefore;
   record.visualDiffPixels = Math.max(record.visualDiffPixels, visualDiff(record.beforePixels, latestPixels || clonePixels()));
   record.keyboardFrames = keyboardFrames.length - record.keyboardStart;
   record.domEvents = keyboardEvents.length - record.domEventStart;
@@ -604,7 +818,9 @@ function publicState() {
     keyboardFrameSample: keyboardFrames.slice(-16),
     keyboardEventSample: keyboardEvents.slice(-16),
     surface: { ...latestSurface },
+    agent: desktopAgentBridge?.stats() || null,
     diagnostics: [...diagnostics],
+    bootStates: [...bootStates],
     launches: interactions.launches.map(safeRecord),
     focuses: interactions.focuses.map(safeRecord),
     commands: interactions.commands.map(safeRecord),
@@ -698,6 +914,21 @@ function publicApi() {
     pointerState: () => pointerBridge?.state() ?? null,
     proof: () => finalProof,
     presentation: () => presentation?.snapshot() ?? null,
+    frontBufferCrc,
+    restoreObservation: () => restoreObservation ? {
+      baseSuccessfulPresents: restoreObservation.baseSuccessfulPresents,
+      firstPresent: restoreObservation.firstPresent ? { ...restoreObservation.firstPresent } : null,
+    } : null,
+    restoreResult: () => lastRestoreResult ? { ...lastRestoreResult } : null,
+    saveDesktopSnapshot,
+    restoreDesktopSnapshot,
+    storedDesktopSnapshot,
+    agentChannel: () => desktopAgentBridge?.channel ?? null,
+    audio: () => ({
+      policy: desktopAudioPolicy,
+      sink: desktopAudioSink,
+      ready: Boolean(desktopAudioSink),
+    }),
   };
 }
 
@@ -730,6 +961,12 @@ try {
 
 globalThis.__desktopTerminal = publicApi();
 globalThis.__desktopTerminalProof = () => finalProof;
+globalThis.__desktopSnapshot = Object.freeze({
+  save: saveDesktopSnapshot,
+  restore: restoreDesktopSnapshot,
+  read: storedDesktopSnapshot,
+  clear: () => sessionStorage.removeItem(DESKTOP_SNAPSHOT_STORAGE_KEY),
+});
 if (desktopPerfHooksRequested) {
   globalThis.__desktopPerf = {
     version: desktopLatencyHooksRequested ? "e5-t25c-v1" : "e5-t25b-v1",
@@ -778,12 +1015,21 @@ const bootPromise = startLinuxBootWorker({
   fastInterpreter: true,
   jit: query.get("jit") !== "0",
   quantum: Number(query.get("quantum") || 500_000),
-  onState: (state) => setStatus(`linux: ${state}`),
+  audioSharedBuffer: desktopAudioSink?.ring.sharedBuffer ?? null,
+  audioClockBuffer: desktopAudioSink?.clockBuffer ?? null,
+  audioCapacityFrames: desktopAudioSink?.ring.capacityFrames ?? 0,
+  audioSampleRateHz: desktopAudioSink?.sampleRateHz ?? 0,
+  onState: (state) => {
+    bootStates.push({ state: String(state), atMs: Math.round(performance.now() - bootStartedAt) });
+    if (bootStates.length > 128) bootStates.shift();
+    setStatus(`linux: ${state}`);
+  },
   onProgress: (role, loaded, total) => {
     const progress = total ? `${Math.round((loaded / total) * 100)}%` : `${Math.round(loaded / 1048576)} MB`;
     setStatus(`loading ${role} ${progress}`);
   },
   onOutput,
+  onAgentOutput,
   onDisplayFrame,
   onError: (error) => {
     latestError = error;
@@ -794,6 +1040,15 @@ const bootPromise = startLinuxBootWorker({
 bootPromise.then((value) => {
   controller = value;
   globalThis.__desktopController = controller;
+  try {
+    desktopAgentBridge = createDesktopAgentBridge(controller, {
+      onError: (error) => diagnostics.push({ reason: "agent-channel", error: String(error?.message || error) }),
+    });
+    globalThis.__desktopAgentChannel = desktopAgentBridge.channel;
+  } catch (error) {
+    latestError = error;
+    diagnostics.push({ reason: "agent-bridge-unavailable", error: String(error?.message || error) });
+  }
   if (desktopPerfHooksRequested) {
     import("./bench/desktop-perf-hooks.js").then(({ createDesktopPerfInput }) => {
       if (controller !== value) return;

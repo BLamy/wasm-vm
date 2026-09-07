@@ -32,9 +32,14 @@ dtc -I dtb -O dts virt.dtb            # decompile to source
 | virtio-mmio 1 | `0x1000_2000` | `0x1000`    | 2   | ✅ match      | … |
 | … (slots 2–6) | `0x1000_3000`–`0x1000_7000` | `0x1000` | 3–7 | ✅ match | … |
 | virtio-mmio 7 | `0x1000_8000` | `0x1000`    | 8   | ✅ match      | … |
+| virtio-mmio 8 | `0x1000_9000` | `0x1000`    | 9   | browser extension | T23/T26f named agent channel |
 | DRAM          | `0x8000_0000` | *param*     | —   | ✅ base match | `DRAM_BASE`, size = construction parameter |
 
 UART reference clock (`clock-frequency`) = 3 686 400 Hz (`UART_CLOCK_HZ`), matching QEMU virt.
+
+The first eight virtio windows preserve the QEMU-compatible layout. The ninth window is a
+wasm-vm browser extension used for the named virtio-console agent channel; native callers retain
+the historical fixed console slot at window 7.
 
 ## DRAM layout at boot (E2-T13)
 

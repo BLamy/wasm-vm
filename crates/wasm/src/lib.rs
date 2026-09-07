@@ -2298,6 +2298,10 @@ impl WasmLinux {
         // the GPU absent; attachDisplay reports that fact to the loader without replacing a
         // working device.
         let _ = machine.enable_virtio_gpu(Box::new(wasm_vm_core::dev::virtio::gpu::NullSink));
+        // E5-T26f: the browser keeps all established devices and uses the ninth extension window
+        // for the T23 named agent channel. Native callers retain the fixed slot-7 console helper.
+        let _ = machine
+            .enable_virtio_console_at(wasm_vm_core::platform::virt::VIRTIO_COUNT as usize - 1);
         machine.enable_builtin_sbi();
         let out = std::rc::Rc::new(RefCell::new(Vec::new()));
         machine.sbi_set_console(Box::new(BufSink { buf: out.clone() }));
@@ -2419,6 +2423,18 @@ impl WasmLinux {
         Ok(inner.machine.confirm_virtio_console_agent_hello().is_some())
     }
 
+    /// E5-T26f: take the live GPU/input/sound/agent component state at one bounded scheduler
+    /// boundary. The core composes the existing codecs; this boundary only owns the JS byte copy.
+    #[wasm_bindgen(js_name = saveDesktopSnapshot)]
+    pub fn save_desktop_snapshot(&self) -> Result<JsValue, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let blob = inner
+            .machine
+            .save_desktop_snapshot()
+            .map_err(|error| JsError::new(&format!("desktop snapshot save {}", error.code())))?;
+        Ok(js_sys::Uint8Array::from(&blob[..]).into())
+    }
+
     /// E5-T26e: restore the versioned desktop envelope after the host Channel has completed its
     /// fresh HELLO intersection. The returned JSON-safe report is consumed by the T22 viewport
     /// owner; this call never silently attests success when the live console/device composition is
@@ -2464,7 +2480,10 @@ impl WasmLinux {
         set("scanout", size(report.scanout));
         set("hostViewport", size(report.host_viewport));
         set("viewport", JsValue::from_str(disposition));
-        set("agentRehandshake", JsValue::from_bool(report.agent_rehandshake));
+        set(
+            "agentRehandshake",
+            JsValue::from_bool(report.agent_rehandshake),
+        );
         set(
             "inputReleaseEvents",
             JsValue::from_f64(report.input_release_events as f64),
@@ -2473,8 +2492,37 @@ impl WasmLinux {
             "soundXrunEvents",
             JsValue::from_f64(report.sound_xrun_events as f64),
         );
-        set("fullRepairFrame", JsValue::from_bool(report.full_repair_frame));
+        set(
+            "fullRepairFrame",
+            JsValue::from_bool(report.full_repair_frame),
+        );
         Ok(object.into())
+    }
+
+    /// E5-T26f: enqueue one owned host-to-guest frame on the named virtio-console agent port.
+    /// Returning the accepted byte count lets the page Channel fail closed on bounded
+    /// backpressure instead of silently reporting that a frame was delivered.
+    #[wasm_bindgen(js_name = sendAgentInput)]
+    pub fn send_agent_input(&self, bytes: &[u8]) -> Result<u32, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let state = inner
+            .machine
+            .virtio_console()
+            .ok_or_else(|| JsError::new("virtio-console agent is not assembled"))?;
+        let accepted = state.borrow_mut().enqueue_agent_input(bytes);
+        u32::try_from(accepted).map_err(|_| JsError::new("agent input length exceeds u32"))
+    }
+
+    /// E5-T26f: drain complete guest-to-host agent frames after a run slice. The returned copy is
+    /// transferred through the worker protocol and then decoded by the page-owned T23d Channel.
+    #[wasm_bindgen(js_name = takeAgentOutput)]
+    pub fn take_agent_output(&self) -> Result<js_sys::Uint8Array, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some(state) = inner.machine.virtio_console() else {
+            return Ok(js_sys::Uint8Array::new_with_length(0));
+        };
+        let bytes = state.borrow_mut().take_agent_output();
+        Ok(js_sys::Uint8Array::from(bytes.as_slice()))
     }
 
     /// Inspect actual GPU state. Advertised dimensions and bound resource dimensions are

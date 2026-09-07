@@ -59,7 +59,9 @@ export const wasmlinux_restoreDecisionCode: (a: number, b: number, c: number, d:
 export const wasmlinux_restoreDesktopSnapshot: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
 export const wasmlinux_restoreStoredSnapshot: (a: number) => any;
 export const wasmlinux_runChunk: (a: number, b: number, c: number) => [number, number, number];
+export const wasmlinux_saveDesktopSnapshot: (a: number) => [number, number, number];
 export const wasmlinux_saveSnapshot: (a: number) => [number, number, number];
+export const wasmlinux_sendAgentInput: (a: number, b: number, c: number) => [number, number, number];
 export const wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
 export const wasmlinux_sendKeyboardEvent: (a: number, b: number, c: number, d: number) => [number, number];
 export const wasmlinux_sendMouseEvent: (a: number, b: number, c: number, d: number) => [number, number];
@@ -76,6 +78,7 @@ export const wasmlinux_stateDigest: (a: number) => [number, number, number, numb
 export const wasmlinux_syncKeyboard: (a: number) => [number, number];
 export const wasmlinux_syncMouse: (a: number) => [number, number];
 export const wasmlinux_syncTablet: (a: number) => [number, number];
+export const wasmlinux_takeAgentOutput: (a: number) => [number, number, number];
 export const wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
 export const wasmlinux_virtioSndCaptureState: (a: number) => [number, number, number];
 export const wasmlinux_virtioSndConfig: (a: number) => [number, number, number];

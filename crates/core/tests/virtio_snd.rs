@@ -5,12 +5,12 @@ use wasm_vm_core::dev::virtio::snd::{
     CHMAP_INFO_SIZE, ChmapInfo, JACK_INFO_SIZE, JackInfo, PCM_CONTROL_COUNT, PCM_INFO_SIZE,
     PCM_SET_PARAMS_SIZE, PCM_STATE_COUNT, PCM_TRANSITION_ORACLE, PcmControl, PcmInfo, PcmParams,
     PcmState, QueryInfo, TRANSITION_ORACLE, VIRTIO_SND_CHMAP_FL, VIRTIO_SND_CHMAP_FR,
-    VIRTIO_SND_D_OUTPUT, VIRTIO_SND_PCM_FMT_S16, VIRTIO_SND_PCM_RATE_44100,
-    VIRTIO_SND_PCM_RATE_48000, VIRTIO_SND_PCM_RATE_96000, VIRTIO_SND_R_CHMAP_INFO,
-    VIRTIO_SND_R_JACK_INFO, VIRTIO_SND_R_JACK_REMAP, VIRTIO_SND_R_PCM_INFO,
-    VIRTIO_SND_R_PCM_PREPARE, VIRTIO_SND_R_PCM_RELEASE, VIRTIO_SND_R_PCM_START,
-    VIRTIO_SND_R_PCM_STOP, VIRTIO_SND_S_BAD_MSG, VIRTIO_SND_S_NOT_SUPP, VIRTIO_SND_S_OK, VirtioSnd,
-    new, transition,
+    VIRTIO_SND_D_OUTPUT, VIRTIO_SND_PCM_F_EVT_XRUNS, VIRTIO_SND_PCM_FMT_S16,
+    VIRTIO_SND_PCM_RATE_44100, VIRTIO_SND_PCM_RATE_48000, VIRTIO_SND_PCM_RATE_96000,
+    VIRTIO_SND_R_CHMAP_INFO, VIRTIO_SND_R_JACK_INFO, VIRTIO_SND_R_JACK_REMAP,
+    VIRTIO_SND_R_PCM_INFO, VIRTIO_SND_R_PCM_PREPARE, VIRTIO_SND_R_PCM_RELEASE,
+    VIRTIO_SND_R_PCM_START, VIRTIO_SND_R_PCM_STOP, VIRTIO_SND_S_BAD_MSG, VIRTIO_SND_S_NOT_SUPP,
+    VIRTIO_SND_S_OK, VirtioSnd, new, transition,
 };
 
 const EXPECTED_JACK_INFO: [u8; JACK_INFO_SIZE] = [
@@ -222,6 +222,19 @@ fn host_rate_selection_narrows_info_and_rejects_the_other_rate() {
         VIRTIO_SND_S_OK
     );
     assert!(!state.borrow_mut().set_output_sample_rate(96_000));
+}
+
+#[test]
+fn set_params_accepts_advertised_xrun_feature_selected_by_linux() {
+    let mut device = VirtioSnd::new();
+    let params = PcmParams {
+        features: VIRTIO_SND_PCM_F_EVT_XRUNS,
+        ..PcmParams::default()
+    };
+    assert_eq!(
+        status(&device.handle_control(&params.to_bytes())),
+        VIRTIO_SND_S_OK
+    );
 }
 
 #[test]

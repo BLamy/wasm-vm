@@ -247,7 +247,7 @@ pub struct Machine {
     /// out, so the field is inert there.)
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     syscon: Option<dev::syscon::ResetCell>,
-    /// E2-T08: the eight virtio-mmio slots + their PLIC lines (IRQ 1..=8), when
+    /// E2-T08: the nine virtio-mmio slots + their PLIC lines (IRQ 1..=9), when
     /// [`Self::enable_virtio_slots`] attached them. The run loop mirrors each slot's
     /// InterruptStatus level.
     virtio: alloc::vec::Vec<(
@@ -1261,9 +1261,9 @@ impl Machine {
         cell
     }
 
-    /// E2-T08: attach the eight virtio-mmio slots (spec 1.2 §4.2.2, Version=2) at
+    /// E2-T08: attach the virtio-mmio slots (spec 1.2 §4.2.2, Version=2) at
     /// [`platform::virt::VIRTIO_BASE`]`+ i*stride`, each wired to PLIC IRQ `1+i`. Slot 0
-    /// gets `slot0` as its backend (E2-T11 plugs the real blk device in); slots 1..=7 are
+    /// gets `slot0` as its backend (E2-T11 plugs the real blk device in); remaining slots are
     /// EMPTY (`DeviceID` 0 — the kernel skips them silently). Requires
     /// [`Self::enable_plic`] first. Returns the slot handles (tests/backends raise
     /// used/config interrupts and inspect queue state through them).
@@ -1411,7 +1411,7 @@ impl Machine {
     }
 
     /// E3-T13: attach a virtio-net device (DeviceID 1) backed by `backend` in slot 1. The
-    /// eight slots must already exist ([`Self::enable_virtio_blk`] or
+    /// nine slots must already exist ([`Self::enable_virtio_blk`] or
     /// [`Self::enable_virtio_slots`] first) — net installs into the empty slot 1 (the DTB
     /// already advertises all eight windows, so the kernel probes it with no DTB change).
     /// Returns (slot-1 handle, shared net state — inspect `rx_dropped`/`tx_count`, drive the
@@ -1458,7 +1458,7 @@ impl Machine {
         Ok(())
     }
 
-    /// Attach a virtio-rng device (DeviceID 4) backed by `source` in slot 2. The eight slots must
+    /// Attach a virtio-rng device (DeviceID 4) backed by `source` in slot 2. The nine slots must
     /// already exist ([`Self::enable_virtio_slots`]/`enable_virtio_blk` first) — rng installs into
     /// the empty slot 2 (the DTB already advertises all eight windows, so the kernel's
     /// `virtio-rng`/`rng-core` probe binds it with no DTB change). The kernel feeds the delivered
@@ -1489,7 +1489,7 @@ impl Machine {
         (alloc::rc::Rc::clone(&self.virtio[2].0), state)
     }
 
-    /// E5-T11b: attach the concrete virtio-input keyboard in slot 3. The standard eight slots
+    /// E5-T11b: attach the concrete virtio-input keyboard in slot 3. The standard nine slots
     /// must already exist (`enable_virtio_slots`/`enable_virtio_blk` first); slot 3 is reserved
     /// for the keyboard so GPU slot 0, net slot 1, and rng slot 2 retain their established shape.
     /// Returns the slot, event/status queue state, and host-owned LED indicator handle.
@@ -1552,7 +1552,7 @@ impl Machine {
     }
 
     /// E5-T14a: attach the absolute tablet in slot 4 and relative mouse in slot 5. The standard
-    /// eight slots must already exist; both queue states stay independent so the host can route a
+    /// nine slots must already exist; both queue states stay independent so the host can route a
     /// selected pointer mode without changing the keyboard's slot or pending frames. Returns
     /// `(tablet_slot, tablet_state, mouse_slot, mouse_state)`.
     #[allow(clippy::type_complexity)]
@@ -1872,9 +1872,122 @@ impl Machine {
         *self.desktop_restore_host.borrow()
     }
 
-    /// E5-T23b: attach the six-queue virtio-console device (DeviceID 3) in the reserved final
-    /// slot.  Port 0 keeps the standard virtio-console queue pair; port 1 is the named
-    /// `org.wasmvm.agent` channel.  The existing UART/SBI console remains at its original MMIO
+    /// E5-T26f: compose the live desktop component codecs into one versioned browser snapshot.
+    /// The worker calls this only at a scheduler boundary, and the existing bounded block-device
+    /// quiesce gate runs first so a parked virtio-blk descriptor is never copied into the desktop
+    /// envelope. Device codecs remain the owners of their payload semantics; this method only
+    /// supplies the canonical section order and the current deterministic boundary id.
+    pub fn save_desktop_snapshot(
+        &mut self,
+    ) -> Result<alloc::vec::Vec<u8>, desktop_snapshot::DesktopSnapshotSaveError> {
+        self.quiesce()
+            .map_err(|_| desktop_snapshot::DesktopSnapshotSaveError::BlockNotQuiesced)?;
+
+        let gpu = self
+            .gpu
+            .as_ref()
+            .map(|(state, _, _, _)| alloc::rc::Rc::clone(state))
+            .ok_or(
+                desktop_snapshot::DesktopSnapshotSaveError::MissingComponent {
+                    tag: desktop_snapshot::section::GPU,
+                },
+            )?;
+        let input = self
+            .keyboard
+            .as_ref()
+            .map(|(state, _, _)| alloc::rc::Rc::clone(state))
+            .ok_or(
+                desktop_snapshot::DesktopSnapshotSaveError::MissingComponent {
+                    tag: desktop_snapshot::section::INPUT,
+                },
+            )?;
+        let sound = self
+            .snd
+            .as_ref()
+            .map(|(_, state, _, _, _, _, _, _, _)| alloc::rc::Rc::clone(state))
+            .ok_or(
+                desktop_snapshot::DesktopSnapshotSaveError::MissingComponent {
+                    tag: desktop_snapshot::section::SOUND,
+                },
+            )?;
+        let console = self.console.as_ref().ok_or(
+            desktop_snapshot::DesktopSnapshotSaveError::MissingComponent {
+                tag: desktop_snapshot::section::AGENT,
+            },
+        )?;
+
+        let gpu_payload = gpu.borrow().to_snapshot().map_err(|_| {
+            desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                tag: desktop_snapshot::section::GPU,
+            }
+        })?;
+        let input_payload = input.borrow().to_snapshot().map_err(|_| {
+            desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                tag: desktop_snapshot::section::INPUT,
+            }
+        })?;
+        let sound_payload = sound.borrow().to_snapshot().map_err(|_| {
+            desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                tag: desktop_snapshot::section::SOUND,
+            }
+        })?;
+        let agent_payload = console.state.borrow().generation().to_le_bytes();
+
+        let mut builder = desktop_snapshot::DesktopSnapshotBuilder::new(self.irqstats.retired);
+        builder
+            .section(
+                desktop_snapshot::section::GPU,
+                desktop_snapshot::FORMAT_VERSION,
+                &gpu_payload,
+            )
+            .map_err(
+                |_| desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                    tag: desktop_snapshot::section::GPU,
+                },
+            )?;
+        builder
+            .section(
+                desktop_snapshot::section::INPUT,
+                desktop_snapshot::FORMAT_VERSION,
+                &input_payload,
+            )
+            .map_err(
+                |_| desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                    tag: desktop_snapshot::section::INPUT,
+                },
+            )?;
+        builder
+            .section(
+                desktop_snapshot::section::SOUND,
+                desktop_snapshot::FORMAT_VERSION,
+                &sound_payload,
+            )
+            .map_err(
+                |_| desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                    tag: desktop_snapshot::section::SOUND,
+                },
+            )?;
+        builder
+            .section(
+                desktop_snapshot::section::AGENT,
+                desktop_snapshot::FORMAT_VERSION,
+                &agent_payload,
+            )
+            .map_err(
+                |_| desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                    tag: desktop_snapshot::section::AGENT,
+                },
+            )?;
+        builder.finish().map_err(
+            |_| desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                tag: desktop_snapshot::section::AGENT,
+            },
+        )
+    }
+
+    /// E5-T23b: attach the six-queue virtio-console device (DeviceID 3) in the reserved native
+    /// slot. Port 0 keeps the standard virtio-console queue pair; port 1 is the named
+    /// `org.wasmvm.agent` channel. The existing UART/SBI console remains at its original MMIO
     /// address and has no shared queue or buffer with this device.
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_console(
@@ -1883,7 +1996,20 @@ impl Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::console::ConsoleState>>,
     ) {
-        let slot_index = dev::virtio::console::VIRTIO_CONSOLE_SLOT;
+        self.enable_virtio_console_at(dev::virtio::console::VIRTIO_CONSOLE_SLOT)
+    }
+
+    /// Attach the same console service at an explicitly selected empty slot. The browser uses
+    /// the ninth platform window so it can retain the established net/rng/input/sound/GPU layout;
+    /// native callers should use [`Self::enable_virtio_console`] to keep the fixed slot-7 contract.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_console_at(
+        &mut self,
+        slot_index: usize,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::console::ConsoleState>>,
+    ) {
         assert!(
             self.virtio.len() > slot_index,
             "enable_virtio_slots/enable_virtio_blk before enable_virtio_console"
