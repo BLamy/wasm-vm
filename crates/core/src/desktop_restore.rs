@@ -11,7 +11,13 @@
 //! particular virtio device layout. Browser/native hosts adapt their existing T26b--d, T22b, and
 //! T23d contracts to the callbacks below.
 
+use alloc::{boxed::Box, rc::Rc, vec::Vec};
+use core::cell::RefCell;
+
 use crate::desktop_snapshot::{DesktopSnapshot, DesktopSnapshotError, section};
+use crate::dev::virtio::gpu::{FrameSink, GpuState, Rect, VirtioGpu};
+use crate::dev::virtio::input::{InputDeviceSpec, InputState, VirtioInput};
+use crate::dev::virtio::snd::{SndState, VirtioSnd};
 
 /// The maximum guest/host pixel dimension accepted by the desktop restore coordinator.
 ///
@@ -89,12 +95,42 @@ impl RestoreCallbackError {
     }
 }
 
-/// Effects observed at the one live-state commit point.
+/// Opaque proof that all detached restore preparation, including the repair frame, completed.
+///
+/// The fields and constructor are private on purpose. A backend cannot manufacture a successful
+/// commit token from a post-commit Boolean; it must return the token supplied by this coordinator's
+/// pre-commit preparation path.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct DesktopRestoreEffects {
-    /// A valid restore must publish one full scanout repair frame. A backend that cannot do so
-    /// returns `false`, which the coordinator treats as a failed restore and cold-boots.
-    pub full_repair_frame: bool,
+pub struct DesktopRestorePreparation {
+    scanout: DisplaySize,
+    host_viewport: DisplaySize,
+    disposition: ViewportDisposition,
+}
+
+impl DesktopRestorePreparation {
+    fn new(
+        scanout: DisplaySize,
+        host_viewport: DisplaySize,
+        disposition: ViewportDisposition,
+    ) -> Self {
+        Self {
+            scanout,
+            host_viewport,
+            disposition,
+        }
+    }
+}
+
+/// Opaque proof returned only by a successful live-state commit.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct DesktopRestoreCommit {
+    _private: (),
+}
+
+impl DesktopRestoreCommit {
+    fn new() -> Self {
+        Self { _private: () }
+    }
 }
 
 /// A fully reconciled desktop restore report.
@@ -158,9 +194,12 @@ impl DesktopRestoreError {
 /// `prepare_component` must validate and stage GPU, input, and sound state in detached storage;
 /// it must not replace live state. `prepare_agent_rehandshake` must wait for the existing T23d
 /// HELLO/Channel generation and stage any reconnect bookkeeping without publishing stale data.
-/// `prepare_viewport` must use T22b's fixed viewport and native-pixel letterbox policy. Only
-/// `commit` may publish the staged state. If `commit` returns an error, the adapter must treat its
-/// live state as unusable; the coordinator will still call both cleanup hooks before cold boot.
+/// `prepare_viewport` must use T22b's fixed viewport and native-pixel letterbox policy.
+/// `prepare_full_repair` must prove that the detached GPU restore emitted the one required repair
+/// frame before publication. Only `commit` may publish the staged state, and it receives the
+/// opaque preparation token rather than a forgeable success Boolean. If `commit` returns an error,
+/// the adapter must roll back or treat its live state as unusable; the coordinator will still call
+/// both cleanup hooks before cold boot.
 pub trait DesktopRestoreBackend {
     /// Validate/stage one of GPU, input, or sound. The callback is invoked in
     /// [`RESTORE_COMPONENT_ORDER`] order, excluding the agent section.
@@ -182,9 +221,22 @@ pub trait DesktopRestoreBackend {
         disposition: ViewportDisposition,
     ) -> Result<(), RestoreCallbackError>;
 
-    /// Atomically publish staged guest devices, agent generation, viewport, and one full repair
-    /// frame. Returning `full_repair_frame: false` is a refusal.
-    fn commit(&mut self) -> Result<DesktopRestoreEffects, RestoreCallbackError>;
+    /// Prove that the detached staged devices can produce the required full repair frame. This is
+    /// deliberately before the live-state commit point.
+    fn prepare_full_repair(
+        &mut self,
+        scanout: DisplaySize,
+        host_viewport: DisplaySize,
+        disposition: ViewportDisposition,
+    ) -> Result<DesktopRestorePreparation, RestoreCallbackError>;
+
+    /// Atomically publish staged guest devices, agent generation, viewport, and the already-proven
+    /// repair frame. The private token makes success a typed transaction state, not a callback
+    /// attestation that can be returned after a partial publication.
+    fn commit(
+        &mut self,
+        preparation: DesktopRestorePreparation,
+    ) -> Result<DesktopRestoreCommit, RestoreCallbackError>;
 
     /// Clear queues, reconnect attempts, timers, and other transient reconciliation work after a
     /// refusal. This must be idempotent.
@@ -356,8 +408,8 @@ impl DesktopRestoreCoordinator {
             );
         }
 
-        let effects = match backend.commit() {
-            Ok(effects) => effects,
+        let preparation = match backend.prepare_full_repair(scanout, host_viewport, disposition) {
+            Ok(preparation) => preparation,
             Err(error) => {
                 return self.abort(
                     backend,
@@ -365,14 +417,15 @@ impl DesktopRestoreCoordinator {
                 );
             }
         };
-        if !effects.full_repair_frame {
-            return self.abort(
-                backend,
-                DesktopRestoreError::CommitRefused {
-                    code: "missing_full_repair_frame",
-                },
-            );
-        }
+        let _commit = match backend.commit(preparation) {
+            Ok(commit) => commit,
+            Err(error) => {
+                return self.abort(
+                    backend,
+                    DesktopRestoreError::CommitRefused { code: error.code() },
+                );
+            }
+        };
 
         Ok(DesktopRestoreReport {
             boundary_id: snapshot.boundary_id(),
@@ -383,7 +436,7 @@ impl DesktopRestoreCoordinator {
             agent_rehandshake: true,
             input_release_events: input_preparation.input_release_events,
             sound_xrun_events: sound_preparation.sound_xrun_events,
-            full_repair_frame: effects.full_repair_frame,
+            full_repair_frame: true,
         })
     }
 
@@ -395,6 +448,354 @@ impl DesktopRestoreCoordinator {
         backend.clear_transient_reconciliation();
         backend.cold_boot_fallback();
         Err(error)
+    }
+}
+
+/// Host-side state that is published together with a successful composite restore.
+///
+/// The browser/native presentation layer can copy this small value into its own viewport and
+/// agent bookkeeping. Keeping it in the concrete adapter makes the native proof exercise the same
+/// state transition as the production coordinator rather than a mock Boolean callback.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct DesktopRestoreHostState {
+    pub agent_generation: u64,
+    pub agent_ready: bool,
+    pub viewport: Option<(DisplaySize, DisplaySize, ViewportDisposition)>,
+    pub repair_frames: u32,
+}
+
+type ViewportPlan = (DisplaySize, DisplaySize, ViewportDisposition);
+
+#[derive(Debug)]
+struct RepairFrameCounter {
+    frames: Rc<RefCell<u32>>,
+}
+
+impl FrameSink for RepairFrameCounter {
+    fn flush(
+        &mut self,
+        _scanout: Option<u32>,
+        _format: u32,
+        _rect: Rect,
+        _resource_width: u32,
+        _resource_height: u32,
+        _pixels: &[u32],
+    ) {
+        let mut frames = self.frames.borrow_mut();
+        *frames = frames.saturating_add(1);
+    }
+}
+
+/// Concrete native adapter for the T26b--d codecs and the T23/T22 host boundary.
+///
+/// Each component is decoded into a detached device first. `prepare_full_repair` requires the
+/// detached GPU codec to have emitted exactly one frame before `commit` can be called. The live
+/// devices are then updated in one adapter transaction with serialized rollback snapshots; a
+/// failure after any individual device update restores the prior state and the coordinator's
+/// cold-boot hook resets all three devices plus host state.
+pub struct VirtioDesktopRestoreBackend {
+    gpu: Rc<RefCell<GpuState>>,
+    input: Rc<RefCell<InputState>>,
+    sound: Rc<RefCell<SndState>>,
+    cold_gpu: Vec<u8>,
+    cold_input: Vec<u8>,
+    cold_sound: Vec<u8>,
+    staged_gpu: Option<Vec<u8>>,
+    staged_input: Option<Vec<u8>>,
+    staged_sound: Option<Vec<u8>>,
+    staged_gpu_scanout: Option<DisplaySize>,
+    staged_gpu_has_scanout: bool,
+    staged_gpu_repair_frames: u32,
+    staged_input_release_events: u32,
+    staged_sound_xrun_events: u32,
+    staged_agent_generation: Option<u64>,
+    staged_viewport: Option<ViewportPlan>,
+    host: DesktopRestoreHostState,
+    agent_available: bool,
+    viewport_available: bool,
+    fail_commit_after_gpu: bool,
+}
+
+impl VirtioDesktopRestoreBackend {
+    /// Capture the clean device snapshots used by the cold-boot fallback.
+    pub fn new(
+        gpu: Rc<RefCell<GpuState>>,
+        input: Rc<RefCell<InputState>>,
+        sound: Rc<RefCell<SndState>>,
+    ) -> Result<Self, RestoreCallbackError> {
+        let cold_gpu = gpu
+            .borrow()
+            .to_snapshot()
+            .map_err(|_| RestoreCallbackError::new("gpu_cold_snapshot_unavailable"))?;
+        let cold_input = input
+            .borrow()
+            .to_snapshot()
+            .map_err(|_| RestoreCallbackError::new("input_cold_snapshot_unavailable"))?;
+        let cold_sound = sound
+            .borrow()
+            .to_snapshot()
+            .map_err(|_| RestoreCallbackError::new("sound_cold_snapshot_unavailable"))?;
+        Ok(Self {
+            gpu,
+            input,
+            sound,
+            cold_gpu,
+            cold_input,
+            cold_sound,
+            staged_gpu: None,
+            staged_input: None,
+            staged_sound: None,
+            staged_gpu_scanout: None,
+            staged_gpu_has_scanout: false,
+            staged_gpu_repair_frames: 0,
+            staged_input_release_events: 0,
+            staged_sound_xrun_events: 0,
+            staged_agent_generation: None,
+            staged_viewport: None,
+            host: DesktopRestoreHostState::default(),
+            agent_available: true,
+            viewport_available: true,
+            fail_commit_after_gpu: false,
+        })
+    }
+
+    /// Host-facing state published by the last successful commit.
+    pub const fn host_state(&self) -> DesktopRestoreHostState {
+        self.host
+    }
+
+    /// Make the agent handshake refuse during a native adversarial run.
+    pub fn set_agent_available(&mut self, available: bool) {
+        self.agent_available = available;
+    }
+
+    /// Make the viewport publication refuse during a native adversarial run.
+    pub fn set_viewport_available(&mut self, available: bool) {
+        self.viewport_available = available;
+    }
+
+    /// Inject a bounded failure after the live GPU has been restored, exercising rollback and the
+    /// coordinator's cold fallback without weakening the normal success path.
+    pub fn set_fail_commit_after_gpu(&mut self, fail: bool) {
+        self.fail_commit_after_gpu = fail;
+    }
+
+    fn refusal(code: &'static str) -> RestoreCallbackError {
+        RestoreCallbackError::new(code)
+    }
+
+    fn clear_staged(&mut self) {
+        self.staged_gpu = None;
+        self.staged_input = None;
+        self.staged_sound = None;
+        self.staged_gpu_scanout = None;
+        self.staged_gpu_has_scanout = false;
+        self.staged_gpu_repair_frames = 0;
+        self.staged_input_release_events = 0;
+        self.staged_sound_xrun_events = 0;
+        self.staged_agent_generation = None;
+        self.staged_viewport = None;
+    }
+
+    fn rollback(&self, gpu: &[u8], input: &[u8], sound: &[u8]) {
+        let _ = self.gpu.borrow_mut().restore_snapshot(gpu);
+        let _ = self.input.borrow_mut().restore_snapshot(input);
+        let _ = self.sound.borrow_mut().restore_snapshot(sound);
+    }
+}
+
+impl DesktopRestoreBackend for VirtioDesktopRestoreBackend {
+    fn prepare_component(
+        &mut self,
+        tag: u16,
+        payload: &[u8],
+    ) -> Result<ComponentPreparation, RestoreCallbackError> {
+        match tag {
+            section::GPU => {
+                let frames = Rc::new(RefCell::new(0));
+                let (_, state) = VirtioGpu::new_with_sink_state(Box::new(RepairFrameCounter {
+                    frames: Rc::clone(&frames),
+                }));
+                state
+                    .borrow_mut()
+                    .restore_snapshot(payload)
+                    .map_err(|_| Self::refusal("gpu_snapshot_refused"))?;
+                let state = state.borrow();
+                let (width, height) = state.display_size();
+                let scanout = DisplaySize::new(width, height);
+                self.staged_gpu = Some(payload.to_vec());
+                self.staged_gpu_scanout = Some(scanout);
+                self.staged_gpu_has_scanout = state.scanout_resource.is_some();
+                self.staged_gpu_repair_frames = *frames.borrow();
+                Ok(ComponentPreparation {
+                    scanout: Some(scanout),
+                    ..ComponentPreparation::default()
+                })
+            }
+            section::INPUT => {
+                let (_, state) = VirtioInput::new_with_state(InputDeviceSpec::default());
+                let report = state
+                    .borrow_mut()
+                    .restore_snapshot(payload)
+                    .map_err(|_| Self::refusal("input_snapshot_refused"))?;
+                let release_events = u32::try_from(report.release_events.len())
+                    .map_err(|_| Self::refusal("input_release_count_overflow"))?;
+                self.staged_input = Some(payload.to_vec());
+                self.staged_input_release_events = release_events;
+                Ok(ComponentPreparation {
+                    input_release_events: release_events,
+                    ..ComponentPreparation::default()
+                })
+            }
+            section::SOUND => {
+                let (_, state) = VirtioSnd::new_with_state();
+                let report = state
+                    .borrow_mut()
+                    .restore_snapshot(payload)
+                    .map_err(|_| Self::refusal("sound_snapshot_refused"))?;
+                self.staged_sound = Some(payload.to_vec());
+                self.staged_sound_xrun_events = report.xrun_events;
+                Ok(ComponentPreparation {
+                    sound_xrun_events: report.xrun_events,
+                    ..ComponentPreparation::default()
+                })
+            }
+            _ => Err(Self::refusal("unknown_restore_component")),
+        }
+    }
+
+    fn prepare_agent_rehandshake(&mut self, payload: &[u8]) -> Result<(), RestoreCallbackError> {
+        if !self.agent_available {
+            return Err(Self::refusal("agent_channel_dropped"));
+        }
+        let bytes: [u8; 8] = payload
+            .try_into()
+            .map_err(|_| Self::refusal("agent_generation_invalid"))?;
+        self.staged_agent_generation = Some(u64::from_le_bytes(bytes));
+        Ok(())
+    }
+
+    fn prepare_viewport(
+        &mut self,
+        scanout: DisplaySize,
+        host_viewport: DisplaySize,
+        disposition: ViewportDisposition,
+    ) -> Result<(), RestoreCallbackError> {
+        if !self.viewport_available {
+            return Err(Self::refusal("viewport_unavailable"));
+        }
+        self.staged_viewport = Some((scanout, host_viewport, disposition));
+        Ok(())
+    }
+
+    fn prepare_full_repair(
+        &mut self,
+        scanout: DisplaySize,
+        host_viewport: DisplaySize,
+        disposition: ViewportDisposition,
+    ) -> Result<DesktopRestorePreparation, RestoreCallbackError> {
+        if self.staged_gpu.is_none()
+            || self.staged_input.is_none()
+            || self.staged_sound.is_none()
+            || self.staged_agent_generation.is_none()
+            || self.staged_viewport != Some((scanout, host_viewport, disposition))
+            || self.staged_gpu_scanout != Some(scanout)
+            || !self.staged_gpu_has_scanout
+            || self.staged_gpu_repair_frames != 1
+        {
+            return Err(Self::refusal("missing_full_repair_frame"));
+        }
+        Ok(DesktopRestorePreparation::new(
+            scanout,
+            host_viewport,
+            disposition,
+        ))
+    }
+
+    fn commit(
+        &mut self,
+        preparation: DesktopRestorePreparation,
+    ) -> Result<DesktopRestoreCommit, RestoreCallbackError> {
+        let Some(gpu_payload) = self.staged_gpu.as_deref() else {
+            return Err(Self::refusal("gpu_not_staged"));
+        };
+        let Some(input_payload) = self.staged_input.as_deref() else {
+            return Err(Self::refusal("input_not_staged"));
+        };
+        let Some(sound_payload) = self.staged_sound.as_deref() else {
+            return Err(Self::refusal("sound_not_staged"));
+        };
+        let Some(agent_generation) = self.staged_agent_generation else {
+            return Err(Self::refusal("agent_not_staged"));
+        };
+        if self.staged_viewport
+            != Some((
+                preparation.scanout,
+                preparation.host_viewport,
+                preparation.disposition,
+            ))
+        {
+            return Err(Self::refusal("stale_restore_preparation"));
+        }
+
+        let gpu_before = self
+            .gpu
+            .borrow()
+            .to_snapshot()
+            .map_err(|_| Self::refusal("gpu_rollback_snapshot_unavailable"))?;
+        let input_before = self
+            .input
+            .borrow()
+            .to_snapshot()
+            .map_err(|_| Self::refusal("input_rollback_snapshot_unavailable"))?;
+        let sound_before = self
+            .sound
+            .borrow()
+            .to_snapshot()
+            .map_err(|_| Self::refusal("sound_rollback_snapshot_unavailable"))?;
+
+        let result = if self.gpu.borrow_mut().restore_snapshot(gpu_payload).is_err() {
+            Err(Self::refusal("gpu_commit_refused"))
+        } else if self.fail_commit_after_gpu {
+            Err(Self::refusal("commit_injected_failure"))
+        } else if self
+            .input
+            .borrow_mut()
+            .restore_snapshot(input_payload)
+            .is_err()
+        {
+            Err(Self::refusal("input_commit_refused"))
+        } else if self
+            .sound
+            .borrow_mut()
+            .restore_snapshot(sound_payload)
+            .is_err()
+        {
+            Err(Self::refusal("sound_commit_refused"))
+        } else {
+            Ok(())
+        };
+        if let Err(error) = result {
+            self.rollback(&gpu_before, &input_before, &sound_before);
+            return Err(error);
+        }
+
+        self.host.agent_generation = agent_generation;
+        self.host.agent_ready = true;
+        self.host.viewport = self.staged_viewport;
+        self.host.repair_frames = self.host.repair_frames.saturating_add(1);
+        self.clear_staged();
+        Ok(DesktopRestoreCommit::new())
+    }
+
+    fn clear_transient_reconciliation(&mut self) {
+        self.clear_staged();
+    }
+
+    fn cold_boot_fallback(&mut self) {
+        self.rollback(&self.cold_gpu, &self.cold_input, &self.cold_sound);
+        self.host = DesktopRestoreHostState::default();
+        self.clear_staged();
     }
 }
 

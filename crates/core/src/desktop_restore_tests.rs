@@ -1,11 +1,15 @@
 //! Deterministic adversarial proof for the E5-T26e restore transaction.
 
 use super::{
-    ComponentPreparation, DesktopRestoreBackend, DesktopRestoreCoordinator, DesktopRestoreEffects,
-    DesktopRestoreError, DisplaySize, RESTORE_COMPONENT_ORDER, RestoreCallbackError,
-    ViewportDisposition,
+    ComponentPreparation, DesktopRestoreBackend, DesktopRestoreCommit, DesktopRestoreCoordinator,
+    DesktopRestoreError, DesktopRestorePreparation, DisplaySize, RESTORE_COMPONENT_ORDER,
+    RestoreCallbackError, ViewportDisposition, VirtioDesktopRestoreBackend,
 };
 use crate::desktop_snapshot::{DesktopSnapshotBuilder, FORMAT_VERSION, section};
+use crate::dev::virtio::gpu::VirtioGpu;
+use crate::dev::virtio::gpu::protocol;
+use crate::dev::virtio::input::{InputDeviceSpec, VirtioInput};
+use crate::dev::virtio::snd::VirtioSnd;
 use alloc::vec::Vec;
 
 fn composite_snapshot() -> Vec<u8> {
@@ -25,6 +29,75 @@ fn composite_snapshot() -> Vec<u8> {
     builder.finish().unwrap()
 }
 
+struct ActualSnapshot {
+    blob: Vec<u8>,
+    gpu: Vec<u8>,
+    input: Vec<u8>,
+    sound: Vec<u8>,
+}
+
+fn actual_snapshot() -> ActualSnapshot {
+    let (_, source_gpu) = VirtioGpu::new_with_state();
+    {
+        let mut state = source_gpu.borrow_mut();
+        state.set_display(1280, 720);
+        let resource = state
+            .resources
+            .create(7, protocol::FORMAT_R8G8B8A8_UNORM, 4, 2)
+            .unwrap();
+        for (index, pixel) in resource.host_pixels.iter_mut().enumerate() {
+            *pixel = 0x1100_0000 | index as u32;
+        }
+        resource.presented = true;
+        state.scanout_resource = Some(7);
+    }
+    let gpu = source_gpu.borrow().to_snapshot().unwrap();
+
+    let (_, source_input) = VirtioInput::new_with_state(InputDeviceSpec::default());
+    let input = source_input.borrow().to_snapshot().unwrap();
+
+    let (_, source_sound) = VirtioSnd::new_with_state();
+    let sound = source_sound.borrow().to_snapshot().unwrap();
+
+    let mut builder = DesktopSnapshotBuilder::new(0x2026_0907);
+    builder.section(section::GPU, FORMAT_VERSION, &gpu).unwrap();
+    builder
+        .section(section::INPUT, FORMAT_VERSION, &input)
+        .unwrap();
+    builder
+        .section(section::SOUND, FORMAT_VERSION, &sound)
+        .unwrap();
+    builder
+        .section(section::AGENT, FORMAT_VERSION, &17u64.to_le_bytes())
+        .unwrap();
+    ActualSnapshot {
+        blob: builder.finish().unwrap(),
+        gpu,
+        input,
+        sound,
+    }
+}
+
+type ConcreteRig = (
+    VirtioDesktopRestoreBackend,
+    alloc::rc::Rc<core::cell::RefCell<crate::dev::virtio::gpu::GpuState>>,
+    alloc::rc::Rc<core::cell::RefCell<crate::dev::virtio::input::InputState>>,
+    alloc::rc::Rc<core::cell::RefCell<crate::dev::virtio::snd::SndState>>,
+);
+
+fn concrete_backend() -> ConcreteRig {
+    let (_, gpu) = VirtioGpu::new_with_state();
+    let (_, input) = VirtioInput::new_with_state(InputDeviceSpec::default());
+    let (_, sound) = VirtioSnd::new_with_state();
+    let backend = VirtioDesktopRestoreBackend::new(
+        alloc::rc::Rc::clone(&gpu),
+        alloc::rc::Rc::clone(&input),
+        alloc::rc::Rc::clone(&sound),
+    )
+    .unwrap();
+    (backend, gpu, input, sound)
+}
+
 #[derive(Debug)]
 struct RecordingBackend {
     actions: Vec<&'static str>,
@@ -32,7 +105,8 @@ struct RecordingBackend {
     refuse_agent: bool,
     refuse_viewport: bool,
     refuse_commit: bool,
-    publish_repair: bool,
+    refuse_repair: bool,
+    commit_after_publication_failure: bool,
     committed: bool,
     fallback: bool,
     staged: bool,
@@ -47,7 +121,8 @@ impl RecordingBackend {
             refuse_agent: false,
             refuse_viewport: false,
             refuse_commit: false,
-            publish_repair: true,
+            refuse_repair: false,
+            commit_after_publication_failure: false,
             committed: false,
             fallback: false,
             staged: false,
@@ -120,15 +195,36 @@ impl DesktopRestoreBackend for RecordingBackend {
         Ok(())
     }
 
-    fn commit(&mut self) -> Result<DesktopRestoreEffects, RestoreCallbackError> {
+    fn prepare_full_repair(
+        &mut self,
+        scanout: DisplaySize,
+        host_viewport: DisplaySize,
+        disposition: ViewportDisposition,
+    ) -> Result<DesktopRestorePreparation, RestoreCallbackError> {
+        self.actions.push("repair");
+        if self.refuse_repair {
+            return Err(Self::refusal("missing_full_repair_frame"));
+        }
+        Ok(DesktopRestorePreparation::new(
+            scanout,
+            host_viewport,
+            disposition,
+        ))
+    }
+
+    fn commit(
+        &mut self,
+        _preparation: DesktopRestorePreparation,
+    ) -> Result<DesktopRestoreCommit, RestoreCallbackError> {
         self.actions.push("commit");
         if self.refuse_commit {
             return Err(Self::refusal("commit_race"));
         }
         self.committed = true;
-        Ok(DesktopRestoreEffects {
-            full_repair_frame: self.publish_repair,
-        })
+        if self.commit_after_publication_failure {
+            return Err(Self::refusal("commit_after_publication"));
+        }
+        Ok(DesktopRestoreCommit::new())
     }
 
     fn clear_transient_reconciliation(&mut self) {
@@ -162,6 +258,7 @@ fn valid_composite_restore_stages_in_dependency_order_and_repairs() {
             "sound",
             "agent",
             "viewport-native",
+            "repair",
             "commit"
         ]
     );
@@ -269,7 +366,7 @@ fn viewport_and_repair_failures_use_the_same_clean_fallback() {
     assert_eq!(viewport_backend.actions.last(), Some(&"cold"));
 
     let mut repair_backend = RecordingBackend::new();
-    repair_backend.publish_repair = false;
+    repair_backend.refuse_repair = true;
     let repair_error = coordinator
         .restore(
             &composite_snapshot(),
@@ -286,12 +383,30 @@ fn viewport_and_repair_failures_use_the_same_clean_fallback() {
             "sound",
             "agent",
             "viewport-native",
-            "commit",
+            "repair",
             "clear",
             "cold"
         ]
     );
     assert!(repair_backend.fallback);
+}
+
+#[test]
+fn commit_failure_after_publication_is_cold_booted() {
+    let mut backend = RecordingBackend::new();
+    backend.commit_after_publication_failure = true;
+    let mut coordinator = DesktopRestoreCoordinator::new();
+    let error = coordinator
+        .restore(
+            &composite_snapshot(),
+            DisplaySize::new(1280, 720),
+            &mut backend,
+        )
+        .unwrap_err();
+
+    assert_eq!(error.code(), "commit_refused");
+    assert!(backend.committed);
+    assert_eq!(backend.actions.last(), Some(&"cold"));
 }
 
 #[test]
@@ -354,4 +469,158 @@ fn invalid_host_dimensions_are_rejected_before_callbacks() {
         .unwrap_err();
     assert_eq!(error.code(), "invalid_display_size");
     assert_eq!(backend.actions, ["clear", "cold"]);
+}
+
+#[test]
+fn concrete_backend_round_trips_the_t26b_to_d_codecs_and_host_state() {
+    let snapshot = actual_snapshot();
+    let (mut backend, gpu, input, sound) = concrete_backend();
+    let mut coordinator = DesktopRestoreCoordinator::new();
+    let report = coordinator
+        .restore(&snapshot.blob, DisplaySize::new(1024, 768), &mut backend)
+        .unwrap();
+
+    assert_eq!(report.viewport, ViewportDisposition::Letterbox);
+    assert!(report.full_repair_frame);
+    assert_eq!(report.input_release_events, 0);
+    assert_eq!(report.sound_xrun_events, 0);
+    assert_eq!(gpu.borrow().scanout_resource, Some(7));
+    assert_eq!(gpu.borrow().to_snapshot().unwrap(), snapshot.gpu);
+    assert_eq!(input.borrow().to_snapshot().unwrap(), snapshot.input);
+    assert_eq!(sound.borrow().to_snapshot().unwrap(), snapshot.sound);
+    assert_eq!(
+        backend.host_state(),
+        super::DesktopRestoreHostState {
+            agent_generation: 17,
+            agent_ready: true,
+            viewport: Some((
+                DisplaySize::new(1280, 720),
+                DisplaySize::new(1024, 768),
+                ViewportDisposition::Letterbox,
+            )),
+            repair_frames: 1,
+        }
+    );
+}
+
+#[test]
+fn concrete_backend_refusals_leave_all_devices_in_the_cold_state() {
+    let snapshot = actual_snapshot();
+    let cases = [
+        ("gpu", {
+            let mut payload = snapshot.gpu.clone();
+            payload[0] ^= 1;
+            payload
+        }),
+        ("input", {
+            let mut payload = snapshot.input.clone();
+            payload[0] ^= 1;
+            payload
+        }),
+        ("sound", {
+            let mut payload = snapshot.sound.clone();
+            payload[0] ^= 1;
+            payload
+        }),
+    ];
+
+    for (name, payload) in cases {
+        let mut builder = DesktopSnapshotBuilder::new(0x2026_0907);
+        let gpu_payload = if name == "gpu" {
+            payload.as_slice()
+        } else {
+            snapshot.gpu.as_slice()
+        };
+        let input_payload = if name == "input" {
+            payload.as_slice()
+        } else {
+            snapshot.input.as_slice()
+        };
+        let sound_payload = if name == "sound" {
+            payload.as_slice()
+        } else {
+            snapshot.sound.as_slice()
+        };
+        builder
+            .section(section::GPU, FORMAT_VERSION, gpu_payload)
+            .unwrap();
+        builder
+            .section(section::INPUT, FORMAT_VERSION, input_payload)
+            .unwrap();
+        builder
+            .section(section::SOUND, FORMAT_VERSION, sound_payload)
+            .unwrap();
+        builder
+            .section(section::AGENT, FORMAT_VERSION, &17u64.to_le_bytes())
+            .unwrap();
+        let blob = builder.finish().unwrap();
+        let (mut backend, gpu, input, sound) = concrete_backend();
+        let cold_gpu = gpu.borrow().to_snapshot().unwrap();
+        let cold_input = input.borrow().to_snapshot().unwrap();
+        let cold_sound = sound.borrow().to_snapshot().unwrap();
+        let error = DesktopRestoreCoordinator::new().restore(
+            &blob,
+            DisplaySize::new(1280, 720),
+            &mut backend,
+        );
+        assert!(error.is_err(), "{name} refusal unexpectedly succeeded");
+        assert_eq!(gpu.borrow().to_snapshot().unwrap(), cold_gpu);
+        assert_eq!(input.borrow().to_snapshot().unwrap(), cold_input);
+        assert_eq!(sound.borrow().to_snapshot().unwrap(), cold_sound);
+        assert_eq!(
+            backend.host_state(),
+            super::DesktopRestoreHostState::default()
+        );
+    }
+
+    let host_refusals = ["agent", "viewport", "repair", "commit"];
+    for refusal in host_refusals {
+        let (mut backend, gpu, input, sound) = concrete_backend();
+        let cold_gpu = gpu.borrow().to_snapshot().unwrap();
+        let cold_input = input.borrow().to_snapshot().unwrap();
+        let cold_sound = sound.borrow().to_snapshot().unwrap();
+        match refusal {
+            "agent" => backend.set_agent_available(false),
+            "viewport" => backend.set_viewport_available(false),
+            "repair" => {
+                // A valid envelope with an unbound scanout cannot satisfy the pre-commit repair
+                // proof, so this exercises the former post-commit Boolean attack.
+            }
+            "commit" => backend.set_fail_commit_after_gpu(true),
+            _ => unreachable!(),
+        }
+        let blob = if refusal == "repair" {
+            let (_, empty_gpu) = VirtioGpu::new_with_state();
+            let empty_gpu = empty_gpu.borrow().to_snapshot().unwrap();
+            let mut builder = DesktopSnapshotBuilder::new(0x2026_0907);
+            builder
+                .section(section::GPU, FORMAT_VERSION, &empty_gpu)
+                .unwrap();
+            builder
+                .section(section::INPUT, FORMAT_VERSION, &snapshot.input)
+                .unwrap();
+            builder
+                .section(section::SOUND, FORMAT_VERSION, &snapshot.sound)
+                .unwrap();
+            builder
+                .section(section::AGENT, FORMAT_VERSION, &17u64.to_le_bytes())
+                .unwrap();
+            builder.finish().unwrap()
+        } else {
+            snapshot.blob.clone()
+        };
+        let error = DesktopRestoreCoordinator::new().restore(
+            &blob,
+            DisplaySize::new(1280, 720),
+            &mut backend,
+        );
+        assert!(error.is_err(), "{refusal} refusal unexpectedly succeeded");
+        assert_eq!(gpu.borrow().to_snapshot().unwrap(), cold_gpu);
+        assert_eq!(input.borrow().to_snapshot().unwrap(), cold_input);
+        assert_eq!(sound.borrow().to_snapshot().unwrap(), cold_sound);
+        assert_eq!(
+            backend.host_state(),
+            super::DesktopRestoreHostState::default()
+        );
+    }
 }

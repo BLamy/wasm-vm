@@ -1760,6 +1760,41 @@ impl Machine {
             .map(|(slot, state, _, _, _, _, _, _, _)| (*slot, alloc::rc::Rc::clone(state)))
     }
 
+    /// E5-T26e: restore the composite desktop envelope through the concrete T26b--d device
+    /// adapter. The coordinator is intentionally assembled at this boundary so a native or wasm
+    /// host cannot accidentally report success from three independent device restore calls.
+    pub fn restore_desktop_snapshot(
+        &mut self,
+        blob: &[u8],
+        host_viewport: desktop_restore::DisplaySize,
+    ) -> Result<desktop_restore::DesktopRestoreReport, desktop_restore::DesktopRestoreError> {
+        let Some((gpu, _, _, _)) = self.gpu.as_ref() else {
+            return Err(desktop_restore::DesktopRestoreError::CommitRefused {
+                code: "gpu_unavailable",
+            });
+        };
+        let Some((input, _, _)) = self.keyboard.as_ref() else {
+            return Err(desktop_restore::DesktopRestoreError::CommitRefused {
+                code: "input_unavailable",
+            });
+        };
+        let Some((_, sound, _, _, _, _, _, _, _)) = self.snd.as_ref() else {
+            return Err(desktop_restore::DesktopRestoreError::CommitRefused {
+                code: "sound_unavailable",
+            });
+        };
+        let mut backend = desktop_restore::VirtioDesktopRestoreBackend::new(
+            alloc::rc::Rc::clone(gpu),
+            alloc::rc::Rc::clone(input),
+            alloc::rc::Rc::clone(sound),
+        )
+        .map_err(
+            |error| desktop_restore::DesktopRestoreError::CommitRefused { code: error.code() },
+        )?;
+        let mut coordinator = desktop_restore::DesktopRestoreCoordinator::new();
+        coordinator.restore(blob, host_viewport, &mut backend)
+    }
+
     /// E5-T23b: attach the six-queue virtio-console device (DeviceID 3) in the reserved final
     /// slot.  Port 0 keeps the standard virtio-console queue pair; port 1 is the named
     /// `org.wasmvm.agent` channel.  The existing UART/SBI console remains at its original MMIO
