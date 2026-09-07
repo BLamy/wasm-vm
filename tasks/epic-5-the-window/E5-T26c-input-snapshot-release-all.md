@@ -3,7 +3,7 @@ id: E5-T26c
 epic: 5
 title: Virtio-input pending rings, LEDs, and restore release-all
 priority: 526.3
-status: implemented
+status: in-progress
 depends_on: [E5-T26b]
 estimate: S
 risk: high
@@ -88,3 +88,31 @@ changed, then run evtest-style assertions for release-all, queue ordering, and f
   snapshot tests, 6 keyboard/LED tests, 2 keyboard integration tests, and the no-default-
   features `wasm32-unknown-unknown` build. A fresh Daybreak verifier recheck is required for the
   terminal status.
+
+### 2026-09-06 — fresh terminal verifier — VERDICT: refuted
+- P1/P2 exact-head gate and evidence binding — HELD. At unchanged submitted HEAD `be6d6135`,
+  `make verify-E5-T26c` passed 9 snapshot, 6 keyboard/LED and 2 integration tests with zero
+  failed/ignored, both clippy modes, format and wasm32. The replacement JSON and committed blob
+  both match SHA-256 `cf3f1286da0fe022859e0e455bc11c7805ded038f91e28688303978059105d62`
+  and identify runtime/test commit `7c2a61ae`.
+- P3 original fully-consumed-frame bypass — HELD after remediation. A new literal-65,536 attack
+  proved an exact-cap fully-consumed frame (`next == len`, declared pending zero) round-trips
+  byte-exactly, while record 65,537 is rejected atomically on encode and forged decode.
+- P4 restore release-growth cap — FAILED. Predicted an at-cap payload restored over delivered
+  `BTN_LEFT` and `KEY_A` would reject the added release frame before mutation with
+  `TooManyEvents { found: 65539, maximum: 65536 }`; observed successful restore with three added
+  events (`BTN_LEFT` up, `KEY_A` up, `SYN_REPORT`). The preflight at `snapshot.rs:205-223` checks
+  release growth against `decoded.pending_event_count`, which excludes consumed frame prefixes
+  and staged records counted by the serialized-event cap. The promoted deterministic regression
+  fails at `snapshot.rs:1010`. Base admission on the decoded total serialized record count and
+  preserve the full target state/physical ledgers on refusal; do not weaken the cap or release-all.
+- P5-P7 promoted malformed atomicity, multi-frame order, multi-key release order/protection,
+  fresh keyboard/tablet/mouse input, and exact LED byte/status tests all HELD in the exact-head
+  gate. Coverage audit executes every remediation hunk except the claimed restore-cap refusal,
+  now directly refuted. The replacement evidence is a corroborated summary, not a self-licking
+  oracle; the old digest survives only in the historical refutation log.
+- Commands and complete prediction/coverage record:
+  `evidence/e5-t26c/verifier/remediation-attack-plan.md` and
+  `evidence/e5-t26c/verifier/remediation-verdict.md`. SUITE: retain both new cap regressions; the
+  release-growth test remains red as the worker's exact semantic repro. Independent machines,
+  WebKit and host rr remain waived by policy/user.

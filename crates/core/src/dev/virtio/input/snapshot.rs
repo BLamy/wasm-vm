@@ -920,4 +920,102 @@ mod tests {
             ]
         );
     }
+
+    fn fully_consumed_frame_at_serialized_cap() -> InputState {
+        assert_eq!(MAX_SNAPSHOT_EVENTS, 65_536);
+        let mut state =
+            InputState::new_with_capabilities(Box::new(super::super::NullStatusSink), None);
+        state.set_pending_event_budget(MAX_SNAPSHOT_BUDGET as usize);
+        let events = (0..MAX_SNAPSHOT_EVENTS)
+            .map(|value| InputEvent::new(super::super::EV_REL, pointer::REL_X, value as i32))
+            .collect::<Vec<_>>();
+        state.pending_frames.push_back(PendingFrame {
+            next: events.len(),
+            events,
+            release_all: false,
+        });
+        state
+    }
+
+    #[test]
+    fn verifier_fully_consumed_records_still_obey_total_serialized_cap() {
+        let mut state = fully_consumed_frame_at_serialized_cap();
+        let payload = state.to_snapshot().unwrap();
+
+        let mut restored =
+            InputState::new_with_capabilities(Box::new(super::super::NullStatusSink), None);
+        restored.restore_snapshot(&payload).unwrap();
+        assert_eq!(restored.pending_event_count, 0);
+        assert_eq!(restored.to_snapshot().unwrap(), payload);
+
+        state.staged_frame.push(InputEvent::new(
+            super::super::EV_REL,
+            pointer::REL_Y,
+            i32::MIN,
+        ));
+        state.staged_event_count = 1;
+        assert_eq!(
+            state.to_snapshot(),
+            Err(InputSnapshotError::TooManyEvents {
+                found: MAX_SNAPSHOT_EVENTS + 1,
+                maximum: MAX_SNAPSHOT_EVENTS,
+            })
+        );
+
+        let mut oversized = payload;
+        oversized.splice(
+            HEADER_LEN..HEADER_LEN,
+            InputEvent::new(super::super::EV_REL, pointer::REL_Y, i32::MIN).to_bytes(),
+        );
+        oversized[24..28].copy_from_slice(&1u32.to_le_bytes());
+        oversized[28..32].copy_from_slice(&1u32.to_le_bytes());
+        let mut target = partially_delivered(
+            keyboard::keyboard_spec(),
+            InputEvent::new(EV_KEY, keyboard::KEY_A, 1),
+        );
+        let before = target.to_snapshot().unwrap();
+        assert_eq!(
+            target.restore_snapshot(&oversized),
+            Err(InputSnapshotError::TooManyEvents {
+                found: MAX_SNAPSHOT_EVENTS + 1,
+                maximum: MAX_SNAPSHOT_EVENTS,
+            })
+        );
+        assert_eq!(target.to_snapshot().unwrap(), before);
+        assert_eq!(
+            target.release_all().release_events,
+            vec![
+                InputEvent::new(EV_KEY, keyboard::KEY_A, 0),
+                InputEvent::new(EV_SYN, SYN_REPORT, 0),
+            ]
+        );
+    }
+
+    #[test]
+    fn verifier_release_growth_at_serialized_cap_is_atomic() {
+        let payload = fully_consumed_frame_at_serialized_cap()
+            .to_snapshot()
+            .unwrap();
+        let mut target =
+            InputState::new_with_capabilities(Box::new(super::super::NullStatusSink), None);
+        for code in [keyboard::KEY_A, pointer::BTN_LEFT] {
+            assert!(target.inject_event(EV_KEY, code, 1));
+            target.sync();
+            drain(&mut target);
+        }
+        let before = target.to_snapshot().unwrap();
+        let delivered_before = target.delivered_keys.clone();
+        let suppressed_before = target.suppressed_keys.clone();
+
+        assert_eq!(
+            target.restore_snapshot(&payload),
+            Err(InputSnapshotError::TooManyEvents {
+                found: MAX_SNAPSHOT_EVENTS + 3,
+                maximum: MAX_SNAPSHOT_EVENTS,
+            })
+        );
+        assert_eq!(target.to_snapshot().unwrap(), before);
+        assert_eq!(target.delivered_keys, delivered_before);
+        assert_eq!(target.suppressed_keys, suppressed_before);
+    }
 }
