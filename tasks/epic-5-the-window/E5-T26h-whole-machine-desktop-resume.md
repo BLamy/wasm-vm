@@ -3,7 +3,7 @@ id: E5-T26h
 epic: 5
 title: Preserve desktop devices across whole-machine resume
 priority: 526.55
-status: in-progress
+status: implemented
 depends_on: [E5-T26e]
 estimate: S
 risk: high
@@ -52,6 +52,26 @@ one preserved cursor and prove the regression test detects duplicate completion.
 Check a headless snapshot independently. No new browser or host-rr requirement.
 
 ## Verification log
+
+### 2026-09-07 — worker — session fence implemented, awaiting fresh critic
+
+Frozen implementation: `2325c05f756f9a9746099051db9ab46866b874e8`.
+Exact-head command `make verify-E5-T26h` passed 119 test executions, fmt,
+warnings-denied clippy, no_std wasm32 build and wrapper check. Evidence:
+`evidence/e5-t26h/worker-session-fence-gates.log`, SHA-256
+`1978f7ac0284ab4b3d9127a84083920e1d7a0ca401bd7fc19fe2e5dbb5570349`.
+
+The nine promoted critic tests are unchanged and pass. Restore now completes
+saved agent TX descriptors without delivering old application bytes, after all
+RAM sections are installed and before guest execution; control and serial work
+continue normally. Wrapped saved frontiers, reordered RAM sections, closed-port
+pending data, fresh HELLO posted before the first new guest step, and malformed
+DMA/reset recovery are exercised. Bad DMA blocks agent TX until transport reset
+instead of rebuilding a cursor at zero and replaying old bytes. Earlier atomic
+refusal, queue continuity and codec predictions remain held; the guest trace
+continuation hash remains `9865e79b681ad970`. No browser success is claimed by this
+native submission, and the concurrently running older browser candidate is not
+evidence for this new session fence.
 
 ### 2026-09-07 — worker — remediation implemented, awaiting fresh critic
 
