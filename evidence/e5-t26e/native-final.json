@@ -1,10 +1,10 @@
 {
   "task": "E5-T26e",
-  "implementationCommit": "74eb1eec3f19aeb510259f71b2f25eaac4e1dff9",
+  "implementationCommit": "58a1f46364a46985bf7750a1b3e2c8b4f4f9b139",
   "verificationCommand": "env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG make verify-E5-T26e",
   "exitCode": 0,
   "results": {
-    "desktopRestoreTests": { "passed": 7, "failed": 0, "ignored": 0 },
+    "desktopRestoreTests": { "passed": 10, "failed": 0, "ignored": 0 },
     "desktopSnapshotTests": { "passed": 9, "failed": 0, "ignored": 0 },
     "gpuSnapshotTests": { "passed": 6, "failed": 0, "ignored": 0 },
     "inputSnapshotTests": { "passed": 12, "failed": 0, "ignored": 0 },
@@ -13,15 +13,17 @@
     "clippy": "passed",
     "wasm32NoDefaultFeaturesBuild": "passed"
   },
-  "claim": "The coordinator parses the complete desktop envelope before callbacks, stages GPU, input, and sound in dependency order, requires the agent restore-time HELLO handshake, chooses deterministic native or T22 letterbox presentation without changing the guest scanout dimensions, and commits only after a full repair frame is available. Component refusal, agent-channel loss, viewport refusal, malformed/forward-version envelopes, invalid host dimensions, and missing repair all clear transient reconciliation state and select the clean cold-boot fallback without a device commit.",
+  "claim": "The coordinator now makes full-repair readiness a pre-commit typed preparation token and never accepts a post-commit Boolean attestation. VirtioDesktopRestoreBackend decodes real T26b GPU, T26c input, and T26d sound payloads into detached device state, proves one GPU repair frame before publication, commits with serialized rollback snapshots, publishes agent generation and native/letterbox viewport state together, and cold-boots all devices and host state on every refusal. Machine::restore_desktop_snapshot is the production composition call site.",
   "coverage": {
-    "stagedOrder": ["gpu", "input", "sound", "agent", "viewport", "commit"],
+    "stagedOrder": ["gpu", "input", "sound", "agent", "viewport", "repair", "commit"],
     "attacks": [
       "changed host window size",
       "agent channel drop during restore",
       "component refusal",
       "viewport refusal",
-      "missing full repair frame",
+      "pre-commit missing full repair frame",
+      "post-GPU commit failure and cold rollback",
+      "real T26b GPU, T26c input, and T26d sound codec round-trip",
       "missing component",
       "envelope digest corruption",
       "forward component version",

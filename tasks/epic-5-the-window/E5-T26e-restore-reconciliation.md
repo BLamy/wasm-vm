@@ -3,7 +3,7 @@ id: E5-T26e
 epic: 5
 title: Desktop restore reconciliation for agent, scanout, and viewport
 priority: 526.5
-status: in-progress
+status: implemented
 depends_on: [E5-T26d, E5-T23e, E5-T22b]
 estimate: S
 risk: high
@@ -103,3 +103,29 @@ without publishing a half-restored desktop.
   `evidence/e5-t26e/verifier/audit.md`.
 - SUITE: no promotion while the semantic contract is refuted; the evidence-only six-test harness
   is retained as the reproducer.
+
+### 2026-09-07 — worker — REMEDIATION SUBMITTED
+- Remediated the refutation at implementation commit `58a1f46364a46985bf7750a1b3e2c8b4f4f9b139`.
+  Full-repair readiness is now a detached pre-commit operation returning an opaque typed
+  preparation token; `commit` no longer returns a forgeable `full_repair_frame` Boolean.
+- Added `VirtioDesktopRestoreBackend`, which decodes actual T26b GPU, T26c input, and T26d sound
+  payloads in detached device instances, counts the GPU repair sink event before publication,
+  commits with rollback snapshots, and resets devices plus agent/viewport host state on fallback.
+  `Machine::restore_desktop_snapshot` is the native production composition call site.
+- The concrete native proof exercises success, changed-host letterboxing, malformed GPU/input/sound
+  payloads, agent and viewport refusal, missing pre-commit repair, and an injected failure after
+  GPU publication. Every refusal checks all three device snapshots and host state against the cold
+  baseline.
+- Exact-head command (exit 0): `env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u
+  CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG make verify-E5-T26e`.
+  It passes 10 coordinator tests, 9 envelope/quiesce tests, 6 GPU snapshot tests, 12 input
+  snapshot tests, 6 sound snapshot tests, both clippy modes, format, and the no-default-features
+  `wasm32-unknown-unknown` build.
+- Evidence: `evidence/e5-t26e/native-final.json` SHA-256
+  `81401c4d4037fa2c463b69a1c7c4e26d7ddc00deba20e7da925101c1ee77c253`; gate transcript summary:
+  `evidence/e5-t26e/worker-remediation-gate.log`.
+
+Claim: no live device or host publication is possible until detached T26b–d codecs and the full
+repair frame are ready. Successful publication returns an opaque commit proof and the concrete
+adapter's native integration test verifies the published GPU/input/sound/agent/viewport state;
+all tested refusals restore the cold baseline. Browser pixel/CRC and reload proof remains E5-T26f.
