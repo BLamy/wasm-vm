@@ -142,6 +142,9 @@ impl PendingData {
 pub struct ConsoleState {
     kicked: [bool; NUM_QUEUES as usize],
     reset_pending: bool,
+    /// A malformed saved TX ring has no safe old-session frontier. Only a transport reset or
+    /// another whole-machine restore may retry it; host drains must not reconstruct cursor zero.
+    resume_agent_tx_blocked: bool,
     driver_ready: bool,
     agent_announced: bool,
     guest_ready: bool,
@@ -181,6 +184,7 @@ impl ConsoleState {
         Self {
             kicked: [false; NUM_QUEUES as usize],
             reset_pending: false,
+            resume_agent_tx_blocked: false,
             driver_ready: false,
             agent_announced: false,
             guest_ready: false,
@@ -219,7 +223,11 @@ impl ConsoleState {
     /// readiness handshake. This is deliberately weaker than [`Self::agent_ready_for_restore`]:
     /// a live port can still be carrying an old application session.
     pub fn agent_ready_for_host(&self) -> bool {
-        self.driver_ready && self.agent_announced && self.guest_ready && self.agent_open()
+        !self.resume_agent_tx_blocked
+            && self.driver_ready
+            && self.agent_announced
+            && self.guest_ready
+            && self.agent_open()
     }
 
     /// True only when the transport is live *and* the host-side T23d Channel has reported a fresh
@@ -394,6 +402,7 @@ impl ConsoleState {
 
         self.kicked = [false; NUM_QUEUES as usize];
         self.reset_pending = false;
+        self.resume_agent_tx_blocked = false;
         self.driver_ready = driver_ready;
         self.agent_announced = agent_announced;
         self.guest_ready = guest_ready;
@@ -406,17 +415,10 @@ impl ConsoleState {
         self.pending_control_bytes = 0;
         self.clear_agent_data();
 
-        // Guest transmit descriptors live in restored RAM, not in the discarded host queues.
-        // QueueNotify may have happened just before save (or a descriptor may have been blocked
-        // on the old host's output budget). Probe each transmit ring once from its restored
-        // cursor so that work continues without requiring the guest to notify again. Consumed
-        // heads cannot replay, and empty/unconfigured queues are harmless. This also repairs
-        // snapshots from the original lifecycle-only codec without changing its wire format.
-        for queue in [
-            PORT0_TRANSMIT_QUEUE,
-            CONTROL_TRANSMIT_QUEUE,
-            AGENT_TRANSMIT_QUEUE,
-        ] {
+        // Guest control/serial work remains valid across host sessions. Re-arm those rings so
+        // a QueueNotify just before save is not lost. Agent TX needs a stronger boundary: Machine
+        // discards and completes its old available descriptors before letting the guest run.
+        for queue in [PORT0_TRANSMIT_QUEUE, CONTROL_TRANSMIT_QUEUE] {
             self.mark_queue_kick(queue);
         }
 
@@ -676,6 +678,7 @@ impl ConsoleState {
     fn reset(&mut self) {
         self.kicked = [false; NUM_QUEUES as usize];
         self.reset_pending = true;
+        self.resume_agent_tx_blocked = false;
         self.driver_ready = false;
         self.agent_announced = false;
         self.guest_ready = false;
@@ -1010,12 +1013,54 @@ fn service_serial_tx(
     Ok(completed)
 }
 
+/// Complete old-session agent TX descriptors without reading or forwarding their application
+/// payload. Machine calls this only after restoring all RAM/transport/cursors and before the guest
+/// can execute: the available ring is therefore the saved session's frontier, even across u16
+/// wrap. At most one ring's capacity (<= 256 chains) is consumed. This also drains descriptors
+/// parked by host backpressure or a closed port, and needs no extra snapshot field.
+pub(crate) fn discard_resume_agent_tx(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<ConsoleState>>,
+    bus: &mut SystemBus,
+) {
+    let mut discard = || -> Result<bool, ()> {
+        if !prepare_queue(slot, vq, AGENT_TRANSMIT_QUEUE)? {
+            return Ok(false);
+        }
+        let queue = vq.as_mut().expect("agent transmit queue was prepared");
+        let mut completed = false;
+        for _ in 0..queue.size() {
+            let Some(chain) = queue.pop(bus).map_err(|_| ())? else {
+                break;
+            };
+            queue.push_used(bus, chain.head, 0).map_err(|_| ())?;
+            completed = true;
+        }
+        Ok(completed && queue.interrupt_needed(bus))
+    };
+    match discard() {
+        Ok(true) => slot.borrow_mut().raise_used_irq(),
+        Ok(false) => {}
+        Err(()) => {
+            // This is malformed guest DMA, not a snapshot-codec refusal. Apply the ordinary
+            // ring-violation policy instead of returning an error after the restore committed.
+            slot.borrow_mut().protocol_violation();
+            state.borrow_mut().resume_agent_tx_blocked = true;
+            *vq = None;
+        }
+    }
+}
+
 fn service_agent_tx(
     slot: &Rc<RefCell<VirtioMmio>>,
     vq: &mut Option<Virtqueue>,
     state: &Rc<RefCell<ConsoleState>>,
     bus: &mut SystemBus,
 ) -> Result<bool, ()> {
+    if state.borrow().resume_agent_tx_blocked {
+        return Ok(false);
+    }
     if !prepare_queue(slot, vq, AGENT_TRANSMIT_QUEUE)? {
         return Ok(false);
     }

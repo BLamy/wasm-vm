@@ -38,6 +38,8 @@ const DESC_WRITE: u16 = 2;
 const DESC_READ: u16 = 0;
 const DESC_NEXT: u16 = 1;
 const DRIVER_OK: u32 = 0x0f;
+// A valid application HELLO; only tests know its framing, never the resume implementation.
+const AGENT_HELLO: [u8; 18] = [10, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7, 0, 0, 0, 0, 0, 0, 0];
 
 #[derive(Clone)]
 struct CountingSink(Rc<Cell<u32>>);
@@ -686,15 +688,19 @@ fn pending_console_transmits_survive_while_stale_host_session_is_discarded() {
 
     for queue in transmit_queues {
         let (_, _, used, _) = queue_addresses(8, queue);
-        assert_eq!(target.bus_mut().load16(used + 2), Ok(1));
+        // Agent application data is discarded/completed before the guest resumes; serial
+        // data remains available for the ordinary device service boundary.
+        let expected = if queue == AGENT_TRANSMIT_QUEUE as usize {
+            2
+        } else {
+            1
+        };
+        assert_eq!(target.bus_mut().load16(used + 2), Ok(expected));
     }
     // No target QueueNotify: these notifications already happened in the saved machine.
     assert_eq!(target.run(1), RunOutcome::MaxInstrs);
     assert!(!restored.borrow().agent_ready_for_restore());
-    assert_eq!(
-        restored.borrow().agent_output_bytes(),
-        b"pending guest".len()
-    );
+    assert_eq!(restored.borrow().agent_output_bytes(), 0);
     assert_eq!(
         restored.borrow().serial_output_bytes(),
         b"pending guest".len()
@@ -706,10 +712,284 @@ fn pending_console_transmits_survive_while_stale_host_session_is_discarded() {
         assert_eq!(target.bus_mut().load32(used + 4), Ok(0));
         assert_eq!(target.bus_mut().load32(used + 12), Ok(1));
     }
-    assert_eq!(restored.borrow_mut().take_agent_output(), b"pending guest");
+    assert!(restored.borrow_mut().take_agent_output().is_empty());
     assert_eq!(restored.borrow_mut().take_serial_output(), b"pending guest");
+    // A valid HELLO posted after load_resume is permitted; the core does not inspect the
+    // application framing. Only this new output is offered to the fresh Channel.
+    let queue = AGENT_TRANSMIT_QUEUE as usize;
+    let (_, _, used, buffer) = queue_addresses(8, queue);
+    target
+        .bus_mut()
+        .ram_mut()
+        .write_slice(buffer, &AGENT_HELLO)
+        .unwrap();
+    write_descriptor(
+        &mut target,
+        8,
+        queue,
+        0,
+        buffer,
+        AGENT_HELLO.len() as u32,
+        0,
+        0,
+    );
+    post_descriptor(&mut target, 8, queue, 2, 0);
+    kick(&mut target, 8, queue);
+    target.hart_mut().regs.pc = virt::DRAM_BASE;
+    assert_eq!(target.run(1), RunOutcome::MaxInstrs);
+    assert_eq!(target.bus_mut().load16(used + 2), Ok(3));
+    assert_eq!(restored.borrow_mut().take_agent_output(), AGENT_HELLO);
     assert!(target.confirm_virtio_console_agent_hello().is_some());
     assert!(restored.borrow().agent_ready_for_restore());
+}
+
+fn empty_console_topology() -> Machine {
+    let mut machine = Machine::new(1024 * 1024);
+    machine.enable_plic();
+    machine.enable_virtio_slots(None);
+    machine.enable_virtio_console_at(8);
+    machine.hart_mut().regs.pc = virt::DRAM_BASE + 0x100;
+    machine.hart_mut().regs.write(5, 0xdead_beef);
+    machine
+        .bus_mut()
+        .store32(virt::DRAM_BASE, 0xdead_beef)
+        .unwrap();
+    machine
+}
+
+fn start_console_agent(machine: &mut Machine) {
+    configure_queue(machine, 8, CONTROL_TRANSMIT_QUEUE as usize);
+    configure_queue(machine, 8, AGENT_TRANSMIT_QUEUE as usize);
+    // An actual guest instruction per boundary, without a finite NOP runway.
+    machine
+        .bus_mut()
+        .store32(virt::DRAM_BASE, 0x0000_006f)
+        .unwrap();
+    machine.hart_mut().regs.pc = virt::DRAM_BASE;
+    machine.hart_mut().regs.write(5, 0x1122_3344);
+    for (ordinal, control) in [
+        ConsoleControl::new(0, VIRTIO_CONSOLE_DEVICE_READY, 1),
+        ConsoleControl::new(AGENT_PORT_ID, VIRTIO_CONSOLE_PORT_READY, 1),
+        ConsoleControl::new(AGENT_PORT_ID, VIRTIO_CONSOLE_PORT_OPEN, 1),
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        let queue = CONTROL_TRANSMIT_QUEUE as usize;
+        let (_, _, _, buffer) = queue_addresses(8, queue);
+        machine
+            .bus_mut()
+            .ram_mut()
+            .write_slice(buffer, &control.to_bytes())
+            .unwrap();
+        write_descriptor(machine, 8, queue, 0, buffer, 8, DESC_READ, 0);
+        post_descriptor(machine, 8, queue, ordinal as u16, 0);
+        kick(machine, 8, queue);
+        assert_eq!(machine.run(1), RunOutcome::MaxInstrs);
+    }
+    assert!(
+        machine
+            .virtio_console()
+            .unwrap()
+            .borrow()
+            .agent_ready_for_host()
+    );
+}
+
+fn post_agent_hello(machine: &mut Machine, ordinal: u16) {
+    let queue = AGENT_TRANSMIT_QUEUE as usize;
+    let (_, _, _, buffer) = queue_addresses(8, queue);
+    let head = ordinal % QUEUE_SIZE as u16;
+    let data = buffer + u64::from(head) * 32;
+    machine
+        .bus_mut()
+        .ram_mut()
+        .write_slice(data, &AGENT_HELLO)
+        .unwrap();
+    write_descriptor(
+        machine,
+        8,
+        queue,
+        head,
+        data,
+        AGENT_HELLO.len() as u32,
+        DESC_READ,
+        0,
+    );
+    post_descriptor(machine, 8, queue, ordinal, head);
+}
+
+#[test]
+fn agent_resume_frontier_wraps_and_allows_fresh_tx_before_first_guest_step() {
+    let queue = AGENT_TRANSMIT_QUEUE as usize;
+    let (_, avail, used, _) = queue_addresses(8, queue);
+    let mmio = Platform::virtio_base(8);
+    let mut seed = empty_console_topology();
+    start_console_agent(&mut seed);
+    let source_console = seed.virtio_console().unwrap();
+    // Establish the cursor through actual completions, not a fabricated snapshot or a target
+    // pre-seeded with the desired cursor. Pending work below crosses 65535 -> 0.
+    const CONSUMED: u16 = u16::MAX - 1;
+    for start in (0..u32::from(CONSUMED)).step_by(QUEUE_SIZE as usize) {
+        let end = (start + QUEUE_SIZE).min(u32::from(CONSUMED));
+        for ordinal in start..end {
+            post_agent_hello(&mut seed, ordinal as u16);
+        }
+        kick(&mut seed, 8, queue);
+        assert_eq!(seed.run(1), RunOutcome::MaxInstrs);
+        assert_eq!(
+            source_console.borrow_mut().take_agent_output(),
+            AGENT_HELLO.repeat((end - start) as usize)
+        );
+    }
+    assert_eq!(seed.bus_mut().load16(used + 2), Ok(CONSUMED));
+    let seeded = seed.save_resume().unwrap();
+
+    // Empty, partially pending across wrap, and a full ring: the bounded drain must consume
+    // exactly the old frontier in each case, even when the saved agent port is closed.
+    for pending in [0_u16, 3, QUEUE_SIZE as u16] {
+        let mut source = empty_console_topology();
+        source.load_resume(&seeded).unwrap();
+        if pending == 3 {
+            source
+                .virtio_console()
+                .unwrap()
+                .borrow_mut()
+                .set_host_connected(false);
+        }
+        for offset in 0..pending {
+            post_agent_hello(&mut source, CONSUMED.wrapping_add(offset));
+        }
+        if pending == QUEUE_SIZE as u16 {
+            source.bus_mut().store16(avail, 1).unwrap(); // VRING_AVAIL_F_NO_INTERRUPT
+        }
+        kick(&mut source, 8, queue);
+        source.bus_mut().store32(mmio + 0x64, 3).unwrap(); // acknowledge old IRQs
+        let snapshot = source.save_resume().unwrap();
+        // Section order is not part of the contract: RAM last must still be drained only after
+        // it is restored, not against the target's sentinel RAM.
+        let (header, reader) = SectionReader::new(&snapshot).unwrap();
+        let mut writer = SnapshotWriter::new(
+            &header.core_hash,
+            &header.base_image_hash,
+            header.overlay_generation,
+        );
+        let mut ram = None;
+        for item in reader {
+            let item = item.unwrap();
+            if item.tag == section::RAM {
+                ram = Some(item.payload);
+            } else {
+                writer.section(item.tag, item.payload);
+            }
+        }
+        writer.section(section::RAM, ram.unwrap());
+        let mut target = empty_console_topology();
+        let console = target.virtio_console().unwrap();
+        assert_eq!(target.bus_mut().load32(mmio + STATUS), Ok(0));
+        assert_eq!(target.bus_mut().load16(used + 2), Ok(0));
+        target.load_resume(&writer.finish()).unwrap();
+        assert!(Rc::ptr_eq(&console, &target.virtio_console().unwrap()));
+        assert_eq!(target.hart().regs.pc, virt::DRAM_BASE);
+        assert_eq!(target.hart().regs.read(5), 0x1122_3344);
+        assert_eq!(target.bus_mut().load32(virt::DRAM_BASE), Ok(0x0000_006f));
+        assert_eq!(target.bus_mut().load32(mmio + STATUS), Ok(DRIVER_OK));
+        assert_eq!(
+            target.bus_mut().load32(mmio + 0x60),
+            Ok(u32::from(pending != 0 && pending != QUEUE_SIZE as u16))
+        );
+        let frontier = CONSUMED.wrapping_add(pending);
+        assert_eq!(target.bus_mut().load16(used + 2), Ok(frontier));
+        assert!(console.borrow_mut().take_agent_output().is_empty());
+        assert_eq!(console.borrow().application_hello_generation(), 0);
+        assert!(!console.borrow().agent_ready_for_restore());
+        for offset in 0..pending {
+            let head = CONSUMED.wrapping_add(offset) % QUEUE_SIZE as u16;
+            let entry = used + 4 + 8 * u64::from(head);
+            assert_eq!(target.bus_mut().load32(entry), Ok(u32::from(head)));
+            assert_eq!(target.bus_mut().load32(entry + 4), Ok(0));
+        }
+        // This descriptor did not exist at load time, yet is posted before the first guest
+        // step. A lazy fence captured at first service would incorrectly discard its HELLO.
+        console.borrow_mut().set_host_connected(true);
+        if pending == 3 {
+            // The saved port was closed. Reopen it through its existing control ring, without
+            // reconfiguration, in the same first boundary as the genuinely fresh HELLO.
+            let control_queue = CONTROL_TRANSMIT_QUEUE as usize;
+            let (_, _, _, buffer) = queue_addresses(8, control_queue);
+            let open = ConsoleControl::new(AGENT_PORT_ID, VIRTIO_CONSOLE_PORT_OPEN, 1);
+            target
+                .bus_mut()
+                .ram_mut()
+                .write_slice(buffer, &open.to_bytes())
+                .unwrap();
+            write_descriptor(&mut target, 8, control_queue, 0, buffer, 8, DESC_READ, 0);
+            post_descriptor(&mut target, 8, control_queue, 3, 0);
+            kick(&mut target, 8, control_queue);
+        }
+        post_agent_hello(&mut target, frontier);
+        kick(&mut target, 8, queue);
+        assert_eq!(target.run(1), RunOutcome::MaxInstrs);
+        assert_eq!(
+            target.bus_mut().load16(used + 2),
+            Ok(frontier.wrapping_add(1))
+        );
+        assert_eq!(console.borrow_mut().take_agent_output(), AGENT_HELLO);
+        assert!(target.confirm_virtio_console_agent_hello().is_some());
+        assert!(console.borrow().agent_ready_for_restore());
+        assert_eq!(target.run(1), RunOutcome::MaxInstrs);
+        assert_eq!(
+            target.bus_mut().load16(used + 2),
+            Ok(frontier.wrapping_add(1))
+        );
+        assert!(console.borrow_mut().take_agent_output().is_empty());
+    }
+}
+
+#[test]
+fn malformed_saved_agent_dma_blocks_tx_until_transport_reset() {
+    let queue = AGENT_TRANSMIT_QUEUE as usize;
+    let (desc, _, used, _) = queue_addresses(8, queue);
+    let mmio = Platform::virtio_base(8);
+    let mut source = empty_console_topology();
+    start_console_agent(&mut source);
+    post_agent_hello(&mut source, 0);
+    post_agent_hello(&mut source, 1);
+    // The first pending HELLO can complete, but the second descriptor cannot DMA outside RAM.
+    // This is valid snapshot encoding of a malformed guest ring, not a section-codec error.
+    source.bus_mut().store64(desc + 16, 0).unwrap();
+    kick(&mut source, 8, queue);
+    source.bus_mut().store32(mmio + 0x64, 3).unwrap();
+    let blob = source.save_resume().unwrap();
+    let mut target = empty_console_topology();
+    target.load_resume(&blob).unwrap();
+    let console = target.virtio_console().unwrap();
+    assert_eq!(target.bus_mut().load32(mmio + STATUS), Ok(DRIVER_OK | 64));
+    assert_eq!(target.bus_mut().load32(mmio + 0x60).unwrap() & 2, 2);
+    assert_eq!(target.bus_mut().load16(used + 2), Ok(1));
+    assert_eq!(target.bus_mut().load32(used + 4), Ok(0));
+    assert_eq!(target.bus_mut().load32(used + 8), Ok(0));
+    assert!(console.borrow_mut().take_agent_output().is_empty());
+    assert!(target.confirm_virtio_console_agent_hello().is_none());
+    // Repairing the descriptor and notifying/draining without the required reset must not
+    // replay the already completed head or expose the remaining old-session bytes.
+    post_agent_hello(&mut target, 1);
+    kick(&mut target, 8, queue);
+    assert_eq!(target.run(1), RunOutcome::MaxInstrs);
+    assert_eq!(target.bus_mut().load16(used + 2), Ok(1));
+    assert!(console.borrow_mut().take_agent_output().is_empty());
+    assert!(!console.borrow().agent_ready_for_restore());
+
+    target.bus_mut().store32(mmio + STATUS, 0).unwrap();
+    start_console_agent(&mut target);
+    post_agent_hello(&mut target, 0);
+    kick(&mut target, 8, queue);
+    assert_eq!(target.run(1), RunOutcome::MaxInstrs);
+    assert_eq!(target.bus_mut().load32(mmio + STATUS), Ok(DRIVER_OK));
+    assert_eq!(target.bus_mut().load16(used + 2), Ok(1));
+    assert_eq!(console.borrow_mut().take_agent_output(), AGENT_HELLO);
+    assert!(target.confirm_virtio_console_agent_hello().is_some());
+    assert!(console.borrow().agent_ready_for_restore());
 }
 
 fn legacy_machine(sentinel: u64, sink: Box<dyn FrameSink>) -> Machine {

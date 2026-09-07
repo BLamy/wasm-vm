@@ -3224,6 +3224,19 @@ impl Machine {
                 }
             }
         }
+        // Agent TX still in guest RAM belongs to the saved application session, including any
+        // pending HELLO. Complete it without forwarding bytes into the new host Channel. Do this
+        // after every section (RAM need not precede console in the container), before any guest
+        // execution can post fresh descriptors or observe completions and reuse old ones.
+        if let Some(console) = &mut self.console {
+            let slot = alloc::rc::Rc::clone(&self.virtio[console.slot_index].0);
+            dev::virtio::console::discard_resume_agent_tx(
+                &slot,
+                &mut console.agent_transmitq,
+                &console.state,
+                &mut self.bus,
+            );
+        }
         // E4-T05: a restore swaps CPU + RAM wholesale, so any predecoded block (keyed by the
         // pre-restore physical layout) is now stale — flush the cache and drop the cursor.
         self.block_cache.flush();
