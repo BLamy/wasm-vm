@@ -3,7 +3,7 @@ id: E5-T26b
 epic: 5
 title: Virtio-GPU resource, scanout, cursor, and shadow snapshot
 priority: 526.2
-status: pending
+status: in-progress
 depends_on: [E5-T26a]
 estimate: S
 risk: high
