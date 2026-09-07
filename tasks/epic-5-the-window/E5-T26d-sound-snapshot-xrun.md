@@ -3,7 +3,7 @@ id: E5-T26d
 epic: 5
 title: Virtio-snd stream snapshot and XRUN restore
 priority: 526.4
-status: in-progress
+status: implemented
 depends_on: [E5-T26c]
 estimate: S
 risk: high
@@ -44,3 +44,20 @@ restore repeatedly and require a bounded XRUN recovery or clean failure, never a
 - Risk: high. The implementation must preserve stopped/prepared/running stream configuration,
   discard host audio-ring contents on restore, and drive a bounded guest-visible XRUN recovery
   without allowing invalid stream metadata to mutate another stream.
+
+### 2026-09-07 — worker — IMPLEMENTED
+- Implementation commit: `ca002004650f0f4ec6acf302db871d2308318350`.
+- Exact-head evidence: `evidence/e5-t26d/native-final.json`, SHA-256
+  `8f8bcf3f3f84b9c6adfe64b9368aec83760b2cfaf27b4118bc7907d7613d6c19`.
+- Command: `make verify-E5-T26d` (exit 0). The gate passed format, both GPU-trace clippy
+  checks, 5 snapshot tests, 7 control tests, 8 playback tests, 5 queue tests, 9 capture tests,
+  4 capture-config tests, 4 machine tests, and the no-default-features `wasm32-unknown-unknown`
+  build.
+- The versioned `WVSND001` payload stores validated output/capture lifecycle configuration and
+  bounded queue metadata while omitting host descriptor chains, PCM frames, and SAB-backed audio
+  buffers. Restore validates all fields before mutation, empties both host queues, marks running
+  streams for lifecycle rescheduling, and prepends one bounded guest-visible XRUN per running
+  stream. The end-to-end playback fixture checkpoints a partially queued ramp, proves the old
+  block is never pushed or completed, then posts a fresh ramp that completes exactly once; the
+  snapshot unit suite covers stopped/running round-trips, capture repair, malformed params, and
+  event-budget atomic refusal.

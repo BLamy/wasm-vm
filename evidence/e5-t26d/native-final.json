@@ -1,0 +1,50 @@
+{
+  "task": "E5-T26d",
+  "implementation_head": "ca002004650f0f4ec6acf302db871d2308318350",
+  "recorded_at": "2026-09-07",
+  "command": "make verify-E5-T26d",
+  "result": "pass",
+  "checks": {
+    "format": "cargo fmt --check -p wasm-vm-core",
+    "clippy_lib_gpu_trace": "pass",
+    "clippy_lib_tests_gpu_trace": "pass",
+    "snapshot_tests": {
+      "passed": 5,
+      "failed": 0,
+      "coverage": [
+        "versioned fixed-header size and event-record boundary",
+        "stopped stream configuration round-trip without synthetic XRUN",
+        "running playback and capture restore with host-ring discard and ordered XRUN repair",
+        "malformed parameter payload rejected atomically",
+        "event-budget refusal before target mutation"
+      ]
+    },
+    "virtio_snd_control": {"passed": 7, "failed": 0},
+    "virtio_snd_playback": {"passed": 8, "failed": 0},
+    "virtio_snd_queue": {"passed": 5, "failed": 0},
+    "virtio_snd_capture": {"passed": 9, "failed": 0},
+    "virtio_snd_capture_config": {"passed": 4, "failed": 0},
+    "virtio_snd_machine": {"passed": 4, "failed": 0},
+    "wasm32_no_default_features_build": "pass"
+  },
+  "snapshot_contract": {
+    "magic": "WVSND001",
+    "version": 1,
+    "host_audio_rings_serialized": false,
+    "restored_rings_empty": true,
+    "running_streams_restore_xrun_pending": true,
+    "serialized_pending_transfer_cap": 4096,
+    "pending_event_cap": 256,
+    "invalid_payload_restore_is_atomic": true
+  },
+  "attacks": [
+    "partially queued playback period is discarded and never reaches the sink",
+    "fresh post-restore ramp completes once with no duplicate block",
+    "running output and capture streams receive bounded XRUN repair",
+    "invalid params and full event-budget growth fail before mutation"
+  ],
+  "waivers": [
+    "host rr and independent-machine proof are waived by repository policy and user direction",
+    "WebKit/browser proof is waived by user direction; this slice changes only native core sound state"
+  ]
+}
