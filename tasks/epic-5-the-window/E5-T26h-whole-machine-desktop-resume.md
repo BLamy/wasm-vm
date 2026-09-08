@@ -3,7 +3,7 @@ id: E5-T26h
 epic: 5
 title: Preserve desktop devices across whole-machine resume
 priority: 526.55
-status: implemented
+status: verified
 depends_on: [E5-T26e]
 estimate: S
 risk: high
@@ -52,6 +52,35 @@ one preserved cursor and prove the regression test detects duplicate completion.
 Check a headless snapshot independently. No new browser or host-rr requirement.
 
 ## Verification log
+
+### 2026-09-07 — fresh verifier sound remediation — VERDICT: verified
+
+- Queue identity and PCM — HELD. At frozen runtime
+  `e8850241b686fd497c4ff1589fd31b6ffd0c7cc4`, sound metadata is encoded and restored in actual
+  control/event/TX/RX queue-index order. The independent 32-case matrix passes with and without RX
+  and the desktop envelope: restore emits no old PCM, exact fresh seed-1701 PCM reaches the fresh
+  sink, TX used advances 1 to 2 with status `0x8000`, and old sink/fresh clock ownership is
+  preserved (`evidence/e5-t26h/verifier-sound-remediation/focused-native.log:17-150`).
+- Version/refusal atomicity — HELD. Layout v2 wire bytes are exact; old unversioned,
+  unknown 0/1/3/`u32::MAX`, and truncated markers refuse as sound tag 16 before mutation. A bounded
+  novel valid-v2 contradiction (TX absent with nonzero cursor) also preserves the full target
+  snapshot, sound handle, zero sink, and fresh clock
+  (`evidence/e5-t26h/verifier-sound-remediation/novel-v2-atomicity.log:83-86`). Outer container-v1
+  headless continuation remains valid.
+- Sabotage/coverage — HELD. Reverting only save order to RX/TX in a temporary archive reproduces
+  old seed-73 replay, TX used 1, and status `0xffffffff`; the promoted test fails all eight selected
+  variants (`queue-order-sabotage.log:8-74`). All six sound tests and nine prior promoted H tests
+  pass independently, and every runtime/test/Makefile hunk executes.
+- Evidence/portability — HELD. Worker gate SHA-256
+  `7b7aba1be129f036c2ffbfc4e5428dc3ed566497d0d8820fea73e045bdec2820` records 125 passing checks;
+  related sound SHA-256 `449388e12b8fa769f739cf77d26d35744fb0910c76173deee448a06e35d09979`
+  records 21 more. One scrubbed clean clone detached at exact `e8850241` passed
+  `make verify-E5-T26h` and remained clean (`clean-exact-head.log:563`, SHA-256
+  `8446b698a4bb27edb3dc533a7c8d295889395861ae3731f1f295e94473fa5921`). Full results and digests:
+  `evidence/e5-t26h/verifier-sound-remediation/results.md`.
+- Carry-forward — all unchanged console session-fence/stale-HELLO, serial/control, input, GPU,
+  CPU/RAM, topology, atomicity, sparse-parser, RNG, and headless results remain HELD. No browser
+  claim was added; E5-T26f owns that proof.
 
 ### 2026-09-07 — worker/coordinator — sound queue remediation implemented
 

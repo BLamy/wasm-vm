@@ -1,0 +1,76 @@
+^D   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.72s
+     Running tests/desktop_machine_audio_resume.rs (target/debug/deps/desktop_machine_audio_resume-f2d6e0d1632a19bd)
+
+running 1 test
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-false-source.wav
+envelope-false-rx-true-frames-480-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-false-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15410333) panicked at crates/core/tests/desktop_machine_audio_resume.rs:424:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-true-source.wav
+envelope-false-rx-true-frames-480-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-true-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15410333) panicked at crates/core/tests/desktop_machine_audio_resume.rs:424:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-false-source.wav
+envelope-false-rx-true-frames-480-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-false-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15410333) panicked at crates/core/tests/desktop_machine_audio_resume.rs:424:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-true-source.wav
+envelope-false-rx-true-frames-480-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-true-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15410333) panicked at crates/core/tests/desktop_machine_audio_resume.rs:424:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-false-source.wav
+envelope-false-rx-true-frames-2048-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-false-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15410333) panicked at crates/core/tests/desktop_machine_audio_resume.rs:424:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-true-source.wav
+envelope-false-rx-true-frames-2048-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-true-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15410333) panicked at crates/core/tests/desktop_machine_audio_resume.rs:424:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-false-source.wav
+envelope-false-rx-true-frames-2048-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-false-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15410333) panicked at crates/core/tests/desktop_machine_audio_resume.rs:424:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-true-source.wav
+envelope-false-rx-true-frames-2048-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/private/tmp/e5-t26h-sound-attack.uNnNSb/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-true-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15410333) panicked at crates/core/tests/desktop_machine_audio_resume.rs:424:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15410333) panicked at crates/core/tests/desktop_machine_audio_resume.rs:598:5:
+failed native PCM resume cases: [
+    "envelope-false-rx-true-frames-480-clock-0-released-false",
+    "envelope-false-rx-true-frames-480-clock-0-released-true",
+    "envelope-false-rx-true-frames-480-clock-3600000000000-released-false",
+    "envelope-false-rx-true-frames-480-clock-3600000000000-released-true",
+    "envelope-false-rx-true-frames-2048-clock-0-released-false",
+    "envelope-false-rx-true-frames-2048-clock-0-released-true",
+    "envelope-false-rx-true-frames-2048-clock-3600000000000-released-false",
+    "envelope-false-rx-true-frames-2048-clock-3600000000000-released-true",
+]
+test configured_unused_rx_preserves_tx_cursor_and_fresh_pcm ... FAILED
+
+failures:
+
+failures:
+    configured_unused_rx_preserves_tx_cursor_and_fresh_pcm
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.20s
+
+error: test failed, to rerun pass `-p wasm-vm-core --test desktop_machine_audio_resume`
