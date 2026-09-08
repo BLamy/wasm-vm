@@ -40,6 +40,43 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker and fresh Daybreak critic — post-M screen closes failed
+
+At frozen head `657fb5a23b411bf02832b2d10ef943b43d0becf1`,
+`env -u RUSTDOCFLAGS node tools/verify/e5-t26f-browser-single-process-observer.mjs`
+creates a new cold seal with M's verified runtime and the unchanged observer
+image. It never rebinds or launches an old checkpoint. Original restore T0
+`1177.8849999904633` to end `4879.879999995232` is
+**3701.9950000047684ms >2000ms: FAILED** at proper runner line1930. Raw SHA256
+`0c282602e307dd9a4c50995414ff3ecca27aa7212fd357d723b502830dc853d8`.
+Cold child0, reuse child1, outer0 records the failure; it is not acceptance.
+
+Daybreak holds new runtime/image/profile binding, saved/restored CRCfa67bb62,
+same prepared PID1000/start26791/FIFO3/PCM4 identity, physical play10 matching
+key/DOM edges, visible completion, cursor/focus and fresh attached/running audio.
+Actual completion PCM is4320 written/2656 non-silent, not the prior1440; no
+bit-exact payload-length or first-arrival claim. Later coherence and drag/second
+reload are not reached; complete failed-reuse error arrays are absent.
+Independent report: `evidence/e5-t26f/inline-context-runtime-verifier/browser-results.md`.
+
+One separate existing latency sampler on a copied new seal closes at
+3637.7949999570847ms (failed), with last observed zero PCM at3108.295ms and
+first sampled fresh PCM at3156.655ms, marker at3613.450ms. It records no asset
+fetch waits in11 sampled worker windows, but cannot identify a cause or exact
+arrival. Raw SHA256
+`8064f99fce17507fded7ee9324fbac420ff5a697b5b6a54b8aefc004745a919a`;
+driver/commands/full limitations in
+`evidence/e5-t26f/single-process-observer-657fb5a2/README.md`, independent
+`inline-context-runtime-verifier/latency-results.md`. These are not comparable
+unprofiled benchmark arms or a speedup claim. Future metadata/runtime rebuilds
+invalidate this historical seal; never rebind it.
+
+A separate Luna source proposal to ignore only saved SPP in cache equality is
+not applied. Fresh Daybreak preflight permits one bounded S/high prerequisite
+with real guest SRET-to-S/U, current-mode authority and nested pending-interrupt
+proof (`evidence/e5-t26f/spp-context-candidate/critic-preflight.md`). Source GO
+is not verification or a latency diagnosis. F remains unfinished.
+
 ### 2026-09-08 — coordinator — resume after verified inline-cache prerequisite
 
 E5-T26m is independently verified in `a438e53930ec9aabcb829cf50d4a578769e3c84a`

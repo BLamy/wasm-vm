@@ -1,0 +1,109 @@
+{
+  "schema": "wasm-vm.e5-t26f.inline-context-latency-verifier.v1",
+  "head": "657fb5a23b411bf02832b2d10ef943b43d0becf1",
+  "hashes": {
+    "driver": "540476887db497f8648ad56c76e7dccb58f55299fd75490f891ccdd35d236282",
+    "invocation": "991ce05d953452daa3ad34cea8bb491bbb9f374ba4d0875001ac9d77a1a4292c",
+    "runLog": "0d1e55f8b1da23583ef1e4b05bb8076e12b7a9ca1342543e7bcede51b5e0a69d",
+    "exit": "0cf195d64edfa93e108082da543b5fe976bc4709e8021c314b822c486255c3d7",
+    "raw": "8064f99fce17507fded7ee9324fbac420ff5a697b5b6a54b8aefc004745a919a",
+    "rawPng": "fcde772ef136f787f4c170c56fb8fa803d2d7ff48a45a23e53ed9ea8234e8485",
+    "post": "1f7d64b8da1705d064924ebe8ad6b6ca8fe029684415b23a2affd766808835ed",
+    "postPng": "fcde772ef136f787f4c170c56fb8fa803d2d7ff48a45a23e53ed9ea8234e8485"
+  },
+  "sourceBindings": {
+    "tools/verify/e5-t26f-browser-roundtrip.mjs": "7f8b58f7e3f6e0f16b7b6cb91b8593e625ed058e7aa764df428e9990f85100a1",
+    "tools/verify/e5-t26f-resident-proof.mjs": "d5615b185536f0f0af3da7d4b133ec28ec9e2c62962d22b3cd57e8c24f5a5810",
+    "tools/guest/e5-t26f-resident-observer.sh": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+    "tools/guest/e5-t26f-observer.c": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+    "target/e5-t26f/observer-build-v1/e5t26f-observe": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+    "target/e5-t26f/observer-build-v1/build-info.json": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+    "crates/wasm/src/jit_browser.rs": "5a83c4269e73ba6cb8e66c27c8f2a4fc797e7e55b5abbd37f566e510f5ba24df",
+    "web/pkg/wasm_vm_wasm_bg.wasm": "18e53caa2e160819d16a6e0bf376530d45234e28f315c89b5042c48b1d791cc4",
+    "tools/verify/e5-t22c-cpu-profile.mjs": "f75fb38299169c662f6f6668d63d17e8ddaf6ec70a19082455e9de121ea5d5d4",
+    "tools/verify/e5-t26f-guest-profile.mjs": "1b9d202be44aa3c01f770ef5483551be0cfc828631b6cbc78caff53baf70948a",
+    "tools/verify/e5-t26k-decoded-cache.mjs": "fc6dde980554845fc3d28f5e44dcd0caf0c1659d48b320054a00aeb8e67e9843",
+    "evidence/e5-t26f/single-process-observer-657fb5a2/run-latency.mjs": "540476887db497f8648ad56c76e7dccb58f55299fd75490f891ccdd35d236282"
+  },
+  "isolation": {
+    "baselineProfileSha256": "3d1f4671402fc69da3f4957cd32f1fd9d92ea3fb28e1d03d60e8f716a4c65a0e",
+    "executedCopy": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-9IMCYn/iteration-VrryWr/profile",
+    "originalBaselineLaunched": false,
+    "latencyOnly": true,
+    "profilers": false
+  },
+  "timing": {
+    "start": 1192.7849999666214,
+    "end": 4830.579999923706,
+    "elapsedMs": 3637.7949999570847,
+    "limitMs": 2000,
+    "passed": false,
+    "failpoint": "tools/verify/e5-t26f-browser-roundtrip.mjs:1930:12"
+  },
+  "sampling": {
+    "limits": {
+      "pcmIntervalMs": 50,
+      "pcmSamples": 120,
+      "schedulerIntervalMs": 250,
+      "schedulerSamples": 24,
+      "markerSamples": 120
+    },
+    "pcmSamplesRetained": 57,
+    "lastZero": {
+      "observedAt": 4301.079999923706,
+      "elapsedMs": 3108.2949999570847,
+      "available": true,
+      "writeIndex": 0
+    },
+    "firstWrite": {
+      "observedAt": 4349.439999938011,
+      "elapsedMs": 3156.6549999713898,
+      "available": true,
+      "writeIndex": 480
+    },
+    "firstPcm": {
+      "observedAt": 4349.439999938011,
+      "elapsedMs": 3156.6549999713898,
+      "available": true,
+      "writeIndex": 480,
+      "pcmAvailable": true,
+      "completedAt": 4349.495000004768,
+      "pcm": {
+        "available": true,
+        "writeIndex": 480,
+        "readIndex": 256,
+        "fillFrames": 224,
+        "capacityFrames": 4096,
+        "writtenFrames": 480,
+        "inspectedFrames": 480,
+        "nonSilentFrames": 480,
+        "maxAbs": 0.999969482421875
+      }
+    },
+    "markerSamplesRetained": 120,
+    "markerCalls": 170,
+    "firstMarker": {
+      "startedAt": 4801.615000009537,
+      "observedAt": 4806.235000014305,
+      "elapsedMs": 3613.4500000476837,
+      "stateReadMs": 4.620000004768372,
+      "frameCount": 9,
+      "markerSeen": true
+    },
+    "markerTotalMs": 9.500000238418579,
+    "markerMaxMs": 4.620000004768372,
+    "schedulerSamples": 11,
+    "allFetchWaitsZero": true,
+    "workerRequestMs": {
+      "min": 2.3350000381469727,
+      "max": 48.330000042915344
+    }
+  },
+  "limitations": [
+    "The PCM arrival is bounded between the last zero and first positive samples; 3156.655 ms is not an exact arrival time.",
+    "The marker time is the first observed true sample, not the exact guest render/completion time.",
+    "Zero fetch waits in eleven sampled scheduler windows does not identify or exclude a dominant host cost.",
+    "The latency sampler and worker RPCs perturb this run; it is not an unprofiled comparison arm or a speedup measurement.",
+    "This diagnostic is acceptance:false and leaves coherence/drag/second restore unproven after the cap failure."
+  ]
+}

@@ -1,0 +1,373 @@
+{
+  "schema": "wasm-vm.e5-t26f.inline-context-runtime-verifier.v1",
+  "head": "657fb5a23b411bf02832b2d10ef943b43d0becf1",
+  "hashes": {
+    "invocation": "54f77b27c468c993de08087168aa0912020c3fb183ea38082349797fdbe784eb",
+    "cold": "df25b2ad21fdea86043e5a4b2e740e69d6e8095698a84c6e8985fc9cde98d2a0",
+    "coldPng": "d7123accc5ab347d32169f80212a23aa086295036170060b42dbeb8a132a2ae5",
+    "coldLog": "b1c8adf424b85a0b92900dfed609b31bf67aaa38c07fb53a584a72d3fd4dd26b",
+    "coldExit": "bcebd13d238a77ac126cc4e2019b18ca63df4a97ac56ee163379a4c768d3acd3",
+    "reuse": "0c282602e307dd9a4c50995414ff3ecca27aa7212fd357d723b502830dc853d8",
+    "reusePng": "9b03b822b7f6d1dc620ca3e59c1fbd2afa5f9cfdaf58c3b959f8add72cb5bb7e",
+    "postPng": "9b03b822b7f6d1dc620ca3e59c1fbd2afa5f9cfdaf58c3b959f8add72cb5bb7e",
+    "reuseLog": "4cb7eca23623033a258ff3933bf3529f3c044344ab01a3b3ead66bca52055d58",
+    "reuseExit": "0cf195d64edfa93e108082da543b5fe976bc4709e8021c314b822c486255c3d7",
+    "observation": "4f0fe7af9608a0b22a02828342984c01daa8cbde0c82cadf37810ff2f056dfed"
+  },
+  "sourceBindings": {
+    "tools/verify/e5-t26f-browser-roundtrip.mjs": "7f8b58f7e3f6e0f16b7b6cb91b8593e625ed058e7aa764df428e9990f85100a1",
+    "tools/verify/e5-t26f-resident-proof.mjs": "d5615b185536f0f0af3da7d4b133ec28ec9e2c62962d22b3cd57e8c24f5a5810",
+    "tools/verify/e5-t26f-discovery-observation.mjs": "423019e85fc480cb3badf91c412a558a1f7ffaf44ac54c033eac31e5c0f1380f",
+    "tools/verify/e5-t26f-compile-queue-observation.mjs": "fff0cf5e7bbbf9c822bbe6b62cb2dcf936076da1eeb3d455d3cdd7a915c02dcc",
+    "tools/verify/e5-t26f-browser-single-process-observer.mjs": "3be35665f7d403f9c291b5b81b1c07449ef526d171a53f5e7a69b087e79c416d",
+    "crates/core/src/compile_queue.rs": "678d51e6c333e076caeb99f3960fac52a0886941cc85ebf6638062878c751b15",
+    "crates/core/src/lib.rs": "7ff782fec3aa18b1b3729ac57e96dd999162b5c92b6fa36ef080cd9953bc2d3c",
+    "crates/wasm/src/lib.rs": "d9b100a0b434688a34fdcd943e8f21f683c3c77e27d9fe6c240ee001399a38be",
+    "tools/guest/e5-t26f-resident-observer.sh": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+    "tools/verify/e5-t26f-observer-image.mjs": "694b1c1dd1fffd8c5894a1b405767d86581f8703806d2caf3243323d28edb45d",
+    "tools/chunk_image.py": "165ccaf1c591247e23c509e6bed4fa2f614f1dee7e8a045698ad4cea447484d0",
+    "tools/guest/e5-t26f-observer.c": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+    "tools/verify/e5-t26f-observer-build.mjs": "e89170a56623174bcf7def80dc230fa79794408bc18df7debcf55a5bb9efd36e",
+    "target/e5-t26f/observer-build-v1/build-info.json": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+    "target/e5-t26f/observer-build-v1/e5t26f-observe": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+    "target/e5-t26f/resident-image-single-process-observer-v1/desktop-info.json": "b6a1f79e2d9f865411fec1907a9b56e6a9d208eb2fd90bcfe95571fc5a5b8c7a",
+    "target/e5-t26f/chunks/resident-single-process-observer-v1/manifest.json": "e02a9af547773f9d54e47151419ab3b118c55d3a4c90b25dcc434487db8dc9f5"
+  },
+  "webTree": {
+    "sha256": "f3a4fbe4d5aee30a9fcaa6f38cef292d8a65959d56612c43f3a82c427701249d",
+    "files": 150
+  },
+  "wasm": {
+    "source": "18e53caa2e160819d16a6e0bf376530d45234e28f315c89b5042c48b1d791cc4",
+    "dist": "18e53caa2e160819d16a6e0bf376530d45234e28f315c89b5042c48b1d791cc4"
+  },
+  "image": {
+    "sha256": "d2fc4eab9bc1b5fe528a2956b58faefb20fcf18e2505c499ecafa8824d390f72",
+    "bytes": 1073741824
+  },
+  "profile": {
+    "sha256": "3d1f4671402fc69da3f4957cd32f1fd9d92ea3fb28e1d03d60e8f716a4c65a0e",
+    "files": 816
+  },
+  "checkpoint": {
+    "createdAt": "2026-09-08T18:46:29.552Z",
+    "browser": {
+      "name": "chromium",
+      "version": "Chrome/152.0.7977.76",
+      "headless": true
+    },
+    "snapshot": {
+      "sha256": "a91dd00f8b7b3552c75cbf98c6f9701952aaa4c39eb4009892cb1f98a32c7a88",
+      "byteLength": 2820140,
+      "preFrontBufferCrc": "fa67bb62",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "fa67bb62",
+        "overlayGeneration": 637
+      }
+    },
+    "sound": {
+      "envelopeSha256": "a91dd00f8b7b3552c75cbf98c6f9701952aaa4c39eb4009892cb1f98a32c7a88",
+      "soundSha256": "330d02f9e91a4e67239bd3386715f87ca45cb0ea8052c387276a6c5450eeeafc",
+      "state": 2,
+      "paramsPresent": 1,
+      "parameterRequest": 257,
+      "streamId": 0,
+      "bufferBytes": 3840,
+      "periodBytes": 1920,
+      "channels": 2,
+      "format": 5,
+      "rate": 7,
+      "pendingTransfers": 0,
+      "pendingBytes": 0,
+      "releasePending": 0,
+      "nextXrunPresent": 0,
+      "eventCount": 0,
+      "events": [],
+      "kicked": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "resetPending": 0
+    }
+  },
+  "reached": {
+    "coldExit": {
+      "code": 0,
+      "signal": null
+    },
+    "reuseExit": {
+      "code": 1,
+      "signal": null
+    },
+    "firstPresentCrc": "fa67bb62",
+    "hello": {
+      "generation": 2,
+      "version": 1,
+      "capabilities": "1"
+    },
+    "bootStates": [
+      {
+        "state": "fetching",
+        "atMs": 130
+      },
+      {
+        "state": "instantiating",
+        "atMs": 150
+      },
+      {
+        "state": "restored",
+        "atMs": 766
+      }
+    ],
+    "preGesture": [
+      {
+        "observedAt": 1478.9800000190735,
+        "policy": "locked",
+        "context": "suspended",
+        "pcm": {
+          "available": true,
+          "writeIndex": 0,
+          "readIndex": 0,
+          "fillFrames": 0,
+          "capacityFrames": 4096,
+          "writtenFrames": 0,
+          "inspectedFrames": 0,
+          "nonSilentFrames": 0,
+          "maxAbs": 0
+        }
+      },
+      {
+        "observedAt": 1834.2699999809265,
+        "policy": "locked",
+        "context": "suspended",
+        "pcm": {
+          "available": true,
+          "writeIndex": 0,
+          "readIndex": 0,
+          "fillFrames": 0,
+          "capacityFrames": 4096,
+          "writtenFrames": 0,
+          "inspectedFrames": 0,
+          "nonSilentFrames": 0,
+          "maxAbs": 0
+        }
+      }
+    ],
+    "cursor": {
+      "frame": {
+        "atMs": 1538,
+        "sequence": 1,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 17510
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 16056
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 17510,
+          "y": 16056
+        }
+      },
+      "rendered": {
+        "x": 684,
+        "y": 392,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      },
+      "observedAt": 1943.7749999761581,
+      "elapsedMs": 765.8899999856949
+    },
+    "command": {
+      "command": "play",
+      "marker": "e5t26f-post-aplay",
+      "beforeFrame": 4,
+      "keyboardStart": 0,
+      "domEventStart": 0,
+      "visualDiffPixels": 8500,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 369,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 8,
+      "redMarkerSeen": false,
+      "keyboardFrames": 10,
+      "domEvents": 10,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "pcm": {
+      "observedAt": 4843.830000042915,
+      "pcm": {
+        "available": true,
+        "writeIndex": 4320,
+        "readIndex": 4320,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 4320,
+        "inspectedFrames": 4096,
+        "nonSilentFrames": 2656,
+        "maxAbs": 0.999969482421875
+      },
+      "elapsedMs": 3665.945000052452
+    },
+    "audioBefore": {
+      "policy": "unlocked",
+      "renderedFrames": 44628,
+      "writeIndex": 0
+    },
+    "audioAfter": {
+      "policy": "unlocked",
+      "context": "running",
+      "renderedFrames": 185556,
+      "pcm": {
+        "available": true,
+        "writeIndex": 4320,
+        "readIndex": 4320,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 4320,
+        "inspectedFrames": 4096,
+        "nonSilentFrames": 2656,
+        "maxAbs": 0.999969482421875
+      },
+      "pcmObservedAt": 4843.830000042915,
+      "writeIndex": 0,
+      "guestAttached": true,
+      "guestAttachedObservedAt": 4877.754999995232
+    },
+    "interaction": {
+      "elapsedMs": 3702.4550000429153,
+      "pointerFrames": 3,
+      "keyboardFrames": 10,
+      "heldButtons": [],
+      "audio": {
+        "policy": "unlocked",
+        "context": "running",
+        "renderedFrames": 185556
+      }
+    }
+  },
+  "timing": {
+    "start": 1177.8849999904633,
+    "end": 4879.879999995232,
+    "elapsedMs": 3701.9950000047684,
+    "limitMs": 2000,
+    "passed": false,
+    "failpoint": "tools/verify/e5-t26f-browser-roundtrip.mjs:1930:12"
+  },
+  "counters": {
+    "guestRetired": [
+      6493894,
+      52473355
+    ],
+    "retiredViaJit": [
+      2187823,
+      20812410
+    ],
+    "dynamicLinkHits": [
+      838,
+      36543
+    ],
+    "blockBuilds": [
+      11766,
+      597644
+    ],
+    "compileQueue": {
+      "before": {
+        "admitted": 269,
+        "droppedBackpressure": 0,
+        "cancelledStale": 0,
+        "popped": 104,
+        "queueHighWater": 223,
+        "queueDepth": 165,
+        "capacity": 256
+      },
+      "after": {
+        "admitted": 1624,
+        "droppedBackpressure": 1787,
+        "cancelledStale": 0,
+        "popped": 840,
+        "queueHighWater": 256,
+        "queueDepth": 248,
+        "capacity": 256
+      },
+      "deltas": {
+        "admitted": 1355,
+        "droppedBackpressure": 1787,
+        "cancelledStale": 0,
+        "popped": 736
+      },
+      "depthDelta": 83
+    },
+    "discovery": {
+      "before": {
+        "nominated": 269,
+        "deduped": 566420,
+        "droppedStale": 0,
+        "droppedOverflow": 0,
+        "countsDropped": 0,
+        "excluded": 22,
+        "queueDepth": 0,
+        "queueHighWater": 133,
+        "candidates": 3751,
+        "generation": 5
+      },
+      "after": {
+        "nominated": 2960,
+        "deduped": 3379727,
+        "droppedStale": 0,
+        "droppedOverflow": 0,
+        "countsDropped": 0,
+        "excluded": 31,
+        "queueDepth": 85,
+        "queueHighWater": 133,
+        "candidates": 32079,
+        "generation": 5
+      },
+      "deltas": {
+        "nominated": 2691,
+        "deduped": 2813307,
+        "droppedStale": 0,
+        "droppedOverflow": 0,
+        "countsDropped": 0,
+        "excluded": 9
+      }
+    },
+    "accounting": {
+      "staged": 2606,
+      "submitted": 468,
+      "pendingDepthDelta": 83,
+      "droppedBackpressure": 1787,
+      "cancelledStale": 0,
+      "popped": 736,
+      "poppedUnsubmitted": 268,
+      "incomingRejected": 1251,
+      "residentDisplaced": 536
+    }
+  },
+  "limitations": {
+    "acceptance": false,
+    "fVerified": false,
+    "profileEnabled": false,
+    "fullReuseErrorArraysPresent": false,
+    "coherence": "deferred",
+    "dragReached": false,
+    "exact1440FrameSubpredictionHeld": false
+  }
+}

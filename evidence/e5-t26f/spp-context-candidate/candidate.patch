@@ -1,0 +1,12 @@
+diff --git a/crates/wasm/src/jit_browser.rs b/crates/wasm/src/jit_browser.rs
+--- a/crates/wasm/src/jit_browser.rs
++++ b/crates/wasm/src/jit_browser.rs
+@@ -131,7 +131,7 @@ struct InlineTlbContext {
+ }
+ 
+ // Only interrupt gating and trap-stack state are projected out of cache equality. The live hart
+ // status remains the architectural authority; all other status bits remain part of the context.
+-const INLINE_TLB_MSTATUS_CONTEXT_MASK: u64 = !((1 << 1) | (1 << 3) | (1 << 5) | (1 << 7));
++const INLINE_TLB_MSTATUS_CONTEXT_MASK: u64 = !((1 << 1) | (1 << 3) | (1 << 5) | (1 << 7) | (1 << 8));
+ 
+ /// The browser-only direct-mapped refill cache. The generated module imports the outer wasm
