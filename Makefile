@@ -5,7 +5,7 @@
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
         bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc bench-runtime-workloads bench-runtime-compute bench-runtime-workloads-browser bench-runtime-compute-browser \
-        web-test-cpu-worker verify-E5-T16a verify-E5-T18a verify-E5-T18c verify-E5-T25a verify-E5-T25b verify-E5-T26a verify-E5-T26b verify-E5-T26c verify-E5-T26d verify-E5-T26e verify-E5-T26f
+        web-test-cpu-worker verify-E5-T16a verify-E5-T18a verify-E5-T18c verify-E5-T25a verify-E5-T25b verify-E5-T26a verify-E5-T26b verify-E5-T26c verify-E5-T26d verify-E5-T26e verify-E5-T26f verify-E5-T26m verify-E5-T26m-runtime
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -1212,6 +1212,18 @@ verify-E5-T26l: verify-E5-T26l-runtime
 	E5_DEMO_TASK=E5-T26l E5_DEMO_OUT=evidence/e5-t26l/demo node tools/verify/e5-t18e-demo-smoke.mjs
 	node tools/verify/e5-t26l-browser-priority.mjs
 	@echo "verify-E5-T26l (live compile selection and browser screen, not F acceptance): OK"
+
+.PHONY: verify-E5-T26m verify-E5-T26m-runtime
+verify-E5-T26m-runtime:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-wasm --lib --test jit_browser_parity --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --test interrupts --test privilege --test pmp_privilege_audit --test pmp_privilege_adversarial
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+	wasm-pack test --node crates/wasm --lib --test jit_browser_parity -- --nocapture
+
+verify-E5-T26m: verify-E5-T26m-runtime
+	@echo "verify-E5-T26m (inline-context interrupt bits): OK"
 
 .PHONY: verify-E5-T26k verify-E5-T26k-runtime
 verify-E5-T26k-runtime:

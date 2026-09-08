@@ -1,0 +1,28 @@
+diff --git a/crates/wasm/src/jit_browser.rs b/crates/wasm/src/jit_browser.rs
+--- a/crates/wasm/src/jit_browser.rs
++++ b/crates/wasm/src/jit_browser.rs
+@@ -131,3 +131,8 @@
+ }
+ 
++// Exactly the interrupt gating and trap-stack state bits are projected out of cache
++// equality. The live hart status remains the architectural authority.
++const INLINE_TLB_MSTATUS_CONTEXT_MASK: u64 =
++    !((1 << 1) | (1 << 3) | (1 << 5) | (1 << 7));
++
+ /// The browser-only direct-mapped refill cache. The generated module imports the outer wasm
+@@ -177,7 +183,7 @@
+     fn context(hart: &Hart) -> InlineTlbContext {
+         InlineTlbContext {
+             satp: hart.csr.satp(),
+-            mstatus: hart.csr.mstatus,
++            mstatus: hart.csr.mstatus & INLINE_TLB_MSTATUS_CONTEXT_MASK,
+             mode: match hart.csr.mode {
+                 wasm_vm_core::csr::Priv::U => 0,
+                 wasm_vm_core::csr::Priv::S => 1,
+                 wasm_vm_core::csr::Priv::M => 3,
+             },
+             pmp_revision: hart.csr.pmp.revision(),
+             flushes: hart.tlb.flush_count(),
+             triggers_idle: hart.csr.triggers_idle(),
+         }
+     }

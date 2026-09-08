@@ -130,6 +130,10 @@ struct InlineTlbContext {
     triggers_idle: bool,
 }
 
+// Only interrupt gating and trap-stack state are projected out of cache equality. The live hart
+// status remains the architectural authority; all other status bits remain part of the context.
+const INLINE_TLB_MSTATUS_CONTEXT_MASK: u64 = !((1 << 1) | (1 << 3) | (1 << 5) | (1 << 7));
+
 /// The browser-only direct-mapped refill cache. The generated module imports the outer wasm
 /// memory, so this allocation and the guest RAM `Vec` are both addressed by the same linear-memory
 /// offsets. Only successful, aligned RAM accesses are published here; the interpreter remains the
@@ -177,7 +181,7 @@ impl InlineTlbCache {
     fn context(hart: &Hart) -> InlineTlbContext {
         InlineTlbContext {
             satp: hart.csr.satp(),
-            mstatus: hart.csr.mstatus,
+            mstatus: hart.csr.mstatus & INLINE_TLB_MSTATUS_CONTEXT_MASK,
             mode: match hart.csr.mode {
                 wasm_vm_core::csr::Priv::U => 0,
                 wasm_vm_core::csr::Priv::S => 1,
@@ -2348,5 +2352,84 @@ impl CompiledBlockExecutor for BrowserExecutor {
             return false;
         };
         self.evict_batch(bid)
+    }
+}
+
+#[cfg(all(test, target_arch = "wasm32"))]
+mod inline_tlb_context_tests {
+    use super::*;
+    use wasm_bindgen_test::wasm_bindgen_test;
+
+    #[wasm_bindgen_test]
+    fn inline_tlb_context_masks_exactly_interrupt_stack_bits() {
+        let mut machine = Machine::new(8 * 1024 * 1024);
+        let mut cache = InlineTlbCache::new(
+            machine.ram_host_ptr(),
+            machine.ram_len(),
+            machine.ram_base(),
+        )
+        .expect("inline TLB fits wasm memory");
+        let baseline = machine.hart().csr.mstatus;
+        let sentinels = [
+            0xfeed_face_cafe_beefu64,
+            0x0123_4567_89ab_cdefu64,
+            0xa5a5_5a5a_f0f0_0f0fu64,
+        ];
+        let cache_word = |array: usize| array * INLINE_TLB_ARRAY_WORDS;
+
+        for bit in 0..64u32 {
+            let hart = machine.hart_mut();
+            hart.csr.mstatus = baseline;
+            cache.context = Some(InlineTlbCache::context(hart));
+            for (array, sentinel) in sentinels.iter().copied().enumerate() {
+                cache.words[cache_word(array)] = sentinel;
+            }
+
+            let expected = baseline ^ (1u64 << bit);
+            hart.csr.mstatus = expected;
+            let changed = cache.sync_context(hart);
+
+            if matches!(bit, 1 | 3 | 5 | 7) {
+                assert!(!changed, "interrupt-stack bit {bit} changed cache context");
+                for (array, sentinel) in sentinels.iter().copied().enumerate() {
+                    assert_eq!(
+                        cache.words[cache_word(array)],
+                        sentinel,
+                        "bit {bit} cleared cache array {array} word"
+                    );
+                }
+            } else {
+                assert!(changed, "retained mstatus bit {bit} did not change context");
+                for array in 0..3 {
+                    assert_eq!(
+                        cache.words[cache_word(array)],
+                        0,
+                        "bit {bit} retained cache array {array} word"
+                    );
+                }
+            }
+            assert_eq!(
+                hart.csr.mstatus, expected,
+                "architectural mstatus was altered"
+            );
+        }
+
+        let retained_and_ignored = (1u64 << 1) | (1u64 << 7) | (1u64 << 18) | (1u64 << 19);
+        let hart = machine.hart_mut();
+        hart.csr.mstatus = baseline;
+        cache.context = Some(InlineTlbCache::context(hart));
+        for (array, sentinel) in sentinels.iter().copied().enumerate() {
+            cache.words[cache_word(array)] = sentinel;
+        }
+        hart.csr.mstatus = baseline ^ retained_and_ignored;
+        assert!(cache.sync_context(hart));
+        for array in 0..3 {
+            assert_eq!(
+                cache.words[cache_word(array)],
+                0,
+                "retained bits must clear cache array {array}"
+            );
+        }
+        assert_eq!(hart.csr.mstatus, baseline ^ retained_and_ignored);
     }
 }

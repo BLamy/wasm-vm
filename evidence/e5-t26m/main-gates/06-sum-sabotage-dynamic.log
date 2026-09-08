@@ -1,0 +1,92 @@
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/jit_browser_parity.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_browser_parity-6cc578c42c9ecada.wasm)
+running 1 test
+Invoking test: browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_invalidates
+panicked at crates/wasm/tests/jit_browser_parity.rs:2085:13:
+assertion `left == right` failed: SUM must prevent stale dynamic entry
+  left: 4
+ right: 2
+
+Stack:
+
+Error
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpN2Zn4u/wasm-bindgen-test.js:2618:25
+    at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpN2Zn4u/wasm-bindgen-test.js:3404:18)
+    at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpN2Zn4u/wasm-bindgen-test.js:2617:57)
+    at jit_browser_parity-6cc578c42c9ecada.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[22075]:0x4a38ab)
+    at jit_browser_parity-6cc578c42c9ecada.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[13166]:0x443c8d)
+    at jit_browser_parity-6cc578c42c9ecada.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[5494]:0x355ec1)
+    at jit_browser_parity-6cc578c42c9ecada.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[14757]:0x45d031)
+    at jit_browser_parity-6cc578c42c9ecada.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[4525]:0x320782)
+    at jit_browser_parity-6cc578c42c9ecada.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[8979]:0x3df344)
+    at jit_browser_parity-6cc578c42c9ecada.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[22484]:0x4a4d42)
+
+
+test browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_invalidates ... FAIL
+
+failures:
+
+---- browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_invalidates output ----
+    error output:
+        panicked at crates/wasm/tests/jit_browser_parity.rs:2085:13:
+        assertion `left == right` failed: SUM must prevent stale dynamic entry
+          left: 4
+         right: 2
+        
+        Stack:
+        
+        Error
+            at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpN2Zn4u/wasm-bindgen-test.js:2618:25
+            at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpN2Zn4u/wasm-bindgen-test.js:3404:18)
+            at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpN2Zn4u/wasm-bindgen-test.js:2617:57)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[22075]:0x4a38ab)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[13166]:0x443c8d)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[5494]:0x355ec1)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[14757]:0x45d031)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[4525]:0x320782)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[8979]:0x3df344)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[22484]:0x4a4d42)
+        
+        
+    
+    JS exception that was thrown:
+        RuntimeError: unreachable
+            at jit_browser_parity-6cc578c42c9ecada.wasm.__rustc[8068f81614cfe5c]::__rust_abort (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[22581]:0x4a5038)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.__rustc[8068f81614cfe5c]::__rust_start_panic (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[22563]:0x4a4fdd)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.__rustc[8068f81614cfe5c]::rust_panic (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[22192]:0x4a3f9b)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[4525]:0x3207f4)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[8979]:0x3df344)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[22484]:0x4a4d42)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.__rustc[8068f81614cfe5c]::rust_begin_unwind (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[17214]:0x47b511)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.core[2c5ad5f686fcca5c]::panicking::panic_fmt (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[14499]:0x45954a)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.core[2c5ad5f686fcca5c]::panicking::assert_failed_inner (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[3970]:0x2fcef4)
+            at jit_browser_parity-6cc578c42c9ecada.wasm.core[2c5ad5f686fcca5c]::panicking::assert_failed::<u64, u64> (wasm://wasm/jit_browser_parity-6cc578c42c9ecada.wasm-0a2df112:wasm-function[15110]:0x461f7c)
+
+failures:
+
+    browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_invalidates
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 37 filtered out; finished in 0.19s
+
+Error: Node failed with exit_code 1
+error: test failed, to rerun pass `--test jit_browser_parity`
+
+Caused by:
+  process didn't exit successfully: `/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner /Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_browser_parity-6cc578c42c9ecada.wasm browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_invalidates --nocapture` (exit status: 1)
+Error: Running Wasm tests with wasm-bindgen-test failed
+Caused by: Running Wasm tests with wasm-bindgen-test failed
+Caused by: failed to execute `cargo test`: exited with exit status: 1
+  full command: cd "crates/wasm" && CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER="/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner" WASM_BINDGEN_TEST_ONLY_NODE="1" "cargo" "test" "--target" "wasm32-unknown-unknown" "--test" "jit_browser_parity" "--" "browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_invalidates" "--nocapture"
