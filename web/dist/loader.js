@@ -27,6 +27,7 @@ import { decideBootPath, deriveBootSnapshotBaseId } from "./boot-path.js";
 import { deriveOverlaySeedIdentity } from "./overlay-seed-identity.js";
 import { createTaskQuiescence } from "./task-quiescence.js";
 import { validateGuestClock, validateICountDivider, createGuestClockLifecycle } from "./guest-clock.js";
+import { validateDecodedCacheEntries, applyDecodedCacheEntries } from "./decoded-cache.js";
 
 // Responsiveness: a near-zero-delay "yield to the main thread" for rescheduling the run loop. The VM
 // runs on the main thread (a Web Worker offload is a larger follow-up), so a long synchronous run slice
@@ -233,6 +234,8 @@ export async function startLinuxBoot(opts = {}) {
     guestClock = "icount",
     // Explicit experiment only. Omission preserves the constructed or restored divider.
     icountDivider = undefined,
+    // E5-T26k: explicit 4096/16384-entry experiment; omission preserves the existing capacity.
+    decodedCacheEntries = undefined,
     // E4-T32: policy is selected by the page and passed as data to a whole-machine worker. Undefined
     // preserves direct-loader compatibility; the page makes the production default explicit.
     jit = undefined,
@@ -284,6 +287,7 @@ export async function startLinuxBoot(opts = {}) {
   const baseUrl = opts.baseUrl ?? imageManifestUrl.replace(/[^/]*$/, "");
 
   try {
+    validateDecodedCacheEntries(decodedCacheEntries);
     validateGuestClock(guestClock);
     validateICountDivider(icountDivider, guestClock);
     const manifest = await fetchJsonAsset(manifestUrl, "boot manifest");
@@ -794,6 +798,8 @@ export async function startLinuxBoot(opts = {}) {
       }
     }
 
+    // All initial resume candidates are settled; selection must survive restore and precede execution.
+    applyDecodedCacheEntries(machine, decodedCacheEntries);
     const guestClockLifecycle = createGuestClockLifecycle(machine, guestClock, icountDivider);
 
     // No resume candidate was coherent, so this machine is about to execute its cold guest boot.

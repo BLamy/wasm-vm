@@ -968,6 +968,16 @@ export class WasmLinux {
         }
     }
     /**
+     * E5-T26k: select one bounded decoded-cache capacity, without coercing JavaScript values.
+     * @param {any} value
+     */
+    setDecodedCacheEntries(value) {
+        const ret = wasm.wasmlinux_setDecodedCacheEntries(this.__wbg_ptr, value);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E3-T10: flip the disk to read-only at runtime — the "continue read-only" choice after a
      * storage-quota hit. Subsequent guest writes get EIO (VIRTIO_BLK_F_RO / BlockError::ReadOnly)
      * so the guest sees an honest I/O error instead of a silently-undurable write. No-op off the

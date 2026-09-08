@@ -69,6 +69,7 @@ export const wasmlinux_sendKeyboardEvent: (a: number, b: number, c: number, d: n
 export const wasmlinux_sendMouseEvent: (a: number, b: number, c: number, d: number) => [number, number];
 export const wasmlinux_sendTabletEvent: (a: number, b: number, c: number, d: number) => [number, number];
 export const wasmlinux_setChaining: (a: number, b: number) => [number, number];
+export const wasmlinux_setDecodedCacheEntries: (a: number, b: any) => [number, number];
 export const wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
 export const wasmlinux_setDisplay: (a: number, b: any, c: any) => [number, number, number];
 export const wasmlinux_setDynamicChaining: (a: number, b: number) => [number, number];

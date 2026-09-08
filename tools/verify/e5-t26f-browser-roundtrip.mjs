@@ -29,6 +29,7 @@ import { guestProfileRequested, installGuestProfileWorker, recordGuestProfile } 
 import { assertWindowMoved } from "../../web/bench/desktop-perf.js";
 import { residentFixtureRequested, assertResidentImage, parsePreparedSound, assertFreshLockedPcm,
   RESIDENT_GUEST_PATH } from "./e5-t26f-resident-proof.mjs";
+import { decodedCacheRequested, recordDecodedCache } from "./e5-t26k-decoded-cache.mjs";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const web = path.join(repo, "web");
@@ -51,6 +52,7 @@ const SHA256 = /^[0-9a-f]{64}$/u;
 const jsonReplacer = (_key, value) => typeof value === "bigint" ? `${value}n` : value;
 
 function diagnosticOptions(env) {
+  if (env.E5_T26F_DIAGNOSTIC_DECODED_CACHE_ENTRIES !== undefined) decodedCacheRequested(env);
   if (env.E5_T26F_DIAGNOSTIC_GUEST_PROFILE !== undefined) guestProfileRequested(env);
   const mode = env.E5_T26F_DIAGNOSTIC;
   const complete = env.E5_T26F_DIAGNOSTIC_COMPLETE;
@@ -128,6 +130,8 @@ function diagnosticOptions(env) {
     keyDelayMs: Number(delay ?? 0), latency: latency === "1", cpu: cpu === "1", guestClock: guestClock ?? null,
     jit: jit ?? null, residency: residency ?? null, complete: complete === "1",
     icountDivider: icountDivider === undefined ? null : Number(icountDivider),
+    ...(env.E5_T26F_DIAGNOSTIC_DECODED_CACHE_ENTRIES === undefined ? {} :
+      { decodedCacheEntries: Number(env.E5_T26F_DIAGNOSTIC_DECODED_CACHE_ENTRIES) }),
     ...(env.E5_T26F_DIAGNOSTIC_GUEST_PROFILE === undefined ? {} : { guestProfile: true }) };
 }
 
@@ -1530,6 +1534,7 @@ try {
   if (diagnostic?.jit != null) query.set("jit", diagnostic.jit);
   if (diagnostic?.residency != null) query.set("jitResidency", diagnostic.residency);
   if (diagnostic?.icountDivider != null) query.set("icountDivider", String(diagnostic.icountDivider));
+  if (diagnostic?.decodedCacheEntries != null) query.set("decodedCacheEntries", String(diagnostic.decodedCacheEntries));
   const coldUrl = `${base}/desktop-cursor.html?${query}`;
   const restoreUrl = `${coldUrl}&autoRestore=1`;
   let normalSnapshot = diagnosticCheckpoint?.normalSnapshot;
@@ -1711,6 +1716,7 @@ try {
   const postRestoreStart = firstRestore.completedAt;
   milestones.postRestoreStart = postRestoreStart;
   assert.ok(Number.isFinite(postRestoreStart), "restore did not expose a timing boundary");
+  if (diagnostic?.decodedCacheEntries != null) await recordDecodedCache(page, milestones, "decodedCacheBefore", diagnostic.decodedCacheEntries);
   // This real RPC is inside the original restore budget in both explicit comparison arms.
   if (diagnostic?.jit != null) await recordDiagnosticJit("jitBefore");
   if (diagnostic?.icountDivider != null) await recordDiagnosticICountDivider("icountDividerBefore");
@@ -1853,6 +1859,7 @@ try {
   phaseProgress("post-restore:interaction-checks");
   const postRestoreEnd = await page.evaluate(() => performance.now());
   milestones.postRestoreEnd = postRestoreEnd;
+  // The end is frozen before this later observation; no collector work changes F's interval.
   const postRestoreInteraction = await page.evaluate((boundary) => ({
     elapsedMs: performance.now() - boundary,
     pointerFrames: window.__desktopTerminal.state().pointerFrames,
@@ -1867,6 +1874,10 @@ try {
   milestones.postRestoreInteraction = postRestoreInteraction;
   // Never delay the immediate PCM observation or replace the already-frozen interaction end.
   if (diagnostic?.jit != null) await recordDiagnosticJit("jitAfter");
+  if (diagnostic?.decodedCacheEntries != null) {
+    await recordDecodedCache(page, milestones, "decodedCacheAfter", diagnostic.decodedCacheEntries);
+    milestones.decodedCacheErrors = { browser: [...browserErrors], http: [...httpErrors] };
+  }
   if (diagnostic?.guestProfile) await recordGuestProfile(page, milestones, "guestProfileAfter");
   if (diagnostic?.icountDivider != null) {
     await recordDiagnosticICountDivider("icountDividerAfter");

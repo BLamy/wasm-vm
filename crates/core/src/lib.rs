@@ -985,6 +985,23 @@ impl Machine {
         self.interrupt_batching && self.block_cache_enabled
     }
 
+    /// Actual decoded-cache slot count; host configuration, not snapshot/architectural state.
+    pub fn decoded_cache_entries(&self) -> usize {
+        self.block_cache.capacity()
+    }
+
+    /// E5-T26k: bounded host selection. Invalid values and selecting the actual current size
+    /// leave all state untouched, including live decoded cursors and compiled handles.
+    pub fn set_decoded_cache_entries(&mut self, entries: usize) -> Result<(), &'static str> {
+        if !matches!(entries, 4096 | 16384) {
+            return Err("decoded cache entries must be 4096 or 16384");
+        }
+        if entries != self.decoded_cache_entries() {
+            self.set_block_cache_capacity(entries);
+        }
+        Ok(())
+    }
+
     /// E4-T05: resize the block cache (rounded up to a power of two). `capacity == 1` is the
     /// adversarial pathological-eviction mode — a 1-entry cache that must STILL be byte-identical.
     pub fn set_block_cache_capacity(&mut self, capacity: usize) {
@@ -4999,6 +5016,9 @@ fn kernel_image_footprint(bytes: &[u8]) -> u64 {
 
 #[cfg(all(test, not(feature = "zicsr-stub")))]
 mod pmp_audit_tests;
+
+#[cfg(all(test, not(feature = "zicsr-stub")))]
+mod decoded_cache_capacity_tests;
 
 #[cfg(test)]
 mod tests {

@@ -251,7 +251,7 @@ test("actual scratch admission is resident reuse only and rejects every profilin
   assert.throws(() => select({}));
   for (const mode of [undefined, "", "create", "REUSE"]) assert.throws(() => select({ ...env, E5_T26F_DIAGNOSTIC: mode }));
   assert.throws(() => select({ ...env, E5_T26F_FIXTURE: undefined }));
-  for (const key of ["COMPLETE", "COMMAND", "CPU", "LATENCY", "GUEST_PROFILE", "JIT", "RESIDENCY", "GUEST_CLOCK", "ICOUNT_DIVIDER", "KEY_DELAY_MS"]) {
+  for (const key of ["COMPLETE", "COMMAND", "CPU", "LATENCY", "GUEST_PROFILE", "JIT", "RESIDENCY", "GUEST_CLOCK", "ICOUNT_DIVIDER", "KEY_DELAY_MS", "DECODED_CACHE_ENTRIES"]) {
     for (const value of ["", "1", null]) assert.throws(() => select({ ...env, [`E5_T26F_DIAGNOSTIC_${key}`]: value }));
   }
   assert.throws(() => select({ ...env, E5_T26F_DIAGNOSTIC_COMMAND: "times;play;times" }));

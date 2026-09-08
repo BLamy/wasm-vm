@@ -1153,6 +1153,26 @@ verify-E5-T26f:
 	E5_T26F_IMAGE=$(E5_T26F_IMAGE) E5_T26F_IMAGE_INFO=$(E5_T26F_IMAGE_INFO) E5_T26F_DESKTOP_ASSET_DIR=$(E5_T26F_DESKTOP_ASSET_DIR) node tools/verify/e5-t26f-browser-roundtrip.mjs
 	@echo "verify-E5-T26f (Chromium desktop snapshot round-trip and interaction smoke): OK"
 
+.PHONY: verify-E5-T26k verify-E5-T26k-runtime
+verify-E5-T26k-runtime:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests --features trace,gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --features trace,gpu-trace --lib decoded_cache_capacity_tests -- --nocapture
+	cargo test -p wasm-vm-core --features trace,gpu-trace --test predecode_diff --test predecode_smc_diff --test cpu_resume --test desktop_machine_resume -- --nocapture
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	node --check tools/verify/e5-t26k-browser-capacity.mjs
+	node --check tools/verify/e5-t26f-browser-roundtrip.mjs
+	node --test web/tests/e5-t26k-decoded-cache.test.mjs web/tests/e5-t26j-icount-divider.test.mjs web/tests/e5-t26i-guest-clock.test.mjs web/tests/e4-t32-worker-protocol.test.mjs
+	node --test tools/verify/e5-t26k-decoded-cache.test.mjs tools/verify/e5-t26k-browser-capacity.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs tools/verify/e5-t26f-quiet-text-probe.test.mjs tools/verify/e5-t26f-browser-roundtrip.test.mjs tools/verify/e5-t26f-completion.test.mjs tools/verify/e5-t26f-residency-comparison.test.mjs
+
+# A fresh runtime-bound cold seal plus ABBA; measured timing failures remain failures of F.
+verify-E5-T26k: verify-E5-T26k-runtime
+	wasm-pack test --node crates/wasm --test decoded_cache_capacity --test icount_divider --test guest_clock
+	$(MAKE) web-dist
+	node tools/verify/e5-t26k-browser-capacity.mjs
+	@echo "verify-E5-T26k (bounded decoded-cache selection and measurement, not F acceptance): OK"
+
 .PHONY: verify-E5-T26j verify-E5-T26j-runtime
 verify-E5-T26j-runtime:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm

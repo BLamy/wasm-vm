@@ -148,7 +148,7 @@ const residentFixture = residentFixtureRequested(process.env);
 // AD HOC COUNTERFACTUAL ONLY. Never use this scratch driver for acceptance or a cold seal.
 assert.equal(residentFixture, true);
 assert.equal(diagnostic?.mode, "reuse");
-for (const key of ["COMPLETE", "COMMAND", "CPU", "LATENCY", "GUEST_PROFILE", "JIT", "RESIDENCY", "GUEST_CLOCK", "ICOUNT_DIVIDER", "KEY_DELAY_MS"])
+for (const key of ["COMPLETE", "COMMAND", "CPU", "LATENCY", "GUEST_PROFILE", "JIT", "RESIDENCY", "GUEST_CLOCK", "ICOUNT_DIVIDER", "KEY_DELAY_MS", "DECODED_CACHE_ENTRIES"])
   assert.equal(process.env[`E5_T26F_DIAGNOSTIC_${key}`], undefined);
 const postRestoreCommand = residentFixture ? diagnostic?.command ?? "play" : diagnostic?.command ?? "sh /tmp/a";
 // Admitted reuse-only accounting probes need reliable physical input, not acceptance speed.

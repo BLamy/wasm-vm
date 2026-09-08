@@ -347,6 +347,10 @@ export class WasmLinux {
      */
     setChaining(on: boolean): void;
     /**
+     * E5-T26k: select one bounded decoded-cache capacity, without coercing JavaScript values.
+     */
+    setDecodedCacheEntries(value: any): void;
+    /**
      * E3-T10: flip the disk to read-only at runtime — the "continue read-only" choice after a
      * storage-quota hit. Subsequent guest writes get EIO (VIRTIO_BLK_F_RO / BlockError::ReadOnly)
      * so the guest sees an honest I/O error instead of a silently-undurable write. No-op off the
@@ -703,6 +707,7 @@ export interface InitOutput {
     readonly wasmlinux_sendMouseEvent: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_sendTabletEvent: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_setChaining: (a: number, b: number) => [number, number];
+    readonly wasmlinux_setDecodedCacheEntries: (a: number, b: any) => [number, number];
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
     readonly wasmlinux_setDisplay: (a: number, b: any, c: any) => [number, number, number];
     readonly wasmlinux_setDynamicChaining: (a: number, b: number) => [number, number];

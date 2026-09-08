@@ -1,0 +1,48 @@
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/decoded_cache_capacity.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/decoded_cache_capacity-37f0fa3b359e1120.wasm)
+running 3 tests
+test whole_machine_restore_retains_selected_host_capacity_and_flushes_real_compiled_state ... ok
+test strict_numeric_boundary_rejects_before_any_architectural_or_live_cache_mutation ... ok
+test resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_policy ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 3.08s
+
+     Running tests/guest_clock.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/guest_clock-ac70823acdca127f.wasm)
+running 5 tests
+test guest_clock::rejected_resume_preserves_policy_anchor_and_guest_state ... ok
+test guest_clock::icount_rebase_selection_and_restore_preserve_trace_digest_and_subtick_phase ... ok
+test guest_clock::fresh_and_same_machine_restore_rebase_at_restored_mtime_and_preserve_deadline ... ok
+test guest_clock::explicit_resume_freezes_pause_but_background_retains_jump_policy ... ok
+test guest_clock::busy_rdtime_tracks_ten_mhz_not_retire_count_and_clamps_jitter ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.04s
+
+     Running tests/icount_divider.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/icount_divider-4d0797b60ff5c2d8.wasm)
+running 11 tests
+test core_icount_divider::wall_mode_refuses_even_same_divider_without_touching_the_host_anchor ... ok
+test core_icount_divider::same_divider_is_byte_exact_and_preserves_pending_irqs_device_and_cache_identity ... ok
+test core_icount_divider::resume_retains_selected_phase_and_explicit_post_restore_override_maps_it_once ... ok
+test core_icount_divider::missing_clint_and_out_of_range_inputs_are_atomic ... ok
+test core_icount_divider::invalid_saved_phases_refuse_before_same_divider_or_any_other_mutation ... ok
+test core_icount_divider::huge_prior_dividers_and_resumed_phases_map_with_full_u128_precision ... ok
+test core_icount_divider::busy_guest_rdtime_matches_independent_phase_oracle_and_trace_across_cache_modes ... ok
+test core_icount_divider::all_small_ratios_and_phases_preserve_state_and_land_the_next_tick_exactly ... ok
+test strict_js_values_reject_without_coercion_or_machine_mutation ... ok
+test numeric_boundaries_same_divider_and_resume_preserve_fractional_progress ... ok
+test divider_preserves_live_compiled_executor_counters_policy_and_guest_memory ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 filtered out; finished in 1.67s
+

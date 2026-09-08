@@ -741,6 +741,10 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
     );
     let discovery = machine.discovery_stats();
     set(
+        "decodedCacheEntries",
+        &JsValue::from_f64(machine.decoded_cache_entries() as f64),
+    );
+    set(
         "decodedBlocksDiscarded",
         &JsValue::from_f64(discovery.blocks_discarded as f64),
     );
@@ -2996,6 +3000,20 @@ impl WasmLinux {
             JsValue::from_f64(inner.machine.guest_clock_div() as f64),
         );
         Ok(object.into())
+    }
+
+    /// E5-T26k: select one bounded decoded-cache capacity, without coercing JavaScript values.
+    #[wasm_bindgen(js_name = setDecodedCacheEntries)]
+    pub fn set_decoded_cache_entries(&self, value: JsValue) -> Result<(), JsError> {
+        let entries = value
+            .as_f64()
+            .filter(|v| *v == 4096.0 || *v == 16384.0)
+            .ok_or_else(|| JsError::new("decoded cache entries must be numeric 4096 or 16384"))?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .machine
+            .set_decoded_cache_entries(entries as usize)
+            .map_err(JsError::new)
     }
 
     /// E4-T30: select the production interpreter fast path for a browser Linux guest. It combines

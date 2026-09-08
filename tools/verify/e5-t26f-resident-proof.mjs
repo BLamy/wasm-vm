@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { guestProfileRequested } from "./e5-t26f-guest-profile.mjs";
+import { decodedCacheRequested } from "./e5-t26k-decoded-cache.mjs";
 
 export const RESIDENT_KIND = "resident-aplay-v1";
 export const RESIDENT_BASE_SHA = "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550";
@@ -12,6 +13,10 @@ export function residentFixtureRequested(env) {
   const value = env.E5_T26F_FIXTURE;
   assert.ok(value === undefined || value === RESIDENT_KIND, "unknown F fixture; omission preserves the original process-launch fixture");
   if (value === undefined) return false;
+  if (env.E5_T26F_DIAGNOSTIC_DECODED_CACHE_ENTRIES !== undefined) {
+    decodedCacheRequested(env);
+    return true;
+  }
   if (env.E5_T26F_DIAGNOSTIC_JIT !== undefined || env.E5_T26F_DIAGNOSTIC_RESIDENCY !== undefined) {
     // Isolated existing-policy comparison only, never a resident default or acceptance knob.
     assert.equal(env.E5_T26F_DIAGNOSTIC, "reuse", "resident residency requires exact diagnostic reuse");
