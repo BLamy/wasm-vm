@@ -1,0 +1,15 @@
+✔ pins current sources and refuses drift (6.6935ms)
+✔ admission refuses overrides and requires the current seal (0.380958ms)
+✔ generated source removes exactly the requested guest block and retains guards (11.059625ms)
+✔ generated module is syntactically valid and imports are pinned absolute files (22.969583ms)
+✔ factory writes only a fresh generated target and metadata (13.623875ms)
+✔ closed result uses original cap and rejects non-cap or missing proof (1.844625ms)
+✔ launcher metadata cannot occupy the child's fresh record directory (0.906375ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 90.825959

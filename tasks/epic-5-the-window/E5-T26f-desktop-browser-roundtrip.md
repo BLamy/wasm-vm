@@ -40,6 +40,49 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker and fresh Daybreak critic — post-PLIC screen and counterfactual closed
+
+Frozen producer `76eca30b248268e130395c53cb09da62637388a7` ran
+`env -u RUSTDOCFLAGS node tools/verify/e5-t26f-browser-single-process-observer.mjs`.
+The new authenticated cold checkpoint restores CRC `e0c300b9`, the same prepared
+PID1000/start28741, physical play/cursor/focus, and1440 fresh non-silent PCM frames.
+Original T0 `1175.460000038147` to end `5178.40499997139` is
+**4002.944999933243ms >2000ms: FAILED**. Raw SHA256
+`1b73c811b9abc99d2d7172323e42f3f97dc66e0d13d76468717a75ed5d3b94dc`.
+Cold0/reuse1/outer0 is diagnostic failure retention, not acceptance. Commands,
+source/image/profile bindings, screenshots and limitations are retained in
+`evidence/e5-t26f/single-process-observer-76eca30b/README.md`; independent verdict
+is `evidence/e5-t26f/plic-runtime-verifier/browser-results.md`.
+
+One approved RAM-only audit-elided counterfactual removes only post-identity
+observation/reporting, retaining armed/PID check, finite PCM/feed, SIGPIPE handling,
+FD close, same-child wait and conditional completion. It never changes the installed
+helper/image. Initial attempt `run-1788906189330-12945` failed before physical play:
+setup readiness text contaminated the inherited geometry detector. No timing result.
+Original scripts/raw/PNGs remain retained. Seven focused Node checks pass after the
+critic-reviewed four-blank-line setup correction; detector/raster/T0 remain unchanged.
+
+Corrected command `env -u RUSTDOCFLAGS node evidence/e5-t26f/audit-elided-76eca30b/run.mjs`
+is retained under `run-1788906843085-13606` in that directory. Actual driver SHA256
+`c847ff1b91428b66579ad11b54efe8351d9a4915ec49a816473bf80b1e6b89bf`;
+raw SHA256 `a92c59cbb871d82222742300f5f40e20c6178b5bfdf82e3478bc6875b491786f`.
+T0 `993.0299999713898` to frozen end `4403.384999990463` is
+**3410.3550000190735ms >2000ms: FAILED**. Current before/after source pins and HEAD
+match. Derived snapshot CRC `036b3773` restores; one fresh exact72×13 token appears
+at557,117 in the unchanged upper region, ten physical key/DOM edges match, and audio
+records2400 written/inspected frames with1920 non-silent. Main and Daybreak viewed
+both PNGs. Fresh post-identity validation is deliberately absent; all records deny
+acceptance and F verification. This closes audit elision as a sufficient fix, not a
+causal attribution or permission to weaken the full guards.
+
+Independent preflight, geometry-pixel finding and closed corrected result are in
+`evidence/e5-t26f/plic-runtime-verifier/audit-elided-results.md`. Later coherence,
+drag/second reload and complete failed-reuse browser/HTTP error arrays remain unproven.
+F stays in-progress. No further audit-elision tuning, timing waiver, runtime fix,
+Epic5 completion, merge, production deployment or Omarchy mutation is claimed.
+This metadata closure invalidates the old checkpoint for subsequent HEADs; never
+rebind it. Existing O and unchanged image/helper proofs carry forward.
+
 ### 2026-09-08 — coordinator — resume after verified PLIC prerequisite
 
 E5-T26o is independently verified at

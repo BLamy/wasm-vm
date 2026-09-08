@@ -1,0 +1,310 @@
+--- tools/verify/e5-t26f-browser-roundtrip.mjs	2026-09-08 12:06:26
++++ target/e5-t26f/audit-elided-76eca30b-main-review/probe.mjs	2026-09-08 18:13:59
+@@ -17,6 +17,7 @@
+ // player; physically typed play feeds/waits it after the gesture, without runtime tuning.
+ 
+ import assert from "node:assert/strict";
++import { createTextOracle } from "file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-text-oracle.mjs";
+ import { createHash } from "node:crypto";
+ import { execFile as execFileCallback, spawn } from "node:child_process";
+ import { createServer } from "node:net";
+@@ -24,14 +25,14 @@
+ import path from "node:path";
+ import { fileURLToPath, pathToFileURL } from "node:url";
+ import { promisify } from "node:util";
+-import { attachWorkerProfiler } from "./e5-t22c-cpu-profile.mjs";
+-import { guestProfileRequested, installGuestProfileWorker, recordGuestProfile } from "./e5-t26f-guest-profile.mjs";
+-import { assertWindowMoved } from "../../web/bench/desktop-perf.js";
++import { attachWorkerProfiler } from "file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t22c-cpu-profile.mjs";
++import { guestProfileRequested, installGuestProfileWorker, recordGuestProfile } from "file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-guest-profile.mjs";
++import { assertWindowMoved } from "file:///Users/blamy/Documents/Codex/wasm-vm/web/bench/desktop-perf.js";
+ import { residentFixtureRequested, residentSourceInputs, assertResidentImage, parsePreparedSound, assertFreshLockedPcm,
+-  RESIDENT_GUEST_PATH } from "./e5-t26f-resident-proof.mjs";
+-import { decodedCacheRequested, recordDecodedCache } from "./e5-t26k-decoded-cache.mjs";
++  RESIDENT_GUEST_PATH } from "file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-resident-proof.mjs";
++import { decodedCacheRequested, recordDecodedCache } from "file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26k-decoded-cache.mjs";
+ 
+-const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
++const repo = "/Users/blamy/Documents/Codex/wasm-vm";
+ const web = path.join(repo, "web");
+ const out = path.resolve(process.env.E5_T26F_OUT || path.join(repo, "evidence/e5-t26f"));
+ const assetRoot = path.resolve(
+@@ -49,6 +50,17 @@
+ const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+ const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
+ const SHA256 = /^[0-9a-f]{64}$/u;
++const reviewedTextFile = path.join(repo, "evidence/e5-t26f/resident-text-template.json");
++const reviewedTextBytes = await readFile(reviewedTextFile);
++const reviewedText = JSON.parse(reviewedTextBytes);
++assert.equal(reviewedText.schema, "wasm-vm.e5-t26f.reviewed-text-raster.v1");
++assert.equal(reviewedText.text, "e5t26f-aplay");
++const textTemplate = { width: reviewedText.width, height: reviewedText.height,
++  rgba: Array.from(Buffer.from(reviewedText.rgbaBase64, "base64")) };
++assert.deepEqual([textTemplate.width, textTemplate.height], [72, 13]);
++assert.equal(sha256(Buffer.from(textTemplate.rgba)),
++  "868249728c21a50b44997f9a83499202dafaecdf6e07f345d08e8da8ab5294fc");
++assert.equal(reviewedText.rgbaSha256, sha256(Buffer.from(textTemplate.rgba)));
+ const jsonReplacer = (_key, value) => typeof value === "bigint" ? `${value}n` : value;
+ 
+ function diagnosticOptions(env) {
+@@ -135,6 +147,28 @@
+     ...(env.E5_T26F_DIAGNOSTIC_GUEST_PROFILE === undefined ? {} : { guestProfile: true }) };
+ }
+ 
++function validateAuditEnvironment(env, requiredHead) {
++  assert.equal(env.E5_T26F_FIXTURE, "resident-observer-v1");
++  assert.equal(env.E5_T26F_DIAGNOSTIC, "reuse");
++  assert.equal(env.E5_T26F_REQUIRE_HEAD, requiredHead);
++  const allowed = new Set(["E5_T26F_DIAGNOSTIC_PROFILE", "E5_T26F_DIAGNOSTIC_PORT"]);
++  for (const key of Object.keys(env)) if (key.startsWith("E5_T26F_DIAGNOSTIC_") && !allowed.has(key)) {
++    assert.fail(`audit-elided counterfactual refuses override ${key}, including empty values`);
++  }
++  for (const [key, predicate] of [
++    ["E5_T26F_DIAGNOSTIC_PROFILE", value => typeof value === "string" && path.isAbsolute(value) && path.resolve(value) === value && value !== path.parse(value).root],
++    ["E5_T26F_OUT", value => typeof value === "string" && path.isAbsolute(value) && path.resolve(value) === value && value !== path.parse(value).root],
++  ]) assert.ok(predicate(env[key]), `explicit normalized ${key} required`);
++  assert.match(env.E5_T26F_DIAGNOSTIC_PORT, /^[1-9][0-9]*$/u);
++  assert.ok(Number(env.E5_T26F_DIAGNOSTIC_PORT) >= 1024 && Number(env.E5_T26F_DIAGNOSTIC_PORT) <= 65535);
++  return { mode: "audit-elided-counterfactual", acceptance: false, fVerified: false, postIdentityValidated: false };
++}
++validateAuditEnvironment(process.env, "76eca30b248268e130395c53cb09da62637388a7");
++const auditSourcePins = {"tools/verify/e5-t26f-browser-roundtrip.mjs":"7f8b58f7e3f6e0f16b7b6cb91b8593e625ed058e7aa764df428e9990f85100a1","tools/verify/e5-t26f-quiet-text-probe.mjs":"1c38cf75c420bf6dc9b187c6aed59e6d0c838e780c1a06e169157e3b5158f6f4","tools/verify/e5-t26f-text-oracle.mjs":"dc14730662600ff3cc978848065d86e431793258c00056c9ae0c3d326edc11ba","tools/verify/e5-t26f-resident-proof.mjs":"d5615b185536f0f0af3da7d4b133ec28ec9e2c62962d22b3cd57e8c24f5a5810","tools/verify/e5-t26f-browser-single-process-observer.mjs":"3be35665f7d403f9c291b5b81b1c07449ef526d171a53f5e7a69b087e79c416d","tools/guest/e5-t26f-resident-observer.sh":"5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9","web/pkg/wasm_vm_wasm_bg.wasm":"20f58e0d44cc94f9d0629478789680e4a87345ba800162aa0737ddc763bfd238","tools/verify/e5-t22c-cpu-profile.mjs":"f75fb38299169c662f6f6668d63d17e8ddaf6ec70a19082455e9de121ea5d5d4","tools/verify/e5-t26f-guest-profile.mjs":"1b9d202be44aa3c01f770ef5483551be0cfc828631b6cbc78caff53baf70948a","tools/verify/e5-t26k-decoded-cache.mjs":"fc6dde980554845fc3d28f5e44dcd0caf0c1659d48b320054a00aeb8e67e9843","web/bench/desktop-perf.js":"d612908317a9d8b6fa031d1652865115b77428c2a923adf32d1642f39be712ed","evidence/e5-t26f/resident-text-template.json":"58609c000193c8079fa21a408aef4d6dd7a7ad17fbc06d3e3f6bd02a6894e85e","evidence/e5-t26f/single-process-observer-76eca30b/invocation.json":"8a44018960c2ae8bdc57e87a786c0773aebf33a12d67382c760eac2a2d3e421d"};
++const auditSeal = {"creatorHead":"76eca30b248268e130395c53cb09da62637388a7","profileSha256":"f634092cc1fa969084d9316f07d4c8dbfdc9685cba445b933d20c049d516efaf","snapshotSha256":"573f27b65af05197d1b30a4c745be5582500653e0c031541333ff99da410f1ae","runtimeSha256":"18953aff6f7cbab92d13460912bbb868a951b42ad7b5aadfdadc1e46b0913190","imageSha256":"d2fc4eab9bc1b5fe528a2956b58faefb20fcf18e2505c499ecafa8824d390f72","wasmSha256":"20f58e0d44cc94f9d0629478789680e4a87345ba800162aa0737ddc763bfd238"};
++const auditElidedPlayBodySha256 = "50fa3e0e8264ebdb6f31d2816c06a5275e8ba4c9ddb892a8cc989ef068f83c58";
++for (const [relative, expected] of Object.entries(auditSourcePins)) assert.equal(sha256(await readFile(path.join(repo, relative))), expected, "audit source drift: " + relative);
++assert.equal(sha256(await readFile(path.join(repo, "web/pkg/wasm_vm_wasm_bg.wasm"))), auditSeal.wasmSha256, "sealed WASM drift");
+ const diagnostic = diagnosticOptions(process.env);
+ const residentFixture = residentFixtureRequested(process.env);
+ const postRestoreCommand = residentFixture ? diagnostic?.command ?? "play" : diagnostic?.command ?? "sh /tmp/a";
+@@ -391,7 +425,8 @@
+ const browserErrors = [];
+ const httpErrors = [];
+ const startedAt = Date.now();
+-const milestones = {
++const auditRecordLabel = { auditElided: "counterfactual", acceptance: false, fVerified: false, postIdentityValidated: false, limitation: "combined validation/reporting-path materiality only; no causation or acceptance claim" };
++const milestones = { ...auditRecordLabel,
+   run: { kind: diagnostic ? "diagnostic-iteration" : "acceptance", acceptance: !diagnostic,
+     diagnostic, postRestoreCommand, postRestoreKeyDelayMs, ...(fixtureBinding ? { fixture: fixtureBinding } : {}) },
+ };
+@@ -1130,7 +1165,7 @@
+ async function captureFailure(label, error = null) {
+   stopProgressSampling();
+   await mkdir(out, { recursive: true });
+-  const diagnostic = {
++  const diagnostic = { ...auditRecordLabel,
+     label,
+     timestamp: new Date().toISOString(),
+     head,
+@@ -1292,6 +1327,83 @@
+   assert.equal(record.accepted, true, `${marker}: command was not accepted`);
+   phaseProgress(`command:${marker}:completion`, "done");
+   return record;
++}
++
++async function typeQuietTextCommand() {
++  const marker = "e5t26f-post-aplay";
++  phaseProgress("quiet-text:baseline");
++  await page.evaluate(() => window.__desktopTerminal.beginCommand("play", "e5t26f-post-aplay"));
++  await page.evaluate(() => window.__desktopTerminal.focus());
++  const baseline = await page.evaluate((template) => {
++    const canvas = document.getElementById("desktop-canvas");
++    const chrome = window.__e5FReadTitlebar();
++    if (!chrome?.titlebar) throw new Error("missing actual topmost titlebar");
++    // The fixture's upper client band is above the second window. Do not reuse
++    // the generic full-height body box, which merges the overlapping windows.
++    const region = { left:chrome.titlebar.left, right:chrome.titlebar.right,
++      top:chrome.titlebar.bottom, bottom:chrome.titlebar.bottom + 200 };
++    const pixels = canvas.getContext("2d").getImageData(0,0,canvas.width,canvas.height).data;
++    const matches = window.__e5FTextOracle.findTemplate({pixels,width:canvas.width,height:canvas.height,template,region});
++    const state = window.__desktopTerminal.state();
++    return { at:performance.now(), region, matches, chrome, frameCount:state.frameCount,
++      keyboardFrames:state.keyboardFrames, keyboardEvents:state.keyboardEvents,
++      redPixels:state.surface.redPixels, focused:document.activeElement===canvas };
++  }, textTemplate);
++  milestones.quietText = { schema:"wasm-vm.e5-t26f.exact-text-diagnostic.v1",
++    acceptance:false, templateFile:path.relative(repo,reviewedTextFile),
++    templateFileSha256:sha256(reviewedTextBytes), template:reviewedText, baseline };
++  assert.equal(baseline.focused,true);
++  assert.deepEqual(baseline.matches, [], "success token already present in focused window before play");
++  assert.ok(reviewedText.source.left + textTemplate.width <= baseline.region.left ||
++    reviewedText.source.left >= baseline.region.right ||
++    reviewedText.source.top + textTemplate.height <= baseline.region.top ||
++    reviewedText.source.top >= baseline.region.bottom, "old reference token overlaps the active region");
++  phaseProgress("quiet-text:typing");
++  await typePhysicalText("play", 5);
++  await page.keyboard.press("Enter",{delay:5});
++  phaseProgress("quiet-text:typing","done");
++  phaseProgress("quiet-text:exact-raster");
++  const handle = await page.waitForFunction(({template,baseline}) => {
++    const canvas=document.getElementById("desktop-canvas");
++    const state=window.__desktopTerminal.state();
++    if(state.frameCount<=baseline.frameCount) return false;
++    const chrome=window.__e5FReadTitlebar();
++    if(JSON.stringify(chrome?.titlebar)!==JSON.stringify(baseline.chrome.titlebar)) throw new Error("upper titlebar moved during text proof");
++    const pixels=canvas.getContext("2d").getImageData(0,0,canvas.width,canvas.height).data;
++    const matches=window.__e5FTextOracle.findTemplate({pixels,width:canvas.width,height:canvas.height,
++      template,region:baseline.region});
++    if(matches.length===0)return false;
++    if(matches.length!==1)throw new Error("ambiguous success text");
++    return {observedAt:performance.now(),matches,focused:document.activeElement===canvas,
++      command:state.active.command, frames:state.keyboardFrameSample.slice(baseline.keyboardFrames),
++      events:state.keyboardEventSample.slice(baseline.keyboardEvents), redPixels:state.surface.redPixels,
++      pointerFrames:state.pointerFrames, focus:state.focuses.at(-1), frameCount:state.frameCount};
++  },{template:textTemplate,baseline},{timeout:120_000,polling:50});
++  const observed=await handle.jsonValue();
++  await handle.dispose();
++  milestones.quietText.observed=observed;
++  assert.equal(observed.focused,true);
++  assert.equal(observed.focus?.accepted,true);
++  assert.ok(!(observed.redPixels>=24 && observed.redPixels>baseline.redPixels),"guest failure marker");
++  const expected=["KeyP","KeyL","KeyA","KeyY","Enter"].flatMap(code=>[
++    {code,value:1,type:"keydown"},{code,value:0,type:"keyup"}]);
++  assert.equal(observed.frames.length,expected.length);
++  assert.equal(observed.events.length,expected.length);
++  for(let i=0;i<expected.length;i++){
++    assert.deepEqual({code:observed.frames[i].code,value:observed.frames[i].value},
++      {code:expected[i].code,value:expected[i].value});
++    assert.deepEqual({code:observed.events[i].code,type:observed.events[i].type},
++      {code:expected[i].code,type:expected[i].type});
++  }
++  const result={ command:"play", marker, accepted:true, inputSequenceMatch:true,
++    keyboardFrames:observed.frames.length, domEvents:observed.events.length,
++    terminalMarkerSeen:true, redMarkerSeen:false,
++    visualDiffPixels:observed.command?.visualDiffPixels ?? null,
++    oracle:"fresh-exact-reviewed-raster", text:reviewedText.text, observedAt:observed.observedAt,
++    templateSha256:reviewedText.rgbaSha256, matches:observed.matches, baselineMatches:baseline.matches };
++  milestones.quietText.result=result;
++  phaseProgress("quiet-text:exact-raster","done");
++  return result;
+ }
+ 
+ async function waitForDesktopReady(label = "desktop ready") {
+@@ -1457,6 +1569,13 @@
+   }
+   const retained = diagnostic ? await prepareDiagnostic(diagnostic, binding) : null;
+   const diagnosticCheckpoint = retained?.checkpoint || null;
++  assert.ok(diagnosticCheckpoint, "audit-elided counterfactual requires retained current seal");
++  assert.notEqual(retained.profile, retained.seed, "never launch the sealed profile directly");
++  assert.equal(retained.creatorHead, auditSeal.creatorHead);
++  assert.equal(diagnosticCheckpoint.profileSha256, auditSeal.profileSha256);
++  assert.equal(diagnosticCheckpoint.normalSnapshot.sha256, auditSeal.snapshotSha256);
++  assert.equal(binding.runtimeSha256, auditSeal.runtimeSha256);
++  assert.equal(binding.imageSha256, auditSeal.imageSha256);
+   if (diagnostic) {
+     milestones.run.profile = retained.profile;
+     milestones.run.checkpointFile = retained.checkpointFile;
+@@ -1506,6 +1625,8 @@
+     context = await browser.newContext(contextOptions);
+   }
+   page = await context.newPage();
++  await page.addInitScript({ content: `globalThis.__e5FTextOracle = (${createTextOracle.toString()})();` });
++  await page.addInitScript({ content: `globalThis.__e5FReadTitlebar = ${readTopmostDragTitlebar.toString()};` });
+   if (diagnostic?.guestProfile) await page.addInitScript(installGuestProfileWorker);
+   const browserIdentity = await readBrowserIdentity(browser, context, page, launchOptions.headless);
+   if (diagnosticCheckpoint) assert.deepEqual(browserIdentity, diagnosticCheckpoint.browser, "checkpoint browser differs");
+@@ -1698,13 +1819,58 @@
+     milestones.run.profileSha256 = checkpoint.profileSha256;
+     phaseProgress("diagnostic:checkpoint-seal", "done");
+     await mkdir(out, { recursive: true });
+-    const result = { schema: "wasm-vm.e5-t26f.diagnostic-iteration.v1", acceptance: false, milestones,
++    const result = { ...auditRecordLabel, schema: "wasm-vm.e5-t26f.diagnostic-iteration.v1", acceptance: false, milestones,
+       errors: { browser: browserErrors, http: httpErrors } };
+     await writeFile(path.join(out, "diagnostic-checkpoint.json"), `${JSON.stringify(result, jsonReplacer, 2)}\n`);
+     console.log(JSON.stringify(result, jsonReplacer, 2));
+   } else {
+ 
+-  const firstRestore = await reloadWithAutoRestore(restoreUrl, "normal", Boolean(diagnosticCheckpoint));
++  const baselineRestore = await reloadWithAutoRestore(restoreUrl, "baseline-before-quiet", true);
++  assert.equal(baselineRestore.snapshotSha256, normalSnapshot.sha256);
++  assert.equal(baselineRestore.observation.firstPresent.crc32, normalSnapshot.preFrontBufferCrc);
++  await auditRestoreCoherence(baselineRestore, normalSnapshot, "baseline-before-audit-elision");
++  const quietCommand = "eval \"$(printf %s 'ZTVfcGxheSgpIHsKICAgIFsgIiR7ZTVfYXJtZWQ6LTB9IiA9IDEgXSAmJiBbICIkZTVfcGlkIiA9ICIkZTVfZXhwZWN0ZWRfcGlkIiBdIHx8IHsKICAgICAgICBlNV9mYWlsIHVuYXJtZWQtb3ItcGlkOyByZXR1cm4gMTsKICAgIH0KICAgIGU1X2FybWVkPTAKICAgICMgQ2F0Y2ggYSBicm9rZW4gRklGTyByZWFkZXIgd2l0aG91dCBsZXR0aW5nIFNJR1BJUEUgc2tpcCB0aGUgcmVkIGZhaWx1cmUuCiAgICB0cmFwICc6JyBQSVBFCiAgICBpZiBwcmludGYgJyViJyAiJGU1X3BjbSIgPiYzOyB0aGVuCiAgICAgICAgdHJhcCAtIFBJUEUKICAgIGVsc2UKICAgICAgICB0cmFwIC0gUElQRQogICAgICAgIGU1X2ZhaWwgZmVlZDsgcmV0dXJuIDEKICAgIGZpCiAgICBleGVjIDM+Ji0KICAgIGU1X3dyaXRlcl9vcGVuPTAKICAgIGlmIHdhaXQgIiRlNV9waWQiOyB0aGVuCiAgICAgICAgcHJpbnRmICdcMDMzWzQybWU1dDI2Zi1hcGxheVwwMzNbMG1cbicKICAgIGVsc2UKICAgICAgICBlNV9mYWlsIGNoaWxkLWV4aXQ7IHJldHVybiAxCiAgICBmaQp9Cg=='|base64 -d)\";printf '\\033[2J\\033[H\\033[42me5t26f-audit-elided-ready\\033[0m\\n'";
++  milestones.quietProbe = { acceptance: false, baselineRestore, baselineSnapshot: normalSnapshot,
++    command: quietCommand, ...auditRecordLabel, limitation: "RAM-only audit and reporting elision plus setup display clear; no fresh post-identity proof or acceptance" };
++  const quietBox = await desktopBox();
++  const quietPoint = await page.evaluate(() => window.__desktopCursor.focusGuestPoint());
++  assert.ok(quietPoint);
++  const quietClient = guestPoint(quietBox, quietPoint.x, quietPoint.y);
++  await page.mouse.click(quietClient.x, quietClient.y);
++  milestones.quietProbe.preparation = await typeCommand(quietCommand, "e5t26f-audit-elided-ready", 120_000, 100);
++  assert.equal(milestones.quietProbe.preparation.accepted, true);
++  assert.equal(milestones.quietProbe.preparation.inputSequenceMatch, true);
++  assert.equal(milestones.quietProbe.preparation.redMarkerSeen, false);
++  // Diagnostic setup only: acknowledge a real cursor move and let the newly typed
++  // shell command finish presenting before freezing. The original failed immediate
++  // snapshot remains retained; neither the restore CRC oracle nor timed T0 changes.
++  const quietCursorPoint = { x: 720, y: 430 };
++  const quietCursorClient = guestPoint(quietBox, quietCursorPoint.x, quietCursorPoint.y);
++  const quietPointerFrames = await page.evaluate(() => window.__desktopTerminal.state().pointerFrames);
++  await page.mouse.move(quietCursorClient.x, quietCursorClient.y);
++  await page.waitForFunction(({ point, minimum }) => {
++    const state = window.__desktopTerminal.state();
++    return state.pointerFrames > minimum && window.__desktopCursor?.renderedCursor?.(point);
++  }, { point: quietCursorPoint, minimum: quietPointerFrames }, { timeout: 120_000, polling: 100 });
++  await page.waitForTimeout(2_000);
++  milestones.quietProbe.cursorPreparation = await page.evaluate((point) => ({
++    at: performance.now(), pointerFrames: window.__desktopTerminal.state().pointerFrames,
++    rendered: window.__desktopCursor.renderedCursor(point), setupSettleMs: 2_000,
++  }), quietCursorPoint);
++  assert.ok(milestones.quietProbe.cursorPreparation.rendered);
++  await page.evaluate(() => window.__desktopController.pause());
++  assert.equal(await page.evaluate(() => window.__desktopController.isPaused()), true);
++  preSnapshotPresents = await page.evaluate(() => window.__desktopTerminal.presentation().successfulPresents);
++  normalSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: true }));
++  milestones.normalSnapshot = { sha256: normalSnapshot.sha256, byteLength: normalSnapshot.byteLength,
++    preFrontBufferCrc: normalSnapshot.preFrontBufferCrc, machineResume: normalSnapshot.machineResume };
++  milestones.quietProbe.snapshot = milestones.normalSnapshot;
++  milestones.quietProbe.sound = parsePreparedSound(await page.evaluate(() =>
++    Array.from(window.__desktopTerminal.storedDesktopSnapshot().bytes)), normalSnapshot.sha256);
++  await auditFrozenSnapshot(normalSnapshot, "BeforeReload", "normal");
++  await mkdir(out, { recursive: true });
++  await page.screenshot({ path: path.join(out, "quiet-prepared.png"), fullPage: true });
++  const firstRestore = await reloadWithAutoRestore(restoreUrl, "quiet-probe", false);
+   milestones.normalRestore = { result: firstRestore, displayChecksPassed: false, checksPassed: false };
+   phaseProgress("restore:normal:display-checks");
+   assert.equal(firstRestore.snapshotSha256, normalSnapshot.sha256, "reload restored a different snapshot");
+@@ -1806,14 +1972,13 @@
+   phaseProgress("post-restore:audio-unlock", "done");
+   if (diagnostic?.cpu) await startCpuProfile(browserIdentity, postRestoreStart);
+   if (diagnostic?.latency) await startInteractionLatencyProbe(postRestoreStart, postAudioBefore.writeIndex);
+-  const postAudioCommand = await typeCommand(
+-    postRestoreCommand,
+-    "e5t26f-post-aplay",
+-    120_000,
+-    postRestoreKeyDelayMs,
+-  );
+-  const postFocusState = await page.evaluate(() => window.__desktopTerminal.confirmGuestFocus("e5t26f-post-aplay"));
+-  assert.equal(postFocusState.focuses.at(-1).guestVisible, true, "post-restore typing was not guest-visible");
++  assert.equal(postRestoreCommand, "play");
++  assert.equal(postRestoreKeyDelayMs, 5);
++  const postAudioCommand = await typeQuietTextCommand();
++  milestones.quietTextFocus = { rawFocus:milestones.quietText.observed.focus,
++    focused:milestones.quietText.observed.focused, actualText:postAudioCommand.text,
++    region:milestones.quietText.baseline.region, matches:postAudioCommand.matches,
++    observedAt:postAudioCommand.observedAt };
+   milestones.postRestoreAplay = postAudioCommand;
+   phaseProgress("post-restore:audio-pcm-and-render");
+   // Capture PCM at the completion boundary. A later digital-silence write can wrap the ring and
+@@ -1911,8 +2076,11 @@
+     assert.ok(postRestoreInteraction.pointerFrames > focusBefore, "post-restore cursor/focus did not move");
+     assert.equal(postRestoreInteraction.heldButtons.length, 0, "post-restore focus left a stuck button");
+     assert.equal(postRestoreInteraction.audio.policy, "unlocked", "user gesture did not unlock audio");
+-    assert.ok(postAudioCommand.terminalMarkerSeen && postAudioCommand.visualDiffPixels >= 2_000,
+-      "post-restore aplay did not produce guest-visible terminal output");
++    assert.equal(postAudioCommand.oracle, "fresh-exact-reviewed-raster");
++    assert.equal(postAudioCommand.terminalMarkerSeen,true);
++    assert.equal(postAudioCommand.inputSequenceMatch,true);
++    assert.equal(postAudioCommand.matches.length,1);
++    assert.deepEqual(postAudioCommand.baselineMatches,[]);
+     if (diagnostic?.complete) {
+       assert.deepEqual(browserErrors, [], "unexpected browser console/page errors");
+       assert.deepEqual(httpErrors, [], "unexpected browser HTTP errors");
+@@ -1953,7 +2121,7 @@
+     assert.deepEqual(httpErrors, [], "unexpected browser HTTP errors");
+     await mkdir(out, { recursive: true });
+     await page.screenshot({ path: path.join(out, "diagnostic-iteration.png"), fullPage: true });
+-    const result = { schema: "wasm-vm.e5-t26f.diagnostic-iteration.v1", acceptance: false,
++    const result = { ...auditRecordLabel, schema: "wasm-vm.e5-t26f.diagnostic-iteration.v1", acceptance: false,
+       browser: browserIdentity, milestones, errors: { browser: browserErrors, http: httpErrors } };
+     await writeFile(path.join(out, "diagnostic-iteration.json"), `${JSON.stringify(result, jsonReplacer, 2)}\n`);
+     await writeFile(path.join(out, "diagnostic-iteration-server.log"), serverOutput);

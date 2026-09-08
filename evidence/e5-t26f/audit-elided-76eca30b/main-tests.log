@@ -1,0 +1,14 @@
+✔ pins current sources and refuses drift (7.055916ms)
+✔ admission refuses overrides and requires the current seal (0.357875ms)
+✔ generated source removes exactly the requested guest block and retains guards (12.65275ms)
+✔ generated module is syntactically valid and imports are pinned absolute files (25.19225ms)
+✔ factory writes only a fresh generated target and metadata (13.579458ms)
+✔ closed result uses original cap and rejects non-cap or missing proof (1.890084ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 95.793167
