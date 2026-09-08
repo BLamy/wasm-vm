@@ -17,7 +17,8 @@ export function residentFixtureRequested(env) {
     assert.equal(env[`E5_T26F_DIAGNOSTIC_${key}`], undefined, "resident playback requires fixed command/pacing and unchanged default runtime policies");
   }
   if (env.E5_T26F_DIAGNOSTIC_COMMAND !== undefined) {
-    assert.ok(["times;e5_observe;times;play", "times;e5_print_observation post;times;play", "times;play;times"].includes(env.E5_T26F_DIAGNOSTIC_COMMAND) &&
+    assert.ok(["times;e5_observe;times;play", "times;e5_print_observation post;times;play", "times;play;times",
+      "grep -Hs 7fff9b /proc/[0-9]*/maps;play"].includes(env.E5_T26F_DIAGNOSTIC_COMMAND) &&
       env.E5_T26F_DIAGNOSTIC === "reuse" && env.E5_T26F_DIAGNOSTIC_COMPLETE === undefined,
     "resident command probes are exact diagnostic reuse only; no acceptance command override");
   }

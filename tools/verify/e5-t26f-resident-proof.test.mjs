@@ -35,11 +35,11 @@ test("resident fixture is exact opt-in; every tuning and command override refuse
 test("resident accounting presets use fixed 100-ms physical edges only for admitted reuse commands", () => {
   const select = env => vm.runInNewContext(between("function diagnosticOptions", "const DIAGNOSTIC_OWNER") +
     "\n({postRestoreCommand,postRestoreKeyDelayMs})", { assert, path, process: { env }, residentFixtureRequested });
-  for (const command of ["times;e5_observe;times;play", "times;e5_print_observation post;times;play", "times;play;times", "play", "true", "", "time play"]) {
+  for (const command of ["times;e5_observe;times;play", "times;e5_print_observation post;times;play", "times;play;times", "grep -Hs 7fff9b /proc/[0-9]*/maps;play", "play", "true", "", "time play"]) {
     for (const mode of [undefined, "create", "reuse"]) {
       const env = { ...resident, E5_T26F_DIAGNOSTIC: mode, E5_T26F_DIAGNOSTIC_COMMAND: command,
         E5_T26F_DIAGNOSTIC_PROFILE: "/private/tmp/resident-unit", E5_T26F_DIAGNOSTIC_PORT: "48123" };
-      if (mode === "reuse" && ["times;e5_observe;times;play", "times;e5_print_observation post;times;play", "times;play;times"].includes(command)) {
+      if (mode === "reuse" && ["times;e5_observe;times;play", "times;e5_print_observation post;times;play", "times;play;times", "grep -Hs 7fff9b /proc/[0-9]*/maps;play"].includes(command)) {
         assert.equal(residentFixtureRequested(env), true);
         assert.deepEqual(json(select(env)), { postRestoreCommand: command, postRestoreKeyDelayMs: 100 });
       } else {
@@ -82,7 +82,7 @@ test("actual runner keeps normal, cold, reuse and COMPLETE resident play at 5-ms
 test("the same command text without resident opt-in does not override existing diagnostic pacing", () => {
   const select = env => vm.runInNewContext(between("function diagnosticOptions", "const DIAGNOSTIC_OWNER") +
     "\n({postRestoreCommand,postRestoreKeyDelayMs})", { assert, path, process: { env }, residentFixtureRequested });
-  for (const command of ["times;e5_observe;times;play", "times;e5_print_observation post;times;play", "times;play;times"]) {
+  for (const command of ["times;e5_observe;times;play", "times;e5_print_observation post;times;play", "times;play;times", "grep -Hs 7fff9b /proc/[0-9]*/maps;play"]) {
     for (const delay of [undefined, "5", "25"]) {
       const env = { E5_T26F_DIAGNOSTIC: "reuse", E5_T26F_DIAGNOSTIC_PROFILE: "/private/tmp/resident-unit",
         E5_T26F_DIAGNOSTIC_PORT: "48123", E5_T26F_DIAGNOSTIC_COMMAND: command };

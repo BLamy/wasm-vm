@@ -132,3 +132,21 @@ BusyBox 1.36.1: the exact escaped baseline writes 3840 correct bytes in four
 NUL-free pattern needs one call but is not the same PCM and is not promoted.
 The actual strace/byte parser and shell syntax check pass. This native result
 does not identify the browser bottleneck; retain the helper and image unchanged.
+
+## Interpreted guest-PC sample at 2934524b
+
+`resident-guest-profile-2934524b/` retains the actual profile-only worker URL,
+two successful profileStats endpoints and readable restored playback PNG. The
+original cap fails at 5024.535 ms. Interpreted samples advance 3814 to 36323;
+collision count advances 2 to 1687. Cumulative lists are top ten, not an interval
+histogram and not a whole-guest/JIT profile. The largest final regions include
+userspace `0x00007fff9b209cc0` (1671 samples), `...209c80` (610), `...203a00`
+(407), and `...2061c0` (396); their library attribution is not established yet.
+Kernel regions map to `_save_context`, `ret_from_exception`, `_copy_to_user`
+and `do_raw_spin_unlock` against the exact kernel's authenticated System.map
+SHA-256 `902e3241fbf86bad7f1b45b62cdfbaf2777dd1c53097296f5bdbd0124ec03290`.
+
+The next exact, physically typed, nonacceptance command reads matching lines
+from accessible guest `/proc/[0-9]*/maps`, then performs real `play`. It reuses
+the same sealed process address spaces to resolve this observed address prefix;
+it is not another timing comparison and makes no runtime/image change.
