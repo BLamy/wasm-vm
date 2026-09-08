@@ -94,3 +94,18 @@ usable CPU-accounting result and does not demonstrate an observer/audio fault.
 The longer diagnostic presets need the existing 100-ms physical edge pacing.
 Only those two nonacceptance measurement commands receive that fixed pacing;
 normal restored `play` remains at 5 ms and no acceptance cap changes.
+
+At `ad59c2e2` both paced commands actually execute, as independently viewed in
+`resident-observe-times-ad59c2e2/post-restore.png` and
+`resident-print-times-ad59c2e2/post-restore.png`. The observer changes shell
+user/system accounting from 0.050/0.100 to 0.070/0.110 seconds; the printer
+leaves it at 0.050/0.100. Both leave reaped-child accounting at 0.050/0.050.
+These are coarse guest CPU counters, not host durations or accounting for the
+terminal/compositor. Actual playback completes in both, with a recovered
+0.405-ms underrun displayed in the observer run. Their all-success intervals
+include deliberately slow typing and fail honestly at 10754.215 and 13290.455 ms.
+
+Next, the equally isolated exact `times;play;times` preset distinguishes shell
+work from the waited player's accumulated CPU. It adds no acceptance override.
+Luna separately checks actual native BusyBox write-call counts for the exact
+finite payload; neither diagnostic changes the helper, image or runtime.
