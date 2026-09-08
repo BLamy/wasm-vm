@@ -429,3 +429,158 @@ fbcab7198546fd01bca9714eca2cc55e1bc7b9cee912e720f1608eca1cf04337  typing-probe-1
 c9afd9429b68322e80ee92588b18a30d996c0098f09cb52ab40ad19ec51dbb2b  typing-probe-scratch.patch
 4e311e31a53706ab43712a1a07650d50045e679dbbfd674f4690b701d854fafd  physical-pacing-151-tests.log
 ```
+
+## 89865ea5 — new cold seal and full functional COMPLETE replay; timing still fails
+
+Both runs use exact head `89865ea5465a94512d966388b2aa57c9442627a1`, Chromium
+`Chrome/152.0.7977.76`, headless. The [cold transcript](paced-receipt-checkpoint-8986.log)
+starts at 2026-09-08 06:46:25 UTC; checkpoint sealing completes at 06:59:59 UTC,
+exit **0**. The [checkpoint report](paced-receipt-checkpoint-8986/diagnostic-checkpoint.json)
+records the full 208-character setup command, **454 keyboard/DOM transitions**,
+`inputSequenceMatch: true`, the accepted conditional marker, attached audio output,
+and **1440 fresh PCM frames, all 1440 non-silent**. Two windows and the initial
+cursor proof complete. Normal publication is confirmed paused and its frozen
+audit reads `resume`, generation **616**, and the saved envelope hash.
+
+The new seal is `/private/tmp/e5-t26f-paced-receipt-78h2h4/normal-checkpoint.json`.
+Its local JSON SHA-256 is
+`dbe6e74f7e9e68d4d4468dd30cd9f794893b5a93a9f17a73bff660af00bbfc6d`;
+its closed profile tree SHA-256 is
+`85c02f515233eca69df87bfbeeb06c32a50215f0a810739f1966775dedabbf9a`.
+The desktop envelope's decoded-byte hash was checked against the seal and both
+run records. Cold and reuse bindings agree: served runtime
+`874f63af4e09fa9e23f348b5ef8050ae09382c1273ce459b999525db40962ccd`, with the
+unchanged kernel/image/manifest hashes recorded for the preceding receipt attempt.
+This is a new seal, not a rebound historical profile.
+
+### Reproduction configuration
+
+The following reconstructs the recorded policy/profile configuration using the
+earlier image paths; the transcripts do not preserve a literal parent-shell
+invocation. Start with inherited `E5_T26F_*` variables cleared. These are the
+recorded paths: a new cold reproduction must choose a **fresh empty profile and
+output directories**, and use that new profile for its reuse. Never recreate over
+the retained seal. `HEADED`, command, JIT, residency, guest-clock, CPU and latency
+overrides are absent; cold setup uses the helper's default 100 ms pacing.
+
+```sh
+export E5_T26F_REQUIRE_HEAD=89865ea5465a94512d966388b2aa57c9442627a1
+export E5_T26F_DIAGNOSTIC_PROFILE=/private/tmp/e5-t26f-paced-receipt-78h2h4
+export E5_T26F_DIAGNOSTIC_PORT=61629
+export E5_T26F_IMAGE=target/e5-t26f/desktop-image-aplay-noresize/alpine-rootfs.ext4
+export E5_T26F_IMAGE_INFO=target/e5-t26f/desktop-image-aplay-noresize/desktop-info.json
+export E5_T26F_DESKTOP_ASSET_DIR=target/e5-t26f/chunks/desktop-aplay-noresize
+
+E5_T26F_DIAGNOSTIC=create \
+E5_T26F_OUT=evidence/e5-t26f/completion/paced-receipt-checkpoint-8986 \
+node tools/verify/e5-t26f-browser-roundtrip.mjs
+
+E5_T26F_DIAGNOSTIC=reuse E5_T26F_DIAGNOSTIC_COMPLETE=1 \
+E5_T26F_DIAGNOSTIC_KEY_DELAY_MS=5 \
+E5_T26F_OUT=evidence/e5-t26f/completion/receipt-completion-8986 \
+node tools/verify/e5-t26f-browser-roundtrip.mjs
+```
+
+### COMPLETE result
+
+The [reuse transcript](receipt-completion-8986.log) runs from 07:00:50 to
+07:01:34 UTC. The [final report](receipt-completion-8986/diagnostic-completion.json)
+has schema `wasm-vm.e5-t26f.diagnostic-completion.v1`,
+`functionalChecksPassed: true`, but `acceptance: false`, `timingPassed: false`
+and `checksPassed: false`. It finishes writing evidence, then rethrows the
+original cap with exit **1**, without a duplicate completion-evidence failure
+capture or a `desktop-roundtrip.*` acceptance artifact.
+
+| Restored checkpoint | Desktop snapshot SHA-256 | Matching first-present CRC |
+| --- | --- | --- |
+| Normal | `4123ec771362109ed9153bdc6635470aad357c2d8ef729da9b19412544e66f95` | `a9a1eba9` |
+| Moving | `3d03bd245708ee6e6bf0d9d228dd3c85dab032fe6897f939130074829fd8701c` | `eb2e0bd3` |
+
+Both restores report fresh agent re-handshakes (HELLO version 1, generation 2),
+full repair frames, and `fetching → instantiating → restored`, with no `booting`.
+Both actual admission receipts record `attempted: true`, `decision: resume`,
+generation **616**; both later live generation observations are also 616.
+The second restore passes display and released-button checks.
+
+Physical `sh /tmp/a` at 5 ms pacing is accepted with its conditional marker and
+20 matching keyboard/DOM transitions. The rendered cursor is observed at
+**829.920 ms** after the original restore boundary. Immediate PCM capture records
+**2400 written frames / 1440 non-silent**, maximum magnitude 0.082000732421875;
+the completion-time output attachment is true. The
+[final PNG](receipt-completion-8986/diagnostic-completion.png) shows a recovered
+ALSA underrun of **at least 4.276 ms**, then the conditional green marker.
+This is successful playback with recovery, **not a zero-XRUN claim**.
+
+The unchanged cap uses original T0 **1175.170000076294 ms** and end
+**6364.735000014305 ms**: **5189.565 ms**, still above 2000 ms. The entire retained
+cap object matches the [immediate timing record](receipt-completion-8986/diagnostic-completion-timing.json);
+the later interaction-summary sample is not substituted for that endpoint.
+
+All four drag-phase saves complete. Actual upper-window bounds move from
+`557..1253 / 13..39` to `637..1280 / 32..58`: **80 px right**, with the permitted
+panel clamp and unchanged height. The paused recheck agrees. Published and
+before-reload audits both retain `isPaused/stillPaused: true`, generation/final
+generation **616**, `resume`, and the exact moving-envelope hash. The released
+nonpersistent snapshot has the same SHA-256 and 2695339-byte length as the moving
+snapshot while paused; it is not evidence of new guest execution after release.
+
+Both reports retain `errors.browser: []` and `errors.http: []`. COMPLETE also
+retains two console 404 messages; the [server log](receipt-completion-8986/diagnostic-completion-server.log)
+identifies both as `/favicon.ico` requests (lines 6 and 11), consistent with the
+existing favicon exclusion. Fresh read-only Rawls review is ongoing; no verdict
+is asserted here. The separate source-command probe is reported chronologically
+below. Functional diagnostic completion does **not** verify F
+or satisfy its still-failed timing criterion.
+
+SHA-256 of all nine retained run artifacts (relative to this README):
+
+```text
+0fe098b5b44642fdd10695b6b4e08f33766497ee7d75bf115c2915d58926f412  paced-receipt-checkpoint-8986.log
+8c79bc9e7f4d0f2c129465e2e805752ad2a5b103c0948c17810d61cad49ca7de  paced-receipt-checkpoint-8986/diagnostic-checkpoint.json
+89a77a2e47f4548c254fa0756ad198e710b01bbd8ac091442fafdf475d29d241  receipt-completion-8986.log
+db703350149be6fbd6df20e0b4e8dbba74b04ad0e32f4f31807bd8fe2e32058f  receipt-completion-8986/diagnostic-completion-server.log
+8c8e2d071eee906404e631527803c803c1f695ec7b1792758c2de0df13c8823f  receipt-completion-8986/diagnostic-completion-timing-server.log
+aa70a0768775fe18afb52983ed09fe7ab975a5106b0ef4d02a06b85f3eb4bb5e  receipt-completion-8986/diagnostic-completion-timing.json
+ca0ba94780350dd3eacde27ce503f3fc53a36de9feaa23c98d2a7ea31b22777a  receipt-completion-8986/diagnostic-completion-timing.png
+903120cbf2f21b2e80acbbb0dd781d40960ba1fd4232a51475c008f8601a5c19  receipt-completion-8986/diagnostic-completion.json
+09382f2517e2f6bf5f3d3dd632cc8779defe01fcc9afa996d96015d60efed76f  receipt-completion-8986/diagnostic-completion.png
+```
+
+### Subsequent source-command diagnostic — still over cap; no default promotion
+
+The [separate transcript](source-command-8986.log) ends at 07:02:42 UTC with
+exit **1**. This uses another copy of the same sealed profile and identical
+head/runtime/image/manifest bindings, with a reuse-only command override and
+5 ms pacing; COMPLETE is absent. With the shared configuration above:
+
+```sh
+E5_T26F_DIAGNOSTIC=reuse E5_T26F_DIAGNOSTIC_COMMAND='. /tmp/a' \
+E5_T26F_DIAGNOSTIC_KEY_DELAY_MS=5 \
+E5_T26F_OUT=evidence/e5-t26f/completion/source-command-8986 \
+node tools/verify/e5-t26f-browser-roundtrip.mjs
+```
+
+The [failure record](source-command-8986/failure-post-restore-interaction-checks.json)
+retains the actual `. /tmp/a` command, 18 matching keyboard/DOM transitions,
+the conditional marker, attached output, and **1440 fresh PCM frames, all
+non-silent**. The [PNG](source-command-8986/failure-post-restore-interaction-checks.png)
+shows the green marker and no displayed XRUN message; that is not a general
+zero-XRUN guarantee. Normal first-present CRC remains `a9a1eba9`, with no cold
+boot. The cap stops this run before its deferred coherence audit or drag proof.
+
+Original T0 **1155.9350000619888 ms** to end **5906.034999966621 ms** gives
+**4750.100 ms**, not the later 4750.370 ms summary sample. It remains above the
+unchanged 2000 ms limit. Compared with the preceding default `sh /tmp/a` result
+of 5189.565 ms, this is **one pair**, not evidence of a stable causal improvement
+or grounds for default promotion. Both are diagnostic failures of the timing
+criterion; no acceptance claim changes.
+
+```text
+688ee811faccd0c2e581a4d51cfba4d151213c1e7ad38827e4970a62008a0197  source-command-8986.log
+66025b66d14a8a501ed509880e276b1ce17071c68b81df38b2568e2ba7826784  source-command-8986/failure-post-restore-interaction-checks-server.log
+ee7b8415d2e6cde2139882d8f5d2c4b7e344c1f6fb9b1206e1ad0bb8812bf63a  source-command-8986/failure-post-restore-interaction-checks.json
+42d4cdc92e7f2a4d0c4374f9c03b0a18235d3b976387774d028b322a8fdcd441  source-command-8986/failure-post-restore-interaction-checks.png
+66025b66d14a8a501ed509880e276b1ce17071c68b81df38b2568e2ba7826784  source-command-8986/post-restore-server.log
+89a8ff631b11fa8efc1b4a21eeb3b6a206e2dc65bda6fd6fa47cf65affa9e213  source-command-8986/post-restore.json
+42d4cdc92e7f2a4d0c4374f9c03b0a18235d3b976387774d028b322a8fdcd441  source-command-8986/post-restore.png
+```

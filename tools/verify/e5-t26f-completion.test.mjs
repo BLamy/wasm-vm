@@ -101,7 +101,8 @@ assert.ok(tail.endsWith("\n  }"), "expected the enclosing checkpoint-reuse branc
 const control = originalStart + "\n" + tail.slice(0, -"\n  }".length);
 const failureHandler = between(outerCatch, "\n} finally {").slice(outerCatch.length);
 
-function fixture({ enabled = true, elapsed = 2_500, failAudit = null, failRestore = false, normalSetup = false } = {}) {
+function fixture({ enabled = true, elapsed = 2_500, failAudit = null, failRestore = false,
+  failGuestRelease = false, normalSetup = false } = {}) {
   const events = [];
   const writes = [];
   const captures = [];
@@ -116,6 +117,7 @@ function fixture({ enabled = true, elapsed = 2_500, failAudit = null, failRestor
     static now() { return 1_700_000_000_000 + now; }
   }
   const laterError = new Error("later functional failure");
+  const releaseError = new Error("restored guest did not acknowledge a stationary hover");
   const sandbox = {
     assert, assertWindowMoved, path, Number, Date: FixtureDate, diagnostic: diagnosticOptions(enabled ? complete : reuse),
     out: "/virtual/completion", head: "frozen-runner", startedAt: FixtureDate.now() - 1_000,
@@ -240,8 +242,25 @@ function fixture({ enabled = true, elapsed = 2_500, failAudit = null, failRestor
     events.push(`capture:${label}`);
     await api.captureFailure(label, error);
   };
+  // The guest-release sidecar executes the real helper. Here retain its control-flow gate
+  // without conflating the orchestration doubles with a guest release observation.
+  sandbox.proveRestoredGuestRelease = async () => {
+    sandbox.phaseProgress("restore:drag:guest-release");
+    events.push("guest-release:proof");
+    assert.equal(sandbox.milestones.dragRestore.displayChecksPassed, true);
+    assert.ok(events.includes("audit:drag"));
+    assert.equal(sandbox.milestones.dragRestore.functionalChecksPassed, undefined);
+    assert.equal(sandbox.milestones.dragRestore.checksPassed, false);
+    assert.equal(writes.some(({ file }) => file === "diagnostic-completion.json"), false);
+    sandbox.milestones.dragGuestRelease = { status: failGuestRelease ? "failed" : "passed" };
+    if (failGuestRelease) {
+      sandbox.milestones.dragGuestRelease.error = releaseError.message;
+      throw releaseError;
+    }
+    sandbox.phaseProgress("restore:drag:guest-release", "done");
+  };
   return {
-    sandbox, context, api, events, writes, captures, laterError, titlebar, now: () => now,
+    sandbox, context, api, events, writes, captures, laterError, releaseError, titlebar, now: () => now,
     run: () => vm.runInContext(`(async () => { try { ${control} } catch (error) { ${failureHandler} } })()`, context),
     json: (name) => JSON.parse(writes.findLast(({ file }) => file === name)?.value ?? "null"),
   };
@@ -319,6 +338,9 @@ test("completion executes real normal audit, drag phases and second restore, per
   assert.equal(result.milestones.postRestoreEnd, 3_500);
   assert.equal(result.milestones.dragMovement.status, "passed");
   assert.equal(result.milestones.dragMovement.pausedTranslation.deltaX, 80);
+  assert.equal(result.milestones.dragGuestRelease.status, "passed");
+  assert.ok(f.events.indexOf("guest-release:proof") > f.events.indexOf("audit:drag"));
+  assert.ok(f.events.indexOf("phase:restore:drag:guest-release:done") < f.events.indexOf("phase:evidence:write:start"));
   for (const label of ["Published", "BeforeReload"]) {
     const checkpoint = result.milestones[`dragCheckpoint${label}`];
     assert.equal(checkpoint.status, "passed");
@@ -353,6 +375,25 @@ test("completion at the exact cap stays diagnostic and never takes the normal ar
   assert.equal(f.captures.length, 0);
   assert.ok(f.events.includes("audit:drag"));
   assert.equal(f.events.some((event) => /desktop-roundtrip|diagnostic-iteration/u.test(event)), false);
+});
+
+test("missing guest release proof blocks functional completion and retains the original timing cap with the later error", async () => {
+  const f = fixture({ failGuestRelease: true });
+  await assert.rejects(f.run(), (error) => error === f.releaseError);
+  assert.equal(f.captures[0].label, "diagnostic-completion-timing");
+  assert.equal(f.captures.at(-1).label, "failure-restore-drag-guest-release");
+  const failure = f.json("failure-restore-drag-guest-release.json");
+  assert.equal(failure.error.message, f.releaseError.message);
+  assert.equal(failure.milestones.dragGuestRelease.status, "failed");
+  assert.equal(failure.milestones.dragGuestRelease.error, f.releaseError.message);
+  assert.equal(failure.milestones.dragRestore.displayChecksPassed, true);
+  assert.equal(failure.milestones.dragRestore.functionalChecksPassed, undefined);
+  assert.equal(failure.milestones.dragRestore.checksPassed, false);
+  assert.equal(failure.milestones.deferredInteractionCap.postRestoreStart, 1_000);
+  assert.equal(failure.milestones.deferredInteractionCap.postRestoreEnd, 3_500);
+  assert.equal(failure.milestones.deferredInteractionCap.error.message, f.captures[0].error.message);
+  assert.equal(f.json("diagnostic-completion.json"), null);
+  assert.equal(f.events.includes("screenshot:diagnostic-completion.png"), false);
 });
 
 test("F1: completed evidence rethrows the exact cap without a duplicate failed phase or failure artifact", async () => {

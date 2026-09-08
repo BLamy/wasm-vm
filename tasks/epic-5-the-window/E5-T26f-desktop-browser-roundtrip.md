@@ -40,6 +40,52 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker — close the guest-release observation gap
+
+Daybreak carries the 8986 receipt, CRC, no-boot, input/audio and actual-drag
+observations forward, but correctly requires a guest endpoint beyond the host
+button ledger. The new bounded hover oracle runs after second-restore coherence
+and before any functional completion flag. It matches the paused saved window,
+issues only a pointer move, requires a new mapped tablet frame and guest-rendered
+cursor, then observes the unchanged titlebar for one full second. Missing state,
+held buttons, two-pixel motion, invalid timestamps and resource bounds fail closed.
+Luna's twelve source-extracted oracle regressions and completion sequencing test
+exercise those failures without changing the original timing boundary or cap.
+One reuse of the unchanged 8986 runtime seal will provide the missing browser
+evidence. No new cold boot, default change or verification follows from unit tests.
+
+### 2026-09-08 — worker — receipt-runtime cold seal and complete functional diagnostic
+
+At `89865ea5465a94512d966388b2aa57c9442627a1`, the original full cold setup
+succeeds with 454 physical transitions and 1440 fresh non-silent PCM frames. The
+paused normal checkpoint and frozen pre-reload audit agree at generation 616,
+CRC `a9a1eba9`, desktop SHA-256
+`4123ec771362109ed9153bdc6635470aad357c2d8ef729da9b19412544e66f95`.
+Its exact-runtime seal is retained in `/private/tmp/e5-t26f-paced-receipt-78h2h4`;
+the cold record is `evidence/e5-t26f/completion/paced-receipt-checkpoint-8986/diagnostic-checkpoint.json`.
+
+One same-head COMPLETE reuse with the unchanged `sh /tmp/a` command and explicit
+5-ms key delay reaches the final diagnostic report. Both actual loader-owned
+admission receipts report `resume`/616; both first-present CRCs match, both fresh
+HELLOs complete without a boot state, and a real 80-pixel drag is saved while
+paused. Its moving snapshot is
+`3d03bd245708ee6e6bf0d9d228dd3c85dab032fe6897f939130074829fd8701c`
+(CRC `eb2e0bd3`); publication and pre-reload audits remain paused/coherent at 616.
+The final diagnostic's functional predicates pass, but its **5189.565-ms**
+interaction interval correctly fails the original 2000-ms cap and exits 1.
+The screenshot shows a recovered 4.276-ms ALSA underrun followed by successful
+conditional output; this is not a zero-XRUN claim. Browser/HTTP errors are empty,
+with the two logged 404s both identified as the permitted favicon.
+
+Final diagnostic SHA-256:
+`903120cbf2f21b2e80acbbb0dd781d40960ba1fd4232a51475c008f8601a5c19`.
+Fresh Daybreak review must distinguish observed host release from guest no-drag
+coverage; no verifier verdict is inferred from the runner's functional flag.
+A separate sourced-script comparison (`. /tmp/a`, same image/seal/pacing/audio)
+also fails at **4750.100 ms**. One pair proves neither a stable speedup nor F;
+no command, runtime policy or deadline is promoted. Exact records are in
+`evidence/e5-t26f/completion/README.md`. F remains in progress.
+
 ### 2026-09-08 — worker — cold setup physical-input localization
 
 The fresh receipt-runtime cold attempt at `32841587` failed before any snapshot:

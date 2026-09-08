@@ -462,6 +462,78 @@ async function auditFrozenDragSnapshot(snapshot, label) {
   return auditFrozenSnapshot(snapshot, label, "drag");
 }
 
+function readRestoredHoverState(point) {
+  const state = window.__desktopTerminal.state();
+  const pointer = window.__desktopTerminal.pointerState();
+  return {
+    at: performance.now(), pointerFrames: state.pointerFrames,
+    heldButtons: pointer.heldButtons,
+    frame: [...state.pointerFrameSample].reverse().find(entry =>
+      entry.device === "tablet" && entry.source === "pointermove" && entry.coordinates) ?? null,
+    rendered: window.__desktopCursor?.renderedCursor?.(point) ?? null,
+  };
+}
+
+function assertStationaryTitlebar(before, after) {
+  for (const key of ["left", "right", "top", "bottom"]) {
+    assert.ok(Number.isFinite(before?.[key]) && Number.isFinite(after?.[key]),
+      `restored hover lacks an unambiguous titlebar ${key}`);
+    assert.ok(Math.abs(after[key] - before[key]) <= 1,
+      `restored guest window moved during hover: ${key} ${before[key]} -> ${after[key]}`);
+  }
+}
+
+async function proveRestoredGuestRelease() {
+  phaseProgress("restore:drag:guest-release");
+  const evidence = milestones.dragGuestRelease = { status: "running", samples: [] };
+  try {
+    evidence.before = await page.evaluate(readTopmostDragTitlebar);
+    // Bind this observation to the actual window saved mid-drag, not a different client.
+    assertStationaryTitlebar(milestones.dragMovement.paused.titlebar, evidence.before.titlebar);
+    const point = evidence.point = {
+      x: evidence.before.titlebar.left + 32, y: evidence.before.titlebar.bottom - 3,
+    };
+    assert.ok(point.y >= 32 && Math.abs(point.x - milestones.dragMapping.guestEnd.x) >= 32,
+      "restored hover must move visibly over the saved titlebar");
+    evidence.initial = await page.evaluate(readRestoredHoverState, point);
+    assert.deepEqual(evidence.initial.heldButtons, [], "hover began with a host button held");
+    assert.ok(Number.isSafeInteger(evidence.initial.pointerFrames), "hover lacks a pointer-frame baseline");
+    assert.ok(Number.isFinite(evidence.initial.at), "hover lacks an observation timestamp");
+    const client = evidence.client = guestPoint(await desktopBox(), point.x, point.y);
+    // Deliberately no down/up or release injection: the guest must consume its saved release.
+    await page.mouse.move(client.x, client.y);
+    let acknowledgedAt = null;
+    await waitFor(async () => {
+      assert.ok(evidence.samples.length < 64, "restored hover exceeded its sample bound");
+      const sample = await page.evaluate(readRestoredHoverState, point);
+      sample.titlebar = (await page.evaluate(readTopmostDragTitlebar)).titlebar;
+      const previousAt = evidence.samples.at(-1)?.at ?? evidence.initial.at;
+      evidence.samples.push(sample);
+      assert.ok(Number.isFinite(sample.at) && sample.at >= previousAt,
+        "restored hover timestamp is invalid or regressed");
+      assert.deepEqual(sample.heldButtons, [], "hover injected or retained a host button");
+      assertStationaryTitlebar(evidence.before.titlebar, sample.titlebar);
+      const matchesFrame = sample.pointerFrames > evidence.initial.pointerFrames &&
+        Math.abs((sample.frame?.coordinates?.x ?? -Infinity) - Math.round(point.x / 1280 * 32767)) <= 1 &&
+        Math.abs((sample.frame?.coordinates?.y ?? -Infinity) - Math.round(point.y / 800 * 32767)) <= 1;
+      const matchesGuest = sample.rendered?.x === point.x && sample.rendered?.y === point.y;
+      if (!matchesFrame || !matchesGuest) return false;
+      if (acknowledgedAt === null) evidence.acknowledgedAt = acknowledgedAt = sample.at;
+      // Observe for one bounded second AFTER the guest cursor arrives, so an immediate host
+      // ledger update cannot mask a delayed compositor drag. This is outside the original cap.
+      if (sample.at - acknowledgedAt < 1_000) return false;
+      evidence.observed = sample;
+      return true;
+    }, "restored guest did not acknowledge a stationary hover", 15_000);
+    evidence.status = "passed";
+    phaseProgress("restore:drag:guest-release", "done");
+  } catch (error) {
+    evidence.status = "failed";
+    evidence.error = String(error?.message || error);
+    throw error;
+  }
+}
+
 async function auditFrozenSnapshot(snapshot, label, kind) {
   assert.ok(kind === "drag" || kind === "normal", "unknown frozen checkpoint kind");
   const description = kind === "drag" ? "moving" : "normal";
@@ -1811,6 +1883,7 @@ try {
   milestones.dragRestore.displayChecksPassed = true;
   phaseProgress("restore:drag:display-and-button-checks", "done");
   await auditRestoreCoherence(secondRestore, dragSnapshot, "drag");
+  await proveRestoredGuestRelease();
   if (diagnostic?.complete) milestones.dragRestore.functionalChecksPassed = true;
   milestones.dragRestore.checksPassed = deferredInteractionCap === null;
 
