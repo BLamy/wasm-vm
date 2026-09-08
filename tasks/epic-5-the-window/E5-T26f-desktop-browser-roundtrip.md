@@ -40,6 +40,24 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker — localize the remaining timing failure without changing acceptance
+
+Paced guest `times` probes at `ad59c2e2`/`989ade25` actually execute on copies of
+the unchanged prepared checkpoint. They measure approximately 30 ms guest CPU
+for the observer, below-resolution printer CPU, and 60 ms total shell CPU around
+playback. The waited child's additional 50 ms includes preparation before the
+checkpoint. Terminal/compositor CPU is absent from those counters; no dominant
+cause follows. Their slow diagnostic typing correctly fails the original host
+cap. The earlier truncated-input attempt is preserved, not used as timing data.
+
+Luna's native strace precheck independently refutes the proposed per-byte-write
+cause: exact 3840-byte output uses four writev calls, not thousands. No helper,
+image, clock/JIT policy, deadline or production change follows. Actual records,
+screenshots, commands and hashes are indexed in `evidence/e5-t26f/resident-records.md`.
+The next isolated observer exercises the existing guest-PC profiler, with its
+interpreted-only and cumulative-top-10 limitations stated explicitly. All prior
+unchanged functional HELD results carry; F is not verified.
+
 ### 2026-09-08 — worker — prepared player survives restore; original cap still fails
 
 The frozen `7da05062` cold checkpoint succeeds with actual PID999/start27744,

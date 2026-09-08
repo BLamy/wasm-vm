@@ -109,3 +109,26 @@ Next, the equally isolated exact `times;play;times` preset distinguishes shell
 work from the waited player's accumulated CPU. It adds no acceptance override.
 Luna separately checks actual native BusyBox write-call counts for the exact
 finite payload; neither diagnostic changes the helper, image or runtime.
+
+At `989ade25`, `resident-play-times-989ade25/post-restore.png` visibly contains
+the complete `times;play;times` command and both counter pairs. Shell user/system
+CPU changes from 0.050/0.100 to 0.100/0.110 seconds (+0.060); reaped children
+change from 0.050/0.050 to 0.090/0.060 (+0.050). The newly reaped player's total
+includes its preparation CPU before the checkpoint, so it is not an exact
+post-restore delta. Neither pair counts the separate terminal or compositor.
+Actual playback and green completion occur; the original host cap still fails.
+The post-typing marker wait is 2947 ms in the phase log; slow diagnostic typing
+and other work remain inside the unchanged original all-success interval.
+
+The next localization uses the already-supported sampled guest-PC profiler,
+only in isolated diagnostic reuse. Its existing core hook samples guest virtual
+PCs from interpreted retirements, not JIT executions or all host CPU. That
+coverage limitation must accompany any reported hot region. This adds no guest
+control, new runtime policy, acceptance override or changed served bytes.
+
+The native probe in `resident-write-probe/README.md` refutes per-byte writes in
+BusyBox 1.36.1: the exact escaped baseline writes 3840 correct bytes in four
+`writev` calls to either a file or a ready FIFO reader. A changed, predecoded
+NUL-free pattern needs one call but is not the same PCM and is not promoted.
+The actual strace/byte parser and shell syntax check pass. This native result
+does not identify the browser bottleneck; retain the helper and image unchanged.

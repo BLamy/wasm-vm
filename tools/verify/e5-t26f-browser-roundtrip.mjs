@@ -11,6 +11,7 @@
 // E5_T26F_DIAGNOSTIC_JIT=0|1 (reuse only) compares the existing unprofiled desktop JIT routes.
 // E5_T26F_DIAGNOSTIC_RESIDENCY (reuse + explicit JIT=1 only) selects an existing module cap.
 // E5_T26F_DIAGNOSTIC_CPU=1 (reuse only) records the owned worker using the shared CDP profiler.
+// E5_T26F_DIAGNOSTIC_GUEST_PROFILE=1 (isolated reuse only) observes interpreted virtual-PC samples.
 // E5_T26F_DIAGNOSTIC_COMPLETE=1 (reuse only) retains later functional evidence, then rethrows a failed timing cap.
 // E5_T26F_FIXTURE=resident-aplay-v1 binds a separate image containing a real prepared
 // player; physically typed play feeds/waits it after the gesture, without runtime tuning.
@@ -24,6 +25,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 import { attachWorkerProfiler } from "./e5-t22c-cpu-profile.mjs";
+import { guestProfileRequested, installGuestProfileWorker, recordGuestProfile } from "./e5-t26f-guest-profile.mjs";
 import { assertWindowMoved } from "../../web/bench/desktop-perf.js";
 import { residentFixtureRequested, assertResidentImage, parsePreparedSound, assertFreshLockedPcm,
   RESIDENT_GUEST_PATH } from "./e5-t26f-resident-proof.mjs";
@@ -49,6 +51,7 @@ const SHA256 = /^[0-9a-f]{64}$/u;
 const jsonReplacer = (_key, value) => typeof value === "bigint" ? `${value}n` : value;
 
 function diagnosticOptions(env) {
+  if (env.E5_T26F_DIAGNOSTIC_GUEST_PROFILE !== undefined) guestProfileRequested(env);
   const mode = env.E5_T26F_DIAGNOSTIC;
   const complete = env.E5_T26F_DIAGNOSTIC_COMPLETE;
   if (complete !== undefined) {
@@ -124,7 +127,8 @@ function diagnosticOptions(env) {
   return { mode, directory, port, origin: `http://127.0.0.1:${port}`, command: command ?? null,
     keyDelayMs: Number(delay ?? 0), latency: latency === "1", cpu: cpu === "1", guestClock: guestClock ?? null,
     jit: jit ?? null, residency: residency ?? null, complete: complete === "1",
-    icountDivider: icountDivider === undefined ? null : Number(icountDivider) };
+    icountDivider: icountDivider === undefined ? null : Number(icountDivider),
+    ...(env.E5_T26F_DIAGNOSTIC_GUEST_PROFILE === undefined ? {} : { guestProfile: true }) };
 }
 
 const diagnostic = diagnosticOptions(process.env);
@@ -1489,6 +1493,7 @@ try {
     context = await browser.newContext(contextOptions);
   }
   page = await context.newPage();
+  if (diagnostic?.guestProfile) await page.addInitScript(installGuestProfileWorker);
   const browserIdentity = await readBrowserIdentity(browser, context, page, launchOptions.headless);
   if (diagnosticCheckpoint) assert.deepEqual(browserIdentity, diagnosticCheckpoint.browser, "checkpoint browser differs");
   if (diagnosticCheckpoint) await installCheckpointSession(page, diagnosticCheckpoint, base);
@@ -1709,6 +1714,7 @@ try {
   // This real RPC is inside the original restore budget in both explicit comparison arms.
   if (diagnostic?.jit != null) await recordDiagnosticJit("jitBefore");
   if (diagnostic?.icountDivider != null) await recordDiagnosticICountDivider("icountDividerBefore");
+  if (diagnostic?.guestProfile) await recordGuestProfile(page, milestones, "guestProfileBefore");
   if (diagnostic?.guestClock) {
     milestones.guestClockBefore = await page.evaluate(async () => {
       const requestedAt = performance.now();
@@ -1861,6 +1867,7 @@ try {
   milestones.postRestoreInteraction = postRestoreInteraction;
   // Never delay the immediate PCM observation or replace the already-frozen interaction end.
   if (diagnostic?.jit != null) await recordDiagnosticJit("jitAfter");
+  if (diagnostic?.guestProfile) await recordGuestProfile(page, milestones, "guestProfileAfter");
   if (diagnostic?.icountDivider != null) {
     await recordDiagnosticICountDivider("icountDividerAfter");
     // The generic early failure record omits error arrays; retain the actual endpoint arrays
