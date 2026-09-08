@@ -50,8 +50,8 @@ pub const DEFAULT_COMPILE_QUEUE_CAP: usize = 256;
 pub struct CompileJob {
     /// The nomination this job will compile + install (unchanged from discovery).
     pub req: TranslationRequest,
-    /// Priority: the observed execution count of the block (threshold + extra hits accrued while it
-    /// waited in the discovery queue). The queue pops the maximum first.
+    /// Priority: discovery hotness sampled on admission and refreshed for surviving residents just
+    /// before selection. Admission/backpressure still uses the stored scores; pop takes the maximum.
     pub hotness: u32,
 }
 
@@ -147,6 +147,15 @@ impl CompileQueue {
         let cancelled = before - self.jobs.len();
         self.stats.cancelled_stale = self.stats.cancelled_stale.saturating_add(cancelled as u64);
         cancelled
+    }
+
+    /// Refresh surviving residents in place after staging, cancellation and recount. Exactly one
+    /// lookup per resident (bounded by `cap`); payloads, order, counters and recount stay untouched.
+    #[cfg(any(test, not(feature = "zicsr-stub")))]
+    pub(crate) fn refresh_hotness(&mut self, mut current: impl FnMut(u64) -> u32) {
+        for job in &mut self.jobs {
+            job.hotness = current(job.req.phys_pc);
+        }
     }
 
     /// Pop the HOTTEST pending job (max `hotness`), or `None` if empty. Ties break by lowest index
@@ -294,5 +303,164 @@ mod tests {
         }
         // Backpressure recount accrued but nothing deadlocked.
         assert!(!q.take_recount().is_empty());
+    }
+
+    #[test]
+    fn refresh_visits_only_residents_preserving_payload_order_counters_and_recount() {
+        use crate::dispatch::{BlockDiscovery, MicroOp};
+        let ops = [MicroOp {
+            instr: crate::decode::decode(0x6f).unwrap(),
+            len: 4,
+            raw: 0x6f,
+        }];
+        let mut discovery = BlockDiscovery::new();
+        discovery.set_threshold(1);
+        let mut q = CompileQueue::with_cap(3);
+        for pc in [0x1000, 0x2000, 0x3000] {
+            discovery.on_block_entry(pc, &ops);
+        }
+        for req in discovery.take_requests_bounded(3) {
+            let hotness = discovery.queued_hotness(req.phys_pc);
+            q.push(CompileJob { req, hotness });
+        }
+        q.push(job(0x4000, 0, discovery.generation())); // Keep a nonempty recount list.
+        for _ in 0..1000 {
+            discovery.on_block_entry(0x3000, &ops);
+        }
+        let before = q.jobs.clone();
+        let stats = q.stats();
+        let recount = q.recount.clone();
+        let discovery_stats = discovery.stats();
+        let allocation = (q.jobs.as_ptr(), q.jobs.capacity());
+        let mut visited = Vec::new();
+        q.refresh_hotness(|pc| {
+            visited.push(pc);
+            discovery.queued_hotness(pc)
+        });
+        assert_eq!(visited, [0x1000, 0x2000, 0x3000]);
+        assert_eq!(visited.len(), q.len());
+        assert!(visited.len() <= q.cap());
+        assert_eq!((q.jobs.as_ptr(), q.jobs.capacity()), allocation);
+        assert_eq!(q.stats(), stats);
+        assert_eq!(q.recount, recount);
+        assert_eq!(discovery.stats(), discovery_stats);
+        for (old, refreshed) in before.iter().zip(&q.jobs) {
+            assert_eq!(old.req, refreshed.req);
+        }
+        assert_eq!(
+            q.jobs.iter().map(|j| j.hotness).collect::<Vec<_>>(),
+            [1, 1, 1001]
+        );
+        assert_eq!(q.pop_hottest().unwrap().req.phys_pc, 0x3000);
+        assert_eq!(q.pop_hottest().unwrap().req.phys_pc, 0x1000);
+        assert_eq!(q.pop_hottest().unwrap().req.phys_pc, 0x2000);
+    }
+
+    #[test]
+    fn refresh_empty_is_inert_and_equal_saturated_scores_keep_order() {
+        let mut q = CompileQueue::with_cap(3);
+        let empty = q.stats();
+        q.refresh_hotness(|_| panic!("empty refresh must not query discovery"));
+        assert_eq!(q.stats(), empty);
+        assert!(q.take_recount().is_empty());
+        for score in [0, 64, u32::MAX] {
+            for pc in [0x3000, 0x1000, 0x2000] {
+                q.push(job(pc, 123, 1));
+            }
+            q.refresh_hotness(|_| score);
+            for pc in [0x3000, 0x1000, 0x2000] {
+                let popped = q.pop_hottest().unwrap();
+                assert_eq!(popped.req.phys_pc, pc);
+                assert_eq!(popped.hotness, score);
+            }
+        }
+    }
+
+    #[test]
+    fn refresh_uses_actual_missing_and_recount_reset_hotness_without_changing_discovery() {
+        use crate::dispatch::{BlockDiscovery, MicroOp};
+        let mut discovery = BlockDiscovery::new();
+        let ops = [MicroOp {
+            instr: crate::decode::decode(0x6f).unwrap(),
+            len: 4,
+            raw: 0x6f,
+        }];
+        for _ in 0..discovery.threshold() + 10 {
+            discovery.on_block_entry(0x1000, &ops);
+        }
+        let mut q = CompileQueue::with_cap(2);
+        q.push(job(0x1000, 74, discovery.generation()));
+        q.push(job(0x2000, u32::MAX, discovery.generation())); // No hotness record exists.
+        q.push(job(0x1000, 0, discovery.generation())); // Existing drop/recount behavior.
+        for pc in q.take_recount() {
+            discovery.renominate(pc);
+        }
+        let before = discovery.stats();
+        let queue_before = q.stats();
+        q.refresh_hotness(|pc| discovery.queued_hotness(pc));
+        assert_eq!(discovery.stats(), before);
+        assert_eq!(q.stats(), queue_before);
+        assert_eq!(
+            q.jobs.iter().map(|j| j.hotness).collect::<Vec<_>>(),
+            [64, 64]
+        );
+        assert_eq!(q.pop_hottest().unwrap().req.phys_pc, 0x1000);
+    }
+
+    #[test]
+    fn staged_stale_resident_and_incoming_cancel_before_refresh_of_fresh_same_pc() {
+        use crate::dispatch::{BlockDiscovery, MicroOp};
+        let mut discovery = BlockDiscovery::new();
+        discovery.set_threshold(1);
+        let old_gen = discovery.generation();
+        let mut q = CompileQueue::with_cap(4);
+        q.push(job(0x1000, u32::MAX, old_gen)); // Stale resident.
+        discovery.on_invalidate();
+        let ops = [MicroOp {
+            instr: crate::decode::decode(0x6f).unwrap(),
+            len: 4,
+            raw: 0x6f,
+        }];
+        discovery.on_block_entry(0x1000, &ops); // Fresh same-PC nomination.
+        let fresh = discovery.take_requests_bounded(1).pop().unwrap();
+        q.push(job(0x2000, u32::MAX, old_gen)); // Stale incoming, staged BEFORE cancellation.
+        q.push(CompileJob {
+            hotness: discovery.queued_hotness(0x1000),
+            req: fresh.clone(),
+        });
+        assert_eq!(q.cancel_stale(discovery.generation()), 2);
+        assert!(
+            q.take_recount().is_empty(),
+            "cancellation must not recount fresh same-PC state"
+        );
+        let before = discovery.stats();
+        q.refresh_hotness(|pc| {
+            assert_eq!(pc, 0x1000, "stale job reached refresh");
+            discovery.queued_hotness(pc)
+        });
+        assert_eq!(discovery.stats(), before);
+        assert_eq!(q.stats().cancelled_stale, 2);
+        let popped = q.pop_hottest().unwrap();
+        assert_eq!(popped.req, fresh);
+        assert!(discovery.install_check(&popped.req, &0x6fu32.to_le_bytes()));
+        assert!(!discovery.install_check(&popped.req, &0x13u32.to_le_bytes()));
+        discovery.on_block_entry(0x1000, &ops);
+        assert_eq!(discovery.stats().nominated, before.nominated);
+        assert_eq!(discovery.stats().deduped, before.deduped + 1);
+    }
+
+    #[test]
+    fn stale_incoming_admission_and_backpressure_are_not_reordered_by_refresh() {
+        let mut q = CompileQueue::with_cap(1);
+        q.push(job(0x1000, 1, 2));
+        q.push(job(0x2000, 2, 1)); // Existing admission evicts the colder fresh resident.
+        assert_eq!(q.cancel_stale(2), 1); // The incoming stale job is then cancelled.
+        assert_eq!(q.take_recount(), [0x1000]);
+        let before = q.stats();
+        q.refresh_hotness(|_| panic!("nothing survives the established ordering"));
+        assert_eq!(q.stats(), before);
+        assert_eq!(before.dropped_backpressure, 1);
+        assert_eq!(before.cancelled_stale, 1);
+        assert!(q.pop_hottest().is_none());
     }
 }

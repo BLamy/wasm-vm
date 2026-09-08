@@ -4118,6 +4118,10 @@ impl Machine {
         for phys in self.compile_queue.take_recount() {
             self.discovery.renominate(phys);
         }
+        // Surviving backlog can accrue interpreted hits across exhausted host budgets, even when
+        // this pump staged nothing. Refresh only now; keep admission/cancellation/recount ordering.
+        self.compile_queue
+            .refresh_hotness(|phys| self.discovery.queued_hotness(phys));
         // ── E4-T21: pop the hottest jobs up to the per-boundary INSTALL budget (bounds the stall). ──
         let mut reqs: alloc::vec::Vec<dispatch::TranslationRequest> = alloc::vec::Vec::new();
         let attempt_budget = JIT_INSTALL_BUDGET.min(self.jit_run_attempt_remaining);

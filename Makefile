@@ -1163,6 +1163,26 @@ verify-E5-T26f-discovery-observation:
 	node --test tools/verify/e5-t26f-discovery-observation.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs tools/verify/e5-t26f-residency-comparison.test.mjs web/tests/e4-t32-worker-protocol.test.mjs
 	@echo "F discovery observation plumbing: OK; new cold/reuse measurement remains separate, not F acceptance"
 
+.PHONY: verify-E5-T26l verify-E5-T26l-runtime
+verify-E5-T26l-runtime:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests --features trace,gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --features trace,gpu-trace --lib -- --nocapture
+	cargo test -p wasm-vm-core --features trace,gpu-trace --test async_compile_pipeline --test predecode_diff --test predecode_smc_diff --test predecode_entry_safety --test jit_entry_timing --test cpu_resume --test desktop_machine_resume -- --nocapture
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	wasm-pack test --node crates/wasm --test jit_browser_parity --test discovery_stats --test decoded_cache_capacity
+	node --check tools/verify/e5-t26l-browser-priority.mjs
+	node --test tools/verify/e5-t26l-browser-priority.test.mjs tools/verify/e5-t26f-discovery-observation.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs web/tests/e4-t32-worker-protocol.test.mjs
+	@echo "L runtime/selection gates: OK; new cold browser recording remains separate"
+
+# A new seal and default-policy screen; a recorded F timing miss is never F acceptance.
+verify-E5-T26l: verify-E5-T26l-runtime
+	$(MAKE) web-dist
+	E5_DEMO_TASK=E5-T26l E5_DEMO_OUT=evidence/e5-t26l/demo node tools/verify/e5-t18e-demo-smoke.mjs
+	node tools/verify/e5-t26l-browser-priority.mjs
+	@echo "verify-E5-T26l (live compile selection and browser screen, not F acceptance): OK"
+
 .PHONY: verify-E5-T26k verify-E5-T26k-runtime
 verify-E5-T26k-runtime:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
