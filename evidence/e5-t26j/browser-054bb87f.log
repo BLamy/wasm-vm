@@ -1,0 +1,1526 @@
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T08:12:50.220Z","elapsedMs":0}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-08T08:12:50.529Z","elapsedMs":309}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-08T08:12:50.529Z","elapsedMs":309}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-08T08:12:52.613Z","elapsedMs":2393}
+[e5-t26f] {"phase":"browser:initial-load","event":"start","timestamp":"2026-09-08T08:12:52.614Z","elapsedMs":2394}
+[e5-t26f] {"phase":"browser:initial-load","event":"done","timestamp":"2026-09-08T08:12:52.766Z","elapsedMs":2546}
+[e5-t26f] {"phase":"readiness:initial desktop ready","event":"start","timestamp":"2026-09-08T08:12:52.766Z","elapsedMs":2546}
+[e5-t26f] {"timestamp":"2026-09-08T08:13:22.617Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"nit as init process\r\n\r\n   OpenRC 0.54 is starting up Linux 6.6.63 (riscv64)\r\n\r\n * Mounting /proc ... [ ok ]\r\n * Mounting /run ... [ ok ]\r\n * /run/openrc: creating directory\r\n * /run/lock: creating directory\r\n * /run/lock: correcting owner\r\n","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":772813,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:13:52.617Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"reating directory\r\n * /run/lock: correcting owner\r\n * Caching service dependencies ... [ ok ]\r\n * Remounting devtmpfs on /dev ... [ ok ]\r\n * Mounting /dev/mqueue ... [ ok ]\r\n * Mounting /dev/pts ... [ ok ]\r\n * Mounting /dev/shm ... [ ok ]\r\n","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":1549389,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:14:22.617Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"]\r\n * Mounting security filesystem ... [ ok ]\r\n * Mounting debug filesystem ... [ ok ]\r\n * Starting udev ... [ ok ]\r\n * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ...","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":2325325,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:14:52.617Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":" ok ]\r\n * Mounting debug filesystem ... [ ok ]\r\n * Starting udev ... [ ok ]\r\n * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ... [ ok ]\r\n * Loading hardware drivers ...","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":3101901,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:15:22.618Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":" ok ]\r\n * Mounting debug filesystem ... [ ok ]\r\n * Starting udev ... [ ok ]\r\n * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ... [ ok ]\r\n * Loading hardware drivers ...","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":3876557,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:15:52.619Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":" ok ]\r\n * Mounting debug filesystem ... [ ok ]\r\n * Starting udev ... [ ok ]\r\n * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ... [ ok ]\r\n * Loading hardware drivers ...","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":4653005,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:16:22.621Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":0,"ready":null,"restored":null,"status":"linux: booting","serialTail":"ng system clock using the hardware clock [UTC] ...hwclock: select() to /dev/rtc0 to wait for clock tick timed out\r\n * Failed to set the system clock\r\n [ !! ]\r\n * Checking local filesystems  ... [ ok ]\r\n * Remounting filesystems ... [ ok ]\r\n","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":5430221,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:16:52.623Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"reating user login records ... [ ok ]\r\n * Cleaning /tmp directory ... [ ok ]\r\n * Setting hostname ... [ ok ]\r\n * Seeding random number generator ... * Saving 256 bits of creditable seed for next boot\r\n [ ok ]\r\n * Starting busybox syslog ...","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":6205901,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:17:22.625Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"* Saving 256 bits of creditable seed for next boot\r\n [ ok ]\r\n * Starting busybox syslog ... [ ok ]\r\n * Starting seatd ... [ ok ]\r\n * Waiting for uevents to be processed ... [ ok ]\r\n * Starting networking ... *   lo ... [ ok ]\r\n *   eth0 ...","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":6981581,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:17:52.625Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":0,"ready":null,"restored":null,"status":"linux: booting","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":14,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":18,"bytesSent":0,"pendingBytes":18},"presentation":{"successfulPresents":14,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":7756877,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:18:22.626Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":15,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":18,"bytesSent":0,"pendingBytes":18},"presentation":{"successfulPresents":15,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":8532429,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:18:52.628Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":15,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":18,"bytesSent":0,"pendingBytes":18},"presentation":{"successfulPresents":15,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":9308621,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:19:22.630Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":15,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":18,"bytesSent":0,"pendingBytes":18},"presentation":{"successfulPresents":15,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":10084173,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:19:52.631Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":15,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":18,"bytesSent":0,"pendingBytes":18},"presentation":{"successfulPresents":15,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":10860877,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:20:22.633Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":18,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":18,"bytesSent":0,"pendingBytes":18},"presentation":{"successfulPresents":18,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":11636301,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"phase":"readiness:initial desktop ready","event":"done","timestamp":"2026-09-08T08:20:41.644Z","elapsedMs":471424}
+[e5-t26f] {"phase":"launch:e5-t26f-terminal-1","event":"start","timestamp":"2026-09-08T08:20:43.658Z","elapsedMs":473438}
+[e5-t26f] {"timestamp":"2026-09-08T08:20:52.635Z","phase":"launch:e5-t26f-terminal-1","event":"sample","probeMs":1,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":27,"pointerFrames":3,"keyboardFrames":0,"launch":{"label":"e5-t26f-terminal-1","marker":null,"accepted":null,"terminalRendered":false,"terminalMarkerSeen":null,"visualDiffPixels":365,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"command":null,"focus":null,"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":27,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":12582093,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:21:22.636Z","phase":"launch:e5-t26f-terminal-1","event":"sample","probeMs":1,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":27,"pointerFrames":3,"keyboardFrames":0,"launch":{"label":"e5-t26f-terminal-1","marker":null,"accepted":null,"terminalRendered":false,"terminalMarkerSeen":null,"visualDiffPixels":365,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"command":null,"focus":null,"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":27,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":14022221,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"phase":"launch:e5-t26f-terminal-1","event":"done","timestamp":"2026-09-08T08:21:31.217Z","elapsedMs":520997}
+[e5-t26f] {"phase":"focus:terminal-1","event":"start","timestamp":"2026-09-08T08:21:31.218Z","elapsedMs":520998}
+[e5-t26f] {"phase":"focus:terminal-1:first-settle","event":"start","timestamp":"2026-09-08T08:21:32.382Z","elapsedMs":522162}
+[e5-t26f] {"timestamp":"2026-09-08T08:21:52.638Z","phase":"focus:terminal-1:first-settle","event":"sample","probeMs":1,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":35,"pointerFrames":6,"keyboardFrames":0,"launch":{"label":"e5-t26f-terminal-1","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":344187,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":null,"focus":{"label":"terminal-1","marker":null,"accepted":null,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":35,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":15462477,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:22:22.640Z","phase":"focus:terminal-1:first-settle","event":"sample","probeMs":1,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":35,"pointerFrames":6,"keyboardFrames":0,"launch":{"label":"e5-t26f-terminal-1","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":344187,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":null,"focus":{"label":"terminal-1","marker":null,"accepted":null,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":35,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":16902349,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"phase":"focus:terminal-1:first-settle","event":"done","timestamp":"2026-09-08T08:22:32.383Z","elapsedMs":582163}
+[e5-t26f] {"phase":"focus:terminal-1:second-settle","event":"start","timestamp":"2026-09-08T08:22:33.546Z","elapsedMs":583326}
+[e5-t26f] {"timestamp":"2026-09-08T08:22:52.641Z","phase":"focus:terminal-1:second-settle","event":"sample","probeMs":1,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":37,"pointerFrames":9,"keyboardFrames":0,"launch":{"label":"e5-t26f-terminal-1","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":344187,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":null,"focus":{"label":"terminal-1","marker":null,"accepted":null,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":37,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":18342605,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"phase":"focus:terminal-1:second-settle","event":"done","timestamp":"2026-09-08T08:23:03.545Z","elapsedMs":613325}
+[e5-t26f] {"phase":"focus:terminal-1","event":"done","timestamp":"2026-09-08T08:23:03.547Z","elapsedMs":613327}
+[e5-t26f] {"phase":"command:e5t26f-shell-ok:typing","event":"start","timestamp":"2026-09-08T08:23:03.547Z","elapsedMs":613327}
+[e5-t26f] {"phase":"command:e5t26f-shell-ok:typing","event":"done","timestamp":"2026-09-08T08:23:13.863Z","elapsedMs":623643}
+[e5-t26f] {"phase":"command:e5t26f-shell-ok:completion","event":"start","timestamp":"2026-09-08T08:23:13.863Z","elapsedMs":623643}
+[e5-t26f] {"phase":"command:e5t26f-shell-ok:completion","event":"done","timestamp":"2026-09-08T08:23:14.386Z","elapsedMs":624166}
+[e5-t26f] {"phase":"agent:agent channel ready","event":"start","timestamp":"2026-09-08T08:23:14.386Z","elapsedMs":624166}
+[e5-t26f] {"phase":"agent:agent channel ready","event":"done","timestamp":"2026-09-08T08:23:14.387Z","elapsedMs":624167}
+[e5-t26f] {"phase":"command:e5t26f-aplay-ok:typing","event":"start","timestamp":"2026-09-08T08:23:14.388Z","elapsedMs":624168}
+[e5-t26f] {"timestamp":"2026-09-08T08:23:22.645Z","phase":"command:e5t26f-aplay-ok:typing","event":"sample","probeMs":4,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":105,"pointerFrames":9,"keyboardFrames":183,"launch":{"label":"e5-t26f-terminal-1","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":344187,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":{"label":null,"marker":"e5t26f-aplay-ok","accepted":null,"terminalRendered":null,"terminalMarkerSeen":false,"visualDiffPixels":912,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"focus":{"label":"terminal-1","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":6,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":105,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":19782733,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:23:52.644Z","phase":"command:e5t26f-aplay-ok:typing","event":"sample","probeMs":1,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":221,"pointerFrames":9,"keyboardFrames":477,"launch":{"label":"e5-t26f-terminal-1","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":344187,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":{"label":null,"marker":"e5t26f-aplay-ok","accepted":null,"terminalRendered":null,"terminalMarkerSeen":false,"visualDiffPixels":3576,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"focus":{"label":"terminal-1","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":6,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":221,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":21222733,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"phase":"command:e5t26f-aplay-ok:typing","event":"done","timestamp":"2026-09-08T08:24:00.639Z","elapsedMs":670419}
+[e5-t26f] {"phase":"command:e5t26f-aplay-ok:completion","event":"start","timestamp":"2026-09-08T08:24:00.639Z","elapsedMs":670419}
+[e5-t26f] {"phase":"command:e5t26f-aplay-ok:completion","event":"done","timestamp":"2026-09-08T08:24:03.764Z","elapsedMs":673544}
+[e5-t26f] {"phase":"launch:e5-t26f-terminal-2","event":"start","timestamp":"2026-09-08T08:24:03.789Z","elapsedMs":673569}
+[e5-t26f] {"timestamp":"2026-09-08T08:24:22.645Z","phase":"launch:e5-t26f-terminal-2","event":"sample","probeMs":1,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":263,"pointerFrames":12,"keyboardFrames":556,"launch":{"label":"e5-t26f-terminal-2","marker":null,"accepted":null,"terminalRendered":false,"terminalMarkerSeen":null,"visualDiffPixels":451,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"command":{"label":null,"marker":"e5t26f-aplay-ok","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":6938,"guestVisible":null,"pointerFrames":null,"keyboardFrames":454},"focus":{"label":"terminal-1","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":true,"pointerFrames":6,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":263,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":22662093,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":1440,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"phase":"launch:e5-t26f-terminal-2","event":"done","timestamp":"2026-09-08T08:24:48.092Z","elapsedMs":717872}
+[e5-t26f] {"phase":"focus:terminal-2","event":"start","timestamp":"2026-09-08T08:24:48.092Z","elapsedMs":717872}
+[e5-t26f] {"phase":"focus:terminal-2:first-settle","event":"start","timestamp":"2026-09-08T08:24:49.272Z","elapsedMs":719052}
+[e5-t26f] {"timestamp":"2026-09-08T08:24:52.647Z","phase":"focus:terminal-2:first-settle","event":"sample","probeMs":2,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":270,"pointerFrames":15,"keyboardFrames":556,"launch":{"label":"e5-t26f-terminal-2","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":297942,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":{"label":null,"marker":"e5t26f-aplay-ok","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":6938,"guestVisible":null,"pointerFrames":null,"keyboardFrames":454},"focus":{"label":"terminal-2","marker":null,"accepted":null,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":270,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":24102605,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":1440,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"timestamp":"2026-09-08T08:25:22.648Z","phase":"focus:terminal-2:first-settle","event":"sample","probeMs":2,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":270,"pointerFrames":15,"keyboardFrames":556,"launch":{"label":"e5-t26f-terminal-2","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":297942,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":{"label":null,"marker":"e5t26f-aplay-ok","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":6938,"guestVisible":null,"pointerFrames":null,"keyboardFrames":454},"focus":{"label":"terminal-2","marker":null,"accepted":null,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":270,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":25542477,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":1440,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"phase":"focus:terminal-2:first-settle","event":"done","timestamp":"2026-09-08T08:25:49.273Z","elapsedMs":779053}
+[e5-t26f] {"phase":"focus:terminal-2:second-settle","event":"start","timestamp":"2026-09-08T08:25:50.471Z","elapsedMs":780251}
+[e5-t26f] {"timestamp":"2026-09-08T08:25:52.649Z","phase":"focus:terminal-2:second-settle","event":"sample","probeMs":1,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":272,"pointerFrames":18,"keyboardFrames":556,"launch":{"label":"e5-t26f-terminal-2","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":297942,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":{"label":null,"marker":"e5t26f-aplay-ok","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":6938,"guestVisible":null,"pointerFrames":null,"keyboardFrames":454},"focus":{"label":"terminal-2","marker":null,"accepted":null,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":272,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":26982349,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":1440,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"phase":"focus:terminal-2:second-settle","event":"done","timestamp":"2026-09-08T08:26:20.472Z","elapsedMs":810252}
+[e5-t26f] {"phase":"focus:terminal-2","event":"done","timestamp":"2026-09-08T08:26:20.475Z","elapsedMs":810255}
+[e5-t26f] {"phase":"cursor:initial-render","event":"start","timestamp":"2026-09-08T08:26:20.475Z","elapsedMs":810255}
+[e5-t26f] {"phase":"cursor:initial-render","event":"done","timestamp":"2026-09-08T08:26:21.485Z","elapsedMs":811265}
+[e5-t26f] {"phase":"snapshot:normal","event":"start","timestamp":"2026-09-08T08:26:21.485Z","elapsedMs":811265}
+[e5-t26f] {"phase":"normal:checkpoint-BeforeReload","event":"start","timestamp":"2026-09-08T08:26:29.523Z","elapsedMs":819303}
+[e5-t26f] {"timestamp":"2026-09-08T08:26:29.524Z","phase":"snapshot:normal","event":"sample","probeMs":6874,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":274,"pointerFrames":19,"keyboardFrames":556,"launch":{"label":"e5-t26f-terminal-2","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":297942,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":{"label":null,"marker":"e5t26f-aplay-ok","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":6938,"guestVisible":null,"pointerFrames":null,"keyboardFrames":454},"focus":{"label":"terminal-2","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":6,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":274,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":28512461,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":1440,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"phase":"normal:checkpoint-BeforeReload","event":"done","timestamp":"2026-09-08T08:26:29.930Z","elapsedMs":819710}
+[e5-t26f] {"phase":"snapshot:normal","event":"done","timestamp":"2026-09-08T08:26:29.930Z","elapsedMs":819710}
+[e5-t26f] {"phase":"diagnostic:checkpoint-seal","event":"start","timestamp":"2026-09-08T08:26:29.930Z","elapsedMs":819710}
+[e5-t26f] {"phase":"diagnostic:checkpoint-seal","event":"done","timestamp":"2026-09-08T08:26:30.295Z","elapsedMs":820075}
+{
+  "schema": "wasm-vm.e5-t26f.diagnostic-iteration.v1",
+  "acceptance": false,
+  "milestones": {
+    "run": {
+      "kind": "diagnostic-iteration",
+      "acceptance": false,
+      "diagnostic": {
+        "mode": "create",
+        "directory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26j-clock-q33jA9",
+        "port": 61630,
+        "origin": "http://127.0.0.1:61630",
+        "command": null,
+        "keyDelayMs": 0,
+        "latency": false,
+        "cpu": false,
+        "guestClock": null,
+        "jit": null,
+        "residency": null,
+        "complete": false,
+        "icountDivider": null
+      },
+      "postRestoreCommand": "sh /tmp/a",
+      "postRestoreKeyDelayMs": 0,
+      "binding": {
+        "head": "054bb87f93b490645d5af921207f97af08629113",
+        "runtimeSha256": "43106f3e04a1c814a3d16994f1328755f8c10999a3ca6bc1818874e8812eb5c7",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "imageBytes": 1073741824,
+        "manifestSha256": "b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592",
+        "origin": "http://127.0.0.1:61630"
+      },
+      "profile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26j-clock-q33jA9/checkpoint-profile",
+      "checkpointFile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26j-clock-q33jA9/normal-checkpoint.json",
+      "creatorHead": "054bb87f93b490645d5af921207f97af08629113",
+      "currentHead": "054bb87f93b490645d5af921207f97af08629113",
+      "profileSha256": "901b20969f43feec5232e698403d4898235a18130fdcb9558b616bdaea2736da"
+    },
+    "initialReadiness": {
+      "completedAt": "2026-09-08T08:20:41.644Z"
+    },
+    "shellProbe": {
+      "command": "true; printf '\\033[42;30me5t26f-shell-ok\\033[0m\\n'",
+      "marker": "e5t26f-shell-ok",
+      "beforeFrame": 37,
+      "keyboardStart": 0,
+      "domEventStart": 0,
+      "visualDiffPixels": 2484,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 1,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 75,
+      "redMarkerSeen": false,
+      "keyboardFrames": 102,
+      "domEvents": 102,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "agentProbe": {
+      "state": "ready",
+      "negotiatedVersion": 1,
+      "transportGeneration": 2,
+      "bytesReceived": 54,
+      "bytesSent": 36,
+      "pendingBytes": 0
+    },
+    "initialAplay": {
+      "command": "yes \"$(printf '\\001\\000\\377\\177')\"|head -c3840 >/tmp/p;printf 'aplay -Dhw:0,0 --period-size=480 --buffer-size=960 -f S16_LE -t raw -r48000 -c2 /tmp/p&&printf \"\\033[42me5t26f-aplay\\033[0m\\n\"' >/tmp/a;sh /tmp/a",
+      "marker": "e5t26f-aplay-ok",
+      "beforeFrame": 75,
+      "keyboardStart": 102,
+      "domEventStart": 102,
+      "visualDiffPixels": 6938,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 128,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 257,
+      "redMarkerSeen": false,
+      "keyboardFrames": 454,
+      "domEvents": 454,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "initialAudio": {
+      "before": {
+        "available": true,
+        "writeIndex": 0,
+        "readIndex": 0,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 4096,
+        "inspectedFrames": 4096,
+        "nonSilentFrames": 0,
+        "maxAbs": 0
+      },
+      "after": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.082000732421875
+      },
+      "outputAttached": true,
+      "observedAt": 671175.7850000858
+    },
+    "twoWindows": {
+      "completedAt": "2026-09-08T08:26:20.475Z"
+    },
+    "initialCursor": {
+      "frame": {
+        "atMs": 807980,
+        "sequence": 19,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 18431
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 17612
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 18431,
+          "y": 17612
+        }
+      },
+      "rendered": {
+        "x": 720,
+        "y": 430,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      }
+    },
+    "normalSnapshotPause": {
+      "at": 808887.9000000954,
+      "isPaused": true
+    },
+    "normalSnapshot": {
+      "sha256": "82edb9b2f0203a5fa756d565dbbfc3fd7466544952e9b8a9ccca036f0212248a",
+      "byteLength": 2626928,
+      "preFrontBufferCrc": "23f83a92",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "23f83a92",
+        "overlayGeneration": 626
+      }
+    },
+    "normalCheckpointBeforeReload": {
+      "status": "passed",
+      "snapshotSha256": "82edb9b2f0203a5fa756d565dbbfc3fd7466544952e9b8a9ccca036f0212248a",
+      "observed": {
+        "at": 817320.1299999952,
+        "isPaused": true,
+        "generation": 626,
+        "decision": "resume",
+        "envelopeSha256": "82edb9b2f0203a5fa756d565dbbfc3fd7466544952e9b8a9ccca036f0212248a",
+        "stillPaused": true,
+        "finalGeneration": 626
+      }
+    }
+  },
+  "errors": {
+    "browser": [],
+    "http": []
+  }
+}
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T08:26:31.308Z","elapsedMs":1}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-08T08:26:32.215Z","elapsedMs":907}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-08T08:26:32.215Z","elapsedMs":907}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-08T08:26:34.967Z","elapsedMs":3659}
+[e5-t26f] {"phase":"reload:normal","event":"start","timestamp":"2026-09-08T08:26:34.968Z","elapsedMs":3660}
+[e5-t26f] {"phase":"reload:normal","event":"done","timestamp":"2026-09-08T08:26:35.122Z","elapsedMs":3814}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"start","timestamp":"2026-09-08T08:26:35.122Z","elapsedMs":3814}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"done","timestamp":"2026-09-08T08:26:36.424Z","elapsedMs":5116}
+[e5-t26f] {"phase":"restore:normal:completion","event":"start","timestamp":"2026-09-08T08:26:36.424Z","elapsedMs":5116}
+[e5-t26f] {"phase":"restore:normal:completion","event":"done","timestamp":"2026-09-08T08:26:36.431Z","elapsedMs":5123}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"start","timestamp":"2026-09-08T08:26:36.431Z","elapsedMs":5123}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"done","timestamp":"2026-09-08T08:26:36.433Z","elapsedMs":5125}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"start","timestamp":"2026-09-08T08:26:36.433Z","elapsedMs":5125}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"done","timestamp":"2026-09-08T08:26:36.433Z","elapsedMs":5125}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"start","timestamp":"2026-09-08T08:26:36.433Z","elapsedMs":5125}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"done","timestamp":"2026-09-08T08:26:36.913Z","elapsedMs":5605}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"start","timestamp":"2026-09-08T08:26:36.913Z","elapsedMs":5605}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"done","timestamp":"2026-09-08T08:26:37.032Z","elapsedMs":5724}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"start","timestamp":"2026-09-08T08:26:37.032Z","elapsedMs":5724}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"done","timestamp":"2026-09-08T08:26:37.034Z","elapsedMs":5726}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"start","timestamp":"2026-09-08T08:26:37.034Z","elapsedMs":5726}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"done","timestamp":"2026-09-08T08:26:37.162Z","elapsedMs":5854}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"start","timestamp":"2026-09-08T08:26:37.162Z","elapsedMs":5854}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"done","timestamp":"2026-09-08T08:26:41.308Z","elapsedMs":10000}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"start","timestamp":"2026-09-08T08:26:41.310Z","elapsedMs":10002}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"done","timestamp":"2026-09-08T08:26:41.339Z","elapsedMs":10031}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"start","timestamp":"2026-09-08T08:26:41.339Z","elapsedMs":10031}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"failed","timestamp":"2026-09-08T08:26:41.543Z","elapsedMs":10235}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds
+    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1840:12 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.20.0
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T08:26:42.640Z","elapsedMs":1}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-08T08:26:43.568Z","elapsedMs":928}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-08T08:26:43.568Z","elapsedMs":928}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-08T08:26:46.183Z","elapsedMs":3543}
+[e5-t26f] {"phase":"reload:normal","event":"start","timestamp":"2026-09-08T08:26:46.184Z","elapsedMs":3544}
+[e5-t26f] {"phase":"reload:normal","event":"done","timestamp":"2026-09-08T08:26:46.331Z","elapsedMs":3691}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"start","timestamp":"2026-09-08T08:26:46.331Z","elapsedMs":3691}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"done","timestamp":"2026-09-08T08:26:47.637Z","elapsedMs":4997}
+[e5-t26f] {"phase":"restore:normal:completion","event":"start","timestamp":"2026-09-08T08:26:47.637Z","elapsedMs":4997}
+[e5-t26f] {"phase":"restore:normal:completion","event":"done","timestamp":"2026-09-08T08:26:47.644Z","elapsedMs":5004}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"start","timestamp":"2026-09-08T08:26:47.644Z","elapsedMs":5004}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"done","timestamp":"2026-09-08T08:26:47.646Z","elapsedMs":5006}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"start","timestamp":"2026-09-08T08:26:47.646Z","elapsedMs":5006}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"done","timestamp":"2026-09-08T08:26:47.646Z","elapsedMs":5006}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"start","timestamp":"2026-09-08T08:26:47.646Z","elapsedMs":5006}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"done","timestamp":"2026-09-08T08:26:48.152Z","elapsedMs":5512}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"start","timestamp":"2026-09-08T08:26:48.152Z","elapsedMs":5512}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"done","timestamp":"2026-09-08T08:26:48.627Z","elapsedMs":5987}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"start","timestamp":"2026-09-08T08:26:48.628Z","elapsedMs":5988}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"done","timestamp":"2026-09-08T08:26:48.630Z","elapsedMs":5990}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"start","timestamp":"2026-09-08T08:26:48.630Z","elapsedMs":5990}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"done","timestamp":"2026-09-08T08:26:48.759Z","elapsedMs":6119}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"start","timestamp":"2026-09-08T08:26:48.760Z","elapsedMs":6120}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"done","timestamp":"2026-09-08T08:26:56.906Z","elapsedMs":14266}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"start","timestamp":"2026-09-08T08:26:56.908Z","elapsedMs":14268}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"done","timestamp":"2026-09-08T08:26:56.926Z","elapsedMs":14286}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"start","timestamp":"2026-09-08T08:26:56.926Z","elapsedMs":14286}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"failed","timestamp":"2026-09-08T08:26:57.143Z","elapsedMs":14503}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds
+    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1840:12 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.20.0
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T08:26:58.232Z","elapsedMs":1}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-08T08:26:59.168Z","elapsedMs":936}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-08T08:26:59.168Z","elapsedMs":936}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-08T08:27:01.758Z","elapsedMs":3526}
+[e5-t26f] {"phase":"reload:normal","event":"start","timestamp":"2026-09-08T08:27:01.759Z","elapsedMs":3527}
+[e5-t26f] {"phase":"reload:normal","event":"done","timestamp":"2026-09-08T08:27:01.901Z","elapsedMs":3669}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"start","timestamp":"2026-09-08T08:27:01.901Z","elapsedMs":3669}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"done","timestamp":"2026-09-08T08:27:03.200Z","elapsedMs":4968}
+[e5-t26f] {"phase":"restore:normal:completion","event":"start","timestamp":"2026-09-08T08:27:03.200Z","elapsedMs":4968}
+[e5-t26f] {"phase":"restore:normal:completion","event":"done","timestamp":"2026-09-08T08:27:03.208Z","elapsedMs":4976}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"start","timestamp":"2026-09-08T08:27:03.208Z","elapsedMs":4976}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"done","timestamp":"2026-09-08T08:27:03.210Z","elapsedMs":4978}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"start","timestamp":"2026-09-08T08:27:03.210Z","elapsedMs":4978}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"done","timestamp":"2026-09-08T08:27:03.210Z","elapsedMs":4978}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"start","timestamp":"2026-09-08T08:27:03.210Z","elapsedMs":4978}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"done","timestamp":"2026-09-08T08:27:03.719Z","elapsedMs":5487}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"start","timestamp":"2026-09-08T08:27:03.720Z","elapsedMs":5488}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"done","timestamp":"2026-09-08T08:27:04.212Z","elapsedMs":5980}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"start","timestamp":"2026-09-08T08:27:04.212Z","elapsedMs":5980}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"done","timestamp":"2026-09-08T08:27:04.215Z","elapsedMs":5983}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"start","timestamp":"2026-09-08T08:27:04.215Z","elapsedMs":5983}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"done","timestamp":"2026-09-08T08:27:04.340Z","elapsedMs":6108}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"start","timestamp":"2026-09-08T08:27:04.340Z","elapsedMs":6108}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"done","timestamp":"2026-09-08T08:27:12.277Z","elapsedMs":14045}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"start","timestamp":"2026-09-08T08:27:12.279Z","elapsedMs":14047}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"done","timestamp":"2026-09-08T08:27:12.323Z","elapsedMs":14091}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"start","timestamp":"2026-09-08T08:27:12.323Z","elapsedMs":14091}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"failed","timestamp":"2026-09-08T08:27:12.536Z","elapsedMs":14304}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds
+    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1840:12 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.20.0
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T08:27:13.669Z","elapsedMs":1}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-08T08:27:14.563Z","elapsedMs":894}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-08T08:27:14.563Z","elapsedMs":894}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-08T08:27:17.180Z","elapsedMs":3511}
+[e5-t26f] {"phase":"reload:normal","event":"start","timestamp":"2026-09-08T08:27:17.180Z","elapsedMs":3511}
+[e5-t26f] {"phase":"reload:normal","event":"done","timestamp":"2026-09-08T08:27:17.326Z","elapsedMs":3657}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"start","timestamp":"2026-09-08T08:27:17.326Z","elapsedMs":3657}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"done","timestamp":"2026-09-08T08:27:18.618Z","elapsedMs":4949}
+[e5-t26f] {"phase":"restore:normal:completion","event":"start","timestamp":"2026-09-08T08:27:18.618Z","elapsedMs":4949}
+[e5-t26f] {"phase":"restore:normal:completion","event":"done","timestamp":"2026-09-08T08:27:18.625Z","elapsedMs":4956}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"start","timestamp":"2026-09-08T08:27:18.625Z","elapsedMs":4956}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"done","timestamp":"2026-09-08T08:27:18.627Z","elapsedMs":4958}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"start","timestamp":"2026-09-08T08:27:18.627Z","elapsedMs":4958}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"done","timestamp":"2026-09-08T08:27:18.627Z","elapsedMs":4958}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"start","timestamp":"2026-09-08T08:27:18.627Z","elapsedMs":4958}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"done","timestamp":"2026-09-08T08:27:19.097Z","elapsedMs":5428}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"start","timestamp":"2026-09-08T08:27:19.097Z","elapsedMs":5428}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"done","timestamp":"2026-09-08T08:27:19.225Z","elapsedMs":5556}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"start","timestamp":"2026-09-08T08:27:19.225Z","elapsedMs":5556}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"done","timestamp":"2026-09-08T08:27:19.228Z","elapsedMs":5559}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"start","timestamp":"2026-09-08T08:27:19.228Z","elapsedMs":5559}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"done","timestamp":"2026-09-08T08:27:19.357Z","elapsedMs":5688}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"start","timestamp":"2026-09-08T08:27:19.357Z","elapsedMs":5688}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"done","timestamp":"2026-09-08T08:27:23.441Z","elapsedMs":9772}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"start","timestamp":"2026-09-08T08:27:23.443Z","elapsedMs":9774}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"done","timestamp":"2026-09-08T08:27:23.466Z","elapsedMs":9797}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"start","timestamp":"2026-09-08T08:27:23.466Z","elapsedMs":9797}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"failed","timestamp":"2026-09-08T08:27:23.673Z","elapsedMs":10004}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds
+    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1840:12 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.20.0
+{
+  "schema": "wasm-vm.e5-t26j.browser-clock-comparison.v1",
+  "head": "054bb87f93b490645d5af921207f97af08629113",
+  "acceptance": false,
+  "fVerified": false,
+  "claim": "unprofiled deterministic-divider ABBA; not F acceptance or a default-policy promotion",
+  "retained": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26j-clock-q33jA9",
+  "baseline": {
+    "head": "054bb87f93b490645d5af921207f97af08629113",
+    "binding": {
+      "head": "054bb87f93b490645d5af921207f97af08629113",
+      "runtimeSha256": "43106f3e04a1c814a3d16994f1328755f8c10999a3ca6bc1818874e8812eb5c7",
+      "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "imageSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+      "imageBytes": 1073741824,
+      "manifestSha256": "b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592",
+      "origin": "http://127.0.0.1:61630"
+    },
+    "browser": {
+      "name": "chromium",
+      "version": "Chrome/152.0.7977.76",
+      "headless": true
+    },
+    "normalSnapshot": {
+      "sha256": "82edb9b2f0203a5fa756d565dbbfc3fd7466544952e9b8a9ccca036f0212248a",
+      "byteLength": 2626928,
+      "preFrontBufferCrc": "23f83a92",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "23f83a92",
+        "overlayGeneration": 626
+      }
+    },
+    "profileSha256": "901b20969f43feec5232e698403d4898235a18130fdcb9558b616bdaea2736da",
+    "checkpointFile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26j-clock-q33jA9/normal-checkpoint.json",
+    "createdAt": "2026-09-08T08:26:30.068Z",
+    "retained": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26j-clock-q33jA9"
+  },
+  "coldRecordSha256": "fd1c50a92e03d7ed6afcc37917db7b1dc0cd4549c7fbdb3f005c86043272c902",
+  "sealSha256": "6e12991a381e10597fbffeef826f98707cfe452515199e354d37909c049ddf41",
+  "results": [
+    {
+      "index": 1,
+      "divider": 10,
+      "profile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26j-clock-q33jA9/iteration-3n7MOw/profile",
+      "binding": {
+        "head": "054bb87f93b490645d5af921207f97af08629113",
+        "runtimeSha256": "43106f3e04a1c814a3d16994f1328755f8c10999a3ca6bc1818874e8812eb5c7",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "imageBytes": 1073741824,
+        "manifestSha256": "b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592",
+        "origin": "http://127.0.0.1:61630"
+      },
+      "profileSha256": "901b20969f43feec5232e698403d4898235a18130fdcb9558b616bdaea2736da",
+      "snapshotSha256": "82edb9b2f0203a5fa756d565dbbfc3fd7466544952e9b8a9ccca036f0212248a",
+      "workerBefore": {
+        "requestedAt": 1464.3849999904633,
+        "receivedAt": 1561.6000000238419,
+        "state": {
+          "mode": "icount",
+          "mtime": "2985913198",
+          "timebaseHz": 10000000,
+          "clockDiv": 10
+        },
+        "jit": {
+          "hasExecutor": true,
+          "compiledBlocks": 103,
+          "executedBlocks": 181060,
+          "retiredViaJit": 2077811,
+          "directChainEntries": 407002,
+          "directChainLinks": 225946,
+          "dynamicLinkAttempts": 81648,
+          "dynamicLinkHits": 64,
+          "dynamicLinkRefusals": 81584,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 0,
+          "dynamicLinkInstalls": 73297,
+          "entryCost": {
+            "timingEnabled": false,
+            "timerReads": 0,
+            "hostEntries": 181060,
+            "stateCopyCalls": 362120,
+            "stateCopyBytes": 22796336,
+            "stateCopyNs": 0,
+            "engineEntryNs": 0,
+            "indirectTableDispatches": 192,
+            "authorityChecks": 171606,
+            "memorySplitExits": 0,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "jitRegionChaining": true,
+          "jitDynamicChaining": true,
+          "guestRetired": 6493934,
+          "jitEngineCalls": 181060,
+          "jitLogicalBlocksPerEngineCall": 2.2478846791118965,
+          "jitRetiredShare": 0.31996182899302644,
+          "chainLinksMade": 13,
+          "chainLinksCut": 0,
+          "chainDispatchEntries": 74120,
+          "chainMaxDepth": 9,
+          "chainLinksFollowed": 178497,
+          "jitResidencyPolicy": "repack-off",
+          "jitResidencyCap": 24,
+          "jitSubmittedMembers": 104,
+          "jitCompilePauseNs": 0,
+          "jitCompilePauseMaxNs": 0,
+          "jitCompilePauseSamples": 15,
+          "jitCacheInstalls": 103,
+          "jitCacheRetranslations": 0,
+          "jitCacheEvictions": 0,
+          "jitCacheBatches": 15,
+          "jitCacheCodeBytes": 1216398,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 4,
+          "discoveryGeneration": 5,
+          "blockEntryHits": 770092,
+          "blockBuilds": 14399
+        },
+        "selection": {
+          "requested": 10,
+          "before": {
+            "mode": "icount",
+            "clockDiv": 10,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          },
+          "after": {
+            "mode": "icount",
+            "clockDiv": 10,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          }
+        }
+      },
+      "workerAfter": {
+        "requestedAt": 6370.564999938011,
+        "receivedAt": 6506.259999990463,
+        "state": {
+          "mode": "icount",
+          "mtime": "2991860376",
+          "timebaseHz": 10000000,
+          "clockDiv": 10
+        },
+        "jit": {
+          "hasExecutor": true,
+          "compiledBlocks": 134,
+          "executedBlocks": 1748033,
+          "retiredViaJit": 23937177,
+          "directChainEntries": 4466850,
+          "directChainLinks": 2718874,
+          "dynamicLinkAttempts": 642761,
+          "dynamicLinkHits": 61335,
+          "dynamicLinkRefusals": 581426,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 0,
+          "dynamicLinkInstalls": 427350,
+          "entryCost": {
+            "timingEnabled": false,
+            "timerReads": 0,
+            "hostEntries": 1748033,
+            "stateCopyCalls": 3496066,
+            "stateCopyBytes": 282696200,
+            "stateCopyNs": 0,
+            "engineEntryNs": 0,
+            "indirectTableDispatches": 492192,
+            "authorityChecks": 1788954,
+            "memorySplitExits": 20742,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "jitRegionChaining": true,
+          "jitDynamicChaining": true,
+          "guestRetired": 65965875,
+          "jitEngineCalls": 1748033,
+          "jitLogicalBlocksPerEngineCall": 2.55535793660646,
+          "jitRetiredShare": 0.36287212138094127,
+          "chainLinksMade": 239,
+          "chainLinksCut": 200,
+          "chainDispatchEntries": 1052380,
+          "chainMaxDepth": 128,
+          "chainLinksFollowed": 1669059,
+          "jitResidencyPolicy": "repack-off",
+          "jitResidencyCap": 24,
+          "jitSubmittedMembers": 757,
+          "jitCompilePauseNs": 0,
+          "jitCompilePauseMaxNs": 0,
+          "jitCompilePauseSamples": 134,
+          "jitCacheInstalls": 754,
+          "jitCacheRetranslations": 256,
+          "jitCacheEvictions": 112,
+          "jitCacheBatches": 21,
+          "jitCacheCodeBytes": 1627245,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 4,
+          "discoveryGeneration": 5,
+          "blockEntryHits": 7204847,
+          "blockBuilds": 867870
+        },
+        "selection": {
+          "requested": 10,
+          "before": {
+            "mode": "icount",
+            "clockDiv": 10,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          },
+          "after": {
+            "mode": "icount",
+            "clockDiv": 10,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          }
+        }
+      },
+      "deltas": {
+        "guestRetired": 59471941,
+        "retiredViaJit": 21859366
+      },
+      "guestDeltaTicks": "5947178",
+      "interactionMs": 5168.225000023842,
+      "postRestoreStart": 1201.5950000286102,
+      "postRestoreEnd": 6369.820000052452,
+      "cursor": {
+        "frame": {
+          "atMs": 1658,
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 17510
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 16056
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 17510,
+            "y": 16056
+          }
+        },
+        "rendered": {
+          "x": 684,
+          "y": 392,
+          "hotX": 1,
+          "hotY": 1,
+          "matchedPixels": 94
+        },
+        "observedAt": 2061.2450000047684,
+        "elapsedMs": 859.6499999761581
+      },
+      "command": {
+        "command": "sh /tmp/a",
+        "marker": "e5t26f-post-aplay",
+        "beforeFrame": 4,
+        "keyboardStart": 0,
+        "domEventStart": 0,
+        "visualDiffPixels": 3555,
+        "terminalMarkerSeen": true,
+        "greenPixelsBefore": 240,
+        "redPixelsBefore": 0,
+        "visualChange": true,
+        "afterFrame": 11,
+        "redMarkerSeen": false,
+        "keyboardFrames": 20,
+        "domEvents": 20,
+        "inputSequenceMatch": true,
+        "inputTraceSha256": null,
+        "accepted": true
+      },
+      "pcmAtCompletion": {
+        "observedAt": 6341.360000014305,
+        "pcm": {
+          "available": true,
+          "writeIndex": 2400,
+          "readIndex": 2400,
+          "fillFrames": 0,
+          "capacityFrames": 4096,
+          "writtenFrames": 2400,
+          "inspectedFrames": 2400,
+          "nonSilentFrames": 1920,
+          "maxAbs": 0.082000732421875
+        },
+        "elapsedMs": 5139.764999985695
+      },
+      "attachment": {
+        "outputAttached": true,
+        "observedAt": 6367.870000004768
+      },
+      "childExit": 1,
+      "fTimingPassed": false,
+      "fVerified": false,
+      "record": "evidence/e5-t26j/browser-054bb87f/1-divider-10/failure-post-restore-interaction-checks.json",
+      "sha256": "e86906ccf47a93f8a98421e81ff8a9de071afb90d97b19d092d9d39575f9ec56",
+      "transcriptSha256": "76dcf19ad49cee51d999fae7dd85475ff6e086d0a45ab221f2607c79ea0202ea"
+    },
+    {
+      "index": 2,
+      "divider": 1,
+      "profile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26j-clock-q33jA9/iteration-mQUQBI/profile",
+      "binding": {
+        "head": "054bb87f93b490645d5af921207f97af08629113",
+        "runtimeSha256": "43106f3e04a1c814a3d16994f1328755f8c10999a3ca6bc1818874e8812eb5c7",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "imageBytes": 1073741824,
+        "manifestSha256": "b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592",
+        "origin": "http://127.0.0.1:61630"
+      },
+      "profileSha256": "901b20969f43feec5232e698403d4898235a18130fdcb9558b616bdaea2736da",
+      "snapshotSha256": "82edb9b2f0203a5fa756d565dbbfc3fd7466544952e9b8a9ccca036f0212248a",
+      "workerBefore": {
+        "requestedAt": 1461.1900000572205,
+        "receivedAt": 1577.6499999761581,
+        "state": {
+          "mode": "icount",
+          "mtime": "2991809431",
+          "timebaseHz": 10000000,
+          "clockDiv": 1
+        },
+        "jit": {
+          "hasExecutor": true,
+          "compiledBlocks": 97,
+          "executedBlocks": 102219,
+          "retiredViaJit": 1514392,
+          "directChainEntries": 256948,
+          "directChainLinks": 154752,
+          "dynamicLinkAttempts": 49019,
+          "dynamicLinkHits": 965,
+          "dynamicLinkRefusals": 48054,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 6,
+          "dynamicLinkInstalls": 26885,
+          "entryCost": {
+            "timingEnabled": false,
+            "timerReads": 0,
+            "hostEntries": 102219,
+            "stateCopyCalls": 204438,
+            "stateCopyBytes": 16138552,
+            "stateCopyNs": 0,
+            "engineEntryNs": 0,
+            "indirectTableDispatches": 6985,
+            "authorityChecks": 97193,
+            "memorySplitExits": 0,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "jitRegionChaining": true,
+          "jitDynamicChaining": true,
+          "guestRetired": 6995332,
+          "jitEngineCalls": 102219,
+          "jitLogicalBlocksPerEngineCall": 2.513700975356832,
+          "jitRetiredShare": 0.21648607957420749,
+          "chainLinksMade": 11,
+          "chainLinksCut": 0,
+          "chainDispatchEntries": 50700,
+          "chainMaxDepth": 9,
+          "chainLinksFollowed": 101392,
+          "jitResidencyPolicy": "repack-off",
+          "jitResidencyCap": 24,
+          "jitSubmittedMembers": 97,
+          "jitCompilePauseNs": 0,
+          "jitCompilePauseMaxNs": 0,
+          "jitCompilePauseSamples": 15,
+          "jitCacheInstalls": 97,
+          "jitCacheRetranslations": 0,
+          "jitCacheEvictions": 0,
+          "jitCacheBatches": 15,
+          "jitCacheCodeBytes": 1254067,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 4,
+          "discoveryGeneration": 5,
+          "blockEntryHits": 926699,
+          "blockBuilds": 53140
+        },
+        "selection": {
+          "requested": 1,
+          "before": {
+            "mode": "icount",
+            "clockDiv": 10,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          },
+          "after": {
+            "mode": "icount",
+            "clockDiv": 1,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          }
+        }
+      },
+      "workerAfter": {
+        "requestedAt": 10728.414999961853,
+        "receivedAt": 10878.965000033379,
+        "state": {
+          "mode": "icount",
+          "mtime": "3090863433",
+          "timebaseHz": 10000000,
+          "clockDiv": 1
+        },
+        "jit": {
+          "hasExecutor": true,
+          "compiledBlocks": 114,
+          "executedBlocks": 2076542,
+          "retiredViaJit": 27265221,
+          "directChainEntries": 4568005,
+          "directChainLinks": 2492094,
+          "dynamicLinkAttempts": 788565,
+          "dynamicLinkHits": 98047,
+          "dynamicLinkRefusals": 690518,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 3,
+          "dynamicLinkInstalls": 347584,
+          "entryCost": {
+            "timingEnabled": false,
+            "timerReads": 0,
+            "hostEntries": 2076542,
+            "stateCopyCalls": 4153084,
+            "stateCopyBytes": 367713912,
+            "stateCopyNs": 0,
+            "engineEntryNs": 0,
+            "indirectTableDispatches": 371122,
+            "authorityChecks": 2056902,
+            "memorySplitExits": 44535,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "jitRegionChaining": true,
+          "jitDynamicChaining": true,
+          "guestRetired": 106049476,
+          "jitEngineCalls": 2076542,
+          "jitLogicalBlocksPerEngineCall": 2.1998134398437403,
+          "jitRetiredShare": 0.2570990638369585,
+          "chainLinksMade": 254,
+          "chainLinksCut": 225,
+          "chainDispatchEntries": 1336009,
+          "chainMaxDepth": 128,
+          "chainLinksFollowed": 1995969,
+          "jitResidencyPolicy": "repack-off",
+          "jitResidencyCap": 24,
+          "jitSubmittedMembers": 1082,
+          "jitCompilePauseNs": 0,
+          "jitCompilePauseMaxNs": 0,
+          "jitCompilePauseSamples": 233,
+          "jitCacheInstalls": 1079,
+          "jitCacheRetranslations": 510,
+          "jitCacheEvictions": 203,
+          "jitCacheBatches": 23,
+          "jitCacheCodeBytes": 1715702,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 4,
+          "discoveryGeneration": 5,
+          "blockEntryHits": 12028179,
+          "blockBuilds": 2611245
+        },
+        "selection": {
+          "requested": 1,
+          "before": {
+            "mode": "icount",
+            "clockDiv": 10,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          },
+          "after": {
+            "mode": "icount",
+            "clockDiv": 1,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          }
+        }
+      },
+      "deltas": {
+        "guestRetired": 99054144,
+        "retiredViaJit": 25750829
+      },
+      "guestDeltaTicks": "99054002",
+      "interactionMs": 9530.715000033379,
+      "postRestoreStart": 1196.9199999570847,
+      "postRestoreEnd": 10727.634999990463,
+      "cursor": {
+        "frame": {
+          "atMs": 1678,
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 17510
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 16056
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 17510,
+            "y": 16056
+          }
+        },
+        "rendered": {
+          "x": 684,
+          "y": 392,
+          "hotX": 1,
+          "hotY": 1,
+          "matchedPixels": 94
+        },
+        "observedAt": 2440.9500000476837,
+        "elapsedMs": 1244.030000090599
+      },
+      "command": {
+        "command": "sh /tmp/a",
+        "marker": "e5t26f-post-aplay",
+        "beforeFrame": 4,
+        "keyboardStart": 0,
+        "domEventStart": 0,
+        "visualDiffPixels": 3613,
+        "terminalMarkerSeen": true,
+        "greenPixelsBefore": 240,
+        "redPixelsBefore": 0,
+        "visualChange": true,
+        "afterFrame": 12,
+        "redMarkerSeen": false,
+        "keyboardFrames": 20,
+        "domEvents": 20,
+        "inputSequenceMatch": true,
+        "inputTraceSha256": null,
+        "accepted": true
+      },
+      "pcmAtCompletion": {
+        "observedAt": 10709.669999957085,
+        "pcm": {
+          "available": true,
+          "writeIndex": 1440,
+          "readIndex": 1440,
+          "fillFrames": 0,
+          "capacityFrames": 4096,
+          "writtenFrames": 1440,
+          "inspectedFrames": 1440,
+          "nonSilentFrames": 960,
+          "maxAbs": 0.082000732421875
+        },
+        "elapsedMs": 9512.75
+      },
+      "attachment": {
+        "outputAttached": true,
+        "observedAt": 10725.40499997139
+      },
+      "childExit": 1,
+      "fTimingPassed": false,
+      "fVerified": false,
+      "record": "evidence/e5-t26j/browser-054bb87f/2-divider-1/failure-post-restore-interaction-checks.json",
+      "sha256": "5d4f58afa387f10723646d126a04dc257942f2c5ccbe17bd884264afa8fbbbed",
+      "transcriptSha256": "174af6e922c73f23b655752643d3025e384030a37588d4e05dd4253524d6a0fe"
+    },
+    {
+      "index": 3,
+      "divider": 1,
+      "profile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26j-clock-q33jA9/iteration-EIdDDe/profile",
+      "binding": {
+        "head": "054bb87f93b490645d5af921207f97af08629113",
+        "runtimeSha256": "43106f3e04a1c814a3d16994f1328755f8c10999a3ca6bc1818874e8812eb5c7",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "imageBytes": 1073741824,
+        "manifestSha256": "b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592",
+        "origin": "http://127.0.0.1:61630"
+      },
+      "profileSha256": "901b20969f43feec5232e698403d4898235a18130fdcb9558b616bdaea2736da",
+      "snapshotSha256": "82edb9b2f0203a5fa756d565dbbfc3fd7466544952e9b8a9ccca036f0212248a",
+      "workerBefore": {
+        "requestedAt": 1449.5149999856949,
+        "receivedAt": 1578.079999923706,
+        "state": {
+          "mode": "icount",
+          "mtime": "2991809431",
+          "timebaseHz": 10000000,
+          "clockDiv": 1
+        },
+        "jit": {
+          "hasExecutor": true,
+          "compiledBlocks": 97,
+          "executedBlocks": 102219,
+          "retiredViaJit": 1514392,
+          "directChainEntries": 256948,
+          "directChainLinks": 154752,
+          "dynamicLinkAttempts": 49019,
+          "dynamicLinkHits": 965,
+          "dynamicLinkRefusals": 48054,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 6,
+          "dynamicLinkInstalls": 26885,
+          "entryCost": {
+            "timingEnabled": false,
+            "timerReads": 0,
+            "hostEntries": 102219,
+            "stateCopyCalls": 204438,
+            "stateCopyBytes": 16138552,
+            "stateCopyNs": 0,
+            "engineEntryNs": 0,
+            "indirectTableDispatches": 6985,
+            "authorityChecks": 97193,
+            "memorySplitExits": 0,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "jitRegionChaining": true,
+          "jitDynamicChaining": true,
+          "guestRetired": 6995332,
+          "jitEngineCalls": 102219,
+          "jitLogicalBlocksPerEngineCall": 2.513700975356832,
+          "jitRetiredShare": 0.21648607957420749,
+          "chainLinksMade": 11,
+          "chainLinksCut": 0,
+          "chainDispatchEntries": 50700,
+          "chainMaxDepth": 9,
+          "chainLinksFollowed": 101392,
+          "jitResidencyPolicy": "repack-off",
+          "jitResidencyCap": 24,
+          "jitSubmittedMembers": 97,
+          "jitCompilePauseNs": 0,
+          "jitCompilePauseMaxNs": 0,
+          "jitCompilePauseSamples": 15,
+          "jitCacheInstalls": 97,
+          "jitCacheRetranslations": 0,
+          "jitCacheEvictions": 0,
+          "jitCacheBatches": 15,
+          "jitCacheCodeBytes": 1254067,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 4,
+          "discoveryGeneration": 5,
+          "blockEntryHits": 926699,
+          "blockBuilds": 53140
+        },
+        "selection": {
+          "requested": 1,
+          "before": {
+            "mode": "icount",
+            "clockDiv": 10,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          },
+          "after": {
+            "mode": "icount",
+            "clockDiv": 1,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          }
+        }
+      },
+      "workerAfter": {
+        "requestedAt": 10556.564999938011,
+        "receivedAt": 10700.144999980927,
+        "state": {
+          "mode": "icount",
+          "mtime": "3089830825",
+          "timebaseHz": 10000000,
+          "clockDiv": 1
+        },
+        "jit": {
+          "hasExecutor": true,
+          "compiledBlocks": 122,
+          "executedBlocks": 2148248,
+          "retiredViaJit": 28192845,
+          "directChainEntries": 4551631,
+          "directChainLinks": 2404044,
+          "dynamicLinkAttempts": 792324,
+          "dynamicLinkHits": 109161,
+          "dynamicLinkRefusals": 683163,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 5,
+          "dynamicLinkInstalls": 372391,
+          "entryCost": {
+            "timingEnabled": false,
+            "timerReads": 0,
+            "hostEntries": 2148248,
+            "stateCopyCalls": 4296496,
+            "stateCopyBytes": 376744968,
+            "stateCopyNs": 0,
+            "engineEntryNs": 0,
+            "indirectTableDispatches": 301773,
+            "authorityChecks": 2165104,
+            "memorySplitExits": 52125,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "jitRegionChaining": true,
+          "jitDynamicChaining": true,
+          "guestRetired": 105016851,
+          "jitEngineCalls": 2148248,
+          "jitLogicalBlocksPerEngineCall": 2.118764220890698,
+          "jitRetiredShare": 0.2684602016870607,
+          "chainLinksMade": 288,
+          "chainLinksCut": 262,
+          "chainDispatchEntries": 1394833,
+          "chainMaxDepth": 128,
+          "chainLinksFollowed": 2079792,
+          "jitResidencyPolicy": "repack-off",
+          "jitResidencyCap": 24,
+          "jitSubmittedMembers": 1142,
+          "jitCompilePauseNs": 0,
+          "jitCompilePauseMaxNs": 0,
+          "jitCompilePauseSamples": 231,
+          "jitCacheInstalls": 1141,
+          "jitCacheRetranslations": 572,
+          "jitCacheEvictions": 203,
+          "jitCacheBatches": 23,
+          "jitCacheCodeBytes": 1750553,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 4,
+          "discoveryGeneration": 5,
+          "blockEntryHits": 11902346,
+          "blockBuilds": 2571013
+        },
+        "selection": {
+          "requested": 1,
+          "before": {
+            "mode": "icount",
+            "clockDiv": 10,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          },
+          "after": {
+            "mode": "icount",
+            "clockDiv": 1,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          }
+        }
+      },
+      "deltas": {
+        "guestRetired": 98021519,
+        "retiredViaJit": 26678453
+      },
+      "guestDeltaTicks": "98021394",
+      "interactionMs": 9371.235000014305,
+      "postRestoreStart": 1184.5699999332428,
+      "postRestoreEnd": 10555.804999947548,
+      "cursor": {
+        "frame": {
+          "atMs": 1681,
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 17510
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 16056
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 17510,
+            "y": 16056
+          }
+        },
+        "rendered": {
+          "x": 684,
+          "y": 392,
+          "hotX": 1,
+          "hotY": 1,
+          "matchedPixels": 94
+        },
+        "observedAt": 2447.7549999952316,
+        "elapsedMs": 1263.1850000619888
+      },
+      "command": {
+        "command": "sh /tmp/a",
+        "marker": "e5t26f-post-aplay",
+        "beforeFrame": 4,
+        "keyboardStart": 0,
+        "domEventStart": 0,
+        "visualDiffPixels": 2923,
+        "terminalMarkerSeen": true,
+        "greenPixelsBefore": 240,
+        "redPixelsBefore": 0,
+        "visualChange": true,
+        "afterFrame": 12,
+        "redMarkerSeen": false,
+        "keyboardFrames": 20,
+        "domEvents": 20,
+        "inputSequenceMatch": true,
+        "inputTraceSha256": null,
+        "accepted": true
+      },
+      "pcmAtCompletion": {
+        "observedAt": 10511.774999976158,
+        "pcm": {
+          "available": true,
+          "writeIndex": 1920,
+          "readIndex": 1920,
+          "fillFrames": 0,
+          "capacityFrames": 4096,
+          "writtenFrames": 1920,
+          "inspectedFrames": 1920,
+          "nonSilentFrames": 1920,
+          "maxAbs": 0.082000732421875
+        },
+        "elapsedMs": 9327.205000042915
+      },
+      "attachment": {
+        "outputAttached": true,
+        "observedAt": 10553.65499997139
+      },
+      "childExit": 1,
+      "fTimingPassed": false,
+      "fVerified": false,
+      "record": "evidence/e5-t26j/browser-054bb87f/3-divider-1/failure-post-restore-interaction-checks.json",
+      "sha256": "15368821738020352da5d5382d38ee5ac60473ede63245f602d16f39ef18f02c",
+      "transcriptSha256": "19b740c0968075ef36541bb2fed600ad9a7b23da27843079c3f5bb493f94c1e9"
+    },
+    {
+      "index": 4,
+      "divider": 10,
+      "profile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26j-clock-q33jA9/iteration-daC06E/profile",
+      "binding": {
+        "head": "054bb87f93b490645d5af921207f97af08629113",
+        "runtimeSha256": "43106f3e04a1c814a3d16994f1328755f8c10999a3ca6bc1818874e8812eb5c7",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "imageBytes": 1073741824,
+        "manifestSha256": "b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592",
+        "origin": "http://127.0.0.1:61630"
+      },
+      "profileSha256": "901b20969f43feec5232e698403d4898235a18130fdcb9558b616bdaea2736da",
+      "snapshotSha256": "82edb9b2f0203a5fa756d565dbbfc3fd7466544952e9b8a9ccca036f0212248a",
+      "workerBefore": {
+        "requestedAt": 1445.8849999904633,
+        "receivedAt": 1538.4049999713898,
+        "state": {
+          "mode": "icount",
+          "mtime": "2985913198",
+          "timebaseHz": 10000000,
+          "clockDiv": 10
+        },
+        "jit": {
+          "hasExecutor": true,
+          "compiledBlocks": 103,
+          "executedBlocks": 181060,
+          "retiredViaJit": 2077811,
+          "directChainEntries": 407002,
+          "directChainLinks": 225946,
+          "dynamicLinkAttempts": 81648,
+          "dynamicLinkHits": 64,
+          "dynamicLinkRefusals": 81584,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 0,
+          "dynamicLinkInstalls": 73297,
+          "entryCost": {
+            "timingEnabled": false,
+            "timerReads": 0,
+            "hostEntries": 181060,
+            "stateCopyCalls": 362120,
+            "stateCopyBytes": 22796336,
+            "stateCopyNs": 0,
+            "engineEntryNs": 0,
+            "indirectTableDispatches": 192,
+            "authorityChecks": 171606,
+            "memorySplitExits": 0,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "jitRegionChaining": true,
+          "jitDynamicChaining": true,
+          "guestRetired": 6493934,
+          "jitEngineCalls": 181060,
+          "jitLogicalBlocksPerEngineCall": 2.2478846791118965,
+          "jitRetiredShare": 0.31996182899302644,
+          "chainLinksMade": 13,
+          "chainLinksCut": 0,
+          "chainDispatchEntries": 74120,
+          "chainMaxDepth": 9,
+          "chainLinksFollowed": 178497,
+          "jitResidencyPolicy": "repack-off",
+          "jitResidencyCap": 24,
+          "jitSubmittedMembers": 104,
+          "jitCompilePauseNs": 0,
+          "jitCompilePauseMaxNs": 0,
+          "jitCompilePauseSamples": 15,
+          "jitCacheInstalls": 103,
+          "jitCacheRetranslations": 0,
+          "jitCacheEvictions": 0,
+          "jitCacheBatches": 15,
+          "jitCacheCodeBytes": 1216398,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 4,
+          "discoveryGeneration": 5,
+          "blockEntryHits": 770092,
+          "blockBuilds": 14399
+        },
+        "selection": {
+          "requested": 10,
+          "before": {
+            "mode": "icount",
+            "clockDiv": 10,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          },
+          "after": {
+            "mode": "icount",
+            "clockDiv": 10,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          }
+        }
+      },
+      "workerAfter": {
+        "requestedAt": 6283.620000004768,
+        "receivedAt": 6422.375,
+        "state": {
+          "mode": "icount",
+          "mtime": "2991810437",
+          "timebaseHz": 10000000,
+          "clockDiv": 10
+        },
+        "jit": {
+          "hasExecutor": true,
+          "compiledBlocks": 125,
+          "executedBlocks": 1843928,
+          "retiredViaJit": 24991705,
+          "directChainEntries": 4622509,
+          "directChainLinks": 2778625,
+          "dynamicLinkAttempts": 721188,
+          "dynamicLinkHits": 50154,
+          "dynamicLinkRefusals": 671034,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 0,
+          "dynamicLinkInstalls": 484171,
+          "entryCost": {
+            "timingEnabled": false,
+            "timerReads": 0,
+            "hostEntries": 1843928,
+            "stateCopyCalls": 3687856,
+            "stateCopyBytes": 290881760,
+            "stateCopyNs": 0,
+            "engineEntryNs": 0,
+            "indirectTableDispatches": 424323,
+            "authorityChecks": 1819388,
+            "memorySplitExits": 20510,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "jitRegionChaining": true,
+          "jitDynamicChaining": true,
+          "guestRetired": 65466492,
+          "jitEngineCalls": 1843928,
+          "jitLogicalBlocksPerEngineCall": 2.506881505134691,
+          "jitRetiredShare": 0.3817480398980291,
+          "chainLinksMade": 185,
+          "chainLinksCut": 156,
+          "chainDispatchEntries": 1078118,
+          "chainMaxDepth": 128,
+          "chainLinksFollowed": 1760841,
+          "jitResidencyPolicy": "repack-off",
+          "jitResidencyCap": 24,
+          "jitSubmittedMembers": 665,
+          "jitCompilePauseNs": 0,
+          "jitCompilePauseMaxNs": 0,
+          "jitCompilePauseSamples": 133,
+          "jitCacheInstalls": 662,
+          "jitCacheRetranslations": 248,
+          "jitCacheEvictions": 105,
+          "jitCacheBatches": 22,
+          "jitCacheCodeBytes": 1699980,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 4,
+          "discoveryGeneration": 5,
+          "blockEntryHits": 6966195,
+          "blockBuilds": 863526
+        },
+        "selection": {
+          "requested": 10,
+          "before": {
+            "mode": "icount",
+            "clockDiv": 10,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          },
+          "after": {
+            "mode": "icount",
+            "clockDiv": 10,
+            "timebaseHz": 10000000,
+            "mtime": "2985313757"
+          }
+        }
+      },
+      "deltas": {
+        "guestRetired": 58972558,
+        "retiredViaJit": 22913894
+      },
+      "guestDeltaTicks": "5897239",
+      "interactionMs": 5098.314999938011,
+      "postRestoreStart": 1184.4750000238419,
+      "postRestoreEnd": 6282.789999961853,
+      "cursor": {
+        "frame": {
+          "atMs": 1636,
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 17510
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 16056
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 17510,
+            "y": 16056
+          }
+        },
+        "rendered": {
+          "x": 684,
+          "y": 392,
+          "hotX": 1,
+          "hotY": 1,
+          "matchedPixels": 94
+        },
+        "observedAt": 2041.6100000143051,
+        "elapsedMs": 857.1349999904633
+      },
+      "command": {
+        "command": "sh /tmp/a",
+        "marker": "e5t26f-post-aplay",
+        "beforeFrame": 4,
+        "keyboardStart": 0,
+        "domEventStart": 0,
+        "visualDiffPixels": 3522,
+        "terminalMarkerSeen": true,
+        "greenPixelsBefore": 240,
+        "redPixelsBefore": 0,
+        "visualChange": true,
+        "afterFrame": 11,
+        "redMarkerSeen": false,
+        "keyboardFrames": 20,
+        "domEvents": 20,
+        "inputSequenceMatch": true,
+        "inputTraceSha256": null,
+        "accepted": true
+      },
+      "pcmAtCompletion": {
+        "observedAt": 6259.8550000190735,
+        "pcm": {
+          "available": true,
+          "writeIndex": 3360,
+          "readIndex": 3360,
+          "fillFrames": 0,
+          "capacityFrames": 4096,
+          "writtenFrames": 3360,
+          "inspectedFrames": 3360,
+          "nonSilentFrames": 2880,
+          "maxAbs": 0.082000732421875
+        },
+        "elapsedMs": 5075.379999995232
+      },
+      "attachment": {
+        "outputAttached": true,
+        "observedAt": 6280.6050000190735
+      },
+      "childExit": 1,
+      "fTimingPassed": false,
+      "fVerified": false,
+      "record": "evidence/e5-t26j/browser-054bb87f/4-divider-10/failure-post-restore-interaction-checks.json",
+      "sha256": "ecd6349747cf0e349fc32e7caf53bcfc02e1224699b99850d4758d4b0fa2dc0e",
+      "transcriptSha256": "01b71f6f94163c62a2ce8e89a56716c565de9004a8adf7f4a366eca1d713321c"
+    }
+  ]
+}

@@ -3,7 +3,7 @@ id: E5-T26j
 epic: 5
 title: Prove opt-in deterministic guest timer-rate selection
 priority: 526.595
-status: in-progress
+status: implemented
 depends_on: [E5-T26i, E5-T26h, E5-T19a]
 estimate: S
 risk: high
@@ -58,6 +58,26 @@ pristine-clone proof once, with local guest/native/WASM evidence; no rr, WebKit,
 independent machine, GitHub Actions or production deployment is required here.
 
 ## Verification log
+
+### 2026-09-08 — worker — implemented; controlled comparison is negative
+
+The new cold seal and all four independent Chromium profile copies complete at
+`054bb87f93b490645d5af921207f97af08629113`. Fixed 10/1/1/10 intervals are
+5168.225 / 9530.715 / 9371.235 / 5098.315 ms; every child preserves the original
+two-second failure. The actual worker receipts preserve stored mtime and select
+the requested divider after restore. JIT/chaining remains active. All arms
+restore CRC `23f83a92` at generation 626 without a boot, deliver 20 physical key
+events, produce conditional terminal output and attached fresh non-silent PCM,
+and retain empty browser/HTTP error arrays. Some screenshots show recovered ALSA
+underruns, not zero-XRUN playback.
+
+The claim is the validated opt-in boundary and honest measurement, not F timing
+or a default promotion. Default ten remains unchanged. The full composed gate,
+exact commands, guest trace digests, image/runtime/seal hashes, and all negative
+records are indexed in `evidence/e5-t26j/README.md`. The comparison report SHA-256
+is `1a58e7dfd6f5e04754d98cc42bde22d15477c32060917f9f8bcb6b9e910e9d35`.
+Fresh Daybreak has independently passed the scrubbed source gates and bounded
+novel/sabotage attacks; its final browser-evidence verdict remains required.
 
 ### 2026-09-08 — worker — frozen gates and roadmap metadata correction
 
