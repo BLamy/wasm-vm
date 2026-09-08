@@ -180,6 +180,12 @@ type ResumeDeviceParts<'a> = (
     &'a [u8],
 );
 
+/// Sound's original unversioned resume prefix used Rust tuple order (control/event/RX/TX),
+/// not virtio queue-index order. Its cursors cannot be silently reinterpreted. Layout 2 puts a
+/// little-endian version word after the transport/cursors and before the unchanged sound codec.
+/// Keep this section-local: container-v1 snapshots without sound remain compatible.
+const SND_RESUME_LAYOUT_VERSION: u32 = 2;
+
 fn parse_resume_device_prefix(
     payload: &[u8],
     tag: u32,
@@ -202,6 +208,9 @@ fn parse_resume_device_prefix(
             return Err(crate::resume::SnapshotError::BadComponentState { tag });
         }
         rings.push((has_queue, last_avail, used));
+    }
+    if tag == crate::resume::section::VIRTIO_SND && reader.u32()? != SND_RESUME_LAYOUT_VERSION {
+        return Err(crate::resume::SnapshotError::BadComponentState { tag });
     }
     let component = reader.remaining_bytes()?;
     Ok((transport, rings, component))
@@ -2749,9 +2758,12 @@ impl Machine {
                 .0
                 .borrow()
                 .snapshot_transport(&mut v);
-            for queue in [controlq, eventq, rxq, txq] {
+            // Prefix entries are indexed by the transport: control=0, event=1, TX=2, RX=3.
+            // The Machine tuple keeps RX before TX, so do not copy its field order here.
+            for queue in [controlq, eventq, txq, rxq] {
                 append_resume_queue(&mut v, queue);
             }
+            v.extend_from_slice(&SND_RESUME_LAYOUT_VERSION.to_le_bytes());
             let payload = state.borrow().to_snapshot().map_err(|_| {
                 crate::resume::SnapshotError::BadComponentState {
                     tag: section::VIRTIO_SND,
@@ -3037,8 +3049,8 @@ impl Machine {
                     })?;
                     *controlq = queues.remove(0);
                     *eventq = queues.remove(0);
-                    *rxq = queues.remove(0);
                     *txq = queues.remove(0);
+                    *rxq = queues.remove(0);
                 }
                 section::VIRTIO_RNG => {
                     let (_, rings, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 1)?;

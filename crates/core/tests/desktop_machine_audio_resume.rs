@@ -15,6 +15,7 @@ use wasm_vm_core::dev::virtio::snd::{
     self, AudioClock, AudioSink, AudioSinkError, ManualAudioClock, PcmParams, PcmState, WavSink,
 };
 use wasm_vm_core::platform::{Platform, virt};
+use wasm_vm_core::resume::{SectionReader, SnapshotError, SnapshotWriter, section};
 use wasm_vm_core::{Machine, RunOutcome};
 
 const QSIZE: u16 = 16;
@@ -618,4 +619,129 @@ fn configured_unused_rx_preserves_tx_cursor_and_fresh_pcm() {
 #[test]
 fn configured_unused_rx_preserves_pcm_through_desktop_envelope_too() {
     run_cases(true, true);
+}
+
+#[test]
+fn old_or_unknown_sound_resume_layout_is_rejected_before_live_mutation() {
+    let root =
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../target/desktop-machine-audio-resume");
+    std::fs::create_dir_all(&root).unwrap();
+    let source_path = root.join("layout-compatibility-source.wav");
+    let mut source = Rig::empty(&source_path);
+    source.initialize_source(HIGH_CLOCK);
+    // Both queue configs are valid, so the old layout cannot be rejected incidentally because
+    // the wrongly associated RX queue is unconfigured. Its missing version must be caught.
+    Ring::sound(snd::RX_QUEUE).configure(&mut source.machine);
+    let source_samples = source.play_period(0, 480, 73);
+    source.lifecycle(snd::VIRTIO_SND_R_PCM_RELEASE);
+    let resume = source.machine.save_resume().unwrap();
+    let (header, reader) = SectionReader::new(&resume).unwrap();
+    assert_eq!(
+        header.format_version, 1,
+        "container/headless format is unchanged"
+    );
+    let sound = reader
+        .map(Result::unwrap)
+        .find(|s| s.tag == section::VIRTIO_SND)
+        .unwrap();
+    // Existing fixed transport (277 bytes), then four five-byte cursor entries. The new
+    // version belongs to this sound resume composition, not the standalone sound codec.
+    const TRANSPORT_BYTES: usize = 277;
+    const CURSOR_BYTES: usize = 5;
+    const VERSION_OFFSET: usize = TRANSPORT_BYTES + 4 * CURSOR_BYTES;
+    let tx_offset = TRANSPORT_BYTES + 2 * CURSOR_BYTES;
+    let rx_offset = TRANSPORT_BYTES + 3 * CURSOR_BYTES;
+    assert_eq!(&sound.payload[tx_offset..rx_offset], &[1, 1, 0, 1, 0]);
+    assert_eq!(
+        &sound.payload[rx_offset..VERSION_OFFSET],
+        &[0; CURSOR_BYTES]
+    );
+    assert_eq!(
+        &sound.payload[VERSION_OFFSET..VERSION_OFFSET + 4],
+        &2u32.to_le_bytes()
+    );
+    let mut legacy = sound.payload.to_vec();
+    legacy[tx_offset..rx_offset].copy_from_slice(&sound.payload[rx_offset..VERSION_OFFSET]);
+    legacy[rx_offset..VERSION_OFFSET].copy_from_slice(&sound.payload[tx_offset..rx_offset]);
+    legacy.drain(VERSION_OFFSET..VERSION_OFFSET + 4);
+    let mut cases = vec![("old-unversioned-RX-TX".to_string(), legacy)];
+    for version in [0u32, 1, 3, u32::MAX] {
+        let mut payload = sound.payload.to_vec();
+        payload[VERSION_OFFSET..VERSION_OFFSET + 4].copy_from_slice(&version.to_le_bytes());
+        cases.push((format!("unknown-layout-{version}"), payload));
+    }
+    for bytes in 0..4 {
+        cases.push((
+            format!("truncated-layout-{bytes}"),
+            sound.payload[..VERSION_OFFSET + bytes].to_vec(),
+        ));
+    }
+    let mut target = Rig::empty(&root.join("layout-compatibility-fresh.wav"));
+    let sound_handle = target.machine.virtio_snd().unwrap().1;
+    let baseline = target.machine.save_resume().unwrap();
+    for (name, payload) in cases {
+        let mut writer = SnapshotWriter::new(
+            &header.core_hash,
+            &header.base_image_hash,
+            header.overlay_generation,
+        );
+        for item in SectionReader::new(&resume).unwrap().1 {
+            let item = item.unwrap();
+            writer.section(
+                item.tag,
+                if item.tag == section::VIRTIO_SND {
+                    &payload
+                } else {
+                    item.payload
+                },
+            );
+        }
+        assert!(
+            matches!(
+                target.machine.load_resume(&writer.finish()),
+                Err(SnapshotError::BadComponentState {
+                    tag: section::VIRTIO_SND
+                })
+            ),
+            "{name}"
+        );
+        assert_eq!(
+            target.machine.save_resume().unwrap(),
+            baseline,
+            "{name}: partial commit"
+        );
+        assert!(Rc::ptr_eq(
+            &sound_handle,
+            &target.machine.virtio_snd().unwrap().1
+        ));
+        assert_eq!(target.wav.bytes(), 0, "{name}: host sink changed");
+        assert_eq!(target.clock.now_ns(), 0, "{name}: host clock changed");
+        assert_eq!(source.wav.bytes(), 1920);
+        println!("{name}: sound tag 16 refusal, unchanged machine/host");
+    }
+    source.wav.finish_and_check(&source_path, &source_samples);
+}
+
+#[test]
+fn sound_layout_version_does_not_invalidate_container_v1_headless_resume() {
+    let mut source = Machine::new(1024 * 1024);
+    source.hart_mut().regs.pc = virt::DRAM_BASE;
+    source.hart_mut().regs.write(5, 0x1122_3344);
+    source
+        .bus_mut()
+        .store32(virt::DRAM_BASE, 0x0000_006f)
+        .unwrap();
+    let blob = source.save_resume().unwrap();
+    let (header, reader) = SectionReader::new(&blob).unwrap();
+    assert_eq!(header.format_version, 1);
+    assert!(
+        reader
+            .map(Result::unwrap)
+            .all(|s| s.tag != section::VIRTIO_SND)
+    );
+    let mut target = Machine::new(1024 * 1024);
+    target.hart_mut().regs.write(5, 0xdead_beef);
+    target.load_resume(&blob).unwrap();
+    assert_eq!(target.hart().regs.read(5), 0x1122_3344);
+    assert_eq!(target.run(1), RunOutcome::MaxInstrs);
 }

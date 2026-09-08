@@ -1108,7 +1108,7 @@ verify-E5-T26h:
 	# Whole-machine transport/ring continuity, detached decode refusal, and existing codec gates.
 	cargo fmt --check -p wasm-vm-core
 	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
-	cargo test -p wasm-vm-core --features gpu-trace --test desktop_machine_resume --test desktop_machine_resume_verifier --test cpu_resume --test snapshot_coherence --test virtio_blk_quiesce --test virtio_console --test desktop_snapshot_save -- --nocapture
+	cargo test -p wasm-vm-core --features gpu-trace --test desktop_machine_resume --test desktop_machine_resume_verifier --test desktop_machine_audio_resume --test cpu_resume --test snapshot_coherence --test virtio_blk_quiesce --test virtio_console --test desktop_snapshot_save -- --nocapture
 	cargo test -p wasm-vm-core --lib --features gpu-trace resume
 	cargo test -p wasm-vm-core --lib --features gpu-trace snapshot
 	cargo test -p wasm-vm-core --lib --features gpu-trace desktop_restore
