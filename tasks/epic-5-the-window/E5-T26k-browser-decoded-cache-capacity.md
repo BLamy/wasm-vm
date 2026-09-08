@@ -3,7 +3,7 @@ id: E5-T26k
 epic: 5
 title: Bound and measure browser decoded-block cache capacity
 priority: 526.596
-status: implemented
+status: verified
 depends_on: [E4-T30, E5-T26h, E5-T26j]
 estimate: S
 risk: high
@@ -66,6 +66,45 @@ clone once. No rr, independent machine, WebKit, GitHub Actions or production
 deployment is required for this diagnostic prerequisite.
 
 ## Verification log
+
+### 2026-09-08 — fresh Daybreak verifier — VERDICT: verified
+
+All K acceptance criteria HELD against frozen runtime
+`a53e51a6caf6eb542e4fa2ef4c039f84298a5ec6`; worker implemented evidence is
+`c9aabb4a8abe42a557bd01997f7cf2e74b1ff5a9` (no runtime changes). Final report:
+`evidence/e5-t26k/verifier/browser-results.md`, SHA-256
+`98df769ee30f0212f46e92ea94bc68093b46fd5a75d214d4fdce0a2d40d6c268`.
+Predictions were written before evidence in `verifier/preflight.md`.
+
+- P1–P3 HELD: strict selection/nonmutation/no-op/actual capacity, coherent
+  resize, guest-state/trace preservation and compiled invalidation. Carry the
+  exact-head pristine runtime/19-WASM proof in `verifier/native-wasm-results.md`.
+  Independent 12-case pending-patch/no-op/rejection attack passed; removing only
+  executor invalidation in an isolated copy made the new WASM regression fail
+  at compiledBlocks 1 instead of 0. No shared runtime mutation.
+- P4–P7 HELD: independently inspected cold and canonical raw ABBA records,
+  screenshots and logs, recomputed runtime/profile/envelope/image bindings,
+  all counter deltas and original timing. Actual 4096/16384/16384/4096 reaches
+  the owned worker; CRC f43155a5, fresh HELLO2/no boot, physical play and positive
+  fresh PCM hold. Loader cold/restore/pre-pump rejection paths have recorded
+  deterministic coverage. No unresolved changed-boundary proof gap remains.
+- F timing FAILED in all arms: 4864.945/4687.215/4685.490/4885.200 ms, child
+  exit1 solely at the unchanged 2000-ms assertion. Outer0 is K experiment
+  completion only. No F verification, default change, timing/FPS waiver or
+  new full drag/second-restore claim; unchanged F/H/J/T19a architecture and
+  functional evidence carries within its original scope.
+- SUITE: promoted the same 12-case test into
+  `crates/core/src/decoded_cache_capacity_tests.rs`; original file prefix and
+  attack tokens mechanically preserved. `cargo fmt --all -- --check` and
+  `cargo test -p wasm-vm-core --features gpu-trace --lib decoded_cache_capacity_tests::verifier_pending_code_patch_survives_same_size_and_rejected_selection -- --exact --nocapture`
+  pass. `verifier/promoted-test.log` retains commands, setup corrections and
+  all 12 trace outcomes. No repeat broad gates or second clone.
+- Built demo independently read/viewed: 126 passed, 0 failed, no non-favicon
+  console/HTTP errors, frozen K in-progress display. Existing dirty user-owned
+  dist manifests remain excluded and untouched; no global cleanliness claim.
+
+Only verifier report/test/log and this task/queue are changed by the critic;
+coordinator owns committing and later demo metadata/publishing.
 
 ### 2026-09-08 — worker — IMPLEMENTED, measured negative performance outcome
 

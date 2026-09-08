@@ -112,6 +112,18 @@ code-patch attack passes, and removing executor invalidation in a separate scrat
 copy makes the intended real-WASM regression fail (`compiledBlocks` 1 instead
 of 0). Raw commands, logs, test/patch and digests are retained under `verifier/`.
 All verifier compiles/tests ended at 12:02:46.996 UTC, before the four timing arms.
-The final built-browser/cold-seal/ABBA review is pending. Unchanged
+Daybreak's final `verifier/browser-results.md` verdict is **verified** for K:
+all seven predictions and changed-hunk coverage hold, while F's timing fails in
+every arm. The 12-case pending-patch attack is promoted into the native test
+module, with its focused successful run in `verifier/promoted-test.log`.
+The work is published as stacked PR [#362](https://github.com/BLamy/wasm-vm/pull/362),
+above #361; no merge or deployment follows from this diagnostic verification.
+`demo-verified/` records the post-verdict metadata handoff: 126/126, no
+non-favicon console/HTTP errors and the K VERIFIED badge. Only K changed in the
+generated task data; the rebuilt WASM digest remains exactly `041a86da…31999f`.
+The metadata rebuild is recorded in `gates/verified-web-dist.log`. It does not
+rebind the prior cold seal; the earlier browser evidence remains tied to its
+original frozen runtime tree.
+Unchanged
 HELD results from the prior boundaries are carried only where source/dependency
 and evidence bindings remain unchanged. The old F seal is not rebound to K.

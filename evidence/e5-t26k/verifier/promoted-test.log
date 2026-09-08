@@ -1,0 +1,45 @@
+E5-T26k verifier promotion recording — 2026-09-08
+CWD /Users/blamy/Documents/Codex/wasm-vm
+HEAD a53e51a6caf6eb542e4fa2ef4c039f84298a5ec6 plus test-only promotion
+Target /private/tmp/e5-t26k-verifier-SrjasM/target (critic-owned)
+Scrubbed CARGO_*, E5_*, RUSTFLAGS, RUST_LOG, RUSTDOCFLAGS, RUSTC_WRAPPER,
+RUSTC_WORKSPACE_WRAPPER, RUSTC, RUSTDOC, NODE_OPTIONS; then set only explicit CARGO_TARGET_DIR.
+
+Retained setup corrections, not product refutations:
+12:18:05.942Z rustfmt --edition 2021 crates/core/src/decoded_cache_capacity_tests.rs -> 0
+12:18:05.984Z cargo fmt --all -- --check -> 1 (edition-dependent import/println formatting).
+12:18:27.945Z rustfmt --edition 2024 crates/core/src/decoded_cache_capacity_tests.rs -> 0
+12:18:27.969Z cargo fmt --all -- --check -> 0 at 12:18:28.632Z.
+12:18:28.632Z cargo test -p wasm-vm-core --lib decoded_cache_capacity_tests::verifier_pending_code_patch_survives_same_size_and_rejected_selection -- --exact --nocapture
+-> 101 at 12:18:30.601Z: pre-existing GPU cfg requires the prescribed gpu-trace feature.
+error[E0599]: no method named `cursorq_commands` found for struct `Ref<'_, virtio::gpu::GpuState>`
+crates/core/src/dev/virtio/gpu/mod.rs:2390:35
+
+Final focused command, 12:19:35.102Z:
+cargo test -p wasm-vm-core --features gpu-trace --lib decoded_cache_capacity_tests::verifier_pending_code_patch_survives_same_size_and_rejected_selection -- --exact --nocapture
+
+running 1 test
+K critic pending patch: entries=4096 selection=4096 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+K critic pending patch: entries=4096 selection=4096 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+K critic pending patch: entries=4096 selection=4096 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+K critic pending patch: entries=4096 selection=8192 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+K critic pending patch: entries=4096 selection=8192 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+K critic pending patch: entries=4096 selection=8192 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+K critic pending patch: entries=16384 selection=16384 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+K critic pending patch: entries=16384 selection=16384 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+K critic pending patch: entries=16384 selection=16384 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+K critic pending patch: entries=16384 selection=8192 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+K critic pending patch: entries=16384 selection=8192 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+K critic pending patch: entries=16384 selection=8192 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+test decoded_cache_capacity_tests::verifier_pending_code_patch_survives_same_size_and_rejected_selection ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 332 filtered out; finished in 0.02s
+
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.89s
+     Running unittests src/lib.rs (/private/tmp/e5-t26k-verifier-SrjasM/target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+Exit 0, signal null, 12:19:38.348Z.
+
+Mechanically checked: original frozen file is an unchanged prefix; appended test
+is token-identical ignoring whitespace to pending_patch_attack.rs from #[test]
+onward. Only its scratch-only introductory comment was omitted. Release WASM not built.
