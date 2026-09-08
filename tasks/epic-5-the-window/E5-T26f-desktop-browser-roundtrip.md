@@ -3,8 +3,7 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: blocked
-blocked_on: [E5-T26j]
+status: in-progress
 depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j]
 estimate: S
 risk: high
@@ -40,6 +39,28 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — resume F with the default clock; prepared-player fixture
+
+J is independently verified at `2b58a5ed` and published as PR #360. Its real
+10/1/1/10 comparison is negative (5.168 / 9.531 / 9.371 / 5.098 seconds), so
+divider ten remains unchanged. F's functional HELD evidence and failed original
+process-launch command are retained; no timing waiver or verified claim follows.
+
+The next bounded fixture prepares a real `aplay` process before snapshot, blocked
+on an empty FIFO, then physically types a resident shell function after the
+delayed gesture. It must authenticate the same PID/starttime/executable, FIFO
+descriptor and actual PCM state before feed; write finite fresh PCM, close the
+only writer, wait for that same child to exit zero, and only then print success.
+All post-restore work stays inside the original 2000-ms interval. Daybreak confirms
+that F requires successful playback, not starting a new process; readable actual
+guest values plus fail-closed shell guards and independent sabotage are acceptable
+evidence, without a new privileged shell/serial API. Existing snapshots and failed
+`sh /tmp/a` records are not rewritten or relabeled.
+
+Luna's native ALSA 1.2.11 FIFO precheck passes with no pre-feed data and exact finite
+PCM output, but uses file-over-null and is not browser/hardware acceptance. Build
+and test the guest guards, then record a new fixture-bound browser checkpoint.
 
 ### 2026-09-08 — coordinator — preserve held functionality; isolate the timer-rate prerequisite
 
