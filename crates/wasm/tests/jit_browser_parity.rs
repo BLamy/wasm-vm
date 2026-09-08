@@ -1149,7 +1149,7 @@ fn browser_inline_static_link_retains_across_interrupt_stack_bits() {
     const CALLER: u64 = DRAM_BASE;
     const TARGET: u64 = DRAM_BASE + 0x1000;
 
-    for bit in [1u32, 3, 5, 7] {
+    for bit in [1u32, 3, 5, 7, 8] {
         let caller = block(
             CALLER,
             &[
@@ -2013,7 +2013,7 @@ fn browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_inval
     const CALLER: u64 = DRAM_BASE;
     const TARGET: u64 = DRAM_BASE + 0x1000;
 
-    for bit in [1u32, 3, 5, 7, 18] {
+    for bit in [1u32, 3, 5, 7, 8, 18] {
         let caller = block(
             CALLER,
             &[
@@ -2102,10 +2102,10 @@ fn browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_inval
 fn browser_inline_combined_interrupt_bits_plus_sum_invalidates_all_links() {
     const CALLER: u64 = DRAM_BASE;
     const TARGET: u64 = DRAM_BASE + 0x1000;
-    const INTERRUPT_BITS: u64 = (1u64 << 1) | (1u64 << 3) | (1u64 << 5) | (1u64 << 7);
+    const INTERRUPT_BITS: u64 = (1u64 << 1) | (1u64 << 3) | (1u64 << 5) | (1u64 << 7) | (1u64 << 8);
     const MIXED_CHANGE: u64 = INTERRUPT_BITS | (1u64 << 18);
 
-    // Static cross-batch publication: the four ignored changes must not hide the simultaneous SUM
+    // Static cross-batch publication: the five ignored changes must not hide the simultaneous SUM
     // mismatch. The generated target must remain unentered for this invocation.
     {
         let caller = block(

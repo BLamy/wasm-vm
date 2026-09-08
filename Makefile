@@ -1225,6 +1225,10 @@ verify-E5-T26m-runtime:
 verify-E5-T26m: verify-E5-T26m-runtime
 	@echo "verify-E5-T26m (inline-context interrupt bits): OK"
 
+.PHONY: verify-E5-T26n
+verify-E5-T26n: verify-E5-T26m-runtime
+	@echo "verify-E5-T26n (SPP context and guest SRET authority): OK"
+
 .PHONY: verify-E5-T26k verify-E5-T26k-runtime
 verify-E5-T26k-runtime:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm

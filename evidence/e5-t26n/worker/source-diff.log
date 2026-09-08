@@ -1,0 +1,602 @@
+diff --git a/Makefile b/Makefile
+index ec9e42f3..26b7eb83 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1225,6 +1225,10 @@ verify-E5-T26m-runtime:
+ verify-E5-T26m: verify-E5-T26m-runtime
+ 	@echo "verify-E5-T26m (inline-context interrupt bits): OK"
+ 
++.PHONY: verify-E5-T26n
++verify-E5-T26n: verify-E5-T26m-runtime
++	@echo "verify-E5-T26n (SPP context and guest SRET authority): OK"
++
+ .PHONY: verify-E5-T26k verify-E5-T26k-runtime
+ verify-E5-T26k-runtime:
+ 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+diff --git a/crates/wasm/src/jit_browser.rs b/crates/wasm/src/jit_browser.rs
+index 1e714c13..e89eda85 100644
+--- a/crates/wasm/src/jit_browser.rs
++++ b/crates/wasm/src/jit_browser.rs
+@@ -132,7 +132,8 @@ struct InlineTlbContext {
+ 
+ // Only interrupt gating and trap-stack state are projected out of cache equality. The live hart
+ // status remains the architectural authority; all other status bits remain part of the context.
+-const INLINE_TLB_MSTATUS_CONTEXT_MASK: u64 = !((1 << 1) | (1 << 3) | (1 << 5) | (1 << 7));
++const INLINE_TLB_MSTATUS_CONTEXT_MASK: u64 =
++    !((1 << 1) | (1 << 3) | (1 << 5) | (1 << 7) | (1 << 8));
+ 
+ /// The browser-only direct-mapped refill cache. The generated module imports the outer wasm
+ /// memory, so this allocation and the guest RAM `Vec` are both addressed by the same linear-memory
+@@ -2389,7 +2390,7 @@ mod inline_tlb_context_tests {
+             hart.csr.mstatus = expected;
+             let changed = cache.sync_context(hart);
+ 
+-            if matches!(bit, 1 | 3 | 5 | 7) {
++            if matches!(bit, 1 | 3 | 5 | 7 | 8) {
+                 assert!(!changed, "interrupt-stack bit {bit} changed cache context");
+                 for (array, sentinel) in sentinels.iter().copied().enumerate() {
+                     assert_eq!(
+@@ -2414,7 +2415,8 @@ mod inline_tlb_context_tests {
+             );
+         }
+ 
+-        let retained_and_ignored = (1u64 << 1) | (1u64 << 7) | (1u64 << 18) | (1u64 << 19);
++        let retained_and_ignored =
++            (1u64 << 1) | (1u64 << 7) | (1u64 << 8) | (1u64 << 18) | (1u64 << 19);
+         let hart = machine.hart_mut();
+         hart.csr.mstatus = baseline;
+         cache.context = Some(InlineTlbCache::context(hart));
+@@ -2433,3 +2435,518 @@ mod inline_tlb_context_tests {
+         assert_eq!(hart.csr.mstatus, baseline ^ retained_and_ignored);
+     }
+ }
++
++// Keep authority-word observations private: these tests run the real Machine and BrowserExecutor,
++// not a test executor, and do not add cache-inspection APIs to the production browser boundary.
++#[cfg(all(test, target_arch = "wasm32"))]
++mod spp_guest_tests {
++    use super::*;
++    use core::ptr::NonNull;
++    use wasm_bindgen_test::{console_log, wasm_bindgen_test};
++    use wasm_vm_core::RunOutcome;
++    use wasm_vm_core::bus::{Bus, mmap::DRAM_BASE};
++    use wasm_vm_core::csr::{
++        CsrOp, MCAUSE, MCYCLE, MEPC, MINSTRET, MIP, MSTATUS, MTVAL, Priv, SATP, SCAUSE, SEPC, SIE,
++        STVAL, STVEC,
++    };
++    use wasm_vm_core::decode::decode;
++    use wasm_vm_core::dispatch::MicroOp;
++    use wasm_vm_core::platform::virt;
++
++    const OUTER: u64 = DRAM_BASE;
++    const ARM_TIMER: u64 = OUTER + 0x100;
++    const LAND: u64 = DRAM_BASE + 0x1000;
++    const STATIC: u64 = DRAM_BASE + 0x2000;
++    const DYNAMIC: u64 = DRAM_BASE + 0x3000;
++    const DATA: u64 = DRAM_BASE + 0x4000;
++    const HANDLER: u64 = DRAM_BASE + 0x5000;
++    const STOP: u64 = DRAM_BASE + 0x6000;
++    const PRIMER: u64 = DRAM_BASE + 0x7000;
++    const SRET: u32 = 0x1020_0073;
++    const SIE_BIT: u64 = 1 << 1;
++    const SPIE: u64 = 1 << 5;
++    const SPP: u64 = 1 << 8;
++    const MPRV: u64 = 1 << 17;
++    const STIP: u64 = 1 << 5;
++
++    fn jal(from: u64, to: u64) -> u32 {
++        let off = to.wrapping_sub(from) as u32;
++        ((off >> 20) & 1) << 31
++            | ((off >> 1) & 0x3ff) << 21
++            | ((off >> 11) & 1) << 20
++            | ((off >> 12) & 0xff) << 12
++            | 0x6f
++    }
++
++    fn encoded_block(machine: &mut Machine, pc: u64, words: &[u32]) -> DecodedBlock {
++        let ops = words
++            .iter()
++            .enumerate()
++            .map(|(i, &raw)| {
++                machine.bus_mut().store32(pc + i as u64 * 4, raw).unwrap();
++                MicroOp {
++                    instr: decode(raw).expect("encoded guest instruction"),
++                    len: 4,
++                    raw,
++                }
++            })
++            .collect();
++        DecodedBlock::new(pc, ops, words.len() as u64 * 4)
++    }
++
++    fn setup_csr(machine: &mut Machine, addr: u16, value: u64) {
++        let csr = &mut machine.hart_mut().csr;
++        let mode = csr.mode;
++        csr.mode = Priv::M;
++        csr.access(addr, CsrOp::Write, value, false, false, 0)
++            .unwrap();
++        csr.mode = mode;
++    }
++
++    #[derive(Debug, PartialEq, Eq)]
++    struct Architecture {
++        pc: u64,
++        mode: Priv,
++        regs: [u64; 32],
++        ram_window: [u64; 3],
++        mstatus: u64,
++        // S and M trap state, including the otherwise untouched M trap bank.
++        trap: [u64; 6],
++        retire_cycle: [u64; 2],
++        mtime: Option<u64>,
++    }
++
++    fn architecture(machine: &mut Machine) -> Architecture {
++        Architecture {
++            pc: machine.hart().regs.pc,
++            mode: machine.hart().csr.mode,
++            regs: core::array::from_fn(|r| machine.hart().regs.read(r as u8)),
++            ram_window: core::array::from_fn(|i| {
++                machine.bus_mut().load64(DATA - 8 + i as u64 * 8).unwrap()
++            }),
++            mstatus: machine.hart().csr.mstatus,
++            trap: [SEPC, SCAUSE, STVAL, MEPC, MCAUSE, MTVAL]
++                .map(|addr| machine.hart_mut().csr.read(addr)),
++            retire_cycle: [MINSTRET, MCYCLE].map(|addr| machine.hart_mut().csr.read(addr)),
++            mtime: machine.bus_mut().load64(virt::CLINT_BASE + 0xbff8).ok(),
++        }
++    }
++
++    #[derive(PartialEq, Eq)]
++    struct Authority {
++        inline: Vec<u64>,
++        static_words: Vec<u32>,
++        static_authority: Vec<u32>,
++        dynamic_words: Vec<u64>,
++        dynamic_authority: Vec<u32>,
++    }
++
++    impl Authority {
++        fn read(executor: &BrowserExecutor) -> Self {
++            let stat = executor.static_links.as_ref().unwrap();
++            let dyns = executor.dynamic_links.as_ref().unwrap();
++            Self {
++                inline: executor.inline_tlb.as_ref().unwrap().words.to_vec(),
++                static_words: stat.words.to_vec(),
++                static_authority: stat.authority.to_vec(),
++                dynamic_words: dyns.words.to_vec(),
++                dynamic_authority: dyns.authority.to_vec(),
++            }
++        }
++
++        fn assert_warm(&self) {
++            for array in self.inline.chunks_exact(INLINE_TLB_ARRAY_WORDS) {
++                assert!(array.iter().any(|&word| word != 0), "R/W/EXEC must be warm");
++            }
++            assert!(self.static_words.iter().any(|&word| word != 0));
++            assert!(self.static_authority.iter().any(|&word| word != 0));
++            assert!(self.dynamic_words.iter().any(|&word| word != 0));
++            assert!(self.dynamic_authority.iter().any(|&word| word != 0));
++        }
++
++        fn assert_cleared(&self) {
++            assert!(self.inline.iter().all(|&word| word == 0), "R/W/EXEC clear");
++            assert!(self.static_words.iter().all(|&word| word == 0));
++            assert!(self.static_authority.iter().all(|&word| word == 0));
++            assert!(self.dynamic_words.iter().all(|&word| word == 0));
++            assert!(self.dynamic_authority.iter().all(|&word| word == 0));
++        }
++    }
++
++    struct Fixture {
++        machine: Machine,
++        // A non-owning observation of the stable Box transferred to Machine. Only this fixture
++        // accesses it, never concurrently with run(), and it never replaces/takes the executor.
++        browser: Option<NonNull<BrowserExecutor>>,
++        landing: u64,
++    }
++
++    impl Fixture {
++        fn browser(&self) -> &BrowserExecutor {
++            // SAFETY: the Box remains owned by self.machine; the shared self borrow prevents run.
++            unsafe { self.browser.unwrap().as_ref() }
++        }
++
++        fn browser_mut(&mut self) -> &mut BrowserExecutor {
++            // SAFETY: same stable Box, exclusively borrowed through this fixture outside run().
++            unsafe { self.browser.as_mut().unwrap().as_mut() }
++        }
++
++        fn run(&mut self, work: u64) {
++            if let Some(executor) = self.machine.executor() {
++                for pc in [self.landing, STATIC, DYNAMIC, PRIMER] {
++                    assert!(
++                        executor.is_compiled(pc),
++                        "compiled identity lost at {pc:#x}"
++                    );
++                }
++            }
++            assert_eq!(self.machine.run(work), RunOutcome::MaxInstrs);
++        }
++
++        fn new(jit: bool, to_user: bool) -> Self {
++            let mut machine = Machine::new(8 * 1024 * 1024);
++            machine.boot_supervisor(0, 0); // open PMP and delegate S interrupts/page faults
++            // The U landing is a ONE-op block ending at the page boundary. Its store faults on
++            // the final work slot, so we observe trap entry before the handler can retire.
++            let landing = if to_user { LAND + 0xffc } else { LAND };
++            let landing_words = if to_user {
++                vec![0x0055_2023] // sw x5,0(x10): forbidden S-only DATA, never a denied entry fetch
++            } else {
++                vec![
++                    0x0005_2283, // lw x5,0(x10)
++                    0x0012_8293, // addi x5,x5,1
++                    0x0055_2023, // sw x5,0(x10)
++                    jal(LAND + 12, STATIC),
++                ]
++            };
++            let blocks = [
++                encoded_block(&mut machine, landing, &landing_words),
++                encoded_block(&mut machine, STATIC, &[0x0013_0313, 0x0005_8067]), // x6++; jalr x11
++                encoded_block(
++                    &mut machine,
++                    DYNAMIC,
++                    &[0x0013_8393, jal(DYNAMIC + 4, STOP)],
++                ),
++                encoded_block(
++                    &mut machine,
++                    PRIMER,
++                    &[0x0005_2283, 0x0055_2023, 0x0040_006f],
++                ),
++            ];
++            encoded_block(&mut machine, OUTER, &[SRET]);
++            // The pending-source test arms/cancels the real SBI TIME source using guest ECALLs.
++            // Save a0/a1 (the data and dynamic-target pointers) in s2/s3 across SBI return values.
++            encoded_block(
++                &mut machine,
++                ARM_TIMER,
++                &[
++                    0x0005_0913, // mv s2,a0
++                    0x0005_8993, // mv s3,a1
++                    0x5449_58b7, // lui a7,0x54495
++                    0xd458_8893, // addi a7,a7,-699: EID TIME=0x54494d45
++                    0x0000_0813, // li a6,0: set_timer
++                    0x0000_0513, // li a0,0: expired deadline
++                    0x0000_0073, // ecall
++                    0x0009_0513, // mv a0,s2
++                    0x0009_8593, // mv a1,s3
++                    jal(ARM_TIMER + 36, OUTER),
++                ],
++            );
++            encoded_block(
++                &mut machine,
++                HANDLER,
++                &[
++                    0xfff0_0513, // li a0,-1: u64::MAX cancels the SBI timer
++                    0x0000_0073, // ecall TIME/set_timer; STIE remains enabled
++                    0x0009_0513, // mv a0,s2
++                    0x0009_8593, // mv a1,s3
++                    SRET,
++                ],
++            );
++            encoded_block(&mut machine, STOP, &[0x0000_006f]);
++
++            // Sv39 identity mapping with separate 4 KiB leaves. Only the negative landing is U;
++            // DATA and both published successors remain S-only. A/D are preset, not fault causes.
++            let root = DRAM_BASE + 0x10000;
++            let l1 = root + 0x1000;
++            let l0 = l1 + 0x1000;
++            machine
++                .bus_mut()
++                .store64(root + 2 * 8, (l1 >> 12) << 10 | 1)
++                .unwrap();
++            machine.bus_mut().store64(l1, (l0 >> 12) << 10 | 1).unwrap();
++            for page in 0..8u64 {
++                let pa = DRAM_BASE + page * 4096;
++                let flags = if pa == DATA { 0xc7 } else { 0xcb }
++                    | if to_user && pa == LAND { 0x10 } else { 0 };
++                machine
++                    .bus_mut()
++                    .store64(l0 + page * 8, (pa >> 12) << 10 | flags)
++                    .unwrap();
++            }
++            setup_csr(&mut machine, SATP, (8 << 60) | (root >> 12));
++            setup_csr(&mut machine, MSTATUS, SPIE | if to_user { 0 } else { SPP });
++            setup_csr(&mut machine, SEPC, landing);
++            setup_csr(&mut machine, STVEC, HANDLER);
++            machine.hart_mut().regs.write(5, 0x7e);
++            machine.hart_mut().regs.write(10, DATA);
++            machine.hart_mut().regs.write(11, DYNAMIC);
++            machine.hart_mut().regs.pc = OUTER;
++            machine.bus_mut().store64(DATA - 8, 0x1234).unwrap();
++            machine.bus_mut().store64(DATA, 41).unwrap();
++            machine.bus_mut().store64(DATA + 8, 0x5678).unwrap();
++
++            // Configure invalidating knobs BEFORE installing or attaching the executor. Populate
++            // Machine's decoded metadata in M (including the U leaf), with no executor installed.
++            // This also drains initial code/PMP writes. Restore architecture, not cache authority.
++            machine.set_block_cache(jit);
++            machine.set_interrupt_batching(true);
++            machine.set_jit(jit);
++            let initial_csr = machine.hart().csr.clone();
++            let initial_regs = machine.hart().regs.clone();
++            machine.hart_mut().csr.mode = Priv::M;
++            for block in &blocks {
++                machine.hart_mut().regs.pc = block.phys_start;
++                assert_eq!(machine.run(block.ops.len() as u64), RunOutcome::MaxInstrs);
++            }
++            machine.hart_mut().csr = initial_csr;
++            machine.hart_mut().regs = initial_regs.clone();
++            machine.bus_mut().store64(DATA, 41).unwrap();
++
++            let browser = jit.then(|| {
++                let mut executor = Box::new(BrowserExecutor::new_inline(&machine).unwrap());
++                for block in &blocks {
++                    executor.install(block); // separate batches: no unguarded intra-batch shortcut
++                    assert!(executor.is_compiled(block.phys_start));
++                }
++                let ptr = NonNull::from(executor.as_mut());
++                machine.set_executor(executor);
++                ptr
++            });
++            let mut fixture = Self {
++                machine,
++                browser,
++                landing,
++            };
++            // Actual S-mode compiled load/store refills R/W; both successor fetches succeed as S
++            // before publishing their EXEC/static/PIC authority. The interpreter runs the same
++            // warmup and has the same architectural counters. No injected sentinel is executable.
++            for (pc, work) in [(PRIMER, 3), (STATIC, 2), (DYNAMIC, 2)] {
++                fixture.machine.hart_mut().regs.pc = pc;
++                fixture.run(work);
++                assert_eq!(fixture.machine.hart().csr.mode, Priv::S);
++            }
++            fixture.machine.hart_mut().regs = initial_regs;
++            if jit {
++                fixture
++                    .browser_mut()
++                    .link_edge_authorized(landing, 0, STATIC, STATIC);
++                fixture.browser_mut().link_dynamic_target(DYNAMIC, DYNAMIC);
++                Authority::read(fixture.browser()).assert_warm();
++                assert_eq!(fixture.browser().dynamic_link_stats().live_entries, 1);
++            }
++            assert_eq!(fixture.machine.hart().csr.mstatus & MPRV, 0);
++            fixture
++        }
++    }
++
++    fn equal_architecture(label: &str, oracle: &mut Fixture, jit: &mut Fixture) -> Architecture {
++        let expected = architecture(&mut oracle.machine);
++        let actual = architecture(&mut jit.machine);
++        assert_eq!(actual, expected, "{label}: architectural oracle");
++        // Compare ALL RAM as well as the exact architectural fields above. The serialized CPU
++        // also contains a cached CSR `time` shadow sampled at polling boundaries: an out-of-band
++        // host stop need not refresh it equally with interpreter versus batched execution. Compare
++        // the actual CLINT mtime source, not that cached shadow; never normalize or write clocks.
++        assert!(
++            jit.machine.bus_mut().ram().as_bytes() == oracle.machine.bus_mut().ram().as_bytes()
++        );
++        console_log!("SPP_ORACLE {label}: {actual:?}; exact architecture + full RAM equal");
++        actual
++    }
++
++    fn assert_return_effects(state: &Architecture, initial_status: u64, retired: u64) {
++        assert_eq!(state.pc, STOP);
++        assert_eq!(state.mode, Priv::S);
++        assert_eq!(state.mstatus, (initial_status & !SPP) | SIE_BIT | SPIE);
++        assert_eq!(state.regs[5], 42);
++        assert_eq!(state.regs[6], 1, "static target effect");
++        assert_eq!(state.regs[7], 1, "dynamic target effect");
++        assert_eq!(state.ram_window, [0x1234, 42, 0x5678]);
++        assert_eq!(state.retire_cycle, [retired; 2]);
++    }
++
++    fn assert_reused(jit: &Fixture, warm: &Authority, entries: u64, hits: u64, retired: u64) {
++        let executor = jit.browser();
++        assert!(
++            Authority::read(executor) == *warm,
++            "all published authority must survive"
++        );
++        assert_eq!(executor.entry_cost_stats().host_entries, entries + 1);
++        assert_eq!(executor.dynamic_link_stats().hits, hits + 1);
++        assert_eq!(executor.dynamic_link_stats().live_entries, 1);
++        assert_eq!(executor.retired_via_jit(), retired + 8);
++        console_log!(
++            "SPP_JIT reused: one host entry, 8 compiled retires, static+dynamic effects, PIC hit +1; all authority words unchanged"
++        );
++    }
++
++    #[wasm_bindgen_test]
++    fn browser_guest_sret_to_s_preserves_inline_and_both_links() {
++        let mut oracle = Fixture::new(false, false);
++        let mut jit = Fixture::new(true, false);
++        let initial = equal_architecture("S baseline", &mut oracle, &mut jit);
++        assert_eq!(initial.mstatus & (SPP | SPIE | SIE_BIT | MPRV), SPP | SPIE);
++        let warm = Authority::read(jit.browser());
++        let entries = jit.browser().entry_cost_stats().host_entries;
++        let hits = jit.browser().dynamic_link_stats().hits;
++        let retired = jit.browser().retired_via_jit();
++        oracle.run(1);
++        jit.run(1);
++        let returned = equal_architecture("S return before entry", &mut oracle, &mut jit);
++        assert_eq!(returned.pc, LAND);
++        assert_eq!(returned.mode, Priv::S);
++        assert_eq!(returned.mstatus, (initial.mstatus & !SPP) | SIE_BIT);
++        assert_eq!(
++            returned.mstatus & (SPP | SIE_BIT | SPIE | MPRV),
++            SIE_BIT | SPIE
++        );
++        assert_eq!(returned.regs, initial.regs);
++        assert_eq!(returned.ram_window, initial.ram_window);
++        assert_eq!(returned.trap, initial.trap);
++        assert_eq!(returned.retire_cycle, [initial.retire_cycle[0] + 1; 2]);
++        assert_eq!(jit.browser().entry_cost_stats().host_entries, entries);
++        assert!(Authority::read(jit.browser()) == warm);
++        oracle.run(8); // the 4+2+2 instruction compiled chain, AFTER observing live SRET state
++        jit.run(8);
++        let state = equal_architecture("S compiled chain", &mut oracle, &mut jit);
++        assert_return_effects(&state, initial.mstatus, initial.retire_cycle[0] + 9);
++        assert_eq!(state.trap, initial.trap);
++        assert_reused(&jit, &warm, entries, hits, retired);
++    }
++
++    #[wasm_bindgen_test]
++    fn browser_guest_sret_to_u_enters_compiled_then_clears_s_authority() {
++        let mut oracle = Fixture::new(false, true);
++        let mut jit = Fixture::new(true, true);
++        let initial = equal_architecture("U baseline", &mut oracle, &mut jit);
++        let entries = jit.browser().entry_cost_stats().host_entries;
++        let retired = jit.browser().retired_via_jit();
++        let hits = jit.browser().dynamic_link_stats().hits;
++        let dispatches = jit.browser().entry_cost_stats().indirect_table_dispatches;
++        oracle.run(1);
++        jit.run(1);
++        let returned = equal_architecture("U return before entry", &mut oracle, &mut jit);
++        assert_eq!(returned.pc, LAND + 0xffc);
++        assert_eq!(returned.mode, Priv::U);
++        assert_eq!(returned.mstatus, initial.mstatus | SIE_BIT);
++        assert_eq!(returned.retire_cycle, [initial.retire_cycle[0] + 1; 2]);
++        Authority::read(jit.browser()).assert_warm(); // synchronization has not run yet
++        oracle.run(1);
++        jit.run(1); // U-fetchable, one-op compiled store: MUST enter before permission fault
++        let fault = equal_architecture("U compiled store fault", &mut oracle, &mut jit);
++        assert_eq!(fault.pc, HANDLER);
++        assert_eq!(fault.mode, Priv::S);
++        assert_eq!(fault.mstatus, initial.mstatus); // trap from U: SPP=0, SIE=0, SPIE=1
++        assert_eq!(&fault.trap[..3], &[LAND + 0xffc, 15, DATA]);
++        assert_eq!(&fault.trap[3..], &initial.trap[3..]);
++        assert_eq!(fault.regs, initial.regs);
++        assert_eq!(fault.ram_window, initial.ram_window);
++        assert_eq!(fault.retire_cycle, returned.retire_cycle); // fault does not retire
++        Authority::read(jit.browser()).assert_cleared();
++        assert_eq!(
++            jit.browser()
++                .inline_tlb
++                .as_ref()
++                .unwrap()
++                .context
++                .unwrap()
++                .mode,
++            0
++        );
++        assert_eq!(jit.browser().entry_cost_stats().host_entries, entries + 1);
++        assert_eq!(jit.browser().retired_via_jit(), retired);
++        assert_eq!(jit.browser().dynamic_link_stats().live_entries, 0);
++        assert_eq!(jit.browser().dynamic_link_stats().hits, hits);
++        assert_eq!(
++            jit.browser().entry_cost_stats().indirect_table_dispatches,
++            dispatches
++        );
++        console_log!(
++            "SPP_JIT U: actual compiled entry +1 in mode U, compiled retires +0, no indirect dispatch or PIC hit; R/W/EXEC, static, dynamic words+authority all zero"
++        );
++    }
++
++    #[wasm_bindgen_test]
++    fn browser_guest_sret_pending_stip_preempts_then_nested_sret_reuses() {
++        let mut oracle = Fixture::new(false, false);
++        let mut jit = Fixture::new(true, false);
++        for fixture in [&mut oracle, &mut jit] {
++            fixture.machine.enable_clint(1);
++            fixture.machine.enable_builtin_sbi();
++            setup_csr(&mut fixture.machine, SIE, STIP);
++            fixture.machine.hart_mut().regs.pc = ARM_TIMER;
++            fixture.run(10); // guest TIME.set_timer(0); restore pointers; jump to outer SRET
++            assert_eq!(fixture.machine.hart().regs.pc, OUTER);
++            assert_eq!(fixture.machine.hart().regs.read(17), 0x5449_4d45);
++            assert_eq!(fixture.machine.hart().regs.read(16), 0);
++            assert_eq!(fixture.machine.hart_mut().csr.read(MIP) & STIP, STIP);
++            assert_eq!(fixture.machine.hart().csr.next_interrupt(), None); // SIE still zero
++        }
++        let initial = equal_architecture("pending STIP baseline", &mut oracle, &mut jit);
++        let warm = Authority::read(jit.browser());
++        let entries = jit.browser().entry_cost_stats().host_entries;
++        let hits = jit.browser().dynamic_link_stats().hits;
++        let retired = jit.browser().retired_via_jit();
++        oracle.run(2); // SRET retires; pending boundary interrupt consumes one non-retiring slot
++        jit.run(2);
++        let trapped = equal_architecture("pending STIP preemption", &mut oracle, &mut jit);
++        assert_eq!(trapped.pc, HANDLER);
++        assert_eq!(trapped.mode, Priv::S);
++        assert_eq!(trapped.mstatus, initial.mstatus);
++        assert_eq!(trapped.mstatus & (SPP | SPIE | SIE_BIT), SPP | SPIE);
++        assert_eq!(&trapped.trap[..3], &[LAND, (1 << 63) | 5, 0]);
++        assert_eq!(&trapped.trap[3..], &initial.trap[3..]);
++        assert_eq!(trapped.regs, initial.regs);
++        assert_eq!(trapped.ram_window, initial.ram_window);
++        assert_eq!(trapped.retire_cycle, [initial.retire_cycle[0] + 1; 2]);
++        assert_eq!(jit.browser().entry_cost_stats().host_entries, entries);
++        assert!(Authority::read(jit.browser()) == warm);
++        for fixture in [&mut oracle, &mut jit] {
++            fixture.run(2); // guest li a0,-1; ECALL TIME.set_timer(u64::MAX)
++            assert_eq!(fixture.machine.hart().regs.read(10), 0, "SBI success");
++            assert_eq!(fixture.machine.hart().regs.read(11), 0, "SBI return value");
++            fixture.run(1); // next real timer boundary derives STIP=0; guest restores a0
++            assert_eq!(fixture.machine.hart().regs.pc, HANDLER + 12);
++            assert_eq!(fixture.machine.hart_mut().csr.read(MIP) & STIP, 0);
++            assert_eq!(fixture.machine.hart().csr.mie_bits() & STIP, STIP);
++        }
++        let cancelled = equal_architecture("guest SBI timer cancelled", &mut oracle, &mut jit);
++        assert_eq!(cancelled.retire_cycle, [initial.retire_cycle[0] + 3; 2]);
++        assert_eq!(cancelled.mstatus, trapped.mstatus);
++        assert_eq!(cancelled.trap, trapped.trap);
++        assert_eq!(jit.browser().entry_cost_stats().host_entries, entries);
++        for fixture in [&mut oracle, &mut jit] {
++            fixture.run(2); // guest restores a1, then nested encoded SRET
++        }
++        let returned = equal_architecture("nested SRET before entry", &mut oracle, &mut jit);
++        assert_eq!(returned.pc, LAND);
++        assert_eq!(returned.mode, Priv::S);
++        assert_eq!(returned.mstatus, (initial.mstatus & !SPP) | SIE_BIT);
++        assert_eq!(returned.regs, initial.regs);
++        assert_eq!(returned.ram_window, initial.ram_window);
++        assert_eq!(returned.retire_cycle, [initial.retire_cycle[0] + 5; 2]);
++        assert_eq!(jit.browser().entry_cost_stats().host_entries, entries);
++        for fixture in [&mut oracle, &mut jit] {
++            fixture.run(8);
++            assert_eq!(fixture.machine.hart_mut().csr.read(MIP) & STIP, 0);
++            assert_eq!(fixture.machine.hart().csr.mie_bits() & STIP, STIP);
++        }
++        let resumed = equal_architecture("nested SRET target effects", &mut oracle, &mut jit);
++        // Firmware ECALLs consume work but do not retire in Machine's established SBI contract.
++        assert_return_effects(&resumed, initial.mstatus, initial.retire_cycle[0] + 13);
++        assert_eq!(resumed.trap, trapped.trap);
++        assert_reused(&jit, &warm, entries, hits, retired);
++    }
++}
+diff --git a/crates/wasm/tests/jit_browser_parity.rs b/crates/wasm/tests/jit_browser_parity.rs
+index 548b8074..883f3cd2 100644
+--- a/crates/wasm/tests/jit_browser_parity.rs
++++ b/crates/wasm/tests/jit_browser_parity.rs
+@@ -1149,7 +1149,7 @@ fn browser_inline_static_link_retains_across_interrupt_stack_bits() {
+     const CALLER: u64 = DRAM_BASE;
+     const TARGET: u64 = DRAM_BASE + 0x1000;
+ 
+-    for bit in [1u32, 3, 5, 7] {
++    for bit in [1u32, 3, 5, 7, 8] {
+         let caller = block(
+             CALLER,
+             &[
+@@ -2013,7 +2013,7 @@ fn browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_inval
+     const CALLER: u64 = DRAM_BASE;
+     const TARGET: u64 = DRAM_BASE + 0x1000;
+ 
+-    for bit in [1u32, 3, 5, 7, 18] {
++    for bit in [1u32, 3, 5, 7, 8, 18] {
+         let caller = block(
+             CALLER,
+             &[
+@@ -2102,10 +2102,10 @@ fn browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_inval
+ fn browser_inline_combined_interrupt_bits_plus_sum_invalidates_all_links() {
+     const CALLER: u64 = DRAM_BASE;
+     const TARGET: u64 = DRAM_BASE + 0x1000;
+-    const INTERRUPT_BITS: u64 = (1u64 << 1) | (1u64 << 3) | (1u64 << 5) | (1u64 << 7);
++    const INTERRUPT_BITS: u64 = (1u64 << 1) | (1u64 << 3) | (1u64 << 5) | (1u64 << 7) | (1u64 << 8);
+     const MIXED_CHANGE: u64 = INTERRUPT_BITS | (1u64 << 18);
+ 
+-    // Static cross-batch publication: the four ignored changes must not hide the simultaneous SUM
++    // Static cross-batch publication: the five ignored changes must not hide the simultaneous SUM
+     // mismatch. The generated target must remain unentered for this invocation.
+     {
+         let caller = block(

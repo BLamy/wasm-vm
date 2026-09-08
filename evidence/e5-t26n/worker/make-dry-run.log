@@ -1,0 +1,7 @@
+cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+cargo clippy -p wasm-vm-wasm --lib --test jit_browser_parity --target wasm32-unknown-unknown -- -D warnings
+cargo test -p wasm-vm-core --test interrupts --test privilege --test pmp_privilege_audit --test pmp_privilege_adversarial
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+wasm-pack test --node crates/wasm --lib --test jit_browser_parity -- --nocapture
+echo "verify-E5-T26n (SPP context and guest SRET authority): OK"
