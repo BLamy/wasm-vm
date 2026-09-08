@@ -1,19 +1,31 @@
 // Actual shell helper, with proc/device paths replaced ONLY in this test copy.
+// The fixed BusyBox cat invocation is adapted to real Mac /bin/cat, not a reader mock.
 // The fake proc files test refusal logic, not real hardware/restore acceptance.
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, symlinkSync, rmSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
+
+// Test-only opt-in. Native mode keeps the production BusyBox invocation intact.
+const dockerSetting = process.env.E5_T26F_RESIDENT_TEST_DOCKER;
+assert.ok(dockerSetting === undefined || dockerSetting === "1", "E5_T26F_RESIDENT_TEST_DOCKER must be omitted or exactly 1");
+const dockerMode = dockerSetting === "1";
+const dockerImage = "sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc";
+let invocation = 0;
 
 const source = readFileSync(new URL("../guest/e5-t26f-resident-aplay.sh", import.meta.url), "utf8");
 const q = (value) => `'${value.replaceAll("'", "'\\''")}'`;
 const payloadLine = source.match(/^    e5_pcm=\$\(yes .*$/m)?.[0];
 assert.ok(payloadLine, "execute the actual prepare payload expression");
 
-function fixture(t, { prepare = false, io = true } = {}) {
-  const dir = mkdtempSync(path.join(os.tmpdir(), "e5t26f-resident-test-"));
+function fixture(t, { prepare = false, io = true, ioText = "rchar: 100\nwchar: 89\nsyscr: 19\nsyscw: 5\n", mutate = value => value, catBody } = {}) {
+  const parent = dockerMode ? fileURLToPath(new URL("../../target/e5-t26f/", import.meta.url)) : os.tmpdir();
+  if (dockerMode) mkdirSync(parent, { recursive: true });
+  const dir = mkdtempSync(path.join(parent, "e5t26f-resident-test-"));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   for (const name of ["child/fd", "child/fdinfo", "parent/fd", "parent/fdinfo", "asound/card0/pcm0p/sub0"])
     mkdirSync(path.join(dir, name), { recursive: true });
@@ -29,6 +41,12 @@ function fixture(t, { prepare = false, io = true } = {}) {
     .replaceAll('/tmp/e5t26f-resident.fifo', `${dir}/fifo`)
     .replaceAll('/dev/snd/pcmC0D0p', `${dir}/pcm`)
     .replaceAll('/usr/bin/aplay', `${dir}/aplay`);
+  if (!dockerMode) copy = copy.replaceAll('/bin/busybox cat', '/bin/cat');
+  if (catBody) {
+    writeFileSync(path.join(dir, "cat-adapter.sh"), `#!/bin/sh\n${catBody(dir)}\n`, { mode: 0o700 });
+    copy = copy.replaceAll(dockerMode ? '/bin/busybox cat' : '/bin/cat', q(path.join(dir, "cat-adapter.sh")));
+  }
+  copy = mutate(copy);
   assert.doesNotMatch(copy, /\/proc\/|\/dev\/snd\/|\/usr\/bin\/aplay/);
   writeFileSync(path.join(dir, "helper.sh"), copy);
   if (!prepare) {
@@ -41,12 +59,21 @@ function fixture(t, { prepare = false, io = true } = {}) {
     writeFileSync(path.join(dir, "child/fdinfo/4"), "pos:\t0\nflags:\t0100000\n");
     writeFileSync(path.join(dir, "parent/fdinfo/3"), "pos:\t0\nflags:\t0100002\n");
     writeFileSync(path.join(dir, "child/wchan"), "pipe_read"); // deliberately no newline
-    if (io) writeFileSync(path.join(dir, "child/io"), "rchar: 100\nwchar: 89\nsyscr: 19\nsyscw: 5\n");
+    if (io) writeFileSync(path.join(dir, "child/io"), ioText);
   }
   return { dir, invoke(script) {
-    const result = spawnSync("/bin/sh", ["-c", `. ${q(path.join(dir, "helper.sh"))}\n${script}`], {
+    const command = `. ${q(path.join(dir, "helper.sh"))}\n${script}`;
+    const container = `e5t26f-resident-test-${process.pid}-${++invocation}`;
+    const args = dockerMode ? ["run", "--rm", "--pull=never", "--network=none", "--cpus=1", "--memory=128m", "--pids-limit=32",
+      "--name", container, "--mount", `type=bind,src=${dir},dst=${dir}`, "--workdir", dir,
+      dockerImage, "/bin/busybox", "ash", "-c", command] : ["-c", command];
+    const result = spawnSync(dockerMode ? "docker" : "/bin/sh", args, {
       encoding: "utf8", timeout: 5_000, maxBuffer: 512 * 1024,
     });
+    if (dockerMode && (result.error || result.signal)) {
+      // Only this uniquely named fixture container; normal exits use --rm.
+      spawnSync("docker", ["rm", "--force", container], { timeout: 5_000 });
+    }
     assert.equal(result.error, undefined);
     assert.equal(result.signal, null);
     return result;
@@ -57,12 +84,12 @@ function status(dir, { state = "PREPARED", owner = '"$e5_pid"', hw = "0", appl =
   return `printf 'state: ${state}\\nowner_pid   : %s\\nhw_ptr     : ${hw}\\nappl_ptr   : ${appl}\\n${extra}' ${owner} > ${q(path.join(dir, "asound/card0/pcm0p/sub0/status"))}`;
 }
 
-function stat(dir, { pid = '"$e5_pid"', start = "777", parent = '"$$"', comm = "(aplay)" } = {}) {
-  return `printf '%s ${comm} S %s ${"0 ".repeat(17)}${start} 0\\n' ${pid} ${parent} > ${q(path.join(dir, "child/stat"))}`;
+function stat(dir, { pid = '"$e5_pid"', start = "777", parent = '"$$"', comm = "(aplay)", rest = Array(30).fill("0").join(" ") } = {}) {
+  return `printf '%s ${comm} S %s ${"0 ".repeat(17)}${start} ${rest}\\n' ${pid} ${parent} > ${q(path.join(dir, "child/stat"))}`;
 }
 
-function playFixture(t, attack = () => "", { exitCode = 0, io = true } = {}) {
-  const f = fixture(t, { io });
+function playFixture(t, attack = () => "", { exitCode = 0, io = true, ...options } = {}) {
+  const f = fixture(t, { io, ...options });
   const result = f.invoke(`
     (exit ${exitCode}) &
     e5_pid=$! e5_parent=$$ e5_writer_open=1
@@ -73,7 +100,7 @@ function playFixture(t, attack = () => "", { exitCode = 0, io = true } = {}) {
     e5_observe || exit 97
     e5_expected_pid=$e5_pid e5_expected=$e5_seen e5_armed=1
     ${attack(f.dir)}
-    # No external command is available during the actual play function.
+    # PATH lookup is unavailable; only the explicitly adapted real cat can run.
     PATH=${q(path.join(f.dir, "no-executables"))}
     play
   `);
@@ -81,7 +108,7 @@ function playFixture(t, attack = () => "", { exitCode = 0, io = true } = {}) {
   return { ...f, result, pcm: readFileSync(path.join(f.dir, "fed.pcm")) };
 }
 
-test("actual play alias validates, feeds exact 3840 bytes, waits child zero, then prints green using only builtins", (t) => {
+test("actual play validates with buffered cat, feeds exact bytes, waits child zero; no PATH commands", (t) => {
   const { result, pcm } = playFixture(t);
   assert.equal(result.status, 0, result.stderr + result.stdout);
   assert.equal(pcm.length, 3840);
@@ -122,15 +149,48 @@ const attacks = {
   "child I/O changed after prepare": (d) => `printf 'rchar: 101\\nwchar: 89\\nsyscr: 19\\nsyscw: 5\\n' > ${q(`${d}/child/io`)}`,
   "available I/O accounting disappears": (d) => `rm ${q(`${d}/child/io`)}`,
   "not armed": () => "e5_armed=0",
+  "truncated stat field list": (d) => stat(d, { rest: "0" }),
+  "surplus stat fields": (d) => stat(d, { rest: Array(31).fill("0").join(" ") }),
+  "stat glob is not expanded": (d) => stat(d, { rest: ["*", ...Array(29).fill("0")].join(" ") }),
+  "negative starttime": (d) => stat(d, { start: "-1" }),
+  "second stat record": (d) => `printf '\\n' >> ${q(`${d}/child/stat`)}`,
+  "stat missing final newline": (d) => `text=$(/bin/cat ${q(`${d}/child/stat`)}); printf '%s' "$text" > ${q(`${d}/child/stat`)}`,
+  "wchan extra newline": (d) => `printf 'pipe_read\\n' > ${q(`${d}/child/wchan`)}`,
+  "wchan extra record": (d) => `printf 'pipe_read\\nwait_woken\\n' > ${q(`${d}/child/wchan`)}`,
+  "missing flags field": (d) => `printf 'pos: 0\\n' > ${q(`${d}/child/fdinfo/4`)}`,
+  "duplicate child flags": (d) => `printf 'flags: 0100000\\nflags: 0100000\\n' > ${q(`${d}/child/fdinfo/4`)}`,
+  "duplicate parent flags": (d) => `printf 'flags: 0100002\\nflags: 0100002\\n' > ${q(`${d}/parent/fdinfo/3`)}`,
+  "flags surplus token": (d) => `printf 'flags: 0100000 ignored\\n' > ${q(`${d}/child/fdinfo/4`)}`,
+  "flags octal overflow": (d) => `printf 'flags: 7777777777777777777777777777777777770\\n' > ${q(`${d}/child/fdinfo/4`)}`,
+  "flags missing final newline": (d) => `printf 'flags: 0100000' > ${q(`${d}/child/fdinfo/4`)}`,
+  "PCM missing application pointer": (d) => `printf 'state: PREPARED\\nowner_pid: %s\\nhw_ptr: 0\\n' "$e5_pid" > ${q(`${d}/asound/card0/pcm0p/sub0/status`)}`,
+  "PCM surplus value": (d) => status(d, { hw: "0 ignored" }),
+  "PCM malformed separator": (d) => `printf 'state PREPARED\\nowner_pid: %s\\nhw_ptr: 0\\nappl_ptr: 0\\n' "$e5_pid" > ${q(`${d}/asound/card0/pcm0p/sub0/status`)}`,
+  "duplicate PCM owner": (d) => status(d, { extra: "owner_pid: 0\\n" }),
+  "readable empty I/O": (d) => `: > ${q(`${d}/child/io`)}`,
+  "I/O missing mandatory field": (d) => `printf 'rchar: 100\\nwchar: 89\\nsyscr: 19\\n' > ${q(`${d}/child/io`)}`,
+  "I/O duplicate field": (d) => `printf 'rchar: 100\\n' >> ${q(`${d}/child/io`)}`,
+  "I/O negative counter": (d) => `printf 'rchar: -100\\nwchar: 89\\nsyscr: 19\\nsyscw: 5\\n' > ${q(`${d}/child/io`)}`,
+  "I/O incomplete accounting group": (d) => `printf 'read_bytes: 0\\n' >> ${q(`${d}/child/io`)}`,
+  "I/O extra token": (d) => `printf 'rchar: 100 extra\\nwchar: 89\\nsyscr: 19\\nsyscw: 5\\n' > ${q(`${d}/child/io`)}`,
+  "I/O missing final newline": (d) => `text=$(/bin/cat ${q(`${d}/child/io`)}); printf '%s' "$text" > ${q(`${d}/child/io`)}`,
+  "I/O unexpected blank record": (d) => `printf '\\n' >> ${q(`${d}/child/io`)}`,
+  "I/O shell metacharacters are data": (d) => `printf '%s\\n' ${q(`rchar: $(touch ${d}/must-not-exist);*`)} > ${q(`${d}/child/io`)}`,
+  "overbound proc text": (d) => `printf '%5000s\\n' 0 > ${q(`${d}/asound/card0/pcm0p/sub0/status`)}`,
 };
+
+function requireRefusal({ result, pcm }) {
+  assert.notEqual(result.status, 0);
+  assert.match(result.stdout, /\x1b\[41me5t26f-resident-failed:/);
+  assert.doesNotMatch(result.stdout, /\x1b\[42m/);
+  assert.equal(pcm.length, 0);
+}
 
 for (const [label, attack] of Object.entries(attacks)) {
   test(`refuses ${label} before feeding or green success`, (t) => {
-    const { result, pcm } = playFixture(t, attack);
-    assert.notEqual(result.status, 0);
-    assert.match(result.stdout, /\x1b\[41me5t26f-resident-failed:/);
-    assert.doesNotMatch(result.stdout, /\x1b\[42m/);
-    assert.equal(pcm.length, 0);
+    const observation = playFixture(t, attack);
+    requireRefusal(observation);
+    assert.throws(() => readFileSync(path.join(observation.dir, "must-not-exist")), { code: "ENOENT" });
   });
 }
 
@@ -205,4 +265,120 @@ test("actual child launch closes inherited FD3 before exec, with fixed real PCM 
   assert.ok(play.indexOf('exec 3>&-') < play.indexOf('wait "$e5_pid"'));
   assert.ok(play.indexOf('wait "$e5_pid"') < play.indexOf('42me5t26f-aplay'));
   assert.match(play, /play\(\) \{ e5_play; \}/);
+});
+
+test("three observation printf calls remain byte-identical to parent 7f15d766", () => {
+  const printer = source.slice(source.indexOf("e5_print_observation() {"), source.indexOf("e5_prepare() {"));
+  assert.equal(createHash("sha256").update(printer).digest("hex"), "fbe3ca0637bb704d9a51f22f91f7ddc0f4efe906f8a549098cac8819cd9716f8");
+  assert.equal(printer.match(/    printf /g)?.length, 3);
+});
+
+test("capture preserves EOF and all trailing newlines at the exact small bound", (t) => {
+  const f = fixture(t);
+  for (const bytes of ["", "pipe_read", "line\n", "line\n\n", "x".repeat(128)]) {
+    writeFileSync(path.join(f.dir, "capture.data"), bytes);
+    const result = f.invoke(`e5_capture ${q(`${f.dir}/capture.data`)} 128 || exit 17\nprintf '%s' "$e5_text"`);
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stdout, bytes);
+  }
+});
+
+for (const bytes of ["x".repeat(129), ":e5t26f-capture-end:", "prefix:e5t26f-capture-end:\n", ":e5t26f-capture-end::e5t26f-capture-end:"]) {
+  test(`capture refuses overbound or embedded sentinel (${JSON.stringify(bytes.slice(0, 40))})`, (t) => {
+    const f = fixture(t);
+    writeFileSync(path.join(f.dir, "capture.data"), bytes);
+    const result = f.invoke(`if e5_capture ${q(`${f.dir}/capture.data`)} 128; then exit 17; fi\n[ -z "$e5_text" ]`);
+    assert.equal(result.status, 0, result.stderr);
+  });
+}
+
+for (const sentinel of [":", "printf '%s' ':e5t26f-capture-en'"]) {
+  test(`missing/truncated capture sentinel refuses even when cat succeeds (${sentinel})`, (t) => {
+    const f = fixture(t, { mutate: text => text.replace("printf '%s' ':e5t26f-capture-end:'", sentinel) });
+    const result = f.invoke(`if e5_capture ${q(`${f.dir}/child/wchan`)} 128; then exit 17; fi\n[ -z "$e5_text" ]`);
+    assert.equal(result.status, 0, result.stderr);
+  });
+}
+
+test("cat failure cannot turn partial data into a successful capture", (t) => {
+  const f = fixture(t, { catBody: () => '/bin/cat "$@"\nexit 23' });
+  const result = f.invoke(`if e5_capture ${q(`${f.dir}/child/wchan`)} 128; then exit 17; fi\n[ -z "$e5_text" ]`);
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test("missing/unreadable-as-file captures fail closed using real cat errors", (t) => {
+  const f = fixture(t);
+  for (const file of [`${f.dir}/missing`, `${f.dir}/child`]) {
+    const result = f.invoke(`if e5_capture ${q(file)} 128; then exit 17; fi\n[ -z "$e5_text" ]`);
+    assert.equal(result.status, 0);
+    assert.notEqual(result.stderr, "", "real cat must report its failed file read");
+  }
+});
+
+test("each actual capture subprocess has FD3 closed while parent feed descriptor stays open", (t) => {
+  const observation = playFixture(t, undefined, { catBody: () => `
+    if ( : >&3 ) 2>/dev/null; then printf 'reader inherited FD3\\n' >&2; exit 23; fi
+    exec /bin/cat "$@"
+  ` });
+  assert.equal(observation.result.status, 0, observation.result.stderr);
+  assert.equal(observation.pcm.length, 3840, "parent's actual descriptor must survive all captures");
+});
+
+for (const change of ["start", "pid", "parent", "exe", "exit"]) {
+  test(`identity ${change} change during capture refuses before feed`, (t) => {
+    const changedStat = change === "start" ? { start: "778" } : change === "pid" ? { pid: "999999" } : { parent: "999999" };
+    const observation = playFixture(t, d => `
+      ${stat(d, changedStat).replace(q(`${d}/child/stat`), q(`${d}/changed-stat`))}
+      : > ${q(`${d}/attack`)}
+    `, { catBody: d => `
+      if [ "$1" = ${q(`${d}/child/io`)} ] && [ -e ${q(`${d}/attack`)} ]; then
+        ${change === "exe" ? `/bin/rm ${q(`${d}/child/exe`)}; /bin/ln -s ${q(`${d}/foreign`)} ${q(`${d}/child/exe`)}` : change === "exit" ? `/bin/rm ${q(`${d}/child/stat`)}` : `/bin/cp ${q(`${d}/changed-stat`)} ${q(`${d}/child/stat`)}`}
+      fi
+      exec /bin/cat "$@"
+    ` });
+    requireRefusal(observation);
+    assert.match(observation.result.stdout, /post-identity:identity/);
+  });
+}
+
+test("readable optional io disappearing during cat is not silently unavailable", (t) => {
+  const observation = playFixture(t, d => `: > ${q(`${d}/attack`)}`, { catBody: d => `
+    if [ "$1" = ${q(`${d}/child/io`)} ] && [ -e ${q(`${d}/attack`)} ]; then /bin/rm "$1"; fi
+    exec /bin/cat "$@"
+  ` });
+  requireRefusal(observation);
+  assert.notEqual(observation.result.stderr, "");
+});
+
+test("in-memory io reconstruction preserves each original byte in |line serialization", (t) => {
+  const ioText = "rchar:\t100\nwchar: 89\nsyscr:\t19 \nsyscw: 5\nread_bytes: 0\nwrite_bytes: 4096\ncancelled_write_bytes: 0\n";
+  const f = fixture(t, { ioText });
+  const result = f.invoke(`e5_pid=123 e5_parent=$$\n${stat(f.dir)}\n${status(f.dir)}\ne5_observe || exit 17\nprintf '%s' "$e5_seen"`);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout, `123/777/4/0100000/5/0100002/${ioText.slice(0, -1).split("\n").map(line => `|${line}`).join("")}`);
+});
+
+test("PCM ordinary timestamp/availability lines and delimiter retain required guards", (t) => {
+  const observation = playFixture(t, d => status(d, { extra: "trigger_time: 0.000000\\ntstamp: 0.000000\\ndelay: 0\\navail: 960\\navail_max: 960\\n-----\\n" }));
+  assert.equal(observation.result.status, 0, observation.result.stderr);
+  assert.equal(observation.pcm.length, 3840);
+});
+
+test("zero-pointer guard sabotage in a temporary helper is killed by the same refusal oracle", (t) => {
+  requireRefusal(playFixture(t, d => status(d, { hw: "480" })));
+  const mutant = playFixture(t, d => status(d, { hw: "480" }), { mutate: text => {
+    assert.equal(text.split('[ "$e5_hw_ptr" = 0 ]').length, 2);
+    return text.replace('[ "$e5_hw_ptr" = 0 ]', ':');
+  } });
+  assert.equal(mutant.result.status, 0, "the sabotage must actually remove the live pointer refusal");
+  assert.equal(mutant.pcm.length, 3840);
+  assert.throws(() => requireRefusal(mutant), assert.AssertionError, "ordinary rejection test must fail against the mutant");
+});
+
+test("capture/parser source uses fixed cat and memory parsing, never read/eval/heredoc", () => {
+  const buffered = source.slice(source.indexOf("e5_capture() {"), source.indexOf("e5_print_observation() {"));
+  const commands = buffered.split("\n").filter(line => !line.trimStart().startsWith("#")).join("\n");
+  assert.match(commands, /exec 3>&-\n        \/bin\/busybox cat "\$1" \|\| exit 1/);
+  assert.doesNotMatch(commands, /\b(?:read|eval)[ \t]+|<<|set --/);
+  assert.doesNotMatch(source, /E5_T26F_|MOCK|fixturePath/);
 });

@@ -1175,6 +1175,14 @@ verify-E5-T26f-compile-queue-observation:
 	node --test tools/verify/e5-t26f-browser-compile-queue.test.mjs tools/verify/e5-t26f-compile-queue-observation.test.mjs tools/verify/e5-t26f-discovery-observation.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs web/tests/e4-t32-worker-protocol.test.mjs
 	@echo "F compile queue observation plumbing: OK; browser timing and F acceptance remain separate"
 
+.PHONY: verify-E5-T26f-buffered-proc
+verify-E5-T26f-buffered-proc:
+	# Guest fixture and recording harness only; this is not F timing acceptance.
+	/bin/sh -n tools/guest/e5-t26f-resident-aplay.sh
+	node --check tools/verify/e5-t26f-browser-buffered-proc.mjs
+	node --test tools/verify/e5-t26f-resident-aplay.test.mjs tools/verify/e5-t26f-browser-buffered-proc.test.mjs tools/verify/e5-t26f-resident-image.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs tools/verify/e5-t26f-compile-queue-observation.test.mjs tools/verify/e5-t26f-physical-typing.test.mjs
+	@echo "F buffered-proc fixture gates: OK; new image and cold-browser evidence remain required"
+
 .PHONY: verify-E5-T26l verify-E5-T26l-runtime
 verify-E5-T26l-runtime:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm

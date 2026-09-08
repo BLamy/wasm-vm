@@ -14,25 +14,107 @@ e5_fail() {
     return 1
 }
 
-e5_observe() {
-    e5_reason=identity
+# Fixed kernel proc text only. A suffix prevents command substitution from
+# discarding trailing newlines; never treat partial output from failed cat as data.
+e5_capture() {
+    e5_end=':e5t26f-capture-end:'
+    e5_text=$(
+        exec 3>&-
+        /bin/busybox cat "$1" || exit 1
+        printf '%s' ':e5t26f-capture-end:'
+    ) || { e5_text=; return 1; }
+    case $e5_text in *"$e5_end") ;; *) e5_text=; return 1;; esac
+    e5_text=${e5_text%"$e5_end"}
+    case $e5_text in *"$e5_end"*) e5_text=; return 1;; esac
+    [ "${#e5_text}" -le "$2" ] || { e5_text=; return 1; }
+}
+
+# Consume newline-terminated records and whitespace-separated words in RAM.
+# No read builtin, pipeline, eval, unquoted expansion, or pathname tokenization.
+e5_next_line() {
+    e5_nl='
+'
+    case $e5_text in
+        *"$e5_nl"*) e5_line=${e5_text%%"$e5_nl"*}; e5_text=${e5_text#*"$e5_nl"};;
+        *) return 1;;
+    esac
+}
+
+e5_next_word() {
+    while :; do
+        case $e5_words in ' '*|'	'*) e5_words=${e5_words#?};; *) break;; esac
+    done
+    [ -n "$e5_words" ] || return 1
+    e5_word=${e5_words%%[ 	]*}
+    e5_words=${e5_words#"$e5_word"}
+}
+
+e5_pair() {
+    case $e5_line in *:*) ;; *) return 1;; esac
+    e5_words=${e5_line%%:*}
+    e5_next_word || return 1
+    e5_key=$e5_word
+    case $e5_key in *[!a-zA-Z0-9_]*) return 1;; esac
+    if e5_next_word; then return 1; fi
+    e5_words=${e5_line#*:}
+    e5_next_word || return 1
+    e5_value=$e5_word
+    if e5_next_word; then return 1; fi
+}
+
+e5_identity() {
     case ${e5_pid:-} in ''|0|*[!0-9]*) return 1;; esac
     [ "${e5_parent:-}" = "$$" ] || return 1
     [ "/proc/$e5_pid/exe" -ef /usr/bin/aplay ] || return 1
-    # Require the exact comm of the executable we launched, so field 22 cannot
-    # be shifted by spaces/parentheses in a foreign comm. read/set are builtins.
-    IFS=' ' read -r e5_s_pid e5_s_comm e5_s_state e5_s_ppid \
-        e5_s_pgrp e5_s_session e5_s_tty e5_s_tpgid e5_s_flags \
-        e5_s_minflt e5_s_cminflt e5_s_majflt e5_s_cmajflt e5_s_utime \
-        e5_s_stime e5_s_cutime e5_s_cstime e5_s_priority e5_s_nice \
-        e5_s_threads e5_s_itreal e5_s_start e5_s_rest \
-        < "/proc/$e5_pid/stat" || return 1
+    e5_capture "/proc/$e5_pid/stat" 4096 || return 1
+    e5_next_line && [ -z "$e5_text" ] || return 1
+    e5_words=$e5_line e5_stat_fields=0
+    while e5_next_word; do
+        e5_stat_fields=$((e5_stat_fields + 1))
+        case $e5_stat_fields in
+            1) e5_s_pid=$e5_word;;
+            2) e5_s_comm=$e5_word; continue;;
+            3) e5_s_state=$e5_word; continue;;
+            4) e5_s_ppid=$e5_word;;
+            22) e5_s_start=$e5_word;;
+        esac
+        # Linux 6.6 stat has 52 fields, numeric except comm/state. Exact comm
+        # and count refuse embedded spaces or extra tokens shifting field 22.
+        e5_number=${e5_word#-}
+        case $e5_number in ''|*[!0-9]*) return 1;; esac
+    done
+    [ "$e5_stat_fields" -eq 52 ] || return 1
     [ "$e5_s_pid" = "$e5_pid" ] && [ "$e5_s_comm" = '(aplay)' ] &&
         [ "$e5_s_state" = S ] && [ "$e5_s_ppid" = "$$" ] || return 1
     case $e5_s_start in ''|*[!0-9]*) return 1;; esac
-    # proc wchan has no trailing newline: read's EOF status is not its value.
-    e5_wchan=
-    IFS= read -r e5_wchan < "/proc/$e5_pid/wchan"
+    [ "/proc/$e5_pid/exe" -ef /usr/bin/aplay ] || return 1
+}
+
+e5_fd_flags() {
+    e5_capture "$1" 4096 || return 1
+    e5_flags= e5_flags_keys='|'
+    while [ -n "$e5_text" ]; do
+        e5_next_line && e5_pair || return 1
+        case $e5_flags_keys in *"|$e5_key|"*) return 1;; esac
+        e5_flags_keys="$e5_flags_keys$e5_key|"
+        case $e5_value in ''|*[!0-9]*) return 1;; esac
+        if [ "$e5_key" = flags ]; then
+            case $e5_value in *[!0-7]*) return 1;; esac
+            # Kernel file flags are u32; bound before shell octal arithmetic.
+            [ "${#e5_value}" -le 11 ] || return 1
+            e5_flags=$e5_value
+        fi
+    done
+    [ -n "$e5_flags" ]
+}
+
+e5_observe() {
+    e5_reason=identity
+    e5_identity || return 1
+    e5_identity_start=$e5_s_start
+    # wchan legitimately ends at EOF without a newline. Any extra byte refuses.
+    e5_capture "/proc/$e5_pid/wchan" 128 || return 1
+    e5_wchan=$e5_text
     [ "$e5_wchan" = pipe_read ] || { e5_reason=not-pipe-read; return 1; }
 
     e5_reason=fifo
@@ -42,10 +124,8 @@ e5_observe() {
         if [ "$e5_fd" -ef /tmp/e5t26f-resident.fifo ]; then
             e5_fifo_count=$((e5_fifo_count + 1))
             e5_fifo_fd=${e5_fd##*/}
-            e5_fifo_flags=
-            while IFS=' 	' read -r e5_key e5_value e5_extra; do
-                [ "$e5_key" != flags: ] || e5_fifo_flags=$e5_value
-            done < "/proc/$e5_pid/fdinfo/$e5_fifo_fd" || return 1
+            e5_fd_flags "/proc/$e5_pid/fdinfo/$e5_fifo_fd" || return 1
+            e5_fifo_flags=$e5_flags
             case $e5_fifo_flags in ''|*[!0-7]*) return 1;; esac
             [ "$((0$e5_fifo_flags & 3))" -eq 0 ] || return 1
         fi
@@ -63,23 +143,29 @@ e5_observe() {
         fi
     done
     [ "$e5_parent_count" -eq 1 ] || return 1
-    while IFS=' 	' read -r e5_key e5_value e5_extra; do
-        [ "$e5_key" != flags: ] || e5_parent_flags=$e5_value
-    done < "/proc/$$/fdinfo/3" || return 1
+    e5_fd_flags "/proc/$$/fdinfo/3" || return 1
+    e5_parent_flags=$e5_flags
     case $e5_parent_flags in ''|*[!0-7]*) return 1;; esac
     [ "$((0$e5_parent_flags & 3))" -eq 2 ] || return 1
 
     e5_reason=pcm
     [ "$e5_pcm_count" -eq 1 ] || return 1
     e5_pcm_state= e5_pcm_owner= e5_hw_ptr= e5_appl_ptr= e5_pcm_fields=0
-    while IFS=' :	' read -r e5_key e5_value e5_extra; do
+    e5_capture /proc/asound/card0/pcm0p/sub0/status 4096 || return 1
+    e5_pcm_keys='|'
+    while [ -n "$e5_text" ]; do
+        e5_next_line || return 1
+        [ "$e5_line" != '-----' ] || continue
+        e5_pair || return 1
+        case $e5_pcm_keys in *"|$e5_key|"*) return 1;; esac
+        e5_pcm_keys="$e5_pcm_keys$e5_key|"
         case $e5_key in
             state) e5_pcm_state=$e5_value; e5_pcm_fields=$((e5_pcm_fields + 1));;
             owner_pid) e5_pcm_owner=$e5_value; e5_pcm_fields=$((e5_pcm_fields + 1));;
             hw_ptr) e5_hw_ptr=$e5_value; e5_pcm_fields=$((e5_pcm_fields + 1));;
             appl_ptr) e5_appl_ptr=$e5_value; e5_pcm_fields=$((e5_pcm_fields + 1));;
         esac
-    done < /proc/asound/card0/pcm0p/sub0/status || return 1
+    done
     [ "$e5_pcm_fields" -eq 4 ] && [ "$e5_pcm_state" = PREPARED ] &&
         [ "$e5_pcm_owner" = "$e5_pid" ] && [ "$e5_hw_ptr" = 0 ] &&
         [ "$e5_appl_ptr" = 0 ] || return 1
@@ -88,11 +174,28 @@ e5_observe() {
     # values when present; do not require CONFIG_TASK_IO_ACCOUNTING to prepare.
     e5_io=unavailable
     if [ -r "/proc/$e5_pid/io" ]; then
-        e5_io=
-        while IFS= read -r e5_line; do e5_io="$e5_io|$e5_line"; done \
-            < "/proc/$e5_pid/io" || return 1
+        e5_capture "/proc/$e5_pid/io" 4096 || return 1
+        e5_io= e5_io_keys='|' e5_io_basic=0 e5_io_accounting=0
+        while [ -n "$e5_text" ]; do
+            e5_next_line && e5_pair || return 1
+            case $e5_io_keys in *"|$e5_key|"*) return 1;; esac
+            e5_io_keys="$e5_io_keys$e5_key|"
+            case $e5_value in ''|*[!0-9]*) return 1;; esac
+            case $e5_key in
+                rchar|wchar|syscr|syscw) e5_io_basic=$((e5_io_basic + 1));;
+                read_bytes|write_bytes|cancelled_write_bytes) e5_io_accounting=$((e5_io_accounting + 1));;
+                *) return 1;;
+            esac
+            e5_io="$e5_io|$e5_line"
+        done
         [ -n "$e5_io" ] || return 1
+        [ "$e5_io_basic" -eq 4 ] || return 1
+        [ "$e5_io_accounting" -eq 0 ] || [ "$e5_io_accounting" -eq 3 ] || return 1
     fi
+    # Captures launch short-lived readers. Do not combine metadata from a child
+    # that exited, changed executable/parent, or reused this PID while they ran.
+    e5_reason=identity
+    e5_identity && [ "$e5_s_start" = "$e5_identity_start" ] || return 1
     e5_seen="$e5_pid/$e5_s_start/$e5_fifo_fd/$e5_fifo_flags/$e5_pcm_fd/$e5_parent_flags/$e5_io"
     e5_reason=
 }
@@ -113,7 +216,7 @@ e5_prepare() {
         e5_fail occupied; return 1;
     }
     e5_writer_open=0 e5_armed=0 e5_parent=$$
-    # All external work is before the checkpoint. Escapes avoid shell NUL loss.
+    # Payload construction is before the checkpoint. Escapes avoid shell NUL loss.
     # 960 repetitions * four decoded bytes = 3840 finite S16 stereo PCM bytes.
     e5_pcm=$(yes '\001\000\377\177' | head -n 960 | tr -d '\n')
     [ "${#e5_pcm}" -eq 15360 ] || { e5_fail payload; return 1; }
