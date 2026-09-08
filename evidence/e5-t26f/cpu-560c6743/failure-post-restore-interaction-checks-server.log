@@ -1,0 +1,13 @@
+127.0.0.1 - - [07/Sep/2026 22:44:01] "GET /desktop-cursor.html HTTP/1.1" 200 -
+127.0.0.1 - - [07/Sep/2026 22:44:01] "GET /e5t18b-desktop/manifest.json HTTP/1.1" 200 -
+127.0.0.1 - - [07/Sep/2026 22:44:02] "GET /desktop-cursor.html?testHooks=1&jit=1&quantum=500000&imageManifestUrl=.%2Fe5t18b-desktop%2Fmanifest.json&baseUrl=.%2Fe5t18b-desktop%2F&imageSha256=5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550&manifestSha256=b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592&autoRestore=1 HTTP/1.1" 200 -
+127.0.0.1 - - [07/Sep/2026 22:44:02] "GET /desktop-terminal.js HTTP/1.1" 304 -
+127.0.0.1 - - [07/Sep/2026 22:44:02] "GET /desktop-agent-bridge.js HTTP/1.1" 304 -
+127.0.0.1 - - [07/Sep/2026 22:44:02] "GET /desktop-restore.js HTTP/1.1" 304 -
+127.0.0.1 - - [07/Sep/2026 22:44:02] "GET /loader.js HTTP/1.1" 304 -
+127.0.0.1 - - [07/Sep/2026 22:44:02] code 404, message File not found
+127.0.0.1 - - [07/Sep/2026 22:44:02] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [07/Sep/2026 22:44:02] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 304 -
+127.0.0.1 - - [07/Sep/2026 22:44:02] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 304 -
+127.0.0.1 - - [07/Sep/2026 22:44:07] code 404, message File not found
+127.0.0.1 - - [07/Sep/2026 22:44:07] "GET /favicon.ico HTTP/1.1" 404 -

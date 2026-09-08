@@ -72,7 +72,7 @@ function fixture() {
   let nextTimer = 0;
   const sandbox = {
     assert, Date: FixtureDate, startedAt: FixtureDate.now() - 5_000, milestones,
-    path, out: "/virtual/evidence", head: "719c6212",
+    path, URL, sha256, out: "/virtual/evidence", head: "719c6212",
     imageSha256: "image-digest", manifestSha256: "manifest-digest", serverOutput: "server log",
     jsonReplacer: (_key, value) => typeof value === "bigint" ? String(value) : value,
     console: { error: (value) => logs.push(JSON.parse(value.slice("[e5-t26f] ".length))) },
@@ -98,6 +98,9 @@ function fixture() {
     window: {},
     diagnostic: null,
     diagnosticCheckpoint: null,
+    browser: null,
+    context: null,
+    attachWorkerProfiler: async () => { throw Error("unexpected profiler attachment"); },
     page: { url: () => "http://local/test" },
   };
   const context = vm.createContext(sandbox);
@@ -105,6 +108,7 @@ function fixture() {
     ({ phaseProgress, sampleProgress, startProgressSampling, stopProgressSampling,
        remainingInteractionMs, waitForRestoredCursor, captureFailure,
        waitForReadyAndRestore, auditRestoreCoherence,
+       workerProfilerHost, startCpuProfile, stopCpuProfile,
        installInteractionLatencyProbe, commandMarkerReady, startInteractionLatencyProbe, stopInteractionLatencyProbe,
        state: () => ({ lastPhase, lastProgressSample, progressProbe }) })
   `, context);
@@ -493,6 +497,229 @@ test("latency opt-in is exactly 1, reuse-only, and never changes the command or 
   const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", selected);
   assert.equal(run.acceptance, false);
   assert.equal(run.diagnostic.latency, true);
+});
+
+test("CPU profiling requires exact 1 and reuse, independently of latency and unchanged input", () => {
+  for (const env of [{}, { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: "create" }]) {
+    assert.throws(() => selectDiagnosticCommand({ ...env, E5_T26F_DIAGNOSTIC_CPU: "1" }), /CPU profiling requires reuse mode/);
+  }
+  for (const flag of ["", "0", "true", "01", "2", "1 ", 1]) {
+    assert.throws(() => selectDiagnosticCommand({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_CPU: flag }), /CPU flag must be exactly 1/);
+  }
+  for (const cpu of [false, true]) for (const latency of [false, true]) {
+    const selected = selectDiagnosticCommand({ ...reuseCommandEnv,
+      ...(cpu ? { E5_T26F_DIAGNOSTIC_CPU: "1" } : {}),
+      ...(latency ? { E5_T26F_DIAGNOSTIC_LATENCY: "1" } : {}),
+      E5_T26F_DIAGNOSTIC_KEY_DELAY_MS: "5" });
+    assert.equal(selected.diagnostic.cpu, cpu);
+    assert.equal(selected.diagnostic.latency, latency);
+    assert.equal(selected.postRestoreCommand, "sh /tmp/a");
+    assert.equal(selected.postRestoreKeyDelayMs, 5);
+    const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", selected);
+    assert.equal(run.acceptance, false);
+    assert.equal(run.diagnostic.cpu, cpu);
+  }
+});
+
+test("default acceptance, create, and latency-only reuse never attach a CPU profiler", async () => {
+  const gate = extractBetween("  if (diagnostic?.cpu) await startCpuProfile", "  if (diagnostic?.latency)");
+  for (const env of [{}, { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: "create" }, reuseCommandEnv,
+    { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_LATENCY: "1" }]) {
+    const f = fixture();
+    Object.assign(f.sandbox, selectDiagnosticCommand(env));
+    f.sandbox.browserIdentity = {};
+    f.sandbox.postRestoreStart = 1_000;
+    await vm.runInContext(`(async () => { ${gate} })()`, f.context);
+    assert.equal(f.sandbox.postRestoreKeyDelayMs, 0);
+    assert.equal(f.milestones.cpuProfile, undefined);
+    assert.equal(f.writes.length, 0);
+    assert.equal(f.timers.size, 0);
+  }
+});
+
+test("CPU host adapter uses the owned page session only when Browser is absent", async () => {
+  const f = fixture();
+  const session = {};
+  let calls = 0;
+  f.sandbox.context = { newCDPSession: async (page) => {
+    assert.equal(page, f.sandbox.page);
+    calls += 1;
+    return session;
+  } };
+  const adapter = f.api.workerProfilerHost({ version: "Chrome/152.0.1" });
+  assert.equal(adapter.version(), "Chrome/152.0.1");
+  assert.equal(await adapter.newBrowserCDPSession(), session);
+  assert.equal(calls, 1);
+  const browser = { version: () => "normal browser" };
+  f.sandbox.browser = browser;
+  assert.equal(f.api.workerProfilerHost({ version: "ignored" }), browser);
+  assert.equal(calls, 1, "normal Browser must not create a page session");
+});
+
+function cpuFixture() {
+  const f = fixture();
+  const events = [];
+  const url = "http://local/linux-worker.js";
+  const identity = { version: "Chrome/152.0.1" };
+  const recording = { url, intervalUs: 1_000, browser: identity.version,
+    profile: { samples: [1, 1], timeDeltas: [1_000, 1_000], nodes: [{ id: 1 }] } };
+  const profiler = {
+    start: async () => { events.push("start"); },
+    stop: async () => { events.push("stop"); return recording; },
+    close: async () => { events.push("close"); },
+  };
+  f.clock.now = 1_250;
+  f.sandbox.head = "a".repeat(40);
+  f.sandbox.postRestoreStart = 1_000;
+  f.sandbox.diagnostic = { mode: "reuse", cpu: true, latency: false };
+  f.milestones.run = { acceptance: false, binding: { runtimeSha256: "b".repeat(64) } };
+  f.milestones.normalRestore = { result: { completedAt: 1_000 } };
+  f.sandbox.page.url = () => "http://local/desktop-terminal.html?diagnostic=1";
+  f.sandbox.page.evaluate = async (fn, argument) => fn(argument);
+  f.sandbox.attachWorkerProfiler = async (host, workerUrl) => {
+    assert.equal(host.version(), identity.version);
+    assert.equal(workerUrl, url);
+    events.push("attach");
+    return profiler;
+  };
+  return { ...f, events, profiler, recording, identity };
+}
+
+test("CPU artifact retains exact worker, head/runtime binding, original T0 and byte digest; closes once", async () => {
+  const f = cpuFixture();
+  await f.api.startCpuProfile(f.identity, 1_000);
+  assert.equal(f.milestones.cpuProfile.startedAt, 1_250);
+  assert.equal(f.milestones.cpuProfile.status, "recording");
+  f.milestones.postRestoreEnd = 2_999;
+  await f.api.stopCpuProfile("interaction-observed");
+  const saved = f.writes.find(({ file }) => file.endsWith("/interaction-cpu.json"));
+  const record = JSON.parse(saved.value);
+  assert.equal(record.head, f.sandbox.head);
+  assert.equal(record.runtimeSha256, f.milestones.run.binding.runtimeSha256);
+  assert.equal(record.diagnostic, true);
+  assert.equal(record.acceptance, false);
+  assert.equal(record.reason, "interaction-observed");
+  assert.equal(record.interaction.restoredAt, 1_000);
+  assert.equal(record.interaction.startedAt, 1_250);
+  assert.equal(record.postRestoreEnd, 2_999);
+  for (const key of ["url", "browser", "intervalUs", "profile"]) assert.deepEqual(record[key], f.recording[key]);
+  assert.equal(f.milestones.cpuProfile.sha256, sha256(saved.value));
+  assert.equal(f.milestones.cpuProfile.samples, 2);
+  assert.equal(f.milestones.cpuProfile.path, saved.file);
+  assert.equal(f.milestones.cpuProfile.status, "saved");
+  assert.equal(f.sandbox.postRestoreStart, 1_000);
+  await f.api.stopCpuProfile("cleanup-after-failure");
+  assert.deepEqual(f.events, ["attach", "start", "stop", "close"]);
+  assert.equal(f.writes.length, 1);
+  assert.equal(f.timers.size, 0);
+});
+
+test("CPU stop/write failures are bounded metadata, preserve T0, and still attempt close once", async () => {
+  for (const failureAt of ["stop", "write"]) {
+    const f = cpuFixture();
+    await f.api.startCpuProfile(f.identity, 1_000);
+    const failure = `${failureAt}:` + "x".repeat(300);
+    if (failureAt === "stop") f.profiler.stop = async () => { throw Error(failure); };
+    else f.sandbox.writeFile = async () => { throw Error(failure); };
+    f.profiler.close = async () => { f.events.push("close"); throw Error("closed:" + "y".repeat(300)); };
+    await f.api.stopCpuProfile("cleanup-after-failure");
+    await f.api.stopCpuProfile("again");
+    assert.equal(f.milestones.cpuProfile.status, "error");
+    assert.equal(f.milestones.cpuProfile.error, failure.slice(0, 240));
+    assert.equal(f.milestones.cpuProfile.closeError.length, 240);
+    assert.equal(f.milestones.cpuProfile.restoredAt, 1_000);
+    assert.equal(f.milestones.cpuProfile.sha256, undefined);
+    assert.equal(f.sandbox.postRestoreStart, 1_000);
+    assert.equal(f.events.filter((event) => event === "close").length, 1);
+    assert.equal(f.timers.size, 0);
+  }
+});
+
+test("CPU setup failure is captured before finally collection without replacing original error or T0", async () => {
+  const start = source.lastIndexOf("} catch (error) {\n  const phase =");
+  const end = source.indexOf("  await context?.close()", start);
+  assert.ok(start > 0 && end > start);
+  for (const failureAt of ["attach", "start"]) {
+    const f = cpuFixture();
+    const original = new Error(`profiler ${failureAt} failed`);
+    if (failureAt === "attach") f.sandbox.attachWorkerProfiler = async () => { throw original; };
+    else f.profiler.start = async () => { throw original; };
+    f.profiler.stop = async () => {
+      assert.equal(JSON.parse(f.writes[0].value).error.message, original.message);
+      f.events.push("stop");
+      throw Error("profiler was not started");
+    };
+    f.sandbox.page.evaluate = async () => {
+      assert.equal(JSON.parse(f.writes[0].value).error.message, original.message);
+      throw Error("browser unavailable");
+    };
+    f.sandbox.browserIdentity = f.identity;
+    await assert.rejects(vm.runInContext(`(async () => {
+      try { await startCpuProfile(browserIdentity, postRestoreStart);
+      ${source.slice(start, end)} }
+    })()`, f.context), (error) => error === original);
+    const initial = JSON.parse(f.writes[0].value);
+    assert.equal(initial.milestones.cpuProfile.restoredAt, 1_000);
+    assert.equal(initial.milestones.normalRestore.result.completedAt, 1_000);
+    assert.equal(initial.milestones.run.binding.runtimeSha256, "b".repeat(64));
+    assert.equal(f.sandbox.postRestoreStart, 1_000);
+    assert.equal(f.events.filter((event) => event === "close").length, failureAt === "start" ? 1 : 0);
+  }
+});
+
+test("CPU collection follows frozen PCM/end and precedes the unchanged cap even when collection stalls", { timeout: 2_000 }, async () => {
+  const body = extractBetween("  const postPcmAtCompletion =", '  phaseProgress("post-restore:interaction-checks", "done");');
+  for (const completedAt of [3_000, 3_000.01]) {
+    const f = cpuFixture();
+    await f.api.startCpuProfile(f.identity, 1_000);
+    f.clock.now = completedAt;
+    const pcm = { writtenFrames: 480, nonSilentFrames: 480, maxAbs: 0.125 };
+    const audio = { pcm: () => pcm, policy: { state: "unlocked" }, sink: { renderedFrames: 480, context: { state: "running" } } };
+    f.sandbox.window.__desktopTerminal = {
+      audio: () => audio, state: () => ({ pointerFrames: 2, keyboardFrames: 20 }), pointerState: () => ({ heldButtons: [] }),
+    };
+    f.sandbox.window.__desktopController = { audioOutputReady: async () => true };
+    Object.assign(f.sandbox, { postAudioBefore: { writeIndex: 0, renderedFrames: 0 }, focusBefore: 1,
+      postAudioCommand: { terminalMarkerSeen: true, visualDiffPixels: 2_000 } });
+    f.sandbox.page.waitForFunction = async (fn, argument) => assert.equal(fn(argument), true);
+    const held = deferred();
+    const stopping = deferred();
+    f.profiler.stop = async () => {
+      assert.equal(f.milestones.postRestorePcmAtCompletion.observedAt, completedAt);
+      assert.equal(f.milestones.postRestorePcmAtCompletion.pcm.nonSilentFrames, 480);
+      assert.equal(f.milestones.postRestoreAudioAfter.guestAttached, true);
+      assert.equal(f.milestones.postRestoreEnd, completedAt);
+      f.clock.now += 20_000;
+      stopping.resolve();
+      await held.promise;
+      return f.recording;
+    };
+    let settled = false;
+    const running = vm.runInContext(`(async () => { ${body} })()`, f.context)
+      .then(() => { settled = true; return null; }, (error) => { settled = true; return error; });
+    try {
+      await Promise.race([stopping.promise, running.then(() => assert.fail("CPU stop was not reached"))]);
+      assert.equal(settled, false, "the original cap must run after collection");
+      await f.api.stopCpuProfile("duplicate-cleanup");
+      assert.equal(f.writes.length, 0, "a held collection must not be reissued");
+      held.resolve();
+      const failure = await running;
+      if (completedAt === 3_000) assert.equal(failure, null, "collection time must not replace frozen end");
+      else {
+        assert.match(failure?.message || "", /interaction exceeded 2 seconds/);
+        const saved = JSON.parse(f.writes.find(({ file }) => file.endsWith("/post-restore.json")).value);
+        assert.equal(saved.milestones.postRestoreEnd, completedAt);
+        assert.equal(saved.milestones.cpuProfile.restoredAt, 1_000);
+        assert.equal(saved.milestones.cpuProfile.status, "saved");
+      }
+      assert.equal(f.milestones.postRestoreEnd, completedAt);
+      assert.equal(f.sandbox.postRestoreStart, 1_000);
+      assert.equal(f.events.filter((event) => event === "close").length, 1);
+    } finally {
+      held.resolve();
+      await running;
+    }
+  }
 });
 
 async function flushMicrotasks() {

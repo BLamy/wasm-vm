@@ -40,6 +40,19 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-07 — worker — exact-runtime CPU capture
+
+At `560c67431d0dcbae24fef7fda4af84df887d0751`, the diagnostic runner reuses the
+existing bounded CDP worker profiler, authenticated by a real synthetic-worker
+adapter test. One isolated replay records 3244 CPU samples from the actual
+release module; names are recovered offline only after all eleven executable
+sections compare equal. It still fails timing at 4824.625 ms while actual
+playback completes with 1440 fresh non-silent frames. The sample profile shows
+mixed execution/dispatch costs, including `try_jit_block` at 27.926% inclusive,
+not a measured fix or a new acceptance result. Full commands, code/symbol
+authentication, raw profile, summary, and inspected screenshot digests are in
+`evidence/e5-t26f/cpu-560c6743/README.md`. No runtime change or waiver occurred.
+
 ### 2026-09-07 — worker — measure JIT coverage without runtime changes
 
 The 49-test harness extension at `43f4cac1ca87af3645a24d2eed12246e84c6593a`
