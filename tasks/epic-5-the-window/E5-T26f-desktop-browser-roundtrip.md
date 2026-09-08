@@ -40,6 +40,26 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — coordinator — bounded buffered-proc hypothesis
+
+PR366 retains an independently reviewed native BusyBox read observation at
+`7f15d76646a9f94e9c089b53bb7202fb1278a18c`. Its arm64 probe records444 one-byte
+positive reads plus2 EOF reads for three proc files; whole-file `cat` records
+one data read plus one EOF per file. This is not a RISC-V/browser syscall or
+speedup claim. The reviewed raw inputs and limitations are indexed in
+`evidence/e5-t26f/resident-read-probe/README.md`.
+
+Keep F active for one guest-fixture change: buffer the existing proc text
+reads with explicit BusyBox `cat`, parse in memory, and preserve the actual
+player identity, FD/PCM guards, arming, finite PCM feed, wait, and three output
+calls. Daybreak's preflight is
+`evidence/e5-t26f/resident-read-verifier/buffered-read-preflight.md`.
+No runtime scheduling, clock, JIT, cache, pacing, restore timestamp, or2000-ms
+deadline change is authorized by this hypothesis. Test refusal paths first;
+then build a new helper-pinned image and chunks and create a NEW authenticated
+cold checkpoint. Retain every failed run. Do not reuse or rebind the old
+2ace1353 seal, and do not infer F verification from diagnostic success.
+
 ### 2026-09-08 — worker — exact queue observation closes; F timing still failed
 
 PR365 frozen runtime `2ace135363cf0fa3cf7ba978fe6810e564eecc03` adds only
