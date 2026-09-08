@@ -402,6 +402,18 @@ export class WasmLinux {
         return takeFromExternrefTable0(ret[0]);
     }
     /**
+     * Read-only state: does not sample the clock or consume jump notifications. mtime is a decimal
+     * string so worker structured cloning cannot round a guest u64 through JavaScript Number.
+     * @returns {any}
+     */
+    guestClockState() {
+        const ret = wasm.wasmlinux_guestClockState(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * E3-T10: whether the overlay has unpersisted (dirty) blocks. In persistent writer mode these
      * belong to a virtio WRITE that has not been acknowledged; the quota dialog uses this to say
      * Retry may still complete it, while Continue returns IOERR.
@@ -750,6 +762,15 @@ export class WasmLinux {
         return ret;
     }
     /**
+     * Explicit loader pause/resume only. Background gaps keep the core catch-up policy.
+     */
+    rebaseGuestClock() {
+        const ret = wasm.wasmlinux_rebaseGuestClock(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * Permanently relinquish this machine's snapshot-writer role. Web Locks releases are dynamic:
      * another tab may acquire the same namespace while this controller is still alive, so the
      * construction-time read-only bit alone is not a sufficient fence for a stale controller. New
@@ -1002,6 +1023,19 @@ export class WasmLinux {
      */
     setFileDownloadReady(ready) {
         const ret = wasm.wasmlinux_setFileDownloadReady(this.__wbg_ptr, ready);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * E5-T26i: opt in to realm-monotonic guest time, or retain the deterministic ICount oracle.
+     * Unsupported labels and unavailable performance sources refuse before any clock mutation.
+     * @param {string} mode
+     */
+    setGuestClock(mode) {
+        const ptr0 = passStringToWasm0(mode, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_setGuestClock(this.__wbg_ptr, ptr0, len0);
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }

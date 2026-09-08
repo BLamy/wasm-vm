@@ -127,6 +127,11 @@ export class WasmLinux {
      */
     getProfile(): any;
     /**
+     * Read-only state: does not sample the clock or consume jump notifications. mtime is a decimal
+     * string so worker structured cloning cannot round a guest u64 through JavaScript Number.
+     */
+    guestClockState(): any;
+    /**
      * E3-T10: whether the overlay has unpersisted (dirty) blocks. In persistent writer mode these
      * belong to a virtio WRITE that has not been acknowledged; the quota dialog uses this to say
      * Retry may still complete it, while Continue returns IOERR.
@@ -254,6 +259,10 @@ export class WasmLinux {
      */
     readStoredSnapshot(): Promise<any>;
     /**
+     * Explicit loader pause/resume only. Background gaps keep the core catch-up policy.
+     */
+    rebaseGuestClock(): void;
+    /**
      * Permanently relinquish this machine's snapshot-writer role. Web Locks releases are dynamic:
      * another tab may acquire the same namespace while this controller is still alive, so the
      * construction-time read-only bit alone is not a sufficient fence for a stale controller. New
@@ -361,6 +370,11 @@ export class WasmLinux {
      */
     setFastInterpreter(on: boolean): void;
     setFileDownloadReady(ready: boolean): void;
+    /**
+     * E5-T26i: opt in to realm-monotonic guest time, or retain the deterministic ICount oracle.
+     * Unsupported labels and unavailable performance sources refuse before any clock mutation.
+     */
+    setGuestClock(mode: string): void;
     /**
      * E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
      * `performance.now()`-backed [`JsHostTimer`]; sampling is 1-in-~1024 retires + cold-path-only
@@ -651,6 +665,7 @@ export interface InitOutput {
     readonly wasmlinux_fileTransferStatus: (a: number) => [number, number, number, number];
     readonly wasmlinux_finishFileDownload: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_getProfile: (a: number) => [number, number, number];
+    readonly wasmlinux_guestClockState: (a: number) => [number, number, number];
     readonly wasmlinux_hasUnpersisted: (a: number) => [number, number, number];
     readonly wasmlinux_importStoredSnapshot: (a: number, b: number, c: number) => any;
     readonly wasmlinux_jitStats: (a: number) => [number, number, number];
@@ -670,6 +685,7 @@ export interface InitOutput {
     readonly wasmlinux_persistStats: (a: number) => [number, number, number];
     readonly wasmlinux_pushFileUpload: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
     readonly wasmlinux_readStoredSnapshot: (a: number) => any;
+    readonly wasmlinux_rebaseGuestClock: (a: number) => [number, number];
     readonly wasmlinux_relinquishSnapshotWriter: (a: number) => any;
     readonly wasmlinux_restoreDecisionCode: (a: number, b: number, c: number, d: number) => [number, number, number, number];
     readonly wasmlinux_restoreDesktopSnapshot: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
@@ -688,6 +704,7 @@ export interface InitOutput {
     readonly wasmlinux_setDynamicChaining: (a: number, b: number) => [number, number];
     readonly wasmlinux_setFastInterpreter: (a: number, b: number) => [number, number];
     readonly wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];
+    readonly wasmlinux_setGuestClock: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_stateDigest: (a: number) => [number, number, number, number];
