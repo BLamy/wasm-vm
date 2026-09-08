@@ -853,7 +853,7 @@ try {
   // Pin the real hardware device and two 10-ms periods: a short file must fill the start
   // threshold, not depend on ALSA's ignored drain return or an implicit larger buffer.
   const initialAudioBefore = await page.evaluate(() => window.__desktopTerminal.audio()?.pcm?.() || null);
-  const aplayCommand = "yes \"$(printf '\\001\\000\\377\\177')\"|head -c3840 >/tmp/p;printf 'aplay -v -Dhw:0,0 --period-size=480 --buffer-size=960 -f S16_LE -t raw -r48000 -c2 /tmp/p&&printf \"\\033[42me5t26f-aplay\\033[0m\\n\"' >/tmp/a;sh /tmp/a";
+  const aplayCommand = "yes \"$(printf '\\001\\000\\377\\177')\"|head -c3840 >/tmp/p;printf 'aplay -Dhw:0,0 --period-size=480 --buffer-size=960 -f S16_LE -t raw -r48000 -c2 /tmp/p&&printf \"\\033[42me5t26f-aplay\\033[0m\\n\"' >/tmp/a;sh /tmp/a";
   firstCommand = await typeCommand(aplayCommand, "e5t26f-aplay-ok");
   assert.equal(firstCommand.terminalMarkerSeen, true, "initial aplay was not guest-visibly completed");
   assert.ok(firstCommand.visualDiffPixels >= 2_000, "initial aplay marker did not change guest pixels");

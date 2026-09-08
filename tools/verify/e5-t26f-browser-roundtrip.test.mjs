@@ -23,6 +23,14 @@ const progress = extractBetween("let lastPhase =", "function guestPoint");
 const capture = extractBetween("async function captureFailure", "async function launchTerminal");
 const restoreHelpers = extractBetween("async function waitForReadyAndRestore", "\ntry {\n  phaseProgress(\"server:startup\")");
 
+test("cold playback fixture keeps errors and conditional success without verbose parameter dumping", () => {
+  const setup = source.match(/const aplayCommand = (.*);/)[1];
+  const command = vm.runInNewContext(setup);
+  assert.match(command, /aplay -Dhw:0,0 --period-size=480 --buffer-size=960/);
+  assert.match(command, /\/tmp\/p&&printf/);
+  assert.doesNotMatch(command, /aplay -[vq]|2>/);
+});
+
 function fixture() {
   const logs = [];
   const timers = new Map();
