@@ -21657,18 +21657,18 @@
         },
         {
           "date": "2026-09-08",
-          "commits": 28,
+          "commits": 29,
           "labels": [
+            "docs(verification): activate scoped SPP cache-context prerequisite",
             "test(browser): record post-inline-context desktop timing failure",
             "docs(verification): resume desktop proof after inline-cache verification",
-            "plan(e5-t26m): isolate interrupt-only inline-cache context changes",
-            "test(e5-t26f): close print-only screen and retain execution profile"
+            "plan(e5-t26m): isolate interrupt-only inline-cache context changes"
           ]
         }
       ],
       "firstActivity": "2026-09-07",
       "lastActivity": "2026-09-08",
-      "commitCount": 45
+      "commitCount": 46
     },
     {
       "id": "E5-T26g",
@@ -21932,7 +21932,7 @@
       "epicKey": "5",
       "title": "Retain browser inline-cache authority across SPP-only trap transitions",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T26m"
       ],
@@ -21943,19 +21943,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-08 — coordinator — activate source-reviewed SPP prerequisite\n\nF's new exact-runtime screen at657fb5a2 fails at3701.995ms; its separate existing\nlatency sampler first observes PCM at3156.655ms after a zero sample at3108.295ms.\nThe records do not identify a cause. Luna's source-only candidate and independent\nDaybreak preflight permit exactly bit8 while preserving current authority and\nguest SRET semantics; see\n`evidence/e5-t26f/spp-context-candidate/{worker-plan,critic-preflight}.md`.\nThe proposal patch is not executed evidence. F is parked on this named\nprerequisite so only one task is active. No semantic or performance claim\nprecedes the new actual-WASM/guest proof.",
+      "verificationLog": "### 2026-09-08 — worker submission — frozen guest proof and promoted source variant\n\nRuntime is frozen at `84fd5190832924a0f609b4a10d1bfaee2704dc0e`; final test\nhead is `b50491ceafc5be9029ee96dc9229085efd354e22`. Luna implements the one-bit\nprojection and private real-Machine/BrowserExecutor guest proof. Main rejects\nthe draft raw pending-bit clear; final tests use encoded guest SBI TIME calls\nto arm/cancel the authentic STIP source. SRET-to-S preserves all warmed words\nand both link classes; SRET-to-U enters an actual U-fetchable compiled block,\nthen precisely faults on an S-only store with all stale authority cleared.\nThe STIP sequence preempts before the target and resumes via nested SRET.\nRequired architecture, actual CLINT time and all RAM equal the interpreter;\nJIT/cache counters are asserted separately. No full serialized CPU or cached\ntime-shadow equality is claimed. Full raw records and superseded attempts:\n`evidence/e5-t26n/worker/claim.md`.\n\nDaybreak independently adds a guest-set/guest-cleared SSIP variant, passing in\nits frozen git-archive scratch and promoted as a permanent private test with\nrustfmt only. Final source SHA256 is\n`0b0830a1ea2f0c979ca4ae662b281b5e6c0044b7ce6964a52715ed887861deb8`.\n`make verify-E5-T26n` at runtime freeze passes 29 native and 50 WASM tests;\nthe promoted affected harness passes 51 WASM tests. One final pristine command,\n`bash evidence/e5-t26n/run-final-clone.sh b50491ceafc5be9029ee96dc9229085efd354e22`,\npasses the full scoped target (29 native plus 51 WASM), format/clippy/builds,\nwith a clean exact no-local/no-alternate checkout, fresh target and scrubbed\nenvironment, ending clean. Retained at `/private/tmp/e5-t26n-final.s8BFQMCn/repo`;\nraw log `evidence/e5-t26n/main-gates/09-final-clone.log`, SHA256\n`d58a1ff05e933b7f28dc9d9563702e7e5bf534cf2db2dcb89b17173bc2f86b06`.\n\nOne executed SUM sabotage in an isolated archive fails both the bit-18 partition\nand actual dynamic-target control (4 rather than 2 retirements), then restores\nautomatically. The earlier in-place command was rejected before any test ran;\nMain immediately restored/hash-checked correct source before runtime freeze.\nThe local demo command\n`E5_DEMO_TASK=E5-T26n E5_DEMO_OUT=evidence/e5-t26n/demo-84fd5190 node tools/verify/e5-t18e-demo-smoke.mjs`\npasses 126/0 with empty collected errors and a viewed screenshot. Production\nWASM SHA256 remains `84b2c17c9b6ab9d86c85912f82bd0b4b4533178fc27a0724d47565cb40974b4d`.\nAll hashes, commands and scope boundaries are in `evidence/e5-t26n/README.md`.\nFinal verification belongs to the fresh Daybreak critic. No timing improvement,\nF acceptance, deployment or Epic 5 completion is claimed.\n\n### 2026-09-08 — coordinator — activate source-reviewed SPP prerequisite\n\nF's new exact-runtime screen at657fb5a2 fails at3701.995ms; its separate existing\nlatency sampler first observes PCM at3156.655ms after a zero sample at3108.295ms.\nThe records do not identify a cause. Luna's source-only candidate and independent\nDaybreak preflight permit exactly bit8 while preserving current authority and\nguest SRET semantics; see\n`evidence/e5-t26f/spp-context-candidate/{worker-plan,critic-preflight}.md`.\nThe proposal patch is not executed evidence. F is parked on this named\nprerequisite so only one task is active. No semantic or performance claim\nprecedes the new actual-WASM/guest proof.",
       "adversarial": "Before inspecting evidence, predict exact live SPP/current-mode and generated\ntarget behavior across SRET. Test MPRV=0 in the positive case; retained MPRV changes\nmust still invalidate. Use a U-fetchable negative landing so the JIT boundary is\nnot bypassed by an earlier fetch denial. Keep JIT counters out of interpreter\nsnapshots. One fresh bounded attack varies the pending delegated interrupt source\nin the nested-SRET sequence. Once add SUM to the ignored mask: both the exact\npartition and existing generated SUM negative control must fail. Restore source\nbefore freeze. Carry unchanged M/authority results; do not repeat old full tasks,\nold image builds or a second pristine clone. No rr, WebKit, other machine, guest\nintervention, performance waiver, or speculative speedup claim.",
       "file": "tasks/epic-5-the-window/E5-T26n-spp-context.md",
       "activity": [
         {
           "date": "2026-09-08",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "docs(verification): activate scoped SPP cache-context prerequisite"
+          ]
         }
       ],
       "firstActivity": "2026-09-08",
       "lastActivity": "2026-09-08",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E5-T27",

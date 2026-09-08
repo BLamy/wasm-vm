@@ -1,0 +1,442 @@
+E5-T26n exact head: b50491ceafc5be9029ee96dc9229085efd354e22
+E5-T26n retained clone: /private/tmp/e5-t26n-final.s8BFQMCn/repo
+Cloning into '/private/tmp/e5-t26n-final.s8BFQMCn/repo'...
+HEAD is now at b50491ce test(wasm): promote independent SSIP return regression and frozen evidence
+Initial checkout clean; no object alternates; fresh local target directory.
+Run make verify-E5-T26n with compiler/test overrides scrubbed.
+cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+cargo clippy -p wasm-vm-wasm --lib --test jit_browser_parity --target wasm32-unknown-unknown -- -D warnings
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+    Checking cfg-if v1.0.4
+   Compiling rustversion v1.0.22
+   Compiling version_check v0.9.5
+   Compiling bumpalo v3.20.3
+    Checking typenum v1.20.1
+    Checking once_cell v1.21.4
+    Checking pin-project-lite v0.2.17
+    Checking futures-task v0.3.32
+    Checking slab v0.4.12
+    Checking futures-core v0.3.32
+   Compiling serde_core v1.0.228
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling zmij v1.0.21
+    Checking bitflags v2.13.0
+   Compiling serde v1.0.228
+    Checking byteorder v1.5.0
+   Compiling heapless v0.9.3
+    Checking log v0.4.33
+    Checking futures-util v0.3.32
+   Compiling serde_json v1.0.150
+    Checking smallvec v1.15.2
+    Checking memchr v2.8.2
+    Checking hash32 v0.3.1
+   Compiling autocfg v1.5.1
+    Checking itoa v1.0.18
+   Compiling generic-array v0.14.7
+   Compiling smoltcp v0.13.1
+    Checking tinyvec_macros v0.1.1
+   Compiling libm v0.2.16
+    Checking stable_deref_trait v1.2.1
+   Compiling num-traits v0.2.19
+    Checking tinyvec v1.12.0
+    Checking bitflags v1.3.2
+    Checking managed v0.8.0
+    Checking unicode-normalization v0.1.25
+    Checking wasm-vm-wasm-emit v0.0.1 (/private/tmp/e5-t26n-final.s8BFQMCn/repo/crates/wasm-emit)
+    Checking nu-ansi-term v0.50.3
+    Checking wasm-bindgen-test-shared v0.2.126
+    Checking cast v0.3.0
+    Checking oorandom v11.1.5
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+   Compiling wasm-bindgen-macro-support v0.2.126
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+    Checking wasm-vm-core v0.0.1 (/private/tmp/e5-t26n-final.s8BFQMCn/repo/crates/core)
+   Compiling serde_derive v1.0.228
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling async-trait v0.1.89
+   Compiling wasm-bindgen-macro v0.2.126
+    Checking wasm-vm-storage v0.0.1 (/private/tmp/e5-t26n-final.s8BFQMCn/repo/crates/storage)
+    Checking wasm-vm-slirp v0.0.0 (/private/tmp/e5-t26n-final.s8BFQMCn/repo/crates/slirp)
+    Checking wasm-vm-jit-translate v0.0.1 (/private/tmp/e5-t26n-final.s8BFQMCn/repo/crates/jit-translate)
+    Checking js-sys v0.3.103
+    Checking console_error_panic_hook v0.1.7
+    Checking web-sys v0.3.103
+    Checking wasm-bindgen-futures v0.4.76
+    Checking getrandom v0.2.17
+    Checking wasm-bindgen-test v0.3.76
+    Checking console_log v1.0.0
+    Checking wasm-vm-wasm v0.0.1 (/private/tmp/e5-t26n-final.s8BFQMCn/repo/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 11.90s
+cargo test -p wasm-vm-core --test interrupts --test privilege --test pmp_privilege_audit --test pmp_privilege_adversarial
+   Compiling libc v0.2.186
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling cfg-if v1.0.4
+   Compiling unicode-ident v1.0.24
+   Compiling zerocopy v0.8.52
+   Compiling version_check v0.9.5
+   Compiling getrandom v0.3.4
+   Compiling serde_core v1.0.228
+   Compiling crossbeam-utils v0.8.21
+   Compiling typenum v1.20.1
+   Compiling bitflags v2.13.0
+   Compiling zmij v1.0.21
+   Compiling serde v1.0.228
+   Compiling autocfg v1.5.1
+   Compiling rustix v1.1.4
+   Compiling getrandom v0.4.3
+   Compiling once_cell v1.21.4
+   Compiling regex-syntax v0.8.11
+   Compiling either v1.16.0
+   Compiling generic-array v0.14.7
+   Compiling num-traits v0.2.19
+   Compiling serde_json v1.0.150
+   Compiling anstyle v1.0.14
+   Compiling rayon-core v1.13.0
+   Compiling fastrand v2.4.1
+   Compiling clap_lex v1.1.0
+   Compiling memchr v2.8.2
+   Compiling itoa v1.0.18
+   Compiling ciborium-io v0.2.2
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling clap_builder v4.6.0
+   Compiling regex-automata v0.4.14
+   Compiling crossbeam-epoch v0.9.18
+   Compiling crossbeam-deque v0.8.6
+   Compiling itertools v0.10.5
+   Compiling bit-vec v0.8.0
+   Compiling quick-error v1.2.3
+   Compiling smallvec v1.15.2
+   Compiling same-file v1.0.6
+   Compiling cast v0.3.0
+   Compiling syn v2.0.118
+   Compiling fnv v1.0.7
+   Compiling criterion-plot v0.5.0
+   Compiling walkdir v2.5.0
+   Compiling bit-set v0.8.0
+   Compiling regex v1.12.4
+   Compiling clap v4.6.1
+   Compiling log v0.4.33
+   Compiling oorandom v11.1.5
+   Compiling unarray v0.1.4
+   Compiling anes v0.1.6
+   Compiling errno v0.3.14
+   Compiling wait-timeout v0.2.1
+   Compiling cpufeatures v0.2.17
+   Compiling is-terminal v0.4.17
+   Compiling rand_core v0.9.5
+   Compiling rand v0.9.4
+   Compiling rand_xorshift v0.4.0
+   Compiling tempfile v3.27.0
+   Compiling zerocopy-derive v0.8.52
+   Compiling serde_derive v1.0.228
+   Compiling rusty-fork v0.3.1
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26n-final.s8BFQMCn/repo/crates/core)
+   Compiling rayon v1.12.0
+   Compiling tinytemplate v1.2.1
+   Compiling half v2.7.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.9.0
+   Compiling ciborium-ll v0.2.2
+   Compiling proptest v1.11.0
+   Compiling ciborium v0.2.2
+   Compiling criterion v0.5.1
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.75s
+     Running tests/interrupts.rs (target/debug/deps/interrupts-7729a6d5828efa91)
+
+running 13 tests
+test m_interrupt_not_masked_from_below ... ok
+test mip_mtip_software_write_ignored_device_bit_survives ... ok
+test higher_priority_but_untakeable_is_skipped ... ok
+test m_mode_with_mie_clear_takes_nothing ... ok
+test full_priority_chain_in_m_with_mie ... ok
+test delegated_stimer_fires_in_u_not_in_m ... ok
+test deleg_and_enable_warl_masks ... ok
+test vectored_mtvec_m_interrupt_ssi_enters_at_base_plus_4 ... ok
+test delegated_interrupt_delivers_to_stvec_with_scause_and_spp ... ok
+test m_mode_exception_is_never_delegated_downward ... ok
+test interrupt_taken_after_an_instruction_retires_precise_mepc ... ok
+test wfi_with_mie_clear_and_mtip_pending_continues_no_trap ... ok
+test vectored_stvec_interrupt_enters_at_base_plus_4x_cause ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/pmp_privilege_adversarial.rs (target/debug/deps/pmp_privilege_adversarial-37083c7cd526d3c1)
+
+running 1 test
+test seeded_mode_map_pte_sequence ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.07s
+
+     Running tests/pmp_privilege_audit.rs (target/debug/deps/pmp_privilege_audit-8db40708c5560fce)
+
+running 4 tests
+test su_midblock_revision_revocation ... ok
+test su_revision_revocation ... ok
+test su_snapshot_and_host_sequence ... ok
+test su_guest_trace_parity ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.16s
+
+     Running tests/privilege.rs (target/debug/deps/privilege-9651faa4bedbcbcd)
+
+running 11 tests
+test trap_to_m_and_mret_field_shuffle ... ok
+test sie_sip_are_mideleg_gated ... ok
+test mode_never_changes_via_plain_csr_write ... ok
+test sstatus_write_touches_only_s_bits ... ok
+test trap_to_s_and_sret_field_shuffle ... ok
+test mret_to_u_clears_mprv_then_mcsr_from_u_traps ... ok
+test mret_below_m_is_illegal ... ok
+test tvm_makes_satp_access_illegal_in_s_mode ... ok
+test wfi_traps_when_tw_set_below_m ... ok
+test ecall_cause_depends_on_mode ... ok
+test sret_privilege_and_tsr ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+   Compiling typenum v1.20.1
+   Compiling bitflags v2.13.0
+   Compiling smallvec v1.15.2
+   Compiling cfg-if v1.0.4
+   Compiling log v0.4.33
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling generic-array v0.14.7
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26n-final.s8BFQMCn/repo/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.27s
+cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+   Compiling unicode-ident v1.0.24
+   Compiling once_cell v1.21.4
+   Compiling pin-project-lite v0.2.17
+   Compiling futures-task v0.3.32
+   Compiling futures-core v0.3.32
+   Compiling slab v0.4.12
+   Compiling byteorder v1.5.0
+   Compiling serde_core v1.0.228
+   Compiling stable_deref_trait v1.2.1
+   Compiling tinyvec_macros v0.1.1
+   Compiling zmij v1.0.21
+   Compiling itoa v1.0.18
+   Compiling bitflags v1.3.2
+   Compiling memchr v2.8.2
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26n-final.s8BFQMCn/repo/crates/core)
+   Compiling managed v0.8.0
+   Compiling tinyvec v1.12.0
+   Compiling wasm-vm-wasm-emit v0.0.1 (/private/tmp/e5-t26n-final.s8BFQMCn/repo/crates/wasm-emit)
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling futures-util v0.3.32
+   Compiling hash32 v0.3.1
+   Compiling wasm-bindgen v0.2.126
+   Compiling heapless v0.9.3
+   Compiling unicode-normalization v0.1.25
+   Compiling smoltcp v0.13.1
+   Compiling console_error_panic_hook v0.1.7
+   Compiling js-sys v0.3.103
+   Compiling serde v1.0.228
+   Compiling serde_json v1.0.150
+   Compiling wasm-vm-storage v0.0.1 (/private/tmp/e5-t26n-final.s8BFQMCn/repo/crates/storage)
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/tmp/e5-t26n-final.s8BFQMCn/repo/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/private/tmp/e5-t26n-final.s8BFQMCn/repo/crates/slirp)
+   Compiling web-sys v0.3.103
+   Compiling getrandom v0.2.17
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/private/tmp/e5-t26n-final.s8BFQMCn/repo/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.73s
+wasm-pack test --node crates/wasm --lib --test jit_browser_parity -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling cast v0.3.0
+   Compiling libm v0.2.16
+   Compiling oorandom v11.1.5
+   Compiling wasm-bindgen-test-shared v0.2.126
+   Compiling nu-ansi-term v0.50.3
+   Compiling num-traits v0.2.19
+   Compiling wasm-bindgen-test v0.3.76
+   Compiling wasm-vm-wasm v0.0.1 (/private/tmp/e5-t26n-final.s8BFQMCn/repo/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.16s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (/private/tmp/e5-t26n-final.s8BFQMCn/repo/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-9581999851bd4c84.wasm)
+running 13 tests
+Invoking test: guest_clock_tests::selection_refuses_invalid_and_unavailable_before_mutating_active_anchor
+test guest_clock_tests::selection_refuses_invalid_and_unavailable_before_mutating_active_anchor ... ok
+Invoking test: guest_clock_tests::exported_state_is_lossless_readonly_and_blob_restore_rebases_only_on_success
+test guest_clock_tests::exported_state_is_lossless_readonly_and_blob_restore_rebases_only_on_success ... ok
+Invoking test: guest_clock_tests::exported_clock_selection_preserves_default_and_reports_unavailable_source
+test guest_clock_tests::exported_clock_selection_preserves_default_and_reports_unavailable_source ... ok
+Invoking test: jit_browser::spp_guest_tests::browser_guest_sret_to_u_enters_compiled_then_clears_s_authority
+SPP_ORACLE U baseline: Architecture { pc: 2147483648, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949672992, trap: [2147491836, 0, 0, 0, 0, 0], retire_cycle: [7, 7], mtime: None }; exact architecture + full RAM equal
+SPP_ORACLE U return before entry: Architecture { pc: 2147491836, mode: U, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949672994, trap: [2147491836, 0, 0, 0, 0, 0], retire_cycle: [8, 8], mtime: None }; exact architecture + full RAM equal
+SPP_ORACLE U compiled store fault: Architecture { pc: 2147504128, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949672992, trap: [2147491836, 15, 2147500032, 0, 0, 0], retire_cycle: [8, 8], mtime: None }; exact architecture + full RAM equal
+SPP_JIT U: actual compiled entry +1 in mode U, compiled retires +0, no indirect dispatch or PIC hit; R/W/EXEC, static, dynamic words+authority all zero
+test jit_browser::spp_guest_tests::browser_guest_sret_to_u_enters_compiled_then_clears_s_authority ... ok
+Invoking test: jit_browser::spp_guest_tests::browser_guest_sret_to_s_preserves_inline_and_both_links
+SPP_ORACLE S baseline: Architecture { pc: 2147483648, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949673248, trap: [2147487744, 0, 0, 0, 0, 0], retire_cycle: [7, 7], mtime: None }; exact architecture + full RAM equal
+SPP_ORACLE S return before entry: Architecture { pc: 2147487744, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949672994, trap: [2147487744, 0, 0, 0, 0, 0], retire_cycle: [8, 8], mtime: None }; exact architecture + full RAM equal
+SPP_ORACLE S compiled chain: Architecture { pc: 2147508224, mode: S, regs: [0, 0, 0, 0, 0, 42, 1, 1, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 42, 22136], mstatus: 42949672994, trap: [2147487744, 0, 0, 0, 0, 0], retire_cycle: [16, 16], mtime: None }; exact architecture + full RAM equal
+SPP_JIT reused: one host entry, 8 compiled retires, static+dynamic effects, PIC hit +1; all authority words unchanged
+test jit_browser::spp_guest_tests::browser_guest_sret_to_s_preserves_inline_and_both_links ... ok
+Invoking test: jit_browser::spp_guest_tests::browser_guest_sret_pending_stip_preempts_then_nested_sret_reuses
+SPP_ORACLE pending STIP baseline: Architecture { pc: 2147483648, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 1414090053, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949673248, trap: [2147487744, 0, 0, 0, 0, 0], retire_cycle: [16, 16], mtime: Some(9) }; exact architecture + full RAM equal
+SPP_ORACLE pending STIP preemption: Architecture { pc: 2147504128, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 1414090053, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949673248, trap: [2147487744, 9223372036854775813, 0, 0, 0, 0], retire_cycle: [17, 17], mtime: Some(10) }; exact architecture + full RAM equal
+SPP_ORACLE guest SBI timer cancelled: Architecture { pc: 2147504140, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 0, 0, 0, 0, 0, 0, 1414090053, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949673248, trap: [2147487744, 9223372036854775813, 0, 0, 0, 0], retire_cycle: [19, 19], mtime: Some(12) }; exact architecture + full RAM equal
+SPP_ORACLE nested SRET before entry: Architecture { pc: 2147487744, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 1414090053, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949672994, trap: [2147487744, 9223372036854775813, 0, 0, 0, 0], retire_cycle: [21, 21], mtime: Some(14) }; exact architecture + full RAM equal
+SPP_ORACLE nested SRET target effects: Architecture { pc: 2147508224, mode: S, regs: [0, 0, 0, 0, 0, 42, 1, 1, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 1414090053, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 42, 22136], mstatus: 42949672994, trap: [2147487744, 9223372036854775813, 0, 0, 0, 0], retire_cycle: [29, 29], mtime: Some(22) }; exact architecture + full RAM equal
+SPP_JIT reused: one host entry, 8 compiled retires, static+dynamic effects, PIC hit +1; all authority words unchanged
+test jit_browser::spp_guest_tests::browser_guest_sret_pending_stip_preempts_then_nested_sret_reuses ... ok
+Invoking test: jit_browser::spp_guest_tests::browser_guest_sret_pending_ssip_guest_clear_variant
+SPP_ORACLE pending SSIP baseline: Architecture { pc: 2147483648, mode: S, regs: [0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949673248, trap: [2147487744, 0, 0, 0, 0, 0], retire_cycle: [10, 10], mtime: None }; exact architecture + full RAM equal
+SPP_ORACLE pending SSIP preemption: Architecture { pc: 2147504384, mode: S, regs: [0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949673248, trap: [2147487744, 9223372036854775809, 0, 0, 0, 0], retire_cycle: [11, 11], mtime: None }; exact architecture + full RAM equal
+SPP_ORACLE guest sip SSIP cleared: Architecture { pc: 2147504392, mode: S, regs: [0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949673248, trap: [2147487744, 9223372036854775809, 0, 0, 0, 0], retire_cycle: [13, 13], mtime: None }; exact architecture + full RAM equal
+SPP_ORACLE SSIP nested SRET before entry: Architecture { pc: 2147487744, mode: S, regs: [0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949672994, trap: [2147487744, 9223372036854775809, 0, 0, 0, 0], retire_cycle: [14, 14], mtime: None }; exact architecture + full RAM equal
+SPP_ORACLE SSIP nested target effects: Architecture { pc: 2147508224, mode: S, regs: [0, 0, 0, 0, 0, 42, 1, 1, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 42, 22136], mstatus: 42949672994, trap: [2147487744, 9223372036854775809, 0, 0, 0, 0], retire_cycle: [22, 22], mtime: None }; exact architecture + full RAM equal
+SPP_JIT reused: one host entry, 8 compiled retires, static+dynamic effects, PIC hit +1; all authority words unchanged
+SPP_ATTACK SSIP held: guest assert+clear, cause 1 preemption, nested SRET, compiled reuse
+test jit_browser::spp_guest_tests::browser_guest_sret_pending_ssip_guest_clear_variant ... ok
+Invoking test: display_tests::display_reset_guest_trace_preserves_monitor_and_releases_resources
+E5-T22e reset 1x1:
+core 0: 0x0000000080200000 (0x100082b7) x5 0x0000000010008000
+core 0: 0x0000000080200004 (0x0602a823) mem 0x0000000010008070 0x00000000
+core 0: 0x0000000080200008 (0x1002a503) x10 0x0000000000000000 mem 0x0000000010008100
+state digest=3397b71b3bc47b842892f58717651471c3c9bd0b45cd7bade3223c776ecde28c
+stats={"advertisedWidth":1,"advertisedHeight":1,"refreshHz":60,"pendingEvents":0,"edid":{"0":0,"1":255,"2":255,"3":255,"4":255,"5":255,"6":255,"7":0,"8":94,"9":205,"10":1,"11":0,"12":1,"13":0,"14":0,"15":0,"16":1,"17":30,"18":1,"19":4,"20":165,"21":1,"22":1,"23":120,"24":10,"25":150,"26":5,"27":163,"28":84,"29":76,"30":153,"31":38,"32":15,"33":80,"34":84,"35":0,"36":0,"37":0,"38":1,"39":1,"40":1,"41":1,"42":1,"43":1,"44":1,"45":1,"46":1,"47":1,"48":1,"49":1,"50":1,"51":1,"52":1,"53":1,"54":30,"55":0,"56":1,"57":160,"58":0,"59":1,"60":30,"61":0,"62":40,"63":20,"64":115,"65":0,"66":10,"67":10,"68":0,"69":0,"70":0,"71":26,"72":0,"73":0,"74":0,"75":253,"76":0,"77":30,"78":120,"79":15,"80":250,"81":60,"82":1,"83":10,"84":32,"85":32,"86":32,"87":32,"88":32,"89":32,"90":0,"91":0,"92":0,"93":252,"94":0,"95":87,"96":65,"97":83,"98":77,"99":32,"100":86,"101":77,"102":10,"103":32,"104":32,"105":32,"106":32,"107":32,"108":0,"109":0,"110":0,"111":255,"112":0,"113":87,"114":86,"115":77,"116":45,"117":48,"118":48,"119":48,"120":49,"121":10,"122":32,"123":32,"124":32,"125":32,"126":0,"127":188},"resourceCount":0,"resourceBytes":0,"scanoutResource":null,"scanoutWidth":null,"scanoutHeight":null}
+E5-T22e reset 4095x4095:
+core 0: 0x0000000080200000 (0x100082b7) x5 0x0000000010008000
+core 0: 0x0000000080200004 (0x0602a823) mem 0x0000000010008070 0x00000000
+core 0: 0x0000000080200008 (0x1002a503) x10 0x0000000000000000 mem 0x0000000010008100
+state digest=3397b71b3bc47b842892f58717651471c3c9bd0b45cd7bade3223c776ecde28c
+stats={"advertisedWidth":4095,"advertisedHeight":4095,"refreshHz":60,"pendingEvents":0,"edid":{"0":0,"1":255,"2":255,"3":255,"4":255,"5":255,"6":255,"7":0,"8":94,"9":205,"10":1,"11":0,"12":1,"13":0,"14":0,"15":0,"16":1,"17":30,"18":1,"19":4,"20":165,"21":108,"22":108,"23":120,"24":10,"25":150,"26":5,"27":163,"28":84,"29":76,"30":153,"31":38,"32":15,"33":80,"34":84,"35":0,"36":0,"37":0,"38":1,"39":1,"40":1,"41":1,"42":1,"43":1,"44":1,"45":1,"46":1,"47":1,"48":1,"49":1,"50":1,"51":1,"52":1,"53":1,"54":255,"55":255,"56":255,"57":0,"58":242,"59":255,"60":128,"61":240,"62":128,"63":64,"64":0,"65":9,"66":56,"67":56,"68":68,"69":0,"70":0,"71":26,"72":0,"73":0,"74":0,"75":253,"76":0,"77":30,"78":120,"79":15,"80":250,"81":60,"82":1,"83":10,"84":32,"85":32,"86":32,"87":32,"88":32,"89":32,"90":0,"91":0,"92":0,"93":252,"94":0,"95":87,"96":65,"97":83,"98":77,"99":32,"100":86,"101":77,"102":10,"103":32,"104":32,"105":32,"106":32,"107":32,"108":0,"109":0,"110":0,"111":255,"112":0,"113":87,"114":86,"115":77,"116":45,"117":48,"118":48,"119":48,"120":49,"121":10,"122":32,"123":32,"124":32,"125":32,"126":0,"127":172},"resourceCount":0,"resourceBytes":0,"scanoutResource":null,"scanoutWidth":null,"scanoutHeight":null}
+E5-T22e reset 901x701:
+core 0: 0x0000000080200000 (0x100082b7) x5 0x0000000010008000
+core 0: 0x0000000080200004 (0x0602a823) mem 0x0000000010008070 0x00000000
+core 0: 0x0000000080200008 (0x1002a503) x10 0x0000000000000000 mem 0x0000000010008100
+state digest=3397b71b3bc47b842892f58717651471c3c9bd0b45cd7bade3223c776ecde28c
+stats={"advertisedWidth":901,"advertisedHeight":701,"refreshHz":60,"pendingEvents":0,"edid":{"0":0,"1":255,"2":255,"3":255,"4":255,"5":255,"6":255,"7":0,"8":94,"9":205,"10":1,"11":0,"12":1,"13":0,"14":0,"15":0,"16":1,"17":30,"18":1,"19":4,"20":165,"21":24,"22":19,"23":120,"24":10,"25":150,"26":5,"27":163,"28":84,"29":76,"30":153,"31":38,"32":15,"33":80,"34":84,"35":0,"36":0,"37":0,"38":1,"39":1,"40":1,"41":1,"42":1,"43":1,"44":1,"45":1,"46":1,"47":1,"48":1,"49":1,"50":1,"51":1,"52":1,"53":1,"54":46,"55":18,"56":133,"57":160,"58":48,"59":189,"60":30,"61":32,"62":40,"63":20,"64":115,"65":0,"66":240,"67":190,"68":0,"69":0,"70":0,"71":26,"72":0,"73":0,"74":0,"75":253,"76":0,"77":30,"78":120,"79":15,"80":250,"81":60,"82":1,"83":10,"84":32,"85":32,"86":32,"87":32,"88":32,"89":32,"90":0,"91":0,"92":0,"93":252,"94":0,"95":87,"96":65,"97":83,"98":77,"99":32,"100":86,"101":77,"102":10,"103":32,"104":32,"105":32,"106":32,"107":32,"108":0,"109":0,"110":0,"111":255,"112":0,"113":87,"114":86,"115":77,"116":45,"117":48,"118":48,"119":48,"120":49,"121":10,"122":32,"123":32,"124":32,"125":32,"126":0,"127":71},"resourceCount":0,"resourceBytes":0,"scanoutResource":null,"scanoutWidth":null,"scanoutHeight":null}
+test display_tests::display_reset_guest_trace_preserves_monitor_and_releases_resources ... ok
+Invoking test: display_tests::display_hotplug_strict_validation_is_atomic
+test display_tests::display_hotplug_strict_validation_is_atomic ... ok
+Invoking test: display_tests::display_hotplug_storm_preserves_actual_old_resource
+E5-T22a actual-device storm stats: {"advertisedWidth":750,"advertisedHeight":531,"refreshHz":60,"pendingEvents":1,"edid":{"0":0,"1":255,"2":255,"3":255,"4":255,"5":255,"6":255,"7":0,"8":94,"9":205,"10":1,"11":0,"12":1,"13":0,"14":0,"15":0,"16":1,"17":30,"18":1,"19":4,"20":165,"21":20,"22":14,"23":120,"24":10,"25":150,"26":5,"27":163,"28":84,"29":76,"30":153,"31":38,"32":15,"33":80,"34":84,"35":0,"36":0,"37":0,"38":1,"39":1,"40":1,"41":1,"42":1,"43":1,"44":1,"45":1,"46":1,"47":1,"48":1,"49":1,"50":1,"51":1,"52":1,"53":1,"54":247,"55":11,"56":238,"57":160,"58":32,"59":19,"60":30,"61":32,"62":40,"63":20,"64":115,"65":0,"66":200,"67":140,"68":0,"69":0,"70":0,"71":26,"72":0,"73":0,"74":0,"75":253,"76":0,"77":30,"78":120,"79":15,"80":250,"81":60,"82":1,"83":10,"84":32,"85":32,"86":32,"87":32,"88":32,"89":32,"90":0,"91":0,"92":0,"93":252,"94":0,"95":87,"96":65,"97":83,"98":77,"99":32,"100":86,"101":77,"102":10,"103":32,"104":32,"105":32,"106":32,"107":32,"108":0,"109":0,"110":0,"111":255,"112":0,"113":87,"114":86,"115":77,"116":45,"117":48,"118":48,"119":48,"120":49,"121":10,"122":32,"123":32,"124":32,"125":32,"126":0,"127":57},"resourceCount":0,"resourceBytes":0,"scanoutResource":null,"scanoutWidth":null,"scanoutHeight":null}
+test display_tests::display_hotplug_storm_preserves_actual_old_resource ... ok
+Invoking test: display_tests::display_hotplug_guest_trace_reads_event_after_request
+E5-T22a guest event trace:
+core 0: 0x0000000080200000 (0x100082b7) x5 0x0000000010008000
+core 0: 0x0000000080200004 (0x1002a503) x10 0x0000000000000001 mem 0x0000000010008100
+state digest=1647f3f2283a61fd4de0e60232b376c8093a6a9cfb4c8d5ae279b203da5cf616
+test display_tests::display_hotplug_guest_trace_reads_event_after_request ... ok
+Invoking test: display_tests::display_hotplug_absence_and_reentrancy_fail_boundedly
+test display_tests::display_hotplug_absence_and_reentrancy_fail_boundedly ... ok
+Invoking test: jit_browser::inline_tlb_context_tests::inline_tlb_context_masks_exactly_interrupt_stack_bits
+test jit_browser::inline_tlb_context_tests::inline_tlb_context_masks_exactly_interrupt_stack_bits ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 filtered out; finished in 3.74s
+
+     Running tests/jit_browser_parity.rs (/private/tmp/e5-t26n-final.s8BFQMCn/repo/target/wasm32-unknown-unknown/debug/deps/jit_browser_parity-6cc578c42c9ecada.wasm)
+running 39 tests
+test browser_handles_remain_bounded_across_retranslation_churn ... ignored, long browser externref/eviction churn; run explicitly for E4-T33 evidence
+Invoking test: unexpected_js_exception_fails_closed_without_commit_and_cleans_host
+test unexpected_js_exception_fails_closed_without_commit_and_cleans_host ... ok
+Invoking test: production_browser_budget_stays_below_measured_instance_cliff
+test production_browser_budget_stays_below_measured_instance_cliff ... ok
+Invoking test: page_write_invalidates_compiled_block
+test page_write_invalidates_compiled_block ... ok
+Invoking test: execute_miss_preserves_public_guard_and_guest_state
+test execute_miss_preserves_public_guard_and_guest_state ... ok
+Invoking test: directed_eviction_through_the_single_ordered_path
+test directed_eviction_through_the_single_ordered_path ... ok
+Invoking test: compile_instantiate_and_cache_by_phys_pc
+test compile_instantiate_and_cache_by_phys_pc ... ok
+Invoking test: chain_edge_links_and_unlinks_on_invalidation
+test chain_edge_links_and_unlinks_on_invalidation ... ok
+Invoking test: bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault
+test bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault ... ok
+Invoking test: browser_run_chunk_scope_caps_all_internal_subruns_to_eight_installs
+test browser_run_chunk_scope_caps_all_internal_subruns_to_eight_installs ... ok
+Invoking test: browser_machine_xie_enable_preempts_reused_inline_target
+test browser_machine_xie_enable_preempts_reused_inline_target ... ok
+Invoking test: browser_jit_six_op_loop_is_exactly_budgeted
+test browser_jit_six_op_loop_is_exactly_budgeted ... ok
+Invoking test: browser_jit_matches_interpreter_m_block
+test browser_jit_matches_interpreter_m_block ... ok
+Invoking test: browser_jit_matches_interpreter_i_block
+test browser_jit_matches_interpreter_i_block ... ok
+Invoking test: browser_jit_matches_interpreter_a_block
+test browser_jit_matches_interpreter_a_block ... ok
+Invoking test: browser_inline_tlb_matches_interpreter_for_ram_loop
+test browser_inline_tlb_matches_interpreter_for_ram_loop ... ok
+Invoking test: browser_inline_static_link_unlinks_and_rearms_after_target_reinstall
+test browser_inline_static_link_unlinks_and_rearms_after_target_reinstall ... ok
+Invoking test: browser_inline_static_link_retains_across_interrupt_stack_bits
+test browser_inline_static_link_retains_across_interrupt_stack_bits ... ok
+Invoking test: browser_inline_static_link_refuses_after_execute_permission_change
+test browser_inline_static_link_refuses_after_execute_permission_change ... ok
+Invoking test: browser_inline_static_guard_rejects_remapped_target_page
+test browser_inline_static_guard_rejects_remapped_target_page ... ok
+Invoking test: browser_inline_static_cross_page_tail_refuses_before_target_entry
+test browser_inline_static_cross_page_tail_refuses_before_target_entry ... ok
+Invoking test: browser_inline_static_cross_batch_target_fault_is_precise
+test browser_inline_static_cross_batch_target_fault_is_precise ... ok
+Invoking test: browser_inline_static_cross_batch_load_store_matches_interpreter
+test browser_inline_static_cross_batch_load_store_matches_interpreter ... ok
+Invoking test: browser_inline_static_cross_batch_link_executes_and_misses_safely
+test browser_inline_static_cross_batch_link_executes_and_misses_safely ... ok
+Invoking test: browser_inline_static_code_store_cuts_link_before_target_reuse
+test browser_inline_static_code_store_cuts_link_before_target_reuse ... ok
+Invoking test: browser_inline_static_chain_reaches_five_blocks_in_one_engine_call
+test browser_inline_static_chain_reaches_five_blocks_in_one_engine_call ... ok
+Invoking test: browser_inline_raw_store_to_compiled_page_aborts_before_successor
+test browser_inline_raw_store_to_compiled_page_aborts_before_successor ... ok
+Invoking test: browser_inline_raw_store_commits_reservation_and_code_log
+test browser_inline_raw_store_commits_reservation_and_code_log ... ok
+Invoking test: browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_invalidates
+test browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_invalidates ... ok
+Invoking test: browser_inline_dynamic_jalr_links_switch_and_unlinks
+test browser_inline_dynamic_jalr_links_switch_and_unlinks ... ok
+Invoking test: browser_inline_direct_chain_reports_bounded_retirement
+test browser_inline_direct_chain_reports_bounded_retirement ... ok
+Invoking test: browser_inline_direct_chain_honors_depth_budget
+test browser_inline_direct_chain_honors_depth_budget ... ok
+Invoking test: browser_inline_data_store_stays_chained_but_atomic_successor_waits_for_commit
+test browser_inline_data_store_stays_chained_but_atomic_successor_waits_for_commit ... ok
+Invoking test: browser_inline_combined_interrupt_bits_plus_sum_invalidates_all_links
+test browser_inline_combined_interrupt_bits_plus_sum_invalidates_all_links ... ok
+Invoking test: browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault
+test browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault ... ok
+Invoking test: browser_handoff_refreshes_after_outer_growth_during_compiled_call
+test browser_handoff_refreshes_after_outer_growth_during_compiled_call ... ok
+Invoking test: browser_dispatch_reuses_memory_views_without_subarray_allocation
+test browser_dispatch_reuses_memory_views_without_subarray_allocation ... ok
+Invoking test: browser_clean_dispatch_reuses_cached_outer_view_without_constructor
+test browser_clean_dispatch_reuses_cached_outer_view_without_constructor ... ok
+Invoking test: browser_batch_skips_unsupported_members_without_fragmenting_valid_blocks
+test browser_batch_skips_unsupported_members_without_fragmenting_valid_blocks ... ok
+
+test result: ok. 38 passed; 0 failed; 1 ignored; 0 filtered out; finished in 6.10s
+
+verify-E5-T26n (SPP context and guest SRET authority): OK
+Final checkout clean; make exit=0; retained=/private/tmp/e5-t26n-final.s8BFQMCn/repo

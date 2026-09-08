@@ -73,9 +73,27 @@ failure messages, then exited 0. `07-restored-source.log` records both scratch
 and real workspace restored/correct at the frozen source SHA256; its digest is
 `203a56d91de6aff66660d5cb10c3126255c627b943a50e24f94c9108e97901c3`.
 
-## Pending final closure
+## Promoted test and final clean proof
 
-The fresh critic's pre-evidence plan is committed in `verifier/plan.md`.
-Its independent SSIP variant, any promoted test and the single final pristine
-clone must be closed before the verifier may mark this task verified. No F
-deadline, speedup, deployment or Epic 5 completion is established here.
+The critic's independently passing SSIP variant was promoted, with rustfmt only,
+at final test head `b50491ceafc5be9029ee96dc9229085efd354e22`. Its only new source
+hunk is a private test; production WASM remains byte-identical. Final source
+SHA256 is `0b0830a1ea2f0c979ca4ae662b281b5e6c0044b7ce6964a52715ed887861deb8`;
+the parity and Makefile digests above remain unchanged. The promoted harness
+passes 51 actual-WASM tests (13 library plus 38 parity), scoped fmt/clippy;
+`main-gates/08-promoted-harness.log` SHA256 is
+`e4703396e8b1f5d8d7d1d7da7d69444efb8ddd14cc72684ed65fe8310dcf6c9a`.
+
+The one final pristine proof is
+`bash evidence/e5-t26n/run-final-clone.sh b50491ceafc5be9029ee96dc9229085efd354e22`.
+It passes the full scoped target: 29 native and 51 actual-WASM tests, format,
+clippy and both target builds. It checks a clean exact checkout, no object
+alternates and fresh target, scrubs compiler/test environment overrides, and
+ends clean with exit 0. Retained clone:
+`/private/tmp/e5-t26n-final.s8BFQMCn/repo`.
+`main-gates/09-final-clone.log` SHA256 is
+`d58a1ff05e933b7f28dc9d9563702e7e5bf534cf2db2dcb89b17173bc2f86b06`.
+
+The pre-evidence predictions and provisional audit are in `verifier/`.
+Only the fresh critic may issue the final task verdict. No F deadline, speedup,
+deployment or Epic 5 completion is established here.

@@ -3,7 +3,7 @@ id: E5-T26n
 epic: 5
 title: Retain browser inline-cache authority across SPP-only trap transitions
 priority: 526.599
-status: in-progress
+status: implemented
 depends_on: [E5-T26m]
 estimate: S
 risk: high
@@ -80,6 +80,46 @@ old image builds or a second pristine clone. No rr, WebKit, other machine, guest
 intervention, performance waiver, or speculative speedup claim.
 
 ## Verification log
+
+### 2026-09-08 — worker submission — frozen guest proof and promoted source variant
+
+Runtime is frozen at `84fd5190832924a0f609b4a10d1bfaee2704dc0e`; final test
+head is `b50491ceafc5be9029ee96dc9229085efd354e22`. Luna implements the one-bit
+projection and private real-Machine/BrowserExecutor guest proof. Main rejects
+the draft raw pending-bit clear; final tests use encoded guest SBI TIME calls
+to arm/cancel the authentic STIP source. SRET-to-S preserves all warmed words
+and both link classes; SRET-to-U enters an actual U-fetchable compiled block,
+then precisely faults on an S-only store with all stale authority cleared.
+The STIP sequence preempts before the target and resumes via nested SRET.
+Required architecture, actual CLINT time and all RAM equal the interpreter;
+JIT/cache counters are asserted separately. No full serialized CPU or cached
+time-shadow equality is claimed. Full raw records and superseded attempts:
+`evidence/e5-t26n/worker/claim.md`.
+
+Daybreak independently adds a guest-set/guest-cleared SSIP variant, passing in
+its frozen git-archive scratch and promoted as a permanent private test with
+rustfmt only. Final source SHA256 is
+`0b0830a1ea2f0c979ca4ae662b281b5e6c0044b7ce6964a52715ed887861deb8`.
+`make verify-E5-T26n` at runtime freeze passes 29 native and 50 WASM tests;
+the promoted affected harness passes 51 WASM tests. One final pristine command,
+`bash evidence/e5-t26n/run-final-clone.sh b50491ceafc5be9029ee96dc9229085efd354e22`,
+passes the full scoped target (29 native plus 51 WASM), format/clippy/builds,
+with a clean exact no-local/no-alternate checkout, fresh target and scrubbed
+environment, ending clean. Retained at `/private/tmp/e5-t26n-final.s8BFQMCn/repo`;
+raw log `evidence/e5-t26n/main-gates/09-final-clone.log`, SHA256
+`d58a1ff05e933b7f28dc9d9563702e7e5bf534cf2db2dcb89b17173bc2f86b06`.
+
+One executed SUM sabotage in an isolated archive fails both the bit-18 partition
+and actual dynamic-target control (4 rather than 2 retirements), then restores
+automatically. The earlier in-place command was rejected before any test ran;
+Main immediately restored/hash-checked correct source before runtime freeze.
+The local demo command
+`E5_DEMO_TASK=E5-T26n E5_DEMO_OUT=evidence/e5-t26n/demo-84fd5190 node tools/verify/e5-t18e-demo-smoke.mjs`
+passes 126/0 with empty collected errors and a viewed screenshot. Production
+WASM SHA256 remains `84b2c17c9b6ab9d86c85912f82bd0b4b4533178fc27a0724d47565cb40974b4d`.
+All hashes, commands and scope boundaries are in `evidence/e5-t26n/README.md`.
+Final verification belongs to the fresh Daybreak critic. No timing improvement,
+F acceptance, deployment or Epic 5 completion is claimed.
 
 ### 2026-09-08 — coordinator — activate source-reviewed SPP prerequisite
 
