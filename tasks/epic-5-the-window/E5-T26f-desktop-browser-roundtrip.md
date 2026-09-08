@@ -40,6 +40,46 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker — exact queue observation closes; F timing still failed
+
+PR365 frozen runtime `2ace135363cf0fa3cf7ba978fe6810e564eecc03` adds only
+immutable existing compile-queue stats/depth/capacity through shared `jitStats`.
+`make verify-E5-T26f-compile-queue-observation` passes format/clippy,14 actual
+WASM and69 Node tests; one built Chromium demo passes126/0 with empty errors.
+Daybreak's closed gate review holds observer P1–P4 and demo coverage, not F.
+Commands, source/build pins and closed artifacts are indexed in
+`evidence/e5-t26f/compile-queue-observation.md`;22 SHA256 records are checked in
+`compile-queue-digests.txt`. No old L/K gate or clone was repeated.
+
+`node tools/verify/e5-t26f-browser-compile-queue.mjs` creates a NEW authenticated
+cold seal on61635, then one actual physical `play`/5ms reuse with unchanged
+default4096/repack-off24 and no profilers/clock/helper/image changes. Cold exits0;
+reuse exits1 at the original cap. T0 `1191.6350001096725` to frozen end
+`5504.760000109673` is **4313.125 ms**, still above2000 ms. The collector's
+outer exit0 means valid diagnostic accounting, never F acceptance.
+
+Actual snapshot SHA256 `06901857ddb25196d8f9212ad981782ba02eae45d0eb456e792a287239339bfb`
+restores CRC `4a8f326b`, freshHELLO2 and the same prepared PID999/start26812
+without a boot state. Two locked/zero pre-gesture PCM observations precede
+10 matched keyboard/DOM transitions, fresh typed text, cursor pixels and1440
+fresh non-silent frames. The lower terminal's old0.063-ms underrun predates save;
+the generic failed reuse record lacks complete browser-error arrays. Later
+coherence/drag/second-restore phases are not reached; carry their old scoped
+HELD evidence without claiming fresh coverage.
+
+The actual same-generation RPC interval conserves2773 staged jobs:73 more
+pending,1908 backpressure drops and792 pops. Of those pops,552 are submitted
+and240 are pre-submission refusals. The drops split into1362 incoming rejections
+and546 resident displacements. Discovery stale/overflow/count-map-loss totals
+remain0. These are jobs, not unique PCs or measured latency causes; this unpaired
+screen does not establish a speedup against the earlier L recording.
+Daybreak independently holds observer P5 and carries P1–P4/demo after rehashing
+the profile/runtime, checking both PNGs and reproducing the exact accounting:
+`evidence/e5-t26f/compile-queue-verifier/browser-results.md`, SHA256
+`8ab3c4f9fd3b7de713ac7aaac9443590174c2b0a3ac1ff6a3697ee89732512d8`.
+F remains in progress, not verified. No observer blocker or repeated proof is
+requested; subsequent work must preserve this closed record and its limits.
+
 ### 2026-09-08 — coordinator — resume after verified L; account for compile-queue work
 
 L is independently verified and published in PR364, final head
