@@ -40,6 +40,20 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-07 — worker — measure JIT coverage without runtime changes
+
+The 49-test harness extension at `43f4cac1ca87af3645a24d2eed12246e84c6593a`
+records bounded JIT statistics after scheduler reads in explicit diagnostic mode.
+One same-runtime cloned-checkpoint replay still fails timing: first PCM at
+3644.315 ms, conditional completion at 4919.430 ms, interaction at 4937.410 ms.
+The executor is active; over the sampled interval only 36.908% of retired guest
+instructions use it, with 14.906 JIT instructions per host entry and rising
+eviction/retranslation counters. Entry-cost timers are disabled. These are
+localization counters, not proof that any proposed JIT change improves latency.
+Exact command, provenance, measured deltas, and inspected screenshot/JSON hashes:
+`evidence/e5-t26f/jit-latency-43f4cac1/README.md`. Preserve the original deadline
+and held sound/restore results; do not promote an unmeasured residency change.
+
 ### 2026-09-07 — worker — localize remaining interaction delay
 
 Frozen harness `2e9d9771477bda265342ac928a25fc6e2d769b25` passes 44 bounded
