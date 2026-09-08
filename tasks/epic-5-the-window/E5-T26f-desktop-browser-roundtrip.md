@@ -3,8 +3,9 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: in-progress
-depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l, E5-T26m, E5-T26n, E5-T26o]
+status: blocked
+blocked_on: E5-T26p
+depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l, E5-T26m, E5-T26n, E5-T26o, E5-T26p]
 estimate: S
 risk: high
 capstone: false
@@ -39,6 +40,22 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — bounded capture prerequisite
+
+PR375 is open/draft at `e37c3af9be3d54dbd613a97682b9803ef9186977` with the
+closed post-PLIC and audit-elided evidence. Exact negative repro remains frozen
+producer76eca30b, `env -u RUSTDOCFLAGS node tools/verify/e5-t26f-browser-single-process-observer.mjs`,
+rawSHA `1b73c811b9abc99d2d7172323e42f3f97dc66e0d13d76468717a75ed5d3b94dc`,
+4002.944999933243ms >2000. Audit elision also fails at3410.355ms and is closed.
+The old seal cannot be rebound after metadata changes.
+
+Fresh source review permits only the concrete optional-returned-metadata design
+in `evidence/e5-t26f/null-trace-candidate/design.md`, with its artifact-first
+stop rule and independent semantics proof. E5-T26p becomes the sole active task;
+F waits on it. No generated-code benefit or F speedup is established. If matched
+artifacts fail to show elimination, abandon this candidate before broader gates
+or another F boot. No guard, clock, timing, image, merge or deployment waiver.
 
 ### 2026-09-08 — worker and fresh Daybreak critic — post-PLIC screen and counterfactual closed
 
