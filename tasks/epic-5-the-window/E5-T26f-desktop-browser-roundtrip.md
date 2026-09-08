@@ -3,8 +3,7 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: blocked
-blocked_on: E5-T26h
+status: in-progress
 depends_on: [E5-T26e, E5-T26h]
 estimate: S
 risk: high
@@ -40,6 +39,15 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-07 — coordinator — resume with verified sound queue mapping
+
+E5-T26h is reverified at frozen runtime `e8850241b686fd497c4ff1589fd31b6ffd0c7cc4`.
+The 32-case native playback matrix proves exact new samples through the fresh sink,
+and the critic's queue-order sabotage reproduces the old replay failure. The new
+browser WASM SHA-256 is `95d1f68df359850d23b4c1b27a76baae393f89efe2cca99b68c2bfa23251c3e3`.
+Old sound-layout snapshots are intentionally incompatible; record a new cold setup.
+The two-second interaction cap and actual non-silent PCM requirement remain unchanged.
 
 ### 2026-09-07 — coordinator/verifier — blocked again on E5-T26h sound queue order
 
