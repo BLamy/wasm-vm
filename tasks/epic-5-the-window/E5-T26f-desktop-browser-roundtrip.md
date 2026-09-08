@@ -3,8 +3,9 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: in-progress
-depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k]
+status: blocked
+blocked_on: E5-T26l bounded live compile-priority runtime candidate and browser screen
+depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l]
 estimate: S
 risk: high
 capstone: false
@@ -39,6 +40,16 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — separate the next core runtime boundary
+
+F's unchanged2-second criterion still fails on the recorded default runtime.
+Exact reproduction and raw inputs are `node evidence/e5-t26f/discovery-690e2324/run.mjs`
+at its pinned `690e2324` release (fresh output/profile required); original result
+4591.175 ms. PR363 now holds the independently reviewed discovery/latency evidence
+and bounded priority reproducer. E5-T26l owns the proposed core queue-selection
+change, which is outside this browser-harness boundary. Park F while that candidate
+is implemented and measured; there is no promised speedup or acceptance waiver.
 
 ### 2026-09-08 — coordinator — discovery hypothesis not supported; audio itself is late
 
