@@ -17,17 +17,28 @@ function between(start, end) {
 const json = value => JSON.parse(JSON.stringify(value));
 const resident = { E5_T26F_FIXTURE: RESIDENT_KIND };
 
-test("resident fixture is exact opt-in; every tuning, profiler and command override refuses", () => {
+test("resident fixture is exact opt-in; every tuning and command override refuses", () => {
   assert.equal(residentFixtureRequested({}), false);
   assert.equal(residentFixtureRequested(resident), true);
   for (const value of ["", "resident", "resident-aplay-v1 ", true, 1, null, [RESIDENT_KIND]]) {
     assert.throws(() => residentFixtureRequested({ E5_T26F_FIXTURE: value }));
   }
-  for (const key of ["COMMAND", "KEY_DELAY_MS", "JIT", "RESIDENCY", "GUEST_CLOCK", "CPU", "LATENCY", "ICOUNT_DIVIDER"]) {
+  for (const key of ["COMMAND", "KEY_DELAY_MS", "JIT", "RESIDENCY", "GUEST_CLOCK", "ICOUNT_DIVIDER"]) {
     for (const value of ["", "0", "1", undefined]) {
       const env = { ...resident, [`E5_T26F_DIAGNOSTIC_${key}`]: value };
       if (value === undefined) assert.equal(residentFixtureRequested(env), true);
       else assert.throws(() => residentFixtureRequested(env), /fixed command\/pacing/);
+    }
+  }
+});
+
+test("read-only resident profiling is exact reuse-only and can never enter cold, normal acceptance or COMPLETE", () => {
+  for (const key of ["CPU", "LATENCY"]) {
+    for (const mode of [undefined, "create", "reuse"]) for (const value of ["", "0", "1", true, 1, "1 "]) {
+      const env = { ...resident, E5_T26F_DIAGNOSTIC: mode, [`E5_T26F_DIAGNOSTIC_${key}`]: value };
+      if (mode === "reuse" && value === "1") assert.equal(residentFixtureRequested(env), true);
+      else assert.throws(() => residentFixtureRequested(env), /diagnostic reuse only/);
+      assert.throws(() => residentFixtureRequested({ ...env, E5_T26F_DIAGNOSTIC_COMPLETE: "1" }), /diagnostic reuse only/);
     }
   }
 });

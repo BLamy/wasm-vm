@@ -40,6 +40,22 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker — prepared player survives restore; original cap still fails
+
+The frozen `7da05062` cold checkpoint succeeds with actual PID999/start27744,
+empty FIFO, Prepared PCM and zero queued sound metadata. Its real COMPLETE
+reuse performs ten physical `play` transitions, proves the same actual process
+identity before feed, produces 1440 fresh non-silent frames, completes both
+CRC-matching restores and the no-stuck guest hover. It still correctly exits 1
+at **4731.885 ms**, not the required 2000 ms. No F verification follows.
+Canonical records and hashes: `evidence/e5-t26f/resident-records.md`.
+
+The next bounded localization admits existing read-only CPU/latency observers
+only to explicitly nonacceptance reuse, never normal acceptance, cold creation
+or COMPLETE evidence. Fixed `play` pacing and default runtime policies remain
+unchanged. The 121 affected diagnostic/fixture tests pass. Preserve this failed
+unprofiled run and its immutable seal; do not infer a cause from elapsed time.
+
 ### 2026-09-08 — worker — freeze prepared-player fixture for a fresh browser run
 
 The fixture is opt-in (`E5_T26F_FIXTURE=resident-aplay-v1`), rejects runtime,

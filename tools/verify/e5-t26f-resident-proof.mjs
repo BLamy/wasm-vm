@@ -11,8 +11,17 @@ export function residentFixtureRequested(env) {
   const value = env.E5_T26F_FIXTURE;
   assert.ok(value === undefined || value === RESIDENT_KIND, "unknown F fixture; omission preserves the original process-launch fixture");
   if (value === undefined) return false;
-  for (const key of ["COMMAND", "KEY_DELAY_MS", "JIT", "RESIDENCY", "GUEST_CLOCK", "CPU", "LATENCY", "ICOUNT_DIVIDER"]) {
-    assert.equal(env[`E5_T26F_DIAGNOSTIC_${key}`], undefined, "resident playback requires fixed command/pacing and unprofiled default runtime policies");
+  for (const key of ["COMMAND", "KEY_DELAY_MS", "JIT", "RESIDENCY", "GUEST_CLOCK", "ICOUNT_DIVIDER"]) {
+    assert.equal(env[`E5_T26F_DIAGNOSTIC_${key}`], undefined, "resident playback requires fixed command/pacing and unchanged default runtime policies");
+  }
+  // Observation-only inner loop after a failed frozen run. The runner labels
+  // reuse nonacceptance, and make refuses diagnostics before any work. Never
+  // admit profiling to cold creation, normal acceptance or COMPLETE evidence.
+  for (const key of ["CPU", "LATENCY"]) {
+    const option = env[`E5_T26F_DIAGNOSTIC_${key}`];
+    if (option === undefined) continue;
+    assert.ok(option === "1" && env.E5_T26F_DIAGNOSTIC === "reuse" && env.E5_T26F_DIAGNOSTIC_COMPLETE === undefined,
+      "resident observation requires exact diagnostic reuse only; no cold, acceptance or completion profiling");
   }
   return true;
 }
