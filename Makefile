@@ -1066,6 +1066,18 @@ verify-E5-T26c:
 	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
 	@echo "verify-E5-T26c (virtio-input rings, LEDs, and restore release-all): OK"
 
+.PHONY: verify-E5-T19a
+verify-E5-T19a:
+	# Spec-grounded PCM lifecycle, Linux XRUN recovery, pending-I/O release ordering,
+	# and retained configuration through the sound and whole-machine codecs.
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --lib --features gpu-trace
+	cargo test -p wasm-vm-core --features gpu-trace --test virtio_snd --test virtio_snd_playback --test virtio_snd_queue --test virtio_snd_capture --test virtio_snd_capture_config --test virtio_snd_machine --test desktop_machine_audio_resume --test desktop_machine_resume --test desktop_machine_resume_verifier -- --nocapture
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	cargo check -p wasm-vm-wasm --lib --target wasm32-unknown-unknown
+	@echo "verify-E5-T19a (PCM lifecycle and Linux XRUN recovery): OK"
+
 .PHONY: verify-E5-T26d
 verify-E5-T26d:
 	# Sound snapshots retain validated guest configuration, discard host rings, and queue bounded

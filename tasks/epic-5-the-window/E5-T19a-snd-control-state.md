@@ -33,11 +33,19 @@ transitions explicit before any host audio timing or browser sink exists.
 - [ ] `SET_PARAMS` at 96 kHz returns `VIRTIO_SND_S_BAD_MSG` while a subsequent legal setup remains
       usable.
 
+## Verification command
+
+`make verify-E5-T19a`
+
 ## Adversarial verification
 
 Permute control requests and selectors, repeat SET_PARAMS with boundary-sized buffers, and inject
 unknown stream IDs or truncated payloads. The oracle must show no illegal transition, panic, or
-state mutation after a rejected request.
+state mutation after a rejected request. Reproduce real Linux STOP → RELEASE → PREPARE
+recovery followed by new exact PCM. Check configured-release snapshot roundtrip, reset losing
+configuration, invalid retained configuration refusal, and repeated SET_PARAMS/PREPARE without
+leaking pending I/O. Run independent schedules, one bounded novel attack, one effective
+sabotage, and one scrubbed exact-head local clean clone for the high-risk remediation.
 
 ## Verification log
 
