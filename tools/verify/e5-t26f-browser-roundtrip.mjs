@@ -2,12 +2,16 @@
 
 // E5-T26f: Chromium-only browser proof for the composed desktop snapshot save/reload/restore
 // boundary. WebKit and independent machines are intentionally outside this slice.
+// Optional inner loop (NEVER acceptance): E5_T26F_DIAGNOSTIC=create|reuse,
+// E5_T26F_DIAGNOSTIC_PROFILE=/absolute/empty/scratch, E5_T26F_DIAGNOSTIC_PORT=PORT.
+// create stops at the normal snapshot; reuse copies that closed profile into a new retained
+// iteration directory and runs the real normal restore/interaction/audit, without cold setup.
 
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { execFile as execFileCallback, spawn } from "node:child_process";
 import { createServer } from "node:net";
-import { mkdir, readFile, stat, writeFile, access } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, lstat, stat, writeFile, access, cp } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { promisify } from "node:util";
@@ -32,6 +36,140 @@ const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const SHA256 = /^[0-9a-f]{64}$/u;
 const jsonReplacer = (_key, value) => typeof value === "bigint" ? `${value}n` : value;
 
+function diagnosticOptions(env) {
+  const mode = env.E5_T26F_DIAGNOSTIC;
+  const directory = env.E5_T26F_DIAGNOSTIC_PROFILE;
+  const port = Number(env.E5_T26F_DIAGNOSTIC_PORT);
+  if (!mode && !directory && !env.E5_T26F_DIAGNOSTIC_PORT) return null;
+  assert.ok(mode === "create" || mode === "reuse", "diagnostic mode must explicitly be create or reuse");
+  assert.ok(directory && path.isAbsolute(directory) && path.resolve(directory) === directory &&
+    directory !== path.parse(directory).root, "diagnostic profile requires an absolute normalized scratch directory");
+  assert.ok(Number.isSafeInteger(port) && port >= 1024 && port <= 65535, "diagnostic mode requires a stable explicit server port");
+  return { mode, directory, port, origin: `http://127.0.0.1:${port}` };
+}
+
+const diagnostic = diagnosticOptions(process.env);
+const DIAGNOSTIC_OWNER = "wasm-vm.e5-t26f.diagnostic-profile.v1";
+const DESKTOP_STORAGE_KEY = "wasm-vm.desktop-snapshot.v1";
+
+async function treeDigest(directory, include = () => true) {
+  const entries = [];
+  async function visit(relative) {
+    for (const name of (await readdir(path.join(directory, relative))).sort()) {
+      const next = path.join(relative, name);
+      if (!include(next)) continue;
+      const file = path.join(directory, next);
+      const info = await lstat(file);
+      assert.ok(!info.isSymbolicLink(), `checkpoint binding refuses symlink: ${file}`);
+      if (info.isDirectory()) await visit(next);
+      else {
+        assert.ok(info.isFile(), `checkpoint binding requires a regular file: ${file}`);
+        entries.push([next, info.size, await sha256File(file)]);
+      }
+    }
+  }
+  await visit("");
+  assert.ok(entries.length, `checkpoint binding is empty: ${directory}`);
+  return sha256(JSON.stringify(entries));
+}
+
+async function diagnosticBinding(options) {
+  // serve-dev serves web/, not web/dist. Bind all top-level runtime assets and the nested
+  // source/wasm modules, including uncommitted bytes; HEAD alone cannot identify a frozen build.
+  const runtimeSha256 = await treeDigest(web, (relative) =>
+    ["src", "pkg", "bench"].includes(relative.split(path.sep)[0]) ||
+    (!relative.includes(path.sep) && /\.(?:js|mjs|html|css|json)$/u.test(relative)));
+  const kernel = JSON.parse(await readFile(path.join(web, "artifacts-alpine.json"), "utf8")).artifacts.kernel;
+  const kernelUrl = new URL(kernel.url, `${options.origin}/desktop-cursor.html`);
+  assert.equal(kernelUrl.origin, options.origin, "diagnostic kernel must use the local server");
+  // Match serve-dev.sh: /releases/* maps to repo/releases; all other local paths map to web/.
+  const servedRoot = kernelUrl.pathname.startsWith("/releases/") ? repo : web;
+  const kernelPath = path.resolve(servedRoot, `.${kernelUrl.pathname}`);
+  assert.ok(kernelPath.startsWith(`${servedRoot}${path.sep}`), "kernel must be local to the frozen repository");
+  const kernelSha256 = await sha256File(kernelPath);
+  assert.equal(kernelSha256, kernel.sha256, "diagnostic kernel digest");
+  return { head, runtimeSha256, kernelSha256, imageSha256, imageBytes: imageStat.size,
+    manifestSha256, origin: options.origin };
+}
+
+function validateCheckpoint(checkpoint) {
+  assert.equal(checkpoint?.schema, DIAGNOSTIC_OWNER, "not a T26f diagnostic checkpoint");
+  assert.match(checkpoint.profileSha256, SHA256, "closed profile digest missing");
+  assert.equal(checkpoint.session?.key, DESKTOP_STORAGE_KEY, "desktop session key differs");
+  const envelope = JSON.parse(checkpoint.session.value);
+  assert.equal(envelope.schema, "wasm-vm.e5-t26f.desktop-snapshot.v1");
+  assert.equal(typeof envelope.bytes, "string", "checkpoint lacks the actual desktop envelope");
+  const bytes = Buffer.from(envelope.bytes, "base64");
+  assert.equal(sha256(bytes), envelope.sha256, "checkpoint envelope digest differs");
+  assert.equal(bytes.length, envelope.byteLength, "checkpoint envelope length differs");
+  const snapshot = checkpoint.normalSnapshot;
+  for (const key of ["sha256", "byteLength", "preFrontBufferCrc", "machineResume"]) {
+    assert.deepEqual(envelope[key], snapshot?.[key], `checkpoint normalSnapshot ${key} differs`);
+  }
+  assert.match(snapshot.preFrontBufferCrc, /^[0-9a-f]{8}$/u);
+  assert.equal(snapshot.machineResume?.persisted, true, "checkpoint lacks persisted machine resume");
+  assert.equal(snapshot.machineResume?.paused, true, "checkpoint lacks paused machine resume");
+  assert.ok(Number.isSafeInteger(snapshot.machineResume.overlayGeneration), "checkpoint lacks overlay generation");
+}
+
+async function prepareDiagnostic(options, binding) {
+  const marker = path.join(options.directory, "e5-t26f-owner.json");
+  const checkpointFile = path.join(options.directory, "normal-checkpoint.json");
+  if (options.mode === "create") await mkdir(options.directory, { recursive: true });
+  const info = await lstat(options.directory);
+  assert.ok(info.isDirectory() && !info.isSymbolicLink(), "diagnostic scratch must be a real directory");
+  const seed = path.join(options.directory, "checkpoint-profile");
+  if (options.mode === "create") {
+    assert.equal((await readdir(options.directory)).length, 0, "refusing to overwrite a nonempty profile; choose new empty scratch");
+    await writeFile(marker, JSON.stringify({ schema: DIAGNOSTIC_OWNER, binding }), { flag: "wx" });
+    await mkdir(seed);
+    return { seed, profile: seed, checkpointFile, checkpoint: null, creatorHead: binding.head };
+  }
+  assert.ok((await lstat(marker)).isFile() && !(await lstat(marker)).isSymbolicLink(), "task-owned marker must be a regular file");
+  const owner = JSON.parse(await readFile(marker, "utf8"));
+  assert.equal(owner.schema, DIAGNOSTIC_OWNER, "profile is not owned by E5-T26f diagnostics");
+  const { head: creatorHead, ...frozenRuntime } = owner.binding;
+  const { head: currentHead, ...currentRuntime } = binding;
+  assert.match(creatorHead, /^[0-9a-f]{40}$/u, "checkpoint creator HEAD missing");
+  assert.match(currentHead, /^[0-9a-f]{40}$/u, "current HEAD missing");
+  // Harness/evidence-only commits may differ. Actual served runtime/image bytes may not.
+  assert.deepEqual(frozenRuntime, currentRuntime, "checkpoint runtime/image/origin binding differs; create new scratch");
+  assert.ok((await lstat(checkpointFile)).isFile() && !(await lstat(checkpointFile)).isSymbolicLink(), "checkpoint must be a regular file");
+  const checkpoint = JSON.parse(await readFile(checkpointFile, "utf8"));
+  validateCheckpoint(checkpoint);
+  assert.ok((await lstat(seed)).isDirectory() && !(await lstat(seed)).isSymbolicLink(), "checkpoint profile must be a real directory");
+  assert.equal(await treeDigest(seed), checkpoint.profileSha256, "closed checkpoint profile changed");
+  // Never launch the sealed baseline again: guest writes can invalidate its overlay generation.
+  // Retain each iteration, even on failure; do not delete or overwrite caller data.
+  const iteration = await mkdtemp(path.join(options.directory, "iteration-"));
+  const profile = path.join(iteration, "profile");
+  await cp(seed, profile, { recursive: true, force: false, errorOnExist: true });
+  assert.equal(await treeDigest(profile), checkpoint.profileSha256, "checkpoint profile copy differs");
+  return { seed, profile, checkpointFile, checkpoint, creatorHead };
+}
+
+async function installCheckpointSession(targetPage, checkpoint, origin) {
+  await targetPage.addInitScript(({ session, origin: expectedOrigin }) => {
+    if (location.origin !== expectedOrigin) return;
+    const current = sessionStorage.getItem(session.key);
+    if (current !== null && current !== session.value) throw new Error("refusing to overwrite a different desktop session");
+    sessionStorage.setItem(session.key, session.value);
+  }, { session: checkpoint.session, origin });
+}
+
+async function readBrowserIdentity(browser, context, page, headless) {
+  if (browser) return { name: browser.browserType().name(), version: browser.version(), headless };
+  // This repo's pinned Playwright returns null from persistentContext.browser(). Use public CDP
+  // only for the diagnostic browser identity, before navigation and the timed interaction.
+  const session = await context.newCDPSession(page);
+  try {
+    const version = await session.send("Browser.getVersion");
+    return { name: "chromium", version: version.product, headless };
+  } finally {
+    await session.detach();
+  }
+}
+
 assert.ok(Number.isSafeInteger(timeoutMs) && timeoutMs >= 120_000, "timeout must be at least two minutes");
 
 async function freePort() {
@@ -43,6 +181,15 @@ async function freePort() {
       probe.close((error) => error ? reject(error) : resolve(port));
     });
   });
+}
+
+async function requireFreePort(port) {
+  const probe = createServer();
+  await new Promise((resolve, reject) => {
+    probe.once("error", reject);
+    probe.listen(port, "127.0.0.1", resolve);
+  });
+  await new Promise((resolve, reject) => probe.close((error) => error ? reject(error) : resolve()));
 }
 
 async function waitFor(predicate, label, limit = timeoutMs) {
@@ -119,7 +266,10 @@ let serverOutput = "";
 const browserErrors = [];
 const httpErrors = [];
 const startedAt = Date.now();
-const milestones = {};
+const milestones = {
+  run: { kind: diagnostic ? "diagnostic-iteration" : "acceptance", acceptance: !diagnostic,
+    diagnostic },
+};
 
 let lastPhase = null;
 let lastProgressSample = null;
@@ -435,6 +585,10 @@ async function waitForDesktopReady(label = "desktop ready") {
       serialTail: (window.__desktopTerminal?.serial?.() || "").slice(-160),
     }));
     lastSample = sample;
+    if (diagnostic?.mode === "reuse") {
+      assert.equal(sample.bootStates.some(({ state }) => state === "booting"), false,
+        "diagnostic checkpoint was refused; aborting cold-boot fallback");
+    }
     return sample.ready === "ready";
   }, label, timeoutMs).catch((error) => {
     throw new Error(`${error.message}; last sample=${JSON.stringify(lastSample)}`, { cause: error });
@@ -549,17 +703,35 @@ async function auditRestoreCoherence(result, snapshot, label) {
   }
 }
 
-async function reloadWithAutoRestore(url, label) {
+async function reloadWithAutoRestore(url, label, initialLoad = false) {
   phaseProgress(`reload:${label}`);
-  await page.evaluate((nextUrl) => history.replaceState(null, "", nextUrl), url);
-  await page.reload({ waitUntil: "domcontentloaded", timeout: timeoutMs });
+  if (initialLoad) {
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: timeoutMs });
+  } else {
+    await page.evaluate((nextUrl) => history.replaceState(null, "", nextUrl), url);
+    await page.reload({ waitUntil: "domcontentloaded", timeout: timeoutMs });
+  }
   phaseProgress(`reload:${label}`, "done");
   return waitForReadyAndRestore(label);
 }
 
 try {
   phaseProgress("server:startup");
-  const port = await freePort();
+  const binding = diagnostic ? await diagnosticBinding(diagnostic) : null;
+  if (diagnostic) {
+    milestones.run.binding = binding;
+    console.error("[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted");
+    await requireFreePort(diagnostic.port);
+  }
+  const retained = diagnostic ? await prepareDiagnostic(diagnostic, binding) : null;
+  const diagnosticCheckpoint = retained?.checkpoint || null;
+  if (diagnostic) {
+    milestones.run.profile = retained.profile;
+    milestones.run.checkpointFile = retained.checkpointFile;
+    milestones.run.creatorHead = retained.creatorHead;
+    milestones.run.currentHead = head;
+  }
+  const port = diagnostic?.port ?? await freePort();
   server = spawn("bash", ["tools/serve-dev.sh", String(port)], {
     cwd: repo,
     env: serverEnv,
@@ -571,6 +743,7 @@ try {
   }
   const base = `http://127.0.0.1:${port}`;
   await waitFor(async () => {
+    if (server.exitCode !== null) throw new Error(`desktop server exited: ${server.exitCode}`);
     try {
       const response = await fetch(`${base}/desktop-cursor.html`);
       const manifestResponse = await fetch(`${base}/e5t18b-desktop/manifest.json`);
@@ -588,13 +761,22 @@ try {
     args: ["--disable-dev-shm-usage", "--disable-background-timer-throttling", "--disable-renderer-backgrounding"],
   };
   try { await access(chromePath); launchOptions.executablePath = chromePath; } catch { /* bundled Chromium */ }
-  browser = await chromium.launch(launchOptions);
-  context = await browser.newContext({
+  const contextOptions = {
     viewport: { width: 1440, height: 1050 },
     deviceScaleFactor: 1,
     serviceWorkers: "block",
-  });
+  };
+  if (retained) {
+    context = await chromium.launchPersistentContext(retained.profile, { ...launchOptions, ...contextOptions });
+    browser = context.browser();
+  } else {
+    browser = await chromium.launch(launchOptions);
+    context = await browser.newContext(contextOptions);
+  }
   page = await context.newPage();
+  const browserIdentity = await readBrowserIdentity(browser, context, page, launchOptions.headless);
+  if (diagnosticCheckpoint) assert.deepEqual(browserIdentity, diagnosticCheckpoint.browser, "checkpoint browser differs");
+  if (diagnosticCheckpoint) await installCheckpointSession(page, diagnosticCheckpoint, base);
   startProgressSampling();
   phaseProgress("browser:launch", "done");
   page.on("pageerror", (error) => browserErrors.push({ type: "pageerror", text: String(error) }));
@@ -620,6 +802,13 @@ try {
   });
   const coldUrl = `${base}/desktop-cursor.html?${query}`;
   const restoreUrl = `${coldUrl}&autoRestore=1`;
+  let normalSnapshot = diagnosticCheckpoint?.normalSnapshot;
+  let preSnapshotPresents, shellProbe, agentProbe, firstCommand, cursorProof;
+  if (diagnosticCheckpoint) {
+    milestones.normalSnapshot = normalSnapshot;
+    milestones.run.checkpointCreatedAt = diagnosticCheckpoint.createdAt;
+    milestones.run.profileSha256 = diagnosticCheckpoint.profileSha256;
+  } else {
   phaseProgress("browser:initial-load");
   await page.goto(coldUrl, { waitUntil: "domcontentloaded", timeout: timeoutMs });
   phaseProgress("browser:initial-load", "done");
@@ -630,13 +819,13 @@ try {
 
   await launchTerminal(box, "e5-t26f-terminal-1");
   await focusTopWindow(box, "terminal-1");
-  const shellProbe = await typeCommand(
+  shellProbe = await typeCommand(
     "true; printf '\\033[42;30me5t26f-shell-ok\\033[0m\\n'",
     "e5t26f-shell-ok",
   );
   assert.equal(shellProbe.redMarkerSeen, false, "guest shell probe reported failure");
   milestones.shellProbe = shellProbe;
-  const agentProbe = await waitForAgentReady();
+  agentProbe = await waitForAgentReady();
   assert.equal(agentProbe.state, "ready", "agent channel did not complete HELLO");
   milestones.agentProbe = agentProbe;
   // Keep the setup-and-run burst below the guest input queue's 256-event budget. The command
@@ -644,11 +833,20 @@ try {
   // replay script whose marker is emitted only after finite aplay completion. The post-restore
   // command is only `sh /tmp/a`, so it cannot spend the 2-second interaction budget in a full
   // one-second /dev/urandom stream.
-  const aplayCommand = "yes \"$(printf '\\001\\000\\377\\177')\"|head -c3840 >/tmp/p;printf 'aplay -f S16_LE -t raw -r48000 -c2 /tmp/p&&printf \"\\033[42me5t26f-aplay\\033[0m\\n\"' >/tmp/a;sh /tmp/a";
-  const firstCommand = await typeCommand(aplayCommand, "e5t26f-aplay-ok");
+  // Pin the real hardware device and two 10-ms periods: a short file must fill the start
+  // threshold, not depend on ALSA's ignored drain return or an implicit larger buffer.
+  const initialAudioBefore = await page.evaluate(() => window.__desktopTerminal.audio()?.pcm?.() || null);
+  const aplayCommand = "yes \"$(printf '\\001\\000\\377\\177')\"|head -c3840 >/tmp/p;printf 'aplay -v -Dhw:0,0 --period-size=480 --buffer-size=960 -f S16_LE -t raw -r48000 -c2 /tmp/p&&printf \"\\033[42me5t26f-aplay\\033[0m\\n\"' >/tmp/a;sh /tmp/a";
+  firstCommand = await typeCommand(aplayCommand, "e5t26f-aplay-ok");
   assert.equal(firstCommand.terminalMarkerSeen, true, "initial aplay was not guest-visibly completed");
   assert.ok(firstCommand.visualDiffPixels >= 2_000, "initial aplay marker did not change guest pixels");
   milestones.initialAplay = firstCommand;
+  milestones.initialAudio = await page.evaluate(async (before) => ({
+    before,
+    after: window.__desktopTerminal.audio()?.pcm?.(before?.writeIndex) || null,
+    outputAttached: await window.__desktopController?.audioOutputReady?.() ?? null,
+    observedAt: performance.now(),
+  }), initialAudioBefore);
   const focusProof = await page.evaluate(() => window.__desktopTerminal.confirmGuestFocus("e5t26f-shell-ok"));
   assert.equal(focusProof.focuses.at(-1).guestVisible, true, "terminal focus was not guest-visibly used");
   await launchTerminal(box, "e5-t26f-terminal-2");
@@ -668,7 +866,7 @@ try {
     const rendered = window.__desktopCursor?.renderedCursor?.(point);
     return rendered ? { frame, rendered } : false;
   }, cursorPoint, { timeout: 120_000, polling: 500 });
-  const cursorProof = await page.evaluate((point) => {
+  cursorProof = await page.evaluate((point) => {
     const state = window.__desktopTerminal.state();
     const frame = [...state.pointerFrameSample].reverse().find(
       (entry) => entry.device === "tablet" && entry.source === "pointermove" && entry.coordinates,
@@ -682,8 +880,11 @@ try {
   phaseProgress("cursor:initial-render", "done");
 
   phaseProgress("snapshot:normal");
-  const preSnapshotPresents = await page.evaluate(() => window.__desktopTerminal.presentation().successfulPresents);
-  const normalSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: true }));
+  // Diagnostic seed only: keep the guest paused through profile close, so no later guest write
+  // advances the durable overlay beyond the normal snapshot. Acceptance keeps its normal path.
+  if (diagnostic) await page.evaluate(() => window.__desktopController.pause());
+  preSnapshotPresents = await page.evaluate(() => window.__desktopTerminal.presentation().successfulPresents);
+  normalSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: true }));
   assert.equal(normalSnapshot.schema, "wasm-vm.e5-t26f.desktop-snapshot.v1");
   assert.match(normalSnapshot.sha256, SHA256);
   assert.ok(normalSnapshot.byteLength > 0, "normal desktop snapshot is empty");
@@ -693,8 +894,31 @@ try {
     preFrontBufferCrc: normalSnapshot.preFrontBufferCrc, machineResume: normalSnapshot.machineResume,
   };
   phaseProgress("snapshot:normal", "done");
+  }
 
-  const firstRestore = await reloadWithAutoRestore(restoreUrl, "normal");
+  if (diagnostic?.mode === "create") {
+    phaseProgress("diagnostic:checkpoint-seal");
+    const session = await page.evaluate((key) => ({ key, value: sessionStorage.getItem(key) }), DESKTOP_STORAGE_KEY);
+    stopProgressSampling();
+    await context.close();
+    context = null;
+    assert.deepEqual(await diagnosticBinding(diagnostic), binding, "runtime changed while creating checkpoint");
+    const checkpoint = {
+      schema: DIAGNOSTIC_OWNER, createdAt: new Date().toISOString(), browser: browserIdentity,
+      normalSnapshot: milestones.normalSnapshot, session, profileSha256: await treeDigest(retained.seed),
+    };
+    validateCheckpoint(checkpoint);
+    await writeFile(retained.checkpointFile, `${JSON.stringify(checkpoint)}\n`, { flag: "wx" });
+    milestones.run.profileSha256 = checkpoint.profileSha256;
+    phaseProgress("diagnostic:checkpoint-seal", "done");
+    await mkdir(out, { recursive: true });
+    const result = { schema: "wasm-vm.e5-t26f.diagnostic-iteration.v1", acceptance: false, milestones,
+      errors: { browser: browserErrors, http: httpErrors } };
+    await writeFile(path.join(out, "diagnostic-checkpoint.json"), `${JSON.stringify(result, jsonReplacer, 2)}\n`);
+    console.log(JSON.stringify(result, jsonReplacer, 2));
+  } else {
+
+  const firstRestore = await reloadWithAutoRestore(restoreUrl, "normal", Boolean(diagnosticCheckpoint));
   milestones.normalRestore = { result: firstRestore, displayChecksPassed: false, checksPassed: false };
   phaseProgress("restore:normal:display-checks");
   assert.equal(firstRestore.snapshotSha256, normalSnapshot.sha256, "reload restored a different snapshot");
@@ -713,6 +937,7 @@ try {
 
   phaseProgress("post-restore:focus-and-gesture");
   const postRestoreStart = firstRestore.completedAt;
+  milestones.postRestoreStart = postRestoreStart;
   assert.ok(Number.isFinite(postRestoreStart), "restore did not expose a timing boundary");
   const postBox = await desktopBox();
   const focusBefore = await page.evaluate(() => window.__desktopTerminal.state().pointerFrames);
@@ -774,6 +999,18 @@ try {
     observedAt: performance.now(),
     pcm: window.__desktopTerminal.audio()?.pcm?.(writeIndex) || null,
   }), postAudioBefore.writeIndex);
+  milestones.postRestorePcmAtCompletion = {
+    ...postPcmAtCompletion, elapsedMs: postPcmAtCompletion.observedAt - postRestoreStart,
+  };
+  // Preserve raw PCM first, even if this optional scalar worker RPC fails or stalls.
+  try {
+    milestones.postRestoreOutputAttached = await page.evaluate(async () => ({
+      outputAttached: await window.__desktopController?.audioOutputReady?.() ?? null,
+      observedAt: performance.now(),
+    }));
+  } catch (error) {
+    milestones.postRestoreOutputAttached = { error: String(error?.message || error) };
+  }
   assert.ok(postPcmAtCompletion.pcm?.writtenFrames > 0, "post-restore aplay wrote no guest PCM at completion");
   assert.ok(postPcmAtCompletion.pcm?.nonSilentFrames > 0 && postPcmAtCompletion.pcm?.maxAbs > 0,
     "post-restore audio PCM was silent at completion");
@@ -785,25 +1022,28 @@ try {
     { minimum: postAudioBefore.renderedFrames },
     { timeout: 2_000 },
   );
-  const postAudioAfter = await page.evaluate(async ({ completion, writeIndex }) => ({
+  const postAudioAfter = await page.evaluate(({ completion, writeIndex, attachment }) => ({
     policy: window.__desktopTerminal.audio()?.policy?.state || null,
     context: window.__desktopTerminal.audio()?.sink?.context?.state || null,
     renderedFrames: window.__desktopTerminal.audio()?.sink?.renderedFrames ?? null,
     pcm: completion.pcm,
     pcmObservedAt: completion.observedAt,
     writeIndex,
-    guestAttached: await window.__desktopController?.audioOutputReady?.() ?? false,
-  }), { completion: postPcmAtCompletion, writeIndex: postAudioBefore.writeIndex });
+    guestAttached: attachment.outputAttached ?? false,
+    guestAttachedObservedAt: attachment.observedAt ?? null,
+  }), { completion: postPcmAtCompletion, writeIndex: postAudioBefore.writeIndex,
+    attachment: milestones.postRestoreOutputAttached });
+  milestones.postRestoreAudioAfter = postAudioAfter;
   assert.ok(postAudioAfter.renderedFrames > postAudioBefore.renderedFrames,
     "post-restore aplay did not advance rendered audio frames");
   assert.equal(postAudioAfter.guestAttached, true, "guest audio output was not attached");
   assert.ok(postAudioAfter.pcm?.writtenFrames > 0, "post-restore aplay wrote no guest PCM");
   assert.ok(postAudioAfter.pcm?.nonSilentFrames > 0 && postAudioAfter.pcm?.maxAbs > 0,
     "post-restore audio PCM was silent");
-  milestones.postRestoreAudioAfter = postAudioAfter;
   phaseProgress("post-restore:audio-pcm-and-render", "done");
   phaseProgress("post-restore:interaction-checks");
   const postRestoreEnd = await page.evaluate(() => performance.now());
+  milestones.postRestoreEnd = postRestoreEnd;
   const postRestoreInteraction = await page.evaluate((boundary) => ({
     elapsedMs: performance.now() - boundary,
     pointerFrames: window.__desktopTerminal.state().pointerFrames,
@@ -815,6 +1055,7 @@ try {
       renderedFrames: window.__desktopTerminal.audio()?.sink?.renderedFrames ?? null,
     },
   }), postRestoreStart);
+  milestones.postRestoreInteraction = postRestoreInteraction;
   try {
     assert.ok(postRestoreInteraction.pointerFrames > focusBefore, "post-restore cursor/focus did not move");
     assert.equal(postRestoreInteraction.heldButtons.length, 0, "post-restore focus left a stuck button");
@@ -826,12 +1067,23 @@ try {
     await captureFailure("post-restore", error);
     throw error;
   }
-  milestones.postRestoreInteraction = postRestoreInteraction;
   phaseProgress("post-restore:interaction-checks", "done");
 
   await auditRestoreCoherence(firstRestore, normalSnapshot, "normal");
   milestones.normalRestore.checksPassed = true;
 
+  if (diagnostic) {
+    phaseProgress("diagnostic:iteration-evidence");
+    assert.deepEqual(browserErrors, [], "unexpected browser console/page errors");
+    assert.deepEqual(httpErrors, [], "unexpected browser HTTP errors");
+    await mkdir(out, { recursive: true });
+    await page.screenshot({ path: path.join(out, "diagnostic-iteration.png"), fullPage: true });
+    const result = { schema: "wasm-vm.e5-t26f.diagnostic-iteration.v1", acceptance: false,
+      browser: browserIdentity, milestones, errors: { browser: browserErrors, http: httpErrors } };
+    await writeFile(path.join(out, "diagnostic-iteration.json"), `${JSON.stringify(result, jsonReplacer, 2)}\n`);
+    await writeFile(path.join(out, "diagnostic-iteration-server.log"), serverOutput);
+    console.log(JSON.stringify(result, jsonReplacer, 2));
+  } else {
   phaseProgress("drag:prepare");
   const dragChrome = await page.evaluate(() => window.__desktopCursor.detectWindowChrome());
   assert.ok(dragChrome?.titlebar, "drag snapshot has no detected titlebar");
@@ -911,6 +1163,7 @@ try {
     schema: "wasm-vm.e5-t26f.browser-roundtrip.v1",
     task: "E5-T26f",
     head,
+    milestones,
     scope: { browser: "local Chromium", webkit: false, independentMachines: false, hostRr: false },
     browser: { name: browser.browserType().name(), version: browser.version(), headless: launchOptions.headless },
     image: {
@@ -958,6 +1211,8 @@ try {
   await writeFile(path.join(out, "desktop-roundtrip-server.log"), serverOutput);
   phaseProgress("evidence:write", "done");
   console.log(JSON.stringify(result, jsonReplacer, 2));
+  }
+  }
 } catch (error) {
   const phase = lastPhase?.phase || "setup";
   phaseProgress(phase, "failed");

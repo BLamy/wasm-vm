@@ -2,7 +2,10 @@
 // Extract only the bounded helpers into a VM; importing the runner would launch Chromium.
 
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
+import * as fs from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import vm from "node:vm";
@@ -51,6 +54,7 @@ function fixture() {
       querySelector: () => ({ textContent: "s".repeat(1_000) }),
     },
     window: {},
+    diagnosticCheckpoint: null,
     page: { url: () => "http://local/test" },
   };
   const context = vm.createContext(sandbox);
@@ -346,8 +350,8 @@ const beforeTimedInteraction = extractBetween(
   "  phaseProgress(\"post-restore:focus-and-gesture\")",
 );
 const afterTimedInteraction = extractBetween(
-  "  milestones.postRestoreInteraction = postRestoreInteraction;",
-  "  phaseProgress(\"drag:prepare\")",
+  "  phaseProgress(\"post-restore:interaction-checks\", \"done\");",
+  "  if (diagnostic) {\n    phaseProgress(\"diagnostic:iteration-evidence\");",
 );
 const originalTimingAssertion = source.match(
   /assert\.ok\(postRestoreEnd - postRestoreStart <= 2_000, "post-restore interaction exceeded 2 seconds"\);/,
@@ -361,6 +365,7 @@ function runRestoreSequence(f) {
       const postRestoreStart = firstRestore.completedAt;
       const postRestoreEnd = await performTimedInteraction(postRestoreStart);
       const postRestoreInteraction = { elapsedMs: postRestoreEnd - postRestoreStart };
+      milestones.postRestoreInteraction = postRestoreInteraction;
       ${originalTimingAssertion}
       ${afterTimedInteraction}
       nextSave();
@@ -424,6 +429,285 @@ test("a held coherence read starts after timed interaction and must finish befor
   } finally {
     releaseAudit.resolve("resume");
     await proof.catch(() => {});
+  }
+});
+
+const checkpointHelpers = extractBetween("function diagnosticOptions", "assert.ok(Number.isSafeInteger(timeoutMs)");
+const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
+
+async function checkpointFixture(t) {
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), "e5-t26f-checkpoint-test-"));
+  t.after(() => fs.rm(directory, { recursive: true, force: true }));
+  const options = { mode: "create", directory, port: 48123, origin: "http://127.0.0.1:48123" };
+  const binding = { head: "a".repeat(40), runtimeSha256: "b".repeat(64), kernelSha256: "c".repeat(64),
+    imageSha256: "d".repeat(64), imageBytes: 4096, manifestSha256: "e".repeat(64), origin: options.origin };
+  const context = vm.createContext({
+    assert, path, ...fs, Buffer, JSON, URL, process: { env: {} }, sha256, SHA256: /^[0-9a-f]{64}$/u,
+    sha256File: async (file) => sha256(await fs.readFile(file)),
+  });
+  const api = vm.runInContext(checkpointHelpers + `
+    ({ diagnosticOptions, treeDigest, diagnosticBinding, prepareDiagnostic, validateCheckpoint,
+       installCheckpointSession, readBrowserIdentity })
+  `, context);
+  const prepared = await api.prepareDiagnostic(options, binding);
+  const bytes = Buffer.from([0, 1, 255, 127]);
+  const normalSnapshot = {
+    sha256: sha256(bytes), byteLength: bytes.length, preFrontBufferCrc: "3079a40f",
+    machineResume: { persisted: true, paused: true, preFrontBufferCrc: "3079a40f", overlayGeneration: 617 },
+  };
+  const envelope = { schema: "wasm-vm.e5-t26f.desktop-snapshot.v1", ...normalSnapshot, bytes: bytes.toString("base64") };
+  const checkpoint = {
+    schema: "wasm-vm.e5-t26f.diagnostic-profile.v1", createdAt: "2026-09-07T23:00:00Z",
+    browser: { name: "chromium", version: "test-only", headless: true }, normalSnapshot,
+    session: { key: "wasm-vm.desktop-snapshot.v1", value: JSON.stringify(envelope) },
+  };
+  return { api, context, options, binding, prepared, checkpoint, directory };
+}
+
+async function sealFixture(f) {
+  await fs.mkdir(path.join(f.prepared.seed, "Default"));
+  await fs.writeFile(path.join(f.prepared.seed, "Default", "persisted-state"), "baseline overlay and resume");
+  f.checkpoint.profileSha256 = await f.api.treeDigest(f.prepared.seed);
+  await fs.writeFile(f.prepared.checkpointFile, JSON.stringify(f.checkpoint), { flag: "wx" });
+}
+
+test("diagnostics require explicit mode, absolute scratch and stable port; default remains fresh acceptance", async (t) => {
+  const { api } = await checkpointFixture(t);
+  assert.equal(api.diagnosticOptions({}), null);
+  const env = { E5_T26F_DIAGNOSTIC: "reuse", E5_T26F_DIAGNOSTIC_PROFILE: "/tmp/t26f", E5_T26F_DIAGNOSTIC_PORT: "48123" };
+  assert.equal(api.diagnosticOptions(env).origin, "http://127.0.0.1:48123");
+  for (const change of [
+    { E5_T26F_DIAGNOSTIC: "" }, { E5_T26F_DIAGNOSTIC: "acceptance" },
+    { E5_T26F_DIAGNOSTIC_PROFILE: "relative" }, { E5_T26F_DIAGNOSTIC_PROFILE: "/" },
+    { E5_T26F_DIAGNOSTIC_PROFILE: "/tmp/../tmp/t26f" },
+    { E5_T26F_DIAGNOSTIC_PORT: "" }, { E5_T26F_DIAGNOSTIC_PORT: "0" },
+    { E5_T26F_DIAGNOSTIC_PORT: "NaN" }, { E5_T26F_DIAGNOSTIC_PORT: "65536" },
+  ]) assert.throws(() => api.diagnosticOptions({ ...env, ...change }));
+  assert.match(source, /if \(retained\) \{[\s\S]*launchPersistentContext[\s\S]*\} else \{\n    browser = await chromium.launch\(launchOptions\);\n    context = await browser.newContext/);
+  assert.match(source, /kind: diagnostic \? "diagnostic-iteration" : "acceptance", acceptance: !diagnostic/);
+  assert.match(source, /schema: "wasm-vm.e5-t26f.diagnostic-iteration.v1", acceptance: false/);
+  assert.match(source, /const postRestoreStart = firstRestore.completedAt;/);
+  assert.ok(source.includes(originalTimingAssertion));
+});
+
+test("profile creation never overwrites existing data and reuse requires the task marker and completed seal", async (t) => {
+  const f = await checkpointFixture(t);
+  const before = await fs.readdir(f.directory);
+  await assert.rejects(f.api.prepareDiagnostic(f.options, f.binding), /nonempty profile/);
+  await assert.rejects(f.api.prepareDiagnostic({ ...f.options, mode: "reuse" }, f.binding), /ENOENT/);
+  assert.deepEqual(await fs.readdir(f.directory), before);
+  const unowned = path.join(f.directory, "user-profile");
+  await fs.mkdir(unowned);
+  await fs.writeFile(path.join(unowned, "personal-data"), "keep");
+  await assert.rejects(f.api.prepareDiagnostic({ ...f.options, directory: unowned }, f.binding), /nonempty profile/);
+  await assert.rejects(f.api.prepareDiagnostic({ ...f.options, directory: unowned, mode: "reuse" }, f.binding), /ENOENT/);
+  assert.equal(await fs.readFile(path.join(unowned, "personal-data"), "utf8"), "keep");
+});
+
+test("every runtime/kernel/image/origin binding mismatch refuses reuse before copying any profile", async (t) => {
+  const f = await checkpointFixture(t);
+  await sealFixture(f);
+  const before = await fs.readdir(f.directory);
+  for (const key of Object.keys(f.binding).filter((key) => key !== "head")) {
+    const changed = { ...f.binding, [key]: key === "imageBytes" ? 8192 : "different" };
+    await assert.rejects(f.api.prepareDiagnostic({ ...f.options, mode: "reuse" }, changed), /binding differs/);
+    assert.deepEqual(await fs.readdir(f.directory), before);
+  }
+});
+
+test("harness-only HEAD changes permit reuse while preserving creator and current provenance", async (t) => {
+  const f = await checkpointFixture(t);
+  await sealFixture(f);
+  const currentBinding = { ...f.binding, head: "f".repeat(40) };
+  const reused = await f.api.prepareDiagnostic({ ...f.options, mode: "reuse" }, currentBinding);
+  assert.equal(reused.creatorHead, f.binding.head);
+  assert.notEqual(reused.creatorHead, currentBinding.head);
+  assert.equal(reused.checkpoint.session.value, f.checkpoint.session.value);
+  const owner = JSON.parse(await fs.readFile(path.join(f.directory, "e5-t26f-owner.json"), "utf8"));
+  assert.equal(owner.binding.head, f.binding.head, "reuse must not rewrite creator identity");
+  assert.match(source, /milestones.run.creatorHead = retained.creatorHead;/);
+  assert.match(source, /milestones.run.currentHead = head;/);
+});
+
+test("runtime binding hashes actual served JS/WASM/kernel bytes, including uncommitted changes", async (t) => {
+  const f = await checkpointFixture(t);
+  const repo = path.join(f.directory, "repo");
+  const web = path.join(repo, "web");
+  await fs.mkdir(path.join(web, "pkg"), { recursive: true });
+  await fs.mkdir(path.join(web, "src"));
+  await fs.mkdir(path.join(repo, "releases"));
+  const kernel = Buffer.from("kernel bytes");
+  await fs.writeFile(path.join(repo, "releases", "Image"), kernel);
+  await fs.writeFile(path.join(web, "artifacts-alpine.json"), JSON.stringify({
+    artifacts: { kernel: { url: "releases/Image", sha256: sha256(kernel) } },
+  }));
+  const files = ["loader.js", "src/ring.js", "pkg/runtime.wasm"];
+  for (const file of files) await fs.writeFile(path.join(web, file), file);
+  Object.assign(f.context, { repo, web, head: f.binding.head, imageSha256: f.binding.imageSha256,
+    imageStat: { size: f.binding.imageBytes }, manifestSha256: f.binding.manifestSha256 });
+  const baseline = await f.api.diagnosticBinding(f.options);
+  for (const file of files) {
+    await fs.writeFile(path.join(web, file), `${file} changed`);
+    assert.notEqual((await f.api.diagnosticBinding(f.options)).runtimeSha256, baseline.runtimeSha256);
+    await fs.writeFile(path.join(web, file), file);
+  }
+  assert.equal((await f.api.diagnosticBinding(f.options)).runtimeSha256, baseline.runtimeSha256);
+  await fs.writeFile(path.join(repo, "releases", "Image"), "different kernel");
+  await assert.rejects(f.api.diagnosticBinding(f.options), /kernel digest/);
+  // A local-relative URL outside the server's /releases override is served from web/, not repo/.
+  await fs.mkdir(path.join(web, "local-kernel"));
+  await fs.writeFile(path.join(web, "local-kernel", "Image"), kernel);
+  await fs.writeFile(path.join(web, "artifacts-alpine.json"), JSON.stringify({
+    artifacts: { kernel: { url: "./local-kernel/Image", sha256: sha256(kernel) } },
+  }));
+  assert.equal((await f.api.diagnosticBinding(f.options)).kernelSha256, sha256(kernel));
+});
+
+test("reuse enters autoRestore directly without cold setup or resetting the restored timing boundary", async () => {
+  const f = restoreFixture();
+  const calls = [];
+  f.sandbox.diagnosticCheckpoint = { normalSnapshot: f.sandbox.normalSnapshot };
+  f.sandbox.page.goto = async (url) => calls.push(url);
+  f.sandbox.page.reload = async () => assert.fail("reuse should not reload a cold page");
+  f.sandbox.performTimedInteraction = async (boundary) => {
+    assert.equal(boundary, 1_131);
+    return 2_000;
+  };
+  f.sandbox.nextSave = () => {};
+  f.sandbox.window.__desktopController.snapshotDecision = async () => "resume";
+  f.sandbox.window.__desktopController.snapshotGeneration = async () => 617;
+  await runRestoreSequence(f);
+  assert.deepEqual(calls, [f.sandbox.restoreUrl]);
+  assert.equal(f.milestones.postRestoreInteraction.elapsedMs, 869);
+  assert.equal(f.milestones.normalRestore.checksPassed, true);
+});
+
+test("reuse cold-boot fallback fails on its first readiness sample instead of waiting for another boot", async () => {
+  const f = fixture();
+  f.sandbox.diagnostic = { mode: "reuse" };
+  f.sandbox.timeoutMs = 900_000;
+  f.sandbox.window.__desktopTerminal = { state: () => ({ bootStates: [{ state: "booting" }] }) };
+  let samples = 0;
+  f.sandbox.page.evaluate = async (fn) => { samples += 1; return fn(); };
+  f.sandbox.waitFor = async (fn) => fn();
+  const readiness = extractBetween("async function waitForDesktopReady", "async function waitForAgentReady");
+  const run = vm.runInContext(`${readiness}\nwaitForDesktopReady`, f.context);
+  await assert.rejects(run("diagnostic restore"), /aborting cold-boot fallback/);
+  assert.equal(samples, 1);
+});
+
+test("reuse copies a sealed profile, preserves actual envelope/metadata and retains separate failed iterations", async (t) => {
+  const f = await checkpointFixture(t);
+  await sealFixture(f);
+  const first = await f.api.prepareDiagnostic({ ...f.options, mode: "reuse" }, f.binding);
+  assert.notEqual(first.profile, f.prepared.seed);
+  assert.equal(first.checkpoint.session.value, f.checkpoint.session.value);
+  assert.equal(first.checkpoint.normalSnapshot.machineResume.overlayGeneration, 617);
+  await fs.writeFile(path.join(first.profile, "Default", "persisted-state"), "failed iteration guest writes");
+  const second = await f.api.prepareDiagnostic({ ...f.options, mode: "reuse" }, f.binding);
+  assert.notEqual(first.profile, second.profile);
+  assert.equal(await fs.readFile(path.join(second.profile, "Default", "persisted-state"), "utf8"), "baseline overlay and resume");
+  assert.equal(await fs.readFile(path.join(first.profile, "Default", "persisted-state"), "utf8"), "failed iteration guest writes");
+  assert.equal(await f.api.treeDigest(f.prepared.seed), f.checkpoint.profileSha256);
+});
+
+test("tampered profile bytes or desktop envelope/normal metadata cannot be reused", async (t) => {
+  const f = await checkpointFixture(t);
+  await sealFixture(f);
+  for (const mutate of [
+    (c) => { c.session.value = c.session.value.replace("AAH/fw==", "AQH/fw=="); },
+    (c) => { c.normalSnapshot.preFrontBufferCrc = "deadbeef"; },
+    (c) => { c.normalSnapshot.machineResume.overlayGeneration += 1; },
+    (c) => { c.session.key = "unrelated-session-key"; },
+  ]) {
+    const changed = structuredClone(f.checkpoint);
+    mutate(changed);
+    assert.throws(() => f.api.validateCheckpoint(changed));
+  }
+  await fs.writeFile(path.join(f.prepared.seed, "Default", "persisted-state"), "tampered");
+  const before = await fs.readdir(f.directory);
+  await assert.rejects(f.api.prepareDiagnostic({ ...f.options, mode: "reuse" }, f.binding), /profile changed/);
+  assert.deepEqual(await fs.readdir(f.directory), before);
+});
+
+test("profile ownership refuses symlinks instead of traversing or overwriting an external profile", async (t) => {
+  const f = await checkpointFixture(t);
+  await sealFixture(f);
+  const linked = path.join(f.directory, "linked-profile");
+  await fs.symlink(f.prepared.seed, linked);
+  await assert.rejects(f.api.prepareDiagnostic({ ...f.options, directory: linked }, f.binding), /real directory/);
+  await fs.symlink(f.prepared.checkpointFile, path.join(f.prepared.seed, "external"));
+  await assert.rejects(f.api.prepareDiagnostic({ ...f.options, mode: "reuse" }, f.binding), /refuses symlink/);
+});
+
+test("checkpoint session hydration is exact, origin-scoped and refuses an existing different envelope", async (t) => {
+  const f = await checkpointFixture(t);
+  const data = new Map();
+  const sandbox = vm.createContext({
+    location: { origin: "http://elsewhere" },
+    sessionStorage: { getItem: (key) => data.get(key) ?? null, setItem: (key, value) => data.set(key, value) },
+  });
+  const targetPage = { addInitScript: async (fn, argument) => {
+    sandbox.argument = argument;
+    vm.runInContext(`(${fn})(argument)`, sandbox);
+  } };
+  await f.api.installCheckpointSession(targetPage, f.checkpoint, f.options.origin);
+  assert.equal(data.size, 0);
+  sandbox.location.origin = f.options.origin;
+  await f.api.installCheckpointSession(targetPage, f.checkpoint, f.options.origin);
+  assert.equal(data.get(f.checkpoint.session.key), f.checkpoint.session.value);
+  data.set(f.checkpoint.session.key, "unrelated envelope");
+  await assert.rejects(f.api.installCheckpointSession(targetPage, f.checkpoint, f.options.origin), /refusing to overwrite/);
+  assert.equal(data.get(f.checkpoint.session.key), "unrelated envelope");
+});
+
+test("persistent Chromium identity uses public CDP when browser() is null and always detaches", async (t) => {
+  const f = await checkpointFixture(t);
+  let detached = 0;
+  const session = { send: async (method) => {
+    assert.equal(method, "Browser.getVersion");
+    return { product: "Chrome/152.0.1" };
+  }, detach: async () => { detached += 1; } };
+  const context = { newCDPSession: async () => session };
+  const identity = await f.api.readBrowserIdentity(null, context, {}, true);
+  assert.equal(identity.version, "Chrome/152.0.1");
+  assert.equal(identity.headless, true);
+  assert.equal(detached, 1);
+  session.send = async () => { throw Error("CDP disconnected"); };
+  await assert.rejects(f.api.readBrowserIdentity(null, context, {}, true), /disconnected/);
+  assert.equal(detached, 2);
+});
+
+test("zero PCM and completion attachment/timestamps reach failure milestones before the PCM assertion", async () => {
+  const body = extractBetween("  const postPcmAtCompletion =", "  await page.waitForFunction(\n    ({ minimum })");
+  for (const attached of [true, false, null]) {
+    const f = fixture();
+    f.clock.now = 14_000;
+    f.sandbox.postRestoreStart = 1_000;
+    f.sandbox.postAudioBefore = { writeIndex: 0 };
+    f.sandbox.window.__desktopTerminal = { audio: () => ({ pcm: () => ({
+      writeIndex: 0, readIndex: 0, writtenFrames: 0, nonSilentFrames: 0, maxAbs: 0,
+    }) }) };
+    f.sandbox.window.__desktopController = { audioOutputReady: async () => {
+      assert.equal(f.milestones.postRestorePcmAtCompletion.pcm.writeIndex, 0);
+      assert.equal(f.milestones.postRestorePcmAtCompletion.observedAt, 14_000);
+      assert.equal(f.milestones.postRestorePcmAtCompletion.elapsedMs, 13_000);
+      return attached;
+    } };
+    f.sandbox.page.evaluate = async (fn, argument) => fn(argument);
+    let failure;
+    await assert.rejects(vm.runInContext(`(async () => { ${body} })()`, f.context), (error) => {
+      failure = error;
+      return /wrote no guest PCM at completion/.test(error.message);
+    });
+    f.sandbox.page.evaluate = async () => { throw Error("page closed"); };
+    await f.api.captureFailure("failure-pcm", failure);
+    const saved = JSON.parse(f.writes[0].value).milestones;
+    assert.equal(saved.postRestorePcmAtCompletion.pcm.writtenFrames, 0);
+    assert.equal(saved.postRestorePcmAtCompletion.observedAt, 14_000);
+    assert.equal(saved.postRestorePcmAtCompletion.elapsedMs, 13_000);
+    assert.equal(saved.postRestoreOutputAttached.outputAttached, attached);
+    assert.equal(saved.postRestoreOutputAttached.observedAt, 14_000);
   }
 });
 
