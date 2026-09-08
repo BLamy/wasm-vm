@@ -3,7 +3,7 @@ id: E5-T26m
 epic: 5
 title: Retain browser inline-cache authority across interrupt-only status changes
 priority: 526.598
-status: implemented
+status: verified
 depends_on: [E4-T11, E5-T22g, E5-T26l]
 estimate: S
 risk: high
@@ -77,6 +77,21 @@ before the final frozen run. No rr, other machine, WebKit, latency waiver,
 arbitrary performance claim or unrelated emulator optimization belongs here.
 
 ## Verification log
+
+### 2026-09-08 — fresh verifier — VERDICT: verified
+
+Predictions P1-P6 all HELD against frozen product/test head
+`7f007bd28e0d8a73ed46d03c7f9bd803449157ee`; no implementation refutation or
+coverage gap remains. The promoted all-four-interrupt-bits-plus-SUM attack
+passes both real generated static and dynamic link legs. Its scope is target
+non-entry/publication reset; the separate private64-bit test supplies seeded
+read/write/exec sentinel-word coverage, including a mixed retained-bit control.
+The one SUM sabotage fails both the private bit18 assertion and actual dynamic
+target retirement assertion. Final exact-head records pass29 native and47
+actual-WASM tests, scoped format/clippy/builds, clean no-local/no-alternates
+clone, and the previously viewed126/0 demo. No F timing or speedup claim is
+made. Full citations, digests, hunk coverage and suite disposition:
+`evidence/e5-t26m/verifier/final-verdict.md`.
 
 ### 2026-09-08 — worker submission — frozen runtime and promoted attack
 
