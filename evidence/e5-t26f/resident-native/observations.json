@@ -1,0 +1,29 @@
+{
+  "acceptance": false,
+  "backend": "actual ALSA file over null",
+  "provenance": "Transcription of successful native precheck stdout, not a fresh run",
+  "before": {
+    "pid": 15,
+    "starttime": "57405488",
+    "executable": "/usr/bin/aplay",
+    "wait": "pipe_read",
+    "fds": {"0": "/dev/null", "1": "/work/aplay.stdout", "2": "/work/aplay.stderr", "3": "/dev/null", "4": "/work/input.fifo", "5": "/work/pcm.raw"},
+    "inputBytesAvailable": 0,
+    "pcmBytes": 0,
+    "io": "rchar: 12404\nwchar: 89\nsyscr: 19\nsyscw: 5\nread_bytes: 0\nwrite_bytes: 4096\ncancelled_write_bytes: 0\n"
+  },
+  "after": {
+    "pid": 15,
+    "starttime": "57405488",
+    "executable": "/usr/bin/aplay",
+    "wait": "pipe_read",
+    "fds": {"0": "/dev/null", "1": "/work/aplay.stdout", "2": "/work/aplay.stderr", "3": "/dev/null", "4": "/work/input.fifo", "5": "/work/pcm.raw"},
+    "inputBytesAvailable": 0,
+    "pcmBytes": 0,
+    "io": "rchar: 12404\nwchar: 89\nsyscr: 19\nsyscw: 5\nread_bytes: 0\nwrite_bytes: 4096\ncancelled_write_bytes: 0\n"
+  },
+  "exitCode": 0,
+  "fedBytes": 3840,
+  "pcmBytes": 5760,
+  "payloadPrefixExact": true
+}

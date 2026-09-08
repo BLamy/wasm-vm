@@ -1,0 +1,6 @@
+{
+  "acceptance": false,
+  "error": "AssertionError [ERR_ASSERTION]: local e2fsprogs packages differ from pinned builder\n+ actual - expected\n\n+ 'e2fsprogs: Standard Ext2/3/4 filesystem utilities\\n' +\n+   'e2fsprogs: https://e2fsprogs.sourceforge.net/\\n' +\n+   'e2fsprogs: 492 KiB\\n' +\n+   'e2fsprogs-extra: Ext2/3/4 filesystem extra utilities\\n' +\n+   'e2fsprogs-extra: https://e2fsprogs.sourceforge.net/\\n' +\n+   'e2fsprogs-extra: 1324 KiB\\n'\n- 'e2fsprogs-1.47.0-r5\\ne2fsprogs-extra-1.47.0-r5\\n'\n",
+  "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+  "helperSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c"
+}

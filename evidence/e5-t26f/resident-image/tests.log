@@ -1,0 +1,20 @@
+✔ CLI requires an explicit output and exact frozen helper digest; no base override (1.219666ms)
+✔ output guard accepts only empty descendants and refuses nonempty, root, escape and symlinks without writes (5.050708ms)
+✔ manifest preserves every original byte and appends exactly the one read-only helper (0.252334ms)
+✔ debugfs adds one file, pins ownership/all inode times and never mounts or executes the guest helper (0.170708ms)
+✔ Docker is local, offline/unprivileged, with exactly two file RO mounts and the owned output RW (0.178417ms)
+✔ actual inode stat parser refuses wrong type, ownership, mode, size, links, generation or any timestamp (0.461667ms)
+✔ streaming SHA256 computes actual bytes (2.0945ms)
+✔ mocked build records verified provenance, exact lock/manifest and before+after source hashes (6.949333ms)
+✔ base/helper hash and input symlink failures happen before Docker or output creation (15.440542ms)
+✔ Docker failure propagates, rehashes immutable inputs and retains partial outputs without success metadata (4.083ms)
+✔ zero-exit Docker does not excuse corrupt readback/stat, tool drift, copy mismatch or unchanged image (21.25975ms)
+✔ post-run base mutation refuses publication and retains both Docker and preservation errors (4.015459ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 95.296334

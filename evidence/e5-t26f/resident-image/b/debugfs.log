@@ -1,0 +1,17 @@
+debugfs 1.47.0 (5-Feb-2023)
+debugfs: write /helper /usr/libexec/wasm-vm/e5t26f-resident.sh
+Allocated inode: 7368
+debugfs: set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh mode 0100444
+debugfs: set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh uid 0
+debugfs: set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh gid 0
+debugfs: set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh generation 0
+debugfs: set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh dtime 0
+debugfs: set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh atime 1731542400
+debugfs: set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh atime_extra 0
+debugfs: set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh mtime 1731542400
+debugfs: set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh mtime_extra 0
+debugfs: set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh ctime 1731542400
+debugfs: set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh ctime_extra 0
+debugfs: set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh crtime 1731542400
+debugfs: set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh crtime_extra 0
+debugfs 1.47.0 (5-Feb-2023)

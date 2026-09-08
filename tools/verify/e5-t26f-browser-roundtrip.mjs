@@ -12,6 +12,8 @@
 // E5_T26F_DIAGNOSTIC_RESIDENCY (reuse + explicit JIT=1 only) selects an existing module cap.
 // E5_T26F_DIAGNOSTIC_CPU=1 (reuse only) records the owned worker using the shared CDP profiler.
 // E5_T26F_DIAGNOSTIC_COMPLETE=1 (reuse only) retains later functional evidence, then rethrows a failed timing cap.
+// E5_T26F_FIXTURE=resident-aplay-v1 binds a separate image containing a real prepared
+// player; physically typed play feeds/waits it after the gesture, without runtime tuning.
 
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
@@ -23,6 +25,8 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 import { attachWorkerProfiler } from "./e5-t22c-cpu-profile.mjs";
 import { assertWindowMoved } from "../../web/bench/desktop-perf.js";
+import { residentFixtureRequested, assertResidentImage, parsePreparedSound, assertFreshLockedPcm,
+  RESIDENT_GUEST_PATH } from "./e5-t26f-resident-proof.mjs";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const web = path.join(repo, "web");
@@ -124,8 +128,9 @@ function diagnosticOptions(env) {
 }
 
 const diagnostic = diagnosticOptions(process.env);
-const postRestoreCommand = diagnostic?.command ?? "sh /tmp/a";
-const postRestoreKeyDelayMs = diagnostic?.keyDelayMs ?? 0;
+const residentFixture = residentFixtureRequested(process.env);
+const postRestoreCommand = residentFixture ? "play" : diagnostic?.command ?? "sh /tmp/a";
+const postRestoreKeyDelayMs = residentFixture ? 5 : diagnostic?.keyDelayMs ?? 0;
 const DIAGNOSTIC_OWNER = "wasm-vm.e5-t26f.diagnostic-profile.v1";
 const DESKTOP_STORAGE_KEY = "wasm-vm.desktop-snapshot.v1";
 
@@ -150,7 +155,7 @@ async function treeDigest(directory, include = () => true) {
   return sha256(JSON.stringify(entries));
 }
 
-async function diagnosticBinding(options) {
+async function diagnosticBinding(options, fixture = null) {
   // serve-dev serves web/, not web/dist. Bind all top-level runtime assets and the nested
   // source/wasm modules, including uncommitted bytes; HEAD alone cannot identify a frozen build.
   const runtimeSha256 = await treeDigest(web, (relative) =>
@@ -166,7 +171,7 @@ async function diagnosticBinding(options) {
   const kernelSha256 = await sha256File(kernelPath);
   assert.equal(kernelSha256, kernel.sha256, "diagnostic kernel digest");
   return { head, runtimeSha256, kernelSha256, imageSha256, imageBytes: imageStat.size,
-    manifestSha256, origin: options.origin };
+    manifestSha256, origin: options.origin, ...(fixture ? { fixture } : {}) };
 }
 
 function validateCheckpoint(checkpoint) {
@@ -269,7 +274,7 @@ async function requireEmptyCompletionOutput(directory) {
 
 assert.ok(Number.isSafeInteger(timeoutMs) && timeoutMs >= 120_000, "timeout must be at least two minutes");
 // Outside the failure-capture try: refusal must not write into a protected prior run.
-if (diagnostic?.complete) await requireEmptyCompletionOutput(out);
+if (diagnostic?.complete || residentFixture) await requireEmptyCompletionOutput(out);
 
 async function freePort() {
   return new Promise((resolve, reject) => {
@@ -347,6 +352,8 @@ const imageStat = await stat(imagePath);
 const imageSha256 = await sha256File(imagePath);
 assert.equal(imageSha256, process.env.E5_T26F_IMAGE_SHA256 || imageInfo.image?.sha256, "desktop image digest");
 assert.equal(imageStat.size, imageInfo.image?.size, "desktop image size");
+const fixtureBinding = residentFixture ? assertResidentImage(imageInfo,
+  await sha256File(path.join(repo, "tools/guest/e5-t26f-resident-aplay.sh"))) : null;
 
 const { stdout: headOutput } = await execFile("git", ["rev-parse", "--verify", "HEAD"], { cwd: repo });
 const head = headOutput.trim();
@@ -368,7 +375,7 @@ const httpErrors = [];
 const startedAt = Date.now();
 const milestones = {
   run: { kind: diagnostic ? "diagnostic-iteration" : "acceptance", acceptance: !diagnostic,
-    diagnostic, postRestoreCommand, postRestoreKeyDelayMs },
+    diagnostic, postRestoreCommand, postRestoreKeyDelayMs, ...(fixtureBinding ? { fixture: fixtureBinding } : {}) },
 };
 
 let lastPhase = null;
@@ -1424,7 +1431,7 @@ async function reloadWithAutoRestore(url, label, initialLoad = false) {
 
 try {
   phaseProgress("server:startup");
-  const binding = diagnostic ? await diagnosticBinding(diagnostic) : null;
+  const binding = diagnostic ? await diagnosticBinding(diagnostic, fixtureBinding) : null;
   if (diagnostic) {
     milestones.run.binding = binding;
     console.error("[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted");
@@ -1525,6 +1532,24 @@ try {
     milestones.normalSnapshot = normalSnapshot;
     milestones.run.checkpointCreatedAt = diagnosticCheckpoint.createdAt;
     milestones.run.profileSha256 = diagnosticCheckpoint.profileSha256;
+    if (residentFixture) {
+      const proof = diagnosticCheckpoint.resident;
+      assert.deepEqual(proof?.fixture, fixtureBinding, "checkpoint resident fixture differs");
+      assert.equal(proof.prepared.command, `. ${RESIDENT_GUEST_PATH} && e5_prepare`);
+      assert.equal(proof.prepared.accepted, true);
+      assert.equal(proof.prepared.inputSequenceMatch, true);
+      assert.equal(proof.prepared.terminalMarkerSeen, true);
+      assert.equal(proof.prepared.redMarkerSeen, false);
+      const envelope = JSON.parse(diagnosticCheckpoint.session.value);
+      const sound = parsePreparedSound(Buffer.from(envelope.bytes, "base64"), normalSnapshot.sha256);
+      assert.deepEqual(sound, proof.sound, "checkpoint sound proof differs from actual saved bytes");
+      const screenshot = path.resolve(repo, proof.screenshot.file);
+      assert.ok(screenshot.startsWith(path.join(repo, "evidence") + path.sep), "checkpoint screenshot must be retained evidence");
+      const screenshotStat = await lstat(screenshot);
+      assert.ok(screenshotStat.isFile() && !screenshotStat.isSymbolicLink(), "prepared screenshot must be a regular file");
+      assert.equal(await sha256File(screenshot), proof.screenshot.sha256, "prepared guest screenshot differs");
+      milestones.residentCheckpoint = proof;
+    }
   } else {
   phaseProgress("browser:initial-load");
   await page.goto(coldUrl, { waitUntil: "domcontentloaded", timeout: timeoutMs });
@@ -1569,6 +1594,16 @@ try {
   await launchTerminal(box, "e5-t26f-terminal-2");
   await focusTopWindow(box, "terminal-2");
   milestones.twoWindows = { completedAt: new Date().toISOString() };
+  if (residentFixture) {
+    phaseProgress("resident:prepare-real-player");
+    const prepared = await typeCommand(`. ${RESIDENT_GUEST_PATH} && e5_prepare`, "e5t26f-prepared");
+    assert.equal(prepared.accepted, true);
+    assert.equal(prepared.inputSequenceMatch, true);
+    assert.equal(prepared.redMarkerSeen, false, "resident guest guards refused preparation");
+    assert.equal(prepared.terminalMarkerSeen, true, "real resident player did not reach prepared state");
+    milestones.residentCheckpoint = { fixture: fixtureBinding, prepared };
+    phaseProgress("resident:prepare-real-player", "done");
+  }
 
   phaseProgress("cursor:initial-render");
   const cursorPoint = { x: 720, y: 430 };
@@ -1616,6 +1651,13 @@ try {
     preFrontBufferCrc: normalSnapshot.preFrontBufferCrc, machineResume: normalSnapshot.machineResume,
   };
   await auditFrozenSnapshot(normalSnapshot, "BeforeReload", "normal");
+  if (residentFixture) {
+    const bytes = await page.evaluate(() => Array.from(window.__desktopTerminal.storedDesktopSnapshot().bytes));
+    milestones.residentCheckpoint.sound = parsePreparedSound(bytes, normalSnapshot.sha256);
+    const file = path.join(out, "resident-prepared.png");
+    const screenshot = await page.screenshot({ path: file, fullPage: true });
+    milestones.residentCheckpoint.screenshot = { file: path.relative(repo, file), sha256: sha256(screenshot) };
+  }
   phaseProgress("snapshot:normal", "done");
   }
 
@@ -1625,10 +1667,11 @@ try {
     stopProgressSampling();
     await context.close();
     context = null;
-    assert.deepEqual(await diagnosticBinding(diagnostic), binding, "runtime changed while creating checkpoint");
+    assert.deepEqual(await diagnosticBinding(diagnostic, fixtureBinding), binding, "runtime changed while creating checkpoint");
     const checkpoint = {
       schema: DIAGNOSTIC_OWNER, createdAt: new Date().toISOString(), browser: browserIdentity,
       normalSnapshot: milestones.normalSnapshot, session, profileSha256: await treeDigest(retained.seed),
+      ...(residentFixture ? { resident: milestones.residentCheckpoint } : {}),
     };
     validateCheckpoint(checkpoint);
     await writeFile(retained.checkpointFile, `${JSON.stringify(checkpoint)}\n`, { flag: "wx" });
@@ -1685,11 +1728,30 @@ try {
     renderedFrames: window.__desktopTerminal.audio()?.sink?.renderedFrames ?? null,
   }));
   assert.equal(audioBefore.policy, "locked", "audio was already unlocked before the delayed gesture");
+  if (residentFixture) {
+    assert.equal(firstRestore.report.soundXrunEvents, 0, "prepared restore unexpectedly repaired a running stream");
+    const sample = await page.evaluate(() => ({ observedAt: performance.now(),
+      policy: window.__desktopTerminal.audio()?.policy?.state,
+      context: window.__desktopTerminal.audio()?.sink?.context?.state,
+      pcm: window.__desktopTerminal.audio()?.pcm?.(0) }));
+    milestones.residentBeforeGesture = [sample];
+    assertFreshLockedPcm(sample);
+    assert.ok(sample.observedAt >= postRestoreStart, "pre-gesture proof predates actual restore");
+  }
   // Let the guest cursor progress while the audio-unlocking click remains deliberately delayed.
   await page.mouse.move(focusClient.x, focusClient.y);
   await page.waitForTimeout(350);
   assert.equal(await page.evaluate(() => window.__desktopTerminal.audio()?.policy?.state || null),
     "locked", "audio unlocked before the delayed click");
+  if (residentFixture) {
+    const sample = await page.evaluate(() => ({ observedAt: performance.now(),
+      policy: window.__desktopTerminal.audio()?.policy?.state,
+      context: window.__desktopTerminal.audio()?.sink?.context?.state,
+      pcm: window.__desktopTerminal.audio()?.pcm?.(0) }));
+    milestones.residentBeforeGesture.push(sample);
+    assertFreshLockedPcm(sample);
+    assert.ok(sample.observedAt > milestones.residentBeforeGesture[0].observedAt);
+  }
   await page.mouse.down();
   await page.mouse.up();
   await page.waitForFunction(

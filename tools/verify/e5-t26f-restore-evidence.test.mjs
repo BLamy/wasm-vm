@@ -81,12 +81,13 @@ function fixture({ decision = "resume", usePersist = true, restoreError = false,
   };
   if (!restoreMethod) delete machine.restoreStoredSnapshot;
   const result = boot.runInNewContext({
-    machine, usePersist,
+    machine, usePersist, icountDivider: undefined,
     alpineOverlaySeeded: false, bootSnap: null, opts: { bootSnapshot: false },
     alpineRamBlob: fallback ? fallbackBlob : null, mode: "chunked", guestClock: "icount",
-    createGuestClockLifecycle(actualMachine, mode) {
+    createGuestClockLifecycle(actualMachine, mode, divider) {
       assert.equal(actualMachine, machine);
       assert.equal(mode, "icount");
+      assert.equal(divider, undefined, "restore receipt tests preserve the omitted divider policy");
       calls.push("clock:selection");
       return {};
     },

@@ -40,6 +40,36 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker — freeze prepared-player fixture for a fresh browser run
+
+The fixture is opt-in (`E5_T26F_FIXTURE=resident-aplay-v1`), rejects runtime,
+profiler and command overrides, and leaves the legacy path untouched. A real
+already-executed player waits on an empty FIFO before save. Physical `play`
+after the delayed gesture rechecks actual process/FIFO/PCM identity, feeds
+3840 bytes, closes the sole writer and waits the same child before success.
+The unchanged restore T0 and 2000-ms assertion include all post-restore work.
+
+Luna's two offline, isolated ext4 overlays are byte-identical at
+`27c2e8f2789b18efac214837c295dbfb22559beea350fb5788f71edfdc0f0a8e`.
+Actual helper readbacks, fixed inode metadata, clean fsck and preserved base
+hashes are in `evidence/e5-t26f/resident-image/`. The initial APK metadata-query
+failure is retained separately. The helper SHA is
+`2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c`;
+8192 chunks independently reassemble to the image, manifest SHA
+`2245a4d8b8b804bb200079c1ce00dee868762324f18627fa5d2b11fe032639ef`.
+
+Daybreak's preflight caught a queued playback-XRUN omission in the read-only
+sound parser; actual event decoding plus a rehashed rejection regression closes
+it. The parser authenticates the envelope/section digests and requires a prepared
+empty TX stream; two fresh locked host-ring observations precede the gesture.
+The frozen focused suite passes 233/233, including real local Chromium, recorded
+in `evidence/e5-t26f/resident-gates/focused-tests.log`. An old source-extracted
+restore fixture now explicitly supplies J's omitted divider argument. No runtime
+semantics changed. Native file-over-null evidence remains precheck-only.
+
+This is a worker submission to the next browser experiment, not F verification.
+Record a new fixture-bound cold checkpoint; old image seals cannot be reused.
+
 ### 2026-09-08 — coordinator — resume F with the default clock; prepared-player fixture
 
 J is independently verified at `2b58a5ed` and published as PR #360. Its real

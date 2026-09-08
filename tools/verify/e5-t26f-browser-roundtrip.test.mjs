@@ -11,6 +11,7 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import vm from "node:vm";
+import { residentFixtureRequested } from "./e5-t26f-resident-proof.mjs";
 
 const source = readFileSync(new URL("./e5-t26f-browser-roundtrip.mjs", import.meta.url), "utf8");
 
@@ -71,6 +72,7 @@ function fixture() {
   }
   let nextTimer = 0;
   const sandbox = {
+    residentFixture: false,
     assert, Date: FixtureDate, startedAt: FixtureDate.now() - 5_000, milestones,
     path, URL, sha256, out: "/virtual/evidence", head: "719c6212",
     imageSha256: "image-digest", manifestSha256: "manifest-digest", serverOutput: "server log",
@@ -485,7 +487,7 @@ test("overlapped motion spends the original deadline; late command completion st
 
 function selectDiagnosticCommand(env) {
   const selection = extractBetween("function diagnosticOptions", "const DIAGNOSTIC_OWNER");
-  return vm.runInNewContext(`${selection}\n({ diagnostic, postRestoreCommand, postRestoreKeyDelayMs })`, { assert, path, process: { env } });
+  return vm.runInNewContext(`${selection}\n({ diagnostic, postRestoreCommand, postRestoreKeyDelayMs })`, { assert, path, process: { env }, residentFixtureRequested });
 }
 
 const reuseCommandEnv = {
@@ -543,7 +545,7 @@ test("residency metadata and cold/restore query are explicit; omission leaves ex
     if (selected.diagnostic) assert.equal(selected.diagnostic.residency, env.E5_T26F_DIAGNOSTIC_RESIDENCY ?? null);
     assert.equal(selected.postRestoreCommand, "sh /tmp/a");
     if (env.E5_T26F_DIAGNOSTIC_RESIDENCY !== undefined) {
-      const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", selected);
+      const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", { ...selected, fixtureBinding: null });
       assert.equal(run.acceptance, false);
       assert.equal(run.diagnostic.residency, env.E5_T26F_DIAGNOSTIC_RESIDENCY);
       assert.equal(run.diagnostic.jit, "1");
@@ -644,7 +646,7 @@ test("JIT comparison is exact-string/reuse-only and rejects profiling or command
     }
     const selected = selectDiagnosticCommand({ ...env, E5_T26F_DIAGNOSTIC_GUEST_CLOCK: "icount",
       E5_T26F_DIAGNOSTIC_KEY_DELAY_MS: "5" });
-    const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", selected);
+    const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", { ...selected, fixtureBinding: null });
     assert.equal(run.acceptance, false);
     assert.equal(run.diagnostic.jit, jit);
     assert.equal(run.diagnostic.guestClock, "icount");
@@ -851,7 +853,7 @@ test("latency opt-in is exactly 1, reuse-only, and never changes the command or 
   assert.equal(selected.diagnostic.latency, true);
   assert.equal(selected.postRestoreCommand, "sh /tmp/a");
   assert.equal(selected.postRestoreKeyDelayMs, 5);
-  const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", selected);
+  const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", { ...selected, fixtureBinding: null });
   assert.equal(run.acceptance, false);
   assert.equal(run.diagnostic.latency, true);
 });
@@ -872,7 +874,7 @@ test("CPU profiling requires exact 1 and reuse, independently of latency and unc
     assert.equal(selected.diagnostic.latency, latency);
     assert.equal(selected.postRestoreCommand, "sh /tmp/a");
     assert.equal(selected.postRestoreKeyDelayMs, 5);
-    const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", selected);
+    const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", { ...selected, fixtureBinding: null });
     assert.equal(run.acceptance, false);
     assert.equal(run.diagnostic.cpu, cpu);
   }
@@ -1481,7 +1483,7 @@ test("diagnostic key pacing is bounded, reuse-only, recorded, and inside the ori
   }
   for (const delay of [0, 5, 25]) {
     const selected = selectDiagnosticCommand({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_KEY_DELAY_MS: String(delay) });
-    const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", selected);
+    const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", { ...selected, fixtureBinding: null });
     assert.equal(run.acceptance, false);
     assert.equal(run.postRestoreKeyDelayMs, delay);
     assert.equal(run.diagnostic.keyDelayMs, delay);
@@ -1493,7 +1495,7 @@ test("diagnostic key pacing is bounded, reuse-only, recorded, and inside the ori
 test("reuse override is recorded verbatim in nonacceptance metadata and the physical command record", async () => {
   const override = 'aplay() { shift; command aplay "$@"; }; . /tmp/a';
   const selected = selectDiagnosticCommand({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_COMMAND: override });
-  const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", selected);
+  const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", { ...selected, fixtureBinding: null });
   assert.equal(run.acceptance, false);
   assert.equal(run.postRestoreCommand, override);
   assert.equal(run.diagnostic.command, override);
@@ -1678,6 +1680,7 @@ async function checkpointFixture(t) {
     imageSha256: "d".repeat(64), imageBytes: 4096, manifestSha256: "e".repeat(64), origin: options.origin };
   const context = vm.createContext({
     assert, path, ...fs, Buffer, JSON, URL, process: { env: {} }, sha256, SHA256: /^[0-9a-f]{64}$/u,
+    residentFixtureRequested,
     sha256File: async (file) => sha256(await fs.readFile(file)),
   });
   const api = vm.runInContext(checkpointHelpers + `

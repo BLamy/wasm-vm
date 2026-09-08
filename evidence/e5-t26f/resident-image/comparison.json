@@ -1,0 +1,91 @@
+{
+  "schema": "wasm-vm.e5-t26f.resident-image-comparison.v1",
+  "acceptance": false,
+  "checkedAt": "2026-09-08T09:09:32.463Z",
+  "claims": "Offline image construction/reproducibility only; no guest playback or browser claim.",
+  "builds": [
+    {
+      "label": "a",
+      "image": {
+        "path": "target/e5-t26f/resident-image-2ae65408-a/alpine-rootfs.ext4",
+        "sha256": "27c2e8f2789b18efac214837c295dbfb22559beea350fb5788f71edfdc0f0a8e",
+        "size": 1073741824
+      },
+      "fixture": {
+        "kind": "resident-aplay-v1",
+        "helperPath": "tools/guest/e5-t26f-resident-aplay.sh",
+        "helperSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+        "helperSize": 7225,
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh",
+        "mode": "0444",
+        "uid": 0,
+        "gid": 0,
+        "epoch": 1731542400,
+        "basePath": "target/e5-t26f/desktop-image-aplay-noresize/alpine-rootfs.ext4",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "baseSize": 1073741824,
+        "basePreserved": true,
+        "baseInfoSha256": "563bc08d5113d14c46c31c80d32205a825bf615e8e89b6bdbab28c83f46d1844",
+        "baseFileManifestSha256": "334bb3b98d2151b6f14358e023f288359255e62835a92f0eb853f6bc76918c93",
+        "builder": {
+          "tag": "wasm-vm-rootfs-build:local",
+          "imageId": "sha256:0d1ead8c1106a838e478676dff113f21cdd91eb9456232ff9f6c24679a87d0eb",
+          "e2fsprogs": "1.47.0-r5"
+        },
+        "readbackSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c"
+      },
+      "packageManifestSha256": "f578113d65a0be90635d8ad9a87630583f9e4cfa49e6f50e67f606301d8f752a",
+      "fileManifestSha256": "1f52824ea09c800ae8c548e047aa3004640eb9ae5cb0644050d431f00720a760",
+      "metadataSha256": "1b7c4f4f2f69855f9895392838a38fa50aa4cfe6b8516be036b735aa2512b00f",
+      "recordSha256": "f0b467da431054125061d3506c1ec25a105b3fed80e65bb89cce9bb1669c705e",
+      "logSha256": "1b7c4f4f2f69855f9895392838a38fa50aa4cfe6b8516be036b735aa2512b00f",
+      "exitCode": 0
+    },
+    {
+      "label": "b",
+      "image": {
+        "path": "target/e5-t26f/resident-image-2ae65408-b/alpine-rootfs.ext4",
+        "sha256": "27c2e8f2789b18efac214837c295dbfb22559beea350fb5788f71edfdc0f0a8e",
+        "size": 1073741824
+      },
+      "fixture": {
+        "kind": "resident-aplay-v1",
+        "helperPath": "tools/guest/e5-t26f-resident-aplay.sh",
+        "helperSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+        "helperSize": 7225,
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh",
+        "mode": "0444",
+        "uid": 0,
+        "gid": 0,
+        "epoch": 1731542400,
+        "basePath": "target/e5-t26f/desktop-image-aplay-noresize/alpine-rootfs.ext4",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "baseSize": 1073741824,
+        "basePreserved": true,
+        "baseInfoSha256": "563bc08d5113d14c46c31c80d32205a825bf615e8e89b6bdbab28c83f46d1844",
+        "baseFileManifestSha256": "334bb3b98d2151b6f14358e023f288359255e62835a92f0eb853f6bc76918c93",
+        "builder": {
+          "tag": "wasm-vm-rootfs-build:local",
+          "imageId": "sha256:0d1ead8c1106a838e478676dff113f21cdd91eb9456232ff9f6c24679a87d0eb",
+          "e2fsprogs": "1.47.0-r5"
+        },
+        "readbackSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c"
+      },
+      "packageManifestSha256": "f578113d65a0be90635d8ad9a87630583f9e4cfa49e6f50e67f606301d8f752a",
+      "fileManifestSha256": "1f52824ea09c800ae8c548e047aa3004640eb9ae5cb0644050d431f00720a760",
+      "metadataSha256": "17cde79d368a99c9baa1ebb810e58a514ad50872b5f44d5b985dc18d7644e805",
+      "recordSha256": "e09a635581c44e19a45a5d49674067094200105aec28142b4e184b7d7eb6cb61",
+      "logSha256": "17cde79d368a99c9baa1ebb810e58a514ad50872b5f44d5b985dc18d7644e805",
+      "exitCode": 0
+    }
+  ],
+  "imageBytesEqual": true,
+  "cmpExitCode": 0,
+  "baseAfterSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+  "helperAfterSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+  "tests": {
+    "command": "node --test tools/verify/e5-t26f-resident-image.test.mjs",
+    "exitCode": 0,
+    "logSha256": "3f54fa0c284387f9abb41a95141b06698c144147ceea73d376862ef9b8d315c2"
+  }
+}

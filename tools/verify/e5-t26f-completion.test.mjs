@@ -119,6 +119,7 @@ function fixture({ enabled = true, elapsed = 2_500, failAudit = null, failRestor
   const laterError = new Error("later functional failure");
   const releaseError = new Error("restored guest did not acknowledge a stationary hover");
   const sandbox = {
+    residentFixture: false,
     assert, assertWindowMoved, path, Number, Date: FixtureDate, diagnostic: diagnosticOptions(enabled ? complete : reuse),
     out: "/virtual/completion", head: "frozen-runner", startedAt: FixtureDate.now() - 1_000,
     imageSha256: "image-digest", manifestSha256: "manifest-digest", serverOutput: "server transcript",
@@ -857,7 +858,7 @@ test("a failed frozen audit at publication or before reload stays fail-fast and 
 
 test("completion output guard permits only new/empty output and runs before browser or failure capture", async () => {
   const helper = between("async function requireEmptyCompletionOutput", "assert.ok(Number.isSafeInteger(timeoutMs)");
-  const call = source.match(/^if \(diagnostic\?\.complete\) await requireEmptyCompletionOutput\(out\);$/m)?.[0];
+  const call = source.match(/^if \(diagnostic\?\.complete \|\| residentFixture\) await requireEmptyCompletionOutput\(out\);$/m)?.[0];
   assert.ok(call, "execute the actual opt-in output guard");
   const startup = source.indexOf('\ntry {\n  phaseProgress("server:startup")');
   const manifest = source.indexOf("const manifestBytes = await readFile(manifestPath)");
@@ -866,7 +867,7 @@ test("completion output guard permits only new/empty output and runs before brow
   for (const existing of [undefined, [], ["desktop-roundtrip.json"], ["unrelated-user-file.txt"]]) {
     let entries = existing?.slice();
     const calls = [];
-    const sandbox = { assert, out: "/virtual/fresh-completion", diagnostic: { complete: true },
+    const sandbox = { assert, out: "/virtual/fresh-completion", diagnostic: { complete: true }, residentFixture: false,
       mkdir: async (directory, options) => {
         calls.push("mkdir"); assert.equal(directory, sandbox.out); assert.equal(options.recursive, true);
         entries ??= [];
