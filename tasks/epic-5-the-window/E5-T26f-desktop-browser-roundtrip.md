@@ -40,6 +40,30 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — coordinator — discovery hypothesis not supported; audio itself is late
+
+Frozen runtime `690e23245b4b376c55c0b830f7690c8a0f72059e` adds only read-only
+projection of existing discovery counters. Nine real-WASM and72 Node checks,
+plus seven incremental collector checks and the126/126 built demo, pass.
+Daybreak's scoped observation review is HELD, not F verification:
+`evidence/e5-t26f/discovery-verifier/browser-results.md`. Complete commands,
+bindings and scope limits are indexed in `evidence/e5-t26f/discovery-observation.md`;
+32 closed artifacts have checked SHA-256 entries in `discovery-digests.txt`.
+
+The new cold seal restores CRC `80ab2d17` with actual physical `play` and1440
+fresh non-silent PCM frames. Original-T0 elapsed is4591.175 ms, failing2000 ms.
+Actual since-reset discovery overflow, counter exhaustion and stale counts are
+all zero at both endpoints; generation stays5. Do not change the intentional
+discovery anti-storm policy on the unsupported overflow hypothesis.
+
+An additional existing, read-only latency probe on the same sealed runtime
+also fails at4726.940 ms. PCM remains zero at3767.240 ms and is first observed
+non-silent at3818.160 ms; the visible completion marker is observed at4670.030 ms.
+This is sampled diagnostic evidence, not a changed endpoint or performance
+acceptance. A preceding wrapper mistake was refused before browser launch;
+its source and logs remain alongside the corrected replay. F stays in progress,
+with the original deadline and all prior held functional scopes unchanged.
+
 ### 2026-09-08 — coordinator — resume after verified K; observe discovery before changing policy
 
 K is independently verified and published as PR362, final head

@@ -1,0 +1,34 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: diagnostic completion refuses nonempty output directory; use a fresh run subdirectory
+
+1 !== 0
+
+    at requireEmptyCompletionOutput (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:280:10)
+    at async file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:286:46 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0
+node:internal/fs/promises:1345
+  return new FileHandle(await PromisePrototypeThen(
+                        ^
+
+Error: ENOENT: no such file or directory, open '/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/discovery-690e2324/latency/failure-post-restore-interaction-checks.json'
+    at async open (node:internal/fs/promises:1345:25)
+    at async readFile (node:internal/fs/promises:1996:14)
+    at async file:///Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/discovery-690e2324/run-latency.mjs:38:24 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/discovery-690e2324/latency/failure-post-restore-interaction-checks.json'
+}
+
+Node.js v24.20.0

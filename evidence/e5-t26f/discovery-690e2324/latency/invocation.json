@@ -1,0 +1,24 @@
+{
+  "head": "690e23245b4b376c55c0b830f7690c8a0f72059e",
+  "acceptance": false,
+  "command": "tools/verify/e5-t26f-browser-roundtrip.mjs",
+  "config": {
+    "E5_T26F_REQUIRE_HEAD": "690e23245b4b376c55c0b830f7690c8a0f72059e",
+    "E5_T26F_HEADED": "0",
+    "E5_T26F_FIXTURE": "resident-aplay-v1",
+    "E5_T26F_DIAGNOSTIC_PROFILE": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-discovery-XRWve7",
+    "E5_T26F_DIAGNOSTIC_PORT": "61633",
+    "E5_T26F_TIMEOUT_MS": "1800000",
+    "E5_T26F_IMAGE": "target/e5-t26f/resident-image-2ae65408-a/alpine-rootfs.ext4",
+    "E5_T26F_IMAGE_INFO": "target/e5-t26f/resident-image-2ae65408-a/desktop-info.json",
+    "E5_T26F_DESKTOP_ASSET_DIR": "target/e5-t26f/chunks/resident-2ae65408",
+    "E5_T26F_DIAGNOSTIC": "reuse",
+    "E5_T26F_DIAGNOSTIC_LATENCY": "1",
+    "E5_T26F_OUT": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/discovery-690e2324/latency"
+  },
+  "sourceBindings": {
+    "tools/verify/e5-t26f-browser-roundtrip.mjs": "bfcdc06f6d6ec330815d7ad12b7a0c101035a11d50348828fe2d39a7370cb219",
+    "tools/verify/e5-t26f-resident-proof.mjs": "28742ad80ee2b8628ae18ffc3d24b02f32a7e9c2d8706ec900bb244e1b548d6c",
+    "evidence/e5-t26f/discovery-690e2324/run-latency.mjs": "4b1858d2069e30f7acf89d146eabe08bbf0743fd4c6808f40f3ee93e91dbeb7e"
+  }
+}

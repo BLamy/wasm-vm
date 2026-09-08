@@ -1,0 +1,42 @@
+// Retain the failed preflight attempt unchanged; keep invocation OUTSIDE protected output.
+// Existing latency probe only; no acceptance, runtime/policy/command or clock change.
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { execFileSync, spawn } from 'node:child_process';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root = path.dirname(fileURLToPath(import.meta.url)), repo = path.resolve(root, '../../..');
+const invocation = JSON.parse(await readFile(path.join(root, 'invocation.json')));
+const head = invocation.head;
+const currentHead = () => execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();
+assert.equal(currentHead(), head);
+assert.equal(JSON.parse(await readFile(path.join(root, 'cold/exit.json'))).code, 0);
+assert.equal(JSON.parse(await readFile(path.join(root, 'reuse/exit.json'))).code, 1);
+const directory = path.join(root, 'latency-replay'); await mkdir(directory);
+const output = path.join(directory, 'record'); // proper runner creates this empty directory itself
+const clean = Object.fromEntries(Object.entries(process.env).filter(([k]) =>
+  !k.startsWith('E5_T26F_') && !k.startsWith('E5_T26K_') && !k.startsWith('CARGO_') && !['RUSTFLAGS', 'RUST_LOG'].includes(k)));
+const config = { ...invocation.common, E5_T26F_DIAGNOSTIC: 'reuse', E5_T26F_DIAGNOSTIC_LATENCY: '1', E5_T26F_OUT: output };
+const sourceBindings = {};
+for (const f of [invocation.command, 'tools/verify/e5-t26f-resident-proof.mjs',
+  'evidence/e5-t26f/discovery-690e2324/run-latency-replay.mjs']) {
+  sourceBindings[f] = createHash('sha256').update(await readFile(path.join(repo, f))).digest('hex');
+}
+await writeFile(path.join(directory, 'invocation.json'), JSON.stringify({ head, acceptance: false,
+  command: invocation.command, config, sourceBindings }, null, 2) + '\n', { flag: 'wx' });
+let log = JSON.stringify({ head, config }) + '\n';
+const child = spawn(process.execPath, [invocation.command], { cwd: repo, env: { ...clean, ...config }, stdio: ['ignore', 'pipe', 'pipe'] });
+for (const stream of [child.stdout, child.stderr]) stream.on('data', b => { log += b.toString(); process.stdout.write(b); });
+const result = await new Promise((resolve, reject) => {
+  child.once('error', reject); child.once('close', (code, signal) => resolve({ code, signal }));
+});
+await writeFile(path.join(directory, 'run.log'), log, { flag: 'wx' });
+await writeFile(path.join(directory, 'exit.json'), JSON.stringify(result) + '\n', { flag: 'wx' });
+assert.equal(result.signal, null); assert.equal(currentHead(), head);
+assert.ok([0, 1].includes(result.code));
+const file = path.join(output, result.code === 0 ? 'diagnostic-iteration.json' : 'failure-post-restore-interaction-checks.json');
+const raw = JSON.parse(await readFile(file));
+if (result.code === 1) assert.equal(raw.error?.message, 'post-restore interaction exceeded 2 seconds');
+console.log(JSON.stringify({ childExit: result.code, elapsedMs: raw.milestones.postRestoreEnd - raw.milestones.postRestoreStart,
+  firstPcm: raw.milestones.interactionLatency?.firstPcm, firstMarker: raw.milestones.interactionLatency?.firstMarker }));

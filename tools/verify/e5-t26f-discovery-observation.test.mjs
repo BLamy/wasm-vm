@@ -1,7 +1,12 @@
 // Synthetic statistics exercise refusal/accounting only; no new browser evidence is created.
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { spawnSync } from "node:child_process";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { DISCOVERY_COUNTERS, validateDiscovery, discoveryObservation } from "./e5-t26f-discovery-observation.mjs";
 
 function fixture() {
@@ -63,4 +68,99 @@ test("mixed policies, non-cap failures, moved endpoints, changed generations and
     ...DISCOVERY_COUNTERS.map(k => r => { r.milestones.jitAfter.state.discovery[k] = 0; }),
   ]) { const bad = fixture(); mutate(bad); assert.throws(() => discoveryObservation(bad, 1)); }
   for (const code of [0, 2, null, "1"]) assert.throws(() => discoveryObservation(fixture(), code));
+});
+
+test("unitOnly successful-cap branch keeps nonacceptance and requires completion within its bound", () => {
+  for (const elapsedMs of [1, 1999.5, 2000]) {
+    const r = fixture();
+    assert.equal(r.unitOnly, true);
+    const m = r.milestones, start = m.postRestoreStart;
+    m.postRestoreEnd = start + elapsedMs;
+    m.jitBefore.requestedAt = start;
+    m.jitBefore.receivedAt = start + 0.5;
+    m.jitAfter.requestedAt = m.postRestoreEnd;
+    m.jitAfter.receivedAt = m.postRestoreEnd + 1;
+    m.normalRestore.checksPassed = true;
+    delete r.error;
+    const unchanged = structuredClone(r), out = discoveryObservation(r, 0);
+    assert.equal(out.fTimingPassed, true);
+    assert.equal(out.elapsedMs, elapsedMs);
+    assert.equal(out.acceptance, false);
+    assert.equal(out.fVerified, false);
+    assert.deepEqual(r, unchanged);
+    for (const mutate of [
+      bad => { bad.milestones.normalRestore.checksPassed = false; },
+      bad => { delete bad.milestones.normalRestore.checksPassed; },
+      bad => { bad.error = { name: "AssertionError" }; },
+      bad => {
+        bad.milestones.postRestoreEnd = start + 2001;
+        bad.milestones.jitAfter.requestedAt = start + 2001;
+        bad.milestones.jitAfter.receivedAt = start + 2002;
+      },
+    ]) {
+      const bad = structuredClone(r); mutate(bad);
+      assert.throws(() => discoveryObservation(bad, 0));
+    }
+  }
+});
+
+function cliFixture(t, record = fixture()) {
+  assert.equal(record.unitOnly, true, "CLI data is synthetic, not desktop performance evidence");
+  const directory = mkdtempSync(path.join(tmpdir(), "e5-t26f-discovery-unit-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const input = path.join(directory, "unitOnly-input.json");
+  const output = path.join(directory, "unitOnly-output.json");
+  const bytes = Buffer.from(JSON.stringify(record, null, 2) + "\n\n");
+  writeFileSync(input, bytes, { flag: "wx" });
+  const helper = fileURLToPath(new URL("./e5-t26f-discovery-observation.mjs", import.meta.url));
+  const sourceBytes = readFileSync(helper);
+  return { input, output, bytes, run(destination = output) {
+    const result = spawnSync(process.execPath, [helper, input, "1", destination], {
+      encoding: "utf8", timeout: 10_000, maxBuffer: 1024 * 1024,
+    });
+    assert.equal(result.error, undefined);
+    assert.equal(result.signal, null);
+    assert.deepEqual(readFileSync(input), bytes, "CLI modified input bytes");
+    assert.deepEqual(readFileSync(helper), sourceBytes, "CLI modified helper source");
+    return result;
+  } };
+}
+
+test("CLI writes a new output bound to the exact unitOnly input bytes", t => {
+  const f = cliFixture(t), result = f.run();
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stderr, "");
+  const out = JSON.parse(readFileSync(f.output, "utf8"));
+  assert.equal(out.record, f.input);
+  assert.equal(out.recordSha256, createHash("sha256").update(f.bytes).digest("hex"));
+  assert.equal(out.acceptance, false);
+  assert.equal(out.fVerified, false);
+  assert.equal(out.fTimingPassed, false);
+  const printed = JSON.parse(result.stdout);
+  assert.equal(printed.elapsedMs, out.elapsedMs);
+  assert.deepEqual(printed.deltas, out.deltas);
+});
+
+test("CLI refuses existing output and input=output without overwriting either", t => {
+  const f = cliFixture(t), protectedBytes = Buffer.from("unrelated output must survive\n");
+  writeFileSync(f.output, protectedBytes, { flag: "wx" });
+  const existing = f.run();
+  assert.equal(existing.status, 1);
+  assert.match(existing.stderr, /EEXIST/);
+  assert.equal(existing.stdout, "");
+  assert.deepEqual(readFileSync(f.output), protectedBytes);
+  const same = f.run(f.input);
+  assert.equal(same.status, 1);
+  assert.match(same.stderr, /AssertionError/);
+  assert.equal(same.stdout, "");
+  assert.deepEqual(readFileSync(f.output), protectedBytes);
+});
+
+test("CLI refuses a non-cap failure before creating output", t => {
+  const r = fixture(); r.error.message = "audio failed";
+  const f = cliFixture(t, r), result = f.run();
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /AssertionError/);
+  assert.equal(result.stdout, "");
+  assert.equal(existsSync(f.output), false);
 });
