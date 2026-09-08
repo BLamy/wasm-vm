@@ -2043,6 +2043,7 @@ test("optional completion generation observations follow drag saves without chan
     f.sandbox.page.waitForTimeout = async (ms) => { calls.push(`wait:${ms}`); f.clock.now += ms; };
     // This fixture isolates the optional observation hook. The completion suite exercises
     // the shared movement/pause/coherence helpers with their actual predicates separately.
+    f.sandbox.readTopmostDragTitlebar = () => ({ at: 0, titlebar: { left: 557, right: 1253, top: 13, bottom: 39 } });
     f.sandbox.proveAndPauseDrag = async () => { calls.push("prove-and-pause"); f.clock.now += 100; };
     f.sandbox.auditFrozenDragSnapshot = async (_snapshot, label) => { calls.push(`audit:${label}`); };
     await vm.runInContext(`(async () => { ${dragBody} })()`, f.context);

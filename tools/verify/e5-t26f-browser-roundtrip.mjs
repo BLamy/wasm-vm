@@ -393,6 +393,36 @@ async function recordCompletionGeneration(key, snapshot) {
   }
 }
 
+function readTopmostDragTitlebar() {
+  // The F fixture has two diagonally overlapping Foot windows. Across their full
+  // height, a dark-body bounding box merges their edges. Use only the first 32
+  // contiguous body rows, above the second window, and reject ambiguous edges.
+  const canvas = document.getElementById("desktop-canvas");
+  const width = canvas.width, height = canvas.height;
+  const data = canvas.getContext("2d").getImageData(0, 0, width, height).data;
+  const rows = [];
+  for (let y = 32; y < height && rows.length < 32; y += 1) {
+    let dark = 0, left = width, right = -1;
+    for (let x = 0; x < width; x += 1) {
+      const i = (y * width + x) * 4;
+      if (data[i] < 65 && data[i + 1] < 65 && data[i + 2] < 65) {
+        dark += 1; left = Math.min(left, x); right = x + 1;
+      }
+    }
+    if (dark >= 240) rows.push({ y, left, right });
+    else rows.length = 0;
+  }
+  const edge = key => {
+    const counts = new Map();
+    for (const row of rows) counts.set(row[key], (counts.get(row[key]) ?? 0) + 1);
+    const [value, count] = [...counts].sort((a, b) => b[1] - a[1])[0] ?? [null, 0];
+    return count >= 24 ? value : null;
+  };
+  const left = edge("left"), right = edge("right");
+  return { at: performance.now(), titlebar: rows.length === 32 && left !== null && right !== null && right - left >= 240
+    ? { left, right, top: Math.max(0, rows[0].y - 26), bottom: rows[0].y } : null };
+}
+
 function observedDragTranslation(before, after) {
   // Match the same titlebar row, not another overlapping Foot window. The requested
   // movement is 80px; allow bounded rounding while rejecting stale or unrelated geometry.
@@ -408,18 +438,16 @@ async function proveAndPauseDrag(before) {
   phaseProgress("drag:guest-translation");
   const evidence = milestones.dragMovement = { before, status: "waiting" };
   await waitFor(async () => {
-    evidence.observed = await page.evaluate(() => ({
-      at: performance.now(), titlebar: window.__desktopCursor.detectWindowChrome()?.titlebar ?? null,
-    }));
+    evidence.observed = await page.evaluate(readTopmostDragTitlebar);
     evidence.translation = observedDragTranslation(before, evidence.observed.titlebar);
     return evidence.translation;
   }, "guest window did not complete the requested 80px drag", 15_000);
   evidence.paused = await page.evaluate(async () => {
     const controller = window.__desktopController;
     await controller.pause();
-    return { at: performance.now(), isPaused: await controller.isPaused(),
-      titlebar: window.__desktopCursor.detectWindowChrome()?.titlebar ?? null };
+    return { at: performance.now(), isPaused: await controller.isPaused() };
   });
+  evidence.paused.titlebar = (await page.evaluate(readTopmostDragTitlebar)).titlebar;
   assert.equal(evidence.paused.isPaused, true, "moving checkpoint must leave the guest paused");
   evidence.pausedTranslation = observedDragTranslation(before, evidence.paused.titlebar);
   assert.ok(evidence.pausedTranslation, "paused guest window no longer matches the requested drag");
@@ -1673,9 +1701,12 @@ try {
     console.log(JSON.stringify(result, jsonReplacer, 2));
   } else {
   phaseProgress("drag:prepare");
-  const dragChrome = await page.evaluate(() => window.__desktopCursor.detectWindowChrome());
+  const dragChrome = await page.evaluate(readTopmostDragTitlebar);
   assert.ok(dragChrome?.titlebar, "drag snapshot has no detected titlebar");
-  const dragY = (dragChrome.titlebar.top + dragChrome.titlebar.bottom) / 2;
+  // The 32px Weston panel may cover most of the top titlebar. Its bottom rows
+  // remain visible; do not aim at the obscured middle of the decoration.
+  const dragY = dragChrome.titlebar.bottom - 3;
+  assert.ok(dragY >= 32 && dragY > dragChrome.titlebar.top, "drag titlebar is obscured by the panel");
   const dragStart = guestPoint(postBox, dragChrome.titlebar.left + 100, dragY);
   const dragEnd = guestPoint(postBox, dragChrome.titlebar.left + 180, dragY);
   await page.mouse.move(dragStart.x, dragStart.y);
