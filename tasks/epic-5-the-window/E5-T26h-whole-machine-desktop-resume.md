@@ -3,7 +3,7 @@ id: E5-T26h
 epic: 5
 title: Preserve desktop devices across whole-machine resume
 priority: 526.55
-status: in-progress
+status: implemented
 depends_on: [E5-T26e]
 estimate: S
 risk: high
@@ -52,6 +52,27 @@ one preserved cursor and prove the regression test detects duplicate completion.
 Check a headless snapshot independently. No new browser or host-rr requirement.
 
 ## Verification log
+
+### 2026-09-07 — worker/coordinator — sound queue remediation implemented
+
+Frozen source: `e8850241b686fd497c4ff1589fd31b6ffd0c7cc4`. Sound service metadata now
+uses actual queue-index order control/event/TX/RX on save and restore. A section-local
+layout-v2 word rejects the old unversioned sound composition before live mutation;
+the outer container and headless snapshots remain version 1. Host sinks and clocks
+are retained, not serialized or replaced.
+
+`make verify-E5-T26h` passes, including the promoted actual-WAV playback matrix,
+legacy/unknown/truncated layout atomic-refusal tests, headless continuation, and the
+existing transport/codec/native/wasm gates. Record:
+`evidence/e5-t26h/worker-audio-queue-order/gates.log`, SHA-256
+`7b7aba1be129f036c2ffbfc4e5428dc3ed566497d0d8820fea73e045bdec2820`.
+`cargo test -p wasm-vm-core --features gpu-trace --test virtio_snd_machine --test
+virtio_snd_playback --test virtio_snd_capture` also passes; record
+`evidence/e5-t26h/worker-audio-queue-order/related-sound-tests.log`, SHA-256
+`449388e12b8fa769f739cf77d26d35744fb0910c76173deee448a06e35d09979`.
+The recordings demonstrate no source-period replay, exact fresh PCM, TX used/status
+completion, and zero live-state changes on incompatible sound layout rejection.
+Independent review remains required. Browser acceptance still belongs to T26f.
 
 ### 2026-09-07 — fresh verifier late sound-queue audit — VERDICT: refuted
 
