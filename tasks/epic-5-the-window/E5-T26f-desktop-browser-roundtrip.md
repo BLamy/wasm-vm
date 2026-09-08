@@ -40,6 +40,29 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker — retain negative localization and review a narrower text oracle
+
+The sampled virtual-PC/musl mapping is a candidate address attribution, not
+proof of one process, a dominant host cost, or a successful optimization. Three
+RAM-only quiet-printer probes remain negative: A refused an invalid audit kind,
+B mismatched the first CRC, and C matched the CRC but rejected its genuinely
+visible short output at the inherited 2000-pixel repaint predicate. C did not
+reach the final two-second assertion; its later capture is not an exact event
+completion timestamp. Actual sources, transcripts, screenshots, hashes and
+lossless oversized reports are indexed in
+`evidence/e5-t26f/resident-profile-localization.md` and `resident-scratch-sources/`.
+Daybreak independently distinguishes those limits in
+`evidence/e5-t26f/resident-verifier/quiet-probe-results.md`.
+
+A read-only native-canvas calibration pins the already-rendered lower-window
+`e5t26f-aplay` token at 72x13 pixels, RGBA SHA
+`868249728c21a50b44997f9a83499202dafaecdf6e07f345d08e8da8ab5294fc`.
+This is reference data, not a timed success. A new isolated diagnostic is being
+reviewed to require that exact raster newly inside the actual upper client,
+with physical typing and fresh PCM, instead of demanding arbitrary bulk repaint.
+No original deadline, supported acceptance path, runtime, helper image, status,
+production artifact or prior HELD conclusion changes here. F remains in progress.
+
 ### 2026-09-08 — worker — localize the remaining timing failure without changing acceptance
 
 Paced guest `times` probes at `ad59c2e2`/`989ade25` actually execute on copies of
