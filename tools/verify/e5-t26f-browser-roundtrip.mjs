@@ -8,6 +8,7 @@
 // iteration directory and runs the real normal restore/interaction/audit, without cold setup.
 // Reuse alone permits E5_T26F_DIAGNOSTIC_COMMAND, physically typed and recorded verbatim.
 // E5_T26F_DIAGNOSTIC_LATENCY=1 (reuse only) records bounded, read-only interaction timing.
+// E5_T26F_DIAGNOSTIC_JIT=0|1 (reuse only) compares the existing unprofiled desktop JIT routes.
 // E5_T26F_DIAGNOSTIC_CPU=1 (reuse only) records the owned worker using the shared CDP profiler.
 
 import assert from "node:assert/strict";
@@ -42,6 +43,14 @@ const jsonReplacer = (_key, value) => typeof value === "bigint" ? `${value}n` : 
 
 function diagnosticOptions(env) {
   const mode = env.E5_T26F_DIAGNOSTIC;
+  const jit = env.E5_T26F_DIAGNOSTIC_JIT;
+  if (jit !== undefined) {
+    assert.equal(mode, "reuse", "diagnostic JIT comparison requires reuse mode");
+    assert.ok(jit === "0" || jit === "1", "diagnostic JIT flag must be exactly 0 or 1");
+    for (const key of ["E5_T26F_DIAGNOSTIC_CPU", "E5_T26F_DIAGNOSTIC_LATENCY", "E5_T26F_DIAGNOSTIC_COMMAND"]) {
+      assert.equal(env[key], undefined, "JIT comparison must be unprofiled with the unchanged command");
+    }
+  }
   const guestClock = env.E5_T26F_DIAGNOSTIC_GUEST_CLOCK;
   if (guestClock !== undefined) {
     assert.equal(mode, "reuse", "diagnostic guest clock comparison requires reuse mode");
@@ -79,7 +88,8 @@ function diagnosticOptions(env) {
     directory !== path.parse(directory).root, "diagnostic profile requires an absolute normalized scratch directory");
   assert.ok(Number.isSafeInteger(port) && port >= 1024 && port <= 65535, "diagnostic mode requires a stable explicit server port");
   return { mode, directory, port, origin: `http://127.0.0.1:${port}`, command: command ?? null,
-    keyDelayMs: Number(delay ?? 0), latency: latency === "1", cpu: cpu === "1", guestClock: guestClock ?? null };
+    keyDelayMs: Number(delay ?? 0), latency: latency === "1", cpu: cpu === "1", guestClock: guestClock ?? null,
+    jit: jit ?? null };
 }
 
 const diagnostic = diagnosticOptions(process.env);
@@ -310,6 +320,24 @@ const milestones = {
 
 let lastPhase = null;
 let cpuProfiler = null;
+
+async function recordDiagnosticJit(key) {
+  try {
+    milestones[key] = await page.evaluate(async () => {
+      const requestedAt = performance.now();
+      if (typeof window.__desktopController?.jitStats !== "function") {
+        throw new Error("actual worker jitStats unavailable");
+      }
+      const state = await window.__desktopController.jitStats();
+      return { requestedAt, receivedAt: performance.now(), state };
+    });
+  } catch (error) {
+    milestones[key] = { error: String(error?.message || error).slice(0, 240) };
+    throw error;
+  }
+  assert.equal(milestones[key].state?.hasExecutor, diagnostic.jit === "1",
+    "requested JIT policy did not match the actual worker executor");
+}
 
 function workerProfilerHost(identity) {
   // Persistent Playwright contexts expose no Browser in this pinned version. Target routing
@@ -1076,6 +1104,7 @@ try {
     manifestSha256,
   });
   if (diagnostic?.guestClock) query.set("guestClock", diagnostic.guestClock);
+  if (diagnostic?.jit != null) query.set("jit", diagnostic.jit);
   const coldUrl = `${base}/desktop-cursor.html?${query}`;
   const restoreUrl = `${coldUrl}&autoRestore=1`;
   let normalSnapshot = diagnosticCheckpoint?.normalSnapshot;
@@ -1215,6 +1244,8 @@ try {
   const postRestoreStart = firstRestore.completedAt;
   milestones.postRestoreStart = postRestoreStart;
   assert.ok(Number.isFinite(postRestoreStart), "restore did not expose a timing boundary");
+  // This real RPC is inside the original restore budget in both explicit comparison arms.
+  if (diagnostic?.jit != null) await recordDiagnosticJit("jitBefore");
   if (diagnostic?.guestClock) {
     milestones.guestClockBefore = await page.evaluate(async () => {
       const requestedAt = performance.now();
@@ -1346,6 +1377,8 @@ try {
     },
   }), postRestoreStart);
   milestones.postRestoreInteraction = postRestoreInteraction;
+  // Never delay the immediate PCM observation or replace the already-frozen interaction end.
+  if (diagnostic?.jit != null) await recordDiagnosticJit("jitAfter");
   if (diagnostic?.guestClock) {
     // Outside the frozen interaction boundary; neither this RPC nor reporting resets F's cap.
     milestones.guestClockAfter = await page.evaluate(async () => {

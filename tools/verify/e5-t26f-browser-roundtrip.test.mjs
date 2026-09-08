@@ -109,6 +109,7 @@ function fixture() {
        remainingInteractionMs, waitForRestoredCursor, captureFailure,
        waitForReadyAndRestore, auditRestoreCoherence,
        workerProfilerHost, startCpuProfile, stopCpuProfile,
+       recordDiagnosticJit,
        installInteractionLatencyProbe, commandMarkerReady, startInteractionLatencyProbe, stopInteractionLatencyProbe,
        state: () => ({ lastPhase, lastProgressSample, progressProbe }) })
   `, context);
@@ -479,6 +480,158 @@ const reuseCommandEnv = {
   E5_T26F_DIAGNOSTIC: "reuse", E5_T26F_DIAGNOSTIC_PROFILE: "/tmp/t26f-command",
   E5_T26F_DIAGNOSTIC_PORT: "48123",
 };
+
+test("JIT comparison is exact-string/reuse-only and rejects profiling or command overrides", () => {
+  for (const jit of ["0", "1"]) {
+    for (const env of [{}, { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: undefined },
+      { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: "create" }]) {
+      assert.throws(() => selectDiagnosticCommand({ ...env, E5_T26F_DIAGNOSTIC_JIT: jit }), /JIT comparison requires reuse mode/);
+    }
+    const env = { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_JIT: jit };
+    for (const key of ["E5_T26F_DIAGNOSTIC_CPU", "E5_T26F_DIAGNOSTIC_LATENCY", "E5_T26F_DIAGNOSTIC_COMMAND"]) {
+      for (const value of ["", "1"]) {
+        assert.throws(() => selectDiagnosticCommand({ ...env, [key]: value }), /JIT comparison must be unprofiled/);
+      }
+    }
+    const selected = selectDiagnosticCommand({ ...env, E5_T26F_DIAGNOSTIC_GUEST_CLOCK: "icount",
+      E5_T26F_DIAGNOSTIC_KEY_DELAY_MS: "5" });
+    const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", selected);
+    assert.equal(run.acceptance, false);
+    assert.equal(run.diagnostic.jit, jit);
+    assert.equal(run.diagnostic.guestClock, "icount");
+    assert.equal(run.diagnostic.cpu, false);
+    assert.equal(run.diagnostic.latency, false);
+    assert.equal(run.postRestoreCommand, "sh /tmp/a");
+    assert.equal(run.postRestoreKeyDelayMs, 5);
+  }
+  for (const jit of ["", "true", "false", "01", "00", "2", "1 ", " 0", 0, 1, false, null]) {
+    assert.throws(() => selectDiagnosticCommand({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_JIT: jit }), /JIT flag must be exactly 0 or 1/);
+  }
+});
+
+test("JIT query selection is explicit; omitted acceptance/create/reuse retain jit=1 without state RPCs", async () => {
+  const query = extractBetween("  const query = new URLSearchParams", "  let normalSnapshot =");
+  for (const env of [{}, reuseCommandEnv, { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: "create" },
+    ...["0", "1"].map((jit) => ({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_JIT: jit }))]) {
+    const selected = selectDiagnosticCommand(env);
+    const urls = vm.runInNewContext(`${query}\n({ coldUrl, restoreUrl })`, { ...selected, URLSearchParams,
+      base: "http://local", imageSha256: "image", manifestSha256: "manifest" });
+    assert.equal(new URL(urls.coldUrl).searchParams.get("jit"), env.E5_T26F_DIAGNOSTIC_JIT ?? "1");
+    assert.equal(new URL(urls.restoreUrl).searchParams.get("jit"), env.E5_T26F_DIAGNOSTIC_JIT ?? "1");
+    assert.equal(new URL(urls.restoreUrl).searchParams.get("autoRestore"), "1");
+    if (env.E5_T26F_DIAGNOSTIC_JIT !== undefined) continue;
+    assert.equal(selected.diagnostic?.jit ?? null, null);
+    const f = fixture();
+    f.sandbox.diagnostic = selected.diagnostic;
+    f.sandbox.page.evaluate = async () => { throw Error("default path requested JIT state"); };
+    const gates = source.match(/  if \(diagnostic\?\.jit != null\) await recordDiagnosticJit\("jit(?:Before|After)"\);/g);
+    assert.equal(gates.length, 2);
+    await vm.runInContext(`(async () => { ${gates.join("\n")} })()`, f.context);
+    assert.deepEqual(f.milestones, {});
+  }
+});
+
+test("both JIT arms read actual state before physical input and charge the RPC to the original cursor budget", async () => {
+  for (const jit of ["0", "1"]) for (const rpcMs of [100, 1_550]) {
+    const f = delayedGestureFixture(1_100, "sh /tmp/a", 5);
+    f.sandbox.diagnostic = { mode: "reuse", jit };
+    let calls = 0;
+    f.sandbox.window.__desktopController = { jitStats: async () => {
+      calls += 1;
+      assert.equal(f.milestones.postRestoreStart, 1_000);
+      assert.deepEqual(f.events, [], "JIT state must precede pointer and physical typing");
+      f.events.push("jit-before");
+      f.clock.now += rpcMs;
+      return { hasExecutor: jit === "1", guestRetired: 123, retiredViaJit: 45 };
+    } };
+    f.releaseDelay.resolve();
+    if (rpcMs === 100) {
+      const result = await f.run();
+      assert.equal(result.postRestoreStart, 1_000);
+      assert.deepEqual(f.events.slice(0, 7), ["jit-before", "move", "delay-start", "delay-end", "down", "up", "command:sh /tmp/a"]);
+      assert.ok(f.events.includes("key:Enter"));
+    } else {
+      await assert.rejects(f.run(), /original 2-second budget/);
+      assert.equal(f.events.some((event) => event.startsWith("key:")), false);
+    }
+    assert.equal(calls, 1);
+    assert.equal(f.milestones.jitBefore.requestedAt, 1_100);
+    assert.equal(f.milestones.jitBefore.receivedAt, 1_100 + rpcMs);
+    assert.equal(f.milestones.jitBefore.state.hasExecutor, jit === "1");
+    assert.equal(f.milestones.postRestoreStart, 1_000);
+  }
+});
+
+test("JIT policy mismatches, missing APIs and RPC errors refuse with actual failure milestones", async () => {
+  for (const jit of ["0", "1"]) for (const key of ["jitBefore", "jitAfter"]) {
+    const f = fixture();
+    f.sandbox.diagnostic = { mode: "reuse", jit };
+    f.sandbox.page.evaluate = async (fn) => fn();
+    f.sandbox.window.__desktopTerminal = new Proxy({}, { get() { throw Error("JIT probe accessed pixels/state/audio"); } });
+    for (const state of [{ hasExecutor: jit !== "1" }, {}, { hasExecutor: jit }, null]) {
+      f.sandbox.window.__desktopController = { jitStats: async () => state };
+      await assert.rejects(f.api.recordDiagnosticJit(key), /did not match the actual worker executor/);
+      assert.equal(f.milestones[key].state, state, "retain the observed mismatch, not the expected policy");
+    }
+    f.sandbox.window.__desktopController = {};
+    await assert.rejects(f.api.recordDiagnosticJit(key), /actual worker jitStats unavailable/);
+    assert.match(f.milestones[key].error, /actual worker jitStats unavailable/);
+    const original = new Error("worker RPC failed");
+    f.sandbox.window.__desktopController = { jitStats: async () => { throw original; } };
+    await assert.rejects(f.api.recordDiagnosticJit(key), (error) => error === original);
+    f.sandbox.page.evaluate = async () => { throw Error("page closed"); };
+    await f.api.captureFailure(`failure-${key}`, original);
+    const saved = JSON.parse(f.writes.at(-2).value);
+    assert.equal(saved.error.message, original.message);
+    assert.equal(saved.milestones[key].error, original.message);
+  }
+});
+
+test("both JIT arms capture PCM and freeze postRestoreEnd before the second RPC; the original cap still fails", async () => {
+  const body = extractBetween("  const postPcmAtCompletion =", '  phaseProgress("post-restore:interaction-checks", "done");');
+  for (const jit of ["0", "1"]) for (const completedAt of [3_000, 3_000.01]) {
+    const f = delayedGestureFixture(1_100, "sh /tmp/a", 5);
+    f.sandbox.diagnostic = { mode: "reuse", jit };
+    let calls = 0;
+    f.sandbox.window.__desktopController = {
+      audioOutputReady: async () => true,
+      jitStats: async () => {
+        calls += 1;
+        if (calls === 2) {
+          assert.equal(f.milestones.postRestorePcmAtCompletion.observedAt, completedAt);
+          assert.equal(f.milestones.postRestorePcmAtCompletion.pcm.nonSilentFrames, 480);
+          assert.equal(f.milestones.postRestoreAudioAfter.guestAttached, true);
+          assert.equal(f.milestones.postRestoreEnd, completedAt);
+          f.clock.now += 20_000;
+        }
+        return { hasExecutor: jit === "1", guestRetired: calls * 123 };
+      },
+    };
+    f.releaseDelay.resolve();
+    const result = await f.run();
+    Object.assign(f.sandbox, { postRestoreStart: result.postRestoreStart, postAudioBefore: { writeIndex: 0, renderedFrames: 0 },
+      focusBefore: 0, postAudioCommand: { ...result.postAudioCommand, visualDiffPixels: 2_000 } });
+    f.sandbox.window.__desktopTerminal.pointerState = () => ({ heldButtons: [] });
+    f.audio.pcm = () => ({ writtenFrames: 480, nonSilentFrames: 480, maxAbs: 0.125 });
+    f.audio.sink.renderedFrames = 480;
+    f.clock.now = completedAt;
+    const running = vm.runInContext(`(async () => { ${body} })()`, f.context);
+    if (completedAt === 3_000) await running;
+    else {
+      await assert.rejects(running, /interaction exceeded 2 seconds/);
+      const saved = JSON.parse(f.writes.find(({ file }) => file.endsWith("/post-restore.json")).value);
+      assert.equal(saved.milestones.jitBefore.state.hasExecutor, jit === "1");
+      assert.equal(saved.milestones.jitAfter.state.hasExecutor, jit === "1");
+      assert.equal(saved.milestones.postRestoreStart, 1_000);
+      assert.equal(saved.milestones.postRestoreEnd, completedAt);
+    }
+    assert.equal(calls, 2, "one before and one after RPC in both arms; no sampling loop");
+    assert.equal(f.milestones.jitAfter.requestedAt, completedAt);
+    assert.equal(f.milestones.jitAfter.receivedAt, completedAt + 20_000);
+    assert.equal(f.milestones.postRestoreEnd, completedAt);
+    assert.equal(f.milestones.postRestoreStart, 1_000);
+  }
+});
 
 test("clock comparison is reuse-only, unprofiled, explicit, and preserves F input/deadline", () => {
   for (const mode of ["icount", "wall"]) {
