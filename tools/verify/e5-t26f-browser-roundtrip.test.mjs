@@ -108,7 +108,8 @@ test("public sample is bounded and excludes pixels, full records and guest contr
     }),
     serial: () => "x".repeat(10_000),
     presentation: () => ({ successfulPresents: 9, scheduler: { pending: 1, scheduled: true } }),
-    audio: () => ({ policy: { state: "locked" }, sink: { renderedFrames: 4 } }),
+    audio: () => ({ policy: { state: "locked" }, sink: { renderedFrames: 4 },
+      pcm: () => ({ writeIndex: 480, nonSilentFrames: 480, maxAbs: 0.125 }) }),
   };
   f.sandbox.window.__desktopController = new Proxy({}, {
     get() { throw Error("guest controller accessed"); },
@@ -126,6 +127,8 @@ test("public sample is bounded and excludes pixels, full records and guest contr
   assert.equal(sample.focus.marker, "aplay");
   assert.equal(sample.agent.state, "ready");
   assert.equal(sample.presentation.scheduler.pending, 1);
+  assert.equal(sample.audio.pcm.writeIndex, 480);
+  assert.equal(sample.audio.pcm.nonSilentFrames, 480);
   assert.ok(JSON.stringify(sample).length < 2_000);
   f.api.stopProgressSampling();
 });
@@ -188,6 +191,25 @@ test("failure artifacts retain phase, error and milestones before browser captur
   assert.equal(record.image.manifestSha256, "manifest-digest");
   assert.equal(record.captureError, "page closed");
   assert.equal(f.timers.size, 0);
+});
+
+test("failure capture retains producer PCM even when the command never completes", async () => {
+  const f = fixture();
+  f.sandbox.window.__desktopTerminal = {
+    state: () => ({ active: { command: { terminalMarkerSeen: false } } }),
+    audio: () => ({
+      policy: { state: "unlocked" }, sink: { context: { state: "running" }, renderedFrames: 999_999 },
+      pcm: () => ({ writeIndex: 480, nonSilentFrames: 480, maxAbs: 0.125 }),
+    }),
+  };
+  f.sandbox.page.evaluate = async (fn) => fn();
+  f.sandbox.page.screenshot = async () => {};
+  await f.api.captureFailure("failure-aplay", new Error("command timeout"));
+  const saved = JSON.parse(f.writes.filter(({ file }) => file.endsWith(".json")).at(-1).value);
+  assert.equal(saved.state.terminal.active.command.terminalMarkerSeen, false);
+  assert.equal(saved.state.audio.renderedFrames, 999_999);
+  assert.deepEqual(saved.state.audio.pcm, { writeIndex: 480, nonSilentFrames: 480, maxAbs: 0.125 });
+  assert.equal(saved.captureError, undefined);
 });
 
 test("failure capture does not issue requests behind a stuck progress probe", async () => {

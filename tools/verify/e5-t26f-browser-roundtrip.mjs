@@ -354,6 +354,7 @@ async function sampleProgress() {
         audio: {
           policy: audio?.policy?.state ?? null, context: audio?.sink?.context?.state ?? null,
           renderedFrames: audio?.sink?.renderedFrames ?? null,
+          pcm: audio?.pcm?.() ?? null,
         },
       };
     });
@@ -468,6 +469,7 @@ async function captureFailure(label, error = null) {
         policy: window.__desktopTerminal.audio().policy?.state || null,
         context: window.__desktopTerminal.audio().sink?.context?.state || null,
         renderedFrames: window.__desktopTerminal.audio().sink?.renderedFrames ?? null,
+        pcm: window.__desktopTerminal.audio().pcm?.() ?? null,
       } : null,
       ready: document.documentElement.dataset.desktopReady,
       restored: document.documentElement.dataset.desktopRestored,
