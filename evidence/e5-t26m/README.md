@@ -1,7 +1,7 @@
 # E5-T26m — interrupt-only inline-cache context changes
 
-Status: frozen implementation passes scoped gates; independent review and the
-single final pristine clone are pending. No task verification or speedup claim.
+Status: final promoted-test head passes scoped gates and the single pristine
+clone. Independent final verdict is pending; no speedup claim.
 Task: `tasks/epic-5-the-window/E5-T26m-inline-context-interrupt-bits.md`.
 Activation commit: `aa03fe85933e9b9730bb747d903bba57c9b13f36`.
 
@@ -64,3 +64,20 @@ immediate post-sabotage source restoration are in `main-gates/README.md`.
 Luna's late `worker/inner-loop-*.log` files contain narrative results rather
 than raw process output; they were not needed, committed or relied on for this
 submission. Main's raw logs preserve all executed integration/frozen commands.
+
+## Final promoted-test freeze and clean clone
+
+Head `7f007bd28e0d8a73ed46d03c7f9bd803449157ee` promotes only the independent
+combined-bit test. Its parity source matches the critic's executed scratch
+digest `73fdbf1c2b5e730e932910e8af4d05be0dd8d275ac63c698854f0eb4308e5bac`.
+The affected actual-WASM harness passes9+38=47 tests,0 failed,1 unchanged ignored
+(`main-gates/09-promoted-harness.log`). Runtime, Makefile and the viewed demo
+bundle are byte-identical to the prior freeze.
+
+The one final command is
+`bash evidence/e5-t26m/run-final-clone.sh 7f007bd28e0d8a73ed46d03c7f9bd803449157ee`.
+`main-gates/10-final-clone.log` records a no-local clone, detached exact head, no
+object alternates, initially/finally clean checkout and fresh default target.
+The scrubbed-environment make target passes29 native+47 actual-WASM tests and
+all scoped format/clippy/target-build checks, exit0. Retained checkout:
+`/private/tmp/e5-t26m-final.fpoX9HG8/repo`. No second clone or old task suite ran.

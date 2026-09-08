@@ -21656,18 +21656,18 @@
         },
         {
           "date": "2026-09-08",
-          "commits": 25,
+          "commits": 26,
           "labels": [
+            "plan(e5-t26m): isolate interrupt-only inline-cache context changes",
             "test(e5-t26f): close print-only screen and retain execution profile",
             "docs(e5-t26f): close observer critique with preserved timing failure",
-            "plan(e5-t26f): isolate single process guest observation",
-            "test(e5-t26f): close buffered proc browser timing evidence"
+            "plan(e5-t26f): isolate single process guest observation"
           ]
         }
       ],
       "firstActivity": "2026-09-07",
       "lastActivity": "2026-09-08",
-      "commitCount": 42
+      "commitCount": 43
     },
     {
       "id": "E5-T26g",
@@ -21893,7 +21893,7 @@
       "epicKey": "5",
       "title": "Retain browser inline-cache authority across interrupt-only status changes",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E4-T11",
         "E5-T22g",
@@ -21906,19 +21906,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-08 — coordinator — activate scoped prerequisite\n\nF's unprofiled observer result4.3622s and print-only counterfactual4.10187s remain\nfailed. The separate interpreted-PC/JIT observation records repeated engine\nentries and low dynamic-hit counts, but cannot assign a cause. Direct source\ninspection finds full mstatus equality clears inline TLB and link state even\nfor interrupt-only changes. Fresh Daybreak review permits only the four-bit\nprojection under the conditions in\n`evidence/e5-t26f/inline-context-candidate/critic-preflight.md` and supplies the\nthree falsifiable test cases above. F is blocked on this named prerequisite;\none active task remains. No code or performance claim precedes the worker proof.",
+      "verificationLog": "### 2026-09-08 — worker submission — frozen runtime and promoted attack\n\nLuna implements the exact four-bit projection; Main integrates/tests and freezes\nruntime at `deb595c78aa96cbcbc674fa3cbe30a7e53dd522f`. Daybreak's independently\nauthored combined ignored+SUM test is promoted without runtime changes at final\nhead `7f007bd28e0d8a73ed46d03c7f9bd803449157ee`. Runtime source SHA256\n`5a83c4269e73ba6cb8e66c27c8f2a4fc797e7e55b5abbd37f566e510f5ba24df`;\nfinal parity-test SHA256\n`73fdbf1c2b5e730e932910e8af4d05be0dd8d275ac63c698854f0eb4308e5bac`.\n\n`make verify-E5-T26m` passes29 native tests, scoped format/clippy, both wasm32\nbuilds and46 actual-WASM tests at runtime freeze. After the test-only promotion,\n`wasm-pack test --node crates/wasm --lib --test jit_browser_parity -- --nocapture`\npasses47 tests. The unchanged long E4-T33 churn test remains ignored, not claimed.\nOne final pristine proof,\n`bash evidence/e5-t26m/run-final-clone.sh 7f007bd28e0d8a73ed46d03c7f9bd803449157ee`,\npasses the full scoped make target (29 native+47 WASM) from a no-local, no-alternate\nclone, fresh target and scrubbed compiler/test environment. Checkout is clean\nbefore/after; retained at `/private/tmp/e5-t26m-final.fpoX9HG8/repo`.\n\nRaw records: `evidence/e5-t26m/main-gates/08-frozen-runtime.log`,\n`09-promoted-harness.log`, `10-final-clone.log`. Integration records02/03 show\nthe old comparison failing and exact mask passing; records05/06 show the one\nunsafe SUM mask failing both private and actual dynamic-link controls. Correct\nsource was restored before freeze. These runs demonstrate actual generated\ntarget reuse, retained authority invalidation, and M/S pending-interrupt state\nmatching the interpreter before the compiled successor executes.\n\n`E5_DEMO_TASK=E5-T26m E5_DEMO_OUT=evidence/e5-t26m/demo-deb595c7 node tools/verify/e5-t18e-demo-smoke.mjs`\npasses126/0 with empty console/page/HTTP errors and a viewed screenshot showing\nthis task. Built WASM SHA256\n`18e53caa2e160819d16a6e0bf376530d45234e28f315c89b5042c48b1d791cc4`.\nIndependent predictions, source review and promoted attack are in\n`evidence/e5-t26m/verifier/`. Final verdict belongs to that fresh critic. No\nspeedup, F timing/restore acceptance, deployment or Epic5 completion is claimed.\n\n### 2026-09-08 — coordinator — activate scoped prerequisite\n\nF's unprofiled observer result4.3622s and print-only counterfactual4.10187s remain\nfailed. The separate interpreted-PC/JIT observation records repeated engine\nentries and low dynamic-hit counts, but cannot assign a cause. Direct source\ninspection finds full mstatus equality clears inline TLB and link state even\nfor interrupt-only changes. Fresh Daybreak review permits only the four-bit\nprojection under the conditions in\n`evidence/e5-t26f/inline-context-candidate/critic-preflight.md` and supplies the\nthree falsifiable test cases above. F is blocked on this named prerequisite;\none active task remains. No code or performance claim precedes the worker proof.",
       "adversarial": "Predict mask equality and actual compiled-target execution before checking the\nrecord. Exercise every status bit independently, including combined irrelevant\nand relevant changes. Carry existing SUM/MXR/MPRV/MPP, mode, satp/PMP, SFENCE and\ntrigger authority tests when unchanged. Cover both pending-interrupt modes and\ntrue guest CSR enablement, not only host mutation. Invent one bounded combination\nof a masked and a retained bit, and once sabotage the mask by adding SUM: the\nexact-mask and real-link negative controls must fail. Restore the real source\nbefore the final frozen run. No rr, other machine, WebKit, latency waiver,\narbitrary performance claim or unrelated emulator optimization belongs here.",
       "file": "tasks/epic-5-the-window/E5-T26m-inline-context-interrupt-bits.md",
       "activity": [
         {
           "date": "2026-09-08",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "plan(e5-t26m): isolate interrupt-only inline-cache context changes"
+          ]
         }
       ],
       "firstActivity": "2026-09-08",
       "lastActivity": "2026-09-08",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E5-T27",

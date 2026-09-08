@@ -3,7 +3,7 @@ id: E5-T26m
 epic: 5
 title: Retain browser inline-cache authority across interrupt-only status changes
 priority: 526.598
-status: in-progress
+status: implemented
 depends_on: [E4-T11, E5-T22g, E5-T26l]
 estimate: S
 risk: high
@@ -77,6 +77,42 @@ before the final frozen run. No rr, other machine, WebKit, latency waiver,
 arbitrary performance claim or unrelated emulator optimization belongs here.
 
 ## Verification log
+
+### 2026-09-08 — worker submission — frozen runtime and promoted attack
+
+Luna implements the exact four-bit projection; Main integrates/tests and freezes
+runtime at `deb595c78aa96cbcbc674fa3cbe30a7e53dd522f`. Daybreak's independently
+authored combined ignored+SUM test is promoted without runtime changes at final
+head `7f007bd28e0d8a73ed46d03c7f9bd803449157ee`. Runtime source SHA256
+`5a83c4269e73ba6cb8e66c27c8f2a4fc797e7e55b5abbd37f566e510f5ba24df`;
+final parity-test SHA256
+`73fdbf1c2b5e730e932910e8af4d05be0dd8d275ac63c698854f0eb4308e5bac`.
+
+`make verify-E5-T26m` passes29 native tests, scoped format/clippy, both wasm32
+builds and46 actual-WASM tests at runtime freeze. After the test-only promotion,
+`wasm-pack test --node crates/wasm --lib --test jit_browser_parity -- --nocapture`
+passes47 tests. The unchanged long E4-T33 churn test remains ignored, not claimed.
+One final pristine proof,
+`bash evidence/e5-t26m/run-final-clone.sh 7f007bd28e0d8a73ed46d03c7f9bd803449157ee`,
+passes the full scoped make target (29 native+47 WASM) from a no-local, no-alternate
+clone, fresh target and scrubbed compiler/test environment. Checkout is clean
+before/after; retained at `/private/tmp/e5-t26m-final.fpoX9HG8/repo`.
+
+Raw records: `evidence/e5-t26m/main-gates/08-frozen-runtime.log`,
+`09-promoted-harness.log`, `10-final-clone.log`. Integration records02/03 show
+the old comparison failing and exact mask passing; records05/06 show the one
+unsafe SUM mask failing both private and actual dynamic-link controls. Correct
+source was restored before freeze. These runs demonstrate actual generated
+target reuse, retained authority invalidation, and M/S pending-interrupt state
+matching the interpreter before the compiled successor executes.
+
+`E5_DEMO_TASK=E5-T26m E5_DEMO_OUT=evidence/e5-t26m/demo-deb595c7 node tools/verify/e5-t18e-demo-smoke.mjs`
+passes126/0 with empty console/page/HTTP errors and a viewed screenshot showing
+this task. Built WASM SHA256
+`18e53caa2e160819d16a6e0bf376530d45234e28f315c89b5042c48b1d791cc4`.
+Independent predictions, source review and promoted attack are in
+`evidence/e5-t26m/verifier/`. Final verdict belongs to that fresh critic. No
+speedup, F timing/restore acceptance, deployment or Epic5 completion is claimed.
 
 ### 2026-09-08 — coordinator — activate scoped prerequisite
 
