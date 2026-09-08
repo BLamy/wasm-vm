@@ -1,0 +1,58 @@
+    Blocking waiting for file lock on build directory
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.86s
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running tests/guest_clock.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/guest_clock-ac70823acdca127f.wasm)
+running 5 tests
+Invoking test: guest_clock::rejected_resume_preserves_policy_anchor_and_guest_state
+test guest_clock::rejected_resume_preserves_policy_anchor_and_guest_state ... ok
+Invoking test: guest_clock::icount_rebase_selection_and_restore_preserve_trace_digest_and_subtick_phase
+test guest_clock::icount_rebase_selection_and_restore_preserve_trace_digest_and_subtick_phase ... ok
+Invoking test: guest_clock::fresh_and_same_machine_restore_rebase_at_restored_mtime_and_preserve_deadline
+test guest_clock::fresh_and_same_machine_restore_rebase_at_restored_mtime_and_preserve_deadline ... ok
+Invoking test: guest_clock::explicit_resume_freezes_pause_but_background_retains_jump_policy
+test guest_clock::explicit_resume_freezes_pause_but_background_retains_jump_policy ... ok
+Invoking test: guest_clock::busy_rdtime_tracks_ten_mhz_not_retire_count_and_clamps_jitter
+test guest_clock::busy_rdtime_tracks_ten_mhz_not_retire_count_and_clamps_jitter ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.04s
+
+     Running tests/icount_divider.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/icount_divider-4d0797b60ff5c2d8.wasm)
+running 11 tests
+Invoking test: core_icount_divider::wall_mode_refuses_even_same_divider_without_touching_the_host_anchor
+test core_icount_divider::wall_mode_refuses_even_same_divider_without_touching_the_host_anchor ... ok
+Invoking test: core_icount_divider::same_divider_is_byte_exact_and_preserves_pending_irqs_device_and_cache_identity
+test core_icount_divider::same_divider_is_byte_exact_and_preserves_pending_irqs_device_and_cache_identity ... ok
+Invoking test: core_icount_divider::resume_retains_selected_phase_and_explicit_post_restore_override_maps_it_once
+test core_icount_divider::resume_retains_selected_phase_and_explicit_post_restore_override_maps_it_once ... ok
+Invoking test: core_icount_divider::missing_clint_and_out_of_range_inputs_are_atomic
+test core_icount_divider::missing_clint_and_out_of_range_inputs_are_atomic ... ok
+Invoking test: core_icount_divider::invalid_saved_phases_refuse_before_same_divider_or_any_other_mutation
+test core_icount_divider::invalid_saved_phases_refuse_before_same_divider_or_any_other_mutation ... ok
+Invoking test: core_icount_divider::huge_prior_dividers_and_resumed_phases_map_with_full_u128_precision
+test core_icount_divider::huge_prior_dividers_and_resumed_phases_map_with_full_u128_precision ... ok
+Invoking test: core_icount_divider::busy_guest_rdtime_matches_independent_phase_oracle_and_trace_across_cache_modes
+ICOUNT_DIVIDER_PARITY trace=4ddc392297ebe1dc snapshot=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+test core_icount_divider::busy_guest_rdtime_matches_independent_phase_oracle_and_trace_across_cache_modes ... ok
+Invoking test: core_icount_divider::all_small_ratios_and_phases_preserve_state_and_land_the_next_tick_exactly
+test core_icount_divider::all_small_ratios_and_phases_preserve_state_and_land_the_next_tick_exactly ... ok
+Invoking test: strict_js_values_reject_without_coercion_or_machine_mutation
+test strict_js_values_reject_without_coercion_or_machine_mutation ... ok
+Invoking test: numeric_boundaries_same_divider_and_resume_preserve_fractional_progress
+test numeric_boundaries_same_divider_and_resume_preserve_fractional_progress ... ok
+Invoking test: divider_preserves_live_compiled_executor_counters_policy_and_guest_memory
+test divider_preserves_live_compiled_executor_counters_policy_and_guest_memory ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 filtered out; finished in 1.70s
+

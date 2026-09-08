@@ -1,0 +1,287 @@
+cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 24.72s
+cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+    Blocking waiting for file lock on build directory
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.52s
+cargo test -p wasm-vm-core --features gpu-trace --test icount_divider --test guest_clock --test cpu_resume --test desktop_machine_resume -- --nocapture
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.56s
+     Running tests/cpu_resume.rs (target/debug/deps/cpu_resume-6c64fcb637644f66)
+
+running 6 tests
+test malformed_cpu_payload_is_rejected_and_leaves_hart_unchanged ... ok
+test resume_places_the_timer_interrupt_identically ... ok
+test virtio_blk_and_net_sections_round_trip_at_machine_level ... ok
+test whole_machine_resume_round_trips ... ok
+test restore_over_dirty_state_is_byte_identical ... ok
+test resume_trace_matches_continuation ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.44s
+
+     Running tests/desktop_machine_resume.rs (target/debug/deps/desktop_machine_resume-a78ea839bc72b4db)
+
+running 7 tests
+test malformed_saved_agent_dma_blocks_tx_until_transport_reset ... ok
+test headless_resume_remains_compatible_without_desktop_sections ... ok
+test every_fallible_legacy_section_refuses_before_live_state_or_host_callbacks_change ... ok
+test agent_resume_frontier_wraps_and_allows_fresh_tx_before_first_guest_step ... ok
+test malformed_desktop_section_and_missing_device_refuse_without_partial_restore ... ok
+desktop resume continuation: hash=9865e79b681ad970, retired=1
+test desktop_devices_resume_with_ring_continuity_and_fresh_host_state ... ok
+test pending_console_transmits_survive_while_stale_host_session_is_discarded ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+
+     Running tests/guest_clock.rs (target/debug/deps/guest_clock-797d59a74e6abd99)
+
+running 5 tests
+test explicit_resume_freezes_pause_but_background_retains_jump_policy ... ok
+test busy_rdtime_tracks_ten_mhz_not_retire_count_and_clamps_jitter ... ok
+test fresh_and_same_machine_restore_rebase_at_restored_mtime_and_preserve_deadline ... ok
+test rejected_resume_preserves_policy_anchor_and_guest_state ... ok
+test icount_rebase_selection_and_restore_preserve_trace_digest_and_subtick_phase ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/icount_divider.rs (target/debug/deps/icount_divider-76047757659744b3)
+
+running 8 tests
+test wall_mode_refuses_even_same_divider_without_touching_the_host_anchor ... ok
+test missing_clint_and_out_of_range_inputs_are_atomic ... ok
+test same_divider_is_byte_exact_and_preserves_pending_irqs_device_and_cache_identity ... ok
+test resume_retains_selected_phase_and_explicit_post_restore_override_maps_it_once ... ok
+test invalid_saved_phases_refuse_before_same_divider_or_any_other_mutation ... ok
+ICOUNT_DIVIDER_PARITY trace=4ddc392297ebe1dc snapshot=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+test busy_guest_rdtime_matches_independent_phase_oracle_and_trace_across_cache_modes ... ok
+test huge_prior_dividers_and_resumed_phases_map_with_full_u128_precision ... ok
+test all_small_ratios_and_phases_preserve_state_and_land_the_next_tick_exactly ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+
+cargo test -p wasm-vm-core --lib --features gpu-trace time::tests -- --nocapture
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.81s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 6 tests
+test time::tests::respects_software_mtime_write_as_floor ... ok
+test time::tests::huge_gap_jumps_with_notification ... ok
+test sbi::time::tests::set_timer_replaces_and_cancels ... ok
+test time::tests::wallclock_never_steps_backward_under_jittery_host ... ok
+test time::tests::icount_is_pure_function_of_retired ... ok
+test time::tests::moderate_gap_slews_at_bounded_rate ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 319 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-jit-runtime --test timekeeping -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/timekeeping.rs (target/debug/deps/timekeeping-9566e3e30f531541)
+
+running 3 tests
+E4-T25 integration: ICount lockstep WITH timer interrupts byte-identical — retired=9009, mtime=9009, timer_ints=1, jit_blocks_exec=2937
+test icount_lockstep_with_timer_interrupts_byte_identical ... ok
+AC5: two ICount JIT runs byte-identical — 325 trace samples, timer fired at retired=Some(4032), final mtime=9009
+test icount_two_runs_identical_mtime_trace ... ok
+test clock_monotonic_never_decreases_under_churn has been running for over 60 seconds
+AC3: mtime monotone across 52800 samples of JIT/interp/eviction churn (evictions=24598, final mtime=52800)
+test clock_monotonic_never_decreases_under_churn ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 104.00s
+
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.07s
+node --check web/tests/e5-t26j-icount-divider.test.mjs
+node --check tools/verify/e5-t26j-runner.test.mjs
+node --check tools/verify/e5-t26j-browser-clock.test.mjs
+node --test web/tests/e5-t26j-icount-divider.test.mjs web/tests/e5-t26i-guest-clock.test.mjs web/tests/e4-t32-worker-protocol.test.mjs tools/verify/e5-t26j-runner.test.mjs tools/verify/e5-t26j-browser-clock.test.mjs tools/verify/e5-t26f-browser-roundtrip.test.mjs tools/verify/e5-t26f-completion.test.mjs
+✔ make verify-E5-T26f refuses diagnostic create before any build or browser command (23.629ms)
+✔ make verify-E5-T26f refuses diagnostic reuse before any build or browser command (14.772292ms)
+✔ cold playback fixture keeps errors and conditional success without verbose parameter dumping (0.634542ms)
+✔ one unresolved progress probe prevents subsequent timer ticks from piling up (1.940791ms)
+✔ public sample is bounded and excludes pixels, full records and guest control (0.580375ms)
+✔ navigation rejection frees the probe; stopped sampling suppresses late results (0.411084ms)
+✔ failure artifacts retain phase, error and milestones before browser capture (0.598166ms)
+✔ failure capture retains producer PCM even when the command never completes (0.739792ms)
+✔ failure capture does not issue requests behind a stuck progress probe (0.405583ms)
+✔ cursor timeout uses only the unspent original two-second budget (1.024459ms)
+✔ cursor waits through missing/stale pixels, returns matching sample and disposes its handle (0.517958ms)
+✔ exhausted cursor budget fails before polling; a polling timeout remains a failure (0.51375ms)
+✔ pointer motion precedes the full delayed gesture; no click or physical key occurs early (1.236291ms)
+✔ premature audio unlock during the delay fails before the click or command (0.691459ms)
+✔ overlapped motion spends the original deadline; late command completion still fails (0.939458ms)
+✔ residency selection is exact, reuse-only and requires explicit JIT=1 without auto-enabling it (12.916458ms)
+✔ residency metadata and cold/restore query are explicit; omission leaves existing URLs unchanged (4.452084ms)
+✔ omitted residency adds no policy access or extra RPC to either existing JIT arm (1.014209ms)
+✔ all three residency policies require actual mapped caps at both existing JIT endpoints (0.755416ms)
+✔ missing or mismatched actual residency policy/cap refuses at either endpoint and preserves raw failure evidence (16.913375ms)
+✔ JIT comparison is exact-string/reuse-only and rejects profiling or command overrides (6.597125ms)
+✔ JIT query selection is explicit; omitted acceptance/create/reuse retain jit=1 without state RPCs (2.810083ms)
+✔ both JIT arms read actual state before physical input and charge the RPC to the original cursor budget (2.737625ms)
+✔ JIT policy mismatches, missing APIs and RPC errors refuse with actual failure milestones (1.78275ms)
+✔ JIT measurement rejects stale, reversed and malformed retirement counts without replacing the evidence (1.371292ms)
+✔ both JIT arms capture PCM and freeze postRestoreEnd before the second RPC; the original cap still fails (3.085583ms)
+✔ clock comparison is reuse-only, unprofiled, explicit, and preserves F input/deadline (3.879417ms)
+✔ latency opt-in is exactly 1, reuse-only, and never changes the command or key pacing (2.160833ms)
+✔ CPU profiling requires exact 1 and reuse, independently of latency and unchanged input (3.434584ms)
+✔ default acceptance, create, and latency-only reuse never attach a CPU profiler (2.133667ms)
+✔ CPU host adapter uses the owned page session only when Browser is absent (5.483083ms)
+✔ CPU artifact retains exact worker, head/runtime binding, original T0 and byte digest; closes once (0.853541ms)
+✔ CPU stop/write failures are bounded metadata, preserve T0, and still attempt close once (0.747583ms)
+✔ CPU setup failure is captured before finally collection without replacing original error or T0 (0.947083ms)
+✔ CPU collection follows frozen PCM/end and precedes the unchanged cap even when collection stalls (1.188417ms)
+✔ probes register before physical typing but a stalled RPC cannot delay typing or completion cleanup (0.793458ms)
+✔ first non-silent PCM precedes a separately timed existing marker read without extra pixel reads (0.650709ms)
+✔ one held scheduler RPC survives a rejected local-stat read without overlap, even at the time limit (1.491042ms)
+✔ JIT RPC follows scheduler settlement and holds the whole sample until completion (0.670458ms)
+✔ stopping with JIT pending retains scheduler evidence and ignores late success or failure (0.729291ms)
+✔ scheduler settlement after stop or the original deadline never requests JIT (1.781833ms)
+✔ JIT observations copy only named scalar fields and record a missing API as unavailable (0.793041ms)
+✔ without the latency flag neither default nor reuse interaction requests diagnostic JIT stats (0.933209ms)
+✔ sampling is capped at 120 PCM/marker records and 24 spaced scheduler reads within the original restore window (5.5415ms)
+✔ missing diagnostic APIs are recorded as unavailable without fallback calls (0.485083ms)
+✔ latency samples survive the unchanged two-second failure before any failure pixel capture (0.652708ms)
+✔ failure is written before a stalled latency collection; timeout persists and never piles up or accepts late data (0.54475ms)
+✔ command override refuses acceptance/create and rejects unbounded or multiline input (1.531667ms)
+✔ without override all modes keep the exact sh /tmp/a command (1.096834ms)
+✔ diagnostic key pacing is bounded, reuse-only, recorded, and inside the original deadline (2.964917ms)
+✔ reuse override is recorded verbatim in nonacceptance metadata and the physical command record (1.093708ms)
+✔ top-level catch captures the phase before finally cleanup and rethrows the original error (0.459125ms)
+✔ a held restore-receipt read starts after timed interaction and must finish before the next save (0.863041ms)
+✔ diagnostics require explicit mode, absolute scratch and stable port; default remains fresh acceptance (6.688833ms)
+✔ profile creation never overwrites existing data and reuse requires the task marker and completed seal (4.318166ms)
+✔ every runtime/kernel/image/origin binding mismatch refuses reuse before copying any profile (4.162125ms)
+✔ harness-only HEAD changes permit reuse while preserving creator and current provenance (5.744084ms)
+✔ runtime binding hashes actual served JS/WASM/kernel bytes, including uncommitted changes (8.751166ms)
+✔ reuse enters autoRestore directly without cold setup or resetting the restored timing boundary (0.574708ms)
+✔ reuse cold-boot fallback fails on its first readiness sample instead of waiting for another boot (0.480583ms)
+✔ reuse copies a sealed profile, preserves actual envelope/metadata and retains separate failed iterations (5.563208ms)
+✔ tampered profile bytes or desktop envelope/normal metadata cannot be reused (2.647792ms)
+✔ profile ownership refuses symlinks instead of traversing or overwriting an external profile (2.067209ms)
+✔ checkpoint hydration seeds exact bytes once on an inert same-origin bootstrap, never on later navigation (1.322375ms)
+✔ checkpoint hydration accepts an identical current envelope but refuses to clobber different data (3.20975ms)
+✔ checkpoint hydration refuses any different exact origin before mutation and removes its route (1.927666ms)
+✔ checkpoint hydration cleans up its exact route after navigation or evaluation failure (1.478417ms)
+✔ completion console capture uses existing listeners, caps text/count, and leaves default error arrays unchanged (0.976834ms)
+✔ optional completion generation observations follow drag saves without changing frozen timing (2.039375ms)
+✔ completion generation diagnostics retain returned resume before reads and never fabricate unavailable state (0.302ms)
+✔ persistent Chromium identity uses public CDP when browser() is null and always detaches (1.364334ms)
+✔ zero PCM and completion attachment/timestamps reach failure milestones before the PCM assertion (1.284125ms)
+✔ stale or mismatched actual restore receipt fails after timing and survives in failure milestones (1.228083ms)
+✔ legitimate post-restore disk progress never replaces the actual load-time generation (0.675667ms)
+✔ missing, unattempted or malformed initial restore evidence cannot borrow a fallback's restored flag (6.323334ms)
+✔ post-restore generation cannot move backwards or become unavailable (2.375875ms)
+✔ second restore performs the real coherence audit after display/button checks and before evidence (0.094833ms)
+✔ completion is absent by default and requires exact string 1 plus reuse (2.118792ms)
+✔ completion rejects every tuning/instrumentation/command flag, including empty values (0.289209ms)
+✔ completion permits existing bounded key delay without altering the command or tuning defaults (0.146375ms)
+✔ only the dedicated cap AssertionError with valid original boundaries can be retained (3.920333ms)
+✔ completion executes real normal audit, drag phases and second restore, persists diagnostics then rethrows original cap (3.151ms)
+✔ completion at the exact cap stays diagnostic and never takes the normal artifact path (0.991333ms)
+✔ missing guest release proof blocks functional completion and retains the original timing cap with the later error (0.946375ms)
+✔ F1: completed evidence rethrows the exact cap without a duplicate failed phase or failure artifact (1.321125ms)
+✔ F1: only the identical successfully reported cap bypasses outer failure reporting (1.265375ms)
+✔ F1: the original cap thrown by an incomplete final write must not be treated as already reported (2.054834ms)
+✔ F1: a different error from final stdout reporting remains captured after successful completion writes (0.816375ms)
+✔ ordinary reuse keeps its original cap failure and early diagnostic-only success (0.808458ms)
+✔ functional assertions fail fast, including an unrelated failure with the cap's identical shape (4.747541ms)
+✔ later {"failAudit":"normal"} failure retains timing evidence and refuses completion success (0.777666ms)
+✔ later {"failAudit":"drag"} failure retains timing evidence and refuses completion success (0.75075ms)
+✔ later {"failRestore":true} failure retains timing evidence and refuses completion success (0.747166ms)
+✔ persistent-context identity uses CDP with no Browser object and always detaches (0.419125ms)
+✔ finish refuses a dropped cap or contradictory metadata before writing any completion success (11.278125ms)
+✔ observed drag translation accepts only finite same-row rightward 64..96px geometry (0.574ms)
+✔ drag translation permits only the exact 32px panel clamp or same-row rounding with unchanged height (1.001667ms)
+✔ drag proof polls read-only geometry before pausing and independently rechecks the paused titlebar (0.644541ms)
+✔ missing, stale, wrong-direction and wrong-window drag evidence expires at 15s without pausing or saving (2.632125ms)
+✔ pause refusal or a superseded paused titlebar cannot satisfy drag proof or publish a checkpoint (1.560792ms)
+✔ F2: default normal snapshot confirms pause, saves, and audits the frozen pair before declaring normal ready (0.626459ms)
+✔ F2: an unconfirmed default normal pause refuses before any snapshot save (0.388167ms)
+✔ F2: default normal publication refuses a generation advance and retains the actual failed audit (0.426917ms)
+✔ frozen checkpoint audit reads both pause/generation endpoints and the actual session envelope in order (0.691042ms)
+✔ frozen checkpoint audit refuses stale, advancing, unpaused or mismatched-envelope state and retains raw observations (8.726917ms)
+✔ a failed frozen audit at publication or before reload stays fail-fast and preserves the original timing failure (1.74025ms)
+✔ completion output guard permits only new/empty output and runs before browser or failure capture (1.118125ms)
+✔ environment is headless, fresh-seal only, and removes every inherited F experiment (1.253042ms)
+✔ the only four replay settings are ABBA 10/1/1/10 with the same five-ms physical command policy (0.432917ms)
+✔ output refuses existing evidence and symlinks without modifying it; new and empty directories work (12.525292ms)
+✔ cold admission requires completed initial real playback, paused publication and an exact new head/binding (2.611792ms)
+✔ both arms retain actual endpoint states, independent deltas and original measured failure (0.760333ms)
+✔ the exact two-second boundary and child exit must agree; only exact cap failures are admitted (1.886292ms)
+✔ command, instrumentation, JIT policy, actual input, attachment and silent PCM cannot be waived (2.731583ms)
+✔ missing/invalid state, receipt, u64, counters and regression refuse in both endpoint observations (5.130083ms)
+✔ RPCs and PCM observations cannot reset T0 or escape their actual original-clock endpoints (0.885791ms)
+✔ all runtime/image/seal bindings and stored selection agree, but iteration directories must differ (1.121042ms)
+✔ collector keeps output refusal outside failure writes and preserves every child transcript before admission (0.266625ms)
+✔ divider flag requires reuse and exact string 1 or 10, with no default/cold admission (2.057917ms)
+✔ every clock/JIT/residency/profiler/command conflict, even empty, refuses without changing pacing (0.40975ms)
+✔ omission keeps jit=1 and adds no divider query or endpoint RPC (1.626666ms)
+✔ actual observer serializes state then JIT then selection; held RPCs cannot overlap (1.454958ms)
+✔ all actual receipt/clock/JIT mismatches refuse while retaining the raw endpoint (8.594875ms)
+✔ unavailable/throwing APIs refuse in sequence and retain a bounded error without fallback (1.332417ms)
+✔ after requires the identical receipt, advancing mtime/JIT counters and nonoverlapping observation times (1.89925ms)
+✔ before costs remain inside original restore T0; after reads follow frozen PCM/end and never waive the cap (0.815125ms)
+✔ loader task quiescence joins held persistence and permanently closes scheduling (0.851708ms)
+✔ explicit surface, FIFO input/RPC, exact transferable ownership, Tailscale, and stop order (4.794875ms)
+✔ every explicit controller method crosses the runtime and no-provider Tailscale is false/nonfatal (3.511209ms)
+✔ guestClock boot data and current machine state traverse the paired worker protocol without rounding or caching (5.705542ms)
+✔ worker forwards an invalid clock label to validation and propagates refusal before machine mutation (0.962791ms)
+✔ capture PCM_START lifecycle notification crosses the worker boundary (2.578041ms)
+✔ display FrameSink projections cross the worker boundary with private pixel ownership (2.4875ms)
+✔ display clear controls cross the worker boundary without a pixel payload (2.040333ms)
+✔ cursor-plane update and move projections keep MOVE payloads empty and privately owned (3.425584ms)
+✔ RPC ids correlate out-of-order results and arbitrary methods are not exposed (0.358208ms)
+✔ version mismatch/fatal rejects boot, pending and future calls exactly once (0.185375ms)
+✔ fatal after ready rejects pending, whenDone, stats, and future RPCs once (0.193333ms)
+✔ worker rejects an unknown method without executing it and propagates controller rejections (3.448208ms)
+✔ unknown frames fail closed and Tailscale events remain versioned (1.832917ms)
+✔ DONE rejects pending RPCs and DONE-before-READY rejects boot (0.301083ms)
+✔ byte RPC encoding errors reject asynchronously (0.203708ms)
+✔ silent termination is detected before and after READY and rejects pending work (54.974542ms)
+✔ heartbeat bypasses long async RPCs and visibility suspension shifts its deadline (83.233791ms)
+✔ visibility suspension pauses the pre-READY boot deadline (61.705541ms)
+✔ stateDigest gets method-scoped heartbeat grace and the controller remains live afterward (60.990875ms)
+✔ every bulk snapshot RPC emits BUSY/IDLE and survives the scoped heartbeat grace (428.647708ms)
+✔ natural completion emits a scoped terminal digest before DONE (1.743208ms)
+✔ natural completion waits behind a held snapshot RPC before terminal BUSY and cleanup (0.431084ms)
+✔ fatal input during natural cleanup wins over clean DONE (1.807542ms)
+✔ stop and fatal cleanup are bounded when a dependency never settles (34.616792ms)
+✔ stop timeout fails closed without releasing storage under a live loader pump (27.846042ms)
+✔ Tailscale UI exceptions are non-fatal (0.901958ms)
+✔ backend-neutral stop closes main storage but does not RPC after worker termination (0.226916ms)
+✔ omitted/icount mode never reads a host clock, including on legacy machines (2.063291ms)
+✔ only exact clock labels pass, before accessing the realm or machine (0.495334ms)
+✔ wall validation samples the injected performance source once with its receiver (0.0965ms)
+✔ wall validation refuses missing, noncallable, nonfinite and negative sources (0.179042ms)
+✔ every wall API must exist before setGuestClock can mutate the machine (0.136833ms)
+✔ selection happens once, resume only rebases wall, and state is the current machine result (0.417792ms)
+✔ machine selection, rebase and state exceptions propagate without fabricated success (0.106792ms)
+✔ loader resume rebases before unpausing/scheduling and refuses all later mutations on error (0.894167ms)
+✔ loader resumeAfterQuota rebases before unpausing/scheduling and refuses all later mutations on error (0.548833ms)
+✔ loader continueReadOnly rebases before unpausing/scheduling and refuses all later mutations on error (0.563666ms)
+✔ all 1..1024 numbers and exact decimal strings validate; undefined alone omits (0.756708ms)
+✔ invalid syntax, types, ranges and explicit incompatible modes refuse before machine access (1.036167ms)
+✔ omission preserves the old mode call without divider/state reads or a fabricated selection (0.411083ms)
+✔ both explicit APIs are validated before the first read or mutation (0.146042ms)
+✔ actual pre-selection state must be ICount and valid; no implicit wall conversion (0.191666ms)
+✔ explicit selection reads stored state, sets once, reads actual result, and never resets mode/time on resume (0.165292ms)
+✔ setter/read exceptions and changed time or wrong actual divider refuse without retry/fallback (0.221917ms)
+✔ receipt is immutable history, returns independent scalar-only copies, and never rereads live state (0.0825ms)
+✔ loader validates before its first fetch and selects after restore branches but before execution (1.419584ms)
+✔ desktop query preserves omission versus exact raw string, including invalid empty input (1.526ms)
+✔ raw divider boot data and real lifecycle receipt traverse the paired worker protocol (9.54375ms)
+ℹ tests 175
+ℹ suites 0
+ℹ pass 175
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 832.652083
+node --check tools/verify/e5-t26j-clock-worker.mjs
+node --check tools/verify/e5-t26j-browser-clock.mjs

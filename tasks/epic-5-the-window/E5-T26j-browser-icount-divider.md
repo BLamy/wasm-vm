@@ -59,6 +59,17 @@ independent machine, GitHub Actions or production deployment is required here.
 
 ## Verification log
 
+### 2026-09-08 — worker — frozen gates and roadmap metadata correction
+
+At `cb283f9b3204f99d0bbc9ad44121c4f5da7b8b6a`, the selected runtime gate
+passes 35 native and 175 JavaScript tests, formatting, Clippy, and the no-default
+WASM target build. The Node/WASM gate passes 16 tests. Logs are
+`evidence/e5-t26j/runtime-cb283f9b.log` and `wasm-cb283f9b.log`.
+The first demo load reached the ISA-suite assertion, then failed to find J in the
+roadmap: generated `tasks.json` predated this task. Its failed transcript is
+`evidence/e5-t26j/demo-cb283f9b.log`. Regenerate the task metadata and dist before
+the cold comparison; this does not change emulator semantics or the held gates.
+
 ### 2026-09-08 — worker — runtime frozen; real direct/worker clock preflight
 
 At runtime commit `d2eda6857a2d17d19f8c64b037239a675901f2e6`, the built
