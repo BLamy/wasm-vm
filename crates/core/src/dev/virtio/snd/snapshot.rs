@@ -16,6 +16,8 @@ use super::{
 };
 
 const MAGIC: [u8; 8] = *b"WVSND001";
+// The existing presence bit represents both unconfigured and configured Released streams.
+// Older readers reject the latter explicitly; no field layout or interpretation changes.
 const VERSION: u16 = 1;
 const HEADER_LEN: usize = 184;
 #[cfg(test)]
@@ -62,7 +64,7 @@ pub enum SndSnapshotError {
     InvalidStreamState { stream: u32, state: u8 },
     /// A non-released stream omitted its parameter block.
     MissingParams { stream: u32 },
-    /// A released stream carried a parameter block.
+    /// Reserved legacy error code: older readers rejected released streams with parameters.
     UnexpectedParams { stream: u32 },
     /// A parameter block failed the same validation used by SET_PARAMS.
     InvalidParams { stream: u32 },
@@ -521,11 +523,7 @@ fn decode_stream(reader: &mut Reader<'_>, stream: u32) -> Result<DecodedStream, 
     } else {
         None
     };
-    if state == PcmState::Released {
-        if params.is_some() {
-            return Err(SndSnapshotError::UnexpectedParams { stream });
-        }
-    } else if params.is_none() {
+    if state != PcmState::Released && params.is_none() {
         return Err(SndSnapshotError::MissingParams { stream });
     }
     Ok(DecodedStream { state, params })
@@ -608,9 +606,6 @@ fn validate_stream(
             };
             if !valid {
                 return Err(SndSnapshotError::InvalidParams { stream });
-            }
-            if state == PcmState::Released {
-                return Err(SndSnapshotError::UnexpectedParams { stream });
             }
         }
         None if state != PcmState::Released => {
@@ -953,6 +948,129 @@ mod tests {
         assert_eq!(restored.stream.state(), PcmState::Stopped);
         assert_eq!(restored.pending_event_count(), 1);
         assert_eq!(restored.stream.params(), source.stream.params());
+    }
+
+    #[test]
+    fn released_configuration_round_trip_recovers_both_streams_and_reset_forgets_it() {
+        let mut source = SndState::new();
+        source.set_capture_enabled(true);
+        for stream in [0, CAPTURE_STREAM_ID] {
+            configure_running(&mut source, stream);
+            for code in [
+                VIRTIO_SND_R_PCM_STOP,
+                super::super::VIRTIO_SND_R_PCM_RELEASE,
+            ] {
+                assert_eq!(
+                    status(&source.handle_control(&lifecycle_request(code, stream))),
+                    VIRTIO_SND_S_OK
+                );
+            }
+        }
+        let payload = source.to_snapshot().unwrap();
+        let mut target = SndState::new();
+        let report = target.restore_snapshot(&payload).unwrap();
+        assert_eq!(report.xrun_events, 0);
+        assert_eq!(target.stream.state(), PcmState::Released);
+        assert_eq!(target.capture_stream.state(), PcmState::Released);
+        assert_eq!(target.stream.params(), source.stream.params());
+        assert_eq!(
+            target.capture_stream.params(),
+            source.capture_stream.params()
+        );
+        assert!(target.stream.params().is_some());
+        assert!(target.capture_stream.params().is_some());
+        assert_eq!(target.playback_pending_count(), 0);
+        assert_eq!(target.capture_pending_count(), 0);
+        for stream in [0, CAPTURE_STREAM_ID] {
+            assert_eq!(
+                status(
+                    &target.handle_control(&lifecycle_request(VIRTIO_SND_R_PCM_PREPARE, stream))
+                ),
+                VIRTIO_SND_S_OK
+            );
+        }
+        assert_eq!(target.stream.state(), PcmState::Prepared);
+        assert_eq!(target.capture_stream.state(), PcmState::Prepared);
+        target.reset();
+        assert_eq!(target.stream.params(), None);
+        assert_eq!(target.capture_stream.params(), None);
+        for stream in [0, CAPTURE_STREAM_ID] {
+            assert_eq!(
+                status(
+                    &target.handle_control(&lifecycle_request(VIRTIO_SND_R_PCM_PREPARE, stream))
+                ),
+                super::super::VIRTIO_SND_S_BAD_MSG
+            );
+        }
+        let reset_payload = target.to_snapshot().unwrap();
+        target.restore_snapshot(&reset_payload).unwrap();
+        assert_eq!(target.stream.params(), None);
+        assert_eq!(target.capture_stream.params(), None);
+        target.restore_snapshot(&payload).unwrap();
+        target.set_capture_enabled(false);
+        assert_eq!(target.capture_stream.params(), None);
+        target.to_snapshot().unwrap();
+    }
+
+    #[test]
+    fn malformed_retained_configuration_is_rejected_before_any_sound_mutation() {
+        let mut source = SndState::new();
+        source.set_capture_enabled(true);
+        for stream in [0, CAPTURE_STREAM_ID] {
+            configure_running(&mut source, stream);
+            for code in [
+                VIRTIO_SND_R_PCM_STOP,
+                super::super::VIRTIO_SND_R_PCM_RELEASE,
+            ] {
+                assert_eq!(
+                    status(&source.handle_control(&lifecycle_request(code, stream))),
+                    VIRTIO_SND_S_OK
+                );
+            }
+        }
+        let payload = source.to_snapshot().unwrap();
+        let mut target = SndState::new();
+        configure_running(&mut target, 0);
+        let before = target.to_snapshot().unwrap();
+        for (offset, stream) in [
+            (OUTPUT_STREAM_OFFSET, 0),
+            (CAPTURE_STREAM_OFFSET, CAPTURE_STREAM_ID),
+        ] {
+            // Invalid format, rate, reserved parameter padding, and wrong stream identifier
+            // must still be checked even though Released now permits a parameter block.
+            for (field, value) in [(21, 0), (22, 255), (23, 1), (4, 9)] {
+                let mut bad = payload.clone();
+                bad[offset + 4 + field] = value;
+                assert_eq!(
+                    target.restore_snapshot(&bad),
+                    Err(SndSnapshotError::InvalidParams { stream })
+                );
+                assert_eq!(target.to_snapshot().unwrap(), before);
+            }
+            let mut bad = payload.clone();
+            bad[offset] = PcmState::Prepared as u8;
+            bad[offset + 1] = 0;
+            assert_eq!(
+                target.restore_snapshot(&bad),
+                Err(SndSnapshotError::MissingParams { stream })
+            );
+            assert_eq!(target.to_snapshot().unwrap(), before);
+        }
+        let mut disabled = payload.clone();
+        disabled[12] = 0; // capture_enabled
+        assert!(matches!(
+            target.restore_snapshot(&disabled),
+            Err(SndSnapshotError::InvalidStreamState {
+                stream: CAPTURE_STREAM_ID,
+                ..
+            })
+        ));
+        assert_eq!(target.to_snapshot().unwrap(), before);
+        assert_eq!(
+            target.restore_snapshot(&payload[..payload.len() - 1]),
+            Err(SndSnapshotError::Truncated)
+        );
+        assert_eq!(target.to_snapshot().unwrap(), before);
     }
 
     #[test]

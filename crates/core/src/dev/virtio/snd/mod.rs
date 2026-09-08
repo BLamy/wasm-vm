@@ -999,20 +999,13 @@ impl PcmControl {
 pub const PCM_STATE_COUNT: usize = 5;
 pub const PCM_CONTROL_COUNT: usize = 6;
 
-/// The checked-in status oracle, in state order Released, SetParams, Prepared, Running, Stopped
-/// and request order Info, SetParams, Prepare, Start, Stop, Release.
+/// Virtio 1.3 §5.14.6.6.1, in state order Released, SetParams, Prepared, Running, Stopped
+/// and request order Info, SetParams, Prepare, Start, Stop, Release. Released here means a
+/// configured stream after RELEASE; [`PcmStream::apply`] additionally guards power-on PREPARE.
 pub const PCM_TRANSITION_ORACLE: [[SndStatus; PCM_CONTROL_COUNT]; PCM_STATE_COUNT] = [
     [
         SndStatus::Ok,
         SndStatus::Ok,
-        SndStatus::BadMsg,
-        SndStatus::BadMsg,
-        SndStatus::BadMsg,
-        SndStatus::BadMsg,
-    ],
-    [
-        SndStatus::Ok,
-        SndStatus::BadMsg,
         SndStatus::Ok,
         SndStatus::BadMsg,
         SndStatus::BadMsg,
@@ -1020,8 +1013,16 @@ pub const PCM_TRANSITION_ORACLE: [[SndStatus; PCM_CONTROL_COUNT]; PCM_STATE_COUN
     ],
     [
         SndStatus::Ok,
+        SndStatus::Ok,
+        SndStatus::Ok,
         SndStatus::BadMsg,
         SndStatus::BadMsg,
+        SndStatus::BadMsg,
+    ],
+    [
+        SndStatus::Ok,
+        SndStatus::Ok,
+        SndStatus::Ok,
         SndStatus::Ok,
         SndStatus::BadMsg,
         SndStatus::Ok,
@@ -1059,8 +1060,8 @@ pub struct PcmTransition {
 pub const fn transition(state: PcmState, request: PcmControl) -> PcmTransition {
     let status = PCM_TRANSITION_ORACLE[state.index()][request.index()];
     let next = match (state, request) {
-        (PcmState::Released, PcmControl::SetParams) => PcmState::SetParams,
-        (PcmState::SetParams, PcmControl::Prepare) => PcmState::Prepared,
+        (PcmState::Released | PcmState::Prepared, PcmControl::SetParams) => PcmState::SetParams,
+        (PcmState::Released | PcmState::SetParams, PcmControl::Prepare) => PcmState::Prepared,
         (PcmState::Prepared, PcmControl::Start) => PcmState::Running,
         (PcmState::Prepared, PcmControl::Release) => PcmState::Released,
         (PcmState::Running, PcmControl::Stop) => PcmState::Stopped,
@@ -1093,7 +1094,8 @@ impl PcmStream {
         self.state
     }
 
-    /// Current parameters, present only after a successful SET_PARAMS and before RELEASE.
+    /// Last validated parameters. RELEASE frees I/O resources, not this configuration; reset
+    /// clears both. Keeping it permits Linux's STOP -> RELEASE -> PREPARE XRUN recovery.
     pub const fn params(&self) -> Option<PcmParams> {
         self.params
     }
@@ -1132,14 +1134,14 @@ impl PcmStream {
 
     /// Apply one non-payload lifecycle request and preserve state on rejection.
     pub fn apply(&mut self, request: PcmControl) -> SndStatus {
+        if request == PcmControl::Prepare && self.params.is_none() {
+            return SndStatus::BadMsg;
+        }
         let result = transition(self.state, request);
         if result.status != SndStatus::Ok {
             return result.status;
         }
         self.state = result.next;
-        if request == PcmControl::Release {
-            self.params = None;
-        }
         result.status
     }
 
@@ -2422,7 +2424,10 @@ fn service_controlq(
     slot: &Rc<RefCell<VirtioMmio>>,
     controlq: &mut Option<Virtqueue>,
     state: &Rc<RefCell<SndState>>,
+    tx_vq: &mut Option<Virtqueue>,
+    mut rx_vq: Option<&mut Option<Virtqueue>>,
     bus: &mut SystemBus,
+    report: &mut PlaybackReport,
 ) {
     if !matches!(
         prepare_queue(slot, controlq, CONTROL_QUEUE),
@@ -2456,6 +2461,25 @@ fn service_controlq(
         } else {
             state.borrow_mut().handle_control(&request)
         };
+        // §5.14.6.6.5.1: complete pending I/O before publishing RELEASE's response, and
+        // before accepting a following PREPARE/SET_PARAMS on this same controlq drain.
+        if read_u32(&request, 0) == Some(VIRTIO_SND_R_PCM_RELEASE)
+            && read_u32(&response, 0) == Some(VIRTIO_SND_S_OK)
+            && flush_control_release(
+                slot,
+                &mut state.borrow_mut(),
+                read_u32(&request, 4).expect("accepted RELEASE has a stream id"),
+                tx_vq,
+                rx_vq.as_deref_mut(),
+                bus,
+                report,
+            )
+            .is_err()
+        {
+            slot.borrow_mut().protocol_violation();
+            *controlq = None;
+            return;
+        }
         let written = match write_control_response(&chain, &response, bus) {
             Ok(written) => written,
             Err(_) => {
@@ -2474,6 +2498,50 @@ fn service_controlq(
     if completed != 0 && queue.interrupt_needed(bus) {
         slot.borrow_mut().raise_used_irq();
     }
+}
+
+fn flush_control_release(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    state: &mut SndState,
+    stream_id: u32,
+    tx_vq: &mut Option<Virtqueue>,
+    rx_vq: Option<&mut Option<Virtqueue>>,
+    bus: &mut SystemBus,
+    report: &mut PlaybackReport,
+) -> Result<(), Violation> {
+    let capture = stream_id == CAPTURE_STREAM_ID;
+    let pending = if capture {
+        !state.capture.pending.is_empty()
+    } else {
+        !state.playback.pending.is_empty()
+    };
+    if pending {
+        let (vq, index) = if capture {
+            (rx_vq.ok_or(Violation::BadAddress)?, RX_QUEUE)
+        } else {
+            (tx_vq, TX_QUEUE)
+        };
+        if !matches!(prepare_queue(slot, vq, index), QueuePreparation::Ready) {
+            return Err(Violation::BadAddress);
+        }
+        let queue = vq.as_mut().expect("release queue prepared");
+        if capture {
+            state.flush_capture_released(queue, bus, &mut CaptureReport::default())?;
+        } else {
+            state.flush_released(queue, bus, report)?;
+        }
+        if queue.interrupt_needed(bus) {
+            slot.borrow_mut().raise_used_irq();
+        }
+    }
+    if capture {
+        state.capture.release_pending = false;
+        state.capture.clear_schedule();
+    } else {
+        state.playback.release_pending = false;
+        state.playback.clear_schedule();
+    }
+    Ok(())
 }
 
 fn write_event(
@@ -2663,7 +2731,15 @@ fn service_internal(
     if let Some(controlq) = controlq
         && control_kicked
     {
-        service_controlq(slot, controlq, state, bus);
+        service_controlq(
+            slot,
+            controlq,
+            state,
+            tx_vq,
+            rx_vq.as_deref_mut(),
+            bus,
+            &mut report,
+        );
     }
     if (tx_kicked || active_audio)
         && matches!(
@@ -2677,11 +2753,13 @@ fn service_internal(
             clock,
             sink,
         );
-        let Ok(playback) = result else {
+        let Ok(mut playback) = result else {
             slot.borrow_mut().protocol_violation();
             *tx_vq = None;
             return PlaybackReport::default();
         };
+        playback.completed = playback.completed.saturating_add(report.completed);
+        playback.errors = playback.errors.saturating_add(report.errors);
         report = playback;
         if report.completed != 0
             && tx_vq

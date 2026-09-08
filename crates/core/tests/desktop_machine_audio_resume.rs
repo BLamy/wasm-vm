@@ -881,4 +881,240 @@ fn linux_6_6_63_xrun_stop_release_prepare_recovers_without_set_params() {
     );
     assert_eq!(state.borrow().stream.state(), PcmState::Prepared);
     assert_eq!(state.borrow().stream.params(), Some(params));
+    let fresh = play_recovery_period(&mut rig, 2, 480, 1701);
+    expected_pcm.extend(fresh.iter().flat_map(|sample| sample.to_le_bytes()));
+    assert_eq!(rig.wav.bytes(), 5760);
+    assert_eq!(&std::fs::read(&path).unwrap()[44..], &expected_pcm);
+    assert_eq!(event.used_idx(&mut rig.machine), 1);
+    for ordinal in 0..2u64 {
+        assert_eq!(
+            rig.machine.bus_mut().load32(tx.status() + ordinal * 8),
+            Ok(snd::VIRTIO_SND_S_OK)
+        );
+    }
+    let samples: Vec<i16> = expected_pcm
+        .chunks_exact(2)
+        .map(|sample| i16::from_le_bytes(sample.try_into().unwrap()))
+        .collect();
+    rig.wav.finish_and_check(&path, &samples);
+}
+
+fn post_recovery_period(rig: &mut Rig, ordinal: u16, frames: usize, seed: i16) -> Vec<i16> {
+    let tx = Ring::sound(snd::TX_QUEUE);
+    let head = (ordinal % 4) * 3;
+    let data = tx.data() + u64::from(ordinal % 4) * 0x4000;
+    let status = tx.status() + u64::from(ordinal % 4) * 8;
+    let samples: Vec<i16> = (0..frames)
+        .flat_map(|frame| {
+            let value = seed + (frame % 997) as i16;
+            [value, -value]
+        })
+        .collect();
+    let pcm: Vec<u8> = samples
+        .iter()
+        .flat_map(|sample| sample.to_le_bytes())
+        .collect();
+    rig.machine.bus_mut().store32(data, 0).unwrap();
+    rig.machine
+        .bus_mut()
+        .ram_mut()
+        .write_slice(data + 4, &pcm)
+        .unwrap();
+    rig.machine.bus_mut().store64(status, u64::MAX).unwrap();
+    tx.descriptor(&mut rig.machine, head, data, 4, NEXT, head + 1);
+    tx.descriptor(
+        &mut rig.machine,
+        head + 1,
+        data + 4,
+        pcm.len() as u32,
+        NEXT,
+        head + 2,
+    );
+    tx.descriptor(&mut rig.machine, head + 2, status, 8, WRITE, 0);
+    tx.post(&mut rig.machine, ordinal, head);
+    samples
+}
+
+fn play_recovery_period(rig: &mut Rig, ordinal: u16, frames: usize, seed: i16) -> Vec<i16> {
+    let state = rig.machine.virtio_snd().unwrap().1;
+    assert_eq!(state.borrow().stream.state(), PcmState::Prepared);
+    let params = state.borrow().stream.params().unwrap();
+    assert_eq!(params.period_bytes as usize, frames * 4);
+    let tx = Ring::sound(snd::TX_QUEUE);
+    let before = rig.wav.bytes();
+    let samples = post_recovery_period(rig, ordinal, frames, seed);
+    // No SET_PARAMS or second TX kick: use the configuration retained through RELEASE.
+    rig.step();
+    assert_eq!(tx.used_idx(&mut rig.machine), ordinal);
+    rig.lifecycle(snd::VIRTIO_SND_R_PCM_START);
+    assert_eq!(state.borrow().playback_pending_count(), 1);
+    let duration = (frames as u64 * 1_000_000_000).div_ceil(48_000);
+    rig.clock.advance_ns(duration - 1);
+    rig.step();
+    assert_eq!(rig.wav.bytes(), before);
+    assert_eq!(tx.used_idx(&mut rig.machine), ordinal);
+    let status = tx.status() + u64::from(ordinal % 4) * 8;
+    assert_eq!(rig.machine.bus_mut().load64(status), Ok(u64::MAX));
+    rig.clock.advance_ns(1);
+    rig.step();
+    tx.assert_completion(&mut rig.machine, ordinal, (ordinal % 4) * 3, 8);
+    assert_eq!(
+        rig.machine.bus_mut().load32(status),
+        Ok(snd::VIRTIO_SND_S_OK)
+    );
+    assert_eq!(rig.machine.bus_mut().load32(status + 4), Ok(0));
+    assert_eq!(state.borrow().playback_pending_count(), 0);
+    assert_eq!(state.borrow().stream.params(), Some(params));
+    assert_eq!(rig.wav.bytes(), before + (samples.len() * 2) as u64);
+    let expected: Vec<u8> = samples
+        .iter()
+        .flat_map(|sample| sample.to_le_bytes())
+        .collect();
+    assert_eq!(
+        &std::fs::read(&rig.path).unwrap()[44 + before as usize..],
+        &expected
+    );
+    rig.step();
+    tx.assert_completion(&mut rig.machine, ordinal, (ordinal % 4) * 3, 8);
+    assert_eq!(rig.wav.bytes(), before + (samples.len() * 2) as u64);
+    println!(
+        "recovery: fresh {frames} frames bit-exact; TX used={} completed exactly once",
+        ordinal + 1
+    );
+    samples
+}
+
+#[test]
+fn released_params_resume_into_fresh_sink_and_clock_without_set_params() {
+    let root =
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../target/desktop-machine-audio-resume");
+    std::fs::create_dir_all(&root).unwrap();
+    for envelope in [false, true] {
+        let source_path = root.join(format!("retained-source-{envelope}.wav"));
+        let target_path = root.join(format!("retained-target-{envelope}.wav"));
+        let mut source = Rig::empty(&source_path);
+        source.initialize_source(HIGH_CLOCK);
+        let old_samples = source.play_period(0, 480, 99);
+        assert_eq!(
+            source
+                .machine
+                .virtio_snd()
+                .unwrap()
+                .1
+                .borrow()
+                .stream
+                .state(),
+            PcmState::Stopped
+        );
+        source.lifecycle(snd::VIRTIO_SND_R_PCM_RELEASE);
+        let params = source
+            .machine
+            .virtio_snd()
+            .unwrap()
+            .1
+            .borrow()
+            .stream
+            .params()
+            .unwrap();
+        let resume = source.machine.save_resume().unwrap();
+        let desktop = source.machine.save_desktop_snapshot().unwrap();
+        let mut target = Rig::empty(&target_path);
+        assert_eq!(
+            target
+                .machine
+                .virtio_snd()
+                .unwrap()
+                .1
+                .borrow()
+                .stream
+                .params(),
+            None
+        );
+        assert_eq!(Ring::sound(snd::TX_QUEUE).used_idx(&mut target.machine), 0);
+        assert!(!Rc::ptr_eq(&source.wav.0, &target.wav.0));
+        assert!(!Rc::ptr_eq(&source.clock, &target.clock));
+        target.machine.load_resume(&resume).unwrap();
+        if envelope {
+            target.fresh_hello();
+            target
+                .machine
+                .restore_desktop_snapshot(&desktop, DisplaySize::new(1280, 720))
+                .unwrap();
+        }
+        let state = target.machine.virtio_snd().unwrap().1;
+        assert_eq!(state.borrow().stream.state(), PcmState::Released);
+        assert_eq!(state.borrow().stream.params(), Some(params));
+        assert_eq!(target.wav.bytes(), 0);
+        assert_eq!(target.clock.now_ns(), 0);
+        assert_eq!(
+            target
+                .machine
+                .bus_mut()
+                .load32(Platform::virtio_base(SND_SLOT as u64) + STATUS),
+            Ok(DRIVER_OK)
+        );
+        assert_eq!(Ring::sound(snd::TX_QUEUE).used_idx(&mut target.machine), 1);
+        assert_eq!(
+            Ring::sound(snd::EVENT_QUEUE).used_idx(&mut target.machine),
+            1
+        );
+        target.lifecycle(snd::VIRTIO_SND_R_PCM_PREPARE);
+        let new_samples = play_recovery_period(&mut target, 1, 480, 2701);
+        source.wav.finish_and_check(&source_path, &old_samples);
+        target.wav.finish_and_check(&target_path, &new_samples);
+    }
+}
+
+#[test]
+fn control_release_completes_pending_io_before_response_and_following_prepare() {
+    let root =
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../target/desktop-machine-audio-resume");
+    std::fs::create_dir_all(&root).unwrap();
+    let path = root.join("release-order.wav");
+    let mut rig = Rig::empty(&path);
+    rig.initialize_source(0);
+    let params = PcmParams {
+        period_bytes: 1920,
+        buffer_bytes: 3840,
+        ..PcmParams::default()
+    };
+    rig.command(&params.to_bytes());
+    rig.lifecycle(snd::VIRTIO_SND_R_PCM_PREPARE);
+    post_recovery_period(&mut rig, 0, 480, 71);
+    rig.lifecycle(snd::VIRTIO_SND_R_PCM_START);
+    let state = rig.machine.virtio_snd().unwrap().1;
+    assert_eq!(state.borrow().playback_pending_count(), 1);
+    rig.lifecycle(snd::VIRTIO_SND_R_PCM_STOP);
+    let control = Ring::sound(snd::CONTROL_QUEUE);
+    let tx = Ring::sound(snd::TX_QUEUE);
+    let ordinal = control.used_idx(&mut rig.machine);
+    // Alias RELEASE's response with the pending I/O status. Correct ordering leaves OK;
+    // publishing the response before flushing I/O leaves IO_ERR and falsifies this assertion.
+    for (index, code) in [snd::VIRTIO_SND_R_PCM_RELEASE, snd::VIRTIO_SND_R_PCM_PREPARE]
+        .into_iter()
+        .enumerate()
+    {
+        let current = ordinal + index as u16;
+        let head = (current % (QSIZE / 2)) * 2;
+        let data = control.data() + u64::from(head) * 0x80;
+        rig.machine.bus_mut().store32(data, code).unwrap();
+        rig.machine.bus_mut().store32(data + 4, 0).unwrap();
+        let status = if index == 0 { tx.status() } else { data + 0x40 };
+        control.descriptor(&mut rig.machine, head, data, 8, NEXT, head + 1);
+        control.descriptor(&mut rig.machine, head + 1, status, 4, WRITE, 0);
+        control.post(&mut rig.machine, current, head);
+    }
+    rig.step();
+    assert_eq!(control.used_idx(&mut rig.machine), ordinal + 2);
+    assert_eq!(
+        rig.machine.bus_mut().load32(tx.status()),
+        Ok(snd::VIRTIO_SND_S_OK)
+    );
+    tx.assert_completion(&mut rig.machine, 0, 0, 8);
+    assert_eq!(state.borrow().playback_pending_count(), 0);
+    assert_eq!(state.borrow().stream.state(), PcmState::Prepared);
+    assert_eq!(state.borrow().stream.params(), Some(params));
+    assert_eq!(rig.wav.bytes(), 0);
+    let samples = play_recovery_period(&mut rig, 1, 480, 1701);
+    rig.wav.finish_and_check(&path, &samples);
 }
