@@ -8,6 +8,7 @@
 // iteration directory and runs the real normal restore/interaction/audit, without cold setup.
 // Reuse alone permits E5_T26F_DIAGNOSTIC_COMMAND, physically typed and recorded verbatim.
 // E5_T26F_DIAGNOSTIC_LATENCY=1 (reuse only) records bounded, read-only interaction timing.
+// E5_T26F_DIAGNOSTIC_CPU=1 (reuse only) records the owned worker using the shared CDP profiler.
 
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
@@ -17,6 +18,7 @@ import { mkdir, mkdtemp, readFile, readdir, lstat, stat, writeFile, access, cp }
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { promisify } from "node:util";
+import { attachWorkerProfiler } from "./e5-t22c-cpu-profile.mjs";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const web = path.join(repo, "web");
@@ -40,6 +42,11 @@ const jsonReplacer = (_key, value) => typeof value === "bigint" ? `${value}n` : 
 
 function diagnosticOptions(env) {
   const mode = env.E5_T26F_DIAGNOSTIC;
+  const cpu = env.E5_T26F_DIAGNOSTIC_CPU;
+  if (cpu !== undefined) {
+    assert.equal(mode, "reuse", "diagnostic CPU profiling requires reuse mode");
+    assert.equal(cpu, "1", "diagnostic CPU flag must be exactly 1");
+  }
   const latency = env.E5_T26F_DIAGNOSTIC_LATENCY;
   if (latency !== undefined) {
     assert.equal(mode, "reuse", "diagnostic latency requires reuse mode");
@@ -64,7 +71,7 @@ function diagnosticOptions(env) {
     directory !== path.parse(directory).root, "diagnostic profile requires an absolute normalized scratch directory");
   assert.ok(Number.isSafeInteger(port) && port >= 1024 && port <= 65535, "diagnostic mode requires a stable explicit server port");
   return { mode, directory, port, origin: `http://127.0.0.1:${port}`, command: command ?? null,
-    keyDelayMs: Number(delay ?? 0), latency: latency === "1" };
+    keyDelayMs: Number(delay ?? 0), latency: latency === "1", cpu: cpu === "1" };
 }
 
 const diagnostic = diagnosticOptions(process.env);
@@ -293,6 +300,51 @@ const milestones = {
 };
 
 let lastPhase = null;
+let cpuProfiler = null;
+
+function workerProfilerHost(identity) {
+  // Persistent Playwright contexts expose no Browser in this pinned version. Target routing
+  // also works through a page CDP session; the shared helper still selects one exact worker URL.
+  return browser ?? {
+    newBrowserCDPSession: () => context.newCDPSession(page),
+    version: () => identity.version,
+  };
+}
+
+async function startCpuProfile(identity, restoredAt) {
+  const url = new URL("./linux-worker.js", page.url()).href;
+  milestones.cpuProfile = { acceptance: false, restoredAt, url, status: "attaching" };
+  cpuProfiler = await attachWorkerProfiler(workerProfilerHost(identity), url);
+  await cpuProfiler.start();
+  milestones.cpuProfile.startedAt = await page.evaluate(() => performance.now());
+  milestones.cpuProfile.status = "recording";
+}
+
+async function stopCpuProfile(reason) {
+  if (!cpuProfiler) return;
+  const profiler = cpuProfiler;
+  cpuProfiler = null;
+  try {
+    const recording = await profiler.stop();
+    const target = path.join(out, "interaction-cpu.json");
+    const record = { ...recording, head, runtimeSha256: milestones.run.binding?.runtimeSha256,
+      diagnostic: true, acceptance: false, reason, interaction: { ...milestones.cpuProfile },
+      postRestoreEnd: milestones.postRestoreEnd ?? null };
+    await mkdir(out, { recursive: true });
+    const bytes = `${JSON.stringify(record, jsonReplacer, 2)}\n`;
+    await writeFile(target, bytes);
+    Object.assign(milestones.cpuProfile, { status: "saved", path: target, sha256: sha256(bytes),
+      samples: recording.profile.samples.length, reason });
+  } catch (error) {
+    Object.assign(milestones.cpuProfile, { status: "error", reason,
+      error: String(error?.message || error).slice(0, 240) });
+  } finally {
+    await profiler.close().catch((error) => {
+      milestones.cpuProfile.closeError = String(error?.message || error).slice(0, 240);
+    });
+  }
+}
+
 let lastProgressSample = null;
 let progressTimer = null;
 let progressProbe = null;
@@ -1199,6 +1251,7 @@ try {
   }));
   milestones.postRestoreAudioBefore = postAudioBefore;
   phaseProgress("post-restore:audio-unlock", "done");
+  if (diagnostic?.cpu) await startCpuProfile(browserIdentity, postRestoreStart);
   if (diagnostic?.latency) await startInteractionLatencyProbe(postRestoreStart, postAudioBefore.writeIndex);
   const postAudioCommand = await typeCommand(
     postRestoreCommand,
@@ -1274,6 +1327,9 @@ try {
     },
   }), postRestoreStart);
   milestones.postRestoreInteraction = postRestoreInteraction;
+  // Stop only after the original interaction boundary and immediate PCM observation are frozen.
+  // Profiler collection cannot reset that boundary or delay the short PCM ring inspection.
+  if (diagnostic?.cpu) await stopCpuProfile("interaction-observed");
   try {
     assert.ok(postRestoreInteraction.pointerFrames > focusBefore, "post-restore cursor/focus did not move");
     assert.equal(postRestoreInteraction.heldButtons.length, 0, "post-restore focus left a stuck button");
@@ -1444,6 +1500,7 @@ try {
   throw error;
 } finally {
   stopProgressSampling();
+  if (cpuProfiler) await stopCpuProfile("cleanup-after-failure");
   if (interactionLatencyActive) await stopInteractionLatencyProbe("cleanup");
   await context?.close().catch(() => {});
   await browser?.close().catch(() => {});
