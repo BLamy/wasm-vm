@@ -53,6 +53,16 @@ Check a headless snapshot independently. No new browser or host-rr requirement.
 
 ## Verification log
 
+### 2026-09-07 — coordinator — rebuilt demo handoff
+
+At bundle/metadata head `bd2ca26721a21d3ba8be5a58b7347cea40990421`, one built-page
+Chromium pass recorded 126 passed, 0 failed, zero console/page/HTTP errors, and the
+visible E5-T26h VERIFIED entry. `make web-dist` embeds the corrected runtime
+WASM SHA-256 `95d1f68df359850d23b4c1b27a76baae393f89efe2cca99b68c2bfa23251c3e3`.
+Command, inspected screenshot and artifact digests are retained in
+`evidence/e5-t26h/browser-bundle-smoke/README.md`. T26f remains responsible for the
+real desktop restore interaction; production publishing stays at the requested milestone.
+
 ### 2026-09-07 — fresh verifier sound remediation — VERDICT: verified
 
 - Queue identity and PCM — HELD. At frozen runtime

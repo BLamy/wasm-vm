@@ -277,6 +277,124 @@ test("exhausted cursor budget fails before polling; a polling timeout remains a 
   assert.equal(f.api.state().lastPhase.event, "start");
 });
 
+function delayedGestureFixture(startAt = 1_100) {
+  const f = fixture();
+  const events = [];
+  const delayStarted = deferred();
+  const releaseDelay = deferred();
+  const point = { x: 684, y: 392 };
+  const audio = { policy: { state: "locked" }, sink: { renderedFrames: 0 }, pcm: () => ({ writeIndex: 0 }) };
+  const focus = { accepted: true, guestVisible: true };
+  const command = { accepted: true, terminalMarkerSeen: false };
+  let pointerFrames = 0;
+  f.clock.now = startAt;
+  Object.assign(f.sandbox, {
+    firstRestore: { completedAt: 1_000 },
+    desktopBox: async () => ({}),
+    guestPoint: (_box, x, y) => ({ x, y }),
+  });
+  f.sandbox.window.__desktopCursor = { focusGuestPoint: () => point, renderedCursor: () => point };
+  f.sandbox.window.__desktopTerminal = {
+    audio: () => audio,
+    state: () => ({ pointerFrames, active: { command }, pointerFrameSample: [
+      { device: "tablet", source: "pointermove", coordinates: point },
+    ] }),
+    beginFocus: () => {}, focus: () => {}, finishFocus: () => ({ focuses: [focus] }),
+    beginCommand: (value) => { events.push(`command:${value}`); },
+    finishCommand: () => ({ commands: [command] }),
+    confirmGuestFocus: () => ({ focuses: [focus] }),
+  };
+  f.sandbox.page.evaluate = async (fn, argument) => fn(argument);
+  f.sandbox.page.waitForTimeout = async (ms) => {
+    assert.equal(ms, 350, "retain the complete intentional gesture delay");
+    events.push("delay-start");
+    delayStarted.resolve();
+    await releaseDelay.promise;
+    f.clock.now += ms;
+    events.push("delay-end");
+  };
+  f.sandbox.page.mouse = {
+    move: async (x, y) => {
+      assert.equal(x, point.x); assert.equal(y, point.y);
+      events.push("move"); pointerFrames += 1;
+    },
+    down: async () => { events.push("down"); pointerFrames += 1; },
+    up: async () => { events.push("up"); pointerFrames += 1; audio.policy.state = "unlocked"; },
+  };
+  f.sandbox.page.keyboard = {
+    type: async (character, options) => {
+      assert.equal(options.delay, 0);
+      events.push(`key:${character}`);
+    },
+    press: async (key) => { events.push(`key:${key}`); command.terminalMarkerSeen = true; },
+  };
+  f.sandbox.page.waitForFunction = async (predicate, argument) => {
+    const value = predicate(argument);
+    assert.ok(value, "required cursor/input/audio observation was missing");
+    return { jsonValue: async () => value, dispose: async () => {} };
+  };
+  const typing = extractBetween("const shiftedPhysicalKey", "async function waitForDesktopReady");
+  const leg = extractBetween('  phaseProgress("post-restore:focus-and-gesture");',
+    '  phaseProgress("post-restore:audio-pcm-and-render");');
+  const run = () => vm.runInContext(`${typing}\n(async () => {
+    ${leg}
+    return { postRestoreStart, postRestoreCursor, postAudioCommand };
+  })()`, f.context);
+  return { ...f, events, audio, delayStarted, releaseDelay, run };
+}
+
+test("pointer motion precedes the full delayed gesture; no click or physical key occurs early", async () => {
+  const f = delayedGestureFixture();
+  const running = f.run();
+  try {
+    await Promise.race([f.delayStarted.promise, running.then(() => assert.fail("gesture delay skipped"))]);
+    assert.deepEqual(f.events, ["move", "delay-start"]);
+    assert.equal(f.audio.policy.state, "locked");
+    f.releaseDelay.resolve();
+    const result = await running;
+    assert.deepEqual(f.events.slice(0, 6), ["move", "delay-start", "delay-end", "down", "up", "command:sh /tmp/a"]);
+    assert.deepEqual(f.events.slice(6), [..."sh /tmp/a"].map((key) => `key:${key}`).concat("key:Enter"));
+    assert.equal(result.postRestoreStart, 1_000);
+    assert.equal(result.postRestoreCursor.elapsedMs, 450);
+  } finally {
+    f.releaseDelay.resolve();
+    await running.catch(() => {});
+  }
+});
+
+test("premature audio unlock during the delay fails before the click or command", async () => {
+  const f = delayedGestureFixture();
+  const running = f.run();
+  const rejected = assert.rejects(running, /audio unlocked before the delayed click/);
+  try {
+    await Promise.race([f.delayStarted.promise, rejected]);
+    f.audio.policy.state = "unlocked";
+    f.releaseDelay.resolve();
+    await rejected;
+    assert.deepEqual(f.events, ["move", "delay-start", "delay-end"]);
+  } finally {
+    f.releaseDelay.resolve();
+    await running.catch(() => {});
+  }
+});
+
+test("overlapped motion spends the original deadline; late command completion still fails", async () => {
+  const f = delayedGestureFixture(2_649.5);
+  f.releaseDelay.resolve();
+  const result = await f.run();
+  assert.equal(result.postRestoreStart, 1_000);
+  assert.equal(result.postRestoreCursor.elapsedMs, 1_999.5);
+  f.sandbox.postRestoreStart = result.postRestoreStart;
+  f.sandbox.postRestoreEnd = 3_000;
+  vm.runInContext(originalTimingAssertion, f.context);
+  f.sandbox.postRestoreEnd = 3_000.01;
+  assert.throws(() => vm.runInContext(originalTimingAssertion, f.context), /interaction exceeded 2 seconds/);
+  const expired = delayedGestureFixture(2_650);
+  expired.releaseDelay.resolve();
+  await assert.rejects(expired.run(), /original 2-second budget/);
+  assert.equal(expired.events.some((event) => event.startsWith("key:")), false);
+});
+
 test("top-level catch captures the phase before finally cleanup and rethrows the original error", async () => {
   const f = fixture();
   const catchMarker = "} catch (error) {\n  const phase =";

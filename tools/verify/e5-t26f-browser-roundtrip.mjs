@@ -950,8 +950,11 @@ try {
     renderedFrames: window.__desktopTerminal.audio()?.sink?.renderedFrames ?? null,
   }));
   assert.equal(audioBefore.policy, "locked", "audio was already unlocked before the delayed gesture");
-  await page.waitForTimeout(350);
+  // Let the guest cursor progress while the audio-unlocking click remains deliberately delayed.
   await page.mouse.move(focusClient.x, focusClient.y);
+  await page.waitForTimeout(350);
+  assert.equal(await page.evaluate(() => window.__desktopTerminal.audio()?.policy?.state || null),
+    "locked", "audio unlocked before the delayed click");
   await page.mouse.down();
   await page.mouse.up();
   await page.waitForFunction(
