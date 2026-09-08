@@ -3,8 +3,9 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: in-progress
-depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l, E5-T26m, E5-T26n]
+status: blocked
+blocked_on: E5-T26o
+depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l, E5-T26m, E5-T26n, E5-T26o]
 estimate: S
 risk: high
 capstone: false
@@ -39,6 +40,19 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — blocked on E5-T26o
+
+PR373 publishes the closed failed screen at
+`a192add31efb1ed1f7f00425032476e0ad72bd28`. Exact historical negative repro:
+producer96ecb801, `env -u RUSTDOCFLAGS node tools/verify/e5-t26f-browser-single-process-observer.mjs`,
+rawSHA256 `a25418d4dd387ae10af687e8cfffb615a3a74eb6bc1bd81aea88a50e10dfef96`,
+original4104.175ms exceeds2000ms. Its full immutable inputs are in the log below.
+The metadata closure invalidates that old checkpoint seal; never rebind it.
+Current authenticated CPU attribution and Daybreak's source-only GO motivate
+one pure PLIC selection prerequisite. Only E5-T26o is active; F resumes with
+a fresh runtime-bound screen after that prerequisite is independently verified.
+No clock, deadline, image, budget or guest-input waiver is introduced.
 
 ### 2026-09-08 — worker and fresh Daybreak critic — post-SPP screen closes failed
 
