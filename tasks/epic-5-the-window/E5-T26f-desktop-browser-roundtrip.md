@@ -3,8 +3,9 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: in-progress
-depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l]
+status: blocked
+depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l, E5-T26m]
+blocked_on: E5-T26m browser inline-cache interrupt-state projection
 estimate: S
 risk: high
 capstone: false
@@ -39,6 +40,27 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — isolated execution-cache prerequisite
+
+Park F outside the active lane while S/high E5-T26m implements the narrowly
+reviewed cached-authority projection. F's acceptance remains unchanged and
+cannot resume until that named prerequisite is verified. Exact negative repro:
+producer `001e80864911863145f2127192bae5df8186e68b`,
+`node evidence/e5-t26f/single-process-quiet-001e8086/run.mjs`, retained raw
+SHA256 `0d56d45f82d6982a52368ca5dc63499d26ce07409712d460b0cb178ab60363bf`,
+original elapsed4101.870000004768ms, cap2000ms. The full original image/profile/
+runtime/source invocation and separately derived snapshot are retained beside
+that driver. Later task-timeline builds invalidate reuse of that old seal;
+do not rebind it or pretend this historical launcher targets current HEAD.
+
+Daybreak's source preflight in
+`evidence/e5-t26f/inline-context-candidate/critic-preflight.md` permits excluding
+only SIE/MIE/SPIE/MPIE from browser inline-cache comparison while preserving
+actual interrupt state and all memory authority. This is a targeted reduction
+of unnecessary invalidation, not a demonstrated cause of F latency or a speedup
+promise. After M, create fresh exact-runtime browser evidence for F; neither M's
+semantic proof nor these diagnostic failures can set F verified.
 
 ### 2026-09-08 — worker and fresh Daybreak critic — print-only hypothesis closed
 
