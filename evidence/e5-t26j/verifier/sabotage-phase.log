@@ -1,0 +1,19 @@
+$ env -u RUST_LOG -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u CARGO_ENCODED_RUSTFLAGS cargo test -p wasm-vm-core --features gpu-trace --test icount_divider all_small_ratios_and_phases_preserve_state_and_land_the_next_tick_exactly -- --nocapture
+exit=101
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26j-critic.pgE4yQ/repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.76s
+     Running tests/icount_divider.rs (target/debug/deps/icount_divider-76047757659744b3)
+
+running 1 test
+thread 'all_small_ratios_and_phases_preserve_state_and_land_the_next_tick_exactly' panicked at crates/core/tests/icount_divider.rs:87:17:
+assertion `left == right` failed
+[the streamed UI rendered the full differing snapshot byte arrays; omitted here because the command was not originally redirected]
+test all_small_ratios_and_phases_preserve_state_and_land_the_next_tick_exactly ... FAILED
+
+failures:
+    all_small_ratios_and_phases_preserve_state_and_land_the_next_tick_exactly
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+error: test failed, to rerun pass `-p wasm-vm-core --test icount_divider`
+
+The patch was reversed immediately after this expected failure.

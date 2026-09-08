@@ -1,0 +1,12 @@
+diff --git a/web/desktop-terminal.js b/web/desktop-terminal.js
+--- a/web/desktop-terminal.js
++++ b/web/desktop-terminal.js
+@@ -1175,7 +1175,7 @@
+   persist: true,
+   slirpNet: false,
+   fastInterpreter: true,
+   guestClock: query.get("guestClock") ?? "icount",
+-  icountDivider: query.has("icountDivider") ? query.get("icountDivider") : undefined,
++  icountDivider: undefined,
+   jit: query.get("jit") !== "0",
+   // Forward an existing policy only; omission keeps the loader's default unchanged.

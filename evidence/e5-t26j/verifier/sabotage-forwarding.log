@@ -1,0 +1,23 @@
+$ env -u RUST_LOG -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u CARGO_ENCODED_RUSTFLAGS node --test web/tests/e5-t26j-icount-divider.test.mjs
+exit=1
+✔ all 1..1024 numbers and exact decimal strings validate; undefined alone omits
+✔ invalid syntax, types, ranges and explicit incompatible modes refuse before machine access
+✔ omission preserves the old mode call without divider/state reads or a fabricated selection
+✔ both explicit APIs are validated before the first read or mutation
+✔ actual pre-selection state must be ICount and valid; no implicit wall conversion
+✔ explicit selection reads stored state, sets once, reads actual result, and never resets mode/time on resume
+✔ setter/read exceptions and changed time or wrong actual divider refuse without retry/fallback
+✔ receipt is immutable history, returns independent scalar-only copies, and never rereads live state
+✔ loader validates before its first fetch and selects after restore branches but before execution
+✖ desktop query preserves omission versus exact raw string, including invalid empty input
+✔ raw divider boot data and real lifecycle receipt traverse the paired worker protocol
+ℹ tests 11
+ℹ pass 10
+ℹ fail 1
+
+test at web/tests/e5-t26j-icount-divider.test.mjs:153:1
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+undefined !== ''
+    at TestContext.<anonymous> (file:///private/tmp/e5-t26j-critic.pgE4yQ/repo/web/tests/e5-t26j-icount-divider.test.mjs:159:12)
+
+The patch was reversed immediately after this expected failure.

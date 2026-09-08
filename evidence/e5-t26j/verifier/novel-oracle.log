@@ -1,0 +1,10 @@
+$ env -u RUST_LOG -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u CARGO_ENCODED_RUSTFLAGS cargo test -p wasm-vm-core --features gpu-trace --test icount_divider critic_full_domain_phase_oracle -- --nocapture
+exit=0
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26j-critic.pgE4yQ/repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.20s
+     Running tests/icount_divider.rs (target/debug/deps/icount_divider-76047757659744b3)
+
+running 1 test
+test critic_full_domain_phase_oracle ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.07s

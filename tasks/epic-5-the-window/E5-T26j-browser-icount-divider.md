@@ -3,7 +3,7 @@ id: E5-T26j
 epic: 5
 title: Prove opt-in deterministic guest timer-rate selection
 priority: 526.595
-status: implemented
+status: verified
 depends_on: [E5-T26i, E5-T26h, E5-T19a]
 estimate: S
 risk: high
@@ -58,6 +58,36 @@ pristine-clone proof once, with local guest/native/WASM evidence; no rr, WebKit,
 independent machine, GitHub Actions or production deployment is required here.
 
 ## Verification log
+
+### 2026-09-08 — verifier — VERDICT: verified
+
+- P1–P10 — HELD. Scrubbed native/JS and actual-WASM gates prove atomic admission,
+  exact no-op, overflow-safe conservative phase mapping, architectural/device
+  identity, exact next tick, unchanged divider-10 default/wire format, strict
+  `JsValue` and JS parsing, restore-before-override, and read-only worker receipt.
+  Native/WASM trace `4ddc392297ebe1dc` and RAM digest `c7d032c2…51f7c4` match.
+- P11–P12 — HELD. One authenticated new cold seal and four independent profile
+  copies run 10/1/1/10 with exact head/runtime/image/snapshot bindings, unchanged
+  command/T0/2-second cap, JIT/chaining active, real clock/JIT progress, cursor/text,
+  attached non-silent PCM, and empty browser/HTTP arrays. Raw JSON, child-log, and
+  screenshot hashes match `comparison.json` SHA-256 `1a58e7df…9d35`.
+- P13–P16 — HELD. The exact code head passes the composed scrubbed clone proof; the
+  metadata/evidence-only heads preserve runtime bytes. Both phase and forwarding
+  sabotages fail as predicted, the 256-case novel phase oracle passes, the corrected
+  demo is 126/126, and the six-arm built-loader result remains valid.
+- COVERAGE — COMPLETE. Every operational J hunk executes in native/WASM/JS or actual
+  Chromium. Generated declarations, service-worker cache metadata, task prose, and
+  evidence are narrowly waived; unrelated E5-T26f build-screen records are excluded.
+  Durable critic report and raw verifier artifacts: `evidence/e5-t26j/critic.md` and
+  `evidence/e5-t26j/verifier/`.
+- SCOPE — J verified, F not verified. Divider-10 mean is 5133.270 ms; divider-1 mean
+  is 9450.975 ms (84.112% slower). Every arm retains the unchanged cap failure, so
+  this negative experiment neither promotes divider 1 nor changes the default.
+
+Commands: scrubbed `make verify-E5-T26j-runtime`; scrubbed `wasm-pack test --node
+crates/wasm --test icount_divider --test guest_clock`; corrected demo; one new cold
+ABBA collector; 256-case critic oracle; isolated phase and forwarding sabotages;
+`python3 tools/check_task_policy.py`; `python3 tools/build_queue.py`.
 
 ### 2026-09-08 — worker — implemented; controlled comparison is negative
 

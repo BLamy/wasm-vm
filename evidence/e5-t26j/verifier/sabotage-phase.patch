@@ -1,0 +1,14 @@
+diff --git a/crates/core/src/lib.rs b/crates/core/src/lib.rs
+--- a/crates/core/src/lib.rs
++++ b/crates/core/src/lib.rs
+@@ -3516,8 +3516,9 @@
+         if divider == self.clock_div {
+             return Ok(());
+         }
+-        let phase = u128::from(self.tick_accum) * u128::from(divider) / u128::from(self.clock_div);
++        let numerator = u128::from(self.tick_accum) * u128::from(divider);
++        let phase = (numerator + u128::from(self.clock_div) - 1) / u128::from(self.clock_div);
+         self.tick_accum = phase as u64;
+         self.clock_div = divider;
+         Ok(())
+     }
