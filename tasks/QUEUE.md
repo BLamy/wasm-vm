@@ -454,7 +454,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `526.595` [E5-T26j](epic-5-the-window/E5-T26j-browser-icount-divider.md) — Prove opt-in deterministic guest timer-rate selection *(deps: E5-T26i, E5-T26h, E5-T19a)*
 - [x] `526.596` [E5-T26k](epic-5-the-window/E5-T26k-browser-decoded-cache-capacity.md) — Bound and measure browser decoded-block cache capacity *(deps: E4-T30, E5-T26h, E5-T26j)*
 - [x] `526.597` [E5-T26l](epic-5-the-window/E5-T26l-live-compile-priority.md) — Refresh live priority when selecting pending JIT compilation jobs *(deps: E4-T21, E5-T22g, E5-T26k)*
-- [b] `526.6` [E5-T26f](epic-5-the-window/E5-T26f-desktop-browser-roundtrip.md) — Browser desktop snapshot round-trip and interaction smoke *(deps: E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l)*
+- [~] `526.6` [E5-T26f](epic-5-the-window/E5-T26f-desktop-browser-roundtrip.md) — Browser desktop snapshot round-trip and interaction smoke *(deps: E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l)*
 - [ ] `526.7` [E5-T26g](epic-5-the-window/E5-T26g-snapshot-hardening-proof.md) — Desktop snapshot stress, versioning, size, and portability proof *(deps: E5-T26f)*
 - [ ] `527` [E5-T27](epic-5-the-window/E5-T27-multi-display-stretch.md) — Multi-display support (config-gated stretch) — second scanout, second canvas *(deps: E5-T22d)*
 - [-] `528` [E5-T28](epic-5-the-window/E5-T28-capstone-desktop-in-the-tab.md) — "Capstone: a browser rendering surface + real GUI apps — type, hear, drag" *(deps: E5-T13c, E5-T15d, E5-T18e, E5-T20e, E5-T24d, E5-T22d, E5-T25d, E5-T26g)*

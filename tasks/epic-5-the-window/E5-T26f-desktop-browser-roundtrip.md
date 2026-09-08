@@ -3,8 +3,7 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: blocked
-blocked_on: E5-T26l bounded live compile-priority runtime candidate and browser screen
+status: in-progress
 depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l]
 estimate: S
 risk: high
@@ -40,6 +39,28 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — resume after verified L; account for compile-queue work
+
+L is independently verified and published in PR364, final head
+`18b620b7213f966c05e4fbed95eea0c16827362e`. Exact native/differential/WASM,
+single pristine clone, sabotage, browser and promoted-test evidence is indexed
+in `evidence/e5-t26l/README.md`. Its new cold screen at42bb34d8 fails F's
+original2000-ms cap at4727.945 ms, while matching CRC `4b00f145`, freshHELLO2,
+physical `play` and1440 fresh non-silent PCM succeed. Prior functional HELD
+results carry. L's verified metadata changes the served tree: do not rebind
+or reuse the old42bb seal with those new assets.
+
+Resume only a read-only measurement increment. Existing discovery counts imply
+3200 staged nominations in the observed interval, versus607 submissions; the
+2593 difference is not2593 known drops. Luna's source audit identifies the
+already-maintained but unexposed compile-queue counters/depth needed to separate
+pending work, backpressure, cancellation and popped-but-unsubmitted requests.
+`evidence/e5-t26f/compile-queue-accounting-plan.md` records the assumptions.
+Project only those immutable existing values through `jitStats`; no new RPC,
+hot-path counter, profiler, scheduling/default/clock/guest/image/helper changes.
+Record a new authenticated cold screen after the new served build, retaining
+the original T0/cap and every failure. No F verification is inferred.
 
 ### 2026-09-08 — coordinator — separate the next core runtime boundary
 
