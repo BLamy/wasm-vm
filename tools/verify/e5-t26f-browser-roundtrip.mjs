@@ -7,6 +7,7 @@
 // create stops at the normal snapshot; reuse copies that closed profile into a new retained
 // iteration directory and runs the real normal restore/interaction/audit, without cold setup.
 // Reuse alone permits E5_T26F_DIAGNOSTIC_COMMAND, physically typed and recorded verbatim.
+// E5_T26F_DIAGNOSTIC_LATENCY=1 (reuse only) records bounded, read-only interaction timing.
 
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
@@ -39,6 +40,11 @@ const jsonReplacer = (_key, value) => typeof value === "bigint" ? `${value}n` : 
 
 function diagnosticOptions(env) {
   const mode = env.E5_T26F_DIAGNOSTIC;
+  const latency = env.E5_T26F_DIAGNOSTIC_LATENCY;
+  if (latency !== undefined) {
+    assert.equal(mode, "reuse", "diagnostic latency requires reuse mode");
+    assert.equal(latency, "1", "diagnostic latency flag must be exactly 1");
+  }
   const delay = env.E5_T26F_DIAGNOSTIC_KEY_DELAY_MS;
   if (delay !== undefined) {
     assert.equal(mode, "reuse", "diagnostic key delay requires reuse mode");
@@ -58,7 +64,7 @@ function diagnosticOptions(env) {
     directory !== path.parse(directory).root, "diagnostic profile requires an absolute normalized scratch directory");
   assert.ok(Number.isSafeInteger(port) && port >= 1024 && port <= 65535, "diagnostic mode requires a stable explicit server port");
   return { mode, directory, port, origin: `http://127.0.0.1:${port}`, command: command ?? null,
-    keyDelayMs: Number(delay ?? 0) };
+    keyDelayMs: Number(delay ?? 0), latency: latency === "1" };
 }
 
 const diagnostic = diagnosticOptions(process.env);
@@ -290,6 +296,154 @@ let lastPhase = null;
 let lastProgressSample = null;
 let progressTimer = null;
 let progressProbe = null;
+let interactionLatencyActive = false;
+let interactionLatencyCollectionPending = false;
+
+// Serialized into the page only for the explicit reuse diagnostic. No state()/pixel inspection,
+// guest control, or awaited RPC on installation; the existing marker predicate supplies its read.
+function installInteractionLatencyProbe({ restoredAt, baselineWriteIndex }) {
+  const startedAt = performance.now();
+  if (!Number.isFinite(restoredAt) || startedAt < restoredAt) throw Error("invalid restore clock");
+  const report = {
+    restoredAt, startedAt, deadlineAt: restoredAt + 6_000, baselineWriteIndex,
+    limits: { pcmIntervalMs: 50, pcmSamples: 120, schedulerIntervalMs: 250, schedulerSamples: 24, markerSamples: 120 },
+    pcmSamples: [], schedulerSamples: [], markerSamples: [], firstWrite: null, firstPcm: null,
+    firstMarker: null, markerCalls: 0, markerTotalMs: 0, markerMaxMs: 0,
+    stoppedAt: null, stopReason: null,
+  };
+  let timer = null, deadlineTimer = null, inFlight = null, lastSchedulerAt = -Infinity;
+  const shortError = (error) => String(error?.message || error).slice(0, 240);
+  const pick = (value, keys) => value == null ? null : Object.fromEntries(keys.map((key) => [key, value[key] ?? null]));
+  function stop(reason) {
+    if (report.stoppedAt === null) {
+      report.stoppedAt = performance.now();
+      report.stopReason = reason;
+      clearInterval(timer);
+      clearTimeout(deadlineTimer);
+      if (inFlight) inFlight.status = "pending-at-stop";
+    }
+    return report;
+  }
+  function active() {
+    if (report.stoppedAt !== null) return false;
+    if (performance.now() >= report.deadlineAt) { stop("time-limit"); return false; }
+    return true;
+  }
+  async function sampleScheduler() {
+    const now = performance.now();
+    if (!active() || inFlight || now - lastSchedulerAt < 250 || report.schedulerSamples.length >= 24) return;
+    lastSchedulerAt = now;
+    const sample = { requestedAt: now, elapsedMs: now - restoredAt, status: "pending" };
+    report.schedulerSamples.push(sample);
+    inFlight = sample;
+    try {
+      const controller = window.__desktopController;
+      sample.schedulerAvailable = typeof controller?.schedulerStats === "function";
+      sample.workerRpcAvailable = typeof controller?.workerRpcStats === "function";
+      // A rejected local-stat read must not free the slot while the worker read is still pending.
+      const [scheduler, rpc] = await Promise.allSettled([
+        Promise.resolve().then(() => sample.schedulerAvailable ? controller.schedulerStats() : null),
+        Promise.resolve().then(() => sample.workerRpcAvailable ? controller.workerRpcStats() : null),
+      ]);
+      if (!active()) return;
+      sample.observedAt = performance.now();
+      sample.requestMs = sample.observedAt - now;
+      sample.status = scheduler.status === "rejected" || rpc.status === "rejected" ? "error" : "completed";
+      if (scheduler.status === "rejected") sample.schedulerError = shortError(scheduler.reason);
+      if (rpc.status === "rejected") sample.workerRpcError = shortError(rpc.reason);
+      sample.scheduler = pick(scheduler.value, ["quantum", "slices", "totalSliceMs", "maxSliceMs", "maxStretchGapMs",
+        "requestedInstructions", "retiredInstructions", "fetchWaits", "fetchRequestedChunks", "fetchWaitTotalMs",
+        "schedulerYields", "timerYields", "mainThreadYields", "yieldMode"]);
+      sample.workerRpc = pick(rpc.value, ["calls", "completed", "pending", "averageMs", "maxMs"]);
+    } catch (error) {
+      if (active()) { sample.status = "error"; sample.observedAt = performance.now(); sample.error = shortError(error); }
+    } finally {
+      inFlight = null; // Only settlement releases this slot; a timeout never permits another RPC.
+    }
+  }
+  function samplePcm() {
+    if (!active()) return;
+    if (report.pcmSamples.length >= 120) { stop("sample-limit"); return; }
+    const observedAt = performance.now();
+    const sample = { observedAt, elapsedMs: observedAt - restoredAt };
+    report.pcmSamples.push(sample);
+    try {
+      const audio = window.__desktopTerminal?.audio?.();
+      const writeIndex = audio?.sink?.ring?.writeIndex;
+      sample.available = Number.isSafeInteger(writeIndex) && Number.isSafeInteger(baselineWriteIndex);
+      sample.writeIndex = sample.available ? writeIndex : null;
+      if (sample.available && ((writeIndex - baselineWriteIndex) >>> 0) > 0) {
+        report.firstWrite ??= { ...sample };
+        if (!report.firstPcm) {
+          sample.pcmAvailable = typeof audio.pcm === "function";
+          const pcm = sample.pcmAvailable ? audio.pcm(baselineWriteIndex) : null;
+          if (pcm?.writtenFrames > 0 && pcm.nonSilentFrames > 0 && pcm.maxAbs > 0) {
+            report.firstPcm = { ...sample, completedAt: performance.now(), pcm: pick(pcm, ["available", "writeIndex",
+              "readIndex", "fillFrames", "capacityFrames", "writtenFrames", "inspectedFrames", "nonSilentFrames", "maxAbs"]) };
+          }
+        }
+      }
+    } catch (error) { sample.error = shortError(error); }
+    if (report.pcmSamples.length >= 120) stop("sample-limit");
+    else void sampleScheduler();
+  }
+  function recordMarker(start, end, state) {
+    if (!active()) return;
+    const sample = { startedAt: start, observedAt: end, elapsedMs: end - restoredAt,
+      stateReadMs: end - start, frameCount: state.frameCount ?? null,
+      markerSeen: state.active.command?.terminalMarkerSeen === true };
+    report.markerCalls += 1;
+    report.markerTotalMs += sample.stateReadMs;
+    report.markerMaxMs = Math.max(report.markerMaxMs, sample.stateReadMs);
+    if (report.markerSamples.length < 120) report.markerSamples.push(sample);
+    if (sample.markerSeen) report.firstMarker ??= sample;
+  }
+  window.__e5t26fLatencyProbe = { active, recordMarker, stop };
+  if (active()) {
+    timer = setInterval(samplePcm, 50);
+    deadlineTimer = setTimeout(() => stop("time-limit"), Math.max(0, report.deadlineAt - startedAt));
+    void sampleScheduler();
+  }
+  return report;
+}
+
+function commandMarkerReady() {
+  const probe = window.__e5t26fLatencyProbe;
+  if (!probe?.active()) return window.__desktopTerminal.state().active.command?.terminalMarkerSeen === true;
+  const startedAt = performance.now();
+  const state = window.__desktopTerminal.state();
+  probe.recordMarker(startedAt, performance.now(), state);
+  return state.active.command?.terminalMarkerSeen === true;
+}
+
+async function startInteractionLatencyProbe(restoredAt, baselineWriteIndex) {
+  interactionLatencyActive = true;
+  milestones.interactionLatency = { restoredAt, baselineWriteIndex, status: "registering" };
+  milestones.interactionLatency = await page.evaluate(installInteractionLatencyProbe, { restoredAt, baselineWriteIndex });
+}
+
+async function stopInteractionLatencyProbe(reason) {
+  if (!interactionLatencyActive) return;
+  interactionLatencyActive = false;
+  interactionLatencyCollectionPending = true;
+  let timer;
+  const collection = Promise.resolve().then(() => page.evaluate((value) =>
+    window.__e5t26fLatencyProbe?.stop(value) ?? { unavailable: true }, reason)).finally(() => {
+    interactionLatencyCollectionPending = false;
+  });
+  try {
+    milestones.interactionLatency = await Promise.race([
+      collection,
+      new Promise((_resolve, reject) => {
+        timer = setTimeout(() => reject(Error("latency collection exceeded 1000 ms")), 1_000);
+      }),
+    ]);
+  } catch (error) {
+    milestones.interactionLatency.captureError = String(error?.message || error).slice(0, 240);
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 function phaseProgress(phase, event = "start") {
   lastPhase = { phase, event, timestamp: new Date().toISOString(), elapsedMs: Date.now() - startedAt };
@@ -462,6 +616,14 @@ async function captureFailure(label, error = null) {
   await writeFile(path.join(out, `${label}.json`), `${JSON.stringify(diagnostic, jsonReplacer, 2)}\n`);
   try {
     if (progressProbe) throw new Error("progress probe still pending; retaining the last completed sample");
+    if (interactionLatencyActive) {
+      await stopInteractionLatencyProbe("failure");
+      // Save collected samples (or the bounded collection error) before any pixel/serial capture.
+      await writeFile(path.join(out, `${label}.json`), `${JSON.stringify(diagnostic, jsonReplacer, 2)}\n`);
+    }
+    if (interactionLatencyCollectionPending) {
+      throw new Error("latency collection still pending; retaining the last completed sample");
+    }
     diagnostic.state = await page.evaluate(() => ({
       terminal: window.__desktopTerminal?.state?.() || null,
       presentation: window.__desktopTerminal?.presentation?.() || null,
@@ -573,13 +735,15 @@ async function typeCommand(command, marker, timeout = 240_000, keyDelay = 100) {
   phaseProgress(`command:${marker}:completion`);
   try {
     await page.waitForFunction(
-      () => window.__desktopTerminal.state().active.command?.terminalMarkerSeen === true,
+      commandMarkerReady,
       null,
       { timeout },
     );
   } catch (error) {
     await captureFailure(`command-${marker}`, error);
     throw error;
+  } finally {
+    if (interactionLatencyActive) await stopInteractionLatencyProbe("command-wait-settled");
   }
   const state = await page.evaluate((expected) => window.__desktopTerminal.finishCommand(expected), marker);
   const record = state.commands.at(-1);
@@ -1002,6 +1166,7 @@ try {
   }));
   milestones.postRestoreAudioBefore = postAudioBefore;
   phaseProgress("post-restore:audio-unlock", "done");
+  if (diagnostic?.latency) await startInteractionLatencyProbe(postRestoreStart, postAudioBefore.writeIndex);
   const postAudioCommand = await typeCommand(
     postRestoreCommand,
     "e5t26f-post-aplay",
@@ -1246,6 +1411,7 @@ try {
   throw error;
 } finally {
   stopProgressSampling();
+  if (interactionLatencyActive) await stopInteractionLatencyProbe("cleanup");
   await context?.close().catch(() => {});
   await browser?.close().catch(() => {});
   if (server) {

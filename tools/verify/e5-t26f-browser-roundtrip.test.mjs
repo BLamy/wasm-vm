@@ -2,15 +2,43 @@
 // Extract only the bounded helpers into a VM; importing the runner would launch Chromium.
 
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import * as fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import vm from "node:vm";
 
 const source = readFileSync(new URL("./e5-t26f-browser-roundtrip.mjs", import.meta.url), "utf8");
+
+for (const mode of ["create", "reuse"]) {
+  test(`make verify-E5-T26f refuses diagnostic ${mode} before any build or browser command`, async (t) => {
+    const directory = await fs.mkdtemp(path.join(os.tmpdir(), "e5-t26f-make-guard-"));
+    t.after(() => fs.rm(directory, { recursive: true, force: true }));
+    const tripwire = path.join(directory, "unexpected-command");
+    // No real Cargo, Node, recursive make, or build shell is reachable even if the guard regresses.
+    for (const command of ["cargo", "node", "make", "bash"]) {
+      await fs.writeFile(path.join(directory, command),
+        '#!/bin/sh\nprintf "%s\\n" "$0 $*" >> "$E5_T26F_TRIPWIRE"\nexit 99\n', { mode: 0o700 });
+    }
+    const result = spawnSync("/usr/bin/make", ["--no-print-directory", "-j1", "-f",
+      fileURLToPath(new URL("../../Makefile", import.meta.url)), "verify-E5-T26f",
+      "SHELL=/bin/sh", `MAKE=${path.join(directory, "make")}`], {
+      cwd: directory, encoding: "utf8", timeout: 2_000, maxBuffer: 64 * 1024,
+      env: { PATH: directory, E5_T26F_DIAGNOSTIC: mode, E5_T26F_TRIPWIRE: tripwire },
+    });
+    assert.equal(result.error, undefined);
+    assert.equal(result.signal, null);
+    assert.notEqual(result.status, 0);
+    const output = result.stdout + result.stderr;
+    assert.match(output, /verify-E5-T26f refuses diagnostic mode/);
+    assert.doesNotMatch(output, /cargo |node |web-dist|Chromium proof|verify-E5-T26f.*: OK/);
+    assert.equal((await fs.readdir(directory)).includes("unexpected-command"), false);
+  });
+}
 
 function extractBetween(startMarker, endMarker) {
   const start = source.indexOf(startMarker);
@@ -50,10 +78,16 @@ function fixture() {
     console: { error: (value) => logs.push(JSON.parse(value.slice("[e5-t26f] ".length))) },
     setInterval: (callback, ms) => {
       const id = ++nextTimer;
-      timers.set(id, { callback, ms });
+      timers.set(id, { callback, ms, next: clock.now + ms, interval: true });
       return id;
     },
     clearInterval: (id) => timers.delete(id),
+    setTimeout: (callback, ms) => {
+      const id = ++nextTimer;
+      timers.set(id, { callback, ms, next: clock.now + ms, interval: false });
+      return id;
+    },
+    clearTimeout: (id) => timers.delete(id),
     mkdir: async () => {},
     writeFile: async (file, value) => writes.push({ file, value }),
     performance: { now: () => clock.now },
@@ -62,6 +96,7 @@ function fixture() {
       querySelector: () => ({ textContent: "s".repeat(1_000) }),
     },
     window: {},
+    diagnostic: null,
     diagnosticCheckpoint: null,
     page: { url: () => "http://local/test" },
   };
@@ -70,6 +105,7 @@ function fixture() {
     ({ phaseProgress, sampleProgress, startProgressSampling, stopProgressSampling,
        remainingInteractionMs, waitForRestoredCursor, captureFailure,
        waitForReadyAndRestore, auditRestoreCoherence,
+       installInteractionLatencyProbe, commandMarkerReady, startInteractionLatencyProbe, stopInteractionLatencyProbe,
        state: () => ({ lastPhase, lastProgressSample, progressProbe }) })
   `, context);
   return { api, sandbox, context, logs, timers, writes, milestones, clock };
@@ -307,7 +343,7 @@ test("exhausted cursor budget fails before polling; a polling timeout remains a 
   assert.equal(f.api.state().lastPhase.event, "start");
 });
 
-function delayedGestureFixture(startAt = 1_100, postRestoreCommand = "sh /tmp/a") {
+function delayedGestureFixture(startAt = 1_100, postRestoreCommand = "sh /tmp/a", keyDelay = 0) {
   const f = fixture();
   const events = [];
   const delayStarted = deferred();
@@ -321,7 +357,7 @@ function delayedGestureFixture(startAt = 1_100, postRestoreCommand = "sh /tmp/a"
   Object.assign(f.sandbox, {
     firstRestore: { completedAt: 1_000 },
     postRestoreCommand,
-    postRestoreKeyDelayMs: 0,
+    postRestoreKeyDelayMs: keyDelay,
     desktopBox: async () => ({}),
     guestPoint: (_box, x, y) => ({ x, y }),
   });
@@ -357,7 +393,8 @@ function delayedGestureFixture(startAt = 1_100, postRestoreCommand = "sh /tmp/a"
     down: async (key) => { events.push(`down:${key}`); },
     up: async (key) => { events.push(`up:${key}`); },
     type: async (character, options) => {
-      assert.equal(options.delay, 0);
+      assert.equal(options.delay, keyDelay);
+      f.clock.now += keyDelay;
       events.push(`key:${character}`);
     },
     press: async (key) => { events.push(`key:${key}`); if (key === "Enter") command.terminalMarkerSeen = true; },
@@ -438,6 +475,270 @@ const reuseCommandEnv = {
   E5_T26F_DIAGNOSTIC: "reuse", E5_T26F_DIAGNOSTIC_PROFILE: "/tmp/t26f-command",
   E5_T26F_DIAGNOSTIC_PORT: "48123",
 };
+
+test("latency opt-in is exactly 1, reuse-only, and never changes the command or key pacing", () => {
+  for (const env of [{}, { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: "create" }]) {
+    assert.throws(() => selectDiagnosticCommand({ ...env, E5_T26F_DIAGNOSTIC_LATENCY: "1" }), /requires reuse mode/);
+  }
+  for (const flag of ["", "0", "true", "01", "2"]) {
+    assert.throws(() => selectDiagnosticCommand({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_LATENCY: flag }), /exactly 1/);
+  }
+  assert.equal(selectDiagnosticCommand({}).diagnostic, null);
+  assert.equal(selectDiagnosticCommand(reuseCommandEnv).diagnostic.latency, false);
+  const selected = selectDiagnosticCommand({ ...reuseCommandEnv,
+    E5_T26F_DIAGNOSTIC_LATENCY: "1", E5_T26F_DIAGNOSTIC_KEY_DELAY_MS: "5" });
+  assert.equal(selected.diagnostic.latency, true);
+  assert.equal(selected.postRestoreCommand, "sh /tmp/a");
+  assert.equal(selected.postRestoreKeyDelayMs, 5);
+  const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", selected);
+  assert.equal(run.acceptance, false);
+  assert.equal(run.diagnostic.latency, true);
+});
+
+async function flushMicrotasks() {
+  for (let i = 0; i < 12; i += 1) await Promise.resolve();
+}
+
+async function advanceProbe(f, target) {
+  await flushMicrotasks();
+  for (;;) {
+    const next = [...f.timers.entries()].sort((a, b) => a[1].next - b[1].next)[0];
+    if (!next || next[1].next > target) break;
+    const [id, timer] = next;
+    f.clock.now = timer.next;
+    if (timer.interval) timer.next += timer.ms;
+    else f.timers.delete(id);
+    timer.callback();
+    await flushMicrotasks();
+  }
+  f.clock.now = target;
+  await flushMicrotasks();
+}
+
+function latencyFixture(startedAt = 1_200) {
+  const f = fixture();
+  const ring = { writeIndex: 0 };
+  const counters = { pixels: 0, pcm: 0, scheduler: 0, rpc: 0 };
+  const state = { frameCount: 4, active: { command: { terminalMarkerSeen: false } } };
+  f.clock.now = startedAt;
+  f.sandbox.diagnostic = { mode: "reuse", latency: true };
+  f.sandbox.window.__desktopTerminal = {
+    audio: () => ({ sink: { ring }, pcm: (baseline) => {
+      counters.pcm += 1;
+      assert.equal(baseline, 0);
+      return { available: true, writeIndex: ring.writeIndex, writtenFrames: ring.writeIndex,
+        nonSilentFrames: ring.writeIndex, maxAbs: 0.125 };
+    } }),
+    state: () => { counters.pixels += 1; f.clock.now += 3; return state; },
+  };
+  f.sandbox.window.__desktopController = {
+    schedulerStats: async () => {
+      counters.scheduler += 1;
+      return { slices: counters.scheduler, retiredInstructions: counters.scheduler * 500_000 };
+    },
+    workerRpcStats: async () => { counters.rpc += 1; return { calls: counters.rpc, pending: 0 }; },
+  };
+  f.sandbox.page.evaluate = async (fn, argument) => structuredClone(await fn(argument));
+  f.sandbox.page.screenshot = async () => {};
+  return { ...f, ring, counters, state };
+}
+
+test("probes register before physical typing but a stalled RPC cannot delay typing or completion cleanup", { timeout: 1_000 }, async () => {
+  const f = delayedGestureFixture(1_100, "sh /tmp/a", 5);
+  const held = deferred();
+  let calls = 0;
+  f.sandbox.diagnostic = { mode: "reuse", latency: true };
+  f.sandbox.window.__desktopController = { schedulerStats: () => { calls += 1; return held.promise; } };
+  const originalType = f.sandbox.page.keyboard.type;
+  f.sandbox.page.keyboard.type = async (...args) => {
+    assert.ok(f.sandbox.window.__e5t26fLatencyProbe, "probe registered before the first key");
+    await originalType(...args);
+  };
+  f.releaseDelay.resolve();
+  try {
+    const result = await f.run();
+    assert.equal(calls, 1);
+    assert.equal(result.postRestoreStart, 1_000);
+    assert.equal(result.postAudioCommand.command, "sh /tmp/a");
+    assert.equal(f.events.filter((e) => e.startsWith("key:")).length, 10);
+    assert.equal(f.milestones.interactionLatency.restoredAt, 1_000);
+    assert.equal(f.milestones.interactionLatency.stopReason, "command-wait-settled");
+    assert.equal(f.milestones.interactionLatency.schedulerSamples[0].status, "pending-at-stop");
+    assert.equal(f.timers.size, 0);
+  } finally { held.resolve({ slices: 1 }); }
+});
+
+test("first non-silent PCM precedes a separately timed existing marker read without extra pixel reads", async () => {
+  const f = latencyFixture();
+  await f.api.startInteractionLatencyProbe(1_000, 0);
+  await advanceProbe(f, 1_250);
+  f.ring.writeIndex = 1440;
+  await advanceProbe(f, 1_300);
+  assert.equal(f.counters.pixels, 0, "the sampler must not read state or pixels");
+  assert.equal(f.counters.pcm, 1);
+  assert.equal(f.api.commandMarkerReady(), false);
+  assert.equal(f.counters.pixels, 1, "one existing predicate means one state read");
+  f.clock.now = 1_500;
+  f.state.active.command.terminalMarkerSeen = true;
+  assert.equal(f.api.commandMarkerReady(), true);
+  await f.api.stopInteractionLatencyProbe("completion");
+  const report = f.milestones.interactionLatency;
+  assert.equal(report.firstPcm.observedAt, 1_300);
+  assert.equal(report.firstPcm.elapsedMs, 300);
+  assert.equal(report.firstPcm.pcm.nonSilentFrames, 1440);
+  assert.equal(report.firstMarker.observedAt, 1_503);
+  assert.equal(report.firstMarker.stateReadMs, 3);
+  assert.equal(report.markerTotalMs, 6);
+  assert.equal(report.markerCalls, 2);
+  f.ring.writeIndex = 2880;
+  await advanceProbe(f, 9_000);
+  assert.equal(f.counters.pcm, 1);
+  assert.equal(report.firstPcm.pcm.writeIndex, 1440, "later PCM cannot overwrite the first latch");
+  assert.equal(f.timers.size, 0);
+});
+
+test("one held scheduler RPC survives a rejected local-stat read without overlap, even at the time limit", async () => {
+  const f = latencyFixture();
+  const held = deferred();
+  f.sandbox.window.__desktopController.schedulerStats = () => { f.counters.scheduler += 1; return held.promise; };
+  f.sandbox.window.__desktopController.workerRpcStats = () => { throw Error("local stats unavailable"); };
+  const report = f.api.installInteractionLatencyProbe({ restoredAt: 1_000, baselineWriteIndex: 0 });
+  await advanceProbe(f, 6_999);
+  assert.equal(f.counters.scheduler, 1);
+  assert.equal(report.schedulerSamples.length, 1);
+  assert.equal(report.schedulerSamples[0].status, "pending");
+  await advanceProbe(f, 7_000);
+  assert.equal(report.stopReason, "time-limit");
+  assert.equal(report.schedulerSamples[0].status, "pending-at-stop");
+  assert.equal(f.timers.size, 0);
+  const frozen = JSON.stringify(report);
+  held.resolve({ slices: 99 });
+  await flushMicrotasks();
+  assert.equal(JSON.stringify(report), frozen, "late settlement cannot mutate stopped evidence");
+  assert.equal(f.counters.scheduler, 1);
+});
+
+test("sampling is capped at 120 PCM/marker records and 24 spaced scheduler reads within the original restore window", async () => {
+  const f = latencyFixture(1_000);
+  const report = f.api.installInteractionLatencyProbe({ restoredAt: 1_000, baselineWriteIndex: 0 });
+  for (let i = 0; i < 121; i += 1) f.api.commandMarkerReady();
+  f.state.active.command.terminalMarkerSeen = true;
+  f.api.commandMarkerReady();
+  assert.equal(report.markerSamples.length, 120);
+  assert.equal(report.markerCalls, 122);
+  assert.ok(report.firstMarker, "the first marker survives a full sample array");
+  // Restore monotonic test time after exercising the independent marker accounting.
+  f.clock.now = 1_366;
+  for (const timer of f.timers.values()) {
+    if (timer.interval) timer.next = f.clock.now + timer.ms;
+  }
+  await advanceProbe(f, 10_000);
+  assert.ok(report.pcmSamples.length <= 120);
+  assert.ok(report.schedulerSamples.length <= 24);
+  for (let i = 1; i < report.schedulerSamples.length; i += 1) {
+    assert.ok(report.schedulerSamples[i].requestedAt - report.schedulerSamples[i - 1].requestedAt >= 250);
+  }
+  assert.ok(report.pcmSamples.every((sample) => sample.observedAt < 7_000));
+  assert.equal(report.deadlineAt, 7_000);
+  assert.equal(report.stoppedAt, 7_000);
+  assert.equal(f.timers.size, 0);
+
+  const late = latencyFixture(6_500);
+  const lateReport = late.api.installInteractionLatencyProbe({ restoredAt: 1_000, baselineWriteIndex: 0 });
+  await advanceProbe(late, 7_000);
+  assert.equal(lateReport.deadlineAt, 7_000, "installation must not restart the six-second observation window");
+  assert.ok(lateReport.pcmSamples.length <= 10);
+  assert.equal(lateReport.restoredAt, 1_000);
+});
+
+test("missing diagnostic APIs are recorded as unavailable without fallback calls", async () => {
+  const f = latencyFixture();
+  f.sandbox.window.__desktopController = {};
+  f.sandbox.window.__desktopTerminal.audio = () => ({});
+  const report = f.api.installInteractionLatencyProbe({ restoredAt: 1_000, baselineWriteIndex: 0 });
+  await advanceProbe(f, 1_500);
+  f.sandbox.window.__e5t26fLatencyProbe.stop("completion");
+  assert.ok(report.pcmSamples.every((sample) => sample.available === false && sample.writeIndex === null));
+  assert.ok(report.schedulerSamples.every((sample) => sample.schedulerAvailable === false && sample.workerRpcAvailable === false));
+  assert.equal(report.firstPcm, null);
+  assert.equal(f.counters.pixels, 0);
+  assert.equal(f.counters.pcm, 0);
+  assert.equal(f.timers.size, 0);
+});
+
+test("latency samples survive the unchanged two-second failure before any failure pixel capture", async () => {
+  const f = latencyFixture();
+  await f.api.startInteractionLatencyProbe(1_000, 0);
+  f.ring.writeIndex = 1440;
+  await advanceProbe(f, 1_300);
+  f.clock.now = 4_500;
+  f.state.active.command.terminalMarkerSeen = true;
+  f.api.commandMarkerReady();
+  f.sandbox.postRestoreStart = 1_000;
+  f.sandbox.postRestoreEnd = 4_503;
+  let original;
+  try { vm.runInContext(originalTimingAssertion, f.context); } catch (error) { original = error; }
+  assert.match(original?.message || "", /interaction exceeded 2 seconds/);
+  const evaluate = f.sandbox.page.evaluate;
+  f.sandbox.page.evaluate = async (fn, argument) => {
+    if (argument === "failure") {
+      assert.equal(f.writes.length, 1, "write the original failure before collecting page diagnostics");
+      return evaluate(fn, argument);
+    }
+    assert.equal(f.writes.length, 2, "save collected milestones before the failure's additional pixel read");
+    throw Error("page closed after diagnostic collection");
+  };
+  await f.api.captureFailure("failure-post-restore-interaction-checks", original);
+  const initial = JSON.parse(f.writes[0].value);
+  assert.equal(initial.error.message, original.message);
+  assert.equal(initial.milestones.interactionLatency.restoredAt, 1_000);
+  const saved = JSON.parse(f.writes[1].value);
+  assert.equal(saved.error.message, original.message);
+  assert.equal(saved.milestones.interactionLatency.restoredAt, 1_000);
+  assert.equal(saved.milestones.interactionLatency.firstPcm.observedAt, 1_250);
+  assert.equal(saved.milestones.interactionLatency.firstMarker.observedAt, 4_503);
+  assert.equal(saved.milestones.interactionLatency.stopReason, "failure");
+  assert.equal(f.timers.size, 0);
+});
+
+test("failure is written before a stalled latency collection; timeout persists and never piles up or accepts late data", async () => {
+  const f = latencyFixture();
+  await f.api.startInteractionLatencyProbe(1_000, 0);
+  const held = deferred();
+  const collectionStarted = deferred();
+  const original = new Error("original two-second failure");
+  let calls = 0, lateReport;
+  f.sandbox.page.evaluate = (fn, argument) => {
+    calls += 1;
+    assert.equal(argument, "failure", "no additional browser request behind the held collection");
+    assert.equal(f.writes.length, 1);
+    const initial = JSON.parse(f.writes[0].value);
+    assert.equal(initial.error.message, original.message);
+    assert.equal(initial.milestones.interactionLatency.restoredAt, 1_000);
+    // The page stops its timers, but the collection response is indefinitely delayed.
+    lateReport = structuredClone(fn(argument));
+    collectionStarted.resolve();
+    return held.promise;
+  };
+  const capturing = f.api.captureFailure("failure-stalled-latency", original);
+  await collectionStarted.promise;
+  await advanceProbe(f, 2_200);
+  await capturing;
+  assert.equal(calls, 1);
+  assert.equal(f.timers.size, 0, "both page timers and the host collection timeout are cleared");
+  const saved = JSON.parse(f.writes.filter(({ file }) => file.endsWith(".json")).at(-1).value);
+  assert.equal(saved.error.message, original.message);
+  assert.match(saved.milestones.interactionLatency.captureError, /exceeded 1000 ms/);
+  assert.match(saved.captureError, /latency collection still pending/);
+  assert.ok(f.writes.some(({ file }) => file.endsWith("-server.log")));
+  await f.api.captureFailure("failure-again", original);
+  assert.equal(calls, 1, "a second failure must not queue behind the timed-out collection");
+  const preserved = JSON.stringify(f.milestones);
+  held.resolve(lateReport);
+  await flushMicrotasks();
+  assert.equal(JSON.stringify(f.milestones), preserved, "late results cannot overwrite persisted evidence");
+  assert.equal(f.timers.size, 0);
+});
 
 test("command override refuses acceptance/create and rejects unbounded or multiline input", () => {
   for (const env of [{}, { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: "create" }]) {

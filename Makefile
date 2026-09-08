@@ -1134,6 +1134,7 @@ E5_T26F_IMAGE_INFO ?= target/e5-t26f/desktop-image-aplay-noresize/desktop-info.j
 E5_T26F_DESKTOP_ASSET_DIR ?= target/e5-t26f/chunks/desktop-aplay-noresize
 
 verify-E5-T26f:
+	@test -z "$${E5_T26F_DIAGNOSTIC:-}" || { echo "verify-E5-T26f refuses diagnostic mode; use the runner directly for non-acceptance diagnostics" >&2; exit 1; }
 	# Browser desktop round-trip: native/wasm snapshot gates plus the exact local Chromium proof.
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
 	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
