@@ -1,4 +1,5 @@
-// Synthetic statistics exercise refusal/accounting only; no new browser evidence is created.
+// Synthetic refusal/accounting fixtures plus an unchanged closed-record regression;
+// none of these tests creates new browser evidence.
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createHash } from "node:crypto";
@@ -19,6 +20,104 @@ function fixture() {
   }
   return r;
 }
+
+const observerRecordPath = fileURLToPath(new URL("../../evidence/e5-t26f/single-process-observer-05b82bc6/reuse/failure-post-restore-interaction-checks.json", import.meta.url));
+const observerRecordSha256 = "0881a4aa55808bd0884b5a6ef2f05af4da9601b119e188390cef94b4c667002a";
+function observerRecord() {
+  const bytes = readFileSync(observerRecordPath);
+  assert.equal(createHash("sha256").update(bytes).digest("hex"), observerRecordSha256);
+  return JSON.parse(bytes);
+}
+
+test("unchanged closed observer record retains actual provenance, counters and failed timing", () => {
+  const r = observerRecord(), unchanged = structuredClone(r), out = discoveryObservation(r, 1);
+  assert.equal(r.unitOnly, undefined);
+  assert.equal(out.head, "05b82bc688a34e6a1abef7b6c761c01bf4a3f7c6");
+  assert.equal(out.binding.fixture.kind, "resident-observer-v1");
+  assert.deepEqual(out.binding, r.milestones.run.binding);
+  assert.deepEqual(out.deltas, { nominated: 2707, deduped: 3394545,
+    droppedStale: 0, droppedOverflow: 0, countsDropped: 0, excluded: 9 });
+  assert.deepEqual(out.before, r.milestones.jitBefore);
+  assert.deepEqual(out.after, r.milestones.jitAfter);
+  assert.equal(out.elapsedMs, 4362.199999928474);
+  assert.equal(out.fTimingPassed, false); assert.equal(out.acceptance, false); assert.equal(out.fVerified, false);
+  assert.deepEqual(r, unchanged);
+  assert.throws(() => discoveryObservation(r, 0));
+  const nonCap = structuredClone(r); nonCap.error.message = "observer identity failed";
+  assert.throws(() => discoveryObservation(nonCap, 1));
+});
+
+test("observer requires coherent run/binding pins and an explicit supported fixture kind", () => {
+  for (const value of [undefined, null, "", "resident-observer-v2", "RESIDENT-OBSERVER-V1", "resident-observer-v1 ", 1]) {
+    const r = observerRecord(); r.milestones.run.fixture.kind = value;
+    assert.throws(() => discoveryObservation(r, 1), /unsupported observation fixture/);
+  }
+  for (const mutate of [
+    run => { delete run.fixture; }, run => { delete run.binding; },
+    run => { delete run.binding.fixture; },
+    run => { run.binding.fixture.kind = "resident-aplay-v1"; },
+    run => { run.binding.fixture.helperSha256 = "a".repeat(64); },
+    ...["sourceSha256", "sha256", "buildInfoSha256", "readbackSha256"].map(key =>
+      run => { run.binding.fixture.observer[key] = "a".repeat(64); }),
+    run => { run.binding.fixture.observer.binaryPath = "target/e5-t26f/other/e5t26f-observe"; },
+    run => { run.binding.fixture.observer.buildInfoPath = "target/e5-t26f/other/build-info.json"; },
+  ]) {
+    const r = observerRecord(); mutate(r.milestones.run);
+    assert.throws(() => discoveryObservation(r, 1));
+  }
+});
+
+test("matching copies still refuse missing or malformed observer provenance and unequal readback", () => {
+  const refuse = mutate => {
+    const r = observerRecord(); mutate(r.milestones.run.fixture);
+    r.milestones.run.binding.fixture = structuredClone(r.milestones.run.fixture);
+    assert.throws(() => discoveryObservation(r, 1));
+  };
+  for (const value of [undefined, null, "", "a".repeat(63), "G".repeat(64), "a".repeat(64) + "\n", 123]) {
+    refuse(f => { f.helperSha256 = value; });
+    for (const key of ["sourceSha256", "sha256", "buildInfoSha256", "readbackSha256"]) {
+      refuse(f => { f.observer[key] = value; });
+    }
+  }
+  for (const mutate of [
+    f => { delete f.observer; }, f => { delete f.baseSha256; },
+    f => { f.baseSha256 = "a".repeat(64); }, f => { delete f.guestPath; },
+    f => { f.guestPath = "/tmp/resident.sh"; }, f => { f.helperPath = "tools/guest/other.sh"; },
+    f => { delete f.observer.sourcePath; }, f => { f.observer.sourcePath = "tools/guest/other.c"; },
+    f => { delete f.observer.guestPath; }, f => { f.observer.guestPath = "/tmp/observe"; },
+    f => { delete f.observer.mode; }, f => { f.observer.mode = "0755"; },
+    f => { f.observer.readbackSha256 = "a".repeat(64); },
+    ...[undefined, null, "30960", 0, -1, .5, NaN, Infinity, 2 ** 53].map(value => f => { f.observer.size = value; }),
+  ]) refuse(mutate);
+  for (const [key, filename] of [["binaryPath", "e5t26f-observe"], ["buildInfoPath", "build-info.json"]]) {
+    for (const value of [undefined, null, "", 1, `/tmp/${filename}`, `target/e5-t26f/../${filename}`,
+      `target/e5-t26f//${filename}`, `target/e5-t26f/./${filename}`, `target/e5-t26f/other/${filename}`,
+      `target/e5-t26f/bad\\name/${filename}`, `target/e5-t26f/bad\nname/${filename}`]) {
+      refuse(f => { f.observer[key] = value; });
+    }
+  }
+});
+
+test("CLI postprocesses the original observer record bytes without rewriting fixture or evidence", t => {
+  const bytes = readFileSync(observerRecordPath);
+  observerRecord(); // Pin the actual closed input before invoking the real CLI.
+  const directory = mkdtempSync(path.join(tmpdir(), "e5-t26f-observer-collector-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const output = path.join(directory, "summary.json");
+  const helper = fileURLToPath(new URL("./e5-t26f-discovery-observation.mjs", import.meta.url));
+  const sourceBytes = readFileSync(helper);
+  const result = spawnSync(process.execPath, [helper, observerRecordPath, "1", output],
+    { encoding: "utf8", timeout: 10_000, maxBuffer: 1024 * 1024 });
+  assert.equal(result.error, undefined); assert.equal(result.signal, null);
+  assert.equal(result.status, 0, result.stderr);
+  const out = JSON.parse(readFileSync(output));
+  assert.equal(out.record, observerRecordPath); assert.equal(out.recordSha256, observerRecordSha256);
+  assert.deepEqual(out.binding, observerRecord().milestones.run.binding);
+  assert.equal(out.elapsedMs, 4362.199999928474);
+  assert.equal(out.fTimingPassed, false); assert.equal(out.acceptance, false); assert.equal(out.fVerified, false);
+  assert.deepEqual(readFileSync(observerRecordPath), bytes);
+  assert.deepEqual(readFileSync(helper), sourceBytes);
+});
 
 test("actual counters are mandatory safe integers, with bounded gauges and consistent generation", () => {
   const good = fixture().milestones.jitBefore.state;

@@ -1,4 +1,5 @@
-// All numbers/records here are synthetic unit fixtures, never browser evidence.
+// Synthetic unit fixtures plus one unchanged closed-record collector regression;
+// these tests do not create new browser evidence.
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createHash } from "node:crypto";
@@ -30,6 +31,25 @@ function fixture() {
     postRestoreStart: 100, postRestoreEnd: 4200,
   } };
 }
+
+test("actual observer record flows through discovery admission and exact compile-queue accounting", () => {
+  const filename = new URL("../../evidence/e5-t26f/single-process-observer-05b82bc6/reuse/failure-post-restore-interaction-checks.json", import.meta.url);
+  const bytes = readFileSync(filename);
+  assert.equal(createHash("sha256").update(bytes).digest("hex"),
+    "0881a4aa55808bd0884b5a6ef2f05af4da9601b119e188390cef94b4c667002a");
+  const r = JSON.parse(bytes), unchanged = structuredClone(r), out = compileQueueObservation(r, 1);
+  assert.equal(r.unitOnly, undefined);
+  assert.deepEqual(out.accounting, { staged: 2670, submitted: 570, pendingDepthDelta: 73,
+    droppedBackpressure: 1797, cancelledStale: 0, popped: 800, poppedUnsubmitted: 230,
+    incomingRejected: 1184, residentDisplaced: 613 });
+  assert.deepEqual(out.binding, r.milestones.run.binding);
+  assert.equal(out.binding.fixture.kind, "resident-observer-v1");
+  assert.equal(out.elapsedMs, 4362.199999928474);
+  assert.equal(out.fTimingPassed, false); assert.equal(out.acceptance, false); assert.equal(out.fVerified, false);
+  assert.deepEqual(r, unchanged); assert.deepEqual(readFileSync(filename), bytes);
+  const bad = structuredClone(r); bad.milestones.run.binding.fixture.observer.sourceSha256 = "a".repeat(64);
+  assert.throws(() => compileQueueObservation(bad, 1), /fixture provenance differ/);
+});
 
 test("coherent exact accounting splits both backpressure cases without subtracting discovery refusals", () => {
   const r = fixture(), original = structuredClone(r), out = compileQueueObservation(r, 1);

@@ -4,6 +4,31 @@ import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { RESIDENT_KIND, OBSERVER_KIND, OBSERVER_GUEST_PATH, RESIDENT_BASE_SHA,
+  RESIDENT_GUEST_PATH, residentSourceInputs } from "./e5-t26f-resident-proof.mjs";
+
+function validateObservationFixture(run) {
+  const fixture = run.fixture;
+  assert.ok([RESIDENT_KIND, OBSERVER_KIND].includes(fixture?.kind), "unsupported observation fixture");
+  if (fixture.kind === RESIDENT_KIND) return; // Preserve the legacy record contract.
+  assert.deepEqual(fixture, run.binding?.fixture, "run and binding fixture provenance differ");
+  assert.equal(fixture.baseSha256, RESIDENT_BASE_SHA, "observer base image differs");
+  assert.equal(fixture.guestPath, RESIDENT_GUEST_PATH, "observer helper install path differs");
+  // The kind fixes the helper source path; the runner binding omits helperPath.
+  // Check recorded pins, not mutable files left in the current checkout/build directory.
+  const inputs = residentSourceInputs(OBSERVER_KIND, { fixture });
+  if (Object.hasOwn(fixture, "helperPath")) assert.equal(fixture.helperPath, inputs.helper);
+  const observer = fixture.observer;
+  assert.equal(observer.sourcePath, inputs.observerSource, "observer source path differs");
+  assert.equal(observer.guestPath, OBSERVER_GUEST_PATH, "observer binary install path differs");
+  assert.equal(observer.mode, "0555");
+  assert.ok(Number.isSafeInteger(observer.size) && observer.size > 0, "invalid observer binary size");
+  for (const [key, value] of [["helperSha256", fixture.helperSha256],
+    ...["sourceSha256", "sha256", "buildInfoSha256", "readbackSha256"].map(key => [key, observer[key]])]) {
+    assert.match(value ?? "", /^[0-9a-f]{64}$/u, `missing or malformed observer ${key}`);
+  }
+  assert.equal(observer.readbackSha256, observer.sha256, "observer image readback differs from binary");
+}
 
 export const DISCOVERY_COUNTERS = Object.freeze([
   "nominated", "deduped", "droppedStale", "droppedOverflow", "countsDropped", "excluded",
@@ -28,7 +53,7 @@ export function validateDiscovery(state) {
 export function discoveryObservation(record, exitCode) {
   const m = record.milestones, run = m.run, d = run.diagnostic;
   assert.equal(run.acceptance, false);
-  assert.equal(run.fixture?.kind, "resident-aplay-v1");
+  validateObservationFixture(run);
   assert.equal(run.postRestoreCommand, "play"); assert.equal(run.postRestoreKeyDelayMs, 5);
   assert.equal(d.mode, "reuse"); assert.equal(d.jit, "1"); assert.equal(d.residency, "repack-off");
   for (const key of ["command", "guestClock", "icountDivider"]) assert.equal(d[key], null);
