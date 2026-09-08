@@ -3,7 +3,7 @@ id: E5-T26i
 epic: 5
 title: Wire opt-in monotonic time through the browser desktop lifecycle
 priority: 526.59
-status: implemented
+status: verified
 depends_on: [E4-T24, E5-T26e, E5-T26h, E5-T19a]
 estimate: S
 risk: high
@@ -113,3 +113,39 @@ The claim is the opt-in adapter/lifecycle and measured comparison only. It does
 not promise automatic guest resynchronization after a large jump, make host
 epochs portable, enable wall-mode direct chaining, or alter any deadline or
 snapshot format. Fresh Daybreak Blue owns the final verdict.
+
+### 2026-09-08 — fresh verifier — VERDICT: verified
+
+- **All 14 pre-evidence predictions HELD.** Exact mode validation, real realm-monotonic
+  ownership, busy 10 MHz `rdtime`, deterministic ICount, jitter clamp, pause/rebase,
+  background-gap policy, successful and rejected restore boundaries, portable wire,
+  worker/WASM routing, and conservative JIT behavior survived the recorded gates and
+  adversarial review. The independent nonzero repeated-rebase attack passed; freezing
+  the injected clock made the busy-rate regression fail immediately, proving test
+  sensitivity rather than a self-derived oracle.
+- **The authenticated browser comparison is sufficient for this task.** Both modes use
+  head `faddd274c934e09aec18161758c690a3b87bde8e`, runtime
+  `84ef07f7f4ec173dc921a1d91a764f538953600fdccfb3af0eed4aaca57617f9`,
+  profile `778bc49dcdc7551de0b2f6a23e4b32a30ce72dea2c00e425bfdc302820d8fc65`,
+  and snapshot `4ebdd9f6edb253d940a93082118068c089c844f985b13e0a7593956d6ccf88fb`.
+  ICount advanced 574.7393 guest ms; wall advanced 7283.315 guest ms within its
+  7231.100–7309.935 ms host bounds. Both restored without reboot and completed real
+  typed terminal output, visual change, and attached non-silent PCM. Both honestly fail
+  only F's unchanged two-second assertion, so ICount remains the default and F remains
+  unverified. Comparison SHA-256:
+  `0a6d1662c67cd32b5c9fe5f128090a6cfd85b04dc827d1c2b6512279ee476306`.
+- **Coverage is complete.** Every changed runtime, WASM, worker, loader, harness, Make,
+  and roadmap hunk is executed or explicitly dispositioned. The desktop public
+  `guestClock` closure is a waived one-line projection over the independently exercised
+  live controller RPC. The final no-local pristine clone passed the prescribed native,
+  WASM, web build, and rebuilt Chromium checks with scrubbed compiler/log environment
+  and byte-identical WASM. The two pre-existing user-owned dist-manifest differences are
+  the previously recorded NO-FIRE scope exception, not T26i inputs or remediation.
+- **Prior boundaries remain HELD.** Unchanged E4-T24 time policy, E5-T26h whole-machine
+  resume/session fence, and E5-T19a sound lifecycle evidence are carried forward.
+
+Full prediction ledger, exact evidence digests, visual inspection, per-hunk coverage,
+clone details, and suite dispositions: `evidence/e5-t26i/critic/results.md`, SHA-256
+`256c7faa7c6b449363b75801b051ec3a4b4dd7696a37536671de6508ece8eb84`.
+No implementation fix, production-default change, F timing waiver, or additional gate
+is required by this verdict.
