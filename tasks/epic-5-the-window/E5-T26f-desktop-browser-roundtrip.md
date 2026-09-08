@@ -3,9 +3,8 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: blocked
+status: in-progress
 depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i]
-blocked_on: E5-T26i browser monotonic-clock adapter and controlled time-policy evidence
 estimate: S
 risk: high
 capstone: false
@@ -40,6 +39,24 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — resume after verified clock experiment
+
+E5-T26i is independently verified at `579a5539` and published as stacked PR 356.
+Its same-checkpoint, unprofiled comparison is negative for responsiveness:
+ICount **5028.065 ms**, wall **7518.450 ms**, both with real conditional command
+completion and non-silent PCM. The comparison and actual worker clock values
+remain in `evidence/e5-t26i/browser/comparison.json`, SHA-256
+`0a6d1662c67cd32b5c9fe5f128090a6cfd85b04dc827d1c2b6512279ee476306`.
+ICount stays the default and neither measurement verifies F.
+
+Continue the browser-only boundary by comparing the already-supported JIT-on and
+JIT-off routes on identical copies of that sealed checkpoint, with no profiler,
+same physical command/pacing, and the original restore timestamp/cap. Prior
+recordings show short JIT entries and mixed execution costs, not a proven benefit
+from the selected JIT policy. This is a bounded control experiment, not authority
+to change guest ISA, JIT semantics, runtime defaults, the image, or the deadline.
+No repeat of the unchanged I/H/T19a runtime gates is needed for harness-only work.
 
 ### 2026-09-07 — coordinator — isolate the browser timekeeping prerequisite
 
