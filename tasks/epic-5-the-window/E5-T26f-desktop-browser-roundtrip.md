@@ -3,8 +3,9 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: in-progress
-depends_on: [E5-T26e, E5-T26h, E5-T19a]
+status: blocked
+depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i]
+blocked_on: E5-T26i browser monotonic-clock adapter and controlled time-policy evidence
 estimate: S
 risk: high
 capstone: false
@@ -39,6 +40,18 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-07 — coordinator — isolate the browser timekeeping prerequisite
+
+The diagnostic layer now has 56 passing helper regressions, a real owned-worker
+profiler-routing test, and fresh Daybreak CPU/JIT/latency reviews. The exact
+repro in `evidence/e5-t26f/cpu-560c6743/README.md` still exits 1 at the unchanged
+two-second cap while playback succeeds at about 4.8 seconds. No F acceptance
+or timing waiver is claimed. The browser remains on retire-derived CLINT time;
+the verified core wall-clock policy was never injected on this path. E5-T26i
+owns that missing opt-in clock/lifecycle boundary and a controlled comparison.
+Resume F after its prerequisite is verified; a negative performance comparison
+must be retained rather than changing the deadline or assuming a speedup.
 
 ### 2026-09-07 — worker — exact-runtime CPU capture
 
