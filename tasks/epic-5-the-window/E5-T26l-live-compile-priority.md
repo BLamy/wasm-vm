@@ -3,7 +3,7 @@ id: E5-T26l
 epic: 5
 title: Refresh live priority when selecting pending JIT compilation jobs
 priority: 526.597
-status: in-progress
+status: implemented
 depends_on: [E4-T21, E5-T22g, E5-T26k]
 estimate: S
 risk: high
@@ -73,6 +73,29 @@ One bounded novel attack should target this queue/selection boundary. Inspect
 every changed hunk and preserve the original F failure if its own cap still fails.
 
 ## Verification log
+
+### 2026-09-08 — worker — IMPLEMENTED; measured F cap remains failed
+
+Frozen runtime/build head `42bb34d854aca091a3940191a8da3b7aff765cad` is published
+as draftPR364. `make verify-E5-T26l-runtime` records373 native,43 actual WASM
+and63 Node passes, plus the127-ELF instruction-trace differential and no_std
+build. The one existing long churn ignore is unchanged/not counted. Exact log,
+commands, digests and scope: `evidence/e5-t26l/README.md` and `digests.txt`.
+The built Chromium demo is126/0 with no non-favicon errors and L visible.
+Daybreak's single scrubbed pristine clone, sensitive refresh-removal sabotage
+and bounded zero-work outer-scope attack are HELD in `verifier/native-results.md`.
+The promoted test-only patch subsequently passes12 pipeline tests and scoped
+fmt/clippy; runtime/served bytes are unchanged.
+
+`node tools/verify/e5-t26l-browser-priority.mjs` records a new authenticated cold
+seal and default-policy restore/physical `play`. Cold exits0; reuse exits1 only
+at the original2000-ms cap: T0 `1202.054999947548`, end `5930`, elapsed4727.945ms.
+The2818680-byte envelope `b229532f4869e0246b3a8d82d3d9cf2cdf6c94263b387a4bb6ee9356b69e65cf`
+restores CRC `4b00f145` without a boot, freshHELLO2, ten actual matching key
+events, visible cursor/output and1440 fresh non-silent PCM frames from the same
+prepared player. Raw JSON/PNGs/logs are under `browser-42bb34d8/`; no raw record
+or old seal was rewritten. This proves the candidate's required measurement,
+not F acceptance or speedup. Final independent browser verdict remains pending.
 
 ### 2026-09-08 — coordinator — bounded runtime candidate, not an assumed F fix
 

@@ -1,0 +1,29 @@
+{
+  "head": "42bb34d854aca091a3940191a8da3b7aff765cad",
+  "acceptance": false,
+  "common": {
+    "E5_T26F_REQUIRE_HEAD": "42bb34d854aca091a3940191a8da3b7aff765cad",
+    "E5_T26F_HEADED": "0",
+    "E5_T26F_FIXTURE": "resident-aplay-v1",
+    "E5_T26F_DIAGNOSTIC_PROFILE": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26l-priority-6hJ5Mu",
+    "E5_T26F_DIAGNOSTIC_PORT": "61634",
+    "E5_T26F_TIMEOUT_MS": "1800000",
+    "E5_T26F_IMAGE": "target/e5-t26f/resident-image-2ae65408-a/alpine-rootfs.ext4",
+    "E5_T26F_IMAGE_INFO": "target/e5-t26f/resident-image-2ae65408-a/desktop-info.json",
+    "E5_T26F_DESKTOP_ASSET_DIR": "target/e5-t26f/chunks/resident-2ae65408"
+  },
+  "command": "tools/verify/e5-t26f-browser-roundtrip.mjs",
+  "sourceBindings": {
+    "tools/verify/e5-t26f-browser-roundtrip.mjs": "bfcdc06f6d6ec330815d7ad12b7a0c101035a11d50348828fe2d39a7370cb219",
+    "tools/verify/e5-t26f-resident-proof.mjs": "28742ad80ee2b8628ae18ffc3d24b02f32a7e9c2d8706ec900bb244e1b548d6c",
+    "tools/verify/e5-t26f-discovery-observation.mjs": "4bc9e00027a42465a37364cad1b707c87da78806a1c0d20d5729109728004d04",
+    "tools/verify/e5-t26l-browser-priority.mjs": "0a717118522b09c5a5de5b38b27e1896692ce52876a9115edfcbba1be0158af4",
+    "crates/core/src/compile_queue.rs": "678d51e6c333e076caeb99f3960fac52a0886941cc85ebf6638062878c751b15",
+    "crates/core/src/lib.rs": "17f721bbb7cab06d3cc41a960fffa65777b6a2fb1c44b469b627a72a26db3898"
+  },
+  "retained": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26l-priority-6hJ5Mu",
+  "order": [
+    "cold",
+    "reuse-default4096-repack-off24"
+  ]
+}

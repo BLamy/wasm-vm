@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:54400/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.76",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5-T26l\nIN PROGRESS\n✕ Close\nRefresh live priority when selecting pending JIT compilation jobs\nEpic\nE5 — The Window\nStatus\nin progress\nEstimate\nS\nDepends on\nE4-T21, E5-T22g, E5-T26k\nGOAL\n\nTest a bounded compilation-selection candidate for F's remaining latency. The\nactual public-type reproducer in `evidence/e5-t26f/compile-priority-reproducer/`\nshows a pending job retaining priority64 after its live discovery hotness rises\nto1064. Daybreak accepted that limited source-level claim, not browser causality\nor an E4 violation. Actual cross-pump integration and a new browser screen are\nrequired before promoting this candidate. F's original2-second gate is unchanged.\n\nVERIFICATION LOG — EVIDENCE\n### 2026-09-08 — coordinator — bounded runtime candidate, not an assumed F fix\n\nPR363 retains the independently reviewed source-level priority reproducer and\nnew discovery/latency records. At runtime head `690e2324`, F fails4591.175 ms with\nzero since-reset discovery overflow/exhaustion/stale counts; the separate latency\nprobe first observes fresh PCM at3818.160 ms and fails4726.940 ms overall. Those\nnegative results and unchanged architecture/functional HELD evidence carry.\nThis task owns the separate core scheduling boundary; F leaves the active lane\nuntil this candidate has deterministic integration and browser evidence.\nADVERSARIAL VERIFICATION\nExercise late-hot/equal/saturated scores, absent/recount-reset hit records, full\nsmall-cap backpressure and same-PC requests spanning a generation change. Prove\nthe real cross-pump backlog selection and unchanged aggregate submission/staging\nbounds, including no new FIFO work. Independently sabotage the refresh call and\nrequire the cross-pump regression to fail; stale-byte protection must still hold.\nOne bounded novel attack should target this queue/selection boundary. Inspect\nevery changed hunk and preserve the original F failure if its own cap still fails.\nsource: tasks/epic-5-the-window/E5-T26l-live-compile-priority.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:54400/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:54400/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:54400/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:54400/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:54400/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:54400/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:54400/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:54400/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:54400/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:54400/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:54400/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:54400/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "880e5fb480c41a0bbdda5f354e04bfcdc66780f5dc12268f0c8fb3ad2af05181"
+}

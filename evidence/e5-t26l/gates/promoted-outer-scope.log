@@ -1,0 +1,25 @@
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.94s
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running tests/async_compile_pipeline.rs (target/debug/deps/async_compile_pipeline-e3f49c4eb252aacf)
+
+running 12 tests
+cross-pump: staged=32 then 0; attempts=8 then 8; late-hot first=0x8000007c; RAM digest=e26a6c58d7f68718119123775969c6e4cec179dccaa0fbd7db0154b760e387a6
+test later_hot_resident_wins_cross_pump_with_zero_new_nominations_and_digest_parity ... ok
+stale cross-pump: staged=9 cancelled-before-selection; fresh install=0x8000009c; RAM digest=b29bb15887c0f21af7c7c88bf7c1dab120c5c56fd8d55798a78d242ec785eede
+test cross_pump_stale_resident_and_fifo_cancel_preserving_fresh_same_pc_bytes ... ok
+test profiling_disabled_does_not_charge_outer_final_pump_to_total_time ... ok
+test profiling_enabled_charges_outer_final_pump_to_total_time_exactly_once ... ok
+test disabled_missing_and_zero_attempt_executor_leave_existing_backlog_unsubmitted ... ok
+L critic outer scope: inner runs stay at8; renewed zero-work final pump stages0/submits8; first=0x8000007c; retired=574; RAM=4c2b6fc6fa51b0a242cd1d99da043e7fc21d37139208f8114ccace42d413f920
+test verifier_outer_scope_zero_work_final_pump_refreshes_only_after_budget_renewal ... ok
+test delayed_install_never_installs_stale_bytes ... ok
+test interpreter_progresses_while_compiler_stalled ... ok
+test zero_budget_and_missing_executor_submit_no_compile_work ... ok
+test terminal_outer_scope_skips_final_pump_and_preserves_backlog ... ok
+test decoded_cache_eviction_consumes_attempt_budget_and_eventually_renominates ... ok
+test run_compile_budget_preserves_backlog_and_eventually_drains ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.74s
+
