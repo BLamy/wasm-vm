@@ -1094,12 +1094,16 @@ async function typePhysicalText(text, keyDelay = 100) {
     const baseKey = shiftedPhysicalKey.get(character);
     if (baseKey) {
       await page.keyboard.down("Shift");
-      await page.keyboard.press(baseKey);
-      await page.keyboard.up("Shift");
       if (keyDelay > 0) await page.waitForTimeout(keyDelay);
+      await page.keyboard.press(baseKey, { delay: keyDelay });
+      if (keyDelay > 0) await page.waitForTimeout(keyDelay);
+      await page.keyboard.up("Shift");
     } else {
       await page.keyboard.type(character, { delay: keyDelay });
     }
+    // Playwright's delay holds a key before keyup; it does not separate that keyup from
+    // the next keydown. Pace both edges, including modifier edges, during cold setup.
+    if (keyDelay > 0) await page.waitForTimeout(keyDelay);
   }
 }
 
@@ -1113,7 +1117,7 @@ async function typeCommand(command, marker, timeout = 240_000, keyDelay = 100) {
   // The interpreted guest needs a bounded drain interval between physical transitions; a 10 ms
   // burst records every DOM frame but can leave the foot line editor visibly mid-command.
   await typePhysicalText(command, keyDelay);
-  await page.keyboard.press("Enter");
+  await page.keyboard.press("Enter", { delay: keyDelay });
   phaseProgress(`command:${marker}:typing`, "done");
   phaseProgress(`command:${marker}:completion`);
   try {

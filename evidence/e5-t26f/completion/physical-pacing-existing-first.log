@@ -1,0 +1,171 @@
+✔ make verify-E5-T26f refuses diagnostic create before any build or browser command (16.4595ms)
+✔ make verify-E5-T26f refuses diagnostic reuse before any build or browser command (11.021625ms)
+✔ cold playback fixture keeps errors and conditional success without verbose parameter dumping (0.623083ms)
+✔ one unresolved progress probe prevents subsequent timer ticks from piling up (1.575584ms)
+✔ public sample is bounded and excludes pixels, full records and guest control (0.532625ms)
+✔ navigation rejection frees the probe; stopped sampling suppresses late results (0.384292ms)
+✔ failure artifacts retain phase, error and milestones before browser capture (0.5555ms)
+✔ failure capture retains producer PCM even when the command never completes (0.660625ms)
+✔ failure capture does not issue requests behind a stuck progress probe (0.379083ms)
+✔ cursor timeout uses only the unspent original two-second budget (0.602958ms)
+✔ cursor waits through missing/stale pixels, returns matching sample and disposes its handle (0.641416ms)
+✔ exhausted cursor budget fails before polling; a polling timeout remains a failure (0.418208ms)
+✔ pointer motion precedes the full delayed gesture; no click or physical key occurs early (0.970875ms)
+✔ premature audio unlock during the delay fails before the click or command (0.530917ms)
+✔ overlapped motion spends the original deadline; late command completion still fails (0.81425ms)
+✔ residency selection is exact, reuse-only and requires explicit JIT=1 without auto-enabling it (12.171417ms)
+✔ residency metadata and cold/restore query are explicit; omission leaves existing URLs unchanged (4.240917ms)
+✔ omitted residency adds no policy access or extra RPC to either existing JIT arm (0.954916ms)
+✔ all three residency policies require actual mapped caps at both existing JIT endpoints (0.731542ms)
+✔ missing or mismatched actual residency policy/cap refuses at either endpoint and preserves raw failure evidence (15.335083ms)
+✔ JIT comparison is exact-string/reuse-only and rejects profiling or command overrides (5.622458ms)
+✔ JIT query selection is explicit; omitted acceptance/create/reuse retain jit=1 without state RPCs (2.494ms)
+✖ both JIT arms read actual state before physical input and charge the RPC to the original cursor budget (0.563042ms)
+✔ JIT policy mismatches, missing APIs and RPC errors refuse with actual failure milestones (2.579792ms)
+✔ JIT measurement rejects stale, reversed and malformed retirement counts without replacing the evidence (1.187666ms)
+✖ both JIT arms capture PCM and freeze postRestoreEnd before the second RPC; the original cap still fails (0.468041ms)
+✔ clock comparison is reuse-only, unprofiled, explicit, and preserves F input/deadline (3.474917ms)
+✔ latency opt-in is exactly 1, reuse-only, and never changes the command or key pacing (1.995958ms)
+✔ CPU profiling requires exact 1 and reuse, independently of latency and unchanged input (3.150375ms)
+✔ default acceptance, create, and latency-only reuse never attach a CPU profiler (1.562042ms)
+✔ CPU host adapter uses the owned page session only when Browser is absent (0.431ms)
+✔ CPU artifact retains exact worker, head/runtime binding, original T0 and byte digest; closes once (0.73075ms)
+✔ CPU stop/write failures are bounded metadata, preserve T0, and still attempt close once (1.874958ms)
+✔ CPU setup failure is captured before finally collection without replacing original error or T0 (1.018708ms)
+✔ CPU collection follows frozen PCM/end and precedes the unchanged cap even when collection stalls (1.207125ms)
+✖ probes register before physical typing but a stalled RPC cannot delay typing or completion cleanup (0.893042ms)
+✔ first non-silent PCM precedes a separately timed existing marker read without extra pixel reads (0.806417ms)
+✔ one held scheduler RPC survives a rejected local-stat read without overlap, even at the time limit (1.605ms)
+✔ JIT RPC follows scheduler settlement and holds the whole sample until completion (0.632125ms)
+✔ stopping with JIT pending retains scheduler evidence and ignores late success or failure (0.657834ms)
+✔ scheduler settlement after stop or the original deadline never requests JIT (1.83475ms)
+✔ JIT observations copy only named scalar fields and record a missing API as unavailable (0.839375ms)
+✖ without the latency flag neither default nor reuse interaction requests diagnostic JIT stats (0.537583ms)
+✔ sampling is capped at 120 PCM/marker records and 24 spaced scheduler reads within the original restore window (5.088875ms)
+✔ missing diagnostic APIs are recorded as unavailable without fallback calls (0.352458ms)
+✔ latency samples survive the unchanged two-second failure before any failure pixel capture (0.584333ms)
+✔ failure is written before a stalled latency collection; timeout persists and never piles up or accepts late data (0.4735ms)
+✔ command override refuses acceptance/create and rejects unbounded or multiline input (1.464291ms)
+✔ without override all modes keep the exact sh /tmp/a command (0.972375ms)
+✔ diagnostic key pacing is bounded, reuse-only, recorded, and inside the original deadline (2.400417ms)
+✔ reuse override is recorded verbatim in nonacceptance metadata and the physical command record (0.884334ms)
+✔ top-level catch captures the phase before finally cleanup and rethrows the original error (0.397834ms)
+✔ a held restore-receipt read starts after timed interaction and must finish before the next save (0.732209ms)
+✔ diagnostics require explicit mode, absolute scratch and stable port; default remains fresh acceptance (6.37275ms)
+✔ profile creation never overwrites existing data and reuse requires the task marker and completed seal (2.514375ms)
+✔ every runtime/kernel/image/origin binding mismatch refuses reuse before copying any profile (3.693167ms)
+✔ harness-only HEAD changes permit reuse while preserving creator and current provenance (5.467291ms)
+✔ runtime binding hashes actual served JS/WASM/kernel bytes, including uncommitted changes (7.336ms)
+✔ reuse enters autoRestore directly without cold setup or resetting the restored timing boundary (0.6105ms)
+✔ reuse cold-boot fallback fails on its first readiness sample instead of waiting for another boot (0.536708ms)
+✔ reuse copies a sealed profile, preserves actual envelope/metadata and retains separate failed iterations (5.335375ms)
+✔ tampered profile bytes or desktop envelope/normal metadata cannot be reused (2.624875ms)
+✔ profile ownership refuses symlinks instead of traversing or overwriting an external profile (2.09025ms)
+✔ checkpoint hydration seeds exact bytes once on an inert same-origin bootstrap, never on later navigation (1.336667ms)
+✔ checkpoint hydration accepts an identical current envelope but refuses to clobber different data (1.423792ms)
+✔ checkpoint hydration refuses any different exact origin before mutation and removes its route (1.822333ms)
+✔ checkpoint hydration cleans up its exact route after navigation or evaluation failure (1.286ms)
+✔ completion console capture uses existing listeners, caps text/count, and leaves default error arrays unchanged (0.853916ms)
+✔ optional completion generation observations follow drag saves without changing frozen timing (1.850042ms)
+✔ completion generation diagnostics retain returned resume before reads and never fabricate unavailable state (0.283875ms)
+✔ persistent Chromium identity uses public CDP when browser() is null and always detaches (6.792917ms)
+✔ zero PCM and completion attachment/timestamps reach failure milestones before the PCM assertion (1.179208ms)
+✔ stale or mismatched actual restore receipt fails after timing and survives in failure milestones (1.145834ms)
+✔ legitimate post-restore disk progress never replaces the actual load-time generation (0.575417ms)
+✔ missing, unattempted or malformed initial restore evidence cannot borrow a fallback's restored flag (5.138542ms)
+✔ post-restore generation cannot move backwards or become unavailable (2.055583ms)
+✔ second restore performs the real coherence audit after display/button checks and before evidence (0.0685ms)
+ℹ tests 77
+ℹ suites 0
+ℹ pass 73
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 224.892208
+
+✖ failing tests:
+
+test at tools/verify/e5-t26f-browser-roundtrip.test.mjs:671:1
+✖ both JIT arms read actual state before physical input and charge the RPC to the original cursor budget (0.563042ms)
+  AssertionError [ERR_ASSERTION]: retain the complete intentional gesture delay
+  
+  5 !== 350
+  
+      at f.sandbox.page.waitForTimeout (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.test.mjs:382:12)
+      at typePhysicalText (evalmachine.<anonymous>:22:34)
+      at async typeCommand (evalmachine.<anonymous>:35:3)
+      at async evalmachine.<anonymous>:123:28
+      at async TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.test.mjs:686:22)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 5,
+    expected: 350,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tools/verify/e5-t26f-browser-roundtrip.test.mjs:759:1
+✖ both JIT arms capture PCM and freeze postRestoreEnd before the second RPC; the original cap still fails (0.468041ms)
+  AssertionError [ERR_ASSERTION]: retain the complete intentional gesture delay
+  
+  5 !== 350
+  
+      at f.sandbox.page.waitForTimeout (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.test.mjs:382:12)
+      at typePhysicalText (evalmachine.<anonymous>:22:34)
+      at async typeCommand (evalmachine.<anonymous>:35:3)
+      at async evalmachine.<anonymous>:123:28
+      at async TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.test.mjs:780:20)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 5,
+    expected: 350,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tools/verify/e5-t26f-browser-roundtrip.test.mjs:1118:1
+✖ probes register before physical typing but a stalled RPC cannot delay typing or completion cleanup (0.893042ms)
+  AssertionError [ERR_ASSERTION]: retain the complete intentional gesture delay
+  
+  5 !== 350
+  
+      at f.sandbox.page.waitForTimeout (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.test.mjs:382:12)
+      at typePhysicalText (evalmachine.<anonymous>:22:34)
+      at async typeCommand (evalmachine.<anonymous>:35:3)
+      at async evalmachine.<anonymous>:123:28
+      at async TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.test.mjs:1131:20)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 5,
+    expected: 350,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tools/verify/e5-t26f-browser-roundtrip.test.mjs:1309:1
+✖ without the latency flag neither default nor reuse interaction requests diagnostic JIT stats (0.537583ms)
+  AssertionError [ERR_ASSERTION]: retain the complete intentional gesture delay
+  
+  5 !== 350
+  
+      at f.sandbox.page.waitForTimeout (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.test.mjs:382:12)
+      at typePhysicalText (evalmachine.<anonymous>:22:34)
+      at async typeCommand (evalmachine.<anonymous>:35:3)
+      at async evalmachine.<anonymous>:123:28
+      at async TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.test.mjs:1317:20)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 5,
+    expected: 350,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

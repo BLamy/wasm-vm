@@ -1,0 +1,45 @@
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T06:31:41.360Z","elapsedMs":1}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"failed","timestamp":"2026-09-08T06:31:41.401Z","elapsedMs":41}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: checkpoint runtime/image/origin binding differs; create new scratch
++ actual - expected
+
+  {
+    imageBytes: 1073741824,
+    imageSha256: '5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550',
+    kernelSha256: 'af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce',
+    manifestSha256: 'b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592',
+    origin: 'http://127.0.0.1:61629',
++   runtimeSha256: '45ce3b925c590fab34b8fd8af85f0bb2ffbec585df2e2586c668869fe4ebca6b'
+-   runtimeSha256: '00919d0146d8b7fa50798e4035bf41e5a486f98570c0bd45474ae41ef8341305'
+  }
+
+    at prepareDiagnostic (file:///private/tmp/e5-t26f-typing-runtime.Qkphkq/tools/verify/e5-t26f-browser-roundtrip.mjs:202:10)
+    at async file:///private/tmp/e5-t26f-typing-runtime.Qkphkq/tools/verify/e5-t26f-browser-roundtrip.mjs:1303:33 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {
+    runtimeSha256: '45ce3b925c590fab34b8fd8af85f0bb2ffbec585df2e2586c668869fe4ebca6b',
+    kernelSha256: 'af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce',
+    imageSha256: '5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550',
+    imageBytes: 1073741824,
+    manifestSha256: 'b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592',
+    origin: 'http://127.0.0.1:61629'
+  },
+  expected: {
+    runtimeSha256: '00919d0146d8b7fa50798e4035bf41e5a486f98570c0bd45474ae41ef8341305',
+    kernelSha256: 'af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce',
+    imageSha256: '5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550',
+    imageBytes: 1073741824,
+    manifestSha256: 'b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592',
+    origin: 'http://127.0.0.1:61629'
+  },
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

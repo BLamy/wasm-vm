@@ -1,0 +1,40 @@
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T06:32:38.881Z","elapsedMs":1}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-08T06:32:39.925Z","elapsedMs":1044}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-08T06:32:39.925Z","elapsedMs":1044}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-08T06:32:42.111Z","elapsedMs":3230}
+[e5-t26f] {"phase":"reload:normal","event":"start","timestamp":"2026-09-08T06:32:42.112Z","elapsedMs":3231}
+[e5-t26f] {"phase":"reload:normal","event":"done","timestamp":"2026-09-08T06:32:42.257Z","elapsedMs":3376}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"start","timestamp":"2026-09-08T06:32:42.257Z","elapsedMs":3376}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"done","timestamp":"2026-09-08T06:32:43.522Z","elapsedMs":4641}
+[e5-t26f] {"phase":"restore:normal:completion","event":"start","timestamp":"2026-09-08T06:32:43.522Z","elapsedMs":4641}
+[e5-t26f] {"phase":"restore:normal:completion","event":"done","timestamp":"2026-09-08T06:32:43.529Z","elapsedMs":4648}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"start","timestamp":"2026-09-08T06:32:43.529Z","elapsedMs":4648}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"done","timestamp":"2026-09-08T06:32:43.531Z","elapsedMs":4650}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"start","timestamp":"2026-09-08T06:32:43.531Z","elapsedMs":4650}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"done","timestamp":"2026-09-08T06:32:43.531Z","elapsedMs":4650}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"start","timestamp":"2026-09-08T06:32:43.531Z","elapsedMs":4650}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"done","timestamp":"2026-09-08T06:32:43.922Z","elapsedMs":5041}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"start","timestamp":"2026-09-08T06:32:43.922Z","elapsedMs":5041}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"done","timestamp":"2026-09-08T06:32:44.072Z","elapsedMs":5191}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"start","timestamp":"2026-09-08T06:32:44.072Z","elapsedMs":5191}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"done","timestamp":"2026-09-08T06:32:44.075Z","elapsedMs":5194}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"start","timestamp":"2026-09-08T06:32:44.075Z","elapsedMs":5194}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"done","timestamp":"2026-09-08T06:32:48.162Z","elapsedMs":9281}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"start","timestamp":"2026-09-08T06:32:48.162Z","elapsedMs":9281}
+[e5-t26f] {"timestamp":"2026-09-08T06:33:12.115Z","phase":"command:e5t26f-post-aplay:completion","event":"sample","probeMs":2,"ready":"ready","restored":"ready","status":"desktop ready: launcher available","serialTail":"","frameCount":17,"pointerFrames":3,"keyboardFrames":152,"launch":null,"command":{"label":null,"marker":"e5t26f-post-aplay","accepted":null,"terminalRendered":null,"terminalMarkerSeen":false,"visualDiffPixels":1289,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"focus":{"label":"post-restore-focus","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":36,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":17,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":1387682,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T06:33:42.115Z","phase":"command:e5t26f-post-aplay:completion","event":"sample","probeMs":2,"ready":"ready","restored":"ready","status":"desktop ready: launcher available","serialTail":"","frameCount":17,"pointerFrames":3,"keyboardFrames":152,"launch":null,"command":{"label":null,"marker":"e5t26f-post-aplay","accepted":null,"terminalRendered":null,"terminalMarkerSeen":false,"visualDiffPixels":1289,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"focus":{"label":"post-restore-focus","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":36,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":17,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":2828066,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T06:34:12.115Z","phase":"command:e5t26f-post-aplay:completion","event":"sample","probeMs":1,"ready":"ready","restored":"ready","status":"desktop ready: launcher available","serialTail":"","frameCount":17,"pointerFrames":3,"keyboardFrames":152,"launch":null,"command":{"label":null,"marker":"e5t26f-post-aplay","accepted":null,"terminalRendered":null,"terminalMarkerSeen":false,"visualDiffPixels":1289,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"focus":{"label":"post-restore-focus","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":36,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":17,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":4267682,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T06:34:42.118Z","phase":"command:e5t26f-post-aplay:completion","event":"sample","probeMs":1,"ready":"ready","restored":"ready","status":"desktop ready: launcher available","serialTail":"","frameCount":17,"pointerFrames":3,"keyboardFrames":152,"launch":null,"command":{"label":null,"marker":"e5t26f-post-aplay","accepted":null,"terminalRendered":null,"terminalMarkerSeen":false,"visualDiffPixels":1289,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"focus":{"label":"post-restore-focus","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":36,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":17,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":5707682,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"failed","timestamp":"2026-09-08T06:34:48.217Z","elapsedMs":129336}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+page.waitForFunction: Timeout 120000ms exceeded.
+    at typeCommand (/private/tmp/e5-t26f-typing-runtime.Qkphkq/tools/verify/e5-t26f-browser-roundtrip.mjs:1124:16)
+    at /private/tmp/e5-t26f-typing-runtime.Qkphkq/async file:/private/tmp/e5-t26f-typing-runtime.Qkphkq/tools/verify/e5-t26f-browser-roundtrip.mjs:1593:28 {
+  name: 'TimeoutError'
+}
+
+Node.js v24.20.0

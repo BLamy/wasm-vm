@@ -40,6 +40,28 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker — cold setup physical-input localization
+
+The fresh receipt-runtime cold attempt at `32841587` failed before any snapshot:
+the shell received malformed quoted setup text, waited at `>`, and produced no
+PCM. Do not reuse the unsealed profile or classify that as an audio/receipt fault.
+The harness now separates all physical key edges at its unchanged cold setup rate
+of 100 ms; seven new scheduling tests join 144 held regressions (151 pass).
+
+Two bounded prechecks on copies of the older, exactly bound 4ae runtime/checkpoint
+retain both results: at 25 ms the short quoted/redirection command is truncated;
+at 100 ms the guest comparison against independently octal-encoded punctuation
+succeeds and actual playback produces 1440 fresh non-silent frames. The latter
+still correctly fails the original cap (19401.350 ms including typing), and its
+100-ms admission exists only in an explicitly retained scratch-runner patch.
+Read-only stored-input inspection refutes a proposed 256-event keyboard budget:
+the saved keyboard budget is 2048. The exact downstream loss cause is unproven.
+See `evidence/e5-t26f/completion/README.md` for commands, artifacts and hashes.
+
+Only harness scheduling changed; served bytes and product timing requirements
+remain frozen. Proceed with one new cold receipt-runtime checkpoint and replay;
+no F verification, policy promotion, merge or deployment follows from the precheck.
+
 ### 2026-09-08 — worker — real mid-drag restoration and restore-history audit correction
 
 At `4ae44f3ff8294e5e2a6c5c5ba7e08a9cdf1d3a66`, a separately sealed headless

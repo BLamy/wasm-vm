@@ -310,3 +310,122 @@ f421b8c21d8341034d618cf90a3674e2bd54db13f4f2cf35f4352183840cc3ba  headless-run-4
 4acba52c35a5c01c451e0ddbd0a3e58a5d8ccdf6f489b1c1da573cbf18d14142  headless-run-4ae44f3f/failure-restore-drag-coherence-audit.json
 ede8d63830a880dfb74fa5f50c0eb0ba4f9df9f21b94b8c12f394dafb7ece8a6  headless-run-4ae44f3f/failure-restore-drag-coherence-audit.png
 ```
+
+## 32841587 — receipt-checkpoint cold setup failed before sealing
+
+The fresh diagnostic `create` at
+`32841587c1ace8e8f08b0ac69d05aecce5d67248` ran on 2026-09-08,
+06:01:46–06:16:23 UTC. The [transcript](receipt-checkpoint.log) ends with
+`page.waitForFunction: Timeout 240000ms exceeded` in
+`command:e5t26f-aplay-ok:completion`. This was not acceptance. Its recorded
+scratch profile is `/private/tmp/e5-t26f-receipt-wxKfmf`, port 61629, served
+runtime SHA-256 `874f63af4e09fa9e23f348b5ef8050ae09382c1273ce459b999525db40962ccd`;
+the image and manifest digests remain those recorded above.
+
+Initial desktop readiness, the separate shell marker, and agent readiness passed.
+The subsequent setup command was malformed/unfinished on the guest display: the
+[failure PNG](receipt-checkpoint/failure-command-e5t26f-aplay-ok-completion.png)
+shows a shell continuation `>` prompt. Both the
+[immediate command capture](receipt-checkpoint/command-e5t26f-aplay-ok.json) and
+[outer failure capture](receipt-checkpoint/failure-command-e5t26f-aplay-ok-completion.json)
+retain `terminalMarkerSeen: false` for the aplay setup command. Their
+`state.audio.pcm` has `writeIndex: 0`, `nonSilentFrames: 0`, and `maxAbs: 0`,
+despite advancing worklet render counts. These do not prove guest PCM production.
+
+**No seal was produced:** the six retained files are only the two failure
+JSON/PNG/server-log triples; the recorded `normal-checkpoint.json` is absent.
+There is no normal snapshot, restore, or post-restore timing milestone. This is
+an initial command-delivery/setup failure, **not an established audio or receipt
+semantic failure**. The exact downstream key/quote-loss mechanism is not proven.
+
+The follow-up changes only physical-key scheduling in
+[`typePhysicalText`](../../../tools/verify/e5-t26f-browser-roundtrip.mjs): preserve
+the same shifted-key map and key order, but separate modifier/key edges and
+character boundaries when delay is positive. Setup still defaults to 100 ms;
+explicit zero adds no waits. Enter now holds for the selected delay without an
+extra trailing wait. Command text and markers are unchanged. The
+[seven deterministic tests](../../../tools/verify/e5-t26f-physical-typing.test.mjs)
+passed: exact edge times, zero-delay equivalence, control/high-character routing,
+Enter timing, original-T0 charging (95 ms for `sh /tmp/a` at 5 ms), and rejection
+of the former burst helper even with a padded final elapsed time. The original
+two-second cap is unchanged; these tests do not prove guest delivery. A short
+browser probe was underway at this point; its results follow below.
+
+SHA-256 computed from all seven retained files (paths relative to this README):
+
+```text
+0635b9b3d0a16e9280c390c8b76853027587d8943fc6b1867f9279e55d8975d6  receipt-checkpoint.log
+5c9022e54f0588cf6f270fb1832b74dc47f076366156d6549492808e5db6b6f0  receipt-checkpoint/command-e5t26f-aplay-ok-server.log
+677a811c781843f94417ff36039ac4fbb3faf36e3bb26ebffa84c64b93622191  receipt-checkpoint/command-e5t26f-aplay-ok.json
+e9da14d31d765337d6ae71e6ecdad922187d52d3f30c7d51b68f06f664d927df  receipt-checkpoint/command-e5t26f-aplay-ok.png
+5c9022e54f0588cf6f270fb1832b74dc47f076366156d6549492808e5db6b6f0  receipt-checkpoint/failure-command-e5t26f-aplay-ok-completion-server.log
+84f262fbab05a209f33b6b75f2cc2d80a79ac65c5160958b4dcc19da0d829c2f  receipt-checkpoint/failure-command-e5t26f-aplay-ok-completion.json
+e9da14d31d765337d6ae71e6ecdad922187d52d3f30c7d51b68f06f664d927df  receipt-checkpoint/failure-command-e5t26f-aplay-ok-completion.png
+```
+
+## Physical typing localization — both rates retained
+
+The short precheck used copies of the unchanged koBy headless checkpoint, with
+its **historical 4ae served runtime**, not the new receipt runtime. A shared local
+clone at `/private/tmp/e5-t26f-typing-runtime.Qkphkq` checked out exact
+`4ae44f3ff8294e5e2a6c5c5ba7e08a9cdf1d3a66`, copied its committed dist/pkg to pkg,
+and retained the original generated one-byte pkg/.gitignore. The first preflight
+(`typing-probe-4ae.log`) correctly refused the missing marker before browser launch.
+After restoring that marker, the unchanged binding guard authenticated runtime
+`45ce3b925c590fab34b8fd8af85f0bb2ffbec585df2e2586c668869fe4ebca6b` and the unchanged
+image/kernel/manifest/origin/profile digests above. No checkpoint was rebound.
+
+The physically typed command was exactly:
+
+```sh
+cd /tmp;printf '!'>k;[ "$(cat k)" = "$(printf '\41')" ]&&sh a
+```
+
+It writes literal punctuation through quoted/redirection syntax, compares the
+guest result with an independently octal-encoded expected value, and runs the
+existing real playback script only on equality. The current paced helper was
+copied into the scratch runner. Neither run is receipt proof or F acceptance.
+
+- **25 ms:** all 152 planned transitions were emitted, but the screenshot shows
+  truncated guest input beginning `c>k;...` and `/bin/sh: c: not found`. Marker and
+  PCM remained absent; the 120-second command timeout failed. Helper pacing at this
+  rate is not a fix. Runner SHA-256:
+  `55d23aa258de2e17429e5486d82e8d51bd77e21c1b30bc1e64380a26f5d1cdea`.
+- **100 ms (actual cold-setup rate):** all 152 transitions matched the DOM ledger,
+  the full command is visible, the comparison passed, and the real script produced
+  its conditional marker and **1440 fresh non-silent PCM frames** (maximum magnitude
+  0.082000732421875). The screenshot shows no XRUN message. The unchanged cap still
+  failed at **19401.350 ms**, including 15.417 seconds of physical typing. Only the
+  scratch parser admitted exactly 100 in addition to 0–25; the repository parser,
+  normal playback command, and acceptance budget are unchanged. Scratch runner
+  SHA-256: `bccb2b7effe9f2ccb7e260cf646c429d71af67b298ee83724148ea63d61ffa23`.
+  Its complete diff from 4ae is retained in `typing-probe-scratch.patch`.
+
+The bounded read-only inspector in `tools/verify/e5-t26f-inspect-input.mjs` copied
+the closed failed profile and read only snapshot chunks 0, 136 and 139, without
+loading an emulator. Its TLV walk finds the stored keyboard codec at byte
+146163345: pending budget **2048**, zero pending/staged events, zero recorded
+drops. This refutes the proposed stored-budget-256 explanation. It describes the
+**pre-run stored checkpoint**, not post-failure live counters. Kernel/userspace
+backlog or another downstream cause is not established by these records.
+
+The narrow conclusion is that the new helper delivered this command at the
+actual cold setup's 100 ms rate, warranting one new cold checkpoint attempt.
+It does not prove all long input, fix the failed 25 ms route, or meet the two-second
+product criterion. All 151 focused helper/receipt regressions pass. The new served
+receipt runtime still needs its own cold seal and confirming replay.
+
+Canonical SHA-256 (relative to this README):
+
+```text
+5f9767a4e3f8790415ceb17cac3a9c3b4347a86774344e58352cee8db7944d9c  typing-probe-4ae.log
+a0c751837eb9e8ffa6fdfc5ecb7d7ed6025981be505ba2e7e99e4290a9b472de  typing-probe-4ae-bound.log
+8c0b7ca4303769bdd843d55434106ab9b79a1542fee8211a2f8d18f1735daed5  typing-probe-4ae-bound/failure-command-e5t26f-post-aplay-completion.json
+3c902ba724d48a8714062d8c3ac4a1c5a125c893cbefc29beb121193b54a1d2c  typing-probe-4ae-bound/failure-command-e5t26f-post-aplay-completion.png
+ec5455e2b92bf36616cd37fa7a7b103e9d2fadadea0a04e639ab6adf88098c5c  typing-probe-100ms.log
+36cdbb5cf6040247689287fd0529ac6fa8dc6645f9a9decb78bcb2a43275896e  typing-probe-100ms/failure-post-restore-interaction-checks.json
+fbcab7198546fd01bca9714eca2cc55e1bc7b9cee912e720f1608eca1cf04337  typing-probe-100ms/failure-post-restore-interaction-checks.png
+8acbd001b97bf12d284dc3938968585ba5172821e7076d82253de2835e9b74b9  typing-probe-stored-input.json
+c9afd9429b68322e80ee92588b18a30d996c0098f09cb52ab40ad19ec51dbb2b  typing-probe-scratch.patch
+4e311e31a53706ab43712a1a07650d50045e679dbbfd674f4690b701d854fafd  physical-pacing-151-tests.log
+```

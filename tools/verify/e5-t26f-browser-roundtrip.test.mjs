@@ -378,8 +378,16 @@ function delayedGestureFixture(startAt = 1_100, postRestoreCommand = "sh /tmp/a"
     confirmGuestFocus: () => ({ focuses: [focus] }),
   };
   f.sandbox.page.evaluate = async (fn, argument) => fn(argument);
+  let gestureDelaySeen = false;
   f.sandbox.page.waitForTimeout = async (ms) => {
+    if (gestureDelaySeen) {
+      assert.equal(ms, keyDelay, "physical key gaps use the selected bounded delay");
+      f.clock.now += ms;
+      events.push(`key-gap:${ms}`);
+      return;
+    }
     assert.equal(ms, 350, "retain the complete intentional gesture delay");
+    gestureDelaySeen = true;
     events.push("delay-start");
     delayStarted.resolve();
     await releaseDelay.promise;
@@ -402,7 +410,11 @@ function delayedGestureFixture(startAt = 1_100, postRestoreCommand = "sh /tmp/a"
       f.clock.now += keyDelay;
       events.push(`key:${character}`);
     },
-    press: async (key) => { events.push(`key:${key}`); if (key === "Enter") command.terminalMarkerSeen = true; },
+    press: async (key, options) => {
+      f.clock.now += options?.delay || 0;
+      events.push(`key:${key}`);
+      if (key === "Enter") command.terminalMarkerSeen = true;
+    },
   };
   f.sandbox.page.waitForFunction = async (predicate, argument) => {
     const value = predicate(argument);
