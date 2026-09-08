@@ -424,10 +424,12 @@ function readTopmostDragTitlebar() {
 }
 
 function observedDragTranslation(before, after) {
-  // Match the same titlebar row, not another overlapping Foot window. The requested
-  // movement is 80px; allow bounded rounding while rejecting stale or unrelated geometry.
+  // Match the same titlebar height/row, permitting the pinned desktop's 32px panel
+  // clamp when a previously obscured window is dragged. Never accept an arbitrary
+  // vertical jump to another window. The requested horizontal movement is 80px.
   if (![before?.top, before?.bottom, after?.top, after?.bottom].every(Number.isFinite) ||
-      Math.abs(after.top - before.top) > 1 || Math.abs(after.bottom - before.bottom) > 1) return null;
+      Math.abs((after.bottom - after.top) - (before.bottom - before.top)) > 1 ||
+      (Math.abs(after.top - before.top) > 1 && Math.abs(after.top - Math.max(32, before.top)) > 1)) return null;
   try {
     const translation = assertWindowMoved(before, after, { direction: 1, minimumPx: 64 });
     return translation.deltaX <= 96 ? translation : null;
@@ -1707,8 +1709,14 @@ try {
   // remain visible; do not aim at the obscured middle of the decoration.
   const dragY = dragChrome.titlebar.bottom - 3;
   assert.ok(dragY >= 32 && dragY > dragChrome.titlebar.top, "drag titlebar is obscured by the panel");
-  const dragStart = guestPoint(postBox, dragChrome.titlebar.left + 100, dragY);
-  const dragEnd = guestPoint(postBox, dragChrome.titlebar.left + 180, dragY);
+  // Failure screenshots/readiness UI can change layout after the timed interaction.
+  // Map the drag through the current canvas box, not the earlier focus box.
+  const dragBox = await desktopBox();
+  const dragStart = guestPoint(dragBox, dragChrome.titlebar.left + 100, dragY);
+  const dragEnd = guestPoint(dragBox, dragChrome.titlebar.left + 180, dragY);
+  milestones.dragMapping = { canvasBox: dragBox, start: dragStart, end: dragEnd,
+    guestStart: { x: dragChrome.titlebar.left + 100, y: dragY },
+    guestEnd: { x: dragChrome.titlebar.left + 180, y: dragY } };
   await page.mouse.move(dragStart.x, dragStart.y);
   await page.waitForTimeout(100);
   phaseProgress("drag:prepare", "done");

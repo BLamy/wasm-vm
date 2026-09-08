@@ -2018,6 +2018,7 @@ test("optional completion generation observations follow drag saves without chan
     f.milestones.postRestoreEnd = 5_000;
     f.sandbox.SHA256 = /^[0-9a-f]{64}$/u;
     f.sandbox.postBox = {};
+    f.sandbox.desktopBox = async () => ({});
     f.sandbox.guestPoint = (_box, x, y) => ({ x, y });
     const calls = [];
     const snapshots = [];
