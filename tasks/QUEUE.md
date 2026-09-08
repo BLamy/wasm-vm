@@ -456,7 +456,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `526.597` [E5-T26l](epic-5-the-window/E5-T26l-live-compile-priority.md) — Refresh live priority when selecting pending JIT compilation jobs *(deps: E4-T21, E5-T22g, E5-T26k)*
 - [x] `526.598` [E5-T26m](epic-5-the-window/E5-T26m-inline-context-interrupt-bits.md) — Retain browser inline-cache authority across interrupt-only status changes *(deps: E4-T11, E5-T22g, E5-T26l)*
 - [x] `526.599` [E5-T26n](epic-5-the-window/E5-T26n-spp-context.md) — Retain browser inline-cache authority across SPP-only trap transitions *(deps: E5-T26m)*
-- [~] `526.5995` [E5-T26o](epic-5-the-window/E5-T26o-plic-sparse-candidates.md) — Visit only eligible PLIC candidate bits during source selection *(deps: E1-T13, E5-T26n)*
+- [?] `526.5995` [E5-T26o](epic-5-the-window/E5-T26o-plic-sparse-candidates.md) — Visit only eligible PLIC candidate bits during source selection *(deps: E1-T13, E5-T26n)*
 - [b] `526.6` [E5-T26f](epic-5-the-window/E5-T26f-desktop-browser-roundtrip.md) — Browser desktop snapshot round-trip and interaction smoke *(deps: E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l, E5-T26m, E5-T26n, E5-T26o)*
 - [ ] `526.7` [E5-T26g](epic-5-the-window/E5-T26g-snapshot-hardening-proof.md) — Desktop snapshot stress, versioning, size, and portability proof *(deps: E5-T26f)*
 - [ ] `527` [E5-T27](epic-5-the-window/E5-T27-multi-display-stretch.md) — Multi-display support (config-gated stretch) — second scanout, second canvas *(deps: E5-T22d)*

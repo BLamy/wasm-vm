@@ -1,0 +1,4 @@
+9f5def69ccf6e98fb72185a9a2714c00caa5de16fe97c218d5555f93f4dc55f1  crates/core/src/dev/plic.rs
+9f5def69ccf6e98fb72185a9a2714c00caa5de16fe97c218d5555f93f4dc55f1  /private/tmp/e5-t26o-mask-sabotage.jn4zZS0E/crates/core/src/dev/plic.rs
+Gate03 full21-record trace equals source-reviewed hand oracle; trap and RAM digest match.
+Canonical trace SHA256=d21ca28fe9818388c614b3112a57654ce5903072b2e38320ba83ac28ec71be2a

@@ -1,0 +1,142 @@
+cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+cargo clippy -p wasm-vm-core --lib --test plic --test plic_sparse --features trace -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.08s
+cargo clippy -p wasm-vm-wasm --test plic_sparse --target wasm32-unknown-unknown -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.07s
+cargo test -p wasm-vm-core --features trace,gpu-trace --lib dev::plic -- --nocapture
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.37s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-048f7c055d42ac1c)
+
+running 2 tests
+test dev::plic::snapshot_tests::plic_restore_rejects_wrong_length_without_mutating ... ok
+test dev::plic::snapshot_tests::plic_behavioural_state_round_trips_and_drops_the_diagnostic_counter ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 336 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-core --features trace --test plic --test plic_sparse --test interrupts -- --nocapture
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.26s
+     Running tests/interrupts.rs (target/debug/deps/interrupts-d99be4e9a9772bd3)
+
+running 13 tests
+test higher_priority_but_untakeable_is_skipped ... ok
+test m_mode_with_mie_clear_takes_nothing ... ok
+test mip_mtip_software_write_ignored_device_bit_survives ... ok
+test deleg_and_enable_warl_masks ... ok
+test delegated_stimer_fires_in_u_not_in_m ... ok
+test m_interrupt_not_masked_from_below ... ok
+test full_priority_chain_in_m_with_mie ... ok
+test delegated_interrupt_delivers_to_stvec_with_scause_and_spp ... ok
+test vectored_mtvec_m_interrupt_ssi_enters_at_base_plus_4 ... ok
+test interrupt_taken_after_an_instruction_retires_precise_mepc ... ok
+test m_mode_exception_is_never_delegated_downward ... ok
+test wfi_with_mie_clear_and_mtip_pending_continues_no_trap ... ok
+test vectored_stvec_interrupt_enters_at_base_plus_4x_cause ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/plic.rs (target/debug/deps/plic-39b28225363347e8)
+
+running 10 tests
+test raising_threshold_drops_eip_without_a_claim ... ok
+test level_reassertion_while_claimed_does_not_repend_until_complete ... ok
+test threshold_masks_all_sources_at_or_below_it ... ok
+test complete_from_wrong_context_or_stale_id_is_ignored ... ok
+test priority_tie_breaks_to_lowest_source_id ... ok
+test claim_with_nothing_pending_returns_zero_and_changes_no_state ... ok
+test seip_delivered_through_stvec_when_delegated ... ok
+test external_interrupt_outranks_the_timer ... ok
+test source_enabled_in_s_context_routes_seip_not_meip_and_claim_clears ... ok
+test meip_delivered_through_mtvec_then_claim_and_complete ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/plic_sparse.rs (target/debug/deps/plic_sparse-de1a1ed26d4d4d5f)
+
+running 4 tests
+
+thread 'invalid_context_eip_keeps_native_panic_contract' (17308338) panicked at crates/core/src/dev/plic.rs:167:47:
+index out of bounds: the len is 2 but the index is 2
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'invalid_context_eip_keeps_native_panic_contract' (17308338) panicked at crates/core/src/dev/plic.rs:167:47:
+index out of bounds: the len is 2 but the index is 2
+E5-T26o invalid direct contexts: empty+pending panic=2
+E5-T26o trap boundary: pc=0x80000100 mepc=0x8000003c mcause=0x800000000000000b mstatus=0xa00001880 retired=16
+test invalid_context_eip_keeps_native_panic_contract ... ok
+E5-T26o bus sequence: PLIC MMIO hits=27 pre-restore claim_counts=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2] post-restore claim_counts=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+test real_bus_gateway_sequence_preserves_observability ... ok
+E5-T26o guest trace (21 records):
+core 0: 0x0000000080000000 (0x00000297) x5 0x0000000080000000
+core 0: 0x0000000080000004 (0x10028293) x5 0x0000000080000100
+core 0: 0x0000000080000008 (0x30529073)
+core 0: 0x000000008000000c (0x80000313) x6 0xfffffffffffff800
+core 0: 0x0000000080000010 (0x30432073)
+core 0: 0x0000000080000014 (0x00800313) x6 0x0000000000000008
+core 0: 0x0000000080000018 (0x30032073)
+core 0: 0x000000008000001c (0x0c0002b7) x5 0x000000000c000000
+core 0: 0x0000000080000020 (0x00700313) x6 0x0000000000000007
+core 0: 0x0000000080000024 (0x0662ae23) mem 0x000000000c00007c 0x00000007
+core 0: 0x0000000080000028 (0x0c0022b7) x5 0x000000000c002000
+core 0: 0x000000008000002c (0x80000337) x6 0xffffffff80000000
+core 0: 0x0000000080000030 (0x0062a023) mem 0x000000000c002000 0x80000000
+core 0: 0x0000000080000034 (0x0c2002b7) x5 0x000000000c200000
+core 0: 0x0000000080000038 (0x0002a023) mem 0x000000000c200000 0x00000000
+core 0: 0x000000008000003c (0x0000006f)
+core 0: 0x0000000080000100 (0x0c2002b7) x5 0x000000000c200000
+core 0: 0x0000000080000104 (0x0042a503) x10 0x000000000000001f mem 0x000000000c200004
+core 0: 0x0000000080000108 (0x00a2a223) mem 0x000000000c200004 0x0000001f
+core 0: 0x000000008000010c (0x00050593) x11 0x000000000000001f
+core 0: 0x0000000080000110 (0x30200073)
+digest=c055e21cdc4ae3b9a55ddee3919d9bbc6fe2d7340a5830370a4aa3d79f6bc891
+test encoded_guest_plic_trace_and_digest_are_exact ... ok
+E5-T26o selector cases: seed=0xe5260badcafe1234 explicit=12 stream=64 contexts=2 total=152
+test selector_and_snapshot_cases_match_old_range_oracle ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+cargo test -p wasm-vm-jit-runtime --test chaining device_completion_fires_inside_chained_loop -- --nocapture
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.64s
+     Running tests/chaining.rs (target/debug/deps/chaining-f12841d853c99373)
+
+running 1 test
+test device_completion_fires_inside_chained_loop ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.20s
+
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.31s
+cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.04s
+wasm-pack test --node crates/wasm --test plic_sparse -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.46s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/plic_sparse.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/plic_sparse-8c9dab3dc6f52302.wasm)
+running 3 tests
+Invoking test: selector_and_snapshot_cases_match_old_range_oracle
+test selector_and_snapshot_cases_match_old_range_oracle ... ok
+Invoking test: real_bus_gateway_sequence_preserves_observability
+test real_bus_gateway_sequence_preserves_observability ... ok
+Invoking test: encoded_guest_plic_trace_and_digest_are_exact
+test encoded_guest_plic_trace_and_digest_are_exact ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.08s
+
+verify-E5-T26o (sparse PLIC selection, not F latency acceptance): OK

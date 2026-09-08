@@ -1,0 +1,627 @@
+E5-T26o exact head: aaa8d40625eaf3a2bf9ba6a5dbe4ef0909495ca0
+E5-T26o retained clone: /private/tmp/e5-t26o-final.9J3lj8Wm/repo
+Cloning into '/private/tmp/e5-t26o-final.9J3lj8Wm/repo'...
+HEAD is now at aaa8d406 test(plic): promote independent hostile gateway and seed regression
+Initial checkout clean; no object alternates; fresh local target directory.
+Run make verify-E5-T26o with compiler/test overrides scrubbed.
+cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+cargo clippy -p wasm-vm-core --lib --test plic --test plic_sparse --test plic_sparse_verifier --features trace -- -D warnings
+   Compiling libc v0.2.186
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+    Checking cfg-if v1.0.4
+   Compiling quote v1.0.46
+   Compiling zerocopy v0.8.52
+   Compiling version_check v0.9.5
+   Compiling serde_core v1.0.228
+   Compiling getrandom v0.3.4
+    Checking bitflags v2.13.0
+   Compiling crossbeam-utils v0.8.21
+    Checking typenum v1.20.1
+   Compiling zmij v1.0.21
+   Compiling getrandom v0.4.3
+   Compiling rustix v1.1.4
+   Compiling autocfg v1.5.1
+   Compiling serde v1.0.228
+    Checking regex-syntax v0.8.11
+   Compiling serde_json v1.0.150
+   Compiling generic-array v0.14.7
+   Compiling num-traits v0.2.19
+    Checking once_cell v1.21.4
+    Checking either v1.16.0
+    Checking fastrand v2.4.1
+   Compiling rayon-core v1.13.0
+    Checking anstyle v1.0.14
+    Checking clap_lex v1.1.0
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+    Checking memchr v2.8.2
+    Checking itoa v1.0.18
+    Checking ciborium-io v0.2.2
+    Checking regex-automata v0.4.14
+    Checking clap_builder v4.6.0
+    Checking crossbeam-epoch v0.9.18
+    Checking crossbeam-deque v0.8.6
+    Checking itertools v0.10.5
+    Checking same-file v1.0.6
+    Checking bit-vec v0.8.0
+    Checking smallvec v1.15.2
+    Checking fnv v1.0.7
+    Checking quick-error v1.2.3
+    Checking cast v0.3.0
+    Checking bit-set v0.8.0
+    Checking clap v4.6.1
+    Checking walkdir v2.5.0
+    Checking regex v1.12.4
+    Checking unarray v0.1.4
+    Checking log v0.4.33
+    Checking anes v0.1.6
+    Checking oorandom v11.1.5
+    Checking criterion-plot v0.5.0
+   Compiling syn v2.0.118
+    Checking errno v0.3.14
+    Checking wait-timeout v0.2.1
+    Checking cpufeatures v0.2.17
+    Checking is-terminal v0.4.17
+    Checking rand_core v0.9.5
+    Checking rand_xorshift v0.4.0
+    Checking rand v0.9.4
+   Compiling zerocopy-derive v0.8.52
+   Compiling serde_derive v1.0.228
+    Checking tempfile v3.27.0
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking digest v0.10.7
+    Checking rusty-fork v0.3.1
+    Checking sha2 v0.10.9
+    Checking wasm-vm-core v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/core)
+    Checking rayon v1.12.0
+    Checking tinytemplate v1.2.1
+    Checking half v2.7.1
+    Checking ppv-lite86 v0.2.21
+    Checking rand_chacha v0.9.0
+    Checking ciborium-ll v0.2.2
+    Checking proptest v1.11.0
+    Checking ciborium v0.2.2
+    Checking criterion v0.5.1
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.12s
+cargo clippy -p wasm-vm-wasm --test plic_sparse --test plic_sparse_verifier --target wasm32-unknown-unknown -- -D warnings
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+    Checking cfg-if v1.0.4
+   Compiling rustversion v1.0.22
+   Compiling version_check v0.9.5
+   Compiling bumpalo v3.20.3
+    Checking typenum v1.20.1
+    Checking once_cell v1.21.4
+    Checking pin-project-lite v0.2.17
+    Checking slab v0.4.12
+    Checking futures-task v0.3.32
+    Checking futures-core v0.3.32
+   Compiling serde_core v1.0.228
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling zmij v1.0.21
+    Checking smallvec v1.15.2
+   Compiling serde_json v1.0.150
+   Compiling serde v1.0.228
+    Checking bitflags v2.13.0
+   Compiling heapless v0.9.3
+    Checking futures-util v0.3.32
+    Checking byteorder v1.5.0
+    Checking log v0.4.33
+    Checking itoa v1.0.18
+   Compiling autocfg v1.5.1
+    Checking hash32 v0.3.1
+   Compiling libm v0.2.16
+   Compiling generic-array v0.14.7
+    Checking stable_deref_trait v1.2.1
+   Compiling smoltcp v0.13.1
+    Checking tinyvec_macros v0.1.1
+    Checking memchr v2.8.2
+    Checking tinyvec v1.12.0
+   Compiling num-traits v0.2.19
+    Checking managed v0.8.0
+    Checking bitflags v1.3.2
+    Checking unicode-normalization v0.1.25
+    Checking wasm-vm-wasm-emit v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/wasm-emit)
+    Checking wasm-bindgen-test-shared v0.2.126
+    Checking cast v0.3.0
+    Checking oorandom v11.1.5
+    Checking nu-ansi-term v0.50.3
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking digest v0.10.7
+   Compiling wasm-bindgen-macro-support v0.2.126
+    Checking sha2 v0.10.9
+    Checking wasm-vm-core v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/core)
+   Compiling serde_derive v1.0.228
+   Compiling async-trait v0.1.89
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling wasm-bindgen-macro v0.2.126
+    Checking wasm-vm-storage v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/storage)
+    Checking wasm-vm-jit-translate v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/jit-translate)
+    Checking wasm-vm-slirp v0.0.0 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/slirp)
+    Checking js-sys v0.3.103
+    Checking console_error_panic_hook v0.1.7
+    Checking web-sys v0.3.103
+    Checking wasm-bindgen-futures v0.4.76
+    Checking getrandom v0.2.17
+    Checking wasm-bindgen-test v0.3.76
+    Checking console_log v1.0.0
+    Checking wasm-vm-wasm v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 11.88s
+cargo test -p wasm-vm-core --features trace,gpu-trace --lib dev::plic -- --nocapture
+   Compiling cfg-if v1.0.4
+   Compiling bitflags v2.13.0
+   Compiling typenum v1.20.1
+   Compiling libc v0.2.186
+   Compiling serde_core v1.0.228
+   Compiling crossbeam-utils v0.8.21
+   Compiling either v1.16.0
+   Compiling regex-syntax v0.8.11
+   Compiling once_cell v1.21.4
+   Compiling zmij v1.0.21
+   Compiling memchr v2.8.2
+   Compiling itoa v1.0.18
+   Compiling clap_lex v1.1.0
+   Compiling anstyle v1.0.14
+   Compiling ciborium-io v0.2.2
+   Compiling zerocopy v0.8.52
+   Compiling fastrand v2.4.1
+   Compiling num-traits v0.2.19
+   Compiling clap_builder v4.6.0
+   Compiling itertools v0.10.5
+   Compiling bit-vec v0.8.0
+   Compiling same-file v1.0.6
+   Compiling fnv v1.0.7
+   Compiling cast v0.3.0
+   Compiling quick-error v1.2.3
+   Compiling walkdir v2.5.0
+   Compiling unarray v0.1.4
+   Compiling anes v0.1.6
+   Compiling bit-set v0.8.0
+   Compiling crossbeam-epoch v0.9.18
+   Compiling oorandom v11.1.5
+   Compiling smallvec v1.15.2
+   Compiling getrandom v0.3.4
+   Compiling errno v0.3.14
+   Compiling getrandom v0.4.3
+   Compiling wait-timeout v0.2.1
+   Compiling cpufeatures v0.2.17
+   Compiling is-terminal v0.4.17
+   Compiling rand_core v0.9.5
+   Compiling generic-array v0.14.7
+   Compiling rustix v1.1.4
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling log v0.4.33
+   Compiling crossbeam-deque v0.8.6
+   Compiling rand v0.9.4
+   Compiling rand_xorshift v0.4.0
+   Compiling rayon-core v1.13.0
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling rayon v1.12.0
+   Compiling digest v0.10.7
+   Compiling criterion-plot v0.5.0
+   Compiling sha2 v0.10.9
+   Compiling regex-automata v0.4.14
+   Compiling tempfile v3.27.0
+   Compiling clap v4.6.1
+   Compiling rusty-fork v0.3.1
+   Compiling serde v1.0.228
+   Compiling serde_json v1.0.150
+   Compiling tinytemplate v1.2.1
+   Compiling regex v1.12.4
+   Compiling half v2.7.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.9.0
+   Compiling ciborium-ll v0.2.2
+   Compiling proptest v1.11.0
+   Compiling ciborium v0.2.2
+   Compiling criterion v0.5.1
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.54s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-048f7c055d42ac1c)
+
+running 2 tests
+test dev::plic::snapshot_tests::plic_restore_rejects_wrong_length_without_mutating ... ok
+test dev::plic::snapshot_tests::plic_behavioural_state_round_trips_and_drops_the_diagnostic_counter ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 336 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-core --features trace --test plic --test plic_sparse --test plic_sparse_verifier --test interrupts -- --nocapture
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.02s
+     Running tests/interrupts.rs (target/debug/deps/interrupts-d99be4e9a9772bd3)
+
+running 13 tests
+test higher_priority_but_untakeable_is_skipped ... ok
+test deleg_and_enable_warl_masks ... ok
+test mip_mtip_software_write_ignored_device_bit_survives ... ok
+test full_priority_chain_in_m_with_mie ... ok
+test delegated_stimer_fires_in_u_not_in_m ... ok
+test m_mode_with_mie_clear_takes_nothing ... ok
+test m_interrupt_not_masked_from_below ... ok
+test wfi_with_mie_clear_and_mtip_pending_continues_no_trap ... ok
+test m_mode_exception_is_never_delegated_downward ... ok
+test interrupt_taken_after_an_instruction_retires_precise_mepc ... ok
+test delegated_interrupt_delivers_to_stvec_with_scause_and_spp ... ok
+test vectored_mtvec_m_interrupt_ssi_enters_at_base_plus_4 ... ok
+test vectored_stvec_interrupt_enters_at_base_plus_4x_cause ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/plic.rs (target/debug/deps/plic-39b28225363347e8)
+
+running 10 tests
+test level_reassertion_while_claimed_does_not_repend_until_complete ... ok
+test complete_from_wrong_context_or_stale_id_is_ignored ... ok
+test priority_tie_breaks_to_lowest_source_id ... ok
+test raising_threshold_drops_eip_without_a_claim ... ok
+test threshold_masks_all_sources_at_or_below_it ... ok
+test claim_with_nothing_pending_returns_zero_and_changes_no_state ... ok
+test external_interrupt_outranks_the_timer ... ok
+test source_enabled_in_s_context_routes_seip_not_meip_and_claim_clears ... ok
+test meip_delivered_through_mtvec_then_claim_and_complete ... ok
+test seip_delivered_through_stvec_when_delegated ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/plic_sparse.rs (target/debug/deps/plic_sparse-de1a1ed26d4d4d5f)
+
+running 4 tests
+
+thread 'invalid_context_eip_keeps_native_panic_contract' (17336765) panicked at crates/core/src/dev/plic.rs:167:47:
+index out of bounds: the len is 2 but the index is 2
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'invalid_context_eip_keeps_native_panic_contract' (17336765) panicked at crates/core/src/dev/plic.rs:167:47:
+index out of bounds: the len is 2 but the index is 2
+E5-T26o invalid direct contexts: empty+pending panic=2
+E5-T26o bus sequence: PLIC MMIO hits=27 pre-restore claim_counts=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2] post-restore claim_counts=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+test invalid_context_eip_keeps_native_panic_contract ... ok
+test real_bus_gateway_sequence_preserves_observability ... ok
+E5-T26o trap boundary: pc=0x80000100 mepc=0x8000003c mcause=0x800000000000000b mstatus=0xa00001880 retired=16
+E5-T26o guest trace (21 records):
+core 0: 0x0000000080000000 (0x00000297) x5 0x0000000080000000
+core 0: 0x0000000080000004 (0x10028293) x5 0x0000000080000100
+core 0: 0x0000000080000008 (0x30529073)
+core 0: 0x000000008000000c (0x80000313) x6 0xfffffffffffff800
+core 0: 0x0000000080000010 (0x30432073)
+core 0: 0x0000000080000014 (0x00800313) x6 0x0000000000000008
+core 0: 0x0000000080000018 (0x30032073)
+core 0: 0x000000008000001c (0x0c0002b7) x5 0x000000000c000000
+core 0: 0x0000000080000020 (0x00700313) x6 0x0000000000000007
+core 0: 0x0000000080000024 (0x0662ae23) mem 0x000000000c00007c 0x00000007
+core 0: 0x0000000080000028 (0x0c0022b7) x5 0x000000000c002000
+core 0: 0x000000008000002c (0x80000337) x6 0xffffffff80000000
+core 0: 0x0000000080000030 (0x0062a023) mem 0x000000000c002000 0x80000000
+core 0: 0x0000000080000034 (0x0c2002b7) x5 0x000000000c200000
+core 0: 0x0000000080000038 (0x0002a023) mem 0x000000000c200000 0x00000000
+core 0: 0x000000008000003c (0x0000006f)
+core 0: 0x0000000080000100 (0x0c2002b7) x5 0x000000000c200000
+core 0: 0x0000000080000104 (0x0042a503) x10 0x000000000000001f mem 0x000000000c200004
+core 0: 0x0000000080000108 (0x00a2a223) mem 0x000000000c200004 0x0000001f
+core 0: 0x000000008000010c (0x00050593) x11 0x000000000000001f
+core 0: 0x0000000080000110 (0x30200073)
+digest=c055e21cdc4ae3b9a55ddee3919d9bbc6fe2d7340a5830370a4aa3d79f6bc891
+test encoded_guest_plic_trace_and_digest_are_exact ... ok
+E5-T26o selector cases: seed=0xe5260badcafe1234 explicit=12 stream=64 contexts=2 total=152
+test selector_and_snapshot_cases_match_old_range_oracle ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/plic_sparse_verifier.rs (target/debug/deps/plic_sparse_verifier-d2e61f4dc3b200c2)
+
+running 1 test
+P6 seed=0x260f0031 row=0 context=0 claim=30
+P6 seed=0x260f0031 row=0 context=1 claim=30
+P6 seed=0x260f0031 row=1 context=0 claim=0
+P6 seed=0x260f0031 row=1 context=1 claim=17
+P6 seed=0x260f0031 row=2 context=0 claim=8
+P6 seed=0x260f0031 row=2 context=1 claim=0
+P6 seed=0x260f0031 row=3 context=0 claim=30
+P6 seed=0x260f0031 row=3 context=1 claim=19
+P6 seed=0x260f0031 row=4 context=0 claim=0
+P6 seed=0x260f0031 row=4 context=1 claim=0
+P6 seed=0x260f0031 row=5 context=0 claim=0
+P6 seed=0x260f0031 row=5 context=1 claim=0
+P6 seed=0x260f0031 row=6 context=0 claim=0
+P6 seed=0x260f0031 row=6 context=1 claim=6
+P6 seed=0x260f0031 row=7 context=0 claim=0
+P6 seed=0x260f0031 row=7 context=1 claim=8
+P6 seed=0x260f0031 row=8 context=0 claim=22
+P6 seed=0x260f0031 row=8 context=1 claim=13
+P6 seed=0x260f0031 row=9 context=0 claim=18
+P6 seed=0x260f0031 row=9 context=1 claim=4
+P6 seed=0x260f0031 row=10 context=0 claim=29
+P6 seed=0x260f0031 row=10 context=1 claim=0
+P6 seed=0x260f0031 row=11 context=0 claim=13
+P6 seed=0x260f0031 row=11 context=1 claim=0
+P6 seed=0x260f0031 row=12 context=0 claim=0
+P6 seed=0x260f0031 row=12 context=1 claim=0
+P6 seed=0x260f0031 row=13 context=0 claim=28
+P6 seed=0x260f0031 row=13 context=1 claim=28
+P6 seed=0x260f0031 row=14 context=0 claim=14
+P6 seed=0x260f0031 row=14 context=1 claim=0
+P6 seed=0x260f0031 row=15 context=0 claim=0
+P6 seed=0x260f0031 row=15 context=1 claim=0
+P6 seed=0x260f0031 row=16 context=0 claim=13
+P6 seed=0x260f0031 row=16 context=1 claim=13
+P6 seed=0x260f0031 row=17 context=0 claim=0
+P6 seed=0x260f0031 row=17 context=1 claim=4
+P6 seed=0x260f0031 row=18 context=0 claim=0
+P6 seed=0x260f0031 row=18 context=1 claim=0
+P6 seed=0x260f0031 row=19 context=0 claim=0
+P6 seed=0x260f0031 row=19 context=1 claim=0
+P6 seed=0x260f0031 row=20 context=0 claim=31
+P6 seed=0x260f0031 row=20 context=1 claim=31
+P6 seed=0x260f0031 row=21 context=0 claim=31
+P6 seed=0x260f0031 row=21 context=1 claim=8
+P6 seed=0x260f0031 row=22 context=0 claim=25
+P6 seed=0x260f0031 row=22 context=1 claim=0
+P6 seed=0x260f0031 row=23 context=0 claim=23
+P6 seed=0x260f0031 row=23 context=1 claim=23
+P6 seed=0x260f0031 row=24 context=0 claim=26
+P6 seed=0x260f0031 row=24 context=1 claim=18
+P6 seed=0x260f0031 row=25 context=0 claim=31
+P6 seed=0x260f0031 row=25 context=1 claim=27
+P6 seed=0x260f0031 row=26 context=0 claim=0
+P6 seed=0x260f0031 row=26 context=1 claim=21
+P6 seed=0x260f0031 row=27 context=0 claim=18
+P6 seed=0x260f0031 row=27 context=1 claim=15
+P6 seed=0x260f0031 row=28 context=0 claim=0
+P6 seed=0x260f0031 row=28 context=1 claim=0
+P6 seed=0x260f0031 row=29 context=0 claim=29
+P6 seed=0x260f0031 row=29 context=1 claim=29
+P6 seed=0x260f0031 row=30 context=0 claim=14
+P6 seed=0x260f0031 row=30 context=1 claim=0
+P6 seed=0x260f0031 row=31 context=0 claim=22
+P6 seed=0x260f0031 row=31 context=1 claim=22
+P6 seed=0x260f0031 row=32 context=0 claim=16
+P6 seed=0x260f0031 row=32 context=1 claim=0
+P6 seed=0x260f0031 row=33 context=0 claim=6
+P6 seed=0x260f0031 row=33 context=1 claim=6
+P6 seed=0x260f0031 row=34 context=0 claim=2
+P6 seed=0x260f0031 row=34 context=1 claim=14
+P6 seed=0x260f0031 row=35 context=0 claim=0
+P6 seed=0x260f0031 row=35 context=1 claim=0
+P6 seed=0x260f0031 row=36 context=0 claim=0
+P6 seed=0x260f0031 row=36 context=1 claim=17
+P6 seed=0x260f0031 row=37 context=0 claim=0
+P6 seed=0x260f0031 row=37 context=1 claim=0
+P6 seed=0x260f0031 row=38 context=0 claim=0
+P6 seed=0x260f0031 row=38 context=1 claim=0
+P6 seed=0x260f0031 row=39 context=0 claim=0
+P6 seed=0x260f0031 row=39 context=1 claim=0
+P6 seed=0x260f0031 row=40 context=0 claim=0
+P6 seed=0x260f0031 row=40 context=1 claim=0
+P6 seed=0x260f0031 row=41 context=0 claim=26
+P6 seed=0x260f0031 row=41 context=1 claim=26
+P6 seed=0x260f0031 row=42 context=0 claim=0
+P6 seed=0x260f0031 row=42 context=1 claim=28
+P6 seed=0x260f0031 row=43 context=0 claim=15
+P6 seed=0x260f0031 row=43 context=1 claim=20
+P6 seed=0x260f0031 row=44 context=0 claim=0
+P6 seed=0x260f0031 row=44 context=1 claim=6
+P6 seed=0x260f0031 row=45 context=0 claim=0
+P6 seed=0x260f0031 row=45 context=1 claim=0
+P6 seed=0x260f0031 row=46 context=0 claim=0
+P6 seed=0x260f0031 row=46 context=1 claim=12
+P6 seed=0x260f0031 row=47 context=0 claim=0
+P6 seed=0x260f0031 row=47 context=1 claim=16
+P6 seed=0x260f0031 row=48 context=0 claim=20
+P6 seed=0x260f0031 row=48 context=1 claim=20
+P6 seed=0x260f0031 row=49 context=0 claim=12
+P6 seed=0x260f0031 row=49 context=1 claim=0
+P6 seed=0x260f0031 row=50 context=0 claim=4
+P6 seed=0x260f0031 row=50 context=1 claim=15
+P6 seed=0x260f0031 row=51 context=0 claim=0
+P6 seed=0x260f0031 row=51 context=1 claim=0
+P6 seed=0x260f0031 row=52 context=0 claim=31
+P6 seed=0x260f0031 row=52 context=1 claim=0
+P6 seed=0x260f0031 row=53 context=0 claim=12
+P6 seed=0x260f0031 row=53 context=1 claim=0
+P6 seed=0x260f0031 row=54 context=0 claim=26
+P6 seed=0x260f0031 row=54 context=1 claim=0
+P6 seed=0x260f0031 row=55 context=0 claim=0
+P6 seed=0x260f0031 row=55 context=1 claim=0
+P6 seed=0x260f0031 row=56 context=0 claim=21
+P6 seed=0x260f0031 row=56 context=1 claim=21
+P6 seed=0x260f0031 row=57 context=0 claim=0
+P6 seed=0x260f0031 row=57 context=1 claim=16
+P6 seed=0x260f0031 row=58 context=0 claim=11
+P6 seed=0x260f0031 row=58 context=1 claim=0
+P6 seed=0x260f0031 row=59 context=0 claim=0
+P6 seed=0x260f0031 row=59 context=1 claim=0
+P6 seed=0x260f0031 row=60 context=0 claim=0
+P6 seed=0x260f0031 row=60 context=1 claim=20
+P6 seed=0x260f0031 row=61 context=0 claim=0
+P6 seed=0x260f0031 row=61 context=1 claim=29
+P6 seed=0x260f0031 row=62 context=0 claim=0
+P6 seed=0x260f0031 row=62 context=1 claim=0
+P6 seed=0x260f0031 row=63 context=0 claim=13
+P6 seed=0x260f0031 row=63 context=1 claim=15
+P6 seed rows=64 contexts=128 nonempty=69 final_seed=0x7d5407845a7c6ff1
+P1 tied1+31: claims1,31,0 in both contexts
+P6 both-claimed restored: winner_both=0 claimed=80000000/80000000 pending=00000001 count31=0 hits=134
+P6 context0 still owns claim: winner_both=0 claimed=80000000/00000000 pending=00000001 count31=0 hits=135
+P6 both banks released: winner_both=31 claimed=00000000/00000000 pending=80000001 count31=0 hits=136
+P6 context1 owns new claim: winner_both=0 claimed=00000000/80000000 pending=00000001 count31=1 hits=137
+P6 context1 still owns claim: winner_both=0 claimed=00000000/80000000 pending=00000001 count31=1 hits=138
+P6 held-high reopened: winner_both=31 claimed=00000000/00000000 pending=80000001 count31=1 hits=139
+test reserved_seed_and_reversed_completion_preserve_plic_authority ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-jit-runtime --test chaining device_completion_fires_inside_chained_loop -- --nocapture
+   Compiling serde v1.0.228
+   Compiling cranelift-srcgen v0.122.0
+   Compiling hashbrown v0.17.1
+   Compiling equivalent v1.0.2
+   Compiling foldhash v0.1.5
+   Compiling cranelift-bitset v0.122.0
+   Compiling libm v0.2.16
+   Compiling log v0.4.33
+   Compiling cranelift-isle v0.122.0
+   Compiling cranelift-codegen-shared v0.122.0
+   Compiling target-lexicon v0.13.5
+   Compiling anyhow v1.0.104
+   Compiling allocator-api2 v0.2.21
+   Compiling arbitrary v1.4.2
+   Compiling pulley-macros v35.0.0
+   Compiling thiserror v2.0.18
+   Compiling crc32fast v1.5.0
+   Compiling rustc-hash v2.1.3
+   Compiling cranelift-assembler-x64-meta v0.122.0
+   Compiling thiserror-impl v2.0.18
+   Compiling object v0.36.7
+   Compiling wasmparser v0.235.0
+   Compiling bumpalo v3.20.3
+   Compiling wasm-encoder v0.235.0
+   Compiling pulley-interpreter v35.0.0
+   Compiling indexmap v2.14.0
+   Compiling semver v1.0.28
+   Compiling cranelift-control v0.122.0
+   Compiling wasmtime-internal-versioned-export-macros v35.0.0
+   Compiling shlex v2.0.1
+   Compiling leb128fmt v0.1.0
+   Compiling gimli v0.31.1
+   Compiling termcolor v1.4.1
+   Compiling find-msvc-tools v0.1.9
+   Compiling rustix v1.1.4
+   Compiling cc v1.2.65
+   Compiling wasmtime-internal-unwinder v35.0.0
+   Compiling smallvec v1.15.2
+   Compiling hashbrown v0.15.5
+   Compiling cranelift-assembler-x64 v0.122.0
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling cranelift-entity v0.122.0
+   Compiling cranelift-codegen-meta v0.122.0
+   Compiling regalloc2 v0.12.2
+   Compiling cranelift-bforest v0.122.0
+   Compiling itertools v0.14.0
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/core)
+   Compiling wasmtime v35.0.0
+   Compiling wasmtime-internal-math v35.0.0
+   Compiling wasmtime-internal-jit-icache-coherence v35.0.0
+   Compiling mach2 v0.4.3
+   Compiling wasmtime-internal-asm-macros v35.0.0
+   Compiling wasmtime-internal-slab v35.0.0
+   Compiling wasm-vm-wasm-emit v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/wasm-emit)
+   Compiling cranelift-codegen v0.122.0
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/jit-translate)
+   Compiling cobs v0.3.0
+   Compiling postcard v1.1.3
+   Compiling wasmprinter v0.235.0
+   Compiling wasmtime-environ v35.0.0
+   Compiling cranelift-frontend v0.122.0
+   Compiling cranelift-native v0.122.0
+   Compiling wasmtime-internal-cranelift v35.0.0
+   Compiling wasm-vm-jit-runtime v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.28s
+     Running tests/chaining.rs (target/debug/deps/chaining-f12841d853c99373)
+
+running 1 test
+test device_completion_fires_inside_chained_loop ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.19s
+
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+   Compiling typenum v1.20.1
+   Compiling smallvec v1.15.2
+   Compiling cfg-if v1.0.4
+   Compiling bitflags v2.13.0
+   Compiling log v0.4.33
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling generic-array v0.14.7
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.34s
+cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+   Compiling unicode-ident v1.0.24
+   Compiling once_cell v1.21.4
+   Compiling futures-core v0.3.32
+   Compiling slab v0.4.12
+   Compiling futures-task v0.3.32
+   Compiling pin-project-lite v0.2.17
+   Compiling byteorder v1.5.0
+   Compiling serde_core v1.0.228
+   Compiling stable_deref_trait v1.2.1
+   Compiling tinyvec_macros v0.1.1
+   Compiling zmij v1.0.21
+   Compiling bitflags v1.3.2
+   Compiling itoa v1.0.18
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/core)
+   Compiling managed v0.8.0
+   Compiling memchr v2.8.2
+   Compiling tinyvec v1.12.0
+   Compiling wasm-vm-wasm-emit v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/wasm-emit)
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling futures-util v0.3.32
+   Compiling hash32 v0.3.1
+   Compiling heapless v0.9.3
+   Compiling wasm-bindgen v0.2.126
+   Compiling unicode-normalization v0.1.25
+   Compiling smoltcp v0.13.1
+   Compiling console_error_panic_hook v0.1.7
+   Compiling js-sys v0.3.103
+   Compiling serde_json v1.0.150
+   Compiling serde v1.0.228
+   Compiling wasm-vm-storage v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/storage)
+   Compiling wasm-vm-slirp v0.0.0 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/slirp)
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/jit-translate)
+   Compiling web-sys v0.3.103
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling getrandom v0.2.17
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.92s
+wasm-pack test --node crates/wasm --test plic_sparse --test plic_sparse_verifier -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-bindgen-test-shared v0.2.126
+   Compiling oorandom v11.1.5
+   Compiling nu-ansi-term v0.50.3
+   Compiling cast v0.3.0
+   Compiling libm v0.2.16
+   Compiling num-traits v0.2.19
+   Compiling wasm-bindgen-test v0.3.76
+   Compiling wasm-vm-wasm v0.0.1 (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.84s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/plic_sparse.rs (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/target/wasm32-unknown-unknown/debug/deps/plic_sparse-8c9dab3dc6f52302.wasm)
+running 3 tests
+Invoking test: selector_and_snapshot_cases_match_old_range_oracle
+test selector_and_snapshot_cases_match_old_range_oracle ... ok
+Invoking test: real_bus_gateway_sequence_preserves_observability
+test real_bus_gateway_sequence_preserves_observability ... ok
+Invoking test: encoded_guest_plic_trace_and_digest_are_exact
+test encoded_guest_plic_trace_and_digest_are_exact ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.09s
+
+     Running tests/plic_sparse_verifier.rs (/private/tmp/e5-t26o-final.9J3lj8Wm/repo/target/wasm32-unknown-unknown/debug/deps/plic_sparse_verifier-89f92e241263fb85.wasm)
+running 1 test
+Invoking test: reserved_seed_and_reversed_completion_preserve_plic_authority
+test reserved_seed_and_reversed_completion_preserve_plic_authority ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.01s
+
+verify-E5-T26o (sparse PLIC selection, not F latency acceptance): OK
+Final checkout clean; make exit=0; retained=/private/tmp/e5-t26o-final.9J3lj8Wm/repo

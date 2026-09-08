@@ -3,7 +3,7 @@ id: E5-T26o
 epic: 5
 title: Visit only eligible PLIC candidate bits during source selection
 priority: 526.5995
-status: in-progress
+status: implemented
 depends_on: [E1-T13, E5-T26n]
 estimate: S
 risk: high
@@ -78,6 +78,47 @@ No rr, retired ssh dev, WebKit, independent machine, old-task replay, second
 clone, or speculative speedup claim.
 
 ## Verification log
+
+### 2026-09-08 — worker submission — exact-head PLIC evidence
+
+Runtime freeze `02c79f5672c3f1a08a3429f7b32dce4e051a41ec`; final promoted
+test/gate/bundle head `aaa8d40625eaf3a2bf9ba6a5dbe4ef0909495ca0`.
+Only best_source changes: ascending set-bit iteration excludes source0 and
+retains unsigned thresholds/priorities, EIP delegation and all stored state.
+Production SHA256 `9f5def69ccf6e98fb72185a9a2714c00caa5de16fe97c218d5555f93f4dc55f1`.
+
+`make verify-E5-T26o` passes scoped fmt/clippy,31 native and4 actual-WASM
+tests plus affected builds. This includes152 worker context cases,128 fresh
+critic-seed context claims, reversed both-bank completion, full behavioral
+bytes/counts/MMIO accounting, and the actual MEI guest fixture. Its21-record
+canonical trace matches the independent hand oracle; RAM-only SHA256 is
+`c055e21cdc4ae3b9a55ddee3919d9bbc6fe2d7340a5830370a4aa3d79f6bc891`.
+PC/MEPC/cause/mode/MSTATUS/registers/counts and retirement state are asserted
+separately; the digest is not represented as full CPU state.
+
+One final pristine clone runs
+`bash evidence/e5-t26o/run-final-clone.sh aaa8d40625eaf3a2bf9ba6a5dbe4ef0909495ca0`.
+It exits0, starts/ends clean, has no object alternates, uses a fresh local
+target and scrubbed compiler/test overrides. Retained clone:
+`/private/tmp/e5-t26o-final.9J3lj8Wm/repo`; raw log
+`evidence/e5-t26o/main-gates/07-final-clone.log`, SHA256
+`0aa00c3c134abf74209dae64b4f45691eb61c08a6c98fe1ccc36a826f0390597`.
+
+`make web-dist` preserves the two unrelated dirty artifact manifests. One
+`E5_DEMO_TASK=E5-T26o E5_DEMO_OUT=evidence/e5-t26o/demo-02c79f56 node tools/verify/e5-t18e-demo-smoke.mjs`
+records126/0, zero non-favicon console/HTTP errors and the visible task.
+Both coordinator and critic view the retained PNG. WASM SHA256 is
+`20f58e0d44cc94f9d0629478789680e4a87345ba800162aa0737ddc763bfd238`.
+
+One executed scratch-only bit0-mask sabotage fails the independent EIP
+assertion for hostile source0 hiding eligible31; the source is automatically
+restored and hash-checked. An earlier incomplete-workspace setup failure did
+not execute tests. The initial lib-test build failure is also retained; adding
+the existing gpu-trace test feature fixes that gate only. Detailed commands,
+failures, raw logs and hashes are in `evidence/e5-t26o/README.md` and
+`verifier/provisional-findings.md`. Worker narrative's old fixture hash is
+explicitly corrected without changing code. Fresh final verdict remains due.
+No F timing acceptance, speedup, Epic5 completion, merge or deploy is claimed.
 
 ### 2026-09-08 — coordinator — activate source-reviewed PLIC prerequisite
 

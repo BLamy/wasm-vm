@@ -10,12 +10,17 @@ The production diff is 4 insertions / 5 deletions. No cache, API, state, snapsho
 polling, clock, budget, MMIO decoder, claim, complete, or source-0 normalization
 changes were made. No production private unit test was added.
 
-Owned file SHA-256 at the worker head:
+Owned file SHA-256 at the submitted runtime freeze (`02c79f56`):
 
 ```text
 9f5def69ccf6e98fb72185a9a2714c00caa5de16fe97c218d5555f93f4dc55f1  crates/core/src/dev/plic.rs
 67a9266d3e93433380291982841ac59e3f049ee86e572a02380777104ba6916f  crates/core/tests/plic_sparse.rs
-b5a88a793ebb5d576d35353d93c6fe6774be8ab71f51258f238d4e41f8a332d6  crates/core/tests/support/plic_sparse_cases.rs
+8d9e49aacdb6709c331e53b210d84e148f900345a7be6c180fddf3c6d63e3814  crates/core/tests/support/plic_sparse_cases.rs
 805de1b55be09a342d77614d5f310ca4a97ff90c878fa195d3ca6d4c241da9ef  crates/wasm/tests/plic_sparse.rs
 ```
 
+Coordinator correction: the original worker handoff listed shared-fixture hash
+`b5a88a793ebb5d576d35353d93c6fe6774be8ab71f51258f238d4e41f8a332d6`.
+Workspace edition-2024 formatting and equivalent seed-literal grouping changed
+that test-only file before freeze. The hash above is the frozen and recorded
+version; production bytes and fixture semantics were unchanged by that cleanup.
