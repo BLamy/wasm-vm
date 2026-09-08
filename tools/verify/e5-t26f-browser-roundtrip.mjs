@@ -42,6 +42,14 @@ const jsonReplacer = (_key, value) => typeof value === "bigint" ? `${value}n` : 
 
 function diagnosticOptions(env) {
   const mode = env.E5_T26F_DIAGNOSTIC;
+  const guestClock = env.E5_T26F_DIAGNOSTIC_GUEST_CLOCK;
+  if (guestClock !== undefined) {
+    assert.equal(mode, "reuse", "diagnostic guest clock comparison requires reuse mode");
+    assert.ok(guestClock === "icount" || guestClock === "wall", "diagnostic guest clock must be icount or wall");
+    for (const key of ["E5_T26F_DIAGNOSTIC_CPU", "E5_T26F_DIAGNOSTIC_LATENCY", "E5_T26F_DIAGNOSTIC_COMMAND"]) {
+      assert.equal(env[key], undefined, "guest clock comparison must be unprofiled with the unchanged command");
+    }
+  }
   const cpu = env.E5_T26F_DIAGNOSTIC_CPU;
   if (cpu !== undefined) {
     assert.equal(mode, "reuse", "diagnostic CPU profiling requires reuse mode");
@@ -71,7 +79,7 @@ function diagnosticOptions(env) {
     directory !== path.parse(directory).root, "diagnostic profile requires an absolute normalized scratch directory");
   assert.ok(Number.isSafeInteger(port) && port >= 1024 && port <= 65535, "diagnostic mode requires a stable explicit server port");
   return { mode, directory, port, origin: `http://127.0.0.1:${port}`, command: command ?? null,
-    keyDelayMs: Number(delay ?? 0), latency: latency === "1", cpu: cpu === "1" };
+    keyDelayMs: Number(delay ?? 0), latency: latency === "1", cpu: cpu === "1", guestClock: guestClock ?? null };
 }
 
 const diagnostic = diagnosticOptions(process.env);
@@ -248,6 +256,7 @@ async function sourceDistParity() {
     "desktop-restore.js",
     "main.js",
     "loader.js",
+    "guest-clock.js",
     "linux-worker-host.js",
     "linux-worker-protocol.js",
     "linux-worker.js",
@@ -1066,6 +1075,7 @@ try {
     imageSha256,
     manifestSha256,
   });
+  if (diagnostic?.guestClock) query.set("guestClock", diagnostic.guestClock);
   const coldUrl = `${base}/desktop-cursor.html?${query}`;
   const restoreUrl = `${coldUrl}&autoRestore=1`;
   let normalSnapshot = diagnosticCheckpoint?.normalSnapshot;
@@ -1205,6 +1215,15 @@ try {
   const postRestoreStart = firstRestore.completedAt;
   milestones.postRestoreStart = postRestoreStart;
   assert.ok(Number.isFinite(postRestoreStart), "restore did not expose a timing boundary");
+  if (diagnostic?.guestClock) {
+    milestones.guestClockBefore = await page.evaluate(async () => {
+      const requestedAt = performance.now();
+      const state = await window.__desktopController.guestClockState();
+      return { requestedAt, receivedAt: performance.now(), state };
+    });
+    assert.equal(milestones.guestClockBefore.state?.mode, diagnostic.guestClock,
+      "requested clock did not reach the actual worker machine");
+  }
   const postBox = await desktopBox();
   const focusBefore = await page.evaluate(() => window.__desktopTerminal.state().pointerFrames);
   const topPoint = await page.evaluate(() => window.__desktopCursor?.focusGuestPoint?.());
@@ -1327,6 +1346,16 @@ try {
     },
   }), postRestoreStart);
   milestones.postRestoreInteraction = postRestoreInteraction;
+  if (diagnostic?.guestClock) {
+    // Outside the frozen interaction boundary; neither this RPC nor reporting resets F's cap.
+    milestones.guestClockAfter = await page.evaluate(async () => {
+      const requestedAt = performance.now();
+      const state = await window.__desktopController.guestClockState();
+      return { requestedAt, receivedAt: performance.now(), state };
+    });
+    assert.equal(milestones.guestClockAfter.state?.mode, diagnostic.guestClock);
+    milestones.guestClockErrors = { browser: [...browserErrors], http: [...httpErrors] };
+  }
   // Stop only after the original interaction boundary and immediate PCM observation are frozen.
   // Profiler collection cannot reset that boundary or delay the short PCM ring inspection.
   if (diagnostic?.cpu) await stopCpuProfile("interaction-observed");

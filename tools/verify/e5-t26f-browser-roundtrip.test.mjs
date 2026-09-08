@@ -480,6 +480,29 @@ const reuseCommandEnv = {
   E5_T26F_DIAGNOSTIC_PORT: "48123",
 };
 
+test("clock comparison is reuse-only, unprofiled, explicit, and preserves F input/deadline", () => {
+  for (const mode of ["icount", "wall"]) {
+    for (const env of [{}, { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: "create" }]) {
+      assert.throws(() => selectDiagnosticCommand({ ...env, E5_T26F_DIAGNOSTIC_GUEST_CLOCK: mode }), /requires reuse mode/);
+    }
+    const env = { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_GUEST_CLOCK: mode };
+    for (const key of ["E5_T26F_DIAGNOSTIC_CPU", "E5_T26F_DIAGNOSTIC_LATENCY", "E5_T26F_DIAGNOSTIC_COMMAND"]) {
+      assert.throws(() => selectDiagnosticCommand({ ...env, [key]: "1" }), /unprofiled/);
+    }
+    const selected = selectDiagnosticCommand(env);
+    assert.equal(selected.diagnostic.guestClock, mode);
+    assert.equal(selected.postRestoreCommand, "sh /tmp/a");
+    assert.equal(selected.postRestoreKeyDelayMs, 0);
+    assert.equal(selected.diagnostic.cpu, false);
+    assert.equal(selected.diagnostic.latency, false);
+  }
+  for (const value of ["", "Wall", "wall ", "realtime", 1, null]) {
+    assert.throws(() => selectDiagnosticCommand({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_GUEST_CLOCK: value }), /must be icount or wall/);
+  }
+  assert.equal(selectDiagnosticCommand(reuseCommandEnv).diagnostic.guestClock, null);
+  assert.match(source, /postRestoreEnd - postRestoreStart <= 2_000/);
+});
+
 test("latency opt-in is exactly 1, reuse-only, and never changes the command or key pacing", () => {
   for (const env of [{}, { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: "create" }]) {
     assert.throws(() => selectDiagnosticCommand({ ...env, E5_T26F_DIAGNOSTIC_LATENCY: "1" }), /requires reuse mode/);

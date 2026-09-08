@@ -26,6 +26,7 @@ import init, {
 import { decideBootPath, deriveBootSnapshotBaseId } from "./boot-path.js";
 import { deriveOverlaySeedIdentity } from "./overlay-seed-identity.js";
 import { createTaskQuiescence } from "./task-quiescence.js";
+import { validateGuestClock, createGuestClockLifecycle } from "./guest-clock.js";
 
 // Responsiveness: a near-zero-delay "yield to the main thread" for rescheduling the run loop. The VM
 // runs on the main thread (a Web Worker offload is a larger follow-up), so a long synchronous run slice
@@ -228,6 +229,8 @@ export async function startLinuxBoot(opts = {}) {
     // E4-T30: the production interpreter uses the predecoded entry cache plus bounded (<=128 retire)
     // interrupt/device batching. `false` is the byte-identical legacy A/B path for diagnosis.
     fastInterpreter = true,
+    // E5-T26i: explicit experiment; deterministic instruction time remains the default.
+    guestClock = "icount",
     // E4-T32: policy is selected by the page and passed as data to a whole-machine worker. Undefined
     // preserves direct-loader compatibility; the page makes the production default explicit.
     jit = undefined,
@@ -279,6 +282,7 @@ export async function startLinuxBoot(opts = {}) {
   const baseUrl = opts.baseUrl ?? imageManifestUrl.replace(/[^/]*$/, "");
 
   try {
+    validateGuestClock(guestClock);
     const manifest = await fetchJsonAsset(manifestUrl, "boot manifest");
     const km = manifest.artifacts.kernel;
     // E4 restore-on-load artifacts (busybox: bootSnapshot only; Alpine chunked: bootSnapshot RAM +
@@ -774,6 +778,8 @@ export async function startLinuxBoot(opts = {}) {
       }
     }
 
+    const guestClockLifecycle = createGuestClockLifecycle(machine, guestClock);
+
     // No resume candidate was coherent, so this machine is about to execute its cold guest boot.
     // Persistent resume success intentionally reaches the scheduler without a booting state.
     if (!restoredFromBootSnapshot) onState("booting");
@@ -1088,21 +1094,20 @@ export async function startLinuxBoot(opts = {}) {
         settleFinished();
         return whenDone;
       },
-      // E2-T23: pause/resume the executor. Because guest `mtime` is a DETERMINISTIC retire-count
-      // clock (not a wall clock), pausing simply stops retiring instructions → guest monotonic
-      // time freezes and continues seamlessly on resume. No slew clamp, catch-up storm, or
-      // deadline reconciliation is possible — the "giant jump on resume" that wall-clock designs
-      // fear cannot occur here. The goldfish RTC (Date.now) keeps true wall time across the pause,
-      // so on resume `date` is correct while `uptime` reflects only executed time. See
-      // docs/timekeeping.md. main.js drives these from `visibilitychange` to idle a hidden tab.
+      // Explicit execution pauses freeze both clock modes. Wall mode resets its host anchor
+      // before rescheduling; unpaused background throttling retains the core gap/slew policy.
+      // The RTC remains separate. main.js's explicit visibility pause still freezes execution;
+      // the desktop worker route does not pause on visibility changes.
       pause: () => { paused = true; },
       resume: () => {
         if (paused && !stopped) {
+          guestClockLifecycle.resume();
           paused = false;
           schedule(); // idempotent — never spawns a second loop even if a tick is still pending
         }
       },
       isPaused: () => paused,
+      guestClockState: () => guestClockLifecycle.state(),
       // E4: true when this boot skipped the Linux boot by restoring a shipped boot snapshot.
       restoredFromBootSnapshot: () => restoredFromBootSnapshot,
       overlaySeedIdentity: () => overlaySeedIdentity,
@@ -1205,12 +1210,17 @@ export async function startLinuxBoot(opts = {}) {
       // "Free browser storage & retry": clear the quota pause and resume — the still-pending
       // writes retry on the next tick (succeed once origin storage is available, else re-dialog).
       // Deleting guest files does not shrink this block overlay until discard/TRIM exists.
-      resumeAfterQuota: () => { quotaPaused = false; schedule(); },
+      resumeAfterQuota: () => {
+        if (quotaPaused && !stopped) guestClockLifecycle.resume();
+        quotaPaused = false;
+        schedule();
+      },
       // "Continue read-only": refuse every future guest write and resolve the ONE parked,
       // unacknowledged WRITE with EIO. The persist pump may keep retrying its RAM-only bytes after
       // space is freed, but page close is allowed to lose those bytes because the guest never saw
       // S_OK for that descriptor. Existing durable data is intact.
       continueReadOnly: () => {
+        if (quotaPaused && !stopped) guestClockLifecycle.resume();
         try { machine.setDiskReadOnly(); } catch {}
         quotaReadOnly = true;
         quotaPaused = false;

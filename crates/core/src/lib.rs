@@ -3261,6 +3261,10 @@ impl Machine {
         if let Some(e) = self.executor.as_mut() {
             e.invalidate_all();
         }
+        // Host epochs are not portable snapshot data. Only a successful whole-machine commit
+        // may discard the previous wall anchor; every refusal above preserves it untouched.
+        #[cfg(not(feature = "zicsr-stub"))]
+        self.rebase_guest_clock();
         Ok(())
     }
 
@@ -3476,12 +3480,41 @@ impl Machine {
         }
         self.wall_time = Some(ts);
         self.mono_clock = Some(clock);
+        self.rebase_guest_clock();
+    }
+
+    /// The selected guest timer policy (host state, deliberately absent from resume wire data).
+    pub fn guest_clock_mode(&self) -> time::TimeMode {
+        if self.wall_time.is_some() {
+            time::TimeMode::WallClock
+        } else {
+            time::TimeMode::ICount
+        }
+    }
+
+    /// Retirements per tick in ICount mode; retained, but inactive, in wall mode.
+    pub fn guest_clock_div(&self) -> u64 {
+        self.clock_div
+    }
+
+    /// Freeze elapsed host time across an explicit pause or a successful snapshot restore.
+    /// Does not change guest mtime, deadlines, ICount phase, or policy. Ordinary worker/background
+    /// gaps must NOT call this: they keep the existing clamp/slew/jump behavior.
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub fn rebase_guest_clock(&mut self) {
+        if let (Some(ts), Some(clock), Some(clint)) =
+            (&mut self.wall_time, &self.mono_clock, &self.clint)
+        {
+            ts.rebase_wall(clock.now_nanos(), clint.borrow().mtime);
+            self.last_time_jump = None;
+        }
     }
 
     /// E4-T24: revert to the deterministic ICount clock (retire-derived `mtime`).
     pub fn set_icount_clock(&mut self) {
         self.wall_time = None;
         self.mono_clock = None;
+        self.last_time_jump = None;
     }
 
     /// E4-T24: take the last discontinuous `mtime` jump (suspend/resume exception), if any — the host

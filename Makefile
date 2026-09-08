@@ -1151,6 +1151,30 @@ verify-E5-T26f:
 	E5_T26F_IMAGE=$(E5_T26F_IMAGE) E5_T26F_IMAGE_INFO=$(E5_T26F_IMAGE_INFO) E5_T26F_DESKTOP_ASSET_DIR=$(E5_T26F_DESKTOP_ASSET_DIR) node tools/verify/e5-t26f-browser-roundtrip.mjs
 	@echo "verify-E5-T26f (Chromium desktop snapshot round-trip and interaction smoke): OK"
 
+.PHONY: verify-E5-T26i verify-E5-T26i-runtime
+verify-E5-T26i-runtime:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --features gpu-trace --test guest_clock --test cpu_resume --test desktop_machine_resume -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace time::tests -- --nocapture
+	cargo test -p wasm-vm-jit-runtime --test timekeeping -- --nocapture
+	cargo test -p wasm-vm-wasm --lib guest_clock_tests -- --nocapture
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	node --test web/tests/e5-t26i-guest-clock.test.mjs web/tests/e4-t32-worker-protocol.test.mjs tools/verify/e5-t26f-browser-roundtrip.test.mjs
+	node --check tools/verify/e5-t26i-browser-clock.mjs
+
+# The browser leg records both modes, retaining F timing failures without waiving them.
+# It requires the authenticated desktop image/chunks (E5_T26I_IMAGE/_IMAGE_INFO/_ASSET_DIR).
+# Reuse E5_T26I_CHECKPOINT only for the exact sealed runtime; the runner verifies every binding.
+verify-E5-T26i: verify-E5-T26i-runtime
+	wasm-pack test --node crates/wasm --lib --test guest_clock -- guest_clock --nocapture
+	$(MAKE) web-dist
+	node tools/verify/e5-t26i-clock-worker.mjs
+	E5_DEMO_TASK=E5-T26i E5_DEMO_OUT=evidence/e5-t26i/demo node tools/verify/e5-t18e-demo-smoke.mjs
+	node tools/verify/e5-t26i-browser-clock.mjs
+	@echo "verify-E5-T26i (opt-in clock lifecycle and unprofiled browser comparison, not F timing): OK"
+
 verify-E5-T22e:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
 	cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings

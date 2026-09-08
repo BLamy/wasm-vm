@@ -85,6 +85,7 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "jitStats",
   "profileStats",
   "schedulerStats",
+  "guestClockState",
   "tailscaleCommand",
 ]);
 

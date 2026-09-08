@@ -152,6 +152,7 @@ export const ROADMAP = [
       { name: "Desktop Terminal launcher + T12 keyboard", status: "verified", evidence: "E5-T18b: local Chromium menu/open/type/close proof" },
       { name: "Desktop cursor alignment + DPR hit-testing", status: "verified", evidence: "E5-T18c: four fresh local Chromium contexts, two window cycles each, exact guest cursor alignment and boundary hit-tests at DPR 1 and 2" },
       { name: "Desktop snapshot reload + interaction round-trip", status: "in-progress", evidence: "E5-T26f: Chromium save/reload/restore CRC, agent re-handshake, drag recovery, keyboard, cursor, and gesture-audio proof" },
+      { name: "Opt-in desktop monotonic clock", status: "in-progress", evidence: "E5-T26i: guestClock=wall experiment; deterministic icount remains the default pending measured lifecycle and input/audio proof" },
       { name: "Measured desktop drag FPS + bottleneck attribution", status: "in-progress", evidence: "E5-T25b: five real Foot-window drag runs with drawn-present, guest-instruction, transfer, and present buckets" },
       { name: "Measured focused-key input-to-photon latency", status: "in-progress", evidence: "E5-T25c: 100 post-warm-up focused key trials, first intersecting drawn damage, rAF/vsync bound, histogram, and 100 ms delay calibration" },
       { name: "Bounded desktop recovery + tty1 fallback", status: "verified", evidence: "E5-T18d: three distinct rendered compositor attempts, bounded crash budget, and visible tty1 fallback in two fresh local Chromium boots; fresh verifier sign-off" },

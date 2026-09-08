@@ -1120,6 +1120,226 @@ impl wasm_vm_core::prof::HostTimer for JsHostTimer {
     }
 }
 
+/// CLINT guest time uses the realm-monotonic performance source, not the RTC's Unix epoch.
+/// This trait adapter does not arm profiling or its entry timers.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl wasm_vm_core::time::MonotonicClock for JsHostTimer {
+    fn now_nanos(&self) -> u64 {
+        wasm_vm_core::prof::HostTimer::now_ns(self)
+    }
+}
+
+/// Validate the browser selection and obtain its source BEFORE mutating the machine. The factory
+/// keeps unavailable-source refusal deterministic in native tests without substituting a fake
+/// source into the exported browser API.
+#[cfg(all(not(feature = "zicsr-stub"), any(target_arch = "wasm32", test)))]
+fn select_guest_clock(
+    machine: &mut Machine,
+    mode: &str,
+    source: impl FnOnce() -> Option<Box<dyn wasm_vm_core::time::MonotonicClock>>,
+) -> Result<(), &'static str> {
+    match mode {
+        "icount" => machine.set_icount_clock(),
+        "wall" => {
+            let clock = source().ok_or("guest_clock_source_unavailable")?;
+            machine.set_wall_clock(clock, wasm_vm_core::time::WallClockPolicy::DEFAULT);
+        }
+        _ => return Err("unsupported_guest_clock"),
+    }
+    Ok(())
+}
+
+#[cfg(all(test, not(feature = "zicsr-stub")))]
+mod guest_clock_tests {
+    use super::*;
+    use std::cell::Cell;
+    use std::rc::Rc;
+    use wasm_vm_core::bus::Bus;
+    use wasm_vm_core::platform::virt;
+    use wasm_vm_core::time::{MonotonicClock, TimeMode};
+
+    struct Clock(Rc<Cell<u64>>);
+    impl MonotonicClock for Clock {
+        fn now_nanos(&self) -> u64 {
+            self.0.get()
+        }
+    }
+
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    fn selection_refuses_invalid_and_unavailable_before_mutating_active_anchor() {
+        let mut m = Machine::new(64 * 1024);
+        m.enable_clint(10);
+        m.bus_mut().store32(virt::DRAM_BASE, 0x0000_006f).unwrap();
+        m.hart_mut().regs.pc = virt::DRAM_BASE;
+        assert_eq!(m.guest_clock_mode(), TimeMode::ICount);
+        assert_eq!(
+            select_guest_clock(&mut m, "icount", || panic!("ICount needs no source")),
+            Ok(())
+        );
+        assert_eq!(
+            select_guest_clock(&mut m, "wall", || None),
+            Err("guest_clock_source_unavailable")
+        );
+        assert_eq!(m.guest_clock_mode(), TimeMode::ICount);
+        let host = Rc::new(Cell::new(0));
+        assert_eq!(
+            select_guest_clock(&mut m, "wall", || Some(Box::new(Clock(host.clone())))),
+            Ok(())
+        );
+        assert_eq!(m.guest_clock_mode(), TimeMode::WallClock);
+        host.set(10_000_000);
+        assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+        assert_eq!(m.clint_mtime(), 100_000);
+        let before = m.save_resume().unwrap();
+        host.set(20_000_000);
+        for label in ["", "Wall", "realtime", "icount "] {
+            assert_eq!(
+                select_guest_clock(&mut m, label, || panic!(
+                    "invalid labels cannot request a source"
+                )),
+                Err("unsupported_guest_clock")
+            );
+        }
+        assert_eq!(
+            select_guest_clock(&mut m, "wall", || None),
+            Err("guest_clock_source_unavailable")
+        );
+        assert_eq!(m.save_resume().unwrap(), before);
+        assert_eq!(m.guest_clock_mode(), TimeMode::WallClock);
+        assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+        assert_eq!(
+            m.clint_mtime(),
+            200_000,
+            "failed selection must preserve the old anchor"
+        );
+        assert_eq!(
+            select_guest_clock(&mut m, "icount", || panic!("ICount needs no source")),
+            Ok(())
+        );
+        host.set(u64::MAX);
+        assert_eq!(m.run(10), RunOutcome::MaxInstrs);
+        assert_eq!(m.clint_mtime(), 200_001);
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    fn linux() -> WasmLinux {
+        WasmLinux::new(
+            8,
+            &0x0000_006fu32.to_le_bytes(), // busy guest, not a Linux boot or WFI
+            &[],
+            String::new(),
+            js_sys::Function::new_no_args(""),
+            false,
+        )
+        .unwrap()
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    fn field(state: &JsValue, name: &str) -> JsValue {
+        js_sys::Reflect::get(state, &JsValue::from_str(name)).unwrap()
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    #[wasm_bindgen_test::wasm_bindgen_test]
+    fn exported_clock_selection_preserves_default_and_reports_unavailable_source() {
+        let m = linux();
+        let initial = m.guest_clock_state().unwrap();
+        assert_eq!(
+            field(&initial, "mode").as_string().as_deref(),
+            Some("icount")
+        );
+        assert_eq!(field(&initial, "mtime").as_string().as_deref(), Some("0"));
+        assert_eq!(field(&initial, "timebaseHz").as_f64(), Some(10_000_000.0));
+        assert_eq!(field(&initial, "clockDiv").as_f64(), Some(10.0));
+        assert!(m.set_guest_clock("invalid").is_err());
+        m.set_guest_clock("icount").unwrap();
+        m.rebase_guest_clock().unwrap();
+        assert_eq!(
+            field(&m.guest_clock_state().unwrap(), "mtime"),
+            field(&initial, "mtime")
+        );
+        // Node has no Window/Worker performance source. A real browser/worker must use the real
+        // adapter; the coordinator's browser proof asserts that wall selection actually succeeds.
+        if JsHostTimer::new().is_some() {
+            m.set_guest_clock("wall").unwrap();
+            assert_eq!(
+                field(&m.guest_clock_state().unwrap(), "mode")
+                    .as_string()
+                    .as_deref(),
+                Some("wall")
+            );
+        } else {
+            assert!(m.set_guest_clock("wall").is_err());
+            assert_eq!(
+                field(&m.guest_clock_state().unwrap(), "mode"),
+                field(&initial, "mode")
+            );
+        }
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    #[wasm_bindgen_test::wasm_bindgen_test]
+    fn exported_state_is_lossless_readonly_and_blob_restore_rebases_only_on_success() {
+        let m = linux();
+        let host = Rc::new(Cell::new(0));
+        let saved_mtime = (1u64 << 53) + 37;
+        {
+            let mut inner = m.inner.borrow_mut();
+            inner
+                .machine
+                .bus_mut()
+                .store64(virt::CLINT_BASE + 0xbff8, saved_mtime)
+                .unwrap();
+            inner.machine.set_wall_clock(
+                Box::new(Clock(host.clone())),
+                wasm_vm_core::time::WallClockPolicy::DEFAULT,
+            );
+        }
+        let blob = js_sys::Uint8Array::new(&m.save_snapshot().unwrap()).to_vec();
+        host.set(600_000_000_000);
+        let state = m.guest_clock_state().unwrap();
+        assert_eq!(
+            field(&state, "mtime").as_string(),
+            Some(saved_mtime.to_string())
+        );
+        assert_eq!(
+            js_sys::Uint8Array::new(&m.save_snapshot().unwrap()).to_vec(),
+            blob
+        );
+        m.rebase_guest_clock().unwrap();
+        m.run_chunk(1, None).unwrap();
+        assert_eq!(
+            field(&m.guest_clock_state().unwrap(), "mtime").as_string(),
+            Some(saved_mtime.to_string())
+        );
+        host.set(600_001_000_000);
+        m.run_chunk(1, None).unwrap();
+        assert_eq!(m.inner.borrow().machine.clint_mtime(), saved_mtime + 10_000);
+        m.load_snapshot_blob(blob.clone()).unwrap();
+        assert_eq!(m.inner.borrow().machine.clint_mtime(), saved_mtime);
+        host.set(600_002_000_000);
+        assert!(m.load_snapshot_blob(vec![0]).is_err());
+        assert!(m.set_guest_clock("invalid").is_err());
+        m.run_chunk(1, None).unwrap();
+        assert_eq!(m.inner.borrow().machine.clint_mtime(), saved_mtime + 10_000);
+        // Also cover a fresh WASM wrapper with a distinct source/epoch and topology from assembly.
+        let fresh = linux();
+        let fresh_host = Rc::new(Cell::new(17_000_000_000));
+        fresh.inner.borrow_mut().machine.set_wall_clock(
+            Box::new(Clock(fresh_host.clone())),
+            wasm_vm_core::time::WallClockPolicy::DEFAULT,
+        );
+        fresh.load_snapshot_blob(blob).unwrap();
+        fresh_host.set(17_001_000_000);
+        fresh.run_chunk(1, None).unwrap();
+        assert_eq!(
+            fresh.inner.borrow().machine.clint_mtime(),
+            saved_mtime + 10_000
+        );
+    }
+}
+
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 fn set_machine_profiling(machine: &mut Machine, on: bool) -> bool {
     if on {
@@ -2713,6 +2933,55 @@ impl WasmLinux {
             set("input", &JsValue::NULL);
         }
         Ok(config.into())
+    }
+
+    /// E5-T26i: opt in to realm-monotonic guest time, or retain the deterministic ICount oracle.
+    /// Unsupported labels and unavailable performance sources refuse before any clock mutation.
+    #[wasm_bindgen(js_name = setGuestClock)]
+    pub fn set_guest_clock(&self, mode: &str) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        select_guest_clock(&mut inner.machine, mode, || {
+            JsHostTimer::new()
+                .map(|clock| Box::new(clock) as Box<dyn wasm_vm_core::time::MonotonicClock>)
+        })
+        .map_err(JsError::new)
+    }
+
+    /// Explicit loader pause/resume only. Background gaps keep the core catch-up policy.
+    #[wasm_bindgen(js_name = rebaseGuestClock)]
+    pub fn rebase_guest_clock(&self) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.rebase_guest_clock();
+        Ok(())
+    }
+
+    /// Read-only state: does not sample the clock or consume jump notifications. mtime is a decimal
+    /// string so worker structured cloning cannot round a guest u64 through JavaScript Number.
+    #[wasm_bindgen(js_name = guestClockState)]
+    pub fn guest_clock_state(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let object = js_sys::Object::new();
+        let set = |key: &str, value: JsValue| {
+            let _ = js_sys::Reflect::set(&object, &JsValue::from_str(key), &value);
+        };
+        let mode = match inner.machine.guest_clock_mode() {
+            wasm_vm_core::time::TimeMode::ICount => "icount",
+            wasm_vm_core::time::TimeMode::WallClock => "wall",
+        };
+        set("mode", JsValue::from_str(mode));
+        set(
+            "mtime",
+            JsValue::from_str(&inner.machine.clint_mtime().to_string()),
+        );
+        set(
+            "timebaseHz",
+            JsValue::from_f64(wasm_vm_core::platform::virt::TIMEBASE_FREQ_HZ as f64),
+        );
+        set(
+            "clockDiv",
+            JsValue::from_f64(inner.machine.guest_clock_div() as f64),
+        );
+        Ok(object.into())
     }
 
     /// E4-T30: select the production interpreter fast path for a browser Linux guest. It combines
