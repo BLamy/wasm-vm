@@ -164,14 +164,13 @@ impl PlicState {
     /// The id the given context would claim: the highest-priority pending+enabled source above
     /// threshold, ties broken by lowest id; 0 if none.
     fn best_source(&self, context: usize) -> usize {
-        let candidates = self.pending() & self.enable[context];
+        let mut candidates = self.pending() & self.enable[context] & !1u32;
         let thresh = self.threshold[context];
         let mut best_id = 0usize;
         let mut best_prio = 0u32;
-        for id in 1..NUM_SOURCES {
-            if candidates & (1u32 << id) == 0 {
-                continue;
-            }
+        while candidates != 0 {
+            let id = candidates.trailing_zeros() as usize;
+            candidates &= candidates - 1;
             let prio = self.priority[id];
             if prio <= thresh {
                 continue; // masked by the threshold
