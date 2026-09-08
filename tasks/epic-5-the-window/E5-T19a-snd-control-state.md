@@ -3,10 +3,10 @@ id: E5-T19a
 epic: 5
 title: virtio-snd control protocol and PCM state machine
 priority: 519.1
-status: verified
+status: in-progress
 depends_on: [E5-T05c]
 estimate: S
-risk: medium
+risk: high
 capstone: false
 ---
 
@@ -19,8 +19,9 @@ transitions explicit before any host audio timing or browser sink exists.
 
 - `crates/core/src/dev/virtio/snd/mod.rs` control-plane skeleton for virtio device ID 25.
 - Deterministic JACK_INFO, PCM_INFO, and CHMAP_INFO responses for one stereo S16 output stream.
-- An explicit RELEASED → SET_PARAMS → PREPARED → RUNNING → STOPPED → RELEASED transition table
-  with a checked-in oracle covering every request/state cell.
+- An explicit PCM transition table matching Virtio 1.3 §5.14.6.6.1, including repeated
+  SET_PARAMS/PREPARE and RELEASE → PREPARE with retained negotiated parameters. Its independent
+  oracle covers every request/state cell and distinguishes never-configured power-on state.
 - Validation for format, rate, channels, buffer size, period size, and stream ID.
 
 ## Acceptance criteria
@@ -39,6 +40,23 @@ unknown stream IDs or truncated payloads. The oracle must show no illegal transi
 state mutation after a rejected request.
 
 ## Verification log
+
+### 2026-09-07 — fresh Daybreak Blue verifier — VERDICT: refuted
+
+The independent report `evidence/e5-t19a/recovery-refutation/results.md` (SHA-256
+`b8e08e9f06e8a8ea65fe51f2c5916c05c0bde64b373d4d924c86bd1968464ca1`) refutes this
+control contract, not the held E5-T26h queue-order fix. At runtime source SHA-256
+`b4665f3c335e1d0806981236338a5507bc8712112051dc530318220dca16fa23`, the real-queue
+native recording proves exact 960-frame playback and an XRUN, then STOP/RELEASE OK
+followed by PREPARE `0x8001` (BAD_MSG, Linux `-EINVAL`), with parameters discarded.
+Repro: `cargo test -p wasm-vm-core --test desktop_machine_audio_resume
+linux_6_6_63_xrun_stop_release_prepare_recovers_without_set_params -- --nocapture`.
+The same specification permits three repeated SET_PARAMS/PREPARE cells that the
+original self-confirming table rejected. Correct this one control-state boundary,
+retain pending-I/O release ordering, and prove configured-release state also survives
+the existing sound codec without admitting invalid or never-configured streams.
+Raise the remediation to high risk because it changes guest control semantics and
+persisted configuration. E5-T26f is blocked until a fresh critic accepts the remedy.
 
 ### 2026-09-03 — worker — IMPLEMENTED
 

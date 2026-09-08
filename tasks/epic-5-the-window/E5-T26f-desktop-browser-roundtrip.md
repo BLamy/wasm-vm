@@ -3,8 +3,9 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: in-progress
-depends_on: [E5-T26e, E5-T26h]
+status: blocked
+blocked_on: E5-T19a
+depends_on: [E5-T26e, E5-T26h, E5-T19a]
 estimate: S
 risk: high
 capstone: false
@@ -39,6 +40,20 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-07 — coordinator — blocked on independently refuted PCM recovery
+
+The paced replay at `6215c8d9` reaches a real ALSA XRUN and then fails PREPARE with
+`Invalid argument`; canonical inspected evidence and exact command are retained in
+`evidence/e5-t26f/paced-original-reuse-6215c8d9/README.md`. A fresh Daybreak Blue
+critic independently reproduced the Linux STOP → RELEASE → PREPARE wire failure
+in E5-T19a: `cargo test -p wasm-vm-core --test desktop_machine_audio_resume
+linux_6_6_63_xrun_stop_release_prepare_recovers_without_set_params -- --nocapture`
+fails with BAD_MSG (`0x8001`) after RELEASE discards parameters. The report is
+`evidence/e5-t19a/recovery-refutation/results.md`. Resume this browser-only task
+after the control-state prerequisite is corrected and independently reverified.
+The existing H queue mapping and other unchanged held findings remain carried
+forward. No timing/FPS waiver has been received; no acceptance cap is changed.
 
 ### 2026-09-07 — coordinator — fixed-sound diagnostic reaches real PCM, misses timing
 

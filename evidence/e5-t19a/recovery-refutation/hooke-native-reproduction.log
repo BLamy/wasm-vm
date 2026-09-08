@@ -1,0 +1,22 @@
+^D    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/desktop_machine_audio_resume.rs (target/debug/deps/desktop_machine_audio_resume-f2d6e0d1632a19bd)
+
+running 1 test
+Linux XRUN recovery after successful 960-frame PCM: STOP=OK RELEASE=OK; state=Released params=None tx_used=2 event_used=1
+Linux recovery PREPARE status=0x8001; state=Released; params=None; control_used=6
+
+thread 'linux_6_6_63_xrun_stop_release_prepare_recovers_without_set_params' (15488097) panicked at crates/core/tests/desktop_machine_audio_resume.rs:877:5:
+assertion `left == right` failed: Linux 6.6.63 STOP -> RELEASE -> PREPARE recovery must not fail (BAD_MSG maps to -EINVAL)
+  left: 32769
+ right: 32768
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test linux_6_6_63_xrun_stop_release_prepare_recovers_without_set_params ... FAILED
+
+failures:
+
+failures:
+    linux_6_6_63_xrun_stop_release_prepare_recovers_without_set_params
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p wasm-vm-core --test desktop_machine_audio_resume`

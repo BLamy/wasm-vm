@@ -745,3 +745,140 @@ fn sound_layout_version_does_not_invalidate_container_v1_headless_resume() {
     assert_eq!(target.hart().regs.read(5), 0x1122_3344);
     assert_eq!(target.run(1), RunOutcome::MaxInstrs);
 }
+
+#[test]
+fn linux_6_6_63_xrun_stop_release_prepare_recovers_without_set_params() {
+    // Driver ordering was read from target/kernel-build/linux-6.6.63.tar.xz:
+    // sound/core/pcm_native.c:1502-1508 triggers STOP and sets stop_operating;
+    // :1952-1957 calls sync_stop before prepare, with :613-618 invoking the driver.
+    // sound/virtio/virtio_pcm_ops.c:358-371 sends STOP; :397-425 sends RELEASE and
+    // waits for pending I/O; :276-308 sends PREPARE without SET_PARAMS unless suspended.
+    // This test does NOT assume PREPARE from Running is a valid recovery sequence.
+    let root =
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../target/desktop-machine-audio-resume");
+    std::fs::create_dir_all(&root).unwrap();
+    let path = root.join("linux-6.6.63-xrun-recovery.wav");
+    let mut rig = Rig::empty(&path);
+    rig.initialize_source(0);
+    // Match the failing aplay observation: 480-frame period, 960-frame buffer, 48 kHz stereo.
+    let params = PcmParams {
+        period_bytes: 480 * 4,
+        buffer_bytes: 960 * 4,
+        features: snd::VIRTIO_SND_PCM_F_EVT_XRUNS,
+        ..PcmParams::default()
+    };
+    rig.command(&params.to_bytes());
+    rig.lifecycle(snd::VIRTIO_SND_R_PCM_PREPARE);
+    let tx = Ring::sound(snd::TX_QUEUE);
+    let event = Ring::sound(snd::EVENT_QUEUE);
+    let mut expected_pcm = Vec::new();
+    for ordinal in 0..2u16 {
+        let head = ordinal * 3;
+        let data = tx.data() + u64::from(ordinal) * 0x4000;
+        let status = tx.status() + u64::from(ordinal) * 8;
+        let sample = 100i16 + ordinal as i16;
+        let pcm: Vec<u8> = [sample, -sample]
+            .repeat(480)
+            .iter()
+            .flat_map(|sample| sample.to_le_bytes())
+            .collect();
+        expected_pcm.extend_from_slice(&pcm);
+        rig.machine.bus_mut().store32(data, 0).unwrap();
+        rig.machine
+            .bus_mut()
+            .ram_mut()
+            .write_slice(data + 4, &pcm)
+            .unwrap();
+        rig.machine.bus_mut().store64(status, u64::MAX).unwrap();
+        tx.descriptor(&mut rig.machine, head, data, 4, NEXT, head + 1);
+        tx.descriptor(
+            &mut rig.machine,
+            head + 1,
+            data + 4,
+            params.period_bytes,
+            NEXT,
+            head + 2,
+        );
+        tx.descriptor(&mut rig.machine, head + 2, status, 8, WRITE, 0);
+        tx.post(&mut rig.machine, ordinal, head);
+    }
+    // The driver queues TX before START, and eventq has a real writable XRUN buffer.
+    event.descriptor(&mut rig.machine, 0, event.data(), 8, WRITE, 0);
+    event.post(&mut rig.machine, 0, 0);
+    rig.step();
+    rig.lifecycle(snd::VIRTIO_SND_R_PCM_START);
+    rig.clock.advance_ns(20_000_000);
+    rig.step();
+    assert_eq!(tx.used_idx(&mut rig.machine), 2);
+    for ordinal in 0..2u64 {
+        assert_eq!(
+            rig.machine.bus_mut().load32(tx.status() + ordinal * 8),
+            Ok(snd::VIRTIO_SND_S_OK)
+        );
+        assert_eq!(
+            rig.machine.bus_mut().load32(tx.used() + 4 + ordinal * 8),
+            Ok(ordinal as u32 * 3)
+        );
+    }
+    assert_eq!(rig.wav.bytes(), 3840);
+    assert_eq!(&std::fs::read(&path).unwrap()[44..], &expected_pcm);
+    // Do not refill. The next 10 ms deadline emits and completes one real XRUN event.
+    rig.clock.advance_ns(10_000_000);
+    rig.step();
+    event.assert_completion(&mut rig.machine, 0, 0, 8);
+    assert_eq!(
+        rig.machine.bus_mut().load32(event.data()),
+        Ok(snd::VIRTIO_SND_EVT_PCM_XRUN)
+    );
+    assert_eq!(rig.machine.bus_mut().load32(event.data() + 4), Ok(0));
+    let state = rig.machine.virtio_snd().unwrap().1;
+    assert_eq!(state.borrow().stream.state(), PcmState::Running);
+    assert_eq!(state.borrow().playback_pending_count(), 0);
+    rig.lifecycle(snd::VIRTIO_SND_R_PCM_STOP);
+    assert_eq!(state.borrow().stream.state(), PcmState::Stopped);
+    assert_eq!(state.borrow().stream.params(), Some(params));
+    rig.lifecycle(snd::VIRTIO_SND_R_PCM_RELEASE);
+    assert_eq!(state.borrow().playback_pending_count(), 0);
+    println!(
+        "Linux XRUN recovery after successful 960-frame PCM: STOP=OK RELEASE=OK; state={:?} params={:?} tx_used={} event_used={}",
+        state.borrow().stream.state(),
+        state.borrow().stream.params(),
+        tx.used_idx(&mut rig.machine),
+        event.used_idx(&mut rig.machine)
+    );
+
+    // Non-suspended snd_pcm_prepare performs no intervening SET_PARAMS. Capture the actual
+    // controlq response here so the diagnostic reports the wire error, not only host metadata.
+    let control = Ring::sound(snd::CONTROL_QUEUE);
+    let ordinal = control.used_idx(&mut rig.machine);
+    let head = (ordinal % (QSIZE / 2)) * 2;
+    let data = control.data() + u64::from(head) * 0x80;
+    rig.machine
+        .bus_mut()
+        .store32(data, snd::VIRTIO_SND_R_PCM_PREPARE)
+        .unwrap();
+    rig.machine.bus_mut().store32(data + 4, 0).unwrap();
+    rig.machine
+        .bus_mut()
+        .store32(data + 0x40, u32::MAX)
+        .unwrap();
+    control.descriptor(&mut rig.machine, head, data, 8, NEXT, head + 1);
+    control.descriptor(&mut rig.machine, head + 1, data + 0x40, 4, WRITE, 0);
+    control.post(&mut rig.machine, ordinal, head);
+    rig.step();
+    control.assert_completion(&mut rig.machine, ordinal, head, 4);
+    let status = rig.machine.bus_mut().load32(data + 0x40).unwrap();
+    println!(
+        "Linux recovery PREPARE status={status:#x}; state={:?}; params={:?}; control_used={}",
+        state.borrow().stream.state(),
+        state.borrow().stream.params(),
+        control.used_idx(&mut rig.machine)
+    );
+    assert_eq!(
+        status,
+        snd::VIRTIO_SND_S_OK,
+        "Linux 6.6.63 STOP -> RELEASE -> PREPARE recovery must not fail (BAD_MSG maps to -EINVAL)"
+    );
+    assert_eq!(state.borrow().stream.state(), PcmState::Prepared);
+    assert_eq!(state.borrow().stream.params(), Some(params));
+}
