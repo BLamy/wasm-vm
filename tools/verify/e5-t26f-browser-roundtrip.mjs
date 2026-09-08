@@ -22,6 +22,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 import { attachWorkerProfiler } from "./e5-t22c-cpu-profile.mjs";
+import { assertWindowMoved } from "../../web/bench/desktop-perf.js";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const web = path.join(repo, "web");
@@ -214,12 +215,26 @@ async function prepareDiagnostic(options, binding) {
 }
 
 async function installCheckpointSession(targetPage, checkpoint, origin) {
-  await targetPage.addInitScript(({ session, origin: expectedOrigin }) => {
-    if (location.origin !== expectedOrigin) return;
-    const current = sessionStorage.getItem(session.key);
-    if (current !== null && current !== session.value) throw new Error("refusing to overwrite a different desktop session");
-    sessionStorage.setItem(session.key, session.value);
-  }, { session: checkpoint.session, origin });
+  // Hydrate once without loading the guest. A persistent init script would replay the
+  // original envelope on later reloads, conflicting with legitimate moving snapshots.
+  const bootstrapUrl = new URL("/__e5t26f-checkpoint-bootstrap.html", origin).href;
+  const serveBootstrap = (route) => route.fulfill({
+    status: 200, contentType: "text/html",
+    headers: { "cache-control": "no-store", "content-security-policy": "default-src 'none'" },
+    body: "<!doctype html><title>E5-T26f checkpoint bootstrap</title>",
+  });
+  await targetPage.route(bootstrapUrl, serveBootstrap);
+  try {
+    await targetPage.goto(bootstrapUrl, { waitUntil: "domcontentloaded", timeout: 30_000 });
+    await targetPage.evaluate(({ session, origin: expectedOrigin }) => {
+      if (location.origin !== expectedOrigin) throw new Error("checkpoint bootstrap origin differs");
+      const current = sessionStorage.getItem(session.key);
+      if (current !== null && current !== session.value) throw new Error("refusing to overwrite a different desktop session");
+      sessionStorage.setItem(session.key, session.value);
+    }, { session: checkpoint.session, origin });
+  } finally {
+    await targetPage.unroute(bootstrapUrl, serveBootstrap);
+  }
 }
 
 async function readBrowserIdentity(browser, context, page, headless) {
@@ -347,6 +362,100 @@ const milestones = {
 
 let lastPhase = null;
 let cpuProfiler = null;
+
+function recordCompletionConsole(type, text) {
+  if (!diagnostic?.complete) return;
+  const entries = milestones.completionConsole ??= [];
+  if (entries.length < 32) entries.push({
+    timestamp: new Date().toISOString(), phase: lastPhase?.phase ?? null,
+    type, text: String(text).slice(0, 1_000),
+  });
+}
+
+async function recordCompletionGeneration(key, snapshot) {
+  if (!diagnostic?.complete) return;
+  const entry = milestones[key] ??= {};
+  if (snapshot) entry.machineResume = snapshot.machineResume;
+  entry.generationObservation = { status: "pending" };
+  try {
+    entry.generationObservation = await page.evaluate(async () => {
+      const requestedAt = performance.now();
+      const controller = window.__desktopController;
+      if (typeof controller?.snapshotGeneration !== "function") {
+        return { requestedAt, observedAt: performance.now(), status: "unavailable" };
+      }
+      const snapshotGeneration = await controller.snapshotGeneration();
+      return { requestedAt, observedAt: performance.now(), status: "observed", snapshotGeneration };
+    });
+  } catch (error) {
+    entry.generationObservation = { status: "error", error: String(error).slice(0, 1_000) };
+    throw error;
+  }
+}
+
+function observedDragTranslation(before, after) {
+  // Match the same titlebar row, not another overlapping Foot window. The requested
+  // movement is 80px; allow bounded rounding while rejecting stale or unrelated geometry.
+  if (![before?.top, before?.bottom, after?.top, after?.bottom].every(Number.isFinite) ||
+      Math.abs(after.top - before.top) > 1 || Math.abs(after.bottom - before.bottom) > 1) return null;
+  try {
+    const translation = assertWindowMoved(before, after, { direction: 1, minimumPx: 64 });
+    return translation.deltaX <= 96 ? translation : null;
+  } catch { return null; }
+}
+
+async function proveAndPauseDrag(before) {
+  phaseProgress("drag:guest-translation");
+  const evidence = milestones.dragMovement = { before, status: "waiting" };
+  await waitFor(async () => {
+    evidence.observed = await page.evaluate(() => ({
+      at: performance.now(), titlebar: window.__desktopCursor.detectWindowChrome()?.titlebar ?? null,
+    }));
+    evidence.translation = observedDragTranslation(before, evidence.observed.titlebar);
+    return evidence.translation;
+  }, "guest window did not complete the requested 80px drag", 15_000);
+  evidence.paused = await page.evaluate(async () => {
+    const controller = window.__desktopController;
+    await controller.pause();
+    return { at: performance.now(), isPaused: await controller.isPaused(),
+      titlebar: window.__desktopCursor.detectWindowChrome()?.titlebar ?? null };
+  });
+  assert.equal(evidence.paused.isPaused, true, "moving checkpoint must leave the guest paused");
+  evidence.pausedTranslation = observedDragTranslation(before, evidence.paused.titlebar);
+  assert.ok(evidence.pausedTranslation, "paused guest window no longer matches the requested drag");
+  evidence.status = "passed";
+  phaseProgress("drag:guest-translation", "done");
+}
+
+async function auditFrozenDragSnapshot(snapshot, label) {
+  phaseProgress(`drag:checkpoint-${label}`);
+  const audit = milestones[`dragCheckpoint${label}`] = { status: "running", snapshotSha256: snapshot.sha256 };
+  try {
+    audit.observed = await page.evaluate(async (key) => {
+      const controller = window.__desktopController;
+      const isPaused = await controller.isPaused();
+      const generation = await controller.snapshotGeneration();
+      const decision = await controller.snapshotDecision();
+      const record = JSON.parse(sessionStorage.getItem(key));
+      return { at: performance.now(), isPaused, generation, decision, envelopeSha256: record?.sha256 ?? null,
+        stillPaused: await controller.isPaused(), finalGeneration: await controller.snapshotGeneration() };
+    }, DESKTOP_STORAGE_KEY);
+    const actual = audit.observed;
+    assert.equal(actual.isPaused, true, "published moving snapshot guest is not paused");
+    assert.equal(actual.stillPaused, true, "guest resumed during moving snapshot audit");
+    assert.ok(Number.isSafeInteger(actual.generation) && actual.generation >= 0, "missing moving snapshot generation");
+    assert.equal(actual.generation, snapshot.machineResume?.overlayGeneration, "moving snapshot disk generation advanced");
+    assert.equal(actual.finalGeneration, actual.generation, "moving snapshot generation changed during audit");
+    assert.equal(actual.decision, "resume", "moving whole-machine snapshot is not coherent");
+    assert.equal(actual.envelopeSha256, snapshot.sha256, "stored moving desktop envelope changed");
+    audit.status = "passed";
+    phaseProgress(`drag:checkpoint-${label}`, "done");
+  } catch (error) {
+    audit.status = "failed";
+    audit.error = String(error?.message || error);
+    throw error;
+  }
+}
 
 function retainDeferredInteractionCap(error, postRestoreStart, postRestoreEnd) {
   // Only the dedicated final-cap assertion may be deferred, never an earlier functional error
@@ -1194,8 +1303,14 @@ try {
   if (diagnosticCheckpoint) await installCheckpointSession(page, diagnosticCheckpoint, base);
   startProgressSampling();
   phaseProgress("browser:launch", "done");
-  page.on("pageerror", (error) => browserErrors.push({ type: "pageerror", text: String(error) }));
+  page.on("pageerror", (error) => {
+    browserErrors.push({ type: "pageerror", text: String(error) });
+    recordCompletionConsole("pageerror", error);
+  });
   page.on("console", (message) => {
+    if (diagnostic?.complete && ["warning", "error"].includes(message.type())) {
+      recordCompletionConsole(message.type(), message.text());
+    }
     if (message.type() === "error" && !message.location().url?.endsWith("/favicon.ico")) {
       browserErrors.push({ type: "console", text: message.text() });
     }
@@ -1570,6 +1685,7 @@ try {
   const beforeDragSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: false }));
   assert.match(beforeDragSnapshot.sha256, SHA256);
   milestones.dragBeforeSnapshot = { sha256: beforeDragSnapshot.sha256, byteLength: beforeDragSnapshot.byteLength };
+  if (diagnostic?.complete) await recordCompletionGeneration("dragBeforeSnapshot", beforeDragSnapshot);
   phaseProgress("snapshot:drag-before", "done");
   phaseProgress("snapshot:drag-held");
   await page.mouse.down();
@@ -1577,15 +1693,20 @@ try {
   const heldDragSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: false }));
   assert.match(heldDragSnapshot.sha256, SHA256);
   milestones.dragHeldSnapshot = { sha256: heldDragSnapshot.sha256, byteLength: heldDragSnapshot.byteLength };
+  if (diagnostic?.complete) await recordCompletionGeneration("dragHeldSnapshot", heldDragSnapshot);
   phaseProgress("snapshot:drag-held", "done");
   phaseProgress("snapshot:drag-moving");
   await page.mouse.move(dragEnd.x, dragEnd.y);
-  await page.waitForTimeout(100);
+  await proveAndPauseDrag(dragChrome.titlebar);
+  // saveDesktopSnapshot preserves an already-paused controller. Do not run the guest
+  // after publishing this paired checkpoint: later durable writes correctly make it stale.
   const dragSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: true }));
   milestones.dragSnapshot = {
     sha256: dragSnapshot.sha256, byteLength: dragSnapshot.byteLength,
     preFrontBufferCrc: dragSnapshot.preFrontBufferCrc, machineResume: dragSnapshot.machineResume,
   };
+  if (diagnostic?.complete) await recordCompletionGeneration("dragSnapshot", dragSnapshot);
+  await auditFrozenDragSnapshot(dragSnapshot, "Published");
   phaseProgress("snapshot:drag-moving", "done");
   phaseProgress("snapshot:drag-released");
   await page.mouse.up();
@@ -1595,8 +1716,11 @@ try {
   assert.match(dragSnapshot.sha256, SHA256);
   assert.ok(dragSnapshot.byteLength > 0, "drag desktop snapshot is empty");
   milestones.dragReleasedSnapshot = { sha256: releasedDragSnapshot.sha256, byteLength: releasedDragSnapshot.byteLength };
+  if (diagnostic?.complete) await recordCompletionGeneration("dragReleasedSnapshot", releasedDragSnapshot);
   phaseProgress("snapshot:drag-released", "done");
 
+  if (diagnostic?.complete) await recordCompletionGeneration("beforeSecondReload");
+  await auditFrozenDragSnapshot(dragSnapshot, "BeforeReload");
   const secondRestore = await reloadWithAutoRestore(restoreUrl, "drag");
   milestones.dragRestore = { result: secondRestore, displayChecksPassed: false, checksPassed: false };
   phaseProgress("restore:drag:display-and-button-checks");

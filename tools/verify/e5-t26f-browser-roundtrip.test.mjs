@@ -109,7 +109,7 @@ function fixture() {
        remainingInteractionMs, waitForRestoredCursor, captureFailure,
        waitForReadyAndRestore, auditRestoreCoherence,
        workerProfilerHost, startCpuProfile, stopCpuProfile,
-       recordDiagnosticJit,
+       recordDiagnosticJit, recordCompletionConsole, recordCompletionGeneration,
        installInteractionLatencyProbe, commandMarkerReady, startInteractionLatencyProbe, stopInteractionLatencyProbe,
        state: () => ({ lastPhase, lastProgressSample, progressProbe }) })
   `, context);
@@ -1859,25 +1859,240 @@ test("profile ownership refuses symlinks instead of traversing or overwriting an
   await assert.rejects(f.api.prepareDiagnostic({ ...f.options, mode: "reuse" }, f.binding), /refuses symlink/);
 });
 
-test("checkpoint session hydration is exact, origin-scoped and refuses an existing different envelope", async (t) => {
-  const f = await checkpointFixture(t);
+function checkpointPage({ observedOrigin, gotoError, evaluateError } = {}) {
   const data = new Map();
+  const routes = new Map();
+  const calls = [];
+  const responses = [];
+  const writes = [];
   const sandbox = vm.createContext({
-    location: { origin: "http://elsewhere" },
-    sessionStorage: { getItem: (key) => data.get(key) ?? null, setItem: (key, value) => data.set(key, value) },
+    location: { origin: "null" },
+    sessionStorage: {
+      getItem: (key) => data.get(key) ?? null,
+      setItem: (key, value) => { writes.push([key, value]); data.set(key, value); },
+    },
   });
-  const targetPage = { addInitScript: async (fn, argument) => {
-    sandbox.argument = argument;
-    vm.runInContext(`(${fn})(argument)`, sandbox);
-  } };
-  await f.api.installCheckpointSession(targetPage, f.checkpoint, f.options.origin);
-  assert.equal(data.size, 0);
-  sandbox.location.origin = f.options.origin;
-  await f.api.installCheckpointSession(targetPage, f.checkpoint, f.options.origin);
-  assert.equal(data.get(f.checkpoint.session.key), f.checkpoint.session.value);
-  data.set(f.checkpoint.session.key, "unrelated envelope");
-  await assert.rejects(f.api.installCheckpointSession(targetPage, f.checkpoint, f.options.origin), /refusing to overwrite/);
-  assert.equal(data.get(f.checkpoint.session.key), "unrelated envelope");
+  const page = {
+    addInitScript: () => assert.fail("checkpoint hydration must not install a persistent script"),
+    route: async (url, handler) => { calls.push("route"); routes.set(url, handler); },
+    goto: async (url, options) => {
+      calls.push({ goto: url, options });
+      if (gotoError) throw gotoError;
+      sandbox.location.origin = observedOrigin ?? new URL(url).origin;
+      const handler = routes.get(url);
+      if (handler) await handler({ fulfill: async (response) => { responses.push(response); } });
+    },
+    evaluate: async (fn, argument) => {
+      calls.push("evaluate");
+      if (evaluateError) throw evaluateError;
+      sandbox.argument = argument;
+      return vm.runInContext(`(${fn})(argument)`, sandbox);
+    },
+    unroute: async (url, handler) => {
+      calls.push("unroute");
+      assert.equal(routes.get(url), handler, "remove exactly the installed bootstrap handler");
+      routes.delete(url);
+    },
+  };
+  return { page, data, routes, calls, responses, writes };
+}
+
+test("checkpoint hydration seeds exact bytes once on an inert same-origin bootstrap, never on later navigation", async (t) => {
+  const f = await checkpointFixture(t);
+  const p = checkpointPage();
+  await f.api.installCheckpointSession(p.page, f.checkpoint, f.options.origin);
+  assert.deepEqual(p.calls.map((call) => typeof call === "string" ? call : "goto"),
+    ["route", "goto", "evaluate", "unroute"]);
+  const navigation = p.calls[1];
+  assert.equal(navigation.goto, `${f.options.origin}/__e5t26f-checkpoint-bootstrap.html`);
+  assert.equal(navigation.options.waitUntil, "domcontentloaded");
+  assert.equal(navigation.options.timeout, 30_000);
+  assert.equal(p.responses.length, 1);
+  assert.equal(p.responses[0].status, 200);
+  assert.equal(p.responses[0].contentType, "text/html");
+  assert.equal(p.responses[0].headers["content-security-policy"], "default-src 'none'");
+  assert.equal(p.responses[0].headers["cache-control"], "no-store");
+  assert.equal(p.responses[0].body, "<!doctype html><title>E5-T26f checkpoint bootstrap</title>");
+  assert.deepEqual(p.writes, [[f.checkpoint.session.key, f.checkpoint.session.value]]);
+  assert.equal(p.routes.size, 0);
+  await p.page.goto(`${f.options.origin}/desktop-cursor.html?autoRestore=1`);
+  p.data.set(f.checkpoint.session.key, "legitimate moving snapshot");
+  await p.page.goto(`${f.options.origin}/desktop-cursor.html?autoRestore=1`);
+  assert.equal(p.data.get(f.checkpoint.session.key), "legitimate moving snapshot");
+  assert.equal(p.writes.length, 1, "later navigation must not re-seed session storage");
+  assert.equal(p.calls.filter((call) => call === "evaluate").length, 1);
+  assert.equal(p.responses.length, 1, "no route remains for the guest navigation");
+  assert.equal(source.match(/await installCheckpointSession\(/gu).length, 1);
+  assert.match(source, /if \(diagnosticCheckpoint\) await installCheckpointSession\(page, diagnosticCheckpoint, base\);/);
+});
+
+test("checkpoint hydration accepts an identical current envelope but refuses to clobber different data", async (t) => {
+  const f = await checkpointFixture(t);
+  for (const current of [f.checkpoint.session.value, "unrelated envelope", ""]) {
+    const p = checkpointPage();
+    p.data.set(f.checkpoint.session.key, current);
+    const hydration = f.api.installCheckpointSession(p.page, f.checkpoint, f.options.origin);
+    if (current === f.checkpoint.session.value) await hydration;
+    else {
+      await assert.rejects(hydration, /refusing to overwrite a different desktop session/);
+      assert.equal(p.writes.length, 0);
+    }
+    assert.equal(p.data.get(f.checkpoint.session.key), current);
+    assert.equal(p.routes.size, 0);
+    assert.equal(p.calls.at(-1), "unroute");
+  }
+});
+
+test("checkpoint hydration refuses any different exact origin before mutation and removes its route", async (t) => {
+  const f = await checkpointFixture(t);
+  for (const observedOrigin of ["http://localhost:48123", "http://127.0.0.1:48124", "https://127.0.0.1:48123", "null"]) {
+    const p = checkpointPage({ observedOrigin });
+    await assert.rejects(f.api.installCheckpointSession(p.page, f.checkpoint, f.options.origin), /bootstrap origin differs/);
+    assert.equal(p.data.size, 0);
+    assert.equal(p.writes.length, 0);
+    assert.equal(p.routes.size, 0);
+    assert.equal(p.calls.at(-1), "unroute");
+  }
+});
+
+test("checkpoint hydration cleans up its exact route after navigation or evaluation failure", async (t) => {
+  const f = await checkpointFixture(t);
+  for (const stage of ["gotoError", "evaluateError"]) {
+    const failure = new Error(stage);
+    const p = checkpointPage({ [stage]: failure });
+    await assert.rejects(f.api.installCheckpointSession(p.page, f.checkpoint, f.options.origin), (error) => error === failure);
+    assert.equal(p.writes.length, 0);
+    assert.equal(p.routes.size, 0);
+    assert.equal(p.calls.at(-1), "unroute");
+    assert.equal(p.calls.includes("evaluate"), stage === "evaluateError");
+  }
+});
+
+test("completion console capture uses existing listeners, caps text/count, and leaves default error arrays unchanged", () => {
+  for (const complete of [false, true]) {
+    const f = fixture();
+    f.sandbox.diagnostic = complete ? { mode: "reuse", complete: true } : null;
+    f.sandbox.browserErrors = [];
+    const listeners = new Map();
+    f.sandbox.page.on = (event, callback) => listeners.set(event, callback);
+    vm.runInContext(extractBetween('  page.on("pageerror"', '  page.on("response"'), f.context);
+    f.api.phaseProgress("reload:drag");
+    const emit = (type, text, url = "http://local/loader.js") => listeners.get("console")({
+      type: () => type, text: () => text, location: () => ({ url }),
+    });
+    emit("log", "not retained");
+    emit("warning", "w".repeat(2_000));
+    listeners.get("pageerror")(new Error("page failure"));
+    emit("error", "favicon failure", "http://local/favicon.ico");
+    for (let i = 0; i < 40; i += 1) emit("error", `failure ${i}`);
+    assert.equal(f.sandbox.browserErrors.length, 41);
+    assert.equal(f.sandbox.browserErrors[0].type, "pageerror");
+    assert.equal(f.sandbox.browserErrors[0].text, "Error: page failure");
+    assert.equal(f.sandbox.browserErrors.at(-1).text, "failure 39");
+    if (!complete) assert.equal(f.milestones.completionConsole, undefined);
+    else {
+      const entries = f.milestones.completionConsole;
+      assert.equal(entries.length, 32);
+      assert.equal(entries[0].type, "warning");
+      assert.equal(entries[0].text, "w".repeat(1_000));
+      assert.equal(entries[1].type, "pageerror");
+      assert.equal(entries[1].text, "Error: page failure");
+      assert.equal(entries[2].text, "favicon failure");
+      assert.equal(entries.at(-1).text, "failure 28");
+      for (const entry of entries) {
+        assert.equal(entry.phase, "reload:drag");
+        assert.equal(entry.timestamp, new f.sandbox.Date().toISOString());
+        assert.ok(entry.text.length <= 1_000);
+      }
+    }
+  }
+});
+
+test("optional completion generation observations follow drag saves without changing frozen timing", async () => {
+  const dragBody = extractBetween('  phaseProgress("drag:prepare");', "  const secondRestore =");
+  assert.ok(source.indexOf(dragBody) > source.indexOf("milestones.postRestoreEnd = postRestoreEnd"));
+  for (const diagnostic of [null, { mode: "create" }, { mode: "reuse", complete: false }, { mode: "reuse", complete: true }]) {
+    const f = fixture();
+    f.sandbox.diagnostic = diagnostic;
+    f.milestones.postRestoreStart = 1_000;
+    f.milestones.postRestoreEnd = 5_000;
+    f.sandbox.SHA256 = /^[0-9a-f]{64}$/u;
+    f.sandbox.postBox = {};
+    f.sandbox.guestPoint = (_box, x, y) => ({ x, y });
+    const calls = [];
+    const snapshots = [];
+    let saves = 0;
+    f.sandbox.window.__desktopCursor = { detectWindowChrome: () => ({ titlebar: { left: 0, top: 0, bottom: 10 } }) };
+    f.sandbox.window.__desktopTerminal = { saveDesktopSnapshot: ({ persist }) => {
+      calls.push(`save:${++saves}:${persist}`);
+      const snapshot = { sha256: String(saves).repeat(64), byteLength: 100,
+        machineResume: { overlayGeneration: 100 + saves, persisted: persist } };
+      snapshots.push(snapshot);
+      return snapshot;
+    } };
+    f.sandbox.window.__desktopController = { snapshotGeneration: async () => {
+      calls.push(`generation:${saves}`);
+      return 621 + saves;
+    } };
+    f.sandbox.page.evaluate = async (fn) => vm.runInContext(`(${fn})()`, f.context);
+    f.sandbox.page.mouse = {
+      move: async () => { calls.push("move"); },
+      down: async () => { calls.push("down"); },
+      up: async () => { calls.push("up"); },
+    };
+    f.sandbox.page.waitForTimeout = async (ms) => { calls.push(`wait:${ms}`); f.clock.now += ms; };
+    // This fixture isolates the optional observation hook. The completion suite exercises
+    // the shared movement/pause/coherence helpers with their actual predicates separately.
+    f.sandbox.proveAndPauseDrag = async () => { calls.push("prove-and-pause"); f.clock.now += 100; };
+    f.sandbox.auditFrozenDragSnapshot = async (_snapshot, label) => { calls.push(`audit:${label}`); };
+    await vm.runInContext(`(async () => { ${dragBody} })()`, f.context);
+    const actions = ["move", "wait:100", "save:1:false", "down", "wait:100", "save:2:false",
+      "move", "prove-and-pause", "save:3:true", "audit:Published", "up", "wait:100", "save:4:false", "audit:BeforeReload"];
+    assert.deepEqual(calls.filter((call) => !call.startsWith("generation:")), actions);
+    const keys = ["dragBeforeSnapshot", "dragHeldSnapshot", "dragSnapshot", "dragReleasedSnapshot"];
+    if (diagnostic?.complete) {
+      assert.deepEqual(calls.filter((call) => /^(save|generation):/u.test(call)), [
+        "save:1:false", "generation:1", "save:2:false", "generation:2", "save:3:true", "generation:3",
+        "save:4:false", "generation:4", "generation:4",
+      ]);
+      for (const [i, key] of keys.entries()) {
+        const entry = f.milestones[key];
+        assert.equal(entry.machineResume, snapshots[i].machineResume);
+        assert.equal(entry.generationObservation.snapshotGeneration, 622 + i,
+          "read the controller, never substitute the save-returned generation");
+        assert.equal(entry.generationObservation.status, "observed");
+        assert.equal(entry.generationObservation.requestedAt, 6_100 + 100 * i);
+        assert.equal(entry.generationObservation.observedAt, 6_100 + 100 * i);
+      }
+      assert.equal(f.milestones.beforeSecondReload.generationObservation.snapshotGeneration, 625);
+    } else {
+      assert.equal(calls.some((call) => call.startsWith("generation:")), false);
+      for (const key of keys) assert.equal(f.milestones[key].generationObservation, undefined);
+      assert.equal(f.milestones.beforeSecondReload, undefined);
+    }
+    assert.equal(f.milestones.postRestoreStart, 1_000);
+    assert.equal(f.milestones.postRestoreEnd, 5_000);
+  }
+});
+
+test("completion generation diagnostics retain returned resume before reads and never fabricate unavailable state", async () => {
+  const f = fixture();
+  f.sandbox.diagnostic = { mode: "reuse", complete: true };
+  const snapshot = { machineResume: { persisted: true, overlayGeneration: 621 } };
+  const failure = new Error("generation RPC failed");
+  f.sandbox.page.evaluate = async () => {
+    assert.equal(f.milestones.dragSnapshot.machineResume, snapshot.machineResume);
+    assert.equal(f.milestones.dragSnapshot.generationObservation.status, "pending");
+    throw failure;
+  };
+  await assert.rejects(f.api.recordCompletionGeneration("dragSnapshot", snapshot), (error) => error === failure);
+  assert.equal(f.milestones.dragSnapshot.machineResume, snapshot.machineResume);
+  assert.equal(f.milestones.dragSnapshot.generationObservation.error, "Error: generation RPC failed");
+  f.sandbox.page.evaluate = async (fn) => vm.runInContext(`(${fn})()`, f.context);
+  await f.api.recordCompletionGeneration("beforeSecondReload");
+  assert.equal(f.milestones.beforeSecondReload.generationObservation.status, "unavailable");
+  assert.equal(f.milestones.beforeSecondReload.generationObservation.snapshotGeneration, undefined);
+  assert.equal(f.milestones.beforeSecondReload.machineResume, undefined);
 });
 
 test("persistent Chromium identity uses public CDP when browser() is null and always detaches", async (t) => {
