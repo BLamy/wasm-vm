@@ -3,7 +3,7 @@ id: E5-T26n
 epic: 5
 title: Retain browser inline-cache authority across SPP-only trap transitions
 priority: 526.599
-status: implemented
+status: verified
 depends_on: [E5-T26m]
 estimate: S
 risk: high
@@ -80,6 +80,44 @@ old image builds or a second pristine clone. No rr, WebKit, other machine, guest
 intervention, performance waiver, or speculative speedup claim.
 
 ## Verification log
+
+### 2026-09-08 — fresh verifier — VERDICT: verified
+
+- P0/P1 source partition — HELD. Exact implementation/test head
+  `b50491ceafc5be9029ee96dc9229085efd354e22` changes runtime semantics only by adding
+  mstatus bit8/SPP to the existing ignored set `{1,3,5,7}`. The actual-WASM 64-bit
+  matrix preserves sentinels for exactly those five bits, clears every retained bit
+  and mixed ignored+retained mutation, and leaves live mstatus complete.
+- P2/P3/P4 generated and guest SRET safety — HELD. Static and dynamic generated
+  reuse execute bit8 while SUM remains authoritative. Encoded SRET-to-S with MPRV0
+  preserves inline/static/dynamic authority and produces exact target effects;
+  encoded SRET-to-U enters the U-fetchable compiled boundary, then clears/refuses all
+  stale S authority with exact interpreter architectural and all-RAM parity. JIT-only
+  counters are asserted separately.
+- P5/P6 interrupt attack — HELD. Authentic guest SBI timer arm/cancel proves pending
+  delegated STIP, immediate cause5 preemption, and nested SRET reuse. The independent
+  promoted SSIP variant uses encoded guest `sip` set/clear, observes cause1 preemption,
+  then nested SRET and compiled reuse; it passed both the critic archive attack and
+  the final exact-head suite.
+- P7 sabotage — HELD. One isolated SUM-bit18 sabotage makes both the exact partition
+  and actual generated dynamic control fail (4 retirements versus 2), with both child
+  exits1 and restored source hashes. No unsafe in-place test executed.
+- P8 exact-head/environment proof — HELD. The sole pristine clone at
+  `/private/tmp/e5-t26n-final.s8BFQMCn/repo` is detached at `b50491ce...`, clean
+  before/after, has no alternates and a fresh target, and scrubs compiler/test
+  overrides. `make verify-E5-T26n` passes 29 native plus 51 actual-WASM tests
+  (13 lib, 38 parity, one unchanged ignore), format/clippy and both target builds.
+  Raw log `evidence/e5-t26n/main-gates/09-final-clone.log`, SHA256
+  `d58a1ff05e933b7f28dc9d9563702e7e5bf534cf2db2dcb89b17173bc2f86b06`.
+- COVERAGE — SUFFICIENT. Every runtime/test/Make hunk executes in the final records;
+  the SSIP attack is promoted as a permanent regression. Demo evidence remains
+  126/0 with empty collected errors and viewed PNG. The cached CSR time-shadow values
+  6/8 from a superseded overbroad serialization comparison are explicitly outside the
+  claim; requested architecture, all RAM and actual CLINT mtime agree.
+- BOUNDARY — this verifies only E5-T26n cache-context source safety. It does not prove
+  latency causality or speedup, satisfy or weaken F, complete Epic5, deploy, or
+  authorize a stack/merge action. Full prediction and coverage record:
+  `evidence/e5-t26n/verifier/final-verdict.md`.
 
 ### 2026-09-08 — worker submission — frozen guest proof and promoted source variant
 
