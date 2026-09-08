@@ -3,7 +3,7 @@ id: E5-T26i
 epic: 5
 title: Wire opt-in monotonic time through the browser desktop lifecycle
 priority: 526.59
-status: pending
+status: in-progress
 depends_on: [E4-T24, E5-T26e, E5-T26h, E5-T19a]
 estimate: S
 risk: high
@@ -60,6 +60,13 @@ or host timer read alone is not guest-clock evidence. Preserve the conservative
 wall-clock JIT path. Run the final exact-head pristine-clone proof once.
 
 ## Verification log
+
+### 2026-09-07 — worker — in-progress
+
+This is the sole eligible task at activation, with high risk recorded before
+entering the lane. Keep the existing default and all held sound/restore/runtime
+checks intact. Implement the adapter and lifecycle first, then record the selected
+clock's guest-visible behavior; no speedup or final F result is assumed.
 
 ### 2026-09-07 — coordinator — measured prerequisite, not a promised speedup
 
