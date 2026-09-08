@@ -40,6 +40,29 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker — buffered-proc browser closes; F timing still failed
+
+PR367 frozen head `52b29b9a41103337aba77bc5d002090111991c2d` changes the
+guest fixture's proc reads, not emulator scheduling or the acceptance clock.
+138 focused checks and84 actual native BusyBox tests pass; the earlier83/84
+shared-file visibility failure and immutable-input test correction are retained.
+Daybreak holds byte equivalence, strict refusals, identity guards and sabotage.
+The built demo passes126/0 with empty errors. Exact commands, helper/image/chunk
+pins and raw evidence are indexed in `evidence/e5-t26f/buffered-proc.md`.
+
+`node tools/verify/e5-t26f-browser-buffered-proc.mjs` records a NEW authenticated
+cold checkpoint, then actual physical `play` with unchanged default4096,
+repack-off24,5ms key pacing and original2000-ms limit. Cold exits0; reuse exits1
+solely at that cap: T0 `1230.9800000190735` to end `12702.524999976158` is
+**11471.544999957085 ms**. Outer collector exit0 is diagnostic success only.
+Actual PID999/start27640 survives, CRC `e0ec6452` matches, no booting state occurs,
+physical input/cursor and1440 fresh non-silent PCM frames hold, and the same child
+completes. Daybreak's closed B1-B6 report is
+`evidence/e5-t26f/buffered-proc-verifier/browser-results.md`; timing remains FAILED.
+Later coherence/drag/second restore were not reached. Generic failed-reuse output
+lacks complete browser/HTTP-error arrays. No speedup or causal claim is made.
+F stays in progress; preserve the negative record and do not rebind its seal.
+
 ### 2026-09-08 — coordinator — bounded buffered-proc hypothesis
 
 PR366 retains an independently reviewed native BusyBox read observation at

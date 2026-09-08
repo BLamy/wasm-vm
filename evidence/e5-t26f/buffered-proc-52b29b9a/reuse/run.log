@@ -1,0 +1,45 @@
+{"head":"52b29b9a41103337aba77bc5d002090111991c2d","config":{"E5_T26F_REQUIRE_HEAD":"52b29b9a41103337aba77bc5d002090111991c2d","E5_T26F_HEADED":"0","E5_T26F_FIXTURE":"resident-aplay-v1","E5_T26F_DIAGNOSTIC_PROFILE":"/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-buffered-proc-VprFCc","E5_T26F_DIAGNOSTIC_PORT":"61636","E5_T26F_TIMEOUT_MS":"1800000","E5_T26F_IMAGE":"target/e5-t26f/resident-image-buffered-proc-v1/alpine-rootfs.ext4","E5_T26F_IMAGE_INFO":"target/e5-t26f/resident-image-buffered-proc-v1/desktop-info.json","E5_T26F_DESKTOP_ASSET_DIR":"target/e5-t26f/chunks/resident-buffered-proc-v1","E5_T26F_DIAGNOSTIC":"reuse","E5_T26F_DIAGNOSTIC_JIT":"1","E5_T26F_DIAGNOSTIC_RESIDENCY":"repack-off","E5_T26F_OUT":"/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-52b29b9a/reuse"},"command":"tools/verify/e5-t26f-browser-roundtrip.mjs"}
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T15:35:13.891Z","elapsedMs":1}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-08T15:35:14.779Z","elapsedMs":888}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-08T15:35:14.779Z","elapsedMs":888}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-08T15:35:16.427Z","elapsedMs":2536}
+[e5-t26f] {"phase":"reload:normal","event":"start","timestamp":"2026-09-08T15:35:16.433Z","elapsedMs":2542}
+[e5-t26f] {"phase":"reload:normal","event":"done","timestamp":"2026-09-08T15:35:16.579Z","elapsedMs":2688}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"start","timestamp":"2026-09-08T15:35:16.579Z","elapsedMs":2688}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"done","timestamp":"2026-09-08T15:35:17.917Z","elapsedMs":4026}
+[e5-t26f] {"phase":"restore:normal:completion","event":"start","timestamp":"2026-09-08T15:35:17.917Z","elapsedMs":4026}
+[e5-t26f] {"phase":"restore:normal:completion","event":"done","timestamp":"2026-09-08T15:35:17.924Z","elapsedMs":4033}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"start","timestamp":"2026-09-08T15:35:17.924Z","elapsedMs":4033}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"done","timestamp":"2026-09-08T15:35:17.926Z","elapsedMs":4035}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"start","timestamp":"2026-09-08T15:35:17.926Z","elapsedMs":4035}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"done","timestamp":"2026-09-08T15:35:17.927Z","elapsedMs":4036}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"start","timestamp":"2026-09-08T15:35:17.927Z","elapsedMs":4036}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"done","timestamp":"2026-09-08T15:35:18.333Z","elapsedMs":4442}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"start","timestamp":"2026-09-08T15:35:18.333Z","elapsedMs":4442}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"done","timestamp":"2026-09-08T15:35:18.477Z","elapsedMs":4586}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"start","timestamp":"2026-09-08T15:35:18.477Z","elapsedMs":4586}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"done","timestamp":"2026-09-08T15:35:18.480Z","elapsedMs":4589}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"start","timestamp":"2026-09-08T15:35:18.480Z","elapsedMs":4589}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"done","timestamp":"2026-09-08T15:35:18.556Z","elapsedMs":4665}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"start","timestamp":"2026-09-08T15:35:18.556Z","elapsedMs":4665}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"done","timestamp":"2026-09-08T15:35:29.116Z","elapsedMs":15225}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"start","timestamp":"2026-09-08T15:35:29.118Z","elapsedMs":15227}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"done","timestamp":"2026-09-08T15:35:29.136Z","elapsedMs":15245}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"start","timestamp":"2026-09-08T15:35:29.136Z","elapsedMs":15245}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"failed","timestamp":"2026-09-08T15:35:29.233Z","elapsedMs":15342}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds
+    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1921:12 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.20.0
