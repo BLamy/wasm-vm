@@ -3,8 +3,9 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: in-progress
-depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j]
+status: blocked
+depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k]
+blocked_on: E5-T26k decoded-cache capacity boundary and measured latency outcome
 estimate: S
 risk: high
 capstone: false
@@ -39,6 +40,30 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — compiled residency alone is insufficient; isolate decoded capacity
+
+The unprofiled resident 24/256/256/24 comparison at
+`45bff9424b15585022bc5d2c1bfd104daea395c5` restores the same CRC and produces
+1440 fresh non-silent PCM frames in every arm. Original-T0 elapsed values are
+4585.095 / 4028.975 / 4013.550 / 4745.285 ms; all four children fail the unchanged
+2000-ms assertion. The larger setting eliminates observed eviction/retranslation
+churn and raises interval JIT share to 61–62%, but still records 670993–701018
+decoded builds without bulk invalidation. No production policy is promoted.
+
+Exact repro: use the complete scrubbed per-arm environment retained in
+`evidence/e5-t26f/resident-residency-replay-45bff942.log` with
+`node tools/verify/e5-t26f-browser-roundtrip.mjs` at the frozen head. All four
+canonical raw JSON/PNG paths, digests and original start/end values are in the
+adjacent directory's `comparison.json`. The earlier headed attempt is retained
+separately in `resident-residency-45bff942.log`: it fails browser identity before
+restore and is not a timing result. The comparison uses the original headless
+browser mode, not a changed seal. Later F coherence/drag phases are not reached
+by these cap-failed arms; prior unchanged functional HELD evidence still carries.
+
+E5-T26k owns the missing bounded decoded-cache configuration/measurement boundary.
+F leaves the active lane until that prerequisite is independently verified, then
+resumes with its measured outcome. This does not close or waive F's timing gate.
 
 ### 2026-09-08 — coordinator — exact quiet output still misses the original deadline
 
