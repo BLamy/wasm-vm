@@ -83,3 +83,14 @@ the initially considered `time` is an external executable there and cannot time
 a shell function, so it was rejected before any browser run. These probes report
 guest process CPU accounting, not the host all-success interval, and add work;
 neither is a candidate acceptance command or a claimed performance improvement.
+
+## Diagnostic input pacing
+
+The first `times;e5_observe;times;play` attempt at `79e926ce`, in
+`resident-observe-times-79e926ce.log` and its adjacent directory, timed out after
+120 seconds. The actual PNG shows only `ti` at the guest prompt, despite 58
+host keyboard transitions; the fresh PCM ring remains zero. It contains no
+usable CPU-accounting result and does not demonstrate an observer/audio fault.
+The longer diagnostic presets need the existing 100-ms physical edge pacing.
+Only those two nonacceptance measurement commands receive that fixed pacing;
+normal restored `play` remains at 5 ms and no acceptance cap changes.

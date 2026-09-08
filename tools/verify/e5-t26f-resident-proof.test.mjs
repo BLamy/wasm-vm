@@ -24,7 +24,7 @@ test("resident fixture is exact opt-in; every tuning and command override refuse
     assert.throws(() => residentFixtureRequested({ E5_T26F_FIXTURE: value }));
   }
   for (const key of ["KEY_DELAY_MS", "JIT", "RESIDENCY", "GUEST_CLOCK", "ICOUNT_DIVIDER"]) {
-    for (const value of ["", "0", "1", undefined]) {
+    for (const value of ["", "0", "1", "100", undefined]) {
       const env = { ...resident, [`E5_T26F_DIAGNOSTIC_${key}`]: value };
       if (value === undefined) assert.equal(residentFixtureRequested(env), true);
       else assert.throws(() => residentFixtureRequested(env), /fixed command\/pacing/);
@@ -32,7 +32,7 @@ test("resident fixture is exact opt-in; every tuning and command override refuse
   }
 });
 
-test("resident phase timing presets preserve the real play and cannot become an acceptance command override", () => {
+test("resident phase timing presets use fixed 100-ms physical edges only for the two admitted reuse commands", () => {
   const select = env => vm.runInNewContext(between("function diagnosticOptions", "const DIAGNOSTIC_OWNER") +
     "\n({postRestoreCommand,postRestoreKeyDelayMs})", { assert, path, process: { env }, residentFixtureRequested });
   for (const command of ["times;e5_observe;times;play", "times;e5_print_observation post;times;play", "play", "true", "", "time play"]) {
@@ -41,9 +41,13 @@ test("resident phase timing presets preserve the real play and cannot become an 
         E5_T26F_DIAGNOSTIC_PROFILE: "/private/tmp/resident-unit", E5_T26F_DIAGNOSTIC_PORT: "48123" };
       if (mode === "reuse" && ["times;e5_observe;times;play", "times;e5_print_observation post;times;play"].includes(command)) {
         assert.equal(residentFixtureRequested(env), true);
-        assert.deepEqual(json(select(env)), { postRestoreCommand: command, postRestoreKeyDelayMs: 5 });
-      } else assert.throws(() => residentFixtureRequested(env), /exact diagnostic reuse/);
+        assert.deepEqual(json(select(env)), { postRestoreCommand: command, postRestoreKeyDelayMs: 100 });
+      } else {
+        assert.throws(() => residentFixtureRequested(env), /exact diagnostic reuse/);
+        assert.throws(() => select(env));
+      }
       assert.throws(() => residentFixtureRequested({ ...env, E5_T26F_DIAGNOSTIC_COMPLETE: "1" }), /exact diagnostic reuse/);
+      assert.throws(() => select({ ...env, E5_T26F_DIAGNOSTIC_COMPLETE: "1" }));
     }
   }
 });
@@ -59,18 +63,32 @@ test("read-only resident profiling is exact reuse-only and can never enter cold,
   }
 });
 
-test("actual runner selects physical play with fixed 5-ms edges in cold, reuse and acceptance only by fixture opt-in", () => {
+test("actual runner keeps normal, cold, reuse and COMPLETE resident play at 5-ms edges", () => {
   const select = env => vm.runInNewContext(between("function diagnosticOptions", "const DIAGNOSTIC_OWNER") +
     "\n({diagnostic, residentFixture, postRestoreCommand, postRestoreKeyDelayMs})", { assert, path, process: { env }, residentFixtureRequested });
-  for (const mode of [undefined, "create", "reuse"]) {
-    const env = mode ? { E5_T26F_DIAGNOSTIC: mode, E5_T26F_DIAGNOSTIC_PROFILE: "/private/tmp/resident-unit",
+  for (const mode of [undefined, "create", "reuse", "complete"]) {
+    const env = mode ? { E5_T26F_DIAGNOSTIC: mode === "complete" ? "reuse" : mode, E5_T26F_DIAGNOSTIC_PROFILE: "/private/tmp/resident-unit",
       E5_T26F_DIAGNOSTIC_PORT: "48123" } : {};
+    if (mode === "complete") env.E5_T26F_DIAGNOSTIC_COMPLETE = "1";
     const legacy = select(env), current = select({ ...env, ...resident });
     assert.equal(legacy.postRestoreCommand, "sh /tmp/a");
     assert.equal(legacy.postRestoreKeyDelayMs, 0);
     assert.equal(current.postRestoreCommand, "play");
     assert.equal(current.postRestoreKeyDelayMs, 5);
     assert.deepEqual(json(current.diagnostic), json(legacy.diagnostic));
+  }
+});
+
+test("the same command text without resident opt-in does not override existing diagnostic pacing", () => {
+  const select = env => vm.runInNewContext(between("function diagnosticOptions", "const DIAGNOSTIC_OWNER") +
+    "\n({postRestoreCommand,postRestoreKeyDelayMs})", { assert, path, process: { env }, residentFixtureRequested });
+  for (const command of ["times;e5_observe;times;play", "times;e5_print_observation post;times;play"]) {
+    for (const delay of [undefined, "5", "25"]) {
+      const env = { E5_T26F_DIAGNOSTIC: "reuse", E5_T26F_DIAGNOSTIC_PROFILE: "/private/tmp/resident-unit",
+        E5_T26F_DIAGNOSTIC_PORT: "48123", E5_T26F_DIAGNOSTIC_COMMAND: command };
+      if (delay !== undefined) env.E5_T26F_DIAGNOSTIC_KEY_DELAY_MS = delay;
+      assert.deepEqual(json(select(env)), { postRestoreCommand: command, postRestoreKeyDelayMs: Number(delay ?? 0) });
+    }
   }
 });
 

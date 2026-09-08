@@ -130,7 +130,8 @@ function diagnosticOptions(env) {
 const diagnostic = diagnosticOptions(process.env);
 const residentFixture = residentFixtureRequested(process.env);
 const postRestoreCommand = residentFixture ? diagnostic?.command ?? "play" : diagnostic?.command ?? "sh /tmp/a";
-const postRestoreKeyDelayMs = residentFixture ? 5 : diagnostic?.keyDelayMs ?? 0;
+// The two admitted reuse-only command probes need reliable shifted input, not acceptance speed.
+const postRestoreKeyDelayMs = residentFixture ? (diagnostic?.command ? 100 : 5) : diagnostic?.keyDelayMs ?? 0;
 const DIAGNOSTIC_OWNER = "wasm-vm.e5-t26f.diagnostic-profile.v1";
 const DESKTOP_STORAGE_KEY = "wasm-vm.desktop-snapshot.v1";
 
