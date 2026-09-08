@@ -3,9 +3,8 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: blocked
+status: in-progress
 depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k]
-blocked_on: E5-T26k decoded-cache capacity boundary and measured latency outcome
 estimate: S
 risk: high
 capstone: false
@@ -40,6 +39,28 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — resume after verified K; observe discovery before changing policy
+
+K is independently verified and published as PR362, final head
+`f4a4d1e9fcee7536749de5af3dd92e070016bd62`. Its new cold ABBA at `a53e51a6`
+reduces decoded builds about 80%, but original times remain
+4864.945/4687.215/4685.490/4885.200 ms. The local 3.87% mean difference does not
+satisfy F; default 4096 and all original acceptance criteria remain unchanged.
+Exact evidence and verdict: `evidence/e5-t26k/README.md` and
+`evidence/e5-t26k/verifier/browser-results.md`. Carry unchanged functional HELD
+results; do not repeat K or the closed quiet/clock/residency experiments.
+
+Luna's bounded source audit identifies possible discovery suppression, not an
+observed cause: `BlockDiscovery::nominate` intentionally marks an overflowing
+request Queued to avoid repeated nomination storms; a full cold-counter map
+also refuses new keys. The existing browser statistics do not expose those
+already-maintained counters. Before changing either bounded policy, expose the
+actual read-only discovery state through the existing statistics RPC and record
+it in the failing browser path. No new hot-path instrumentation, cache/JIT/clock
+policy, guest helper/image, default, snapshot semantics or deadline changes are
+part of this observation. A newly built runtime must receive its own authenticated
+checkpoint; do not rewrite a prior seal's binding. F remains in progress.
 
 ### 2026-09-08 — coordinator — compiled residency alone is insufficient; isolate decoded capacity
 
