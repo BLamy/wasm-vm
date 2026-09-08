@@ -3,7 +3,7 @@ id: E5-T19a
 epic: 5
 title: virtio-snd control protocol and PCM state machine
 priority: 519.1
-status: in-progress
+status: implemented
 depends_on: [E5-T05c]
 estimate: S
 risk: high
@@ -48,6 +48,24 @@ leaking pending I/O. Run independent schedules, one bounded novel attack, one ef
 sabotage, and one scrubbed exact-head local clean clone for the high-risk remediation.
 
 ## Verification log
+
+### 2026-09-07 — worker — IMPLEMENTED: PCM recovery remediation
+
+Runtime `9e8e1c22423f935e2e918a687cc6633e1356869c`, final source/test gate
+`1be872f25f2d836f3d56310db82875053b6c185b`. `make verify-E5-T19a` passes
+394/394 tests, format, clippy, no-std wasm build, and wasm wrapper check; recording
+SHA-256 `a01dce36e9c6d6262322893b80735f6d0a64a9dd43d5f2980d654fef5b15142a`.
+Exact commands, source digests, new bit-exact PCM, real TX/RX release ordering,
+reset/refusal, and codec coverage: `evidence/e5-t19a/recovery-worker/README.md`.
+The rebuilt demo passes 126/0 with zero console/page/HTTP errors and its current
+task entry visible. A fresh Linux-browser run completes real ALSA playback and
+records 1440 new non-silent frames both before saving and after actual restoration.
+The inspected restored screenshot shows the conditional success marker and next
+prompt without a prepare error. Full provenance and commands:
+`evidence/e5-t19a/recovery-browser-c90bc4e4/README.md`. The diagnostic's separate
+F timing check fails at 3842.595 ms; no F acceptance, timing waiver, coherence/drag
+proof, or production deployment is claimed. Submit this sound boundary to the
+fresh Daybreak critic while retaining unrelated H findings.
 
 ### 2026-09-07 — fresh Daybreak Blue verifier — VERDICT: refuted
 

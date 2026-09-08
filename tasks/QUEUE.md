@@ -403,7 +403,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `518.4` [E5-T18d](epic-5-the-window/E5-T18d-desktop-crash-restart-fallback.md) — Harden compositor restart and tty1 getty fallback *(deps: E5-T18c)*
 - [x] `518.5` [E5-T18e](epic-5-the-window/E5-T18e-desktop-bringup-playbook.md) — Publish the desktop bring-up playbook and final boot proof *(deps: E5-T18d)*
 - [-] `519` [E5-T19](epic-5-the-window/E5-T19-virtio-snd-pcm-device.md) — virtio-snd device — control plane and PCM playback stream machine *(deps: E5-T05c)*
-- [~] `519.1` [E5-T19a](epic-5-the-window/E5-T19a-snd-control-state.md) — virtio-snd control protocol and PCM state machine *(deps: E5-T05c)*
+- [?] `519.1` [E5-T19a](epic-5-the-window/E5-T19a-snd-control-state.md) — virtio-snd control protocol and PCM state machine *(deps: E5-T05c)*
 - [x] `519.2` [E5-T19b](epic-5-the-window/E5-T19b-snd-playback-pacing.md) — virtio-snd paced playback and native audio sinks *(deps: E5-T19a)*
 - [x] `519.3` [E5-T19c](epic-5-the-window/E5-T19c-snd-queue-xrun-hardening.md) — virtio-snd queue errors, XRUN events, and reset hardening *(deps: E5-T19b)*
 - [x] `519.4` [E5-T19d](epic-5-the-window/E5-T19d-snd-guest-playback-proof.md) — virtio-snd Linux guest integration and playback proof *(deps: E5-T19c)*
