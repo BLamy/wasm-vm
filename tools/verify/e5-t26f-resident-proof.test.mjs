@@ -5,7 +5,8 @@ import path from "node:path";
 import test from "node:test";
 import vm from "node:vm";
 import { guestProfileRequested } from "./e5-t26f-guest-profile.mjs";
-import { RESIDENT_KIND, RESIDENT_BASE_SHA, RESIDENT_GUEST_PATH, residentFixtureRequested,
+import { RESIDENT_KIND, OBSERVER_KIND, OBSERVER_HELPER, OBSERVER_SOURCE, OBSERVER_GUEST_PATH,
+  residentSourceInputs, RESIDENT_BASE_SHA, RESIDENT_GUEST_PATH, residentFixtureRequested,
   assertResidentImage, parsePreparedSound, assertFreshLockedPcm } from "./e5-t26f-resident-proof.mjs";
 
 const hash = bytes => createHash("sha256").update(bytes).digest("hex");
@@ -17,6 +18,39 @@ function between(start, end) {
 }
 const json = value => JSON.parse(JSON.stringify(value));
 const resident = { E5_T26F_FIXTURE: RESIDENT_KIND };
+
+test("single-process fixture binds exact separate helper/source/binary/provenance without tuning policy changes", () => {
+  const inputs = { helper: "a".repeat(64), observerSource: "b".repeat(64),
+    observerBinary: "c".repeat(64), observerBuildInfo: "d".repeat(64) };
+  const observer = { sourcePath: OBSERVER_SOURCE, guestPath: OBSERVER_GUEST_PATH, mode: "0555", size: 8192,
+    sourceSha256: inputs.observerSource, sha256: inputs.observerBinary, buildInfoSha256: inputs.observerBuildInfo,
+    binaryPath: "target/e5-t26f/build/e5t26f-observe", buildInfoPath: "target/e5-t26f/build/build-info.json" };
+  const fixture = { kind: OBSERVER_KIND, helperPath: OBSERVER_HELPER, helperSha256: inputs.helper,
+    baseSha256: RESIDENT_BASE_SHA, guestPath: RESIDENT_GUEST_PATH, observer };
+  assert.deepEqual(residentSourceInputs(OBSERVER_KIND, { fixture }), { helper: OBSERVER_HELPER,
+    observerSource: OBSERVER_SOURCE, observerBinary: observer.binaryPath, observerBuildInfo: observer.buildInfoPath });
+  assert.equal(assertResidentImage({ fixture }, inputs.helper, { kind: OBSERVER_KIND, inputs }).kind, OBSERVER_KIND);
+  assert.throws(() => assertResidentImage({ fixture }, inputs.helper));
+  for (const key of ["observerSource", "observerBinary", "observerBuildInfo"]) {
+    for (const value of [undefined, "wrong", "e".repeat(64)]) {
+      assert.throws(() => assertResidentImage({ fixture }, inputs.helper, { kind: OBSERVER_KIND, inputs: { ...inputs, [key]: value } }));
+    }
+  }
+  for (const change of [{ sourcePath: "other.c" }, { guestPath: "/tmp/other" }, { mode: "0777" }, { size: 0 },
+    { binaryPath: "target/e5-t26f/../build/e5t26f-observe" }, { buildInfoPath: "/private/tmp/build-info.json" },
+    { binaryPath: "target/e5-t26f/other/e5t26f-observe" }, { binaryPath: "target/e5-t26f/./build/e5t26f-observe" }]) {
+    assert.throws(() => assertResidentImage({ fixture: { ...fixture, observer: { ...observer, ...change } } }, inputs.helper,
+      { kind: OBSERVER_KIND, inputs }));
+  }
+  for (const mode of [undefined, "create", "reuse"]) {
+    const env = { E5_T26F_FIXTURE: OBSERVER_KIND, ...(mode ? { E5_T26F_DIAGNOSTIC: mode,
+      E5_T26F_DIAGNOSTIC_PROFILE: "/private/tmp/new-observer", E5_T26F_DIAGNOSTIC_PORT: "61637" } : {}) };
+    assert.equal(residentFixtureRequested(env), true);
+    assert.equal(runnerSelection(env).postRestoreCommand, "play");
+    assert.equal(runnerSelection(env).postRestoreKeyDelayMs, 5);
+    assert.throws(() => residentFixtureRequested({ ...env, E5_T26F_DIAGNOSTIC_KEY_DELAY_MS: "0" }));
+  }
+});
 
 test("resident fixture is exact opt-in; unmatched tuning overrides refuse", () => {
   assert.equal(residentFixtureRequested({}), false);

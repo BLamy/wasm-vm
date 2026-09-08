@@ -20,14 +20,14 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { execFile as execFileCallback, spawn } from "node:child_process";
 import { createServer } from "node:net";
-import { mkdir, mkdtemp, readFile, readdir, lstat, stat, writeFile, access, cp } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, lstat, stat, realpath, writeFile, access, cp } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 import { attachWorkerProfiler } from "./e5-t22c-cpu-profile.mjs";
 import { guestProfileRequested, installGuestProfileWorker, recordGuestProfile } from "./e5-t26f-guest-profile.mjs";
 import { assertWindowMoved } from "../../web/bench/desktop-perf.js";
-import { residentFixtureRequested, assertResidentImage, parsePreparedSound, assertFreshLockedPcm,
+import { residentFixtureRequested, residentSourceInputs, assertResidentImage, parsePreparedSound, assertFreshLockedPcm,
   RESIDENT_GUEST_PATH } from "./e5-t26f-resident-proof.mjs";
 import { decodedCacheRequested, recordDecodedCache } from "./e5-t26k-decoded-cache.mjs";
 
@@ -361,8 +361,17 @@ const imageStat = await stat(imagePath);
 const imageSha256 = await sha256File(imagePath);
 assert.equal(imageSha256, process.env.E5_T26F_IMAGE_SHA256 || imageInfo.image?.sha256, "desktop image digest");
 assert.equal(imageStat.size, imageInfo.image?.size, "desktop image size");
-const fixtureBinding = residentFixture ? assertResidentImage(imageInfo,
-  await sha256File(path.join(repo, "tools/guest/e5-t26f-resident-aplay.sh"))) : null;
+const fixtureInputs = {};
+if (residentFixture) {
+  for (const [key, relative] of Object.entries(residentSourceInputs(process.env.E5_T26F_FIXTURE, imageInfo))) {
+    const filename = path.join(repo, relative);
+    assert.equal(await realpath(filename), filename, "resident evidence input symlink refused");
+    assert.ok((await lstat(filename)).isFile(), "resident evidence input must be a regular file");
+    fixtureInputs[key] = await sha256File(filename);
+  }
+}
+const fixtureBinding = residentFixture ? assertResidentImage(imageInfo, fixtureInputs.helper,
+  { kind: process.env.E5_T26F_FIXTURE, inputs: fixtureInputs }) : null;
 
 const { stdout: headOutput } = await execFile("git", ["rev-parse", "--verify", "HEAD"], { cwd: repo });
 const head = headOutput.trim();

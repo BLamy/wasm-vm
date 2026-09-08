@@ -5,13 +5,17 @@ import { guestProfileRequested } from "./e5-t26f-guest-profile.mjs";
 import { decodedCacheRequested } from "./e5-t26k-decoded-cache.mjs";
 
 export const RESIDENT_KIND = "resident-aplay-v1";
+export const OBSERVER_KIND = "resident-observer-v1";
+export const OBSERVER_SOURCE = "tools/guest/e5-t26f-observer.c";
+export const OBSERVER_HELPER = "tools/guest/e5-t26f-resident-observer.sh";
+export const OBSERVER_GUEST_PATH = "/usr/libexec/wasm-vm/e5t26f-observe";
 export const RESIDENT_BASE_SHA = "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550";
 export const RESIDENT_GUEST_PATH = "/usr/libexec/wasm-vm/e5t26f-resident.sh";
 const hash = bytes => createHash("sha256").update(bytes).digest("hex");
 
 export function residentFixtureRequested(env) {
   const value = env.E5_T26F_FIXTURE;
-  assert.ok(value === undefined || value === RESIDENT_KIND, "unknown F fixture; omission preserves the original process-launch fixture");
+  assert.ok(value === undefined || value === RESIDENT_KIND || value === OBSERVER_KIND, "unknown F fixture; omission preserves the original process-launch fixture");
   if (value === undefined) return false;
   if (env.E5_T26F_DIAGNOSTIC_DECODED_CACHE_ENTRIES !== undefined) {
     decodedCacheRequested(env);
@@ -52,13 +56,47 @@ export function residentFixtureRequested(env) {
   return true;
 }
 
-export function assertResidentImage(info, helperSha256) {
+export function residentSourceInputs(kind, info) {
+  assert.ok([RESIDENT_KIND, OBSERVER_KIND].includes(kind), "unknown resident source kind");
+  if (kind === RESIDENT_KIND) return { helper: "tools/guest/e5-t26f-resident-aplay.sh" };
+  const observer = info.fixture?.observer;
+  assert.ok(observer, "single-process image needs binary provenance");
+  for (const [key, filename] of [["binaryPath", "e5t26f-observe"], ["buildInfoPath", "build-info.json"]]) {
+    const value = observer[key];
+    assert.equal(typeof value, "string");
+    assert.ok(value.startsWith("target/e5-t26f/") && value.endsWith(`/${filename}`), "observer input must be a task-owned build artifact");
+    assert.ok(value.split("/").every(part => part && part !== "." && part !== ".."), "observer input traversal refused");
+    assert.doesNotMatch(value, /[\\\r\n\0]/u);
+  }
+  assert.equal(observer.binaryPath.slice(0, -"e5t26f-observe".length),
+    observer.buildInfoPath.slice(0, -"build-info.json".length), "observer build artifacts must share one directory");
+  return { helper: OBSERVER_HELPER, observerSource: OBSERVER_SOURCE,
+    observerBinary: observer.binaryPath, observerBuildInfo: observer.buildInfoPath };
+}
+
+export function assertResidentImage(info, helperSha256, { kind = RESIDENT_KIND, inputs = {} } = {}) {
   assert.match(helperSha256, /^[0-9a-f]{64}$/u);
-  assert.equal(info.fixture?.kind, RESIDENT_KIND, "image does not contain the resident fixture");
+  assert.ok([RESIDENT_KIND, OBSERVER_KIND].includes(kind), "unknown resident image kind");
+  assert.equal(info.fixture?.kind, kind, "image does not contain the selected resident fixture");
   assert.equal(info.fixture.helperSha256, helperSha256, "fixture helper differs from frozen source");
   assert.equal(info.fixture.baseSha256, RESIDENT_BASE_SHA, "fixture base image differs");
   assert.equal(info.fixture.guestPath, RESIDENT_GUEST_PATH, "fixture install path differs");
-  return { kind: RESIDENT_KIND, helperSha256, baseSha256: RESIDENT_BASE_SHA, guestPath: RESIDENT_GUEST_PATH };
+  const binding = { kind, helperSha256, baseSha256: RESIDENT_BASE_SHA, guestPath: RESIDENT_GUEST_PATH };
+  if (kind === OBSERVER_KIND) {
+    residentSourceInputs(kind, info);
+    const observer = info.fixture.observer;
+    assert.equal(info.fixture.helperPath, OBSERVER_HELPER);
+    assert.equal(observer.sourcePath, OBSERVER_SOURCE);
+    assert.equal(observer.guestPath, OBSERVER_GUEST_PATH);
+    assert.equal(observer.mode, "0555");
+    assert.ok(Number.isSafeInteger(observer.size) && observer.size > 0);
+    for (const [field, key] of [["sourceSha256", "observerSource"], ["sha256", "observerBinary"], ["buildInfoSha256", "observerBuildInfo"]]) {
+      assert.match(inputs[key] ?? "", /^[0-9a-f]{64}$/u, "missing actual observer input hash");
+      assert.equal(observer[field], inputs[key], `observer ${field} differs from frozen input`);
+    }
+    binding.observer = { ...observer };
+  }
+  return binding;
 }
 
 export function parsePreparedSound(value, expectedSha256) {

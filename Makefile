@@ -1183,6 +1183,16 @@ verify-E5-T26f-buffered-proc:
 	node --test tools/verify/e5-t26f-resident-aplay.test.mjs tools/verify/e5-t26f-browser-buffered-proc.test.mjs tools/verify/e5-t26f-resident-image.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs tools/verify/e5-t26f-compile-queue-observation.test.mjs tools/verify/e5-t26f-physical-typing.test.mjs
 	@echo "F buffered-proc fixture gates: OK; new image and cold-browser evidence remain required"
 
+.PHONY: verify-E5-T26f-single-process-observer
+verify-E5-T26f-single-process-observer:
+	# Guest fixture/build boundary only, not F timing acceptance or an emulator change.
+	/bin/sh -n tools/guest/e5-t26f-resident-observer.sh
+	node tools/verify/e5-t26f-observer.test.mjs
+	node --check tools/verify/e5-t26f-browser-roundtrip.mjs
+	node --check tools/verify/e5-t26f-browser-single-process-observer.mjs
+	node --test tools/verify/e5-t26f-resident-observer.test.mjs tools/verify/e5-t26f-observer-build.test.mjs tools/verify/e5-t26f-observer-image.test.mjs tools/verify/e5-t26f-browser-single-process-observer.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs tools/verify/e5-t26f-compile-queue-observation.test.mjs tools/verify/e5-t26f-physical-typing.test.mjs
+	@echo "F single-process fixture gates: OK; actual pinned cross-build/image and new cold-browser evidence remain required"
+
 .PHONY: verify-E5-T26l verify-E5-T26l-runtime
 verify-E5-T26l-runtime:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
