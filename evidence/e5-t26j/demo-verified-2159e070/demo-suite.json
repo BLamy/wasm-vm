@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:51560/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.76",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5-T26j\nVERIFIED\n✕ Close\nProve opt-in deterministic guest timer-rate selection\nEpic\nE5 — The Window\nStatus\nverified\nEstimate\nS\nDepends on\nE5-T26i, E5-T26h, E5-T19a\nGOAL\n\nTest F's timer-rate hypothesis without disabling the existing deterministic JIT\npaths or changing the production default. The setting controls retirements per\nmtime tick; it is not a claim of correct wall-time synchronization or a speedup.\n\nVERIFICATION LOG — EVIDENCE\n### 2026-09-08 — verifier — VERDICT: verified\n\n- P1–P10 — HELD. Scrubbed native/JS and actual-WASM gates prove atomic admission,\n  exact no-op, overflow-safe conservative phase mapping, architectural/device\n  identity, exact next tick, unchanged divider-10 default/wire format, strict\n  `JsValue` and JS parsing, restore-before-override, and read-only worker receipt.\n  Native/WASM trace `4ddc392297ebe1dc` and RAM digest `c7d032c2…51f7c4` match.\n- P11–P12 — HELD. One authenticated new cold seal and four independent profile\n  copies run 10/1/1/10 with exact head/runtime/image/snapshot bindings, unchanged\n  command/T0/2-second cap, JIT/chaining active, real clock/JIT progress, cursor/text,\n  attached non-silent PCM, and empty browser/HTTP arrays. Raw JSON, child-log, and\n  screenshot hashes match `comparison.json` SHA-256 `1a58e7df…9d35`.\n- P13–P16 — HELD. The exact code head passes the composed scrubbed clone proof; the\n  metadata/evidence-only heads preserve runtime bytes. Both phase and forwarding\n  sabotages fail as predicted, the 256-case novel phase oracle passes, the corrected\n  demo is 126/126, and the six-arm built-loader result remains valid.\n- COVERAGE — COMPLETE. Every operational J hunk executes in native/WASM/JS or actual\n  Chromium. Generated declarations, service-worker cache metadata, task prose, and\n  evidence are narrowly waived; unrelated E5-T26f build-screen records are excluded.\n  Durable critic report and raw verifier artifacts: `evidence/e5-t26j/critic.md` and\n  `evidence/e5-t26j/verifier/`.\n- SCOPE — J verified, F not verified. Divider-10 mean is 5133.270 ms; divider-1 mean\n  is 9450.975 ms (84.112% slower). Every arm retains the unchanged cap failure, so\n  this negative experiment neither promotes divider 1 nor changes the default.\n\nCommands: scrubbed `make verify-E5-T26j-runtime`; scrubbed `wasm-pack test --node\ncrates/wasm --test icount_divider --test guest_clock`; corrected demo; one new cold\nABBA collector; 256-case critic oracle; isolated phase and forwarding sabotages;\n`python3 tools/check_task_policy.py`; `python3 tools/build_queue.py`.\n\n### 2026-09-08 — worker — implemented; controlled comparison is negative\n\nThe new cold seal and all four independent Chromium profile copies complete at\n`054bb87f93b490645d5af921207f97af08629113`. Fixed 10/1/1/10 intervals are\n5168.225 / 9530.715 / 9371.235 / 5098.315 ms; every child preserves the original\ntwo-second failure. The actual worker receipts preserve stored mtime and select\nthe requested divider after restore. JIT/chaining remains active. All arms\nrestore CRC `23f83a92` at generation 626 without a boot, deliver 20 physical key\nevents, produce conditional terminal output and attached fresh non-silent PCM,\nand retain empty browser/HTTP error arrays. Some screenshots show recovered ALSA\nunderruns, not zero-XRUN playback.\n\nThe claim is the validated opt-in boundary and honest measurement, not F timing\nor a default promotion. Default ten remains unchanged. The full composed gate,\nexact commands, guest trace digests, image/runtime/seal hashes, and all negative\nrecords are indexed in `evidence/e5-t26j/README.md`. The comparison report SHA-256\nis `1a58e7dfd6f5e04754d98cc42bde22d15477c32060917f9f8bcb6b9e910e9d35`.\nFresh Daybreak has independently passed the scrubbed source gates and bounded\nnovel/sabotage attacks; its final browser-evidence verdict remains required.\n\n### 2026-09-08 — worker — frozen gates and roadmap metadata correction\n\nAt `cb283f9b3204f99d0bbc9ad44121c4f5da7b8b6a`, the selected runtime gate\npasses 35 native and 175 JavaScript tests, formatting, Clippy, and the no-default\nWASM target build. The Node/WASM gate passes 16 tests. Logs are\n`evidence/e5-t26j/runtime-cb283f9b.log` and `wasm-cb283f9b.log`.\nThe first demo load reached the ISA-suite assertion, then failed to find J in the\nroadmap: generated `tasks.json` predated this task. Its failed transcript is\n`evidence/e5-t26j/demo-cb283f9b.log`. Regenerate the task metadata and dist before\nthe cold comparison; this does not change emulator semantics or the held gates.\n\n### 2026-09-08 — worker — runtime frozen; real direct/worker clock preflight\n\nAt runtime commit `d2eda6857a2d17d19f8c64b037239a675901f2e6`, the built\nChromium proof `tools/verify/e5-t26j-clock-worker.mjs` passes all six combinations\nof direct/worker and omitted/10/1 selection. Actual busy guest `rdtime` advances;\npaused state is unchanged; final mtime equals actual retired instructions divided\nby the selected divider. All arms execute real compiled JIT instructions with\ndynamic/static chaining still enabled. There are no browser/HTTP errors. Records:\n`evidence/e5-t26j/worker-d2eda685/guest-rdtime.json` and the adjacent transcript.\n\nThe built WASM is SHA-256\n`8df0e82c87aa25d39988517b045b42712f8c94d1bec4f0d1db5ed2ab772f0e3a`.\nThis proves the configuration path, not restored-desktop performance. Selected\nexisting clock/resume tests (18) and JIT timekeeping tests (3) pass; Luna's eight\nnative and eleven WASM self-tests include 2,176 phase combinations and identical\nnative/WASM guest trace/state digests. The final frozen-head gauntlet and one new\ncold-seal ABBA recording remain required; no J verification or default promotion\nis inferred from these preflights.\n\n### 2026-09-08 — worker — activation\n\nPrerequisites I/H/T19a are verified. F is blocked on this named adapter and retains\nits failed 5050.230-ms recording and functional HELD results. Daybreak's design\ncritique accepts conservative fractional rebasing as an explicit configuration\noperation, not as a more-correct clock or an acceptance waiver. Implement the\nsmall fail-closed boundary first, then measure; do not assume the hypothesis holds.\nADVERSARIAL VERIFICATION\nFresh Daybreak Blue carries unchanged I/H/T19a evidence. Attack missing CLINT,\nzero, fractional/NaN/infinite/oversized input, wall-mode conflict, same-divider\nidempotence, fractional rebase and u128 extremes, pending timer/software IRQs,\nsaved divider restoration and override ordering. Check actual worker state, not\nonly query strings. Sabotage a phase or forwarding test. Run the exact-head\npristine-clone proof once, with local guest/native/WASM evidence; no rr, WebKit,\nindependent machine, GitHub Actions or production deployment is required here.\nsource: tasks/epic-5-the-window/E5-T26j-browser-icount-divider.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:51560/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:51560/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:51560/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:51560/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:51560/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:51560/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:51560/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:51560/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:51560/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:51560/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:51560/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:51560/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "291ee4c9ded5ea2b2474e319fe63896dea36c59ff3e731e5113dc000ce5964df"
+}
