@@ -1,0 +1,154 @@
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling cfg-if v1.0.4
+   Compiling rustversion v1.0.22
+   Compiling version_check v0.9.5
+   Compiling bumpalo v3.20.3
+   Compiling typenum v1.20.1
+   Compiling once_cell v1.21.4
+   Compiling slab v0.4.12
+   Compiling futures-core v0.3.32
+   Compiling pin-project-lite v0.2.17
+   Compiling futures-task v0.3.32
+   Compiling serde_core v1.0.228
+   Compiling zmij v1.0.21
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling serde_json v1.0.150
+   Compiling bitflags v2.13.0
+   Compiling heapless v0.9.3
+   Compiling futures-util v0.3.32
+   Compiling byteorder v1.5.0
+   Compiling log v0.4.33
+   Compiling serde v1.0.228
+   Compiling smallvec v1.15.2
+   Compiling hash32 v0.3.1
+   Compiling stable_deref_trait v1.2.1
+   Compiling tinyvec_macros v0.1.1
+   Compiling autocfg v1.5.1
+   Compiling smoltcp v0.13.1
+   Compiling generic-array v0.14.7
+   Compiling itoa v1.0.18
+   Compiling libm v0.2.16
+   Compiling memchr v2.8.2
+   Compiling num-traits v0.2.19
+   Compiling tinyvec v1.12.0
+   Compiling managed v0.8.0
+   Compiling bitflags v1.3.2
+   Compiling unicode-normalization v0.1.25
+   Compiling wasm-vm-wasm-emit v0.0.1 (/private/tmp/e5-t26n-sum-sabotage.V25LdQ1A/crates/wasm-emit)
+   Compiling oorandom v11.1.5
+   Compiling cast v0.3.0
+   Compiling wasm-bindgen-test-shared v0.2.126
+   Compiling nu-ansi-term v0.50.3
+   Compiling wasm-bindgen v0.2.126
+   Compiling syn v2.0.118
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26n-sum-sabotage.V25LdQ1A/crates/core)
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling async-trait v0.1.89
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/tmp/e5-t26n-sum-sabotage.V25LdQ1A/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/private/tmp/e5-t26n-sum-sabotage.V25LdQ1A/crates/slirp)
+   Compiling wasm-bindgen-macro v0.2.126
+   Compiling wasm-vm-storage v0.0.1 (/private/tmp/e5-t26n-sum-sabotage.V25LdQ1A/crates/storage)
+   Compiling js-sys v0.3.103
+   Compiling console_error_panic_hook v0.1.7
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling web-sys v0.3.103
+   Compiling getrandom v0.2.17
+   Compiling wasm-bindgen-test v0.3.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/private/tmp/e5-t26n-sum-sabotage.V25LdQ1A/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 15.74s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (/private/tmp/e5-t26n-sum-sabotage.V25LdQ1A/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-9581999851bd4c84.wasm)
+running 1 test
+Invoking test: jit_browser::inline_tlb_context_tests::inline_tlb_context_masks_exactly_interrupt_stack_bits
+panicked at crates/wasm/src/jit_browser.rs:2403:17:
+retained mstatus bit 18 did not change context
+
+Stack:
+
+Error
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp0ovg6Q/wasm-bindgen-test.js:2612:25
+    at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp0ovg6Q/wasm-bindgen-test.js:3394:18)
+    at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp0ovg6Q/wasm-bindgen-test.js:2611:57)
+    at wasm_vm_wasm-9581999851bd4c84.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[21963]:0x49adcc)
+    at wasm_vm_wasm-9581999851bd4c84.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[13003]:0x4390f1)
+    at wasm_vm_wasm-9581999851bd4c84.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[5435]:0x34d0c2)
+    at wasm_vm_wasm-9581999851bd4c84.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[14635]:0x45342f)
+    at wasm_vm_wasm-9581999851bd4c84.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[4480]:0x318488)
+    at wasm_vm_wasm-9581999851bd4c84.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[8909]:0x3d6afa)
+    at wasm_vm_wasm-9581999851bd4c84.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[22381]:0x49c2d2)
+
+
+test jit_browser::inline_tlb_context_tests::inline_tlb_context_masks_exactly_interrupt_stack_bits ... FAIL
+
+failures:
+
+---- jit_browser::inline_tlb_context_tests::inline_tlb_context_masks_exactly_interrupt_stack_bits output ----
+    error output:
+        panicked at crates/wasm/src/jit_browser.rs:2403:17:
+        retained mstatus bit 18 did not change context
+        
+        Stack:
+        
+        Error
+            at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp0ovg6Q/wasm-bindgen-test.js:2612:25
+            at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp0ovg6Q/wasm-bindgen-test.js:3394:18)
+            at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp0ovg6Q/wasm-bindgen-test.js:2611:57)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[21963]:0x49adcc)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[13003]:0x4390f1)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[5435]:0x34d0c2)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[14635]:0x45342f)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[4480]:0x318488)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[8909]:0x3d6afa)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[22381]:0x49c2d2)
+        
+        
+    
+    JS exception that was thrown:
+        RuntimeError: unreachable
+            at wasm_vm_wasm-9581999851bd4c84.wasm.__rustc[8068f81614cfe5c]::__rust_abort (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[22476]:0x49c5b7)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.__rustc[8068f81614cfe5c]::__rust_start_panic (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[22458]:0x49c55c)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.__rustc[8068f81614cfe5c]::rust_panic (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[22081]:0x49b4cb)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[4480]:0x3184fa)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[8909]:0x3d6afa)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[22381]:0x49c2d2)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.__rustc[8068f81614cfe5c]::rust_begin_unwind (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[17180]:0x472de6)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.core[2c5ad5f686fcca5c]::panicking::panic_fmt (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[14455]:0x450ae8)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.wasm_vm_wasm::jit_browser::inline_tlb_context_tests::inline_tlb_context_masks_exactly_interrupt_stack_bits::hf190adeaec9089b1 (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[284]:0x8aef0)
+            at wasm_vm_wasm-9581999851bd4c84.wasm.core::ops::function::FnOnce::call_once::h10ededce25f6c6ae (wasm://wasm/wasm_vm_wasm-9581999851bd4c84.wasm-0a315992:wasm-function[20687]:0x49378d)
+
+failures:
+
+    jit_browser::inline_tlb_context_tests::inline_tlb_context_masks_exactly_interrupt_stack_bits
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 11 filtered out; finished in 0.05s
+
+Error: Node failed with exit_code 1
+error: test failed, to rerun pass `--lib`
+
+Caused by:
+  process didn't exit successfully: `/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner /private/tmp/e5-t26n-sum-sabotage.V25LdQ1A/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-9581999851bd4c84.wasm --nocapture inline_tlb_context_masks_exactly_interrupt_stack_bits` (exit status: 1)
+Error: Running Wasm tests with wasm-bindgen-test failed
+Caused by: Running Wasm tests with wasm-bindgen-test failed
+Caused by: failed to execute `cargo test`: exited with exit status: 1
+  full command: cd "crates/wasm" && CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER="/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner" WASM_BINDGEN_TEST_ONLY_NODE="1" "cargo" "test" "--target" "wasm32-unknown-unknown" "--lib" "--" "--nocapture" "inline_tlb_context_masks_exactly_interrupt_stack_bits"
