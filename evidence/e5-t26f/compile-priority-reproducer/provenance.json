@@ -1,0 +1,37 @@
+{
+  "schema": "wasm-vm.e5-t26f.compile-priority-reproducer.v1",
+  "acceptance": false,
+  "head": "690e23245b4b376c55c0b830f7690c8a0f72059e",
+  "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+  "command": [
+    "cargo",
+    "run",
+    "--offline",
+    "--manifest-path",
+    "evidence/e5-t26f/compile-priority-reproducer/Cargo.toml",
+    "--target-dir",
+    "evidence/e5-t26f/compile-priority-reproducer/target"
+  ],
+  "startedAt": "2026-09-08T13:09:38.872Z",
+  "finishedAt": "2026-09-08T13:09:42.156Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "sourcePins": {
+    "Cargo.toml": "fc7cbaedc583510a98e1ce66875c32af7fe9aa43bc80cb16b298168dd0c61479",
+    "Cargo.lock": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7",
+    ".cargo/config.toml": "693000886a9f8195d7dbfbba41d9ffa19147b18233b83f52c4626d92a54c2b7b",
+    "crates/core/Cargo.toml": "828e4d59f7f29f2cbfa98b3cdea67e530cc4b3f51132e4e0d9fc22de280c4c6c",
+    "crates/core/src/lib.rs": "7f8c72c28cd51afaf44834fd809e9781ea6c27c6d8f6f2f97f1452bb77f9791a",
+    "crates/core/src/dispatch.rs": "5e6ccdd33f9dc9c948dde6e8daa4b69d8f008330169cdecbdfb3356b3d6dc04d",
+    "crates/core/src/compile_queue.rs": "bcf1649fa2c9b6fb7ecc0eff13702ec6e806603b12c222ef2cf7c9836ebbae7b",
+    "crates/core/src/decode.rs": "b6ff3df57b34648a2aa471b9b7b47823abc9e1df897c78b0f4db055b5598a7f3",
+    "evidence/e5-t26f/compile-priority-reproducer/Cargo.toml": "649a4f09839b8bd753b2893ba17d71895b4fbbfd6a56a29828318ba2cbffdd1e",
+    "evidence/e5-t26f/compile-priority-reproducer/src/main.rs": "c7877d375a7007d01b6abc0dae014375cc36a7e208fce5e97451716d727c0876",
+    "evidence/e5-t26f/compile-priority-reproducer/record.mjs": "4c9618fe811ddfcf88e79c26f8173aab755b32a9cfd299d02fcc0b3cf2b3a3e8"
+  },
+  "sourceBytesUnchanged": true,
+  "localLockSha256": "8c953b33a93cca3e8e0433fe40ad2d7d1ab5f855933042d51e054be400f0a6cf",
+  "logSha256": "8a331da2c715d27b6b9ac41f60fa1e0abfe3b1a566dfc4ad918d7815d107bf93"
+}

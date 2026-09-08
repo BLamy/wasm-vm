@@ -121,5 +121,32 @@ All14 completed scheduler samples show continuing retirement, scheduler.postTask
 zero timer yields and zero fetch waits; the15th pending-at-stop is retained.
 Do not interpret those scoped counters as proof of zero persistence/host delay.
 The canonical JSON and viewed PNG retain the same CRC/identity/ten physical
-events/green completion and1440 fresh PCM. Independent latency review is separate
-from the already-closed baseline discovery review.
+events/green completion and1440 fresh PCM. Independent Daybreak review is closed
+in `discovery-verifier/latency-results.md`: HELD as diagnostic evidence, original
+F timing FAILED. It checked all77 PCM samples, all14 completed scheduler samples,
+the pending15th sample, actual screenshots, source pins and refused attempt.
+
+## Bounded next candidate: compile-staging priority
+
+Luna's one native source-level reproducer under `compile-priority-reproducer/`
+uses actual public discovery/queue types and the real decoded `jal x0, 0`.
+Both jobs are staged with priority64; after1000 additional observations for the
+later job, live priorities are64/1064 but stored priorities remain64/64 and the
+older job still pops first. It has zero drops/stale events and valid bytes.
+This composes the production staging API sequence; it does not execute Machine,
+instantiate a JIT, model the desktop schedule or establish a browser cause.
+The source phenomenon, command, log and unchanged pins are retained separately.
+No runtime priority policy has changed in this PR.
+
+The older already-closed profiled recording
+`resident-jit-cost-73e7e4d9/failure-post-restore-interaction-checks.json` also
+retains actual `guestProfileBefore/After.state.jitPause` fields. These profile
+RPCs have runCount12→121 and totalAttemptedBlocks96→968, with the observed
+maxRunAttemptedBlocks8 at both endpoints. Thus the109 recorded completed scopes
+used872 attempts, saturating the existing8-attempt per-scope bound. Submitted
+blocks96→700 are604 in that profile interval, not the603 delta from the later,
+sequential `jitStats()` interval. Do not mix these endpoints or assign the gap
+to a particular rejection cause. This is historical profiled evidence from
+another checkpoint, not a new unprofiled measurement or current queue-depth
+observation. Together with the source-level priority staleness, it motivates
+a bounded scheduling candidate, not a predicted speedup or waived deadline.
