@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:49537/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.76",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5-T26i\nVERIFIED\n✕ Close\nWire opt-in monotonic time through the browser desktop lifecycle\nEpic\nE5 — The Window\nStatus\nverified\nEstimate\nS\nDepends on\nE4-T24, E5-T26e, E5-T26h, E5-T19a\nGOAL\n\nExpose the existing core monotonic time policy to the interactive browser desktop\nso its timer-rate hypothesis can be tested. This is one host-clock adapter/lifecycle\nboundary, not a JIT optimization or a waiver of F's two-second interaction target.\n\nVERIFICATION LOG — EVIDENCE\n### 2026-09-07 — worker — in-progress\n\nThis is the sole eligible task at activation, with high risk recorded before\nentering the lane. Keep the existing default and all held sound/restore/runtime\nchecks intact. Implement the adapter and lifecycle first, then record the selected\nclock's guest-visible behavior; no speedup or final F result is assumed.\n\n### 2026-09-07 — coordinator — measured prerequisite, not a promised speedup\n\nF's authenticated same-runtime diagnostics complete playback but miss two seconds;\n`evidence/e5-t26f/cpu-560c6743/README.md` retains the exact command and profile.\nCPU attribution is mixed, not dominated by one cheap removable function.\n`WasmLinux::assemble` uses `enable_clint(10)` against a 10 MHz DT timebase,\nrequiring 100 million retirements per guest second while busy. The measured\n12.8–13 million retirements/host-second therefore yield roughly 0.13× guest time\nwhile busy; ICount WFI fast-forward is a separate path and must not be conflated.\nE4-T24 explicitly deferred browser monotonic injection. Core wall mode also\ndisables in-module direct chaining, so wiring it is not presumed to improve\nthroughput or satisfy F. Establish the missing adapter with exact lifecycle proof,\nthen use controlled unprofiled measurements before any production-policy change.\n\n### 2026-09-08 — worker — implemented, wall mode is not a latency fix\n\nFrozen runtime `99b8e692fddb7b1e82e4175e152ef5682c6b9373`; built metadata\n`bfebb8d42f065196735df088c6d4b2ed8da62e77`; final bundle/cache stamp and paired\ndesktop recording `faddd274c934e09aec18161758c690a3b87bde8e`.\n`evidence/e5-t26i/submission/README.md` records the exact commands and digests:\n`make verify-E5-T26i-runtime` (28 native, 95 JS, fmt/clippy/no_std target),\n`wasm-pack test --node crates/wasm --lib --test guest_clock -- guest_clock --nocapture`\n(3 wrapper + 5 guest fixtures), `make web-dist`, the real built UART/rdtime\ndirect/worker fixture, and the 126/0 Chromium demo smoke with no errors. The\nfresh critic's exact-head clone reproduced these gates and byte-identical WASM;\nits two pre-existing dist-manifest differences are explicitly outside this claim.\n\n`node tools/verify/e5-t26i-browser-clock.mjs` completed the cold checkpoint and\nboth unprofiled, physically typed `sh /tmp/a` replays with the same frozen image,\nprofile, snapshot, and runtime. Comparison SHA-256:\n`0a6d1662c67cd32b5c9fe5f128090a6cfd85b04dc827d1c2b6512279ee476306`.\nICount elapsed **5028.065 ms**; wall elapsed **7518.450 ms**. Both complete actual\nguest-visible conditional playback markers and non-silent attached PCM, with\nempty browser/HTTP error arrays, but both fail F's unchanged two-second cap.\nThe wall guest advances 7283.315 ms within host sample bounds 7231.100–7309.935 ms;\nICount advances 574.7393 ms within host bounds 4749.320–4808.775 ms. This demonstrates\nthe selected clock and a negative performance comparison, not an improvement.\nCanonical per-mode JSON/PNG files and checkpoint provenance are retained under\n`evidence/e5-t26i/browser/`. Both screenshots show the completed marker and prompt,\nnot an ALSA error. **ICount stays the default; F is not verified.**\n\nThe claim is the opt-in adapter/lifecycle and measured comparison only. It does\nnot promise automatic guest resynchronization after a large jump, make host\nepochs portable, enable wall-mode direct chaining, or alter any deadline or\nsnapshot format. Fresh Daybreak Blue owns the final verdict.\n\n### 2026-09-08 — fresh verifier — VERDICT: verified\n\n- **All 14 pre-evidence predictions HELD.** Exact mode validation, real realm-monotonic\n  ownership, busy 10 MHz `rdtime`, deterministic ICount, jitter clamp, pause/rebase,\n  background-gap policy, successful and rejected restore boundaries, portable wire,\n  worker/WASM routing, and conservative JIT behavior survived the recorded gates and\n  adversarial review. The independent nonzero repeated-rebase attack passed; freezing\n  the injected clock made the busy-rate regression fail immediately, proving test\n  sensitivity rather than a self-derived oracle.\n- **The authenticated browser comparison is sufficient for this task.** Both modes use\n  head `faddd274c934e09aec18161758c690a3b87bde8e`, runtime\n  `84ef07f7f4ec173dc921a1d91a764f538953600fdccfb3af0eed4aaca57617f9`,\n  profile `778bc49dcdc7551de0b2f6a23e4b32a30ce72dea2c00e425bfdc302820d8fc65`,\n  and snapshot `4ebdd9f6edb253d940a93082118068c089c844f985b13e0a7593956d6ccf88fb`.\n  ICount advanced 574.7393 guest ms; wall advanced 7283.315 guest ms within its\n  7231.100–7309.935 ms host bounds. Both restored without reboot and completed real\n  typed terminal output, visual change, and attached non-silent PCM. Both honestly fail\n  only F's unchanged two-second assertion, so ICount remains the default and F remains\n  unverified. Comparison SHA-256:\n  `0a6d1662c67cd32b5c9fe5f128090a6cfd85b04dc827d1c2b6512279ee476306`.\n- **Coverage is complete.** Every changed runtime, WASM, worker, loader, harness, Make,\n  and roadmap hunk is executed or explicitly dispositioned. The desktop public\n  `guestClock` closure is a waived one-line projection over the independently exercised\n  live controller RPC. The final no-local pristine clone passed the prescribed native,\n  WASM, web build, and rebuilt Chromium checks with scrubbed compiler/log environment\n  and byte-identical WASM. The two pre-existing user-owned dist-manifest differences are\n  the previously recorded NO-FIRE scope exception, not T26i inputs or remediation.\n- **Prior boundaries remain HELD.** Unchanged E4-T24 time policy, E5-T26h whole-machine\n  resume/session fence, and E5-T19a sound lifecycle evidence are carried forward.\n\nFull prediction ledger, exact evidence digests, visual inspection, per-hunk coverage,\nclone details, and suite dispositions: `evidence/e5-t26i/critic/results.md`, SHA-256\n`256c7faa7c6b449363b75801b051ec3a4b4dd7696a37536671de6508ece8eb84`.\nNo implementation fix, production-default change, F timing waiver, or additional gate\nis required by this verdict.\nADVERSARIAL VERIFICATION\nFresh Daybreak Blue: carry unchanged E4-T24 and H/T19a results forward. Attack\nmissing/invalid mode selection, busy `rdtime` versus the ICount control, backward\nhost time, paused host-time advance, large background gaps, restored deadlines,\nsame-instance restore after the host epoch advanced, and failed-restore atomicity.\nSabotage one clock test by freezing or mis-scaling the host source. Check the\nactual browser boot option reaches the worker and WASM adapter; a query string\nor host timer read alone is not guest-clock evidence. Preserve the conservative\nwall-clock JIT path. Run the final exact-head pristine-clone proof once.\nsource: tasks/epic-5-the-window/E5-T26i-browser-monotonic-clock.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:49537/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:49537/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:49537/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:49537/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:49537/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:49537/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:49537/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:49537/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:49537/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:49537/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:49537/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:49537/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "ac5b7e65de5a6218c76d2ba0b606efbb281655c89eac3a4cc05b7f068ea5ba27"
+}

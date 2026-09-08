@@ -1,0 +1,108 @@
+✔ make verify-E5-T26f refuses diagnostic create before any build or browser command (16.053125ms)
+✔ make verify-E5-T26f refuses diagnostic reuse before any build or browser command (21.061916ms)
+✔ cold playback fixture keeps errors and conditional success without verbose parameter dumping (0.625417ms)
+✔ one unresolved progress probe prevents subsequent timer ticks from piling up (1.620167ms)
+✔ public sample is bounded and excludes pixels, full records and guest control (0.518791ms)
+✔ navigation rejection frees the probe; stopped sampling suppresses late results (0.373667ms)
+✔ failure artifacts retain phase, error and milestones before browser capture (0.588041ms)
+✔ failure capture retains producer PCM even when the command never completes (0.687708ms)
+✔ failure capture does not issue requests behind a stuck progress probe (0.362917ms)
+✔ cursor timeout uses only the unspent original two-second budget (0.650667ms)
+✔ cursor waits through missing/stale pixels, returns matching sample and disposes its handle (0.403458ms)
+✔ exhausted cursor budget fails before polling; a polling timeout remains a failure (0.424541ms)
+✔ pointer motion precedes the full delayed gesture; no click or physical key occurs early (1.312875ms)
+✔ premature audio unlock during the delay fails before the click or command (0.659083ms)
+✔ overlapped motion spends the original deadline; late command completion still fails (0.905333ms)
+✔ residency selection is exact, reuse-only and requires explicit JIT=1 without auto-enabling it (12.146917ms)
+✔ residency metadata and cold/restore query are explicit; omission leaves existing URLs unchanged (4.262792ms)
+✔ omitted residency adds no policy access or extra RPC to either existing JIT arm (0.959834ms)
+✔ all three residency policies require actual mapped caps at both existing JIT endpoints (0.712958ms)
+✔ missing or mismatched actual residency policy/cap refuses at either endpoint and preserves raw failure evidence (14.67525ms)
+✔ JIT comparison is exact-string/reuse-only and rejects profiling or command overrides (6.692708ms)
+✔ JIT query selection is explicit; omitted acceptance/create/reuse retain jit=1 without state RPCs (2.476625ms)
+✔ both JIT arms read actual state before physical input and charge the RPC to the original cursor budget (1.44425ms)
+✔ JIT policy mismatches, missing APIs and RPC errors refuse with actual failure milestones (1.454667ms)
+✔ JIT measurement rejects stale, reversed and malformed retirement counts without replacing the evidence (2.049666ms)
+✔ both JIT arms capture PCM and freeze postRestoreEnd before the second RPC; the original cap still fails (2.795ms)
+✔ clock comparison is reuse-only, unprofiled, explicit, and preserves F input/deadline (4.033375ms)
+✔ latency opt-in is exactly 1, reuse-only, and never changes the command or key pacing (2.221084ms)
+✔ CPU profiling requires exact 1 and reuse, independently of latency and unchanged input (3.28825ms)
+✔ default acceptance, create, and latency-only reuse never attach a CPU profiler (3.116334ms)
+✔ CPU host adapter uses the owned page session only when Browser is absent (0.310917ms)
+✔ CPU artifact retains exact worker, head/runtime binding, original T0 and byte digest; closes once (0.726375ms)
+✔ CPU stop/write failures are bounded metadata, preserve T0, and still attempt close once (0.574583ms)
+✔ CPU setup failure is captured before finally collection without replacing original error or T0 (0.817458ms)
+✔ CPU collection follows frozen PCM/end and precedes the unchanged cap even when collection stalls (1.217667ms)
+✔ probes register before physical typing but a stalled RPC cannot delay typing or completion cleanup (0.737084ms)
+✔ first non-silent PCM precedes a separately timed existing marker read without extra pixel reads (0.563375ms)
+✔ one held scheduler RPC survives a rejected local-stat read without overlap, even at the time limit (1.335208ms)
+✔ JIT RPC follows scheduler settlement and holds the whole sample until completion (0.566416ms)
+✔ stopping with JIT pending retains scheduler evidence and ignores late success or failure (0.594333ms)
+✔ scheduler settlement after stop or the original deadline never requests JIT (1.640042ms)
+✔ JIT observations copy only named scalar fields and record a missing API as unavailable (0.89975ms)
+✔ without the latency flag neither default nor reuse interaction requests diagnostic JIT stats (0.814167ms)
+✔ sampling is capped at 120 PCM/marker records and 24 spaced scheduler reads within the original restore window (5.198708ms)
+✔ missing diagnostic APIs are recorded as unavailable without fallback calls (0.348625ms)
+✔ latency samples survive the unchanged two-second failure before any failure pixel capture (0.548916ms)
+✔ failure is written before a stalled latency collection; timeout persists and never piles up or accepts late data (0.472416ms)
+✔ command override refuses acceptance/create and rejects unbounded or multiline input (1.308917ms)
+✔ without override all modes keep the exact sh /tmp/a command (0.95325ms)
+✔ diagnostic key pacing is bounded, reuse-only, recorded, and inside the original deadline (2.372875ms)
+✔ reuse override is recorded verbatim in nonacceptance metadata and the physical command record (0.866041ms)
+✔ top-level catch captures the phase before finally cleanup and rethrows the original error (0.371167ms)
+✔ a held coherence read starts after timed interaction and must finish before the next save (0.695042ms)
+✔ diagnostics require explicit mode, absolute scratch and stable port; default remains fresh acceptance (5.87925ms)
+✔ profile creation never overwrites existing data and reuse requires the task marker and completed seal (2.58325ms)
+✔ every runtime/kernel/image/origin binding mismatch refuses reuse before copying any profile (3.302958ms)
+✔ harness-only HEAD changes permit reuse while preserving creator and current provenance (5.887625ms)
+✔ runtime binding hashes actual served JS/WASM/kernel bytes, including uncommitted changes (7.617583ms)
+✔ reuse enters autoRestore directly without cold setup or resetting the restored timing boundary (0.58675ms)
+✔ reuse cold-boot fallback fails on its first readiness sample instead of waiting for another boot (0.551875ms)
+✔ reuse copies a sealed profile, preserves actual envelope/metadata and retains separate failed iterations (5.011583ms)
+✔ tampered profile bytes or desktop envelope/normal metadata cannot be reused (2.640583ms)
+✔ profile ownership refuses symlinks instead of traversing or overwriting an external profile (2.246375ms)
+✔ checkpoint session hydration is exact, origin-scoped and refuses an existing different envelope (1.2005ms)
+✔ persistent Chromium identity uses public CDP when browser() is null and always detaches (0.927916ms)
+✔ zero PCM and completion attachment/timestamps reach failure milestones before the PCM assertion (1.025333ms)
+✔ stale or mismatched actual coherence fails after timing and survives in failure milestones (1.215459ms)
+✔ second restore performs the real coherence audit after display/button checks and before evidence (0.058583ms)
+
+  #  /Users/blamy/.nvm/versions/node/v24.20.0/bin/node[56092]: void node::InternalCallbackScope::Close() at ../src/api/callback.cc:165
+  #  Assertion failed: (env_->execution_async_id()) == (0)
+
+----- Native stack trace -----
+
+ 1: 0x1024019f8 node::Assert(node::AssertionInfo const&) [/Users/blamy/.nvm/versions/node/v24.20.0/bin/node]
+ 2: 0x10460602c node::InternalCallbackScope::Close() (.cold.3) [/Users/blamy/.nvm/versions/node/v24.20.0/bin/node]
+ 3: 0x1022df1e4 node::InternalCallbackScope::Close() [/Users/blamy/.nvm/versions/node/v24.20.0/bin/node]
+ 4: 0x1022dea90 node::InternalCallbackScope::~InternalCallbackScope() [/Users/blamy/.nvm/versions/node/v24.20.0/bin/node]
+ 5: 0x10249f4d8 node::PerIsolatePlatformData::RunForegroundTask(std::__1::unique_ptr<v8::Task, std::__1::default_delete<v8::Task>>) [/Users/blamy/.nvm/versions/node/v24.20.0/bin/node]
+ 6: 0x10249e2ec node::PerIsolatePlatformData::FlushForegroundTasksInternal() [/Users/blamy/.nvm/versions/node/v24.20.0/bin/node]
+ 7: 0x1032e9da8 uv__async_io [/Users/blamy/.nvm/versions/node/v24.20.0/bin/node]
+ 8: 0x1032fe6a0 uv__io_poll [/Users/blamy/.nvm/versions/node/v24.20.0/bin/node]
+ 9: 0x1032ea6fc uv_run [/Users/blamy/.nvm/versions/node/v24.20.0/bin/node]
+10: 0x1022e06a8 node::SpinEventLoopInternal(node::Environment*) [/Users/blamy/.nvm/versions/node/v24.20.0/bin/node]
+11: 0x10245d0b0 node::NodeMainInstance::Run() [/Users/blamy/.nvm/versions/node/v24.20.0/bin/node]
+12: 0x1023ae538 node::Start(int, char**) [/Users/blamy/.nvm/versions/node/v24.20.0/bin/node]
+13: 0x18139c4e4 start [/usr/lib/dyld]
+✖ tools/verify/e5-t26f-cpu-profile.test.mjs (169.164167ms)
+✔ actual frozen browser counters produce exact within-run deltas, including nested host entries (1.319834ms)
+✔ nested host entries are authoritative and missing nested data cannot fall back to fabricated flat values (2.446333ms)
+✔ every counter rejects missing, nonnumeric, fractional, negative or unsafe endpoint values (71.196417ms)
+✔ every counter rejects decreasing safe nonnegative values (2.786542ms)
+✔ zero deltas are valid except guestRetired and retiredViaJit, which must each advance (2.6925ms)
+✔ child-failure admission allows only exit 1 with the exact F timing-cap message (4.797459ms)
+ℹ tests 75
+ℹ suites 0
+ℹ pass 74
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 214.221791
+
+✖ failing tests:
+
+test at tools/verify/e5-t26f-cpu-profile.test.mjs:1:1
+✖ tools/verify/e5-t26f-cpu-profile.test.mjs (169.164167ms)
+  'test failed'

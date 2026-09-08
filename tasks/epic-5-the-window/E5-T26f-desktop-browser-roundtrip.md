@@ -40,6 +40,30 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker — existing-residency screen remains negative
+
+At `884dc59a81970a96f9fc4672a7241eee2454d5d0`, the corrected ABBA collector
+retains all four same-checkpoint results: repack-off **4997.115 ms**, cap-256
+**3691.095 ms**, cap-256 **4582.245 ms**, repack-off **3991.010 ms**. All restore
+the same CRC without booting and complete real conditional playback with fresh
+non-silent PCM, then exit 1 at the unchanged two-second bound. Removing eviction
+churn did not meet the deadline; this small variable screen does not authorize a
+default change. The initial collector failure and baseline are retained separately.
+Exact commands, provenance, canonical artifact hashes and limits are in
+`evidence/e5-t26f/residency/README.md`; aggregate SHA-256 is
+`bba06bea873de0d2876ccebe8a923239040cbc66d97c63da7380305685536745`.
+
+Fresh Daybreak inspected the policy boundary, all four records and captures,
+and independently sabotaged forwarding, cap validation and the nested-counter
+collector. Its incremental report is `evidence/e5-t26f/residency/critic.md`.
+Six new real-record collector regressions join the focused F gate; 75 combined
+harness tests pass with browser permissions. The built demo is 126/0 with no
+browser/HTTP errors and T26i visibly verified. No F status/default/runtime
+semantic change follows; its coherence/drag/second reload and timing acceptance
+remain unproven. Continue with explicit non-acceptance functional diagnostics
+which retain and ultimately fail the timing assertion, rather than hide it or
+let it prevent observation of unrelated functional criteria.
+
 ### 2026-09-08 — coordinator — bounded existing-residency comparison
 
 The JIT-control layer is published as PR 357. Continue F's browser-only control
