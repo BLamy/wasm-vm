@@ -1073,7 +1073,7 @@ verify-E5-T19a:
 	cargo fmt --check -p wasm-vm-core
 	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
 	cargo test -p wasm-vm-core --lib --features gpu-trace
-	cargo test -p wasm-vm-core --features gpu-trace --test virtio_snd --test virtio_snd_playback --test virtio_snd_queue --test virtio_snd_capture --test virtio_snd_capture_config --test virtio_snd_machine --test desktop_machine_audio_resume --test desktop_machine_resume --test desktop_machine_resume_verifier -- --nocapture
+	cargo test -p wasm-vm-core --features gpu-trace --test virtio_snd --test virtio_snd_playback --test virtio_snd_queue --test virtio_snd_capture --test virtio_snd_capture_config --test virtio_snd_release_capture --test virtio_snd_machine --test desktop_machine_audio_resume --test desktop_machine_resume --test desktop_machine_resume_verifier -- --nocapture
 	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
 	cargo check -p wasm-vm-wasm --lib --target wasm32-unknown-unknown
 	@echo "verify-E5-T19a (PCM lifecycle and Linux XRUN recovery): OK"
