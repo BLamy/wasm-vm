@@ -1153,6 +1153,16 @@ verify-E5-T26f:
 	E5_T26F_IMAGE=$(E5_T26F_IMAGE) E5_T26F_IMAGE_INFO=$(E5_T26F_IMAGE_INFO) E5_T26F_DESKTOP_ASSET_DIR=$(E5_T26F_DESKTOP_ASSET_DIR) node tools/verify/e5-t26f-browser-roundtrip.mjs
 	@echo "verify-E5-T26f (Chromium desktop snapshot round-trip and interaction smoke): OK"
 
+.PHONY: verify-E5-T26f-discovery-observation
+verify-E5-T26f-discovery-observation:
+	# Read-only projection of existing core counters; no execution/queue policy change.
+	cargo fmt --check -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	wasm-pack test --node crates/wasm --test discovery_stats --test decoded_cache_capacity
+	node --check tools/verify/e5-t26f-discovery-observation.mjs
+	node --test tools/verify/e5-t26f-discovery-observation.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs tools/verify/e5-t26f-residency-comparison.test.mjs web/tests/e4-t32-worker-protocol.test.mjs
+	@echo "F discovery observation plumbing: OK; new cold/reuse measurement remains separate, not F acceptance"
+
 .PHONY: verify-E5-T26k verify-E5-T26k-runtime
 verify-E5-T26k-runtime:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm

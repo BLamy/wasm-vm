@@ -740,6 +740,26 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
         &JsValue::from_f64(cache.code_bytes as f64),
     );
     let discovery = machine.discovery_stats();
+    let discovery_obj = js_sys::Object::new();
+    for (key, value) in [
+        ("nominated", discovery.nominated),
+        ("deduped", discovery.deduped),
+        ("droppedStale", discovery.dropped_stale),
+        ("droppedOverflow", discovery.dropped_overflow),
+        ("countsDropped", discovery.counts_dropped),
+        ("excluded", discovery.excluded),
+        ("queueDepth", discovery.queue_depth as u64),
+        ("queueHighWater", discovery.queue_hwm as u64),
+        ("candidates", discovery.candidates as u64),
+        ("generation", discovery.generation),
+    ] {
+        let _ = js_sys::Reflect::set(
+            &discovery_obj,
+            &JsValue::from_str(key),
+            &JsValue::from_f64(value as f64),
+        );
+    }
+    set("discovery", &discovery_obj.into());
     set(
         "decodedCacheEntries",
         &JsValue::from_f64(machine.decoded_cache_entries() as f64),
