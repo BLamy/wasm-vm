@@ -12,6 +12,19 @@ export function residentFixtureRequested(env) {
   const value = env.E5_T26F_FIXTURE;
   assert.ok(value === undefined || value === RESIDENT_KIND, "unknown F fixture; omission preserves the original process-launch fixture");
   if (value === undefined) return false;
+  if (env.E5_T26F_DIAGNOSTIC_JIT !== undefined || env.E5_T26F_DIAGNOSTIC_RESIDENCY !== undefined) {
+    // Isolated existing-policy comparison only, never a resident default or acceptance knob.
+    assert.equal(env.E5_T26F_DIAGNOSTIC, "reuse", "resident residency requires exact diagnostic reuse");
+    assert.equal(env.E5_T26F_DIAGNOSTIC_JIT, "1", "resident residency requires explicit JIT=1");
+    assert.ok(["repack-off", "cap-256"].includes(env.E5_T26F_DIAGNOSTIC_RESIDENCY),
+      "resident residency requires explicit repack-off or cap-256");
+    for (const key of ["COMPLETE", "CPU", "LATENCY", "GUEST_PROFILE", "GUEST_CLOCK",
+      "ICOUNT_DIVIDER", "COMMAND", "KEY_DELAY_MS"]) {
+      assert.equal(env[`E5_T26F_DIAGNOSTIC_${key}`], undefined,
+        "resident residency requires isolated unchanged command/pacing and no other diagnostic overrides");
+    }
+    return true;
+  }
   if (env.E5_T26F_DIAGNOSTIC_GUEST_PROFILE !== undefined) guestProfileRequested(env);
   for (const key of ["KEY_DELAY_MS", "JIT", "RESIDENCY", "GUEST_CLOCK", "ICOUNT_DIVIDER"]) {
     assert.equal(env[`E5_T26F_DIAGNOSTIC_${key}`], undefined, "resident playback requires fixed command/pacing and unchanged default runtime policies");

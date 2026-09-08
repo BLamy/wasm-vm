@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import vm from "node:vm";
+import { guestProfileRequested } from "./e5-t26f-guest-profile.mjs";
 import { RESIDENT_KIND, RESIDENT_BASE_SHA, RESIDENT_GUEST_PATH, residentFixtureRequested,
   assertResidentImage, parsePreparedSound, assertFreshLockedPcm } from "./e5-t26f-resident-proof.mjs";
 
@@ -17,7 +18,7 @@ function between(start, end) {
 const json = value => JSON.parse(JSON.stringify(value));
 const resident = { E5_T26F_FIXTURE: RESIDENT_KIND };
 
-test("resident fixture is exact opt-in; every tuning and command override refuses", () => {
+test("resident fixture is exact opt-in; unmatched tuning overrides refuse", () => {
   assert.equal(residentFixtureRequested({}), false);
   assert.equal(residentFixtureRequested(resident), true);
   for (const value of ["", "resident", "resident-aplay-v1 ", true, 1, null, [RESIDENT_KIND]]) {
@@ -27,9 +28,124 @@ test("resident fixture is exact opt-in; every tuning and command override refuse
     for (const value of ["", "0", "1", "100", undefined]) {
       const env = { ...resident, [`E5_T26F_DIAGNOSTIC_${key}`]: value };
       if (value === undefined) assert.equal(residentFixtureRequested(env), true);
-      else assert.throws(() => residentFixtureRequested(env), /fixed command\/pacing/);
+      else assert.throws(() => residentFixtureRequested(env), /fixed command\/pacing|resident residency/);
     }
   }
+});
+
+const residentReuse = { ...resident, E5_T26F_DIAGNOSTIC: "reuse",
+  E5_T26F_DIAGNOSTIC_PROFILE: "/private/tmp/resident-unit", E5_T26F_DIAGNOSTIC_PORT: "48123" };
+const residencyEnv = policy => ({ ...residentReuse, E5_T26F_DIAGNOSTIC_JIT: "1", E5_T26F_DIAGNOSTIC_RESIDENCY: policy });
+function runnerSelection(env, runner = source) {
+  const start = runner.indexOf("function diagnosticOptions"), end = runner.indexOf("const DIAGNOSTIC_OWNER", start);
+  assert.ok(start >= 0 && end > start, "actual selection boundaries exist");
+  return vm.runInNewContext(`${runner.slice(start, end)}\n({diagnostic,residentFixture,postRestoreCommand,postRestoreKeyDelayMs})`,
+    { assert, path, process: { env }, residentFixtureRequested, guestProfileRequested });
+}
+
+for (const policy of ["repack-off", "cap-256"]) {
+  test(`resident ${policy} requires isolated explicit JIT=1 reuse; actual URLs retain play/5ms`, () => {
+    const env = Object.freeze(residencyEnv(policy)), saved = { ...env };
+    assert.equal(residentFixtureRequested(env), true);
+    const selected = runnerSelection(env);
+    assert.equal(selected.residentFixture, true);
+    assert.equal(selected.postRestoreCommand, "play"); assert.equal(selected.postRestoreKeyDelayMs, 5);
+    assert.equal(selected.diagnostic.jit, "1"); assert.equal(selected.diagnostic.residency, policy);
+    assert.equal(selected.diagnostic.mode, "reuse"); assert.equal(selected.diagnostic.complete, false);
+    assert.equal(selected.diagnostic.cpu, false); assert.equal(selected.diagnostic.latency, false);
+    assert.equal(selected.diagnostic.command, null); assert.equal(selected.diagnostic.guestClock, null);
+    const urls = vm.runInNewContext(`${between("  const query = new URLSearchParams({", "  let normalSnapshot =")}\n({coldUrl,restoreUrl})`,
+      { URLSearchParams, diagnostic: selected.diagnostic, base: "http://127.0.0.1:48123", imageSha256: "a".repeat(64), manifestSha256: "b".repeat(64) });
+    for (const value of [urls.coldUrl, urls.restoreUrl]) {
+      const url = new URL(value);
+      assert.equal(url.searchParams.get("jit"), "1"); assert.equal(url.searchParams.get("jitResidency"), policy);
+      assert.equal(url.searchParams.has("guestClock"), false); assert.equal(url.searchParams.has("icountDivider"), false);
+    }
+    assert.equal(new URL(urls.restoreUrl).searchParams.get("autoRestore"), "1");
+    assert.deepEqual(env, saved, "selection does not normalize/mutate caller flags");
+  });
+}
+
+test("resident residency rejects missing counterparts and malformed/coerced labels in both admission layers", () => {
+  const invalid = [undefined, null, "", "0", "01", "1 ", " 1", 0, 1, true, ["1"], { toString: () => "1" }];
+  for (const policy of ["repack-off", "cap-256"]) for (const jit of invalid) {
+    const env = { ...residencyEnv(policy), E5_T26F_DIAGNOSTIC_JIT: jit };
+    assert.throws(() => residentFixtureRequested(env), /resident residency/);
+    assert.throws(() => runnerSelection(env));
+  }
+  for (const policy of [undefined, null, "", "0", "cap-1024", "CAP-256", "repack-off ", " cap-256", "cap-0256",
+    "cap-256\n", 256, true, ["cap-256"], { toString: () => "cap-256" }]) {
+    const env = residencyEnv(policy);
+    assert.throws(() => residentFixtureRequested(env), /resident residency/);
+    assert.throws(() => runnerSelection(env));
+  }
+});
+
+test("resident residency refuses cold/normal/COMPLETE and every coexisting override, including empty", () => {
+  for (const policy of ["repack-off", "cap-256"]) {
+    for (const mode of [undefined, "", "create", "REUSE", "reuse ", ["reuse"], null]) {
+      const env = { ...residencyEnv(policy), E5_T26F_DIAGNOSTIC: mode };
+      assert.throws(() => residentFixtureRequested(env)); assert.throws(() => runnerSelection(env));
+    }
+    for (const key of ["COMPLETE", "CPU", "LATENCY", "GUEST_PROFILE", "GUEST_CLOCK", "ICOUNT_DIVIDER", "COMMAND", "KEY_DELAY_MS"]) {
+      for (const value of ["", "1", "5", "icount", "times;play;times", null, false]) {
+        const env = { ...residencyEnv(policy), [`E5_T26F_DIAGNOSTIC_${key}`]: value };
+        assert.throws(() => residentFixtureRequested(env), /resident residency/);
+        assert.throws(() => runnerSelection(env));
+      }
+    }
+  }
+});
+
+test("actual quiet scratch selection remains stricter and rejects both newly admitted resident policies", () => {
+  const quiet = readFileSync(new URL("./e5-t26f-quiet-text-probe.mjs", import.meta.url), "utf8");
+  assert.equal(runnerSelection(residentReuse, quiet).postRestoreCommand, "play");
+  for (const policy of ["repack-off", "cap-256"]) {
+    assert.equal(residentFixtureRequested(residencyEnv(policy)), true);
+    assert.throws(() => runnerSelection(residencyEnv(policy), quiet), assert.AssertionError);
+  }
+});
+
+test("outside the paired opt-in, existing resident observation rules and nonresident policy selection stay intact", () => {
+  for (const key of ["CPU", "LATENCY", "GUEST_PROFILE"]) {
+    const env = { ...residentReuse, [`E5_T26F_DIAGNOSTIC_${key}`]: "1" };
+    assert.equal(residentFixtureRequested(env), true);
+    const selected = runnerSelection(env);
+    assert.equal(selected.postRestoreCommand, "play"); assert.equal(selected.postRestoreKeyDelayMs, 5);
+    assert.equal(selected.diagnostic.residency, null); assert.equal(selected.diagnostic.jit, null);
+  }
+  const nonresident = { ...residencyEnv("cap-1024"), E5_T26F_FIXTURE: undefined };
+  assert.equal(residentFixtureRequested(nonresident), false);
+  assert.equal(runnerSelection(nonresident).diagnostic.residency, "cap-1024");
+  assert.equal(runnerSelection(nonresident).postRestoreCommand, "sh /tmp/a");
+});
+
+test("admitted residency still requires actual executor/policy/cap and fresh before/after RPC state", async () => {
+  const helper = between("async function recordDiagnosticJit(", "function workerProfilerHost(");
+  for (const policy of ["repack-off", "cap-256"]) {
+    const diagnostic = runnerSelection(residencyEnv(policy)).diagnostic;
+    const actual = { hasExecutor: true, jitResidencyPolicy: policy,
+      jitResidencyCap: policy === "repack-off" ? 24 : 256, guestRetired: 100 };
+    for (const change of [null, { hasExecutor: false }, { jitResidencyPolicy: undefined },
+      { jitResidencyPolicy: "cap-1024" }, { jitResidencyCap: undefined }, { jitResidencyCap: 1024 },
+      { jitResidencyCap: String(actual.jitResidencyCap) }]) {
+      const milestones = {}, current = { ...actual, ...change };
+      const record = vm.runInNewContext(`${helper}\nrecordDiagnosticJit`, { assert, diagnostic, milestones,
+        page: { evaluate: async callback => callback() }, performance: { now: () => 1100 },
+        window: { __desktopController: { jitStats: async () => ({ ...current }) } } });
+      if (change) {
+        await assert.rejects(record("jitBefore")); assert.deepEqual(milestones.jitBefore.state, current);
+      } else {
+        await record("jitBefore");
+        await assert.rejects(record("jitAfter"), /positive guest retirement progress/);
+        current.guestRetired = 101;
+        await record("jitAfter"); assert.equal(milestones.jitAfter.state.guestRetired, 101);
+      }
+    }
+  }
+  assert.ok(source.indexOf('await recordDiagnosticJit("jitBefore")') > source.indexOf("const postRestoreStart = firstRestore.completedAt"));
+  assert.ok(source.indexOf('await recordDiagnosticJit("jitAfter")') > source.indexOf("milestones.postRestoreEnd = postRestoreEnd"));
+  assert.match(source, /assert\.ok\(postRestoreEnd - postRestoreStart <= 2_000, "post-restore interaction exceeded 2 seconds"\)/u);
 });
 
 test("resident accounting presets use fixed 100-ms physical edges only for admitted reuse commands", () => {
