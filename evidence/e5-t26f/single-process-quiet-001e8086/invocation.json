@@ -1,0 +1,163 @@
+{
+  "head": "001e80864911863145f2127192bae5df8186e68b",
+  "acceptance": false,
+  "fVerified": false,
+  "command": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-quiet-001e8086/probe.mjs",
+  "config": {
+    "E5_T26F_REQUIRE_HEAD": "001e80864911863145f2127192bae5df8186e68b",
+    "E5_T26F_HEADED": "0",
+    "E5_T26F_FIXTURE": "resident-observer-v1",
+    "E5_T26F_DIAGNOSTIC_PROFILE": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-IKBhyX",
+    "E5_T26F_DIAGNOSTIC_PORT": "61637",
+    "E5_T26F_TIMEOUT_MS": "1800000",
+    "E5_T26F_IMAGE": "target/e5-t26f/resident-image-single-process-observer-v1/alpine-rootfs.ext4",
+    "E5_T26F_IMAGE_INFO": "target/e5-t26f/resident-image-single-process-observer-v1/desktop-info.json",
+    "E5_T26F_DESKTOP_ASSET_DIR": "target/e5-t26f/chunks/resident-single-process-observer-v1",
+    "E5_T26F_DIAGNOSTIC": "reuse",
+    "E5_T26F_OUT": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-quiet-001e8086/record"
+  },
+  "sourceBindings": {
+    "tools/verify/e5-t26f-single-process-quiet-probe.mjs": "dcf52ced1640baf7dc3fb7f73bcd5b8ae1253679ea51e09469b1bd4cf3268ec5",
+    "tools/verify/e5-t26f-single-process-quiet-probe.test.mjs": "ee6a5d1c43e6ba5cf29c13530d07215e07bd927ae9104858317dc0f3c0b0f859",
+    "tools/verify/e5-t22c-cpu-profile.mjs": "f75fb38299169c662f6f6668d63d17e8ddaf6ec70a19082455e9de121ea5d5d4",
+    "tools/verify/e5-t26f-guest-profile.mjs": "1b9d202be44aa3c01f770ef5483551be0cfc828631b6cbc78caff53baf70948a",
+    "tools/verify/e5-t26k-decoded-cache.mjs": "fc6dde980554845fc3d28f5e44dcd0caf0c1659d48b320054a00aeb8e67e9843",
+    "tools/verify/e5-t26f-browser-roundtrip.mjs": "7f8b58f7e3f6e0f16b7b6cb91b8593e625ed058e7aa764df428e9990f85100a1",
+    "tools/verify/e5-t26f-resident-proof.mjs": "d5615b185536f0f0af3da7d4b133ec28ec9e2c62962d22b3cd57e8c24f5a5810",
+    "tools/guest/e5-t26f-resident-observer.sh": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+    "tools/guest/e5-t26f-observer.c": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+    "target/e5-t26f/observer-build-v1/e5t26f-observe": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+    "target/e5-t26f/observer-build-v1/build-info.json": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+    "evidence/e5-t26f/single-process-quiet-001e8086/run.mjs": "f8dad67f176ed94fae3c46e3d896ace20c491ef26c8e06ef05730bb19aa0507f",
+    "target/e5-t26f/single-process-quiet-001e8086/probe.mjs": "58b735d6a2225cd6614c192af898d7b4878ae1124f39d2244867274684b3fa73"
+  },
+  "factory": {
+    "schema": "wasm-vm.e5-t26f.single-process-quiet-factory.v1",
+    "acceptance": false,
+    "fVerified": false,
+    "sourcePins": {
+      "tools/verify/e5-t26f-browser-roundtrip.mjs": "7f8b58f7e3f6e0f16b7b6cb91b8593e625ed058e7aa764df428e9990f85100a1",
+      "tools/verify/e5-t26f-quiet-text-probe.mjs": "1c38cf75c420bf6dc9b187c6aed59e6d0c838e780c1a06e169157e3b5158f6f4",
+      "tools/verify/e5-t26f-text-oracle.mjs": "dc14730662600ff3cc978848065d86e431793258c00056c9ae0c3d326edc11ba",
+      "evidence/e5-t26f/resident-text-template.json": "58609c000193c8079fa21a408aef4d6dd7a7ad17fbc06d3e3f6bd02a6894e85e"
+    },
+    "seal": {
+      "creatorHead": "05b82bc688a34e6a1abef7b6c761c01bf4a3f7c6",
+      "profileSha256": "f7a2bc52a45ed895eb1edd71f722ab1fb5c5ccf106a0753a6630b17f84940685",
+      "snapshotSha256": "87477fbfe7b1d31edfb75336f0f49f0001f175106a6506933cef733d579699e7",
+      "runtimeSha256": "f897f34951ca3ab59909f0ce6bbe2e8a68a6620cdace4d1e4eca617cbd601ce8",
+      "imageSha256": "d2fc4eab9bc1b5fe528a2956b58faefb20fcf18e2505c499ecafa8824d390f72"
+    },
+    "changes": [
+      {
+        "label": "oracle import",
+        "beforeSha256": "57f1709746dd7dd60c275d2834f4d96fb0d5da730b4974371e98141d980b3849",
+        "afterSha256": "a0a1966d63dfa9975413b09263292daf9036c256fe981789bffa6b08353a7f77"
+      },
+      {
+        "label": "held raster configuration",
+        "beforeSha256": "df946402fb8ad05ae3765dc8ebe07cf0c936ba37bc9d499185f3cda5e5e4b5ea",
+        "afterSha256": "50516cd12a01065773d12e235879f0169a34029d64efc6e45c59c8e52606434b"
+      },
+      {
+        "label": "early isolated admission and live source pins",
+        "beforeSha256": "b7a9c5109b37954f684e8ddd20bc33c45a7a1361bfd1bb899942d1f42ae4680e",
+        "afterSha256": "ffa330a9b49ae1fa7daeb7c417d34856d7d3ddccfe785b52891f4c2f37346f72"
+      },
+      {
+        "label": "held exact physical-text oracle",
+        "beforeSha256": "5acda6c48363c1db8a8a54b9c21ae91fb578cc5338a0547f90c865ce13847dbd",
+        "afterSha256": "36e34114fe08288b9cb1d917ac0c36a90f0eb2bf5bf38d265f46c68ddd20c11b"
+      },
+      {
+        "label": "read-only raster and titlebar installation",
+        "beforeSha256": "71c7d57710f5351144f81586eac1239b0da6f6786b0990ea9e202ec9c796ca4b",
+        "afterSha256": "d1b57883c472476b116f9444870436f1449c639a51dfd8b34b6166100c56c7f3"
+      },
+      {
+        "label": "05b seal only, copied by unchanged prepareDiagnostic",
+        "beforeSha256": "11b94cd3f681a0338ead77781efe650ac6e111a9cad6eee245e2be9527a01ed3",
+        "afterSha256": "66347eaf128e967278b6073d061f0ee4ef23dbd1fcce0164bc46b6490108850c"
+      },
+      {
+        "label": "nonacceptance provenance",
+        "beforeSha256": "d0cb592f80a93f16d211e83663b6acaa342a76017b929b3ce9cbb29499050ac6",
+        "afterSha256": "1e38265c31ae359b0af0e843668b599eda1aaedb1c62684fbdc8dc8a32cc61bb"
+      },
+      {
+        "label": "held RAM-only preparation and derived reload",
+        "beforeSha256": "d0441c47bbe13e3a8665952a5b7f2763c374f98ad38e9be73f36d677cbd3e0b4",
+        "afterSha256": "d20dbfa5c3e681b309a58e924c1c7322a712eb7f099f3d5be62f32c3d603c788"
+      },
+      {
+        "label": "held timed play and raster focus proof",
+        "beforeSha256": "50cdb0c5b06c57a4b90ee0c531a004b128f45a876166cc0f97021a36f763943a",
+        "afterSha256": "a67a237eea962c304d9a709bf669169d99fa2eafc4f308ce10a5206aa69a0956"
+      },
+      {
+        "label": "exact token replaces only the timed area heuristic",
+        "beforeSha256": "37ccd6d2f475d12cbb84eab98dab936817accf9668a4effde3bddc73667ff479",
+        "afterSha256": "d67675ae6698aabc760bd9e295d5f819b39179f852fd99c336c403ccfbcfbe06"
+      },
+      {
+        "label": "repository root",
+        "beforeSha256": "3d26b4dbe5b70221ade083fbdeb9c903f8e2153ee5c8b008d4aa8d0f90634e53",
+        "afterSha256": "3ca267a6f5f955a8f58bf71f1d96513c8ba2679b0d14efb510efc63f61571423"
+      },
+      {
+        "label": "import ./e5-t26f-text-oracle.mjs",
+        "beforeSha256": "ded4114cc0dbd986c3652eb70a00f8170cbd9e1fb0a09359d7c5c27d824a0dbd",
+        "afterSha256": "2ae560f021734f055911957dabee12e85a71096da2708400c83a67687cdf9b48"
+      },
+      {
+        "label": "import ./e5-t22c-cpu-profile.mjs",
+        "beforeSha256": "116a9f85f370a7072d6904654a999e8247869c19d47891178e2890e1a927ec98",
+        "afterSha256": "8f612548ce2563a3d3fa220a4d4e4dd3beadb96e09e3c7738fb09b3e971ee3ac"
+      },
+      {
+        "label": "import ./e5-t26f-guest-profile.mjs",
+        "beforeSha256": "5facc30e691fca66a494792c624e67fe4f3f8b9d1eb4421ffb4ef4460868d48f",
+        "afterSha256": "3fd48e711a5e780acb6cf0907f98049f2743677aaedd5627fb2459292794ffe8"
+      },
+      {
+        "label": "import ../../web/bench/desktop-perf.js",
+        "beforeSha256": "5b319bc5becdde2d5e0f48c9995c3e7ad4ad0850dbafd99b445f70b9539f5221",
+        "afterSha256": "2f7cfdf6d368b7b81fce4f5342e513191b1fb0e13fb4c5ae3ad86bf8017eb3c5"
+      },
+      {
+        "label": "import ./e5-t26f-resident-proof.mjs",
+        "beforeSha256": "bad98a326ad78306ab2ffafbe9c744d08153b34802b157b6be397cc21cc43761",
+        "afterSha256": "abb20105aef56163b98a22f1c14e9ccdc25896b6c6a4c40a6b3518ca617d0171"
+      },
+      {
+        "label": "import ./e5-t26k-decoded-cache.mjs",
+        "beforeSha256": "00059fe6d3822f5089135d404198cfc0e849d4f28578eaf9b432112b63f4f13f",
+        "afterSha256": "6d320e317966ea57fc1b427273afbdfd1802076bd4495514137d1022912a4f1d"
+      }
+    ],
+    "factorySha256": "dcf52ced1640baf7dc3fb7f73bcd5b8ae1253679ea51e09469b1bd4cf3268ec5",
+    "generatedSourceSha256": "58b735d6a2225cd6614c192af898d7b4878ae1124f39d2244867274684b3fa73",
+    "invocation": {
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "argv": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-quiet-001e8086/probe.mjs"
+      ],
+      "env": {
+        "E5_T26F_REQUIRE_HEAD": "001e80864911863145f2127192bae5df8186e68b",
+        "E5_T26F_HEADED": "0",
+        "E5_T26F_FIXTURE": "resident-observer-v1",
+        "E5_T26F_DIAGNOSTIC_PROFILE": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-IKBhyX",
+        "E5_T26F_DIAGNOSTIC_PORT": "61637",
+        "E5_T26F_TIMEOUT_MS": "1800000",
+        "E5_T26F_IMAGE": "target/e5-t26f/resident-image-single-process-observer-v1/alpine-rootfs.ext4",
+        "E5_T26F_IMAGE_INFO": "target/e5-t26f/resident-image-single-process-observer-v1/desktop-info.json",
+        "E5_T26F_DESKTOP_ASSET_DIR": "target/e5-t26f/chunks/resident-single-process-observer-v1",
+        "E5_T26F_DIAGNOSTIC": "reuse",
+        "E5_T26F_OUT": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-quiet-001e8086/record"
+      }
+    },
+    "limitation": "Generated only; no browser executed and no timing result. Retain this directory with the eventual diagnostic evidence."
+  },
+  "limitation": "One print-only screen; no deadline or identity guard waiver"
+}

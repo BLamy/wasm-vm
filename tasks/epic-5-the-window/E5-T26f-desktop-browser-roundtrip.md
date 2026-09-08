@@ -40,6 +40,36 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker and fresh Daybreak critic — print-only hypothesis closed
+
+Luna's hash-pinned factory derives the held exact72x13 text oracle from the
+current observer-aware runner;9/9 focused tests pass. Daybreak reviews the
+derivation and closes three missing imported-helper pins before the one launch.
+`node evidence/e5-t26f/single-process-quiet-001e8086/run.mjs` runs at actual
+producer001e8086 on a fresh copy of the original05b seal, physically suppresses
+only the three post-observation prints, then saves/reloads a separately labeled
+RAM snapshot. All C identity/FD/PCM guards, finite feed, same-child wait, physical
+input and original clock remain. The installed helper/image are not changed.
+
+Original T0 `1050.1349999904633` to end `5152.004999995232` is
+**4101.870000004768 ms: FAILED**. Derived snapshot SHA256
+`569f4689a2f9082688159c47347480dac022873bd79227f1effb39ceb6c0b6cc`
+restores CRCaf15247a without booting;10 physical key edges, fresh exact text,
+cursor/focus and1440 fresh non-silent PCM frames hold. Raw SHA256
+`0d56d45f82d6982a52368ca5dc63499d26ce07409712d460b0cb178ab60363bf`.
+Daybreak's closed-failure report is
+`evidence/e5-t26f/single-process-quiet-verifier/result-review.md`; all generated
+source, invocation, PNGs, result and archive details are in the sibling
+`single-process-quiet-001e8086/README.md`. No repeat or durable promotion of
+this print-only hypothesis; F remains in progress.
+
+One separate existing guest-PC diagnostic on the original seal, not the quiet
+snapshot, closes at4427.939999938011ms (failed). Commands, raw hash, kernel-symbol
+binding and sampling limits are in
+`evidence/e5-t26f/single-process-guest-profile-001e8086/README.md`. Aggregate
+compiled-entry/link counts motivate a targeted cache-invalidation investigation;
+they do not identify a timing cause, establish a speedup, or waive F's deadline.
+
 ### 2026-09-08 — worker and fresh Daybreak critic — single-process observer closes
 
 PR368 source freeze `05b82bc688a34e6a1abef7b6c761c01bf4a3f7c6` builds the
