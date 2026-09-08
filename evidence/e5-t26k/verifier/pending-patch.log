@@ -1,0 +1,23 @@
+{"command":["cargo","test","-p","wasm-vm-core","--features","trace,gpu-trace","--lib","verifier_pending_code_patch_survives_same_size_and_rejected_selection","--","--nocapture"],"cwd":"/private/tmp/e5-t26k-verifier-SrjasM/attack-repo","target":"/private/tmp/e5-t26k-verifier-SrjasM/target","startedAt":"2026-09-08T12:02:03.071Z"}
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26k-verifier-SrjasM/attack-repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.18s
+     Running unittests src/lib.rs (/private/tmp/e5-t26k-verifier-SrjasM/target/debug/deps/wasm_vm_core-048f7c055d42ac1c)
+
+running 1 test
+K critic pending patch: entries=4096 selection=4096 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+K critic pending patch: entries=4096 selection=4096 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+K critic pending patch: entries=4096 selection=4096 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+K critic pending patch: entries=4096 selection=8192 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+K critic pending patch: entries=4096 selection=8192 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+K critic pending patch: entries=4096 selection=8192 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+K critic pending patch: entries=16384 selection=16384 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+K critic pending patch: entries=16384 selection=16384 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+K critic pending patch: entries=16384 selection=16384 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+K critic pending patch: entries=16384 selection=8192 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+K critic pending patch: entries=16384 selection=8192 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+K critic pending patch: entries=16384 selection=8192 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+test decoded_cache_capacity_tests::verifier_pending_code_patch_survives_same_size_and_rejected_selection ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 332 filtered out; finished in 0.01s
+
+{"command":["cargo","test","-p","wasm-vm-core","--features","trace,gpu-trace","--lib","verifier_pending_code_patch_survives_same_size_and_rejected_selection","--","--nocapture"],"cwd":"/private/tmp/e5-t26k-verifier-SrjasM/attack-repo","target":"/private/tmp/e5-t26k-verifier-SrjasM/target","startedAt":"2026-09-08T12:02:03.071Z","code":0,"signal":null,"endedAt":"2026-09-08T12:02:06.597Z"}

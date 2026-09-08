@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:65370/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.76",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5-T26k\nIN PROGRESS\n✕ Close\nBound and measure browser decoded-block cache capacity\nEpic\nE5 — The Window\nStatus\nin progress\nEstimate\nS\nDepends on\nE4-T30, E5-T26h, E5-T26j\nGOAL\n\nTest whether decoded-cache working-set pressure is a material contributor to F's\nremaining latency. The resident 24/256-batch comparison at `45bff942` still builds\n670993–807475 decoded blocks per endpoint interval with no bulk invalidation.\nCompiled residency alone does not satisfy F. This is a controlled capacity\nexperiment, not an assumed optimization or permission to waive the deadline.\n\nVERIFICATION LOG — EVIDENCE\n### 2026-09-08 — coordinator — start one bounded configuration boundary\n\nWorker contract: `decodedCacheEntries` is the optional loader/desktop query\nselection; `setDecodedCacheEntries(number)` is the strict WASM method; the\nread-only `jitStats().decodedCacheEntries` field reports actual core capacity.\nAdmit only 4096 or 16384. Omission and same-size selection must not resize.\nKeep selection outside the permissive JIT-enable fallback catch. Run all actual\nbrowser builds/measurements centrally after the disjoint Rust and JS workers\nfinish; never combine browser timing with another active benchmark or change an\nexisting cold seal's binding. This task's status is not a performance claim.\n\n### 2026-09-08 — coordinator — measured prerequisite, no default decision\n\nThe closed F comparison is indexed at\n`evidence/e5-t26f/resident-residency-replay-45bff942/comparison.json`.\nLarger compiled residency raises interval JIT share from roughly 39% to 61–62%\nand removes recorded eviction/retranslation churn, but all four interactions\nstill take 4013.55–4745.285 ms. Decoded builds remain high even in the no-churn\narms. Capacity is a falsifiable candidate; these counts alone establish neither\na cache-conflict cause nor a host-time saving. Keep the normal default unchanged\nuntil an independently reviewed product-level result justifies a later decision.\nADVERSARIAL VERIFICATION\nFresh Daybreak Blue carries unchanged architecture and F functional evidence.\nAttack NaN/infinity/fractions/strings/arrays/null/empty/oversized inputs, no-op\nselection, mutation on rejection, reported-versus-real capacity, missing worker\nforwarding, application after the first pump, restore-time loss of selection,\nPMP/SMC/DMA coherence, stale compiled handles and changed snapshot semantics.\nCompare guest trace/state digests and run the affected native/WASM/browser gates;\nsabotage one selection or coherence regression. Run the final exact-head pristine\nclone once. No rr, independent machine, WebKit, GitHub Actions or production\ndeployment is required for this diagnostic prerequisite.\nsource: tasks/epic-5-the-window/E5-T26k-browser-decoded-cache-capacity.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:65370/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:65370/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:65370/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:65370/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:65370/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:65370/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:65370/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:65370/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:65370/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:65370/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:65370/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:65370/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "1b66363502e765295099bed0248a0b2578718c7ef4cb43ef7c191ee781855477"
+}

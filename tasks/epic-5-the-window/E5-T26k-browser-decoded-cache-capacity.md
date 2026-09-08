@@ -3,7 +3,7 @@ id: E5-T26k
 epic: 5
 title: Bound and measure browser decoded-block cache capacity
 priority: 526.596
-status: in-progress
+status: implemented
 depends_on: [E4-T30, E5-T26h, E5-T26j]
 estimate: S
 risk: high
@@ -66,6 +66,33 @@ clone once. No rr, independent machine, WebKit, GitHub Actions or production
 deployment is required for this diagnostic prerequisite.
 
 ## Verification log
+
+### 2026-09-08 — worker — IMPLEMENTED, measured negative performance outcome
+
+Frozen implementation/build `a53e51a6caf6eb542e4fa2ef4c039f84298a5ec6` is indexed in
+`evidence/e5-t26k/README.md`. `make verify-E5-T26k-runtime`, the 19-test real-WASM
+selection/clock run, and local `make web-dist` pass; the pristine Daybreak clone
+reproduces all scoped gates. New native SMC trace `568b64d33599f3f5` retires 20
+instructions identically with legacy/4096/16384, including final snapshot bytes.
+The recorded new Chromium cold seal and actual 4096/16384/16384/4096 replay are
+`E5_T26K_OUT=evidence/e5-t26k/capacity-a53e51a6 node tools/verify/e5-t26k-browser-capacity.mjs`.
+No checkpoint override was supplied. Full invocation, per-child JSON/PNG/logs,
+and aggregate survive in that directory; outer transcript is adjacent `.log`.
+
+Actual capacities, repack-off/24 executor, divider ten, independent profile copies,
+CRC `f43155a5`, ten real key edges and 1440 fresh non-silent PCM frames hold in
+every arm. Original times are 4864.945/4687.215/4685.490/4885.200 ms: all four F
+2000-ms checks fail, retained as child exit 1. The collector exits 0 only because
+all four configuration measurements are complete. Decoded builds fall about 80%
+at 16384, but local mean elapsed improves only 3.87%; no causal host-cost attribution,
+F verification, default promotion or deadline waiver follows. Aggregate SHA-256
+`408f0e39bcdee9b7766b96557f615e8af49ea1e8fc5e652ca32159e8c7a214e4`.
+
+`E5_DEMO_TASK=E5-T26k E5_DEMO_OUT=evidence/e5-t26k/demo-a53e51a6 node tools/verify/e5-t18e-demo-smoke.mjs`
+passes 126/126, zero console/HTTP errors and K in-progress display. The critic's
+fresh pending-patch attack and executor-invalidation sabotage are retained under
+`evidence/e5-t26k/verifier/`; final browser verdict remains the separate critic's
+responsibility. No production deployment or Omarchy image change occurred.
 
 ### 2026-09-08 — coordinator — start one bounded configuration boundary
 

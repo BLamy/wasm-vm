@@ -1,0 +1,99 @@
+{"command":["wasm-pack","test","--node","crates/wasm","--test","decoded_cache_capacity","--","resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_policy","--nocapture"],"cwd":"/private/tmp/e5-t26k-verifier-SrjasM/attack-repo","target":"/private/tmp/e5-t26k-verifier-SrjasM/target","startedAt":"2026-09-08T12:02:38.261Z"}
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-wasm-emit v0.0.1 (/private/tmp/e5-t26k-verifier-SrjasM/attack-repo/crates/wasm-emit)
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26k-verifier-SrjasM/attack-repo/crates/core)
+   Compiling wasm-vm-storage v0.0.1 (/private/tmp/e5-t26k-verifier-SrjasM/attack-repo/crates/storage)
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/tmp/e5-t26k-verifier-SrjasM/attack-repo/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/private/tmp/e5-t26k-verifier-SrjasM/attack-repo/crates/slirp)
+   Compiling wasm-vm-wasm v0.0.1 (/private/tmp/e5-t26k-verifier-SrjasM/attack-repo/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.58s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/decoded_cache_capacity.rs (/private/tmp/e5-t26k-verifier-SrjasM/target/wasm32-unknown-unknown/debug/deps/decoded_cache_capacity-37f0fa3b359e1120.wasm)
+running 1 test
+Invoking test: resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_policy
+panicked at crates/wasm/tests/decoded_cache_capacity.rs:126:9:
+assertion `left == right` failed
+  left: 1.0
+ right: 0.0
+
+Stack:
+
+Error
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpYPQyJp/wasm-bindgen-test.js:2591:25
+    at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpYPQyJp/wasm-bindgen-test.js:3404:18)
+    at __wbg_new_227d7c05414eb861 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpYPQyJp/wasm-bindgen-test.js:2590:57)
+    at decoded_cache_capacity-37f0fa3b359e1120.wasm.console_error_panic_hook::Error::new::__wbg_new_227d7c05414eb861::h189795aeb157c241 externref shim (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[20964]:0x45f121)
+    at decoded_cache_capacity-37f0fa3b359e1120.wasm.console_error_panic_hook::Error::new::h94471273f2e99118 (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[12514]:0x40290f)
+    at decoded_cache_capacity-37f0fa3b359e1120.wasm.console_error_panic_hook::hook_impl::h4fec77a80fa62eb2 (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[6106]:0x347dee)
+    at decoded_cache_capacity-37f0fa3b359e1120.wasm.console_error_panic_hook::hook::hb893e28764ec5a25 (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[18565]:0x44de6c)
+    at decoded_cache_capacity-37f0fa3b359e1120.wasm.core::ops::function::Fn::call::h680dc69ef355f38e (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[15824]:0x4321dd)
+    at decoded_cache_capacity-37f0fa3b359e1120.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[4315]:0x2ebc6f)
+    at decoded_cache_capacity-37f0fa3b359e1120.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[8606]:0x3a4723)
+
+
+test resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_policy ... FAIL
+
+failures:
+
+---- resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_policy output ----
+    error output:
+        panicked at crates/wasm/tests/decoded_cache_capacity.rs:126:9:
+        assertion `left == right` failed
+          left: 1.0
+         right: 0.0
+        
+        Stack:
+        
+        Error
+            at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpYPQyJp/wasm-bindgen-test.js:2591:25
+            at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpYPQyJp/wasm-bindgen-test.js:3404:18)
+            at __wbg_new_227d7c05414eb861 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpYPQyJp/wasm-bindgen-test.js:2590:57)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.console_error_panic_hook::Error::new::__wbg_new_227d7c05414eb861::h189795aeb157c241 externref shim (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[20964]:0x45f121)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.console_error_panic_hook::Error::new::h94471273f2e99118 (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[12514]:0x40290f)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.console_error_panic_hook::hook_impl::h4fec77a80fa62eb2 (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[6106]:0x347dee)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.console_error_panic_hook::hook::hb893e28764ec5a25 (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[18565]:0x44de6c)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.core::ops::function::Fn::call::h680dc69ef355f38e (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[15824]:0x4321dd)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[4315]:0x2ebc6f)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[8606]:0x3a4723)
+        
+        
+    
+    JS exception that was thrown:
+        RuntimeError: unreachable
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.__rustc[8068f81614cfe5c]::__rust_abort (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[21464]:0x460898)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.__rustc[8068f81614cfe5c]::__rust_start_panic (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[21446]:0x46083d)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.__rustc[8068f81614cfe5c]::rust_panic (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[21086]:0x45f875)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[4315]:0x2ebce1)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[8606]:0x3a4723)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[21369]:0x4605b3)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.__rustc[8068f81614cfe5c]::rust_begin_unwind (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[16483]:0x4399b2)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.core[2c5ad5f686fcca5c]::panicking::panic_fmt (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[13926]:0x419964)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.core[2c5ad5f686fcca5c]::panicking::assert_failed_inner (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[3771]:0x2c8fa4)
+            at decoded_cache_capacity-37f0fa3b359e1120.wasm.core::panicking::assert_failed::hdafa88f8fb9475df (wasm://wasm/decoded_cache_capacity-37f0fa3b359e1120.wasm-09dd0b32:wasm-function[11225]:0x3e8d68)
+
+failures:
+
+    resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_policy
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 2 filtered out; finished in 0.46s
+
+Error: Node failed with exit_code 1
+error: test failed, to rerun pass `--test decoded_cache_capacity`
+
+Caused by:
+  process didn't exit successfully: `/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner /private/tmp/e5-t26k-verifier-SrjasM/target/wasm32-unknown-unknown/debug/deps/decoded_cache_capacity-37f0fa3b359e1120.wasm resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_policy --nocapture` (exit status: 1)
+Error: Running Wasm tests with wasm-bindgen-test failed
+Caused by: Running Wasm tests with wasm-bindgen-test failed
+Caused by: failed to execute `cargo test`: exited with exit status: 1
+  full command: cd "crates/wasm" && CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER="/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner" WASM_BINDGEN_TEST_ONLY_NODE="1" "cargo" "test" "--target" "wasm32-unknown-unknown" "--test" "decoded_cache_capacity" "--" "resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_policy" "--nocapture"
+{"command":["wasm-pack","test","--node","crates/wasm","--test","decoded_cache_capacity","--","resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_policy","--nocapture"],"cwd":"/private/tmp/e5-t26k-verifier-SrjasM/attack-repo","target":"/private/tmp/e5-t26k-verifier-SrjasM/target","startedAt":"2026-09-08T12:02:38.261Z","code":1,"signal":null,"endedAt":"2026-09-08T12:02:46.996Z"}

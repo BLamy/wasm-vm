@@ -1,0 +1,100 @@
+{
+  "frozen": "a53e51a6caf6eb542e4fa2ef4c039f84298a5ec6",
+  "scratch": "/private/tmp/e5-t26k-verifier-SrjasM",
+  "checkout": "/private/tmp/e5-t26k-verifier-SrjasM/repo",
+  "target": "/private/tmp/e5-t26k-verifier-SrjasM/target",
+  "targetInitiallyAbsent": true,
+  "removedKeys": [
+    "RUST_LOG"
+  ],
+  "effectiveCargoKeys": [
+    "CARGO_TARGET_DIR"
+  ],
+  "startedAt": "2026-09-08T11:58:27.520Z",
+  "commands": [
+    {
+      "label": "clone",
+      "command": [
+        "git",
+        "-c",
+        "core.hooksPath=/dev/null",
+        "clone",
+        "--no-local",
+        "--depth",
+        "1",
+        "--branch",
+        "codex/e5-t26k-decoded-cache-capacity",
+        "file:///Users/blamy/Documents/Codex/wasm-vm",
+        "/private/tmp/e5-t26k-verifier-SrjasM/repo"
+      ],
+      "cwd": "/private/tmp/e5-t26k-verifier-SrjasM",
+      "startedAt": "2026-09-08T11:58:27.521Z",
+      "log": "pristine-clone.log",
+      "code": 0,
+      "signal": null,
+      "endedAt": "2026-09-08T11:58:32.297Z",
+      "sha256": "2a0d6e96bed978a87d3efcf04734f9ee50f1563b41d01c9d2daa49f7dc3f247a"
+    },
+    {
+      "label": "deps",
+      "command": [
+        "npm",
+        "ci",
+        "--offline",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund",
+        "--prefix",
+        "web"
+      ],
+      "cwd": "/private/tmp/e5-t26k-verifier-SrjasM/repo",
+      "startedAt": "2026-09-08T11:58:32.599Z",
+      "log": "pristine-deps.log",
+      "code": 0,
+      "signal": null,
+      "endedAt": "2026-09-08T11:58:32.986Z",
+      "sha256": "ecf7d4e9b0f9c754fc69dbf03848ba934c2f9c396946a1640d3c7607c0d5ce26"
+    },
+    {
+      "label": "runtime",
+      "command": [
+        "make",
+        "verify-E5-T26k-runtime"
+      ],
+      "cwd": "/private/tmp/e5-t26k-verifier-SrjasM/repo",
+      "startedAt": "2026-09-08T11:58:32.986Z",
+      "log": "pristine-runtime.log",
+      "code": 0,
+      "signal": null,
+      "endedAt": "2026-09-08T12:00:29.896Z",
+      "sha256": "3bf67a0a926ad5bbf4fb9091e7506d15f2f43fb32329ad1bc7ddd2937e6f7960"
+    },
+    {
+      "label": "wasm",
+      "command": [
+        "wasm-pack",
+        "test",
+        "--node",
+        "crates/wasm",
+        "--test",
+        "decoded_cache_capacity",
+        "--test",
+        "icount_divider",
+        "--test",
+        "guest_clock"
+      ],
+      "cwd": "/private/tmp/e5-t26k-verifier-SrjasM/repo",
+      "startedAt": "2026-09-08T12:00:29.896Z",
+      "log": "pristine-wasm.log",
+      "code": 0,
+      "signal": null,
+      "endedAt": "2026-09-08T12:00:49.286Z",
+      "sha256": "203fcaddacaaaade8f47dd6895ec3a790d4e50b664c05e4a2cce3730e0818099"
+    }
+  ],
+  "actualHead": "a53e51a6caf6eb542e4fa2ef4c039f84298a5ec6",
+  "initialStatus": "",
+  "finalStatus": "",
+  "completed": true,
+  "finishedAt": "2026-09-08T12:00:49.564Z"
+}

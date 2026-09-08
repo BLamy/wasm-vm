@@ -1,0 +1,13 @@
+--- a/crates/core/src/lib.rs
++++ b/crates/core/src/lib.rs
+@@ -1014,9 +1014,7 @@
+         // E4-T08: a fresh cache has no blocks; reset discovery so stale counts/requests are dropped.
+         self.discovery.reset();
+         // E4-T10: fresh cache ⇒ every compiled block is stale; drop them all.
+-        if let Some(e) = self.executor.as_mut() {
+-            e.invalidate_all();
+-        }
++        // VERIFIER SABOTAGE ONLY: deliberately retain stale compiled handles on resize.
+         // Fresh cache ⇒ no cached code ⇒ any pending write frames are moot.
+         self.bus.code_write_log_mut().clear();
+     }
