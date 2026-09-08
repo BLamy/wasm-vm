@@ -277,7 +277,7 @@ test("exhausted cursor budget fails before polling; a polling timeout remains a 
   assert.equal(f.api.state().lastPhase.event, "start");
 });
 
-function delayedGestureFixture(startAt = 1_100) {
+function delayedGestureFixture(startAt = 1_100, postRestoreCommand = "sh /tmp/a") {
   const f = fixture();
   const events = [];
   const delayStarted = deferred();
@@ -290,6 +290,7 @@ function delayedGestureFixture(startAt = 1_100) {
   f.clock.now = startAt;
   Object.assign(f.sandbox, {
     firstRestore: { completedAt: 1_000 },
+    postRestoreCommand,
     desktopBox: async () => ({}),
     guestPoint: (_box, x, y) => ({ x, y }),
   });
@@ -300,7 +301,7 @@ function delayedGestureFixture(startAt = 1_100) {
       { device: "tablet", source: "pointermove", coordinates: point },
     ] }),
     beginFocus: () => {}, focus: () => {}, finishFocus: () => ({ focuses: [focus] }),
-    beginCommand: (value) => { events.push(`command:${value}`); },
+    beginCommand: (value) => { command.command = value; events.push(`command:${value}`); },
     finishCommand: () => ({ commands: [command] }),
     confirmGuestFocus: () => ({ focuses: [focus] }),
   };
@@ -322,11 +323,13 @@ function delayedGestureFixture(startAt = 1_100) {
     up: async () => { events.push("up"); pointerFrames += 1; audio.policy.state = "unlocked"; },
   };
   f.sandbox.page.keyboard = {
+    down: async (key) => { events.push(`down:${key}`); },
+    up: async (key) => { events.push(`up:${key}`); },
     type: async (character, options) => {
       assert.equal(options.delay, 0);
       events.push(`key:${character}`);
     },
-    press: async (key) => { events.push(`key:${key}`); command.terminalMarkerSeen = true; },
+    press: async (key) => { events.push(`key:${key}`); if (key === "Enter") command.terminalMarkerSeen = true; },
   };
   f.sandbox.page.waitForFunction = async (predicate, argument) => {
     const value = predicate(argument);
@@ -393,6 +396,48 @@ test("overlapped motion spends the original deadline; late command completion st
   expired.releaseDelay.resolve();
   await assert.rejects(expired.run(), /original 2-second budget/);
   assert.equal(expired.events.some((event) => event.startsWith("key:")), false);
+});
+
+function selectDiagnosticCommand(env) {
+  const selection = extractBetween("function diagnosticOptions", "const DIAGNOSTIC_OWNER");
+  return vm.runInNewContext(`${selection}\n({ diagnostic, postRestoreCommand })`, { assert, path, process: { env } });
+}
+
+const reuseCommandEnv = {
+  E5_T26F_DIAGNOSTIC: "reuse", E5_T26F_DIAGNOSTIC_PROFILE: "/tmp/t26f-command",
+  E5_T26F_DIAGNOSTIC_PORT: "48123",
+};
+
+test("command override refuses acceptance/create and rejects unbounded or multiline input", () => {
+  for (const env of [{}, { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: "create" }]) {
+    assert.throws(() => selectDiagnosticCommand({ ...env, E5_T26F_DIAGNOSTIC_COMMAND: "true" }), /requires reuse mode/);
+  }
+  for (const command of ["", "x".repeat(64), "true\ntrue", "echo\tbad", "é"]) {
+    assert.throws(() => selectDiagnosticCommand({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_COMMAND: command }), /1-63 printable ASCII/);
+  }
+});
+
+test("without override all modes keep the exact sh /tmp/a command", () => {
+  for (const env of [{}, reuseCommandEnv, { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: "create" }]) {
+    assert.equal(selectDiagnosticCommand(env).postRestoreCommand, "sh /tmp/a");
+  }
+});
+
+test("reuse override is recorded verbatim in nonacceptance metadata and the physical command record", async () => {
+  const override = 'aplay() { shift; command aplay "$@"; }; . /tmp/a';
+  const selected = selectDiagnosticCommand({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_COMMAND: override });
+  const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", selected);
+  assert.equal(run.acceptance, false);
+  assert.equal(run.postRestoreCommand, override);
+  assert.equal(run.diagnostic.command, override);
+  const f = delayedGestureFixture(1_100, selected.postRestoreCommand);
+  f.releaseDelay.resolve();
+  const result = await f.run();
+  assert.equal(result.postAudioCommand.command, override);
+  assert.ok(f.events.indexOf(`command:${override}`) > f.events.indexOf("up"));
+  assert.ok(f.events.includes("key:Enter"));
+  assert.equal(result.postRestoreStart, 1_000);
+  assert.ok(source.includes(originalTimingAssertion));
 });
 
 test("top-level catch captures the phase before finally cleanup and rethrows the original error", async () => {

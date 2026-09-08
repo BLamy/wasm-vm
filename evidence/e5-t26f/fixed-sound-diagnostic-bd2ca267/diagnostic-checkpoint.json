@@ -1,0 +1,156 @@
+{
+  "schema": "wasm-vm.e5-t26f.diagnostic-iteration.v1",
+  "acceptance": false,
+  "milestones": {
+    "run": {
+      "kind": "diagnostic-iteration",
+      "acceptance": false,
+      "diagnostic": {
+        "mode": "create",
+        "directory": "/private/tmp/e5-t26f-fixed-pcm.QrhhBP",
+        "port": 61627,
+        "origin": "http://127.0.0.1:61627"
+      },
+      "binding": {
+        "head": "bd2ca26721a21d3ba8be5a58b7347cea40990421",
+        "runtimeSha256": "96e3d11057e89768463ea9fe06a84178116841eb7b9a4a32487455d8a3000526",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "imageBytes": 1073741824,
+        "manifestSha256": "b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592",
+        "origin": "http://127.0.0.1:61627"
+      },
+      "profile": "/private/tmp/e5-t26f-fixed-pcm.QrhhBP/checkpoint-profile",
+      "checkpointFile": "/private/tmp/e5-t26f-fixed-pcm.QrhhBP/normal-checkpoint.json",
+      "creatorHead": "bd2ca26721a21d3ba8be5a58b7347cea40990421",
+      "currentHead": "bd2ca26721a21d3ba8be5a58b7347cea40990421",
+      "profileSha256": "809b6b806a5f87f6b6a0f9b2696d314132e4344d978649fb759ca092317d595d"
+    },
+    "initialReadiness": {
+      "completedAt": "2026-09-08T00:32:33.934Z"
+    },
+    "shellProbe": {
+      "command": "true; printf '\\033[42;30me5t26f-shell-ok\\033[0m\\n'",
+      "marker": "e5t26f-shell-ok",
+      "beforeFrame": 35,
+      "keyboardStart": 0,
+      "domEventStart": 0,
+      "visualDiffPixels": 2432,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 1,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 55,
+      "redMarkerSeen": false,
+      "keyboardFrames": 102,
+      "domEvents": 102,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "agentProbe": {
+      "state": "ready",
+      "negotiatedVersion": 1,
+      "transportGeneration": 2,
+      "bytesReceived": 54,
+      "bytesSent": 36,
+      "pendingBytes": 0
+    },
+    "initialAplay": {
+      "command": "yes \"$(printf '\\001\\000\\377\\177')\"|head -c3840 >/tmp/p;printf 'aplay -v -Dhw:0,0 --period-size=480 --buffer-size=960 -f S16_LE -t raw -r48000 -c2 /tmp/p&&printf \"\\033[42me5t26f-aplay\\033[0m\\n\"' >/tmp/a;sh /tmp/a",
+      "marker": "e5t26f-aplay-ok",
+      "beforeFrame": 55,
+      "keyboardStart": 102,
+      "domEventStart": 102,
+      "visualDiffPixels": 16893,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 128,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 139,
+      "redMarkerSeen": false,
+      "keyboardFrames": 460,
+      "domEvents": 460,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "initialAudio": {
+      "before": {
+        "available": true,
+        "writeIndex": 0,
+        "readIndex": 0,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 4096,
+        "inspectedFrames": 4096,
+        "nonSilentFrames": 0,
+        "maxAbs": 0
+      },
+      "after": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.082000732421875
+      },
+      "outputAttached": true,
+      "observedAt": 630360.5199999809
+    },
+    "twoWindows": {
+      "completedAt": "2026-09-08T00:37:42.764Z"
+    },
+    "initialCursor": {
+      "frame": {
+        "atMs": 767189,
+        "sequence": 19,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 18431
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 17612
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 18431,
+          "y": 17612
+        }
+      },
+      "rendered": {
+        "x": 720,
+        "y": 430,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      }
+    },
+    "normalSnapshot": {
+      "sha256": "de7769605e11a4fb6bb7bba7fccce0f611b975a94800c7ae9a0421775b765921",
+      "byteLength": 2768852,
+      "preFrontBufferCrc": "49d5e923",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "49d5e923",
+        "overlayGeneration": 617
+      }
+    }
+  },
+  "errors": {
+    "browser": [],
+    "http": []
+  }
+}

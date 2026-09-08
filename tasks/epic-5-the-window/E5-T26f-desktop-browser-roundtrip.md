@@ -40,6 +40,19 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-07 — coordinator — fixed-sound diagnostic reaches real PCM, misses timing
+
+The sealed diagnostic created at `bd2ca267` and reused at `28bf565e` now restores
+actual audio: 1440 new non-silent producer-ring frames, maxAbs 0.082000732421875,
+with attached guest output and running/unlocked playback. First-present CRC
+`49d5e923` matches, the fresh HELLO is generation 2, no cold boot occurs, and cursor
+pixels match at 856.565 ms. However, command/PCM completion arrives at 4799.225 ms
+and the final interaction observation at 4806.345 ms, exceeding the unchanged
+two-second requirement. This remains diagnostic-only; coherence/drag/second-reload
+were not reached. Exact command, provenance, retained JSON/inspected PNG hashes:
+`evidence/e5-t26f/fixed-sound-reuse-28bf565e/README.md`. Investigate the remaining
+latency without weakening the PCM or timing assertions.
+
 ### 2026-09-07 — coordinator — resume with verified sound queue mapping
 
 E5-T26h is reverified at frozen runtime `e8850241b686fd497c4ff1589fd31b6ffd0c7cc4`.

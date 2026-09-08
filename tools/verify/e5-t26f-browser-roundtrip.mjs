@@ -6,6 +6,7 @@
 // E5_T26F_DIAGNOSTIC_PROFILE=/absolute/empty/scratch, E5_T26F_DIAGNOSTIC_PORT=PORT.
 // create stops at the normal snapshot; reuse copies that closed profile into a new retained
 // iteration directory and runs the real normal restore/interaction/audit, without cold setup.
+// Reuse alone permits E5_T26F_DIAGNOSTIC_COMMAND, physically typed and recorded verbatim.
 
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
@@ -38,6 +39,12 @@ const jsonReplacer = (_key, value) => typeof value === "bigint" ? `${value}n` : 
 
 function diagnosticOptions(env) {
   const mode = env.E5_T26F_DIAGNOSTIC;
+  const command = env.E5_T26F_DIAGNOSTIC_COMMAND;
+  if (command !== undefined) {
+    assert.equal(mode, "reuse", "diagnostic command override requires reuse mode");
+    // At most four physical transitions per character plus Enter: below the 256-event budget.
+    assert.ok(/^[\x20-\x7e]{1,63}$/u.test(command), "diagnostic command must be 1-63 printable ASCII characters");
+  }
   const directory = env.E5_T26F_DIAGNOSTIC_PROFILE;
   const port = Number(env.E5_T26F_DIAGNOSTIC_PORT);
   if (!mode && !directory && !env.E5_T26F_DIAGNOSTIC_PORT) return null;
@@ -45,10 +52,11 @@ function diagnosticOptions(env) {
   assert.ok(directory && path.isAbsolute(directory) && path.resolve(directory) === directory &&
     directory !== path.parse(directory).root, "diagnostic profile requires an absolute normalized scratch directory");
   assert.ok(Number.isSafeInteger(port) && port >= 1024 && port <= 65535, "diagnostic mode requires a stable explicit server port");
-  return { mode, directory, port, origin: `http://127.0.0.1:${port}` };
+  return { mode, directory, port, origin: `http://127.0.0.1:${port}`, command: command ?? null };
 }
 
 const diagnostic = diagnosticOptions(process.env);
+const postRestoreCommand = diagnostic?.command ?? "sh /tmp/a";
 const DIAGNOSTIC_OWNER = "wasm-vm.e5-t26f.diagnostic-profile.v1";
 const DESKTOP_STORAGE_KEY = "wasm-vm.desktop-snapshot.v1";
 
@@ -268,7 +276,7 @@ const httpErrors = [];
 const startedAt = Date.now();
 const milestones = {
   run: { kind: diagnostic ? "diagnostic-iteration" : "acceptance", acceptance: !diagnostic,
-    diagnostic },
+    diagnostic, postRestoreCommand },
 };
 
 let lastPhase = null;
@@ -986,7 +994,7 @@ try {
   milestones.postRestoreAudioBefore = postAudioBefore;
   phaseProgress("post-restore:audio-unlock", "done");
   const postAudioCommand = await typeCommand(
-    "sh /tmp/a",
+    postRestoreCommand,
     "e5t26f-post-aplay",
     120_000,
     0,

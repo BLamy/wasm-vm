@@ -1,0 +1,36 @@
+^D✔ one unresolved progress probe prevents subsequent timer ticks from piling up (2.115542ms)
+✔ public sample is bounded and excludes pixels, full records and guest control (0.530958ms)
+✔ navigation rejection frees the probe; stopped sampling suppresses late results (0.394625ms)
+✔ failure artifacts retain phase, error and milestones before browser capture (0.61275ms)
+✔ failure capture does not issue requests behind a stuck progress probe (0.399583ms)
+✔ cursor timeout uses only the unspent original two-second budget (0.581333ms)
+✔ cursor waits through missing/stale pixels, returns matching sample and disposes its handle (0.453458ms)
+✔ exhausted cursor budget fails before polling; a polling timeout remains a failure (0.420583ms)
+✔ pointer motion precedes the full delayed gesture; no click or physical key occurs early (1.234542ms)
+✔ premature audio unlock during the delay fails before the click or command (0.654708ms)
+✔ overlapped motion spends the original deadline; late command completion still fails (1.128417ms)
+✔ top-level catch captures the phase before finally cleanup and rethrows the original error (0.358542ms)
+✔ a held coherence read starts after timed interaction and must finish before the next save (0.728459ms)
+✔ diagnostics require explicit mode, absolute scratch and stable port; default remains fresh acceptance (5.488958ms)
+✔ profile creation never overwrites existing data and reuse requires the task marker and completed seal (2.498917ms)
+✔ every runtime/kernel/image/origin binding mismatch refuses reuse before copying any profile (3.557167ms)
+✔ harness-only HEAD changes permit reuse while preserving creator and current provenance (3.744084ms)
+✔ runtime binding hashes actual served JS/WASM/kernel bytes, including uncommitted changes (7.34375ms)
+✔ reuse enters autoRestore directly without cold setup or resetting the restored timing boundary (0.537042ms)
+✔ reuse cold-boot fallback fails on its first readiness sample instead of waiting for another boot (0.471292ms)
+✔ reuse copies a sealed profile, preserves actual envelope/metadata and retains separate failed iterations (4.437458ms)
+✔ tampered profile bytes or desktop envelope/normal metadata cannot be reused (2.73425ms)
+✔ profile ownership refuses symlinks instead of traversing or overwriting an external profile (2.17325ms)
+✔ checkpoint session hydration is exact, origin-scoped and refuses an existing different envelope (1.214125ms)
+✔ persistent Chromium identity uses public CDP when browser() is null and always detaches (0.864625ms)
+✔ zero PCM and completion attachment/timestamps reach failure milestones before the PCM assertion (1.055958ms)
+✔ stale or mismatched actual coherence fails after timing and survives in failure milestones (1.303584ms)
+✔ second restore performs the real coherence audit after display/button checks and before evidence (0.049583ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 82.94325
