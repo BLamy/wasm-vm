@@ -1,0 +1,44 @@
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T03:51:47.134Z","elapsedMs":0}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-08T03:51:48.040Z","elapsedMs":906}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-08T03:51:48.040Z","elapsedMs":906}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-08T03:51:48.589Z","elapsedMs":1455}
+[e5-t26f] {"phase":"reload:normal","event":"start","timestamp":"2026-09-08T03:51:48.590Z","elapsedMs":1456}
+[e5-t26f] {"phase":"reload:normal","event":"done","timestamp":"2026-09-08T03:51:48.738Z","elapsedMs":1604}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"start","timestamp":"2026-09-08T03:51:48.738Z","elapsedMs":1604}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"done","timestamp":"2026-09-08T03:51:50.039Z","elapsedMs":2905}
+[e5-t26f] {"phase":"restore:normal:completion","event":"start","timestamp":"2026-09-08T03:51:50.039Z","elapsedMs":2905}
+[e5-t26f] {"phase":"restore:normal:completion","event":"done","timestamp":"2026-09-08T03:51:50.046Z","elapsedMs":2912}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"start","timestamp":"2026-09-08T03:51:50.046Z","elapsedMs":2912}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"done","timestamp":"2026-09-08T03:51:50.047Z","elapsedMs":2913}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"start","timestamp":"2026-09-08T03:51:50.047Z","elapsedMs":2913}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"done","timestamp":"2026-09-08T03:51:50.047Z","elapsedMs":2913}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"start","timestamp":"2026-09-08T03:51:50.047Z","elapsedMs":2913}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"done","timestamp":"2026-09-08T03:51:50.477Z","elapsedMs":3343}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"start","timestamp":"2026-09-08T03:51:50.478Z","elapsedMs":3344}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"done","timestamp":"2026-09-08T03:51:50.626Z","elapsedMs":3492}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"start","timestamp":"2026-09-08T03:51:50.626Z","elapsedMs":3492}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"done","timestamp":"2026-09-08T03:51:50.629Z","elapsedMs":3495}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"start","timestamp":"2026-09-08T03:51:50.629Z","elapsedMs":3495}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"done","timestamp":"2026-09-08T03:51:50.687Z","elapsedMs":3553}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"start","timestamp":"2026-09-08T03:51:50.687Z","elapsedMs":3553}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"done","timestamp":"2026-09-08T03:51:55.009Z","elapsedMs":7875}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"start","timestamp":"2026-09-08T03:51:55.010Z","elapsedMs":7876}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"done","timestamp":"2026-09-08T03:51:55.017Z","elapsedMs":7883}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"start","timestamp":"2026-09-08T03:51:55.017Z","elapsedMs":7883}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"failed","timestamp":"2026-09-08T03:51:55.177Z","elapsedMs":8043}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds
+    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1401:12 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

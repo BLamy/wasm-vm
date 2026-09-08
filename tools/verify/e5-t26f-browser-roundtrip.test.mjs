@@ -587,6 +587,38 @@ test("JIT policy mismatches, missing APIs and RPC errors refuse with actual fail
   }
 });
 
+test("JIT measurement rejects stale, reversed and malformed retirement counts without replacing the evidence", async () => {
+  for (const jit of ["0", "1"]) {
+    const f = fixture();
+    f.sandbox.diagnostic = { mode: "reuse", jit };
+    f.sandbox.page.evaluate = async (fn) => fn();
+    let retired = 123;
+    f.sandbox.window.__desktopController = { jitStats: async () => ({ hasExecutor: jit === "1", guestRetired: retired }) };
+    await f.api.recordDiagnosticJit("jitBefore");
+    for (const value of [123, 122, 0]) {
+      retired = value;
+      await assert.rejects(f.api.recordDiagnosticJit("jitAfter"), /positive guest retirement progress/);
+      assert.equal(f.milestones.jitAfter.state.guestRetired, value);
+      assert.equal(f.milestones.jitBefore.state.guestRetired, 123);
+    }
+    for (const value of [undefined, null, "124", -1, 123.5, NaN, Infinity, Number.MAX_SAFE_INTEGER + 1]) {
+      retired = value;
+      for (const key of ["jitBefore", "jitAfter"]) {
+        await assert.rejects(f.api.recordDiagnosticJit(key), /retirement count is unavailable or unsafe/);
+        assert.equal(f.milestones[key].state.guestRetired, value);
+      }
+    }
+    retired = 124;
+    delete f.milestones.jitBefore;
+    await assert.rejects(f.api.recordDiagnosticJit("jitAfter"), /positive guest retirement progress/);
+    retired = 0;
+    await f.api.recordDiagnosticJit("jitBefore");
+    retired = 1;
+    await f.api.recordDiagnosticJit("jitAfter");
+    assert.equal(f.milestones.jitAfter.state.guestRetired, 1);
+  }
+});
+
 test("both JIT arms capture PCM and freeze postRestoreEnd before the second RPC; the original cap still fails", async () => {
   const body = extractBetween("  const postPcmAtCompletion =", '  phaseProgress("post-restore:interaction-checks", "done");');
   for (const jit of ["0", "1"]) for (const completedAt of [3_000, 3_000.01]) {

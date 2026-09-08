@@ -337,6 +337,14 @@ async function recordDiagnosticJit(key) {
   }
   assert.equal(milestones[key].state?.hasExecutor, diagnostic.jit === "1",
     "requested JIT policy did not match the actual worker executor");
+  const retired = milestones[key].state.guestRetired;
+  assert.ok(Number.isSafeInteger(retired) && retired >= 0,
+    "actual worker guest retirement count is unavailable or unsafe");
+  if (key === "jitAfter") {
+    const before = milestones.jitBefore?.state?.guestRetired;
+    assert.ok(Number.isSafeInteger(before) && before >= 0 && retired > before,
+      "JIT comparison requires positive guest retirement progress");
+  }
 }
 
 function workerProfilerHost(identity) {

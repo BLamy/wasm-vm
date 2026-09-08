@@ -40,6 +40,28 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker — matched JIT control remains a negative diagnostic
+
+At `f9f017f5115b9425bf66457e8aeae016107b245d`, both copies of the sealed I
+checkpoint restore the same front-buffer CRC, re-handshake without booting, and
+complete physically typed `sh /tmp/a` with 1440 new PCM frames (960 non-silent).
+Inspected terminal captures show a recoverable ALSA underrun in each arm followed
+by the green conditional success marker and prompt. Actual executor state is
+true/true with JIT and false/false without it; guest retirement counts progress.
+JIT-on takes **5231.120 ms**, JIT-off **4842.675 ms**. Both fail the unchanged
+two-second bound; one ordered pair is not a default-policy result. Canonical
+records and exact reproduction: `evidence/e5-t26f/jit-control/README.md`.
+
+Fresh Daybreak Blue authenticated the records and found that stale RPC counter
+snapshots could pass the diagnostic helper. The follow-up validates safe,
+nonnegative endpoint counts and requires strictly positive before/after guest
+retirement progress; 63 helper regressions pass, and the critic's two isolated
+guard sabotages fail as intended. The already inspected pair has positive
+retirement deltas and needs no replay. Incremental report:
+`evidence/e5-t26f/jit-control/critic.md`, SHA-256
+`aa5419bc95eaf8ee509ceb1eb309f422a58fb2e1f2d79db277c8f45e105990e0`.
+This does not verify F or cover its deferred coherence/drag/reload criteria.
+
 ### 2026-09-08 — coordinator — resume after verified clock experiment
 
 E5-T26i is independently verified at `579a5539` and published as stacked PR 356.
