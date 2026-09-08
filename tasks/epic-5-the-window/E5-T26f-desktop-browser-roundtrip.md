@@ -40,6 +40,16 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — coordinator — bounded single-process observer candidate
+
+The buffered-proc attempt closes in PR367 at `a7d1556a`, with actual playback
+but failed11.471545-second timing. Keep F active for one separate static guest
+observer, preserving the prior helper and negative evidence. Scope and worker/
+critic boundaries are `evidence/e5-t26f/single-process-observer.md`. Require a
+new pinned binary/image/chunks and authenticated cold checkpoint. All original
+identity/audio guards and the2000-ms deadline remain; no performance benefit
+or F acceptance is claimed before the new real-browser record exists.
+
 ### 2026-09-08 — worker — buffered-proc browser closes; F timing still failed
 
 PR367 frozen head `52b29b9a41103337aba77bc5d002090111991c2d` changes the
