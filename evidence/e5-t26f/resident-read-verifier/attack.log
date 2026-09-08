@@ -1,0 +1,14 @@
+$ node tools/verify/e5-t26f-ash-read-probe.mjs evidence/e5-t26f/resident-read-verifier/attack-unknown-c-escape
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: unknown C escape q
+    at decodeCString (tools/verify/e5-t26f-ash-read-probe.mjs:42:19)
+    at tools/verify/e5-t26f-ash-read-probe.mjs:62:21
+
+Node.js v24.20.0
+exit=1
+summary.json absent after refusal: yes
+mutated builtin.strace SHA-256: a76c7291f0cddf0ba8e04232cee0a1b1ef3636b613c9e4e86a558f9fc8d0d6c0
+

@@ -1,0 +1,9 @@
+Started 2026-09-08T14:38:24.716Z
+$ "docker" "inspect" "--format" "{{.State.Status}} {{.Image}}" "e5-t26f-ash-write-probe-native"
+exited sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc
+
+exit=0 signal=none
+$ "git" "rev-parse" "HEAD"
+fatal: not a git repository (or any of the parent directories): .git
+
+exit=128 signal=none

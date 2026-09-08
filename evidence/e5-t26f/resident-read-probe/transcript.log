@@ -1,0 +1,238 @@
+Started 2026-09-08T14:39:42.451Z
+$ "docker" "inspect" "--format" "{{.State.Status}} {{.Image}}" "e5-t26f-ash-write-probe-native"
+exited sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc
+
+exit=0 signal=none
+$ "git" "rev-parse" "HEAD"
+2ace135363cf0fa3cf7ba978fe6810e564eecc03
+
+exit=0 signal=none
+$ "docker" "create" "--pull" "never" "--network" "none" "--cpus" "1" "--memory" "128m" "--pids-limit" "32" "--name" "e5-t26f-ash-read-probe-native-1788878382451" "sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc" "/bin/sh" "/work/run.sh"
+063cded6ff36a1fada3f5ad1b3af51569e9cb4cbe13bc8ea077f06351a9d45ba
+
+exit=0 signal=none
+$ "docker" "cp" "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/resident-read-probe/input" "e5-t26f-ash-read-probe-native-1788878382451:/work"
+
+exit=0 signal=none
+$ "docker" "cp" "-L" "e5-t26f-ash-write-probe-native:/usr/bin/strace" "-"
+[tar bytes=1642496, sha256=1a58d148c42bd646f7770aa50eccbead07e6261d63c10160b8986036d36f517f]
+
+exit=0 signal=none
+$ "docker" "cp" "-" "e5-t26f-ash-read-probe-native-1788878382451:/usr/bin" [copied tar on stdin]
+
+exit=0 signal=none
+$ "docker" "cp" "-L" "e5-t26f-ash-write-probe-native:/lib/libz.so.1" "-"
+[tar bytes=134656, sha256=9c99aacd95e1c007b73dd59ba22ba72562cf316ce952849c456818c4675f543e]
+
+exit=0 signal=none
+$ "docker" "cp" "-" "e5-t26f-ash-read-probe-native-1788878382451:/lib" [copied tar on stdin]
+
+exit=0 signal=none
+$ "docker" "cp" "e5-t26f-ash-write-probe-native:/lib/libz.so.1" "-"
+[tar bytes=1536, sha256=d72697b16868d5efdc43748be645dc80b28a43ec0c7cea3eff760eba881ac8db]
+
+exit=0 signal=none
+$ "docker" "cp" "-" "e5-t26f-ash-read-probe-native-1788878382451:/lib" [copied tar on stdin]
+
+exit=0 signal=none
+$ "docker" "cp" "-L" "e5-t26f-ash-write-probe-native:/usr/lib/libbz2.so.1" "-"
+[tar bytes=72192, sha256=0ccfb399d60bc0a4d20c43f02f0b2822332cad933cd6d425875cfa42ba8d4409]
+
+exit=0 signal=none
+$ "docker" "cp" "-" "e5-t26f-ash-read-probe-native-1788878382451:/usr/lib" [copied tar on stdin]
+
+exit=0 signal=none
+$ "docker" "cp" "e5-t26f-ash-write-probe-native:/usr/lib/libbz2.so.1" "-"
+[tar bytes=1536, sha256=1c8e54b94b35689f417a4d08975539a1dd324d84e367dc18fa41863f254c0fe5]
+
+exit=0 signal=none
+$ "docker" "cp" "-" "e5-t26f-ash-read-probe-native-1788878382451:/usr/lib" [copied tar on stdin]
+
+exit=0 signal=none
+$ "docker" "cp" "-L" "e5-t26f-ash-write-probe-native:/usr/lib/libdw.so.1" "-"
+[tar bytes=659968, sha256=a3cedb18cfc68884a61913a720fb35bcf4ab28e1e45a2bf8cbcd8a9a86b1f58c]
+
+exit=0 signal=none
+$ "docker" "cp" "-" "e5-t26f-ash-read-probe-native-1788878382451:/usr/lib" [copied tar on stdin]
+
+exit=0 signal=none
+$ "docker" "cp" "e5-t26f-ash-write-probe-native:/usr/lib/libdw.so.1" "-"
+[tar bytes=1536, sha256=f6b4acaa7fb47f21078a7a29dd8b1ac2308cba62f64b16f4fc5534d06f522e13]
+
+exit=0 signal=none
+$ "docker" "cp" "-" "e5-t26f-ash-read-probe-native-1788878382451:/usr/lib" [copied tar on stdin]
+
+exit=0 signal=none
+$ "docker" "cp" "-L" "e5-t26f-ash-write-probe-native:/usr/lib/libelf.so.1" "-"
+[tar bytes=134656, sha256=f993bd2d4441b36d2cc2b7322f3d652cea93fa0ee759ae5be53305356a952b50]
+
+exit=0 signal=none
+$ "docker" "cp" "-" "e5-t26f-ash-read-probe-native-1788878382451:/usr/lib" [copied tar on stdin]
+
+exit=0 signal=none
+$ "docker" "cp" "e5-t26f-ash-write-probe-native:/usr/lib/libelf.so.1" "-"
+[tar bytes=1536, sha256=17bf2d7fb490a7edcaa6a857c53376c65fb7caa9ff127b1fd6ec9d09b756018e]
+
+exit=0 signal=none
+$ "docker" "cp" "-" "e5-t26f-ash-read-probe-native-1788878382451:/usr/lib" [copied tar on stdin]
+
+exit=0 signal=none
+$ "docker" "cp" "-L" "e5-t26f-ash-write-probe-native:/usr/lib/libfts.so.0" "-"
+[tar bytes=69120, sha256=28833689c47f05b896970d249c8bcf17080ce5be45ebf1899fa897f33fae8a42]
+
+exit=0 signal=none
+$ "docker" "cp" "-" "e5-t26f-ash-read-probe-native-1788878382451:/usr/lib" [copied tar on stdin]
+
+exit=0 signal=none
+$ "docker" "cp" "e5-t26f-ash-write-probe-native:/usr/lib/libfts.so.0" "-"
+[tar bytes=1536, sha256=91a5d8f994e700643f06f383603a3a8fcb6c13fc581417d03e23203559bf395f]
+
+exit=0 signal=none
+$ "docker" "cp" "-" "e5-t26f-ash-read-probe-native-1788878382451:/usr/lib" [copied tar on stdin]
+
+exit=0 signal=none
+$ "docker" "cp" "-L" "e5-t26f-ash-write-probe-native:/usr/lib/liblzma.so.5" "-"
+[tar bytes=265728, sha256=e5da812e6b7fd46a36af1d234282dc39fa92b2e2f4391c5d2f59dbf001b17ceb]
+
+exit=0 signal=none
+$ "docker" "cp" "-" "e5-t26f-ash-read-probe-native-1788878382451:/usr/lib" [copied tar on stdin]
+
+exit=0 signal=none
+$ "docker" "cp" "e5-t26f-ash-write-probe-native:/usr/lib/liblzma.so.5" "-"
+[tar bytes=1536, sha256=964b4c202e58dc969d658267bc945812f3083de503e1bd4089ab56e8a67970f6]
+
+exit=0 signal=none
+$ "docker" "cp" "-" "e5-t26f-ash-read-probe-native-1788878382451:/usr/lib" [copied tar on stdin]
+
+exit=0 signal=none
+$ "docker" "cp" "-L" "e5-t26f-ash-write-probe-native:/usr/lib/libzstd.so.1" "-"
+[tar bytes=658944, sha256=eb835c35f082a8a4dd6a960d60863d1d079fb0d16b67847afbbe6b7d93832829]
+
+exit=0 signal=none
+$ "docker" "cp" "-" "e5-t26f-ash-read-probe-native-1788878382451:/usr/lib" [copied tar on stdin]
+
+exit=0 signal=none
+$ "docker" "cp" "e5-t26f-ash-write-probe-native:/usr/lib/libzstd.so.1" "-"
+[tar bytes=1536, sha256=b7b4517e1af67316da2068d15897f3a1156529e9956dda04262d27db62dd2b69]
+
+exit=0 signal=none
+$ "docker" "cp" "-" "e5-t26f-ash-read-probe-native-1788878382451:/usr/lib" [copied tar on stdin]
+
+exit=0 signal=none
+$ "docker" "start" "-a" "e5-t26f-ash-read-probe-native-1788878382451"
+native ash read probe completed
+
+exit=0 signal=none
+$ "docker" "inspect" "--format" "{{.State.ExitCode}}" "e5-t26f-ash-read-probe-native-1788878382451"
+0
+
+exit=0 signal=none
+$ "docker" "cp" "e5-t26f-ash-read-probe-native-1788878382451:/work/results/." "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/resident-read-probe"
+
+exit=0 signal=none
+$ "docker" "inspect" "--format" "{{.State.Status}} {{.Image}}" "e5-t26f-ash-write-probe-native"
+exited sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc
+
+exit=0 signal=none
+$ "git" "rev-parse" "HEAD"
+2ace135363cf0fa3cf7ba978fe6810e564eecc03
+
+exit=0 signal=none
+$ "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node" "tools/verify/e5-t26f-ash-read-probe.mjs" "evidence/e5-t26f/resident-read-probe"
+{
+  "acceptance": false,
+  "results": [
+    {
+      "mode": "builtin",
+      "kind": "stat",
+      "target": "/proc/16/stat",
+      "bytes": 302,
+      "reads": 302,
+      "positiveReads": 302,
+      "eofReads": 0,
+      "returnedSizeHistogram": {
+        "1": 302
+      },
+      "outputSha256": "ff66b9a56da9b40a8a22bbc7c8b3b14c8ec31e7f0e0d21e1b149d2114eafe3de",
+      "traceSha256": "98fbf71a0c46faba98889da60bc2df49c56b913c413105e6cbca8c634f96177d"
+    },
+    {
+      "mode": "builtin",
+      "kind": "fdinfo",
+      "target": "/proc/16/fdinfo/3",
+      "bytes": 41,
+      "reads": 42,
+      "positiveReads": 41,
+      "eofReads": 1,
+      "returnedSizeHistogram": {
+        "0": 1,
+        "1": 41
+      },
+      "outputSha256": "b1c2e312b02ed037380c966ba8f925703fd2c64154983a449fad171301454787",
+      "traceSha256": "98fbf71a0c46faba98889da60bc2df49c56b913c413105e6cbca8c634f96177d"
+    },
+    {
+      "mode": "builtin",
+      "kind": "io",
+      "target": "/proc/16/io",
+      "bytes": 101,
+      "reads": 102,
+      "positiveReads": 101,
+      "eofReads": 1,
+      "returnedSizeHistogram": {
+        "0": 1,
+        "1": 101
+      },
+      "outputSha256": "1874f0877bfe6ae6fed0b5d70e5c70e604ed7474bf388ebcc74e42d308543782",
+      "traceSha256": "98fbf71a0c46faba98889da60bc2df49c56b913c413105e6cbca8c634f96177d"
+    },
+    {
+      "mode": "whole",
+      "kind": "stat",
+      "target": "/proc/20/stat",
+      "bytes": 302,
+      "reads": 2,
+      "positiveReads": 1,
+      "eofReads": 1,
+      "returnedSizeHistogram": {
+        "0": 1,
+        "302": 1
+      },
+      "outputSha256": "84c343a260770627c356c48c6c93234943eba1d3e90a075dfdf372da982fcb9b",
+      "traceSha256": "a9e9d21929a8cbc1633ea8da083bee07d95c57ff294e46a0244b4983c2c1db19"
+    },
+    {
+      "mode": "whole",
+      "kind": "fdinfo",
+      "target": "/proc/20/fdinfo/3",
+      "bytes": 41,
+      "reads": 2,
+      "positiveReads": 1,
+      "eofReads": 1,
+      "returnedSizeHistogram": {
+        "0": 1,
+        "41": 1
+      },
+      "outputSha256": "b1c2e312b02ed037380c966ba8f925703fd2c64154983a449fad171301454787",
+      "traceSha256": "a9e9d21929a8cbc1633ea8da083bee07d95c57ff294e46a0244b4983c2c1db19"
+    },
+    {
+      "mode": "whole",
+      "kind": "io",
+      "target": "/proc/20/io",
+      "bytes": 100,
+      "reads": 2,
+      "positiveReads": 1,
+      "eofReads": 1,
+      "returnedSizeHistogram": {
+        "0": 1,
+        "100": 1
+      },
+      "outputSha256": "3219bef3a5d5c6256214110993ded75ec1dc60bd6728a709aef781e4c5b15a2c",
+      "traceSha256": "a9e9d21929a8cbc1633ea8da083bee07d95c57ff294e46a0244b4983c2c1db19"
+    }
+  ]
+}
+
+exit=0 signal=none
+Finished 2026-09-08T14:39:43.222Z
