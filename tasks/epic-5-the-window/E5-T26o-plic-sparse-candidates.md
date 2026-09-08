@@ -3,7 +3,7 @@ id: E5-T26o
 epic: 5
 title: Visit only eligible PLIC candidate bits during source selection
 priority: 526.5995
-status: implemented
+status: verified
 depends_on: [E1-T13, E5-T26n]
 estimate: S
 risk: high
@@ -78,6 +78,34 @@ No rr, retired ssh dev, WebKit, independent machine, old-task replay, second
 clone, or speculative speedup claim.
 
 ## Verification log
+
+### 2026-09-08 — fresh verifier — VERDICT: verified
+
+P0–P8 HELD for O's selector-only claim. Final report:
+`evidence/e5-t26o/verifier/final.md`; implemented submission
+`b0b37de34c7355faeb3279f147ca58fa0c174236` preserves runtime/test/gate code
+from final proof head `aaa8d40625eaf3a2bf9ba6a5dbe4ef0909495ca0`.
+Read all627 lines of `evidence/e5-t26o/main-gates/07-final-clone.log` and
+independently confirmed SHA256
+`0aa00c3c134abf74209dae64b4f45691eb61c08a6c98fe1ccc36a826f0390597`.
+The sole clean clone passes `make verify-E5-T26o`:31 native +4 actual-WASM
+tests, scoped format/clippy and affected builds, fresh target/scrubbed overrides.
+
+Independent word-derived trap/return state and the complete21-record trace hold;
+the digest is RAM-only, with architecture and counters asserted separately.
+The reserved seed and reversed both-claimed/source0 variant holds natively and
+on WASM, now promoted in the shared `plic_sparse_verifier` fixture and wrappers.
+One executed scratch mask-removal mutant fails the expected semantic assertion;
+restored scratch/main source hashes match. The126/0 built-demo record and viewed
+PNG hold. Every changed selector operation is exercised; no source-safety or
+coverage refutation remains. The stale worker narrative hash is corrected.
+
+No runtime/test changes or repeated gate, clone, demo or sabotage were needed for
+this final review. Carry unchanged M/N/image/observer/harness evidence. F is not
+verified; no speedup, deadline, merge or deployment is claimed. Metadata commands:
+`python3 tools/check_task_policy.py` → `python3 tools/build_queue.py` →
+`make tasks-json`; verdict/task/queue/web-task metadata committed separately with
+`SKIP_WEB_BUILD=1`. Main retains ownership of dist metadata, stack submission and F.
 
 ### 2026-09-08 — worker submission — exact-head PLIC evidence
 
