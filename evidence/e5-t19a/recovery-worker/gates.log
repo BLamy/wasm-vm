@@ -1,0 +1,628 @@
+^D# Spec-grounded PCM lifecycle, Linux XRUN recovery, pending-I/O release ordering,
+# and retained configuration through the sound and whole-machine codecs.
+cargo fmt --check -p wasm-vm-core
+cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 22.70s
+cargo test -p wasm-vm-core --lib --features gpu-trace
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 325 tests
+test block::tests::boundaries_and_errors ... ok
+test compile_queue::tests::cancellation_on_generation_bump_drops_stale ... ok
+test compile_queue::tests::priority_hotter_compiles_first ... ok
+test compile_queue::tests::backpressure_drops_and_recounts_never_overflows ... ok
+test desktop_restore::desktop_restore_tests::invalid_host_dimensions_are_rejected_before_callbacks ... ok
+test desktop_restore::desktop_restore_tests::changed_host_window_keeps_guest_scanout_and_selects_letterbox ... ok
+test desktop_restore::desktop_restore_tests::component_refusal_clears_staging_and_cold_boots_without_commit ... ok
+test desktop_restore::desktop_restore_tests::commit_failure_after_publication_is_cold_booted ... ok
+test desktop_restore::desktop_restore_tests::dropped_agent_channel_never_publishes_viewport_or_device_commit ... ok
+test desktop_restore::desktop_restore_tests::valid_composite_restore_stages_in_dependency_order_and_repairs ... ok
+test block::tests::five_gib_sparse_no_truncation ... ok
+test desktop_restore::desktop_restore_tests::missing_or_malformed_composite_never_enters_component_staging ... ok
+test desktop_snapshot::desktop_snapshot_tests::builder_rejects_duplicate_unknown_and_forward_sections ... ok
+test desktop_restore::desktop_restore_tests::viewport_and_repair_failures_use_the_same_clean_fallback ... ok
+test desktop_snapshot::desktop_snapshot_tests::explicit_abort_is_idempotent_and_invalid_permits_are_rejected ... ok
+test desktop_snapshot::desktop_snapshot_tests::in_flight_timeout_is_bounded_aborts_and_leaves_device_usable ... ok
+test desktop_snapshot::desktop_snapshot_tests::bad_magic_and_forward_envelope_version_are_machine_readable ... ok
+test desktop_snapshot::desktop_snapshot_tests::empty_envelope_is_byte_exact_and_stably_digested ... ok
+test desktop_snapshot::desktop_snapshot_tests::parser_rejects_trailing_table_bytes_and_component_digest_tampering ... ok
+test desktop_snapshot::desktop_snapshot_tests::quiesce_waits_for_one_boundary_and_releases_cleanly ... ok
+test dev::clint::snapshot_tests::clint_restore_rejects_malformed_payloads_without_mutating ... ok
+test desktop_snapshot::desktop_snapshot_tests::malformed_sections_fail_closed_before_live_state_mutation ... ok
+test dev::clint::snapshot_tests::clint_state_round_trips_completely ... ok
+test desktop_snapshot::desktop_snapshot_tests::populated_envelope_includes_versions_component_digests_and_stable_digest ... ok
+test dev::console::tests::other_offset_writes_ignored_and_logged_once ... ok
+test dev::plic::snapshot_tests::plic_behavioural_state_round_trips_and_drops_the_diagnostic_counter ... ok
+test dev::plic::snapshot_tests::plic_restore_rejects_wrong_length_without_mutating ... ok
+test dev::rtc::snapshot_tests::rtc_restore_rejects_malformed_without_mutating ... ok
+test dev::rtc::snapshot_tests::rtc_state_round_trips_completely_and_keeps_the_host_clock ... ok
+test desktop_restore::desktop_restore_tests::concrete_backend_round_trips_the_t26b_to_d_codecs_and_host_state ... ok
+test desktop_restore::desktop_restore_tests::rollback_clears_live_sink_and_uses_power_on_baseline ... ok
+test dev::rtc::tests::alarm_fires_raises_irq_and_clears ... ok
+test dev::rtc::tests::guest_set_time_offsets_without_touching_host ... ok
+test dev::rtc::tests::alarm_value_readable_after_fire ... ok
+test dev::rtc::tests::irq_gated_by_enable ... ok
+test dev::rtc::tests::reads_injected_time ... ok
+test dev::console::tests::low_byte_emitted_at_every_write_width ... ok
+test dev::rtc::tests::time_set_is_write_order_independent ... ok
+test dev::syscon::tests::first_command_wins ... ok
+test dev::console::tests::lsr_reads_ready_thr_reads_zero_no_faults ... ok
+test dev::syscon::tests::reads_return_zero ... ok
+test dev::syscon::tests::recognized_commands_decode ... ok
+test dev::syscon::tests::unrecognized_values_are_ignored ... ok
+test dev::uart16550::snapshot_tests::uart_state_round_trips_completely ... ok
+test dev::uart16550::tests::dlab_banking ... ok
+test dev::uart16550::snapshot_tests::uart_restore_rejects_malformed_payloads_without_mutating ... ok
+test dev::uart16550::tests::iir_priority_order ... ok
+test dev::uart16550::tests::char_timeout_delivers_short_input ... ok
+test dev::uart16550::tests::thre_interrupt_dance ... ok
+test dev::uart16550::tests::overrun_caps_fifo_and_preserves_contents ... ok
+test dev::virtio::gpu::damage::tests::clipping_and_empty_input_are_bounded_and_drain_is_empty ... ok
+test dev::virtio::gpu::damage::tests::edge_adjacent_rectangles_union_but_corner_only_rectangles_remain_separate ... ok
+test dev::virtio::gpu::damage::tests::overlapping_rectangles_union_and_contained_rectangles_do_not_expand ... ok
+test dev::virtio::gpu::damage::tests::seventeenth_disjoint_rectangle_spills_to_one_bounded_box ... ok
+test desktop_restore::desktop_restore_tests::concrete_backend_refusals_leave_all_devices_in_the_cold_state ... ok
+test dev::virtio::gpu::edid::tests::fixture_and_checksum_are_stable ... ok
+test dev::virtio::gpu::edid::tests::out_of_range_inputs_are_bounded ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_backing_map_replacement_and_detach_are_independent ... ok
+test dev::virtio::gpu::edid::tests::checksum_and_preferred_mode_cover_odd_and_large_sizes ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_rejects_dimension_and_budget_before_allocation ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_rejects_id_zero_duplicate_and_bad_fields_without_mutation ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_enforces_aggregate_budget_without_partial_insert ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_supported_formats_are_detached_and_accounted ... ok
+test dev::rtc::tests::low_high_latch_is_coherent_across_2p32_boundary ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_lifecycle_unref_returns_accounting_to_baseline ... ok
+test compile_queue::tests::never_blocks_execution_thread_under_flood ... ok
+test dev::uart16550::snapshot_tests::uart_restore_never_panics_on_random_input ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_scatter_gather_copies_partial_odd_x_rows ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_rejects_detached_bounds_and_offset_without_shadow_mutation ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_one_byte_entries_copy_a_full_frame ... ok
+test dev::virtio::gpu::snapshot::tests::gpu_snapshot_round_trips_resource_scanout_cursor_damage_and_crc ... ok
+test dev::virtio::gpu::snapshot::tests::malformed_resource_metadata_fails_closed_before_live_map_swap ... ok
+test dev::virtio::gpu::snapshot::tests::malformed_shadow_and_truncation_fail_closed ... ok
+test dev::virtio::gpu::snapshot::tests::missing_scanout_resource_and_bad_format_leave_live_state_unchanged ... ok
+test dev::virtio::gpu::snapshot::tests::shadow_codec_reports_bounded_compression_and_rejects_forged_runs ... ok
+test dev::virtio::gpu::tests::display_event_clear_is_write_one_to_clear ... ok
+test dev::virtio::gpu::snapshot::tests::valid_restore_presents_one_full_repair_frame ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_tracks_changed_pixel_bounds_until_flush ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_tiled_and_full_frame_plans_keep_shadow_bytes_identical ... ok
+test block::tests::mem_backend_matches_reference_model ... ok
+test dev::virtio::gpu::tests::display_reset_mmio_clears_latched_irqs_and_both_cached_queues ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_lifecycle_10k_create_unref_cycles_have_zero_net_growth ... ok
+test dev::virtio::gpu::tests::display_reset_preserves_host_monitor_but_clears_guest_state ... ok
+test dev::virtio::gpu::tests::gpu_cursor_protocol_wire_fixtures_are_little_endian_and_bounded ... ok
+test dev::virtio::gpu::tests::get_edid_requires_negotiation_and_is_scanout_indexed ... ok
+test dev::virtio::gpu::tests::get_edid_without_feature_returns_unspec ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_read_only_completion_and_reset_clear_cursor_state ... ok
+test dev::virtio::gpu::tests::display_reset_verifier_reconfigured_rings_reject_stale_resources ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_updates_moves_hides_and_rejects_without_mutation ... ok
+test dev::virtio::gpu::tests::gpu_flush_after_scanout_disable_forwards_old_resource_without_binding ... ok
+test dev::virtio::gpu::tests::gpu_flush_controlq_calls_test_sink_with_resource_crc ... ok
+test dev::virtio::gpu::tests::gpu_flush_after_unref_rejects_old_resource_without_sink_event ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_random_rect_model_oracle_10k_cases ... ok
+test dev::virtio::gpu::tests::gpu_flush_wire_fixture_is_little_endian ... ok
+test dev::virtio::console::tests::virtio_console_split_control_announcement_and_coalesced_data_are_bounded ... ok
+test dev::virtio::gpu::tests::gpu_mmio_identity_features_and_config ... ok
+test dev::virtio::gpu::tests::gpu_protocol_wire_fixtures ... ok
+test dev::virtio::console::tests::virtio_console_advertises_multiport_device_id_config_and_six_queue_layout ... ok
+test dev::virtio::gpu::tests::gpu_flush_tracking_sink_publishes_changed_transfer_bounds ... ok
+test dev::virtio::gpu::tests::gpu_flush_default_null_sink_accepts_headless_path ... ok
+test dev::virtio::gpu::tests::gpu_resources_create_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_resources_lifecycle_device_reset_releases_resource_state ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_controlq_validates_entries_atomically ... ok
+test dev::virtio::gpu::tests::gpu_flush_rejects_unknown_short_and_out_of_bounds_requests_without_sink_event ... ok
+test dev::virtio::console::tests::restore_rehandshake_requires_live_agent_and_fences_old_application_bytes ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_repeated_hide_show_keeps_one_bounded_state_per_scanout ... ok
+test dev::virtio::gpu::tests::gpu_resources_create_controlq_dispatches_and_returns_spec_errors ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_rejects_address_overflow_and_truncated_sglists ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_controlq_binds_existing_resource ... ok
+test dev::virtio::gpu::tests::gpu_transfer_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_split_attach_then_detach_controlq ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_short_request_is_bounded ... ok
+test dev::virtio::gpu::tests::set_display_updates_mode_and_coalesces_config_interrupts ... ok
+test dev::virtio::gpu::tests::unsupported_feature_does_not_mutate_config ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_rejects_bad_scanout_and_rect_without_mutation ... ok
+test dev::virtio::console::tests::virtio_console_lifecycle_restart_and_reset_drop_stale_agent_state ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_split_request_is_parsed_across_descriptors ... ok
+test dev::virtio::gpu::tests::gpu_resources_lifecycle_unref_clears_scanout_and_is_idempotently_rejected ... ok
+test dev::virtio::gpu::tests::set_display_stress_preserves_final_mode_and_bounds_config_irqs ... ok
+test dev::virtio::gpu::tiles::tests::flush_intersection_consumes_only_selected_tiles_and_resize_drops_old_state ... ok
+test dev::virtio::gpu::tiles::tests::full_frame_mode_is_a_comparable_bounded_fallback ... ok
+test dev::virtio::gpu::tiles::tests::full_resource_transfer_selects_every_tile_in_row_major_order ... ok
+test dev::virtio::gpu::tiles::tests::one_pixel_transfer_selects_one_full_tile_and_exact_bytes ... ok
+test dev::virtio::gpu::tiles::tests::tile_boundaries_and_partial_edges_are_clipped_without_outside_regions ... ok
+test dev::virtio::gpu::tests::gpu_transfer_controlq_copies_sg_rows_and_echoes_fence ... ok
+test dev::virtio::input::keyboard::tests::keyboard_identity_and_event_bitmap_tail_are_stable ... ok
+test dev::virtio::gpu::tests::virtio_gpu_malformed_guest_address_is_rejected_without_write ... ok
+test dev::virtio::input::keyboard::tests::keyboard_led_sink_applies_only_canonical_status_events ... ok
+test dev::virtio::input::keyboard::tests::keyboard_config_fixture_is_exact_on_native ... ok
+test dev::virtio::input::keyboard::tests::keyboard_led_snapshot_round_trip_rejects_non_boolean_bytes ... ok
+test dev::virtio::input::keyboard::tests::pc105_keyboard_bitmap_is_exact_and_repeat_is_absent ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_short_tail_is_bounded ... ok
+test dev::virtio::input::keyboard::tests::verifier_led_bytes_and_fresh_post_restore_status_are_exact ... ok
+test dev::virtio::input::pointer::tests::mouse_map_has_only_relative_axes_and_both_wheels ... ok
+test dev::virtio::input::pointer::tests::tablet_absolute_injection_rejects_out_of_range_values ... ok
+test dev::virtio::input::pointer::tests::tablet_map_and_absolute_wire_metadata_are_exact ... ok
+test dev::virtio::input::pointer::tests::pointer_config_selectors_do_not_cross_contaminate ... ok
+test dev::virtio::input::snapshot::tests::direct_release_all_is_protected_from_budget_eviction ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_contiguous_fenced ... ok
+test dev::virtio::input::snapshot::tests::restore_discards_held_key_and_button_state_with_one_protected_release_frame ... ok
+test dev::virtio::input::snapshot::tests::malformed_ring_lengths_duplicate_events_and_truncation_are_atomic ... ok
+test dev::virtio::input::snapshot::tests::verifier_empty_restore_accepts_fresh_keyboard_tablet_and_mouse_frames ... ok
+test dev::virtio::input::snapshot::tests::three_input_devices_round_trip_pending_order_and_partial_indices ... ok
+test dev::virtio::input::snapshot::tests::verifier_multiframe_order_indices_and_staged_work_are_byte_exact ... ok
+test dev::virtio::input::snapshot::tests::verifier_release_all_precedes_saved_work_and_survives_host_pressure ... ok
+test dev::virtio::input::snapshot::tests::verifier_malformed_headers_preserve_unserialized_delivered_ledger ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_split_header_unfenced ... ok
+test dev::virtio::gpu::tests::virtio_gpu_malformed_requests_make_progress_and_recover ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_zero_resource_disables_scanout ... ok
+test dev::virtio::input::tests::inject_and_sync_retain_bounded_complete_frames_with_exact_drop_count ... ok
+test dev::virtio::input::tests::input_config_selector_writes_are_width_preserving_and_resettable ... ok
+test dev::virtio::input::tests::input_config_fixture_matches_little_endian_wire_bytes ... ok
+test dev::virtio::input::tests::input_config_unsupported_queries_are_zero_and_do_not_leak_previous_payload ... ok
+test dev::virtio::input::tests::input_event_wire_layout_is_fixed_and_little_endian ... ok
+test dev::virtio::input::tests::key_transition_drop_removes_both_separate_frames ... ok
+test dev::virtio::input::tests::statusq_reads_split_event_and_rejects_short_or_wrong_direction ... ok
+test dev::virtio::input::tests::short_event_buffer_is_not_partially_written_and_ring_recovers ... ok
+test dev::virtio::input::tests::unsupported_queue_shape_is_bounded_and_requests_reset ... ok
+test dev::virtio::input::tests::eventq_writes_one_event_across_split_descriptors_and_exact_used_len ... ok
+test dev::virtio::mmio::tests::critic_advisories_pinned ... ok
+test dev::virtio::mmio::tests::driver_ok_without_features_ok_needs_reset ... ok
+test dev::virtio::mmio::tests::empty_slot_answers_and_tolerates ... ok
+test dev::virtio::mmio::tests::interrupt_ack_is_mask_clear ... ok
+test dev::virtio::mmio::tests::lifecycle_happy_path ... ok
+test dev::virtio::mmio::tests::protocol_violation_degrades_loudly ... ok
+test dev::virtio::gpu::tiles::tests::seeded_random_transfer_flush_resize_sequences_match_reference_tiles ... ok
+test dev::virtio::mmio::tests::status_zero_is_full_reset ... ok
+test dev::virtio::mmio::tests::transport_snapshot_round_trips_and_rejects_malformed ... ok
+test dev::virtio::mmio::tests::unoffered_feature_rejected ... ok
+test dev::virtio::net::switch_tests::replacing_backend_keeps_adapter_identity_and_drops_old_frames ... ok
+test dev::virtio::input::tests::injected_frames_cross_eventq_without_boundary_loss ... ok
+test dev::virtio::snd::snapshot::tests::malformed_restore_is_atomic_and_rejects_bad_params ... ok
+test dev::virtio::snd::snapshot::tests::malformed_retained_configuration_is_rejected_before_any_sound_mutation ... ok
+test dev::virtio::snd::snapshot::tests::pending_period_metadata_is_exact_and_atomic_for_both_streams ... ok
+test dev::virtio::snd::snapshot::tests::released_configuration_round_trip_recovers_both_streams_and_reset_forgets_it ... ok
+test dev::virtio::snd::snapshot::tests::running_restore_discards_ephemeral_rings_and_repairs_both_streams ... ok
+test dev::virtio::snd::snapshot::tests::running_repair_respects_the_event_budget_before_mutation ... ok
+test dev::virtio::snd::snapshot::tests::snapshot_header_has_stable_size_before_event_records ... ok
+test dev::virtio::snd::snapshot::tests::stopped_stream_round_trip_preserves_configuration_without_xrun ... ok
+test diag::irqstats::tests::hottest_irq_picks_the_max ... ok
+test diag::irqstats::tests::naming_uses_the_window_not_the_lifetime_leader ... ok
+test diag::irqstats::tests::storm_fires_after_consecutive_hot_windows ... ok
+test diag::irqstats::tests::quiet_windows_never_fire_and_reset_the_streak ... ok
+test diag::irqstats::tests::wfi_watchdog_fires_once_then_rearms ... ok
+test diag::irqstats::tests::wfi_watchdog_silent_when_making_progress_or_armed ... ok
+test diag::irqstats::tests::window_stays_open_until_enough_retired ... ok
+test dispatch::tests::counter_increments_and_fires_exactly_once ... ok
+test dispatch::tests::csr_and_wfi_blocks_are_excluded ... ok
+test dispatch::tests::counter_map_is_bounded_under_cold_flood ... ok
+test dispatch::tests::dedup_across_distinct_blocks ... ok
+test dispatch::tests::no_nomination_below_threshold ... ok
+test dispatch::tests::requeue_after_invalidation_no_stale_survives ... ok
+test dev::virtio::console::tests::virtio_console_agent_and_port0_data_queues_keep_frame_bytes_and_backpressure_separate ... ok
+test dispatch::tests::reset_clears_state_and_bumps_generation ... ok
+test dispatch::tests::stale_generation_alone_blocks_install_even_if_bytes_match ... ok
+test dispatch::tests::translation_request_shape ... ok
+test dev::virtio::gpu::tests::gpu_flush_golden_five_patterns_match_independent_reference ... ok
+test fdt::tests::header_is_spec_valid ... ok
+test fdt::tests::dtb_tracks_platform_and_args ... ok
+test fdt::tests::placement_top_of_dram_aligned_outside_kernel ... ok
+test fdt::tests::tree_has_every_required_node_and_link ... ok
+test hart::fregs::tests::f0_is_an_ordinary_register ... ok
+test fdt::tests::initrd_placement_between_kernel_and_dtb ... ok
+test hart::fregs::tests::non_boxed_value_reads_as_canonical_nan ... ok
+test hart::fregs::tests::registers_are_independent ... ok
+test hart::fregs::tests::write_f32_boxes_and_read_f32_unboxes ... ok
+test hart::regs::tests::abi_names_match_psabi ... ok
+test hart::regs::tests::compiled_register_mask_commit_preserves_unmasked_words_and_x0 ... ok
+test hart::regs::tests::default_is_all_zero_including_pc ... ok
+test hart::regs::tests::dump_format_is_byte_stable ... ok
+test hart::regs::tests::jit_version_is_not_architectural_equality ... ok
+test hart::regs::tests::interleavings_vs_oracle_lcg ... ok
+test hart::regs::tests::x0_writes_are_discarded ... ok
+test hart::regs::tests::x1_to_x31_roundtrip_distinct_values ... ok
+test dispatch::tests::queue_overflow_degrades_gracefully ... ok
+test jit::tests::cpu_state_handoff_pins_frozen_layout_endian_and_x0 ... ok
+test hart::regs::tests::out_of_range_write_panics - should panic ... ok
+test hart::regs::tests::out_of_range_read_panics - should panic ... ok
+test mmio::tests::attach_rejects_overlap_with_ram_and_devices ... ok
+test mmio::tests::attach_rejects_zero_length_and_overflow_without_panic ... ok
+test mmio::tests::device_faults_propagate ... ok
+test mmio::tests::device_hits_counts_every_access_that_lands_in_the_window ... ok
+test mmio::tests::device_read_results_are_masked_to_width ... ok
+test mmio::tests::misaligned_in_window_faults_without_invoking_device ... ok
+test mmio::tests::ram_accesses_pass_through_unchanged ... ok
+test mmio::tests::unmapped_hole_faults_access_at_every_width ... ok
+test mmio::tests::multiple_devices_route_independently ... ok
+test mmio::tests::window_access_reaches_device_with_offset_width_value ... ok
+test mmio::tests::width_forwarding_is_exact_never_split ... ok
+test mmio::tests::straddling_window_edge_faults_and_never_invokes_device ... ok
+test mmio::tests::zero_size_ram_bus_still_routes_devices ... ok
+test platform::tests::default_platform_is_valid ... ok
+test platform::tests::irq_and_virtio_layout ... ok
+test platform::tests::overlap_and_overflow_are_caught ... ok
+test platform::tests::region_boundaries ... ok
+test pmp_audit_tests::su_pmp_ignored_locked_tor_writes_keep_revision_and_zero_work ... ok
+test pmp_audit_tests::su_pmp_effective_address_change_cannot_take_shortcut ... ok
+test dev::virtio::rng::tests::fills_posted_buffer_with_entropy_and_publishes_used ... ok
+test prof::pause::tests::buckets_bracket_the_target ... ok
+test prof::pause::tests::over_target_and_max_ns ... ok
+test prof::pause::tests::work_bound_tracks_max ... ok
+test pmp_audit_tests::su_pmp_revision_change_flushes_before_shortcut ... ok
+test prof::tests::add_ns_accumulates_per_subsystem ... ok
+test prof::tests::fixed_timer_reflects_set_and_advance_monotonically ... ok
+test prof::tests::collisions_are_visible_not_silently_merged ... ok
+test prof::tests::records_land_in_expected_64_byte_regions ... ok
+test prof::tests::report_computes_pct_and_passes_total_through ... ok
+test prof::tests::report_json_shape_and_contents ... ok
+test pmp_audit_tests::m_pmp_audit_still_visits_cached_instructions ... ok
+test prof::tests::report_on_empty_profile_does_not_divide_by_zero ... ok
+test prof::tests::report_text_contains_pc_and_subsystem_names ... ok
+test prof::tests::tight_loop_concentrates ... ok
+test prof::tests::top_is_descending_with_low_pc_tie_break ... ok
+test ram::resume_snapshot_tests::a_malformed_payload_is_refused_without_mutating ... ok
+test prof::tests::weak_incumbent_is_evicted_by_newcomer ... ok
+test desktop_restore::desktop_restore_tests::machine_refuses_restore_without_the_production_agent_channel ... ok
+test ram::resume_snapshot_tests::restoring_a_wrong_size_snapshot_is_refused_without_mutating ... ok
+test ram::tests::default_map_constants ... ok
+test ram::tests::extreme_addresses_fault_without_overflow_panics ... ok
+test pmp_audit_tests::su_pmp_audit_work_is_zero_for_populated_caches ... ok
+test ram::tests::faulting_store_leaves_ram_bit_identical ... ok
+test ram::resume_snapshot_tests::ram_round_trips_completely ... ok
+test ram::tests::little_endian_byte_order ... ok
+test ram::tests::misaligned_in_range_faults_misaligned_at_every_width ... ok
+test ram::tests::roundtrip_every_width_at_base_and_last_slot ... ok
+test ram::tests::straddling_the_end_is_access_not_panic ... ok
+test resume::resume_tests::a_bad_magic_is_rejected ... ok
+test ram::tests::zero_and_absurd_sizes_fail_cleanly ... ok
+test resume::resume_tests::a_component_round_trips_through_the_container_format ... ok
+test ram::tests::slice_escape_hatch_bounds_and_content ... ok
+test resume::resume_tests::a_huge_zero_run_length_is_rejected_without_allocating ... ok
+test resume::resume_tests::a_partial_trailing_section_header_is_truncated ... ok
+test resume::resume_tests::a_reserved_but_unimplemented_section_is_refused_as_unsupported ... ok
+test resume::resume_tests::a_section_length_past_the_end_is_rejected_not_over_read ... ok
+test resume::resume_tests::a_too_short_blob_is_truncated_not_a_panic ... ok
+test resume::resume_tests::a_version_mismatch_is_rejected ... ok
+test resume::resume_tests::an_unknown_section_fails_loudly ... ok
+test resume::resume_tests::decode_sparse_rejects_malformed_payloads ... ok
+test resume::resume_tests::header_round_trips_and_sections_read_back_in_order ... ok
+test prof::tests::histogram_memory_is_fixed ... ok
+test resume::resume_tests::restore_decision_rejects_a_truncated_final_section ... ok
+test resume::resume_tests::the_coherence_guards_refuse_a_mismatch ... ok
+test resume::resume_tests::zero_elision_round_trips_for_every_shape ... ok
+test sbi::base::tests::ids_and_unknown_fid ... ok
+test sbi::base::tests::probe_extension_per_plan ... ok
+test sbi::base::tests::spec_version_is_2_0 ... ok
+test sbi::dbcn::tests::read_drains_queue_nonblocking_and_write_byte ... ok
+test sbi::dbcn::tests::write_attack_matrix ... ok
+test sbi::hsm::tests::lifecycle_answers_single_hart ... ok
+test sbi::dbcn::tests::write_reads_guest_dram_and_reports_count ... ok
+test sbi::ipi::tests::self_ipi_sets_ssip_and_masks_validate ... ok
+test sbi::legacy::tests::getchar_empty_is_minus_one_nonblocking ... ok
+test sbi::legacy::tests::putchar_emits_and_returns_zero ... ok
+test sbi::rfence::tests::fences_flush_and_masks_validate ... ok
+test sbi::srst::tests::shutdown_reboot_and_error_paths ... ok
+test sbi::tests::probe_set_matches_plan ... ok
+test resume::resume_tests::a_mostly_zero_buffer_compresses_far_under_ram_size ... ok
+test sbi::time::tests::set_timer_replaces_and_cancels ... ok
+test sbi::tests::unknown_and_pending_eids_not_supported ... ok
+test tests::kernel_footprint_falls_back_to_file_len ... ok
+test tests::group_batches_coalesces_disconnected_chunks ... ok
+test tests::kernel_footprint_honours_image_size ... ok
+test tests::machine_allocates_requested_ram ... ok
+test tests::version_matches_manifest ... ok
+test tests::machine_tolerates_zero_ram ... ok
+test time::tests::huge_gap_jumps_with_notification ... ok
+test time::tests::icount_is_pure_function_of_retired ... ok
+test time::tests::respects_software_mtime_write_as_floor ... ok
+test time::tests::moderate_gap_slews_at_bounded_rate ... ok
+test time::tests::wallclock_never_steps_backward_under_jittery_host ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_ram_snapshot_is_far_under_ram_size ... ok
+test resume::resume_tests::decode_sparse_never_panics_on_random_input ... ok
+test resume::resume_tests::the_parser_never_panics_on_any_truncation_or_flip ... ok
+test dev::virtio::mmio::tests::register_fuzz_1e6 ... ok
+test hart::regs::proptests::writes_track_oracle_and_x0_stays_zero ... ok
+test sbi::tests::dispatcher_fuzz_1e6 ... ok
+test dev::virtio::gpu::damage::tests::seeded_random_rectangles_never_drop_reference_damage ... ok
+test dev::virtio::input::snapshot::tests::verifier_total_serialized_event_cap_is_atomic_on_encode_and_decode ... ok
+test dev::virtio::input::snapshot::tests::verifier_release_growth_at_serialized_cap_is_atomic ... ok
+test dev::virtio::input::snapshot::tests::verifier_fully_consumed_records_still_obey_total_serialized_cap ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_full_frame_native_budget ... ok
+test dev::virtio::input::snapshot::tests::verifier_release_growth_that_exactly_reaches_serialized_cap_succeeds ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_repeated_rejections_do_not_grow_map ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_256_mib_ram_encodes_under_15_percent_and_restores_byte_identically ... ok
+
+test result: ok. 325 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.06s
+
+cargo test -p wasm-vm-core --features gpu-trace --test virtio_snd --test virtio_snd_playback --test virtio_snd_queue --test virtio_snd_capture --test virtio_snd_capture_config --test virtio_snd_release_capture --test virtio_snd_machine --test desktop_machine_audio_resume --test desktop_machine_resume --test desktop_machine_resume_verifier -- --nocapture
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.78s
+     Running tests/desktop_machine_audio_resume.rs (target/debug/deps/desktop_machine_audio_resume-a0e91b2ede2294fe)
+
+running 9 tests
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-false-source.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/layout-compatibility-source.wav
+envelope-false-rx-true-frames-480-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-0-released-false-source.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-0-released-false-source.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[99, 0, 157, 255, 100, 0, 156, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/retained-source-false.wav
+envelope-false-rx-false-frames-480-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+envelope-true-rx-false-frames-480-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-false-source.wav
+envelope-true-rx-true-frames-480-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+Linux XRUN recovery after successful 960-frame PCM: STOP=OK RELEASE=OK; state=Released params=Some(PcmParams { stream_id: 0, buffer_bytes: 3840, period_bytes: 1920, features: 16, channels: 2, format: 5, rate: 7, padding: 0 }) tx_used=2 event_used=1
+Linux recovery PREPARE status=0x8000; state=Prepared; params=Some(PcmParams { stream_id: 0, buffer_bytes: 3840, period_bytes: 1920, features: 16, channels: 2, format: 5, rate: 7, padding: 0 }); control_used=6
+recovery: fresh 480 frames bit-exact; TX used=2 completed exactly once
+test control_release_completes_pending_io_before_response_and_following_prepare ... ok
+recovery: fresh 480 frames bit-exact; TX used=3 completed exactly once
+test linux_6_6_63_xrun_stop_release_prepare_recovers_without_set_params ... ok
+test sound_layout_version_does_not_invalidate_container_v1_headless_resume ... ok
+old-unversioned-RX-TX: sound tag 16 refusal, unchanged machine/host
+unknown-layout-0: sound tag 16 refusal, unchanged machine/host
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-0-released-false-fresh.wav
+recovery: fresh 480 frames bit-exact; TX used=2 completed exactly once
+envelope-false-rx-true-frames-480-clock-0-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-false-fresh.wav
+envelope-false-rx-false-frames-480-clock-0-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-0-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-0-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-false-fresh.wav
+envelope-true-rx-false-frames-480-clock-0-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-0-released-false-fresh.wav
+envelope-true-rx-true-frames-480-clock-0-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-false-fresh.wav
+unknown-layout-1: sound tag 16 refusal, unchanged machine/host
+unknown-layout-3: sound tag 16 refusal, unchanged machine/host
+unknown-layout-4294967295: sound tag 16 refusal, unchanged machine/host
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-true-source.wav
+envelope-true-rx-true-frames-480-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+truncated-layout-0: sound tag 16 refusal, unchanged machine/host
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-0-released-true-source.wav
+envelope-true-rx-false-frames-480-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-true-source.wav
+envelope-false-rx-true-frames-480-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[99, 0, 157, 255, 100, 0, 156, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/retained-source-true.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-0-released-true-source.wav
+envelope-false-rx-false-frames-480-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+truncated-layout-1: sound tag 16 refusal, unchanged machine/host
+truncated-layout-2: sound tag 16 refusal, unchanged machine/host
+truncated-layout-3: sound tag 16 refusal, unchanged machine/host
+test old_or_unknown_sound_resume_layout_is_rejected_before_live_mutation ... ok
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-0-released-true-fresh.wav
+envelope-true-rx-true-frames-480-clock-0-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-true-fresh.wav
+envelope-true-rx-false-frames-480-clock-0-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-0-released-true-fresh.wav
+recovery: fresh 480 frames bit-exact; TX used=2 completed exactly once
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-0-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-true-fresh.wav
+test released_params_resume_into_fresh_sink_and_clock_without_set_params ... ok
+envelope-false-rx-false-frames-480-clock-0-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-0-released-true-fresh.wav
+envelope-false-rx-true-frames-480-clock-0-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-true-fresh.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-false-source.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-3600000000000-released-false-source.wav
+envelope-true-rx-true-frames-480-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+envelope-true-rx-false-frames-480-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-false-source.wav
+envelope-false-rx-true-frames-480-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-3600000000000-released-false-source.wav
+envelope-false-rx-false-frames-480-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-3600000000000-released-false-fresh.wav
+envelope-true-rx-true-frames-480-clock-3600000000000-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-3600000000000-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-false-fresh.wav
+envelope-true-rx-false-frames-480-clock-3600000000000-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-3600000000000-released-false-fresh.wav
+envelope-false-rx-false-frames-480-clock-3600000000000-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-3600000000000-released-false-fresh.wav
+envelope-false-rx-true-frames-480-clock-3600000000000-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-false-fresh.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-3600000000000-released-true-source.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-true-source.wav
+envelope-true-rx-false-frames-480-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+envelope-false-rx-true-frames-480-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-true-source.wav
+envelope-true-rx-true-frames-480-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-3600000000000-released-true-source.wav
+envelope-false-rx-false-frames-480-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-3600000000000-released-true-fresh.wav
+envelope-false-rx-true-frames-480-clock-3600000000000-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-true-fresh.wav
+envelope-true-rx-false-frames-480-clock-3600000000000-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-3600000000000-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-true-fresh.wav
+envelope-true-rx-true-frames-480-clock-3600000000000-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-3600000000000-released-true-fresh.wav
+envelope-false-rx-false-frames-480-clock-3600000000000-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-3600000000000-released-true-fresh.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-false-source.wav
+envelope-false-rx-true-frames-2048-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-0-released-false-source.wav
+envelope-true-rx-false-frames-2048-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-false-source.wav
+envelope-true-rx-true-frames-2048-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-0-released-false-source.wav
+envelope-false-rx-false-frames-2048-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-0-released-false-fresh.wav
+envelope-false-rx-true-frames-2048-clock-0-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-0-released-false-fresh.wav
+envelope-true-rx-true-frames-2048-clock-0-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-false-fresh.wav
+envelope-true-rx-false-frames-2048-clock-0-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-0-released-false-fresh.wav
+envelope-false-rx-false-frames-2048-clock-0-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-0-released-false-fresh.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-true-source.wav
+envelope-false-rx-true-frames-2048-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-true-source.wav
+envelope-true-rx-true-frames-2048-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-0-released-true-source.wav
+envelope-true-rx-false-frames-2048-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-0-released-true-source.wav
+envelope-false-rx-false-frames-2048-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-true-fresh.wav
+envelope-true-rx-true-frames-2048-clock-0-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-true-fresh.wav
+envelope-false-rx-true-frames-2048-clock-0-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-0-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-0-released-true-fresh.wav
+envelope-false-rx-false-frames-2048-clock-0-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-0-released-true-fresh.wav
+envelope-true-rx-false-frames-2048-clock-0-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-0-released-true-fresh.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-false-source.wav
+envelope-false-rx-true-frames-2048-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-false-source.wav
+envelope-true-rx-true-frames-2048-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-3600000000000-released-false-source.wav
+envelope-false-rx-false-frames-2048-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-3600000000000-released-false-source.wav
+envelope-true-rx-false-frames-2048-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-false-fresh.wav
+envelope-false-rx-true-frames-2048-clock-3600000000000-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-false-fresh.wav
+envelope-true-rx-true-frames-2048-clock-3600000000000-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-3600000000000-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-3600000000000-released-false-fresh.wav
+envelope-false-rx-false-frames-2048-clock-3600000000000-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-3600000000000-released-false-fresh.wav
+envelope-true-rx-false-frames-2048-clock-3600000000000-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-3600000000000-released-false-fresh.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-true-source.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-true-source.wav
+envelope-false-rx-true-frames-2048-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+envelope-true-rx-true-frames-2048-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-3600000000000-released-true-source.wav
+envelope-false-rx-false-frames-2048-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-3600000000000-released-true-source.wav
+envelope-true-rx-false-frames-2048-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-3600000000000-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-3600000000000-released-true-fresh.wav
+envelope-true-rx-true-frames-2048-clock-3600000000000-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-true-fresh.wav
+envelope-false-rx-true-frames-2048-clock-3600000000000-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-true-fresh.wav
+test configured_unused_rx_preserves_tx_cursor_and_fresh_pcm ... ok
+test configured_unused_rx_preserves_pcm_through_desktop_envelope_too ... ok
+envelope-true-rx-false-frames-2048-clock-3600000000000-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-3600000000000-released-true-fresh.wav
+envelope-false-rx-false-frames-2048-clock-3600000000000-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-3600000000000-released-true-fresh.wav
+test fresh_pcm_sink_after_whole_machine_and_desktop_envelope_restore ... ok
+test strict_fresh_machine_pcm_sink_after_whole_machine_resume ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running tests/desktop_machine_resume.rs (target/debug/deps/desktop_machine_resume-a78ea839bc72b4db)
+
+running 7 tests
+test malformed_saved_agent_dma_blocks_tx_until_transport_reset ... ok
+test headless_resume_remains_compatible_without_desktop_sections ... ok
+test every_fallible_legacy_section_refuses_before_live_state_or_host_callbacks_change ... ok
+test agent_resume_frontier_wraps_and_allows_fresh_tx_before_first_guest_step ... ok
+test malformed_desktop_section_and_missing_device_refuse_without_partial_restore ... ok
+desktop resume continuation: hash=9865e79b681ad970, retired=1
+test pending_console_transmits_survive_while_stale_host_session_is_discarded ... ok
+test desktop_devices_resume_with_ring_continuity_and_fresh_host_state ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+
+     Running tests/desktop_machine_resume_verifier.rs (target/debug/deps/desktop_machine_resume_verifier-37cbdfd441e68e16)
+
+running 9 tests
+test console_control_request_kicked_before_save_completes_once_after_resume ... ok
+test pending_old_session_agent_hello_cannot_attest_the_resumed_host ... ok
+test sound_request_kicked_before_save_completes_once_after_resume ... ok
+test malformed_later_machine_payload_must_not_partially_commit_desktop_state ... ok
+test rng_cursor_wrap_preserves_one_pending_completion_exactly_once ... ok
+test machine_save_reconciles_held_keyboard_tablet_and_mouse_state ... ok
+test same_topology_in_alternate_assembly_order_restores ... ok
+test source_target_topology_mismatch_is_atomic_both_directions ... ok
+test every_new_section_corruption_missing_and_duplicate_are_atomic ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.54s
+
+     Running tests/virtio_snd.rs (target/debug/deps/virtio_snd-de1ffef3fd7fa143)
+
+running 10 tests
+test device_identity_config_and_queue_markers_are_spec_shaped ... ok
+test host_rate_selection_narrows_info_and_rejects_the_other_rate ... ok
+test info_queries_return_exact_one_item_capabilities_and_zero_padding ... ok
+test malformed_and_unsupported_queries_are_deterministic_and_non_mutating ... ok
+test set_params_accepts_advertised_xrun_feature_selected_by_linux ... ok
+test set_params_rejects_96khz_without_poisoning_the_next_legal_setup ... ok
+test repeated_setup_validates_boundaries_and_host_rate_atomically ... ok
+test recovery_reset_and_disabled_capture_do_not_inherit_configuration ... ok
+test exhaustive_six_request_five_state_oracle_is_stable ... ok
+test invalid_params_cover_ids_sizes_alignment_features_and_caps ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/virtio_snd_capture.rs (target/debug/deps/virtio_snd_capture-872af32819f214f8)
+
+running 9 tests
+test short_capture_source_zero_fills_and_delivers_input_xrun_event ... ok
+test malformed_rxq_buffers_complete_bounded_and_next_valid_buffer_recovers ... ok
+test one_megabyte_period_is_bounded_by_the_posted_writable_buffer ... ok
+test capture_rxq_completes_full_buffer_and_preserves_canaries ... ok
+test capture_start_edges_are_monotonic_and_resettable_for_lazy_host_permission ... ok
+test capture_xrun_events_stay_within_the_bounded_event_budget ... ok
+test capture_transitions_are_stream_local_and_release_flushes_pending_rxq ... ok
+test five_second_capture_has_exact_pcm16_duration_and_sine_peak ... ok
+test sixteen_byte_and_one_megabyte_periods_keep_rxq_canaries ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s
+
+     Running tests/virtio_snd_capture_config.rs (target/debug/deps/virtio_snd_capture_config-04fe169a4df760e1)
+
+running 4 tests
+test unsupported_capture_values_and_malformed_selectors_do_not_mutate_state ... ok
+test flag_off_keeps_playback_only_config_and_existing_slot_numbering ... ok
+test flag_on_exposes_one_fixed_input_stream_in_any_query_order ... ok
+test reset_and_repeated_creation_preserve_the_selected_gate_without_host_capture ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/virtio_snd_machine.rs (target/debug/deps/virtio_snd_machine-713695add90ee6e7)
+
+running 4 tests
+test sound_uses_slot_seven_only_when_slot_six_is_already_occupied ... ok
+test controlq_bounds_oversized_request_and_short_response_without_poisoning_next_query ... ok
+test assembled_sound_device_serves_controlq_and_paced_txq_without_shifting_existing_slots ... ok
+test controlq_reclaims_malformed_request_then_accepts_query_and_stop_start_resumes ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/virtio_snd_playback.rs (target/debug/deps/virtio_snd_playback-95fd32732c26675d)
+
+running 8 tests
+test release_flushes_pending_periods_with_error_status_without_sending_audio ... ok
+test wrong_stream_id_is_completed_with_io_error_without_reaching_the_sink ... ok
+test arrival_alone_never_completes_an_unripe_period ... ok
+test snapshot_restore_drops_partial_period_and_xruns_before_fresh_audio ... ok
+test sink_failure_completes_the_period_with_io_error_and_no_reported_frames ... ok
+test stop_start_resumes_pending_ramp_once_and_wav_sink_is_bit_exact ... ok
+test half_real_and_double_real_clock_scales_change_completion_rate_without_changing_audio ... ok
+test eight_second_440hz_sine_capture_has_expected_peak_and_clean_period_joins ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
+
+     Running tests/virtio_snd_queue.rs (target/debug/deps/virtio_snd_queue-e3c12d50b1e64ce6)
+
+running 5 tests
+test legacy_tx_only_service_does_not_replay_event_buffers ... ok
+test xrun_eventq_is_fifo_and_bounded_when_the_guest_stops_polling ... ok
+test malformed_event_buffer_is_returned_without_consuming_the_event ... ok
+test event_wire_is_stable_and_malformed_txq_reaches_a_later_valid_period ... ok
+test fifty_release_reset_re_setup_cycles_reclaim_pending_descriptors ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/virtio_snd_release_capture.rs (target/debug/deps/virtio_snd_release_capture-a1bafd216018ffe6)
+
+running 4 tests
+test pending_capture_release_needs_no_source_and_reprepare_remains_usable ... ok
+test disabled_capture_release_rejects_input_without_touching_source_or_rx ... ok
+test capture_release_completes_rx_before_control_response_and_following_prepare ... ok
+test pending_capture_release_without_a_usable_rx_queue_requests_reset_without_response ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.66s
+cargo check -p wasm-vm-wasm --lib --target wasm32-unknown-unknown
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Checking wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+    Checking wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+    Checking wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.48s
+verify-E5-T19a (PCM lifecycle and Linux XRUN recovery): OK

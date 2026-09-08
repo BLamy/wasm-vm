@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:55251/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.76",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5-T19a\nIN PROGRESS\n✕ Close\nvirtio-snd control protocol and PCM state machine\nEpic\nE5 — The Window\nStatus\nin progress\nEstimate\nS\nDepends on\nE5-T05c\nGOAL\n\nDefine the guest-visible virtio-snd control contract and make one playback stream's legal\ntransitions explicit before any host audio timing or browser sink exists.\n\nACCEPTANCE CRITERIA (0/3)\n○\nThe exhaustive native oracle covers all six control requests across all five stream states and matches the documented OK/BAD_MSG table exactly.\n○\nConfig responses advertise one output jack, FL/FR, S16, stereo, and only 44.1 kHz/48 kHz; unsupported selectors and malformed requests return deterministic errors.\n○\n`SET_PARAMS` at 96 kHz returns `VIRTIO_SND_S_BAD_MSG` while a subsequent legal setup remains usable.\nVERIFICATION LOG — EVIDENCE\n### 2026-09-07 — fresh Daybreak Blue verifier — VERDICT: refuted\n\nThe independent report `evidence/e5-t19a/recovery-refutation/results.md` (SHA-256\n`b8e08e9f06e8a8ea65fe51f2c5916c05c0bde64b373d4d924c86bd1968464ca1`) refutes this\ncontrol contract, not the held E5-T26h queue-order fix. At runtime source SHA-256\n`b4665f3c335e1d0806981236338a5507bc8712112051dc530318220dca16fa23`, the real-queue\nnative recording proves exact 960-frame playback and an XRUN, then STOP/RELEASE OK\nfollowed by PREPARE `0x8001` (BAD_MSG, Linux `-EINVAL`), with parameters discarded.\nRepro: `cargo test -p wasm-vm-core --test desktop_machine_audio_resume\nlinux_6_6_63_xrun_stop_release_prepare_recovers_without_set_params -- --nocapture`.\nThe same specification permits three repeated SET_PARAMS/PREPARE cells that the\noriginal self-confirming table rejected. Correct this one control-state boundary,\nretain pending-I/O release ordering, and prove configured-release state also survives\nthe existing sound codec without admitting invalid or never-configured streams.\nRaise the remediation to high risk because it changes guest control semantics and\npersisted configuration. E5-T26f is blocked until a fresh critic accepts the remedy.\n\n### 2026-09-03 — worker — IMPLEMENTED\n\n- Commits: `411ac609038dfad39c8f3ad754ca445634314bfd` (implementation) and `ae3d641` (shared-constructor coverage).\n- Commands: `cargo fmt --all -- --check`; `cargo test -p wasm-vm-core --test virtio_snd -- --nocapture`; `cargo test -p wasm-vm-core --lib --quiet`; `cargo clippy -p wasm-vm-core --all-targets -- -D warnings`; `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release`; `git diff --check`.\n- Results: focused control-plane suite 6/6 passed; core library 238/238 passed; clippy and the release wasm build passed.\n- Evidence: [`snd-control-native-2026-09-03.txt`](../../evidence/e5-t19a/snd-control-native-2026-09-03.txt), SHA-256 `ed52f518d2aa366ff76ff7912c555f00e495021903c180d8d29d58a2c3d4ca7f`.\n\nThe recorded native run exercises the exact JACK_INFO, PCM_INFO, and CHMAP_INFO wire payloads,\nthe five-state/six-request oracle, malformed and unsupported control requests, queue/reset\nmarkers, parameter-boundary rejection including 96 kHz, and a legal prepare/start/stop/resume/\nrelease sequence. The independent byte fixtures and state assertions show that rejected requests\ndo not mutate the stream, while the accepted setup remains usable.\n\n### 2026-09-03 — verifier — VERDICT: verified\n\n- Predictions: every oracle cell remains exact; malformed, truncated, unsupported, invalid-boundary,\n  and unknown-stream requests return errors without mutation; the legal lifecycle remains usable.\n- Observed: the optimized focused suite passed 6/6, and 25 consecutive debug invocations passed\n  6/6 each with no panic or failure. The run covers every changed runtime branch, including the\n  shared constructor, queue/reset markers, exact info payloads, validation, and lifecycle paths.\n- Evidence: [`snd-control-verifier-2026-09-03.txt`](../../evidence/e5-t19a/snd-control-verifier-2026-09-03.txt), SHA-256 `4362b5a2c684802d38c39ef8605e0a555789d85017a3fdfee397fb5787aa3456`.\n- Findings: none. The task is verified.\nADVERSARIAL VERIFICATION\nPermute control requests and selectors, repeat SET_PARAMS with boundary-sized buffers, and inject\nunknown stream IDs or truncated payloads. The oracle must show no illegal transition, panic, or\nstate mutation after a rejected request. Reproduce real Linux STOP → RELEASE → PREPARE\nrecovery followed by new exact PCM. Check configured-release snapshot roundtrip, reset losing\nconfiguration, invalid retained configuration refusal, and repeated SET_PARAMS/PREPARE without\nleaking pending I/O. Run independent schedules, one bounded novel attack, one effective\nsabotage, and one scrubbed exact-head local clean clone for the high-risk remediation.\nsource: tasks/epic-5-the-window/E5-T19a-snd-control-state.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:55251/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:55251/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:55251/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:55251/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:55251/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:55251/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:55251/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:55251/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:55251/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:55251/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:55251/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:55251/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "1257b0f560ecf9c82e477154d0798c2a1e98403024a754852f0d9cf18b972710"
+}
