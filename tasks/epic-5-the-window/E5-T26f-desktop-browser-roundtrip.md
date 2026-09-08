@@ -3,8 +3,9 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: in-progress
-depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i]
+status: blocked
+blocked_on: [E5-T26j]
+depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j]
 estimate: S
 risk: high
 capstone: false
@@ -39,6 +40,22 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — preserve held functionality; isolate the timer-rate prerequisite
+
+F's remaining exact repro is the frozen `8c892667` COMPLETE command in
+`evidence/e5-t26f/completion/README.md`: the unchanged `sh /tmp/a` interaction
+takes 5050.230 ms and exits 1 at the original 2000-ms assertion. All functional
+criteria are independently HELD. Whole-program WASM build optimization did not
+produce a material early-Linux benefit, so it is not promoted.
+
+The measured ICount configuration advances one 10-MHz tick per ten retirements,
+while the browser executes roughly 13 million retirements per host second.
+E5-T26j owns the missing opt-in deterministic-divider adapter and its controlled
+comparison; F leaves the active lane until that roadmap prerequisite is verified.
+This does not waive the cap, assert that timer rate is the cause, or claim that
+a diagnostic setting satisfies the supported/default-path acceptance. Resume F
+after J with the measured outcome, retaining all unchanged HELD evidence.
 
 ### 2026-09-08 — worker — guest-release replay closes the functional proof
 
