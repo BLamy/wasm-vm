@@ -95,5 +95,6 @@ ends clean with exit 0. Retained clone:
 `d58a1ff05e933b7f28dc9d9563702e7e5bf534cf2db2dcb89b17173bc2f86b06`.
 
 The pre-evidence predictions and provisional audit are in `verifier/`.
-Only the fresh critic may issue the final task verdict. No F deadline, speedup,
-deployment or Epic 5 completion is established here.
+Daybreak's final `VERDICT: verified` is recorded in `verifier/final-verdict.md`;
+the independent task-status commit is `ba9910ab0bec9029368376888a34a629620c7dbd`.
+No F deadline, speedup, deployment or Epic 5 completion is established here.
