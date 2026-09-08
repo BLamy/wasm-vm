@@ -1151,6 +1151,32 @@ verify-E5-T26f:
 	E5_T26F_IMAGE=$(E5_T26F_IMAGE) E5_T26F_IMAGE_INFO=$(E5_T26F_IMAGE_INFO) E5_T26F_DESKTOP_ASSET_DIR=$(E5_T26F_DESKTOP_ASSET_DIR) node tools/verify/e5-t26f-browser-roundtrip.mjs
 	@echo "verify-E5-T26f (Chromium desktop snapshot round-trip and interaction smoke): OK"
 
+.PHONY: verify-E5-T26j verify-E5-T26j-runtime
+verify-E5-T26j-runtime:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --features gpu-trace --test icount_divider --test guest_clock --test cpu_resume --test desktop_machine_resume -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace time::tests -- --nocapture
+	cargo test -p wasm-vm-jit-runtime --test timekeeping -- --nocapture
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	node --check web/tests/e5-t26j-icount-divider.test.mjs
+	node --check tools/verify/e5-t26j-runner.test.mjs
+	node --check tools/verify/e5-t26j-browser-clock.test.mjs
+	node --test web/tests/e5-t26j-icount-divider.test.mjs web/tests/e5-t26i-guest-clock.test.mjs web/tests/e4-t32-worker-protocol.test.mjs tools/verify/e5-t26j-runner.test.mjs tools/verify/e5-t26j-browser-clock.test.mjs tools/verify/e5-t26f-browser-roundtrip.test.mjs tools/verify/e5-t26f-completion.test.mjs
+	node --check tools/verify/e5-t26j-clock-worker.mjs
+	node --check tools/verify/e5-t26j-browser-clock.mjs
+
+# One new authenticated seal and the fixed ABBA sequence. Negative timings remain failures of F,
+# not failures to measure this explicit configuration boundary and never default promotion.
+verify-E5-T26j: verify-E5-T26j-runtime
+	wasm-pack test --node crates/wasm --test icount_divider --test guest_clock
+	$(MAKE) web-dist
+	node tools/verify/e5-t26j-clock-worker.mjs
+	E5_DEMO_TASK=E5-T26j E5_DEMO_OUT=evidence/e5-t26j/demo node tools/verify/e5-t18e-demo-smoke.mjs
+	node tools/verify/e5-t26j-browser-clock.mjs
+	@echo "verify-E5-T26j (explicit ICount divider and measured comparison, not F timing): OK"
+
 .PHONY: verify-E5-T26i verify-E5-T26i-runtime
 verify-E5-T26i-runtime:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm

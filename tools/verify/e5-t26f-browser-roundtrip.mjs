@@ -1798,7 +1798,12 @@ try {
   milestones.postRestoreInteraction = postRestoreInteraction;
   // Never delay the immediate PCM observation or replace the already-frozen interaction end.
   if (diagnostic?.jit != null) await recordDiagnosticJit("jitAfter");
-  if (diagnostic?.icountDivider != null) await recordDiagnosticICountDivider("icountDividerAfter");
+  if (diagnostic?.icountDivider != null) {
+    await recordDiagnosticICountDivider("icountDividerAfter");
+    // The generic early failure record omits error arrays; retain the actual endpoint arrays
+    // before the original cap can throw, just as the existing clock-mode comparison does.
+    milestones.icountDividerErrors = { browser: [...browserErrors], http: [...httpErrors] };
+  }
   if (diagnostic?.guestClock) {
     // Outside the frozen interaction boundary; neither this RPC nor reporting resets F's cap.
     milestones.guestClockAfter = await page.evaluate(async () => {

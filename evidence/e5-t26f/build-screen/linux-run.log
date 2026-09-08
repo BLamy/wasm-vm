@@ -1,0 +1,6 @@
+{"workload":"linux-prefix","arm":"baseline","recordName":"linux-prefix-baseline-1.json","retired":50000000,"elapsedMs":1619.980958}
+{"workload":"linux-prefix","arm":"candidate","recordName":"linux-prefix-candidate-2.json","retired":50000000,"elapsedMs":1613.479167}
+{"workload":"linux-prefix","arm":"candidate","recordName":"linux-prefix-candidate-3.json","retired":50000000,"elapsedMs":1621.691375}
+{"workload":"linux-prefix","arm":"baseline","recordName":"linux-prefix-baseline-4.json","retired":50000000,"elapsedMs":1635.760667}
+{"workload":"linux-prefix","arm":"baseline","recordName":"linux-prefix-baseline-5.json","retired":50000000,"elapsedMs":1650.874209}
+{"workload":"linux-prefix","arm":"candidate","recordName":"linux-prefix-candidate-6.json","retired":50000000,"elapsedMs":1605.8559579999999}

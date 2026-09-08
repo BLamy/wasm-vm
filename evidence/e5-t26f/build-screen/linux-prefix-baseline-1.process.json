@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "/private/tmp/e5-t26f-build-screen.h4HPPD/screen.mjs",
+    "child",
+    "linux-prefix",
+    "baseline",
+    "linux-prefix-baseline-1.json"
+  ],
+  "startedAt": "2026-09-08T07:32:35.785Z",
+  "completedAt": "2026-09-08T07:32:41.450Z",
+  "status": 0,
+  "signal": null,
+  "error": null
+}

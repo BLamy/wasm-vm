@@ -59,6 +59,25 @@ independent machine, GitHub Actions or production deployment is required here.
 
 ## Verification log
 
+### 2026-09-08 — worker — runtime frozen; real direct/worker clock preflight
+
+At runtime commit `d2eda6857a2d17d19f8c64b037239a675901f2e6`, the built
+Chromium proof `tools/verify/e5-t26j-clock-worker.mjs` passes all six combinations
+of direct/worker and omitted/10/1 selection. Actual busy guest `rdtime` advances;
+paused state is unchanged; final mtime equals actual retired instructions divided
+by the selected divider. All arms execute real compiled JIT instructions with
+dynamic/static chaining still enabled. There are no browser/HTTP errors. Records:
+`evidence/e5-t26j/worker-d2eda685/guest-rdtime.json` and the adjacent transcript.
+
+The built WASM is SHA-256
+`8df0e82c87aa25d39988517b045b42712f8c94d1bec4f0d1db5ed2ab772f0e3a`.
+This proves the configuration path, not restored-desktop performance. Selected
+existing clock/resume tests (18) and JIT timekeeping tests (3) pass; Luna's eight
+native and eleven WASM self-tests include 2,176 phase combinations and identical
+native/WASM guest trace/state digests. The final frozen-head gauntlet and one new
+cold-seal ABBA recording remain required; no J verification or default promotion
+is inferred from these preflights.
+
 ### 2026-09-08 — worker — activation
 
 Prerequisites I/H/T19a are verified. F is blocked on this named adapter and retains

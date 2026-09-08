@@ -1,0 +1,74 @@
+{
+  "acceptance": false,
+  "head": "8c892667be0da360af2329f2ae8bf7bf7ef6f10d",
+  "order": [
+    "baseline",
+    "candidate",
+    "candidate",
+    "baseline",
+    "baseline",
+    "candidate"
+  ],
+  "baselineMs": [
+    1619.980958,
+    1635.760667,
+    1650.874209
+  ],
+  "candidateMs": [
+    1613.479167,
+    1621.691375,
+    1605.8559579999999
+  ],
+  "baselineMedianMs": 1635.760667,
+  "candidateMedianMs": 1613.479167,
+  "baselineOverCandidate": 1.0138095988195677,
+  "reductionPercent": 1.3621491486810577,
+  "actualRetiredEach": 50000000,
+  "clocks": [
+    {
+      "mode": "icount",
+      "mtime": "5000000",
+      "timebaseHz": 10000000,
+      "clockDiv": 10
+    },
+    {
+      "mode": "icount",
+      "mtime": "5000000",
+      "timebaseHz": 10000000,
+      "clockDiv": 10
+    },
+    {
+      "mode": "icount",
+      "mtime": "5000000",
+      "timebaseHz": 10000000,
+      "clockDiv": 10
+    },
+    {
+      "mode": "icount",
+      "mtime": "5000000",
+      "timebaseHz": 10000000,
+      "clockDiv": 10
+    },
+    {
+      "mode": "icount",
+      "mtime": "5000000",
+      "timebaseHz": 10000000,
+      "clockDiv": 10
+    },
+    {
+      "mode": "icount",
+      "mtime": "5000000",
+      "timebaseHz": 10000000,
+      "clockDiv": 10
+    }
+  ],
+  "ramDigests": [
+    "b4deb22077826e86b444325f56d14ac8339886f57a4cfc77350a0ab63476f1f1",
+    "b4deb22077826e86b444325f56d14ac8339886f57a4cfc77350a0ab63476f1f1",
+    "b4deb22077826e86b444325f56d14ac8339886f57a4cfc77350a0ab63476f1f1",
+    "b4deb22077826e86b444325f56d14ac8339886f57a4cfc77350a0ab63476f1f1",
+    "b4deb22077826e86b444325f56d14ac8339886f57a4cfc77350a0ab63476f1f1",
+    "b4deb22077826e86b444325f56d14ac8339886f57a4cfc77350a0ab63476f1f1"
+  ],
+  "warning": "fresh no-disk/no-initrd prefix, real entropy/RTC; neither desktop resume nor browser acceptance"
+}

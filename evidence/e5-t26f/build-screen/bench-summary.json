@@ -1,0 +1,16 @@
+{
+  "acceptance": false,
+  "head": "8c892667be0da360af2329f2ae8bf7bf7ef6f10d",
+  "baseline": {
+    "medianReportedMs": 699,
+    "medianHostMs": 698.5992080000001
+  },
+  "candidate": {
+    "medianReportedMs": 862,
+    "medianHostMs": 862.141959
+  },
+  "baselineOverCandidate": 0.8109048723897911,
+  "reductionPercent": -23.319027181688124,
+  "measuredRetiredEach": 20000016,
+  "warning": "golden-accounted reload-heavy interpreter benchmark, not desktop or JIT acceptance"
+}

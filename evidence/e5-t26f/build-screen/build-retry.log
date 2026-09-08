@@ -1,0 +1,9 @@
++ wasm-pack --verbose build crates/wasm --target web --release --mode no-install --out-dir /private/tmp/e5-t26f-build-screen.h4HPPD/candidate-package -- --locked
+[INFO]: 🎯  Checking for the Wasm target...
+[INFO]: 🌀  Compiling to Wasm...
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.04s
+[INFO]: found wasm-opt at "/private/tmp/e5-t26f-build-screen.h4HPPD/tool-cache/wasm-opt-50385c9e73ccee70/bin/wasm-opt"
+[INFO]: Optimizing wasm binaries with `wasm-opt`...
+[INFO]: License key is set in Cargo.toml but no LICENSE file(s) were found; Please add the LICENSE file(s) to your project directory
+[INFO]: ✨   Done in 1.93s
+[INFO]: 📦   Your wasm pkg is ready to publish at /private/tmp/e5-t26f-build-screen.h4HPPD/candidate-package.
