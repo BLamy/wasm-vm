@@ -90,11 +90,13 @@ for (const [index, policy] of ["repack-off", "cap-256", "cap-256", "repack-off"]
     assert.ok(sample.receivedAt >= sample.requestedAt);
   }
   const deltas = {};
-  for (const key of ["guestRetired", "retiredViaJit", "hostEntries", "directChainEntries",
+  for (const key of ["guestRetired", "retiredViaJit", "entryCost.hostEntries", "directChainEntries",
     "blockEntryHits", "blockBuilds", "jitCacheInstalls", "jitCacheRetranslations", "jitCacheEvictions",
     "decodedBlocksDiscarded", "decodedCacheFlushes"]) {
-    assert.ok(Number.isSafeInteger(before.state[key]) && Number.isSafeInteger(after.state[key]), key);
-    deltas[key] = after.state[key] - before.state[key];
+    const read = state => key.split(".").reduce((value, part) => value?.[part], state);
+    const from = read(before.state), to = read(after.state);
+    assert.ok(Number.isSafeInteger(from) && from >= 0 && Number.isSafeInteger(to), key);
+    deltas[key] = to - from;
     assert.ok(deltas[key] >= 0, `${key} regressed`);
   }
   assert.ok(deltas.guestRetired > 0 && deltas.retiredViaJit > 0);
