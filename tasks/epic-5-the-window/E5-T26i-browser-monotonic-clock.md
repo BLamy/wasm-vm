@@ -3,7 +3,7 @@ id: E5-T26i
 epic: 5
 title: Wire opt-in monotonic time through the browser desktop lifecycle
 priority: 526.59
-status: in-progress
+status: implemented
 depends_on: [E4-T24, E5-T26e, E5-T26h, E5-T19a]
 estimate: S
 risk: high
@@ -81,3 +81,35 @@ E4-T24 explicitly deferred browser monotonic injection. Core wall mode also
 disables in-module direct chaining, so wiring it is not presumed to improve
 throughput or satisfy F. Establish the missing adapter with exact lifecycle proof,
 then use controlled unprofiled measurements before any production-policy change.
+
+### 2026-09-08 — worker — implemented, wall mode is not a latency fix
+
+Frozen runtime `99b8e692fddb7b1e82e4175e152ef5682c6b9373`; built metadata
+`bfebb8d42f065196735df088c6d4b2ed8da62e77`; final bundle/cache stamp and paired
+desktop recording `faddd274c934e09aec18161758c690a3b87bde8e`.
+`evidence/e5-t26i/submission/README.md` records the exact commands and digests:
+`make verify-E5-T26i-runtime` (28 native, 95 JS, fmt/clippy/no_std target),
+`wasm-pack test --node crates/wasm --lib --test guest_clock -- guest_clock --nocapture`
+(3 wrapper + 5 guest fixtures), `make web-dist`, the real built UART/rdtime
+direct/worker fixture, and the 126/0 Chromium demo smoke with no errors. The
+fresh critic's exact-head clone reproduced these gates and byte-identical WASM;
+its two pre-existing dist-manifest differences are explicitly outside this claim.
+
+`node tools/verify/e5-t26i-browser-clock.mjs` completed the cold checkpoint and
+both unprofiled, physically typed `sh /tmp/a` replays with the same frozen image,
+profile, snapshot, and runtime. Comparison SHA-256:
+`0a6d1662c67cd32b5c9fe5f128090a6cfd85b04dc827d1c2b6512279ee476306`.
+ICount elapsed **5028.065 ms**; wall elapsed **7518.450 ms**. Both complete actual
+guest-visible conditional playback markers and non-silent attached PCM, with
+empty browser/HTTP error arrays, but both fail F's unchanged two-second cap.
+The wall guest advances 7283.315 ms within host sample bounds 7231.100–7309.935 ms;
+ICount advances 574.7393 ms within host bounds 4749.320–4808.775 ms. This demonstrates
+the selected clock and a negative performance comparison, not an improvement.
+Canonical per-mode JSON/PNG files and checkpoint provenance are retained under
+`evidence/e5-t26i/browser/`. Both screenshots show the completed marker and prompt,
+not an ALSA error. **ICount stays the default; F is not verified.**
+
+The claim is the opt-in adapter/lifecycle and measured comparison only. It does
+not promise automatic guest resynchronization after a large jump, make host
+epochs portable, enable wall-mode direct chaining, or alter any deadline or
+snapshot format. Fresh Daybreak Blue owns the final verdict.

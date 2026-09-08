@@ -1,0 +1,40 @@
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-9581999851bd4c84.wasm)
+running 3 tests
+Invoking test: guest_clock_tests::selection_refuses_invalid_and_unavailable_before_mutating_active_anchor
+test guest_clock_tests::selection_refuses_invalid_and_unavailable_before_mutating_active_anchor ... ok
+Invoking test: guest_clock_tests::exported_state_is_lossless_readonly_and_blob_restore_rebases_only_on_success
+test guest_clock_tests::exported_state_is_lossless_readonly_and_blob_restore_rebases_only_on_success ... ok
+Invoking test: guest_clock_tests::exported_clock_selection_preserves_default_and_reports_unavailable_source
+test guest_clock_tests::exported_clock_selection_preserves_default_and_reports_unavailable_source ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 5 filtered out; finished in 0.23s
+
+     Running tests/guest_clock.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/guest_clock-ac70823acdca127f.wasm)
+running 5 tests
+Invoking test: guest_clock::rejected_resume_preserves_policy_anchor_and_guest_state
+test guest_clock::rejected_resume_preserves_policy_anchor_and_guest_state ... ok
+Invoking test: guest_clock::icount_rebase_selection_and_restore_preserve_trace_digest_and_subtick_phase
+test guest_clock::icount_rebase_selection_and_restore_preserve_trace_digest_and_subtick_phase ... ok
+Invoking test: guest_clock::fresh_and_same_machine_restore_rebase_at_restored_mtime_and_preserve_deadline
+test guest_clock::fresh_and_same_machine_restore_rebase_at_restored_mtime_and_preserve_deadline ... ok
+Invoking test: guest_clock::explicit_resume_freezes_pause_but_background_retains_jump_policy
+test guest_clock::explicit_resume_freezes_pause_but_background_retains_jump_policy ... ok
+Invoking test: guest_clock::busy_rdtime_tracks_ten_mhz_not_retire_count_and_clamps_jitter
+test guest_clock::busy_rdtime_tracks_ten_mhz_not_retire_count_and_clamps_jitter ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.04s
+
