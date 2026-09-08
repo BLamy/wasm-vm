@@ -3,8 +3,7 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: blocked
-blocked_on: E5-T19a
+status: in-progress
 depends_on: [E5-T26e, E5-T26h, E5-T19a]
 estimate: S
 risk: high
@@ -40,6 +39,22 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-07 — coordinator — resume after verified PCM recovery
+
+E5-T19a is independently reverified in `fbd9e966` at runtime `9e8e1c22`, with
+394-test exact-head and clean-clone gates, effective sabotage, native bit-exact
+recovery, and real Linux-browser playback before/after restoration. Source/dist
+WASM SHA-256 is `551206882e7e3ec605dfe04571e53046a81678ebd542fdccafc2c08d8188c229`.
+The newest diagnostic at `1d3360b3` restores first-present CRC `94da90ee`, obtains
+a fresh HELLO without a guest boot, moves the visible cursor at 786.255 ms, and
+produces 1440 new non-silent frames with attached guest output and a conditional
+successful `aplay` marker. However, interaction finishes at 3842.595 ms and fails
+the unchanged two-second cap. Coherence/drag/second-reload remain unproven here.
+Exact command and canonical inspected JSON/PNG hashes:
+`evidence/e5-t19a/recovery-browser-c90bc4e4/README.md`. Continue only the remaining
+F interaction/proof boundary; carry the unchanged H and T19a findings forward.
+No performance waiver, merge, or production deployment has occurred.
 
 ### 2026-09-07 — coordinator — blocked on independently refuted PCM recovery
 
