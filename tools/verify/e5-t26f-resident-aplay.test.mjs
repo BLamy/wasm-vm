@@ -275,9 +275,12 @@ test("three observation printf calls remain byte-identical to parent 7f15d766", 
 
 test("capture preserves EOF and all trailing newlines at the exact small bound", (t) => {
   const f = fixture(t);
-  for (const bytes of ["", "pipe_read", "line\n", "line\n\n", "x".repeat(128)]) {
-    writeFileSync(path.join(f.dir, "capture.data"), bytes);
-    const result = f.invoke(`e5_capture ${q(`${f.dir}/capture.data`)} 128 || exit 17\nprintf '%s' "$e5_text"`);
+  for (const [index, bytes] of ["", "pipe_read", "line\n", "line\n\n", "x".repeat(128)].entries()) {
+    // Immutable inputs: a fresh container can retain the old shared-file size
+    // after a rapid host rewrite of the same inode (see native-fixture evidence).
+    const file = path.join(f.dir, `capture-${index}.data`);
+    writeFileSync(file, bytes, { flag: "wx" });
+    const result = f.invoke(`e5_capture ${q(file)} 128 || exit 17\nprintf '%s' "$e5_text"`);
     assert.equal(result.status, 0, result.stderr);
     assert.equal(result.stdout, bytes);
   }

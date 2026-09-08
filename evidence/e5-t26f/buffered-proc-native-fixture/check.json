@@ -1,0 +1,97 @@
+{
+  "acceptance": false,
+  "scope": "Native shared-host-file visibility versus unchanged capture helper; not real proc, ALSA or browser timing.",
+  "image": "sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc",
+  "helperSha256": "324e0acddd88bd2d41b0310444e32e2262dedd3129132240134dac857d4eec2e",
+  "scratch": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA",
+  "results": [
+    {
+      "index": 0,
+      "name": "reused.data",
+      "host": {
+        "at": "2026-09-08T15:14:19.497Z",
+        "size": 0,
+        "inode": 34749046,
+        "hex": "",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "container": {
+        "size": 0,
+        "inode": 16904,
+        "hex": ""
+      },
+      "capture": {
+        "status": 0,
+        "length": 0,
+        "hex": ""
+      },
+      "stdout": "containerSize=0\ncontainerInode=16904\ncontainerHex=\nhelperSha=324e0acddd88bd2d41b0310444e32e2262dedd3129132240134dac857d4eec2e  /Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh\ncaptureStatus=0\ncaptureLength=0\ncaptureHex=\n"
+    },
+    {
+      "index": 1,
+      "name": "reused.data",
+      "host": {
+        "at": "2026-09-08T15:14:19.613Z",
+        "size": 9,
+        "inode": 34749046,
+        "hex": "706970655f72656164",
+        "sha256": "4fe92241199e9ef42bba365975b963bd9681d68337af20cd4f9d033f7fdc1c2d"
+      },
+      "container": {
+        "size": 0,
+        "inode": 16904,
+        "hex": ""
+      },
+      "capture": {
+        "status": 0,
+        "length": 0,
+        "hex": ""
+      },
+      "stdout": "containerSize=0\ncontainerInode=16904\ncontainerHex=\nhelperSha=324e0acddd88bd2d41b0310444e32e2262dedd3129132240134dac857d4eec2e  /Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh\ncaptureStatus=0\ncaptureLength=0\ncaptureHex=\n"
+    },
+    {
+      "index": 2,
+      "name": "unique-empty.data",
+      "host": {
+        "at": "2026-09-08T15:14:19.714Z",
+        "size": 0,
+        "inode": 34749047,
+        "hex": "",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "container": {
+        "size": 0,
+        "inode": 16906,
+        "hex": ""
+      },
+      "capture": {
+        "status": 0,
+        "length": 0,
+        "hex": ""
+      },
+      "stdout": "containerSize=0\ncontainerInode=16906\ncontainerHex=\nhelperSha=324e0acddd88bd2d41b0310444e32e2262dedd3129132240134dac857d4eec2e  /Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh\ncaptureStatus=0\ncaptureLength=0\ncaptureHex=\n"
+    },
+    {
+      "index": 3,
+      "name": "unique-pipe.data",
+      "host": {
+        "at": "2026-09-08T15:14:19.798Z",
+        "size": 9,
+        "inode": 34749048,
+        "hex": "706970655f72656164",
+        "sha256": "4fe92241199e9ef42bba365975b963bd9681d68337af20cd4f9d033f7fdc1c2d"
+      },
+      "container": {
+        "size": 9,
+        "inode": 16907,
+        "hex": "706970655f72656164"
+      },
+      "capture": {
+        "status": 0,
+        "length": 9,
+        "hex": "706970655f72656164"
+      },
+      "stdout": "containerSize=9\ncontainerInode=16907\ncontainerHex= 70 69 70 65 5f 72 65 61 64\n\nhelperSha=324e0acddd88bd2d41b0310444e32e2262dedd3129132240134dac857d4eec2e  /Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh\ncaptureStatus=0\ncaptureLength=9\ncaptureHex= 70 69 70 65 5f 72 65 61 64\n\n"
+    }
+  ]
+}

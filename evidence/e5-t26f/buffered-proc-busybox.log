@@ -1,0 +1,115 @@
+✔ actual play validates with buffered cat, feeds exact bytes, waits child zero; no PATH commands (144.119834ms)
+✔ refuses wrong saved PID before feeding or green success (107.036791ms)
+✔ refuses wrong actual stat PID before feeding or green success (107.47675ms)
+✔ refuses changed starttime before feeding or green success (103.066208ms)
+✔ refuses wrong parent shell before feeding or green success (99.658166ms)
+✔ refuses malformed comm cannot shift starttime before feeding or green success (102.070167ms)
+✔ refuses wrong executable inode before feeding or green success (110.027458ms)
+✔ refuses not blocked in pipe_read before feeding or green success (99.292375ms)
+✔ refuses missing actual FIFO descriptor before feeding or green success (106.816916ms)
+✔ refuses wrong FIFO inode before feeding or green success (105.232333ms)
+✔ refuses child inherited extra writer before feeding or green success (118.299791ms)
+✔ refuses child FIFO descriptor is read-write before feeding or green success (108.537041ms)
+✔ refuses malformed fd flags before feeding or green success (123.6375ms)
+✔ refuses missing parent writer before feeding or green success (108.44875ms)
+✔ refuses extra parent writer before feeding or green success (121.256958ms)
+✔ refuses parent descriptor read-only before feeding or green success (103.96975ms)
+✔ refuses missing PCM descriptor before feeding or green success (97.923667ms)
+✔ refuses wrong PCM device inode before feeding or green success (104.749292ms)
+✔ refuses wrong PCM owner before feeding or green success (105.43175ms)
+✔ refuses OPEN is not PREPARED before feeding or green success (98.942166ms)
+✔ refuses RUNNING is not PREPARED before feeding or green success (109.801084ms)
+✔ refuses nonzero hardware pointer before feeding or green success (100.980292ms)
+✔ refuses queued application data before feeding or green success (102.66975ms)
+✔ refuses duplicate PCM status field before feeding or green success (105.716917ms)
+✔ refuses unreadable/missing PCM status before feeding or green success (102.63725ms)
+✔ refuses child I/O changed after prepare before feeding or green success (98.076333ms)
+✔ refuses available I/O accounting disappears before feeding or green success (111.01275ms)
+✔ refuses not armed before feeding or green success (95.442541ms)
+✔ refuses truncated stat field list before feeding or green success (100.205292ms)
+✔ refuses surplus stat fields before feeding or green success (126.2005ms)
+✔ refuses stat glob is not expanded before feeding or green success (100.732542ms)
+✔ refuses negative starttime before feeding or green success (107.027625ms)
+✔ refuses second stat record before feeding or green success (97.991375ms)
+✔ refuses stat missing final newline before feeding or green success (93.040833ms)
+✔ refuses wchan extra newline before feeding or green success (110.607125ms)
+✔ refuses wchan extra record before feeding or green success (113.015375ms)
+✔ refuses missing flags field before feeding or green success (97.726125ms)
+✔ refuses duplicate child flags before feeding or green success (114.783125ms)
+✔ refuses duplicate parent flags before feeding or green success (108.151833ms)
+✔ refuses flags surplus token before feeding or green success (102.2155ms)
+✔ refuses flags octal overflow before feeding or green success (110.859459ms)
+✔ refuses flags missing final newline before feeding or green success (94.204583ms)
+✔ refuses PCM missing application pointer before feeding or green success (98.819ms)
+✔ refuses PCM surplus value before feeding or green success (113.732ms)
+✔ refuses PCM malformed separator before feeding or green success (101.884125ms)
+✔ refuses duplicate PCM owner before feeding or green success (97.770834ms)
+✔ refuses readable empty I/O before feeding or green success (117.654083ms)
+✔ refuses I/O missing mandatory field before feeding or green success (101.443458ms)
+✔ refuses I/O duplicate field before feeding or green success (103.653875ms)
+✔ refuses I/O negative counter before feeding or green success (104.665583ms)
+✔ refuses I/O incomplete accounting group before feeding or green success (102.289667ms)
+✔ refuses I/O extra token before feeding or green success (111.492875ms)
+✔ refuses I/O missing final newline before feeding or green success (108.241083ms)
+✔ refuses I/O unexpected blank record before feeding or green success (99.87725ms)
+✔ refuses I/O shell metacharacters are data before feeding or green success (117.145042ms)
+✔ refuses overbound proc text before feeding or green success (99.859ms)
+✔ failed feed reports red and cannot print completion (95.828916ms)
+✔ kernel without optional task I/O accounting still requires all actual PCM and FIFO guards (216.695541ms)
+✔ nonzero original child exit refuses green even after a successful finite feed (151.555791ms)
+✔ prepare requires two matching observations and retains the actual observation in parent RAM (134.113ms)
+✔ prepare bounds refused observations without green (113.902917ms)
+✔ prepare bounds changing observations without green (100.792125ms)
+✔ actual child launch closes inherited FD3 before exec, with fixed real PCM parameters (0.115625ms)
+✔ three observation printf calls remain byte-identical to parent 7f15d766 (0.293959ms)
+✖ capture preserves EOF and all trailing newlines at the exact small bound (188.663042ms)
+✔ capture refuses overbound or embedded sentinel ("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx") (95.702625ms)
+✔ capture refuses overbound or embedded sentinel (":e5t26f-capture-end:") (90.312416ms)
+✔ capture refuses overbound or embedded sentinel ("prefix:e5t26f-capture-end:\n") (126.005917ms)
+✔ capture refuses overbound or embedded sentinel (":e5t26f-capture-end::e5t26f-capture-end:") (120.34175ms)
+✔ missing/truncated capture sentinel refuses even when cat succeeds (:) (96.292042ms)
+✔ missing/truncated capture sentinel refuses even when cat succeeds (printf '%s' ':e5t26f-capture-en') (89.666959ms)
+✔ cat failure cannot turn partial data into a successful capture (107.212417ms)
+✔ missing/unreadable-as-file captures fail closed using real cat errors (191.300459ms)
+✔ each actual capture subprocess has FD3 closed while parent feed descriptor stays open (132.272417ms)
+✔ identity start change during capture refuses before feed (119.65025ms)
+✔ identity pid change during capture refuses before feed (115.356167ms)
+✔ identity parent change during capture refuses before feed (103.934917ms)
+✔ identity exe change during capture refuses before feed (113.141ms)
+✔ identity exit change during capture refuses before feed (117.801083ms)
+✔ readable optional io disappearing during cat is not silently unavailable (116.870584ms)
+✔ in-memory io reconstruction preserves each original byte in |line serialization (94.534375ms)
+✔ PCM ordinary timestamp/availability lines and delimiter retain required guards (109.014292ms)
+✔ zero-pointer guard sabotage in a temporary helper is killed by the same refusal oracle (192.360417ms)
+✔ capture/parser source uses fixed cat and memory parsing, never read/eval/heredoc (0.201125ms)
+ℹ tests 84
+ℹ suites 0
+ℹ pass 83
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9137.07425
+
+✖ failing tests:
+
+test at tools/verify/e5-t26f-resident-aplay.test.mjs:276:1
+✖ capture preserves EOF and all trailing newlines at the exact small bound (188.663042ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '' !== 'pipe_read'
+  
+      at TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-resident-aplay.test.mjs:282:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: 'pipe_read',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

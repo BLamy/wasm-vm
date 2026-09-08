@@ -1,0 +1,2 @@
+chunk_image: 1073741824 bytes → 8192 chunks of 131072 B (split); wrote target/e5-t26f/chunks/resident-buffered-proc-v1/manifest.json
+chunk_image: OK — 8192 chunks reassemble to 1073741824 bytes, sha256 round-trips
