@@ -3,8 +3,7 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: blocked
-blocked_on: E5-T26o
+status: in-progress
 depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l, E5-T26m, E5-T26n, E5-T26o]
 estimate: S
 risk: high
@@ -40,6 +39,28 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — resume after verified PLIC prerequisite
+
+E5-T26o is independently verified at
+`1bfcd9b04e2bbf0bb1ce2d3926613cabe526f320`; its final exact source/test head
+`aaa8d40625eaf3a2bf9ba6a5dbe4ef0909495ca0` passes31 native and4 actual-WASM
+tests in one pristine clone, plus the held126/0 built-demo proof. PR374 is
+open/draft at `45253492b62ab9985e595eb72bcfc87f14061c09`.
+Runtime WASM SHA256 is
+`20f58e0d44cc94f9d0629478789680e4a87345ba800162aa0737ddc763bfd238`.
+Only the PLIC selector's ascending candidate loop changes; no speedup is assumed.
+
+Resume F with one fresh authenticated cold checkpoint and unchanged-policy
+unprofiled reuse via
+`env -u RUSTDOCFLAGS node tools/verify/e5-t26f-browser-single-process-observer.mjs`.
+The producer invocation will record the final current HEAD after this metadata
+and bundle freeze. Daybreak's prelaunch predictions are frozen in
+`evidence/e5-t26f/plic-runtime-verifier/plan.md`. All historical seals remain
+invalid and must never be rebound. Existing image/helper/observer evidence
+carries unchanged. Original two-second timing, physical play, clocks, cache and
+residency budgets remain unchanged; diagnostic success cannot itself verify F.
+No merge, outage-only release, Omarchy mutation or Epic6 work is introduced.
 
 ### 2026-09-08 — coordinator — blocked on E5-T26o
 
