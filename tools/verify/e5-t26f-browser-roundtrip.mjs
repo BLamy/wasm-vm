@@ -52,8 +52,18 @@ function diagnosticOptions(env) {
     assert.equal(complete, "1", "diagnostic completion flag must be exactly 1");
     for (const key of ["E5_T26F_DIAGNOSTIC_JIT", "E5_T26F_DIAGNOSTIC_RESIDENCY",
       "E5_T26F_DIAGNOSTIC_GUEST_CLOCK", "E5_T26F_DIAGNOSTIC_CPU",
-      "E5_T26F_DIAGNOSTIC_LATENCY", "E5_T26F_DIAGNOSTIC_COMMAND"]) {
+      "E5_T26F_DIAGNOSTIC_LATENCY", "E5_T26F_DIAGNOSTIC_COMMAND", "E5_T26F_DIAGNOSTIC_ICOUNT_DIVIDER"]) {
       assert.equal(env[key], undefined, "diagnostic completion requires unchanged unprofiled policies and command");
+    }
+  }
+  const icountDivider = env.E5_T26F_DIAGNOSTIC_ICOUNT_DIVIDER;
+  if (icountDivider !== undefined) {
+    assert.equal(mode, "reuse", "diagnostic ICount divider requires reuse mode");
+    assert.ok(icountDivider === "1" || icountDivider === "10", "diagnostic ICount divider must be exactly 1 or 10");
+    for (const key of ["E5_T26F_DIAGNOSTIC_GUEST_CLOCK", "E5_T26F_DIAGNOSTIC_JIT",
+      "E5_T26F_DIAGNOSTIC_RESIDENCY", "E5_T26F_DIAGNOSTIC_CPU", "E5_T26F_DIAGNOSTIC_LATENCY",
+      "E5_T26F_DIAGNOSTIC_COMMAND"]) {
+      assert.equal(env[key], undefined, "ICount divider comparison requires unchanged unprofiled policies and command");
     }
   }
   const jit = env.E5_T26F_DIAGNOSTIC_JIT;
@@ -109,7 +119,8 @@ function diagnosticOptions(env) {
   assert.ok(Number.isSafeInteger(port) && port >= 1024 && port <= 65535, "diagnostic mode requires a stable explicit server port");
   return { mode, directory, port, origin: `http://127.0.0.1:${port}`, command: command ?? null,
     keyDelayMs: Number(delay ?? 0), latency: latency === "1", cpu: cpu === "1", guestClock: guestClock ?? null,
-    jit: jit ?? null, residency: residency ?? null, complete: complete === "1" };
+    jit: jit ?? null, residency: residency ?? null, complete: complete === "1",
+    icountDivider: icountDivider === undefined ? null : Number(icountDivider) };
 }
 
 const diagnostic = diagnosticOptions(process.env);
@@ -636,6 +647,53 @@ async function finishDiagnosticCompletion(identity, finalState, timingFailure) {
   if (!timingPassed) {
     reportedCompletionTimingFailure = timingFailure;
     throw timingFailure;
+  }
+}
+
+async function recordDiagnosticICountDivider(key) {
+  try {
+    milestones[key] = await page.evaluate(async () => {
+      const requestedAt = performance.now();
+      const controller = window.__desktopController;
+      const state = await controller.guestClockState();
+      const jit = await controller.jitStats();
+      const selection = await controller.icountDividerSelection();
+      return { requestedAt, receivedAt: performance.now(), state, jit, selection };
+    });
+  } catch (error) {
+    milestones[key] = { error: String(error?.message || error).slice(0, 240) };
+    throw error;
+  }
+  const sample = milestones[key];
+  assert.ok(Number.isFinite(sample.requestedAt) && Number.isFinite(sample.receivedAt) &&
+    sample.receivedAt >= sample.requestedAt, "ICount observation lacks bounded timestamps");
+  const divider = diagnostic.icountDivider;
+  assert.equal(sample.selection?.requested, divider, "missing actual ICount selection receipt");
+  for (const [state, expected] of [[sample.state, divider], [sample.selection.before, 10], [sample.selection.after, divider]]) {
+    assert.equal(state?.mode, "icount", "actual clock is not ICount");
+    assert.equal(state.clockDiv, expected, "actual ICount divider differs from the selected/stored value");
+    assert.equal(state.timebaseHz, 10_000_000);
+    assert.match(state.mtime, /^[0-9]+$/u);
+    assert.ok(BigInt(state.mtime) <= 0xffff_ffff_ffff_ffffn, "ICount mtime is outside u64");
+  }
+  assert.equal(sample.selection.before.mtime, sample.selection.after.mtime, "ICount selection advanced guest time");
+  assert.ok(BigInt(sample.state.mtime) >= BigInt(sample.selection.after.mtime), "ICount time regressed after selection");
+  assert.equal(sample.jit?.hasExecutor, true, "divider comparison lost its JIT executor");
+  assert.equal(sample.jit.jitResidencyPolicy, "repack-off");
+  assert.equal(sample.jit.jitResidencyCap, 24);
+  assert.equal(sample.jit.jitRegionChaining, true);
+  assert.equal(sample.jit.jitDynamicChaining, true);
+  for (const counter of ["guestRetired", "retiredViaJit"]) {
+    assert.ok(Number.isSafeInteger(sample.jit[counter]) && sample.jit[counter] >= 0, `unsafe ICount JIT ${counter}`);
+  }
+  if (key === "icountDividerAfter") {
+    const before = milestones.icountDividerBefore;
+    assert.deepEqual(sample.selection, before.selection, "ICount admission receipt changed during execution");
+    assert.ok(sample.requestedAt > before.receivedAt, "ICount endpoint intervals overlap");
+    assert.ok(BigInt(sample.state.mtime) > BigInt(before.state.mtime), "actual ICount time did not advance");
+    for (const counter of ["guestRetired", "retiredViaJit"]) {
+      assert.ok(sample.jit[counter] > before.jit[counter], `ICount comparison has no ${counter} progress`);
+    }
   }
 }
 
@@ -1458,6 +1516,7 @@ try {
   if (diagnostic?.guestClock) query.set("guestClock", diagnostic.guestClock);
   if (diagnostic?.jit != null) query.set("jit", diagnostic.jit);
   if (diagnostic?.residency != null) query.set("jitResidency", diagnostic.residency);
+  if (diagnostic?.icountDivider != null) query.set("icountDivider", String(diagnostic.icountDivider));
   const coldUrl = `${base}/desktop-cursor.html?${query}`;
   const restoreUrl = `${coldUrl}&autoRestore=1`;
   let normalSnapshot = diagnosticCheckpoint?.normalSnapshot;
@@ -1605,6 +1664,7 @@ try {
   assert.ok(Number.isFinite(postRestoreStart), "restore did not expose a timing boundary");
   // This real RPC is inside the original restore budget in both explicit comparison arms.
   if (diagnostic?.jit != null) await recordDiagnosticJit("jitBefore");
+  if (diagnostic?.icountDivider != null) await recordDiagnosticICountDivider("icountDividerBefore");
   if (diagnostic?.guestClock) {
     milestones.guestClockBefore = await page.evaluate(async () => {
       const requestedAt = performance.now();
@@ -1738,6 +1798,7 @@ try {
   milestones.postRestoreInteraction = postRestoreInteraction;
   // Never delay the immediate PCM observation or replace the already-frozen interaction end.
   if (diagnostic?.jit != null) await recordDiagnosticJit("jitAfter");
+  if (diagnostic?.icountDivider != null) await recordDiagnosticICountDivider("icountDividerAfter");
   if (diagnostic?.guestClock) {
     // Outside the frozen interaction boundary; neither this RPC nor reporting resets F's cap.
     milestones.guestClockAfter = await page.evaluate(async () => {

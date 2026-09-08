@@ -26,7 +26,7 @@ import init, {
 import { decideBootPath, deriveBootSnapshotBaseId } from "./boot-path.js";
 import { deriveOverlaySeedIdentity } from "./overlay-seed-identity.js";
 import { createTaskQuiescence } from "./task-quiescence.js";
-import { validateGuestClock, createGuestClockLifecycle } from "./guest-clock.js";
+import { validateGuestClock, validateICountDivider, createGuestClockLifecycle } from "./guest-clock.js";
 
 // Responsiveness: a near-zero-delay "yield to the main thread" for rescheduling the run loop. The VM
 // runs on the main thread (a Web Worker offload is a larger follow-up), so a long synchronous run slice
@@ -231,6 +231,8 @@ export async function startLinuxBoot(opts = {}) {
     fastInterpreter = true,
     // E5-T26i: explicit experiment; deterministic instruction time remains the default.
     guestClock = "icount",
+    // Explicit experiment only. Omission preserves the constructed or restored divider.
+    icountDivider = undefined,
     // E4-T32: policy is selected by the page and passed as data to a whole-machine worker. Undefined
     // preserves direct-loader compatibility; the page makes the production default explicit.
     jit = undefined,
@@ -283,6 +285,7 @@ export async function startLinuxBoot(opts = {}) {
 
   try {
     validateGuestClock(guestClock);
+    validateICountDivider(icountDivider, guestClock);
     const manifest = await fetchJsonAsset(manifestUrl, "boot manifest");
     const km = manifest.artifacts.kernel;
     // E4 restore-on-load artifacts (busybox: bootSnapshot only; Alpine chunked: bootSnapshot RAM +
@@ -791,7 +794,7 @@ export async function startLinuxBoot(opts = {}) {
       }
     }
 
-    const guestClockLifecycle = createGuestClockLifecycle(machine, guestClock);
+    const guestClockLifecycle = createGuestClockLifecycle(machine, guestClock, icountDivider);
 
     // No resume candidate was coherent, so this machine is about to execute its cold guest boot.
     // Persistent resume success intentionally reaches the scheduler without a booting state.
@@ -1121,6 +1124,7 @@ export async function startLinuxBoot(opts = {}) {
       },
       isPaused: () => paused,
       guestClockState: () => guestClockLifecycle.state(),
+      icountDividerSelection: () => guestClockLifecycle.dividerSelection(),
       // E4: true when this boot skipped the Linux boot by restoring a shipped boot snapshot.
       restoredFromBootSnapshot: () => restoredFromBootSnapshot,
       storedSnapshotRestoreEvidence: () => ({ ...storedSnapshotRestoreObservation }),

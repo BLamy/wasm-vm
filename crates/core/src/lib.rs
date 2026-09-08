@@ -3497,6 +3497,31 @@ impl Machine {
         self.clock_div
     }
 
+    /// Select an explicit deterministic timer rate without replacing the CLINT or advancing time.
+    /// Fractional progress toward the next tick is conservatively quantized to the new divisor.
+    /// Host configuration only: the existing resume clock section already stores both fields.
+    pub fn set_icount_divider(&mut self, divider: u64) -> Result<(), &'static str> {
+        if !(1..=1024).contains(&divider) {
+            return Err("ICount divider must be an integer from 1 to 1024");
+        }
+        if self.clint.is_none() {
+            return Err("ICount divider requires an attached CLINT");
+        }
+        if self.wall_time.is_some() {
+            return Err("ICount divider requires ICount mode");
+        }
+        if self.clock_div == 0 || self.tick_accum >= self.clock_div {
+            return Err("ICount divider requires a valid saved clock phase");
+        }
+        if divider == self.clock_div {
+            return Ok(());
+        }
+        let phase = u128::from(self.tick_accum) * u128::from(divider) / u128::from(self.clock_div);
+        self.tick_accum = phase as u64;
+        self.clock_div = divider;
+        Ok(())
+    }
+
     /// Freeze elapsed host time across an explicit pause or a successful snapshot restore.
     /// Does not change guest mtime, deadlines, ICount phase, or policy. Ordinary worker/background
     /// gaps must NOT call this: they keep the existing clamp/slew/jump behavior.

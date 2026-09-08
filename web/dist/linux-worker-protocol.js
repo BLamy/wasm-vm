@@ -87,6 +87,7 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "profileStats",
   "schedulerStats",
   "guestClockState",
+  "icountDividerSelection",
   "tailscaleCommand",
 ]);
 

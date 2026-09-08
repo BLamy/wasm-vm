@@ -2947,6 +2947,20 @@ impl WasmLinux {
         .map_err(JsError::new)
     }
 
+    /// Explicit deterministic retirements-per-tick selection; never silently coerce JS input.
+    #[wasm_bindgen(js_name = setICountDivider)]
+    pub fn set_icount_divider(&self, value: JsValue) -> Result<(), JsError> {
+        let divider = value
+            .as_f64()
+            .filter(|v| v.is_finite() && v.fract() == 0.0 && (1.0..=1024.0).contains(v))
+            .ok_or_else(|| JsError::new("ICount divider must be an integer from 1 to 1024"))?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .machine
+            .set_icount_divider(divider as u64)
+            .map_err(JsError::new)
+    }
+
     /// Explicit loader pause/resume only. Background gaps keep the core catch-up policy.
     #[wasm_bindgen(js_name = rebaseGuestClock)]
     pub fn rebase_guest_clock(&self) -> Result<(), JsError> {

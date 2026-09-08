@@ -376,6 +376,10 @@ export class WasmLinux {
      */
     setGuestClock(mode: string): void;
     /**
+     * Explicit deterministic retirements-per-tick selection; never silently coerce JS input.
+     */
+    setICountDivider(value: any): void;
+    /**
      * E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
      * `performance.now()`-backed [`JsHostTimer`]; sampling is 1-in-~1024 retires + cold-path-only
      * timing (~0 overhead). Returns `false` if no `performance` object is available to arm it.
@@ -705,6 +709,7 @@ export interface InitOutput {
     readonly wasmlinux_setFastInterpreter: (a: number, b: number) => [number, number];
     readonly wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];
     readonly wasmlinux_setGuestClock: (a: number, b: number, c: number) => [number, number];
+    readonly wasmlinux_setICountDivider: (a: number, b: any) => [number, number];
     readonly wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_stateDigest: (a: number) => [number, number, number, number];

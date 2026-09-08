@@ -1041,6 +1041,16 @@ export class WasmLinux {
         }
     }
     /**
+     * Explicit deterministic retirements-per-tick selection; never silently coerce JS input.
+     * @param {any} value
+     */
+    setICountDivider(value) {
+        const ret = wasm.wasmlinux_setICountDivider(this.__wbg_ptr, value);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
      * `performance.now()`-backed [`JsHostTimer`]; sampling is 1-in-~1024 retires + cold-path-only
      * timing (~0 overhead). Returns `false` if no `performance` object is available to arm it.

@@ -75,6 +75,7 @@ export const wasmlinux_setDynamicChaining: (a: number, b: number) => [number, nu
 export const wasmlinux_setFastInterpreter: (a: number, b: number) => [number, number];
 export const wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];
 export const wasmlinux_setGuestClock: (a: number, b: number, c: number) => [number, number];
+export const wasmlinux_setICountDivider: (a: number, b: any) => [number, number];
 export const wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
 export const wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: number) => [number, number];
 export const wasmlinux_stateDigest: (a: number) => [number, number, number, number];

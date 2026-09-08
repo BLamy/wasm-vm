@@ -1175,6 +1175,7 @@ const bootPromise = startLinuxBootWorker({
   slirpNet: false,
   fastInterpreter: true,
   guestClock: query.get("guestClock") ?? "icount",
+  icountDivider: query.has("icountDivider") ? query.get("icountDivider") : undefined,
   jit: query.get("jit") !== "0",
   // Forward an existing policy only; omission keeps the loader's default unchanged.
   jitResidency: query.get("jitResidency") ?? undefined,
