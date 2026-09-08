@@ -1,0 +1,79 @@
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T04:51:43.023Z","elapsedMs":0}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-08T04:51:43.937Z","elapsedMs":914}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-08T04:51:43.937Z","elapsedMs":914}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-08T04:51:44.483Z","elapsedMs":1460}
+[e5-t26f] {"phase":"reload:normal","event":"start","timestamp":"2026-09-08T04:51:44.484Z","elapsedMs":1461}
+[e5-t26f] {"phase":"reload:normal","event":"done","timestamp":"2026-09-08T04:51:44.639Z","elapsedMs":1616}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"start","timestamp":"2026-09-08T04:51:44.639Z","elapsedMs":1616}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"done","timestamp":"2026-09-08T04:51:45.936Z","elapsedMs":2913}
+[e5-t26f] {"phase":"restore:normal:completion","event":"start","timestamp":"2026-09-08T04:51:45.936Z","elapsedMs":2913}
+[e5-t26f] {"phase":"restore:normal:completion","event":"done","timestamp":"2026-09-08T04:51:45.943Z","elapsedMs":2920}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"start","timestamp":"2026-09-08T04:51:45.943Z","elapsedMs":2920}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"done","timestamp":"2026-09-08T04:51:45.944Z","elapsedMs":2921}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"start","timestamp":"2026-09-08T04:51:45.944Z","elapsedMs":2921}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"done","timestamp":"2026-09-08T04:51:45.944Z","elapsedMs":2921}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"start","timestamp":"2026-09-08T04:51:45.944Z","elapsedMs":2921}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"done","timestamp":"2026-09-08T04:51:46.320Z","elapsedMs":3297}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"start","timestamp":"2026-09-08T04:51:46.320Z","elapsedMs":3297}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"done","timestamp":"2026-09-08T04:51:46.497Z","elapsedMs":3474}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"start","timestamp":"2026-09-08T04:51:46.498Z","elapsedMs":3475}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"done","timestamp":"2026-09-08T04:51:46.502Z","elapsedMs":3479}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"start","timestamp":"2026-09-08T04:51:46.502Z","elapsedMs":3479}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"done","timestamp":"2026-09-08T04:51:46.560Z","elapsedMs":3537}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"start","timestamp":"2026-09-08T04:51:46.560Z","elapsedMs":3537}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"done","timestamp":"2026-09-08T04:51:50.645Z","elapsedMs":7622}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"start","timestamp":"2026-09-08T04:51:50.647Z","elapsedMs":7624}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"done","timestamp":"2026-09-08T04:51:50.695Z","elapsedMs":7672}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"start","timestamp":"2026-09-08T04:51:50.695Z","elapsedMs":7672}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"timing-failed-continuing","timestamp":"2026-09-08T04:51:50.752Z","elapsedMs":7729}
+[e5-t26f] {"phase":"restore:normal:coherence-audit","event":"start","timestamp":"2026-09-08T04:51:50.752Z","elapsedMs":7729}
+[e5-t26f] {"timestamp":"2026-09-08T04:52:20.755Z","phase":"restore:normal:coherence-audit","event":"sample","probeMs":1,"ready":"ready","restored":"ready","status":"desktop ready: launcher available","serialTail":"","frameCount":12,"pointerFrames":3,"keyboardFrames":20,"launch":null,"command":{"label":null,"marker":"e5t26f-post-aplay","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":3555,"guestVisible":null,"pointerFrames":null,"keyboardFrames":20},"focus":{"label":"post-restore-focus","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":true,"pointerFrames":3,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":36,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":12,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":1691169,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":960,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"phase":"restore:normal:coherence-audit","event":"done","timestamp":"2026-09-08T04:52:25.090Z","elapsedMs":42067}
+[e5-t26f] {"phase":"drag:prepare","event":"start","timestamp":"2026-09-08T04:52:25.090Z","elapsedMs":42067}
+[e5-t26f] {"phase":"drag:prepare","event":"done","timestamp":"2026-09-08T04:52:25.204Z","elapsedMs":42181}
+[e5-t26f] {"phase":"snapshot:drag-before","event":"start","timestamp":"2026-09-08T04:52:25.204Z","elapsedMs":42181}
+[e5-t26f] {"phase":"snapshot:drag-before","event":"done","timestamp":"2026-09-08T04:52:32.743Z","elapsedMs":49720}
+[e5-t26f] {"phase":"snapshot:drag-held","event":"start","timestamp":"2026-09-08T04:52:32.743Z","elapsedMs":49720}
+[e5-t26f] {"phase":"snapshot:drag-held","event":"done","timestamp":"2026-09-08T04:52:40.082Z","elapsedMs":57059}
+[e5-t26f] {"phase":"snapshot:drag-moving","event":"start","timestamp":"2026-09-08T04:52:40.082Z","elapsedMs":57059}
+[e5-t26f] {"phase":"snapshot:drag-moving","event":"done","timestamp":"2026-09-08T04:52:48.423Z","elapsedMs":65400}
+[e5-t26f] {"phase":"snapshot:drag-released","event":"start","timestamp":"2026-09-08T04:52:48.423Z","elapsedMs":65400}
+[e5-t26f] {"phase":"snapshot:drag-released","event":"done","timestamp":"2026-09-08T04:52:55.611Z","elapsedMs":72588}
+[e5-t26f] {"phase":"reload:drag","event":"start","timestamp":"2026-09-08T04:52:55.612Z","elapsedMs":72589}
+[e5-t26f] {"timestamp":"2026-09-08T04:52:55.654Z","phase":"snapshot:drag-released","event":"sample","probeMs":4900,"ready":"ready","restored":"ready","status":"desktop ready: launcher available","serialTail":"","frameCount":19,"pointerFrames":10,"keyboardFrames":20,"launch":null,"command":{"label":null,"marker":"e5t26f-post-aplay","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":3555,"guestVisible":null,"pointerFrames":null,"keyboardFrames":20},"focus":{"label":"post-restore-focus","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":true,"pointerFrames":3,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":36,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":19,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":3131681,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":960,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"phase":"reload:drag","event":"done","timestamp":"2026-09-08T04:52:55.677Z","elapsedMs":72654}
+[e5-t26f] {"phase":"readiness:drag:desktop ready","event":"start","timestamp":"2026-09-08T04:52:55.677Z","elapsedMs":72654}
+[e5-t26f] {"phase":"readiness:drag:desktop ready","event":"failed","timestamp":"2026-09-08T04:52:56.183Z","elapsedMs":73160}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+Error: diagnostic checkpoint was refused; aborting cold-boot fallback
+
+true !== false
+; last sample={"ready":null,"restored":null,"status":null,"bootStates":[{"state":"fetching","atMs":9},{"state":"instantiating","atMs":30},{"state":"booting","atMs":469}],"readiness":{"desktopReady":false,"inspection":null,"agentState":"disconnected"},"diagnostics":[{"atMs":498,"reason":"agent-channel","error":"agent channel disconnected; reconnecting","channelState":"disconnected","transportGeneration":0}],"serialTail":""}
+    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1009:11
+    at async waitForDesktopReady (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:992:3)
+    at async waitForReadyAndRestore (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1037:3)
+    at async file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1600:25 {
+  [cause]: AssertionError [ERR_ASSERTION]: diagnostic checkpoint was refused; aborting cold-boot fallback
+  
+  true !== false
+  
+      at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1004:14
+      at async waitFor (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:271:19)
+      at async waitForDesktopReady (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:992:3)
+      at async waitForReadyAndRestore (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1037:3)
+      at async file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1600:25 {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+}
+
+Node.js v24.20.0
+{"code":1,"signal":null}

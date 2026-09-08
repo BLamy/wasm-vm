@@ -1,0 +1,94 @@
+✔ completion is absent by default and requires exact string 1 plus reuse (1.542ms)
+✔ completion rejects every tuning/instrumentation/command flag, including empty values (0.608958ms)
+✔ completion permits existing bounded key delay without altering the command or tuning defaults (0.122125ms)
+✔ only the dedicated cap AssertionError with valid original boundaries can be retained (2.743792ms)
+✔ completion executes real normal audit, drag phases and second restore, persists diagnostics then rethrows original cap (2.674083ms)
+✔ completion at the exact cap stays diagnostic and never takes the normal artifact path (0.87275ms)
+✖ F1: completed evidence rethrows the exact cap without a duplicate failed phase or failure artifact (1.064875ms)
+✖ F1: only the identical successfully reported cap bypasses outer failure reporting (1.645083ms)
+✔ F1: the original cap thrown by an incomplete final write must not be treated as already reported (1.678666ms)
+✔ F1: a different error from final stdout reporting remains captured after successful completion writes (1.164292ms)
+✔ ordinary reuse keeps its original cap failure and early diagnostic-only success (0.808709ms)
+✔ functional assertions fail fast, including an unrelated failure with the cap's identical shape (4.474084ms)
+✔ later {"failAudit":"normal"} failure retains timing evidence and refuses completion success (0.565666ms)
+✔ later {"failAudit":"drag"} failure retains timing evidence and refuses completion success (0.659ms)
+✔ later {"failRestore":true} failure retains timing evidence and refuses completion success (0.637708ms)
+✔ persistent-context identity uses CDP with no Browser object and always detaches (0.43225ms)
+✔ finish refuses a dropped cap or contradictory metadata before writing any completion success (11.712ms)
+✔ observed drag translation accepts only finite same-row rightward 64..96px geometry (0.537375ms)
+✔ drag translation permits only the exact 32px panel clamp or same-row rounding with unchanged height (0.405958ms)
+✔ drag proof polls read-only geometry before pausing and independently rechecks the paused titlebar (0.458166ms)
+✔ missing, stale, wrong-direction and wrong-window drag evidence expires at 15s without pausing or saving (3.175ms)
+✔ pause refusal or a superseded paused titlebar cannot satisfy drag proof or publish a checkpoint (1.1835ms)
+✔ frozen checkpoint audit reads both pause/generation endpoints and the actual session envelope in order (0.718334ms)
+✔ frozen checkpoint audit refuses stale, advancing, unpaused or mismatched-envelope state and retains raw observations (7.568875ms)
+✔ a failed frozen audit at publication or before reload stays fail-fast and preserves the original timing failure (3.066792ms)
+✔ completion output guard permits only new/empty output and runs before browser or failure capture (1.181291ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 24
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 95.734583
+
+✖ failing tests:
+
+test at tools/verify/e5-t26f-completion.test.mjs:357:1
+✖ F1: completed evidence rethrows the exact cap without a duplicate failed phase or failure artifact (1.064875ms)
+  AssertionError [ERR_ASSERTION]: the already-reported timing cap must not retroactively fail evidence writing
+  + actual - expected
+  
+    [
+      'screenshot:diagnostic-completion.png',
+      'write:diagnostic-completion.json',
+      'write:diagnostic-completion-server.log',
+      'phase:diagnostic:completion-evidence:done',
+      'report:stdout',
+  +   'phase:diagnostic:completion-evidence:failed',
+  +   'capture:failure-diagnostic-completion-evidence',
+  +   'sampling:stop',
+  +   'write:failure-diagnostic-completion-evidence.json',
+  +   'screenshot:failure-diagnostic-completion-evidence.png',
+  +   'write:failure-diagnostic-completion-evidence.json',
+  +   'write:failure-diagnostic-completion-evidence-server.log'
+    ]
+  
+      at TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-completion.test.mjs:363:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'screenshot:diagnostic-completion.png', 'write:diagnostic-completion.json', 'write:diagnostic-completion-server.log', 'phase:diagnostic:completion-evidence:done', 'report:stdout', 'phase:diagnostic:completion-evidence:failed', 'capture:failure-diagnostic-completion-evidence', 'sampling:stop', 'write:failure-diagnostic-completion-evidence.json', 'screenshot:failure-diagnostic-completion-evidence.png', 'write:failure-diagnostic-completion-evidence.json', 'write:failure-diagnostic-completion-evidence-server.log' ],
+    expected: [ 'screenshot:diagnostic-completion.png', 'write:diagnostic-completion.json', 'write:diagnostic-completion-server.log', 'phase:diagnostic:completion-evidence:done', 'report:stdout' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tools/verify/e5-t26f-completion.test.mjs:381:1
+✖ F1: only the identical successfully reported cap bypasses outer failure reporting (1.645083ms)
+  AssertionError [ERR_ASSERTION]: propagating the exact reported object must have no additional reporting side effects
+  + actual - expected
+  
+  + [
+  +   'phase:diagnostic:completion-evidence:failed',
+  +   'capture:failure-diagnostic-completion-evidence',
+  +   'sampling:stop',
+  +   'write:failure-diagnostic-completion-evidence.json',
+  +   'screenshot:failure-diagnostic-completion-evidence.png',
+  +   'write:failure-diagnostic-completion-evidence.json',
+  +   'write:failure-diagnostic-completion-evidence-server.log'
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-completion.test.mjs:403:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'phase:diagnostic:completion-evidence:failed', 'capture:failure-diagnostic-completion-evidence', 'sampling:stop', 'write:failure-diagnostic-completion-evidence.json', 'screenshot:failure-diagnostic-completion-evidence.png', 'write:failure-diagnostic-completion-evidence.json', 'write:failure-diagnostic-completion-evidence-server.log' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

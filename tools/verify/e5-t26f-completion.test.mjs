@@ -72,6 +72,10 @@ test("completion permits existing bounded key delay without altering the command
 });
 
 const completionHelpers = between("function retainDeferredInteractionCap", "async function recordDiagnosticJit");
+// Include any reporting sentinel beside the runner's phase/profiler state. Those two
+// existing fields remain fixture-controlled; never invent or pre-arm reporting state.
+const reportingState = between("let lastPhase =", "function recordCompletionConsole")
+  .replace(/^let (?:lastPhase|cpuProfiler) = .*;\n/gm, "");
 const dragHelpers = between("async function recordCompletionGeneration", "function retainDeferredInteractionCap");
 const waitHelper = between("async function waitFor(predicate", "async function sha256File");
 const captureHelper = between("async function captureFailure", "async function launchTerminal");
@@ -88,16 +92,16 @@ function capError(start = 1_000, end = 3_001) {
 
 const originalStart = source.match(/  const postRestoreStart = firstRestore\.completedAt;\n  milestones\.postRestoreStart = postRestoreStart;/)?.[0];
 assert.ok(originalStart, "timing must originate at the real first restore boundary");
+const outerCatch = "\n} catch (error) {\n";
 const tail = between("  const postRestoreEnd = await page.evaluate(() => performance.now());",
-  "\n} catch (error) {\n  const phase = lastPhase");
+  outerCatch);
 assert.ok(tail.endsWith("\n  }"), "expected the enclosing checkpoint-reuse branch terminator");
 // Remove only the enclosing checkpoint branch's closing brace. Keep and execute all actual
 // functional/cap/audit/diagnostic/drag/evidence branches inside it, including the acceptance guard.
 const control = originalStart + "\n" + tail.slice(0, -"\n  }".length);
-const failureHandler = between("\n} catch (error) {\n  const phase = lastPhase", "\n} finally {")
-  .slice("\n} catch (error) {".length);
+const failureHandler = between(outerCatch, "\n} finally {").slice(outerCatch.length);
 
-function fixture({ enabled = true, elapsed = 2_500, failAudit = null, failRestore = false } = {}) {
+function fixture({ enabled = true, elapsed = 2_500, failAudit = null, failRestore = false, normalSetup = false } = {}) {
   const events = [];
   const writes = [];
   const captures = [];
@@ -223,9 +227,10 @@ function fixture({ enabled = true, elapsed = 2_500, failAudit = null, failRestor
   // must fail instead of letting a fabricated placeholder satisfy serialization.
   for (const key of ["browser", "shellProbe", "agentProbe", "firstCommand", "cursorProof", "audioBefore",
     "preSnapshotPresents", "imageStat", "manifest", "launchOptions"]) {
+    if (normalSetup && key === "preSnapshotPresents") continue;
     Object.defineProperty(sandbox, key, { get() { throw Error(`cold-only access: ${key}`); } });
   }
-  const api = vm.runInContext(`${completionHelpers}\n${dragHelpers}\n${waitHelper}\n${captureHelper}\n${identityHelper}\n({
+  const api = vm.runInContext(`${reportingState}\n${completionHelpers}\n${dragHelpers}\n${waitHelper}\n${captureHelper}\n${identityHelper}\n({
     retainDeferredInteractionCap, finishDiagnosticCompletion, captureFailure, readBrowserIdentity,
     observedDragTranslation, proveAndPauseDrag, auditFrozenDragSnapshot,
     fail: async (error) => { ${failureHandler} },
@@ -348,6 +353,91 @@ test("completion at the exact cap stays diagnostic and never takes the normal ar
   assert.equal(f.captures.length, 0);
   assert.ok(f.events.includes("audit:drag"));
   assert.equal(f.events.some((event) => /desktop-roundtrip|diagnostic-iteration/u.test(event)), false);
+});
+
+test("F1: completed evidence rethrows the exact cap without a duplicate failed phase or failure artifact", async () => {
+  const f = fixture();
+  f.sandbox.console.log = () => f.events.push("report:stdout");
+  await assert.rejects(f.run(), (error) => error === f.captures[0]?.error);
+  const start = f.events.indexOf("screenshot:diagnostic-completion.png");
+  assert.ok(start >= 0);
+  assert.deepEqual(f.events.slice(start), [
+    "screenshot:diagnostic-completion.png",
+    "write:diagnostic-completion.json",
+    "write:diagnostic-completion-server.log",
+    "phase:diagnostic:completion-evidence:done",
+    "report:stdout",
+  ], "the already-reported timing cap must not retroactively fail evidence writing");
+  assert.equal(f.captures.length, 1);
+  assert.equal(f.captures[0].label, "diagnostic-completion-timing");
+  assert.equal(f.sandbox.lastPhase.event, "done");
+  assert.equal(f.writes.some(({ file }) => file.startsWith("failure-diagnostic-completion-evidence")), false);
+  const result = f.json("diagnostic-completion.json");
+  assert.equal(result.acceptance, false);
+  assert.equal(result.timingPassed, false);
+  assert.equal(result.milestones.postRestoreStart, 1_000);
+  assert.equal(result.milestones.postRestoreEnd, 3_500);
+});
+
+test("F1: only the identical successfully reported cap bypasses outer failure reporting", async () => {
+  const f = fixture();
+  await assert.rejects(f.run(), /post-restore interaction exceeded 2 seconds/);
+  const cap = f.captures[0].error;
+  const impostor = new assert.AssertionError({ actual: cap.actual, expected: cap.expected,
+    operator: cap.operator, message: cap.message });
+  impostor.stack = cap.stack;
+  assert.notEqual(impostor, cap);
+  for (const different of [new Error("later reporting failure"), new Error(cap.message), impostor]) {
+    f.events.length = 0; f.writes.length = 0; f.captures.length = 0;
+    f.sandbox.lastPhase = { phase: "diagnostic:completion-evidence", event: "done" };
+    await assert.rejects(f.api.fail(different), (error) => error === different);
+    assert.equal(f.captures.length, 1, "a different error must still be captured, even with identical serialized cap fields");
+    assert.equal(f.captures[0].error, different);
+    assert.equal(f.captures[0].label, "failure-diagnostic-completion-evidence");
+    assert.equal(f.sandbox.lastPhase.event, "failed");
+    const failure = f.json("failure-diagnostic-completion-evidence.json");
+    assert.equal(failure.error.message, different.message);
+    assert.equal(failure.milestones.deferredInteractionCap.error.message, cap.message);
+  }
+  f.events.length = 0; f.writes.length = 0; f.captures.length = 0;
+  await assert.rejects(f.api.fail(cap), (error) => error === cap);
+  assert.deepEqual(f.events, [], "propagating the exact reported object must have no additional reporting side effects");
+  assert.deepEqual(f.writes, []);
+  assert.deepEqual(f.captures, []);
+});
+
+test("F1: the original cap thrown by an incomplete final write must not be treated as already reported", async () => {
+  for (const target of ["diagnostic-completion.json", "diagnostic-completion-server.log"]) {
+    const f = fixture();
+    const write = f.sandbox.writeFile;
+    f.sandbox.writeFile = async (file, value) => {
+      if (path.basename(file) === target) throw f.captures[0].error;
+      await write(file, value);
+    };
+    await assert.rejects(f.run(), (error) => error === f.captures[0]?.error);
+    assert.equal(f.captures.length, 2, "a failed write cannot arm suppression, even when it throws the original cap object");
+    assert.equal(f.captures[1].error, f.captures[0].error);
+    assert.equal(f.captures[1].label, "failure-evidence-write");
+    assert.equal(f.events.includes("phase:diagnostic:completion-evidence:done"), false);
+    const failure = f.json("failure-evidence-write.json");
+    assert.equal(failure.milestones.deferredInteractionCap.postRestoreStart, 1_000);
+    assert.equal(failure.milestones.deferredInteractionCap.postRestoreEnd, 3_500);
+  }
+});
+
+test("F1: a different error from final stdout reporting remains captured after successful completion writes", async () => {
+  const f = fixture();
+  const reportingError = new Error("stdout reporting failed");
+  f.sandbox.console.log = () => { throw reportingError; };
+  await assert.rejects(f.run(), (error) => error === reportingError);
+  assert.equal(f.captures.length, 2);
+  assert.equal(f.captures[1].error, reportingError);
+  assert.equal(f.captures[1].label, "failure-diagnostic-completion-evidence");
+  assert.equal(f.json("diagnostic-completion.json").timingPassed, false);
+  const failure = f.json("failure-diagnostic-completion-evidence.json");
+  assert.equal(failure.error.message, reportingError.message);
+  assert.equal(failure.milestones.deferredInteractionCap.error.message, f.captures[0].error.message);
+  assert.equal(failure.milestones.deferredInteractionCap.postRestoreEnd, 3_500);
 });
 
 test("ordinary reuse keeps its original cap failure and early diagnostic-only success", async () => {
@@ -592,6 +682,71 @@ function frozenAuditFixture({ isPaused = true, stillPaused = true, generation = 
   };
   return { ...f, calls, snapshot: f.sandbox.snapshots[2] };
 }
+
+function normalSnapshotFixture({ pauseConfirmed = true, generation = 621 } = {}) {
+  const f = fixture({ enabled: false, normalSetup: true });
+  f.sandbox.diagnostic = null; // Exercise the real default acceptance branch, not seed creation.
+  f.sandbox.preSnapshotPresents = null;
+  const calls = [];
+  let paused = false;
+  const snapshot = { schema: "wasm-vm.e5-t26f.desktop-snapshot.v1", sha256: "a".repeat(64),
+    byteLength: 512, preFrontBufferCrc: "1234abcd", machineResume: { persisted: true, overlayGeneration: 621 } };
+  f.sandbox.window.__desktopController = {
+    pause: async () => { calls.push("pause"); paused = pauseConfirmed; },
+    isPaused: async () => { calls.push("isPaused"); return paused; },
+    snapshotGeneration: async () => { calls.push("generation"); return generation; },
+    snapshotDecision: async () => { calls.push("decision"); return "resume"; },
+    resume: () => assert.fail("normal publication must remain paused until reload"),
+  };
+  f.sandbox.window.__desktopTerminal.saveDesktopSnapshot = async ({ persist }) => {
+    calls.push("save");
+    assert.equal(persist, true);
+    assert.equal(paused, true, "default normal snapshot requires an explicit confirmed pause before saving");
+    f.sandbox.sessionStorage.setItem(f.sandbox.DESKTOP_STORAGE_KEY, JSON.stringify({ sha256: snapshot.sha256 }));
+    return snapshot;
+  };
+  const block = between('  phaseProgress("snapshot:normal");', '  if (diagnostic?.mode === "create") {');
+  const closing = "\n  }\n\n";
+  assert.ok(block.endsWith(closing), "only the enclosing cold-setup branch is removed");
+  return { ...f, calls, snapshot,
+    runNormal: () => vm.runInContext(`(async () => { ${block.slice(0, -closing.length)} })()`, f.context) };
+}
+
+test("F2: default normal snapshot confirms pause, saves, and audits the frozen pair before declaring normal ready", async () => {
+  const f = normalSnapshotFixture();
+  await f.runNormal();
+  assert.deepEqual(f.calls, ["pause", "isPaused", "save", "isPaused", "generation", "decision", "isPaused", "generation"]);
+  assert.equal(f.sandbox.normalSnapshot, f.snapshot);
+  assert.equal(f.sandbox.preSnapshotPresents, 3);
+  assert.equal(f.sandbox.milestones.normalSnapshotPause.isPaused, true);
+  assert.equal(f.sandbox.milestones.normalSnapshot.machineResume, f.snapshot.machineResume);
+  const audit = f.sandbox.milestones.normalCheckpointBeforeReload;
+  assert.equal(audit.status, "passed");
+  assert.equal(audit.observed.generation, 621);
+  assert.equal(audit.observed.envelopeSha256, f.snapshot.sha256);
+  assert.equal(f.events.at(-1), "phase:snapshot:normal:done");
+});
+
+test("F2: an unconfirmed default normal pause refuses before any snapshot save", async () => {
+  const f = normalSnapshotFixture({ pauseConfirmed: false });
+  await assert.rejects(f.runNormal(), assert.AssertionError);
+  assert.deepEqual(f.calls, ["pause", "isPaused"]);
+  assert.equal(f.sandbox.milestones.normalSnapshotPause.isPaused, false);
+  assert.equal(f.sandbox.milestones.normalSnapshot, undefined);
+  assert.equal(f.events.includes("phase:snapshot:normal:done"), false);
+});
+
+test("F2: default normal publication refuses a generation advance and retains the actual failed audit", async () => {
+  const f = normalSnapshotFixture({ generation: 625 });
+  await assert.rejects(f.runNormal(), /generation advanced/);
+  assert.equal(f.calls.indexOf("save") > f.calls.indexOf("pause"), true);
+  assert.equal(f.sandbox.milestones.normalSnapshot.machineResume.overlayGeneration, 621);
+  const audit = f.sandbox.milestones.normalCheckpointBeforeReload;
+  assert.equal(audit.status, "failed");
+  assert.equal(audit.observed.generation, 625);
+  assert.equal(audit.observed.isPaused, true);
+  assert.equal(f.events.includes("phase:snapshot:normal:done"), false);
+});
 
 test("frozen checkpoint audit reads both pause/generation endpoints and the actual session envelope in order", async () => {
   for (const label of ["Published", "BeforeReload"]) {

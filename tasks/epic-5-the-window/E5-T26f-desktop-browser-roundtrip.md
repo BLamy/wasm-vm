@@ -40,6 +40,31 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker — real mid-drag restoration and restore-history audit correction
+
+At `4ae44f3ff8294e5e2a6c5c5ba7e08a9cdf1d3a66`, a separately sealed headless
+Chromium replay proves 80 px actual window movement, coherent paused moving
+publication at generation 627, and a second reload with the correct CRC
+`68fb7727`, fresh HELLO, no boot and no stuck host button. The original interaction
+cap still fails at **5059.890 ms**, with 1440 fresh PCM frames / 960 non-silent.
+The later live-checkpoint audit incorrectly asks whether that old checkpoint is
+still reusable while the resumed guest writes to its disk; after 30.116 seconds
+it reads `stale` and generation 648. This is retained as a failed run, not full
+functional completion or F acceptance. Exact bindings, commands, all earlier
+headed failures, screenshots and hashes are in
+`evidence/e5-t26f/completion/README.md`.
+
+The follow-up retains the actual loader-owned stored-restore decision and
+generation before guest scheduling, forwards only that scalar observation over
+the existing worker protocol, and audits historical admission separately from
+later live disk progress. The stale guard, guest/device semantics and snapshot
+format are unchanged. It also keeps every normal checkpoint paused through its
+pre-reload audit and prevents a previously recorded cap from being mislabeled as
+a new evidence-writing failure. Focused tests execute these boundaries; fresh
+Daybreak review remains in `evidence/e5-t26f/completion/critic.md`. Changed served
+JS requires a new exact-runtime cold checkpoint. F remains in progress; no timing
+waiver, default policy promotion, merge or production deployment follows.
+
 ### 2026-09-08 — worker — existing-residency screen remains negative
 
 At `884dc59a81970a96f9fc4672a7241eee2454d5d0`, the corrected ABBA collector

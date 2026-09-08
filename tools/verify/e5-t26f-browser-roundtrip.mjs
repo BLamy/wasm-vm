@@ -362,6 +362,7 @@ const milestones = {
 
 let lastPhase = null;
 let cpuProfiler = null;
+let reportedCompletionTimingFailure = null;
 
 function recordCompletionConsole(type, text) {
   if (!diagnostic?.complete) return;
@@ -458,8 +459,14 @@ async function proveAndPauseDrag(before) {
 }
 
 async function auditFrozenDragSnapshot(snapshot, label) {
-  phaseProgress(`drag:checkpoint-${label}`);
-  const audit = milestones[`dragCheckpoint${label}`] = { status: "running", snapshotSha256: snapshot.sha256 };
+  return auditFrozenSnapshot(snapshot, label, "drag");
+}
+
+async function auditFrozenSnapshot(snapshot, label, kind) {
+  assert.ok(kind === "drag" || kind === "normal", "unknown frozen checkpoint kind");
+  const description = kind === "drag" ? "moving" : "normal";
+  phaseProgress(`${kind}:checkpoint-${label}`);
+  const audit = milestones[`${kind}Checkpoint${label}`] = { status: "running", snapshotSha256: snapshot.sha256 };
   try {
     audit.observed = await page.evaluate(async (key) => {
       const controller = window.__desktopController;
@@ -471,15 +478,15 @@ async function auditFrozenDragSnapshot(snapshot, label) {
         stillPaused: await controller.isPaused(), finalGeneration: await controller.snapshotGeneration() };
     }, DESKTOP_STORAGE_KEY);
     const actual = audit.observed;
-    assert.equal(actual.isPaused, true, "published moving snapshot guest is not paused");
-    assert.equal(actual.stillPaused, true, "guest resumed during moving snapshot audit");
-    assert.ok(Number.isSafeInteger(actual.generation) && actual.generation >= 0, "missing moving snapshot generation");
-    assert.equal(actual.generation, snapshot.machineResume?.overlayGeneration, "moving snapshot disk generation advanced");
-    assert.equal(actual.finalGeneration, actual.generation, "moving snapshot generation changed during audit");
-    assert.equal(actual.decision, "resume", "moving whole-machine snapshot is not coherent");
-    assert.equal(actual.envelopeSha256, snapshot.sha256, "stored moving desktop envelope changed");
+    assert.equal(actual.isPaused, true, `published ${description} snapshot guest is not paused`);
+    assert.equal(actual.stillPaused, true, `guest resumed during ${description} snapshot audit`);
+    assert.ok(Number.isSafeInteger(actual.generation) && actual.generation >= 0, `missing ${description} snapshot generation`);
+    assert.equal(actual.generation, snapshot.machineResume?.overlayGeneration, `${description} snapshot disk generation advanced`);
+    assert.equal(actual.finalGeneration, actual.generation, `${description} snapshot generation changed during audit`);
+    assert.equal(actual.decision, "resume", `${description} whole-machine snapshot is not coherent`);
+    assert.equal(actual.envelopeSha256, snapshot.sha256, `stored ${description} desktop envelope changed`);
     audit.status = "passed";
-    phaseProgress(`drag:checkpoint-${label}`, "done");
+    phaseProgress(`${kind}:checkpoint-${label}`, "done");
   } catch (error) {
     audit.status = "failed";
     audit.error = String(error?.message || error);
@@ -554,7 +561,10 @@ async function finishDiagnosticCompletion(identity, finalState, timingFailure) {
   await writeFile(path.join(out, "diagnostic-completion-server.log"), serverOutput);
   phaseProgress("diagnostic:completion-evidence", "done");
   console.log(JSON.stringify(result, jsonReplacer, 2));
-  if (!timingPassed) throw timingFailure;
+  if (!timingPassed) {
+    reportedCompletionTimingFailure = timingFailure;
+    throw timingFailure;
+  }
 }
 
 async function recordDiagnosticJit(key) {
@@ -1236,16 +1246,25 @@ async function auditRestoreCoherence(result, snapshot, label) {
   audit.status = "running";
   audit.startedAt = new Date().toISOString();
   try {
-    // Read the actual controller values before another save can replace the blob being audited.
-    result.resume.snapshotDecision = await page.evaluate(async () =>
-      await window.__desktopController?.snapshotDecision?.() ?? null);
-    result.resume.overlayGeneration = await page.evaluate(async () =>
-      await window.__desktopController?.snapshotGeneration?.() ?? null);
+    // Read the actual initial restore receipt, not the old blob's validity after the resumed
+    // guest has legitimately advanced its disk. The loader freezes this before scheduling work.
+    const receipt = await page.evaluate(async () =>
+      await window.__desktopController?.storedSnapshotRestoreEvidence?.() ?? null);
+    audit.restoreBoundary = receipt;
+    assert.equal(receipt?.attempted, true, `${label} stored snapshot restore was not attempted`);
+    result.resume.snapshotDecision = receipt.decision;
+    result.resume.overlayGeneration = receipt.overlayGeneration;
     assert.equal(result.resume.restored, true, `${label} reload did not restore the whole-machine snapshot`);
     assert.equal(result.resume.snapshotDecision, "resume", `${label} whole-machine snapshot was not coherent`);
-    assert.ok(Number.isSafeInteger(result.resume.overlayGeneration), `${label} actual overlay generation is missing`);
+    assert.ok(Number.isSafeInteger(result.resume.overlayGeneration) && result.resume.overlayGeneration >= 0,
+      `${label} actual overlay generation is missing`);
     assert.equal(result.resume.overlayGeneration, snapshot.machineResume?.overlayGeneration,
       `${label} actual overlay generation differs from the saved snapshot`);
+    audit.currentOverlayGeneration = await page.evaluate(async () =>
+      await window.__desktopController?.snapshotGeneration?.() ?? null);
+    assert.ok(Number.isSafeInteger(audit.currentOverlayGeneration) &&
+      audit.currentOverlayGeneration >= result.resume.overlayGeneration,
+    `${label} current overlay generation predates the actual restore`);
     audit.status = "passed";
     phaseProgress(`restore:${label}:coherence-audit`, "done");
   } catch (error) {
@@ -1443,9 +1462,14 @@ try {
   phaseProgress("cursor:initial-render", "done");
 
   phaseProgress("snapshot:normal");
-  // Diagnostic seed only: keep the guest paused through profile close, so no later guest write
-  // advances the durable overlay beyond the normal snapshot. Acceptance keeps its normal path.
-  if (diagnostic) await page.evaluate(() => window.__desktopController.pause());
+  // Keep every persisted normal checkpoint frozen until reload (or diagnostic profile close).
+  // Otherwise an intervening guest write can correctly invalidate the just-saved machine blob.
+  milestones.normalSnapshotPause = await page.evaluate(async () => {
+    const controller = window.__desktopController;
+    await controller.pause();
+    return { at: performance.now(), isPaused: await controller.isPaused() };
+  });
+  assert.equal(milestones.normalSnapshotPause.isPaused, true, "normal checkpoint must leave the guest paused");
   preSnapshotPresents = await page.evaluate(() => window.__desktopTerminal.presentation().successfulPresents);
   normalSnapshot = await page.evaluate(() => window.__desktopTerminal.saveDesktopSnapshot({ persist: true }));
   assert.equal(normalSnapshot.schema, "wasm-vm.e5-t26f.desktop-snapshot.v1");
@@ -1456,6 +1480,7 @@ try {
     sha256: normalSnapshot.sha256, byteLength: normalSnapshot.byteLength,
     preFrontBufferCrc: normalSnapshot.preFrontBufferCrc, machineResume: normalSnapshot.machineResume,
   };
+  await auditFrozenSnapshot(normalSnapshot, "BeforeReload", "normal");
   phaseProgress("snapshot:normal", "done");
   }
 
@@ -1858,6 +1883,9 @@ try {
   }
   }
 } catch (error) {
+  // Only the identical cap already written into the complete functional report is propagated
+  // without recapturing it as an evidence-writing failure. Other errors still fail closed.
+  if (error === reportedCompletionTimingFailure && error !== null) throw error;
   const phase = lastPhase?.phase || "setup";
   phaseProgress(phase, "failed");
   const label = `failure-${phase.replace(/[^a-zA-Z0-9_.-]/gu, "-")}`;

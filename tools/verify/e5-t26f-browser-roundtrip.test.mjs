@@ -981,7 +981,7 @@ test("CPU stop/write failures are bounded metadata, preserve T0, and still attem
 });
 
 test("CPU setup failure is captured before finally collection without replacing original error or T0", async () => {
-  const start = source.lastIndexOf("} catch (error) {\n  const phase =");
+  const start = source.lastIndexOf("\n} catch (error) {\n") + 1;
   const end = source.indexOf("  await context?.close()", start);
   assert.ok(start > 0 && end > start);
   for (const failureAt of ["attach", "start"]) {
@@ -1497,11 +1497,11 @@ test("reuse override is recorded verbatim in nonacceptance metadata and the phys
 
 test("top-level catch captures the phase before finally cleanup and rethrows the original error", async () => {
   const f = fixture();
-  const catchMarker = "} catch (error) {\n  const phase =";
+  const catchMarker = "\n} catch (error) {\n";
   const start = source.lastIndexOf(catchMarker);
   const end = source.indexOf("} finally {", start);
   assert.ok(start > 0 && end > start, "runner top-level catch/finally is missing");
-  const body = source.slice(start + "} catch (error) {".length, end);
+  const body = source.slice(start + catchMarker.length, end);
   const order = [];
   const original = new Error("cursor was not visible");
   f.sandbox.original = original;
@@ -1553,7 +1553,11 @@ function restoreFixture() {
     state: () => state,
     presentation: () => ({ successfulPresents: 2, scheduler: null }),
   };
-  f.sandbox.window.__desktopController = { restoredFromBootSnapshot: () => true };
+  f.sandbox.window.__desktopController = {
+    restoredFromBootSnapshot: () => true,
+    storedSnapshotRestoreEvidence: async () => ({ attempted: true, decision: "resume", overlayGeneration: 617 }),
+    snapshotDecision: async () => assert.fail("live old-checkpoint validity is not historical restore evidence"),
+  };
   f.sandbox.page.evaluate = async (fn, argument) => fn(argument);
   f.sandbox.page.reload = async () => {};
   f.sandbox.page.screenshot = async () => {};
@@ -1593,7 +1597,7 @@ function runRestoreSequence(f) {
   `, f.context);
 }
 
-test("a held coherence read starts after timed interaction and must finish before the next save", async () => {
+test("a held restore-receipt read starts after timed interaction and must finish before the next save", async () => {
   const f = restoreFixture();
   const timingDone = deferred();
   const auditStarted = deferred();
@@ -1601,7 +1605,7 @@ test("a held coherence read starts after timed interaction and must finish befor
   let decisionCalls = 0;
   let generationCalls = 0;
   let saves = 0;
-  f.sandbox.window.__desktopController.snapshotDecision = () => {
+  f.sandbox.window.__desktopController.storedSnapshotRestoreEvidence = () => {
     decisionCalls += 1;
     auditStarted.resolve("audit");
     return releaseAudit.promise;
@@ -1633,7 +1637,7 @@ test("a held coherence read starts after timed interaction and must finish befor
     assert.equal(f.milestones.postRestoreInteraction.elapsedMs, 869);
     assert.equal(f.api.state().lastPhase.phase, "restore:normal:coherence-audit");
     f.clock.now += 20_000;
-    releaseAudit.resolve("resume");
+    releaseAudit.resolve({ attempted: true, decision: "resume", overlayGeneration: 617 });
     const result = await proof;
     assert.equal(decisionCalls, 1);
     assert.equal(generationCalls, 1);
@@ -1646,7 +1650,7 @@ test("a held coherence read starts after timed interaction and must finish befor
     assert.equal(f.milestones.postRestoreInteraction.elapsedMs, 869);
     assert.equal(saves, 1);
   } finally {
-    releaseAudit.resolve("resume");
+    releaseAudit.resolve({ attempted: true, decision: "resume", overlayGeneration: 617 });
     await proof.catch(() => {});
   }
 });
@@ -1793,7 +1797,6 @@ test("reuse enters autoRestore directly without cold setup or resetting the rest
     return 2_000;
   };
   f.sandbox.nextSave = () => {};
-  f.sandbox.window.__desktopController.snapshotDecision = async () => "resume";
   f.sandbox.window.__desktopController.snapshotGeneration = async () => 617;
   await runRestoreSequence(f);
   assert.deepEqual(calls, [f.sandbox.restoreUrl]);
@@ -2147,7 +2150,7 @@ test("zero PCM and completion attachment/timestamps reach failure milestones bef
   }
 });
 
-test("stale or mismatched actual coherence fails after timing and survives in failure milestones", async () => {
+test("stale or mismatched actual restore receipt fails after timing and survives in failure milestones", async () => {
   for (const [decision, generation, reason] of [
     ["stale", 617, /not coherent/],
     ["resume", 618, /actual overlay generation differs/],
@@ -2157,7 +2160,9 @@ test("stale or mismatched actual coherence fails after timing and survives in fa
     let saves = 0;
     f.sandbox.performTimedInteraction = async () => 2_000;
     f.sandbox.nextSave = () => { saves += 1; };
-    f.sandbox.window.__desktopController.snapshotDecision = async () => decision;
+    f.sandbox.window.__desktopController.storedSnapshotRestoreEvidence = async () => ({
+      attempted: true, decision, overlayGeneration: generation,
+    });
     f.sandbox.window.__desktopController.snapshotGeneration = async () => generation;
     let failure;
     await assert.rejects(runRestoreSequence(f), (error) => {
@@ -2176,6 +2181,62 @@ test("stale or mismatched actual coherence fails after timing and survives in fa
     assert.equal(saved.milestones.postRestoreInteraction.elapsedMs, 869);
     assert.equal(saved.lastPhase.phase, "restore:normal:coherence-audit");
     assert.match(saved.error.message, reason);
+  }
+});
+
+test("legitimate post-restore disk progress never replaces the actual load-time generation", async () => {
+  for (const currentGeneration of [617, 648]) {
+    const f = restoreFixture();
+    f.sandbox.performTimedInteraction = async () => 2_000;
+    f.sandbox.nextSave = () => {};
+    // The fixture's live snapshotDecision throws: rereading it would reject perfectly valid
+    // historical restoration once ordinary resumed guest writes invalidate the old checkpoint.
+    f.sandbox.window.__desktopController.snapshotGeneration = async () => currentGeneration;
+    const result = await runRestoreSequence(f);
+    assert.equal(Object.hasOwn(result.resume, "source"), false,
+      "the harness must not add a provenance label to the actual typed getter result");
+    assert.equal(result.resume.snapshotDecision, "resume");
+    assert.equal(result.resume.overlayGeneration, 617);
+    assert.equal(result.coherenceAudit.restoreBoundary.overlayGeneration, 617);
+    assert.equal(result.coherenceAudit.currentOverlayGeneration, currentGeneration);
+    assert.equal(result.coherenceAudit.status, "passed");
+    assert.equal(result.completedAt, 1_131);
+    assert.equal(f.milestones.postRestoreInteraction.elapsedMs, 869);
+  }
+});
+
+test("missing, unattempted or malformed initial restore evidence cannot borrow a fallback's restored flag", async () => {
+  const receipts = [null, {}, { attempted: false, decision: "resume", overlayGeneration: 617 },
+    { attempted: 1, decision: "resume", overlayGeneration: 617 },
+    ...[null, "617", -1, NaN, Infinity, 2 ** 53].map((overlayGeneration) => ({
+      attempted: true, decision: "resume", overlayGeneration,
+    })),
+    ...["missing", "stale", "corrupt", "foreign_build", "foreign_image", "error", null]
+      .map((decision) => ({ attempted: true, decision, overlayGeneration: 617 }))];
+  for (const receipt of receipts) {
+    const f = restoreFixture();
+    f.sandbox.performTimedInteraction = async () => 2_000;
+    f.sandbox.nextSave = () => assert.fail("unproven initial restore cannot reach the next save");
+    f.sandbox.window.__desktopController.storedSnapshotRestoreEvidence = async () => receipt;
+    f.sandbox.window.__desktopController.snapshotGeneration = async () => 617;
+    await assert.rejects(runRestoreSequence(f), assert.AssertionError);
+    assert.equal(f.milestones.normalRestore.checksPassed, false);
+  }
+  const f = restoreFixture();
+  delete f.sandbox.window.__desktopController.storedSnapshotRestoreEvidence;
+  f.sandbox.performTimedInteraction = async () => 2_000;
+  await assert.rejects(runRestoreSequence(f), /stored snapshot restore was not attempted/);
+});
+
+test("post-restore generation cannot move backwards or become unavailable", async () => {
+  for (const currentGeneration of [616, -1, null, "648", NaN, Infinity, 2 ** 53]) {
+    const f = restoreFixture();
+    f.sandbox.performTimedInteraction = async () => 2_000;
+    f.sandbox.nextSave = () => assert.fail("invalid current generation cannot advance the proof");
+    f.sandbox.window.__desktopController.snapshotGeneration = async () => currentGeneration;
+    await assert.rejects(runRestoreSequence(f), /current overlay generation predates the actual restore/);
+    assert.equal(f.milestones.normalRestore.result.resume.overlayGeneration, 617);
+    assert.equal(f.milestones.normalRestore.result.coherenceAudit.currentOverlayGeneration, currentGeneration);
   }
 });
 

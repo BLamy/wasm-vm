@@ -1,0 +1,95 @@
+✔ Channel is not ready until HELLO intersects, then correlates reverse-order PONGs (3.513166ms)
+✔ clipboard messages negotiate and preserve strict bounded UTF-8 bytes (0.910208ms)
+✔ clipboard frames survive byte dribble and coalescing (0.276458ms)
+✔ clipboard messages stay compatible with peers that only advertise PING (0.656083ms)
+✔ unknown frames are NAKed without killing the session and subscriptions are typed (0.544542ms)
+✔ termination rejects each in-flight PING once, exposes the gap, and reconnects cleanly (0.612834ms)
+✔ rehandshake resolves only after a fresh transport HELLO (1.008542ms)
+✔ a transport killed during HELLO is discarded and the next generation re-negotiates (0.929458ms)
+✔ 10,000 PING attempts are backpressured at the pending bound (36.956416ms)
+✔ a failed connector retries with bounded backoff and a PING timeout retires only itself (10.489625ms)
+✔ stale HELLO and no-common-version peers fail explicitly (0.531917ms)
+✔ 100 reconnect cycles keep one transport listener and one user subscription (115.775334ms)
+✔ decoder stays bounded across dribble/coalescing and rejects oversized lengths before allocation (0.266292ms)
+✔ malformed PING during a live session disconnects instead of guessing at framing (0.095625ms)
+✔ MessagePort transport adapter runs the same Channel in a worker-safe endpoint (8.377375ms)
+✔ loader task quiescence joins held persistence and permanently closes scheduling (0.821ms)
+✔ explicit surface, FIFO input/RPC, exact transferable ownership, Tailscale, and stop order (4.706625ms)
+✖ every explicit controller method crosses the runtime and no-provider Tailscale is false/nonfatal (0.696833ms)
+✔ guestClock boot data and current machine state traverse the paired worker protocol without rounding or caching (5.291167ms)
+✔ worker forwards an invalid clock label to validation and propagates refusal before machine mutation (0.218041ms)
+✔ capture PCM_START lifecycle notification crosses the worker boundary (1.510541ms)
+✔ display FrameSink projections cross the worker boundary with private pixel ownership (0.767584ms)
+✔ display clear controls cross the worker boundary without a pixel payload (1.4775ms)
+✔ cursor-plane update and move projections keep MOVE payloads empty and privately owned (2.719167ms)
+✔ RPC ids correlate out-of-order results and arbitrary methods are not exposed (0.268417ms)
+✔ version mismatch/fatal rejects boot, pending and future calls exactly once (0.140542ms)
+✔ fatal after ready rejects pending, whenDone, stats, and future RPCs once (0.147834ms)
+✔ worker rejects an unknown method without executing it and propagates controller rejections (2.970875ms)
+✔ unknown frames fail closed and Tailscale events remain versioned (1.72275ms)
+✔ DONE rejects pending RPCs and DONE-before-READY rejects boot (0.219667ms)
+✔ byte RPC encoding errors reject asynchronously (0.170292ms)
+✔ silent termination is detected before and after READY and rejects pending work (53.49ms)
+✔ heartbeat bypasses long async RPCs and visibility suspension shifts its deadline (83.761334ms)
+✔ visibility suspension pauses the pre-READY boot deadline (61.103917ms)
+✔ stateDigest gets method-scoped heartbeat grace and the controller remains live afterward (60.249666ms)
+✔ every bulk snapshot RPC emits BUSY/IDLE and survives the scoped heartbeat grace (424.643375ms)
+✔ natural completion emits a scoped terminal digest before DONE (2.329792ms)
+✔ natural completion waits behind a held snapshot RPC before terminal BUSY and cleanup (1.900625ms)
+✔ fatal input during natural cleanup wins over clean DONE (1.85725ms)
+✔ stop and fatal cleanup are bounded when a dependency never settles (33.63875ms)
+✔ stop timeout fails closed without releasing storage under a live loader pump (28.446959ms)
+✔ Tailscale UI exceptions are non-fatal (1.062292ms)
+✔ backend-neutral stop closes main storage but does not RPC after worker termination (0.512791ms)
+✔ desktop restore requires fresh Channel HELLO and applies T22 viewport (0.729708ms)
+✔ desktop restore may pause only after the fresh HELLO (0.092917ms)
+✔ a dropped Channel or refused restore clears the T22 surface (0.55575ms)
+✔ desktop agent bridge owns queued guest bytes, negotiates, reconnects, and drains output (12.231584ms)
+✔ absent desktop residency stays undefined so the loader retains its default (1.31775ms)
+✔ desktop forwards existing repack-off policy unchanged to the worker boundary (0.27525ms)
+✔ desktop forwards existing cap-256 policy unchanged to the worker boundary (0.26025ms)
+✔ desktop forwards existing cap-1024 policy unchanged to the worker boundary (0.243666ms)
+✔ desktop does not normalize empty or unsupported labels into a default (0.828875ms)
+✔ transient non-ready inspection resumes a controller paused by readiness (0.602667ms)
+✔ readiness inspection does not resume a controller already paused by its owner (0.075958ms)
+✔ omitted/icount mode never reads a host clock, including on legacy machines (0.812333ms)
+✔ only exact clock labels pass, before accessing the realm or machine (0.248ms)
+✔ wall validation samples the injected performance source once with its receiver (0.066458ms)
+✔ wall validation refuses missing, noncallable, nonfinite and negative sources (0.165833ms)
+✔ every wall API must exist before setGuestClock can mutate the machine (0.136ms)
+✔ selection happens once, resume only rebases wall, and state is the current machine result (0.38925ms)
+✔ machine selection, rebase and state exceptions propagate without fabricated success (0.098875ms)
+✔ loader resume rebases before unpausing/scheduling and refuses all later mutations on error (0.841708ms)
+✔ loader resumeAfterQuota rebases before unpausing/scheduling and refuses all later mutations on error (0.543542ms)
+✔ loader continueReadOnly rebases before unpausing/scheduling and refuses all later mutations on error (0.548083ms)
+ℹ tests 64
+ℹ suites 0
+ℹ pass 63
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 817.968459
+
+✖ failing tests:
+
+test at web/tests/e4-t32-worker-protocol.test.mjs:208:1
+✖ every explicit controller method crosses the runtime and no-provider Tailscale is false/nonfatal (0.696833ms)
+  Error: AssertionError [ERR_ASSERTION]: fake must implement storedSnapshotRestoreEvidence
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at startBoot (file:///Users/blamy/Documents/Codex/wasm-vm/web/tests/e4-t32-worker-protocol.test.mjs:220:16)
+      at handleBoot (file:///Users/blamy/Documents/Codex/wasm-vm/web/linux-worker-protocol.js:773:24)
+      at handle (file:///Users/blamy/Documents/Codex/wasm-vm/web/linux-worker-protocol.js:855:27)
+      at file:///Users/blamy/Documents/Codex/wasm-vm/web/linux-worker-protocol.js:881:30
+      at errorFrom (file:///Users/blamy/Documents/Codex/wasm-vm/web/linux-worker-protocol.js:110:10)
+      at fail (file:///Users/blamy/Documents/Codex/wasm-vm/web/linux-worker-protocol.js:233:13)
+      at onMessage (file:///Users/blamy/Documents/Codex/wasm-vm/web/linux-worker-protocol.js:401:21)
+      at file:///Users/blamy/Documents/Codex/wasm-vm/web/linux-worker-protocol.js:419:11
+      at file:///Users/blamy/Documents/Codex/wasm-vm/web/tests/e4-t32-worker-protocol.test.mjs:33:57
+      at node:internal/process/task_queues:151:7
+      at AsyncResource.runInAsyncScope (node:async_hooks:227:14)
+      at AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)

@@ -665,9 +665,19 @@ export async function startLinuxBoot(opts = {}) {
     // out of JS; a missing, stale, corrupt, or foreign result leaves the freshly constructed machine
     // untouched and the normal fallback paths below decide what to do.
     let restoredFromStoredSnapshot = false;
+    // Retain the actual load-time decision, before the guest can advance its disk. A later
+    // snapshotDecision() intentionally answers a different question: can the OLD checkpoint
+    // still be reused against the now-current overlay? Never use that live query as history.
+    let storedSnapshotRestoreObservation = Object.freeze({
+      attempted: false, decision: null, overlayGeneration: null,
+    });
     if (usePersist && typeof machine.restoreStoredSnapshot === "function") {
       try {
         const decision = await machine.restoreStoredSnapshot();
+        let overlayGeneration = null;
+        // Evidence collection must not change an already completed restore into a fallback.
+        try { overlayGeneration = machine.overlayGeneration(); } catch { /* unavailable evidence */ }
+        storedSnapshotRestoreObservation = Object.freeze({ attempted: true, decision, overlayGeneration });
         if (decision === "resume") {
           restoredFromStoredSnapshot = true;
           onState("restored");
@@ -675,6 +685,9 @@ export async function startLinuxBoot(opts = {}) {
           console.warn(`wasm-vm: stored snapshot not coherent (${decision}) — cold booting`);
         }
       } catch (e) {
+        storedSnapshotRestoreObservation = Object.freeze({
+          attempted: true, decision: "error", overlayGeneration: null,
+        });
         // A storage read failure is a cold-boot fallback, never a partially restored machine.
         console.warn("wasm-vm: stored snapshot restore failed, cold booting:", e?.message || e);
       }
@@ -1110,6 +1123,7 @@ export async function startLinuxBoot(opts = {}) {
       guestClockState: () => guestClockLifecycle.state(),
       // E4: true when this boot skipped the Linux boot by restoring a shipped boot snapshot.
       restoredFromBootSnapshot: () => restoredFromBootSnapshot,
+      storedSnapshotRestoreEvidence: () => ({ ...storedSnapshotRestoreObservation }),
       overlaySeedIdentity: () => overlaySeedIdentity,
       audioOutputReady: () => (
         typeof machine.audioOutputReady === "function" ? machine.audioOutputReady() : false

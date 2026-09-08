@@ -102,6 +102,7 @@ function fakeController(events, done) {
     snapshotSave: () => true,
     snapshotRead: () => Uint8Array.of(1, 2),
     snapshotDecision: () => "resume",
+    storedSnapshotRestoreEvidence: () => ({ attempted: true, decision: "resume", overlayGeneration: 2 }),
     snapshotAdvanceGen: () => 2,
     snapshotGeneration: () => 2,
     snapshotExport: () => Uint8Array.of(3, 4),

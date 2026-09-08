@@ -1,0 +1,81 @@
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T05:42:59.674Z","elapsedMs":1}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-08T05:43:00.537Z","elapsedMs":863}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-08T05:43:00.537Z","elapsedMs":863}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-08T05:43:03.234Z","elapsedMs":3560}
+[e5-t26f] {"phase":"reload:normal","event":"start","timestamp":"2026-09-08T05:43:03.234Z","elapsedMs":3560}
+[e5-t26f] {"phase":"reload:normal","event":"done","timestamp":"2026-09-08T05:43:03.377Z","elapsedMs":3703}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"start","timestamp":"2026-09-08T05:43:03.378Z","elapsedMs":3704}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"done","timestamp":"2026-09-08T05:43:04.654Z","elapsedMs":4980}
+[e5-t26f] {"phase":"restore:normal:completion","event":"start","timestamp":"2026-09-08T05:43:04.654Z","elapsedMs":4980}
+[e5-t26f] {"phase":"restore:normal:completion","event":"done","timestamp":"2026-09-08T05:43:04.662Z","elapsedMs":4988}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"start","timestamp":"2026-09-08T05:43:04.662Z","elapsedMs":4988}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"done","timestamp":"2026-09-08T05:43:04.664Z","elapsedMs":4990}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"start","timestamp":"2026-09-08T05:43:04.664Z","elapsedMs":4990}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"done","timestamp":"2026-09-08T05:43:04.664Z","elapsedMs":4990}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"start","timestamp":"2026-09-08T05:43:04.664Z","elapsedMs":4990}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"done","timestamp":"2026-09-08T05:43:05.040Z","elapsedMs":5366}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"start","timestamp":"2026-09-08T05:43:05.040Z","elapsedMs":5366}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"done","timestamp":"2026-09-08T05:43:05.210Z","elapsedMs":5536}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"start","timestamp":"2026-09-08T05:43:05.211Z","elapsedMs":5537}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"done","timestamp":"2026-09-08T05:43:05.213Z","elapsedMs":5539}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"start","timestamp":"2026-09-08T05:43:05.213Z","elapsedMs":5539}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"done","timestamp":"2026-09-08T05:43:05.274Z","elapsedMs":5600}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"start","timestamp":"2026-09-08T05:43:05.274Z","elapsedMs":5600}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"done","timestamp":"2026-09-08T05:43:09.417Z","elapsedMs":9743}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"start","timestamp":"2026-09-08T05:43:09.419Z","elapsedMs":9745}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"done","timestamp":"2026-09-08T05:43:09.448Z","elapsedMs":9774}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"start","timestamp":"2026-09-08T05:43:09.449Z","elapsedMs":9775}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"timing-failed-continuing","timestamp":"2026-09-08T05:43:09.505Z","elapsedMs":9831}
+[e5-t26f] {"phase":"restore:normal:coherence-audit","event":"start","timestamp":"2026-09-08T05:43:09.505Z","elapsedMs":9831}
+[e5-t26f] {"timestamp":"2026-09-08T05:43:39.507Z","phase":"restore:normal:coherence-audit","event":"sample","probeMs":1,"ready":"ready","restored":"ready","status":"desktop ready: launcher available","serialTail":"","frameCount":11,"pointerFrames":3,"keyboardFrames":20,"launch":null,"command":{"label":null,"marker":"e5t26f-post-aplay","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":3544,"guestVisible":null,"pointerFrames":null,"keyboardFrames":20},"focus":{"label":"post-restore-focus","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":true,"pointerFrames":3,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":36,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":11,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":1689536,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":960,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"phase":"restore:normal:coherence-audit","event":"done","timestamp":"2026-09-08T05:43:43.388Z","elapsedMs":43714}
+[e5-t26f] {"phase":"drag:prepare","event":"start","timestamp":"2026-09-08T05:43:43.388Z","elapsedMs":43714}
+[e5-t26f] {"phase":"drag:prepare","event":"done","timestamp":"2026-09-08T05:43:43.493Z","elapsedMs":43819}
+[e5-t26f] {"phase":"snapshot:drag-before","event":"start","timestamp":"2026-09-08T05:43:43.493Z","elapsedMs":43819}
+[e5-t26f] {"phase":"snapshot:drag-before","event":"done","timestamp":"2026-09-08T05:43:51.029Z","elapsedMs":51355}
+[e5-t26f] {"phase":"snapshot:drag-held","event":"start","timestamp":"2026-09-08T05:43:51.029Z","elapsedMs":51355}
+[e5-t26f] {"phase":"snapshot:drag-held","event":"done","timestamp":"2026-09-08T05:43:58.449Z","elapsedMs":58775}
+[e5-t26f] {"phase":"snapshot:drag-moving","event":"start","timestamp":"2026-09-08T05:43:58.449Z","elapsedMs":58775}
+[e5-t26f] {"phase":"drag:guest-translation","event":"start","timestamp":"2026-09-08T05:43:58.451Z","elapsedMs":58777}
+[e5-t26f] {"phase":"drag:guest-translation","event":"done","timestamp":"2026-09-08T05:43:59.757Z","elapsedMs":60083}
+[e5-t26f] {"phase":"drag:checkpoint-Published","event":"start","timestamp":"2026-09-08T05:44:07.816Z","elapsedMs":68142}
+[e5-t26f] {"phase":"drag:checkpoint-Published","event":"done","timestamp":"2026-09-08T05:44:08.211Z","elapsedMs":68537}
+[e5-t26f] {"phase":"snapshot:drag-moving","event":"done","timestamp":"2026-09-08T05:44:08.211Z","elapsedMs":68537}
+[e5-t26f] {"phase":"snapshot:drag-released","event":"start","timestamp":"2026-09-08T05:44:08.211Z","elapsedMs":68537}
+[e5-t26f] {"timestamp":"2026-09-08T05:44:15.484Z","phase":"snapshot:drag-released","event":"sample","probeMs":5977,"ready":"ready","restored":"ready","status":"desktop ready: launcher available","serialTail":"","frameCount":17,"pointerFrames":7,"keyboardFrames":20,"launch":null,"command":{"label":null,"marker":"e5t26f-post-aplay","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":3544,"guestVisible":null,"pointerFrames":null,"keyboardFrames":20},"focus":{"label":"post-restore-focus","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":true,"pointerFrames":3,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":36,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":17,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":3174080,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":960,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"phase":"snapshot:drag-released","event":"done","timestamp":"2026-09-08T05:44:15.484Z","elapsedMs":75810}
+[e5-t26f] {"phase":"drag:checkpoint-BeforeReload","event":"start","timestamp":"2026-09-08T05:44:15.485Z","elapsedMs":75811}
+[e5-t26f] {"phase":"drag:checkpoint-BeforeReload","event":"done","timestamp":"2026-09-08T05:44:15.879Z","elapsedMs":76205}
+[e5-t26f] {"phase":"reload:drag","event":"start","timestamp":"2026-09-08T05:44:15.879Z","elapsedMs":76205}
+[e5-t26f] {"phase":"reload:drag","event":"done","timestamp":"2026-09-08T05:44:15.899Z","elapsedMs":76225}
+[e5-t26f] {"phase":"readiness:drag:desktop ready","event":"start","timestamp":"2026-09-08T05:44:15.899Z","elapsedMs":76225}
+[e5-t26f] {"phase":"readiness:drag:desktop ready","event":"done","timestamp":"2026-09-08T05:44:16.992Z","elapsedMs":77318}
+[e5-t26f] {"phase":"restore:drag:completion","event":"start","timestamp":"2026-09-08T05:44:16.992Z","elapsedMs":77318}
+[e5-t26f] {"phase":"restore:drag:completion","event":"done","timestamp":"2026-09-08T05:44:16.997Z","elapsedMs":77323}
+[e5-t26f] {"phase":"restore:drag:first-present","event":"start","timestamp":"2026-09-08T05:44:16.997Z","elapsedMs":77323}
+[e5-t26f] {"phase":"restore:drag:first-present","event":"done","timestamp":"2026-09-08T05:44:16.998Z","elapsedMs":77324}
+[e5-t26f] {"phase":"restore:drag:display-and-button-checks","event":"start","timestamp":"2026-09-08T05:44:16.998Z","elapsedMs":77324}
+[e5-t26f] {"phase":"restore:drag:display-and-button-checks","event":"done","timestamp":"2026-09-08T05:44:16.999Z","elapsedMs":77325}
+[e5-t26f] {"phase":"restore:drag:coherence-audit","event":"start","timestamp":"2026-09-08T05:44:16.999Z","elapsedMs":77325}
+[e5-t26f] {"timestamp":"2026-09-08T05:44:39.511Z","phase":"restore:drag:coherence-audit","event":"sample","probeMs":4,"ready":"ready","restored":"ready","status":"desktop ready: launcher available","serialTail":"","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"ready","transportGeneration":2,"bytesReceived":36,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":607213,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"phase":"restore:drag:coherence-audit","event":"failed","timestamp":"2026-09-08T05:44:47.115Z","elapsedMs":107441}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: drag whole-machine snapshot was not coherent
+
+'stale' !== 'resume'
+
+    at auditRestoreCoherence (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1245:12)
+    at async file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1784:3 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'stale',
+  expected: 'resume',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0
