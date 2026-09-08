@@ -11,8 +11,13 @@ export function residentFixtureRequested(env) {
   const value = env.E5_T26F_FIXTURE;
   assert.ok(value === undefined || value === RESIDENT_KIND, "unknown F fixture; omission preserves the original process-launch fixture");
   if (value === undefined) return false;
-  for (const key of ["COMMAND", "KEY_DELAY_MS", "JIT", "RESIDENCY", "GUEST_CLOCK", "ICOUNT_DIVIDER"]) {
+  for (const key of ["KEY_DELAY_MS", "JIT", "RESIDENCY", "GUEST_CLOCK", "ICOUNT_DIVIDER"]) {
     assert.equal(env[`E5_T26F_DIAGNOSTIC_${key}`], undefined, "resident playback requires fixed command/pacing and unchanged default runtime policies");
+  }
+  if (env.E5_T26F_DIAGNOSTIC_COMMAND !== undefined) {
+    assert.ok(["times;e5_observe;times;play", "times;e5_print_observation post;times;play"].includes(env.E5_T26F_DIAGNOSTIC_COMMAND) &&
+      env.E5_T26F_DIAGNOSTIC === "reuse" && env.E5_T26F_DIAGNOSTIC_COMPLETE === undefined,
+    "resident command probes are exact diagnostic reuse only; no acceptance command override");
   }
   // Observation-only inner loop after a failed frozen run. The runner labels
   // reuse nonacceptance, and make refuses diagnostics before any work. Never

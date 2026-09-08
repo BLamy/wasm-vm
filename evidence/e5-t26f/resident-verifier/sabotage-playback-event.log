@@ -1,0 +1,48 @@
+$ /Users/blamy/.nvm/versions/node/v24.20.0/bin/node --test --test-name-pattern=queued playback XRUN refuses tools/verify/e5-t26f-resident-proof.test.mjs
+✖ queued playback XRUN refuses even with rehashed envelope, no scheduled XRUN and only event kick (1.497875ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37.26375
+
+✖ failing tests:
+
+test at tools/verify/e5-t26f-resident-proof.test.mjs:116:1
+✖ queued playback XRUN refuses even with rehashed envelope, no scheduled XRUN and only event kick (1.497875ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /queued playback XRUN/. Input:
+  
+  'AssertionError [ERR_ASSERTION]: capture event requires enabled capture\n' +
+    '\n' +
+    '0 !== 1\n'
+  
+      at TestContext.<anonymous> (file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5t26f-resident-critic-wDA9rs/tools/verify/e5-t26f-resident-proof.test.mjs:119:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: AssertionError [ERR_ASSERTION]: capture event requires enabled capture
+    
+    0 !== 1
+    
+        at parsePreparedSound (file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5t26f-resident-critic-wDA9rs/tools/verify/e5-t26f-resident-proof.mjs:68:12)
+        at parse (file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5t26f-resident-critic-wDA9rs/tools/verify/e5-t26f-resident-proof.test.mjs:84:24)
+        at file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5t26f-resident-critic-wDA9rs/tools/verify/e5-t26f-resident-proof.test.mjs:119:23
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5t26f-resident-critic-wDA9rs/tools/verify/e5-t26f-resident-proof.test.mjs:119:10)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1397:25)
+        at Test.start (node:internal/test_runner/test:1257:17)
+        at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17),
+    expected: /queued playback XRUN/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+exit=1 signal=null

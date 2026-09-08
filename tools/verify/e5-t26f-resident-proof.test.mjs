@@ -23,11 +23,27 @@ test("resident fixture is exact opt-in; every tuning and command override refuse
   for (const value of ["", "resident", "resident-aplay-v1 ", true, 1, null, [RESIDENT_KIND]]) {
     assert.throws(() => residentFixtureRequested({ E5_T26F_FIXTURE: value }));
   }
-  for (const key of ["COMMAND", "KEY_DELAY_MS", "JIT", "RESIDENCY", "GUEST_CLOCK", "ICOUNT_DIVIDER"]) {
+  for (const key of ["KEY_DELAY_MS", "JIT", "RESIDENCY", "GUEST_CLOCK", "ICOUNT_DIVIDER"]) {
     for (const value of ["", "0", "1", undefined]) {
       const env = { ...resident, [`E5_T26F_DIAGNOSTIC_${key}`]: value };
       if (value === undefined) assert.equal(residentFixtureRequested(env), true);
       else assert.throws(() => residentFixtureRequested(env), /fixed command\/pacing/);
+    }
+  }
+});
+
+test("resident phase timing presets preserve the real play and cannot become an acceptance command override", () => {
+  const select = env => vm.runInNewContext(between("function diagnosticOptions", "const DIAGNOSTIC_OWNER") +
+    "\n({postRestoreCommand,postRestoreKeyDelayMs})", { assert, path, process: { env }, residentFixtureRequested });
+  for (const command of ["times;e5_observe;times;play", "times;e5_print_observation post;times;play", "play", "true", "", "time play"]) {
+    for (const mode of [undefined, "create", "reuse"]) {
+      const env = { ...resident, E5_T26F_DIAGNOSTIC: mode, E5_T26F_DIAGNOSTIC_COMMAND: command,
+        E5_T26F_DIAGNOSTIC_PROFILE: "/private/tmp/resident-unit", E5_T26F_DIAGNOSTIC_PORT: "48123" };
+      if (mode === "reuse" && ["times;e5_observe;times;play", "times;e5_print_observation post;times;play"].includes(command)) {
+        assert.equal(residentFixtureRequested(env), true);
+        assert.deepEqual(json(select(env)), { postRestoreCommand: command, postRestoreKeyDelayMs: 5 });
+      } else assert.throws(() => residentFixtureRequested(env), /exact diagnostic reuse/);
+      assert.throws(() => residentFixtureRequested({ ...env, E5_T26F_DIAGNOSTIC_COMPLETE: "1" }), /exact diagnostic reuse/);
     }
   }
 });

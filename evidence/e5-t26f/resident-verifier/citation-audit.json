@@ -1,0 +1,42 @@
+{
+  "checked": [
+    {
+      "file": "tools/guest/e5-t26f-resident-aplay.sh",
+      "sha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c"
+    },
+    {
+      "file": "target/e5-t26f/resident-image-2ae65408-a/alpine-rootfs.ext4",
+      "sha256": "27c2e8f2789b18efac214837c295dbfb22559beea350fb5788f71edfdc0f0a8e"
+    },
+    {
+      "file": "target/e5-t26f/chunks/resident-2ae65408/manifest.json",
+      "sha256": "2245a4d8b8b804bb200079c1ce00dee868762324f18627fa5d2b11fe032639ef"
+    },
+    {
+      "file": "evidence/e5-t26f/resident-gates/focused-tests.log",
+      "sha256": "3df786fe87433e1aa7085cc4fe7b99f4ce62bb6eb7092445b2d41ee90fff2278"
+    },
+    {
+      "file": "evidence/e5-t26f/resident-verifier/focused.log",
+      "sha256": "c28f50a8ff288ccdefeb6a2f872c38b8d973d96416f316c8b5497497c5bb2728"
+    },
+    {
+      "file": "evidence/e5-t26f/resident-verifier/attacks.json",
+      "sha256": "6e545d09efb579f26be1d29c5af7bacab6dd0a783541db69b203c8b7c65561d9"
+    },
+    {
+      "file": "evidence/e5-t26f/resident-verifier/build-audit.json",
+      "sha256": "b8719ca9c5677d31f744c91de166bbd1618817edbea10905fbce628bf07c71fe"
+    },
+    {
+      "file": "evidence/e5-t26f/completion/critic.md",
+      "sha256": "a811d6cf8cb637a1af74194c5a356c81c08bf023be41ba50627455fc9a069bcb"
+    },
+    {
+      "file": "evidence/e5-t26f/completion/guest-release-8c892667/diagnostic-completion.json",
+      "sha256": "28046f748fc855531d5bc77874cfff7c57ce85992e231eb68d369d85bdbf2e8a"
+    }
+  ],
+  "reportSha256": "a25babb1f29c47bc81e281db64a04ce556341131994d3158e75ab8095423e864",
+  "allReportDigestsChecked": true
+}

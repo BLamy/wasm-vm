@@ -1,0 +1,30 @@
+$ /Users/blamy/.nvm/versions/node/v24.20.0/bin/node --test --test-name-pattern=nonzero original child exit tools/verify/e5-t26f-resident-aplay.test.mjs
+✖ nonzero original child exit refuses green even after a successful finite feed (16.018334ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 51.199958
+
+✖ failing tests:
+
+test at tools/verify/e5-t26f-resident-aplay.test.mjs:157:1
+✖ nonzero original child exit refuses green even after a successful finite feed (16.018334ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be strictly unequal to: 0
+      at TestContext.<anonymous> (file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5t26f-resident-critic-wDA9rs/tools/verify/e5-t26f-resident-aplay.test.mjs:159:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 0,
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
+
+exit=1 signal=null

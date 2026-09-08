@@ -57,3 +57,29 @@ Next: one explicitly nonacceptance, read-only latency/CPU diagnostic of the same
 sealed image. No new image, cold boot, clock policy, guest helper or cap change
 is justified before that localization. Profiling remains forbidden in normal
 acceptance, cold preparation and COMPLETE functional records.
+
+## Read-only localization at 33a65efb
+
+`resident-profile-33a65efb.log` records the exact CPU=1/LATENCY=1 diagnostic-only
+reuse; it still exits 1. Frozen end minus original T0 is **4687.560 ms**. The last
+zero-ring sample is T0+3687.670 ms; the first actual PCM sample is T0+3737.065 ms,
+and first green marker is T0+4651.235 ms. The 50-ms PCM observation interval is
+not a precision timestamp for the guest's first write.
+
+Luna's `resident-profile-analysis/README.md` binds all eleven non-custom WASM
+sections and 1889 names to the exact executed module. Largest weighted leaves
+are the executor 12.42%, run loop 11.60%, and interpreter 7.90%; no one leaf
+dominates. Marker-predicate reads total 8.55 ms. This localizes distributed guest
+execution, not a proven shell/renderer/audio cause. Daybreak independently holds
+the prior run's build, identity, fresh PCM, restores and release proof while
+retaining the original timing failure in `resident-verifier/completion-results.md`.
+
+Next bounded probes use actual Alpine `times` before/after the already-existing
+observer or metadata printer, then the unchanged real `play`. These two exact
+commands are admitted only in diagnostic reuse without COMPLETE; they cannot
+be selected for cold preparation or acceptance. All 137 affected tests pass.
+The local Alpine precheck confirms `times` is a no-fork special shell builtin;
+the initially considered `time` is an external executable there and cannot time
+a shell function, so it was rejected before any browser run. These probes report
+guest process CPU accounting, not the host all-success interval, and add work;
+neither is a candidate acceptance command or a claimed performance improvement.

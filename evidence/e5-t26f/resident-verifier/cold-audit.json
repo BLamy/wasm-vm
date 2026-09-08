@@ -1,0 +1,106 @@
+{
+  "scope": "closed diagnostic create only; no restore/timing/acceptance claim",
+  "checkedAt": "2026-09-08T09:31:47.542Z",
+  "head": "7da050620031145b6e76cf150a894ed2710bd5b2",
+  "browser": {
+    "name": "chromium",
+    "version": "Chrome/152.0.7977.76",
+    "headless": true
+  },
+  "artifacts": {
+    "evidence/e5-t26f/resident-cold-7da05062/diagnostic-checkpoint.json": "c9d5c5b19587f8f92a98257b98cfbe593a5b5235704102f677c5b49cc60e6fff",
+    "evidence/e5-t26f/resident-cold-7da05062/resident-prepared.png": "4364d8fc74137f098cc633c33bd829a011637ff130a5b2b9115d01b47eb8758f",
+    "evidence/e5-t26f/resident-cold-7da05062.log": "6334ac81c69e502697c7a185d561372d5511ef341106c73510b443874243c58e",
+    "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resident-FUBCo4/normal-checkpoint.json": "8711af5fc17976b54ee7dc92ee970418a34667135f328fe7fa9ffa4be5a74968",
+    "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resident-FUBCo4/e5-t26f-owner.json": "8be498fa8d6aee51ce4ce7b20163ffe2f6407ea722b7385832528546adaa5d92"
+  },
+  "profile": {
+    "sha256": "59f3f2483c95331fad64c5cf6014a60f42b3b9fb89a50ec7b2d1c8853d9c70b5",
+    "files": 812,
+    "bytes": 185689351
+  },
+  "servedRuntime": {
+    "sha256": "42aced7a2dfc4d0a69e1ea5a15685f5d9a605f797f8df1c5db89f95051ba0425",
+    "files": 149,
+    "bytes": 6572773
+  },
+  "normalSnapshot": {
+    "sha256": "b2e057ccf0150eb892ed4ae53c0642e5757d8d52293306776d52dd4bf94b86b9",
+    "byteLength": 2818926,
+    "preFrontBufferCrc": "940993e9",
+    "machineResume": {
+      "persisted": true,
+      "paused": true,
+      "preFrontBufferCrc": "940993e9",
+      "overlayGeneration": 626
+    }
+  },
+  "actualEnvelopeSound": {
+    "envelopeSha256": "b2e057ccf0150eb892ed4ae53c0642e5757d8d52293306776d52dd4bf94b86b9",
+    "soundSha256": "330d02f9e91a4e67239bd3386715f87ca45cb0ea8052c387276a6c5450eeeafc",
+    "state": 2,
+    "paramsPresent": 1,
+    "parameterRequest": 257,
+    "streamId": 0,
+    "bufferBytes": 3840,
+    "periodBytes": 1920,
+    "channels": 2,
+    "format": 5,
+    "rate": 7,
+    "pendingTransfers": 0,
+    "pendingBytes": 0,
+    "releasePending": 0,
+    "nextXrunPresent": 0,
+    "eventCount": 0,
+    "events": [],
+    "kicked": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "resetPending": 0
+  },
+  "desktopRetirementBoundary": "9388156017",
+  "auditCorrection": {
+    "initialAuditExit": 1,
+    "incorrectAssertion": "desktop header u64 at byte 12 equals overlay generation 626",
+    "actual": "9388156017",
+    "correction": "core desktop builder writes irqstats.retired here; generation is checked in the frozen snapshot metadata/audit, not this field",
+    "workerRefutation": false
+  },
+  "frozenAudit": {
+    "at": 829751.5449999571,
+    "isPaused": true,
+    "generation": 626,
+    "decision": "resume",
+    "envelopeSha256": "b2e057ccf0150eb892ed4ae53c0642e5757d8d52293306776d52dd4bf94b86b9",
+    "stillPaused": true,
+    "finalGeneration": 626
+  },
+  "manualPngTranscription": {
+    "method": "direct independent image inspection, not OCR or worker summary",
+    "pre1AndPre2": {
+      "pid": 999,
+      "starttime": 27744,
+      "exe": "/usr/bin/aplay(inode-match)",
+      "wchan": "pipe_read",
+      "childFifoFd": 3,
+      "childFifoFlags": "0100000",
+      "parentFd": 3,
+      "parentFlags": "0100002",
+      "childWriters": 0,
+      "pcmFd": 4,
+      "owner": 999,
+      "state": "PREPARED",
+      "hw_ptr": 0,
+      "appl_ptr": 0
+    },
+    "visiblePreparedGreenAndPrompt": true,
+    "twoWindows": true,
+    "cursorVisible": true,
+    "initialAplayUnderrunMs": 0.324,
+    "initialAplaySubsequentGreenAndPrompt": true
+  },
+  "reuseInspected": false
+}
