@@ -1229,6 +1229,19 @@ verify-E5-T26m: verify-E5-T26m-runtime
 verify-E5-T26n: verify-E5-T26m-runtime
 	@echo "verify-E5-T26n (SPP context and guest SRET authority): OK"
 
+.PHONY: verify-E5-T26o
+verify-E5-T26o:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --test plic --test plic_sparse --features trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --test plic_sparse --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --features trace --lib dev::plic -- --nocapture
+	cargo test -p wasm-vm-core --features trace --test plic --test plic_sparse --test interrupts -- --nocapture
+	cargo test -p wasm-vm-jit-runtime --test chaining device_completion_fires_inside_chained_loop -- --nocapture
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+	wasm-pack test --node crates/wasm --test plic_sparse -- --nocapture
+	@echo "verify-E5-T26o (sparse PLIC selection, not F latency acceptance): OK"
+
 .PHONY: verify-E5-T26k verify-E5-T26k-runtime
 verify-E5-T26k-runtime:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
