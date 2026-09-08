@@ -3,9 +3,8 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: blocked
+status: in-progress
 depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l, E5-T26m]
-blocked_on: E5-T26m browser inline-cache interrupt-state projection
 estimate: S
 risk: high
 capstone: false
@@ -40,6 +39,29 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — resume after verified inline-cache prerequisite
+
+E5-T26m is independently verified in `a438e53930ec9aabcb829cf50d4a578769e3c84a`
+and published as open draft PR370 at `fff16dadf26b5e1596c8524dfa6d6572d1d14da2`.
+The exact final runtime/test proof is `7f007bd28e0d8a73ed46d03c7f9bd803449157ee`:
+29 native+47 real-WASM tests, the single final pristine clone, generated-link
+mixed-bit attack and built demo126/0. These verify M only, not F or speed.
+
+Reactivate F on `codex/e5-t26f-inline-context-browser-proof`. The next command,
+`node tools/verify/e5-t26f-browser-single-process-observer.mjs`, creates a new
+authenticated cold seal and one unchanged-policy browser timing screen. Its
+own invocation records the exact current head. No old checkpoint is rebound or
+launched. The already-held single-process observer image/helper is unchanged:
+image SHA256 `d2fc4eab9bc1b5fe528a2956b58faefb20fcf18e2505c499ecafa8824d390f72`;
+new actual runtime WASM SHA256
+`18e53caa2e160819d16a6e0bf376530d45234e28f315c89b5042c48b1d791cc4`.
+Default clocks/cache budgets, physical play command and original two-second
+endpoint remain unchanged. This wrapper is a diagnostic screen, never full F
+acceptance even if fast; the complete normal verification still follows a
+passing screen. Fresh Daybreak predictions/review belong in
+`evidence/e5-t26f/inline-context-runtime-verifier/`. No merge/deploy or Omarchy
+image mutation occurs before the requested Epic5 milestone.
 
 ### 2026-09-08 — coordinator — isolated execution-cache prerequisite
 
