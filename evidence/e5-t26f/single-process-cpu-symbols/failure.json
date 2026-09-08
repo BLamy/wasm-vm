@@ -1,0 +1,113 @@
+{
+  "acceptance": false,
+  "originalInputsUnchanged": true,
+  "error": "AssertionError [ERR_ASSERTION]: all release module frames must carry an index",
+  "commands": [
+    {
+      "executable": "/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen",
+      "argv": [
+        "--version"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "env": {
+        "PATH": "/usr/bin:/bin",
+        "LANG": "C",
+        "LC_ALL": "C",
+        "TZ": "UTC",
+        "TMPDIR": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01/tmp"
+      },
+      "startedAt": "2026-09-08T16:47:24.577Z",
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-09-08T16:47:24.584Z",
+      "logPrefix": "evidence/e5-t26f/single-process-cpu-symbols/logs/01-wasm-bindgen-version"
+    },
+    {
+      "executable": "/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt",
+      "argv": [
+        "--version"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "env": {
+        "PATH": "/usr/bin:/bin",
+        "LANG": "C",
+        "LC_ALL": "C",
+        "TZ": "UTC",
+        "TMPDIR": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01/tmp"
+      },
+      "startedAt": "2026-09-08T16:47:24.584Z",
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-09-08T16:47:24.623Z",
+      "logPrefix": "evidence/e5-t26f/single-process-cpu-symbols/logs/02-wasm-opt-version"
+    },
+    {
+      "executable": "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+      "argv": [
+        "--test",
+        "tools/verify/e5-t22c-symbolize-cpu.test.mjs"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "env": {
+        "PATH": "/usr/bin:/bin",
+        "LANG": "C",
+        "LC_ALL": "C",
+        "TZ": "UTC",
+        "TMPDIR": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01/tmp"
+      },
+      "startedAt": "2026-09-08T16:47:24.623Z",
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-09-08T16:47:24.683Z",
+      "logPrefix": "evidence/e5-t26f/single-process-cpu-symbols/logs/03-symbolizer-tests"
+    },
+    {
+      "executable": "/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen",
+      "argv": [
+        "--target",
+        "web",
+        "--out-dir",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01",
+        "--out-name",
+        "wasm_vm_wasm",
+        "target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "env": {
+        "PATH": "/usr/bin:/bin",
+        "LANG": "C",
+        "LC_ALL": "C",
+        "TZ": "UTC",
+        "TMPDIR": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01/tmp"
+      },
+      "startedAt": "2026-09-08T16:47:24.683Z",
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-09-08T16:47:24.788Z",
+      "logPrefix": "evidence/e5-t26f/single-process-cpu-symbols/logs/04-wasm-bindgen"
+    },
+    {
+      "executable": "/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt",
+      "argv": [
+        "-O",
+        "-g",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01/wasm_vm_wasm_bg.wasm",
+        "-o",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01/named.wasm"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "env": {
+        "PATH": "/usr/bin:/bin",
+        "LANG": "C",
+        "LC_ALL": "C",
+        "TZ": "UTC",
+        "TMPDIR": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01/tmp"
+      },
+      "startedAt": "2026-09-08T16:47:24.788Z",
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-09-08T16:47:25.614Z",
+      "logPrefix": "evidence/e5-t26f/single-process-cpu-symbols/logs/05-wasm-opt-names"
+    }
+  ]
+}

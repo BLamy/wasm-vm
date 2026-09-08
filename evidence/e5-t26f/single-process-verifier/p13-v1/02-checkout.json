@@ -1,0 +1,15 @@
+{
+  "name": "02-checkout",
+  "command": "git",
+  "args": [
+    "-c",
+    "core.hooksPath=/dev/null",
+    "checkout",
+    "--detach",
+    "001e80864911863145f2127192bae5df8186e68b"
+  ],
+  "cwd": "/private/tmp/e5-t26f-single-process-p13.j00WpJ/repo",
+  "code": 0,
+  "signal": null,
+  "error": null
+}

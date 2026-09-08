@@ -210,3 +210,59 @@ The only served release remains WASM SHA256
 Any offline name recovery must authenticate every non-custom executable
 section against that release. These perturbed diagnostics neither establish
 a speedup nor satisfy F; no new cold boot or policy change accompanies them.
+
+Offline names are authenticated against all11 non-custom sections of the actual
+release.1890 names cover85 observed indexed functions. The2181 sample deltas
+sum to3253226 microseconds. Top self costs are BrowserExecutor::execute_with_budget
+12.493%, run_traced10.635% and Hart::execute8.859%; try_jit_block31.512% is
+inclusive and overlaps its callees. No single dominant fix or2x speedup follows.
+Generated-module frames remain unmapped (3.950% self), and three Chrome bridge
+nodes retain literal names (0.046% self). Full limits/commands/hashes:
+`single-process-cpu-symbols/INDEX.md`; canonical summary SHA256
+`da4e6f6eddaa18ce5d0200cdc65c7ed72b9bd6bc05b5536f2c48f01aae2d3100`.
+All44 recorded SHA entries pass. The initial symbolization driver unnecessarily
+required an index on Chrome bridge frames; that failed attempt is retained.
+The continuation uses the unchanged held symbolizer's literal-label behavior,
+without rebuilding the companion. Named bytes SHA256
+`44ee774b2c8bca1bfc82426944f01e6c79b85dffcccdd6488d953342f7e6eba0`.
+`single-process-cpu-symbols/companion-records.tar.gz` preserves both drivers,
+seal script and actual generated files; archive SHA256
+`c29bf9afa4f9dddbbe02c5f391c7d782fd56c9bd505d22d632b64a32a3839333`.
+The original files remain under target/e5-t26f/single-process-symbols.
+
+## Critic evidence retention
+
+Daybreak's original unprofiled browser report is
+`single-process-verifier/browser-results.md`: actual150-file runtime,
+816-file sealed profile and actual decoded envelope/sound payload match.
+Reached functionality holds, original timing fails, and the historical
+collector-compatibility claim is explicitly refuted pending its separate repair
+review. This does not override the raw failure or upgrade unreached phases.
+`single-process-verifier/attack-raw.tar.gz` preserves the independent source
+guard attack including its original/mutant binaries and four raw fixture
+trees/FIFOs. Archive SHA256
+`0d701351d54549999b1b78f590da5ff988b91415057be4d3f4a8af6e9d1674d8`;
+gzip integrity and byte-for-byte extraction of the result.json are checked.
+The packer warned that extended attributes on four entries are unsupported;
+no extended-attribute fidelity claim is made. Original trees remain untracked
+in place and must not be staged as ordinary Git files. Result SHA256 is
+`2165584da3b175158cfbf3407491c1ac26f73cd23521da29fcc6111bba06ee3e`.
+
+The subsequent `single-process-verifier/collector-review.md` holds the
+incremental repair and independently recomputed arithmetic at001e8086. Its
+result SHA256 is
+`c6a1f99eafc3f628f5e309a72472ec2099a5c316e6d9e72eaae3abee0dd5747b`.
+This is postprocessing of the original failed run, not a replacement run.
+`single-process-verifier/p13-review.md` holds the one exact001e8086 same-host
+clean clone:10,389 C checks,82 observer-gate Node tests and18 overlapping
+collector tests, clean before/after, no source workaround. Retained clone is
+`/private/tmp/e5-t26f-single-process-p13.j00WpJ/repo`; result SHA256
+`6b5572460e16f5d9e40d16e838c508add1662c5570e7244e36383245a8dffc8f`.
+Do not repeat these unchanged gates or count their overlapping cases twice.
+
+Daybreak's `single-process-verifier/latency-review.md` independently holds only
+the sampled localization limits above, including the already-late zero PCM
+sample. It does not attribute the delay to a particular observer operation.
+Its independent result SHA256 is
+`eef36d73b521c8b738bfc04af15c0d9eafef4512f63dd61610ead7daa8ecd930`.
+All these scoped HELD findings coexist with F's failed two-second endpoint.

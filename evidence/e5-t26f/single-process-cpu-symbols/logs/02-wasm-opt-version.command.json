@@ -1,0 +1,15 @@
+{
+  "executable": "/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt",
+  "argv": [
+    "--version"
+  ],
+  "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+  "env": {
+    "PATH": "/usr/bin:/bin",
+    "LANG": "C",
+    "LC_ALL": "C",
+    "TZ": "UTC",
+    "TMPDIR": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01/tmp"
+  },
+  "startedAt": "2026-09-08T16:47:24.584Z"
+}

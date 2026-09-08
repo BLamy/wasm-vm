@@ -1,0 +1,100 @@
+{
+  "acceptance": false,
+  "operation": "review collector patch and independently recompute original raw counters",
+  "pins": {
+    "tools/verify/e5-t26f-discovery-observation.mjs": "423019e85fc480cb3badf91c412a558a1f7ffaf44ac54c033eac31e5c0f1380f",
+    "tools/verify/e5-t26f-discovery-observation.test.mjs": "bec3a06c8e466a490680463ab0db7a52f56dffec3fc503666566266e1c46cf1e",
+    "tools/verify/e5-t26f-compile-queue-observation.test.mjs": "6243d3aee5ec34333c496d6510d7db39bd514a0a03656bc4df7727a9de897c81",
+    "tools/verify/e5-t26f-compile-queue-observation.mjs": "fff0cf5e7bbbf9c822bbe6b62cb2dcf936076da1eeb3d455d3cdd7a915c02dcc",
+    "tools/verify/e5-t26f-resident-proof.mjs": "d5615b185536f0f0af3da7d4b133ec28ec9e2c62962d22b3cd57e8c24f5a5810",
+    "evidence/e5-t26f/single-process-observer-05b82bc6/reuse/failure-post-restore-interaction-checks.json": "0881a4aa55808bd0884b5a6ef2f05af4da9601b119e188390cef94b4c667002a",
+    "evidence/e5-t26f/single-process-observer-05b82bc6/posthoc-observation.json": "7a0ec6b45330319c6a49457365f968538bbda0ce78bf6fad38565f984d01dc50",
+    "evidence/e5-t26f/single-process-collector-gates.log": "65b83ca58cfc82f2d8c30c10ea9fbd2e7154c28ad8e43c6874758e566ca88df8"
+  },
+  "unchangedAccountingAndTimingBodySha256": "6e007c45af129389353b2dd5c0f1a26eb340dd7ec5015a2bcb2457d8452ac942",
+  "provenanceSha256": "72d046d9909bdc657a842cfae405b3c98885264078caca916768168740d8e454",
+  "rawSamples": {
+    "before": {
+      "discovery": {
+        "nominated": 271,
+        "deduped": 527508,
+        "droppedStale": 0,
+        "droppedOverflow": 0,
+        "countsDropped": 0,
+        "excluded": 22,
+        "queueDepth": 0,
+        "queueHighWater": 137,
+        "candidates": 3678,
+        "generation": 5
+      },
+      "compileQueue": {
+        "admitted": 271,
+        "droppedBackpressure": 0,
+        "cancelledStale": 0,
+        "popped": 96,
+        "queueHighWater": 221,
+        "queueDepth": 175,
+        "capacity": 256
+      },
+      "submitted": 95
+    },
+    "after": {
+      "discovery": {
+        "nominated": 2978,
+        "deduped": 3922053,
+        "droppedStale": 0,
+        "droppedOverflow": 0,
+        "countsDropped": 0,
+        "excluded": 31,
+        "queueDepth": 37,
+        "queueHighWater": 137,
+        "candidates": 32222,
+        "generation": 5
+      },
+      "compileQueue": {
+        "admitted": 1757,
+        "droppedBackpressure": 1797,
+        "cancelledStale": 0,
+        "popped": 896,
+        "queueHighWater": 256,
+        "queueDepth": 248,
+        "capacity": 256
+      },
+      "submitted": 665
+    }
+  },
+  "independent": {
+    "discoveryDelta": {
+      "nominated": 2707,
+      "deduped": 3394545,
+      "droppedStale": 0,
+      "droppedOverflow": 0,
+      "countsDropped": 0,
+      "excluded": 9
+    },
+    "discoveryDepthDelta": 37,
+    "compileQueueDelta": {
+      "admitted": 1486,
+      "droppedBackpressure": 1797,
+      "cancelledStale": 0,
+      "popped": 800
+    },
+    "accounting": {
+      "staged": 2670,
+      "submitted": 570,
+      "pendingDepthDelta": 73,
+      "droppedBackpressure": 1797,
+      "cancelledStale": 0,
+      "popped": 800,
+      "poppedUnsubmitted": 230,
+      "incomingRejected": 1184,
+      "residentDisplaced": 613
+    },
+    "guestRetiredDelta": 49977871,
+    "jitRetiredDelta": 19818064,
+    "elapsedMs": 4362.199999928474,
+    "fTimingPassed": false,
+    "fVerified": false
+  },
+  "held": true
+}

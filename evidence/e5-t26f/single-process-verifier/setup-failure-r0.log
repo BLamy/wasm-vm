@@ -1,0 +1,20 @@
+Historical verifier setup failure, not a candidate failure. No compiler or observer ran.
+Command: node evidence/e5-t26f/single-process-verifier/run-attack.mjs
+Exit: 1; Node.js v24.20.0.
+Initial driver SHA256: 7f439b7f176442764aca51d25ed7152dfd52186efd802545b34c78b97d836471
+Exact initial driver retained as run-attack.r0.mjs. Diagnostic excerpt follows;
+the complete original tool response remains in this critic session.
+
+node:fs:622
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/Users/blamy/Documents/Codex/tools/guest/e5-t26f-observer.c'
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/blamy/Documents/Codex/tools/guest/e5-t26f-observer.c'
+
+Correction before candidate execution: use three parent directories for repo root,
+not four; bind mutation to the actual parse_pcm remember_key statement.
+The attack prediction and production sources did not change.

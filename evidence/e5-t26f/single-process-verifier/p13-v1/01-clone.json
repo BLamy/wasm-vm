@@ -1,0 +1,17 @@
+{
+  "name": "01-clone",
+  "command": "git",
+  "args": [
+    "-c",
+    "core.hooksPath=/dev/null",
+    "clone",
+    "--no-local",
+    "--no-checkout",
+    "/Users/blamy/Documents/Codex/wasm-vm",
+    "/private/tmp/e5-t26f-single-process-p13.j00WpJ/repo"
+  ],
+  "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+  "code": 0,
+  "signal": null,
+  "error": null
+}

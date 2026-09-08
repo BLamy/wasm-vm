@@ -1,0 +1,26 @@
+✔ actual observer record flows through discovery admission and exact compile-queue accounting (2.52675ms)
+✔ coherent exact accounting splits both backpressure cases without subtracting discovery refusals (0.2235ms)
+✔ negative resident-depth delta and lifetime drops with zero interval drops remain valid (0.133ms)
+✔ missing, unsafe and out-of-bound actual queue fields refuse (0.955042ms)
+✔ impossible residuals, regressions, unsafe intermediate totals and mixed head/policy refuse (0.674167ms)
+✔ actual success producer shape uses only its nested head and never verifies F (1.849041ms)
+✔ CLI binds original bytes, preserves inputs/outputs and refuses bad accounting before output (107.185041ms)
+✔ unchanged closed observer record retains actual provenance, counters and failed timing (2.522ms)
+✔ observer requires coherent run/binding pins and an explicit supported fixture kind (2.528167ms)
+✔ matching copies still refuse missing or malformed observer provenance and unequal readback (8.050792ms)
+✔ CLI postprocesses the original observer record bytes without rewriting fixture or evidence (26.974833ms)
+✔ actual counters are mandatory safe integers, with bounded gauges and consistent generation (1.7735ms)
+✔ collector subtracts counters, retains gauges/endpoints and does not erase earlier drops (0.413791ms)
+✔ mixed policies, non-cap failures, moved endpoints, changed generations and regressed counters refuse (4.124958ms)
+✔ unitOnly successful-cap branch keeps nonacceptance and requires completion within its bound (2.0145ms)
+✔ CLI writes a new output bound to the exact unitOnly input bytes (28.738625ms)
+✔ CLI refuses existing output and input=output without overwriting either (52.538125ms)
+✔ CLI refuses a non-cap failure before creating output (26.011583ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 195.725583

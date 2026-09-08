@@ -1,0 +1,118 @@
+{
+  "acceptance": false,
+  "scope": "separate latency-only replay; sampled observations, not timing cause",
+  "files": {
+    "evidence/e5-t26f/single-process-observer-05b82bc6/invocation.json": {
+      "sha256": "3a9d98a834a83805ebba0081acc96cfb37c90e4edb2c032f99dde3dc39fc58c8",
+      "size": 3010
+    },
+    "evidence/e5-t26f/single-process-observer-05b82bc6/reuse/failure-post-restore-interaction-checks.json": {
+      "sha256": "0881a4aa55808bd0884b5a6ef2f05af4da9601b119e188390cef94b4c667002a",
+      "size": 31262
+    },
+    "evidence/e5-t26f/single-process-observer-05b82bc6/latency/invocation.json": {
+      "sha256": "e08826ba0fe0bbf0a21cf3eeb199f78f9a96804023f18ac0c446d1edce76e812",
+      "size": 1870
+    },
+    "evidence/e5-t26f/single-process-observer-05b82bc6/latency/record/failure-post-restore-interaction-checks.json": {
+      "sha256": "974433f28a914edfe6258e3c389eec5bc2e3ffd42e9b6c184b0453dad8562dff",
+      "size": 93188
+    },
+    "evidence/e5-t26f/single-process-observer-05b82bc6/latency/exit.json": {
+      "sha256": "0cf195d64edfa93e108082da543b5fe976bc4709e8021c314b822c486255c3d7",
+      "size": 25
+    },
+    "evidence/e5-t26f/single-process-observer-05b82bc6/run-latency.mjs": {
+      "sha256": "16af6ce3b4bc61a0775095a675c527911d2268cc7249310ecfc986f1b70ab209",
+      "size": 3633
+    },
+    "evidence/e5-t26f/single-process-latency-05b82bc6.log": {
+      "sha256": "afd52c38388bc51e8f381bcd305477f7e540e4b8d51766ef2b2fecb29bd20f4e",
+      "size": 4425
+    }
+  },
+  "observations": {
+    "producerHead": "05b82bc688a34e6a1abef7b6c761c01bf4a3f7c6",
+    "iterationProfile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-IKBhyX/iteration-7nse0r/profile",
+    "profileSha256": "f7a2bc52a45ed895eb1edd71f722ab1fb5c5ccf106a0753a6630b17f84940685",
+    "start": 1180.4750000238419,
+    "end": 5445.259999990463,
+    "elapsedMs": 4264.784999966621,
+    "capMs": 2000,
+    "fTimingPassed": false,
+    "samplerStartedElapsedMs": 803.8799999952316,
+    "pcmSampleCount": 68,
+    "schedulerSampleCount": 13,
+    "lastZero": {
+      "observedAt": 4485.685000061989,
+      "elapsedMs": 3305.210000038147,
+      "available": true,
+      "writeIndex": 0
+    },
+    "firstSampledPcm": {
+      "observedAt": 4536.375,
+      "elapsedMs": 3355.899999976158,
+      "available": true,
+      "writeIndex": 1440,
+      "pcmAvailable": true,
+      "completedAt": 4536.47000002861,
+      "pcm": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.999969482421875
+      }
+    },
+    "firstMarker": {
+      "startedAt": 5428.795000076294,
+      "observedAt": 5428.800000071526,
+      "elapsedMs": 4248.325000047684,
+      "stateReadMs": 0.004999995231628418,
+      "frameCount": 10,
+      "markerSeen": true
+    },
+    "pcmToMarkerObservedMs": 892.4250000715256,
+    "markerSamples": 120,
+    "markerCalls": 204,
+    "markerBufferLastElapsedMs": 2846.3949999809265,
+    "markerTotalMs": 10.114999055862427,
+    "markerMaxMs": 5.174999952316284,
+    "stopReason": "command-wait-settled",
+    "command": {
+      "command": "play",
+      "marker": "e5t26f-post-aplay",
+      "beforeFrame": 4,
+      "keyboardStart": 0,
+      "domEventStart": 0,
+      "visualDiffPixels": 8510,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 369,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 10,
+      "redMarkerSeen": false,
+      "keyboardFrames": 10,
+      "domEvents": 10,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "completionPcm": {
+      "available": true,
+      "writeIndex": 1440,
+      "readIndex": 1440,
+      "fillFrames": 0,
+      "capacityFrames": 4096,
+      "writtenFrames": 1440,
+      "inspectedFrames": 1440,
+      "nonSilentFrames": 1440,
+      "maxAbs": 0.999969482421875
+    }
+  },
+  "held": true
+}

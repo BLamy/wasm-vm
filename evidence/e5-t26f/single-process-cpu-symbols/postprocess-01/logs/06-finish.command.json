@@ -1,0 +1,25 @@
+{
+  "executable": "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+  "argv": [
+    "target/e5-t26f/single-process-symbols/finish.mjs"
+  ],
+  "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+  "startedAt": "2026-09-08T16:50:31.295Z",
+  "finishedAt": "2026-09-08T16:50:31.505Z",
+  "code": 0,
+  "signal": null,
+  "action": "All-section reauthentication and offline summary only; companion reused after successful authentication.",
+  "script": {
+    "path": "target/e5-t26f/single-process-symbols/finish.mjs",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/finish.mjs",
+    "size": 12960,
+    "sha256": "f908e2db7ac531da28fcbe785b2c816e1a0a056a766aaf6004bf8123a67cbd89"
+  },
+  "node": {
+    "path": "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "realpath": "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "size": 121911744,
+    "sha256": "9d050fd455b56426e25d4d603c7c501cbb2630348e836cf221dcce748e90588a",
+    "version": "v24.20.0"
+  }
+}

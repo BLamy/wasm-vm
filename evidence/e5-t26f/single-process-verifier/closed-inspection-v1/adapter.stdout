@@ -1,0 +1,4 @@
+111/777/4/0100000/5/0100002/|rchar:	100|wchar: 89 |syscr: 19|syscw: 5
+e5t26f-post pid=111 start=777 exe=/usr/bin/aplay(inode-match) wchan=pipe_read
+fifoFD=4 flags=0100000 readonly=1 parentFD=3 flags=0100002 child-writers=0
+pcmFD=5 owner=111 state=PREPARED hw_ptr=0 appl_ptr=0

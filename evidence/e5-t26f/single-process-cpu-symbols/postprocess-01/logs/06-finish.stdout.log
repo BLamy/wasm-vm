@@ -1,0 +1,161 @@
+{
+  "status": "authenticated",
+  "originalInputsUnchanged": true,
+  "summarySha256": "da4e6f6eddaa18ce5d0200cdc65c7ed72b9bd6bc05b5536f2c48f01aae2d3100",
+  "releaseSha256": "39c674d0707a1a0d4348df078128b8a83cd9bec0b5fe943239f25497b3bf127c",
+  "namedSha256": "44ee774b2c8bca1bfc82426944f01e6c79b85dffcccdd6488d953342f7e6eba0",
+  "allNoncustomSections": 11,
+  "names": 1890,
+  "indexedNodes": 234,
+  "uniqueIndices": 85,
+  "bridgeNodes": 3,
+  "selfCategories": [
+    {
+      "category": "authenticated-indexed-release",
+      "samples": 2063,
+      "us": 3077150,
+      "percent": 94.58764930564307
+    },
+    {
+      "category": "unmapped-generated-wasm",
+      "samples": 86,
+      "us": 128502,
+      "percent": 3.949986874566968
+    },
+    {
+      "category": "literal-runtime-or-synthetic",
+      "samples": 17,
+      "us": 24964,
+      "percent": 0.767361382209536
+    },
+    {
+      "category": "literal-javascript-or-other-url",
+      "samples": 14,
+      "us": 21103,
+      "percent": 0.6486791879814068
+    },
+    {
+      "category": "literal-release-bridge",
+      "samples": 1,
+      "us": 1507,
+      "percent": 0.04632324959901341
+    }
+  ],
+  "totalUs": 3253226,
+  "samples": 2181,
+  "profileDurationUs": 3254433,
+  "selfTop10": [
+    {
+      "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h1c6b17789b9d53e7",
+      "us": 406425,
+      "percent": 12.492983887378251
+    },
+    {
+      "name": "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b",
+      "us": 345971,
+      "percent": 10.634705366304093
+    },
+    {
+      "name": "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81",
+      "us": 288203,
+      "percent": 8.858991044581593
+    },
+    {
+      "name": "wasm_vm_core::Machine::sync_plic::h7f5c3bd066f966f0",
+      "us": 194434,
+      "percent": 5.976652098563088
+    },
+    {
+      "name": "wasm_vm_core::dispatch::BlockDiscovery::on_block_entry::h603a5b4937cad8ca",
+      "us": 167179,
+      "percent": 5.138868311024195
+    },
+    {
+      "name": "wasm_vm_core::Machine::try_jit_block::h0ec09f3d40a79477",
+      "us": 156469,
+      "percent": 4.809656630065049
+    },
+    {
+      "name": "wasm_vm_core::mmu::translate_cached::hf2b93220145a733d",
+      "us": 151708,
+      "percent": 4.663309588697496
+    },
+    {
+      "name": "wasm_vm_core::Machine::next_micro_op::hde9600194430e6db",
+      "us": 136758,
+      "percent": 4.203765738992618
+    },
+    {
+      "name": "wasm_vm_core::mmu::translate_cached::h0f176be2d21edacd",
+      "us": 122588,
+      "percent": 3.7681980901419085
+    },
+    {
+      "name": "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf",
+      "us": 88169,
+      "percent": 2.7102021193732004
+    }
+  ],
+  "inclusiveTop12": [
+    {
+      "name": "(root)",
+      "us": 3253226,
+      "percent": 100
+    },
+    {
+      "name": "runTick http://127.0.0.1:61637/loader.js",
+      "us": 3085776,
+      "percent": 94.85280149611494
+    },
+    {
+      "name": "runChunk http://127.0.0.1:61637/pkg/wasm_vm_wasm.js",
+      "us": 3084272,
+      "percent": 94.80657046267305
+    },
+    {
+      "name": "wasm_vm_wasm::WasmLinux::run_chunk::h07405c1400974665",
+      "us": 3082763,
+      "percent": 94.76018573563596
+    },
+    {
+      "name": "wasmlinux_runChunk multivalue shim",
+      "us": 3082763,
+      "percent": 94.76018573563596
+    },
+    {
+      "name": "js-to-wasm:iii:ii http://127.0.0.1:61637/pkg/wasm_vm_wasm_bg.wasm",
+      "us": 3082763,
+      "percent": 94.76018573563596
+    },
+    {
+      "name": "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b",
+      "us": 3013880,
+      "percent": 92.64281055174156
+    },
+    {
+      "name": "wasm_vm_core::Machine::try_jit_block::h0ec09f3d40a79477",
+      "us": 1025149,
+      "percent": 31.511767089037157
+    },
+    {
+      "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h1c6b17789b9d53e7",
+      "us": 605145,
+      "percent": 18.601382135763085
+    },
+    {
+      "name": "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81",
+      "us": 500082,
+      "percent": 15.371880096863851
+    },
+    {
+      "name": "wasm_vm_core::Machine::next_micro_op::hde9600194430e6db",
+      "us": 496277,
+      "percent": 15.254919270902175
+    },
+    {
+      "name": "wasm-to-js",
+      "us": 195873,
+      "percent": 6.020885115267123
+    }
+  ]
+}

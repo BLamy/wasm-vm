@@ -1,0 +1,11 @@
+{
+  "name": "05-observer-gate",
+  "command": "make",
+  "args": [
+    "verify-E5-T26f-single-process-observer"
+  ],
+  "cwd": "/private/tmp/e5-t26f-single-process-p13.j00WpJ/repo",
+  "code": 0,
+  "signal": null,
+  "error": null
+}

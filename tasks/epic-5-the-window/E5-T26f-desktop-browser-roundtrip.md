@@ -40,6 +40,31 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker and fresh Daybreak critic — single-process observer closes
+
+PR368 source freeze `05b82bc688a34e6a1abef7b6c761c01bf4a3f7c6` builds the
+static RISC-V observer and separately pinned image. Actual Chromium cold/reuse
+restores the same prepared PID1000/start31468, matching CRC `9c53f290`, and
+produces1440 fresh non-silent PCM frames after physical input. The original
+endpoint is **4362.199999928474 ms: FAILED**, not F acceptance. Its raw SHA256
+is `0881a4aa55808bd0884b5a6ef2f05af4da9601b119e188390cef94b4c667002a`.
+The wrapper also failed legacy collector-kind admission; original exit/raw
+are preserved. `001e80864911863145f2127192bae5df8186e68b` repairs only report
+admission, with an actual-record regression and separately labeled postprocessing.
+
+Daybreak's independent source, image/runtime/profile/snapshot authentication,
+collector arithmetic and one exact001e8086 clean-clone review hold within their
+scope. Commands: `make verify-E5-T26f-single-process-observer` and
+`node --test tools/verify/e5-t26f-discovery-observation.test.mjs tools/verify/e5-t26f-compile-queue-observation.test.mjs`.
+The clean clone passes10,389 C checks,82 observer-gate Node tests and18 overlapping
+collector tests with a clean tree before/after. The original source freeze had81
+Node tests; the actual-record regression adds one. Separate latency/CPU records
+also fail the unchanged deadline; authenticated CPU names do not establish a
+causal optimization or speedup. Detailed commands, hashes, limits and fresh
+critic reports: `evidence/e5-t26f/single-process-observer.md` and its linked
+`single-process-verifier/` reports. F remains in progress; unreached later
+coherence/drag phases are not upgraded, and no production release is claimed.
+
 ### 2026-09-08 — coordinator — bounded single-process observer candidate
 
 The buffered-proc attempt closes in PR367 at `a7d1556a`, with actual playback
