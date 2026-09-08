@@ -3,8 +3,7 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: blocked
-blocked_on: E5-T26n must verify SPP-only cache-context transitions before the next exact-runtime browser proof
+status: in-progress
 depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l, E5-T26m, E5-T26n]
 estimate: S
 risk: high
@@ -40,6 +39,26 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — resume after verified SPP prerequisite
+
+E5-T26n is independently verified by Daybreak at
+`ba9910ab0bec9029368376888a34a629620c7dbd`, with final test head
+`b50491ceafc5be9029ee96dc9229085efd354e22`, one clean-clone proof and the
+unchanged-image 126/0 demo. PR #372 publishes its verified roadmap state at
+`9511165cb8d7106b7a17cf4cd381c08b3c490121`. Served WASM SHA256 is
+`84b2c17c9b6ab9d86c85912f82bd0b4b4533178fc27a0724d47565cb40974b4d`.
+Only cached SPP equality changes; F's image/helper, clocks, execution budgets,
+input pacing and two-second deadline are unchanged.
+
+Resume with one fresh authenticated cold checkpoint and one unprofiled default
+reuse via `env -u RUSTDOCFLAGS node tools/verify/e5-t26f-browser-single-process-observer.mjs`.
+The independent critic's predictions are frozen first in
+`evidence/e5-t26f/spp-runtime-verifier/plan.md`. All older checkpoint seals
+remain invalid for this runtime; none may be rebound. This diagnostic screen
+cannot itself verify F, even if fast: the full normal acceptance run and its
+remaining drag/reload phases are still required. Prior 3701.995 ms failure is
+retained, not recaptioned as a success. No timing improvement is assumed.
 
 ### 2026-09-08 — coordinator — blocked on E5-T26n
 
