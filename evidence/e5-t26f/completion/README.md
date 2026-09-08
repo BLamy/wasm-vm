@@ -584,3 +584,127 @@ ee7b8415d2e6cde2139882d8f5d2c4b7e344c1f6fb9b1206e1ad0bb8812bf63a  source-command
 89a8ff631b11fa8efc1b4a21eeb3b6a206e2dc65bda6fd6fa47cf65affa9e213  source-command-8986/post-restore.json
 42d4cdc92e7f2a4d0c4374f9c03b0a18235d3b976387774d028b322a8fdcd441  source-command-8986/post-restore.png
 ```
+
+## 8c892667 — guest-visible release after second restore; timing still fails
+
+The [transcript](guest-release-8c892667.log) runs from 2026-09-08 07:22:12 to
+07:22:57 UTC at exact head `8c892667be0da360af2329f2ae8bf7bf7ef6f10d`, Chromium
+`Chrome/152.0.7977.76`, headless. The [final JSON](guest-release-8c892667/diagnostic-completion.json)
+records diagnostic-completion schema v1, `acceptance: false`,
+`functionalChecksPassed: true`, `timingPassed: false`, and `checksPassed: false`.
+Evidence finishes before the original cap AssertionError is rethrown, exit **1**;
+there is no duplicate final failure capture or acceptance artifact.
+
+### Exact binding and reproduction configuration
+
+This iteration copies the existing **8986 seal**, not a new cold setup or rebound
+profile. `creatorHead` remains `89865ea5465a94512d966388b2aa57c9442627a1`;
+`currentHead` is the full 8c892667 head above. The checkpoint path is
+`/private/tmp/e5-t26f-paced-receipt-78h2h4/normal-checkpoint.json`, created at
+`2026-09-08T06:59:59.311Z`; its JSON SHA-256 remains
+`dbe6e74f7e9e68d4d4468dd30cd9f794893b5a93a9f17a73bff660af00bbfc6d` and recorded
+sealed-profile SHA-256 remains
+`85c02f515233eca69df87bfbeeb06c32a50215f0a810739f1966775dedabbf9a`.
+The run uses the separate copy `iteration-nyhq70/profile` beneath that directory.
+Runtime SHA-256 is unchanged:
+`874f63af4e09fa9e23f348b5ef8050ae09382c1273ce459b999525db40962ccd`.
+The JSON's kernel, image, manifest, origin and normal-snapshot bindings were
+compared with the cold report and match exactly; their full hashes remain above.
+
+As with the preceding entry, this reconstructs the recorded configuration using
+the retained image paths, not a claimed literal parent-shell transcript. Clear
+inherited `E5_T26F_*` variables first. The named output is historical: use a **new
+empty output subdirectory** for another replay; leave the seal untouched.
+`HEADED`, command, CPU, latency, JIT, residency and guest-clock overrides are absent.
+
+```sh
+E5_T26F_REQUIRE_HEAD=8c892667be0da360af2329f2ae8bf7bf7ef6f10d \
+E5_T26F_DIAGNOSTIC=reuse E5_T26F_DIAGNOSTIC_COMPLETE=1 \
+E5_T26F_DIAGNOSTIC_KEY_DELAY_MS=5 \
+E5_T26F_DIAGNOSTIC_PROFILE=/private/tmp/e5-t26f-paced-receipt-78h2h4 \
+E5_T26F_DIAGNOSTIC_PORT=61629 \
+E5_T26F_IMAGE=target/e5-t26f/desktop-image-aplay-noresize/alpine-rootfs.ext4 \
+E5_T26F_IMAGE_INFO=target/e5-t26f/desktop-image-aplay-noresize/desktop-info.json \
+E5_T26F_DESKTOP_ASSET_DIR=target/e5-t26f/chunks/desktop-aplay-noresize \
+E5_T26F_OUT=evidence/e5-t26f/completion/guest-release-8c892667 \
+node tools/verify/e5-t26f-browser-roundtrip.mjs
+```
+
+### Observed release and unchanged proof limits
+
+After second-restore coherence passes, the helper sends one **move only**, with
+no down/up/click or release injection. `milestones.dragGuestRelease` retains eight
+samples. Initial pointer-frame count is **0**; the first sample still has no frame
+or rendered cursor. The next samples record frame **1**, absolute tablet
+`pointermove`, normalized coordinates **17126/2253**, while cursor evidence is
+still null. Only the fourth sample acknowledges the actual guest cursor at
+**669/55**, with 94 matched pixels. The mapped browser point is **749/139**.
+
+Acknowledgment is at **1874.375 ms**, final observation at
+**2897.194999933243 ms**: **1022.820 ms after acknowledgment**. These are second-page
+observation timestamps, not a replacement interaction clock. All eight samples
+have `heldButtons: []` and the exact saved/paused titlebar
+`left=637, right=1280, top=32, bottom=58`; no edge moves, even within the allowed
+one-pixel tolerance. The guest-release milestone reaches `passed` before the
+functional completion flag and final evidence write. This adds guest-visible
+cursor consumption and stationary-window evidence beyond the prior host ledger.
+
+The actual drag again moves the upper window **80 px right**, from
+`557..1253 / 13..39` to `637..1280 / 32..58`. All four saves complete. Moving and
+released snapshots are byte-identical while paused, SHA-256
+`565dacbf461a372cd4ab5d353eae7753cab21527801cbe8777296ecfd6c02161`, 2695511 bytes;
+the nonpersistent released save is not new guest execution. Publication and
+before-reload audits both retain paused/still-paused state, `resume`, generation
+and final generation **616**, and the matching envelope hash. Normal and moving
+first-present CRCs match **a9a1eba9** and **d028fe13** respectively. Both restores
+retain fresh generation-2 HELLOs, no `booting`, and actual admission receipts
+`attempted: true, decision: resume, overlayGeneration: 616`.
+
+Unchanged physical `sh /tmp/a`, paced at 5 ms, records 20 matching keyboard/DOM
+transitions and the conditional green marker. The first-restored cursor arrives
+at **853.095 ms**. Immediate playback capture retains **1440 written frames / 960
+non-silent**, maximum magnitude 0.082000732421875, and attached output. The
+[final PNG](guest-release-8c892667/diagnostic-completion.png) (1440×1145) visibly
+shows `underrun!!! (at least 0.063 ms long)` followed by the green marker: recovered
+playback, **not zero XRUN**. Browser and HTTP error arrays are empty; both retained
+console 404s resolve to `/favicon.ico` in the
+[server log](guest-release-8c892667/diagnostic-completion-server.log), lines 7 and 13.
+
+Original T0 **1131.2849999666214 ms** and end **6181.514999985695 ms** yield
+**5050.230 ms**, still failing the unchanged **2000 ms** cap. The complete retained
+cap object equals the [immediate timing JSON](guest-release-8c892667/diagnostic-completion-timing.json);
+the later 5050.575 ms interaction-summary sample is not the asserted endpoint.
+Previously HELD cold-setup, CRC/receipt/no-boot, physical terminal/audio, real-drag,
+and failure-reporting observations carry only their unchanged boundaries. Native
+input reconciliation coverage is not substituted for this browser observation.
+This appendix records the new release evidence, not a fresh critic verdict;
+neither functional completion nor a carried HELD component verifies F or waives
+its still-failed timing criterion.
+
+### Focused tests and artifact digests
+
+[guest-release-final-tests.log](guest-release-final-tests.log) records **165 passed,
+0 failed, 0 skipped**, including the real worker-profiler adapter test. The separate
+[49-test partial invocation](guest-release-partial-invocation.log) is only a subset,
+**not the full focused gate**. The full focused command is:
+
+```sh
+node --test tools/verify/e5-t26f-{browser-roundtrip,cpu-profile,residency-comparison,completion,drag-geometry,restore-evidence,physical-typing,guest-release}.test.mjs
+```
+
+These logs were read, not rerun for this documentation update. Focused helper
+tests are not a passing `make verify-E5-T26f` or browser acceptance result.
+Full test-log SHA-256:
+`1423906b1ecc702dae1230101c3347b601cadee3a369c7748ab1cd87b69a0f8f`.
+
+SHA-256 of all seven run artifacts, including the transcript (relative to this README):
+
+```text
+660a5b1fdeb5aeac458054a0a074eaeb075d0d0215530cac2635a9493923d607  guest-release-8c892667.log
+63ac6c1e54e9239e1ad452590bf2ab63e5af68eaf6db583942d41ffa0e268836  guest-release-8c892667/diagnostic-completion-server.log
+c0b745f4f54973a2be072b6e543151ef67244ab4faf1b2a015c7aee048333302  guest-release-8c892667/diagnostic-completion-timing-server.log
+8d00637b247ec7e35925f4dc9e89bdcc3c0f1432c5128b0fab3dd2635a0c032b  guest-release-8c892667/diagnostic-completion-timing.json
+170ba93cd9b1956f190cde31814905db406e73db73d0d9c6510eb72b48b573cf  guest-release-8c892667/diagnostic-completion-timing.png
+28046f748fc855531d5bc77874cfff7c57ce85992e231eb68d369d85bdbf2e8a  guest-release-8c892667/diagnostic-completion.json
+7c6124ffed75baee70e118908e5e063c21e910ca60ad1a13e52b6cf72677e211  guest-release-8c892667/diagnostic-completion.png
+```

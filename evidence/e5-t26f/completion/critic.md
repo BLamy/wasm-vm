@@ -1317,3 +1317,68 @@ two-pixel edge motion, no post-ack dwell, and accidental down/up. The one sealed
 record the actual samples, guest frame coordinates, rendered cursor, unchanged titlebar, and final
 nonzero original-cap exit before the prior no-stuck-button finding can move from NEEDS EVIDENCE to
 HELD.
+
+## `8c892667` replay result — guest no-stuck-button HELD
+
+The single same-runtime replay closes the narrow browser endpoint predicted above. Frozen harness
+and tests are commit `8c892667be0da360af2329f2ae8bf7bf7ef6f10d`; the runtime remains SHA-256
+`874f63af4e09fa9e23f348b5ef8050ae09382c1273ce459b999525db40962ccd`, and the immutable seal is
+the existing 8986 profile (`creatorHead=89865ea5`, profile SHA-256
+`85c02f515233eca69df87bfbeeb06c32a50215f0a810739f1966775dedabbf9a`). The 165-test focused
+record has SHA-256 `1423906b1ecc702dae1230101c3347b601cadee3a369c7748ab1cd87b69a0f8f` and reports
+165 passed, 0 failed, including the real Chromium adapter and each predeclared guest-release
+sabotage. Runner SHA-256 is
+`d49ce58fcd1130e46ac73dbd95e15efac1ad6bdce5ab92e6a009ccf4544465a6`; the dedicated helper-test
+file is SHA-256 `52680cc6a1957cf40898553115718c6cd25b26888604d5f3cff75fee61bf366f`.
+
+Canonical replay artifacts were mechanically hashed as follows:
+
+- `diagnostic-completion.json` —
+  `28046f748fc855531d5bc77874cfff7c57ce85992e231eb68d369d85bdbf2e8a`;
+- `diagnostic-completion.png` —
+  `7c6124ffed75baee70e118908e5e063c21e910ca60ad1a13e52b6cf72677e211`;
+- `diagnostic-completion-timing.json` —
+  `8d00637b247ec7e35925f4dc9e89bdcc3c0f1432c5128b0fab3dd2635a0c032b`;
+- `diagnostic-completion-timing.png` —
+  `170ba93cd9b1956f190cde31814905db406e73db73d0d9c6510eb72b48b573cf`;
+- completion server log —
+  `63ac6c1e54e9239e1ad452590bf2ab63e5af68eaf6db583942d41ffa0e268836`;
+- timing server log —
+  `c0b745f4f54973a2be072b6e543151ef67244ab4faf1b2a015c7aee048333302`;
+- adjacent run transcript —
+  `660a5b1fdeb5aeac458054a0a074eaeb075d0d0215530cac2635a9493923d607`.
+
+The live `dragGuestRelease` observation satisfies all six predictions. Its initial frame count is
+zero with `heldButtons:[]`. The move produces exactly one new tablet `pointermove` frame at
+`{x:17126,y:2253}`, which is the independently rounded 32767-range mapping of guest point
+`{x:669,y:55}`. The front buffer then renders the custom cursor at that exact point with 94 matched
+pixels. Across all eight finite, non-regressing samples, every held-button array remains empty and
+every titlebar remains exactly `{left:637,right:1280,top:32,bottom:58}`—stricter than the permitted
+one-pixel tolerance. Cursor acknowledgment occurs at 1874.375 ms and the final stationary sample at
+2897.194999933243 ms, a **1022.8199999332428 ms** post-ack dwell. The helper emits only the mapped
+move; no down/up or synthetic release participates. This independently proves that Linux/Weston
+consumed the restored release before processing the new motion: a retained BTN_LEFT would have
+translated the titlebar.
+
+The surrounding whole-machine facts also carry on the new execution. The normal snapshot SHA/CRC
+remain `4123ec771362109ed9153bdc6635470aad357c2d8ef729da9b19412544e66f95` / `a9a1eba9` and match
+the normal first present. The new moving snapshot SHA/CRC
+`565dacbf461a372cd4ab5d353eae7753cab21527801cbe8777296ecfd6c02161` / `d028fe13` match the second
+restore and first present. Both restores consume genuine generation-616 `resume` receipts, report a
+fresh HELLO generation 2, and never enter `booting`; both frozen moving audits remain paused and
+coherent. The real `sh /tmp/a` marker succeeds with 1440 fresh PCM frames / 960 non-silent at maxAbs
+0.082000732421875. Browser and HTTP error arrays are empty; the two generic console 404s again map
+exactly to `/favicon.ico` in both server logs.
+
+F1 remains closed: exactly six intended completion/timing files exist, the transcript records
+`restore:drag:guest-release` start/done followed by `diagnostic:completion-evidence` done, and the
+process exits 1 by rethrowing the original cap assertion without a duplicate failure capture. The
+cap itself is unchanged and still fails: `postRestoreStart=1131.2849999666214`,
+`postRestoreEnd=6181.514999985695`, difference **5050.2300000190735 ms** > 2000 ms.
+
+**Incremental verdict: functional criteria HELD; E5-T26f remains in progress on timing only.** The
+previous guest no-stuck-button NEEDS EVIDENCE finding is closed. Acceptance criterion 1 and the
+functional portions of criterion 2 remain HELD; criterion 3 now HELD end-to-end through the actual
+browser guest. Criterion 2 still FAILS solely at its explicit two-second bound. This diagnostic is
+`acceptance:false`, `functionalChecksPassed:true`, `timingPassed:false`, and `checksPassed:false`;
+it supplies no timing waiver or F verification claim.

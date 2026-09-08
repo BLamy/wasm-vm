@@ -40,6 +40,26 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker — guest-release replay closes the functional proof
+
+The single COMPLETE reuse at frozen `8c892667be0da360af2329f2ae8bf7bf7ef6f10d`
+keeps the existing 8986 runtime/checkpoint bindings. A new physical tablet move
+advances frame count 0 to 1 at normalized coordinates 17126/2253. The actual guest
+cursor reaches 669/55, then the saved titlebar stays exactly 637..1280 / 32..58
+through all eight samples, including 1022.820 ms after acknowledgment. There is
+no down/up injection. Both matching-CRC restores retain generation-616 admission,
+fresh HELLO and no boot. Fresh playback yields 1440 PCM frames / 960 non-silent;
+the screenshot shows a recovered 0.063-ms XRUN, not zero underruns.
+
+Canonical report `evidence/e5-t26f/completion/guest-release-8c892667/diagnostic-completion.json`
+has SHA-256 `28046f748fc855531d5bc77874cfff7c57ce85992e231eb68d369d85bdbf2e8a`.
+All 165 focused tests pass. Daybreak independently closes the guest no-stuck
+finding and carries the functional criteria as HELD in `completion/critic.md`.
+The original interval still fails at **5050.230 ms**, so the diagnostic exits 1
+and F remains in progress on timing only. No verified status, policy promotion,
+merge or deployment follows. The next bounded precheck compares whole-program
+WASM build optimization without changing runtime semantics or acceptance.
+
 ### 2026-09-08 — worker — close the guest-release observation gap
 
 Daybreak carries the 8986 receipt, CRC, no-boot, input/audio and actual-drag
