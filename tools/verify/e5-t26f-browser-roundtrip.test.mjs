@@ -757,7 +757,7 @@ test("JIT measurement rejects stale, reversed and malformed retirement counts wi
 });
 
 test("both JIT arms capture PCM and freeze postRestoreEnd before the second RPC; the original cap still fails", async () => {
-  const body = extractBetween("  const postPcmAtCompletion =", '  phaseProgress("post-restore:interaction-checks", "done");');
+  const body = extractBetween("  const postPcmAtCompletion =", '  await auditRestoreCoherence(firstRestore, normalSnapshot, "normal");');
   for (const jit of ["0", "1"]) for (const completedAt of [3_000, 3_000.01]) {
     const f = delayedGestureFixture(1_100, "sh /tmp/a", 5);
     f.sandbox.diagnostic = { mode: "reuse", jit };
@@ -1013,7 +1013,7 @@ test("CPU setup failure is captured before finally collection without replacing 
 });
 
 test("CPU collection follows frozen PCM/end and precedes the unchanged cap even when collection stalls", { timeout: 2_000 }, async () => {
-  const body = extractBetween("  const postPcmAtCompletion =", '  phaseProgress("post-restore:interaction-checks", "done");');
+  const body = extractBetween("  const postPcmAtCompletion =", '  await auditRestoreCoherence(firstRestore, normalSnapshot, "normal");');
   for (const completedAt of [3_000, 3_000.01]) {
     const f = cpuFixture();
     await f.api.startCpuProfile(f.identity, 1_000);
@@ -1568,8 +1568,8 @@ const beforeTimedInteraction = extractBetween(
   "  phaseProgress(\"post-restore:focus-and-gesture\")",
 );
 const afterTimedInteraction = extractBetween(
-  "  phaseProgress(\"post-restore:interaction-checks\", \"done\");",
-  "  if (diagnostic) {\n    phaseProgress(\"diagnostic:iteration-evidence\");",
+  "  await auditRestoreCoherence(firstRestore, normalSnapshot, \"normal\");",
+  "  if (diagnostic && !diagnostic.complete) {\n    phaseProgress(\"diagnostic:iteration-evidence\");",
 );
 const originalTimingAssertion = source.match(
   /assert\.ok\(postRestoreEnd - postRestoreStart <= 2_000, "post-restore interaction exceeded 2 seconds"\);/,
@@ -1585,6 +1585,7 @@ function runRestoreSequence(f) {
       const postRestoreInteraction = { elapsedMs: postRestoreEnd - postRestoreStart };
       milestones.postRestoreInteraction = postRestoreInteraction;
       ${originalTimingAssertion}
+      const deferredInteractionCap = null;
       ${afterTimedInteraction}
       nextSave();
       return firstRestore;
@@ -1966,7 +1967,7 @@ test("second restore performs the real coherence audit after display/button chec
   const buttonCheck = sequence.indexOf("assert.deepEqual(afterDragState.pointer.heldButtons, []");
   const displayCheck = sequence.indexOf("assert.ok(afterDragState.presentation.successfulPresents > 0");
   const audit = sequence.indexOf('await auditRestoreCoherence(secondRestore, dragSnapshot, "drag")');
-  const passed = sequence.indexOf("milestones.dragRestore.checksPassed = true");
+  const passed = sequence.indexOf("milestones.dragRestore.checksPassed = deferredInteractionCap === null");
   const evidence = sequence.indexOf('phaseProgress("evidence:write")');
   assert.ok(buttonCheck >= 0 && displayCheck > buttonCheck && audit > displayCheck && passed > audit && evidence > passed);
 });

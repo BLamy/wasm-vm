@@ -11,6 +11,7 @@
 // E5_T26F_DIAGNOSTIC_JIT=0|1 (reuse only) compares the existing unprofiled desktop JIT routes.
 // E5_T26F_DIAGNOSTIC_RESIDENCY (reuse + explicit JIT=1 only) selects an existing module cap.
 // E5_T26F_DIAGNOSTIC_CPU=1 (reuse only) records the owned worker using the shared CDP profiler.
+// E5_T26F_DIAGNOSTIC_COMPLETE=1 (reuse only) retains later functional evidence, then rethrows a failed timing cap.
 
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
@@ -44,6 +45,16 @@ const jsonReplacer = (_key, value) => typeof value === "bigint" ? `${value}n` : 
 
 function diagnosticOptions(env) {
   const mode = env.E5_T26F_DIAGNOSTIC;
+  const complete = env.E5_T26F_DIAGNOSTIC_COMPLETE;
+  if (complete !== undefined) {
+    assert.equal(mode, "reuse", "diagnostic completion requires reuse mode");
+    assert.equal(complete, "1", "diagnostic completion flag must be exactly 1");
+    for (const key of ["E5_T26F_DIAGNOSTIC_JIT", "E5_T26F_DIAGNOSTIC_RESIDENCY",
+      "E5_T26F_DIAGNOSTIC_GUEST_CLOCK", "E5_T26F_DIAGNOSTIC_CPU",
+      "E5_T26F_DIAGNOSTIC_LATENCY", "E5_T26F_DIAGNOSTIC_COMMAND"]) {
+      assert.equal(env[key], undefined, "diagnostic completion requires unchanged unprofiled policies and command");
+    }
+  }
   const jit = env.E5_T26F_DIAGNOSTIC_JIT;
   const residency = env.E5_T26F_DIAGNOSTIC_RESIDENCY;
   if (residency !== undefined) {
@@ -97,7 +108,7 @@ function diagnosticOptions(env) {
   assert.ok(Number.isSafeInteger(port) && port >= 1024 && port <= 65535, "diagnostic mode requires a stable explicit server port");
   return { mode, directory, port, origin: `http://127.0.0.1:${port}`, command: command ?? null,
     keyDelayMs: Number(delay ?? 0), latency: latency === "1", cpu: cpu === "1", guestClock: guestClock ?? null,
-    jit: jit ?? null, residency: residency ?? null };
+    jit: jit ?? null, residency: residency ?? null, complete: complete === "1" };
 }
 
 const diagnostic = diagnosticOptions(process.env);
@@ -224,7 +235,15 @@ async function readBrowserIdentity(browser, context, page, headless) {
   }
 }
 
+async function requireEmptyCompletionOutput(directory) {
+  await mkdir(directory, { recursive: true });
+  assert.equal((await readdir(directory)).length, 0,
+    "diagnostic completion refuses nonempty output directory; use a fresh run subdirectory");
+}
+
 assert.ok(Number.isSafeInteger(timeoutMs) && timeoutMs >= 120_000, "timeout must be at least two minutes");
+// Outside the failure-capture try: refusal must not write into a protected prior run.
+if (diagnostic?.complete) await requireEmptyCompletionOutput(out);
 
 async function freePort() {
   return new Promise((resolve, reject) => {
@@ -328,6 +347,76 @@ const milestones = {
 
 let lastPhase = null;
 let cpuProfiler = null;
+
+function retainDeferredInteractionCap(error, postRestoreStart, postRestoreEnd) {
+  // Only the dedicated final-cap assertion may be deferred, never an earlier functional error
+  // or a malformed clock. Keep the original Error object for the eventual nonzero exit.
+  if (diagnostic?.mode !== "reuse" || diagnostic.complete !== true ||
+      !(error instanceof assert.AssertionError) || error.code !== "ERR_ASSERTION" ||
+      error.message !== "post-restore interaction exceeded 2 seconds" ||
+      error.actual !== false || error.expected !== true || error.operator !== "==" ||
+      !Number.isFinite(postRestoreStart) || !Number.isFinite(postRestoreEnd) ||
+      postRestoreStart < 0 || postRestoreEnd < 0 ||
+      postRestoreEnd - postRestoreStart <= 2_000) throw error;
+  milestones.deferredInteractionCap = {
+    kind: "timing-cap", acceptance: false, capturedAt: new Date().toISOString(),
+    postRestoreStart, postRestoreEnd, elapsedMs: postRestoreEnd - postRestoreStart, limitMs: 2_000,
+    error: { name: error.name, message: error.message, code: error.code,
+      actual: error.actual, expected: error.expected, operator: error.operator,
+      stack: String(error.stack || "").slice(0, 8_000) },
+  };
+  return error;
+}
+
+async function finishDiagnosticCompletion(identity, finalState, timingFailure) {
+  assert.equal(diagnostic?.mode, "reuse");
+  assert.equal(diagnostic.complete, true);
+  assert.equal(milestones.normalRestore?.functionalChecksPassed, true);
+  assert.equal(milestones.dragRestore?.functionalChecksPassed, true);
+  const { postRestoreStart, postRestoreEnd, deferredInteractionCap: retainedCap } = milestones;
+  assert.ok(Number.isFinite(postRestoreStart) && Number.isFinite(postRestoreEnd) &&
+    postRestoreStart >= 0 && postRestoreEnd >= postRestoreStart, "completion requires valid original timing boundaries");
+  assert.equal(postRestoreStart, milestones.normalRestore.result?.completedAt,
+    "completion must retain the original restore timestamp");
+  const elapsedMs = postRestoreEnd - postRestoreStart;
+  const timingPassed = elapsedMs <= 2_000;
+  if (timingPassed) {
+    assert.equal(timingFailure, null, "successful timing cannot retain a cap failure");
+    assert.equal(retainedCap, undefined, "successful timing contradicts a retained cap failure");
+  } else {
+    assert.ok(timingFailure instanceof assert.AssertionError && timingFailure.code === "ERR_ASSERTION" &&
+      timingFailure.message === "post-restore interaction exceeded 2 seconds" &&
+      timingFailure.actual === false && timingFailure.expected === true && timingFailure.operator === "==",
+    "completion must rethrow the original final cap AssertionError");
+    assert.equal(retainedCap?.kind, "timing-cap", "missing retained timing failure");
+    assert.equal(retainedCap.acceptance, false);
+    assert.equal(retainedCap.postRestoreStart, postRestoreStart);
+    assert.equal(retainedCap.postRestoreEnd, postRestoreEnd);
+    assert.equal(retainedCap.elapsedMs, elapsedMs);
+    assert.equal(retainedCap.limitMs, 2_000);
+    assert.deepEqual(retainedCap.error, {
+      name: timingFailure.name, message: timingFailure.message, code: timingFailure.code,
+      actual: timingFailure.actual, expected: timingFailure.expected, operator: timingFailure.operator,
+      stack: String(timingFailure.stack || "").slice(0, 8_000),
+    }, "completion error differs from the immediately retained cap");
+  }
+  assert.equal(milestones.postRestoreInteractionChecks?.functionalChecksPassed, true);
+  assert.equal(milestones.postRestoreInteractionChecks.timingPassed, timingPassed);
+  assert.equal(milestones.postRestoreInteractionChecks.checksPassed, timingPassed);
+  assert.equal(milestones.normalRestore.checksPassed, timingPassed);
+  assert.equal(milestones.dragRestore.checksPassed, timingPassed);
+  const result = {
+    schema: "wasm-vm.e5-t26f.diagnostic-completion.v1", task: "E5-T26f", head, acceptance: false,
+    functionalChecksPassed: true, timingPassed, checksPassed: timingPassed,
+    browser: identity, milestones, final: finalState,
+    errors: { browser: browserErrors, http: httpErrors }, elapsedMs: Date.now() - startedAt,
+  };
+  await writeFile(path.join(out, "diagnostic-completion.json"), `${JSON.stringify(result, jsonReplacer, 2)}\n`);
+  await writeFile(path.join(out, "diagnostic-completion-server.log"), serverOutput);
+  phaseProgress("diagnostic:completion-evidence", "done");
+  console.log(JSON.stringify(result, jsonReplacer, 2));
+  if (!timingPassed) throw timingFailure;
+}
 
 async function recordDiagnosticJit(key) {
   try {
@@ -1422,17 +1511,41 @@ try {
     assert.equal(postRestoreInteraction.audio.policy, "unlocked", "user gesture did not unlock audio");
     assert.ok(postAudioCommand.terminalMarkerSeen && postAudioCommand.visualDiffPixels >= 2_000,
       "post-restore aplay did not produce guest-visible terminal output");
-    assert.ok(postRestoreEnd - postRestoreStart <= 2_000, "post-restore interaction exceeded 2 seconds");
+    if (diagnostic?.complete) {
+      assert.deepEqual(browserErrors, [], "unexpected browser console/page errors");
+      assert.deepEqual(httpErrors, [], "unexpected browser HTTP errors");
+    }
   } catch (error) {
     await captureFailure("post-restore", error);
     throw error;
   }
-  phaseProgress("post-restore:interaction-checks", "done");
+  let deferredInteractionCap = null;
+  if (diagnostic?.complete) {
+    milestones.postRestoreInteractionChecks = { functionalChecksPassed: true, timingPassed: false, checksPassed: false };
+  }
+  // This try contains ONLY the original final cap. Every functional assertion stays fail-fast.
+  try {
+    assert.ok(postRestoreEnd - postRestoreStart <= 2_000, "post-restore interaction exceeded 2 seconds");
+  } catch (error) {
+    if (!diagnostic?.complete) {
+      await captureFailure("post-restore", error);
+      throw error;
+    }
+    deferredInteractionCap = retainDeferredInteractionCap(error, postRestoreStart, postRestoreEnd);
+    await captureFailure("diagnostic-completion-timing", error);
+    startProgressSampling(); // captureFailure stops sampling; later audit/drag phases still need it.
+  }
+  if (diagnostic?.complete) {
+    milestones.postRestoreInteractionChecks.timingPassed = deferredInteractionCap === null;
+    milestones.postRestoreInteractionChecks.checksPassed = deferredInteractionCap === null;
+  }
+  phaseProgress("post-restore:interaction-checks", deferredInteractionCap ? "timing-failed-continuing" : "done");
 
   await auditRestoreCoherence(firstRestore, normalSnapshot, "normal");
-  milestones.normalRestore.checksPassed = true;
+  if (diagnostic?.complete) milestones.normalRestore.functionalChecksPassed = true;
+  milestones.normalRestore.checksPassed = deferredInteractionCap === null;
 
-  if (diagnostic) {
+  if (diagnostic && !diagnostic.complete) {
     phaseProgress("diagnostic:iteration-evidence");
     assert.deepEqual(browserErrors, [], "unexpected browser console/page errors");
     assert.deepEqual(httpErrors, [], "unexpected browser HTTP errors");
@@ -1506,11 +1619,13 @@ try {
   milestones.dragRestore.displayChecksPassed = true;
   phaseProgress("restore:drag:display-and-button-checks", "done");
   await auditRestoreCoherence(secondRestore, dragSnapshot, "drag");
-  milestones.dragRestore.checksPassed = true;
+  if (diagnostic?.complete) milestones.dragRestore.functionalChecksPassed = true;
+  milestones.dragRestore.checksPassed = deferredInteractionCap === null;
 
   phaseProgress("evidence:write");
   await mkdir(out, { recursive: true });
-  await page.screenshot({ path: path.join(out, "desktop-roundtrip.png"), fullPage: true });
+  const screenshotName = diagnostic?.complete ? "diagnostic-completion.png" : "desktop-roundtrip.png";
+  await page.screenshot({ path: path.join(out, screenshotName), fullPage: true });
   assert.deepEqual(browserErrors, [], "unexpected browser console/page errors");
   assert.deepEqual(httpErrors, [], "unexpected browser HTTP errors");
   const finalState = await page.evaluate(() => ({
@@ -1519,6 +1634,11 @@ try {
     cursor: window.__desktopCursor.state(),
     restore: window.__desktopTerminal.restoreResult(),
   }));
+  if (diagnostic?.complete) {
+    // Reuse has no cold shell/agent/cursor probes and no Browser object. Preserve its actual
+    // checkpoint provenance and persistent-context identity, without inventing cold evidence.
+    await finishDiagnosticCompletion(browserIdentity, finalState, deferredInteractionCap);
+  } else {
   const result = {
     schema: "wasm-vm.e5-t26f.browser-roundtrip.v1",
     task: "E5-T26f",
@@ -1571,6 +1691,7 @@ try {
   await writeFile(path.join(out, "desktop-roundtrip-server.log"), serverOutput);
   phaseProgress("evidence:write", "done");
   console.log(JSON.stringify(result, jsonReplacer, 2));
+  }
   }
   }
 } catch (error) {
