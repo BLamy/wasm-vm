@@ -3,8 +3,9 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: in-progress
-depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l, E5-T26m]
+status: blocked
+blocked_on: E5-T26n must verify SPP-only cache-context transitions before the next exact-runtime browser proof
+depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l, E5-T26m, E5-T26n]
 estimate: S
 risk: high
 capstone: false
@@ -39,6 +40,20 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — blocked on E5-T26n
+
+The exact-runtime screen at `657fb5a23b411bf02832b2d10ef943b43d0becf1`
+reproduces the original post-restore deadline failure at 3701.995 ms with
+`env -u RUSTDOCFLAGS node tools/verify/e5-t26f-browser-single-process-observer.mjs`.
+Raw evidence and the independent verdict are committed in PR #371, under
+`evidence/e5-t26f/single-process-observer-657fb5a2/` and
+`evidence/e5-t26f/inline-context-runtime-verifier/`. This command is diagnostic,
+not the full acceptance gate. The old checkpoint seal is invalid after the
+metadata closure; it must not be rebound to a new runtime. Source-only review
+permits the bounded SPP prerequisite E5-T26n. It does not establish a latency
+cause or speedup. Resume F with a fresh runtime-bound browser capture only after
+N is independently verified. No image, deadline, clock or budget waiver.
 
 ### 2026-09-08 — worker and fresh Daybreak critic — post-M screen closes failed
 
