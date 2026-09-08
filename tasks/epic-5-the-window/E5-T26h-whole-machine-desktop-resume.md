@@ -3,7 +3,7 @@ id: E5-T26h
 epic: 5
 title: Preserve desktop devices across whole-machine resume
 priority: 526.55
-status: verified
+status: in-progress
 depends_on: [E5-T26e]
 estimate: S
 risk: high
@@ -52,6 +52,29 @@ one preserved cursor and prove the regression test detects duplicate completion.
 Check a headless snapshot independently. No new browser or host-rr requirement.
 
 ## Verification log
+
+### 2026-09-07 — fresh verifier late sound-queue audit — VERDICT: refuted
+
+- Sound queue identity — FAILED. Virtio-snd's wire order is control/event/TX/RX
+  (`TX_QUEUE = 2`, `RX_QUEUE = 3`), but `save_resume` appends cursor metadata as
+  control/event/RX/TX at `crates/core/src/lib.rs:2746-2754`. The shared decoder rebuilds tuple
+  ordinal against transport queue index at `:183-228`, and sound restore assigns those results
+  back as control/event/RX/TX at `:3017-3041`. This binds the saved TX cursor and live service to
+  queue 3 instead of queue 2.
+- Native reproduction — FAILED. With RX absent, whole-machine load rejects the valid playback
+  topology as `BadComponentState { tag: 16 }`. With unused RX configured, restore proceeds but the
+  fresh sink receives old seed-73 PCM instead of fresh seed-1701 PCM; the fresh TX used index stays
+  `1` and its status stays `0xffffffff`. The independent command
+  `cargo test -p wasm-vm-core --test desktop_machine_audio_resume -- --nocapture` exits 101 with
+  0 passed / 4 failed across whole-machine-only and desktop-envelope variants. Evidence:
+  `evidence/e5-t26h/verifier-audio-queue-order/native-audio-resume.log`, SHA-256
+  `c80f4272d49e8660566bce2fe025e4401c395100d0e7cccd49b2887f6bf2f36e`; full analysis in
+  `evidence/e5-t26h/verifier-audio-queue-order/results.md`.
+- Scope — prior sound queue/cursor continuity is withdrawn. All unchanged console session-fence,
+  stale-HELLO, serial/control, input, GPU, CPU/RAM, corruption/topology, atomicity, sparse-parser,
+  headless, and clean-environment results remain HELD. Preserve sound cursors in queue-index order,
+  retain the fresh host sink/clock, and prove no old PCM replay plus exact fresh TX completion in
+  all four promoted fixture cases before reverification.
 
 ### 2026-09-07 — fresh verifier session fence — VERDICT: verified
 

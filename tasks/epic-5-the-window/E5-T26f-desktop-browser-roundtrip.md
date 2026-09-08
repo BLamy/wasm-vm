@@ -3,7 +3,8 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: in-progress
+status: blocked
+blocked_on: E5-T26h
 depends_on: [E5-T26e, E5-T26h]
 estimate: S
 risk: high
@@ -39,6 +40,19 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-07 — coordinator/verifier — blocked again on E5-T26h sound queue order
+
+The browser PCM failure now has a deterministic native prerequisite refutation. The frozen H
+runtime serializes virtio-snd service cursors in control/event/RX/TX order while its shared resume
+parser interprets them in queue-index control/event/TX/RX order. Exact repro:
+`cargo test -p wasm-vm-core --test desktop_machine_audio_resume -- --nocapture` exits 101 with all
+four tests failing: absent RX causes `BadComponentState { tag: 16 }`; configured RX misbinds the TX
+cursor, replays old PCM into the fresh sink, and leaves the fresh TX descriptor incomplete.
+Evidence: `evidence/e5-t26h/verifier-audio-queue-order/native-audio-resume.log`, SHA-256
+`c80f4272d49e8660566bce2fe025e4401c395100d0e7cccd49b2887f6bf2f36e`. Resume F only after H fixes
+and independently reverifies this sound-queue boundary; the retained F display/input/no-reboot
+facts remain held and no additional browser criterion is introduced.
 
 ### 2026-09-07 — coordinator — retained failed browser candidate
 
