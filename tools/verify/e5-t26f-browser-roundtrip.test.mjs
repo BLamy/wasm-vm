@@ -291,6 +291,7 @@ function delayedGestureFixture(startAt = 1_100, postRestoreCommand = "sh /tmp/a"
   Object.assign(f.sandbox, {
     firstRestore: { completedAt: 1_000 },
     postRestoreCommand,
+    postRestoreKeyDelayMs: 0,
     desktopBox: async () => ({}),
     guestPoint: (_box, x, y) => ({ x, y }),
   });
@@ -400,7 +401,7 @@ test("overlapped motion spends the original deadline; late command completion st
 
 function selectDiagnosticCommand(env) {
   const selection = extractBetween("function diagnosticOptions", "const DIAGNOSTIC_OWNER");
-  return vm.runInNewContext(`${selection}\n({ diagnostic, postRestoreCommand })`, { assert, path, process: { env } });
+  return vm.runInNewContext(`${selection}\n({ diagnostic, postRestoreCommand, postRestoreKeyDelayMs })`, { assert, path, process: { env } });
 }
 
 const reuseCommandEnv = {
@@ -420,7 +421,26 @@ test("command override refuses acceptance/create and rejects unbounded or multil
 test("without override all modes keep the exact sh /tmp/a command", () => {
   for (const env of [{}, reuseCommandEnv, { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: "create" }]) {
     assert.equal(selectDiagnosticCommand(env).postRestoreCommand, "sh /tmp/a");
+    assert.equal(selectDiagnosticCommand(env).postRestoreKeyDelayMs, 0);
   }
+});
+
+test("diagnostic key pacing is bounded, reuse-only, recorded, and inside the original deadline", () => {
+  for (const env of [{}, { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: "create" }]) {
+    assert.throws(() => selectDiagnosticCommand({ ...env, E5_T26F_DIAGNOSTIC_KEY_DELAY_MS: "5" }), /requires reuse mode/);
+  }
+  for (const delay of ["", "-1", "1.5", "26", "NaN", "05"]) {
+    assert.throws(() => selectDiagnosticCommand({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_KEY_DELAY_MS: delay }), /integer from 0 to 25/);
+  }
+  for (const delay of [0, 5, 25]) {
+    const selected = selectDiagnosticCommand({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_KEY_DELAY_MS: String(delay) });
+    const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", selected);
+    assert.equal(run.acceptance, false);
+    assert.equal(run.postRestoreKeyDelayMs, delay);
+    assert.equal(run.diagnostic.keyDelayMs, delay);
+  }
+  assert.ok(source.includes('    120_000,\n    postRestoreKeyDelayMs,\n'));
+  assert.ok(source.includes(originalTimingAssertion));
 });
 
 test("reuse override is recorded verbatim in nonacceptance metadata and the physical command record", async () => {

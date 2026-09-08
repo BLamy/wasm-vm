@@ -39,6 +39,11 @@ const jsonReplacer = (_key, value) => typeof value === "bigint" ? `${value}n` : 
 
 function diagnosticOptions(env) {
   const mode = env.E5_T26F_DIAGNOSTIC;
+  const delay = env.E5_T26F_DIAGNOSTIC_KEY_DELAY_MS;
+  if (delay !== undefined) {
+    assert.equal(mode, "reuse", "diagnostic key delay requires reuse mode");
+    assert.ok(/^(?:[0-9]|1[0-9]|2[0-5])$/u.test(delay), "diagnostic key delay must be an integer from 0 to 25 ms");
+  }
   const command = env.E5_T26F_DIAGNOSTIC_COMMAND;
   if (command !== undefined) {
     assert.equal(mode, "reuse", "diagnostic command override requires reuse mode");
@@ -52,11 +57,13 @@ function diagnosticOptions(env) {
   assert.ok(directory && path.isAbsolute(directory) && path.resolve(directory) === directory &&
     directory !== path.parse(directory).root, "diagnostic profile requires an absolute normalized scratch directory");
   assert.ok(Number.isSafeInteger(port) && port >= 1024 && port <= 65535, "diagnostic mode requires a stable explicit server port");
-  return { mode, directory, port, origin: `http://127.0.0.1:${port}`, command: command ?? null };
+  return { mode, directory, port, origin: `http://127.0.0.1:${port}`, command: command ?? null,
+    keyDelayMs: Number(delay ?? 0) };
 }
 
 const diagnostic = diagnosticOptions(process.env);
 const postRestoreCommand = diagnostic?.command ?? "sh /tmp/a";
+const postRestoreKeyDelayMs = diagnostic?.keyDelayMs ?? 0;
 const DIAGNOSTIC_OWNER = "wasm-vm.e5-t26f.diagnostic-profile.v1";
 const DESKTOP_STORAGE_KEY = "wasm-vm.desktop-snapshot.v1";
 
@@ -276,7 +283,7 @@ const httpErrors = [];
 const startedAt = Date.now();
 const milestones = {
   run: { kind: diagnostic ? "diagnostic-iteration" : "acceptance", acceptance: !diagnostic,
-    diagnostic, postRestoreCommand },
+    diagnostic, postRestoreCommand, postRestoreKeyDelayMs },
 };
 
 let lastPhase = null;
@@ -997,7 +1004,7 @@ try {
     postRestoreCommand,
     "e5t26f-post-aplay",
     120_000,
-    0,
+    postRestoreKeyDelayMs,
   );
   const postFocusState = await page.evaluate(() => window.__desktopTerminal.confirmGuestFocus("e5t26f-post-aplay"));
   assert.equal(postFocusState.focuses.at(-1).guestVisible, true, "post-restore typing was not guest-visible");
