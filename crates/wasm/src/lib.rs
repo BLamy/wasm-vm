@@ -739,6 +739,24 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
         "jitCacheCodeBytes",
         &JsValue::from_f64(cache.code_bytes as f64),
     );
+    let (compile_queue, queue_depth, capacity) = machine.compile_queue_stats();
+    let compile_queue_obj = js_sys::Object::new();
+    for (key, value) in [
+        ("admitted", compile_queue.admitted),
+        ("droppedBackpressure", compile_queue.dropped_backpressure),
+        ("cancelledStale", compile_queue.cancelled_stale),
+        ("popped", compile_queue.popped),
+        ("queueHighWater", compile_queue.hwm as u64),
+        ("queueDepth", queue_depth as u64),
+        ("capacity", capacity as u64),
+    ] {
+        let _ = js_sys::Reflect::set(
+            &compile_queue_obj,
+            &JsValue::from_str(key),
+            &JsValue::from_f64(value as f64),
+        );
+    }
+    set("compileQueue", &compile_queue_obj.into());
     let discovery = machine.discovery_stats();
     let discovery_obj = js_sys::Object::new();
     for (key, value) in [

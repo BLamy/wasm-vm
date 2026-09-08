@@ -1163,6 +1163,18 @@ verify-E5-T26f-discovery-observation:
 	node --test tools/verify/e5-t26f-discovery-observation.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs tools/verify/e5-t26f-residency-comparison.test.mjs web/tests/e4-t32-worker-protocol.test.mjs
 	@echo "F discovery observation plumbing: OK; new cold/reuse measurement remains separate, not F acceptance"
 
+.PHONY: verify-E5-T26f-compile-queue-observation
+verify-E5-T26f-compile-queue-observation:
+	# Existing copied queue counters only; browser evidence needs a new cold seal.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	wasm-pack test --node crates/wasm --test compile_queue_stats --test discovery_stats --test decoded_cache_capacity
+	node --check tools/verify/e5-t26f-browser-compile-queue.mjs
+	node --check tools/verify/e5-t26f-compile-queue-observation.mjs
+	node --test tools/verify/e5-t26f-browser-compile-queue.test.mjs tools/verify/e5-t26f-compile-queue-observation.test.mjs tools/verify/e5-t26f-discovery-observation.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs web/tests/e4-t32-worker-protocol.test.mjs
+	@echo "F compile queue observation plumbing: OK; browser timing and F acceptance remain separate"
+
 .PHONY: verify-E5-T26l verify-E5-T26l-runtime
 verify-E5-T26l-runtime:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm

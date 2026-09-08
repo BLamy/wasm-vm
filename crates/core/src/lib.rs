@@ -1042,6 +1042,16 @@ impl Machine {
         s
     }
 
+    /// Immutable compile-queue accounting, resident depth and capacity from the same borrow.
+    /// These are lifetime queue counters, independent of discovery's generation/reset counters.
+    pub fn compile_queue_stats(&self) -> (compile_queue::CompileQueueStats, usize, usize) {
+        (
+            self.compile_queue.stats(),
+            self.compile_queue.len(),
+            self.compile_queue.cap(),
+        )
+    }
+
     /// E4-T08: drain the pending translation-candidate FIFO (a trivial consumer; the real compile
     /// queue is E4-T21). Each request carries its coherence generation — validate with
     /// [`Self::discovery_install_check`] before acting on it.
