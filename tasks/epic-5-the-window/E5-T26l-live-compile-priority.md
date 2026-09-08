@@ -3,7 +3,7 @@ id: E5-T26l
 epic: 5
 title: Refresh live priority when selecting pending JIT compilation jobs
 priority: 526.597
-status: implemented
+status: verified
 depends_on: [E4-T21, E5-T22g, E5-T26k]
 estimate: S
 risk: high
@@ -73,6 +73,39 @@ One bounded novel attack should target this queue/selection boundary. Inspect
 every changed hunk and preserve the original F failure if its own cap still fails.
 
 ## Verification log
+
+### 2026-09-08 — independent Daybreak verifier — VERDICT: verified
+
+P1–P7 HELD for L's selection-only boundary at runtime/build head
+`42bb34d854aca091a3940191a8da3b7aff765cad`, with worker claim/test-only promotion
+committed as `41590d211f758403bc517fe308500ef3510baae0`. No runtime change since
+the single scrubbed pristine clone. Source placement, exact Machine selection,
+stale/fresh safety, budgets, sensitive refresh-removal sabotage and the novel
+outer-scope/zero-work final pump carry from
+`evidence/e5-t26l/verifier/native-results.md`
+(SHA256 `7d3c81703d3e2b1a880de43aadae93b34830c0348428cbbe9bf06b34e13befdf`).
+The promoted63-line test is byte-identical to the tested scratch version;
+the narrow recorded gate passes12 pipeline tests and scoped clippy.
+
+P7 independently HELD: inspected both actual PNGs/full raw records; rehashed
+all20 worker artifacts, six frozen source bindings, the new814-file sealed
+profile,150-file runtime, kernel/image/manifest and decoded envelope/sound.
+Correct CRC `4b00f145`, no boot/freshHELLO2, actual cursor/focus and10 matching
+physical `play` key edges, same PID999/start28835/conditional child completion,
+two pre-gesture zero rings then1440 fresh non-silent PCM. Built demo126/0 with
+L visible and no non-favicon errors carries unchanged. Required browser screen
+is complete, but F still fails: original T0 `1202.054999947548`, frozen end5930,
+elapsed **4727.945000052452 ms**. No first-PCM timestamp, speedup/default claim,
+timing waiver or new second-restore/drag coverage is inferred. Lower-window
+pre-checkpoint2.864-ms XRUN and generic failure-error-array limitation retained.
+
+Final coverage/digest report:
+`evidence/e5-t26l/verifier/browser-results.md`
+(SHA256 `90e24fa8e29eefbbf28a711a3c745c50565545cb44aac9046d869df03075669b`).
+Prior F/K/H/I/J/T19a and unchanged architecture HELD carry; known pre-existing
+user-owned dist manifests stay excluded and untouched. No further runtime,
+WASM/browser gates or clone. Verifier runs `python3 tools/check_task_policy.py`
+then `python3 tools/build_queue.py`; coordinator owns the final commit.
 
 ### 2026-09-08 — worker — IMPLEMENTED; measured F cap remains failed
 

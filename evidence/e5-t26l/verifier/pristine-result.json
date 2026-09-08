@@ -1,0 +1,210 @@
+{
+  "expectedHead": "42bb34d854aca091a3940191a8da3b7aff765cad",
+  "scratch": "/private/tmp/e5-t26l-verifier.WIYRcw",
+  "clone": "/private/tmp/e5-t26l-verifier.WIYRcw/repo",
+  "target": "/private/tmp/e5-t26l-verifier.WIYRcw/cargo-target",
+  "removedKeys": [
+    "RUST_LOG"
+  ],
+  "explicitBuildEnv": {
+    "CARGO_TARGET_DIR": "/private/tmp/e5-t26l-verifier.WIYRcw/cargo-target",
+    "CARGO_BUILD_JOBS": "4"
+  },
+  "startedAt": "2026-09-08T13:37:29.741Z",
+  "sharedBefore": {
+    "crates/core/src/compile_queue.rs": "678d51e6c333e076caeb99f3960fac52a0886941cc85ebf6638062878c751b15",
+    "crates/core/src/lib.rs": "17f721bbb7cab06d3cc41a960fffa65777b6a2fb1c44b469b627a72a26db3898",
+    "crates/core/tests/async_compile_pipeline.rs": "e7365969e28368b91604de175cb17be42193911663a066c1a273a52b3fa8f941",
+    "Makefile": "8e0c226b847b8f6128b36879cecc3d5d8aaa33d1d9364e14fdcf1574b70595e3",
+    "tools/verify/e5-t26l-browser-priority.mjs": "0a717118522b09c5a5de5b38b27e1896692ce52876a9115edfcbba1be0158af4",
+    "tools/verify/e5-t26l-browser-priority.test.mjs": "a0553f2d5e5a2db0d82318ef231e746c5d7b54a6229a0f57def9506f92e4a005",
+    "tools/verify/e5-t26f-browser-roundtrip.mjs": "bfcdc06f6d6ec330815d7ad12b7a0c101035a11d50348828fe2d39a7370cb219"
+  },
+  "finishedAt": "2026-09-08T13:40:17.154Z",
+  "error": null,
+  "commands": [
+    {
+      "label": "clone",
+      "executable": "git",
+      "args": [
+        "-c",
+        "core.hooksPath=/dev/null",
+        "clone",
+        "--no-local",
+        "--no-checkout",
+        "--single-branch",
+        "--branch",
+        "codex/e5-t26l-live-compile-priority",
+        "/Users/blamy/Documents/Codex/wasm-vm",
+        "/private/tmp/e5-t26l-verifier.WIYRcw/repo"
+      ],
+      "cwd": "/private/tmp/e5-t26l-verifier.WIYRcw",
+      "startedAt": "2026-09-08T13:37:29.742Z",
+      "finishedAt": "2026-09-08T13:37:35.702Z",
+      "code": 0,
+      "signal": null,
+      "error": null,
+      "log": "clone.log",
+      "sha256": "5fcf5b323f622cd0baf9d991a8a22f9db11961b37724bce0c3265b2cb50faca4"
+    },
+    {
+      "label": "checkout",
+      "executable": "git",
+      "args": [
+        "-c",
+        "core.hooksPath=/dev/null",
+        "checkout",
+        "--detach",
+        "42bb34d854aca091a3940191a8da3b7aff765cad"
+      ],
+      "cwd": "/private/tmp/e5-t26l-verifier.WIYRcw/repo",
+      "startedAt": "2026-09-08T13:37:35.703Z",
+      "finishedAt": "2026-09-08T13:37:36.761Z",
+      "code": 0,
+      "signal": null,
+      "error": null,
+      "log": "checkout.log",
+      "sha256": "78840202240f42c59154d3e3cab7fb8c86741a125ffbb7d672e524e003466f60"
+    },
+    {
+      "label": "clone-head",
+      "executable": "git",
+      "args": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/private/tmp/e5-t26l-verifier.WIYRcw/repo",
+      "startedAt": "2026-09-08T13:37:36.761Z",
+      "finishedAt": "2026-09-08T13:37:36.773Z",
+      "code": 0,
+      "signal": null,
+      "error": null,
+      "log": "clone-head.log",
+      "sha256": "5cb7a28ab9d59969b248d9a909cc53a2976a3a7f471083d74c73fc56a7a99a0e"
+    },
+    {
+      "label": "clone-initial-status",
+      "executable": "git",
+      "args": [
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/private/tmp/e5-t26l-verifier.WIYRcw/repo",
+      "startedAt": "2026-09-08T13:37:36.773Z",
+      "finishedAt": "2026-09-08T13:37:37.337Z",
+      "code": 0,
+      "signal": null,
+      "error": null,
+      "log": "clone-initial-status.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "rustc-version",
+      "executable": "rustc",
+      "args": [
+        "-Vv"
+      ],
+      "cwd": "/private/tmp/e5-t26l-verifier.WIYRcw/repo",
+      "startedAt": "2026-09-08T13:37:37.338Z",
+      "finishedAt": "2026-09-08T13:37:37.362Z",
+      "code": 0,
+      "signal": null,
+      "error": null,
+      "log": "rustc-version.log",
+      "sha256": "aea7c77c2b0d24444d07240e4d785e4ba73b6c9e786748af2ddc22bbf4c104bf"
+    },
+    {
+      "label": "node-version",
+      "executable": "node",
+      "args": [
+        "--version"
+      ],
+      "cwd": "/private/tmp/e5-t26l-verifier.WIYRcw/repo",
+      "startedAt": "2026-09-08T13:37:37.363Z",
+      "finishedAt": "2026-09-08T13:37:37.374Z",
+      "code": 0,
+      "signal": null,
+      "error": null,
+      "log": "node-version.log",
+      "sha256": "b67d0ced059f9313d861ddbbe734d2d1f9219106a9e036ae6d88407afa0846e6"
+    },
+    {
+      "label": "wasm-pack-version",
+      "executable": "wasm-pack",
+      "args": [
+        "--version"
+      ],
+      "cwd": "/private/tmp/e5-t26l-verifier.WIYRcw/repo",
+      "startedAt": "2026-09-08T13:37:37.374Z",
+      "finishedAt": "2026-09-08T13:37:37.378Z",
+      "code": 0,
+      "signal": null,
+      "error": null,
+      "log": "wasm-pack-version.log",
+      "sha256": "f9f112a3a860c47f458ea768dbb85026be4bdcdc051efb7fbab251a92864d38d"
+    },
+    {
+      "label": "pristine-runtime",
+      "executable": "make",
+      "args": [
+        "verify-E5-T26l-runtime"
+      ],
+      "cwd": "/private/tmp/e5-t26l-verifier.WIYRcw/repo",
+      "startedAt": "2026-09-08T13:37:37.379Z",
+      "finishedAt": "2026-09-08T13:40:17.115Z",
+      "code": 0,
+      "signal": null,
+      "error": null,
+      "log": "pristine-runtime.log",
+      "sha256": "caadac154049d9e7e24cacf3f4f9006d3ebca216993343935d9235969937dfc6"
+    },
+    {
+      "label": "clone-final-status",
+      "executable": "git",
+      "args": [
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/private/tmp/e5-t26l-verifier.WIYRcw/repo",
+      "startedAt": "2026-09-08T13:40:17.115Z",
+      "finishedAt": "2026-09-08T13:40:17.153Z",
+      "code": 0,
+      "signal": null,
+      "error": null,
+      "log": "clone-final-status.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "initialStatus": "",
+  "finalStatus": "",
+  "clonePins": {
+    "crates/core/src/compile_queue.rs": "678d51e6c333e076caeb99f3960fac52a0886941cc85ebf6638062878c751b15",
+    "crates/core/src/lib.rs": "17f721bbb7cab06d3cc41a960fffa65777b6a2fb1c44b469b627a72a26db3898",
+    "crates/core/tests/async_compile_pipeline.rs": "e7365969e28368b91604de175cb17be42193911663a066c1a273a52b3fa8f941",
+    "Makefile": "8e0c226b847b8f6128b36879cecc3d5d8aaa33d1d9364e14fdcf1574b70595e3",
+    "tools/verify/e5-t26l-browser-priority.mjs": "0a717118522b09c5a5de5b38b27e1896692ce52876a9115edfcbba1be0158af4",
+    "tools/verify/e5-t26l-browser-priority.test.mjs": "a0553f2d5e5a2db0d82318ef231e746c5d7b54a6229a0f57def9506f92e4a005",
+    "tools/verify/e5-t26f-browser-roundtrip.mjs": "bfcdc06f6d6ec330815d7ad12b7a0c101035a11d50348828fe2d39a7370cb219"
+  },
+  "clonePinsAfter": {
+    "crates/core/src/compile_queue.rs": "678d51e6c333e076caeb99f3960fac52a0886941cc85ebf6638062878c751b15",
+    "crates/core/src/lib.rs": "17f721bbb7cab06d3cc41a960fffa65777b6a2fb1c44b469b627a72a26db3898",
+    "crates/core/tests/async_compile_pipeline.rs": "e7365969e28368b91604de175cb17be42193911663a066c1a273a52b3fa8f941",
+    "Makefile": "8e0c226b847b8f6128b36879cecc3d5d8aaa33d1d9364e14fdcf1574b70595e3",
+    "tools/verify/e5-t26l-browser-priority.mjs": "0a717118522b09c5a5de5b38b27e1896692ce52876a9115edfcbba1be0158af4",
+    "tools/verify/e5-t26l-browser-priority.test.mjs": "a0553f2d5e5a2db0d82318ef231e746c5d7b54a6229a0f57def9506f92e4a005",
+    "tools/verify/e5-t26f-browser-roundtrip.mjs": "bfcdc06f6d6ec330815d7ad12b7a0c101035a11d50348828fe2d39a7370cb219"
+  },
+  "sharedAfter": {
+    "crates/core/src/compile_queue.rs": "678d51e6c333e076caeb99f3960fac52a0886941cc85ebf6638062878c751b15",
+    "crates/core/src/lib.rs": "17f721bbb7cab06d3cc41a960fffa65777b6a2fb1c44b469b627a72a26db3898",
+    "crates/core/tests/async_compile_pipeline.rs": "e7365969e28368b91604de175cb17be42193911663a066c1a273a52b3fa8f941",
+    "Makefile": "8e0c226b847b8f6128b36879cecc3d5d8aaa33d1d9364e14fdcf1574b70595e3",
+    "tools/verify/e5-t26l-browser-priority.mjs": "0a717118522b09c5a5de5b38b27e1896692ce52876a9115edfcbba1be0158af4",
+    "tools/verify/e5-t26l-browser-priority.test.mjs": "a0553f2d5e5a2db0d82318ef231e746c5d7b54a6229a0f57def9506f92e4a005",
+    "tools/verify/e5-t26f-browser-roundtrip.mjs": "bfcdc06f6d6ec330815d7ad12b7a0c101035a11d50348828fe2d39a7370cb219"
+  },
+  "sharedUnchanged": true
+}

@@ -1,6 +1,6 @@
 # E5-T26l — bounded live compile-selection priority
 
-Implemented candidate; final Daybreak verdict pending. F timing remains failed. This task tests
+Independently verified selection boundary. F timing remains failed. This task tests
 one runtime candidate motivated by the independently reviewed public-type
 reproducer in `../e5-t26f/compile-priority-reproducer/`. That earlier source-only
 experiment is not real Machine integration or evidence of browser causality.
@@ -182,3 +182,26 @@ was promoted. `gates/promoted-outer-scope.log` records scoped fmt/clippy plus12
 pipeline tests passed, including the same574-retirement/digest result. Core
 runtime, served JS/WASM and the browser seal were not changed or rebound. No
 second pristine clone or unrelated gate repetition was needed.
+
+## Final independent verdict
+
+Daybreak closes P1–P7 as HELD in `verifier/browser-results.md` and sets L verified.
+Report SHA-256:
+`90e24fa8e29eefbbf28a711a3c745c50565545cb44aac9046d869df03075669b`.
+Its current-source/frozen-blob checks, all20 main artifact digests,814-file profile,
+150-file runtime, actual kernel/image/manifest and decoded envelope/sound agree.
+Full PNG/input/timing/coverage citations are in that report; earlier preflight and
+native pending-browser statements are historical, not an outstanding finding.
+F's original cap remains failed, and L has no remaining execution proof gap.
+
+The final verified roadmap/task metadata refresh changes the served runtime tree,
+even though the WASM stays byte-identical. Do not use that refreshed tree to
+rebind or replay the old42bb seal. A later served-code increment needs its own
+new authenticated checkpoint.
+
+Final metadata build succeeds (`gates/verified-web-dist.log`, SW6deaaf1bebee),
+retaining identical WASM264db1b1. The additional single built-demo pass with
+`E5_DEMO_VERIFIED=1` shows L VERIFIED and296/464 tasks verified,126/0 and empty
+non-favicon error arrays; main viewed its PNG. The three final metadata artifacts
+are independently listed in `final-metadata-digests.txt`, leaving the original
+20-entry measurement manifest unchanged.

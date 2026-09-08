@@ -1,0 +1,3 @@
+# Recorder path preflight failure
+
+The first verifier recorder invocation exited before creating any invocation/log or launching Git/Cargo: its repository-root calculation used four parent components instead of three. `readFileSync` failed with ENOENT at `/Users/blamy/Documents/Codex/crates/core/src/compile_queue.rs` (Node v24.20.0). One empty temporary parent directory had been allocated; no clone or runtime proof ran. Corrected only the verifier recorder root calculation and restarted the recording. This is a verifier orchestration mistake, not a candidate portability failure or a second clean clone.

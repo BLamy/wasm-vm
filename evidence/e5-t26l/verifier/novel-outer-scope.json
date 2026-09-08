@@ -1,0 +1,37 @@
+{
+  "head": "42bb34d854aca091a3940191a8da3b7aff765cad",
+  "clone": "/private/tmp/e5-t26l-verifier.WIYRcw/repo",
+  "target": "/private/tmp/e5-t26l-verifier.WIYRcw/cargo-target",
+  "command": [
+    "cargo",
+    "test",
+    "-p",
+    "wasm-vm-core",
+    "--features",
+    "trace,gpu-trace",
+    "--test",
+    "async_compile_pipeline",
+    "verifier_outer_scope_zero_work_final_pump_refreshes_only_after_budget_renewal",
+    "--",
+    "--exact",
+    "--nocapture"
+  ],
+  "startedAt": "2026-09-08T13:42:47.685Z",
+  "finishedAt": "2026-09-08T13:42:48.990Z",
+  "code": 0,
+  "signal": null,
+  "error": null,
+  "expectedExit": 0,
+  "sourceBefore": {
+    "crates/core/src/compile_queue.rs": "678d51e6c333e076caeb99f3960fac52a0886941cc85ebf6638062878c751b15",
+    "crates/core/src/lib.rs": "17f721bbb7cab06d3cc41a960fffa65777b6a2fb1c44b469b627a72a26db3898",
+    "crates/core/tests/async_compile_pipeline.rs": "c452dc6057109d3717ed839c19a15a9a3898e36847557d33f25608a0f21d09c6"
+  },
+  "sourceAfter": {
+    "crates/core/src/compile_queue.rs": "678d51e6c333e076caeb99f3960fac52a0886941cc85ebf6638062878c751b15",
+    "crates/core/src/lib.rs": "17f721bbb7cab06d3cc41a960fffa65777b6a2fb1c44b469b627a72a26db3898",
+    "crates/core/tests/async_compile_pipeline.rs": "c452dc6057109d3717ed839c19a15a9a3898e36847557d33f25608a0f21d09c6"
+  },
+  "logSha256": "d50a7e1c1a9050db8c8c8795831e1b9e485288647c400a624b8bfef0e7490505",
+  "patchSha256": "1b46a5e59ae5403dbddec8ff17a8b269e38f0418612a8b118e77abe937a4db9a"
+}

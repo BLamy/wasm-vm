@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:56461/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.76",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5-T26l\nVERIFIED\n✕ Close\nRefresh live priority when selecting pending JIT compilation jobs\nEpic\nE5 — The Window\nStatus\nverified\nEstimate\nS\nDepends on\nE4-T21, E5-T22g, E5-T26k\nGOAL\n\nTest a bounded compilation-selection candidate for F's remaining latency. The\nactual public-type reproducer in `evidence/e5-t26f/compile-priority-reproducer/`\nshows a pending job retaining priority64 after its live discovery hotness rises\nto1064. Daybreak accepted that limited source-level claim, not browser causality\nor an E4 violation. Actual cross-pump integration and a new browser screen are\nrequired before promoting this candidate. F's original2-second gate is unchanged.\n\nVERIFICATION LOG — EVIDENCE\n### 2026-09-08 — independent Daybreak verifier — VERDICT: verified\n\nP1–P7 HELD for L's selection-only boundary at runtime/build head\n`42bb34d854aca091a3940191a8da3b7aff765cad`, with worker claim/test-only promotion\ncommitted as `41590d211f758403bc517fe308500ef3510baae0`. No runtime change since\nthe single scrubbed pristine clone. Source placement, exact Machine selection,\nstale/fresh safety, budgets, sensitive refresh-removal sabotage and the novel\nouter-scope/zero-work final pump carry from\n`evidence/e5-t26l/verifier/native-results.md`\n(SHA256 `7d3c81703d3e2b1a880de43aadae93b34830c0348428cbbe9bf06b34e13befdf`).\nThe promoted63-line test is byte-identical to the tested scratch version;\nthe narrow recorded gate passes12 pipeline tests and scoped clippy.\n\nP7 independently HELD: inspected both actual PNGs/full raw records; rehashed\nall20 worker artifacts, six frozen source bindings, the new814-file sealed\nprofile,150-file runtime, kernel/image/manifest and decoded envelope/sound.\nCorrect CRC `4b00f145`, no boot/freshHELLO2, actual cursor/focus and10 matching\nphysical `play` key edges, same PID999/start28835/conditional child completion,\ntwo pre-gesture zero rings then1440 fresh non-silent PCM. Built demo126/0 with\nL visible and no non-favicon errors carries unchanged. Required browser screen\nis complete, but F still fails: original T0 `1202.054999947548`, frozen end5930,\nelapsed **4727.945000052452 ms**. No first-PCM timestamp, speedup/default claim,\ntiming waiver or new second-restore/drag coverage is inferred. Lower-window\npre-checkpoint2.864-ms XRUN and generic failure-error-array limitation retained.\n\nFinal coverage/digest report:\n`evidence/e5-t26l/verifier/browser-results.md`\n(SHA256 `90e24fa8e29eefbbf28a711a3c745c50565545cb44aac9046d869df03075669b`).\nPrior F/K/H/I/J/T19a and unchanged architecture HELD carry; known pre-existing\nuser-owned dist manifests stay excluded and untouched. No further runtime,\nWASM/browser gates or clone. Verifier runs `python3 tools/check_task_policy.py`\nthen `python3 tools/build_queue.py`; coordinator owns the final commit.\n\n### 2026-09-08 — worker — IMPLEMENTED; measured F cap remains failed\n\nFrozen runtime/build head `42bb34d854aca091a3940191a8da3b7aff765cad` is published\nas draftPR364. `make verify-E5-T26l-runtime` records373 native,43 actual WASM\nand63 Node passes, plus the127-ELF instruction-trace differential and no_std\nbuild. The one existing long churn ignore is unchanged/not counted. Exact log,\ncommands, digests and scope: `evidence/e5-t26l/README.md` and `digests.txt`.\nThe built Chromium demo is126/0 with no non-favicon errors and L visible.\nDaybreak's single scrubbed pristine clone, sensitive refresh-removal sabotage\nand bounded zero-work outer-scope attack are HELD in `verifier/native-results.md`.\nThe promoted test-only patch subsequently passes12 pipeline tests and scoped\nfmt/clippy; runtime/served bytes are unchanged.\n\n`node tools/verify/e5-t26l-browser-priority.mjs` records a new authenticated cold\nseal and default-policy restore/physical `play`. Cold exits0; reuse exits1 only\nat the original2000-ms cap: T0 `1202.054999947548`, end `5930`, elapsed4727.945ms.\nThe2818680-byte envelope `b229532f4869e0246b3a8d82d3d9cf2cdf6c94263b387a4bb6ee9356b69e65cf`\nrestores CRC `4b00f145` without a boot, freshHELLO2, ten actual matching key\nevents, visible cursor/output and1440 fresh non-silent PCM frames from the same\nprepared player. Raw JSON/PNGs/logs are under `browser-42bb34d8/`; no raw record\nor old seal was rewritten. This proves the candidate's required measurement,\nnot F acceptance or speedup. Final independent browser verdict remains pending.\n\n### 2026-09-08 — coordinator — bounded runtime candidate, not an assumed F fix\n\nPR363 retains the independently reviewed source-level priority reproducer and\nnew discovery/latency records. At runtime head `690e2324`, F fails4591.175 ms with\nzero since-reset discovery overflow/exhaustion/stale counts; the separate latency\nprobe first observes fresh PCM at3818.160 ms and fails4726.940 ms overall. Those\nnegative results and unchanged architecture/functional HELD evidence carry.\nThis task owns the separate core scheduling boundary; F leaves the active lane\nuntil this candidate has deterministic integration and browser evidence.\nADVERSARIAL VERIFICATION\nExercise late-hot/equal/saturated scores, absent/recount-reset hit records, full\nsmall-cap backpressure and same-PC requests spanning a generation change. Prove\nthe real cross-pump backlog selection and unchanged aggregate submission/staging\nbounds, including no new FIFO work. Independently sabotage the refresh call and\nrequire the cross-pump regression to fail; stale-byte protection must still hold.\nOne bounded novel attack should target this queue/selection boundary. Inspect\nevery changed hunk and preserve the original F failure if its own cap still fails.\nsource: tasks/epic-5-the-window/E5-T26l-live-compile-priority.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:56461/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:56461/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:56461/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:56461/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:56461/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:56461/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:56461/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:56461/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:56461/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:56461/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:56461/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:56461/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "38512531c3d5df4d50d636edab4558be4a9f3edc2aacb6c07635b4eecb0c1630"
+}
