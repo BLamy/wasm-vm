@@ -618,6 +618,138 @@ test("one held scheduler RPC survives a rejected local-stat read without overlap
   assert.equal(f.counters.scheduler, 1);
 });
 
+test("JIT RPC follows scheduler settlement and holds the whole sample until completion", async () => {
+  const f = latencyFixture();
+  const scheduler = deferred(), jit = deferred();
+  const calls = [];
+  let activeRpc = 0;
+  f.sandbox.window.__desktopController.schedulerStats = () => {
+    assert.equal(activeRpc, 0, "scheduler cannot overlap a JIT request");
+    activeRpc += 1; calls.push("scheduler");
+    return scheduler.promise.finally(() => { activeRpc -= 1; });
+  };
+  f.sandbox.window.__desktopController.jitStats = () => {
+    assert.equal(activeRpc, 0, "JIT cannot overtake the scheduler response");
+    activeRpc += 1; calls.push("jit");
+    return jit.promise.finally(() => { activeRpc -= 1; });
+  };
+  const report = f.api.installInteractionLatencyProbe({ restoredAt: 1_000, baselineWriteIndex: 0 });
+  await advanceProbe(f, 1_500);
+  assert.deepEqual(calls, ["scheduler"]);
+  scheduler.resolve({ retiredInstructions: 12_920_000, slices: 20 });
+  await flushMicrotasks();
+  assert.deepEqual(calls, ["scheduler", "jit"]);
+  const sample = report.schedulerSamples[0];
+  assert.equal(sample.scheduler.retiredInstructions, 12_920_000);
+  assert.equal(sample.observedAt, 1_500);
+  assert.equal(sample.jit.requestedAt, 1_500);
+  assert.equal(sample.status, "jit-pending");
+  await advanceProbe(f, 2_500);
+  assert.deepEqual(calls, ["scheduler", "jit"], "later timer ticks cannot start another sample");
+  jit.resolve({ hasExecutor: true, guestRetired: 13_000_000 });
+  await flushMicrotasks();
+  assert.equal(activeRpc, 0);
+  assert.equal(sample.jit.observedAt, 2_500);
+  assert.equal(sample.status, "completed");
+  assert.equal(sample.jit.stats.guestRetired, 13_000_000);
+  assert.equal(report.restoredAt, 1_000);
+  f.sandbox.window.__e5t26fLatencyProbe.stop("completion");
+  assert.equal(f.timers.size, 0);
+});
+
+test("stopping with JIT pending retains scheduler evidence and ignores late success or failure", async () => {
+  for (const rejectLate of [false, true]) {
+    const f = latencyFixture();
+    let settle;
+    const held = new Promise((resolve, reject) => { settle = rejectLate ? reject : resolve; });
+    f.sandbox.window.__desktopController.jitStats = () => held;
+    await f.api.startInteractionLatencyProbe(1_000, 0);
+    await flushMicrotasks();
+    await f.api.stopInteractionLatencyProbe("completion");
+    const report = f.milestones.interactionLatency;
+    const sample = report.schedulerSamples[0];
+    assert.equal(sample.scheduler.retiredInstructions, 500_000);
+    assert.equal(sample.observedAt, 1_200);
+    assert.equal(sample.jit.requestedAt, 1_200);
+    assert.equal(sample.jit.observedAt, null);
+    assert.equal(sample.status, "pending-at-stop");
+    assert.equal(sample.jit.status, "pending-at-stop");
+    assert.equal(f.timers.size, 0);
+    const preserved = JSON.stringify(report);
+    settle(rejectLate ? Error("late JIT failure") : { guestRetired: 999 });
+    await flushMicrotasks();
+    const pageReport = f.sandbox.window.__e5t26fLatencyProbe.stop("again");
+    assert.equal(JSON.stringify(pageReport), preserved);
+    assert.equal(JSON.stringify(f.milestones.interactionLatency), preserved);
+  }
+});
+
+test("scheduler settlement after stop or the original deadline never requests JIT", async () => {
+  for (const deadline of [false, true]) {
+    const f = latencyFixture();
+    const held = deferred();
+    let jitCalls = 0;
+    f.sandbox.window.__desktopController.schedulerStats = () => held.promise;
+    f.sandbox.window.__desktopController.jitStats = () => { jitCalls += 1; return {}; };
+    const report = f.api.installInteractionLatencyProbe({ restoredAt: 1_000, baselineWriteIndex: 0 });
+    await flushMicrotasks();
+    if (deadline) await advanceProbe(f, 7_000);
+    else f.sandbox.window.__e5t26fLatencyProbe.stop("completion");
+    const preserved = JSON.stringify(report);
+    held.resolve({ retiredInstructions: 999 });
+    await flushMicrotasks();
+    assert.equal(jitCalls, 0);
+    assert.equal(JSON.stringify(report), preserved);
+    assert.equal(f.timers.size, 0);
+  }
+});
+
+test("JIT observations copy only named scalar fields and record a missing API as unavailable", async () => {
+  const f = latencyFixture();
+  const stats = { hasExecutor: true, guestRetired: 100, retiredViaJit: 80, compiledBlocks: 9,
+    jitCacheInstalls: 10, jitCacheEvictions: 2, jitCacheRetranslations: 1, executedBlocks: 40, directChainEntries: 30,
+    entryCost: { hostEntries: 50, stateCopyBytes: 512, timingEnabled: false, timerReads: 0 } };
+  const forbid = { get() { throw Error("unlisted JIT payload read"); } };
+  Object.defineProperty(stats, "regions", forbid);
+  Object.defineProperty(stats.entryCost, "stateCopyCalls", forbid);
+  f.sandbox.window.__desktopController.jitStats = async () => stats;
+  const report = f.api.installInteractionLatencyProbe({ restoredAt: 1_000, baselineWriteIndex: 0 });
+  await flushMicrotasks();
+  const captured = JSON.parse(JSON.stringify(report.schedulerSamples[0].jit.stats));
+  assert.deepEqual(captured, stats);
+  assert.ok(JSON.stringify(captured).length < 500);
+  stats.compiledBlocks = { unexpected: "x".repeat(10_000) };
+  stats.entryCost.timerReads = Infinity;
+  await advanceProbe(f, 1_450);
+  assert.equal(report.schedulerSamples[1].jit.stats.compiledBlocks, null);
+  assert.equal(report.schedulerSamples[1].jit.stats.entryCost.timerReads, null);
+  f.sandbox.window.__e5t26fLatencyProbe.stop("completion");
+
+  const missing = latencyFixture();
+  const missingReport = missing.api.installInteractionLatencyProbe({ restoredAt: 1_000, baselineWriteIndex: 0 });
+  await flushMicrotasks();
+  assert.equal(missingReport.schedulerSamples[0].jit.available, false);
+  assert.equal(missingReport.schedulerSamples[0].jit.status, "unavailable");
+  assert.equal(missingReport.schedulerSamples[0].jit.requestedAt, null);
+  missing.sandbox.window.__e5t26fLatencyProbe.stop("completion");
+});
+
+test("without the latency flag neither default nor reuse interaction requests diagnostic JIT stats", async () => {
+  for (const diagnostic of [null, { mode: "reuse", latency: false }]) {
+    const f = delayedGestureFixture(1_100, "sh /tmp/a", 5);
+    f.sandbox.diagnostic = diagnostic;
+    f.sandbox.window.__desktopController = new Proxy({}, {
+      get() { assert.fail("disabled latency diagnostics accessed the controller"); },
+    });
+    f.releaseDelay.resolve();
+    const result = await f.run();
+    assert.equal(result.postRestoreStart, 1_000);
+    assert.equal(result.postAudioCommand.command, "sh /tmp/a");
+    assert.equal(f.milestones.interactionLatency, undefined);
+    assert.equal(f.timers.size, 0);
+  }
+});
+
 test("sampling is capped at 120 PCM/marker records and 24 spaced scheduler reads within the original restore window", async () => {
   const f = latencyFixture(1_000);
   const report = f.api.installInteractionLatencyProbe({ restoredAt: 1_000, baselineWriteIndex: 0 });

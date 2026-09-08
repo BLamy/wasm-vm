@@ -314,13 +314,20 @@ function installInteractionLatencyProbe({ restoredAt, baselineWriteIndex }) {
   let timer = null, deadlineTimer = null, inFlight = null, lastSchedulerAt = -Infinity;
   const shortError = (error) => String(error?.message || error).slice(0, 240);
   const pick = (value, keys) => value == null ? null : Object.fromEntries(keys.map((key) => [key, value[key] ?? null]));
+  const pickScalars = (value, keys) => value == null ? null : Object.fromEntries(keys.map((key) => {
+    const item = value[key];
+    return [key, typeof item === "boolean" || (typeof item === "number" && Number.isFinite(item)) ? item : null];
+  }));
   function stop(reason) {
     if (report.stoppedAt === null) {
       report.stoppedAt = performance.now();
       report.stopReason = reason;
       clearInterval(timer);
       clearTimeout(deadlineTimer);
-      if (inFlight) inFlight.status = "pending-at-stop";
+      if (inFlight) {
+        inFlight.status = "pending-at-stop";
+        if (inFlight.jit?.status === "pending") inFlight.jit.status = "pending-at-stop";
+      }
     }
     return report;
   }
@@ -355,6 +362,32 @@ function installInteractionLatencyProbe({ restoredAt, baselineWriteIndex }) {
         "requestedInstructions", "retiredInstructions", "fetchWaits", "fetchRequestedChunks", "fetchWaitTotalMs",
         "schedulerYields", "timerYields", "mainThreadYields", "yieldMode"]);
       sample.workerRpc = pick(rpc.value, ["calls", "completed", "pending", "averageMs", "maxMs"]);
+      // Retain the completed scheduler data before the next worker RPC. The same logical sample
+      // owns the slot until JIT settles, including when stop/deadline leaves only partial evidence.
+      const jit = sample.jit = { available: typeof controller?.jitStats === "function",
+        requestedAt: null, observedAt: null, status: "unavailable", stats: null };
+      if (jit.available && active()) {
+        const schedulerStatus = sample.status;
+        sample.status = "jit-pending";
+        jit.status = "pending";
+        jit.requestedAt = performance.now();
+        try {
+          const stats = await controller.jitStats();
+          if (!active()) return;
+          jit.observedAt = performance.now();
+          jit.stats = pickScalars(stats, ["hasExecutor", "guestRetired", "retiredViaJit", "compiledBlocks",
+            "jitCacheInstalls", "jitCacheEvictions", "jitCacheRetranslations", "executedBlocks", "directChainEntries"]);
+          if (jit.stats) jit.stats.entryCost = pickScalars(stats.entryCost,
+            ["hostEntries", "stateCopyBytes", "timingEnabled", "timerReads"]);
+          jit.status = "completed";
+          sample.status = schedulerStatus;
+        } catch (error) {
+          if (active()) {
+            jit.status = "error"; jit.observedAt = performance.now(); jit.error = shortError(error);
+            sample.status = "error";
+          }
+        }
+      }
     } catch (error) {
       if (active()) { sample.status = "error"; sample.observedAt = performance.now(); sample.error = shortError(error); }
     } finally {
