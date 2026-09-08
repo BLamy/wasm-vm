@@ -1176,6 +1176,8 @@ const bootPromise = startLinuxBootWorker({
   fastInterpreter: true,
   guestClock: query.get("guestClock") ?? "icount",
   jit: query.get("jit") !== "0",
+  // Forward an existing policy only; omission keeps the loader's default unchanged.
+  jitResidency: query.get("jitResidency") ?? undefined,
   quantum: Number(query.get("quantum") || 500_000),
   audioSharedBuffer: desktopAudioSink?.ring.sharedBuffer ?? null,
   audioClockBuffer: desktopAudioSink?.clockBuffer ?? null,

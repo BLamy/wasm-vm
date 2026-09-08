@@ -40,6 +40,18 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — coordinator — bounded existing-residency comparison
+
+The JIT-control layer is published as PR 357. Continue F's browser-only control
+surface by passing the already-supported `jitResidency` option to the owned
+worker, with no core/WASM policy change. Explicit reuse-only diagnostics require
+JIT=1 and assert the actual worker policy/cap at both endpoints. Run an
+unprofiled ABBA comparison of `repack-off` (24 batches) and `cap-256` on separate
+copies of one new sealed checkpoint. Preserve image, command, clock, key pacing,
+and original deadline. Changed served JS requires a new checkpoint; do not
+reuse or rebind the previous runtime's seal. Report all arms, including negative
+results. No production-default promotion or F verification follows from a screen.
+
 ### 2026-09-08 — worker — matched JIT control remains a negative diagnostic
 
 At `f9f017f5115b9425bf66457e8aeae016107b245d`, both copies of the sealed I

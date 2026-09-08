@@ -481,6 +481,143 @@ const reuseCommandEnv = {
   E5_T26F_DIAGNOSTIC_PORT: "48123",
 };
 
+const residencyCases = [["repack-off", 24], ["cap-256", 256], ["cap-1024", 1024]];
+
+test("residency selection is exact, reuse-only and requires explicit JIT=1 without auto-enabling it", () => {
+  for (const [residency] of residencyCases) {
+    for (const env of [{}, { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: undefined },
+      { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: "create" }]) {
+      assert.throws(() => selectDiagnosticCommand({ ...env, E5_T26F_DIAGNOSTIC_JIT: "1",
+        E5_T26F_DIAGNOSTIC_RESIDENCY: residency }), /requires reuse mode/);
+    }
+    for (const jit of [undefined, "0", 1, true, "01", "1 "]) {
+      assert.throws(() => selectDiagnosticCommand({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_JIT: jit,
+        E5_T26F_DIAGNOSTIC_RESIDENCY: residency }), /JIT/);
+    }
+    for (const key of ["E5_T26F_DIAGNOSTIC_CPU", "E5_T26F_DIAGNOSTIC_LATENCY", "E5_T26F_DIAGNOSTIC_COMMAND"]) {
+      for (const value of ["", "1"]) {
+        assert.throws(() => selectDiagnosticCommand({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_JIT: "1",
+          E5_T26F_DIAGNOSTIC_RESIDENCY: residency, [key]: value }), /unprofiled/);
+      }
+    }
+  }
+  for (const residency of ["", "REPACK-OFF", "Cap-256", "cap-1024 ", " cap-256", "cap-256\n", "cap-0256", "cap-24", "256", 256, 1024, false, null, {}, ["cap-256"]]) {
+    assert.throws(() => selectDiagnosticCommand({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_JIT: "1",
+      E5_T26F_DIAGNOSTIC_RESIDENCY: residency }), /residency/i);
+  }
+});
+
+test("residency metadata and cold/restore query are explicit; omission leaves existing URLs unchanged", () => {
+  const query = extractBetween("  const query = new URLSearchParams", "  let normalSnapshot =");
+  const defaultEnvs = [{}, reuseCommandEnv, { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: "create" },
+    ...["0", "1"].map((jit) => ({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_JIT: jit }))];
+  const explicitEnvs = residencyCases.map(([residency]) => ({ ...reuseCommandEnv,
+    E5_T26F_DIAGNOSTIC_JIT: "1", E5_T26F_DIAGNOSTIC_RESIDENCY: residency,
+    E5_T26F_DIAGNOSTIC_GUEST_CLOCK: "icount", E5_T26F_DIAGNOSTIC_KEY_DELAY_MS: "5" }));
+  for (const env of [...defaultEnvs, ...explicitEnvs]) {
+    const selected = selectDiagnosticCommand(env);
+    const expected = new URLSearchParams({ testHooks: "1", jit: env.E5_T26F_DIAGNOSTIC_JIT ?? "1",
+      quantum: "500000", imageManifestUrl: "./e5t18b-desktop/manifest.json", baseUrl: "./e5t18b-desktop/",
+      imageSha256: "image", manifestSha256: "manifest" });
+    if (env.E5_T26F_DIAGNOSTIC_GUEST_CLOCK) expected.set("guestClock", env.E5_T26F_DIAGNOSTIC_GUEST_CLOCK);
+    if (env.E5_T26F_DIAGNOSTIC_RESIDENCY) expected.set("jitResidency", env.E5_T26F_DIAGNOSTIC_RESIDENCY);
+    const urls = vm.runInNewContext(`${query}\n({ coldUrl, restoreUrl })`, { ...selected, URLSearchParams,
+      base: "http://local", imageSha256: "image", manifestSha256: "manifest" });
+    for (const url of [urls.coldUrl, urls.restoreUrl]) {
+      const actual = new URL(url).searchParams;
+      actual.delete("autoRestore");
+      assert.deepEqual([...actual.entries()].sort(), [...expected.entries()].sort());
+    }
+    if (selected.diagnostic) assert.equal(selected.diagnostic.residency, env.E5_T26F_DIAGNOSTIC_RESIDENCY ?? null);
+    assert.equal(selected.postRestoreCommand, "sh /tmp/a");
+    if (env.E5_T26F_DIAGNOSTIC_RESIDENCY !== undefined) {
+      const run = vm.runInNewContext(extractBetween("const milestones = {", "\nlet lastPhase") + "\nmilestones.run", selected);
+      assert.equal(run.acceptance, false);
+      assert.equal(run.diagnostic.residency, env.E5_T26F_DIAGNOSTIC_RESIDENCY);
+      assert.equal(run.diagnostic.jit, "1");
+      assert.equal(run.diagnostic.cpu, false);
+      assert.equal(run.diagnostic.latency, false);
+      assert.equal(run.postRestoreKeyDelayMs, 5);
+    } else {
+      assert.equal(new URL(urls.coldUrl).searchParams.has("jitResidency"), false);
+      assert.equal(new URL(urls.restoreUrl).searchParams.has("jitResidency"), false);
+    }
+  }
+});
+
+test("omitted residency adds no policy access or extra RPC to either existing JIT arm", async () => {
+  for (const jit of ["0", "1"]) {
+    const f = fixture();
+    f.sandbox.diagnostic = selectDiagnosticCommand({ ...reuseCommandEnv, E5_T26F_DIAGNOSTIC_JIT: jit }).diagnostic;
+    assert.equal(f.sandbox.diagnostic.residency, null);
+    let calls = 0;
+    f.sandbox.page.evaluate = async (fn) => fn();
+    f.sandbox.window.__desktopController = { jitStats: async () => ({
+      hasExecutor: jit === "1", guestRetired: ++calls,
+      get jitResidencyPolicy() { throw Error("omitted policy was checked"); },
+      get jitResidencyCap() { throw Error("omitted cap was checked"); },
+    }) };
+    await f.api.recordDiagnosticJit("jitBefore");
+    await f.api.recordDiagnosticJit("jitAfter");
+    assert.equal(calls, 2);
+    assert.equal(f.milestones.jitBefore.state.guestRetired, 1);
+    assert.equal(f.milestones.jitAfter.state.guestRetired, 2);
+  }
+});
+
+test("all three residency policies require actual mapped caps at both existing JIT endpoints", async () => {
+  for (const [residency, cap] of residencyCases) {
+    const f = fixture();
+    f.sandbox.diagnostic = { mode: "reuse", jit: "1", residency };
+    let calls = 0;
+    f.sandbox.page.evaluate = async (fn) => fn();
+    f.sandbox.window.__desktopController = { jitStats: async () => ({ hasExecutor: true,
+      guestRetired: ++calls, jitResidencyPolicy: residency, jitResidencyCap: cap }) };
+    await f.api.recordDiagnosticJit("jitBefore");
+    await f.api.recordDiagnosticJit("jitAfter");
+    for (const key of ["jitBefore", "jitAfter"]) {
+      assert.equal(f.milestones[key].state.jitResidencyPolicy, residency);
+      assert.equal(f.milestones[key].state.jitResidencyCap, cap);
+    }
+    assert.equal(calls, 2, "policy checks reuse the same before/after RPCs");
+    assert.equal(f.timers.size, 0);
+  }
+});
+
+test("missing or mismatched actual residency policy/cap refuses at either endpoint and preserves raw failure evidence", async () => {
+  for (const [residency, cap] of residencyCases) for (const key of ["jitBefore", "jitAfter"]) {
+    const wrongPolicy = residency === "repack-off" ? "cap-256" : "repack-off";
+    const changes = [
+      { jitResidencyPolicy: undefined }, { jitResidencyPolicy: null }, { jitResidencyPolicy: wrongPolicy },
+      { jitResidencyPolicy: residency.toUpperCase() }, { jitResidencyPolicy: `${residency} ` },
+      { jitResidencyCap: undefined }, { jitResidencyCap: null }, { jitResidencyCap: String(cap) },
+      { jitResidencyCap: cap === 24 ? 256 : 24 },
+    ];
+    for (const change of changes) {
+      const f = fixture();
+      f.sandbox.diagnostic = { mode: "reuse", jit: "1", residency };
+      f.milestones.jitBefore = { state: { hasExecutor: true, guestRetired: 100,
+        jitResidencyPolicy: residency, jitResidencyCap: cap } };
+      const actual = { hasExecutor: true, guestRetired: 101, jitResidencyPolicy: residency, jitResidencyCap: cap, ...change };
+      f.sandbox.page.evaluate = async (fn) => fn();
+      let calls = 0;
+      f.sandbox.window.__desktopController = { jitStats: async () => { calls += 1; return actual; } };
+      let failure;
+      await assert.rejects(f.api.recordDiagnosticJit(key), (error) => {
+        failure = error;
+        return /residency|policy|cap/i.test(error.message);
+      });
+      assert.equal(calls, 1);
+      assert.equal(f.milestones[key].state, actual, "do not replace observed policy/cap with requested values");
+      f.sandbox.page.evaluate = async () => { throw Error("page closed"); };
+      await f.api.captureFailure(`failure-${key}`, failure);
+      const saved = JSON.parse(f.writes[0].value);
+      assert.deepEqual(saved.milestones[key].state, JSON.parse(JSON.stringify(actual)));
+      assert.equal(saved.error.message, failure.message);
+    }
+  }
+});
+
 test("JIT comparison is exact-string/reuse-only and rejects profiling or command overrides", () => {
   for (const jit of ["0", "1"]) {
     for (const env of [{}, { ...reuseCommandEnv, E5_T26F_DIAGNOSTIC: undefined },

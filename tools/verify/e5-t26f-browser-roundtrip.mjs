@@ -9,6 +9,7 @@
 // Reuse alone permits E5_T26F_DIAGNOSTIC_COMMAND, physically typed and recorded verbatim.
 // E5_T26F_DIAGNOSTIC_LATENCY=1 (reuse only) records bounded, read-only interaction timing.
 // E5_T26F_DIAGNOSTIC_JIT=0|1 (reuse only) compares the existing unprofiled desktop JIT routes.
+// E5_T26F_DIAGNOSTIC_RESIDENCY (reuse + explicit JIT=1 only) selects an existing module cap.
 // E5_T26F_DIAGNOSTIC_CPU=1 (reuse only) records the owned worker using the shared CDP profiler.
 
 import assert from "node:assert/strict";
@@ -44,6 +45,13 @@ const jsonReplacer = (_key, value) => typeof value === "bigint" ? `${value}n` : 
 function diagnosticOptions(env) {
   const mode = env.E5_T26F_DIAGNOSTIC;
   const jit = env.E5_T26F_DIAGNOSTIC_JIT;
+  const residency = env.E5_T26F_DIAGNOSTIC_RESIDENCY;
+  if (residency !== undefined) {
+    assert.equal(mode, "reuse", "diagnostic residency comparison requires reuse mode");
+    assert.ok(["repack-off", "cap-256", "cap-1024"].includes(residency),
+      "diagnostic residency must be exactly repack-off, cap-256, or cap-1024");
+    assert.equal(jit, "1", "diagnostic residency requires explicit JIT=1");
+  }
   if (jit !== undefined) {
     assert.equal(mode, "reuse", "diagnostic JIT comparison requires reuse mode");
     assert.ok(jit === "0" || jit === "1", "diagnostic JIT flag must be exactly 0 or 1");
@@ -89,7 +97,7 @@ function diagnosticOptions(env) {
   assert.ok(Number.isSafeInteger(port) && port >= 1024 && port <= 65535, "diagnostic mode requires a stable explicit server port");
   return { mode, directory, port, origin: `http://127.0.0.1:${port}`, command: command ?? null,
     keyDelayMs: Number(delay ?? 0), latency: latency === "1", cpu: cpu === "1", guestClock: guestClock ?? null,
-    jit: jit ?? null };
+    jit: jit ?? null, residency: residency ?? null };
 }
 
 const diagnostic = diagnosticOptions(process.env);
@@ -337,6 +345,13 @@ async function recordDiagnosticJit(key) {
   }
   assert.equal(milestones[key].state?.hasExecutor, diagnostic.jit === "1",
     "requested JIT policy did not match the actual worker executor");
+  if (diagnostic.residency != null) {
+    assert.equal(milestones[key].state.jitResidencyPolicy, diagnostic.residency,
+      "requested residency policy did not match the actual worker");
+    const cap = { "repack-off": 24, "cap-256": 256, "cap-1024": 1024 }[diagnostic.residency];
+    assert.equal(milestones[key].state.jitResidencyCap, cap,
+      "requested residency cap did not match the actual worker");
+  }
   const retired = milestones[key].state.guestRetired;
   assert.ok(Number.isSafeInteger(retired) && retired >= 0,
     "actual worker guest retirement count is unavailable or unsafe");
@@ -1113,6 +1128,7 @@ try {
   });
   if (diagnostic?.guestClock) query.set("guestClock", diagnostic.guestClock);
   if (diagnostic?.jit != null) query.set("jit", diagnostic.jit);
+  if (diagnostic?.residency != null) query.set("jitResidency", diagnostic.residency);
   const coldUrl = `${base}/desktop-cursor.html?${query}`;
   const restoreUrl = `${coldUrl}&autoRestore=1`;
   let normalSnapshot = diagnosticCheckpoint?.normalSnapshot;
