@@ -1,7 +1,8 @@
 # E5-T26m — interrupt-only inline-cache context changes
 
-Status: final promoted-test head passes scoped gates and the single pristine
-clone. Independent final verdict is pending; no speedup claim.
+Status: verified by fresh Daybreak critic in
+`a438e53930ec9aabcb829cf50d4a578769e3c84a`; see
+`verifier/final-verdict.md`. No speedup or F-acceptance claim.
 Task: `tasks/epic-5-the-window/E5-T26m-inline-context-interrupt-bits.md`.
 Activation commit: `aa03fe85933e9b9730bb747d903bba57c9b13f36`.
 
