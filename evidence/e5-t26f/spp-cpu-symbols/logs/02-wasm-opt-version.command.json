@@ -1,0 +1,16 @@
+{
+  "executable": "/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt",
+  "argv": [
+    "--version"
+  ],
+  "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+  "env": {
+    "PATH": "/usr/bin:/bin",
+    "LANG": "C",
+    "LC_ALL": "C",
+    "TZ": "UTC",
+    "TMPDIR": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion/tmp"
+  },
+  "startedAt": "2026-09-08T20:30:53.713Z",
+  "logPrefix": "evidence/e5-t26f/spp-cpu-symbols/logs/02-wasm-opt-version"
+}

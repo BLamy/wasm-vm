@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-09-08T20:30:54.821Z",
+  "artifacts": [
+    {
+      "path": "target/e5-t26f/spp-cpu-symbols-96ecb801/companion/named.wasm",
+      "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion/named.wasm",
+      "size": 1721362,
+      "sha256": "372815edf3bb6a1f72d770d7796353836b87df48c61acb9fb8168e72c1810116"
+    },
+    {
+      "path": "target/e5-t26f/spp-cpu-symbols-96ecb801/companion/named.wasm.gz",
+      "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion/named.wasm.gz",
+      "size": 639454,
+      "sha256": "5225951cfc6c9e67b1949b8348babb341f01d4b3b4c1f1740cb01c68aa687e63"
+    },
+    {
+      "path": "target/e5-t26f/spp-cpu-symbols-96ecb801/companion/wasm_vm_wasm_bg.wasm",
+      "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion/wasm_vm_wasm_bg.wasm",
+      "size": 1915262,
+      "sha256": "79913af70ac30d57148b259a6b81ad2ec3ae857b778815d0b60f69b4af14a7f0"
+    },
+    {
+      "path": "target/e5-t26f/spp-cpu-symbols-96ecb801/companion/wasm_vm_wasm.js",
+      "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion/wasm_vm_wasm.js",
+      "size": 115275,
+      "sha256": "f877c77a0ba7740ea98cee2fa99cf6d41e771b2514abefb18267525f63152416"
+    },
+    {
+      "path": "target/e5-t26f/spp-cpu-symbols-96ecb801/companion/wasm_vm_wasm.d.ts",
+      "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion/wasm_vm_wasm.d.ts",
+      "size": 46945,
+      "sha256": "189c555c15de6c2e1fadbcc45eb37c911f4c9f48c737e2f6ab96208f59964b80"
+    },
+    {
+      "path": "target/e5-t26f/spp-cpu-symbols-96ecb801/companion/wasm_vm_wasm_bg.wasm.d.ts",
+      "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion/wasm_vm_wasm_bg.wasm.d.ts",
+      "size": 12041,
+      "sha256": "10b3b4a07fb430939ab52a07e04d1b180cfef2a09dbc7a8d87e7eceb86a3fb56"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "evidence/e5-t26f/spp-cpu-symbols/section-binding.json",
+      "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/spp-cpu-symbols/section-binding.json",
+      "size": 2026,
+      "sha256": "19c1dead8eff51f06935943ec6129a3b050c9c74f82987fbe37b508f8cddc057"
+    },
+    {
+      "path": "evidence/e5-t26f/spp-cpu-symbols/cpu-summary.json",
+      "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/spp-cpu-symbols/cpu-summary.json",
+      "size": 255714,
+      "sha256": "cd03d968f470897f30b6bb117f3b63af5bc45c927f26b819a6f384bef8e7b4bd"
+    },
+    {
+      "path": "evidence/e5-t26f/spp-cpu-symbols/closed-failure.json",
+      "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/spp-cpu-symbols/closed-failure.json",
+      "size": 711,
+      "sha256": "9b5192f299a3da2feb4e475be59bf6f6efe6c617d3017f2b4866c8b62e28187d"
+    },
+    {
+      "path": "evidence/e5-t26f/spp-cpu-symbols/inputs-before.json",
+      "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/spp-cpu-symbols/inputs-before.json",
+      "size": 24071,
+      "sha256": "dd72f1797eaa7313047506f6178c2b959efc846679c525797c2dc748258d3129"
+    },
+    {
+      "path": "evidence/e5-t26f/spp-cpu-symbols/inputs-after.json",
+      "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/spp-cpu-symbols/inputs-after.json",
+      "size": 24071,
+      "sha256": "44e1b58af90b20ac29ffd6e46c8925f7140602ee4b0e086591a02f939beb1dc6"
+    },
+    {
+      "path": "evidence/e5-t26f/spp-cpu-symbols/commands.json",
+      "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/spp-cpu-symbols/commands.json",
+      "size": 4194,
+      "sha256": "04bbf2844bd780a1bffa24b71112eb321e3982e79956aec56c56c07d44e147d1"
+    }
+  ]
+}

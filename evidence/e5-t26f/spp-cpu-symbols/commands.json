@@ -1,0 +1,118 @@
+[
+  {
+    "executable": "/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen",
+    "argv": [
+      "--version"
+    ],
+    "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+    "env": {
+      "PATH": "/usr/bin:/bin",
+      "LANG": "C",
+      "LC_ALL": "C",
+      "TZ": "UTC",
+      "TMPDIR": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion/tmp"
+    },
+    "startedAt": "2026-09-08T20:30:53.707Z",
+    "logPrefix": "evidence/e5-t26f/spp-cpu-symbols/logs/01-wasm-bindgen-version",
+    "stdout": "wasm-bindgen 0.2.126\n",
+    "stderr": "",
+    "code": 0,
+    "signal": null,
+    "finishedAt": "2026-09-08T20:30:53.712Z"
+  },
+  {
+    "executable": "/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt",
+    "argv": [
+      "--version"
+    ],
+    "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+    "env": {
+      "PATH": "/usr/bin:/bin",
+      "LANG": "C",
+      "LC_ALL": "C",
+      "TZ": "UTC",
+      "TMPDIR": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion/tmp"
+    },
+    "startedAt": "2026-09-08T20:30:53.713Z",
+    "logPrefix": "evidence/e5-t26f/spp-cpu-symbols/logs/02-wasm-opt-version",
+    "stdout": "wasm-opt version 117 (version_117)\n",
+    "stderr": "",
+    "code": 0,
+    "signal": null,
+    "finishedAt": "2026-09-08T20:30:53.749Z"
+  },
+  {
+    "executable": "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "argv": [
+      "--test",
+      "tools/verify/e5-t22c-symbolize-cpu.test.mjs"
+    ],
+    "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+    "env": {
+      "PATH": "/usr/bin:/bin",
+      "LANG": "C",
+      "LC_ALL": "C",
+      "TZ": "UTC",
+      "TMPDIR": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion/tmp"
+    },
+    "startedAt": "2026-09-08T20:30:53.750Z",
+    "logPrefix": "evidence/e5-t26f/spp-cpu-symbols/logs/03-symbolizer-tests",
+    "stdout": "✔ offline names cannot be applied to different executable bytes (1.499959ms)\n✔ time-weighted samples resolve only the bound module, retaining unrelated JIT names (0.270083ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 33.817834\n",
+    "stderr": "",
+    "code": 0,
+    "signal": null,
+    "finishedAt": "2026-09-08T20:30:53.807Z"
+  },
+  {
+    "executable": "/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen",
+    "argv": [
+      "--target",
+      "web",
+      "--out-dir",
+      "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion",
+      "--out-name",
+      "wasm_vm_wasm",
+      "/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm"
+    ],
+    "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+    "env": {
+      "PATH": "/usr/bin:/bin",
+      "LANG": "C",
+      "LC_ALL": "C",
+      "TZ": "UTC",
+      "TMPDIR": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion/tmp"
+    },
+    "startedAt": "2026-09-08T20:30:53.808Z",
+    "logPrefix": "evidence/e5-t26f/spp-cpu-symbols/logs/04-wasm-bindgen",
+    "stdout": "",
+    "stderr": "",
+    "code": 0,
+    "signal": null,
+    "finishedAt": "2026-09-08T20:30:53.910Z"
+  },
+  {
+    "executable": "/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt",
+    "argv": [
+      "-O",
+      "-g",
+      "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion/wasm_vm_wasm_bg.wasm",
+      "-o",
+      "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion/named.wasm"
+    ],
+    "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+    "env": {
+      "PATH": "/usr/bin:/bin",
+      "LANG": "C",
+      "LC_ALL": "C",
+      "TZ": "UTC",
+      "TMPDIR": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion/tmp"
+    },
+    "startedAt": "2026-09-08T20:30:53.911Z",
+    "logPrefix": "evidence/e5-t26f/spp-cpu-symbols/logs/05-wasm-opt-names",
+    "stdout": "",
+    "stderr": "",
+    "code": 0,
+    "signal": null,
+    "finishedAt": "2026-09-08T20:30:54.745Z"
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "schema": "wasm-vm.e5-t26f.spp-cpu-symbols.script-provenance.v1",
+  "initialFailure": {
+    "record": "evidence/e5-t26f/spp-cpu-symbols/failure.json",
+    "recordSha256": "268c373ed8323dfc681b0e0e69838401304d13f07609144c50566fa7f1d76549",
+    "script": "target/e5-t26f/spp-cpu-symbols-96ecb801/worker-initial-failure-reconstructed.mjs",
+    "scriptSha256": "b8874642f8c5d1d5770c290a08d794aa97630d3727ba8322627c2775a46cff52",
+    "scriptLabel": "RECONSTRUCTED INITIAL FAILURE REPRODUCTION — NOT THE ORIGINAL SCRIPT",
+    "originalScriptRetained": false,
+    "reconstructionScope": "The original worker was changed after this failure; this small file preserves the exact failing digest comparison, not the original full script.",
+    "wrongExpectedDigest": "275b4febbd10b186f9c2b34c85dbb346880de86f1e0522878c450ce25289a51f",
+    "wrongDigestMeaning": "enclosing baseline/checkpoint profile SHA-256",
+    "actualCpuDigest": "21e222eda13169d922c4f1d4135446cd7b6de84b97cc31f2cb7c7afe123e708a",
+    "failureEffect": "stopped before wasm-bindgen, wasm-opt, section binding, or attribution; no companion was produced by that attempt"
+  },
+  "correctedWorker": {
+    "script": "target/e5-t26f/spp-cpu-symbols-96ecb801/worker.mjs",
+    "scriptSha256": "aea606c91b96c97159182309de3e2d3b42e4d26bbe74c74ffc1bcdd8732edd9f",
+    "correction": "expectedProfile now binds the actual interaction-cpu.json digest 21e222eda13169d922c4f1d4135446cd7b6de84b97cc31f2cb7c7afe123e708a",
+    "provenance": "same bounded worker after repository-root/gzip syntax fixes; executed once to generate the single companion"
+  },
+  "handoff": {
+    "head": "96ecb801fdf8b67af75cd150db82d115bcf046cd",
+    "companionSha256": "372815edf3bb6a1f72d770d7796353836b87df48c61acb9fb8168e72c1810116",
+    "sourceInput": "target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm",
+    "sourceInputSha256": "89bf2f0ad3306efbf42aaaa0b54dda5aada6110f361d939b3eeca2c300323c2d",
+    "noSecondCompanion": true,
+    "noBrowserOrGateRerun": true
+  }
+}

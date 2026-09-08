@@ -40,6 +40,41 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — worker and fresh Daybreak critic — post-SPP screen closes failed
+
+Frozen producer `96ecb801fdf8b67af75cd150db82d115bcf046cd` runs
+`env -u RUSTDOCFLAGS node tools/verify/e5-t26f-browser-single-process-observer.mjs`.
+The new cold seal restores CRC168fc7fa and the same fresh prepared
+PID999/start28938, then accepts physical play/cursor/focus and produces1440
+fresh non-silent PCM frames. Original T0 `1177.8450000286102` to frozen end
+`5282.0199999809265` is **4104.174999952316ms >2000ms: FAILED** at runner1930.
+Raw SHA256 `a25418d4dd387ae10af687e8cfffb615a3a74eb6bc1bd81aea88a50e10dfef96`.
+Cold0/reuse1/outer0 admits a diagnostic failure, not acceptance. Daybreak
+holds provenance and reached functionality, with later coherence/drag/reload
+unreached and complete reuse error arrays absent. Independent report:
+`evidence/e5-t26f/spp-runtime-verifier/browser-results.md`.
+
+One separate CPU reuse of a new copy at the same head fails at4023.200ms;
+raw SHA256 `677544f3f9137e7e542a9c4e2ad6b143bfd5f25659132e50cf2cb5ed085d95ea`.
+An earlier conflicting-selector invocation was refused before browser launch
+and remains retained, not a measurement. Corrected default-policy driver,
+full commands, PNGs and limitations are in
+`evidence/e5-t26f/single-process-observer-96ecb801/README.md`.
+Daybreak independently verifies the closed CPU record and all11 noncustom
+sections of Luna's named companion before authenticating1890 names. Profile
+SHA256 `21e222eda13169d922c4f1d4135446cd7b6de84b97cc31f2cb7c7afe123e708a`
+has2608 samples and3260775us time-delta weight; sync_plic self208905us=6.4066%.
+This is partial sampled attribution, not exact F wall time or causation.
+CPU/symbol verdicts: `spp-runtime-verifier/cpu-results.md` and
+`spp-runtime-verifier/cpu-symbols-results.md` under the same evidence root.
+
+F remains unfinished; N's safety proof and unchanged observer/image evidence
+carry forward. Source-only preflight permits a bounded PLIC sparse-selector
+prerequisite (`plic-sparse-candidate/critic-preflight.md`), not yet implemented
+or verified. No timing waiver, speedup, Epic5 completion, merge or deployment
+is claimed. Any subsequent HEAD/runtime change invalidates this historical
+checkpoint seal; never rebind it to a new runtime.
+
 ### 2026-09-08 — coordinator — resume after verified SPP prerequisite
 
 E5-T26n is independently verified by Daybreak at

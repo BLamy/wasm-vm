@@ -1,0 +1,16 @@
+{
+  "source": "evidence/e5-t26f/single-process-observer-96ecb801/cpu-default/record/failure-post-restore-interaction-checks.json",
+  "invocation": "evidence/e5-t26f/single-process-observer-96ecb801/cpu-default/invocation.json",
+  "acceptance": false,
+  "exitCode": 1,
+  "head": "96ecb801fdf8b67af75cd150db82d115bcf046cd",
+  "label": "CPU replay closed child1 canonical2s cap failure; diagnostic only",
+  "failureLabel": "failure-post-restore-interaction-checks",
+  "lastPhase": {
+    "phase": "post-restore:interaction-checks",
+    "event": "failed",
+    "timestamp": "2026-09-08T20:24:24.343Z",
+    "elapsedMs": 8269
+  },
+  "profileSha256": "21e222eda13169d922c4f1d4135446cd7b6de84b97cc31f2cb7c7afe123e708a"
+}
