@@ -3,7 +3,7 @@ id: E5-T19a
 epic: 5
 title: virtio-snd control protocol and PCM state machine
 priority: 519.1
-status: implemented
+status: verified
 depends_on: [E5-T05c]
 estimate: S
 risk: high
@@ -48,6 +48,38 @@ leaking pending I/O. Run independent schedules, one bounded novel attack, one ef
 sabotage, and one scrubbed exact-head local clean clone for the high-risk remediation.
 
 ## Verification log
+
+### 2026-09-07 — fresh Daybreak Blue verifier — VERDICT: verified
+
+At task head `81a17da24774680902a9331ef70f2286ea0eec5d`, final source/gate head
+`1be872f25f2d836f3d56310db82875053b6c185b`, and runtime
+`9e8e1c22423f935e2e918a687cc6633e1356869c`, all remediation predictions HELD:
+the independently transcribed full transition matrix, never-configured refusal,
+configured RELEASE parameter retention, repeated setup, malformed-request atomicity,
+wire-v1 codec compatibility, reset/capture-disable clearing, and playback/capture pending-I/O
+ordering. The authenticated worker gate passed 325 core plus 69 integration tests, format,
+clippy, no-std wasm, and wrapper checks (SHA-256
+`a01dce36e9c6d6262322893b80735f6d0a64a9dd43d5f2980d654fef5b15142a`). Independent
+focused and capture tests passed; an exact-source sabotage recreating RELEASE parameter
+erasure failed at PREPARE as predicted; a novel Prepared-stream reconfiguration produced
+one exact fresh period; and the sole scrubbed `--no-local` clone passed `make
+verify-E5-T19a` at exact `1be872f2` and remained clean.
+
+The real Linux-browser create/reuse pair binds the same runtime, image, manifest, and
+snapshot. Before and after restore, the physical ALSA command produced 1,440/1,440 fresh
+non-silent frames (`maxAbs=0.082000732421875`) with output attached; restored first-present
+CRC matched `94da90ee`, boot went directly to `restored`, the agent performed a fresh HELLO,
+and the inspected PNG shows the conditional green playback marker and returned prompt with
+no XRUN/PREPARE error. Canonical restored JSON/PNG/server SHA-256 values are respectively
+`9a83b529652f0bd9d72271d66e3227d9c95e219b1da5508f1dc868671142c04a`,
+`f50e85d164e63a0581edf9c705702991634c03e47b99563d4ba89cfae8cf11f3`, and
+`b3693db94edbb7b48d54c4c4836b785a269d1bc49fc144645610bf89aaf0a360`.
+
+Full critic report: `evidence/e5-t19a/recovery-remediation/final-results.md`, SHA-256
+`081aae089b68b59ee7ca15526e4f9e885d90abfdf9cb4ae54b8fbff526c1d747`.
+Every changed runtime branch is exercised and no hunk remains unclassified. The restored
+diagnostic's `3842.595 ms` result still fails E5-T26f's unchanged 2-second cap; that
+performance requirement is neither waived nor claimed here, and E5-T26f status is untouched.
 
 ### 2026-09-07 — worker — IMPLEMENTED: PCM recovery remediation
 

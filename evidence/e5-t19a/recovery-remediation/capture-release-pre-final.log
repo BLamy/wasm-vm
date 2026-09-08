@@ -1,0 +1,11 @@
+^D    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/virtio_snd_release_capture.rs (target/debug/deps/virtio_snd_release_capture-a1bafd216018ffe6)
+
+running 4 tests
+test pending_capture_release_needs_no_source_and_reprepare_remains_usable ... ok
+test disabled_capture_release_rejects_input_without_touching_source_or_rx ... ok
+test capture_release_completes_rx_before_control_response_and_following_prepare ... ok
+test pending_capture_release_without_a_usable_rx_queue_requests_reset_without_response ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+

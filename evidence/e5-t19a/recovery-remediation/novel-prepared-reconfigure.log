@@ -1,0 +1,10 @@
+^D   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t19a-remediation-novel.BTeTpH/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.41s
+     Running tests/desktop_machine_audio_resume.rs (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t19a-verifier-sabotage/debug/deps/desktop_machine_audio_resume-a0e91b2ede2294fe)
+
+running 1 test
+recovery: fresh 240 frames bit-exact; TX used=1 completed exactly once
+test verifier_prepared_reconfigure_uses_replacement_period_for_fresh_pcm ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.01s
+
