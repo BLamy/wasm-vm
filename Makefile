@@ -1234,7 +1234,7 @@ verify-E5-T26o:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
 	cargo clippy -p wasm-vm-core --lib --test plic --test plic_sparse --features trace -- -D warnings
 	cargo clippy -p wasm-vm-wasm --test plic_sparse --target wasm32-unknown-unknown -- -D warnings
-	cargo test -p wasm-vm-core --features trace --lib dev::plic -- --nocapture
+	cargo test -p wasm-vm-core --features trace,gpu-trace --lib dev::plic -- --nocapture
 	cargo test -p wasm-vm-core --features trace --test plic --test plic_sparse --test interrupts -- --nocapture
 	cargo test -p wasm-vm-jit-runtime --test chaining device_completion_fires_inside_chained_loop -- --nocapture
 	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
