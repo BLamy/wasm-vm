@@ -1,0 +1,3042 @@
+{
+  "label": "failure-post-restore-interaction-checks",
+  "timestamp": "2026-09-08T02:16:43.001Z",
+  "head": "2e9d9771477bda265342ac928a25fc6e2d769b25",
+  "image": {
+    "imageSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+    "manifestSha256": "b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592"
+  },
+  "lastPhase": {
+    "phase": "post-restore:interaction-checks",
+    "event": "failed",
+    "timestamp": "2026-09-08T02:16:43.001Z",
+    "elapsedMs": 7160
+  },
+  "lastProgressSample": null,
+  "milestones": {
+    "run": {
+      "kind": "diagnostic-iteration",
+      "acceptance": false,
+      "diagnostic": {
+        "mode": "reuse",
+        "directory": "/private/tmp/e5-t19a-recovery-browser.zziUlb",
+        "port": 61627,
+        "origin": "http://127.0.0.1:61627",
+        "command": null,
+        "keyDelayMs": 5,
+        "latency": true
+      },
+      "postRestoreCommand": "sh /tmp/a",
+      "postRestoreKeyDelayMs": 5,
+      "binding": {
+        "head": "2e9d9771477bda265342ac928a25fc6e2d769b25",
+        "runtimeSha256": "75000f36186a075ede719bdd16f1fb953b36830bd23ff3ea7ac29c64bd97297c",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "imageBytes": 1073741824,
+        "manifestSha256": "b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592",
+        "origin": "http://127.0.0.1:61627"
+      },
+      "profile": "/private/tmp/e5-t19a-recovery-browser.zziUlb/iteration-kb3LPd/profile",
+      "checkpointFile": "/private/tmp/e5-t19a-recovery-browser.zziUlb/normal-checkpoint.json",
+      "creatorHead": "c90bc4e466358be1f0a02e5a0ff609eb0e129c6d",
+      "currentHead": "2e9d9771477bda265342ac928a25fc6e2d769b25",
+      "checkpointCreatedAt": "2026-09-08T01:48:44.813Z",
+      "profileSha256": "ea5d8b662bfa418675b1de917143092bd34279058605610b30c1b3a43692aaf4"
+    },
+    "normalSnapshot": {
+      "sha256": "5917353c7ce3a38f4ca8a2c197f9d2f09a8563d4d9838d050662fc9e00085641",
+      "byteLength": 2627028,
+      "preFrontBufferCrc": "94da90ee",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "94da90ee",
+        "overlayGeneration": 610
+      }
+    },
+    "normalRestore": {
+      "result": {
+        "snapshotSha256": "5917353c7ce3a38f4ca8a2c197f9d2f09a8563d4d9838d050662fc9e00085641",
+        "snapshotBytes": 2627028,
+        "completedAt": 1129.4700000286102,
+        "report": {
+          "boundaryId": 8933691341,
+          "scanout": {
+            "width": 1280,
+            "height": 800
+          },
+          "hostViewport": {
+            "width": 1280,
+            "height": 800
+          },
+          "viewport": "native",
+          "agentRehandshake": true,
+          "inputReleaseEvents": 0,
+          "soundXrunEvents": 0,
+          "fullRepairFrame": true
+        },
+        "handshake": {
+          "generation": 2,
+          "version": 1,
+          "capabilities": "1"
+        },
+        "observation": {
+          "baseSuccessfulPresents": 1,
+          "firstPresent": {
+            "successfulPresents": 2,
+            "crc32": "94da90ee"
+          }
+        },
+        "bootStates": [
+          {
+            "state": "fetching",
+            "atMs": 136
+          },
+          {
+            "state": "instantiating",
+            "atMs": 155
+          },
+          {
+            "state": "restored",
+            "atMs": 722
+          }
+        ],
+        "diagnostics": [
+          {
+            "atMs": 814,
+            "reason": "agent-channel",
+            "error": "desktop restore requested a fresh agent HELLO",
+            "channelState": "disconnected",
+            "transportGeneration": 0
+          }
+        ],
+        "machineResume": {
+          "persisted": true,
+          "paused": true,
+          "preFrontBufferCrc": "94da90ee",
+          "overlayGeneration": 610
+        },
+        "preFrontBufferCrc": "94da90ee",
+        "resume": {
+          "restored": true,
+          "snapshotDecision": null,
+          "overlayGeneration": null
+        },
+        "coherenceAudit": {
+          "status": "deferred"
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "fixedViewport": true,
+          "sizeMismatch": false,
+          "framesReceived": 2,
+          "successfulPresents": 2,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "scheduler": null,
+          "gpu": {
+            "framesReceived": 2,
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "successfulPresents": 2,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 0,
+            "uploadedBytes": 8192000,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "width": 1280,
+            "height": 800
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 800
+          },
+          "errors": []
+        }
+      },
+      "displayChecksPassed": true,
+      "checksPassed": false
+    },
+    "postRestoreStart": 1129.4700000286102,
+    "postRestoreCursor": {
+      "frame": {
+        "atMs": 1790,
+        "sequence": 2,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 19119
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 14303
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 19119,
+          "y": 14303
+        }
+      },
+      "rendered": {
+        "x": 684,
+        "y": 392,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      },
+      "observedAt": 1904.960000038147,
+      "elapsedMs": 775.4900000095367
+    },
+    "postRestoreAudioBefore": {
+      "policy": "unlocked",
+      "renderedFrames": 43648,
+      "writeIndex": 0
+    },
+    "interactionLatency": {
+      "restoredAt": 1129.4700000286102,
+      "startedAt": 1911.2450000047684,
+      "deadlineAt": 7129.47000002861,
+      "baselineWriteIndex": 0,
+      "limits": {
+        "pcmIntervalMs": 50,
+        "pcmSamples": 120,
+        "schedulerIntervalMs": 250,
+        "schedulerSamples": 24,
+        "markerSamples": 120
+      },
+      "pcmSamples": [
+        {
+          "observedAt": 1961.4850000143051,
+          "elapsedMs": 832.0149999856949,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2012.2549999952316,
+          "elapsedMs": 882.7849999666214,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2061.5800000429153,
+          "elapsedMs": 932.1100000143051,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2112.3250000476837,
+          "elapsedMs": 982.8550000190735,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2163.139999985695,
+          "elapsedMs": 1033.6699999570847,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2212.4500000476837,
+          "elapsedMs": 1082.9800000190735,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2262.8150000572205,
+          "elapsedMs": 1133.3450000286102,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2311.6200000047684,
+          "elapsedMs": 1182.1499999761581,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2363.1549999713898,
+          "elapsedMs": 1233.6849999427795,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2413.1699999570847,
+          "elapsedMs": 1283.6999999284744,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2463.1200000047684,
+          "elapsedMs": 1333.6499999761581,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2512.8150000572205,
+          "elapsedMs": 1383.3450000286102,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2563.085000038147,
+          "elapsedMs": 1433.6150000095367,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2613.2599999904633,
+          "elapsedMs": 1483.789999961853,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2662.0499999523163,
+          "elapsedMs": 1532.579999923706,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2712.460000038147,
+          "elapsedMs": 1582.9900000095367,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2762.8550000190735,
+          "elapsedMs": 1633.3849999904633,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2812.7200000286102,
+          "elapsedMs": 1683.25,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2862.9650000333786,
+          "elapsedMs": 1733.4950000047684,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2913.1749999523163,
+          "elapsedMs": 1783.704999923706,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2963.2300000190735,
+          "elapsedMs": 1833.7599999904633,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3012.860000014305,
+          "elapsedMs": 1883.3899999856949,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3063.2000000476837,
+          "elapsedMs": 1933.7300000190735,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3111.975000023842,
+          "elapsedMs": 1982.5049999952316,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3162.399999976158,
+          "elapsedMs": 2032.929999947548,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3213.2799999713898,
+          "elapsedMs": 2083.8099999427795,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3262.1449999809265,
+          "elapsedMs": 2132.6749999523163,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3312.350000023842,
+          "elapsedMs": 2182.8799999952316,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3361.7949999570847,
+          "elapsedMs": 2232.3249999284744,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3412.2599999904633,
+          "elapsedMs": 2282.789999961853,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3462.5,
+          "elapsedMs": 2333.0299999713898,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3513.225000023842,
+          "elapsedMs": 2383.7549999952316,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3562.320000052452,
+          "elapsedMs": 2432.850000023842,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3612.610000014305,
+          "elapsedMs": 2483.139999985695,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3662.8700000047684,
+          "elapsedMs": 2533.399999976158,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3713.304999947548,
+          "elapsedMs": 2583.8349999189377,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3763.2400000095367,
+          "elapsedMs": 2633.7699999809265,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3812.3300000429153,
+          "elapsedMs": 2682.860000014305,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3862.375,
+          "elapsedMs": 2732.9049999713898,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3913.210000038147,
+          "elapsedMs": 2783.7400000095367,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3962.3650000095367,
+          "elapsedMs": 2832.8949999809265,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 4012.570000052452,
+          "elapsedMs": 2883.100000023842,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 4062.5199999809265,
+          "elapsedMs": 2933.0499999523163,
+          "available": true,
+          "writeIndex": 1920,
+          "pcmAvailable": true
+        },
+        {
+          "observedAt": 4112.399999976158,
+          "elapsedMs": 2982.929999947548,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4163.254999995232,
+          "elapsedMs": 3033.7849999666214,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4213.195000052452,
+          "elapsedMs": 3083.725000023842,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4263.205000042915,
+          "elapsedMs": 3133.735000014305,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4313.215000033379,
+          "elapsedMs": 3183.7450000047684,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4362.460000038147,
+          "elapsedMs": 3232.9900000095367,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4412.77999997139,
+          "elapsedMs": 3283.3099999427795,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4462.865000009537,
+          "elapsedMs": 3333.3949999809265,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4512.004999995232,
+          "elapsedMs": 3382.5349999666214,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4563.205000042915,
+          "elapsedMs": 3433.735000014305,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4613.15499997139,
+          "elapsedMs": 3483.6849999427795,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4662.935000061989,
+          "elapsedMs": 3533.4650000333786,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4713.200000047684,
+          "elapsedMs": 3583.7300000190735,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4763.195000052452,
+          "elapsedMs": 3633.725000023842,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4812.320000052452,
+          "elapsedMs": 3682.850000023842,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4863.22000002861,
+          "elapsedMs": 3733.75,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4913.25,
+          "elapsedMs": 3783.7799999713898,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 4963.254999995232,
+          "elapsedMs": 3833.7849999666214,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 5013.235000014305,
+          "elapsedMs": 3883.764999985695,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 5062.360000014305,
+          "elapsedMs": 3932.889999985695,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 5111.560000061989,
+          "elapsedMs": 3982.0900000333786,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 5163.179999947548,
+          "elapsedMs": 4033.7099999189377,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 5211.84500002861,
+          "elapsedMs": 4082.375,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 5262.710000038147,
+          "elapsedMs": 4133.240000009537,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 5312.554999947548,
+          "elapsedMs": 4183.084999918938,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 5362.460000038147,
+          "elapsedMs": 4232.990000009537,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 5412.575000047684,
+          "elapsedMs": 4283.1050000190735,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 5463.2300000190735,
+          "elapsedMs": 4333.759999990463,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 5512.879999995232,
+          "elapsedMs": 4383.409999966621,
+          "available": true,
+          "writeIndex": 3360
+        },
+        {
+          "observedAt": 5568.044999957085,
+          "elapsedMs": 4438.574999928474,
+          "available": true,
+          "writeIndex": 3360
+        }
+      ],
+      "schedulerSamples": [
+        {
+          "requestedAt": 1911.335000038147,
+          "elapsedMs": 781.8650000095367,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 1952.429999947548,
+          "requestMs": 41.09499990940094,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 25,
+            "totalSliceMs": 1083.9600002765656,
+            "maxSliceMs": 48.950000047683716,
+            "maxStretchGapMs": 154.40500009059906,
+            "requestedInstructions": 12500000,
+            "retiredInstructions": 12489917,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 28,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 20,
+            "completed": 18,
+            "pending": 2,
+            "averageMs": 37.08972222937478,
+            "maxMs": 109.79999995231628
+          }
+        },
+        {
+          "requestedAt": 2163.149999976158,
+          "elapsedMs": 1033.679999947548,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 2165.685000061989,
+          "requestMs": 2.5350000858306885,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 31,
+            "totalSliceMs": 1296.4100004434586,
+            "maxSliceMs": 48.950000047683716,
+            "maxStretchGapMs": 154.40500009059906,
+            "requestedInstructions": 15500000,
+            "retiredInstructions": 15489068,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 34,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 67,
+            "completed": 65,
+            "pending": 2,
+            "averageMs": 29.35138462323409,
+            "maxMs": 109.79999995231628
+          }
+        },
+        {
+          "requestedAt": 2413.1900000572205,
+          "elapsedMs": 1283.7200000286102,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 2448.399999976158,
+          "requestMs": 35.20999991893768,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 38,
+            "totalSliceMs": 1578.4000004529953,
+            "maxSliceMs": 48.950000047683716,
+            "maxStretchGapMs": 154.40500009059906,
+            "requestedInstructions": 19000000,
+            "retiredInstructions": 18987689,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 41,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 75,
+            "completed": 73,
+            "pending": 2,
+            "averageMs": 29.59739726700195,
+            "maxMs": 109.79999995231628
+          }
+        },
+        {
+          "requestedAt": 2712.4650000333786,
+          "elapsedMs": 1582.9950000047684,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 2755.1549999713898,
+          "requestMs": 42.68999993801117,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 45,
+            "totalSliceMs": 1883.7350002527237,
+            "maxSliceMs": 48.950000047683716,
+            "maxStretchGapMs": 154.40500009059906,
+            "requestedInstructions": 22500000,
+            "retiredInstructions": 22486188,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 48,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 83,
+            "completed": 81,
+            "pending": 2,
+            "averageMs": 30.89870370906076,
+            "maxMs": 109.79999995231628
+          }
+        },
+        {
+          "requestedAt": 2963.235000014305,
+          "elapsedMs": 1833.7649999856949,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 2979.554999947548,
+          "requestMs": 16.319999933242798,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 50,
+            "totalSliceMs": 2108.2500001192093,
+            "maxSliceMs": 48.950000047683716,
+            "maxStretchGapMs": 154.40500009059906,
+            "requestedInstructions": 25000000,
+            "retiredInstructions": 24985513,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 53,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 89,
+            "completed": 87,
+            "pending": 2,
+            "averageMs": 31.86425287833159,
+            "maxMs": 109.79999995231628
+          }
+        },
+        {
+          "requestedAt": 3213.2849999666214,
+          "elapsedMs": 2083.814999938011,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 3229.335000038147,
+          "requestMs": 16.050000071525574,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 56,
+            "totalSliceMs": 2357.4800000190735,
+            "maxSliceMs": 48.950000047683716,
+            "maxStretchGapMs": 154.40500009059906,
+            "requestedInstructions": 28000000,
+            "retiredInstructions": 27984368,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 59,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 96,
+            "completed": 94,
+            "pending": 2,
+            "averageMs": 32.36611702594351,
+            "maxMs": 109.79999995231628
+          }
+        },
+        {
+          "requestedAt": 3513.235000014305,
+          "elapsedMs": 2383.764999985695,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 3537.4049999713898,
+          "requestMs": 24.169999957084656,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 67,
+            "totalSliceMs": 2664.7549998760223,
+            "maxSliceMs": 48.950000047683716,
+            "maxStretchGapMs": 154.40500009059906,
+            "requestedInstructions": 33500000,
+            "retiredInstructions": 33482547,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 70,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 103,
+            "completed": 102,
+            "pending": 1,
+            "averageMs": 31.668529415831845,
+            "maxMs": 109.79999995231628
+          }
+        },
+        {
+          "requestedAt": 3763.25,
+          "elapsedMs": 2633.7799999713898,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 3787.9900000095367,
+          "requestMs": 24.740000009536743,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 75,
+            "totalSliceMs": 2914.935000061989,
+            "maxSliceMs": 48.950000047683716,
+            "maxStretchGapMs": 154.40500009059906,
+            "requestedInstructions": 37500000,
+            "retiredInstructions": 37481307,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 78,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 104,
+            "completed": 103,
+            "pending": 1,
+            "averageMs": 31.59558252802173,
+            "maxMs": 109.79999995231628
+          }
+        },
+        {
+          "requestedAt": 4062.6699999570847,
+          "elapsedMs": 2933.1999999284744,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 4081.4550000429153,
+          "requestMs": 18.78500008583069,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 83,
+            "totalSliceMs": 3207.800000309944,
+            "maxSliceMs": 48.950000047683716,
+            "maxStretchGapMs": 154.40500009059906,
+            "requestedInstructions": 41500000,
+            "retiredInstructions": 41479720,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 86,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 105,
+            "completed": 104,
+            "pending": 1,
+            "averageMs": 31.52947115783508,
+            "maxMs": 109.79999995231628
+          }
+        },
+        {
+          "requestedAt": 4313.22000002861,
+          "elapsedMs": 3183.75,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 4324.830000042915,
+          "requestMs": 11.610000014305115,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 89,
+            "totalSliceMs": 3450.625000476837,
+            "maxSliceMs": 48.950000047683716,
+            "maxStretchGapMs": 154.40500009059906,
+            "requestedInstructions": 44500000,
+            "retiredInstructions": 44478538,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 92,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 106,
+            "completed": 105,
+            "pending": 1,
+            "averageMs": 31.407904766854784,
+            "maxMs": 109.79999995231628
+          }
+        },
+        {
+          "requestedAt": 4613.159999966621,
+          "elapsedMs": 3483.689999938011,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 4628.84500002861,
+          "requestMs": 15.68500006198883,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 96,
+            "totalSliceMs": 3754.0400005578995,
+            "maxSliceMs": 49.420000076293945,
+            "maxStretchGapMs": 154.40500009059906,
+            "requestedInstructions": 48000000,
+            "retiredInstructions": 47977008,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 99,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 107,
+            "completed": 106,
+            "pending": 1,
+            "averageMs": 31.22099057121097,
+            "maxMs": 109.79999995231628
+          }
+        },
+        {
+          "requestedAt": 4863.2300000190735,
+          "elapsedMs": 3733.7599999904633,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 4889.0650000572205,
+          "requestMs": 25.835000038146973,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 103,
+            "totalSliceMs": 4013.825000524521,
+            "maxSliceMs": 50.25,
+            "maxStretchGapMs": 154.40500009059906,
+            "requestedInstructions": 51500000,
+            "retiredInstructions": 51475470,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 106,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 108,
+            "completed": 107,
+            "pending": 1,
+            "averageMs": 31.075560753590594,
+            "maxMs": 109.79999995231628
+          }
+        },
+        {
+          "requestedAt": 5163.185000061989,
+          "elapsedMs": 4033.7150000333786,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 5166.375,
+          "requestMs": 3.1899999380111694,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 109,
+            "totalSliceMs": 4290.785000443459,
+            "maxSliceMs": 50.25,
+            "maxStretchGapMs": 154.40500009059906,
+            "requestedInstructions": 54500000,
+            "retiredInstructions": 54474139,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 112,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 109,
+            "completed": 108,
+            "pending": 1,
+            "averageMs": 31.02685185825383,
+            "maxMs": 109.79999995231628
+          }
+        },
+        {
+          "requestedAt": 5463.240000009537,
+          "elapsedMs": 4333.7699999809265,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 5480.435000061989,
+          "requestMs": 17.195000052452087,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 116,
+            "totalSliceMs": 4604.310000181198,
+            "maxSliceMs": 50.25,
+            "maxStretchGapMs": 154.40500009059906,
+            "requestedInstructions": 58000000,
+            "retiredInstructions": 57972076,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 119,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 110,
+            "completed": 109,
+            "pending": 1,
+            "averageMs": 30.77133028113514,
+            "maxMs": 109.79999995231628
+          }
+        }
+      ],
+      "markerSamples": [
+        {
+          "startedAt": 1968.5449999570847,
+          "observedAt": 1968.5600000619888,
+          "elapsedMs": 839.0900000333786,
+          "stateReadMs": 0.015000104904174805,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 1968.7599999904633,
+          "observedAt": 1968.7599999904633,
+          "elapsedMs": 839.289999961853,
+          "stateReadMs": 0,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 1985.5299999713898,
+          "observedAt": 1985.5449999570847,
+          "elapsedMs": 856.0749999284744,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2002.1900000572205,
+          "observedAt": 2002.195000052452,
+          "elapsedMs": 872.7250000238419,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2018.8450000286102,
+          "observedAt": 2018.8550000190735,
+          "elapsedMs": 889.3849999904633,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2035.570000052452,
+          "observedAt": 2035.5800000429153,
+          "elapsedMs": 906.1100000143051,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2052.185000061989,
+          "observedAt": 2052.2000000476837,
+          "elapsedMs": 922.7300000190735,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2069.7400000095367,
+          "observedAt": 2069.7450000047684,
+          "elapsedMs": 940.2749999761581,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2085.414999961853,
+          "observedAt": 2085.4199999570847,
+          "elapsedMs": 955.9499999284744,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2102.100000023842,
+          "observedAt": 2102.110000014305,
+          "elapsedMs": 972.6399999856949,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2118.7599999904633,
+          "observedAt": 2118.7699999809265,
+          "elapsedMs": 989.2999999523163,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2135.4199999570847,
+          "observedAt": 2135.4249999523163,
+          "elapsedMs": 1005.954999923706,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2152.085000038147,
+          "observedAt": 2152.085000038147,
+          "elapsedMs": 1022.6150000095367,
+          "stateReadMs": 0,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2168.7599999904633,
+          "observedAt": 2168.7699999809265,
+          "elapsedMs": 1039.2999999523163,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2185.4249999523163,
+          "observedAt": 2185.429999947548,
+          "elapsedMs": 1055.9599999189377,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2202.2699999809265,
+          "observedAt": 2202.2799999713898,
+          "elapsedMs": 1072.8099999427795,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2218.7549999952316,
+          "observedAt": 2218.7599999904633,
+          "elapsedMs": 1089.289999961853,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2235.4500000476837,
+          "observedAt": 2235.460000038147,
+          "elapsedMs": 1105.9900000095367,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2252.085000038147,
+          "observedAt": 2252.0950000286102,
+          "elapsedMs": 1122.625,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2268.7549999952316,
+          "observedAt": 2268.7599999904633,
+          "elapsedMs": 1139.289999961853,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2288.2599999904633,
+          "observedAt": 2288.274999976158,
+          "elapsedMs": 1158.804999947548,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2302.070000052452,
+          "observedAt": 2302.0800000429153,
+          "elapsedMs": 1172.6100000143051,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2318.764999985695,
+          "observedAt": 2318.7699999809265,
+          "elapsedMs": 1189.2999999523163,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2336.399999976158,
+          "observedAt": 2336.4099999666214,
+          "elapsedMs": 1206.9399999380112,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2352.085000038147,
+          "observedAt": 2352.0950000286102,
+          "elapsedMs": 1222.625,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2368.7699999809265,
+          "observedAt": 2368.7799999713898,
+          "elapsedMs": 1239.3099999427795,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2385.414999961853,
+          "observedAt": 2385.4199999570847,
+          "elapsedMs": 1255.9499999284744,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2402.085000038147,
+          "observedAt": 2402.0950000286102,
+          "elapsedMs": 1272.625,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2418.7599999904633,
+          "observedAt": 2418.7699999809265,
+          "elapsedMs": 1289.2999999523163,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2435.4249999523163,
+          "observedAt": 2435.445000052452,
+          "elapsedMs": 1305.9750000238419,
+          "stateReadMs": 0.020000100135803223,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2452.070000052452,
+          "observedAt": 2452.070000052452,
+          "elapsedMs": 1322.6000000238419,
+          "stateReadMs": 0,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2468.75,
+          "observedAt": 2468.7549999952316,
+          "elapsedMs": 1339.2849999666214,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2485.4249999523163,
+          "observedAt": 2485.4249999523163,
+          "elapsedMs": 1355.954999923706,
+          "stateReadMs": 0,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2502.0950000286102,
+          "observedAt": 2502.1050000190735,
+          "elapsedMs": 1372.6349999904633,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2518.7450000047684,
+          "observedAt": 2518.7549999952316,
+          "elapsedMs": 1389.2849999666214,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2535.389999985695,
+          "observedAt": 2535.399999976158,
+          "elapsedMs": 1405.929999947548,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2552.054999947548,
+          "observedAt": 2552.054999947548,
+          "elapsedMs": 1422.5849999189377,
+          "stateReadMs": 0,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2568.7949999570847,
+          "observedAt": 2568.804999947548,
+          "elapsedMs": 1439.3349999189377,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2585.4800000190735,
+          "observedAt": 2585.4950000047684,
+          "elapsedMs": 1456.0249999761581,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2602.1599999666214,
+          "observedAt": 2602.1699999570847,
+          "elapsedMs": 1472.6999999284744,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2618.8250000476837,
+          "observedAt": 2618.835000038147,
+          "elapsedMs": 1489.3650000095367,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2635.625,
+          "observedAt": 2635.639999985695,
+          "elapsedMs": 1506.1699999570847,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2651.1349999904633,
+          "observedAt": 2651.1449999809265,
+          "elapsedMs": 1521.6749999523163,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2667.810000061989,
+          "observedAt": 2667.8150000572205,
+          "elapsedMs": 1538.3450000286102,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2685.4500000476837,
+          "observedAt": 2685.4650000333786,
+          "elapsedMs": 1555.9950000047684,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2702.125,
+          "observedAt": 2702.1349999904633,
+          "elapsedMs": 1572.664999961853,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2718.9049999713898,
+          "observedAt": 2718.914999961853,
+          "elapsedMs": 1589.4449999332428,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2735.610000014305,
+          "observedAt": 2735.6200000047684,
+          "elapsedMs": 1606.1499999761581,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2751.149999976158,
+          "observedAt": 2754.8150000572205,
+          "elapsedMs": 1625.3450000286102,
+          "stateReadMs": 3.665000081062317,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2768.774999976158,
+          "observedAt": 2768.7849999666214,
+          "elapsedMs": 1639.3149999380112,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2785.6349999904633,
+          "observedAt": 2785.6449999809265,
+          "elapsedMs": 1656.1749999523163,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2802.100000023842,
+          "observedAt": 2802.1050000190735,
+          "elapsedMs": 1672.6349999904633,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2818.7599999904633,
+          "observedAt": 2818.774999976158,
+          "elapsedMs": 1689.304999947548,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2835.4400000572205,
+          "observedAt": 2835.4550000429153,
+          "elapsedMs": 1705.9850000143051,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2852.0950000286102,
+          "observedAt": 2852.1050000190735,
+          "elapsedMs": 1722.6349999904633,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2868.75,
+          "observedAt": 2868.764999985695,
+          "elapsedMs": 1739.2949999570847,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2885.4249999523163,
+          "observedAt": 2885.435000061989,
+          "elapsedMs": 1755.9650000333786,
+          "stateReadMs": 0.010000109672546387,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2902.100000023842,
+          "observedAt": 2902.110000014305,
+          "elapsedMs": 1772.6399999856949,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2918.935000061989,
+          "observedAt": 2918.9400000572205,
+          "elapsedMs": 1789.4700000286102,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2935.429999947548,
+          "observedAt": 2935.4400000572205,
+          "elapsedMs": 1805.9700000286102,
+          "stateReadMs": 0.010000109672546387,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2952.149999976158,
+          "observedAt": 2952.1599999666214,
+          "elapsedMs": 1822.6899999380112,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2968.7799999713898,
+          "observedAt": 2968.7849999666214,
+          "elapsedMs": 1839.3149999380112,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2985.4400000572205,
+          "observedAt": 2985.445000052452,
+          "elapsedMs": 1855.9750000238419,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3002.1299999952316,
+          "observedAt": 3002.139999985695,
+          "elapsedMs": 1872.6699999570847,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3018.774999976158,
+          "observedAt": 3018.789999961853,
+          "elapsedMs": 1889.3199999332428,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3035.4700000286102,
+          "observedAt": 3035.4800000190735,
+          "elapsedMs": 1906.0099999904633,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3052.125,
+          "observedAt": 3052.1349999904633,
+          "elapsedMs": 1922.664999961853,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3068.7849999666214,
+          "observedAt": 3068.7949999570847,
+          "elapsedMs": 1939.3249999284744,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3085.6349999904633,
+          "observedAt": 3085.639999985695,
+          "elapsedMs": 1956.1699999570847,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3102.1349999904633,
+          "observedAt": 3102.149999976158,
+          "elapsedMs": 1972.679999947548,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3118.8849999904633,
+          "observedAt": 3118.889999985695,
+          "elapsedMs": 1989.4199999570847,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3135.4700000286102,
+          "observedAt": 3135.485000014305,
+          "elapsedMs": 2006.0149999856949,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3152.125,
+          "observedAt": 3152.1349999904633,
+          "elapsedMs": 2022.664999961853,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3169.7200000286102,
+          "observedAt": 3169.725000023842,
+          "elapsedMs": 2040.2549999952316,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3185.4550000429153,
+          "observedAt": 3185.4700000286102,
+          "elapsedMs": 2056,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3202.164999961853,
+          "observedAt": 3202.1749999523163,
+          "elapsedMs": 2072.704999923706,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3218.960000038147,
+          "observedAt": 3218.9700000286102,
+          "elapsedMs": 2089.5,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3234.7549999952316,
+          "observedAt": 3234.764999985695,
+          "elapsedMs": 2105.2949999570847,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3252.1349999904633,
+          "observedAt": 3252.149999976158,
+          "elapsedMs": 2122.679999947548,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3268.7949999570847,
+          "observedAt": 3268.810000061989,
+          "elapsedMs": 2139.3400000333786,
+          "stateReadMs": 0.015000104904174805,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3285.460000038147,
+          "observedAt": 3285.475000023842,
+          "elapsedMs": 2156.0049999952316,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3302.274999976158,
+          "observedAt": 3302.2799999713898,
+          "elapsedMs": 2172.8099999427795,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3317.929999947548,
+          "observedAt": 3317.945000052452,
+          "elapsedMs": 2188.475000023842,
+          "stateReadMs": 0.015000104904174805,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3335.460000038147,
+          "observedAt": 3335.475000023842,
+          "elapsedMs": 2206.0049999952316,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3352.1200000047684,
+          "observedAt": 3352.1299999952316,
+          "elapsedMs": 2222.6599999666214,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3369.7549999952316,
+          "observedAt": 3369.7699999809265,
+          "elapsedMs": 2240.2999999523163,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3385.4550000429153,
+          "observedAt": 3385.4700000286102,
+          "elapsedMs": 2256,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3402.1349999904633,
+          "observedAt": 3402.1449999809265,
+          "elapsedMs": 2272.6749999523163,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3418.789999961853,
+          "observedAt": 3418.7999999523163,
+          "elapsedMs": 2289.329999923706,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3436.4199999570847,
+          "observedAt": 3436.429999947548,
+          "elapsedMs": 2306.9599999189377,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3452.9249999523163,
+          "observedAt": 3452.929999947548,
+          "elapsedMs": 2323.4599999189377,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3468.7849999666214,
+          "observedAt": 3468.7999999523163,
+          "elapsedMs": 2339.329999923706,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3485.4550000429153,
+          "observedAt": 3485.4700000286102,
+          "elapsedMs": 2356,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3502.125,
+          "observedAt": 3502.139999985695,
+          "elapsedMs": 2372.6699999570847,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3518.945000052452,
+          "observedAt": 3518.9550000429153,
+          "elapsedMs": 2389.485000014305,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3535.460000038147,
+          "observedAt": 3535.4650000333786,
+          "elapsedMs": 2405.9950000047684,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3552.2200000286102,
+          "observedAt": 3552.235000014305,
+          "elapsedMs": 2422.764999985695,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3568.7849999666214,
+          "observedAt": 3568.7949999570847,
+          "elapsedMs": 2439.3249999284744,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3586.179999947548,
+          "observedAt": 3586.2050000429153,
+          "elapsedMs": 2456.735000014305,
+          "stateReadMs": 0.02500009536743164,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3602.1549999713898,
+          "observedAt": 3602.1699999570847,
+          "elapsedMs": 2472.6999999284744,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3618.789999961853,
+          "observedAt": 3618.7999999523163,
+          "elapsedMs": 2489.329999923706,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3635.4800000190735,
+          "observedAt": 3635.4900000095367,
+          "elapsedMs": 2506.0199999809265,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3652.125,
+          "observedAt": 3652.1349999904633,
+          "elapsedMs": 2522.664999961853,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3669.2599999904633,
+          "observedAt": 3669.2699999809265,
+          "elapsedMs": 2539.7999999523163,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3686.2450000047684,
+          "observedAt": 3686.2599999904633,
+          "elapsedMs": 2556.789999961853,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3702.1749999523163,
+          "observedAt": 3702.185000061989,
+          "elapsedMs": 2572.7150000333786,
+          "stateReadMs": 0.010000109672546387,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3718.7999999523163,
+          "observedAt": 3718.8150000572205,
+          "elapsedMs": 2589.3450000286102,
+          "stateReadMs": 0.015000104904174805,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3735.4900000095367,
+          "observedAt": 3735.5,
+          "elapsedMs": 2606.0299999713898,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3752.1449999809265,
+          "observedAt": 3752.1599999666214,
+          "elapsedMs": 2622.689999938011,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3768.7999999523163,
+          "observedAt": 3768.810000061989,
+          "elapsedMs": 2639.3400000333786,
+          "stateReadMs": 0.010000109672546387,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3785.485000014305,
+          "observedAt": 3785.5,
+          "elapsedMs": 2656.0299999713898,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3802.1449999809265,
+          "observedAt": 3802.1549999713898,
+          "elapsedMs": 2672.6849999427795,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3818.804999947548,
+          "observedAt": 3818.8150000572205,
+          "elapsedMs": 2689.3450000286102,
+          "stateReadMs": 0.010000109672546387,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3835.475000023842,
+          "observedAt": 3835.485000014305,
+          "elapsedMs": 2706.014999985695,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3852.2849999666214,
+          "observedAt": 3852.2949999570847,
+          "elapsedMs": 2722.8249999284744,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3868.804999947548,
+          "observedAt": 3868.820000052452,
+          "elapsedMs": 2739.350000023842,
+          "stateReadMs": 0.015000104904174805,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3885.4550000429153,
+          "observedAt": 3885.4650000333786,
+          "elapsedMs": 2755.9950000047684,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3902.125,
+          "observedAt": 3902.139999985695,
+          "elapsedMs": 2772.6699999570847,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3918.7799999713898,
+          "observedAt": 3918.789999961853,
+          "elapsedMs": 2789.319999933243,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3935.485000014305,
+          "observedAt": 3935.5,
+          "elapsedMs": 2806.0299999713898,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        }
+      ],
+      "firstWrite": {
+        "observedAt": 4062.5199999809265,
+        "elapsedMs": 2933.0499999523163,
+        "available": true,
+        "writeIndex": 1920
+      },
+      "firstPcm": {
+        "observedAt": 4062.5199999809265,
+        "elapsedMs": 2933.0499999523163,
+        "available": true,
+        "writeIndex": 1920,
+        "pcmAvailable": true,
+        "completedAt": 4062.6599999666214,
+        "pcm": {
+          "available": true,
+          "writeIndex": 1920,
+          "readIndex": 1600,
+          "fillFrames": 320,
+          "capacityFrames": 4096,
+          "writtenFrames": 1920,
+          "inspectedFrames": 1920,
+          "nonSilentFrames": 1920,
+          "maxAbs": 0.082000732421875
+        }
+      },
+      "firstMarker": {
+        "startedAt": 5568.77999997139,
+        "observedAt": 5568.789999961853,
+        "elapsedMs": 4439.319999933243,
+        "stateReadMs": 0.009999990463256836,
+        "frameCount": 10,
+        "markerSeen": true
+      },
+      "markerCalls": 218,
+      "markerTotalMs": 9.245000720024109,
+      "markerMaxMs": 3.665000081062317,
+      "stoppedAt": 5569.8150000572205,
+      "stopReason": "command-wait-settled"
+    },
+    "postRestoreAplay": {
+      "command": "sh /tmp/a",
+      "marker": "e5t26f-post-aplay",
+      "beforeFrame": 4,
+      "keyboardStart": 0,
+      "domEventStart": 0,
+      "visualDiffPixels": 3062,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 240,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 10,
+      "redMarkerSeen": false,
+      "keyboardFrames": 20,
+      "domEvents": 20,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "postRestorePcmAtCompletion": {
+      "observedAt": 5582.225000023842,
+      "pcm": {
+        "available": true,
+        "writeIndex": 3360,
+        "readIndex": 3360,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 3360,
+        "inspectedFrames": 3360,
+        "nonSilentFrames": 2400,
+        "maxAbs": 0.082000732421875
+      },
+      "elapsedMs": 4452.754999995232
+    },
+    "postRestoreOutputAttached": {
+      "outputAttached": true,
+      "observedAt": 5615.669999957085
+    },
+    "postRestoreAudioAfter": {
+      "policy": "unlocked",
+      "context": "running",
+      "renderedFrames": 220800,
+      "pcm": {
+        "available": true,
+        "writeIndex": 3360,
+        "readIndex": 3360,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 3360,
+        "inspectedFrames": 3360,
+        "nonSilentFrames": 2400,
+        "maxAbs": 0.082000732421875
+      },
+      "pcmObservedAt": 5582.225000023842,
+      "writeIndex": 0,
+      "guestAttached": true,
+      "guestAttachedObservedAt": 5615.669999957085
+    },
+    "postRestoreEnd": 5617.575000047684,
+    "postRestoreInteraction": {
+      "elapsedMs": 4488.444999933243,
+      "pointerFrames": 16,
+      "keyboardFrames": 20,
+      "heldButtons": [],
+      "audio": {
+        "policy": "unlocked",
+        "context": "running",
+        "renderedFrames": 220800
+      }
+    }
+  },
+  "error": {
+    "name": "AssertionError",
+    "message": "post-restore interaction exceeded 2 seconds",
+    "code": "ERR_ASSERTION",
+    "stack": "AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1250:12"
+  },
+  "progressProbe": null,
+  "url": "http://127.0.0.1:61627/desktop-cursor.html?testHooks=1&jit=1&quantum=500000&imageManifestUrl=.%2Fe5t18b-desktop%2Fmanifest.json&baseUrl=.%2Fe5t18b-desktop%2F&imageSha256=5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550&manifestSha256=b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592&autoRestore=1",
+  "state": {
+    "terminal": {
+      "desktopReady": true,
+      "frameCount": 10,
+      "serialText": "",
+      "pointerFrames": 16,
+      "pointerFrameSample": [
+        {
+          "atMs": 1530,
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 17510
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 16056
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 17510,
+            "y": 16056
+          }
+        },
+        {
+          "atMs": 1790,
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 19119
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 14303
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 19119,
+            "y": 14303
+          }
+        },
+        {
+          "atMs": 1924,
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 19789
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 13060
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 19789,
+            "y": 13060
+          }
+        },
+        {
+          "atMs": 2056,
+          "sequence": 4,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 22385
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 8264
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 22385,
+            "y": 8264
+          }
+        },
+        {
+          "atMs": 2137,
+          "sequence": 5,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 25075
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 3880
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 25075,
+            "y": 3880
+          }
+        },
+        {
+          "atMs": 2238,
+          "sequence": 6,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 25443
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 3380
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 25443,
+            "y": 3380
+          }
+        },
+        {
+          "atMs": 2371,
+          "sequence": 7,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 25790
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 2980
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 25790,
+            "y": 2980
+          }
+        },
+        {
+          "atMs": 2463,
+          "sequence": 8,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "atMs": 2546,
+          "sequence": 9,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "atMs": 2678,
+          "sequence": 10,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 25818
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 2947
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 25818,
+            "y": 2947
+          }
+        },
+        {
+          "atMs": 2815,
+          "sequence": 11,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 25840
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 2959
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 25840,
+            "y": 2959
+          }
+        },
+        {
+          "atMs": 2951,
+          "sequence": 12,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 25999
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 2984
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 25999,
+            "y": 2984
+          }
+        },
+        {
+          "atMs": 3083,
+          "sequence": 13,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 27300
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 3234
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 27300,
+            "y": 3234
+          }
+        },
+        {
+          "atMs": 3200,
+          "sequence": 14,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 30733
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 3799
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 30733,
+            "y": 3799
+          }
+        },
+        {
+          "atMs": 3271,
+          "sequence": 15,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 32607
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 4062
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 32607,
+            "y": 4062
+          }
+        },
+        {
+          "atMs": 3331,
+          "sequence": 16,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 32160
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 4321
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 32160,
+            "y": 4321
+          }
+        }
+      ],
+      "keyboardFrames": 20,
+      "keyboardEvents": 20,
+      "keyboardFrameSample": [
+        {
+          "atMs": 1897,
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 1903,
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 1903,
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 1909,
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 1909,
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 1914,
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 1915,
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 1921,
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 1921,
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 1926,
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 1926,
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 1932,
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 1933,
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 1938,
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 1939,
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 1939,
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardEventSample": [
+        {
+          "atMs": 1897,
+          "timestamp": 1926.3300000429153,
+          "type": "keydown",
+          "code": "Space",
+          "key": " ",
+          "repeat": false
+        },
+        {
+          "atMs": 1903,
+          "timestamp": 1931.7999999523163,
+          "type": "keyup",
+          "code": "Space",
+          "key": " ",
+          "repeat": false
+        },
+        {
+          "atMs": 1903,
+          "timestamp": 1932.1299999952316,
+          "type": "keydown",
+          "code": "Slash",
+          "key": "/",
+          "repeat": false
+        },
+        {
+          "atMs": 1909,
+          "timestamp": 1937.6150000095367,
+          "type": "keyup",
+          "code": "Slash",
+          "key": "/",
+          "repeat": false
+        },
+        {
+          "atMs": 1909,
+          "timestamp": 1937.9650000333786,
+          "type": "keydown",
+          "code": "KeyT",
+          "key": "t",
+          "repeat": false
+        },
+        {
+          "atMs": 1914,
+          "timestamp": 1943.2949999570847,
+          "type": "keyup",
+          "code": "KeyT",
+          "key": "t",
+          "repeat": false
+        },
+        {
+          "atMs": 1915,
+          "timestamp": 1943.6000000238419,
+          "type": "keydown",
+          "code": "KeyM",
+          "key": "m",
+          "repeat": false
+        },
+        {
+          "atMs": 1921,
+          "timestamp": 1949.414999961853,
+          "type": "keyup",
+          "code": "KeyM",
+          "key": "m",
+          "repeat": false
+        },
+        {
+          "atMs": 1921,
+          "timestamp": 1949.75,
+          "type": "keydown",
+          "code": "KeyP",
+          "key": "p",
+          "repeat": false
+        },
+        {
+          "atMs": 1926,
+          "timestamp": 1954.9900000095367,
+          "type": "keyup",
+          "code": "KeyP",
+          "key": "p",
+          "repeat": false
+        },
+        {
+          "atMs": 1926,
+          "timestamp": 1955.2949999570847,
+          "type": "keydown",
+          "code": "Slash",
+          "key": "/",
+          "repeat": false
+        },
+        {
+          "atMs": 1932,
+          "timestamp": 1961.1050000190735,
+          "type": "keyup",
+          "code": "Slash",
+          "key": "/",
+          "repeat": false
+        },
+        {
+          "atMs": 1932,
+          "timestamp": 1961.3799999952316,
+          "type": "keydown",
+          "code": "KeyA",
+          "key": "a",
+          "repeat": false
+        },
+        {
+          "atMs": 1938,
+          "timestamp": 1967.1599999666214,
+          "type": "keyup",
+          "code": "KeyA",
+          "key": "a",
+          "repeat": false
+        },
+        {
+          "atMs": 1939,
+          "timestamp": 1967.6299999952316,
+          "type": "keydown",
+          "code": "Enter",
+          "key": "Enter",
+          "repeat": false
+        },
+        {
+          "atMs": 1939,
+          "timestamp": 1967.7949999570847,
+          "type": "keyup",
+          "code": "Enter",
+          "key": "Enter",
+          "repeat": false
+        }
+      ],
+      "surface": {
+        "nonBlackRatio": 0.999890625,
+        "darkRatio": 0.6094444444444445,
+        "greenPixels": 348,
+        "redPixels": 0
+      },
+      "agent": {
+        "state": "ready",
+        "negotiatedVersion": 1,
+        "transportGeneration": 2,
+        "bytesReceived": 36,
+        "bytesSent": 36,
+        "pendingBytes": 0
+      },
+      "diagnostics": [
+        {
+          "atMs": 814,
+          "reason": "agent-channel",
+          "error": "desktop restore requested a fresh agent HELLO",
+          "channelState": "disconnected",
+          "transportGeneration": 0
+        }
+      ],
+      "readiness": {
+        "desktopReady": true,
+        "inspection": {
+          "wallpaper": true,
+          "panel": {
+            "ready": true,
+            "position": "top",
+            "top": 0,
+            "height": 80,
+            "mean": [
+              86,
+              84,
+              82
+            ],
+            "difference": 85
+          },
+          "menu": true,
+          "nonBlackRatio": 0.999890625,
+          "background": [
+            56,
+            55,
+            55
+          ],
+          "menuDetails": {
+            "ready": true,
+            "inkPixels": 22524,
+            "runs": 211
+          }
+        },
+        "agentState": "ready"
+      },
+      "bootStates": [
+        {
+          "state": "fetching",
+          "atMs": 136
+        },
+        {
+          "state": "instantiating",
+          "atMs": 155
+        },
+        {
+          "state": "restored",
+          "atMs": 722
+        }
+      ],
+      "launches": [],
+      "focuses": [
+        {
+          "label": "post-restore-focus",
+          "beforeFrame": 2,
+          "pointerStart": 0,
+          "hostFocusedBefore": true,
+          "afterFrame": 4,
+          "pointerFrames": 2,
+          "hostFocusedAfter": true,
+          "accepted": true,
+          "guestVisible": true,
+          "guestVisibleCommand": "e5t26f-post-aplay",
+          "guestVisiblePixels": 3062
+        }
+      ],
+      "commands": [
+        {
+          "command": "sh /tmp/a",
+          "marker": "e5t26f-post-aplay",
+          "beforeFrame": 4,
+          "keyboardStart": 0,
+          "domEventStart": 0,
+          "visualDiffPixels": 3062,
+          "terminalMarkerSeen": true,
+          "greenPixelsBefore": 240,
+          "redPixelsBefore": 0,
+          "visualChange": true,
+          "afterFrame": 10,
+          "redMarkerSeen": false,
+          "keyboardFrames": 20,
+          "domEvents": 20,
+          "inputSequenceMatch": true,
+          "inputTraceSha256": null,
+          "accepted": true
+        }
+      ],
+      "closes": [],
+      "active": {
+        "launch": null,
+        "command": {
+          "command": "sh /tmp/a",
+          "marker": "e5t26f-post-aplay",
+          "beforeFrame": 4,
+          "keyboardStart": 0,
+          "domEventStart": 0,
+          "visualDiffPixels": 3062,
+          "terminalMarkerSeen": true,
+          "greenPixelsBefore": 240,
+          "redPixelsBefore": 0,
+          "visualChange": true,
+          "afterFrame": 10,
+          "redMarkerSeen": false,
+          "keyboardFrames": 20,
+          "domEvents": 20,
+          "inputSequenceMatch": true,
+          "inputTraceSha256": null,
+          "accepted": true
+        },
+        "close": null
+      }
+    },
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 800,
+      "fixedViewport": true,
+      "sizeMismatch": false,
+      "framesReceived": 10,
+      "successfulPresents": 10,
+      "drawnPresents": 10,
+      "drawnBytes": 22082976,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": null,
+      "gpu": {
+        "framesReceived": 10,
+        "enqueued": 10,
+        "coalesced": 0,
+        "presented": 10,
+        "successfulPresents": 10,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 22082976,
+        "drawnPresents": 10,
+        "drawnBytes": 22082976,
+        "width": 1280,
+        "height": 800
+      },
+      "latest": {
+        "rect": {
+          "x": 557,
+          "y": 39,
+          "width": 701,
+          "height": 74
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800
+      },
+      "errors": []
+    },
+    "audio": {
+      "policy": "unlocked",
+      "context": "running",
+      "renderedFrames": 222976,
+      "pcm": {
+        "available": true,
+        "writeIndex": 3360,
+        "readIndex": 3360,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 4096,
+        "inspectedFrames": 4096,
+        "nonSilentFrames": 2400,
+        "maxAbs": 0.082000732421875
+      }
+    },
+    "ready": "ready",
+    "restored": "ready"
+  },
+  "serial": null,
+  "serverOutput": "127.0.0.1 - - [07/Sep/2026 22:16:36] \"GET /desktop-cursor.html HTTP/1.1\" 200 -\n127.0.0.1 - - [07/Sep/2026 22:16:36] \"GET /e5t18b-desktop/manifest.json HTTP/1.1\" 200 -\n127.0.0.1 - - [07/Sep/2026 22:16:37] \"GET /desktop-cursor.html?testHooks=1&jit=1&quantum=500000&imageManifestUrl=.%2Fe5t18b-desktop%2Fmanifest.json&baseUrl=.%2Fe5t18b-desktop%2F&imageSha256=5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550&manifestSha256=b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592&autoRestore=1 HTTP/1.1\" 200 -\n127.0.0.1 - - [07/Sep/2026 22:16:37] \"GET /desktop-terminal.js HTTP/1.1\" 304 -\n127.0.0.1 - - [07/Sep/2026 22:16:37] \"GET /desktop-agent-bridge.js HTTP/1.1\" 304 -\n127.0.0.1 - - [07/Sep/2026 22:16:37] \"GET /loader.js HTTP/1.1\" 304 -\n127.0.0.1 - - [07/Sep/2026 22:16:37] code 404, message File not found\n127.0.0.1 - - [07/Sep/2026 22:16:37] \"GET /favicon.ico HTTP/1.1\" 404 -\n127.0.0.1 - - [07/Sep/2026 22:16:37] \"GET /pkg/wasm_vm_wasm.js HTTP/1.1\" 304 -\n127.0.0.1 - - [07/Sep/2026 22:16:37] \"GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1\" 304 -\n127.0.0.1 - - [07/Sep/2026 22:16:41] code 404, message File not found\n127.0.0.1 - - [07/Sep/2026 22:16:41] \"GET /favicon.ico HTTP/1.1\" 404 -\n"
+}

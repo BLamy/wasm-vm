@@ -40,6 +40,22 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-07 — worker — localize remaining interaction delay
+
+Frozen harness `2e9d9771477bda265342ac928a25fc6e2d769b25` passes 44 bounded
+helper regressions and adds explicit reuse-only PCM/marker/scheduler timing.
+One cloned-checkpoint replay fails the unchanged two-second cap: first actual
+non-silent PCM at 2933.050 ms, conditional terminal completion at 4439.320 ms,
+final interaction at 4488.445 ms. The 218 existing marker reads cost 9.245 ms
+total (max 3.665 ms), all chunk-fetch waits are zero, and worker slices account
+for about 3.52 seconds over the observed interval. Investigate guest execution;
+do not remove the observer or relabel this as accepted timing. Matching CRC,
+fresh HELLO, no boot, released buttons, and working audio remain observed.
+Exact command, runtime/profile bindings, and inspected JSON/PNG digests are in
+`evidence/e5-t26f/latency-2e9d9771/README.md`. This diagnostic is not acceptance;
+deferred coherence/drag/second reload still require proof. No performance waiver,
+merge, production deployment, or Epic 6 work occurred.
+
 ### 2026-09-07 — coordinator — resume after verified PCM recovery
 
 E5-T19a is independently reverified in `fbd9e966` at runtime `9e8e1c22`, with
