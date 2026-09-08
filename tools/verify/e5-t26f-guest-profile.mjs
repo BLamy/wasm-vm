@@ -7,6 +7,26 @@ export const GUEST_PROFILE_SCOPE = Object.freeze({
   limitation: "cumulative bounded histogram; collisions/evictions and top-10 truncation; not whole-guest CPU time",
 });
 
+// Exact scalar surface of crates/wasm/src/lib.rs::jit_stats_object. Only cumulative
+// counters have interval deltas: live gauges may shrink, ratios are not counters,
+// and high-water marks/generation ordinals must not be called interval work.
+export const GUEST_JIT_SCOPE = Object.freeze({
+  counters: Object.freeze(["executedBlocks", "retiredViaJit", "directChainEntries", "directChainLinks",
+    "dynamicLinkAttempts", "dynamicLinkHits", "dynamicLinkRefusals", "dynamicLinkRetargets", "dynamicLinkInstalls",
+    "guestRetired", "jitEngineCalls", "chainLinksMade", "chainLinksCut", "chainDispatchEntries", "chainLinksFollowed",
+    "jitSubmittedMembers", "jitCompilePauseNs", "jitCompilePauseSamples", "jitCacheInstalls", "jitCacheRetranslations",
+    "jitCacheEvictions", "decodedBlocksDiscarded", "decodedCacheFlushes", "blockEntryHits", "blockBuilds"]),
+  gauges: Object.freeze(["compiledBlocks", "dynamicLinkLiveEntries", "jitCacheBatches", "jitCacheCodeBytes"]),
+  highWater: Object.freeze(["chainMaxDepth", "jitCompilePauseMaxNs"]),
+  generations: Object.freeze(["discoveryGeneration"]),
+  ratios: Object.freeze(["jitRetiredShare", "jitLogicalBlocksPerEngineCall"]),
+  configuration: Object.freeze(["hasExecutor", "jitRegionChaining", "jitDynamicChaining", "jitResidencyPolicy", "jitResidencyCap"]),
+  entryCostCounters: Object.freeze(["timerReads", "hostEntries", "stateCopyCalls", "stateCopyBytes", "stateCopyNs",
+    "engineEntryNs", "indirectTableDispatches", "authorityChecks", "memorySplitExits", "deviceBoundaries", "deviceBoundaryNs"]),
+  entryCostConfiguration: Object.freeze(["timingEnabled"]),
+  limitation: "two sequential endpoint RPCs, not an atomic profile/JIT sample; no per-PC compiled membership or TLB hit/miss counters",
+});
+
 export function guestProfileRequested(env) {
   const value = env.E5_T26F_DIAGNOSTIC_GUEST_PROFILE;
   if (value === undefined) return false;
@@ -74,12 +94,64 @@ function validateProfile(profile) {
   }
 }
 
+function validateJit(jit, profileReceivedAt) {
+  assert.ok(Number.isFinite(jit?.requestedAt) && jit.requestedAt >= profileReceivedAt &&
+    Number.isFinite(jit.receivedAt) && jit.receivedAt >= jit.requestedAt, "invalid actual jitStats timestamps");
+  assert.equal(jit.available, true, "jitStats API unavailable");
+  assert.equal(jit.timedOut, false, "actual jitStats RPC timed out");
+  assert.equal(jit.error, null, "actual jitStats RPC failed");
+  assert.equal(jit.invalidFields.length, 0, `invalid actual jitStats scalar fields: ${jit.invalidFields.join(", ")}`);
+  const state = jit.state;
+  assert.ok(state && state.entryCost, "actual jitStats unavailable/null");
+  const integer = (value, field) => assert.ok(Number.isSafeInteger(value) && value >= 0, `invalid actual jitStats ${field}`);
+  for (const field of [...GUEST_JIT_SCOPE.counters, ...GUEST_JIT_SCOPE.gauges, ...GUEST_JIT_SCOPE.highWater,
+    ...GUEST_JIT_SCOPE.generations, "jitResidencyCap"]) integer(state[field], field);
+  for (const field of GUEST_JIT_SCOPE.entryCostCounters) integer(state.entryCost[field], `entryCost.${field}`);
+  for (const field of ["hasExecutor", "jitRegionChaining", "jitDynamicChaining"]) {
+    assert.equal(typeof state[field], "boolean", `invalid actual jitStats ${field}`);
+  }
+  assert.equal(typeof state.entryCost.timingEnabled, "boolean", "invalid actual jitStats entryCost.timingEnabled");
+  assert.ok(["disabled", "repack-off", "cap-256", "cap-1024", "custom"].includes(state.jitResidencyPolicy), "invalid actual jitStats jitResidencyPolicy");
+  for (const field of GUEST_JIT_SCOPE.ratios) {
+    assert.ok(Number.isFinite(state[field]) && state[field] >= 0 && state[field] <=
+      (field === "jitRetiredShare" ? 1 : Number.MAX_SAFE_INTEGER), `invalid actual jitStats ${field}`);
+  }
+  // Relationships are the exported formulas, not performance thresholds.
+  assert.equal(state.jitEngineCalls, state.executedBlocks, "actual jitStats engine-call alias disagrees");
+  assert.ok(state.retiredViaJit <= state.guestRetired, "actual JIT retirement exceeds guest retirement");
+  assert.equal(state.jitRetiredShare, state.guestRetired === 0 ? 0 : state.retiredViaJit / state.guestRetired,
+    "actual jitStats retired-share formula disagrees");
+  assert.equal(state.jitLogicalBlocksPerEngineCall, !state.hasExecutor || state.executedBlocks === 0 ? 0 :
+    state.directChainEntries === 0 ? 1 : state.directChainEntries / state.executedBlocks,
+  "actual jitStats logical-block formula disagrees");
+}
+
+function jitDeltas(before, after) {
+  const deltas = { entryCost: {} };
+  for (const field of [...GUEST_JIT_SCOPE.counters, ...GUEST_JIT_SCOPE.highWater, ...GUEST_JIT_SCOPE.generations]) {
+    assert.ok(after[field] >= before[field], `actual jitStats ${field} regressed/reset`);
+  }
+  for (const field of GUEST_JIT_SCOPE.counters) deltas[field] = after[field] - before[field];
+  for (const field of GUEST_JIT_SCOPE.entryCostCounters) {
+    assert.ok(after.entryCost[field] >= before.entryCost[field], `actual jitStats entryCost.${field} regressed/reset`);
+    deltas.entryCost[field] = after.entryCost[field] - before.entryCost[field];
+  }
+  for (const field of GUEST_JIT_SCOPE.configuration) {
+    assert.equal(after[field], before[field], `actual jitStats configuration ${field} changed`);
+  }
+  assert.equal(after.entryCost.timingEnabled, before.entryCost.timingEnabled, "actual jitStats entryCost timing configuration changed");
+  assert.ok(deltas.guestRetired > 0, "actual jitStats guest retirement did not advance");
+  assert.ok(deltas.retiredViaJit <= deltas.guestRetired, "actual interval JIT retirement exceeds guest retirement");
+  // Zero JIT progress is useful evidence of absent coverage, not a reason to hide the read.
+  return deltas;
+}
+
 export async function recordGuestProfile(page, milestones, key) {
   assert.ok(key === "guestProfileBefore" || key === "guestProfileAfter");
   const record = { acceptance: false, scope: GUEST_PROFILE_SCOPE, requestedAt: null, receivedAt: null, state: null };
   milestones[key] = record; // Raw/failed observations survive the runner's normal failure capture.
   try {
-    Object.assign(record, await page.evaluate(async () => {
+    Object.assign(record, await page.evaluate(async fields => {
       const requestedAt = performance.now();
       const worker = globalThis.__e5t26fGuestProfileWorker?.snapshot() ?? null;
       const controller = globalThis.__desktopController;
@@ -91,8 +163,37 @@ export async function recordGuestProfile(page, milestones, key) {
         })]);
       } catch (cause) { error = String(cause?.message || cause).slice(0, 240); }
       finally { clearTimeout(timer); }
-      return { requestedAt, receivedAt: performance.now(), origin: globalThis.location.origin, worker, available, state, error };
-    }));
+      const receivedAt = performance.now(); // Preserve the original profile RPC's interval/state.
+      const jit = { requestedAt: performance.now(), receivedAt: null, available: typeof controller?.jitStats === "function",
+        timeoutMs: 5_000, timedOut: false, state: null, error: null, invalidFields: [] };
+      // Project only named own data properties before crossing Playwright's serialization
+      // boundary. Never traverse extras, invoke accessors, or return deep/cyclic objects.
+      const object = value => value !== null && typeof value === "object" && !Array.isArray(value);
+      const own = (value, field) => object(value) ? Object.getOwnPropertyDescriptor(value, field) : undefined;
+      const copy = (value, names, prefix = "") => Object.fromEntries(names.map(field => {
+        const descriptor = own(value, field), scalar = descriptor?.value;
+        if (!descriptor || !("value" in descriptor) || !((typeof scalar === "number" && Number.isFinite(scalar)) ||
+          typeof scalar === "boolean" || (typeof scalar === "string" && scalar.length <= 32))) {
+          jit.invalidFields.push(`${prefix}${field}`);
+          return [field, null];
+        }
+        return [field, scalar];
+      }));
+      try {
+        if (jit.available) {
+          const raw = await Promise.race([controller.jitStats(), new Promise((_, reject) => {
+            timer = setTimeout(() => { jit.timedOut = true; reject(Error("bounded jitStats timeout")); }, jit.timeoutMs);
+          })]);
+          jit.state = copy(raw, [...fields.counters, ...fields.gauges, ...fields.highWater, ...fields.generations,
+            ...fields.ratios, ...fields.configuration]);
+          jit.state.entryCost = copy(own(raw, "entryCost")?.value,
+            [...fields.entryCostCounters, ...fields.entryCostConfiguration], "entryCost.");
+        }
+      } catch (cause) { jit.error = String(cause?.message || cause).slice(0, 240); }
+      finally { clearTimeout(timer); jit.receivedAt = performance.now(); }
+      return { requestedAt, receivedAt, origin: globalThis.location.origin, worker, available, state, error, jit };
+    }, GUEST_JIT_SCOPE));
+    record.jit.scope = GUEST_JIT_SCOPE;
     assert.ok(Number.isFinite(milestones.postRestoreStart) && Number.isFinite(record.requestedAt) &&
       record.requestedAt >= milestones.postRestoreStart && Number.isFinite(record.receivedAt) &&
       record.receivedAt >= record.requestedAt, "invalid original restore/profile timestamps");
@@ -106,12 +207,14 @@ export async function recordGuestProfile(page, milestones, key) {
     assert.equal(record.available, true, "profileStats API unavailable");
     assert.equal(record.error, null, "actual profileStats RPC failed");
     validateProfile(record.state);
+    validateJit(record.jit, record.receivedAt);
     if (key === "guestProfileAfter") {
       assert.ok(Number.isFinite(milestones.postRestoreEnd) && record.requestedAt >= milestones.postRestoreEnd,
         "after profile must follow the original frozen interaction end");
       const before = milestones.guestProfileBefore;
       assert.equal(before?.checksPassed, true, "actual before profile required");
       assert.ok(record.requestedAt >= before.receivedAt, "profile endpoint timestamps regressed/overlapped");
+      assert.ok(record.requestedAt >= before.jit.receivedAt, "JIT/profile endpoint timestamps regressed/overlapped");
       assert.deepEqual(record.worker, before.worker, "profile worker changed between endpoints");
       const deltas = {};
       for (const field of ["totalNs", "sampleCount", "walkCount", "collisions"]) {
@@ -120,6 +223,7 @@ export async function recordGuestProfile(page, milestones, key) {
       }
       assert.ok(deltas.sampleCount > 0 && deltas.totalNs > 0, "actual interpreted-retire profiler did not advance");
       record.deltas = deltas;
+      record.jit.deltas = jitDeltas(before.jit.state, record.jit.state);
       // Top-10 membership can change and weak histogram slots can be evicted; never invent
       // zero counts for missing PCs or call these truncated cumulative lists interval profiles.
     }
