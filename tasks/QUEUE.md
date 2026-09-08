@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T26k** — Bound and measure browser decoded-block cache capacity
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -453,7 +452,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `526.55` [E5-T26h](epic-5-the-window/E5-T26h-whole-machine-desktop-resume.md) — Preserve desktop devices across whole-machine resume *(deps: E5-T26e)*
 - [x] `526.59` [E5-T26i](epic-5-the-window/E5-T26i-browser-monotonic-clock.md) — Wire opt-in monotonic time through the browser desktop lifecycle *(deps: E4-T24, E5-T26e, E5-T26h, E5-T19a)*
 - [x] `526.595` [E5-T26j](epic-5-the-window/E5-T26j-browser-icount-divider.md) — Prove opt-in deterministic guest timer-rate selection *(deps: E5-T26i, E5-T26h, E5-T19a)*
-- [ ] `526.596` [E5-T26k](epic-5-the-window/E5-T26k-browser-decoded-cache-capacity.md) — Bound and measure browser decoded-block cache capacity *(deps: E4-T30, E5-T26h, E5-T26j)*
+- [~] `526.596` [E5-T26k](epic-5-the-window/E5-T26k-browser-decoded-cache-capacity.md) — Bound and measure browser decoded-block cache capacity *(deps: E4-T30, E5-T26h, E5-T26j)*
 - [b] `526.6` [E5-T26f](epic-5-the-window/E5-T26f-desktop-browser-roundtrip.md) — Browser desktop snapshot round-trip and interaction smoke *(deps: E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k)*
 - [ ] `526.7` [E5-T26g](epic-5-the-window/E5-T26g-snapshot-hardening-proof.md) — Desktop snapshot stress, versioning, size, and portability proof *(deps: E5-T26f)*
 - [ ] `527` [E5-T27](epic-5-the-window/E5-T27-multi-display-stretch.md) — Multi-display support (config-gated stretch) — second scanout, second canvas *(deps: E5-T22d)*

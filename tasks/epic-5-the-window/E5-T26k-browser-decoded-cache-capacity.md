@@ -3,7 +3,7 @@ id: E5-T26k
 epic: 5
 title: Bound and measure browser decoded-block cache capacity
 priority: 526.596
-status: pending
+status: in-progress
 depends_on: [E4-T30, E5-T26h, E5-T26j]
 estimate: S
 risk: high
@@ -66,6 +66,17 @@ clone once. No rr, independent machine, WebKit, GitHub Actions or production
 deployment is required for this diagnostic prerequisite.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — start one bounded configuration boundary
+
+Worker contract: `decodedCacheEntries` is the optional loader/desktop query
+selection; `setDecodedCacheEntries(number)` is the strict WASM method; the
+read-only `jitStats().decodedCacheEntries` field reports actual core capacity.
+Admit only 4096 or 16384. Omission and same-size selection must not resize.
+Keep selection outside the permissive JIT-enable fallback catch. Run all actual
+browser builds/measurements centrally after the disjoint Rust and JS workers
+finish; never combine browser timing with another active benchmark or change an
+existing cold seal's binding. This task's status is not a performance claim.
 
 ### 2026-09-08 — coordinator — measured prerequisite, no default decision
 
