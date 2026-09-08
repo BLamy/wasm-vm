@@ -40,6 +40,28 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — coordinator — exact quiet output still misses the original deadline
+
+The closed `d3f34c5b` quiet-text diagnostic recognizes the reviewed 72x13 raster
+newly in the actual upper window, after exactly ten physical keyboard edges.
+The unchanged same-child success branch completes and produces 1440 fresh
+non-silent PCM frames. Daybreak independently checks those reached predicates
+and the artifact digests in `evidence/e5-t26f/resident-verifier/quiet-text-results.md`.
+Original restore T0 990.5299999713898 to frozen end 5868.139999985695 is
+**4877.610000014305 ms**, so the two-second assertion still fails. No earlier
+first-PCM timestamp was recorded. Later coherence/drag audits were not reached.
+This closes the text-oracle experiment, not F acceptance or a speedup claim.
+
+The separate proper-runner JIT-cost diagnostic at `73e7e4d9` fails at
+**4943.945000052452 ms**. Its sequential endpoint samples record 98 evictions,
+305 retranslations, 774152 decoded-block builds and no bulk decoded invalidation.
+JIT executes 38.9616% of interval retirements; these counters do not identify a
+dominant host cost. Exact boundaries, raw records and hashes are in
+`evidence/e5-t26f/resident-jit-cost-analysis.md`. One isolated ABBA comparison
+of existing 24/256-batch policies on the unchanged resident checkpoint is next;
+no production/default runtime change, fixture mutation or acceptance waiver is
+authorized by these measurements. All prior unchanged HELD evidence carries.
+
 ### 2026-09-08 — worker — retain negative localization and review a narrower text oracle
 
 The sampled virtual-PC/musl mapping is a candidate address attribution, not
