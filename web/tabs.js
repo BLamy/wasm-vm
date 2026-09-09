@@ -31,12 +31,17 @@ function show(tab) {
     p.classList.toggle("active", p.id === `panel-${tab}`);
   }
   if (tab === "ide") {
-    // The terminal panel was hidden; let layout settle, then re-fit xterm locally and focus it so
-    // keystrokes land immediately. Do not click the manual Fit button here: that button also types
-    // `stty rows …` into the guest, which can interleave with a command already running.
+    // The terminal panel was hidden; let layout settle, then fit/focus the active guest surface.
+    // Do not click the manual Fit button here: that button also types `stty rows …` into the
+    // guest, which can interleave with a command already running.
     requestAnimationFrame(() => {
-      window.__term?.fitNow?.();
-      window.__term?.focus?.();
+      if (document.documentElement.dataset.wvmDesktop === "omarchy") {
+        const canvas = document.getElementById("ide-display-canvas");
+        canvas?.focus?.();
+      } else {
+        window.__term?.fitNow?.();
+        window.__term?.focus?.();
+      }
     });
   }
   if (location.hash.slice(1) !== tab) {

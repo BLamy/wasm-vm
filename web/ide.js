@@ -14,6 +14,10 @@
 // byte-exact (base64 in JS → `base64 -d` in-guest). Container logs/exec use the real wvrun CLI.
 
 const ROOT = "/root";
+const _ideQuery = new URLSearchParams(location.search);
+const _ideGuest = (_ideQuery.get("guest") || _ideQuery.get("boot") || _ideQuery.get("os") || "").toLowerCase();
+const OMARCHY_DESKTOP_MODE = _ideQuery.get("desktop") === "1" && _ideGuest === "omarchy";
+if (OMARCHY_DESKTOP_MODE) document.documentElement.dataset.wvmDesktop = "omarchy";
 
 // ── styles (injected; no dependency on index.html CSS) ───────────────────────
 const css = `
@@ -245,6 +249,64 @@ const css = `
   box-shadow: 0 10px 30px rgba(0,0,0,.5); padding: 12px; display: none; }
 .ide-net-pop.open { display: block; }
 .ide-net-pop .file, .ide-net-pop h4 { color: #d6deeb; }
+
+/* Omarchy is a desktop session, not an editor session. Keep the same guest display/controller,
+   but promote its viewport to the whole page and remove every VS Code surface around it. */
+html[data-wvm-desktop="omarchy"], html[data-wvm-desktop="omarchy"] body {
+  width: 100%; height: 100%; min-height: 100%; overflow: hidden;
+}
+html[data-wvm-desktop="omarchy"] header,
+html[data-wvm-desktop="omarchy"] .os-launcher,
+html[data-wvm-desktop="omarchy"] .ide-activity,
+html[data-wvm-desktop="omarchy"] .ide-side,
+html[data-wvm-desktop="omarchy"] .ide-vsplit,
+html[data-wvm-desktop="omarchy"] .ide-tabstrip,
+html[data-wvm-desktop="omarchy"] .ide-editor-toolbar,
+html[data-wvm-desktop="omarchy"] .ide-editor-body,
+html[data-wvm-desktop="omarchy"] .ide-hsplit,
+html[data-wvm-desktop="omarchy"] .ide-term-pane,
+html[data-wvm-desktop="omarchy"] .ide-statusbar {
+  display: none !important;
+}
+html[data-wvm-desktop="omarchy"] #panel-ide.active {
+  display: flex; height: 100vh; min-height: 100vh; overflow: hidden;
+}
+html[data-wvm-desktop="omarchy"] #ide-root {
+  position: relative; flex: 1 1 auto; width: 100%; height: 100%; min-height: 0;
+}
+html[data-wvm-desktop="omarchy"] .ide-body,
+html[data-wvm-desktop="omarchy"] .ide-editor-area,
+html[data-wvm-desktop="omarchy"] .ide-display-pane {
+  width: 100%; height: 100%; min-height: 0;
+}
+html[data-wvm-desktop="omarchy"] .ide-editor-area { display: flex; }
+html[data-wvm-desktop="omarchy"] .ide-display-pane { flex: 1 1 auto; border: 0; }
+html[data-wvm-desktop="omarchy"] .ide-display-head {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 3; opacity: 0;
+  transition: opacity .16s ease;
+}
+html[data-wvm-desktop="omarchy"] .ide-display-pane:hover .ide-display-head,
+html[data-wvm-desktop="omarchy"] .ide-display-pane:focus-within .ide-display-head {
+  opacity: 1;
+}
+html[data-wvm-desktop="omarchy"] .ide-display-viewport { width: 100%; height: 100%; }
+html[data-wvm-desktop="omarchy"] .ide-display-canvas {
+  width: 100%; height: 100%; image-rendering: auto; touch-action: none; outline: none;
+}
+.omarchy-desktop-toolbar {
+  position: absolute; top: 12px; left: 12px; right: 12px; z-index: 10;
+  display: flex; align-items: center; gap: 9px; min-height: 38px; padding: 6px 9px;
+  color: #d6deeb; background: rgba(10, 13, 19, .88); border: 1px solid rgba(83, 212, 255, .28);
+  border-radius: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, .35); backdrop-filter: blur(8px);
+  opacity: 0; transition: opacity .16s ease;
+}
+html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar:hover,
+html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar:focus-within { opacity: 1; }
+.omarchy-desktop-toolbar[hidden] { display: none; }
+.omarchy-desktop-toolbar .brand { color: #fff; font-weight: 700; }
+.omarchy-desktop-toolbar .status { color: #9fb0c7; font-size: 11px; }
+.omarchy-desktop-toolbar .sp { flex: 1 1 auto; }
+.omarchy-desktop-toolbar button { min-height: 27px; padding: 3px 9px; font-size: 11px; }
 `;
 const style = document.createElement("style");
 style.textContent = css;
@@ -382,6 +444,13 @@ const containerLedger = {
 const root = document.getElementById("ide-root");
 if (root) {
   root.innerHTML = `
+    <div class="omarchy-desktop-toolbar" id="omarchy-desktop-toolbar" hidden>
+      <span class="brand">Omarchy</span>
+      <span class="status" id="omarchy-desktop-status">desktop · resizable</span>
+      <span class="sp"></span>
+      <button id="omarchy-fullscreen" type="button">Full screen</button>
+      <button id="omarchy-exit" type="button">Exit desktop</button>
+    </div>
     <div class="ide-body">
       <div class="ide-activity">
         <button class="ide-act-btn active" id="ide-act-files" title="Files">📁</button>
@@ -463,6 +532,45 @@ if (root) {
   const saveBtn = q("#ide-save");
   const tabstripEl = q("#ide-tabstrip");
   const dkEl = q("#ide-dk");
+
+  if (OMARCHY_DESKTOP_MODE) {
+    const desktopToolbar = q("#omarchy-desktop-toolbar");
+    const desktopStatus = q("#omarchy-desktop-status");
+    const fullscreenButton = q("#omarchy-fullscreen");
+    const exitButton = q("#omarchy-exit");
+    if (desktopToolbar) desktopToolbar.hidden = false;
+    const updateFullscreenLabel = () => {
+      if (fullscreenButton) fullscreenButton.textContent = document.fullscreenElement
+        ? "Exit full screen"
+        : "Full screen";
+    };
+    fullscreenButton?.addEventListener("click", async () => {
+      try {
+        if (document.fullscreenElement) await document.exitFullscreen();
+        else await document.documentElement.requestFullscreen();
+      } catch (error) {
+        if (desktopStatus) desktopStatus.textContent = `desktop · fullscreen unavailable: ${error?.message || error}`;
+      }
+      updateFullscreenLabel();
+    });
+    document.addEventListener("fullscreenchange", updateFullscreenLabel);
+    exitButton?.addEventListener("click", () => {
+      const next = new URL(location.href);
+      next.searchParams.delete("desktop");
+      next.searchParams.delete("guest");
+      next.searchParams.delete("boot");
+      next.searchParams.delete("os");
+      next.hash = "ide";
+      location.assign(next.href);
+    });
+    window.addEventListener("wvm:guest-booting", () => {
+      if (desktopStatus) desktopStatus.textContent = "desktop · booting Omarchy…";
+    });
+    window.addEventListener("wvm:guest-ready", () => {
+      if (desktopStatus) desktopStatus.textContent = "desktop · ready · drag to resize";
+    });
+    updateFullscreenLabel();
+  }
 
   // ── Re-parent live DOM nodes (keeps main.js / file-transfer / tailscale wiring intact) ──
   const consoleSection = document.querySelector("#panel-ide > .console");

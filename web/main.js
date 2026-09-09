@@ -15,6 +15,8 @@ import { resolveOverlayResetSeedIdentity } from "./overlay-reset-target.js";
 // differential/fallback switches. If Worker is genuinely unavailable, fall back once with a visible
 // warning; a worker boot failure itself never starts a second machine.
 const _startupQuery = new URLSearchParams(location.search);
+const _startupGuest = (_startupQuery.get("guest") || _startupQuery.get("boot") || _startupQuery.get("os") || "").toLowerCase();
+const _omarchyDesktopMode = _startupQuery.get("desktop") === "1" && _startupGuest === "omarchy";
 const _workerQuery = _startupQuery.get("worker");
 const _singleThreadForced = _workerQuery === "0" || _startupQuery.get("singlethread") === "1";
 const _workerAvailable = typeof globalThis.Worker === "function";
@@ -70,6 +72,7 @@ globalThis.vm = pageVm;
 // WebGL context loss can replay it through Canvas2D without re-entering the guest.
 const displayCanvas = document.getElementById("ide-display-canvas");
 const displayStatusEl = document.getElementById("ide-display-status");
+if (_omarchyDesktopMode && displayCanvas) displayCanvas.tabIndex = 0;
 let presentation = null;
 let displayViewport = null;
 if (displayCanvas) {
@@ -507,7 +510,7 @@ if (new URLSearchParams(location.search).has("testHooks")) {
 // host in capture phase, ahead of xterm's handlers, while leaving the existing serial onData path
 // intact. Physical transitions additionally flow through the T11 evdev bridge once a guest boots;
 // the serial getty remains the byte-oriented foreground console used by the demo.
-const keyboardHost = document.getElementById("term");
+const keyboardHost = _omarchyDesktopMode ? displayCanvas : document.getElementById("term");
 const keyboardStateEl = document.getElementById("ide-keyboard-state");
 const keyboardToggle = document.getElementById("ide-keyboard-toggle");
 const keyboardReleaseButton = document.getElementById("ide-keyboard-release");
@@ -777,15 +780,19 @@ try {
 // adapter is deliberately dynamic because the controller is replaced on every boot and may be a
 // direct WasmLinux object or a whole-machine Worker proxy. Pointer frames remain no-ops before a
 // guest is live, while the mode/Pointer Lock state remains inspectable for UI and tests.
-const pointerHost = document.getElementById("term");
+const pointerHost = _omarchyDesktopMode ? displayCanvas : document.getElementById("term");
 const pointerStateEl = document.getElementById("ide-pointer-state");
 const pointerToggle = document.getElementById("ide-pointer-toggle");
 const pointerDebugEl = document.getElementById("ide-pointer-debug");
+const cursorOverlayParent = _omarchyDesktopMode
+  ? document.getElementById("ide-display-viewport")
+  : pointerHost;
 const pointerDiagnostics = [];
 const pointerFrames = [];
 const cursorDiagnostics = [];
 const cursorController = new CursorController({
   target: pointerHost,
+  overlayParent: cursorOverlayParent,
   documentTarget: document,
   onDiagnostic: (entry) => {
     cursorDiagnostics.push(entry);
@@ -1671,9 +1678,10 @@ async function runLinuxBootOwned(opts, banner, request) {
     });
     // Fit the rendered grid to the page (no stty-hint line printed — the terminal auto-fits on resize).
     ui.fitNow();
-    // The guest is live and the input sink is attached; focus the terminal so the user can
-    // type immediately without first having to click into it.
-    ui.focus();
+    // The guest is live and the input sink is attached. A desktop session owns the display canvas
+    // as its keyboard/pointer surface; the editor profiles keep the terminal's original focus UX.
+    if (_omarchyDesktopMode) displayCanvas?.focus();
+    else ui.focus();
   } catch (e) {
     setupFailed = true;
     if (bootController) {
@@ -1978,8 +1986,11 @@ async function bootOmarchy() {
       bootProfileUrl: null,
       bootargs: "root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0",
       cacheBudgetMib: Number(query.get("omarchyCacheMib")) || 256,
-      persist: false,
-      bootSnapshot: false,
+      // Omarchy ships a paired RAM snapshot + overlay delta just like the Alpine flavors. Keep
+      // both enabled by default so the desktop resumes at the captured Hyprland/Foot session;
+      // `?persist=0`/`?noSnapshot` remain explicit cold-boot diagnostics.
+      persist: query.get("persist") !== "0",
+      bootSnapshot: !query.has("noSnapshot"),
       ramMib: 1024,
       imageLen: 4 * 1024 * 1024 * 1024,
       fileTransfer: false,
@@ -3104,7 +3115,7 @@ setInteractiveState();
     if (_guest === "busybox") return window.wvmDemo.runBusybox();
     return Promise.resolve({ ok: false, error: "choose an OS from the Demo tab" });
   };
-  const startGuestChoice = (kind) => {
+  const startGuestChoice = (kind, { navigateToDesktop = true } = {}) => {
     const normalized = kind === "nodealpine" ? "node-alpine" : kind;
     const available = normalized === "busybox" ||
       (normalized === "omarchy" && omarchyAvailable) ||
@@ -3113,6 +3124,14 @@ setInteractiveState();
     if (!available) {
       if (osLauncherStatusEl) osLauncherStatusEl.textContent = `${normalized} is not available on this host.`;
       return Promise.resolve({ ok: false, error: `${normalized} image unavailable` });
+    }
+    if (normalized === "omarchy" && navigateToDesktop && !_omarchyDesktopMode) {
+      const next = new URL(location.href);
+      next.searchParams.set("guest", "omarchy");
+      next.searchParams.set("desktop", "1");
+      next.hash = "ide";
+      location.assign(next.href);
+      return Promise.resolve({ ok: true, navigating: true });
     }
     const method = normalized === "omarchy"
       ? window.wvmDemo.bootOmarchy
@@ -3135,7 +3154,7 @@ setInteractiveState();
     });
   }
   if (_bootQ.has("testHooks")) {
-    window.__runConfiguredAutoBootForTest = () => startGuestChoice(_guest);
+    window.__runConfiguredAutoBootForTest = () => startGuestChoice(_guest, { navigateToDesktop: false });
     window.__linuxBootStateForTest = () => ({
       active: linuxActiveRequest?.key ?? null,
       inFlight: linuxBootRequest?.key ?? null,
