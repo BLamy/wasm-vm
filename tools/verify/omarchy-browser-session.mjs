@@ -10,6 +10,7 @@ import fs from "node:fs/promises";
 import { createServer } from "node:net";
 import os from "node:os";
 import path from "node:path";
+import { createInterface } from "node:readline";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { promisify } from "node:util";
@@ -32,6 +33,7 @@ OMARCHY_MANIFEST_SHA256 and OMARCHY_OUTPUT_DIR. --out must not already exist.
 Optional: --timeout-ms 1800000 --ram-mib 1024 --port 0 --chrome PATH --headed
           --icount-divider INTEGER (1..1024, optional; e.g. 64; omitted preserves the core default)
           --bootargs STRING (explicit guest kernel command line, recorded verbatim)
+          --control-stdin (JSON lines {"command":"guest command"}; same recorded serial probe)
           --keyboard none|auto (default none) --poll-ms 30000 --probe-timeout-ms 120000
           --shell-namespace NAME (optional layer filter; package process PID still required)
           --check-only (integrity checks, no browser or guest)
@@ -62,6 +64,7 @@ export function options(argv = process.argv.slice(2), env = process.env) {
     port: { type: "string", default: "0" }, chrome: { type: "string", default: env.OMARCHY_CHROME_PATH },
     keyboard: { type: "string", default: "none" }, "shell-namespace": { type: "string", default: "" },
     headed: { type: "boolean" }, "check-only": { type: "boolean" },
+    "control-stdin": { type: "boolean" },
     "self-test": { type: "boolean" }, "smoke-test": { type: "boolean" }, help: { type: "boolean" },
   } });
   // Validate before every early return: malformed clock input must never reach browser startup.
@@ -186,6 +189,10 @@ function layersIn(value) {
 
 export function parseInstances(result) {
   if (result.status !== 0) return [];
+  // The packaged hyprctl emits exactly this negative result until its instance
+  // lock exists, including while the Hyprland process is still initializing.
+  // This is absence, never repaired JSON or a fabricated positive instance.
+  if (result.output.trim() === "]") return [];
   const list = JSON.parse(result.output);
   assert.ok(Array.isArray(list), "hyprctl instances must be an array");
   return list;
@@ -433,13 +440,13 @@ async function browserSession(opts, base, publication, record, serialOutput) {
   } catch (error) { await browser.close(); throw error; }
 }
 
-async function observeGuest(session, opts, record, getSerial) {
+async function observeGuest(session, opts, record, getSerial, setControlProbe) {
   const { page, errors } = session, deadline = Date.now() + opts["timeout-ms"];
   const nonce = randomBytes(16).toString("hex");
   let sequence = 0;
   const remaining = () => Math.max(1, deadline - Date.now());
   const evaluate = (fn, arg) => within(page.evaluate(fn, arg), Math.min(30000, remaining()), "browser operation");
-  const probe = async (command) => {
+  const rawProbe = async (command) => {
     const token = `omarchy_${nonce}_${++sequence}`, start = getSerial().length;
     const wire = probeCommand(command, token);
     assert.ok(wire.length < 3500, "serial command exceeds canonical TTY line budget");
@@ -453,6 +460,12 @@ async function observeGuest(session, opts, record, getSerial) {
       await sleep(500);
     }
     throw new Error(`serial probe timed out: ${token}`);
+  };
+  let probeTail = Promise.resolve();
+  const probe = (command) => {
+    const pending = probeTail.then(() => rawProbe(command));
+    probeTail = pending.catch(() => {});
+    return pending;
   };
   await evaluate(() => { void window.__omarchyProof.start(); });
   await page.waitForFunction(() => Boolean(window.__omarchyController) || window.__omarchyProof.state().errors.length,
@@ -473,16 +486,18 @@ async function observeGuest(session, opts, record, getSerial) {
   const identity = await probe("stty -echo; /usr/bin/id -u; printf '%s\\n' \"$HOME\"");
   assert.equal(identity.status, 0, "serial identity query failed");
   assert.equal(identity.output, "1000\n/home/omarchy", "serial shell is not the generic UID-1000 account");
-  let observed, instance, missingInstanceJournalCaptured = false;
+  setControlProbe(probe);
+  let observed, instance;
+  const capturedJournalStages = new Set();
   while (Date.now() < deadline) {
-    // This package emits invalid JSON when no Hyprland process exists. Avoid that query;
-    // a successful command with malformed output still fails strict JSON parsing.
+    // A process may precede its discoverable instance. Neither absence state is readiness.
     const instances = await probe("/usr/bin/pgrep -u 1000 -x Hyprland >/dev/null && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances");
     instance = parseInstances(instances).find((v) => /^[A-Za-z0-9_.-]+$/u.test(v.instance || "") && v.pid > 0);
-    if (!instance && !missingInstanceJournalCaptured) {
-      missingInstanceJournalCaptured = true;
-      const journal = await probe("journalctl --user --no-pager -n 40 -o short-monotonic");
-      record({ type: "missing-instance-journal", ...journal });
+    const journalStage = instances.status === 0 ? "process-before-interface" : "no-process";
+    if (!instance && !capturedJournalStages.has(journalStage)) {
+      capturedJournalStages.add(journalStage);
+      const journal = await probe("journalctl --user --no-pager -n 80 -o short-monotonic");
+      record({ type: "missing-instance-journal", stage: journalStage, ...journal });
     }
     if (instance) {
       const ctl = `XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i ${quote(instance.instance)}`;
@@ -537,6 +552,8 @@ async function observeGuest(session, opts, record, getSerial) {
     keyboard = { mode: "auto", verified: true, nonce, guestPath, command, keys: keysAfter - keysBefore,
       path: "Chromium KeyboardEvent -> sendKeyboardEvent/syncKeyboard -> focused Foot -> guest nonce file" };
   }
+  setControlProbe(null);
+  await probeTail;
   return { identity, instance, desktop: observed, keyboard, probes: sequence, coldBoot: true,
     setupMarkerObserved: true, upstreamDoneMarkersAbsent: true };
 }
@@ -546,7 +563,7 @@ async function run(opts) {
   await fs.mkdir(opts.out); // Never overwrite another run's evidence.
   const started = Date.now(), report = { schema: "wasm-vm.omarchy-browser-session.v1", task: "E5.5-T03a",
     taskVerified: false, startedAt: new Date().toISOString(), options: opts, result: "incomplete" };
-  let serial = "", serialBytes = 0, io = Promise.resolve(), ioError, server, session;
+  let serial = "", serialBytes = 0, io = Promise.resolve(), ioError, server, session, input, controlProbe;
   const append = (filename, bytes) => { io = io.then(() => fs.appendFile(path.join(opts.out, filename), bytes))
     .catch((error) => { ioError = error; }); };
   const record = (event) => append("events.jsonl", `${JSON.stringify({ hostMs: Date.now() - started, ...event })}\n`);
@@ -565,7 +582,26 @@ async function run(opts) {
     assert.ok(served.ok); assert.equal(hash(Buffer.from(await served.arrayBuffer())), opts["manifest-sha256"]);
     session = await browserSession(opts, server.base, report.publication, record, serialOutput);
     report.browser = session.info;
-    report.observations = await within(observeGuest(session, opts, record, () => serial), opts["timeout-ms"], "guest proof");
+    if (opts["control-stdin"]) {
+      input = createInterface({ input: process.stdin, terminal: false });
+      input.on("line", (line) => {
+        void (async () => {
+          try {
+            const value = JSON.parse(line);
+            assert.equal(typeof value.command, "string");
+            assert.ok(controlProbe, "serial control is not ready before the identity probe");
+            record({ type: "manual-probe-request", command: value.command });
+            const result = await controlProbe(value.command);
+            console.log(`OMARCHY_CONTROL ${JSON.stringify(result)}`);
+          } catch (error) {
+            record({ type: "manual-probe-error", error: String(error) });
+            console.log(`OMARCHY_CONTROL_ERROR ${String(error)}`);
+          }
+        })();
+      });
+    }
+    report.observations = await within(observeGuest(session, opts, record, () => serial,
+      (probe) => { controlProbe = probe; if (probe) console.log("OMARCHY_SERIAL_READY"); }), opts["timeout-ms"], "guest proof");
     report.capture = await within(session.page.evaluate(() => window.__omarchyProof.capture()), 90000, "paused capture");
     assert.equal(report.capture.paused, true);
     assert.match(report.capture.stateDigest, SHA);
@@ -589,6 +625,8 @@ async function run(opts) {
   } catch (error) {
     report.result = "failed"; report.error = String(error.stack || error); process.exitCode = 1;
   } finally {
+    controlProbe = null;
+    input?.close();
     if (session) {
       report.browserErrors = session.errors;
       if (!report.capture) {
@@ -638,7 +676,10 @@ function selfTest() {
   assert.deepEqual(parseInstances({ status: 1, output: "" }), []);
   assert.deepEqual(parseInstances({ status: 1, output: "\n]\n\n" }), []);
   assert.deepEqual(parseInstances({ status: 0, output: "[]" }), []);
-  assert.throws(() => parseInstances({ status: 0, output: "\n]\n\n" }), SyntaxError);
+  assert.deepEqual(parseInstances({ status: 0, output: "\n]\n\n" }), []);
+  for (const malformed of ["[", "[{", "]unexpected", "[true"]) {
+    assert.throws(() => parseInstances({ status: 0, output: malformed }), SyntaxError);
+  }
   assert.throws(() => parseInstances({ status: 0, output: "{}" }), /must be an array/u);
   assert.deepEqual(parseInstances({ status: 0, output: '[{"instance":"actual_1","pid":267}]' }),
     [{ instance: "actual_1", pid: 267 }]);
