@@ -250,6 +250,11 @@ pub struct BootArgs {
     /// evidence is unaffected; turn it on for network/TLS workloads that need prompt entropy.
     #[arg(long)]
     pub virtio_rng: bool,
+    /// Assemble the browser's complete desktop device topology for a shipped resume snapshot:
+    /// keyboard, tablet, mouse, sound, GPU, and the ninth-slot agent console. This is opt-in so
+    /// ordinary headless CLI boots keep their smaller native topology.
+    #[arg(long)]
+    pub browser_topology: bool,
     /// DHCP lease advertised by slirp, in seconds. Short values make renewal tests deterministic.
     #[arg(long, default_value_t = wasm_vm_slirp::dhcp::DEFAULT_LEASE_SECS)]
     pub net_slirp_lease_secs: u32,
@@ -1103,8 +1108,13 @@ fn assemble(
     // E5-T11c: the concrete keyboard is present on every native Linux boot, so the rebuilt guest
     // can bind /dev/input/event0 before the host's first key injection.
     let _ = m.enable_virtio_keyboard();
+    if a.browser_topology {
+        // Match crates/wasm::assemble exactly: pointer slots 4/5, sound slot 6, GPU slot 7, and
+        // the browser-only agent console in the ninth platform window (slot 8).
+        let _ = m.enable_virtio_pointer();
+    }
     #[cfg(feature = "gpu-trace")]
-    if a.display_workload {
+    if !a.browser_topology && a.display_workload {
         // T16b drives the real evdev path, so reserve the same absolute tablet and relative mouse
         // slots as the browser assembly before sound/GPU claim the remaining virtio windows.
         let _ = m.enable_virtio_pointer();
@@ -1117,7 +1127,15 @@ fn assemble(
         Box::new(wasm_vm_core::dev::virtio::snd::NullSink::new()),
         a.enable_mic,
     );
-    let agent_state = a.agent_proof.as_ref().map(|_| m.enable_virtio_console().1);
+    let agent_state = if a.browser_topology {
+        let _ = m.enable_virtio_gpu(Box::new(wasm_vm_core::dev::virtio::gpu::NullSink));
+        let state = m
+            .enable_virtio_console_at(wasm_vm_core::platform::virt::VIRTIO_COUNT as usize - 1)
+            .1;
+        a.agent_proof.as_ref().map(|_| state)
+    } else {
+        a.agent_proof.as_ref().map(|_| m.enable_virtio_console().1)
+    };
 
     #[cfg(feature = "gpu-trace")]
     let display_metrics = a

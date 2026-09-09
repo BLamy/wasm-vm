@@ -45,6 +45,10 @@ with open(delta,"rb") as d:
 PY
 
 # ── 2. NATIVE node-runs proof (resume RAM snap with identity zeroed, against the node ext4) ─────────
+# The proof is valuable on a fast Linux host, but an interpreted macOS run can spend many minutes
+# faulting in the freshly installed V8 image. Keep the deterministic assembly usable there while
+# preserving the proof as the default and making an explicit skip visible in the log.
+if [ "${SKIP_NATIVE_PROOF:-0}" != "1" ]; then
 echo "[finalize] NATIVE node-runs proof…"
 ZSNAP=$(mktemp -t na-zsnap.XXXXXX.snap)
 gunzip -c "$RAM_GZ" > "$ZSNAP"
@@ -76,9 +80,12 @@ echo "==================== NATIVE PROOF ===================="
 grep -aE "v[0-9]+\.[0-9]+\.[0-9]+|^42$|SUM=|FILE=|NODEPROOF_DONE" "$PLOG" || true
 echo "====================================================="
 rm -f "$ZSNAP" "$FIFO" "$PLOG"
+else
+  echo "[finalize] SKIP_NATIVE_PROOF=1 — native post-restore command proof deferred"
+fi
 
 # ── 3. re-chunk the node ext4 (1 MiB) → NEW base ────────────────────────────────────────────────────
-echo "[finalize] chunking $NODE_EXT4 at $CHUNK_SIZE bytes → $CHUNK_OUT…"
+echo "[finalize] chunking $NODE_EXT4 at $CHUNK_SIZE bytes → ${CHUNK_OUT}…"
 rm -rf "$CHUNK_OUT"
 "$BIN" chunk "$NODE_EXT4" --out "$CHUNK_OUT" --chunk-size "$CHUNK_SIZE"
 NCHUNKS=$(ls "$CHUNK_OUT/chunks" | wc -l | tr -d ' ')

@@ -59,6 +59,7 @@ echo "[boot-snapshot] booting busybox to \"$TRIGGER\" and snapshotting (device s
   --initrd "$INITRD" \
   --net \
   --virtio-rng \
+  --browser-topology \
   --no-input \
   --max-instrs 30000000000 \
   --snapshot-trigger "$TRIGGER" \

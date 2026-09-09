@@ -1382,7 +1382,11 @@ async function runLinuxBootOwned(opts, banner, request) {
           // ESC[6n) immediately after the prompt. Strip terminal control sequences before matching
           // the visible shell suffix so that a usable prompt cannot be masked by its own reply.
           const promptText = promptTail.replace(/\x1b(?:\[[0-?]*[ -/]*[@-~]|[ -/]*[@-~])/g, "");
-          if (/[^\w][\w.-]*:~#\s*$/.test(promptText) || /[~\/]\s*#\s*$/.test(promptText)) markGuestReady();
+          const omarchyPrompt = currentGuestKind === "omarchy" &&
+            /\[[\w.-]+@[\w.-]+ [^\]]+\]\$\s*$/.test(promptText);
+          if (omarchyPrompt || /[^\w][\w.-]*:~#\s*$/.test(promptText) || /[~\/]\s*#\s*$/.test(promptText)) {
+            markGuestReady();
+          }
         } catch {}
       },
       onAgentOutput,
@@ -1889,6 +1893,9 @@ const R2_ASSETS =
 let alpineAvailable = false;
 // E3.6-T05: whether the node-preinstalled Alpine artifacts are deployed (the default flavor).
 let nodeAlpineAvailable = false;
+// E5.5-T03a: whether the immutable Omarchy desktop manifest is present. Its 4 GiB image is
+// chunked on R2 and deliberately does not participate in Alpine's persistent overlay/snapshot path.
+let omarchyAvailable = false;
 // Guest readiness: flips true when the booted guest reaches a usable shell prompt. The Docker/IDE tabs
 // gate on this; a `wvm:guest-ready` window event fires once per boot. Reset when a new boot starts.
 let guestReady = false;
@@ -1950,6 +1957,55 @@ async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl, bootProfile
     },
   );
   if (boot?.winner !== chip) {
+    return { ok: false, conflict: true, error: `${boot?.winner ?? "another guest"} boot already owns the VM` };
+  }
+  return linuxCtl
+    ? { ok: true, ...(boot?.already ? { already: true } : {}) }
+    : { ok: false, error: lastBootError || "boot failed" };
+}
+
+// E5.5-T03a: Omarchy is an immutable graphical guest, not an Alpine overlay. Keep its boot
+// contract explicit so it cannot accidentally inherit Alpine persistence, a stale warm snapshot,
+// or file-transfer/network devices that are not part of the published desktop image.
+async function bootOmarchy() {
+  const query = new URLSearchParams(location.search);
+  const assetBase = query.get("omarchyAssetBase") || R2_ASSETS;
+  const boot = await runLinuxBoot(
+    {
+      manifestUrl: "./artifacts-omarchy.json",
+      mode: "chunked",
+      imageManifestUrl: assetBase.replace(/\/+$/, "") + "/chunked-omarchy/manifest.json",
+      bootProfileUrl: null,
+      bootargs: "root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0",
+      cacheBudgetMib: Number(query.get("omarchyCacheMib")) || 256,
+      persist: false,
+      bootSnapshot: false,
+      ramMib: 1024,
+      imageLen: 4 * 1024 * 1024 * 1024,
+      fileTransfer: false,
+      slirpNet: false,
+      slirpProvider: "offline",
+      enableMic: false,
+      guestClock: "icount",
+      icountDivider: Number(query.get("omarchyDivider")) || 64,
+      fastInterpreter: true,
+      jit: true,
+      quantum: 500_000,
+    },
+    "booting the Omarchy graphical desktop on RISC-V…",
+    {
+      requestKey: "omarchy",
+      onClaim: () => {
+        lastBootError = null;
+        setRunBanner(
+          "Booting <b>Omarchy</b> (immutable desktop image)… the display and serial console are live guest output.",
+        );
+        setGuestChip("omarchy");
+        if (osLauncherStatusEl) osLauncherStatusEl.textContent = "Starting Omarchy — first boot downloads only the desktop chunks it touches.";
+      },
+    },
+  );
+  if (boot?.winner !== "omarchy") {
     return { ok: false, conflict: true, error: `${boot?.winner ?? "another guest"} boot already owns the VM` };
   }
   return linuxCtl
@@ -2020,7 +2076,10 @@ window.wvmDemo = {
       "./artifacts-alpine.json",
       "alpine",
       undefined,
-      R2_ASSETS + "/chunked-alpine/boot-profile.json",
+      // The refreshed production base has no separately published profile yet. Passing null keeps
+      // the optional probe off the network (a missing optional asset would otherwise surface as a
+      // browser 404) while sequential readahead still covers cold chunk demand.
+      null,
     );
   },
   // E3.6-T05: boot the NODE-preinstalled Alpine guest — same chunked base + restore machinery, but the
@@ -2043,6 +2102,12 @@ window.wvmDemo = {
       // a restore-bound Node profile is recorded, demand + sequential readahead is faster and exact.
       null,
     );
+  },
+  // Boot the Omarchy desktop image. This is intentionally a separate entry point from the Alpine
+  // flavor helper: Omarchy is a cold immutable 4 GiB guest today, so no persistent overlay or
+  // Alpine warm snapshot may be selected for it.
+  async bootOmarchy() {
+    return bootOmarchy();
   },
   // True only once the booted guest actually has the container runtime (Alpine, not the busybox
   // initramfs). The Docker tab uses this to know whether it can run wvrun.
@@ -2386,18 +2451,54 @@ function setStatus(text) {
 // `root@alpine`. Called when a boot starts; cleared when the machine halts. (The host is `wasm-vm`, the
 // guest hostname, but the useful distinction for the user is which userland/runtime is live.)
 let currentGuestKind = null;
+const panelIdeEl = document.getElementById("panel-ide");
+const osLauncherEl = document.getElementById("os-launcher");
+const osLauncherStatusEl = document.getElementById("os-launcher-status");
+const osOptionButtons = [...document.querySelectorAll("[data-os]")];
+const osOptionMeta = new Map(
+  [...document.querySelectorAll("[data-os-meta]")].map((el) => [el.dataset.osMeta, el]),
+);
+
+function setOsLauncherVisible(visible, message = null) {
+  if (visible) {
+    delete panelIdeEl?.dataset.osSelected;
+    if (osLauncherEl) osLauncherEl.hidden = false;
+  } else {
+    if (panelIdeEl) panelIdeEl.dataset.osSelected = "true";
+    if (osLauncherEl) osLauncherEl.hidden = true;
+  }
+  if (message && osLauncherStatusEl) osLauncherStatusEl.textContent = message;
+}
+
+function setOsOptionAvailability(kind, available, detail) {
+  const button = osOptionButtons.find((el) => el.dataset.os === kind);
+  const meta = osOptionMeta.get(kind);
+  if (button && kind !== "busybox") button.disabled = !available;
+  if (meta) {
+    meta.dataset.state = available ? "ready" : "unavailable";
+    meta.textContent = available ? detail : "unavailable on this host";
+  }
+}
+
 function setGuestChip(kind) {
   currentGuestKind = kind;
-  if (kind) document.documentElement.dataset.linuxGuest = kind;
-  else delete document.documentElement.dataset.linuxGuest;
+  if (kind) {
+    document.documentElement.dataset.linuxGuest = kind;
+    setOsLauncherVisible(false);
+  } else {
+    delete document.documentElement.dataset.linuxGuest;
+    setOsLauncherVisible(true, "Select a guest to start the shared VM.");
+  }
   const el = document.getElementById("ide-term-who");
   if (!el) return;
   if (kind) {
-    el.textContent = `root@${kind}`;
+    el.textContent = kind === "omarchy" ? "omarchy@omarchy-demo" : `root@${kind}`;
     el.title = kind === "node-alpine"
       ? "Alpine Linux userland with Node.js preinstalled — container-capable (wvrun / OCI)"
       : kind === "alpine"
       ? "Alpine Linux userland — container-capable (wvrun / OCI)"
+      : kind === "omarchy"
+      ? "Omarchy desktop image — Hyprland, Foot, and Quickshell"
       : "busybox userland (initramfs)";
     el.hidden = false;
   } else {
@@ -2966,25 +3067,75 @@ setInteractiveState();
   } catch {
     nodeAlpineAvailable = false;
   }
-  // Auto-boot the shared host for the whole app (IDE + Docker both use it). E3.6-T05 DEFAULT is
-  // node-alpine: it restores (in ~1s from the shipped RAM snapshot + overlay-delta) an Alpine host with
-  // Node.js already on PATH — no boot, no apk wait. `?guest=alpine` restores the bare (container-capable)
-  // Alpine; `?guest=busybox` the busybox fast-restore. If the node-alpine artifacts aren't deployed, the
-  // default falls back to busybox (always available). `?noAutoBoot` opts out entirely (e.g. for tests).
-  // Guest choice also honors `?boot=` as an alias.
+  // Omarchy is a separate immutable 4 GiB guest. Probe its small local manifest here; its chunk set
+  // is fetched lazily from R2 only after the user explicitly chooses the desktop.
+  try {
+    const probe = await fetch("./artifacts-omarchy.json", { method: "GET", cache: "no-store" });
+    const text = probe.ok ? await probe.text() : "";
+    omarchyAvailable = probe.ok && !text.trimStart().startsWith("<");
+  } catch {
+    omarchyAvailable = false;
+  }
+  setOsOptionAvailability("omarchy", omarchyAvailable, "ready · 4 GiB desktop");
+  setOsOptionAvailability("node-alpine", nodeAlpineAvailable, "ready · fast restore");
+  setOsOptionAvailability("alpine", alpineAvailable, "ready · fast restore");
+
+  // The Demo tab now waits for an explicit OS choice. Query-driven boots remain available for
+  // embeds and deterministic browser proofs, but an absent artifact is a visible error rather than
+  // a silent fallback to a different guest identity.
   const _bootQ = new URLSearchParams(location.search);
-  const _guest = (_bootQ.get("guest") || _bootQ.get("boot") || "node-alpine").toLowerCase();
+  const _guest = (_bootQ.get("guest") || _bootQ.get("boot") || _bootQ.get("os") || "").toLowerCase();
   const runConfiguredAutoBoot = () => {
-    if ((_guest === "node-alpine" || _guest === "nodealpine") && nodeAlpineAvailable) {
-      return window.wvmDemo.bootNodeAlpine();
+    if (_guest === "omarchy") {
+      return omarchyAvailable
+        ? window.wvmDemo.bootOmarchy()
+        : Promise.resolve({ ok: false, error: "Omarchy image manifest is not published on this host" });
     }
-    if (_guest === "alpine" && alpineAvailable) return window.wvmDemo.bootAlpine();
+    if (_guest === "node-alpine" || _guest === "nodealpine") {
+      return nodeAlpineAvailable
+        ? window.wvmDemo.bootNodeAlpine()
+        : Promise.resolve({ ok: false, error: "Alpine + Node.js image manifest is not published on this host" });
+    }
+    if (_guest === "alpine") {
+      return alpineAvailable
+        ? window.wvmDemo.bootAlpine()
+        : Promise.resolve({ ok: false, error: "Alpine image manifest is not published on this host" });
+    }
     if (_guest === "busybox") return window.wvmDemo.runBusybox();
-    // Default flavor requested but its artifacts aren't here → busybox fast-restore (always works).
-    return window.wvmDemo.runBusybox();
+    return Promise.resolve({ ok: false, error: "choose an OS from the Demo tab" });
   };
+  const startGuestChoice = (kind) => {
+    const normalized = kind === "nodealpine" ? "node-alpine" : kind;
+    const available = normalized === "busybox" ||
+      (normalized === "omarchy" && omarchyAvailable) ||
+      (normalized === "node-alpine" && nodeAlpineAvailable) ||
+      (normalized === "alpine" && alpineAvailable);
+    if (!available) {
+      if (osLauncherStatusEl) osLauncherStatusEl.textContent = `${normalized} is not available on this host.`;
+      return Promise.resolve({ ok: false, error: `${normalized} image unavailable` });
+    }
+    const method = normalized === "omarchy"
+      ? window.wvmDemo.bootOmarchy
+      : normalized === "node-alpine"
+        ? window.wvmDemo.bootNodeAlpine
+        : normalized === "alpine"
+          ? window.wvmDemo.bootAlpine
+          : window.wvmDemo.runBusybox;
+    if (osLauncherStatusEl) osLauncherStatusEl.textContent = `Starting ${normalized}…`;
+    return Promise.resolve().then(() => method()).then((outcome) => {
+      if (outcome?.ok === false && osLauncherStatusEl) {
+        osLauncherStatusEl.textContent = `Could not start ${normalized}: ${outcome.error || "boot failed"}`;
+      }
+      return outcome;
+    });
+  };
+  for (const button of osOptionButtons) {
+    button.addEventListener("click", () => {
+      if (!button.disabled) void startGuestChoice(button.dataset.os);
+    });
+  }
   if (_bootQ.has("testHooks")) {
-    window.__runConfiguredAutoBootForTest = runConfiguredAutoBoot;
+    window.__runConfiguredAutoBootForTest = () => startGuestChoice(_guest);
     window.__linuxBootStateForTest = () => ({
       active: linuxActiveRequest?.key ?? null,
       inFlight: linuxBootRequest?.key ?? null,
@@ -3000,7 +3151,7 @@ setInteractiveState();
       return retireLinuxController(controller);
     };
   }
-  if (!linuxCtl && !_bootQ.has("noAutoBoot")) {
+  if (_guest && !linuxCtl && !_bootQ.has("noAutoBoot")) {
     setTimeout(() => {
       try {
         // Invoke the production callback synchronously so its single-flight ownership is claimed
@@ -3014,6 +3165,8 @@ setInteractiveState();
         void autoBoot.catch(() => {});
       } catch {}
     }, 400);
+  } else if (!_guest && osLauncherStatusEl) {
+    osLauncherStatusEl.textContent = "Select a guest to start the shared VM.";
   }
   // The riscv-tests suite no longer auto-runs on load (Brett 2026-07-06): 126 in-browser
   // binaries take real time and CPU — run it via the "Run tests" button instead. The

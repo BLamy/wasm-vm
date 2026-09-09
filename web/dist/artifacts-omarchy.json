@@ -1,0 +1,10 @@
+{
+  "generated": "LOCAL-ONLY Omarchy desktop manifest (kernel + remote chunked disk)",
+  "artifacts": {
+    "kernel": {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "size": 24208896
+    }
+  }
+}
