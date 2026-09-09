@@ -458,7 +458,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `526.599` [E5-T26n](epic-5-the-window/E5-T26n-spp-context.md) — Retain browser inline-cache authority across SPP-only trap transitions *(deps: E5-T26m)*
 - [x] `526.5995` [E5-T26o](epic-5-the-window/E5-T26o-plic-sparse-candidates.md) — Visit only eligible PLIC candidate bits during source selection *(deps: E1-T13, E5-T26n)*
 - [x] `526.5996` [E5-T26p](epic-5-the-window/E5-T26p-optional-retirement-capture.md) — Specialize optional interpreter retirement metadata without changing effects *(deps: E0-T16, E1-T04, E5-T26o)*
-- [b] `526.6` [E5-T26f](epic-5-the-window/E5-T26f-desktop-browser-roundtrip.md) — Browser desktop snapshot round-trip and interaction smoke *(deps: E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l, E5-T26m, E5-T26n, E5-T26o, E5-T26p)*
+- [~] `526.6` [E5-T26f](epic-5-the-window/E5-T26f-desktop-browser-roundtrip.md) — Browser desktop snapshot round-trip and interaction smoke *(deps: E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l, E5-T26m, E5-T26n, E5-T26o, E5-T26p)*
 - [ ] `526.7` [E5-T26g](epic-5-the-window/E5-T26g-snapshot-hardening-proof.md) — Desktop snapshot stress, versioning, size, and portability proof *(deps: E5-T26f)*
 - [ ] `527` [E5-T27](epic-5-the-window/E5-T27-multi-display-stretch.md) — Multi-display support (config-gated stretch) — second scanout, second canvas *(deps: E5-T22d)*
 - [-] `528` [E5-T28](epic-5-the-window/E5-T28-capstone-desktop-in-the-tab.md) — "Capstone: a browser rendering surface + real GUI apps — type, hear, drag" *(deps: E5-T13c, E5-T15d, E5-T18e, E5-T20e, E5-T24d, E5-T22d, E5-T25d, E5-T26g)*

@@ -3,8 +3,7 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: blocked
-blocked_on: E5-T26p
+status: in-progress
 depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l, E5-T26m, E5-T26n, E5-T26o, E5-T26p]
 estimate: S
 risk: high
@@ -40,6 +39,28 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-08 — coordinator — resume after verified optional capture
+
+E5-T26p is independently verified at
+`46629788b3c1074c02a6395f7b636057721fe426`, published as PR376. Final source
+`078500ebbef1c5d90adf973790ad68b7579a5879` passes 75 native and 82 WASM tests
+in its sole pristine clone, the canonical old-source state comparison and one
+126/0 demo. Daybreak's final verdict SHA256 is
+`154e61bd84cfd98011d5214fefba0157818720045aaa2b4e068796068665bc45`.
+The actual release WASM is
+`a3ce02529ae2e6ec175066f4c838451ca7d1472b5f6bd2f5b2d5cbff805c8b42`.
+This proves optional metadata elimination and semantic safety, not F performance.
+
+Resume with one fresh cold checkpoint and the unchanged-policy unprofiled reuse:
+`env -u RUSTDOCFLAGS node tools/verify/e5-t26f-browser-single-process-observer.mjs`.
+The invocation binds the final HEAD after this metadata freeze. Fresh independent
+F predictions are in `evidence/e5-t26f/capture-runtime-verifier/plan.md`, SHA256
+`2ee1649d0d6d9f0ec73d99df8920fbf9e144ce6af860b3dcd2c2445526cfae94`.
+All historical seals remain invalid; no rebinding. Carry unchanged image/helper
+evidence, original T0/end, two-second cap, physical input and default policies.
+This diagnostic cannot itself verify F, even if timing passes. No Omarchy mutation,
+merge, deployment, Epic5 completion or Epic6 work is introduced.
 
 ### 2026-09-08 — coordinator — bounded capture prerequisite
 
