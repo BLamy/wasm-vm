@@ -1,0 +1,10 @@
+{
+  "sourceRecord": "evidence/e5-t26f/completion/run-856f3e78/failure-readiness-drag-desktop-ready.json",
+  "sourceRecordSha256": "be3f63baf93eba97b43d48488e603212a4813e673ba4d41b910f8359612d6d29",
+  "sourceProfile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-residency-L5pPJH/iteration-PKZ0Xs/profile",
+  "inspectedCopy": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resume-inspection-acLO97/profile",
+  "origin": "http://127.0.0.1:61629",
+  "guestBooted": false,
+  "transactions": "readonly",
+  "metadata": []
+}

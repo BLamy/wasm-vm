@@ -1,0 +1,1665 @@
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.000000] efi: UEFI not found.
+[    0.000000] Zone ranges:
+[    0.000000]   DMA32    [mem 0x0000000080000000-0x000000008fffffff]
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x000000008fffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x000000008fffffff]
+[    0.000000] SBI HSM extension detected
+[    0.000000] Falling back to deprecated "riscv,isa"
+[    0.000000] riscv: base ISA extensions acdfim
+[    0.000000] riscv: ELF capabilities acdfim
+[    0.000000] percpu: Embedded 18 pages/cpu s42104 r0 d31624 u73728
+[    0.000000] Kernel command line: root=/dev/vda rw console=ttyS0 earlycon=sbi
+[    0.000000] Dentry cache hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 16384 (order: 5, 131072 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 64512
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]       fixmap : 0xff1bfffffea00000 - 0xff1bffffff000000   (6144 kB)
+[    0.000000]       pci io : 0xff1bffffff000000 - 0xff1c000000000000   (  16 MB)
+[    0.000000]      vmemmap : 0xff1c000000000000 - 0xff20000000000000   (1024 TB)
+[    0.000000]      vmalloc : 0xff20000000000000 - 0xff60000000000000   (16384 TB)
+[    0.000000]      modules : 0xffffffff0179e000 - 0xffffffff80000000   (2024 MB)
+[    0.000000]       lowmem : 0xff60000000000000 - 0xff60000010000000   ( 256 MB)
+[    0.000000]       kernel : 0xffffffff80000000 - 0xffffffffffffffff   (2047 MB)
+[    0.000000] Memory: 216560K/262144K available (10367K kernel code, 5056K rwdata, 4096K rodata, 2201K init, 539K bss, 45584K reserved, 0K cma-reserved)
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=1.
+[    0.000000] rcu: 	RCU debug extended QS entry/exit.
+[    0.000000] 	Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=1
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] riscv-intc: 64 local interrupts mapped
+[    0.000000] plic: plic@c000000: mapped 95 interrupts with 1 handlers for 2 contexts.
+[    0.000000] riscv: providing IPIs using SBI IPI extension
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff max_cycles: 0x24e6a1710, max_idle_ns: 440795202120 ns
+[    0.000002] sched_clock: 64 bits at 10MHz, resolution 100ns, wraps every 4398046511100ns
+[    0.001286] Console: colour dummy device 80x25
+[    0.001486] Calibrating delay loop (skipped), value calculated using timer frequency.. 20.00 BogoMIPS (lpj=40000)
+[    0.001644] pid_max: default: 32768 minimum: 301
+[    0.002151] LSM: initializing lsm=capability,integrity
+[    0.002878] Mount-cache hash table entries: 512 (order: 0, 4096 bytes, linear)
+[    0.003012] Mountpoint-cache hash table entries: 512 (order: 0, 4096 bytes, linear)
+[    0.014500] RCU Tasks Trace: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.
+[    0.015202] riscv: ELF compat mode unsupported
+[    0.015283] ASID allocator using 16 bits (65536 entries)
+[    0.016150] rcu: Hierarchical SRCU implementation.
+[    0.016224] rcu: 	Max phase no-delay instances is 1000.
+[    0.017835] EFI services will not be available.
+[    0.018675] smp: Bringing up secondary CPUs ...
+[    0.018783] smp: Brought up 1 node, 1 CPU
+[    0.021287] devtmpfs: initialized
+[    0.031843] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.031996] futex hash table entries: 256 (order: 2, 16384 bytes, linear)
+[    0.033038] pinctrl core: initialized pinctrl subsystem
+[    0.042650] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.047057] DMA: preallocated 128 KiB GFP_KERNEL pool for atomic allocations
+[    0.047269] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    0.047595] audit: initializing netlink subsys (disabled)
+[    0.050884] thermal_sys: Registered thermal governor 'step_wise'
+[    0.051054] audit: type=2000 audit(0.044:1): state=initialized audit_enabled=0 res=1
+[    0.051293] cpuidle: using governor menu
+[    0.073118] cpu0: Ratio of byte access time to unaligned word access is 7.98, unaligned accesses are fast
+[    0.093976] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.094073] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.161991] raid6: int64x8  gen()    42 MB/s
+[    0.230562] raid6: int64x4  gen()    57 MB/s
+[    0.298900] raid6: int64x2  gen()    58 MB/s
+[    0.367496] raid6: int64x1  gen()    52 MB/s
+[    0.367578] raid6: using algorithm int64x2 gen() 58 MB/s
+[    0.436165] raid6: .... xor() 32 MB/s, rmw enabled
+[    0.436245] raid6: using intx1 recovery algorithm
+[    0.437219] ACPI: Interpreter disabled.
+[    0.437986] iommu: Default domain type: Translated
+[    0.438068] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.441609] SCSI subsystem initialized
+[    0.445000] Advanced Linux Sound Architecture Driver Initialized.
+[    0.451083] clocksource: Switched to clocksource riscv_clocksource
+[    0.453320] pnp: PnP ACPI: disabled
+[    0.515240] NET: Registered PF_INET protocol family
+[    0.516641] IP idents hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.525870] tcp_listen_portaddr_hash hash table entries: 128 (order: 0, 4096 bytes, linear)
+[    0.526062] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.526216] TCP established hash table entries: 2048 (order: 2, 16384 bytes, linear)
+[    0.526590] TCP bind hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.527816] TCP: Hash tables configured (established 2048 bind 2048)
+[    0.528194] UDP hash table entries: 256 (order: 2, 24576 bytes, linear)
+[    0.528530] UDP-Lite hash table entries: 256 (order: 2, 24576 bytes, linear)
+[    0.529527] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.532521] RPC: Registered named UNIX socket transport module.
+[    0.532609] RPC: Registered udp transport module.
+[    0.532688] RPC: Registered tcp transport module.
+[    0.532768] RPC: Registered tcp-with-tls transport module.
+[    0.532853] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    0.533148] kvm [1]: hypervisor extension not available
+[    0.538542] workingset: timestamp_bits=46 max_order=16 bucket_order=0
+[    0.542100] NFS: Registering the id_resolver key type
+[    0.542543] Key type id_resolver registered
+[    0.542620] Key type id_legacy registered
+[    0.542825] nfs4filelayout_init: NFSv4 File Layout Driver Registering...
+[    0.542955] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver Registering...
+[    0.544130] 9p: Installing v9fs 9p2000 file system support
+[    1.697025] NET: Registered PF_ALG protocol family
+[    1.697126] xor: measuring software checksum speed
+[    1.716024]    8regs           :   174 MB/sec
+[    1.734914]    8regs_prefetch  :   174 MB/sec
+[    1.753822]    32regs          :   174 MB/sec
+[    1.772767]    32regs_prefetch :   173 MB/sec
+[    1.772851] xor: using function: 32regs (174 MB/sec)
+[    1.773152] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 246)
+[    1.773256] io scheduler mq-deadline registered
+[    1.773340] io scheduler kyber registered
+[    1.773493] io scheduler bfq registered
+[    1.793001] input: wasm-vm virtio keyboard as /devices/platform/soc/10004000.virtio_mmio/virtio3/input/input0
+[    2.180183] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+[    2.193721] printk: console [ttyS0] disabled
+[    2.195997] 10000000.serial: ttyS0 at MMIO 0x10000000 (irq = 13, base_baud = 230400) is a 16550A
+[    2.196210] printk: console [ttyS0] enabled
+[    2.196384] printk: bootconsole [sbi0] disabled
+[    2.196210] printk: console [ttyS0] enabled
+[    2.196384] printk: bootconsole [sbi0] disabled
+[    2.198930] SuperH (H)SCI(F) driver initialized
+[    2.202508] random: crng init done
+[    2.244119] loop: module loaded
+[    2.244423] virtio_blk virtio0: 1/0/0 default/read/poll queues
+[    2.245774] virtio_blk virtio0: [vda] 1048576 512-byte logical blocks (537 MB/512 MiB)
+[    2.272810] mousedev: PS/2 mouse device common for all mice
+[    2.276413] goldfish_rtc 101000.rtc: registered as rtc0
+[    2.276595] goldfish_rtc 101000.rtc: setting system clock to 2026-09-05T02:24:33 UTC (1788575073)
+[    2.279909] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+[    2.280156] syscon-poweroff: probe of poweroff failed with error -16
+[    2.282305] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+[    2.285140] sdhci: Secure Digital Host Controller Interface driver
+[    2.285291] sdhci: Copyright(c) Pierre Ossman
+[    2.286357] sdhci-pltfm: SDHCI platform and OF driver helper
+[    2.296428] IPVS: Registered protocols (TCP, UDP)
+[    2.296598] IPVS: Connection hash table configured (size=4096, memory=32Kbytes)
+[    2.297710] IPVS: ipvs loaded.
+[    2.297815] IPVS: [rr] scheduler registered.
+[    2.299607] Initializing XFRM netlink socket
+[    2.299998] NET: Registered PF_INET6 protocol family
+[    2.305608] Segment Routing with IPv6
+[    2.305890] In-situ OAM (IOAM) with IPv6
+[    2.306756] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    2.310552] NET: Registered PF_PACKET protocol family
+[    2.310917] Bridge firewalling registered
+[    2.311368] 8021q: 802.1Q VLAN Support v1.8
+[    2.311949] 9pnet: Installing 9P2000 support
+[    2.312460] Key type dns_resolver registered
+[    2.554180] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
+[    2.566033] Btrfs loaded, zoned=no, fsverity=no
+[    2.573849] Legacy PMU implementation is available
+[    2.574896] clk: Disabling unused clocks
+[    2.575078] ALSA device list:
+[    2.575174]   #0: VirtIO SoundCard at platform/10007000.virtio_mmio/virtio4
+[    2.600979] EXT4-fs (vda): mounted filesystem a11ce000-0e2f-4c18-b007-f50000000018 r/w with ordered data mode. Quota mode: disabled.
+[    2.601266] VFS: Mounted root (ext4 filesystem) on device 254:0.
+[    2.601909] devtmpfs: mounted
+[    2.608531] Freeing unused kernel image (initmem) memory: 2200K
+[    2.608689] Run /sbin/init as init process
+
+   OpenRC 0.54 is starting up Linux 6.6.63 (riscv64)
+
+ * Mounting /proc ... [ ok ]
+ * Mounting /run ... [ ok ]
+ * /run/openrc: creating directory
+ * /run/lock: creating directory
+ * /run/lock: correcting owner
+ * Caching service dependencies ... [ ok ]
+ * Remounting devtmpfs on /dev ... [ ok ]
+ * Mounting /dev/mqueue ... [ ok ]
+ * Mounting /dev/pts ... [ ok ]
+ * Mounting /dev/shm ... [ ok ]
+ * Mounting /sys ... [ ok ]
+ * Mounting security filesystem ... [ ok ]
+ * Mounting debug filesystem ... [ ok ]
+ * Starting busybox mdev .../lib/rc/sh/openrc-run.sh: line 15: can't create /proc/sys/kernel/hotplug: nonexistent directory
+ [ !! ]
+ * Scanning hardware for mdev ... [ ok ]
+ * Loading hardware drivers ... [ ok ]
+ * Loading modules ...modprobe: can't change directory to '/lib/modules': No such file or directory
+modprobe: can't change directory to '/lib/modules': No such file or directory
+ [ ok ]
+ * Setting system clock using the hardware clock [UTC] ...hwclock: select() to /dev/rtc0 to wait for clock tick timed out
+ * Failed to set the system clock
+ [ !! ]
+ * Checking local filesystems  ... [ ok ]
+ * Remounting filesystems ... [ ok ]
+ * Activating swap devices ... [ ok ]
+ * Mounting local filesystems ... [ ok ]
+ * Migrating /var/lock to /run/lock ... [ ok ]
+ * Creating user login records ... [ ok ]
+ * Cleaning /tmp directory ... [ ok ]
+ * Setting hostname ... [ ok ]
+ * Seeding random number generator ... * Saving 256 bits of creditable seed for next boot
+ [ ok ]
+ * Starting busybox syslog ... [ ok ]
+ * Starting networking ... *   lo ... [ ok ]
+ *   eth0 ...udhcpc: started, v1.36.1
+udhcpc: broadcasting discover
+udhcpc: broadcasting select for 10.0.2.15, server 10.0.2.2
+udhcpc: lease of 10.0.2.15 obtained from 10.0.2.2, lease time 86400
+ [ ok ]
+ * Starting wasm-vm file transfer agent ... [ ok ]
+ * Starting wasm-vm virtio agent ... [ ok ]
+
+Welcome to Alpine Linux 3.20
+Kernel 6.6.63 on an riscv64 (/dev/ttyS0)
+
+wasm-vm login: root
+Welcome to Alpine!
+
+The Alpine Wiki contains a large amount of how-to guides and general
+information about administrating Alpine systems.
+See <https://wiki.alpinelinux.org/>.
+
+You can setup the system with the command: setup-alpine
+
+You may change this message by editing /etc/motd.
+
+wasm-vm:~# [6nset +e
+wasm-vm:~# all_ok=1
+wasm-vm:~# printf 'E5T16D_''BEGIN candidate=weston-pixman\n'
+E5T16D_BEGIN candidate=weston-pixman
+wasm-vm:~# printf 'E5T16D_''ARCH_BEGIN\n'
+E5T16D_ARCH_BEGIN
+
+printf 'E5T16D_wasm-vm:~# apk --print-arch 2>&1
+/apk/repositories 2>&1
+repos_rc=$?
+printf 'E5T16D_''REPOSITORIES_END rc=%s\n' "$repos_rc"
+[ "$repos_rc" -eq 0 ] || all_ok=0
+printf 'E5T16D_''CACHE_BEGIN\n'
+ls -1 /var/cache/apk 2>&1 | sort
+printf 'E5T16D_''CACHE_END\n'
+printf 'E5T16D_''UPDATE_BEGIN\n'
+apk update 2>&1
+update_rc=$?
+printf 'E5T16D_''UPDATE_END rc=%s\n' "$update_rc"
+[ "$update_rc" -eq 0 ] || all_ok=0
+printf 'E5T16D_''SEARCH_BEGIN packages=weston weston-backend-drm weston-shell-desktop foot seatd eudev udev-init-scripts pixman xkeyboard-config wl-clipboard font-dejavu\n'
+apk search -v weston weston-backend-drm weston-shell-desktop foot seatd eudev udev-init-scripts pixman xkeyboard-config wl-clipboard font-dejavu 2>&1
+search_rc=$?
+printf 'E5T16D_''SEARCH_END rc=%s\n' "$search_rc"
+[ "$search_rc" -eq 0 ] || all_ok=0
+printf 'E5T16D_''SIMULATE_BEGIN command=apk add --simulate --no-progress weston weston-backend-drm weston-shell-desktop foot seatd eudev udev-init-scripts pixman xkeyboard-config wl-clipboard font-dejavu\n'
+apk add --simulate --no-progress weston weston-backend-drm weston-shell-desktop foot seatd eudev udev-init-scripts pixman xkeyriscv64
+board-config wl-clipboard font-dejavu 2>&1
+simulate_rc=$?
+printf 'E5T16D_''SIMULATE_END rc=%s\n' "$simulate_rc"
+[ "$simulate_rc" -eq 0 ] || all_ok=0
+printf 'E5Twasm-vm:~# arch_rc=$?
+wasm-vm:~# printf 'E5T16D_''ARCH_END rc=%s\n' "$arch_rc"
+E5T16D_ARCH_END rc=0
+shell-desktop fowasm-vm:~# [ "$arch_rc" -eq 0 ] || all_ok=0
+ pixman xkeyboarwasm-vm:~# printf 'E5T16D_''REPOSITORIES_BEGIN\n'
+E5T16D_REPOSITORIES_BEGIN
+rogress weston wwasm-vm:~# cat /etc/apk/repositories 2>&1
+esktop foot seatd eudev udev-init-scripts pixman xkeyboard-config wl-clipboard font-dejavu 2>&1
+install_rc=$?
+printf 'E5T16D_''Ihttps://dl-cdn.alpinelinux.org/alpine/v3.20/main
+https://dl-cdn.alpinelinux.org/alpine/v3.20/community
+NSTALL_END rc=%s\n' "$install_rcwasm-vm:~# repos_rc=$?
+" -eq 0 ] || allwasm-vm:~# printf 'E5T16D_''REPOSITORIES_END rc=%s\n' "$repos_rc"
+E5T16D_REPOSITORIES_END rc=0
+l-desktop foot swasm-vm:~# [ "$repos_rc" -eq 0 ] || all_ok=0
+man xkeyboard-cowasm-vm:~# printf 'E5T16D_''CACHE_BEGIN\n'
+E5T16D_CACHE_BEGIN
+wasm-vm:~# ls -1 /var/cache/apk 2>&1 | sort
+v-init-scripts pixman xkeyboard-config wl-clipboard font-dejavu 2>&1
+info_rc=$?
+printf 'E5T16D_''INFO_END rc=%s\n' "$info_rc"
+[ "$info_rc" -eq 0 ] || all_ok=0
+printf 'E5T16D_''MANIFEST_BEGIN\n'
+apk info -v 2>&1 | sort
+printf 'E5T16D_''MANIFEST_END\n'
+if [ "$all_ok" -eq 1 ]; then
+  printfAPKINDEX.b98cb270.tar.gz
+APKINDEX.cf413ec4.tar.gz
+ 'E5T16D_''PACKAGE_PASS=1\n'
+elswasm-vm:~# printf 'E5T16D_''CACHE_END\n'
+S=0\n'
+fi
+sync
+pE5T16D_CACHE_END
+wasm-vm:~# printf 'E5T16D_''UPDATE_BEGIN\n'
+E5T16D_UPDATE_BEGIN
+wasm-vm:~# apk update 2>&1
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.20/main/riscv64/APKINDEX.tar.gz
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.20/community/riscv64/APKINDEX.tar.gz
+v3.20.10-114-ga410d2306e5 [https://dl-cdn.alpinelinux.org/alpine/v3.20/main]
+v3.20.10-106-gcfb1a4769c3 [https://dl-cdn.alpinelinux.org/alpine/v3.20/community]
+OK: 22120 distinct packages available
+wasm-vm:~# update_rc=$?
+wasm-vm:~# printf 'E5T16D_''UPDATE_END rc=%s\n' "$update_rc"
+E5T16D_UPDATE_END rc=0
+wasm-vm:~# [ "$update_rc" -eq 0 ] || all_ok=0
+wasm-vm:~# printf 'E5T16D_''SEARCH_BEGIN packages=weston weston-backend-drm west
+on-shell-desktop foot seatd eudev udev-init-scripts pixman xkeyboard-config wl-c
+lipboard font-dejavu\n'
+E5T16D_SEARCH_BEGIN packages=weston weston-backend-drm weston-shell-desktop foot seatd eudev udev-init-scripts pixman xkeyboard-config wl-clipboard font-dejavu
+wasm-vm:~# apk search -v weston weston-backend-drm weston-shell-desktop foot sea
+td eudev udev-init-scripts pixman xkeyboard-config wl-clipboard font-dejavu 2>&1
+barkery-weston-0.6.1-r0 - WebKit2-based kiosk browser for digital signage (Weston DRM session)
+barkery-weston-openrc-0.6.1-r0 - WebKit2-based kiosk browser for digital signage (OpenRC init scripts)
+eudev-3.2.14-r2 - init system agnostic fork of systemd-udev
+eudev-dev-3.2.14-r2 - init system agnostic fork of systemd-udev (development files)
+eudev-doc-3.2.14-r2 - init system agnostic fork of systemd-udev (documentation)
+eudev-hwids-3.2.14-r2 - Hardware identification databases (from eudev)
+eudev-libs-3.2.14-r2 - Dynamic library to access udev device information
+eudev-netifnames-3.2.14-r2 - udev rules for systemd-style interface names
+eudev-openrc-3.2.14-r2 - init system agnostic fork of systemd-udev (OpenRC init scripts)
+eudev-rule-generator-3.2.14-r2 - generate udev net persistance rules
+font-dejavu-2.37-r5 - Font family based on the Bitstream Vera Fonts with a wider range of characters
+font-dejavu-sans-mono-nerd-3.2.1-r0 - DejaVuSansM Nerd Font (modified DejaVu Sans Mono Font)
+foot-1.17.2-r0 - Fast, lightweight and minimalistic Wayland terminal emulator
+foot-bash-completion-1.17.2-r0 - Bash completions for foot
+foot-dbg-1.17.2-r0 - Fast, lightweight and minimalistic Wayland terminal emulator (debug symbols)
+foot-doc-1.17.2-r0 - Fast, lightweight and minimalistic Wayland terminal emulator (documentation)
+foot-extra-terminfo-1.17.2-r0 - Fast, lightweight and minimalistic Wayland terminal emulator (extra terminfo data)
+foot-fish-completion-1.17.2-r0 - Fish completions for foot
+foot-themes-1.17.2-r0 - Fast, lightweight and minimalistic Wayland terminal emulator (color schemes)
+foot-zsh-completion-1.17.2-r0 - Zsh completions for foot
+gdal-tools-3.9.3-r0 - A translator library for raster and vector geospatial data formats (command line utilities)
+libweston-12.0.4-r0 - Reference Wayland server (libraries)
+pixman-0.43.2-r0 - Low-level pixel manipulation library
+pixman-dbg-0.43.2-r0 - Low-level pixel manipulation library (debug symbols)
+pixman-dev-0.43.2-r0 - Low-level pixel manipulation library (development files)
+pixman-static-0.43.2-r0 - Low-level pixel manipulation library (static library)
+seatd-0.8.0-r0 - Minimal seat management daemon
+seatd-doc-0.8.0-r0 - Minimal seat management daemon (documentation)
+seatd-launch-0.8.0-r0 - Command to start a process with its own seatd instance (SUID binary)
+seatd-openrc-0.8.0-r0 - Minimal seat management daemon (OpenRC init scripts)
+udev-init-scripts-35-r1 - udev startup scripts for openrc
+udev-init-scripts-openrc-35-r1 - udev startup scripts for openrc (OpenRC init scripts)
+weston-12.0.4-r0 - Reference Wayland server
+weston-backend-drm-12.0.4-r0 - Weston backend: drm
+weston-backend-headless-12.0.4-r0 - Weston backend: headless
+weston-backend-rdp-12.0.4-r0 - Weston backend: rdp
+weston-backend-wayland-12.0.4-r0 - Weston backend: wayland
+weston-backend-x11-12.0.4-r0 - Weston backend: x11
+weston-clients-12.0.4-r0 - Weston example clients
+weston-desktop-x11-12.0.4-r0 - Weston desktop helper pack (x11 backend)
+weston-dev-12.0.4-r0 - Reference Wayland server (development files)
+weston-doc-12.0.4-r0 - Reference Wayland server (documentation)
+weston-shell-desktop-12.0.4-r0 - Weston shell: desktop
+weston-shell-fullscreen-12.0.4-r0 - Weston shell: fullscreen
+weston-shell-ivi-12.0.4-r0 - Weston shell: ivi
+weston-terminal-12.0.4-r0 - Weston client: weston-terminal
+weston-wcap-decode-12.0.4-r0 - Weston client: wcap-decode
+weston-xwayland-12.0.4-r0 - Wayland module to run X Clients
+wl-clipboard-2.2.0-r1 - Command-line copy/paste utilities for Wayland
+wl-clipboard-bash-completion-2.2.0-r1 - Bash completions for wl-clipboard
+wl-clipboard-doc-2.2.0-r1 - Command-line copy/paste utilities for Wayland (documentation)
+wl-clipboard-fish-completion-2.2.0-r1 - Fish completions for wl-clipboard
+wl-clipboard-zsh-completion-2.2.0-r1 - Zsh completions for wl-clipboard
+xkeyboard-config-2.41-r0 - X keyboard configuration files
+xkeyboard-config-dev-2.41-r0 - X keyboard configuration files (development files)
+xkeyboard-config-doc-2.41-r0 - X keyboard configuration files (documentation)
+xkeyboard-config-lang-2.41-r0 - Languages for package xkeyboard-config
+wasm-vm:~# search_rc=$?
+wasm-vm:~# printf 'E5T16D_''SEARCH_END rc=%s\n' "$search_rc"
+E5T16D_SEARCH_END rc=0
+wasm-vm:~# [ "$search_rc" -eq 0 ] || all_ok=0
+wasm-vm:~# printf 'E5T16D_''SIMULATE_BEGIN command=apk add --simulate --no-progr
+ess weston weston-backend-drm weston-shell-desktop foot seatd eudev udev-init-sc
+ripts pixman xkeyboard-config wl-clipboard font-dejavu\n'
+E5T16D_SIMULATE_BEGIN command=apk add --simulate --no-progress weston weston-backend-drm weston-shell-desktop foot seatd eudev udev-init-scripts pixman xkeyboard-config wl-clipboard font-dejavu
+wasm-vm:~# apk add --simulate --no-progress weston weston-backend-drm weston-she
+ll-desktop foot seatd eudev udev-init-scripts pixman xkeyboard-config wl-clipboa
+rd font-dejavu 2>&1
+(1/106) Installing udev-init-scripts (35-r1)
+(2/106) Installing udev-init-scripts-openrc (35-r1)
+(3/106) Installing eudev-libs (3.2.14-r2)
+(4/106) Installing xz-libs (5.8.3-r0)
+(5/106) Installing kmod-libs (32-r0)
+(6/106) Installing eudev (3.2.14-r2)
+(7/106) Installing eudev-openrc (3.2.14-r2)
+(8/106) Installing libexpat (2.8.1-r0)
+(9/106) Installing libbz2 (1.0.8-r6)
+(10/106) Installing libpng (1.6.57-r0)
+(11/106) Installing freetype (2.13.2-r0)
+(12/106) Installing fontconfig (2.15.0-r1)
+(13/106) Installing encodings (1.0.7-r1)
+(14/106) Installing libfontenc (1.1.8-r0)
+(15/106) Installing mkfontscale (1.2.2-r6)
+(16/106) Installing font-dejavu (2.37-r5)
+(17/106) Installing ncurses-terminfo (6.4_p20240420-r2)
+(18/106) Installing libffi (3.4.6-r0)
+(19/106) Installing libintl (0.22.5-r0)
+(20/106) Installing pcre2 (10.43-r0)
+(21/106) Installing glib (2.80.5-r0)
+(22/106) Installing graphite2 (1.3.14-r6)
+(23/106) Installing harfbuzz (8.5.0-r0)
+(24/106) Installing pixman (0.43.2-r0)
+(25/106) Installing utf8proc (2.9.0-r0)
+(26/106) Installing fcft (3.1.8-r0)
+(27/106) Installing wayland-libs-client (1.22.0-r4)
+(28/106) Installing wayland-libs-cursor (1.22.0-r4)
+(29/106) Installing xkeyboard-config (2.41-r0)
+(30/106) Installing libxml2 (2.12.10-r0)
+(31/106) Installing libxkbcommon (1.7.0-r0)
+(32/106) Installing foot (1.17.2-r0)
+(33/106) Installing seatd (0.8.0-r0)
+(34/106) Installing seatd-openrc (0.8.0-r0)
+(35/106) Installing mesa (24.0.9-r1)
+(36/106) Installing libxau (1.0.11-r4)
+(37/106) Installing libmd (1.1.0-r0)
+(38/106) Installing libbsd (0.12.2-r0)
+(39/106) Installing libxdmcp (1.1.5-r1)
+(40/106) Installing libxcb (1.16.1-r0)
+(41/106) Installing libx11 (1.8.9-r1)
+(42/106) Installing hwdata-pci (0.382-r0)
+(43/106) Installing libpciaccess (0.18.1-r0)
+(44/106) Installing libdrm (2.4.120-r0)
+(45/106) Installing wayland-libs-server (1.22.0-r4)
+(46/106) Installing mesa-gbm (24.0.9-r1)
+(47/106) Installing libgcc (13.2.1_git20240309-r1)
+(48/106) Installing mesa-glapi (24.0.9-r1)
+(49/106) Installing libxshmfence (1.3.2-r6)
+(50/106) Installing mesa-egl (24.0.9-r1)
+(51/106) Installing mesa-gles (24.0.9-r1)
+(52/106) Installing libxext (1.3.6-r2)
+(53/106) Installing libxrender (0.9.11-r5)
+(54/106) Installing cairo (1.18.4-r0)
+(55/106) Installing libevdev (1.13.1-r0)
+(56/106) Installing libxfixes (6.0.1-r4)
+(57/106) Installing libxxf86vm (1.1.5-r6)
+(58/106) Installing mesa-gl (24.0.9-r1)
+(59/106) Installing libxi (1.8.1-r4)
+(60/106) Installing libxv (1.0.12-r5)
+(61/106) Installing alsa-lib (1.2.11-r0)
+(62/106) Installing cdparanoia-libs (10.2-r14)
+(63/106) Installing graphene (1.10.8-r4)
+(64/106) Installing gstreamer (1.24.10-r0)
+(65/106) Installing libjpeg-turbo (3.0.3-r0)
+(66/106) Installing libogg (1.3.5-r5)
+(67/106) Installing opus (1.5.2-r0)
+(68/106) Installing orc (0.4.40-r0)
+(69/106) Installing libxft (2.3.8-r3)
+(70/106) Installing fribidi (1.0.15-r0)
+(71/106) Installing pango (1.52.2-r0)
+(72/106) Installing libtheora (1.1.1-r18)
+(73/106) Installing libvorbis (1.3.7-r2)
+(74/106) Installing wayland-libs-egl (1.22.0-r4)
+(75/106) Installing gst-plugins-base (1.24.10-r0)
+(76/106) Installing mtdev (1.1.6-r3)
+(77/106) Installing libinput-libs (1.25.0-r0)
+(78/106) Installing libinput-udev (1.25.0-r0)
+(79/106) Installing lcms2 (2.19-r0)
+(80/106) Installing dbus-libs (1.14.10-r1)
+(81/106) Installing avahi-libs (0.8-r17)
+(82/106) Installing gmp (6.3.0-r1)
+(83/106) Installing nettle (3.10.2-r0)
+(84/106) Installing libtasn1 (4.21.0-r0)
+(85/106) Installing p11-kit (0.25.3-r0)
+(86/106) Installing gnutls (3.8.13-r0)
+(87/106) Installing libstdc++ (13.2.1_git20240309-r1)
+(88/106) Installing libunwind (1.8.1-r0)
+(89/106) Installing yaml (0.2.5-r2)
+(90/106) Installing libcamera (0.3.0-r0)
+(91/106) Installing speexdsp (1.2.1-r2)
+(92/106) Installing libuv (1.48.0-r0)
+(93/106) Installing roc-toolkit-libs (0.3.0-r0)
+(94/106) Installing libflac (1.4.3-r1)
+(95/106) Installing libsndfile (1.2.2-r1)
+(96/106) Installing pipewire-libs (1.0.6-r1)
+(97/106) Installing libsharpyuv (1.3.2-r0)
+(98/106) Installing libwebp (1.3.2-r0)
+(99/106) Installing libweston (12.0.4-r0)
+(100/106) Installing weston (12.0.4-r0)
+(101/106) Installing libelogind (252.9-r5)
+(102/106) Installing libseat (0.8.0-r0)
+(103/106) Installing libva (2.21.0-r0)
+(104/106) Installing weston-backend-drm (12.0.4-r0)
+(105/106) Installing weston-shell-desktop (12.0.4-r0)
+(106/106) Installing wl-clipboard (2.2.0-r1)
+OK: 24 MiB in 84 packages
+wasm-vm:~# simulate_rc=$?
+wasm-vm:~# printf 'E5T16D_''SIMULATE_END rc=%s\n' "$simulate_rc"
+E5T16D_SIMULATE_END rc=0
+wasm-vm:~# [ "$simulate_rc" -eq 0 ] || all_ok=0
+wasm-vm:~# printf 'E5T16D_''INSTALL_BEGIN command=apk add --no-scripts --no-prog
+ress weston weston-backend-drm weston-shell-desktop foot seatd eudev udev-init-s
+cripts pixman xkeyboard-config wl-clipboard font-dejavu\n'
+E5T16D_INSTALL_BEGIN command=apk add --no-scripts --no-progress weston weston-backend-drm weston-shell-desktop foot seatd eudev udev-init-scripts pixman xkeyboard-config wl-clipboard font-dejavu
+wasm-vm:~# apk add --no-scripts --no-progress weston weston-backend-drm weston-s
+hell-desktop foot seatd eudev udev-init-scripts pixman xkeyboard-config wl-clipb
+oard font-dejavu 2>&1
+(1/106) Installing udev-init-scripts (35-r1)
+(2/106) Installing udev-init-scripts-openrc (35-r1)
+(3/106) Installing eudev-libs (3.2.14-r2)
+(4/106) Installing xz-libs (5.8.3-r0)
+(5/106) Installing kmod-libs (32-r0)
+(6/106) Installing eudev (3.2.14-r2)
+(7/106) Installing eudev-openrc (3.2.14-r2)
+(8/106) Installing libexpat (2.8.1-r0)
+(9/106) Installing libbz2 (1.0.8-r6)
+(10/106) Installing libpng (1.6.57-r0)
+(11/106) Installing freetype (2.13.2-r0)
+(12/106) Installing fontconfig (2.15.0-r1)
+(13/106) Installing encodings (1.0.7-r1)
+(14/106) Installing libfontenc (1.1.8-r0)
+(15/106) Installing mkfontscale (1.2.2-r6)
+(16/106) Installing font-dejavu (2.37-r5)
+(17/106) Installing ncurses-terminfo (6.4_p20240420-r2)
+(18/106) Installing libffi (3.4.6-r0)
+(19/106) Installing libintl (0.22.5-r0)
+(20/106) Installing pcre2 (10.43-r0)
+(21/106) Installing glib (2.80.5-r0)
+(22/106) Installing graphite2 (1.3.14-r6)
+(23/106) Installing harfbuzz (8.5.0-r0)
+(24/106) Installing pixman (0.43.2-r0)
+(25/106) Installing utf8proc (2.9.0-r0)
+(26/106) Installing fcft (3.1.8-r0)
+(27/106) Installing wayland-libs-client (1.22.0-r4)
+(28/106) Installing wayland-libs-cursor (1.22.0-r4)
+(29/106) Installing xkeyboard-config (2.41-r0)
+(30/106) Installing libxml2 (2.12.10-r0)
+(31/106) Installing libxkbcommon (1.7.0-r0)
+(32/106) Installing foot (1.17.2-r0)
+(33/106) Installing seatd (0.8.0-r0)
+(34/106) Installing seatd-openrc (0.8.0-r0)
+(35/106) Installing mesa (24.0.9-r1)
+(36/106) Installing libxau (1.0.11-r4)
+(37/106) Installing libmd (1.1.0-r0)
+(38/106) Installing libbsd (0.12.2-r0)
+(39/106) Installing libxdmcp (1.1.5-r1)
+(40/106) Installing libxcb (1.16.1-r0)
+(41/106) Installing libx11 (1.8.9-r1)
+(42/106) Installing hwdata-pci (0.382-r0)
+(43/106) Installing libpciaccess (0.18.1-r0)
+(44/106) Installing libdrm (2.4.120-r0)
+(45/106) Installing wayland-libs-server (1.22.0-r4)
+(46/106) Installing mesa-gbm (24.0.9-r1)
+(47/106) Installing libgcc (13.2.1_git20240309-r1)
+(48/106) Installing mesa-glapi (24.0.9-r1)
+(49/106) Installing libxshmfence (1.3.2-r6)
+(50/106) Installing mesa-egl (24.0.9-r1)
+(51/106) Installing mesa-gles (24.0.9-r1)
+(52/106) Installing libxext (1.3.6-r2)
+(53/106) Installing libxrender (0.9.11-r5)
+(54/106) Installing cairo (1.18.4-r0)
+(55/106) Installing libevdev (1.13.1-r0)
+(56/106) Installing libxfixes (6.0.1-r4)
+(57/106) Installing libxxf86vm (1.1.5-r6)
+(58/106) Installing mesa-gl (24.0.9-r1)
+(59/106) Installing libxi (1.8.1-r4)
+(60/106) Installing libxv (1.0.12-r5)
+(61/106) Installing alsa-lib (1.2.11-r0)
+(62/106) Installing cdparanoia-libs (10.2-r14)
+(63/106) Installing graphene (1.10.8-r4)
+(64/106) Installing gstreamer (1.24.10-r0)
+(65/106) Installing libjpeg-turbo (3.0.3-r0)
+(66/106) Installing libogg (1.3.5-r5)
+(67/106) Installing opus (1.5.2-r0)
+(68/106) Installing orc (0.4.40-r0)
+(69/106) Installing libxft (2.3.8-r3)
+(70/106) Installing fribidi (1.0.15-r0)
+(71/106) Installing pango (1.52.2-r0)
+(72/106) Installing libtheora (1.1.1-r18)
+(73/106) Installing libvorbis (1.3.7-r2)
+(74/106) Installing wayland-libs-egl (1.22.0-r4)
+(75/106) Installing gst-plugins-base (1.24.10-r0)
+(76/106) Installing mtdev (1.1.6-r3)
+(77/106) Installing libinput-libs (1.25.0-r0)
+(78/106) Installing libinput-udev (1.25.0-r0)
+(79/106) Installing lcms2 (2.19-r0)
+(80/106) Installing dbus-libs (1.14.10-r1)
+(81/106) Installing avahi-libs (0.8-r17)
+(82/106) Installing gmp (6.3.0-r1)
+(83/106) Installing nettle (3.10.2-r0)
+(84/106) Installing libtasn1 (4.21.0-r0)
+(85/106) Installing p11-kit (0.25.3-r0)
+(86/106) Installing gnutls (3.8.13-r0)
+(87/106) Installing libstdc++ (13.2.1_git20240309-r1)
+(88/106) Installing libunwind (1.8.1-r0)
+(89/106) Installing yaml (0.2.5-r2)
+(90/106) Installing libcamera (0.3.0-r0)
+(91/106) Installing speexdsp (1.2.1-r2)
+(92/106) Installing libuv (1.48.0-r0)
+(93/106) Installing roc-toolkit-libs (0.3.0-r0)
+(94/106) Installing libflac (1.4.3-r1)
+(95/106) Installing libsndfile (1.2.2-r1)
+(96/106) Installing pipewire-libs (1.0.6-r1)
+(97/106) Installing libsharpyuv (1.3.2-r0)
+(98/106) Installing libwebp (1.3.2-r0)
+(99/106) Installing libweston (12.0.4-r0)
+(100/106) Installing weston (12.0.4-r0)
+(101/106) Installing libelogind (252.9-r5)
+(102/106) Installing libseat (0.8.0-r0)
+(103/106) Installing libva (2.21.0-r0)
+(104/106) Installing weston-backend-drm (12.0.4-r0)
+(105/106) Installing weston-shell-desktop (12.0.4-r0)
+(106/106) Installing wl-clipboard (2.2.0-r1)
+OK: 100 MiB in 190 packages
+wasm-vm:~# install_rc=$?
+wasm-vm:~# printf 'E5T16D_''INSTALL_END rc=%s\n' "$install_rc"
+E5T16D_INSTALL_END rc=0
+wasm-vm:~# [ "$install_rc" -eq 0 ] || all_ok=0
+wasm-vm:~# printf 'E5T16D_''INFO_BEGIN packages=weston weston-backend-drm weston
+-shell-desktop foot seatd eudev udev-init-scripts pixman xkeyboard-config wl-cli
+pboard font-dejavu\n'
+E5T16D_INFO_BEGIN packages=weston weston-backend-drm weston-shell-desktop foot seatd eudev udev-init-scripts pixman xkeyboard-config wl-clipboard font-dejavu
+wasm-vm:~# apk info -a weston weston-backend-drm weston-shell-desktop foot seatd
+ eudev udev-init-scripts pixman xkeyboard-config wl-clipboard font-dejavu 2>&1
+eudev-3.2.14-r2 description:
+init system agnostic fork of systemd-udev
+
+eudev-3.2.14-r2 webpage:
+https://github.com/eudev-project/eudev
+
+eudev-3.2.14-r2 installed size:
+784 KiB
+
+eudev-3.2.14-r2 depends on:
+udev-init-scripts
+/bin/sh
+eudev-libs=3.2.14-r2
+so:libblkid.so.1
+so:libc.musl-riscv64.so.1
+so:libkmod.so.2
+
+eudev-3.2.14-r2 provides:
+udev=176
+cmd:udevadm=3.2.14-r2
+cmd:udevd=3.2.14-r2
+
+eudev-3.2.14-r2 is required by:
+
+eudev-3.2.14-r2 contains:
+bin/udevadm
+etc/udev/udev.conf
+lib/udev/ata_id
+lib/udev/cdrom_id
+lib/udev/collect
+lib/udev/dmi_memory_id
+lib/udev/fido_id
+lib/udev/mtd_probe
+lib/udev/scsi_id
+lib/udev/v4l_id
+lib/udev/rules.d/50-udev-default.rules
+lib/udev/rules.d/60-autosuspend.rules
+lib/udev/rules.d/60-block.rules
+lib/udev/rules.d/60-cdrom_id.rules
+lib/udev/rules.d/60-drm.rules
+lib/udev/rules.d/60-evdev.rules
+lib/udev/rules.d/60-fido-id.rules
+lib/udev/rules.d/60-input-id.rules
+lib/udev/rules.d/60-persistent-alsa.rules
+lib/udev/rules.d/60-persistent-input.rules
+lib/udev/rules.d/60-persistent-storage-tape.rules
+lib/udev/rules.d/60-persistent-storage.rules
+lib/udev/rules.d/60-persistent-v4l.rules
+lib/udev/rules.d/60-sensor.rules
+lib/udev/rules.d/60-serial.rules
+lib/udev/rules.d/64-btrfs.rules
+lib/udev/rules.d/70-camera.rules
+lib/udev/rules.d/70-joystick.rules
+lib/udev/rules.d/70-memory.rules
+lib/udev/rules.d/70-mouse.rules
+lib/udev/rules.d/70-touchpad.rules
+lib/udev/rules.d/75-net-description.rules
+lib/udev/rules.d/75-probe_mtd.rules
+lib/udev/rules.d/78-sound-card.rules
+lib/udev/rules.d/80-drivers.rules
+lib/udev/rules.d/81-net-dhcp.rules
+sbin/udevadm
+sbin/udevd
+usr/lib/libudev.so.1
+usr/lib/libudev.so.1.6.3
+
+eudev-3.2.14-r2 triggers:
+/lib/udev/rules.d
+/usr/lib/udev/rules.d
+
+eudev-3.2.14-r2 has auto-install rule:
+
+eudev-3.2.14-r2 affects auto-installation of:
+libinput-udev-1.25.0-r0
+eudev-openrc-3.2.14-r2
+
+eudev-3.2.14-r2 replaces:
+udev
+
+eudev-3.2.14-r2 license:
+GPL-2.0-or-later
+
+font-dejavu-2.37-r5 description:
+Font family based on the Bitstream Vera Fonts with a wider range of characters
+
+font-dejavu-2.37-r5 webpage:
+https://dejavu-fonts.github.io/
+
+font-dejavu-2.37-r5 installed size:
+9 MiB
+
+font-dejavu-2.37-r5 depends on:
+fontconfig
+encodings
+mkfontscale
+
+font-dejavu-2.37-r5 provides:
+ttf-dejavu=2.37-r5
+
+font-dejavu-2.37-r5 is required by:
+
+font-dejavu-2.37-r5 contains:
+etc/fonts/conf.avail/20-unhint-small-dejavu-lgc-sans-mono.conf
+etc/fonts/conf.avail/20-unhint-small-dejavu-lgc-sans.conf
+etc/fonts/conf.avail/20-unhint-small-dejavu-lgc-serif.conf
+etc/fonts/conf.avail/20-unhint-small-dejavu-sans-mono.conf
+etc/fonts/conf.avail/20-unhint-small-dejavu-sans.conf
+etc/fonts/conf.avail/20-unhint-small-dejavu-serif.conf
+etc/fonts/conf.avail/45-dejavu.conf
+etc/fonts/conf.avail/57-dejavu-sans-mono.conf
+etc/fonts/conf.avail/57-dejavu-sans.conf
+etc/fonts/conf.avail/57-dejavu-serif.conf
+etc/fonts/conf.avail/58-dejavu-lgc-sans-mono.conf
+etc/fonts/conf.avail/58-dejavu-lgc-sans.conf
+etc/fonts/conf.avail/58-dejavu-lgc-serif.conf
+etc/fonts/conf.avail/90-tt-dejavu.conf
+etc/fonts/conf.d/45-dejavu.conf
+etc/fonts/conf.d/90-tt-dejavu.conf
+usr/share/fonts/dejavu/DejaVuMathTeXGyre.ttf
+usr/share/fonts/dejavu/DejaVuSans-Bold.ttf
+usr/share/fonts/dejavu/DejaVuSans-BoldOblique.ttf
+usr/share/fonts/dejavu/DejaVuSans-ExtraLight.ttf
+usr/share/fonts/dejavu/DejaVuSans-Oblique.ttf
+usr/share/fonts/dejavu/DejaVuSans.ttf
+usr/share/fonts/dejavu/DejaVuSansCondensed-Bold.ttf
+usr/share/fonts/dejavu/DejaVuSansCondensed-BoldOblique.ttf
+usr/share/fonts/dejavu/DejaVuSansCondensed-Oblique.ttf
+usr/share/fonts/dejavu/DejaVuSansCondensed.ttf
+usr/share/fonts/dejavu/DejaVuSansMono-Bold.ttf
+usr/share/fonts/dejavu/DejaVuSansMono-BoldOblique.ttf
+usr/share/fonts/dejavu/DejaVuSansMono-Oblique.ttf
+usr/share/fonts/dejavu/DejaVuSansMono.ttf
+usr/share/fonts/dejavu/DejaVuSerif-Bold.ttf
+usr/share/fonts/dejavu/DejaVuSerif-BoldItalic.ttf
+usr/share/fonts/dejavu/DejaVuSerif-Italic.ttf
+usr/share/fonts/dejavu/DejaVuSerif.ttf
+usr/share/fonts/dejavu/DejaVuSerifCondensed-Bold.ttf
+usr/share/fonts/dejavu/DejaVuSerifCondensed-BoldItalic.ttf
+usr/share/fonts/dejavu/DejaVuSerifCondensed-Italic.ttf
+usr/share/fonts/dejavu/DejaVuSerifCondensed.ttf
+
+font-dejavu-2.37-r5 triggers:
+
+font-dejavu-2.37-r5 has auto-install rule:
+
+font-dejavu-2.37-r5 affects auto-installation of:
+
+font-dejavu-2.37-r5 replaces:
+ttf-dejavu
+
+font-dejavu-2.37-r5 license:
+Bitstream-Vera
+
+foot-1.17.2-r0 description:
+Fast, lightweight and minimalistic Wayland terminal emulator
+
+foot-1.17.2-r0 webpage:
+https://codeberg.org/dnkl/foot
+
+foot-1.17.2-r0 installed size:
+520 KiB
+
+foot-1.17.2-r0 depends on:
+ncurses-terminfo
+so:libc.musl-riscv64.so.1
+so:libfcft.so.4
+so:libfontconfig.so.1
+so:libpixman-1.so.0
+so:libutf8proc.so.3
+so:libwayland-client.so.0
+so:libwayland-cursor.so.0
+so:libxkbcommon.so.0
+
+foot-1.17.2-r0 provides:
+cmd:foot=1.17.2-r0
+cmd:footclient=1.17.2-r0
+
+foot-1.17.2-r0 is required by:
+
+foot-1.17.2-r0 contains:
+etc/xdg/foot/foot.ini
+usr/bin/foot
+usr/bin/footclient
+usr/share/applications/org.codeberg.dnkl.foot-server.desktop
+usr/share/applications/org.codeberg.dnkl.foot.desktop
+usr/share/applications/org.codeberg.dnkl.footclient.desktop
+usr/share/icons/hicolor/48x48/apps/foot.png
+usr/share/icons/hicolor/scalable/apps/foot.svg
+
+foot-1.17.2-r0 triggers:
+
+foot-1.17.2-r0 has auto-install rule:
+
+foot-1.17.2-r0 affects auto-installation of:
+
+foot-1.17.2-r0 replaces:
+
+foot-1.17.2-r0 license:
+MIT
+
+pixman-0.43.2-r0 description:
+Low-level pixel manipulation library
+
+pixman-0.43.2-r0 webpage:
+https://gitlab.freedesktop.org/pixman
+
+pixman-0.43.2-r0 installed size:
+356 KiB
+
+pixman-0.43.2-r0 depends on:
+so:libc.musl-riscv64.so.1
+
+pixman-0.43.2-r0 provides:
+so:libpixman-1.so.0=0.43.2
+
+pixman-0.43.2-r0 is required by:
+cairo-1.18.4-r0
+weston-shell-desktop-12.0.4-r0
+weston-12.0.4-r0
+fcft-3.1.8-r0
+foot-1.17.2-r0
+libweston-12.0.4-r0
+weston-backend-drm-12.0.4-r0
+
+pixman-0.43.2-r0 contains:
+usr/lib/libpixman-1.so.0
+usr/lib/libpixman-1.so.0.43.2
+
+pixman-0.43.2-r0 triggers:
+
+pixman-0.43.2-r0 has auto-install rule:
+
+pixman-0.43.2-r0 affects auto-installation of:
+
+pixman-0.43.2-r0 replaces:
+
+pixman-0.43.2-r0 license:
+MIT
+
+seatd-0.8.0-r0 description:
+Minimal seat management daemon
+
+seatd-0.8.0-r0 webpage:
+https://sr.ht/~kennylevinsen/seatd/
+
+seatd-0.8.0-r0 installed size:
+60 KiB
+
+seatd-0.8.0-r0 depends on:
+/bin/sh
+so:libc.musl-riscv64.so.1
+
+seatd-0.8.0-r0 provides:
+cmd:seatd=0.8.0-r0
+
+seatd-0.8.0-r0 is required by:
+
+seatd-0.8.0-r0 contains:
+usr/bin/seatd
+
+seatd-0.8.0-r0 triggers:
+
+seatd-0.8.0-r0 has auto-install rule:
+
+seatd-0.8.0-r0 affects auto-installation of:
+seatd-openrc-0.8.0-r0
+
+seatd-0.8.0-r0 replaces:
+
+seatd-0.8.0-r0 license:
+MIT
+
+udev-init-scripts-35-r1 description:
+udev startup scripts for openrc
+
+udev-init-scripts-35-r1 webpage:
+https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-fs/udev-init-scripts
+
+udev-init-scripts-35-r1 installed size:
+8192 B
+
+udev-init-scripts-35-r1 depends on:
+
+udev-init-scripts-35-r1 provides:
+
+udev-init-scripts-35-r1 is required by:
+eudev-3.2.14-r2
+
+udev-init-scripts-35-r1 contains:
+
+udev-init-scripts-35-r1 triggers:
+
+udev-init-scripts-35-r1 has auto-install rule:
+
+udev-init-scripts-35-r1 affects auto-installation of:
+udev-init-scripts-openrc-35-r1
+
+udev-init-scripts-35-r1 replaces:
+
+udev-init-scripts-35-r1 license:
+GPL-2.0-only
+
+weston-12.0.4-r0 description:
+Reference Wayland server
+
+weston-12.0.4-r0 webpage:
+https://wayland.freedesktop.org/
+
+weston-12.0.4-r0 installed size:
+1140 KiB
+
+weston-12.0.4-r0 depends on:
+/bin/sh
+so:libEGL.so.1
+so:libGLESv2.so.2
+so:libc.musl-riscv64.so.1
+so:libcairo.so.2
+so:libevdev.so.2
+so:libfontconfig.so.1
+so:libglib-2.0.so.0
+so:libgobject-2.0.so.0
+so:libgstallocators-1.0.so.0
+so:libgstapp-1.0.so.0
+so:libgstreamer-1.0.so.0
+so:libgstvideo-1.0.so.0
+so:libinput.so.10
+so:libjpeg.so.8
+so:liblcms2.so.2
+so:libpango-1.0.so.0
+so:libpangocairo-1.0.so.0
+so:libpipewire-0.3.so.0
+so:libpixman-1.so.0
+so:libpng16.so.16
+so:libwayland-client.so.0
+so:libwayland-cursor.so.0
+so:libwayland-server.so.0
+so:libwebp.so.7
+so:libweston-12.so.0
+so:libxkbcommon.so.0
+
+weston-12.0.4-r0 provides:
+so:hmi-controller.so=0
+so:kiosk-shell.so=0
+so:libexec_weston.so.0=0.0.0
+so:screen-share.so=0
+cmd:weston=12.0.4-r0
+
+weston-12.0.4-r0 is required by:
+weston-shell-desktop-12.0.4-r0
+
+weston-12.0.4-r0 contains:
+usr/bin/weston
+usr/lib/libweston-12/color-lcms.so
+usr/lib/libweston-12/gl-renderer.so
+usr/lib/libweston-12/pipewire-backend.so
+usr/lib/libweston-12/pipewire-plugin.so
+usr/lib/libweston-12/remoting-plugin.so
+usr/lib/weston/hmi-controller.so
+usr/lib/weston/kiosk-shell.so
+usr/lib/weston/libexec_weston.so
+usr/lib/weston/libexec_weston.so.0
+usr/lib/weston/libexec_weston.so.0.0.0
+usr/lib/weston/screen-share.so
+usr/libexec/weston-desktop-shell
+usr/libexec/weston-ivi-shell-user-interface
+usr/libexec/weston-keyboard
+usr/libexec/weston-simple-im
+usr/share/libweston-12/protocols/weston-content-protection.xml
+usr/share/libweston-12/protocols/weston-debug.xml
+usr/share/libweston-12/protocols/weston-direct-display.xml
+usr/share/libweston-12/protocols/weston-output-capture.xml
+usr/share/wayland-sessions/weston.desktop
+usr/share/weston/background.png
+usr/share/weston/border.png
+usr/share/weston/fullscreen.png
+usr/share/weston/home.png
+usr/share/weston/icon_editor.png
+usr/share/weston/icon_flower.png
+usr/share/weston/icon_ivi_clickdot.png
+usr/share/weston/icon_ivi_flower.png
+usr/share/weston/icon_ivi_simple-egl.png
+usr/share/weston/icon_ivi_simple-shm.png
+usr/share/weston/icon_ivi_smoke.png
+usr/share/weston/icon_terminal.png
+usr/share/weston/icon_window.png
+usr/share/weston/panel.png
+usr/share/weston/pattern.png
+usr/share/weston/random.png
+usr/share/weston/sidebyside.png
+usr/share/weston/sign_close.png
+usr/share/weston/sign_maximize.png
+usr/share/weston/sign_minimize.png
+usr/share/weston/terminal.png
+usr/share/weston/tiling.png
+usr/share/weston/wayland.png
+usr/share/weston/wayland.svg
+
+weston-12.0.4-r0 triggers:
+
+weston-12.0.4-r0 has auto-install rule:
+
+weston-12.0.4-r0 affects auto-installation of:
+
+weston-12.0.4-r0 replaces:
+
+weston-12.0.4-r0 license:
+MIT
+
+weston-backend-drm-12.0.4-r0 description:
+Weston backend: drm
+
+weston-backend-drm-12.0.4-r0 webpage:
+https://wayland.freedesktop.org/
+
+weston-backend-drm-12.0.4-r0 installed size:
+152 KiB
+
+weston-backend-drm-12.0.4-r0 depends on:
+so:libc.musl-riscv64.so.1
+so:libdrm.so.2
+so:libgbm.so.1
+so:libinput.so.10
+so:libpixman-1.so.0
+so:libseat.so.1
+so:libudev.so.1
+so:libva-drm.so.2
+so:libva.so.2
+so:libwayland-client.so.0
+so:libwayland-server.so.0
+so:libweston-12.so.0
+
+weston-backend-drm-12.0.4-r0 provides:
+
+weston-backend-drm-12.0.4-r0 is required by:
+
+weston-backend-drm-12.0.4-r0 contains:
+usr/lib/libweston-12/drm-backend.so
+
+weston-backend-drm-12.0.4-r0 triggers:
+
+weston-backend-drm-12.0.4-r0 has auto-install rule:
+
+weston-backend-drm-12.0.4-r0 affects auto-installation of:
+
+weston-backend-drm-12.0.4-r0 replaces:
+
+weston-backend-drm-12.0.4-r0 license:
+MIT
+
+weston-shell-desktop-12.0.4-r0 description:
+Weston shell: desktop
+
+weston-shell-desktop-12.0.4-r0 webpage:
+https://wayland.freedesktop.org/
+
+weston-shell-desktop-12.0.4-r0 installed size:
+80 KiB
+
+weston-shell-desktop-12.0.4-r0 depends on:
+so:libc.musl-riscv64.so.1
+so:libexec_weston.so.0
+so:libpixman-1.so.0
+so:libwayland-server.so.0
+so:libweston-12.so.0
+
+weston-shell-desktop-12.0.4-r0 provides:
+so:desktop-shell.so=0
+
+weston-shell-desktop-12.0.4-r0 is required by:
+
+weston-shell-desktop-12.0.4-r0 contains:
+usr/lib/weston/desktop-shell.so
+
+weston-shell-desktop-12.0.4-r0 triggers:
+
+weston-shell-desktop-12.0.4-r0 has auto-install rule:
+
+weston-shell-desktop-12.0.4-r0 affects auto-installation of:
+
+weston-shell-desktop-12.0.4-r0 replaces:
+
+weston-shell-desktop-12.0.4-r0 license:
+MIT
+
+wl-clipboard-2.2.0-r1 description:
+Command-line copy/paste utilities for Wayland
+
+wl-clipboard-2.2.0-r1 webpage:
+https://github.com/bugaevc/wl-clipboard
+
+wl-clipboard-2.2.0-r1 installed size:
+100 KiB
+
+wl-clipboard-2.2.0-r1 depends on:
+so:libc.musl-riscv64.so.1
+so:libwayland-client.so.0
+
+wl-clipboard-2.2.0-r1 provides:
+cmd:wl-copy=2.2.0-r1
+cmd:wl-paste=2.2.0-r1
+
+wl-clipboard-2.2.0-r1 is required by:
+
+wl-clipboard-2.2.0-r1 contains:
+usr/bin/wl-copy
+usr/bin/wl-paste
+
+wl-clipboard-2.2.0-r1 triggers:
+
+wl-clipboard-2.2.0-r1 has auto-install rule:
+
+wl-clipboard-2.2.0-r1 affects auto-installation of:
+
+wl-clipboard-2.2.0-r1 replaces:
+
+wl-clipboard-2.2.0-r1 license:
+GPL-3.0-or-later
+
+xkeyboard-config-2.41-r0 description:
+X keyboard configuration files
+
+xkeyboard-config-2.41-r0 webpage:
+https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config
+
+xkeyboard-config-2.41-r0 installed size:
+4036 KiB
+
+xkeyboard-config-2.41-r0 depends on:
+
+xkeyboard-config-2.41-r0 provides:
+
+xkeyboard-config-2.41-r0 is required by:
+libxkbcommon-1.7.0-r0
+
+xkeyboard-config-2.41-r0 contains:
+usr/share/X11/xkb/compat/README
+usr/share/X11/xkb/compat/accessx
+usr/share/X11/xkb/compat/basic
+usr/share/X11/xkb/compat/caps
+usr/share/X11/xkb/compat/complete
+usr/share/X11/xkb/compat/iso9995
+usr/share/X11/xkb/compat/japan
+usr/share/X11/xkb/compat/ledcaps
+usr/share/X11/xkb/compat/ledcompose
+usr/share/X11/xkb/compat/lednum
+usr/share/X11/xkb/compat/ledscroll
+usr/share/X11/xkb/compat/level5
+usr/share/X11/xkb/compat/misc
+usr/share/X11/xkb/compat/mousekeys
+usr/share/X11/xkb/compat/olpc
+usr/share/X11/xkb/compat/pc
+usr/share/X11/xkb/compat/pc98
+usr/share/X11/xkb/compat/xfree86
+usr/share/X11/xkb/compat/xtest
+usr/share/X11/xkb/geometry/README
+usr/share/X11/xkb/geometry/amiga
+usr/share/X11/xkb/geometry/ataritt
+usr/share/X11/xkb/geometry/chicony
+usr/share/X11/xkb/geometry/dell
+usr/share/X11/xkb/geometry/everex
+usr/share/X11/xkb/geometry/fujitsu
+usr/share/X11/xkb/geometry/hhk
+usr/share/X11/xkb/geometry/hp
+usr/share/X11/xkb/geometry/keytronic
+usr/share/X11/xkb/geometry/kinesis
+usr/share/X11/xkb/geometry/macintosh
+usr/share/X11/xkb/geometry/microsoft
+usr/share/X11/xkb/geometry/nec
+usr/share/X11/xkb/geometry/nokia
+usr/share/X11/xkb/geometry/northgate
+usr/share/X11/xkb/geometry/pc
+usr/share/X11/xkb/geometry/sanwa
+usr/share/X11/xkb/geometry/sony
+usr/share/X11/xkb/geometry/steelseries
+usr/share/X11/xkb/geometry/sun
+usr/share/X11/xkb/geometry/teck
+usr/share/X11/xkb/geometry/thinkpad
+usr/share/X11/xkb/geometry/typematrix
+usr/share/X11/xkb/geometry/winbook
+usr/share/X11/xkb/geometry/digital_vndr/lk
+usr/share/X11/xkb/geometry/digital_vndr/pc
+usr/share/X11/xkb/geometry/digital_vndr/unix
+usr/share/X11/xkb/geometry/sgi_vndr/O2
+usr/share/X11/xkb/geometry/sgi_vndr/indigo
+usr/share/X11/xkb/geometry/sgi_vndr/indy
+usr/share/X11/xkb/keycodes/README
+usr/share/X11/xkb/keycodes/aliases
+usr/share/X11/xkb/keycodes/amiga
+usr/share/X11/xkb/keycodes/ataritt
+usr/share/X11/xkb/keycodes/empty
+usr/share/X11/xkb/keycodes/evdev
+usr/share/X11/xkb/keycodes/fujitsu
+usr/share/X11/xkb/keycodes/hp
+usr/share/X11/xkb/keycodes/ibm
+usr/share/X11/xkb/keycodes/jolla
+usr/share/X11/xkb/keycodes/macintosh
+usr/share/X11/xkb/keycodes/olpc
+usr/share/X11/xkb/keycodes/sony
+usr/share/X11/xkb/keycodes/sun
+usr/share/X11/xkb/keycodes/xfree86
+usr/share/X11/xkb/keycodes/xfree98
+usr/share/X11/xkb/keycodes/digital_vndr/lk
+usr/share/X11/xkb/keycodes/digital_vndr/pc
+usr/share/X11/xkb/keycodes/sgi_vndr/indigo
+usr/share/X11/xkb/keycodes/sgi_vndr/indy
+usr/share/X11/xkb/keycodes/sgi_vndr/iris
+usr/share/X11/xkb/rules/README
+usr/share/X11/xkb/rules/base
+usr/share/X11/xkb/rules/base.extras.xml
+usr/share/X11/xkb/rules/base.lst
+usr/share/X11/xkb/rules/base.xml
+usr/share/X11/xkb/rules/evdev
+usr/share/X11/xkb/rules/evdev.extras.xml
+usr/share/X11/xkb/rules/evdev.lst
+usr/share/X11/xkb/rules/evdev.xml
+usr/share/X11/xkb/rules/xfree98
+usr/share/X11/xkb/rules/xkb.dtd
+usr/share/X11/xkb/symbols/af
+usr/share/X11/xkb/symbols/al
+usr/share/X11/xkb/symbols/altwin
+usr/share/X11/xkb/symbols/am
+usr/share/X11/xkb/symbols/ancient
+usr/share/X11/xkb/symbols/apl
+usr/share/X11/xkb/symbols/ara
+usr/share/X11/xkb/symbols/at
+usr/share/X11/xkb/symbols/au
+usr/share/X11/xkb/symbols/az
+usr/share/X11/xkb/symbols/ba
+usr/share/X11/xkb/symbols/bd
+usr/share/X11/xkb/symbols/be
+usr/share/X11/xkb/symbols/bg
+usr/share/X11/xkb/symbols/bqn
+usr/share/X11/xkb/symbols/br
+usr/share/X11/xkb/symbols/brai
+usr/share/X11/xkb/symbols/bt
+usr/share/X11/xkb/symbols/bw
+usr/share/X11/xkb/symbols/by
+usr/share/X11/xkb/symbols/ca
+usr/share/X11/xkb/symbols/capslock
+usr/share/X11/xkb/symbols/cd
+usr/share/X11/xkb/symbols/ch
+usr/share/X11/xkb/symbols/cm
+usr/share/X11/xkb/symbols/cn
+usr/share/X11/xkb/symbols/compose
+usr/share/X11/xkb/symbols/ctrl
+usr/share/X11/xkb/symbols/cz
+usr/share/X11/xkb/symbols/de
+usr/share/X11/xkb/symbols/dk
+usr/share/X11/xkb/symbols/dz
+usr/share/X11/xkb/symbols/ee
+usr/share/X11/xkb/symbols/eg
+usr/share/X11/xkb/symbols/empty
+usr/share/X11/xkb/symbols/epo
+usr/share/X11/xkb/symbols/es
+usr/share/X11/xkb/symbols/et
+usr/share/X11/xkb/symbols/eu
+usr/share/X11/xkb/symbols/eurosign
+usr/share/X11/xkb/symbols/fi
+usr/share/X11/xkb/symbols/fo
+usr/share/X11/xkb/symbols/fr
+usr/share/X11/xkb/symbols/gb
+usr/share/X11/xkb/symbols/ge
+usr/share/X11/xkb/symbols/gh
+usr/share/X11/xkb/symbols/gn
+usr/share/X11/xkb/symbols/gr
+usr/share/X11/xkb/symbols/group
+usr/share/X11/xkb/symbols/hr
+usr/share/X11/xkb/symbols/hu
+usr/share/X11/xkb/symbols/id
+usr/share/X11/xkb/symbols/ie
+usr/share/X11/xkb/symbols/il
+usr/share/X11/xkb/symbols/in
+usr/share/X11/xkb/symbols/inet
+usr/share/X11/xkb/symbols/iq
+usr/share/X11/xkb/symbols/ir
+usr/share/X11/xkb/symbols/is
+usr/share/X11/xkb/symbols/it
+usr/share/X11/xkb/symbols/jp
+usr/share/X11/xkb/symbols/ke
+usr/share/X11/xkb/symbols/keypad
+usr/share/X11/xkb/symbols/kg
+usr/share/X11/xkb/symbols/kh
+usr/share/X11/xkb/symbols/kpdl
+usr/share/X11/xkb/symbols/kr
+usr/share/X11/xkb/symbols/kz
+usr/share/X11/xkb/symbols/la
+usr/share/X11/xkb/symbols/latam
+usr/share/X11/xkb/symbols/latin
+usr/share/X11/xkb/symbols/level2
+usr/share/X11/xkb/symbols/level3
+usr/share/X11/xkb/symbols/level5
+usr/share/X11/xkb/symbols/lk
+usr/share/X11/xkb/symbols/lt
+usr/share/X11/xkb/symbols/lv
+usr/share/X11/xkb/symbols/ma
+usr/share/X11/xkb/symbols/md
+usr/share/X11/xkb/symbols/me
+usr/share/X11/xkb/symbols/mk
+usr/share/X11/xkb/symbols/ml
+usr/share/X11/xkb/symbols/mm
+usr/share/X11/xkb/symbols/mn
+usr/share/X11/xkb/symbols/mt
+usr/share/X11/xkb/symbols/mv
+usr/share/X11/xkb/symbols/my
+usr/share/X11/xkb/symbols/nbsp
+usr/share/X11/xkb/symbols/ng
+usr/share/X11/xkb/symbols/nl
+usr/share/X11/xkb/symbols/no
+usr/share/X11/xkb/symbols/np
+usr/share/X11/xkb/symbols/nz
+usr/share/X11/xkb/symbols/olpc
+usr/share/X11/xkb/symbols/parens
+usr/share/X11/xkb/symbols/pc
+usr/share/X11/xkb/symbols/ph
+usr/share/X11/xkb/symbols/pk
+usr/share/X11/xkb/symbols/pl
+usr/share/X11/xkb/symbols/pt
+usr/share/X11/xkb/symbols/ro
+usr/share/X11/xkb/symbols/rs
+usr/share/X11/xkb/symbols/ru
+usr/share/X11/xkb/symbols/rupeesign
+usr/share/X11/xkb/symbols/se
+usr/share/X11/xkb/symbols/shift
+usr/share/X11/xkb/symbols/si
+usr/share/X11/xkb/symbols/sk
+usr/share/X11/xkb/symbols/sn
+usr/share/X11/xkb/symbols/srvr_ctrl
+usr/share/X11/xkb/symbols/sy
+usr/share/X11/xkb/symbols/terminate
+usr/share/X11/xkb/symbols/tg
+usr/share/X11/xkb/symbols/th
+usr/share/X11/xkb/symbols/tj
+usr/share/X11/xkb/symbols/tm
+usr/share/X11/xkb/symbols/tr
+usr/share/X11/xkb/symbols/trans
+usr/share/X11/xkb/symbols/tw
+usr/share/X11/xkb/symbols/typo
+usr/share/X11/xkb/symbols/tz
+usr/share/X11/xkb/symbols/ua
+usr/share/X11/xkb/symbols/us
+usr/share/X11/xkb/symbols/uz
+usr/share/X11/xkb/symbols/vn
+usr/share/X11/xkb/symbols/za
+usr/share/X11/xkb/symbols/digital_vndr/lk
+usr/share/X11/xkb/symbols/digital_vndr/pc
+usr/share/X11/xkb/symbols/digital_vndr/us
+usr/share/X11/xkb/symbols/digital_vndr/vt
+usr/share/X11/xkb/symbols/fujitsu_vndr/jp
+usr/share/X11/xkb/symbols/fujitsu_vndr/us
+usr/share/X11/xkb/symbols/hp_vndr/us
+usr/share/X11/xkb/symbols/jolla_vndr/sbj
+usr/share/X11/xkb/symbols/macintosh_vndr/apple
+usr/share/X11/xkb/symbols/macintosh_vndr/ch
+usr/share/X11/xkb/symbols/macintosh_vndr/de
+usr/share/X11/xkb/symbols/macintosh_vndr/dk
+usr/share/X11/xkb/symbols/macintosh_vndr/fi
+usr/share/X11/xkb/symbols/macintosh_vndr/fr
+usr/share/X11/xkb/symbols/macintosh_vndr/gb
+usr/share/X11/xkb/symbols/macintosh_vndr/is
+usr/share/X11/xkb/symbols/macintosh_vndr/it
+usr/share/X11/xkb/symbols/macintosh_vndr/jp
+usr/share/X11/xkb/symbols/macintosh_vndr/latam
+usr/share/X11/xkb/symbols/macintosh_vndr/nl
+usr/share/X11/xkb/symbols/macintosh_vndr/no
+usr/share/X11/xkb/symbols/macintosh_vndr/pt
+usr/share/X11/xkb/symbols/macintosh_vndr/se
+usr/share/X11/xkb/symbols/macintosh_vndr/us
+usr/share/X11/xkb/symbols/nec_vndr/jp
+usr/share/X11/xkb/symbols/nokia_vndr/rx-44
+usr/share/X11/xkb/symbols/nokia_vndr/rx-51
+usr/share/X11/xkb/symbols/nokia_vndr/su-8w
+usr/share/X11/xkb/symbols/sgi_vndr/jp
+usr/share/X11/xkb/symbols/sharp_vndr/sl-c3x00
+usr/share/X11/xkb/symbols/sharp_vndr/ws003sh
+usr/share/X11/xkb/symbols/sharp_vndr/ws007sh
+usr/share/X11/xkb/symbols/sharp_vndr/ws011sh
+usr/share/X11/xkb/symbols/sharp_vndr/ws020sh
+usr/share/X11/xkb/symbols/sony_vndr/us
+usr/share/X11/xkb/symbols/sun_vndr/ara
+usr/share/X11/xkb/symbols/sun_vndr/be
+usr/share/X11/xkb/symbols/sun_vndr/br
+usr/share/X11/xkb/symbols/sun_vndr/ca
+usr/share/X11/xkb/symbols/sun_vndr/ch
+usr/share/X11/xkb/symbols/sun_vndr/cz
+usr/share/X11/xkb/symbols/sun_vndr/de
+usr/share/X11/xkb/symbols/sun_vndr/dk
+usr/share/X11/xkb/symbols/sun_vndr/ee
+usr/share/X11/xkb/symbols/sun_vndr/es
+usr/share/X11/xkb/symbols/sun_vndr/fi
+usr/share/X11/xkb/symbols/sun_vndr/fr
+usr/share/X11/xkb/symbols/sun_vndr/gb
+usr/share/X11/xkb/symbols/sun_vndr/gr
+usr/share/X11/xkb/symbols/sun_vndr/it
+usr/share/X11/xkb/symbols/sun_vndr/jp
+usr/share/X11/xkb/symbols/sun_vndr/kr
+usr/share/X11/xkb/symbols/sun_vndr/lt
+usr/share/X11/xkb/symbols/sun_vndr/lv
+usr/share/X11/xkb/symbols/sun_vndr/nl
+usr/share/X11/xkb/symbols/sun_vndr/no
+usr/share/X11/xkb/symbols/sun_vndr/pl
+usr/share/X11/xkb/symbols/sun_vndr/pt
+usr/share/X11/xkb/symbols/sun_vndr/ro
+usr/share/X11/xkb/symbols/sun_vndr/ru
+usr/share/X11/xkb/symbols/sun_vndr/se
+usr/share/X11/xkb/symbols/sun_vndr/sk
+usr/share/X11/xkb/symbols/sun_vndr/solaris
+usr/share/X11/xkb/symbols/sun_vndr/tr
+usr/share/X11/xkb/symbols/sun_vndr/tw
+usr/share/X11/xkb/symbols/sun_vndr/ua
+usr/share/X11/xkb/symbols/sun_vndr/us
+usr/share/X11/xkb/symbols/xfree68_vndr/amiga
+usr/share/X11/xkb/symbols/xfree68_vndr/ataritt
+usr/share/X11/xkb/types/README
+usr/share/X11/xkb/types/basic
+usr/share/X11/xkb/types/cancel
+usr/share/X11/xkb/types/caps
+usr/share/X11/xkb/types/complete
+usr/share/X11/xkb/types/default
+usr/share/X11/xkb/types/extra
+usr/share/X11/xkb/types/iso9995
+usr/share/X11/xkb/types/level5
+usr/share/X11/xkb/types/mousekeys
+usr/share/X11/xkb/types/nokia
+usr/share/X11/xkb/types/numpad
+usr/share/X11/xkb/types/pc
+
+xkeyboard-config-2.41-r0 triggers:
+
+xkeyboard-config-2.41-r0 has auto-install rule:
+
+xkeyboard-config-2.41-r0 affects auto-installation of:
+
+xkeyboard-config-2.41-r0 replaces:
+
+xkeyboard-config-2.41-r0 license:
+MIT
+
+wasm-vm:~# info_rc=$?
+wasm-vm:~# printf 'E5T16D_''INFO_END rc=%s\n' "$info_rc"
+E5T16D_INFO_END rc=0
+wasm-vm:~# [ "$info_rc" -eq 0 ] || all_ok=0
+wasm-vm:~# printf 'E5T16D_''MANIFEST_BEGIN\n'
+E5T16D_MANIFEST_BEGIN
+wasm-vm:~# apk info -v 2>&1 | sort
+agetty-2.40.1-r1
+agetty-openrc-0.54-r1
+alpine-base-3.20.10-r0
+alpine-baselayout-3.6.5-r0
+alpine-baselayout-data-3.6.5-r0
+alpine-conf-3.18.1-r1
+alpine-keys-2.4-r1
+alpine-release-3.20.10-r0
+alsa-lib-1.2.11-r0
+apk-tools-2.14.4-r1
+avahi-libs-0.8-r17
+blkid-2.40.1-r1
+brotli-libs-1.1.0-r2
+busybox-1.36.1-r31
+busybox-binsh-1.36.1-r31
+busybox-mdev-openrc-1.36.1-r31
+busybox-openrc-1.36.1-r31
+busybox-suid-1.36.1-r31
+c-ares-1.33.1-r0
+ca-certificates-20260413-r0
+ca-certificates-bundle-20260413-r0
+cairo-1.18.4-r0
+cdparanoia-libs-10.2-r14
+cfdisk-2.40.1-r1
+curl-8.14.1-r2
+dbus-libs-1.14.10-r1
+dmesg-2.40.1-r1
+e2fsprogs-1.47.0-r5
+e2fsprogs-libs-1.47.0-r5
+encodings-1.0.7-r1
+eudev-3.2.14-r2
+eudev-libs-3.2.14-r2
+eudev-openrc-3.2.14-r2
+fcft-3.1.8-r0
+findmnt-2.40.1-r1
+flock-2.40.1-r1
+font-dejavu-2.37-r5
+fontconfig-2.15.0-r1
+foot-1.17.2-r0
+freetype-2.13.2-r0
+fribidi-1.0.15-r0
+fstrim-2.40.1-r1
+glib-2.80.5-r0
+gmp-6.3.0-r1
+gnutls-3.8.13-r0
+graphene-1.10.8-r4
+graphite2-1.3.14-r6
+gst-plugins-base-1.24.10-r0
+gstreamer-1.24.10-r0
+harfbuzz-8.5.0-r0
+hexdump-2.40.1-r1
+hwdata-pci-0.382-r0
+ifupdown-ng-0.12.1-r5
+ifupdown-ng-iproute2-0.12.1-r5
+iproute2-6.9.0-r0
+iproute2-minimal-6.9.0-r0
+iproute2-ss-6.9.0-r0
+iproute2-tc-6.9.0-r0
+kmod-libs-32-r0
+lcms2-2.19-r0
+libblkid-2.40.1-r1
+libbsd-0.12.2-r0
+libbz2-1.0.8-r6
+libcamera-0.3.0-r0
+libcap-ng-0.8.5-r0
+libcap2-2.78-r0
+libcom_err-1.47.0-r5
+libcrypto3-3.3.7-r0
+libcurl-8.14.1-r2
+libdrm-2.4.120-r0
+libeconf-0.6.3-r0
+libelf-0.191-r0
+libelogind-252.9-r5
+libevdev-1.13.1-r0
+libexpat-2.8.1-r0
+libfdisk-2.40.1-r1
+libffi-3.4.6-r0
+libflac-1.4.3-r1
+libfontenc-1.1.8-r0
+libgcc-13.2.1_git20240309-r1
+libidn2-2.3.7-r0
+libinput-libs-1.25.0-r0
+libinput-udev-1.25.0-r0
+libintl-0.22.5-r0
+libjpeg-turbo-3.0.3-r0
+libmd-1.1.0-r0
+libmnl-1.0.5-r2
+libmount-2.40.1-r1
+libncursesw-6.4_p20240420-r2
+libogg-1.3.5-r5
+libpciaccess-0.18.1-r0
+libpng-1.6.57-r0
+libpsl-0.21.5-r1
+libseat-0.8.0-r0
+libsharpyuv-1.3.2-r0
+libsmartcols-2.40.1-r1
+libsndfile-1.2.2-r1
+libssl3-3.3.7-r0
+libstdc++-13.2.1_git20240309-r1
+libtasn1-4.21.0-r0
+libtheora-1.1.1-r18
+libunistring-1.2-r0
+libunwind-1.8.1-r0
+libuuid-2.40.1-r1
+libuv-1.48.0-r0
+libva-2.21.0-r0
+libvorbis-1.3.7-r2
+libwebp-1.3.2-r0
+libweston-12.0.4-r0
+libx11-1.8.9-r1
+libxau-1.0.11-r4
+libxcb-1.16.1-r0
+libxdmcp-1.1.5-r1
+libxext-1.3.6-r2
+libxfixes-6.0.1-r4
+libxft-2.3.8-r3
+libxi-1.8.1-r4
+libxkbcommon-1.7.0-r0
+libxml2-2.12.10-r0
+libxrender-0.9.11-r5
+libxshmfence-1.3.2-r6
+libxtables-1.8.10-r3
+libxv-1.0.12-r5
+libxxf86vm-1.1.5-r6
+linux-pam-1.6.0-r0
+logger-2.40.1-r1
+losetup-2.40.1-r1
+lsblk-2.40.1-r1
+mcookie-2.40.1-r1
+mdev-conf-4.7-r0
+mesa-24.0.9-r1
+mesa-egl-24.0.9-r1
+mesa-gbm-24.0.9-r1
+mesa-gl-24.0.9-r1
+mesa-glapi-24.0.9-r1
+mesa-gles-24.0.9-r1
+mkfontscale-1.2.2-r6
+mount-2.40.1-r1
+mtdev-1.1.6-r3
+musl-1.2.5-r3
+musl-utils-1.2.5-r3
+nano-8.0-r0
+ncurses-terminfo-6.4_p20240420-r2
+ncurses-terminfo-base-6.4_p20240420-r2
+nettle-3.10.2-r0
+nghttp2-libs-1.62.1-r0
+openrc-0.54-r1
+opus-1.5.2-r0
+orc-0.4.40-r0
+p11-kit-0.25.3-r0
+pango-1.52.2-r0
+partx-2.40.1-r1
+pcre2-10.43-r0
+pipewire-libs-1.0.6-r1
+pixman-0.43.2-r0
+roc-toolkit-libs-0.3.0-r0
+runuser-2.40.1-r1
+scanelf-1.3.7-r2
+seatd-0.8.0-r0
+seatd-openrc-0.8.0-r0
+setarch-2.40.1-r1
+setpriv-2.40.1-r1
+sfdisk-2.40.1-r1
+skalibs-2.14.1.1-r0
+speexdsp-1.2.1-r2
+sqlite-libs-3.45.3-r3
+ssl_client-1.36.1-r31
+udev-init-scripts-35-r1
+udev-init-scripts-openrc-35-r1
+umount-2.40.1-r1
+utf8proc-2.9.0-r0
+util-linux-2.40.1-r1
+util-linux-misc-2.40.1-r1
+util-linux-openrc-2.40.1-r1
+utmps-libs-0.1.2.2-r1
+uuidgen-2.40.1-r1
+wayland-libs-client-1.22.0-r4
+wayland-libs-cursor-1.22.0-r4
+wayland-libs-egl-1.22.0-r4
+wayland-libs-server-1.22.0-r4
+weston-12.0.4-r0
+weston-backend-drm-12.0.4-r0
+weston-shell-desktop-12.0.4-r0
+wipefs-2.40.1-r1
+wl-clipboard-2.2.0-r1
+xkeyboard-config-2.41-r0
+xz-libs-5.8.3-r0
+yaml-0.2.5-r2
+zlib-1.3.2-r0
+zstd-libs-1.5.6-r0
+wasm-vm:~# printf 'E5T16D_''MANIFEST_END\n'
+E5T16D_MANIFEST_END
+wasm-vm:~# if [ "$all_ok" -eq 1 ]; then
+>   printf 'E5T16D_''PACKAGE_PASS=1\n'
+> else
+>   printf 'E5T16D_''PACKAGE_PASS=0\n'
+> fi
+E5T16D_PACKAGE_PASS=1
+wasm-vm:~# sync
+wasm-vm:~# poweroff -f
+[  266.982195] reboot: Power down

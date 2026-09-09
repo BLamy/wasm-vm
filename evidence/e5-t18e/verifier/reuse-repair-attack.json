@@ -1,0 +1,2961 @@
+{
+  "basedOnHead": "5506f2a514a6a7b90d83eafe8cf39e6d3ff4fd1b",
+  "at": "2026-09-06T06:16:47.423Z",
+  "sourceSha256": "ac413df34da56adb631a5c4f2215626683142de37041af31f0dea686c0086112",
+  "extractedReuseBranchSha256": "adeec07180b053aa6eca2a680a3c8a9a755767c584c46c305bb3017fbca190de",
+  "scratch": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT",
+  "scope": "Repaired actual reuse branch and HEAD guard; real fs/git fixtures; no build or browser",
+  "onlyStub": "Final npm ci observer install",
+  "observations": [
+    {
+      "label": "unchanged-positive",
+      "expectedAccepted": true,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive",
+      "committedAnchorSha256": "15ff6276b67ffb68bdc30a8228736d40de31ef745c2f80a3118270639bd69f83",
+      "workingAnchorSha256": "15ff6276b67ffb68bdc30a8228736d40de31ef745c2f80a3118270639bd69f83",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "c36e0113061e963a081582ba9b06c16d39910281",
+              "sourceBindingSha256": "a6b6c5e1a5dd5d86400884e9f9522a3de701f422115357a4ec35a9b2a05f223f",
+              "publicationRecordSha256": "15ff6276b67ffb68bdc30a8228736d40de31ef745c2f80a3118270639bd69f83",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "775801701b291f7928af65aecdf7063d44093591:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "c36e0113061e963a081582ba9b06c16d39910281",
+                "775801701b291f7928af65aecdf7063d44093591",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "c36e0113061e963a081582ba9b06c16d39910281:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "c36e0113061e963a081582ba9b06c16d39910281:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        },
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "c36e0113061e963a081582ba9b06c16d39910281",
+              "sourceBindingSha256": "a6b6c5e1a5dd5d86400884e9f9522a3de701f422115357a4ec35a9b2a05f223f",
+              "publicationRecordSha256": "15ff6276b67ffb68bdc30a8228736d40de31ef745c2f80a3118270639bd69f83",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "775801701b291f7928af65aecdf7063d44093591:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "c36e0113061e963a081582ba9b06c16d39910281",
+                "775801701b291f7928af65aecdf7063d44093591",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "c36e0113061e963a081582ba9b06c16d39910281:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "c36e0113061e963a081582ba9b06c16d39910281:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/unchanged-positive/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "committed-proof-recipe-only",
+      "expectedAccepted": true,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only",
+      "committedAnchorSha256": "dcbd8a7284395ea9daa3768fd38b5b4d04beac8898394e22817f8da2becf0b38",
+      "workingAnchorSha256": "dcbd8a7284395ea9daa3768fd38b5b4d04beac8898394e22817f8da2becf0b38",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "20181e8a8c7030a5683b5994051f100d2567d06b",
+              "sourceBindingSha256": "9329f30ee665b7dc993653eaa616556edf4833935cbc9e01a56a092bf98196c5",
+              "publicationRecordSha256": "dcbd8a7284395ea9daa3768fd38b5b4d04beac8898394e22817f8da2becf0b38",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "2afd29fd90b0e6f01de284f5aae9e8b50738ccff:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "20181e8a8c7030a5683b5994051f100d2567d06b",
+                "2afd29fd90b0e6f01de284f5aae9e8b50738ccff",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "20181e8a8c7030a5683b5994051f100d2567d06b:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "20181e8a8c7030a5683b5994051f100d2567d06b:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        },
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "20181e8a8c7030a5683b5994051f100d2567d06b",
+              "sourceBindingSha256": "9329f30ee665b7dc993653eaa616556edf4833935cbc9e01a56a092bf98196c5",
+              "publicationRecordSha256": "dcbd8a7284395ea9daa3768fd38b5b4d04beac8898394e22817f8da2becf0b38",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "2afd29fd90b0e6f01de284f5aae9e8b50738ccff:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "20181e8a8c7030a5683b5994051f100d2567d06b",
+                "2afd29fd90b0e6f01de284f5aae9e8b50738ccff",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "20181e8a8c7030a5683b5994051f100d2567d06b:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "20181e8a8c7030a5683b5994051f100d2567d06b:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-proof-recipe-only/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "anchor-both-working-copies",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/anchor-both-working-copies",
+      "committedAnchorSha256": "7fa8988ca66e44c5fcd90710824e767ff67f5fa86aab8ce6f434051ecec9ab19",
+      "workingAnchorSha256": "29ab9cb7c9d7ccd5cca0dfadd64e470838c18f775f8a0280f034cc5ce6d527aa",
+      "currentStatus": " M evidence/e5-t18e/initial/publication.json\n",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git -c core.hooksPath=/dev/null diff --exit-code HEAD -- Makefile evidence/e5-t18e/initial/publication.json tools/image/desktop.sh tools/image/e5-t17a-desktop-packages.json tools/image/e5-t18d-desktop-image.json tools/image/e5-t18e/MANIFEST.txt tools/image/e5-t18e/FILE-MANIFEST.txt tools/rootfs.Dockerfile tools/build-rootfs.sh tools/rootfs-inner.sh tools/rootfs/start-desktop tools/rootfs/desktop-autologin tools/rootfs/desktop-runtime.initd tools/rootfs/desktop-test-console tools/serve-dev.sh tools/verify/e5-t18e-desktop-bringup.mjs tools/verify/e5-t18e-publication.mjs tools/verify/e5-t18d-surface.mjs tools/verify/e5-t18e-cache.mjs web/desktop-cursor.html web/desktop-cursor.js web/desktop-terminal.js web/linux-worker-protocol.js web/linux-worker-host.js web/linux-worker.js web/loader.js web/src/sink/presentation.js web/src/sink/canvas2d.js web/src/input/pointer.js web/src/input/desktop-cursor-template.js web/src/input/desktop-geometry.js web/artifacts-alpine.json docs/desktop-bringup.md",
+          "calls": []
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git -c core.hooksPath=/dev/null diff --exit-code HEAD -- Makefile evidence/e5-t18e/initial/publication.json tools/image/desktop.sh tools/image/e5-t17a-desktop-packages.json tools/image/e5-t18d-desktop-image.json tools/image/e5-t18e/MANIFEST.txt tools/image/e5-t18e/FILE-MANIFEST.txt tools/rootfs.Dockerfile tools/build-rootfs.sh tools/rootfs-inner.sh tools/rootfs/start-desktop tools/rootfs/desktop-autologin tools/rootfs/desktop-runtime.initd tools/rootfs/desktop-test-console tools/serve-dev.sh tools/verify/e5-t18e-desktop-bringup.mjs tools/verify/e5-t18e-publication.mjs tools/verify/e5-t18d-surface.mjs tools/verify/e5-t18e-cache.mjs web/desktop-cursor.html web/desktop-cursor.js web/desktop-terminal.js web/linux-worker-protocol.js web/linux-worker-host.js web/linux-worker.js web/loader.js web/src/sink/presentation.js web/src/sink/canvas2d.js web/src/input/pointer.js web/src/input/desktop-cursor-template.js web/src/input/desktop-geometry.js web/artifacts-alpine.json docs/desktop-bringup.md",
+          "calls": []
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "anchor-branch-local-guard",
+      "expectedAccepted": false,
+      "options": {
+        "branchOnly": true
+      },
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/anchor-branch-local-guard",
+      "committedAnchorSha256": "2d0a139011da871aa3c14c81951f14b2a3f9a3fbe290da07b9a9abf6fec59295",
+      "workingAnchorSha256": "b36ce31809634631473eefa7667f8cea51bde5dc34157a3bf42529119dc8bf7d",
+      "currentStatus": " M evidence/e5-t18e/initial/publication.json\n",
+      "results": [
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: working publication anchor differs from HEAD\n+ actual - expected\n... Skipped lines\n\n+ Buffer(4655) [Uint8Array] [\n- Buffer(4749) [Uint8Array] [\n    123,\n    10,\n    32,\n    32,\n    34,\n...\n    47,\n-   115,\n-   101,\n-   114,\n    118,\n    101,\n-   45,\n-   100,\n-   101,\n-   118,\n-   46,\n-   115,\n-   104,\n-   34,\n-   58,\n-   32,\n-   34,\n-   51,\n-   56,\n-   99,\n-   53,\n-   102,\n-   102,\n-   101,\n-   49,\n-   55,\n-   98,\n-   52,\n-   57,\n-   55,\n-   53,\n-   101,\n-   54,\n-   101,\n-   100,\n-   98,\n-   48,\n-   52,\n-   48,\n-   54,\n-   50,\n-   99,\n-   99,\n-   101,\n-   102,\n-   48,\n-   56,\n-   99,\n-   53,\n-   54,\n-   101,\n-   101,\n-   55,\n-   52,\n-   49,\n-   98,\n-   102,\n-   97,\n-   100,\n-   100,\n-   102,\n-   102,\n-   100,\n-   101,\n-   101,\n-   50,\n-   97,\n-   49,\n-   99,\n-   53,\n-   49,\n-   102,\n-   48,\n-   98,\n-   100,\n-   50,\n-   53,\n-   56,\n-   97,\n-   48,\n-   98,\n-   34,\n-   44,\n-   10,\n-   32,\n-   32,\n-   32,\n-   32,\n-   34,\n-   116,\n-   111,\n-   111,\n-   108,\n-   115,\n-   47,\n-   118,\n-   101,\n    114,\n    105,\n    102,\n    121,\n    47,\n...\n    34,\n-   50,\n-   53,\n-   50,\n-   56,\n-   53,\n-   50,\n-   49,\n    100,\n    55,\n+   48,\n-   49,\n-   52,\n-   49,\n-   97,\n-   57,\n    53,\n+   100,\n+   100,\n-   101,\n-   50,\n-   101,\n-   51,\n-   56,\n-   50,\n-   97,\n    48,\n-   57,\n    98,\n-   49,\n    102,\n+   99,\n+   98,\n-   53,\n-   100,\n    97,\n+   50,\n+   99,\n+   99,\n    48,\n+   48,\n+   100,\n+   98,\n+   48,\n+   100,\n+   48,\n+   53,\n+   48,\n-   97,\n-   51,\n-   99,\n-   101,\n    54,\n    53,\n+   97,\n    55,\n+   100,\n+   48,\n+   98,\n-   50,\n-   99,\n-   57,\n-   53,\n    52,\n-   97,\n    56,\n    97,\n-   56,\n    98,\n    57,\n    57,\n+   50,\n+   54,\n+   49,\n+   52,\n+   52,\n+   54,\n-   57,\n    98,\n+   54,\n+   50,\n+   51,\n+   50,\n+   49,\n    100,\n+   50,\n-   54,\n-   52,\n-   102,\n-   48,\n    97,\n    57,\n-   57,\n    50,\n+   102,\n+   97,\n+   98,\n+   48,\n    51,\n+   55,\n+   102,\n+   57,\n+   98,\n+   98,\n-   56,\n-   101,\n    34,\n    10,\n    125,\n    10\n  ]\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "d1e4d51c8a82dc2bbf3f8453d6ede7db2d34b310:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/anchor-branch-local-guard/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: working publication anchor differs from HEAD\n+ actual - expected\n... Skipped lines\n\n+ Buffer(4655) [Uint8Array] [\n- Buffer(4749) [Uint8Array] [\n    123,\n    10,\n    32,\n    32,\n    34,\n...\n    47,\n-   115,\n-   101,\n-   114,\n    118,\n    101,\n-   45,\n-   100,\n-   101,\n-   118,\n-   46,\n-   115,\n-   104,\n-   34,\n-   58,\n-   32,\n-   34,\n-   51,\n-   56,\n-   99,\n-   53,\n-   102,\n-   102,\n-   101,\n-   49,\n-   55,\n-   98,\n-   52,\n-   57,\n-   55,\n-   53,\n-   101,\n-   54,\n-   101,\n-   100,\n-   98,\n-   48,\n-   52,\n-   48,\n-   54,\n-   50,\n-   99,\n-   99,\n-   101,\n-   102,\n-   48,\n-   56,\n-   99,\n-   53,\n-   54,\n-   101,\n-   101,\n-   55,\n-   52,\n-   49,\n-   98,\n-   102,\n-   97,\n-   100,\n-   100,\n-   102,\n-   102,\n-   100,\n-   101,\n-   101,\n-   50,\n-   97,\n-   49,\n-   99,\n-   53,\n-   49,\n-   102,\n-   48,\n-   98,\n-   100,\n-   50,\n-   53,\n-   56,\n-   97,\n-   48,\n-   98,\n-   34,\n-   44,\n-   10,\n-   32,\n-   32,\n-   32,\n-   32,\n-   34,\n-   116,\n-   111,\n-   111,\n-   108,\n-   115,\n-   47,\n-   118,\n-   101,\n    114,\n    105,\n    102,\n    121,\n    47,\n...\n    34,\n-   50,\n-   53,\n-   50,\n-   56,\n-   53,\n-   50,\n-   49,\n    100,\n    55,\n+   48,\n-   49,\n-   52,\n-   49,\n-   97,\n-   57,\n    53,\n+   100,\n+   100,\n-   101,\n-   50,\n-   101,\n-   51,\n-   56,\n-   50,\n-   97,\n    48,\n-   57,\n    98,\n-   49,\n    102,\n+   99,\n+   98,\n-   53,\n-   100,\n    97,\n+   50,\n+   99,\n+   99,\n    48,\n+   48,\n+   100,\n+   98,\n+   48,\n+   100,\n+   48,\n+   53,\n+   48,\n-   97,\n-   51,\n-   99,\n-   101,\n    54,\n    53,\n+   97,\n    55,\n+   100,\n+   48,\n+   98,\n-   50,\n-   99,\n-   57,\n-   53,\n    52,\n-   97,\n    56,\n    97,\n-   56,\n    98,\n    57,\n    57,\n+   50,\n+   54,\n+   49,\n+   52,\n+   52,\n+   54,\n-   57,\n    98,\n+   54,\n+   50,\n+   51,\n+   50,\n+   49,\n    100,\n+   50,\n-   54,\n-   52,\n-   102,\n-   48,\n    97,\n    57,\n-   57,\n    50,\n+   102,\n+   97,\n+   98,\n+   48,\n    51,\n+   55,\n+   102,\n+   57,\n+   98,\n+   98,\n-   56,\n-   101,\n    34,\n    10,\n    125,\n    10\n  ]\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "d1e4d51c8a82dc2bbf3f8453d6ede7db2d34b310:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/anchor-branch-local-guard/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "old-publication-only",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/old-publication-only",
+      "committedAnchorSha256": "7b45f608f7990d8e9b7fd9c3a8ece498348a7cac3a110a5ce671a4ed96a17c8b",
+      "workingAnchorSha256": "7b45f608f7990d8e9b7fd9c3a8ece498348a7cac3a110a5ce671a4ed96a17c8b",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: reused build is not the committed initial rebuild\n+ actual - expected\n... Skipped lines\n\n+ Buffer(4750) [Uint8Array] [\n- Buffer(4749) [Uint8Array] [\n    123,\n    10,\n    32,\n    32,\n    34,\n...\n    10,\n+   32\n  ]\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "7e5d0da2130cc947395246ad8a1eccee4b894b81:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/old-publication-only/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: reused build is not the committed initial rebuild\n+ actual - expected\n... Skipped lines\n\n+ Buffer(4750) [Uint8Array] [\n- Buffer(4749) [Uint8Array] [\n    123,\n    10,\n    32,\n    32,\n    34,\n...\n    10,\n+   32\n  ]\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "7e5d0da2130cc947395246ad8a1eccee4b894b81:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/old-publication-only/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "dirty-wvrun",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-wvrun",
+      "committedAnchorSha256": "96f89568db1ae0eedb16b704806c71f5980152d8bf8c31826babaf1130686608",
+      "workingAnchorSha256": "96f89568db1ae0eedb16b704806c71f5980152d8bf8c31826babaf1130686608",
+      "currentStatus": " M tools/guest/wvrun.sh\n",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "b7459d69b953a4580ed88227e271032e64cc5461:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-wvrun/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-wvrun/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "694a5a70a2d87bf3813150e268934663526e145e",
+                "b7459d69b953a4580ed88227e271032e64cc5461",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-wvrun/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-wvrun/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "b7459d69b953a4580ed88227e271032e64cc5461:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-wvrun/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-wvrun/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "694a5a70a2d87bf3813150e268934663526e145e",
+                "b7459d69b953a4580ed88227e271032e64cc5461",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-wvrun/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-wvrun/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "committed-wvrun",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-wvrun",
+      "committedAnchorSha256": "9b1abe4647955b1108592491fee6facdbdf03b46f5289f7e250812b49715969f",
+      "workingAnchorSha256": "9b1abe4647955b1108592491fee6facdbdf03b46f5289f7e250812b49715969f",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code 1b6f30067cfcf0d3006ec5bd5a036bf5bca652a7 22e5e23e237dd37e51dfb291936f9fc3d70faad9 -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "22e5e23e237dd37e51dfb291936f9fc3d70faad9:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-wvrun/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-wvrun/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "1b6f30067cfcf0d3006ec5bd5a036bf5bca652a7",
+                "22e5e23e237dd37e51dfb291936f9fc3d70faad9",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-wvrun/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code 1b6f30067cfcf0d3006ec5bd5a036bf5bca652a7 22e5e23e237dd37e51dfb291936f9fc3d70faad9 -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "22e5e23e237dd37e51dfb291936f9fc3d70faad9:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-wvrun/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-wvrun/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "1b6f30067cfcf0d3006ec5bd5a036bf5bca652a7",
+                "22e5e23e237dd37e51dfb291936f9fc3d70faad9",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-wvrun/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "dirty-file-agent-builder",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-file-agent-builder",
+      "committedAnchorSha256": "7643b00d711e459310d30a0077d85155d6376dd941e9918b7ebf0576e37fc8b7",
+      "workingAnchorSha256": "7643b00d711e459310d30a0077d85155d6376dd941e9918b7ebf0576e37fc8b7",
+      "currentStatus": " M tools/build-file-agent.sh\n",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "15e61e64db273a3c65bac9a195685f3f5608da62:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-file-agent-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-file-agent-builder/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "18c163c6fb4dd408aef46ed70cdf7e3e76c26dba",
+                "15e61e64db273a3c65bac9a195685f3f5608da62",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-file-agent-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-file-agent-builder/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "15e61e64db273a3c65bac9a195685f3f5608da62:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-file-agent-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-file-agent-builder/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "18c163c6fb4dd408aef46ed70cdf7e3e76c26dba",
+                "15e61e64db273a3c65bac9a195685f3f5608da62",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-file-agent-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-file-agent-builder/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "committed-file-agent-builder",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-file-agent-builder",
+      "committedAnchorSha256": "0e0296e548bd57b1a3ac69875a0b898c58454191a0d80252400a7d0703c97698",
+      "workingAnchorSha256": "0e0296e548bd57b1a3ac69875a0b898c58454191a0d80252400a7d0703c97698",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code 62d9e2fdae13b0dec66f160039acab5e02db45b7 a373270570b5eff3d3cfe23cbd9ee769c387a12e -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "a373270570b5eff3d3cfe23cbd9ee769c387a12e:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-file-agent-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-file-agent-builder/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "62d9e2fdae13b0dec66f160039acab5e02db45b7",
+                "a373270570b5eff3d3cfe23cbd9ee769c387a12e",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-file-agent-builder/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code 62d9e2fdae13b0dec66f160039acab5e02db45b7 a373270570b5eff3d3cfe23cbd9ee769c387a12e -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "a373270570b5eff3d3cfe23cbd9ee769c387a12e:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-file-agent-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-file-agent-builder/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "62d9e2fdae13b0dec66f160039acab5e02db45b7",
+                "a373270570b5eff3d3cfe23cbd9ee769c387a12e",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-file-agent-builder/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "dirty-channel-agent-builder",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-channel-agent-builder",
+      "committedAnchorSha256": "eeba3163cebf2d247b2451a9234ec7c958985dee237c4282dbe595c144da6a43",
+      "workingAnchorSha256": "eeba3163cebf2d247b2451a9234ec7c958985dee237c4282dbe595c144da6a43",
+      "currentStatus": " M tools/build-agent.sh\n",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "d10f10a88aaf149ec3f418b43126c21fbca93e05:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-channel-agent-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-channel-agent-builder/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "2741062fed49bfb19fb7d2500ac37e0f07d2ce10",
+                "d10f10a88aaf149ec3f418b43126c21fbca93e05",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-channel-agent-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-channel-agent-builder/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "d10f10a88aaf149ec3f418b43126c21fbca93e05:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-channel-agent-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-channel-agent-builder/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "2741062fed49bfb19fb7d2500ac37e0f07d2ce10",
+                "d10f10a88aaf149ec3f418b43126c21fbca93e05",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-channel-agent-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-channel-agent-builder/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "committed-channel-agent-builder",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-channel-agent-builder",
+      "committedAnchorSha256": "497b77f735a7276b60b9a78e173608a5a0d2a5d872148ccb6da3740ca2b01f56",
+      "workingAnchorSha256": "497b77f735a7276b60b9a78e173608a5a0d2a5d872148ccb6da3740ca2b01f56",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code ad2d3efbc49e4954a3e7494594c3c70bb47334c3 2b28595182b64be05afdc7948d46ea03b71de0c4 -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "2b28595182b64be05afdc7948d46ea03b71de0c4:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-channel-agent-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-channel-agent-builder/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "ad2d3efbc49e4954a3e7494594c3c70bb47334c3",
+                "2b28595182b64be05afdc7948d46ea03b71de0c4",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-channel-agent-builder/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code ad2d3efbc49e4954a3e7494594c3c70bb47334c3 2b28595182b64be05afdc7948d46ea03b71de0c4 -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "2b28595182b64be05afdc7948d46ea03b71de0c4:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-channel-agent-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-channel-agent-builder/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "ad2d3efbc49e4954a3e7494594c3c70bb47334c3",
+                "2b28595182b64be05afdc7948d46ea03b71de0c4",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-channel-agent-builder/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "dirty-seccomp-builder",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-seccomp-builder",
+      "committedAnchorSha256": "162db327be0893384ac745e747da62d23d52086f53b70fc304f0db2978dae480",
+      "workingAnchorSha256": "162db327be0893384ac745e747da62d23d52086f53b70fc304f0db2978dae480",
+      "currentStatus": " M tools/build-wvseccomp.sh\n",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "0905fbbe28188f1d3b40b6f594f5b525c24f1320:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-seccomp-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-seccomp-builder/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "8161d98df0b334c9d7868a058da0800ce7b2aa42",
+                "0905fbbe28188f1d3b40b6f594f5b525c24f1320",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-seccomp-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-seccomp-builder/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "0905fbbe28188f1d3b40b6f594f5b525c24f1320:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-seccomp-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-seccomp-builder/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "8161d98df0b334c9d7868a058da0800ce7b2aa42",
+                "0905fbbe28188f1d3b40b6f594f5b525c24f1320",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-seccomp-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-seccomp-builder/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "committed-seccomp-builder",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-seccomp-builder",
+      "committedAnchorSha256": "20d90472233a3b6abd8bb71a3cfee9995b187d50f2976a507c03df2dfdc4a099",
+      "workingAnchorSha256": "20d90472233a3b6abd8bb71a3cfee9995b187d50f2976a507c03df2dfdc4a099",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code 8bd2ea7926a1d75177592f0b5dcb6f7591281d98 10e452b5a6c268f4be898b9cf3222b9dcd2d2f3c -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "10e452b5a6c268f4be898b9cf3222b9dcd2d2f3c:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-seccomp-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-seccomp-builder/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "8bd2ea7926a1d75177592f0b5dcb6f7591281d98",
+                "10e452b5a6c268f4be898b9cf3222b9dcd2d2f3c",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-seccomp-builder/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code 8bd2ea7926a1d75177592f0b5dcb6f7591281d98 10e452b5a6c268f4be898b9cf3222b9dcd2d2f3c -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "10e452b5a6c268f4be898b9cf3222b9dcd2d2f3c:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-seccomp-builder/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-seccomp-builder/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "8bd2ea7926a1d75177592f0b5dcb6f7591281d98",
+                "10e452b5a6c268f4be898b9cf3222b9dcd2d2f3c",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-seccomp-builder/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "dirty-linker",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-linker",
+      "committedAnchorSha256": "4549405a3d5de6de749bd4b7428e89a4ab037639ec8fadbe07d69d2b0bd84b61",
+      "workingAnchorSha256": "4549405a3d5de6de749bd4b7428e89a4ab037639ec8fadbe07d69d2b0bd84b61",
+      "currentStatus": " M tools/zig-riscv64-linux-musl.sh\n",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "12b9f80590ae94bda0b892892543a129b435b4f8:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-linker/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-linker/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "a20504b027724e4c534496fb09df62c3080830b4",
+                "12b9f80590ae94bda0b892892543a129b435b4f8",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-linker/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-linker/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "12b9f80590ae94bda0b892892543a129b435b4f8:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-linker/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-linker/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "a20504b027724e4c534496fb09df62c3080830b4",
+                "12b9f80590ae94bda0b892892543a129b435b4f8",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-linker/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-linker/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "committed-linker",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-linker",
+      "committedAnchorSha256": "f421783cd7b96de807b9509802bf4a0bf292878ac676fe9c8160fccdccdff743",
+      "workingAnchorSha256": "f421783cd7b96de807b9509802bf4a0bf292878ac676fe9c8160fccdccdff743",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code 288b038f7f3b65d07da1242b6cf80f11729e5027 ab3562f4dc5ce794e6ed8886a895f0d0e5f8d7c5 -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "ab3562f4dc5ce794e6ed8886a895f0d0e5f8d7c5:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-linker/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-linker/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "288b038f7f3b65d07da1242b6cf80f11729e5027",
+                "ab3562f4dc5ce794e6ed8886a895f0d0e5f8d7c5",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-linker/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code 288b038f7f3b65d07da1242b6cf80f11729e5027 ab3562f4dc5ce794e6ed8886a895f0d0e5f8d7c5 -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "ab3562f4dc5ce794e6ed8886a895f0d0e5f8d7c5:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-linker/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-linker/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "288b038f7f3b65d07da1242b6cf80f11729e5027",
+                "ab3562f4dc5ce794e6ed8886a895f0d0e5f8d7c5",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-linker/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "dirty-toolchain",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-toolchain",
+      "committedAnchorSha256": "27a1941260e0d0bfb54493ddf22fc083f255e083c8ba6fe44933102a0581cff8",
+      "workingAnchorSha256": "27a1941260e0d0bfb54493ddf22fc083f255e083c8ba6fe44933102a0581cff8",
+      "currentStatus": " M rust-toolchain.toml\n",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "f68b55f28a6ecb3280ae84f4f8def6abf8ba31df:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-toolchain/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "10738f153a9a91ba0f67a27fb6c58ac3c1dff77f",
+                "f68b55f28a6ecb3280ae84f4f8def6abf8ba31df",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-toolchain/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "f68b55f28a6ecb3280ae84f4f8def6abf8ba31df:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-toolchain/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "10738f153a9a91ba0f67a27fb6c58ac3c1dff77f",
+                "f68b55f28a6ecb3280ae84f4f8def6abf8ba31df",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-toolchain/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "committed-toolchain",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-toolchain",
+      "committedAnchorSha256": "05d5af4879d5a84b67c43dacf002dfb914a8ce0bccf2759e5a3abf700f3af8ee",
+      "workingAnchorSha256": "05d5af4879d5a84b67c43dacf002dfb914a8ce0bccf2759e5a3abf700f3af8ee",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code e540fc884a3dc69df9c56cafcd52881efe513009 f468a1398f1fa4ce138b4d7625987d54bd0f28e4 -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "f468a1398f1fa4ce138b4d7625987d54bd0f28e4:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-toolchain/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "e540fc884a3dc69df9c56cafcd52881efe513009",
+                "f468a1398f1fa4ce138b4d7625987d54bd0f28e4",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-toolchain/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code e540fc884a3dc69df9c56cafcd52881efe513009 f468a1398f1fa4ce138b4d7625987d54bd0f28e4 -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "f468a1398f1fa4ce138b4d7625987d54bd0f28e4:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-toolchain/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "e540fc884a3dc69df9c56cafcd52881efe513009",
+                "f468a1398f1fa4ce138b4d7625987d54bd0f28e4",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-toolchain/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "dirty-cargo-config",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-cargo-config",
+      "committedAnchorSha256": "35a3c1627a727e702c9ec1d05a2f1bbae5fb292440d8a8287d189e8feaaa4ec7",
+      "workingAnchorSha256": "35a3c1627a727e702c9ec1d05a2f1bbae5fb292440d8a8287d189e8feaaa4ec7",
+      "currentStatus": " M .cargo/config.toml\n",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "301c2ae4bbde6d5104d15353459779196947fd8d:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-cargo-config/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "e4ab1f7df7110c4995c455044a46024b120dd1b6",
+                "301c2ae4bbde6d5104d15353459779196947fd8d",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-cargo-config/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code HEAD -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "301c2ae4bbde6d5104d15353459779196947fd8d:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-cargo-config/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "e4ab1f7df7110c4995c455044a46024b120dd1b6",
+                "301c2ae4bbde6d5104d15353459779196947fd8d",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-cargo-config/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "committed-cargo-config",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-cargo-config",
+      "committedAnchorSha256": "16a6b9a84039641a3289e9631869f15b5ad192933be1022240f3c04969cf9cb8",
+      "workingAnchorSha256": "16a6b9a84039641a3289e9631869f15b5ad192933be1022240f3c04969cf9cb8",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code 6d34aa19c3a551a88825f8245bee4353ce85f105 41171dcc441bb322328a9387f19536577b65b25e -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "41171dcc441bb322328a9387f19536577b65b25e:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-cargo-config/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "6d34aa19c3a551a88825f8245bee4353ce85f105",
+                "41171dcc441bb322328a9387f19536577b65b25e",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-cargo-config/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git diff --exit-code 6d34aa19c3a551a88825f8245bee4353ce85f105 41171dcc441bb322328a9387f19536577b65b25e -- crates Cargo.toml Cargo.lock .cargo rust-toolchain rust-toolchain.toml releases web tools :!tools/verify/e5-t18e*",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "41171dcc441bb322328a9387f19536577b65b25e:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-cargo-config/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "6d34aa19c3a551a88825f8245bee4353ce85f105",
+                "41171dcc441bb322328a9387f19536577b65b25e",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-cargo-config/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "dirty-nonproof-Makefile",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/dirty-nonproof-Makefile",
+      "committedAnchorSha256": "a89f09af320ed3a88401d69fd329d61bf2b8801c5b62fd0247db813fdc6df948",
+      "workingAnchorSha256": "a89f09af320ed3a88401d69fd329d61bf2b8801c5b62fd0247db813fdc6df948",
+      "currentStatus": " M Makefile\n",
+      "results": [
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git -c core.hooksPath=/dev/null diff --exit-code HEAD -- Makefile evidence/e5-t18e/initial/publication.json tools/image/desktop.sh tools/image/e5-t17a-desktop-packages.json tools/image/e5-t18d-desktop-image.json tools/image/e5-t18e/MANIFEST.txt tools/image/e5-t18e/FILE-MANIFEST.txt tools/rootfs.Dockerfile tools/build-rootfs.sh tools/rootfs-inner.sh tools/rootfs/start-desktop tools/rootfs/desktop-autologin tools/rootfs/desktop-runtime.initd tools/rootfs/desktop-test-console tools/serve-dev.sh tools/verify/e5-t18e-desktop-bringup.mjs tools/verify/e5-t18e-publication.mjs tools/verify/e5-t18d-surface.mjs tools/verify/e5-t18e-cache.mjs web/desktop-cursor.html web/desktop-cursor.js web/desktop-terminal.js web/linux-worker-protocol.js web/linux-worker-host.js web/linux-worker.js web/loader.js web/src/sink/presentation.js web/src/sink/canvas2d.js web/src/input/pointer.js web/src/input/desktop-cursor-template.js web/src/input/desktop-geometry.js web/artifacts-alpine.json docs/desktop-bringup.md",
+          "calls": []
+        },
+        {
+          "accepted": false,
+          "error": "Error: Command failed: git -c core.hooksPath=/dev/null diff --exit-code HEAD -- Makefile evidence/e5-t18e/initial/publication.json tools/image/desktop.sh tools/image/e5-t17a-desktop-packages.json tools/image/e5-t18d-desktop-image.json tools/image/e5-t18e/MANIFEST.txt tools/image/e5-t18e/FILE-MANIFEST.txt tools/rootfs.Dockerfile tools/build-rootfs.sh tools/rootfs-inner.sh tools/rootfs/start-desktop tools/rootfs/desktop-autologin tools/rootfs/desktop-runtime.initd tools/rootfs/desktop-test-console tools/serve-dev.sh tools/verify/e5-t18e-desktop-bringup.mjs tools/verify/e5-t18e-publication.mjs tools/verify/e5-t18d-surface.mjs tools/verify/e5-t18e-cache.mjs web/desktop-cursor.html web/desktop-cursor.js web/desktop-terminal.js web/linux-worker-protocol.js web/linux-worker-host.js web/linux-worker.js web/loader.js web/src/sink/presentation.js web/src/sink/canvas2d.js web/src/input/pointer.js web/src/input/desktop-cursor-template.js web/src/input/desktop-geometry.js web/artifacts-alpine.json docs/desktop-bringup.md",
+          "calls": []
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "committed-nonproof-Makefile",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-nonproof-Makefile",
+      "committedAnchorSha256": "a2b2ee4eeedbd17cafadf56635e8f63f8e67ac4475a6b633e9e5562eac6bb076",
+      "workingAnchorSha256": "a2b2ee4eeedbd17cafadf56635e8f63f8e67ac4475a6b633e9e5562eac6bb076",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: non-proof Makefile build recipe changed\n+ actual - expected\n\n  'BUILD_FLAGS := original\\n' +\n    '\\n' +\n    'web-dist:\\n' +\n+   '\\t@echo original-build\\n' +\n-   '\\t@echo changed-build\\n' +\n    '\\n' +\n    'verify-E5-T18e:\\n' +\n    'next-target:\\n' +\n    '\\t@true\\n'\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "44903e28cec7a33fef5de8f2487d13db4599e385:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-nonproof-Makefile/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-nonproof-Makefile/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "143b0e8ede87a7f8fd94271868690c5d1798f686",
+                "44903e28cec7a33fef5de8f2487d13db4599e385",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-nonproof-Makefile/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-nonproof-Makefile/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "143b0e8ede87a7f8fd94271868690c5d1798f686:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-nonproof-Makefile/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: non-proof Makefile build recipe changed\n+ actual - expected\n\n  'BUILD_FLAGS := original\\n' +\n    '\\n' +\n    'web-dist:\\n' +\n+   '\\t@echo original-build\\n' +\n-   '\\t@echo changed-build\\n' +\n    '\\n' +\n    'verify-E5-T18e:\\n' +\n    'next-target:\\n' +\n    '\\t@true\\n'\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "44903e28cec7a33fef5de8f2487d13db4599e385:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-nonproof-Makefile/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-nonproof-Makefile/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "143b0e8ede87a7f8fd94271868690c5d1798f686",
+                "44903e28cec7a33fef5de8f2487d13db4599e385",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-nonproof-Makefile/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-nonproof-Makefile/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "143b0e8ede87a7f8fd94271868690c5d1798f686:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-nonproof-Makefile/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "committed-global-Makefile-variable",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-global-Makefile-variable",
+      "committedAnchorSha256": "cc3dc2972bc4b4e236d0637512bd3536503b7343a27536b7bda40f7830eeda41",
+      "workingAnchorSha256": "cc3dc2972bc4b4e236d0637512bd3536503b7343a27536b7bda40f7830eeda41",
+      "currentStatus": "",
+      "results": [
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: non-proof Makefile build recipe changed\n+ actual - expected\n\n+ 'BUILD_FLAGS := original\\n' +\n- 'BUILD_FLAGS := changed\\n' +\n    '\\n' +\n    'web-dist:\\n' +\n    '\\t@echo original-build\\n' +\n    '\\n' +\n    'verify-E5-T18e:\\n' +\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "dce9b7c4a79a6277a067aea49e9518157aaa630e:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-global-Makefile-variable/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-global-Makefile-variable/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "ecb7840be436ae67d0cdfc0e0e69e5d519e42dbe",
+                "dce9b7c4a79a6277a067aea49e9518157aaa630e",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-global-Makefile-variable/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-global-Makefile-variable/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "ecb7840be436ae67d0cdfc0e0e69e5d519e42dbe:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-global-Makefile-variable/current"
+            }
+          ]
+        },
+        {
+          "accepted": false,
+          "error": "AssertionError [ERR_ASSERTION]: non-proof Makefile build recipe changed\n+ actual - expected\n\n+ 'BUILD_FLAGS := original\\n' +\n- 'BUILD_FLAGS := changed\\n' +\n    '\\n' +\n    'web-dist:\\n' +\n    '\\t@echo original-build\\n' +\n    '\\n' +\n    'verify-E5-T18e:\\n' +\n",
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "dce9b7c4a79a6277a067aea49e9518157aaa630e:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-global-Makefile-variable/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-global-Makefile-variable/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "ecb7840be436ae67d0cdfc0e0e69e5d519e42dbe",
+                "dce9b7c4a79a6277a067aea49e9518157aaa630e",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-global-Makefile-variable/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-global-Makefile-variable/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "ecb7840be436ae67d0cdfc0e0e69e5d519e42dbe:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/committed-global-Makefile-variable/current"
+            }
+          ]
+        }
+      ],
+      "prediction": "HELD"
+    },
+    {
+      "label": "new-untracked-cargo-config",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config",
+      "committedAnchorSha256": "806ce870df9ceec3de793abc17211ef9bd1176dd0d8485063946d3e51a29704d",
+      "workingAnchorSha256": "806ce870df9ceec3de793abc17211ef9bd1176dd0d8485063946d3e51a29704d",
+      "currentStatus": "?? .cargo/config\n",
+      "results": [
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "f801b2845aac9c90b555aea2725df57c091a1685",
+              "sourceBindingSha256": "c6d984f49293963d9252d310406703219fe20234fa962251c88fc373157d2f5f",
+              "publicationRecordSha256": "806ce870df9ceec3de793abc17211ef9bd1176dd0d8485063946d3e51a29704d",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "9eacb368ea533b42ccc55a3c96862848211ccd08:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "f801b2845aac9c90b555aea2725df57c091a1685",
+                "9eacb368ea533b42ccc55a3c96862848211ccd08",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "f801b2845aac9c90b555aea2725df57c091a1685:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "f801b2845aac9c90b555aea2725df57c091a1685:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        },
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "f801b2845aac9c90b555aea2725df57c091a1685",
+              "sourceBindingSha256": "c6d984f49293963d9252d310406703219fe20234fa962251c88fc373157d2f5f",
+              "publicationRecordSha256": "806ce870df9ceec3de793abc17211ef9bd1176dd0d8485063946d3e51a29704d",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "9eacb368ea533b42ccc55a3c96862848211ccd08:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "f801b2845aac9c90b555aea2725df57c091a1685",
+                "9eacb368ea533b42ccc55a3c96862848211ccd08",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "f801b2845aac9c90b555aea2725df57c091a1685:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "f801b2845aac9c90b555aea2725df57c091a1685:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-cargo-config/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        }
+      ],
+      "prediction": "FAILED"
+    },
+    {
+      "label": "new-untracked-toolchain",
+      "expectedAccepted": false,
+      "options": {},
+      "fixture": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain",
+      "committedAnchorSha256": "fea5ab45bf2802e743d4ce42d5e986048f22b66ad40c662684a20c61a08d9097",
+      "workingAnchorSha256": "fea5ab45bf2802e743d4ce42d5e986048f22b66ad40c662684a20c61a08d9097",
+      "currentStatus": "?? rust-toolchain\n",
+      "results": [
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "f8404056c77d8035f90ec31271b18286a3bbe0e6",
+              "sourceBindingSha256": "24ab0bb2f726fb7c69a7e1ad6fb2b9131cc203bfe316e22e7ce1bc6927ce0a27",
+              "publicationRecordSha256": "fea5ab45bf2802e743d4ce42d5e986048f22b66ad40c662684a20c61a08d9097",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "ad18dd4e30a32e7bbd08ec4b98c96f2d7a69d7dc:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "f8404056c77d8035f90ec31271b18286a3bbe0e6",
+                "ad18dd4e30a32e7bbd08ec4b98c96f2d7a69d7dc",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "f8404056c77d8035f90ec31271b18286a3bbe0e6:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "f8404056c77d8035f90ec31271b18286a3bbe0e6:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        },
+        {
+          "accepted": true,
+          "result": {
+            "imageDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/old/fixture-image",
+            "chunkDir": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/old/fixture-chunks",
+            "buildProvenance": {
+              "mode": "incremental-proof-repair",
+              "head": "f8404056c77d8035f90ec31271b18286a3bbe0e6",
+              "sourceBindingSha256": "24ab0bb2f726fb7c69a7e1ad6fb2b9131cc203bfe316e22e7ce1bc6927ce0a27",
+              "publicationRecordSha256": "fea5ab45bf2802e743d4ce42d5e986048f22b66ad40c662684a20c61a08d9097",
+              "buildInputsUnchanged": true,
+              "sourceDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/old"
+            }
+          },
+          "calls": [
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "ad18dd4e30a32e7bbd08ec4b98c96f2d7a69d7dc:evidence/e5-t18e/initial/publication.json"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/old"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "f8404056c77d8035f90ec31271b18286a3bbe0e6",
+                "ad18dd4e30a32e7bbd08ec4b98c96f2d7a69d7dc",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "diff",
+                "--exit-code",
+                "HEAD",
+                "--",
+                "crates",
+                "Cargo.toml",
+                "Cargo.lock",
+                ".cargo",
+                "rust-toolchain",
+                "rust-toolchain.toml",
+                "releases",
+                "web",
+                "tools",
+                ":!tools/verify/e5-t18e*"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "f8404056c77d8035f90ec31271b18286a3bbe0e6:Makefile"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/current"
+            },
+            {
+              "command": "git",
+              "args": [
+                "show",
+                "f8404056c77d8035f90ec31271b18286a3bbe0e6:web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+              ],
+              "cwd": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-reuse-repair-8GVDWT/new-untracked-toolchain/current"
+            },
+            {
+              "command": "npm",
+              "args": [
+                "ci",
+                "--prefix",
+                "web",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund"
+              ],
+              "skipped": "Final observer dependency install only; no guard replaced"
+            }
+          ]
+        }
+      ],
+      "prediction": "FAILED"
+    }
+  ]
+}

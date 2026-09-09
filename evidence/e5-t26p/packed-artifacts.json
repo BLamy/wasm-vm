@@ -1,0 +1,198 @@
+{
+  "schema": "wasm-vm.e5-t26p.lossless-artifacts.v1",
+  "note": "Gzip decompresses to the exact bytes cited by the static-code verdict and semantic comparison. Originals were not deleted. The first baseline attempt remains excluded from admitted evidence.",
+  "entries": [
+    {
+      "file": "baseline/rust-web.wasm",
+      "bytes": 35040709,
+      "sha256": "d2cd30aa88cbae55539e820577dad401695d911df499bbe05fa13c126b870381",
+      "gzip": "baseline/rust-web.wasm.gz",
+      "gzipBytes": 8969168,
+      "gzipSha256": "6e75bc2eda9f13acbde9c952b16cf6133241a0d1dfabbaa03928cc050d878d60"
+    },
+    {
+      "file": "baseline/release-web.wasm",
+      "bytes": 1549483,
+      "sha256": "20f58e0d44cc94f9d0629478789680e4a87345ba800162aa0737ddc763bfd238",
+      "gzip": "baseline/release-web.wasm.gz",
+      "gzipBytes": 593871,
+      "gzipSha256": "2ce5bc86f7cc35d4a078c54df41d5dcac35962306339a5ff85de2f649fe15be8"
+    },
+    {
+      "file": "production-candidate-r1/rust-web.wasm",
+      "bytes": 34940147,
+      "sha256": "cddcc25c2c0c5c1e79cae5e768395aa739c044d29afacddfbf0c8ed5f32c414b",
+      "gzip": "production-candidate-r1/rust-web.wasm.gz",
+      "gzipBytes": 8929156,
+      "gzipSha256": "1e4c3d15efd5157bd25d24daade9916451ddf2008fbb83f861a3808ff6c6d99b"
+    },
+    {
+      "file": "production-candidate-r1/release-web.wasm",
+      "bytes": 1555346,
+      "sha256": "a3ce02529ae2e6ec175066f4c838451ca7d1472b5f6bd2f5b2d5cbff805c8b42",
+      "gzip": "production-candidate-r1/release-web.wasm.gz",
+      "gzipBytes": 594671,
+      "gzipSha256": "2916ad4fc5552c6d6173ced2c8af5a5eb545acc02af5bd42ceb029dc115c60e8"
+    },
+    {
+      "file": "artifact-baseline-d7d308a5-r2/native.s",
+      "bytes": 3379529,
+      "sha256": "af33a736a27a58fdb31fea8012bd3d84fce965556ad62d81cfec333e729b3142",
+      "gzip": "artifact-baseline-d7d308a5-r2/native.s.gz",
+      "gzipBytes": 427077,
+      "gzipSha256": "60b8927656f0466cbb75c172fc73af7d85bf186a876c28af4eac7017e1d4b3d6"
+    },
+    {
+      "file": "artifact-baseline-d7d308a5-r2/native-probe",
+      "bytes": 868936,
+      "sha256": "fdd9c6a82272499a1d68a272c50e93799cf44b7744915b0980fb81a57a9e4913",
+      "gzip": "artifact-baseline-d7d308a5-r2/native-probe.gz",
+      "gzipBytes": 370388,
+      "gzipSha256": "3d64ad5a53b0df18e6be7a95d743ef4d035b52044a7d21f38ff7d575d00856b6"
+    },
+    {
+      "file": "artifact-baseline-d7d308a5-r2/probe.wasm",
+      "bytes": 9090337,
+      "sha256": "882643f2dd07ab302dc9cc7d15b133d7b42427dff0b245af4190623cc5c2e7d6",
+      "gzip": "artifact-baseline-d7d308a5-r2/probe.wasm.gz",
+      "gzipBytes": 2141406,
+      "gzipSha256": "eba57ff72ad53827c4804bd75a1c83d06ed1a7112df03fdba2e2286395287f8e"
+    },
+    {
+      "file": "artifact-baseline-d7d308a5-r2/wasm-decode.stdout",
+      "bytes": 8485514,
+      "sha256": "ee5ffc03d5e04c5b82f478ee790436e0f60a077812614bb5dda77701a2347e7e",
+      "gzip": "artifact-baseline-d7d308a5-r2/wasm-decode.stdout.gz",
+      "gzipBytes": 433636,
+      "gzipSha256": "4692b93c0a4931ea333d983b7594158f16bb14e436dd2f9b73f3ba61868546b4"
+    },
+    {
+      "file": "artifact-baseline-d7d308a5-r2/native-disassembly.txt",
+      "bytes": 4734239,
+      "sha256": "e18483c4b43bb36f99a2019371406232723a56f694e7aa360590fc01e01b2749",
+      "gzip": "artifact-baseline-d7d308a5-r2/native-disassembly.txt.gz",
+      "gzipBytes": 793747,
+      "gzipSha256": "1756ef025cf7fb868d9d1132ce5bf43c346744f6a6cd1b09a2bea97da2a16896"
+    },
+    {
+      "file": "artifact-candidate-d7d308a5-r1/native.s",
+      "bytes": 3919034,
+      "sha256": "bd2d5bf785a839c3288f3b5743c26f0e609fd04265b24e02be25188f7df21387",
+      "gzip": "artifact-candidate-d7d308a5-r1/native.s.gz",
+      "gzipBytes": 491828,
+      "gzipSha256": "b010fe588c914d9a58045de2f5993cfbef76f423c78805916c1c34648e9fdb2a"
+    },
+    {
+      "file": "artifact-candidate-d7d308a5-r1/native-probe",
+      "bytes": 885768,
+      "sha256": "53d3793e0d03808ea646113cf577e0397d1d7a1248d0b521eb095a9f02155215",
+      "gzip": "artifact-candidate-d7d308a5-r1/native-probe.gz",
+      "gzipBytes": 374154,
+      "gzipSha256": "165e2e62497db6198fa68c3ebcc9288121bdbb99a2e94c4839363e0026c5bf00"
+    },
+    {
+      "file": "artifact-candidate-d7d308a5-r1/probe.wasm",
+      "bytes": 9183734,
+      "sha256": "5d4555c3cd0a2c92587ca88a51d3211a50e34c95e31003e16d4df922fc24ec11",
+      "gzip": "artifact-candidate-d7d308a5-r1/probe.wasm.gz",
+      "gzipBytes": 2161223,
+      "gzipSha256": "8e976fe60b47d157a64504cedcf738ce503946f5476fac634f3bdffa046a1fb1"
+    },
+    {
+      "file": "artifact-candidate-d7d308a5-r1/wasm-decode.stdout",
+      "bytes": 9171318,
+      "sha256": "df33d75dab347e1bb63abdc9615d2d56e6351abdc6b8612b78c5a85f9462812b",
+      "gzip": "artifact-candidate-d7d308a5-r1/wasm-decode.stdout.gz",
+      "gzipBytes": 453199,
+      "gzipSha256": "d9f0d7cc81507b54fd10533743c076cf298051b9f3abb93b807d56da9a5dd301"
+    },
+    {
+      "file": "artifact-candidate-d7d308a5-r1/native-disassembly.txt",
+      "bytes": 4800171,
+      "sha256": "9b806f69c604a7716166c61fdaad92e5dd4e136861668b31cc4f4c41f93d4f6b",
+      "gzip": "artifact-candidate-d7d308a5-r1/native-disassembly.txt.gz",
+      "gzipBytes": 804088,
+      "gzipSha256": "6020359de9944baaee73a680da4067e335389d254f687d6826dd8e727856f267"
+    },
+    {
+      "file": "release-baseline-d7d308a5/named.wasm",
+      "bytes": 1720630,
+      "sha256": "4a234e51b53935d24b743278a58ba2bfa958625cef40ee087185846c9b6d7407",
+      "gzip": "release-baseline-d7d308a5/named.wasm.gz",
+      "gzipBytes": 639033,
+      "gzipSha256": "fdf80ae790dce8eadc4bd8293baa818a5dda6082279ba5790d432281ee06e530"
+    },
+    {
+      "file": "release-baseline-d7d308a5/named-wat.stdout",
+      "bytes": 29004727,
+      "sha256": "996867a3a8f912210e2b74ee3719d024846dfe7746f331936fe30537a222f182",
+      "gzip": "release-baseline-d7d308a5/named-wat.stdout.gz",
+      "gzipBytes": 1786506,
+      "gzipSha256": "33419ef6a1a083e63288087413a821ecbf0178d01188e3ebb3c78d3d45ed95ad"
+    },
+    {
+      "file": "release-baseline-d7d308a5/disassembly.txt",
+      "bytes": 49425068,
+      "sha256": "6679f8e78da9ce9f6f466071b5e531d351a9638ea43f785b836ab6fc5b7183e0",
+      "gzip": "release-baseline-d7d308a5/disassembly.txt.gz",
+      "gzipBytes": 4520886,
+      "gzipSha256": "7d90a353af7e8d6bdc5e643ec4d0ab3f855110b03ef5bd20c9a7d53541df6c97"
+    },
+    {
+      "file": "release-candidate-r1/named.wasm",
+      "bytes": 1725570,
+      "sha256": "0e99527f97e665b98a5f7fe5710d2075818e4f9f0875aa51ef746894f66ee44f",
+      "gzip": "release-candidate-r1/named.wasm.gz",
+      "gzipBytes": 639490,
+      "gzipSha256": "30ad5a013b21b753a2b63a2dccfd6fd26fd46f6eb0c1c74737884ad9d79d24df"
+    },
+    {
+      "file": "release-candidate-r1/named-wat.stdout",
+      "bytes": 29680454,
+      "sha256": "d075ecf0a9e43623ce9a87218b1f349a2faf0b717a502ee10b5da60a921fcbfe",
+      "gzip": "release-candidate-r1/named-wat.stdout.gz",
+      "gzipBytes": 1793514,
+      "gzipSha256": "78411a8043ad7f436e6b77054a6796803164fd3cc28ac8cdbbbcecad04a39e06"
+    },
+    {
+      "file": "release-candidate-r1/disassembly.txt",
+      "bytes": 50184619,
+      "sha256": "55e2f09fb4bb3c5b2c1e67d38daf855f4109127a2037b91da1247083d50d7b6d",
+      "gzip": "release-candidate-r1/disassembly.txt.gz",
+      "gzipBytes": 4541921,
+      "gzipSha256": "879fe2c7bfeb5f032becfee5fe51ce2c11e40d7ace689cb3203d6248281ee1ee"
+    },
+    {
+      "file": "artifact-baseline-d7d308a5/native.s",
+      "bytes": 269921,
+      "sha256": "031429afb2a4375baa5e32ffbcf309982c5fc408bd6855d7ee12c9fe08cffbb1",
+      "gzip": "artifact-baseline-d7d308a5/native.s.gz",
+      "gzipBytes": 35463,
+      "gzipSha256": "2ea24edd81da22b030c378ba7507333161d653a9f32396d00685f82ba9b14893"
+    },
+    {
+      "file": "artifact-baseline-d7d308a5/native-probe",
+      "bytes": 817296,
+      "sha256": "0592a16477a8d9522845b73717f91d539e28db4e860457bf0bf2fe32a23aed2c",
+      "gzip": "artifact-baseline-d7d308a5/native-probe.gz",
+      "gzipBytes": 352066,
+      "gzipSha256": "92d32a7094d31ab6a719cedcefc72a5ec6b7b17a5e51cb186678aceef7309b04"
+    },
+    {
+      "file": "semantics-r1/baseline-producer",
+      "bytes": 1139936,
+      "sha256": "2faa61b03f8454cb254200d0cbd1a08ee9ad1f944dddc2eda8aa3fd509e15d0c",
+      "gzip": "semantics-r1/baseline-producer.gz",
+      "gzipBytes": 465732,
+      "gzipSha256": "585fdab04323339142bc0daafec953c9689ef71a8275a3715c00df7ce85e2e10"
+    },
+    {
+      "file": "semantics-r1/candidate-producer",
+      "bytes": 1155312,
+      "sha256": "b1a5158dcaf2e5b5deb653fb08fc95b7b5639f061613afd9b22c2f8e9fe7ea06",
+      "gzip": "semantics-r1/candidate-producer.gz",
+      "gzipBytes": 469357,
+      "gzipSha256": "ff5c5f16554be3fea7acabbdf1f661f095d0d84fbe30c40ae93f26fa619bf9e6"
+    }
+  ]
+}

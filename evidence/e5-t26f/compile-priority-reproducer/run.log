@@ -1,0 +1,33 @@
+command: cargo run --offline --manifest-path evidence/e5-t26f/compile-priority-reproducer/Cargo.toml --target-dir evidence/e5-t26f/compile-priority-reproducer/target
+cwd: /Users/blamy/Documents/Codex/wasm-vm
+--- stdout (raw) ---
+scope=source-level-public-types-only acceptance=false browser_causality=unproven
+threshold=64 compile_queue_cap=256 generation=1
+staged pc=0x80001000 stored_hotness=64
+staged pc=0x80002000 stored_hotness=64
+after_extra_entries=1000 earlier_live=64 later_live=1064
+discovery_nominated=2 discovery_deduped=1000 discovery_queue_depth=0
+pop=1 pc=0x80001000 stored_hotness=64 live_hotness=64
+pop=2 pc=0x80002000 stored_hotness=64 live_hotness=1064
+reproduced=true stored_tie_pops_earlier_despite_later_live_hotness_increase=true
+limits=no guest execution; no browser cause, E4 acceptance violation, or timing claim
+--- stderr (raw) ---
+     Locking 15 packages to latest Rust 1.96.0 compatible versions
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling libc v0.2.189
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling bitflags v2.13.1
+   Compiling smallvec v1.16.0
+   Compiling cfg-if v1.0.4
+   Compiling log v0.4.34
+   Compiling generic-array v0.14.7
+   Compiling cpufeatures v0.2.17
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling e5-t26f-compile-priority-reproducer v0.1.0 (/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/compile-priority-reproducer)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.07s
+     Running `evidence/e5-t26f/compile-priority-reproducer/target/debug/e5-t26f-compile-priority-reproducer`

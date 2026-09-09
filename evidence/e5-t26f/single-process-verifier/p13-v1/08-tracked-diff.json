@@ -1,0 +1,12 @@
+{
+  "name": "08-tracked-diff",
+  "command": "git",
+  "args": [
+    "diff",
+    "--exit-code"
+  ],
+  "cwd": "/private/tmp/e5-t26f-single-process-p13.j00WpJ/repo",
+  "code": 0,
+  "signal": null,
+  "error": null
+}

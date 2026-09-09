@@ -39,7 +39,7 @@ Two regimes, before and after the **WFI fast-forward** (E2-T23b, below):
 | guest `sleep 2` | ~40 s wall (**~20×**) | **~2.5 s wall (~1.2×)** — near real time |
 | guest `date` vs host after boot | ~12 s **behind** | ~**ahead** (idle compressed to ~0 wall) |
 | guest/wall ratio while idle | ~0.05 (clock crawls in `WFI`) | ≫1 (idle skipped; virtual time runs ahead) |
-| pause (tab hidden) | both clocks freeze | both clocks freeze (unchanged) |
+| pause (explicit `window.__linux.pause()`) | both clocks freeze | both clocks freeze |
 
 ### The WFI fast-forward (E2-T23b) — fixes idle/sleep slowness, keeps determinism
 Originally there was no idle fast-forward, so a sleeping/idle guest's clock crawled: `sleep N` spun
@@ -66,8 +66,12 @@ sampled every run-loop boundary regardless of the clock jump.
 
 ## Suspend / background policy
 
-`main.js` idles the executor on `document.visibilitychange` (hidden → `pause()`, visible →
-`resume()`), implemented in `web/loader.js` as a flag that stops/starts the `setTimeout` run loop.
+For embeddings without the T09d display scheduler, `main.js` idles the executor on
+`document.visibilitychange` (hidden → `pause()`, visible → `resume()`), implemented in
+`web/loader.js` as a flag that stops/starts the `setTimeout` run loop. The production page owns a
+visibility-aware display scheduler, so it keeps the guest live while hidden and drains presentation
+on its bounded 250 ms timer; callers that need the legacy full pause can still invoke
+`window.__linux.pause()` explicitly.
 
 Because `mtime` is a **retire-count** clock, this is trivially safe:
 

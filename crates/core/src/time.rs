@@ -288,6 +288,18 @@ impl TimeSource {
     pub fn sync_floor(&mut self, mtime: u64) {
         self.last_mtime = mtime;
     }
+
+    /// Start a new host epoch at an already-authoritative guest time. Used after a successful
+    /// snapshot restore or an explicit paused-host resume, never for ordinary background gaps.
+    /// Unlike `sync_floor`, this discards the old anchor as well as its monotone floor: a snapshot
+    /// may intentionally restore an earlier guest timeline, but subsequent samples must not regress.
+    pub fn rebase_wall(&mut self, host_ns: u64, mtime: u64) {
+        self.anchor_host_ns = host_ns;
+        self.anchor_mtime = mtime;
+        self.last_host_ns = host_ns;
+        self.last_mtime = mtime;
+        self.primed = true;
+    }
 }
 
 #[cfg(test)]

@@ -1,0 +1,578 @@
+{
+  "schema": "wasm-vm.e5-t18e.partial-evidence-audit.v1",
+  "auditedAt": "2026-09-06T05:39:03.103Z",
+  "auditScriptSha256": "5badeae816f4b44ef3918567b1980be13867b8a75fbb63cae27ae33c8d4bd623",
+  "clone": "/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo",
+  "mainHead": "8de49f979b8b20595b871fcdb90f0af36af0116a",
+  "frozenHead": "9ed9e0d1c57daf64f6362193bc30b79482dd3258",
+  "publicationRecordSha256": "c0ae77aa9eb3680153802bc22fd05ca0d379ca73179165912ee5ce9c7673a3c5",
+  "sourceBindingSha256": "0e41e0d9f9fa9ccc3277867fc0146d5c4d856959e92b5de947bd52ded7a149c2",
+  "frozenSourceFiles": 30,
+  "runtimeFiles": 14,
+  "sourceDifferences": [
+    {
+      "file": "docs/desktop-bringup.md",
+      "frozenSha256": "238b4bfe524a73277fc16f53f7d3f5695d3f0f12e2f13e9122e36e9a9316de6c",
+      "currentSha256": "cd95503a8b916ae1d6c2a9a439832acd25430363b302e1c7eca71d9ebfcbe5a9"
+    }
+  ],
+  "canvasExtraction": {
+    "x": 80,
+    "y": 84,
+    "width": 1280,
+    "height": 800
+  },
+  "publication": {
+    "schema": "wasm-vm.e5-t18d.image-lock.v1",
+    "imageSha256": "e75b04caadd9616915b323497c92df1d5a9d11d55c877afcc95d208dde302416",
+    "chunkManifestSha256": "4ee9976955d30915ba2ed154c14475303070db9b6902491cae9d16ae25241b55",
+    "fileManifestSha256": "ab73efab8eac885690def228e3d2080d4ed9f57801e642037f12fd0186e7e2d5",
+    "packageManifestSha256": "ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908",
+    "positions": 8192,
+    "uniqueObjects": 823,
+    "imageBytes": 1073741824,
+    "imageDir": "target/e5-t18e/run-CaaCRb/image",
+    "chunkDir": "target/e5-t18e/run-CaaCRb/chunks"
+  },
+  "acceptanceBuildPrefix": {
+    "throughLine": 574,
+    "sha256": "25ee4c69074f0db4b21c88a41267cf6b70ee4220bffca6af297929a9a04ba2ac"
+  },
+  "selectedCases": 13,
+  "cases": [
+    {
+      "label": "cold-13",
+      "jsonSha256": "c30aceb5b4055cea462dd67b886d868dcfd96aec7c4dff15e72d98cf16f58f9d",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 888627,
+      "totalMs": 938666,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-13.png",
+          "screenshotSha256": "a95223474b43a306eee5c5b67143cd798cc84747ce0db23e60807d4a08eb88d2",
+          "framebufferSha256": "2ed5da40f1e85edd064a60202f2b154b2924ffce570d8e64ceec3b169df9f13c",
+          "guestStateDigest": "ef86d7f2c206b7e141c3ed4d5f33051a22343cb11a8bfc5af8e4159f96b61de1",
+          "retiredInstructions": 4777663268,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-13-terminal.png",
+          "screenshotSha256": "8f8a6b0d6209cacd58adb28749c60e385ab421736491720906dc6c556819c9e8",
+          "framebufferSha256": "da228610ad6bffa301dbd9cd6e55b09bee59d72d209a57a7cbd1a3caff37c614",
+          "guestStateDigest": "ef7fa720bf9d7985d2f0af177b01cd237c613c3cf0c3861dfd2fcb51b39d0df9",
+          "retiredInstructions": 5042151988,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14255,
+      "serialSha256": "38665e79ef18f03e72995151f638a977ff29b594ec673bd7aad1acfee9d3a58a",
+      "acceptanceLogLine": 674,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-14",
+      "jsonSha256": "0a00ae4571199e541a666c24c32c7c51158acf9545398d7fac3ec0794a9d91e0",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 886289,
+      "totalMs": 936226,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-14.png",
+          "screenshotSha256": "3246a3f5dd0a25432fdef4524194ea9d5d2b8e8d14877226332fe2e4518d733c",
+          "framebufferSha256": "9b9640507aa9a2ecc9baaa12920adf0d083fcc0360ac22ed3b5bf42adb953102",
+          "guestStateDigest": "827ff14098e1f17908308422c546c0755ec388f6e6c6e58ad15e432aff56fb25",
+          "retiredInstructions": 4779162955,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-14-terminal.png",
+          "screenshotSha256": "105366b5c63060c7bc0be284d53fb48a59d655237a072389e2680b9f99a39d15",
+          "framebufferSha256": "545dc27935981772a2b7629ec8e70a65bcaded0df91b3977ae0f2bc906f158a0",
+          "guestStateDigest": "feba7ce44d6b2bdbc7a28addf45b5a49277e57d83b3ecd715b81404e524428ae",
+          "retiredInstructions": 5043650808,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "bc94d9efa5d14fcd658c3751aab462556b4bf15a54d92c896c4b2ab974f8687d",
+      "acceptanceLogLine": 676,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-15",
+      "jsonSha256": "c564f04f32c8d8c7f7299976d337fab93bd2a538f2471e275b8f448ef5d4a706",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 889717,
+      "totalMs": 940760,
+      "actualCursorPixels": 94,
+      "changedPixels": 344439,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-15.png",
+          "screenshotSha256": "99ab21aeeb520fd63e66af3b0141a6b5fb8885b17a0e619d2f9d1376bb6e5a0f",
+          "framebufferSha256": "490f54fcea6b7dc18e09d76faef3da9d8698755781bed159cf57229a2ab5e71a",
+          "guestStateDigest": "9c1eb7d36ef87fb396acb971eb1ed35928d928011d41bdf2ce995124184c49b8",
+          "retiredInstructions": 4778663566,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-15-terminal.png",
+          "screenshotSha256": "105366b5c63060c7bc0be284d53fb48a59d655237a072389e2680b9f99a39d15",
+          "framebufferSha256": "545dc27935981772a2b7629ec8e70a65bcaded0df91b3977ae0f2bc906f158a0",
+          "guestStateDigest": "6e416dd096245933d65c50f4b7249d261359c2764c75afc25e629268a752a5ad",
+          "retiredInstructions": 5047652034,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "508febbaf9382fff2507188ca690c3f0e6c5721bbde3bd0c8f941e17d2066647",
+      "acceptanceLogLine": 680,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-16",
+      "jsonSha256": "5016f05d8b340b1a84b63d0f95b6b3625fd6561e342cfe7b75093c3ddd1a0a1e",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 892296,
+      "totalMs": 941239,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-16.png",
+          "screenshotSha256": "99ab21aeeb520fd63e66af3b0141a6b5fb8885b17a0e619d2f9d1376bb6e5a0f",
+          "framebufferSha256": "490f54fcea6b7dc18e09d76faef3da9d8698755781bed159cf57229a2ab5e71a",
+          "guestStateDigest": "543d9360b2541a16fe7fdc2670a7a6142da01e9915b22cfec96f8581863d8590",
+          "retiredInstructions": 4779663246,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-16-terminal.png",
+          "screenshotSha256": "fd6837a02342120f677f9cb93fe88613dae41010a9ceac8df36cf27bd363b884",
+          "framebufferSha256": "b1768ea82fb358a89bbdb3d2bd439face5ff83e3733a2261e807a9f87589568c",
+          "guestStateDigest": "619523f14588cf697cce7f86c3cf6b60deb5b617aa5ca66f1d908d9f117b611f",
+          "retiredInstructions": 5045152168,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "5d428a622871880a790fe9bacb15ecd3e82529cf60af149a66b11cdcc517ec81",
+      "acceptanceLogLine": 682,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-17",
+      "jsonSha256": "99bd1f8765338ef3938c29d94be78fdd9a59659b69750ce070e9f4a33051c78b",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 883454,
+      "totalMs": 935433,
+      "actualCursorPixels": 94,
+      "changedPixels": 344439,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-17.png",
+          "screenshotSha256": "99ab21aeeb520fd63e66af3b0141a6b5fb8885b17a0e619d2f9d1376bb6e5a0f",
+          "framebufferSha256": "490f54fcea6b7dc18e09d76faef3da9d8698755781bed159cf57229a2ab5e71a",
+          "guestStateDigest": "76fb12be02071cbb89d20d20f8f1ed5d5ab056bf84917d836b9632e15d88a5ae",
+          "retiredInstructions": 4770663555,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-17-terminal.png",
+          "screenshotSha256": "105366b5c63060c7bc0be284d53fb48a59d655237a072389e2680b9f99a39d15",
+          "framebufferSha256": "545dc27935981772a2b7629ec8e70a65bcaded0df91b3977ae0f2bc906f158a0",
+          "guestStateDigest": "27b2b5be28aa42d7ecb5ab875f7f22df35c500fbdc0081502a4c487b133313f6",
+          "retiredInstructions": 5041650529,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "16532fe94c33a81c1a97e5603358bb250bfbc5c7fe4a836f5e653abc2991e725",
+      "acceptanceLogLine": 678,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-18",
+      "jsonSha256": "a7798a742982ead183645f0a064ebda491111c567476d42148a9fa99bdaf4d6d",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 896117,
+      "totalMs": 943215,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-18.png",
+          "screenshotSha256": "3246a3f5dd0a25432fdef4524194ea9d5d2b8e8d14877226332fe2e4518d733c",
+          "framebufferSha256": "9b9640507aa9a2ecc9baaa12920adf0d083fcc0360ac22ed3b5bf42adb953102",
+          "guestStateDigest": "5c6ca0b3fa093a40d2253030e7ae1643aabe89b4937369c940566e5e180e87d5",
+          "retiredInstructions": 4775163217,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-18-terminal.png",
+          "screenshotSha256": "105366b5c63060c7bc0be284d53fb48a59d655237a072389e2680b9f99a39d15",
+          "framebufferSha256": "545dc27935981772a2b7629ec8e70a65bcaded0df91b3977ae0f2bc906f158a0",
+          "guestStateDigest": "a6f7e7887b2064efc0fb7be29d77e4b9504ccaeb371a32a950ee3185ffd4cdce",
+          "retiredInstructions": 5041650598,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "8b045994e30254f96c305cb2f3821979a4cf93e9d57d3888e5c2f0e3eaed7a12",
+      "acceptanceLogLine": 685,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-19",
+      "jsonSha256": "91ba18e4e71046e8cdf23a3179a679048fe8c0b1cffe0bba961c363a0f317d31",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 886577,
+      "totalMs": 936248,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-19.png",
+          "screenshotSha256": "3246a3f5dd0a25432fdef4524194ea9d5d2b8e8d14877226332fe2e4518d733c",
+          "framebufferSha256": "9b9640507aa9a2ecc9baaa12920adf0d083fcc0360ac22ed3b5bf42adb953102",
+          "guestStateDigest": "6a9de101f8139b2d19a9bb756917d864e021e3d3cdd14561457b6eb93940d3c9",
+          "retiredInstructions": 4778163579,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-19-terminal.png",
+          "screenshotSha256": "105366b5c63060c7bc0be284d53fb48a59d655237a072389e2680b9f99a39d15",
+          "framebufferSha256": "545dc27935981772a2b7629ec8e70a65bcaded0df91b3977ae0f2bc906f158a0",
+          "guestStateDigest": "02668a32aae653b1813d73f381608e3aa91a7463adba5b7707a2f1a1c20f5ec6",
+          "retiredInstructions": 5042652218,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "b65d927caf2a160332deb4a9d6e647f3d471cf3fffc300ab55159098a3db1869",
+      "acceptanceLogLine": 683,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-20",
+      "jsonSha256": "de9e4dbf0e9d360980e6a3ba17aa97f838c3faa4e12bd28741fda0d0b57ac8e8",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 886236,
+      "totalMs": 934202,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-20.png",
+          "screenshotSha256": "0014291c00a5bcb7fe20e49240044e20f7aad1e8fcf2509db660beb927e7b465",
+          "framebufferSha256": "71baccb0888de6acffac81948b4ee5ce279542e77f41f74e3f13bf0e375ce0a7",
+          "guestStateDigest": "c489e55c63ef54bb288b1204480779e3c1179d22f0a73c80326a51537c57c411",
+          "retiredInstructions": 4783162736,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-20-terminal.png",
+          "screenshotSha256": "23998edf0413e95409d5b6ab97cbac7dadc00867f26f100cbfd253d3116b5266",
+          "framebufferSha256": "4912a5095cd76a256637e8866bc80ba8ba0a8a7cdbafd07c7dc2ff4b91b68495",
+          "guestStateDigest": "926ec5ad8992481974c3c081ee0735f54f2e32f79133fbb6c18f4af79c9fe160",
+          "retiredInstructions": 5048151808,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14255,
+      "serialSha256": "711547550a6b22395a2d15fb1d8338737680e0fd8eb389b008850276a203bdc2",
+      "acceptanceLogLine": 681,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-21",
+      "jsonSha256": "df2c349cc254f09b987b46fa168d52818ea8a19b9ef5db61c1a48f1327f6df59",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 892407,
+      "totalMs": 938101,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-21.png",
+          "screenshotSha256": "3246a3f5dd0a25432fdef4524194ea9d5d2b8e8d14877226332fe2e4518d733c",
+          "framebufferSha256": "9b9640507aa9a2ecc9baaa12920adf0d083fcc0360ac22ed3b5bf42adb953102",
+          "guestStateDigest": "2cd5850f5d188b9be0747dd1f112e12ce0b0ffc8ed5d462443fca416eecc8aac",
+          "retiredInstructions": 4778163210,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-21-terminal.png",
+          "screenshotSha256": "105366b5c63060c7bc0be284d53fb48a59d655237a072389e2680b9f99a39d15",
+          "framebufferSha256": "545dc27935981772a2b7629ec8e70a65bcaded0df91b3977ae0f2bc906f158a0",
+          "guestStateDigest": "e502593997d8985d55e1229467902fbe44a169576e2c36168bbeea4d172ffd30",
+          "retiredInstructions": 5045151249,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "0cac16dca37da28d721ff88a1a6703b5d80badae5fe00dc5026b6a4a298c65c9",
+      "acceptanceLogLine": 686,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-22",
+      "jsonSha256": "04597b3a83e8e202648594de8521945160cac7edcb29db1d677c041f9f22bdec",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 900662,
+      "totalMs": 942111,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-22.png",
+          "screenshotSha256": "3246a3f5dd0a25432fdef4524194ea9d5d2b8e8d14877226332fe2e4518d733c",
+          "framebufferSha256": "9b9640507aa9a2ecc9baaa12920adf0d083fcc0360ac22ed3b5bf42adb953102",
+          "guestStateDigest": "49ded48351a2e31518814d9df5c0a0772bb34674337441bdcc6f5544f8978637",
+          "retiredInstructions": 4782162777,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-22-terminal.png",
+          "screenshotSha256": "105366b5c63060c7bc0be284d53fb48a59d655237a072389e2680b9f99a39d15",
+          "framebufferSha256": "545dc27935981772a2b7629ec8e70a65bcaded0df91b3977ae0f2bc906f158a0",
+          "guestStateDigest": "34c2557fe643cb470731792047ebf56aa8656384a80bfa9cd4bfe78b85b50c61",
+          "retiredInstructions": 5046651587,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "bf612169965a3e044571a7110bd7bebb4e25d5f956991debe7af2e4bd267e13d",
+      "acceptanceLogLine": 688,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-23",
+      "jsonSha256": "51ac0a8daf15d4501cf067756ef603c07ad105f6d24b7f9b25bc557647deda30",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 884476,
+      "totalMs": 932255,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-23.png",
+          "screenshotSha256": "3246a3f5dd0a25432fdef4524194ea9d5d2b8e8d14877226332fe2e4518d733c",
+          "framebufferSha256": "9b9640507aa9a2ecc9baaa12920adf0d083fcc0360ac22ed3b5bf42adb953102",
+          "guestStateDigest": "eeea30579c84489b66be61423ab7a0bb67151fb9f5da80248f9c24a27982bb95",
+          "retiredInstructions": 4778663449,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-23-terminal.png",
+          "screenshotSha256": "105366b5c63060c7bc0be284d53fb48a59d655237a072389e2680b9f99a39d15",
+          "framebufferSha256": "545dc27935981772a2b7629ec8e70a65bcaded0df91b3977ae0f2bc906f158a0",
+          "guestStateDigest": "d454649f47616f199a2249033ac9ffb508d63d9d3a5f6f64310559c849d71024",
+          "retiredInstructions": 5042152062,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "32578c252a7521dda4003d52913a7d97ca9497db7e3317e37615402dd1e349ed",
+      "acceptanceLogLine": 684,
+      "checksHeld": true
+    },
+    {
+      "label": "cold-24",
+      "jsonSha256": "fa625a91dcb117132836b79b9705c89949224e1f3cd38396a766d36d43fb02e1",
+      "cacheDisabled": true,
+      "cacheHits": 0,
+      "bootToDesktopMs": 891706,
+      "totalMs": 934721,
+      "actualCursorPixels": 94,
+      "changedPixels": 344355,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "cold-24.png",
+          "screenshotSha256": "3246a3f5dd0a25432fdef4524194ea9d5d2b8e8d14877226332fe2e4518d733c",
+          "framebufferSha256": "9b9640507aa9a2ecc9baaa12920adf0d083fcc0360ac22ed3b5bf42adb953102",
+          "guestStateDigest": "2122350bfdfe78370f26cec2ec2de779a04ee5815c14800385244ca1e21fdd29",
+          "retiredInstructions": 4778663242,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "cold-24-terminal.png",
+          "screenshotSha256": "105366b5c63060c7bc0be284d53fb48a59d655237a072389e2680b9f99a39d15",
+          "framebufferSha256": "545dc27935981772a2b7629ec8e70a65bcaded0df91b3977ae0f2bc906f158a0",
+          "guestStateDigest": "0d97095b12432f4198f6d1ed8b7e95f69e2df1b416d0590df7e6ec95a72a8486",
+          "retiredInstructions": 5044651780,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "7a474088f11947013ab2ba80bbee8410ea2d2639daef1f341f3918a2f456e664",
+      "acceptanceLogLine": 687,
+      "checksHeld": true
+    },
+    {
+      "label": "warm-reload",
+      "jsonSha256": "31e3125463ad27550943e6d2839fa6c2d0245fe672400fe5ef489e7962169c93",
+      "cacheDisabled": false,
+      "cacheHits": 0,
+      "bootToDesktopMs": 886730,
+      "totalMs": 937185,
+      "actualCursorPixels": 94,
+      "changedPixels": 344439,
+      "frames": {
+        "desktopFrame": {
+          "screenshot": "warm-reload.png",
+          "screenshotSha256": "99ab21aeeb520fd63e66af3b0141a6b5fb8885b17a0e619d2f9d1376bb6e5a0f",
+          "framebufferSha256": "490f54fcea6b7dc18e09d76faef3da9d8698755781bed159cf57229a2ab5e71a",
+          "guestStateDigest": "61d8576a4bd96a11cdb461a9b7936e44cfc971ae3fe93b7743c3c277fd056ef5",
+          "retiredInstructions": 4776663215,
+          "screenshotMatchesFramebuffer": true
+        },
+        "terminalFrame": {
+          "screenshot": "warm-reload-terminal.png",
+          "screenshotSha256": "105366b5c63060c7bc0be284d53fb48a59d655237a072389e2680b9f99a39d15",
+          "framebufferSha256": "545dc27935981772a2b7629ec8e70a65bcaded0df91b3977ae0f2bc906f158a0",
+          "guestStateDigest": "d81568efd84199f829ba8eb1e9183f7db1e52a9f0f9b5de7d074d9b3288508ff",
+          "retiredInstructions": 5046651193,
+          "screenshotMatchesFramebuffer": true
+        }
+      },
+      "serialBytes": 14355,
+      "serialSha256": "ecae05760f60b3677dab1aea145d11b8631dcc08d72c343243211caba1d886be",
+      "acceptanceLogLine": 677,
+      "checksHeld": true
+    }
+  ],
+  "screenshotGroups": [
+    {
+      "representative": "cold-13.png",
+      "screenshotSha256": "a95223474b43a306eee5c5b67143cd798cc84747ce0db23e60807d4a08eb88d2",
+      "framebufferSha256": "2ed5da40f1e85edd064a60202f2b154b2924ffce570d8e64ceec3b169df9f13c",
+      "members": [
+        "cold-13.png"
+      ]
+    },
+    {
+      "representative": "cold-13-terminal.png",
+      "screenshotSha256": "8f8a6b0d6209cacd58adb28749c60e385ab421736491720906dc6c556819c9e8",
+      "framebufferSha256": "da228610ad6bffa301dbd9cd6e55b09bee59d72d209a57a7cbd1a3caff37c614",
+      "members": [
+        "cold-13-terminal.png"
+      ]
+    },
+    {
+      "representative": "cold-14.png",
+      "screenshotSha256": "3246a3f5dd0a25432fdef4524194ea9d5d2b8e8d14877226332fe2e4518d733c",
+      "framebufferSha256": "9b9640507aa9a2ecc9baaa12920adf0d083fcc0360ac22ed3b5bf42adb953102",
+      "members": [
+        "cold-14.png",
+        "cold-18.png",
+        "cold-19.png",
+        "cold-21.png",
+        "cold-22.png",
+        "cold-23.png",
+        "cold-24.png"
+      ]
+    },
+    {
+      "representative": "cold-14-terminal.png",
+      "screenshotSha256": "105366b5c63060c7bc0be284d53fb48a59d655237a072389e2680b9f99a39d15",
+      "framebufferSha256": "545dc27935981772a2b7629ec8e70a65bcaded0df91b3977ae0f2bc906f158a0",
+      "members": [
+        "cold-14-terminal.png",
+        "cold-15-terminal.png",
+        "cold-17-terminal.png",
+        "cold-18-terminal.png",
+        "cold-19-terminal.png",
+        "cold-21-terminal.png",
+        "cold-22-terminal.png",
+        "cold-23-terminal.png",
+        "cold-24-terminal.png",
+        "warm-reload-terminal.png"
+      ]
+    },
+    {
+      "representative": "cold-15.png",
+      "screenshotSha256": "99ab21aeeb520fd63e66af3b0141a6b5fb8885b17a0e619d2f9d1376bb6e5a0f",
+      "framebufferSha256": "490f54fcea6b7dc18e09d76faef3da9d8698755781bed159cf57229a2ab5e71a",
+      "members": [
+        "cold-15.png",
+        "cold-16.png",
+        "cold-17.png",
+        "warm-reload.png"
+      ]
+    },
+    {
+      "representative": "cold-16-terminal.png",
+      "screenshotSha256": "fd6837a02342120f677f9cb93fe88613dae41010a9ceac8df36cf27bd363b884",
+      "framebufferSha256": "b1768ea82fb358a89bbdb3d2bd439face5ff83e3733a2261e807a9f87589568c",
+      "members": [
+        "cold-16-terminal.png"
+      ]
+    },
+    {
+      "representative": "cold-20.png",
+      "screenshotSha256": "0014291c00a5bcb7fe20e49240044e20f7aad1e8fcf2509db660beb927e7b465",
+      "framebufferSha256": "71baccb0888de6acffac81948b4ee5ce279542e77f41f74e3f13bf0e375ce0a7",
+      "members": [
+        "cold-20.png"
+      ]
+    },
+    {
+      "representative": "cold-20-terminal.png",
+      "screenshotSha256": "23998edf0413e95409d5b6ab97cbac7dadc00867f26f100cbfd253d3116b5266",
+      "framebufferSha256": "4912a5095cd76a256637e8866bc80ba8ba0a8a7cdbafd07c7dc2ff4b91b68495",
+      "members": [
+        "cold-20-terminal.png"
+      ]
+    }
+  ],
+  "partialColdTimings": {
+    "count": 12,
+    "minMs": 883454,
+    "maxMs": 900662,
+    "meanMs": 889880.3333333334
+  },
+  "remainingCases": [
+    "cold-01",
+    "cold-02",
+    "cold-03",
+    "cold-04",
+    "cold-05",
+    "cold-06",
+    "cold-07",
+    "cold-08",
+    "cold-09",
+    "cold-10",
+    "cold-11",
+    "cold-12",
+    "cold-25",
+    "warm-prime"
+  ],
+  "unitTests": {
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t18e/unit-tests.log",
+    "sha256": "46ec6f291d893c0cc941a9d270efe067f1c67dbe61f72f94f7ccbb8eec683a4b",
+    "tests": 23,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0
+  },
+  "guestDigestScope": "Well-formed recorded digests and distinct desktop/terminal states; no independent memory replay is claimed.",
+  "finalCountAndReport": "NEEDS EVIDENCE",
+  "completedCaseChecks": "HELD",
+  "verdictIssued": false
+}

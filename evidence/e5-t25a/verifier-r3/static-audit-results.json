@@ -1,0 +1,53 @@
+{
+  "exactHead": "a1c25437bed33910218eece228a77b230abfb8e9",
+  "checks": {
+    "sourceDistMainByteParity": true,
+    "sourceDistPresentationByteParity": true,
+    "helperProjectionByteParity": true,
+    "exactDualGateUnique": true,
+    "cacheGuardUnique": true,
+    "cacheAssignmentUnique": true,
+    "cacheGuardOwnsAssignment": true,
+    "cacheReadsRawValueWithoutCoercion": true,
+    "samplerSetupInsideExactGate": true,
+    "samplerInstallUnique": true,
+    "teardownClearsInterval": true,
+    "teardownResetsBaseline": true,
+    "perfSurfaceInsideDualGate": true,
+    "noProductionHelperImport": true,
+    "sourceSinkStrictGuard": true,
+    "queryTruthTable": true
+  },
+  "allHeld": true,
+  "queryTruthTable": [
+    {
+      "query": "",
+      "enabled": false
+    },
+    {
+      "query": "testHooks=1",
+      "enabled": false
+    },
+    {
+      "query": "perfHooks=1",
+      "enabled": false
+    },
+    {
+      "query": "testHooks=1&perfHooks=1",
+      "enabled": true
+    }
+  ],
+  "auditRegexFindings": {
+    "dualGateRegexCanMatchUnrelatedTokens": true,
+    "samplerRegexCanCrossAClosedGate": true,
+    "cleanupRegexDoesNotRequireHandleOrBaselineReset": true,
+    "submittedAuditContainsOnlyClearAssertion": true
+  },
+  "qualification": "The submitted release audit has three over-broad lifecycle regexes. This verifier audit instead checks unique exact gate/guard/install strings inside bounded owner blocks, ordered assignment ownership, source/dist bytes, teardown handle nulling, and baseline reset. Because main.js cannot be booted without the forbidden listener/Linux owner path in this sandbox, setup and teardown receive a deterministic static-audit waiver rather than an execution claim.",
+  "sourceHashes": {
+    "main": "6b525f0f0e0c598a3803e98367a0bd8e799d9757c98f7c930ad52ad06e93c121",
+    "distMain": "6b525f0f0e0c598a3803e98367a0bd8e799d9757c98f7c930ad52ad06e93c121",
+    "presentation": "787796c1a031e86da277a7ebc269d668d9c3e161c8ea951c7dbf15415a22e2c6",
+    "distPresentation": "787796c1a031e86da277a7ebc269d668d9c3e161c8ea951c7dbf15415a22e2c6"
+  }
+}

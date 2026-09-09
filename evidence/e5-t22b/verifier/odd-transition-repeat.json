@@ -1,0 +1,3073 @@
+{
+  "head": "2da168d7372dadbad60957adf622471915d8cc7d",
+  "browser": "152.0.7977.76",
+  "digests": {
+    "web/src/sink/presentation.js": "e3edd912255916b565edc8394c7420f08a87b035e28ca8c0240cd44fa6a9a5d7",
+    "web/dist/src/sink/presentation.js": "e3edd912255916b565edc8394c7420f08a87b035e28ca8c0240cd44fa6a9a5d7",
+    "web/src/sink/viewport.js": "252959466bacaa986d3548bd4ce862c1f68fc3521338a1d59a4272849c269faf",
+    "web/dist/src/sink/viewport.js": "252959466bacaa986d3548bd4ce862c1f68fc3521338a1d59a4272849c269faf",
+    "web/src/sink/frame-scheduler.js": "4ab11b844262f32bf3c1f6e0cfa36a866f241273c36e66d1aa8c4679f770e54d"
+  },
+  "results": [
+    {
+      "backend": "canvas2d",
+      "dpr": 1,
+      "checks": [
+        {
+          "label": "immediate-resize-329",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 329,
+            "height": 277,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 1,
+            "successfulPresents": 2,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 1,
+              "coalesced": 0,
+              "presented": 1,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 1,
+              "enqueued": 1,
+              "coalesced": 0,
+              "presented": 1,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 733784,
+              "width": 329,
+              "height": 277
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 337,
+                "height": 251
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-329",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 329,
+            "height": 277,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 3,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 3,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 1098316,
+              "width": 329,
+              "height": 277
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "immediate-resize-371",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 371,
+            "height": 243,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 4,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 4,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 1458928,
+              "width": 371,
+              "height": 243
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-371",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 371,
+            "height": 243,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 5,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 5,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 1819540,
+              "width": 371,
+              "height": 243
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "immediate-resize-351",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 351,
+            "height": 263,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 6,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 6,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 2188792,
+              "width": 351,
+              "height": 263
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-351",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 351,
+            "height": 263,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 4,
+            "successfulPresents": 7,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 4,
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "successfulPresents": 7,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 2558044,
+              "width": 351,
+              "height": 263
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "two-matching-partial-frames-before-raf",
+          "mismatches": 7725,
+          "first": {
+            "x": 337,
+            "y": 0,
+            "expected": [
+              48,
+              16,
+              152,
+              255
+            ],
+            "actual": [
+              0,
+              0,
+              0,
+              255
+            ]
+          },
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 351,
+            "height": 263,
+            "fixedViewport": true,
+            "sizeMismatch": false,
+            "framesReceived": 6,
+            "successfulPresents": 8,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 6,
+              "coalesced": 1,
+              "presented": 5,
+              "skipped": 1,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 6,
+              "enqueued": 6,
+              "coalesced": 1,
+              "presented": 5,
+              "successfulPresents": 8,
+              "skipped": 1,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 2558048,
+              "width": 351,
+              "height": 263
+            },
+            "latest": {
+              "rect": {
+                "x": 350,
+                "y": 262,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 351,
+              "resourceHeight": 263
+            },
+            "errors": []
+          },
+          "source": [
+            351,
+            263
+          ]
+        }
+      ],
+      "pointer": {
+        "x": 32767,
+        "y": 32767
+      },
+      "css": {
+        "width": "351px",
+        "height": "263px"
+      },
+      "mode": {
+        "width": 351,
+        "height": 263,
+        "dpr": 1,
+        "cssWidth": 351,
+        "cssHeight": 263,
+        "sequence": 4
+      }
+    },
+    {
+      "backend": "canvas2d",
+      "dpr": 1.5,
+      "checks": [
+        {
+          "label": "immediate-resize-329",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 494,
+            "height": 416,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 1,
+            "successfulPresents": 2,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 1,
+              "coalesced": 0,
+              "presented": 1,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 1,
+              "enqueued": 1,
+              "coalesced": 0,
+              "presented": 1,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 1654676,
+              "width": 494,
+              "height": 416
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 337,
+                "height": 251
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-329",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 494,
+            "height": 416,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 3,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 3,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 2476692,
+              "width": 494,
+              "height": 416
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "immediate-resize-371",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 557,
+            "height": 365,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 4,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 4,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 3289912,
+              "width": 557,
+              "height": 365
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-371",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 557,
+            "height": 365,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 5,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 5,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 4103132,
+              "width": 557,
+              "height": 365
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "immediate-resize-351",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 527,
+            "height": 395,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 6,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 6,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 4935792,
+              "width": 527,
+              "height": 395
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-351",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 527,
+            "height": 395,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 4,
+            "successfulPresents": 7,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 4,
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "successfulPresents": 7,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 5768452,
+              "width": 527,
+              "height": 395
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "two-matching-partial-frames-before-raf",
+          "mismatches": 123577,
+          "first": {
+            "x": 337,
+            "y": 0,
+            "expected": [
+              48,
+              16,
+              152,
+              255
+            ],
+            "actual": [
+              0,
+              0,
+              0,
+              255
+            ]
+          },
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 527,
+            "height": 395,
+            "fixedViewport": true,
+            "sizeMismatch": false,
+            "framesReceived": 6,
+            "successfulPresents": 8,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 6,
+              "coalesced": 1,
+              "presented": 5,
+              "skipped": 1,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 6,
+              "enqueued": 6,
+              "coalesced": 1,
+              "presented": 5,
+              "successfulPresents": 8,
+              "skipped": 1,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 5768456,
+              "width": 527,
+              "height": 395
+            },
+            "latest": {
+              "rect": {
+                "x": 526,
+                "y": 394,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 527,
+              "resourceHeight": 395
+            },
+            "errors": []
+          },
+          "source": [
+            527,
+            395
+          ]
+        }
+      ],
+      "pointer": {
+        "x": 32767,
+        "y": 32767
+      },
+      "css": {
+        "width": "351.333px",
+        "height": "263.333px"
+      },
+      "mode": {
+        "width": 527,
+        "height": 395,
+        "dpr": 1.5,
+        "cssWidth": 351.3333333333333,
+        "cssHeight": 263.3333333333333,
+        "sequence": 4
+      }
+    },
+    {
+      "backend": "canvas2d",
+      "dpr": 2,
+      "checks": [
+        {
+          "label": "immediate-resize-329",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 658,
+            "height": 554,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 1,
+            "successfulPresents": 2,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 1,
+              "coalesced": 0,
+              "presented": 1,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 1,
+              "enqueued": 1,
+              "coalesced": 0,
+              "presented": 1,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 2935136,
+              "width": 658,
+              "height": 554
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 337,
+                "height": 251
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-329",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 658,
+            "height": 554,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 3,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 3,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 4393264,
+              "width": 658,
+              "height": 554
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "immediate-resize-371",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 742,
+            "height": 486,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 4,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 4,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 5835712,
+              "width": 742,
+              "height": 486
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-371",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 742,
+            "height": 486,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 5,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 5,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 7278160,
+              "width": 742,
+              "height": 486
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "immediate-resize-351",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 702,
+            "height": 526,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 6,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 6,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 8755168,
+              "width": 702,
+              "height": 526
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-351",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 702,
+            "height": 526,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 4,
+            "successfulPresents": 7,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 4,
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "successfulPresents": 7,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 10232176,
+              "width": 702,
+              "height": 526
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "two-matching-partial-frames-before-raf",
+          "mismatches": 284664,
+          "first": {
+            "x": 337,
+            "y": 0,
+            "expected": [
+              48,
+              16,
+              152,
+              255
+            ],
+            "actual": [
+              0,
+              0,
+              0,
+              255
+            ]
+          },
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 702,
+            "height": 526,
+            "fixedViewport": true,
+            "sizeMismatch": false,
+            "framesReceived": 6,
+            "successfulPresents": 8,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 6,
+              "coalesced": 1,
+              "presented": 5,
+              "skipped": 1,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 6,
+              "enqueued": 6,
+              "coalesced": 1,
+              "presented": 5,
+              "successfulPresents": 8,
+              "skipped": 1,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 10232180,
+              "width": 702,
+              "height": 526
+            },
+            "latest": {
+              "rect": {
+                "x": 701,
+                "y": 525,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 702,
+              "resourceHeight": 526
+            },
+            "errors": []
+          },
+          "source": [
+            702,
+            526
+          ]
+        }
+      ],
+      "pointer": {
+        "x": 32767,
+        "y": 32767
+      },
+      "css": {
+        "width": "351px",
+        "height": "263px"
+      },
+      "mode": {
+        "width": 702,
+        "height": 526,
+        "dpr": 2,
+        "cssWidth": 351,
+        "cssHeight": 263,
+        "sequence": 4
+      }
+    },
+    {
+      "backend": "webgl2",
+      "dpr": 1,
+      "checks": [
+        {
+          "label": "immediate-resize-329",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 329,
+            "height": 277,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 1,
+            "successfulPresents": 2,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 1,
+              "coalesced": 0,
+              "presented": 1,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 1,
+              "enqueued": 1,
+              "coalesced": 0,
+              "presented": 1,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 733784,
+              "width": 329,
+              "height": 277
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 337,
+                "height": 251
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-329",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 329,
+            "height": 277,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 3,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 3,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 1098316,
+              "width": 329,
+              "height": 277
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "immediate-resize-371",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 371,
+            "height": 243,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 4,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 4,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 1458928,
+              "width": 371,
+              "height": 243
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-371",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 371,
+            "height": 243,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 5,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 5,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 1819540,
+              "width": 371,
+              "height": 243
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "immediate-resize-351",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 351,
+            "height": 263,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 6,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 6,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 2188792,
+              "width": 351,
+              "height": 263
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-351",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 351,
+            "height": 263,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 4,
+            "successfulPresents": 7,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 4,
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "successfulPresents": 7,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 2558044,
+              "width": 351,
+              "height": 263
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "two-matching-partial-frames-before-raf",
+          "mismatches": 7725,
+          "first": {
+            "x": 337,
+            "y": 0,
+            "expected": [
+              48,
+              16,
+              152,
+              255
+            ],
+            "actual": [
+              0,
+              0,
+              0,
+              255
+            ]
+          },
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 351,
+            "height": 263,
+            "fixedViewport": true,
+            "sizeMismatch": false,
+            "framesReceived": 6,
+            "successfulPresents": 8,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 6,
+              "coalesced": 1,
+              "presented": 5,
+              "skipped": 1,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 6,
+              "enqueued": 6,
+              "coalesced": 1,
+              "presented": 5,
+              "successfulPresents": 8,
+              "skipped": 1,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 2558048,
+              "width": 351,
+              "height": 263
+            },
+            "latest": {
+              "rect": {
+                "x": 350,
+                "y": 262,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 351,
+              "resourceHeight": 263
+            },
+            "errors": []
+          },
+          "source": [
+            351,
+            263
+          ]
+        },
+        {
+          "label": "context-replay-without-new-frame",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "webgl2",
+            "width": 351,
+            "height": 263,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 7,
+            "successfulPresents": 10,
+            "replayedFrames": 4,
+            "droppedFrames": 0,
+            "contextLosses": 1,
+            "contextRestores": 0,
+            "fallbacks": 1,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 7,
+              "coalesced": 1,
+              "presented": 6,
+              "skipped": 1,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 7,
+              "enqueued": 7,
+              "coalesced": 1,
+              "presented": 6,
+              "successfulPresents": 10,
+              "skipped": 1,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 3296552,
+              "width": 351,
+              "height": 263
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 337,
+                "height": 251
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ],
+          "replaced": true
+        }
+      ],
+      "pointer": {
+        "x": 32767,
+        "y": 32767
+      },
+      "css": {
+        "width": "351px",
+        "height": "263px"
+      },
+      "mode": {
+        "width": 351,
+        "height": 263,
+        "dpr": 1,
+        "cssWidth": 351,
+        "cssHeight": 263,
+        "sequence": 4
+      }
+    },
+    {
+      "backend": "webgl2",
+      "dpr": 1.5,
+      "checks": [
+        {
+          "label": "immediate-resize-329",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 494,
+            "height": 416,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 1,
+            "successfulPresents": 2,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 1,
+              "coalesced": 0,
+              "presented": 1,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 1,
+              "enqueued": 1,
+              "coalesced": 0,
+              "presented": 1,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 1654676,
+              "width": 494,
+              "height": 416
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 337,
+                "height": 251
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-329",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 494,
+            "height": 416,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 3,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 3,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 2476692,
+              "width": 494,
+              "height": 416
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "immediate-resize-371",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 557,
+            "height": 365,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 4,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 4,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 3289912,
+              "width": 557,
+              "height": 365
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-371",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 557,
+            "height": 365,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 5,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 5,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 4103132,
+              "width": 557,
+              "height": 365
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "immediate-resize-351",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 527,
+            "height": 395,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 6,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 6,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 4935792,
+              "width": 527,
+              "height": 395
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-351",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 527,
+            "height": 395,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 4,
+            "successfulPresents": 7,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 4,
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "successfulPresents": 7,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 5768452,
+              "width": 527,
+              "height": 395
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "two-matching-partial-frames-before-raf",
+          "mismatches": 123577,
+          "first": {
+            "x": 337,
+            "y": 0,
+            "expected": [
+              48,
+              16,
+              152,
+              255
+            ],
+            "actual": [
+              0,
+              0,
+              0,
+              255
+            ]
+          },
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 527,
+            "height": 395,
+            "fixedViewport": true,
+            "sizeMismatch": false,
+            "framesReceived": 6,
+            "successfulPresents": 8,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 6,
+              "coalesced": 1,
+              "presented": 5,
+              "skipped": 1,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 6,
+              "enqueued": 6,
+              "coalesced": 1,
+              "presented": 5,
+              "successfulPresents": 8,
+              "skipped": 1,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 5768456,
+              "width": 527,
+              "height": 395
+            },
+            "latest": {
+              "rect": {
+                "x": 526,
+                "y": 394,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 527,
+              "resourceHeight": 395
+            },
+            "errors": []
+          },
+          "source": [
+            527,
+            395
+          ]
+        },
+        {
+          "label": "context-replay-without-new-frame",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "webgl2",
+            "width": 527,
+            "height": 395,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 7,
+            "successfulPresents": 10,
+            "replayedFrames": 4,
+            "droppedFrames": 0,
+            "contextLosses": 1,
+            "contextRestores": 0,
+            "fallbacks": 1,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 7,
+              "coalesced": 1,
+              "presented": 6,
+              "skipped": 1,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 7,
+              "enqueued": 7,
+              "coalesced": 1,
+              "presented": 6,
+              "successfulPresents": 10,
+              "skipped": 1,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 7433776,
+              "width": 527,
+              "height": 395
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 337,
+                "height": 251
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ],
+          "replaced": true
+        }
+      ],
+      "pointer": {
+        "x": 32767,
+        "y": 32767
+      },
+      "css": {
+        "width": "351.333px",
+        "height": "263.333px"
+      },
+      "mode": {
+        "width": 527,
+        "height": 395,
+        "dpr": 1.5,
+        "cssWidth": 351.3333333333333,
+        "cssHeight": 263.3333333333333,
+        "sequence": 4
+      }
+    },
+    {
+      "backend": "webgl2",
+      "dpr": 2,
+      "checks": [
+        {
+          "label": "immediate-resize-329",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 658,
+            "height": 554,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 1,
+            "successfulPresents": 2,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 1,
+              "coalesced": 0,
+              "presented": 1,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 1,
+              "enqueued": 1,
+              "coalesced": 0,
+              "presented": 1,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 2935136,
+              "width": 658,
+              "height": 554
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 337,
+                "height": 251
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-329",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 658,
+            "height": 554,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 3,
+            "replayedFrames": 1,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 3,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 4393264,
+              "width": 658,
+              "height": 554
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "immediate-resize-371",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 742,
+            "height": 486,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 4,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 4,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 5835712,
+              "width": 742,
+              "height": 486
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-371",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 742,
+            "height": 486,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 5,
+            "replayedFrames": 2,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 5,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 7278160,
+              "width": 742,
+              "height": 486
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "immediate-resize-351",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 702,
+            "height": 526,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 6,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 6,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 8755168,
+              "width": 702,
+              "height": 526
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "partial-old-351",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 702,
+            "height": 526,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 4,
+            "successfulPresents": 7,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 4,
+              "enqueued": 4,
+              "coalesced": 0,
+              "presented": 4,
+              "successfulPresents": 7,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 10232176,
+              "width": 702,
+              "height": 526
+            },
+            "latest": {
+              "rect": {
+                "x": 336,
+                "y": 250,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ]
+        },
+        {
+          "label": "two-matching-partial-frames-before-raf",
+          "mismatches": 284664,
+          "first": {
+            "x": 337,
+            "y": 0,
+            "expected": [
+              48,
+              16,
+              152,
+              255
+            ],
+            "actual": [
+              0,
+              0,
+              0,
+              255
+            ]
+          },
+          "state": {
+            "backend": "webgl2",
+            "defaultBackend": "webgl2",
+            "width": 702,
+            "height": 526,
+            "fixedViewport": true,
+            "sizeMismatch": false,
+            "framesReceived": 6,
+            "successfulPresents": 8,
+            "replayedFrames": 3,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 6,
+              "coalesced": 1,
+              "presented": 5,
+              "skipped": 1,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 6,
+              "enqueued": 6,
+              "coalesced": 1,
+              "presented": 5,
+              "successfulPresents": 8,
+              "skipped": 1,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 10232180,
+              "width": 702,
+              "height": 526
+            },
+            "latest": {
+              "rect": {
+                "x": 701,
+                "y": 525,
+                "width": 1,
+                "height": 1
+              },
+              "resourceWidth": 702,
+              "resourceHeight": 526
+            },
+            "errors": []
+          },
+          "source": [
+            702,
+            526
+          ]
+        },
+        {
+          "label": "context-replay-without-new-frame",
+          "mismatches": 0,
+          "first": null,
+          "state": {
+            "backend": "canvas2d",
+            "defaultBackend": "webgl2",
+            "width": 702,
+            "height": 526,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 7,
+            "successfulPresents": 10,
+            "replayedFrames": 4,
+            "droppedFrames": 0,
+            "contextLosses": 1,
+            "contextRestores": 0,
+            "fallbacks": 1,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 7,
+              "coalesced": 1,
+              "presented": 6,
+              "skipped": 1,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false
+            },
+            "gpu": {
+              "framesReceived": 7,
+              "enqueued": 7,
+              "coalesced": 1,
+              "presented": 6,
+              "successfulPresents": 10,
+              "skipped": 1,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 13186196,
+              "width": 702,
+              "height": 526
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 337,
+                "height": 251
+              },
+              "resourceWidth": 337,
+              "resourceHeight": 251
+            },
+            "errors": []
+          },
+          "source": [
+            337,
+            251
+          ],
+          "replaced": true
+        }
+      ],
+      "pointer": {
+        "x": 32767,
+        "y": 32767
+      },
+      "css": {
+        "width": "351px",
+        "height": "263px"
+      },
+      "mode": {
+        "width": 702,
+        "height": 526,
+        "dpr": 2,
+        "cssWidth": 351,
+        "cssHeight": 263,
+        "sequence": 4
+      }
+    }
+  ]
+}

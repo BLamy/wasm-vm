@@ -1,0 +1,561 @@
+{
+  "schema": "wasm-vm.e5-t26f.jit-control-comparison.v1",
+  "head": "f9f017f5115b9425bf66457e8aeae016107b245d",
+  "diagnosticOnly": true,
+  "acceptance": false,
+  "fVerified": false,
+  "sampleCountPerArm": 1,
+  "runOrder": [
+    "jit-1",
+    "jit-0"
+  ],
+  "originalTimingCapMs": 2000,
+  "interpretation": "Both runs fail the original two-second cap. One sequential pair is not a significance estimate, root-cause proof, or authority to change the JIT default.",
+  "timingDefinition": "elapsedMs = postRestoreEnd - postRestoreStart; postRestoreStart is the original restore completedAt. The later postRestoreInteraction.elapsedMs is retained separately, not substituted.",
+  "counterDefinition": "Every counterDeltas value is jitAfter.state minus jitBefore.state within that arm, not a comparison of cumulative counters across arms. The RPC-bounded counter interval starts after restore and ends after frozen postRestoreEnd; it includes guest work around the command and is not an exact aplay-only or frozen-interaction window. compiledBlocks is retained as a gauge. Ratios are computed from deltas, not cumulative ratio fields.",
+  "common": {
+    "binding": {
+      "head": "f9f017f5115b9425bf66457e8aeae016107b245d",
+      "runtimeSha256": "84ef07f7f4ec173dc921a1d91a764f538953600fdccfb3af0eed4aaca57617f9",
+      "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "imageSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+      "imageBytes": 1073741824,
+      "manifestSha256": "b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592",
+      "origin": "http://127.0.0.1:61628"
+    },
+    "creatorHead": "faddd274c934e09aec18161758c690a3b87bde8e",
+    "sealedProfileDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26i-clock-ni2iS7",
+    "sealedProfileSha256": "778bc49dcdc7551de0b2f6a23e4b32a30ce72dea2c00e425bfdc302820d8fc65",
+    "checkpointCreatedAt": "2026-09-08T03:32:56.897Z",
+    "checkpointFile": {
+      "path": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26i-clock-ni2iS7/normal-checkpoint.json",
+      "sha256": "ff3bc3bb8a84478177003ea7a343d4986b92060f74ca67c4f3f8efeb130f0167"
+    },
+    "checkpointCreatorRecord": {
+      "path": "evidence/e5-t26i/browser/checkpoint/diagnostic-checkpoint.json",
+      "sha256": "04dd944c53926d0b39e16e7366c6dc3f64ce5c92876bcbcf163325bcecbb1c55"
+    },
+    "browser": {
+      "name": "chromium",
+      "version": "Chrome/152.0.7977.76",
+      "headless": false
+    },
+    "browserProvenance": "Sealed normal-checkpoint.json; the runner requires browser identity equality before reuse.",
+    "normalSnapshot": {
+      "sha256": "4ebdd9f6edb253d940a93082118068c089c844f985b13e0a7593956d6ccf88fb",
+      "byteLength": 2626972,
+      "preFrontBufferCrc": "0a17c914",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "0a17c914",
+        "overlayGeneration": 651
+      }
+    },
+    "postRestoreCommand": "sh /tmp/a",
+    "keyDelayMs": 5,
+    "guestClock": "icount",
+    "delayedGestureMs": 350,
+    "cpuProfile": false,
+    "latencyProbe": false,
+    "commandOverride": null
+  },
+  "reproduction": {
+    "provenance": "Reconstructed effective invocation from canonical milestones, server URLs, sealed checkpoint browser identity, frozen runner, and hash-checked local image/manifest. run.log does not retain the literal original shell command or complete environment.",
+    "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+    "argv": [
+      "node",
+      "tools/verify/e5-t26f-browser-roundtrip.mjs"
+    ],
+    "unset": [
+      "E5_T26F_DIAGNOSTIC_CPU",
+      "E5_T26F_DIAGNOSTIC_LATENCY",
+      "E5_T26F_DIAGNOSTIC_COMMAND"
+    ],
+    "commonEnv": {
+      "E5_T26F_REQUIRE_HEAD": "f9f017f5115b9425bf66457e8aeae016107b245d",
+      "E5_T26F_HEADED": "1",
+      "E5_T26F_DIAGNOSTIC": "reuse",
+      "E5_T26F_DIAGNOSTIC_PROFILE": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26i-clock-ni2iS7",
+      "E5_T26F_DIAGNOSTIC_PORT": "61628",
+      "E5_T26F_DIAGNOSTIC_GUEST_CLOCK": "icount",
+      "E5_T26F_DIAGNOSTIC_KEY_DELAY_MS": "5",
+      "E5_T26F_IMAGE": "target/e5-t26f/desktop-image-aplay-noresize/alpine-rootfs.ext4",
+      "E5_T26F_IMAGE_INFO": "target/e5-t26f/desktop-image-aplay-noresize/desktop-info.json",
+      "E5_T26F_DESKTOP_ASSET_DIR": "target/e5-t26f/chunks/desktop-aplay-noresize"
+    },
+    "arms": [
+      {
+        "E5_T26F_DIAGNOSTIC_JIT": "1",
+        "recordedOutputDirectory": "evidence/e5-t26f/jit-control/jit-1"
+      },
+      {
+        "E5_T26F_DIAGNOSTIC_JIT": "0",
+        "recordedOutputDirectory": "evidence/e5-t26f/jit-control/jit-0"
+      }
+    ],
+    "outputWarning": "Use a fresh E5_T26F_OUT per replay; never overwrite the canonical evidence."
+  },
+  "results": [
+    {
+      "arm": "jit-1",
+      "selectedJit": "1",
+      "acceptance": false,
+      "fTimingPassed": false,
+      "startedAt": "2026-09-08T03:51:47.134Z",
+      "failureTimestamp": "2026-09-08T03:51:55.177Z",
+      "profileCopy": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26i-clock-ni2iS7/iteration-71v2Tc/profile",
+      "url": "http://127.0.0.1:61628/desktop-cursor.html?testHooks=1&jit=1&quantum=500000&imageManifestUrl=.%2Fe5t18b-desktop%2Fmanifest.json&baseUrl=.%2Fe5t18b-desktop%2F&imageSha256=5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550&manifestSha256=b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592&guestClock=icount&autoRestore=1",
+      "artifacts": {
+        "failure-post-restore-interaction-checks.json": {
+          "path": "evidence/e5-t26f/jit-control/jit-1/failure-post-restore-interaction-checks.json",
+          "sha256": "8019eb6495611139ef6a2e71e91431e312e892ce9591d67f7aa7393f8dbbf782"
+        },
+        "failure-post-restore-interaction-checks.png": {
+          "path": "evidence/e5-t26f/jit-control/jit-1/failure-post-restore-interaction-checks.png",
+          "sha256": "c4aacf2ccf2aa5307470647937f9abab0312a82336707e88cbccb442ec6899c7"
+        },
+        "failure-post-restore-interaction-checks-server.log": {
+          "path": "evidence/e5-t26f/jit-control/jit-1/failure-post-restore-interaction-checks-server.log",
+          "sha256": "59a3a399471cb7602d7882e7b1c1ad184d4138054942ff6761d52aa2155604fe"
+        },
+        "run.log": {
+          "path": "evidence/e5-t26f/jit-control/jit-1/run.log",
+          "sha256": "b1a95adde9af1467382cdfe211f590e03069312db17caff947cd889f92b66d09"
+        }
+      },
+      "timing": {
+        "restoreCompletedAt": 1194.6449999809265,
+        "postRestoreStart": 1194.6449999809265,
+        "postRestoreEnd": 6425.764999985695,
+        "elapsedMs": 5231.120000004768,
+        "laterInteractionObservationElapsedMs": 5231.514999985695,
+        "cursorObservedAt": 2032.7849999666214,
+        "cursorElapsedMs": 838.1399999856949,
+        "pcmObservedAt": 6419.414999961853,
+        "pcmElapsedMs": 5224.7699999809265
+      },
+      "executor": {
+        "before": {
+          "requestedAt": 1456.3250000476837,
+          "receivedAt": 1467.8300000429153,
+          "rpcMs": 11.504999995231628,
+          "hasExecutor": true,
+          "entryTimingEnabled": false,
+          "entryTimerReads": 0,
+          "jitResidencyPolicy": "repack-off",
+          "jitResidencyCap": 24
+        },
+        "after": {
+          "requestedAt": 6426.59500002861,
+          "receivedAt": 6473.504999995232,
+          "rpcMs": 46.9099999666214,
+          "hasExecutor": true,
+          "entryTimingEnabled": false,
+          "entryTimerReads": 0,
+          "jitResidencyPolicy": "repack-off",
+          "jitResidencyCap": 24
+        },
+        "compiledBlocksGauge": {
+          "before": 94,
+          "after": 133
+        },
+        "counterDeltas": {
+          "guestRetired": 61972377,
+          "retiredViaJit": 22286932,
+          "executedBlocks": 1652644,
+          "directChainEntries": 4145377,
+          "jitCacheInstalls": 656,
+          "jitCacheRetranslations": 307,
+          "jitCacheEvictions": 112,
+          "jitSubmittedMembers": 659,
+          "blockEntryHits": 6928058,
+          "blockBuilds": 881211,
+          "decodedCacheFlushes": 0,
+          "decodedBlocksDiscarded": 0,
+          "entryCost": {
+            "hostEntries": 1652644,
+            "stateCopyCalls": 3305288,
+            "stateCopyBytes": 275884928,
+            "timerReads": 0,
+            "authorityChecks": 1742969,
+            "indirectTableDispatches": 445838,
+            "memorySplitExits": 19285
+          }
+        },
+        "intervalRetiredViaJitShare": 0.35962687053297954,
+        "intervalJitInstructionsPerHostEntry": 13.485621827810466
+      },
+      "guestClock": {
+        "before": {
+          "requestedAt": 1468.6549999713898,
+          "receivedAt": 1510.6399999856949,
+          "state": {
+            "mode": "icount",
+            "mtime": "2879386487",
+            "timebaseHz": 10000000,
+            "clockDiv": 10
+          }
+        },
+        "after": {
+          "requestedAt": 6474.399999976158,
+          "receivedAt": 6521.629999995232,
+          "state": {
+            "mode": "icount",
+            "mtime": "2885583741",
+            "timebaseHz": 10000000,
+            "clockDiv": 10
+          }
+        },
+        "deltaTicks": "6197254"
+      },
+      "cursor": {
+        "x": 684,
+        "y": 392,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      },
+      "command": {
+        "command": "sh /tmp/a",
+        "marker": "e5t26f-post-aplay",
+        "beforeFrame": 4,
+        "keyboardStart": 0,
+        "domEventStart": 0,
+        "visualDiffPixels": 3736,
+        "terminalMarkerSeen": true,
+        "greenPixelsBefore": 240,
+        "redPixelsBefore": 0,
+        "visualChange": true,
+        "afterFrame": 13,
+        "redMarkerSeen": false,
+        "keyboardFrames": 20,
+        "domEvents": 20,
+        "inputSequenceMatch": true,
+        "inputTraceSha256": null,
+        "accepted": true
+      },
+      "focus": {
+        "label": "post-restore-focus",
+        "beforeFrame": 2,
+        "pointerStart": 0,
+        "hostFocusedBefore": true,
+        "afterFrame": 4,
+        "pointerFrames": 3,
+        "hostFocusedAfter": true,
+        "accepted": true,
+        "guestVisible": true,
+        "guestVisibleCommand": "e5t26f-post-aplay",
+        "guestVisiblePixels": 3736
+      },
+      "heldButtons": [],
+      "pcm": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 960,
+        "maxAbs": 0.082000732421875
+      },
+      "audio": {
+        "before": {
+          "policy": "unlocked",
+          "renderedFrames": 47360,
+          "writeIndex": 0
+        },
+        "outputAttached": {
+          "outputAttached": true,
+          "observedAt": 6423.784999966621
+        },
+        "policyAfter": "unlocked",
+        "contextAfter": "running",
+        "renderedFramesAfter": 258048,
+        "renderedFramesDelta": 210688
+      },
+      "restore": {
+        "firstPresentCrc": "0a17c914",
+        "resumed": true,
+        "bootStates": [
+          {
+            "state": "fetching",
+            "atMs": 146
+          },
+          {
+            "state": "instantiating",
+            "atMs": 167
+          },
+          {
+            "state": "restored",
+            "atMs": 762
+          }
+        ],
+        "agentHandshake": {
+          "generation": 2,
+          "version": 1,
+          "capabilities": "1"
+        },
+        "diagnostics": [
+          {
+            "atMs": 857,
+            "reason": "agent-channel",
+            "error": "desktop restore requested a fresh agent HELLO",
+            "channelState": "disconnected",
+            "transportGeneration": 0
+          }
+        ],
+        "displayChecksPassed": true,
+        "checksPassed": false,
+        "coherenceAudit": {
+          "status": "deferred"
+        }
+      },
+      "error": {
+        "name": "AssertionError",
+        "message": "post-restore interaction exceeded 2 seconds",
+        "code": "ERR_ASSERTION",
+        "stack": "AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1401:12"
+      },
+      "observedErrors": {
+        "browser": [],
+        "http": []
+      },
+      "serverLogNonSuccessRequests": [
+        "127.0.0.1 - - [07/Sep/2026 23:51:48] \"GET /favicon.ico HTTP/1.1\" 404 -",
+        "127.0.0.1 - - [07/Sep/2026 23:51:53] \"GET /favicon.ico HTTP/1.1\" 404 -"
+      ]
+    },
+    {
+      "arm": "jit-0",
+      "selectedJit": "0",
+      "acceptance": false,
+      "fTimingPassed": false,
+      "startedAt": "2026-09-08T03:51:56.247Z",
+      "failureTimestamp": "2026-09-08T03:52:03.844Z",
+      "profileCopy": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26i-clock-ni2iS7/iteration-ZbCNof/profile",
+      "url": "http://127.0.0.1:61628/desktop-cursor.html?testHooks=1&jit=0&quantum=500000&imageManifestUrl=.%2Fe5t18b-desktop%2Fmanifest.json&baseUrl=.%2Fe5t18b-desktop%2F&imageSha256=5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550&manifestSha256=b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592&guestClock=icount&autoRestore=1",
+      "artifacts": {
+        "failure-post-restore-interaction-checks.json": {
+          "path": "evidence/e5-t26f/jit-control/jit-0/failure-post-restore-interaction-checks.json",
+          "sha256": "afee1c19cb82b59f6a4e7384dddc6c5902bca68d6402d6eb87a80ddbf707d13f"
+        },
+        "failure-post-restore-interaction-checks.png": {
+          "path": "evidence/e5-t26f/jit-control/jit-0/failure-post-restore-interaction-checks.png",
+          "sha256": "4f47af34049324ae5132fcbf6d90c9a29238912eeb7dfd9115de60ba9dd1a161"
+        },
+        "failure-post-restore-interaction-checks-server.log": {
+          "path": "evidence/e5-t26f/jit-control/jit-0/failure-post-restore-interaction-checks-server.log",
+          "sha256": "1d48f3aa07de4b584235f43fbe2903160521db8db255fe320261081e5387ec00"
+        },
+        "run.log": {
+          "path": "evidence/e5-t26f/jit-control/jit-0/run.log",
+          "sha256": "3ff9955625b9534919b314a9389df64e83f005f318b56b111a9e3cc1d101d444"
+        }
+      },
+      "timing": {
+        "restoreCompletedAt": 1178.954999923706,
+        "postRestoreStart": 1178.954999923706,
+        "postRestoreEnd": 6021.629999995232,
+        "elapsedMs": 4842.675000071526,
+        "laterInteractionObservationElapsedMs": 4843.080000042915,
+        "cursorObservedAt": 1971.7099999189377,
+        "cursorElapsedMs": 792.7549999952316,
+        "pcmObservedAt": 6011.989999890327,
+        "pcmElapsedMs": 4833.034999966621
+      },
+      "executor": {
+        "before": {
+          "requestedAt": 1443.0099999904633,
+          "receivedAt": 1443.6099998950958,
+          "rpcMs": 0.5999999046325684,
+          "hasExecutor": false,
+          "entryTimingEnabled": false,
+          "entryTimerReads": 0,
+          "jitResidencyPolicy": "disabled",
+          "jitResidencyCap": 0
+        },
+        "after": {
+          "requestedAt": 6022.429999947548,
+          "receivedAt": 6058.219999909401,
+          "rpcMs": 35.78999996185303,
+          "hasExecutor": false,
+          "entryTimingEnabled": false,
+          "entryTimerReads": 0,
+          "jitResidencyPolicy": "disabled",
+          "jitResidencyCap": 0
+        },
+        "compiledBlocksGauge": {
+          "before": 0,
+          "after": 0
+        },
+        "counterDeltas": {
+          "guestRetired": 57973104,
+          "retiredViaJit": 0,
+          "executedBlocks": 0,
+          "directChainEntries": 0,
+          "jitCacheInstalls": 0,
+          "jitCacheRetranslations": 0,
+          "jitCacheEvictions": 0,
+          "jitSubmittedMembers": 0,
+          "blockEntryHits": 10211163,
+          "blockBuilds": 834473,
+          "decodedCacheFlushes": 0,
+          "decodedBlocksDiscarded": 0,
+          "entryCost": {
+            "hostEntries": 0,
+            "stateCopyCalls": 0,
+            "stateCopyBytes": 0,
+            "timerReads": 0,
+            "authorityChecks": 0,
+            "indirectTableDispatches": 0,
+            "memorySplitExits": 0
+          }
+        },
+        "intervalRetiredViaJitShare": 0,
+        "intervalJitInstructionsPerHostEntry": null
+      },
+      "guestClock": {
+        "before": {
+          "requestedAt": 1444.2599999904633,
+          "receivedAt": 1481.3649998903275,
+          "state": {
+            "mode": "icount",
+            "mtime": "2879436440",
+            "timebaseHz": 10000000,
+            "clockDiv": 10
+          }
+        },
+        "after": {
+          "requestedAt": 6059.004999995232,
+          "receivedAt": 6099.209999918938,
+          "state": {
+            "mode": "icount",
+            "mtime": "2885233763",
+            "timebaseHz": 10000000,
+            "clockDiv": 10
+          }
+        },
+        "deltaTicks": "5797323"
+      },
+      "cursor": {
+        "x": 684,
+        "y": 392,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      },
+      "command": {
+        "command": "sh /tmp/a",
+        "marker": "e5t26f-post-aplay",
+        "beforeFrame": 4,
+        "keyboardStart": 0,
+        "domEventStart": 0,
+        "visualDiffPixels": 3555,
+        "terminalMarkerSeen": true,
+        "greenPixelsBefore": 240,
+        "redPixelsBefore": 0,
+        "visualChange": true,
+        "afterFrame": 11,
+        "redMarkerSeen": false,
+        "keyboardFrames": 20,
+        "domEvents": 20,
+        "inputSequenceMatch": true,
+        "inputTraceSha256": null,
+        "accepted": true
+      },
+      "focus": {
+        "label": "post-restore-focus",
+        "beforeFrame": 2,
+        "pointerStart": 0,
+        "hostFocusedBefore": true,
+        "afterFrame": 4,
+        "pointerFrames": 2,
+        "hostFocusedAfter": true,
+        "accepted": true,
+        "guestVisible": true,
+        "guestVisibleCommand": "e5t26f-post-aplay",
+        "guestVisiblePixels": 3555
+      },
+      "heldButtons": [],
+      "pcm": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 960,
+        "maxAbs": 0.082000732421875
+      },
+      "audio": {
+        "before": {
+          "policy": "unlocked",
+          "renderedFrames": 45952,
+          "writeIndex": 0
+        },
+        "outputAttached": {
+          "outputAttached": true,
+          "observedAt": 6019.819999933243
+        },
+        "policyAfter": "unlocked",
+        "contextAfter": "running",
+        "renderedFramesAfter": 240128,
+        "renderedFramesDelta": 194176
+      },
+      "restore": {
+        "firstPresentCrc": "0a17c914",
+        "resumed": true,
+        "bootStates": [
+          {
+            "state": "fetching",
+            "atMs": 149
+          },
+          {
+            "state": "instantiating",
+            "atMs": 169
+          },
+          {
+            "state": "restored",
+            "atMs": 800
+          }
+        ],
+        "agentHandshake": {
+          "generation": 2,
+          "version": 1,
+          "capabilities": "1"
+        },
+        "diagnostics": [
+          {
+            "atMs": 886,
+            "reason": "agent-channel",
+            "error": "desktop restore requested a fresh agent HELLO",
+            "channelState": "disconnected",
+            "transportGeneration": 0
+          }
+        ],
+        "displayChecksPassed": true,
+        "checksPassed": false,
+        "coherenceAudit": {
+          "status": "deferred"
+        }
+      },
+      "error": {
+        "name": "AssertionError",
+        "message": "post-restore interaction exceeded 2 seconds",
+        "code": "ERR_ASSERTION",
+        "stack": "AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1401:12"
+      },
+      "observedErrors": {
+        "browser": [],
+        "http": []
+      },
+      "serverLogNonSuccessRequests": [
+        "127.0.0.1 - - [07/Sep/2026 23:51:57] \"GET /favicon.ico HTTP/1.1\" 404 -",
+        "127.0.0.1 - - [07/Sep/2026 23:52:02] \"GET /favicon.ico HTTP/1.1\" 404 -"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1498 @@
+{
+  "label": "failure-post-restore-interaction-checks",
+  "timestamp": "2026-09-08T17:16:16.277Z",
+  "head": "001e80864911863145f2127192bae5df8186e68b",
+  "image": {
+    "imageSha256": "d2fc4eab9bc1b5fe528a2956b58faefb20fcf18e2505c499ecafa8824d390f72",
+    "manifestSha256": "e02a9af547773f9d54e47151419ab3b118c55d3a4c90b25dcc434487db8dc9f5"
+  },
+  "lastPhase": {
+    "phase": "post-restore:interaction-checks",
+    "event": "failed",
+    "timestamp": "2026-09-08T17:16:16.277Z",
+    "elapsedMs": 9408
+  },
+  "lastProgressSample": null,
+  "milestones": {
+    "run": {
+      "kind": "diagnostic-iteration",
+      "acceptance": false,
+      "diagnostic": {
+        "mode": "reuse",
+        "directory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-IKBhyX",
+        "port": 61637,
+        "origin": "http://127.0.0.1:61637",
+        "command": null,
+        "keyDelayMs": 0,
+        "latency": false,
+        "cpu": false,
+        "guestClock": null,
+        "jit": null,
+        "residency": null,
+        "complete": false,
+        "icountDivider": null,
+        "guestProfile": true
+      },
+      "postRestoreCommand": "play",
+      "postRestoreKeyDelayMs": 5,
+      "fixture": {
+        "kind": "resident-observer-v1",
+        "helperSha256": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh",
+        "observer": {
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-observe",
+          "sourcePath": "tools/guest/e5-t26f-observer.c",
+          "sourceSha256": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+          "binaryPath": "target/e5-t26f/observer-build-v1/e5t26f-observe",
+          "sha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+          "size": 30960,
+          "mode": "0555",
+          "buildInfoPath": "target/e5-t26f/observer-build-v1/build-info.json",
+          "buildInfoSha256": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+          "readbackSha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350"
+        }
+      },
+      "binding": {
+        "head": "001e80864911863145f2127192bae5df8186e68b",
+        "runtimeSha256": "f897f34951ca3ab59909f0ce6bbe2e8a68a6620cdace4d1e4eca617cbd601ce8",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "d2fc4eab9bc1b5fe528a2956b58faefb20fcf18e2505c499ecafa8824d390f72",
+        "imageBytes": 1073741824,
+        "manifestSha256": "e02a9af547773f9d54e47151419ab3b118c55d3a4c90b25dcc434487db8dc9f5",
+        "origin": "http://127.0.0.1:61637",
+        "fixture": {
+          "kind": "resident-observer-v1",
+          "helperSha256": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+          "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh",
+          "observer": {
+            "guestPath": "/usr/libexec/wasm-vm/e5t26f-observe",
+            "sourcePath": "tools/guest/e5-t26f-observer.c",
+            "sourceSha256": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+            "binaryPath": "target/e5-t26f/observer-build-v1/e5t26f-observe",
+            "sha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+            "size": 30960,
+            "mode": "0555",
+            "buildInfoPath": "target/e5-t26f/observer-build-v1/build-info.json",
+            "buildInfoSha256": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+            "readbackSha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350"
+          }
+        }
+      },
+      "profile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-IKBhyX/iteration-CSvmwZ/profile",
+      "checkpointFile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-IKBhyX/normal-checkpoint.json",
+      "creatorHead": "05b82bc688a34e6a1abef7b6c761c01bf4a3f7c6",
+      "currentHead": "001e80864911863145f2127192bae5df8186e68b",
+      "checkpointCreatedAt": "2026-09-08T16:30:16.424Z",
+      "profileSha256": "f7a2bc52a45ed895eb1edd71f722ab1fb5c5ccf106a0753a6630b17f84940685"
+    },
+    "normalSnapshot": {
+      "sha256": "87477fbfe7b1d31edfb75336f0f49f0001f175106a6506933cef733d579699e7",
+      "byteLength": 2820040,
+      "preFrontBufferCrc": "9c53f290",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "9c53f290",
+        "overlayGeneration": 652
+      }
+    },
+    "residentCheckpoint": {
+      "fixture": {
+        "kind": "resident-observer-v1",
+        "helperSha256": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh",
+        "observer": {
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-observe",
+          "sourcePath": "tools/guest/e5-t26f-observer.c",
+          "sourceSha256": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+          "binaryPath": "target/e5-t26f/observer-build-v1/e5t26f-observe",
+          "sha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+          "size": 30960,
+          "mode": "0555",
+          "buildInfoPath": "target/e5-t26f/observer-build-v1/build-info.json",
+          "buildInfoSha256": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+          "readbackSha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350"
+        }
+      },
+      "prepared": {
+        "command": ". /usr/libexec/wasm-vm/e5t26f-resident.sh && e5_prepare",
+        "marker": "e5t26f-prepared",
+        "beforeFrame": 268,
+        "keyboardStart": 556,
+        "domEventStart": 556,
+        "visualDiffPixels": 13650,
+        "terminalMarkerSeen": true,
+        "greenPixelsBefore": 240,
+        "redPixelsBefore": 0,
+        "visualChange": true,
+        "afterFrame": 311,
+        "redMarkerSeen": false,
+        "keyboardFrames": 118,
+        "domEvents": 118,
+        "inputSequenceMatch": true,
+        "inputTraceSha256": null,
+        "accepted": true
+      },
+      "sound": {
+        "envelopeSha256": "87477fbfe7b1d31edfb75336f0f49f0001f175106a6506933cef733d579699e7",
+        "soundSha256": "330d02f9e91a4e67239bd3386715f87ca45cb0ea8052c387276a6c5450eeeafc",
+        "state": 2,
+        "paramsPresent": 1,
+        "parameterRequest": 257,
+        "streamId": 0,
+        "bufferBytes": 3840,
+        "periodBytes": 1920,
+        "channels": 2,
+        "format": 5,
+        "rate": 7,
+        "pendingTransfers": 0,
+        "pendingBytes": 0,
+        "releasePending": 0,
+        "nextXrunPresent": 0,
+        "eventCount": 0,
+        "events": [],
+        "kicked": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "resetPending": 0
+      },
+      "screenshot": {
+        "file": "evidence/e5-t26f/single-process-observer-05b82bc6/cold/resident-prepared.png",
+        "sha256": "1b01fa84c548d1254408da3a1bdb113962d779b691f7f951033f3c57dc3a7baa"
+      }
+    },
+    "normalRestore": {
+      "result": {
+        "snapshotSha256": "87477fbfe7b1d31edfb75336f0f49f0001f175106a6506933cef733d579699e7",
+        "snapshotBytes": 2820040,
+        "completedAt": 1298.9750000238419,
+        "report": {
+          "boundaryId": 9462051826,
+          "scanout": {
+            "width": 1280,
+            "height": 800
+          },
+          "hostViewport": {
+            "width": 1280,
+            "height": 800
+          },
+          "viewport": "native",
+          "agentRehandshake": true,
+          "inputReleaseEvents": 0,
+          "soundXrunEvents": 0,
+          "fullRepairFrame": true
+        },
+        "handshake": {
+          "generation": 2,
+          "version": 1,
+          "capabilities": "1"
+        },
+        "observation": {
+          "baseSuccessfulPresents": 1,
+          "firstPresent": {
+            "successfulPresents": 2,
+            "crc32": "9c53f290"
+          }
+        },
+        "bootStates": [
+          {
+            "state": "fetching",
+            "atMs": 135
+          },
+          {
+            "state": "instantiating",
+            "atMs": 156
+          },
+          {
+            "state": "restored",
+            "atMs": 830
+          }
+        ],
+        "diagnostics": [
+          {
+            "atMs": 937,
+            "reason": "agent-channel",
+            "error": "desktop restore requested a fresh agent HELLO",
+            "channelState": "disconnected",
+            "transportGeneration": 0
+          }
+        ],
+        "machineResume": {
+          "persisted": true,
+          "paused": true,
+          "preFrontBufferCrc": "9c53f290",
+          "overlayGeneration": 652
+        },
+        "preFrontBufferCrc": "9c53f290",
+        "resume": {
+          "restored": true,
+          "snapshotDecision": null,
+          "overlayGeneration": null
+        },
+        "coherenceAudit": {
+          "status": "deferred"
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "fixedViewport": true,
+          "sizeMismatch": false,
+          "framesReceived": 2,
+          "successfulPresents": 2,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "scheduler": null,
+          "gpu": {
+            "framesReceived": 2,
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "successfulPresents": 2,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 0,
+            "uploadedBytes": 8192000,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "width": 1280,
+            "height": 800
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 800
+          },
+          "errors": []
+        }
+      },
+      "displayChecksPassed": true,
+      "checksPassed": false
+    },
+    "postRestoreStart": 1298.9750000238419,
+    "guestProfileBefore": {
+      "acceptance": false,
+      "scope": {
+        "pcAddressSpace": "guest-virtual",
+        "regionBytes": 64,
+        "topRegions": 10,
+        "retires": "interpreted-only; JIT retires excluded",
+        "sampling": "jittered approximately 1/1024",
+        "limitation": "cumulative bounded histogram; collisions/evictions and top-10 truncation; not whole-guest CPU time"
+      },
+      "requestedAt": 1425.0349999666214,
+      "receivedAt": 1460.570000052452,
+      "state": {
+        "totalNs": 472925000,
+        "sampleCount": 3010,
+        "walkCount": 122102,
+        "collisions": 0,
+        "regions": [
+          {
+            "pc": "0xffffffff80a21b40",
+            "samples": 103,
+            "pct": 3.421926910299003
+          },
+          {
+            "pc": "0xffffffff80a21b00",
+            "samples": 90,
+            "pct": 2.990033222591362
+          },
+          {
+            "pc": "0xffffffff80a21bc0",
+            "samples": 80,
+            "pct": 2.6578073089700998
+          },
+          {
+            "pc": "0xffffffff80a21c00",
+            "samples": 70,
+            "pct": 2.3255813953488373
+          },
+          {
+            "pc": "0xffffffff804b31c0",
+            "samples": 63,
+            "pct": 2.0930232558139537
+          },
+          {
+            "pc": "0x00007fff8073db40",
+            "samples": 51,
+            "pct": 1.6943521594684385
+          },
+          {
+            "pc": "0xffffffff8009bbc0",
+            "samples": 51,
+            "pct": 1.6943521594684385
+          },
+          {
+            "pc": "0xffffffff8009bc40",
+            "samples": 51,
+            "pct": 1.6943521594684385
+          },
+          {
+            "pc": "0xffffffff800a2e80",
+            "samples": 51,
+            "pct": 1.6943521594684385
+          },
+          {
+            "pc": "0xffffffff800a1d40",
+            "samples": 50,
+            "pct": 1.6611295681063125
+          }
+        ],
+        "subsystems": [
+          {
+            "name": "cpu_interp",
+            "ns": 464159993
+          },
+          {
+            "name": "mmu_walk",
+            "ns": 8650009
+          },
+          {
+            "name": "clint",
+            "ns": 0
+          },
+          {
+            "name": "plic",
+            "ns": 44999
+          },
+          {
+            "name": "uart",
+            "ns": 0
+          },
+          {
+            "name": "virtio_blk",
+            "ns": 0
+          },
+          {
+            "name": "virtio_net",
+            "ns": 0
+          },
+          {
+            "name": "virtio_rng",
+            "ns": 0
+          },
+          {
+            "name": "rtc",
+            "ns": 0
+          },
+          {
+            "name": "syscon",
+            "ns": 0
+          },
+          {
+            "name": "other",
+            "ns": 69999
+          }
+        ],
+        "jitPause": {
+          "count": 11,
+          "maxNs": 1865000,
+          "sumNs": 4655000,
+          "overTarget": 0,
+          "maxAttemptedBlocks": 8,
+          "totalAttemptedBlocks": 72,
+          "maxSubmittedBlocks": 8,
+          "maxSubmittedBytes": 268,
+          "totalSubmittedBlocks": 71,
+          "runCount": 9,
+          "lastRunAttemptedBlocks": 8,
+          "maxRunAttemptedBlocks": 8,
+          "lastRunSubmittedBlocks": 8,
+          "maxRunSubmittedBlocks": 8,
+          "lastRunStagedNominations": 1,
+          "maxRunStagedNominations": 64,
+          "lastFinalPumps": 0,
+          "maxFinalPumps": 0,
+          "lastFinalAttemptedBlocks": 0,
+          "maxFinalAttemptedBlocks": 0,
+          "lastFinalSubmittedBlocks": 0,
+          "maxFinalSubmittedBlocks": 0
+        }
+      },
+      "origin": "http://127.0.0.1:61637",
+      "worker": {
+        "installed": true,
+        "requests": [
+          {
+            "originalUrl": "http://127.0.0.1:61637/linux-worker.js",
+            "requestedUrl": "http://127.0.0.1:61637/linux-worker.js?profile=1"
+          }
+        ]
+      },
+      "available": true,
+      "error": null,
+      "jit": {
+        "requestedAt": 1460.5750000476837,
+        "receivedAt": 1512.7250000238419,
+        "available": true,
+        "timeoutMs": 5000,
+        "timedOut": false,
+        "state": {
+          "executedBlocks": 121836,
+          "retiredViaJit": 1447492,
+          "directChainEntries": 281177,
+          "directChainLinks": 159342,
+          "dynamicLinkAttempts": 55634,
+          "dynamicLinkHits": 356,
+          "dynamicLinkRefusals": 55278,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkInstalls": 40746,
+          "guestRetired": 4995331,
+          "jitEngineCalls": 121836,
+          "chainLinksMade": 12,
+          "chainLinksCut": 0,
+          "chainDispatchEntries": 56200,
+          "chainLinksFollowed": 121755,
+          "jitSubmittedMembers": 79,
+          "jitCompilePauseNs": 4974999,
+          "jitCompilePauseSamples": 12,
+          "jitCacheInstalls": 78,
+          "jitCacheRetranslations": 0,
+          "jitCacheEvictions": 0,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 4,
+          "blockEntryHits": 616348,
+          "blockBuilds": 18612,
+          "compiledBlocks": 78,
+          "dynamicLinkLiveEntries": 1,
+          "jitCacheBatches": 12,
+          "jitCacheCodeBytes": 959388,
+          "chainMaxDepth": 5,
+          "jitCompilePauseMaxNs": 1865000,
+          "discoveryGeneration": 5,
+          "jitRetiredShare": 0.2897689862793877,
+          "jitLogicalBlocksPerEngineCall": 2.3078318395219806,
+          "hasExecutor": true,
+          "jitRegionChaining": true,
+          "jitDynamicChaining": true,
+          "jitResidencyPolicy": "repack-off",
+          "jitResidencyCap": 24,
+          "entryCost": {
+            "timerReads": 796396,
+            "hostEntries": 121836,
+            "stateCopyCalls": 243672,
+            "stateCopyBytes": 16602216,
+            "stateCopyNs": 12259987,
+            "engineEntryNs": 57434938,
+            "indirectTableDispatches": 1818,
+            "authorityChecks": 119080,
+            "memorySplitExits": 1396,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0,
+            "timingEnabled": true
+          }
+        },
+        "error": null,
+        "invalidFields": [],
+        "scope": {
+          "counters": [
+            "executedBlocks",
+            "retiredViaJit",
+            "directChainEntries",
+            "directChainLinks",
+            "dynamicLinkAttempts",
+            "dynamicLinkHits",
+            "dynamicLinkRefusals",
+            "dynamicLinkRetargets",
+            "dynamicLinkInstalls",
+            "guestRetired",
+            "jitEngineCalls",
+            "chainLinksMade",
+            "chainLinksCut",
+            "chainDispatchEntries",
+            "chainLinksFollowed",
+            "jitSubmittedMembers",
+            "jitCompilePauseNs",
+            "jitCompilePauseSamples",
+            "jitCacheInstalls",
+            "jitCacheRetranslations",
+            "jitCacheEvictions",
+            "decodedBlocksDiscarded",
+            "decodedCacheFlushes",
+            "blockEntryHits",
+            "blockBuilds"
+          ],
+          "gauges": [
+            "compiledBlocks",
+            "dynamicLinkLiveEntries",
+            "jitCacheBatches",
+            "jitCacheCodeBytes"
+          ],
+          "highWater": [
+            "chainMaxDepth",
+            "jitCompilePauseMaxNs"
+          ],
+          "generations": [
+            "discoveryGeneration"
+          ],
+          "ratios": [
+            "jitRetiredShare",
+            "jitLogicalBlocksPerEngineCall"
+          ],
+          "configuration": [
+            "hasExecutor",
+            "jitRegionChaining",
+            "jitDynamicChaining",
+            "jitResidencyPolicy",
+            "jitResidencyCap"
+          ],
+          "entryCostCounters": [
+            "timerReads",
+            "hostEntries",
+            "stateCopyCalls",
+            "stateCopyBytes",
+            "stateCopyNs",
+            "engineEntryNs",
+            "indirectTableDispatches",
+            "authorityChecks",
+            "memorySplitExits",
+            "deviceBoundaries",
+            "deviceBoundaryNs"
+          ],
+          "entryCostConfiguration": [
+            "timingEnabled"
+          ],
+          "limitation": "two sequential endpoint RPCs, not an atomic profile/JIT sample; no per-PC compiled membership or TLB hit/miss counters"
+        }
+      },
+      "checksPassed": true
+    },
+    "residentBeforeGesture": [
+      {
+        "observedAt": 1534.9650000333786,
+        "policy": "locked",
+        "context": "suspended",
+        "pcm": {
+          "available": true,
+          "writeIndex": 0,
+          "readIndex": 0,
+          "fillFrames": 0,
+          "capacityFrames": 4096,
+          "writtenFrames": 0,
+          "inspectedFrames": 0,
+          "nonSilentFrames": 0,
+          "maxAbs": 0
+        }
+      },
+      {
+        "observedAt": 1888.539999961853,
+        "policy": "locked",
+        "context": "suspended",
+        "pcm": {
+          "available": true,
+          "writeIndex": 0,
+          "readIndex": 0,
+          "fillFrames": 0,
+          "capacityFrames": 4096,
+          "writtenFrames": 0,
+          "inspectedFrames": 0,
+          "nonSilentFrames": 0,
+          "maxAbs": 0
+        }
+      }
+    ],
+    "postRestoreCursor": {
+      "frame": {
+        "atMs": 1643,
+        "sequence": 1,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 17510
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 16056
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 17510,
+          "y": 16056
+        }
+      },
+      "rendered": {
+        "x": 684,
+        "y": 392,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      },
+      "observedAt": 2138.445000052452,
+      "elapsedMs": 839.4700000286102
+    },
+    "postRestoreAudioBefore": {
+      "policy": "unlocked",
+      "renderedFrames": 53523,
+      "writeIndex": 0
+    },
+    "postRestoreAplay": {
+      "command": "play",
+      "marker": "e5t26f-post-aplay",
+      "beforeFrame": 4,
+      "keyboardStart": 0,
+      "domEventStart": 0,
+      "visualDiffPixels": 5742,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 369,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 9,
+      "redMarkerSeen": false,
+      "keyboardFrames": 10,
+      "domEvents": 10,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "postRestorePcmAtCompletion": {
+      "observedAt": 5705.284999966621,
+      "pcm": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.999969482421875
+      },
+      "elapsedMs": 4406.3099999427795
+    },
+    "postRestoreOutputAttached": {
+      "outputAttached": true,
+      "observedAt": 5724.674999952316
+    },
+    "postRestoreAudioAfter": {
+      "policy": "unlocked",
+      "context": "running",
+      "renderedFrames": 225299,
+      "pcm": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.999969482421875
+      },
+      "pcmObservedAt": 5705.284999966621,
+      "writeIndex": 0,
+      "guestAttached": true,
+      "guestAttachedObservedAt": 5724.674999952316
+    },
+    "postRestoreEnd": 5726.914999961853,
+    "postRestoreInteraction": {
+      "elapsedMs": 4428.379999995232,
+      "pointerFrames": 3,
+      "keyboardFrames": 10,
+      "heldButtons": [],
+      "audio": {
+        "policy": "unlocked",
+        "context": "running",
+        "renderedFrames": 225299
+      }
+    },
+    "guestProfileAfter": {
+      "acceptance": false,
+      "scope": {
+        "pcAddressSpace": "guest-virtual",
+        "regionBytes": 64,
+        "topRegions": 10,
+        "retires": "interpreted-only; JIT retires excluded",
+        "sampling": "jittered approximately 1/1024",
+        "limitation": "cumulative bounded histogram; collisions/evictions and top-10 truncation; not whole-guest CPU time"
+      },
+      "requestedAt": 5728.125,
+      "receivedAt": 5778.870000004768,
+      "state": {
+        "totalNs": 4780560004,
+        "sampleCount": 29036,
+        "walkCount": 854314,
+        "collisions": 1270,
+        "regions": [
+          {
+            "pc": "0xffffffff80a21b40",
+            "samples": 535,
+            "pct": 1.842540294806447
+          },
+          {
+            "pc": "0xffffffff80a21bc0",
+            "samples": 492,
+            "pct": 1.6944482711117235
+          },
+          {
+            "pc": "0xffffffff80a21b00",
+            "samples": 483,
+            "pct": 1.6634522661523627
+          },
+          {
+            "pc": "0xffffffff80a21c00",
+            "samples": 446,
+            "pct": 1.5360242457638793
+          },
+          {
+            "pc": "0x00007fffa206c780",
+            "samples": 388,
+            "pct": 1.336272213803554
+          },
+          {
+            "pc": "0x00007fff85fcbcc0",
+            "samples": 386,
+            "pct": 1.329384212701474
+          },
+          {
+            "pc": "0x00007fffa206c800",
+            "samples": 367,
+            "pct": 1.2639482022317123
+          },
+          {
+            "pc": "0x00007fff85fc81c0",
+            "samples": 328,
+            "pct": 1.129632180741149
+          },
+          {
+            "pc": "0xffffffff804b31c0",
+            "samples": 265,
+            "pct": 0.9126601460256234
+          },
+          {
+            "pc": "0xffffffff800a1d40",
+            "samples": 235,
+            "pct": 0.8093401294944208
+          }
+        ],
+        "subsystems": [
+          {
+            "name": "cpu_interp",
+            "ns": 4718769991
+          },
+          {
+            "name": "mmu_walk",
+            "ns": 61590012
+          },
+          {
+            "name": "clint",
+            "ns": 0
+          },
+          {
+            "name": "plic",
+            "ns": 60000
+          },
+          {
+            "name": "uart",
+            "ns": 0
+          },
+          {
+            "name": "virtio_blk",
+            "ns": 0
+          },
+          {
+            "name": "virtio_net",
+            "ns": 0
+          },
+          {
+            "name": "virtio_rng",
+            "ns": 0
+          },
+          {
+            "name": "rtc",
+            "ns": 0
+          },
+          {
+            "name": "syscon",
+            "ns": 0
+          },
+          {
+            "name": "other",
+            "ns": 140001
+          }
+        ],
+        "jitPause": {
+          "count": 104,
+          "maxNs": 1865000,
+          "sumNs": 30335009,
+          "overTarget": 0,
+          "maxAttemptedBlocks": 8,
+          "totalAttemptedBlocks": 816,
+          "maxSubmittedBlocks": 8,
+          "maxSubmittedBytes": 298,
+          "totalSubmittedBlocks": 615,
+          "runCount": 102,
+          "lastRunAttemptedBlocks": 8,
+          "maxRunAttemptedBlocks": 8,
+          "lastRunSubmittedBlocks": 6,
+          "maxRunSubmittedBlocks": 8,
+          "lastRunStagedNominations": 64,
+          "maxRunStagedNominations": 64,
+          "lastFinalPumps": 0,
+          "maxFinalPumps": 0,
+          "lastFinalAttemptedBlocks": 0,
+          "maxFinalAttemptedBlocks": 0,
+          "lastFinalSubmittedBlocks": 0,
+          "maxFinalSubmittedBlocks": 0
+        }
+      },
+      "origin": "http://127.0.0.1:61637",
+      "worker": {
+        "installed": true,
+        "requests": [
+          {
+            "originalUrl": "http://127.0.0.1:61637/linux-worker.js",
+            "requestedUrl": "http://127.0.0.1:61637/linux-worker.js?profile=1"
+          }
+        ]
+      },
+      "available": true,
+      "error": null,
+      "jit": {
+        "requestedAt": 5778.879999995232,
+        "receivedAt": 5828.189999938011,
+        "available": true,
+        "timeoutMs": 5000,
+        "timedOut": false,
+        "state": {
+          "executedBlocks": 1438755,
+          "retiredViaJit": 19538423,
+          "directChainEntries": 3599225,
+          "directChainLinks": 2160508,
+          "dynamicLinkAttempts": 558325,
+          "dynamicLinkHits": 21194,
+          "dynamicLinkRefusals": 537131,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkInstalls": 386312,
+          "guestRetired": 51475234,
+          "jitEngineCalls": 1438755,
+          "chainLinksMade": 158,
+          "chainLinksCut": 139,
+          "chainDispatchEntries": 785387,
+          "chainLinksFollowed": 1389119,
+          "jitSubmittedMembers": 622,
+          "jitCompilePauseNs": 30615009,
+          "jitCompilePauseSamples": 105,
+          "jitCacheInstalls": 621,
+          "jitCacheRetranslations": 231,
+          "jitCacheEvictions": 84,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 4,
+          "blockEntryHits": 5826346,
+          "blockBuilds": 606984,
+          "compiledBlocks": 119,
+          "dynamicLinkLiveEntries": 0,
+          "jitCacheBatches": 20,
+          "jitCacheCodeBytes": 1546511,
+          "chainMaxDepth": 128,
+          "jitCompilePauseMaxNs": 1865000,
+          "discoveryGeneration": 5,
+          "jitRetiredShare": 0.37956938670740187,
+          "jitLogicalBlocksPerEngineCall": 2.5016246685502397,
+          "hasExecutor": true,
+          "jitRegionChaining": true,
+          "jitDynamicChaining": true,
+          "jitResidencyPolicy": "repack-off",
+          "jitResidencyCap": 24,
+          "entryCost": {
+            "timerReads": 9214438,
+            "hostEntries": 1438755,
+            "stateCopyCalls": 2877510,
+            "stateCopyBytes": 221247160,
+            "stateCopyNs": 140799949,
+            "engineEntryNs": 583794879,
+            "indirectTableDispatches": 301867,
+            "authorityChecks": 1434149,
+            "memorySplitExits": 17095,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0,
+            "timingEnabled": true
+          }
+        },
+        "error": null,
+        "invalidFields": [],
+        "scope": {
+          "counters": [
+            "executedBlocks",
+            "retiredViaJit",
+            "directChainEntries",
+            "directChainLinks",
+            "dynamicLinkAttempts",
+            "dynamicLinkHits",
+            "dynamicLinkRefusals",
+            "dynamicLinkRetargets",
+            "dynamicLinkInstalls",
+            "guestRetired",
+            "jitEngineCalls",
+            "chainLinksMade",
+            "chainLinksCut",
+            "chainDispatchEntries",
+            "chainLinksFollowed",
+            "jitSubmittedMembers",
+            "jitCompilePauseNs",
+            "jitCompilePauseSamples",
+            "jitCacheInstalls",
+            "jitCacheRetranslations",
+            "jitCacheEvictions",
+            "decodedBlocksDiscarded",
+            "decodedCacheFlushes",
+            "blockEntryHits",
+            "blockBuilds"
+          ],
+          "gauges": [
+            "compiledBlocks",
+            "dynamicLinkLiveEntries",
+            "jitCacheBatches",
+            "jitCacheCodeBytes"
+          ],
+          "highWater": [
+            "chainMaxDepth",
+            "jitCompilePauseMaxNs"
+          ],
+          "generations": [
+            "discoveryGeneration"
+          ],
+          "ratios": [
+            "jitRetiredShare",
+            "jitLogicalBlocksPerEngineCall"
+          ],
+          "configuration": [
+            "hasExecutor",
+            "jitRegionChaining",
+            "jitDynamicChaining",
+            "jitResidencyPolicy",
+            "jitResidencyCap"
+          ],
+          "entryCostCounters": [
+            "timerReads",
+            "hostEntries",
+            "stateCopyCalls",
+            "stateCopyBytes",
+            "stateCopyNs",
+            "engineEntryNs",
+            "indirectTableDispatches",
+            "authorityChecks",
+            "memorySplitExits",
+            "deviceBoundaries",
+            "deviceBoundaryNs"
+          ],
+          "entryCostConfiguration": [
+            "timingEnabled"
+          ],
+          "limitation": "two sequential endpoint RPCs, not an atomic profile/JIT sample; no per-PC compiled membership or TLB hit/miss counters"
+        },
+        "deltas": {
+          "entryCost": {
+            "timerReads": 8418042,
+            "hostEntries": 1316919,
+            "stateCopyCalls": 2633838,
+            "stateCopyBytes": 204644944,
+            "stateCopyNs": 128539962,
+            "engineEntryNs": 526359941,
+            "indirectTableDispatches": 300049,
+            "authorityChecks": 1315069,
+            "memorySplitExits": 15699,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "executedBlocks": 1316919,
+          "retiredViaJit": 18090931,
+          "directChainEntries": 3318048,
+          "directChainLinks": 2001166,
+          "dynamicLinkAttempts": 502691,
+          "dynamicLinkHits": 20838,
+          "dynamicLinkRefusals": 481853,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkInstalls": 345566,
+          "guestRetired": 46479903,
+          "jitEngineCalls": 1316919,
+          "chainLinksMade": 146,
+          "chainLinksCut": 139,
+          "chainDispatchEntries": 729187,
+          "chainLinksFollowed": 1267364,
+          "jitSubmittedMembers": 543,
+          "jitCompilePauseNs": 25640010,
+          "jitCompilePauseSamples": 93,
+          "jitCacheInstalls": 543,
+          "jitCacheRetranslations": 231,
+          "jitCacheEvictions": 84,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 0,
+          "blockEntryHits": 5209998,
+          "blockBuilds": 588372
+        }
+      },
+      "deltas": {
+        "totalNs": 4307635004,
+        "sampleCount": 26026,
+        "walkCount": 732212,
+        "collisions": 1270
+      },
+      "checksPassed": true
+    }
+  },
+  "error": {
+    "name": "AssertionError",
+    "message": "post-restore interaction exceeded 2 seconds",
+    "code": "ERR_ASSERTION",
+    "stack": "AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1930:12"
+  },
+  "progressProbe": null,
+  "url": "http://127.0.0.1:61637/desktop-cursor.html?testHooks=1&jit=1&quantum=500000&imageManifestUrl=.%2Fe5t18b-desktop%2Fmanifest.json&baseUrl=.%2Fe5t18b-desktop%2F&imageSha256=d2fc4eab9bc1b5fe528a2956b58faefb20fcf18e2505c499ecafa8824d390f72&manifestSha256=e02a9af547773f9d54e47151419ab3b118c55d3a4c90b25dcc434487db8dc9f5&autoRestore=1",
+  "state": {
+    "terminal": {
+      "desktopReady": true,
+      "frameCount": 9,
+      "serialText": "",
+      "pointerFrames": 3,
+      "pointerFrameSample": [
+        {
+          "atMs": 1643,
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 17510
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 16056
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 17510,
+            "y": 16056
+          }
+        },
+        {
+          "atMs": 1955,
+          "sequence": 2,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "atMs": 2049,
+          "sequence": 3,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "keyboardFrames": 10,
+      "keyboardEvents": 10,
+      "keyboardFrameSample": [
+        {
+          "atMs": 2120,
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 2144,
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 2151,
+          "eventType": 1,
+          "code": "KeyL",
+          "evdev": 38,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 2156,
+          "eventType": 1,
+          "code": "KeyL",
+          "evdev": 38,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 2162,
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 2168,
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 2174,
+          "eventType": 1,
+          "code": "KeyY",
+          "evdev": 21,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 2180,
+          "eventType": 1,
+          "code": "KeyY",
+          "evdev": 21,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 2187,
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 2192,
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardEventSample": [
+        {
+          "atMs": 2120,
+          "timestamp": 2145.0299999713898,
+          "type": "keydown",
+          "code": "KeyP",
+          "key": "p",
+          "repeat": false
+        },
+        {
+          "atMs": 2144,
+          "timestamp": 2169.389999985695,
+          "type": "keyup",
+          "code": "KeyP",
+          "key": "p",
+          "repeat": false
+        },
+        {
+          "atMs": 2151,
+          "timestamp": 2176.139999985695,
+          "type": "keydown",
+          "code": "KeyL",
+          "key": "l",
+          "repeat": false
+        },
+        {
+          "atMs": 2156,
+          "timestamp": 2181.024999976158,
+          "type": "keyup",
+          "code": "KeyL",
+          "key": "l",
+          "repeat": false
+        },
+        {
+          "atMs": 2162,
+          "timestamp": 2187.3849999904633,
+          "type": "keydown",
+          "code": "KeyA",
+          "key": "a",
+          "repeat": false
+        },
+        {
+          "atMs": 2168,
+          "timestamp": 2193.314999938011,
+          "type": "keyup",
+          "code": "KeyA",
+          "key": "a",
+          "repeat": false
+        },
+        {
+          "atMs": 2174,
+          "timestamp": 2199.639999985695,
+          "type": "keydown",
+          "code": "KeyY",
+          "key": "y",
+          "repeat": false
+        },
+        {
+          "atMs": 2180,
+          "timestamp": 2205.5800000429153,
+          "type": "keyup",
+          "code": "KeyY",
+          "key": "y",
+          "repeat": false
+        },
+        {
+          "atMs": 2187,
+          "timestamp": 2212.0449999570847,
+          "type": "keydown",
+          "code": "Enter",
+          "key": "Enter",
+          "repeat": false
+        },
+        {
+          "atMs": 2192,
+          "timestamp": 2216.929999947548,
+          "type": "keyup",
+          "code": "Enter",
+          "key": "Enter",
+          "repeat": false
+        }
+      ],
+      "surface": {
+        "nonBlackRatio": 0.9999375,
+        "darkRatio": 0.5940972222222223,
+        "greenPixels": 477,
+        "redPixels": 0
+      },
+      "agent": {
+        "state": "ready",
+        "negotiatedVersion": 1,
+        "transportGeneration": 2,
+        "bytesReceived": 36,
+        "bytesSent": 36,
+        "pendingBytes": 0
+      },
+      "diagnostics": [
+        {
+          "atMs": 937,
+          "reason": "agent-channel",
+          "error": "desktop restore requested a fresh agent HELLO",
+          "channelState": "disconnected",
+          "transportGeneration": 0
+        }
+      ],
+      "readiness": {
+        "desktopReady": true,
+        "inspection": {
+          "wallpaper": true,
+          "panel": {
+            "ready": true,
+            "position": "top",
+            "top": 0,
+            "height": 80,
+            "mean": [
+              91,
+              88,
+              87
+            ],
+            "difference": 95
+          },
+          "menu": true,
+          "nonBlackRatio": 0.9999375,
+          "background": [
+            58,
+            57,
+            56
+          ],
+          "menuDetails": {
+            "ready": true,
+            "inkPixels": 22434,
+            "runs": 282
+          }
+        },
+        "agentState": "ready"
+      },
+      "bootStates": [
+        {
+          "state": "fetching",
+          "atMs": 135
+        },
+        {
+          "state": "instantiating",
+          "atMs": 156
+        },
+        {
+          "state": "restored",
+          "atMs": 830
+        }
+      ],
+      "launches": [],
+      "focuses": [
+        {
+          "label": "post-restore-focus",
+          "beforeFrame": 2,
+          "pointerStart": 0,
+          "hostFocusedBefore": true,
+          "afterFrame": 4,
+          "pointerFrames": 3,
+          "hostFocusedAfter": true,
+          "accepted": true,
+          "guestVisible": true,
+          "guestVisibleCommand": "e5t26f-post-aplay",
+          "guestVisiblePixels": 5742
+        }
+      ],
+      "commands": [
+        {
+          "command": "play",
+          "marker": "e5t26f-post-aplay",
+          "beforeFrame": 4,
+          "keyboardStart": 0,
+          "domEventStart": 0,
+          "visualDiffPixels": 5742,
+          "terminalMarkerSeen": true,
+          "greenPixelsBefore": 369,
+          "redPixelsBefore": 0,
+          "visualChange": true,
+          "afterFrame": 9,
+          "redMarkerSeen": false,
+          "keyboardFrames": 10,
+          "domEvents": 10,
+          "inputSequenceMatch": true,
+          "inputTraceSha256": null,
+          "accepted": true
+        }
+      ],
+      "closes": [],
+      "active": {
+        "launch": null,
+        "command": {
+          "command": "play",
+          "marker": "e5t26f-post-aplay",
+          "beforeFrame": 4,
+          "keyboardStart": 0,
+          "domEventStart": 0,
+          "visualDiffPixels": 5742,
+          "terminalMarkerSeen": true,
+          "greenPixelsBefore": 369,
+          "redPixelsBefore": 0,
+          "visualChange": true,
+          "afterFrame": 9,
+          "redMarkerSeen": false,
+          "keyboardFrames": 10,
+          "domEvents": 10,
+          "inputSequenceMatch": true,
+          "inputTraceSha256": null,
+          "accepted": true
+        },
+        "close": null
+      }
+    },
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 800,
+      "fixedViewport": true,
+      "sizeMismatch": false,
+      "framesReceived": 9,
+      "successfulPresents": 9,
+      "drawnPresents": 9,
+      "drawnBytes": 20765432,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": null,
+      "gpu": {
+        "framesReceived": 9,
+        "enqueued": 9,
+        "coalesced": 0,
+        "presented": 9,
+        "successfulPresents": 9,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 20765432,
+        "drawnPresents": 9,
+        "drawnBytes": 20765432,
+        "width": 1280,
+        "height": 800
+      },
+      "latest": {
+        "rect": {
+          "x": 557,
+          "y": 156,
+          "width": 480,
+          "height": 78
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800
+      },
+      "errors": []
+    },
+    "audio": {
+      "policy": "unlocked",
+      "context": "running",
+      "renderedFrames": 233107,
+      "pcm": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 4096,
+        "inspectedFrames": 4096,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.999969482421875
+      }
+    },
+    "ready": "ready",
+    "restored": "ready"
+  },
+  "serial": null,
+  "serverOutput": "127.0.0.1 - - [08/Sep/2026 13:16:07] \"GET /desktop-cursor.html HTTP/1.1\" 200 -\n127.0.0.1 - - [08/Sep/2026 13:16:07] \"GET /e5t18b-desktop/manifest.json HTTP/1.1\" 200 -\n127.0.0.1 - - [08/Sep/2026 13:16:10] \"GET /desktop-cursor.html?testHooks=1&jit=1&quantum=500000&imageManifestUrl=.%2Fe5t18b-desktop%2Fmanifest.json&baseUrl=.%2Fe5t18b-desktop%2F&imageSha256=d2fc4eab9bc1b5fe528a2956b58faefb20fcf18e2505c499ecafa8824d390f72&manifestSha256=e02a9af547773f9d54e47151419ab3b118c55d3a4c90b25dcc434487db8dc9f5&autoRestore=1 HTTP/1.1\" 200 -\n127.0.0.1 - - [08/Sep/2026 13:16:10] \"GET /desktop-terminal.js HTTP/1.1\" 304 -\n127.0.0.1 - - [08/Sep/2026 13:16:10] \"GET /linux-worker-protocol.js HTTP/1.1\" 304 -\n127.0.0.1 - - [08/Sep/2026 13:16:10] \"GET /linux-worker.js?profile=1 HTTP/1.1\" 200 -\n127.0.0.1 - - [08/Sep/2026 13:16:10] code 404, message File not found\n127.0.0.1 - - [08/Sep/2026 13:16:10] \"GET /favicon.ico HTTP/1.1\" 404 -\n127.0.0.1 - - [08/Sep/2026 13:16:10] \"GET /loader.js HTTP/1.1\" 304 -\n127.0.0.1 - - [08/Sep/2026 13:16:10] \"GET /pkg/wasm_vm_wasm.js HTTP/1.1\" 304 -\n127.0.0.1 - - [08/Sep/2026 13:16:10] \"GET /guest-clock.js HTTP/1.1\" 304 -\n127.0.0.1 - - [08/Sep/2026 13:16:10] \"GET /decoded-cache.js HTTP/1.1\" 304 -\n127.0.0.1 - - [08/Sep/2026 13:16:10] \"GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1\" 304 -\n127.0.0.1 - - [08/Sep/2026 13:16:15] code 404, message File not found\n127.0.0.1 - - [08/Sep/2026 13:16:15] \"GET /favicon.ico HTTP/1.1\" 404 -\n"
+}

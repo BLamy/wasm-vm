@@ -1,0 +1,136 @@
+{
+  "head": "179b8fd04e716a24a7b15091b3f7b0de0a356dfb",
+  "proofSha256": "8596d057ec660e689d4d7ba5e8423a7e8e520e6ec46703052edcac7fc2a329d1",
+  "checked": [
+    {
+      "file": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "digest": "60154a93800803af94dc2d69524976be2e40c82b3e6c026786a0f86cbf45d58c"
+    },
+    {
+      "file": "crates/wasm/src/lib.rs",
+      "digest": "6fff7eda2f5f9e13a8e8188681155fe38e2420b5723e4f71dc08fc3bfea6035f"
+    },
+    {
+      "file": "crates/wasm/src/display_tests.rs",
+      "digest": "c3a9f5be379abfe300ebbd013ca845c1f0b5b8dd3fd205e5195eff9e53b4c3d0"
+    },
+    {
+      "file": "web/loader.js",
+      "digest": "e3d23caca1be3527d224d73862c4655f1691742f5b77906de23fa12230a4bca8"
+    },
+    {
+      "file": "web/linux-worker-protocol.js",
+      "digest": "35ebbbd6ae4f4ce95d05fbd637c9192d8ab83d50120d6afb9bef0d7f44a5225d"
+    },
+    {
+      "file": "web/linux-worker-host.js",
+      "digest": "3e1586d97418702a9c9c1f1a82b1163001fd27f3a9bf31ef9e3b0562a66506a9"
+    },
+    {
+      "file": "web/linux-worker.js",
+      "digest": "31ddce9e578df9b963843a5c0b387d3aa0e34ae35f27a22af3dde258018e7e87"
+    },
+    {
+      "file": "web/main.js",
+      "digest": "bc5f36187f9c74dd8684aa18f99389f0c1ab346b94f57de831d50c77b6eabebf"
+    },
+    {
+      "file": "web/display-hotplug.js",
+      "digest": "9f2c54ff74011e2b46b1eec2fdcfef9bb7593ac75ad21456f702604728a94691"
+    },
+    {
+      "file": "web/display-hotplug.html",
+      "digest": "6208e02a395d79ed9f965a4bfc263f163f48be5709c5438c636ac8cba83397b4"
+    },
+    {
+      "file": "web/artifacts-alpine.json",
+      "digest": "547c147ccfc57a1d5a3b6818c5c1cc74b3673de2e7dbc13300256d1a5725ff5d"
+    },
+    {
+      "file": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "digest": "563fb01ba0eb5bcfbf5de2b0f76471881f06f165aa0ff56380edc14acb9d05fc"
+    },
+    {
+      "file": "tools/verify/e5-t22a-display-hotplug.mjs",
+      "digest": "b5d976b7f1ed72d384551f0ce3cad5c224d6b87fff32f68afb491d442c4211d2"
+    }
+  ],
+  "mirrors": [
+    "display-hotplug.html",
+    "display-hotplug.js",
+    "linux-worker-protocol.js",
+    "loader.js",
+    "main.js",
+    "roadmap.js"
+  ],
+  "carried": [
+    {
+      "file": "crates/core/src/lib.rs",
+      "digest": "d94cc3f691dc0508d665359474a23a9cad0e41982107b2f702aba186d6f8403e"
+    },
+    {
+      "file": "crates/core/src/dispatch.rs",
+      "digest": "fa8ebfa0a4a1dc74b0e40655b74763c11b043bc704c80e413b46bfa7a937d848"
+    },
+    {
+      "file": "crates/core/src/hart/mod.rs",
+      "digest": "c3b4fc40bc3240de652a510efc5dd5822c79e02c41664324c2fbb6a2419653ad"
+    },
+    {
+      "file": "crates/core/src/dev/virtio/gpu/resources.rs",
+      "digest": "2b8be6626bf7006243d7f2c22e239a88d07d9312a6768f9b52ef6575268d7f6e"
+    },
+    {
+      "file": "crates/wasm/tests/gpu_protocol.rs",
+      "digest": "bdaf71d43864fb037a88e78bb2ca485eba50767dc4e55550324aef8779dad900"
+    },
+    {
+      "file": "crates/wasm/tests/hart_ctrl.rs",
+      "digest": "2dfa4dc9c4fe9dd5f58e8ce8ac8d97a5b0da58f427c37e870a8f1e5a96837e3b"
+    },
+    {
+      "file": "crates/wasm/tests/hart.rs",
+      "digest": "0e708523cf9d826585874523ef9c8be55c6641aad80f82f4cb9bd1c090070f7f"
+    },
+    {
+      "file": "tools/ci/determinism-hazards.sh",
+      "digest": "8e6e3a153a2eb2e78a3c9d47ef1436170bcf0383a1e923283ec63bc38b5342cc"
+    },
+    {
+      "file": "crates/wasm/tests/input_queues.rs",
+      "digest": "1a0249d54735d2181e16ebc4879afcc5936dbfe3523d65294bffa28ec1f7ac15"
+    },
+    {
+      "file": "crates/core/src/dev/virtio/input/mod.rs",
+      "digest": "1e763d501847d8b0d018a6ea8c0e2fb5d0c350a5d6c75ec443f2ac3a26d2a687"
+    },
+    {
+      "file": "crates/core/src/dev/virtio/mmio.rs",
+      "digest": "fb1e4944974d1cf1cb8802018d0f23aea21f1b0b42190707cf8f85e2af7671a8"
+    },
+    {
+      "file": "crates/core/src/dev/virtio/queue.rs",
+      "digest": "28964991619b47c3b26263731a91183351712d8995062ab314786ef55ef8362e"
+    },
+    {
+      "file": "Cargo.lock",
+      "digest": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7"
+    },
+    {
+      "file": "crates/wasm/Cargo.toml",
+      "digest": "ee9a0e90a0d447f06571fe203772a51bd4b491d3d42dfabb81befee2516b3d69"
+    },
+    {
+      "file": "crates/wvseccomp/src/main.rs",
+      "digest": "166934f78790262bc6bd184b5413b114370ffd970e2947b636521c1d191b8899"
+    }
+  ],
+  "samplesValidated": 2006,
+  "invalidRequestsRejected": 64,
+  "metrics": [
+    "126",
+    "0",
+    "126"
+  ],
+  "errors": []
+}

@@ -1,0 +1,107 @@
+Started 2026-09-08T15:14:19.496Z
+
+HOST {"index":0,"name":"reused.data","host":{"at":"2026-09-08T15:14:19.497Z","size":0,"inode":34749046,"hex":"","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}}
+$ docker 'run' '--rm' '--pull=never' '--network=none' '--cpus=1' '--memory=128m' '--pids-limit=32' '--name' 'e5t26f-buffered-fixture-26975-0' '--mount' 'type=bind,src=/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA,dst=/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA' '--workdir' '/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA' 'sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc' '/bin/busybox' 'ash' '-c' 'set -eu
+printf '\''containerSize='\''
+/bin/busybox stat -c %s '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/reused.data'\''
+printf '\''containerInode='\''
+/bin/busybox stat -c %i '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/reused.data'\''
+printf '\''containerHex='\''
+/bin/busybox od -An -tx1 '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/reused.data'\''
+printf '\''\nhelperSha='\''
+/bin/busybox sha256sum '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh'\''
+. '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh'\''
+if e5_capture '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/reused.data'\'' 128; then capture_status=0; else capture_status=$?; fi
+printf '\''captureStatus=%s\ncaptureLength=%s\ncaptureHex='\'' "$capture_status" "${#e5_text}"
+printf '\''%s'\'' "$e5_text" | /bin/busybox od -An -tx1
+printf '\''\n'\''
+'
+containerSize=0
+containerInode=16904
+containerHex=
+helperSha=324e0acddd88bd2d41b0310444e32e2262dedd3129132240134dac857d4eec2e  /Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh
+captureStatus=0
+captureLength=0
+captureHex=
+
+exit=0 signal=null
+
+HOST {"index":1,"name":"reused.data","host":{"at":"2026-09-08T15:14:19.613Z","size":9,"inode":34749046,"hex":"706970655f72656164","sha256":"4fe92241199e9ef42bba365975b963bd9681d68337af20cd4f9d033f7fdc1c2d"}}
+$ docker 'run' '--rm' '--pull=never' '--network=none' '--cpus=1' '--memory=128m' '--pids-limit=32' '--name' 'e5t26f-buffered-fixture-26975-1' '--mount' 'type=bind,src=/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA,dst=/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA' '--workdir' '/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA' 'sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc' '/bin/busybox' 'ash' '-c' 'set -eu
+printf '\''containerSize='\''
+/bin/busybox stat -c %s '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/reused.data'\''
+printf '\''containerInode='\''
+/bin/busybox stat -c %i '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/reused.data'\''
+printf '\''containerHex='\''
+/bin/busybox od -An -tx1 '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/reused.data'\''
+printf '\''\nhelperSha='\''
+/bin/busybox sha256sum '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh'\''
+. '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh'\''
+if e5_capture '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/reused.data'\'' 128; then capture_status=0; else capture_status=$?; fi
+printf '\''captureStatus=%s\ncaptureLength=%s\ncaptureHex='\'' "$capture_status" "${#e5_text}"
+printf '\''%s'\'' "$e5_text" | /bin/busybox od -An -tx1
+printf '\''\n'\''
+'
+containerSize=0
+containerInode=16904
+containerHex=
+helperSha=324e0acddd88bd2d41b0310444e32e2262dedd3129132240134dac857d4eec2e  /Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh
+captureStatus=0
+captureLength=0
+captureHex=
+
+exit=0 signal=null
+
+HOST {"index":2,"name":"unique-empty.data","host":{"at":"2026-09-08T15:14:19.714Z","size":0,"inode":34749047,"hex":"","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}}
+$ docker 'run' '--rm' '--pull=never' '--network=none' '--cpus=1' '--memory=128m' '--pids-limit=32' '--name' 'e5t26f-buffered-fixture-26975-2' '--mount' 'type=bind,src=/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA,dst=/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA' '--workdir' '/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA' 'sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc' '/bin/busybox' 'ash' '-c' 'set -eu
+printf '\''containerSize='\''
+/bin/busybox stat -c %s '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/unique-empty.data'\''
+printf '\''containerInode='\''
+/bin/busybox stat -c %i '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/unique-empty.data'\''
+printf '\''containerHex='\''
+/bin/busybox od -An -tx1 '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/unique-empty.data'\''
+printf '\''\nhelperSha='\''
+/bin/busybox sha256sum '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh'\''
+. '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh'\''
+if e5_capture '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/unique-empty.data'\'' 128; then capture_status=0; else capture_status=$?; fi
+printf '\''captureStatus=%s\ncaptureLength=%s\ncaptureHex='\'' "$capture_status" "${#e5_text}"
+printf '\''%s'\'' "$e5_text" | /bin/busybox od -An -tx1
+printf '\''\n'\''
+'
+containerSize=0
+containerInode=16906
+containerHex=
+helperSha=324e0acddd88bd2d41b0310444e32e2262dedd3129132240134dac857d4eec2e  /Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh
+captureStatus=0
+captureLength=0
+captureHex=
+
+exit=0 signal=null
+
+HOST {"index":3,"name":"unique-pipe.data","host":{"at":"2026-09-08T15:14:19.798Z","size":9,"inode":34749048,"hex":"706970655f72656164","sha256":"4fe92241199e9ef42bba365975b963bd9681d68337af20cd4f9d033f7fdc1c2d"}}
+$ docker 'run' '--rm' '--pull=never' '--network=none' '--cpus=1' '--memory=128m' '--pids-limit=32' '--name' 'e5t26f-buffered-fixture-26975-3' '--mount' 'type=bind,src=/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA,dst=/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA' '--workdir' '/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA' 'sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc' '/bin/busybox' 'ash' '-c' 'set -eu
+printf '\''containerSize='\''
+/bin/busybox stat -c %s '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/unique-pipe.data'\''
+printf '\''containerInode='\''
+/bin/busybox stat -c %i '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/unique-pipe.data'\''
+printf '\''containerHex='\''
+/bin/busybox od -An -tx1 '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/unique-pipe.data'\''
+printf '\''\nhelperSha='\''
+/bin/busybox sha256sum '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh'\''
+. '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh'\''
+if e5_capture '\''/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/unique-pipe.data'\'' 128; then capture_status=0; else capture_status=$?; fi
+printf '\''captureStatus=%s\ncaptureLength=%s\ncaptureHex='\'' "$capture_status" "${#e5_text}"
+printf '\''%s'\'' "$e5_text" | /bin/busybox od -An -tx1
+printf '\''\n'\''
+'
+containerSize=9
+containerInode=16907
+containerHex= 70 69 70 65 5f 72 65 61 64
+
+helperSha=324e0acddd88bd2d41b0310444e32e2262dedd3129132240134dac857d4eec2e  /Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/buffered-proc-native-fixture/scratch-yDUSIA/helper.sh
+captureStatus=0
+captureLength=9
+captureHex= 70 69 70 65 5f 72 65 61 64
+
+
+exit=0 signal=null

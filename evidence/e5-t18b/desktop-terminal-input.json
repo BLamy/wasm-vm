@@ -1,0 +1,2592 @@
+{
+  "schema": "wasm-vm.e5-t18b.desktop-terminal-input-evidence.v1",
+  "task": "E5-T18b",
+  "command": "make verify-E5-T18b",
+  "scope": {
+    "browser": "local Chromium",
+    "webkit": false,
+    "independentMachines": false,
+    "hostRr": false
+  },
+  "static": {
+    "rootfsLauncher": true,
+    "keyboardBridge": true,
+    "pointerBridge": true,
+    "assetRoute": true
+  },
+  "publication": {
+    "image": {
+      "path": "target/e5-t18b/desktop-image-v6/alpine-rootfs.ext4",
+      "sha256": "08bb8227fe0180ed06e5a01188e4a0fe3b21565ba83dcc2c1df632ca413172be",
+      "size": 1073741824
+    },
+    "packageManifest": {
+      "path": "target/e5-t18b/desktop-image-v6/MANIFEST.txt",
+      "sha256": "ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908"
+    },
+    "fileManifest": {
+      "path": "target/e5-t18b/desktop-image-v6/FILE-MANIFEST.txt",
+      "sha256": "0155d794fa136a4653e76ae76f9c01233d9175f0ef56a9e9eb2565074985e0ad",
+      "terminalDigest": "0b83d0269abcbae3208229681be17fd05630c4029882517c4c2f51946ffba9fe"
+    },
+    "chunkManifest": {
+      "path": "target/e5-t18b/chunks/desktop-v6/manifest.json",
+      "sha256": "2e92778fe0e6c5bd0819034bda28d235307cf7ab8f031cd30e1854f96982a6c0",
+      "imageLen": 1073741824,
+      "chunkSize": 131072,
+      "chunkCount": 8192,
+      "distinctChunks": 823,
+      "layout": "split",
+      "chunkVerify": "chunk-verify: OK — 823 distinct chunks, manifest ↔ chunks/ consistent"
+    }
+  },
+  "browser": {
+    "name": "chromium",
+    "version": "152.0.7977.76",
+    "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+  },
+  "acceptance": {
+    "coldCache": true,
+    "launcher": "Weston desktop-shell Terminal -> /usr/bin/weston-terminal -> foot",
+    "keyboardPath": "Chromium physical KeyboardEvent -> T12 evdev bridge -> guest foot",
+    "command": "ls -la /home/desktop; printf '\\033[42;30m<marker>\\033[0m\\n'",
+    "repeatCycles": 2,
+    "close": "Control-D",
+    "browserErrors": {
+      "console": [],
+      "page": [],
+      "requests": []
+    }
+  },
+  "run": {
+    "elapsedMs": 602241,
+    "bootToDesktopMs": 602122,
+    "proof": {
+      "schema": "wasm-vm.e5-t18b.desktop-terminal-input.v1",
+      "task": "E5-T18b",
+      "route": "desktop-terminal",
+      "image": {
+        "expectedSha256": "08bb8227fe0180ed06e5a01188e4a0fe3b21565ba83dcc2c1df632ca413172be",
+        "manifestUrl": "./e5t18b-desktop/manifest.json",
+        "manifestSha256": "2e92778fe0e6c5bd0819034bda28d235307cf7ab8f031cd30e1854f96982a6c0",
+        "expectedManifestSha256": "2e92778fe0e6c5bd0819034bda28d235307cf7ab8f031cd30e1854f96982a6c0",
+        "imageLen": 1073741824,
+        "chunkSize": 131072,
+        "chunkCount": 8192,
+        "layout": "split"
+      },
+      "readiness": {
+        "wallpaper": true,
+        "panel": {
+          "ready": true,
+          "position": "top",
+          "top": 0,
+          "height": 80,
+          "mean": [
+            97,
+            92,
+            90
+          ],
+          "difference": 98
+        },
+        "menu": true,
+        "nonBlackRatio": 0.9999140625,
+        "background": [
+          131,
+          124,
+          121
+        ],
+        "menuDetails": {
+          "ready": true,
+          "inkPixels": 25493,
+          "runs": 122
+        }
+      },
+      "selectedBackend": "canvas2d",
+      "canvas": {
+        "width": 1280,
+        "height": 800
+      },
+      "frameCount": 71,
+      "bootToDesktopMs": 602122,
+      "serialBytes": 14355,
+      "serialSha256": "793791e6157ee009615c86bacf800b742ac5cafaffc3a5cef9c8722116ac1f6d",
+      "serialTail": " * Caching service dependencies ... [ ok ]\r\n * Remounting devtmpfs on /dev ... [ ok ]\r\n * Mounting /dev/mqueue ... [ ok ]\r\n * Mounting /dev/pts ... [ ok ]\r\n * Mounting /dev/shm ... [ ok ]\r\n * Mounting /sys ... [ ok ]\r\n * Mounting security filesystem ... [ ok ]\r\n * Mounting debug filesystem ... [ ok ]\r\n * Starting udev ... [ ok ]\r\n * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ... [ ok ]\r\n * Loading hardware drivers ...modprobe: can't change directory to '/lib/modules': No such file or directory\r\n [ ok ]\r\n * Loading modules ...modprobe: can't change directory to '/lib/modules': No such file or directory\r\nmodprobe: can't change directory to '/lib/modules': No such file or directory\r\n [ ok ]\r\n * Setting system clock using the hardware clock [UTC] ...hwclock: select() to /dev/rtc0 to wait for clock tick timed out\r\n * Failed to set the system clock\r\n [ !! ]\r\n * Checking local filesystems  ... [ ok ]\r\n * Remounting filesystems ... [ ok ]\r\n * Activating swap devices ... [ ok ]\r\n * Mounting local filesystems ... [ ok ]\r\n * Migrating /var/lock to /run/lock ... [ ok ]\r\n * Creating user login records ... [ ok ]\r\n * Cleaning /tmp directory ... [ ok ]\r\n * Setting hostname ... [ ok ]\r\n * Seeding random number generator ... * Saving 256 bits of creditable seed for next boot\r\n [ ok ]\r\n * Starting busybox syslog ... [ ok ]\r\n * Starting seatd ... [ ok ]\r\n * Waiting for uevents to be processed ... [ ok ]\r\n * Starting networking ... *   lo ... [ ok ]\r\n *   eth0 ...udhcpc: started, v1.36.1\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc failed to get a DHCP lease\r\nudhcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ",
+      "interactions": {
+        "launches": [
+          {
+            "label": "terminal-1",
+            "beforeFrame": 26,
+            "pointerStart": 0,
+            "keyboardStart": 0,
+            "visualDiffPixels": 983945,
+            "visualChange": true,
+            "terminalRendered": true,
+            "nonBlackStreak": 0,
+            "afterFrame": 36,
+            "pointerFrames": 3,
+            "accepted": true
+          },
+          {
+            "label": "terminal-2",
+            "beforeFrame": 49,
+            "pointerStart": 6,
+            "keyboardStart": 136,
+            "visualDiffPixels": 343891,
+            "visualChange": true,
+            "terminalRendered": true,
+            "nonBlackStreak": 0,
+            "afterFrame": 59,
+            "pointerFrames": 3,
+            "accepted": true
+          }
+        ],
+        "focuses": [
+          {
+            "label": "focus-1",
+            "beforeFrame": 36,
+            "pointerStart": 3,
+            "hostFocusedBefore": true,
+            "afterFrame": 41,
+            "pointerFrames": 3,
+            "hostFocusedAfter": true,
+            "accepted": true
+          },
+          {
+            "label": "focus-2",
+            "beforeFrame": 59,
+            "pointerStart": 9,
+            "hostFocusedBefore": true,
+            "afterFrame": 63,
+            "pointerFrames": 3,
+            "hostFocusedAfter": true,
+            "accepted": true
+          }
+        ],
+        "commands": [
+          {
+            "command": "ls -la /home/desktop; printf '\\033[42;30me5t18b-ls-1-ok\\033[0m\\n'",
+            "marker": "e5t18b-ls-1-ok",
+            "beforeFrame": 41,
+            "keyboardStart": 0,
+            "domEventStart": 0,
+            "visualDiffPixels": 9657,
+            "terminalMarkerSeen": true,
+            "greenPixelsBefore": 1,
+            "visualChange": true,
+            "afterFrame": 47,
+            "keyboardFrames": 132,
+            "domEvents": 132,
+            "inputSequenceMatch": true,
+            "inputTraceSha256": null,
+            "accepted": true
+          },
+          {
+            "command": "ls -la /home/desktop; printf '\\033[42;30me5t18b-ls-2-ok\\033[0m\\n'",
+            "marker": "e5t18b-ls-2-ok",
+            "beforeFrame": 63,
+            "keyboardStart": 136,
+            "domEventStart": 136,
+            "visualDiffPixels": 9675,
+            "terminalMarkerSeen": true,
+            "greenPixelsBefore": 1,
+            "visualChange": true,
+            "afterFrame": 69,
+            "keyboardFrames": 132,
+            "domEvents": 132,
+            "inputSequenceMatch": true,
+            "inputTraceSha256": null,
+            "accepted": true
+          }
+        ],
+        "closes": [
+          {
+            "label": "close-1",
+            "beforeFrame": 47,
+            "visualDiffPixels": 343282,
+            "visualChange": true,
+            "afterFrame": 49,
+            "accepted": true
+          },
+          {
+            "label": "close-2",
+            "beforeFrame": 69,
+            "visualDiffPixels": 342974,
+            "visualChange": true,
+            "afterFrame": 71,
+            "accepted": true
+          }
+        ]
+      },
+      "input": {
+        "pointerFrameCount": 12,
+        "keyboardFrameCount": 272,
+        "keyboardEventCount": 272,
+        "keyboardFrames": [
+          {
+            "atMs": 538181,
+            "eventType": 1,
+            "code": "KeyL",
+            "evdev": 38,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538192,
+            "eventType": 1,
+            "code": "KeyL",
+            "evdev": 38,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538193,
+            "eventType": 1,
+            "code": "KeyS",
+            "evdev": 31,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538204,
+            "eventType": 1,
+            "code": "KeyS",
+            "evdev": 31,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538204,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538217,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538217,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538229,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538229,
+            "eventType": 1,
+            "code": "KeyL",
+            "evdev": 38,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538239,
+            "eventType": 1,
+            "code": "KeyL",
+            "evdev": 38,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538239,
+            "eventType": 1,
+            "code": "KeyA",
+            "evdev": 30,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538252,
+            "eventType": 1,
+            "code": "KeyA",
+            "evdev": 30,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538252,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538264,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538264,
+            "eventType": 1,
+            "code": "Slash",
+            "evdev": 53,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538274,
+            "eventType": 1,
+            "code": "Slash",
+            "evdev": 53,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538274,
+            "eventType": 1,
+            "code": "KeyH",
+            "evdev": 35,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538287,
+            "eventType": 1,
+            "code": "KeyH",
+            "evdev": 35,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538287,
+            "eventType": 1,
+            "code": "KeyO",
+            "evdev": 24,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538299,
+            "eventType": 1,
+            "code": "KeyO",
+            "evdev": 24,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538299,
+            "eventType": 1,
+            "code": "KeyM",
+            "evdev": 50,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538309,
+            "eventType": 1,
+            "code": "KeyM",
+            "evdev": 50,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538309,
+            "eventType": 1,
+            "code": "KeyE",
+            "evdev": 18,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538322,
+            "eventType": 1,
+            "code": "KeyE",
+            "evdev": 18,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538322,
+            "eventType": 1,
+            "code": "Slash",
+            "evdev": 53,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538334,
+            "eventType": 1,
+            "code": "Slash",
+            "evdev": 53,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538334,
+            "eventType": 1,
+            "code": "KeyD",
+            "evdev": 32,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538345,
+            "eventType": 1,
+            "code": "KeyD",
+            "evdev": 32,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538345,
+            "eventType": 1,
+            "code": "KeyE",
+            "evdev": 18,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538357,
+            "eventType": 1,
+            "code": "KeyE",
+            "evdev": 18,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538357,
+            "eventType": 1,
+            "code": "KeyS",
+            "evdev": 31,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538370,
+            "eventType": 1,
+            "code": "KeyS",
+            "evdev": 31,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538370,
+            "eventType": 1,
+            "code": "KeyK",
+            "evdev": 37,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538382,
+            "eventType": 1,
+            "code": "KeyK",
+            "evdev": 37,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538382,
+            "eventType": 1,
+            "code": "KeyT",
+            "evdev": 20,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538394,
+            "eventType": 1,
+            "code": "KeyT",
+            "evdev": 20,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538394,
+            "eventType": 1,
+            "code": "KeyO",
+            "evdev": 24,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538407,
+            "eventType": 1,
+            "code": "KeyO",
+            "evdev": 24,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538407,
+            "eventType": 1,
+            "code": "KeyP",
+            "evdev": 25,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538419,
+            "eventType": 1,
+            "code": "KeyP",
+            "evdev": 25,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538419,
+            "eventType": 1,
+            "code": "Semicolon",
+            "evdev": 39,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538431,
+            "eventType": 1,
+            "code": "Semicolon",
+            "evdev": 39,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538431,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538442,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538442,
+            "eventType": 1,
+            "code": "KeyP",
+            "evdev": 25,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538455,
+            "eventType": 1,
+            "code": "KeyP",
+            "evdev": 25,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538455,
+            "eventType": 1,
+            "code": "KeyR",
+            "evdev": 19,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538467,
+            "eventType": 1,
+            "code": "KeyR",
+            "evdev": 19,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538467,
+            "eventType": 1,
+            "code": "KeyI",
+            "evdev": 23,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538479,
+            "eventType": 1,
+            "code": "KeyI",
+            "evdev": 23,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538479,
+            "eventType": 1,
+            "code": "KeyN",
+            "evdev": 49,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538491,
+            "eventType": 1,
+            "code": "KeyN",
+            "evdev": 49,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538492,
+            "eventType": 1,
+            "code": "KeyT",
+            "evdev": 20,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538504,
+            "eventType": 1,
+            "code": "KeyT",
+            "evdev": 20,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538504,
+            "eventType": 1,
+            "code": "KeyF",
+            "evdev": 33,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538516,
+            "eventType": 1,
+            "code": "KeyF",
+            "evdev": 33,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538516,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538528,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538528,
+            "eventType": 1,
+            "code": "Quote",
+            "evdev": 40,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538541,
+            "eventType": 1,
+            "code": "Quote",
+            "evdev": 40,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538541,
+            "eventType": 1,
+            "code": "Backslash",
+            "evdev": 43,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538553,
+            "eventType": 1,
+            "code": "Backslash",
+            "evdev": 43,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538553,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538565,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538565,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538575,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538576,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538588,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538588,
+            "eventType": 1,
+            "code": "BracketLeft",
+            "evdev": 26,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538600,
+            "eventType": 1,
+            "code": "BracketLeft",
+            "evdev": 26,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538600,
+            "eventType": 1,
+            "code": "Digit4",
+            "evdev": 5,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538612,
+            "eventType": 1,
+            "code": "Digit4",
+            "evdev": 5,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538612,
+            "eventType": 1,
+            "code": "Digit2",
+            "evdev": 3,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538625,
+            "eventType": 1,
+            "code": "Digit2",
+            "evdev": 3,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538625,
+            "eventType": 1,
+            "code": "Semicolon",
+            "evdev": 39,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538637,
+            "eventType": 1,
+            "code": "Semicolon",
+            "evdev": 39,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538637,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538649,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538649,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538661,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538661,
+            "eventType": 1,
+            "code": "KeyM",
+            "evdev": 50,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538674,
+            "eventType": 1,
+            "code": "KeyM",
+            "evdev": 50,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538674,
+            "eventType": 1,
+            "code": "KeyE",
+            "evdev": 18,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538686,
+            "eventType": 1,
+            "code": "KeyE",
+            "evdev": 18,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538686,
+            "eventType": 1,
+            "code": "Digit5",
+            "evdev": 6,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538698,
+            "eventType": 1,
+            "code": "Digit5",
+            "evdev": 6,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538698,
+            "eventType": 1,
+            "code": "KeyT",
+            "evdev": 20,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538709,
+            "eventType": 1,
+            "code": "KeyT",
+            "evdev": 20,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538709,
+            "eventType": 1,
+            "code": "Digit1",
+            "evdev": 2,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538721,
+            "eventType": 1,
+            "code": "Digit1",
+            "evdev": 2,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538721,
+            "eventType": 1,
+            "code": "Digit8",
+            "evdev": 9,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538733,
+            "eventType": 1,
+            "code": "Digit8",
+            "evdev": 9,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538733,
+            "eventType": 1,
+            "code": "KeyB",
+            "evdev": 48,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538746,
+            "eventType": 1,
+            "code": "KeyB",
+            "evdev": 48,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538746,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538758,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538758,
+            "eventType": 1,
+            "code": "KeyL",
+            "evdev": 38,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538770,
+            "eventType": 1,
+            "code": "KeyL",
+            "evdev": 38,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538770,
+            "eventType": 1,
+            "code": "KeyS",
+            "evdev": 31,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538782,
+            "eventType": 1,
+            "code": "KeyS",
+            "evdev": 31,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538783,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538795,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538795,
+            "eventType": 1,
+            "code": "Digit1",
+            "evdev": 2,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538807,
+            "eventType": 1,
+            "code": "Digit1",
+            "evdev": 2,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538807,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538819,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538819,
+            "eventType": 1,
+            "code": "KeyO",
+            "evdev": 24,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538832,
+            "eventType": 1,
+            "code": "KeyO",
+            "evdev": 24,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538832,
+            "eventType": 1,
+            "code": "KeyK",
+            "evdev": 37,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538844,
+            "eventType": 1,
+            "code": "KeyK",
+            "evdev": 37,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538844,
+            "eventType": 1,
+            "code": "Backslash",
+            "evdev": 43,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538856,
+            "eventType": 1,
+            "code": "Backslash",
+            "evdev": 43,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538856,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538868,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538868,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538881,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538881,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538892,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538892,
+            "eventType": 1,
+            "code": "BracketLeft",
+            "evdev": 26,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538904,
+            "eventType": 1,
+            "code": "BracketLeft",
+            "evdev": 26,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538905,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538917,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538917,
+            "eventType": 1,
+            "code": "KeyM",
+            "evdev": 50,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538929,
+            "eventType": 1,
+            "code": "KeyM",
+            "evdev": 50,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538929,
+            "eventType": 1,
+            "code": "Backslash",
+            "evdev": 43,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538941,
+            "eventType": 1,
+            "code": "Backslash",
+            "evdev": 43,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538941,
+            "eventType": 1,
+            "code": "KeyN",
+            "evdev": 49,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538953,
+            "eventType": 1,
+            "code": "KeyN",
+            "evdev": 49,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538954,
+            "eventType": 1,
+            "code": "Quote",
+            "evdev": 40,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538966,
+            "eventType": 1,
+            "code": "Quote",
+            "evdev": 40,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 538966,
+            "eventType": 1,
+            "code": "Enter",
+            "evdev": 28,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 538966,
+            "eventType": 1,
+            "code": "Enter",
+            "evdev": 28,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 541937,
+            "eventType": 1,
+            "code": "ControlLeft",
+            "evdev": 29,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 541937,
+            "eventType": 1,
+            "code": "KeyD",
+            "evdev": 32,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 541937,
+            "eventType": 1,
+            "code": "KeyD",
+            "evdev": 32,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 541937,
+            "eventType": 1,
+            "code": "ControlLeft",
+            "evdev": 29,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 596831,
+            "eventType": 1,
+            "code": "KeyL",
+            "evdev": 38,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 596843,
+            "eventType": 1,
+            "code": "KeyL",
+            "evdev": 38,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 596843,
+            "eventType": 1,
+            "code": "KeyS",
+            "evdev": 31,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 596855,
+            "eventType": 1,
+            "code": "KeyS",
+            "evdev": 31,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 596856,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 596868,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 596868,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 596880,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 596881,
+            "eventType": 1,
+            "code": "KeyL",
+            "evdev": 38,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 596892,
+            "eventType": 1,
+            "code": "KeyL",
+            "evdev": 38,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 596892,
+            "eventType": 1,
+            "code": "KeyA",
+            "evdev": 30,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 596905,
+            "eventType": 1,
+            "code": "KeyA",
+            "evdev": 30,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 596905,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 596917,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 596917,
+            "eventType": 1,
+            "code": "Slash",
+            "evdev": 53,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 596929,
+            "eventType": 1,
+            "code": "Slash",
+            "evdev": 53,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 596929,
+            "eventType": 1,
+            "code": "KeyH",
+            "evdev": 35,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 596941,
+            "eventType": 1,
+            "code": "KeyH",
+            "evdev": 35,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 596942,
+            "eventType": 1,
+            "code": "KeyO",
+            "evdev": 24,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 596954,
+            "eventType": 1,
+            "code": "KeyO",
+            "evdev": 24,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 596954,
+            "eventType": 1,
+            "code": "KeyM",
+            "evdev": 50,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 596966,
+            "eventType": 1,
+            "code": "KeyM",
+            "evdev": 50,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 596966,
+            "eventType": 1,
+            "code": "KeyE",
+            "evdev": 18,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 596978,
+            "eventType": 1,
+            "code": "KeyE",
+            "evdev": 18,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 596978,
+            "eventType": 1,
+            "code": "Slash",
+            "evdev": 53,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 596990,
+            "eventType": 1,
+            "code": "Slash",
+            "evdev": 53,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 596990,
+            "eventType": 1,
+            "code": "KeyD",
+            "evdev": 32,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597002,
+            "eventType": 1,
+            "code": "KeyD",
+            "evdev": 32,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597002,
+            "eventType": 1,
+            "code": "KeyE",
+            "evdev": 18,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597014,
+            "eventType": 1,
+            "code": "KeyE",
+            "evdev": 18,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597015,
+            "eventType": 1,
+            "code": "KeyS",
+            "evdev": 31,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597027,
+            "eventType": 1,
+            "code": "KeyS",
+            "evdev": 31,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597027,
+            "eventType": 1,
+            "code": "KeyK",
+            "evdev": 37,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597039,
+            "eventType": 1,
+            "code": "KeyK",
+            "evdev": 37,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597039,
+            "eventType": 1,
+            "code": "KeyT",
+            "evdev": 20,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597051,
+            "eventType": 1,
+            "code": "KeyT",
+            "evdev": 20,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597051,
+            "eventType": 1,
+            "code": "KeyO",
+            "evdev": 24,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597063,
+            "eventType": 1,
+            "code": "KeyO",
+            "evdev": 24,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597063,
+            "eventType": 1,
+            "code": "KeyP",
+            "evdev": 25,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597076,
+            "eventType": 1,
+            "code": "KeyP",
+            "evdev": 25,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597076,
+            "eventType": 1,
+            "code": "Semicolon",
+            "evdev": 39,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597088,
+            "eventType": 1,
+            "code": "Semicolon",
+            "evdev": 39,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597088,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597100,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597100,
+            "eventType": 1,
+            "code": "KeyP",
+            "evdev": 25,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597112,
+            "eventType": 1,
+            "code": "KeyP",
+            "evdev": 25,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597112,
+            "eventType": 1,
+            "code": "KeyR",
+            "evdev": 19,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597125,
+            "eventType": 1,
+            "code": "KeyR",
+            "evdev": 19,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597125,
+            "eventType": 1,
+            "code": "KeyI",
+            "evdev": 23,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597137,
+            "eventType": 1,
+            "code": "KeyI",
+            "evdev": 23,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597137,
+            "eventType": 1,
+            "code": "KeyN",
+            "evdev": 49,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597149,
+            "eventType": 1,
+            "code": "KeyN",
+            "evdev": 49,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597149,
+            "eventType": 1,
+            "code": "KeyT",
+            "evdev": 20,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597161,
+            "eventType": 1,
+            "code": "KeyT",
+            "evdev": 20,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597162,
+            "eventType": 1,
+            "code": "KeyF",
+            "evdev": 33,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597174,
+            "eventType": 1,
+            "code": "KeyF",
+            "evdev": 33,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597174,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597186,
+            "eventType": 1,
+            "code": "Space",
+            "evdev": 57,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597186,
+            "eventType": 1,
+            "code": "Quote",
+            "evdev": 40,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597198,
+            "eventType": 1,
+            "code": "Quote",
+            "evdev": 40,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597198,
+            "eventType": 1,
+            "code": "Backslash",
+            "evdev": 43,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597209,
+            "eventType": 1,
+            "code": "Backslash",
+            "evdev": 43,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597209,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597221,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597221,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597233,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597234,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597246,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597246,
+            "eventType": 1,
+            "code": "BracketLeft",
+            "evdev": 26,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597258,
+            "eventType": 1,
+            "code": "BracketLeft",
+            "evdev": 26,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597258,
+            "eventType": 1,
+            "code": "Digit4",
+            "evdev": 5,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597270,
+            "eventType": 1,
+            "code": "Digit4",
+            "evdev": 5,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597270,
+            "eventType": 1,
+            "code": "Digit2",
+            "evdev": 3,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597283,
+            "eventType": 1,
+            "code": "Digit2",
+            "evdev": 3,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597283,
+            "eventType": 1,
+            "code": "Semicolon",
+            "evdev": 39,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597295,
+            "eventType": 1,
+            "code": "Semicolon",
+            "evdev": 39,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597295,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597307,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597307,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597319,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597319,
+            "eventType": 1,
+            "code": "KeyM",
+            "evdev": 50,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597332,
+            "eventType": 1,
+            "code": "KeyM",
+            "evdev": 50,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597332,
+            "eventType": 1,
+            "code": "KeyE",
+            "evdev": 18,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597342,
+            "eventType": 1,
+            "code": "KeyE",
+            "evdev": 18,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597342,
+            "eventType": 1,
+            "code": "Digit5",
+            "evdev": 6,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597355,
+            "eventType": 1,
+            "code": "Digit5",
+            "evdev": 6,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597355,
+            "eventType": 1,
+            "code": "KeyT",
+            "evdev": 20,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597367,
+            "eventType": 1,
+            "code": "KeyT",
+            "evdev": 20,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597367,
+            "eventType": 1,
+            "code": "Digit1",
+            "evdev": 2,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597379,
+            "eventType": 1,
+            "code": "Digit1",
+            "evdev": 2,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597379,
+            "eventType": 1,
+            "code": "Digit8",
+            "evdev": 9,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597391,
+            "eventType": 1,
+            "code": "Digit8",
+            "evdev": 9,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597392,
+            "eventType": 1,
+            "code": "KeyB",
+            "evdev": 48,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597404,
+            "eventType": 1,
+            "code": "KeyB",
+            "evdev": 48,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597404,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597416,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597416,
+            "eventType": 1,
+            "code": "KeyL",
+            "evdev": 38,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597428,
+            "eventType": 1,
+            "code": "KeyL",
+            "evdev": 38,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597428,
+            "eventType": 1,
+            "code": "KeyS",
+            "evdev": 31,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597440,
+            "eventType": 1,
+            "code": "KeyS",
+            "evdev": 31,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597440,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597453,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597453,
+            "eventType": 1,
+            "code": "Digit2",
+            "evdev": 3,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597465,
+            "eventType": 1,
+            "code": "Digit2",
+            "evdev": 3,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597465,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597476,
+            "eventType": 1,
+            "code": "Minus",
+            "evdev": 12,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597476,
+            "eventType": 1,
+            "code": "KeyO",
+            "evdev": 24,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597488,
+            "eventType": 1,
+            "code": "KeyO",
+            "evdev": 24,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597488,
+            "eventType": 1,
+            "code": "KeyK",
+            "evdev": 37,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597500,
+            "eventType": 1,
+            "code": "KeyK",
+            "evdev": 37,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597500,
+            "eventType": 1,
+            "code": "Backslash",
+            "evdev": 43,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597511,
+            "eventType": 1,
+            "code": "Backslash",
+            "evdev": 43,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597511,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597523,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597523,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597536,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597536,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597548,
+            "eventType": 1,
+            "code": "Digit3",
+            "evdev": 4,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597548,
+            "eventType": 1,
+            "code": "BracketLeft",
+            "evdev": 26,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597560,
+            "eventType": 1,
+            "code": "BracketLeft",
+            "evdev": 26,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597560,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597572,
+            "eventType": 1,
+            "code": "Digit0",
+            "evdev": 11,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597573,
+            "eventType": 1,
+            "code": "KeyM",
+            "evdev": 50,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597585,
+            "eventType": 1,
+            "code": "KeyM",
+            "evdev": 50,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597585,
+            "eventType": 1,
+            "code": "Backslash",
+            "evdev": 43,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597597,
+            "eventType": 1,
+            "code": "Backslash",
+            "evdev": 43,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597597,
+            "eventType": 1,
+            "code": "KeyN",
+            "evdev": 49,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597609,
+            "eventType": 1,
+            "code": "KeyN",
+            "evdev": 49,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597609,
+            "eventType": 1,
+            "code": "Quote",
+            "evdev": 40,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597621,
+            "eventType": 1,
+            "code": "Quote",
+            "evdev": 40,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 597622,
+            "eventType": 1,
+            "code": "Enter",
+            "evdev": 28,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 597622,
+            "eventType": 1,
+            "code": "Enter",
+            "evdev": 28,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 600466,
+            "eventType": 1,
+            "code": "ControlLeft",
+            "evdev": 29,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 600466,
+            "eventType": 1,
+            "code": "KeyD",
+            "evdev": 32,
+            "value": 1,
+            "sync": 0
+          },
+          {
+            "atMs": 600466,
+            "eventType": 1,
+            "code": "KeyD",
+            "evdev": 32,
+            "value": 0,
+            "sync": 0
+          },
+          {
+            "atMs": 600466,
+            "eventType": 1,
+            "code": "ControlLeft",
+            "evdev": 29,
+            "value": 0,
+            "sync": 0
+          }
+        ],
+        "diagnostics": []
+      },
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "framesReceived": 71,
+        "successfulPresents": 71,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": null,
+        "gpu": {
+          "framesReceived": 71,
+          "enqueued": 71,
+          "coalesced": 0,
+          "presented": 71,
+          "successfulPresents": 71,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 0,
+          "uploadedBytes": 158832440,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 557,
+            "y": 13,
+            "width": 696,
+            "height": 494
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        },
+        "errors": []
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 11596,
+        "totalSliceMs": 600325.7700008154,
+        "averageSliceMs": 51.77007330120864,
+        "maxSliceMs": 518.1150000095367,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 53
+          },
+          {
+            "leMs": 8,
+            "count": 496
+          },
+          {
+            "leMs": 16,
+            "count": 589
+          },
+          {
+            "leMs": 32,
+            "count": 1082
+          },
+          {
+            "leMs": 64,
+            "count": 5899
+          },
+          {
+            "leMs": 128,
+            "count": 3408
+          },
+          {
+            "leMs": 256,
+            "count": 57
+          },
+          {
+            "leMs": 512,
+            "count": 11
+          },
+          {
+            "leMs": 1000,
+            "count": 1
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 520.0199999809265,
+        "requestedInstructions": 5798000000,
+        "retiredInstructions": 5797527785,
+        "fetchWaits": 274,
+        "fetchRequestedChunks": 303,
+        "fetchWaitTotalMs": 591.8499999046326,
+        "fetchWaitMaxMs": 10.025000035762787,
+        "outputCalls": 142,
+        "outputBytes": 14355,
+        "inputCalls": 0,
+        "inputBytes": 0,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 11598,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "fetchStats": {
+        "fetches": 374,
+        "bytes": 49020928,
+        "error": null,
+        "cache": {
+          "hits": 39707444,
+          "misses": 35185128,
+          "evictions": 0,
+          "residentBytes": 49020928,
+          "budgetBytes": 268435456
+        },
+        "prefetch": {
+          "issued": 71,
+          "used": 48,
+          "profileEntries": 0,
+          "accuracyPct": 67
+        }
+      },
+      "stateDigest": "23cf9d43d3b70e6bc879bd9316e336205ad208efcf822848feb93b0cc8c0bb7e",
+      "paused": true,
+      "error": null
+    }
+  },
+  "screenshot": {
+    "path": "evidence/e5-t18b/desktop-terminal-input.png",
+    "sha256": "45456a63a456737cf9a46709083638bf6131b7e0925092a5bf5620579af37ef2"
+  },
+  "sourceUnchanged": true,
+  "sourceDistParity": {
+    "equal": true,
+    "files": [
+      {
+        "source": "web/desktop-terminal.html",
+        "dist": "web/dist/desktop-terminal.html",
+        "sha256": "a953752cb699c7d5b5ac9569b8b39293e8eece1c40c05be665d89dca5a019f89",
+        "equal": true
+      },
+      {
+        "source": "web/desktop-terminal.js",
+        "dist": "web/dist/desktop-terminal.js",
+        "sha256": "c6cc1fe01c724e8a9cc2aba3153735291f3ac70035bbe6150d75fe3916769a68",
+        "equal": true
+      },
+      {
+        "source": "web/roadmap.js",
+        "dist": "web/dist/roadmap.js",
+        "sha256": "850db97f2a96ae57abe8c8c127df84af404e93bd4777e7dc9e374faedab3d771",
+        "equal": true
+      },
+      {
+        "source": "web/src/input/pointer.js",
+        "dist": "web/dist/src/input/pointer.js",
+        "sha256": "b5442e60b877e36077ee451eeec6da46da97b246d97afa8a9c94ea4e4cb231d5",
+        "equal": true
+      },
+      {
+        "source": "web/src/input/keyboard.js",
+        "dist": "web/dist/src/input/keyboard.js",
+        "sha256": "53a664fed275830498b04d02f6a118ce33702589744e170a1a5749c2f1fa4a67",
+        "equal": true
+      },
+      {
+        "source": "web/src/input/capture.js",
+        "dist": "web/dist/src/input/capture.js",
+        "sha256": "ae0a676d181ec9118118378e5767f755ae89ff8890f60ef9bd45a4f6ed70f369",
+        "equal": true
+      },
+      {
+        "source": "web/src/input/reconciliation.js",
+        "dist": "web/dist/src/input/reconciliation.js",
+        "sha256": "6ff57347fd7818531e17ca1b00456192258d76532299ba642422f057582fe36d",
+        "equal": true
+      }
+    ],
+    "deployedAppLink": true
+  },
+  "transcript": {
+    "path": "evidence/e5-t18b/desktop-terminal-browser-console.log",
+    "sha256": "5fa145ba9dc48aa47d67fc4833eec3f083db9b487dabd6349f5d911d78f5657b"
+  },
+  "result": "passed"
+}

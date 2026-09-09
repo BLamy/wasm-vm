@@ -1,0 +1,13 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('.rm-g-label').filter({ hasText: 'E5-T26j' })[22m
+
+    at /Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t18e-demo-smoke.mjs:52:63 {
+  name: 'TimeoutError'
+}
+
+Node.js v24.20.0

@@ -1,0 +1,706 @@
+node --check tools/verify/e5-t18e-desktop-bringup.mjs
+node --test tools/verify/e5-t18e-publication.test.mjs tools/verify/e5-t18d-surface.test.mjs
+✔ neutral wallpaper with a contrasting panel counts as a desktop (2.424542ms)
+✔ black and flat-gray scanouts do not claim desktop readiness (1.372958ms)
+✔ sparse login text is not confused with a desktop (1.308625ms)
+✔ all chunk positions, including duplicate objects, reconstruct the image (7.25425ms)
+✔ one mutated published byte is rejected (6.867ms)
+✔ a mutated published manifest is rejected (1.27825ms)
+✔ missing published object fails closed (1.183084ms)
+✔ self-consistent manifest cannot change required dimensions (5.481125ms)
+✔ reordered valid chunks cannot claim the original full-image hash (1.321875ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 55.463833
+node tools/verify/e5-t18e-desktop-bringup.mjs
+E5T18E_COMMAND=bash tools/image/desktop.sh
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling libc v0.2.186
+   Compiling tinyvec_macros v0.1.1
+   Compiling cfg-if v1.0.4
+   Compiling tinyvec v1.12.0
+   Compiling generic-array v0.14.7
+   Compiling unicode-normalization v0.1.25
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-file-agent-storage v0.0.0 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/file-agent-storage)
+   Compiling wasm-vm-file-agent v0.0.0 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/file-agent)
+    Finished `release` profile [optimized + debuginfo] target(s) in 8.63s
+   Compiling wasm-vm-agent-protocol v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/agent-protocol)
+   Compiling wasm-vm-guest-agent v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/guest/agent)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.45s
+   Compiling wasm-vm-wvseccomp v0.0.0 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/wvseccomp)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.22s
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.20/community/riscv64/APKINDEX.tar.gz
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.20/main/riscv64/APKINDEX.tar.gz
+(1/190) Installing musl (1.2.5-r3)
+(2/190) Installing libeconf (0.6.3-r0)
+(3/190) Installing agetty (2.40.1-r1)
+(4/190) Installing ifupdown-ng (0.12.1-r5)
+(5/190) Installing agetty-openrc (0.54-r1)
+(6/190) Installing alpine-baselayout-data (3.6.5-r0)
+(7/190) Installing busybox (1.36.1-r31)
+(8/190) Installing busybox-binsh (1.36.1-r31)
+(9/190) Installing alpine-baselayout (3.6.5-r0)
+(10/190) Installing libcap2 (2.78-r0)
+(11/190) Installing openrc (0.54-r1)
+(12/190) Installing mdev-conf (4.7-r0)
+(13/190) Installing busybox-mdev-openrc (1.36.1-r31)
+(14/190) Installing alpine-conf (3.18.1-r1)
+(15/190) Installing alpine-keys (2.4-r1)
+(16/190) Installing alpine-release (3.20.10-r0)
+(17/190) Installing ca-certificates-bundle (20260413-r0)
+(18/190) Installing libcrypto3 (3.3.7-r0)
+(19/190) Installing libssl3 (3.3.7-r0)
+(20/190) Installing ssl_client (1.36.1-r31)
+(21/190) Installing zlib (1.3.2-r0)
+(22/190) Installing apk-tools (2.14.4-r1)
+(23/190) Installing busybox-openrc (1.36.1-r31)
+(24/190) Installing busybox-suid (1.36.1-r31)
+(25/190) Installing scanelf (1.3.7-r2)
+(26/190) Installing musl-utils (1.2.5-r3)
+(27/190) Installing alpine-base (3.20.10-r0)
+(28/190) Installing libblkid (2.40.1-r1)
+(29/190) Installing blkid (2.40.1-r1)
+(30/190) Installing brotli-libs (1.1.0-r2)
+(31/190) Installing c-ares (1.33.1-r0)
+(32/190) Installing ca-certificates (20260413-r0)
+(33/190) Installing libuuid (2.40.1-r1)
+(34/190) Installing libfdisk (2.40.1-r1)
+(35/190) Installing libmount (2.40.1-r1)
+(36/190) Installing ncurses-terminfo-base (6.4_p20240420-r2)
+(37/190) Installing libncursesw (6.4_p20240420-r2)
+(38/190) Installing libsmartcols (2.40.1-r1)
+(39/190) Installing cfdisk (2.40.1-r1)
+(40/190) Installing libunistring (1.2-r0)
+(41/190) Installing libidn2 (2.3.7-r0)
+(42/190) Installing nghttp2-libs (1.62.1-r0)
+(43/190) Installing libpsl (0.21.5-r1)
+(44/190) Installing zstd-libs (1.5.6-r0)
+(45/190) Installing libcurl (8.14.1-r2)
+(46/190) Installing curl (8.14.1-r2)
+(47/190) Installing dmesg (2.40.1-r1)
+(48/190) Installing libcom_err (1.47.0-r5)
+(49/190) Installing e2fsprogs-libs (1.47.0-r5)
+(50/190) Installing e2fsprogs (1.47.0-r5)
+(51/190) Installing udev-init-scripts (35-r1)
+(52/190) Installing udev-init-scripts-openrc (35-r1)
+(53/190) Installing eudev-libs (3.2.14-r2)
+(54/190) Installing xz-libs (5.8.3-r0)
+(55/190) Installing kmod-libs (32-r0)
+(56/190) Installing eudev (3.2.14-r2)
+(57/190) Installing eudev-openrc (3.2.14-r2)
+(58/190) Installing findmnt (2.40.1-r1)
+(59/190) Installing flock (2.40.1-r1)
+(60/190) Installing libexpat (2.8.1-r0)
+(61/190) Installing libbz2 (1.0.8-r6)
+(62/190) Installing libpng (1.6.57-r0)
+(63/190) Installing freetype (2.13.2-r0)
+(64/190) Installing fontconfig (2.15.0-r1)
+(65/190) Installing encodings (1.0.7-r1)
+(66/190) Installing libfontenc (1.1.8-r0)
+(67/190) Installing mkfontscale (1.2.2-r6)
+(68/190) Installing font-dejavu (2.37-r5)
+(69/190) Installing ncurses-terminfo (6.4_p20240420-r2)
+(70/190) Installing libffi (3.4.6-r0)
+(71/190) Installing libintl (0.22.5-r0)
+(72/190) Installing pcre2 (10.43-r0)
+(73/190) Installing glib (2.80.5-r0)
+(74/190) Installing graphite2 (1.3.14-r6)
+(75/190) Installing harfbuzz (8.5.0-r0)
+(76/190) Installing pixman (0.43.2-r0)
+(77/190) Installing utf8proc (2.9.0-r0)
+(78/190) Installing fcft (3.1.8-r0)
+(79/190) Installing wayland-libs-client (1.22.0-r4)
+(80/190) Installing wayland-libs-cursor (1.22.0-r4)
+(81/190) Installing xkeyboard-config (2.41-r0)
+(82/190) Installing libxml2 (2.12.10-r0)
+(83/190) Installing libxkbcommon (1.7.0-r0)
+(84/190) Installing foot (1.17.2-r0)
+(85/190) Installing fstrim (2.40.1-r1)
+(86/190) Installing hexdump (2.40.1-r1)
+(87/190) Installing libelf (0.191-r0)
+(88/190) Installing libmnl (1.0.5-r2)
+(89/190) Installing iproute2-minimal (6.9.0-r0)
+(90/190) Installing ifupdown-ng-iproute2 (0.12.1-r5)
+(91/190) Installing libxtables (1.8.10-r3)
+(92/190) Installing iproute2-tc (6.9.0-r0)
+(93/190) Installing iproute2-ss (6.9.0-r0)
+(94/190) Installing iproute2 (6.9.0-r0)
+(95/190) Installing libcap-ng (0.8.5-r0)
+(96/190) Installing skalibs (2.14.1.1-r0)
+(97/190) Installing utmps-libs (0.1.2.2-r1)
+(98/190) Installing linux-pam (1.6.0-r0)
+(99/190) Installing logger (2.40.1-r1)
+(100/190) Installing losetup (2.40.1-r1)
+(101/190) Installing lsblk (2.40.1-r1)
+(102/190) Installing mcookie (2.40.1-r1)
+(103/190) Installing mount (2.40.1-r1)
+(104/190) Installing nano (8.0-r0)
+(105/190) Installing partx (2.40.1-r1)
+(106/190) Installing runuser (2.40.1-r1)
+(107/190) Installing seatd (0.8.0-r0)
+(108/190) Installing seatd-openrc (0.8.0-r0)
+(109/190) Installing setarch (2.40.1-r1)
+(110/190) Installing setpriv (2.40.1-r1)
+(111/190) Installing sfdisk (2.40.1-r1)
+(112/190) Installing sqlite-libs (3.45.3-r3)
+(113/190) Installing umount (2.40.1-r1)
+(114/190) Installing util-linux (2.40.1-r1)
+(115/190) Installing util-linux-misc (2.40.1-r1)
+(116/190) Installing uuidgen (2.40.1-r1)
+(117/190) Installing wipefs (2.40.1-r1)
+(118/190) Installing util-linux-openrc (2.40.1-r1)
+(119/190) Installing mesa (24.0.9-r1)
+(120/190) Installing libxau (1.0.11-r4)
+(121/190) Installing libmd (1.1.0-r0)
+(122/190) Installing libbsd (0.12.2-r0)
+(123/190) Installing libxdmcp (1.1.5-r1)
+(124/190) Installing libxcb (1.16.1-r0)
+(125/190) Installing libx11 (1.8.9-r1)
+(126/190) Installing hwdata-pci (0.382-r0)
+(127/190) Installing libpciaccess (0.18.1-r0)
+(128/190) Installing libdrm (2.4.120-r0)
+(129/190) Installing wayland-libs-server (1.22.0-r4)
+(130/190) Installing mesa-gbm (24.0.9-r1)
+(131/190) Installing libgcc (13.2.1_git20240309-r1)
+(132/190) Installing mesa-glapi (24.0.9-r1)
+(133/190) Installing libxshmfence (1.3.2-r6)
+(134/190) Installing mesa-egl (24.0.9-r1)
+(135/190) Installing mesa-gles (24.0.9-r1)
+(136/190) Installing libxext (1.3.6-r2)
+(137/190) Installing libxrender (0.9.11-r5)
+(138/190) Installing cairo (1.18.4-r0)
+(139/190) Installing libevdev (1.13.1-r0)
+(140/190) Installing libxfixes (6.0.1-r4)
+(141/190) Installing libxxf86vm (1.1.5-r6)
+(142/190) Installing mesa-gl (24.0.9-r1)
+(143/190) Installing libxi (1.8.1-r4)
+(144/190) Installing libxv (1.0.12-r5)
+(145/190) Installing alsa-lib (1.2.11-r0)
+(146/190) Installing cdparanoia-libs (10.2-r14)
+(147/190) Installing graphene (1.10.8-r4)
+(148/190) Installing gstreamer (1.24.10-r0)
+(149/190) Installing libjpeg-turbo (3.0.3-r0)
+(150/190) Installing libogg (1.3.5-r5)
+(151/190) Installing opus (1.5.2-r0)
+(152/190) Installing orc (0.4.40-r0)
+(153/190) Installing libxft (2.3.8-r3)
+(154/190) Installing fribidi (1.0.15-r0)
+(155/190) Installing pango (1.52.2-r0)
+(156/190) Installing libtheora (1.1.1-r18)
+(157/190) Installing libvorbis (1.3.7-r2)
+(158/190) Installing wayland-libs-egl (1.22.0-r4)
+(159/190) Installing gst-plugins-base (1.24.10-r0)
+(160/190) Installing mtdev (1.1.6-r3)
+(161/190) Installing libinput-libs (1.25.0-r0)
+(162/190) Installing libinput-udev (1.25.0-r0)
+(163/190) Installing lcms2 (2.19-r0)
+(164/190) Installing dbus-libs (1.14.10-r1)
+(165/190) Installing avahi-libs (0.8-r17)
+(166/190) Installing gmp (6.3.0-r1)
+(167/190) Installing nettle (3.10.2-r0)
+(168/190) Installing libtasn1 (4.21.0-r0)
+(169/190) Installing p11-kit (0.25.3-r0)
+(170/190) Installing gnutls (3.8.13-r0)
+(171/190) Installing libstdc++ (13.2.1_git20240309-r1)
+(172/190) Installing libunwind (1.8.1-r0)
+(173/190) Installing yaml (0.2.5-r2)
+(174/190) Installing libcamera (0.3.0-r0)
+(175/190) Installing speexdsp (1.2.1-r2)
+(176/190) Installing libuv (1.48.0-r0)
+(177/190) Installing roc-toolkit-libs (0.3.0-r0)
+(178/190) Installing libflac (1.4.3-r1)
+(179/190) Installing libsndfile (1.2.2-r1)
+(180/190) Installing pipewire-libs (1.0.6-r1)
+(181/190) Installing libsharpyuv (1.3.2-r0)
+(182/190) Installing libwebp (1.3.2-r0)
+(183/190) Installing libweston (12.0.4-r0)
+(184/190) Installing weston (12.0.4-r0)
+(185/190) Installing libelogind (252.9-r5)
+(186/190) Installing libseat (0.8.0-r0)
+(187/190) Installing libva (2.21.0-r0)
+(188/190) Installing weston-backend-drm (12.0.4-r0)
+(189/190) Installing weston-shell-desktop (12.0.4-r0)
+(190/190) Installing wl-clipboard (2.2.0-r1)
+OK: 100 MiB in 190 packages
+OK: 100 MiB in 190 packages
+  busybox applets linked (/sbin/init -> /bin/busybox)
+Creating regular file /out/alpine-rootfs.ext4
+--- fsck.ext4 -f -n ---
+e2fsck 1.47.0 (5-Feb-2023)
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+root: 4719/65536 files (0.1% non-contiguous), 38601/262144 blocks
+--- foreign-ELF scan (every ELF must be RISC-V) ---
+  (clean — riscv64 only)
+Alpine riscv64 rootfs built (signatures verified, package lock enforced):
+ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908  MANIFEST.txt
+ab73efab8eac885690def228e3d2080d4ed9f57801e642037f12fd0186e7e2d5  FILE-MANIFEST.txt
+-rw-r--r--  1 blamy  staff  1073741824 Sep  6 01:04 target/e5-t18e/run-CaaCRb/image/alpine-rootfs.ext4
+E5T17B_IMAGE=target/e5-t18e/run-CaaCRb/image/alpine-rootfs.ext4
+E5T17B_IMAGE_SHA256=e75b04caadd9616915b323497c92df1d5a9d11d55c877afcc95d208dde302416
+E5T17B_PACKAGE_MANIFEST=target/e5-t18e/run-CaaCRb/image/MANIFEST.txt
+E5T17B_FILE_MANIFEST=target/e5-t18e/run-CaaCRb/image/FILE-MANIFEST.txt
+E5T18E_COMMAND=cargo build --release -p wasm-vm-cli --bin wasm-vm
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling libc v0.2.186
+   Compiling serde_core v1.0.228
+   Compiling serde v1.0.228
+   Compiling cfg-if v1.0.4
+   Compiling log v0.4.33
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v2.0.1
+   Compiling stable_deref_trait v1.2.1
+   Compiling version_check v0.9.5
+   Compiling cranelift-srcgen v0.122.0
+   Compiling bitflags v2.13.0
+   Compiling typenum v1.20.1
+   Compiling memchr v2.8.2
+   Compiling libm v0.2.16
+   Compiling hashbrown v0.17.1
+   Compiling cranelift-isle v0.122.0
+   Compiling cranelift-assembler-x64-meta v0.122.0
+   Compiling generic-array v0.14.7
+   Compiling equivalent v1.0.2
+   Compiling foldhash v0.1.5
+   Compiling cranelift-bitset v0.122.0
+   Compiling hashbrown v0.15.5
+   Compiling cranelift-codegen-shared v0.122.0
+   Compiling target-lexicon v0.13.5
+   Compiling crc32fast v1.5.0
+   Compiling allocator-api2 v0.2.21
+   Compiling anyhow v1.0.104
+   Compiling thiserror v2.0.18
+   Compiling bumpalo v3.20.3
+   Compiling arbitrary v1.4.2
+   Compiling rustc-hash v2.1.3
+   Compiling litemap v0.8.2
+   Compiling writeable v0.6.3
+   Compiling zerocopy v0.8.52
+   Compiling icu_normalizer_data v2.2.0
+   Compiling wasmparser v0.235.0
+   Compiling utf8_iter v1.0.4
+   Compiling syn v2.0.118
+   Compiling syn v3.0.3
+   Compiling cranelift-assembler-x64 v0.122.0
+   Compiling object v0.36.7
+   Compiling cranelift-control v0.122.0
+   Compiling icu_properties_data v2.2.0
+   Compiling jobserver v0.1.35
+   Compiling getrandom v0.2.17
+   Compiling cc v1.2.65
+   Compiling cpufeatures v0.2.17
+   Compiling block-buffer v0.10.4
+   Compiling displaydoc v0.2.7
+   Compiling indexmap v2.14.0
+   Compiling crypto-common v0.1.7
+   Compiling wasmtime-internal-math v35.0.0
+   Compiling digest v0.10.7
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling ring v0.17.14
+   Compiling rustix v1.1.4
+   Compiling synstructure v0.13.2
+   Compiling itoa v1.0.18
+   Compiling gimli v0.31.1
+   Compiling wasm-encoder v0.235.0
+   Compiling semver v1.0.28
+   Compiling zeroize v1.9.0
+   Compiling pkg-config v0.3.33
+   Compiling byteorder v1.5.0
+   Compiling rustls-pki-types v1.15.1
+   Compiling sha2 v0.10.9
+   Compiling zstd-sys v2.0.16+zstd.1.5.7
+   Compiling rand_core v0.6.4
+   Compiling errno v0.3.14
+   Compiling bytes v1.12.0
+   Compiling leb128fmt v0.1.0
+   Compiling termcolor v1.4.1
+   Compiling httparse v1.10.1
+   Compiling serde_derive v1.0.228
+   Compiling zerofrom-derive v0.1.7
+   Compiling yoke-derive v0.8.2
+   Compiling zerovec-derive v0.11.3
+   Compiling pulley-macros v35.0.0
+   Compiling thiserror-impl v2.0.18
+   Compiling pulley-interpreter v35.0.0
+   Compiling wasmtime-internal-versioned-export-macros v35.0.0
+   Compiling utf8parse v0.2.2
+   Compiling thiserror v1.0.69
+   Compiling anstyle-parse v1.0.0
+   Compiling zerofrom v0.1.8
+   Compiling thiserror-impl v1.0.69
+   Compiling ppv-lite86 v0.2.21
+   Compiling cranelift-codegen-meta v0.122.0
+   Compiling aho-corasick v1.1.4
+   Compiling once_cell v1.21.4
+   Compiling rand_chacha v0.3.1
+   Compiling yoke v0.8.3
+   Compiling untrusted v0.9.0
+   Compiling anstyle v1.0.14
+   Compiling anstyle-query v1.1.5
+   Compiling regex-syntax v0.8.11
+   Compiling colorchoice v1.0.5
+   Compiling zmij v1.0.21
+   Compiling pin-project-lite v0.2.17
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling wasmtime-internal-unwinder v35.0.0
+   Compiling either v1.16.0
+   Compiling heapless v0.9.3
+   Compiling regex-automata v0.4.14
+   Compiling cobs v0.3.0
+   Compiling cranelift-codegen v0.122.0
+   Compiling itertools v0.14.0
+   Compiling anstream v1.0.0
+   Compiling zerovec v0.11.6
+   Compiling zerotrie v0.2.4
+   Compiling smallvec v1.15.2
+   Compiling regalloc2 v0.12.2
+   Compiling cranelift-entity v0.122.0
+   Compiling cranelift-bforest v0.122.0
+   Compiling postcard v1.1.3
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/core)
+   Compiling rand v0.8.6
+   Compiling wasmtime v35.0.0
+   Compiling tinystr v0.8.3
+   Compiling icu_locale_core v2.2.0
+   Compiling potential_utf v0.1.5
+   Compiling icu_collections v2.2.0
+   Compiling http v1.4.2
+   Compiling tokio-macros v2.7.0
+   Compiling icu_provider v2.2.0
+   Compiling hash32 v0.3.1
+   Compiling icu_properties v2.2.0
+   Compiling icu_normalizer v2.2.0
+   Compiling sha1 v0.10.6
+   Compiling socket2 v0.6.4
+   Compiling mio v1.2.1
+   Compiling utf-8 v0.7.6
+   Compiling idna_adapter v1.2.2
+   Compiling data-encoding v2.11.0
+   Compiling rustls v0.23.42
+   Compiling adler2 v2.0.1
+   Compiling futures-task v0.3.32
+   Compiling futures-core v0.3.32
+   Compiling futures-sink v0.3.32
+   Compiling slab v0.4.12
+   Compiling serde_json v1.0.150
+   Compiling tinyvec_macros v0.1.1
+   Compiling percent-encoding v2.3.2
+   Compiling simd-adler32 v0.3.9
+   Compiling smoltcp v0.13.1
+   Compiling zstd-safe v7.2.4
+   Compiling miniz_oxide v0.8.9
+   Compiling form_urlencoded v1.2.2
+   Compiling rustls-webpki v0.103.13
+   Compiling futures-util v0.3.32
+   Compiling tinyvec v1.12.0
+   Compiling wasmprinter v0.235.0
+   Compiling tungstenite v0.24.0
+   Compiling tokio v1.52.3
+   Compiling idna v1.1.0
+   Compiling wasmtime-environ v35.0.0
+   Compiling regex v1.12.4
+   Compiling webpki-roots v1.0.9
+   Compiling wasmtime-internal-jit-icache-coherence v35.0.0
+   Compiling mach2 v0.4.3
+   Compiling wasmtime-internal-asm-macros v35.0.0
+   Compiling wasmtime-internal-slab v35.0.0
+   Compiling bitflags v1.3.2
+   Compiling clap_lex v1.1.0
+   Compiling strsim v0.11.1
+   Compiling wasm-vm-wasm-emit v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/wasm-emit)
+   Compiling subtle v2.6.1
+   Compiling heck v0.5.0
+   Compiling managed v0.8.0
+   Compiling clap_derive v4.6.1
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/jit-translate)
+   Compiling tokio-tungstenite v0.24.0
+   Compiling clap_builder v4.6.0
+   Compiling env_filter v2.0.0
+   Compiling webpki-roots v0.26.11
+   Compiling url v2.5.8
+   Compiling unicode-normalization v0.1.25
+   Compiling flate2 v1.1.9
+   Compiling xattr v1.6.1
+   Compiling filetime v0.2.29
+   Compiling jiff v0.2.31
+   Compiling base64 v0.22.1
+   Compiling ureq v2.12.1
+   Compiling tar v0.4.46
+   Compiling clap v4.6.1
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/slirp)
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/storage)
+   Compiling env_logger v0.11.11
+   Compiling memmap2 v0.9.11
+   Compiling wasm-vm-agent-protocol v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/agent-protocol)
+   Compiling zstd v0.13.3
+   Compiling cranelift-native v0.122.0
+   Compiling cranelift-frontend v0.122.0
+   Compiling wasmtime-internal-cranelift v35.0.0
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/jit-runtime)
+   Compiling wasm-vm-cli v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/cli)
+warning: unused variable: `display_metrics`
+   --> crates/cli/src/boot.rs:624:52
+    |
+624 |         let (mut m, uart, agent_state, _gpu_state, display_metrics) =
+    |                                                    ^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_display_metrics`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-cli` (bin "wasm-vm") generated 1 warning (run `cargo fix --bin "wasm-vm" -p wasm-vm-cli` to apply 1 suggestion)
+    Finished `release` profile [optimized + debuginfo] target(s) in 35.57s
+E5T18E_COMMAND=target/release/wasm-vm chunk /Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/target/e5-t18e/run-CaaCRb/image/alpine-rootfs.ext4 --out /Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/target/e5-t18e/run-CaaCRb/chunks
+chunked 1073741824 bytes into 8192 × 131072-byte split chunks → /Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/target/e5-t18e/run-CaaCRb/chunks
+{"image_len":1073741824,"chunk_size":131072,"chunks":8192,"layout":"split"}
+E5T18E_COMMAND=make web-dist
+bash tools/build-web-dist.sh
+[web-dist] building wasm + installing pinned deps (make web-build)…
+wasm-pack build crates/wasm --target web
+[INFO]: 🎯  Checking for the Wasm target...
+[INFO]: 🌀  Compiling to Wasm...
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling cfg-if v1.0.4
+   Compiling version_check v0.9.5
+   Compiling rustversion v1.0.22
+   Compiling bumpalo v3.20.3
+   Compiling typenum v1.20.1
+   Compiling once_cell v1.21.4
+   Compiling futures-core v0.3.32
+   Compiling futures-task v0.3.32
+   Compiling slab v0.4.12
+   Compiling pin-project-lite v0.2.17
+   Compiling serde_core v1.0.228
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling log v0.4.33
+   Compiling zmij v1.0.21
+   Compiling smallvec v1.15.2
+   Compiling heapless v0.9.3
+   Compiling bitflags v2.13.0
+   Compiling byteorder v1.5.0
+   Compiling serde v1.0.228
+   Compiling futures-util v0.3.32
+   Compiling generic-array v0.14.7
+   Compiling smoltcp v0.13.1
+   Compiling hash32 v0.3.1
+   Compiling serde_json v1.0.150
+   Compiling stable_deref_trait v1.2.1
+   Compiling tinyvec_macros v0.1.1
+   Compiling tinyvec v1.12.0
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.2
+   Compiling managed v0.8.0
+   Compiling bitflags v1.3.2
+   Compiling unicode-normalization v0.1.25
+   Compiling wasm-vm-wasm-emit v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/wasm-emit)
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/core)
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/slirp)
+   Compiling wasm-bindgen-macro v0.2.126
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/storage)
+   Compiling js-sys v0.3.103
+   Compiling console_error_panic_hook v0.1.7
+   Compiling web-sys v0.3.103
+   Compiling getrandom v0.2.17
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/e5-t18e-final.20gEr1/repo/crates/wasm)
+    Finished `release` profile [optimized + debuginfo] target(s) in 13.46s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[INFO]: Optimizing wasm binaries with `wasm-opt`...
+[INFO]: License key is set in Cargo.toml but no LICENSE file(s) were found; Please add the LICENSE file(s) to your project directory
+[INFO]: ✨   Done in 14.54s
+[INFO]: 📦   Your wasm pkg is ready to publish at crates/wasm/pkg.
+cd web && npm ci --no-audit --no-fund
+
+added 7 packages in 434ms
+npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn install-scripts   fsevents@2.3.2 (install: (install scripts present))
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+mkdir -p web/pkg web/assets/riscv-tests
+cp -R crates/wasm/pkg/. web/pkg/
+cp guest/prebuilt/hello.elf guest/prebuilt/loops.elf web/assets/
+cp tests/riscv-tests-bin/* web/assets/riscv-tests/
+# Boot artifacts must live UNDER web/ (the Pages publish_dir) so they deploy with the site.
+# Paths mirror the relative URLs in web/artifacts.json (regenerated by tools/gen-web-manifest.sh).
+mkdir -p web/releases/kernel/6.6.63 web/releases/initramfs
+cp releases/kernel/6.6.63/Image web/releases/kernel/6.6.63/Image
+cp releases/initramfs/initramfs.cpio.gz web/releases/initramfs/initramfs.cpio.gz
+# E4 restore-on-first-load: the (optional) compressed busybox boot snapshot, if built. Small
+# enough to ship on Pages (deploy-cloudflare.sh keeps its URL relative, unlike kernel/initramfs).
+bash tools/gen-web-manifest.sh
+wrote web/artifacts.json:
+{
+  "generated": "content-hashed; regenerate with tools/gen-web-manifest.sh",
+  "artifacts": {
+    "kernel": { "url": "releases/kernel/6.6.63/Image", "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce", "size": 24208896 },
+    "initramfs": { "url": "releases/initramfs/initramfs.cpio.gz", "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563", "size": 1151596 },
+    "bootSnapshot": { "url": "releases/boot-snapshot/busybox-ready.snap.gz", "sha256": "ba3168696638db573173b4d266f5234acd01fb2fabe452cc5a1dfde483a61d33", "size": 10983666 }
+  }
+}
+[web-dist] assembling web/dist …
+[web-dist] deploy root: / = landing, /app.html = app
+[web-dist] stamped sw.js app-shell version=ef3a9385f573
+[web-dist] done —  34M in web/dist (boot artifacts added at deploy time)
+E5T18E_REBUILT={"schema":"wasm-vm.e5-t18d.image-lock.v1","imageSha256":"e75b04caadd9616915b323497c92df1d5a9d11d55c877afcc95d208dde302416","chunkManifestSha256":"4ee9976955d30915ba2ed154c14475303070db9b6902491cae9d16ae25241b55","fileManifestSha256":"ab73efab8eac885690def228e3d2080d4ed9f57801e642037f12fd0186e7e2d5","packageManifestSha256":"ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908","positions":8192,"uniqueObjects":823,"imageBytes":1073741824,"imageDir":"target/e5-t18e/run-CaaCRb/image","chunkDir":"target/e5-t18e/run-CaaCRb/chunks"}
+E5T18E_BOOT=cold-01
+E5T18E_BOOT=cold-03
+E5T18E_BOOT=cold-02
+E5T18E_BOOT=cold-04
+E5T18E_BOOT=cold-05
+E5T18E_BOOT=cold-07
+E5T18E_BOOT=cold-06
+E5T18E_BOOT=cold-08
+E5T18E_BOOT=cold-09
+E5T18E_BOOT=cold-10
+E5T18E_BOOT=cold-11
+E5T18E_BOOT=warm-prime
+E5T18E_BOOT=cold-12
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":307488702},{"label":"cold-03","status":"linux: booting","frames":4,"retired":305988763},{"label":"cold-02","status":"linux: booting","frames":4,"retired":307988705},{"label":"cold-04","status":"linux: booting","frames":4,"retired":308988657},{"label":"cold-05","status":"linux: booting","frames":4,"retired":309488614},{"label":"cold-07","status":"linux: booting","frames":4,"retired":307488621},{"label":"cold-06","status":"linux: booting","frames":4,"retired":311488475},{"label":"cold-08","status":"linux: booting","frames":4,"retired":307988520},{"label":"cold-09","status":"linux: booting","frames":4,"retired":309988451},{"label":"cold-10","status":"linux: booting","frames":4,"retired":310988296},{"label":"cold-11","status":"linux: booting","frames":4,"retired":308488460},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":311988148},{"label":"cold-12","status":"linux: booting","frames":4,"retired":311488143}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":490974807},{"label":"cold-03","status":"linux: booting","frames":4,"retired":486475010},{"label":"cold-02","status":"linux: booting","frames":4,"retired":486475072},{"label":"cold-04","status":"linux: booting","frames":4,"retired":490474799},{"label":"cold-05","status":"linux: booting","frames":4,"retired":487974927},{"label":"cold-07","status":"linux: booting","frames":4,"retired":487974848},{"label":"cold-06","status":"linux: booting","frames":4,"retired":491974952},{"label":"cold-08","status":"linux: booting","frames":4,"retired":486475036},{"label":"cold-09","status":"linux: booting","frames":4,"retired":490974763},{"label":"cold-10","status":"linux: booting","frames":4,"retired":488474913},{"label":"cold-11","status":"linux: booting","frames":4,"retired":485975003},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":491974804},{"label":"cold-12","status":"linux: booting","frames":4,"retired":491974627}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":680461694},{"label":"cold-03","status":"linux: booting","frames":4,"retired":678461745},{"label":"cold-02","status":"linux: booting","frames":4,"retired":676961935},{"label":"cold-04","status":"linux: booting","frames":4,"retired":679461669},{"label":"cold-05","status":"linux: booting","frames":4,"retired":679461745},{"label":"cold-07","status":"linux: booting","frames":4,"retired":677461770},{"label":"cold-06","status":"linux: booting","frames":4,"retired":676462214},{"label":"cold-08","status":"linux: booting","frames":4,"retired":678461746},{"label":"cold-09","status":"linux: booting","frames":4,"retired":677461872},{"label":"cold-10","status":"linux: booting","frames":4,"retired":675461999},{"label":"cold-11","status":"linux: booting","frames":4,"retired":678461770},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":681461698},{"label":"cold-12","status":"linux: booting","frames":4,"retired":681961524}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":855448026},{"label":"cold-03","status":"linux: booting","frames":4,"retired":854447871},{"label":"cold-02","status":"linux: booting","frames":4,"retired":852948191},{"label":"cold-04","status":"linux: booting","frames":4,"retired":856947753},{"label":"cold-05","status":"linux: booting","frames":4,"retired":856447871},{"label":"cold-07","status":"linux: booting","frames":4,"retired":854947868},{"label":"cold-06","status":"linux: booting","frames":4,"retired":851948668},{"label":"cold-08","status":"linux: booting","frames":4,"retired":856947750},{"label":"cold-09","status":"linux: booting","frames":4,"retired":855447901},{"label":"cold-10","status":"linux: booting","frames":4,"retired":852448114},{"label":"cold-11","status":"linux: booting","frames":4,"retired":854947973},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":857947701},{"label":"cold-12","status":"linux: booting","frames":4,"retired":859947541}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":1013435847},{"label":"cold-03","status":"linux: booting","frames":4,"retired":1010435810},{"label":"cold-02","status":"linux: booting","frames":4,"retired":1009436147},{"label":"cold-04","status":"linux: booting","frames":4,"retired":1016935362},{"label":"cold-05","status":"linux: booting","frames":4,"retired":1013435821},{"label":"cold-07","status":"linux: booting","frames":4,"retired":1012935761},{"label":"cold-06","status":"linux: booting","frames":4,"retired":1004936355},{"label":"cold-08","status":"linux: booting","frames":4,"retired":1015935547},{"label":"cold-09","status":"linux: booting","frames":4,"retired":1013435800},{"label":"cold-10","status":"linux: booting","frames":4,"retired":1012935756},{"label":"cold-11","status":"linux: booting","frames":4,"retired":1015435596},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":1013435872},{"label":"cold-12","status":"linux: booting","frames":4,"retired":1019435010}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":1161422423},{"label":"cold-03","status":"linux: booting","frames":4,"retired":1158422421},{"label":"cold-02","status":"linux: booting","frames":4,"retired":1152922570},{"label":"cold-04","status":"linux: booting","frames":4,"retired":1164921853},{"label":"cold-05","status":"linux: booting","frames":4,"retired":1162422220},{"label":"cold-07","status":"linux: booting","frames":4,"retired":1162922051},{"label":"cold-06","status":"linux: booting","frames":4,"retired":1152423057},{"label":"cold-08","status":"linux: booting","frames":4,"retired":1164421801},{"label":"cold-09","status":"linux: booting","frames":4,"retired":1164921866},{"label":"cold-10","status":"linux: booting","frames":4,"retired":1161422300},{"label":"cold-11","status":"linux: booting","frames":4,"retired":1166421817},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":1165921840},{"label":"cold-12","status":"linux: booting","frames":4,"retired":1169920980}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":1281907642},{"label":"cold-03","status":"linux: booting","frames":4,"retired":1280907334},{"label":"cold-02","status":"linux: booting","frames":4,"retired":1275908424},{"label":"cold-04","status":"linux: booting","frames":4,"retired":1287406906},{"label":"cold-05","status":"linux: booting","frames":4,"retired":1284407349},{"label":"cold-07","status":"linux: booting","frames":4,"retired":1285907058},{"label":"cold-06","status":"linux: booting","frames":4,"retired":1274408987},{"label":"cold-08","status":"linux: booting","frames":4,"retired":1289406686},{"label":"cold-09","status":"linux: booting","frames":4,"retired":1286906979},{"label":"cold-10","status":"linux: booting","frames":4,"retired":1282407396},{"label":"cold-11","status":"linux: booting","frames":4,"retired":1288906814},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":1286907043},{"label":"cold-12","status":"linux: booting","frames":4,"retired":1294405879}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":1405393683},{"label":"cold-03","status":"linux: booting","frames":4,"retired":1404893302},{"label":"cold-02","status":"linux: booting","frames":4,"retired":1398894500},{"label":"cold-04","status":"linux: booting","frames":4,"retired":1410393049},{"label":"cold-05","status":"linux: booting","frames":4,"retired":1408893292},{"label":"cold-07","status":"linux: booting","frames":4,"retired":1410392959},{"label":"cold-06","status":"linux: booting","frames":4,"retired":1395395311},{"label":"cold-08","status":"linux: booting","frames":4,"retired":1412892812},{"label":"cold-09","status":"linux: booting","frames":4,"retired":1410392998},{"label":"cold-10","status":"linux: booting","frames":4,"retired":1405393483},{"label":"cold-11","status":"linux: booting","frames":4,"retired":1412392817},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":1410893043},{"label":"cold-12","status":"linux: booting","frames":4,"retired":1419391683}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":1526379659},{"label":"cold-03","status":"linux: booting","frames":4,"retired":1526879241},{"label":"cold-02","status":"linux: booting","frames":4,"retired":1518880505},{"label":"cold-04","status":"linux: booting","frames":4,"retired":1531878995},{"label":"cold-05","status":"linux: booting","frames":4,"retired":1531879075},{"label":"cold-07","status":"linux: booting","frames":4,"retired":1534378561},{"label":"cold-06","status":"linux: booting","frames":4,"retired":1514881307},{"label":"cold-08","status":"linux: booting","frames":4,"retired":1533878885},{"label":"cold-09","status":"linux: booting","frames":4,"retired":1532378865},{"label":"cold-10","status":"linux: booting","frames":4,"retired":1528379296},{"label":"cold-11","status":"linux: booting","frames":4,"retired":1534878654},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":1534878780},{"label":"cold-12","status":"linux: booting","frames":4,"retired":1543877415}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":1656867504},{"label":"cold-03","status":"linux: booting","frames":4,"retired":1658366876},{"label":"cold-02","status":"linux: booting","frames":4,"retired":1646368313},{"label":"cold-04","status":"linux: booting","frames":4,"retired":1660367087},{"label":"cold-05","status":"linux: booting","frames":4,"retired":1662366947},{"label":"cold-07","status":"linux: booting","frames":4,"retired":1666366356},{"label":"cold-06","status":"linux: booting","frames":4,"retired":1640868849},{"label":"cold-08","status":"linux: booting","frames":4,"retired":1663866926},{"label":"cold-09","status":"linux: booting","frames":4,"retired":1662866871},{"label":"cold-10","status":"linux: booting","frames":4,"retired":1657367265},{"label":"cold-11","status":"linux: booting","frames":4,"retired":1665866584},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":1665866591},{"label":"cold-12","status":"linux: booting","frames":4,"retired":1680365376}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":1797356000},{"label":"cold-03","status":"linux: booting","frames":4,"retired":1803854944},{"label":"cold-02","status":"linux: booting","frames":4,"retired":1788856747},{"label":"cold-04","status":"linux: booting","frames":4,"retired":1799855650},{"label":"cold-05","status":"linux: booting","frames":4,"retired":1801355579},{"label":"cold-07","status":"linux: booting","frames":4,"retired":1808354869},{"label":"cold-06","status":"linux: booting","frames":4,"retired":1783857403},{"label":"cold-08","status":"linux: booting","frames":4,"retired":1808855101},{"label":"cold-09","status":"linux: booting","frames":4,"retired":1800855597},{"label":"cold-10","status":"linux: booting","frames":4,"retired":1798855655},{"label":"cold-11","status":"linux: booting","frames":4,"retired":1809854827},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":1805355326},{"label":"cold-12","status":"linux: booting","frames":4,"retired":1823353635}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":1935844155},{"label":"cold-03","status":"linux: booting","frames":4,"retired":1944342807},{"label":"cold-02","status":"linux: booting","frames":4,"retired":1927845087},{"label":"cold-04","status":"linux: booting","frames":4,"retired":1937344026},{"label":"cold-05","status":"linux: booting","frames":4,"retired":1940843681},{"label":"cold-07","status":"linux: booting","frames":4,"retired":1949342694},{"label":"cold-06","status":"linux: booting","frames":4,"retired":1921846037},{"label":"cold-08","status":"linux: booting","frames":4,"retired":1945343300},{"label":"cold-09","status":"linux: booting","frames":4,"retired":1934344335},{"label":"cold-10","status":"linux: booting","frames":4,"retired":1939343582},{"label":"cold-11","status":"linux: booting","frames":4,"retired":1948842802},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":1942843446},{"label":"cold-12","status":"linux: booting","frames":4,"retired":1963341614}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":2074332468},{"label":"cold-03","status":"linux: booting","frames":4,"retired":2088830630},{"label":"cold-02","status":"linux: booting","frames":4,"retired":2066333235},{"label":"cold-04","status":"linux: booting","frames":4,"retired":2077832062},{"label":"cold-05","status":"linux: booting","frames":4,"retired":2081831742},{"label":"cold-07","status":"linux: booting","frames":4,"retired":2090330814},{"label":"cold-06","status":"linux: booting","frames":4,"retired":2056334216},{"label":"cold-08","status":"linux: booting","frames":4,"retired":2088331297},{"label":"cold-09","status":"linux: booting","frames":4,"retired":2075332354},{"label":"cold-10","status":"linux: booting","frames":4,"retired":2080831666},{"label":"cold-11","status":"linux: booting","frames":4,"retired":2088831077},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":2085331515},{"label":"cold-12","status":"linux: booting","frames":4,"retired":2108329032}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":2213818884},{"label":"cold-03","status":"linux: booting","frames":4,"retired":2232316830},{"label":"cold-02","status":"linux: booting","frames":4,"retired":2203819868},{"label":"cold-04","status":"linux: booting","frames":4,"retired":2219818246},{"label":"cold-05","status":"linux: booting","frames":4,"retired":2227317698},{"label":"cold-07","status":"linux: booting","frames":4,"retired":2232317124},{"label":"cold-06","status":"linux: booting","frames":4,"retired":2194321050},{"label":"cold-08","status":"linux: booting","frames":4,"retired":2231817458},{"label":"cold-09","status":"linux: booting","frames":4,"retired":2215318676},{"label":"cold-10","status":"linux: booting","frames":4,"retired":2221817999},{"label":"cold-11","status":"linux: booting","frames":4,"retired":2230817334},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":2229817533},{"label":"cold-12","status":"linux: booting","frames":4,"retired":2251314931}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":2348806094},{"label":"cold-03","status":"linux: booting","frames":4,"retired":2370804256},{"label":"cold-02","status":"linux: booting","frames":4,"retired":2341306907},{"label":"cold-04","status":"linux: booting","frames":4,"retired":2355305415},{"label":"cold-05","status":"linux: booting","frames":4,"retired":2363804726},{"label":"cold-07","status":"linux: booting","frames":4,"retired":2371304417},{"label":"cold-06","status":"linux: booting","frames":4,"retired":2332308089},{"label":"cold-08","status":"linux: booting","frames":4,"retired":2366304804},{"label":"cold-09","status":"linux: booting","frames":4,"retired":2352305711},{"label":"cold-10","status":"linux: booting","frames":4,"retired":2357805076},{"label":"cold-11","status":"linux: booting","frames":4,"retired":2368304440},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":2366804724},{"label":"cold-12","status":"linux: booting","frames":4,"retired":2394302451}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":2494294728},{"label":"cold-03","status":"linux: booting","frames":4,"retired":2511292428},{"label":"cold-02","status":"linux: booting","frames":4,"retired":2480795186},{"label":"cold-04","status":"linux: booting","frames":4,"retired":2500794006},{"label":"cold-05","status":"linux: booting","frames":4,"retired":2509293155},{"label":"cold-07","status":"linux: booting","frames":4,"retired":2513792517},{"label":"cold-06","status":"linux: booting","frames":4,"retired":2473796088},{"label":"cold-08","status":"linux: booting","frames":4,"retired":2509793350},{"label":"cold-09","status":"linux: booting","frames":4,"retired":2500794038},{"label":"cold-10","status":"linux: booting","frames":4,"retired":2502293683},{"label":"cold-11","status":"linux: booting","frames":4,"retired":2512792841},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":2510793104},{"label":"cold-12","status":"linux: booting","frames":4,"retired":2535790530}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":2631283031},{"label":"cold-03","status":"linux: booting","frames":4,"retired":2651281206},{"label":"cold-02","status":"linux: booting","frames":4,"retired":2620784103},{"label":"cold-04","status":"linux: booting","frames":4,"retired":2637782360},{"label":"cold-05","status":"linux: booting","frames":4,"retired":2647281439},{"label":"cold-07","status":"linux: booting","frames":4,"retired":2654281257},{"label":"cold-06","status":"linux: booting","frames":4,"retired":2616284899},{"label":"cold-08","status":"linux: booting","frames":4,"retired":2647781879},{"label":"cold-09","status":"linux: booting","frames":4,"retired":2639782225},{"label":"cold-10","status":"linux: booting","frames":4,"retired":2638782099},{"label":"cold-11","status":"linux: booting","frames":4,"retired":2652281407},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":2651781683},{"label":"cold-12","status":"linux: booting","frames":4,"retired":2678279229}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":2773771766},{"label":"cold-03","status":"linux: booting","frames":4,"retired":2790769430},{"label":"cold-02","status":"linux: booting","frames":4,"retired":2761772927},{"label":"cold-04","status":"linux: booting","frames":4,"retired":2779770999},{"label":"cold-05","status":"linux: booting","frames":4,"retired":2790270013},{"label":"cold-07","status":"linux: booting","frames":4,"retired":2793769569},{"label":"cold-06","status":"linux: booting","frames":4,"retired":2755773523},{"label":"cold-08","status":"linux: booting","frames":4,"retired":2790270290},{"label":"cold-09","status":"linux: booting","frames":4,"retired":2782270714},{"label":"cold-10","status":"linux: booting","frames":4,"retired":2781770547},{"label":"cold-11","status":"linux: booting","frames":4,"retired":2794269664},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":2794769828},{"label":"cold-12","status":"linux: booting","frames":4,"retired":2821767385}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":2910759407},{"label":"cold-03","status":"linux: booting","frames":4,"retired":2928256432},{"label":"cold-02","status":"linux: booting","frames":4,"retired":2899760708},{"label":"cold-04","status":"linux: booting","frames":4,"retired":2916758630},{"label":"cold-05","status":"linux: booting","frames":4,"retired":2926757244},{"label":"cold-07","status":"linux: booting","frames":4,"retired":2930256540},{"label":"cold-06","status":"linux: booting","frames":4,"retired":2897261584},{"label":"cold-08","status":"linux: booting","frames":4,"retired":2927257404},{"label":"cold-09","status":"linux: booting","frames":4,"retired":2918758162},{"label":"cold-10","status":"linux: booting","frames":4,"retired":2920257778},{"label":"cold-11","status":"linux: booting","frames":4,"retired":2931756551},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":2931756869},{"label":"cold-12","status":"linux: booting","frames":4,"retired":2960254538}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":3048247336},{"label":"cold-03","status":"linux: booting","frames":4,"retired":3072745033},{"label":"cold-02","status":"linux: booting","frames":4,"retired":3037248190},{"label":"cold-04","status":"linux: booting","frames":4,"retired":3054246683},{"label":"cold-05","status":"linux: booting","frames":4,"retired":3068245710},{"label":"cold-07","status":"linux: booting","frames":4,"retired":3073745296},{"label":"cold-06","status":"linux: booting","frames":4,"retired":3031749241},{"label":"cold-08","status":"linux: booting","frames":4,"retired":3070246147},{"label":"cold-09","status":"linux: booting","frames":4,"retired":3056746243},{"label":"cold-10","status":"linux: booting","frames":4,"retired":3058245973},{"label":"cold-11","status":"linux: booting","frames":4,"retired":3075745242},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":3076245385},{"label":"cold-12","status":"linux: booting","frames":4,"retired":3100242637}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":3190236012},{"label":"cold-03","status":"linux: booting","frames":4,"retired":3216733727},{"label":"cold-02","status":"linux: booting","frames":4,"retired":3181236702},{"label":"cold-04","status":"linux: booting","frames":4,"retired":3195235574},{"label":"cold-05","status":"linux: booting","frames":4,"retired":3211734379},{"label":"cold-07","status":"linux: booting","frames":4,"retired":3215234050},{"label":"cold-06","status":"linux: booting","frames":4,"retired":3175237634},{"label":"cold-08","status":"linux: booting","frames":4,"retired":3210234893},{"label":"cold-09","status":"linux: booting","frames":4,"retired":3200735096},{"label":"cold-10","status":"linux: booting","frames":4,"retired":3203734760},{"label":"cold-11","status":"linux: booting","frames":4,"retired":3217733977},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":3216734297},{"label":"cold-12","status":"linux: booting","frames":4,"retired":3246231605}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":4,"retired":3332224406},{"label":"cold-03","status":"linux: booting","frames":4,"retired":3360221610},{"label":"cold-02","status":"linux: booting","frames":4,"retired":3325225019},{"label":"cold-04","status":"linux: booting","frames":4,"retired":3336223969},{"label":"cold-05","status":"linux: booting","frames":4,"retired":3350722277},{"label":"cold-07","status":"linux: booting","frames":4,"retired":3355721871},{"label":"cold-06","status":"linux: booting","frames":4,"retired":3316726469},{"label":"cold-08","status":"linux: booting","frames":4,"retired":3349222863},{"label":"cold-09","status":"linux: booting","frames":4,"retired":3342223308},{"label":"cold-10","status":"linux: booting","frames":4,"retired":3345722537},{"label":"cold-11","status":"linux: booting","frames":4,"retired":3360721821},{"label":"warm-prime","status":"linux: booting","frames":4,"retired":3357722225},{"label":"cold-12","status":"linux: booting","frames":5,"retired":3386218988}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":17,"retired":3450711610},{"label":"cold-03","status":"linux: booting","frames":15,"retired":3487209083},{"label":"cold-02","status":"linux: booting","frames":15,"retired":3442212206},{"label":"cold-04","status":"linux: booting","frames":16,"retired":3457710944},{"label":"cold-05","status":"linux: booting","frames":15,"retired":3473210020},{"label":"cold-07","status":"linux: booting","frames":15,"retired":3482709382},{"label":"cold-06","status":"linux: booting","frames":15,"retired":3434714128},{"label":"cold-08","status":"linux: booting","frames":17,"retired":3473710610},{"label":"cold-09","status":"linux: booting","frames":17,"retired":3465710444},{"label":"cold-10","status":"linux: booting","frames":15,"retired":3465210335},{"label":"cold-11","status":"linux: booting","frames":15,"retired":3485209269},{"label":"warm-prime","status":"linux: booting","frames":17,"retired":3483709644},{"label":"cold-12","status":"linux: booting","frames":17,"retired":3518708030}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":17,"retired":3585702139},{"label":"cold-03","status":"linux: booting","frames":16,"retired":3672698484},{"label":"cold-02","status":"linux: booting","frames":15,"retired":3576202947},{"label":"cold-04","status":"linux: booting","frames":17,"retired":3595201043},{"label":"cold-05","status":"linux: booting","frames":16,"retired":3619699295},{"label":"cold-07","status":"linux: booting","frames":16,"retired":3626199061},{"label":"cold-06","status":"linux: booting","frames":17,"retired":3571704353},{"label":"cold-08","status":"linux: booting","frames":18,"retired":3616200054},{"label":"cold-09","status":"linux: booting","frames":18,"retired":3611700296},{"label":"cold-10","status":"linux: booting","frames":16,"retired":3607700523},{"label":"cold-11","status":"linux: booting","frames":16,"retired":3660698562},{"label":"warm-prime","status":"linux: booting","frames":18,"retired":3648199364},{"label":"cold-12","status":"linux: booting","frames":18,"retired":3743696424}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":18,"retired":3822192464},{"label":"cold-03","status":"linux: booting","frames":16,"retired":3863690284},{"label":"cold-02","status":"linux: booting","frames":16,"retired":3817692578},{"label":"cold-04","status":"linux: booting","frames":17,"retired":3836691437},{"label":"cold-05","status":"linux: booting","frames":16,"retired":3857690116},{"label":"cold-07","status":"linux: booting","frames":16,"retired":3864190252},{"label":"cold-06","status":"linux: booting","frames":18,"retired":3798194087},{"label":"cold-08","status":"linux: booting","frames":18,"retired":3853190935},{"label":"cold-09","status":"linux: booting","frames":18,"retired":3840191135},{"label":"cold-10","status":"linux: booting","frames":16,"retired":3841191295},{"label":"cold-11","status":"linux: booting","frames":16,"retired":3872689927},{"label":"warm-prime","status":"linux: booting","frames":18,"retired":3864190625},{"label":"cold-12","status":"linux: booting","frames":18,"retired":3906188962}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":18,"retired":3975186288},{"label":"cold-03","status":"linux: booting","frames":16,"retired":4017681432},{"label":"cold-02","status":"linux: booting","frames":16,"retired":3974186257},{"label":"cold-04","status":"linux: booting","frames":17,"retired":3988184811},{"label":"cold-05","status":"linux: booting","frames":16,"retired":4012682079},{"label":"cold-07","status":"linux: booting","frames":16,"retired":4013181945},{"label":"cold-06","status":"linux: booting","frames":18,"retired":3955687764},{"label":"cold-08","status":"linux: booting","frames":18,"retired":4013682491},{"label":"cold-09","status":"linux: booting","frames":18,"retired":3998683573},{"label":"cold-10","status":"linux: booting","frames":16,"retired":3997683496},{"label":"cold-11","status":"linux: booting","frames":16,"retired":4025680958},{"label":"warm-prime","status":"linux: booting","frames":18,"retired":4019681762},{"label":"cold-12","status":"linux: booting","frames":18,"retired":4057179454}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":18,"retired":4159177178},{"label":"cold-03","status":"linux: booting","frames":16,"retired":4310174156},{"label":"cold-02","status":"linux: booting","frames":16,"retired":4157177035},{"label":"cold-04","status":"linux: booting","frames":17,"retired":4180176078},{"label":"cold-05","status":"linux: booting","frames":16,"retired":4254674539},{"label":"cold-07","status":"linux: booting","frames":16,"retired":4310173805},{"label":"cold-06","status":"linux: booting","frames":18,"retired":4115678545},{"label":"cold-08","status":"linux: booting","frames":18,"retired":4269674966},{"label":"cold-09","status":"linux: booting","frames":18,"retired":4192675992},{"label":"cold-10","status":"linux: booting","frames":16,"retired":4201675986},{"label":"cold-11","status":"linux: booting","frames":16,"retired":4264174699},{"label":"warm-prime","status":"linux: booting","frames":18,"retired":4304174442},{"label":"cold-12","status":"linux: booting","frames":18,"retired":4444672062}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"linux: booting","frames":21,"retired":4560167808},{"label":"cold-03","status":"desktop ready: launcher available","frames":20,"retired":4721664581},{"label":"cold-02","status":"linux: booting","frames":18,"retired":4558167712},{"label":"cold-04","status":"linux: booting","frames":20,"retired":4577166777},{"label":"cold-05","status":"linux: booting","frames":19,"retired":4630665634},{"label":"cold-07","status":"desktop ready: launcher available","frames":20,"retired":4695164667},{"label":"cold-06","status":"linux: booting","frames":19,"retired":4527670457},{"label":"cold-08","status":"linux: booting","frames":21,"retired":4665165669},{"label":"cold-09","status":"linux: booting","frames":21,"retired":4574166984},{"label":"cold-10","status":"linux: booting","frames":19,"retired":4578167076},{"label":"cold-11","status":"linux: booting","frames":19,"retired":4622166115},{"label":"warm-prime","status":"linux: booting","frames":21,"retired":4667665735},{"label":"cold-12","status":"desktop ready: launcher available","frames":30,"retired":4798661321}]}
+E5T18E_PROGRESS={"complete":0,"active":[{"label":"cold-01","status":"desktop ready: launcher available","frames":30,"retired":4854658472},{"label":"cold-03","status":"desktop ready: launcher available","frames":28,"retired":4928156178},{"label":"cold-02","status":"desktop ready: launcher available","frames":28,"retired":4857157993},{"label":"cold-04","status":"desktop ready: launcher available","frames":28,"retired":4873656721},{"label":"cold-05","status":"desktop ready: launcher available","frames":28,"retired":4897155950},{"label":"cold-07","status":"desktop ready: launcher available","frames":27,"retired":4926653739},{"label":"cold-06","status":"desktop ready: launcher available","frames":29,"retired":4809661913},{"label":"cold-08","status":"desktop ready: launcher available","frames":30,"retired":4918655701},{"label":"cold-09","status":"desktop ready: launcher available","frames":30,"retired":4858657535},{"label":"cold-10","status":"desktop ready: launcher available","frames":28,"retired":4865656038},{"label":"cold-11","status":"desktop ready: launcher available","frames":28,"retired":4888656293},{"label":"warm-prime","status":"desktop ready: launcher available","frames":30,"retired":4918656290},{"label":"cold-12","status":"desktop ready: launcher available","frames":30,"retired":4989153216}]}
+E5T18E_CASE_PASS=cold-12 bootMs=816430
+E5T18E_BOOT=cold-13
+E5T18E_CASE_PASS=cold-03 bootMs=824530
+E5T18E_BOOT=cold-14
+E5T18E_CASE_PASS=cold-07 bootMs=826044
+E5T18E_BOOT=cold-15
+E5T18E_CASE_PASS=warm-prime bootMs=827701
+E5T18E_BOOT=warm-reload
+E5T18E_CASE_PASS=cold-08 bootMs=828062
+E5T18E_BOOT=cold-16
+E5T18E_CASE_PASS=cold-05 bootMs=830124
+E5T18E_BOOT=cold-17
+E5T18E_CASE_PASS=cold-11 bootMs=830124
+E5T18E_BOOT=cold-18
+E5T18E_CASE_PASS=cold-10 bootMs=833653
+E5T18E_CASE_PASS=cold-04 bootMs=833279
+E5T18E_BOOT=cold-19
+E5T18E_BOOT=cold-20
+E5T18E_CASE_PASS=cold-02 bootMs=835162
+E5T18E_CASE_PASS=cold-01 bootMs=835671
+E5T18E_BOOT=cold-21
+E5T18E_BOOT=cold-22
+E5T18E_CASE_PASS=cold-09 bootMs=834660
+E5T18E_BOOT=cold-23
+E5T18E_PROGRESS={"complete":12,"active":[{"label":"cold-06","status":"desktop ready: launcher available","frames":29,"retired":5008653977},{"label":"cold-09","status":"desktop ready: launcher available","frames":34,"retired":5047649971},{"label":"cold-13","status":"linux: booting","frames":4,"retired":303489040},{"label":"cold-14","status":"linux: booting","frames":0,"retired":231989998},{"label":"cold-15","status":"linux: booting","frames":0,"retired":231490002},{"label":"warm-reload","status":"linux: booting","frames":0,"retired":234989659},{"label":"cold-16","status":"linux: booting","frames":0,"retired":214490086},{"label":"cold-17","status":"linux: booting","frames":0,"retired":203990138},{"label":"cold-18","status":"linux: booting","frames":0,"retired":203490142},{"label":"cold-19","status":"linux: booting","frames":0,"retired":20494650},{"label":"cold-20","status":"linux: booting","frames":0,"retired":14496437},{"label":"cold-21","status":"linux: booting","frames":0},{"label":"cold-22","status":"linux: booting","frames":0},{"label":"cold-23","status":"loading kernel 100%","frames":0}]}
+E5T18E_CASE_PASS=cold-06 bootMs=841236
+E5T18E_BOOT=cold-24
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":419479722},{"label":"cold-14","status":"linux: booting","frames":4,"retired":390481398},{"label":"cold-15","status":"linux: booting","frames":4,"retired":393481413},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":390981569},{"label":"cold-16","status":"linux: booting","frames":4,"retired":374982853},{"label":"cold-17","status":"linux: booting","frames":4,"retired":364483261},{"label":"cold-18","status":"linux: booting","frames":4,"retired":362983339},{"label":"cold-19","status":"linux: booting","frames":4,"retired":335485960},{"label":"cold-20","status":"linux: booting","frames":4,"retired":333986230},{"label":"cold-21","status":"linux: booting","frames":4,"retired":327986642},{"label":"cold-22","status":"linux: booting","frames":4,"retired":329486773},{"label":"cold-23","status":"linux: booting","frames":4,"retired":329486730},{"label":"cold-24","status":"linux: booting","frames":4,"retired":308488513}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":571469119},{"label":"cold-14","status":"linux: booting","frames":4,"retired":541971176},{"label":"cold-15","status":"linux: booting","frames":4,"retired":545971121},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":539971491},{"label":"cold-16","status":"linux: booting","frames":4,"retired":525472570},{"label":"cold-17","status":"linux: booting","frames":4,"retired":514473089},{"label":"cold-18","status":"linux: booting","frames":4,"retired":512473210},{"label":"cold-19","status":"linux: booting","frames":4,"retired":482975450},{"label":"cold-20","status":"linux: booting","frames":4,"retired":479475694},{"label":"cold-21","status":"linux: booting","frames":4,"retired":470976049},{"label":"cold-22","status":"linux: booting","frames":4,"retired":472976094},{"label":"cold-23","status":"linux: booting","frames":4,"retired":478975693},{"label":"cold-24","status":"linux: booting","frames":4,"retired":451477648}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":721958808},{"label":"cold-14","status":"linux: booting","frames":4,"retired":691460738},{"label":"cold-15","status":"linux: booting","frames":4,"retired":696460611},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":688461046},{"label":"cold-16","status":"linux: booting","frames":4,"retired":675462148},{"label":"cold-17","status":"linux: booting","frames":4,"retired":667462568},{"label":"cold-18","status":"linux: booting","frames":4,"retired":660463023},{"label":"cold-19","status":"linux: booting","frames":4,"retired":634964900},{"label":"cold-20","status":"linux: booting","frames":4,"retired":628965420},{"label":"cold-21","status":"linux: booting","frames":4,"retired":619465701},{"label":"cold-22","status":"linux: booting","frames":4,"retired":619965949},{"label":"cold-23","status":"linux: booting","frames":4,"retired":628965336},{"label":"cold-24","status":"linux: booting","frames":4,"retired":600967206}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":862447288},{"label":"cold-14","status":"linux: booting","frames":4,"retired":835949943},{"label":"cold-15","status":"linux: booting","frames":4,"retired":840449909},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":833950248},{"label":"cold-16","status":"linux: booting","frames":4,"retired":819951004},{"label":"cold-17","status":"linux: booting","frames":4,"retired":809951349},{"label":"cold-18","status":"linux: booting","frames":4,"retired":802452283},{"label":"cold-19","status":"linux: booting","frames":4,"retired":782954451},{"label":"cold-20","status":"linux: booting","frames":4,"retired":777454953},{"label":"cold-21","status":"linux: booting","frames":4,"retired":768455230},{"label":"cold-22","status":"linux: booting","frames":4,"retired":766455721},{"label":"cold-23","status":"linux: booting","frames":4,"retired":779954751},{"label":"cold-24","status":"linux: booting","frames":4,"retired":752457025}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":992436863},{"label":"cold-14","status":"linux: booting","frames":4,"retired":969438748},{"label":"cold-15","status":"linux: booting","frames":4,"retired":974938567},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":969438872},{"label":"cold-16","status":"linux: booting","frames":4,"retired":961939822},{"label":"cold-17","status":"linux: booting","frames":4,"retired":952940328},{"label":"cold-18","status":"linux: booting","frames":4,"retired":942941369},{"label":"cold-19","status":"linux: booting","frames":4,"retired":921942880},{"label":"cold-20","status":"linux: booting","frames":4,"retired":916443384},{"label":"cold-21","status":"linux: booting","frames":4,"retired":906443861},{"label":"cold-22","status":"linux: booting","frames":4,"retired":900944649},{"label":"cold-23","status":"linux: booting","frames":4,"retired":918443188},{"label":"cold-24","status":"linux: booting","frames":4,"retired":889945699}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":1120925328},{"label":"cold-14","status":"linux: booting","frames":4,"retired":1091927865},{"label":"cold-15","status":"linux: booting","frames":4,"retired":1095927893},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":1088428258},{"label":"cold-16","status":"linux: booting","frames":4,"retired":1080929409},{"label":"cold-17","status":"linux: booting","frames":4,"retired":1067430349},{"label":"cold-18","status":"linux: booting","frames":4,"retired":1058931464},{"label":"cold-19","status":"linux: booting","frames":4,"retired":1044433128},{"label":"cold-20","status":"linux: booting","frames":4,"retired":1038433618},{"label":"cold-21","status":"linux: booting","frames":4,"retired":1030433870},{"label":"cold-22","status":"linux: booting","frames":4,"retired":1021435057},{"label":"cold-23","status":"linux: booting","frames":4,"retired":1042933229},{"label":"cold-24","status":"linux: booting","frames":4,"retired":1011935941}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":1239912997},{"label":"cold-14","status":"linux: booting","frames":4,"retired":1214416140},{"label":"cold-15","status":"linux: booting","frames":4,"retired":1221415897},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":1209916769},{"label":"cold-16","status":"linux: booting","frames":4,"retired":1202917841},{"label":"cold-17","status":"linux: booting","frames":4,"retired":1190418623},{"label":"cold-18","status":"linux: booting","frames":4,"retired":1181419808},{"label":"cold-19","status":"linux: booting","frames":4,"retired":1171421490},{"label":"cold-20","status":"linux: booting","frames":4,"retired":1165422020},{"label":"cold-21","status":"linux: booting","frames":4,"retired":1157922565},{"label":"cold-22","status":"linux: booting","frames":4,"retired":1143923682},{"label":"cold-23","status":"linux: booting","frames":4,"retired":1170921486},{"label":"cold-24","status":"linux: booting","frames":4,"retired":1134423888}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":1351899442},{"label":"cold-14","status":"linux: booting","frames":4,"retired":1326402189},{"label":"cold-15","status":"linux: booting","frames":4,"retired":1332901997},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":1321402876},{"label":"cold-16","status":"linux: booting","frames":4,"retired":1313403963},{"label":"cold-17","status":"linux: booting","frames":4,"retired":1302904619},{"label":"cold-18","status":"linux: booting","frames":4,"retired":1292406155},{"label":"cold-19","status":"linux: booting","frames":4,"retired":1284407865},{"label":"cold-20","status":"linux: booting","frames":4,"retired":1277408410},{"label":"cold-21","status":"linux: booting","frames":4,"retired":1268409086},{"label":"cold-22","status":"linux: booting","frames":4,"retired":1257410909},{"label":"cold-23","status":"linux: booting","frames":4,"retired":1284907583},{"label":"cold-24","status":"linux: booting","frames":4,"retired":1250911511}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":1467886203},{"label":"cold-14","status":"linux: booting","frames":4,"retired":1441389123},{"label":"cold-15","status":"linux: booting","frames":4,"retired":1447888942},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":1435889980},{"label":"cold-16","status":"linux: booting","frames":4,"retired":1428890955},{"label":"cold-17","status":"linux: booting","frames":4,"retired":1418891551},{"label":"cold-18","status":"linux: booting","frames":4,"retired":1406393359},{"label":"cold-19","status":"linux: booting","frames":4,"retired":1399894875},{"label":"cold-20","status":"linux: booting","frames":4,"retired":1393395225},{"label":"cold-21","status":"linux: booting","frames":4,"retired":1384395935},{"label":"cold-22","status":"linux: booting","frames":4,"retired":1366898045},{"label":"cold-23","status":"linux: booting","frames":4,"retired":1401394468},{"label":"cold-24","status":"linux: booting","frames":4,"retired":1361898296}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":1584372980},{"label":"cold-14","status":"linux: booting","frames":4,"retired":1555876097},{"label":"cold-15","status":"linux: booting","frames":4,"retired":1563875842},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":1550876898},{"label":"cold-16","status":"linux: booting","frames":4,"retired":1544877720},{"label":"cold-17","status":"linux: booting","frames":4,"retired":1534878256},{"label":"cold-18","status":"linux: booting","frames":4,"retired":1520880154},{"label":"cold-19","status":"linux: booting","frames":4,"retired":1514881531},{"label":"cold-20","status":"linux: booting","frames":4,"retired":1509381679},{"label":"cold-21","status":"linux: booting","frames":4,"retired":1499882448},{"label":"cold-22","status":"linux: booting","frames":4,"retired":1479385059},{"label":"cold-23","status":"linux: booting","frames":4,"retired":1517380923},{"label":"cold-24","status":"linux: booting","frames":4,"retired":1477385082}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":1722862079},{"label":"cold-14","status":"linux: booting","frames":4,"retired":1687864689},{"label":"cold-15","status":"linux: booting","frames":4,"retired":1693364645},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":1679365622},{"label":"cold-16","status":"linux: booting","frames":4,"retired":1671866164},{"label":"cold-17","status":"linux: booting","frames":4,"retired":1663866399},{"label":"cold-18","status":"linux: booting","frames":4,"retired":1644868330},{"label":"cold-19","status":"linux: booting","frames":4,"retired":1637369123},{"label":"cold-20","status":"linux: booting","frames":4,"retired":1631369238},{"label":"cold-21","status":"linux: booting","frames":4,"retired":1618869656},{"label":"cold-22","status":"linux: booting","frames":4,"retired":1594371997},{"label":"cold-23","status":"linux: booting","frames":4,"retired":1640868725},{"label":"cold-24","status":"linux: booting","frames":4,"retired":1592871965}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":1860850361},{"label":"cold-14","status":"linux: booting","frames":4,"retired":1823353535},{"label":"cold-15","status":"linux: booting","frames":4,"retired":1831353304},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":1813854687},{"label":"cold-16","status":"linux: booting","frames":4,"retired":1808855091},{"label":"cold-17","status":"linux: booting","frames":4,"retired":1804854988},{"label":"cold-18","status":"linux: booting","frames":4,"retired":1784356983},{"label":"cold-19","status":"linux: booting","frames":4,"retired":1777858046},{"label":"cold-20","status":"linux: booting","frames":4,"retired":1771358280},{"label":"cold-21","status":"linux: booting","frames":4,"retired":1760858768},{"label":"cold-22","status":"linux: booting","frames":4,"retired":1731861491},{"label":"cold-23","status":"linux: booting","frames":4,"retired":1781357516},{"label":"cold-24","status":"linux: booting","frames":4,"retired":1731361386}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":2001338450},{"label":"cold-14","status":"linux: booting","frames":4,"retired":1959841765},{"label":"cold-15","status":"linux: booting","frames":4,"retired":1969341419},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":1947843135},{"label":"cold-16","status":"linux: booting","frames":4,"retired":1944343421},{"label":"cold-17","status":"linux: booting","frames":4,"retired":1942843006},{"label":"cold-18","status":"linux: booting","frames":4,"retired":1921845537},{"label":"cold-19","status":"linux: booting","frames":4,"retired":1919346510},{"label":"cold-20","status":"linux: booting","frames":4,"retired":1908847212},{"label":"cold-21","status":"linux: booting","frames":4,"retired":1897847509},{"label":"cold-22","status":"linux: booting","frames":4,"retired":1869849740},{"label":"cold-23","status":"linux: booting","frames":4,"retired":1919846241},{"label":"cold-24","status":"linux: booting","frames":4,"retired":1866349889}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":2143325628},{"label":"cold-14","status":"linux: booting","frames":4,"retired":2101829632},{"label":"cold-15","status":"linux: booting","frames":4,"retired":2111329218},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":2088831246},{"label":"cold-16","status":"linux: booting","frames":4,"retired":2087831409},{"label":"cold-17","status":"linux: booting","frames":4,"retired":2085331046},{"label":"cold-18","status":"linux: booting","frames":4,"retired":2060333588},{"label":"cold-19","status":"linux: booting","frames":4,"retired":2057334252},{"label":"cold-20","status":"linux: booting","frames":4,"retired":2045834841},{"label":"cold-21","status":"linux: booting","frames":4,"retired":2034335551},{"label":"cold-22","status":"linux: booting","frames":4,"retired":2007338104},{"label":"cold-23","status":"linux: booting","frames":4,"retired":2059333916},{"label":"cold-24","status":"linux: booting","frames":4,"retired":2002338373}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":2281311815},{"label":"cold-14","status":"linux: booting","frames":4,"retired":2242816025},{"label":"cold-15","status":"linux: booting","frames":4,"retired":2252815497},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":2229817638},{"label":"cold-16","status":"linux: booting","frames":4,"retired":2230817551},{"label":"cold-17","status":"linux: booting","frames":4,"retired":2227317360},{"label":"cold-18","status":"linux: booting","frames":4,"retired":2198820179},{"label":"cold-19","status":"linux: booting","frames":4,"retired":2197320917},{"label":"cold-20","status":"linux: booting","frames":4,"retired":2184321871},{"label":"cold-21","status":"linux: booting","frames":4,"retired":2175322371},{"label":"cold-22","status":"linux: booting","frames":4,"retired":2147825333},{"label":"cold-23","status":"linux: booting","frames":4,"retired":2203820079},{"label":"cold-24","status":"linux: booting","frames":4,"retired":2144325524}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":2420300096},{"label":"cold-14","status":"linux: booting","frames":4,"retired":2380303874},{"label":"cold-15","status":"linux: booting","frames":4,"retired":2390303370},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":2363305009},{"label":"cold-16","status":"linux: booting","frames":4,"retired":2364804853},{"label":"cold-17","status":"linux: booting","frames":4,"retired":2361304779},{"label":"cold-18","status":"linux: booting","frames":4,"retired":2333807476},{"label":"cold-19","status":"linux: booting","frames":4,"retired":2332808196},{"label":"cold-20","status":"linux: booting","frames":4,"retired":2317308585},{"label":"cold-21","status":"linux: booting","frames":4,"retired":2308808753},{"label":"cold-22","status":"linux: booting","frames":4,"retired":2283311727},{"label":"cold-23","status":"linux: booting","frames":4,"retired":2341307168},{"label":"cold-24","status":"linux: booting","frames":4,"retired":2280811874}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":2562788883},{"label":"cold-14","status":"linux: booting","frames":4,"retired":2517792169},{"label":"cold-15","status":"linux: booting","frames":4,"retired":2528791570},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":2506793560},{"label":"cold-16","status":"linux: booting","frames":4,"retired":2506293695},{"label":"cold-17","status":"linux: booting","frames":4,"retired":2503793272},{"label":"cold-18","status":"linux: booting","frames":4,"retired":2472795834},{"label":"cold-19","status":"linux: booting","frames":4,"retired":2470796511},{"label":"cold-20","status":"linux: booting","frames":4,"retired":2460297330},{"label":"cold-21","status":"linux: booting","frames":4,"retired":2453297581},{"label":"cold-22","status":"linux: booting","frames":4,"retired":2420300058},{"label":"cold-23","status":"linux: booting","frames":4,"retired":2483795076},{"label":"cold-24","status":"linux: booting","frames":4,"retired":2418800032}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":2701277452},{"label":"cold-14","status":"linux: booting","frames":4,"retired":2655281181},{"label":"cold-15","status":"linux: booting","frames":4,"retired":2666780888},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":2641282125},{"label":"cold-16","status":"linux: booting","frames":4,"retired":2641782242},{"label":"cold-17","status":"linux: booting","frames":4,"retired":2641781743},{"label":"cold-18","status":"linux: booting","frames":4,"retired":2612284743},{"label":"cold-19","status":"linux: booting","frames":4,"retired":2611285461},{"label":"cold-20","status":"linux: booting","frames":4,"retired":2601785836},{"label":"cold-21","status":"linux: booting","frames":4,"retired":2590785844},{"label":"cold-22","status":"linux: booting","frames":4,"retired":2560289264},{"label":"cold-23","status":"linux: booting","frames":4,"retired":2626283827},{"label":"cold-24","status":"linux: booting","frames":4,"retired":2561788891}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":2841765666},{"label":"cold-14","status":"linux: booting","frames":4,"retired":2793269577},{"label":"cold-15","status":"linux: booting","frames":4,"retired":2802269224},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":2780770963},{"label":"cold-16","status":"linux: booting","frames":4,"retired":2780271208},{"label":"cold-17","status":"linux: booting","frames":4,"retired":2781770574},{"label":"cold-18","status":"linux: booting","frames":4,"retired":2747273608},{"label":"cold-19","status":"linux: booting","frames":4,"retired":2745273976},{"label":"cold-20","status":"linux: booting","frames":4,"retired":2738274358},{"label":"cold-21","status":"linux: booting","frames":4,"retired":2726274921},{"label":"cold-22","status":"linux: booting","frames":4,"retired":2694777984},{"label":"cold-23","status":"linux: booting","frames":4,"retired":2766772631},{"label":"cold-24","status":"linux: booting","frames":4,"retired":2697777592}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":2973753475},{"label":"cold-14","status":"linux: booting","frames":4,"retired":2926257128},{"label":"cold-15","status":"linux: booting","frames":4,"retired":2933756686},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":2911759211},{"label":"cold-16","status":"linux: booting","frames":4,"retired":2913259197},{"label":"cold-17","status":"linux: booting","frames":4,"retired":2913258429},{"label":"cold-18","status":"linux: booting","frames":4,"retired":2885762237},{"label":"cold-19","status":"linux: booting","frames":4,"retired":2884262754},{"label":"cold-20","status":"linux: booting","frames":4,"retired":2878263156},{"label":"cold-21","status":"linux: booting","frames":4,"retired":2866263940},{"label":"cold-22","status":"linux: booting","frames":4,"retired":2830766815},{"label":"cold-23","status":"linux: booting","frames":4,"retired":2903760588},{"label":"cold-24","status":"linux: booting","frames":4,"retired":2834266241}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":3112241588},{"label":"cold-14","status":"linux: booting","frames":4,"retired":3066745880},{"label":"cold-15","status":"linux: booting","frames":4,"retired":3076245550},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":3049247235},{"label":"cold-16","status":"linux: booting","frames":4,"retired":3049247325},{"label":"cold-17","status":"linux: booting","frames":4,"retired":3053246493},{"label":"cold-18","status":"linux: booting","frames":4,"retired":3018749834},{"label":"cold-19","status":"linux: booting","frames":4,"retired":3020250259},{"label":"cold-20","status":"linux: booting","frames":4,"retired":3013750598},{"label":"cold-21","status":"linux: booting","frames":4,"retired":2998251455},{"label":"cold-22","status":"linux: booting","frames":4,"retired":2965754282},{"label":"cold-23","status":"linux: booting","frames":4,"retired":3041248239},{"label":"cold-24","status":"linux: booting","frames":4,"retired":2969753739}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":4,"retired":3255230954},{"label":"cold-14","status":"linux: booting","frames":4,"retired":3208734478},{"label":"cold-15","status":"linux: booting","frames":4,"retired":3218234167},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":3191736061},{"label":"cold-16","status":"linux: booting","frames":4,"retired":3188736297},{"label":"cold-17","status":"linux: booting","frames":4,"retired":3195235380},{"label":"cold-18","status":"linux: booting","frames":4,"retired":3160738219},{"label":"cold-19","status":"linux: booting","frames":4,"retired":3162238449},{"label":"cold-20","status":"linux: booting","frames":4,"retired":3155738701},{"label":"cold-21","status":"linux: booting","frames":4,"retired":3139739491},{"label":"cold-22","status":"linux: booting","frames":4,"retired":3102242636},{"label":"cold-23","status":"linux: booting","frames":4,"retired":3186736518},{"label":"cold-24","status":"linux: booting","frames":4,"retired":3109741741}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":6,"retired":3393218520},{"label":"cold-14","status":"linux: booting","frames":4,"retired":3345722630},{"label":"cold-15","status":"linux: booting","frames":4,"retired":3353722329},{"label":"warm-reload","status":"linux: booting","frames":4,"retired":3329724673},{"label":"cold-16","status":"linux: booting","frames":4,"retired":3328225104},{"label":"cold-17","status":"linux: booting","frames":4,"retired":3334223829},{"label":"cold-18","status":"linux: booting","frames":4,"retired":3301727451},{"label":"cold-19","status":"linux: booting","frames":4,"retired":3302727550},{"label":"cold-20","status":"linux: booting","frames":4,"retired":3293227735},{"label":"cold-21","status":"linux: booting","frames":4,"retired":3279228704},{"label":"cold-22","status":"linux: booting","frames":4,"retired":3241232258},{"label":"cold-23","status":"linux: booting","frames":4,"retired":3328725110},{"label":"cold-24","status":"linux: booting","frames":4,"retired":3250731203}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":18,"retired":3526707608},{"label":"cold-14","status":"linux: booting","frames":17,"retired":3466710280},{"label":"cold-15","status":"linux: booting","frames":16,"retired":3477210110},{"label":"warm-reload","status":"linux: booting","frames":16,"retired":3449211703},{"label":"cold-16","status":"linux: booting","frames":17,"retired":3445712330},{"label":"cold-17","status":"linux: booting","frames":16,"retired":3453711140},{"label":"cold-18","status":"linux: booting","frames":13,"retired":3423215244},{"label":"cold-19","status":"linux: booting","frames":15,"retired":3426715608},{"label":"cold-20","status":"linux: booting","frames":14,"retired":3423215632},{"label":"cold-21","status":"linux: booting","frames":11,"retired":3414216412},{"label":"cold-22","status":"linux: booting","frames":4,"retired":3378720250},{"label":"cold-23","status":"linux: booting","frames":14,"retired":3447212197},{"label":"cold-24","status":"linux: booting","frames":4,"retired":3386219221}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":19,"retired":3732197345},{"label":"cold-14","status":"linux: booting","frames":18,"retired":3607200562},{"label":"cold-15","status":"linux: booting","frames":17,"retired":3612200646},{"label":"warm-reload","status":"linux: booting","frames":17,"retired":3586701693},{"label":"cold-16","status":"linux: booting","frames":17,"retired":3581702280},{"label":"cold-17","status":"linux: booting","frames":17,"retired":3586701609},{"label":"cold-18","status":"linux: booting","frames":16,"retired":3559205461},{"label":"cold-19","status":"linux: booting","frames":18,"retired":3565705306},{"label":"cold-20","status":"linux: booting","frames":18,"retired":3563205291},{"label":"cold-21","status":"linux: booting","frames":16,"retired":3550206373},{"label":"cold-22","status":"linux: booting","frames":18,"retired":3504208276},{"label":"cold-23","status":"linux: booting","frames":14,"retired":3579702484},{"label":"cold-24","status":"linux: booting","frames":16,"retired":3514707765}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":19,"retired":3884189586},{"label":"cold-14","status":"linux: booting","frames":18,"retired":3843191159},{"label":"cold-15","status":"linux: booting","frames":17,"retired":3840691721},{"label":"warm-reload","status":"linux: booting","frames":17,"retired":3828692064},{"label":"cold-16","status":"linux: booting","frames":18,"retired":3822192528},{"label":"cold-17","status":"linux: booting","frames":17,"retired":3827192212},{"label":"cold-18","status":"linux: booting","frames":17,"retired":3777694858},{"label":"cold-19","status":"linux: booting","frames":19,"retired":3785194639},{"label":"cold-20","status":"linux: booting","frames":19,"retired":3783194253},{"label":"cold-21","status":"linux: booting","frames":17,"retired":3758195655},{"label":"cold-22","status":"linux: booting","frames":19,"retired":3675198363},{"label":"cold-23","status":"linux: booting","frames":15,"retired":3818192833},{"label":"cold-24","status":"linux: booting","frames":17,"retired":3679698309}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":19,"retired":4031180850},{"label":"cold-14","status":"linux: booting","frames":18,"retired":3995183813},{"label":"cold-15","status":"linux: booting","frames":17,"retired":3990685047},{"label":"warm-reload","status":"linux: booting","frames":17,"retired":3980685562},{"label":"cold-16","status":"linux: booting","frames":18,"retired":3977186238},{"label":"cold-17","status":"linux: booting","frames":17,"retired":3977185610},{"label":"cold-18","status":"linux: booting","frames":17,"retired":3929688117},{"label":"cold-19","status":"linux: booting","frames":19,"retired":3940687948},{"label":"cold-20","status":"linux: booting","frames":19,"retired":3942187327},{"label":"cold-21","status":"linux: booting","frames":17,"retired":3927188217},{"label":"cold-22","status":"linux: booting","frames":19,"retired":3871190135},{"label":"cold-23","status":"linux: booting","frames":15,"retired":3978686146},{"label":"cold-24","status":"linux: booting","frames":17,"retired":3874190024}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"linux: booting","frames":19,"retired":4329673829},{"label":"cold-14","status":"linux: booting","frames":18,"retired":4216175453},{"label":"cold-15","status":"linux: booting","frames":17,"retired":4193176702},{"label":"warm-reload","status":"linux: booting","frames":17,"retired":4162676952},{"label":"cold-16","status":"linux: booting","frames":18,"retired":4147177362},{"label":"cold-17","status":"linux: booting","frames":17,"retired":4167677128},{"label":"cold-18","status":"linux: booting","frames":17,"retired":4078678743},{"label":"cold-19","status":"linux: booting","frames":19,"retired":4101678469},{"label":"cold-20","status":"linux: booting","frames":19,"retired":4092178082},{"label":"cold-21","status":"linux: booting","frames":17,"retired":4071178874},{"label":"cold-22","status":"linux: booting","frames":19,"retired":4017682070},{"label":"cold-23","status":"linux: booting","frames":15,"retired":4147677555},{"label":"cold-24","status":"linux: booting","frames":17,"retired":4019181783}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"desktop ready: launcher available","frames":23,"retired":4729164449},{"label":"cold-14","status":"linux: booting","frames":21,"retired":4589666542},{"label":"cold-15","status":"linux: booting","frames":19,"retired":4556668146},{"label":"warm-reload","status":"linux: booting","frames":20,"retired":4574667317},{"label":"cold-16","status":"linux: booting","frames":19,"retired":4529669897},{"label":"cold-17","status":"linux: booting","frames":20,"retired":4565167803},{"label":"cold-18","status":"linux: booting","frames":17,"retired":4439172115},{"label":"cold-19","status":"linux: booting","frames":20,"retired":4523170831},{"label":"cold-20","status":"linux: booting","frames":20,"retired":4516170414},{"label":"cold-21","status":"linux: booting","frames":17,"retired":4412672528},{"label":"cold-22","status":"linux: booting","frames":19,"retired":4261174804},{"label":"cold-23","status":"linux: booting","frames":16,"retired":4509671124},{"label":"cold-24","status":"linux: booting","frames":17,"retired":4306174222}]}
+E5T18E_PROGRESS={"complete":13,"active":[{"label":"cold-13","status":"desktop ready: launcher available","frames":31,"retired":4932655275},{"label":"cold-14","status":"desktop ready: launcher available","frames":29,"retired":4873155576},{"label":"cold-15","status":"desktop ready: launcher available","frames":29,"retired":4846159450},{"label":"warm-reload","status":"desktop ready: launcher available","frames":29,"retired":4863657011},{"label":"cold-16","status":"desktop ready: launcher available","frames":30,"retired":4830660051},{"label":"cold-17","status":"desktop ready: launcher available","frames":28,"retired":4851157489},{"label":"cold-18","status":"desktop ready: launcher available","frames":28,"retired":4794161991},{"label":"cold-19","status":"desktop ready: launcher available","frames":31,"retired":4823660778},{"label":"cold-20","status":"desktop ready: launcher available","frames":30,"retired":4831659818},{"label":"cold-21","status":"desktop ready: launcher available","frames":23,"retired":4778663072},{"label":"cold-22","status":"linux: booting","frames":22,"retired":4648665635},{"label":"cold-23","status":"desktop ready: launcher available","frames":26,"retired":4814661193},{"label":"cold-24","status":"desktop ready: launcher available","frames":21,"retired":4703664904}]}
+E5T18E_CASE_PASS=cold-13 bootMs=888627
+E5T18E_BOOT=cold-25
+E5T18E_CASE_PASS=cold-14 bootMs=886289
+E5T18E_CASE_PASS=warm-reload bootMs=886730
+E5T18E_CASE_PASS=cold-17 bootMs=883454
+E5T18E_PROGRESS={"complete":17,"active":[{"label":"cold-15","status":"desktop ready: launcher available","frames":33,"retired":5042652340},{"label":"cold-16","status":"desktop ready: launcher available","frames":31,"retired":5015153418},{"label":"cold-17","status":"desktop ready: launcher available","frames":34,"retired":5041650529},{"label":"cold-18","status":"desktop ready: launcher available","frames":29,"retired":4966153505},{"label":"cold-19","status":"desktop ready: launcher available","frames":31,"retired":5007153582},{"label":"cold-20","status":"desktop ready: launcher available","frames":32,"retired":5025152923},{"label":"cold-21","status":"desktop ready: launcher available","frames":29,"retired":4958654662},{"label":"cold-22","status":"desktop ready: launcher available","frames":30,"retired":4907655790},{"label":"cold-23","status":"desktop ready: launcher available","frames":26,"retired":5001653742},{"label":"cold-24","status":"desktop ready: launcher available","frames":29,"retired":4928155765},{"label":"cold-25","status":"linux: booting","frames":0,"retired":215490082}]}
+E5T18E_CASE_PASS=cold-15 bootMs=889717
+E5T18E_CASE_PASS=cold-20 bootMs=886236
+E5T18E_CASE_PASS=cold-16 bootMs=892296
+E5T18E_CASE_PASS=cold-19 bootMs=886577
+E5T18E_CASE_PASS=cold-23 bootMs=884476
+E5T18E_CASE_PASS=cold-18 bootMs=896117
+E5T18E_CASE_PASS=cold-21 bootMs=892407
+E5T18E_CASE_PASS=cold-24 bootMs=891706
+E5T18E_CASE_PASS=cold-22 bootMs=900662
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"linux: booting","frames":4,"retired":493974704}]}
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"linux: booting","frames":4,"retired":768955609}]}
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"linux: booting","frames":4,"retired":1012936064}]}
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"linux: booting","frames":4,"retired":1243912759}]}
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"linux: booting","frames":4,"retired":1460887292}]}
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"linux: booting","frames":4,"retired":1696864430}]}
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"linux: booting","frames":4,"retired":1948343146}]}
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"linux: booting","frames":4,"retired":2205819827}]}
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"linux: booting","frames":4,"retired":2459297410}]}
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"linux: booting","frames":4,"retired":2712276651}]}
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"linux: booting","frames":4,"retired":2964254670}]}
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"linux: booting","frames":4,"retired":3220734102}]}
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"linux: booting","frames":17,"retired":3455711400}]}
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"linux: booting","frames":18,"retired":3800193687}]}
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"linux: booting","frames":18,"retired":4075178894}]}
+E5T18E_PROGRESS={"complete":26,"active":[{"label":"cold-25","status":"desktop ready: launcher available","frames":24,"retired":4777163458}]}
+E5T18E_CASE_PASS=cold-25 bootMs=487422
+E5T18E_PASS=25_COLD_2_WARM

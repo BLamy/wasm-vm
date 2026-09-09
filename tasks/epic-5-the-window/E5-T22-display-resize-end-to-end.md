@@ -3,13 +3,32 @@ id: E5-T22
 epic: 5
 title: Display resize end-to-end — canvas size to guest mode change and back
 priority: 522
-status: pending
-depends_on: [E5-T04, E5-T18]
+status: cancelled
+depends_on: [E5-T04, E5-T18e]
 estimate: M
+risk: high
 capstone: false
+decomposed_into: [E5-T22a, E5-T22b, E5-T22e, E5-T22c, E5-T22d]
 ---
 
 ## Goal
+
+> Decomposed before activation on 2026-09-06. The original requirements below
+> remain intact and are assigned to the ordered S slices listed next.
+
+## Execution slices
+
+1. E5-T22a — bounded host hotplug API and actual GPU state; make verify-E5-T22a.
+2. E5-T22b — viewport/DPR debounce and stale-frame presentation; make verify-E5-T22b.
+3. E5-T22e — retain physical monitor state during Linux's boot-time device reset;
+   make verify-E5-T22e. Discovered by T22c's non-default initial-mode boot.
+4. E5-T22c — real in-place guest compositor mode adoption; make verify-E5-T22c.
+5. E5-T22d — final storms, lifetime, DPR and reload matrix; make verify-E5-T22d.
+
+T22d is the dependency handoff. No original acceptance or attack is waived.
+
+## Original goal
+
 Resizing the browser window resizes the guest desktop: canvas-size changes flow through
 T04's display-info/EDID hotplug event, the guest compositor picks up the new mode,
 reallocates its framebuffer, and the new-size scanout lands back on a correctly-sized

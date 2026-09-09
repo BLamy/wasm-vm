@@ -1,0 +1,28 @@
+{
+  "head": "05b82bc688a34e6a1abef7b6c761c01bf4a3f7c6",
+  "acceptance": false,
+  "command": "tools/verify/e5-t26f-browser-roundtrip.mjs",
+  "config": {
+    "E5_T26F_REQUIRE_HEAD": "05b82bc688a34e6a1abef7b6c761c01bf4a3f7c6",
+    "E5_T26F_HEADED": "0",
+    "E5_T26F_FIXTURE": "resident-observer-v1",
+    "E5_T26F_DIAGNOSTIC_PROFILE": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-IKBhyX",
+    "E5_T26F_DIAGNOSTIC_PORT": "61637",
+    "E5_T26F_TIMEOUT_MS": "1800000",
+    "E5_T26F_IMAGE": "target/e5-t26f/resident-image-single-process-observer-v1/alpine-rootfs.ext4",
+    "E5_T26F_IMAGE_INFO": "target/e5-t26f/resident-image-single-process-observer-v1/desktop-info.json",
+    "E5_T26F_DESKTOP_ASSET_DIR": "target/e5-t26f/chunks/resident-single-process-observer-v1",
+    "E5_T26F_DIAGNOSTIC": "reuse",
+    "E5_T26F_DIAGNOSTIC_LATENCY": "1",
+    "E5_T26F_OUT": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-observer-05b82bc6/latency/record"
+  },
+  "sourceBindings": {
+    "tools/verify/e5-t26f-browser-roundtrip.mjs": "7f8b58f7e3f6e0f16b7b6cb91b8593e625ed058e7aa764df428e9990f85100a1",
+    "tools/verify/e5-t26f-resident-proof.mjs": "d5615b185536f0f0af3da7d4b133ec28ec9e2c62962d22b3cd57e8c24f5a5810",
+    "tools/guest/e5-t26f-resident-observer.sh": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+    "tools/guest/e5-t26f-observer.c": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+    "target/e5-t26f/observer-build-v1/e5t26f-observe": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+    "target/e5-t26f/observer-build-v1/build-info.json": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+    "evidence/e5-t26f/single-process-observer-05b82bc6/run-latency.mjs": "16af6ce3b4bc61a0775095a675c527911d2268cc7249310ecfc986f1b70ab209"
+  }
+}

@@ -1,0 +1,197 @@
+# Whole-machine transport/ring continuity, detached decode refusal, and existing codec gates.
+cargo fmt --check -p wasm-vm-core
+cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.10s
+cargo test -p wasm-vm-core --features gpu-trace --test desktop_machine_resume --test desktop_machine_resume_verifier --test cpu_resume --test snapshot_coherence --test virtio_blk_quiesce --test virtio_console --test desktop_snapshot_save -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/cpu_resume.rs (target/debug/deps/cpu_resume-6c64fcb637644f66)
+
+running 6 tests
+test malformed_cpu_payload_is_rejected_and_leaves_hart_unchanged ... ok
+test resume_places_the_timer_interrupt_identically ... ok
+test virtio_blk_and_net_sections_round_trip_at_machine_level ... ok
+test whole_machine_resume_round_trips ... ok
+test restore_over_dirty_state_is_byte_identical ... ok
+test resume_trace_matches_continuation ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.46s
+
+     Running tests/desktop_machine_resume.rs (target/debug/deps/desktop_machine_resume-a78ea839bc72b4db)
+
+running 7 tests
+test malformed_saved_agent_dma_blocks_tx_until_transport_reset ... ok
+test headless_resume_remains_compatible_without_desktop_sections ... ok
+test every_fallible_legacy_section_refuses_before_live_state_or_host_callbacks_change ... ok
+test agent_resume_frontier_wraps_and_allows_fresh_tx_before_first_guest_step ... ok
+test malformed_desktop_section_and_missing_device_refuse_without_partial_restore ... ok
+desktop resume continuation: hash=9865e79b681ad970, retired=1
+test desktop_devices_resume_with_ring_continuity_and_fresh_host_state ... ok
+test pending_console_transmits_survive_while_stale_host_session_is_discarded ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+
+     Running tests/desktop_machine_resume_verifier.rs (target/debug/deps/desktop_machine_resume_verifier-37cbdfd441e68e16)
+
+running 9 tests
+test pending_old_session_agent_hello_cannot_attest_the_resumed_host ... ok
+test console_control_request_kicked_before_save_completes_once_after_resume ... ok
+test sound_request_kicked_before_save_completes_once_after_resume ... ok
+test malformed_later_machine_payload_must_not_partially_commit_desktop_state ... ok
+test rng_cursor_wrap_preserves_one_pending_completion_exactly_once ... ok
+test same_topology_in_alternate_assembly_order_restores ... ok
+test machine_save_reconciles_held_keyboard_tablet_and_mouse_state ... ok
+test source_target_topology_mismatch_is_atomic_both_directions ... ok
+test every_new_section_corruption_missing_and_duplicate_are_atomic ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.81s
+
+     Running tests/desktop_snapshot_save.rs (target/debug/deps/desktop_snapshot_save-4ef0a4aa7a795ba1)
+
+running 2 tests
+test save_refuses_a_malformed_live_input_component ... ok
+test save_reports_each_missing_desktop_participant ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+
+     Running tests/snapshot_coherence.rs (target/debug/deps/snapshot_coherence-1932df21462b55c0)
+
+running 5 tests
+test overlay_generation_is_monotonic ... ok
+test same_snapshot_refused_after_overlay_advances ... ok
+test changed_base_hash_is_refused_before_mutation ... ok
+test bumped_overlay_generation_is_refused_before_mutation ... ok
+test matching_base_and_generation_restores ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/virtio_blk_quiesce.rs (target/debug/deps/virtio_blk_quiesce-9fe385d383dc4fa2)
+
+running 3 tests
+test quiesce_refuses_unresolvable_chunk_within_bounded_passes ... ok
+test quiesce_is_a_noop_when_nothing_is_parked ... ok
+test quiesce_drains_resolvable_flush_then_snapshots_coherently ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/virtio_console.rs (target/debug/deps/virtio_console-0259a65cbd855805)
+
+running 4 tests
+test desktop_restore_uses_live_agent_and_retains_host_reconciliation_state ... ok
+test missing_agent_early_refusal_clears_dirty_presentation_and_restores_cold_devices ... ok
+test virtio_console_machine_registers_and_services_named_agent_port_without_uart_aliasing ... ok
+test resume_restores_console_transport_and_restarts_the_host_application_generation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+cargo test -p wasm-vm-core --lib --features gpu-trace resume
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 22 tests
+test ram::resume_snapshot_tests::a_malformed_payload_is_refused_without_mutating ... ok
+test resume::resume_tests::a_huge_zero_run_length_is_rejected_without_allocating ... ok
+test resume::resume_tests::a_bad_magic_is_rejected ... ok
+test resume::resume_tests::a_component_round_trips_through_the_container_format ... ok
+test resume::resume_tests::a_partial_trailing_section_header_is_truncated ... ok
+test resume::resume_tests::a_section_length_past_the_end_is_rejected_not_over_read ... ok
+test resume::resume_tests::a_too_short_blob_is_truncated_not_a_panic ... ok
+test ram::resume_snapshot_tests::restoring_a_wrong_size_snapshot_is_refused_without_mutating ... ok
+test resume::resume_tests::a_reserved_but_unimplemented_section_is_refused_as_unsupported ... ok
+test resume::resume_tests::a_version_mismatch_is_rejected ... ok
+test resume::resume_tests::an_unknown_section_fails_loudly ... ok
+test resume::resume_tests::decode_sparse_rejects_malformed_payloads ... ok
+test resume::resume_tests::header_round_trips_and_sections_read_back_in_order ... ok
+test resume::resume_tests::restore_decision_rejects_a_truncated_final_section ... ok
+test resume::resume_tests::the_coherence_guards_refuse_a_mismatch ... ok
+test resume::resume_tests::zero_elision_round_trips_for_every_shape ... ok
+test ram::resume_snapshot_tests::ram_round_trips_completely ... ok
+test resume::resume_tests::a_mostly_zero_buffer_compresses_far_under_ram_size ... ok
+test resume::resume_tests::decode_sparse_never_panics_on_random_input ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_ram_snapshot_is_far_under_ram_size ... ok
+test resume::resume_tests::the_parser_never_panics_on_any_truncation_or_flip ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_256_mib_ram_encodes_under_15_percent_and_restores_byte_identically ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 301 filtered out; finished in 3.14s
+
+cargo test -p wasm-vm-core --lib --features gpu-trace snapshot
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 49 tests
+test desktop_snapshot::desktop_snapshot_tests::explicit_abort_is_idempotent_and_invalid_permits_are_rejected ... ok
+test desktop_snapshot::desktop_snapshot_tests::in_flight_timeout_is_bounded_aborts_and_leaves_device_usable ... ok
+test desktop_snapshot::desktop_snapshot_tests::quiesce_waits_for_one_boundary_and_releases_cleanly ... ok
+test desktop_snapshot::desktop_snapshot_tests::builder_rejects_duplicate_unknown_and_forward_sections ... ok
+test desktop_snapshot::desktop_snapshot_tests::empty_envelope_is_byte_exact_and_stably_digested ... ok
+test dev::clint::snapshot_tests::clint_restore_rejects_malformed_payloads_without_mutating ... ok
+test dev::clint::snapshot_tests::clint_state_round_trips_completely ... ok
+test desktop_snapshot::desktop_snapshot_tests::parser_rejects_trailing_table_bytes_and_component_digest_tampering ... ok
+test desktop_snapshot::desktop_snapshot_tests::bad_magic_and_forward_envelope_version_are_machine_readable ... ok
+test desktop_snapshot::desktop_snapshot_tests::populated_envelope_includes_versions_component_digests_and_stable_digest ... ok
+test dev::plic::snapshot_tests::plic_restore_rejects_wrong_length_without_mutating ... ok
+test dev::plic::snapshot_tests::plic_behavioural_state_round_trips_and_drops_the_diagnostic_counter ... ok
+test desktop_snapshot::desktop_snapshot_tests::malformed_sections_fail_closed_before_live_state_mutation ... ok
+test dev::rtc::snapshot_tests::rtc_restore_rejects_malformed_without_mutating ... ok
+test dev::rtc::snapshot_tests::rtc_state_round_trips_completely_and_keeps_the_host_clock ... ok
+test dev::uart16550::snapshot_tests::uart_restore_rejects_malformed_payloads_without_mutating ... ok
+test dev::uart16550::snapshot_tests::uart_state_round_trips_completely ... ok
+test dev::virtio::input::keyboard::tests::keyboard_led_snapshot_round_trip_rejects_non_boolean_bytes ... ok
+test dev::virtio::gpu::snapshot::tests::malformed_shadow_and_truncation_fail_closed ... ok
+test dev::virtio::gpu::snapshot::tests::missing_scanout_resource_and_bad_format_leave_live_state_unchanged ... ok
+test dev::virtio::gpu::snapshot::tests::valid_restore_presents_one_full_repair_frame ... ok
+test dev::virtio::gpu::snapshot::tests::gpu_snapshot_round_trips_resource_scanout_cursor_damage_and_crc ... ok
+test dev::virtio::input::snapshot::tests::direct_release_all_is_protected_from_budget_eviction ... ok
+test dev::virtio::gpu::snapshot::tests::malformed_resource_metadata_fails_closed_before_live_map_swap ... ok
+test dev::virtio::gpu::snapshot::tests::shadow_codec_reports_bounded_compression_and_rejects_forged_runs ... ok
+test dev::virtio::input::snapshot::tests::malformed_ring_lengths_duplicate_events_and_truncation_are_atomic ... ok
+test dev::virtio::input::snapshot::tests::restore_discards_held_key_and_button_state_with_one_protected_release_frame ... ok
+test dev::virtio::input::snapshot::tests::three_input_devices_round_trip_pending_order_and_partial_indices ... ok
+test dev::virtio::input::snapshot::tests::verifier_empty_restore_accepts_fresh_keyboard_tablet_and_mouse_frames ... ok
+test dev::virtio::input::snapshot::tests::verifier_multiframe_order_indices_and_staged_work_are_byte_exact ... ok
+test dev::virtio::input::snapshot::tests::verifier_release_all_precedes_saved_work_and_survives_host_pressure ... ok
+test dev::virtio::input::snapshot::tests::verifier_malformed_headers_preserve_unserialized_delivered_ledger ... ok
+test dev::virtio::mmio::tests::transport_snapshot_round_trips_and_rejects_malformed ... ok
+test dev::virtio::snd::snapshot::tests::malformed_restore_is_atomic_and_rejects_bad_params ... ok
+test dev::virtio::snd::snapshot::tests::pending_period_metadata_is_exact_and_atomic_for_both_streams ... ok
+test dev::virtio::snd::snapshot::tests::snapshot_header_has_stable_size_before_event_records ... ok
+test ram::resume_snapshot_tests::a_malformed_payload_is_refused_without_mutating ... ok
+test dev::virtio::snd::snapshot::tests::stopped_stream_round_trip_preserves_configuration_without_xrun ... ok
+test dev::virtio::snd::snapshot::tests::running_repair_respects_the_event_budget_before_mutation ... ok
+test dev::virtio::snd::snapshot::tests::running_restore_discards_ephemeral_rings_and_repairs_both_streams ... ok
+test ram::resume_snapshot_tests::restoring_a_wrong_size_snapshot_is_refused_without_mutating ... ok
+test ram::resume_snapshot_tests::ram_round_trips_completely ... ok
+test dev::uart16550::snapshot_tests::uart_restore_never_panics_on_random_input ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_ram_snapshot_is_far_under_ram_size ... ok
+test dev::virtio::input::snapshot::tests::verifier_total_serialized_event_cap_is_atomic_on_encode_and_decode ... ok
+test dev::virtio::input::snapshot::tests::verifier_release_growth_at_serialized_cap_is_atomic ... ok
+test dev::virtio::input::snapshot::tests::verifier_fully_consumed_records_still_obey_total_serialized_cap ... ok
+test dev::virtio::input::snapshot::tests::verifier_release_growth_that_exactly_reaches_serialized_cap_succeeds ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_256_mib_ram_encodes_under_15_percent_and_restores_byte_identically ... ok
+
+test result: ok. 49 passed; 0 failed; 0 ignored; 0 measured; 274 filtered out; finished in 3.13s
+
+cargo test -p wasm-vm-core --lib --features gpu-trace desktop_restore
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 12 tests
+test desktop_restore::desktop_restore_tests::commit_failure_after_publication_is_cold_booted ... ok
+test desktop_restore::desktop_restore_tests::changed_host_window_keeps_guest_scanout_and_selects_letterbox ... ok
+test desktop_restore::desktop_restore_tests::component_refusal_clears_staging_and_cold_boots_without_commit ... ok
+test desktop_restore::desktop_restore_tests::dropped_agent_channel_never_publishes_viewport_or_device_commit ... ok
+test desktop_restore::desktop_restore_tests::invalid_host_dimensions_are_rejected_before_callbacks ... ok
+test desktop_restore::desktop_restore_tests::valid_composite_restore_stages_in_dependency_order_and_repairs ... ok
+test desktop_restore::desktop_restore_tests::missing_or_malformed_composite_never_enters_component_staging ... ok
+test desktop_restore::desktop_restore_tests::viewport_and_repair_failures_use_the_same_clean_fallback ... ok
+test desktop_restore::desktop_restore_tests::concrete_backend_round_trips_the_t26b_to_d_codecs_and_host_state ... ok
+test desktop_restore::desktop_restore_tests::rollback_clears_live_sink_and_uses_power_on_baseline ... ok
+test desktop_restore::desktop_restore_tests::concrete_backend_refusals_leave_all_devices_in_the_cold_state ... ok
+test desktop_restore::desktop_restore_tests::machine_refuses_restore_without_the_production_agent_channel ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 311 filtered out; finished in 0.06s
+
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.04s
+cargo check -p wasm-vm-wasm --lib --target wasm32-unknown-unknown
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.04s
+verify-E5-T26h (whole-machine desktop transport and device resume): OK

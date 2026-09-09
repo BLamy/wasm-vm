@@ -123,6 +123,16 @@ const css = `
 .ide-save:hover:not(:disabled) { background: #2b5278; }
 .ide-save:disabled { opacity: .4; cursor: not-allowed; }
 
+/* Guest display surface — the virtio-gpu canvas stays visible above the source editor. */
+.ide-display-pane { flex: 0 0 190px; min-height: 96px; display: flex; flex-direction: column;
+  background: #05070a; border-bottom: 1px solid var(--line, #232a35); }
+.ide-display-head { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; padding: 5px 12px;
+  color: #8fa3bf; background: #0a0d13; border-bottom: 1px solid var(--line, #232a35); font-size: 11px; }
+.ide-display-head .sp { flex: 1 1 auto; }
+.ide-display-status { color: #9ad29a; }
+.ide-display-viewport { flex: 1 1 auto; min-width: 0; min-height: 0; position: relative; overflow: hidden; background: #000; }
+.ide-display-canvas { display: block; position: absolute; left: 0; top: 0; image-rendering: auto; background: #000; }
+
 .ide-editor-body { flex: 1 1 auto; display: flex; min-height: 0; position: relative; }
 #ide-editor-wrap { flex: 1 1 auto; display: flex; min-width: 0; }
 .ide-gutter { flex: 0 0 auto; padding: 8px 8px 8px 12px; text-align: right; color: #4a5a72;
@@ -396,6 +406,16 @@ if (root) {
           <span class="ide-crumb" id="ide-crumb">No file open</span>
           <span class="ide-status" id="ide-status"></span>
           <button class="ide-save" id="ide-save" disabled>Save</button>
+        </div>
+        <div class="ide-display-pane" id="ide-display-pane" aria-label="Guest display">
+          <div class="ide-display-head">
+            <span>DISPLAY — virtio-gpu scanout</span>
+            <span class="sp"></span>
+            <span class="ide-display-status" id="ide-display-status" role="status" aria-live="polite">Canvas2D · waiting for guest frame</span>
+          </div>
+          <div class="ide-display-viewport" id="ide-display-viewport">
+            <canvas id="ide-display-canvas" class="ide-display-canvas" width="1280" height="800" aria-label="Guest display canvas"></canvas>
+          </div>
         </div>
         <div class="ide-editor-body" id="ide-editor-body">
           <div id="ide-editor-wrap">

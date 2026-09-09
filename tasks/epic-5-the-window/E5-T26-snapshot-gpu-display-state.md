@@ -3,11 +3,16 @@ id: E5-T26
 epic: 5
 title: Desktop-aware snapshots — GPU, input, and sound state across suspend/resume
 priority: 526
-status: pending
-depends_on: [E5-T18, E5-T20e]
+status: cancelled
+decomposed_into: [E5-T26a, E5-T26b, E5-T26c, E5-T26d, E5-T26e, E5-T26f, E5-T26g]
+depends_on: [E5-T18e, E5-T20e]
 estimate: L
 capstone: false
 ---
+
+> **Decomposed 2026-09-06.** This L-sized planning container is cancelled and replaced by
+> seven ordered S tasks. The children own the executable device, restore, and proof boundaries;
+> E5-T26g is the final desktop snapshot stress/portability proof.
 
 ## Goal
 Epic 3's snapshot/restore machinery learns the Epic 5 devices: suspend a running

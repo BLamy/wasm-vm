@@ -1,0 +1,97 @@
+$ node tools/verify/e5-t26f-ash-read-probe.mjs /Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/resident-read-probe/parser-check-valid
+{
+  "acceptance": false,
+  "results": [
+    {
+      "mode": "builtin",
+      "kind": "stat",
+      "target": "/proc/16/stat",
+      "bytes": 302,
+      "reads": 302,
+      "positiveReads": 302,
+      "eofReads": 0,
+      "returnedSizeHistogram": {
+        "1": 302
+      },
+      "outputSha256": "ff66b9a56da9b40a8a22bbc7c8b3b14c8ec31e7f0e0d21e1b149d2114eafe3de",
+      "traceSha256": "98fbf71a0c46faba98889da60bc2df49c56b913c413105e6cbca8c634f96177d"
+    },
+    {
+      "mode": "builtin",
+      "kind": "fdinfo",
+      "target": "/proc/16/fdinfo/3",
+      "bytes": 41,
+      "reads": 42,
+      "positiveReads": 41,
+      "eofReads": 1,
+      "returnedSizeHistogram": {
+        "0": 1,
+        "1": 41
+      },
+      "outputSha256": "b1c2e312b02ed037380c966ba8f925703fd2c64154983a449fad171301454787",
+      "traceSha256": "98fbf71a0c46faba98889da60bc2df49c56b913c413105e6cbca8c634f96177d"
+    },
+    {
+      "mode": "builtin",
+      "kind": "io",
+      "target": "/proc/16/io",
+      "bytes": 101,
+      "reads": 102,
+      "positiveReads": 101,
+      "eofReads": 1,
+      "returnedSizeHistogram": {
+        "0": 1,
+        "1": 101
+      },
+      "outputSha256": "1874f0877bfe6ae6fed0b5d70e5c70e604ed7474bf388ebcc74e42d308543782",
+      "traceSha256": "98fbf71a0c46faba98889da60bc2df49c56b913c413105e6cbca8c634f96177d"
+    },
+    {
+      "mode": "whole",
+      "kind": "stat",
+      "target": "/proc/20/stat",
+      "bytes": 302,
+      "reads": 2,
+      "positiveReads": 1,
+      "eofReads": 1,
+      "returnedSizeHistogram": {
+        "0": 1,
+        "302": 1
+      },
+      "outputSha256": "84c343a260770627c356c48c6c93234943eba1d3e90a075dfdf372da982fcb9b",
+      "traceSha256": "a9e9d21929a8cbc1633ea8da083bee07d95c57ff294e46a0244b4983c2c1db19"
+    },
+    {
+      "mode": "whole",
+      "kind": "fdinfo",
+      "target": "/proc/20/fdinfo/3",
+      "bytes": 41,
+      "reads": 2,
+      "positiveReads": 1,
+      "eofReads": 1,
+      "returnedSizeHistogram": {
+        "0": 1,
+        "41": 1
+      },
+      "outputSha256": "b1c2e312b02ed037380c966ba8f925703fd2c64154983a449fad171301454787",
+      "traceSha256": "a9e9d21929a8cbc1633ea8da083bee07d95c57ff294e46a0244b4983c2c1db19"
+    },
+    {
+      "mode": "whole",
+      "kind": "io",
+      "target": "/proc/20/io",
+      "bytes": 100,
+      "reads": 2,
+      "positiveReads": 1,
+      "eofReads": 1,
+      "returnedSizeHistogram": {
+        "0": 1,
+        "100": 1
+      },
+      "outputSha256": "3219bef3a5d5c6256214110993ded75ec1dc60bd6728a709aef781e4c5b15a2c",
+      "traceSha256": "a9e9d21929a8cbc1633ea8da083bee07d95c57ff294e46a0244b4983c2c1db19"
+    }
+  ]
+}
+
+exit=0

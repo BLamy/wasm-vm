@@ -1,0 +1,100 @@
+{
+  "exactHead": "57c2cc828c151c830ebd7a377dc29d7bf898566d",
+  "artifacts": {
+    "evidence/e5-t25a/browser/results.json": {
+      "expectedSha256": "f82cf35bb1c0db9e425b6bbfc37a5117304be424e1f9318777e1dc165a273d4e",
+      "observedSha256": "f82cf35bb1c0db9e425b6bbfc37a5117304be424e1f9318777e1dc165a273d4e",
+      "held": true
+    },
+    "evidence/e5-t25a/browser/chromium-gated.png": {
+      "expectedSha256": "7b77d08efbfeab64a9b46cf6b3617c86b1e81afd90781a24bf4c2b02893f5547",
+      "observedSha256": "7b77d08efbfeab64a9b46cf6b3617c86b1e81afd90781a24bf4c2b02893f5547",
+      "held": true
+    },
+    "evidence/e5-t25a/demo/demo-suite.json": {
+      "expectedSha256": "0b786e88c8ead85e509d1b1dd09213072816f2b4d3bc35c78563b3be5cc568fd",
+      "observedSha256": "0b786e88c8ead85e509d1b1dd09213072816f2b4d3bc35c78563b3be5cc568fd",
+      "held": true
+    },
+    "evidence/e5-t25a/demo/demo-suite.png": {
+      "expectedSha256": "aaef2ebff2f8abcd6ed9e825831f4299eba5914bae80cf28d8762450b9c37ab1",
+      "observedSha256": "aaef2ebff2f8abcd6ed9e825831f4299eba5914bae80cf28d8762450b9c37ab1",
+      "held": true
+    }
+  },
+  "checks": {
+    "exactHead": true,
+    "hashesRecompute": true,
+    "browserVersions": true,
+    "browserNormalOffFullOn": true,
+    "retainedSourceDistFourQueryIsolation": true,
+    "demo126of126": true,
+    "demoErrorsEmpty": true,
+    "demoScreenshotSelfHash": true,
+    "workerLogFullPngDigest": true,
+    "workerLogCurrentDemoDigests": true
+  },
+  "allHeld": true,
+  "browser": [
+    {
+      "browser": "chromium",
+      "version": "152.0.7977.76",
+      "normalSurface": false,
+      "gatedSurface": true,
+      "hookCalls": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          4
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          5
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    {
+      "browser": "firefox",
+      "version": "132.0",
+      "normalSurface": false,
+      "gatedSurface": true,
+      "hookCalls": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          4
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          5
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    }
+  ],
+  "retainedSurfaceInspection": {
+    "priorHead": "0da96f6a5c7f323b986fe41b6f6bfb2508eec834",
+    "cases": 16,
+    "qualification": "Retained browser cases establish actual Chromium/Firefox source/dist four-query behavior; exact-head source/dist parity and the exact query conjunction are independently re-established by static-audit.mjs."
+  },
+  "demo": {
+    "metrics": {
+      "metric-pass": "126",
+      "metric-fail": "0",
+      "metric-done": "126"
+    },
+    "errors": [],
+    "httpErrors": []
+  }
+}

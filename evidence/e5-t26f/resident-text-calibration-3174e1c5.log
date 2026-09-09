@@ -1,0 +1,57 @@
+{
+  "acceptance": false,
+  "command": "node tools/verify/e5-t26f-text-calibrate-scratch.mjs",
+  "scriptSha256": "6facda523e87a814c0f44762603b3aa421615add8f5d660853a48d31357e9b60",
+  "config": {
+    "E5_T26F_REQUIRE_HEAD": "3174e1c5013cb551f88ccd258ffb9c2e596139ea",
+    "E5_T26F_FIXTURE": "resident-aplay-v1",
+    "E5_T26F_DIAGNOSTIC": "reuse",
+    "E5_T26F_DIAGNOSTIC_PROFILE": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resident-FUBCo4",
+    "E5_T26F_DIAGNOSTIC_PORT": "61631",
+    "E5_T26F_IMAGE": "target/e5-t26f/resident-image-2ae65408-a/alpine-rootfs.ext4",
+    "E5_T26F_IMAGE_INFO": "target/e5-t26f/resident-image-2ae65408-a/desktop-info.json",
+    "E5_T26F_DESKTOP_ASSET_DIR": "target/e5-t26f/chunks/resident-2ae65408",
+    "E5_T26F_TIMEOUT_MS": "1200000",
+    "E5_T26F_OUT": "evidence/e5-t26f/resident-text-calibration-3174e1c5"
+  }
+}
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T10:45:34.752Z","elapsedMs":0}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-08T10:45:35.677Z","elapsedMs":925}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-08T10:45:35.677Z","elapsedMs":925}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-08T10:45:38.346Z","elapsedMs":3594}
+[e5-t26f] {"phase":"reload:baseline-before-quiet","event":"start","timestamp":"2026-09-08T10:45:38.351Z","elapsedMs":3599}
+[e5-t26f] {"phase":"reload:baseline-before-quiet","event":"done","timestamp":"2026-09-08T10:45:38.498Z","elapsedMs":3746}
+[e5-t26f] {"phase":"readiness:baseline-before-quiet:desktop ready","event":"start","timestamp":"2026-09-08T10:45:38.499Z","elapsedMs":3747}
+[e5-t26f] {"phase":"readiness:baseline-before-quiet:desktop ready","event":"done","timestamp":"2026-09-08T10:45:39.773Z","elapsedMs":5021}
+[e5-t26f] {"phase":"restore:baseline-before-quiet:completion","event":"start","timestamp":"2026-09-08T10:45:39.773Z","elapsedMs":5021}
+[e5-t26f] {"phase":"restore:baseline-before-quiet:completion","event":"done","timestamp":"2026-09-08T10:45:39.781Z","elapsedMs":5029}
+[e5-t26f] {"phase":"restore:baseline-before-quiet:first-present","event":"start","timestamp":"2026-09-08T10:45:39.781Z","elapsedMs":5029}
+[e5-t26f] {"phase":"restore:baseline-before-quiet:first-present","event":"done","timestamp":"2026-09-08T10:45:39.783Z","elapsedMs":5031}
+[e5-t26f] {"phase":"calibration:native-canvas","event":"start","timestamp":"2026-09-08T10:45:39.783Z","elapsedMs":5031}
+{
+  "acceptance": false,
+  "head": "3174e1c5013cb551f88ccd258ffb9c2e596139ea",
+  "nativePngSha256": "f524daa892cdc6e79a4e6dfabe2a30f59345abfcb7648f73e1d4b92fca925fbe",
+  "candidates": [
+    {
+      "left": 115,
+      "right": 205,
+      "top": 290,
+      "bottom": 303,
+      "width": 90,
+      "height": 13,
+      "rgbaSha256": "aeef88541671c278d749ea2d57b285bdd277ab4b6d149f4291edbae90caca290"
+    },
+    {
+      "left": 115,
+      "right": 187,
+      "top": 355,
+      "bottom": 368,
+      "width": 72,
+      "height": 13,
+      "rgbaSha256": "868249728c21a50b44997f9a83499202dafaecdf6e07f345d08e8da8ab5294fc"
+    }
+  ]
+}
+[e5-t26f] {"phase":"calibration:native-canvas","event":"done","timestamp":"2026-09-08T10:45:39.811Z","elapsedMs":5059}

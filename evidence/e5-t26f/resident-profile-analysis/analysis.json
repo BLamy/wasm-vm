@@ -1,0 +1,5912 @@
+{
+  "acceptance": false,
+  "head": "33a65efb90d1656be45931ea5aacb9b670c0c35f",
+  "rawSha256": "1b4763eb02fc912a4cf4a20c0aee9366ed09ffb619160f60a61f856f8df36194",
+  "observationSha256": "497cc356e24521c9228062c135c7e01870db639f494fff0fff995db29d496b10",
+  "runtimeSha256": "42aced7a2dfc4d0a69e1ea5a15685f5d9a605f797f8df1c5db89f95051ba0425",
+  "releaseSha256": "8df0e82c87aa25d39988517b045b42712f8c94d1bec4f0d1db5ed2ab772f0e3a",
+  "namedSha256": "c2e5156819783abb458d65318ef05b4a7036484a66b9c96f6d74c1caadbc17ea",
+  "mappedNames": 1889,
+  "matchedNoncustomSections": 11,
+  "samples": 2592,
+  "totalUs": 3857677,
+  "profileSpanMs": 3858.149,
+  "sampleIntervalsUs": {
+    "requested": 1000,
+    "median": 1506,
+    "max": 4698
+  },
+  "timing": {
+    "restoreAt": 1144.1449999809265,
+    "profilePageAnchor": 1979.5099999904633,
+    "frozenEnd": 5831.705000042915,
+    "elapsedFromFrozenEndMs": 4687.560000061989,
+    "retainedAssertionElapsedMs": 4687.870000004768,
+    "profilePageAlignmentSlackMs": 5.9539999475478,
+    "lastZero": {
+      "observedAt": 4831.814999938011,
+      "elapsedMs": 3687.6699999570847,
+      "available": true,
+      "writeIndex": 0
+    },
+    "firstPcm": {
+      "observedAt": 4881.210000038147,
+      "elapsedMs": 3737.0650000572205,
+      "available": true,
+      "writeIndex": 960,
+      "pcmAvailable": true,
+      "completedAt": 4881.284999966621,
+      "pcm": {
+        "available": true,
+        "writeIndex": 960,
+        "readIndex": 480,
+        "fillFrames": 480,
+        "capacityFrames": 4096,
+        "writtenFrames": 960,
+        "inspectedFrames": 960,
+        "nonSilentFrames": 960,
+        "maxAbs": 0.999969482421875
+      }
+    },
+    "firstMarker": {
+      "startedAt": 5795.360000014305,
+      "observedAt": 5795.379999995232,
+      "elapsedMs": 4651.235000014305,
+      "stateReadMs": 0.019999980926513672,
+      "frameCount": 11,
+      "markerSeen": true
+    },
+    "markerCalls": 228,
+    "markerTotalMs": 8.549999237060547,
+    "markerMaxMs": 3.459999918937683,
+    "profileRelativeWindowsUs": {
+      "beforePcm": [
+        0,
+        2852304.999947548
+      ],
+      "pcmBoundaryUncertain": [
+        2852304.999947548,
+        2907653.9999952316
+      ],
+      "afterPcm": [
+        2907653.9999952316,
+        3857677
+      ]
+    }
+  },
+  "summary": {
+    "totalUs": 3857677,
+    "samples": 2592,
+    "self": [
+      {
+        "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h1c6b17789b9d53e7",
+        "us": 478990,
+        "percent": 12.416539798433098
+      },
+      {
+        "name": "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b",
+        "us": 447565,
+        "percent": 11.601930384529343
+      },
+      {
+        "name": "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81",
+        "us": 304755,
+        "percent": 7.899961557175471
+      },
+      {
+        "name": "wasm_vm_core::Machine::try_jit_block::h0ec09f3d40a79477",
+        "us": 210588,
+        "percent": 5.458932927769744
+      },
+      {
+        "name": "wasm_vm_core::dispatch::BlockDiscovery::on_block_entry::h603a5b4937cad8ca",
+        "us": 204274,
+        "percent": 5.295259297240282
+      },
+      {
+        "name": "wasm_vm_core::Machine::sync_plic::h7f5c3bd066f966f0",
+        "us": 202756,
+        "percent": 5.255909190945743
+      },
+      {
+        "name": "wasm_vm_core::mmu::translate_cached::hf2b93220145a733d",
+        "us": 182592,
+        "percent": 4.733211204566894
+      },
+      {
+        "name": "wasm_vm_core::Machine::next_micro_op::hde9600194430e6db",
+        "us": 159894,
+        "percent": 4.144826018352496
+      },
+      {
+        "name": "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf",
+        "us": 123259,
+        "percent": 3.1951612330425796
+      },
+      {
+        "name": "wasm_vm_core::mmu::translate_cached::h0f176be2d21edacd",
+        "us": 108663,
+        "percent": 2.816798814416033
+      },
+      {
+        "name": "__udivti3",
+        "us": 108143,
+        "percent": 2.80331919961158
+      },
+      {
+        "name": "wasm_vm_core::pmp::Pmp::check::h49feb29917fd316e",
+        "us": 89152,
+        "percent": 2.311028113551238
+      },
+      {
+        "name": "wasm_vm_core::Machine::sync_clint::h0564e959affb159d",
+        "us": 75841,
+        "percent": 1.9659758968933894
+      },
+      {
+        "name": "alloc::collections::btree::map::BTreeMap<K,V,A>::remove::h49400433011d1148",
+        "us": 70971,
+        "percent": 1.8397341197824495
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::console::service::h1ffb3e3719360d51",
+        "us": 66190,
+        "percent": 1.7157994305899638
+      },
+      {
+        "name": "wasm_vm_core::mmu::finish_leaf::hb5c91ebad7369df2",
+        "us": 65179,
+        "percent": 1.6895919487297666
+      },
+      {
+        "name": "core::hash::BuildHasher::hash_one::he61abe7265f819be",
+        "us": 57947,
+        "percent": 1.5021216136032125
+      },
+      {
+        "name": "<std[f839c7267e543978]::hash::random::DefaultHasher as core[2c5ad5f686fcca5c]::hash::Hasher>::write",
+        "us": 50540,
+        "percent": 1.3101148696482365
+      },
+      {
+        "name": "wasm_vm_core::csr::Csrs::next_interrupt::he02f95cae226d67a",
+        "us": 48884,
+        "percent": 1.2671874809632844
+      },
+      {
+        "name": "wasm_vm_core::Machine::drain_code_writes::h397dce4503e03991",
+        "us": 47533,
+        "percent": 1.2321664048078675
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::net::service::h88973684b4a526cb",
+        "us": 45509,
+        "percent": 1.1796995964151482
+      },
+      {
+        "name": "wasm_vm_core::Machine::sync_sbi_timer::hfac2bf38b14163de",
+        "us": 40927,
+        "percent": 1.0609234521189825
+      },
+      {
+        "name": "wasm_vm_core::hart::Hart::decode_at::h44ce55ab00ab1770",
+        "us": 38538,
+        "percent": 0.9989949910269833
+      },
+      {
+        "name": "__multi3",
+        "us": 35680,
+        "percent": 0.9249089542748136
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::input::service::hbc44a2a62a26abb2",
+        "us": 32953,
+        "percent": 0.8542187435599196
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::snd::service_internal::h746557e7fa1093ec",
+        "us": 32726,
+        "percent": 0.8483343732510524
+      },
+      {
+        "name": "wasm_vm_core::decode::decode::hc0ed8cae72412bec",
+        "us": 25153,
+        "percent": 0.6520245214931162
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::gpu::service::h3a22ce79444eb9c0",
+        "us": 24134,
+        "percent": 0.6256096609436197
+      },
+      {
+        "name": "wasm_vm_core::decode_c::expand_c::h2452b9e1ed4d8e0b",
+        "us": 23958,
+        "percent": 0.6210473297790354
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::gpu::service_cursor::hda6c1825a97ffd87",
+        "us": 22584,
+        "percent": 0.5854300398918831
+      },
+      {
+        "name": "js-to-wasm:iil:i wasm://wasm/270a815a",
+        "us": 22263,
+        "percent": 0.5771089699837493
+      },
+      {
+        "name": "wasm_vm_core::hart::cstore64_with_phys::h933922e1acd9045f",
+        "us": 20920,
+        "percent": 0.5422952725176318
+      },
+      {
+        "name": "wasm_vm_core::hart::cload64::h2536535db8ec3fef",
+        "us": 20610,
+        "percent": 0.5342593483072844
+      },
+      {
+        "name": "wasm_vm_core::dev::plic::IrqLine::set::hbc1d1743be327740",
+        "us": 16586,
+        "percent": 0.4299478675897438
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::gpu::service_with_cursor::h846deeec38039ecc",
+        "us": 14947,
+        "percent": 0.38746115861955266
+      },
+      {
+        "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::is_compiled::hf0b26b7146f8907b",
+        "us": 14746,
+        "percent": 0.3822507690509081
+      },
+      {
+        "name": "wasm-to-js",
+        "us": 13423,
+        "percent": 0.3479555183080387
+      },
+      {
+        "name": "wasm_vm_wasm::WasmLinux::run_chunk::h07405c1400974665",
+        "us": 13330,
+        "percent": 0.34554474104493454
+      },
+      {
+        "name": "wasm_vm_core::dev::uart16550::Uart16550::irq_level::h79d07f06a2fc562e",
+        "us": 10561,
+        "percent": 0.2737657922112193
+      },
+      {
+        "name": "wasm_vm_core::Machine::sync_pmp_code_permissions::hdc3cf2729702a634",
+        "us": 10426,
+        "percent": 0.2702662768292939
+      },
+      {
+        "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7fba6d5383ae0c08",
+        "us": 10210,
+        "percent": 0.2646670522182132
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::blk::service::h3d6e34ecce8fe7d0",
+        "us": 9043,
+        "percent": 0.2344156859166799
+      },
+      {
+        "name": "wasm_vm_core::Machine::sample_wall_clock::h8e67bc52a553e03e",
+        "us": 9025,
+        "percent": 0.23394908386575652
+      },
+      {
+        "name": "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::free",
+        "us": 7530,
+        "percent": 0.19519519130295251
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::rng::service::he448130d2aeb0fa2",
+        "us": 7526,
+        "percent": 0.19509150195830288
+      },
+      {
+        "name": "Module",
+        "us": 7090,
+        "percent": 0.18378936339149182
+      },
+      {
+        "name": "Instance",
+        "us": 6054,
+        "percent": 0.15693382312723433
+      },
+      {
+        "name": "wasm_vm_core::dev::rtc::GoldfishRtc::poll::he0a3c0e1bc5027db",
+        "us": 6028,
+        "percent": 0.15625984238701165
+      },
+      {
+        "name": "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::malloc",
+        "us": 5991,
+        "percent": 0.15530071594900247
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/0001cfd6",
+        "us": 5686,
+        "percent": 0.14739440341946722
+      },
+      {
+        "name": "wasm_vm_core::hart::cload8::h620a223848ce909c",
+        "us": 4510,
+        "percent": 0.11690973609247222
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/0001cfd6",
+        "us": 4510,
+        "percent": 0.11690973609247222
+      },
+      {
+        "name": "(garbage collector)",
+        "us": 4497,
+        "percent": 0.1165727457223609
+      },
+      {
+        "name": "core::hash::BuildHasher::hash_one::hf59f0499646c0046",
+        "us": 4491,
+        "percent": 0.11641721170538642
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/0001306e",
+        "us": 4454,
+        "percent": 0.11545808526737723
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/d193186e",
+        "us": 4296,
+        "percent": 0.11136235615371634
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/d24eba16",
+        "us": 3022,
+        "percent": 0.07833729988280512
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/00014956",
+        "us": 3021,
+        "percent": 0.0783113775466427
+      },
+      {
+        "name": "wasm_vm_core::csr::Csrs::satp::hef636e9b5d7646c9",
+        "us": 3021,
+        "percent": 0.0783113775466427
+      },
+      {
+        "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::note_chain::h002c0395c865b3e5",
+        "us": 3015,
+        "percent": 0.07815584352966824
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/f01b5966",
+        "us": 3015,
+        "percent": 0.07815584352966824
+      },
+      {
+        "name": "wasm-function[12] wasm://wasm/0001063e",
+        "us": 3014,
+        "percent": 0.07812992119350583
+      },
+      {
+        "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7a18440956482b17",
+        "us": 3013,
+        "percent": 0.07810399885734343
+      },
+      {
+        "name": "wasm_vm_core::csr::Csrs::access::h753f6a96fda47812",
+        "us": 3011,
+        "percent": 0.0780521541850186
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/f49ad1ee",
+        "us": 3010,
+        "percent": 0.0780262318488562
+      },
+      {
+        "name": "wasm_vm_core::hart::cload32::hd276ae068ebb76eb",
+        "us": 3004,
+        "percent": 0.07787069783188172
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/ae404dfe",
+        "us": 2953,
+        "percent": 0.07654865868759878
+      },
+      {
+        "name": "onDisplayFrame http://127.0.0.1:61631/linux-worker-protocol.js",
+        "us": 2848,
+        "percent": 0.07382681339054566
+      },
+      {
+        "name": "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::insert_large_chunk",
+        "us": 2819,
+        "percent": 0.07307506564183575
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/000100da",
+        "us": 1526,
+        "percent": 0.03955748498383872
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/1eaf7ed2",
+        "us": 1513,
+        "percent": 0.03922049461372738
+      },
+      {
+        "name": "<wasm_vm_core::dev::virtio::mmio::SharedVirtioMmio as wasm_vm_core::mmio::MmioDevice>::write::h1ef710a1f00f5744",
+        "us": 1513,
+        "percent": 0.03922049461372738
+      },
+      {
+        "name": "wasm_vm_core::hart::cstore32_with_phys::h4d26e50a3aebe110",
+        "us": 1513,
+        "percent": 0.03922049461372738
+      },
+      {
+        "name": "wasm-function[12] wasm://wasm/bf2f2e66",
+        "us": 1512,
+        "percent": 0.03919457227756497
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/0682faee",
+        "us": 1512,
+        "percent": 0.03919457227756497
+      },
+      {
+        "name": "takeFromExternrefTable0 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 1511,
+        "percent": 0.03916864994140256
+      },
+      {
+        "name": "real._wbg_cb_unref http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 1511,
+        "percent": 0.03916864994140256
+      },
+      {
+        "name": "alloc::collections::btree::node::BalancingContext<K,V>::do_merge::he71861293e31e3c7",
+        "us": 1511,
+        "percent": 0.03916864994140256
+      },
+      {
+        "name": "wasm_vm_core::softfloat::f64_from_int::hc663ad58dfa3229c",
+        "us": 1511,
+        "percent": 0.03916864994140256
+      },
+      {
+        "name": "wasm-function[12] wasm://wasm/339d367e",
+        "us": 1511,
+        "percent": 0.03916864994140256
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/33b82ba2",
+        "us": 1510,
+        "percent": 0.03914272760524015
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/286efe1a",
+        "us": 1510,
+        "percent": 0.03914272760524015
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/3126049a",
+        "us": 1510,
+        "percent": 0.03914272760524015
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/5813d22e",
+        "us": 1510,
+        "percent": 0.03914272760524015
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/884b3bf6",
+        "us": 1510,
+        "percent": 0.03914272760524015
+      },
+      {
+        "name": "wasm_vm_core::csr::Csrs::deliver_trap_s::h3ab7b23f8accd3a1",
+        "us": 1510,
+        "percent": 0.03914272760524015
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/e4565846",
+        "us": 1510,
+        "percent": 0.03914272760524015
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/9313d19a",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[12] wasm://wasm/00016c6e",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/000126ee",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[12] wasm://wasm/000126ee",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/606aba8e",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/ae404dfe",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/7d7218ea",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/f49ad1ee",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/9243d3d6",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/20209436",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/b72b54c2",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "wasm-function[11] wasm://wasm/0001cfd6",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "rustc_apfloat::ieee::IeeeFloat<S>::normalize::hd2d84624e94a000e",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/d24eba16",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "<wasm_vm_core::softfloat::F32 as wasm_vm_core::softfloat::SoftFloat>::fma::h1178d08e2231c9c4",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "(idle)",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "wasm-function[11] wasm://wasm/ae404dfe",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/55c31382",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "decode",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/0dae7ede",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "wasm-function[11] wasm://wasm/9313d19a",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/1e4f5eae",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "__wbg_set_8535240470bf2500 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "jit_translate::emit_exit::h07b6e673603a1cea",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/3126049a",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/7bc6a46e",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "wasm_bindgen__convert__closures_____invoke__h3c376d590f4b7628 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::queue::Virtqueue::pop::h43e2f73695fe065c",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/0001306e",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "<rustc_apfloat::ieee::IeeeFloat<S> as rustc_apfloat::Float>::to_u128_r::h7e416134f37836b6",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm-function[12] wasm://wasm/f49ad1ee",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/00014956",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/0001cfd6",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/7d7218ea",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/00016616",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::remove_block::h3662dd32ea82b74d",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::note_jit_retired::hbc5b69eb1383553c",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "alloc::raw_vec::RawVecInner<A>::finish_grow::hadd31fe3c10ecfad",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/00012cea",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm_vm_core::mmu::walk_leaf_inner::h8f584abd0d439f06",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/7cf2c956",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "wasm-function[11] wasm://wasm/000126ee",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/85c5090a",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/847797b6",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "jit_translate::emit_chain_prologue::h21382d5e6798db9e",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "wasm_emit::func::FuncBuilder::if_::hb1dd6e45328dc745",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/339d367e",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/0001cfd6",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "schedule http://127.0.0.1:61631/loader.js",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "postTask",
+        "us": 1503,
+        "percent": 0.038961271252103274
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/3126049a",
+        "us": 1503,
+        "percent": 0.038961271252103274
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/2725fa86",
+        "us": 1503,
+        "percent": 0.038961271252103274
+      },
+      {
+        "name": "wasm_bindgen__convert__closures_____invoke__hf96fc87adc256ad8 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 1503,
+        "percent": 0.038961271252103274
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/9243d3d6",
+        "us": 1503,
+        "percent": 0.038961271252103274
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/aedd14ba",
+        "us": 1503,
+        "percent": 0.038961271252103274
+      },
+      {
+        "name": "__rustc[8068f81614cfe5c]::__rust_realloc",
+        "us": 1502,
+        "percent": 0.03893534891594086
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/b6d5ab92",
+        "us": 1502,
+        "percent": 0.03893534891594086
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/9313d19a",
+        "us": 1502,
+        "percent": 0.03893534891594086
+      },
+      {
+        "name": "memcmp",
+        "us": 1502,
+        "percent": 0.03893534891594086
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/f1afd7aa",
+        "us": 1502,
+        "percent": 0.03893534891594086
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/a24a1f06",
+        "us": 1500,
+        "percent": 0.03888350424361604
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/0001063e",
+        "us": 1497,
+        "percent": 0.03880573723512881
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/0001063e",
+        "us": 1496,
+        "percent": 0.0387798148989664
+      },
+      {
+        "name": "runTick http://127.0.0.1:61631/loader.js",
+        "us": 1495,
+        "percent": 0.03875389256280399
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/f1afd7aa",
+        "us": 1494,
+        "percent": 0.038727970226641574
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/339d367e",
+        "us": 1493,
+        "percent": 0.038702047890479166
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/5f2bbc4a",
+        "us": 1482,
+        "percent": 0.03841690219269265
+      },
+      {
+        "name": "__wbg_invokeJitBlock_99121dda606f7308 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 1450,
+        "percent": 0.03758738743549551
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/000126ee",
+        "us": 1396,
+        "percent": 0.03618758128272533
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/000126ee",
+        "us": 1151,
+        "percent": 0.02983660892293471
+      },
+      {
+        "name": "wasm_vm_core::mmu::walk_leaf_inner::he301c8b3dbb8bbd1",
+        "us": 1141,
+        "percent": 0.029577385561310603
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/b506530a",
+        "us": 1140,
+        "percent": 0.029551463225148192
+      }
+    ],
+    "inclusive": [
+      {
+        "name": "(root)",
+        "us": 3857677,
+        "percent": 100
+      },
+      {
+        "name": "runTick http://127.0.0.1:61631/loader.js",
+        "us": 3652709,
+        "percent": 94.686750601463
+      },
+      {
+        "name": "js-to-wasm:iii:ii http://127.0.0.1:61631/pkg/wasm_vm_wasm_bg.wasm",
+        "us": 3648212,
+        "percent": 94.57017785574064
+      },
+      {
+        "name": "runChunk http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 3646701,
+        "percent": 94.53100920579924
+      },
+      {
+        "name": "wasm_vm_wasm::WasmLinux::run_chunk::h07405c1400974665",
+        "us": 3645190,
+        "percent": 94.49184055585783
+      },
+      {
+        "name": "wasmlinux_runChunk multivalue shim",
+        "us": 3645190,
+        "percent": 94.49184055585783
+      },
+      {
+        "name": "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b",
+        "us": 3581315,
+        "percent": 92.83605133348385
+      },
+      {
+        "name": "wasm_vm_core::Machine::try_jit_block::h0ec09f3d40a79477",
+        "us": 1142476,
+        "percent": 29.61564692948632
+      },
+      {
+        "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h1c6b17789b9d53e7",
+        "us": 699639,
+        "percent": 18.136277350332854
+      },
+      {
+        "name": "wasm_vm_core::Machine::next_micro_op::hde9600194430e6db",
+        "us": 652284,
+        "percent": 16.908725121361897
+      },
+      {
+        "name": "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81",
+        "us": 497094,
+        "percent": 12.885837772317382
+      },
+      {
+        "name": "wasm-to-js",
+        "us": 221447,
+        "percent": 5.740423576157361
+      },
+      {
+        "name": "wasm_vm_core::mmu::translate_cached::hf2b93220145a733d",
+        "us": 216425,
+        "percent": 5.610241603949735
+      },
+      {
+        "name": "wasm_vm_core::dispatch::BlockDiscovery::on_block_entry::h603a5b4937cad8ca",
+        "us": 204274,
+        "percent": 5.295259297240282
+      },
+      {
+        "name": "wasm_vm_core::Machine::sync_plic::h7f5c3bd066f966f0",
+        "us": 202756,
+        "percent": 5.255909190945743
+      },
+      {
+        "name": "__wbg_invokeJitBlock_99121dda606f7308 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 192032,
+        "percent": 4.977918057940051
+      },
+      {
+        "name": "js-to-wasm:iil:i wasm://wasm/270a815a",
+        "us": 144923,
+        "percent": 3.7567427236650452
+      },
+      {
+        "name": "wasm_vm_core::hart::Hart::decode_at::h44ce55ab00ab1770",
+        "us": 144507,
+        "percent": 3.7459590318214824
+      },
+      {
+        "name": "wasm_vm_core::mmu::translate_cached::h0f176be2d21edacd",
+        "us": 141649,
+        "percent": 3.6718729950693123
+      },
+      {
+        "name": "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf",
+        "us": 123259,
+        "percent": 3.1951612330425796
+      },
+      {
+        "name": "__udivti3",
+        "us": 108143,
+        "percent": 2.80331919961158
+      },
+      {
+        "name": "wasm_vm_core::Machine::drain_code_writes::h397dce4503e03991",
+        "us": 105314,
+        "percent": 2.72998491060812
+      },
+      {
+        "name": "core::hash::BuildHasher::hash_one::he61abe7265f819be",
+        "us": 96432,
+        "percent": 2.4997427208135883
+      },
+      {
+        "name": "wasm_vm_core::pmp::Pmp::check::h49feb29917fd316e",
+        "us": 89152,
+        "percent": 2.311028113551238
+      },
+      {
+        "name": "wasm_vm_core::hart::cload64::h2536535db8ec3fef",
+        "us": 83085,
+        "percent": 2.1537573000538925
+      },
+      {
+        "name": "wasm_vm_core::Machine::sync_clint::h0564e959affb159d",
+        "us": 75841,
+        "percent": 1.9659758968933894
+      },
+      {
+        "name": "alloc::collections::btree::map::BTreeMap<K,V,A>::remove::h49400433011d1148",
+        "us": 70971,
+        "percent": 1.8397341197824495
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::console::service::h1ffb3e3719360d51",
+        "us": 66190,
+        "percent": 1.7157994305899638
+      },
+      {
+        "name": "wasm_vm_core::mmu::finish_leaf::hb5c91ebad7369df2",
+        "us": 65179,
+        "percent": 1.6895919487297666
+      },
+      {
+        "name": "wasm_vm_core::hart::cstore64_with_phys::h933922e1acd9045f",
+        "us": 58380,
+        "percent": 1.5133459851615363
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::gpu::service_with_cursor::h846deeec38039ecc",
+        "us": 53971,
+        "percent": 1.3990544050214675
+      },
+      {
+        "name": "<std[f839c7267e543978]::hash::random::DefaultHasher as core[2c5ad5f686fcca5c]::hash::Hasher>::write",
+        "us": 50540,
+        "percent": 1.3101148696482365
+      },
+      {
+        "name": "wasm_vm_core::csr::Csrs::next_interrupt::he02f95cae226d67a",
+        "us": 48884,
+        "percent": 1.2671874809632844
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::net::service::h88973684b4a526cb",
+        "us": 45509,
+        "percent": 1.1796995964151482
+      },
+      {
+        "name": "wasm_vm_core::hart::cload32::hd276ae068ebb76eb",
+        "us": 41911,
+        "percent": 1.0864310309027947
+      },
+      {
+        "name": "real._wbg_cb_unref http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 41825,
+        "percent": 1.0842017099928274
+      },
+      {
+        "name": "real http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 41825,
+        "percent": 1.0842017099928274
+      },
+      {
+        "name": "wasm_vm_core::Machine::sync_sbi_timer::hfac2bf38b14163de",
+        "us": 40927,
+        "percent": 1.0609234521189825
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::snd::service_internal::h746557e7fa1093ec",
+        "us": 37095,
+        "percent": 0.9615890599446247
+      },
+      {
+        "name": "__multi3",
+        "us": 35680,
+        "percent": 0.9249089542748136
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::input::service::hbc44a2a62a26abb2",
+        "us": 32953,
+        "percent": 0.8542187435599196
+      },
+      {
+        "name": "wasm_bindgen__convert__closures_____invoke__h3c376d590f4b7628 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 28268,
+        "percent": 0.7327725986390256
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::gpu::service::h3a22ce79444eb9c0",
+        "us": 26982,
+        "percent": 0.6994364743341653
+      },
+      {
+        "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7fba6d5383ae0c08",
+        "us": 26762,
+        "percent": 0.693733560378435
+      },
+      {
+        "name": "wasm_bindgen::convert::closures::_::invoke::h3c376d590f4b7628",
+        "us": 26762,
+        "percent": 0.693733560378435
+      },
+      {
+        "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::is_compiled::hf0b26b7146f8907b",
+        "us": 25189,
+        "percent": 0.652957725594963
+      },
+      {
+        "name": "wasm_vm_core::decode::decode::hc0ed8cae72412bec",
+        "us": 25153,
+        "percent": 0.6520245214931162
+      },
+      {
+        "name": "wasm_vm_core::decode_c::expand_c::h2452b9e1ed4d8e0b",
+        "us": 23958,
+        "percent": 0.6210473297790354
+      },
+      {
+        "name": "wasm_vm_core::Machine::pump_jit_translations::hb3d02ac3b411b36f",
+        "us": 23683,
+        "percent": 0.6139186873343725
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::gpu::service_cursor::hda6c1825a97ffd87",
+        "us": 22584,
+        "percent": 0.5854300398918831
+      },
+      {
+        "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::install_batch::hef5554a713db00d0",
+        "us": 19163,
+        "percent": 0.49674972788027616
+      },
+      {
+        "name": "wasm_vm_core::dev::plic::IrqLine::set::hbc1d1743be327740",
+        "us": 16586,
+        "percent": 0.4299478675897438
+      },
+      {
+        "name": "http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 15992,
+        "percent": 0.4145499999092718
+      },
+      {
+        "name": "handleError http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 15992,
+        "percent": 0.4145499999092718
+      },
+      {
+        "name": "wasm_bindgen__convert__closures_____invoke__hf96fc87adc256ad8 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 12046,
+        "percent": 0.3122604614123992
+      },
+      {
+        "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::link_dynamic_target::haa6d6a0e229425aa",
+        "us": 11604,
+        "percent": 0.3008027888286137
+      },
+      {
+        "name": "wasm_vm_core::dev::uart16550::Uart16550::irq_level::h79d07f06a2fc562e",
+        "us": 10561,
+        "percent": 0.2737657922112193
+      },
+      {
+        "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7a18440956482b17",
+        "us": 10543,
+        "percent": 0.27329919016029597
+      },
+      {
+        "name": "wasm_bindgen::convert::closures::_::invoke::hf96fc87adc256ad8",
+        "us": 10543,
+        "percent": 0.27329919016029597
+      },
+      {
+        "name": "core::hash::BuildHasher::hash_one::hf59f0499646c0046",
+        "us": 10523,
+        "percent": 0.2727807434370477
+      },
+      {
+        "name": "wasm_vm_core::Machine::sync_pmp_code_permissions::hdc3cf2729702a634",
+        "us": 10426,
+        "percent": 0.2702662768292939
+      },
+      {
+        "name": "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::free",
+        "us": 10349,
+        "percent": 0.2682702569447883
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/0001cfd6",
+        "us": 10201,
+        "percent": 0.2644337511927515
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::blk::service::h3d6e34ecce8fe7d0",
+        "us": 9043,
+        "percent": 0.2344156859166799
+      },
+      {
+        "name": "wasm_vm_core::mmu::walk_leaf_inner::h8f584abd0d439f06",
+        "us": 9031,
+        "percent": 0.234104617882731
+      },
+      {
+        "name": "wasm_vm_core::Machine::sample_wall_clock::h8e67bc52a553e03e",
+        "us": 9025,
+        "percent": 0.23394908386575652
+      },
+      {
+        "name": "alloc::raw_vec::RawVecInner<A>::finish_grow::hadd31fe3c10ecfad",
+        "us": 8996,
+        "percent": 0.2331973361170466
+      },
+      {
+        "name": "__rustc[8068f81614cfe5c]::__rust_dealloc",
+        "us": 8848,
+        "percent": 0.22936083036500982
+      },
+      {
+        "name": "wasm_vm_core::hart::cstore32_with_phys::h4d26e50a3aebe110",
+        "us": 7547,
+        "percent": 0.19563587101771351
+      },
+      {
+        "name": "wasm-function[11] wasm://wasm/000126ee",
+        "us": 7534,
+        "percent": 0.19529888064760217
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::rng::service::he448130d2aeb0fa2",
+        "us": 7526,
+        "percent": 0.19509150195830288
+      },
+      {
+        "name": "__rustc[8068f81614cfe5c]::__rust_realloc",
+        "us": 7491,
+        "percent": 0.19418422019261852
+      },
+      {
+        "name": "alloc::raw_vec::RawVec<T,A>::grow_one::hd7acdfec40060a61",
+        "us": 7491,
+        "percent": 0.19418422019261852
+      },
+      {
+        "name": "wasm_vm_core::hart::cload8::h620a223848ce909c",
+        "us": 7276,
+        "percent": 0.1886109179177002
+      },
+      {
+        "name": "Module",
+        "us": 7090,
+        "percent": 0.18378936339149182
+      },
+      {
+        "name": "__wbg_new_711fb31c64c1c363 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 7090,
+        "percent": 0.18378936339149182
+      },
+      {
+        "name": "Instance",
+        "us": 6054,
+        "percent": 0.15693382312723433
+      },
+      {
+        "name": "__wbg_new_944c2b5ed6653041 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 6054,
+        "percent": 0.15693382312723433
+      },
+      {
+        "name": "wasm-function[12] wasm://wasm/000126ee",
+        "us": 6030,
+        "percent": 0.15631168705933648
+      },
+      {
+        "name": "wasm_vm_core::dev::rtc::GoldfishRtc::poll::he0a3c0e1bc5027db",
+        "us": 6028,
+        "percent": 0.15625984238701165
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/f49ad1ee",
+        "us": 6021,
+        "percent": 0.15607838603387478
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/0001cfd6",
+        "us": 6017,
+        "percent": 0.15597469668922515
+      },
+      {
+        "name": "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::malloc",
+        "us": 5991,
+        "percent": 0.15530071594900247
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/0001306e",
+        "us": 5960,
+        "percent": 0.15449712352796774
+      },
+      {
+        "name": "wasm_vm_core::mmu::walk_leaf_inner::he301c8b3dbb8bbd1",
+        "us": 5665,
+        "percent": 0.14685003436005659
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/d24eba16",
+        "us": 4529,
+        "percent": 0.11740226047955804
+      },
+      {
+        "name": "wasm_vm_core::hart::cload16::h3a17e81b61302812",
+        "us": 4525,
+        "percent": 0.1172985711349084
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/3126049a",
+        "us": 4520,
+        "percent": 0.11716895945409633
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/7d7218ea",
+        "us": 4520,
+        "percent": 0.11716895945409633
+      },
+      {
+        "name": "hashbrown::map::HashMap<K,V,S,A>::insert::h6f2660bbc6fa3714",
+        "us": 4518,
+        "percent": 0.11711711478177152
+      },
+      {
+        "name": "wasm_vm_wasm::jit_browser::DynamicLinkCache::install_at::h6dd2d86ca170490a",
+        "us": 4518,
+        "percent": 0.11711711478177152
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/339d367e",
+        "us": 4512,
+        "percent": 0.11696158076479705
+      },
+      {
+        "name": "(garbage collector)",
+        "us": 4497,
+        "percent": 0.1165727457223609
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/d193186e",
+        "us": 4296,
+        "percent": 0.11136235615371634
+      },
+      {
+        "name": "js_sys::Reflect::set::ha332cd6b8e4c853e",
+        "us": 3022,
+        "percent": 0.07833729988280512
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/d24eba16",
+        "us": 3021,
+        "percent": 0.0783113775466427
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/00014956",
+        "us": 3021,
+        "percent": 0.0783113775466427
+      },
+      {
+        "name": "wasm_vm_core::csr::Csrs::satp::hef636e9b5d7646c9",
+        "us": 3021,
+        "percent": 0.0783113775466427
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/33b82ba2",
+        "us": 3018,
+        "percent": 0.07823361053815547
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/f49ad1ee",
+        "us": 3017,
+        "percent": 0.07820768820199306
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/9313d19a",
+        "us": 3015,
+        "percent": 0.07815584352966824
+      },
+      {
+        "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::note_chain::h002c0395c865b3e5",
+        "us": 3015,
+        "percent": 0.07815584352966824
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/f01b5966",
+        "us": 3015,
+        "percent": 0.07815584352966824
+      },
+      {
+        "name": "wasm-function[12] wasm://wasm/0001063e",
+        "us": 3014,
+        "percent": 0.07812992119350583
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/3126049a",
+        "us": 3014,
+        "percent": 0.07812992119350583
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/b72b54c2",
+        "us": 3013,
+        "percent": 0.07810399885734343
+      },
+      {
+        "name": "wasm-function[11] wasm://wasm/0001cfd6",
+        "us": 3012,
+        "percent": 0.07807807652118101
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/0001cfd6",
+        "us": 3012,
+        "percent": 0.07807807652118101
+      },
+      {
+        "name": "wasm_vm_core::hart::cstore8_with_phys::h5086917545b8882e",
+        "us": 3012,
+        "percent": 0.07807807652118101
+      },
+      {
+        "name": "wasm_vm_core::hart::cstore16_with_phys::h894aea18678f564f",
+        "us": 3011,
+        "percent": 0.0780521541850186
+      },
+      {
+        "name": "wasm_vm_core::csr::Csrs::access::h753f6a96fda47812",
+        "us": 3011,
+        "percent": 0.0780521541850186
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/7d7218ea",
+        "us": 3011,
+        "percent": 0.0780521541850186
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/e08e100e",
+        "us": 3011,
+        "percent": 0.0780521541850186
+      },
+      {
+        "name": "jit_translate::emit_exit::h07b6e673603a1cea",
+        "us": 3010,
+        "percent": 0.0780262318488562
+      },
+      {
+        "name": "wasm_vm_core::csr::Csrs::pmp_ok::hb2f1ee2d8e63ac3b",
+        "us": 3009,
+        "percent": 0.07800030951269378
+      },
+      {
+        "name": "schedule http://127.0.0.1:61631/loader.js",
+        "us": 3007,
+        "percent": 0.07794846484036896
+      },
+      {
+        "name": "wasm-function[11] wasm://wasm/f49ad1ee",
+        "us": 3007,
+        "percent": 0.07794846484036896
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/f49ad1ee",
+        "us": 3007,
+        "percent": 0.07794846484036896
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/b6d5ab92",
+        "us": 3004,
+        "percent": 0.07787069783188172
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/f1afd7aa",
+        "us": 2996,
+        "percent": 0.07766331914258244
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/ae404dfe",
+        "us": 2953,
+        "percent": 0.07654865868759878
+      },
+      {
+        "name": "<wasm_vm_wasm::SharedAudioClock as wasm_vm_core::dev::virtio::snd::AudioClock>::now_ns::h6fac41dd462c427a",
+        "us": 2863,
+        "percent": 0.07421564843298181
+      },
+      {
+        "name": "onDisplayFrame http://127.0.0.1:61631/linux-worker-protocol.js",
+        "us": 2848,
+        "percent": 0.07382681339054566
+      },
+      {
+        "name": "onDisplayFrame http://127.0.0.1:61631/linux-worker.js",
+        "us": 2848,
+        "percent": 0.07382681339054566
+      },
+      {
+        "name": "http://127.0.0.1:61631/loader.js",
+        "us": 2848,
+        "percent": 0.07382681339054566
+      },
+      {
+        "name": "__wbg_call_a6e5c5dce5018821 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 2848,
+        "percent": 0.07382681339054566
+      },
+      {
+        "name": "js_sys::Function<F>::call1::__wbg_call_a6e5c5dce5018821::hd726a72a6d726ff2 externref shim",
+        "us": 2848,
+        "percent": 0.07382681339054566
+      },
+      {
+        "name": "<wasm_vm_wasm::JsFrameSink as wasm_vm_core::dev::virtio::gpu::FrameSink>::flush::h712896c8783286dd",
+        "us": 2848,
+        "percent": 0.07382681339054566
+      },
+      {
+        "name": "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::insert_large_chunk",
+        "us": 2819,
+        "percent": 0.07307506564183575
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/000126ee",
+        "us": 2655,
+        "percent": 0.06882380251120039
+      },
+      {
+        "name": "wasm_vm_core::hart::camoload64::hd7848b79b8c9e118",
+        "us": 1527,
+        "percent": 0.03958340732000113
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/000100da",
+        "us": 1526,
+        "percent": 0.03955748498383872
+      },
+      {
+        "name": "wasm_vm_wasm::jit_stats_object::h0f54b9e9a9c096bf",
+        "us": 1516,
+        "percent": 0.039298261622214614
+      },
+      {
+        "name": "wasmlinux_jitStats multivalue shim",
+        "us": 1516,
+        "percent": 0.039298261622214614
+      },
+      {
+        "name": "jitStats http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 1516,
+        "percent": 0.039298261622214614
+      },
+      {
+        "name": "jitStats http://127.0.0.1:61631/loader.js",
+        "us": 1516,
+        "percent": 0.039298261622214614
+      },
+      {
+        "name": "handleCall http://127.0.0.1:61631/linux-worker-protocol.js",
+        "us": 1516,
+        "percent": 0.039298261622214614
+      },
+      {
+        "name": "handle http://127.0.0.1:61631/linux-worker-protocol.js",
+        "us": 1516,
+        "percent": 0.039298261622214614
+      },
+      {
+        "name": "http://127.0.0.1:61631/linux-worker-protocol.js",
+        "us": 1516,
+        "percent": 0.039298261622214614
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/1eaf7ed2",
+        "us": 1513,
+        "percent": 0.03922049461372738
+      },
+      {
+        "name": "<wasm_vm_core::dev::virtio::mmio::SharedVirtioMmio as wasm_vm_core::mmio::MmioDevice>::write::h1ef710a1f00f5744",
+        "us": 1513,
+        "percent": 0.03922049461372738
+      },
+      {
+        "name": "wasm_vm_core::mmio::store_device::hc72da53ab70b328f",
+        "us": 1513,
+        "percent": 0.03922049461372738
+      },
+      {
+        "name": "wasm-function[12] wasm://wasm/bf2f2e66",
+        "us": 1512,
+        "percent": 0.03919457227756497
+      },
+      {
+        "name": "wasm-function[11] wasm://wasm/bf2f2e66",
+        "us": 1512,
+        "percent": 0.03919457227756497
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/bf2f2e66",
+        "us": 1512,
+        "percent": 0.03919457227756497
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/0682faee",
+        "us": 1512,
+        "percent": 0.03919457227756497
+      },
+      {
+        "name": "takeFromExternrefTable0 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 1511,
+        "percent": 0.03916864994140256
+      },
+      {
+        "name": "alloc::collections::btree::node::BalancingContext<K,V>::do_merge::he71861293e31e3c7",
+        "us": 1511,
+        "percent": 0.03916864994140256
+      },
+      {
+        "name": "alloc::collections::btree::remove::<impl alloc::collections::btree::node::Handle<alloc::collections::btree::node::NodeRef<alloc::collections::btree::node::marker::Mut,K,V,alloc::collections::btree::node::marker::Leaf>,alloc::collections::btree::node::marker::KV>>::remove_leaf_kv::h611ee0b7c90946c0",
+        "us": 1511,
+        "percent": 0.03916864994140256
+      },
+      {
+        "name": "alloc::collections::btree::map::BTreeMap<K,V,A>::remove::h7f9797d26180bcec",
+        "us": 1511,
+        "percent": 0.03916864994140256
+      },
+      {
+        "name": "wasm_vm_core::softfloat::f64_from_int::hc663ad58dfa3229c",
+        "us": 1511,
+        "percent": 0.03916864994140256
+      },
+      {
+        "name": "wasm-function[12] wasm://wasm/339d367e",
+        "us": 1511,
+        "percent": 0.03916864994140256
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/286efe1a",
+        "us": 1510,
+        "percent": 0.03914272760524015
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/5813d22e",
+        "us": 1510,
+        "percent": 0.03914272760524015
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/884b3bf6",
+        "us": 1510,
+        "percent": 0.03914272760524015
+      },
+      {
+        "name": "wasm_vm_core::csr::Csrs::deliver_trap_s::h3ab7b23f8accd3a1",
+        "us": 1510,
+        "percent": 0.03914272760524015
+      },
+      {
+        "name": "wasm_vm_core::hart::Hart::take_trap::h912e35b29ec67e89",
+        "us": 1510,
+        "percent": 0.03914272760524015
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/e4565846",
+        "us": 1510,
+        "percent": 0.03914272760524015
+      },
+      {
+        "name": "wasm-function[12] wasm://wasm/00016c6e",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[11] wasm://wasm/00016c6e",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/00016c6e",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/00016c6e",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/00016c6e",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/00016c6e",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/00016c6e",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/00016c6e",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/000126ee",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/606aba8e",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/ae404dfe",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/00016616",
+        "us": 1509,
+        "percent": 0.03911680526907774
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/33b82ba2",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/f49ad1ee",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/9243d3d6",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "wasm-function[12] wasm://wasm/d92836fa",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/2725fa86",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/20209436",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/b72b54c2",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "rustc_apfloat::ieee::IeeeFloat<S>::normalize::hd2d84624e94a000e",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "<rustc_apfloat::ieee::IeeeFloat<S> as rustc_apfloat::Float>::add_r::h3cf18cbb7e801a6b",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "<wasm_vm_core::softfloat::F64 as wasm_vm_core::softfloat::SoftFloat>::sub::h91308f7923f72f9a",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::link_edge_authorized::h188d637c6660ce37",
+        "us": 1508,
+        "percent": 0.03909088293291533
+      },
+      {
+        "name": "<wasm_vm_core::softfloat::F32 as wasm_vm_core::softfloat::SoftFloat>::fma::h1178d08e2231c9c4",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "(idle)",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "wasm-function[11] wasm://wasm/ae404dfe",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/337bcfbe",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/55c31382",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "decode",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "decodeText http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "__wbindgen_cast_000000000000000e http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "Ref(String) -> Externref externref shim",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/0dae7ede",
+        "us": 1507,
+        "percent": 0.039064960596752914
+      },
+      {
+        "name": "wasm-function[11] wasm://wasm/9313d19a",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/9313d19a",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/1e4f5eae",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "__wbg_set_8535240470bf2500 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "wasmlinux_persistStats multivalue shim",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "persistStats http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "jit_translate::emit_branch::h66015e36c8b1e5ab",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "wasm-function[12] wasm://wasm/7d7218ea",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "wasm-function[11] wasm://wasm/7d7218ea",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/7bc6a46e",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "wasm_vm_core::dev::virtio::queue::Virtqueue::pop::h43e2f73695fe065c",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/aedd14ba",
+        "us": 1506,
+        "percent": 0.039039038260590506
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/0001306e",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "<rustc_apfloat::ieee::IeeeFloat<S> as rustc_apfloat::Float>::to_u128_r::h7e416134f37836b6",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm_vm_core::softfloat::f64_to_int::h2c418052d714c396",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm-function[12] wasm://wasm/f49ad1ee",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/00014956",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/0001cfd6",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/00016616",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::remove_block::h3662dd32ea82b74d",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::evict_batch::haf93504b06cbac55",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::enforce_budget::he0afe3990382abcb",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/8e95b896",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::note_jit_retired::hbc5b69eb1383553c",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/00012cea",
+        "us": 1505,
+        "percent": 0.0390131159244281
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/3126049a",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/7cf2c956",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/bf925172",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/85c5090a",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/73d4827e",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/85c5090a",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/847797b6",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "jit_translate::emit_chain_prologue::h21382d5e6798db9e",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "wasm_emit::func::FuncBuilder::if_::hb1dd6e45328dc745",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "jit_translate::emit_dynamic_exit::hf1a6e8c5f8049ee9",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/0001cfd6",
+        "us": 1504,
+        "percent": 0.03898719358826568
+      },
+      {
+        "name": "postTask",
+        "us": 1503,
+        "percent": 0.038961271252103274
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/3126049a",
+        "us": 1503,
+        "percent": 0.038961271252103274
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/2725fa86",
+        "us": 1503,
+        "percent": 0.038961271252103274
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/0001063e",
+        "us": 1503,
+        "percent": 0.038961271252103274
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/9243d3d6",
+        "us": 1503,
+        "percent": 0.038961271252103274
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/aedd14ba",
+        "us": 1503,
+        "percent": 0.038961271252103274
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/aedd14ba",
+        "us": 1503,
+        "percent": 0.038961271252103274
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/9313d19a",
+        "us": 1502,
+        "percent": 0.03893534891594086
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/f1afd7aa",
+        "us": 1502,
+        "percent": 0.03893534891594086
+      },
+      {
+        "name": "memcmp",
+        "us": 1502,
+        "percent": 0.03893534891594086
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/a24a1f06",
+        "us": 1500,
+        "percent": 0.03888350424361604
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/0001063e",
+        "us": 1497,
+        "percent": 0.03880573723512881
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/0001063e",
+        "us": 1496,
+        "percent": 0.0387798148989664
+      },
+      {
+        "name": "wasm-function[8] wasm://wasm/f1afd7aa",
+        "us": 1494,
+        "percent": 0.038727970226641574
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/f1afd7aa",
+        "us": 1494,
+        "percent": 0.038727970226641574
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/339d367e",
+        "us": 1493,
+        "percent": 0.038702047890479166
+      },
+      {
+        "name": "wasm-function[9] wasm://wasm/5f2bbc4a",
+        "us": 1482,
+        "percent": 0.03841690219269265
+      },
+      {
+        "name": "wasm-function[7] wasm://wasm/000126ee",
+        "us": 1396,
+        "percent": 0.03618758128272533
+      },
+      {
+        "name": "wasm-function[6] wasm://wasm/000126ee",
+        "us": 1396,
+        "percent": 0.03618758128272533
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/000126ee",
+        "us": 1396,
+        "percent": 0.03618758128272533
+      },
+      {
+        "name": "js_sys::Atomics::load::__wbg_load_209206003cdf5be2::hdff35ba04e943725 externref shim",
+        "us": 1337,
+        "percent": 0.034658163449143096
+      },
+      {
+        "name": "wasm-function[5] wasm://wasm/056caa9e",
+        "us": 1181,
+        "percent": 0.03061427900780703
+      },
+      {
+        "name": "wasm-function[10] wasm://wasm/b506530a",
+        "us": 1140,
+        "percent": 0.029551463225148192
+      }
+    ],
+    "buckets": [
+      {
+        "name": "JIT executor / selection",
+        "us": 723572,
+        "leaves": [
+          "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h1c6b17789b9d53e7",
+          "wasm_vm_core::Machine::try_jit_block::h0ec09f3d40a79477",
+          "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::is_compiled::hf0b26b7146f8907b",
+          "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7fba6d5383ae0c08",
+          "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::note_chain::h002c0395c865b3e5",
+          "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7a18440956482b17",
+          "wasm_vm_wasm::jit_browser::BrowserExecutor::remove_block::h3662dd32ea82b74d",
+          "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::note_jit_retired::hbc5b69eb1383553c"
+        ],
+        "percent": 18.756676621707832
+      },
+      {
+        "name": "dispatch discovery / block cache",
+        "us": 327533,
+        "leaves": [
+          "wasm_vm_core::dispatch::BlockDiscovery::on_block_entry::h603a5b4937cad8ca",
+          "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf"
+        ],
+        "percent": 8.490420530282861
+      },
+      {
+        "name": "interpreter / decode / run loop",
+        "us": 1050420,
+        "leaves": [
+          "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b",
+          "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81",
+          "wasm_vm_core::Machine::next_micro_op::hde9600194430e6db",
+          "wasm_vm_core::hart::Hart::decode_at::h44ce55ab00ab1770",
+          "wasm_vm_core::decode::decode::hc0ed8cae72412bec",
+          "wasm_vm_core::decode_c::expand_c::h2452b9e1ed4d8e0b",
+          "wasm_vm_core::hart::cstore64_with_phys::h933922e1acd9045f",
+          "wasm_vm_core::hart::cload64::h2536535db8ec3fef",
+          "wasm_vm_core::hart::cload8::h620a223848ce909c",
+          "wasm_vm_core::hart::cload32::hd276ae068ebb76eb",
+          "wasm_vm_core::hart::cstore32_with_phys::h4d26e50a3aebe110"
+        ],
+        "percent": 27.22934035171944
+      },
+      {
+        "name": "MMU / PMP",
+        "us": 458657,
+        "leaves": [
+          "wasm_vm_core::mmu::translate_cached::hf2b93220145a733d",
+          "wasm_vm_core::mmu::translate_cached::h0f176be2d21edacd",
+          "wasm_vm_core::pmp::Pmp::check::h49feb29917fd316e",
+          "wasm_vm_core::mmu::finish_leaf::hb5c91ebad7369df2",
+          "wasm_vm_core::Machine::sync_pmp_code_permissions::hdc3cf2729702a634",
+          "wasm_vm_core::mmu::walk_leaf_inner::h8f584abd0d439f06",
+          "wasm_vm_core::mmu::walk_leaf_inner::he301c8b3dbb8bbd1"
+        ],
+        "percent": 11.889460937242802
+      },
+      {
+        "name": "interrupt / clock synchronization",
+        "us": 401561,
+        "leaves": [
+          "wasm_vm_core::Machine::sync_plic::h7f5c3bd066f966f0",
+          "wasm_vm_core::Machine::sync_clint::h0564e959affb159d",
+          "wasm_vm_core::csr::Csrs::next_interrupt::he02f95cae226d67a",
+          "wasm_vm_core::Machine::sync_sbi_timer::hfac2bf38b14163de",
+          "wasm_vm_core::dev::plic::IrqLine::set::hbc1d1743be327740",
+          "wasm_vm_core::Machine::sample_wall_clock::h8e67bc52a553e03e",
+          "wasm_vm_core::csr::Csrs::satp::hef636e9b5d7646c9",
+          "wasm_vm_core::csr::Csrs::access::h753f6a96fda47812",
+          "wasm_vm_core::csr::Csrs::deliver_trap_s::h3ab7b23f8accd3a1"
+        ],
+        "percent": 10.4093992317138
+      },
+      {
+        "name": "virtio / other devices",
+        "us": 275220,
+        "leaves": [
+          "wasm_vm_core::dev::virtio::console::service::h1ffb3e3719360d51",
+          "wasm_vm_core::dev::virtio::net::service::h88973684b4a526cb",
+          "wasm_vm_core::dev::virtio::input::service::hbc44a2a62a26abb2",
+          "wasm_vm_core::dev::virtio::snd::service_internal::h746557e7fa1093ec",
+          "wasm_vm_core::dev::virtio::gpu::service::h3a22ce79444eb9c0",
+          "wasm_vm_core::dev::virtio::gpu::service_cursor::hda6c1825a97ffd87",
+          "wasm_vm_core::dev::virtio::gpu::service_with_cursor::h846deeec38039ecc",
+          "wasm_vm_core::dev::uart16550::Uart16550::irq_level::h79d07f06a2fc562e",
+          "wasm_vm_core::dev::virtio::blk::service::h3d6e34ecce8fe7d0",
+          "wasm_vm_core::dev::virtio::rng::service::he448130d2aeb0fa2",
+          "wasm_vm_core::dev::rtc::GoldfishRtc::poll::he0a3c0e1bc5027db",
+          "<wasm_vm_core::dev::virtio::mmio::SharedVirtioMmio as wasm_vm_core::mmio::MmioDevice>::write::h1ef710a1f00f5744",
+          "wasm_vm_core::dev::virtio::queue::Virtqueue::pop::h43e2f73695fe065c"
+        ],
+        "percent": 7.134345358618671
+      },
+      {
+        "name": "integer division / multiply helpers",
+        "us": 143823,
+        "leaves": [
+          "__udivti3",
+          "__multi3"
+        ],
+        "percent": 3.7282281538863935
+      },
+      {
+        "name": "collection / hashing / allocation",
+        "us": 203305,
+        "leaves": [
+          "alloc::collections::btree::map::BTreeMap<K,V,A>::remove::h49400433011d1148",
+          "core::hash::BuildHasher::hash_one::he61abe7265f819be",
+          "<std[f839c7267e543978]::hash::random::DefaultHasher as core[2c5ad5f686fcca5c]::hash::Hasher>::write",
+          "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::free",
+          "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::malloc",
+          "core::hash::BuildHasher::hash_one::hf59f0499646c0046",
+          "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::insert_large_chunk",
+          "alloc::collections::btree::node::BalancingContext<K,V>::do_merge::he71861293e31e3c7",
+          "alloc::raw_vec::RawVecInner<A>::finish_grow::hadd31fe3c10ecfad"
+        ],
+        "percent": 5.270140553498906
+      },
+      {
+        "name": "unmapped generated Wasm / its trampolines",
+        "us": 148759,
+        "leaves": [
+          "js-to-wasm:iil:i wasm://wasm/270a815a",
+          "wasm-function[9] wasm://wasm/0001cfd6",
+          "wasm-function[8] wasm://wasm/0001cfd6",
+          "wasm-function[10] wasm://wasm/0001306e",
+          "wasm-function[5] wasm://wasm/d193186e",
+          "wasm-function[5] wasm://wasm/d24eba16",
+          "wasm-function[5] wasm://wasm/00014956",
+          "wasm-function[8] wasm://wasm/f01b5966",
+          "wasm-function[12] wasm://wasm/0001063e",
+          "wasm-function[5] wasm://wasm/f49ad1ee",
+          "wasm-function[5] wasm://wasm/ae404dfe",
+          "wasm-function[10] wasm://wasm/000100da",
+          "wasm-function[5] wasm://wasm/1eaf7ed2",
+          "wasm-function[12] wasm://wasm/bf2f2e66",
+          "wasm-function[6] wasm://wasm/0682faee",
+          "wasm-function[12] wasm://wasm/339d367e",
+          "wasm-function[8] wasm://wasm/33b82ba2",
+          "wasm-function[10] wasm://wasm/286efe1a",
+          "wasm-function[8] wasm://wasm/3126049a",
+          "wasm-function[5] wasm://wasm/5813d22e",
+          "wasm-function[9] wasm://wasm/884b3bf6",
+          "wasm-function[5] wasm://wasm/e4565846",
+          "wasm-function[9] wasm://wasm/9313d19a",
+          "wasm-function[12] wasm://wasm/00016c6e",
+          "wasm-function[8] wasm://wasm/000126ee",
+          "wasm-function[12] wasm://wasm/000126ee",
+          "wasm-function[6] wasm://wasm/606aba8e",
+          "wasm-function[8] wasm://wasm/ae404dfe",
+          "wasm-function[9] wasm://wasm/7d7218ea",
+          "wasm-function[6] wasm://wasm/f49ad1ee",
+          "wasm-function[10] wasm://wasm/9243d3d6",
+          "wasm-function[8] wasm://wasm/20209436",
+          "wasm-function[9] wasm://wasm/b72b54c2",
+          "wasm-function[11] wasm://wasm/0001cfd6",
+          "wasm-function[6] wasm://wasm/d24eba16",
+          "wasm-function[11] wasm://wasm/ae404dfe",
+          "wasm-function[5] wasm://wasm/55c31382",
+          "wasm-function[5] wasm://wasm/0dae7ede",
+          "wasm-function[11] wasm://wasm/9313d19a",
+          "wasm-function[5] wasm://wasm/1e4f5eae",
+          "wasm-function[6] wasm://wasm/3126049a",
+          "wasm-function[5] wasm://wasm/7bc6a46e",
+          "wasm-function[7] wasm://wasm/0001306e",
+          "wasm-function[12] wasm://wasm/f49ad1ee",
+          "wasm-function[6] wasm://wasm/00014956",
+          "wasm-function[5] wasm://wasm/0001cfd6",
+          "wasm-function[10] wasm://wasm/7d7218ea",
+          "wasm-function[6] wasm://wasm/00016616",
+          "wasm-function[10] wasm://wasm/00012cea",
+          "wasm-function[5] wasm://wasm/7cf2c956",
+          "wasm-function[11] wasm://wasm/000126ee",
+          "wasm-function[5] wasm://wasm/85c5090a",
+          "wasm-function[5] wasm://wasm/847797b6",
+          "wasm-function[7] wasm://wasm/339d367e",
+          "wasm-function[7] wasm://wasm/0001cfd6",
+          "wasm-function[5] wasm://wasm/3126049a",
+          "wasm-function[8] wasm://wasm/2725fa86",
+          "wasm-function[5] wasm://wasm/9243d3d6",
+          "wasm-function[10] wasm://wasm/aedd14ba",
+          "wasm-function[5] wasm://wasm/b6d5ab92",
+          "wasm-function[7] wasm://wasm/9313d19a",
+          "wasm-function[6] wasm://wasm/f1afd7aa",
+          "wasm-function[10] wasm://wasm/a24a1f06",
+          "wasm-function[10] wasm://wasm/0001063e",
+          "wasm-function[6] wasm://wasm/0001063e",
+          "wasm-function[8] wasm://wasm/f1afd7aa",
+          "wasm-function[9] wasm://wasm/339d367e",
+          "wasm-function[9] wasm://wasm/5f2bbc4a",
+          "wasm-function[7] wasm://wasm/000126ee",
+          "wasm-function[9] wasm://wasm/000126ee",
+          "wasm-function[10] wasm://wasm/b506530a"
+        ],
+        "percent": 3.8561808051840525
+      },
+      {
+        "name": "other",
+        "us": 124827,
+        "leaves": [
+          "wasm_vm_core::Machine::drain_code_writes::h397dce4503e03991",
+          "wasm-to-js",
+          "wasm_vm_wasm::WasmLinux::run_chunk::h07405c1400974665",
+          "Module",
+          "Instance",
+          "(garbage collector)",
+          "onDisplayFrame http://127.0.0.1:61631/linux-worker-protocol.js",
+          "takeFromExternrefTable0 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "real._wbg_cb_unref http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "wasm_vm_core::softfloat::f64_from_int::hc663ad58dfa3229c",
+          "rustc_apfloat::ieee::IeeeFloat<S>::normalize::hd2d84624e94a000e",
+          "<wasm_vm_core::softfloat::F32 as wasm_vm_core::softfloat::SoftFloat>::fma::h1178d08e2231c9c4",
+          "(idle)",
+          "decode",
+          "__wbg_set_8535240470bf2500 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "jit_translate::emit_exit::h07b6e673603a1cea",
+          "wasm_bindgen__convert__closures_____invoke__h3c376d590f4b7628 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "<rustc_apfloat::ieee::IeeeFloat<S> as rustc_apfloat::Float>::to_u128_r::h7e416134f37836b6",
+          "jit_translate::emit_chain_prologue::h21382d5e6798db9e",
+          "wasm_emit::func::FuncBuilder::if_::hb1dd6e45328dc745",
+          "schedule http://127.0.0.1:61631/loader.js",
+          "postTask",
+          "wasm_bindgen__convert__closures_____invoke__hf96fc87adc256ad8 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "__rustc[8068f81614cfe5c]::__rust_realloc",
+          "memcmp",
+          "runTick http://127.0.0.1:61631/loader.js",
+          "__wbg_invokeJitBlock_99121dda606f7308 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js"
+        ],
+        "percent": 3.2358074561452397
+      }
+    ]
+  },
+  "phases": {
+    "beforePcm": {
+      "totalUs": 2852304.999947548,
+      "samples": 1917,
+      "self": [
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h1c6b17789b9d53e7",
+          "us": 380798,
+          "percent": 13.350535794979942
+        },
+        {
+          "name": "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b",
+          "us": 322387,
+          "percent": 11.302683268652142
+        },
+        {
+          "name": "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81",
+          "us": 240425,
+          "percent": 8.429147654420593
+        },
+        {
+          "name": "wasm_vm_core::Machine::try_jit_block::h0ec09f3d40a79477",
+          "us": 166637.9999475479,
+          "percent": 5.842222341250753
+        },
+        {
+          "name": "wasm_vm_core::dispatch::BlockDiscovery::on_block_entry::h603a5b4937cad8ca",
+          "us": 142304,
+          "percent": 4.989087772963161
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_plic::h7f5c3bd066f966f0",
+          "us": 137453,
+          "percent": 4.819014796893308
+        },
+        {
+          "name": "wasm_vm_core::mmu::translate_cached::hf2b93220145a733d",
+          "us": 135833,
+          "percent": 4.762218626777217
+        },
+        {
+          "name": "wasm_vm_core::Machine::next_micro_op::hde9600194430e6db",
+          "us": 104126,
+          "percent": 3.650591363893932
+        },
+        {
+          "name": "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf",
+          "us": 94817,
+          "percent": 3.3242237419120193
+        },
+        {
+          "name": "wasm_vm_core::mmu::translate_cached::h0f176be2d21edacd",
+          "us": 84996,
+          "percent": 2.9799057254242807
+        },
+        {
+          "name": "__udivti3",
+          "us": 75356,
+          "percent": 2.641933453869265
+        },
+        {
+          "name": "wasm_vm_core::pmp::Pmp::check::h49feb29917fd316e",
+          "us": 59447,
+          "percent": 2.084174027710683
+        },
+        {
+          "name": "alloc::collections::btree::map::BTreeMap<K,V,A>::remove::h49400433011d1148",
+          "us": 59150,
+          "percent": 2.0737613965227326
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_clint::h0564e959affb159d",
+          "us": 58311,
+          "percent": 2.04434658990088
+        },
+        {
+          "name": "wasm_vm_core::mmu::finish_leaf::hb5c91ebad7369df2",
+          "us": 49062,
+          "percent": 1.7200825297751194
+        },
+        {
+          "name": "core::hash::BuildHasher::hash_one::he61abe7265f819be",
+          "us": 48919,
+          "percent": 1.715069040684625
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::console::service::h1ffb3e3719360d51",
+          "us": 43624,
+          "percent": 1.5294297068792508
+        },
+        {
+          "name": "<std[f839c7267e543978]::hash::random::DefaultHasher as core[2c5ad5f686fcca5c]::hash::Hasher>::write",
+          "us": 36974,
+          "percent": 1.2962849344891212
+        },
+        {
+          "name": "wasm_vm_core::csr::Csrs::next_interrupt::he02f95cae226d67a",
+          "us": 36882,
+          "percent": 1.2930594729763556
+        },
+        {
+          "name": "wasm_vm_core::Machine::drain_code_writes::h397dce4503e03991",
+          "us": 35786,
+          "percent": 1.2546344097373205
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_sbi_timer::hfac2bf38b14163de",
+          "us": 33401,
+          "percent": 1.1710178259552966
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::net::service::h88973684b4a526cb",
+          "us": 31946,
+          "percent": 1.1200064509436216
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::input::service::hbc44a2a62a26abb2",
+          "us": 26983,
+          "percent": 0.9460068260756196
+        },
+        {
+          "name": "__multi3",
+          "us": 25131,
+          "percent": 0.8810768834490752
+        },
+        {
+          "name": "wasm_vm_core::hart::Hart::decode_at::h44ce55ab00ab1770",
+          "us": 23461,
+          "percent": 0.8225277451195238
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::snd::service_internal::h746557e7fa1093ec",
+          "us": 22173,
+          "percent": 0.7773712839408039
+        },
+        {
+          "name": "wasm_vm_core::decode::decode::hc0ed8cae72412bec",
+          "us": 19117,
+          "percent": 0.6702298667341519
+        },
+        {
+          "name": "wasm_vm_core::decode_c::expand_c::h2452b9e1ed4d8e0b",
+          "us": 17941,
+          "percent": 0.6290000543535815
+        },
+        {
+          "name": "js-to-wasm:iil:i wasm://wasm/270a815a",
+          "us": 14723,
+          "percent": 0.5161790201353202
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service::h3a22ce79444eb9c0",
+          "us": 13588,
+          "percent": 0.47638664168978684
+        },
+        {
+          "name": "wasm_vm_core::dev::plic::IrqLine::set::hbc1d1743be327740",
+          "us": 13572,
+          "percent": 0.47582569186147977
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service_cursor::hda6c1825a97ffd87",
+          "us": 13554,
+          "percent": 0.4751946233046343
+        },
+        {
+          "name": "wasm_vm_core::hart::cstore64_with_phys::h933922e1acd9045f",
+          "us": 11901,
+          "percent": 0.4172414941676592
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service_with_cursor::h846deeec38039ecc",
+          "us": 10437,
+          "percent": 0.36591458487756146
+        },
+        {
+          "name": "wasm_vm_core::hart::cload64::h2536535db8ec3fef",
+          "us": 10274,
+          "percent": 0.3601999085016831
+        },
+        {
+          "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7fba6d5383ae0c08",
+          "us": 9029,
+          "percent": 0.3165509999865385
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_pmp_code_permissions::hdc3cf2729702a634",
+          "us": 8922,
+          "percent": 0.3127996480097349
+        },
+        {
+          "name": "wasm_vm_wasm::WasmLinux::run_chunk::h07405c1400974665",
+          "us": 8818,
+          "percent": 0.3091534741257389
+        },
+        {
+          "name": "wasm_vm_core::dev::uart16550::Uart16550::irq_level::h79d07f06a2fc562e",
+          "us": 7551,
+          "percent": 0.2647332595966721
+        },
+        {
+          "name": "wasm-to-js",
+          "us": 7549,
+          "percent": 0.2646631408681337
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::is_compiled::hf0b26b7146f8907b",
+          "us": 7536,
+          "percent": 0.2642073691326342
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::blk::service::h3d6e34ecce8fe7d0",
+          "us": 7535,
+          "percent": 0.26417230976836503
+        },
+        {
+          "name": "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::free",
+          "us": 7530,
+          "percent": 0.26399701294701905
+        },
+        {
+          "name": "Instance",
+          "us": 6054,
+          "percent": 0.212249391285691
+        },
+        {
+          "name": "wasm_vm_core::Machine::sample_wall_clock::h8e67bc52a553e03e",
+          "us": 6017,
+          "percent": 0.2109521948077309
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/0001cfd6",
+          "us": 5686,
+          "percent": 0.1993475452346282
+        },
+        {
+          "name": "Module",
+          "us": 5576,
+          "percent": 0.19549101516501705
+        },
+        {
+          "name": "wasm_vm_core::dev::rtc::GoldfishRtc::poll::he0a3c0e1bc5027db",
+          "us": 4526,
+          "percent": 0.15867868268236499
+        },
+        {
+          "name": "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::malloc",
+          "us": 4508,
+          "percent": 0.15804761412551951
+        },
+        {
+          "name": "core::hash::BuildHasher::hash_one::hf59f0499646c0046",
+          "us": 4491,
+          "percent": 0.15745160493294325
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/0001306e",
+          "us": 4454,
+          "percent": 0.15615440845498313
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/d24eba16",
+          "us": 3022,
+          "percent": 0.10594939882149955
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/00014956",
+          "us": 3021,
+          "percent": 0.10591433945723036
+        },
+        {
+          "name": "wasm_vm_core::csr::Csrs::satp::hef636e9b5d7646c9",
+          "us": 3021,
+          "percent": 0.10591433945723036
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::rng::service::he448130d2aeb0fa2",
+          "us": 3016,
+          "percent": 0.10573904263588439
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/f01b5966",
+          "us": 3015,
+          "percent": 0.1057039832716152
+        },
+        {
+          "name": "wasm-function[12] wasm://wasm/0001063e",
+          "us": 3014,
+          "percent": 0.105668923907346
+        },
+        {
+          "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7a18440956482b17",
+          "us": 3013,
+          "percent": 0.10563386454307681
+        },
+        {
+          "name": "wasm_vm_core::csr::Csrs::access::h753f6a96fda47812",
+          "us": 3011,
+          "percent": 0.10556374581453844
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/f49ad1ee",
+          "us": 3010,
+          "percent": 0.10552868645026924
+        },
+        {
+          "name": "(garbage collector)",
+          "us": 3009,
+          "percent": 0.10549362708600005
+        },
+        {
+          "name": "wasm_vm_core::hart::cload8::h620a223848ce909c",
+          "us": 3006,
+          "percent": 0.10538844899319247
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/0001cfd6",
+          "us": 3004,
+          "percent": 0.10531833026465408
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/ae404dfe",
+          "us": 2953,
+          "percent": 0.10353030268692527
+        },
+        {
+          "name": "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::insert_large_chunk",
+          "us": 2819,
+          "percent": 0.09883234787485348
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/000100da",
+          "us": 1526,
+          "percent": 0.05350058987478766
+        },
+        {
+          "name": "onDisplayFrame http://127.0.0.1:61631/linux-worker-protocol.js",
+          "us": 1523,
+          "percent": 0.05339541178198008
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/1eaf7ed2",
+          "us": 1513,
+          "percent": 0.05304481813928816
+        },
+        {
+          "name": "wasm-function[12] wasm://wasm/bf2f2e66",
+          "us": 1512,
+          "percent": 0.05300975877501896
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/0682faee",
+          "us": 1512,
+          "percent": 0.05300975877501896
+        },
+        {
+          "name": "takeFromExternrefTable0 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1511,
+          "percent": 0.052974699410749775
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::note_chain::h002c0395c865b3e5",
+          "us": 1511,
+          "percent": 0.052974699410749775
+        },
+        {
+          "name": "real._wbg_cb_unref http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1511,
+          "percent": 0.052974699410749775
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/33b82ba2",
+          "us": 1510,
+          "percent": 0.05293964004648058
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/286efe1a",
+          "us": 1510,
+          "percent": 0.05293964004648058
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/3126049a",
+          "us": 1510,
+          "percent": 0.05293964004648058
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/5813d22e",
+          "us": 1510,
+          "percent": 0.05293964004648058
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/884b3bf6",
+          "us": 1510,
+          "percent": 0.05293964004648058
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/9313d19a",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[12] wasm://wasm/00016c6e",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/000126ee",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[12] wasm://wasm/000126ee",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/606aba8e",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/ae404dfe",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/7d7218ea",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/f49ad1ee",
+          "us": 1508,
+          "percent": 0.052869521317942196
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/9243d3d6",
+          "us": 1508,
+          "percent": 0.052869521317942196
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/20209436",
+          "us": 1508,
+          "percent": 0.052869521317942196
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/b72b54c2",
+          "us": 1508,
+          "percent": 0.052869521317942196
+        },
+        {
+          "name": "wasm-function[11] wasm://wasm/0001cfd6",
+          "us": 1508,
+          "percent": 0.052869521317942196
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/d24eba16",
+          "us": 1507,
+          "percent": 0.052834461953673
+        },
+        {
+          "name": "<wasm_vm_core::softfloat::F32 as wasm_vm_core::softfloat::SoftFloat>::fma::h1178d08e2231c9c4",
+          "us": 1507,
+          "percent": 0.052834461953673
+        },
+        {
+          "name": "(idle)",
+          "us": 1507,
+          "percent": 0.052834461953673
+        },
+        {
+          "name": "wasm-function[11] wasm://wasm/ae404dfe",
+          "us": 1507,
+          "percent": 0.052834461953673
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/55c31382",
+          "us": 1507,
+          "percent": 0.052834461953673
+        },
+        {
+          "name": "wasm-function[11] wasm://wasm/9313d19a",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/1e4f5eae",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "__wbg_set_8535240470bf2500 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "jit_translate::emit_exit::h07b6e673603a1cea",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/3126049a",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/7bc6a46e",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "wasm_bindgen__convert__closures_____invoke__h3c376d590f4b7628 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/0001306e",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "<rustc_apfloat::ieee::IeeeFloat<S> as rustc_apfloat::Float>::to_u128_r::h7e416134f37836b6",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm-function[12] wasm://wasm/f49ad1ee",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/00014956",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/0001cfd6",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/7d7218ea",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/00016616",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::remove_block::h3662dd32ea82b74d",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/d193186e",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm_vm_core::mmu::walk_leaf_inner::h8f584abd0d439f06",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/7cf2c956",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "wasm-function[11] wasm://wasm/000126ee",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/85c5090a",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/847797b6",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "jit_translate::emit_chain_prologue::h21382d5e6798db9e",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "wasm_emit::func::FuncBuilder::if_::hb1dd6e45328dc745",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "postTask",
+          "us": 1503,
+          "percent": 0.052694224496596234
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/3126049a",
+          "us": 1503,
+          "percent": 0.052694224496596234
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/2725fa86",
+          "us": 1503,
+          "percent": 0.052694224496596234
+        },
+        {
+          "name": "wasm_bindgen__convert__closures_____invoke__hf96fc87adc256ad8 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1503,
+          "percent": 0.052694224496596234
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/9243d3d6",
+          "us": 1503,
+          "percent": 0.052694224496596234
+        },
+        {
+          "name": "__rustc[8068f81614cfe5c]::__rust_realloc",
+          "us": 1502,
+          "percent": 0.05265916513232704
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/b6d5ab92",
+          "us": 1502,
+          "percent": 0.05265916513232704
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/9313d19a",
+          "us": 1502,
+          "percent": 0.05265916513232704
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/a24a1f06",
+          "us": 1500,
+          "percent": 0.052589046403788656
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/0001063e",
+          "us": 1497,
+          "percent": 0.05248386831098108
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/0001063e",
+          "us": 1496,
+          "percent": 0.05244880894671189
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/f1afd7aa",
+          "us": 1494,
+          "percent": 0.052378690218173506
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/5f2bbc4a",
+          "us": 1482,
+          "percent": 0.05195797784694319
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/000126ee",
+          "us": 1396,
+          "percent": 0.048942872519792645
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/000126ee",
+          "us": 1151,
+          "percent": 0.04035332827384049
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/b506530a",
+          "us": 1140,
+          "percent": 0.03996767526687938
+        }
+      ],
+      "inclusive": [
+        {
+          "name": "(root)",
+          "us": 2852304.999947548,
+          "percent": 100
+        },
+        {
+          "name": "runTick http://127.0.0.1:61631/loader.js",
+          "us": 2700461.999947548,
+          "percent": 94.676480951273
+        },
+        {
+          "name": "js-to-wasm:iii:ii http://127.0.0.1:61631/pkg/wasm_vm_wasm_bg.wasm",
+          "us": 2698963.999947548,
+          "percent": 94.62396202359776
+        },
+        {
+          "name": "runChunk http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 2697452.999947548,
+          "percent": 94.57098732418702
+        },
+        {
+          "name": "wasm_vm_wasm::WasmLinux::run_chunk::h07405c1400974665",
+          "us": 2695941.999947548,
+          "percent": 94.51801262477626
+        },
+        {
+          "name": "wasmlinux_runChunk multivalue shim",
+          "us": 2695941.999947548,
+          "percent": 94.51801262477626
+        },
+        {
+          "name": "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b",
+          "us": 2653991.999947548,
+          "percent": 93.04727229368363
+        },
+        {
+          "name": "wasm_vm_core::Machine::try_jit_block::h0ec09f3d40a79477",
+          "us": 897703.9999475479,
+          "percent": 31.472931540072192
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h1c6b17789b9d53e7",
+          "us": 555375,
+          "percent": 19.47109443100275
+        },
+        {
+          "name": "wasm_vm_core::Machine::next_micro_op::hde9600194430e6db",
+          "us": 457689,
+          "percent": 16.04628537300242
+        },
+        {
+          "name": "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81",
+          "us": 378985,
+          "percent": 13.286973167559896
+        },
+        {
+          "name": "wasm-to-js",
+          "us": 174191,
+          "percent": 6.1070257214148995
+        },
+        {
+          "name": "wasm_vm_core::mmu::translate_cached::hf2b93220145a733d",
+          "us": 159497,
+          "percent": 5.591863422843386
+        },
+        {
+          "name": "__wbg_invokeJitBlock_99121dda606f7308 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 151985,
+          "percent": 5.328497478453213
+        },
+        {
+          "name": "wasm_vm_core::dispatch::BlockDiscovery::on_block_entry::h603a5b4937cad8ca",
+          "us": 142304,
+          "percent": 4.989087772963161
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_plic::h7f5c3bd066f966f0",
+          "us": 137453,
+          "percent": 4.819014796893308
+        },
+        {
+          "name": "js-to-wasm:iil:i wasm://wasm/270a815a",
+          "us": 112124,
+          "percent": 3.930996159318933
+        },
+        {
+          "name": "wasm_vm_core::mmu::translate_cached::h0f176be2d21edacd",
+          "us": 107409,
+          "percent": 3.7656912567896907
+        },
+        {
+          "name": "wasm_vm_core::hart::Hart::decode_at::h44ce55ab00ab1770",
+          "us": 97773,
+          "percent": 3.4278592226917524
+        },
+        {
+          "name": "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf",
+          "us": 94817,
+          "percent": 3.3242237419120193
+        },
+        {
+          "name": "wasm_vm_core::Machine::drain_code_writes::h397dce4503e03991",
+          "us": 84757,
+          "percent": 2.9715265373639435
+        },
+        {
+          "name": "core::hash::BuildHasher::hash_one::he61abe7265f819be",
+          "us": 76847,
+          "percent": 2.6942069659946313
+        },
+        {
+          "name": "__udivti3",
+          "us": 75356,
+          "percent": 2.641933453869265
+        },
+        {
+          "name": "wasm_vm_core::pmp::Pmp::check::h49feb29917fd316e",
+          "us": 59447,
+          "percent": 2.084174027710683
+        },
+        {
+          "name": "alloc::collections::btree::map::BTreeMap<K,V,A>::remove::h49400433011d1148",
+          "us": 59150,
+          "percent": 2.0737613965227326
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_clint::h0564e959affb159d",
+          "us": 58311,
+          "percent": 2.04434658990088
+        },
+        {
+          "name": "wasm_vm_core::hart::cload64::h2536535db8ec3fef",
+          "us": 57805,
+          "percent": 2.026606551580669
+        },
+        {
+          "name": "wasm_vm_core::mmu::finish_leaf::hb5c91ebad7369df2",
+          "us": 49062,
+          "percent": 1.7200825297751194
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::console::service::h1ffb3e3719360d51",
+          "us": 43624,
+          "percent": 1.5294297068792508
+        },
+        {
+          "name": "wasm_vm_core::hart::cstore64_with_phys::h933922e1acd9045f",
+          "us": 38816,
+          "percent": 1.3608642834729736
+        },
+        {
+          "name": "<std[f839c7267e543978]::hash::random::DefaultHasher as core[2c5ad5f686fcca5c]::hash::Hasher>::write",
+          "us": 36974,
+          "percent": 1.2962849344891212
+        },
+        {
+          "name": "wasm_vm_core::csr::Csrs::next_interrupt::he02f95cae226d67a",
+          "us": 36882,
+          "percent": 1.2930594729763556
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service_with_cursor::h846deeec38039ecc",
+          "us": 34587,
+          "percent": 1.2125982319785589
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_sbi_timer::hfac2bf38b14163de",
+          "us": 33401,
+          "percent": 1.1710178259552966
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::net::service::h88973684b4a526cb",
+          "us": 31946,
+          "percent": 1.1200064509436216
+        },
+        {
+          "name": "real._wbg_cb_unref http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 31615,
+          "percent": 1.108401801370519
+        },
+        {
+          "name": "real http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 31615,
+          "percent": 1.108401801370519
+        },
+        {
+          "name": "wasm_vm_core::hart::cload32::hd276ae068ebb76eb",
+          "us": 27166,
+          "percent": 0.9524226897368818
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::input::service::hbc44a2a62a26abb2",
+          "us": 26983,
+          "percent": 0.9460068260756196
+        },
+        {
+          "name": "__multi3",
+          "us": 25131,
+          "percent": 0.8810768834490752
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::snd::service_internal::h746557e7fa1093ec",
+          "us": 22173,
+          "percent": 0.7773712839408039
+        },
+        {
+          "name": "wasm_bindgen__convert__closures_____invoke__h3c376d590f4b7628 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 21066,
+          "percent": 0.7385605676948079
+        },
+        {
+          "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7fba6d5383ae0c08",
+          "us": 19560,
+          "percent": 0.6857611651054041
+        },
+        {
+          "name": "wasm_bindgen::convert::closures::_::invoke::h3c376d590f4b7628",
+          "us": 19560,
+          "percent": 0.6857611651054041
+        },
+        {
+          "name": "wasm_vm_core::Machine::pump_jit_translations::hb3d02ac3b411b36f",
+          "us": 19156,
+          "percent": 0.6715971819406503
+        },
+        {
+          "name": "wasm_vm_core::decode::decode::hc0ed8cae72412bec",
+          "us": 19117,
+          "percent": 0.6702298667341519
+        },
+        {
+          "name": "wasm_vm_core::decode_c::expand_c::h2452b9e1ed4d8e0b",
+          "us": 17941,
+          "percent": 0.6290000543535815
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::install_batch::hef5554a713db00d0",
+          "us": 17649,
+          "percent": 0.6187627199869773
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service::h3a22ce79444eb9c0",
+          "us": 15111,
+          "percent": 0.5297820534717669
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::is_compiled::hf0b26b7146f8907b",
+          "us": 14970,
+          "percent": 0.5248386831098107
+        },
+        {
+          "name": "wasm_vm_core::dev::plic::IrqLine::set::hbc1d1743be327740",
+          "us": 13572,
+          "percent": 0.47582569186147977
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service_cursor::hda6c1825a97ffd87",
+          "us": 13554,
+          "percent": 0.4751946233046343
+        },
+        {
+          "name": "http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 13153,
+          "percent": 0.4611358182326881
+        },
+        {
+          "name": "handleError http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 13153,
+          "percent": 0.4611358182326881
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::link_dynamic_target::haa6d6a0e229425aa",
+          "us": 11604,
+          "percent": 0.40682886297970905
+        },
+        {
+          "name": "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::free",
+          "us": 10349,
+          "percent": 0.36282936082187256
+        },
+        {
+          "name": "wasm_bindgen__convert__closures_____invoke__hf96fc87adc256ad8 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 9038,
+          "percent": 0.31686653426496125
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_pmp_code_permissions::hdc3cf2729702a634",
+          "us": 8922,
+          "percent": 0.3127996480097349
+        },
+        {
+          "name": "__rustc[8068f81614cfe5c]::__rust_dealloc",
+          "us": 8848,
+          "percent": 0.3102052550538147
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/0001cfd6",
+          "us": 8698,
+          "percent": 0.3049463504134358
+        },
+        {
+          "name": "wasm_vm_core::dev::uart16550::Uart16550::irq_level::h79d07f06a2fc562e",
+          "us": 7551,
+          "percent": 0.2647332595966721
+        },
+        {
+          "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7a18440956482b17",
+          "us": 7535,
+          "percent": 0.26417230976836503
+        },
+        {
+          "name": "wasm_bindgen::convert::closures::_::invoke::hf96fc87adc256ad8",
+          "us": 7535,
+          "percent": 0.26417230976836503
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::blk::service::h3d6e34ecce8fe7d0",
+          "us": 7535,
+          "percent": 0.26417230976836503
+        },
+        {
+          "name": "wasm-function[11] wasm://wasm/000126ee",
+          "us": 7534,
+          "percent": 0.2641372504040958
+        },
+        {
+          "name": "core::hash::BuildHasher::hash_one::hf59f0499646c0046",
+          "us": 7514,
+          "percent": 0.263436063118712
+        },
+        {
+          "name": "Instance",
+          "us": 6054,
+          "percent": 0.212249391285691
+        },
+        {
+          "name": "__wbg_new_944c2b5ed6653041 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 6054,
+          "percent": 0.212249391285691
+        },
+        {
+          "name": "wasm-function[12] wasm://wasm/000126ee",
+          "us": 6030,
+          "percent": 0.2114079665432304
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/f49ad1ee",
+          "us": 6021,
+          "percent": 0.21109243226480767
+        },
+        {
+          "name": "wasm_vm_core::Machine::sample_wall_clock::h8e67bc52a553e03e",
+          "us": 6017,
+          "percent": 0.2109521948077309
+        },
+        {
+          "name": "wasm_vm_core::mmu::walk_leaf_inner::h8f584abd0d439f06",
+          "us": 6015,
+          "percent": 0.21088207607919252
+        },
+        {
+          "name": "__rustc[8068f81614cfe5c]::__rust_realloc",
+          "us": 6008,
+          "percent": 0.21063666052930816
+        },
+        {
+          "name": "alloc::raw_vec::RawVecInner<A>::finish_grow::hadd31fe3c10ecfad",
+          "us": 6008,
+          "percent": 0.21063666052930816
+        },
+        {
+          "name": "alloc::raw_vec::RawVec<T,A>::grow_one::hd7acdfec40060a61",
+          "us": 6008,
+          "percent": 0.21063666052930816
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/0001306e",
+          "us": 5960,
+          "percent": 0.20895381104438693
+        },
+        {
+          "name": "wasm_vm_core::hart::cload8::h620a223848ce909c",
+          "us": 5772,
+          "percent": 0.20236265056177874
+        },
+        {
+          "name": "Module",
+          "us": 5576,
+          "percent": 0.19549101516501705
+        },
+        {
+          "name": "__wbg_new_711fb31c64c1c363 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 5576,
+          "percent": 0.19549101516501705
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/d24eba16",
+          "us": 4529,
+          "percent": 0.15878386077517256
+        },
+        {
+          "name": "wasm_vm_core::dev::rtc::GoldfishRtc::poll::he0a3c0e1bc5027db",
+          "us": 4526,
+          "percent": 0.15867868268236499
+        },
+        {
+          "name": "wasm_vm_core::hart::cstore32_with_phys::h4d26e50a3aebe110",
+          "us": 4521,
+          "percent": 0.158503385861019
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/3126049a",
+          "us": 4520,
+          "percent": 0.15846832649674983
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/7d7218ea",
+          "us": 4520,
+          "percent": 0.15846832649674983
+        },
+        {
+          "name": "hashbrown::map::HashMap<K,V,S,A>::insert::h6f2660bbc6fa3714",
+          "us": 4518,
+          "percent": 0.15839820776821142
+        },
+        {
+          "name": "wasm_vm_wasm::jit_browser::DynamicLinkCache::install_at::h6dd2d86ca170490a",
+          "us": 4518,
+          "percent": 0.15839820776821142
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/0001cfd6",
+          "us": 4511,
+          "percent": 0.1581527922183271
+        },
+        {
+          "name": "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::malloc",
+          "us": 4508,
+          "percent": 0.15804761412551951
+        },
+        {
+          "name": "js_sys::Reflect::set::ha332cd6b8e4c853e",
+          "us": 3022,
+          "percent": 0.10594939882149955
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/d24eba16",
+          "us": 3021,
+          "percent": 0.10591433945723036
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/00014956",
+          "us": 3021,
+          "percent": 0.10591433945723036
+        },
+        {
+          "name": "wasm_vm_core::csr::Csrs::satp::hef636e9b5d7646c9",
+          "us": 3021,
+          "percent": 0.10591433945723036
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/33b82ba2",
+          "us": 3018,
+          "percent": 0.10580916136442278
+        },
+        {
+          "name": "wasm_vm_core::hart::cload16::h3a17e81b61302812",
+          "us": 3017,
+          "percent": 0.10577410200015358
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/f49ad1ee",
+          "us": 3017,
+          "percent": 0.10577410200015358
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::rng::service::he448130d2aeb0fa2",
+          "us": 3016,
+          "percent": 0.10573904263588439
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/9313d19a",
+          "us": 3015,
+          "percent": 0.1057039832716152
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/f01b5966",
+          "us": 3015,
+          "percent": 0.1057039832716152
+        },
+        {
+          "name": "wasm-function[12] wasm://wasm/0001063e",
+          "us": 3014,
+          "percent": 0.105668923907346
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/3126049a",
+          "us": 3014,
+          "percent": 0.105668923907346
+        },
+        {
+          "name": "wasm-function[11] wasm://wasm/0001cfd6",
+          "us": 3012,
+          "percent": 0.10559880517880763
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/0001cfd6",
+          "us": 3012,
+          "percent": 0.10559880517880763
+        },
+        {
+          "name": "wasm_vm_core::hart::cstore8_with_phys::h5086917545b8882e",
+          "us": 3012,
+          "percent": 0.10559880517880763
+        },
+        {
+          "name": "wasm_vm_core::hart::cstore16_with_phys::h894aea18678f564f",
+          "us": 3011,
+          "percent": 0.10556374581453844
+        },
+        {
+          "name": "wasm_vm_core::csr::Csrs::access::h753f6a96fda47812",
+          "us": 3011,
+          "percent": 0.10556374581453844
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/7d7218ea",
+          "us": 3011,
+          "percent": 0.10556374581453844
+        },
+        {
+          "name": "jit_translate::emit_exit::h07b6e673603a1cea",
+          "us": 3010,
+          "percent": 0.10552868645026924
+        },
+        {
+          "name": "(garbage collector)",
+          "us": 3009,
+          "percent": 0.10549362708600005
+        },
+        {
+          "name": "wasm-function[11] wasm://wasm/f49ad1ee",
+          "us": 3007,
+          "percent": 0.10542350835746166
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/f49ad1ee",
+          "us": 3007,
+          "percent": 0.10542350835746166
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/b6d5ab92",
+          "us": 3004,
+          "percent": 0.10531833026465408
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/ae404dfe",
+          "us": 2953,
+          "percent": 0.10353030268692527
+        },
+        {
+          "name": "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::insert_large_chunk",
+          "us": 2819,
+          "percent": 0.09883234787485348
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/000126ee",
+          "us": 2655,
+          "percent": 0.09308261213470592
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/000100da",
+          "us": 1526,
+          "percent": 0.05350058987478766
+        },
+        {
+          "name": "onDisplayFrame http://127.0.0.1:61631/linux-worker-protocol.js",
+          "us": 1523,
+          "percent": 0.05339541178198008
+        },
+        {
+          "name": "onDisplayFrame http://127.0.0.1:61631/linux-worker.js",
+          "us": 1523,
+          "percent": 0.05339541178198008
+        },
+        {
+          "name": "http://127.0.0.1:61631/loader.js",
+          "us": 1523,
+          "percent": 0.05339541178198008
+        },
+        {
+          "name": "__wbg_call_a6e5c5dce5018821 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1523,
+          "percent": 0.05339541178198008
+        },
+        {
+          "name": "js_sys::Function<F>::call1::__wbg_call_a6e5c5dce5018821::hd726a72a6d726ff2 externref shim",
+          "us": 1523,
+          "percent": 0.05339541178198008
+        },
+        {
+          "name": "<wasm_vm_wasm::JsFrameSink as wasm_vm_core::dev::virtio::gpu::FrameSink>::flush::h712896c8783286dd",
+          "us": 1523,
+          "percent": 0.05339541178198008
+        },
+        {
+          "name": "wasm_vm_wasm::jit_stats_object::h0f54b9e9a9c096bf",
+          "us": 1516,
+          "percent": 0.053149996232095736
+        },
+        {
+          "name": "wasmlinux_jitStats multivalue shim",
+          "us": 1516,
+          "percent": 0.053149996232095736
+        },
+        {
+          "name": "jitStats http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1516,
+          "percent": 0.053149996232095736
+        },
+        {
+          "name": "jitStats http://127.0.0.1:61631/loader.js",
+          "us": 1516,
+          "percent": 0.053149996232095736
+        },
+        {
+          "name": "handleCall http://127.0.0.1:61631/linux-worker-protocol.js",
+          "us": 1516,
+          "percent": 0.053149996232095736
+        },
+        {
+          "name": "handle http://127.0.0.1:61631/linux-worker-protocol.js",
+          "us": 1516,
+          "percent": 0.053149996232095736
+        },
+        {
+          "name": "http://127.0.0.1:61631/linux-worker-protocol.js",
+          "us": 1516,
+          "percent": 0.053149996232095736
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/1eaf7ed2",
+          "us": 1513,
+          "percent": 0.05304481813928816
+        },
+        {
+          "name": "wasm-function[12] wasm://wasm/bf2f2e66",
+          "us": 1512,
+          "percent": 0.05300975877501896
+        },
+        {
+          "name": "wasm-function[11] wasm://wasm/bf2f2e66",
+          "us": 1512,
+          "percent": 0.05300975877501896
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/bf2f2e66",
+          "us": 1512,
+          "percent": 0.05300975877501896
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/0682faee",
+          "us": 1512,
+          "percent": 0.05300975877501896
+        },
+        {
+          "name": "takeFromExternrefTable0 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1511,
+          "percent": 0.052974699410749775
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::note_chain::h002c0395c865b3e5",
+          "us": 1511,
+          "percent": 0.052974699410749775
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/286efe1a",
+          "us": 1510,
+          "percent": 0.05293964004648058
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/5813d22e",
+          "us": 1510,
+          "percent": 0.05293964004648058
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/884b3bf6",
+          "us": 1510,
+          "percent": 0.05293964004648058
+        },
+        {
+          "name": "wasm-function[12] wasm://wasm/00016c6e",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[11] wasm://wasm/00016c6e",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/00016c6e",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/00016c6e",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/00016c6e",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/00016c6e",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/00016c6e",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/00016c6e",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/000126ee",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/606aba8e",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/ae404dfe",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/00016616",
+          "us": 1509,
+          "percent": 0.05290458068221139
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/33b82ba2",
+          "us": 1508,
+          "percent": 0.052869521317942196
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/f49ad1ee",
+          "us": 1508,
+          "percent": 0.052869521317942196
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/9243d3d6",
+          "us": 1508,
+          "percent": 0.052869521317942196
+        },
+        {
+          "name": "wasm-function[12] wasm://wasm/d92836fa",
+          "us": 1508,
+          "percent": 0.052869521317942196
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/2725fa86",
+          "us": 1508,
+          "percent": 0.052869521317942196
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/20209436",
+          "us": 1508,
+          "percent": 0.052869521317942196
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/b72b54c2",
+          "us": 1508,
+          "percent": 0.052869521317942196
+        },
+        {
+          "name": "<wasm_vm_core::softfloat::F32 as wasm_vm_core::softfloat::SoftFloat>::fma::h1178d08e2231c9c4",
+          "us": 1507,
+          "percent": 0.052834461953673
+        },
+        {
+          "name": "(idle)",
+          "us": 1507,
+          "percent": 0.052834461953673
+        },
+        {
+          "name": "wasm-function[11] wasm://wasm/ae404dfe",
+          "us": 1507,
+          "percent": 0.052834461953673
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/337bcfbe",
+          "us": 1507,
+          "percent": 0.052834461953673
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/55c31382",
+          "us": 1507,
+          "percent": 0.052834461953673
+        },
+        {
+          "name": "wasm-function[11] wasm://wasm/9313d19a",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/9313d19a",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/1e4f5eae",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "__wbg_set_8535240470bf2500 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "wasmlinux_persistStats multivalue shim",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "persistStats http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "jit_translate::emit_branch::h66015e36c8b1e5ab",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "wasm-function[12] wasm://wasm/7d7218ea",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "wasm-function[11] wasm://wasm/7d7218ea",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "wasm_vm_core::mmu::walk_leaf_inner::he301c8b3dbb8bbd1",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/7bc6a46e",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/b72b54c2",
+          "us": 1506,
+          "percent": 0.05279940258940381
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/0001306e",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "<rustc_apfloat::ieee::IeeeFloat<S> as rustc_apfloat::Float>::to_u128_r::h7e416134f37836b6",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm_vm_core::softfloat::f64_to_int::h2c418052d714c396",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm-function[12] wasm://wasm/f49ad1ee",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/00014956",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/0001cfd6",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/00016616",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::remove_block::h3662dd32ea82b74d",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::evict_batch::haf93504b06cbac55",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::enforce_budget::he0afe3990382abcb",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/d193186e",
+          "us": 1505,
+          "percent": 0.05276434322513462
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/3126049a",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/7cf2c956",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/bf925172",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/85c5090a",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/73d4827e",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/85c5090a",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/847797b6",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "jit_translate::emit_chain_prologue::h21382d5e6798db9e",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "wasm_emit::func::FuncBuilder::if_::hb1dd6e45328dc745",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "jit_translate::emit_dynamic_exit::hf1a6e8c5f8049ee9",
+          "us": 1504,
+          "percent": 0.05272928386086543
+        },
+        {
+          "name": "postTask",
+          "us": 1503,
+          "percent": 0.052694224496596234
+        },
+        {
+          "name": "schedule http://127.0.0.1:61631/loader.js",
+          "us": 1503,
+          "percent": 0.052694224496596234
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/3126049a",
+          "us": 1503,
+          "percent": 0.052694224496596234
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/2725fa86",
+          "us": 1503,
+          "percent": 0.052694224496596234
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/0001063e",
+          "us": 1503,
+          "percent": 0.052694224496596234
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/9243d3d6",
+          "us": 1503,
+          "percent": 0.052694224496596234
+        },
+        {
+          "name": "wasm_vm_core::csr::Csrs::pmp_ok::hb2f1ee2d8e63ac3b",
+          "us": 1503,
+          "percent": 0.052694224496596234
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/9313d19a",
+          "us": 1502,
+          "percent": 0.05265916513232704
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/f1afd7aa",
+          "us": 1502,
+          "percent": 0.05265916513232704
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/a24a1f06",
+          "us": 1500,
+          "percent": 0.052589046403788656
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/0001063e",
+          "us": 1497,
+          "percent": 0.05248386831098108
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/0001063e",
+          "us": 1496,
+          "percent": 0.05244880894671189
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/f1afd7aa",
+          "us": 1494,
+          "percent": 0.052378690218173506
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/f1afd7aa",
+          "us": 1494,
+          "percent": 0.052378690218173506
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/f1afd7aa",
+          "us": 1494,
+          "percent": 0.052378690218173506
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/5f2bbc4a",
+          "us": 1482,
+          "percent": 0.05195797784694319
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/000126ee",
+          "us": 1396,
+          "percent": 0.048942872519792645
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/000126ee",
+          "us": 1396,
+          "percent": 0.048942872519792645
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/000126ee",
+          "us": 1396,
+          "percent": 0.048942872519792645
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/b506530a",
+          "us": 1140,
+          "percent": 0.03996767526687938
+        }
+      ],
+      "buckets": [
+        {
+          "name": "JIT executor / selection",
+          "us": 570029.9999475479,
+          "leaves": [
+            "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h1c6b17789b9d53e7",
+            "wasm_vm_core::Machine::try_jit_block::h0ec09f3d40a79477",
+            "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7fba6d5383ae0c08",
+            "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::is_compiled::hf0b26b7146f8907b",
+            "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7a18440956482b17",
+            "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::note_chain::h002c0395c865b3e5",
+            "wasm_vm_wasm::jit_browser::BrowserExecutor::remove_block::h3662dd32ea82b74d"
+          ],
+          "percent": 19.98488941252883
+        },
+        {
+          "name": "dispatch discovery / block cache",
+          "us": 237121,
+          "leaves": [
+            "wasm_vm_core::dispatch::BlockDiscovery::on_block_entry::h603a5b4937cad8ca",
+            "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf"
+          ],
+          "percent": 8.31331151487518
+        },
+        {
+          "name": "interpreter / decode / run loop",
+          "us": 752638,
+          "leaves": [
+            "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b",
+            "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81",
+            "wasm_vm_core::Machine::next_micro_op::hde9600194430e6db",
+            "wasm_vm_core::hart::Hart::decode_at::h44ce55ab00ab1770",
+            "wasm_vm_core::decode::decode::hc0ed8cae72412bec",
+            "wasm_vm_core::decode_c::expand_c::h2452b9e1ed4d8e0b",
+            "wasm_vm_core::hart::cstore64_with_phys::h933922e1acd9045f",
+            "wasm_vm_core::hart::cload64::h2536535db8ec3fef",
+            "wasm_vm_core::hart::cload8::h620a223848ce909c"
+          ],
+          "percent": 26.38700980483646
+        },
+        {
+          "name": "MMU / PMP",
+          "us": 339764,
+          "leaves": [
+            "wasm_vm_core::mmu::translate_cached::hf2b93220145a733d",
+            "wasm_vm_core::mmu::translate_cached::h0f176be2d21edacd",
+            "wasm_vm_core::pmp::Pmp::check::h49feb29917fd316e",
+            "wasm_vm_core::mmu::finish_leaf::hb5c91ebad7369df2",
+            "wasm_vm_core::Machine::sync_pmp_code_permissions::hdc3cf2729702a634",
+            "wasm_vm_core::mmu::walk_leaf_inner::h8f584abd0d439f06"
+          ],
+          "percent": 11.9119098415579
+        },
+        {
+          "name": "interrupt / clock synchronization",
+          "us": 291668,
+          "leaves": [
+            "wasm_vm_core::Machine::sync_plic::h7f5c3bd066f966f0",
+            "wasm_vm_core::Machine::sync_clint::h0564e959affb159d",
+            "wasm_vm_core::csr::Csrs::next_interrupt::he02f95cae226d67a",
+            "wasm_vm_core::Machine::sync_sbi_timer::hfac2bf38b14163de",
+            "wasm_vm_core::dev::plic::IrqLine::set::hbc1d1743be327740",
+            "wasm_vm_core::Machine::sample_wall_clock::h8e67bc52a553e03e",
+            "wasm_vm_core::csr::Csrs::satp::hef636e9b5d7646c9",
+            "wasm_vm_core::csr::Csrs::access::h753f6a96fda47812"
+          ],
+          "percent": 10.22569465766682
+        },
+        {
+          "name": "virtio / other devices",
+          "us": 184933,
+          "leaves": [
+            "wasm_vm_core::dev::virtio::console::service::h1ffb3e3719360d51",
+            "wasm_vm_core::dev::virtio::net::service::h88973684b4a526cb",
+            "wasm_vm_core::dev::virtio::input::service::hbc44a2a62a26abb2",
+            "wasm_vm_core::dev::virtio::snd::service_internal::h746557e7fa1093ec",
+            "wasm_vm_core::dev::virtio::gpu::service::h3a22ce79444eb9c0",
+            "wasm_vm_core::dev::virtio::gpu::service_cursor::hda6c1825a97ffd87",
+            "wasm_vm_core::dev::virtio::gpu::service_with_cursor::h846deeec38039ecc",
+            "wasm_vm_core::dev::uart16550::Uart16550::irq_level::h79d07f06a2fc562e",
+            "wasm_vm_core::dev::virtio::blk::service::h3d6e34ecce8fe7d0",
+            "wasm_vm_core::dev::rtc::GoldfishRtc::poll::he0a3c0e1bc5027db",
+            "wasm_vm_core::dev::virtio::rng::service::he448130d2aeb0fa2"
+          ],
+          "percent": 6.483633412394565
+        },
+        {
+          "name": "integer division / multiply helpers",
+          "us": 100487,
+          "leaves": [
+            "__udivti3",
+            "__multi3"
+          ],
+          "percent": 3.5230103373183406
+        },
+        {
+          "name": "collection / hashing / allocation",
+          "us": 164391,
+          "leaves": [
+            "alloc::collections::btree::map::BTreeMap<K,V,A>::remove::h49400433011d1148",
+            "core::hash::BuildHasher::hash_one::he61abe7265f819be",
+            "<std[f839c7267e543978]::hash::random::DefaultHasher as core[2c5ad5f686fcca5c]::hash::Hasher>::write",
+            "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::free",
+            "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::malloc",
+            "core::hash::BuildHasher::hash_one::hf59f0499646c0046",
+            "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::insert_large_chunk"
+          ],
+          "percent": 5.763443951576814
+        },
+        {
+          "name": "unmapped generated Wasm / its trampolines",
+          "us": 123383,
+          "leaves": [
+            "js-to-wasm:iil:i wasm://wasm/270a815a",
+            "wasm-function[9] wasm://wasm/0001cfd6",
+            "wasm-function[10] wasm://wasm/0001306e",
+            "wasm-function[5] wasm://wasm/d24eba16",
+            "wasm-function[5] wasm://wasm/00014956",
+            "wasm-function[8] wasm://wasm/f01b5966",
+            "wasm-function[12] wasm://wasm/0001063e",
+            "wasm-function[5] wasm://wasm/f49ad1ee",
+            "wasm-function[8] wasm://wasm/0001cfd6",
+            "wasm-function[5] wasm://wasm/ae404dfe",
+            "wasm-function[10] wasm://wasm/000100da",
+            "wasm-function[5] wasm://wasm/1eaf7ed2",
+            "wasm-function[12] wasm://wasm/bf2f2e66",
+            "wasm-function[6] wasm://wasm/0682faee",
+            "wasm-function[8] wasm://wasm/33b82ba2",
+            "wasm-function[10] wasm://wasm/286efe1a",
+            "wasm-function[8] wasm://wasm/3126049a",
+            "wasm-function[5] wasm://wasm/5813d22e",
+            "wasm-function[9] wasm://wasm/884b3bf6",
+            "wasm-function[9] wasm://wasm/9313d19a",
+            "wasm-function[12] wasm://wasm/00016c6e",
+            "wasm-function[8] wasm://wasm/000126ee",
+            "wasm-function[12] wasm://wasm/000126ee",
+            "wasm-function[6] wasm://wasm/606aba8e",
+            "wasm-function[8] wasm://wasm/ae404dfe",
+            "wasm-function[9] wasm://wasm/7d7218ea",
+            "wasm-function[6] wasm://wasm/f49ad1ee",
+            "wasm-function[10] wasm://wasm/9243d3d6",
+            "wasm-function[8] wasm://wasm/20209436",
+            "wasm-function[9] wasm://wasm/b72b54c2",
+            "wasm-function[11] wasm://wasm/0001cfd6",
+            "wasm-function[6] wasm://wasm/d24eba16",
+            "wasm-function[11] wasm://wasm/ae404dfe",
+            "wasm-function[5] wasm://wasm/55c31382",
+            "wasm-function[11] wasm://wasm/9313d19a",
+            "wasm-function[5] wasm://wasm/1e4f5eae",
+            "wasm-function[6] wasm://wasm/3126049a",
+            "wasm-function[5] wasm://wasm/7bc6a46e",
+            "wasm-function[7] wasm://wasm/0001306e",
+            "wasm-function[12] wasm://wasm/f49ad1ee",
+            "wasm-function[6] wasm://wasm/00014956",
+            "wasm-function[5] wasm://wasm/0001cfd6",
+            "wasm-function[10] wasm://wasm/7d7218ea",
+            "wasm-function[6] wasm://wasm/00016616",
+            "wasm-function[5] wasm://wasm/d193186e",
+            "wasm-function[5] wasm://wasm/7cf2c956",
+            "wasm-function[11] wasm://wasm/000126ee",
+            "wasm-function[5] wasm://wasm/85c5090a",
+            "wasm-function[5] wasm://wasm/847797b6",
+            "wasm-function[5] wasm://wasm/3126049a",
+            "wasm-function[8] wasm://wasm/2725fa86",
+            "wasm-function[5] wasm://wasm/9243d3d6",
+            "wasm-function[5] wasm://wasm/b6d5ab92",
+            "wasm-function[7] wasm://wasm/9313d19a",
+            "wasm-function[10] wasm://wasm/a24a1f06",
+            "wasm-function[10] wasm://wasm/0001063e",
+            "wasm-function[6] wasm://wasm/0001063e",
+            "wasm-function[8] wasm://wasm/f1afd7aa",
+            "wasm-function[9] wasm://wasm/5f2bbc4a",
+            "wasm-function[7] wasm://wasm/000126ee",
+            "wasm-function[9] wasm://wasm/000126ee",
+            "wasm-function[10] wasm://wasm/b506530a"
+          ],
+          "percent": 4.325729541625771
+        },
+        {
+          "name": "other",
+          "us": 87890,
+          "leaves": [
+            "wasm_vm_core::Machine::drain_code_writes::h397dce4503e03991",
+            "wasm_vm_wasm::WasmLinux::run_chunk::h07405c1400974665",
+            "wasm-to-js",
+            "Instance",
+            "Module",
+            "(garbage collector)",
+            "onDisplayFrame http://127.0.0.1:61631/linux-worker-protocol.js",
+            "takeFromExternrefTable0 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+            "real._wbg_cb_unref http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+            "<wasm_vm_core::softfloat::F32 as wasm_vm_core::softfloat::SoftFloat>::fma::h1178d08e2231c9c4",
+            "(idle)",
+            "__wbg_set_8535240470bf2500 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+            "jit_translate::emit_exit::h07b6e673603a1cea",
+            "wasm_bindgen__convert__closures_____invoke__h3c376d590f4b7628 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+            "<rustc_apfloat::ieee::IeeeFloat<S> as rustc_apfloat::Float>::to_u128_r::h7e416134f37836b6",
+            "jit_translate::emit_chain_prologue::h21382d5e6798db9e",
+            "wasm_emit::func::FuncBuilder::if_::hb1dd6e45328dc745",
+            "postTask",
+            "wasm_bindgen__convert__closures_____invoke__hf96fc87adc256ad8 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+            "__rustc[8068f81614cfe5c]::__rust_realloc"
+          ],
+          "percent": 3.0813675256193234
+        }
+      ]
+    },
+    "pcmBoundaryUncertain": {
+      "totalUs": 55349.000047683716,
+      "samples": 39,
+      "self": [
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h1c6b17789b9d53e7",
+          "us": 4231,
+          "percent": 7.644221207889847
+        },
+        {
+          "name": "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b",
+          "us": 4077,
+          "percent": 7.365986732348595
+        },
+        {
+          "name": "wasm_vm_core::mmu::finish_leaf::hb5c91ebad7369df2",
+          "us": 4071,
+          "percent": 7.355146428106728
+        },
+        {
+          "name": "wasm_vm_core::Machine::try_jit_block::h0ec09f3d40a79477",
+          "us": 3939.0000524520874,
+          "percent": 7.116659829551753
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service_with_cursor::h846deeec38039ecc",
+          "us": 3007,
+          "percent": 5.432799142548988
+        },
+        {
+          "name": "wasm_vm_core::csr::Csrs::next_interrupt::he02f95cae226d67a",
+          "us": 2960,
+          "percent": 5.347883425987697
+        },
+        {
+          "name": "wasm-to-js",
+          "us": 2863,
+          "percent": 5.172631840744181
+        },
+        {
+          "name": "__udivti3",
+          "us": 2672,
+          "percent": 4.827548822378083
+        },
+        {
+          "name": "wasm_vm_core::Machine::next_micro_op::hde9600194430e6db",
+          "us": 1513,
+          "percent": 2.733563386324117
+        },
+        {
+          "name": "<wasm_vm_core::dev::virtio::mmio::SharedVirtioMmio as wasm_vm_core::mmio::MmioDevice>::write::h1ef710a1f00f5744",
+          "us": 1513,
+          "percent": 2.733563386324117
+        },
+        {
+          "name": "alloc::collections::btree::node::BalancingContext<K,V>::do_merge::he71861293e31e3c7",
+          "us": 1511,
+          "percent": 2.729949951576828
+        },
+        {
+          "name": "wasm_vm_core::dispatch::BlockDiscovery::on_block_entry::h603a5b4937cad8ca",
+          "us": 1510,
+          "percent": 2.7281432342031833
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::console::service::h1ffb3e3719360d51",
+          "us": 1510,
+          "percent": 2.7281432342031833
+        },
+        {
+          "name": "wasm_vm_core::decode_c::expand_c::h2452b9e1ed4d8e0b",
+          "us": 1510,
+          "percent": 2.7281432342031833
+        },
+        {
+          "name": "wasm_vm_core::pmp::Pmp::check::h49feb29917fd316e",
+          "us": 1510,
+          "percent": 2.7281432342031833
+        },
+        {
+          "name": "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf",
+          "us": 1506,
+          "percent": 2.7209163647086054
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::queue::Virtqueue::pop::h43e2f73695fe065c",
+          "us": 1506,
+          "percent": 2.7209163647086054
+        },
+        {
+          "name": "wasm_vm_core::mmu::translate_cached::h0f176be2d21edacd",
+          "us": 1505,
+          "percent": 2.7191096473349607
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::snd::service_internal::h746557e7fa1093ec",
+          "us": 1505,
+          "percent": 2.7191096473349607
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/339d367e",
+          "us": 1504,
+          "percent": 2.7173029299613165
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service_cursor::hda6c1825a97ffd87",
+          "us": 1504,
+          "percent": 2.7173029299613165
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::is_compiled::hf0b26b7146f8907b",
+          "us": 1504,
+          "percent": 2.7173029299613165
+        },
+        {
+          "name": "core::hash::BuildHasher::hash_one::he61abe7265f819be",
+          "us": 1501,
+          "percent": 2.711882777840383
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_plic::h7f5c3bd066f966f0",
+          "us": 1500,
+          "percent": 2.710076060466738
+        },
+        {
+          "name": "(garbage collector)",
+          "us": 1488,
+          "percent": 2.6883954519830047
+        },
+        {
+          "name": "wasm_vm_core::mmu::walk_leaf_inner::he301c8b3dbb8bbd1",
+          "us": 1141,
+          "percent": 2.0614645233283655
+        },
+        {
+          "name": "wasm_vm_core::dev::uart16550::Uart16550::irq_level::h79d07f06a2fc562e",
+          "us": 787.9999952316284,
+          "percent": 1.42369328181676
+        }
+      ],
+      "inclusive": [
+        {
+          "name": "(root)",
+          "us": 55349.000047683716,
+          "percent": 100
+        },
+        {
+          "name": "wasm_vm_wasm::WasmLinux::run_chunk::h07405c1400974665",
+          "us": 51289.000047683716,
+          "percent": 92.66472746300336
+        },
+        {
+          "name": "wasmlinux_runChunk multivalue shim",
+          "us": 51289.000047683716,
+          "percent": 92.66472746300336
+        },
+        {
+          "name": "js-to-wasm:iii:ii http://127.0.0.1:61631/pkg/wasm_vm_wasm_bg.wasm",
+          "us": 51289.000047683716,
+          "percent": 92.66472746300336
+        },
+        {
+          "name": "runChunk http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 51289.000047683716,
+          "percent": 92.66472746300336
+        },
+        {
+          "name": "runTick http://127.0.0.1:61631/loader.js",
+          "us": 51289.000047683716,
+          "percent": 92.66472746300336
+        },
+        {
+          "name": "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b",
+          "us": 49776.000047683716,
+          "percent": 89.93116407667924
+        },
+        {
+          "name": "wasm_vm_core::Machine::try_jit_block::h0ec09f3d40a79477",
+          "us": 18342.000052452087,
+          "percent": 33.138810162153376
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h1c6b17789b9d53e7",
+          "us": 7240,
+          "percent": 13.080633785186125
+        },
+        {
+          "name": "wasm_vm_core::Machine::next_micro_op::hde9600194430e6db",
+          "us": 6030,
+          "percent": 10.894505763076289
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::snd::service_internal::h746557e7fa1093ec",
+          "us": 5874,
+          "percent": 10.612657852787748
+        },
+        {
+          "name": "wasm-to-js",
+          "us": 5872,
+          "percent": 10.609044418040458
+        },
+        {
+          "name": "wasm_vm_core::mmu::translate_cached::hf2b93220145a733d",
+          "us": 5655,
+          "percent": 10.216986747959604
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service_with_cursor::h846deeec38039ecc",
+          "us": 4511,
+          "percent": 8.150102072510304
+        },
+        {
+          "name": "wasm_vm_core::mmu::finish_leaf::hb5c91ebad7369df2",
+          "us": 4071,
+          "percent": 7.355146428106728
+        },
+        {
+          "name": "js-to-wasm:iil:i wasm://wasm/270a815a",
+          "us": 3009,
+          "percent": 5.436412577296277
+        },
+        {
+          "name": "__wbg_invokeJitBlock_99121dda606f7308 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 3009,
+          "percent": 5.436412577296277
+        },
+        {
+          "name": "wasm_vm_core::hart::Hart::decode_at::h44ce55ab00ab1770",
+          "us": 3007,
+          "percent": 5.432799142548988
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::is_compiled::hf0b26b7146f8907b",
+          "us": 3005,
+          "percent": 5.429185707801699
+        },
+        {
+          "name": "wasm_vm_core::csr::Csrs::next_interrupt::he02f95cae226d67a",
+          "us": 2960,
+          "percent": 5.347883425987697
+        },
+        {
+          "name": "<wasm_vm_wasm::SharedAudioClock as wasm_vm_core::dev::virtio::snd::AudioClock>::now_ns::h6fac41dd462c427a",
+          "us": 2863,
+          "percent": 5.172631840744181
+        },
+        {
+          "name": "__udivti3",
+          "us": 2672,
+          "percent": 4.827548822378083
+        },
+        {
+          "name": "wasm_vm_core::mmu::walk_leaf_inner::he301c8b3dbb8bbd1",
+          "us": 2651,
+          "percent": 4.789607757531549
+        },
+        {
+          "name": "<wasm_vm_core::dev::virtio::mmio::SharedVirtioMmio as wasm_vm_core::mmio::MmioDevice>::write::h1ef710a1f00f5744",
+          "us": 1513,
+          "percent": 2.733563386324117
+        },
+        {
+          "name": "wasm_vm_core::mmio::store_device::hc72da53ab70b328f",
+          "us": 1513,
+          "percent": 2.733563386324117
+        },
+        {
+          "name": "wasm_vm_core::hart::cstore32_with_phys::h4d26e50a3aebe110",
+          "us": 1513,
+          "percent": 2.733563386324117
+        },
+        {
+          "name": "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81",
+          "us": 1513,
+          "percent": 2.733563386324117
+        },
+        {
+          "name": "alloc::collections::btree::node::BalancingContext<K,V>::do_merge::he71861293e31e3c7",
+          "us": 1511,
+          "percent": 2.729949951576828
+        },
+        {
+          "name": "alloc::collections::btree::remove::<impl alloc::collections::btree::node::Handle<alloc::collections::btree::node::NodeRef<alloc::collections::btree::node::marker::Mut,K,V,alloc::collections::btree::node::marker::Leaf>,alloc::collections::btree::node::marker::KV>>::remove_leaf_kv::h611ee0b7c90946c0",
+          "us": 1511,
+          "percent": 2.729949951576828
+        },
+        {
+          "name": "alloc::collections::btree::map::BTreeMap<K,V,A>::remove::h7f9797d26180bcec",
+          "us": 1511,
+          "percent": 2.729949951576828
+        },
+        {
+          "name": "wasm_vm_core::Machine::pump_jit_translations::hb3d02ac3b411b36f",
+          "us": 1511,
+          "percent": 2.729949951576828
+        },
+        {
+          "name": "wasm_vm_core::dispatch::BlockDiscovery::on_block_entry::h603a5b4937cad8ca",
+          "us": 1510,
+          "percent": 2.7281432342031833
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::console::service::h1ffb3e3719360d51",
+          "us": 1510,
+          "percent": 2.7281432342031833
+        },
+        {
+          "name": "wasm_vm_core::decode_c::expand_c::h2452b9e1ed4d8e0b",
+          "us": 1510,
+          "percent": 2.7281432342031833
+        },
+        {
+          "name": "wasm_vm_core::pmp::Pmp::check::h49feb29917fd316e",
+          "us": 1510,
+          "percent": 2.7281432342031833
+        },
+        {
+          "name": "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf",
+          "us": 1506,
+          "percent": 2.7209163647086054
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::queue::Virtqueue::pop::h43e2f73695fe065c",
+          "us": 1506,
+          "percent": 2.7209163647086054
+        },
+        {
+          "name": "wasm_vm_core::mmu::translate_cached::h0f176be2d21edacd",
+          "us": 1505,
+          "percent": 2.7191096473349607
+        },
+        {
+          "name": "wasm_vm_core::hart::cstore64_with_phys::h933922e1acd9045f",
+          "us": 1505,
+          "percent": 2.7191096473349607
+        },
+        {
+          "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7a18440956482b17",
+          "us": 1505,
+          "percent": 2.7191096473349607
+        },
+        {
+          "name": "wasm_bindgen::convert::closures::_::invoke::hf96fc87adc256ad8",
+          "us": 1505,
+          "percent": 2.7191096473349607
+        },
+        {
+          "name": "wasm_bindgen__convert__closures_____invoke__hf96fc87adc256ad8 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1505,
+          "percent": 2.7191096473349607
+        },
+        {
+          "name": "real._wbg_cb_unref http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1505,
+          "percent": 2.7191096473349607
+        },
+        {
+          "name": "real http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1505,
+          "percent": 2.7191096473349607
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/8e95b896",
+          "us": 1505,
+          "percent": 2.7191096473349607
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/339d367e",
+          "us": 1504,
+          "percent": 2.7173029299613165
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service_cursor::hda6c1825a97ffd87",
+          "us": 1504,
+          "percent": 2.7173029299613165
+        },
+        {
+          "name": "core::hash::BuildHasher::hash_one::he61abe7265f819be",
+          "us": 1501,
+          "percent": 2.711882777840383
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_plic::h7f5c3bd066f966f0",
+          "us": 1500,
+          "percent": 2.710076060466738
+        },
+        {
+          "name": "(garbage collector)",
+          "us": 1488,
+          "percent": 2.6883954519830047
+        },
+        {
+          "name": "js_sys::Atomics::load::__wbg_load_209206003cdf5be2::hdff35ba04e943725 externref shim",
+          "us": 1337,
+          "percent": 2.4155811285626863
+        },
+        {
+          "name": "wasm_vm_core::dev::uart16550::Uart16550::irq_level::h79d07f06a2fc562e",
+          "us": 787.9999952316284,
+          "percent": 1.42369328181676
+        }
+      ],
+      "buckets": [
+        {
+          "name": "JIT executor / selection",
+          "us": 9674.000052452087,
+          "leaves": [
+            "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h1c6b17789b9d53e7",
+            "wasm_vm_core::Machine::try_jit_block::h0ec09f3d40a79477",
+            "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::is_compiled::hf0b26b7146f8907b"
+          ],
+          "percent": 17.478183967402916
+        },
+        {
+          "name": "dispatch discovery / block cache",
+          "us": 3016,
+          "leaves": [
+            "wasm_vm_core::dispatch::BlockDiscovery::on_block_entry::h603a5b4937cad8ca",
+            "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf"
+          ],
+          "percent": 5.449059598911789
+        },
+        {
+          "name": "interpreter / decode / run loop",
+          "us": 7100,
+          "leaves": [
+            "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b",
+            "wasm_vm_core::Machine::next_micro_op::hde9600194430e6db",
+            "wasm_vm_core::decode_c::expand_c::h2452b9e1ed4d8e0b"
+          ],
+          "percent": 12.827693352875896
+        },
+        {
+          "name": "MMU / PMP",
+          "us": 8227,
+          "leaves": [
+            "wasm_vm_core::mmu::finish_leaf::hb5c91ebad7369df2",
+            "wasm_vm_core::pmp::Pmp::check::h49feb29917fd316e",
+            "wasm_vm_core::mmu::translate_cached::h0f176be2d21edacd",
+            "wasm_vm_core::mmu::walk_leaf_inner::he301c8b3dbb8bbd1"
+          ],
+          "percent": 14.863863832973237
+        },
+        {
+          "name": "interrupt / clock synchronization",
+          "us": 4460,
+          "leaves": [
+            "wasm_vm_core::csr::Csrs::next_interrupt::he02f95cae226d67a",
+            "wasm_vm_core::Machine::sync_plic::h7f5c3bd066f966f0"
+          ],
+          "percent": 8.057959486454436
+        },
+        {
+          "name": "virtio / other devices",
+          "us": 11332.999995231628,
+          "leaves": [
+            "wasm_vm_core::dev::virtio::gpu::service_with_cursor::h846deeec38039ecc",
+            "<wasm_vm_core::dev::virtio::mmio::SharedVirtioMmio as wasm_vm_core::mmio::MmioDevice>::write::h1ef710a1f00f5744",
+            "wasm_vm_core::dev::virtio::console::service::h1ffb3e3719360d51",
+            "wasm_vm_core::dev::virtio::queue::Virtqueue::pop::h43e2f73695fe065c",
+            "wasm_vm_core::dev::virtio::snd::service_internal::h746557e7fa1093ec",
+            "wasm_vm_core::dev::virtio::gpu::service_cursor::hda6c1825a97ffd87",
+            "wasm_vm_core::dev::uart16550::Uart16550::irq_level::h79d07f06a2fc562e"
+          ],
+          "percent": 20.47552798689793
+        },
+        {
+          "name": "integer division / multiply helpers",
+          "us": 2672,
+          "leaves": [
+            "__udivti3"
+          ],
+          "percent": 4.827548822378083
+        },
+        {
+          "name": "collection / hashing / allocation",
+          "us": 3012,
+          "leaves": [
+            "alloc::collections::btree::node::BalancingContext<K,V>::do_merge::he71861293e31e3c7",
+            "core::hash::BuildHasher::hash_one::he61abe7265f819be"
+          ],
+          "percent": 5.441832729417211
+        },
+        {
+          "name": "unmapped generated Wasm / its trampolines",
+          "us": 1504,
+          "leaves": [
+            "wasm-function[7] wasm://wasm/339d367e"
+          ],
+          "percent": 2.7173029299613165
+        },
+        {
+          "name": "other",
+          "us": 4351,
+          "leaves": [
+            "wasm-to-js",
+            "(garbage collector)"
+          ],
+          "percent": 7.861027292727186
+        }
+      ]
+    },
+    "afterPcm": {
+      "totalUs": 950023.0000047684,
+      "samples": 638,
+      "self": [
+        {
+          "name": "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b",
+          "us": 121101,
+          "percent": 12.7471650685712
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h1c6b17789b9d53e7",
+          "us": 93961,
+          "percent": 9.890392127298854
+        },
+        {
+          "name": "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81",
+          "us": 64330,
+          "percent": 6.771415007813191
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_plic::h7f5c3bd066f966f0",
+          "us": 63803,
+          "percent": 6.7159426666175195
+        },
+        {
+          "name": "wasm_vm_core::dispatch::BlockDiscovery::on_block_entry::h603a5b4937cad8ca",
+          "us": 60460,
+          "percent": 6.364056449127709
+        },
+        {
+          "name": "wasm_vm_core::Machine::next_micro_op::hde9600194430e6db",
+          "us": 54255,
+          "percent": 5.710914367307706
+        },
+        {
+          "name": "wasm_vm_core::mmu::translate_cached::hf2b93220145a733d",
+          "us": 46759,
+          "percent": 4.921880838649728
+        },
+        {
+          "name": "wasm_vm_core::Machine::try_jit_block::h0ec09f3d40a79477",
+          "us": 40011,
+          "percent": 4.211582245882381
+        },
+        {
+          "name": "__udivti3",
+          "us": 30115,
+          "percent": 3.1699232544737175
+        },
+        {
+          "name": "wasm_vm_core::pmp::Pmp::check::h49feb29917fd316e",
+          "us": 28195,
+          "percent": 2.9678228842731684
+        },
+        {
+          "name": "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf",
+          "us": 26936,
+          "percent": 2.8352997769385375
+        },
+        {
+          "name": "wasm_vm_core::mmu::translate_cached::h0f176be2d21edacd",
+          "us": 22162,
+          "percent": 2.3327856272836303
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::console::service::h1ffb3e3719360d51",
+          "us": 21056,
+          "percent": 2.2163673931993557
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_clint::h0564e959affb159d",
+          "us": 17530,
+          "percent": 1.8452184841748056
+        },
+        {
+          "name": "wasm_vm_core::hart::Hart::decode_at::h44ce55ab00ab1770",
+          "us": 15077,
+          "percent": 1.587014209121708
+        },
+        {
+          "name": "<std[f839c7267e543978]::hash::random::DefaultHasher as core[2c5ad5f686fcca5c]::hash::Hasher>::write",
+          "us": 13566,
+          "percent": 1.4279654281982552
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::net::service::h88973684b4a526cb",
+          "us": 13563,
+          "percent": 1.4276496463698167
+        },
+        {
+          "name": "wasm_vm_core::mmu::finish_leaf::hb5c91ebad7369df2",
+          "us": 12046,
+          "percent": 1.267969301789487
+        },
+        {
+          "name": "alloc::collections::btree::map::BTreeMap<K,V,A>::remove::h49400433011d1148",
+          "us": 11821,
+          "percent": 1.2442856646566103
+        },
+        {
+          "name": "wasm_vm_core::Machine::drain_code_writes::h397dce4503e03991",
+          "us": 11747,
+          "percent": 1.2364963795551307
+        },
+        {
+          "name": "__multi3",
+          "us": 10549,
+          "percent": 1.1103941693987465
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service::h3a22ce79444eb9c0",
+          "us": 10546,
+          "percent": 1.110078387570308
+        },
+        {
+          "name": "wasm_vm_core::hart::cload64::h2536535db8ec3fef",
+          "us": 10336,
+          "percent": 1.087973659579623
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::snd::service_internal::h746557e7fa1093ec",
+          "us": 9048,
+          "percent": 0.9523979945700879
+        },
+        {
+          "name": "wasm_vm_core::csr::Csrs::next_interrupt::he02f95cae226d67a",
+          "us": 9042,
+          "percent": 0.9517664309132112
+        },
+        {
+          "name": "wasm_vm_core::hart::cstore64_with_phys::h933922e1acd9045f",
+          "us": 9019,
+          "percent": 0.9493454368951838
+        },
+        {
+          "name": "js-to-wasm:iil:i wasm://wasm/270a815a",
+          "us": 7540,
+          "percent": 0.7936649954750733
+        },
+        {
+          "name": "core::hash::BuildHasher::hash_one::he61abe7265f819be",
+          "us": 7527,
+          "percent": 0.7922966075518404
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service_cursor::hda6c1825a97ffd87",
+          "us": 7526,
+          "percent": 0.7921913469423609
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_sbi_timer::hfac2bf38b14163de",
+          "us": 7526,
+          "percent": 0.7921913469423609
+        },
+        {
+          "name": "wasm_vm_core::decode::decode::hc0ed8cae72412bec",
+          "us": 6036,
+          "percent": 0.6353530388179764
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::input::service::hbc44a2a62a26abb2",
+          "us": 5970,
+          "percent": 0.6284058385923326
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::is_compiled::hf0b26b7146f8907b",
+          "us": 5706,
+          "percent": 0.600617037689757
+        },
+        {
+          "name": "wasm_vm_wasm::WasmLinux::run_chunk::h07405c1400974665",
+          "us": 4512,
+          "percent": 0.4749358699712905
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::rng::service::he448130d2aeb0fa2",
+          "us": 4510,
+          "percent": 0.47472534875233163
+        },
+        {
+          "name": "wasm_vm_core::decode_c::expand_c::h2452b9e1ed4d8e0b",
+          "us": 4507,
+          "percent": 0.47440956692389324
+        },
+        {
+          "name": "wasm_vm_core::dev::plic::IrqLine::set::hbc1d1743be327740",
+          "us": 3014,
+          "percent": 0.31725547697107037
+        },
+        {
+          "name": "wasm-to-js",
+          "us": 3011,
+          "percent": 0.31693969514263204
+        },
+        {
+          "name": "wasm_vm_core::Machine::sample_wall_clock::h8e67bc52a553e03e",
+          "us": 3008,
+          "percent": 0.31662391331419365
+        },
+        {
+          "name": "wasm_vm_core::hart::cload32::hd276ae068ebb76eb",
+          "us": 3004,
+          "percent": 0.31620287087627585
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/d193186e",
+          "us": 2791,
+          "percent": 0.29378236105715244
+        },
+        {
+          "name": "wasm_vm_core::dev::uart16550::Uart16550::irq_level::h79d07f06a2fc562e",
+          "us": 2222.0000047683716,
+          "percent": 0.23388907476526558
+        },
+        {
+          "name": "Module",
+          "us": 1514,
+          "percent": 0.15936456275189137
+        },
+        {
+          "name": "wasm_vm_core::hart::cstore32_with_phys::h4d26e50a3aebe110",
+          "us": 1513,
+          "percent": 0.1592593021424119
+        },
+        {
+          "name": "wasm_vm_core::softfloat::f64_from_int::hc663ad58dfa3229c",
+          "us": 1511,
+          "percent": 0.159048780923453
+        },
+        {
+          "name": "wasm-function[12] wasm://wasm/339d367e",
+          "us": 1511,
+          "percent": 0.159048780923453
+        },
+        {
+          "name": "wasm_vm_core::csr::Csrs::deliver_trap_s::h3ab7b23f8accd3a1",
+          "us": 1510,
+          "percent": 0.15894352031397355
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/e4565846",
+          "us": 1510,
+          "percent": 0.15894352031397355
+        },
+        {
+          "name": "rustc_apfloat::ieee::IeeeFloat<S>::normalize::hd2d84624e94a000e",
+          "us": 1508,
+          "percent": 0.15873299909501465
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::blk::service::h3d6e34ecce8fe7d0",
+          "us": 1508,
+          "percent": 0.15873299909501465
+        },
+        {
+          "name": "decode",
+          "us": 1507,
+          "percent": 0.15862773848553519
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/0dae7ede",
+          "us": 1507,
+          "percent": 0.15862773848553519
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/0001cfd6",
+          "us": 1506,
+          "percent": 0.15852247787605575
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::note_jit_retired::hbc5b69eb1383553c",
+          "us": 1505,
+          "percent": 0.1584172172665763
+        },
+        {
+          "name": "alloc::raw_vec::RawVecInner<A>::finish_grow::hadd31fe3c10ecfad",
+          "us": 1505,
+          "percent": 0.1584172172665763
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/00012cea",
+          "us": 1505,
+          "percent": 0.1584172172665763
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_pmp_code_permissions::hdc3cf2729702a634",
+          "us": 1504,
+          "percent": 0.15831195665709683
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/0001cfd6",
+          "us": 1504,
+          "percent": 0.15831195665709683
+        },
+        {
+          "name": "wasm_vm_core::hart::cload8::h620a223848ce909c",
+          "us": 1504,
+          "percent": 0.15831195665709683
+        },
+        {
+          "name": "schedule http://127.0.0.1:61631/loader.js",
+          "us": 1504,
+          "percent": 0.15831195665709683
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::note_chain::h002c0395c865b3e5",
+          "us": 1504,
+          "percent": 0.15831195665709683
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service_with_cursor::h846deeec38039ecc",
+          "us": 1503,
+          "percent": 0.1582066960476174
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/aedd14ba",
+          "us": 1503,
+          "percent": 0.1582066960476174
+        },
+        {
+          "name": "memcmp",
+          "us": 1502,
+          "percent": 0.15810143543813793
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/f1afd7aa",
+          "us": 1502,
+          "percent": 0.15810143543813793
+        },
+        {
+          "name": "wasm_vm_core::dev::rtc::GoldfishRtc::poll::he0a3c0e1bc5027db",
+          "us": 1502,
+          "percent": 0.15810143543813793
+        },
+        {
+          "name": "runTick http://127.0.0.1:61631/loader.js",
+          "us": 1495,
+          "percent": 0.15736461117178177
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/339d367e",
+          "us": 1493,
+          "percent": 0.15715408995282285
+        },
+        {
+          "name": "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::malloc",
+          "us": 1483,
+          "percent": 0.15610148385802833
+        },
+        {
+          "name": "__wbg_invokeJitBlock_99121dda606f7308 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1450,
+          "percent": 0.1526278837452064
+        },
+        {
+          "name": "onDisplayFrame http://127.0.0.1:61631/linux-worker-protocol.js",
+          "us": 1325,
+          "percent": 0.13947030756027481
+        },
+        {
+          "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7fba6d5383ae0c08",
+          "us": 1181,
+          "percent": 0.12431277979523363
+        }
+      ],
+      "inclusive": [
+        {
+          "name": "(root)",
+          "us": 950023.0000047684,
+          "percent": 100
+        },
+        {
+          "name": "runTick http://127.0.0.1:61631/loader.js",
+          "us": 900958.0000047684,
+          "percent": 94.83538819589066
+        },
+        {
+          "name": "wasm_vm_wasm::WasmLinux::run_chunk::h07405c1400974665",
+          "us": 897959.0000047684,
+          "percent": 94.51971162806177
+        },
+        {
+          "name": "wasmlinux_runChunk multivalue shim",
+          "us": 897959.0000047684,
+          "percent": 94.51971162806177
+        },
+        {
+          "name": "js-to-wasm:iii:ii http://127.0.0.1:61631/pkg/wasm_vm_wasm_bg.wasm",
+          "us": 897959.0000047684,
+          "percent": 94.51971162806177
+        },
+        {
+          "name": "runChunk http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 897959.0000047684,
+          "percent": 94.51971162806177
+        },
+        {
+          "name": "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b",
+          "us": 877547.0000047684,
+          "percent": 92.37113206736718
+        },
+        {
+          "name": "wasm_vm_core::Machine::try_jit_block::h0ec09f3d40a79477",
+          "us": 226430,
+          "percent": 23.83415980443247
+        },
+        {
+          "name": "wasm_vm_core::Machine::next_micro_op::hde9600194430e6db",
+          "us": 188565,
+          "percent": 19.848466826492995
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h1c6b17789b9d53e7",
+          "us": 137024,
+          "percent": 14.423229753312524
+        },
+        {
+          "name": "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81",
+          "us": 116596,
+          "percent": 12.272966022866266
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_plic::h7f5c3bd066f966f0",
+          "us": 63803,
+          "percent": 6.7159426666175195
+        },
+        {
+          "name": "wasm_vm_core::dispatch::BlockDiscovery::on_block_entry::h603a5b4937cad8ca",
+          "us": 60460,
+          "percent": 6.364056449127709
+        },
+        {
+          "name": "wasm_vm_core::mmu::translate_cached::hf2b93220145a733d",
+          "us": 51273,
+          "percent": 5.397027229839978
+        },
+        {
+          "name": "wasm_vm_core::hart::Hart::decode_at::h44ce55ab00ab1770",
+          "us": 43727,
+          "percent": 4.602730670708028
+        },
+        {
+          "name": "wasm-to-js",
+          "us": 41384,
+          "percent": 4.35610506269767
+        },
+        {
+          "name": "__wbg_invokeJitBlock_99121dda606f7308 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 37038,
+          "percent": 3.8986424538999684
+        },
+        {
+          "name": "wasm_vm_core::mmu::translate_cached::h0f176be2d21edacd",
+          "us": 32735,
+          "percent": 3.445706051309884
+        },
+        {
+          "name": "__udivti3",
+          "us": 30115,
+          "percent": 3.1699232544737175
+        },
+        {
+          "name": "js-to-wasm:iil:i wasm://wasm/270a815a",
+          "us": 29790,
+          "percent": 3.1357135563928953
+        },
+        {
+          "name": "wasm_vm_core::pmp::Pmp::check::h49feb29917fd316e",
+          "us": 28195,
+          "percent": 2.9678228842731684
+        },
+        {
+          "name": "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf",
+          "us": 26936,
+          "percent": 2.8352997769385375
+        },
+        {
+          "name": "wasm_vm_core::hart::cload64::h2536535db8ec3fef",
+          "us": 25280,
+          "percent": 2.660988207640564
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::console::service::h1ffb3e3719360d51",
+          "us": 21056,
+          "percent": 2.2163673931993557
+        },
+        {
+          "name": "wasm_vm_core::Machine::drain_code_writes::h397dce4503e03991",
+          "us": 20557,
+          "percent": 2.163842349069109
+        },
+        {
+          "name": "core::hash::BuildHasher::hash_one::he61abe7265f819be",
+          "us": 18084,
+          "percent": 1.9035328618264225
+        },
+        {
+          "name": "wasm_vm_core::hart::cstore64_with_phys::h933922e1acd9045f",
+          "us": 18059,
+          "percent": 1.900901346589436
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_clint::h0564e959affb159d",
+          "us": 17530,
+          "percent": 1.8452184841748056
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service_with_cursor::h846deeec38039ecc",
+          "us": 14873,
+          "percent": 1.5655410447878997
+        },
+        {
+          "name": "wasm_vm_core::hart::cload32::hd276ae068ebb76eb",
+          "us": 14745,
+          "percent": 1.5520676867745298
+        },
+        {
+          "name": "<std[f839c7267e543978]::hash::random::DefaultHasher as core[2c5ad5f686fcca5c]::hash::Hasher>::write",
+          "us": 13566,
+          "percent": 1.4279654281982552
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::net::service::h88973684b4a526cb",
+          "us": 13563,
+          "percent": 1.4276496463698167
+        },
+        {
+          "name": "wasm_vm_core::mmu::finish_leaf::hb5c91ebad7369df2",
+          "us": 12046,
+          "percent": 1.267969301789487
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service::h3a22ce79444eb9c0",
+          "us": 11871,
+          "percent": 1.2495486951305828
+        },
+        {
+          "name": "alloc::collections::btree::map::BTreeMap<K,V,A>::remove::h49400433011d1148",
+          "us": 11821,
+          "percent": 1.2442856646566103
+        },
+        {
+          "name": "__multi3",
+          "us": 10549,
+          "percent": 1.1103941693987465
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::snd::service_internal::h746557e7fa1093ec",
+          "us": 9048,
+          "percent": 0.9523979945700879
+        },
+        {
+          "name": "wasm_vm_core::csr::Csrs::next_interrupt::he02f95cae226d67a",
+          "us": 9042,
+          "percent": 0.9517664309132112
+        },
+        {
+          "name": "real._wbg_cb_unref http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 8705,
+          "percent": 0.9162936055186356
+        },
+        {
+          "name": "real http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 8705,
+          "percent": 0.9162936055186356
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::gpu::service_cursor::hda6c1825a97ffd87",
+          "us": 7526,
+          "percent": 0.7921913469423609
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_sbi_timer::hfac2bf38b14163de",
+          "us": 7526,
+          "percent": 0.7921913469423609
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::is_compiled::hf0b26b7146f8907b",
+          "us": 7214,
+          "percent": 0.7593500367847716
+        },
+        {
+          "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7fba6d5383ae0c08",
+          "us": 7202,
+          "percent": 0.7580869094710182
+        },
+        {
+          "name": "wasm_bindgen::convert::closures::_::invoke::h3c376d590f4b7628",
+          "us": 7202,
+          "percent": 0.7580869094710182
+        },
+        {
+          "name": "wasm_bindgen__convert__closures_____invoke__h3c376d590f4b7628 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 7202,
+          "percent": 0.7580869094710182
+        },
+        {
+          "name": "wasm_vm_core::decode::decode::hc0ed8cae72412bec",
+          "us": 6036,
+          "percent": 0.6353530388179764
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::input::service::hbc44a2a62a26abb2",
+          "us": 5970,
+          "percent": 0.6284058385923326
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::rng::service::he448130d2aeb0fa2",
+          "us": 4510,
+          "percent": 0.47472534875233163
+        },
+        {
+          "name": "wasm_vm_core::decode_c::expand_c::h2452b9e1ed4d8e0b",
+          "us": 4507,
+          "percent": 0.47440956692389324
+        },
+        {
+          "name": "wasm_vm_core::mmu::walk_leaf_inner::h8f584abd0d439f06",
+          "us": 3016,
+          "percent": 0.3174659981900293
+        },
+        {
+          "name": "wasm_vm_core::Machine::pump_jit_translations::hb3d02ac3b411b36f",
+          "us": 3016,
+          "percent": 0.3174659981900293
+        },
+        {
+          "name": "wasm_vm_core::dev::plic::IrqLine::set::hbc1d1743be327740",
+          "us": 3014,
+          "percent": 0.31725547697107037
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/e08e100e",
+          "us": 3011,
+          "percent": 0.31693969514263204
+        },
+        {
+          "name": "core::hash::BuildHasher::hash_one::hf59f0499646c0046",
+          "us": 3009,
+          "percent": 0.3167291739236731
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/339d367e",
+          "us": 3008,
+          "percent": 0.31662391331419365
+        },
+        {
+          "name": "wasm_vm_core::Machine::sample_wall_clock::h8e67bc52a553e03e",
+          "us": 3008,
+          "percent": 0.31662391331419365
+        },
+        {
+          "name": "alloc::raw_vec::RawVecInner<A>::finish_grow::hadd31fe3c10ecfad",
+          "us": 2988,
+          "percent": 0.3145187011246046
+        },
+        {
+          "name": "http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 2839,
+          "percent": 0.29883487031216616
+        },
+        {
+          "name": "handleError http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 2839,
+          "percent": 0.29883487031216616
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/d193186e",
+          "us": 2791,
+          "percent": 0.29378236105715244
+        },
+        {
+          "name": "wasm_vm_core::dev::uart16550::Uart16550::irq_level::h79d07f06a2fc562e",
+          "us": 2222.0000047683716,
+          "percent": 0.23388907476526558
+        },
+        {
+          "name": "wasm_vm_core::hart::camoload64::hd7848b79b8c9e118",
+          "us": 1527,
+          "percent": 0.16073295067512425
+        },
+        {
+          "name": "Module",
+          "us": 1514,
+          "percent": 0.15936456275189137
+        },
+        {
+          "name": "__wbg_new_711fb31c64c1c363 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1514,
+          "percent": 0.15936456275189137
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::install_batch::hef5554a713db00d0",
+          "us": 1514,
+          "percent": 0.15936456275189137
+        },
+        {
+          "name": "wasm_vm_core::hart::cstore32_with_phys::h4d26e50a3aebe110",
+          "us": 1513,
+          "percent": 0.1592593021424119
+        },
+        {
+          "name": "wasm_vm_core::softfloat::f64_from_int::hc663ad58dfa3229c",
+          "us": 1511,
+          "percent": 0.159048780923453
+        },
+        {
+          "name": "wasm-function[12] wasm://wasm/339d367e",
+          "us": 1511,
+          "percent": 0.159048780923453
+        },
+        {
+          "name": "wasm_vm_core::csr::Csrs::deliver_trap_s::h3ab7b23f8accd3a1",
+          "us": 1510,
+          "percent": 0.15894352031397355
+        },
+        {
+          "name": "wasm_vm_core::hart::Hart::take_trap::h912e35b29ec67e89",
+          "us": 1510,
+          "percent": 0.15894352031397355
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/e4565846",
+          "us": 1510,
+          "percent": 0.15894352031397355
+        },
+        {
+          "name": "rustc_apfloat::ieee::IeeeFloat<S>::normalize::hd2d84624e94a000e",
+          "us": 1508,
+          "percent": 0.15873299909501465
+        },
+        {
+          "name": "<rustc_apfloat::ieee::IeeeFloat<S> as rustc_apfloat::Float>::add_r::h3cf18cbb7e801a6b",
+          "us": 1508,
+          "percent": 0.15873299909501465
+        },
+        {
+          "name": "<wasm_vm_core::softfloat::F64 as wasm_vm_core::softfloat::SoftFloat>::sub::h91308f7923f72f9a",
+          "us": 1508,
+          "percent": 0.15873299909501465
+        },
+        {
+          "name": "wasm_vm_core::hart::cload16::h3a17e81b61302812",
+          "us": 1508,
+          "percent": 0.15873299909501465
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::link_edge_authorized::h188d637c6660ce37",
+          "us": 1508,
+          "percent": 0.15873299909501465
+        },
+        {
+          "name": "wasm_vm_core::mmu::walk_leaf_inner::he301c8b3dbb8bbd1",
+          "us": 1508,
+          "percent": 0.15873299909501465
+        },
+        {
+          "name": "wasm_vm_core::dev::virtio::blk::service::h3d6e34ecce8fe7d0",
+          "us": 1508,
+          "percent": 0.15873299909501465
+        },
+        {
+          "name": "decode",
+          "us": 1507,
+          "percent": 0.15862773848553519
+        },
+        {
+          "name": "decodeText http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1507,
+          "percent": 0.15862773848553519
+        },
+        {
+          "name": "__wbindgen_cast_000000000000000e http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1507,
+          "percent": 0.15862773848553519
+        },
+        {
+          "name": "Ref(String) -> Externref externref shim",
+          "us": 1507,
+          "percent": 0.15862773848553519
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/b72b54c2",
+          "us": 1507,
+          "percent": 0.15862773848553519
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/0dae7ede",
+          "us": 1507,
+          "percent": 0.15862773848553519
+        },
+        {
+          "name": "wasm_vm_core::csr::Csrs::pmp_ok::hb2f1ee2d8e63ac3b",
+          "us": 1506,
+          "percent": 0.15852247787605575
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/0001cfd6",
+          "us": 1506,
+          "percent": 0.15852247787605575
+        },
+        {
+          "name": "wasm-function[8] wasm://wasm/aedd14ba",
+          "us": 1506,
+          "percent": 0.15852247787605575
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::note_jit_retired::hbc5b69eb1383553c",
+          "us": 1505,
+          "percent": 0.1584172172665763
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/00012cea",
+          "us": 1505,
+          "percent": 0.1584172172665763
+        },
+        {
+          "name": "wasm_vm_core::Machine::sync_pmp_code_permissions::hdc3cf2729702a634",
+          "us": 1504,
+          "percent": 0.15831195665709683
+        },
+        {
+          "name": "wasm-function[7] wasm://wasm/0001cfd6",
+          "us": 1504,
+          "percent": 0.15831195665709683
+        },
+        {
+          "name": "wasm_vm_core::hart::cload8::h620a223848ce909c",
+          "us": 1504,
+          "percent": 0.15831195665709683
+        },
+        {
+          "name": "schedule http://127.0.0.1:61631/loader.js",
+          "us": 1504,
+          "percent": 0.15831195665709683
+        },
+        {
+          "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::note_chain::h002c0395c865b3e5",
+          "us": 1504,
+          "percent": 0.15831195665709683
+        },
+        {
+          "name": "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7a18440956482b17",
+          "us": 1503,
+          "percent": 0.1582066960476174
+        },
+        {
+          "name": "wasm_bindgen::convert::closures::_::invoke::hf96fc87adc256ad8",
+          "us": 1503,
+          "percent": 0.1582066960476174
+        },
+        {
+          "name": "wasm_bindgen__convert__closures_____invoke__hf96fc87adc256ad8 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1503,
+          "percent": 0.1582066960476174
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/0001cfd6",
+          "us": 1503,
+          "percent": 0.1582066960476174
+        },
+        {
+          "name": "wasm-function[10] wasm://wasm/aedd14ba",
+          "us": 1503,
+          "percent": 0.1582066960476174
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/aedd14ba",
+          "us": 1503,
+          "percent": 0.1582066960476174
+        },
+        {
+          "name": "memcmp",
+          "us": 1502,
+          "percent": 0.15810143543813793
+        },
+        {
+          "name": "wasm-function[6] wasm://wasm/f1afd7aa",
+          "us": 1502,
+          "percent": 0.15810143543813793
+        },
+        {
+          "name": "wasm_vm_core::dev::rtc::GoldfishRtc::poll::he0a3c0e1bc5027db",
+          "us": 1502,
+          "percent": 0.15810143543813793
+        },
+        {
+          "name": "wasm-function[9] wasm://wasm/339d367e",
+          "us": 1493,
+          "percent": 0.15715408995282285
+        },
+        {
+          "name": "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::malloc",
+          "us": 1483,
+          "percent": 0.15610148385802833
+        },
+        {
+          "name": "__rustc[8068f81614cfe5c]::__rust_realloc",
+          "us": 1483,
+          "percent": 0.15610148385802833
+        },
+        {
+          "name": "alloc::raw_vec::RawVec<T,A>::grow_one::hd7acdfec40060a61",
+          "us": 1483,
+          "percent": 0.15610148385802833
+        },
+        {
+          "name": "onDisplayFrame http://127.0.0.1:61631/linux-worker-protocol.js",
+          "us": 1325,
+          "percent": 0.13947030756027481
+        },
+        {
+          "name": "onDisplayFrame http://127.0.0.1:61631/linux-worker.js",
+          "us": 1325,
+          "percent": 0.13947030756027481
+        },
+        {
+          "name": "http://127.0.0.1:61631/loader.js",
+          "us": 1325,
+          "percent": 0.13947030756027481
+        },
+        {
+          "name": "__wbg_call_a6e5c5dce5018821 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+          "us": 1325,
+          "percent": 0.13947030756027481
+        },
+        {
+          "name": "js_sys::Function<F>::call1::__wbg_call_a6e5c5dce5018821::hd726a72a6d726ff2 externref shim",
+          "us": 1325,
+          "percent": 0.13947030756027481
+        },
+        {
+          "name": "<wasm_vm_wasm::JsFrameSink as wasm_vm_core::dev::virtio::gpu::FrameSink>::flush::h712896c8783286dd",
+          "us": 1325,
+          "percent": 0.13947030756027481
+        },
+        {
+          "name": "wasm-function[5] wasm://wasm/056caa9e",
+          "us": 1181,
+          "percent": 0.12431277979523363
+        }
+      ],
+      "buckets": [
+        {
+          "name": "JIT executor / selection",
+          "us": 143868,
+          "leaves": [
+            "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h1c6b17789b9d53e7",
+            "wasm_vm_core::Machine::try_jit_block::h0ec09f3d40a79477",
+            "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::is_compiled::hf0b26b7146f8907b",
+            "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::note_jit_retired::hbc5b69eb1383553c",
+            "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::note_chain::h002c0395c865b3e5",
+            "wasm_vm_wasm::jit_browser::BrowserExecutor::new_with_inline_tlb::{{closure}}::h7fba6d5383ae0c08"
+          ],
+          "percent": 15.143633364589899
+        },
+        {
+          "name": "dispatch discovery / block cache",
+          "us": 87396,
+          "leaves": [
+            "wasm_vm_core::dispatch::BlockDiscovery::on_block_entry::h603a5b4937cad8ca",
+            "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf"
+          ],
+          "percent": 9.199356226066246
+        },
+        {
+          "name": "interpreter / decode / run loop",
+          "us": 290682,
+          "leaves": [
+            "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b",
+            "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81",
+            "wasm_vm_core::Machine::next_micro_op::hde9600194430e6db",
+            "wasm_vm_core::hart::Hart::decode_at::h44ce55ab00ab1770",
+            "wasm_vm_core::hart::cload64::h2536535db8ec3fef",
+            "wasm_vm_core::hart::cstore64_with_phys::h933922e1acd9045f",
+            "wasm_vm_core::decode::decode::hc0ed8cae72412bec",
+            "wasm_vm_core::decode_c::expand_c::h2452b9e1ed4d8e0b",
+            "wasm_vm_core::hart::cload32::hd276ae068ebb76eb",
+            "wasm_vm_core::hart::cstore32_with_phys::h4d26e50a3aebe110",
+            "wasm_vm_core::hart::cload8::h620a223848ce909c"
+          ],
+          "percent": 30.597364484706265
+        },
+        {
+          "name": "MMU / PMP",
+          "us": 110666,
+          "leaves": [
+            "wasm_vm_core::mmu::translate_cached::hf2b93220145a733d",
+            "wasm_vm_core::pmp::Pmp::check::h49feb29917fd316e",
+            "wasm_vm_core::mmu::translate_cached::h0f176be2d21edacd",
+            "wasm_vm_core::mmu::finish_leaf::hb5c91ebad7369df2",
+            "wasm_vm_core::Machine::sync_pmp_code_permissions::hdc3cf2729702a634"
+          ],
+          "percent": 11.64877060865311
+        },
+        {
+          "name": "interrupt / clock synchronization",
+          "us": 105433,
+          "leaves": [
+            "wasm_vm_core::Machine::sync_plic::h7f5c3bd066f966f0",
+            "wasm_vm_core::Machine::sync_clint::h0564e959affb159d",
+            "wasm_vm_core::csr::Csrs::next_interrupt::he02f95cae226d67a",
+            "wasm_vm_core::Machine::sync_sbi_timer::hfac2bf38b14163de",
+            "wasm_vm_core::dev::plic::IrqLine::set::hbc1d1743be327740",
+            "wasm_vm_core::Machine::sample_wall_clock::h8e67bc52a553e03e",
+            "wasm_vm_core::csr::Csrs::deliver_trap_s::h3ab7b23f8accd3a1"
+          ],
+          "percent": 11.097941839247135
+        },
+        {
+          "name": "virtio / other devices",
+          "us": 78954.00000476837,
+          "leaves": [
+            "wasm_vm_core::dev::virtio::console::service::h1ffb3e3719360d51",
+            "wasm_vm_core::dev::virtio::net::service::h88973684b4a526cb",
+            "wasm_vm_core::dev::virtio::gpu::service::h3a22ce79444eb9c0",
+            "wasm_vm_core::dev::virtio::snd::service_internal::h746557e7fa1093ec",
+            "wasm_vm_core::dev::virtio::gpu::service_cursor::hda6c1825a97ffd87",
+            "wasm_vm_core::dev::virtio::input::service::hbc44a2a62a26abb2",
+            "wasm_vm_core::dev::virtio::rng::service::he448130d2aeb0fa2",
+            "wasm_vm_core::dev::uart16550::Uart16550::irq_level::h79d07f06a2fc562e",
+            "wasm_vm_core::dev::virtio::blk::service::h3d6e34ecce8fe7d0",
+            "wasm_vm_core::dev::virtio::gpu::service_with_cursor::h846deeec38039ecc",
+            "wasm_vm_core::dev::rtc::GoldfishRtc::poll::he0a3c0e1bc5027db"
+          ],
+          "percent": 8.31074616134263
+        },
+        {
+          "name": "integer division / multiply helpers",
+          "us": 40664,
+          "leaves": [
+            "__udivti3",
+            "__multi3"
+          ],
+          "percent": 4.280317423872464
+        },
+        {
+          "name": "collection / hashing / allocation",
+          "us": 35902,
+          "leaves": [
+            "<std[f839c7267e543978]::hash::random::DefaultHasher as core[2c5ad5f686fcca5c]::hash::Hasher>::write",
+            "alloc::collections::btree::map::BTreeMap<K,V,A>::remove::h49400433011d1148",
+            "core::hash::BuildHasher::hash_one::he61abe7265f819be",
+            "alloc::raw_vec::RawVecInner<A>::finish_grow::hadd31fe3c10ecfad",
+            "<dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::malloc"
+          ],
+          "percent": 3.7790664015313102
+        },
+        {
+          "name": "unmapped generated Wasm / its trampolines",
+          "us": 23872,
+          "leaves": [
+            "js-to-wasm:iil:i wasm://wasm/270a815a",
+            "wasm-function[5] wasm://wasm/d193186e",
+            "wasm-function[12] wasm://wasm/339d367e",
+            "wasm-function[5] wasm://wasm/e4565846",
+            "wasm-function[5] wasm://wasm/0dae7ede",
+            "wasm-function[8] wasm://wasm/0001cfd6",
+            "wasm-function[10] wasm://wasm/00012cea",
+            "wasm-function[7] wasm://wasm/0001cfd6",
+            "wasm-function[10] wasm://wasm/aedd14ba",
+            "wasm-function[6] wasm://wasm/f1afd7aa",
+            "wasm-function[9] wasm://wasm/339d367e"
+          ],
+          "percent": 2.5127812694934946
+        },
+        {
+          "name": "other",
+          "us": 32586,
+          "leaves": [
+            "wasm_vm_core::Machine::drain_code_writes::h397dce4503e03991",
+            "wasm_vm_wasm::WasmLinux::run_chunk::h07405c1400974665",
+            "wasm-to-js",
+            "Module",
+            "wasm_vm_core::softfloat::f64_from_int::hc663ad58dfa3229c",
+            "rustc_apfloat::ieee::IeeeFloat<S>::normalize::hd2d84624e94a000e",
+            "decode",
+            "schedule http://127.0.0.1:61631/loader.js",
+            "memcmp",
+            "runTick http://127.0.0.1:61631/loader.js",
+            "__wbg_invokeJitBlock_99121dda606f7308 http://127.0.0.1:61631/pkg/wasm_vm_wasm.js",
+            "onDisplayFrame http://127.0.0.1:61631/linux-worker-protocol.js"
+          ],
+          "percent": 3.4300222204974453
+        }
+      ]
+    }
+  },
+  "caveat": "Weighted sampling, not exact function timers or guest syscall tracing. Phase windows assume equal monotonic clock rates and retain the zero-to-first-observed-PCM plus alignment uncertainty separately. Inclusive costs overlap. Generated Wasm names are not guessed."
+}

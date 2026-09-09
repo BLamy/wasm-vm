@@ -1,0 +1,410 @@
+sh -n tools/rootfs/start-desktop tools/rootfs/desktop-autologin tools/rootfs/desktop-runtime.initd tools/rootfs/desktop-test-console
+bash -n tools/build-rootfs.sh tools/rootfs-inner.sh tools/image/desktop.sh tools/serve-dev.sh
+node --test web/tests/e5-t18d-desktop-recovery.test.mjs
+✔ normal boot has no diagnostic kernel authority, even on localhost (0.380375ms)
+✔ explicit local boot permits only the fixed config fault (0.32725ms)
+✔ remote and lookalike hosts cannot opt in through query parameters (0.062333ms)
+✔ fixed verbs cannot smuggle arbitrary serial shell input (0.054709ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 33.638333
+node --test web/tests/e4-t32-worker-protocol.test.mjs
+✔ loader task quiescence joins held persistence and permanently closes scheduling (0.746042ms)
+✔ explicit surface, FIFO input/RPC, exact transferable ownership, Tailscale, and stop order (4.289542ms)
+✔ every explicit controller method crosses the runtime and no-provider Tailscale is false/nonfatal (2.566292ms)
+✔ capture PCM_START lifecycle notification crosses the worker boundary (0.415458ms)
+✔ display FrameSink projections cross the worker boundary with private pixel ownership (1.845416ms)
+✔ cursor-plane update and move projections keep MOVE payloads empty and privately owned (2.982042ms)
+✔ RPC ids correlate out-of-order results and arbitrary methods are not exposed (0.259333ms)
+✔ version mismatch/fatal rejects boot, pending and future calls exactly once (0.196084ms)
+✔ fatal after ready rejects pending, whenDone, stats, and future RPCs once (0.188041ms)
+✔ worker rejects an unknown method without executing it and propagates controller rejections (2.020667ms)
+✔ unknown frames fail closed and Tailscale events remain versioned (0.406542ms)
+✔ DONE rejects pending RPCs and DONE-before-READY rejects boot (0.166041ms)
+✔ byte RPC encoding errors reject asynchronously (0.137125ms)
+✔ silent termination is detected before and after READY and rejects pending work (56.627833ms)
+✔ heartbeat bypasses long async RPCs and visibility suspension shifts its deadline (86.391709ms)
+✔ visibility suspension pauses the pre-READY boot deadline (62.01725ms)
+✔ stateDigest gets method-scoped heartbeat grace and the controller remains live afterward (61.836958ms)
+✔ every bulk snapshot RPC emits BUSY/IDLE and survives the scoped heartbeat grace (431.81725ms)
+✔ natural completion emits a scoped terminal digest before DONE (2.397959ms)
+✔ natural completion waits behind a held snapshot RPC before terminal BUSY and cleanup (1.572417ms)
+✔ fatal input during natural cleanup wins over clean DONE (2.47675ms)
+✔ stop and fatal cleanup are bounded when a dependency never settles (35.470166ms)
+✔ stop timeout fails closed without releasing storage under a live loader pump (28.091375ms)
+✔ Tailscale UI exceptions are non-fatal (2.7645ms)
+✔ backend-neutral stop closes main storage but does not RPC after worker termination (0.813917ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 826.389834
+node --check tools/verify/e5-t18d-desktop-recovery.mjs
+docker run --rm -v "/Users/blamy/Documents/Codex/e5-t18d-final.YlijDe/repo:/repo:ro" wasm-vm-kernel-build:local python3 /repo/tools/verify/e5-t18d-local-fixtures.py
+{
+  "scope": "Linux process-double precheck, not guest acceptance",
+  "supervisorSha256": "6752fb4a165e85c130d50d5d27775cac102f5d014c3de8263f1aaaa1a5b8e799",
+  "passed": 10,
+  "cases": [
+    {
+      "case": "three-crashes-and-reentry",
+      "log": "2026-09-06T04:04:39Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman\n2026-09-06T04:04:39Z E5T18D event=started attempt=1 pid=20\n2026-09-06T04:04:39Z E5T18D event=ready attempt=1 pid=20\n2026-09-06T04:04:39Z E5T18D event=exit attempt=1 pid=20 status=137\n2026-09-06T04:04:39Z E5T18D event=restart next=2\n2026-09-06T04:04:40Z E5T18D event=attempt attempt=2 backend=drm renderer=pixman\n2026-09-06T04:04:40Z E5T18D event=started attempt=2 pid=31\n2026-09-06T04:04:40Z E5T18D event=ready attempt=2 pid=31\n2026-09-06T04:04:40Z E5T18D event=exit attempt=2 pid=31 status=137\n2026-09-06T04:04:40Z E5T18D event=restart next=3\n2026-09-06T04:04:41Z E5T18D event=attempt attempt=3 backend=drm renderer=pixman\n2026-09-06T04:04:41Z E5T18D event=started attempt=3 pid=42\n2026-09-06T04:04:41Z E5T18D event=ready attempt=3 pid=42\n2026-09-06T04:04:41Z E5T18D event=exit attempt=3 pid=42 status=137\n2026-09-06T04:04:41Z E5T18D event=fallback reason=restart-budget-exhausted attempts=3\n2026-09-06T04:04:41Z E5T18D event=latched attempts=3\n"
+    },
+    {
+      "case": "seatd-delay-500ms",
+      "log": "2026-09-06T04:04:41Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman\n2026-09-06T04:04:43Z E5T18D event=started attempt=1 pid=65\n2026-09-06T04:04:43Z E5T18D event=ready attempt=1 pid=65\n"
+    },
+    {
+      "case": "video",
+      "log": "2026-09-06T04:04:43Z E5T18D event=fallback reason=video-device-missing attempts=0\n"
+    },
+    {
+      "case": "runtime",
+      "log": "2026-09-06T04:04:43Z E5T18D event=fallback reason=runtime-directory-missing attempts=0\n"
+    },
+    {
+      "case": "renderer",
+      "log": "2026-09-06T04:04:43Z E5T18D event=fallback reason=unsupported-renderer attempts=0\n"
+    },
+    {
+      "case": "config",
+      "log": "2026-09-06T04:04:43Z E5T18D event=fallback reason=compositor-config-missing attempts=0\n"
+    },
+    {
+      "case": "config-removed-after-readiness",
+      "log": "2026-09-06T04:04:43Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman\n2026-09-06T04:04:43Z E5T18D event=started attempt=1 pid=112\n2026-09-06T04:04:43Z E5T18D event=ready attempt=1 pid=112\n2026-09-06T04:04:43Z E5T18D event=exit attempt=1 pid=112 status=137\n2026-09-06T04:04:43Z E5T18D event=restart next=2\n2026-09-06T04:04:44Z E5T18D event=fallback reason=compositor-config-missing attempts=1\n"
+    },
+    {
+      "case": "early-exit",
+      "log": "2026-09-06T04:04:44Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman\n2026-09-06T04:04:44Z E5T18D event=started attempt=1 pid=132\n2026-09-06T04:04:44Z E5T18D event=not-ready attempt=1 pid=132 reason=early-exit status=23\n2026-09-06T04:04:44Z E5T18D event=restart next=2\n2026-09-06T04:04:45Z E5T18D event=attempt attempt=2 backend=drm renderer=pixman\n2026-09-06T04:04:45Z E5T18D event=started attempt=2 pid=141\n2026-09-06T04:04:45Z E5T18D event=not-ready attempt=2 pid=141 reason=early-exit status=23\n2026-09-06T04:04:45Z E5T18D event=restart next=3\n2026-09-06T04:04:46Z E5T18D event=attempt attempt=3 backend=drm renderer=pixman\n2026-09-06T04:04:46Z E5T18D event=started attempt=3 pid=150\n2026-09-06T04:04:46Z E5T18D event=not-ready attempt=3 pid=150 reason=early-exit status=23\n2026-09-06T04:04:46Z E5T18D event=fallback reason=restart-budget-exhausted attempts=3\n"
+    },
+    {
+      "case": "bounded-shutdown-kill",
+      "log": "2026-09-06T04:04:46Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman\n2026-09-06T04:04:46Z E5T18D event=started attempt=1 pid=166\n2026-09-06T04:04:46Z E5T18D event=ready attempt=1 pid=166\n2026-09-06T04:04:46Z E5T18D event=shutdown\n"
+    },
+    {
+      "case": "startup-timeout",
+      "log": "2026-09-06T04:04:51Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman\n2026-09-06T04:04:51Z E5T18D event=started attempt=1 pid=192\n2026-09-06T04:05:22Z E5T18D event=not-ready attempt=1 pid=192 reason=startup-timeout\n2026-09-06T04:05:22Z E5T18D event=restart next=2\n2026-09-06T04:05:23Z E5T18D event=attempt attempt=2 backend=drm renderer=pixman\n2026-09-06T04:05:23Z E5T18D event=started attempt=2 pid=263\n2026-09-06T04:05:53Z E5T18D event=not-ready attempt=2 pid=263 reason=startup-timeout\n2026-09-06T04:05:53Z E5T18D event=restart next=3\n2026-09-06T04:05:54Z E5T18D event=attempt attempt=3 backend=drm renderer=pixman\n2026-09-06T04:05:54Z E5T18D event=started attempt=3 pid=334\n2026-09-06T04:06:24Z E5T18D event=not-ready attempt=3 pid=334 reason=startup-timeout\n2026-09-06T04:06:24Z E5T18D event=fallback reason=restart-budget-exhausted attempts=3\n"
+    }
+  ]
+}
+docker run --rm --network none --cap-add SYS_PTRACE -v "/Users/blamy/Documents/Codex/e5-t18d-final.YlijDe/repo:/repo:ro" wasm-vm-kernel-build:local python3 /repo/tools/verify/e5-t18d-state-boundaries.py --disposable
+test_hook_pid_post_check_fifo_swap_is_bounded (__main__.StateBoundaries.test_hook_pid_post_check_fifo_swap_is_bounded) ... ok
+test_hook_preserves_normal_output_and_caps_logs (__main__.StateBoundaries.test_hook_preserves_normal_output_and_caps_logs) ... ok
+test_hook_regular_root_file_still_has_no_read_authority (__main__.StateBoundaries.test_hook_regular_root_file_still_has_no_read_authority) ... ok
+test_hook_rejects_symlinks_and_fifos (__main__.StateBoundaries.test_hook_rejects_symlinks_and_fifos) ... ok
+test_hook_signals_desktop_weston_but_not_root_weston (__main__.StateBoundaries.test_hook_signals_desktop_weston_but_not_root_weston) ... ok
+test_runtime_fifo_is_replaced (__main__.StateBoundaries.test_runtime_fifo_is_replaced) ... ok
+test_runtime_post_check_fifo_swap_is_bounded (__main__.StateBoundaries.test_runtime_post_check_fifo_swap_is_bounded) ... ok
+test_runtime_symlink_preserves_target (__main__.StateBoundaries.test_runtime_symlink_preserves_target) ... ok
+test_runtime_unavailable_state_returns_control (__main__.StateBoundaries.test_runtime_unavailable_state_returns_control) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 32.297s
+
+OK
+{
+  "scope": "E5-T18d deterministic Linux state-boundary probes; not guest acceptance",
+  "sourceSha256": {
+    "desktop-runtime.initd": "0d98f68ec97381a955c91c566082119b4ba33d97a923d995dc5139efea2f73be",
+    "desktop-test-console": "12c5603cbb093fb1e4c7c62804825798084e2bbd6268fd39e0003b84bc00f613"
+  },
+  "tests": 9,
+  "failures": 0,
+  "errors": 0,
+  "timeoutExecutable": "/usr/bin/timeout",
+  "timeoutSha256": "3629fa180f625d4de2e3fd3b15b12c5d42315e5733ecae6d1550b306abd7d482",
+  "externalKillFixture": true,
+  "cases": [
+    {
+      "test": "test_hook_pid_post_check_fifo_swap_is_bounded",
+      "kind": "hook",
+      "elapsedSeconds": 2.067,
+      "exitCode": 0,
+      "externalWatchdogExpired": false,
+      "outputSha256": "e7ca8755feabad0e28be16403fa5d12e9c49fc95351bde207323f1e65e833915",
+      "outputBytes": 189,
+      "swapProcesses": [
+        {
+          "pid": 29,
+          "status": [
+            "Name:\thead",
+            "State:\tZ (zombie)",
+            "PPid:\t1",
+            "Uid:\t1000\t1000\t1000\t1000"
+          ],
+          "waitChannel": "0"
+        }
+      ],
+      "output": "\nE5T18D_TEST_CONSOLE_READY\nE5T18D_HOOK_ERROR=no-compositor\nE5T18D_STATUS_BEGIN\ndesktop.attempts=absent\ndesktop.ready=absent\ndesktop.failed=absent\nweston.pid=absent\nabsent\nE5T18D_STATUS_END\n"
+    },
+    {
+      "test": "test_hook_preserves_normal_output_and_caps_logs",
+      "kind": "hook",
+      "elapsedSeconds": 0.034,
+      "exitCode": 0,
+      "externalWatchdogExpired": false,
+      "outputSha256": "e9bc9c44d4e6daae4160ec0ac10666f4cbde02377b17a766a24b591ff04566a0",
+      "outputBytes": 16573,
+      "swapProcesses": [],
+      "output": "\nE5T18D_TEST_CONSOLE_READY\nE5T18D_STATUS_BEGIN\ndesktop.attempts=absent\ndesktop.ready=2 1234\ndesktop.failed=absent\nweston.pid=absent\nabsent\nE5T18D_STATUS_END\nE5T18D_LOG_BEGIN\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n[capture shortened]\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nE5T18D_LOG_END\n"
+    },
+    {
+      "test": "test_hook_regular_root_file_still_has_no_read_authority",
+      "kind": "hook",
+      "elapsedSeconds": 0.017,
+      "exitCode": 0,
+      "externalWatchdogExpired": false,
+      "outputSha256": "32ea04e5c2735465a7cc5b1e2f2426291f6a1177b46dfaaba8c01d48b9c5853b",
+      "outputBytes": 162,
+      "swapProcesses": [],
+      "output": "\nE5T18D_TEST_CONSOLE_READY\nE5T18D_STATUS_BEGIN\ndesktop.attempts=absent\ndesktop.ready=unavailable\ndesktop.failed=absent\nweston.pid=absent\nabsent\nE5T18D_STATUS_END\n"
+    },
+    {
+      "test": "test_hook_rejects_symlinks_and_fifos",
+      "kind": "hook",
+      "elapsedSeconds": 0.033,
+      "exitCode": 0,
+      "externalWatchdogExpired": false,
+      "outputSha256": "d96bfe913cda2193f43724f10a76ec98e4f90e6048ba00dddea6e7a9e7e8b8c3",
+      "outputBytes": 358,
+      "swapProcesses": [],
+      "output": "\nE5T18D_TEST_CONSOLE_READY\nE5T18D_STATUS_BEGIN\ndesktop.attempts=absent\ndesktop.ready=absent\ndesktop.failed=absent\nweston.pid=absent\nabsent\nE5T18D_STATUS_END\nE5T18D_LOG_BEGIN\nabsent\nE5T18D_LOG_END\nE5T18D_HOOK_ERROR=no-compositor\nE5T18D_STATUS_BEGIN\ndesktop.attempts=absent\ndesktop.ready=absent\ndesktop.failed=absent\nweston.pid=absent\nabsent\nE5T18D_STATUS_END\n"
+    },
+    {
+      "test": "test_hook_signals_desktop_weston_but_not_root_weston",
+      "kind": "hook",
+      "elapsedSeconds": 0.008,
+      "exitCode": 0,
+      "externalWatchdogExpired": false,
+      "outputSha256": "92f23d01f1393e5588336347d6a8bb06884736861a2ba1c474d9e568af6d79e5",
+      "outputBytes": 58,
+      "swapProcesses": [],
+      "output": "\nE5T18D_TEST_CONSOLE_READY\nE5T18D_HOOK_ERROR=pid-identity\n"
+    },
+    {
+      "test": "test_hook_signals_desktop_weston_but_not_root_weston",
+      "kind": "hook",
+      "elapsedSeconds": 0.008,
+      "exitCode": 0,
+      "externalWatchdogExpired": false,
+      "outputSha256": "3dd9a181949bf7cd7495b2127eea894ef5937849bc39f2ea1516457f1c982585",
+      "outputBytes": 65,
+      "swapProcesses": [],
+      "output": "\nE5T18D_TEST_CONSOLE_READY\nE5T18D_HOOK_CRASH pid=152 signal=KILL\n"
+    },
+    {
+      "test": "test_runtime_fifo_is_replaced",
+      "kind": "runtime",
+      "elapsedSeconds": 0.008,
+      "exitCode": 0,
+      "externalWatchdogExpired": false,
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "outputBytes": 0,
+      "swapProcesses": [],
+      "output": ""
+    },
+    {
+      "test": "test_runtime_post_check_fifo_swap_is_bounded",
+      "kind": "runtime",
+      "elapsedSeconds": 30.04,
+      "exitCode": 0,
+      "externalWatchdogExpired": false,
+      "outputSha256": "b756dec7387f0d2d287e511efb231fc99aec816a7a436d0cd3577e1d87bde765",
+      "outputBytes": 70,
+      "swapProcesses": [
+        {
+          "pid": 200,
+          "status": [
+            "Name:\tsh",
+            "State:\tZ (zombie)",
+            "PPid:\t1",
+            "Uid:\t1000\t1000\t1000\t1000"
+          ],
+          "waitChannel": "0"
+        }
+      ],
+      "output": "Killed\nE5T18D_RUNTIME_STATE_UNAVAILABLE: continuing to recovery login\n"
+    },
+    {
+      "test": "test_runtime_symlink_preserves_target",
+      "kind": "runtime",
+      "elapsedSeconds": 0.035,
+      "exitCode": 0,
+      "externalWatchdogExpired": false,
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "outputBytes": 0,
+      "swapProcesses": [],
+      "output": ""
+    },
+    {
+      "test": "test_runtime_unavailable_state_returns_control",
+      "kind": "runtime",
+      "elapsedSeconds": 0.017,
+      "exitCode": 0,
+      "externalWatchdogExpired": false,
+      "outputSha256": "a719f24ff4f047a64f3b58fadba6962c6ede788c6201f6d969949ec501b06bec",
+      "outputBytes": 146,
+      "swapProcesses": [],
+      "output": "rm: cannot remove '/home/desktop/.local/state/wasm-vm/desktop.log': Is a directory\nE5T18D_RUNTIME_STATE_UNAVAILABLE: continuing to recovery login\n"
+    }
+  ]
+}
+/Applications/Xcode.app/Contents/Developer/usr/bin/make web-dist
+bash tools/build-web-dist.sh
+[web-dist] building wasm + installing pinned deps (make web-build)…
+wasm-pack build crates/wasm --target web
+[INFO]: 🎯  Checking for the Wasm target...
+[INFO]: 🌀  Compiling to Wasm...
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling cfg-if v1.0.4
+   Compiling version_check v0.9.5
+   Compiling rustversion v1.0.22
+   Compiling bumpalo v3.20.3
+   Compiling typenum v1.20.1
+   Compiling once_cell v1.21.4
+   Compiling futures-core v0.3.32
+   Compiling futures-task v0.3.32
+   Compiling pin-project-lite v0.2.17
+   Compiling slab v0.4.12
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling serde_core v1.0.228
+   Compiling zmij v1.0.21
+   Compiling log v0.4.33
+   Compiling byteorder v1.5.0
+   Compiling futures-util v0.3.32
+   Compiling smallvec v1.15.2
+   Compiling bitflags v2.13.0
+   Compiling heapless v0.9.3
+   Compiling serde_json v1.0.150
+   Compiling hash32 v0.3.1
+   Compiling serde v1.0.228
+   Compiling generic-array v0.14.7
+   Compiling smoltcp v0.13.1
+   Compiling tinyvec_macros v0.1.1
+   Compiling stable_deref_trait v1.2.1
+   Compiling tinyvec v1.12.0
+   Compiling memchr v2.8.2
+   Compiling itoa v1.0.18
+   Compiling managed v0.8.0
+   Compiling bitflags v1.3.2
+   Compiling unicode-normalization v0.1.25
+   Compiling wasm-vm-wasm-emit v0.0.1 (/Users/blamy/Documents/Codex/e5-t18d-final.YlijDe/repo/crates/wasm-emit)
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-bindgen v0.2.126
+   Compiling syn v2.0.118
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t18d-final.YlijDe/repo/crates/core)
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/e5-t18d-final.YlijDe/repo/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/e5-t18d-final.YlijDe/repo/crates/slirp)
+   Compiling serde_derive v1.0.228
+   Compiling wasm-bindgen-macro v0.2.126
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/Documents/Codex/e5-t18d-final.YlijDe/repo/crates/storage)
+   Compiling js-sys v0.3.103
+   Compiling console_error_panic_hook v0.1.7
+   Compiling web-sys v0.3.103
+   Compiling getrandom v0.2.17
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/e5-t18d-final.YlijDe/repo/crates/wasm)
+    Finished `release` profile [optimized + debuginfo] target(s) in 15.69s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[INFO]: Optimizing wasm binaries with `wasm-opt`...
+[INFO]: License key is set in Cargo.toml but no LICENSE file(s) were found; Please add the LICENSE file(s) to your project directory
+[INFO]: ✨   Done in 16.78s
+[INFO]: 📦   Your wasm pkg is ready to publish at crates/wasm/pkg.
+cd web && npm ci --no-audit --no-fund
+
+added 7 packages in 360ms
+npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn install-scripts   fsevents@2.3.2 (install: (install scripts present))
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+mkdir -p web/pkg web/assets/riscv-tests
+cp -R crates/wasm/pkg/. web/pkg/
+cp guest/prebuilt/hello.elf guest/prebuilt/loops.elf web/assets/
+cp tests/riscv-tests-bin/* web/assets/riscv-tests/
+# Boot artifacts must live UNDER web/ (the Pages publish_dir) so they deploy with the site.
+# Paths mirror the relative URLs in web/artifacts.json (regenerated by tools/gen-web-manifest.sh).
+mkdir -p web/releases/kernel/6.6.63 web/releases/initramfs
+cp releases/kernel/6.6.63/Image web/releases/kernel/6.6.63/Image
+cp releases/initramfs/initramfs.cpio.gz web/releases/initramfs/initramfs.cpio.gz
+# E4 restore-on-first-load: the (optional) compressed busybox boot snapshot, if built. Small
+# enough to ship on Pages (deploy-cloudflare.sh keeps its URL relative, unlike kernel/initramfs).
+bash tools/gen-web-manifest.sh
+wrote web/artifacts.json:
+{
+  "generated": "content-hashed; regenerate with tools/gen-web-manifest.sh",
+  "artifacts": {
+    "kernel": { "url": "releases/kernel/6.6.63/Image", "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce", "size": 24208896 },
+    "initramfs": { "url": "releases/initramfs/initramfs.cpio.gz", "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563", "size": 1151596 },
+    "bootSnapshot": { "url": "releases/boot-snapshot/busybox-ready.snap.gz", "sha256": "ba3168696638db573173b4d266f5234acd01fb2fabe452cc5a1dfde483a61d33", "size": 10983666 }
+  }
+}
+[web-dist] assembling web/dist …
+[web-dist] deploy root: / = landing, /app.html = app
+[web-dist] stamped sw.js app-shell version=927e426ce90c
+[web-dist] done —  34M in web/dist (boot artifacts added at deploy time)
+E5_T18D_IMAGE_DIR="/Users/blamy/Documents/Codex/wasm-vm/target/e5-t18d/desktop-image-v5" E5_T18D_DESKTOP_ASSET_DIR="/Users/blamy/Documents/Codex/wasm-vm/target/e5-t18d/chunks/desktop-v5" node tools/verify/e5-t18d-desktop-recovery.mjs
+E5T18D_IMAGE=e75b04caadd9616915b323497c92df1d5a9d11d55c877afcc95d208dde302416
+E5T18D_BOOT=three-crashes
+E5T18D_BOOT=broken-config
+E5T18D_PROGRESS=three-crashes frames=4 retired=427479218 serial= /proc ... [ ok ]  * Mounting /run ... [ ok ]  * /run/openrc: creating directory  * /run/lock: creating directory  * /run/lock: correcting owner 
+E5T18D_PROGRESS=broken-config frames=4 retired=426479265 serial= /proc ... [ ok ]  * Mounting /run ... [ ok ]  * /run/openrc: creating directory  * /run/lock: creating directory  * /run/lock: correcting owner 
+E5T18D_PROGRESS=three-crashes frames=4 retired=694960465 serial= /proc ... [ ok ]  * Mounting /run ... [ ok ]  * /run/openrc: creating directory  * /run/lock: creating directory  * /run/lock: correcting owner 
+E5T18D_PROGRESS=broken-config frames=4 retired=695960461 serial= /proc ... [ ok ]  * Mounting /run ... [ ok ]  * /run/openrc: creating directory  * /run/lock: creating directory  * /run/lock: correcting owner 
+E5T18D_PROGRESS=three-crashes frames=4 retired=948440805 serial=]  * Mounting /dev/shm ... [ ok ]  * Mounting /sys ... [ ok ]  * Mounting security filesystem ... [ ok ]  * Mounting debug filesystem ... [ ok ] 
+E5T18D_PROGRESS=broken-config frames=4 retired=947941056 serial=]  * Mounting /dev/shm ... [ ok ]  * Mounting /sys ... [ ok ]  * Mounting security filesystem ... [ ok ]  * Mounting debug filesystem ... [ ok ] 
+E5T18D_PROGRESS=three-crashes frames=4 retired=1174420595 serial= Starting udev ... [ ok ]  * Generating a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ...
+E5T18D_PROGRESS=broken-config frames=4 retired=1169421189 serial= Starting udev ... [ ok ]  * Generating a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ...
+E5T18D_PROGRESS=three-crashes frames=4 retired=1381395928 serial= udev ... [ ok ]  * Generating a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ] 
+E5T18D_PROGRESS=broken-config frames=4 retired=1378396509 serial= udev ... [ ok ]  * Generating a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ] 
+E5T18D_PROGRESS=three-crashes frames=4 retired=1594371524 serial= a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ]  * Loading hardware drivers ...
+E5T18D_PROGRESS=broken-config frames=4 retired=1591372096 serial= a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ]  * Loading hardware drivers ...
+E5T18D_PROGRESS=three-crashes frames=4 retired=1848851122 serial= a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ]  * Loading hardware drivers ...
+E5T18D_PROGRESS=broken-config frames=4 retired=1842851864 serial= a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ]  * Loading hardware drivers ...
+E5T18D_PROGRESS=three-crashes frames=4 retired=2099829636 serial= a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ]  * Loading hardware drivers ...
+E5T18D_PROGRESS=broken-config frames=4 retired=2094830341 serial= a rule to create a /dev/root symlink ... [ ok ]  * Populating /dev with existing devices through uevents ... [ ok ]  * Loading hardware drivers ...
+E5T18D_PROGRESS=three-crashes frames=4 retired=2347305850 serial= [ ok ]  * Loading hardware drivers ...modprobe: can't change directory to '/lib/modules': No such file or directory  [ ok ]  * Loading modules ...
+E5T18D_PROGRESS=broken-config frames=4 retired=2344806315 serial= [ ok ]  * Loading hardware drivers ...modprobe: can't change directory to '/lib/modules': No such file or directory  [ ok ]  * Loading modules ...
+E5T18D_PROGRESS=three-crashes frames=4 retired=2593785439 serial=et the system clock  [ !! ]  * Checking local filesystems  ... [ ok ]  * Remounting filesystems ... [ ok ]  * Activating swap devices ... [ ok ] 
+E5T18D_PROGRESS=broken-config frames=4 retired=2590786043 serial=dware clock [UTC] ... [ ok ]  * Checking local filesystems  ... [ ok ]  * Remounting filesystems ... [ ok ]  * Activating swap devices ... [ ok ] 
+E5T18D_PROGRESS=three-crashes frames=4 retired=2842765148 serial=ctory ... [ ok ]  * Setting hostname ... [ ok ]  * Seeding random number generator ... * Saving 256 bits of creditable seed for next boot  [ ok ] 
+E5T18D_PROGRESS=broken-config frames=4 retired=2836266302 serial=ctory ... [ ok ]  * Setting hostname ... [ ok ]  * Seeding random number generator ... * Saving 256 bits of creditable seed for next boot  [ ok ] 
+E5T18D_PROGRESS=three-crashes frames=4 retired=3091743275 serial= seed for next boot  [ ok ]  * Starting busybox syslog ... [ ok ]  * Starting seatd ... [ ok ]  * Waiting for uevents to be processed ... [ ok ] 
+E5T18D_PROGRESS=broken-config frames=4 retired=3079245002 serial=umber generator ... * Saving 256 bits of creditable seed for next boot  [ ok ]  * Starting busybox syslog ... [ ok ]  * Starting seatd ... [ ok ] 
+E5T18D_PROGRESS=three-crashes frames=4 retired=3343222858 serial=ng discover udhcpc failed to get a DHCP lease udhcpc: no lease, forking to background  [ ok ]  * Starting wasm-vm file transfer agent ... [ ok ] 
+E5T18D_PROGRESS=broken-config frames=4 retired=3328724832 serial=roadcasting discover udhcpc failed to get a DHCP lease udhcpc: no lease, forking to background  [ ok ]  * Starting wasm-vm file transfer agent ...
+E5T18D_CASE_PASS=broken-config
+E5T18D_PROGRESS=three-crashes frames=14 retired=3572202370 serial=t=started attempt=1 pid=968 E5T18D_STATUS_END E5T18D_STATUS_BEGIN desktop.attempts=1 desktop.ready=absent desktop.failed=absent weston.pid=968 
+E5T18D_PROGRESS=three-crashes frames=15 retired=3817683278 serial=nt=started attempt=1 pid=968 E5T18D_STATUS_END E5T18D_STATUS_BEGIN desktop.attempts=1 desktop.ready=1 968 desktop.failed=absent weston.pid=968 
+E5T18D_PROGRESS=three-crashes frames=15 retired=4153169595 serial=er=pixman 2026-09-06T04:12:03Z E5T18D event=started attempt=1 pid=968 2026-09-06T04:12:06Z E5T18D event=ready attempt=1 pid=968 E5T18D_STATUS_END 
+E5T18D_PROGRESS=three-crashes frames=16 retired=4710652350 serial=er=pixman 2026-09-06T04:12:03Z E5T18D event=started attempt=1 pid=968 2026-09-06T04:12:06Z E5T18D event=ready attempt=1 pid=968 E5T18D_STATUS_END 
+E5T18D_PROGRESS=three-crashes frames=21 retired=5082112107 serial=er=pixman 2026-09-06T04:12:03Z E5T18D event=started attempt=1 pid=968 2026-09-06T04:12:06Z E5T18D event=ready attempt=1 pid=968 E5T18D_STATUS_END 
+E5T18D_PROGRESS=three-crashes frames=23 retired=5265563154 serial=er=pixman 2026-09-06T04:12:03Z E5T18D event=started attempt=1 pid=968 2026-09-06T04:12:06Z E5T18D event=ready attempt=1 pid=968 E5T18D_STATUS_END 
+file:///Users/blamy/Documents/Codex/e5-t18d-final.YlijDe/repo/tools/verify/e5-t18d-desktop-recovery.mjs:52
+  throw new Error(`bounded wait expired: ${label}`);
+        ^
+
+Error: bounded wait expired: painted desktop attempt 1
+    at waitFor (file:///Users/blamy/Documents/Codex/e5-t18d-final.YlijDe/repo/tools/verify/e5-t18d-desktop-recovery.mjs:52:9)
+    at async file:///Users/blamy/Documents/Codex/e5-t18d-final.YlijDe/repo/tools/verify/e5-t18d-desktop-recovery.mjs:200:11
+    at async Promise.allSettled (index 0)
+    at async file:///Users/blamy/Documents/Codex/e5-t18d-final.YlijDe/repo/tools/verify/e5-t18d-desktop-recovery.mjs:185:20
+
+Node.js v24.20.0
+make: *** [verify-E5-T18d] Error 1

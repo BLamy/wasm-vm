@@ -1,0 +1,192 @@
+cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 23.38s
+cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+cargo test -p wasm-vm-core --features gpu-trace --test guest_clock --test cpu_resume --test desktop_machine_resume -- --nocapture
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.91s
+     Running tests/cpu_resume.rs (target/debug/deps/cpu_resume-6c64fcb637644f66)
+
+running 6 tests
+test malformed_cpu_payload_is_rejected_and_leaves_hart_unchanged ... ok
+test resume_places_the_timer_interrupt_identically ... ok
+test virtio_blk_and_net_sections_round_trip_at_machine_level ... ok
+test whole_machine_resume_round_trips ... ok
+test restore_over_dirty_state_is_byte_identical ... ok
+test resume_trace_matches_continuation ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.42s
+
+     Running tests/desktop_machine_resume.rs (target/debug/deps/desktop_machine_resume-a78ea839bc72b4db)
+
+running 7 tests
+test malformed_saved_agent_dma_blocks_tx_until_transport_reset ... ok
+test headless_resume_remains_compatible_without_desktop_sections ... ok
+test every_fallible_legacy_section_refuses_before_live_state_or_host_callbacks_change ... ok
+test agent_resume_frontier_wraps_and_allows_fresh_tx_before_first_guest_step ... ok
+test malformed_desktop_section_and_missing_device_refuse_without_partial_restore ... ok
+test pending_console_transmits_survive_while_stale_host_session_is_discarded ... ok
+desktop resume continuation: hash=9865e79b681ad970, retired=1
+test desktop_devices_resume_with_ring_continuity_and_fresh_host_state ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+
+     Running tests/guest_clock.rs (target/debug/deps/guest_clock-797d59a74e6abd99)
+
+running 5 tests
+test explicit_resume_freezes_pause_but_background_retains_jump_policy ... ok
+test busy_rdtime_tracks_ten_mhz_not_retire_count_and_clamps_jitter ... ok
+test fresh_and_same_machine_restore_rebase_at_restored_mtime_and_preserve_deadline ... ok
+test rejected_resume_preserves_policy_anchor_and_guest_state ... ok
+test icount_rebase_selection_and_restore_preserve_trace_digest_and_subtick_phase ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+cargo test -p wasm-vm-core --lib --features gpu-trace time::tests -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 6 tests
+test time::tests::huge_gap_jumps_with_notification ... ok
+test sbi::time::tests::set_timer_replaces_and_cancels ... ok
+test time::tests::wallclock_never_steps_backward_under_jittery_host ... ok
+test time::tests::respects_software_mtime_write_as_floor ... ok
+test time::tests::icount_is_pure_function_of_retired ... ok
+test time::tests::moderate_gap_slews_at_bounded_rate ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 319 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-jit-runtime --test timekeeping -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/timekeeping.rs (target/debug/deps/timekeeping-9566e3e30f531541)
+
+running 3 tests
+E4-T25 integration: ICount lockstep WITH timer interrupts byte-identical — retired=9009, mtime=9009, timer_ints=1, jit_blocks_exec=2937
+test icount_lockstep_with_timer_interrupts_byte_identical ... ok
+AC5: two ICount JIT runs byte-identical — 325 trace samples, timer fired at retired=Some(4032), final mtime=9009
+test icount_two_runs_identical_mtime_trace ... ok
+test clock_monotonic_never_decreases_under_churn has been running for over 60 seconds
+AC3: mtime monotone across 52800 samples of JIT/interp/eviction churn (evictions=24598, final mtime=52800)
+test clock_monotonic_never_decreases_under_churn ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 98.75s
+
+cargo test -p wasm-vm-wasm --lib guest_clock_tests -- --nocapture
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.56s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_wasm-7fc2a5cef18649f1)
+
+running 1 test
+test guest_clock_tests::selection_refuses_invalid_and_unavailable_before_mutating_active_anchor ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 25 filtered out; finished in 0.00s
+
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
+node --test web/tests/e5-t26i-guest-clock.test.mjs web/tests/e4-t32-worker-protocol.test.mjs tools/verify/e5-t26f-browser-roundtrip.test.mjs
+✔ make verify-E5-T26f refuses diagnostic create before any build or browser command (16.672125ms)
+✔ make verify-E5-T26f refuses diagnostic reuse before any build or browser command (12.494667ms)
+✔ cold playback fixture keeps errors and conditional success without verbose parameter dumping (0.582208ms)
+✔ one unresolved progress probe prevents subsequent timer ticks from piling up (1.511333ms)
+✔ public sample is bounded and excludes pixels, full records and guest control (0.525625ms)
+✔ navigation rejection frees the probe; stopped sampling suppresses late results (0.765625ms)
+✔ failure artifacts retain phase, error and milestones before browser capture (0.56825ms)
+✔ failure capture retains producer PCM even when the command never completes (0.703458ms)
+✔ failure capture does not issue requests behind a stuck progress probe (0.365792ms)
+✔ cursor timeout uses only the unspent original two-second budget (0.622708ms)
+✔ cursor waits through missing/stale pixels, returns matching sample and disposes its handle (0.405041ms)
+✔ exhausted cursor budget fails before polling; a polling timeout remains a failure (0.426083ms)
+✔ pointer motion precedes the full delayed gesture; no click or physical key occurs early (0.940666ms)
+✔ premature audio unlock during the delay fails before the click or command (0.538625ms)
+✔ overlapped motion spends the original deadline; late command completion still fails (0.8535ms)
+✔ clock comparison is reuse-only, unprofiled, explicit, and preserves F input/deadline (3.902291ms)
+✔ latency opt-in is exactly 1, reuse-only, and never changes the command or key pacing (2.064083ms)
+✔ CPU profiling requires exact 1 and reuse, independently of latency and unchanged input (3.097959ms)
+✔ default acceptance, create, and latency-only reuse never attach a CPU profiler (1.885208ms)
+✔ CPU host adapter uses the owned page session only when Browser is absent (0.255125ms)
+✔ CPU artifact retains exact worker, head/runtime binding, original T0 and byte digest; closes once (0.663417ms)
+✔ CPU stop/write failures are bounded metadata, preserve T0, and still attempt close once (0.588708ms)
+✔ CPU setup failure is captured before finally collection without replacing original error or T0 (0.739041ms)
+✔ CPU collection follows frozen PCM/end and precedes the unchanged cap even when collection stalls (1.175834ms)
+✔ probes register before physical typing but a stalled RPC cannot delay typing or completion cleanup (0.749334ms)
+✔ first non-silent PCM precedes a separately timed existing marker read without extra pixel reads (0.599167ms)
+✔ one held scheduler RPC survives a rejected local-stat read without overlap, even at the time limit (1.754292ms)
+✔ JIT RPC follows scheduler settlement and holds the whole sample until completion (0.636458ms)
+✔ stopping with JIT pending retains scheduler evidence and ignores late success or failure (0.634542ms)
+✔ scheduler settlement after stop or the original deadline never requests JIT (1.516125ms)
+✔ JIT observations copy only named scalar fields and record a missing API as unavailable (0.670708ms)
+✔ without the latency flag neither default nor reuse interaction requests diagnostic JIT stats (1.403792ms)
+✔ sampling is capped at 120 PCM/marker records and 24 spaced scheduler reads within the original restore window (1.792542ms)
+✔ missing diagnostic APIs are recorded as unavailable without fallback calls (0.389834ms)
+✔ latency samples survive the unchanged two-second failure before any failure pixel capture (0.756875ms)
+✔ failure is written before a stalled latency collection; timeout persists and never piles up or accepts late data (0.64325ms)
+✔ command override refuses acceptance/create and rejects unbounded or multiline input (3.075459ms)
+✔ without override all modes keep the exact sh /tmp/a command (1.153333ms)
+✔ diagnostic key pacing is bounded, reuse-only, recorded, and inside the original deadline (2.639458ms)
+✔ reuse override is recorded verbatim in nonacceptance metadata and the physical command record (0.909417ms)
+✔ top-level catch captures the phase before finally cleanup and rethrows the original error (0.4075ms)
+✔ a held coherence read starts after timed interaction and must finish before the next save (0.715417ms)
+✔ diagnostics require explicit mode, absolute scratch and stable port; default remains fresh acceptance (7.082541ms)
+✔ profile creation never overwrites existing data and reuse requires the task marker and completed seal (2.612ms)
+✔ every runtime/kernel/image/origin binding mismatch refuses reuse before copying any profile (4.03575ms)
+✔ harness-only HEAD changes permit reuse while preserving creator and current provenance (4.149708ms)
+✔ runtime binding hashes actual served JS/WASM/kernel bytes, including uncommitted changes (8.442667ms)
+✔ reuse enters autoRestore directly without cold setup or resetting the restored timing boundary (0.506416ms)
+✔ reuse cold-boot fallback fails on its first readiness sample instead of waiting for another boot (0.4465ms)
+✔ reuse copies a sealed profile, preserves actual envelope/metadata and retains separate failed iterations (4.796167ms)
+✔ tampered profile bytes or desktop envelope/normal metadata cannot be reused (2.619708ms)
+✔ profile ownership refuses symlinks instead of traversing or overwriting an external profile (2.316334ms)
+✔ checkpoint session hydration is exact, origin-scoped and refuses an existing different envelope (1.411833ms)
+✔ persistent Chromium identity uses public CDP when browser() is null and always detaches (0.975042ms)
+✔ zero PCM and completion attachment/timestamps reach failure milestones before the PCM assertion (1.113417ms)
+✔ stale or mismatched actual coherence fails after timing and survives in failure milestones (1.425709ms)
+✔ second restore performs the real coherence audit after display/button checks and before evidence (0.054583ms)
+✔ loader task quiescence joins held persistence and permanently closes scheduling (0.824417ms)
+✔ explicit surface, FIFO input/RPC, exact transferable ownership, Tailscale, and stop order (4.69825ms)
+✔ every explicit controller method crosses the runtime and no-provider Tailscale is false/nonfatal (3.019167ms)
+✔ guestClock boot data and current machine state traverse the paired worker protocol without rounding or caching (5.0705ms)
+✔ worker forwards an invalid clock label to validation and propagates refusal before machine mutation (0.325958ms)
+✔ capture PCM_START lifecycle notification crosses the worker boundary (1.566625ms)
+✔ display FrameSink projections cross the worker boundary with private pixel ownership (1.530334ms)
+✔ display clear controls cross the worker boundary without a pixel payload (1.476458ms)
+✔ cursor-plane update and move projections keep MOVE payloads empty and privately owned (1.6295ms)
+✔ RPC ids correlate out-of-order results and arbitrary methods are not exposed (0.242416ms)
+✔ version mismatch/fatal rejects boot, pending and future calls exactly once (0.138584ms)
+✔ fatal after ready rejects pending, whenDone, stats, and future RPCs once (0.212125ms)
+✔ worker rejects an unknown method without executing it and propagates controller rejections (2.922291ms)
+✔ unknown frames fail closed and Tailscale events remain versioned (1.488166ms)
+✔ DONE rejects pending RPCs and DONE-before-READY rejects boot (0.199792ms)
+✔ byte RPC encoding errors reject asynchronously (0.178833ms)
+✔ silent termination is detected before and after READY and rejects pending work (50.936334ms)
+✔ heartbeat bypasses long async RPCs and visibility suspension shifts its deadline (85.1625ms)
+✔ visibility suspension pauses the pre-READY boot deadline (61.8905ms)
+✔ stateDigest gets method-scoped heartbeat grace and the controller remains live afterward (61.679916ms)
+✔ every bulk snapshot RPC emits BUSY/IDLE and survives the scoped heartbeat grace (429.661959ms)
+✔ natural completion emits a scoped terminal digest before DONE (3.096667ms)
+✔ natural completion waits behind a held snapshot RPC before terminal BUSY and cleanup (2.819833ms)
+✔ fatal input during natural cleanup wins over clean DONE (2.776875ms)
+✔ stop and fatal cleanup are bounded when a dependency never settles (34.539333ms)
+✔ stop timeout fails closed without releasing storage under a live loader pump (27.029583ms)
+✔ Tailscale UI exceptions are non-fatal (1.507958ms)
+✔ backend-neutral stop closes main storage but does not RPC after worker termination (0.413ms)
+✔ omitted/icount mode never reads a host clock, including on legacy machines (0.831917ms)
+✔ only exact clock labels pass, before accessing the realm or machine (0.271917ms)
+✔ wall validation samples the injected performance source once with its receiver (0.080041ms)
+✔ wall validation refuses missing, noncallable, nonfinite and negative sources (0.179542ms)
+✔ every wall API must exist before setGuestClock can mutate the machine (0.138167ms)
+✔ selection happens once, resume only rebases wall, and state is the current machine result (0.394417ms)
+✔ machine selection, rebase and state exceptions propagate without fabricated success (0.102042ms)
+✔ loader resume rebases before unpausing/scheduling and refuses all later mutations on error (0.8765ms)
+✔ loader resumeAfterQuota rebases before unpausing/scheduling and refuses all later mutations on error (0.539458ms)
+✔ loader continueReadOnly rebases before unpausing/scheduling and refuses all later mutations on error (0.529167ms)
+ℹ tests 95
+ℹ suites 0
+ℹ pass 95
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 824.935875
+node --check tools/verify/e5-t26i-browser-clock.mjs

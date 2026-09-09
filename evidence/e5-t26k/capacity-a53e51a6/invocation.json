@@ -1,0 +1,29 @@
+{
+  "head": "a53e51a6caf6eb542e4fa2ef4c039f84298a5ec6",
+  "acceptance": false,
+  "common": {
+    "E5_T26F_REQUIRE_HEAD": "a53e51a6caf6eb542e4fa2ef4c039f84298a5ec6",
+    "E5_T26F_HEADED": "0",
+    "E5_T26F_FIXTURE": "resident-aplay-v1",
+    "E5_T26F_DIAGNOSTIC_PROFILE": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26k-capacity-hQWMhT",
+    "E5_T26F_DIAGNOSTIC_PORT": "61632",
+    "E5_T26F_TIMEOUT_MS": "1800000",
+    "E5_T26F_IMAGE": "target/e5-t26f/resident-image-2ae65408-a/alpine-rootfs.ext4",
+    "E5_T26F_IMAGE_INFO": "target/e5-t26f/resident-image-2ae65408-a/desktop-info.json",
+    "E5_T26F_DESKTOP_ASSET_DIR": "target/e5-t26f/chunks/resident-2ae65408"
+  },
+  "command": "tools/verify/e5-t26f-browser-roundtrip.mjs",
+  "sourceBindings": {
+    "tools/verify/e5-t26f-browser-roundtrip.mjs": "bfcdc06f6d6ec330815d7ad12b7a0c101035a11d50348828fe2d39a7370cb219",
+    "tools/verify/e5-t26f-resident-proof.mjs": "28742ad80ee2b8628ae18ffc3d24b02f32a7e9c2d8706ec900bb244e1b548d6c",
+    "tools/verify/e5-t26k-decoded-cache.mjs": "fc6dde980554845fc3d28f5e44dcd0caf0c1659d48b320054a00aeb8e67e9843",
+    "tools/verify/e5-t26k-browser-capacity.mjs": "525be610f2300a2ded5450664ea0e0cb219329a97d9abbae60247b0ecc0f4a9e"
+  },
+  "order": [
+    4096,
+    16384,
+    16384,
+    4096
+  ],
+  "retained": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26k-capacity-hQWMhT"
+}

@@ -1,0 +1,53 @@
+{
+  "state": {
+    "test": true,
+    "configFault": false,
+    "frames": 21,
+    "error": null,
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 800,
+      "fixedViewport": false,
+      "sizeMismatch": false,
+      "framesReceived": 21,
+      "successfulPresents": 21,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": null,
+      "gpu": {
+        "framesReceived": 21,
+        "enqueued": 21,
+        "coalesced": 0,
+        "presented": 21,
+        "successfulPresents": 21,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 41268464,
+        "width": 1280,
+        "height": 800
+      },
+      "latest": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800
+      },
+      "errors": []
+    }
+  },
+  "retired": 4906143085,
+  "serial": " cursor 'dnd-move'\r\ncould not load cursor 'dnd-copy'\r\ncould not load cursor 'dnd-none'\r\nE5T18D_LOG_END\r\nE5T18D_STATUS_BEGIN\r\ndesktop.attempts=1\r\ndesktop.ready=1 961\r\ndesktop.failed=absent\r\nweston.pid="
+}

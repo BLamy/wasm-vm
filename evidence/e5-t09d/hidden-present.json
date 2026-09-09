@@ -1,0 +1,34 @@
+{
+  "schema": "wasm-vm.e5-t09d.hidden-present.v1",
+  "task": "E5-T09d",
+  "status": "passed",
+  "gitHead": "47ef46df0c7d55eeff0365006f2e505e0504e458",
+  "commands": [
+    {
+      "command": "node --test web/tests/e5-t09d-hidden-present.test.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 70,
+      "outputSha256": "74d187fbf9206d25337a49558a68bd40077d4b0466d6b85fdecd6d4bfa450581",
+      "outputTail": "✔ hidden mode drains through one 250 ms timer while producer work continues (0.882833ms)\n✔ visibility transition cancels a delayed timer and resumes the latest plan on rAF (0.159167ms)\n✔ 1,000 alternating visibility callbacks keep one chain and deliver every latest frame (1.815417ms)\n✔ PresentationController exposes fresh scalar vm.stats.gpu snapshots (0.671333ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 42.534959\n",
+      "error": null
+    }
+  ],
+  "proofFiles": {
+    "Makefile": "d4c4fe15951cc4209135c5515c0313e7c48233bb60ee874ca3667301481a94f9",
+    "docs/timekeeping.md": "114e3315cb9cf92e9065e58b05868d947252d4333c310c0e65c662ee346fb260",
+    "web/main.js": "8a64bcd8c38a6659b32b947f5adcde8acf948b6122cc23d90cf5f866053d7f18",
+    "web/src/sink/frame-scheduler.js": "4ab11b844262f32bf3c1f6e0cfa36a866f241273c36e66d1aa8c4679f770e54d",
+    "web/src/sink/visibility-scheduler.js": "c878ce43e806975368e63adce8157ead3a579c4246a770202047a3be3c46ca80",
+    "web/src/sink/visibility-scheduler.ts": "05e785629afb014efafa8f21302e978f8ec20543e1aeaa81f3353f9e1823a284",
+    "web/src/sink/presentation.js": "9233e963240094de98389174b629f2b8b659fc8793e60c28cd2a96f4c5a42426",
+    "web/tests/e5-t09d-hidden-present.test.mjs": "6d636d24a0828b739cd721b372635cb01424046f3a177279692212f423a694d6",
+    "tools/verify/e5-t09d-hidden-present.mjs": "0af19965eae4062af2342fc260cd20146752681b398235ffca6eec5c57a00f73"
+  },
+  "scope": {
+    "independentMachines": false,
+    "webkit": false,
+    "hostRr": false
+  }
+}

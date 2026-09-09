@@ -1,0 +1,1077 @@
+{
+  "schema": "e5-t26f-build-screen-v1",
+  "acceptance": false,
+  "workload": "linux-prefix",
+  "arm": "candidate",
+  "head": "8c892667be0da360af2329f2ae8bf7bf7ef6f10d",
+  "pid": 95401,
+  "node": "v24.20.0",
+  "v8": "13.6.233.17-node.53",
+  "wasmSha256": "7780e9da58180d10c833c4f541d31b139be654fd747879fc13b4fc800463da43",
+  "wasmBytes": 1484145,
+  "initializedMs": 2.1152499999999996,
+  "recordedAt": "2026-09-08T07:32:47.165Z",
+  "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+  "options": {
+    "ramMiB": 256,
+    "initrdBytes": 0,
+    "disk": null,
+    "bootargs": "console=ttyS0 earlycon=sbi",
+    "enableMic": false,
+    "guestClock": "icount",
+    "jitThreshold": 512,
+    "residency": "repack-off",
+    "dynamicChaining": true,
+    "chaining": true,
+    "quantum": 500000,
+    "targetRetired": 50000000,
+    "yield": "setImmediate between chunks"
+  },
+  "constructionMs": 14.311625000000003,
+  "before": {
+    "clock": {
+      "mode": "icount",
+      "mtime": "0",
+      "timebaseHz": 10000000,
+      "clockDiv": 10
+    },
+    "jit": {
+      "hasExecutor": true,
+      "compiledBlocks": 0,
+      "executedBlocks": 0,
+      "retiredViaJit": 0,
+      "directChainEntries": 0,
+      "directChainLinks": 0,
+      "dynamicLinkAttempts": 0,
+      "dynamicLinkHits": 0,
+      "dynamicLinkRefusals": 0,
+      "dynamicLinkRetargets": 0,
+      "dynamicLinkLiveEntries": 0,
+      "dynamicLinkInstalls": 0,
+      "entryCost": {
+        "timingEnabled": false,
+        "timerReads": 0,
+        "hostEntries": 0,
+        "stateCopyCalls": 0,
+        "stateCopyBytes": 0,
+        "stateCopyNs": 0,
+        "engineEntryNs": 0,
+        "indirectTableDispatches": 0,
+        "authorityChecks": 0,
+        "memorySplitExits": 0,
+        "deviceBoundaries": 0,
+        "deviceBoundaryNs": 0
+      },
+      "jitRegionChaining": true,
+      "jitDynamicChaining": true,
+      "guestRetired": 0,
+      "jitEngineCalls": 0,
+      "jitLogicalBlocksPerEngineCall": 0,
+      "jitRetiredShare": 0,
+      "chainLinksMade": 0,
+      "chainLinksCut": 0,
+      "chainDispatchEntries": 0,
+      "chainMaxDepth": 0,
+      "chainLinksFollowed": 0,
+      "jitResidencyPolicy": "repack-off",
+      "jitResidencyCap": 24,
+      "jitSubmittedMembers": 0,
+      "jitCompilePauseNs": 0,
+      "jitCompilePauseMaxNs": 0,
+      "jitCompilePauseSamples": 0,
+      "jitCacheInstalls": 0,
+      "jitCacheRetranslations": 0,
+      "jitCacheEvictions": 0,
+      "jitCacheBatches": 0,
+      "jitCacheCodeBytes": 0,
+      "decodedBlocksDiscarded": 0,
+      "decodedCacheFlushes": 2,
+      "discoveryGeneration": 3,
+      "blockEntryHits": 0,
+      "blockBuilds": 0
+    }
+  },
+  "elapsedMs": 1621.691375,
+  "retired": 50000000,
+  "chunks": [
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499989
+      },
+      "hostMs": 39.79383299999999
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 38.631417
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 23.25758400000001
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 7.552209000000005
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499635
+      },
+      "hostMs": 13.965332999999987
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499719
+      },
+      "hostMs": 22.449542000000008
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 19.462625000000003
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 11.05533299999999
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 8.592792000000003
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 8.502874999999989
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 8.457999999999998
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 8.251791000000026
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499867
+      },
+      "hostMs": 34.593875
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499757
+      },
+      "hostMs": 35.708624999999984
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 4.557458999999994
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 3.0135420000000295
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 3.0424579999999537
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 3.1219169999999963
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 3.079582999999957
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 3.033999999999992
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499899
+      },
+      "hostMs": 10.238290999999947
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499422
+      },
+      "hostMs": 37.50170800000001
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 18.775082999999995
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 40.483333000000016
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 12.257416999999975
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 5.412750000000017
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 500000
+      },
+      "hostMs": 5.197457999999983
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499142
+      },
+      "hostMs": 40.613291000000004
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499102
+      },
+      "hostMs": 43.183874999999944
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499467
+      },
+      "hostMs": 42.283416999999986
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499994
+      },
+      "hostMs": 43.476125000000025
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499884
+      },
+      "hostMs": 40.481583
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499614
+      },
+      "hostMs": 42.568874999999935
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499957
+      },
+      "hostMs": 41.870750000000044
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 40.728166999999985
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499747
+      },
+      "hostMs": 40.98704099999998
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 31.759625000000028
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499928
+      },
+      "hostMs": 29.460542000000032
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499758
+      },
+      "hostMs": 42.88220799999999
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499792
+      },
+      "hostMs": 56.25258400000007
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 47.34754099999998
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499996
+      },
+      "hostMs": 56.88741600000003
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 20.976166999999805
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 5.637459000000035
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499888
+      },
+      "hostMs": 29.89066600000001
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499996
+      },
+      "hostMs": 42.15866600000004
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 41.13687499999992
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 40.53933400000005
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499843
+      },
+      "hostMs": 40.20491599999991
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499995
+      },
+      "hostMs": 77.82837500000005
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 21.285000000000082
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 12.006832999999915
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 9.573249999999916
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 5.270874999999933
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499996
+      },
+      "hostMs": 5.454582999999957
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 5.070375000000013
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 4.829916999999796
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 5.08462499999996
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499996
+      },
+      "hostMs": 5.077499999999873
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 4.742665999999872
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 4.533292000000074
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 3.795291000000134
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499947
+      },
+      "hostMs": 5.9597499999999854
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 20.102750000000015
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 9.259999999999991
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 3.385874999999942
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499996
+      },
+      "hostMs": 2.9505840000001626
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.237291000000141
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.3544999999999163
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.2118329999998423
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499996
+      },
+      "hostMs": 2.53712500000006
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.298915999999963
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.275333000000046
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.1092080000000806
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499996
+      },
+      "hostMs": 2.406541999999945
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.1424999999999272
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499949
+      },
+      "hostMs": 10.054624999999987
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 20.825832999999875
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 3.0792499999997744
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499996
+      },
+      "hostMs": 2.8126250000000255
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.5131659999999556
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.4075000000000273
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.358874999999898
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499996
+      },
+      "hostMs": 2.7705000000000837
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.379666000000043
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.3450840000000426
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.3847500000001673
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499996
+      },
+      "hostMs": 2.6360420000000886
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.3286249999998745
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.3447909999999865
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499949
+      },
+      "hostMs": 15.51320799999985
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499996
+      },
+      "hostMs": 6.3580839999999625
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 1.906833000000006
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.0045410000000174
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 1.922416000000112
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499996
+      },
+      "hostMs": 2.300666999999976
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.0042080000000624
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 1.866666000000123
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499998
+      },
+      "hostMs": 2.2634169999998903
+    },
+    {
+      "budget": 500000,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 499996
+      },
+      "hostMs": 2.210207999999966
+    },
+    {
+      "budget": 5894,
+      "raw": {
+        "done": false,
+        "state": null,
+        "retired": 5894
+      },
+      "hostMs": 0.0382089999998243
+    }
+  ],
+  "after": {
+    "clock": {
+      "mode": "icount",
+      "mtime": "5000000",
+      "timebaseHz": 10000000,
+      "clockDiv": 10
+    },
+    "jit": {
+      "hasExecutor": true,
+      "compiledBlocks": 87,
+      "executedBlocks": 969187,
+      "retiredViaJit": 37586250,
+      "directChainEntries": 3713318,
+      "directChainLinks": 2744173,
+      "dynamicLinkAttempts": 172444,
+      "dynamicLinkHits": 117351,
+      "dynamicLinkRefusals": 55093,
+      "dynamicLinkRetargets": 0,
+      "dynamicLinkLiveEntries": 2,
+      "dynamicLinkInstalls": 11307,
+      "entryCost": {
+        "timingEnabled": false,
+        "timerReads": 0,
+        "hostEntries": 969187,
+        "stateCopyCalls": 1938374,
+        "stateCopyBytes": 96940560,
+        "stateCopyNs": 0,
+        "engineEntryNs": 0,
+        "indirectTableDispatches": 285550,
+        "authorityChecks": 544448,
+        "memorySplitExits": 35447,
+        "deviceBoundaries": 189208,
+        "deviceBoundaryNs": 0
+      },
+      "jitRegionChaining": true,
+      "jitDynamicChaining": true,
+      "guestRetired": 50000000,
+      "jitEngineCalls": 969187,
+      "jitLogicalBlocksPerEngineCall": 3.8313741311016347,
+      "jitRetiredShare": 0.751725,
+      "chainLinksMade": 71,
+      "chainLinksCut": 58,
+      "chainDispatchEntries": 382242,
+      "chainMaxDepth": 128,
+      "chainLinksFollowed": 515363,
+      "jitResidencyPolicy": "repack-off",
+      "jitResidencyCap": 24,
+      "jitSubmittedMembers": 500,
+      "jitCompilePauseNs": 0,
+      "jitCompilePauseMaxNs": 0,
+      "jitCompilePauseSamples": 96,
+      "jitCacheInstalls": 500,
+      "jitCacheRetranslations": 17,
+      "jitCacheEvictions": 77,
+      "jitCacheBatches": 18,
+      "jitCacheCodeBytes": 1533537,
+      "decodedBlocksDiscarded": 74,
+      "decodedCacheFlushes": 2,
+      "discoveryGeneration": 15,
+      "blockEntryHits": 1952778,
+      "blockBuilds": 141636
+    },
+    "ramDigest": "b4deb22077826e86b444325f56d14ac8339886f57a4cfc77350a0ab63476f1f1"
+  },
+  "console": {
+    "bytes": 5648,
+    "sha256": "85bd4fd27a910f70f4eb903efce71ea49c38f9d19661d8649ba38f11dbafb8bf",
+    "text": "[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024\r\n[    0.000000] Machine model: riscv-virtio,qemu\r\n[    0.000000] SBI specification v2.0 detected\r\n[    0.000000] SBI implementation ID=0x574d Version=0x100\r\n[    0.000000] SBI TIME extension detected\r\n[    0.000000] SBI IPI extension detected\r\n[    0.000000] SBI RFENCE extension detected\r\n[    0.000000] SBI SRST extension detected\r\n[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')\r\n[    0.000000] printk: bootconsole [sbi0] enabled\r\n[    0.000000] efi: UEFI not found.\r\n[    0.000000] Zone ranges:\r\n[    0.000000]   DMA32    [mem 0x0000000080000000-0x000000008fffffff]\r\n[    0.000000]   Normal   empty\r\n[    0.000000] Movable zone start for each node\r\n[    0.000000] Early memory node ranges\r\n[    0.000000]   node   0: [mem 0x0000000080000000-0x000000008fffffff]\r\n[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x000000008fffffff]\r\n[    0.000000] SBI HSM extension detected\r\n[    0.000000] Falling back to deprecated \"riscv,isa\"\r\n[    0.000000] riscv: base ISA extensions acdfim\r\n[    0.000000] riscv: ELF capabilities acdfim\r\n[    0.000000] percpu: Embedded 18 pages/cpu s42104 r0 d31624 u73728\r\n[    0.000000] Kernel command line: console=ttyS0 earlycon=sbi\r\n[    0.000000] Dentry cache hash table entries: 32768 (order: 6, 262144 bytes, linear)\r\n[    0.000000] Inode-cache hash table entries: 16384 (order: 5, 131072 bytes, linear)\r\n[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 64512\r\n[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off\r\n[    0.000000] Virtual kernel memory layout:\r\n[    0.000000]       fixmap : 0xff1bfffffea00000 - 0xff1bffffff000000   (6144 kB)\r\n[    0.000000]       pci io : 0xff1bffffff000000 - 0xff1c000000000000   (  16 MB)\r\n[    0.000000]      vmemmap : 0xff1c000000000000 - 0xff20000000000000   (1024 TB)\r\n[    0.000000]      vmalloc : 0xff20000000000000 - 0xff60000000000000   (16384 TB)\r\n[    0.000000]      modules : 0xffffffff0179e000 - 0xffffffff80000000   (2024 MB)\r\n[    0.000000]       lowmem : 0xff60000000000000 - 0xff60000010000000   ( 256 MB)\r\n[    0.000000]       kernel : 0xffffffff80000000 - 0xffffffffffffffff   (2047 MB)\r\n[    0.000000] Memory: 216560K/262144K available (10367K kernel code, 5056K rwdata, 4096K rodata, 2201K init, 539K bss, 45584K reserved, 0K cma-reserved)\r\n[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1\r\n[    0.000000] rcu: Hierarchical RCU implementation.\r\n[    0.000000] rcu: \tRCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=1.\r\n[    0.000000] rcu: \tRCU debug extended QS entry/exit.\r\n[    0.000000] \tTracing variant of Tasks RCU enabled.\r\n[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.\r\n[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=1\r\n[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0\r\n[    0.000000] riscv-intc: 64 local interrupts mapped\r\n[    0.000000] plic: plic@c000000: mapped 95 interrupts with 1 handlers for 2 contexts.\r\n[    0.000000] riscv: providing IPIs using SBI IPI extension\r\n[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.\r\n[    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff max_cycles: 0x24e6a1710, max_idle_ns: 440795202120 ns\r\n[    0.000002] sched_clock: 64 bits at 10MHz, resolution 100ns, wraps every 4398046511100ns\r\n[    0.001300] Console: colour dummy device 80x25\r\n[    0.001500] Calibrating delay loop (skipped), value calculated using timer frequency.. 20.00 BogoMIPS (lpj=40000)\r\n[    0.001657] pid_max: default: 32768 minimum: 301\r\n[    0.002165] LSM: initializing lsm=capability,integrity\r\n[    0.002892] Mount-cache hash table entries: 512 (order: 0, 4096 bytes, linear)\r\n[    0.003026] Mountpoint-cache hash table entries: 512 (order: 0, 4096 bytes, linear)\r\n[    0.014896] RCU Tasks Trace: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.\r\n[    0.015595] riscv: ELF compat mode unsupported\r\n[    0.015676] ASID allocator using 16 bits (65536 entries)\r\n[    0.016581] rcu: Hierarchical SRCU implementation.\r\n[    0.016655] rcu: \tMax phase no-delay instances is 1000.\r\n[    0.018232] EFI services will not be available.\r\n[    0.019072] smp: Bringing up secondary CPUs ...\r\n[    0.019180] smp: Brought up 1 node, 1 CPU\r\n[    0.021674] devtmpfs: initialized\r\n[    0.032298] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns\r\n[    0.032492] futex hash table entries: 256 (order: 2, 16384 bytes, linear)\r\n[    0.033499] pinctrl core: initialized pinctrl subsystem\r\n[    0.043118] NET: Registered PF_NETLINK/PF_ROUTE protocol family\r\n[    0.047454] DMA: preallocated 128 KiB GFP_KERNEL pool for atomic allocations\r\n[    0.047667] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations\r\n[    0.047952] audit: initializing netlink subsys (disabled)\r\n[    0.051280] thermal_sys: Registered thermal governor 'step_wise'\r\n[    0.051450] audit: type=2000 audit(0.048:1): state=initialized audit_enabled=0 res=1\r\n[    0.051689] cpuidle: using governor menu\r\n[    0.076867] cpu0: Ratio of byte access time to unaligned word access is 7.98, unaligned accesses are fast\r\n[    0.098710] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages\r\n[    0.098807] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page\r\n[    0.169777] raid6: int64x8  gen()    42 MB/s\r\n[    0.238348] raid6: int64x4  gen()    57 MB/s\r\n[    0.306691] raid6: int64x2  gen()    58 MB/s\r\n"
+  },
+  "scope": "early no-disk/no-initrd Linux prefix; RAM-only digest is not architectural/device equivalence; real entropy/RTC unchanged"
+}

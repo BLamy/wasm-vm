@@ -31,9 +31,13 @@ PKGS="$BASE_PKGS ${EXTRA_PKGS:-}"
 # and churn experiments deliberately re-resolve the requested world, then the host-side drift gate
 # either updates the lock or refuses/ignores it explicitly.
 LOCKED_INSTALL=1
-if [ "${UPDATE_MANIFEST:-0}" = 1 ]; then LOCKED_INSTALL=0; fi
+# A profile-driven extension can accept the newly-added desktop packages while still installing
+# every package from the committed base lock at its exact version. This keeps the first T17 build
+# independent of a mirror-side point-release bump; UPDATE_MANIFEST only controls whether the
+# resulting (base + extension) lock is accepted by the outer drift gate.
+if [ "${UPDATE_MANIFEST:-0}" = 1 ] && [ "${FORCE_LOCKED_INSTALL:-0}" != 1 ]; then LOCKED_INSTALL=0; fi
 
-OUT="releases/rootfs"
+OUT="${ROOTFS_OUT:-releases/rootfs}"
 IMG_TAG="wasm-vm-rootfs-build:local"
 mkdir -p "$OUT"
 
@@ -52,6 +56,18 @@ CARGO_TARGET_DIR="$ROOTFS_CARGO_TARGET_DIR" bash tools/build-agent.sh "$CHANNEL_
 WVSECCOMP="$PWD/releases/wvseccomp-riscv64"
 CARGO_TARGET_DIR="$ROOTFS_CARGO_TARGET_DIR" bash tools/build-wvseccomp.sh "$WVSECCOMP"
 
+# T22c's optional desktop layer contributes only two compiled artifacts. Its
+# development sysroot is a separate pinned build input, never copied into the guest.
+display_mounts=()
+if [ "${DISPLAY_CANDIDATE:-}" = desktop ] && [ "${E5_T22C_RESIZE:-0}" = 1 ]; then
+  bash tools/image/build-display-tools.sh
+  display_tools_out="${E5_T22C_TOOLS_OUT:-target/e5-t22c/display-tools}"
+  display_mounts=(
+    -v "$PWD/$display_tools_out/wv-display-query:/wv-display-query:ro"
+    -v "$PWD/$display_tools_out/wv-display-resize.so:/wv-display-resize.so:ro"
+  )
+fi
+
 # Build the pinned build image (context = tools/ only). The cold-cache adversarial gate can force
 # every layer to rebuild without changing the production command or tag.
 if [ "${DOCKER_BUILD_NO_CACHE:-0}" = 1 ]; then
@@ -63,6 +79,7 @@ fi
 # The whole build runs in the container (tools/rootfs-inner.sh); only the finished image +
 # manifest come out through the bind mount.
 docker run --rm \
+  ${display_mounts[@]+"${display_mounts[@]}"} \
   -v "$PWD/$OUT:/out" \
   -v "$PWD/tools/rootfs-inner.sh:/rootfs-inner.sh:ro" \
   -v "$PWD/tools/guest/container-smoke.sh:/container-smoke.sh:ro" \
@@ -76,6 +93,10 @@ docker run --rm \
   -v "$PWD/tools/rootfs/wasmvm-agent.initd:/wasmvm-agent.initd:ro" \
   -v "$PWD/tools/rootfs/vm-download:/vm-download:ro" \
   -v "$PWD/tools/rootfs/osc52-copy:/osc52-copy:ro" \
+  -v "$PWD/tools/rootfs/start-desktop:/start-desktop:ro" \
+  -v "$PWD/tools/rootfs/desktop-autologin:/desktop-autologin:ro" \
+  -v "$PWD/tools/rootfs/desktop-runtime.initd:/desktop-runtime.initd:ro" \
+  -v "$PWD/tools/rootfs/desktop-test-console:/desktop-test-console:ro" \
   -e MAIN_REPO="$MAIN_REPO" \
   -e COMMUNITY_REPO="$COMMUNITY_REPO" \
   -e FS_UUID="$FS_UUID" \
@@ -84,7 +105,12 @@ docker run --rm \
   -e PKGS="$PKGS" \
   -e EXTRA_PKGS="${EXTRA_PKGS:-}" \
   -e LOCKED_INSTALL="$LOCKED_INSTALL" \
+  -e FORCE_LOCKED_INSTALL="${FORCE_LOCKED_INSTALL:-0}" \
   -e ALPINE_BRANCH="$ALPINE_BRANCH" \
+  -e DISPLAY_CANDIDATE="${DISPLAY_CANDIDATE:-}" \
+  -e E5_T18B_INTERACTIVE="${E5_T18B_INTERACTIVE:-0}" \
+  -e E5_T18D_RECOVERY="${E5_T18D_RECOVERY:-0}" \
+  -e E5_T22C_RESIZE="${E5_T22C_RESIZE:-0}" \
   "$IMG_TAG" /rootfs-inner.sh
 
 # MANIFEST drift gate (critic #3): apk resolves "latest within v3.20", so a mirror-side

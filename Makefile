@@ -5,7 +5,7 @@
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
         bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc bench-runtime-workloads bench-runtime-compute bench-runtime-workloads-browser bench-runtime-compute-browser \
-        web-test-cpu-worker
+        web-test-cpu-worker verify-E5-T16a verify-E5-T18a verify-E5-T18c verify-E5-T25a verify-E5-T25b verify-E5-T26a verify-E5-T26b verify-E5-T26c verify-E5-T26d verify-E5-T26e verify-E5-T26f verify-E5-T26m verify-E5-T26m-runtime
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -501,6 +501,858 @@ verify-E5-T06c:
 	node --check tools/verify/e5-t06c-present-bench.mjs
 	node tools/verify/e5-t06c-present-bench.mjs
 	@echo "verify-E5-T06c (measured Canvas2D/WebGL2 presentation benchmark): OK"
+
+.PHONY: verify-E5-T06d
+verify-E5-T06d:
+	node --check web/src/sink/presentation.js
+	node --check web/linux-worker-protocol.js
+	node --check web/linux-worker.js
+	node --check tools/verify/e5-t06d-present-integration.mjs
+	node --test web/tests/e4-t32-worker-protocol.test.mjs web/tests/e5-t06d-presentation.test.mjs
+	cargo test -p wasm-vm-core --test virtio_gpu_machine
+	node tools/verify/e5-t06d-present-integration.mjs --output evidence/e5-t06d/presentation-integration.json
+	@echo "verify-E5-T06d (presentation selection and context-loss integration): OK"
+
+.PHONY: verify-E5-T07a
+verify-E5-T07a:
+	# Guest-facing first-light proof: the feature-gated native recorder is enabled only for this
+	# acceptance build; its final trace is compared byte-for-byte with the checked-in fixture.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-cli
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --features gpu-trace --lib
+	cargo test -p wasm-vm-core --features gpu-trace --test virtio_gpu_machine
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	node --check tools/verify/e5-t07a-fbcon-probe.mjs
+	node tools/verify/e5-t07a-fbcon-probe.mjs
+	@echo "verify-E5-T07a (native virtio-gpu fbcon probe trace): OK"
+
+.PHONY: verify-E5-T07b
+verify-E5-T07b:
+	# Cold Chromium proof: the route disables the shipped boot snapshot, attaches the production
+	# FrameSink, and records both the visible canvas and the serial DRM/fbcon boundary.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests -- -D warnings
+	cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib
+	cargo test -p wasm-vm-core --test virtio_gpu_machine
+	node --test web/tests/e5-t06d-presentation.test.mjs
+	$(MAKE) web-build
+	node --check web/first-light.js
+	node --check tools/verify/e5-t07b-first-light.mjs
+	node tools/verify/e5-t07b-first-light.mjs --output evidence/e5-t07b/first-light.json
+	@echo "verify-E5-T07b (Chromium fbcon first light): OK"
+
+.PHONY: verify-E5-T07c
+verify-E5-T07c:
+	# Chromium-only cold boot proof: echo hello targets tty0 while an independent reference buffer
+	# checks every narrowed Canvas2D rectangle, outside-pixel preservation, and queue liveness.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests -- -D warnings
+	cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib
+	cargo test -p wasm-vm-core --test virtio_gpu_machine
+	node --test web/tests/e5-t06d-presentation.test.mjs
+	$(MAKE) web-build
+	node --check web/tty0-damage.js
+	node --check tools/verify/e5-t07c-tty0-damage.mjs
+	node tools/verify/e5-t07c-tty0-damage.mjs --output evidence/e5-t07c/tty0-damage.json
+	@echo "verify-E5-T07c (Chromium tty0 damage rectangles): OK"
+
+.PHONY: verify-E5-T07d
+verify-E5-T07d:
+	# Native null-sink parity plus Chromium-only cold stress/reload proof. Independent machines,
+	# WebKit, and host rr are outside this task's acceptance boundary.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-cli -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib
+	cargo test -p wasm-vm-core --test virtio_gpu_machine
+	cargo test -p wasm-vm-cli --bin wasm-vm
+	node --test web/tests/e5-t06d-presentation.test.mjs
+	$(MAKE) web-build
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	node --check web/tty0-stress.js
+	node --check tools/verify/e5-t07d-native-parity-stress.mjs
+	node tools/verify/e5-t07d-native-parity-stress.mjs --output evidence/e5-t07d/native-parity-stress.json
+	@echo "verify-E5-T07d (native parity and tty0 stress): OK"
+
+.PHONY: verify-E5-T08
+verify-E5-T08:
+	# Chromium + Firefox proof: one real cold guest, visibility-only Display/Serial tabs, the
+	# capture-phase reserved chord, readback-checked PNG, bounded WebM playback, and 50 toggles.
+	node --check web/src/host/console-capture.js
+	node --check web/console-capture.js
+	node --check tools/verify/e5-t08-console-capture.mjs
+	node --test web/tests/console-capture.test.mjs web/tests/capture-policy.test.mjs web/tests/held-keys.test.mjs
+	$(MAKE) web-build
+	node tools/verify/e5-t08-console-capture.mjs --output evidence/e5-t08/console-capture.json
+	@echo "verify-E5-T08 (display/serial host chrome and capture): OK"
+
+.PHONY: verify-E5-T09a
+verify-E5-T09a:
+	# Guest-side bounded damage proof: deterministic unit/integration tests plus the wasm target.
+	node --check tools/verify/e5-t09a-damage-coalescer.mjs
+	node tools/verify/e5-t09a-damage-coalescer.mjs --output evidence/e5-t09a/damage-coalescer.json
+	@echo "verify-E5-T09a (bounded damage coalescer): OK"
+
+.PHONY: verify-E5-T09b
+verify-E5-T09b:
+	# Guest-side bounded tile proof: deterministic unit/integration tests plus the wasm target.
+	node --check tools/verify/e5-t09b-dirty-tiles.mjs
+	node tools/verify/e5-t09b-dirty-tiles.mjs --output evidence/e5-t09b/dirty-tiles.json
+	@echo "verify-E5-T09b (dirty-tile upload planner): OK"
+
+.PHONY: verify-E5-T09c
+verify-E5-T09c:
+	# Browser-side bounded scheduler proof: fake rAF, latest-wins, reentrancy, teardown, and the
+	# opt-in PresentationController seam. Hidden-tab fallback and the end-to-end workload are later slices.
+	node --check web/src/sink/frame-scheduler.js
+	node --check web/src/sink/presentation.js
+	node --check tools/verify/e5-t09c-present-scheduler.mjs
+	node tools/verify/e5-t09c-present-scheduler.mjs --output evidence/e5-t09c/present-scheduler.json
+	@echo "verify-E5-T09c (latest-wins rAF scheduler): OK"
+
+.PHONY: verify-E5-T09d
+verify-E5-T09d:
+	# Hidden-tab drain proof: a bounded 250 ms timer, visibility cancellation/resume, 1,000 mode
+	# transitions, and scalar vm.stats.gpu. The integrated guest workload is E5-T09e.
+	node --check web/src/sink/visibility-scheduler.js
+	node --check web/src/sink/presentation.js
+	node --check tools/verify/e5-t09d-hidden-present.mjs
+	node tools/verify/e5-t09d-hidden-present.mjs --output evidence/e5-t09d/hidden-present.json
+	@echo "verify-E5-T09d (hidden present fallback and metrics): OK"
+
+.PHONY: verify-E5-T09e
+verify-E5-T09e:
+	# Chromium integration: Canvas2D tiled/full-frame A/B readback, 10,000-sequence fuzz,
+	# visible and 4x-throttled latest-wins load, visibility resume, and forced-hidden Linux boot.
+	node --check web/present-integration.js
+	node --check tools/verify/e5-t09e-present-integration.mjs
+	$(MAKE) web-build
+	node tools/verify/e5-t09e-present-integration.mjs --output evidence/e5-t09e/present-integration.json
+	@echo "verify-E5-T09e (damage/frame-pacing integration): OK"
+
+.PHONY: verify-E5-T15a
+verify-E5-T15a:
+	# Native and wasm32 cursorq proof: exact wire decoding, bounded invalid-command handling,
+	# reset/hide lifetime, and the same eight-command machine-boundary sequence on both targets.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests -- -D warnings
+	cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib
+	cargo test -p wasm-vm-core --test virtio_gpu_machine
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	wasm-pack test --node crates/wasm --test gpu_protocol
+	@echo "verify-E5-T15a (bounded cursorq core state and command handling): OK"
+
+.PHONY: verify-E5-T15b
+verify-E5-T15b:
+	# Browser-side cursor conversion proof: alpha-safe PNG round-trip, exact hotspot CSS, bounded
+	# overlay fallback, malformed-input rejection, and 1,000 repeated updates with no sink history.
+	node --check web/src/sink/cursor.js
+	node --test web/tests/e5-t15b-cursor-sink.test.mjs
+	@echo "verify-E5-T15b (bounded cursor resource sink): OK"
+
+.PHONY: verify-E5-T15c
+verify-E5-T15c:
+	# Cursor mode/lifecycle proof plus the direct/worker callback seam. The guest/browser workload
+	# and delayed-frame integration proof remain the E5-T15d boundary.
+	node --check web/src/sink/cursor-controller.js
+	node --check web/loader.js
+	node --check web/linux-worker.js
+	node --check web/linux-worker-host.js
+	node --check web/linux-worker-protocol.js
+	node --check web/main.js
+	node --check tools/verify/e5-t15c-cursor-mode-browser-smoke.mjs
+	node --test web/tests/e5-t15c-cursor-mode.test.mjs web/tests/e4-t32-worker-protocol.test.mjs
+	node tools/verify/e5-t15c-cursor-mode-browser-smoke.mjs
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests -- -D warnings
+	cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib
+	cargo test -p wasm-vm-core --test virtio_gpu_machine
+	cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+	@echo "verify-E5-T15c (cursor mode wiring and lifecycle): OK"
+
+.PHONY: verify-E5-T15d
+verify-E5-T15d:
+	# Native cursorq payload capture plus Chromium integration: independent RGBA/alpha reference,
+	# delayed framebuffer presents, 500 requested MOVE updates, DPR math, oversized fallback, and hide.
+	node --check web/cursor-integration.js
+	node --check tools/verify/e5-t15d-cursor-integration.mjs
+	node --test web/tests/e5-t15d-cursor-integration.test.mjs
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --test virtio_gpu_machine -- -D warnings
+	$(MAKE) web-build
+	node tools/verify/e5-t15d-cursor-integration.mjs
+	@echo "verify-E5-T15d (cursor plane integration and transform-only proof): OK"
+
+.PHONY: verify-E5-T16a
+verify-E5-T16a:
+	# Candidate-neutral display workload contract: exact phases, counters, image-owned digest, and
+	# typed failure paths. Real labwc/weston measurements are the E5-T16b/c boundaries.
+	node --check tools/display-server-workload.mjs
+	node --check tools/verify/e5-t16a-display-server-workload.mjs
+	node --test web/tests/e5-t16a-display-server-workload.test.mjs
+	node tools/verify/e5-t16a-display-server-workload.mjs
+	@echo "verify-E5-T16a (display-server workload and guest metric harness): OK"
+
+.PHONY: verify-E5-T16b
+verify-E5-T16b:
+	# Real Alpine riscv64 finalist proof: build the disposable signed image, run the exact T16a
+	# workload in the native emulator, then inspect the renderer/phase/evidence bindings. This
+	# slice intentionally has no independent-machine or WebKit leg.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-cli
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --features gpu-trace --lib
+	cargo test -p wasm-vm-core --features gpu-trace --test virtio_gpu_machine
+	cargo test -p wasm-vm-cli --bin wasm-vm --features gpu-trace
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	node --check tools/run-labwc-pixman.mjs
+	node --check tools/verify/e5-t16b-labwc-pixman.mjs
+	bash tools/build-labwc-scratch.sh
+	node tools/display-server-workload.mjs run \
+	  --image target/e5-t16b/labwc-image/alpine-rootfs.ext4 \
+	  --output evidence/e5-t16b/labwc-capture.json -- \
+	  node tools/run-labwc-pixman.mjs
+	node tools/verify/e5-t16b-labwc-pixman.mjs \
+	  --capture evidence/e5-t16b/labwc-capture.json
+	node tools/verify/e5-t16b-labwc-pixman.mjs \
+	  --capture evidence/e5-t16b/labwc-capture.json --self-test
+	@echo "verify-E5-T16b (labwc/pixman riscv64 emulator workload): OK"
+
+.PHONY: verify-E5-T16c
+verify-E5-T16c:
+	# Real Alpine riscv64 Weston finalist proof: build the disposable signed image, run the exact
+	# T16a workload in the native emulator, then inspect the renderer/phase/evidence bindings. This
+	# slice intentionally has no independent-machine or WebKit leg.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-cli
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --features gpu-trace --lib
+	cargo test -p wasm-vm-core --features gpu-trace --test virtio_gpu_machine
+	cargo test -p wasm-vm-cli --bin wasm-vm --features gpu-trace
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	node --check tools/run-weston-pixman.mjs
+	node --check tools/verify/e5-t16c-weston-pixman.mjs
+	bash tools/build-weston-scratch.sh
+	node tools/display-server-workload.mjs run \
+	  --image target/e5-t16c/weston-image/alpine-rootfs.ext4 \
+	  --output evidence/e5-t16c/weston-capture.json -- \
+	  node tools/run-weston-pixman.mjs
+	node tools/verify/e5-t16c-weston-pixman.mjs \
+	  --capture evidence/e5-t16c/weston-capture.json
+	node tools/verify/e5-t16c-weston-pixman.mjs \
+	  --capture evidence/e5-t16c/weston-capture.json --self-test
+	@echo "verify-E5-T16c (weston/pixman riscv64 emulator workload): OK"
+
+.PHONY: verify-E5-T16d
+verify-E5-T16d:
+	# Audit both finalists from clean copies of the committed E3 base image. All apk commands run
+	# inside the riscv64 guest against the real Alpine repositories; there is no host package lookup,
+	# independent-machine leg, or WebKit leg in this package-availability slice.
+	cargo fmt --check -p wasm-vm-cli
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-cli --bin wasm-vm --features gpu-trace
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	node --check tools/run-e5-t16d-package-audit.mjs
+	node --check tools/verify/e5-t16d-package-audit.mjs
+	node tools/run-e5-t16d-package-audit.mjs
+	node tools/verify/e5-t16d-package-audit.mjs
+	node tools/verify/e5-t16d-package-audit.mjs --self-test
+	@echo "verify-E5-T16d (Alpine riscv64 display package audit): OK"
+
+.PHONY: verify-E5-T16e
+verify-E5-T16e:
+	# Publish the measured Weston decision from two fresh native-emulator replays, with the
+	# T16d signed package audit as the exact T17 handoff. This slice has no independent-machine
+	# or WebKit leg, and it does not rebuild web/dist because no browser-facing source changed.
+	cargo fmt --check -p wasm-vm-cli
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-cli --bin wasm-vm --features gpu-trace
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	node --check tools/run-weston-pixman.mjs
+	node --check tools/run-e5-t16e-weston-reruns.mjs
+	node --check tools/verify/e5-t16e-display-server-decision.mjs
+	E5_T16C_OUT=target/e5-t16e/weston-image E5_T16C_UPDATE_MANIFEST=1 bash tools/build-weston-scratch.sh
+	node tools/run-e5-t16e-weston-reruns.mjs
+	node tools/verify/e5-t16e-display-server-decision.mjs
+	node tools/verify/e5-t16e-display-server-decision.mjs --self-test
+	@echo "verify-E5-T16e (measured display-server decision and T17 handoff): OK"
+
+.PHONY: verify-E5-T17a
+verify-E5-T17a:
+	# Freeze the T16e-selected signed package set and prove the explicit online/offline cache
+	# contract before any desktop image assembly. This metadata/profile slice has no guest boot,
+	# independent-machine, or WebKit leg.
+	node --check tools/verify/e5-t17a-desktop-package-manifest.mjs
+	node tools/verify/e5-t17a-desktop-package-manifest.mjs
+	node tools/verify/e5-t17a-desktop-package-manifest.mjs --self-test
+	@echo "verify-E5-T17a (signed desktop package manifest and offline profile): OK"
+
+.PHONY: verify-E5-T17b
+verify-E5-T17b:
+	# Assemble the production desktop image from the verified T17a profile and inspect the ext4
+	# read-only through local Docker/debugfs. T17c owns the two-output reproducibility/chunk gate;
+	# this target has no independent-machine, WebKit, or host-rr leg.
+	cargo fmt --check -p wasm-vm-cli
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-cli --bin wasm-vm --features gpu-trace
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	bash -n tools/image/desktop.sh
+	bash -n tools/rootfs-inner.sh
+	node --check tools/verify/e5-t17a-desktop-package-manifest.mjs
+	node --check tools/verify/e5-t17b-desktop-image.mjs
+	E5_T17B_OUT=target/e5-t17b/desktop-image bash tools/image/desktop.sh
+	node tools/verify/e5-t17b-desktop-image.mjs --out target/e5-t17b/desktop-image --self-test
+	@echo "verify-E5-T17b (profile-driven Alpine desktop image assembly): OK"
+
+.PHONY: verify-E5-T17c
+verify-E5-T17c:
+	# Rebuild the T17b image in two distinct output directories, then prove byte/image-manifest
+	# reproducibility, ext4 used-block delta, and content-addressed E3 chunk reuse. The second build
+	# consumes the first build's resolved output lock for the drift gate while both builds install the
+	# same exact input transaction; there is no undeclared package cache,
+	# independent-machine, WebKit, or host-rr leg in this local proof.
+	rm -rf target/e5-t17b/desktop-image target/e5-t17c/repro-b target/e5-t17c/chunks
+	# T17c changes only the image-builder and its verifier. Keep the inherited CLI test suite out of
+	# this target's critical path; the current T17b gate already recorded its full suite, while one
+	# unrelated OCI tamper test is presently flaky on this checkout.
+	cargo fmt --check -p wasm-vm-cli
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	bash -n tools/build-rootfs.sh
+	bash -n tools/image/desktop.sh
+	bash -n tools/rootfs-inner.sh
+	node --check tools/verify/e5-t17a-desktop-package-manifest.mjs
+	node --check tools/verify/e5-t17b-desktop-image.mjs
+	node --check tools/verify/e5-t17c-desktop-image-reproducibility.mjs
+	node tools/verify/e5-t17a-desktop-package-manifest.mjs
+	E5_T17B_OUT=target/e5-t17b/desktop-image bash tools/image/desktop.sh
+	node tools/verify/e5-t17b-desktop-image.mjs --out target/e5-t17b/desktop-image --self-test
+	E5_T17B_OUT=target/e5-t17c/repro-b \
+	E5_T17B_PACKAGE_LOCK=target/e5-t17b/desktop-image/MANIFEST.txt \
+	bash tools/image/desktop.sh
+	touch -t 200001010101 target/e5-t17b/desktop-image/FILE-MANIFEST.txt target/e5-t17c/repro-b/MANIFEST.txt
+	node --check tools/verify/e5-t17c-desktop-image-reproducibility.mjs
+	node tools/verify/e5-t17c-desktop-image-reproducibility.mjs \
+		--out-a target/e5-t17b/desktop-image \
+		--out-b target/e5-t17c/repro-b \
+		--base-image releases/rootfs/alpine-rootfs.ext4 \
+		--cli target/release/wasm-vm --self-test
+	@echo "verify-E5-T17c (desktop reproducibility, ext4 delta, and E3 chunk dedupe): OK"
+
+.PHONY: verify-E5-T17d
+verify-E5-T17d:
+	# Recreate the exact T17c handoff, then run twenty fresh native-emulator boots. The production
+	# image keeps root locked; the desktop startup scripts persist ordering/runtime audit markers
+	# after the serial login prompt and before the fixed post-login instruction bound. There is no independent-machine,
+	# WebKit, or host-rr leg in this local proof.
+	cargo fmt --check -p wasm-vm-cli
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	bash -n tools/rootfs-inner.sh
+	node --check tools/run-e5-t17d-boot-order.mjs
+	node --check tools/verify/e5-t17d-desktop-boot-order.mjs
+	$(MAKE) verify-E5-T17c
+	node tools/run-e5-t17d-boot-order.mjs
+	node tools/verify/e5-t17d-desktop-boot-order.mjs --self-test
+	@echo "verify-E5-T17d (twenty cold desktop boot-order replays): OK"
+
+.PHONY: verify-E5-T17e
+verify-E5-T17e:
+	# Recreate the committed T17c publication, inspect the final image, then run the real local
+	# riscv64 guest through signed apk installation and two save_resume/reload boundaries. The
+	# evidence policy for this slice excludes independent machines, WebKit, and host rr.
+	cargo fmt --check -p wasm-vm-cli
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	bash -n tools/image/desktop.sh
+	bash -n tools/rootfs-inner.sh
+	node --check tools/run-e5-t17e-desktop-persistence.mjs
+	node --check tools/verify/e5-t17e-desktop-persistence.mjs
+	$(MAKE) verify-E5-T17c
+	node tools/run-e5-t17e-desktop-persistence.mjs
+	node tools/verify/e5-t17e-desktop-persistence.mjs --self-test
+	@echo "verify-E5-T17e (desktop persistence, publication, and reload proof): OK"
+
+.PHONY: verify-E5-T18a
+verify-E5-T18a:
+	@set -eu; \
+	  command -v node >/dev/null; \
+	  test -d target/e5-t17c/chunks/desktop-b; \
+	  make web-build; \
+	  node tools/verify/e5-t18a-desktop-cold-boot.mjs
+
+.PHONY: verify-E5-T18b
+verify-E5-T18b:
+	@set -eu; \
+	  command -v node >/dev/null; \
+	  test -s target/e5-t18b/desktop-image-v6/alpine-rootfs.ext4; \
+	  test -s target/e5-t18b/chunks/desktop-v6/manifest.json; \
+	  make web-dist; \
+	  E5_T18B_IMAGE=target/e5-t18b/desktop-image-v6/alpine-rootfs.ext4 E5_T18B_DESKTOP_ASSET_DIR=target/e5-t18b/chunks/desktop-v6 node tools/verify/e5-t18b-desktop-terminal-input.mjs
+
+.PHONY: verify-E5-T18c
+E5_T18C_IMAGE ?= target/e5-t18b/desktop-image-v6/alpine-rootfs.ext4
+E5_T18C_DESKTOP_ASSET_DIR ?= target/e5-t18b/chunks/desktop-v6
+E5_T18C_CLI ?= target/release/wasm-vm
+verify-E5-T18c:
+	@set -eu; \
+	  command -v node >/dev/null; \
+	  test -s "$(E5_T18C_IMAGE)"; \
+	  test -s "$(E5_T18C_DESKTOP_ASSET_DIR)/manifest.json"; \
+	  node --test web/tests/pointer.test.mjs; \
+	  node --test web/tests/e5-t18c-desktop-geometry.test.mjs; \
+	  node --test web/tests/e5-t18c-desktop-cursor.test.mjs; \
+	  node tools/verify/e5-t18c-desktop-cursor-dpr-hit-testing.mjs --self-test; \
+	  make web-dist; \
+	  E5_T18C_DPRS=1,2 E5_T18C_IMAGE="$(E5_T18C_IMAGE)" E5_T18C_DESKTOP_ASSET_DIR="$(E5_T18C_DESKTOP_ASSET_DIR)" E5_T18C_CLI="$(E5_T18C_CLI)" node tools/verify/e5-t18c-desktop-cursor-dpr-hit-testing.mjs
+
+.PHONY: verify-E5-T18d
+E5_T18D_IMAGE_DIR ?= target/e5-t18d/desktop-image-v5
+E5_T18D_DESKTOP_ASSET_DIR ?= target/e5-t18d/chunks/desktop-v5
+verify-E5-T18d:
+	sh -n tools/rootfs/start-desktop tools/rootfs/desktop-autologin tools/rootfs/desktop-runtime.initd tools/rootfs/desktop-test-console
+	bash -n tools/build-rootfs.sh tools/rootfs-inner.sh tools/image/desktop.sh tools/serve-dev.sh
+	node --test web/tests/e5-t18d-desktop-recovery.test.mjs
+	node --test tools/verify/e5-t18d-surface.test.mjs
+	node --test web/tests/e4-t32-worker-protocol.test.mjs
+	node --check tools/verify/e5-t18d-desktop-recovery.mjs
+	docker run --rm -v "$(CURDIR):/repo:ro" wasm-vm-kernel-build:local python3 /repo/tools/verify/e5-t18d-local-fixtures.py
+	docker run --rm --network none --cap-add SYS_PTRACE -v "$(CURDIR):/repo:ro" wasm-vm-kernel-build:local python3 /repo/tools/verify/e5-t18d-state-boundaries.py --disposable
+	$(MAKE) web-dist
+	E5_T18D_IMAGE_DIR="$(E5_T18D_IMAGE_DIR)" E5_T18D_DESKTOP_ASSET_DIR="$(E5_T18D_DESKTOP_ASSET_DIR)" node tools/verify/e5-t18d-desktop-recovery.mjs
+
+.PHONY: verify-E5-T18e
+.PHONY: verify-E5-T22a
+.PHONY: verify-E5-T22b
+.PHONY: verify-E5-T22c
+.PHONY: verify-E5-T22e
+verify-E5-T22c:
+	test -s tools/image/e5-t22c-desktop-image.json
+	bash -n tools/build-rootfs.sh tools/rootfs-inner.sh tools/image/desktop.sh tools/image/build-display-tools.sh tools/verify/e5-t22c-native.sh
+	sh -n tools/rootfs/desktop-test-console
+	node --check web/desktop-resize.js
+	node --check tools/verify/e5-t22c-guest-mode.mjs
+	node --test tools/verify/e5-t22c-observations.test.mjs tools/verify/e5-t22c-publication.test.mjs tools/verify/e5-t22c-symbolize-cpu.test.mjs tools/verify/e5-t18e-publication.test.mjs
+	E5_T22C_TOOLS_OUT=target/e5-t22c/display-tools E5_T17B_OUT=target/e5-t22c/acceptance-image E5_T17B_IMG_SIZE=1G E5_T17B_PACKAGE_LOCK=tools/image/e5-t22c/MANIFEST.txt E5_T18B_INTERACTIVE=1 E5_T18D_RECOVERY=1 E5_T22C_RESIZE=1 bash tools/image/desktop.sh
+	E5_T22C_TOOLS_OUT=target/e5-t22c/display-tools bash tools/verify/e5-t22c-native.sh
+	cargo build --release -p wasm-vm-cli
+	target/release/wasm-vm chunk target/e5-t22c/acceptance-image/alpine-rootfs.ext4 --out target/e5-t22c/chunks/acceptance
+	E5_T22C_CHUNKS=target/e5-t22c/chunks/acceptance node tools/verify/e5-t22c-dev-route.mjs
+	$(MAKE) web-dist
+	node --test tools/verify/e5-t22c-cpu-profile.test.mjs
+	node tools/verify/e5-t22c-content-replay.mjs
+	E5_T22C_ITERATION=0 E5_T22C_IMAGE_DIR=target/e5-t22c/acceptance-image E5_T22C_CHUNKS=target/e5-t22c/chunks/acceptance E5_T22C_TOOLS_OUT=target/e5-t22c/display-tools E5_T22C_OUT=evidence/e5-t22c/acceptance node tools/verify/e5-t22c-guest-mode.mjs
+	E5_DEMO_TASK=E5-T22c E5_DEMO_OUT=evidence/e5-t22c/demo node tools/verify/e5-t18e-demo-smoke.mjs
+
+.PHONY: verify-E5-T22f
+verify-E5-T22f:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --test pmp_privilege_audit --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --test pmp_privilege_audit --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib --features gpu-trace -- --nocapture
+	cargo test -p wasm-vm-core --test pmp_privilege_audit --test predecode_entry_safety --test pmp --test privilege --test tlb --test cpu_resume --test reset --test sv39 --features trace -- --nocapture
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	wasm-pack test --node crates/wasm --test pmp_privilege_audit --test jit_browser_parity -- --nocapture
+	node --test tools/verify/e5-t22f-browser.test.mjs tools/verify/cold-clone.test.mjs
+	E5_T22C_TOOLS_OUT=target/e5-t22f/display-tools E5_T17B_OUT=target/e5-t22f/desktop-image E5_T17B_IMG_SIZE=1G E5_T17B_PACKAGE_LOCK=tools/image/e5-t18e/MANIFEST.txt E5_T18B_INTERACTIVE=1 E5_T18D_RECOVERY=1 E5_T22C_RESIZE=1 bash tools/image/desktop.sh
+	cargo build --release -p wasm-vm-cli
+	target/release/wasm-vm chunk target/e5-t22f/desktop-image/alpine-rootfs.ext4 --out target/e5-t22f/chunks
+	$(MAKE) web-dist
+	node tools/verify/e5-t22f-browser.mjs
+
+.PHONY: verify-E5-T22g
+verify-E5-T22g:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --test jit_entry_timing -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib --test jit_entry_timing --test prof_sampling --test prof_time_accounting --features gpu-trace -- --nocapture
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	wasm-pack test --node crates/wasm --test jit_browser_parity -- --nocapture
+	node --check tools/verify/e5-t22g-jit-entry-timer-worker.mjs
+	node --check tools/verify/e5-t22g-jit-entry-timer.mjs
+	test -s target/e5-t22c/desktop-image-solid-v7/alpine-rootfs.ext4
+	test -s target/e5-t22c/chunks/desktop-solid-v7/manifest.json
+	$(MAKE) web-build
+	E5_T22G_OUT=evidence/e5-t22g/browser node tools/verify/e5-t22g-jit-entry-timer.mjs
+	E5_T22C_ITERATION=1 E5_T22C_PROFILE=0 E5_T22C_CPU_PROFILE=0 E5_T22C_IMAGE_DIR=target/e5-t22c/desktop-image-solid-v7 E5_T22C_CHUNKS=target/e5-t22c/chunks/desktop-solid-v7 E5_T22C_TOOLS_OUT=target/e5-t22c/display-tools E5_T22C_OUT=evidence/e5-t22g/desktop node tools/verify/e5-t22c-guest-mode.mjs
+	E5_DEMO_TASK=E5-T22g E5_DEMO_OUT=evidence/e5-t22g/demo node tools/verify/e5-t18e-demo-smoke.mjs
+
+.PHONY: verify-E5-T25a
+verify-E5-T25a:
+	node --check web/bench/desktop-perf-hooks.js
+	node --check web/src/sink/presentation.js
+	node --check web/main.js
+	node --test web/tests/e5-t25a-perf-hooks.test.mjs web/tests/e5-t06d-presentation.test.mjs
+	node tools/verify/e5-t25a-release-audit.mjs
+	node tools/verify/e5-t25a-browser.mjs
+
+.PHONY: verify-E5-T25b
+verify-E5-T25b:
+	node --check web/bench/desktop-perf.js
+	node --check web/desktop-terminal.js
+	node --test web/tests/e5-t25b-desktop-perf.test.mjs
+	node tools/verify/e5-t25b-release-audit.mjs
+	node tools/verify/e5-t25b-browser.mjs
+
+.PHONY: e5-t25c-assets
+e5-t25c-assets:
+	@if [ ! -s target/e5-t22c/desktop-image-solid-v7/desktop-info.json ] || [ ! -s target/e5-t22c/chunks/desktop-solid-v7/manifest.json ]; then \
+		E5_T22C_TOOLS_OUT=target/e5-t22c/display-tools E5_T17B_OUT=target/e5-t22c/desktop-image-solid-v7 E5_T17B_IMG_SIZE=1G E5_T17B_PACKAGE_LOCK=tools/image/e5-t18e/MANIFEST.txt E5_T18B_INTERACTIVE=1 E5_T18D_RECOVERY=1 E5_T22C_RESIZE=1 bash tools/image/desktop.sh; \
+		cargo build --release -p wasm-vm-cli; \
+		target/release/wasm-vm chunk target/e5-t22c/desktop-image-solid-v7/alpine-rootfs.ext4 --out target/e5-t22c/chunks/desktop-solid-v7; \
+	fi
+
+.PHONY: verify-E5-T25c
+verify-E5-T25c:
+	node --check web/bench/desktop-perf.js
+	node --check web/desktop-terminal.js
+	node --check tools/verify/e5-t25c-browser.mjs
+	node --test web/tests/e5-t25c-desktop-perf.test.mjs web/tests/e5-t25b-desktop-perf.test.mjs
+	node tools/verify/e5-t25c-release-audit.mjs
+	$(MAKE) e5-t25c-assets
+	$(MAKE) web-build
+	E5_T25C_OUT=evidence/e5-t25c/browser node tools/verify/e5-t25c-browser.mjs
+
+.PHONY: verify-E5-T26a
+verify-E5-T26a:
+	# Versioned desktop envelope: exact canonical bytes, digests, duplicate/forward-version refusal,
+	# and the bounded quiesce gate with abort-to-usable-device proof.
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --lib --features gpu-trace desktop_snapshot -- --nocapture
+	# Existing block-device quiesce and whole-machine resume paths must remain intact.
+	cargo clippy -p wasm-vm-core --test virtio_blk_quiesce -- -D warnings
+	cargo test -p wasm-vm-core --test virtio_blk_quiesce
+	cargo test -p wasm-vm-core --test cpu_resume
+	# The envelope and coordinator are no_std/wasm-compatible even though this proof is native.
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	@echo "verify-E5-T26a (versioned desktop envelope and bounded quiesce): OK"
+
+.PHONY: verify-E5-T26b
+verify-E5-T26b:
+	# GPU resource/scanout/cursor snapshots: deterministic shadows, atomic restore, and one repair frame.
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::gpu::snapshot::tests -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::gpu::resources::tests -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::gpu::damage::tests -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::gpu::tiles::tests -- --nocapture
+	# Existing quiesce and resume paths remain intact after the GPU snapshot additions.
+	cargo test -p wasm-vm-core --test virtio_blk_quiesce
+	cargo test -p wasm-vm-core --test cpu_resume
+	# The resource codec and GPU state facade remain no_std/wasm-compatible.
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	@echo "verify-E5-T26b (GPU resource, scanout, cursor, and shadow snapshot): OK"
+
+.PHONY: verify-E5-T26c
+verify-E5-T26c:
+	# Input queues and keyboard LEDs: byte-exact pending-ring restore, release-all reconciliation,
+	# fresh post-restore events, and bounded malformed-payload refusal.
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::input::snapshot::tests -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::input::keyboard::tests -- --nocapture
+	cargo test -p wasm-vm-core --test virtio_keyboard
+	# The input codec and LED payload helpers remain no_std/wasm-compatible.
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	@echo "verify-E5-T26c (virtio-input rings, LEDs, and restore release-all): OK"
+
+.PHONY: verify-E5-T19a
+verify-E5-T19a:
+	# Spec-grounded PCM lifecycle, Linux XRUN recovery, pending-I/O release ordering,
+	# and retained configuration through the sound and whole-machine codecs.
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --lib --features gpu-trace
+	cargo test -p wasm-vm-core --features gpu-trace --test virtio_snd --test virtio_snd_playback --test virtio_snd_queue --test virtio_snd_capture --test virtio_snd_capture_config --test virtio_snd_release_capture --test virtio_snd_machine --test desktop_machine_audio_resume --test desktop_machine_resume --test desktop_machine_resume_verifier -- --nocapture
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	cargo check -p wasm-vm-wasm --lib --target wasm32-unknown-unknown
+	@echo "verify-E5-T19a (PCM lifecycle and Linux XRUN recovery): OK"
+
+.PHONY: verify-E5-T26d
+verify-E5-T26d:
+	# Sound snapshots retain validated guest configuration, discard host rings, and queue bounded
+	# XRUN repair before the next fresh period. Invalid metadata is rejected atomically.
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::snd::snapshot::tests -- --nocapture
+	cargo test -p wasm-vm-core --test virtio_snd
+	cargo test -p wasm-vm-core --test virtio_snd_playback
+	cargo test -p wasm-vm-core --test virtio_snd_queue
+	cargo test -p wasm-vm-core --test virtio_snd_capture
+	cargo test -p wasm-vm-core --test virtio_snd_capture_config
+	cargo test -p wasm-vm-core --test virtio_snd_machine
+	# The snapshot codec remains no_std/wasm-compatible.
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	@echo "verify-E5-T26d (virtio-snd snapshot, ephemeral rings, and XRUN recovery): OK"
+
+.PHONY: verify-E5-T26e
+verify-E5-T26e:
+	# Composite desktop restore: parse-before-mutate, GPU → input → sound staging, agent HELLO,
+	# deterministic T22 viewport planning, full repair publication, and cold fallback on refusal.
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --lib --features gpu-trace desktop_restore -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::console::tests::restore_rehandshake -- --nocapture
+	cargo test -p wasm-vm-core --test virtio_console desktop_restore_uses_live_agent_and_retains_host_reconciliation_state -- --nocapture
+	# Carry the component-level atomicity gates forward at the cross-device boundary.
+	cargo test -p wasm-vm-core --lib --features gpu-trace desktop_snapshot -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::gpu::snapshot::tests -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::input::snapshot::tests -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace dev::virtio::snd::snapshot::tests -- --nocapture
+	# The coordinator and callback contract remain no_std/wasm-compatible.
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	@echo "verify-E5-T26e (desktop restore reconciliation and cold fallback): OK"
+
+.PHONY: verify-E5-T26h
+verify-E5-T26h:
+	# Whole-machine transport/ring continuity, detached decode refusal, and existing codec gates.
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-core --features gpu-trace --test desktop_machine_resume --test desktop_machine_resume_verifier --test desktop_machine_audio_resume --test cpu_resume --test snapshot_coherence --test virtio_blk_quiesce --test virtio_console --test desktop_snapshot_save -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace resume
+	cargo test -p wasm-vm-core --lib --features gpu-trace snapshot
+	cargo test -p wasm-vm-core --lib --features gpu-trace desktop_restore
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	cargo check -p wasm-vm-wasm --lib --target wasm32-unknown-unknown
+	@echo "verify-E5-T26h (whole-machine desktop transport and device resume): OK"
+
+.PHONY: verify-E5-T26f
+E5_T26F_IMAGE ?= target/e5-t26f/desktop-image-aplay-noresize/alpine-rootfs.ext4
+E5_T26F_IMAGE_INFO ?= target/e5-t26f/desktop-image-aplay-noresize/desktop-info.json
+E5_T26F_DESKTOP_ASSET_DIR ?= target/e5-t26f/chunks/desktop-aplay-noresize
+
+verify-E5-T26f:
+	@test -z "$${E5_T26F_DIAGNOSTIC:-}" || { echo "verify-E5-T26f refuses diagnostic mode; use the runner directly for non-acceptance diagnostics" >&2; exit 1; }
+	# Browser desktop round-trip: native/wasm snapshot gates plus the exact local Chromium proof.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib --features gpu-trace desktop_snapshot -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace desktop_restore -- --nocapture
+	cargo test -p wasm-vm-core --test virtio_mmio_slots
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown
+	node --check web/desktop-agent-bridge.js web/desktop-terminal.js web/main.js tools/verify/e5-t26f-browser-roundtrip.mjs
+	node --test web/tests/e4-t32-worker-protocol.test.mjs web/tests/e5-t26e-desktop-restore.test.mjs web/tests/e5-t26f-desktop-agent-bridge.test.mjs web/tests/e5-t26f-readiness.test.mjs web/tests/e5-t26f-jit-residency.test.mjs web/tests/agent-channel.test.mjs
+	node --test tools/verify/e5-t26f-browser-roundtrip.test.mjs tools/verify/e5-t26f-cpu-profile.test.mjs tools/verify/e5-t26f-residency-comparison.test.mjs tools/verify/e5-t26f-completion.test.mjs tools/verify/e5-t26f-drag-geometry.test.mjs tools/verify/e5-t26f-restore-evidence.test.mjs tools/verify/e5-t26f-physical-typing.test.mjs tools/verify/e5-t26f-guest-release.test.mjs
+	node --test tools/verify/e5-t26f-resident-proof.test.mjs tools/verify/e5-t26f-resident-aplay.test.mjs tools/verify/e5-t26f-resident-image.test.mjs tools/verify/e5-t26f-guest-profile.test.mjs
+	node --test tools/verify/e5-t26f-text-oracle.test.mjs tools/verify/e5-t26f-quiet-text-probe.test.mjs
+	$(MAKE) web-dist
+	E5_T26F_IMAGE=$(E5_T26F_IMAGE) E5_T26F_IMAGE_INFO=$(E5_T26F_IMAGE_INFO) E5_T26F_DESKTOP_ASSET_DIR=$(E5_T26F_DESKTOP_ASSET_DIR) node tools/verify/e5-t26f-browser-roundtrip.mjs
+	@echo "verify-E5-T26f (Chromium desktop snapshot round-trip and interaction smoke): OK"
+
+.PHONY: verify-E5-T26f-discovery-observation
+verify-E5-T26f-discovery-observation:
+	# Read-only projection of existing core counters; no execution/queue policy change.
+	cargo fmt --check -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	wasm-pack test --node crates/wasm --test discovery_stats --test decoded_cache_capacity
+	node --check tools/verify/e5-t26f-discovery-observation.mjs
+	node --test tools/verify/e5-t26f-discovery-observation.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs tools/verify/e5-t26f-residency-comparison.test.mjs web/tests/e4-t32-worker-protocol.test.mjs
+	@echo "F discovery observation plumbing: OK; new cold/reuse measurement remains separate, not F acceptance"
+
+.PHONY: verify-E5-T26f-compile-queue-observation
+verify-E5-T26f-compile-queue-observation:
+	# Existing copied queue counters only; browser evidence needs a new cold seal.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	wasm-pack test --node crates/wasm --test compile_queue_stats --test discovery_stats --test decoded_cache_capacity
+	node --check tools/verify/e5-t26f-browser-compile-queue.mjs
+	node --check tools/verify/e5-t26f-compile-queue-observation.mjs
+	node --test tools/verify/e5-t26f-browser-compile-queue.test.mjs tools/verify/e5-t26f-compile-queue-observation.test.mjs tools/verify/e5-t26f-discovery-observation.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs web/tests/e4-t32-worker-protocol.test.mjs
+	@echo "F compile queue observation plumbing: OK; browser timing and F acceptance remain separate"
+
+.PHONY: verify-E5-T26f-buffered-proc
+verify-E5-T26f-buffered-proc:
+	# Guest fixture and recording harness only; this is not F timing acceptance.
+	/bin/sh -n tools/guest/e5-t26f-resident-aplay.sh
+	node --check tools/verify/e5-t26f-browser-buffered-proc.mjs
+	node --test tools/verify/e5-t26f-resident-aplay.test.mjs tools/verify/e5-t26f-browser-buffered-proc.test.mjs tools/verify/e5-t26f-resident-image.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs tools/verify/e5-t26f-compile-queue-observation.test.mjs tools/verify/e5-t26f-physical-typing.test.mjs
+	@echo "F buffered-proc fixture gates: OK; new image and cold-browser evidence remain required"
+
+.PHONY: verify-E5-T26f-single-process-observer
+verify-E5-T26f-single-process-observer:
+	# Guest fixture/build boundary only, not F timing acceptance or an emulator change.
+	/bin/sh -n tools/guest/e5-t26f-resident-observer.sh
+	node tools/verify/e5-t26f-observer.test.mjs
+	node --check tools/verify/e5-t26f-browser-roundtrip.mjs
+	node --check tools/verify/e5-t26f-browser-single-process-observer.mjs
+	node --test tools/verify/e5-t26f-resident-observer.test.mjs tools/verify/e5-t26f-observer-build.test.mjs tools/verify/e5-t26f-observer-image.test.mjs tools/verify/e5-t26f-browser-single-process-observer.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs tools/verify/e5-t26f-compile-queue-observation.test.mjs tools/verify/e5-t26f-physical-typing.test.mjs
+	@echo "F single-process fixture gates: OK; actual pinned cross-build/image and new cold-browser evidence remain required"
+
+.PHONY: verify-E5-T26l verify-E5-T26l-runtime
+verify-E5-T26l-runtime:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests --features trace,gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --features trace,gpu-trace --lib -- --nocapture
+	cargo test -p wasm-vm-core --features trace,gpu-trace --test async_compile_pipeline --test predecode_diff --test predecode_smc_diff --test predecode_entry_safety --test jit_entry_timing --test cpu_resume --test desktop_machine_resume -- --nocapture
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	wasm-pack test --node crates/wasm --test jit_browser_parity --test discovery_stats --test decoded_cache_capacity
+	node --check tools/verify/e5-t26l-browser-priority.mjs
+	node --test tools/verify/e5-t26l-browser-priority.test.mjs tools/verify/e5-t26f-discovery-observation.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs web/tests/e4-t32-worker-protocol.test.mjs
+	@echo "L runtime/selection gates: OK; new cold browser recording remains separate"
+
+# A new seal and default-policy screen; a recorded F timing miss is never F acceptance.
+verify-E5-T26l: verify-E5-T26l-runtime
+	$(MAKE) web-dist
+	E5_DEMO_TASK=E5-T26l E5_DEMO_OUT=evidence/e5-t26l/demo node tools/verify/e5-t18e-demo-smoke.mjs
+	node tools/verify/e5-t26l-browser-priority.mjs
+	@echo "verify-E5-T26l (live compile selection and browser screen, not F acceptance): OK"
+
+.PHONY: verify-E5-T26m verify-E5-T26m-runtime
+verify-E5-T26m-runtime:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-wasm --lib --test jit_browser_parity --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --test interrupts --test privilege --test pmp_privilege_audit --test pmp_privilege_adversarial
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+	wasm-pack test --node crates/wasm --lib --test jit_browser_parity -- --nocapture
+
+verify-E5-T26m: verify-E5-T26m-runtime
+	@echo "verify-E5-T26m (inline-context interrupt bits): OK"
+
+.PHONY: verify-E5-T26n
+verify-E5-T26n: verify-E5-T26m-runtime
+	@echo "verify-E5-T26n (SPP context and guest SRET authority): OK"
+
+.PHONY: verify-E5-T26o
+verify-E5-T26o:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --test plic --test plic_sparse --test plic_sparse_verifier --features trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --test plic_sparse --test plic_sparse_verifier --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --features trace,gpu-trace --lib dev::plic -- --nocapture
+	cargo test -p wasm-vm-core --features trace --test plic --test plic_sparse --test plic_sparse_verifier --test interrupts -- --nocapture
+	cargo test -p wasm-vm-jit-runtime --test chaining device_completion_fires_inside_chained_loop -- --nocapture
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+	wasm-pack test --node crates/wasm --test plic_sparse --test plic_sparse_verifier -- --nocapture
+	@echo "verify-E5-T26o (sparse PLIC selection, not F latency acceptance): OK"
+
+.PHONY: verify-E5-T26k verify-E5-T26k-runtime
+.PHONY: verify-E5-T26p
+verify-E5-T26p:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --test retirement_capture --test retirement_capture_verifier --example retirement_capture_baseline --features trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --test retirement_capture --test retirement_capture_baseline --test retirement_capture_verifier --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --features trace --test retirement_capture --test retirement_capture_verifier --test hart_memory --test trace_mem_exec --test trace_retire --test rv64a --test rv64f --test rv64d --test predecode_diff --test predecode_smc_diff --test zicntr --test privilege -- --nocapture
+	cargo test -p wasm-vm-core --features trace --test csr fence_i_and_wfi_retire_as_noops -- --exact --nocapture
+	cargo run --release -p wasm-vm-core --features trace --example retirement_capture_baseline
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+	wasm-pack test --node crates/wasm --test retirement_capture --test retirement_capture_baseline --test retirement_capture_verifier --test hart_mem --test hart_ctrl --test jit_browser_parity --test rv64a --test rv64f --test rv64d --test mmio --test icount_divider --test discovery_stats --test wrapper -- --nocapture
+	bash tools/check-zero-cost.sh --selftest
+	@echo "verify-E5-T26p (optional retirement capture; not F latency or Omarchy acceptance): OK"
+
+verify-E5-T26k-runtime:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests --features trace,gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --features trace,gpu-trace --lib decoded_cache_capacity_tests -- --nocapture
+	cargo test -p wasm-vm-core --features trace,gpu-trace --test predecode_diff --test predecode_smc_diff --test cpu_resume --test desktop_machine_resume -- --nocapture
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	node --check tools/verify/e5-t26k-browser-capacity.mjs
+	node --check tools/verify/e5-t26f-browser-roundtrip.mjs
+	node --test web/tests/e5-t26k-decoded-cache.test.mjs web/tests/e5-t26j-icount-divider.test.mjs web/tests/e5-t26i-guest-clock.test.mjs web/tests/e4-t32-worker-protocol.test.mjs
+	node --test tools/verify/e5-t26k-decoded-cache.test.mjs tools/verify/e5-t26k-browser-capacity.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs tools/verify/e5-t26f-quiet-text-probe.test.mjs tools/verify/e5-t26f-browser-roundtrip.test.mjs tools/verify/e5-t26f-completion.test.mjs tools/verify/e5-t26f-residency-comparison.test.mjs
+
+# A fresh runtime-bound cold seal plus ABBA; measured timing failures remain failures of F.
+verify-E5-T26k: verify-E5-T26k-runtime
+	wasm-pack test --node crates/wasm --test decoded_cache_capacity --test icount_divider --test guest_clock
+	$(MAKE) web-dist
+	node tools/verify/e5-t26k-browser-capacity.mjs
+	@echo "verify-E5-T26k (bounded decoded-cache selection and measurement, not F acceptance): OK"
+
+.PHONY: verify-E5-T26j verify-E5-T26j-runtime
+verify-E5-T26j-runtime:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --features gpu-trace --test icount_divider --test guest_clock --test cpu_resume --test desktop_machine_resume -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace time::tests -- --nocapture
+	cargo test -p wasm-vm-jit-runtime --test timekeeping -- --nocapture
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	node --check web/tests/e5-t26j-icount-divider.test.mjs
+	node --check tools/verify/e5-t26j-runner.test.mjs
+	node --check tools/verify/e5-t26j-browser-clock.test.mjs
+	node --test web/tests/e5-t26j-icount-divider.test.mjs web/tests/e5-t26i-guest-clock.test.mjs web/tests/e4-t32-worker-protocol.test.mjs tools/verify/e5-t26j-runner.test.mjs tools/verify/e5-t26j-browser-clock.test.mjs tools/verify/e5-t26f-browser-roundtrip.test.mjs tools/verify/e5-t26f-completion.test.mjs
+	node --check tools/verify/e5-t26j-clock-worker.mjs
+	node --check tools/verify/e5-t26j-browser-clock.mjs
+
+# One new authenticated seal and the fixed ABBA sequence. Negative timings remain failures of F,
+# not failures to measure this explicit configuration boundary and never default promotion.
+verify-E5-T26j: verify-E5-T26j-runtime
+	wasm-pack test --node crates/wasm --test icount_divider --test guest_clock
+	$(MAKE) web-dist
+	node tools/verify/e5-t26j-clock-worker.mjs
+	E5_DEMO_TASK=E5-T26j E5_DEMO_OUT=evidence/e5-t26j/demo node tools/verify/e5-t18e-demo-smoke.mjs
+	node tools/verify/e5-t26j-browser-clock.mjs
+	@echo "verify-E5-T26j (explicit ICount divider and measured comparison, not F timing): OK"
+
+.PHONY: verify-E5-T26i verify-E5-T26i-runtime
+verify-E5-T26i-runtime:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --features gpu-trace --test guest_clock --test cpu_resume --test desktop_machine_resume -- --nocapture
+	cargo test -p wasm-vm-core --lib --features gpu-trace time::tests -- --nocapture
+	cargo test -p wasm-vm-jit-runtime --test timekeeping -- --nocapture
+	cargo test -p wasm-vm-wasm --lib guest_clock_tests -- --nocapture
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	node --test web/tests/e5-t26i-guest-clock.test.mjs web/tests/e4-t32-worker-protocol.test.mjs tools/verify/e5-t26f-browser-roundtrip.test.mjs
+	node --check tools/verify/e5-t26i-browser-clock.mjs
+
+# The browser leg records both modes, retaining F timing failures without waiving them.
+# It requires the authenticated desktop image/chunks (E5_T26I_IMAGE/_IMAGE_INFO/_ASSET_DIR).
+# Reuse E5_T26I_CHECKPOINT only for the exact sealed runtime; the runner verifies every binding.
+verify-E5-T26i: verify-E5-T26i-runtime
+	wasm-pack test --node crates/wasm --lib --test guest_clock -- guest_clock --nocapture
+	$(MAKE) web-dist
+	node tools/verify/e5-t26i-clock-worker.mjs
+	E5_DEMO_TASK=E5-T26i E5_DEMO_OUT=evidence/e5-t26i/demo node tools/verify/e5-t18e-demo-smoke.mjs
+	node tools/verify/e5-t26i-browser-clock.mjs
+	@echo "verify-E5-T26i (opt-in clock lifecycle and unprofiled browser comparison, not F timing): OK"
+
+verify-E5-T22e:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib --features gpu-trace -- --nocapture
+	wasm-pack test --node crates/wasm --lib -- --nocapture
+	$(MAKE) web-dist
+	node --check tools/verify/e5-t22e-display-reset.mjs
+	node tools/verify/e5-t22e-display-reset.mjs
+
+verify-E5-T22b:
+	node --check web/src/sink/viewport.js
+	node --check web/main.js
+	node --check web/display-resize.js
+	node --test web/tests/e5-t22b-viewport.test.mjs web/tests/e5-t06a-canvas2d.test.mjs web/tests/e5-t06b-webgl.test.mjs web/tests/e5-t06d-presentation.test.mjs web/tests/e5-t09c-present-scheduler.test.mjs web/tests/e5-t09d-hidden-present.test.mjs web/tests/pointer.test.mjs
+	node tools/verify/e5-t22b-viewport.mjs
+
+verify-E5-T22a:
+	cargo test -p wasm-vm-core --features gpu-trace dev::virtio::gpu::tests::set_display -- --nocapture
+	wasm-pack test --node crates/wasm --lib -- --nocapture
+	node --test web/tests/e4-t32-worker-protocol.test.mjs
+	node tools/verify/e5-t22a-display-hotplug.mjs
+
+verify-E5-T18e:
+	node --check tools/verify/e5-t18e-desktop-bringup.mjs
+	node --test tools/verify/e5-t18e-publication.test.mjs tools/verify/e5-t18e-verifier.test.mjs tools/verify/e5-t18e-cache.test.mjs tools/verify/e5-t18e-cache-verifier.test.mjs tools/verify/e5-t18d-surface.test.mjs
+	node tools/verify/e5-t18e-desktop-bringup.mjs
 
 .PHONY: verify-E3-T12a
 verify-E3-T12a:

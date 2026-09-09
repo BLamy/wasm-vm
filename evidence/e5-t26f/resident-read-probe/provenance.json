@@ -1,0 +1,16 @@
+{
+  "acceptance": false,
+  "head": "2ace135363cf0fa3cf7ba978fe6810e564eecc03",
+  "source": "e5-t26f-ash-write-probe-native",
+  "sourceStateBeforeAndAfter": "exited sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc",
+  "image": "sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc",
+  "container": "e5-t26f-ash-read-probe-native-1788878382451",
+  "network": "none",
+  "cpuLimit": 1,
+  "memoryMiB": 128,
+  "pidsLimit": 32,
+  "startedAt": "2026-09-08T14:39:42.973Z",
+  "finishedAt": "2026-09-08T14:39:43.146Z",
+  "exitCode": 0,
+  "helperSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c"
+}

@@ -1,0 +1,56 @@
+{
+  "provenance": "Preserved from this fresh verifier session's original tool result (chunk 51d54e), not a rerun; original case log strings are retained below.",
+  "command": "/usr/bin/time -p docker run --rm --network none -v \"$PWD:/repo:ro\" wasm-vm-kernel-build:local python3 /repo/tools/verify/e5-t18d-local-fixtures.py",
+  "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+  "head": "9ed9e0d1c57daf64f6362193bc30b79482dd3258",
+  "harnessSha256": "acc047f918dfff8f353e056cba1649b08442179c9637ef951a480fb46add3e47",
+  "exitCode": 0,
+  "hostElapsedSeconds": 105.06,
+  "result": {
+    "scope": "Linux process-double precheck, not guest acceptance",
+    "supervisorSha256": "6752fb4a165e85c130d50d5d27775cac102f5d014c3de8263f1aaaa1a5b8e799",
+    "passed": 10,
+    "cases": [
+      {
+        "case": "three-crashes-and-reentry",
+        "log": "2026-09-06T05:03:50Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman\n2026-09-06T05:03:50Z E5T18D event=started attempt=1 pid=20\n2026-09-06T05:03:50Z E5T18D event=ready attempt=1 pid=20\n2026-09-06T05:03:50Z E5T18D event=exit attempt=1 pid=20 status=137\n2026-09-06T05:03:50Z E5T18D event=restart next=2\n2026-09-06T05:03:51Z E5T18D event=attempt attempt=2 backend=drm renderer=pixman\n2026-09-06T05:03:51Z E5T18D event=started attempt=2 pid=31\n2026-09-06T05:03:51Z E5T18D event=ready attempt=2 pid=31\n2026-09-06T05:03:51Z E5T18D event=exit attempt=2 pid=31 status=137\n2026-09-06T05:03:51Z E5T18D event=restart next=3\n2026-09-06T05:03:52Z E5T18D event=attempt attempt=3 backend=drm renderer=pixman\n2026-09-06T05:03:52Z E5T18D event=started attempt=3 pid=42\n2026-09-06T05:03:52Z E5T18D event=ready attempt=3 pid=42\n2026-09-06T05:03:52Z E5T18D event=exit attempt=3 pid=42 status=137\n2026-09-06T05:03:52Z E5T18D event=fallback reason=restart-budget-exhausted attempts=3\n2026-09-06T05:03:52Z E5T18D event=latched attempts=3\n"
+      },
+      {
+        "case": "seatd-delay-500ms",
+        "log": "2026-09-06T05:03:52Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman\n2026-09-06T05:03:53Z E5T18D event=started attempt=1 pid=65\n2026-09-06T05:03:53Z E5T18D event=ready attempt=1 pid=65\n"
+      },
+      {
+        "case": "video",
+        "log": "2026-09-06T05:03:54Z E5T18D event=fallback reason=video-device-missing attempts=0\n"
+      },
+      {
+        "case": "runtime",
+        "log": "2026-09-06T05:03:54Z E5T18D event=fallback reason=runtime-directory-missing attempts=0\n"
+      },
+      {
+        "case": "renderer",
+        "log": "2026-09-06T05:03:54Z E5T18D event=fallback reason=unsupported-renderer attempts=0\n"
+      },
+      {
+        "case": "config",
+        "log": "2026-09-06T05:03:54Z E5T18D event=fallback reason=compositor-config-missing attempts=0\n"
+      },
+      {
+        "case": "config-removed-after-readiness",
+        "log": "2026-09-06T05:03:54Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman\n2026-09-06T05:03:54Z E5T18D event=started attempt=1 pid=112\n2026-09-06T05:03:54Z E5T18D event=ready attempt=1 pid=112\n2026-09-06T05:03:54Z E5T18D event=exit attempt=1 pid=112 status=137\n2026-09-06T05:03:54Z E5T18D event=restart next=2\n2026-09-06T05:03:55Z E5T18D event=fallback reason=compositor-config-missing attempts=1\n"
+      },
+      {
+        "case": "early-exit",
+        "log": "2026-09-06T05:03:55Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman\n2026-09-06T05:03:55Z E5T18D event=started attempt=1 pid=132\n2026-09-06T05:03:55Z E5T18D event=not-ready attempt=1 pid=132 reason=early-exit status=23\n2026-09-06T05:03:55Z E5T18D event=restart next=2\n2026-09-06T05:03:56Z E5T18D event=attempt attempt=2 backend=drm renderer=pixman\n2026-09-06T05:03:56Z E5T18D event=started attempt=2 pid=141\n2026-09-06T05:03:56Z E5T18D event=not-ready attempt=2 pid=141 reason=early-exit status=23\n2026-09-06T05:03:56Z E5T18D event=restart next=3\n2026-09-06T05:03:57Z E5T18D event=attempt attempt=3 backend=drm renderer=pixman\n2026-09-06T05:03:57Z E5T18D event=started attempt=3 pid=150\n2026-09-06T05:03:57Z E5T18D event=not-ready attempt=3 pid=150 reason=early-exit status=23\n2026-09-06T05:03:57Z E5T18D event=fallback reason=restart-budget-exhausted attempts=3\n"
+      },
+      {
+        "case": "bounded-shutdown-kill",
+        "log": "2026-09-06T05:03:57Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman\n2026-09-06T05:03:57Z E5T18D event=started attempt=1 pid=166\n2026-09-06T05:03:57Z E5T18D event=ready attempt=1 pid=166\n2026-09-06T05:03:57Z E5T18D event=shutdown\n"
+      },
+      {
+        "case": "startup-timeout",
+        "log": "2026-09-06T05:04:02Z E5T18D event=attempt attempt=1 backend=drm renderer=pixman\n2026-09-06T05:04:02Z E5T18D event=started attempt=1 pid=192\n2026-09-06T05:04:32Z E5T18D event=not-ready attempt=1 pid=192 reason=startup-timeout\n2026-09-06T05:04:32Z E5T18D event=restart next=2\n2026-09-06T05:04:33Z E5T18D event=attempt attempt=2 backend=drm renderer=pixman\n2026-09-06T05:04:33Z E5T18D event=started attempt=2 pid=263\n2026-09-06T05:05:04Z E5T18D event=not-ready attempt=2 pid=263 reason=startup-timeout\n2026-09-06T05:05:04Z E5T18D event=restart next=3\n2026-09-06T05:05:05Z E5T18D event=attempt attempt=3 backend=drm renderer=pixman\n2026-09-06T05:05:05Z E5T18D event=started attempt=3 pid=334\n2026-09-06T05:05:35Z E5T18D event=not-ready attempt=3 pid=334 reason=startup-timeout\n2026-09-06T05:05:35Z E5T18D event=fallback reason=restart-budget-exhausted attempts=3\n"
+      }
+    ]
+  }
+}

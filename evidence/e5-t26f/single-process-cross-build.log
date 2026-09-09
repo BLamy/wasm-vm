@@ -1,0 +1,76 @@
+{
+  "schema": "wasm-vm.e5-t26f.observer-build.v1",
+  "task": "E5-T26f",
+  "source": {
+    "path": "tools/guest/e5-t26f-observer.c",
+    "sha256": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+    "size": 13268
+  },
+  "binary": {
+    "path": "target/e5-t26f/observer-build-v1/e5t26f-observe",
+    "sha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+    "size": 30960
+  },
+  "compiler": {
+    "version": "0.16.0",
+    "path": "/opt/homebrew/Cellar/zig/0.16.0_1/bin/zig",
+    "sha256": "747a9b519198afe71ad190a2387ce28cee879894d7ebc4e34c042b3ebf623c08"
+  },
+  "target": "riscv64-linux-musl",
+  "cpu": "baseline_rv64",
+  "abi": "lp64d",
+  "isa": "RV64GC",
+  "flags": [
+    "-target",
+    "riscv64-linux-musl",
+    "-mcpu=baseline_rv64",
+    "-mabi=lp64d"
+  ],
+  "note": "ISA is claimed by compiler target/flags; ELF headers only establish format and ABI compatibility.",
+  "argv": [
+    "/opt/homebrew/Cellar/zig/0.16.0_1/bin/zig",
+    "cc",
+    "-target",
+    "riscv64-linux-musl",
+    "-mcpu=baseline_rv64",
+    "-mabi=lp64d",
+    "-std=c11",
+    "-Os",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-g0",
+    "-s",
+    "-static",
+    "-fno-pie",
+    "-fno-ident",
+    "-ffile-prefix-map=/Users/blamy/Documents/Codex/wasm-vm=/wasm-vm",
+    "-Wl,--build-id=none",
+    "-Wl,-no-pie",
+    "tools/guest/e5-t26f-observer.c",
+    "-o",
+    "target/e5-t26f/observer-build-v1/e5t26f-observe"
+  ],
+  "epoch": 1731542400,
+  "environment": {
+    "inherited": [
+      "PATH"
+    ],
+    "SOURCE_DATE_EPOCH": "1731542400",
+    "ZIG_GLOBAL_CACHE_DIR": "target/e5-t26f/observer-build-v1/.zig-global-cache",
+    "ZIG_LOCAL_CACHE_DIR": "target/e5-t26f/observer-build-v1/.zig-local-cache"
+  },
+  "elf": {
+    "class": "ELF64",
+    "data": "little-endian",
+    "type": "ET_EXEC",
+    "machine": "RISC-V",
+    "machineNumber": 243,
+    "flags": 5,
+    "rvc": true,
+    "floatAbi": "double",
+    "programHeaders": 8,
+    "loadSegments": 3,
+    "static": true
+  }
+}

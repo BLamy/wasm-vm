@@ -1,0 +1,800 @@
+^Dcargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+cargo clippy -p wasm-vm-core --lib --test jit_entry_timing -- -D warnings
+   Compiling libc v0.2.186
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling unicode-ident v1.0.24
+    Checking cfg-if v1.0.4
+   Compiling zerocopy v0.8.52
+   Compiling version_check v0.9.5
+   Compiling getrandom v0.3.4
+   Compiling serde_core v1.0.228
+    Checking bitflags v2.13.0
+    Checking typenum v1.20.1
+   Compiling crossbeam-utils v0.8.21
+   Compiling serde v1.0.228
+   Compiling rustix v1.1.4
+   Compiling zmij v1.0.21
+   Compiling getrandom v0.4.3
+   Compiling autocfg v1.5.1
+    Checking either v1.16.0
+    Checking regex-syntax v0.8.11
+   Compiling serde_json v1.0.150
+   Compiling generic-array v0.14.7
+   Compiling num-traits v0.2.19
+    Checking once_cell v1.21.4
+    Checking ciborium-io v0.2.2
+   Compiling rayon-core v1.13.0
+    Checking anstyle v1.0.14
+    Checking memchr v2.8.2
+    Checking itoa v1.0.18
+    Checking fastrand v2.4.1
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+    Checking clap_lex v1.1.0
+    Checking clap_builder v4.6.0
+    Checking regex-automata v0.4.14
+    Checking crossbeam-epoch v0.9.18
+    Checking crossbeam-deque v0.8.6
+    Checking itertools v0.10.5
+    Checking bit-vec v0.8.0
+    Checking smallvec v1.15.2
+    Checking same-file v1.0.6
+   Compiling syn v2.0.118
+    Checking fnv v1.0.7
+    Checking quick-error v1.2.3
+    Checking cast v0.3.0
+    Checking walkdir v2.5.0
+    Checking bit-set v0.8.0
+    Checking regex v1.12.4
+    Checking clap v4.6.1
+    Checking oorandom v11.1.5
+    Checking anes v0.1.6
+    Checking unarray v0.1.4
+    Checking log v0.4.33
+    Checking criterion-plot v0.5.0
+    Checking errno v0.3.14
+    Checking wait-timeout v0.2.1
+    Checking cpufeatures v0.2.17
+    Checking is-terminal v0.4.17
+    Checking rand_core v0.9.5
+    Checking rand v0.9.4
+    Checking rand_xorshift v0.4.0
+   Compiling zerocopy-derive v0.8.52
+   Compiling serde_derive v1.0.228
+    Checking tempfile v3.27.0
+    Checking rusty-fork v0.3.1
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+    Checking rayon v1.12.0
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/core)
+    Checking tinytemplate v1.2.1
+    Checking half v2.7.1
+    Checking ppv-lite86 v0.2.21
+    Checking rand_chacha v0.9.0
+    Checking ciborium-ll v0.2.2
+    Checking proptest v1.11.0
+    Checking ciborium v0.2.2
+    Checking criterion v0.5.1
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.86s
+cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+   Compiling unicode-ident v1.0.24
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+    Checking cfg-if v1.0.4
+   Compiling version_check v0.9.5
+   Compiling rustversion v1.0.22
+    Checking typenum v1.20.1
+   Compiling bumpalo v3.20.3
+    Checking once_cell v1.21.4
+    Checking futures-core v0.3.32
+    Checking slab v0.4.12
+    Checking pin-project-lite v0.2.17
+    Checking futures-task v0.3.32
+   Compiling serde_core v1.0.228
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+    Checking byteorder v1.5.0
+    Checking log v0.4.33
+   Compiling zmij v1.0.21
+    Checking bitflags v2.13.0
+    Checking smallvec v1.15.2
+    Checking futures-util v0.3.32
+   Compiling heapless v0.9.3
+    Checking stable_deref_trait v1.2.1
+    Checking hash32 v0.3.1
+   Compiling serde_json v1.0.150
+    Checking tinyvec_macros v0.1.1
+   Compiling smoltcp v0.13.1
+   Compiling serde v1.0.228
+    Checking tinyvec v1.12.0
+   Compiling generic-array v0.14.7
+    Checking managed v0.8.0
+    Checking bitflags v1.3.2
+    Checking memchr v2.8.2
+    Checking itoa v1.0.18
+    Checking unicode-normalization v0.1.25
+    Checking wasm-vm-wasm-emit v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/wasm-emit)
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+   Compiling wasm-bindgen-macro-support v0.2.126
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/core)
+   Compiling serde_derive v1.0.228
+   Compiling wasm-bindgen-macro v0.2.126
+    Checking wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/jit-translate)
+    Checking wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/slirp)
+    Checking wasm-vm-storage v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/storage)
+    Checking js-sys v0.3.103
+    Checking console_error_panic_hook v0.1.7
+    Checking web-sys v0.3.103
+    Checking wasm-bindgen-futures v0.4.76
+    Checking getrandom v0.2.17
+    Checking console_log v1.0.0
+    Checking wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 11.14s
+cargo test -p wasm-vm-core --lib --test jit_entry_timing --test prof_sampling --test prof_time_accounting --features gpu-trace -- --nocapture
+   Compiling cfg-if v1.0.4
+   Compiling bitflags v2.13.0
+   Compiling typenum v1.20.1
+   Compiling libc v0.2.186
+   Compiling serde_core v1.0.228
+   Compiling crossbeam-utils v0.8.21
+   Compiling regex-syntax v0.8.11
+   Compiling either v1.16.0
+   Compiling once_cell v1.21.4
+   Compiling zmij v1.0.21
+   Compiling clap_lex v1.1.0
+   Compiling ciborium-io v0.2.2
+   Compiling memchr v2.8.2
+   Compiling itoa v1.0.18
+   Compiling fastrand v2.4.1
+   Compiling zerocopy v0.8.52
+   Compiling anstyle v1.0.14
+   Compiling num-traits v0.2.19
+   Compiling itertools v0.10.5
+   Compiling bit-vec v0.8.0
+   Compiling clap_builder v4.6.0
+   Compiling fnv v1.0.7
+   Compiling same-file v1.0.6
+   Compiling quick-error v1.2.3
+   Compiling smallvec v1.15.2
+   Compiling cast v0.3.0
+   Compiling crossbeam-epoch v0.9.18
+   Compiling walkdir v2.5.0
+   Compiling bit-set v0.8.0
+   Compiling getrandom v0.3.4
+   Compiling errno v0.3.14
+   Compiling getrandom v0.4.3
+   Compiling cpufeatures v0.2.17
+   Compiling wait-timeout v0.2.1
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling rustix v1.1.4
+   Compiling generic-array v0.14.7
+   Compiling rand_core v0.9.5
+   Compiling crossbeam-deque v0.8.6
+   Compiling is-terminal v0.4.17
+   Compiling anes v0.1.6
+   Compiling oorandom v11.1.5
+   Compiling rand_xorshift v0.4.0
+   Compiling rand v0.9.4
+   Compiling rayon-core v1.13.0
+   Compiling log v0.4.33
+   Compiling unarray v0.1.4
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling rayon v1.12.0
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling criterion-plot v0.5.0
+   Compiling tempfile v3.27.0
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/core)
+   Compiling regex-automata v0.4.14
+   Compiling rusty-fork v0.3.1
+   Compiling clap v4.6.1
+   Compiling serde v1.0.228
+   Compiling serde_json v1.0.150
+   Compiling tinytemplate v1.2.1
+   Compiling regex v1.12.4
+   Compiling half v2.7.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.9.0
+   Compiling ciborium-ll v0.2.2
+   Compiling proptest v1.11.0
+   Compiling ciborium v0.2.2
+   Compiling criterion v0.5.1
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.98s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 275 tests
+test dev::plic::snapshot_tests::plic_restore_rejects_wrong_length_without_mutating ... ok
+test dev::clint::snapshot_tests::clint_state_round_trips_completely ... ok
+test dev::clint::snapshot_tests::clint_restore_rejects_malformed_payloads_without_mutating ... ok
+test block::tests::boundaries_and_errors ... ok
+test dev::plic::snapshot_tests::plic_behavioural_state_round_trips_and_drops_the_diagnostic_counter ... ok
+test compile_queue::tests::priority_hotter_compiles_first ... ok
+test dev::rtc::snapshot_tests::rtc_state_round_trips_completely_and_keeps_the_host_clock ... ok
+test compile_queue::tests::cancellation_on_generation_bump_drops_stale ... ok
+test dev::rtc::snapshot_tests::rtc_restore_rejects_malformed_without_mutating ... ok
+test dev::rtc::tests::alarm_value_readable_after_fire ... ok
+test dev::rtc::tests::alarm_fires_raises_irq_and_clears ... ok
+test compile_queue::tests::backpressure_drops_and_recounts_never_overflows ... ok
+test dev::rtc::tests::reads_injected_time ... ok
+test dev::rtc::tests::irq_gated_by_enable ... ok
+test dev::console::tests::other_offset_writes_ignored_and_logged_once ... ok
+test dev::console::tests::lsr_reads_ready_thr_reads_zero_no_faults ... ok
+test dev::syscon::tests::first_command_wins ... ok
+test dev::rtc::tests::time_set_is_write_order_independent ... ok
+test dev::rtc::tests::guest_set_time_offsets_without_touching_host ... ok
+test dev::syscon::tests::reads_return_zero ... ok
+test dev::syscon::tests::recognized_commands_decode ... ok
+test dev::console::tests::low_byte_emitted_at_every_write_width ... ok
+test block::tests::five_gib_sparse_no_truncation ... ok
+test dev::syscon::tests::unrecognized_values_are_ignored ... ok
+test dev::uart16550::snapshot_tests::uart_state_round_trips_completely ... ok
+test dev::uart16550::snapshot_tests::uart_restore_rejects_malformed_payloads_without_mutating ... ok
+test dev::uart16550::tests::dlab_banking ... ok
+test dev::uart16550::tests::char_timeout_delivers_short_input ... ok
+test dev::uart16550::tests::iir_priority_order ... ok
+test dev::uart16550::tests::overrun_caps_fifo_and_preserves_contents ... ok
+test dev::uart16550::tests::thre_interrupt_dance ... ok
+test dev::virtio::gpu::damage::tests::clipping_and_empty_input_are_bounded_and_drain_is_empty ... ok
+test dev::virtio::gpu::damage::tests::edge_adjacent_rectangles_union_but_corner_only_rectangles_remain_separate ... ok
+test dev::virtio::gpu::damage::tests::overlapping_rectangles_union_and_contained_rectangles_do_not_expand ... ok
+test dev::virtio::gpu::damage::tests::seventeenth_disjoint_rectangle_spills_to_one_bounded_box ... ok
+test dev::virtio::gpu::edid::tests::out_of_range_inputs_are_bounded ... ok
+test dev::virtio::gpu::edid::tests::fixture_and_checksum_are_stable ... ok
+test dev::virtio::gpu::edid::tests::checksum_and_preferred_mode_cover_odd_and_large_sizes ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_rejects_dimension_and_budget_before_allocation ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_backing_map_replacement_and_detach_are_independent ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_supported_formats_are_detached_and_accounted ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_enforces_aggregate_budget_without_partial_insert ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_rejects_id_zero_duplicate_and_bad_fields_without_mutation ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_lifecycle_unref_returns_accounting_to_baseline ... ok
+test dev::rtc::tests::low_high_latch_is_coherent_across_2p32_boundary ... ok
+test compile_queue::tests::never_blocks_execution_thread_under_flood ... ok
+test dev::uart16550::snapshot_tests::uart_restore_never_panics_on_random_input ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_rejects_detached_bounds_and_offset_without_shadow_mutation ... ok
+test dev::virtio::gpu::tests::display_event_clear_is_write_one_to_clear ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_scatter_gather_copies_partial_odd_x_rows ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_tiled_and_full_frame_plans_keep_shadow_bytes_identical ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_one_byte_entries_copy_a_full_frame ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_tracks_changed_pixel_bounds_until_flush ... ok
+test dev::virtio::gpu::tests::gpu_cursor_protocol_wire_fixtures_are_little_endian_and_bounded ... ok
+test dev::virtio::gpu::tests::display_reset_preserves_host_monitor_but_clears_guest_state ... ok
+E5-T22e verifier latched=false: double reset retained 1373x907/60/128 EDID bytes; new rings completed 5 control + 2 cursor; stale id rejected then recreated; old rings/responses unchanged; fresh devices isolated
+test dev::virtio::gpu::tests::get_edid_requires_negotiation_and_is_scanout_indexed ... ok
+test dev::virtio::gpu::tests::get_edid_without_feature_returns_unspec ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_lifecycle_10k_create_unref_cycles_have_zero_net_growth ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_read_only_completion_and_reset_clear_cursor_state ... ok
+test dev::virtio::gpu::tests::display_reset_mmio_clears_latched_irqs_and_both_cached_queues ... ok
+E5-T22e verifier latched=true: double reset retained 1373x907/60/128 EDID bytes; new rings completed 5 control + 2 cursor; stale id rejected then recreated; old rings/responses unchanged; fresh devices isolated
+test dev::virtio::gpu::tests::display_reset_verifier_reconfigured_rings_reject_stale_resources ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_updates_moves_hides_and_rejects_without_mutation ... ok
+test dev::virtio::gpu::tests::gpu_flush_after_scanout_disable_forwards_old_resource_without_binding ... ok
+test dev::virtio::gpu::tests::gpu_flush_after_unref_rejects_old_resource_without_sink_event ... ok
+test dev::virtio::gpu::tests::gpu_flush_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_flush_controlq_calls_test_sink_with_resource_crc ... ok
+test dev::virtio::gpu::tests::gpu_mmio_identity_features_and_config ... ok
+test dev::virtio::gpu::tests::gpu_protocol_wire_fixtures ... ok
+test dev::virtio::gpu::tests::gpu_flush_default_null_sink_accepts_headless_path ... ok
+test block::tests::mem_backend_matches_reference_model ... ok
+test dev::virtio::gpu::tests::gpu_flush_rejects_unknown_short_and_out_of_bounds_requests_without_sink_event ... ok
+test dev::virtio::gpu::tests::gpu_resources_create_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_resources_lifecycle_device_reset_releases_resource_state ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_rejects_address_overflow_and_truncated_sglists ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_split_attach_then_detach_controlq ... ok
+test dev::virtio::gpu::tests::gpu_flush_tracking_sink_publishes_changed_transfer_bounds ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_controlq_validates_entries_atomically ... ok
+test dev::virtio::gpu::tests::gpu_resources_create_controlq_dispatches_and_returns_spec_errors ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_controlq_binds_existing_resource ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_rejects_bad_scanout_and_rect_without_mutation ... ok
+test dev::virtio::gpu::tests::gpu_resources_lifecycle_unref_clears_scanout_and_is_idempotently_rejected ... ok
+test dev::virtio::gpu::tests::gpu_transfer_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_split_request_is_parsed_across_descriptors ... ok
+test dev::virtio::gpu::tests::set_display_updates_mode_and_coalesces_config_interrupts ... ok
+test dev::virtio::gpu::tests::unsupported_feature_does_not_mutate_config ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_zero_resource_disables_scanout ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_short_request_is_bounded ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_repeated_hide_show_keeps_one_bounded_state_per_scanout ... ok
+test dev::virtio::gpu::tests::set_display_stress_preserves_final_mode_and_bounds_config_irqs ... ok
+test dev::virtio::gpu::tiles::tests::flush_intersection_consumes_only_selected_tiles_and_resize_drops_old_state ... ok
+test dev::virtio::gpu::tiles::tests::full_frame_mode_is_a_comparable_bounded_fallback ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_random_rect_model_oracle_10k_cases ... ok
+test dev::virtio::gpu::tiles::tests::full_resource_transfer_selects_every_tile_in_row_major_order ... ok
+test dev::virtio::gpu::tiles::tests::one_pixel_transfer_selects_one_full_tile_and_exact_bytes ... ok
+test dev::virtio::gpu::tiles::tests::tile_boundaries_and_partial_edges_are_clipped_without_outside_regions ... ok
+test dev::virtio::input::keyboard::tests::keyboard_config_fixture_is_exact_on_native ... ok
+test dev::virtio::input::keyboard::tests::keyboard_identity_and_event_bitmap_tail_are_stable ... ok
+test dev::virtio::input::keyboard::tests::keyboard_led_sink_applies_only_canonical_status_events ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_contiguous_fenced ... ok
+test dev::virtio::input::keyboard::tests::pc105_keyboard_bitmap_is_exact_and_repeat_is_absent ... ok
+test dev::virtio::input::pointer::tests::mouse_map_has_only_relative_axes_and_both_wheels ... ok
+test dev::virtio::input::pointer::tests::pointer_config_selectors_do_not_cross_contaminate ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_short_tail_is_bounded ... ok
+test dev::virtio::input::pointer::tests::tablet_absolute_injection_rejects_out_of_range_values ... ok
+test dev::virtio::input::pointer::tests::tablet_map_and_absolute_wire_metadata_are_exact ... ok
+test dev::virtio::input::tests::inject_and_sync_retain_bounded_complete_frames_with_exact_drop_count ... ok
+test dev::virtio::gpu::tests::gpu_transfer_controlq_copies_sg_rows_and_echoes_fence ... ok
+test dev::virtio::input::tests::input_config_selector_writes_are_width_preserving_and_resettable ... ok
+test dev::virtio::input::tests::input_config_fixture_matches_little_endian_wire_bytes ... ok
+test dev::virtio::input::tests::input_event_wire_layout_is_fixed_and_little_endian ... ok
+test dev::virtio::input::tests::key_transition_drop_removes_both_separate_frames ... ok
+test dev::virtio::input::tests::input_config_unsupported_queries_are_zero_and_do_not_leak_previous_payload ... ok
+test dev::virtio::gpu::tests::virtio_gpu_malformed_requests_make_progress_and_recover ... ok
+test dev::virtio::gpu::tests::virtio_gpu_malformed_guest_address_is_rejected_without_write ... ok
+test dev::virtio::console::tests::virtio_console_lifecycle_restart_and_reset_drop_stale_agent_state ... ok
+test dev::virtio::mmio::tests::critic_advisories_pinned ... ok
+test dev::virtio::mmio::tests::driver_ok_without_features_ok_needs_reset ... ok
+test dev::virtio::mmio::tests::interrupt_ack_is_mask_clear ... ok
+test dev::virtio::mmio::tests::empty_slot_answers_and_tolerates ... ok
+test dev::virtio::console::tests::virtio_console_split_control_announcement_and_coalesced_data_are_bounded ... ok
+test dev::virtio::mmio::tests::lifecycle_happy_path ... ok
+test dev::virtio::mmio::tests::protocol_violation_degrades_loudly ... ok
+test dev::virtio::mmio::tests::status_zero_is_full_reset ... ok
+test dev::virtio::mmio::tests::unoffered_feature_rejected ... ok
+test dev::virtio::mmio::tests::transport_snapshot_round_trips_and_rejects_malformed ... ok
+test dev::virtio::net::switch_tests::replacing_backend_keeps_adapter_identity_and_drops_old_frames ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_split_header_unfenced ... ok
+test diag::irqstats::tests::hottest_irq_picks_the_max ... ok
+test diag::irqstats::tests::quiet_windows_never_fire_and_reset_the_streak ... ok
+test diag::irqstats::tests::naming_uses_the_window_not_the_lifetime_leader ... ok
+test diag::irqstats::tests::storm_fires_after_consecutive_hot_windows ... ok
+test diag::irqstats::tests::wfi_watchdog_fires_once_then_rearms ... ok
+test diag::irqstats::tests::wfi_watchdog_silent_when_making_progress_or_armed ... ok
+test diag::irqstats::tests::window_stays_open_until_enough_retired ... ok
+test dispatch::tests::counter_increments_and_fires_exactly_once ... ok
+test dispatch::tests::csr_and_wfi_blocks_are_excluded ... ok
+test dispatch::tests::counter_map_is_bounded_under_cold_flood ... ok
+test dispatch::tests::dedup_across_distinct_blocks ... ok
+test dispatch::tests::no_nomination_below_threshold ... ok
+test dispatch::tests::requeue_after_invalidation_no_stale_survives ... ok
+test dispatch::tests::reset_clears_state_and_bumps_generation ... ok
+test dispatch::tests::stale_generation_alone_blocks_install_even_if_bytes_match ... ok
+test dispatch::tests::translation_request_shape ... ok
+test fdt::tests::dtb_tracks_platform_and_args ... ok
+test fdt::tests::header_is_spec_valid ... ok
+test fdt::tests::initrd_placement_between_kernel_and_dtb ... ok
+test dev::virtio::input::tests::injected_frames_cross_eventq_without_boundary_loss ... ok
+test dev::virtio::input::tests::eventq_writes_one_event_across_split_descriptors_and_exact_used_len ... ok
+test dev::virtio::gpu::tests::gpu_flush_golden_five_patterns_match_independent_reference ... ok
+test fdt::tests::tree_has_every_required_node_and_link ... ok
+test fdt::tests::placement_top_of_dram_aligned_outside_kernel ... ok
+test hart::fregs::tests::f0_is_an_ordinary_register ... ok
+test hart::fregs::tests::non_boxed_value_reads_as_canonical_nan ... ok
+test hart::fregs::tests::registers_are_independent ... ok
+test hart::fregs::tests::write_f32_boxes_and_read_f32_unboxes ... ok
+test hart::regs::tests::abi_names_match_psabi ... ok
+test hart::regs::tests::compiled_register_mask_commit_preserves_unmasked_words_and_x0 ... ok
+test hart::regs::tests::default_is_all_zero_including_pc ... ok
+test hart::regs::tests::dump_format_is_byte_stable ... ok
+
+thread 'hart::regs::tests::out_of_range_read_panics' (13207288) panicked at crates/core/src/hart/regs.rs:48:9:
+register index 32 out of range
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hart::regs::tests::jit_version_is_not_architectural_equality ... ok
+test dev::virtio::input::tests::unsupported_queue_shape_is_bounded_and_requests_reset ... ok
+
+thread 'hart::regs::tests::out_of_range_write_panics' (13207289) panicked at crates/core/src/hart/regs.rs:56:9:
+register index 32 out of range
+test hart::regs::tests::interleavings_vs_oracle_lcg ... ok
+test hart::regs::tests::out_of_range_read_panics - should panic ... ok
+test hart::regs::tests::out_of_range_write_panics - should panic ... ok
+test hart::regs::tests::x0_writes_are_discarded ... ok
+test hart::regs::tests::x1_to_x31_roundtrip_distinct_values ... ok
+test jit::tests::cpu_state_handoff_pins_frozen_layout_endian_and_x0 ... ok
+test dev::virtio::input::tests::short_event_buffer_is_not_partially_written_and_ring_recovers ... ok
+test mmio::tests::attach_rejects_zero_length_and_overflow_without_panic ... ok
+test mmio::tests::attach_rejects_overlap_with_ram_and_devices ... ok
+test dev::virtio::rng::tests::fills_posted_buffer_with_entropy_and_publishes_used ... ok
+test mmio::tests::device_hits_counts_every_access_that_lands_in_the_window ... ok
+test mmio::tests::device_faults_propagate ... ok
+test dispatch::tests::queue_overflow_degrades_gracefully ... ok
+test mmio::tests::misaligned_in_window_faults_without_invoking_device ... ok
+test dev::virtio::input::tests::statusq_reads_split_event_and_rejects_short_or_wrong_direction ... ok
+test mmio::tests::device_read_results_are_masked_to_width ... ok
+test mmio::tests::unmapped_hole_faults_access_at_every_width ... ok
+test mmio::tests::ram_accesses_pass_through_unchanged ... ok
+test mmio::tests::multiple_devices_route_independently ... ok
+test mmio::tests::zero_size_ram_bus_still_routes_devices ... ok
+test platform::tests::default_platform_is_valid ... ok
+test platform::tests::irq_and_virtio_layout ... ok
+test mmio::tests::straddling_window_edge_faults_and_never_invokes_device ... ok
+test mmio::tests::width_forwarding_is_exact_never_split ... ok
+test platform::tests::region_boundaries ... ok
+test mmio::tests::window_access_reaches_device_with_offset_width_value ... ok
+test platform::tests::overlap_and_overflow_are_caught ... ok
+test prof::pause::tests::buckets_bracket_the_target ... ok
+test prof::pause::tests::over_target_and_max_ns ... ok
+test prof::pause::tests::work_bound_tracks_max ... ok
+test pmp_audit_tests::su_pmp_effective_address_change_cannot_take_shortcut ... ok
+test pmp_audit_tests::su_pmp_ignored_locked_tor_writes_keep_revision_and_zero_work ... ok
+test prof::tests::fixed_timer_reflects_set_and_advance_monotonically ... ok
+test prof::tests::collisions_are_visible_not_silently_merged ... ok
+test prof::tests::add_ns_accumulates_per_subsystem ... ok
+test prof::tests::records_land_in_expected_64_byte_regions ... ok
+test pmp_audit_tests::su_pmp_revision_change_flushes_before_shortcut ... ok
+test prof::tests::report_computes_pct_and_passes_total_through ... ok
+test prof::tests::report_on_empty_profile_does_not_divide_by_zero ... ok
+test prof::tests::report_text_contains_pc_and_subsystem_names ... ok
+test prof::tests::report_json_shape_and_contents ... ok
+test ram::resume_snapshot_tests::a_malformed_payload_is_refused_without_mutating ... ok
+test prof::tests::tight_loop_concentrates ... ok
+test prof::tests::top_is_descending_with_low_pc_tie_break ... ok
+test prof::tests::weak_incumbent_is_evicted_by_newcomer ... ok
+test ram::resume_snapshot_tests::restoring_a_wrong_size_snapshot_is_refused_without_mutating ... ok
+test ram::tests::default_map_constants ... ok
+test ram::tests::extreme_addresses_fault_without_overflow_panics ... ok
+test pmp_audit_tests::m_pmp_audit_still_visits_cached_instructions ... ok
+test ram::resume_snapshot_tests::ram_round_trips_completely ... ok
+test ram::tests::little_endian_byte_order ... ok
+test ram::tests::faulting_store_leaves_ram_bit_identical ... ok
+test ram::tests::misaligned_in_range_faults_misaligned_at_every_width ... ok
+test dev::virtio::gpu::tiles::tests::seeded_random_transfer_flush_resize_sequences_match_reference_tiles ... ok
+test prof::tests::histogram_memory_is_fixed ... ok
+test ram::tests::zero_and_absurd_sizes_fail_cleanly ... ok
+test resume::resume_tests::a_bad_magic_is_rejected ... ok
+test ram::tests::slice_escape_hatch_bounds_and_content ... ok
+test resume::resume_tests::a_component_round_trips_through_the_container_format ... ok
+test resume::resume_tests::a_huge_zero_run_length_is_rejected_without_allocating ... ok
+test ram::tests::roundtrip_every_width_at_base_and_last_slot ... ok
+test resume::resume_tests::a_partial_trailing_section_header_is_truncated ... ok
+test ram::tests::straddling_the_end_is_access_not_panic ... ok
+test resume::resume_tests::a_reserved_but_unimplemented_section_is_refused_as_unsupported ... ok
+test resume::resume_tests::a_section_length_past_the_end_is_rejected_not_over_read ... ok
+test resume::resume_tests::a_too_short_blob_is_truncated_not_a_panic ... ok
+test resume::resume_tests::a_version_mismatch_is_rejected ... ok
+test dev::virtio::console::tests::virtio_console_advertises_multiport_device_id_config_and_six_queue_layout ... ok
+test resume::resume_tests::an_unknown_section_fails_loudly ... ok
+test resume::resume_tests::decode_sparse_rejects_malformed_payloads ... ok
+test resume::resume_tests::header_round_trips_and_sections_read_back_in_order ... ok
+test pmp_audit_tests::su_pmp_audit_work_is_zero_for_populated_caches ... ok
+test resume::resume_tests::restore_decision_rejects_a_truncated_final_section ... ok
+test resume::resume_tests::the_coherence_guards_refuse_a_mismatch ... ok
+test sbi::base::tests::ids_and_unknown_fid ... ok
+test resume::resume_tests::zero_elision_round_trips_for_every_shape ... ok
+test sbi::base::tests::probe_extension_per_plan ... ok
+test sbi::base::tests::spec_version_is_2_0 ... ok
+test sbi::hsm::tests::lifecycle_answers_single_hart ... ok
+test sbi::ipi::tests::self_ipi_sets_ssip_and_masks_validate ... ok
+test sbi::dbcn::tests::read_drains_queue_nonblocking_and_write_byte ... ok
+test sbi::dbcn::tests::write_attack_matrix ... ok
+test sbi::legacy::tests::getchar_empty_is_minus_one_nonblocking ... ok
+test sbi::legacy::tests::putchar_emits_and_returns_zero ... ok
+test sbi::rfence::tests::fences_flush_and_masks_validate ... ok
+test sbi::dbcn::tests::write_reads_guest_dram_and_reports_count ... ok
+test sbi::srst::tests::shutdown_reboot_and_error_paths ... ok
+test sbi::tests::probe_set_matches_plan ... ok
+test sbi::time::tests::set_timer_replaces_and_cancels ... ok
+test tests::group_batches_coalesces_disconnected_chunks ... ok
+test tests::kernel_footprint_falls_back_to_file_len ... ok
+test tests::kernel_footprint_honours_image_size ... ok
+test sbi::tests::unknown_and_pending_eids_not_supported ... ok
+test tests::machine_tolerates_zero_ram ... ok
+test tests::version_matches_manifest ... ok
+test tests::machine_allocates_requested_ram ... ok
+test time::tests::huge_gap_jumps_with_notification ... ok
+test time::tests::icount_is_pure_function_of_retired ... ok
+test time::tests::respects_software_mtime_write_as_floor ... ok
+test time::tests::wallclock_never_steps_backward_under_jittery_host ... ok
+test time::tests::moderate_gap_slews_at_bounded_rate ... ok
+test resume::resume_tests::a_mostly_zero_buffer_compresses_far_under_ram_size ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_ram_snapshot_is_far_under_ram_size ... ok
+test resume::resume_tests::decode_sparse_never_panics_on_random_input ... ok
+test dev::virtio::console::tests::virtio_console_agent_and_port0_data_queues_keep_frame_bytes_and_backpressure_separate ... ok
+test resume::resume_tests::the_parser_never_panics_on_any_truncation_or_flip ... ok
+test dev::virtio::mmio::tests::register_fuzz_1e6 ... ok
+test hart::regs::proptests::writes_track_oracle_and_x0_stays_zero ... ok
+test sbi::tests::dispatcher_fuzz_1e6 ... ok
+test dev::virtio::gpu::damage::tests::seeded_random_rectangles_never_drop_reference_damage ... ok
+1280x800 transfer: 139.362958ms
+test dev::virtio::gpu::resources::tests::gpu_transfer_full_frame_native_budget ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_repeated_rejections_do_not_grow_map ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_256_mib_ram_encodes_under_15_percent_and_restores_byte_identically ... ok
+
+test result: ok. 275 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.04s
+
+     Running tests/jit_entry_timing.rs (target/debug/deps/jit_entry_timing-2e2ca837c9145edc)
+
+running 1 test
+test profiling_state_follows_executor_lifecycle ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/prof_sampling.rs (target/debug/deps/prof_sampling-6cab8f7541c01240)
+
+running 3 tests
+test profiler_is_inert_until_armed ... ok
+test hot_loop_concentrates_samples_in_its_region ... ok
+test sampling_is_deterministic ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running tests/prof_time_accounting.rs (target/debug/deps/prof_time_accounting-4111e9f342d4359d)
+
+running 2 tests
+test profiling_off_reads_no_clock_and_records_zero_ns ... ok
+test device_time_is_attributed_to_the_right_subsystem_and_cpu_is_by_subtraction ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+   Compiling typenum v1.20.1
+   Compiling smallvec v1.15.2
+   Compiling bitflags v2.13.0
+   Compiling cfg-if v1.0.4
+   Compiling log v0.4.33
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling generic-array v0.14.7
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.10s
+wasm-pack test --node crates/wasm --test jit_browser_parity -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling unicode-ident v1.0.24
+   Compiling once_cell v1.21.4
+   Compiling futures-task v0.3.32
+   Compiling pin-project-lite v0.2.17
+   Compiling futures-core v0.3.32
+   Compiling slab v0.4.12
+   Compiling serde_core v1.0.228
+   Compiling byteorder v1.5.0
+   Compiling zmij v1.0.21
+   Compiling memchr v2.8.2
+   Compiling libm v0.2.16
+   Compiling autocfg v1.5.1
+   Compiling itoa v1.0.18
+   Compiling stable_deref_trait v1.2.1
+   Compiling tinyvec_macros v0.1.1
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/core)
+   Compiling tinyvec v1.12.0
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling managed v0.8.0
+   Compiling futures-util v0.3.32
+   Compiling hash32 v0.3.1
+   Compiling bitflags v1.3.2
+   Compiling wasm-vm-wasm-emit v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/wasm-emit)
+   Compiling async-trait v0.1.89
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling wasm-bindgen v0.2.126
+   Compiling heapless v0.9.3
+   Compiling cast v0.3.0
+   Compiling oorandom v11.1.5
+   Compiling wasm-bindgen-test-shared v0.2.126
+   Compiling unicode-normalization v0.1.25
+   Compiling nu-ansi-term v0.50.3
+   Compiling num-traits v0.2.19
+   Compiling smoltcp v0.13.1
+   Compiling console_error_panic_hook v0.1.7
+   Compiling js-sys v0.3.103
+   Compiling serde v1.0.228
+   Compiling serde_json v1.0.150
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/storage)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/slirp)
+   Compiling web-sys v0.3.103
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling getrandom v0.2.17
+   Compiling wasm-bindgen-test v0.3.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.48s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running tests/jit_browser_parity.rs (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/target/wasm32-unknown-unknown/debug/deps/jit_browser_parity-6cc578c42c9ecada.wasm)
+Executing bindgen...                                                                                running 35 tests
+test browser_handles_remain_bounded_across_retranslation_churn ... ignored, long browser externref/eviction churn; run explicitly for E4-T33 evidence
+Invoking test: unexpected_js_exception_fails_closed_without_commit_and_cleans_host
+test unexpected_js_exception_fails_closed_without_commit_and_cleans_host ... ok
+Invoking test: production_browser_budget_stays_below_measured_instance_cliff
+test production_browser_budget_stays_below_measured_instance_cliff ... ok
+Invoking test: page_write_invalidates_compiled_block
+test page_write_invalidates_compiled_block ... ok
+Invoking test: execute_miss_preserves_public_guard_and_guest_state
+test execute_miss_preserves_public_guard_and_guest_state ... ok
+Invoking test: directed_eviction_through_the_single_ordered_path
+test directed_eviction_through_the_single_ordered_path ... ok
+Invoking test: compile_instantiate_and_cache_by_phys_pc
+test compile_instantiate_and_cache_by_phys_pc ... ok
+Invoking test: chain_edge_links_and_unlinks_on_invalidation
+test chain_edge_links_and_unlinks_on_invalidation ... ok
+Invoking test: bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault
+test bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault ... ok
+Invoking test: browser_run_chunk_scope_caps_all_internal_subruns_to_eight_installs
+test browser_run_chunk_scope_caps_all_internal_subruns_to_eight_installs ... ok
+Invoking test: browser_jit_six_op_loop_is_exactly_budgeted
+test browser_jit_six_op_loop_is_exactly_budgeted ... ok
+Invoking test: browser_jit_matches_interpreter_m_block
+test browser_jit_matches_interpreter_m_block ... ok
+Invoking test: browser_jit_matches_interpreter_i_block
+test browser_jit_matches_interpreter_i_block ... ok
+Invoking test: browser_jit_matches_interpreter_a_block
+test browser_jit_matches_interpreter_a_block ... ok
+Invoking test: browser_inline_tlb_matches_interpreter_for_ram_loop
+test browser_inline_tlb_matches_interpreter_for_ram_loop ... ok
+Invoking test: browser_inline_static_link_unlinks_and_rearms_after_target_reinstall
+test browser_inline_static_link_unlinks_and_rearms_after_target_reinstall ... ok
+Invoking test: browser_inline_static_link_refuses_after_execute_permission_change
+test browser_inline_static_link_refuses_after_execute_permission_change ... ok
+Invoking test: browser_inline_static_guard_rejects_remapped_target_page
+test browser_inline_static_guard_rejects_remapped_target_page ... ok
+Invoking test: browser_inline_static_cross_page_tail_refuses_before_target_entry
+test browser_inline_static_cross_page_tail_refuses_before_target_entry ... ok
+Invoking test: browser_inline_static_cross_batch_target_fault_is_precise
+test browser_inline_static_cross_batch_target_fault_is_precise ... ok
+Invoking test: browser_inline_static_cross_batch_load_store_matches_interpreter
+test browser_inline_static_cross_batch_load_store_matches_interpreter ... ok
+Invoking test: browser_inline_static_cross_batch_link_executes_and_misses_safely
+test browser_inline_static_cross_batch_link_executes_and_misses_safely ... ok
+Invoking test: browser_inline_static_code_store_cuts_link_before_target_reuse
+test browser_inline_static_code_store_cuts_link_before_target_reuse ... ok
+Invoking test: browser_inline_static_chain_reaches_five_blocks_in_one_engine_call
+test browser_inline_static_chain_reaches_five_blocks_in_one_engine_call ... ok
+Invoking test: browser_inline_raw_store_to_compiled_page_aborts_before_successor
+test browser_inline_raw_store_to_compiled_page_aborts_before_successor ... ok
+Invoking test: browser_inline_raw_store_commits_reservation_and_code_log
+test browser_inline_raw_store_commits_reservation_and_code_log ... ok
+Invoking test: browser_inline_dynamic_jalr_links_switch_and_unlinks
+test browser_inline_dynamic_jalr_links_switch_and_unlinks ... ok
+Invoking test: browser_inline_direct_chain_reports_bounded_retirement
+test browser_inline_direct_chain_reports_bounded_retirement ... ok
+Invoking test: browser_inline_direct_chain_honors_depth_budget
+test browser_inline_direct_chain_honors_depth_budget ... ok
+Invoking test: browser_inline_data_store_stays_chained_but_atomic_successor_waits_for_commit
+test browser_inline_data_store_stays_chained_but_atomic_successor_waits_for_commit ... ok
+Invoking test: browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault
+test browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault ... ok
+Invoking test: browser_handoff_refreshes_after_outer_growth_during_compiled_call
+test browser_handoff_refreshes_after_outer_growth_during_compiled_call ... ok
+Invoking test: browser_dispatch_reuses_memory_views_without_subarray_allocation
+test browser_dispatch_reuses_memory_views_without_subarray_allocation ... ok
+Invoking test: browser_clean_dispatch_reuses_cached_outer_view_without_constructor
+test browser_clean_dispatch_reuses_cached_outer_view_without_constructor ... ok
+Invoking test: browser_batch_skips_unsupported_members_without_fragmenting_valid_blocks
+test browser_batch_skips_unsupported_members_without_fragmenting_valid_blocks ... ok
+
+test result: ok. 34 passed; 0 failed; 1 ignored; 0 filtered out; finished in 5.58s
+
+                                                  node --check tools/verify/e5-t22g-jit-entry-timer-worker.mjs
+node --check tools/verify/e5-t22g-jit-entry-timer.mjs
+test -s target/e5-t22c/desktop-image-solid-v7/alpine-rootfs.ext4
+test -s target/e5-t22c/chunks/desktop-solid-v7/manifest.json
+/Applications/Xcode.app/Contents/Developer/usr/bin/make web-build
+wasm-pack build crates/wasm --target web
+[INFO]: 🎯  Checking for the Wasm target...
+[INFO]: 🌀  Compiling to Wasm...
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling cfg-if v1.0.4
+   Compiling version_check v0.9.5
+   Compiling rustversion v1.0.22
+   Compiling bumpalo v3.20.3
+   Compiling typenum v1.20.1
+   Compiling once_cell v1.21.4
+   Compiling pin-project-lite v0.2.17
+   Compiling futures-core v0.3.32
+   Compiling futures-task v0.3.32
+   Compiling slab v0.4.12
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling serde_core v1.0.228
+   Compiling byteorder v1.5.0
+   Compiling heapless v0.9.3
+   Compiling log v0.4.33
+   Compiling bitflags v2.13.0
+   Compiling futures-util v0.3.32
+   Compiling smallvec v1.15.2
+   Compiling zmij v1.0.21
+   Compiling stable_deref_trait v1.2.1
+   Compiling hash32 v0.3.1
+   Compiling smoltcp v0.13.1
+   Compiling tinyvec_macros v0.1.1
+   Compiling generic-array v0.14.7
+   Compiling serde v1.0.228
+   Compiling serde_json v1.0.150
+   Compiling tinyvec v1.12.0
+   Compiling managed v0.8.0
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.2
+   Compiling bitflags v1.3.2
+   Compiling unicode-normalization v0.1.25
+   Compiling wasm-vm-wasm-emit v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/wasm-emit)
+   Compiling wasm-bindgen v0.2.126
+   Compiling syn v2.0.118
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/core)
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/slirp)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/jit-translate)
+   Compiling wasm-bindgen-macro v0.2.126
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/storage)
+   Compiling js-sys v0.3.103
+   Compiling console_error_panic_hook v0.1.7
+   Compiling web-sys v0.3.103
+   Compiling getrandom v0.2.17
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t22g/cold/sw-calc.uhTpTMvB/repo/crates/wasm)
+    Finished `release` profile [optimized + debuginfo] target(s) in 13.36s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[INFO]: Optimizing wasm binaries with `wasm-opt`...
+[INFO]: License key is set in Cargo.toml but no LICENSE file(s) were found; Please add the LICENSE file(s) to your project directory
+[INFO]: ✨   Done in 14.35s
+[INFO]: 📦   Your wasm pkg is ready to publish at crates/wasm/pkg.
+cd web && npm ci --no-audit --no-fund
+⠙[1G[0K⠹[1G[0K⠸[1G[0K
+added 7 packages in 443ms
+⠸[1G[0K[1mnpm[22m [33mwarn[39m [94minstall-scripts[39m 1 package has install scripts not yet covered by allowScripts:
+[1mnpm[22m [33mwarn[39m [94minstall-scripts[39m   fsevents@2.3.2 (install: (install scripts present))
+[1mnpm[22m [33mwarn[39m [94minstall-scripts[39m
+[1mnpm[22m [33mwarn[39m [94minstall-scripts[39m Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+⠸[1G[0Kmkdir -p web/pkg web/assets/riscv-tests
+cp -R crates/wasm/pkg/. web/pkg/
+cp guest/prebuilt/hello.elf guest/prebuilt/loops.elf web/assets/
+cp tests/riscv-tests-bin/* web/assets/riscv-tests/
+# Boot artifacts must live UNDER web/ (the Pages publish_dir) so they deploy with the site.
+# Paths mirror the relative URLs in web/artifacts.json (regenerated by tools/gen-web-manifest.sh).
+mkdir -p web/releases/kernel/6.6.63 web/releases/initramfs
+cp releases/kernel/6.6.63/Image web/releases/kernel/6.6.63/Image
+cp releases/initramfs/initramfs.cpio.gz web/releases/initramfs/initramfs.cpio.gz
+# E4 restore-on-first-load: the (optional) compressed busybox boot snapshot, if built. Small
+# enough to ship on Pages (deploy-cloudflare.sh keeps its URL relative, unlike kernel/initramfs).
+bash tools/gen-web-manifest.sh
+wrote web/artifacts.json:
+{
+  "generated": "content-hashed; regenerate with tools/gen-web-manifest.sh",
+  "artifacts": {
+    "kernel": { "url": "releases/kernel/6.6.63/Image", "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce", "size": 24208896 },
+    "initramfs": { "url": "releases/initramfs/initramfs.cpio.gz", "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563", "size": 1151596 },
+    "bootSnapshot": { "url": "releases/boot-snapshot/busybox-ready.snap.gz", "sha256": "ba3168696638db573173b4d266f5234acd01fb2fabe452cc5a1dfde483a61d33", "size": 10983666 }
+  }
+}
+E5_T22G_OUT=evidence/e5-t22g/browser node tools/verify/e5-t22g-jit-entry-timer.mjs
+{"browsers":["152.0.7977.76","132.0"],"fixedRetiredPerPhase":400000,"ramDigest":"6976cebc670e2c4165f17e942fa31dce90227428ff2885b790cc49d7dbfd5748","defaultTimerReads":[0,0],"enabledTimerReads":[19056,19056],"errors":[]}
+E5_T22C_ITERATION=1 E5_T22C_PROFILE=0 E5_T22C_CPU_PROFILE=0 E5_T22C_IMAGE_DIR=target/e5-t22c/desktop-image-solid-v7 E5_T22C_CHUNKS=target/e5-t22c/chunks/desktop-solid-v7 E5_T22C_TOOLS_OUT=target/e5-t22c/display-tools E5_T22C_OUT=evidence/e5-t22g/desktop node tools/verify/e5-t22c-guest-mode.mjs
+{"phase":"guest boot","retired":516473519,"frames":106,"mode":[901,701],"scanout":[901,701],"serial":"ort\r\n[    2.527725] Key type dns_resolver registered\r\n[    2.754184] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers\r\n[    2.766022] Btrfs loaded, zoned=no, fsverity=no\r\n[    2.768494] Legacy PMU implementation is available\r\n[    2.769554] clk: Disabling unused clocks\r\n[    2.769696] ALSA device list:\r\n[    2.769792]   #0: VirtIO SoundCard at platform/10007000.virtio_mmio/virtio6\r\n[    5.127103] EXT4-fs (vda): mounted filesystem a11ce000-0e2f-4c18-b007-f50000000018 r/w with ordered data mode. Quota mode: disabled.\r\n[    5.127436] VFS: Mounted root (ext4 filesystem) on device 254:0.\r\n[    5.128080] devtmpfs: mounted\r\n[    5.134630] Freeing unused kernel image (initmem) memory: 2200K\r\n[    5.134797] Run /sbin/init as init process\r\n\r\n   OpenRC 0.54 is starting up Linux 6.6.63 (riscv64)\r\n\r\n * Mounting /proc ... [ ok ]\r\n * Mounting /run ... [ ok ]\r\n * /run/openrc: creating directory\r\n * /run/lock: creating directory\r\n * /run/lock: correcting owner\r\n"}
+{"phase":"guest boot","retired":883946830,"frames":141,"mode":[901,701],"scanout":[901,701],"serial":"zoned=no, fsverity=no\r\n[    2.768494] Legacy PMU implementation is available\r\n[    2.769554] clk: Disabling unused clocks\r\n[    2.769696] ALSA device list:\r\n[    2.769792]   #0: VirtIO SoundCard at platform/10007000.virtio_mmio/virtio6\r\n[    5.127103] EXT4-fs (vda): mounted filesystem a11ce000-0e2f-4c18-b007-f50000000018 r/w with ordered data mode. Quota mode: disabled.\r\n[    5.127436] VFS: Mounted root (ext4 filesystem) on device 254:0.\r\n[    5.128080] devtmpfs: mounted\r\n[    5.134630] Freeing unused kernel image (initmem) memory: 2200K\r\n[    5.134797] Run /sbin/init as init process\r\n\r\n   OpenRC 0.54 is starting up Linux 6.6.63 (riscv64)\r\n\r\n * Mounting /proc ... [ ok ]\r\n * Mounting /run ... [ ok ]\r\n * /run/openrc: creating directory\r\n * /run/lock: creating directory\r\n * /run/lock: correcting owner\r\n * Caching service dependencies ... [ ok ]\r\n * Remounting devtmpfs on /dev ... [ ok ]\r\n * Mounting /dev/mqueue ... [ ok ]\r\n * Mounting /dev/pts ... [ ok ]\r\n * Mounting /dev/shm ... [ ok ]\r\n"}
+{"phase":"guest boot","retired":1206417976,"frames":173,"mode":[901,701],"scanout":[901,701],"serial":" mounted filesystem a11ce000-0e2f-4c18-b007-f50000000018 r/w with ordered data mode. Quota mode: disabled.\r\n[    5.127436] VFS: Mounted root (ext4 filesystem) on device 254:0.\r\n[    5.128080] devtmpfs: mounted\r\n[    5.134630] Freeing unused kernel image (initmem) memory: 2200K\r\n[    5.134797] Run /sbin/init as init process\r\n\r\n   OpenRC 0.54 is starting up Linux 6.6.63 (riscv64)\r\n\r\n * Mounting /proc ... [ ok ]\r\n * Mounting /run ... [ ok ]\r\n * /run/openrc: creating directory\r\n * /run/lock: creating directory\r\n * /run/lock: correcting owner\r\n * Caching service dependencies ... [ ok ]\r\n * Remounting devtmpfs on /dev ... [ ok ]\r\n * Mounting /dev/mqueue ... [ ok ]\r\n * Mounting /dev/pts ... [ ok ]\r\n * Mounting /dev/shm ... [ ok ]\r\n * Mounting /sys ... [ ok ]\r\n * Mounting security filesystem ... [ ok ]\r\n * Mounting debug filesystem ... [ ok ]\r\n * Starting udev ... [ ok ]\r\n * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ..."}
+{"phase":"guest boot","retired":1534379726,"frames":189,"mode":[901,701],"scanout":[901,701],"serial":"007-f50000000018 r/w with ordered data mode. Quota mode: disabled.\r\n[    5.127436] VFS: Mounted root (ext4 filesystem) on device 254:0.\r\n[    5.128080] devtmpfs: mounted\r\n[    5.134630] Freeing unused kernel image (initmem) memory: 2200K\r\n[    5.134797] Run /sbin/init as init process\r\n\r\n   OpenRC 0.54 is starting up Linux 6.6.63 (riscv64)\r\n\r\n * Mounting /proc ... [ ok ]\r\n * Mounting /run ... [ ok ]\r\n * /run/openrc: creating directory\r\n * /run/lock: creating directory\r\n * /run/lock: correcting owner\r\n * Caching service dependencies ... [ ok ]\r\n * Remounting devtmpfs on /dev ... [ ok ]\r\n * Mounting /dev/mqueue ... [ ok ]\r\n * Mounting /dev/pts ... [ ok ]\r\n * Mounting /dev/shm ... [ ok ]\r\n * Mounting /sys ... [ ok ]\r\n * Mounting security filesystem ... [ ok ]\r\n * Mounting debug filesystem ... [ ok ]\r\n * Starting udev ... [ ok ]\r\n * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ... [ ok ]\r\n * Loading hardware drivers ..."}
+{"phase":"guest boot","retired":1910348029,"frames":207,"mode":[901,701],"scanout":[901,701],"serial":"007-f50000000018 r/w with ordered data mode. Quota mode: disabled.\r\n[    5.127436] VFS: Mounted root (ext4 filesystem) on device 254:0.\r\n[    5.128080] devtmpfs: mounted\r\n[    5.134630] Freeing unused kernel image (initmem) memory: 2200K\r\n[    5.134797] Run /sbin/init as init process\r\n\r\n   OpenRC 0.54 is starting up Linux 6.6.63 (riscv64)\r\n\r\n * Mounting /proc ... [ ok ]\r\n * Mounting /run ... [ ok ]\r\n * /run/openrc: creating directory\r\n * /run/lock: creating directory\r\n * /run/lock: correcting owner\r\n * Caching service dependencies ... [ ok ]\r\n * Remounting devtmpfs on /dev ... [ ok ]\r\n * Mounting /dev/mqueue ... [ ok ]\r\n * Mounting /dev/pts ... [ ok ]\r\n * Mounting /dev/shm ... [ ok ]\r\n * Mounting /sys ... [ ok ]\r\n * Mounting security filesystem ... [ ok ]\r\n * Mounting debug filesystem ... [ ok ]\r\n * Starting udev ... [ ok ]\r\n * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ... [ ok ]\r\n * Loading hardware drivers ..."}
+{"phase":"guest boot","retired":2309310180,"frames":227,"mode":[901,701],"scanout":[901,701],"serial":"Mounted root (ext4 filesystem) on device 254:0.\r\n[    5.128080] devtmpfs: mounted\r\n[    5.134630] Freeing unused kernel image (initmem) memory: 2200K\r\n[    5.134797] Run /sbin/init as init process\r\n\r\n   OpenRC 0.54 is starting up Linux 6.6.63 (riscv64)\r\n\r\n * Mounting /proc ... [ ok ]\r\n * Mounting /run ... [ ok ]\r\n * /run/openrc: creating directory\r\n * /run/lock: creating directory\r\n * /run/lock: correcting owner\r\n * Caching service dependencies ... [ ok ]\r\n * Remounting devtmpfs on /dev ... [ ok ]\r\n * Mounting /dev/mqueue ... [ ok ]\r\n * Mounting /dev/pts ... [ ok ]\r\n * Mounting /dev/shm ... [ ok ]\r\n * Mounting /sys ... [ ok ]\r\n * Mounting security filesystem ... [ ok ]\r\n * Mounting debug filesystem ... [ ok ]\r\n * Starting udev ... [ ok ]\r\n * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ... [ ok ]\r\n * Loading hardware drivers ...modprobe: can't change directory to '/lib/modules': No such file or directory\r\n [ ok ]\r\n"}
+{"phase":"guest boot","retired":2669281861,"frames":280,"mode":[901,701],"scanout":[901,701],"serial":"* Caching service dependencies ... [ ok ]\r\n * Remounting devtmpfs on /dev ... [ ok ]\r\n * Mounting /dev/mqueue ... [ ok ]\r\n * Mounting /dev/pts ... [ ok ]\r\n * Mounting /dev/shm ... [ ok ]\r\n * Mounting /sys ... [ ok ]\r\n * Mounting security filesystem ... [ ok ]\r\n * Mounting debug filesystem ... [ ok ]\r\n * Starting udev ... [ ok ]\r\n * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ... [ ok ]\r\n * Loading hardware drivers ...modprobe: can't change directory to '/lib/modules': No such file or directory\r\n [ ok ]\r\n * Loading modules ...modprobe: can't change directory to '/lib/modules': No such file or directory\r\nmodprobe: can't change directory to '/lib/modules': No such file or directory\r\n [ ok ]\r\n * Setting system clock using the hardware clock [UTC] ... [ ok ]\r\n * Checking local filesystems  ... [ ok ]\r\n * Remounting filesystems ... [ ok ]\r\n * Activating swap devices ... [ ok ]\r\n * Mounting local filesystems ... [ ok ]\r\n"}
+{"phase":"guest boot","retired":3026751055,"frames":302,"mode":[901,701],"scanout":[901,701],"serial":" * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ... [ ok ]\r\n * Loading hardware drivers ...modprobe: can't change directory to '/lib/modules': No such file or directory\r\n [ ok ]\r\n * Loading modules ...modprobe: can't change directory to '/lib/modules': No such file or directory\r\nmodprobe: can't change directory to '/lib/modules': No such file or directory\r\n [ ok ]\r\n * Setting system clock using the hardware clock [UTC] ... [ ok ]\r\n * Checking local filesystems  ... [ ok ]\r\n * Remounting filesystems ... [ ok ]\r\n * Activating swap devices ... [ ok ]\r\n * Mounting local filesystems ... [ ok ]\r\n * Migrating /var/lock to /run/lock ... [ ok ]\r\n * Creating user login records ... [ ok ]\r\n * Cleaning /tmp directory ... [ ok ]\r\n * Setting hostname ... [ ok ]\r\n * Seeding random number generator ... * Saving 256 bits of creditable seed for next boot\r\n [ ok ]\r\n * Starting busybox syslog ... [ ok ]\r\n * Starting seatd ... [ ok ]\r\n"}
+{"phase":"guest boot","retired":3381222596,"frames":417,"mode":[901,701],"scanout":[901,701],"serial":"y\r\n [ ok ]\r\n * Setting system clock using the hardware clock [UTC] ... [ ok ]\r\n * Checking local filesystems  ... [ ok ]\r\n * Remounting filesystems ... [ ok ]\r\n * Activating swap devices ... [ ok ]\r\n * Mounting local filesystems ... [ ok ]\r\n * Migrating /var/lock to /run/lock ... [ ok ]\r\n * Creating user login records ... [ ok ]\r\n * Cleaning /tmp directory ... [ ok ]\r\n * Setting hostname ... [ ok ]\r\n * Seeding random number generator ... * Saving 256 bits of creditable seed for next boot\r\n [ ok ]\r\n * Starting busybox syslog ... [ ok ]\r\n * Starting seatd ... [ ok ]\r\n * Waiting for uevents to be processed ... [ ok ]\r\n * Starting networking ... *   lo ... [ ok ]\r\n *   eth0 ...udhcpc: started, v1.36.1\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc failed to get a DHCP lease\r\nudhcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n"}
+{"phase":"desktop startup","retired":3766696160,"frames":429,"mode":[901,701],"scanout":[901,701],"serial":"k ]\r\n * Checking local filesystems  ... [ ok ]\r\n * Remounting filesystems ... [ ok ]\r\n * Activating swap devices ... [ ok ]\r\n * Mounting local filesystems ... [ ok ]\r\n * Migrating /var/lock to /run/lock ... [ ok ]\r\n * Creating user login records ... [ ok ]\r\n * Cleaning /tmp directory ... [ ok ]\r\n * Setting hostname ... [ ok ]\r\n * Seeding random number generator ... * Saving 256 bits of creditable seed for next boot\r\n [ ok ]\r\n * Starting busybox syslog ... [ ok ]\r\n * Starting seatd ... [ ok ]\r\n * Waiting for uevents to be processed ... [ ok ]\r\n * Starting networking ... *   lo ... [ ok ]\r\n *   eth0 ...udhcpc: started, v1.36.1\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc failed to get a DHCP lease\r\nudhcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\nE5T18D_TEST_CONSOLE_READY\r\n"}
+{"phase":"desktop startup","retired":4124176268,"frames":432,"mode":[901,701],"scanout":[901,701],"serial":"k ]\r\n * Checking local filesystems  ... [ ok ]\r\n * Remounting filesystems ... [ ok ]\r\n * Activating swap devices ... [ ok ]\r\n * Mounting local filesystems ... [ ok ]\r\n * Migrating /var/lock to /run/lock ... [ ok ]\r\n * Creating user login records ... [ ok ]\r\n * Cleaning /tmp directory ... [ ok ]\r\n * Setting hostname ... [ ok ]\r\n * Seeding random number generator ... * Saving 256 bits of creditable seed for next boot\r\n [ ok ]\r\n * Starting busybox syslog ... [ ok ]\r\n * Starting seatd ... [ ok ]\r\n * Waiting for uevents to be processed ... [ ok ]\r\n * Starting networking ... *   lo ... [ ok ]\r\n *   eth0 ...udhcpc: started, v1.36.1\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc failed to get a DHCP lease\r\nudhcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\nE5T18D_TEST_CONSOLE_READY\r\n"}
+{"phase":"foot startup","retired":4570152966,"frames":435,"mode":[901,701],"scanout":[901,701],"serial":")\r\nE5T18D_LOG_END\r\nWV_DISPLAY ns=99544739700 id=16 name=Virtual-1 width=901 height=701 refresh=60006 scale=1 edid_width=901 edid_height=701 edid=00ffffffffffff005ecd010001000000011e0104a51813780a9605a3544c99260f5054000000010101010101010101010101010101012e1285a030bd1e2028147300f0be0000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a202020200047\r\n\u001b[33mwarn\u001b[0m: \u001b[2mwayland.c:1542: \u001b[0mno primary selection available\r\n\u001b[33mwarn\u001b[0m: \u001b[2mwayland.c:1545: \u001b[0mno XDG activation support; bell.urgent will fall back to coloring the window margins red\r\n\u001b[33mwarn\u001b[0m: \u001b[2mwayland.c:1551: \u001b[0mfractional scaling not available\r\n\u001b[33mwarn\u001b[0m: \u001b[2mwayland.c:1554: \u001b[0mno server-side cursors available, falling back to client-side cursors\r\n\u001b[33mwarn\u001b[0m: \u001b[2mwayland.c:1565: \u001b[0mtext input interface not implemented by compositor; IME will be disabled\r\n\u001b[33mwarn\u001b[0m: \u001b[2mwayland.c:1770: \u001b[0mno decoration manager available - using CSDs unconditionally\r\n"}
+{"mode":[803,603],"elapsed":1878.8949999809265,"pid":"961","foot":["1018"],"marker":"5f514001ec640d0c264f7cc4937e33db530649fc873bb36512811cbd02ef3444"}
+{"mode":[640,480],"elapsed":1501.9799999594688,"pid":"961","foot":["1018"],"marker":"5f514001ec640d0c264f7cc4937e33db530649fc873bb36512811cbd02ef3444"}
+{"phase":"resize 1280x800","retired":4952616265,"frames":445,"mode":[1280,800],"scanout":[1280,800],"serial":"ckend=drm renderer=pixman\r\n2026-09-06T17:20:49Z E5T18D event=started attempt=1 pid=961\r\n2026-09-06T17:20:52Z E5T18D event=ready attempt=1 pid=961\r\nE5T18D_STATUS_END\r\nWV_DISPLAY ns=106944939400 id=16 name=Virtual-1 width=1280 height=800 refresh=59998 scale=1 edid_width=1280 edid_height=800 edid=00ffffffffffff005ecd010001000000011e0104a52215780a9605a3544c99260f505400000001010101010101010101010101010101031c00a050201e302814730054d21000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a2020202000c6\r\nE5T22C_DISPLAY_BEGIN\r\nWV_DISPLAY ns=107364389900 id=16 name=Virtual-1 width=1280 height=800 refresh=59998 scale=1 edid_width=1280 edid_height=800 edid=00ffffffffffff005ecd010001000000011e0104a52215780a9605a3544c99260f505400000001010101010101010101010101010101031c00a050201e302814730054d21000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a2020202000c6\r\nWV_CLIENT pid=1018 exe=/usr/bin/foot\r\n"}
+{"mode":[1280,800],"elapsed":2128.8550000190735,"pid":"961","foot":["1018"],"marker":"5f514001ec640d0c264f7cc4937e33db530649fc873bb36512811cbd02ef3444"}
+{"mode":[2560,1600],"elapsed":5267.670000016689,"pid":"961","foot":["1018"],"marker":"5f514001ec640d0c264f7cc4937e33db530649fc873bb36512811cbd02ef3444"}
+{"phase":"resize 801x601","retired":5359075303,"frames":449,"mode":[801,601],"scanout":[801,601],"serial":"h=801 height=601 refresh=59994 scale=1 edid_width=801 edid_height=601 edid=00ffffffffffff005ecd010001000000011e0104a51510780a9605a3544c99260f505400000001010101010101010101010101010101360e21a030591e2028147300d2a00000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a20202020004d\r\nE5T22C_DISPLAY_BEGIN\r\nWV_DISPLAY ns=112481540300 id=16 name=Virtual-1 width=801 height=601 refresh=59994 scale=1 edid_width=801 edid_height=601 edid=00ffffffffffff005ecd010001000000011e0104a51510780a9605a3544c99260f505400000001010101010101010101010101010101360e21a030591e2028147300d2a00000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a20202020004d\r\nWV_CLIENT pid=1018 exe=/usr/bin/foot\r\nWV_CLIENT_STATE State:\tS (sleeping)\r\nWV_CLIENT_STATE VmRSS:\t    9384 kB\r\nWV_CLIENT_STATE Threads:\t2\r\nE5T22C_DISPLAY_END\r\nE5T18D_STATUS_BEGIN\r\ndesktop.attempts=1\r\ndesktop.ready=1 961\r\ndesktop.failed=absent\r\nweston.pid=961\r\n"}
+{"mode":[801,601],"elapsed":2746.014999985695,"pid":"961","foot":["1018"],"marker":"5f514001ec640d0c264f7cc4937e33db530649fc873bb36512811cbd02ef3444"}
+{"mode":[802,601],"elapsed":1774.195000052452,"pid":"961","foot":["1018"],"marker":"5f514001ec640d0c264f7cc4937e33db530649fc873bb36512811cbd02ef3444"}
+{"mode":[1201,801],"elapsed":2221.2699999809265,"pid":"961","foot":["1018"],"marker":"5f514001ec640d0c264f7cc4937e33db530649fc873bb36512811cbd02ef3444"}
+{"iteration":true,"completed":true,"gaps":["1280x800: 2128.86ms exceeds 2000ms","1280x800: complete desktop 2988.99ms exceeds 2000ms","2560x1600: 5267.67ms exceeds 2000ms","2560x1600: complete desktop 7832.91ms exceeds 2000ms","801x601: 2746.01ms exceeds 2000ms","801x601: complete desktop 2858.21ms exceeds 2000ms","1201x801: 2221.27ms exceeds 2000ms","1201x801: complete desktop 3287.14ms exceeds 2000ms"],"errors":[]}
+E5_DEMO_TASK=E5-T22g E5_DEMO_OUT=evidence/e5-t22g/demo node tools/verify/e5-t18e-demo-smoke.mjs
+{"metrics":{"metric-pass":"126","metric-fail":"0","metric-done":"126"},"errors":[],"httpErrors":[],"detail":"E5-T22g\nIN PROGRESS\n✕ Close\nGate browser-JIT entry timing behind explicit profiling\nEpic\nE5 — The Window\nStatus\nin progress\nEstimate\nS\nDepends on\nE5-T22f\nGOAL\n\nRemove high-frequency `performance.now()` sampling from the normal browser-JIT\nentry path while preserving the structural cost ledger and exact guest behavior.\nTiming remains available when profiling is explicitly enabled. This is a measured\nE5-T22c prerequisite, not a claim that resize now meets two seconds.\n\nACCEPTANCE CRITERIA (0/4)\n○\nIn an actual browser Web Worker with profiling off, compiled execution and all deterministic entry-work counters remain live while entry-timer reads and entry nanoseconds remain exactly zero. Prove this in Chromium and Firefox; WebKit is outside this task.\n○\nEnabling profiling before or after JIT attachment arms entry timing; disabling stops new reads immediately; re-enabling resumes them. Replacing an executor preserves the machine's current profiling state.\n○\nIdentical fixed-retirement runs with timing off/on have equal outcomes, architectural registers and RAM digests. The default-off worker path still executes compiled blocks, and the profiling-on control records real reads.\n○\nThe built demo passes 126/126 with zero browser/HTTP errors. Re-run the unchanged v7 desktop without either profiler, report all seven resize timings and retain client/mode/EDID/scanout/canvas agreement. Do not mark E5-T22c verified unless its own two-second gate passes.\nVERIFICATION LOG — EVIDENCE\n### 2026-09-06 — worker — in-progress\n\nE5-T22f is independently verified. Its profiler-enabled maximum-resize capture\nreduced PMP synchronization from 30.71% to 0.35%, then attributed 13.46% of total\nsampled CPU to `performance.now()` through the browser-JIT entry timer. Source\ninspection confirms the executor constructs and reads that timer even when the\nmachine profiler is off. Isolate that diagnostic clock behind the existing\nprofiling control; preserve C's complete timing requirement and immutable v7\ndesktop evidence.\nADVERSARIAL VERIFICATION\nExercise profiling-before-executor, executor-before-profiling, disable/re-enable,\nand executor replacement. Require independent timer-read deltas so zero elapsed\nnanoseconds cannot masquerade as zero clock calls. Sabotage the default gate to\nenabled and require the profiling-off browser test to fail. Compare fixed guest\nstate after the same work under both timing modes, and verify that guest/device\nclocks and scheduler budgets are not routed through this diagnostic switch.\nsource: tasks/epic-5-the-window/E5-T22g-jit-entry-timer-gate.md"}

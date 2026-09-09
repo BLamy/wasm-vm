@@ -1,0 +1,20 @@
+{
+  "command": [
+    "wasm-pack",
+    "test",
+    "--node",
+    "crates/wasm",
+    "--test",
+    "decoded_cache_capacity",
+    "--",
+    "resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_policy",
+    "--nocapture"
+  ],
+  "cwd": "/private/tmp/e5-t26k-verifier-SrjasM/attack-repo",
+  "target": "/private/tmp/e5-t26k-verifier-SrjasM/target",
+  "startedAt": "2026-09-08T12:02:38.261Z",
+  "code": 1,
+  "signal": null,
+  "endedAt": "2026-09-08T12:02:46.996Z",
+  "sha256": "949130be7eed1c7592c05419153dd43f8407ea99a01b293331dd9b6ecae0c0d0"
+}

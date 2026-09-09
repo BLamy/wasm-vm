@@ -1,0 +1,778 @@
+{
+  "label": "failure-command-e5t26f-post-aplay-completion",
+  "timestamp": "2026-09-08T01:02:18.669Z",
+  "head": "6215c8d97d05e34925b082bfe96b817f1912f4bc",
+  "image": {
+    "imageSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+    "manifestSha256": "b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592"
+  },
+  "lastPhase": {
+    "phase": "command:e5t26f-post-aplay:completion",
+    "event": "failed",
+    "timestamp": "2026-09-08T01:02:18.669Z",
+    "elapsedMs": 123565
+  },
+  "lastProgressSample": {
+    "timestamp": "2026-09-08T01:02:16.544Z",
+    "phase": "command:e5t26f-post-aplay:completion",
+    "event": "sample",
+    "probeMs": 1,
+    "ready": "ready",
+    "restored": "ready",
+    "status": "desktop ready: launcher available",
+    "serialTail": "",
+    "frameCount": 11,
+    "pointerFrames": 3,
+    "keyboardFrames": 20,
+    "launch": null,
+    "command": {
+      "label": null,
+      "marker": "e5t26f-post-aplay",
+      "accepted": null,
+      "terminalRendered": null,
+      "terminalMarkerSeen": false,
+      "visualDiffPixels": 15426,
+      "guestVisible": null,
+      "pointerFrames": null,
+      "keyboardFrames": null
+    },
+    "focus": {
+      "label": "post-restore-focus",
+      "marker": null,
+      "accepted": true,
+      "terminalRendered": null,
+      "terminalMarkerSeen": null,
+      "visualDiffPixels": null,
+      "guestVisible": null,
+      "pointerFrames": 3,
+      "keyboardFrames": null
+    },
+    "agent": {
+      "state": "ready",
+      "transportGeneration": 2,
+      "bytesReceived": 36,
+      "bytesSent": 36,
+      "pendingBytes": 0
+    },
+    "presentation": {
+      "successfulPresents": 11,
+      "scheduler": null
+    },
+    "audio": {
+      "policy": "unlocked",
+      "context": "running",
+      "renderedFrames": 5709312
+    }
+  },
+  "milestones": {
+    "run": {
+      "kind": "diagnostic-iteration",
+      "acceptance": false,
+      "diagnostic": {
+        "mode": "reuse",
+        "directory": "/private/tmp/e5-t26f-fixed-pcm.QrhhBP",
+        "port": 61627,
+        "origin": "http://127.0.0.1:61627",
+        "command": null,
+        "keyDelayMs": 5
+      },
+      "postRestoreCommand": "sh /tmp/a",
+      "postRestoreKeyDelayMs": 5,
+      "binding": {
+        "head": "6215c8d97d05e34925b082bfe96b817f1912f4bc",
+        "runtimeSha256": "96e3d11057e89768463ea9fe06a84178116841eb7b9a4a32487455d8a3000526",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "imageBytes": 1073741824,
+        "manifestSha256": "b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592",
+        "origin": "http://127.0.0.1:61627"
+      },
+      "profile": "/private/tmp/e5-t26f-fixed-pcm.QrhhBP/iteration-e0TdgQ/profile",
+      "checkpointFile": "/private/tmp/e5-t26f-fixed-pcm.QrhhBP/normal-checkpoint.json",
+      "creatorHead": "bd2ca26721a21d3ba8be5a58b7347cea40990421",
+      "currentHead": "6215c8d97d05e34925b082bfe96b817f1912f4bc",
+      "checkpointCreatedAt": "2026-09-08T00:37:52.228Z",
+      "profileSha256": "809b6b806a5f87f6b6a0f9b2696d314132e4344d978649fb759ca092317d595d"
+    },
+    "normalSnapshot": {
+      "sha256": "de7769605e11a4fb6bb7bba7fccce0f611b975a94800c7ae9a0421775b765921",
+      "byteLength": 2768852,
+      "preFrontBufferCrc": "49d5e923",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "49d5e923",
+        "overlayGeneration": 617
+      }
+    },
+    "normalRestore": {
+      "result": {
+        "snapshotSha256": "de7769605e11a4fb6bb7bba7fccce0f611b975a94800c7ae9a0421775b765921",
+        "snapshotBytes": 2768852,
+        "completedAt": 1151.7549999952316,
+        "report": {
+          "boundaryId": 8952588739,
+          "scanout": {
+            "width": 1280,
+            "height": 800
+          },
+          "hostViewport": {
+            "width": 1280,
+            "height": 800
+          },
+          "viewport": "native",
+          "agentRehandshake": true,
+          "inputReleaseEvents": 0,
+          "soundXrunEvents": 0,
+          "fullRepairFrame": true
+        },
+        "handshake": {
+          "generation": 2,
+          "version": 1,
+          "capabilities": "1"
+        },
+        "observation": {
+          "baseSuccessfulPresents": 1,
+          "firstPresent": {
+            "successfulPresents": 2,
+            "crc32": "49d5e923"
+          }
+        },
+        "bootStates": [
+          {
+            "state": "fetching",
+            "atMs": 155
+          },
+          {
+            "state": "instantiating",
+            "atMs": 173
+          },
+          {
+            "state": "restored",
+            "atMs": 743
+          }
+        ],
+        "diagnostics": [
+          {
+            "atMs": 835,
+            "reason": "agent-channel",
+            "error": "desktop restore requested a fresh agent HELLO",
+            "channelState": "disconnected",
+            "transportGeneration": 0
+          }
+        ],
+        "machineResume": {
+          "persisted": true,
+          "paused": true,
+          "preFrontBufferCrc": "49d5e923",
+          "overlayGeneration": 617
+        },
+        "preFrontBufferCrc": "49d5e923",
+        "resume": {
+          "restored": true,
+          "snapshotDecision": null,
+          "overlayGeneration": null
+        },
+        "coherenceAudit": {
+          "status": "deferred"
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "fixedViewport": true,
+          "sizeMismatch": false,
+          "framesReceived": 2,
+          "successfulPresents": 2,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "scheduler": null,
+          "gpu": {
+            "framesReceived": 2,
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "successfulPresents": 2,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 0,
+            "uploadedBytes": 8192000,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "width": 1280,
+            "height": 800
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 800
+          },
+          "errors": []
+        }
+      },
+      "displayChecksPassed": true,
+      "checksPassed": false
+    },
+    "postRestoreStart": 1151.7549999952316,
+    "postRestoreCursor": {
+      "frame": {
+        "atMs": 1543,
+        "sequence": 1,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 17510
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 16056
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 17510,
+          "y": 16056
+        }
+      },
+      "rendered": {
+        "x": 684,
+        "y": 392,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      },
+      "observedAt": 1998.4900000095367,
+      "elapsedMs": 846.7350000143051
+    },
+    "postRestoreAudioBefore": {
+      "policy": "unlocked",
+      "renderedFrames": 45568,
+      "writeIndex": 0
+    }
+  },
+  "error": {
+    "name": "TimeoutError",
+    "message": "page.waitForFunction: Timeout 120000ms exceeded.",
+    "code": null,
+    "stack": "page.waitForFunction: Timeout 120000ms exceeded.\n    at typeCommand (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:573:16)\n    at /Users/blamy/Documents/Codex/wasm-vm/async file:/Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1003:28"
+  },
+  "progressProbe": null,
+  "url": "http://127.0.0.1:61627/desktop-cursor.html?testHooks=1&jit=1&quantum=500000&imageManifestUrl=.%2Fe5t18b-desktop%2Fmanifest.json&baseUrl=.%2Fe5t18b-desktop%2F&imageSha256=5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550&manifestSha256=b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592&autoRestore=1",
+  "state": {
+    "terminal": {
+      "desktopReady": true,
+      "frameCount": 11,
+      "serialText": "",
+      "pointerFrames": 3,
+      "pointerFrameSample": [
+        {
+          "atMs": 1543,
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 17510
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 16056
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 17510,
+            "y": 16056
+          }
+        },
+        {
+          "atMs": 1850,
+          "sequence": 2,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "atMs": 1941,
+          "sequence": 3,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "keyboardFrames": 20,
+      "keyboardEvents": 20,
+      "keyboardFrameSample": [
+        {
+          "atMs": 1989,
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 1995,
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 1995,
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 2001,
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 2001,
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 2007,
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 2007,
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 2013,
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 2013,
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 2019,
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 2020,
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 2025,
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 2026,
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 2032,
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 2032,
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 2032,
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardEventSample": [
+        {
+          "atMs": 1989,
+          "timestamp": 2019.6599999666214,
+          "type": "keydown",
+          "code": "Space",
+          "key": " ",
+          "repeat": false
+        },
+        {
+          "atMs": 1995,
+          "timestamp": 2025.5049999952316,
+          "type": "keyup",
+          "code": "Space",
+          "key": " ",
+          "repeat": false
+        },
+        {
+          "atMs": 1995,
+          "timestamp": 2025.7599999904633,
+          "type": "keydown",
+          "code": "Slash",
+          "key": "/",
+          "repeat": false
+        },
+        {
+          "atMs": 2001,
+          "timestamp": 2031.5299999713898,
+          "type": "keyup",
+          "code": "Slash",
+          "key": "/",
+          "repeat": false
+        },
+        {
+          "atMs": 2001,
+          "timestamp": 2031.8949999809265,
+          "type": "keydown",
+          "code": "KeyT",
+          "key": "t",
+          "repeat": false
+        },
+        {
+          "atMs": 2007,
+          "timestamp": 2037.6899999380112,
+          "type": "keyup",
+          "code": "KeyT",
+          "key": "t",
+          "repeat": false
+        },
+        {
+          "atMs": 2007,
+          "timestamp": 2037.9599999189377,
+          "type": "keydown",
+          "code": "KeyM",
+          "key": "m",
+          "repeat": false
+        },
+        {
+          "atMs": 2013,
+          "timestamp": 2043.7549999952316,
+          "type": "keyup",
+          "code": "KeyM",
+          "key": "m",
+          "repeat": false
+        },
+        {
+          "atMs": 2013,
+          "timestamp": 2044.0349999666214,
+          "type": "keydown",
+          "code": "KeyP",
+          "key": "p",
+          "repeat": false
+        },
+        {
+          "atMs": 2019,
+          "timestamp": 2049.844999909401,
+          "type": "keyup",
+          "code": "KeyP",
+          "key": "p",
+          "repeat": false
+        },
+        {
+          "atMs": 2020,
+          "timestamp": 2050.164999961853,
+          "type": "keydown",
+          "code": "Slash",
+          "key": "/",
+          "repeat": false
+        },
+        {
+          "atMs": 2025,
+          "timestamp": 2056.0349999666214,
+          "type": "keyup",
+          "code": "Slash",
+          "key": "/",
+          "repeat": false
+        },
+        {
+          "atMs": 2026,
+          "timestamp": 2056.3249999284744,
+          "type": "keydown",
+          "code": "KeyA",
+          "key": "a",
+          "repeat": false
+        },
+        {
+          "atMs": 2032,
+          "timestamp": 2062.2149999141693,
+          "type": "keyup",
+          "code": "KeyA",
+          "key": "a",
+          "repeat": false
+        },
+        {
+          "atMs": 2032,
+          "timestamp": 2062.7400000095367,
+          "type": "keydown",
+          "code": "Enter",
+          "key": "Enter",
+          "repeat": false
+        },
+        {
+          "atMs": 2032,
+          "timestamp": 2062.9199999570847,
+          "type": "keyup",
+          "code": "Enter",
+          "key": "Enter",
+          "repeat": false
+        }
+      ],
+      "surface": {
+        "nonBlackRatio": 0.9999375,
+        "darkRatio": 0.5877777777777777,
+        "greenPixels": 240,
+        "redPixels": 0
+      },
+      "agent": {
+        "state": "ready",
+        "negotiatedVersion": 1,
+        "transportGeneration": 2,
+        "bytesReceived": 36,
+        "bytesSent": 36,
+        "pendingBytes": 0
+      },
+      "diagnostics": [
+        {
+          "atMs": 835,
+          "reason": "agent-channel",
+          "error": "desktop restore requested a fresh agent HELLO",
+          "channelState": "disconnected",
+          "transportGeneration": 0
+        }
+      ],
+      "readiness": {
+        "desktopReady": true,
+        "inspection": {
+          "wallpaper": true,
+          "panel": {
+            "ready": true,
+            "position": "top",
+            "top": 0,
+            "height": 80,
+            "mean": [
+              87,
+              85,
+              84
+            ],
+            "difference": 77
+          },
+          "menu": true,
+          "nonBlackRatio": 0.9999375,
+          "background": [
+            61,
+            60,
+            59
+          ],
+          "menuDetails": {
+            "ready": true,
+            "inkPixels": 22477,
+            "runs": 240
+          }
+        },
+        "agentState": "ready"
+      },
+      "bootStates": [
+        {
+          "state": "fetching",
+          "atMs": 155
+        },
+        {
+          "state": "instantiating",
+          "atMs": 173
+        },
+        {
+          "state": "restored",
+          "atMs": 743
+        }
+      ],
+      "launches": [],
+      "focuses": [
+        {
+          "label": "post-restore-focus",
+          "beforeFrame": 2,
+          "pointerStart": 0,
+          "hostFocusedBefore": true,
+          "afterFrame": 4,
+          "pointerFrames": 3,
+          "hostFocusedAfter": true,
+          "accepted": true
+        }
+      ],
+      "commands": [
+        {
+          "command": "sh /tmp/a",
+          "marker": "e5t26f-post-aplay",
+          "beforeFrame": 4,
+          "keyboardStart": 0,
+          "domEventStart": 0,
+          "visualDiffPixels": 15426,
+          "terminalMarkerSeen": false,
+          "greenPixelsBefore": 240,
+          "redPixelsBefore": 0,
+          "visualChange": true
+        }
+      ],
+      "closes": [],
+      "active": {
+        "launch": null,
+        "command": {
+          "command": "sh /tmp/a",
+          "marker": "e5t26f-post-aplay",
+          "beforeFrame": 4,
+          "keyboardStart": 0,
+          "domEventStart": 0,
+          "visualDiffPixels": 15426,
+          "terminalMarkerSeen": false,
+          "greenPixelsBefore": 240,
+          "redPixelsBefore": 0,
+          "visualChange": true
+        },
+        "close": null
+      }
+    },
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 800,
+      "fixedViewport": true,
+      "sizeMismatch": false,
+      "framesReceived": 11,
+      "successfulPresents": 11,
+      "drawnPresents": 11,
+      "drawnBytes": 25540344,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": null,
+      "gpu": {
+        "framesReceived": 11,
+        "enqueued": 11,
+        "coalesced": 0,
+        "presented": 11,
+        "successfulPresents": 11,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 25540344,
+        "drawnPresents": 11,
+        "drawnBytes": 25540344,
+        "width": 1280,
+        "height": 800
+      },
+      "latest": {
+        "rect": {
+          "x": 557,
+          "y": 41,
+          "width": 468,
+          "height": 466
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800
+      },
+      "errors": []
+    },
+    "audio": {
+      "policy": "unlocked",
+      "context": "running",
+      "renderedFrames": 5811456
+    },
+    "ready": "ready",
+    "restored": "ready"
+  },
+  "serial": null,
+  "serverOutput": "127.0.0.1 - - [07/Sep/2026 21:00:15] \"GET /desktop-cursor.html HTTP/1.1\" 200 -\n127.0.0.1 - - [07/Sep/2026 21:00:15] \"GET /e5t18b-desktop/manifest.json HTTP/1.1\" 200 -\n127.0.0.1 - - [07/Sep/2026 21:00:16] \"GET /desktop-cursor.html?testHooks=1&jit=1&quantum=500000&imageManifestUrl=.%2Fe5t18b-desktop%2Fmanifest.json&baseUrl=.%2Fe5t18b-desktop%2F&imageSha256=5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550&manifestSha256=b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592&autoRestore=1 HTTP/1.1\" 200 -\n127.0.0.1 - - [07/Sep/2026 21:00:16] \"GET /desktop-terminal.js HTTP/1.1\" 304 -\n127.0.0.1 - - [07/Sep/2026 21:00:16] \"GET /desktop-agent-bridge.js HTTP/1.1\" 304 -\n127.0.0.1 - - [07/Sep/2026 21:00:16] code 404, message File not found\n127.0.0.1 - - [07/Sep/2026 21:00:16] \"GET /favicon.ico HTTP/1.1\" 404 -\n127.0.0.1 - - [07/Sep/2026 21:00:16] \"GET /loader.js HTTP/1.1\" 304 -\n127.0.0.1 - - [07/Sep/2026 21:00:16] \"GET /pkg/wasm_vm_wasm.js HTTP/1.1\" 304 -\n127.0.0.1 - - [07/Sep/2026 21:00:16] \"GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1\" 304 -\n127.0.0.1 - - [07/Sep/2026 21:00:21] code 404, message File not found\n127.0.0.1 - - [07/Sep/2026 21:00:21] \"GET /favicon.ico HTTP/1.1\" 404 -\n"
+}

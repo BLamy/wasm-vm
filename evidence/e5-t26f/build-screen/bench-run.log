@@ -1,0 +1,2 @@
+{"workload":"bench","arm":"baseline","recordName":"bench-baseline-1.json","medianReportedMs":699}
+{"workload":"bench","arm":"candidate","recordName":"bench-candidate-1.json","medianReportedMs":862}

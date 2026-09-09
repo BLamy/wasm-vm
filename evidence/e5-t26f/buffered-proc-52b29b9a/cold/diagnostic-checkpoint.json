@@ -1,0 +1,253 @@
+{
+  "schema": "wasm-vm.e5-t26f.diagnostic-iteration.v1",
+  "acceptance": false,
+  "milestones": {
+    "run": {
+      "kind": "diagnostic-iteration",
+      "acceptance": false,
+      "diagnostic": {
+        "mode": "create",
+        "directory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-buffered-proc-VprFCc",
+        "port": 61636,
+        "origin": "http://127.0.0.1:61636",
+        "command": null,
+        "keyDelayMs": 0,
+        "latency": false,
+        "cpu": false,
+        "guestClock": null,
+        "jit": null,
+        "residency": null,
+        "complete": false,
+        "icountDivider": null
+      },
+      "postRestoreCommand": "play",
+      "postRestoreKeyDelayMs": 5,
+      "fixture": {
+        "kind": "resident-aplay-v1",
+        "helperSha256": "324e0acddd88bd2d41b0310444e32e2262dedd3129132240134dac857d4eec2e",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh"
+      },
+      "binding": {
+        "head": "52b29b9a41103337aba77bc5d002090111991c2d",
+        "runtimeSha256": "ce156e701a52057dbdd8436133ac09cdecb2e6360fca90bd528981e3396b6c71",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "4cb3424f637ba55d709171ce21a6b7b42a67e7bdfaef7848d7f1d7c02976ec18",
+        "imageBytes": 1073741824,
+        "manifestSha256": "6b648e57c713325d2ce3df86eeb459cf3e27c873ec2088f562ea94168b66dd08",
+        "origin": "http://127.0.0.1:61636",
+        "fixture": {
+          "kind": "resident-aplay-v1",
+          "helperSha256": "324e0acddd88bd2d41b0310444e32e2262dedd3129132240134dac857d4eec2e",
+          "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh"
+        }
+      },
+      "profile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-buffered-proc-VprFCc/checkpoint-profile",
+      "checkpointFile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-buffered-proc-VprFCc/normal-checkpoint.json",
+      "creatorHead": "52b29b9a41103337aba77bc5d002090111991c2d",
+      "currentHead": "52b29b9a41103337aba77bc5d002090111991c2d",
+      "profileSha256": "b4facf9d0c1c8214e62b2a1b0dcaf39b7f9da74079ed87c07bf3b0437d09c943"
+    },
+    "initialReadiness": {
+      "completedAt": "2026-09-08T15:28:47.635Z"
+    },
+    "shellProbe": {
+      "command": "true; printf '\\033[42;30me5t26f-shell-ok\\033[0m\\n'",
+      "marker": "e5t26f-shell-ok",
+      "beforeFrame": 38,
+      "keyboardStart": 0,
+      "domEventStart": 0,
+      "visualDiffPixels": 2439,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 1,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 74,
+      "redMarkerSeen": false,
+      "keyboardFrames": 102,
+      "domEvents": 102,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "agentProbe": {
+      "state": "ready",
+      "negotiatedVersion": 1,
+      "transportGeneration": 2,
+      "bytesReceived": 54,
+      "bytesSent": 36,
+      "pendingBytes": 0
+    },
+    "initialAplay": {
+      "command": "yes \"$(printf '\\001\\000\\377\\177')\"|head -c3840 >/tmp/p;printf 'aplay -Dhw:0,0 --period-size=480 --buffer-size=960 -f S16_LE -t raw -r48000 -c2 /tmp/p&&printf \"\\033[42me5t26f-aplay\\033[0m\\n\"' >/tmp/a;sh /tmp/a",
+      "marker": "e5t26f-aplay-ok",
+      "beforeFrame": 74,
+      "keyboardStart": 102,
+      "domEventStart": 102,
+      "visualDiffPixels": 6996,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 128,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 258,
+      "redMarkerSeen": false,
+      "keyboardFrames": 454,
+      "domEvents": 454,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "initialAudio": {
+      "before": {
+        "available": true,
+        "writeIndex": 0,
+        "readIndex": 0,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 4096,
+        "inspectedFrames": 4096,
+        "nonSilentFrames": 0,
+        "maxAbs": 0
+      },
+      "after": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.082000732421875
+      },
+      "outputAttached": true,
+      "observedAt": 666596.7649999857
+    },
+    "twoWindows": {
+      "completedAt": "2026-09-08T15:34:23.806Z"
+    },
+    "residentCheckpoint": {
+      "fixture": {
+        "kind": "resident-aplay-v1",
+        "helperSha256": "324e0acddd88bd2d41b0310444e32e2262dedd3129132240134dac857d4eec2e",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh"
+      },
+      "prepared": {
+        "command": ". /usr/libexec/wasm-vm/e5t26f-resident.sh && e5_prepare",
+        "marker": "e5t26f-prepared",
+        "beforeFrame": 274,
+        "keyboardStart": 556,
+        "domEventStart": 556,
+        "visualDiffPixels": 13514,
+        "terminalMarkerSeen": true,
+        "greenPixelsBefore": 240,
+        "redPixelsBefore": 0,
+        "visualChange": true,
+        "afterFrame": 322,
+        "redMarkerSeen": false,
+        "keyboardFrames": 118,
+        "domEvents": 118,
+        "inputSequenceMatch": true,
+        "inputTraceSha256": null,
+        "accepted": true
+      },
+      "sound": {
+        "envelopeSha256": "dd5ee19ced147f572e91df14db5eb871f84db2556c5eb00173e55fbe3ff95fbd",
+        "soundSha256": "42dfc147f4ad0d0b98490c3cb39bb8f3932f785a8266335fcd151de18b56858f",
+        "state": 2,
+        "paramsPresent": 1,
+        "parameterRequest": 257,
+        "streamId": 0,
+        "bufferBytes": 3840,
+        "periodBytes": 1920,
+        "channels": 2,
+        "format": 5,
+        "rate": 7,
+        "pendingTransfers": 0,
+        "pendingBytes": 0,
+        "releasePending": 0,
+        "nextXrunPresent": 0,
+        "eventCount": 0,
+        "events": [],
+        "kicked": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "resetPending": 0
+      },
+      "screenshot": {
+        "file": "evidence/e5-t26f/buffered-proc-52b29b9a/cold/resident-prepared.png",
+        "sha256": "7ba92583a3d574462f9b1aa85bf114d28eae47b3fa0dd0ea4278ec35c5f1f144"
+      }
+    },
+    "initialCursor": {
+      "frame": {
+        "atMs": 836082,
+        "sequence": 19,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 18431
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 17612
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 18431,
+          "y": 17612
+        }
+      },
+      "rendered": {
+        "x": 720,
+        "y": 430,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      }
+    },
+    "normalSnapshotPause": {
+      "at": 836990.314999938,
+      "isPaused": true
+    },
+    "normalSnapshot": {
+      "sha256": "dd5ee19ced147f572e91df14db5eb871f84db2556c5eb00173e55fbe3ff95fbd",
+      "byteLength": 2808178,
+      "preFrontBufferCrc": "e0ec6452",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "e0ec6452",
+        "overlayGeneration": 641
+      }
+    },
+    "normalCheckpointBeforeReload": {
+      "status": "passed",
+      "snapshotSha256": "dd5ee19ced147f572e91df14db5eb871f84db2556c5eb00173e55fbe3ff95fbd",
+      "observed": {
+        "at": 846229.5299999714,
+        "isPaused": true,
+        "generation": 641,
+        "decision": "resume",
+        "envelopeSha256": "dd5ee19ced147f572e91df14db5eb871f84db2556c5eb00173e55fbe3ff95fbd",
+        "stillPaused": true,
+        "finalGeneration": 641
+      }
+    }
+  },
+  "errors": {
+    "browser": [],
+    "http": []
+  }
+}

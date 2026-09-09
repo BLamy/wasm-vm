@@ -1,0 +1,40 @@
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 11.75s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-9581999851bd4c84.wasm)
+running 3 tests
+Invoking test: jit_browser::spp_guest_tests::browser_guest_sret_to_u_enters_compiled_then_clears_s_authority
+SPP_ORACLE U baseline: Architecture { pc: 2147483648, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949672992, trap: [2147491836, 0, 0, 0, 0, 0], retire_cycle: [7, 7], mtime: None }; exact architecture + full RAM equal
+SPP_ORACLE U return before entry: Architecture { pc: 2147491836, mode: U, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949672994, trap: [2147491836, 0, 0, 0, 0, 0], retire_cycle: [8, 8], mtime: None }; exact architecture + full RAM equal
+SPP_ORACLE U compiled store fault: Architecture { pc: 2147504128, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949672992, trap: [2147491836, 15, 2147500032, 0, 0, 0], retire_cycle: [8, 8], mtime: None }; exact architecture + full RAM equal
+SPP_JIT U: actual compiled entry +1 in mode U, compiled retires +0, no indirect dispatch or PIC hit; R/W/EXEC, static, dynamic words+authority all zero
+test jit_browser::spp_guest_tests::browser_guest_sret_to_u_enters_compiled_then_clears_s_authority ... ok
+Invoking test: jit_browser::spp_guest_tests::browser_guest_sret_to_s_preserves_inline_and_both_links
+SPP_ORACLE S baseline: Architecture { pc: 2147483648, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949673248, trap: [2147487744, 0, 0, 0, 0, 0], retire_cycle: [7, 7], mtime: None }; exact architecture + full RAM equal
+SPP_ORACLE S return before entry: Architecture { pc: 2147487744, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949672994, trap: [2147487744, 0, 0, 0, 0, 0], retire_cycle: [8, 8], mtime: None }; exact architecture + full RAM equal
+SPP_ORACLE S compiled chain: Architecture { pc: 2147508224, mode: S, regs: [0, 0, 0, 0, 0, 42, 1, 1, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 42, 22136], mstatus: 42949672994, trap: [2147487744, 0, 0, 0, 0, 0], retire_cycle: [16, 16], mtime: None }; exact architecture + full RAM equal
+SPP_JIT reused: one host entry, 8 compiled retires, static+dynamic effects, PIC hit +1; all authority words unchanged
+test jit_browser::spp_guest_tests::browser_guest_sret_to_s_preserves_inline_and_both_links ... ok
+Invoking test: jit_browser::spp_guest_tests::browser_guest_sret_pending_stip_preempts_then_nested_sret_reuses
+SPP_ORACLE pending STIP baseline: Architecture { pc: 2147483648, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 1414090053, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949673248, trap: [2147487744, 0, 0, 0, 0, 0], retire_cycle: [16, 16], mtime: Some(9) }; exact architecture + full RAM equal
+SPP_ORACLE pending STIP preemption: Architecture { pc: 2147504128, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 1414090053, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949673248, trap: [2147487744, 9223372036854775813, 0, 0, 0, 0], retire_cycle: [17, 17], mtime: Some(10) }; exact architecture + full RAM equal
+SPP_ORACLE guest SBI timer cancelled: Architecture { pc: 2147504140, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 0, 0, 0, 0, 0, 0, 1414090053, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949673248, trap: [2147487744, 9223372036854775813, 0, 0, 0, 0], retire_cycle: [19, 19], mtime: Some(12) }; exact architecture + full RAM equal
+SPP_ORACLE nested SRET before entry: Architecture { pc: 2147487744, mode: S, regs: [0, 0, 0, 0, 0, 126, 0, 0, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 1414090053, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 41, 22136], mstatus: 42949672994, trap: [2147487744, 9223372036854775813, 0, 0, 0, 0], retire_cycle: [21, 21], mtime: Some(14) }; exact architecture + full RAM equal
+SPP_ORACLE nested SRET target effects: Architecture { pc: 2147508224, mode: S, regs: [0, 0, 0, 0, 0, 42, 1, 1, 0, 0, 2147500032, 2147495936, 0, 0, 0, 0, 0, 1414090053, 2147500032, 2147495936, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ram_window: [4660, 42, 22136], mstatus: 42949672994, trap: [2147487744, 9223372036854775813, 0, 0, 0, 0], retire_cycle: [29, 29], mtime: Some(22) }; exact architecture + full RAM equal
+SPP_JIT reused: one host entry, 8 compiled retires, static+dynamic effects, PIC hit +1; all authority words unchanged
+test jit_browser::spp_guest_tests::browser_guest_sret_pending_stip_preempts_then_nested_sret_reuses ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 9 filtered out; finished in 0.28s
+

@@ -1,0 +1,19 @@
+E5-T26e remediation exact-head gate
+implementation head: 58a1f46364a46985bf7750a1b3e2c8b4f4f9b139
+command: env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG make verify-E5-T26e
+exit: 0
+
+format: passed
+clippy --lib: passed
+clippy --lib --tests: passed
+desktop_restore tests: 10 passed, 0 failed, 0 ignored
+desktop_snapshot tests: 9 passed, 0 failed, 0 ignored
+gpu snapshot tests: 6 passed, 0 failed, 0 ignored
+input snapshot tests: 12 passed, 0 failed, 0 ignored
+sound snapshot tests: 6 passed, 0 failed, 0 ignored
+wasm-vm-core no-default-features wasm32-unknown-unknown build: passed
+
+The new native coordinator tests include a real T26b/T26c/T26d payload round-trip through
+VirtioDesktopRestoreBackend, the pre-commit full-repair proof, agent and viewport refusals,
+malformed component refusals, and an injected failure after live GPU publication. Every refusal
+asserts the three live codec snapshots and host state return to the adapter's cold baseline.

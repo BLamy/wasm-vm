@@ -1,0 +1,3 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.21s
+     Running `target/release/examples/retirement_capture_baseline`

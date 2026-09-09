@@ -1,0 +1,74 @@
+{
+  "schema": "e5-t25a-page-cache-v1",
+  "exactHead": "0da96f6a5c7f323b986fe41b6f6bfb2508eec834",
+  "browser": "chromium",
+  "browserVersion": "152.0.7977.76",
+  "results": [
+    {
+      "query": "testHooks=1",
+      "boot": {
+        "ok": true
+      },
+      "observed": {
+        "hasPerf": false,
+        "retiredInstructions": 999989,
+        "mainFiftyMsIntervals": [],
+        "presentationAttributionCallback": false
+      },
+      "cleanup": {
+        "mainFiftyMsIntervals": [],
+        "perfControllerAfterStop": null
+      },
+      "errors": []
+    },
+    {
+      "query": "testHooks=1&perfHooks=1",
+      "boot": {
+        "ok": true
+      },
+      "observed": {
+        "hasPerf": true,
+        "retiredInstructions": 999989,
+        "mainFiftyMsIntervals": [
+          {
+            "delay": 50,
+            "cleared": false,
+            "stackHasMain": true
+          }
+        ],
+        "presentationAttributionCallback": true,
+        "records": [
+          {
+            "sequence": 1,
+            "timestamp": 399.0049999952316,
+            "backend": "canvas2d",
+            "drawn": true,
+            "replay": false,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 962,
+              "height": 240
+            },
+            "resourceWidth": 962,
+            "resourceHeight": 240,
+            "bytes": 923520,
+            "guestInstructions": 999989,
+            "guestInstructionsTotal": 999989
+          }
+        ]
+      },
+      "cleanup": {
+        "mainFiftyMsIntervals": [
+          {
+            "delay": 50,
+            "cleared": true,
+            "stackHasMain": true
+          }
+        ],
+        "perfControllerAfterStop": null
+      },
+      "errors": []
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schema": "wasm-vm.e5-t26f.spp-cpu-symbols.failure.v1",
+  "failedAt": "2026-09-08T20:30:41.140Z",
+  "error": "AssertionError [ERR_ASSERTION]: closed CPU profile digest\n+ actual - expected\n\n+ '21e222eda13169d922c4f1d4135446cd7b6de84b97cc31f2cb7c7afe123e708a'\n- '275b4febbd10b186f9c2b34c85dbb346880de86f1e0522878c450ce25289a51f'\n",
+  "stack": "AssertionError [ERR_ASSERTION]: closed CPU profile digest\n+ actual - expected\n\n+ '21e222eda13169d922c4f1d4135446cd7b6de84b97cc31f2cb7c7afe123e708a'\n- '275b4febbd10b186f9c2b34c85dbb346880de86f1e0522878c450ce25289a51f'\n\n    at main (file:///Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/worker.mjs:202:10)\n    at async file:///Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/worker.mjs:341:3",
+  "commands": []
+}

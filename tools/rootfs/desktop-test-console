@@ -1,0 +1,114 @@
+#!/bin/sh
+# E5-T18d: explicit kernel command-line opt-in, fixed diagnostic verbs, no shell or credential.
+# Normal production boots immediately exec the original serial getty.
+set -u
+case " $(cat /proc/cmdline) " in
+  *' wasmvm.desktop_test=1 '*) ;;
+  *) exec /sbin/getty -L 115200 ttyS0 vt100 ;;
+esac
+
+state=/home/desktop/.local/state/wasm-vm
+read_state() {
+  # User-controlled paths never inherit root's read authority; reject special nodes and links.
+  # The timeout also bounds a race that swaps a regular file for a FIFO after the type check.
+  # Run the watchdog AFTER dropping privilege and exec the reader in its direct child. BusyBox
+  # timeout kills one process, not a process group: killing runuser would orphan a FIFO reader
+  # holding the command-substitution pipe open. No shell/pipeline may remain around that reader.
+  runuser -u desktop -- timeout -s KILL 2 /bin/sh -c '
+    if [ -f "$1" ] && [ ! -L "$1" ]; then
+      case "$2" in
+        head) exec head -c "$3" "$1" ;;
+        tail) exec tail -c "$3" "$1" ;;
+      esac
+    else printf "absent\n"; fi
+  ' sh "$state/$1" "$2" "$3" 2>/dev/null || printf 'unavailable\n'
+}
+
+crash() {
+  pid=$(read_state weston.pid head 32)
+  case "$pid" in ''|*[!0-9]*) printf 'E5T18D_HOOK_ERROR=no-compositor\n'; return ;; esac
+  # A user-writable PID file is only a hint. Bind the signal to the actual desktop Weston ELF.
+  if [ "$(readlink "/proc/$pid/exe" 2>/dev/null)" != /usr/bin/weston ] ||
+     [ "$(awk '/^Uid:/ {print $2}' "/proc/$pid/status" 2>/dev/null)" != 1000 ]; then
+    printf 'E5T18D_HOOK_ERROR=pid-identity\n'
+    return
+  fi
+  # Even PID reuse between inspection and signaling cannot cross the desktop UID boundary.
+  if runuser -u desktop -- /bin/kill -KILL "$pid"; then
+    printf 'E5T18D_HOOK_CRASH pid=%s signal=KILL\n' "$pid"
+  else
+    printf 'E5T18D_HOOK_ERROR=signal-failed\n'
+  fi
+}
+
+stty -echo 2>/dev/null || true
+printf '\nE5T18D_TEST_CONSOLE_READY\n'
+display_watch_started=0
+display_client_started=0
+while IFS= read -r command; do
+  command=$(printf '%s' "$command" | tr -d '\r')
+  case "$command" in
+    status)
+      printf 'E5T18D_STATUS_BEGIN\n'
+      for name in desktop.attempts desktop.ready desktop.failed weston.pid; do
+        printf '%s=' "$name"
+        read_state "$name" head 128
+      done
+      read_state desktop.log tail 16384
+      printf 'E5T18D_STATUS_END\n'
+      ;;
+    crash) crash ;;
+    config-fail)
+      # Only the opt-in disposable guest overlay is changed; the immutable image stays intact.
+      if [ -f /etc/xdg/weston/weston.ini ]; then
+        mv /etc/xdg/weston/weston.ini /etc/xdg/weston/weston.ini.disabled
+      fi
+      printf 'E5T18D_HOOK_CONFIG=missing\n'
+      crash
+      ;;
+    log)
+      printf 'E5T18D_LOG_BEGIN\n'
+      read_state weston.log tail 16384
+      printf 'E5T18D_LOG_END\n'
+      ;;
+    display)
+      printf 'E5T22C_DISPLAY_BEGIN\n'
+      runuser -u desktop -- env XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 \
+        /usr/local/bin/wv-display-query
+      for client_pid in $(pidof foot 2>/dev/null); do
+        printf 'WV_CLIENT pid=%s exe=%s\n' "$client_pid" "$(readlink "/proc/$client_pid/exe")"
+        awk '/^(State|VmRSS|Threads):/ { print "WV_CLIENT_STATE " $0 }' "/proc/$client_pid/status" 2>/dev/null || true
+      done
+      printf 'E5T22C_DISPLAY_END\n'
+      ;;
+    display-watch)
+      if [ "$display_watch_started" -eq 0 ]; then
+        display_watch_started=1
+        # One read-only unprivileged observer for this explicitly opted-in guest.
+        runuser -u desktop -- env XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 \
+          /usr/local/bin/wv-display-query --watch &
+      fi
+      ;;
+    display-client)
+      if [ "$display_client_started" -eq 0 ]; then
+        display_client_started=1
+        runuser -u desktop -- env XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 \
+          /usr/bin/foot --title=WV_RESIZE_PROOF /bin/sh -c \
+          'printf "\033[48;2;20;40;80m\033[38;2;245;231;190mWV_RESIZE_CONTENT_2026\033[0m\n"; exec /bin/sh' \
+          > /dev/null &
+      fi
+      ;;
+    tty)
+      printf 'E5T18D_TTY_BEGIN\n'
+      cat /sys/class/tty/tty0/active 2>/dev/null || true
+      for getty_pid in $(pidof getty 2>/dev/null); do
+        printf 'getty pid=%s args=' "$getty_pid"
+        tr '\0' ' ' <"/proc/$getty_pid/cmdline" 2>/dev/null || true
+        printf '\n'
+      done
+      head -c 16000 /dev/vcs1 2>/dev/null || true
+      printf '\nE5T18D_TTY_END\n'
+      ;;
+    *) printf 'E5T18D_HOOK_ERROR=unknown-command\n' ;;
+  esac
+done

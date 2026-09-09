@@ -13,6 +13,7 @@
 //! | `std`        | yes   | off     | default; host integration                     |
 //! | `trace`      | no    | on      | `no_std` + instruction-trace hooks (E0-T16)   |
 //! | `std,trace`  | yes   | on      | full host + tracing                           |
+//! | `gpu-trace`  | no    | off     | bounded virtio-gpu probe trace (E5-T07a)     |
 //!
 //! Diagnostics route through the [`log`] facade (never `println!`), so hosts choose the
 //! backend (`env_logger` in the CLI, `console_log` in wasm). **Tracing is zero-cost when
@@ -31,6 +32,8 @@ pub mod compile_queue;
 pub mod csr;
 pub mod decode;
 pub mod decode_c;
+pub mod desktop_restore;
+pub mod desktop_snapshot;
 pub mod dev;
 pub mod diag;
 pub mod dispatch;
@@ -60,6 +63,40 @@ use htif::{Htif, HtifStatus};
 use loader::ElfError;
 use mmio::SystemBus;
 use ram::Ram;
+
+/// Private run-loop dispatch. Public traced runs always keep their recording capture, even for
+/// sinks that decline JIT records; only `Machine::run` selects the unit retirement capture.
+enum RunCapture<'a, T: trace::TraceSink> {
+    Unit,
+    Traced(&'a mut T),
+}
+
+impl<T: trace::TraceSink> RunCapture<'_, T> {
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
+    fn wants_records(&self) -> bool {
+        match self {
+            Self::Unit => false,
+            Self::Traced(sink) => sink.wants_records(),
+        }
+    }
+
+    #[inline]
+    fn step(&mut self, machine: &mut Machine, cached: bool) -> Result<(), Trap> {
+        #[cfg(feature = "zicsr-stub")]
+        let _ = cached;
+        match self {
+            #[cfg(not(feature = "zicsr-stub"))]
+            Self::Unit if cached => machine.step_cached_with_capture(hart::UnitCapture),
+            Self::Unit => machine.hart.step(&mut machine.bus),
+            #[cfg(not(feature = "zicsr-stub"))]
+            Self::Traced(sink) if cached => {
+                machine.step_cached_with_capture(hart::RecordingCapture::new(*sink))
+            }
+            Self::Traced(sink) => machine.hart.step_traced(&mut machine.bus, *sink),
+        }
+    }
+}
 
 /// The crate version, sourced from `Cargo.toml`.
 pub fn version() -> &'static str {
@@ -147,6 +184,91 @@ struct VirtioConsoleService {
     control_transmitq: Option<dev::virtio::queue::Virtqueue>,
     agent_receiveq: Option<dev::virtio::queue::Virtqueue>,
     agent_transmitq: Option<dev::virtio::queue::Virtqueue>,
+}
+
+/// Append one device-side virtqueue shadow to a whole-machine resume section. The transport
+/// contains the guest's ring addresses; this shadow contains the device's free-running cursors.
+fn append_resume_queue(
+    out: &mut alloc::vec::Vec<u8>,
+    queue: &Option<dev::virtio::queue::Virtqueue>,
+) {
+    match queue {
+        Some(queue) => {
+            out.push(1);
+            let (last_avail, used) = queue.ring_indices();
+            out.extend_from_slice(&last_avail.to_le_bytes());
+            out.extend_from_slice(&used.to_le_bytes());
+        }
+        None => {
+            out.extend_from_slice(&[0, 0, 0, 0, 0]);
+        }
+    }
+}
+
+/// Parse the fixed transport/ring prefix shared by the desktop device visitors. Parsing is done
+/// against a detached empty transport, so malformed queue metadata is rejected before the live
+/// target's MMIO file or service cursors are changed.
+type ResumeDeviceParts<'a> = (
+    dev::virtio::mmio::VirtioMmio,
+    alloc::vec::Vec<(bool, u16, u16)>,
+    &'a [u8],
+);
+
+/// Sound's original unversioned resume prefix used Rust tuple order (control/event/RX/TX),
+/// not virtio queue-index order. Its cursors cannot be silently reinterpreted. Layout 2 puts a
+/// little-endian version word after the transport/cursors and before the unchanged sound codec.
+/// Keep this section-local: container-v1 snapshots without sound remain compatible.
+const SND_RESUME_LAYOUT_VERSION: u32 = 2;
+
+fn parse_resume_device_prefix(
+    payload: &[u8],
+    tag: u32,
+    queue_count: usize,
+) -> Result<ResumeDeviceParts<'_>, crate::resume::SnapshotError> {
+    let mut reader = crate::resume::Reader::new(payload, tag);
+    let mut transport = dev::virtio::mmio::VirtioMmio::empty();
+    transport.restore_transport(&mut reader)?;
+    let mut rings = alloc::vec::Vec::with_capacity(queue_count);
+    for index in 0..queue_count {
+        let has_queue = reader.bool()?;
+        let last_avail = reader.u16()?;
+        let used = reader.u16()?;
+        let queue_state = *transport.queue(index);
+        if (!has_queue && (last_avail != 0 || used != 0))
+            || (has_queue
+                && (!queue_state.ready
+                    || dev::virtio::queue::Virtqueue::new(&queue_state, 256).is_err()))
+        {
+            return Err(crate::resume::SnapshotError::BadComponentState { tag });
+        }
+        rings.push((has_queue, last_avail, used));
+    }
+    if tag == crate::resume::section::VIRTIO_SND && reader.u32()? != SND_RESUME_LAYOUT_VERSION {
+        return Err(crate::resume::SnapshotError::BadComponentState { tag });
+    }
+    let component = reader.remaining_bytes()?;
+    Ok((transport, rings, component))
+}
+
+fn restore_resume_queues(
+    slot: &alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+    rings: &[(bool, u16, u16)],
+    tag: u32,
+) -> Result<alloc::vec::Vec<Option<dev::virtio::queue::Virtqueue>>, crate::resume::SnapshotError> {
+    let mut restored = alloc::vec::Vec::with_capacity(rings.len());
+    let transport = slot.borrow();
+    for (index, &(has_queue, last_avail, used)) in rings.iter().enumerate() {
+        if !has_queue {
+            restored.push(None);
+            continue;
+        }
+        let queue_state = *transport.queue(index);
+        let mut queue = dev::virtio::queue::Virtqueue::new(&queue_state, 256)
+            .map_err(|_| crate::resume::SnapshotError::BadComponentState { tag })?;
+        queue.set_ring_indices(last_avail, used);
+        restored.push(Some(queue));
+    }
+    Ok(restored)
 }
 
 pub struct Machine {
@@ -244,12 +366,22 @@ pub struct Machine {
     /// out, so the field is inert there.)
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     syscon: Option<dev::syscon::ResetCell>,
-    /// E2-T08: the eight virtio-mmio slots + their PLIC lines (IRQ 1..=8), when
+    /// E2-T08: the nine virtio-mmio slots + their PLIC lines (IRQ 1..=9), when
     /// [`Self::enable_virtio_slots`] attached them. The run loop mirrors each slot's
     /// InterruptStatus level.
     virtio: alloc::vec::Vec<(
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
         dev::plic::IrqLine,
+    )>,
+    /// E5-T06d/E5-T15a: virtio-gpu service state (shared presentation sink + deferred controlq /
+    /// cursorq views) and its selected optional slot. The sink is replaced by a browser callback
+    /// after assembly; headless/native machines retain the GPU with [`dev::virtio::gpu::NullSink`].
+    #[allow(clippy::type_complexity)]
+    gpu: Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+        Option<dev::virtio::queue::Virtqueue>,
+        usize,
     )>,
     /// E2-T11: virtio-blk service state (shared backend state + the persistent ring view),
     /// when [`Self::enable_virtio_blk`] plugged a backend into slot 0. Serviced at every
@@ -337,6 +469,10 @@ pub struct Machine {
     /// The agent uses port 1 (queues 4 and 5); the UART/SBI console is intentionally not routed
     /// through this state.
     console: Option<VirtioConsoleService>,
+    /// E5-T26e: host-side desktop restore state persists across adapter construction so a
+    /// successful viewport/agent reconciliation cannot disappear when the call returns.
+    desktop_restore_host:
+        alloc::rc::Rc<core::cell::RefCell<desktop_restore::DesktopRestoreHostState>>,
     /// E3-T12c3: the snapshot coherence binding — the base disk image this machine is running against
     /// (`base_image_hash`), the emulator build (`core_hash`), and the monotonic overlay-commit
     /// generation. `save_resume` stamps all three into the blob header; `load_resume` validates them
@@ -368,6 +504,9 @@ pub struct Machine {
     /// are bypassed in M-mode but enforced in S/U-mode.
     pmp_revision_seen: u64,
     pmp_mode_seen: csr::Priv,
+    /// Test-only work counter; never consulted by runtime permission decisions.
+    #[cfg(all(test, not(feature = "zicsr-stub")))]
+    pmp_audited_ops: u64,
     /// E4-T08: hotness counters + translation-candidate discovery. The block cache learns to
     /// NOMINATE JIT candidates: each block entry bumps a saturating counter, and crossing the
     /// design-doc threshold enqueues a `TranslationRequest` (dedup'd, requeued after any
@@ -714,6 +853,7 @@ impl Machine {
             prof_total_ns: 0,
             syscon: None,
             virtio: alloc::vec::Vec::new(),
+            gpu: None,
             blk: None,
             extra_blk: alloc::vec::Vec::new(),
             net: None,
@@ -725,6 +865,9 @@ impl Machine {
             mouse: None,
             snd: None,
             console: None,
+            desktop_restore_host: alloc::rc::Rc::new(core::cell::RefCell::new(
+                desktop_restore::DesktopRestoreHostState::default(),
+            )),
             coherence: SnapshotCoherence::default(),
             // E4-T05: default the toggle to the `predecode` feature (OFF in the normal build);
             // the differential harness flips it at runtime via `set_block_cache`.
@@ -736,6 +879,8 @@ impl Machine {
             block_builds: 0,
             pmp_revision_seen: 0,
             pmp_mode_seen: csr::Priv::M,
+            #[cfg(all(test, not(feature = "zicsr-stub")))]
+            pmp_audited_ops: 0,
             // E4-T05 Phase C: batching is OFF by default even under `predecode` (the cache stays
             // byte-identical); it is opted in explicitly via `set_interrupt_batching`.
             interrupt_batching: false,
@@ -802,7 +947,9 @@ impl Machine {
     /// change is cheaper to audit: if every cached instruction has the same execute permission in
     /// the old and new modes, the physically keyed code remains valid and can be retained. This is
     /// the common full-grant case used by Linux; a split or mode-sensitive PMP map still takes the
-    /// conservative flush path. The check stays off the steady-state path except at mode changes.
+    /// conservative flush path. S and U have identical PMP checks, so their transition needs no
+    /// per-instruction audit while the PMP revision is unchanged. This does not skip MMU/PTE
+    /// permission checks, which still use the actual current privilege at instruction fetch.
     #[cfg(not(feature = "zicsr-stub"))]
     fn sync_pmp_code_permissions(&mut self) {
         let revision = self.hart.csr.pmp.revision();
@@ -811,10 +958,23 @@ impl Machine {
             return;
         }
         if revision == self.pmp_revision_seen
+            && matches!(
+                (self.pmp_mode_seen, mode),
+                (csr::Priv::S, csr::Priv::U) | (csr::Priv::U, csr::Priv::S)
+            )
+        {
+            self.pmp_mode_seen = mode;
+            return;
+        }
+        if revision == self.pmp_revision_seen
             && mode != self.pmp_mode_seen
             && self.block_cache.live_blocks().all(|block| {
                 let mut pc = block.phys_start;
                 block.ops.iter().all(|op| {
+                    #[cfg(test)]
+                    {
+                        self.pmp_audited_ops += 1;
+                    }
                     let len = u64::from(op.len);
                     let old_ok = self.hart.csr.pmp_ok(
                         pc,
@@ -859,6 +1019,23 @@ impl Machine {
         self.interrupt_batching && self.block_cache_enabled
     }
 
+    /// Actual decoded-cache slot count; host configuration, not snapshot/architectural state.
+    pub fn decoded_cache_entries(&self) -> usize {
+        self.block_cache.capacity()
+    }
+
+    /// E5-T26k: bounded host selection. Invalid values and selecting the actual current size
+    /// leave all state untouched, including live decoded cursors and compiled handles.
+    pub fn set_decoded_cache_entries(&mut self, entries: usize) -> Result<(), &'static str> {
+        if !matches!(entries, 4096 | 16384) {
+            return Err("decoded cache entries must be 4096 or 16384");
+        }
+        if entries != self.decoded_cache_entries() {
+            self.set_block_cache_capacity(entries);
+        }
+        Ok(())
+    }
+
     /// E4-T05: resize the block cache (rounded up to a power of two). `capacity == 1` is the
     /// adversarial pathological-eviction mode — a 1-entry cache that must STILL be byte-identical.
     pub fn set_block_cache_capacity(&mut self, capacity: usize) {
@@ -899,6 +1076,16 @@ impl Machine {
         s
     }
 
+    /// Immutable compile-queue accounting, resident depth and capacity from the same borrow.
+    /// These are lifetime queue counters, independent of discovery's generation/reset counters.
+    pub fn compile_queue_stats(&self) -> (compile_queue::CompileQueueStats, usize, usize) {
+        (
+            self.compile_queue.stats(),
+            self.compile_queue.len(),
+            self.compile_queue.cap(),
+        )
+    }
+
     /// E4-T08: drain the pending translation-candidate FIFO (a trivial consumer; the real compile
     /// queue is E4-T21). Each request carries its coherence generation — validate with
     /// [`Self::discovery_install_check`] before acting on it.
@@ -920,7 +1107,8 @@ impl Machine {
     /// E4-T10: install a compiled-block executor (a native/browser JIT runtime). The run loop
     /// drives it once the JIT is enabled and the block cache is on. Installing a fresh executor
     /// (or replacing one) drops any previously compiled state by construction.
-    pub fn set_executor(&mut self, executor: jit::BoxedExecutor) {
+    pub fn set_executor(&mut self, mut executor: jit::BoxedExecutor) {
+        executor.set_entry_timing(self.profiling);
         self.executor = Some(executor);
     }
 
@@ -1219,9 +1407,9 @@ impl Machine {
         cell
     }
 
-    /// E2-T08: attach the eight virtio-mmio slots (spec 1.2 §4.2.2, Version=2) at
+    /// E2-T08: attach the virtio-mmio slots (spec 1.2 §4.2.2, Version=2) at
     /// [`platform::virt::VIRTIO_BASE`]`+ i*stride`, each wired to PLIC IRQ `1+i`. Slot 0
-    /// gets `slot0` as its backend (E2-T11 plugs the real blk device in); slots 1..=7 are
+    /// gets `slot0` as its backend (E2-T11 plugs the real blk device in); remaining slots are
     /// EMPTY (`DeviceID` 0 — the kernel skips them silently). Requires
     /// [`Self::enable_plic`] first. Returns the slot handles (tests/backends raise
     /// used/config interrupts and inspect queue state through them).
@@ -1306,8 +1494,70 @@ impl Machine {
         state
     }
 
+    /// E5-T06d/E5-T07a: attach the virtio-gpu control queue to the highest free optional slot.
+    /// Slots 7 and 6 remain preferred so the browser's established device layout is unchanged;
+    /// native proof assemblies may also keep the fixed agent console in slot 7 and sound in slot
+    /// 6, in which case the GPU uses an earlier empty slot. Returning `None` lets callers with
+    /// every slot consumed keep their existing device set without replacing another backend.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_gpu(
+        &mut self,
+        sink: alloc::boxed::Box<dyn dev::virtio::gpu::FrameSink>,
+    ) -> Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,
+    )> {
+        assert!(
+            self.virtio.len() > dev::virtio::gpu::VIRTIO_GPU_SLOT,
+            "enable_virtio_slots/enable_virtio_blk before enable_virtio_gpu"
+        );
+        assert!(self.gpu.is_none(), "virtio-gpu is already enabled");
+        let slot_index = (4..=dev::virtio::gpu::VIRTIO_GPU_SLOT)
+            .rev()
+            .find(|&index| self.virtio[index].0.borrow().device_id() == 0)?;
+        let (device, state) = dev::virtio::gpu::VirtioGpu::new_with_sink_state(sink);
+        assert!(
+            self.virtio[slot_index]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(device))
+                .is_ok(),
+            "virtio slot {slot_index} already has a device"
+        );
+        self.gpu = Some((alloc::rc::Rc::clone(&state), None, None, slot_index));
+        Some((alloc::rc::Rc::clone(&self.virtio[slot_index].0), state))
+    }
+
+    /// E5-T06d: replace the host presentation callback after assembly. The guest-visible GPU
+    /// device and queue state remain untouched, so attaching a browser sink cannot reset or stall
+    /// a running guest.
+    pub fn replace_virtio_gpu_sink(
+        &mut self,
+        sink: alloc::boxed::Box<dyn dev::virtio::gpu::FrameSink>,
+    ) -> bool {
+        let Some((state, _, _, _)) = self.gpu.as_ref() else {
+            return false;
+        };
+        state.borrow_mut().frame_sink = sink;
+        true
+    }
+
+    /// E5-T06d: report the selected virtio-gpu slot and shared state, if the display capability was
+    /// installed. Hosts use the handle only for diagnostics; queue servicing stays in `run`.
+    #[allow(clippy::type_complexity)]
+    pub fn virtio_gpu(
+        &self,
+    ) -> Option<(
+        usize,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,
+    )> {
+        self.gpu
+            .as_ref()
+            .map(|(state, _, _, slot)| (*slot, alloc::rc::Rc::clone(state)))
+    }
+
     /// E3-T13: attach a virtio-net device (DeviceID 1) backed by `backend` in slot 1. The
-    /// eight slots must already exist ([`Self::enable_virtio_blk`] or
+    /// nine slots must already exist ([`Self::enable_virtio_blk`] or
     /// [`Self::enable_virtio_slots`] first) — net installs into the empty slot 1 (the DTB
     /// already advertises all eight windows, so the kernel probes it with no DTB change).
     /// Returns (slot-1 handle, shared net state — inspect `rx_dropped`/`tx_count`, drive the
@@ -1354,7 +1604,7 @@ impl Machine {
         Ok(())
     }
 
-    /// Attach a virtio-rng device (DeviceID 4) backed by `source` in slot 2. The eight slots must
+    /// Attach a virtio-rng device (DeviceID 4) backed by `source` in slot 2. The nine slots must
     /// already exist ([`Self::enable_virtio_slots`]/`enable_virtio_blk` first) — rng installs into
     /// the empty slot 2 (the DTB already advertises all eight windows, so the kernel's
     /// `virtio-rng`/`rng-core` probe binds it with no DTB change). The kernel feeds the delivered
@@ -1385,7 +1635,7 @@ impl Machine {
         (alloc::rc::Rc::clone(&self.virtio[2].0), state)
     }
 
-    /// E5-T11b: attach the concrete virtio-input keyboard in slot 3. The standard eight slots
+    /// E5-T11b: attach the concrete virtio-input keyboard in slot 3. The standard nine slots
     /// must already exist (`enable_virtio_slots`/`enable_virtio_blk` first); slot 3 is reserved
     /// for the keyboard so GPU slot 0, net slot 1, and rng slot 2 retain their established shape.
     /// Returns the slot, event/status queue state, and host-owned LED indicator handle.
@@ -1448,7 +1698,7 @@ impl Machine {
     }
 
     /// E5-T14a: attach the absolute tablet in slot 4 and relative mouse in slot 5. The standard
-    /// eight slots must already exist; both queue states stay independent so the host can route a
+    /// nine slots must already exist; both queue states stay independent so the host can route a
     /// selected pointer mode without changing the keyboard's slot or pending frames. Returns
     /// `(tablet_slot, tablet_state, mouse_slot, mouse_state)`.
     #[allow(clippy::type_complexity)]
@@ -1663,9 +1913,227 @@ impl Machine {
             .map(|(slot, state, _, _, _, _, _, _, _)| (*slot, alloc::rc::Rc::clone(state)))
     }
 
-    /// E5-T23b: attach the six-queue virtio-console device (DeviceID 3) in the reserved final
-    /// slot.  Port 0 keeps the standard virtio-console queue pair; port 1 is the named
-    /// `org.wasmvm.agent` channel.  The existing UART/SBI console remains at its original MMIO
+    /// E5-T26e: restore the composite desktop envelope through the concrete T26b--d device
+    /// adapter. The coordinator is intentionally assembled at this boundary so a native or wasm
+    /// host cannot accidentally report success from three independent device restore calls.
+    pub fn restore_desktop_snapshot(
+        &mut self,
+        blob: &[u8],
+        host_viewport: desktop_restore::DisplaySize,
+    ) -> Result<desktop_restore::DesktopRestoreReport, desktop_restore::DesktopRestoreError> {
+        if self.gpu.is_none() {
+            self.cold_boot_desktop_fallback();
+            return Err(desktop_restore::DesktopRestoreError::CommitRefused {
+                code: "gpu_unavailable",
+            });
+        }
+        if self.keyboard.is_none() {
+            self.cold_boot_desktop_fallback();
+            return Err(desktop_restore::DesktopRestoreError::CommitRefused {
+                code: "input_unavailable",
+            });
+        }
+        if self.snd.is_none() {
+            self.cold_boot_desktop_fallback();
+            return Err(desktop_restore::DesktopRestoreError::CommitRefused {
+                code: "sound_unavailable",
+            });
+        }
+        if self.console.is_none() {
+            // This is a pre-backend refusal. It must have the same visible result as a dropped
+            // agent during staging: no retained frame, no dirty device queues, and no stale host
+            // reconciliation tuple.
+            self.cold_boot_desktop_fallback();
+            return Err(desktop_restore::DesktopRestoreError::CommitRefused {
+                code: "agent_unavailable",
+            });
+        }
+        let gpu = self
+            .gpu
+            .as_ref()
+            .map(|(state, _, _, _)| alloc::rc::Rc::clone(state))
+            .expect("GPU checked above");
+        let input = self
+            .keyboard
+            .as_ref()
+            .map(|(state, _, _)| alloc::rc::Rc::clone(state))
+            .expect("keyboard checked above");
+        let sound = self
+            .snd
+            .as_ref()
+            .map(|(_, state, _, _, _, _, _, _, _)| alloc::rc::Rc::clone(state))
+            .expect("sound checked above");
+        let console = self.console.as_ref().expect("console checked above");
+        let backend = desktop_restore::VirtioDesktopRestoreBackend::new_with_agent(
+            gpu,
+            input,
+            sound,
+            alloc::rc::Rc::clone(&console.state),
+            alloc::rc::Rc::clone(&self.desktop_restore_host),
+        );
+        let mut backend = match backend {
+            Ok(backend) => backend,
+            Err(error) => {
+                self.cold_boot_desktop_fallback();
+                return Err(desktop_restore::DesktopRestoreError::CommitRefused {
+                    code: error.code(),
+                });
+            }
+        };
+        let mut coordinator = desktop_restore::DesktopRestoreCoordinator::new();
+        coordinator.restore(blob, host_viewport, &mut backend)
+    }
+
+    /// Reset every desktop surface participating in restore to a fresh power-on baseline. This is
+    /// also used before the concrete backend exists, so all early missing-device refusals clear
+    /// the live presentation instead of merely discarding host metadata.
+    fn cold_boot_desktop_fallback(&mut self) {
+        let gpu = self
+            .gpu
+            .as_ref()
+            .map(|(state, _, _, _)| alloc::rc::Rc::clone(state));
+        let input = self
+            .keyboard
+            .as_ref()
+            .map(|(state, _, _)| alloc::rc::Rc::clone(state));
+        let sound = self
+            .snd
+            .as_ref()
+            .map(|(_, state, _, _, _, _, _, _, _)| alloc::rc::Rc::clone(state));
+        let agent = self
+            .console
+            .as_ref()
+            .map(|console| alloc::rc::Rc::clone(&console.state));
+        desktop_restore::reset_live_desktop_to_cold(
+            gpu.as_ref(),
+            input.as_ref(),
+            sound.as_ref(),
+            agent.as_ref(),
+            &self.desktop_restore_host,
+        );
+    }
+
+    /// E5-T26e: host-facing state from the last successful desktop restore commit.
+    pub fn desktop_restore_host_state(&self) -> desktop_restore::DesktopRestoreHostState {
+        *self.desktop_restore_host.borrow()
+    }
+
+    /// E5-T26f: compose the live desktop component codecs into one versioned browser snapshot.
+    /// The worker calls this only at a scheduler boundary, and the existing bounded block-device
+    /// quiesce gate runs first so a parked virtio-blk descriptor is never copied into the desktop
+    /// envelope. Device codecs remain the owners of their payload semantics; this method only
+    /// supplies the canonical section order and the current deterministic boundary id.
+    pub fn save_desktop_snapshot(
+        &mut self,
+    ) -> Result<alloc::vec::Vec<u8>, desktop_snapshot::DesktopSnapshotSaveError> {
+        self.quiesce()
+            .map_err(|_| desktop_snapshot::DesktopSnapshotSaveError::BlockNotQuiesced)?;
+
+        let gpu = self
+            .gpu
+            .as_ref()
+            .map(|(state, _, _, _)| alloc::rc::Rc::clone(state))
+            .ok_or(
+                desktop_snapshot::DesktopSnapshotSaveError::MissingComponent {
+                    tag: desktop_snapshot::section::GPU,
+                },
+            )?;
+        let input = self
+            .keyboard
+            .as_ref()
+            .map(|(state, _, _)| alloc::rc::Rc::clone(state))
+            .ok_or(
+                desktop_snapshot::DesktopSnapshotSaveError::MissingComponent {
+                    tag: desktop_snapshot::section::INPUT,
+                },
+            )?;
+        let sound = self
+            .snd
+            .as_ref()
+            .map(|(_, state, _, _, _, _, _, _, _)| alloc::rc::Rc::clone(state))
+            .ok_or(
+                desktop_snapshot::DesktopSnapshotSaveError::MissingComponent {
+                    tag: desktop_snapshot::section::SOUND,
+                },
+            )?;
+        let console = self.console.as_ref().ok_or(
+            desktop_snapshot::DesktopSnapshotSaveError::MissingComponent {
+                tag: desktop_snapshot::section::AGENT,
+            },
+        )?;
+
+        let gpu_payload = gpu.borrow().to_snapshot().map_err(|_| {
+            desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                tag: desktop_snapshot::section::GPU,
+            }
+        })?;
+        let input_payload = input.borrow().to_snapshot().map_err(|_| {
+            desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                tag: desktop_snapshot::section::INPUT,
+            }
+        })?;
+        let sound_payload = sound.borrow().to_snapshot().map_err(|_| {
+            desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                tag: desktop_snapshot::section::SOUND,
+            }
+        })?;
+        let agent_payload = console.state.borrow().generation().to_le_bytes();
+
+        let mut builder = desktop_snapshot::DesktopSnapshotBuilder::new(self.irqstats.retired);
+        builder
+            .section(
+                desktop_snapshot::section::GPU,
+                desktop_snapshot::FORMAT_VERSION,
+                &gpu_payload,
+            )
+            .map_err(
+                |_| desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                    tag: desktop_snapshot::section::GPU,
+                },
+            )?;
+        builder
+            .section(
+                desktop_snapshot::section::INPUT,
+                desktop_snapshot::FORMAT_VERSION,
+                &input_payload,
+            )
+            .map_err(
+                |_| desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                    tag: desktop_snapshot::section::INPUT,
+                },
+            )?;
+        builder
+            .section(
+                desktop_snapshot::section::SOUND,
+                desktop_snapshot::FORMAT_VERSION,
+                &sound_payload,
+            )
+            .map_err(
+                |_| desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                    tag: desktop_snapshot::section::SOUND,
+                },
+            )?;
+        builder
+            .section(
+                desktop_snapshot::section::AGENT,
+                desktop_snapshot::FORMAT_VERSION,
+                &agent_payload,
+            )
+            .map_err(
+                |_| desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                    tag: desktop_snapshot::section::AGENT,
+                },
+            )?;
+        builder.finish().map_err(
+            |_| desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                tag: desktop_snapshot::section::AGENT,
+            },
+        )
+    }
+
+    /// E5-T23b: attach the six-queue virtio-console device (DeviceID 3) in the reserved native
+    /// slot. Port 0 keeps the standard virtio-console queue pair; port 1 is the named
+    /// `org.wasmvm.agent` channel. The existing UART/SBI console remains at its original MMIO
     /// address and has no shared queue or buffer with this device.
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_console(
@@ -1674,7 +2142,20 @@ impl Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::console::ConsoleState>>,
     ) {
-        let slot_index = dev::virtio::console::VIRTIO_CONSOLE_SLOT;
+        self.enable_virtio_console_at(dev::virtio::console::VIRTIO_CONSOLE_SLOT)
+    }
+
+    /// Attach the same console service at an explicitly selected empty slot. The browser uses
+    /// the ninth platform window so it can retain the established net/rng/input/sound/GPU layout;
+    /// native callers should use [`Self::enable_virtio_console`] to keep the fixed slot-7 contract.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_console_at(
+        &mut self,
+        slot_index: usize,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::console::ConsoleState>>,
+    ) {
         assert!(
             self.virtio.len() > slot_index,
             "enable_virtio_slots/enable_virtio_blk before enable_virtio_console"
@@ -1709,6 +2190,14 @@ impl Machine {
         self.console
             .as_ref()
             .map(|console| alloc::rc::Rc::clone(&console.state))
+    }
+
+    /// Record that the host-side T23d Channel completed a fresh application HELLO intersection.
+    /// The transport/device readiness bits alone are intentionally insufficient for desktop
+    /// restore. Returns the application HELLO generation when a live named port accepted it.
+    pub fn confirm_virtio_console_agent_hello(&self) -> Option<u64> {
+        let console = self.console.as_ref()?;
+        console.state.borrow_mut().mark_application_hello()
     }
 
     /// E2-T16: attach the goldfish RTC at [`platform::virt::RTC_BASE`], wired to PLIC IRQ 11,
@@ -1753,6 +2242,9 @@ impl Machine {
     /// loop's sampling is a single not-taken branch per retire.
     pub fn set_profiling(&mut self, on: bool) {
         self.profiling = on;
+        if let Some(executor) = self.executor.as_mut() {
+            executor.set_entry_timing(on);
+        }
         if on {
             self.prof_countdown = PROF_STRIDE_BASE;
         }
@@ -2249,6 +2741,126 @@ impl Machine {
             v.extend_from_slice(&st.rx_count.to_le_bytes());
             w.section(section::VIRTIO_NET, &v);
         }
+        // E5-T26h: compose each desktop codec with its live MMIO register file and service-ring
+        // cursors. Host sinks/clocks remain owned by the freshly assembled target machine; only
+        // guest-visible state and deterministic device shadows cross the resume boundary.
+        if let Some((state, vq, cursor_vq, slot_index)) = &self.gpu {
+            let mut v = alloc::vec::Vec::new();
+            self.virtio[*slot_index]
+                .0
+                .borrow()
+                .snapshot_transport(&mut v);
+            append_resume_queue(&mut v, vq);
+            append_resume_queue(&mut v, cursor_vq);
+            let payload = state.borrow().to_snapshot().map_err(|_| {
+                crate::resume::SnapshotError::BadComponentState {
+                    tag: section::VIRTIO_GPU,
+                }
+            })?;
+            v.extend_from_slice(&payload);
+            w.section(section::VIRTIO_GPU, &v);
+        }
+        if let Some((state, eventq, statusq)) = &self.keyboard {
+            // A physical key/button belongs to the old host session. Turn it into a protected
+            // release frame before encoding so a fresh target cannot inherit a stuck key.
+            state.borrow_mut().release_all();
+            let mut v = alloc::vec::Vec::new();
+            self.virtio[dev::virtio::input::keyboard::KEYBOARD_VIRTIO_SLOT]
+                .0
+                .borrow()
+                .snapshot_transport(&mut v);
+            append_resume_queue(&mut v, eventq);
+            append_resume_queue(&mut v, statusq);
+            let payload = state.borrow().to_snapshot().map_err(|_| {
+                crate::resume::SnapshotError::BadComponentState {
+                    tag: section::VIRTIO_KEYBOARD,
+                }
+            })?;
+            v.extend_from_slice(&payload);
+            w.section(section::VIRTIO_KEYBOARD, &v);
+        }
+        if let Some((state, eventq, statusq)) = &self.tablet {
+            state.borrow_mut().release_all();
+            let mut v = alloc::vec::Vec::new();
+            self.virtio[dev::virtio::input::pointer::TABLET_VIRTIO_SLOT]
+                .0
+                .borrow()
+                .snapshot_transport(&mut v);
+            append_resume_queue(&mut v, eventq);
+            append_resume_queue(&mut v, statusq);
+            let payload = state.borrow().to_snapshot().map_err(|_| {
+                crate::resume::SnapshotError::BadComponentState {
+                    tag: section::VIRTIO_TABLET,
+                }
+            })?;
+            v.extend_from_slice(&payload);
+            w.section(section::VIRTIO_TABLET, &v);
+        }
+        if let Some((state, eventq, statusq)) = &self.mouse {
+            state.borrow_mut().release_all();
+            let mut v = alloc::vec::Vec::new();
+            self.virtio[dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT]
+                .0
+                .borrow()
+                .snapshot_transport(&mut v);
+            append_resume_queue(&mut v, eventq);
+            append_resume_queue(&mut v, statusq);
+            let payload = state.borrow().to_snapshot().map_err(|_| {
+                crate::resume::SnapshotError::BadComponentState {
+                    tag: section::VIRTIO_MOUSE,
+                }
+            })?;
+            v.extend_from_slice(&payload);
+            w.section(section::VIRTIO_MOUSE, &v);
+        }
+        if let Some((slot_index, state, controlq, eventq, rxq, txq, _, _, _)) = &self.snd {
+            let mut v = alloc::vec::Vec::new();
+            self.virtio[*slot_index]
+                .0
+                .borrow()
+                .snapshot_transport(&mut v);
+            // Prefix entries are indexed by the transport: control=0, event=1, TX=2, RX=3.
+            // The Machine tuple keeps RX before TX, so do not copy its field order here.
+            for queue in [controlq, eventq, txq, rxq] {
+                append_resume_queue(&mut v, queue);
+            }
+            v.extend_from_slice(&SND_RESUME_LAYOUT_VERSION.to_le_bytes());
+            let payload = state.borrow().to_snapshot().map_err(|_| {
+                crate::resume::SnapshotError::BadComponentState {
+                    tag: section::VIRTIO_SND,
+                }
+            })?;
+            v.extend_from_slice(&payload);
+            w.section(section::VIRTIO_SND, &v);
+        }
+        if let Some((state, vq)) = &self.rng {
+            let mut v = alloc::vec::Vec::new();
+            self.virtio[2].0.borrow().snapshot_transport(&mut v);
+            append_resume_queue(&mut v, vq);
+            state.borrow().snapshot_resume(&mut v);
+            w.section(section::VIRTIO_RNG, &v);
+        }
+        // E5-T26f: the guest's virtio-console driver remains live in restored RAM. Persist its
+        // transport lifecycle and device-side ring cursors as well as the small host lifecycle
+        // tuple, while intentionally dropping application bytes so the browser can establish a
+        // fresh Channel generation after reload.
+        if let Some(console) = &self.console {
+            let slot = alloc::rc::Rc::clone(&self.virtio[console.slot_index].0);
+            let mut v = alloc::vec::Vec::new();
+            slot.borrow().snapshot_transport(&mut v);
+            for q in [
+                &console.port0_receiveq,
+                &console.port0_transmitq,
+                &console.control_receiveq,
+                &console.control_transmitq,
+                &console.agent_receiveq,
+                &console.agent_transmitq,
+            ] {
+                append_resume_queue(&mut v, q);
+            }
+            console.state.borrow().snapshot_resume(&mut v);
+            w.section(section::VIRTIO_CONSOLE, &v);
+        }
         // Deterministic-clock phase (E3-T12b): the sub-`clock_div` remainder + `clock_div` itself, so
         // the next `mtime` tick lands at the identical retirement after resume (instruction-exact
         // timer placement). Machine-level state, so it has its own section.
@@ -2284,8 +2896,248 @@ impl Machine {
             &self.coherence.base_image_hash,
             self.coherence.generation,
         )?;
+        // Parse the complete TLV list before applying anything. The desktop sections below are
+        // then decoded against detached transports and throwaway codec instances. Every fallible
+        // legacy component is checked too: a later CPU/RAM/device refusal must not leave an earlier
+        // desktop commit (including a host GPU repair frame) behind.
+        let mut sections = alloc::vec::Vec::new();
         for sec in reader {
-            let sec = sec?;
+            sections.push(sec?);
+        }
+        let desktop_sections = [
+            (section::VIRTIO_GPU, self.gpu.is_some()),
+            (section::VIRTIO_KEYBOARD, self.keyboard.is_some()),
+            (section::VIRTIO_TABLET, self.tablet.is_some()),
+            (section::VIRTIO_MOUSE, self.mouse.is_some()),
+            (section::VIRTIO_SND, self.snd.is_some()),
+            (section::VIRTIO_CONSOLE, self.console.is_some()),
+            (section::VIRTIO_RNG, self.rng.is_some()),
+        ];
+        for &(tag, present) in &desktop_sections {
+            let count = sections.iter().filter(|sec| sec.tag == tag).count();
+            if count > 1 || (present != (count == 1)) {
+                return Err(crate::resume::SnapshotError::BadComponentState { tag });
+            }
+        }
+        for sec in &sections {
+            match sec.tag {
+                section::CPU => Hart::new().restore(sec.payload)?,
+                section::RAM => {
+                    crate::resume::validate_sparse(sec.payload, self.bus.ram().len())?;
+                }
+                section::CLINT => dev::clint::ClintState::default().restore(sec.payload)?,
+                section::PLIC => dev::plic::PlicState::default().restore(sec.payload)?,
+                section::UART => dev::uart16550::Uart16550::new().restore(sec.payload)?,
+                section::RTC => {
+                    dev::rtc::GoldfishRtc::new(alloc::boxed::Box::new(dev::rtc::FixedClock(0)))
+                        .restore(sec.payload)?;
+                }
+                section::CLOCK => {
+                    let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
+                    reader.u64()?;
+                    reader.u64()?;
+                    reader.u64()?;
+                    reader.finish()?;
+                }
+                section::VIRTIO_BLK | section::VIRTIO_NET => {
+                    let (slot_index, queue_count, counter_count) = if sec.tag == section::VIRTIO_BLK
+                    {
+                        (0, 1, 1)
+                    } else {
+                        (1, 2, 3)
+                    };
+                    if self.virtio.get(slot_index).is_none() {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        });
+                    }
+                    // Use the same transport decoder and field reads as the legacy commit pass,
+                    // keeping its accepted wire layout while moving all refusal ahead of writes.
+                    let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
+                    dev::virtio::mmio::VirtioMmio::empty().restore_transport(&mut reader)?;
+                    for _ in 0..queue_count {
+                        reader.bool()?;
+                        reader.u16()?;
+                        reader.u16()?;
+                    }
+                    for _ in 0..counter_count {
+                        reader.u64()?;
+                    }
+                    reader.finish()?;
+                }
+                section::VIRTIO_GPU => {
+                    let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
+                    let mut device = dev::virtio::gpu::VirtioGpu::new();
+                    device.restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                }
+                section::VIRTIO_KEYBOARD => {
+                    let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
+                    let (_, state) = dev::virtio::input::VirtioInput::new_with_state(
+                        dev::virtio::input::keyboard::keyboard_spec(),
+                    );
+                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                }
+                section::VIRTIO_TABLET => {
+                    let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
+                    let (_, state) = dev::virtio::input::VirtioInput::new_with_state(
+                        dev::virtio::input::pointer::tablet_spec(),
+                    );
+                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                }
+                section::VIRTIO_MOUSE => {
+                    let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
+                    let (_, state) = dev::virtio::input::VirtioInput::new_with_state(
+                        dev::virtio::input::pointer::mouse_spec(),
+                    );
+                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                }
+                section::VIRTIO_SND => {
+                    let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 4)?;
+                    let mut device = dev::virtio::snd::VirtioSnd::new();
+                    device.restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                }
+                section::VIRTIO_CONSOLE => {
+                    let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 6)?;
+                    let mut state = dev::virtio::console::ConsoleState::new();
+                    let mut reader = crate::resume::Reader::new(payload, sec.tag);
+                    state.restore_resume(&mut reader)?;
+                    reader.finish()?;
+                }
+                section::VIRTIO_RNG => {
+                    let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 1)?;
+                    let mut reader = crate::resume::Reader::new(payload, sec.tag);
+                    reader.bool()?;
+                    reader.bool()?;
+                    reader.u64()?;
+                    reader.finish()?;
+                }
+                _ => {}
+            }
+        }
+        for sec in &sections {
+            match sec.tag {
+                section::VIRTIO_GPU => {
+                    let (_, rings, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
+                    let Some((state, control_vq, cursor_vq, slot_index)) = &mut self.gpu else {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        });
+                    };
+                    let slot = alloc::rc::Rc::clone(&self.virtio[*slot_index].0);
+                    let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
+                    slot.borrow_mut().restore_transport(&mut reader)?;
+                    for _ in &rings {
+                        reader.bool()?;
+                        reader.u16()?;
+                        reader.u16()?;
+                    }
+                    let mut queues = restore_resume_queues(&slot, &rings, sec.tag)?;
+                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                    *control_vq = queues.remove(0);
+                    *cursor_vq = queues.remove(0);
+                }
+                section::VIRTIO_KEYBOARD | section::VIRTIO_TABLET | section::VIRTIO_MOUSE => {
+                    let slot_index = match sec.tag {
+                        section::VIRTIO_KEYBOARD => {
+                            dev::virtio::input::keyboard::KEYBOARD_VIRTIO_SLOT
+                        }
+                        section::VIRTIO_TABLET => dev::virtio::input::pointer::TABLET_VIRTIO_SLOT,
+                        _ => dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT,
+                    };
+                    let (_, rings, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
+                    let (state, eventq, statusq) = match sec.tag {
+                        section::VIRTIO_KEYBOARD => self
+                            .keyboard
+                            .as_mut()
+                            .map(|device| (&mut device.0, &mut device.1, &mut device.2)),
+                        section::VIRTIO_TABLET => self
+                            .tablet
+                            .as_mut()
+                            .map(|device| (&mut device.0, &mut device.1, &mut device.2)),
+                        _ => self
+                            .mouse
+                            .as_mut()
+                            .map(|device| (&mut device.0, &mut device.1, &mut device.2)),
+                    }
+                    .ok_or(crate::resume::SnapshotError::BadComponentState { tag: sec.tag })?;
+                    let slot = alloc::rc::Rc::clone(&self.virtio[slot_index].0);
+                    let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
+                    slot.borrow_mut().restore_transport(&mut reader)?;
+                    for _ in &rings {
+                        reader.bool()?;
+                        reader.u16()?;
+                        reader.u16()?;
+                    }
+                    let mut queues = restore_resume_queues(&slot, &rings, sec.tag)?;
+                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                    *eventq = queues.remove(0);
+                    *statusq = queues.remove(0);
+                }
+                section::VIRTIO_SND => {
+                    let (_, rings, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 4)?;
+                    let Some((slot_index, state, controlq, eventq, rxq, txq, _, _, _)) =
+                        &mut self.snd
+                    else {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        });
+                    };
+                    let slot = alloc::rc::Rc::clone(&self.virtio[*slot_index].0);
+                    let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
+                    slot.borrow_mut().restore_transport(&mut reader)?;
+                    for _ in &rings {
+                        reader.bool()?;
+                        reader.u16()?;
+                        reader.u16()?;
+                    }
+                    let mut queues = restore_resume_queues(&slot, &rings, sec.tag)?;
+                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
+                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                    })?;
+                    *controlq = queues.remove(0);
+                    *eventq = queues.remove(0);
+                    *txq = queues.remove(0);
+                    *rxq = queues.remove(0);
+                }
+                section::VIRTIO_RNG => {
+                    let (_, rings, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 1)?;
+                    let Some((state, vq)) = &mut self.rng else {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        });
+                    };
+                    let slot = alloc::rc::Rc::clone(&self.virtio[2].0);
+                    let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
+                    slot.borrow_mut().restore_transport(&mut reader)?;
+                    for _ in &rings {
+                        reader.bool()?;
+                        reader.u16()?;
+                        reader.u16()?;
+                    }
+                    let mut queues = restore_resume_queues(&slot, &rings, sec.tag)?;
+                    let mut state_reader = crate::resume::Reader::new(payload, sec.tag);
+                    state.borrow_mut().restore_resume(&mut state_reader)?;
+                    state_reader.finish()?;
+                    *vq = queues.remove(0);
+                }
+                _ => {}
+            }
+        }
+        for sec in sections {
             match sec.tag {
                 section::CPU => self.hart.restore(sec.payload)?,
                 section::RAM => self.bus.ram_mut().restore(sec.payload)?,
@@ -2402,10 +3254,61 @@ impl Machine {
                         st.rx_count = rx_count;
                     }
                 }
+                section::VIRTIO_CONSOLE => {
+                    let Some(console) = &mut self.console else {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: section::VIRTIO_CONSOLE,
+                        });
+                    };
+                    let (_, rings, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 6)?;
+                    let slot = alloc::rc::Rc::clone(&self.virtio[console.slot_index].0);
+                    let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
+                    slot.borrow_mut().restore_transport(&mut reader)?;
+                    for _ in &rings {
+                        reader.bool()?;
+                        reader.u16()?;
+                        reader.u16()?;
+                    }
+                    let mut restored_queues = restore_resume_queues(&slot, &rings, sec.tag)?;
+                    let mut state_reader = crate::resume::Reader::new(payload, sec.tag);
+                    console
+                        .state
+                        .borrow_mut()
+                        .restore_resume(&mut state_reader)?;
+                    state_reader.finish()?;
+                    console.port0_receiveq = restored_queues.remove(0);
+                    console.port0_transmitq = restored_queues.remove(0);
+                    console.control_receiveq = restored_queues.remove(0);
+                    console.control_transmitq = restored_queues.remove(0);
+                    console.agent_receiveq = restored_queues.remove(0);
+                    console.agent_transmitq = restored_queues.remove(0);
+                }
+                // Desktop devices are decoded and committed in the transactional passes above;
+                // skip them here so the legacy component restores retain their existing order
+                // without applying the same transport or codec twice.
+                section::VIRTIO_GPU
+                | section::VIRTIO_KEYBOARD
+                | section::VIRTIO_TABLET
+                | section::VIRTIO_MOUSE
+                | section::VIRTIO_SND
+                | section::VIRTIO_RNG => {}
                 other => {
                     return Err(crate::resume::SnapshotError::UnsupportedSection { tag: other });
                 }
             }
+        }
+        // Agent TX still in guest RAM belongs to the saved application session, including any
+        // pending HELLO. Complete it without forwarding bytes into the new host Channel. Do this
+        // after every section (RAM need not precede console in the container), before any guest
+        // execution can post fresh descriptors or observe completions and reuse old ones.
+        if let Some(console) = &mut self.console {
+            let slot = alloc::rc::Rc::clone(&self.virtio[console.slot_index].0);
+            dev::virtio::console::discard_resume_agent_tx(
+                &slot,
+                &mut console.agent_transmitq,
+                &console.state,
+                &mut self.bus,
+            );
         }
         // E4-T05: a restore swaps CPU + RAM wholesale, so any predecoded block (keyed by the
         // pre-restore physical layout) is now stale — flush the cache and drop the cursor.
@@ -2419,6 +3322,10 @@ impl Machine {
         if let Some(e) = self.executor.as_mut() {
             e.invalidate_all();
         }
+        // Host epochs are not portable snapshot data. Only a successful whole-machine commit
+        // may discard the previous wall anchor; every refusal above preserves it untouched.
+        #[cfg(not(feature = "zicsr-stub"))]
+        self.rebase_guest_clock();
         Ok(())
     }
 
@@ -2470,8 +3377,8 @@ impl Machine {
 
     /// Step one instruction with a [`trace::TraceSink`] hook (E0-T16). Does NOT consult
     /// HTIF — the caller drives termination (e.g. via [`Self::htif_exit`]); use this to
-    /// trace a run instruction-by-instruction. `step_traced(&mut NullSink)` is exactly
-    /// [`Self::run`]'s per-step behavior.
+    /// trace a run instruction-by-instruction. The untraced [`Self::step`] path uses the
+    /// private unit capture; this method always retains public retirement records.
     pub fn step_traced<T: trace::TraceSink>(&mut self, sink: &mut T) -> Result<(), hart::Trap> {
         self.hart.step_traced(&mut self.bus, sink)
     }
@@ -2482,7 +3389,7 @@ impl Machine {
     /// run loop layers delivery on top; this is the primitive tests use to inspect a raw
     /// trap or prove execute-purity.
     pub fn step(&mut self) -> Result<(), hart::Trap> {
-        self.hart.step_traced(&mut self.bus, &mut trace::NullSink)
+        self.hart.step(&mut self.bus)
     }
 
     /// If HTIF is armed and `tohost` currently requests exit, the exit code; else `None`.
@@ -2499,12 +3406,9 @@ impl Machine {
     /// on the first guest exit, the first escaping trap, or after exactly
     /// `max_instrs` retirements — whichever comes first.
     ///
-    /// Zero-cost: delegates to [`Self::run_traced`] with a [`trace::NullSink`], whose
-    /// empty `#[inline(always)]` `retire` erases the hook entirely (same monomorphization
-    /// the E0-T16 zero-cost proof covers), so this is identical to a hand-written
-    /// `hart.step` loop.
+    /// Selects the private unit retirement capture through the ordinary/cached dispatch below.
     pub fn run(&mut self, max_instrs: u64) -> RunOutcome {
-        self.run_traced(max_instrs, &mut trace::NullSink)
+        self.run_with_capture::<trace::NullSink>(max_instrs, RunCapture::Unit)
     }
 
     /// E1-T12: mirror the CLINT interrupt LEVELS into `mip`. MTIP (bit 7) tracks
@@ -2634,12 +3538,66 @@ impl Machine {
         }
         self.wall_time = Some(ts);
         self.mono_clock = Some(clock);
+        self.rebase_guest_clock();
+    }
+
+    /// The selected guest timer policy (host state, deliberately absent from resume wire data).
+    pub fn guest_clock_mode(&self) -> time::TimeMode {
+        if self.wall_time.is_some() {
+            time::TimeMode::WallClock
+        } else {
+            time::TimeMode::ICount
+        }
+    }
+
+    /// Retirements per tick in ICount mode; retained, but inactive, in wall mode.
+    pub fn guest_clock_div(&self) -> u64 {
+        self.clock_div
+    }
+
+    /// Select an explicit deterministic timer rate without replacing the CLINT or advancing time.
+    /// Fractional progress toward the next tick is conservatively quantized to the new divisor.
+    /// Host configuration only: the existing resume clock section already stores both fields.
+    pub fn set_icount_divider(&mut self, divider: u64) -> Result<(), &'static str> {
+        if !(1..=1024).contains(&divider) {
+            return Err("ICount divider must be an integer from 1 to 1024");
+        }
+        if self.clint.is_none() {
+            return Err("ICount divider requires an attached CLINT");
+        }
+        if self.wall_time.is_some() {
+            return Err("ICount divider requires ICount mode");
+        }
+        if self.clock_div == 0 || self.tick_accum >= self.clock_div {
+            return Err("ICount divider requires a valid saved clock phase");
+        }
+        if divider == self.clock_div {
+            return Ok(());
+        }
+        let phase = u128::from(self.tick_accum) * u128::from(divider) / u128::from(self.clock_div);
+        self.tick_accum = phase as u64;
+        self.clock_div = divider;
+        Ok(())
+    }
+
+    /// Freeze elapsed host time across an explicit pause or a successful snapshot restore.
+    /// Does not change guest mtime, deadlines, ICount phase, or policy. Ordinary worker/background
+    /// gaps must NOT call this: they keep the existing clamp/slew/jump behavior.
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub fn rebase_guest_clock(&mut self) {
+        if let (Some(ts), Some(clock), Some(clint)) =
+            (&mut self.wall_time, &self.mono_clock, &self.clint)
+        {
+            ts.rebase_wall(clock.now_nanos(), clint.borrow().mtime);
+            self.last_time_jump = None;
+        }
     }
 
     /// E4-T24: revert to the deterministic ICount clock (retire-derived `mtime`).
     pub fn set_icount_clock(&mut self) {
         self.wall_time = None;
         self.mono_clock = None;
+        self.last_time_jump = None;
     }
 
     /// E4-T24: take the last discontinuous `mtime` jump (suspend/resume exception), if any — the host
@@ -2895,6 +3853,14 @@ impl Machine {
     /// entry→exit delta accumulates into `prof_total_ns`, the span CPU-interp time is later derived
     /// from by subtraction. The `_inner` body holds the actual loop and is untouched by profiling.
     pub fn run_traced<T: trace::TraceSink>(&mut self, max_instrs: u64, sink: &mut T) -> RunOutcome {
+        self.run_with_capture(max_instrs, RunCapture::Traced(sink))
+    }
+
+    fn run_with_capture<T: trace::TraceSink>(
+        &mut self,
+        max_instrs: u64,
+        mut capture: RunCapture<'_, T>,
+    ) -> RunOutcome {
         // One timer read at entry (cold, once per run) — only when profiling armed with a timer.
         let t0 = if self.profiling {
             self.host_timer.as_ref().map(|t| t.now_ns())
@@ -2907,7 +3873,7 @@ impl Machine {
         if owns_cooperative_scope {
             self.begin_cooperative_run_mode(false);
         }
-        let outcome = self.run_traced_inner(max_instrs, sink);
+        let outcome = self.run_capture_inner(max_instrs, &mut capture);
         // One timer read at exit; accumulate the total profiled span. The device+walk time timed on
         // the cold paths is a SUBSET of this span, so `total − (device + walk)` is the interpreter's.
         if let (Some(t0), Some(t)) = (t0, self.host_timer.as_ref()) {
@@ -2930,7 +3896,10 @@ impl Machine {
     /// memoized. Called once per outer-loop iteration, so the loop's per-op device sync +
     /// interrupt sampling stay per-retire (interrupt batching is Phase C).
     #[cfg(not(feature = "zicsr-stub"))]
-    fn step_cached<T: trace::TraceSink>(&mut self, sink: &mut T) -> Result<(), Trap> {
+    fn step_cached_with_capture<C: hart::RetirementCapture>(
+        &mut self,
+        mut capture: C,
+    ) -> Result<(), Trap> {
         // Same ordering as `step_traced`: arm counters, then the execute-address trigger check,
         // BEFORE obtaining the instruction.
         self.hart.csr.arm_counters();
@@ -2951,19 +3920,15 @@ impl Machine {
         // bumps its revision and flushes this cursor at the next block boundary. A miss (re)builds
         // the block at pc's physical address, reproducing any fetch/decode trap.
         let op = self.next_micro_op(pc)?;
-        let (rd, value, mem) = self.hart.execute(
+        let output = self.hart.execute(
             &mut self.bus,
             op.instr,
             u64::from(op.len),
             u64::from(op.raw),
+            &mut capture,
         )?;
         self.hart.csr.retire_tick();
-        sink.retire(&trace::TraceRecord {
-            pc,
-            insn: op.raw,
-            rd: (rd != 0).then_some((rd, value)),
-            mem,
-        });
+        capture.retire(output, pc, op.raw);
         // E4-T17 page-granular invalidation (supersedes E4-T16's conservative fence.i flush):
         //  - a store (this op's `mem.is_store`, incl. SC/AMO) reached RAM via the bus, which
         //    recorded its physical frame(s). Drain that log through PAGE-GRANULAR invalidation:
@@ -3201,6 +4166,10 @@ impl Machine {
         for phys in self.compile_queue.take_recount() {
             self.discovery.renominate(phys);
         }
+        // Surviving backlog can accrue interpreted hits across exhausted host budgets, even when
+        // this pump staged nothing. Refresh only now; keep admission/cancellation/recount ordering.
+        self.compile_queue
+            .refresh_hotness(|phys| self.discovery.queued_hotness(phys));
         // ── E4-T21: pop the hottest jobs up to the per-boundary INSTALL budget (bounds the stall). ──
         let mut reqs: alloc::vec::Vec<dispatch::TranslationRequest> = alloc::vec::Vec::new();
         let attempt_budget = JIT_INSTALL_BUDGET.min(self.jit_run_attempt_remaining);
@@ -3678,10 +4647,10 @@ impl Machine {
         }
     }
 
-    fn run_traced_inner<T: trace::TraceSink>(
+    fn run_capture_inner<T: trace::TraceSink>(
         &mut self,
         max_instrs: u64,
-        sink: &mut T,
+        capture: &mut RunCapture<'_, T>,
     ) -> RunOutcome {
         // A host/device can mutate RAM through `bus_mut()` while execution is yielded between
         // bounded run calls. Drain once before even considering a saved mid-block cursor: waiting
@@ -3800,6 +4769,19 @@ impl Machine {
                     );
                     dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
                 }
+                // E5-T06d: service the deferred virtio-gpu control queue at the same boundary as
+                // the other guest devices. RESOURCE_FLUSH invokes the retained host sink only
+                // after guest backing has been validated and copied into the resource shadow.
+                if let Some((state, control_vq, cursor_vq, slot_index)) = &mut self.gpu {
+                    let slot = alloc::rc::Rc::clone(&self.virtio[*slot_index].0);
+                    dev::virtio::gpu::service_with_cursor(
+                        &slot,
+                        control_vq,
+                        cursor_vq,
+                        state,
+                        &mut self.bus,
+                    );
+                }
                 // E5-T19d: service sound controlq before eventq/txq so a Linux snd_virtio probe
                 // receives its QEMU-shaped responses at the same guest-visible boundary that it
                 // kicks the queue. Playback then uses the injected host clock/sink without changing
@@ -3903,7 +4885,7 @@ impl Machine {
             // via the executor INSTEAD of interpreting. `try_jit_block` commits the retire clock for
             // the block's ops itself (so the per-op accounting below is skipped for a JIT run).
             #[cfg(not(feature = "zicsr-stub"))]
-            let jit_attempt = if self.jit_active() && sample_boundary && !sink.wants_records() {
+            let jit_attempt = if self.jit_active() && sample_boundary && !capture.wants_records() {
                 self.try_jit_block(remaining_work)
             } else {
                 None
@@ -3911,11 +4893,10 @@ impl Machine {
             #[cfg(not(feature = "zicsr-stub"))]
             let (step_result, ran_via_jit, work_used) = match jit_attempt {
                 Some(progress) => (progress.result, true, progress.work_used),
-                None if self.block_cache_enabled => (self.step_cached(sink), false, 1),
-                None => (self.hart.step_traced(&mut self.bus, sink), false, 1),
+                None => (capture.step(self, self.block_cache_enabled), false, 1),
             };
             #[cfg(feature = "zicsr-stub")]
-            let (step_result, work_used) = (self.hart.step_traced(&mut self.bus, sink), 1u64);
+            let (step_result, work_used) = (capture.step(self, false), 1u64);
             debug_assert!(work_used > 0 && work_used <= remaining_work);
             remaining_work -= work_used;
             // E1-T12: an instruction retired iff the step succeeded — advance the deterministic
@@ -4083,6 +5064,12 @@ fn kernel_image_footprint(bytes: &[u8]) -> u64 {
     }
     file_len
 }
+
+#[cfg(all(test, not(feature = "zicsr-stub")))]
+mod pmp_audit_tests;
+
+#[cfg(all(test, not(feature = "zicsr-stub")))]
+mod decoded_cache_capacity_tests;
 
 #[cfg(test)]
 mod tests {

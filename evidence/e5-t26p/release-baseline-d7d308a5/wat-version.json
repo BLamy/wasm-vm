@@ -1,0 +1,1 @@
+{"label":"wat-version","executable":"/opt/homebrew/bin/wasm2wat","args":["--version"],"status":0,"signal":null}

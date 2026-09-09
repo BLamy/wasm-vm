@@ -1,0 +1,264 @@
+{
+  "schema": "wasm-vm.e5-t15d.cursor-integration-evidence.v1",
+  "task": "E5-T15d",
+  "command": "node tools/verify/e5-t15d-cursor-integration.mjs",
+  "generatedAt": "2026-09-04T17:15:37.060Z",
+  "gitHead": "94c51769153d630377a270a93eaa208708bd43c3",
+  "base": "http://127.0.0.1:58896",
+  "browser": {
+    "name": "chromium",
+    "version": "152.0.7977.76",
+    "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+  },
+  "sourceDistParity": {
+    "equal": true,
+    "files": [
+      {
+        "source": "web/cursor-integration.html",
+        "dist": "web/dist/cursor-integration.html",
+        "sha256": "3aca639aaa7bdb74261d45271fefee05bf31908b41dd06e378a4dea1fe43439a"
+      },
+      {
+        "source": "web/cursor-integration.js",
+        "dist": "web/dist/cursor-integration.js",
+        "sha256": "cebc4a5ca9cf4906a0fba21df6d759533d961f94390593f1fbe0f34e23e99cbe"
+      },
+      {
+        "source": "web/src/sink/cursor.js",
+        "dist": "web/dist/src/sink/cursor.js",
+        "sha256": "be4619b7f049b4a468bdbfbc20602d4d514775b710d2abc6ccdc370406e63c7b"
+      },
+      {
+        "source": "web/src/sink/cursor-controller.js",
+        "dist": "web/dist/src/sink/cursor-controller.js",
+        "sha256": "3f3505f27dca24ea5a1f5454905e4a6744f7af58803a8c609e25b7fbff3344e0"
+      },
+      {
+        "source": "web/src/sink/presentation.js",
+        "dist": "web/dist/src/sink/presentation.js",
+        "sha256": "9233e963240094de98389174b629f2b8b659fc8793e60c28cd2a96f4c5a42426"
+      },
+      {
+        "source": "web/src/sink/frame-scheduler.js",
+        "dist": "web/dist/src/sink/frame-scheduler.js",
+        "sha256": "4ab11b844262f32bf3c1f6e0cfa36a866f241273c36e66d1aa8c4679f770e54d"
+      }
+    ]
+  },
+  "native": {
+    "command": "cargo test -p wasm-vm-core --test virtio_gpu_machine gpu_cursor_plane_integration_preserves_pixels_and_transform_only_moves -- --nocapture",
+    "marker": "E5T15D_NATIVE_PROOF updates=3 moves=500 final_x=600 final_y=580 checker_crc=29eaa715 oversized_pixels=65536 hidden_resource=0 used=503",
+    "stdoutSha256": "6e74fb3eb90bf93f1adc782dba2727f02ca7c11decac0b00ee01720ddf1da50f"
+  },
+  "integration": {
+    "schema": "wasm-vm.e5-t15d.cursor-integration.v1",
+    "task": "E5-T15d",
+    "route": "cursor-integration",
+    "browser": {
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36",
+      "platform": "MacIntel",
+      "devicePixelRatio": 1
+    },
+    "noTraffic": {
+      "hostCursor": "",
+      "overlays": 0,
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      }
+    },
+    "asset": {
+      "kind": "css",
+      "width": 64,
+      "height": 64,
+      "hotX": 10,
+      "hotY": 3,
+      "dataUrlChars": 22046
+    },
+    "movement": {
+      "requested": 500,
+      "requestedHz": 500,
+      "observedHz": 435.38267959810497,
+      "elapsedMs": 1148.4150000214577,
+      "movesDuringDelayedFrame": 297,
+      "layoutReads": 0,
+      "transformWrites": 500,
+      "final": {
+        "x": 619,
+        "y": 579
+      },
+      "finalTransform": "translate3d(609px, 576px, 0px)",
+      "overlayBefore": {
+        "width": "64px",
+        "height": "64px",
+        "display": "block",
+        "left": "0px",
+        "top": "0px",
+        "pointerEvents": "none",
+        "userSelect": "none",
+        "willChange": "transform",
+        "transformOrigin": "0px 0px",
+        "zIndex": "2147483647"
+      },
+      "overlayAfter": {
+        "width": "64px",
+        "height": "64px",
+        "display": "block",
+        "left": "0px",
+        "top": "0px",
+        "pointerEvents": "none",
+        "userSelect": "none",
+        "willChange": "transform",
+        "transformOrigin": "0px 0px",
+        "zIndex": "2147483647"
+      }
+    },
+    "delayedFrames": {
+      "requested": 160,
+      "delivered": 160,
+      "periodMs": 4,
+      "delayMs": 30,
+      "maxPending": 8,
+      "elapsedMs": 1157.2049999833107,
+      "delayedTimers": 0,
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 128,
+        "height": 80,
+        "framesReceived": 160,
+        "successfulPresents": 20,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 160,
+          "coalesced": 140,
+          "presented": 20,
+          "skipped": 140,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false
+        },
+        "gpu": {
+          "framesReceived": 160,
+          "enqueued": 160,
+          "coalesced": 140,
+          "presented": 20,
+          "successfulPresents": 20,
+          "skipped": 140,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 819200,
+          "width": 128,
+          "height": 80
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 128,
+            "height": 80
+          },
+          "resourceWidth": 128,
+          "resourceHeight": 80
+        },
+        "errors": []
+      }
+    },
+    "oversized": {
+      "kind": "overlay",
+      "width": 256,
+      "height": 256,
+      "hotX": 255,
+      "hotY": 255,
+      "dataUrlChars": 350006,
+      "maxDataUrlChars": 350006,
+      "overlays": 1
+    },
+    "dpr2": {
+      "transform": "translate3d(-175px, -195px, 0px)",
+      "scale": 2
+    },
+    "hidden": {
+      "kind": "hidden",
+      "resourceId": 0,
+      "hostCursor": "",
+      "overlays": 0
+    },
+    "diagnostics": 0
+  },
+  "independentReference": {
+    "dimensions": {
+      "width": 64,
+      "height": 64
+    },
+    "hotspot": {
+      "x": 10,
+      "y": 3
+    },
+    "rgbaBytes": 16384,
+    "mismatchBytes": 0,
+    "pngBytes": 16516,
+    "pngSha256": "10a8923c11d9f5e74c17e846ef3d3a53693acbdf7ea73e8e89bf3206a2e4931e",
+    "dataUrlSha256": "b6909e8b0f03a016338d131cfebd71f1adc93af85982fb33b37492ecf6eb20ee",
+    "samples": {
+      "transparent": [
+        229,
+        25,
+        68,
+        0
+      ],
+      "hotspot": [
+        25,
+        229,
+        255,
+        128
+      ],
+      "final": [
+        229,
+        25,
+        68,
+        255
+      ]
+    }
+  },
+  "screenshot": {
+    "path": "evidence/e5-t15d/cursor-integration-2026-09-04.png",
+    "sha256": "50344f1689f1a97e57bf2b58507d6b6ddb13425d58e92fcfdd032c197839c341"
+  },
+  "errors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "scope": {
+    "independentMachines": false,
+    "webkit": false,
+    "hostRr": false
+  }
+}

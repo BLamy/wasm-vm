@@ -1,0 +1,17 @@
+✔ source, rebuilt ELF, installed custom files and image metadata all bind (0.995917ms)
+✔ an unchanged image cannot claim changed adapter source or compiled ELF (1.74625ms)
+✔ wrong renderer, identity or architecture cannot pass a correct image hash (0.467208ms)
+✔ self-consistent manifest hashes cannot omit or duplicate installed adapter (0.399ms)
+✔ modified package or custom bytes and mismatched image metadata are rejected (0.205292ms)
+error: pathspec 'tools/image/e5-t22c-desktop-image.json' did not match any file(s) known to git
+Did you forget to 'git add'?
+✔ freeze detects stable dirty imported runtime and staged bytes, not unrelated task files (1064.687042ms)
+✔ Make acceptance explicitly overrides inherited working-loop controls (0.611708ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1105.688167

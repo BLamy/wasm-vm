@@ -1,0 +1,289 @@
+{
+  "schema": "wasm-vm.e5-t26f.diagnostic-iteration.v1",
+  "acceptance": false,
+  "milestones": {
+    "run": {
+      "kind": "diagnostic-iteration",
+      "acceptance": false,
+      "diagnostic": {
+        "mode": "create",
+        "directory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-oBnSX1",
+        "port": 61637,
+        "origin": "http://127.0.0.1:61637",
+        "command": null,
+        "keyDelayMs": 0,
+        "latency": false,
+        "cpu": false,
+        "guestClock": null,
+        "jit": null,
+        "residency": null,
+        "complete": false,
+        "icountDivider": null
+      },
+      "postRestoreCommand": "play",
+      "postRestoreKeyDelayMs": 5,
+      "fixture": {
+        "kind": "resident-observer-v1",
+        "helperSha256": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh",
+        "observer": {
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-observe",
+          "sourcePath": "tools/guest/e5-t26f-observer.c",
+          "sourceSha256": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+          "binaryPath": "target/e5-t26f/observer-build-v1/e5t26f-observe",
+          "sha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+          "size": 30960,
+          "mode": "0555",
+          "buildInfoPath": "target/e5-t26f/observer-build-v1/build-info.json",
+          "buildInfoSha256": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+          "readbackSha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350"
+        }
+      },
+      "binding": {
+        "head": "96ecb801fdf8b67af75cd150db82d115bcf046cd",
+        "runtimeSha256": "65935dd0535eb38ed23d78956f63ec800daf3f6bb63094c9c694e236786f74e1",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "d2fc4eab9bc1b5fe528a2956b58faefb20fcf18e2505c499ecafa8824d390f72",
+        "imageBytes": 1073741824,
+        "manifestSha256": "e02a9af547773f9d54e47151419ab3b118c55d3a4c90b25dcc434487db8dc9f5",
+        "origin": "http://127.0.0.1:61637",
+        "fixture": {
+          "kind": "resident-observer-v1",
+          "helperSha256": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+          "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh",
+          "observer": {
+            "guestPath": "/usr/libexec/wasm-vm/e5t26f-observe",
+            "sourcePath": "tools/guest/e5-t26f-observer.c",
+            "sourceSha256": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+            "binaryPath": "target/e5-t26f/observer-build-v1/e5t26f-observe",
+            "sha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+            "size": 30960,
+            "mode": "0555",
+            "buildInfoPath": "target/e5-t26f/observer-build-v1/build-info.json",
+            "buildInfoSha256": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+            "readbackSha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350"
+          }
+        }
+      },
+      "profile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-oBnSX1/checkpoint-profile",
+      "checkpointFile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-oBnSX1/normal-checkpoint.json",
+      "creatorHead": "96ecb801fdf8b67af75cd150db82d115bcf046cd",
+      "currentHead": "96ecb801fdf8b67af75cd150db82d115bcf046cd",
+      "profileSha256": "275b4febbd10b186f9c2b34c85dbb346880de86f1e0522878c450ce25289a51f"
+    },
+    "initialReadiness": {
+      "completedAt": "2026-09-08T20:07:16.362Z"
+    },
+    "shellProbe": {
+      "command": "true; printf '\\033[42;30me5t26f-shell-ok\\033[0m\\n'",
+      "marker": "e5t26f-shell-ok",
+      "beforeFrame": 37,
+      "keyboardStart": 0,
+      "domEventStart": 0,
+      "visualDiffPixels": 2406,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 1,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 78,
+      "redMarkerSeen": false,
+      "keyboardFrames": 102,
+      "domEvents": 102,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "agentProbe": {
+      "state": "ready",
+      "negotiatedVersion": 1,
+      "transportGeneration": 2,
+      "bytesReceived": 54,
+      "bytesSent": 36,
+      "pendingBytes": 0
+    },
+    "initialAplay": {
+      "command": "yes \"$(printf '\\001\\000\\377\\177')\"|head -c3840 >/tmp/p;printf 'aplay -Dhw:0,0 --period-size=480 --buffer-size=960 -f S16_LE -t raw -r48000 -c2 /tmp/p&&printf \"\\033[42me5t26f-aplay\\033[0m\\n\"' >/tmp/a;sh /tmp/a",
+      "marker": "e5t26f-aplay-ok",
+      "beforeFrame": 78,
+      "keyboardStart": 102,
+      "domEventStart": 102,
+      "visualDiffPixels": 6860,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 128,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 268,
+      "redMarkerSeen": false,
+      "keyboardFrames": 454,
+      "domEvents": 454,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "initialAudio": {
+      "before": {
+        "available": true,
+        "writeIndex": 0,
+        "readIndex": 0,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 4096,
+        "inspectedFrames": 4096,
+        "nonSilentFrames": 0,
+        "maxAbs": 0
+      },
+      "after": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.082000732421875
+      },
+      "outputAttached": true,
+      "observedAt": 647423.8900001049
+    },
+    "twoWindows": {
+      "completedAt": "2026-09-08T20:12:47.951Z"
+    },
+    "residentCheckpoint": {
+      "fixture": {
+        "kind": "resident-observer-v1",
+        "helperSha256": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh",
+        "observer": {
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-observe",
+          "sourcePath": "tools/guest/e5-t26f-observer.c",
+          "sourceSha256": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+          "binaryPath": "target/e5-t26f/observer-build-v1/e5t26f-observe",
+          "sha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+          "size": 30960,
+          "mode": "0555",
+          "buildInfoPath": "target/e5-t26f/observer-build-v1/build-info.json",
+          "buildInfoSha256": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+          "readbackSha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350"
+        }
+      },
+      "prepared": {
+        "command": ". /usr/libexec/wasm-vm/e5t26f-resident.sh && e5_prepare",
+        "marker": "e5t26f-prepared",
+        "beforeFrame": 284,
+        "keyboardStart": 556,
+        "domEventStart": 556,
+        "visualDiffPixels": 13548,
+        "terminalMarkerSeen": true,
+        "greenPixelsBefore": 240,
+        "redPixelsBefore": 0,
+        "visualChange": true,
+        "afterFrame": 334,
+        "redMarkerSeen": false,
+        "keyboardFrames": 118,
+        "domEvents": 118,
+        "inputSequenceMatch": true,
+        "inputTraceSha256": null,
+        "accepted": true
+      },
+      "sound": {
+        "envelopeSha256": "b9eac0eb045945eed648c90537a9e11819e882b7f4c57fb3bd2b9690513fce49",
+        "soundSha256": "42dfc147f4ad0d0b98490c3cb39bb8f3932f785a8266335fcd151de18b56858f",
+        "state": 2,
+        "paramsPresent": 1,
+        "parameterRequest": 257,
+        "streamId": 0,
+        "bufferBytes": 3840,
+        "periodBytes": 1920,
+        "channels": 2,
+        "format": 5,
+        "rate": 7,
+        "pendingTransfers": 0,
+        "pendingBytes": 0,
+        "releasePending": 0,
+        "nextXrunPresent": 0,
+        "eventCount": 0,
+        "events": [],
+        "kicked": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "resetPending": 0
+      },
+      "screenshot": {
+        "file": "evidence/e5-t26f/single-process-observer-96ecb801/cold/resident-prepared.png",
+        "sha256": "f7f0f305d33859b60b6490c2f6adddd8ca4e37c3b247192439741851c16ada03"
+      }
+    },
+    "initialCursor": {
+      "frame": {
+        "atMs": 800287,
+        "sequence": 19,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 18431
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 17612
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 18431,
+          "y": 17612
+        }
+      },
+      "rendered": {
+        "x": 720,
+        "y": 430,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      }
+    },
+    "normalSnapshotPause": {
+      "at": 801233.1600000858,
+      "isPaused": true
+    },
+    "normalSnapshot": {
+      "sha256": "b9eac0eb045945eed648c90537a9e11819e882b7f4c57fb3bd2b9690513fce49",
+      "byteLength": 2808262,
+      "preFrontBufferCrc": "168fc7fa",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "168fc7fa",
+        "overlayGeneration": 627
+      }
+    },
+    "normalCheckpointBeforeReload": {
+      "status": "passed",
+      "snapshotSha256": "b9eac0eb045945eed648c90537a9e11819e882b7f4c57fb3bd2b9690513fce49",
+      "observed": {
+        "at": 810171.7400000095,
+        "isPaused": true,
+        "generation": 627,
+        "decision": "resume",
+        "envelopeSha256": "b9eac0eb045945eed648c90537a9e11819e882b7f4c57fb3bd2b9690513fce49",
+        "stillPaused": true,
+        "finalGeneration": 627
+      }
+    }
+  },
+  "errors": {
+    "browser": [],
+    "http": []
+  }
+}

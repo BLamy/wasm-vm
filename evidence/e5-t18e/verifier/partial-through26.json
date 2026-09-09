@@ -1,0 +1,55 @@
+{
+  "schema": "wasm-vm.e5-t18e.partial-through26.v1",
+  "auditedAt": "2026-09-06T05:41:28.122Z",
+  "frozenHead": "9ed9e0d1c57daf64f6362193bc30b79482dd3258",
+  "mainHead": "8de49f979b8b20595b871fcdb90f0af36af0116a",
+  "sourceBindingSha256": "0e41e0d9f9fa9ccc3277867fc0146d5c4d856959e92b5de947bd52ded7a149c2",
+  "audits": [
+    {
+      "path": "partial-first13.json",
+      "sha256": "fe1f444a1cd43c3a5542398e214fb39201558a4c80731a59f5106f54f2360230"
+    },
+    {
+      "path": "partial-second13.json",
+      "sha256": "fcd5b16688bbd476e352696176b8f83d8972c465c6b0246deb7a45698588f562"
+    }
+  ],
+  "previousCasesCarriedHeld": 13,
+  "previousEvidenceFilesHashChecked": 52,
+  "newCasesAudited": 13,
+  "totalAuditedCases": 26,
+  "totalScreenshotFrameBindings": 52,
+  "totalCursorChecks": 26,
+  "uniqueRecordedGuestStateDigests": 52,
+  "cold": {
+    "count": 24,
+    "minMs": 816430,
+    "maxMs": 900662,
+    "meanMs": 860314.125,
+    "reportedHttpCacheHits": 0
+  },
+  "cacheEnabledMeasurements": [
+    {
+      "label": "warm-prime",
+      "bootToDesktopMs": 827701,
+      "cacheDisabled": false,
+      "reportedCacheHits": 0
+    },
+    {
+      "label": "warm-reload",
+      "bootToDesktopMs": 886730,
+      "cacheDisabled": false,
+      "reportedCacheHits": 0
+    }
+  ],
+  "warmReloadInternalBlockCacheHits": 39178326,
+  "warmCacheReuse": {
+    "status": "NEEDS EVIDENCE",
+    "observation": "Both cache-enabled records report zero page-CDP requestServedFromCache events. Configuration and internal block-cache hits are not proof of HTTP cache reuse.",
+    "causeOfZeroCounter": "Not determined in this audit."
+  },
+  "desktopAndLauncherEvidence": "HELD for cold-01 through cold-24 and both cache-enabled cases",
+  "remainingCase": "cold-25",
+  "finalCountReportAndEndAudit": "NEEDS EVIDENCE",
+  "verdictIssued": false
+}

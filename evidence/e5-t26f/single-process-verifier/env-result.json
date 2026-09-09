@@ -1,0 +1,42 @@
+{
+  "acceptance": false,
+  "sourceSha256": "e89170a56623174bcf7def80dc230fa79794408bc18df7debcf55a5bb9efd36e",
+  "sourceLines": "125-137",
+  "prediction": "Only PATH inherited; owned epoch, cache and temporary values; no poison forwarded.",
+  "input": {
+    "PATH": "/controlled/path",
+    "CFLAGS": "/POISON/CFLAGS",
+    "CPPFLAGS": "/POISON/CPPFLAGS",
+    "CXXFLAGS": "/POISON/CXXFLAGS",
+    "CPATH": "/POISON/CPATH",
+    "C_INCLUDE_PATH": "/POISON/C_INCLUDE_PATH",
+    "CPLUS_INCLUDE_PATH": "/POISON/CPLUS_INCLUDE_PATH",
+    "OBJC_INCLUDE_PATH": "/POISON/OBJC_INCLUDE_PATH",
+    "LIBRARY_PATH": "/POISON/LIBRARY_PATH",
+    "LD_LIBRARY_PATH": "/POISON/LD_LIBRARY_PATH",
+    "DYLD_LIBRARY_PATH": "/POISON/DYLD_LIBRARY_PATH",
+    "RUSTFLAGS": "/POISON/RUSTFLAGS",
+    "RUSTDOCFLAGS": "/POISON/RUSTDOCFLAGS",
+    "RUST_LOG": "/POISON/RUST_LOG",
+    "CARGO_HOME": "/POISON/CARGO_HOME",
+    "CARGO_TARGET_DIR": "/POISON/CARGO_TARGET_DIR",
+    "RUSTUP_HOME": "/POISON/RUSTUP_HOME",
+    "CC": "/POISON/CC",
+    "CXX": "/POISON/CXX",
+    "ZIG_LIB_DIR": "/POISON/ZIG_LIB_DIR",
+    "ZIG_GLOBAL_CACHE_DIR": "/POISON/ZIG_GLOBAL_CACHE_DIR",
+    "ZIG_LOCAL_CACHE_DIR": "/POISON/ZIG_LOCAL_CACHE_DIR",
+    "SOURCE_DATE_EPOCH": "/POISON/SOURCE_DATE_EPOCH",
+    "TMPDIR": "/POISON/TMPDIR",
+    "E5_T26F_FIXTURE": "/POISON/E5_T26F_FIXTURE"
+  },
+  "output": {
+    "PATH": "/controlled/path",
+    "TMPDIR": "/owned/output/.tmp",
+    "SOURCE_DATE_EPOCH": "1731542400",
+    "ZIG_GLOBAL_CACHE_DIR": "/owned/output/.zig-global-cache",
+    "ZIG_LOCAL_CACHE_DIR": "/owned/output/.zig-local-cache"
+  },
+  "held": true,
+  "limit": "Executes the exact environment constructor, not Zig or a cross-build."
+}

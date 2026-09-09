@@ -1,0 +1,1069 @@
+    Blocking waiting for file lock on build directory
+   Compiling cfg-if v1.0.4
+   Compiling bitflags v2.13.0
+   Compiling typenum v1.20.1
+   Compiling libc v0.2.186
+   Compiling rustix v1.1.4
+   Compiling num-traits v0.2.19
+   Compiling serde_core v1.0.228
+   Compiling crossbeam-utils v0.8.21
+   Compiling regex-syntax v0.8.11
+   Compiling either v1.16.0
+   Compiling serde_json v1.0.150
+   Compiling once_cell v1.21.4
+   Compiling zmij v1.0.21
+   Compiling clap_lex v1.1.0
+   Compiling fastrand v2.4.1
+   Compiling syn v2.0.118
+   Compiling itoa v1.0.18
+   Compiling anstyle v1.0.14
+   Compiling ciborium-io v0.2.2
+   Compiling memchr v2.8.2
+   Compiling itertools v0.10.5
+   Compiling same-file v1.0.6
+   Compiling fnv v1.0.7
+   Compiling quick-error v1.2.3
+   Compiling bit-vec v0.8.0
+   Compiling crossbeam-epoch v0.9.18
+   Compiling cast v0.3.0
+   Compiling getrandom v0.3.4
+   Compiling errno v0.3.14
+   Compiling getrandom v0.4.3
+   Compiling clap_builder v4.6.0
+   Compiling generic-array v0.14.7
+   Compiling rand_core v0.9.5
+   Compiling wait-timeout v0.2.1
+   Compiling bit-set v0.8.0
+   Compiling crossbeam-deque v0.8.6
+   Compiling is-terminal v0.4.17
+   Compiling cpufeatures v0.2.17
+   Compiling rand_xorshift v0.4.0
+   Compiling rand v0.9.4
+   Compiling rayon-core v1.13.0
+   Compiling walkdir v2.5.0
+   Compiling unarray v0.1.4
+   Compiling smallvec v1.15.2
+   Compiling oorandom v11.1.5
+   Compiling anes v0.1.6
+   Compiling log v0.4.33
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling rayon v1.12.0
+   Compiling sha2 v0.10.9
+   Compiling criterion-plot v0.5.0
+   Compiling regex-automata v0.4.14
+   Compiling clap v4.6.1
+   Compiling zerocopy-derive v0.8.52
+   Compiling serde_derive v1.0.228
+   Compiling tempfile v3.27.0
+   Compiling regex v1.12.4
+   Compiling rusty-fork v0.3.1
+   Compiling zerocopy v0.8.52
+   Compiling serde v1.0.228
+   Compiling tinytemplate v1.2.1
+   Compiling half v2.7.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.9.0
+   Compiling ciborium-ll v0.2.2
+   Compiling proptest v1.11.0
+   Compiling ciborium v0.2.2
+   Compiling criterion v0.5.1
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.22s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 267 tests
+test dev::clint::snapshot_tests::clint_state_round_trips_completely ... ok
+test dev::clint::snapshot_tests::clint_restore_rejects_malformed_payloads_without_mutating ... ok
+test dev::plic::snapshot_tests::plic_behavioural_state_round_trips_and_drops_the_diagnostic_counter ... ok
+test block::tests::boundaries_and_errors ... ok
+test dev::rtc::snapshot_tests::rtc_state_round_trips_completely_and_keeps_the_host_clock ... ok
+test dev::rtc::snapshot_tests::rtc_restore_rejects_malformed_without_mutating ... ok
+test compile_queue::tests::priority_hotter_compiles_first ... ok
+test compile_queue::tests::cancellation_on_generation_bump_drops_stale ... ok
+test dev::console::tests::low_byte_emitted_at_every_write_width ... ok
+test compile_queue::tests::backpressure_drops_and_recounts_never_overflows ... ok
+test block::tests::five_gib_sparse_no_truncation ... ok
+test dev::console::tests::other_offset_writes_ignored_and_logged_once ... ok
+test dev::plic::snapshot_tests::plic_restore_rejects_wrong_length_without_mutating ... ok
+test dev::console::tests::lsr_reads_ready_thr_reads_zero_no_faults ... ok
+test compile_queue::tests::never_blocks_execution_thread_under_flood ... ok
+test dev::rtc::tests::alarm_fires_raises_irq_and_clears ... ok
+test dev::rtc::tests::alarm_value_readable_after_fire ... ok
+test dev::rtc::tests::guest_set_time_offsets_without_touching_host ... ok
+test dev::rtc::tests::irq_gated_by_enable ... ok
+test dev::rtc::tests::reads_injected_time ... ok
+test dev::rtc::tests::time_set_is_write_order_independent ... ok
+test dev::syscon::tests::first_command_wins ... ok
+test dev::syscon::tests::reads_return_zero ... ok
+test dev::syscon::tests::recognized_commands_decode ... ok
+test dev::syscon::tests::unrecognized_values_are_ignored ... ok
+test dev::uart16550::snapshot_tests::uart_state_round_trips_completely ... ok
+test dev::uart16550::snapshot_tests::uart_restore_rejects_malformed_payloads_without_mutating ... ok
+test dev::uart16550::tests::dlab_banking ... ok
+test dev::uart16550::tests::char_timeout_delivers_short_input ... ok
+test dev::uart16550::tests::iir_priority_order ... ok
+test dev::uart16550::tests::overrun_caps_fifo_and_preserves_contents ... ok
+test dev::uart16550::tests::thre_interrupt_dance ... ok
+test dev::virtio::gpu::damage::tests::clipping_and_empty_input_are_bounded_and_drain_is_empty ... ok
+test dev::virtio::gpu::damage::tests::overlapping_rectangles_union_and_contained_rectangles_do_not_expand ... ok
+test dev::virtio::gpu::damage::tests::edge_adjacent_rectangles_union_but_corner_only_rectangles_remain_separate ... ok
+test dev::virtio::gpu::damage::tests::seventeenth_disjoint_rectangle_spills_to_one_bounded_box ... ok
+test dev::virtio::gpu::edid::tests::fixture_and_checksum_are_stable ... ok
+test dev::virtio::gpu::edid::tests::out_of_range_inputs_are_bounded ... ok
+test dev::virtio::gpu::edid::tests::checksum_and_preferred_mode_cover_odd_and_large_sizes ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_backing_map_replacement_and_detach_are_independent ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_supported_formats_are_detached_and_accounted ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_enforces_aggregate_budget_without_partial_insert ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_rejects_dimension_and_budget_before_allocation ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_rejects_id_zero_duplicate_and_bad_fields_without_mutation ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_lifecycle_unref_returns_accounting_to_baseline ... ok
+test dev::rtc::tests::low_high_latch_is_coherent_across_2p32_boundary ... ok
+test dev::uart16550::snapshot_tests::uart_restore_never_panics_on_random_input ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_lifecycle_10k_create_unref_cycles_have_zero_net_growth ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_one_byte_entries_copy_a_full_frame ... ok
+test block::tests::mem_backend_matches_reference_model ... ok
+test dev::virtio::gpu::tests::display_event_clear_is_write_one_to_clear ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_tiled_and_full_frame_plans_keep_shadow_bytes_identical ... ok
+test dev::virtio::gpu::tests::gpu_cursor_protocol_wire_fixtures_are_little_endian_and_bounded ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_scatter_gather_copies_partial_odd_x_rows ... ok
+test dev::virtio::gpu::tests::get_edid_requires_negotiation_and_is_scanout_indexed ... ok
+test dev::virtio::gpu::tests::get_edid_without_feature_returns_unspec ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_rejects_detached_bounds_and_offset_without_shadow_mutation ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_read_only_completion_and_reset_clear_cursor_state ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_tracks_changed_pixel_bounds_until_flush ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_updates_moves_hides_and_rejects_without_mutation ... ok
+test dev::virtio::gpu::tests::gpu_flush_controlq_calls_test_sink_with_resource_crc ... ok
+test dev::virtio::gpu::tests::gpu_flush_after_unref_rejects_old_resource_without_sink_event ... ok
+test dev::virtio::gpu::tests::gpu_flush_after_scanout_disable_forwards_old_resource_without_binding ... ok
+test dev::virtio::gpu::tests::gpu_flush_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_mmio_identity_features_and_config ... ok
+test dev::virtio::gpu::tests::gpu_flush_rejects_unknown_short_and_out_of_bounds_requests_without_sink_event ... ok
+test dev::virtio::gpu::tests::gpu_flush_default_null_sink_accepts_headless_path ... ok
+test dev::virtio::gpu::tests::gpu_protocol_wire_fixtures ... ok
+test dev::virtio::gpu::tests::gpu_flush_tracking_sink_publishes_changed_transfer_bounds ... ok
+test dev::virtio::gpu::tests::gpu_resources_create_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_controlq_validates_entries_atomically ... ok
+test dev::virtio::gpu::tests::gpu_resources_lifecycle_device_reset_releases_resource_state ... ok
+test dev::virtio::gpu::tests::gpu_resources_create_controlq_dispatches_and_returns_spec_errors ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_split_attach_then_detach_controlq ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_rejects_address_overflow_and_truncated_sglists ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_resources_lifecycle_unref_clears_scanout_and_is_idempotently_rejected ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_short_request_is_bounded ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_rejects_bad_scanout_and_rect_without_mutation ... ok
+test dev::virtio::gpu::tests::gpu_transfer_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::set_display_updates_mode_and_coalesces_config_interrupts ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_split_request_is_parsed_across_descriptors ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_random_rect_model_oracle_10k_cases ... ok
+test dev::virtio::gpu::tests::unsupported_feature_does_not_mutate_config ... ok
+test dev::virtio::gpu::tests::set_display_stress_preserves_final_mode_and_bounds_config_irqs ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_controlq_binds_existing_resource ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_zero_resource_disables_scanout ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_split_header_unfenced ... ok
+test dev::virtio::gpu::tests::gpu_transfer_controlq_copies_sg_rows_and_echoes_fence ... ok
+test dev::virtio::gpu::tiles::tests::flush_intersection_consumes_only_selected_tiles_and_resize_drops_old_state ... ok
+test dev::virtio::gpu::tiles::tests::full_frame_mode_is_a_comparable_bounded_fallback ... ok
+test dev::virtio::gpu::tiles::tests::full_resource_transfer_selects_every_tile_in_row_major_order ... ok
+test dev::virtio::gpu::tiles::tests::one_pixel_transfer_selects_one_full_tile_and_exact_bytes ... ok
+test dev::virtio::gpu::tiles::tests::tile_boundaries_and_partial_edges_are_clipped_without_outside_regions ... ok
+test dev::virtio::gpu::tests::virtio_gpu_malformed_guest_address_is_rejected_without_write ... ok
+test dev::virtio::input::keyboard::tests::keyboard_identity_and_event_bitmap_tail_are_stable ... ok
+test dev::virtio::input::keyboard::tests::keyboard_led_sink_applies_only_canonical_status_events ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_short_tail_is_bounded ... ok
+test dev::virtio::input::keyboard::tests::pc105_keyboard_bitmap_is_exact_and_repeat_is_absent ... ok
+test dev::virtio::input::pointer::tests::mouse_map_has_only_relative_axes_and_both_wheels ... ok
+test dev::virtio::input::keyboard::tests::keyboard_config_fixture_is_exact_on_native ... ok
+test dev::virtio::input::pointer::tests::pointer_config_selectors_do_not_cross_contaminate ... ok
+test dev::virtio::input::pointer::tests::tablet_absolute_injection_rejects_out_of_range_values ... ok
+test dev::virtio::input::pointer::tests::tablet_map_and_absolute_wire_metadata_are_exact ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_contiguous_fenced ... ok
+test dev::virtio::input::tests::inject_and_sync_retain_bounded_complete_frames_with_exact_drop_count ... ok
+test dev::virtio::gpu::tests::virtio_gpu_malformed_requests_make_progress_and_recover ... ok
+test dev::virtio::input::tests::input_config_fixture_matches_little_endian_wire_bytes ... ok
+test dev::virtio::input::tests::input_config_selector_writes_are_width_preserving_and_resettable ... ok
+test dev::virtio::input::tests::input_event_wire_layout_is_fixed_and_little_endian ... ok
+test dev::virtio::input::tests::key_transition_drop_removes_both_separate_frames ... ok
+test dev::virtio::input::tests::input_config_unsupported_queries_are_zero_and_do_not_leak_previous_payload ... ok
+test dev::virtio::mmio::tests::critic_advisories_pinned ... ok
+test dev::virtio::input::tests::injected_frames_cross_eventq_without_boundary_loss ... ok
+test dev::virtio::mmio::tests::driver_ok_without_features_ok_needs_reset ... ok
+test dev::virtio::input::tests::short_event_buffer_is_not_partially_written_and_ring_recovers ... ok
+test dev::virtio::mmio::tests::empty_slot_answers_and_tolerates ... ok
+test dev::virtio::mmio::tests::interrupt_ack_is_mask_clear ... ok
+test dev::virtio::mmio::tests::lifecycle_happy_path ... ok
+test dev::virtio::mmio::tests::protocol_violation_degrades_loudly ... ok
+test dev::virtio::mmio::tests::status_zero_is_full_reset ... ok
+test dev::virtio::mmio::tests::transport_snapshot_round_trips_and_rejects_malformed ... ok
+test dev::virtio::mmio::tests::unoffered_feature_rejected ... ok
+test dev::virtio::net::switch_tests::replacing_backend_keeps_adapter_identity_and_drops_old_frames ... ok
+test dev::virtio::input::tests::statusq_reads_split_event_and_rejects_short_or_wrong_direction ... ok
+test diag::irqstats::tests::hottest_irq_picks_the_max ... ok
+test dev::virtio::input::tests::eventq_writes_one_event_across_split_descriptors_and_exact_used_len ... ok
+test diag::irqstats::tests::quiet_windows_never_fire_and_reset_the_streak ... ok
+test diag::irqstats::tests::naming_uses_the_window_not_the_lifetime_leader ... ok
+test diag::irqstats::tests::storm_fires_after_consecutive_hot_windows ... ok
+test diag::irqstats::tests::wfi_watchdog_fires_once_then_rearms ... ok
+test diag::irqstats::tests::wfi_watchdog_silent_when_making_progress_or_armed ... ok
+test diag::irqstats::tests::window_stays_open_until_enough_retired ... ok
+test dispatch::tests::counter_increments_and_fires_exactly_once ... ok
+test dispatch::tests::counter_map_is_bounded_under_cold_flood ... ok
+test dispatch::tests::csr_and_wfi_blocks_are_excluded ... ok
+test dispatch::tests::dedup_across_distinct_blocks ... ok
+test dispatch::tests::no_nomination_below_threshold ... ok
+test dispatch::tests::requeue_after_invalidation_no_stale_survives ... ok
+test dispatch::tests::reset_clears_state_and_bumps_generation ... ok
+test dispatch::tests::stale_generation_alone_blocks_install_even_if_bytes_match ... ok
+test dispatch::tests::translation_request_shape ... ok
+test dispatch::tests::queue_overflow_degrades_gracefully ... ok
+test dev::virtio::gpu::tiles::tests::seeded_random_transfer_flush_resize_sequences_match_reference_tiles ... ok
+test fdt::tests::header_is_spec_valid ... ok
+test fdt::tests::dtb_tracks_platform_and_args ... ok
+test dev::virtio::input::tests::unsupported_queue_shape_is_bounded_and_requests_reset ... ok
+test dev::virtio::console::tests::virtio_console_split_control_announcement_and_coalesced_data_are_bounded ... ok
+test dev::virtio::rng::tests::fills_posted_buffer_with_entropy_and_publishes_used ... ok
+test hart::fregs::tests::f0_is_an_ordinary_register ... ok
+test fdt::tests::initrd_placement_between_kernel_and_dtb ... ok
+test hart::fregs::tests::non_boxed_value_reads_as_canonical_nan ... ok
+test hart::fregs::tests::write_f32_boxes_and_read_f32_unboxes ... ok
+test hart::fregs::tests::registers_are_independent ... ok
+test fdt::tests::tree_has_every_required_node_and_link ... ok
+test fdt::tests::placement_top_of_dram_aligned_outside_kernel ... ok
+test hart::regs::tests::abi_names_match_psabi ... ok
+test hart::regs::tests::compiled_register_mask_commit_preserves_unmasked_words_and_x0 ... ok
+test hart::regs::tests::default_is_all_zero_including_pc ... ok
+test hart::regs::tests::dump_format_is_byte_stable ... ok
+test hart::regs::tests::jit_version_is_not_architectural_equality ... ok
+test hart::regs::tests::interleavings_vs_oracle_lcg ... ok
+test hart::regs::tests::x0_writes_are_discarded ... ok
+test hart::regs::tests::x1_to_x31_roundtrip_distinct_values ... ok
+test hart::regs::tests::out_of_range_read_panics - should panic ... ok
+test hart::regs::tests::out_of_range_write_panics - should panic ... ok
+test jit::tests::cpu_state_handoff_pins_frozen_layout_endian_and_x0 ... ok
+test mmio::tests::attach_rejects_zero_length_and_overflow_without_panic ... ok
+test mmio::tests::device_hits_counts_every_access_that_lands_in_the_window ... ok
+test mmio::tests::device_faults_propagate ... ok
+test mmio::tests::attach_rejects_overlap_with_ram_and_devices ... ok
+test mmio::tests::misaligned_in_window_faults_without_invoking_device ... ok
+test mmio::tests::ram_accesses_pass_through_unchanged ... ok
+test mmio::tests::device_read_results_are_masked_to_width ... ok
+test mmio::tests::unmapped_hole_faults_access_at_every_width ... ok
+test mmio::tests::multiple_devices_route_independently ... ok
+test mmio::tests::zero_size_ram_bus_still_routes_devices ... ok
+test mmio::tests::width_forwarding_is_exact_never_split ... ok
+test mmio::tests::straddling_window_edge_faults_and_never_invokes_device ... ok
+test platform::tests::default_platform_is_valid ... ok
+test mmio::tests::window_access_reaches_device_with_offset_width_value ... ok
+test platform::tests::irq_and_virtio_layout ... ok
+test platform::tests::overlap_and_overflow_are_caught ... ok
+test platform::tests::region_boundaries ... ok
+test prof::pause::tests::buckets_bracket_the_target ... ok
+test prof::pause::tests::over_target_and_max_ns ... ok
+test prof::pause::tests::work_bound_tracks_max ... ok
+test prof::tests::add_ns_accumulates_per_subsystem ... ok
+test prof::tests::fixed_timer_reflects_set_and_advance_monotonically ... ok
+test prof::tests::records_land_in_expected_64_byte_regions ... ok
+test prof::tests::collisions_are_visible_not_silently_merged ... ok
+test prof::tests::report_computes_pct_and_passes_total_through ... ok
+test prof::tests::report_json_shape_and_contents ... ok
+test prof::tests::report_text_contains_pc_and_subsystem_names ... ok
+test prof::tests::report_on_empty_profile_does_not_divide_by_zero ... ok
+test prof::tests::tight_loop_concentrates ... ok
+test ram::resume_snapshot_tests::a_malformed_payload_is_refused_without_mutating ... ok
+test prof::tests::top_is_descending_with_low_pc_tie_break ... ok
+test prof::tests::weak_incumbent_is_evicted_by_newcomer ... ok
+test ram::resume_snapshot_tests::restoring_a_wrong_size_snapshot_is_refused_without_mutating ... ok
+test ram::resume_snapshot_tests::ram_round_trips_completely ... ok
+test ram::tests::default_map_constants ... ok
+test ram::tests::extreme_addresses_fault_without_overflow_panics ... ok
+test ram::tests::faulting_store_leaves_ram_bit_identical ... ok
+test ram::tests::misaligned_in_range_faults_misaligned_at_every_width ... ok
+test ram::tests::little_endian_byte_order ... ok
+test ram::tests::roundtrip_every_width_at_base_and_last_slot ... ok
+test ram::tests::zero_and_absurd_sizes_fail_cleanly ... ok
+test resume::resume_tests::a_bad_magic_is_rejected ... ok
+test resume::resume_tests::a_component_round_trips_through_the_container_format ... ok
+test resume::resume_tests::a_huge_zero_run_length_is_rejected_without_allocating ... ok
+test ram::tests::slice_escape_hatch_bounds_and_content ... ok
+test ram::tests::straddling_the_end_is_access_not_panic ... ok
+test resume::resume_tests::a_partial_trailing_section_header_is_truncated ... ok
+test resume::resume_tests::a_reserved_but_unimplemented_section_is_refused_as_unsupported ... ok
+test resume::resume_tests::a_section_length_past_the_end_is_rejected_not_over_read ... ok
+test resume::resume_tests::a_too_short_blob_is_truncated_not_a_panic ... ok
+test resume::resume_tests::a_version_mismatch_is_rejected ... ok
+test resume::resume_tests::an_unknown_section_fails_loudly ... ok
+test resume::resume_tests::decode_sparse_rejects_malformed_payloads ... ok
+test resume::resume_tests::header_round_trips_and_sections_read_back_in_order ... ok
+test prof::tests::histogram_memory_is_fixed ... ok
+test resume::resume_tests::restore_decision_rejects_a_truncated_final_section ... ok
+test resume::resume_tests::the_coherence_guards_refuse_a_mismatch ... ok
+test resume::resume_tests::zero_elision_round_trips_for_every_shape ... ok
+test sbi::base::tests::ids_and_unknown_fid ... ok
+test sbi::base::tests::probe_extension_per_plan ... ok
+test sbi::base::tests::spec_version_is_2_0 ... ok
+test sbi::dbcn::tests::read_drains_queue_nonblocking_and_write_byte ... ok
+test sbi::dbcn::tests::write_attack_matrix ... ok
+test sbi::dbcn::tests::write_reads_guest_dram_and_reports_count ... ok
+test sbi::hsm::tests::lifecycle_answers_single_hart ... ok
+test sbi::ipi::tests::self_ipi_sets_ssip_and_masks_validate ... ok
+test sbi::legacy::tests::getchar_empty_is_minus_one_nonblocking ... ok
+test sbi::legacy::tests::putchar_emits_and_returns_zero ... ok
+test sbi::rfence::tests::fences_flush_and_masks_validate ... ok
+test sbi::srst::tests::shutdown_reboot_and_error_paths ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_ram_snapshot_is_far_under_ram_size ... ok
+test sbi::tests::probe_set_matches_plan ... ok
+test sbi::tests::unknown_and_pending_eids_not_supported ... ok
+test sbi::time::tests::set_timer_replaces_and_cancels ... ok
+test tests::group_batches_coalesces_disconnected_chunks ... ok
+test tests::kernel_footprint_falls_back_to_file_len ... ok
+test dev::virtio::console::tests::virtio_console_advertises_multiport_device_id_config_and_six_queue_layout ... ok
+test dev::virtio::console::tests::virtio_console_lifecycle_restart_and_reset_drop_stale_agent_state ... ok
+test tests::kernel_footprint_honours_image_size ... ok
+test tests::version_matches_manifest ... ok
+test resume::resume_tests::a_mostly_zero_buffer_compresses_far_under_ram_size ... ok
+test time::tests::huge_gap_jumps_with_notification ... ok
+test tests::machine_tolerates_zero_ram ... ok
+test time::tests::icount_is_pure_function_of_retired ... ok
+test tests::machine_allocates_requested_ram ... ok
+test time::tests::respects_software_mtime_write_as_floor ... ok
+test time::tests::wallclock_never_steps_backward_under_jittery_host ... ok
+test time::tests::moderate_gap_slews_at_bounded_rate ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_repeated_hide_show_keeps_one_bounded_state_per_scanout ... ok
+test resume::resume_tests::decode_sparse_never_panics_on_random_input ... ok
+test dev::virtio::gpu::tests::gpu_flush_golden_five_patterns_match_independent_reference ... ok
+test resume::resume_tests::the_parser_never_panics_on_any_truncation_or_flip ... ok
+test dev::virtio::console::tests::virtio_console_agent_and_port0_data_queues_keep_frame_bytes_and_backpressure_separate ... ok
+test dev::virtio::mmio::tests::register_fuzz_1e6 ... ok
+test hart::regs::proptests::writes_track_oracle_and_x0_stays_zero ... ok
+test sbi::tests::dispatcher_fuzz_1e6 ... ok
+test dev::virtio::gpu::damage::tests::seeded_random_rectangles_never_drop_reference_damage ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_full_frame_native_budget ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_repeated_rejections_do_not_grow_map ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_256_mib_ram_encodes_under_15_percent_and_restores_byte_identically ... ok
+
+test result: ok. 267 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.10s
+
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+    Blocking waiting for file lock on build directory
+   Compiling typenum v1.20.1
+   Compiling cfg-if v1.0.4
+   Compiling bitflags v2.13.0
+   Compiling smallvec v1.15.2
+   Compiling log v0.4.33
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling generic-array v0.14.7
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.77s
+wasm-pack build crates/wasm --target web
+[INFO]: 🎯  Checking for the Wasm target...
+[INFO]: 🌀  Compiling to Wasm...
+   Compiling unicode-ident v1.0.24
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling cfg-if v1.0.4
+   Compiling version_check v0.9.5
+   Compiling rustversion v1.0.22
+   Compiling typenum v1.20.1
+   Compiling bumpalo v3.20.3
+   Compiling once_cell v1.21.4
+   Compiling futures-task v0.3.32
+   Compiling slab v0.4.12
+   Compiling pin-project-lite v0.2.17
+   Compiling futures-core v0.3.32
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling serde_core v1.0.228
+   Compiling byteorder v1.5.0
+   Compiling heapless v0.9.3
+   Compiling bitflags v2.13.0
+   Compiling futures-util v0.3.32
+   Compiling zmij v1.0.21
+   Compiling log v0.4.33
+   Compiling smallvec v1.15.2
+   Compiling hash32 v0.3.1
+   Compiling tinyvec_macros v0.1.1
+   Compiling serde v1.0.228
+   Compiling serde_json v1.0.150
+   Compiling generic-array v0.14.7
+   Compiling stable_deref_trait v1.2.1
+   Compiling smoltcp v0.13.1
+   Compiling tinyvec v1.12.0
+   Compiling managed v0.8.0
+   Compiling memchr v2.8.2
+   Compiling bitflags v1.3.2
+   Compiling itoa v1.0.18
+   Compiling unicode-normalization v0.1.25
+   Compiling wasm-vm-wasm-emit v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/wasm-emit)
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/slirp)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/jit-translate)
+   Compiling wasm-bindgen-macro v0.2.126
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/storage)
+   Compiling js-sys v0.3.103
+   Compiling console_error_panic_hook v0.1.7
+   Compiling web-sys v0.3.103
+   Compiling getrandom v0.2.17
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/wasm)
+    Finished `release` profile [optimized + debuginfo] target(s) in 15.43s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[INFO]: Optimizing wasm binaries with `wasm-opt`...
+[INFO]: License key is set in Cargo.toml but no LICENSE file(s) were found; Please add the LICENSE file(s) to your project directory
+[INFO]: ✨   Done in 16.41s
+[INFO]: 📦   Your wasm pkg is ready to publish at crates/wasm/pkg.
+wasm-pack test --node crates/wasm
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling unicode-ident v1.0.24
+   Compiling once_cell v1.21.4
+   Compiling pin-project-lite v0.2.17
+   Compiling futures-core v0.3.32
+   Compiling futures-task v0.3.32
+   Compiling slab v0.4.12
+   Compiling serde_core v1.0.228
+   Compiling byteorder v1.5.0
+   Compiling zmij v1.0.21
+   Compiling stable_deref_trait v1.2.1
+   Compiling autocfg v1.5.1
+   Compiling itoa v1.0.18
+   Compiling tinyvec_macros v0.1.1
+   Compiling libm v0.2.16
+   Compiling memchr v2.8.2
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+   Compiling bitflags v1.3.2
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling tinyvec v1.12.0
+   Compiling managed v0.8.0
+   Compiling wasm-vm-wasm-emit v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/wasm-emit)
+   Compiling futures-util v0.3.32
+   Compiling async-trait v0.1.89
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling oorandom v11.1.5
+   Compiling hash32 v0.3.1
+   Compiling wasm-bindgen v0.2.126
+   Compiling heapless v0.9.3
+   Compiling cast v0.3.0
+   Compiling wasm-bindgen-test-shared v0.2.126
+   Compiling nu-ansi-term v0.50.3
+   Compiling unicode-normalization v0.1.25
+   Compiling num-traits v0.2.19
+   Compiling smoltcp v0.13.1
+   Compiling console_error_panic_hook v0.1.7
+   Compiling js-sys v0.3.103
+   Compiling serde_json v1.0.150
+   Compiling serde v1.0.228
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/storage)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/slirp)
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling web-sys v0.3.103
+   Compiling getrandom v0.2.17
+   Compiling wasm-bindgen-test v0.3.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.46s
+[INFO]: ⬇️  Installing wasm-bindgen...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-9581999851bd4c84.wasm)
+running 4 tests
+test display_tests::display_hotplug_strict_validation_is_atomic ... ok
+test display_tests::display_hotplug_storm_preserves_actual_old_resource ... ok
+test display_tests::display_hotplug_guest_trace_reads_event_after_request ... ok
+test display_tests::display_hotplug_absence_and_reentrancy_fail_boundedly ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 filtered out; finished in 1.11s
+
+     Running tests/block.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/block-b40cfa7243204f24.wasm)
+running 2 tests
+test mem_backend_roundtrip_and_ro_on_wasm32 ... ok
+test five_gib_sparse_on_32bit_usize ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.01s
+
+     Running tests/console.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/console-0811b0d1abfe730c.wasm)
+running 3 tests
+test lsr_ready_and_boundary_fault_on_wasm32 ... ok
+test byte_exact_and_widths_on_wasm32 ... ok
+test all_256_values_exact_on_wasm32 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.01s
+
+     Running tests/csr.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/csr-802d1cfeb5ff68ec.wasm)
+running 1 test
+test csr_semantics_on_wasm32 ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.01s
+
+     Running tests/decode.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/decode-e3e5e3d90891e6e7.wasm)
+running 3 tests
+test random_sweep_never_panics_on_wasm32 ... ok
+test negatives_on_wasm32 ... ok
+test golden_subset_on_wasm32 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.01s
+
+     Running tests/decode_props.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/decode_props-60d6533215ae1eda.wasm)
+running 2 tests
+test negative_immediates_decode_signed_on_wasm32 ... ok
+test decoder_round_trips_1000_cases_on_wasm32 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.01s
+
+     Running tests/determinism.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/determinism-0ae4cb7acac5b2ea.wasm)
+running 1 test
+test pinned_fingerprints_match_golden_on_wasm ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out; finished in 3.72s
+
+     Running tests/fdt.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/fdt-9b2cdd99a907d53a.wasm)
+running 3 tests
+test placement_on_wasm32 ... ok
+test header_and_totalsize_on_wasm32 ... ok
+test blob_tracks_platform_on_wasm32 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.01s
+
+     Running tests/gpu_protocol.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/gpu_protocol-8ed9e588f4d12e67.wasm)
+running 5 tests
+test gpu_wire_fixture_is_little_endian_on_wasm32 ... ok
+test gpu_mmio_identity_and_config_on_wasm32 ... ok
+test gpu_flush_golden_crc_fixtures_on_wasm32 ... ok
+test gpu_edid_resize_fixture_on_wasm32 ... ok
+test gpu_cursorq_sequence_matches_native_through_wasm_machine_boundary ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.07s
+
+     Running tests/hart.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/hart-8641618088adbccf.wasm)
+running 2 tests
+test determinism_checksum_matches_native_pin ... ok
+test acceptance_anchors_on_wasm32 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.03s
+
+     Running tests/hart_ctrl.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/hart_ctrl-f32ec722ad497143.wasm)
+running 2 tests
+test target_alignment_semantics_on_wasm32 ... ok
+test jal_jalr_and_loop_on_wasm32 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.01s
+
+     Running tests/hart_mem.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/hart_mem-2d656fd757508a55.wasm)
+running 2 tests
+test misaligned_ram_succeeds_and_fault_purity_on_wasm32 ... ok
+test extension_and_roundtrip_on_wasm32 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.01s
+
+     Running tests/htif.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/htif-b87703d321a22c0e.wasm)
+running 3 tests
+test load_elf_arms_htif_on_wasm32 ... ok
+test htif_exit_on_wasm32 ... ok
+test ecall_ebreak_and_maxinstrs_on_wasm32 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.02s
+
+     Running tests/input_config.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/input_config-88b40de128feb0f1.wasm)
+running 1 test
+test input_config_fixture_is_identical_on_wasm32 ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.01s
+
+     Running tests/input_queues.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/input_queues-ecca27483270a507.wasm)
+running 2 tests
+test input_event_wire_bytes_match_native_layout ... ok
+test inject_sync_stream_crosses_eventq_on_wasm32 ... FAIL
+
+failures:
+
+---- inject_sync_stream_crosses_eventq_on_wasm32 output ----
+    error output:
+        panicked at crates/wasm/tests/input_queues.rs:91:9:
+        assertion `left == right` failed
+          left: InputEvent { event_type: 0, code: 0, value: 0 }
+         right: InputEvent { event_type: 1, code: 30, value: 1 }
+        
+        Stack:
+        
+        Error
+            at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpvnrhy1/wasm-bindgen-test.js:329:25
+            at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpvnrhy1/wasm-bindgen-test.js:662:18)
+            at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpvnrhy1/wasm-bindgen-test.js:328:57)
+            at input_queues-ecca27483270a507.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[3744]:0xb9967)
+            at input_queues-ecca27483270a507.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[2046]:0xa6f73)
+            at input_queues-ecca27483270a507.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[894]:0x844a1)
+            at input_queues-ecca27483270a507.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[2365]:0xac133)
+            at input_queues-ecca27483270a507.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[741]:0x7bd3f)
+            at input_queues-ecca27483270a507.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[1358]:0x9698b)
+            at input_queues-ecca27483270a507.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[3851]:0xb9f70)
+        
+        
+    
+    JS exception that was thrown:
+        RuntimeError: unreachable
+            at input_queues-ecca27483270a507.wasm.__rustc[8068f81614cfe5c]::__rust_abort (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[3884]:0xba06c)
+            at input_queues-ecca27483270a507.wasm.__rustc[8068f81614cfe5c]::__rust_start_panic (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[3875]:0xba036)
+            at input_queues-ecca27483270a507.wasm.__rustc[8068f81614cfe5c]::rust_panic (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[3777]:0xb9b89)
+            at input_queues-ecca27483270a507.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[741]:0x7bdb0)
+            at input_queues-ecca27483270a507.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[1358]:0x9698b)
+            at input_queues-ecca27483270a507.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[3851]:0xb9f70)
+            at input_queues-ecca27483270a507.wasm.__rustc[8068f81614cfe5c]::rust_begin_unwind (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[2878]:0xb26ab)
+            at input_queues-ecca27483270a507.wasm.core[2c5ad5f686fcca5c]::panicking::panic_fmt (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[2337]:0xabac7)
+            at input_queues-ecca27483270a507.wasm.core[2c5ad5f686fcca5c]::panicking::assert_failed_inner (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[647]:0x75e23)
+            at input_queues-ecca27483270a507.wasm.core::panicking::assert_failed::h09c3d769094e077e (wasm://wasm/input_queues-ecca27483270a507.wasm-038bf8da:wasm-function[1802]:0xa214d)
+
+failures:
+
+    inject_sync_stream_crosses_eventq_on_wasm32
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 filtered out; finished in 0.01s
+
+Error: Node failed with exit_code 1
+error: test failed, to rerun pass `--test input_queues`
+
+Caused by:
+  process didn't exit successfully: `/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner /Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/input_queues-ecca27483270a507.wasm` (exit status: 1)
+note: test exited abnormally; to see the full output pass --no-capture to the harness.
+Error: Running Wasm tests with wasm-bindgen-test failed
+Caused by: Running Wasm tests with wasm-bindgen-test failed
+Caused by: failed to execute `cargo test`: exited with exit status: 1
+  full command: cd "crates/wasm" && CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER="/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner" WASM_BINDGEN_TEST_ONLY_NODE="1" "cargo" "test" "--target" "wasm32-unknown-unknown"
+make: *** [wasm] Error 1
+cargo build -p wasm-vm-core --no-default-features
+   Compiling bitflags v2.13.0
+   Compiling log v0.4.33
+   Compiling libc v0.2.186
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.86s
+cargo build -p wasm-vm-core --no-default-features --features std
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.58s
+cargo build -p wasm-vm-core --no-default-features --features trace
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.52s
+cargo build -p wasm-vm-core --no-default-features --features std,trace
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.53s
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.04s
+cargo build -p wasm-vm-core --no-default-features --features trace --target wasm32-unknown-unknown
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.02s
+cargo test -p wasm-vm-core --features zicsr-stub --test riscv_tests
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+warning: multiple fields are never read
+   --> crates/core/src/lib.rs:143:5
+    |
+142 | struct VirtioConsoleService {
+    |        -------------------- fields in this struct
+143 |     slot_index: usize,
+    |     ^^^^^^^^^^
+144 |     state: alloc::rc::Rc<core::cell::RefCell<dev::virtio::console::ConsoleState>>,
+145 |     port0_receiveq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^
+146 |     port0_transmitq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^^
+147 |     control_receiveq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^^^
+148 |     control_transmitq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^^^^
+149 |     agent_receiveq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^
+150 |     agent_transmitq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `live_blocks` is never used
+   --> crates/core/src/dispatch.rs:251:19
+    |
+154 | impl BlockCache {
+    | --------------- method in this implementation
+...
+251 |     pub(crate) fn live_blocks(&self) -> impl Iterator<Item = &DecodedBlock> {
+    |                   ^^^^^^^^^^^
+
+warning: method `fetch_phys` is never used
+   --> crates/core/src/hart/mod.rs:878:19
+    |
+670 | impl Hart {
+    | --------- method in this implementation
+...
+878 |     pub(crate) fn fetch_phys(&mut self, bus: &mut impl Bus, va: u64) -> Result<u64, Trap> {
+    |                   ^^^^^^^^^^
+
+warning: `wasm-vm-core` (lib) generated 3 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.64s
+     Running tests/riscv_tests.rs (target/debug/deps/riscv_tests-acb12b94033a2617)
+
+running 3 tests
+test rv64um_p_suite_all_pass ... ok
+test rv64ua_p_suite_all_pass ... ok
+test rv64ui_p_suite_passes_except_documented_skips ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.85s
+
+wasm-pack test --node crates/wasm --features zicsr-stub
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+warning: multiple fields are never read
+   --> crates/core/src/lib.rs:143:5
+    |
+142 | struct VirtioConsoleService {
+    |        -------------------- fields in this struct
+143 |     slot_index: usize,
+    |     ^^^^^^^^^^
+144 |     state: alloc::rc::Rc<core::cell::RefCell<dev::virtio::console::ConsoleState>>,
+145 |     port0_receiveq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^
+146 |     port0_transmitq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^^
+147 |     control_receiveq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^^^
+148 |     control_transmitq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^^^^
+149 |     agent_receiveq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^
+150 |     agent_transmitq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `live_blocks` is never used
+   --> crates/core/src/dispatch.rs:251:19
+    |
+154 | impl BlockCache {
+    | --------------- method in this implementation
+...
+251 |     pub(crate) fn live_blocks(&self) -> impl Iterator<Item = &DecodedBlock> {
+    |                   ^^^^^^^^^^^
+
+warning: method `fetch_phys` is never used
+   --> crates/core/src/hart/mod.rs:878:19
+    |
+670 | impl Hart {
+    | --------- method in this implementation
+...
+878 |     pub(crate) fn fetch_phys(&mut self, bus: &mut impl Bus, va: u64) -> Result<u64, Trap> {
+    |                   ^^^^^^^^^^
+
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/slirp)
+warning: `wasm-vm-core` (lib) generated 3 warnings
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.40s
+[INFO]: ⬇️  Installing wasm-bindgen...
+warning: multiple fields are never read
+   --> crates/core/src/lib.rs:143:5
+    |
+142 | struct VirtioConsoleService {
+    |        -------------------- fields in this struct
+143 |     slot_index: usize,
+    |     ^^^^^^^^^^
+144 |     state: alloc::rc::Rc<core::cell::RefCell<dev::virtio::console::ConsoleState>>,
+145 |     port0_receiveq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^
+146 |     port0_transmitq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^^
+147 |     control_receiveq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^^^
+148 |     control_transmitq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^^^^
+149 |     agent_receiveq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^
+150 |     agent_transmitq: Option<dev::virtio::queue::Virtqueue>,
+    |     ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `live_blocks` is never used
+   --> crates/core/src/dispatch.rs:251:19
+    |
+154 | impl BlockCache {
+    | --------------- method in this implementation
+...
+251 |     pub(crate) fn live_blocks(&self) -> impl Iterator<Item = &DecodedBlock> {
+    |                   ^^^^^^^^^^^
+
+warning: method `fetch_phys` is never used
+   --> crates/core/src/hart/mod.rs:878:19
+    |
+670 | impl Hart {
+    | --------- method in this implementation
+...
+878 |     pub(crate) fn fetch_phys(&mut self, bus: &mut impl Bus, va: u64) -> Result<u64, Trap> {
+    |                   ^^^^^^^^^^
+
+warning: `wasm-vm-core` (lib) generated 3 warnings
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-19b2751e7574f3cb.wasm)
+no tests to run!
+     Running tests/block.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/block-f766b66366e9d096.wasm)
+no tests to run!
+     Running tests/console.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/console-bd7c8208c585551e.wasm)
+running 3 tests
+test lsr_ready_and_boundary_fault_on_wasm32 ... ok
+test byte_exact_and_widths_on_wasm32 ... ok
+test all_256_values_exact_on_wasm32 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.01s
+
+     Running tests/csr.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/csr-c11d1e00ab3197af.wasm)
+no tests to run!
+     Running tests/decode.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/decode-c000a798fe74c70a.wasm)
+running 3 tests
+test random_sweep_never_panics_on_wasm32 ... ok
+test negatives_on_wasm32 ... ok
+test golden_subset_on_wasm32 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.01s
+
+     Running tests/decode_props.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/decode_props-6d8f1992241f9af8.wasm)
+running 2 tests
+test negative_immediates_decode_signed_on_wasm32 ... ok
+test decoder_round_trips_1000_cases_on_wasm32 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.01s
+
+     Running tests/determinism.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/determinism-390c30e3d0adcea8.wasm)
+no tests to run!
+     Running tests/fdt.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/fdt-0168a1acd29dfe24.wasm)
+running 3 tests
+test placement_on_wasm32 ... ok
+test header_and_totalsize_on_wasm32 ... ok
+test blob_tracks_platform_on_wasm32 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.01s
+
+     Running tests/gpu_protocol.rs (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/gpu_protocol-883b78e8f86c2c8c.wasm)
+running 5 tests
+test gpu_wire_fixture_is_little_endian_on_wasm32 ... ok
+test gpu_mmio_identity_and_config_on_wasm32 ... ok
+test gpu_flush_golden_crc_fixtures_on_wasm32 ... ok
+test gpu_edid_resize_fixture_on_wasm32 ... ok
+test gpu_cursorq_sequence_matches_native_through_wasm_machine_boundary ... FAIL
+
+failures:
+
+---- gpu_cursorq_sequence_matches_native_through_wasm_machine_boundary output ----
+    error output:
+        panicked at crates/wasm/tests/gpu_protocol.rs:385:5:
+        assertion `left == right` failed
+          left: 0
+         right: 8
+        
+        Stack:
+        
+        Error
+            at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpC1tdbY/wasm-bindgen-test.js:329:25
+            at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpC1tdbY/wasm-bindgen-test.js:662:18)
+            at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpC1tdbY/wasm-bindgen-test.js:328:57)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[5037]:0x10cab1)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[2812]:0xf45eb)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[1157]:0xc28c0)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[3231]:0xfb097)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[964]:0xb7e12)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[1831]:0xdd152)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[5162]:0x10d182)
+        
+        
+    
+    JS exception that was thrown:
+        RuntimeError: unreachable
+            at gpu_protocol-883b78e8f86c2c8c.wasm.__rustc[8068f81614cfe5c]::__rust_abort (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[5195]:0x10d27e)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.__rustc[8068f81614cfe5c]::__rust_start_panic (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[5186]:0x10d248)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.__rustc[8068f81614cfe5c]::rust_panic (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[5075]:0x10cd14)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[964]:0xb7e83)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[1831]:0xdd152)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[5162]:0x10d182)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.__rustc[8068f81614cfe5c]::rust_begin_unwind (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[3856]:0x102c64)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.core[2c5ad5f686fcca5c]::panicking::panic_fmt (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[3190]:0xfa751)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.core[2c5ad5f686fcca5c]::panicking::assert_failed_inner (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[842]:0xb02b0)
+            at gpu_protocol-883b78e8f86c2c8c.wasm.core::panicking::assert_failed::h0770f07cb7b4d71a (wasm://wasm/gpu_protocol-883b78e8f86c2c8c.wasm-0390b4ae:wasm-function[2454]:0xed2e3)
+
+failures:
+
+    gpu_cursorq_sequence_matches_native_through_wasm_machine_boundary
+
+test result: FAILED. 4 passed; 1 failed; 0 ignored; 0 filtered out; finished in 0.06s
+
+Error: Node failed with exit_code 1
+error: test failed, to rerun pass `--test gpu_protocol`
+
+Caused by:
+  process didn't exit successfully: `/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner /Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/target/wasm32-unknown-unknown/debug/deps/gpu_protocol-883b78e8f86c2c8c.wasm` (exit status: 1)
+note: test exited abnormally; to see the full output pass --no-capture to the harness.
+Error: Running Wasm tests with wasm-bindgen-test failed
+Caused by: Running Wasm tests with wasm-bindgen-test failed
+Caused by: failed to execute `cargo test`: exited with exit status: 1
+  full command: cd "crates/wasm" && CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER="/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner" WASM_BINDGEN_TEST_ONLY_NODE="1" "cargo" "test" "--target" "wasm32-unknown-unknown" "--features" "zicsr-stub"
+make: *** [test-riscv] Error 1
+bash tools/run_riscv_tests.sh
+== riscv-tests regression wall (native, real CSR file) ==
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.88s
+     Running tests/riscv_tests_suite.rs (target/debug/deps/riscv_tests_suite-7d7e9e30f2863d44)
+
+running 5 tests
+test discovered_suite_counts_match_manifest ... ok
+test empty_dir_is_not_a_green_run ... ok
+test fail_exit_code_is_reported_as_fail ... ok
+test corrupted_binary_does_not_pass ... ok
+test riscv_tests_suite_matches_allowlist ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 27.38s
+
+
+== report: target/riscv-tests-report.md ==
+# riscv-tests report (E1-T19)
+
+- our git rev: `0fe393ed9bac81a88ae454b68fe813b2cd209c0a`
+- corpus fingerprint (FNV-1a 64): `0xbee876dbe691f410`
+- passing: **127 / 127**
+
+(full per-test table in target/riscv-tests-report.md and target/riscv-tests-report.json)
+bash tools/determinism_check.sh 
+== determinism hazards (static) ==
+determinism-hazards: banned nondeterminism source(s) in crates/core/src:
+crates/core/src/dev/virtio/gpu/resources.rs:833:        let started = std::time::Instant::now();
+crates/core/src/dev/virtio/gpu/resources.rs:850:            elapsed < std::time::Duration::from_millis(5),
+  (use BTreeMap for ordered maps; the only legal clock is the T12 retire-count CLINT)
+make: *** [determinism] Error 1
+cargo test -p wasm-vm-core --release --test perf_baseline perf_smoke_alu_above_floor -- --ignored --nocapture
+   Compiling libc v0.2.186
+   Compiling proc-macro2 v1.0.106
+   Compiling cfg-if v1.0.4
+   Compiling quote v1.0.46
+   Compiling unicode-ident v1.0.24
+   Compiling zerocopy v0.8.52
+   Compiling version_check v0.9.5
+   Compiling serde_core v1.0.228
+   Compiling getrandom v0.3.4
+   Compiling typenum v1.20.1
+   Compiling bitflags v2.13.0
+   Compiling crossbeam-utils v0.8.21
+   Compiling rustix v1.1.4
+   Compiling autocfg v1.5.1
+   Compiling serde v1.0.228
+   Compiling zmij v1.0.21
+   Compiling getrandom v0.4.3
+   Compiling serde_json v1.0.150
+   Compiling generic-array v0.14.7
+   Compiling either v1.16.0
+   Compiling num-traits v0.2.19
+   Compiling once_cell v1.21.4
+   Compiling regex-syntax v0.8.11
+   Compiling itoa v1.0.18
+   Compiling anstyle v1.0.14
+   Compiling memchr v2.8.2
+   Compiling rayon-core v1.13.0
+   Compiling clap_lex v1.1.0
+   Compiling fastrand v2.4.1
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling ciborium-io v0.2.2
+   Compiling clap_builder v4.6.0
+   Compiling crossbeam-epoch v0.9.18
+   Compiling regex-automata v0.4.14
+   Compiling crossbeam-deque v0.8.6
+   Compiling itertools v0.10.5
+   Compiling same-file v1.0.6
+   Compiling syn v2.0.118
+   Compiling bit-vec v0.8.0
+   Compiling quick-error v1.2.3
+   Compiling cast v0.3.0
+   Compiling smallvec v1.15.2
+   Compiling fnv v1.0.7
+   Compiling regex v1.12.4
+   Compiling criterion-plot v0.5.0
+   Compiling bit-set v0.8.0
+   Compiling walkdir v2.5.0
+   Compiling clap v4.6.1
+   Compiling log v0.4.33
+   Compiling unarray v0.1.4
+   Compiling oorandom v11.1.5
+   Compiling anes v0.1.6
+   Compiling errno v0.3.14
+   Compiling rand_core v0.9.5
+   Compiling wait-timeout v0.2.1
+   Compiling cpufeatures v0.2.17
+   Compiling rand_xorshift v0.4.0
+   Compiling rand v0.9.4
+   Compiling is-terminal v0.4.17
+   Compiling crypto-common v0.1.7
+   Compiling zerocopy-derive v0.8.52
+   Compiling serde_derive v1.0.228
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling tempfile v3.27.0
+   Compiling rusty-fork v0.3.1
+   Compiling sha2 v0.10.9
+   Compiling rayon v1.12.0
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+   Compiling tinytemplate v1.2.1
+   Compiling half v2.7.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling ciborium-ll v0.2.2
+   Compiling rand_chacha v0.9.0
+   Compiling ciborium v0.2.2
+   Compiling proptest v1.11.0
+   Compiling criterion v0.5.1
+    Finished `release` profile [optimized + debuginfo] target(s) in 8.55s
+     Running tests/perf_baseline.rs (target/release/deps/perf_baseline-192935589b9a066d)
+
+running 1 test
+perf-smoke: alu median 55.4 MIPS ≥ floor 15
+test perf_smoke_alu_above_floor ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 1.53s
+

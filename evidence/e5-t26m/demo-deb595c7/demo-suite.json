@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:55478/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.76",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5-T26m\nIN PROGRESS\n✕ Close\nRetain browser inline-cache authority across interrupt-only status changes\nEpic\nE5 — The Window\nStatus\nin progress\nEstimate\nS\nDepends on\nE4-T11, E5-T22g, E5-T26l\nGOAL\n\nAvoid clearing browser inline TLB and published static/dynamic links when only\nthe four interrupt-enable/history bits of mstatus change. This is a bounded\nexecution-cache prerequisite for F, not a claim that it caused the recorded\nlatency, improves wall time by any amount, or satisfies F's two-second deadline.\n\nVERIFICATION LOG — EVIDENCE\n### 2026-09-08 — coordinator — activate scoped prerequisite\n\nF's unprofiled observer result4.3622s and print-only counterfactual4.10187s remain\nfailed. The separate interpreted-PC/JIT observation records repeated engine\nentries and low dynamic-hit counts, but cannot assign a cause. Direct source\ninspection finds full mstatus equality clears inline TLB and link state even\nfor interrupt-only changes. Fresh Daybreak review permits only the four-bit\nprojection under the conditions in\n`evidence/e5-t26f/inline-context-candidate/critic-preflight.md` and supplies the\nthree falsifiable test cases above. F is blocked on this named prerequisite;\none active task remains. No code or performance claim precedes the worker proof.\nADVERSARIAL VERIFICATION\nPredict mask equality and actual compiled-target execution before checking the\nrecord. Exercise every status bit independently, including combined irrelevant\nand relevant changes. Carry existing SUM/MXR/MPRV/MPP, mode, satp/PMP, SFENCE and\ntrigger authority tests when unchanged. Cover both pending-interrupt modes and\ntrue guest CSR enablement, not only host mutation. Invent one bounded combination\nof a masked and a retained bit, and once sabotage the mask by adding SUM: the\nexact-mask and real-link negative controls must fail. Restore the real source\nbefore the final frozen run. No rr, other machine, WebKit, latency waiver,\narbitrary performance claim or unrelated emulator optimization belongs here.\nsource: tasks/epic-5-the-window/E5-T26m-inline-context-interrupt-bits.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:55478/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:55478/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:55478/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:55478/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:55478/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:55478/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:55478/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:55478/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:55478/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:55478/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:55478/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:55478/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "3841e60fd9f9857009ad40c150dad02f75675a53349595f242fa4e930f1563f7"
+}

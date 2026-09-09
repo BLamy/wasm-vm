@@ -1,0 +1,38 @@
+E5-T26j fresh-verifier scrubbed clone transcript
+clone=/private/tmp/e5-t26j-critic.pgE4yQ/repo
+runtime_head=cb283f9b3204f99d0bbc9ad44121c4f5da7b8b6a
+metadata_head=054bb87f93b490645d5af921207f97af08629113
+
+$ env -u RUST_LOG -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u CARGO_ENCODED_RUSTFLAGS make verify-E5-T26j-runtime
+exit=0
+observed:
+  cargo fmt --check: PASS
+  cargo clippy -p wasm-vm-core --features gpu-trace -- -D warnings: PASS
+  cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings: PASS
+  native selected tests: 35 passed, 0 failed
+  JIT churn: 52,800 samples, 24,598 evictions, final mtime=52,800, PASS (100.48s)
+  wasm32 no-default core build: PASS
+  selected JavaScript: 175 passed, 0 failed (832.652083ms in worker transcript;
+    840.518708ms in scrubbed clone stream)
+  ICOUNT_DIVIDER_PARITY trace=4ddc392297ebe1dc
+  ICOUNT_DIVIDER_PARITY snapshot=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+
+$ env -u RUST_LOG -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u CARGO_ENCODED_RUSTFLAGS wasm-pack test --node crates/wasm --test icount_divider --test guest_clock
+exit=0
+observed:
+  guest_clock: 5 passed, 0 failed, 0 ignored (0.04s)
+  icount_divider: 11 passed, 0 failed, 0 ignored (1.70s)
+  ICOUNT_DIVIDER_PARITY trace=4ddc392297ebe1dc
+  ICOUNT_DIVIDER_PARITY snapshot=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+
+$ git fetch origin codex/e5-t26j-icount-divider
+exit=0
+observed: cb283f9b..054bb87f
+
+$ git switch --detach 054bb87f93b490645d5af921207f97af08629113
+exit=0
+observed: HEAD is now at 054bb87f fix(e5-t26j): refresh built demo task metadata
+
+No runtime or WASM gate was rerun after the metadata-only switch.
+Final `git status --porcelain=v1` output was empty.
+Final `git diff --exit-code` exited 0.

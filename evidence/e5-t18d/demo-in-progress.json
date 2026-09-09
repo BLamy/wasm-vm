@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:62620/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.76",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5-T18d\nIN PROGRESS\n✕ Close\nHarden compositor restart and tty1 getty fallback\nEpic\nE5 — The Window\nStatus\nin progress\nEstimate\nS\nDepends on\nE5-T18c\nGOAL\n\nMake compositor failure bounded, observable, and recoverable without hanging init.\n\nACCEPTANCE CRITERIA (0/3)\n○\nKilling the compositor with the local serial test hook causes an automatic restart and a timestamped log entry without an init hang.\n○\nThree bounded crashes stop retrying and leave tty1 at getty with a visible error banner.\n○\nA broken-config boot exercises the fallback path, preserves the diagnostic log, and does not silently claim desktop readiness.\nVERIFICATION LOG — EVIDENCE\n### 2026-09-05 — coordinator — planned\n\nThis S slice isolates process supervision and the failure boundary needed by the final bring-up\nplaybook.\n\n### 2026-09-05 — worker — STARTED\n\nImplement bounded compositor supervision, a boot-latched tty1 getty fallback, and local-only\nserial failure drills. Reuse the verified desktop package profile; no Omarchy or Epic 6 work\nstarts in this slice. Final evidence will distinguish a successful restart from stale readiness\nand prove repeated failure cannot re-enter an unbounded init/autologin loop.\nADVERSARIAL VERIFICATION\nInject the 500 ms seatd delay, remove the video device, delete XDG_RUNTIME_DIR initialization,\nand force WLR_RENDERER=gles2 in separate local fixtures. Each case must terminate with its\npredicted bounded symptom/log path; no new hang or unbounded restart loop is acceptable.\nWebKit and independent machines are out of scope.\nsource: tasks/epic-5-the-window/E5-T18d-desktop-crash-restart-fallback.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:62620/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:62620/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:62620/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:62620/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:62620/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:62620/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:62620/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:62620/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:62620/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:62620/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:62620/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:62620/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "72d76461734ad25b14a5be9fb604a99f9c1f2b989fbeb6f74e50338066107cc9"
+}

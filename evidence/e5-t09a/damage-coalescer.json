@@ -1,0 +1,70 @@
+{
+  "schema": "wasm-vm.e5-t09a.damage-coalescer.v1",
+  "task": "E5-T09a",
+  "status": "passed",
+  "gitHead": "9b067d8db731190399ef9736438b86aedf505e7c",
+  "commands": [
+    {
+      "command": "cargo fmt --all -- --check",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 605,
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "outputTail": "",
+      "error": null
+    },
+    {
+      "command": "cargo clippy -p wasm-vm-core --lib --tests -- -D warnings",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 145,
+      "outputSha256": "a5f4c585ee974ca44916ac30a98bbc189e067a7e0a6bc6d2e8d6bc525be724af",
+      "outputTail": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.09s\n",
+      "error": null
+    },
+    {
+      "command": "cargo test -p wasm-vm-core --lib",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 3154,
+      "outputSha256": "331b1875151f5179460c2cac7c7e5ce0797b77e52cdb2da3f6df46104d394b97",
+      "outputTail": "chunks ... ok\ntest prof::tests::histogram_memory_is_fixed ... ok\ntest tests::kernel_footprint_falls_back_to_file_len ... ok\ntest tests::kernel_footprint_honours_image_size ... ok\ntest sbi::tests::unknown_and_pending_eids_not_supported ... ok\ntest tests::machine_tolerates_zero_ram ... ok\ntest tests::version_matches_manifest ... ok\ntest time::tests::huge_gap_jumps_with_notification ... ok\ntest time::tests::icount_is_pure_function_of_retired ... ok\ntest tests::machine_allocates_requested_ram ... ok\ntest time::tests::respects_software_mtime_write_as_floor ... ok\ntest time::tests::wallclock_never_steps_backward_under_jittery_host ... ok\ntest time::tests::moderate_gap_slews_at_bounded_rate ... ok\ntest resume::resume_tests::a_mostly_zero_buffer_compresses_far_under_ram_size ... ok\ntest resume::resume_tests::decode_sparse_never_panics_on_random_input ... ok\ntest ram::resume_snapshot_tests::a_mostly_zero_ram_snapshot_is_far_under_ram_size ... ok\ntest resume::resume_tests::the_parser_never_panics_on_any_truncation_or_flip ... ok\ntest dev::virtio::console::tests::virtio_console_agent_and_port0_data_queues_keep_frame_bytes_and_backpressure_separate ... ok\ntest dev::virtio::mmio::tests::register_fuzz_1e6 ... ok\ntest hart::regs::proptests::writes_track_oracle_and_x0_stays_zero ... ok\ntest sbi::tests::dispatcher_fuzz_1e6 ... ok\ntest dev::virtio::gpu::damage::tests::seeded_random_rectangles_never_drop_reference_damage ... ok\ntest dev::virtio::gpu::resources::tests::gpu_transfer_full_frame_native_budget ... ok\ntest dev::virtio::gpu::resources::tests::gpu_resources_create_repeated_rejections_do_not_grow_map ... ok\ntest ram::resume_snapshot_tests::a_mostly_zero_256_mib_ram_encodes_under_15_percent_and_restores_byte_identically ... ok\n\ntest result: ok. 256 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.04s\n\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s\n     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-a59d5c538677c031)\n",
+      "error": null
+    },
+    {
+      "command": "cargo test -p wasm-vm-core --test virtio_gpu_machine",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 104,
+      "outputSha256": "c871f6dd6fd447ec61c11140551cab4371b86c219edc58f58934477bfbd9a4c2",
+      "outputTail": "\nrunning 2 tests\ntest gpu_falls_back_to_slot_six_without_replacing_an_existing_optional_device ... ok\ntest gpu_uses_the_remaining_optional_slot_and_machine_boundary_drains_controlq ... ok\n\ntest result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s\n\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s\n     Running tests/virtio_gpu_machine.rs (target/debug/deps/virtio_gpu_machine-b10e1707e62783ac)\n",
+      "error": null
+    },
+    {
+      "command": "cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 82,
+      "outputSha256": "ee1d3fffa2022e962e63e0dbe4d35c9c198450a20c29fc09030f635dbb38bfcd",
+      "outputTail": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s\n",
+      "error": null
+    }
+  ],
+  "proofFiles": {
+    "Makefile": "0d321a1b01793daa3944aab577d1bdadc16d4d22f1fe63cefeff7a64c613a4f8",
+    "crates/core/src/dev/virtio/gpu/damage.rs": "f0cebad5d6e1794bfd602bc1efd5996ae589bc8f7d32b6a455f2442873c81b4b",
+    "crates/core/src/dev/virtio/gpu/mod.rs": "cc3fcaa682cf202553e9652a15dd8025d25161548461ad07558c395c5d5a93bb",
+    "crates/core/src/dev/virtio/gpu/resources.rs": "b225653f9b4a625d747772cda75708729b6e9569136a36d87ba753586a769089",
+    "tools/verify/e5-t09a-damage-coalescer.mjs": "d2a2d508259397264a59f75c75aa4bdd7321834b5c072baab0aa032d47fa4701"
+  },
+  "scope": {
+    "independentMachines": false,
+    "webkit": false,
+    "hostRr": false
+  }
+}

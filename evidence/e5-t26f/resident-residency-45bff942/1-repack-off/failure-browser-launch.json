@@ -1,0 +1,79 @@
+{
+  "label": "failure-browser-launch",
+  "timestamp": "2026-09-08T11:22:01.932Z",
+  "head": "45bff9424b15585022bc5d2c1bfd104daea395c5",
+  "image": {
+    "imageSha256": "27c2e8f2789b18efac214837c295dbfb22559beea350fb5788f71edfdc0f0a8e",
+    "manifestSha256": "2245a4d8b8b804bb200079c1ce00dee868762324f18627fa5d2b11fe032639ef"
+  },
+  "lastPhase": {
+    "phase": "browser:launch",
+    "event": "failed",
+    "timestamp": "2026-09-08T11:22:01.932Z",
+    "elapsedMs": 1443
+  },
+  "lastProgressSample": null,
+  "milestones": {
+    "run": {
+      "kind": "diagnostic-iteration",
+      "acceptance": false,
+      "diagnostic": {
+        "mode": "reuse",
+        "directory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resident-FUBCo4",
+        "port": 61631,
+        "origin": "http://127.0.0.1:61631",
+        "command": null,
+        "keyDelayMs": 0,
+        "latency": false,
+        "cpu": false,
+        "guestClock": null,
+        "jit": "1",
+        "residency": "repack-off",
+        "complete": false,
+        "icountDivider": null
+      },
+      "postRestoreCommand": "play",
+      "postRestoreKeyDelayMs": 5,
+      "fixture": {
+        "kind": "resident-aplay-v1",
+        "helperSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh"
+      },
+      "binding": {
+        "head": "45bff9424b15585022bc5d2c1bfd104daea395c5",
+        "runtimeSha256": "42aced7a2dfc4d0a69e1ea5a15685f5d9a605f797f8df1c5db89f95051ba0425",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "27c2e8f2789b18efac214837c295dbfb22559beea350fb5788f71edfdc0f0a8e",
+        "imageBytes": 1073741824,
+        "manifestSha256": "2245a4d8b8b804bb200079c1ce00dee868762324f18627fa5d2b11fe032639ef",
+        "origin": "http://127.0.0.1:61631",
+        "fixture": {
+          "kind": "resident-aplay-v1",
+          "helperSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+          "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh"
+        }
+      },
+      "profile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resident-FUBCo4/iteration-wGZ77g/profile",
+      "checkpointFile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resident-FUBCo4/normal-checkpoint.json",
+      "creatorHead": "7da050620031145b6e76cf150a894ed2710bd5b2",
+      "currentHead": "45bff9424b15585022bc5d2c1bfd104daea395c5"
+    }
+  },
+  "error": {
+    "name": "AssertionError",
+    "message": "checkpoint browser differs\n+ actual - expected\n\n  {\n+   headless: false,\n-   headless: true,\n    name: 'chromium',\n    version: 'Chrome/152.0.7977.76'\n  }\n",
+    "code": "ERR_ASSERTION",
+    "stack": "AssertionError [ERR_ASSERTION]: checkpoint browser differs\n+ actual - expected\n\n  {\n+   headless: false,\n-   headless: true,\n    name: 'chromium',\n    version: 'Chrome/152.0.7977.76'\n  }\n\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1498:36"
+  },
+  "progressProbe": null,
+  "url": "about:blank",
+  "state": {
+    "terminal": null,
+    "presentation": null,
+    "audio": null
+  },
+  "serial": null,
+  "serverOutput": "127.0.0.1 - - [08/Sep/2026 07:22:01] \"GET /desktop-cursor.html HTTP/1.1\" 200 -\n127.0.0.1 - - [08/Sep/2026 07:22:01] \"GET /e5t18b-desktop/manifest.json HTTP/1.1\" 200 -\n"
+}

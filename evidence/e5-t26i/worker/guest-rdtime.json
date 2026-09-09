@@ -1,0 +1,630 @@
+{
+  "head": "bfebb8d42f065196735df088c6d4b2ed8da62e77",
+  "browser": "152.0.7977.76",
+  "results": [
+    {
+      "backend": "direct",
+      "mode": "icount",
+      "words": [
+        268436279,
+        5456771,
+        1307539,
+        4261645539,
+        213891,
+        3222282995,
+        8392211,
+        5439523,
+        8573587,
+        4294839827,
+        4262337251,
+        4255117423
+      ],
+      "initial": {
+        "mode": "icount",
+        "mtime": "0",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "before": {
+        "raw": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "ticks": "0",
+        "requestedAt": 38.00499999523163,
+        "receivedAt": 123.57499992847443
+      },
+      "after": {
+        "raw": [
+          224,
+          200,
+          16,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "ticks": "1100000",
+        "requestedAt": 776.8099999427795,
+        "receivedAt": 842.2350000143051
+      },
+      "pausedBefore": {
+        "mode": "icount",
+        "mtime": "1200000",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "pausedAfter": {
+        "mode": "icount",
+        "mtime": "1200000",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "resumed": {
+        "raw": [
+          128,
+          79,
+          18,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "ticks": "1200000",
+        "requestedAt": 1344.2200000286102,
+        "receivedAt": 1435.6399999856949
+      },
+      "final": {
+        "mode": "icount",
+        "mtime": "1300000",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 26,
+        "totalSliceMs": 894.3399996757507,
+        "averageSliceMs": 34.397692295221184,
+        "maxSliceMs": 55.639999985694885,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 0
+          },
+          {
+            "leMs": 64,
+            "count": 26
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 534.8650000095367,
+        "requestedInstructions": 13000000,
+        "retiredInstructions": 13000000,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 3,
+        "outputBytes": 24,
+        "inputCalls": 3,
+        "inputBytes": 3,
+        "yieldMode": "message-channel",
+        "schedulerYields": 0,
+        "timerYields": 0,
+        "mainThreadYields": 28
+      },
+      "guestDeltaMs": 110,
+      "hostDeltaMs": 718.6600000858307
+    },
+    {
+      "backend": "direct",
+      "mode": "wall",
+      "words": [
+        268436279,
+        5456771,
+        1307539,
+        4261645539,
+        213891,
+        3222282995,
+        8392211,
+        5439523,
+        8573587,
+        4294839827,
+        4262337251,
+        4255117423
+      ],
+      "initial": {
+        "mode": "wall",
+        "mtime": "0",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "before": {
+        "raw": [
+          144,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "ticks": "400",
+        "requestedAt": 1437.5749999284744,
+        "receivedAt": 1514.2849999666214
+      },
+      "after": {
+        "raw": [
+          124,
+          161,
+          110,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "ticks": "7250300",
+        "requestedAt": 2162.569999933243,
+        "receivedAt": 2238.7150000333786
+      },
+      "pausedBefore": {
+        "mode": "wall",
+        "mtime": "8011200",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "pausedAfter": {
+        "mode": "wall",
+        "mtime": "8011200",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "resumed": {
+        "raw": [
+          226,
+          72,
+          122,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "ticks": "8014050",
+        "requestedAt": 2740.1050000190735,
+        "receivedAt": 2843.0049999952316
+      },
+      "final": {
+        "mode": "wall",
+        "mtime": "9040200",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 23,
+        "totalSliceMs": 903.2749998569489,
+        "averageSliceMs": 39.272826080736905,
+        "maxSliceMs": 62.11500000953674,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 0
+          },
+          {
+            "leMs": 64,
+            "count": 23
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 539.3799999952316,
+        "requestedInstructions": 11500000,
+        "retiredInstructions": 11500000,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 3,
+        "outputBytes": 24,
+        "inputCalls": 3,
+        "inputBytes": 3,
+        "yieldMode": "message-channel",
+        "schedulerYields": 0,
+        "timerYields": 0,
+        "mainThreadYields": 25
+      },
+      "guestDeltaMs": 724.99,
+      "hostDeltaMs": 724.4300000667572
+    },
+    {
+      "backend": "worker",
+      "mode": "icount",
+      "words": [
+        268436279,
+        5456771,
+        1307539,
+        4261645539,
+        213891,
+        3222282995,
+        8392211,
+        5439523,
+        8573587,
+        4294839827,
+        4262337251,
+        4255117423
+      ],
+      "initial": {
+        "mode": "icount",
+        "mtime": "0",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "before": {
+        "raw": [
+          80,
+          195,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "ticks": "50000",
+        "requestedAt": 2856.3949999809265,
+        "receivedAt": 2923.944999933243
+      },
+      "after": {
+        "raw": [
+          144,
+          5,
+          16,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "ticks": "1050000",
+        "requestedAt": 3525.0099999904633,
+        "receivedAt": 3581.835000038147
+      },
+      "pausedBefore": {
+        "mode": "icount",
+        "mtime": "1150000",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "pausedAfter": {
+        "mode": "icount",
+        "mtime": "1150000",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "resumed": {
+        "raw": [
+          128,
+          79,
+          18,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "ticks": "1200000",
+        "requestedAt": 4116.9800000190735,
+        "receivedAt": 4206.1050000190735
+      },
+      "final": {
+        "mode": "icount",
+        "mtime": "1300000",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 26,
+        "totalSliceMs": 877.8400000333786,
+        "averageSliceMs": 33.76307692436072,
+        "maxSliceMs": 52.199999928474426,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 0
+          },
+          {
+            "leMs": 64,
+            "count": 26
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 536.3000000715256,
+        "requestedInstructions": 13000000,
+        "retiredInstructions": 13000000,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 3,
+        "outputBytes": 24,
+        "inputCalls": 3,
+        "inputBytes": 3,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 28,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "guestDeltaMs": 100,
+      "hostDeltaMs": 657.8900001049042
+    },
+    {
+      "backend": "worker",
+      "mode": "wall",
+      "words": [
+        268436279,
+        5456771,
+        1307539,
+        4261645539,
+        213891,
+        3222282995,
+        8392211,
+        5439523,
+        8573587,
+        4294839827,
+        4262337251,
+        4255117423
+      ],
+      "initial": {
+        "mode": "wall",
+        "mtime": "0",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "before": {
+        "raw": [
+          188,
+          222,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "ticks": "384700",
+        "requestedAt": 4251.990000009537,
+        "receivedAt": 4331.634999990463
+      },
+      "after": {
+        "raw": [
+          94,
+          202,
+          104,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "ticks": "6867550",
+        "requestedAt": 4932.689999938011,
+        "receivedAt": 4978.125
+      },
+      "pausedBefore": {
+        "mode": "wall",
+        "mtime": "7626750",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "pausedAfter": {
+        "mode": "wall",
+        "mtime": "7626750",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "resumed": {
+        "raw": [
+          32,
+          40,
+          123,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "ticks": "8071200",
+        "requestedAt": 5517.100000023842,
+        "receivedAt": 5601.960000038147
+      },
+      "final": {
+        "mode": "wall",
+        "mtime": "8857900",
+        "timebaseHz": 10000000,
+        "clockDiv": 10
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 23,
+        "totalSliceMs": 884.575000166893,
+        "averageSliceMs": 38.45978261595187,
+        "maxSliceMs": 44.27999997138977,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 0
+          },
+          {
+            "leMs": 64,
+            "count": 23
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 540.0900000333786,
+        "requestedInstructions": 11500000,
+        "retiredInstructions": 11500000,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 3,
+        "outputBytes": 24,
+        "inputCalls": 3,
+        "inputBytes": 3,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 25,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "guestDeltaMs": 648.285,
+      "hostDeltaMs": 646.4900000095367
+    }
+  ],
+  "digests": {
+    "web/dist/loader.js": "ec69eefb8a7f6f61b252f5cfe84b3ee95e9941f2b4a7951f8c1bab06a16c57d1",
+    "web/dist/guest-clock.js": "ced63b1add6d9faa0d8b760fff403f25cd19e33ad3d80641c735f69bee5100db",
+    "web/dist/linux-worker-protocol.js": "974ec70e44be266bd4d7d4128982c840b0e7c2eea8d763673f14f3c9f60fedcc",
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm": "30c8f2ab3b1f3c25db77c03d6161d39e55de7ea3d88447f83f5d7942952c3a28",
+    "tools/verify/e5-t26i-clock-worker.mjs": "4eece3f29c827b379b0288257c03148a99d1079c1d8477aa5fe3c7b83e42526f"
+  },
+  "errors": []
+}

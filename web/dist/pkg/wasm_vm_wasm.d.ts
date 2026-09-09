@@ -45,6 +45,13 @@ export class WasmLinux {
      */
     attachAudioOutput(shared_buffer: SharedArrayBuffer, clock_buffer: SharedArrayBuffer, capacity_frames: number, sample_rate_hz: number): void;
     /**
+     * E5-T06d: attach the page-owned presentation callback after the machine has been assembled.
+     * The callback receives `{ scanout, rect, resourceWidth, resourceHeight, pixels }`, where
+     * `pixels` is a temporary `Uint32Array` view over wasm memory. The browser sink must copy it
+     * synchronously before returning so context-loss replay owns its latest frame.
+     */
+    attachDisplay(callback: Function): boolean;
+    /**
      * E5-T21d: report whether this guest owns the page-provided capture ring.
      */
     audioCaptureReady(): boolean;
@@ -69,8 +76,23 @@ export class WasmLinux {
      * not persist afterward. No-op off the persistent path.
      */
     closeStorage(): void;
+    /**
+     * E5-T26e: acknowledge a fresh application HELLO from the host T23d Channel. The console
+     * transport must already be open; a true result is the only value accepted by the browser
+     * restore bridge before it asks the core to publish a desktop snapshot.
+     */
+    confirmAgentHello(): boolean;
     dismissFileDownload(id: number): boolean;
     dismissFileUpload(stream: number): boolean;
+    /**
+     * E5-T06d: report whether a page presentation callback owns the assembled GPU sink.
+     */
+    displayReady(): boolean;
+    /**
+     * Inspect actual GPU state. Advertised dimensions and bound resource dimensions are
+     * deliberately separate: only guest SET_SCANOUT can change the latter. EDID is a copy.
+     */
+    displayStats(): any;
     /**
      * E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
      * arm tier-up. The accelerated interpreter remains the fallback for cold/untranslatable blocks;
@@ -104,6 +126,11 @@ export class WasmLinux {
      * `getStats` surface the UI already consumes. `pc` is a hex string (a guest PC exceeds 2^53).
      */
     getProfile(): any;
+    /**
+     * Read-only state: does not sample the clock or consume jump notifications. mtime is a decimal
+     * string so worker structured cloning cannot round a guest u64 through JavaScript Number.
+     */
+    guestClockState(): any;
     /**
      * E3-T10: whether the overlay has unpersisted (dirty) blocks. In persistent writer mode these
      * belong to a virtio WRITE that has not been acknowledged; the quota dialog uses this to say
@@ -232,6 +259,10 @@ export class WasmLinux {
      */
     readStoredSnapshot(): Promise<any>;
     /**
+     * Explicit loader pause/resume only. Background gaps keep the core catch-up policy.
+     */
+    rebaseGuestClock(): void;
+    /**
      * Permanently relinquish this machine's snapshot-writer role. Web Locks releases are dynamic:
      * another tab may acquire the same namespace while this controller is still alive, so the
      * construction-time read-only bit alone is not a sufficient fence for a stale controller. New
@@ -247,6 +278,13 @@ export class WasmLinux {
      * persistent path (no base binding) there is no snapshot to resume: always `"missing"`.
      */
     restoreDecisionCode(stored: Uint8Array | null | undefined, current_generation: number): string;
+    /**
+     * E5-T26e: restore the versioned desktop envelope after the host Channel has completed its
+     * fresh HELLO intersection. The returned JSON-safe report is consumed by the T22 viewport
+     * owner; this call never silently attests success when the live console/device composition is
+     * unavailable.
+     */
+    restoreDesktopSnapshot(blob: Uint8Array, host_width: number, host_height: number): any;
     /**
      * Load and, only when coherent, apply the persisted snapshot directly inside wasm. The stored
      * blob is held by one Rust allocation while the coherence header is checked and the machine is
@@ -265,6 +303,11 @@ export class WasmLinux {
      */
     runChunk(max_instrs: number, persist_max_dirty_bytes?: number | null): any;
     /**
+     * E5-T26f: take the live GPU/input/sound/agent component state at one bounded scheduler
+     * boundary. The core composes the existing codecs; this boundary only owns the JS byte copy.
+     */
+    saveDesktopSnapshot(): any;
+    /**
      * Take a whole-machine resume snapshot and return its bytes as a `Uint8Array`. NOT async and NOT
      * persisting — kept synchronous so the `RefCell` borrow is never held across an `await` (the JS
      * caller may drive persistence itself, or use [`Self::persist_snapshot`]). `save_resume` quiesces
@@ -273,6 +316,12 @@ export class WasmLinux {
      * starts with `"save_error"`.
      */
     saveSnapshot(): any;
+    /**
+     * E5-T26f: enqueue one owned host-to-guest frame on the named virtio-console agent port.
+     * Returning the accepted byte count lets the page Channel fail closed on bounded
+     * backpressure instead of silently reporting that a frame was delivered.
+     */
+    sendAgentInput(bytes: Uint8Array): number;
     /**
      * Queue host keystrokes for the guest's `ttyS0` (fed to the RX FIFO across `runChunk`s).
      */
@@ -298,12 +347,21 @@ export class WasmLinux {
      */
     setChaining(on: boolean): void;
     /**
+     * E5-T26k: select one bounded decoded-cache capacity, without coercing JavaScript values.
+     */
+    setDecodedCacheEntries(value: any): void;
+    /**
      * E3-T10: flip the disk to read-only at runtime — the "continue read-only" choice after a
      * storage-quota hit. Subsequent guest writes get EIO (VIRTIO_BLK_F_RO / BlockError::ReadOnly)
      * so the guest sees an honest I/O error instead of a silently-undurable write. No-op off the
      * persistent path. Returns true if a disk flag was flipped.
      */
     setDiskReadOnly(): boolean;
+    /**
+     * Request a preferred display mode. This does not resize a guest resource or claim the
+     * compositor has adopted the mode. Validate both JS values before borrowing/mutating state.
+     */
+    setDisplay(width: any, height: any): boolean;
     /**
      * E4-T39: toggle generated dynamic-return (`jalr`) chaining independently of static regions.
      */
@@ -316,6 +374,15 @@ export class WasmLinux {
      */
     setFastInterpreter(on: boolean): void;
     setFileDownloadReady(ready: boolean): void;
+    /**
+     * E5-T26i: opt in to realm-monotonic guest time, or retain the deterministic ICount oracle.
+     * Unsupported labels and unavailable performance sources refuse before any clock mutation.
+     */
+    setGuestClock(mode: string): void;
+    /**
+     * Explicit deterministic retirements-per-tick selection; never silently coerce JS input.
+     */
+    setICountDivider(value: any): void;
     /**
      * E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
      * `performance.now()`-backed [`JsHostTimer`]; sampling is 1-in-~1024 retires + cold-path-only
@@ -352,6 +419,11 @@ export class WasmLinux {
      * Publish the current host absolute-tablet frame with `EV_SYN/SYN_REPORT`.
      */
     syncTablet(): void;
+    /**
+     * E5-T26f: drain complete guest-to-host agent frames after a run slice. The returned copy is
+     * transferred through the worker protocol and then decoded by the page-owned T23d Channel.
+     */
+    takeAgentOutput(): Uint8Array;
     takeFileDownloadChunk(id: number): Uint8Array;
     /**
      * E5-T21d: expose the input PCM lifecycle edge to the page. `startCount` increments only for
@@ -441,6 +513,11 @@ export class WasmMachine {
      * E4-T39: toggle generated dynamic-return (`jalr`) chaining independently of static regions.
      */
     setDynamicChaining(on: boolean): void;
+    /**
+     * Arm or disarm the same profiler used by the Linux wrapper. Browser-JIT entry clocks follow
+     * this state, while their deterministic structural counters remain enabled in both modes.
+     */
+    setProfiling(on: boolean): boolean;
     /**
      * Enable or disable canonical instruction tracing (appended to an internal buffer;
      * drain it with `takeTrace`).
@@ -575,6 +652,7 @@ export interface InitOutput {
     readonly wasmlinux_advanceOverlayGeneration: (a: number) => [number, number, number];
     readonly wasmlinux_attachAudioCapture: (a: number, b: any, c: number, d: number) => [number, number];
     readonly wasmlinux_attachAudioOutput: (a: number, b: any, c: any, d: number, e: number) => [number, number];
+    readonly wasmlinux_attachDisplay: (a: number, b: any) => [number, number, number];
     readonly wasmlinux_audioCaptureReady: (a: number) => [number, number, number];
     readonly wasmlinux_audioOutputReady: (a: number) => [number, number, number];
     readonly wasmlinux_beginFileUpload: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number, number];
@@ -582,8 +660,11 @@ export interface InitOutput {
     readonly wasmlinux_cancelFileDownload: (a: number, b: number) => [number, number];
     readonly wasmlinux_cancelFileUpload: (a: number, b: number) => [number, number];
     readonly wasmlinux_closeStorage: (a: number) => [number, number];
+    readonly wasmlinux_confirmAgentHello: (a: number) => [number, number, number];
     readonly wasmlinux_dismissFileDownload: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_dismissFileUpload: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_displayReady: (a: number) => [number, number, number];
+    readonly wasmlinux_displayStats: (a: number) => [number, number, number];
     readonly wasmlinux_enableJit: (a: number, b: number) => [number, number];
     readonly wasmlinux_enableJitWithPolicy: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_fetchPending: (a: number) => any;
@@ -592,6 +673,7 @@ export interface InitOutput {
     readonly wasmlinux_fileTransferStatus: (a: number) => [number, number, number, number];
     readonly wasmlinux_finishFileDownload: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_getProfile: (a: number) => [number, number, number];
+    readonly wasmlinux_guestClockState: (a: number) => [number, number, number];
     readonly wasmlinux_hasUnpersisted: (a: number) => [number, number, number];
     readonly wasmlinux_importStoredSnapshot: (a: number, b: number, c: number) => any;
     readonly wasmlinux_jitStats: (a: number) => [number, number, number];
@@ -611,26 +693,35 @@ export interface InitOutput {
     readonly wasmlinux_persistStats: (a: number) => [number, number, number];
     readonly wasmlinux_pushFileUpload: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
     readonly wasmlinux_readStoredSnapshot: (a: number) => any;
+    readonly wasmlinux_rebaseGuestClock: (a: number) => [number, number];
     readonly wasmlinux_relinquishSnapshotWriter: (a: number) => any;
     readonly wasmlinux_restoreDecisionCode: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+    readonly wasmlinux_restoreDesktopSnapshot: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
     readonly wasmlinux_restoreStoredSnapshot: (a: number) => any;
     readonly wasmlinux_runChunk: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmlinux_saveDesktopSnapshot: (a: number) => [number, number, number];
     readonly wasmlinux_saveSnapshot: (a: number) => [number, number, number];
+    readonly wasmlinux_sendAgentInput: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_sendKeyboardEvent: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_sendMouseEvent: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_sendTabletEvent: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_setChaining: (a: number, b: number) => [number, number];
+    readonly wasmlinux_setDecodedCacheEntries: (a: number, b: any) => [number, number];
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
+    readonly wasmlinux_setDisplay: (a: number, b: any, c: any) => [number, number, number];
     readonly wasmlinux_setDynamicChaining: (a: number, b: number) => [number, number];
     readonly wasmlinux_setFastInterpreter: (a: number, b: number) => [number, number];
     readonly wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];
+    readonly wasmlinux_setGuestClock: (a: number, b: number, c: number) => [number, number];
+    readonly wasmlinux_setICountDivider: (a: number, b: any) => [number, number];
     readonly wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_stateDigest: (a: number) => [number, number, number, number];
     readonly wasmlinux_syncKeyboard: (a: number) => [number, number];
     readonly wasmlinux_syncMouse: (a: number) => [number, number];
     readonly wasmlinux_syncTablet: (a: number) => [number, number];
+    readonly wasmlinux_takeAgentOutput: (a: number) => [number, number, number];
     readonly wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_virtioSndCaptureState: (a: number) => [number, number, number];
     readonly wasmlinux_virtioSndConfig: (a: number) => [number, number, number];
@@ -646,6 +737,7 @@ export interface InitOutput {
     readonly wasmmachine_setChaining: (a: number, b: number) => [number, number];
     readonly wasmmachine_setConsole: (a: number, b: any) => [number, number];
     readonly wasmmachine_setDynamicChaining: (a: number, b: number) => [number, number];
+    readonly wasmmachine_setProfiling: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_setTrace: (a: number, b: number) => [number, number];
     readonly wasmmachine_stateDigest: (a: number) => [number, number, number, number];
     readonly wasmmachine_step: (a: number, b: number) => [number, number, number];

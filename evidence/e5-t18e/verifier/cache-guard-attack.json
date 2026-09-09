@@ -1,0 +1,266 @@
+{
+  "candidate": "5506f2a514a6a7b90d83eafe8cf39e6d3ff4fd1b",
+  "at": "2026-09-06T05:59:31.007Z",
+  "purpose": "Cheap real dedicated-worker cache and guard sabotage; no emulator",
+  "sourceSha256": "056054b90fe110a99d8847c0e3c0f944835d7a83ae6ca877a3216584a46ef845",
+  "scratch": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t18e-cache-critic-OClNYL",
+  "asset": "/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+  "browserVersion": "152.0.7977.76",
+  "calibration": {
+    "observations": [
+      {
+        "disabled": false,
+        "phase": "prime",
+        "workers": [
+          {
+            "url": "calibration-worker",
+            "entries": [
+              {
+                "name": "http://127.0.0.1:64099/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+                "transferSize": 131372,
+                "encodedBodySize": 131072,
+                "decodedBodySize": 131072
+              },
+              {
+                "name": "http://127.0.0.1:64099/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+                "transferSize": 0,
+                "encodedBodySize": 131072,
+                "decodedBodySize": 131072
+              }
+            ]
+          }
+        ],
+        "chunkRequests": 2,
+        "cachedChunkRequests": 1,
+        "networkChunkRequests": 1,
+        "unknownChunkRequests": 0
+      },
+      {
+        "disabled": false,
+        "phase": "reload",
+        "workers": [
+          {
+            "url": "calibration-worker",
+            "entries": [
+              {
+                "name": "http://127.0.0.1:64099/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+                "transferSize": 0,
+                "encodedBodySize": 131072,
+                "decodedBodySize": 131072
+              },
+              {
+                "name": "http://127.0.0.1:64099/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+                "transferSize": 0,
+                "encodedBodySize": 131072,
+                "decodedBodySize": 131072
+              }
+            ]
+          }
+        ],
+        "chunkRequests": 2,
+        "cachedChunkRequests": 2,
+        "networkChunkRequests": 0,
+        "unknownChunkRequests": 0
+      },
+      {
+        "disabled": true,
+        "phase": "prime",
+        "workers": [
+          {
+            "url": "calibration-worker",
+            "entries": [
+              {
+                "name": "http://127.0.0.1:64099/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+                "transferSize": 131372,
+                "encodedBodySize": 131072,
+                "decodedBodySize": 131072
+              },
+              {
+                "name": "http://127.0.0.1:64099/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+                "transferSize": 131372,
+                "encodedBodySize": 131072,
+                "decodedBodySize": 131072
+              }
+            ]
+          }
+        ],
+        "chunkRequests": 2,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 2,
+        "unknownChunkRequests": 0
+      },
+      {
+        "disabled": true,
+        "phase": "reload",
+        "workers": [
+          {
+            "url": "calibration-worker",
+            "entries": [
+              {
+                "name": "http://127.0.0.1:64099/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+                "transferSize": 131372,
+                "encodedBodySize": 131072,
+                "decodedBodySize": 131072
+              },
+              {
+                "name": "http://127.0.0.1:64099/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+                "transferSize": 131372,
+                "encodedBodySize": 131072,
+                "decodedBodySize": 131072
+              }
+            ]
+          }
+        ],
+        "chunkRequests": 2,
+        "cachedChunkRequests": 0,
+        "networkChunkRequests": 2,
+        "unknownChunkRequests": 0
+      }
+    ],
+    "passed": true
+  },
+  "routingSabotage": {
+    "rejected": true,
+    "error": "AssertionError [ERR_ASSERTION]: cold worker reused HTTP cache\n\n1 !== 0\n"
+  },
+  "directReadWorkerCache": {
+    "workers": [
+      {
+        "url": "blob:http://127.0.0.1:64099/31ba2a19-c110-498b-b577-3c72d079b913",
+        "entries": [
+          {
+            "name": "http://127.0.0.1:64099/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+            "transferSize": 131372,
+            "encodedBodySize": 131072,
+            "decodedBodySize": 131072
+          },
+          {
+            "name": "http://127.0.0.1:64099/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+            "transferSize": 131372,
+            "encodedBodySize": 131072,
+            "decodedBodySize": 131072
+          }
+        ]
+      }
+    ],
+    "chunkRequests": 2,
+    "cachedChunkRequests": 0,
+    "networkChunkRequests": 2,
+    "unknownChunkRequests": 0
+  },
+  "regressions": {
+    "intact": {
+      "status": 0,
+      "stdout": "✔ verifier: completed-fetch coverage cannot pass on an empty or truncated observer (3.000375ms)\n✔ verifier: real-worker-shaped reuse is rejected cold and admitted warm (4.585ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 125.617833\n",
+      "stderr": ""
+    },
+    "coldGuardRemoved": {
+      "status": 1,
+      "stdout": "✔ verifier: completed-fetch coverage cannot pass on an empty or truncated observer (2.559ms)\n✖ verifier: real-worker-shaped reuse is rejected cold and admitted warm (0.556041ms)\nℹ tests 2\nℹ suites 0\nℹ pass 1\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 125.636791\n\n✖ failing tests:\n\ntest at tools/verify/e5-t18e-cache-verifier.test.mjs:23:1\n✖ verifier: real-worker-shaped reuse is rejected cold and admitted warm (0.556041ms)\n  AssertionError [ERR_ASSERTION]: Missing expected exception.\n      at TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t18e-cache-verifier.test.mjs:26:10)\n      at Test.runInAsyncScope (node:async_hooks:227:14)\n      at Test.run (node:internal/test_runner/test:1397:25)\n      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)\n      at Test.postRun (node:internal/test_runner/test:1537:19)\n      at Test.run (node:internal/test_runner/test:1462:12)\n      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {\n    generatedMessage: false,\n    code: 'ERR_ASSERTION',\n    actual: undefined,\n    expected: /cold worker reused HTTP cache/,\n    operator: 'throws',\n    diff: 'simple'\n  }\n",
+      "stderr": ""
+    }
+  },
+  "passed": true,
+  "requests": [
+    {
+      "url": "/artifacts-alpine.json",
+      "at": "2026-09-06T05:59:36.064Z"
+    },
+    {
+      "url": "/favicon.ico",
+      "at": "2026-09-06T05:59:36.257Z"
+    },
+    {
+      "url": "/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+      "at": "2026-09-06T05:59:36.341Z"
+    },
+    {
+      "url": "/artifacts-alpine.json",
+      "at": "2026-09-06T05:59:36.407Z"
+    },
+    {
+      "url": "/favicon.ico",
+      "at": "2026-09-06T05:59:36.482Z"
+    },
+    {
+      "url": "/artifacts-alpine.json",
+      "at": "2026-09-06T05:59:39.406Z"
+    },
+    {
+      "url": "/favicon.ico",
+      "at": "2026-09-06T05:59:39.555Z"
+    },
+    {
+      "url": "/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+      "at": "2026-09-06T05:59:39.914Z"
+    },
+    {
+      "url": "/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+      "at": "2026-09-06T05:59:40.088Z"
+    },
+    {
+      "url": "/artifacts-alpine.json",
+      "at": "2026-09-06T05:59:40.215Z"
+    },
+    {
+      "url": "/favicon.ico",
+      "at": "2026-09-06T05:59:40.382Z"
+    },
+    {
+      "url": "/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+      "at": "2026-09-06T05:59:40.571Z"
+    },
+    {
+      "url": "/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+      "at": "2026-09-06T05:59:40.649Z"
+    },
+    {
+      "url": "/artifacts-alpine.json",
+      "at": "2026-09-06T05:59:43.041Z"
+    },
+    {
+      "url": "/favicon.ico",
+      "at": "2026-09-06T05:59:43.307Z"
+    },
+    {
+      "url": "/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+      "at": "2026-09-06T05:59:43.392Z"
+    },
+    {
+      "url": "/artifacts-alpine.json",
+      "at": "2026-09-06T05:59:43.498Z"
+    },
+    {
+      "url": "/favicon.ico",
+      "at": "2026-09-06T05:59:43.595Z"
+    },
+    {
+      "url": "/artifacts-alpine.json",
+      "at": "2026-09-06T05:59:45.399Z"
+    },
+    {
+      "url": "/favicon.ico",
+      "at": "2026-09-06T05:59:45.475Z"
+    },
+    {
+      "url": "/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+      "at": "2026-09-06T05:59:45.502Z"
+    },
+    {
+      "url": "/artifacts-alpine.json",
+      "at": "2026-09-06T05:59:47.008Z"
+    },
+    {
+      "url": "/favicon.ico",
+      "at": "2026-09-06T05:59:47.088Z"
+    },
+    {
+      "url": "/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+      "at": "2026-09-06T05:59:47.116Z"
+    },
+    {
+      "url": "/e5t18b-desktop/chunks/e665203bb0ea771064f2d8969ac9872bcf64b7bad3d4fb457ab36f3dce6cc792.bin",
+      "at": "2026-09-06T05:59:47.127Z"
+    }
+  ]
+}

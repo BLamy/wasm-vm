@@ -1,0 +1,156 @@
+{
+  "head": "5ff7f85727352781f297fff70ba10263ff8646ae",
+  "publication": {
+    "imageSha256": "e75b04caadd9616915b323497c92df1d5a9d11d55c877afcc95d208dde302416",
+    "chunkManifestSha256": "4ee9976955d30915ba2ed154c14475303070db9b6902491cae9d16ae25241b55",
+    "fileManifestSha256": "ab73efab8eac885690def228e3d2080d4ed9f57801e642037f12fd0186e7e2d5",
+    "packageManifestSha256": "ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908"
+  },
+  "sources": {
+    "tools/rootfs/start-desktop": "6752fb4a165e85c130d50d5d27775cac102f5d014c3de8263f1aaaa1a5b8e799",
+    "tools/rootfs/desktop-autologin": "5e2818bf8170bfe931add12e1058bbb6c0c2f77fe98e32c8e019344cfec4c2c3",
+    "tools/rootfs/desktop-runtime.initd": "0d98f68ec97381a955c91c566082119b4ba33d97a923d995dc5139efea2f73be",
+    "tools/rootfs/desktop-test-console": "12c5603cbb093fb1e4c7c62804825798084e2bbd6268fd39e0003b84bc00f613",
+    "tools/rootfs-inner.sh": "82db20e89cd73b188e5b4ed25b02ced959c7907b11c271081000de82ac9a515e",
+    "tools/build-rootfs.sh": "c28bd4e0be7592c0c354a86a0b0e2f46095c5eb2b911921c923646db5667789b",
+    "tools/image/desktop.sh": "0f28ac5165449eed2b9af21691981dee181ee2cdcfb471d22034296a66da01bd",
+    "tools/serve-dev.sh": "1ed0be2fe9911c2702e94e6406478f150a6ec052fbd3817cb5951fc405037ce8",
+    "web/desktop-recovery.html": "7c92f455e35401635520c3f5258e962d6ed2f9dec9f7454ecb831ec7b2f86eba",
+    "web/desktop-recovery.js": "9056d7c7d8e85a619302c272220bb326a058c2d513c3b9bd914186f4e583c654",
+    "web/src/input/desktop-recovery-policy.js": "50d0487057012c2f5de28c23a8dffd75c9bda7f3c6e4773afcc9fd931372c85f",
+    "tools/verify/e5-t18d-desktop-recovery.mjs": "bc1bce95ef0897312459e769601ed323f74b98a00570b46fa1eb7c656f3454d3",
+    "web/linux-worker-protocol.js": "4b451386529d2e5d2f98f2a30e8b9b42e9cb04d324a426645a4edb17be805421",
+    "tools/verify/e5-t18d-surface.mjs": "28d9b8145e43bd8fab496679944b1758ee5ae4a65b667c6f8799ebfa447318a8",
+    "tools/image/e5-t18d-desktop-image.json": "905e34eed8d5dbe98fc420793c00457b0870b8ebb6bd62fe28a9fb58634f48a7"
+  },
+  "label": "broken-config",
+  "fallback": {
+    "status": "E5T18D_STATUS_BEGIN\ndesktop.attempts=absent\ndesktop.ready=absent\ndesktop.failed=compositor-config-missing\nweston.pid=absent\n2026-09-06T04:28:25Z E5T18D event=boot-runtime-ready\n2026-09-06T04:28:58Z E5T18D event=fallback reason=compositor-config-missing attempts=0\nE5T18D_STATUS_END\n",
+    "tty": "E5T18D_TTY_BEGIN\ntty1\ngetty pid=992 args=/sbin/getty -L -f /etc/wasm-vm/desktop-fallback.issue 115200 tty1 linux \n                                                                                                                                                                Welcome to Alpine!                                                                                                                                                                                                                                                                                                              The Alpine Wiki contains a large amount of how-to guides and general                                                                                            information about administrating Alpine systems.                                                                                                                See <https://wiki.alpinelinux.org/>.                                                                                                                                                                                                                                                                                            You can setup the system with the command: setup-alpine                                                                                                                                                                                                                                                                         You may change this message by editing /etc/motd.                                                                                                                                                                                                                                                                                                                                                                                                                                               DESKTOP FAILED: compositor-config-missing                                                                                                                       See /home/desktop/.local/state/wasm-vm/desktop.log; returning tty1 to login.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    DESKTOP FAILED � automatic restart budget exhausted or startup unavailable.                                                                                     Logs: /home/desktop/.local/state/wasm-vm/desktop.log                                                                                                            A serial login remains available. Reboot after correcting the configuration.                                                                                                                                                                                                                                                    wasm-vm login:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  \nE5T18D_TTY_END\n",
+    "frame": {
+      "frames": 25,
+      "width": 1280,
+      "height": 800,
+      "framebufferSha256": "fd308cef33451faba2945200937ae1b3d2eb4b3fb060d6a0d5a7bf4c27fcc6c4",
+      "guestStateDigest": "da907371852e4c761700380a5047df5cd89765be2a65a72e1602431b121c49a9",
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 7007,
+        "totalSliceMs": 408164.39500045776,
+        "averageSliceMs": 58.25094833744224,
+        "maxSliceMs": 403.80500000715256,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 47
+          },
+          {
+            "leMs": 8,
+            "count": 286
+          },
+          {
+            "leMs": 16,
+            "count": 36
+          },
+          {
+            "leMs": 32,
+            "count": 111
+          },
+          {
+            "leMs": 64,
+            "count": 3749
+          },
+          {
+            "leMs": 128,
+            "count": 2757
+          },
+          {
+            "leMs": 256,
+            "count": 16
+          },
+          {
+            "leMs": 512,
+            "count": 5
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 406.93000000715256,
+        "requestedInstructions": 3503500000,
+        "retiredInstructions": 3503207018,
+        "fetchWaits": 121,
+        "fetchRequestedChunks": 141,
+        "fetchWaitTotalMs": 246.4350004196167,
+        "fetchWaitMaxMs": 6.605000019073486,
+        "outputCalls": 167,
+        "outputBytes": 30806,
+        "inputCalls": 3,
+        "inputBytes": 15,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 7008,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "framesReceived": 25,
+        "successfulPresents": 25,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": null,
+        "gpu": {
+          "framesReceived": 25,
+          "enqueued": 25,
+          "coalesced": 0,
+          "presented": 25,
+          "successfulPresents": 25,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 0,
+          "uploadedBytes": 16860624,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 120,
+            "y": 350,
+            "width": 8,
+            "height": 2
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        },
+        "errors": []
+      },
+      "surface": {
+        "black": 1008684,
+        "white": 15316,
+        "colored": 0,
+        "total": 1024000,
+        "bodyMean": 2.2037651909722222,
+        "panelMean": 1.98388671875,
+        "desktop": false
+      },
+      "screenshot": "broken-config.png",
+      "screenshotSha256": "6e980aa3f96f910881bf2ccd34b5e962e2c9668a4d3bed3758e3f972dd7e0781"
+    }
+  },
+  "passed": true
+}

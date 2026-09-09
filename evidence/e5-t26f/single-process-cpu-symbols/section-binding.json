@@ -1,0 +1,69 @@
+{
+  "algorithm": "bindNames: ordered id+payload equality for ALL noncustom sections",
+  "symbolizer": {
+    "path": "tools/verify/e5-t22c-symbolize-cpu.mjs",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t22c-symbolize-cpu.mjs",
+    "size": 4650,
+    "sha256": "15006e82701a6aa010e1e96638e4d6cf5f07118843c8c4c0d4bb79f1fd9519d5"
+  },
+  "release": {
+    "path": "web/pkg/wasm_vm_wasm_bg.wasm",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/web/pkg/wasm_vm_wasm_bg.wasm",
+    "size": 1550133,
+    "sha256": "39c674d0707a1a0d4348df078128b8a83cd9bec0b5fe943239f25497b3bf127c"
+  },
+  "named": {
+    "path": "target/e5-t26f/single-process-symbols/companion-01/named.wasm",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01/named.wasm",
+    "size": 1721358,
+    "sha256": "44ee774b2c8bca1bfc82426944f01e6c79b85dffcccdd6488d953342f7e6eba0"
+  },
+  "sections": [
+    {
+      "id": 1,
+      "payloadSha256": "f515c4f7013f8304aa53eaf854ed8f1f32f26c4316391b30fe2e641b5d4961f0"
+    },
+    {
+      "id": 2,
+      "payloadSha256": "ceada104b64ca83f0c71b4ee1f337061ecbe25541a9c300bab3844614e1d4c19"
+    },
+    {
+      "id": 3,
+      "payloadSha256": "3e5f5ad8d9ea6ff0222a90faa060bd77ec8cb2d9af554d88b03b489666fd8906"
+    },
+    {
+      "id": 4,
+      "payloadSha256": "a9e1243944c55b1597e9f3fadbf07b8bc083301904bf9d7fe3b4710ab002726b"
+    },
+    {
+      "id": 5,
+      "payloadSha256": "2e2461dd6852f58de2d470cabcf5c41b6e56fdb6ee9169954fe02a13b3ef4bae"
+    },
+    {
+      "id": 6,
+      "payloadSha256": "13ddec6cde4d7a99a338dd7f18e081b4d5c29a91723580fe44c87c16b6ef64ac"
+    },
+    {
+      "id": 7,
+      "payloadSha256": "4141731f0b600d22d44190731cda57c29bef4c7e56139cd342369cd318328b9b"
+    },
+    {
+      "id": 9,
+      "payloadSha256": "b73d35b2068e519fddb481bb5774b9b7d7682b124876b8e4ce7adf4c283d2700"
+    },
+    {
+      "id": 12,
+      "payloadSha256": "77f9d866ab0841ca1d07a39d3dbb37e21c2025c098d53c902904ed87316bb29f"
+    },
+    {
+      "id": 10,
+      "payloadSha256": "9abc521ff84329886a841096e6cc2b17c7d42cd0f7cd3fbeb3adc596a6874f81"
+    },
+    {
+      "id": 11,
+      "payloadSha256": "254aaa1b1b8768e8d96b7934362bc63807602ab67a6808755d854024b5b3486c"
+    }
+  ],
+  "names": 1890,
+  "allNoncustomSectionsEqual": true
+}

@@ -1,0 +1,132 @@
+2ace135363cf0fa3cf7ba978fe6810e564eecc03
+# Existing copied queue counters only; browser evidence needs a new cold seal.
+cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+cargo clippy -p wasm-vm-core --lib -- -D warnings
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.75s
+cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+wasm-pack test --node crates/wasm --test compile_queue_stats --test discovery_stats --test decoded_cache_capacity
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/compile_queue_stats.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/compile_queue_stats-b7469b0377ab5816.wasm)
+running 5 tests
+test restore_keeps_lifetime_queue_counters_then_actual_pump_cancels_old_generation ... ok
+test repeated_reads_and_detached_object_mutation_preserve_backlog_guest_and_all_stats ... ok
+test real_backlog_backpressure_and_pop_obey_conservation_and_browser_run_budgets ... ok
+test initial_exact_shape_and_capacity_are_shared_by_both_wrappers_without_executor ... ok
+test bare_metal_shared_projection_reports_real_compilation_and_is_read_only ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 filtered out; finished in 7.89s
+
+     Running tests/decoded_cache_capacity.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/decoded_cache_capacity-37f0fa3b359e1120.wasm)
+running 3 tests
+test whole_machine_restore_retains_selected_host_capacity_and_flushes_real_compiled_state ... ok
+test strict_numeric_boundary_rejects_before_any_architectural_or_live_cache_mutation ... ok
+test resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_policy ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 3.03s
+
+     Running tests/discovery_stats.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/discovery_stats-786cbcf7d0787b56.wasm)
+running 6 tests
+test real_csr_terminator_is_excluded_while_supported_jump_is_nominated ... ok
+test real_candidates_nomination_dedup_and_compiled_progress_are_observed_without_mutation ... ok
+test one_bounded_real_jal_stream_overflows_queue_and_restore_resets_live_gauges ... ok
+test initial_shape_is_actual_and_shared_by_both_wrappers ... ok
+test bounded_cold_flood_reports_actual_counter_map_exhaustion_without_jit ... ok
+test bare_metal_shared_projection_tracks_real_jit_without_changing_guest_or_stats ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 7.50s
+
+node --check tools/verify/e5-t26f-browser-compile-queue.mjs
+node --check tools/verify/e5-t26f-compile-queue-observation.mjs
+node --test tools/verify/e5-t26f-browser-compile-queue.test.mjs tools/verify/e5-t26f-compile-queue-observation.test.mjs tools/verify/e5-t26f-discovery-observation.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs web/tests/e4-t32-worker-protocol.test.mjs
+✔ actual wrapper creates a new seal and only the unchanged default-policy reuse (1.877792ms)
+✔ existing attempt refuses before seal creation, writes or child launch (0.408916ms)
+✔ cold failure or signalled child retains transcript/exit and never launches reuse (1.389ms)
+✔ successful timing keeps non-acceptance and uses the success record (0.994542ms)
+✔ non-cap failure, wrong recorded head, or source mutation cannot emit an observation (2.217583ms)
+✔ coherent exact accounting splits both backpressure cases without subtracting discovery refusals (1.3775ms)
+✔ negative resident-depth delta and lifetime drops with zero interval drops remain valid (0.19725ms)
+✔ missing, unsafe and out-of-bound actual queue fields refuse (1.225875ms)
+✔ impossible residuals, regressions, unsafe intermediate totals and mixed head/policy refuse (0.78425ms)
+✔ actual success producer shape uses only its nested head and never verifies F (1.851708ms)
+✔ CLI binds original bytes, preserves inputs/outputs and refuses bad accounting before output (110.977583ms)
+✔ actual counters are mandatory safe integers, with bounded gauges and consistent generation (2.906292ms)
+✔ collector subtracts counters, retains gauges/endpoints and does not erase earlier drops (1.034042ms)
+✔ mixed policies, non-cap failures, moved endpoints, changed generations and regressed counters refuse (5.135458ms)
+✔ unitOnly successful-cap branch keeps nonacceptance and requires completion within its bound (2.582667ms)
+✔ CLI writes a new output bound to the exact unitOnly input bytes (33.049542ms)
+✔ CLI refuses existing output and input=output without overwriting either (51.454333ms)
+✔ CLI refuses a non-cap failure before creating output (26.096166ms)
+✔ resident fixture is exact opt-in; unmatched tuning overrides refuse (1.507958ms)
+✔ resident repack-off requires isolated explicit JIT=1 reuse; actual URLs retain play/5ms (1.270084ms)
+✔ resident cap-256 requires isolated explicit JIT=1 reuse; actual URLs retain play/5ms (0.571458ms)
+✔ resident residency rejects missing counterparts and malformed/coerced labels in both admission layers (9.309875ms)
+✔ resident residency refuses cold/normal/COMPLETE and every coexisting override, including empty (28.805375ms)
+✔ actual quiet scratch selection remains stricter and rejects both newly admitted resident policies (1.070042ms)
+✔ outside the paired opt-in, existing resident observation rules and nonresident policy selection stay intact (1.2605ms)
+✔ admitted residency still requires actual executor/policy/cap and fresh before/after RPC state (3.769917ms)
+✔ resident accounting presets use fixed 100-ms physical edges only for admitted reuse commands (10.015666ms)
+✔ read-only resident profiling is exact reuse-only and can never enter cold, normal acceptance or COMPLETE (1.472625ms)
+✔ actual runner keeps normal, cold, reuse and COMPLETE resident play at 5-ms edges (1.834208ms)
+✔ the same command text without resident opt-in does not override existing diagnostic pacing (2.157583ms)
+✔ resident image binding checks frozen helper, original base and actual install path (0.292042ms)
+✔ actual envelope authenticates prepared stereo parameters and empty TX metadata (0.555541ms)
+✔ fully rehashed sound-state and queue mutations fail, so valid hashes cannot stand in for empty prepared playback (1.473625ms)
+✔ capture XRUN and unrelated kicks are retained without claiming they contain playback PCM (0.151625ms)
+✔ queued playback XRUN refuses even with rehashed envelope, no scheduled XRUN and only event kick (0.190125ms)
+✔ digest, format, missing/duplicate sections, bounds and malformed sound event lengths refuse (0.686125ms)
+✔ fresh host ring requires actual zero indices, silence and suspended locked context (0.483667ms)
+✔ resident pre-gesture checks execute inside original T0, twice before real down/up and refuse early PCM (2.934542ms)
+✔ resident mode uses the protected output guard even without diagnostic completion (0.512166ms)
+✔ actual preparation requires physical command acceptance and fresh green without red before snapshot (1.036667ms)
+✔ reuse authenticates exact saved sound bytes and retained screenshot, not a worker's prepared summary (2.595334ms)
+✔ loader task quiescence joins held persistence and permanently closes scheduling (0.774083ms)
+✔ explicit surface, FIFO input/RPC, exact transferable ownership, Tailscale, and stop order (4.529ms)
+✔ every explicit controller method crosses the runtime and no-provider Tailscale is false/nonfatal (3.196875ms)
+✔ guestClock boot data and current machine state traverse the paired worker protocol without rounding or caching (4.215375ms)
+✔ worker forwards an invalid clock label to validation and propagates refusal before machine mutation (0.330583ms)
+✔ capture PCM_START lifecycle notification crosses the worker boundary (1.658584ms)
+✔ display FrameSink projections cross the worker boundary with private pixel ownership (1.602125ms)
+✔ display clear controls cross the worker boundary without a pixel payload (1.610959ms)
+✔ cursor-plane update and move projections keep MOVE payloads empty and privately owned (3.052667ms)
+✔ RPC ids correlate out-of-order results and arbitrary methods are not exposed (0.244792ms)
+✔ version mismatch/fatal rejects boot, pending and future calls exactly once (0.164084ms)
+✔ fatal after ready rejects pending, whenDone, stats, and future RPCs once (0.142333ms)
+✔ worker rejects an unknown method without executing it and propagates controller rejections (1.85925ms)
+✔ unknown frames fail closed and Tailscale events remain versioned (1.678167ms)
+✔ DONE rejects pending RPCs and DONE-before-READY rejects boot (0.262333ms)
+✔ byte RPC encoding errors reject asynchronously (0.187041ms)
+✔ silent termination is detected before and after READY and rejects pending work (55.831625ms)
+✔ heartbeat bypasses long async RPCs and visibility suspension shifts its deadline (85.087167ms)
+✔ visibility suspension pauses the pre-READY boot deadline (61.309916ms)
+✔ stateDigest gets method-scoped heartbeat grace and the controller remains live afterward (60.971125ms)
+✔ every bulk snapshot RPC emits BUSY/IDLE and survives the scoped heartbeat grace (432.343792ms)
+✔ natural completion emits a scoped terminal digest before DONE (2.2ms)
+✔ natural completion waits behind a held snapshot RPC before terminal BUSY and cleanup (2.1455ms)
+✔ fatal input during natural cleanup wins over clean DONE (2.24975ms)
+✔ stop and fatal cleanup are bounded when a dependency never settles (35.444917ms)
+✔ stop timeout fails closed without releasing storage under a live loader pump (28.955ms)
+✔ Tailscale UI exceptions are non-fatal (1.201584ms)
+✔ backend-neutral stop closes main storage but does not RPC after worker termination (0.398791ms)
+ℹ tests 69
+ℹ suites 0
+ℹ pass 69
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 830.853875
+F compile queue observation plumbing: OK; browser timing and F acceptance remain separate

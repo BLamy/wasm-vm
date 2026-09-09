@@ -1,0 +1,196 @@
+✔ make verify-E5-T26f refuses diagnostic create before any build or browser command (15.985583ms)
+✔ make verify-E5-T26f refuses diagnostic reuse before any build or browser command (12.8675ms)
+✔ cold playback fixture keeps errors and conditional success without verbose parameter dumping (0.682792ms)
+✔ one unresolved progress probe prevents subsequent timer ticks from piling up (1.72375ms)
+✔ public sample is bounded and excludes pixels, full records and guest control (0.534125ms)
+✔ navigation rejection frees the probe; stopped sampling suppresses late results (0.396667ms)
+✔ failure artifacts retain phase, error and milestones before browser capture (0.614333ms)
+✔ failure capture retains producer PCM even when the command never completes (0.709958ms)
+✔ failure capture does not issue requests behind a stuck progress probe (0.381125ms)
+✔ cursor timeout uses only the unspent original two-second budget (0.645209ms)
+✔ cursor waits through missing/stale pixels, returns matching sample and disposes its handle (0.416292ms)
+✔ exhausted cursor budget fails before polling; a polling timeout remains a failure (0.800417ms)
+✔ pointer motion precedes the full delayed gesture; no click or physical key occurs early (1.144292ms)
+✔ premature audio unlock during the delay fails before the click or command (0.620542ms)
+✔ overlapped motion spends the original deadline; late command completion still fails (0.934208ms)
+✔ residency selection is exact, reuse-only and requires explicit JIT=1 without auto-enabling it (13.016875ms)
+✔ residency metadata and cold/restore query are explicit; omission leaves existing URLs unchanged (4.423917ms)
+✔ omitted residency adds no policy access or extra RPC to either existing JIT arm (1.008166ms)
+✔ all three residency policies require actual mapped caps at both existing JIT endpoints (0.818375ms)
+✔ missing or mismatched actual residency policy/cap refuses at either endpoint and preserves raw failure evidence (15.694125ms)
+✔ JIT comparison is exact-string/reuse-only and rejects profiling or command overrides (6.195792ms)
+✔ JIT query selection is explicit; omitted acceptance/create/reuse retain jit=1 without state RPCs (2.809333ms)
+✔ both JIT arms read actual state before physical input and charge the RPC to the original cursor budget (2.362292ms)
+✔ JIT policy mismatches, missing APIs and RPC errors refuse with actual failure milestones (1.565708ms)
+✔ JIT measurement rejects stale, reversed and malformed retirement counts without replacing the evidence (1.313833ms)
+✔ both JIT arms capture PCM and freeze postRestoreEnd before the second RPC; the original cap still fails (2.571208ms)
+✔ clock comparison is reuse-only, unprofiled, explicit, and preserves F input/deadline (4.261417ms)
+✔ latency opt-in is exactly 1, reuse-only, and never changes the command or key pacing (2.150292ms)
+✔ CPU profiling requires exact 1 and reuse, independently of latency and unchanged input (3.431791ms)
+✔ default acceptance, create, and latency-only reuse never attach a CPU profiler (1.75525ms)
+✔ CPU host adapter uses the owned page session only when Browser is absent (0.280625ms)
+✔ CPU artifact retains exact worker, head/runtime binding, original T0 and byte digest; closes once (0.690542ms)
+✔ CPU stop/write failures are bounded metadata, preserve T0, and still attempt close once (0.600042ms)
+✖ CPU setup failure is captured before finally collection without replacing original error or T0 (3.22075ms)
+✔ CPU collection follows frozen PCM/end and precedes the unchanged cap even when collection stalls (1.176416ms)
+✔ probes register before physical typing but a stalled RPC cannot delay typing or completion cleanup (0.910875ms)
+✔ first non-silent PCM precedes a separately timed existing marker read without extra pixel reads (0.733958ms)
+✔ one held scheduler RPC survives a rejected local-stat read without overlap, even at the time limit (1.548375ms)
+✔ JIT RPC follows scheduler settlement and holds the whole sample until completion (0.69575ms)
+✔ stopping with JIT pending retains scheduler evidence and ignores late success or failure (0.717084ms)
+✔ scheduler settlement after stop or the original deadline never requests JIT (1.630167ms)
+✔ JIT observations copy only named scalar fields and record a missing API as unavailable (0.704959ms)
+✔ without the latency flag neither default nor reuse interaction requests diagnostic JIT stats (0.86275ms)
+✔ sampling is capped at 120 PCM/marker records and 24 spaced scheduler reads within the original restore window (5.268541ms)
+✔ missing diagnostic APIs are recorded as unavailable without fallback calls (0.462667ms)
+✔ latency samples survive the unchanged two-second failure before any failure pixel capture (0.569083ms)
+✔ failure is written before a stalled latency collection; timeout persists and never piles up or accepts late data (0.498791ms)
+✔ command override refuses acceptance/create and rejects unbounded or multiline input (1.29825ms)
+✔ without override all modes keep the exact sh /tmp/a command (0.942666ms)
+✔ diagnostic key pacing is bounded, reuse-only, recorded, and inside the original deadline (2.260375ms)
+✔ reuse override is recorded verbatim in nonacceptance metadata and the physical command record (0.813167ms)
+✖ top-level catch captures the phase before finally cleanup and rethrows the original error (0.297083ms)
+✖ a held coherence read starts after timed interaction and must finish before the next save (0.870667ms)
+✔ diagnostics require explicit mode, absolute scratch and stable port; default remains fresh acceptance (6.096375ms)
+✔ profile creation never overwrites existing data and reuse requires the task marker and completed seal (2.23425ms)
+✔ every runtime/kernel/image/origin binding mismatch refuses reuse before copying any profile (3.252916ms)
+✔ harness-only HEAD changes permit reuse while preserving creator and current provenance (5.811791ms)
+✔ runtime binding hashes actual served JS/WASM/kernel bytes, including uncommitted changes (6.653458ms)
+✖ reuse enters autoRestore directly without cold setup or resetting the restored timing boundary (0.527334ms)
+✔ reuse cold-boot fallback fails on its first readiness sample instead of waiting for another boot (0.4485ms)
+✔ reuse copies a sealed profile, preserves actual envelope/metadata and retains separate failed iterations (4.961041ms)
+✔ tampered profile bytes or desktop envelope/normal metadata cannot be reused (2.368583ms)
+✔ profile ownership refuses symlinks instead of traversing or overwriting an external profile (2.275167ms)
+✔ checkpoint hydration seeds exact bytes once on an inert same-origin bootstrap, never on later navigation (1.354ms)
+✔ checkpoint hydration accepts an identical current envelope but refuses to clobber different data (1.459ms)
+✔ checkpoint hydration refuses any different exact origin before mutation and removes its route (1.73625ms)
+✔ checkpoint hydration cleans up its exact route after navigation or evaluation failure (1.164708ms)
+✔ completion console capture uses existing listeners, caps text/count, and leaves default error arrays unchanged (1.055708ms)
+✔ optional completion generation observations follow drag saves without changing frozen timing (1.719459ms)
+✔ completion generation diagnostics retain returned resume before reads and never fabricate unavailable state (0.260375ms)
+✔ persistent Chromium identity uses public CDP when browser() is null and always detaches (2.711166ms)
+✔ zero PCM and completion attachment/timestamps reach failure milestones before the PCM assertion (1.115917ms)
+✖ stale or mismatched actual coherence fails after timing and survives in failure milestones (0.423083ms)
+✔ second restore performs the real coherence audit after display/button checks and before evidence (0.055625ms)
+ℹ tests 74
+ℹ suites 0
+ℹ pass 69
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 218.301333
+
+✖ failing tests:
+
+test at tools/verify/e5-t26f-browser-roundtrip.test.mjs:983:1
+✖ CPU setup failure is captured before finally collection without replacing original error or T0 (3.22075ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(start > 0 && end > start)
+  
+      at TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.test.mjs:986:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tools/verify/e5-t26f-browser-roundtrip.test.mjs:1498:1
+✖ top-level catch captures the phase before finally cleanup and rethrows the original error (0.297083ms)
+  AssertionError [ERR_ASSERTION]: runner top-level catch/finally is missing
+      at TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.test.mjs:1503:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tools/verify/e5-t26f-browser-roundtrip.test.mjs:1596:1
+✖ a held coherence read starts after timed interaction and must finish before the next save (0.870667ms)
+  AssertionError [ERR_ASSERTION]: normal stored snapshot restore was not attempted
+  + actual - expected
+  
+  + undefined
+  - true
+  
+      at auditRestoreCoherence (evalmachine.<anonymous>:720:12)
+      at async evalmachine.<anonymous>:27:9 {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tools/verify/e5-t26f-browser-roundtrip.test.mjs:1785:1
+✖ reuse enters autoRestore directly without cold setup or resetting the restored timing boundary (0.527334ms)
+  AssertionError [ERR_ASSERTION]: normal stored snapshot restore was not attempted
+  + actual - expected
+  
+  + undefined
+  - true
+  
+      at auditRestoreCoherence (evalmachine.<anonymous>:720:12)
+      at async evalmachine.<anonymous>:27:9
+      at async TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.test.mjs:1798:3)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tools/verify/e5-t26f-browser-roundtrip.test.mjs:2150:1
+✖ stale or mismatched actual coherence fails after timing and survives in failure milestones (0.423083ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+  
+  Caught error:
+  
+  AssertionError [ERR_ASSERTION]: normal stored snapshot restore was not attempted
+  + actual - expected
+  
+  + undefined
+  - true
+  
+      at async TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.test.mjs:2163:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: AssertionError [ERR_ASSERTION]: normal stored snapshot restore was not attempted
+    + actual - expected
+    
+    + undefined
+    - true
+    
+        at auditRestoreCoherence (evalmachine.<anonymous>:720:12)
+        at async evalmachine.<anonymous>:27:9
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.test.mjs:2163:5)
+        at async Test.run (node:internal/test_runner/test:1404:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:969:7),
+    operator: 'rejects',
+    diff: 'simple'
+  }

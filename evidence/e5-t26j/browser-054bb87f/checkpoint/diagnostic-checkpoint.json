@@ -1,0 +1,184 @@
+{
+  "schema": "wasm-vm.e5-t26f.diagnostic-iteration.v1",
+  "acceptance": false,
+  "milestones": {
+    "run": {
+      "kind": "diagnostic-iteration",
+      "acceptance": false,
+      "diagnostic": {
+        "mode": "create",
+        "directory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26j-clock-q33jA9",
+        "port": 61630,
+        "origin": "http://127.0.0.1:61630",
+        "command": null,
+        "keyDelayMs": 0,
+        "latency": false,
+        "cpu": false,
+        "guestClock": null,
+        "jit": null,
+        "residency": null,
+        "complete": false,
+        "icountDivider": null
+      },
+      "postRestoreCommand": "sh /tmp/a",
+      "postRestoreKeyDelayMs": 0,
+      "binding": {
+        "head": "054bb87f93b490645d5af921207f97af08629113",
+        "runtimeSha256": "43106f3e04a1c814a3d16994f1328755f8c10999a3ca6bc1818874e8812eb5c7",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "imageBytes": 1073741824,
+        "manifestSha256": "b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592",
+        "origin": "http://127.0.0.1:61630"
+      },
+      "profile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26j-clock-q33jA9/checkpoint-profile",
+      "checkpointFile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26j-clock-q33jA9/normal-checkpoint.json",
+      "creatorHead": "054bb87f93b490645d5af921207f97af08629113",
+      "currentHead": "054bb87f93b490645d5af921207f97af08629113",
+      "profileSha256": "901b20969f43feec5232e698403d4898235a18130fdcb9558b616bdaea2736da"
+    },
+    "initialReadiness": {
+      "completedAt": "2026-09-08T08:20:41.644Z"
+    },
+    "shellProbe": {
+      "command": "true; printf '\\033[42;30me5t26f-shell-ok\\033[0m\\n'",
+      "marker": "e5t26f-shell-ok",
+      "beforeFrame": 37,
+      "keyboardStart": 0,
+      "domEventStart": 0,
+      "visualDiffPixels": 2484,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 1,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 75,
+      "redMarkerSeen": false,
+      "keyboardFrames": 102,
+      "domEvents": 102,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "agentProbe": {
+      "state": "ready",
+      "negotiatedVersion": 1,
+      "transportGeneration": 2,
+      "bytesReceived": 54,
+      "bytesSent": 36,
+      "pendingBytes": 0
+    },
+    "initialAplay": {
+      "command": "yes \"$(printf '\\001\\000\\377\\177')\"|head -c3840 >/tmp/p;printf 'aplay -Dhw:0,0 --period-size=480 --buffer-size=960 -f S16_LE -t raw -r48000 -c2 /tmp/p&&printf \"\\033[42me5t26f-aplay\\033[0m\\n\"' >/tmp/a;sh /tmp/a",
+      "marker": "e5t26f-aplay-ok",
+      "beforeFrame": 75,
+      "keyboardStart": 102,
+      "domEventStart": 102,
+      "visualDiffPixels": 6938,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 128,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 257,
+      "redMarkerSeen": false,
+      "keyboardFrames": 454,
+      "domEvents": 454,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "initialAudio": {
+      "before": {
+        "available": true,
+        "writeIndex": 0,
+        "readIndex": 0,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 4096,
+        "inspectedFrames": 4096,
+        "nonSilentFrames": 0,
+        "maxAbs": 0
+      },
+      "after": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.082000732421875
+      },
+      "outputAttached": true,
+      "observedAt": 671175.7850000858
+    },
+    "twoWindows": {
+      "completedAt": "2026-09-08T08:26:20.475Z"
+    },
+    "initialCursor": {
+      "frame": {
+        "atMs": 807980,
+        "sequence": 19,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 18431
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 17612
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 18431,
+          "y": 17612
+        }
+      },
+      "rendered": {
+        "x": 720,
+        "y": 430,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      }
+    },
+    "normalSnapshotPause": {
+      "at": 808887.9000000954,
+      "isPaused": true
+    },
+    "normalSnapshot": {
+      "sha256": "82edb9b2f0203a5fa756d565dbbfc3fd7466544952e9b8a9ccca036f0212248a",
+      "byteLength": 2626928,
+      "preFrontBufferCrc": "23f83a92",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "23f83a92",
+        "overlayGeneration": 626
+      }
+    },
+    "normalCheckpointBeforeReload": {
+      "status": "passed",
+      "snapshotSha256": "82edb9b2f0203a5fa756d565dbbfc3fd7466544952e9b8a9ccca036f0212248a",
+      "observed": {
+        "at": 817320.1299999952,
+        "isPaused": true,
+        "generation": 626,
+        "decision": "resume",
+        "envelopeSha256": "82edb9b2f0203a5fa756d565dbbfc3fd7466544952e9b8a9ccca036f0212248a",
+        "stillPaused": true,
+        "finalGeneration": 626
+      }
+    }
+  },
+  "errors": {
+    "browser": [],
+    "http": []
+  }
+}

@@ -1,0 +1,21 @@
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.04s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/jit_browser_parity.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_browser_parity-6cc578c42c9ecada.wasm)
+running 1 test
+Invoking test: browser_machine_xie_enable_preempts_reused_inline_target
+test browser_machine_xie_enable_preempts_reused_inline_target ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 37 filtered out; finished in 0.17s
+

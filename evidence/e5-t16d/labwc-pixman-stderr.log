@@ -1,0 +1,9 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2786 bytes @ 0x8fffb518, 256 MiB RAM
+=== E4-T29 JIT summary ===
+jit_active=true  blocks_compiled=3393  blocks_executed=3146906369  retired_via_jit=19133792026
+discovery: nominated=2274965 deduped=152981956 excluded=871 dropped_stale=0 dropped_overflow=0 queue_hwm=841
+chaining: links_made=1295304 links_cut=1293524 dispatch_entries=245364452 max_chain_depth=32 links_followed=3146681268
+cache: modules=192 est_bytes=13335265 installs=1952931 retranslations=1908328 evictions=943475 flushes=0 generation=943477
+jit_pause: samples=981106 sum_ns=0 max_ns=0 over_target=0
+JIT_STATS_JSON {"blocks_compiled":3393,"blocks_executed":3146906369,"retired_via_jit":19133792026,"links_made":1295304,"dispatch_entries":245364452,"installs":1952931,"evictions":943475,"jit_pause_count":981106,"jit_pause_sum_ns":0,"jit_pause_max_ns":0,"jit_pause_over_target":0}
+wasm-vm: guest exited 0

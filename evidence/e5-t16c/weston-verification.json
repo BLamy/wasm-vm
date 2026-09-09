@@ -1,0 +1,57 @@
+{
+  "task": "E5-T16c",
+  "command": "make verify-E5-T16c",
+  "capture": "evidence/e5-t16c/weston-capture.json",
+  "image": {
+    "path": "target/e5-t16c/weston-image/alpine-rootfs.ext4",
+    "sha256": "9176a631e0b2d572f2cb87dde5a8e6916ecca60d4829afb8f1eef6045b92e382",
+    "postRunSha256": "d57ce5bf2d9cb68b20ba7df381703090024634fd7db633772e2690d60a57a80e",
+    "packageManifest": "target/e5-t16c/weston-image/MANIFEST.txt",
+    "packageManifestSha256": "225b8d35f7375c084075ca60edac5ea8fbf7ef46f1fd09a7e3a5d40bb074aae1",
+    "fileManifest": "target/e5-t16c/weston-image/FILE-MANIFEST.txt",
+    "fileManifestSha256": "b2b4964035b5a348be808afddc83b91d007c5cb3e5fbfcf1854b6f85d5d51552"
+  },
+  "renderer": {
+    "backend": "drm",
+    "renderer": "pixman",
+    "proof": "E5T16C_LAUNCH + Using Pixman renderer"
+  },
+  "idle": {
+    "durationMs": 2853.068250000011,
+    "guestInstructions": 19396638,
+    "totalGuestInstructions": 5332024187,
+    "instructionRatio": 0.0036377625681614334,
+    "budget": "<=2% unless charter justification"
+  },
+  "typing": {
+    "characters": 100,
+    "uploadedBytes": 36864000
+  },
+  "drag": {
+    "axis": "x",
+    "deltaPx": 300,
+    "steps": 30
+  },
+  "cursorq": {
+    "events": 0,
+    "status": "capability-gap: weston submitted no cursorq chain during this run"
+  },
+  "artifacts": {
+    "console": {
+      "path": "evidence/e5-t16c/weston-console.log",
+      "sha256": "74345c4bdc226284dfbc9bfe2a1ddb4b9a91115bfec27d85b79413373e17c6b0"
+    },
+    "stderr": {
+      "path": "evidence/e5-t16c/weston-stderr.log",
+      "sha256": "b0f127518f241359279976b1a2665ea69cad9bc2b9e7abd11b33ee41a0a0f11b"
+    },
+    "guestEvidence": {
+      "path": "evidence/e5-t16c/weston-guest-evidence.txt",
+      "sha256": "e3a7c159faafb2736c3b87bc3b2d0ee0e5126bf8a5bf048769d83bf2ece0c8ae"
+    },
+    "gpuTrace": {
+      "path": "evidence/e5-t16c/weston-gpu-trace.log",
+      "sha256": "a07aea671a61945a0c754816aa1f63125551e47a3cba03cf38012f424584d3b2"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "executable": "/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen",
+  "argv": [
+    "--target",
+    "web",
+    "--out-dir",
+    "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion",
+    "--out-name",
+    "wasm_vm_wasm",
+    "/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm"
+  ],
+  "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+  "env": {
+    "PATH": "/usr/bin:/bin",
+    "LANG": "C",
+    "LC_ALL": "C",
+    "TZ": "UTC",
+    "TMPDIR": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/spp-cpu-symbols-96ecb801/companion/tmp"
+  },
+  "startedAt": "2026-09-08T20:30:53.808Z",
+  "logPrefix": "evidence/e5-t26f/spp-cpu-symbols/logs/04-wasm-bindgen"
+}

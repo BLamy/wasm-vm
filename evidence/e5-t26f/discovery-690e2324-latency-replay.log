@@ -1,0 +1,45 @@
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T13:02:53.639Z","elapsedMs":0}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-08T13:02:54.562Z","elapsedMs":923}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-08T13:02:54.562Z","elapsedMs":923}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-08T13:02:57.230Z","elapsedMs":3591}
+[e5-t26f] {"phase":"reload:normal","event":"start","timestamp":"2026-09-08T13:02:57.235Z","elapsedMs":3596}
+[e5-t26f] {"phase":"reload:normal","event":"done","timestamp":"2026-09-08T13:02:57.380Z","elapsedMs":3741}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"start","timestamp":"2026-09-08T13:02:57.380Z","elapsedMs":3741}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"done","timestamp":"2026-09-08T13:02:58.661Z","elapsedMs":5022}
+[e5-t26f] {"phase":"restore:normal:completion","event":"start","timestamp":"2026-09-08T13:02:58.661Z","elapsedMs":5022}
+[e5-t26f] {"phase":"restore:normal:completion","event":"done","timestamp":"2026-09-08T13:02:58.668Z","elapsedMs":5029}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"start","timestamp":"2026-09-08T13:02:58.668Z","elapsedMs":5029}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"done","timestamp":"2026-09-08T13:02:58.670Z","elapsedMs":5031}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"start","timestamp":"2026-09-08T13:02:58.670Z","elapsedMs":5031}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"done","timestamp":"2026-09-08T13:02:58.670Z","elapsedMs":5031}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"start","timestamp":"2026-09-08T13:02:58.670Z","elapsedMs":5031}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"done","timestamp":"2026-09-08T13:02:59.058Z","elapsedMs":5419}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"start","timestamp":"2026-09-08T13:02:59.058Z","elapsedMs":5419}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"done","timestamp":"2026-09-08T13:02:59.220Z","elapsedMs":5581}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"start","timestamp":"2026-09-08T13:02:59.220Z","elapsedMs":5581}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"done","timestamp":"2026-09-08T13:02:59.223Z","elapsedMs":5584}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"start","timestamp":"2026-09-08T13:02:59.224Z","elapsedMs":5585}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"done","timestamp":"2026-09-08T13:02:59.302Z","elapsedMs":5663}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"start","timestamp":"2026-09-08T13:02:59.302Z","elapsedMs":5663}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"done","timestamp":"2026-09-08T13:03:03.091Z","elapsedMs":9452}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"start","timestamp":"2026-09-08T13:03:03.092Z","elapsedMs":9453}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"done","timestamp":"2026-09-08T13:03:03.135Z","elapsedMs":9496}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"start","timestamp":"2026-09-08T13:03:03.135Z","elapsedMs":9496}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"failed","timestamp":"2026-09-08T13:03:03.188Z","elapsedMs":9549}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds
+    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1921:12 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.20.0
+{"childExit":1,"elapsedMs":4726.939999938011,"firstPcm":{"observedAt":4989.375,"elapsedMs":3818.1599999666214,"available":true,"writeIndex":1440,"pcmAvailable":true,"completedAt":4989.475000023842,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":1440,"inspectedFrames":1440,"nonSilentFrames":1440,"maxAbs":0.999969482421875}},"firstMarker":{"startedAt":5841.240000009537,"observedAt":5841.245000004768,"elapsedMs":4670.02999997139,"stateReadMs":0.004999995231628418,"frameCount":11,"markerSeen":true}}

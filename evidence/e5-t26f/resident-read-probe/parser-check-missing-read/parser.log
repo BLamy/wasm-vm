@@ -1,0 +1,54 @@
+$ node tools/verify/e5-t26f-ash-read-probe.mjs /Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/resident-read-probe/parser-check-missing-read
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: actual proc read bytes differ from real output
++ actual - expected
+
++ Buffer(301) [Uint8Array] [
+- Buffer(302) [Uint8Array] [
+-   49,
+    54,
+    32,
+    40,
+    98,
+    117,
+
+    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-ash-read-probe.mjs:77:12
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: Buffer(301) [Uint8Array] [
+    54, 32, 40, 98, 117, 115, 121, 98, 111, 120, 41, 32,
+    82, 32, 49, 51,  32,  49,  32, 49,  32,  48, 32, 45,
+    49, 32, 52, 49,  57,  52,  53, 54,  48,  32, 53, 50,
+    32, 48, 32, 48,  32,  48,  32, 48,  32,  48, 32, 48,
+    32, 48, 32, 50,  48,  32,  48, 32,  49,  32, 48, 32,
+    53, 57, 54, 48,  50,  56,  50, 49,  32,  49, 55, 54,
+    53, 51, 55, 54,  32,  50,  53, 54,  32,  49, 56, 52,
+    52, 54, 55, 52,  52,  48,  55, 51,  55,  48, 57, 53,
+    53, 49, 54, 49,
+    ... 201 more items
+  ],
+  expected: Buffer(302) [Uint8Array] [
+    49, 54, 32, 40, 98, 117, 115, 121, 98, 111, 120, 41,
+    32, 82, 32, 49, 51,  32,  49,  32, 49,  32,  48, 32,
+    45, 49, 32, 52, 49,  57,  52,  53, 54,  48,  32, 53,
+    50, 32, 48, 32, 48,  32,  48,  32, 48,  32,  48, 32,
+    48, 32, 48, 32, 50,  48,  32,  48, 32,  49,  32, 48,
+    32, 53, 57, 54, 48,  50,  56,  50, 49,  32,  49, 55,
+    54, 53, 51, 55, 54,  32,  50,  53, 54,  32,  49, 56,
+    52, 52, 54, 55, 52,  52,  48,  55, 51,  55,  48, 57,
+    53, 53, 49, 54,
+    ... 202 more items
+  ],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0
+
+exit=1

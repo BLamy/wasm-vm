@@ -1,0 +1,14 @@
+write /helper /usr/libexec/wasm-vm/e5t26f-resident.sh
+set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh mode 0100444
+set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh uid 0
+set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh gid 0
+set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh generation 0
+set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh dtime 0
+set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh atime 1731542400
+set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh atime_extra 0
+set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh mtime 1731542400
+set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh mtime_extra 0
+set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh ctime 1731542400
+set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh ctime_extra 0
+set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh crtime 1731542400
+set_inode_field /usr/libexec/wasm-vm/e5t26f-resident.sh crtime_extra 0

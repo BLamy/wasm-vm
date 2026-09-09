@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:61935/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.76",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5-T26i\nIN PROGRESS\n✕ Close\nWire opt-in monotonic time through the browser desktop lifecycle\nEpic\nE5 — The Window\nStatus\nin progress\nEstimate\nS\nDepends on\nE4-T24, E5-T26e, E5-T26h, E5-T19a\nGOAL\n\nExpose the existing core monotonic time policy to the interactive browser desktop\nso its timer-rate hypothesis can be tested. This is one host-clock adapter/lifecycle\nboundary, not a JIT optimization or a waiver of F's two-second interaction target.\n\nVERIFICATION LOG — EVIDENCE\n### 2026-09-07 — worker — in-progress\n\nThis is the sole eligible task at activation, with high risk recorded before\nentering the lane. Keep the existing default and all held sound/restore/runtime\nchecks intact. Implement the adapter and lifecycle first, then record the selected\nclock's guest-visible behavior; no speedup or final F result is assumed.\n\n### 2026-09-07 — coordinator — measured prerequisite, not a promised speedup\n\nF's authenticated same-runtime diagnostics complete playback but miss two seconds;\n`evidence/e5-t26f/cpu-560c6743/README.md` retains the exact command and profile.\nCPU attribution is mixed, not dominated by one cheap removable function.\n`WasmLinux::assemble` uses `enable_clint(10)` against a 10 MHz DT timebase,\nrequiring 100 million retirements per guest second while busy. The measured\n12.8–13 million retirements/host-second therefore yield roughly 0.13× guest time\nwhile busy; ICount WFI fast-forward is a separate path and must not be conflated.\nE4-T24 explicitly deferred browser monotonic injection. Core wall mode also\ndisables in-module direct chaining, so wiring it is not presumed to improve\nthroughput or satisfy F. Establish the missing adapter with exact lifecycle proof,\nthen use controlled unprofiled measurements before any production-policy change.\nADVERSARIAL VERIFICATION\nFresh Daybreak Blue: carry unchanged E4-T24 and H/T19a results forward. Attack\nmissing/invalid mode selection, busy `rdtime` versus the ICount control, backward\nhost time, paused host-time advance, large background gaps, restored deadlines,\nsame-instance restore after the host epoch advanced, and failed-restore atomicity.\nSabotage one clock test by freezing or mis-scaling the host source. Check the\nactual browser boot option reaches the worker and WASM adapter; a query string\nor host timer read alone is not guest-clock evidence. Preserve the conservative\nwall-clock JIT path. Run the final exact-head pristine-clone proof once.\nsource: tasks/epic-5-the-window/E5-T26i-browser-monotonic-clock.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:61935/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:61935/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:61935/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:61935/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:61935/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:61935/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:61935/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:61935/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:61935/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:61935/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:61935/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:61935/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "7ee1ac7b4ddf3ea4f723d7bf0aee03d16d86f15f454a9cdd55c582ffe433bcd8"
+}

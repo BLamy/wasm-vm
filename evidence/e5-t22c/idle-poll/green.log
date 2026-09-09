@@ -1,0 +1,2 @@
+WV_DISPLAY_FATAL native mode switch failed; no retry or renderer teardown
+PASS actual adapter ASan/UBSan: 232494 checks; 10000 seeded transitions; 3000 pending polls; 100000 parser seeds; 10004 retired KMS blobs

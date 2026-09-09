@@ -1,0 +1,19 @@
+--- crates/core/tests/desktop_machine_audio_resume.rs
++++ crates/core/tests/desktop_machine_audio_resume.rs
+@@ verifier-only temporary test (not promoted)
++#[test]
++fn verifier_v2_tx_presence_cursor_contradiction_is_atomic() {
++    // Build a production MMIO sound source, complete seed-73 PCM, and save layout v2.
++    // In the sound payload, retain version=2 and the nonzero TX cursor but change only
++    // queue-2 has_queue from true to false. Reassemble the outer snapshot unchanged.
++    // A fresh target must return BadComponentState { tag: VIRTIO_SND } and retain:
++    //   * its byte-identical save_resume baseline,
++    //   * the same sound-state Rc,
++    //   * zero fresh WavSink bytes, and
++    //   * the zero-valued fresh ManualAudioClock.
++}
+
+The executable temporary test used the existing `Rig`, `Ring`, `SectionReader`, and
+`SnapshotWriter` helpers from the frozen regression file. It was added only to an exact
+`git archive e8850241...` copy under `/private/tmp`, run once, and discarded. Full observed
+output is in `novel-v2-atomicity.log`.

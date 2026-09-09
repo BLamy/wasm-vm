@@ -1,0 +1,48 @@
+{
+  "task": "E5-T26e",
+  "implementationCommit": "ea14c48f12a323ff60fb21744a34c10e814cd68a",
+  "verificationCommand": "env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG make verify-E5-T26e",
+  "exitCode": 0,
+  "results": {
+    "desktopRestoreTests": { "passed": 12, "failed": 0, "ignored": 0 },
+    "consoleRestoreUnitTests": { "passed": 1, "failed": 0, "ignored": 0 },
+    "liveAgentMachineIntegrationTests": { "passed": 1, "failed": 0, "ignored": 0 },
+    "desktopSnapshotTests": { "passed": 9, "failed": 0, "ignored": 0 },
+    "gpuSnapshotTests": { "passed": 6, "failed": 0, "ignored": 0 },
+    "inputSnapshotTests": { "passed": 12, "failed": 0, "ignored": 0 },
+    "soundSnapshotTests": { "passed": 6, "failed": 0, "ignored": 0 },
+    "format": "passed",
+    "clippy": "passed",
+    "coreWasm32NoDefaultFeaturesBuild": "passed",
+    "wasmWrapperWasm32Check": "passed",
+    "browserCompositionTests": { "passed": 17, "failed": 0 },
+    "sourceDistParity": "passed"
+  },
+  "implementationProof": {
+    "freshAgentHello": "web/agent-channel.js rehandshake waits for a new transport generation's peer HELLO; web/desktop-restore.js then calls confirmAgentHello before the core restore boundary.",
+    "coldFallback": "Machine pre-backend refusals clear the live FrameSink, restore fresh GPU/input/sound snapshots, restart the agent port, and reset retained host state.",
+    "viewportOwner": "web/desktop-restore.js clears and resizes the live T22 PresentationController and applies its canvas style from the returned host viewport.",
+    "exactHead": "All implementation and generated dist files in this proof are committed at implementationCommit."
+  },
+  "coverage": {
+    "nativeAttacks": [
+      "missing production agent before backend construction",
+      "agent channel drop during restore",
+      "component refusal",
+      "viewport refusal",
+      "pre-commit missing full repair frame",
+      "post-GPU commit failure with sink clearing and cold rollback",
+      "changed host window size",
+      "real T26b GPU, T26c input, T26d sound, and T23e console payloads"
+    ],
+    "browserCompositionAttacks": [
+      "fresh Channel HELLO required",
+      "application HELLO refusal clears T22 presentation",
+      "restore RPC refusal clears T22 presentation"
+    ],
+    "waivers": [
+      "The browser pixel/CRC and reload harness are owned by E5-T26f.",
+      "Independent machines, WebKit, and host rr are waived by repository policy and user direction."
+    ]
+  }
+}

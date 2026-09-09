@@ -3,7 +3,7 @@ id: E5-T06d
 epic: 5
 title: Presentation selection, context-loss fallback, and VM integration
 priority: 506.4
-status: pending
+status: verified
 depends_on: [E5-T06c]
 estimate: S
 risk: medium
@@ -31,13 +31,13 @@ protocol.
 
 ## Acceptance criteria
 
-- [ ] The selected default matches the committed E5-T06c decision and falls back when the feature
+- [x] The selected default matches the committed E5-T06c decision and falls back when the feature
       is unavailable.
-- [ ] Simulated WebGL context loss causes at most one dropped frame and leaves later presents
+- [x] Simulated WebGL context loss causes at most one dropped frame and leaves later presents
       pixel-correct through Canvas2D.
-- [ ] Full and partial presents reach the visible canvas with no guest queue stall or duplicate
+- [x] Full and partial presents reach the visible canvas with no guest queue stall or duplicate
       frame callback.
-- [ ] The built demo's browser proof records the backend, final frame, and zero console errors.
+- [x] The built demo's browser proof records the backend, final frame, and zero console errors.
 
 ## Verification command
 
@@ -51,4 +51,35 @@ leaks accumulate, and a guest-visible queue remains live.
 
 ## Verification log
 
-(empty)
+### 2026-09-04 — verifier — VERDICT: verified
+
+- Default/fallback — HELD. The exact-head Chromium capture selected Canvas2D as the E5-T06c
+  default and selected Canvas2D after a WebGL2 feature-disable shim, with one recorded fallback.
+- Context-loss replay — HELD. `WEBGL_lose_context.loseContext()` during a partial update produced
+  one context loss, one full-resource replay, zero dropped frames, and pixel-correct Canvas2D
+  readback; the replacement canvas retained two listeners and the old canvas retained none.
+- Queue and delivery — HELD. The native Machine test configured a real controlq descriptor chain,
+  kicked it through the MMIO notify path, and observed the `GET_DISPLAY_INFO` response and used
+  index at the production run boundary. The worker protocol test independently confirmed copied
+  FrameSink pixels cross the worker without retaining the source view.
+- Adversarial rapid/resize path — HELD. The browser capture resized during the recovered path and
+  delivered 1,000 rapid presents with the last frame visible, zero dropped frames, no listener
+  growth, and no duplicate callback.
+- Coverage — HELD. Runtime Rust paths are exercised by `virtio_gpu_machine`; worker changes by the
+  E4-T32 protocol suite; controller behavior by the focused Node tests and real Chromium capture;
+  generated `web/dist` modules match their source counterparts byte-for-byte.
+
+Commit: `4d49c888934d0afea8e4f07011e6b65978c312e8`.
+
+Commands: `cargo fmt --check`; `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`;
+`cargo clippy -p wasm-vm-core --lib --tests -- -D warnings`; `cargo clippy -p wasm-vm-wasm
+--target wasm32-unknown-unknown -- -D warnings`; `cargo test -p wasm-vm-core --lib` (249 passed);
+`make verify-E5-T06d` (27 browser/worker tests, 2 machine tests, and the prescribed Chromium
+proof).
+
+Evidence: [presentation-integration.json](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t06d/presentation-integration.json)
+(SHA-256 `a19bdb332defde0224bf1a622ef8d4e70a6a0ca4c2940ca929ec7043c6bb17f2`) and
+[presentation-integration.png](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t06d/presentation-integration.png)
+(SHA-256 `cc7990bf5c139b148a3b3fac73d61e0fd672af280ae10dd614b272b622b8041f`). The JSON records
+Chromium 131, source/dist parity, Canvas2D default, WebGL2-unavailable fallback, the partial-loss
+recovery, resize, 1,003 total frames, 0 dropped frames, and empty console/page/request errors.

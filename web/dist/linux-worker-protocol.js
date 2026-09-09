@@ -23,10 +23,14 @@ const LONG_RPC_GRACE_MS = Object.freeze({
   snapshotExport: 120_000,
   snapshotRestore: 120_000,
   snapshotImport: 120_000,
+  saveDesktopSnapshot: 120_000,
+  restoreDesktopSnapshot: 120_000,
   terminalStateDigest: 60_000,
 });
 
 export const LINUX_CONTROLLER_METHODS = Object.freeze([
+  "setDisplay",
+  "displayStats",
   "sendKeyboardEvent",
   "syncKeyboard",
   "sendTabletEvent",
@@ -38,6 +42,11 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "resume",
   "isPaused",
   "stateDigest",
+  "saveDesktopSnapshot",
+  "confirmAgentHello",
+  "sendAgentInput",
+  "takeAgentOutput",
+  "restoreDesktopSnapshot",
   "dhcpStats",
   "fileTransferReady",
   "setFileDownloadReady",
@@ -65,6 +74,7 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "snapshotSave",
   "snapshotRead",
   "snapshotDecision",
+  "storedSnapshotRestoreEvidence",
   "snapshotAdvanceGen",
   "snapshotGeneration",
   "snapshotExport",
@@ -76,12 +86,25 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "jitStats",
   "profileStats",
   "schedulerStats",
+  "guestClockState",
+  "icountDividerSelection",
   "tailscaleCommand",
 ]);
 
 const METHOD_SET = new Set(LINUX_CONTROLLER_METHODS);
-const BYTE_ARG = Object.freeze({ pushFileUpload: 1, snapshotImport: 0 });
-const BYTE_RESULT = new Set(["takeFileDownloadChunk", "snapshotRead", "snapshotExport"]);
+const BYTE_ARG = Object.freeze({
+  pushFileUpload: 1,
+  snapshotImport: 0,
+  restoreDesktopSnapshot: 0,
+  sendAgentInput: 0,
+});
+const BYTE_RESULT = new Set([
+  "takeFileDownloadChunk",
+  "snapshotRead",
+  "snapshotExport",
+  "saveDesktopSnapshot",
+  "takeAgentOutput",
+]);
 
 function errorFrom(value, fallback = "Linux worker failed") {
   if (value instanceof Error) return value;
@@ -263,10 +286,55 @@ export function createLinuxWorkerClient(endpoint, callbacks = {}) {
       case "state": callbacks.onState?.(message.state); break;
       case "progress": callbacks.onProgress?.(message.label, message.loaded, message.total); break;
       case "output": callbacks.onOutput?.(new Uint8Array(message.buffer)); break;
+      case "agent": {
+        if (!(message.buffer instanceof ArrayBuffer)) {
+          fail(new Error("invalid Linux worker agent frame"));
+          break;
+        }
+        callbacks.onAgentOutput?.(new Uint8Array(message.buffer));
+        break;
+      }
       case "storage": callbacks.onStorage?.(message.info); break;
       case "writer": callbacks.onWriterStatus?.(message.info); break;
       case "quota": callbacks.onQuota?.(message.info); break;
       case "capture-start": callbacks.onCaptureStart?.(message.info); break;
+      case "display": {
+        const frame = message.frame;
+        if (frame?.type === "clear") {
+          callbacks.onDisplayFrame?.({ type: "clear" });
+          break;
+        }
+        if (!frame || !(frame.pixels instanceof ArrayBuffer)) {
+          fail(new Error("invalid Linux worker display frame"));
+          break;
+        }
+        callbacks.onDisplayFrame?.({
+          scanout: frame.scanout ?? null,
+          format: frame.format ?? 1,
+          rect: frame.rect,
+          resourceWidth: frame.resourceWidth,
+          resourceHeight: frame.resourceHeight,
+          pixels: new Uint32Array(frame.pixels),
+        });
+        break;
+      }
+      case "cursor": {
+        const frame = message.frame;
+        if (!frame || (frame.type !== "cursor-update" && frame.type !== "cursor-move")
+            || !frame.state || !(frame.pixels instanceof ArrayBuffer)) {
+          fail(new Error("invalid Linux worker cursor frame"));
+          break;
+        }
+        callbacks.onCursorState?.({
+          type: frame.type,
+          state: frame.state,
+          format: frame.format ?? null,
+          resourceWidth: frame.resourceWidth,
+          resourceHeight: frame.resourceHeight,
+          pixels: new Uint32Array(frame.pixels),
+        });
+        break;
+      }
       case "tailscale-event":
         // Tailscale status persistence is ancillary UI work. localStorage/security failures must not
         // terminate the emulated machine or poison the controller protocol.
@@ -646,11 +714,58 @@ export function createLinuxWorkerRuntime(endpoint, {
         queueMicrotask(flushOutput);
       }
     },
+    onAgentOutput: (value) => {
+      const bytes = privateBytes(value);
+      if (!bytes.byteLength) return;
+      send({ type: "agent", buffer: bytes.buffer }, [bytes.buffer]);
+    },
     onError: (error) => send({ type: "error", error: String(error?.message || error) }),
     onStorage: (info) => send({ type: "storage", info }),
     onWriterStatus: (info) => send({ type: "writer", info }),
     onQuota: (info) => send({ type: "quota", info }),
     onCaptureStart: (info) => send({ type: "capture-start", info }),
+    onDisplayFrame: (frame) => {
+      try {
+        if (frame?.type === "clear") {
+          send({ type: "display", frame: { type: "clear" } });
+          return;
+        }
+        const source = frame?.pixels;
+        const pixels = source instanceof Uint32Array ? source.slice() : Uint32Array.from(source ?? []);
+        send({
+          type: "display",
+          frame: {
+            scanout: frame?.scanout ?? null,
+            format: frame?.format ?? 1,
+            rect: frame?.rect,
+            resourceWidth: frame?.resourceWidth,
+            resourceHeight: frame?.resourceHeight,
+            pixels: pixels.buffer,
+          },
+        }, [pixels.buffer]);
+      } catch (error) {
+        send({ type: "error", error: String(error?.message || error) });
+      }
+    },
+    onCursorState: (frame) => {
+      try {
+        const source = frame?.pixels;
+        const pixels = source instanceof Uint32Array ? source.slice() : Uint32Array.from(source ?? []);
+        send({
+          type: "cursor",
+          frame: {
+            type: frame?.type,
+            state: frame?.state,
+            format: frame?.format ?? null,
+            resourceWidth: frame?.resourceWidth ?? 0,
+            resourceHeight: frame?.resourceHeight ?? 0,
+            pixels: pixels.buffer,
+          },
+        }, [pixels.buffer]);
+      } catch (error) {
+        send({ type: "error", error: String(error?.message || error) });
+      }
+    },
   };
 
   const handleBoot = async (message) => {

@@ -1,0 +1,53 @@
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T05:08:06.299Z","elapsedMs":1}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-08T05:08:07.219Z","elapsedMs":920}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-08T05:08:07.219Z","elapsedMs":920}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-08T05:08:07.824Z","elapsedMs":1525}
+[e5-t26f] {"phase":"reload:normal","event":"start","timestamp":"2026-09-08T05:08:07.824Z","elapsedMs":1525}
+[e5-t26f] {"phase":"reload:normal","event":"done","timestamp":"2026-09-08T05:08:07.971Z","elapsedMs":1672}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"start","timestamp":"2026-09-08T05:08:07.972Z","elapsedMs":1673}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"done","timestamp":"2026-09-08T05:08:09.269Z","elapsedMs":2970}
+[e5-t26f] {"phase":"restore:normal:completion","event":"start","timestamp":"2026-09-08T05:08:09.269Z","elapsedMs":2970}
+[e5-t26f] {"phase":"restore:normal:completion","event":"done","timestamp":"2026-09-08T05:08:09.276Z","elapsedMs":2977}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"start","timestamp":"2026-09-08T05:08:09.276Z","elapsedMs":2977}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"done","timestamp":"2026-09-08T05:08:09.277Z","elapsedMs":2978}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"start","timestamp":"2026-09-08T05:08:09.280Z","elapsedMs":2981}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"done","timestamp":"2026-09-08T05:08:09.280Z","elapsedMs":2981}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"start","timestamp":"2026-09-08T05:08:09.280Z","elapsedMs":2981}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"done","timestamp":"2026-09-08T05:08:09.656Z","elapsedMs":3357}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"start","timestamp":"2026-09-08T05:08:09.657Z","elapsedMs":3358}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"done","timestamp":"2026-09-08T05:08:09.810Z","elapsedMs":3511}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"start","timestamp":"2026-09-08T05:08:09.810Z","elapsedMs":3511}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"done","timestamp":"2026-09-08T05:08:09.813Z","elapsedMs":3514}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"start","timestamp":"2026-09-08T05:08:09.813Z","elapsedMs":3514}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"done","timestamp":"2026-09-08T05:08:09.873Z","elapsedMs":3574}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"start","timestamp":"2026-09-08T05:08:09.873Z","elapsedMs":3574}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"done","timestamp":"2026-09-08T05:08:13.925Z","elapsedMs":7626}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"start","timestamp":"2026-09-08T05:08:13.930Z","elapsedMs":7631}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"done","timestamp":"2026-09-08T05:08:13.951Z","elapsedMs":7652}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"start","timestamp":"2026-09-08T05:08:13.951Z","elapsedMs":7652}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"timing-failed-continuing","timestamp":"2026-09-08T05:08:14.011Z","elapsedMs":7712}
+[e5-t26f] {"phase":"restore:normal:coherence-audit","event":"start","timestamp":"2026-09-08T05:08:14.012Z","elapsedMs":7713}
+[e5-t26f] {"timestamp":"2026-09-08T05:08:44.014Z","phase":"restore:normal:coherence-audit","event":"sample","probeMs":2,"ready":"ready","restored":"ready","status":"desktop ready: launcher available","serialTail":"","frameCount":12,"pointerFrames":3,"keyboardFrames":20,"launch":null,"command":{"label":null,"marker":"e5t26f-post-aplay","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":3555,"guestVisible":null,"pointerFrames":null,"keyboardFrames":20},"focus":{"label":"post-restore-focus","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":true,"pointerFrames":3,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":36,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":12,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":1683456,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":960,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"phase":"restore:normal:coherence-audit","event":"done","timestamp":"2026-09-08T05:08:47.809Z","elapsedMs":41510}
+[e5-t26f] {"phase":"drag:prepare","event":"start","timestamp":"2026-09-08T05:08:47.809Z","elapsedMs":41510}
+[e5-t26f] {"phase":"drag:prepare","event":"done","timestamp":"2026-09-08T05:08:47.923Z","elapsedMs":41624}
+[e5-t26f] {"phase":"snapshot:drag-before","event":"start","timestamp":"2026-09-08T05:08:47.925Z","elapsedMs":41626}
+[e5-t26f] {"phase":"snapshot:drag-before","event":"done","timestamp":"2026-09-08T05:08:55.325Z","elapsedMs":49026}
+[e5-t26f] {"phase":"snapshot:drag-held","event":"start","timestamp":"2026-09-08T05:08:55.326Z","elapsedMs":49027}
+[e5-t26f] {"phase":"snapshot:drag-held","event":"done","timestamp":"2026-09-08T05:09:02.605Z","elapsedMs":56306}
+[e5-t26f] {"phase":"snapshot:drag-moving","event":"start","timestamp":"2026-09-08T05:09:02.605Z","elapsedMs":56306}
+[e5-t26f] {"phase":"drag:guest-translation","event":"start","timestamp":"2026-09-08T05:09:02.606Z","elapsedMs":56307}
+[e5-t26f] {"timestamp":"2026-09-08T05:09:14.015Z","phase":"drag:guest-translation","event":"sample","probeMs":3,"ready":"ready","restored":"ready","status":"desktop ready: launcher available","serialTail":"","frameCount":23,"pointerFrames":19,"keyboardFrames":20,"launch":null,"command":{"label":null,"marker":"e5t26f-post-aplay","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":3555,"guestVisible":null,"pointerFrames":null,"keyboardFrames":20},"focus":{"label":"post-restore-focus","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":true,"pointerFrames":3,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":36,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":23,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":3123712,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":960,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"phase":"drag:guest-translation","event":"failed","timestamp":"2026-09-08T05:09:17.781Z","elapsedMs":71482}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+Error: bounded wait expired: guest window did not complete the requested 80px drag
+    at waitFor (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:290:9)
+    at async proveAndPauseDrag (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:410:3)
+    at async file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1700:3
+
+Node.js v24.20.0
+{"code":1,"signal":null}

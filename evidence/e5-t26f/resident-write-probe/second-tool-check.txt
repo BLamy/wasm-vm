@@ -1,0 +1,14 @@
+BusyBox v1.36.1 (2025-11-23 14:32:18 UTC) multi-call binary.
+Error loading shared library libfts.so.0: No such file or directory (needed by /usr/lib/libdw.so.1)
+Error loading shared library liblzma.so.5: No such file or directory (needed by /usr/lib/libdw.so.1)
+Error loading shared library libbz2.so.1: No such file or directory (needed by /usr/lib/libdw.so.1)
+Error relocating /usr/lib/libdw.so.1: lzma_code: symbol not found
+Error relocating /usr/lib/libdw.so.1: BZ2_bzDecompressInit: symbol not found
+Error relocating /usr/lib/libdw.so.1: fts_close: symbol not found
+Error relocating /usr/lib/libdw.so.1: BZ2_bzDecompress: symbol not found
+Error relocating /usr/lib/libdw.so.1: BZ2_bzDecompressEnd: symbol not found
+Error relocating /usr/lib/libdw.so.1: lzma_end: symbol not found
+Error relocating /usr/lib/libdw.so.1: lzma_auto_decoder: symbol not found
+Error relocating /usr/lib/libdw.so.1: fts_set: symbol not found
+Error relocating /usr/lib/libdw.so.1: fts_read: symbol not found
+Error relocating /usr/lib/libdw.so.1: fts_open: symbol not found

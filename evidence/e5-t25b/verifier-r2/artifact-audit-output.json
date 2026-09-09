@@ -1,0 +1,34 @@
+{
+  "artifact": {
+    "jsonSha256": "8cd005bf639b7638548c18b38a0bb32938b2494b179797aa875ddc5bd70060f7",
+    "pngSha256": "d81ba53cbe4146e0be05be40bbbd6c53d9f082910bb7595d32958301b718a059",
+    "pngDimensions": "1440x1050",
+    "head": "a14bf5453a6799a67b5f66e85b4167223580e541",
+    "currentHead": "6793e0ef926c9ef6dbdea2faf96820ce9362a53d",
+    "producerDifference": ["tasks/epic-5-the-window/E5-T25b-drag-fps-harness.md"],
+    "browser": "152.0.7977.76",
+    "viewport": { "width": 1440, "height": 1050 },
+    "deviceScaleFactor": 1,
+    "imageSha256": "811267cbf96c1e055e31063829580432d5e5e343cff1a975f5fc10664cc2e00e",
+    "manifestSha256": "935a9fe2bf6022b01ac6147665b9ca59736930b6e265e33069318e4d9cc2ccaa",
+    "chunkCount": 8192
+  },
+  "runs": [
+    { "runId": "drag-01", "pointer": "325+303=628", "records": 93, "sequence": "431-523", "timestampSpanMs": 23263.52999997139, "drawn": 93, "undrawn": 0, "distinctDamageRects": 93, "damageXRange": "0-405", "bytes": 128610908, "guestInstructions": 454485079, "schedulerRetiredDelta": 453486017, "preBoundaryInstructions": 3998929, "tailBoundaryInstructions": 2999867, "presentSamples": 93, "presentDurationMs": 123.03000092506409, "guestDurationMs": 23348.495000958443, "transferDurationMs": 0, "fps": 3.979144150290881 },
+    { "runId": "drag-02", "pointer": "629+302=931", "records": 94, "sequence": "524-617", "timestampSpanMs": 17977.829999923706, "drawn": 94, "undrawn": 0, "distinctDamageRects": 94, "damageXRange": "118-470", "bytes": 129109420, "guestInstructions": 457986622, "schedulerRetiredDelta": 454486740, "preBoundaryInstructions": 7499764, "tailBoundaryInstructions": 3999882, "presentSamples": 94, "presentDurationMs": 123.30000042915344, "guestDurationMs": 18051.589997649193, "transferDurationMs": 0, "fps": 5.183019875508211 },
+    { "runId": "drag-03", "pointer": "932+302=1234", "records": 92, "sequence": "619-710", "timestampSpanMs": 24113.03499996662, "drawn": 92, "undrawn": 0, "distinctDamageRects": 92, "damageXRange": "115-403", "bytes": 127363752, "guestInstructions": 452987083, "schedulerRetiredDelta": 451987124, "preBoundaryInstructions": 2499876, "tailBoundaryInstructions": 1499917, "presentSamples": 92, "presentDurationMs": 121.8250002861023, "guestDurationMs": 24411.18499827385, "transferDurationMs": 0, "fps": 3.763704024770816 },
+    { "runId": "drag-04", "pointer": "1235+302=1537", "records": 97, "sequence": "711-807", "timestampSpanMs": 21917.294999957085, "drawn": 97, "undrawn": 0, "distinctDamageRects": 96, "damageXRange": "395-681", "bytes": 119678416, "guestInstructions": 452486889, "schedulerRetiredDelta": 452986881, "preBoundaryInstructions": 3499879, "tailBoundaryInstructions": 3999871, "presentSamples": 97, "presentDurationMs": 120.73999989032745, "guestDurationMs": 22114.800000190735, "transferDurationMs": 0, "fps": 4.372599578061981 },
+    { "runId": "drag-05", "pointer": "1538+302=1840", "records": 97, "sequence": "809-905", "timestampSpanMs": 20877.24499988556, "drawn": 97, "undrawn": 0, "distinctDamageRects": 97, "damageXRange": "390-681", "bytes": 120172416, "guestInstructions": 448987059, "schedulerRetiredDelta": 453987008, "preBoundaryInstructions": 499900, "tailBoundaryInstructions": 5499849, "presentSamples": 97, "presentDurationMs": 124.03999996185303, "guestDurationMs": 21094.39500284195, "transferDurationMs": 0, "fps": 4.585622796112313 }
+  ],
+  "aggregate": {
+    "fpsP50": 4.372599578061981,
+    "fpsP95": 5.183019875508211,
+    "meanFps": 4.37681808494884,
+    "standardDeviationFps": 0.4955061935838695,
+    "coefficientOfVariationPercent": 11.321151210004228,
+    "repeatabilityHeld": true
+  },
+  "nullSinkAttack": { "drawnPresents": 0, "accepted": false, "reason": "no-drawn-presents" },
+  "errors": [],
+  "httpErrors": []
+}

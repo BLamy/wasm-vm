@@ -1,0 +1,100 @@
+{
+  "schema": "wasm-vm.e5-t26f.resident-image-build.v1",
+  "acceptance": false,
+  "command": [
+    "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "tools/verify/e5-t26f-resident-image.mjs",
+    "--out",
+    "target/e5-t26f/resident-image-2ae65408-a",
+    "--helper-sha256",
+    "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c"
+  ],
+  "startedAt": "2026-09-08T09:08:06.037Z",
+  "finishedAt": "2026-09-08T09:08:08.371Z",
+  "code": 0,
+  "signal": null,
+  "before": {
+    "head": "00cad42c512bfd24012d3bce9cbef6c30faa138a",
+    "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+    "helperSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+    "builderSha256": "6c00973a0462847cab200a857b1946a9c54669569785dd2406d06478da5d1481"
+  },
+  "after": {
+    "head": "00cad42c512bfd24012d3bce9cbef6c30faa138a",
+    "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+    "helperSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+    "builderSha256": "6c00973a0462847cab200a857b1946a9c54669569785dd2406d06478da5d1481"
+  },
+  "artifacts": [
+    {
+      "name": ".e5-t26f-resident-image.json",
+      "size": 191,
+      "sha256": "9a6263b8808a8a4ff29e31639c64dffe98954e4f91654846e8fb28ff63e58b6f"
+    },
+    {
+      "name": "FILE-MANIFEST.txt",
+      "size": 3290,
+      "sha256": "1f52824ea09c800ae8c548e047aa3004640eb9ae5cb0644050d431f00720a760"
+    },
+    {
+      "name": "MANIFEST.txt",
+      "size": 4073,
+      "sha256": "f578113d65a0be90635d8ad9a87630583f9e4cfa49e6f50e67f606301d8f752a"
+    },
+    {
+      "name": "SHA256SUMS",
+      "size": 163,
+      "sha256": "3e2124fbe5c5cc886c44b0c16f858290db069f20d47c83d44aa93c98e0289408"
+    },
+    {
+      "name": "absent-stat.txt",
+      "size": 100,
+      "sha256": "3341373d3f6d5f4001d28b787ced23af7bc6a3e63b7c860ba4a0b85ad1af767e"
+    },
+    {
+      "name": "debugfs.log",
+      "size": 1158,
+      "sha256": "7d044206d3881c4da91526600b384b826c76211c9313151bf9f127b0dd5db7ea"
+    },
+    {
+      "name": "desktop-info.json",
+      "size": 1930,
+      "sha256": "1b7c4f4f2f69855f9895392838a38fa50aa4cfe6b8516be036b735aa2512b00f"
+    },
+    {
+      "name": "fsck.log",
+      "size": 290,
+      "sha256": "393a75364fabd9d168f0c0dbdd5af156a08c52b790b32076a4de7de559a76530"
+    },
+    {
+      "name": "install.debugfs",
+      "size": 954,
+      "sha256": "29ec714f2d3b49a9d85fda51d872ecf576084a51bff07153a51e9aec21c1dfb9"
+    },
+    {
+      "name": "parent-stat.txt",
+      "size": 550,
+      "sha256": "dfeabc7cbc471ae1d7c1f5e9de04b19b9663b3149c1af3d5110c7431953c41bb"
+    },
+    {
+      "name": "resident-readback.sh",
+      "size": 7225,
+      "sha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c"
+    },
+    {
+      "name": "resident-stat.txt",
+      "size": 557,
+      "sha256": "61b70d7ee5b83ac6c7a66e83b9cc3a32069508bd79d464e1b72cbf753d3e34e8"
+    },
+    {
+      "name": "tool-packages.log",
+      "size": 46,
+      "sha256": "05bd6c26ea705344344ec3d57f8c48a9c82424fe13606996fbf000c37da66929"
+    },
+    {
+      "name": "tool-version.log",
+      "size": 65,
+      "sha256": "0243bfd58f3711ed98cf8fefb579966f4e911964a8ddee789b1a0e19d2238143"
+    }
+  ]
+}

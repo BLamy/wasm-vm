@@ -1,0 +1,3 @@
+WV_DISPLAY_FATAL native mode switch failed; no retry or renderer teardown
+FAIL tools/verify/fixtures/e5-t22c-resize-test.c:241: sysfs_opens==0
+tools/verify/e5-t22c-native.sh: line 20: 17795 Abort trap: 6           ASAN_OPTIONS="detect_leaks=$leaks" UBSAN_OPTIONS=halt_on_error=1 "$out/resize-test"

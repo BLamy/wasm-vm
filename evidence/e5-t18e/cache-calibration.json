@@ -1,0 +1,113 @@
+{
+  "observations": [
+    {
+      "disabled": false,
+      "phase": "prime",
+      "workers": [
+        {
+          "url": "calibration-worker",
+          "entries": [
+            {
+              "name": "http://127.0.0.1:61962/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+              "transferSize": 131372,
+              "encodedBodySize": 131072,
+              "decodedBodySize": 131072
+            },
+            {
+              "name": "http://127.0.0.1:61962/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+              "transferSize": 0,
+              "encodedBodySize": 131072,
+              "decodedBodySize": 131072
+            }
+          ]
+        }
+      ],
+      "chunkRequests": 2,
+      "cachedChunkRequests": 1,
+      "networkChunkRequests": 1,
+      "unknownChunkRequests": 0
+    },
+    {
+      "disabled": false,
+      "phase": "reload",
+      "workers": [
+        {
+          "url": "calibration-worker",
+          "entries": [
+            {
+              "name": "http://127.0.0.1:61962/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+              "transferSize": 0,
+              "encodedBodySize": 131072,
+              "decodedBodySize": 131072
+            },
+            {
+              "name": "http://127.0.0.1:61962/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+              "transferSize": 0,
+              "encodedBodySize": 131072,
+              "decodedBodySize": 131072
+            }
+          ]
+        }
+      ],
+      "chunkRequests": 2,
+      "cachedChunkRequests": 2,
+      "networkChunkRequests": 0,
+      "unknownChunkRequests": 0
+    },
+    {
+      "disabled": true,
+      "phase": "prime",
+      "workers": [
+        {
+          "url": "calibration-worker",
+          "entries": [
+            {
+              "name": "http://127.0.0.1:61962/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+              "transferSize": 131372,
+              "encodedBodySize": 131072,
+              "decodedBodySize": 131072
+            },
+            {
+              "name": "http://127.0.0.1:61962/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+              "transferSize": 131372,
+              "encodedBodySize": 131072,
+              "decodedBodySize": 131072
+            }
+          ]
+        }
+      ],
+      "chunkRequests": 2,
+      "cachedChunkRequests": 0,
+      "networkChunkRequests": 2,
+      "unknownChunkRequests": 0
+    },
+    {
+      "disabled": true,
+      "phase": "reload",
+      "workers": [
+        {
+          "url": "calibration-worker",
+          "entries": [
+            {
+              "name": "http://127.0.0.1:61962/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+              "transferSize": 131372,
+              "encodedBodySize": 131072,
+              "decodedBodySize": 131072
+            },
+            {
+              "name": "http://127.0.0.1:61962/e5t18b-desktop/chunks/b60ea88d08376a7ec261491b5f6c0abbe01081de9ef008bc502ee97b3f3857ff.bin",
+              "transferSize": 131372,
+              "encodedBodySize": 131072,
+              "decodedBodySize": 131072
+            }
+          ]
+        }
+      ],
+      "chunkRequests": 2,
+      "cachedChunkRequests": 0,
+      "networkChunkRequests": 2,
+      "unknownChunkRequests": 0
+    }
+  ],
+  "passed": true
+}

@@ -625,6 +625,12 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
             &JsValue::from_f64(v as f64),
         );
     };
+    let _ = js_sys::Reflect::set(
+        &entry_cost_obj,
+        &JsValue::from_str("timingEnabled"),
+        &JsValue::from_bool(entry_cost.timing_enabled),
+    );
+    set_entry_cost("timerReads", entry_cost.timer_reads);
     set_entry_cost("hostEntries", entry_cost.host_entries);
     set_entry_cost("stateCopyCalls", entry_cost.state_copy_calls);
     set_entry_cost("stateCopyBytes", entry_cost.state_copy_bytes);
@@ -733,7 +739,49 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
         "jitCacheCodeBytes",
         &JsValue::from_f64(cache.code_bytes as f64),
     );
+    let (compile_queue, queue_depth, capacity) = machine.compile_queue_stats();
+    let compile_queue_obj = js_sys::Object::new();
+    for (key, value) in [
+        ("admitted", compile_queue.admitted),
+        ("droppedBackpressure", compile_queue.dropped_backpressure),
+        ("cancelledStale", compile_queue.cancelled_stale),
+        ("popped", compile_queue.popped),
+        ("queueHighWater", compile_queue.hwm as u64),
+        ("queueDepth", queue_depth as u64),
+        ("capacity", capacity as u64),
+    ] {
+        let _ = js_sys::Reflect::set(
+            &compile_queue_obj,
+            &JsValue::from_str(key),
+            &JsValue::from_f64(value as f64),
+        );
+    }
+    set("compileQueue", &compile_queue_obj.into());
     let discovery = machine.discovery_stats();
+    let discovery_obj = js_sys::Object::new();
+    for (key, value) in [
+        ("nominated", discovery.nominated),
+        ("deduped", discovery.deduped),
+        ("droppedStale", discovery.dropped_stale),
+        ("droppedOverflow", discovery.dropped_overflow),
+        ("countsDropped", discovery.counts_dropped),
+        ("excluded", discovery.excluded),
+        ("queueDepth", discovery.queue_depth as u64),
+        ("queueHighWater", discovery.queue_hwm as u64),
+        ("candidates", discovery.candidates as u64),
+        ("generation", discovery.generation),
+    ] {
+        let _ = js_sys::Reflect::set(
+            &discovery_obj,
+            &JsValue::from_str(key),
+            &JsValue::from_f64(value as f64),
+        );
+    }
+    set("discovery", &discovery_obj.into());
+    set(
+        "decodedCacheEntries",
+        &JsValue::from_f64(machine.decoded_cache_entries() as f64),
+    );
     set(
         "decodedBlocksDiscarded",
         &JsValue::from_f64(discovery.blocks_discarded as f64),
@@ -849,6 +897,15 @@ impl WasmMachine {
     ) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         enable_browser_jit(&mut inner.machine, threshold, &residency_policy)
+    }
+
+    /// Arm or disarm the same profiler used by the Linux wrapper. Browser-JIT entry clocks follow
+    /// this state, while their deterministic structural counters remain enabled in both modes.
+    #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+    #[wasm_bindgen(js_name = setProfiling)]
+    pub fn set_profiling(&self, on: bool) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        Ok(set_machine_profiling(&mut inner.machine, on))
     }
 
     /// E4-T39: toggle static region chaining without rebuilding the generated modules.
@@ -1103,6 +1160,239 @@ impl wasm_vm_core::prof::HostTimer for JsHostTimer {
             (ms * 1_000_000.0) as u64
         }
     }
+}
+
+/// CLINT guest time uses the realm-monotonic performance source, not the RTC's Unix epoch.
+/// This trait adapter does not arm profiling or its entry timers.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl wasm_vm_core::time::MonotonicClock for JsHostTimer {
+    fn now_nanos(&self) -> u64 {
+        wasm_vm_core::prof::HostTimer::now_ns(self)
+    }
+}
+
+/// Validate the browser selection and obtain its source BEFORE mutating the machine. The factory
+/// keeps unavailable-source refusal deterministic in native tests without substituting a fake
+/// source into the exported browser API.
+#[cfg(all(not(feature = "zicsr-stub"), any(target_arch = "wasm32", test)))]
+fn select_guest_clock(
+    machine: &mut Machine,
+    mode: &str,
+    source: impl FnOnce() -> Option<Box<dyn wasm_vm_core::time::MonotonicClock>>,
+) -> Result<(), &'static str> {
+    match mode {
+        "icount" => machine.set_icount_clock(),
+        "wall" => {
+            let clock = source().ok_or("guest_clock_source_unavailable")?;
+            machine.set_wall_clock(clock, wasm_vm_core::time::WallClockPolicy::DEFAULT);
+        }
+        _ => return Err("unsupported_guest_clock"),
+    }
+    Ok(())
+}
+
+#[cfg(all(test, not(feature = "zicsr-stub")))]
+mod guest_clock_tests {
+    use super::*;
+    use std::cell::Cell;
+    use std::rc::Rc;
+    use wasm_vm_core::bus::Bus;
+    use wasm_vm_core::platform::virt;
+    use wasm_vm_core::time::{MonotonicClock, TimeMode};
+
+    struct Clock(Rc<Cell<u64>>);
+    impl MonotonicClock for Clock {
+        fn now_nanos(&self) -> u64 {
+            self.0.get()
+        }
+    }
+
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    fn selection_refuses_invalid_and_unavailable_before_mutating_active_anchor() {
+        let mut m = Machine::new(64 * 1024);
+        m.enable_clint(10);
+        m.bus_mut().store32(virt::DRAM_BASE, 0x0000_006f).unwrap();
+        m.hart_mut().regs.pc = virt::DRAM_BASE;
+        assert_eq!(m.guest_clock_mode(), TimeMode::ICount);
+        assert_eq!(
+            select_guest_clock(&mut m, "icount", || panic!("ICount needs no source")),
+            Ok(())
+        );
+        assert_eq!(
+            select_guest_clock(&mut m, "wall", || None),
+            Err("guest_clock_source_unavailable")
+        );
+        assert_eq!(m.guest_clock_mode(), TimeMode::ICount);
+        let host = Rc::new(Cell::new(0));
+        assert_eq!(
+            select_guest_clock(&mut m, "wall", || Some(Box::new(Clock(host.clone())))),
+            Ok(())
+        );
+        assert_eq!(m.guest_clock_mode(), TimeMode::WallClock);
+        host.set(10_000_000);
+        assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+        assert_eq!(m.clint_mtime(), 100_000);
+        let before = m.save_resume().unwrap();
+        host.set(20_000_000);
+        for label in ["", "Wall", "realtime", "icount "] {
+            assert_eq!(
+                select_guest_clock(&mut m, label, || panic!(
+                    "invalid labels cannot request a source"
+                )),
+                Err("unsupported_guest_clock")
+            );
+        }
+        assert_eq!(
+            select_guest_clock(&mut m, "wall", || None),
+            Err("guest_clock_source_unavailable")
+        );
+        assert_eq!(m.save_resume().unwrap(), before);
+        assert_eq!(m.guest_clock_mode(), TimeMode::WallClock);
+        assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+        assert_eq!(
+            m.clint_mtime(),
+            200_000,
+            "failed selection must preserve the old anchor"
+        );
+        assert_eq!(
+            select_guest_clock(&mut m, "icount", || panic!("ICount needs no source")),
+            Ok(())
+        );
+        host.set(u64::MAX);
+        assert_eq!(m.run(10), RunOutcome::MaxInstrs);
+        assert_eq!(m.clint_mtime(), 200_001);
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    fn linux() -> WasmLinux {
+        WasmLinux::new(
+            8,
+            &0x0000_006fu32.to_le_bytes(), // busy guest, not a Linux boot or WFI
+            &[],
+            String::new(),
+            js_sys::Function::new_no_args(""),
+            false,
+        )
+        .unwrap()
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    fn field(state: &JsValue, name: &str) -> JsValue {
+        js_sys::Reflect::get(state, &JsValue::from_str(name)).unwrap()
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    #[wasm_bindgen_test::wasm_bindgen_test]
+    fn exported_clock_selection_preserves_default_and_reports_unavailable_source() {
+        let m = linux();
+        let initial = m.guest_clock_state().unwrap();
+        assert_eq!(
+            field(&initial, "mode").as_string().as_deref(),
+            Some("icount")
+        );
+        assert_eq!(field(&initial, "mtime").as_string().as_deref(), Some("0"));
+        assert_eq!(field(&initial, "timebaseHz").as_f64(), Some(10_000_000.0));
+        assert_eq!(field(&initial, "clockDiv").as_f64(), Some(10.0));
+        assert!(m.set_guest_clock("invalid").is_err());
+        m.set_guest_clock("icount").unwrap();
+        m.rebase_guest_clock().unwrap();
+        assert_eq!(
+            field(&m.guest_clock_state().unwrap(), "mtime"),
+            field(&initial, "mtime")
+        );
+        // Node has no Window/Worker performance source. A real browser/worker must use the real
+        // adapter; the coordinator's browser proof asserts that wall selection actually succeeds.
+        if JsHostTimer::new().is_some() {
+            m.set_guest_clock("wall").unwrap();
+            assert_eq!(
+                field(&m.guest_clock_state().unwrap(), "mode")
+                    .as_string()
+                    .as_deref(),
+                Some("wall")
+            );
+        } else {
+            assert!(m.set_guest_clock("wall").is_err());
+            assert_eq!(
+                field(&m.guest_clock_state().unwrap(), "mode"),
+                field(&initial, "mode")
+            );
+        }
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    #[wasm_bindgen_test::wasm_bindgen_test]
+    fn exported_state_is_lossless_readonly_and_blob_restore_rebases_only_on_success() {
+        let m = linux();
+        let host = Rc::new(Cell::new(0));
+        let saved_mtime = (1u64 << 53) + 37;
+        {
+            let mut inner = m.inner.borrow_mut();
+            inner
+                .machine
+                .bus_mut()
+                .store64(virt::CLINT_BASE + 0xbff8, saved_mtime)
+                .unwrap();
+            inner.machine.set_wall_clock(
+                Box::new(Clock(host.clone())),
+                wasm_vm_core::time::WallClockPolicy::DEFAULT,
+            );
+        }
+        let blob = js_sys::Uint8Array::new(&m.save_snapshot().unwrap()).to_vec();
+        host.set(600_000_000_000);
+        let state = m.guest_clock_state().unwrap();
+        assert_eq!(
+            field(&state, "mtime").as_string(),
+            Some(saved_mtime.to_string())
+        );
+        assert_eq!(
+            js_sys::Uint8Array::new(&m.save_snapshot().unwrap()).to_vec(),
+            blob
+        );
+        m.rebase_guest_clock().unwrap();
+        m.run_chunk(1, None).unwrap();
+        assert_eq!(
+            field(&m.guest_clock_state().unwrap(), "mtime").as_string(),
+            Some(saved_mtime.to_string())
+        );
+        host.set(600_001_000_000);
+        m.run_chunk(1, None).unwrap();
+        assert_eq!(m.inner.borrow().machine.clint_mtime(), saved_mtime + 10_000);
+        m.load_snapshot_blob(blob.clone()).unwrap();
+        assert_eq!(m.inner.borrow().machine.clint_mtime(), saved_mtime);
+        host.set(600_002_000_000);
+        assert!(m.load_snapshot_blob(vec![0]).is_err());
+        assert!(m.set_guest_clock("invalid").is_err());
+        m.run_chunk(1, None).unwrap();
+        assert_eq!(m.inner.borrow().machine.clint_mtime(), saved_mtime + 10_000);
+        // Also cover a fresh WASM wrapper with a distinct source/epoch and topology from assembly.
+        let fresh = linux();
+        let fresh_host = Rc::new(Cell::new(17_000_000_000));
+        fresh.inner.borrow_mut().machine.set_wall_clock(
+            Box::new(Clock(fresh_host.clone())),
+            wasm_vm_core::time::WallClockPolicy::DEFAULT,
+        );
+        fresh.load_snapshot_blob(blob).unwrap();
+        fresh_host.set(17_001_000_000);
+        fresh.run_chunk(1, None).unwrap();
+        assert_eq!(
+            fresh.inner.borrow().machine.clint_mtime(),
+            saved_mtime + 10_000
+        );
+    }
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+fn set_machine_profiling(machine: &mut Machine, on: bool) -> bool {
+    if on {
+        let Some(timer) = JsHostTimer::new() else {
+            return false;
+        };
+        machine.set_host_timer(std::rc::Rc::new(timer));
+    } else {
+        machine.set_profiling(false);
+    }
+    true
 }
 
 /// E5-T19d: the browser's monotonic performance clock also drives virtio-snd queue pacing. It is
@@ -1462,6 +1752,9 @@ pub struct WasmLinux {
     inner: RefCell<LinuxInner>,
 }
 
+#[cfg(all(test, target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod display_tests;
+
 /// E3-T12d build-stable snapshot identity: the crate version zero-padded into 32 bytes. Changes across
 /// releases so a snapshot taken by a different build fails the coherence guard (a `CoreHashMismatch`
 /// cold boot). A semantic change WITHIN one published version is out of scope (documented); a git-hash
@@ -1480,6 +1773,7 @@ struct LinuxInner {
     machine: Machine,
     audio_attached: bool,
     capture_attached: bool,
+    display_attached: bool,
     uart: std::rc::Rc<RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
     out: std::rc::Rc<RefCell<Vec<u8>>>,
     output: js_sys::Function,
@@ -1611,6 +1905,160 @@ struct BufSink {
 impl ConsoleSink for BufSink {
     fn put_byte(&mut self, b: u8) {
         self.buf.borrow_mut().push(b);
+    }
+}
+
+/// E5-T06d/E5-T07c: synchronous browser presentation adapter. The GPU service owns the
+/// guest-backed pixels only for the duration of this call; the page-side PresentationController
+/// immediately copies the typed view before returning, so replay never retains a borrowed
+/// wasm-memory slice. The core may narrow `rect` to the changed transfer bounds after the first
+/// full frame; `resourceWidth`/`resourceHeight` and `format` still describe the complete resource.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+struct JsFrameSink {
+    callback: js_sys::Function,
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl JsFrameSink {
+    fn set_u32(object: &js_sys::Object, name: &str, value: u32) {
+        let _ = js_sys::Reflect::set(
+            object,
+            &JsValue::from_str(name),
+            &JsValue::from_f64(value as f64),
+        );
+    }
+
+    /// Emit a cursor update/move through the existing synchronous display callback.  MOVE_CURSOR
+    /// passes an empty view so the page can update only transform/style state and never re-encode
+    /// the resource at pointer-reporting frequency.
+    fn emit_cursor(
+        &self,
+        event_type: &str,
+        state: wasm_vm_core::dev::virtio::gpu::CursorState,
+        format: Option<u32>,
+        resource_width: u32,
+        resource_height: u32,
+        pixels: &[u32],
+    ) {
+        let frame = js_sys::Object::new();
+        let state_object = js_sys::Object::new();
+        let pos_object = js_sys::Object::new();
+        Self::set_u32(&pos_object, "scanoutId", state.pos.scanout_id);
+        Self::set_u32(&pos_object, "x", state.pos.x);
+        Self::set_u32(&pos_object, "y", state.pos.y);
+        let _ = js_sys::Reflect::set(
+            &state_object,
+            &JsValue::from_str("resourceId"),
+            &JsValue::from_f64(state.resource_id as f64),
+        );
+        Self::set_u32(&state_object, "hotX", state.hot_x);
+        Self::set_u32(&state_object, "hotY", state.hot_y);
+        let _ = js_sys::Reflect::set(
+            &state_object,
+            &JsValue::from_str("pos"),
+            pos_object.as_ref(),
+        );
+        let _ = js_sys::Reflect::set(
+            &frame,
+            &JsValue::from_str("type"),
+            &JsValue::from_str(event_type),
+        );
+        let _ = js_sys::Reflect::set(&frame, &JsValue::from_str("state"), state_object.as_ref());
+        let _ = js_sys::Reflect::set(
+            &frame,
+            &JsValue::from_str("format"),
+            &format
+                .map(|value| JsValue::from_f64(value as f64))
+                .unwrap_or(JsValue::NULL),
+        );
+        Self::set_u32(&frame, "resourceWidth", resource_width);
+        Self::set_u32(&frame, "resourceHeight", resource_height);
+        // `view` is safe here because the callback is synchronous and the page copies update
+        // pixels before it returns. MOVE_CURSOR supplies an empty view by contract.
+        let pixel_view = unsafe { js_sys::Uint32Array::view(pixels) };
+        let _ = js_sys::Reflect::set(&frame, &JsValue::from_str("pixels"), pixel_view.as_ref());
+        let _ = self.callback.call1(&JsValue::NULL, &frame);
+    }
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl wasm_vm_core::dev::virtio::gpu::FrameSink for JsFrameSink {
+    fn tracks_transferred_damage(&self) -> bool {
+        true
+    }
+
+    fn flush(
+        &mut self,
+        scanout: Option<u32>,
+        format: u32,
+        rect: wasm_vm_core::dev::virtio::gpu::Rect,
+        resource_width: u32,
+        resource_height: u32,
+        pixels: &[u32],
+    ) {
+        let frame = js_sys::Object::new();
+        let rect_object = js_sys::Object::new();
+        let set = |object: &js_sys::Object, name: &str, value: u32| {
+            let _ = js_sys::Reflect::set(
+                object,
+                &JsValue::from_str(name),
+                &JsValue::from_f64(value as f64),
+            );
+        };
+        set(&rect_object, "x", rect.x);
+        set(&rect_object, "y", rect.y);
+        set(&rect_object, "width", rect.width);
+        set(&rect_object, "height", rect.height);
+        let _ = js_sys::Reflect::set(
+            &frame,
+            &JsValue::from_str("scanout"),
+            &scanout
+                .map(|value| JsValue::from_f64(value as f64))
+                .unwrap_or(JsValue::NULL),
+        );
+        let _ = js_sys::Reflect::set(&frame, &JsValue::from_str("rect"), rect_object.as_ref());
+        set(&frame, "resourceWidth", resource_width);
+        set(&frame, "resourceHeight", resource_height);
+        set(&frame, "format", format);
+        // `view` is safe here because the callback is synchronous and the page copies the view
+        // before it returns. A copy at this boundary would double the full-frame allocation.
+        let pixel_view = unsafe { js_sys::Uint32Array::view(pixels) };
+        let _ = js_sys::Reflect::set(&frame, &JsValue::from_str("pixels"), pixel_view.as_ref());
+        // FrameSink cannot surface a JS exception. The controller owns the error/fallback policy;
+        // ignoring an exception here keeps a guest presentation fault from aborting the emulator.
+        let _ = self.callback.call1(&JsValue::NULL, &frame);
+    }
+
+    fn clear(&mut self) {
+        let frame = js_sys::Object::new();
+        let _ = js_sys::Reflect::set(
+            &frame,
+            &JsValue::from_str("type"),
+            &JsValue::from_str("clear"),
+        );
+        let _ = self.callback.call1(&JsValue::NULL, &frame);
+    }
+
+    fn cursor_state(
+        &mut self,
+        state: wasm_vm_core::dev::virtio::gpu::CursorState,
+        format: Option<u32>,
+        resource_width: u32,
+        resource_height: u32,
+        pixels: &[u32],
+    ) {
+        self.emit_cursor(
+            "cursor-update",
+            state,
+            format,
+            resource_width,
+            resource_height,
+            pixels,
+        );
+    }
+
+    fn cursor_move(&mut self, state: wasm_vm_core::dev::virtio::gpu::CursorState) {
+        self.emit_cursor("cursor-move", state, None, 0, 0, &[]);
     }
 }
 
@@ -2079,6 +2527,14 @@ impl WasmLinux {
         // E5-T11c: attach the guest-visible keyboard on every browser boot. The host keymap can
         // inject make/break frames through WasmLinux::sendKeyboardEvent/syncKeyboard.
         let _ = machine.enable_virtio_keyboard();
+        // A browser key transition is two bounded input events (EV_KEY + SYN_REPORT). Give the
+        // interactive path the same finite burst headroom as the native display workload so a
+        // terminal command cannot overflow the default generic-device budget and strand a key.
+        if let Some(keyboard) = machine.keyboard_input() {
+            keyboard.borrow_mut().set_pending_event_budget(
+                wasm_vm_core::dev::virtio::input::keyboard::INTERACTIVE_PENDING_EVENT_BUDGET,
+            );
+        }
         // E5-T14a: keep both pointer devices guest-visible on every browser boot. T14b selects
         // which state receives DOM frames; the tablet and relative mouse remain stable peers.
         let _ = machine.enable_virtio_pointer();
@@ -2099,6 +2555,15 @@ impl WasmLinux {
             Box::new(wasm_vm_core::dev::virtio::snd::NullSink::new()),
             enable_mic,
         );
+        // E5-T06d: preserve the established sound slot, then use the remaining optional
+        // virtio-mmio slot for the browser display. A fully occupied legacy layout simply keeps
+        // the GPU absent; attachDisplay reports that fact to the loader without replacing a
+        // working device.
+        let _ = machine.enable_virtio_gpu(Box::new(wasm_vm_core::dev::virtio::gpu::NullSink));
+        // E5-T26f: the browser keeps all established devices and uses the ninth extension window
+        // for the T23 named agent channel. Native callers retain the fixed slot-7 console helper.
+        let _ = machine
+            .enable_virtio_console_at(wasm_vm_core::platform::virt::VIRTIO_COUNT as usize - 1);
         machine.enable_builtin_sbi();
         let out = std::rc::Rc::new(RefCell::new(Vec::new()));
         machine.sbi_set_console(Box::new(BufSink { buf: out.clone() }));
@@ -2110,6 +2575,7 @@ impl WasmLinux {
                 machine,
                 audio_attached: false,
                 capture_attached: false,
+                display_attached: false,
                 uart,
                 out,
                 output,
@@ -2151,6 +2617,221 @@ impl WasmLinux {
         } else {
             Err(JsError::new("virtio-snd is not assembled"))
         }
+    }
+
+    /// E5-T06d: attach the page-owned presentation callback after the machine has been assembled.
+    /// The callback receives `{ scanout, rect, resourceWidth, resourceHeight, pixels }`, where
+    /// `pixels` is a temporary `Uint32Array` view over wasm memory. The browser sink must copy it
+    /// synchronously before returning so context-loss replay owns its latest frame.
+    #[wasm_bindgen(js_name = attachDisplay)]
+    pub fn attach_display(&self, callback: js_sys::Function) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner
+            .machine
+            .replace_virtio_gpu_sink(Box::new(JsFrameSink { callback }))
+        {
+            inner.display_attached = true;
+            Ok(true)
+        } else {
+            Ok(false)
+        }
+    }
+
+    /// E5-T06d: report whether a page presentation callback owns the assembled GPU sink.
+    #[wasm_bindgen(js_name = displayReady)]
+    pub fn display_ready(&self) -> Result<bool, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner.display_attached)
+    }
+
+    /// Request a preferred display mode. This does not resize a guest resource or claim the
+    /// compositor has adopted the mode. Validate both JS values before borrowing/mutating state.
+    #[wasm_bindgen(js_name = setDisplay)]
+    pub fn set_display(&self, width: JsValue, height: JsValue) -> Result<bool, JsError> {
+        let dimension = |value: JsValue| -> Result<u32, JsError> {
+            let max = wasm_vm_core::dev::virtio::gpu::edid::MAX_EDID_DIMENSION;
+            let number = value
+                .as_f64()
+                .ok_or_else(|| JsError::new("display dimension must be a number"))?;
+            if !number.is_finite()
+                || number.fract() != 0.0
+                || number < 1.0
+                || number > f64::from(max)
+            {
+                return Err(JsError::new(
+                    "display dimension must be an integer in 1..=4095",
+                ));
+            }
+            Ok(number as u32)
+        };
+        let (width, height) = (dimension(width)?, dimension(height)?);
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some((_, state)) = inner.machine.virtio_gpu() else {
+            return Ok(false);
+        };
+        state
+            .try_borrow_mut()
+            .map_err(|_| reentrant())?
+            .set_display(width, height);
+        Ok(true)
+    }
+
+    /// E5-T26e: acknowledge a fresh application HELLO from the host T23d Channel. The console
+    /// transport must already be open; a true result is the only value accepted by the browser
+    /// restore bridge before it asks the core to publish a desktop snapshot.
+    #[wasm_bindgen(js_name = confirmAgentHello)]
+    pub fn confirm_agent_hello(&self) -> Result<bool, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner.machine.confirm_virtio_console_agent_hello().is_some())
+    }
+
+    /// E5-T26f: take the live GPU/input/sound/agent component state at one bounded scheduler
+    /// boundary. The core composes the existing codecs; this boundary only owns the JS byte copy.
+    #[wasm_bindgen(js_name = saveDesktopSnapshot)]
+    pub fn save_desktop_snapshot(&self) -> Result<JsValue, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let blob = inner
+            .machine
+            .save_desktop_snapshot()
+            .map_err(|error| JsError::new(&format!("desktop snapshot save {}", error.code())))?;
+        Ok(js_sys::Uint8Array::from(&blob[..]).into())
+    }
+
+    /// E5-T26e: restore the versioned desktop envelope after the host Channel has completed its
+    /// fresh HELLO intersection. The returned JSON-safe report is consumed by the T22 viewport
+    /// owner; this call never silently attests success when the live console/device composition is
+    /// unavailable.
+    #[wasm_bindgen(js_name = restoreDesktopSnapshot)]
+    pub fn restore_desktop_snapshot(
+        &self,
+        blob: Vec<u8>,
+        host_width: u32,
+        host_height: u32,
+    ) -> Result<JsValue, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let report = inner
+            .machine
+            .restore_desktop_snapshot(
+                &blob,
+                wasm_vm_core::desktop_restore::DisplaySize::new(host_width, host_height),
+            )
+            .map_err(|error| JsError::new(&format!("desktop restore {}", error.code())))?;
+        let object = js_sys::Object::new();
+        let set = |key: &str, value: JsValue| {
+            let _ = js_sys::Reflect::set(&object, &JsValue::from_str(key), &value);
+        };
+        let size = |value: wasm_vm_core::desktop_restore::DisplaySize| {
+            let pair = js_sys::Object::new();
+            let _ = js_sys::Reflect::set(
+                &pair,
+                &JsValue::from_str("width"),
+                &JsValue::from_f64(value.width as f64),
+            );
+            let _ = js_sys::Reflect::set(
+                &pair,
+                &JsValue::from_str("height"),
+                &JsValue::from_f64(value.height as f64),
+            );
+            pair.into()
+        };
+        let disposition = match report.viewport {
+            wasm_vm_core::desktop_restore::ViewportDisposition::Native => "native",
+            wasm_vm_core::desktop_restore::ViewportDisposition::Letterbox => "letterbox",
+        };
+        set("boundaryId", JsValue::from_f64(report.boundary_id as f64));
+        set("scanout", size(report.scanout));
+        set("hostViewport", size(report.host_viewport));
+        set("viewport", JsValue::from_str(disposition));
+        set(
+            "agentRehandshake",
+            JsValue::from_bool(report.agent_rehandshake),
+        );
+        set(
+            "inputReleaseEvents",
+            JsValue::from_f64(report.input_release_events as f64),
+        );
+        set(
+            "soundXrunEvents",
+            JsValue::from_f64(report.sound_xrun_events as f64),
+        );
+        set(
+            "fullRepairFrame",
+            JsValue::from_bool(report.full_repair_frame),
+        );
+        Ok(object.into())
+    }
+
+    /// E5-T26f: enqueue one owned host-to-guest frame on the named virtio-console agent port.
+    /// Returning the accepted byte count lets the page Channel fail closed on bounded
+    /// backpressure instead of silently reporting that a frame was delivered.
+    #[wasm_bindgen(js_name = sendAgentInput)]
+    pub fn send_agent_input(&self, bytes: &[u8]) -> Result<u32, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let state = inner
+            .machine
+            .virtio_console()
+            .ok_or_else(|| JsError::new("virtio-console agent is not assembled"))?;
+        let accepted = state.borrow_mut().enqueue_agent_input(bytes);
+        u32::try_from(accepted).map_err(|_| JsError::new("agent input length exceeds u32"))
+    }
+
+    /// E5-T26f: drain complete guest-to-host agent frames after a run slice. The returned copy is
+    /// transferred through the worker protocol and then decoded by the page-owned T23d Channel.
+    #[wasm_bindgen(js_name = takeAgentOutput)]
+    pub fn take_agent_output(&self) -> Result<js_sys::Uint8Array, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some(state) = inner.machine.virtio_console() else {
+            return Ok(js_sys::Uint8Array::new_with_length(0));
+        };
+        let bytes = state.borrow_mut().take_agent_output();
+        Ok(js_sys::Uint8Array::from(bytes.as_slice()))
+    }
+
+    /// Inspect actual GPU state. Advertised dimensions and bound resource dimensions are
+    /// deliberately separate: only guest SET_SCANOUT can change the latter. EDID is a copy.
+    #[wasm_bindgen(js_name = displayStats)]
+    pub fn display_stats(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some((_, state)) = inner.machine.virtio_gpu() else {
+            return Ok(JsValue::NULL);
+        };
+        let state = state.try_borrow().map_err(|_| reentrant())?;
+        let result = js_sys::Object::new();
+        let set = |key: &str, value: JsValue| -> Result<(), JsError> {
+            js_sys::Reflect::set(&result, &key.into(), &value)
+                .map(|_| ())
+                .map_err(|_| JsError::new("display stats property failed"))
+        };
+        let (width, height) = state.display_size();
+        set("advertisedWidth", width.into())?;
+        set("advertisedHeight", height.into())?;
+        set("refreshHz", state.display_refresh_hz().into())?;
+        set("pendingEvents", state.pending_events().into())?;
+        set(
+            "edid",
+            js_sys::Uint8Array::from(state.edid().as_slice()).into(),
+        )?;
+        set("resourceCount", (state.resources.len() as f64).into())?;
+        set(
+            "resourceBytes",
+            (state.resources.accounted_bytes() as f64).into(),
+        )?;
+        let scanout = state
+            .scanout_resource
+            .and_then(|id| state.resources.get(id).map(|r| (id, r)));
+        set(
+            "scanoutResource",
+            scanout.map_or(JsValue::NULL, |(id, _)| id.into()),
+        )?;
+        set(
+            "scanoutWidth",
+            scanout.map_or(JsValue::NULL, |(_, r)| r.width.into()),
+        )?;
+        set(
+            "scanoutHeight",
+            scanout.map_or(JsValue::NULL, |(_, r)| r.height.into()),
+        )?;
+        Ok(result.into())
     }
 
     /// E5-T20e: report whether this guest owns the page-provided ring sink. Kept separate from
@@ -2296,6 +2977,83 @@ impl WasmLinux {
         Ok(config.into())
     }
 
+    /// E5-T26i: opt in to realm-monotonic guest time, or retain the deterministic ICount oracle.
+    /// Unsupported labels and unavailable performance sources refuse before any clock mutation.
+    #[wasm_bindgen(js_name = setGuestClock)]
+    pub fn set_guest_clock(&self, mode: &str) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        select_guest_clock(&mut inner.machine, mode, || {
+            JsHostTimer::new()
+                .map(|clock| Box::new(clock) as Box<dyn wasm_vm_core::time::MonotonicClock>)
+        })
+        .map_err(JsError::new)
+    }
+
+    /// Explicit deterministic retirements-per-tick selection; never silently coerce JS input.
+    #[wasm_bindgen(js_name = setICountDivider)]
+    pub fn set_icount_divider(&self, value: JsValue) -> Result<(), JsError> {
+        let divider = value
+            .as_f64()
+            .filter(|v| v.is_finite() && v.fract() == 0.0 && (1.0..=1024.0).contains(v))
+            .ok_or_else(|| JsError::new("ICount divider must be an integer from 1 to 1024"))?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .machine
+            .set_icount_divider(divider as u64)
+            .map_err(JsError::new)
+    }
+
+    /// Explicit loader pause/resume only. Background gaps keep the core catch-up policy.
+    #[wasm_bindgen(js_name = rebaseGuestClock)]
+    pub fn rebase_guest_clock(&self) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.rebase_guest_clock();
+        Ok(())
+    }
+
+    /// Read-only state: does not sample the clock or consume jump notifications. mtime is a decimal
+    /// string so worker structured cloning cannot round a guest u64 through JavaScript Number.
+    #[wasm_bindgen(js_name = guestClockState)]
+    pub fn guest_clock_state(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let object = js_sys::Object::new();
+        let set = |key: &str, value: JsValue| {
+            let _ = js_sys::Reflect::set(&object, &JsValue::from_str(key), &value);
+        };
+        let mode = match inner.machine.guest_clock_mode() {
+            wasm_vm_core::time::TimeMode::ICount => "icount",
+            wasm_vm_core::time::TimeMode::WallClock => "wall",
+        };
+        set("mode", JsValue::from_str(mode));
+        set(
+            "mtime",
+            JsValue::from_str(&inner.machine.clint_mtime().to_string()),
+        );
+        set(
+            "timebaseHz",
+            JsValue::from_f64(wasm_vm_core::platform::virt::TIMEBASE_FREQ_HZ as f64),
+        );
+        set(
+            "clockDiv",
+            JsValue::from_f64(inner.machine.guest_clock_div() as f64),
+        );
+        Ok(object.into())
+    }
+
+    /// E5-T26k: select one bounded decoded-cache capacity, without coercing JavaScript values.
+    #[wasm_bindgen(js_name = setDecodedCacheEntries)]
+    pub fn set_decoded_cache_entries(&self, value: JsValue) -> Result<(), JsError> {
+        let entries = value
+            .as_f64()
+            .filter(|v| *v == 4096.0 || *v == 16384.0)
+            .ok_or_else(|| JsError::new("decoded cache entries must be numeric 4096 or 16384"))?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .machine
+            .set_decoded_cache_entries(entries as usize)
+            .map_err(JsError::new)
+    }
+
     /// E4-T30: select the production interpreter fast path for a browser Linux guest. It combines
     /// physical-entry predecode reuse with the proven <=128-retire interrupt/device batching. The
     /// caller can turn it off for a byte-identical legacy A/B; enabling JIT later turns it back on
@@ -2370,7 +3128,6 @@ impl WasmLinux {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         let retired_before = inner.machine.irq_stats().retired;
         if inner.finished.is_none() {
-            let mut sink = wasm_vm_core::trace::NullSink;
             // Interleave RX refills with execution. The 16550 RX FIFO is 16 bytes; feeding it only
             // once per budget caps host→guest throughput at ~16 bytes per chunk and wastes the rest
             // of the budget on a near-empty FIFO. Instead, when input is queued, run in short slices
@@ -2407,7 +3164,7 @@ impl WasmLinux {
                 } else {
                     remaining
                 };
-                let oc = inner.machine.run_traced(step, &mut sink);
+                let oc = inner.machine.run(step);
                 remaining -= step;
                 let persistence_due = persistence_bounded
                     && (inner.machine.blk_write_waiting()
@@ -2481,18 +3238,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = setProfiling)]
     pub fn set_profiling(&self, on: bool) -> Result<bool, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        if on {
-            match JsHostTimer::new() {
-                Some(timer) => {
-                    inner.machine.set_host_timer(std::rc::Rc::new(timer));
-                    Ok(true)
-                }
-                None => Ok(false),
-            }
-        } else {
-            inner.machine.set_profiling(false);
-            Ok(true)
-        }
+        Ok(set_machine_profiling(&mut inner.machine, on))
     }
 
     /// E4-T01: the accumulated profile as a plain JS object — `{ totalNs, sampleCount, walkCount,

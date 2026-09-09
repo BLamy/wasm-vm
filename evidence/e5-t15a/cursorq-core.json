@@ -1,0 +1,60 @@
+{
+  "task": "E5-T15a",
+  "implementation_commit": "dd7b670c295fafe7aa2a90a71c309af93a2fe50a",
+  "recorded_at": "2026-09-04",
+  "commands": [
+    "cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm",
+    "cargo clippy -p wasm-vm-core --lib --tests -- -D warnings",
+    "cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings",
+    "cargo test -p wasm-vm-core --lib",
+    "cargo test -p wasm-vm-core --test virtio_gpu_machine",
+    "cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown",
+    "wasm-pack test --node crates/wasm --test gpu_protocol",
+    "make verify-E5-T15a"
+  ],
+  "results": {
+    "native_core_tests": "267 passed, 0 failed",
+    "native_machine_tests": "3 passed, 0 failed",
+    "wasm_gpu_protocol_tests": "5 passed, 0 failed",
+    "wasm_core_build": "passed",
+    "native_and_wasm_clippy": "passed with -D warnings",
+    "format": "passed"
+  },
+  "deterministic_sequence": [
+    "UPDATE_CURSOR scanout=0 resource=7 position=(40,50) hotspot=(10,3)",
+    "MOVE_CURSOR scanout=0 position=(41,51)",
+    "UPDATE_CURSOR scanout=0 resource=0 position=(42,52) (hide)",
+    "MOVE_CURSOR scanout=0 while hidden (invalid parameter)",
+    "UPDATE_CURSOR resource=7 hotspot=(64,0) for a 64x64 resource (invalid parameter)",
+    "UPDATE_CURSOR scanout=1 (invalid scanout)",
+    "UPDATE_CURSOR resource=8 for a 257x64 resource (invalid dimension)",
+    "truncated UPDATE_CURSOR descriptor (55 of 56 bytes) (invalid parameter)"
+  ],
+  "observations": {
+    "native_machine_boundary_used_entries": 8,
+    "wasm_machine_boundary_used_entries": 8,
+    "valid_callbacks": [
+      { "resource_id": 7, "hot_x": 10, "hot_y": 3, "scanout_id": 0, "x": 40, "y": 50 },
+      { "resource_id": 7, "hot_x": 10, "hot_y": 3, "scanout_id": 0, "x": 41, "y": 51 },
+      { "resource_id": 0, "hot_x": 0, "hot_y": 0, "scanout_id": 0, "x": 42, "y": 52 }
+    ],
+    "invalid_requests_preserved_state": true,
+    "reset_cleared_resources_and_cursor_state": true,
+    "native_repeated_hide_show_iterations": 1000,
+    "native_repeated_hide_show_bounded_callbacks": 1000,
+    "wire_encoding": "explicit little-endian; short decodes rejected"
+  },
+  "coverage": {
+    "protocol_types": "native and wasm wire fixtures",
+    "cursorq_dispatch": "native direct queue tests and native/wasm Machine boundary tests",
+    "update_move_hide_validation": "eight-command deterministic sequence",
+    "reset_lifetime": "native reset test",
+    "bounded_repetition": "native 1000-transition test",
+    "guest_buffers_retained": false
+  },
+  "waivers": {
+    "independent_machines": "out of scope by explicit user direction",
+    "webkit": "out of scope by explicit user direction",
+    "host_rr": "waived by repository policy dated 2026-09-01"
+  }
+}

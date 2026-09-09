@@ -7,32 +7,45 @@
 pub const CMD_GET_DISPLAY_INFO: u32 = 0x0100;
 /// `VIRTIO_GPU_CMD_RESOURCE_CREATE_2D`.
 pub const CMD_RESOURCE_CREATE_2D: u32 = 0x0101;
-/// `VIRTIO_GPU_CMD_RESOURCE_ATTACH_BACKING`.
-pub const CMD_RESOURCE_ATTACH_BACKING: u32 = 0x0102;
-/// `VIRTIO_GPU_CMD_RESOURCE_DETACH_BACKING`.
-pub const CMD_RESOURCE_DETACH_BACKING: u32 = 0x0103;
 /// `VIRTIO_GPU_CMD_RESOURCE_UNREF`.
-pub const CMD_RESOURCE_UNREF: u32 = 0x0104;
-/// `VIRTIO_GPU_CMD_SET_SCANOUT` in the device's GPU command table.
-pub const CMD_SET_SCANOUT: u32 = 0x0105;
-/// `VIRTIO_GPU_CMD_TRANSFER_TO_HOST_2D` in the device's GPU command table.
-pub const CMD_TRANSFER_TO_HOST_2D: u32 = 0x0106;
-/// `VIRTIO_GPU_CMD_RESOURCE_FLUSH` in the device's GPU command table.
-pub const CMD_RESOURCE_FLUSH: u32 = 0x0107;
-/// `VIRTIO_GPU_CMD_GET_EDID` in the device's GPU command table.
-pub const CMD_GET_EDID: u32 = 0x0108;
+pub const CMD_RESOURCE_UNREF: u32 = 0x0102;
+/// `VIRTIO_GPU_CMD_SET_SCANOUT`.
+pub const CMD_SET_SCANOUT: u32 = 0x0103;
+/// `VIRTIO_GPU_CMD_RESOURCE_FLUSH`.
+pub const CMD_RESOURCE_FLUSH: u32 = 0x0104;
+/// `VIRTIO_GPU_CMD_TRANSFER_TO_HOST_2D`.
+pub const CMD_TRANSFER_TO_HOST_2D: u32 = 0x0105;
+/// `VIRTIO_GPU_CMD_RESOURCE_ATTACH_BACKING`.
+pub const CMD_RESOURCE_ATTACH_BACKING: u32 = 0x0106;
+/// `VIRTIO_GPU_CMD_RESOURCE_DETACH_BACKING`.
+pub const CMD_RESOURCE_DETACH_BACKING: u32 = 0x0107;
+/// `VIRTIO_GPU_CMD_GET_CAPSET_INFO`.
+pub const CMD_GET_CAPSET_INFO: u32 = 0x0108;
+/// `VIRTIO_GPU_CMD_GET_CAPSET`.
+pub const CMD_GET_CAPSET: u32 = 0x0109;
+/// `VIRTIO_GPU_CMD_GET_EDID`.
+pub const CMD_GET_EDID: u32 = 0x010a;
+/// `VIRTIO_GPU_CMD_UPDATE_CURSOR`.
+pub const CMD_UPDATE_CURSOR: u32 = 0x0300;
+/// `VIRTIO_GPU_CMD_MOVE_CURSOR`.
+pub const CMD_MOVE_CURSOR: u32 = 0x0301;
 /// Successful `GET_DISPLAY_INFO` response.
 pub const RESP_OK_DISPLAY_INFO: u32 = 0x1101;
-/// Successful `GET_EDID` response.
-pub const RESP_OK_EDID: u32 = 0x1102;
 /// Successful command with no response payload.
 pub const RESP_OK_NODATA: u32 = 0x1100;
+/// Successful `GET_CAPSET_INFO` response.
+pub const RESP_OK_CAPSET_INFO: u32 = 0x1102;
+/// Successful `GET_CAPSET` response.
+pub const RESP_OK_CAPSET: u32 = 0x1103;
+/// Successful `GET_EDID` response.
+pub const RESP_OK_EDID: u32 = 0x1104;
 /// Generic unsupported/malformed-command response (used by E5-T01c).
 pub const RESP_ERR_UNSPEC: u32 = 0x1200;
 /// Resource command errors (virtio-gpu spec §5.7.6.4).
 pub const RESP_ERR_OUT_OF_MEMORY: u32 = 0x1201;
+pub const RESP_ERR_INVALID_SCANOUT_ID: u32 = 0x1202;
 pub const RESP_ERR_INVALID_RESOURCE_ID: u32 = 0x1203;
-pub const RESP_ERR_INVALID_SCANOUT_ID: u32 = 0x1204;
+pub const RESP_ERR_INVALID_CONTEXT_ID: u32 = 0x1204;
 pub const RESP_ERR_INVALID_PARAMETER: u32 = 0x1205;
 /// Request/response fence flag.
 pub const FLAG_FENCE: u32 = 1 << 0;
@@ -78,8 +91,14 @@ pub const SET_SCANOUT_SIZE: usize = CTRL_HDR_SIZE + RECT_SIZE + 8;
 pub const TRANSFER_TO_HOST_2D_SIZE: usize = CTRL_HDR_SIZE + RECT_SIZE + 16;
 /// Wire size of `virtio_gpu_resource_flush`.
 pub const RESOURCE_FLUSH_SIZE: usize = CTRL_HDR_SIZE + RECT_SIZE + 8;
-/// Wire size of `virtio_gpu_get_edid`.
-pub const GET_EDID_REQUEST_SIZE: usize = CTRL_HDR_SIZE + 4;
+/// Wire size of `virtio_gpu_cmd_get_edid` (scanout plus required padding).
+pub const GET_EDID_REQUEST_SIZE: usize = CTRL_HDR_SIZE + 8;
+/// Wire size of `virtio_gpu_cursor_pos`.
+pub const CURSOR_POS_SIZE: usize = 16;
+/// Wire size of `virtio_gpu_update_cursor`.
+pub const UPDATE_CURSOR_SIZE: usize = CTRL_HDR_SIZE + CURSOR_POS_SIZE + 16;
+/// Wire size of `virtio_gpu_move_cursor`.
+pub const MOVE_CURSOR_SIZE: usize = CTRL_HDR_SIZE + CURSOR_POS_SIZE;
 /// Wire size of one `virtio_gpu_mem_entry`.
 pub const RESOURCE_MEM_ENTRY_SIZE: usize = 16;
 /// Wire size of one `virtio_gpu_display_one`.
@@ -87,8 +106,8 @@ pub const DISPLAY_MODE_SIZE: usize = 24;
 /// Wire size of `virtio_gpu_resp_display_info`.
 pub const DISPLAY_INFO_RESPONSE_SIZE: usize =
     CTRL_HDR_SIZE + DISPLAY_MODE_COUNT * DISPLAY_MODE_SIZE;
-/// Wire size of `virtio_gpu_resp_edid`.
-pub const EDID_RESPONSE_SIZE: usize = CTRL_HDR_SIZE + 128;
+/// Wire size of `virtio_gpu_resp_edid` (size, padding, and the 1024-byte EDID payload).
+pub const EDID_RESPONSE_SIZE: usize = CTRL_HDR_SIZE + 8 + 1024;
 
 /// `virtio_gpu_ctrl_hdr`, encoded as le32/le32/le64/le32/u8/u8[3].
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
@@ -149,7 +168,7 @@ impl GetEdid {
         })
     }
 
-    /// Encode the exact 28-byte GET_EDID request layout.
+    /// Encode the exact 32-byte GET_EDID request layout, leaving the required padding zeroed.
     pub fn to_bytes(self) -> [u8; GET_EDID_REQUEST_SIZE] {
         let mut out = [0u8; GET_EDID_REQUEST_SIZE];
         out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
@@ -158,7 +177,109 @@ impl GetEdid {
     }
 }
 
-/// `virtio_gpu_resp_edid`, a control header followed by one 128-byte EDID base block.
+/// `virtio_gpu_cursor_pos`, shared by UPDATE_CURSOR and MOVE_CURSOR.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct CursorPos {
+    pub scanout_id: u32,
+    pub x: u32,
+    pub y: u32,
+    pub padding: u32,
+}
+
+impl CursorPos {
+    /// Decode a complete cursor position.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < CURSOR_POS_SIZE {
+            return None;
+        }
+        Some(Self {
+            scanout_id: u32::from_le_bytes(bytes[0..4].try_into().ok()?),
+            x: u32::from_le_bytes(bytes[4..8].try_into().ok()?),
+            y: u32::from_le_bytes(bytes[8..12].try_into().ok()?),
+            padding: u32::from_le_bytes(bytes[12..16].try_into().ok()?),
+        })
+    }
+
+    /// Encode the exact little-endian cursor-position layout.
+    pub fn to_bytes(self) -> [u8; CURSOR_POS_SIZE] {
+        let mut out = [0u8; CURSOR_POS_SIZE];
+        out[0..4].copy_from_slice(&self.scanout_id.to_le_bytes());
+        out[4..8].copy_from_slice(&self.x.to_le_bytes());
+        out[8..12].copy_from_slice(&self.y.to_le_bytes());
+        out[12..16].copy_from_slice(&self.padding.to_le_bytes());
+        out
+    }
+}
+
+/// `virtio_gpu_update_cursor`, with the cursor image resource and hotspot.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct UpdateCursor {
+    pub header: CtrlHeader,
+    pub pos: CursorPos,
+    pub resource_id: u32,
+    pub hot_x: u32,
+    pub hot_y: u32,
+    pub padding: u32,
+}
+
+impl UpdateCursor {
+    /// Decode a complete UPDATE_CURSOR request.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < UPDATE_CURSOR_SIZE {
+            return None;
+        }
+        Some(Self {
+            header: CtrlHeader::from_bytes(&bytes[..CTRL_HDR_SIZE])?,
+            pos: CursorPos::from_bytes(&bytes[CTRL_HDR_SIZE..CTRL_HDR_SIZE + CURSOR_POS_SIZE])?,
+            resource_id: u32::from_le_bytes(bytes[40..44].try_into().ok()?),
+            hot_x: u32::from_le_bytes(bytes[44..48].try_into().ok()?),
+            hot_y: u32::from_le_bytes(bytes[48..52].try_into().ok()?),
+            padding: u32::from_le_bytes(bytes[52..56].try_into().ok()?),
+        })
+    }
+
+    /// Encode the exact 56-byte UPDATE_CURSOR request layout.
+    pub fn to_bytes(self) -> [u8; UPDATE_CURSOR_SIZE] {
+        let mut out = [0u8; UPDATE_CURSOR_SIZE];
+        out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
+        out[CTRL_HDR_SIZE..CTRL_HDR_SIZE + CURSOR_POS_SIZE].copy_from_slice(&self.pos.to_bytes());
+        out[40..44].copy_from_slice(&self.resource_id.to_le_bytes());
+        out[44..48].copy_from_slice(&self.hot_x.to_le_bytes());
+        out[48..52].copy_from_slice(&self.hot_y.to_le_bytes());
+        out[52..56].copy_from_slice(&self.padding.to_le_bytes());
+        out
+    }
+}
+
+/// `virtio_gpu_move_cursor`, containing only the new position.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct MoveCursor {
+    pub header: CtrlHeader,
+    pub pos: CursorPos,
+}
+
+impl MoveCursor {
+    /// Decode a complete MOVE_CURSOR request.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < MOVE_CURSOR_SIZE {
+            return None;
+        }
+        Some(Self {
+            header: CtrlHeader::from_bytes(&bytes[..CTRL_HDR_SIZE])?,
+            pos: CursorPos::from_bytes(&bytes[CTRL_HDR_SIZE..CTRL_HDR_SIZE + CURSOR_POS_SIZE])?,
+        })
+    }
+
+    /// Encode the exact 40-byte MOVE_CURSOR request layout.
+    pub fn to_bytes(self) -> [u8; MOVE_CURSOR_SIZE] {
+        let mut out = [0u8; MOVE_CURSOR_SIZE];
+        out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
+        out[CTRL_HDR_SIZE..CTRL_HDR_SIZE + CURSOR_POS_SIZE].copy_from_slice(&self.pos.to_bytes());
+        out
+    }
+}
+
+/// `virtio_gpu_resp_edid`, with a size/padding pair followed by the EDID payload area.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct EdidResponse {
     pub header: CtrlHeader,
@@ -166,11 +287,16 @@ pub struct EdidResponse {
 }
 
 impl EdidResponse {
-    /// Encode the exact 152-byte GET_EDID response layout.
+    /// Encode the exact 1056-byte GET_EDID response layout. The device returns one 128-byte base
+    /// block and reports that size; the remaining payload area is zero-filled as required by the
+    /// fixed-size virtio-gpu response structure.
     pub fn to_bytes(self) -> [u8; EDID_RESPONSE_SIZE] {
         let mut out = [0u8; EDID_RESPONSE_SIZE];
         out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
-        out[CTRL_HDR_SIZE..].copy_from_slice(&self.edid);
+        out[CTRL_HDR_SIZE..CTRL_HDR_SIZE + 4]
+            .copy_from_slice(&(self.edid.len() as u32).to_le_bytes());
+        let edid_start = CTRL_HDR_SIZE + 8;
+        out[edid_start..edid_start + self.edid.len()].copy_from_slice(&self.edid);
         out
     }
 
@@ -180,8 +306,14 @@ impl EdidResponse {
             return None;
         }
         let header = CtrlHeader::from_bytes(&bytes[..CTRL_HDR_SIZE])?;
+        let size = u32::from_le_bytes(bytes[CTRL_HDR_SIZE..CTRL_HDR_SIZE + 4].try_into().ok()?);
+        if size < 128 || size as usize > 1024 {
+            return None;
+        }
         let mut edid = [0u8; 128];
-        edid.copy_from_slice(&bytes[CTRL_HDR_SIZE..EDID_RESPONSE_SIZE]);
+        let edid_start = CTRL_HDR_SIZE + 8;
+        let edid_len = edid.len();
+        edid.copy_from_slice(&bytes[edid_start..edid_start + edid_len]);
         Some(Self { header, edid })
     }
 }

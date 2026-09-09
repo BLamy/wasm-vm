@@ -1,0 +1,307 @@
+{
+  "exactHead": "0da96f6a5c7f323b986fe41b6f6bfb2508eec834",
+  "checkSummary": {
+    "totalChecks": 154,
+    "held": 153,
+    "failed": 1
+  },
+  "failedPredictions": [
+    {
+      "name": "null-sampler-explicit-null",
+      "held": false,
+      "actual": [
+        [
+          0,
+          0
+        ]
+      ],
+      "expected": [
+        [
+          null,
+          null
+        ]
+      ]
+    }
+  ],
+  "delayedConcurrency": {
+    "repetitions": 64,
+    "allCompleteFrames": true,
+    "ordersExercised": [
+      "move-then-button",
+      "button-then-move"
+    ],
+    "firstCalls": [
+      [
+        "sendTabletEvent",
+        3,
+        0,
+        11
+      ],
+      [
+        "sendTabletEvent",
+        3,
+        1,
+        12
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        1
+      ],
+      [
+        "syncTablet"
+      ]
+    ],
+    "secondCalls": [
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        1
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendTabletEvent",
+        3,
+        0,
+        11
+      ],
+      [
+        "sendTabletEvent",
+        3,
+        1,
+        12
+      ],
+      [
+        "syncTablet"
+      ]
+    ]
+  },
+  "mixedBurst": {
+    "sequences": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "calls": [
+      [
+        "sendTabletEvent",
+        3,
+        0,
+        20
+      ],
+      [
+        "sendTabletEvent",
+        3,
+        1,
+        21
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        1
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendKeyboardEvent",
+        1,
+        30,
+        1
+      ],
+      [
+        "syncKeyboard"
+      ],
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        0
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendKeyboardEvent",
+        1,
+        30,
+        0
+      ],
+      [
+        "syncKeyboard"
+      ]
+    ]
+  },
+  "queueRecovery": {
+    "statuses": [
+      "rejected",
+      "fulfilled",
+      "fulfilled"
+    ],
+    "fulfilledSequences": [
+      2,
+      3
+    ],
+    "postFailureState": [
+      false,
+      true
+    ]
+  },
+  "stateAndSequence": {
+    "sequences": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "noops": [
+      true,
+      false,
+      true,
+      false,
+      true,
+      true,
+      false,
+      true,
+      false,
+      true
+    ],
+    "unique": true
+  },
+  "attribution": {
+    "source100Then175": [
+      [
+        100,
+        100
+      ],
+      [
+        175,
+        75
+      ]
+    ],
+    "dist100Then175": [
+      [
+        100,
+        100
+      ],
+      [
+        175,
+        75
+      ]
+    ],
+    "retiredObject100Then175": [
+      [
+        100,
+        100
+      ],
+      [
+        175,
+        75
+      ]
+    ],
+    "guestObject100Then175": [
+      [
+        100,
+        100
+      ],
+      [
+        175,
+        75
+      ]
+    ],
+    "missingSampler": [
+      [
+        null,
+        null
+      ]
+    ],
+    "nullSampler": [
+      [
+        0,
+        0
+      ]
+    ],
+    "throwingSampler": [
+      [
+        null,
+        null
+      ]
+    ],
+    "invalidSampler": [
+      [
+        null,
+        null
+      ],
+      [
+        null,
+        null
+      ],
+      [
+        100,
+        100
+      ]
+    ],
+    "decreasingSampler": [
+      [
+        100,
+        100
+      ],
+      [
+        80,
+        null
+      ],
+      [
+        95,
+        15
+      ]
+    ]
+  },
+  "damage": {
+    "backendCalls": 1,
+    "records": 1,
+    "nextSequence": 1,
+    "nextBytes": 16,
+    "drawnPresents": 1
+  },
+  "nullSink": {
+    "backendCalls": 1,
+    "successfulPresents": 1,
+    "drawnPresents": 0,
+    "drawnBytes": 0,
+    "recordDrawn": false
+  },
+  "fixture": {
+    "fiveHashes": [
+      "20b60bbff90600cb8cfa8c65701fd5cf720af40e3d541dfa1b89a78f06cca2a4",
+      "20b60bbff90600cb8cfa8c65701fd5cf720af40e3d541dfa1b89a78f06cca2a4",
+      "20b60bbff90600cb8cfa8c65701fd5cf720af40e3d541dfa1b89a78f06cca2a4",
+      "20b60bbff90600cb8cfa8c65701fd5cf720af40e3d541dfa1b89a78f06cca2a4",
+      "20b60bbff90600cb8cfa8c65701fd5cf720af40e3d541dfa1b89a78f06cca2a4"
+    ],
+    "distHash": "20b60bbff90600cb8cfa8c65701fd5cf720af40e3d541dfa1b89a78f06cca2a4"
+  },
+  "projections": {
+    "jsTsByteEqual": true,
+    "sourceDistPresentationByteEqual": true
+  }
+}

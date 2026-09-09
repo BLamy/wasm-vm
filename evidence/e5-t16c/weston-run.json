@@ -1,0 +1,268 @@
+{
+  "task": "E5-T16c",
+  "command": "tools/run-weston-pixman.mjs",
+  "image": {
+    "id": "alpine-rootfs.ext4",
+    "sha256": "9176a631e0b2d572f2cb87dde5a8e6916ecca60d4829afb8f1eef6045b92e382"
+  },
+  "imagePostRun": {
+    "id": "alpine-rootfs.ext4",
+    "sha256": "d57ce5bf2d9cb68b20ba7df381703090024634fd7db633772e2690d60a57a80e"
+  },
+  "imageManifest": {
+    "packagePath": "target/e5-t16c/weston-image/MANIFEST.txt",
+    "packageSha256": "225b8d35f7375c084075ca60edac5ea8fbf7ef46f1fd09a7e3a5d40bb074aae1",
+    "filePath": "target/e5-t16c/weston-image/FILE-MANIFEST.txt",
+    "fileSha256": "b2b4964035b5a348be808afddc83b91d007c5cb3e5fbfcf1854b6f85d5d51552"
+  },
+  "renderer": {
+    "backend": "drm",
+    "renderer": "pixman",
+    "log": "E5T16C_LAUNCH + Using Pixman renderer"
+  },
+  "guestEvidence": {
+    "path": "evidence/e5-t16c/weston-guest-evidence.txt",
+    "sha256": "e3a7c159faafb2736c3b87bc3b2d0ee0e5126bf8a5bf048769d83bf2ece0c8ae"
+  },
+  "gpuTrace": {
+    "path": "evidence/e5-t16c/weston-gpu-trace.log",
+    "sha256": "a07aea671a61945a0c754816aa1f63125551e47a3cba03cf38012f424584d3b2"
+  },
+  "console": {
+    "path": "evidence/e5-t16c/weston-console.log",
+    "sha256": "74345c4bdc226284dfbc9bfe2a1ddb4b9a91115bfec27d85b79413373e17c6b0"
+  },
+  "stderr": {
+    "path": "evidence/e5-t16c/weston-stderr.log",
+    "sha256": "b0f127518f241359279976b1a2665ea69cad9bc2b9e7abd11b33ee41a0a0f11b"
+  },
+  "capture": {
+    "schema": "wasm-vm.e5-t16a.display-server-workload.v1",
+    "task": "E5-T16a",
+    "environment": "emulator",
+    "architecture": "riscv64",
+    "candidate": {
+      "id": "weston-pixman",
+      "server": "drm",
+      "wm": "weston",
+      "terminal": "foot",
+      "renderer": "pixman",
+      "clipboard": "wl-clipboard"
+    },
+    "image": {
+      "id": "alpine-rootfs.ext4",
+      "sha256": "9176a631e0b2d572f2cb87dde5a8e6916ecca60d4829afb8f1eef6045b92e382"
+    },
+    "sources": {
+      "guestInstructions": "guest-e4-minstret",
+      "uploadedBytes": "guest-t09-vm-stats-gpu-bytesUploaded",
+      "peakRssBytes": "guest-proc-status-vmHWM",
+      "idleWakeups": "guest-proc-interrupts-idle-delta",
+      "cursorqEvents": "guest-virtio-gpu-cursorq-trace"
+    },
+    "plan": {
+      "drag": {
+        "axis": "x",
+        "deltaPx": 300,
+        "from": {
+          "x": 100,
+          "y": 100
+        },
+        "phase": "drag-300",
+        "steps": 30,
+        "to": {
+          "x": 400,
+          "y": 100
+        }
+      },
+      "idle": {
+        "minimumMs": 900,
+        "requestedMs": 1000
+      },
+      "phases": [
+        {
+          "id": "cold-start",
+          "marker": "E5T16A_COLD_START_DONE"
+        },
+        {
+          "id": "idle",
+          "marker": "E5T16A_IDLE_DONE"
+        },
+        {
+          "id": "open-terminal",
+          "marker": "E5T16A_OPEN_TERMINAL_DONE"
+        },
+        {
+          "id": "type-100",
+          "marker": "E5T16A_TYPE_100_DONE"
+        },
+        {
+          "id": "drag-300",
+          "marker": "E5T16A_DRAG_300_DONE"
+        },
+        {
+          "id": "close",
+          "marker": "E5T16A_CLOSE_DONE"
+        }
+      ],
+      "terminal": {
+        "closePhase": "close",
+        "openPhase": "open-terminal",
+        "typedCharacters": 100,
+        "typingText": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:;!?-_abcdefghijklmnopqrstuvwxyzABC",
+        "typingTextSha256": "1c8868568b4eea1c33a76556a1bc9acd4bf56f5c7c2f26b6cd628d61a44f9e68"
+      },
+      "version": 1
+    },
+    "observations": {
+      "cursorqEvents": 0,
+      "cursorqStatus": "capability-gap: weston submitted no cursorq chain during this run",
+      "errors": [],
+      "markerSequence": [
+        "E5T16A_COLD_START_DONE",
+        "E5T16A_IDLE_DONE",
+        "E5T16A_OPEN_TERMINAL_DONE",
+        "E5T16A_TYPE_100_DONE",
+        "E5T16A_DRAG_300_DONE",
+        "E5T16A_CLOSE_DONE"
+      ]
+    },
+    "phases": [
+      {
+        "details": {},
+        "end": {
+          "guestInstructions": 3461922505,
+          "idleWakeups": 10365,
+          "uploadedBytes": 12288064,
+          "wallMs": 506129.576666
+        },
+        "id": "cold-start",
+        "marker": "E5T16A_COLD_START_DONE",
+        "outcome": "passed",
+        "peakRssBytes": 1048576,
+        "start": {
+          "guestInstructions": 0,
+          "idleWakeups": 0,
+          "uploadedBytes": 0,
+          "wallMs": 0
+        }
+      },
+      {
+        "details": {
+          "measuredMs": 2853.068250000011,
+          "requestedMs": 1000
+        },
+        "end": {
+          "guestInstructions": 3481319143,
+          "idleWakeups": 10792,
+          "uploadedBytes": 12288064,
+          "wallMs": 508982.644916
+        },
+        "id": "idle",
+        "marker": "E5T16A_IDLE_DONE",
+        "outcome": "passed",
+        "peakRssBytes": 1048576,
+        "start": {
+          "guestInstructions": 3461922505,
+          "idleWakeups": 10365,
+          "uploadedBytes": 12288064,
+          "wallMs": 506129.576666
+        }
+      },
+      {
+        "details": {
+          "compositor": "weston",
+          "renderer": "pixman",
+          "terminal": "foot"
+        },
+        "end": {
+          "guestInstructions": 4607862075,
+          "idleWakeups": 15958,
+          "uploadedBytes": 20480064,
+          "wallMs": 670624.2172910001
+        },
+        "id": "open-terminal",
+        "marker": "E5T16A_OPEN_TERMINAL_DONE",
+        "outcome": "passed",
+        "peakRssBytes": 13107200,
+        "start": {
+          "guestInstructions": 3481319143,
+          "idleWakeups": 10792,
+          "uploadedBytes": 12288064,
+          "wallMs": 508982.644916
+        }
+      },
+      {
+        "details": {
+          "characters": 100,
+          "frames": 200,
+          "rejectedEvents": 0,
+          "textSha256": "1c8868568b4eea1c33a76556a1bc9acd4bf56f5c7c2f26b6cd628d61a44f9e68"
+        },
+        "end": {
+          "guestInstructions": 5142249724,
+          "idleWakeups": 17808,
+          "uploadedBytes": 57344064,
+          "wallMs": 746551.7807080001
+        },
+        "id": "type-100",
+        "marker": "E5T16A_TYPE_100_DONE",
+        "outcome": "passed",
+        "peakRssBytes": 18612224,
+        "start": {
+          "guestInstructions": 4607862075,
+          "idleWakeups": 15958,
+          "uploadedBytes": 20480064,
+          "wallMs": 670624.2172910001
+        }
+      },
+      {
+        "details": {
+          "axis": "x",
+          "deltaPx": 300,
+          "frames": 32,
+          "rejectedEvents": 0,
+          "steps": 30
+        },
+        "end": {
+          "guestInstructions": 5184643280,
+          "idleWakeups": 18614,
+          "uploadedBytes": 65536664,
+          "wallMs": 752792.1469159999
+        },
+        "id": "drag-300",
+        "marker": "E5T16A_DRAG_300_DONE",
+        "outcome": "passed",
+        "peakRssBytes": 18612224,
+        "start": {
+          "guestInstructions": 5142249724,
+          "idleWakeups": 17808,
+          "uploadedBytes": 57344064,
+          "wallMs": 746551.7807080001
+        }
+      },
+      {
+        "details": {
+          "applicationExited": true,
+          "compositorExited": true
+        },
+        "end": {
+          "guestInstructions": 5332024187,
+          "idleWakeups": 21646,
+          "uploadedBytes": 92863832,
+          "wallMs": 774433.3206249999
+        },
+        "id": "close",
+        "marker": "E5T16A_CLOSE_DONE",
+        "outcome": "passed",
+        "peakRssBytes": 1179648,
+        "start": {
+          "guestInstructions": 5184643280,
+          "idleWakeups": 18614,
+          "uploadedBytes": 65536664,
+          "wallMs": 752792.1469159999
+        }
+      }
+    ]
+  }
+}

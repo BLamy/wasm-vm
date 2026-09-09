@@ -1,0 +1,75 @@
+{
+  "scope": "closed diagnostic COMPLETE at 7da05062; committed in 33a65efb; not F acceptance",
+  "artifacts": {
+    "evidence/e5-t26f/resident-reuse-7da05062/diagnostic-completion-server.log": "627daaa24ed8e0e462f2b24d629f02c5787a5efcbf5b148aaa8aea576db705da",
+    "evidence/e5-t26f/resident-reuse-7da05062/diagnostic-completion-timing-server.log": "3ffaeac8e6c907b6f54dd3ddea88b3782710c692f77c00fe5a99c9e82596c655",
+    "evidence/e5-t26f/resident-reuse-7da05062/diagnostic-completion-timing.json": "df712a5cacaa9d0873f2bc48016db449151068a3413fc8b63c9f080ec4672dc9",
+    "evidence/e5-t26f/resident-reuse-7da05062/diagnostic-completion-timing.png": "d4537508f5cb7f9be48b0819bf90eea066d5bf4a699d670fcdf004554cec8bd6",
+    "evidence/e5-t26f/resident-reuse-7da05062/diagnostic-completion.json": "8178ca2126a17ecbc1360b5c7adf3acd30c635558150d57b9283dfd1691f2e4a",
+    "evidence/e5-t26f/resident-reuse-7da05062/diagnostic-completion.png": "fb60ef4f294157cbfeeda146893507bbb7ba4e2c59a7393504b3ef84c55cdb88",
+    "evidence/e5-t26f/resident-reuse-7da05062.log": "4f388196b5946dabf7ae6157fe8cc3f15df69f4f5c280356b00d0dbb3cc72dae",
+    "evidence/e5-t26f/resident-records.md": "cba2bae64d6e6d99b2a225f60bacda7308242f8925d3a18a7514f98ae99063a0"
+  },
+  "exactCap": {
+    "t0": 1215.4900000095367,
+    "end": 5947.375,
+    "elapsed": 4731.884999990463,
+    "limit": 2000,
+    "passed": false
+  },
+  "laterTelemetryElapsedMs": 4732.264999985695,
+  "beforeGestureOffsetsMs": [
+    281.45500004291534,
+    649.9450000524521
+  ],
+  "pcmObservedMs": 4686.004999995232,
+  "pcmFirstArrivalTime": "not established by this record",
+  "pcm": {
+    "available": true,
+    "writeIndex": 1440,
+    "readIndex": 1440,
+    "fillFrames": 0,
+    "capacityFrames": 4096,
+    "writtenFrames": 1440,
+    "inspectedFrames": 1440,
+    "nonSilentFrames": 1440,
+    "maxAbs": 0.999969482421875
+  },
+  "restores": [
+    {
+      "label": "normal",
+      "sha256": "b2e057ccf0150eb892ed4ae53c0642e5757d8d52293306776d52dd4bf94b86b9",
+      "crc": "940993e9",
+      "receipt": {
+        "attempted": true,
+        "decision": "resume",
+        "overlayGeneration": 626
+      }
+    },
+    {
+      "label": "drag",
+      "sha256": "caa94ba1711151785c669c8c78e2fc76d41918b91adc2d3a72b541f515590922",
+      "crc": "27b1022b",
+      "receipt": {
+        "attempted": true,
+        "decision": "resume",
+        "overlayGeneration": 626
+      }
+    }
+  ],
+  "drag": {
+    "actualHorizontalPx": 80,
+    "panelClampVerticalPx": 19,
+    "samples": 7,
+    "acknowledgedAt": 1908.704999923706,
+    "finalAt": 2925.444999933243,
+    "dwellMs": 1016.7400000095367
+  },
+  "manuallyViewedPngs": [
+    "diagnostic-completion-timing.png",
+    "diagnostic-completion.png"
+  ],
+  "visualWitness": "post PID999/start27744/exe inode match/pipe_read/FIFO3 flags0100000/parentFD3 flags0100002/PCM4 owner999 PREPARED hw0 app0; physically typed play; green aplay; original job Done; prompt",
+  "xruns": "first-playback terminal retains recovered 0.324ms underrun; no new underrun displayed in resident post block, not a zero-XRUN counter claim",
+  "profilingEvidenceInspected": false
+}

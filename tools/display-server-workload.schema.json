@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wasm-vm.pages.dev/schemas/e5-t16a-display-server-workload.json",
+  "title": "wasm-vm E5-T16a display-server workload capture",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "task",
+    "environment",
+    "architecture",
+    "candidate",
+    "image",
+    "sources",
+    "plan",
+    "phases",
+    "observations",
+    "summary"
+  ],
+  "properties": {
+    "schema": { "const": "wasm-vm.e5-t16a.display-server-workload.v1" },
+    "task": { "const": "E5-T16a" },
+    "environment": { "const": "emulator" },
+    "architecture": { "const": "riscv64" },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "server", "wm", "terminal", "renderer"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "server": { "type": "string", "minLength": 1 },
+        "wm": { "type": "string", "minLength": 1 },
+        "terminal": { "type": "string", "minLength": 1 },
+        "renderer": { "type": "string", "minLength": 1 },
+        "clipboard": { "type": "string", "minLength": 1 }
+      }
+    },
+    "image": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sha256"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["guestInstructions", "uploadedBytes", "peakRssBytes", "idleWakeups", "cursorqEvents"],
+      "properties": {
+        "guestInstructions": { "const": "guest-e4-minstret" },
+        "uploadedBytes": { "const": "guest-t09-vm-stats-gpu-bytesUploaded" },
+        "peakRssBytes": { "const": "guest-proc-status-vmHWM" },
+        "idleWakeups": { "const": "guest-proc-interrupts-idle-delta" },
+        "cursorqEvents": { "const": "guest-virtio-gpu-cursorq-trace" }
+      }
+    },
+    "plan": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "phases": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "marker", "start", "end", "peakRssBytes", "outcome", "details"],
+        "properties": {
+          "id": { "type": "string" },
+          "marker": { "type": "string", "minLength": 1 },
+          "start": { "$ref": "#/$defs/counterPoint" },
+          "end": { "$ref": "#/$defs/counterPoint" },
+          "peakRssBytes": { "type": "integer", "minimum": 1 },
+          "outcome": { "const": "passed" },
+          "details": { "type": "object" }
+        }
+      }
+    },
+    "observations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cursorqEvents", "markerSequence", "errors"],
+      "properties": {
+        "cursorqEvents": { "type": "integer", "minimum": 0 },
+        "cursorqStatus": { "type": "string", "minLength": 1 },
+        "markerSequence": { "type": "array", "minItems": 6, "maxItems": 6, "items": { "type": "string" } },
+        "errors": { "const": [] }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "guestInstructions",
+        "uploadedBytes",
+        "peakRssBytes",
+        "idleWakeups",
+        "idleWakeupsPerSecond",
+        "phaseDurationsMs",
+        "typingUploadedBytes"
+      ],
+      "properties": {
+        "guestInstructions": { "type": "integer", "minimum": 0 },
+        "uploadedBytes": { "type": "integer", "minimum": 0 },
+        "peakRssBytes": { "type": "integer", "minimum": 1 },
+        "idleWakeups": { "type": "integer", "minimum": 0 },
+        "idleWakeupsPerSecond": { "type": "number", "minimum": 0 },
+        "phaseDurationsMs": { "type": "object" },
+        "typingUploadedBytes": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "$defs": {
+    "counterPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["wallMs", "guestInstructions", "uploadedBytes", "idleWakeups"],
+      "properties": {
+        "wallMs": { "type": "number", "minimum": 0 },
+        "guestInstructions": { "type": "integer", "minimum": 0 },
+        "uploadedBytes": { "type": "integer", "minimum": 0 },
+        "idleWakeups": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

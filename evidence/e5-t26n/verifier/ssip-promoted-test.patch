@@ -1,0 +1,133 @@
+diff --git a/crates/wasm/src/jit_browser.rs b/crates/wasm/src/jit_browser.rs
+--- a/crates/wasm/src/jit_browser.rs
++++ b/crates/wasm/src/jit_browser.rs
+@@ -2946,7 +2946,129 @@
+         let resumed = equal_architecture("nested SRET target effects", &mut oracle, &mut jit);
+         // Firmware ECALLs consume work but do not retire in Machine's established SBI contract.
+         assert_return_effects(&resumed, initial.mstatus, initial.retire_cycle[0] + 13);
+         assert_eq!(resumed.trap, trapped.trap);
+         assert_reused(&jit, &warm, entries, hits, retired);
+     }
++
++    #[wasm_bindgen_test]
++    fn browser_guest_sret_pending_ssip_guest_clear_variant() {
++        const SSIP_ARM: u64 = OUTER + 0x180;
++        const SSIP_HANDLER: u64 = HANDLER + 0x100;
++        const SSIP: u64 = 1 << 1;
++        const ADDI_X5_SSIP: u32 = 0x0020_0293; // addi x5,x0,2
++        const CSRRS_SIP_X5: u32 = 0x1442_a073; // csrrs x0,sip,x5: guest asserts SSIP
++        const CSRRC_SIP_X5: u32 = 0x1442_b073; // csrrc x0,sip,x5: guest clears SSIP
++
++        let mut oracle = Fixture::new(false, false);
++        let mut jit = Fixture::new(true, false);
++        for fixture in [&mut oracle, &mut jit] {
++            encoded_block(
++                &mut fixture.machine,
++                SSIP_ARM,
++                &[
++                    ADDI_X5_SSIP,
++                    CSRRS_SIP_X5,
++                    jal(SSIP_ARM + 8, OUTER),
++                ],
++            );
++            encoded_block(
++                &mut fixture.machine,
++                SSIP_HANDLER,
++                &[ADDI_X5_SSIP, CSRRC_SIP_X5, SRET],
++            );
++            setup_csr(&mut fixture.machine, STVEC, SSIP_HANDLER);
++            setup_csr(&mut fixture.machine, SIE, SSIP);
++            fixture.machine.hart_mut().regs.pc = SSIP_ARM;
++            fixture.run(3);
++            assert_eq!(fixture.machine.hart().regs.pc, OUTER);
++            assert_eq!(
++                fixture
++                    .machine
++                    .hart_mut()
++                    .csr
++                    .read(wasm_vm_core::csr::SIP)
++                    & SSIP,
++                SSIP,
++                "encoded guest csrrs must assert delegated SSIP"
++            );
++            assert_eq!(fixture.machine.hart().csr.next_interrupt(), None); // SIE remains zero
++        }
++
++        let initial = equal_architecture("pending SSIP baseline", &mut oracle, &mut jit);
++        assert_eq!(initial.mstatus & (SPP | SPIE | SIE_BIT), SPP | SPIE);
++        let warm = Authority::read(jit.browser());
++        let entries = jit.browser().entry_cost_stats().host_entries;
++        let hits = jit.browser().dynamic_link_stats().hits;
++        let retired = jit.browser().retired_via_jit();
++
++        oracle.run(2); // outer SRET retires; delegated SSIP consumes the next non-retiring slot
++        jit.run(2);
++        let trapped = equal_architecture("pending SSIP preemption", &mut oracle, &mut jit);
++        assert_eq!(trapped.pc, SSIP_HANDLER);
++        assert_eq!(trapped.mode, Priv::S);
++        assert_eq!(trapped.mstatus, initial.mstatus);
++        assert_eq!(&trapped.trap[..3], &[LAND, (1 << 63) | 1, 0]);
++        assert_eq!(&trapped.trap[3..], &initial.trap[3..]);
++        assert_eq!(trapped.regs, initial.regs);
++        assert_eq!(trapped.ram_window, initial.ram_window);
++        assert_eq!(trapped.retire_cycle, [initial.retire_cycle[0] + 1; 2]);
++        assert_eq!(jit.browser().entry_cost_stats().host_entries, entries);
++        assert!(Authority::read(jit.browser()) == warm);
++
++        for fixture in [&mut oracle, &mut jit] {
++            fixture.run(2); // guest addi mask; encoded csrrc clears delegated sip.SSIP
++            assert_eq!(fixture.machine.hart().regs.pc, SSIP_HANDLER + 8);
++            assert_eq!(
++                fixture
++                    .machine
++                    .hart_mut()
++                    .csr
++                    .read(wasm_vm_core::csr::SIP)
++                    & SSIP,
++                0,
++                "guest sip clear must remove SSIP"
++            );
++            assert_eq!(fixture.machine.hart().csr.mie_bits() & SSIP, SSIP);
++        }
++        let cleared = equal_architecture("guest sip SSIP cleared", &mut oracle, &mut jit);
++        assert_eq!(cleared.mstatus, trapped.mstatus);
++        assert_eq!(cleared.trap, trapped.trap);
++        assert_eq!(cleared.regs, initial.regs);
++        assert_eq!(cleared.retire_cycle, [initial.retire_cycle[0] + 3; 2]);
++        assert_eq!(jit.browser().entry_cost_stats().host_entries, entries);
++        assert!(Authority::read(jit.browser()) == warm);
++
++        oracle.run(1);
++        jit.run(1); // nested encoded SRET, checkpointed before compiled entry
++        let returned = equal_architecture("SSIP nested SRET before entry", &mut oracle, &mut jit);
++        assert_eq!(returned.pc, LAND);
++        assert_eq!(returned.mode, Priv::S);
++        assert_eq!(returned.mstatus, (initial.mstatus & !SPP) | SIE_BIT);
++        assert_eq!(returned.regs, initial.regs);
++        assert_eq!(returned.ram_window, initial.ram_window);
++        assert_eq!(returned.trap, trapped.trap);
++        assert_eq!(returned.retire_cycle, [initial.retire_cycle[0] + 4; 2]);
++        assert_eq!(jit.browser().entry_cost_stats().host_entries, entries);
++
++        for fixture in [&mut oracle, &mut jit] {
++            fixture.run(8);
++            assert_eq!(
++                fixture
++                    .machine
++                    .hart_mut()
++                    .csr
++                    .read(wasm_vm_core::csr::SIP)
++                    & SSIP,
++                0
++            );
++            assert_eq!(fixture.machine.hart().csr.mie_bits() & SSIP, SSIP);
++        }
++        let resumed = equal_architecture("SSIP nested target effects", &mut oracle, &mut jit);
++        assert_return_effects(&resumed, initial.mstatus, initial.retire_cycle[0] + 12);
++        assert_eq!(resumed.trap, trapped.trap);
++        assert_reused(&jit, &warm, entries, hits, retired);
++        console_log!(
++            "SPP_ATTACK SSIP held: guest assert+clear, cause 1 preemption, nested SRET, compiled reuse"
++        );
++    }
+ }

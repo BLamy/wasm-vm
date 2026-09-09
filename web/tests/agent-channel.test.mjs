@@ -342,6 +342,33 @@ test("termination rejects each in-flight PING once, exposes the gap, and reconne
   channel.close();
 });
 
+test("rehandshake resolves only after a fresh transport HELLO", async () => {
+  const h = connector({ autoHello: false });
+  const channel = new Channel({
+    connect: h.connect,
+    reconnectMinDelayMs: 0,
+    reconnectMaxDelayMs: 0,
+  });
+  channel.start();
+  await eventually(() => h.transports.length === 1);
+  h.transports[0].emit(helloFrame());
+  await channel.ready;
+  assert.equal(h.transports.length, 1);
+  const first = h.transports[0];
+
+  const fresh = channel.rehandshake();
+  await eventually(() => h.transports.length === 2, "fresh transport was not opened");
+  assert.equal(channel.state, CHANNEL_STATE.HANDSHAKING);
+  assert.equal(first.closed, true, "the old transport is closed before the new HELLO");
+  h.transports[1].emit(helloFrame());
+  const result = await fresh;
+  assert.equal(result.generation, 2);
+  assert.equal(result.version, 1);
+  assert.equal(channel.state, CHANNEL_STATE.READY);
+  assert.equal(h.transports[1].sent.filter((bytes) => decodeOne(bytes).type === TYPE_HELLO).length, 1);
+  channel.close();
+});
+
 test("a transport killed during HELLO is discarded and the next generation re-negotiates", async () => {
   const h = connector({ autoHello: false });
   const channel = new Channel({

@@ -1,0 +1,32 @@
+✔ wrapper resolves the real held collector without launching a browser (3.850834ms)
+✔ actual wrapper creates a new seal and only the unchanged default-policy reuse (1.392625ms)
+✔ existing attempt refuses before seal creation, writes or child launch (0.37775ms)
+✔ cold failure or signalled child retains transcript/exit and never launches reuse (1.585667ms)
+✔ successful timing keeps non-acceptance and uses the success record (0.596792ms)
+✔ non-cap failure, wrong recorded head, or source mutation cannot emit an observation (3.226125ms)
+✔ actual observer record flows through discovery admission and exact compile-queue accounting (2.808167ms)
+✔ coherent exact accounting splits both backpressure cases without subtracting discovery refusals (0.252042ms)
+✔ negative resident-depth delta and lifetime drops with zero interval drops remain valid (0.224042ms)
+✔ missing, unsafe and out-of-bound actual queue fields refuse (1.034667ms)
+✔ impossible residuals, regressions, unsafe intermediate totals and mixed head/policy refuse (0.718625ms)
+✔ actual success producer shape uses only its nested head and never verifies F (2.197791ms)
+✔ CLI binds original bytes, preserves inputs/outputs and refuses bad accounting before output (111.253542ms)
+✔ unchanged closed observer record retains actual provenance, counters and failed timing (2.819167ms)
+✔ observer requires coherent run/binding pins and an explicit supported fixture kind (2.963417ms)
+✔ matching copies still refuse missing or malformed observer provenance and unequal readback (8.210791ms)
+✔ CLI postprocesses the original observer record bytes without rewriting fixture or evidence (27.573208ms)
+✔ actual counters are mandatory safe integers, with bounded gauges and consistent generation (1.844167ms)
+✔ collector subtracts counters, retains gauges/endpoints and does not erase earlier drops (0.429042ms)
+✔ mixed policies, non-cap failures, moved endpoints, changed generations and regressed counters refuse (4.064709ms)
+✔ unitOnly successful-cap branch keeps nonacceptance and requires completion within its bound (2.109792ms)
+✔ CLI writes a new output bound to the exact unitOnly input bytes (26.23875ms)
+✔ CLI refuses existing output and input=output without overwriting either (56.297125ms)
+✔ CLI refuses a non-cap failure before creating output (30.525292ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 201.552

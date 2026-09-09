@@ -1,0 +1,99 @@
+^D   Compiling libc v0.2.186
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling cfg-if v1.0.4
+   Compiling unicode-ident v1.0.24
+   Compiling zerocopy v0.8.52
+   Compiling version_check v0.9.5
+   Compiling getrandom v0.3.4
+   Compiling serde_core v1.0.228
+   Compiling typenum v1.20.1
+   Compiling crossbeam-utils v0.8.21
+   Compiling bitflags v2.13.0
+   Compiling getrandom v0.4.3
+   Compiling rustix v1.1.4
+   Compiling zmij v1.0.21
+   Compiling autocfg v1.5.1
+   Compiling serde v1.0.228
+   Compiling regex-syntax v0.8.11
+   Compiling serde_json v1.0.150
+   Compiling generic-array v0.14.7
+   Compiling num-traits v0.2.19
+   Compiling once_cell v1.21.4
+   Compiling either v1.16.0
+   Compiling clap_lex v1.1.0
+   Compiling ciborium-io v0.2.2
+   Compiling memchr v2.8.2
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling anstyle v1.0.14
+   Compiling itoa v1.0.18
+   Compiling fastrand v2.4.1
+   Compiling rayon-core v1.13.0
+   Compiling clap_builder v4.6.0
+   Compiling crossbeam-epoch v0.9.18
+   Compiling crossbeam-deque v0.8.6
+   Compiling regex-automata v0.4.14
+   Compiling itertools v0.10.5
+   Compiling fnv v1.0.7
+   Compiling cast v0.3.0
+   Compiling bit-vec v0.8.0
+   Compiling quick-error v1.2.3
+   Compiling same-file v1.0.6
+   Compiling syn v2.0.118
+   Compiling smallvec v1.15.2
+   Compiling walkdir v2.5.0
+   Compiling bit-set v0.8.0
+   Compiling clap v4.6.1
+   Compiling log v0.4.33
+   Compiling oorandom v11.1.5
+   Compiling regex v1.12.4
+   Compiling criterion-plot v0.5.0
+   Compiling anes v0.1.6
+   Compiling unarray v0.1.4
+   Compiling errno v0.3.14
+   Compiling cpufeatures v0.2.17
+   Compiling wait-timeout v0.2.1
+   Compiling is-terminal v0.4.17
+   Compiling rand_core v0.9.5
+   Compiling rand_xorshift v0.4.0
+   Compiling rand v0.9.4
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling zerocopy-derive v0.8.52
+   Compiling serde_derive v1.0.228
+   Compiling sha2 v0.10.9
+   Compiling tempfile v3.27.0
+   Compiling rusty-fork v0.3.1
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t19a-remediation-sabotage.knvLNY/crates/core)
+   Compiling rayon v1.12.0
+   Compiling tinytemplate v1.2.1
+   Compiling half v2.7.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.9.0
+   Compiling ciborium-ll v0.2.2
+   Compiling proptest v1.11.0
+   Compiling ciborium v0.2.2
+   Compiling criterion v0.5.1
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.89s
+     Running tests/desktop_machine_audio_resume.rs (/Users/blamy/Documents/Codex/wasm-vm/target/e5-t19a-verifier-sabotage/debug/deps/desktop_machine_audio_resume-a0e91b2ede2294fe)
+
+running 1 test
+Linux XRUN recovery after successful 960-frame PCM: STOP=OK RELEASE=OK; state=Released params=None tx_used=2 event_used=1
+Linux recovery PREPARE status=0x8001; state=Released; params=None; control_used=6
+
+thread 'linux_6_6_63_xrun_stop_release_prepare_recovers_without_set_params' (15520392) panicked at crates/core/tests/desktop_machine_audio_resume.rs:877:5:
+assertion `left == right` failed: Linux 6.6.63 STOP -> RELEASE -> PREPARE recovery must not fail (BAD_MSG maps to -EINVAL)
+  left: 32769
+ right: 32768
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test linux_6_6_63_xrun_stop_release_prepare_recovers_without_set_params ... FAILED
+
+failures:
+
+failures:
+    linux_6_6_63_xrun_stop_release_prepare_recovers_without_set_params
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p wasm-vm-core --test desktop_machine_audio_resume`

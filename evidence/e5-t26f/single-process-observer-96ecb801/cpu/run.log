@@ -1,0 +1,23 @@
+{"head":"96ecb801fdf8b67af75cd150db82d115bcf046cd","config":{"E5_T26F_REQUIRE_HEAD":"96ecb801fdf8b67af75cd150db82d115bcf046cd","E5_T26F_HEADED":"0","E5_T26F_FIXTURE":"resident-observer-v1","E5_T26F_DIAGNOSTIC_PROFILE":"/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-oBnSX1","E5_T26F_DIAGNOSTIC_PORT":"61637","E5_T26F_TIMEOUT_MS":"1800000","E5_T26F_IMAGE":"target/e5-t26f/resident-image-single-process-observer-v1/alpine-rootfs.ext4","E5_T26F_IMAGE_INFO":"target/e5-t26f/resident-image-single-process-observer-v1/desktop-info.json","E5_T26F_DESKTOP_ASSET_DIR":"target/e5-t26f/chunks/resident-single-process-observer-v1","E5_T26F_DIAGNOSTIC":"reuse","E5_T26F_DIAGNOSTIC_CPU":"1","E5_T26F_DIAGNOSTIC_JIT":"1","E5_T26F_DIAGNOSTIC_RESIDENCY":"repack-off","E5_T26F_OUT":"/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-observer-96ecb801/cpu/record"}}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: JIT comparison must be unprofiled with the unchanged command
+
+'1' !== undefined
+
+    at diagnosticOptions (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:90:14)
+    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:138:20
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: '1',
+  expected: undefined,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

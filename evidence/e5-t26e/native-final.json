@@ -1,0 +1,37 @@
+{
+  "task": "E5-T26e",
+  "implementationCommit": "58a1f46364a46985bf7750a1b3e2c8b4f4f9b139",
+  "verificationCommand": "env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG make verify-E5-T26e",
+  "exitCode": 0,
+  "results": {
+    "desktopRestoreTests": { "passed": 10, "failed": 0, "ignored": 0 },
+    "desktopSnapshotTests": { "passed": 9, "failed": 0, "ignored": 0 },
+    "gpuSnapshotTests": { "passed": 6, "failed": 0, "ignored": 0 },
+    "inputSnapshotTests": { "passed": 12, "failed": 0, "ignored": 0 },
+    "soundSnapshotTests": { "passed": 6, "failed": 0, "ignored": 0 },
+    "format": "passed",
+    "clippy": "passed",
+    "wasm32NoDefaultFeaturesBuild": "passed"
+  },
+  "claim": "The coordinator now makes full-repair readiness a pre-commit typed preparation token and never accepts a post-commit Boolean attestation. VirtioDesktopRestoreBackend decodes real T26b GPU, T26c input, and T26d sound payloads into detached device state, proves one GPU repair frame before publication, commits with serialized rollback snapshots, publishes agent generation and native/letterbox viewport state together, and cold-boots all devices and host state on every refusal. Machine::restore_desktop_snapshot is the production composition call site.",
+  "coverage": {
+    "stagedOrder": ["gpu", "input", "sound", "agent", "viewport", "repair", "commit"],
+    "attacks": [
+      "changed host window size",
+      "agent channel drop during restore",
+      "component refusal",
+      "viewport refusal",
+      "pre-commit missing full repair frame",
+      "post-GPU commit failure and cold rollback",
+      "real T26b GPU, T26c input, and T26d sound codec round-trip",
+      "missing component",
+      "envelope digest corruption",
+      "forward component version",
+      "invalid host dimensions"
+    ],
+    "waivers": [
+      "The browser pixel/CRC and reload harness are owned by E5-T26f.",
+      "Independent machines, WebKit, and host rr are waived by repository policy and user direction."
+    ]
+  }
+}

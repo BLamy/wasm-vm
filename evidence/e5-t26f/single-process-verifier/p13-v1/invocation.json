@@ -1,0 +1,19 @@
+{
+  "acceptance": false,
+  "scope": "same-host clean-clone test availability/portability only",
+  "head": "001e80864911863145f2127192bae5df8186e68b",
+  "root": "/private/tmp/e5-t26f-single-process-p13.j00WpJ",
+  "clone": "/private/tmp/e5-t26f-single-process-p13.j00WpJ/repo",
+  "environment": {
+    "removedNames": [
+      "RUST_LOG"
+    ],
+    "requiredAbsent": [
+      "RUSTFLAGS",
+      "RUST_LOG",
+      "CARGO*"
+    ],
+    "gitTerminalPrompt": "0"
+  },
+  "runs": []
+}

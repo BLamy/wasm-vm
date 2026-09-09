@@ -1,0 +1,66 @@
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/core)
+    Checking js-sys v0.3.103
+    Checking cranelift-codegen v0.122.0
+    Checking console_error_panic_hook v0.1.7
+    Checking wasmprinter v0.235.0
+    Checking ring v0.17.14
+    Checking zerovec v0.11.6
+    Checking zerotrie v0.2.4
+   Compiling zstd-safe v7.2.4
+    Checking zstd-sys v2.0.16+zstd.1.5.7
+   Compiling rustls v0.23.42
+    Checking wasm-vm-guest-agent v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/guest/agent)
+    Checking assert_cmd v2.2.2
+    Checking wasmparser v0.240.0
+    Checking wasm-vm-storage v0.0.1 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/storage)
+    Checking wasm-vm-file-agent-storage v0.0.0 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/file-agent-storage)
+    Checking wasm-vm-wvseccomp v0.0.0 (/Users/blamy/Documents/Codex/e5-t22a-final.2rSfc8/repo/crates/wvseccomp)
+error[E0425]: cannot find function `prctl` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:121:23
+    |
+121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {
+    |                       ^^^^^ not found in `libc`
+
+error[E0425]: cannot find value `PR_SET_NO_NEW_PRIVS` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:121:35
+    |
+121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {
+    |                                   ^^^^^^^^^^^^^^^^^^^ not found in `libc`
+
+error[E0425]: cannot find value `SYS_seccomp` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:132:19
+    |
+132 |             libc::SYS_seccomp,
+    |                   ^^^^^^^^^^^ not found in `libc`
+
+error[E0308]: mismatched types
+   --> crates/wvseccomp/src/main.rs:148:37
+    |
+148 |     let rc = unsafe { libc::syscall(SYS_MOUNT as libc::c_long, 0, 0, 0, 0, 0) };
+    |                       ------------- ^^^^^^^^^^^^^^^^^^^^^^^^^ expected `i32`, found `i64`
+    |                       |
+    |                       arguments to this function are incorrect
+    |
+note: function defined here
+   --> /Users/blamy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.186/src/unix/bsd/mod.rs:586:12
+    |
+586 |     pub fn syscall(num: c_int, ...) -> c_int;
+    |            ^^^^^^^
+help: you can convert an `i64` to an `i32` and panic if the converted value doesn't fit
+    |
+148 |     let rc = unsafe { libc::syscall((SYS_MOUNT as libc::c_long).try_into().unwrap(), 0, 0, 0, 0, 0) };
+    |                                     +                         +++++++++++++++++++++
+
+Some errors have detailed explanations: E0308, E0425.
+For more information about an error, try `rustc --explain E0308`.
+error: could not compile `wasm-vm-wvseccomp` (bin "wvseccomp") due to 4 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `wasm-vm-wvseccomp` (bin "wvseccomp" test) due to 4 previous errors
+error[E0599]: no method named `cursorq_commands` found for struct `std::cell::Ref<'_, dev::virtio::gpu::GpuState>` in the current scope
+    --> crates/core/src/dev/virtio/gpu/mod.rs:2357:35
+     |
+2357 |         assert_eq!(state.borrow().cursorq_commands(), requests.len() as u64);
+     |                                   ^^^^^^^^^^^^^^^^ method not found in `std::cell::Ref<'_, dev::virtio::gpu::GpuState>`
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `wasm-vm-core` (lib test) due to 1 previous error

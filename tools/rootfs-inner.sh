@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # E2-T18 in-container build: cross-install + configure the Alpine riscv64 root and pack it into
 # an ext4 image. Runs inside tools/rootfs.Dockerfile (host-arch Alpine); env from build-rootfs.sh:
-#   MAIN_REPO COMMUNITY_REPO FS_UUID SOURCE_DATE_EPOCH IMG_SIZE PKGS EXTRA_PKGS
+#   MAIN_REPO COMMUNITY_REPO FS_UUID SOURCE_DATE_EPOCH IMG_SIZE PKGS EXTRA_PKGS DISPLAY_CANDIDATE
 #   LOCKED_INSTALL ALPINE_BRANCH
 set -euo pipefail
 ROOT=/rootfs
@@ -13,7 +13,13 @@ mkdir -p "$ROOT"
 # 60ac2099, which lives under /usr/share/apk/keys/riscv64 (NOT the default /etc/apk/keys), so
 # without this apk reports "UNTRUSTED signature". We do NOT use --allow-untrusted (critic #1):
 # a MITM/mirror-compromise now fails closed.
-if [ "${LOCKED_INSTALL:-0}" = 1 ] && [ -s /out/MANIFEST.txt ]; then
+if [ -s /out/INSTALL-MANIFEST.txt ]; then
+  # Profile-driven builds keep the requested base+desktop package constraints in a small,
+  # deterministic input lock. The resolved MANIFEST.txt is still the output lock; using it as the
+  # apk world on a second build would change /etc/apk/world when the first build installed the
+  # desktop extension as a separate transaction.
+  mapfile -t INSTALL_PKGS < <(sed -E 's/-([0-9][^-]*-r[0-9]+)$/=\1/' /out/INSTALL-MANIFEST.txt)
+elif [ "${LOCKED_INSTALL:-0}" = 1 ] && [ -s /out/MANIFEST.txt ]; then
   # Convert `name-version-rN` to apk's exact constraint `name=version-rN`. Package names may
   # contain dashes, so split only at the final version beginning with a digit.
   mapfile -t INSTALL_PKGS < <(sed -E 's/-([0-9][^-]*-r[0-9]+)$/=\1/' /out/MANIFEST.txt)
@@ -164,6 +170,415 @@ for s in modules hwclock swap hostname bootmisc syslog seedrng; do link_svc boot
 link_svc default networking
 for s in killprocs savecache mount-ro; do link_svc shutdown "$s"; done
 
+# E5-T16b/c: display finalists are disposable measurement profiles, not the production desktop
+# image. Keep them opt-in so the E2/E3 base image remains byte-for-byte on its existing path. The
+# profile still uses the real riscv64 APK packages and the emulator's DRM/input devices; it only
+# adds the minimum user/runtime/configuration needed to launch one measured compositor session.
+if [ -n "${DISPLAY_CANDIDATE:-}" ]; then
+  case "$DISPLAY_CANDIDATE" in
+    labwc|weston|desktop) ;;
+    *)
+      echo "unknown DISPLAY_CANDIDATE=$DISPLAY_CANDIDATE (expected labwc, weston, or desktop)" >&2
+      exit 2
+      ;;
+  esac
+
+  # eudev owns /dev event discovery when present. Do not run mdev and udev together in the
+  # scratch profile: both can race over the same device nodes and make a result non-replayable.
+  if [ -e "$ROOT/etc/init.d/udev" ]; then
+    rm -f "$ROOT/etc/runlevels/sysinit/mdev"
+    link_svc sysinit udev
+    link_svc boot udev-trigger
+  fi
+  link_svc default seatd
+
+  # Cross-install deliberately skips APK post-install scripts, so create the measurement user
+  # and group memberships explicitly. Existing numeric ids are preserved; a missing named group
+  # gets a stable private id instead of inheriting the host's account database.
+  desktop_shell=/bin/sh
+  if [ "$DISPLAY_CANDIDATE" = desktop ]; then desktop_shell=/usr/local/bin/start-desktop; fi
+  if grep -q '^desktop:' "$ROOT/etc/passwd" 2>/dev/null; then
+    if [ "$DISPLAY_CANDIDATE" = desktop ]; then
+      awk -F: -v OFS=: '$1 == "desktop" { $7 = "/usr/local/bin/start-desktop" } { print }' \
+        "$ROOT/etc/passwd" > "$ROOT/etc/passwd.e5-t17b"
+      mv "$ROOT/etc/passwd.e5-t17b" "$ROOT/etc/passwd"
+    fi
+  else
+    printf 'desktop:x:1000:1000:wasm-vm display:/home/desktop:%s\n' "$desktop_shell" >> "$ROOT/etc/passwd"
+  fi
+  grep -q '^desktop:' "$ROOT/etc/group" 2>/dev/null || \
+    printf 'desktop:x:1000:\n' >> "$ROOT/etc/group"
+  add_display_member() {
+    group="$1"
+    fallback_gid="$2"
+    group_file="$ROOT/etc/group"
+    group_tmp="$ROOT/etc/group.e5-t16"
+    awk -F: -v OFS=: -v wanted="$group" -v member=desktop -v fallback="$fallback_gid" '
+      $1 == wanted {
+        found = 1
+        if ($4 == "") $4 = member
+        else if ($4 !~ "(^|,)" member "(,|$)") $4 = $4 "," member
+      }
+      { print }
+      END { if (!found) print wanted, "x", fallback, member }
+    ' "$group_file" > "$group_tmp"
+    mv "$group_tmp" "$group_file"
+  }
+  add_display_member video 18
+  add_display_member input 997
+  add_display_member audio 63
+  add_display_member seat 996
+  install -d -m0700 -o 1000 -g 1000 "$ROOT/home/desktop" "$ROOT/run/user/1000"
+  if [ "${E5_T18B_INTERACTIVE:-0}" = 1 ]; then
+    install -d -m0755 "$ROOT/etc/wasm-vm"
+    printf '%s\n' 900 > "$ROOT/etc/wasm-vm/desktop-terminal-interactive"
+  fi
+  install -d -m0755 "$ROOT/usr/local/bin"
+
+  # Keep the compositor and terminal in the same desktop session: Wayland creates its socket with
+  # the compositor user's ownership, so launching either compositor as root would strand the
+  # desktop client. The candidate-specific launchers make the backend and renderer visible in every
+  # transcript and keep each scratch image's custom-input manifest self-describing.
+  if [ "$DISPLAY_CANDIDATE" = labwc ]; then
+    install -d -m0755 "$ROOT/etc/xdg/labwc"
+    cat > "$ROOT/usr/local/bin/e5-t16b-start-labwc" <<'LABWC'
+#!/bin/sh
+set -eu
+export WLR_BACKENDS=drm
+export WLR_RENDERER=pixman
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/1000}
+mkdir -p "$XDG_RUNTIME_DIR"
+chmod 700 "$XDG_RUNTIME_DIR"
+chown desktop:desktop "$XDG_RUNTIME_DIR"
+printf '%s\n' "E5T16B_LAUNCH WLR_BACKENDS=$WLR_BACKENDS WLR_RENDERER=$WLR_RENDERER"
+exec runuser -u desktop -- env \
+  WLR_BACKENDS="$WLR_BACKENDS" \
+  WLR_RENDERER="$WLR_RENDERER" \
+  XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+  labwc -d 2>&1
+LABWC
+    chmod 0755 "$ROOT/usr/local/bin/e5-t16b-start-labwc"
+    cat > "$ROOT/usr/local/bin/e5-t16b-open-terminal" <<'TERMINAL'
+#!/bin/sh
+set -eu
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/1000}
+export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+mkdir -p "$XDG_RUNTIME_DIR"
+chmod 700 "$XDG_RUNTIME_DIR"
+chown desktop:desktop "$XDG_RUNTIME_DIR"
+cd /home/desktop
+exec runuser -u desktop -- env \
+  HOME=/home/desktop \
+  XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+  WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \
+  foot "$@"
+TERMINAL
+    chmod 0755 "$ROOT/usr/local/bin/e5-t16b-open-terminal"
+    cat > "$ROOT/etc/xdg/labwc/rc.xml" <<'RCXML'
+<?xml version="1.0"?>
+<labwc_config>
+  <core>
+    <adaptiveSync>no</adaptiveSync>
+  </core>
+</labwc_config>
+RCXML
+  elif [ "$DISPLAY_CANDIDATE" = weston ]; then
+    install -d -m0755 "$ROOT/etc/xdg/weston"
+    cat > "$ROOT/usr/local/bin/e5-t16c-start-weston" <<'WESTON'
+#!/bin/sh
+set -eu
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/1000}
+export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+mkdir -p "$XDG_RUNTIME_DIR"
+chmod 700 "$XDG_RUNTIME_DIR"
+chown desktop:desktop "$XDG_RUNTIME_DIR"
+printf '%s\n' "E5T16C_LAUNCH weston --backend=drm --renderer=pixman --socket=wayland-0 --no-config"
+exec runuser -u desktop -- env \
+  HOME=/home/desktop \
+  XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+  WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \
+  weston --backend=drm --renderer=pixman --socket=wayland-0 --no-config 2>&1
+WESTON
+    chmod 0755 "$ROOT/usr/local/bin/e5-t16c-start-weston"
+    cat > "$ROOT/usr/local/bin/e5-t16c-open-terminal" <<'TERMINAL'
+#!/bin/sh
+set -eu
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/1000}
+export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+mkdir -p "$XDG_RUNTIME_DIR"
+chmod 700 "$XDG_RUNTIME_DIR"
+chown desktop:desktop "$XDG_RUNTIME_DIR"
+cd /home/desktop
+exec runuser -u desktop -- env \
+  HOME=/home/desktop \
+  XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+  WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \
+  foot "$@"
+TERMINAL
+    chmod 0755 "$ROOT/usr/local/bin/e5-t16c-open-terminal"
+  fi
+
+  if [ "$DISPLAY_CANDIDATE" = desktop ]; then
+    # Production desktop startup is deliberately separate from the disposable T16c launcher. The
+    # tty1 login invokes this bounded wrapper as desktop's shell, so a missing DRM device cannot
+    # strand init or leave a foreground Weston process with no timeout.
+    install -d -m0755 "$ROOT/etc/init.d" "$ROOT/usr/local/sbin" \
+      "$ROOT/home/desktop/.config/foot" "$ROOT/home/desktop/.local/bin" \
+      "$ROOT/etc/xdg/weston"
+    install -d -m0700 "$ROOT/home/desktop/.local/state/wasm-vm"
+    cat > "$ROOT/etc/init.d/desktop-runtime" <<'DESKTOP_RUNTIME'
+#!/sbin/openrc-run
+description="Initialize the desktop user's Wayland runtime directory"
+
+boot_order_log=/home/desktop/.local/state/wasm-vm/boot-order.log
+
+depend() {
+  need seatd
+  after udev udev-trigger
+}
+
+start() {
+  if ! pidof seatd >/dev/null 2>&1; then
+    printf '%s\n' "E5T17D_SEATD_NOT_READY=1" >>"$boot_order_log"
+    chown 1000:1000 "$boot_order_log"
+    chmod 600 "$boot_order_log"
+    /bin/sync
+    return 1
+  fi
+  mkdir -p /run/user/1000
+  chmod 700 /run/user/1000
+  chown 1000:1000 /run/user/1000
+  seatd_pid=$(pidof seatd | awk '{print $1}')
+  seatd_state=$(awk '{print $3}' "/proc/$seatd_pid/stat")
+  runtime_mode=$(stat -c '%a' /run/user/1000)
+  runtime_uid=$(stat -c '%u' /run/user/1000)
+  runtime_gid=$(stat -c '%g' /run/user/1000)
+  printf '%s\n' "E5T17D_SEATD_READY=1 pid=$seatd_pid state=$seatd_state" \
+    "E5T17D_RUNTIME_READY mode=0$runtime_mode uid=$runtime_uid gid=$runtime_gid" >>"$boot_order_log"
+  chown 1000:1000 "$boot_order_log"
+  chmod 600 "$boot_order_log"
+  /bin/sync
+}
+DESKTOP_RUNTIME
+    chmod 0755 "$ROOT/etc/init.d/desktop-runtime"
+    link_svc default desktop-runtime
+
+    # tty1 autologin reaches a real desktop account but never stores a password or an interactive
+    # root credential. BusyBox getty's -n/-l path executes this fixed login helper after OpenRC's
+    # default runlevel has brought up seatd and the runtime-directory service.
+    cat > "$ROOT/usr/local/sbin/desktop-autologin" <<'DESKTOP_AUTOLOGIN'
+#!/bin/sh
+set -eu
+exec /bin/login -f desktop
+DESKTOP_AUTOLOGIN
+    chmod 0755 "$ROOT/usr/local/sbin/desktop-autologin"
+    cat >> "$ROOT/etc/inittab" <<'DESKTOP_TTY1'
+tty1::respawn:/sbin/getty -L -n -l /usr/local/sbin/desktop-autologin 115200 tty1 linux
+DESKTOP_TTY1
+
+    cat > "$ROOT/usr/local/bin/start-desktop" <<'START_DESKTOP'
+#!/bin/sh
+set -eu
+
+runtime_dir=${XDG_RUNTIME_DIR:-/run/user/1000}
+log_dir=/home/desktop/.local/state/wasm-vm
+mkdir -p "$runtime_dir" "$log_dir"
+chmod 700 "$runtime_dir" "$log_dir"
+chown desktop:desktop "$runtime_dir" "$log_dir"
+export XDG_RUNTIME_DIR="$runtime_dir"
+export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+export XKB_CONFIG_ROOT=${XKB_CONFIG_ROOT:-/usr/share/X11/xkb}
+export XKB_DEFAULT_RULES=${XKB_DEFAULT_RULES:-evdev}
+export XKB_DEFAULT_MODEL=${XKB_DEFAULT_MODEL:-pc105}
+export XKB_DEFAULT_LAYOUT=${XKB_DEFAULT_LAYOUT:-us}
+export XKB_DEFAULT_VARIANT=${XKB_DEFAULT_VARIANT:-}
+export XKB_DEFAULT_OPTIONS=${XKB_DEFAULT_OPTIONS:-}
+
+weston_log="$log_dir/weston.log"
+foot_log="$log_dir/foot.log"
+boot_order_log="$log_dir/boot-order.log"
+if ! pidof seatd >/dev/null 2>&1; then
+  printf '%s\n' "E5T17D_START_DESKTOP_SEATD_NOT_READY=1" >>"$boot_order_log"
+  /bin/sync
+  exit 1
+fi
+seatd_pid=$(pidof seatd | awk '{print $1}')
+seatd_state=$(awk '{print $3}' "/proc/$seatd_pid/stat")
+if [ "$seatd_state" = Z ]; then
+  printf '%s\n' "E5T17D_START_DESKTOP_SEATD_ZOMBIE=1" >>"$boot_order_log"
+  /bin/sync
+  exit 1
+fi
+runtime_mode=$(stat -c '%a' "$runtime_dir")
+runtime_uid=$(stat -c '%u' "$runtime_dir")
+runtime_gid=$(stat -c '%g' "$runtime_dir")
+printf '%s\n' "E5T17D_START_DESKTOP_AFTER_SEATD=1 pid=$seatd_pid state=$seatd_state" \
+  "E5T17D_START_DESKTOP_RUNTIME mode=0$runtime_mode uid=$runtime_uid gid=$runtime_gid" >>"$boot_order_log"
+chown desktop:desktop "$boot_order_log"
+chmod 600 "$boot_order_log"
+printf '%s\n' "E5T17B_START_DESKTOP weston --config=/etc/xdg/weston/weston.ini --backend=drm --renderer=pixman --socket=$WAYLAND_DISPLAY"
+
+# The guest display can be absent or already claimed. Both compositor and terminal are bounded;
+# the login shell returns cleanly after a failure so tty1/getty cannot block OpenRC shutdown.
+desktop_timeout=30
+if [ -r /etc/wasm-vm/desktop-terminal-interactive ]; then
+  desktop_timeout=$(cat /etc/wasm-vm/desktop-terminal-interactive)
+fi
+/bin/busybox timeout "$desktop_timeout" weston \
+  --config=/etc/xdg/weston/weston.ini \
+  --backend=drm --renderer=pixman --socket="$WAYLAND_DISPLAY" \
+  >"$weston_log" 2>&1 &
+weston_pid=$!
+socket_ready=0
+attempt=0
+while [ "$attempt" -lt 30 ]; do
+  if [ -S "$runtime_dir/$WAYLAND_DISPLAY" ]; then
+    socket_ready=1
+    break
+  fi
+  if ! kill -0 "$weston_pid" 2>/dev/null; then break; fi
+  /bin/busybox sleep 1
+  attempt=$((attempt + 1))
+done
+
+if [ "$socket_ready" -ne 1 ]; then
+  printf '%s\n' "E5T17B_WESTON_NOT_READY=1" >>"$weston_log"
+  printf '%s\n' "E5T17D_COMPOSITOR_FAILURE_BOUNDED=30" >>"$boot_order_log"
+  kill "$weston_pid" 2>/dev/null || true
+  wait "$weston_pid" 2>/dev/null || true
+  printf '%s\n' "E5T17D_DESKTOP_RETURNED=0" >>"$boot_order_log"
+  /bin/sync
+  exit 0
+fi
+
+printf '%s\n' "E5T17B_WESTON_READY=1" >>"$weston_log"
+printf '%s\n' "E5T17D_COMPOSITOR_READY=1" >>"$boot_order_log"
+foot_pid=
+if [ ! -r /etc/wasm-vm/desktop-terminal-interactive ]; then
+  /bin/busybox timeout "$desktop_timeout" env HOME=/home/desktop SHELL=/bin/sh /usr/bin/foot \
+    >"$foot_log" 2>&1 &
+  foot_pid=$!
+fi
+if wait "$weston_pid"; then
+  weston_status=0
+else
+  weston_status=$?
+fi
+if [ -n "$foot_pid" ] && kill -0 "$foot_pid" 2>/dev/null; then
+  kill "$foot_pid" 2>/dev/null || true
+fi
+if [ -n "$foot_pid" ]; then wait "$foot_pid" 2>/dev/null || true; fi
+printf '%s\n' "E5T17B_WESTON_EXIT=$weston_status" >>"$weston_log"
+printf '%s\n' "E5T17D_DESKTOP_RETURNED=0" >>"$boot_order_log"
+/bin/sync
+exit 0
+START_DESKTOP
+    chmod 0755 "$ROOT/usr/local/bin/start-desktop"
+    # E5-T18d's production supervisor replaces the historical single-attempt fixture without
+    # changing its pinned image recipe when E5_T18D_RECOVERY=0 is explicitly selected.
+    if [ "${E5_T18D_RECOVERY:-0}" = 1 ]; then
+      install -Dm755 /start-desktop "$ROOT/usr/local/bin/start-desktop"
+      install -Dm755 /desktop-autologin "$ROOT/usr/local/sbin/desktop-autologin"
+      install -Dm755 /desktop-runtime.initd "$ROOT/etc/init.d/desktop-runtime"
+      install -Dm755 /desktop-test-console "$ROOT/usr/local/sbin/desktop-test-console"
+      install -d -m0755 "$ROOT/etc/wasm-vm"
+      printf '\033[0m\nDESKTOP FAILED — automatic restart budget exhausted or startup unavailable.\nLogs: /home/desktop/.local/state/wasm-vm/desktop.log\nA serial login remains available. Reboot after correcting the configuration.\n\n' \
+        >"$ROOT/etc/wasm-vm/desktop-fallback.issue"
+      sed -i 's@ttyS0::respawn:/sbin/getty -L 115200 ttyS0 vt100@ttyS0::respawn:/usr/local/sbin/desktop-test-console@' "$ROOT/etc/inittab"
+    fi
+    grep -qxF /usr/local/bin/start-desktop "$ROOT/etc/shells" 2>/dev/null || \
+      printf '%s\n' /usr/local/bin/start-desktop >> "$ROOT/etc/shells"
+
+    # Explicitly pin the compositor configuration too. The desktop shell reads this file for the
+    # real panel launcher, keyboard rules, and renderer; command-line flags below repeat the DRM /
+    # pixman boundary so the startup transcript remains self-describing.
+    cat > "$ROOT/etc/xdg/weston/weston.ini" <<'WESTON_INI'
+[core]
+backend=drm-backend.so
+renderer=pixman
+shell=desktop-shell.so
+
+[launcher]
+icon=/usr/share/weston/icon_terminal.png
+path=/usr/bin/weston-terminal
+
+[keyboard]
+keymap_rules=evdev
+keymap_model=pc105
+keymap_layout=us
+
+[terminal]
+term=xterm-256color
+WESTON_INI
+
+    if [ "${E5_T22C_RESIZE:-0}" = 1 ]; then
+      install -Dm755 /wv-display-query "$ROOT/usr/local/bin/wv-display-query"
+      install -Dm755 /wv-display-resize.so "$ROOT/usr/lib/weston/wv-display-resize.so"
+      # Keep the same DRM/pixman renderer, without an unnecessary extra shadow
+      # framebuffer copy on this RAM-backed virtual GPU.
+      sed -i '/^\[core\]$/a modules=wv-display-resize.so\npixman-shadow=false' "$ROOT/etc/xdg/weston/weston.ini"
+      # Weston represents a solid background with a one-pixel client buffer and
+      # a native Wayland viewport destination. Avoid re-rasterizing the stock
+      # wallpaper in the interpreted guest every time its output expands.
+      printf '\n[shell]\nbackground-color=0xff77716f\n' >> "$ROOT/etc/xdg/weston/weston.ini"
+    fi
+
+    cat > "$ROOT/home/desktop/.profile" <<'DESKTOP_PROFILE'
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/1000}
+export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+DESKTOP_PROFILE
+    cat > "$ROOT/home/desktop/.config/foot/foot.ini" <<'FOOT_INI'
+shell=/bin/sh
+term=xterm-256color
+FOOT_INI
+    # Weston desktop-shell's built-in Terminal launcher execs this conventional path. Keep the
+    # launcher target inside the verified image rather than relying on the optional weston-terminal
+    # sample client, which is not part of the selected production package set.
+    cat > "$ROOT/usr/bin/weston-terminal" <<'WESTON_TERMINAL'
+#!/bin/sh
+set -eu
+export HOME=/home/desktop
+export SHELL=/bin/sh
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/1000}
+export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+export XKB_CONFIG_ROOT=${XKB_CONFIG_ROOT:-/usr/share/X11/xkb}
+export XKB_DEFAULT_RULES=${XKB_DEFAULT_RULES:-evdev}
+export XKB_DEFAULT_MODEL=${XKB_DEFAULT_MODEL:-pc105}
+export XKB_DEFAULT_LAYOUT=${XKB_DEFAULT_LAYOUT:-us}
+export XKB_DEFAULT_VARIANT=${XKB_DEFAULT_VARIANT:-}
+export XKB_DEFAULT_OPTIONS=${XKB_DEFAULT_OPTIONS:-}
+cd /home/desktop
+exec /usr/bin/foot "$@"
+WESTON_TERMINAL
+    chmod 0755 "$ROOT/usr/bin/weston-terminal"
+    cat > "$ROOT/home/desktop/.local/bin/clip-copy" <<'CLIP_COPY'
+#!/bin/sh
+set -eu
+exec /usr/bin/wl-copy "$@"
+CLIP_COPY
+    cat > "$ROOT/home/desktop/.local/bin/clip-paste" <<'CLIP_PASTE'
+#!/bin/sh
+set -eu
+exec /usr/bin/wl-paste "$@"
+CLIP_PASTE
+    chmod 0755 "$ROOT/home/desktop/.local/bin/clip-copy" "$ROOT/home/desktop/.local/bin/clip-paste"
+    chown -R 1000:1000 "$ROOT/home/desktop"
+
+    # The desktop image is not a root-login credential store. Remove shell histories, network
+    # credential files, and APK download residue before the deterministic manifests are written.
+    sed -i 's@^root:[^:]*:@root:!:@' "$ROOT/etc/shadow"
+    for credential in \
+      "$ROOT/root/.ash_history" "$ROOT/root/.bash_history" "$ROOT/root/.netrc" "$ROOT/root/.curlrc" \
+      "$ROOT/root/.wget-hsts" "$ROOT/home/desktop/.ash_history" "$ROOT/home/desktop/.bash_history" \
+      "$ROOT/home/desktop/.netrc" "$ROOT/home/desktop/.curlrc" "$ROOT/home/desktop/.wget-hsts"; do
+      rm -f "$credential"
+    done
+    if [ -d "$ROOT/root/.ssh" ]; then rm -rf "$ROOT/root/.ssh"; fi
+    if [ -d "$ROOT/home/desktop/.ssh" ]; then rm -rf "$ROOT/home/desktop/.ssh"; fi
+    if [ -d "$ROOT/var/cache/apk" ]; then find "$ROOT/var/cache/apk" -type f -delete; fi
+  fi
+fi
+
 # E5-T23c: the static virtio-console agent. It owns only the named agent port and retries inside
 # the process when the kernel removes/recreates that port; no serial-console service is changed.
 install -Dm755 /wasmvm-agent-riscv64 "$ROOT/usr/libexec/wasm-vm/wasmvm-agent"
@@ -199,11 +614,59 @@ link_svc default wasm-vm-file-agent
     digest=$(sha256sum "$ROOT$path" | awk '{print $1}')
     printf '%s 0%s %s\n' "$digest" "$mode" "$path"
   done
+  # E5-T16b/c disposable finalist files are present only when DISPLAY_CANDIDATE is set. Include
+  # every launcher/config file in the custom-input lock when it exists, while leaving the base
+  # image's historical manifest unchanged.
+  for path in \
+    /usr/local/bin/e5-t16b-start-labwc \
+    /usr/local/bin/e5-t16b-open-terminal \
+    /etc/xdg/labwc/rc.xml \
+    /usr/local/bin/e5-t16c-start-weston \
+    /usr/local/bin/e5-t16c-open-terminal \
+    /etc/init.d/desktop-runtime \
+    /usr/local/sbin/desktop-autologin \
+    /usr/local/bin/start-desktop \
+    /usr/local/sbin/desktop-test-console \
+    /usr/local/bin/wv-display-query \
+    /usr/lib/weston/wv-display-resize.so \
+    /etc/wasm-vm/desktop-fallback.issue \
+    /etc/xdg/weston/weston.ini \
+    /etc/wasm-vm/desktop-terminal-interactive \
+    /home/desktop/.profile \
+    /home/desktop/.config/foot/foot.ini \
+    /usr/bin/weston-terminal \
+    /home/desktop/.local/bin/clip-copy \
+    /home/desktop/.local/bin/clip-paste \
+    /etc/inittab \
+    /etc/fstab \
+    /etc/hostname \
+    /etc/securetty \
+    /etc/shadow \
+    /etc/shells \
+    /etc/apk/repositories \
+    /etc/network/interfaces
+  do
+    [ -e "$ROOT$path" ] || continue
+    mode=$(stat -c '%a' "$ROOT$path")
+    digest=$(sha256sum "$ROOT$path" | awk '{print $1}')
+    printf '%s 0%s %s\n' "$digest" "$mode" "$path"
+  done
+  if [ -n "${DISPLAY_CANDIDATE:-}" ]; then
+    for path in /etc/passwd /etc/group; do
+      mode=$(stat -c '%a' "$ROOT$path")
+      digest=$(sha256sum "$ROOT$path" | awk '{print $1}')
+      printf '%s 0%s %s\n' "$digest" "$mode" "$path"
+    done
+  fi
   for path in \
     /var/lib/wasm-vm/transfer \
     /var/lib/wasm-vm/transfer/inbox \
-    /var/lib/wasm-vm/transfer/outbox
+    /var/lib/wasm-vm/transfer/outbox \
+    /home/desktop \
+    /home/desktop/.local/state/wasm-vm \
+    /run/user/1000
   do
+    [ -e "$ROOT$path" ] || continue
     mode=$(stat -c '%a' "$ROOT$path")
     printf '%s 0%s %s\n' directory "$mode" "$path"
   done
@@ -261,11 +724,13 @@ rm -f /out/alpine-rootfs.ext4
 mke2fs -q -t ext4 -O ^metadata_csum -L root -U "$FS_UUID" -E "root_owner=0:0,hash_seed=$FS_UUID" -d "$ROOT" /out/alpine-rootfs.ext4 "$IMG_SIZE"
 
 # `touch` pins mtime/atime but necessarily advances the SOURCE tree's ctime to the real
-# container clock. `mke2fs -d` copies that ctime into each destination inode even while
-# E2FSPROGS_FAKE_TIME correctly pins the filesystem/superblock and inode creation times.
-# The result is one changing byte at inode offset 0x0c for every imported inode — exactly
-# the residual E3-T11 drift in chunks 2-4. ext4 ctime is historical metadata here (the image
-# has never been mounted), so normalize it after population with the same pinned e2fsprogs.
+# container clock. `mke2fs -d` also reads a few source directories while copying them; the
+# container's relatime policy can therefore advance their destination atime during the copy,
+# even though the source tree was normalized first. `mke2fs` copies ctime and those atimes into
+# destination inodes while E2FSPROGS_FAKE_TIME pins the filesystem/superblock and inode creation
+# times. Normalize both fields after population with the same pinned e2fsprogs. These are
+# historical metadata on an image that has never been mounted, and leaving either field live
+# would make the byte-level reproducibility proof depend on build timing.
 #
 # Address inodes by their image path rather than by source inode number. Quoting/escaping
 # keeps the batch correct for whitespace, quotes, and backslashes; repeated hard-link paths
@@ -278,6 +743,7 @@ while IFS= read -r -d '' source_path; do
   image_path=${image_path//\\/\\\\}
   image_path=${image_path//\"/\\\"}
   printf 'set_inode_field "%s" ctime %s\n' "$image_path" "$SOURCE_DATE_EPOCH" >> "$CTIME_CMDS"
+  printf 'set_inode_field "%s" atime %s\n' "$image_path" "$SOURCE_DATE_EPOCH" >> "$CTIME_CMDS"
 done < <(find "$ROOT" -print0)
 debugfs -w -f "$CTIME_CMDS" /out/alpine-rootfs.ext4 >/tmp/debugfs-normalize-ctime.log 2>&1
 

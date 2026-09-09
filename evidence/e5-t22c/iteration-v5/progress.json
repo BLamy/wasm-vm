@@ -1,0 +1,443 @@
+{
+  "state": {
+    "frames": 431,
+    "error": null,
+    "disposed": false,
+    "viewport": {
+      "disposed": false,
+      "desired": {
+        "width": 802,
+        "height": 601,
+        "dpr": 1,
+        "cssWidth": 802,
+        "cssHeight": 601,
+        "sequence": 7
+      },
+      "requested": {
+        "width": 802,
+        "height": 601,
+        "dpr": 1,
+        "cssWidth": 802,
+        "cssHeight": 601,
+        "sequence": 7
+      },
+      "accepted": {
+        "width": 802,
+        "height": 601,
+        "dpr": 1,
+        "cssWidth": 802,
+        "cssHeight": 601,
+        "sequence": 7
+      },
+      "requests": 7,
+      "inFlight": false,
+      "timerPending": false,
+      "dprWatcherPending": true,
+      "debounceMs": 250,
+      "error": null
+    },
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 802,
+      "height": 601,
+      "fixedViewport": true,
+      "sizeMismatch": false,
+      "framesReceived": 431,
+      "successfulPresents": 411,
+      "replayedFrames": 6,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": {
+        "enqueued": 431,
+        "coalesced": 26,
+        "presented": 405,
+        "skipped": 26,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 1,
+        "paused": false,
+        "disposed": false,
+        "scheduled": false
+      },
+      "gpu": {
+        "framesReceived": 431,
+        "enqueued": 431,
+        "coalesced": 26,
+        "presented": 405,
+        "successfulPresents": 411,
+        "skipped": 26,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 1,
+        "uploadedBytes": 110925084,
+        "width": 802,
+        "height": 601
+      },
+      "latest": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 802,
+          "height": 601
+        },
+        "resourceWidth": 802,
+        "resourceHeight": 601
+      },
+      "errors": []
+    },
+    "modes": [
+      {
+        "ms": 7713.615000009537,
+        "width": 901,
+        "height": 701,
+        "frame": 1
+      },
+      {
+        "ms": 532595.4499999881,
+        "width": 803,
+        "height": 603,
+        "frame": 425
+      },
+      {
+        "ms": 547994.1549999714,
+        "width": 640,
+        "height": 480,
+        "frame": 426
+      },
+      {
+        "ms": 565335.8700000048,
+        "width": 1280,
+        "height": 800,
+        "frame": 427
+      },
+      {
+        "ms": 584264.8599999547,
+        "width": 2560,
+        "height": 1600,
+        "frame": 428
+      },
+      {
+        "ms": 604696.2249999642,
+        "width": 801,
+        "height": 601,
+        "frame": 430
+      },
+      {
+        "ms": 623334.4549999833,
+        "width": 802,
+        "height": 601,
+        "frame": 431
+      }
+    ],
+    "paints": [
+      {
+        "ms": 7718.324999988079,
+        "width": 901,
+        "height": 701,
+        "presents": 1
+      },
+      {
+        "ms": 532597.8299999833,
+        "width": 803,
+        "height": 603,
+        "presents": 400
+      },
+      {
+        "ms": 547999.7049999833,
+        "width": 640,
+        "height": 480,
+        "presents": 402
+      },
+      {
+        "ms": 565338.844999969,
+        "width": 1280,
+        "height": 800,
+        "presents": 404
+      },
+      {
+        "ms": 584277.2899999619,
+        "width": 2560,
+        "height": 1600,
+        "presents": 406
+      },
+      {
+        "ms": 604698.4549999833,
+        "width": 801,
+        "height": 601,
+        "presents": 409
+      },
+      {
+        "ms": 623336.4049999714,
+        "width": 802,
+        "height": 601,
+        "presents": 411
+      }
+    ]
+  },
+  "scheduler": {
+    "quantum": 500000,
+    "maxQuantum": 500000,
+    "slices": 11903,
+    "totalSliceMs": 628691.2050014138,
+    "averageSliceMs": 52.81787826610214,
+    "maxSliceMs": 557.6349999904633,
+    "sliceHistogram": [
+      {
+        "leMs": 4,
+        "count": 50
+      },
+      {
+        "leMs": 8,
+        "count": 300
+      },
+      {
+        "leMs": 16,
+        "count": 278
+      },
+      {
+        "leMs": 32,
+        "count": 1133
+      },
+      {
+        "leMs": 64,
+        "count": 6921
+      },
+      {
+        "leMs": 128,
+        "count": 3147
+      },
+      {
+        "leMs": 256,
+        "count": 52
+      },
+      {
+        "leMs": 512,
+        "count": 19
+      },
+      {
+        "leMs": 1000,
+        "count": 3
+      },
+      {
+        "leMs": null,
+        "count": 0
+      }
+    ],
+    "maxStretchGapMs": 559.214999973774,
+    "requestedInstructions": 5951500000,
+    "retiredInstructions": 5951071476,
+    "fetchWaits": 279,
+    "fetchRequestedChunks": 308,
+    "fetchWaitTotalMs": 555.7949994206429,
+    "fetchWaitMaxMs": 10.75,
+    "outputCalls": 273,
+    "outputBytes": 28177,
+    "inputCalls": 18,
+    "inputBytes": 146,
+    "yieldMode": "scheduler.postTask",
+    "schedulerYields": 11904,
+    "timerYields": 0,
+    "mainThreadYields": 0
+  },
+  "jit": {
+    "hasExecutor": true,
+    "compiledBlocks": 114,
+    "executedBlocks": 131793247,
+    "retiredViaJit": 1867390650,
+    "directChainEntries": 352337254,
+    "directChainLinks": 220548006,
+    "dynamicLinkAttempts": 41778750,
+    "dynamicLinkHits": 15647455,
+    "dynamicLinkRefusals": 26131295,
+    "dynamicLinkRetargets": 0,
+    "dynamicLinkLiveEntries": 5,
+    "dynamicLinkInstalls": 4747913,
+    "entryCost": {
+      "hostEntries": 131793247,
+      "stateCopyCalls": 263586494,
+      "stateCopyBytes": 26224300552,
+      "stateCopyNs": 12198898254,
+      "engineEntryNs": 44141794406,
+      "indirectTableDispatches": 80716622,
+      "authorityChecks": 178496869,
+      "memorySplitExits": 3623907,
+      "deviceBoundaries": 249856,
+      "deviceBoundaryNs": 19060019
+    },
+    "jitRegionChaining": true,
+    "jitDynamicChaining": true,
+    "guestRetired": 5951571405,
+    "jitEngineCalls": 131793247,
+    "jitLogicalBlocksPerEngineCall": 2.673409010098977,
+    "jitRetiredShare": 0.31376430238763137,
+    "chainLinksMade": 23063,
+    "chainLinksCut": 23025,
+    "chainDispatchEntries": 95464139,
+    "chainMaxDepth": 128,
+    "chainLinksFollowed": 124249453,
+    "jitResidencyPolicy": "repack-off",
+    "jitResidencyCap": 24,
+    "jitSubmittedMembers": 55774,
+    "jitCompilePauseNs": 0,
+    "jitCompilePauseMaxNs": 0,
+    "jitCompilePauseSamples": 11896,
+    "jitCacheInstalls": 55761,
+    "jitCacheRetranslations": 49394,
+    "jitCacheEvictions": 11424,
+    "jitCacheBatches": 22,
+    "jitCacheCodeBytes": 1664978,
+    "decodedBlocksDiscarded": 257,
+    "decodedCacheFlushes": 3,
+    "discoveryGeneration": 101,
+    "blockEntryHits": 689855047,
+    "blockBuilds": 108863242
+  },
+  "gpu": {
+    "advertisedWidth": 802,
+    "advertisedHeight": 601,
+    "refreshHz": 60,
+    "pendingEvents": 0,
+    "edid": [
+      0,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      0,
+      94,
+      205,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      30,
+      1,
+      4,
+      165,
+      21,
+      16,
+      120,
+      10,
+      150,
+      5,
+      163,
+      84,
+      76,
+      153,
+      38,
+      15,
+      80,
+      84,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      58,
+      14,
+      34,
+      160,
+      48,
+      89,
+      30,
+      32,
+      40,
+      20,
+      115,
+      0,
+      210,
+      160,
+      0,
+      0,
+      0,
+      26,
+      0,
+      0,
+      0,
+      253,
+      0,
+      30,
+      120,
+      15,
+      250,
+      60,
+      1,
+      10,
+      32,
+      32,
+      32,
+      32,
+      32,
+      32,
+      0,
+      0,
+      0,
+      252,
+      0,
+      87,
+      65,
+      83,
+      77,
+      32,
+      86,
+      77,
+      10,
+      32,
+      32,
+      32,
+      32,
+      32,
+      0,
+      0,
+      0,
+      255,
+      0,
+      87,
+      86,
+      77,
+      45,
+      48,
+      48,
+      48,
+      49,
+      10,
+      32,
+      32,
+      32,
+      32,
+      0,
+      72
+    ],
+    "resourceCount": 3,
+    "resourceBytes": 6382420,
+    "scanoutResource": 16,
+    "scanoutWidth": 802,
+    "scanoutHeight": 601
+  },
+  "serial": "PLAY ns=111054550700 id=16 name=Virtual-1 width=802 height=601 refresh=59998 scale=1 edid_width=802 edid_height=601 edid=00ffffffffffff005ecd010001000000011e0104a51510780a9605a3544c99260f5054000000010101010101010101010101010101013a0e22a030591e2028147300d2a00000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a202020200048\r\nE5T22C_DISPLAY_BEGIN\r\nWV_DISPLAY ns=111410000900 id=16 name=Virtual-1 width=802 height=601 refresh=59998 scale=1 edid_width=802 edid_height=601 edid=00ffffffffffff005ecd010001000000011e0104a51510780a9605a3544c99260f5054000000010101010101010101010101010101013a0e22a030591e2028147300d2a00000001a000000fd001e780ffa3c010a202020202020000000fc005741534d20564d0a2020202020000000ff0057564d2d303030310a202020200048\r\nWV_CLIENT pid=1018 exe=/usr/bin/foot\r\nWV_CLIENT_STATE State:\tS (sleeping)\r\nWV_CLIENT_STATE VmRSS:\t    9280 kB\r\nWV_CLIENT_STATE Threads:\t2\r\nE5T22C_DISPLAY_END\r\nE5T18D_STATUS_BEGIN\r\ndesktop.attempts=1\r\ndesktop.ready=",
+  "phase": "resize 802x601"
+}

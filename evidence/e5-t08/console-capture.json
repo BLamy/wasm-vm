@@ -1,0 +1,396 @@
+{
+  "task": "E5-T08",
+  "schema": 1,
+  "command": "node tools/verify/e5-t08-console-capture.mjs",
+  "generatedAt": "2026-09-04T14:34:57.137Z",
+  "gitHead": "d6756fa128fc4743f9e2855abd71a5aadcf84a8d",
+  "base": "http://127.0.0.1:49739",
+  "sourceDistParity": {
+    "equal": true,
+    "files": [
+      "web/dist/console-capture.html",
+      "web/dist/console-capture.js",
+      "web/dist/src/host/console-capture.js",
+      "web/dist/roadmap.js"
+    ]
+  },
+  "bundle": {
+    "sha256": "4b7b2619a468bfe05b04a3cbcf2815505c20fb5e1b1afec90d2b85f0bf3f57cd",
+    "files": [
+      "web/console-capture.html",
+      "web/console-capture.js",
+      "web/src/host/console-capture.js",
+      "web/loader.js",
+      "web/terminal.js",
+      "web/src/sink/presentation.js",
+      "web/src/sink/canvas2d.js",
+      "web/src/input/capture.js",
+      "web/src/input/keyboard.js",
+      "web/src/input/held-keys.js",
+      "web/src/input/reconciliation.js",
+      "web/pkg/wasm_vm_wasm_bg.wasm"
+    ]
+  },
+  "browsers": [
+    {
+      "name": "Chromium",
+      "version": "131.0.6778.33",
+      "proof": {
+        "route": "console-capture",
+        "backend": "canvas2d",
+        "canvas": {
+          "width": 1280,
+          "height": 800
+        },
+        "view": {
+          "bootBefore": {
+            "frameCount": 8,
+            "serialBytes": 10040,
+            "view": "display"
+          },
+          "bootAfter": {
+            "frameCount": 24,
+            "serialBytes": 11994,
+            "view": "serial"
+          },
+          "framesWhileSerialHidden": 675,
+          "framesDuringHiddenWindow": 16,
+          "serialBytesDuringHiddenWindow": 1954,
+          "hiddenFlushMarkerObserved": true,
+          "activeAtEnd": "display"
+        },
+        "reservedHotkey": {
+          "priorView": "display",
+          "afterView": "serial",
+          "reservedToggleCount": 1,
+          "forwardedCodes": [],
+          "reservedCodesAfter": []
+        },
+        "screenshot": {
+          "generation": 24,
+          "width": 1280,
+          "height": 800,
+          "blobSize": 71114,
+          "filename": "wasm-vm-display-1788532523502.png",
+          "readbackSha256": "74af4f6410e15f35087acde8e7005d987d5d40e4fad7dd78341692a084121b43",
+          "decodedPngSha256": "74af4f6410e15f35087acde8e7005d987d5d40e4fad7dd78341692a084121b43",
+          "mismatchBytes": 0,
+          "pixelIdentical": true
+        },
+        "recording": {
+          "blobSize": 476833,
+          "mimeType": "video/webm;codecs=vp9",
+          "frameRate": 30,
+          "maxDurationMs": 10000,
+          "startedAt": 26090.360000014305,
+          "stoppedAt": 36228.53499996662,
+          "durationMs": 10138.174999952316,
+          "stopReason": "duration-cap",
+          "framesDuringRecording": 632,
+          "startedInView": "serial",
+          "playback": {
+            "playable": true,
+            "readyState": 4,
+            "width": 1280,
+            "height": 800,
+            "durationSeconds": null
+          }
+        },
+        "serial": {
+          "bytes": 12113,
+          "sha256": "e3e978e6b6d579fd6dfe861e790863b83d232e160d945506d2298b8848bf5f2b",
+          "scrollCommandObserved": false,
+          "scrollMarkerObserved": true,
+          "promptObserved": true
+        },
+        "rapidToggles": {
+          "requested": 50,
+          "transitionsAdded": 50,
+          "listenerCountBefore": 2,
+          "listenerCountAfter": 2,
+          "displayHiddenAtEnd": false,
+          "serialHiddenAtEnd": true
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "framesReceived": 690,
+          "successfulPresents": 690,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 798,
+              "width": 8,
+              "height": 2
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 800
+          },
+          "errors": []
+        },
+        "scheduler": {
+          "quantum": 500000,
+          "maxQuantum": 500000,
+          "slices": 1002,
+          "totalSliceMs": 36257.61999964714,
+          "averageSliceMs": 36.185249500645845,
+          "maxSliceMs": 81.57000005245209,
+          "sliceHistogram": [
+            {
+              "leMs": 4,
+              "count": 0
+            },
+            {
+              "leMs": 8,
+              "count": 0
+            },
+            {
+              "leMs": 16,
+              "count": 0
+            },
+            {
+              "leMs": 32,
+              "count": 441
+            },
+            {
+              "leMs": 64,
+              "count": 553
+            },
+            {
+              "leMs": 128,
+              "count": 8
+            },
+            {
+              "leMs": 256,
+              "count": 0
+            },
+            {
+              "leMs": 512,
+              "count": 0
+            },
+            {
+              "leMs": 1000,
+              "count": 0
+            },
+            {
+              "leMs": null,
+              "count": 0
+            }
+          ],
+          "maxStretchGapMs": 141.80500000715256,
+          "requestedInstructions": 501000000,
+          "retiredInstructions": 500980535,
+          "fetchWaits": 0,
+          "fetchRequestedChunks": 0,
+          "fetchWaitTotalMs": 0,
+          "fetchWaitMaxMs": 0,
+          "outputCalls": 80,
+          "outputBytes": 12113,
+          "inputCalls": 2,
+          "inputBytes": 180,
+          "yieldMode": "message-channel",
+          "schedulerYields": 0,
+          "timerYields": 0,
+          "mainThreadYields": 1004
+        },
+        "firstFrameAt": 17761.094999969006,
+        "paused": false,
+        "fullSurfaceBytes": 4096000
+      },
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t08/console-capture-chromium.png",
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      }
+    },
+    {
+      "name": "Firefox",
+      "version": "132.0",
+      "proof": {
+        "route": "console-capture",
+        "backend": "canvas2d",
+        "canvas": {
+          "width": 1280,
+          "height": 800
+        },
+        "view": {
+          "bootBefore": {
+            "frameCount": 8,
+            "serialBytes": 10040,
+            "view": "display"
+          },
+          "bootAfter": {
+            "frameCount": 21,
+            "serialBytes": 11994,
+            "view": "serial"
+          },
+          "framesWhileSerialHidden": 117,
+          "framesDuringHiddenWindow": 13,
+          "serialBytesDuringHiddenWindow": 1954,
+          "hiddenFlushMarkerObserved": true,
+          "activeAtEnd": "display"
+        },
+        "reservedHotkey": {
+          "priorView": "display",
+          "afterView": "serial",
+          "reservedToggleCount": 1,
+          "forwardedCodes": [],
+          "reservedCodesAfter": []
+        },
+        "screenshot": {
+          "generation": 21,
+          "width": 1280,
+          "height": 800,
+          "blobSize": 71133,
+          "filename": "wasm-vm-display-1788532778625.png",
+          "readbackSha256": "820f0e66eb7e42aab13af262c0d0f74a9727811b0d4b5bb426e879be45a05e1e",
+          "decodedPngSha256": "820f0e66eb7e42aab13af262c0d0f74a9727811b0d4b5bb426e879be45a05e1e",
+          "mismatchBytes": 0,
+          "pixelIdentical": true
+        },
+        "recording": {
+          "blobSize": 330622,
+          "mimeType": "video/webm;codecs=vp8",
+          "frameRate": 30,
+          "maxDurationMs": 10000,
+          "startedAt": 243573.16,
+          "stoppedAt": 256109.42,
+          "durationMs": 12536.26000000001,
+          "stopReason": "duration-cap",
+          "framesDuringRecording": 80,
+          "startedInView": "serial",
+          "playback": {
+            "playable": true,
+            "readyState": 4,
+            "width": 1280,
+            "height": 800,
+            "durationSeconds": 10.742
+          }
+        },
+        "serial": {
+          "bytes": 12113,
+          "sha256": "f4d6ccf8dda05d449a48fe4723b10519f64a15cb7613d5cf427876ead27d4c9d",
+          "scrollCommandObserved": false,
+          "scrollMarkerObserved": true,
+          "promptObserved": true
+        },
+        "rapidToggles": {
+          "requested": 50,
+          "transitionsAdded": 50,
+          "listenerCountBefore": 2,
+          "listenerCountAfter": 2,
+          "displayHiddenAtEnd": false,
+          "serialHiddenAtEnd": true
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "framesReceived": 131,
+          "successfulPresents": 131,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 798,
+              "width": 8,
+              "height": 2
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 800
+          },
+          "errors": []
+        },
+        "scheduler": {
+          "quantum": 500000,
+          "maxQuantum": 500000,
+          "slices": 835,
+          "totalSliceMs": 258599.61999999994,
+          "averageSliceMs": 309.7001437125748,
+          "maxSliceMs": 697.1000000000004,
+          "sliceHistogram": [
+            {
+              "leMs": 4,
+              "count": 0
+            },
+            {
+              "leMs": 8,
+              "count": 0
+            },
+            {
+              "leMs": 16,
+              "count": 0
+            },
+            {
+              "leMs": 32,
+              "count": 0
+            },
+            {
+              "leMs": 64,
+              "count": 0
+            },
+            {
+              "leMs": 128,
+              "count": 0
+            },
+            {
+              "leMs": 256,
+              "count": 398
+            },
+            {
+              "leMs": 512,
+              "count": 420
+            },
+            {
+              "leMs": 1000,
+              "count": 17
+            },
+            {
+              "leMs": null,
+              "count": 0
+            }
+          ],
+          "maxStretchGapMs": 698.1800000000003,
+          "requestedInstructions": 417500000,
+          "retiredInstructions": 417485623,
+          "fetchWaits": 0,
+          "fetchRequestedChunks": 0,
+          "fetchWaitTotalMs": 0,
+          "fetchWaitMaxMs": 0,
+          "outputCalls": 80,
+          "outputBytes": 12113,
+          "inputCalls": 2,
+          "inputBytes": 180,
+          "yieldMode": "message-channel",
+          "schedulerYields": 0,
+          "timerYields": 0,
+          "mainThreadYields": 837
+        },
+        "firstFrameAt": 166232.96,
+        "paused": false,
+        "fullSurfaceBytes": 4096000
+      },
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t08/console-capture-firefox.png",
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      }
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-//! E2-T08 integration: the eight virtio-mmio slots probed over the REAL bus (the kernel's
+//! E2-T08 integration: the nine virtio-mmio slots probed over the REAL bus (the kernel's
 //! probe order — magic, version, DeviceID), and a slot interrupt delivered to the S-mode
 //! guest through PLIC IRQ 1 via the run-loop level mirror.
 
@@ -52,14 +52,14 @@ fn sw(rs2: u8, rs1: u8, imm: i32) -> u32 {
 const SRET: u32 = 0x1020_0073;
 const JDOT: u32 = 0x0000_006F;
 
-/// Kernel-style probe of all 8 slots over the bus: magic + version everywhere; slot 0 is
-/// the blk placeholder (DeviceID 2), slots 1..=7 are empty (DeviceID 0, silently skipped).
+/// Kernel-style probe of all 9 slots over the bus: magic + version everywhere; slot 0 is
+/// the blk placeholder (DeviceID 2), slots 1..=8 are empty (DeviceID 0, silently skipped).
 #[test]
-fn all_eight_slots_probe_like_a_kernel() {
+fn all_nine_slots_probe_like_a_kernel() {
     let mut m = Machine::new(RAM);
     m.enable_plic();
     let slots = m.enable_virtio_slots(Some(Box::new(BlkPlaceholder)));
-    assert_eq!(slots.len(), 8);
+    assert_eq!(slots.len(), 9);
     for i in 0..virt::VIRTIO_COUNT {
         let base = Platform::virtio_base(i);
         assert_eq!(m.bus_mut().load32(base).unwrap(), MAGIC, "slot {i} magic");

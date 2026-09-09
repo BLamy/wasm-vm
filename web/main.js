@@ -20,6 +20,10 @@ const _singleThreadForced = _workerQuery === "0" || _startupQuery.get("singlethr
 const _workerAvailable = typeof globalThis.Worker === "function";
 const _workerRequested = !_singleThreadForced;
 const _useCpuWorker = _workerRequested && _workerAvailable;
+const _desktopPerfHooksRequested = _startupQuery.has("testHooks") && _startupQuery.has("perfHooks");
+const _desktopPerfPresentRecords = [];
+let _desktopPerfGuestInstructions = null;
+let _desktopPerfStatsTimer = null;
 if (_workerRequested && !_workerAvailable) {
   console.warn("wasm-vm: whole-machine Worker unavailable; using the main-thread fallback");
 }
@@ -42,6 +46,11 @@ import {
   createWasmPointerAdapter,
   POINTER_MODES,
 } from "./src/input/pointer.js";
+import { PresentationController } from "./src/sink/presentation.js";
+import { DisplayViewportController } from "./src/sink/viewport.js";
+import { CursorController } from "./src/sink/cursor-controller.js";
+import { createDesktopAgentBridge } from "./desktop-agent-bridge.js";
+import { restoreDesktopThroughHost } from "./desktop-restore.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
@@ -50,6 +59,91 @@ const SYS_EXIT = 93n;
 const TAILSCALE_STATE_KEY = "wasm-vm.tailscale-state.v1";
 const NETWORK_CONFIG_KEY = "wasm-vm.network-config.v1";
 const NETWORK_PROVIDERS = new Set(["offline", "websocket", "tailscale", "headscale", "relay"]);
+const pageVm = globalThis.vm && typeof globalThis.vm === "object" && !Array.isArray(globalThis.vm)
+  ? globalThis.vm
+  : {};
+if (!pageVm.stats || typeof pageVm.stats !== "object" || Array.isArray(pageVm.stats)) pageVm.stats = {};
+globalThis.vm = pageVm;
+
+// E5-T09c: the page owns the visible canvas and drains FrameSink projections through a bounded,
+// latest-wins requestAnimationFrame scheduler. The controller records a private latest frame so a
+// WebGL context loss can replay it through Canvas2D without re-entering the guest.
+const displayCanvas = document.getElementById("ide-display-canvas");
+const displayStatusEl = document.getElementById("ide-display-status");
+let presentation = null;
+let displayViewport = null;
+if (displayCanvas) {
+  try {
+    presentation = new PresentationController(displayCanvas, {
+      defaultBackend: "canvas2d",
+      scheduleFrames: true,
+      visibilityTarget: document,
+      vm: pageVm,
+      onPresent: _desktopPerfHooksRequested
+        ? (record) => {
+          _desktopPerfPresentRecords.push(record);
+          if (_desktopPerfPresentRecords.length > 4096) _desktopPerfPresentRecords.shift();
+        }
+        : undefined,
+      now: _desktopPerfHooksRequested ? () => globalThis.performance?.now?.() ?? Date.now() : undefined,
+      guestInstructions: _desktopPerfHooksRequested ? () => _desktopPerfGuestInstructions : undefined,
+    });
+  } catch (error) {
+    if (displayStatusEl) {
+      displayStatusEl.textContent = `display unavailable: ${String(error?.message || error)}`;
+      displayStatusEl.dataset.state = "error";
+    }
+  }
+}
+const displayViewportEl = document.getElementById("ide-display-viewport");
+if (presentation && displayViewportEl) {
+  displayViewport = new DisplayViewportController({ container: displayViewportEl, presentation,
+    onState: (state) => {
+      if (displayStatusEl && state.error) displayStatusEl.textContent = "display: " + state.error;
+    },
+  });
+}
+function handleDisplayFrame(frame) {
+  if (!presentation) return false;
+  try {
+    const reached = presentation.present(frame);
+    displayViewport?.applyCanvasStyle();
+    if (displayStatusEl) {
+      const state = presentation.snapshot();
+      displayStatusEl.textContent = `${state.backend || "none"} · ${state.width}×${state.height} · ${state.successfulPresents} presents`;
+      if (state.sizeMismatch) displayStatusEl.textContent += " · waiting for guest mode set";
+      displayStatusEl.dataset.state = reached ? "ready" : "degraded";
+    }
+    return reached;
+  } catch (error) {
+    if (displayStatusEl) {
+      displayStatusEl.textContent = `display error: ${String(error?.message || error)}`;
+      displayStatusEl.dataset.state = "error";
+    }
+    return false;
+  }
+}
+try {
+  window.__presentation = {
+    controller: () => presentation,
+    state: () => presentation?.snapshot?.() ?? null,
+    gpuStats: () => presentation?.snapshot?.().gpu ?? null,
+    viewport: () => displayViewport?.snapshot() ?? null,
+    readPixels: () => presentation?.readPixels?.() ?? null,
+    dispose: () => presentation?.dispose?.(),
+  };
+} catch { /* worker/test scope */ }
+if (_desktopPerfHooksRequested) {
+  try {
+    window.__desktopPerf = {
+      version: "e5-t25a-v1",
+      presents: () => _desktopPerfPresentRecords.map((record) => ({ ...record, rect: { ...record.rect } })),
+      clearPresents: () => { _desktopPerfPresentRecords.length = 0; },
+      state: () => presentation?.snapshot?.() ?? null,
+      controller: () => linuxCtl ?? null,
+    };
+  } catch { /* test-only diagnostics must never affect the page */ }
+}
 
 const networkProviderEl = document.getElementById("network-provider");
 const networkWebsocketEl = document.getElementById("network-websocket-url");
@@ -350,6 +444,7 @@ function installAudioAutoplayPolicy() {
   }
   try {
     const candidate = new AudioSink({
+      vm: pageVm,
       requestedSampleRateHz: audioRequestedSampleRateHz,
       capture: audioCaptureEnabled,
       onCapture: (block) => {
@@ -607,6 +702,18 @@ const linuxControllerTeardowns = new WeakMap();
 const bootBtns = [bootLinuxBtn, bootAlpineBtn, bootAlpineFullBtn];
 const microphoneStateEl = document.getElementById("ide-microphone-state");
 const pendingMicrophoneEvents = [];
+let desktopAgentBridge = null;
+const pendingAgentOutput = [];
+
+function onAgentOutput(bytes) {
+  const value = bytes instanceof Uint8Array ? bytes.slice() : Uint8Array.from(bytes || []);
+  if (!value.byteLength) return;
+  if (desktopAgentBridge) desktopAgentBridge.receive(value);
+  else {
+    pendingAgentOutput.push(value);
+    if (pendingAgentOutput.length > 128) pendingAgentOutput.shift();
+  }
+}
 
 function updateMicrophoneIndicator(snapshot = microphoneCapture?.snapshot?.()) {
   if (!snapshot) return;
@@ -676,6 +783,15 @@ const pointerToggle = document.getElementById("ide-pointer-toggle");
 const pointerDebugEl = document.getElementById("ide-pointer-debug");
 const pointerDiagnostics = [];
 const pointerFrames = [];
+const cursorDiagnostics = [];
+const cursorController = new CursorController({
+  target: pointerHost,
+  documentTarget: document,
+  onDiagnostic: (entry) => {
+    cursorDiagnostics.push(entry);
+    if (cursorDiagnostics.length > 256) cursorDiagnostics.shift();
+  },
+});
 const pointerControllerProxy = {
   sendTabletEvent: (...args) => linuxCtl?.sendTabletEvent?.(...args),
   syncTablet: () => linuxCtl?.syncTablet?.(),
@@ -685,6 +801,10 @@ const pointerControllerProxy = {
 
 function updatePointerIndicator(snapshot = pointerBridge?.state?.()) {
   if (!snapshot) return;
+  try { cursorController.setPointerState(snapshot); } catch (error) {
+    cursorDiagnostics.push({ reason: "cursor-pointer-state-error", error: String(error?.message || error) });
+    if (cursorDiagnostics.length > 256) cursorDiagnostics.shift();
+  }
   const relative = snapshot.mode === POINTER_MODES.RELATIVE;
   if (pointerStateEl) {
     pointerStateEl.textContent = `Pointer: ${relative ? "relative" : "absolute"}`;
@@ -746,6 +866,15 @@ try {
     frames: () => [...pointerFrames],
   };
 } catch { /* page-only diagnostics */ }
+try {
+  window.__cursor = {
+    state: () => cursorController.snapshot(),
+    descriptor: () => cursorController.descriptor(),
+    handle: (event) => cursorController.handle(event),
+    diagnostics: () => [...cursorDiagnostics],
+    reset: () => cursorController.reset(),
+  };
+} catch { /* page-only diagnostics */ }
 updatePointerIndicator();
 
 function teardownLinuxController(controller, { natural = false } = {}) {
@@ -769,6 +898,13 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   // without sending post-termination key-up RPCs; the capture policy resets transient state when
   // the next boot installs a fresh bridge.
   stopKeyboardLedPoll();
+  try { desktopAgentBridge?.close("desktop controller retired"); } catch { /* teardown may already be closed */ }
+  desktopAgentBridge = null;
+  pendingAgentOutput.length = 0;
+  try {
+    if (window.__agentChannel) window.__agentChannel = null;
+    if (window.__desktopAgentChannel) window.__desktopAgentChannel = null;
+  } catch { /* page-only diagnostic */ }
   try { keyboardBridge?.resetHeld?.(); } catch { /* a failed controller may already be gone */ }
   keyboardBridge = null;
   keyboardReconciler = null;
@@ -781,13 +917,19 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   microphoneCapture.reset();
   updateMicrophoneIndicator();
   try { pointerBridge?.reset?.({ emit: false, exitLock: true }); } catch { /* pointer lock may already be gone */ }
+  try { cursorController.reset(); } catch { /* a failed controller may already be gone */ }
   updatePointerIndicator();
   ui.detachSink();
   fileTransferUI.attachController(null);
   if (diagnosticJitStatsTimer !== null) {
     clearInterval(diagnosticJitStatsTimer);
-    diagnosticJitStatsTimer = null;
+  diagnosticJitStatsTimer = null;
   }
+  if (_desktopPerfStatsTimer !== null) {
+    clearInterval(_desktopPerfStatsTimer);
+    _desktopPerfStatsTimer = null;
+  }
+  _desktopPerfGuestInstructions = null;
   // Quota/read-only controls are controller capabilities, not ordinary page chrome. Destroy their
   // children and generation marker when the owner retires so a visible or retained old button can
   // never act on whichever controller happens to occupy the global slot next.
@@ -820,6 +962,7 @@ function clearLinuxControllerOwner(controller) {
   // shared UI/metadata; a late DONE from an older generation must leave the replacement untouched.
   if (!controller || linuxCtl !== controller) return false;
   linuxCtl = null;
+  displayViewport?.setController(null);
   linuxActiveRequest = null;
   try {
     if (window.__linuxCtl === controller) window.__linuxCtl = null;
@@ -1186,6 +1329,18 @@ async function runLinuxBootOwned(opts, banner, request) {
       onCaptureStart: (info) => {
         void microphoneCapture.onPcmStart(info);
       },
+      // E5-T06d: keep display rendering on the page even when the guest machine itself runs in a
+      // worker; the worker protocol copies each frame once before this callback sees it.
+      onDisplayFrame: handleDisplayFrame,
+      // E5-T15c: cursor-plane events bypass framebuffer pacing and update the page-owned CSS/
+      // overlay controller directly. The controller copies UPDATE pixels synchronously and
+      // handles MOVE with a transform-only write.
+      onCursorState: (frame) => {
+        try { cursorController.handle(frame); } catch (error) {
+          cursorDiagnostics.push({ reason: "cursor-callback-error", error: String(error?.message || error) });
+          if (cursorDiagnostics.length > 256) cursorDiagnostics.shift();
+        }
+      },
       onState: (s) => {
         // E4 restore-on-first-load: a visible stopwatch instead of the "booting" progress bar when
         // the shipped boot snapshot is being restored.
@@ -1230,6 +1385,7 @@ async function runLinuxBootOwned(opts, banner, request) {
           if (/[^\w][\w.-]*:~#\s*$/.test(promptText) || /[~\/]\s*#\s*$/.test(promptText)) markGuestReady();
         } catch {}
       },
+      onAgentOutput,
       onError: (e) => {
         term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`);
         bootProgress.fail(e?.message || String(e));
@@ -1263,6 +1419,19 @@ async function runLinuxBootOwned(opts, banner, request) {
       onWriterStatus: ownerUi.onWriterStatus,
     });
     linuxCtl = bootController;
+    try {
+      desktopAgentBridge = createDesktopAgentBridge(bootController, {
+        onError: (error) => console.warn("wasm-vm: desktop agent channel:", error?.message || error),
+      });
+      desktopAgentBridge.start();
+      for (const bytes of pendingAgentOutput.splice(0)) desktopAgentBridge.receive(bytes);
+      window.__agentChannel = desktopAgentBridge.channel;
+      window.__desktopAgentChannel = desktopAgentBridge.channel;
+    } catch (error) {
+      console.warn("wasm-vm: desktop agent bridge unavailable:", error?.message || error);
+      pendingAgentOutput.length = 0;
+    }
+    displayViewport?.setController(bootController);
     flushMicrophoneGuestEvents(linuxCtl);
     updatePointerIndicator();
     const ctlForRelease = bootController;
@@ -1378,7 +1547,23 @@ async function runLinuxBootOwned(opts, banner, request) {
           : "JIT disabled by caller";
     term.writeln(`\x1b[90m[execution: ${backend}; ${interpreter} interpreter; ${jitLabel}; quantum ${selectedQuantum}]\x1b[0m`);
     window.__jitStats = async () => await linuxCtl?.jitStats?.() ?? null;
-    window.__schedulerStats = async () => await linuxCtl?.schedulerStats?.() ?? null;
+    const readSchedulerStats = async () => {
+      const stats = await linuxCtl?.schedulerStats?.() ?? null;
+      const retired = stats?.retiredInstructions;
+      if (typeof retired === "number" && Number.isSafeInteger(retired) && retired >= 0) {
+        _desktopPerfGuestInstructions = retired;
+      }
+      return stats;
+    };
+    window.__schedulerStats = readSchedulerStats;
+    if (_desktopPerfHooksRequested) {
+      const sampleGuestInstructions = async () => {
+        if (linuxCtl !== ctlForRelease) return;
+        try { await readSchedulerStats(); } catch { /* perf attribution is diagnostic-only */ }
+      };
+      void sampleGuestInstructions();
+      _desktopPerfStatsTimer = setInterval(sampleGuestInstructions, 50);
+    }
     window.__workerRpcStats = async () => await linuxCtl?.workerRpcStats?.() ?? null;
     // Test-only bridge for the worker's existing stats RPC. The browser automation surface runs
     // in an isolated world and cannot read page-owned expando functions such as __jitStats, so a
@@ -1398,7 +1583,7 @@ async function runLinuxBootOwned(opts, banner, request) {
     }
     // A visibilitychange may have happened while _bootLinux was still awaiting READY, when linuxCtl
     // was null and the event handler had nothing to pause. Reconcile once before advertising ready.
-    if (document.hidden) {
+    if (document.hidden && !presentation?.snapshot?.().scheduler) {
       try { await ctlForRelease.pause(); } catch { /* terminal settlement owns the visible error */ }
     }
     // The shipped Node snapshot deliberately drops Linux's page cache to keep the RAM artifact
@@ -1774,6 +1959,8 @@ async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl, bootProfile
 
 window.wvmDemo = {
   isGuestUp: () => !!linuxCtl,
+  async setDisplay(width, height) { return await linuxCtl?.setDisplay?.(width, height) ?? false; },
+  async displayStats() { return await linuxCtl?.displayStats?.() ?? null; },
   // E5-T20d/T20e: inspect the real context/ring pair without exposing a second unlock path.
   audioAutoplay: () => audioAutoplayPolicy,
   audioSink: () => audioSink,
@@ -2095,12 +2282,11 @@ if (termFitBtn) {
 // Test hook: Playwright drives keyboard input + reads the backpressure high-water via this.
 window.__term = ui;
 
-// E2-T23: idle the executor while the tab is hidden. Guest `mtime` is a deterministic retire-count
-// clock, so pausing freezes guest monotonic time cleanly and it resumes with no jump/storm (see
-// docs/timekeeping.md); the Date.now goldfish RTC keeps true wall time across the gap, so on return
-// `date` is correct while `uptime` counts only executed time.
+// E2-T23 legacy fallback: without the T09d display scheduler, idle the executor while the tab is
+// hidden. The production scheduler keeps the guest live and drains display work on its bounded
+// timer, so serial output remains observable in a hidden tab.
 document.addEventListener("visibilitychange", () => {
-  if (!linuxCtl) return;
+  if (!linuxCtl || presentation?.snapshot?.().scheduler) return;
   const pending = document.hidden ? linuxCtl.pause() : linuxCtl.resume();
   void Promise.resolve(pending).catch(() => {});
 });
@@ -2112,6 +2298,16 @@ window.__linux = {
   // E4: did this boot skip the Linux boot by restoring the shipped boot snapshot?
   restoredFromBootSnapshot: () => !!linuxCtl?.restoredFromBootSnapshot?.(),
 };
+// E5-T26e: the browser round-trip harness supplies the live T23d Channel. Keep the composition
+// boundary on the page so it can call the actual T22 PresentationController, including its clear
+// and viewport policy, while the guest transaction remains behind the worker-safe controller.
+window.__desktopRestore = (snapshot, hostViewport, agentChannel) =>
+  restoreDesktopThroughHost({
+    controller: linuxCtl,
+    agentChannel: agentChannel ?? desktopAgentBridge?.channel,
+    presentation,
+    viewportController: displayViewport,
+  }, snapshot, hostViewport);
 // E3-T21c proof hook: the UI must not mistake an attached controller for guest-agent readiness.
 window.__fileTransferReady = async () =>
   Promise.all([0, 1].map(async (slot) => Boolean(await linuxCtl?.fileTransferReady?.(slot))));

@@ -1,0 +1,11 @@
+{
+  "acceptance": false,
+  "fVerified": false,
+  "childExit": 1,
+  "rawPath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-quiet-001e8086/record/failure-post-restore-interaction-checks.json",
+  "rawSha256": "0d56d45f82d6982a52368ca5dc63499d26ce07409712d460b0cb178ab60363bf",
+  "elapsedMs": 4101.870000004768,
+  "originalCapMs": 2000,
+  "printOnlyScreenPassed": false,
+  "limitation": "Close this print-only hypothesis; no repeat tuning"
+}

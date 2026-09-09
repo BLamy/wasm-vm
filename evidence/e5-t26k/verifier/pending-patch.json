@@ -1,0 +1,21 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "-p",
+    "wasm-vm-core",
+    "--features",
+    "trace,gpu-trace",
+    "--lib",
+    "verifier_pending_code_patch_survives_same_size_and_rejected_selection",
+    "--",
+    "--nocapture"
+  ],
+  "cwd": "/private/tmp/e5-t26k-verifier-SrjasM/attack-repo",
+  "target": "/private/tmp/e5-t26k-verifier-SrjasM/target",
+  "startedAt": "2026-09-08T12:02:03.071Z",
+  "code": 0,
+  "signal": null,
+  "endedAt": "2026-09-08T12:02:06.597Z",
+  "sha256": "a0abcb64c3ee9d27d0ce95740e441acdebf82c38294149367dc51dd9ead27211"
+}

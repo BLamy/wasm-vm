@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:62186/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.76",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5-T26n\nIN PROGRESS\n✕ Close\nRetain browser inline-cache authority across SPP-only trap transitions\nEpic\nE5 — The Window\nStatus\nin progress\nEstimate\nS\nDepends on\nE5-T26m\nGOAL\n\nExtend the verified browser cache projection by exactly one bit: saved supervisor\nprevious privilege (SPP). Prove that real guest trap/return transitions preserve\nlive privilege while avoiding needless invalidation when current authority is\nunchanged. This is not a latency diagnosis or a promise to satisfy F's deadline.\n\nVERIFICATION LOG — EVIDENCE\n### 2026-09-08 — coordinator — activate source-reviewed SPP prerequisite\n\nF's new exact-runtime screen at657fb5a2 fails at3701.995ms; its separate existing\nlatency sampler first observes PCM at3156.655ms after a zero sample at3108.295ms.\nThe records do not identify a cause. Luna's source-only candidate and independent\nDaybreak preflight permit exactly bit8 while preserving current authority and\nguest SRET semantics; see\n`evidence/e5-t26f/spp-context-candidate/{worker-plan,critic-preflight}.md`.\nThe proposal patch is not executed evidence. F is parked on this named\nprerequisite so only one task is active. No semantic or performance claim\nprecedes the new actual-WASM/guest proof.\nADVERSARIAL VERIFICATION\nBefore inspecting evidence, predict exact live SPP/current-mode and generated\ntarget behavior across SRET. Test MPRV=0 in the positive case; retained MPRV changes\nmust still invalidate. Use a U-fetchable negative landing so the JIT boundary is\nnot bypassed by an earlier fetch denial. Keep JIT counters out of interpreter\nsnapshots. One fresh bounded attack varies the pending delegated interrupt source\nin the nested-SRET sequence. Once add SUM to the ignored mask: both the exact\npartition and existing generated SUM negative control must fail. Restore source\nbefore freeze. Carry unchanged M/authority results; do not repeat old full tasks,\nold image builds or a second pristine clone. No rr, WebKit, other machine, guest\nintervention, performance waiver, or speculative speedup claim.\nsource: tasks/epic-5-the-window/E5-T26n-spp-context.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:62186/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:62186/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:62186/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:62186/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:62186/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:62186/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:62186/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:62186/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:62186/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:62186/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:62186/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:62186/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "9c180395102fa34e02feaabab09468a02f97de467f71c64ff9d0858b18c0420d"
+}

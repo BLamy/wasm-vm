@@ -1,0 +1,73 @@
+{
+  "acceptance": false,
+  "head": "8c892667be0da360af2329f2ae8bf7bf7ef6f10d",
+  "recordedAt": "2026-09-08T07:35:01.524Z",
+  "cleanScratchSource": true,
+  "archivedPackagesUnchanged": true,
+  "livePackageMatchesArchivedBaseline": true,
+  "successfulFreshChildProcesses": 8,
+  "identicalLinuxActualRetirement": 50000000,
+  "matchingLinuxClockJitRamAndConsole": true,
+  "commands": [
+    "node --check screen.mjs",
+    "bash -n build.sh",
+    "node screen.mjs bench",
+    "node screen.mjs linux",
+    "node retain.mjs"
+  ],
+  "sourceFiles": [
+    {
+      "path": "Cargo.toml",
+      "sha256": "fc7cbaedc583510a98e1ce66875c32af7fe9aa43bc80cb16b298168dd0c61479"
+    },
+    {
+      "path": ".cargo/config.toml",
+      "sha256": "693000886a9f8195d7dbfbba41d9ffa19147b18233b83f52c4626d92a54c2b7b"
+    },
+    {
+      "path": "Cargo.lock",
+      "sha256": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7"
+    },
+    {
+      "path": "crates/wasm/Cargo.toml",
+      "sha256": "ee9a0e90a0d447f06571fe203772a51bd4b491d3d42dfabb81befee2516b3d69"
+    },
+    {
+      "path": "crates/wasm/src/lib.rs",
+      "sha256": "99d64f8e74a94a03e53c6eb424f90112c8468e9642840ac1af83fcc885a1cdc3"
+    },
+    {
+      "path": "guest/prebuilt/loops.elf",
+      "sha256": "f6b9938620af83440d7c224325df21025257895adbdf2de8e58fed6272470adb"
+    },
+    {
+      "path": "releases/kernel/6.6.63/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    }
+  ],
+  "scripts": [
+    {
+      "path": "/private/tmp/e5-t26f-build-screen.h4HPPD/build.sh",
+      "sha256": "792c3e6a0a85e8ae86e8079e5156141c0d8c8a3a64eb5d5ad14d74dbcb571a70"
+    },
+    {
+      "path": "/private/tmp/e5-t26f-build-screen.h4HPPD/screen.mjs",
+      "sha256": "fbe7c1959403758e2530b9fc00275cbf2c67bd12d7fb01aee24ecbe27412df00"
+    },
+    {
+      "path": "/private/tmp/e5-t26f-build-screen.h4HPPD/retain.mjs",
+      "sha256": "383dd89b5cab2f7a96e6ae5ebd22e60202a7fc206738d549c6ee8a69dfc6eeeb"
+    }
+  ],
+  "tools": [
+    {
+      "path": "/private/tmp/e5-t26f-build-screen.h4HPPD/tool-cache/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen",
+      "sha256": "41e7ae3a0f1db74ebbfbbd65b0271f44afcc3b3b1bb1a1f893c8ab5033bddad5"
+    },
+    {
+      "path": "/private/tmp/e5-t26f-build-screen.h4HPPD/tool-cache/wasm-opt-50385c9e73ccee70/bin/wasm-opt",
+      "sha256": "e541f303219f9b6caa1661daea44510249da278736b7f2e320910051e7bbd4cd"
+    }
+  ],
+  "profileConfig": "# Workspace-wide cargo config. Written before E0-T01 lands so the workspace scaffold\n# inherits it; E0-T01's implementer should keep these settings.\n#\n# Full debug info in EVERY profile: rr/gdb time-travel sessions (tools/rr/) inspect\n# release-built runs too, and a trace without symbols is evidence nobody can interrogate.\n# Cost: larger native artifacts (fine). For shipped wasm32 artifacts, strip at packaging\n# time (wasm-opt --strip-debug) — never by lowering debuginfo here.\n\n[profile.dev]\ndebug = 2\n\n[profile.release]\ndebug = 2\n\n[profile.bench]\ndebug = 2\n"
+}

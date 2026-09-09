@@ -1,0 +1,28 @@
+✖ desktop agent bridge owns queued guest bytes, negotiates, reconnects, and drains output (1.555458ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 39.878
+
+✖ failing tests:
+
+test at web/tests/e5-t26f-desktop-agent-bridge.test.mjs:31:1
+✖ desktop agent bridge owns queued guest bytes, negotiates, reconnects, and drains output (1.555458ms)
+  AssertionError [ERR_ASSERTION]: queued guest HELLO was borrowed instead of copied before Channel.start
+  
+  0n !== 1n
+  
+      at TestContext.<anonymous> (file:///private/tmp/e5-t26f-verifier.kWyHAR/web/tests/e5-t26f-desktop-agent-bridge.test.mjs:74:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0n,
+    expected: 1n,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

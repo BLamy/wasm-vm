@@ -1,0 +1,42 @@
+^D✔ cold playback fixture keeps errors and conditional success without verbose parameter dumping (0.88925ms)
+✔ one unresolved progress probe prevents subsequent timer ticks from piling up (1.390709ms)
+✔ public sample is bounded and excludes pixels, full records and guest control (0.495958ms)
+✔ navigation rejection frees the probe; stopped sampling suppresses late results (0.463625ms)
+✔ failure artifacts retain phase, error and milestones before browser capture (0.651167ms)
+✔ failure capture retains producer PCM even when the command never completes (0.707667ms)
+✔ failure capture does not issue requests behind a stuck progress probe (0.41675ms)
+✔ cursor timeout uses only the unspent original two-second budget (0.5575ms)
+✔ cursor waits through missing/stale pixels, returns matching sample and disposes its handle (0.431292ms)
+✔ exhausted cursor budget fails before polling; a polling timeout remains a failure (0.441958ms)
+✔ pointer motion precedes the full delayed gesture; no click or physical key occurs early (0.914792ms)
+✔ premature audio unlock during the delay fails before the click or command (0.534084ms)
+✔ overlapped motion spends the original deadline; late command completion still fails (0.933ms)
+✔ command override refuses acceptance/create and rejects unbounded or multiline input (1.445125ms)
+✔ without override all modes keep the exact sh /tmp/a command (1.143417ms)
+✔ diagnostic key pacing is bounded, reuse-only, recorded, and inside the original deadline (2.459667ms)
+✔ reuse override is recorded verbatim in nonacceptance metadata and the physical command record (1.145208ms)
+✔ top-level catch captures the phase before finally cleanup and rethrows the original error (0.366583ms)
+✔ a held coherence read starts after timed interaction and must finish before the next save (0.6295ms)
+✔ diagnostics require explicit mode, absolute scratch and stable port; default remains fresh acceptance (5.67975ms)
+✔ profile creation never overwrites existing data and reuse requires the task marker and completed seal (2.348041ms)
+✔ every runtime/kernel/image/origin binding mismatch refuses reuse before copying any profile (3.170875ms)
+✔ harness-only HEAD changes permit reuse while preserving creator and current provenance (4.209792ms)
+✔ runtime binding hashes actual served JS/WASM/kernel bytes, including uncommitted changes (7.762375ms)
+✔ reuse enters autoRestore directly without cold setup or resetting the restored timing boundary (0.551ms)
+✔ reuse cold-boot fallback fails on its first readiness sample instead of waiting for another boot (0.436708ms)
+✔ reuse copies a sealed profile, preserves actual envelope/metadata and retains separate failed iterations (5.672334ms)
+✔ tampered profile bytes or desktop envelope/normal metadata cannot be reused (2.450334ms)
+✔ profile ownership refuses symlinks instead of traversing or overwriting an external profile (2.447709ms)
+✔ checkpoint session hydration is exact, origin-scoped and refuses an existing different envelope (1.257875ms)
+✔ persistent Chromium identity uses public CDP when browser() is null and always detaches (0.934166ms)
+✔ zero PCM and completion attachment/timestamps reach failure milestones before the PCM assertion (1.075ms)
+✔ stale or mismatched actual coherence fails after timing and survives in failure milestones (1.196167ms)
+✔ second restore performs the real coherence audit after display/button checks and before evidence (0.047625ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 91.1545

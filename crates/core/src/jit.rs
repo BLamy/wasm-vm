@@ -519,6 +519,11 @@ pub struct DynamicLinkStats {
 /// structural work from the wall-clock controls without putting a host clock in `no_std` core.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct JitEntryCostStats {
+    /// Whether the executor is currently permitted to sample its host entry clock.
+    pub timing_enabled: bool,
+    /// Actual host-clock reads made by the entry ledger. This remains exactly zero when timing is
+    /// disabled, independently of the clock's resolution or the accumulated nanosecond values.
+    pub timer_reads: u64,
     /// Host-side compiled-engine entries.
     pub host_entries: u64,
     /// State/register synchronization operations at those entries.
@@ -702,6 +707,11 @@ pub trait CompiledBlockExecutor {
     fn entry_cost_stats(&self) -> JitEntryCostStats {
         JitEntryCostStats::default()
     }
+
+    /// Arm or disarm optional host-clock sampling in the compiled entry path. Structural counters
+    /// remain live in both modes. The default is inert for native/simple executors without an
+    /// entry timer.
+    fn set_entry_timing(&mut self, _on: bool) {}
 
     /// E4-T31: record the exact retirement count the core committed for a compiled exit. The core,
     /// not the executor, owns this count because it can distinguish a clean block from a precise

@@ -1,0 +1,35 @@
+{
+  "sourceRecord": "evidence/e5-t26f/completion/run-856f3e78/failure-readiness-drag-desktop-ready.json",
+  "sourceRecordSha256": "be3f63baf93eba97b43d48488e603212a4813e673ba4d41b910f8359612d6d29",
+  "sourceProfile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-residency-L5pPJH/iteration-PKZ0Xs/profile",
+  "inspectedCopy": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resume-inspection-9kXq06/profile",
+  "origin": "http://127.0.0.1:61629",
+  "guestBooted": false,
+  "transactions": "readonly",
+  "metadata": [
+    {
+      "name": "wvov-b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592",
+      "version": 1,
+      "stores": [
+        "blocks",
+        "meta"
+      ],
+      "metaHex": "77766f7601000000001000000000004000000000b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb95927102000000000000",
+      "firstChunkHeaderHex": null,
+      "snapshotGeneration": null,
+      "overlayGeneration": "625"
+    },
+    {
+      "name": "wvsn-b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592",
+      "version": 1,
+      "stores": [
+        "chunks",
+        "meta"
+      ],
+      "metaHex": "7776736e02000000000010009124ba08000000008c00000000000000b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592e8209b6881c09b5cca89112f55edad05aafd8fcf1715b3d71d9da667bdbec0d0",
+      "firstChunkHeaderHex": "57564d524553553101000000302e302e31000000000000000000000000000000000000000000000000000000b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb95926d02000000000000",
+      "snapshotGeneration": "621",
+      "overlayGeneration": null
+    }
+  ]
+}

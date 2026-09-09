@@ -1,0 +1,105 @@
+{
+  "before": {
+    "release": "8df0e82c87aa25d39988517b045b42712f8c94d1bec4f0d1db5ed2ab772f0e3a",
+    "input": "6039cbc695ba017d0bfb413ba4b5b91b424a7d983d3a4a8757df8a47b569d4f1"
+  },
+  "after": {
+    "release": "8df0e82c87aa25d39988517b045b42712f8c94d1bec4f0d1db5ed2ab772f0e3a",
+    "input": "6039cbc695ba017d0bfb413ba4b5b91b424a7d983d3a4a8757df8a47b569d4f1"
+  },
+  "commands": [
+    {
+      "command": "/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen",
+      "args": [
+        "--target",
+        "web",
+        "--out-dir",
+        "target/e5-t26f/resident-symbols/bindgen",
+        "--out-name",
+        "wasm_vm_wasm",
+        "target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm"
+      ],
+      "startedAt": "2026-09-08T09:38:08.105Z",
+      "finishedAt": "2026-09-08T09:38:08.210Z",
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt",
+      "args": [
+        "-O",
+        "-g",
+        "target/e5-t26f/resident-symbols/bindgen/wasm_vm_wasm_bg.wasm",
+        "-o",
+        "target/e5-t26f/resident-symbols/named.wasm"
+      ],
+      "startedAt": "2026-09-08T09:38:08.210Z",
+      "finishedAt": "2026-09-08T09:38:09.180Z",
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+      "args": [
+        "tools/verify/e5-t22c-symbolize-cpu.mjs",
+        "target/e5-t26f/resident-symbols/release.wasm",
+        "target/e5-t26f/resident-symbols/named.wasm",
+        "evidence/e5-t26f/resident-profile-33a65efb",
+        "evidence/e5-t26f/resident-profile-analysis"
+      ],
+      "startedAt": "2026-09-08T09:38:09.180Z",
+      "finishedAt": "2026-09-08T09:38:09.220Z",
+      "stdout": "Bound 1 profiles to release 8df0e82c87aa25d39988517b045b42712f8c94d1bec4f0d1db5ed2ab772f0e3a\n",
+      "stderr": ""
+    }
+  ],
+  "releaseSha256": "8df0e82c87aa25d39988517b045b42712f8c94d1bec4f0d1db5ed2ab772f0e3a",
+  "namedSha256": "c2e5156819783abb458d65318ef05b4a7036484a66b9c96f6d74c1caadbc17ea",
+  "names": 1889,
+  "sections": [
+    {
+      "id": 1,
+      "payloadSha256": "7e16b939b5bbd73ae3259ad23f67f0574313fd025f23684e76d65eeec144dd17"
+    },
+    {
+      "id": 2,
+      "payloadSha256": "0b4abb173fba8b4d4525083754550a3ccc297ba258a1004d4a8e728af0fcacb2"
+    },
+    {
+      "id": 3,
+      "payloadSha256": "1e6aad65270e3f3c891530f2f877770f6c6e3d9ad78da1c93529c34fd8a3add1"
+    },
+    {
+      "id": 4,
+      "payloadSha256": "a9e1243944c55b1597e9f3fadbf07b8bc083301904bf9d7fe3b4710ab002726b"
+    },
+    {
+      "id": 5,
+      "payloadSha256": "2e2461dd6852f58de2d470cabcf5c41b6e56fdb6ee9169954fe02a13b3ef4bae"
+    },
+    {
+      "id": 6,
+      "payloadSha256": "877e252296a71ea5f8a642bddd70862f534441eec9113a72f638c23096aba9aa"
+    },
+    {
+      "id": 7,
+      "payloadSha256": "4a4b3e117bbbd07f684d5ae5171d13fca4ef7c4f2affa53e99aa310453753c39"
+    },
+    {
+      "id": 9,
+      "payloadSha256": "2a1956bf7dc7ddedb684819315d583dc5fed20595f2232607c53aa0593b1cc09"
+    },
+    {
+      "id": 12,
+      "payloadSha256": "b7e60cdf144aa31d1e03e0e0e257772daa5424d99382b1d38ac8d0e0f4af6e86"
+    },
+    {
+      "id": 10,
+      "payloadSha256": "74db3cdde68afc7b6a06f015eb48577a1a3d883fbeae1697562f9e53e681caa3"
+    },
+    {
+      "id": 11,
+      "payloadSha256": "7a2c3a1a3dd9e8410b400a265693b55bdebd91325ba0ae7d76bd66fc2e1cfcaf"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "head": "8c892667be0da360af2329f2ae8bf7bf7ef6f10d",
+  "source": "/private/tmp/e5-t26f-build-screen.h4HPPD/source",
+  "root": "/private/tmp/e5-t26f-build-screen.h4HPPD",
+  "acceptance": false,
+  "node": "v24.20.0",
+  "v8": "13.6.233.17-node.53",
+  "host": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpus": 16,
+    "cpu": "Apple M4 Max"
+  },
+  "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)\nbinary: rustc\ncommit-hash: 88d9e12ae178fab0fb5cc050a94da85685d449ea\ncommit-date: 2026-08-18\nhost: aarch64-apple-darwin\nrelease: 1.98.0\nLLVM version: 22.1.8",
+  "wasmPack": "wasm-pack 0.15.0",
+  "wasmBindgen": "wasm-bindgen 0.2.126",
+  "wasmOpt": "wasm-opt version 117 (version_117)",
+  "candidateEnvironment": {
+    "CARGO_PROFILE_RELEASE_LTO": "fat",
+    "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "1",
+    "CARGO_PROFILE_RELEASE_DEBUG": "2",
+    "CARGO_PROFILE_RELEASE_OPT_LEVEL": "3",
+    "CARGO_NET_OFFLINE": "true",
+    "CARGO_TARGET_DIR": "/private/tmp/e5-t26f-build-screen.h4HPPD/cargo-target",
+    "WASM_PACK_CACHE": "/private/tmp/e5-t26f-build-screen.h4HPPD/tool-cache"
+  },
+  "baseline": [
+    {
+      "path": ".gitignore",
+      "bytes": 1,
+      "sha256": "684888c0ebb17f374298b65ee2807526c066094c701bcc7ebbe1c1095f494fc1"
+    },
+    {
+      "path": "package.json",
+      "bytes": 492,
+      "sha256": "611a2c672de163ac0371aeceac9875966dc3c6dc1c5c86e64b88b2a73039f438"
+    },
+    {
+      "path": "snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "wasm_vm_wasm.d.ts",
+      "bytes": 46468,
+      "sha256": "df2c9b909261d48d9ab1f4c0745a72f6a0c54461a97364802bec484c2d896175"
+    },
+    {
+      "path": "wasm_vm_wasm.js",
+      "bytes": 114600,
+      "sha256": "8c4e3bcd010b741f2462cc932991d800e40021e8f4ae570d0f01fffd970b7e41"
+    },
+    {
+      "path": "wasm_vm_wasm_bg.wasm",
+      "bytes": 1545383,
+      "sha256": "30c8f2ab3b1f3c25db77c03d6161d39e55de7ea3d88447f83f5d7942952c3a28"
+    },
+    {
+      "path": "wasm_vm_wasm_bg.wasm.d.ts",
+      "bytes": 11871,
+      "sha256": "bddabca7a376832a7c47ce3b6496ae0fff933726531260589b161298ddac0d6a"
+    }
+  ],
+  "candidate": [
+    {
+      "path": ".gitignore",
+      "bytes": 1,
+      "sha256": "684888c0ebb17f374298b65ee2807526c066094c701bcc7ebbe1c1095f494fc1"
+    },
+    {
+      "path": "package.json",
+      "bytes": 492,
+      "sha256": "611a2c672de163ac0371aeceac9875966dc3c6dc1c5c86e64b88b2a73039f438"
+    },
+    {
+      "path": "snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "wasm_vm_wasm.d.ts",
+      "bytes": 46468,
+      "sha256": "7d5b919853de7da95260247912674edaa48e97409492798728b47cccd401f988"
+    },
+    {
+      "path": "wasm_vm_wasm.js",
+      "bytes": 114589,
+      "sha256": "02ff91babdda35a011c6220e3f2cb6da4ee83929b2d8bdcfd8331c4207712fca"
+    },
+    {
+      "path": "wasm_vm_wasm_bg.wasm",
+      "bytes": 1484145,
+      "sha256": "7780e9da58180d10c833c4f541d31b139be654fd747879fc13b4fc800463da43"
+    },
+    {
+      "path": "wasm_vm_wasm_bg.wasm.d.ts",
+      "bytes": 11871,
+      "sha256": "826744135309054cef29e5cfb1fb81294c82d3220c0e40aa15ea38aa571ef551"
+    }
+  ]
+}

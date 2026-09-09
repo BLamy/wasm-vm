@@ -1,0 +1,15 @@
+✔ CSS/DPR rounding and minimum/maximum clamps are finite, hidden panes do not hotplug (0.869125ms)
+✔ 50 resizes/5 seconds send one trailing request at exactly 250ms, DPR listener rearms and disposes (1.813458ms)
+✔ in-flight requests serialize latest intent, stale replies and disposed completions cannot restore old state (0.1955ms)
+✔ scalar fallback detects silent DPR changes without CSS or media-query notification (0.156625ms)
+✔ controller replacement ignores old completion, initial binding has no duplicate timer, errors recover (0.291334ms)
+✔ native fit keeps odd resource stride and independently checks every clipped/padded pixel (0.306208ms)
+✔ presentation keeps fixed viewport on pending old frame and later matching frame (0.889041ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 45.646167

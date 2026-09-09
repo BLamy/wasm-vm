@@ -1,0 +1,31 @@
+{
+  "schema": "wasm-vm.e5-t17b.desktop-image-verification.v1",
+  "task": "E5-T17b",
+  "command": "make verify-E5-T17b",
+  "output": "target/e5-t17b/desktop-image",
+  "profile": {
+    "path": "tools/image/e5-t17a-desktop-packages.json",
+    "sha256": "5e0ede77a0fe30fe2268a2a3b9bc322146e67cf128d9b15e6808cfa69cfb1a67"
+  },
+  "image": {
+    "path": "target/e5-t17b/desktop-image/alpine-rootfs.ext4",
+    "sha256": "467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e",
+    "size": 1073741824
+  },
+  "packageManifest": {
+    "path": "target/e5-t17b/desktop-image/MANIFEST.txt",
+    "sha256": "ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908"
+  },
+  "fileManifest": {
+    "path": "target/e5-t17b/desktop-image/FILE-MANIFEST.txt",
+    "sha256": "c82b20c083d808a797bd8db9c080a2be0c3ef7859d29e5b818bbfa99d8427cf0"
+  },
+  "startup": {
+    "backend": "drm",
+    "renderer": "pixman",
+    "desktopUser": "desktop",
+    "autologinTty": "tty1",
+    "seatdRunlevel": "default"
+  },
+  "result": "passed"
+}

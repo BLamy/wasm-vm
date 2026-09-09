@@ -3,10 +3,12 @@ id: E5-T16
 epic: 5
 title: Display server decision — Wayland (labwc/weston) vs X11 under emulation, measured
 priority: 516
-status: pending
-depends_on: [E5-T07, E5-T13c, E5-T14c]
+status: cancelled
+depends_on: [E5-T07d, E5-T09e, E5-T13c, E5-T14c, E5-T15d]
 estimate: M
+risk: medium
 capstone: false
+decomposed_into: [E5-T16a, E5-T16b, E5-T16c, E5-T16d, E5-T16e]
 ---
 
 ## Goal
@@ -49,6 +51,35 @@ packages of it. Measure, don't vibe: each candidate gets the same scripted workl
       confirmed present in Alpine riscv64 main/community repos (apk search output
       captured in the doc).
 - [ ] Decision doc merged; T17 blocked on nothing ambiguous.
+
+## Execution slices
+
+This M-sized display-server decision is cancelled before implementation as required by task
+policy and replaced by five ordered S tickets. E5-T16a owns the repeatable workload and metric
+capture; E5-T16b and E5-T16c measure the two finalists under their correct software renderers;
+E5-T16d verifies the real Alpine riscv64 package/install surface; and E5-T16e performs the
+variance check, damage recomputation, final decision, and T17 handoff. E5-T17 now depends on
+E5-T16e so the image cannot start from an unfinished decision container.
+
+1. **E5-T16a — workload harness and counters.** Define the candidate-neutral cold-start,
+   idle, terminal typing, drag, close workload and capture E4 instructions, T09 upload bytes,
+   guest RSS, idle wakeups, phase markers, and cursorq traffic in a machine-readable result.
+2. **E5-T16b — labwc finalist.** Bring up labwc with `WLR_RENDERER=pixman` in a scratch
+   riscv64 image, run the exact T16a workload end-to-end, and record the labwc measurements.
+3. **E5-T16c — weston finalist.** Bring up weston with `--backend=drm --renderer=pixman`
+   in a scratch riscv64 image, run the identical workload, and record the weston measurements.
+4. **E5-T16d — Alpine package audit.** On a clean E3-derived riscv64 image, verify signed
+   `apk search` and `apk add` results for both finalist stacks and the terminal/clipboard
+   tools needed by the eventual winner; capture versions, repositories, and failures.
+5. **E5-T16e — measured decision and handoff.** Re-run the winner twice, independently
+   recompute typing damage from T09 counters, publish the comparison and revisit triggers in
+   `docs/decisions/display-server.md`, and hand T17 one unambiguous package/config manifest.
+
+### 2026-09-04 — coordinator — decomposed
+
+The cancelled parent remains the acceptance charter; the child tickets carry its required
+inside-emulator measurements and adversarial checks without leaving an M-sized task in the
+active lane.
 
 ## Adversarial verification
 Refute the methodology: re-run the winner's workload twice — if run-to-run variance

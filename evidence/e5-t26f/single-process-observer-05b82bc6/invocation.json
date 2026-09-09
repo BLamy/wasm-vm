@@ -1,0 +1,40 @@
+{
+  "head": "05b82bc688a34e6a1abef7b6c761c01bf4a3f7c6",
+  "acceptance": false,
+  "common": {
+    "E5_T26F_REQUIRE_HEAD": "05b82bc688a34e6a1abef7b6c761c01bf4a3f7c6",
+    "E5_T26F_HEADED": "0",
+    "E5_T26F_FIXTURE": "resident-observer-v1",
+    "E5_T26F_DIAGNOSTIC_PROFILE": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-IKBhyX",
+    "E5_T26F_DIAGNOSTIC_PORT": "61637",
+    "E5_T26F_TIMEOUT_MS": "1800000",
+    "E5_T26F_IMAGE": "target/e5-t26f/resident-image-single-process-observer-v1/alpine-rootfs.ext4",
+    "E5_T26F_IMAGE_INFO": "target/e5-t26f/resident-image-single-process-observer-v1/desktop-info.json",
+    "E5_T26F_DESKTOP_ASSET_DIR": "target/e5-t26f/chunks/resident-single-process-observer-v1"
+  },
+  "command": "tools/verify/e5-t26f-browser-roundtrip.mjs",
+  "sourceBindings": {
+    "tools/verify/e5-t26f-browser-roundtrip.mjs": "7f8b58f7e3f6e0f16b7b6cb91b8593e625ed058e7aa764df428e9990f85100a1",
+    "tools/verify/e5-t26f-resident-proof.mjs": "d5615b185536f0f0af3da7d4b133ec28ec9e2c62962d22b3cd57e8c24f5a5810",
+    "tools/verify/e5-t26f-discovery-observation.mjs": "4bc9e00027a42465a37364cad1b707c87da78806a1c0d20d5729109728004d04",
+    "tools/verify/e5-t26f-compile-queue-observation.mjs": "fff0cf5e7bbbf9c822bbe6b62cb2dcf936076da1eeb3d455d3cdd7a915c02dcc",
+    "tools/verify/e5-t26f-browser-single-process-observer.mjs": "3be35665f7d403f9c291b5b81b1c07449ef526d171a53f5e7a69b087e79c416d",
+    "crates/core/src/compile_queue.rs": "678d51e6c333e076caeb99f3960fac52a0886941cc85ebf6638062878c751b15",
+    "crates/core/src/lib.rs": "7ff782fec3aa18b1b3729ac57e96dd999162b5c92b6fa36ef080cd9953bc2d3c",
+    "crates/wasm/src/lib.rs": "d9b100a0b434688a34fdcd943e8f21f683c3c77e27d9fe6c240ee001399a38be",
+    "tools/guest/e5-t26f-resident-observer.sh": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+    "tools/verify/e5-t26f-observer-image.mjs": "694b1c1dd1fffd8c5894a1b405767d86581f8703806d2caf3243323d28edb45d",
+    "tools/chunk_image.py": "165ccaf1c591247e23c509e6bed4fa2f614f1dee7e8a045698ad4cea447484d0",
+    "tools/guest/e5-t26f-observer.c": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+    "tools/verify/e5-t26f-observer-build.mjs": "e89170a56623174bcf7def80dc230fa79794408bc18df7debcf55a5bb9efd36e",
+    "target/e5-t26f/observer-build-v1/build-info.json": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+    "target/e5-t26f/observer-build-v1/e5t26f-observe": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+    "target/e5-t26f/resident-image-single-process-observer-v1/desktop-info.json": "b6a1f79e2d9f865411fec1907a9b56e6a9d208eb2fd90bcfe95571fc5a5b8c7a",
+    "target/e5-t26f/chunks/resident-single-process-observer-v1/manifest.json": "e02a9af547773f9d54e47151419ab3b118c55d3a4c90b25dcc434487db8dc9f5"
+  },
+  "retained": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-IKBhyX",
+  "order": [
+    "cold",
+    "reuse-default4096-repack-off24"
+  ]
+}

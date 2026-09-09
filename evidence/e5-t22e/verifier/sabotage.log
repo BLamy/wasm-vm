@@ -1,0 +1,18 @@
+Base: 779efb7dfafc55db8ee476e3626a6d5f78b18a8c plus independent verifier test.
+Disposable copy only: /tmp/e5-t22e-verifier.AmU6jU/repo
+Single mutation: restore display_width/height/refresh_hz and EDID default assignments in GpuState::reset.
+Command: cargo test -p wasm-vm-core --lib --features gpu-trace display_reset_ -- --nocapture
+Captured failures (compilation progress and thread ids omitted):
+running 3 tests
+display_reset_preserves_host_monitor_but_clears_guest_state: assertion left == right failed at gpu/mod.rs:3217
+  left: (1280, 800)
+ right: (901, 701)
+display_reset_mmio_clears_latched_irqs_and_both_cached_queues: assertion left == right failed at gpu/mod.rs:3287
+  left: (1280, 800)
+ right: (901, 701)
+display_reset_verifier_reconfigured_rings_reject_stale_resources: assertion left == right failed at reset_verifier_tests.rs:80
+  left: (1280, 800)
+ right: (1373, 907)
+test result: FAILED. 0 passed; 3 failed; 0 ignored; 0 measured; 267 filtered out; finished in 0.01s
+Exit status: 101 (expected). All three tests detect restored old reset semantics.
+No sabotage was applied to the worker checkout or retained authoritative cold clone.

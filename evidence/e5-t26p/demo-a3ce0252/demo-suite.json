@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:58713/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.76",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5-T26p\nIN PROGRESS\n✕ Close\nSpecialize optional interpreter retirement metadata without changing effects\nEpic\nE5 — The Window\nStatus\nin progress\nEstimate\nS\nDepends on\nE0-T16, E1-T04, E5-T26o\nGOAL\n\nMake returned retirement records optional at the shared interpreter boundary while\npreserving every architectural effect. Source constructors and a trace-symbol scan\ndo not prove generated overhead; inspect matched actual artifacts before adoption.\nThis task makes no F latency or Omarchy performance claim.\n\nVERIFICATION LOG — EVIDENCE\n### 2026-09-08 — coordinator — bounded activation\n\nFresh Daybreak preflight first refused the vague candidate, then approved the concrete\ndesign; both findings are retained in `evidence/e5-t26f/null-trace-candidate/`.\nDesign digest `8f493e2b1196abcdfa94164819d17d5500de793276dcd3f225b03ecf1ad70891`;\ncritic report `de0d2d43ee454e604384b13601dd56c3af6fcfcd848bdadeea43d7f17047d897`.\nExisting runtime before any implementation is web WASM\n`20f58e0d44cc94f9d0629478789680e4a87345ba800162aa0737ddc763bfd238`.\nNo generated overhead, semantic equivalence or latency benefit is claimed at activation.\n\n### 2026-09-08 — coordinator — Linux caller routing preflight\n\nFresh Daybreak approved only the two-line Linux caller migration described above,\nin `evidence/e5-t26p/verifier/caller-preflight.md`. The caller otherwise always uses\nthe recording API with NullSink, so a core-only specialization cannot reach this\nbrowser path. This is source-routing approval, not artifact or runtime verification.\n\n### 2026-09-08 — coordinator — artifact admission, semantics still pending\n\nFresh Daybreak's `evidence/e5-t26p/verifier/artifact-verdict.md` holds A1–A7:\nactual native and authenticated production-WASM ordinary/cached unit callers\neliminate returned retirement metadata, while recording remains a positive control.\n`artifact-index.json` digest is\n`dc53ee61a9caa4e6d93c72617b2ab94f8e7c044bab395a19737db7edf0a08d07`.\nThe actual release WASM grows 5,863 bytes (code section +5,850); native text grows\n7,112 bytes. The old Linux-specific execute body was smaller than the new unit\nspecialization despite the removed stores. This is not a speed or F-latency claim.\n\nCommands and exact source/toolchain/flags/binary identities are retained in the\nmatched probe results, `production-candidate-r1/result.json`, and both release\n`binding.json` files. The earlier baseline build missing archived toolchain/config\nis excluded; its failure record remains. No broad gate, final clone, demo, F boot,\nmerge or deployment is claimed. The first semantic scaffold lacked the required\nfour-way hazard coverage and actual seeded reservations in overlap-labelled cases;\nit is being corrected before independent old-source comparison.\n\n### 2026-09-08 — coordinator — canonical native/WASM state comparison\n\nFinal shared producer digest\n`62ce60205676c1ed59b2e11395c36337278cdd65d6fd9d4f56be4a4e13e7c5c9`.\n`node evidence/e5-t26p/record-semantics.mjs r1` executes the same public-API fixture\non the untouched old runtime archive before the candidate. Both complete 266\ncases/modes, with byte-identical full output (202,466 bytes; digest\n`5587b4d8fc786ea48a87a2c004466fe7fb2b9a7630c408548fcb264414446cc2`).\n`semantics-r1/result.json` binds both retained native binaries, compiler versions,\nfixture/source hashes, commands and outputs. No candidate semantic oracle is\nsubstituted for the old-source execution.\n\nThe actual-WASM wrapper runs that identical producer and asserts its whole output\nequals the old-source golden: `wasm-pack test --node crates/wasm --test\nretirement_capture_baseline -- --nocapture`, exit0, one test/266 cases.\n`semantics-r1/wasm.log` digest\n`dbeefd2e7f15c5e4a8b85b6eb8ea952c432fc6d3226f0f25ed737b9fe362f995`.\nThis covers the recorded state comparisons; it is not yet a completed fresh\nverifier verdict, full task submission, F latency or Omarchy proof.\nADVERSARIAL VERIFICATION\nPredict concrete state before inspecting retained baseline/candidate results. In particular,\ndistinguish SC's existing early reservation consumption on a fault from successful-store\noverlap invalidation. Attack a custom non-record-requesting sink with observable callbacks;\nit must not be silently disabled. Check recording metadata widths/values, x0 suppression,\ncompressed trap tval, counter suppression and both pages of a crossing write. In an isolated\nscratch copy, sabotage one successful-store reservation effect and demand test failure;\nrestore/hash it afterward. Audit generated untraced code and its reachable callee, not only\nsource-level constructors or the presence/absence of trace symbols. No old-seal reuse,\nweakened guard, timing inference, rr, WebKit, second clone or unrelated replay.\nsource: tasks/epic-5-the-window/E5-T26p-optional-retirement-capture.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:58713/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:58713/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:58713/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:58713/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:58713/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:58713/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:58713/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:58713/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:58713/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:58713/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:58713/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:58713/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "997b0ca38ce7de4b911cd034a3e6dab5a8b1140a53061fc41bc9ed63c118db26"
+}

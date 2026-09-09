@@ -1,0 +1,754 @@
+{
+  "exactHead": "0da96f6a5c7f323b986fe41b6f6bfb2508eec834",
+  "delayedConcurrentAttack": {
+    "repetitions": 25,
+    "allHeld": true,
+    "expectedCalls": [
+      [
+        "sendTabletEvent",
+        3,
+        0,
+        11
+      ],
+      [
+        "sendTabletEvent",
+        3,
+        1,
+        12
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        1
+      ],
+      [
+        "syncTablet"
+      ]
+    ],
+    "traceHashes": [
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c",
+      "ca822b5defa11bfe61ac53f36e6abcab7e56a77410aefe8030a1c03065939a6c"
+    ],
+    "firstRun": {
+      "repetition": 0,
+      "held": true,
+      "sequences": [
+        1,
+        2
+      ],
+      "calls": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    },
+    "lastRun": {
+      "repetition": 24,
+      "held": true,
+      "sequences": [
+        1,
+        2
+      ],
+      "calls": [
+        [
+          "sendTabletEvent",
+          3,
+          0,
+          11
+        ],
+        [
+          "sendTabletEvent",
+          3,
+          1,
+          12
+        ],
+        [
+          "syncTablet"
+        ],
+        [
+          "sendTabletEvent",
+          1,
+          272,
+          1
+        ],
+        [
+          "syncTablet"
+        ]
+      ]
+    }
+  },
+  "stateAndSequenceAttack": {
+    "records": [
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 1,
+        "device": "tablet",
+        "events": [],
+        "sync": "SYN_REPORT",
+        "noop": true
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 2,
+        "device": "tablet",
+        "events": [
+          {
+            "eventType": 1,
+            "code": 272,
+            "value": 1
+          }
+        ],
+        "sync": "SYN_REPORT",
+        "noop": false
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 3,
+        "device": "tablet",
+        "events": [],
+        "sync": "SYN_REPORT",
+        "noop": true
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 4,
+        "device": "tablet",
+        "events": [
+          {
+            "eventType": 1,
+            "code": 272,
+            "value": 0
+          }
+        ],
+        "sync": "SYN_REPORT",
+        "noop": false
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 5,
+        "device": "tablet",
+        "events": [],
+        "sync": "SYN_REPORT",
+        "noop": true
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 6,
+        "device": "keyboard",
+        "events": [],
+        "sync": "SYN_REPORT",
+        "noop": true
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 7,
+        "device": "keyboard",
+        "events": [
+          {
+            "eventType": 1,
+            "code": 30,
+            "value": 1
+          }
+        ],
+        "sync": "SYN_REPORT",
+        "noop": false
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 8,
+        "device": "keyboard",
+        "events": [],
+        "sync": "SYN_REPORT",
+        "noop": true
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 9,
+        "device": "keyboard",
+        "events": [
+          {
+            "eventType": 1,
+            "code": 30,
+            "value": 0
+          }
+        ],
+        "sync": "SYN_REPORT",
+        "noop": false
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 10,
+        "device": "keyboard",
+        "events": [],
+        "sync": "SYN_REPORT",
+        "noop": true
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 11,
+        "device": "tablet",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 7
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 9
+          }
+        ],
+        "sync": "SYN_REPORT",
+        "noop": false
+      }
+    ],
+    "calls": [
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        1
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        0
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendKeyboardEvent",
+        1,
+        30,
+        1
+      ],
+      [
+        "syncKeyboard"
+      ],
+      [
+        "sendKeyboardEvent",
+        1,
+        30,
+        0
+      ],
+      [
+        "syncKeyboard"
+      ],
+      [
+        "sendTabletEvent",
+        3,
+        0,
+        7
+      ],
+      [
+        "sendTabletEvent",
+        3,
+        1,
+        9
+      ],
+      [
+        "syncTablet"
+      ]
+    ],
+    "uniqueSequences": true,
+    "invalidInputConsumedSequence": false
+  },
+  "guestAttribution": {
+    "source": {
+      "records": [
+        {
+          "sequence": 1,
+          "timestamp": 15,
+          "backend": "canvas2d",
+          "drawn": true,
+          "replay": false,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 2,
+            "height": 2
+          },
+          "resourceWidth": 2,
+          "resourceHeight": 2,
+          "bytes": 16,
+          "guestInstructions": 100,
+          "guestInstructionsTotal": 100
+        },
+        {
+          "sequence": 2,
+          "timestamp": 15,
+          "backend": "canvas2d",
+          "drawn": true,
+          "replay": false,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 2,
+            "height": 2
+          },
+          "resourceWidth": 2,
+          "resourceHeight": 2,
+          "bytes": 16,
+          "guestInstructions": 75,
+          "guestInstructionsTotal": 175
+        }
+      ],
+      "gpu": {
+        "framesReceived": 2,
+        "enqueued": 2,
+        "coalesced": 0,
+        "presented": 2,
+        "successfulPresents": 2,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 32,
+        "drawnPresents": 2,
+        "drawnBytes": 32,
+        "width": 2,
+        "height": 2
+      },
+      "backendCalls": 2
+    },
+    "dist": {
+      "records": [
+        {
+          "sequence": 1,
+          "timestamp": 15,
+          "backend": "canvas2d",
+          "drawn": true,
+          "replay": false,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 2,
+            "height": 2
+          },
+          "resourceWidth": 2,
+          "resourceHeight": 2,
+          "bytes": 16,
+          "guestInstructions": 100,
+          "guestInstructionsTotal": 100
+        },
+        {
+          "sequence": 2,
+          "timestamp": 15,
+          "backend": "canvas2d",
+          "drawn": true,
+          "replay": false,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 2,
+            "height": 2
+          },
+          "resourceWidth": 2,
+          "resourceHeight": 2,
+          "bytes": 16,
+          "guestInstructions": 75,
+          "guestInstructionsTotal": 175
+        }
+      ],
+      "gpu": {
+        "framesReceived": 2,
+        "enqueued": 2,
+        "coalesced": 0,
+        "presented": 2,
+        "successfulPresents": 2,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 32,
+        "drawnPresents": 2,
+        "drawnBytes": 32,
+        "width": 2,
+        "height": 2
+      },
+      "backendCalls": 2
+    },
+    "sourceDistByteEqual": true,
+    "objectSourceRecords": [
+      {
+        "sequence": 1,
+        "timestamp": 16,
+        "backend": "canvas2d",
+        "drawn": true,
+        "replay": false,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 2,
+          "height": 2
+        },
+        "resourceWidth": 2,
+        "resourceHeight": 2,
+        "bytes": 16,
+        "guestInstructions": 100,
+        "guestInstructionsTotal": 100
+      },
+      {
+        "sequence": 2,
+        "timestamp": 16,
+        "backend": "canvas2d",
+        "drawn": true,
+        "replay": false,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 2,
+          "height": 2
+        },
+        "resourceWidth": 2,
+        "resourceHeight": 2,
+        "bytes": 16,
+        "guestInstructions": 75,
+        "guestInstructionsTotal": 175
+      }
+    ],
+    "noSourceRecord": {
+      "sequence": 1,
+      "timestamp": 17,
+      "backend": "canvas2d",
+      "drawn": true,
+      "replay": false,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 2,
+        "height": 2
+      },
+      "resourceWidth": 2,
+      "resourceHeight": 2,
+      "bytes": 16,
+      "guestInstructions": null,
+      "guestInstructionsTotal": null
+    },
+    "unavailableCallbackRecord": {
+      "sequence": 1,
+      "timestamp": 18,
+      "backend": "canvas2d",
+      "drawn": true,
+      "replay": false,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 2,
+        "height": 2
+      },
+      "resourceWidth": 2,
+      "resourceHeight": 2,
+      "bytes": 16,
+      "guestInstructions": null,
+      "guestInstructionsTotal": null
+    },
+    "unavailableExplicit": true,
+    "negativeAttribution": {
+      "record": {
+        "sequence": 1,
+        "timestamp": 19,
+        "backend": "canvas2d",
+        "drawn": true,
+        "replay": false,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 2,
+          "height": 2
+        },
+        "resourceWidth": 2,
+        "resourceHeight": 2,
+        "bytes": 16,
+        "guestInstructions": null,
+        "guestInstructionsTotal": null
+      },
+      "errors": []
+    },
+    "throwingAttribution": {
+      "record": {
+        "sequence": 1,
+        "timestamp": 19,
+        "backend": "canvas2d",
+        "drawn": true,
+        "replay": false,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 2,
+          "height": 2
+        },
+        "resourceWidth": 2,
+        "resourceHeight": 2,
+        "bytes": 16,
+        "guestInstructions": null,
+        "guestInstructionsTotal": null
+      },
+      "errors": [
+        "guest instruction telemetry: injected attribution failure"
+      ]
+    },
+    "regressionRecords": [
+      {
+        "sequence": 1,
+        "timestamp": 20,
+        "backend": "canvas2d",
+        "drawn": true,
+        "replay": false,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 2,
+          "height": 2
+        },
+        "resourceWidth": 2,
+        "resourceHeight": 2,
+        "bytes": 16,
+        "guestInstructions": 175,
+        "guestInstructionsTotal": 175
+      },
+      {
+        "sequence": 2,
+        "timestamp": 20,
+        "backend": "canvas2d",
+        "drawn": true,
+        "replay": false,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 2,
+          "height": 2
+        },
+        "resourceWidth": 2,
+        "resourceHeight": 2,
+        "bytes": 16,
+        "guestInstructions": null,
+        "guestInstructionsTotal": 100
+      }
+    ]
+  },
+  "damageAttack": {
+    "records": [
+      {
+        "sequence": 1,
+        "timestamp": 42,
+        "backend": "canvas2d",
+        "drawn": true,
+        "replay": false,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 2,
+          "height": 2
+        },
+        "resourceWidth": 2,
+        "resourceHeight": 2,
+        "bytes": 16,
+        "guestInstructions": 100,
+        "guestInstructionsTotal": 100
+      }
+    ],
+    "gpu": {
+      "framesReceived": 1,
+      "enqueued": 1,
+      "coalesced": 0,
+      "presented": 1,
+      "successfulPresents": 1,
+      "skipped": 0,
+      "droppedFrames": 0,
+      "overruns": 0,
+      "pending": 0,
+      "maxPending": 0,
+      "uploadedBytes": 16,
+      "drawnPresents": 1,
+      "drawnBytes": 16,
+      "width": 2,
+      "height": 2
+    }
+  },
+  "nullSinkAttack": {
+    "records": [
+      {
+        "sequence": 1,
+        "timestamp": 43,
+        "backend": "canvas2d",
+        "drawn": false,
+        "replay": false,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 2,
+          "height": 2
+        },
+        "resourceWidth": 2,
+        "resourceHeight": 2,
+        "bytes": 16,
+        "guestInstructions": 100,
+        "guestInstructionsTotal": 100
+      }
+    ],
+    "gpu": {
+      "framesReceived": 1,
+      "enqueued": 1,
+      "coalesced": 0,
+      "presented": 1,
+      "successfulPresents": 1,
+      "skipped": 0,
+      "droppedFrames": 0,
+      "overruns": 0,
+      "pending": 0,
+      "maxPending": 0,
+      "uploadedBytes": 16,
+      "drawnPresents": 0,
+      "drawnBytes": 0,
+      "width": 2,
+      "height": 2
+    }
+  },
+  "fiveRepetitions": {
+    "allByteEqual": true,
+    "sha256": [
+      "20b60bbff90600cb8cfa8c65701fd5cf720af40e3d541dfa1b89a78f06cca2a4",
+      "20b60bbff90600cb8cfa8c65701fd5cf720af40e3d541dfa1b89a78f06cca2a4",
+      "20b60bbff90600cb8cfa8c65701fd5cf720af40e3d541dfa1b89a78f06cca2a4",
+      "20b60bbff90600cb8cfa8c65701fd5cf720af40e3d541dfa1b89a78f06cca2a4",
+      "20b60bbff90600cb8cfa8c65701fd5cf720af40e3d541dfa1b89a78f06cca2a4"
+    ],
+    "bytes": "{\"events\":[{\"version\":\"e5-t25a-v1\",\"sequence\":1,\"device\":\"tablet\",\"events\":[{\"eventType\":3,\"code\":0,\"value\":100},{\"eventType\":3,\"code\":1,\"value\":200}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":2,\"device\":\"tablet\",\"events\":[{\"eventType\":1,\"code\":272,\"value\":1}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":3,\"device\":\"tablet\",\"events\":[{\"eventType\":1,\"code\":272,\"value\":0}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":4,\"device\":\"keyboard\",\"events\":[{\"eventType\":1,\"code\":30,\"value\":1}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":5,\"device\":\"keyboard\",\"events\":[{\"eventType\":1,\"code\":30,\"value\":0}],\"sync\":\"SYN_REPORT\",\"noop\":false}],\"calls\":[[\"sendTabletEvent\",3,0,100],[\"sendTabletEvent\",3,1,200],[\"syncTablet\"],[\"sendTabletEvent\",1,272,1],[\"syncTablet\"],[\"sendTabletEvent\",1,272,0],[\"syncTablet\"],[\"sendKeyboardEvent\",1,30,1],[\"syncKeyboard\"],[\"sendKeyboardEvent\",1,30,0],[\"syncKeyboard\"]],\"telemetry\":[{\"sequence\":1,\"timestamp\":15,\"backend\":\"canvas2d\",\"drawn\":true,\"replay\":false,\"rect\":{\"x\":0,\"y\":0,\"width\":2,\"height\":2},\"resourceWidth\":2,\"resourceHeight\":2,\"bytes\":16,\"guestInstructions\":100,\"guestInstructionsTotal\":100}],\"gpu\":{\"framesReceived\":1,\"enqueued\":1,\"coalesced\":0,\"presented\":1,\"successfulPresents\":1,\"skipped\":0,\"droppedFrames\":0,\"overruns\":0,\"pending\":0,\"maxPending\":0,\"uploadedBytes\":16,\"drawnPresents\":1,\"drawnBytes\":16,\"width\":2,\"height\":2}}",
+    "distByteEqual": true
+  },
+  "queueRecoveryAttack": {
+    "settled": [
+      {
+        "status": "rejected",
+        "reason": "injected first press failure"
+      },
+      {
+        "status": "fulfilled",
+        "record": {
+          "version": "e5-t25a-v1",
+          "sequence": 2,
+          "device": "tablet",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": "SYN_REPORT",
+          "noop": false
+        }
+      },
+      {
+        "status": "fulfilled",
+        "record": {
+          "version": "e5-t25a-v1",
+          "sequence": 3,
+          "device": "keyboard",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 30,
+              "value": 1
+            }
+          ],
+          "sync": "SYN_REPORT",
+          "noop": false
+        }
+      }
+    ],
+    "postRecoveryDuplicate": {
+      "version": "e5-t25a-v1",
+      "sequence": 4,
+      "device": "tablet",
+      "events": [],
+      "sync": "SYN_REPORT",
+      "noop": true
+    },
+    "calls": [
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        1
+      ],
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        1
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendKeyboardEvent",
+        1,
+        30,
+        1
+      ],
+      [
+        "syncKeyboard"
+      ]
+    ],
+    "held": true
+  },
+  "jsTsByteEqual": true
+}

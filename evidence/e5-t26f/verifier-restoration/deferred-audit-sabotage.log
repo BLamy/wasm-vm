@@ -1,0 +1,56 @@
+✔ one unresolved progress probe prevents subsequent timer ticks from piling up (2.138ms)
+✔ public sample is bounded and excludes pixels, full records and guest control (0.53ms)
+✔ navigation rejection frees the probe; stopped sampling suppresses late results (0.39025ms)
+✔ failure artifacts retain phase, error and milestones before browser capture (0.607458ms)
+✔ failure capture does not issue requests behind a stuck progress probe (0.586167ms)
+✔ cursor timeout uses only the unspent original two-second budget (0.640708ms)
+✔ cursor waits through missing/stale pixels, returns matching sample and disposes its handle (0.476083ms)
+✔ exhausted cursor budget fails before polling; a polling timeout remains a failure (0.450625ms)
+✔ top-level catch captures the phase before finally cleanup and rethrows the original error (0.725958ms)
+✖ a held coherence read starts after timed interaction and must finish before the next save (1.045833ms)
+✖ stale or mismatched actual coherence fails after timing and survives in failure milestones (0.45375ms)
+✔ second restore performs the real coherence audit after display/button checks and before evidence (0.134333ms)
+ℹ Error: Test "stale or mismatched actual coherence fails after timing and survives in failure milestones" at tools/verify/e5-t26f-browser-roundtrip.test.mjs:430:1 generated asynchronous activity after the test ended. This activity created the error "AssertionError [ERR_ASSERTION]: normal whole-machine snapshot was not coherent
+
+'stale' !== 'resume'
+" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+ℹ tests 12
+ℹ suites 0
+ℹ pass 10
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 45.87
+
+✖ failing tests:
+
+test at tools/verify/e5-t26f-browser-roundtrip.test.mjs:372:1
+✖ a held coherence read starts after timed interaction and must finish before the next save (1.045833ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///private/tmp/e5-t26f-verifier.kWyHAR/tools/verify/e5-t26f-browser-roundtrip.test.mjs:405:12)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tools/verify/e5-t26f-browser-roundtrip.test.mjs:430:1
+✖ stale or mismatched actual coherence fails after timing and survives in failure milestones (0.45375ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///private/tmp/e5-t26f-verifier.kWyHAR/tools/verify/e5-t26f-browser-roundtrip.test.mjs:443:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }

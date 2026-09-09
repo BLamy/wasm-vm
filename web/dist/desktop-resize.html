@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>wasm-vm — live desktop resize</title>
+<style>
+  :root{color-scheme:dark;font-family:system-ui;background:#0b0e12;color:#e2e9f2}
+  body{margin:20px}a{color:#60d8fa}button,input{font:inherit}header{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+  #viewport{position:relative;width:1280px;height:800px;resize:both;overflow:hidden;background:#000;box-shadow:0 0 0 1px #596577;margin:20px 0;outline:none}
+  canvas{position:absolute;left:0;top:0;display:block}
+  #status{font:13px ui-monospace,monospace}pre{white-space:pre-wrap;max-height:260px;overflow:auto;font-size:12px}
+</style>
+<header><a href="./app.html?noAutoBoot=1">wasm-vm</a><h1>Live desktop resize</h1></header>
+<p>This is a real RISC-V Weston desktop. Drag the display corner or change browser zoom.
+  Guest pixels stay at native scale while a mode change is pending. Click the display to type.</p>
+<div id="status">Preparing guest…</div>
+<div id="viewport" tabindex="0" aria-label="RISC-V desktop"><canvas id="desktop-canvas" width="1280" height="800"></canvas></div>
+<details><summary>Guest serial console</summary><pre id="serial"></pre></details>
+<script type="module" src="./desktop-resize.js"></script>
+</html>

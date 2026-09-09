@@ -1,0 +1,13 @@
+[package]
+name = "retirement-capture-probes"
+version = "0.0.0"
+edition = "2024"
+
+[workspace]
+
+[dependencies]
+wasm-vm-core = { path = "../../../crates/core", features = ["trace"] }
+
+[[bin]]
+name = "retirement-capture-probes"
+path = "../../../crates/core/examples/retirement_capture_probe.rs"

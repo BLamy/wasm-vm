@@ -1,0 +1,15 @@
+✔ actual counters are mandatory safe integers, with bounded gauges and consistent generation (2.681459ms)
+✔ collector subtracts counters, retains gauges/endpoints and does not erase earlier drops (0.957709ms)
+✔ mixed policies, non-cap failures, moved endpoints, changed generations and regressed counters refuse (4.868042ms)
+✔ unitOnly successful-cap branch keeps nonacceptance and requires completion within its bound (2.509959ms)
+✔ CLI writes a new output bound to the exact unitOnly input bytes (29.944875ms)
+✔ CLI refuses existing output and input=output without overwriting either (56.242ms)
+✔ CLI refuses a non-cap failure before creating output (28.825583ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 163.116083

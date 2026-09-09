@@ -1,0 +1,27 @@
+{
+  "role": "fresh Daybreak Blue adversarial verifier",
+  "clone": "/private/tmp/e5-t26j-critic.pgE4yQ/repo",
+  "cloneMode": "git clone --no-local --single-branch",
+  "runtimeHead": "cb283f9b3204f99d0bbc9ad44121c4f5da7b8b6a",
+  "metadataHead": "054bb87f93b490645d5af921207f97af08629113",
+  "scrubbedEnvironment": [
+    "RUST_LOG",
+    "RUSTFLAGS",
+    "CARGO_HOME",
+    "CARGO_TARGET_DIR",
+    "CARGO_ENCODED_RUSTFLAGS"
+  ],
+  "runtimeExit": 0,
+  "nativePassed": 35,
+  "javascriptPassed": 175,
+  "wasmPassed": 16,
+  "novelCases": 256,
+  "novelExit": 0,
+  "phaseSabotageExit": 101,
+  "forwardingSabotageExit": 1,
+  "finalScratchStatus": "clean",
+  "verifierProcessesExitedBy": "2026-09-08T08:16:22Z",
+  "browserLaunchedByVerifier": false,
+  "mainSourceChangedByVerifier": false,
+  "servedBytesChangedByVerifier": false
+}

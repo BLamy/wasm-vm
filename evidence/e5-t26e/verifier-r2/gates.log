@@ -1,0 +1,21 @@
+E5-T26e fresh verifier gate transcript summary
+head: 8c9314817321420fb94bfdaf23ae6491723f2e80
+
+in-place command: env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG make verify-E5-T26e
+in-place exit: 0
+format: passed
+clippy --lib: passed
+clippy --lib --tests: passed
+desktop_restore: 10 passed, 0 failed, 0 ignored
+desktop_snapshot: 9 passed, 0 failed, 0 ignored
+gpu snapshot: 6 passed, 0 failed, 0 ignored
+input snapshot: 12 passed, 0 failed, 0 ignored
+sound snapshot: 6 passed, 0 failed, 0 ignored
+wasm32 no-default-features build: passed
+
+cold command: git archive 8c9314817321420fb94bfdaf23ae6491723f2e80 into mktemp; env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG CARGO_NET_OFFLINE=true make verify-E5-T26e
+cold exit: 0
+cold desktop_restore: 10 passed, 0 failed, 0 ignored
+cold desktop_snapshot: 9 passed, 0 failed, 0 ignored
+cold gpu/input/sound snapshots: 6/12/6 passed, 0 failed, 0 ignored
+cold format, both clippy modes, and wasm32 build: passed

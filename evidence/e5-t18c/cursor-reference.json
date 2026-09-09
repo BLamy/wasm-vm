@@ -1,0 +1,23 @@
+{
+  "schema": "wasm-vm.e5-t18c.cursor-reference.v1",
+  "reference": "Wayland 1.22.0 built-in left_ptr",
+  "sourceUrl": "https://raw.githubusercontent.com/wayland-mirror/wayland/1.22.0/cursor/cursor-data.h",
+  "sourceSha256": "cb9f692118c2fd3f817d43372d3c532db76417d4ea77583f84e63453fcd69a92",
+  "width": 10,
+  "height": 16,
+  "hotspot": { "x": 1, "y": 1 },
+  "pixels": {
+    "encoding": "little-endian ARGB32",
+    "sourceWordOffset": 1008,
+    "length": 640,
+    "sha256": "03569147f5dd6d3174a5d88c11ae2e1c353a1cd81b4e3987f043225d111cd44f"
+  },
+  "guestImageSha256": "08bb8227fe0180ed06e5a01188e4a0fe3b21565ba83dcc2c1df632ca413172be",
+  "guestLibrary": {
+    "path": "/usr/lib/libwayland-cursor.so.0.22.0",
+    "sha256": "42c23debcace47e501ab1f6f01e94a1ce2ebc777fa26e5396c4f6b0770ce664b",
+    "matchingByteOffset": 16328,
+    "byteIdentical": true
+  },
+  "extraction": "Read-only debugfs dump from the pinned guest image using local wasm-vm-rootfs-build:local; Node Buffer.indexOf of the independently downloaded reference's 640 ARGB bytes returned 16328."
+}

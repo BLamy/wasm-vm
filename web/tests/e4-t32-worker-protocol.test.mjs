@@ -9,6 +9,7 @@ import {
 } from "../linux-worker-protocol.js";
 import { stopLinuxController } from "../linux-worker-host.js";
 import { createTaskQuiescence } from "../task-quiescence.js";
+import { createGuestClockLifecycle, validateGuestClock } from "../guest-clock.js";
 
 function endpointPair(events = []) {
   const connection = { closed: false };
@@ -43,6 +44,9 @@ function fakeController(events, done) {
     whenDone: done,
     restoredFromBootSnapshot: () => true,
     sendInput(bytes) { events.push(["input", [...bytes]]); },
+    setDisplay: (width, height) => width === 1367 && height === 901,
+    displayStats: () => ({ advertisedWidth: 1367, advertisedHeight: 901, scanoutResource: null,
+      edid: Uint8Array.of(0, 255) }),
     sendKeyboardEvent: (eventType, code, value) => events.push(["keyboard", eventType, code, value]),
     syncKeyboard: () => events.push("keyboard-sync"),
     sendTabletEvent: (eventType, code, value) => events.push(["tablet", eventType, code, value]),
@@ -75,12 +79,31 @@ function fakeController(events, done) {
     audioCaptureReady: () => true,
     captureState: () => ({ enabled: true, state: "running", startCount: 1 }),
     notifyCaptureEvent: (event) => { events.push(["capture", event]); return true; },
+    confirmAgentHello: () => { events.push("agent-hello"); return true; },
+    saveDesktopSnapshot: () => Uint8Array.of(11, 12),
+    sendAgentInput: (bytes) => bytes.byteLength,
+    takeAgentOutput: () => Uint8Array.of(13, 14),
+    restoreDesktopSnapshot: (bytes, width, height) => {
+      events.push(["desktop-restore", [...bytes], width, height]);
+      return {
+        boundaryId: 7,
+        scanout: { width: 1280, height: 720 },
+        hostViewport: { width, height },
+        viewport: "letterbox",
+        agentRehandshake: true,
+        inputReleaseEvents: 0,
+        soundXrunEvents: 0,
+        fullRepairFrame: true,
+      };
+    },
     resumeAfterQuota: () => true,
     continueReadOnly: () => true,
     hasUnpersisted: () => false,
     snapshotSave: () => true,
     snapshotRead: () => Uint8Array.of(1, 2),
     snapshotDecision: () => "resume",
+    storedSnapshotRestoreEvidence: () => ({ attempted: true, decision: "resume", overlayGeneration: 2 }),
+    icountDividerSelection: () => null,
     snapshotAdvanceGen: () => 2,
     snapshotGeneration: () => 2,
     snapshotExport: () => Uint8Array.of(3, 4),
@@ -90,6 +113,7 @@ function fakeController(events, done) {
     jitStats: () => ({ compiledBlocks: 2, executedBlocks: 3, retiredViaJit: 4 }),
     profileStats: () => ({ totalNs: 5 }),
     schedulerStats: () => ({ quantum: 500_000 }),
+    guestClockState: () => ({ mode: "icount", mtime: "17", timebaseHz: 10_000_000, clockDiv: 10 }),
     async stop() { events.push("inner-stop"); },
     async releaseWriterLock() { events.push("release-lock"); },
     async closeStorage() { events.push("close-storage"); },
@@ -215,6 +239,7 @@ test("every explicit controller method crosses the runtime and no-provider Tails
   invoked.length = 0;
   try {
     const args = {
+      setDisplay: [1367, 901],
       sendKeyboardEvent: [1, 30, 1],
       syncKeyboard: [],
       sendTabletEvent: [3, 0, 12],
@@ -234,6 +259,11 @@ test("every explicit controller method crosses the runtime and no-provider Tails
       dismissFileDownload: [9],
       snapshotImport: [Uint8Array.of(4, 5)],
       notifyCaptureEvent: ["muted"],
+      saveDesktopSnapshot: [],
+      confirmAgentHello: [],
+      sendAgentInput: [Uint8Array.of(6, 7)],
+      takeAgentOutput: [],
+      restoreDesktopSnapshot: [Uint8Array.of(8, 9), 1024, 768],
       tailscaleCommand: ["status"],
     };
     const results = new Map();
@@ -241,6 +271,14 @@ test("every explicit controller method crosses the runtime and no-provider Tails
       results.set(method, await controller[method](...(args[method] ?? [])));
     }
     assert.deepEqual([...invoked], LINUX_CONTROLLER_METHODS);
+    assert.equal(results.get("setDisplay"), true);
+    assert.equal(results.get("confirmAgentHello"), true);
+    assert.deepEqual([...results.get("saveDesktopSnapshot")], [11, 12]);
+    assert.equal(results.get("sendAgentInput"), 2);
+    assert.deepEqual([...results.get("takeAgentOutput")], [13, 14]);
+    assert.deepEqual(results.get("restoreDesktopSnapshot").hostViewport, { width: 1024, height: 768 });
+    assert.deepEqual(results.get("displayStats"), { advertisedWidth: 1367, advertisedHeight: 901,
+      scanoutResource: null, edid: Uint8Array.of(0, 255) });
     assert.deepEqual(events.slice(0, 2), [["keyboard", 1, 30, 1], "keyboard-sync"]);
     assert.equal(results.get("tailscaleCommand"), false);
     assert.deepEqual([...results.get("takeFileDownloadChunk")], [9, 10]);
@@ -251,6 +289,85 @@ test("every explicit controller method crosses the runtime and no-provider Tails
     resolveDone("stopped");
     await controller.whenDone;
   }
+});
+
+test("guestClock boot data and current machine state traverse the paired worker protocol without rounding or caching", { timeout: 2_000 }, async () => {
+  // The protocol and lifecycle are real; the injected machine is only a boundary fixture,
+  // not evidence of guest-visible rdtime progression or the browser monotonic source.
+  for (const mode of [undefined, "icount", "wall"]) {
+    const events = [];
+    const { page, worker } = endpointPair(events);
+    let resolveDone;
+    const done = new Promise((resolve) => { resolveDone = resolve; });
+    let state = { mode: mode ?? "icount", mtime: "18446744073709551615", timebaseHz: 10_000_000, clockDiv: 10 };
+    let stateError = null;
+    let sourceReads = 0;
+    createLinuxWorkerRuntime(worker, {
+      startBoot: async (opts) => {
+        assert.equal(Object.hasOwn(opts, "guestClock"), mode !== undefined);
+        assert.equal(opts.guestClock, mode, "boot option must survive the structured-clone boundary verbatim");
+        validateGuestClock(opts.guestClock, { performance: { now: () => { sourceReads += 1; return 123.5; } } });
+        const lifecycle = createGuestClockLifecycle({
+          setGuestClock(value) { events.push(["clock-set", value]); },
+          rebaseGuestClock() { events.push("clock-rebase"); },
+          guestClockState() {
+            events.push("clock-state");
+            if (stateError) throw stateError;
+            return state;
+          },
+        }, opts.guestClock);
+        return { ...fakeController(events, done), resume: () => lifecycle.resume(), guestClockState: () => lifecycle.state() };
+      },
+    });
+    const client = createLinuxWorkerClient(page);
+    const opts = mode === undefined ? {} : { guestClock: mode };
+    const boot = client.boot(opts);
+    opts.guestClock = "caller-mutated-after-post";
+    try {
+      const controller = await boot;
+      assert.ok(LINUX_CONTROLLER_METHODS.includes("guestClockState"));
+      assert.equal(controller.setGuestClock, undefined, "read-only RPC must not expose clock mutation");
+      assert.equal(sourceReads, mode === "wall" ? 1 : 0);
+      assert.deepEqual(events, [["clock-set", mode ?? "icount"]]);
+      const first = await controller.guestClockState();
+      assert.deepEqual(first, state);
+      assert.notEqual(first, state);
+      assert.equal(first.mtime, "18446744073709551615", "u64 clock state must not round through Number");
+      first.mtime = "caller mutation";
+      state = { mode: "machine-reported-mode", mtime: "9007199254740993", timebaseHz: 10_000_000, clockDiv: 11 };
+      events.length = 0;
+      const [, next] = await Promise.all([controller.resume(), controller.guestClockState()]);
+      assert.deepEqual(next, state, "RPC must return the current machine result, not the requested boot mode");
+      assert.deepEqual(events, mode === "wall" ? ["clock-rebase", "clock-state"] : ["clock-state"]);
+      stateError = new Error("clock state unavailable");
+      await assert.rejects(controller.guestClockState(), /clock state unavailable/);
+      stateError = null;
+      state = null;
+      assert.equal(await controller.guestClockState(), null, "unavailable state must not become fabricated icount/wall data");
+    } finally {
+      resolveDone("stopped");
+      await client.controller.whenDone.catch(() => {});
+    }
+  }
+});
+
+test("worker forwards an invalid clock label to validation and propagates refusal before machine mutation", { timeout: 2_000 }, async () => {
+  const { page, worker } = endpointPair();
+  let mutations = 0;
+  let observed;
+  createLinuxWorkerRuntime(worker, {
+    startBoot: async (opts) => {
+      observed = opts.guestClock;
+      validateGuestClock(opts.guestClock, { performance: { now() { throw Error("source should not be read"); } } });
+      mutations += 1;
+      throw Error("invalid label reached machine creation");
+    },
+  });
+  const client = createLinuxWorkerClient(page);
+  await assert.rejects(client.boot({ guestClock: "Wall" }), /unsupported guestClock: Wall/);
+  await assert.rejects(client.controller.whenDone, /unsupported guestClock: Wall/);
+  assert.equal(observed, "Wall");
+  assert.equal(mutations, 0);
 });
 
 test("capture PCM_START lifecycle notification crosses the worker boundary", async () => {
@@ -271,6 +388,105 @@ test("capture PCM_START lifecycle notification crosses the worker boundary", asy
   });
   const controller = await client.boot({});
   assert.deepEqual(await capture, { enabled: true, state: "running", startCount: 3 });
+  resolveDone("stopped");
+  await controller.whenDone;
+});
+
+test("display FrameSink projections cross the worker boundary with private pixel ownership", async () => {
+  const events = [];
+  const { page, worker } = endpointPair(events);
+  let resolveDone;
+  const done = new Promise((resolve) => { resolveDone = resolve; });
+  let resolveDisplay;
+  const display = new Promise((resolve) => { resolveDisplay = resolve; });
+  createLinuxWorkerRuntime(worker, {
+    startBoot: async (opts) => {
+      const source = Uint32Array.of(0x11223344, 0x55667788);
+      opts.onDisplayFrame({
+        scanout: 0,
+        format: 2,
+        rect: { x: 1, y: 0, width: 1, height: 1 },
+        resourceWidth: 2,
+        resourceHeight: 1,
+        pixels: source,
+      });
+      source[0] = 0;
+      return fakeController(events, done);
+    },
+  });
+  const client = createLinuxWorkerClient(page, { onDisplayFrame: resolveDisplay });
+  const controller = await client.boot({});
+  const frame = await display;
+  assert.equal(frame.format, 2, "XRGB padding must not become transparent alpha at the page sink");
+  assert.deepEqual(frame.rect, { x: 1, y: 0, width: 1, height: 1 });
+  assert.deepEqual([...frame.pixels], [0x11223344, 0x55667788]);
+  resolveDone("stopped");
+  await controller.whenDone;
+});
+
+test("display clear controls cross the worker boundary without a pixel payload", async () => {
+  const events = [];
+  const { page, worker } = endpointPair(events);
+  let resolveDone;
+  const done = new Promise((resolve) => { resolveDone = resolve; });
+  let resolveClear;
+  const cleared = new Promise((resolve) => { resolveClear = resolve; });
+  createLinuxWorkerRuntime(worker, {
+    startBoot: async (opts) => {
+      opts.onDisplayFrame({ type: "clear" });
+      return fakeController(events, done);
+    },
+  });
+  const client = createLinuxWorkerClient(page, {
+    onDisplayFrame: (frame) => resolveClear(frame),
+  });
+  const controller = await client.boot({});
+  assert.deepEqual(await cleared, { type: "clear" });
+  resolveDone("stopped");
+  await controller.whenDone;
+});
+
+test("cursor-plane update and move projections keep MOVE payloads empty and privately owned", async () => {
+  const events = [];
+  const { page, worker } = endpointPair(events);
+  let resolveDone;
+  const done = new Promise((resolve) => { resolveDone = resolve; });
+  const cursors = [];
+  createLinuxWorkerRuntime(worker, {
+    startBoot: async (opts) => {
+      const source = Uint32Array.of(0x11223344, 0x55667788);
+      opts.onCursorState({
+        type: "cursor-update",
+        state: { resourceId: 7, hotX: 1, hotY: 0, pos: { scanoutId: 0, x: 10, y: 20 } },
+        format: 1,
+        resourceWidth: 2,
+        resourceHeight: 1,
+        pixels: source,
+      });
+      source[0] = 0;
+      opts.onCursorState({
+        type: "cursor-move",
+        state: { resourceId: 7, hotX: 1, hotY: 0, pos: { scanoutId: 0, x: 11, y: 21 } },
+        format: null,
+        resourceWidth: 0,
+        resourceHeight: 0,
+        pixels: new Uint32Array(0),
+      });
+      return fakeController(events, done);
+    },
+  });
+  const client = createLinuxWorkerClient(page, { onCursorState: (frame) => cursors.push(frame) });
+  const controller = await client.boot({});
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  assert.equal(cursors.length, 2);
+  assert.equal(cursors[0].type, "cursor-update");
+  assert.deepEqual([...cursors[0].pixels], [0x11223344, 0x55667788]);
+  assert.equal(cursors[0].resourceWidth, 2);
+  assert.equal(cursors[1].type, "cursor-move");
+  assert.deepEqual(cursors[1].state.pos, { scanoutId: 0, x: 11, y: 21 });
+  assert.equal(cursors[1].format, null);
+  assert.equal(cursors[1].resourceWidth, 0);
+  assert.equal(cursors[1].pixels.byteLength, 0);
   resolveDone("stopped");
   await controller.whenDone;
 });

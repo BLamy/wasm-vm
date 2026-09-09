@@ -1,0 +1,33 @@
+{
+  "acceptance": false,
+  "helperSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+  "probeSha256": "80760a2e145e84afed31c9e8b9d908da06912d1a84d9d13ae218bade76a855cf",
+  "parserSha256": "32b61aec8b9baf2473a1962e3d6adf1759b4e9c1aaffae82488d86aa6ed8a020",
+  "versionsFile": "versions.txt",
+  "results": [
+    {
+      "name": "escaped-file", "mainPid": 16,
+      "target": "/work/results/escaped-file.pcm", "writes": 4, "bytes": 3840,
+      "writeSizeHistogram": {"765": 1, "1025": 3},
+      "firstWriteLine": 143, "lastWriteLine": 146,
+      "pcmSha256": "e3179ebc66c47bef5c1bbcabce0718c5170c3995f2ff5a450db079a6e2a8d8ac",
+      "traceSha256": "c02b0294c71f096cd1d7998dd3124d6c7d95a93287d0982508f64e23d94ec369"
+    },
+    {
+      "name": "escaped-fifo", "mainPid": 24,
+      "target": "/work/results/escaped-fifo.fifo", "writes": 4, "bytes": 3840,
+      "writeSizeHistogram": {"765": 1, "1025": 3},
+      "firstWriteLine": 159, "lastWriteLine": 166,
+      "pcmSha256": "e3179ebc66c47bef5c1bbcabce0718c5170c3995f2ff5a450db079a6e2a8d8ac",
+      "traceSha256": "b6c5db9f8835793d40aafe8c24090276ec3ec68cb032141b9e8a78f658d9ceb7"
+    },
+    {
+      "name": "decoded-fifo", "mainPid": 36,
+      "target": "/work/results/decoded-fifo.fifo", "writes": 1, "bytes": 3840,
+      "writeSizeHistogram": {"3840": 1},
+      "firstWriteLine": 297, "lastWriteLine": 297,
+      "pcmSha256": "0f52f84a44e8c2bb1969e9b2b278f3e7f13618124f8997f177a2f652b63ec207",
+      "traceSha256": "166575f7f2b62ee8cdf0c1c55843bf89e588af959700c304f41ca3406573b16f"
+    }
+  ]
+}

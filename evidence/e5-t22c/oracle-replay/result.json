@@ -1,0 +1,15 @@
+{
+  "source": "evidence/e5-t22c/rejected-oracle-v4/failure.png",
+  "sourceSha256": "8255679ab35bb21425e79136da58acfce459401b6c2946297d28f034dbb3c543",
+  "observed": {
+    "visible": true,
+    "left": 72,
+    "top": 253,
+    "width": 132,
+    "height": 13,
+    "background": 1090,
+    "foreground": 477
+  },
+  "markerSha256": "5f514001ec640d0c264f7cc4937e33db530649fc873bb36512811cbd02ef3444",
+  "claim": "offline antialias detector regression only; not live resize acceptance"
+}

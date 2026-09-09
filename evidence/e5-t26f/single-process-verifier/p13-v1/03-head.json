@@ -1,0 +1,12 @@
+{
+  "name": "03-head",
+  "command": "git",
+  "args": [
+    "rev-parse",
+    "HEAD"
+  ],
+  "cwd": "/private/tmp/e5-t26f-single-process-p13.j00WpJ/repo",
+  "code": 0,
+  "signal": null,
+  "error": null
+}

@@ -1,0 +1,39 @@
+{
+  "task": "E5-T15b",
+  "role": "worker",
+  "recorded_at": "2026-09-04",
+  "implementation_commit": "9f171ab",
+  "commands": [
+    {
+      "command": "node --check web/src/sink/cursor.js",
+      "result": "passed"
+    },
+    {
+      "command": "node --test web/tests/e5-t15b-cursor-sink.test.mjs",
+      "result": "5 passed, 0 failed"
+    },
+    {
+      "command": "make verify-E5-T15b",
+      "result": "passed; syntax check plus 5 tests, 0 failed"
+    }
+  ],
+  "acceptance": {
+    "rgba_round_trip": "A 64x64 BGRA checkerboard with transparent, half-alpha, and opaque pixels decoded from the deterministic PNG byte-for-byte to the expected RGBA rows.",
+    "css_hotspot": "The 64x64 sink descriptor is exactly url(\"<data-url>\") 10 3, none.",
+    "overlay_and_limits": "A 256x256 resource selects overlay; the checked limits are 65,536 pixels, 262,144 RGBA bytes, 262,400 filtered bytes, 262,488 PNG bytes, and 350,006 data-URL characters.",
+    "adversarial_inputs": "Odd 63x65 dimensions work; zero/oversized dimensions, negative or out-of-range hotspots, malformed pixel counts, unsupported formats, and CSS control characters are rejected.",
+    "bounded_repetition": "The sink performs 1,001 updates while retaining one current descriptor, no source pixel view, no RGBA staging array, and no history; its diagnostic data-URL length remains within the fixed bound. A source mutation after update cannot change the copied descriptor.",
+    "hide": "A resource-id-zero callback clears the current image and reports a hidden descriptor without validating or retaining an image payload."
+  },
+  "coverage": [
+    "web/src/sink/cursor.js and the byte-identical cursor.ts mirror are exercised by the focused Node proof.",
+    "web/dist/src/sink/cursor.js and cursor.ts were regenerated from the exact source commit by make web-dist and included in the implementation commit.",
+    "DOM mode/lifecycle wiring is intentionally downstream in E5-T15c; this slice has no user-reachable DOM path to browser-test yet."
+  ],
+  "waivers": [
+    "Per user direction, no independent-machine proof was run.",
+    "Per user direction, no WebKit proof was run.",
+    "No host rr trace was recorded because the repository policy waives host-layer rr and this slice is browser-side JavaScript without a host concurrency claim."
+  ],
+  "claim": "At implementation commit 9f171ab, E5-T15b's pure cursor-resource sink deterministically copies checked virtio-gpu words into alpha-correct RGBA, encodes a self-contained bounded PNG data URL, emits the exact hotspot CSS declaration for browser-sized cursors, and selects a bounded overlay descriptor for 256x256 resources while rejecting malformed or unbounded inputs."
+}

@@ -1,0 +1,222 @@
+{
+  "state": {
+    "frames": 26,
+    "error": null,
+    "disposed": false,
+    "viewport": {
+      "disposed": false,
+      "desired": {
+        "width": 901,
+        "height": 701,
+        "dpr": 1,
+        "cssWidth": 901,
+        "cssHeight": 701,
+        "sequence": 1
+      },
+      "requested": {
+        "width": 901,
+        "height": 701,
+        "dpr": 1,
+        "cssWidth": 901,
+        "cssHeight": 701,
+        "sequence": 1
+      },
+      "accepted": {
+        "width": 901,
+        "height": 701,
+        "dpr": 1,
+        "cssWidth": 901,
+        "cssHeight": 701,
+        "sequence": 1
+      },
+      "requests": 1,
+      "inFlight": false,
+      "timerPending": false,
+      "dprWatcherPending": true,
+      "debounceMs": 250,
+      "error": null
+    },
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 901,
+      "height": 701,
+      "fixedViewport": true,
+      "sizeMismatch": true,
+      "framesReceived": 26,
+      "successfulPresents": 26,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": {
+        "enqueued": 26,
+        "coalesced": 0,
+        "presented": 26,
+        "skipped": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 1,
+        "paused": false,
+        "disposed": false,
+        "scheduled": false
+      },
+      "gpu": {
+        "framesReceived": 26,
+        "enqueued": 26,
+        "coalesced": 0,
+        "presented": 26,
+        "successfulPresents": 26,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 1,
+        "uploadedBytes": 65686504,
+        "width": 901,
+        "height": 701
+      },
+      "latest": {
+        "rect": {
+          "x": 1233,
+          "y": 11,
+          "width": 8,
+          "height": 11
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800
+      },
+      "errors": []
+    },
+    "modes": [
+      {
+        "ms": 7938.495000004768,
+        "width": 1280,
+        "height": 800,
+        "frame": 1
+      }
+    ],
+    "paints": []
+  },
+  "scheduler": {
+    "quantum": 500000,
+    "maxQuantum": 500000,
+    "slices": 12912,
+    "totalSliceMs": 778605.2450046539,
+    "averageSliceMs": 60.30090187458596,
+    "maxSliceMs": 553.9549999833107,
+    "sliceHistogram": [
+      {
+        "leMs": 4,
+        "count": 52
+      },
+      {
+        "leMs": 8,
+        "count": 426
+      },
+      {
+        "leMs": 16,
+        "count": 317
+      },
+      {
+        "leMs": 32,
+        "count": 1036
+      },
+      {
+        "leMs": 64,
+        "count": 5181
+      },
+      {
+        "leMs": 128,
+        "count": 5834
+      },
+      {
+        "leMs": 256,
+        "count": 49
+      },
+      {
+        "leMs": 512,
+        "count": 15
+      },
+      {
+        "leMs": 1000,
+        "count": 2
+      },
+      {
+        "leMs": null,
+        "count": 0
+      }
+    ],
+    "maxStretchGapMs": 555.664999961853,
+    "requestedInstructions": 6456000000,
+    "retiredInstructions": 6455239984,
+    "fetchWaits": 267,
+    "fetchRequestedChunks": 295,
+    "fetchWaitTotalMs": 535.3149996995926,
+    "fetchWaitMaxMs": 11.714999973773956,
+    "outputCalls": 139,
+    "outputBytes": 14311,
+    "inputCalls": 0,
+    "inputBytes": 0,
+    "yieldMode": "scheduler.postTask",
+    "schedulerYields": 12913,
+    "timerYields": 0,
+    "mainThreadYields": 0
+  },
+  "jit": {
+    "hasExecutor": true,
+    "compiledBlocks": 119,
+    "executedBlocks": 150637491,
+    "retiredViaJit": 2053971462,
+    "directChainEntries": 358585049,
+    "directChainLinks": 207954215,
+    "dynamicLinkAttempts": 51066307,
+    "dynamicLinkHits": 18572924,
+    "dynamicLinkRefusals": 32493383,
+    "dynamicLinkRetargets": 0,
+    "dynamicLinkLiveEntries": 7,
+    "dynamicLinkInstalls": 9511483,
+    "entryCost": {
+      "hostEntries": 150637491,
+      "stateCopyCalls": 301274982,
+      "stateCopyBytes": 28732438160,
+      "stateCopyNs": 13867200856,
+      "engineEntryNs": 52300982433,
+      "indirectTableDispatches": 89375424,
+      "authorityChecks": 200103604,
+      "memorySplitExits": 5694905,
+      "deviceBoundaries": 249856,
+      "deviceBoundaryNs": 19234979
+    },
+    "jitRegionChaining": true,
+    "jitDynamicChaining": true,
+    "guestRetired": 6455739857,
+    "jitEngineCalls": 150637491,
+    "jitLogicalBlocksPerEngineCall": 2.380450222713813,
+    "jitRetiredShare": 0.31816205539522563,
+    "chainLinksMade": 26358,
+    "chainLinksCut": 26326,
+    "chainDispatchEntries": 103662508,
+    "chainMaxDepth": 128,
+    "chainLinksFollowed": 143305324,
+    "jitResidencyPolicy": "repack-off",
+    "jitResidencyCap": 24,
+    "jitSubmittedMembers": 62785,
+    "jitCompilePauseNs": 0,
+    "jitCompilePauseMaxNs": 0,
+    "jitCompilePauseSamples": 12917,
+    "jitCacheInstalls": 62774,
+    "jitCacheRetranslations": 57343,
+    "jitCacheEvictions": 12453,
+    "jitCacheBatches": 19,
+    "jitCacheCodeBytes": 1528264,
+    "decodedBlocksDiscarded": 258,
+    "decodedCacheFlushes": 3,
+    "discoveryGeneration": 101,
+    "blockEntryHits": 697220483,
+    "blockBuilds": 158186338
+  },
+  "serial": "seed for next boot\r\n [ ok ]\r\n * Starting busybox syslog ... [ ok ]\r\n * Starting seatd ... [ ok ]\r\n * Waiting for uevents to be processed ... [ ok ]\r\n * Starting networking ... *   lo ... [ ok ]\r\n *   eth0 ...udhcpc: started, v1.36.1\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc failed to get a DHCP lease\r\nudhcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\nE5T18D_TEST_CONSOLE_READY\r\n"
+}

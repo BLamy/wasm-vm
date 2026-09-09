@@ -31,11 +31,15 @@ use wasm_bindgen_test::*;
 use wasm_vm_core::Machine;
 use wasm_vm_core::bus::mmap::DRAM_BASE;
 use wasm_vm_core::bus::{Bus, BusFault};
+use wasm_vm_core::csr::{
+    CsrOp, MCAUSE, MEPC, MIE, MSTATUS, MTVEC, SCAUSE, SEPC, SIE, SSTATUS, STVEC,
+};
 use wasm_vm_core::decode::{AmoOp, Instr};
 use wasm_vm_core::dispatch::{DecodedBlock, MicroOp};
 use wasm_vm_core::hart::{Exception, Hart, Trap};
 use wasm_vm_core::jit::{CompiledBlockExecutor, EvictPolicy, ExitCode, JitCacheBudget};
 use wasm_vm_core::mmio::{MmioDevice, SystemBus, Width};
+use wasm_vm_core::platform::virt;
 use wasm_vm_core::ram::Ram;
 use wasm_vm_wasm::{BROWSER_MAX_BATCHES, BrowserExecutor};
 
@@ -158,6 +162,9 @@ fn enc_lw(rd: u32, rs1: u32, imm: i32) -> u32 {
 fn enc_sw(rs1: u32, rs2: u32, imm: i32) -> u32 {
     let imm = imm as u32;
     ((imm >> 5) << 25) | (rs2 << 20) | (rs1 << 15) | (0b010 << 12) | ((imm & 0x1f) << 7) | 0b0100011
+}
+fn enc_csrrs(rd: u32, csr: u32, rs1: u32) -> u32 {
+    (csr << 20) | (rs1 << 15) | (0b010 << 12) | (rd << 7) | 0b1110011
 }
 const ECALL: u32 = 0x0000_0073;
 
@@ -292,6 +299,153 @@ fn browser_jit_matches_interpreter_a_block() {
         executed > 0,
         "the browser JIT must actually execute blocks (A)"
     );
+}
+
+#[derive(Debug, PartialEq, Eq)]
+struct InterruptSnapshot {
+    pc: u64,
+    epc: u64,
+    cause: u64,
+    mstatus: u64,
+    target_side_effect: u64,
+}
+
+fn read_csr(machine: &mut Machine, addr: u16) -> u64 {
+    machine
+        .hart_mut()
+        .csr
+        .access(addr, CsrOp::Set, 0, true, false, 0)
+        .expect("test CSR read succeeds")
+}
+
+fn run_machine_xie_enable_case(supervisor: bool, with_browser_jit: bool) -> InterruptSnapshot {
+    const HANDLER_OFFSET: u64 = 0x100;
+    let code = if supervisor {
+        virt::KERNEL_BASE
+    } else {
+        DRAM_BASE
+    };
+    let handler = code + HANDLER_OFFSET;
+    let successor = code + 8;
+    let mut machine = Machine::new(8 * 1024 * 1024);
+    machine.enable_clint(1);
+
+    if supervisor {
+        machine.boot_supervisor(0, 0);
+        machine
+            .hart_mut()
+            .csr
+            .access(SIE, CsrOp::Write, 1 << 5, false, false, 0)
+            .expect("S-mode STIE setup succeeds");
+        machine.hart_mut().csr.set_mip_bit(5, true);
+        machine
+            .hart_mut()
+            .csr
+            .access(STVEC, CsrOp::Write, handler, false, false, 0)
+            .expect("stvec setup succeeds");
+    } else {
+        machine
+            .bus_mut()
+            .store64(virt::CLINT_BASE + 0x4000, 0)
+            .expect("mtimecmp setup succeeds");
+        machine
+            .hart_mut()
+            .csr
+            .access(MIE, CsrOp::Write, 1 << 7, false, false, 0)
+            .expect("M-mode MTIE setup succeeds");
+        machine
+            .hart_mut()
+            .csr
+            .access(MTVEC, CsrOp::Write, handler, false, false, 0)
+            .expect("mtvec setup succeeds");
+    }
+
+    let enable = if supervisor { 1 << 1 } else { 1 << 3 };
+    let csr = if supervisor {
+        SSTATUS as u32
+    } else {
+        MSTATUS as u32
+    };
+    poke(
+        &mut machine,
+        code,
+        &[
+            enc_addi(5, 0, enable),
+            enc_csrrs(0, csr, 5),
+            enc_addi(6, 6, 1),
+            enc_jal(0, 4),
+        ],
+    );
+    poke(&mut machine, handler, &[enc_addi(7, 7, 1), enc_jal(0, 4)]);
+    machine.hart_mut().regs.pc = code;
+
+    if with_browser_jit {
+        machine.set_block_cache(true);
+        machine.set_interrupt_batching(true);
+        machine.set_hotness_threshold(1);
+        machine.set_jit(true);
+        let mut executor =
+            BrowserExecutor::new_inline(&machine).expect("inline TLB fits wasm memory");
+        executor.install(&block(
+            successor,
+            &[
+                Instr::Addi {
+                    rd: 6,
+                    rs1: 6,
+                    imm: 1,
+                },
+                Instr::Jal { rd: 0, imm: 4 },
+            ],
+        ));
+        machine.set_executor(Box::new(executor));
+        assert!(
+            machine
+                .executor()
+                .is_some_and(|executor| executor.is_compiled(successor)),
+            "interrupt test successor must be precompiled before guest execution"
+        );
+    }
+
+    machine.run(3);
+    let epc_addr = if supervisor { SEPC } else { MEPC };
+    let cause_addr = if supervisor { SCAUSE } else { MCAUSE };
+    InterruptSnapshot {
+        pc: machine.hart().regs.pc,
+        epc: read_csr(&mut machine, epc_addr),
+        cause: read_csr(&mut machine, cause_addr),
+        mstatus: machine.hart().csr.mstatus,
+        target_side_effect: machine.hart().regs.read(6),
+    }
+}
+
+#[wasm_bindgen_test]
+fn browser_machine_xie_enable_preempts_reused_inline_target() {
+    let cases = [(false, (1u64 << 63) | 7), (true, (1u64 << 63) | 5)];
+    for (supervisor, cause) in cases {
+        let oracle = run_machine_xie_enable_case(supervisor, false);
+        let browser = run_machine_xie_enable_case(supervisor, true);
+        assert_eq!(browser, oracle, "browser interrupt state diverged");
+        assert_eq!(browser.cause, cause);
+        assert_eq!(
+            browser.epc,
+            if supervisor {
+                virt::KERNEL_BASE + 8
+            } else {
+                DRAM_BASE + 8
+            }
+        );
+        assert_eq!(
+            browser.target_side_effect, 0,
+            "compiled successor must not run"
+        );
+        if supervisor {
+            assert_eq!(browser.pc, virt::KERNEL_BASE + 0x100);
+            assert_eq!(browser.mstatus & ((1 << 1) | (1 << 5)), 1 << 5);
+        } else {
+            assert_eq!(browser.pc, DRAM_BASE + 0x100);
+            assert_eq!(browser.mstatus & ((1 << 3) | (1 << 7)), 1 << 7);
+        }
+    }
 }
 
 #[wasm_bindgen_test]
@@ -988,6 +1142,87 @@ fn browser_inline_static_cross_batch_link_executes_and_misses_safely() {
     assert_eq!(hit.next_pc, TARGET + 8);
     assert_eq!(machine.hart().regs.read(1), 1);
     assert_eq!(machine.hart().regs.read(2), 1);
+}
+
+#[wasm_bindgen_test]
+fn browser_inline_static_link_retains_across_interrupt_stack_bits() {
+    const CALLER: u64 = DRAM_BASE;
+    const TARGET: u64 = DRAM_BASE + 0x1000;
+
+    for bit in [1u32, 3, 5, 7, 8] {
+        let caller = block(
+            CALLER,
+            &[
+                Instr::Addi {
+                    rd: 1,
+                    rs1: 1,
+                    imm: 1,
+                },
+                Instr::Jal {
+                    rd: 0,
+                    imm: (TARGET - (CALLER + 4)) as i64,
+                },
+            ],
+        );
+        let target = block(
+            TARGET,
+            &[
+                Instr::Addi {
+                    rd: 2,
+                    rs1: 2,
+                    imm: 1,
+                },
+                Instr::Jal { rd: 0, imm: 4 },
+            ],
+        );
+        let mut machine = Machine::new(8 * 1024 * 1024);
+        let mut executor =
+            BrowserExecutor::new_inline(&machine).expect("inline TLB fits wasm memory");
+        executor.install(&caller);
+        executor.install(&target);
+        let machine_ptr: *mut Machine = &mut machine;
+
+        let cold = unsafe {
+            executor
+                .execute_with_budget(
+                    CALLER,
+                    (*machine_ptr).hart_mut(),
+                    (*machine_ptr).bus_mut(),
+                    16,
+                    16,
+                    false,
+                )
+                .expect("cold static caller establishes context")
+        };
+        assert_eq!(cold.retired, 2);
+        executor.link_edge(CALLER, 0, TARGET);
+        assert_eq!(executor.linked_target(CALLER, 0), Some(TARGET));
+
+        let baseline = machine.hart().csr.mstatus;
+        machine.hart_mut().csr.mstatus = baseline ^ (1u64 << bit);
+        machine.hart_mut().regs.write(1, 0);
+        machine.hart_mut().regs.write(2, 0);
+        machine.hart_mut().regs.pc = CALLER;
+        let hit = unsafe {
+            executor
+                .execute_with_budget(
+                    CALLER,
+                    (*machine_ptr).hart_mut(),
+                    (*machine_ptr).bus_mut(),
+                    16,
+                    16,
+                    true,
+                )
+                .expect("static target survives interrupt-stack bit change")
+        };
+        assert_eq!(
+            hit.retired, 4,
+            "static edge must enter target for bit {bit}"
+        );
+        assert_eq!(machine.hart().regs.read(2), 1);
+        assert_eq!(executor.linked_target(CALLER, 0), Some(TARGET));
+        assert_eq!(machine.hart().csr.mstatus, baseline ^ (1u64 << bit));
+    }
 }
 
 #[wasm_bindgen_test]
@@ -1771,6 +2006,259 @@ fn browser_inline_static_link_unlinks_and_rearms_after_target_reinstall() {
     assert_eq!(rearmed.retired, 4);
     assert_eq!(rearmed.next_pc, TARGET + 8);
     assert_eq!(machine.hart().regs.read(2), 1);
+}
+
+#[wasm_bindgen_test]
+fn browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_invalidates() {
+    const CALLER: u64 = DRAM_BASE;
+    const TARGET: u64 = DRAM_BASE + 0x1000;
+
+    for bit in [1u32, 3, 5, 7, 8, 18] {
+        let caller = block(
+            CALLER,
+            &[
+                Instr::Addi {
+                    rd: 1,
+                    rs1: 1,
+                    imm: 1,
+                },
+                Instr::Jalr {
+                    rd: 0,
+                    rs1: 6,
+                    imm: 0,
+                },
+            ],
+        );
+        let target = block(
+            TARGET,
+            &[
+                Instr::Addi {
+                    rd: 2,
+                    rs1: 2,
+                    imm: 1,
+                },
+                Instr::Jal { rd: 0, imm: 4 },
+            ],
+        );
+        let mut machine = Machine::new(8 * 1024 * 1024);
+        let mut executor =
+            BrowserExecutor::new_inline(&machine).expect("inline TLB fits wasm memory");
+        executor.install_batch(&[caller, target], &[[None, None], [None, None]]);
+        let machine_ptr: *mut Machine = &mut machine;
+
+        machine.hart_mut().regs.write(6, TARGET);
+        let cold = unsafe {
+            executor
+                .execute_with_budget(
+                    CALLER,
+                    (*machine_ptr).hart_mut(),
+                    (*machine_ptr).bus_mut(),
+                    16,
+                    16,
+                    false,
+                )
+                .expect("cold dynamic caller establishes context")
+        };
+        assert_eq!(cold.retired, 2);
+        executor.link_dynamic_target(TARGET, TARGET);
+        assert_eq!(executor.dynamic_link_stats().live_entries, 1);
+
+        let baseline = machine.hart().csr.mstatus;
+        machine.hart_mut().csr.mstatus = baseline ^ (1u64 << bit);
+        machine.hart_mut().regs.write(1, 0);
+        machine.hart_mut().regs.write(2, 0);
+        machine.hart_mut().regs.pc = CALLER;
+        let exit = unsafe {
+            executor
+                .execute_with_budget(
+                    CALLER,
+                    (*machine_ptr).hart_mut(),
+                    (*machine_ptr).bus_mut(),
+                    16,
+                    16,
+                    true,
+                )
+                .expect("dynamic target returns an executor exit")
+        };
+
+        if bit == 18 {
+            assert_eq!(exit.retired, 2, "SUM must prevent stale dynamic entry");
+            assert_eq!(machine.hart().regs.read(2), 0);
+            assert_eq!(executor.dynamic_link_stats().live_entries, 0);
+        } else {
+            assert_eq!(
+                exit.retired, 4,
+                "dynamic edge must enter target for bit {bit}"
+            );
+            assert_eq!(machine.hart().regs.read(2), 1);
+            assert_eq!(executor.dynamic_link_stats().hits, 1);
+            assert_eq!(executor.dynamic_link_stats().live_entries, 1);
+        }
+        assert_eq!(machine.hart().csr.mstatus, baseline ^ (1u64 << bit));
+    }
+}
+
+#[wasm_bindgen_test]
+fn browser_inline_combined_interrupt_bits_plus_sum_invalidates_all_links() {
+    const CALLER: u64 = DRAM_BASE;
+    const TARGET: u64 = DRAM_BASE + 0x1000;
+    const INTERRUPT_BITS: u64 = (1u64 << 1) | (1u64 << 3) | (1u64 << 5) | (1u64 << 7) | (1u64 << 8);
+    const MIXED_CHANGE: u64 = INTERRUPT_BITS | (1u64 << 18);
+
+    // Static cross-batch publication: the five ignored changes must not hide the simultaneous SUM
+    // mismatch. The generated target must remain unentered for this invocation.
+    {
+        let caller = block(
+            CALLER,
+            &[
+                Instr::Addi {
+                    rd: 1,
+                    rs1: 1,
+                    imm: 1,
+                },
+                Instr::Jal {
+                    rd: 0,
+                    imm: (TARGET - (CALLER + 4)) as i64,
+                },
+            ],
+        );
+        let target = block(
+            TARGET,
+            &[
+                Instr::Addi {
+                    rd: 2,
+                    rs1: 2,
+                    imm: 1,
+                },
+                Instr::Jal { rd: 0, imm: 4 },
+            ],
+        );
+        let mut machine = Machine::new(8 * 1024 * 1024);
+        let mut executor =
+            BrowserExecutor::new_inline(&machine).expect("inline TLB fits wasm memory");
+        executor.install(&caller);
+        executor.install(&target);
+        let machine_ptr: *mut Machine = &mut machine;
+
+        let cold = unsafe {
+            executor
+                .execute_with_budget(
+                    CALLER,
+                    (*machine_ptr).hart_mut(),
+                    (*machine_ptr).bus_mut(),
+                    16,
+                    16,
+                    false,
+                )
+                .expect("cold static caller establishes context")
+        };
+        assert_eq!(cold.retired, 2);
+        executor.link_edge(CALLER, 0, TARGET);
+        assert_eq!(executor.linked_target(CALLER, 0), Some(TARGET));
+
+        let baseline = machine.hart().csr.mstatus;
+        machine.hart_mut().csr.mstatus = baseline ^ MIXED_CHANGE;
+        machine.hart_mut().regs.write(1, 0);
+        machine.hart_mut().regs.write(2, 0);
+        machine.hart_mut().regs.pc = CALLER;
+        let exit = unsafe {
+            executor
+                .execute_with_budget(
+                    CALLER,
+                    (*machine_ptr).hart_mut(),
+                    (*machine_ptr).bus_mut(),
+                    16,
+                    16,
+                    true,
+                )
+                .expect("mixed status change returns a static caller exit")
+        };
+        assert_eq!(exit.code, ExitCode::BranchTaken);
+        assert_eq!(exit.retired, 2, "SUM must clear static publication");
+        assert_eq!(exit.next_pc, TARGET);
+        assert_eq!(machine.hart().regs.read(1), 1);
+        assert_eq!(machine.hart().regs.read(2), 0, "static target entered");
+        assert_eq!(machine.hart().csr.mstatus, baseline ^ MIXED_CHANGE);
+    }
+
+    // Dynamic publication: the same mixed transition must reset the live PIC entry and refuse the
+    // generated call even though every other changed bit is intentionally ignored.
+    {
+        let caller = block(
+            CALLER,
+            &[
+                Instr::Addi {
+                    rd: 1,
+                    rs1: 1,
+                    imm: 1,
+                },
+                Instr::Jalr {
+                    rd: 0,
+                    rs1: 6,
+                    imm: 0,
+                },
+            ],
+        );
+        let target = block(
+            TARGET,
+            &[
+                Instr::Addi {
+                    rd: 2,
+                    rs1: 2,
+                    imm: 1,
+                },
+                Instr::Jal { rd: 0, imm: 4 },
+            ],
+        );
+        let mut machine = Machine::new(8 * 1024 * 1024);
+        let mut executor =
+            BrowserExecutor::new_inline(&machine).expect("inline TLB fits wasm memory");
+        executor.install_batch(&[caller, target], &[[None, None], [None, None]]);
+        let machine_ptr: *mut Machine = &mut machine;
+
+        machine.hart_mut().regs.write(6, TARGET);
+        let cold = unsafe {
+            executor
+                .execute_with_budget(
+                    CALLER,
+                    (*machine_ptr).hart_mut(),
+                    (*machine_ptr).bus_mut(),
+                    16,
+                    16,
+                    false,
+                )
+                .expect("cold dynamic caller establishes context")
+        };
+        assert_eq!(cold.retired, 2);
+        executor.link_dynamic_target(TARGET, TARGET);
+        assert_eq!(executor.dynamic_link_stats().live_entries, 1);
+
+        let baseline = machine.hart().csr.mstatus;
+        machine.hart_mut().csr.mstatus = baseline ^ MIXED_CHANGE;
+        machine.hart_mut().regs.write(1, 0);
+        machine.hart_mut().regs.write(2, 0);
+        machine.hart_mut().regs.pc = CALLER;
+        let exit = unsafe {
+            executor
+                .execute_with_budget(
+                    CALLER,
+                    (*machine_ptr).hart_mut(),
+                    (*machine_ptr).bus_mut(),
+                    16,
+                    16,
+                    true,
+                )
+                .expect("mixed status change returns a dynamic caller exit")
+        };
+        assert_eq!(exit.code, ExitCode::BranchTaken);
+        assert_eq!(exit.retired, 2, "SUM must clear dynamic publication");
+        assert_eq!(exit.next_pc, TARGET);
+        assert_eq!(machine.hart().regs.read(1), 1);
+        assert_eq!(machine.hart().regs.read(2), 0, "dynamic target entered");
+        assert_eq!(executor.dynamic_link_stats().hits, 0);
+        assert_eq!(executor.dynamic_link_stats().live_entries, 0);
+        assert_eq!(machine.hart().csr.mstatus, baseline ^ MIXED_CHANGE);
+    }
 }
 
 #[wasm_bindgen_test]

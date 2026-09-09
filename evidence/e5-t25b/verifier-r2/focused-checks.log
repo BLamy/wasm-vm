@@ -1,0 +1,12 @@
+PASS node --check web/bench/desktop-perf.js
+PASS node --check web/desktop-terminal.js
+PASS node --check tools/verify/e5-t25b-browser.mjs
+PASS node --test web/tests/e5-t25b-desktop-perf.test.mjs (5 passed, 0 failed, 0 skipped)
+PASS node tools/verify/e5-t25b-release-audit.mjs
+OUTPUT {"sourceDistByteParity":true,"perfModuleByteParity":true,"pageParity":true,"exactDualGate":true,"dynamicHelperImport":"dual-gated","harnessVersion":"e5-t25b-v1","dragMoves":300,"samplerLifecycle":"installed-and-cleared","recordRetention":"raw-presents-scheduler-counters-and-pointer-deltas"}
+PASS direct cmp: desktop-terminal.js, desktop-perf.js/.ts, desktop-perf-hooks.js, desktop-cursor.html, roadmap.js source versus web/dist
+PASS git diff --check 4017448c..a14bf5453a6799a67b5f66e85b4167223580e541
+ENV RUSTFLAGS=verifier-hostile RUST_LOG=verifier-trace CARGO_TARGET_DIR=/private/tmp/e5-t25b-r2-hostile-target CARGO_BUILD_JOBS=1 CARGO_HTTP_DEBUG=true
+STATIC runner cleanEnv deletes RUSTFLAGS, RUST_LOG, and every CARGO_* key before spawning tools/serve-dev.sh (tools/verify/e5-t25b-browser.mjs:65-72).
+PASS local Chrome binary reports Google Chrome 152.0.7977.76.
+VISUAL drag-fps.png is 1440x1050 and shows desktop-ready Weston with a rendered Foot window.

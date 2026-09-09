@@ -132,6 +132,21 @@ test("mode changes release old-device buttons before routing the next button pai
   ]);
 });
 
+test("an absolute desktop can keep tablet motion and route buttons through the mouse seat", () => {
+  const io = recorder();
+  const bridge = createPointerBridge(io, { getRect: rect, absoluteButtonDevice: "mouse" });
+  bridge.handlePointerMove(pointerEvent());
+  assert.equal(bridge.handlePointerDown({ type: "pointerdown", button: 0 }).forwarded, true);
+  assert.deepEqual(bridge.heldButtons().map((entry) => [entry.device, entry.evdev]), [["mouse", BTN_LEFT]]);
+  assert.equal(bridge.handlePointerUp({ type: "pointerup", button: 0 }).forwarded, true);
+  assert.deepEqual(io.calls.slice(-4), [
+    ["mouse", "event", EV_KEY, BTN_LEFT, 1],
+    ["mouse", "sync"],
+    ["mouse", "event", EV_KEY, BTN_LEFT, 0],
+    ["mouse", "sync"],
+  ]);
+});
+
 test("pixel and line wheel detents use signed per-axis accumulators", () => {
   const io = recorder();
   const bridge = createPointerBridge(io);

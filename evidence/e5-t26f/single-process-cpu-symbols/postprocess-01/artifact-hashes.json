@@ -1,0 +1,230 @@
+[
+  {
+    "path": "target/e5-t26f/single-process-symbols/companion-01/named.wasm",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01/named.wasm",
+    "size": 1721358,
+    "sha256": "44ee774b2c8bca1bfc82426944f01e6c79b85dffcccdd6488d953342f7e6eba0"
+  },
+  {
+    "path": "target/e5-t26f/single-process-symbols/companion-01/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+    "size": 437,
+    "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+  },
+  {
+    "path": "target/e5-t26f/single-process-symbols/companion-01/wasm_vm_wasm.d.ts",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01/wasm_vm_wasm.d.ts",
+    "size": 46945,
+    "sha256": "189c555c15de6c2e1fadbcc45eb37c911f4c9f48c737e2f6ab96208f59964b80"
+  },
+  {
+    "path": "target/e5-t26f/single-process-symbols/companion-01/wasm_vm_wasm.js",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01/wasm_vm_wasm.js",
+    "size": 115275,
+    "sha256": "f877c77a0ba7740ea98cee2fa99cf6d41e771b2514abefb18267525f63152416"
+  },
+  {
+    "path": "target/e5-t26f/single-process-symbols/companion-01/wasm_vm_wasm_bg.wasm",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01/wasm_vm_wasm_bg.wasm",
+    "size": 1915258,
+    "sha256": "2f781abc1a861b4dbbb209bfec663ea62732ce44a5a512f3ff374f991f53d954"
+  },
+  {
+    "path": "target/e5-t26f/single-process-symbols/companion-01/wasm_vm_wasm_bg.wasm.d.ts",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/companion-01/wasm_vm_wasm_bg.wasm.d.ts",
+    "size": 12041,
+    "sha256": "10b3b4a07fb430939ab52a07e04d1b180cfef2a09dbc7a8d87e7eceb86a3fb56"
+  },
+  {
+    "path": "target/e5-t26f/single-process-symbols/finish.mjs",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/finish.mjs",
+    "size": 12960,
+    "sha256": "f908e2db7ac531da28fcbe785b2c816e1a0a056a766aaf6004bf8123a67cbd89"
+  },
+  {
+    "path": "target/e5-t26f/single-process-symbols/run.mjs",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t26f/single-process-symbols/run.mjs",
+    "size": 15466,
+    "sha256": "babe1084b7457aac8e07ffc8678954fd583dd21616844deaeb89c2efd64f2342"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/failure-inputs-after.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/failure-inputs-after.json",
+    "size": 26519,
+    "sha256": "5944adda28ae1edc5cfba4d7d39058503ce8b420cb4c39de742916d2019d2f16"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/failure.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/failure.json",
+    "size": 4061,
+    "sha256": "5e386c15045e55a3cfda6729718711cdaa085ad33b2578499f6f1a8d74e7bd02"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/inputs-before.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/inputs-before.json",
+    "size": 26519,
+    "sha256": "5944adda28ae1edc5cfba4d7d39058503ce8b420cb4c39de742916d2019d2f16"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/01-wasm-bindgen-version.command.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/01-wasm-bindgen-version.command.json",
+    "size": 440,
+    "sha256": "46b90fc31d70a56078ba0d12b15e85308652cf41cc682ab1ec1cf4737f38a270"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/01-wasm-bindgen-version.exit.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/01-wasm-bindgen-version.exit.json",
+    "size": 78,
+    "sha256": "f1ffd7380ce922c99d112542f0a3c289e41b50c748d29417e911ac4e8dce91e6"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/01-wasm-bindgen-version.stderr.log",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/01-wasm-bindgen-version.stderr.log",
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/01-wasm-bindgen-version.stdout.log",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/01-wasm-bindgen-version.stdout.log",
+    "size": 21,
+    "sha256": "9665b51d243c180bb4c9c723552ddca2ee5a212f1dd5f4d27424266754321d91"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/02-wasm-opt-version.command.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/02-wasm-opt-version.command.json",
+    "size": 431,
+    "sha256": "d415878f75181b71444c2c46b5fb65dffcafb3de44f974b0d58448c5f87f640e"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/02-wasm-opt-version.exit.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/02-wasm-opt-version.exit.json",
+    "size": 78,
+    "sha256": "fa0b619344226397c798fdb86dbdba27a87f394fc3dec82d8b2d176832eb761c"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/02-wasm-opt-version.stderr.log",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/02-wasm-opt-version.stderr.log",
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/02-wasm-opt-version.stdout.log",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/02-wasm-opt-version.stdout.log",
+    "size": 35,
+    "sha256": "15647c8ddc59943b287606b47782e10b3316bde2afc42d96318ebc4072764639"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/03-symbolizer-tests.command.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/03-symbolizer-tests.command.json",
+    "size": 451,
+    "sha256": "57ff67c1738c8505ef8e093789468db0a3c521f78f241d19e2a9157c20e573f1"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/03-symbolizer-tests.exit.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/03-symbolizer-tests.exit.json",
+    "size": 78,
+    "sha256": "7efad78fe976ca13154144f6264c0791c9d53797dfc910480a7b79078976e364"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/03-symbolizer-tests.stderr.log",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/03-symbolizer-tests.stderr.log",
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/03-symbolizer-tests.stdout.log",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/03-symbolizer-tests.stdout.log",
+    "size": 290,
+    "sha256": "fb21c036dc2c7e17397e49bd0dbe69f7bb6ba8017578765bdb771dba00cb0e17"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/04-wasm-bindgen.command.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/04-wasm-bindgen.command.json",
+    "size": 663,
+    "sha256": "1efffd0c72496feb3df746eedc4ac4b069494db242c15ec5d944b3d1b49f6e91"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/04-wasm-bindgen.exit.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/04-wasm-bindgen.exit.json",
+    "size": 78,
+    "sha256": "3d86c804af38215f81e7f5a8e0318a749e39f01c75855806cbfec2723296f07d"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/04-wasm-bindgen.stderr.log",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/04-wasm-bindgen.stderr.log",
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/04-wasm-bindgen.stdout.log",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/04-wasm-bindgen.stdout.log",
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/05-wasm-opt-names.command.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/05-wasm-opt-names.command.json",
+    "size": 666,
+    "sha256": "2f5f8b6bf066ec3ae8979767dd1c1b72bd6465385f9b341386f03a815d2dffe0"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/05-wasm-opt-names.exit.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/05-wasm-opt-names.exit.json",
+    "size": 78,
+    "sha256": "0b272505f91616ee56fbec0c0ba22a873164f9cbdab685cca4c0be950d6f69bc"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/05-wasm-opt-names.stderr.log",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/05-wasm-opt-names.stderr.log",
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/logs/05-wasm-opt-names.stdout.log",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/logs/05-wasm-opt-names.stdout.log",
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/postprocess-01/commands.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/postprocess-01/commands.json",
+    "size": 4731,
+    "sha256": "7bb3bc1aa07a63710617dd99d44f6136e526c6babb420cd0a5c970f216b257d5"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/postprocess-01/cpu-summary.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/postprocess-01/cpu-summary.json",
+    "size": 259849,
+    "sha256": "da4e6f6eddaa18ce5d0200cdc65c7ed72b9bd6bc05b5536f2c48f01aae2d3100"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/postprocess-01/inputs-after.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/postprocess-01/inputs-after.json",
+    "size": 26519,
+    "sha256": "5944adda28ae1edc5cfba4d7d39058503ce8b420cb4c39de742916d2019d2f16"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/postprocess-01/logs/06-finish.command.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/postprocess-01/logs/06-finish.command.json",
+    "size": 1001,
+    "sha256": "404e806a1eebbdbb309bad216392f48b51c57a0f31e64d0d82c26a4c15862c01"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/postprocess-01/logs/06-finish.exit.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/postprocess-01/logs/06-finish.exit.json",
+    "size": 34,
+    "sha256": "6380f7ebf1263a94abaaef4f5a1323cf0f4fbc88e37d8f1792ae68f163e18807"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/postprocess-01/logs/06-finish.stdout.log",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/postprocess-01/logs/06-finish.stdout.log",
+    "size": 4400,
+    "sha256": "350f555e8b516c2a8fd16ae2418ef6ae7eb686f93cb67061651fbac6dcb8ab3d"
+  },
+  {
+    "path": "evidence/e5-t26f/single-process-cpu-symbols/section-binding.json",
+    "realpath": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-cpu-symbols/section-binding.json",
+    "size": 2299,
+    "sha256": "85f278d64d7e62bd0018be625c20cf743e5c9341beb7669475fd5199d5d6f4dd"
+  }
+]

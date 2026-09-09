@@ -1,0 +1,67 @@
++ wasm-pack --verbose build crates/wasm --target web --release --out-dir /private/tmp/e5-t26f-build-screen.h4HPPD/candidate-package -- --locked
+[INFO]: 🎯  Checking for the Wasm target...
+[INFO]: 🌀  Compiling to Wasm...
+   Compiling unicode-ident v1.0.24
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling cfg-if v1.0.4
+   Compiling version_check v0.9.5
+   Compiling rustversion v1.0.22
+   Compiling typenum v1.20.1
+   Compiling bumpalo v3.20.3
+   Compiling once_cell v1.21.4
+   Compiling pin-project-lite v0.2.17
+   Compiling futures-core v0.3.32
+   Compiling slab v0.4.12
+   Compiling futures-task v0.3.32
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling serde_core v1.0.228
+   Compiling bitflags v2.13.0
+   Compiling smallvec v1.15.2
+   Compiling heapless v0.9.3
+   Compiling log v0.4.33
+   Compiling futures-util v0.3.32
+   Compiling byteorder v1.5.0
+   Compiling zmij v1.0.21
+   Compiling stable_deref_trait v1.2.1
+   Compiling serde v1.0.228
+   Compiling hash32 v0.3.1
+   Compiling serde_json v1.0.150
+   Compiling tinyvec_macros v0.1.1
+   Compiling generic-array v0.14.7
+   Compiling smoltcp v0.13.1
+   Compiling tinyvec v1.12.0
+   Compiling itoa v1.0.18
+   Compiling bitflags v1.3.2
+   Compiling memchr v2.8.2
+   Compiling managed v0.8.0
+   Compiling unicode-normalization v0.1.25
+   Compiling wasm-vm-wasm-emit v0.0.1 (/private/tmp/e5-t26f-build-screen.h4HPPD/source/crates/wasm-emit)
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26f-build-screen.h4HPPD/source/crates/core)
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+   Compiling wasm-vm-slirp v0.0.0 (/private/tmp/e5-t26f-build-screen.h4HPPD/source/crates/slirp)
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/tmp/e5-t26f-build-screen.h4HPPD/source/crates/jit-translate)
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+   Compiling wasm-bindgen-macro v0.2.126
+   Compiling wasm-vm-storage v0.0.1 (/private/tmp/e5-t26f-build-screen.h4HPPD/source/crates/storage)
+   Compiling js-sys v0.3.103
+   Compiling console_error_panic_hook v0.1.7
+   Compiling web-sys v0.3.103
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling getrandom v0.2.17
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/private/tmp/e5-t26f-build-screen.h4HPPD/source/crates/wasm)
+    Finished `release` profile [optimized + debuginfo] target(s) in 19.53s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+Error: Operation not permitted (os error 1)
+To disable `wasm-opt`, add `wasm-opt = false` to your package metadata in your `Cargo.toml`.
+Caused by: Operation not permitted (os error 1)
+To disable `wasm-opt`, add `wasm-opt = false` to your package metadata in your `Cargo.toml`.

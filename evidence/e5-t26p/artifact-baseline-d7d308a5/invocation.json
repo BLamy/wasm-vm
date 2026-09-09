@@ -1,0 +1,25 @@
+{
+  "schema": "wasm-vm.e5-t26p.compiler-probes.v1",
+  "phase": "baseline",
+  "source": "/private/tmp/e5-t26p-baseline.T3zMuW",
+  "baselineHead": "d7d308a58825e6856db532822e36e1681230027a",
+  "mainHead": "d7d308a58825e6856db532822e36e1681230027a",
+  "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: aarch64-apple-darwin\nrelease: 1.96.0\nLLVM version: 22.1.2\n",
+  "cargo": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "wasm2wat": "1.0.41",
+  "before": {
+    "Cargo.toml": "fc7cbaedc583510a98e1ce66875c32af7fe9aa43bc80cb16b298168dd0c61479",
+    "Cargo.lock": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7",
+    "crates/core/Cargo.toml": "828e4d59f7f29f2cbfa98b3cdea67e530cc4b3f51132e4e0d9fc22de280c4c6c",
+    "crates/core/src/hart/mod.rs": "c3b4fc40bc3240de652a510efc5dd5822c79e02c41664324c2fbb6a2419653ad",
+    "crates/core/src/lib.rs": "7ff782fec3aa18b1b3729ac57e96dd999162b5c92b6fa36ef080cd9953bc2d3c",
+    "crates/core/src/trace.rs": "3aba6a5aff31a60887052fbe06c8ed85ba37edfc871edca67013f39951cea669",
+    "crates/core/examples/retirement_capture_probe.rs": "2e3a3cd6c8f50cff88a57da2783c058849e529af0affb22d21a68d4f9b181ba5"
+  },
+  "flags": {
+    "CARGO_TARGET_DIR": "/private/tmp/e5-t26p-baseline.T3zMuW/target/e5-t26p-baseline-probes",
+    "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "1",
+    "cargo": "--locked --offline --release -p wasm-vm-core --features trace --example retirement_capture_probe"
+  },
+  "limitation": "Compiler probes and positive control; not production-browser timing or complete semantic evidence"
+}

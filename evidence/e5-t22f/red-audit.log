@@ -1,0 +1,23 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.34s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 3 tests
+
+thread 'pmp_audit_tests::su_pmp_audit_work_is_zero_for_populated_caches' (12797954) panicked at crates/core/src/pmp_audit_tests.rs:36:13:
+assertion `left == right` failed: S/U inspected cached instructions; count=1, turn=0
+  left: 128
+ right: 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test pmp_audit_tests::su_pmp_audit_work_is_zero_for_populated_caches ... FAILED
+test pmp_audit_tests::su_pmp_revision_change_flushes_before_shortcut ... ok
+test pmp_audit_tests::m_pmp_audit_still_visits_cached_instructions ... ok
+
+failures:
+
+failures:
+    pmp_audit_tests::su_pmp_audit_work_is_zero_for_populated_caches
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 270 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p wasm-vm-core --lib`

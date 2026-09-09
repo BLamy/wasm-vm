@@ -1,0 +1,145 @@
+{
+  "sourceRecord": "evidence/e5-t26f/completion/typing-probe-4ae-bound/failure-command-e5t26f-post-aplay-completion.json",
+  "sourceRecordSha256": "8c0b7ca4303769bdd843d55434106ab9b79a1542fee8211a2f8d18f1735daed5",
+  "sourceProfile": "/private/tmp/e5-t26f-headless.koByhb/iteration-h63MnB/profile",
+  "inspectedCopy": "/private/tmp/e5-t26f-input-inspection-qYSi99/profile",
+  "origin": "http://127.0.0.1:61629",
+  "guestBooted": false,
+  "transactions": "readonly",
+  "limitation": "Stored pre-run checkpoint only; no live post-failure input counters",
+  "metadata": [
+    {
+      "database": "wvsn-b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592",
+      "metaHex": "7776736e02000000000010002c4eb608000000008c00000000000000b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592afaa9110bc64f0227f22f45b887e65730f3791e7a848b4b87b50651a9158da76",
+      "totalBytes": 146165292,
+      "sections": [
+        {
+          "tag": 1,
+          "offset": 84,
+          "length": 1309
+        },
+        {
+          "tag": 2,
+          "offset": 1401,
+          "length": 143533867
+        },
+        {
+          "tag": 3,
+          "offset": 143535276,
+          "length": 17
+        },
+        {
+          "tag": 4,
+          "offset": 143535301,
+          "length": 156
+        },
+        {
+          "tag": 5,
+          "offset": 143535465,
+          "length": 22
+        },
+        {
+          "tag": 8,
+          "offset": 143535495,
+          "length": 27
+        },
+        {
+          "tag": 6,
+          "offset": 143535530,
+          "length": 290
+        },
+        {
+          "tag": 7,
+          "offset": 143535828,
+          "length": 311
+        },
+        {
+          "tag": 12,
+          "offset": 143536147,
+          "length": 2626895
+        },
+        {
+          "tag": 13,
+          "offset": 146163050,
+          "length": 355
+        },
+        {
+          "tag": 14,
+          "offset": 146163413,
+          "length": 355
+        },
+        {
+          "tag": 15,
+          "offset": 146163776,
+          "length": 355
+        },
+        {
+          "tag": 16,
+          "offset": 146164139,
+          "length": 485
+        },
+        {
+          "tag": 10,
+          "offset": 146164632,
+          "length": 292
+        },
+        {
+          "tag": 11,
+          "offset": 146164932,
+          "length": 320
+        },
+        {
+          "tag": 9,
+          "offset": 146165260,
+          "length": 24
+        }
+      ],
+      "input": [
+        {
+          "tag": 13,
+          "sectionOffset": 146163050,
+          "codecOffset": 146163345,
+          "payloadSha256": "7d8d62367536051cded4532315bd03af602390cc5a5ff87b93f2f824015290ef",
+          "version": 1,
+          "pendingFrames": 0,
+          "pendingEvents": 0,
+          "pendingEventBudget": 2048,
+          "stagedEvents": 0,
+          "droppedFrames": "0",
+          "droppedEvents": "0"
+        },
+        {
+          "tag": 14,
+          "sectionOffset": 146163413,
+          "codecOffset": 146163708,
+          "payloadSha256": "663240d0faa29eb508d8794054df7b16b5b10fc91bd81b4e54192786163f7e89",
+          "version": 1,
+          "pendingFrames": 0,
+          "pendingEvents": 0,
+          "pendingEventBudget": 256,
+          "stagedEvents": 0,
+          "droppedFrames": "0",
+          "droppedEvents": "0"
+        },
+        {
+          "tag": 15,
+          "sectionOffset": 146163776,
+          "codecOffset": 146164071,
+          "payloadSha256": "74d26e86207dd87c966925f80520ef73de348eeccef466ef3a93ec871a296d9f",
+          "version": 1,
+          "pendingFrames": 0,
+          "pendingEvents": 0,
+          "pendingEventBudget": 256,
+          "stagedEvents": 0,
+          "droppedFrames": "0",
+          "droppedEvents": "0"
+        }
+      ],
+      "inspectedChunkIndexes": [
+        0,
+        136,
+        139
+      ]
+    }
+  ]
+}

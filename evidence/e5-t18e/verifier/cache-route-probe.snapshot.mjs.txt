@@ -1,0 +1,52 @@
+import assert from 'node:assert/strict';
+import { spawn } from 'node:child_process';
+import { readFile, writeFile } from 'node:fs/promises';
+import { createServer } from 'node:net';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
+const repo = process.cwd(), clone = process.argv[2];
+const binding = JSON.parse(await readFile(path.join(clone, 'evidence/e5-t18e/publication.json'), 'utf8'));
+const manifest = JSON.parse(await readFile(path.join(clone, binding.publication.chunkDir, 'manifest.json'), 'utf8'));
+const asset = `/e5t18b-desktop/chunks/${manifest.chunks[0]}.bin`;
+const port = await new Promise(resolve => { const server=createServer(); server.listen(0,'127.0.0.1',()=>{const p=server.address().port;server.close(()=>resolve(p));}); });
+const logs=[];
+const server=spawn('bash',['tools/serve-dev.sh',String(port)],{cwd:clone,env:{...process.env,E5_T18B_DESKTOP_ASSET_DIR:binding.publication.chunkDir},detached:true,stdio:['ignore','pipe','pipe']});
+for(const stream of [server.stdout,server.stderr]) stream.on('data',x=>logs.push(x.toString()));
+const base=`http://127.0.0.1:${port}`;
+const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const { chromium }=await import(pathToFileURL(path.join(repo,'web/node_modules/playwright/index.mjs')));
+let browser;
+const observations=[];
+try {
+  for(let i=0;i<100;i++){try{if((await fetch(base+'/artifacts-alpine.json')).ok)break;}catch{}await sleep(100);}
+  browser=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});
+  for(const cacheDisabled of [false,true]){
+    const context=await browser.newContext({serviceWorkers:'block'});
+    if(cacheDisabled)await context.route('**/*',route=>route.continue());
+    const page=await context.newPage(), cdp=await context.newCDPSession(page);
+    const cacheEvents=[], statuses=[];
+    await cdp.send('Network.enable');await cdp.send('Network.setCacheDisabled',{cacheDisabled});
+    cdp.on('Network.requestServedFromCache',x=>cacheEvents.push(x));
+    cdp.on('Network.responseReceivedExtraInfo',x=>statuses.push(x.statusCode));
+    await page.goto(base+'/artifacts-alpine.json');
+    for(const phase of ['prime','reload']){
+      if(phase==='reload')await page.reload();
+      const result=await page.evaluate(async asset=>{
+        const workerCode=`onmessage=async e=>{try{for(let i=0;i<2;i++){const r=await fetch(e.data,{cache:'default'});await r.arrayBuffer();}postMessage({entries:performance.getEntriesByType('resource').map(x=>({name:x.name,transferSize:x.transferSize,encodedBodySize:x.encodedBodySize,decodedBodySize:x.decodedBodySize}))});}catch(e){postMessage({error:String(e)});}}`;
+        const url=URL.createObjectURL(new Blob([workerCode],{type:'text/javascript'}));
+        try{return await new Promise((resolve,reject)=>{const w=new Worker(url);w.onmessage=e=>{w.terminate();resolve(e.data);};w.onerror=e=>{w.terminate();reject(new Error(e.message));};w.postMessage(asset);});}
+        finally{URL.revokeObjectURL(url);}
+      },base+asset);
+      assert.equal(result.error,undefined);
+      observations.push({cacheDisabled,phase,...result,pageCacheEvents:cacheEvents.length,pageStatuses:[...statuses]});
+    }
+    await context.close();
+  }
+}finally{
+  await browser?.close();
+  try{process.kill(-server.pid,'SIGTERM');}catch(e){if(e.code!=='ESRCH')throw e;}
+  await sleep(300);
+}
+const report={purpose:'Read-only observer diagnostic; not another guest boot or a replacement for recorded boot evidence',browserVersion:'152.0.7977.76',asset,observations,serverLog:logs.join('')};
+await writeFile(path.join(repo,'target/e5-t18e-cache-probe.json'),JSON.stringify(report,null,2)+'\n');
+console.log(JSON.stringify(report,null,2));

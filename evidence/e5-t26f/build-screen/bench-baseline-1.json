@@ -1,0 +1,61 @@
+{
+  "schema": "e5-t26f-build-screen-v1",
+  "acceptance": false,
+  "workload": "bench",
+  "arm": "baseline",
+  "head": "8c892667be0da360af2329f2ae8bf7bf7ef6f10d",
+  "pid": 95341,
+  "node": "v24.20.0",
+  "v8": "13.6.233.17-node.53",
+  "wasmSha256": "30c8f2ab3b1f3c25db77c03d6161d39e55de7ea3d88447f83f5d7942952c3a28",
+  "wasmBytes": 1545383,
+  "initializedMs": 2.0941249999999982,
+  "recordedAt": "2026-09-08T07:32:06.892Z",
+  "goldenPreflight": {
+    "retired": 48,
+    "kind": "exited",
+    "code": 0
+  },
+  "elfSha256": "f6b9938620af83440d7c224325df21025257895adbdf2de8e58fed6272470adb",
+  "retirementAccounting": "bench reports 48 per ELF load/run; separate actual WasmMachine.run preflight asserts 48",
+  "warmup": {
+    "target": 5000000,
+    "raw": {
+      "retired": 5000016,
+      "ms": 192
+    },
+    "hostMs": 192.85345800000002,
+    "reportedMips": 26.04175
+  },
+  "measured": [
+    {
+      "target": 20000000,
+      "raw": {
+        "retired": 20000016,
+        "ms": 699
+      },
+      "hostMs": 698.5992080000001,
+      "reportedMips": 28.61232618025751
+    },
+    {
+      "target": 20000000,
+      "raw": {
+        "retired": 20000016,
+        "ms": 700
+      },
+      "hostMs": 699.9598340000001,
+      "reportedMips": 28.57145142857143
+    },
+    {
+      "target": 20000000,
+      "raw": {
+        "retired": 20000016,
+        "ms": 679
+      },
+      "hostMs": 679.367459,
+      "reportedMips": 29.455104565537557
+    }
+  ],
+  "medianReportedMs": 699,
+  "medianHostMs": 698.5992080000001
+}

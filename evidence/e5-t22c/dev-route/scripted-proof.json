@@ -1,0 +1,24 @@
+{
+  "manifestSha256": "07c1ac9c4ee349978d03ad8217b8d461fde7a15a023531510d02ed5d4e2ce42f",
+  "chunkSha256": "cff9c131f4187314b558b6f02117a3148e07f1c65946bf8ff4e9f34dc8c92942",
+  "forbidden": [
+    {
+      "path": "/e5t22c-desktop/README.md",
+      "status": 404
+    },
+    {
+      "path": "/e5t22c-desktop/chunks/%2e%2e/manifest.json",
+      "status": 404
+    },
+    {
+      "path": "/e5t22c-desktop/chunks/../../MANIFEST.txt",
+      "status": 404
+    },
+    {
+      "path": "/e5t22c-desktop/chunks/not-a-hash.bin",
+      "status": 404
+    }
+  ],
+  "serverSha256": "406a0f8577ad468932ccdf1087c9e23581aa3f224382b0b665431f5821b1d63f",
+  "recorderSha256": "8bebc4f6b5e2795be6e05a5c2d637ab9ff67d193b768dbaf13978a6cbc617544"
+}

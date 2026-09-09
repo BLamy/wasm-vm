@@ -1,0 +1,10 @@
+E5-T26e remediation 3 exact-head gate
+Implementation commit: ea14c48f12a323ff60fb21744a34c10e814cd68a
+Command: env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG make verify-E5-T26e
+Result: exit 0; verify-E5-T26e (desktop restore reconciliation and cold fallback): OK
+Native results: 12 desktop-restore tests, 1 console restore/rehandshake unit test, 1 live Machine/console integration test, 9 envelope/quiesce tests, 6 GPU, 12 input, and 6 sound snapshot tests; all passed.
+Native gates: cargo fmt --check, core clippy library and tests with gpu-trace, and core no-default-features wasm32 build all passed.
+Wasm wrapper: cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown passed.
+Browser composition: node --check on the changed source modules passed; node --test web/tests/agent-channel.test.mjs web/tests/e5-t26e-desktop-restore.test.mjs => 17 passed, 0 failed.
+Projection: cmp passed for agent-channel.js, linux-worker-protocol.js, loader.js, main.js, and desktop-restore.js against web/dist; git diff HEAD^ HEAD --check passed.
+Scope: browser pixel/CRC and reload remain E5-T26f; independent machines, WebKit, and host rr remain waived by policy and user direction.

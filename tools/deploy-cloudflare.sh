@@ -26,6 +26,11 @@ fi
 R2_PUBLIC="https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev"
 R2_BUCKET="${R2_BUCKET:-wasm-vm}"
 PAGES_FILE_LIMIT=$((25 * 1024 * 1024))
+MANIFEST_NAMES=(artifacts.json artifacts-alpine.json artifacts-node-alpine.json)
+LOCAL_RECORDS=$(mktemp "${TMPDIR:-/tmp}/wasm-vm-artifact-records.XXXXXX")
+RELEASE_URLS=$(mktemp "${TMPDIR:-/tmp}/wasm-vm-release-urls.XXXXXX")
+R2_QUEUE=$(mktemp "${TMPDIR:-/tmp}/wasm-vm-r2-queue.XXXXXX")
+trap 'rm -f "$LOCAL_RECORDS" "$RELEASE_URLS" "$R2_QUEUE"' EXIT
 
 public_object_is_exact() {
   local url=$1 expected_size=$2 expected_sha=$3 tmp actual_size actual_sha
@@ -72,43 +77,106 @@ ensure_r2_object() {
   echo "[deploy] uploaded and verified R2 object: $key"
 }
 
-echo "[deploy] repointing manifests at R2 ($R2_PUBLIC) …"
-[ -f web/artifacts-alpine.json ] && cp web/artifacts-alpine.json "$DIST/artifacts-alpine.json"
-# E3.6-T05: the node-preinstalled Alpine manifest (the default flavor) ships too.
-[ -f web/artifacts-node-alpine.json ] && cp web/artifacts-node-alpine.json "$DIST/artifacts-node-alpine.json"
-for m in "$DIST/artifacts.json" "$DIST/artifacts-alpine.json" "$DIST/artifacts-node-alpine.json"; do
-  [ -f "$m" ] || continue
-  sed "s#\"releases/#\"$R2_PUBLIC/#g" "$m" > "$m.tmp" && mv "$m.tmp" "$m"
-done
-# Boot artifacts below the Pages limit stay deployment-local. Larger artifacts use immutable,
-# content-addressed R2 keys and are verified byte-for-byte before Pages is mutated.
-mkdir -p "$DIST/releases/boot-snapshot"
-for snap in busybox-ready.snap.gz alpine-ready.snap.gz alpine-overlay-delta.bin.gz node-alpine-ready.snap.gz node-alpine-overlay-delta.bin.gz; do
-  source="releases/boot-snapshot/$snap"
-  [ -f "$source" ] || continue
-  size=$(wc -c < "$source" | tr -d ' ')
-  sha=$(shasum -a 256 "$source" | awk '{print $1}')
-  if [ "$size" -le "$PAGES_FILE_LIMIT" ]; then
-    cp "$source" "$DIST/releases/boot-snapshot/$snap"
-    for m in "$DIST/artifacts.json" "$DIST/artifacts-alpine.json" "$DIST/artifacts-node-alpine.json"; do
-      [ -f "$m" ] || continue
-      sed "s#\"$R2_PUBLIC/boot-snapshot/$snap\"#\"releases/boot-snapshot/$snap\"#g" "$m" > "$m.tmp" && mv "$m.tmp" "$m"
-    done
-    echo "[deploy] shipped $snap ($(du -h "$source" | cut -f1)) on Pages"
-  else
-    key="boot-snapshot/sha256/$sha/$snap"
-    ensure_r2_object "$source" "$key" "$size" "$sha"
-    rm -f "$DIST/releases/boot-snapshot/$snap"
-    for m in "$DIST/artifacts.json" "$DIST/artifacts-alpine.json" "$DIST/artifacts-node-alpine.json"; do
-      [ -f "$m" ] || continue
-      sed "s#\"$R2_PUBLIC/boot-snapshot/$snap\"#\"$R2_PUBLIC/$key\"#g" "$m" > "$m.tmp" && mv "$m.tmp" "$m"
-    done
+echo "[deploy] staging and validating artifact manifests …"
+# Always stage manifests from web/. A prior deploy rewrites web/dist URLs, and reusing that mutated
+# manifest would make the next deploy validate the wrong expected bytes. Optional flavor manifests
+# are removed from the staging directory when absent, so an old snapshot cannot remain reachable.
+[ -f web/artifacts.json ] || { echo "[deploy] ERROR: missing web/artifacts.json" >&2; exit 1; }
+for name in "${MANIFEST_NAMES[@]}"; do
+  source="web/$name"
+  if [ -f "$source" ]; then
+    cp "$source" "$DIST/$name"
+  elif [ "$name" != "artifacts.json" ]; then
+    rm -f "$DIST/$name"
   fi
 done
+
+MANIFEST_ARGS=()
+for name in "${MANIFEST_NAMES[@]}"; do
+  manifest="$DIST/$name"
+  [ -f "$manifest" ] || continue
+  MANIFEST_ARGS+=(--manifest "$manifest")
+done
+[ "${#MANIFEST_ARGS[@]}" -gt 0 ] || { echo "[deploy] ERROR: no artifact manifests staged" >&2; exit 1; }
+
+# This is deliberately before any URL rewrite or R2 upload. It catches a stale manifest, a
+# missing release, a size mismatch, and the kernel/initramfs drift that the old script missed.
+python3 tools/validate-deploy-artifacts.py \
+  --root "$PWD" --reject-remote --print-records "${MANIFEST_ARGS[@]}" > "$LOCAL_RECORDS"
+python3 tools/validate-deploy-artifacts.py \
+  --root "$PWD" --reject-remote --print-release-urls "${MANIFEST_ARGS[@]}" > "$RELEASE_URLS"
+
+rewrite_r2_reference() {
+  local relative=$1 key=$2 m
+  python3 tools/validate-deploy-artifacts.py \
+    --root "$PWD" "${MANIFEST_ARGS[@]}" \
+    --rewrite-reference "$relative" "$R2_PUBLIC/$key"
+}
+
+queue_r2_object() {
+  local source=$1 key=$2 size=$3 sha=$4
+  printf '%s\t%s\t%s\t%s\n' "$source" "$key" "$size" "$sha" >> "$R2_QUEUE"
+}
+
+# Large boot artifacts stay off Pages. Every R2 key is content-addressed from the already-validated
+# manifest digest, so a mutable old key can never be the URL in the release manifest.
+while IFS=$'\t' read -r relative sha size; do
+  source="$PWD/$relative"
+  case "$relative" in
+    releases/kernel/*|releases/initramfs/*|releases/rootfs/*)
+      key="sha256/$sha/$relative"
+      rewrite_r2_reference "$relative" "$key"
+      queue_r2_object "$source" "$key" "$size" "$sha"
+      ;;
+    releases/boot-snapshot/*)
+      if [ "$size" -le "$PAGES_FILE_LIMIT" ]; then
+        destination="$DIST/$relative"
+        mkdir -p "$(dirname "$destination")"
+        cp "$source" "$destination"
+        echo "[deploy] shipped $(basename "$relative") on Pages"
+      else
+        key="sha256/$sha/$relative"
+        rewrite_r2_reference "$relative" "$key"
+        rm -f "$DIST/$relative"
+        queue_r2_object "$source" "$key" "$size" "$sha"
+      fi
+      ;;
+  esac
+done < "$LOCAL_RECORDS"
+
+# Chunked base/profile references are schema-level URLs rather than artifact entries. They use the
+# same R2 base as main.js (without the source-only `releases/` prefix), and are rewritten by exact
+# JSON string equality so a URL such as `a.bin` cannot collide with `axbin`.
+while IFS= read -r relative; do
+  case "$relative" in
+    releases/chunked-alpine/*|releases/chunked-node-alpine/*)
+      rewrite_r2_reference "$relative" "${relative#releases/}"
+      ;;
+  esac
+done < "$RELEASE_URLS"
 
 # Do NOT ship the big artifacts with the site. The chunked bases (chunked-alpine + E3.6-T05
 # chunked-node-alpine) live on R2, uploaded separately; their manifest URLs are rewritten to R2 above.
 rm -rf "$DIST/releases/kernel" "$DIST/releases/initramfs" "$DIST/releases/chunked-alpine" "$DIST/releases/chunked-node-alpine" 2>/dev/null || true
+
+# Validate the exact staged tree after optional snapshots have been copied and excluded artifacts
+# have been removed. Remote entries are checked below through their public URL; every remaining
+# relative entry must exist in Pages staging and match its manifest declaration.
+python3 tools/validate-deploy-artifacts.py \
+  --root "$DIST" "${MANIFEST_ARGS[@]}" \
+  --reject-local-prefix releases/kernel/ \
+  --reject-local-prefix releases/initramfs/ \
+  --reject-local-prefix releases/rootfs/ \
+  --reject-local-prefix releases/chunked-alpine/ \
+  --reject-local-prefix releases/chunked-node-alpine/ \
+  --binding-file "$R2_QUEUE" --binding-root "$PWD" --r2-base "$R2_PUBLIC"
+
+# Check R2 without credentials first. A missing or mismatched public object is not accepted as
+# "close enough": the deploy must have credentials to publish the exact already-validated bytes,
+# then it must pass the same public check again. The content-addressed key also prevents later drift.
+while IFS=$'\t' read -r source key size sha; do
+  ensure_r2_object "$source" "$key" "$size" "$sha"
+done < "$R2_QUEUE"
 
 # Fail fast on any file over Cloudflare Pages' 25 MiB per-file limit.
 big=$(find "$DIST" -type f -size +25M -print)

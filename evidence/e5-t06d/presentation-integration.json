@@ -1,0 +1,139 @@
+{
+  "task": "E5-T06d",
+  "schema": 1,
+  "command": "node tools/verify/e5-t06d-present-integration.mjs",
+  "generatedAt": "2026-09-04T11:12:57.300Z",
+  "gitHead": "4d49c888934d0afea8e4f07011e6b65978c312e8",
+  "base": "http://127.0.0.1:54212",
+  "browser": {
+    "name": "Chromium",
+    "version": "131.0.6778.33",
+    "executablePath": "Playwright Chromium"
+  },
+  "sourceDistParity": {
+    "equal": true,
+    "files": [
+      "web/src/sink/presentation.js",
+      "web/src/sink/presentation.ts",
+      "web/main.js",
+      "web/loader.js",
+      "web/linux-worker.js",
+      "web/linux-worker-host.js",
+      "web/linux-worker-protocol.js"
+    ]
+  },
+  "integration": {
+    "default": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 4,
+      "height": 3,
+      "framesReceived": 2,
+      "successfulPresents": 2,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "latest": {
+        "rect": {
+          "x": 1,
+          "y": 1,
+          "width": 2,
+          "height": 1
+        },
+        "resourceWidth": 4,
+        "resourceHeight": 3
+      },
+      "errors": []
+    },
+    "unavailable": {
+      "backend": "canvas2d",
+      "defaultBackend": "webgl2",
+      "width": 2,
+      "height": 2,
+      "framesReceived": 1,
+      "successfulPresents": 1,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 1,
+      "listenerCount": 2,
+      "latest": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 2,
+          "height": 2
+        },
+        "resourceWidth": 2,
+        "resourceHeight": 2
+      },
+      "errors": [
+        "webgl2: WebGL2 is not available for this canvas"
+      ]
+    },
+    "recovered": {
+      "backend": "canvas2d",
+      "defaultBackend": "webgl2",
+      "width": 4,
+      "height": 3,
+      "framesReceived": 2,
+      "successfulPresents": 3,
+      "replayedFrames": 1,
+      "droppedFrames": 0,
+      "contextLosses": 1,
+      "contextRestores": 0,
+      "fallbacks": 1,
+      "listenerCount": 2,
+      "latest": {
+        "rect": {
+          "x": 1,
+          "y": 1,
+          "width": 2,
+          "height": 1
+        },
+        "resourceWidth": 4,
+        "resourceHeight": 3
+      },
+      "errors": []
+    },
+    "rapid": {
+      "backend": "canvas2d",
+      "defaultBackend": "webgl2",
+      "width": 5,
+      "height": 2,
+      "framesReceived": 1003,
+      "successfulPresents": 1004,
+      "replayedFrames": 1,
+      "droppedFrames": 0,
+      "contextLosses": 1,
+      "contextRestores": 0,
+      "fallbacks": 1,
+      "listenerCount": 2,
+      "latest": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 5,
+          "height": 2
+        },
+        "resourceWidth": 5,
+        "resourceHeight": 2
+      },
+      "errors": []
+    },
+    "visibleCanvas": {
+      "width": 5,
+      "height": 2
+    }
+  },
+  "errors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t06d/presentation-integration.png"
+}

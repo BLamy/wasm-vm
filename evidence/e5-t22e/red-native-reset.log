@@ -1,0 +1,21 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.31s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 1 test
+
+thread 'dev::virtio::gpu::tests::display_reset_preserves_host_monitor_but_clears_guest_state' (12614108) panicked at crates/core/src/dev/virtio/gpu/mod.rs:3206:17:
+assertion `left == right` failed
+  left: (1280, 800)
+ right: (901, 701)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test dev::virtio::gpu::tests::display_reset_preserves_host_monitor_but_clears_guest_state ... FAILED
+
+failures:
+
+failures:
+    dev::virtio::gpu::tests::display_reset_preserves_host_monitor_but_clears_guest_state
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 267 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p wasm-vm-core --lib`

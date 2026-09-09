@@ -1,0 +1,8 @@
+{
+  "schema": "wasm-vm.e5-t22f.unchanged-desktop-fixture.v1",
+  "imageSha256": "811267cbf96c1e055e31063829580432d5e5e343cff1a975f5fc10664cc2e00e",
+  "packageManifestSha256": "ba86429d08e11360309b346e8fb757f44f318eccefed3e243dcaf425b91ad908",
+  "fileManifestSha256": "a85af9915e53c9ab315ebfc9d9f2c29902b7207d4e75096045fc496a07af6f6b",
+  "chunkManifestSha256": "935a9fe2bf6022b01ac6147665b9ca59736930b6e265e33069318e4d9cc2ccaa",
+  "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+}

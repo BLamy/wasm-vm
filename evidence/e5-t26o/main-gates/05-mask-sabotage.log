@@ -1,0 +1,8 @@
+error: failed to load manifest for workspace member `/private/tmp/e5-t26o-mask-sabotage.jn4zZS0E/guest/agent`
+referenced by workspace at `/private/tmp/e5-t26o-mask-sabotage.jn4zZS0E/Cargo.toml`
+
+Caused by:
+  failed to read `/private/tmp/e5-t26o-mask-sabotage.jn4zZS0E/guest/agent/Cargo.toml`
+
+Caused by:
+  No such file or directory (os error 2)

@@ -1,0 +1,27 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.36s
+     Running tests/pmp_privilege_audit.rs (target/debug/deps/pmp_privilege_audit-8db40708c5560fce)
+
+running 3 tests
+SU_REVOKE S->U cache=false retired=1 hash=59514d8d732ca0e2 fault=80000004
+SU_REVOKE S->U cache=true retired=1 hash=59514d8d732ca0e2 fault=80000004
+SU_REVOKE U->S cache=false retired=1 hash=59514d8d732ca0e2 fault=80000004
+SU_REVOKE U->S cache=true retired=1 hash=59514d8d732ca0e2 fault=80000004
+test su_revision_revocation ... ok
+SU_RESTORE retired=2000 hash=8907ff1cb93090b5 ram_sha256=14118a1afcb43237022d6fb90905fd2420e80af1850fbcee2df81f78a3ecc5e0
+test su_snapshot_and_host_sequence ... ok
+SU_TRACE turns=1 retired=7 hash=1046a1baefeab5ca ram_sha256=14118a1afcb43237022d6fb90905fd2420e80af1850fbcee2df81f78a3ecc5e0
+core 0: 0x000000008000010c (0x10200073)
+core 0: 0x0000000080000000 (0x00128293) x5 0x0000000000000001
+core 0: 0x0000000080000100 (0x14102373) x6 0x0000000080000004
+core 0: 0x0000000080000104 (0x00430313) x6 0x0000000080000008
+core 0: 0x0000000080000108 (0x14131073)
+core 0: 0x000000008000010c (0x10200073)
+core 0: 0x0000000080000008 (0xff9ff06f)
+SU_TRACE turns=7 retired=43 hash=bdacf09cb6d2a951 ram_sha256=14118a1afcb43237022d6fb90905fd2420e80af1850fbcee2df81f78a3ecc5e0
+SU_TRACE turns=37 retired=223 hash=eac08f91a4e7b526 ram_sha256=14118a1afcb43237022d6fb90905fd2420e80af1850fbcee2df81f78a3ecc5e0
+SU_TRACE turns=191 retired=1147 hash=107b228d8e75d2b9 ram_sha256=14118a1afcb43237022d6fb90905fd2420e80af1850fbcee2df81f78a3ecc5e0
+test su_guest_trace_parity ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.12s
+

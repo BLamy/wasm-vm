@@ -1,0 +1,65 @@
+E5T17E_INSPECT_SHADOW_BEGIN
+debugfs 1.47.0 (5-Feb-2023)
+root:!::0:::::
+bin:!::0:::::
+daemon:!::0:::::
+lp:!::0:::::
+sync:!::0:::::
+shutdown:!::0:::::
+halt:!::0:::::
+mail:!::0:::::
+news:!::0:::::
+uucp:!::0:::::
+cron:!::0:::::
+ftp:!::0:::::
+sshd:!::0:::::
+games:!::0:::::
+ntp:!::0:::::
+guest:!::0:::::
+nobody:!::0:::::
+E5T17E_INSPECT_SHADOW_END
+E5T17E_INSPECT_INITTAB_BEGIN
+debugfs 1.47.0 (5-Feb-2023)
+::sysinit:/sbin/openrc sysinit
+::sysinit:/sbin/openrc boot
+::wait:/sbin/openrc default
+ttyS0::respawn:/sbin/getty -L 115200 ttyS0 vt100
+::ctrlaltdel:/sbin/reboot
+::shutdown:/sbin/openrc shutdown
+tty1::respawn:/sbin/getty -L -n -l /usr/local/sbin/desktop-autologin 115200 tty1 linux
+E5T17E_INSPECT_INITTAB_END
+E5T17E_INSPECT_REPOSITORIES_BEGIN
+debugfs 1.47.0 (5-Feb-2023)
+https://dl-cdn.alpinelinux.org/alpine/v3.20/main
+https://dl-cdn.alpinelinux.org/alpine/v3.20/community
+E5T17E_INSPECT_REPOSITORIES_END
+E5T17E_INSPECT_ROOT_LIST_BEGIN
+debugfs 1.47.0 (5-Feb-2023)
+    694   40700 (2)      0      0    4096 14-Nov-2024 00:00 .
+      2   40755 (2)      0      0    4096 14-Nov-2024 00:00 ..
+    695  100644 (1)      0      0     116 14-Nov-2024 00:00 .tmux.conf
+    696  100644 (1)      0      0     316 14-Nov-2024 00:00 .vimrc
+
+E5T17E_INSPECT_ROOT_LIST_END
+E5T17E_INSPECT_APK_CACHE_BEGIN
+debugfs 1.47.0 (5-Feb-2023)
+   4694   40755 (2)      0      0    4096 14-Nov-2024 00:00 .
+   4693   40755 (2)      0      0    4096 14-Nov-2024 00:00 ..
+
+E5T17E_INSPECT_APK_CACHE_END
+E5T17E_INSPECT_APK_DB_BEGIN
+debugfs 1.47.0 (5-Feb-2023)
+    473   40755 (2)      0      0    4096 14-Nov-2024 00:00 .
+    472   40755 (2)      0      0    4096 14-Nov-2024 00:00 ..
+    474  100644 (1)      0      0   345419 14-Nov-2024 00:00 installed
+    475  100600 (1)      0      0       0 14-Nov-2024 00:00 lock
+    476  100644 (1)      0      0   28160 14-Nov-2024 00:00 scripts.tar
+    477  100644 (1)      0      0     536 14-Nov-2024 00:00 triggers
+
+E5T17E_INSPECT_APK_DB_END
+E5T17E_INSPECT_TMP_LIST_BEGIN
+debugfs 1.47.0 (5-Feb-2023)
+    856   41777 (2)      0      0    4096 14-Nov-2024 00:00 .
+      2   40755 (2)      0      0    4096 14-Nov-2024 00:00 ..
+
+E5T17E_INSPECT_TMP_LIST_END

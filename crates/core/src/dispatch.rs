@@ -152,6 +152,11 @@ pub struct BlockCache {
 }
 
 impl BlockCache {
+    /// Actual slot count, including rounding by the unrestricted test resize path.
+    pub fn capacity(&self) -> usize {
+        self.slots.len()
+    }
+
     /// A cache with `capacity` slots (rounded up to a power of two, min 1). `capacity == 1`
     /// is the adversarial pathological-eviction mode.
     pub fn with_capacity(capacity: usize) -> Self {

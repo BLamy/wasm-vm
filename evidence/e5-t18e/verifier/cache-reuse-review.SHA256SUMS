@@ -1,0 +1,11 @@
+b70bf255cadfeeffcdc3d5c7fb1826751b0eebff4717d3f53f60cea9e5dcef2a  evidence/e5-t18e/verifier/cache-reuse-attack-predictions.md
+056054b90fe110a99d8847c0e3c0f944835d7a83ae6ca877a3216584a46ef845  evidence/e5-t18e/verifier/e5-t18e-cache.mjs.review-snapshot.txt
+15b003abf15c4133d2f10d3fcec7e71d70bc967cd8792f159e347cdafdb82d11  evidence/e5-t18e/verifier/e5-t18e-cache.test.mjs.review-snapshot.txt
+bbd686c740157b58520cb64c61b1b9bbdaeeca18a63d67c94477ca48114fb37e  evidence/e5-t18e/verifier/e5-t18e-desktop-bringup.mjs.review-snapshot.txt
+daa79aa7aaa7a2b610634c86fff300f1e2a2def3058386307378b3e51c2a3f09  evidence/e5-t18e/verifier/cache-guard-attack.mjs
+82de5582ed7fb9e2b6bad1ebb10f4374635e49626fcd871b9e4a408de67f4e19  evidence/e5-t18e/verifier/cache-guard-attack.json
+b4c3ad464063333f6fa90698289a7e931ef7cbc718199211afc46ff5976910e2  evidence/e5-t18e/verifier/reuse-boundary-attack.mjs
+b37915703bd1bd9fca5825b383dccabbf335dfd3e5805cfb82857546c9d295df  evidence/e5-t18e/verifier/reuse-boundary-attack.json
+ee4932b0c2cf8b6c860f097000634cb7718877452f025aef58cff7607a660803  evidence/e5-t18e/verifier/reuse-frozen-input-check.json
+88e4df693aa863d94004f195657a5f8b395dd1e20b5082bce3efb943a66753b1  evidence/e5-t18e/verifier/cache-reuse-review.md
+efd6a7c5f89f22b93ca5f7b0ada38494ccdf37173eac51ed5e1aecc99f13d254  tools/verify/e5-t18e-cache-verifier.test.mjs

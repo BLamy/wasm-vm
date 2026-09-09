@@ -1,0 +1,333 @@
+{
+  "exactHead": "fc7bfdf5e6aa503e853ab85e48d4ea656dbede77",
+  "stateAttack": {
+    "sequences": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "noop": [
+      true,
+      false,
+      true,
+      false,
+      true,
+      true,
+      false,
+      true,
+      false,
+      false
+    ],
+    "calls": [
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        1
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        0
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendKeyboardEvent",
+        1,
+        30,
+        1
+      ],
+      [
+        "syncKeyboard"
+      ],
+      [
+        "sendKeyboardEvent",
+        1,
+        30,
+        0
+      ],
+      [
+        "syncKeyboard"
+      ],
+      [
+        "sendTabletEvent",
+        3,
+        0,
+        7
+      ],
+      [
+        "sendTabletEvent",
+        3,
+        1,
+        9
+      ],
+      [
+        "syncTablet"
+      ]
+    ]
+  },
+  "genericButtonAttack": {
+    "records": [
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 1,
+        "device": "tablet",
+        "events": [],
+        "sync": "SYN_REPORT",
+        "noop": true
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 2,
+        "device": "tablet",
+        "events": [
+          {
+            "eventType": 1,
+            "code": 273,
+            "value": 1
+          }
+        ],
+        "sync": "SYN_REPORT",
+        "noop": false
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 3,
+        "device": "tablet",
+        "events": [],
+        "sync": "SYN_REPORT",
+        "noop": true
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 4,
+        "device": "tablet",
+        "events": [
+          {
+            "eventType": 1,
+            "code": 273,
+            "value": 0
+          }
+        ],
+        "sync": "SYN_REPORT",
+        "noop": false
+      }
+    ],
+    "calls": [
+      [
+        "sendTabletEvent",
+        1,
+        273,
+        1
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendTabletEvent",
+        1,
+        273,
+        0
+      ],
+      [
+        "syncTablet"
+      ]
+    ]
+  },
+  "damageAttack": {
+    "records": [
+      {
+        "sequence": 1,
+        "timestamp": 42,
+        "backend": "canvas2d",
+        "drawn": true,
+        "replay": false,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 2,
+          "height": 2
+        },
+        "resourceWidth": 2,
+        "resourceHeight": 2,
+        "bytes": 16
+      }
+    ],
+    "gpu": {
+      "framesReceived": 1,
+      "enqueued": 1,
+      "coalesced": 0,
+      "presented": 1,
+      "successfulPresents": 1,
+      "skipped": 0,
+      "droppedFrames": 0,
+      "overruns": 0,
+      "pending": 0,
+      "maxPending": 0,
+      "uploadedBytes": 16,
+      "drawnPresents": 1,
+      "drawnBytes": 16,
+      "width": 2,
+      "height": 2
+    }
+  },
+  "nullSinkAttack": {
+    "records": [
+      {
+        "sequence": 1,
+        "timestamp": 43,
+        "backend": "canvas2d",
+        "drawn": false,
+        "replay": false,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 2,
+          "height": 2
+        },
+        "resourceWidth": 2,
+        "resourceHeight": 2,
+        "bytes": 16
+      }
+    ],
+    "gpu": {
+      "framesReceived": 1,
+      "enqueued": 1,
+      "coalesced": 0,
+      "presented": 1,
+      "successfulPresents": 1,
+      "skipped": 0,
+      "droppedFrames": 0,
+      "overruns": 0,
+      "pending": 0,
+      "maxPending": 0,
+      "uploadedBytes": 16,
+      "drawnPresents": 0,
+      "drawnBytes": 0,
+      "width": 2,
+      "height": 2
+    }
+  },
+  "schemaParity": {
+    "nodeBytes": "{\"version\":\"e5-t25a-v1\",\"sequence\":1,\"device\":\"tablet\",\"events\":[{\"eventType\":3,\"code\":0,\"value\":4},{\"eventType\":3,\"code\":1,\"value\":5}],\"sync\":\"SYN_REPORT\",\"noop\":false}",
+    "browserBytes": [
+      "{\"version\":\"e5-t25a-v1\",\"sequence\":1,\"device\":\"tablet\",\"events\":[{\"eventType\":3,\"code\":0,\"value\":4},{\"eventType\":3,\"code\":1,\"value\":5}],\"sync\":\"SYN_REPORT\",\"noop\":false}",
+      "{\"version\":\"e5-t25a-v1\",\"sequence\":1,\"device\":\"tablet\",\"events\":[{\"eventType\":3,\"code\":0,\"value\":4},{\"eventType\":3,\"code\":1,\"value\":5}],\"sync\":\"SYN_REPORT\",\"noop\":false}"
+    ],
+    "sha256": "ed83a4c28a5b1442b3fe69c7b903cb97155875294f636aa895a65f7d0a0de59b"
+  },
+  "fiveRepetitions": {
+    "allByteEqual": true,
+    "sha256": [
+      "edc41b0d0fb314cefb748cb7e8e81728c08208eaa588c2df604312e72e517c8e",
+      "edc41b0d0fb314cefb748cb7e8e81728c08208eaa588c2df604312e72e517c8e",
+      "edc41b0d0fb314cefb748cb7e8e81728c08208eaa588c2df604312e72e517c8e",
+      "edc41b0d0fb314cefb748cb7e8e81728c08208eaa588c2df604312e72e517c8e",
+      "edc41b0d0fb314cefb748cb7e8e81728c08208eaa588c2df604312e72e517c8e"
+    ],
+    "bytes": "{\"events\":[{\"version\":\"e5-t25a-v1\",\"sequence\":1,\"device\":\"tablet\",\"events\":[{\"eventType\":3,\"code\":0,\"value\":100},{\"eventType\":3,\"code\":1,\"value\":200}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":2,\"device\":\"tablet\",\"events\":[{\"eventType\":1,\"code\":272,\"value\":1}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":3,\"device\":\"tablet\",\"events\":[{\"eventType\":1,\"code\":272,\"value\":0}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":4,\"device\":\"keyboard\",\"events\":[{\"eventType\":1,\"code\":30,\"value\":1}],\"sync\":\"SYN_REPORT\",\"noop\":false},{\"version\":\"e5-t25a-v1\",\"sequence\":5,\"device\":\"keyboard\",\"events\":[{\"eventType\":1,\"code\":30,\"value\":0}],\"sync\":\"SYN_REPORT\",\"noop\":false}],\"calls\":[[\"sendTabletEvent\",3,0,100],[\"sendTabletEvent\",3,1,200],[\"syncTablet\"],[\"sendTabletEvent\",1,272,1],[\"syncTablet\"],[\"sendTabletEvent\",1,272,0],[\"syncTablet\"],[\"sendKeyboardEvent\",1,30,1],[\"syncKeyboard\"],[\"sendKeyboardEvent\",1,30,0],[\"syncKeyboard\"]],\"telemetry\":[{\"sequence\":1,\"timestamp\":15,\"backend\":\"canvas2d\",\"drawn\":true,\"replay\":false,\"rect\":{\"x\":0,\"y\":0,\"width\":2,\"height\":2},\"resourceWidth\":2,\"resourceHeight\":2,\"bytes\":16}],\"gpu\":{\"framesReceived\":1,\"enqueued\":1,\"coalesced\":0,\"presented\":1,\"successfulPresents\":1,\"skipped\":0,\"droppedFrames\":0,\"overruns\":0,\"pending\":0,\"maxPending\":0,\"uploadedBytes\":16,\"drawnPresents\":1,\"drawnBytes\":16,\"width\":2,\"height\":2}}"
+  },
+  "concurrencyAttack": {
+    "records": [
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 1,
+        "device": "tablet",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 11
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 12
+          }
+        ],
+        "sync": "SYN_REPORT",
+        "noop": false
+      },
+      {
+        "version": "e5-t25a-v1",
+        "sequence": 2,
+        "device": "tablet",
+        "events": [
+          {
+            "eventType": 1,
+            "code": 272,
+            "value": 1
+          }
+        ],
+        "sync": "SYN_REPORT",
+        "noop": false
+      }
+    ],
+    "observedCalls": [
+      [
+        "sendTabletEvent",
+        3,
+        0,
+        11
+      ],
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        1
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendTabletEvent",
+        3,
+        1,
+        12
+      ],
+      [
+        "syncTablet"
+      ]
+    ],
+    "expectedSerializedCalls": [
+      [
+        "sendTabletEvent",
+        3,
+        0,
+        11
+      ],
+      [
+        "sendTabletEvent",
+        3,
+        1,
+        12
+      ],
+      [
+        "syncTablet"
+      ],
+      [
+        "sendTabletEvent",
+        1,
+        272,
+        1
+      ],
+      [
+        "syncTablet"
+      ]
+    ],
+    "held": false
+  }
+}

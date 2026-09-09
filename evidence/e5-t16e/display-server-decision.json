@@ -1,0 +1,190 @@
+{
+  "schema": "wasm-vm.e5-t16e.display-server-decision.v1",
+  "task": "E5-T16e",
+  "command": "make verify-E5-T16e",
+  "decision": {
+    "selected": "weston-pixman",
+    "winnerMetric": "idle-instruction-ratio",
+    "winningMargin": 0.0009304131819650491,
+    "variance": {
+      "method": "max absolute deviation from two-run mean",
+      "values": [
+        0.0036462359033466426,
+        0.0036463767176481247
+      ],
+      "mean": 0.0036463063104973836,
+      "spread": 1.408143014821825e-7,
+      "maxAbsoluteDeviation": 7.040715074109125e-8,
+      "margin": 0.0009304131819650491
+    }
+  },
+  "finalists": {
+    "labwc-pixman": {
+      "capture": "evidence/e5-t16b/labwc-capture.json",
+      "metrics": {
+        "coldStartMs": 491094.899541,
+        "totalGuestInstructions": 4246036068,
+        "idleInstructions": 19396639,
+        "idleInstructionRatio": 0.0045681757501264825,
+        "typingDamageBytes": 0,
+        "peakRssBytes": 20512768,
+        "idleWakeups": 437,
+        "idleWakeupsPerSecond": 156.10700563677557,
+        "cursorqEvents": 0,
+        "cursorqStatus": "capability-gap: labwc submitted no cursorq chain during this run",
+        "workloadOutcome": true
+      },
+      "damageRecomputedBytes": 0
+    },
+    "weston-pixman": {
+      "capture": "evidence/e5-t16c/weston-capture.json",
+      "metrics": {
+        "coldStartMs": 506129.576666,
+        "totalGuestInstructions": 5332024187,
+        "idleInstructions": 19396638,
+        "idleInstructionRatio": 0.0036377625681614334,
+        "typingDamageBytes": 36864000,
+        "peakRssBytes": 18612224,
+        "idleWakeups": 427,
+        "idleWakeupsPerSecond": 149.66343689815284,
+        "cursorqEvents": 0,
+        "cursorqStatus": "capability-gap: weston submitted no cursorq chain during this run",
+        "workloadOutcome": true
+      },
+      "damageRecomputedBytes": 36864000
+    }
+  },
+  "winnerReruns": {
+    "artifact": "evidence/e5-t16e/winner-reruns.json",
+    "sourceImage": {
+      "commit": "64abae1b813ea9eda66a3dee5887d5e93ec33d1e",
+      "image": {
+        "path": "target/e5-t16e/weston-image/alpine-rootfs.ext4",
+        "sha256": "27bbdc06f63fd611fbb2c071d56b5ec1bbfd696a8d9180c81c33a45e5ed5ed95"
+      },
+      "packageManifest": {
+        "path": "target/e5-t16e/weston-image/MANIFEST.txt",
+        "sha256": "225b8d35f7375c084075ca60edac5ea8fbf7ef46f1fd09a7e3a5d40bb074aae1"
+      },
+      "fileManifest": {
+        "path": "target/e5-t16e/weston-image/FILE-MANIFEST.txt",
+        "sha256": "b2b4964035b5a348be808afddc83b91d007c5cb3e5fbfcf1854b6f85d5d51552"
+      },
+      "derivation": "fresh E5-T16c Weston scratch build, copied before each T16a workload replay"
+    },
+    "runs": [
+      {
+        "id": "weston-rerun-1",
+        "capture": {
+          "path": "evidence/e5-t16e/weston-rerun-1-capture.json",
+          "sha256": "4941cdbaf749c41b4e19a9c121344a4994de6d08eabf63cf5054fbf1c1dca4ee"
+        },
+        "metrics": {
+          "coldStartMs": 491808.90599999996,
+          "totalGuestInstructions": 5319625914,
+          "idleInstructions": 19396611,
+          "idleInstructionRatio": 0.0036462359033466426,
+          "typingDamageBytes": 36864000,
+          "peakRssBytes": 18612224,
+          "idleWakeups": 437,
+          "idleWakeupsPerSecond": 157.60014292204917,
+          "cursorqEvents": 0,
+          "cursorqStatus": "capability-gap: weston submitted no cursorq chain during this run",
+          "workloadOutcome": true
+        },
+        "artifacts": {
+          "weston-console.log": {
+            "path": "evidence/e5-t16e/weston-rerun-1/weston-console.log",
+            "sha256": "5bbf2f87ea52e52068e0261112c2ca5f24ce484d61e737945e5cd37450a8d70c"
+          },
+          "weston-stderr.log": {
+            "path": "evidence/e5-t16e/weston-rerun-1/weston-stderr.log",
+            "sha256": "ce0b3fd4346d4ae846a27a65c79c4716a44de0492653fadf8b3ce2c1025bbb7a"
+          },
+          "weston-guest-evidence.txt": {
+            "path": "evidence/e5-t16e/weston-rerun-1/weston-guest-evidence.txt",
+            "sha256": "571245fe18026af84fb7f4e60b231217c65961f507769484804532e979224b55"
+          },
+          "weston-gpu-trace.log": {
+            "path": "evidence/e5-t16e/weston-rerun-1/weston-gpu-trace.log",
+            "sha256": "b270c1acf8b56001a6d32c8396adb2f080bbf3bc931e37ea6ce61abefc51a532"
+          },
+          "weston-run.json": {
+            "path": "evidence/e5-t16e/weston-rerun-1/weston-run.json",
+            "sha256": "33b3560e32921efab7f65e2685a90240ea279e9f3c4ae1faae463a80991bcffe"
+          }
+        }
+      },
+      {
+        "id": "weston-rerun-2",
+        "capture": {
+          "path": "evidence/e5-t16e/weston-rerun-2-capture.json",
+          "sha256": "8f5dc4adc50e464fe30ea4aa1a10ab1c7bde3ea1d15fba70439f17cb4c005406"
+        },
+        "metrics": {
+          "coldStartMs": 491001.87504199997,
+          "totalGuestInstructions": 5319425145,
+          "idleInstructions": 19396628,
+          "idleInstructionRatio": 0.0036463767176481247,
+          "typingDamageBytes": 36864000,
+          "peakRssBytes": 18743296,
+          "idleWakeups": 438,
+          "idleWakeupsPerSecond": 157.19039749700823,
+          "cursorqEvents": 0,
+          "cursorqStatus": "capability-gap: weston submitted no cursorq chain during this run",
+          "workloadOutcome": true
+        },
+        "artifacts": {
+          "weston-console.log": {
+            "path": "evidence/e5-t16e/weston-rerun-2/weston-console.log",
+            "sha256": "24318696eca300b3c3eb4410f7d747b57fa089370aabe0f0fdbdc5f2952f34be"
+          },
+          "weston-stderr.log": {
+            "path": "evidence/e5-t16e/weston-rerun-2/weston-stderr.log",
+            "sha256": "59e2234cd5e1b7a243a6bd1d7432014af9912ff3e7f20522f68072b990cbd07f"
+          },
+          "weston-guest-evidence.txt": {
+            "path": "evidence/e5-t16e/weston-rerun-2/weston-guest-evidence.txt",
+            "sha256": "0c23fc95eee1869409b65061e62be4aa2e84494f1eb5f827fc5235093ed58e18"
+          },
+          "weston-gpu-trace.log": {
+            "path": "evidence/e5-t16e/weston-rerun-2/weston-gpu-trace.log",
+            "sha256": "a07aea671a61945a0c754816aa1f63125551e47a3cba03cf38012f424584d3b2"
+          },
+          "weston-run.json": {
+            "path": "evidence/e5-t16e/weston-rerun-2/weston-run.json",
+            "sha256": "7aad543110eef7a7a26e547e0f839284e23a0cc667e3d26c1b1bfc8020f313cf"
+          }
+        }
+      }
+    ]
+  },
+  "packageHandoff": {
+    "repositories": [
+      "https://dl-cdn.alpinelinux.org/alpine/v3.20/main",
+      "https://dl-cdn.alpinelinux.org/alpine/v3.20/community"
+    ],
+    "versions": {
+      "weston": "weston-12.0.4-r0",
+      "weston-backend-drm": "weston-backend-drm-12.0.4-r0",
+      "weston-shell-desktop": "weston-shell-desktop-12.0.4-r0",
+      "foot": "foot-1.17.2-r0",
+      "seatd": "seatd-0.8.0-r0",
+      "eudev": "eudev-3.2.14-r2",
+      "udev-init-scripts": "udev-init-scripts-35-r1",
+      "pixman": "pixman-0.43.2-r0",
+      "xkeyboard-config": "xkeyboard-config-2.41-r0",
+      "wl-clipboard": "wl-clipboard-2.2.0-r1",
+      "font-dejavu": "font-dejavu-2.37-r5"
+    },
+    "audit": "evidence/e5-t16d/package-audit.json",
+    "auditVerification": "evidence/e5-t16d/package-audit-verification.json",
+    "packageManifest": "target/e5-t16e/weston-image/MANIFEST.txt",
+    "fileManifest": "target/e5-t16e/weston-image/FILE-MANIFEST.txt"
+  },
+  "scope": {
+    "independentMachines": false,
+    "webkit": false,
+    "hostRr": false
+  }
+}

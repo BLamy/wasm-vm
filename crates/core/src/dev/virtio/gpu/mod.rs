@@ -4,9 +4,14 @@
 //! registers, and keeps the protocol wire formats in [`protocol`]. E5-T02a adds the first
 //! host-owned resource store and CREATE_2D command; later slices add backing and presentation.
 
+pub mod damage;
 pub mod edid;
 pub mod protocol;
 pub mod resources;
+pub mod tiles;
+
+mod snapshot;
+pub use snapshot::GpuSnapshotError;
 
 use alloc::boxed::Box;
 use alloc::rc::Rc;
@@ -31,16 +36,93 @@ pub struct FlushRecord {
     pub crc32: u32,
 }
 
+/// The canvas-free cursor state published by the core to a host presentation sink.
+///
+/// `resource_id == 0` is the virtio-gpu hide operation.  The position is retained in the record
+/// so a sink can update an overlay without reading guest memory or depending on framebuffer
+/// presentation.  `padding` in `pos` is canonicalized to zero by the command handlers.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct CursorState {
+    pub resource_id: u32,
+    pub hot_x: u32,
+    pub hot_y: u32,
+    pub pos: protocol::CursorPos,
+}
+
+impl CursorState {
+    /// Construct the canonical hidden state for one scanout.
+    pub const fn hidden(scanout_id: u32) -> Self {
+        Self {
+            resource_id: 0,
+            hot_x: 0,
+            hot_y: 0,
+            pos: protocol::CursorPos {
+                scanout_id,
+                x: 0,
+                y: 0,
+                padding: 0,
+            },
+        }
+    }
+}
+
+/// One guest command completed by the control queue. This is compiled only for the
+/// E5-T07a proof build; the runtime flag on [`GpuState`] keeps the normal headless and
+/// browser paths allocation-free.
+#[cfg(feature = "gpu-trace")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct CommandTraceRecord {
+    /// Monotonic command number for this GPU boot.
+    pub sequence: u64,
+    /// Raw `virtio_gpu_ctrl_type` request. Zero means the chain had no complete header.
+    pub command_type: u32,
+    /// Raw response type published in the writable response buffer. Zero means that no
+    /// complete response header was available to inspect.
+    pub response_type: u32,
+    /// Scanout mentioned by the request, or the scanout receiving a flush.
+    pub scanout: Option<u32>,
+    /// Resource mentioned by the request, if the request carried one.
+    pub resource_id: Option<u32>,
+    /// Resource dimensions observed before the command ran. Display-info uses the current
+    /// display dimensions; commands without a live resource use `None`.
+    pub resource_width: Option<u32>,
+    pub resource_height: Option<u32>,
+    /// Queue shadow positions after the request was consumed and its used entry published.
+    pub avail_idx: u16,
+    pub used_idx: u16,
+    /// Used-ring entry identity and response length for the just-published completion.
+    pub used_head: u16,
+    pub response_len: u32,
+}
+
+/// A deliberately bounded trace store. A malicious guest can submit commands indefinitely, so
+/// enabling the proof recorder must not turn guest traffic into an unbounded host allocation.
+#[cfg(feature = "gpu-trace")]
+const COMMAND_TRACE_CAPACITY: usize = 65_536;
+
 /// In-memory presentation sink for deterministic native and wasm tests.
 #[derive(Clone, Default)]
 pub struct TestSink {
     records: Rc<RefCell<Vec<FlushRecord>>>,
+    cursor_records: Rc<RefCell<Vec<CursorState>>>,
+    track_damage: bool,
 }
 
 impl TestSink {
     /// Construct an empty recording sink.
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Construct a test sink that asks the GPU resource path to narrow later flushes to pixels
+    /// changed by a transfer.  The default sink keeps the exact protocol rectangle for the
+    /// historical T03 golden contract.
+    pub fn with_damage_tracking() -> Self {
+        Self {
+            records: Rc::new(RefCell::new(Vec::new())),
+            cursor_records: Rc::new(RefCell::new(Vec::new())),
+            track_damage: true,
+        }
     }
 
     /// Return an owned snapshot so callers cannot mutate the sink's records through an alias.
@@ -57,12 +139,22 @@ impl TestSink {
     pub fn is_empty(&self) -> bool {
         self.records.borrow().is_empty()
     }
+
+    /// Return an owned snapshot of the canvas-free cursor state callbacks.
+    pub fn cursor_records(&self) -> Vec<CursorState> {
+        self.cursor_records.borrow().clone()
+    }
 }
 
 impl FrameSink for TestSink {
+    fn tracks_transferred_damage(&self) -> bool {
+        self.track_damage
+    }
+
     fn flush(
         &mut self,
         scanout: Option<u32>,
+        _format: u32,
         rect: Rect,
         resource_width: u32,
         resource_height: u32,
@@ -75,6 +167,22 @@ impl FrameSink for TestSink {
             resource_height,
             crc32: crc32_pixels(pixels),
         });
+    }
+
+    fn clear(&mut self) {
+        self.records.borrow_mut().clear();
+        self.cursor_records.borrow_mut().clear();
+    }
+
+    fn cursor_state(
+        &mut self,
+        state: CursorState,
+        _format: Option<u32>,
+        _resource_width: u32,
+        _resource_height: u32,
+        _pixels: &[u32],
+    ) {
+        self.cursor_records.borrow_mut().push(state);
     }
 }
 
@@ -99,16 +207,49 @@ fn crc32_pixels(pixels: &[u32]) -> u32 {
 /// transfer work has completed. `scanout` is `Some(id)` when the resource is currently bound to
 /// that scanout and `None` for a legal flush of an unbound resource. Browser-specific color
 /// conversion and presentation scheduling belong to the sink implementation, not this trait.
+/// `format` is the virtio-gpu resource format that describes the pixel words.
 pub trait FrameSink {
+    /// Whether the sink can consume a rectangle narrowed from transferred pixel changes.
+    ///
+    /// The default is false so core sinks retain the exact guest-requested rectangle. Browser
+    /// sinks opt in because they preserve the full resource and upload only the changed area.
+    fn tracks_transferred_damage(&self) -> bool {
+        false
+    }
+
     /// Publish one validated damage rectangle and its resource-sized pixel view.
     fn flush(
         &mut self,
         scanout: Option<u32>,
+        format: u32,
         rect: Rect,
         resource_width: u32,
         resource_height: u32,
         pixels: &[u32],
     );
+
+    /// Clear host-owned pixels or retained frame records after a failed live restore.
+    fn clear(&mut self);
+
+    /// Publish a cursor-plane state transition.  The resource view is borrowed only for the
+    /// duration of this callback; a browser sink must copy it before returning.  Hidden cursors
+    /// use `format = None`, zero dimensions, and an empty pixel slice.
+    fn cursor_state(
+        &mut self,
+        _state: CursorState,
+        _format: Option<u32>,
+        _resource_width: u32,
+        _resource_height: u32,
+        _pixels: &[u32],
+    ) {
+    }
+
+    /// Publish a MOVE_CURSOR transition without re-reading or re-encoding the resource image.
+    /// Browser sinks use this event to update only overlay transform/style state; simple sinks
+    /// retain the historical callback record through the default implementation.
+    fn cursor_move(&mut self, state: CursorState) {
+        self.cursor_state(state, None, 0, 0, &[]);
+    }
 }
 
 /// Headless sink used by default and by native boot paths that do not present a window.
@@ -119,12 +260,15 @@ impl FrameSink for NullSink {
     fn flush(
         &mut self,
         _scanout: Option<u32>,
+        _format: u32,
         _rect: Rect,
         _resource_width: u32,
         _resource_height: u32,
         _pixels: &[u32],
     ) {
     }
+
+    fn clear(&mut self) {}
 }
 
 /// Virtio device type assigned to a GPU (virtio spec 1.2 §5.7).
@@ -141,8 +285,16 @@ pub const DEFAULT_DISPLAY_HEIGHT: u32 = 800;
 pub const DEFAULT_DISPLAY_REFRESH_HZ: u32 = edid::DEFAULT_REFRESH_HZ;
 /// The initial device has one scanout; later display work may make this configurable.
 pub const DEFAULT_NUM_SCANOUTS: u32 = 1;
+/// Maximum cursor resource dimension accepted by cursorq.  Larger resources use the browser
+/// overlay fallback in the presentation slices, while an unbounded guest allocation is rejected.
+pub const MAX_CURSOR_DIMENSION: u32 = 256;
 /// E5-T01a exposes no 3D capsets.
 pub const DEFAULT_NUM_CAPSETS: u32 = 0;
+/// Preferred virtio-mmio slot for the browser display. Slot 6 is the first optional slot;
+/// callers may fall back to slot 6 when the preferred slot is already occupied by another
+/// optional device (the machine keeps the established device ordering and reserves the ninth
+/// platform window for the browser agent extension).
+pub const VIRTIO_GPU_SLOT: usize = 7;
 
 const CONFIG_LEN: usize = 16;
 
@@ -155,17 +307,36 @@ pub struct GpuState {
     edid: [u8; edid::EDID_BLOCK_SIZE],
     config_irq_pending: bool,
     kicked: bool,
+    cursor_kicked: bool,
     reset_pending: bool,
     /// Host-owned 2D resource store. Backing entries are added by E5-T02b.
     pub resources: resources::ResourceMap,
     /// Resource currently bound to scanout 0, if any. SET_SCANOUT is owned by E5-T03;
     /// RESOURCE_UNREF clears this before dropping a bound resource.
     pub scanout_resource: Option<u32>,
+    /// Validated cursor-plane state for each advertised scanout.  Only ids and coordinates cross
+    /// this boundary; guest backing is never retained by the cursor queue.
+    cursor_states: [CursorState; DEFAULT_NUM_SCANOUTS as usize],
     /// Core-to-host presentation boundary. The default is [`NullSink`], so a headless device
     /// never allocates or calls into browser-specific code.
     pub frame_sink: Box<dyn FrameSink>,
     /// Number of valid GET_DISPLAY_INFO requests completed by the service.
     pub commands_served: u64,
+    /// E5-T07a: bounded controlq trace, present only in the proof feature build. The
+    /// recorder is disabled until a host explicitly arms it.
+    #[cfg(feature = "gpu-trace")]
+    command_trace: Vec<CommandTraceRecord>,
+    #[cfg(feature = "gpu-trace")]
+    command_trace_enabled: bool,
+    #[cfg(feature = "gpu-trace")]
+    command_trace_sequence: u64,
+    #[cfg(feature = "gpu-trace")]
+    command_trace_dropped: u64,
+    /// E5-T16b: number of cursorq chains completed while the proof recorder is armed.  This is
+    /// kept beside the bounded controlq trace so a finalist capture can distinguish real guest
+    /// cursor traffic from a compositor configuration that merely mentions a hardware cursor.
+    #[cfg(feature = "gpu-trace")]
+    cursorq_commands: u64,
 }
 
 impl GpuState {
@@ -182,17 +353,34 @@ impl GpuState {
             ),
             config_irq_pending: false,
             kicked: false,
+            cursor_kicked: false,
             reset_pending: false,
             resources: resources::ResourceMap::new(),
             scanout_resource: None,
+            cursor_states: [CursorState::hidden(0); DEFAULT_NUM_SCANOUTS as usize],
             frame_sink: sink,
             commands_served: 0,
+            #[cfg(feature = "gpu-trace")]
+            command_trace: Vec::new(),
+            #[cfg(feature = "gpu-trace")]
+            command_trace_enabled: false,
+            #[cfg(feature = "gpu-trace")]
+            command_trace_sequence: 0,
+            #[cfg(feature = "gpu-trace")]
+            command_trace_dropped: 0,
+            #[cfg(feature = "gpu-trace")]
+            cursorq_commands: 0,
         }
     }
 
     /// Current width and height advertised in pmode 0 and the preferred EDID timing.
     pub fn display_size(&self) -> (u32, u32) {
         (self.display_width, self.display_height)
+    }
+
+    /// Pending guest-visible config events, without clearing or signalling them.
+    pub fn pending_events(&self) -> u32 {
+        self.events_read
     }
 
     /// Current preferred refresh rate in hertz.
@@ -203,6 +391,42 @@ impl GpuState {
     /// Copy the current EDID base block for host-side inspection.
     pub fn edid(&self) -> [u8; edid::EDID_BLOCK_SIZE] {
         self.edid
+    }
+
+    /// Return the last validated cursor state for a scanout.
+    pub fn cursor_state(&self, scanout_id: u32) -> Option<CursorState> {
+        self.cursor_states
+            .get(usize::try_from(scanout_id).ok()?)
+            .copied()
+    }
+
+    /// Notify the host sink with the current cursor state and a temporary view of its host-owned
+    /// resource pixels.  No guest-memory pointer or backing entry is retained after the callback.
+    fn publish_cursor_state(&mut self, cursor: CursorState) {
+        let GpuState {
+            resources,
+            frame_sink,
+            ..
+        } = self;
+        if cursor.resource_id == 0 {
+            frame_sink.cursor_state(cursor, None, 0, 0, &[]);
+            return;
+        }
+        if let Some(resource) = resources.get(cursor.resource_id) {
+            frame_sink.cursor_state(
+                cursor,
+                Some(resource.format),
+                resource.width,
+                resource.height,
+                &resource.host_pixels,
+            );
+        }
+    }
+
+    /// Publish a MOVE_CURSOR transition without borrowing the backing resource.  The cursor
+    /// image is unchanged, so this keeps high-frequency movement on the host's transform path.
+    fn publish_cursor_move(&mut self, cursor: CursorState) {
+        self.frame_sink.cursor_move(cursor);
     }
 
     /// Apply a host display-size change and coalesce its config interrupt until the guest clears
@@ -222,6 +446,80 @@ impl GpuState {
         }
     }
 
+    /// E5-T07a: arm the bounded guest command trace. Recording is opt-in even when the
+    /// `gpu-trace` feature is compiled, so normal native and browser boots retain the
+    /// null-sink behavior and do not allocate trace storage.
+    #[cfg(feature = "gpu-trace")]
+    pub fn enable_command_trace(&mut self) {
+        self.command_trace_enabled = true;
+    }
+
+    /// E5-T07a: clear a previously captured command trace and restart its sequence number.
+    #[cfg(feature = "gpu-trace")]
+    pub fn clear_command_trace(&mut self) {
+        self.command_trace.clear();
+        self.command_trace_sequence = 0;
+        self.command_trace_dropped = 0;
+        self.cursorq_commands = 0;
+    }
+
+    /// E5-T07a: return an owned snapshot of the bounded command trace.
+    #[cfg(feature = "gpu-trace")]
+    pub fn command_trace(&self) -> Vec<CommandTraceRecord> {
+        self.command_trace.clone()
+    }
+
+    /// Number of completed commands omitted after the bounded trace reached its cap or a
+    /// host allocation was refused.
+    #[cfg(feature = "gpu-trace")]
+    pub fn command_trace_dropped(&self) -> u64 {
+        self.command_trace_dropped
+    }
+
+    /// E5-T16b: return the number of completed cursorq chains observed by the proof recorder.
+    /// The count includes rejected cursor requests because they are still guest cursorq traffic;
+    /// the finalist harness reports the count separately from compositor success/failure.
+    #[cfg(feature = "gpu-trace")]
+    pub fn cursorq_commands(&self) -> u64 {
+        self.cursorq_commands
+    }
+
+    #[cfg(feature = "gpu-trace")]
+    fn record_command(
+        &mut self,
+        meta: CommandTraceMeta,
+        response_type: u32,
+        avail_idx: u16,
+        used_idx: u16,
+        used_head: u16,
+        response_len: u32,
+    ) {
+        if !self.command_trace_enabled {
+            return;
+        }
+        let sequence = self.command_trace_sequence;
+        self.command_trace_sequence = self.command_trace_sequence.wrapping_add(1);
+        if self.command_trace.len() >= COMMAND_TRACE_CAPACITY
+            || self.command_trace.try_reserve(1).is_err()
+        {
+            self.command_trace_dropped = self.command_trace_dropped.saturating_add(1);
+            return;
+        }
+        self.command_trace.push(CommandTraceRecord {
+            sequence,
+            command_type: meta.command_type,
+            response_type,
+            scanout: meta.scanout,
+            resource_id: meta.resource_id,
+            resource_width: meta.resource_width,
+            resource_height: meta.resource_height,
+            avail_idx,
+            used_idx,
+            used_head,
+            response_len,
+        });
+    }
+
     fn raise_event(&mut self, bits: u32) {
         if bits & VIRTIO_GPU_EVENT_DISPLAY != 0 && self.events_read & VIRTIO_GPU_EVENT_DISPLAY == 0
         {
@@ -238,19 +536,36 @@ impl GpuState {
 
     fn reset(&mut self) {
         self.events_read = 0;
-        self.display_width = DEFAULT_DISPLAY_WIDTH;
-        self.display_height = DEFAULT_DISPLAY_HEIGHT;
-        self.display_refresh_hz = DEFAULT_DISPLAY_REFRESH_HZ;
-        self.edid = edid::edid_for(
-            DEFAULT_DISPLAY_WIDTH,
-            DEFAULT_DISPLAY_HEIGHT,
-            DEFAULT_DISPLAY_REFRESH_HZ,
-        );
+        // Device reset discards guest-owned queues/resources, not the physical
+        // host monitor. Linux resets the device during initial probe, after the
+        // browser has already supplied its viewport mode. Keep that mode/EDID.
         self.config_irq_pending = false;
         self.kicked = false;
+        self.cursor_kicked = false;
         self.resources = resources::ResourceMap::new();
         self.scanout_resource = None;
+        let previous_cursors = self.cursor_states;
+        self.cursor_states = [CursorState::hidden(0); DEFAULT_NUM_SCANOUTS as usize];
+        for (index, previous) in previous_cursors.into_iter().enumerate() {
+            if previous.resource_id != 0 {
+                self.publish_cursor_state(CursorState::hidden(index as u32));
+            }
+        }
         self.reset_pending = true;
+        #[cfg(feature = "gpu-trace")]
+        self.clear_command_trace();
+    }
+
+    /// Serialize the host-owned GPU resources, scanout binding, cursor plane, and pending damage
+    /// into the T26b component payload.  The outer desktop envelope supplies the section version
+    /// and component digest.
+    pub fn to_snapshot(&self) -> Result<Vec<u8>, GpuSnapshotError> {
+        snapshot::encode(self)
+    }
+
+    /// Atomically restore a T26b payload and publish one full repair frame when a scanout is bound.
+    pub fn restore_snapshot(&mut self, payload: &[u8]) -> Result<(), GpuSnapshotError> {
+        snapshot::restore(self, payload)
     }
 }
 
@@ -312,6 +627,21 @@ impl VirtioGpu {
         self.state.borrow().edid()
     }
 
+    /// Copy the last validated cursor state for a scanout.
+    pub fn cursor_state(&self, scanout_id: u32) -> Option<CursorState> {
+        self.state.borrow().cursor_state(scanout_id)
+    }
+
+    /// Serialize the shared GPU state for the desktop snapshot envelope.
+    pub fn to_snapshot(&self) -> Result<Vec<u8>, GpuSnapshotError> {
+        self.state.borrow().to_snapshot()
+    }
+
+    /// Atomically restore the shared GPU state and emit one full repair frame if scanout is bound.
+    pub fn restore_snapshot(&mut self, payload: &[u8]) -> Result<(), GpuSnapshotError> {
+        self.state.borrow_mut().restore_snapshot(payload)
+    }
+
     /// Change the host-visible virtual display mode.  The transport latches one config interrupt
     /// at its next boundary; repeated changes before `events_clear` update the final mode without
     /// creating an interrupt storm.
@@ -355,10 +685,14 @@ impl VirtioDevice for VirtioGpu {
     }
 
     fn queue_notify(&mut self, queue: u32) {
-        let _ = queue;
         // Bus is borrowed while the MMIO write is being handled.  Defer queue walking until the
         // run-loop boundary, when guest RAM can be borrowed safely.
-        self.state.borrow_mut().kicked = true;
+        let mut state = self.state.borrow_mut();
+        match queue {
+            0 => state.kicked = true,
+            1 => state.cursor_kicked = true,
+            _ => {}
+        }
     }
 
     fn config_read(&mut self, offset: u64, width: u8) -> u64 {
@@ -471,6 +805,158 @@ fn read_request<const N: usize>(chain: &DescriptorChain, bus: &mut SystemBus) ->
     read_readable_at::<N>(chain, bus, 0)
 }
 
+/// Read a small fixed-size window from the device-writable response stream. The response type is
+/// sampled before used-ring publication, but the trace itself is recorded only after publication.
+#[cfg(feature = "gpu-trace")]
+fn read_writable_at<const N: usize>(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    start: u64,
+) -> Option<[u8; N]> {
+    let end = start.checked_add(N as u64)?;
+    if end > chain.writable_len() {
+        return None;
+    }
+
+    let mut skip = start;
+    let mut copied = 0usize;
+    let mut bytes = [0u8; N];
+    for segment in chain.writable() {
+        let segment_len = u64::from(segment.len);
+        if skip >= segment_len {
+            skip -= segment_len;
+            continue;
+        }
+        let available = segment_len - skip;
+        let take = available.min((N - copied) as u64);
+        for offset in 0..take {
+            let guest_addr = segment.addr.checked_add(skip.checked_add(offset)?)?;
+            bytes[copied] = bus.load8(guest_addr).ok()?;
+            copied += 1;
+        }
+        skip = 0;
+        if copied == N {
+            return Some(bytes);
+        }
+    }
+    None
+}
+
+/// Trace-only metadata decoded from the request before it mutates the resource store. Keeping
+/// this separate from command execution means an invalid request still gets an accurate resource
+/// id/dimension annotation while the completion ordering remains owned by `service`.
+#[cfg(feature = "gpu-trace")]
+#[derive(Clone, Copy, Default)]
+struct CommandTraceMeta {
+    command_type: u32,
+    scanout: Option<u32>,
+    resource_id: Option<u32>,
+    resource_width: Option<u32>,
+    resource_height: Option<u32>,
+}
+
+#[cfg(feature = "gpu-trace")]
+fn command_trace_meta(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    state: &Rc<RefCell<GpuState>>,
+    request: Option<protocol::CtrlHeader>,
+) -> CommandTraceMeta {
+    let Some(request) = request else {
+        return CommandTraceMeta::default();
+    };
+    let mut meta = CommandTraceMeta {
+        command_type: request.ty,
+        ..CommandTraceMeta::default()
+    };
+
+    match request.ty {
+        protocol::CMD_GET_DISPLAY_INFO => {
+            meta.scanout = Some(0);
+            let (width, height) = state.borrow().display_size();
+            meta.resource_width = Some(width);
+            meta.resource_height = Some(height);
+        }
+        protocol::CMD_GET_EDID => {
+            if let Some(bytes) = read_request::<{ protocol::GET_EDID_REQUEST_SIZE }>(chain, bus)
+                && let Some(get_edid) = protocol::GetEdid::from_bytes(&bytes)
+            {
+                meta.scanout = Some(get_edid.scanout_id);
+            }
+            let (width, height) = state.borrow().display_size();
+            meta.resource_width = Some(width);
+            meta.resource_height = Some(height);
+        }
+        protocol::CMD_RESOURCE_CREATE_2D => {
+            if let Some(bytes) = read_request::<{ protocol::RESOURCE_CREATE_2D_SIZE }>(chain, bus)
+                && let Some(create) = protocol::ResourceCreate2d::from_bytes(&bytes)
+            {
+                meta.resource_id = Some(create.resource_id);
+                meta.resource_width = Some(create.width);
+                meta.resource_height = Some(create.height);
+            }
+        }
+        protocol::CMD_RESOURCE_ATTACH_BACKING => {
+            if let Some(bytes) =
+                read_request::<{ protocol::RESOURCE_ATTACH_BACKING_HEADER_SIZE }>(chain, bus)
+                && let Some(attach) = protocol::ResourceAttachBacking::from_bytes(&bytes)
+            {
+                meta.resource_id = Some(attach.resource_id);
+            }
+        }
+        protocol::CMD_RESOURCE_DETACH_BACKING => {
+            if let Some(bytes) =
+                read_request::<{ protocol::RESOURCE_DETACH_BACKING_SIZE }>(chain, bus)
+                && let Some(detach) = protocol::ResourceDetachBacking::from_bytes(&bytes)
+            {
+                meta.resource_id = Some(detach.resource_id);
+            }
+        }
+        protocol::CMD_RESOURCE_UNREF => {
+            if let Some(bytes) = read_request::<{ protocol::RESOURCE_UNREF_SIZE }>(chain, bus)
+                && let Some(unref) = protocol::ResourceUnref::from_bytes(&bytes)
+            {
+                meta.resource_id = Some(unref.resource_id);
+            }
+        }
+        protocol::CMD_SET_SCANOUT => {
+            if let Some(bytes) = read_request::<{ protocol::SET_SCANOUT_SIZE }>(chain, bus)
+                && let Some(set_scanout) = protocol::SetScanout::from_bytes(&bytes)
+            {
+                meta.scanout = Some(set_scanout.scanout_id);
+                meta.resource_id = Some(set_scanout.resource_id);
+            }
+        }
+        protocol::CMD_TRANSFER_TO_HOST_2D => {
+            if let Some(bytes) = read_request::<{ protocol::TRANSFER_TO_HOST_2D_SIZE }>(chain, bus)
+                && let Some(transfer) = protocol::TransferToHost2d::from_bytes(&bytes)
+            {
+                meta.resource_id = Some(transfer.resource_id);
+            }
+        }
+        protocol::CMD_RESOURCE_FLUSH => {
+            if let Some(bytes) = read_request::<{ protocol::RESOURCE_FLUSH_SIZE }>(chain, bus)
+                && let Some(flush) = protocol::ResourceFlush::from_bytes(&bytes)
+            {
+                meta.resource_id = Some(flush.resource_id);
+                if state.borrow().scanout_resource == Some(flush.resource_id) {
+                    meta.scanout = Some(0);
+                }
+            }
+        }
+        _ => {}
+    }
+
+    if let Some(resource_id) = meta.resource_id {
+        let state_ref = state.borrow();
+        if let Some(resource) = state_ref.resources.get(resource_id) {
+            meta.resource_width.get_or_insert(resource.width);
+            meta.resource_height.get_or_insert(resource.height);
+        }
+    }
+    meta
+}
+
 /// Write a response prefix across all device-writable descriptors. A short tail is truncated at
 /// its validated capacity; no byte beyond the provided descriptors is ever addressed.
 fn write_prefix(chain: &DescriptorChain, bus: &mut SystemBus, response: &[u8]) -> Result<u32, ()> {
@@ -581,11 +1067,124 @@ fn flush_error_response(error: FlushError) -> u32 {
     }
 }
 
+/// Why a cursorq command was rejected.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CursorError {
+    /// The command named a scanout that is not advertised by this device.
+    InvalidScanout,
+    /// The command named a resource that is not live.
+    InvalidResource,
+    /// The command payload, cursor dimensions, hotspot, or cursor lifetime was invalid.
+    InvalidParameter,
+}
+
+fn cursor_error_response(error: CursorError) -> u32 {
+    match error {
+        CursorError::InvalidScanout => protocol::RESP_ERR_INVALID_SCANOUT_ID,
+        CursorError::InvalidResource => protocol::RESP_ERR_INVALID_RESOURCE_ID,
+        CursorError::InvalidParameter => protocol::RESP_ERR_INVALID_PARAMETER,
+    }
+}
+
 /// Check a rectangle with widened arithmetic so an overflowing guest coordinate cannot wrap into
 /// the resource. Zero-sized rectangles are valid at an edge; the command still binds the resource.
 fn rect_within(rect: Rect, resource_width: u32, resource_height: u32) -> bool {
     u64::from(rect.x) + u64::from(rect.width) <= u64::from(resource_width)
         && u64::from(rect.y) + u64::from(rect.height) <= u64::from(resource_height)
+}
+
+fn cursor_position(pos: protocol::CursorPos) -> protocol::CursorPos {
+    protocol::CursorPos {
+        scanout_id: pos.scanout_id,
+        x: pos.x,
+        y: pos.y,
+        padding: 0,
+    }
+}
+
+/// Validate and apply UPDATE_CURSOR.  All guest-controlled fields are checked before the
+/// per-scanout state is changed or the host callback is entered.
+fn update_cursor(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    state: &Rc<RefCell<GpuState>>,
+) -> Result<(), CursorError> {
+    let request = read_request::<{ protocol::UPDATE_CURSOR_SIZE }>(chain, bus)
+        .and_then(|bytes| protocol::UpdateCursor::from_bytes(&bytes))
+        .ok_or(CursorError::InvalidParameter)?;
+    if request.pos.scanout_id >= DEFAULT_NUM_SCANOUTS {
+        return Err(CursorError::InvalidScanout);
+    }
+
+    let cursor = if request.resource_id == 0 {
+        // The resource and hotspot fields have no meaning when the guest hides the cursor.  Keep
+        // the state canonical and retain the requested position for a deterministic callback.
+        CursorState {
+            resource_id: 0,
+            hot_x: 0,
+            hot_y: 0,
+            pos: cursor_position(request.pos),
+        }
+    } else {
+        let state_ref = state.borrow();
+        let resource = state_ref
+            .resources
+            .get(request.resource_id)
+            .ok_or(CursorError::InvalidResource)?;
+        if resource.width == 0
+            || resource.height == 0
+            || resource.width > MAX_CURSOR_DIMENSION
+            || resource.height > MAX_CURSOR_DIMENSION
+            || request.hot_x >= resource.width
+            || request.hot_y >= resource.height
+        {
+            return Err(CursorError::InvalidParameter);
+        }
+        CursorState {
+            resource_id: request.resource_id,
+            hot_x: request.hot_x,
+            hot_y: request.hot_y,
+            pos: cursor_position(request.pos),
+        }
+    };
+
+    let mut state_ref = state.borrow_mut();
+    let index = request.pos.scanout_id as usize;
+    state_ref.cursor_states[index] = cursor;
+    state_ref.publish_cursor_state(cursor);
+    Ok(())
+}
+
+/// Validate and apply MOVE_CURSOR.  A hidden/unbound scanout cannot be moved, and a rejected move
+/// leaves the prior resource, hotspot, position, and callback sequence untouched.
+fn move_cursor(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    state: &Rc<RefCell<GpuState>>,
+) -> Result<(), CursorError> {
+    let request = read_request::<{ protocol::MOVE_CURSOR_SIZE }>(chain, bus)
+        .and_then(|bytes| protocol::MoveCursor::from_bytes(&bytes))
+        .ok_or(CursorError::InvalidParameter)?;
+    if request.pos.scanout_id >= DEFAULT_NUM_SCANOUTS {
+        return Err(CursorError::InvalidScanout);
+    }
+
+    let mut state_ref = state.borrow_mut();
+    let index = request.pos.scanout_id as usize;
+    let previous = state_ref.cursor_states[index];
+    if previous.resource_id == 0 {
+        return Err(CursorError::InvalidParameter);
+    }
+    if state_ref.resources.get(previous.resource_id).is_none() {
+        return Err(CursorError::InvalidResource);
+    }
+    let cursor = CursorState {
+        pos: cursor_position(request.pos),
+        ..previous
+    };
+    state_ref.cursor_states[index] = cursor;
+    state_ref.publish_cursor_move(cursor);
+    Ok(())
 }
 
 /// Bind or disable a scanout without mutating the previous binding on a rejected request.
@@ -657,15 +1256,30 @@ fn resource_flush(
         ..
     } = &mut *state_ref;
     let scanout = (*scanout_resource == Some(request.resource_id)).then_some(0);
+    let (resource_width, resource_height) = {
+        let resource = resources
+            .get(request.resource_id)
+            .ok_or(FlushError::InvalidResourceId)?;
+        (resource.width, resource.height)
+    };
+    if !rect_within(request.rect, resource_width, resource_height) {
+        return Err(FlushError::InvalidParameter);
+    }
+    let track_changes = frame_sink.tracks_transferred_damage();
+    let effective_rect = resources
+        .get_mut(request.resource_id)
+        .ok_or(FlushError::InvalidResourceId)?
+        .flush_rect(request.rect, track_changes);
     let resource = resources
         .get(request.resource_id)
         .ok_or(FlushError::InvalidResourceId)?;
-    if !rect_within(request.rect, resource.width, resource.height) {
+    if !rect_within(effective_rect, resource.width, resource.height) {
         return Err(FlushError::InvalidParameter);
     }
     frame_sink.flush(
         scanout,
-        request.rect,
+        resource.format,
+        effective_rect,
         resource.width,
         resource.height,
         &resource.host_pixels,
@@ -746,7 +1360,7 @@ fn detach_backing(
         .map_err(|_| resources::BackingError::InvalidResourceId)
 }
 
-/// Unref a resource, clearing scanout 0 before releasing its host-owned pixels.
+/// Unref a resource, clearing scanout/cursor bindings before releasing its host-owned pixels.
 fn unref_resource(
     chain: &DescriptorChain,
     bus: &mut SystemBus,
@@ -765,6 +1379,13 @@ fn unref_resource(
         state.scanout_resource = None;
     }
     let _ = state.resources.remove(request.resource_id)?;
+    for index in 0..state.cursor_states.len() {
+        if state.cursor_states[index].resource_id == request.resource_id {
+            let cursor = CursorState::hidden(index as u32);
+            state.cursor_states[index] = cursor;
+            state.publish_cursor_state(cursor);
+        }
+    }
     Ok(())
 }
 
@@ -821,7 +1442,10 @@ pub fn service(
             }
         };
 
-        let written = match read_header(&chain, bus) {
+        let request = read_header(&chain, bus);
+        #[cfg(feature = "gpu-trace")]
+        let trace_meta = command_trace_meta(&chain, bus, state, request);
+        let written = match request {
             Some(request) if request.ty == protocol::CMD_GET_DISPLAY_INFO => {
                 let (width, height) = state.borrow().display_size();
                 let response = protocol::DisplayInfoResponse::new_with_mode(
@@ -997,10 +1621,33 @@ pub fn service(
             _ => 0,
         };
 
+        #[cfg(feature = "gpu-trace")]
+        let response_type = if written >= 4 {
+            read_writable_at::<4>(&chain, bus, 0)
+                .map(u32::from_le_bytes)
+                .unwrap_or(0)
+        } else {
+            0
+        };
+
         if queue.push_used(bus, chain.head, written).is_err() {
             slot.borrow_mut().protocol_violation();
             *vq = None;
             return;
+        }
+        #[cfg(feature = "gpu-trace")]
+        {
+            // The trace record is deliberately emitted after push_used: its used_idx and
+            // response_len therefore prove that this command has a published completion.
+            let (avail_idx, used_idx) = queue.ring_indices();
+            state.borrow_mut().record_command(
+                trace_meta,
+                response_type,
+                avail_idx,
+                used_idx,
+                chain.head,
+                written,
+            );
         }
         delivered_work = true;
     }
@@ -1010,8 +1657,145 @@ pub fn service(
     }
 }
 
+/// Service the GPU cursorq (queue 1) after a deferred QueueNotify kick.
+///
+/// Cursor commands normally contain only device-readable descriptors and therefore complete with
+/// a zero used length.  For deterministic tests and tolerant embedders, an optional writable tail
+/// receives the normal 24-byte response header (truncated to its checked capacity); no response
+/// buffer is required by the cursor state machine itself.
+pub fn service_cursor(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<GpuState>>,
+    bus: &mut SystemBus,
+) {
+    slot.borrow_mut().sync_backend_config_irq();
+    {
+        let mut state = state.borrow_mut();
+        if state.reset_pending {
+            state.reset_pending = false;
+            *vq = None;
+        }
+        if !state.cursor_kicked {
+            return;
+        }
+        state.cursor_kicked = false;
+    }
+
+    let queue_state = *slot.borrow().queue(1);
+    if !queue_state.ready {
+        *vq = None;
+        return;
+    }
+    if vq.is_none() {
+        match Virtqueue::new(&queue_state, 256) {
+            Ok(queue) => *vq = Some(queue),
+            Err(_) => {
+                slot.borrow_mut().protocol_violation();
+                return;
+            }
+        }
+    }
+
+    let queue = vq.as_mut().expect("cursor queue was constructed above");
+    let mut delivered_work = false;
+    loop {
+        let chain = match queue.pop(bus) {
+            Ok(Some(chain)) => chain,
+            Ok(None) => break,
+            Err(_) => {
+                slot.borrow_mut().protocol_violation();
+                *vq = None;
+                return;
+            }
+        };
+
+        let request = read_header(&chain, bus);
+        let response_type = match request {
+            Some(request) if request.ty == protocol::CMD_UPDATE_CURSOR => {
+                match update_cursor(&chain, bus, state) {
+                    Ok(()) => protocol::RESP_OK_NODATA,
+                    Err(error) => cursor_error_response(error),
+                }
+            }
+            Some(request) if request.ty == protocol::CMD_MOVE_CURSOR => {
+                match move_cursor(&chain, bus, state) {
+                    Ok(()) => protocol::RESP_OK_NODATA,
+                    Err(error) => cursor_error_response(error),
+                }
+            }
+            Some(_) => protocol::RESP_ERR_UNSPEC,
+            None => 0,
+        };
+        let written = if response_type == 0 || chain.writable_len() == 0 {
+            0
+        } else {
+            let response = response_header(
+                request.expect("response_type is nonzero only with a complete header"),
+                response_type,
+            )
+            .to_bytes();
+            match write_prefix(&chain, bus, &response) {
+                Ok(written) => written,
+                Err(()) => {
+                    slot.borrow_mut().protocol_violation();
+                    *vq = None;
+                    return;
+                }
+            }
+        };
+
+        if queue.push_used(bus, chain.head, written).is_err() {
+            slot.borrow_mut().protocol_violation();
+            *vq = None;
+            return;
+        }
+        #[cfg(feature = "gpu-trace")]
+        {
+            // Count the completed chain after publishing its used entry.  This makes the
+            // observation a transport fact, independent of whether the cursor command itself
+            // was accepted by the state validator.
+            let mut state_ref = state.borrow_mut();
+            state_ref.cursorq_commands = state_ref.cursorq_commands.saturating_add(1);
+        }
+        delivered_work = true;
+    }
+
+    if delivered_work && queue.interrupt_needed(bus) {
+        slot.borrow_mut().raise_used_irq();
+    }
+}
+
+/// Service both GPU queues at one machine boundary.  The wrapper invalidates both cached ring
+/// views on reset; the legacy [`service`] entry point remains available for controlq-only tests.
+pub fn service_with_cursor(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    control_vq: &mut Option<Virtqueue>,
+    cursor_vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<GpuState>>,
+    bus: &mut SystemBus,
+) {
+    let reset = {
+        let mut state_ref = state.borrow_mut();
+        if state_ref.reset_pending {
+            state_ref.reset_pending = false;
+            true
+        } else {
+            false
+        }
+    };
+    if reset {
+        *control_vq = None;
+        *cursor_vq = None;
+    }
+    service(slot, control_vq, state, bus);
+    service_cursor(slot, cursor_vq, state, bus);
+}
+
 #[cfg(test)]
 mod tests {
+    include!("reset_verifier_tests.rs");
+
     use alloc::rc::Rc;
     use core::cell::RefCell;
 
@@ -1049,9 +1833,26 @@ mod tests {
     const USED: u64 = DRAM_BASE + 0x3000;
     const REQUEST: u64 = DRAM_BASE + 0x4000;
     const RESPONSE: u64 = DRAM_BASE + 0x5000;
+    const CURSOR_DESC: u64 = DRAM_BASE + 0x6000;
+    const CURSOR_AVAIL: u64 = DRAM_BASE + 0x7000;
+    const CURSOR_USED: u64 = DRAM_BASE + 0x8000;
+    const CURSOR_REQUEST: u64 = DRAM_BASE + 0x9000;
+    const CURSOR_RESPONSE: u64 = DRAM_BASE + 0xA000;
 
     fn write_desc(bus: &mut SystemBus, index: u64, addr: u64, len: u32, flags: u16, next: u16) {
-        let base = DESC + 16 * index;
+        write_desc_at(bus, DESC, index, addr, len, flags, next);
+    }
+
+    fn write_desc_at(
+        bus: &mut SystemBus,
+        desc_base: u64,
+        index: u64,
+        addr: u64,
+        len: u32,
+        flags: u16,
+        next: u16,
+    ) {
+        let base = desc_base + 16 * index;
         bus.store64(base, addr).unwrap();
         bus.store32(base + 8, len).unwrap();
         bus.store16(base + 12, flags).unwrap();
@@ -1101,6 +1902,49 @@ mod tests {
         .to_bytes()
     }
 
+    fn cursor_update_request(
+        scanout_id: u32,
+        x: u32,
+        y: u32,
+        resource_id: u32,
+        hot_x: u32,
+        hot_y: u32,
+    ) -> [u8; protocol::UPDATE_CURSOR_SIZE] {
+        protocol::UpdateCursor {
+            header: CtrlHeader {
+                ty: protocol::CMD_UPDATE_CURSOR,
+                ..CtrlHeader::default()
+            },
+            pos: protocol::CursorPos {
+                scanout_id,
+                x,
+                y,
+                padding: 0xDEAD_BEEF,
+            },
+            resource_id,
+            hot_x,
+            hot_y,
+            padding: 0xCAFE_BABE,
+        }
+        .to_bytes()
+    }
+
+    fn cursor_move_request(scanout_id: u32, x: u32, y: u32) -> [u8; protocol::MOVE_CURSOR_SIZE] {
+        protocol::MoveCursor {
+            header: CtrlHeader {
+                ty: protocol::CMD_MOVE_CURSOR,
+                ..CtrlHeader::default()
+            },
+            pos: protocol::CursorPos {
+                scanout_id,
+                x,
+                y,
+                padding: 0xABCD_EF01,
+            },
+        }
+        .to_bytes()
+    }
+
     fn queue_for_test(
         bus: &mut SystemBus,
         descriptors: &[(u64, u32, u16, u16)],
@@ -1137,6 +1981,46 @@ mod tests {
         for (index, head) in heads.iter().copied().enumerate() {
             bus.store16(AVAIL + 4 + 2 * index as u64, head).unwrap();
         }
+    }
+
+    fn set_cursor_avail_heads(bus: &mut SystemBus, heads: &[u16]) {
+        bus.store16(CURSOR_AVAIL + 2, heads.len() as u16).unwrap();
+        for (index, head) in heads.iter().copied().enumerate() {
+            bus.store16(CURSOR_AVAIL + 4 + 2 * index as u64, head)
+                .unwrap();
+        }
+    }
+
+    fn cursor_queue_for_test(
+        bus: &mut SystemBus,
+        descriptors: &[(u64, u32, u16, u16)],
+        sink: Box<dyn FrameSink>,
+    ) -> (
+        Rc<RefCell<VirtioMmio>>,
+        Rc<RefCell<GpuState>>,
+        Option<Virtqueue>,
+    ) {
+        for (index, &(addr, len, flags, next)) in descriptors.iter().enumerate() {
+            write_desc_at(bus, CURSOR_DESC, index as u64, addr, len, flags, next);
+        }
+        bus.store16(CURSOR_AVAIL, 0).unwrap();
+        bus.store16(CURSOR_AVAIL + 2, 0).unwrap();
+        bus.store16(CURSOR_USED, 0).unwrap();
+        bus.store16(CURSOR_USED + 2, 0).unwrap();
+        let (device, state) = VirtioGpu::new_with_sink_state(sink);
+        let queue_size = descriptors.len().max(8).next_power_of_two();
+        let slot = Rc::new(RefCell::new(VirtioMmio::new(Box::new(device))));
+        slot.borrow_mut().set_queue_for_test(
+            1,
+            QueueState {
+                num: queue_size as u32,
+                ready: true,
+                desc: CURSOR_DESC,
+                driver: CURSOR_AVAIL,
+                device: CURSOR_USED,
+            },
+        );
+        (slot, state, None)
     }
 
     fn response_type(bus: &mut SystemBus, addr: u64) -> u32 {
@@ -1315,6 +2199,288 @@ mod tests {
     }
 
     #[test]
+    fn gpu_cursor_protocol_wire_fixtures_are_little_endian_and_bounded() {
+        let request = protocol::UpdateCursor {
+            header: CtrlHeader {
+                ty: protocol::CMD_UPDATE_CURSOR,
+                flags: 0x1122_3344,
+                fence_id: 0x0102_0304_0506_0708,
+                ctx_id: 0xA1B2_C3D4,
+                ring_idx: 9,
+                padding: [0x0A, 0x0B, 0x0C],
+            },
+            pos: protocol::CursorPos {
+                scanout_id: 0x1020_3040,
+                x: 0x5060_7080,
+                y: 0x90A0_B0C0,
+                padding: 0xD0E0_F000,
+            },
+            resource_id: 0x1122_3344,
+            hot_x: 0x5566_7788,
+            hot_y: 0x99AA_BBCC,
+            padding: 0xDDEE_FF00,
+        };
+        let expected = [
+            0x00, 0x03, 0x00, 0x00, // type
+            0x44, 0x33, 0x22, 0x11, // flags
+            0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, // fence_id
+            0xD4, 0xC3, 0xB2, 0xA1, // ctx_id
+            0x09, 0x0A, 0x0B, 0x0C, // ring_idx + padding
+            0x40, 0x30, 0x20, 0x10, // scanout_id
+            0x80, 0x70, 0x60, 0x50, // x
+            0xC0, 0xB0, 0xA0, 0x90, // y
+            0x00, 0xF0, 0xE0, 0xD0, // position padding
+            0x44, 0x33, 0x22, 0x11, // resource_id
+            0x88, 0x77, 0x66, 0x55, // hot_x
+            0xCC, 0xBB, 0xAA, 0x99, // hot_y
+            0x00, 0xFF, 0xEE, 0xDD, // request padding
+        ];
+        assert_eq!(protocol::UPDATE_CURSOR_SIZE, expected.len());
+        assert_eq!(request.to_bytes(), expected);
+        assert_eq!(protocol::UpdateCursor::from_bytes(&expected), Some(request));
+        assert_eq!(protocol::UpdateCursor::from_bytes(&expected[..55]), None);
+
+        let move_request = protocol::MoveCursor {
+            header: CtrlHeader {
+                ty: protocol::CMD_MOVE_CURSOR,
+                ..request.header
+            },
+            pos: request.pos,
+        };
+        let move_bytes = move_request.to_bytes();
+        assert_eq!(move_bytes.len(), protocol::MOVE_CURSOR_SIZE);
+        assert_eq!(
+            protocol::MoveCursor::from_bytes(&move_bytes),
+            Some(move_request)
+        );
+        assert_eq!(
+            protocol::CursorPos::from_bytes(&move_bytes[CTRL_HDR_SIZE..]),
+            Some(request.pos)
+        );
+    }
+
+    #[test]
+    fn gpu_cursorq_updates_moves_hides_and_rejects_without_mutation() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let requests = [
+            cursor_update_request(0, 40, 50, 7, 10, 3).to_vec(),
+            cursor_move_request(0, 41, 51).to_vec(),
+            cursor_update_request(0, 42, 52, 0, u32::MAX, u32::MAX).to_vec(),
+            cursor_move_request(0, 43, 53).to_vec(),
+            cursor_update_request(0, 44, 54, 7, 64, 0).to_vec(),
+            cursor_update_request(1, 45, 55, 7, 10, 3).to_vec(),
+            cursor_update_request(0, 46, 56, 8, 0, 0).to_vec(),
+            cursor_update_request(0, 47, 57, 7, 10, 3).to_vec(),
+        ];
+        for (index, request) in requests.iter().enumerate() {
+            write_bytes(&mut bus, CURSOR_REQUEST + index as u64 * 0x100, request);
+        }
+
+        let mut descriptors = alloc::vec::Vec::new();
+        for index in 0..requests.len() {
+            let request_len = if index == requests.len() - 1 {
+                (protocol::UPDATE_CURSOR_SIZE - 1) as u32
+            } else if index == 1 || index == 3 {
+                protocol::MOVE_CURSOR_SIZE as u32
+            } else {
+                protocol::UPDATE_CURSOR_SIZE as u32
+            };
+            let request_desc = (index * 2) as u16;
+            let response_desc = request_desc + 1;
+            descriptors.push((
+                CURSOR_REQUEST + index as u64 * 0x100,
+                request_len,
+                1,
+                response_desc,
+            ));
+            descriptors.push((
+                CURSOR_RESPONSE + index as u64 * 0x100,
+                CTRL_HDR_SIZE as u32,
+                2,
+                0,
+            ));
+        }
+        let sink = TestSink::new();
+        let (slot, state, mut vq) =
+            cursor_queue_for_test(&mut bus, &descriptors, Box::new(sink.clone()));
+        state
+            .borrow_mut()
+            .resources
+            .create(7, protocol::FORMAT_B8G8R8A8_UNORM, 64, 64)
+            .unwrap();
+        state
+            .borrow_mut()
+            .resources
+            .create(
+                8,
+                protocol::FORMAT_B8G8R8A8_UNORM,
+                MAX_CURSOR_DIMENSION + 1,
+                64,
+            )
+            .unwrap();
+        set_cursor_avail_heads(&mut bus, &[0, 2, 4, 6, 8, 10, 12, 14]);
+        slot.borrow_mut().write(0x050, Width::B4, 1).unwrap();
+
+        service_cursor(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load16(CURSOR_USED + 2).unwrap(), requests.len() as u16);
+        for index in 0..3 {
+            assert_eq!(
+                bus.load32(CURSOR_RESPONSE + index as u64 * 0x100).unwrap(),
+                protocol::RESP_OK_NODATA
+            );
+        }
+        assert_eq!(
+            bus.load32(CURSOR_RESPONSE + 3 * 0x100).unwrap(),
+            protocol::RESP_ERR_INVALID_PARAMETER
+        );
+        assert_eq!(
+            bus.load32(CURSOR_RESPONSE + 4 * 0x100).unwrap(),
+            protocol::RESP_ERR_INVALID_PARAMETER
+        );
+        assert_eq!(
+            bus.load32(CURSOR_RESPONSE + 5 * 0x100).unwrap(),
+            protocol::RESP_ERR_INVALID_SCANOUT_ID
+        );
+        assert_eq!(
+            bus.load32(CURSOR_RESPONSE + 6 * 0x100).unwrap(),
+            protocol::RESP_ERR_INVALID_PARAMETER
+        );
+        assert_eq!(
+            bus.load32(CURSOR_RESPONSE + 7 * 0x100).unwrap(),
+            protocol::RESP_ERR_INVALID_PARAMETER
+        );
+
+        let expected_callbacks = [
+            CursorState {
+                resource_id: 7,
+                hot_x: 10,
+                hot_y: 3,
+                pos: protocol::CursorPos {
+                    scanout_id: 0,
+                    x: 40,
+                    y: 50,
+                    padding: 0,
+                },
+            },
+            CursorState {
+                resource_id: 7,
+                hot_x: 10,
+                hot_y: 3,
+                pos: protocol::CursorPos {
+                    scanout_id: 0,
+                    x: 41,
+                    y: 51,
+                    padding: 0,
+                },
+            },
+            CursorState {
+                resource_id: 0,
+                hot_x: 0,
+                hot_y: 0,
+                pos: protocol::CursorPos {
+                    scanout_id: 0,
+                    x: 42,
+                    y: 52,
+                    padding: 0,
+                },
+            },
+        ];
+        assert_eq!(sink.cursor_records(), expected_callbacks);
+        assert_eq!(state.borrow().cursorq_commands(), requests.len() as u64);
+        assert_eq!(state.borrow().cursor_state(0), Some(expected_callbacks[2]));
+        assert_eq!(state.borrow().cursor_state(1), None);
+        assert_eq!(state.borrow().resources.len(), 2);
+    }
+
+    #[test]
+    fn gpu_cursorq_read_only_completion_and_reset_clear_cursor_state() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let request = cursor_update_request(0, 12, 13, 7, 1, 2);
+        write_bytes(&mut bus, CURSOR_REQUEST, &request);
+        let sink = TestSink::new();
+        let (slot, state, mut vq) = cursor_queue_for_test(
+            &mut bus,
+            &[(CURSOR_REQUEST, protocol::UPDATE_CURSOR_SIZE as u32, 0, 0)],
+            Box::new(sink.clone()),
+        );
+        state
+            .borrow_mut()
+            .resources
+            .create(7, protocol::FORMAT_B8G8R8A8_UNORM, 8, 8)
+            .unwrap();
+        set_cursor_avail_heads(&mut bus, &[0]);
+        slot.borrow_mut().write(0x050, Width::B4, 1).unwrap();
+        service_cursor(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load16(CURSOR_USED + 2).unwrap(), 1);
+        assert_eq!(bus.load32(CURSOR_USED + 8).unwrap(), 0);
+        assert_eq!(sink.cursor_records().len(), 1);
+        assert_eq!(state.borrow().cursor_state(0).unwrap().resource_id, 7);
+
+        let (mut device, state) = VirtioGpu::new_with_sink_state(Box::new(sink.clone()));
+        state
+            .borrow_mut()
+            .resources
+            .create(9, protocol::FORMAT_B8G8R8A8_UNORM, 4, 4)
+            .unwrap();
+        state.borrow_mut().cursor_states[0] = CursorState {
+            resource_id: 9,
+            hot_x: 1,
+            hot_y: 1,
+            pos: protocol::CursorPos {
+                scanout_id: 0,
+                x: 6,
+                y: 7,
+                padding: 0,
+            },
+        };
+        VirtioDevice::reset(&mut device);
+        assert!(state.borrow().resources.is_empty());
+        assert_eq!(state.borrow().cursor_state(0), Some(CursorState::hidden(0)));
+        assert_eq!(
+            sink.cursor_records().last().copied(),
+            Some(CursorState::hidden(0))
+        );
+    }
+
+    #[test]
+    fn gpu_cursorq_repeated_hide_show_keeps_one_bounded_state_per_scanout() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let sink = TestSink::new();
+        let (slot, state, mut vq) = cursor_queue_for_test(
+            &mut bus,
+            &[(CURSOR_REQUEST, protocol::UPDATE_CURSOR_SIZE as u32, 0, 0)],
+            Box::new(sink.clone()),
+        );
+        state
+            .borrow_mut()
+            .resources
+            .create(7, protocol::FORMAT_B8G8R8A8_UNORM, 64, 64)
+            .unwrap();
+
+        for index in 0..1_000u32 {
+            let resource_id = if index % 2 == 0 { 7 } else { 0 };
+            let request =
+                cursor_update_request(0, index, index.wrapping_mul(3), resource_id, 10, 3);
+            write_bytes(&mut bus, CURSOR_REQUEST, &request);
+            let ring_slot = u64::from(index % 8);
+            bus.store16(CURSOR_AVAIL + 4 + 2 * ring_slot, 0).unwrap();
+            bus.store16(CURSOR_AVAIL + 2, (index + 1) as u16).unwrap();
+            slot.borrow_mut().write(0x050, Width::B4, 1).unwrap();
+            service_cursor(&slot, &mut vq, &state, &mut bus);
+        }
+
+        let final_state = state.borrow().cursor_state(0).unwrap();
+        assert_eq!(final_state.resource_id, 0);
+        assert_eq!(final_state.pos.x, 999);
+        assert_eq!(final_state.pos.y, 999u32.wrapping_mul(3));
+        assert_eq!(sink.cursor_records().len(), 1_000);
+        assert_eq!(bus.load16(CURSOR_USED + 2).unwrap(), 1_000);
+        assert!(vq.is_some());
+    }
+
+    #[test]
     fn gpu_mmio_identity_features_and_config() {
         let mut slot = VirtioMmio::new(Box::new(VirtioGpu::new()));
         assert_eq!(read32(&mut slot, DEVICE_ID), VIRTIO_GPU_DEVICE_ID);
@@ -1478,6 +2644,16 @@ mod tests {
 
         assert_eq!(bus.load32(RESPONSE).unwrap(), RESP_OK_EDID);
         assert_eq!(bus.load16(USED + 2).unwrap(), 1);
+        assert_eq!(
+            bus.load32(RESPONSE + CTRL_HDR_SIZE as u64).unwrap(),
+            128,
+            "EDID base-block size is reported in the response payload"
+        );
+        assert_eq!(
+            bus.load32(RESPONSE + CTRL_HDR_SIZE as u64 + 4).unwrap(),
+            0,
+            "EDID response padding is zero"
+        );
         assert_eq!(
             bus.load32(USED + 8).unwrap(),
             EDID_RESPONSE_SIZE as u32,
@@ -2035,6 +3211,120 @@ mod tests {
     }
 
     #[test]
+    fn display_reset_preserves_host_monitor_but_clears_guest_state() {
+        let (mut gpu, state) = VirtioGpu::new_with_state();
+        let (_, fresh) = VirtioGpu::new_with_state();
+        let mut expected_edid = edid::edid_for(901, 701, 75);
+        for index in 0..1000 {
+            let width = 901 + index % 127;
+            let height = 701 + index % 79;
+            {
+                let mut state = state.borrow_mut();
+                state.set_display(width, height);
+                state.display_refresh_hz = 75;
+                state.edid = edid::edid_for(width, height, 75);
+                expected_edid = state.edid();
+                state
+                    .resources
+                    .create(17, protocol::FORMAT_B8G8R8A8_UNORM, 7, 5)
+                    .unwrap();
+                state
+                    .resources
+                    .attach_backing(17, alloc::vec![(DRAM_BASE + 0x1000, 140)])
+                    .unwrap();
+                state.scanout_resource = Some(17);
+                state.cursor_states[0] = CursorState {
+                    resource_id: 17,
+                    ..CursorState::hidden(0)
+                };
+                state.kicked = true;
+                state.cursor_kicked = true;
+                state.raise_event(VIRTIO_GPU_EVENT_DISPLAY);
+                assert_eq!(state.resources.accounted_bytes(), 140);
+            }
+            for _ in 0..2 {
+                VirtioDevice::reset(&mut gpu);
+                let state = state.borrow();
+                assert_eq!(state.display_size(), (width, height));
+                assert_eq!(state.display_refresh_hz, 75);
+                assert_eq!(state.edid(), expected_edid);
+                assert!(state.resources.is_empty());
+                assert_eq!(state.resources.accounted_bytes(), 0);
+                assert_eq!(state.scanout_resource, None);
+                assert_eq!(state.cursor_state(0), Some(CursorState::hidden(0)));
+                assert!(!state.kicked && !state.cursor_kicked && !state.config_irq_pending);
+                assert_eq!(state.events_read, 0);
+                assert!(state.reset_pending);
+            }
+        }
+        assert_eq!(fresh.borrow().display_size(), (1280, 800));
+        assert_ne!(fresh.borrow().edid(), expected_edid);
+    }
+
+    #[test]
+    fn display_reset_mmio_clears_latched_irqs_and_both_cached_queues() {
+        for latched in [false, true] {
+            let (gpu, state) = VirtioGpu::new_with_state();
+            let slot = Rc::new(RefCell::new(VirtioMmio::new(Box::new(gpu))));
+            let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+            let control = QueueState {
+                num: 8,
+                ready: true,
+                desc: DESC,
+                driver: AVAIL,
+                device: USED,
+            };
+            let cursor = QueueState {
+                num: 8,
+                ready: true,
+                desc: CURSOR_DESC,
+                driver: CURSOR_AVAIL,
+                device: CURSOR_USED,
+            };
+            slot.borrow_mut().set_queue_for_test(0, control);
+            slot.borrow_mut().set_queue_for_test(1, cursor);
+            let mut control_cache = Some(Virtqueue::new(&control, 256).unwrap());
+            let mut cursor_cache = Some(Virtqueue::new(&cursor, 256).unwrap());
+            bus.store32(USED, 0x1234_5678).unwrap();
+            bus.store32(CURSOR_USED, 0x9abc_def0).unwrap();
+            state.borrow_mut().set_display(901, 701);
+            let before_edid = state.borrow().edid();
+            state.borrow_mut().kicked = true;
+            state.borrow_mut().cursor_kicked = true;
+            if latched {
+                assert!(slot.borrow_mut().sync_backend_config_irq());
+                slot.borrow_mut().raise_used_irq();
+                assert_eq!(read32(&mut slot.borrow_mut(), 0x060), 3);
+                assert!(slot.borrow().irq_level());
+            }
+            write32(&mut slot.borrow_mut(), STATUS, 0);
+            assert_eq!(read32(&mut slot.borrow_mut(), 0x060), 0);
+            assert!(!slot.borrow().irq_level());
+            assert_eq!(slot.borrow().queue(0), &QueueState::default());
+            assert_eq!(slot.borrow().queue(1), &QueueState::default());
+            service_with_cursor(
+                &slot,
+                &mut control_cache,
+                &mut cursor_cache,
+                &state,
+                &mut bus,
+            );
+            assert!(control_cache.is_none() && cursor_cache.is_none());
+            assert!(!state.borrow().reset_pending);
+            assert!(!slot.borrow_mut().sync_backend_config_irq());
+            assert!(!slot.borrow().irq_level());
+            assert_eq!(bus.load32(USED).unwrap(), 0x1234_5678);
+            assert_eq!(bus.load32(CURSOR_USED).unwrap(), 0x9abc_def0);
+            assert_eq!(state.borrow().display_size(), (901, 701));
+            assert_eq!(state.borrow().edid(), before_edid);
+            state.borrow_mut().set_display(901, 701);
+            assert!(slot.borrow_mut().sync_backend_config_irq());
+            assert!(!slot.borrow_mut().sync_backend_config_irq());
+            assert_eq!(read32(&mut slot.borrow_mut(), 0x060), INT_CONFIG_CHANGE);
+        }
+    }
+
+    #[test]
     fn gpu_resources_lifecycle_device_reset_releases_resource_state() {
         let (mut gpu, state) = VirtioGpu::new_with_state();
         state.borrow_mut().set_display(1921, 1081);
@@ -2051,13 +3341,10 @@ mod tests {
         assert!(state.resources.is_empty());
         assert_eq!(state.resources.accounted_bytes(), 0);
         assert_eq!(state.scanout_resource, None);
-        assert_eq!(
-            state.display_size(),
-            (DEFAULT_DISPLAY_WIDTH, DEFAULT_DISPLAY_HEIGHT)
-        );
+        assert_eq!(state.display_size(), (1921, 1081));
         assert_eq!(
             state.edid(),
-            edid::edid_for(1280, 800, DEFAULT_DISPLAY_REFRESH_HZ)
+            edid::edid_for(1921, 1081, DEFAULT_DISPLAY_REFRESH_HZ)
         );
         assert_eq!(state.events_read, 0);
     }
@@ -2177,6 +3464,8 @@ mod tests {
             (VALID_RESPONSE, 408, 2, 0),
         ];
         let (slot, state, mut vq) = queue_for_test(&mut bus, &descriptors);
+        #[cfg(feature = "gpu-trace")]
+        state.borrow_mut().enable_command_trace();
         set_avail_heads(&mut bus, &[0, 2, 4, 5]);
         slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
 
@@ -2210,6 +3499,23 @@ mod tests {
         assert_eq!(valid_response.modes[0].enabled, 1);
         assert_eq!(valid_response.modes[0].width, 1280);
         assert_eq!(state.borrow().commands_served, 2);
+        #[cfg(feature = "gpu-trace")]
+        {
+            let trace = state.borrow().command_trace();
+            assert_eq!(trace.len(), 4);
+            assert_eq!(trace[0].command_type, 0xDEAD);
+            assert_eq!(trace[0].response_type, protocol::RESP_ERR_UNSPEC);
+            assert_eq!(trace[1].command_type, 0);
+            assert_eq!(trace[1].response_type, 0);
+            assert_eq!(trace[2].response_type, 0);
+            assert_eq!(trace[3].response_type, protocol::RESP_OK_DISPLAY_INFO);
+            for (sequence, record) in trace.iter().enumerate() {
+                assert_eq!(record.sequence, sequence as u64);
+                assert_eq!(record.avail_idx, sequence as u16 + 1);
+                assert_eq!(record.used_idx, sequence as u16 + 1);
+                assert_eq!(record.used_head, [0, 2, 4, 5][sequence]);
+            }
+        }
     }
 
     #[test]
@@ -2261,7 +3567,7 @@ mod tests {
             resource_id: 0x1122_3344,
         };
         let expected = [
-            0x05, 0x01, 0x00, 0x00, // type
+            0x03, 0x01, 0x00, 0x00, // type
             0x44, 0x33, 0x22, 0x11, // flags
             0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, // fence_id
             0xD4, 0xC3, 0xB2, 0xA1, // ctx_id
@@ -2512,7 +3818,7 @@ mod tests {
             padding: 0xAABB_CCDD,
         };
         let expected = [
-            0x07, 0x01, 0x00, 0x00, // type
+            0x04, 0x01, 0x00, 0x00, // type
             0x44, 0x33, 0x22, 0x11, // flags
             0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, // fence_id
             0xD4, 0xC3, 0xB2, 0xA1, // ctx_id
@@ -2551,7 +3857,7 @@ mod tests {
             padding: 0xAABB_CCDD,
         };
         let expected = [
-            0x06, 0x01, 0x00, 0x00, // type
+            0x05, 0x01, 0x00, 0x00, // type
             0x44, 0x33, 0x22, 0x11, // flags
             0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, // fence_id
             0xD4, 0xC3, 0xB2, 0xA1, // ctx_id
@@ -2708,6 +4014,122 @@ mod tests {
                 resource_height: 2,
                 crc32: reference_crc32(&[0x0102_0304, 0xAABB_CCDD, 0x1122_3344, 0x5566_7788,]),
             }]
+        );
+    }
+
+    #[test]
+    fn gpu_flush_tracking_sink_publishes_changed_transfer_bounds() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let source_addr = DRAM_BASE + 0x70_000;
+        let width = 5u32;
+        let height = 4u32;
+        let full = Rect {
+            x: 0,
+            y: 0,
+            width,
+            height,
+        };
+        let mut source = alloc::vec![0u8; (width * height * 4) as usize];
+        for index in 0..(width * height) {
+            source[index as usize * 4..index as usize * 4 + 4]
+                .copy_from_slice(&(0x1100_0000u32 | index).to_le_bytes());
+        }
+        let mut changed = source.clone();
+        let set_pixel = |bytes: &mut [u8], x: u32, y: u32, value: u32| {
+            let offset = ((y * width + x) * 4) as usize;
+            bytes[offset..offset + 4].copy_from_slice(&value.to_le_bytes());
+        };
+        set_pixel(&mut changed, 1, 0, 0xCAFE_0101);
+        set_pixel(&mut changed, 3, 2, 0xCAFE_0302);
+        bus.ram_mut().write_slice(source_addr, &source).unwrap();
+
+        let transfer = || {
+            TransferToHost2d {
+                header: CtrlHeader {
+                    ty: CMD_TRANSFER_TO_HOST_2D,
+                    ..CtrlHeader::default()
+                },
+                rect: full,
+                offset: 0,
+                resource_id: 1,
+                padding: 0,
+            }
+            .to_bytes()
+        };
+        let flush = || flush_request(1, full);
+        let request_addrs = [REQUEST, REQUEST + 0x100, REQUEST + 0x200, REQUEST + 0x300];
+        let response_addrs = [
+            RESPONSE,
+            RESPONSE + 0x100,
+            RESPONSE + 0x200,
+            RESPONSE + 0x300,
+        ];
+        write_bytes(&mut bus, request_addrs[0], &transfer());
+        write_bytes(&mut bus, request_addrs[1], &flush());
+
+        let mut descriptors = alloc::vec::Vec::new();
+        for index in 0..4 {
+            descriptors.push((
+                request_addrs[index],
+                if index % 2 == 0 {
+                    TRANSFER_TO_HOST_2D_SIZE as u32
+                } else {
+                    RESOURCE_FLUSH_SIZE as u32
+                },
+                1,
+                (index * 2 + 1) as u16,
+            ));
+            descriptors.push((response_addrs[index], 24, 2, 0));
+        }
+        let (slot, state, mut vq) = queue_for_test(&mut bus, &descriptors);
+        set_avail_heads(&mut bus, &[0, 2, 4, 6]);
+        let sink = TestSink::with_damage_tracking();
+        {
+            let mut state_ref = state.borrow_mut();
+            state_ref
+                .resources
+                .create(1, protocol::FORMAT_B8G8R8A8_UNORM, width, height)
+                .unwrap();
+            state_ref
+                .resources
+                .attach_backing(1, alloc::vec![(source_addr, source.len() as u32)])
+                .unwrap();
+            state_ref.frame_sink = Box::new(sink.clone());
+        }
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        set_avail_heads(&mut bus, &[0, 2]);
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(
+            bus.load16(USED + 2).unwrap(),
+            2,
+            "initial commands completed once"
+        );
+        assert_eq!(sink.len(), 1);
+        assert_eq!(sink.records()[0].rect, full);
+
+        bus.ram_mut().write_slice(source_addr, &changed).unwrap();
+        write_bytes(&mut bus, request_addrs[2], &transfer());
+        write_bytes(&mut bus, request_addrs[3], &flush());
+        set_avail_heads(&mut bus, &[0, 2, 4, 6]);
+        state.borrow_mut().kicked = true;
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(
+            bus.load16(USED + 2).unwrap(),
+            4,
+            "each command completed once"
+        );
+        assert_eq!(sink.len(), 2);
+        assert_eq!(
+            sink.records()[1].rect,
+            Rect {
+                x: 1,
+                y: 0,
+                width: 3,
+                height: 3,
+            }
         );
     }
 
@@ -3037,7 +4459,11 @@ mod tests {
             }
             let (slot, state, mut vq) = queue_for_test(&mut bus, &descriptors);
             let sink = TestSink::new();
-            state.borrow_mut().frame_sink = Box::new(sink.clone());
+            let mut state_ref = state.borrow_mut();
+            state_ref.frame_sink = Box::new(sink.clone());
+            #[cfg(feature = "gpu-trace")]
+            state_ref.enable_command_trace();
+            drop(state_ref);
             set_avail_heads(&mut bus, &[0, 2, 4, 6, 8]);
             slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
 
@@ -3082,6 +4508,38 @@ mod tests {
                 }],
                 "sink record {index}"
             );
+
+            #[cfg(feature = "gpu-trace")]
+            {
+                let trace = state.borrow().command_trace();
+                assert_eq!(trace.len(), 5, "command count for pattern {index}");
+                assert_eq!(
+                    trace
+                        .iter()
+                        .map(|record| record.command_type)
+                        .collect::<alloc::vec::Vec<_>>(),
+                    alloc::vec![
+                        protocol::CMD_RESOURCE_CREATE_2D,
+                        protocol::CMD_RESOURCE_ATTACH_BACKING,
+                        protocol::CMD_SET_SCANOUT,
+                        protocol::CMD_TRANSFER_TO_HOST_2D,
+                        protocol::CMD_RESOURCE_FLUSH,
+                    ],
+                    "command sequence for pattern {index}"
+                );
+                assert!(trace.iter().all(|record| {
+                    record.response_type == protocol::RESP_OK_NODATA
+                        && record.avail_idx == record.sequence as u16 + 1
+                        && record.used_idx == record.sequence as u16 + 1
+                        && record.used_head == record.sequence as u16 * 2
+                }));
+                assert_eq!(trace[0].resource_width, Some(WIDTH));
+                assert_eq!(trace[0].resource_height, Some(HEIGHT));
+                assert_eq!(trace[4].scanout, Some(0));
+                assert_eq!(trace[4].resource_id, Some(1));
+                assert_eq!(trace[4].resource_width, Some(WIDTH));
+                assert_eq!(trace[4].resource_height, Some(HEIGHT));
+            }
 
             // Guest backing is not the sink's pixel view: mutating the source after TRANSFER and
             // FLUSH cannot alter either the host shadow or the already-owned record.

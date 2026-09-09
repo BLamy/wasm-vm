@@ -1,0 +1,3016 @@
+{
+  "label": "failure-post-restore-interaction-checks",
+  "timestamp": "2026-09-08T16:40:20.383Z",
+  "head": "05b82bc688a34e6a1abef7b6c761c01bf4a3f7c6",
+  "image": {
+    "imageSha256": "d2fc4eab9bc1b5fe528a2956b58faefb20fcf18e2505c499ecafa8824d390f72",
+    "manifestSha256": "e02a9af547773f9d54e47151419ab3b118c55d3a4c90b25dcc434487db8dc9f5"
+  },
+  "lastPhase": {
+    "phase": "post-restore:interaction-checks",
+    "event": "failed",
+    "timestamp": "2026-09-08T16:40:20.383Z",
+    "elapsedMs": 9011
+  },
+  "lastProgressSample": null,
+  "milestones": {
+    "run": {
+      "kind": "diagnostic-iteration",
+      "acceptance": false,
+      "diagnostic": {
+        "mode": "reuse",
+        "directory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-IKBhyX",
+        "port": 61637,
+        "origin": "http://127.0.0.1:61637",
+        "command": null,
+        "keyDelayMs": 0,
+        "latency": true,
+        "cpu": false,
+        "guestClock": null,
+        "jit": null,
+        "residency": null,
+        "complete": false,
+        "icountDivider": null
+      },
+      "postRestoreCommand": "play",
+      "postRestoreKeyDelayMs": 5,
+      "fixture": {
+        "kind": "resident-observer-v1",
+        "helperSha256": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh",
+        "observer": {
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-observe",
+          "sourcePath": "tools/guest/e5-t26f-observer.c",
+          "sourceSha256": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+          "binaryPath": "target/e5-t26f/observer-build-v1/e5t26f-observe",
+          "sha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+          "size": 30960,
+          "mode": "0555",
+          "buildInfoPath": "target/e5-t26f/observer-build-v1/build-info.json",
+          "buildInfoSha256": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+          "readbackSha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350"
+        }
+      },
+      "binding": {
+        "head": "05b82bc688a34e6a1abef7b6c761c01bf4a3f7c6",
+        "runtimeSha256": "f897f34951ca3ab59909f0ce6bbe2e8a68a6620cdace4d1e4eca617cbd601ce8",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "d2fc4eab9bc1b5fe528a2956b58faefb20fcf18e2505c499ecafa8824d390f72",
+        "imageBytes": 1073741824,
+        "manifestSha256": "e02a9af547773f9d54e47151419ab3b118c55d3a4c90b25dcc434487db8dc9f5",
+        "origin": "http://127.0.0.1:61637",
+        "fixture": {
+          "kind": "resident-observer-v1",
+          "helperSha256": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+          "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh",
+          "observer": {
+            "guestPath": "/usr/libexec/wasm-vm/e5t26f-observe",
+            "sourcePath": "tools/guest/e5-t26f-observer.c",
+            "sourceSha256": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+            "binaryPath": "target/e5-t26f/observer-build-v1/e5t26f-observe",
+            "sha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+            "size": 30960,
+            "mode": "0555",
+            "buildInfoPath": "target/e5-t26f/observer-build-v1/build-info.json",
+            "buildInfoSha256": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+            "readbackSha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350"
+          }
+        }
+      },
+      "profile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-IKBhyX/iteration-7nse0r/profile",
+      "checkpointFile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-IKBhyX/normal-checkpoint.json",
+      "creatorHead": "05b82bc688a34e6a1abef7b6c761c01bf4a3f7c6",
+      "currentHead": "05b82bc688a34e6a1abef7b6c761c01bf4a3f7c6",
+      "checkpointCreatedAt": "2026-09-08T16:30:16.424Z",
+      "profileSha256": "f7a2bc52a45ed895eb1edd71f722ab1fb5c5ccf106a0753a6630b17f84940685"
+    },
+    "normalSnapshot": {
+      "sha256": "87477fbfe7b1d31edfb75336f0f49f0001f175106a6506933cef733d579699e7",
+      "byteLength": 2820040,
+      "preFrontBufferCrc": "9c53f290",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "9c53f290",
+        "overlayGeneration": 652
+      }
+    },
+    "residentCheckpoint": {
+      "fixture": {
+        "kind": "resident-observer-v1",
+        "helperSha256": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh",
+        "observer": {
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-observe",
+          "sourcePath": "tools/guest/e5-t26f-observer.c",
+          "sourceSha256": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+          "binaryPath": "target/e5-t26f/observer-build-v1/e5t26f-observe",
+          "sha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+          "size": 30960,
+          "mode": "0555",
+          "buildInfoPath": "target/e5-t26f/observer-build-v1/build-info.json",
+          "buildInfoSha256": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+          "readbackSha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350"
+        }
+      },
+      "prepared": {
+        "command": ". /usr/libexec/wasm-vm/e5t26f-resident.sh && e5_prepare",
+        "marker": "e5t26f-prepared",
+        "beforeFrame": 268,
+        "keyboardStart": 556,
+        "domEventStart": 556,
+        "visualDiffPixels": 13650,
+        "terminalMarkerSeen": true,
+        "greenPixelsBefore": 240,
+        "redPixelsBefore": 0,
+        "visualChange": true,
+        "afterFrame": 311,
+        "redMarkerSeen": false,
+        "keyboardFrames": 118,
+        "domEvents": 118,
+        "inputSequenceMatch": true,
+        "inputTraceSha256": null,
+        "accepted": true
+      },
+      "sound": {
+        "envelopeSha256": "87477fbfe7b1d31edfb75336f0f49f0001f175106a6506933cef733d579699e7",
+        "soundSha256": "330d02f9e91a4e67239bd3386715f87ca45cb0ea8052c387276a6c5450eeeafc",
+        "state": 2,
+        "paramsPresent": 1,
+        "parameterRequest": 257,
+        "streamId": 0,
+        "bufferBytes": 3840,
+        "periodBytes": 1920,
+        "channels": 2,
+        "format": 5,
+        "rate": 7,
+        "pendingTransfers": 0,
+        "pendingBytes": 0,
+        "releasePending": 0,
+        "nextXrunPresent": 0,
+        "eventCount": 0,
+        "events": [],
+        "kicked": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "resetPending": 0
+      },
+      "screenshot": {
+        "file": "evidence/e5-t26f/single-process-observer-05b82bc6/cold/resident-prepared.png",
+        "sha256": "1b01fa84c548d1254408da3a1bdb113962d779b691f7f951033f3c57dc3a7baa"
+      }
+    },
+    "normalRestore": {
+      "result": {
+        "snapshotSha256": "87477fbfe7b1d31edfb75336f0f49f0001f175106a6506933cef733d579699e7",
+        "snapshotBytes": 2820040,
+        "completedAt": 1180.4750000238419,
+        "report": {
+          "boundaryId": 9462051826,
+          "scanout": {
+            "width": 1280,
+            "height": 800
+          },
+          "hostViewport": {
+            "width": 1280,
+            "height": 800
+          },
+          "viewport": "native",
+          "agentRehandshake": true,
+          "inputReleaseEvents": 0,
+          "soundXrunEvents": 0,
+          "fullRepairFrame": true
+        },
+        "handshake": {
+          "generation": 2,
+          "version": 1,
+          "capabilities": "1"
+        },
+        "observation": {
+          "baseSuccessfulPresents": 1,
+          "firstPresent": {
+            "successfulPresents": 2,
+            "crc32": "9c53f290"
+          }
+        },
+        "bootStates": [
+          {
+            "state": "fetching",
+            "atMs": 129
+          },
+          {
+            "state": "instantiating",
+            "atMs": 146
+          },
+          {
+            "state": "restored",
+            "atMs": 755
+          }
+        ],
+        "diagnostics": [
+          {
+            "atMs": 852,
+            "reason": "agent-channel",
+            "error": "desktop restore requested a fresh agent HELLO",
+            "channelState": "disconnected",
+            "transportGeneration": 0
+          }
+        ],
+        "machineResume": {
+          "persisted": true,
+          "paused": true,
+          "preFrontBufferCrc": "9c53f290",
+          "overlayGeneration": 652
+        },
+        "preFrontBufferCrc": "9c53f290",
+        "resume": {
+          "restored": true,
+          "snapshotDecision": null,
+          "overlayGeneration": null
+        },
+        "coherenceAudit": {
+          "status": "deferred"
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "fixedViewport": true,
+          "sizeMismatch": false,
+          "framesReceived": 2,
+          "successfulPresents": 2,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "scheduler": null,
+          "gpu": {
+            "framesReceived": 2,
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "successfulPresents": 2,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 0,
+            "uploadedBytes": 8192000,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "width": 1280,
+            "height": 800
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 800
+          },
+          "errors": []
+        }
+      },
+      "displayChecksPassed": true,
+      "checksPassed": false
+    },
+    "postRestoreStart": 1180.4750000238419,
+    "residentBeforeGesture": [
+      {
+        "observedAt": 1461.7649999856949,
+        "policy": "locked",
+        "context": "suspended",
+        "pcm": {
+          "available": true,
+          "writeIndex": 0,
+          "readIndex": 0,
+          "fillFrames": 0,
+          "capacityFrames": 4096,
+          "writtenFrames": 0,
+          "inspectedFrames": 0,
+          "nonSilentFrames": 0,
+          "maxAbs": 0
+        }
+      },
+      {
+        "observedAt": 1831.085000038147,
+        "policy": "locked",
+        "context": "suspended",
+        "pcm": {
+          "available": true,
+          "writeIndex": 0,
+          "readIndex": 0,
+          "fillFrames": 0,
+          "capacityFrames": 4096,
+          "writtenFrames": 0,
+          "inspectedFrames": 0,
+          "nonSilentFrames": 0,
+          "maxAbs": 0
+        }
+      }
+    ],
+    "postRestoreCursor": {
+      "frame": {
+        "atMs": 1551,
+        "sequence": 1,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 17510
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 16056
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 17510,
+          "y": 16056
+        }
+      },
+      "rendered": {
+        "x": 684,
+        "y": 392,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      },
+      "observedAt": 1979.2400000095367,
+      "elapsedMs": 798.7649999856949
+    },
+    "postRestoreAudioBefore": {
+      "policy": "unlocked",
+      "renderedFrames": 43592,
+      "writeIndex": 0
+    },
+    "interactionLatency": {
+      "restoredAt": 1180.4750000238419,
+      "startedAt": 1984.3550000190735,
+      "deadlineAt": 7180.475000023842,
+      "baselineWriteIndex": 0,
+      "limits": {
+        "pcmIntervalMs": 50,
+        "pcmSamples": 120,
+        "schedulerIntervalMs": 250,
+        "schedulerSamples": 24,
+        "markerSamples": 120
+      },
+      "pcmSamples": [
+        {
+          "observedAt": 2036.625,
+          "elapsedMs": 856.1499999761581,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2086.0199999809265,
+          "elapsedMs": 905.5449999570847,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2135.6299999952316,
+          "elapsedMs": 955.1549999713898,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2187.3300000429153,
+          "elapsedMs": 1006.8550000190735,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2236.4550000429153,
+          "elapsedMs": 1055.9800000190735,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2286.100000023842,
+          "elapsedMs": 1105.625,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2336.774999976158,
+          "elapsedMs": 1156.2999999523163,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2386.9950000047684,
+          "elapsedMs": 1206.5199999809265,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2436.810000061989,
+          "elapsedMs": 1256.335000038147,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2486.514999985695,
+          "elapsedMs": 1306.039999961853,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2536.264999985695,
+          "elapsedMs": 1355.789999961853,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2585.5049999952316,
+          "elapsedMs": 1405.0299999713898,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2634.850000023842,
+          "elapsedMs": 1454.375,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2686.420000076294,
+          "elapsedMs": 1505.945000052452,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2736.430000066757,
+          "elapsedMs": 1555.9550000429153,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2785.774999976158,
+          "elapsedMs": 1605.2999999523163,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2835.1200000047684,
+          "elapsedMs": 1654.6449999809265,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2886.4500000476837,
+          "elapsedMs": 1705.9750000238419,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2937.110000014305,
+          "elapsedMs": 1756.6349999904633,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 2986.0500000715256,
+          "elapsedMs": 1805.5750000476837,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3035.3949999809265,
+          "elapsedMs": 1854.9199999570847,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3085.920000076294,
+          "elapsedMs": 1905.445000052452,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3134.889999985695,
+          "elapsedMs": 1954.414999961853,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3186.100000023842,
+          "elapsedMs": 2005.625,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3235.639999985695,
+          "elapsedMs": 2055.164999961853,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3286.3300000429153,
+          "elapsedMs": 2105.8550000190735,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3336.0800000429153,
+          "elapsedMs": 2155.6050000190735,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3384.9500000476837,
+          "elapsedMs": 2204.475000023842,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3436.045000076294,
+          "elapsedMs": 2255.570000052452,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3485.274999976158,
+          "elapsedMs": 2304.7999999523163,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3536.180000066757,
+          "elapsedMs": 2355.7050000429153,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3587.320000052452,
+          "elapsedMs": 2406.8450000286102,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3636.475000023842,
+          "elapsedMs": 2456,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3685.5650000572205,
+          "elapsedMs": 2505.0900000333786,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3736.5,
+          "elapsedMs": 2556.024999976158,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3786.2150000333786,
+          "elapsedMs": 2605.7400000095367,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3835.170000076294,
+          "elapsedMs": 2654.695000052452,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3885.7400000095367,
+          "elapsedMs": 2705.264999985695,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3935.524999976158,
+          "elapsedMs": 2755.0499999523163,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 3986.4700000286102,
+          "elapsedMs": 2805.9950000047684,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 4036.7549999952316,
+          "elapsedMs": 2856.2799999713898,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 4086.3000000715256,
+          "elapsedMs": 2905.8250000476837,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 4135.4400000572205,
+          "elapsedMs": 2954.9650000333786,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 4185.600000023842,
+          "elapsedMs": 3005.125,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 4236.090000033379,
+          "elapsedMs": 3055.6150000095367,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 4286.370000004768,
+          "elapsedMs": 3105.8949999809265,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 4337.274999976158,
+          "elapsedMs": 3156.7999999523163,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 4386.384999990463,
+          "elapsedMs": 3205.9099999666214,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 4435.210000038147,
+          "elapsedMs": 3254.735000014305,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 4485.685000061989,
+          "elapsedMs": 3305.210000038147,
+          "available": true,
+          "writeIndex": 0
+        },
+        {
+          "observedAt": 4536.375,
+          "elapsedMs": 3355.899999976158,
+          "available": true,
+          "writeIndex": 1440,
+          "pcmAvailable": true
+        },
+        {
+          "observedAt": 4585.325000047684,
+          "elapsedMs": 3404.850000023842,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 4636.40499997139,
+          "elapsedMs": 3455.929999947548,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 4686.384999990463,
+          "elapsedMs": 3505.9099999666214,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 4736.384999990463,
+          "elapsedMs": 3555.9099999666214,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 4785.600000023842,
+          "elapsedMs": 3605.125,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 4835.754999995232,
+          "elapsedMs": 3655.2799999713898,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 4885.615000009537,
+          "elapsedMs": 3705.139999985695,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 4935.915000081062,
+          "elapsedMs": 3755.4400000572205,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 4985.040000081062,
+          "elapsedMs": 3804.5650000572205,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 5035.075000047684,
+          "elapsedMs": 3854.600000023842,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 5084.955000042915,
+          "elapsedMs": 3904.4800000190735,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 5137.330000042915,
+          "elapsedMs": 3956.8550000190735,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 5186.2300000190735,
+          "elapsedMs": 4005.7549999952316,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 5236.665000081062,
+          "elapsedMs": 4056.1900000572205,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 5287.0199999809265,
+          "elapsedMs": 4106.544999957085,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 5336.3550000190735,
+          "elapsedMs": 4155.879999995232,
+          "available": true,
+          "writeIndex": 1440
+        },
+        {
+          "observedAt": 5386.274999976158,
+          "elapsedMs": 4205.799999952316,
+          "available": true,
+          "writeIndex": 1440
+        }
+      ],
+      "schedulerSamples": [
+        {
+          "requestedAt": 1984.4700000286102,
+          "elapsedMs": 803.9950000047684,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 2022.7200000286102,
+          "requestMs": 38.25,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 25,
+            "totalSliceMs": 1117.3499999046326,
+            "maxSliceMs": 51.35000002384186,
+            "maxStretchGapMs": 165.66499996185303,
+            "requestedInstructions": 12500000,
+            "retiredInstructions": 12489940,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 28,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 18,
+            "completed": 17,
+            "pending": 1,
+            "averageMs": 38.616470596369574,
+            "maxMs": 118.1800000667572
+          },
+          "jit": {
+            "available": true,
+            "requestedAt": 2022.7699999809265,
+            "observedAt": 2072.4650000333786,
+            "status": "completed",
+            "stats": {
+              "hasExecutor": true,
+              "guestRetired": 12989856,
+              "retiredViaJit": 4884340,
+              "compiledBlocks": 140,
+              "jitCacheInstalls": 190,
+              "jitCacheEvictions": 7,
+              "jitCacheRetranslations": 1,
+              "executedBlocks": 444698,
+              "directChainEntries": 923526,
+              "entryCost": {
+                "hostEntries": 444698,
+                "stateCopyBytes": 53531192,
+                "timingEnabled": false,
+                "timerReads": 0
+              }
+            }
+          }
+        },
+        {
+          "requestedAt": 2236.4650000333786,
+          "elapsedMs": 1055.9900000095367,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 2247.350000023842,
+          "requestMs": 10.884999990463257,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 30,
+            "totalSliceMs": 1341.2649999856949,
+            "maxSliceMs": 51.35000002384186,
+            "maxStretchGapMs": 165.66499996185303,
+            "requestedInstructions": 15000000,
+            "retiredInstructions": 14988976,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 33,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 40,
+            "completed": 39,
+            "pending": 1,
+            "averageMs": 33.22910259014521,
+            "maxMs": 118.1800000667572
+          },
+          "jit": {
+            "available": true,
+            "requestedAt": 2247.360000014305,
+            "observedAt": 2292.399999976158,
+            "status": "completed",
+            "stats": {
+              "hasExecutor": true,
+              "guestRetired": 15488577,
+              "retiredViaJit": 5759920,
+              "compiledBlocks": 117,
+              "jitCacheInstalls": 217,
+              "jitCacheEvictions": 14,
+              "jitCacheRetranslations": 9,
+              "executedBlocks": 538062,
+              "directChainEntries": 1096861,
+              "entryCost": {
+                "hostEntries": 538062,
+                "stateCopyBytes": 65196320,
+                "timingEnabled": false,
+                "timerReads": 0
+              }
+            }
+          }
+        },
+        {
+          "requestedAt": 2486.5299999713898,
+          "elapsedMs": 1306.054999947548,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 2521.0400000810623,
+          "requestMs": 34.510000109672546,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 39,
+            "totalSliceMs": 1614.3699997663498,
+            "maxSliceMs": 51.35000002384186,
+            "maxStretchGapMs": 165.66499996185303,
+            "requestedInstructions": 19500000,
+            "retiredInstructions": 19486719,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 42,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 42,
+            "completed": 41,
+            "pending": 1,
+            "averageMs": 32.971463438941214,
+            "maxMs": 118.1800000667572
+          },
+          "jit": {
+            "available": true,
+            "requestedAt": 2521.0500000715256,
+            "observedAt": 2543.125,
+            "status": "completed",
+            "stats": {
+              "hasExecutor": true,
+              "guestRetired": 19986541,
+              "retiredViaJit": 8676701,
+              "compiledBlocks": 125,
+              "jitCacheInstalls": 274,
+              "jitCacheEvictions": 21,
+              "jitCacheRetranslations": 9,
+              "executedBlocks": 666048,
+              "directChainEntries": 1502321,
+              "entryCost": {
+                "hostEntries": 666048,
+                "stateCopyBytes": 83347920,
+                "timingEnabled": false,
+                "timerReads": 0
+              }
+            }
+          }
+        },
+        {
+          "requestedAt": 2785.7799999713898,
+          "elapsedMs": 1605.304999947548,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 2801.4100000858307,
+          "requestMs": 15.630000114440918,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 48,
+            "totalSliceMs": 1894.1999998092651,
+            "maxSliceMs": 51.35000002384186,
+            "maxStretchGapMs": 165.66499996185303,
+            "requestedInstructions": 24000000,
+            "retiredInstructions": 23984632,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 51,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 44,
+            "completed": 43,
+            "pending": 1,
+            "averageMs": 32.7531395540681,
+            "maxMs": 118.1800000667572
+          },
+          "jit": {
+            "available": true,
+            "requestedAt": 2801.420000076294,
+            "observedAt": 2838.195000052452,
+            "status": "completed",
+            "stats": {
+              "hasExecutor": true,
+              "guestRetired": 24484373,
+              "retiredViaJit": 10727214,
+              "compiledBlocks": 140,
+              "jitCacheInstalls": 326,
+              "jitCacheEvictions": 28,
+              "jitCacheRetranslations": 37,
+              "executedBlocks": 806002,
+              "directChainEntries": 1845824,
+              "entryCost": {
+                "hostEntries": 806002,
+                "stateCopyBytes": 102443480,
+                "timingEnabled": false,
+                "timerReads": 0
+              }
+            }
+          }
+        },
+        {
+          "requestedAt": 3085.9250000715256,
+          "elapsedMs": 1905.4500000476837,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 3098.820000052452,
+          "requestMs": 12.894999980926514,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 56,
+            "totalSliceMs": 2191.0299999713898,
+            "maxSliceMs": 52.96000003814697,
+            "maxStretchGapMs": 165.66499996185303,
+            "requestedInstructions": 28000000,
+            "retiredInstructions": 27982641,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 59,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 46,
+            "completed": 45,
+            "pending": 1,
+            "averageMs": 32.461555571026274,
+            "maxMs": 118.1800000667572
+          },
+          "jit": {
+            "available": true,
+            "requestedAt": 3098.8300000429153,
+            "observedAt": 3144.8300000429153,
+            "status": "completed",
+            "stats": {
+              "hasExecutor": true,
+              "guestRetired": 28482570,
+              "retiredViaJit": 12608534,
+              "compiledBlocks": 142,
+              "jitCacheInstalls": 368,
+              "jitCacheEvictions": 35,
+              "jitCacheRetranslations": 70,
+              "executedBlocks": 916238,
+              "directChainEntries": 2113097,
+              "entryCost": {
+                "hostEntries": 916238,
+                "stateCopyBytes": 115674688,
+                "timingEnabled": false,
+                "timerReads": 0
+              }
+            }
+          }
+        },
+        {
+          "requestedAt": 3336.085000038147,
+          "elapsedMs": 2155.610000014305,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 3372.4800000190735,
+          "requestMs": 36.394999980926514,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 62,
+            "totalSliceMs": 2464.1750000715256,
+            "maxSliceMs": 52.96000003814697,
+            "maxStretchGapMs": 165.66499996185303,
+            "requestedInstructions": 31000000,
+            "retiredInstructions": 30981728,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 65,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 48,
+            "completed": 47,
+            "pending": 1,
+            "averageMs": 32.332765972360654,
+            "maxMs": 118.1800000667572
+          },
+          "jit": {
+            "available": true,
+            "requestedAt": 3372.485000014305,
+            "observedAt": 3400.3400000333786,
+            "status": "completed",
+            "stats": {
+              "hasExecutor": true,
+              "guestRetired": 31481638,
+              "retiredViaJit": 13511754,
+              "compiledBlocks": 123,
+              "jitCacheInstalls": 397,
+              "jitCacheEvictions": 42,
+              "jitCacheRetranslations": 85,
+              "executedBlocks": 984329,
+              "directChainEntries": 2288903,
+              "entryCost": {
+                "hostEntries": 984329,
+                "stateCopyBytes": 127082384,
+                "timingEnabled": false,
+                "timerReads": 0
+              }
+            }
+          }
+        },
+        {
+          "requestedAt": 3587.3300000429153,
+          "elapsedMs": 2406.8550000190735,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 3591.5299999713898,
+          "requestMs": 4.199999928474426,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 68,
+            "totalSliceMs": 2682.8200001716614,
+            "maxSliceMs": 52.96000003814697,
+            "maxStretchGapMs": 165.66499996185303,
+            "requestedInstructions": 34000000,
+            "retiredInstructions": 33980679,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 71,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 50,
+            "completed": 49,
+            "pending": 1,
+            "averageMs": 32.32367348427675,
+            "maxMs": 118.1800000667572
+          },
+          "jit": {
+            "available": true,
+            "requestedAt": 3591.5400000810623,
+            "observedAt": 3624.045000076294,
+            "status": "completed",
+            "stats": {
+              "hasExecutor": true,
+              "guestRetired": 34480647,
+              "retiredViaJit": 14795329,
+              "compiledBlocks": 121,
+              "jitCacheInstalls": 426,
+              "jitCacheEvictions": 49,
+              "jitCacheRetranslations": 100,
+              "executedBlocks": 1039636,
+              "directChainEntries": 2453596,
+              "entryCost": {
+                "hostEntries": 1039636,
+                "stateCopyBytes": 134079456,
+                "timingEnabled": false,
+                "timerReads": 0
+              }
+            }
+          }
+        },
+        {
+          "requestedAt": 3885.7450000047684,
+          "elapsedMs": 2705.2699999809265,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 3914.0950000286102,
+          "requestMs": 28.350000023841858,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 76,
+            "totalSliceMs": 3004.845000386238,
+            "maxSliceMs": 52.96000003814697,
+            "maxStretchGapMs": 165.66499996185303,
+            "requestedInstructions": 38000000,
+            "retiredInstructions": 37979694,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 79,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 52,
+            "completed": 51,
+            "pending": 1,
+            "averageMs": 31.77549020916808,
+            "maxMs": 118.1800000667572
+          },
+          "jit": {
+            "available": true,
+            "requestedAt": 3914.1050000190735,
+            "observedAt": 3960.25,
+            "status": "completed",
+            "stats": {
+              "hasExecutor": true,
+              "guestRetired": 38479431,
+              "retiredViaJit": 15921661,
+              "compiledBlocks": 125,
+              "jitCacheInstalls": 467,
+              "jitCacheEvictions": 56,
+              "jitCacheRetranslations": 114,
+              "executedBlocks": 1159871,
+              "directChainEntries": 2794553,
+              "entryCost": {
+                "hostEntries": 1159871,
+                "stateCopyBytes": 154168400,
+                "timingEnabled": false,
+                "timerReads": 0
+              }
+            }
+          }
+        },
+        {
+          "requestedAt": 4185.615000009537,
+          "elapsedMs": 3005.139999985695,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 4186.22000002861,
+          "requestMs": 0.6050000190734863,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 83,
+            "totalSliceMs": 3276.510000348091,
+            "maxSliceMs": 52.96000003814697,
+            "maxStretchGapMs": 165.66499996185303,
+            "requestedInstructions": 41500000,
+            "retiredInstructions": 41478235,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 86,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 54,
+            "completed": 53,
+            "pending": 1,
+            "averageMs": 31.98160378663045,
+            "maxMs": 118.1800000667572
+          },
+          "jit": {
+            "available": true,
+            "requestedAt": 4186.2300000190735,
+            "observedAt": 4217.225000023842,
+            "status": "completed",
+            "stats": {
+              "hasExecutor": true,
+              "guestRetired": 41978206,
+              "retiredViaJit": 17461383,
+              "compiledBlocks": 137,
+              "jitCacheInstalls": 507,
+              "jitCacheEvictions": 63,
+              "jitCacheRetranslations": 136,
+              "executedBlocks": 1284432,
+              "directChainEntries": 3233070,
+              "entryCost": {
+                "hostEntries": 1284432,
+                "stateCopyBytes": 170201000,
+                "timingEnabled": false,
+                "timerReads": 0
+              }
+            }
+          }
+        },
+        {
+          "requestedAt": 4485.685000061989,
+          "elapsedMs": 3305.210000038147,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 4517.320000052452,
+          "requestMs": 31.634999990463257,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 91,
+            "totalSliceMs": 3607.07000041008,
+            "maxSliceMs": 52.96000003814697,
+            "maxStretchGapMs": 165.66499996185303,
+            "requestedInstructions": 45500000,
+            "retiredInstructions": 45476949,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 94,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 56,
+            "completed": 55,
+            "pending": 1,
+            "averageMs": 31.392909104173835,
+            "maxMs": 118.1800000667572
+          },
+          "jit": {
+            "available": true,
+            "requestedAt": 4517.325000047684,
+            "observedAt": 4563.600000023842,
+            "status": "completed",
+            "stats": {
+              "hasExecutor": true,
+              "guestRetired": 45976874,
+              "retiredViaJit": 18632228,
+              "compiledBlocks": 132,
+              "jitCacheInstalls": 542,
+              "jitCacheEvictions": 70,
+              "jitCacheRetranslations": 155,
+              "executedBlocks": 1378707,
+              "directChainEntries": 3519951,
+              "entryCost": {
+                "hostEntries": 1378707,
+                "stateCopyBytes": 188389352,
+                "timingEnabled": false,
+                "timerReads": 0
+              }
+            }
+          }
+        },
+        {
+          "requestedAt": 4736.3949999809265,
+          "elapsedMs": 3555.9199999570847,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 4743.745000004768,
+          "requestMs": 7.350000023841858,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 96,
+            "totalSliceMs": 3833.16000020504,
+            "maxSliceMs": 52.96000003814697,
+            "maxStretchGapMs": 165.66499996185303,
+            "requestedInstructions": 48000000,
+            "retiredInstructions": 47976008,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 99,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 58,
+            "completed": 57,
+            "pending": 1,
+            "averageMs": 31.657719310961273,
+            "maxMs": 118.1800000667572
+          },
+          "jit": {
+            "available": true,
+            "requestedAt": 4743.75,
+            "observedAt": 4788.195000052452,
+            "status": "completed",
+            "stats": {
+              "hasExecutor": true,
+              "guestRetired": 48475978,
+              "retiredViaJit": 19225336,
+              "compiledBlocks": 120,
+              "jitCacheInstalls": 560,
+              "jitCacheEvictions": 77,
+              "jitCacheRetranslations": 169,
+              "executedBlocks": 1425909,
+              "directChainEntries": 3627299,
+              "entryCost": {
+                "hostEntries": 1425909,
+                "stateCopyBytes": 197239272,
+                "timingEnabled": false,
+                "timerReads": 0
+              }
+            }
+          }
+        },
+        {
+          "requestedAt": 5035.075000047684,
+          "elapsedMs": 3854.600000023842,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 5064.6050000190735,
+          "requestMs": 29.52999997138977,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 103,
+            "totalSliceMs": 4153.540000319481,
+            "maxSliceMs": 52.96000003814697,
+            "maxStretchGapMs": 165.66499996185303,
+            "requestedInstructions": 51500000,
+            "retiredInstructions": 51474851,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 106,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 60,
+            "completed": 59,
+            "pending": 1,
+            "averageMs": 31.462118655948316,
+            "maxMs": 118.1800000667572
+          },
+          "jit": {
+            "available": true,
+            "requestedAt": 5064.6050000190735,
+            "observedAt": 5114.950000047684,
+            "status": "completed",
+            "stats": {
+              "hasExecutor": true,
+              "guestRetired": 51974420,
+              "retiredViaJit": 20102486,
+              "compiledBlocks": 118,
+              "jitCacheInstalls": 599,
+              "jitCacheEvictions": 84,
+              "jitCacheRetranslations": 195,
+              "executedBlocks": 1517296,
+              "directChainEntries": 3801975,
+              "entryCost": {
+                "hostEntries": 1517296,
+                "stateCopyBytes": 215983648,
+                "timingEnabled": false,
+                "timerReads": 0
+              }
+            }
+          }
+        },
+        {
+          "requestedAt": 5287.02999997139,
+          "elapsedMs": 4106.554999947548,
+          "status": "completed",
+          "schedulerAvailable": true,
+          "workerRpcAvailable": true,
+          "observedAt": 5304.305000066757,
+          "requestMs": 17.27500009536743,
+          "scheduler": {
+            "quantum": 500000,
+            "slices": 108,
+            "totalSliceMs": 4392.875000357628,
+            "maxSliceMs": 52.96000003814697,
+            "maxStretchGapMs": 165.66499996185303,
+            "requestedInstructions": 54000000,
+            "retiredInstructions": 53973521,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "schedulerYields": 111,
+            "timerYields": 0,
+            "mainThreadYields": 0,
+            "yieldMode": "scheduler.postTask"
+          },
+          "workerRpc": {
+            "calls": 62,
+            "completed": 61,
+            "pending": 1,
+            "averageMs": 31.739344274411437,
+            "maxMs": 118.1800000667572
+          },
+          "jit": {
+            "available": true,
+            "requestedAt": 5304.310000061989,
+            "observedAt": 5346.785000085831,
+            "status": "completed",
+            "stats": {
+              "hasExecutor": true,
+              "guestRetired": 54473316,
+              "retiredViaJit": 20710922,
+              "compiledBlocks": 113,
+              "jitCacheInstalls": 629,
+              "jitCacheEvictions": 91,
+              "jitCacheRetranslations": 225,
+              "executedBlocks": 1595576,
+              "directChainEntries": 3953255,
+              "entryCost": {
+                "hostEntries": 1595576,
+                "stateCopyBytes": 232059064,
+                "timingEnabled": false,
+                "timerReads": 0
+              }
+            }
+          }
+        }
+      ],
+      "markerSamples": [
+        {
+          "startedAt": 2063.7000000476837,
+          "observedAt": 2063.710000038147,
+          "elapsedMs": 883.2350000143051,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2063.8700000047684,
+          "observedAt": 2063.8799999952316,
+          "elapsedMs": 883.4049999713898,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2077.1900000572205,
+          "observedAt": 2077.195000052452,
+          "elapsedMs": 896.7200000286102,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2095.585000038147,
+          "observedAt": 2095.600000023842,
+          "elapsedMs": 915.125,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2112.264999985695,
+          "observedAt": 2112.274999976158,
+          "elapsedMs": 931.7999999523163,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2128.9500000476837,
+          "observedAt": 2128.960000038147,
+          "elapsedMs": 948.4850000143051,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2145.5900000333786,
+          "observedAt": 2145.6050000190735,
+          "elapsedMs": 965.1299999952316,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2161.9400000572205,
+          "observedAt": 2161.9500000476837,
+          "elapsedMs": 981.4750000238419,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2177.274999976158,
+          "observedAt": 2177.2799999713898,
+          "elapsedMs": 996.8049999475479,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2194.6900000572205,
+          "observedAt": 2194.7000000476837,
+          "elapsedMs": 1014.2250000238419,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2212.1349999904633,
+          "observedAt": 2212.1449999809265,
+          "elapsedMs": 1031.6699999570847,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2228.8949999809265,
+          "observedAt": 2228.9049999713898,
+          "elapsedMs": 1048.429999947548,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2245.5800000429153,
+          "observedAt": 2245.5950000286102,
+          "elapsedMs": 1065.1200000047684,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2261.899999976158,
+          "observedAt": 2261.9049999713898,
+          "elapsedMs": 1081.429999947548,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2278.545000076294,
+          "observedAt": 2278.5500000715256,
+          "elapsedMs": 1098.0750000476837,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2295.545000076294,
+          "observedAt": 2295.5500000715256,
+          "elapsedMs": 1115.0750000476837,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2311.2850000858307,
+          "observedAt": 2311.2900000810623,
+          "elapsedMs": 1130.8150000572205,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2327.9550000429153,
+          "observedAt": 2327.9650000333786,
+          "elapsedMs": 1147.4900000095367,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2344.6299999952316,
+          "observedAt": 2344.639999985695,
+          "elapsedMs": 1164.164999961853,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2362.0400000810623,
+          "observedAt": 2362.0500000715256,
+          "elapsedMs": 1181.5750000476837,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2376.935000061989,
+          "observedAt": 2376.945000052452,
+          "elapsedMs": 1196.4700000286102,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2395.5650000572205,
+          "observedAt": 2395.5750000476837,
+          "elapsedMs": 1215.1000000238419,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2411.975000023842,
+          "observedAt": 2411.9800000190735,
+          "elapsedMs": 1231.5049999952316,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2427.9800000190735,
+          "observedAt": 2427.985000014305,
+          "elapsedMs": 1247.5099999904633,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2444.560000061989,
+          "observedAt": 2444.570000052452,
+          "elapsedMs": 1264.0950000286102,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2461.8150000572205,
+          "observedAt": 2461.820000052452,
+          "elapsedMs": 1281.3450000286102,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2478.920000076294,
+          "observedAt": 2478.9400000572205,
+          "elapsedMs": 1298.4650000333786,
+          "stateReadMs": 0.019999980926513672,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2494.264999985695,
+          "observedAt": 2494.274999976158,
+          "elapsedMs": 1313.7999999523163,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2512.225000023842,
+          "observedAt": 2512.2300000190735,
+          "elapsedMs": 1331.7549999952316,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2528.680000066757,
+          "observedAt": 2528.685000061989,
+          "elapsedMs": 1348.210000038147,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2545.5350000858307,
+          "observedAt": 2545.5400000810623,
+          "elapsedMs": 1365.0650000572205,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2560.9400000572205,
+          "observedAt": 2560.945000052452,
+          "elapsedMs": 1380.4700000286102,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2578.625,
+          "observedAt": 2578.6299999952316,
+          "elapsedMs": 1398.1549999713898,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2595.2450000047684,
+          "observedAt": 2595.2549999952316,
+          "elapsedMs": 1414.7799999713898,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2610.8650000095367,
+          "observedAt": 2610.8650000095367,
+          "elapsedMs": 1430.3899999856949,
+          "stateReadMs": 0,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2627.545000076294,
+          "observedAt": 2627.5500000715256,
+          "elapsedMs": 1447.0750000476837,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2645.225000023842,
+          "observedAt": 2645.2300000190735,
+          "elapsedMs": 1464.7549999952316,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2662.2150000333786,
+          "observedAt": 2662.225000023842,
+          "elapsedMs": 1481.75,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2678.8700000047684,
+          "observedAt": 2678.875,
+          "elapsedMs": 1498.3999999761581,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2693.8400000333786,
+          "observedAt": 2693.8400000333786,
+          "elapsedMs": 1513.3650000095367,
+          "stateReadMs": 0,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2711.600000023842,
+          "observedAt": 2711.6050000190735,
+          "elapsedMs": 1531.1299999952316,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2728.8700000047684,
+          "observedAt": 2728.875,
+          "elapsedMs": 1548.3999999761581,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2745.2150000333786,
+          "observedAt": 2745.2200000286102,
+          "elapsedMs": 1564.7450000047684,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2761.9250000715256,
+          "observedAt": 2761.935000061989,
+          "elapsedMs": 1581.460000038147,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2778.6349999904633,
+          "observedAt": 2778.6449999809265,
+          "elapsedMs": 1598.1699999570847,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2795.555000066757,
+          "observedAt": 2795.560000061989,
+          "elapsedMs": 1615.085000038147,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2812.2000000476837,
+          "observedAt": 2812.2050000429153,
+          "elapsedMs": 1631.7300000190735,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2828.4500000476837,
+          "observedAt": 2828.4550000429153,
+          "elapsedMs": 1647.9800000190735,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2845.2450000047684,
+          "observedAt": 2845.2549999952316,
+          "elapsedMs": 1664.7799999713898,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2862.2200000286102,
+          "observedAt": 2862.2400000095367,
+          "elapsedMs": 1681.7649999856949,
+          "stateReadMs": 0.019999980926513672,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2878.8799999952316,
+          "observedAt": 2878.889999985695,
+          "elapsedMs": 1698.414999961853,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2894.225000023842,
+          "observedAt": 2894.225000023842,
+          "elapsedMs": 1713.75,
+          "stateReadMs": 0,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2910.795000076294,
+          "observedAt": 2910.805000066757,
+          "elapsedMs": 1730.3300000429153,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2928.2900000810623,
+          "observedAt": 2928.305000066757,
+          "elapsedMs": 1747.8300000429153,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2945.5350000858307,
+          "observedAt": 2945.5400000810623,
+          "elapsedMs": 1765.0650000572205,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2962.2050000429153,
+          "observedAt": 2962.210000038147,
+          "elapsedMs": 1781.7350000143051,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2978.5049999952316,
+          "observedAt": 2978.5049999952316,
+          "elapsedMs": 1798.0299999713898,
+          "stateReadMs": 0,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 2995.5199999809265,
+          "observedAt": 2995.524999976158,
+          "elapsedMs": 1815.0499999523163,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 4,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3012.225000023842,
+          "observedAt": 3012.2300000190735,
+          "elapsedMs": 1831.7549999952316,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3027.6449999809265,
+          "observedAt": 3027.6549999713898,
+          "elapsedMs": 1847.179999947548,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3045.1200000047684,
+          "observedAt": 3045.1200000047684,
+          "elapsedMs": 1864.6449999809265,
+          "stateReadMs": 0,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3060.4150000810623,
+          "observedAt": 3060.420000076294,
+          "elapsedMs": 1879.945000052452,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3077.100000023842,
+          "observedAt": 3077.1050000190735,
+          "elapsedMs": 1896.6299999952316,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3095.545000076294,
+          "observedAt": 3095.555000066757,
+          "elapsedMs": 1915.0800000429153,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3112.210000038147,
+          "observedAt": 3112.2200000286102,
+          "elapsedMs": 1931.7450000047684,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3128.685000061989,
+          "observedAt": 3128.7000000476837,
+          "elapsedMs": 1948.2250000238419,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3143.5800000429153,
+          "observedAt": 3143.5800000429153,
+          "elapsedMs": 1963.1050000190735,
+          "stateReadMs": 0,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3160.2850000858307,
+          "observedAt": 3160.2900000810623,
+          "elapsedMs": 1979.8150000572205,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3178.524999976158,
+          "observedAt": 3178.5350000858307,
+          "elapsedMs": 1998.0600000619888,
+          "stateReadMs": 0.010000109672546387,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3195.524999976158,
+          "observedAt": 3195.5299999713898,
+          "elapsedMs": 2015.054999947548,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3211.6600000858307,
+          "observedAt": 3211.670000076294,
+          "elapsedMs": 2031.195000052452,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3228.0750000476837,
+          "observedAt": 3228.0800000429153,
+          "elapsedMs": 2047.6050000190735,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3243.670000076294,
+          "observedAt": 3243.6750000715256,
+          "elapsedMs": 2063.2000000476837,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3261.3550000190735,
+          "observedAt": 3261.3650000095367,
+          "elapsedMs": 2080.889999985695,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3278.75,
+          "observedAt": 3278.7549999952316,
+          "elapsedMs": 2098.2799999713898,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3295.5350000858307,
+          "observedAt": 3295.545000076294,
+          "elapsedMs": 2115.070000052452,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3312.2000000476837,
+          "observedAt": 3312.210000038147,
+          "elapsedMs": 2131.735000014305,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3327.085000038147,
+          "observedAt": 3327.0950000286102,
+          "elapsedMs": 2146.6200000047684,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3343.585000038147,
+          "observedAt": 3343.5900000333786,
+          "elapsedMs": 2163.1150000095367,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3362.2150000333786,
+          "observedAt": 3362.2200000286102,
+          "elapsedMs": 2181.7450000047684,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3378.850000023842,
+          "observedAt": 3378.8550000190735,
+          "elapsedMs": 2198.3799999952316,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3394.2000000476837,
+          "observedAt": 3394.210000038147,
+          "elapsedMs": 2213.735000014305,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3412.2000000476837,
+          "observedAt": 3412.210000038147,
+          "elapsedMs": 2231.735000014305,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3427.225000023842,
+          "observedAt": 3427.235000014305,
+          "elapsedMs": 2246.7599999904633,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3445.5199999809265,
+          "observedAt": 3445.5299999713898,
+          "elapsedMs": 2265.054999947548,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3462.1750000715256,
+          "observedAt": 3462.180000066757,
+          "elapsedMs": 2281.7050000429153,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3478.6650000810623,
+          "observedAt": 3478.670000076294,
+          "elapsedMs": 2298.195000052452,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3493.6200000047684,
+          "observedAt": 3493.625,
+          "elapsedMs": 2313.149999976158,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3512.235000014305,
+          "observedAt": 3512.2450000047684,
+          "elapsedMs": 2331.7699999809265,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3527.350000023842,
+          "observedAt": 3527.360000014305,
+          "elapsedMs": 2346.8849999904633,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3545.4100000858307,
+          "observedAt": 3545.4250000715256,
+          "elapsedMs": 2364.9500000476837,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3560.8000000715256,
+          "observedAt": 3560.810000061989,
+          "elapsedMs": 2380.335000038147,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3577.235000014305,
+          "observedAt": 3577.25,
+          "elapsedMs": 2396.774999976158,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3593.860000014305,
+          "observedAt": 3593.8700000047684,
+          "elapsedMs": 2413.3949999809265,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3612.2050000429153,
+          "observedAt": 3612.210000038147,
+          "elapsedMs": 2431.735000014305,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3628.8650000095367,
+          "observedAt": 3628.889999985695,
+          "elapsedMs": 2448.414999961853,
+          "stateReadMs": 0.02499997615814209,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3645.555000066757,
+          "observedAt": 3645.570000052452,
+          "elapsedMs": 2465.0950000286102,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3662.2150000333786,
+          "observedAt": 3662.225000023842,
+          "elapsedMs": 2481.75,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3678.4650000333786,
+          "observedAt": 3678.4800000190735,
+          "elapsedMs": 2498.0049999952316,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3695.560000061989,
+          "observedAt": 3695.5650000572205,
+          "elapsedMs": 2515.0900000333786,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 5,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3714.585000038147,
+          "observedAt": 3714.5950000286102,
+          "elapsedMs": 2534.1200000047684,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3728.9150000810623,
+          "observedAt": 3728.930000066757,
+          "elapsedMs": 2548.4550000429153,
+          "stateReadMs": 0.014999985694885254,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3743.6900000572205,
+          "observedAt": 3743.7000000476837,
+          "elapsedMs": 2563.225000023842,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3760.9049999713898,
+          "observedAt": 3760.9150000810623,
+          "elapsedMs": 2580.4400000572205,
+          "stateReadMs": 0.010000109672546387,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3777.3799999952316,
+          "observedAt": 3777.389999985695,
+          "elapsedMs": 2596.914999961853,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3795.3949999809265,
+          "observedAt": 3795.4049999713898,
+          "elapsedMs": 2614.929999947548,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3812.1900000572205,
+          "observedAt": 3812.2000000476837,
+          "elapsedMs": 2631.725000023842,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3827.5800000429153,
+          "observedAt": 3827.5900000333786,
+          "elapsedMs": 2647.1150000095367,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3845.524999976158,
+          "observedAt": 3845.5350000858307,
+          "elapsedMs": 2665.060000061989,
+          "stateReadMs": 0.010000109672546387,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3861.1449999809265,
+          "observedAt": 3861.149999976158,
+          "elapsedMs": 2680.6749999523163,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3876.8799999952316,
+          "observedAt": 3876.889999985695,
+          "elapsedMs": 2696.414999961853,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3895.335000038147,
+          "observedAt": 3895.3450000286102,
+          "elapsedMs": 2714.8700000047684,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3910.2900000810623,
+          "observedAt": 3910.3000000715256,
+          "elapsedMs": 2729.8250000476837,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3927.935000061989,
+          "observedAt": 3927.945000052452,
+          "elapsedMs": 2747.4700000286102,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3945.5199999809265,
+          "observedAt": 3945.5350000858307,
+          "elapsedMs": 2765.060000061989,
+          "stateReadMs": 0.015000104904174805,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3962.180000066757,
+          "observedAt": 3962.1900000572205,
+          "elapsedMs": 2781.7150000333786,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3978.875,
+          "observedAt": 3978.8799999952316,
+          "elapsedMs": 2798.4049999713898,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 3993.8300000429153,
+          "observedAt": 3993.835000038147,
+          "elapsedMs": 2813.360000014305,
+          "stateReadMs": 0.004999995231628418,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 4010.7150000333786,
+          "observedAt": 4010.725000023842,
+          "elapsedMs": 2830.25,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        },
+        {
+          "startedAt": 4026.860000014305,
+          "observedAt": 4026.8700000047684,
+          "elapsedMs": 2846.3949999809265,
+          "stateReadMs": 0.009999990463256836,
+          "frameCount": 6,
+          "markerSeen": false
+        }
+      ],
+      "firstWrite": {
+        "observedAt": 4536.375,
+        "elapsedMs": 3355.899999976158,
+        "available": true,
+        "writeIndex": 1440
+      },
+      "firstPcm": {
+        "observedAt": 4536.375,
+        "elapsedMs": 3355.899999976158,
+        "available": true,
+        "writeIndex": 1440,
+        "pcmAvailable": true,
+        "completedAt": 4536.47000002861,
+        "pcm": {
+          "available": true,
+          "writeIndex": 1440,
+          "readIndex": 1440,
+          "fillFrames": 0,
+          "capacityFrames": 4096,
+          "writtenFrames": 1440,
+          "inspectedFrames": 1440,
+          "nonSilentFrames": 1440,
+          "maxAbs": 0.999969482421875
+        }
+      },
+      "firstMarker": {
+        "startedAt": 5428.795000076294,
+        "observedAt": 5428.800000071526,
+        "elapsedMs": 4248.325000047684,
+        "stateReadMs": 0.004999995231628418,
+        "frameCount": 10,
+        "markerSeen": true
+      },
+      "markerCalls": 204,
+      "markerTotalMs": 10.114999055862427,
+      "markerMaxMs": 5.174999952316284,
+      "stoppedAt": 5429.810000061989,
+      "stopReason": "command-wait-settled"
+    },
+    "postRestoreAplay": {
+      "command": "play",
+      "marker": "e5t26f-post-aplay",
+      "beforeFrame": 4,
+      "keyboardStart": 0,
+      "domEventStart": 0,
+      "visualDiffPixels": 8510,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 369,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 10,
+      "redMarkerSeen": false,
+      "keyboardFrames": 10,
+      "domEvents": 10,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "postRestorePcmAtCompletion": {
+      "observedAt": 5440.830000042915,
+      "pcm": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.999969482421875
+      },
+      "elapsedMs": 4260.3550000190735
+    },
+    "postRestoreOutputAttached": {
+      "outputAttached": true,
+      "observedAt": 5443.580000042915
+    },
+    "postRestoreAudioAfter": {
+      "policy": "unlocked",
+      "context": "running",
+      "renderedFrames": 209608,
+      "pcm": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.999969482421875
+      },
+      "pcmObservedAt": 5440.830000042915,
+      "writeIndex": 0,
+      "guestAttached": true,
+      "guestAttachedObservedAt": 5443.580000042915
+    },
+    "postRestoreEnd": 5445.259999990463,
+    "postRestoreInteraction": {
+      "elapsedMs": 4265.195000052452,
+      "pointerFrames": 3,
+      "keyboardFrames": 10,
+      "heldButtons": [],
+      "audio": {
+        "policy": "unlocked",
+        "context": "running",
+        "renderedFrames": 209992
+      }
+    }
+  },
+  "error": {
+    "name": "AssertionError",
+    "message": "post-restore interaction exceeded 2 seconds",
+    "code": "ERR_ASSERTION",
+    "stack": "AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1930:12"
+  },
+  "progressProbe": null,
+  "url": "http://127.0.0.1:61637/desktop-cursor.html?testHooks=1&jit=1&quantum=500000&imageManifestUrl=.%2Fe5t18b-desktop%2Fmanifest.json&baseUrl=.%2Fe5t18b-desktop%2F&imageSha256=d2fc4eab9bc1b5fe528a2956b58faefb20fcf18e2505c499ecafa8824d390f72&manifestSha256=e02a9af547773f9d54e47151419ab3b118c55d3a4c90b25dcc434487db8dc9f5&autoRestore=1",
+  "state": {
+    "terminal": {
+      "desktopReady": true,
+      "frameCount": 10,
+      "serialText": "",
+      "pointerFrames": 3,
+      "pointerFrameSample": [
+        {
+          "atMs": 1551,
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 17510
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 16056
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 17510,
+            "y": 16056
+          }
+        },
+        {
+          "atMs": 1859,
+          "sequence": 2,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "atMs": 1956,
+          "sequence": 3,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "keyboardFrames": 10,
+      "keyboardEvents": 10,
+      "keyboardFrameSample": [
+        {
+          "atMs": 1963,
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 1970,
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 1993,
+          "eventType": 1,
+          "code": "KeyL",
+          "evdev": 38,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 1999,
+          "eventType": 1,
+          "code": "KeyL",
+          "evdev": 38,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 2006,
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 2013,
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 2020,
+          "eventType": 1,
+          "code": "KeyY",
+          "evdev": 21,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 2025,
+          "eventType": 1,
+          "code": "KeyY",
+          "evdev": 21,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "atMs": 2032,
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "atMs": 2039,
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardEventSample": [
+        {
+          "atMs": 1963,
+          "timestamp": 1987.0299999713898,
+          "type": "keydown",
+          "code": "KeyP",
+          "key": "p",
+          "repeat": false
+        },
+        {
+          "atMs": 1970,
+          "timestamp": 1993.7450000047684,
+          "type": "keyup",
+          "code": "KeyP",
+          "key": "p",
+          "repeat": false
+        },
+        {
+          "atMs": 1993,
+          "timestamp": 2016.5800000429153,
+          "type": "keydown",
+          "code": "KeyL",
+          "key": "l",
+          "repeat": false
+        },
+        {
+          "atMs": 1999,
+          "timestamp": 2023.2699999809265,
+          "type": "keyup",
+          "code": "KeyL",
+          "key": "l",
+          "repeat": false
+        },
+        {
+          "atMs": 2006,
+          "timestamp": 2030.2000000476837,
+          "type": "keydown",
+          "code": "KeyA",
+          "key": "a",
+          "repeat": false
+        },
+        {
+          "atMs": 2013,
+          "timestamp": 2036.7850000858307,
+          "type": "keyup",
+          "code": "KeyA",
+          "key": "a",
+          "repeat": false
+        },
+        {
+          "atMs": 2020,
+          "timestamp": 2043.8849999904633,
+          "type": "keydown",
+          "code": "KeyY",
+          "key": "y",
+          "repeat": false
+        },
+        {
+          "atMs": 2025,
+          "timestamp": 2049.2300000190735,
+          "type": "keyup",
+          "code": "KeyY",
+          "key": "y",
+          "repeat": false
+        },
+        {
+          "atMs": 2032,
+          "timestamp": 2056.350000023842,
+          "type": "keydown",
+          "code": "Enter",
+          "key": "Enter",
+          "repeat": false
+        },
+        {
+          "atMs": 2039,
+          "timestamp": 2063,
+          "type": "keyup",
+          "code": "Enter",
+          "key": "Enter",
+          "repeat": false
+        }
+      ],
+      "surface": {
+        "nonBlackRatio": 0.9999375,
+        "darkRatio": 0.5918055555555556,
+        "greenPixels": 477,
+        "redPixels": 0
+      },
+      "agent": {
+        "state": "ready",
+        "negotiatedVersion": 1,
+        "transportGeneration": 2,
+        "bytesReceived": 36,
+        "bytesSent": 36,
+        "pendingBytes": 0
+      },
+      "diagnostics": [
+        {
+          "atMs": 852,
+          "reason": "agent-channel",
+          "error": "desktop restore requested a fresh agent HELLO",
+          "channelState": "disconnected",
+          "transportGeneration": 0
+        }
+      ],
+      "readiness": {
+        "desktopReady": true,
+        "inspection": {
+          "wallpaper": true,
+          "panel": {
+            "ready": true,
+            "position": "top",
+            "top": 0,
+            "height": 80,
+            "mean": [
+              91,
+              88,
+              87
+            ],
+            "difference": 93
+          },
+          "menu": true,
+          "nonBlackRatio": 0.9999375,
+          "background": [
+            59,
+            58,
+            57
+          ],
+          "menuDetails": {
+            "ready": true,
+            "inkPixels": 22434,
+            "runs": 282
+          }
+        },
+        "agentState": "ready"
+      },
+      "bootStates": [
+        {
+          "state": "fetching",
+          "atMs": 129
+        },
+        {
+          "state": "instantiating",
+          "atMs": 146
+        },
+        {
+          "state": "restored",
+          "atMs": 755
+        }
+      ],
+      "launches": [],
+      "focuses": [
+        {
+          "label": "post-restore-focus",
+          "beforeFrame": 2,
+          "pointerStart": 0,
+          "hostFocusedBefore": true,
+          "afterFrame": 4,
+          "pointerFrames": 3,
+          "hostFocusedAfter": true,
+          "accepted": true,
+          "guestVisible": true,
+          "guestVisibleCommand": "e5t26f-post-aplay",
+          "guestVisiblePixels": 8510
+        }
+      ],
+      "commands": [
+        {
+          "command": "play",
+          "marker": "e5t26f-post-aplay",
+          "beforeFrame": 4,
+          "keyboardStart": 0,
+          "domEventStart": 0,
+          "visualDiffPixels": 8510,
+          "terminalMarkerSeen": true,
+          "greenPixelsBefore": 369,
+          "redPixelsBefore": 0,
+          "visualChange": true,
+          "afterFrame": 10,
+          "redMarkerSeen": false,
+          "keyboardFrames": 10,
+          "domEvents": 10,
+          "inputSequenceMatch": true,
+          "inputTraceSha256": null,
+          "accepted": true
+        }
+      ],
+      "closes": [],
+      "active": {
+        "launch": null,
+        "command": {
+          "command": "play",
+          "marker": "e5t26f-post-aplay",
+          "beforeFrame": 4,
+          "keyboardStart": 0,
+          "domEventStart": 0,
+          "visualDiffPixels": 8510,
+          "terminalMarkerSeen": true,
+          "greenPixelsBefore": 369,
+          "redPixelsBefore": 0,
+          "visualChange": true,
+          "afterFrame": 10,
+          "redMarkerSeen": false,
+          "keyboardFrames": 10,
+          "domEvents": 10,
+          "inputSequenceMatch": true,
+          "inputTraceSha256": null,
+          "accepted": true
+        },
+        "close": null
+      }
+    },
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 800,
+      "fixedViewport": true,
+      "sizeMismatch": false,
+      "framesReceived": 10,
+      "successfulPresents": 10,
+      "drawnPresents": 10,
+      "drawnBytes": 25001208,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": null,
+      "gpu": {
+        "framesReceived": 10,
+        "enqueued": 10,
+        "coalesced": 0,
+        "presented": 10,
+        "successfulPresents": 10,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 25001208,
+        "drawnPresents": 10,
+        "drawnBytes": 25001208,
+        "width": 1280,
+        "height": 800
+      },
+      "latest": {
+        "rect": {
+          "x": 557,
+          "y": 156,
+          "width": 696,
+          "height": 104
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800
+      },
+      "errors": []
+    },
+    "audio": {
+      "policy": "unlocked",
+      "context": "running",
+      "renderedFrames": 213576,
+      "pcm": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 4096,
+        "inspectedFrames": 4096,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.999969482421875
+      }
+    },
+    "ready": "ready",
+    "restored": "ready"
+  },
+  "serial": null,
+  "serverOutput": "127.0.0.1 - - [08/Sep/2026 12:40:12] \"GET /desktop-cursor.html HTTP/1.1\" 200 -\n127.0.0.1 - - [08/Sep/2026 12:40:12] \"GET /e5t18b-desktop/manifest.json HTTP/1.1\" 200 -\n127.0.0.1 - - [08/Sep/2026 12:40:14] \"GET /desktop-cursor.html?testHooks=1&jit=1&quantum=500000&imageManifestUrl=.%2Fe5t18b-desktop%2Fmanifest.json&baseUrl=.%2Fe5t18b-desktop%2F&imageSha256=d2fc4eab9bc1b5fe528a2956b58faefb20fcf18e2505c499ecafa8824d390f72&manifestSha256=e02a9af547773f9d54e47151419ab3b118c55d3a4c90b25dcc434487db8dc9f5&autoRestore=1 HTTP/1.1\" 200 -\n127.0.0.1 - - [08/Sep/2026 12:40:15] code 404, message File not found\n127.0.0.1 - - [08/Sep/2026 12:40:15] \"GET /favicon.ico HTTP/1.1\" 404 -\n127.0.0.1 - - [08/Sep/2026 12:40:15] \"GET /pkg/wasm_vm_wasm.js HTTP/1.1\" 304 -\n127.0.0.1 - - [08/Sep/2026 12:40:15] \"GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1\" 304 -\n127.0.0.1 - - [08/Sep/2026 12:40:19] code 404, message File not found\n127.0.0.1 - - [08/Sep/2026 12:40:19] \"GET /favicon.ico HTTP/1.1\" 404 -\n"
+}

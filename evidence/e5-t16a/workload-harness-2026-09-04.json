@@ -1,0 +1,87 @@
+{
+  "schema": "wasm-vm.e5-t16a.display-server-workload-evidence.v1",
+  "task": "E5-T16a",
+  "command": "make verify-E5-T16a",
+  "gitHead": "07948a052b36e05a9dda62f204d5e9d2bd632442",
+  "plan": {
+    "sha256": "b0abe0eb129f072f7e12abacaa07bb3c4b7cc55eab0c663272c76897bb8612d0",
+    "phaseCount": 6,
+    "markers": [
+      "E5T16A_COLD_START_DONE",
+      "E5T16A_IDLE_DONE",
+      "E5T16A_OPEN_TERMINAL_DONE",
+      "E5T16A_TYPE_100_DONE",
+      "E5T16A_DRAG_300_DONE",
+      "E5T16A_CLOSE_DONE"
+    ],
+    "typingCharacters": 100,
+    "dragDeltaPx": 300
+  },
+  "contract": {
+    "driverInput": "one canonical plan JSON document on stdin",
+    "driverOutput": "one complete capture JSON document on stdout",
+    "imageDigestOwner": "harness",
+    "target": "riscv64 emulator",
+    "sources": {
+      "guestInstructions": "guest-e4-minstret",
+      "uploadedBytes": "guest-t09-vm-stats-gpu-bytesUploaded",
+      "peakRssBytes": "guest-proc-status-vmHWM",
+      "idleWakeups": "guest-proc-interrupts-idle-delta",
+      "cursorqEvents": "guest-virtio-gpu-cursorq-trace"
+    }
+  },
+  "selfTest": {
+    "schema": "wasm-vm.e5-t16a.display-server-workload-self-test.v1",
+    "task": "E5-T16a",
+    "planSha256": "b0abe0eb129f072f7e12abacaa07bb3c4b7cc55eab0c663272c76897bb8612d0",
+    "phaseMarkers": [
+      "E5T16A_COLD_START_DONE",
+      "E5T16A_IDLE_DONE",
+      "E5T16A_OPEN_TERMINAL_DONE",
+      "E5T16A_TYPE_100_DONE",
+      "E5T16A_DRAG_300_DONE",
+      "E5T16A_CLOSE_DONE"
+    ],
+    "phaseCount": 6,
+    "sources": {
+      "guestInstructions": "guest-e4-minstret",
+      "uploadedBytes": "guest-t09-vm-stats-gpu-bytesUploaded",
+      "peakRssBytes": "guest-proc-status-vmHWM",
+      "idleWakeups": "guest-proc-interrupts-idle-delta",
+      "cursorqEvents": "guest-virtio-gpu-cursorq-trace"
+    },
+    "typingCharacters": 100,
+    "dragDeltaPx": 300,
+    "normalizedSha256": "29e948f100ac652763c7ed7fbd06f20a50784449ffc08fb711818e58af641b67",
+    "summary": {
+      "guestInstructions": 1014,
+      "uploadedBytes": 2176,
+      "peakRssBytes": 16797696,
+      "idleWakeups": 3,
+      "idleWakeupsPerSecond": 3,
+      "phaseDurationsMs": {
+        "cold-start": 200,
+        "idle": 1000,
+        "open-terminal": 200,
+        "type-100": 200,
+        "drag-300": 200,
+        "close": 200
+      },
+      "typingUploadedBytes": 448
+    },
+    "checks": {
+      "validCapture": true,
+      "deterministicNormalization": true,
+      "missingMarker": true,
+      "counterOrder": true,
+      "sourceContract": true,
+      "typingShape": true,
+      "preIdleExit": true
+    }
+  },
+  "scope": {
+    "independentMachines": false,
+    "webkit": false,
+    "hostRr": false
+  }
+}

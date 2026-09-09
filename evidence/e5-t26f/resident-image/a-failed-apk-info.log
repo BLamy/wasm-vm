@@ -1,0 +1,25 @@
+AssertionError [ERR_ASSERTION]: local e2fsprogs packages differ from pinned builder
++ actual - expected
+
++ 'e2fsprogs: Standard Ext2/3/4 filesystem utilities\n' +
++   'e2fsprogs: https://e2fsprogs.sourceforge.net/\n' +
++   'e2fsprogs: 492 KiB\n' +
++   'e2fsprogs-extra: Ext2/3/4 filesystem extra utilities\n' +
++   'e2fsprogs-extra: https://e2fsprogs.sourceforge.net/\n' +
++   'e2fsprogs-extra: 1324 KiB\n'
+- 'e2fsprogs-1.47.0-r5\ne2fsprogs-extra-1.47.0-r5\n'
+
+    at buildResidentImage (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-resident-image.mjs:182:12)
+    at async file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-resident-image.mjs:220:36 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'e2fsprogs: Standard Ext2/3/4 filesystem utilities\n' +
+    'e2fsprogs: https://e2fsprogs.sourceforge.net/\n' +
+    'e2fsprogs: 492 KiB\n' +
+    'e2fsprogs-extra: Ext2/3/4 filesystem extra utilities\n' +
+    'e2fsprogs-extra: https://e2fsprogs.sourceforge.net/\n' +
+    'e2fsprogs-extra: 1324 KiB\n',
+  expected: 'e2fsprogs-1.47.0-r5\ne2fsprogs-extra-1.47.0-r5\n',
+  operator: 'strictEqual',
+  diff: 'simple'
+}

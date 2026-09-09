@@ -1,0 +1,35 @@
+   Compiling cfg-if v1.0.4
+   Compiling typenum v1.20.1
+   Compiling either v1.16.0
+   Compiling regex-syntax v0.8.11
+   Compiling zerocopy v0.8.52
+   Compiling getrandom v0.3.4
+   Compiling serde_core v1.0.228
+   Compiling crossbeam-utils v0.8.21
+   Compiling zmij v1.0.21
+   Compiling serde v1.0.228
+   Compiling once_cell v1.21.4
+   Compiling serde_json v1.0.150
+   Compiling generic-array v0.14.7
+   Compiling num-traits v0.2.19
+   Compiling clap_lex v1.1.0
+   Compiling memchr v2.8.2
+error[E0463]: can't find crate for `core`
+  |
+  = note: the `wasm32-unknown-unknown` target may not be installed
+  = help: consider downloading the target with `rustup target add wasm32-unknown-unknown`
+
+For more information about this error, try `rustc --explain E0463`.
+error: could not compile `cfg-if` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `either` (lib) due to 1 previous error
+error[E0463]: can't find crate for `std`
+  |
+  = note: the `wasm32-unknown-unknown` target may not be installed
+  = help: consider downloading the target with `rustup target add wasm32-unknown-unknown`
+
+error: could not compile `once_cell` (lib) due to 1 previous error
+error: could not compile `clap_lex` (lib) due to 1 previous error
+error: could not compile `memchr` (lib) due to 1 previous error
+error: could not compile `typenum` (lib) due to 1 previous error
+error: could not compile `regex-syntax` (lib) due to 1 previous error

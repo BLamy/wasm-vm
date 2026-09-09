@@ -1,0 +1,141 @@
+---
+id: E5-T26l
+epic: 5
+title: Refresh live priority when selecting pending JIT compilation jobs
+priority: 526.597
+status: verified
+depends_on: [E4-T21, E5-T22g, E5-T26k]
+estimate: S
+risk: high
+capstone: false
+---
+
+## Goal
+
+Test a bounded compilation-selection candidate for F's remaining latency. The
+actual public-type reproducer in `evidence/e5-t26f/compile-priority-reproducer/`
+shows a pending job retaining priority64 after its live discovery hotness rises
+to1064. Daybreak accepted that limited source-level claim, not browser causality
+or an E4 violation. Actual cross-pump integration and a new browser screen are
+required before promoting this candidate. F's original2-second gate is unchanged.
+
+## Boundary
+
+Own only bounded in-place refresh of resident compile-job hotness from the
+existing read-only discovery lookup, immediately before compile selection, and
+the associated deterministic evidence. Preserve the existing order of bounded
+FIFO staging, stale cancellation and recount; refresh only the surviving jobs
+after those operations and before `pop_hottest`. Do not move cancellation ahead
+of staging or invent a new stale-incoming admission policy. This does not claim
+globally current priority at incoming-job admission or starvation freedom.
+
+Keep request bytes/generation/metadata, byte validation, discovery nomination and
+anti-storm rules, bounds/thresholds, eight-attempt and64-staging browser budgets,
+decoded capacity4096, module cap24, chaining, guest/device clocks, snapshot formats,
+image/helper and F's proper browser driver unchanged. No new runtime tuning API,
+hot-path instrumentation, profiling switch, guest command or acceptance override.
+
+## Acceptance criteria
+
+- Refresh changes only each surviving resident job's stored priority. It visits
+  at most the bounded resident count in place, preserving payloads, queue order,
+  counters and recount; equal/saturated priorities keep existing tie semantics.
+- A real Machine workload retains a compile backlog across an exhausted host
+  budget, accrues later interpreted hits, then selects the newly hotter resident
+  on a later pump. Cover zero newly staged nominations; public-type composition
+  alone is not sufficient. Compare fixed-retirement registers/RAM digest with
+  the unchanged interpreter path.
+- Empty/disabled/zero-budget paths stay inert. Existing finite-burst progress,
+  backpressure/recount, stale resident and stale incoming cancellation, fresh
+  same-PC re-nomination, and live-byte/generation refusal remain correct. Refresh
+  must not install stale bytes or clear fresh discovery state.
+- Native affected-core tests, guest/digest differentials, no_std wasm build and
+  actual browser-JIT WASM parity/cooperative-budget tests pass. Record one final
+  scrubbed-environment pristine-clone runtime proof and the exact tested head.
+- Build the demo, record126 passed/0 failed and zero non-favicon errors with this
+  task visible, then create a new authenticated cold resident checkpoint. Run
+  the unchanged default-policy F restore/physical-play diagnostic and report its
+  original T0/end, CRC, actual input, fresh PCM and timing outcome. Do not rebind
+  the earlier seal, subtract observer time or mark F verified from this screen.
+
+## Verification command
+
+make verify-E5-T26l
+
+## Adversarial verification
+
+Exercise late-hot/equal/saturated scores, absent/recount-reset hit records, full
+small-cap backpressure and same-PC requests spanning a generation change. Prove
+the real cross-pump backlog selection and unchanged aggregate submission/staging
+bounds, including no new FIFO work. Independently sabotage the refresh call and
+require the cross-pump regression to fail; stale-byte protection must still hold.
+One bounded novel attack should target this queue/selection boundary. Inspect
+every changed hunk and preserve the original F failure if its own cap still fails.
+
+## Verification log
+
+### 2026-09-08 — independent Daybreak verifier — VERDICT: verified
+
+P1–P7 HELD for L's selection-only boundary at runtime/build head
+`42bb34d854aca091a3940191a8da3b7aff765cad`, with worker claim/test-only promotion
+committed as `41590d211f758403bc517fe308500ef3510baae0`. No runtime change since
+the single scrubbed pristine clone. Source placement, exact Machine selection,
+stale/fresh safety, budgets, sensitive refresh-removal sabotage and the novel
+outer-scope/zero-work final pump carry from
+`evidence/e5-t26l/verifier/native-results.md`
+(SHA256 `7d3c81703d3e2b1a880de43aadae93b34830c0348428cbbe9bf06b34e13befdf`).
+The promoted63-line test is byte-identical to the tested scratch version;
+the narrow recorded gate passes12 pipeline tests and scoped clippy.
+
+P7 independently HELD: inspected both actual PNGs/full raw records; rehashed
+all20 worker artifacts, six frozen source bindings, the new814-file sealed
+profile,150-file runtime, kernel/image/manifest and decoded envelope/sound.
+Correct CRC `4b00f145`, no boot/freshHELLO2, actual cursor/focus and10 matching
+physical `play` key edges, same PID999/start28835/conditional child completion,
+two pre-gesture zero rings then1440 fresh non-silent PCM. Built demo126/0 with
+L visible and no non-favicon errors carries unchanged. Required browser screen
+is complete, but F still fails: original T0 `1202.054999947548`, frozen end5930,
+elapsed **4727.945000052452 ms**. No first-PCM timestamp, speedup/default claim,
+timing waiver or new second-restore/drag coverage is inferred. Lower-window
+pre-checkpoint2.864-ms XRUN and generic failure-error-array limitation retained.
+
+Final coverage/digest report:
+`evidence/e5-t26l/verifier/browser-results.md`
+(SHA256 `90e24fa8e29eefbbf28a711a3c745c50565545cb44aac9046d869df03075669b`).
+Prior F/K/H/I/J/T19a and unchanged architecture HELD carry; known pre-existing
+user-owned dist manifests stay excluded and untouched. No further runtime,
+WASM/browser gates or clone. Verifier runs `python3 tools/check_task_policy.py`
+then `python3 tools/build_queue.py`; coordinator owns the final commit.
+
+### 2026-09-08 — worker — IMPLEMENTED; measured F cap remains failed
+
+Frozen runtime/build head `42bb34d854aca091a3940191a8da3b7aff765cad` is published
+as draftPR364. `make verify-E5-T26l-runtime` records373 native,43 actual WASM
+and63 Node passes, plus the127-ELF instruction-trace differential and no_std
+build. The one existing long churn ignore is unchanged/not counted. Exact log,
+commands, digests and scope: `evidence/e5-t26l/README.md` and `digests.txt`.
+The built Chromium demo is126/0 with no non-favicon errors and L visible.
+Daybreak's single scrubbed pristine clone, sensitive refresh-removal sabotage
+and bounded zero-work outer-scope attack are HELD in `verifier/native-results.md`.
+The promoted test-only patch subsequently passes12 pipeline tests and scoped
+fmt/clippy; runtime/served bytes are unchanged.
+
+`node tools/verify/e5-t26l-browser-priority.mjs` records a new authenticated cold
+seal and default-policy restore/physical `play`. Cold exits0; reuse exits1 only
+at the original2000-ms cap: T0 `1202.054999947548`, end `5930`, elapsed4727.945ms.
+The2818680-byte envelope `b229532f4869e0246b3a8d82d3d9cf2cdf6c94263b387a4bb6ee9356b69e65cf`
+restores CRC `4b00f145` without a boot, freshHELLO2, ten actual matching key
+events, visible cursor/output and1440 fresh non-silent PCM frames from the same
+prepared player. Raw JSON/PNGs/logs are under `browser-42bb34d8/`; no raw record
+or old seal was rewritten. This proves the candidate's required measurement,
+not F acceptance or speedup. Final independent browser verdict remains pending.
+
+### 2026-09-08 — coordinator — bounded runtime candidate, not an assumed F fix
+
+PR363 retains the independently reviewed source-level priority reproducer and
+new discovery/latency records. At runtime head `690e2324`, F fails4591.175 ms with
+zero since-reset discovery overflow/exhaustion/stale counts; the separate latency
+probe first observes fresh PCM at3818.160 ms and fails4726.940 ms overall. Those
+negative results and unchanged architecture/functional HELD evidence carry.
+This task owns the separate core scheduling boundary; F leaves the active lane
+until this candidate has deterministic integration and browser evidence.

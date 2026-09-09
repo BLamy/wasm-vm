@@ -1,0 +1,101 @@
+E5T18D_LOG_BEGIN
+Date: 2026-09-06 UTC
+[10:55:09.110] weston 12.0.4
+               https://wayland.freedesktop.org
+               Bug reports to: https://gitlab.freedesktop.org/wayland/weston/issues/
+               Build: 12.0.4
+[10:55:09.111] Command line: weston --config=/etc/xdg/weston/weston.ini --backend=drm --renderer=pixman --socket=wayland-0
+[10:55:09.111] OS: Linux, 6.6.63, #1 SMP Thu Nov 14 2024, riscv64
+[10:55:09.111] Flight recorder: enabled
+[10:55:09.113] Using config file '/etc/xdg/weston/weston.ini'
+[10:55:09.120] Output repaint window is 7 ms maximum.
+[10:55:09.191] Loading module '/usr/lib/libweston-12/drm-backend.so'
+[10:55:09.580] initializing drm backend
+[10:55:09.580] Trying libseat launcher...
+[10:55:09.581] [libseat/libseat.c:73] Seat opened with backend 'seatd'
+[10:55:09.582] [libseat/backend/seatd.c:212] Enabling seat
+[10:55:09.582] libseat: session control granted
+[10:55:09.592] using /dev/dri/card0
+[10:55:09.593] DRM: supports atomic modesetting
+[10:55:09.593] DRM: does not support GBM modifiers
+[10:55:09.593] DRM: does not support async page flipping
+[10:55:09.593] DRM: supports picture aspect ratio
+[10:55:09.593] Using Pixman renderer
+[10:55:09.789] event0  - wasm-vm virtio keyboard: is tagged by udev as: Keyboard
+[10:55:09.794] event0  - wasm-vm virtio keyboard: device is a keyboard
+[10:55:09.834] event1  - wasm-vm virtio tablet: is tagged by udev as: Mouse
+[10:55:09.852] event1  - wasm-vm virtio tablet: device is a pointer
+[10:55:09.888] event2  - wasm-vm virtio mouse: is tagged by udev as: Mouse
+[10:55:09.897] event2  - wasm-vm virtio mouse: device is a pointer
+[10:55:10.894] libinput: configuring device "wasm-vm virtio keyboard".
+[10:55:10.895] libinput: configuring device "wasm-vm virtio tablet".
+[10:55:10.895] input device event1 has no enabled output associated (none named), skipping calibration for now.
+[10:55:10.895] libinput: configuring device "wasm-vm virtio mouse".
+[10:55:10.897] DRM: head 'Virtual-1' found, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[10:55:10.899] Registered plugin API 'weston_drm_output_api_v1' of size 40
+[10:55:10.899] Registered plugin API 'weston_drm_virtual_output_api_v2' of size 48
+[10:55:10.899] Color manager: no-op
+[10:55:10.899] Output 'Virtual-1' attempts EOTF mode: SDR
+[10:55:10.900] Output 'Virtual-1' using color profile: built-in default sRGB SDR profile
+[10:55:10.962] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:55:10.962] Output Virtual-1 (crtc 33) video modes:
+               901x701@60.0, preferred, current, 46.5 MHz
+[10:55:10.963] associating input device event0 with output Virtual-1 (none by udev)
+[10:55:10.963] associating input device event1 with output Virtual-1 (none by udev)
+[10:55:10.966] associating input device event2 with output Virtual-1 (none by udev)
+[10:55:10.966] Output 'Virtual-1' enabled with head(s) Virtual-1
+[10:55:10.966] Compositor capabilities:
+               arbitrary surface rotation: yes
+               screen capture uses y-flip: no
+               cursor planes: yes
+               arbitrary resolutions: no
+               view mask clipping: yes
+               explicit sync: no
+               color operations: no
+               presentation clock: CLOCK_MONOTONIC, id 1
+               presentation clock resolution: 0.000000001 s
+[10:55:10.968] Loading module '/usr/lib/weston/desktop-shell.so'
+[10:55:10.974] Loading module '/usr/lib/weston/wv-display-resize.so'
+[10:55:10.976] WV_DISPLAY enabled bounded 10ms EDID watcher
+[10:55:10.976] launching '/usr/libexec/weston-keyboard'
+[10:55:10.992] launching '/usr/libexec/weston-desktop-shell'
+could not load cursor 'dnd-move'
+could not load cursor 'dnd-copy'
+could not load cursor 'dnd-none'
+could not load cursor 'dnd-move'
+could not load cursor 'dnd-copy'
+could not load cursor 'dnd-none'
+[10:55:27.061] DRM: head 'Virtual-1' updated, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[10:55:27.064] Detected a monitor change on head 'Virtual-1', not bothering to do anything about it.
+[10:55:27.161] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:55:27.162] WV_DISPLAY_APPLIED output=Virtual-1 width=803 height=603
+[10:55:28.758] DRM: head 'Virtual-1' updated, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[10:55:28.759] Detected a monitor change on head 'Virtual-1', not bothering to do anything about it.
+[10:55:28.854] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:55:28.859] WV_DISPLAY_APPLIED output=Virtual-1 width=640 height=480
+[10:55:30.389] DRM: head 'Virtual-1' updated, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[10:55:30.390] Detected a monitor change on head 'Virtual-1', not bothering to do anything about it.
+[10:55:30.623] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:55:30.624] WV_DISPLAY_APPLIED output=Virtual-1 width=1280 height=800
+[10:55:37.128] DRM: head 'Virtual-1' updated, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[10:55:37.128] Detected a monitor change on head 'Virtual-1', not bothering to do anything about it.
+[10:55:37.617] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:55:37.617] WV_DISPLAY_APPLIED output=Virtual-1 width=2560 height=1600
+[10:55:55.903] DRM: head 'Virtual-1' updated, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[10:55:55.904] Detected a monitor change on head 'Virtual-1', not bothering to do anything about it.
+[10:55:56.044] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:55:56.045] WV_DISPLAY_APPLIED output=Virtual-1 width=801 height=601
+[10:55:58.009] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:55:58.009] WV_DISPLAY_APPLIED output=Virtual-1 width=802 height=601
+[10:55:59.551] DRM: head 'Virtual-1' updated, connector 34 is connected, EDID make 'WVM', model 'WASM VM', serial 'WVM-0001'
+               Supported EOTF modes: SDR
+[10:55:59.554] Detected a monitor change on head 'Virtual-1', not bothering to do anything about it.
+[10:55:59.803] DRM: output Virtual-1 does not use shadow framebuffer.
+[10:55:59.805] WV_DISPLAY_APPLIED output=Virtual-1 width=1201 height=801
+E5T18D_LOG_END

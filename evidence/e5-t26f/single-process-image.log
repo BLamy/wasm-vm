@@ -1,0 +1,62 @@
+{
+  "schema": "wasm-vm.e5-t26f.desktop-image-info.v1",
+  "task": "E5-T26f",
+  "architecture": "riscv64",
+  "image": {
+    "path": "target/e5-t26f/resident-image-single-process-observer-v1/alpine-rootfs.ext4",
+    "sha256": "d2fc4eab9bc1b5fe528a2956b58faefb20fcf18e2505c499ecafa8824d390f72",
+    "size": 1073741824
+  },
+  "packageManifest": {
+    "path": "target/e5-t26f/resident-image-single-process-observer-v1/MANIFEST.txt",
+    "sha256": "f578113d65a0be90635d8ad9a87630583f9e4cfa49e6f50e67f606301d8f752a"
+  },
+  "fileManifest": {
+    "path": "target/e5-t26f/resident-image-single-process-observer-v1/FILE-MANIFEST.txt",
+    "sha256": "826ae6242881740ccf3a85712e0c761208f0a8ad8abd82cf7975d7335d85a10e"
+  },
+  "startup": {
+    "boundedRecovery": true,
+    "inPlaceDisplayResize": false,
+    "backend": "drm",
+    "renderer": "pixman",
+    "autologinTty": "tty1",
+    "desktopUser": "desktop",
+    "seatdRunlevel": "default"
+  },
+  "fixture": {
+    "kind": "resident-observer-v1",
+    "helperPath": "tools/guest/e5-t26f-resident-observer.sh",
+    "helperSha256": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+    "helperSize": 5098,
+    "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh",
+    "mode": "0444",
+    "uid": 0,
+    "gid": 0,
+    "epoch": 1731542400,
+    "readbackSha256": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+    "basePath": "target/e5-t26f/desktop-image-aplay-noresize/alpine-rootfs.ext4",
+    "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+    "baseSize": 1073741824,
+    "basePreserved": true,
+    "baseInfoSha256": "563bc08d5113d14c46c31c80d32205a825bf615e8e89b6bdbab28c83f46d1844",
+    "baseFileManifestSha256": "334bb3b98d2151b6f14358e023f288359255e62835a92f0eb853f6bc76918c93",
+    "builder": {
+      "tag": "wasm-vm-rootfs-build:local",
+      "imageId": "sha256:0d1ead8c1106a838e478676dff113f21cdd91eb9456232ff9f6c24679a87d0eb",
+      "e2fsprogs": "1.47.0-r5"
+    },
+    "observer": {
+      "guestPath": "/usr/libexec/wasm-vm/e5t26f-observe",
+      "sourcePath": "tools/guest/e5-t26f-observer.c",
+      "sourceSha256": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+      "binaryPath": "target/e5-t26f/observer-build-v1/e5t26f-observe",
+      "sha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+      "size": 30960,
+      "mode": "0555",
+      "buildInfoPath": "target/e5-t26f/observer-build-v1/build-info.json",
+      "buildInfoSha256": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+      "readbackSha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350"
+    }
+  }
+}

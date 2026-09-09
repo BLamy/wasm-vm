@@ -1,0 +1,330 @@
+{
+  "label": "cold-11",
+  "sourceBindingSha256": "0e41e0d9f9fa9ccc3277867fc0146d5c4d856959e92b5de947bd52ded7a149c2",
+  "cacheDisabled": true,
+  "cacheHits": 0,
+  "bootToDesktopMs": 830124,
+  "totalMs": 881215,
+  "readiness": {
+    "wallpaper": true,
+    "panel": {
+      "ready": true,
+      "position": "top",
+      "top": 0,
+      "height": 80,
+      "mean": [
+        85,
+        80,
+        79
+      ],
+      "difference": 86
+    },
+    "menu": true,
+    "nonBlackRatio": 0.9999609375,
+    "background": [
+      114,
+      108,
+      106
+    ],
+    "menuDetails": {
+      "ready": true,
+      "inkPixels": 25482,
+      "runs": 128
+    }
+  },
+  "surface": {
+    "black": 276,
+    "white": 485,
+    "colored": 10,
+    "total": 1024000,
+    "bodyMean": 125.47202727141203,
+    "panelMean": 43.738330078125,
+    "desktop": true
+  },
+  "cursor": {
+    "x": 480,
+    "y": 160,
+    "hotX": 1,
+    "hotY": 1,
+    "matchedPixels": 94
+  },
+  "desktopFrame": {
+    "width": 1280,
+    "height": 800,
+    "framebufferSha256": "5c849ed860755eac72309b6123e01a65e9ca884fe174ef064ba62d507d00abfa",
+    "guestStateDigest": "f4fe8ae4450f8f1e7deee992f8146021d1071982026daf1d1c9c71abb4d83cb6",
+    "scheduler": {
+      "quantum": 500000,
+      "maxQuantum": 500000,
+      "slices": 9556,
+      "totalSliceMs": 832468.5999943614,
+      "averageSliceMs": 87.11475512707842,
+      "maxSliceMs": 890.1850000023842,
+      "sliceHistogram": [
+        {
+          "leMs": 4,
+          "count": 24
+        },
+        {
+          "leMs": 8,
+          "count": 243
+        },
+        {
+          "leMs": 16,
+          "count": 335
+        },
+        {
+          "leMs": 32,
+          "count": 608
+        },
+        {
+          "leMs": 64,
+          "count": 1335
+        },
+        {
+          "leMs": 128,
+          "count": 6101
+        },
+        {
+          "leMs": 256,
+          "count": 869
+        },
+        {
+          "leMs": 512,
+          "count": 35
+        },
+        {
+          "leMs": 1000,
+          "count": 6
+        },
+        {
+          "leMs": null,
+          "count": 0
+        }
+      ],
+      "maxStretchGapMs": 896.6400000452995,
+      "requestedInstructions": 4778000000,
+      "retiredInstructions": 4777662907,
+      "fetchWaits": 263,
+      "fetchRequestedChunks": 292,
+      "fetchWaitTotalMs": 1241.2500001192093,
+      "fetchWaitMaxMs": 67.41500002145767,
+      "outputCalls": 140,
+      "outputBytes": 14255,
+      "inputCalls": 0,
+      "inputBytes": 0,
+      "yieldMode": "scheduler.postTask",
+      "schedulerYields": 9558,
+      "timerYields": 0,
+      "mainThreadYields": 0
+    },
+    "fetchStats": {
+      "fetches": 363,
+      "bytes": 47579136,
+      "error": null,
+      "cache": {
+        "hits": 32217205,
+        "misses": 36968355,
+        "evictions": 0,
+        "residentBytes": 47579136,
+        "budgetBytes": 268435456
+      },
+      "prefetch": {
+        "issued": 71,
+        "used": 49,
+        "profileEntries": 0,
+        "accuracyPct": 69
+      }
+    },
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 800,
+      "framesReceived": 22,
+      "successfulPresents": 22,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": null,
+      "gpu": {
+        "framesReceived": 22,
+        "enqueued": 22,
+        "coalesced": 0,
+        "presented": 22,
+        "successfulPresents": 22,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 41192532,
+        "width": 1280,
+        "height": 800
+      },
+      "latest": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800
+      },
+      "errors": []
+    },
+    "screenshot": "cold-11.png",
+    "screenshotSha256": "f0200b550770ada720ebe4133a380dee40599c3c2cfbc8a36b58747b41e71e5b"
+  },
+  "launcher": {
+    "label": "cold-11",
+    "beforeFrame": 22,
+    "pointerStart": 1,
+    "keyboardStart": 0,
+    "visualDiffPixels": 344281,
+    "visualChange": true,
+    "terminalRendered": true,
+    "nonBlackStreak": 3,
+    "afterFrame": 32,
+    "pointerFrames": 3,
+    "accepted": true
+  },
+  "terminalFrame": {
+    "width": 1280,
+    "height": 800,
+    "framebufferSha256": "ef1f6168017fc1e7d90eb3ac2e53c065f5e16d4a97f1f2b0ddb963fe2407dad2",
+    "guestStateDigest": "0d0ffd57134a09867b75341a7aa0a994154ed520c9a29959eff15d7e66360390",
+    "scheduler": {
+      "quantum": 500000,
+      "maxQuantum": 500000,
+      "slices": 10095,
+      "totalSliceMs": 875765.7449939251,
+      "averageSliceMs": 86.75242644813522,
+      "maxSliceMs": 890.1850000023842,
+      "sliceHistogram": [
+        {
+          "leMs": 4,
+          "count": 24
+        },
+        {
+          "leMs": 8,
+          "count": 243
+        },
+        {
+          "leMs": 16,
+          "count": 339
+        },
+        {
+          "leMs": 32,
+          "count": 622
+        },
+        {
+          "leMs": 64,
+          "count": 1464
+        },
+        {
+          "leMs": 128,
+          "count": 6462
+        },
+        {
+          "leMs": 256,
+          "count": 897
+        },
+        {
+          "leMs": 512,
+          "count": 37
+        },
+        {
+          "leMs": 1000,
+          "count": 7
+        },
+        {
+          "leMs": null,
+          "count": 0
+        }
+      ],
+      "maxStretchGapMs": 1125.4849999547005,
+      "requestedInstructions": 5047500000,
+      "retiredInstructions": 5047150886,
+      "fetchWaits": 277,
+      "fetchRequestedChunks": 307,
+      "fetchWaitTotalMs": 1299.3300000429153,
+      "fetchWaitMaxMs": 67.41500002145767,
+      "outputCalls": 140,
+      "outputBytes": 14255,
+      "inputCalls": 0,
+      "inputBytes": 0,
+      "yieldMode": "scheduler.postTask",
+      "schedulerYields": 10098,
+      "timerYields": 0,
+      "mainThreadYields": 0
+    },
+    "fetchStats": {
+      "fetches": 378,
+      "bytes": 49545216,
+      "error": null,
+      "cache": {
+        "hits": 35207442,
+        "misses": 38957209,
+        "evictions": 0,
+        "residentBytes": 49545216,
+        "budgetBytes": 268435456
+      },
+      "prefetch": {
+        "issued": 71,
+        "used": 49,
+        "profileEntries": 0,
+        "accuracyPct": 69
+      }
+    },
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 800,
+      "framesReceived": 32,
+      "successfulPresents": 32,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": null,
+      "gpu": {
+        "framesReceived": 32,
+        "enqueued": 32,
+        "coalesced": 0,
+        "presented": 32,
+        "successfulPresents": 32,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 68842012,
+        "width": 1280,
+        "height": 800
+      },
+      "latest": {
+        "rect": {
+          "x": 115,
+          "y": 251,
+          "width": 696,
+          "height": 494
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800
+      },
+      "errors": []
+    },
+    "screenshot": "cold-11-terminal.png",
+    "screenshotSha256": "0dbfc32045f04232451d3413729533d23485a48b770c33d18e8106edc9d371f4"
+  },
+  "errors": [],
+  "passed": true
+}

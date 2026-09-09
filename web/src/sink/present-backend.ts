@@ -11,6 +11,11 @@
  * the canvas bounds and source stride used to validate subsequent presents.
  */
 export class PresentBackend {
+  /** Whether a successful present wrote pixels to a real display surface. */
+  drawsPixels() {
+    return true;
+  }
+
   present(_rect, _pixels) {
     throw new Error("PresentBackend.present must be implemented by a concrete backend");
   }

@@ -1,0 +1,125 @@
+{
+  "schema": "wasm-vm.e5-t26p.compiler-probes.v1",
+  "phase": "baseline",
+  "source": "/private/tmp/e5-t26p-baseline.T3zMuW",
+  "baselineHead": "d7d308a58825e6856db532822e36e1681230027a",
+  "mainHead": "d7d308a58825e6856db532822e36e1681230027a",
+  "builderSha256": "6f6def3bd84a87673d1cd5f1133c2b26eead2d4e345def14c293a8b4659cddd6",
+  "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: aarch64-apple-darwin\nrelease: 1.96.0\nLLVM version: 22.1.2\n",
+  "cargo": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "wasm2wat": "1.0.41",
+  "before": {
+    "Cargo.toml": "fc7cbaedc583510a98e1ce66875c32af7fe9aa43bc80cb16b298168dd0c61479",
+    "Cargo.lock": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7",
+    "rust-toolchain.toml": "0a7758acebb8cbcc2ba66675476f1c4dff67d31c5d662fccca504f19d2e6aef9",
+    ".cargo/config.toml": "693000886a9f8195d7dbfbba41d9ffa19147b18233b83f52c4626d92a54c2b7b",
+    "crates/core/Cargo.toml": "828e4d59f7f29f2cbfa98b3cdea67e530cc4b3f51132e4e0d9fc22de280c4c6c",
+    "crates/core/src/hart/mod.rs": "c3b4fc40bc3240de652a510efc5dd5822c79e02c41664324c2fbb6a2419653ad",
+    "crates/core/src/lib.rs": "7ff782fec3aa18b1b3729ac57e96dd999162b5c92b6fa36ef080cd9953bc2d3c",
+    "crates/core/src/trace.rs": "3aba6a5aff31a60887052fbe06c8ed85ba37edfc871edca67013f39951cea669",
+    "evidence/e5-t26p/probe-crate/Cargo.toml": "620f888c2dfc88d5a1a406910dbee8a1562cb558e3b443a110d6c8d4dbb450d8",
+    "crates/core/examples/retirement_capture_probe.rs": "2e3a3cd6c8f50cff88a57da2783c058849e529af0affb22d21a68d4f9b181ba5"
+  },
+  "flags": {
+    "CARGO_TARGET_DIR": "/private/tmp/e5-t26p-baseline.T3zMuW/target/artifact-baseline-d7d308a5-r2",
+    "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "1",
+    "cargo": "--offline --release --manifest-path evidence/e5-t26p/probe-crate/Cargo.toml; standalone probe excludes core dev-dependencies; core default std + trace"
+  },
+  "limitation": "Compiler probes and positive control; not production-browser timing or complete semantic evidence",
+  "after": {
+    "Cargo.toml": "fc7cbaedc583510a98e1ce66875c32af7fe9aa43bc80cb16b298168dd0c61479",
+    "Cargo.lock": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7",
+    "rust-toolchain.toml": "0a7758acebb8cbcc2ba66675476f1c4dff67d31c5d662fccca504f19d2e6aef9",
+    ".cargo/config.toml": "693000886a9f8195d7dbfbba41d9ffa19147b18233b83f52c4626d92a54c2b7b",
+    "crates/core/Cargo.toml": "828e4d59f7f29f2cbfa98b3cdea67e530cc4b3f51132e4e0d9fc22de280c4c6c",
+    "crates/core/src/hart/mod.rs": "c3b4fc40bc3240de652a510efc5dd5822c79e02c41664324c2fbb6a2419653ad",
+    "crates/core/src/lib.rs": "7ff782fec3aa18b1b3729ac57e96dd999162b5c92b6fa36ef080cd9953bc2d3c",
+    "crates/core/src/trace.rs": "3aba6a5aff31a60887052fbe06c8ed85ba37edfc871edca67013f39951cea669",
+    "evidence/e5-t26p/probe-crate/Cargo.toml": "620f888c2dfc88d5a1a406910dbee8a1562cb558e3b443a110d6c8d4dbb450d8",
+    "crates/core/examples/retirement_capture_probe.rs": "2e3a3cd6c8f50cff88a57da2783c058849e529af0affb22d21a68d4f9b181ba5"
+  },
+  "commands": [
+    {
+      "name": "probe-lock",
+      "command": "cargo",
+      "args": [
+        "check",
+        "--offline",
+        "--manifest-path",
+        "/private/tmp/e5-t26p-baseline.T3zMuW/evidence/e5-t26p/probe-crate/Cargo.toml"
+      ],
+      "cwd": "/private/tmp/e5-t26p-baseline.T3zMuW"
+    },
+    {
+      "name": "native-build",
+      "command": "cargo",
+      "args": [
+        "rustc",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "/private/tmp/e5-t26p-baseline.T3zMuW/evidence/e5-t26p/probe-crate/Cargo.toml",
+        "--",
+        "--emit=asm,link"
+      ],
+      "cwd": "/private/tmp/e5-t26p-baseline.T3zMuW"
+    },
+    {
+      "name": "native-smoke",
+      "command": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26p/artifact-baseline-d7d308a5-r2/native-probe",
+      "args": [],
+      "cwd": "/private/tmp/e5-t26p-baseline.T3zMuW"
+    },
+    {
+      "name": "wasm-build",
+      "command": "cargo",
+      "args": [
+        "rustc",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "/private/tmp/e5-t26p-baseline.T3zMuW/evidence/e5-t26p/probe-crate/Cargo.toml",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--",
+        "-Clink-arg=--export=capture_hart_unit_probe",
+        "-Clink-arg=--export=capture_hart_record_probe",
+        "-Clink-arg=--export=capture_machine_unit_probe",
+        "-Clink-arg=--export=capture_machine_record_probe"
+      ],
+      "cwd": "/private/tmp/e5-t26p-baseline.T3zMuW"
+    },
+    {
+      "name": "wasm-decode",
+      "command": "wasm2wat",
+      "args": [
+        "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26p/artifact-baseline-d7d308a5-r2/probe.wasm"
+      ],
+      "cwd": "/private/tmp/e5-t26p-baseline.T3zMuW"
+    }
+  ],
+  "artifacts": {
+    "native.s": {
+      "bytes": 3379529,
+      "sha256": "af33a736a27a58fdb31fea8012bd3d84fce965556ad62d81cfec333e729b3142"
+    },
+    "native-probe": {
+      "bytes": 868936,
+      "sha256": "fdd9c6a82272499a1d68a272c50e93799cf44b7744915b0980fb81a57a9e4913"
+    },
+    "probe.wasm": {
+      "bytes": 9090337,
+      "sha256": "882643f2dd07ab302dc9cc7d15b133d7b42427dff0b245af4190623cc5c2e7d6"
+    },
+    "wasm-decode.stdout": {
+      "bytes": 8485514,
+      "sha256": "ee5ffc03d5e04c5b82f478ee790436e0f60a077812614bb5dda77701a2347e7e"
+    },
+    "probe-Cargo.lock": {
+      "bytes": 3357,
+      "sha256": "82b300ce814c8742002c86b733ebd60c7e344fbec6cd228c04eb0ff760d408b3"
+    }
+  }
+}

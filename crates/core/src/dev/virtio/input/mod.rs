@@ -8,6 +8,9 @@
 
 pub mod keyboard;
 pub mod pointer;
+mod snapshot;
+
+pub use snapshot::{InputRestoreReport, InputSnapshotError};
 
 use alloc::boxed::Box;
 use alloc::collections::{BTreeSet, VecDeque};
@@ -97,11 +100,18 @@ struct PendingFrame {
     /// Number of events already handed to the guest.  A frame with `next != 0` is protected from
     /// dropping so a slow eventq can never expose only the first half of a key transition.
     next: usize,
+    /// A restore-generated release frame is protected from normal host-buffer accounting until it
+    /// has been delivered, so restoring a checkpoint cannot strand a key or button in the guest.
+    release_all: bool,
 }
 
 impl PendingFrame {
     fn new(events: Vec<InputEvent>) -> Self {
-        Self { events, next: 0 }
+        Self {
+            events,
+            next: 0,
+            release_all: false,
+        }
     }
 
     fn remaining(&self) -> usize {
@@ -234,6 +244,39 @@ impl InputState {
         self.kicked[EVENT_QUEUE as usize] = true;
     }
 
+    /// Encode this device's bounded pending-input state for a desktop checkpoint.
+    pub fn to_snapshot(&self) -> Result<Vec<u8>, InputSnapshotError> {
+        snapshot::encode(self)
+    }
+
+    /// Restore a desktop checkpoint and return the release frame needed to clear host-held input.
+    pub fn restore_snapshot(
+        &mut self,
+        payload: &[u8],
+    ) -> Result<InputRestoreReport, InputSnapshotError> {
+        snapshot::restore(self, payload)
+    }
+
+    /// Release every key or button whose down transition reached the guest.
+    pub fn release_all(&mut self) -> InputRestoreReport {
+        let release_events = self.take_release_frame();
+        if !release_events.is_empty() {
+            self.pending_event_count = self
+                .pending_event_count
+                .saturating_add(release_events.len());
+            self.pending_frames.push_front(PendingFrame {
+                events: release_events.clone(),
+                next: 0,
+                release_all: true,
+            });
+            self.mark_queue_kick(EVENT_QUEUE);
+        }
+        InputRestoreReport {
+            host_held_set_discarded: true,
+            release_events,
+        }
+    }
+
     fn accepts_host_event(&self, event: InputEvent) -> bool {
         let Some(spec) = &self.capabilities else {
             return true;
@@ -327,6 +370,19 @@ impl InputState {
         }
     }
 
+    fn take_release_frame(&mut self) -> Vec<InputEvent> {
+        let mut releases = Vec::with_capacity(self.delivered_keys.len().saturating_add(1));
+        for code in self.delivered_keys.iter().rev().copied() {
+            releases.push(InputEvent::new(EV_KEY, code, 0));
+        }
+        if !releases.is_empty() {
+            releases.push(InputEvent::new(EV_SYN, SYN_REPORT, 0));
+        }
+        self.delivered_keys.clear();
+        self.suppressed_keys.clear();
+        releases
+    }
+
     fn has_pending_down_before(&self, index: usize, code: u16) -> bool {
         self.pending_frames
             .iter()
@@ -361,7 +417,7 @@ impl InputState {
         let Some(frame) = self.pending_frames.get(index) else {
             return false;
         };
-        if frame.next != 0 {
+        if frame.next != 0 || frame.release_all {
             return false;
         }
         for event in &frame.events {
@@ -435,10 +491,9 @@ impl InputState {
     fn drop_pending_keyups(&mut self, code: u16) {
         let mut index = 0;
         while index < self.pending_frames.len() {
-            let drop = self
-                .pending_frames
-                .get(index)
-                .is_some_and(|frame| frame.next == 0 && frame.has_key_up(code));
+            let drop = self.pending_frames.get(index).is_some_and(|frame| {
+                frame.next == 0 && !frame.release_all && frame.has_key_up(code)
+            });
             if !drop {
                 index += 1;
                 continue;

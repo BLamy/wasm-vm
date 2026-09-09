@@ -1,0 +1,180 @@
+{
+  "task": "E5-T15c",
+  "generatedAt": "2026-09-04T16:55:36.149Z",
+  "gitHead": "9c0060864d87ebde262182a860441eaf2eba884c",
+  "command": "node tools/verify/e5-t15c-cursor-mode-browser-smoke.mjs",
+  "base": "http://127.0.0.1:57660",
+  "url": "http://127.0.0.1:57660/?noAutoBoot=1&nosw=1&testHooks=1&jit=0#ide",
+  "browser": {
+    "name": "chromium",
+    "version": "unknown"
+  },
+  "parity": [
+    {
+      "source": "web/main.js",
+      "dist": "web/dist/main.js",
+      "sha256": "3ab7e1bee91822ab68660de6465cc256aff54ea64d4a473e765ec323e31197c1"
+    },
+    {
+      "source": "web/loader.js",
+      "dist": "web/dist/loader.js",
+      "sha256": "e36108bd764d5fab94327471d51286c8b42051278ff2e5f3a8da56508419c15e"
+    },
+    {
+      "source": "web/linux-worker.js",
+      "dist": "web/dist/linux-worker.js",
+      "sha256": "31ddce9e578df9b963843a5c0b387d3aa0e34ae35f27a22af3dde258018e7e87"
+    },
+    {
+      "source": "web/linux-worker-host.js",
+      "dist": "web/dist/linux-worker-host.js",
+      "sha256": "3e1586d97418702a9c9c1f1a82b1163001fd27f3a9bf31ef9e3b0562a66506a9"
+    },
+    {
+      "source": "web/linux-worker-protocol.js",
+      "dist": "web/dist/linux-worker-protocol.js",
+      "sha256": "bbe5065fa694b7cf9c27f61b4819132193d4c4cd4646a02634e31e898cc3dc05"
+    },
+    {
+      "source": "web/roadmap.js",
+      "dist": "web/dist/roadmap.js",
+      "sha256": "535f3b3bfd7f4affa1133b86d1da9fc08257227c2e3be766ca364c633983facf"
+    },
+    {
+      "source": "web/src/sink/cursor-controller.js",
+      "dist": "web/dist/src/sink/cursor-controller.js",
+      "sha256": "3f3505f27dca24ea5a1f5454905e4a6744f7af58803a8c609e25b7fbff3344e0"
+    },
+    {
+      "source": "web/src/sink/cursor-controller.ts",
+      "dist": "web/dist/src/sink/cursor-controller.ts",
+      "sha256": "3f3505f27dca24ea5a1f5454905e4a6744f7af58803a8c609e25b7fbff3344e0"
+    }
+  ],
+  "stages": {
+    "initial": {
+      "pointer": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "pointerLockRequested": false,
+        "heldButtons": [],
+        "wheelRemainders": {
+          "horizontal": 0,
+          "vertical": 0
+        },
+        "modeChanges": 0,
+        "pointerLockChanges": 0,
+        "reason": "state"
+      },
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "style": "",
+      "overlays": 0
+    },
+    "actions": {
+      "moved": {
+        "updateKind": "css",
+        "cssChars": 22064,
+        "cssHasDataUrl": true,
+        "cssHotspot": true,
+        "sourceUrlChars": 22046,
+        "relative": {
+          "mode": "relative",
+          "pointerLocked": false,
+          "resourceId": 7,
+          "kind": "css",
+          "width": 64,
+          "height": 64,
+          "hotX": 10,
+          "hotY": 3,
+          "overlayAttached": true,
+          "hostCursorOwned": false,
+          "hostCursorHidden": false,
+          "updates": 1,
+          "moves": 500,
+          "modeChanges": 1,
+          "transformWrites": 501,
+          "styleWrites": 3,
+          "diagnostics": 0,
+          "reason": "state"
+        },
+        "overlayAttached": true,
+        "sameSource": true,
+        "transform": "translate3d(689px, 796px, 0px)",
+        "hostCursor": "",
+        "beforeMoves": {
+          "mode": "relative",
+          "pointerLocked": false,
+          "resourceId": 7,
+          "kind": "css",
+          "width": 64,
+          "height": 64,
+          "hotX": 10,
+          "hotY": 3,
+          "overlayAttached": true,
+          "hostCursorOwned": false,
+          "hostCursorHidden": false,
+          "updates": 1,
+          "moves": 0,
+          "modeChanges": 1,
+          "transformWrites": 1,
+          "styleWrites": 3,
+          "diagnostics": 0,
+          "reason": "state"
+        }
+      },
+      "hidden": {
+        "kind": "hidden",
+        "state": {
+          "mode": "relative",
+          "pointerLocked": false,
+          "resourceId": 0,
+          "kind": "hidden",
+          "width": 0,
+          "height": 0,
+          "hotX": 0,
+          "hotY": 0,
+          "overlayAttached": false,
+          "hostCursorOwned": false,
+          "hostCursorHidden": false,
+          "updates": 2,
+          "moves": 500,
+          "modeChanges": 1,
+          "transformWrites": 501,
+          "styleWrites": 4,
+          "diagnostics": 0,
+          "reason": "state"
+        },
+        "hostCursor": "",
+        "overlays": 0
+      }
+    }
+  },
+  "errors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "screenshot": {
+    "path": "evidence/e5-t15c/cursor-mode-browser-2026-09-04.png",
+    "sha256": "bff503494b4e7cad24d9b9089676ca348f7cee8c795a23f9749f86f1d76b889b"
+  }
+}

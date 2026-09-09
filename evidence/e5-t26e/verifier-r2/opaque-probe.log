@@ -1,0 +1,6 @@
+E5-T26e safe opaque-token construction probe
+command: env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET -u RUST_LOG cargo check --offline --manifest-path evidence/e5-t26e/verifier-r2/opaque-probe/Cargo.toml
+expected exit: 101
+observed: error[E0451]: fields scanout, host_viewport and disposition of DesktopRestorePreparation are private
+observed: error[E0451]: field _private of DesktopRestoreCommit is private
+result: HELD — safe external code cannot construct either transaction token

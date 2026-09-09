@@ -1,0 +1,627 @@
+{
+  "schema": "wasm-vm.e5-t26p.artifact-index.v1",
+  "limitation": "Static compiled-code evidence only; instruction spans include any alignment listed by otool. No runtime or speed claim.",
+  "phases": {
+    "baseline": {
+      "native": {
+        "file": "artifact-baseline-d7d308a5-r2/native-probe",
+        "sha256": "fdd9c6a82272499a1d68a272c50e93799cf44b7744915b0980fb81a57a9e4913",
+        "bytes": 868936,
+        "textBytes": 490312,
+        "disassembly": "artifact-baseline-d7d308a5-r2/native-disassembly.txt",
+        "disassemblySha256": "e18483c4b43bb36f99a2019371406232723a56f694e7aa360590fc01e01b2749",
+        "functions": [
+          {
+            "name": "__ZN12wasm_vm_core4hart4Hart11step_traced17h8a6e3f3e10529840E",
+            "line": 1722,
+            "firstAddress": "0000000100002334",
+            "instructions": 115,
+            "instructionSpanBytes": 460,
+            "calls": [
+              {
+                "line": 1784,
+                "address": "0000000100002428",
+                "name": "__ZN12wasm_vm_core4hart4Hart7execute17h7e56b87b362db8d9E"
+              }
+            ]
+          },
+          {
+            "name": "__ZN12wasm_vm_core4hart4Hart7execute17h7e56b87b362db8d9E",
+            "line": 1838,
+            "firstAddress": "0000000100002500",
+            "instructions": 2222,
+            "instructionSpanBytes": 8888,
+            "calls": []
+          },
+          {
+            "name": "__ZN25retirement_capture_probes4main17hdfa9f712d448230aE",
+            "line": 4879,
+            "firstAddress": "0000000100005464",
+            "instructions": 305,
+            "instructionSpanBytes": 1220,
+            "calls": [
+              {
+                "line": 4952,
+                "address": "0000000100005584",
+                "name": "_capture_hart_unit_probe"
+              },
+              {
+                "line": 4956,
+                "address": "0000000100005594",
+                "name": "_capture_hart_record_probe"
+              },
+              {
+                "line": 5003,
+                "address": "0000000100005650",
+                "name": "_capture_machine_unit_probe"
+              },
+              {
+                "line": 5007,
+                "address": "0000000100005660",
+                "name": "_capture_machine_record_probe"
+              },
+              {
+                "line": 5053,
+                "address": "0000000100005718",
+                "name": "_capture_machine_unit_probe"
+              },
+              {
+                "line": 5057,
+                "address": "0000000100005728",
+                "name": "_capture_machine_record_probe"
+              }
+            ]
+          },
+          {
+            "name": "_capture_hart_record_probe",
+            "line": 7050,
+            "firstAddress": "00000001000075cc",
+            "instructions": 21,
+            "instructionSpanBytes": 84,
+            "calls": [
+              {
+                "line": 7061,
+                "address": "00000001000075f4",
+                "name": "__ZN12wasm_vm_core4hart4Hart11step_traced17h8a6e3f3e10529840E"
+              }
+            ]
+          },
+          {
+            "name": "_capture_hart_unit_probe",
+            "line": 7072,
+            "firstAddress": "0000000100007620",
+            "instructions": 83,
+            "instructionSpanBytes": 332,
+            "calls": [
+              {
+                "line": 7131,
+                "address": "0000000100007708",
+                "name": "__ZN12wasm_vm_core4hart4Hart7execute17h7e56b87b362db8d9E"
+              }
+            ]
+          },
+          {
+            "name": "_capture_machine_record_probe",
+            "line": 7156,
+            "firstAddress": "000000010000776c",
+            "instructions": 1115,
+            "instructionSpanBytes": 4460,
+            "calls": [
+              {
+                "line": 7761,
+                "address": "00000001000080dc",
+                "name": "__ZN12wasm_vm_core4hart4Hart11step_traced17h8a6e3f3e10529840E"
+              },
+              {
+                "line": 7804,
+                "address": "0000000100008188",
+                "name": "__ZN12wasm_vm_core4hart4Hart7execute17h7e56b87b362db8d9E"
+              }
+            ]
+          },
+          {
+            "name": "_capture_machine_unit_probe",
+            "line": 8272,
+            "firstAddress": "00000001000088d8",
+            "instructions": 15,
+            "instructionSpanBytes": 60,
+            "calls": [
+              {
+                "line": 8280,
+                "address": "00000001000088f4",
+                "name": "__ZN12wasm_vm_core7Machine3run17haf7f9d5b81fcb29eE"
+              }
+            ]
+          },
+          {
+            "name": "__ZN12wasm_vm_core4hart4Hart11step_traced17h2fa3e9613bd7e7daE",
+            "line": 34205,
+            "firstAddress": "0000000100021c58",
+            "instructions": 78,
+            "instructionSpanBytes": 312,
+            "calls": [
+              {
+                "line": 34262,
+                "address": "0000000100021d38",
+                "name": "__ZN12wasm_vm_core4hart4Hart7execute17h136fbd3eb1c0d9b8E"
+              }
+            ]
+          },
+          {
+            "name": "__ZN12wasm_vm_core4hart4Hart7execute17h136fbd3eb1c0d9b8E",
+            "line": 34393,
+            "firstAddress": "0000000100021f3c",
+            "instructions": 2242,
+            "instructionSpanBytes": 8968,
+            "calls": []
+          },
+          {
+            "name": "__ZN12wasm_vm_core7Machine3run17haf7f9d5b81fcb29eE",
+            "line": 43971,
+            "firstAddress": "000000010002b474",
+            "instructions": 1612,
+            "instructionSpanBytes": 6448,
+            "calls": [
+              {
+                "line": 44794,
+                "address": "000000010002c14c",
+                "name": "__ZN12wasm_vm_core4hart4Hart11step_traced17h2fa3e9613bd7e7daE"
+              },
+              {
+                "line": 45020,
+                "address": "000000010002c4d4",
+                "name": "__ZN12wasm_vm_core4hart4Hart7execute17h136fbd3eb1c0d9b8E"
+              }
+            ]
+          }
+        ]
+      },
+      "wasm": {
+        "file": "baseline/release-web.wasm",
+        "sha256": "20f58e0d44cc94f9d0629478789680e4a87345ba800162aa0737ddc763bfd238",
+        "bytes": 1549483,
+        "codeSectionBytes": 1335611,
+        "disassembly": "release-baseline-d7d308a5/disassembly.txt",
+        "disassemblySha256": "6679f8e78da9ce9f6f466071b5e531d351a9638ea43f785b836ab6fc5b7183e0",
+        "functions": [
+          {
+            "name": "wasm_vm_core::hart::Hart::execute::h9beed47c93832292",
+            "index": 174,
+            "line": 9553,
+            "body": {
+              "fileOffset": 39096,
+              "bytes": 15417,
+              "sha256": "e9fac3890f3e333f285130ba1ad8a8e78749ce7a40d77fa98df05b184389f66f"
+            },
+            "calls": []
+          },
+          {
+            "name": "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81",
+            "index": 175,
+            "line": 17003,
+            "body": {
+              "fileOffset": 54515,
+              "bytes": 13305,
+              "sha256": "3437c1bed12e070c9967e72018a7a50497eb4ab3cd3688033e1ce76525742b22"
+            },
+            "calls": []
+          },
+          {
+            "name": "wasm_vm_core::Machine::run::h1d0301301e6e0ec4",
+            "index": 182,
+            "line": 64873,
+            "body": {
+              "fileOffset": 153871,
+              "bytes": 9142,
+              "sha256": "93d4f2972d93b448efb0a2ef2a94b4ae5fe05e715ea3906a715ded78a665c315"
+            },
+            "calls": [
+              {
+                "line": 67739,
+                "address": "02704a",
+                "name": "wasm_vm_core::hart::Hart::execute::h9beed47c93832292"
+              },
+              {
+                "line": 68021,
+                "address": "0272c0",
+                "name": "wasm_vm_core::hart::Hart::execute::h9beed47c93832292"
+              }
+            ]
+          },
+          {
+            "name": "wasm_vm_core::Machine::run_traced::h8acd36b9f8281a69",
+            "index": 190,
+            "line": 117651,
+            "body": {
+              "fileOffset": 262327,
+              "bytes": 5319,
+              "sha256": "928ebca35d161388f3398b9e7ee2a8b9994d930283e8c4c8864c268fdd6bfe55"
+            },
+            "calls": [
+              {
+                "line": 119122,
+                "address": "040ce9",
+                "name": "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81"
+              },
+              {
+                "line": 119367,
+                "address": "040f0b",
+                "name": "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81"
+              }
+            ]
+          },
+          {
+            "name": "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b",
+            "index": 192,
+            "line": 122440,
+            "body": {
+              "fileOffset": 272043,
+              "bytes": 4923,
+              "sha256": "64b389126cf5bbb3ad7bde18beecdcee6e5c33e2ebfb2aa0797fb4f68a80f505"
+            },
+            "calls": [
+              {
+                "line": 123945,
+                "address": "043319",
+                "name": "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81"
+              },
+              {
+                "line": 124098,
+                "address": "043463",
+                "name": "wasm_vm_core::hart::Hart::execute::h8a6da61cfda5db81"
+              }
+            ]
+          },
+          {
+            "name": "wasm_vm_wasm::WasmLinux::run_chunk::h07405c1400974665",
+            "index": 266,
+            "line": 261307,
+            "body": {
+              "fileOffset": 559479,
+              "bytes": 2482,
+              "sha256": "ec21773b85d1c8ea87968a95d8e77c32785e39e69e42021ef227044139a289ec"
+            },
+            "calls": [
+              {
+                "line": 261710,
+                "address": "088cd3",
+                "name": "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b"
+              },
+              {
+                "line": 261722,
+                "address": "088ce9",
+                "name": "wasm_vm_core::Machine::run_traced::hfd8275d83dd0f97b"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "candidate": {
+      "native": {
+        "file": "artifact-candidate-d7d308a5-r1/native-probe",
+        "sha256": "53d3793e0d03808ea646113cf577e0397d1d7a1248d0b521eb095a9f02155215",
+        "bytes": 885768,
+        "textBytes": 497424,
+        "disassembly": "artifact-candidate-d7d308a5-r1/native-disassembly.txt",
+        "disassemblySha256": "9b806f69c604a7716166c61fdaad92e5dd4e136861668b31cc4f4c41f93d4f6b",
+        "functions": [
+          {
+            "name": "__ZN12wasm_vm_core4hart4Hart17step_with_capture17h554b26f86291c404E",
+            "line": 1722,
+            "firstAddress": "0000000100002334",
+            "instructions": 76,
+            "instructionSpanBytes": 304,
+            "calls": [
+              {
+                "line": 1778,
+                "address": "0000000100002410",
+                "name": "__ZN12wasm_vm_core4hart4Hart7execute17h18e7948cbcf78d24E"
+              }
+            ]
+          },
+          {
+            "name": "__ZN12wasm_vm_core4hart4Hart17step_with_capture17h97b87f7b6584463cE",
+            "line": 1799,
+            "firstAddress": "0000000100002464",
+            "instructions": 117,
+            "instructionSpanBytes": 468,
+            "calls": [
+              {
+                "line": 1862,
+                "address": "000000010000255c",
+                "name": "__ZN12wasm_vm_core4hart4Hart7execute17h7bb8b758bc135fbaE"
+              }
+            ]
+          },
+          {
+            "name": "__ZN12wasm_vm_core4hart4Hart7execute17h18e7948cbcf78d24E",
+            "line": 1917,
+            "firstAddress": "0000000100002638",
+            "instructions": 1957,
+            "instructionSpanBytes": 7828,
+            "calls": []
+          },
+          {
+            "name": "__ZN12wasm_vm_core4hart4Hart7execute17h7bb8b758bc135fbaE",
+            "line": 3875,
+            "firstAddress": "00000001000044cc",
+            "instructions": 2300,
+            "instructionSpanBytes": 9200,
+            "calls": []
+          },
+          {
+            "name": "__ZN25retirement_capture_probes4main17h4b4631791766101bE",
+            "line": 6994,
+            "firstAddress": "0000000100007568",
+            "instructions": 305,
+            "instructionSpanBytes": 1220,
+            "calls": [
+              {
+                "line": 7067,
+                "address": "0000000100007688",
+                "name": "_capture_hart_unit_probe"
+              },
+              {
+                "line": 7071,
+                "address": "0000000100007698",
+                "name": "_capture_hart_record_probe"
+              },
+              {
+                "line": 7118,
+                "address": "0000000100007754",
+                "name": "_capture_machine_unit_probe"
+              },
+              {
+                "line": 7122,
+                "address": "0000000100007764",
+                "name": "_capture_machine_record_probe"
+              },
+              {
+                "line": 7168,
+                "address": "000000010000781c",
+                "name": "_capture_machine_unit_probe"
+              },
+              {
+                "line": 7172,
+                "address": "000000010000782c",
+                "name": "_capture_machine_record_probe"
+              }
+            ]
+          },
+          {
+            "name": "_capture_hart_record_probe",
+            "line": 9165,
+            "firstAddress": "00000001000096d0",
+            "instructions": 25,
+            "instructionSpanBytes": 100,
+            "calls": [
+              {
+                "line": 9180,
+                "address": "0000000100009708",
+                "name": "__ZN12wasm_vm_core4hart4Hart17step_with_capture17h97b87f7b6584463cE"
+              }
+            ]
+          },
+          {
+            "name": "_capture_hart_unit_probe",
+            "line": 9191,
+            "firstAddress": "0000000100009734",
+            "instructions": 13,
+            "instructionSpanBytes": 52,
+            "calls": [
+              {
+                "line": 9198,
+                "address": "000000010000974c",
+                "name": "__ZN12wasm_vm_core4hart4Hart17step_with_capture17h554b26f86291c404E"
+              }
+            ]
+          },
+          {
+            "name": "_capture_machine_record_probe",
+            "line": 9205,
+            "firstAddress": "0000000100009768",
+            "instructions": 1128,
+            "instructionSpanBytes": 4512,
+            "calls": [
+              {
+                "line": 9821,
+                "address": "000000010000a104",
+                "name": "__ZN12wasm_vm_core4hart4Hart17step_with_capture17h97b87f7b6584463cE"
+              },
+              {
+                "line": 9865,
+                "address": "000000010000a1b4",
+                "name": "__ZN12wasm_vm_core4hart4Hart7execute17h7bb8b758bc135fbaE"
+              }
+            ]
+          },
+          {
+            "name": "_capture_machine_unit_probe",
+            "line": 10334,
+            "firstAddress": "000000010000a908",
+            "instructions": 15,
+            "instructionSpanBytes": 60,
+            "calls": [
+              {
+                "line": 10342,
+                "address": "000000010000a924",
+                "name": "__ZN12wasm_vm_core7Machine3run17hbdf89693be93c29fE"
+              }
+            ]
+          },
+          {
+            "name": "__ZN12wasm_vm_core4hart4Hart17step_with_capture17h23b5b01d5e4f6d65E",
+            "line": 36312,
+            "firstAddress": "0000000100023d38",
+            "instructions": 76,
+            "instructionSpanBytes": 304,
+            "calls": [
+              {
+                "line": 36368,
+                "address": "0000000100023e14",
+                "name": "__ZN12wasm_vm_core4hart4Hart7execute17ha20e3ca6d1178e46E"
+              }
+            ]
+          },
+          {
+            "name": "__ZN12wasm_vm_core4hart4Hart7execute17ha20e3ca6d1178e46E",
+            "line": 36453,
+            "firstAddress": "0000000100023f64",
+            "instructions": 1972,
+            "instructionSpanBytes": 7888,
+            "calls": []
+          },
+          {
+            "name": "__ZN12wasm_vm_core7Machine3run17hbdf89693be93c29fE",
+            "line": 45761,
+            "firstAddress": "000000010002d064",
+            "instructions": 1602,
+            "instructionSpanBytes": 6408,
+            "calls": [
+              {
+                "line": 46589,
+                "address": "000000010002dd50",
+                "name": "__ZN12wasm_vm_core4hart4Hart17step_with_capture17h23b5b01d5e4f6d65E"
+              },
+              {
+                "line": 46719,
+                "address": "000000010002df58",
+                "name": "__ZN12wasm_vm_core4hart4Hart7execute17ha20e3ca6d1178e46E"
+              }
+            ]
+          }
+        ]
+      },
+      "wasm": {
+        "file": "production-candidate-r1/release-web.wasm",
+        "sha256": "a3ce02529ae2e6ec175066f4c838451ca7d1472b5f6bd2f5b2d5cbff805c8b42",
+        "bytes": 1555346,
+        "codeSectionBytes": 1341461,
+        "disassembly": "release-candidate-r1/disassembly.txt",
+        "disassemblySha256": "55e2f09fb4bb3c5b2c1e67d38daf855f4109127a2037b91da1247083d50d7b6d",
+        "functions": [
+          {
+            "name": "wasm_vm_core::hart::Hart::execute::h47da1d43a6586cc3",
+            "index": 174,
+            "line": 9550,
+            "body": {
+              "fileOffset": 39076,
+              "bytes": 13907,
+              "sha256": "bee720771c9e7de1109274d2ddff531290501a8b276b5d9d47f19983afee7d2f"
+            },
+            "calls": []
+          },
+          {
+            "name": "wasm_vm_core::hart::Hart::execute::h4b7b710127400de2",
+            "index": 175,
+            "line": 16228,
+            "body": {
+              "fileOffset": 52985,
+              "bytes": 14649,
+              "sha256": "beba676d73a5011a0de5ba5d2461942c14d12ff07fe9cd64d31ef742c186d1aa"
+            },
+            "calls": []
+          },
+          {
+            "name": "wasm_vm_core::hart::Hart::execute::h861df31a89e6a3d5",
+            "index": 176,
+            "line": 23320,
+            "body": {
+              "fileOffset": 67636,
+              "bytes": 12480,
+              "sha256": "1727fcdd9bfee11d15c69e69b72d54db80a811d8e477f32ea4b4f91bf01d41f6"
+            },
+            "calls": []
+          },
+          {
+            "name": "wasm_vm_core::Machine::run::hb3a70af4514667f1",
+            "index": 183,
+            "line": 70361,
+            "body": {
+              "fileOffset": 165313,
+              "bytes": 9136,
+              "sha256": "18cefafa12fde5b26f2ece6e3a7e00c9c6862c18ace7bde6d7e8695530778ef9"
+            },
+            "calls": [
+              {
+                "line": 73274,
+                "address": "029d67",
+                "name": "wasm_vm_core::hart::Hart::execute::h4b7b710127400de2"
+              },
+              {
+                "line": 73509,
+                "address": "029f71",
+                "name": "wasm_vm_core::hart::Hart::execute::h4b7b710127400de2"
+              }
+            ]
+          },
+          {
+            "name": "wasm_vm_core::Machine::run_with_capture::h6c49a018eead55d8",
+            "index": 187,
+            "line": 92558,
+            "body": {
+              "fileOffset": 211276,
+              "bytes": 9270,
+              "sha256": "85dd54980e67f0332f501f87c9c33ee91a4f3d2f5438e9ef29df0f6d4732441c"
+            },
+            "calls": [
+              {
+                "line": 95256,
+                "address": "034f2c",
+                "name": "wasm_vm_core::hart::Hart::execute::h47da1d43a6586cc3"
+              },
+              {
+                "line": 95428,
+                "address": "0350be",
+                "name": "wasm_vm_core::hart::Hart::execute::h861df31a89e6a3d5"
+              },
+              {
+                "line": 95583,
+                "address": "035218",
+                "name": "wasm_vm_core::hart::Hart::execute::h47da1d43a6586cc3"
+              },
+              {
+                "line": 95865,
+                "address": "03549a",
+                "name": "wasm_vm_core::hart::Hart::execute::h861df31a89e6a3d5"
+              }
+            ]
+          },
+          {
+            "name": "wasm_vm_wasm::WasmLinux::run_chunk::h07405c1400974665",
+            "index": 269,
+            "line": 267647,
+            "body": {
+              "fileOffset": 572508,
+              "bytes": 2474,
+              "sha256": "254fd896d3a8c3b6baf9f2dd54f0e1d186786ee19b44cb0f7cddd294e9d754f2"
+            },
+            "calls": [
+              {
+                "line": 268050,
+                "address": "08bfb7",
+                "name": "wasm_vm_core::Machine::run::hb3a70af4514667f1"
+              },
+              {
+                "line": 268062,
+                "address": "08bfcd",
+                "name": "wasm_vm_core::Machine::run::hb3a70af4514667f1"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "deltas": {
+    "native": {
+      "wholeArtifactBytes": 16832,
+      "codeBytes": 7112
+    },
+    "wasm": {
+      "wholeArtifactBytes": 5863,
+      "codeBytes": 5850
+    }
+  }
+}

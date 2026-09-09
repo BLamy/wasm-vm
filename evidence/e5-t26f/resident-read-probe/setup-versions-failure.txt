@@ -1,0 +1,22 @@
+BusyBox v1.36.1 (2025-11-23 14:32:18 UTC) multi-call binary.
+Error loading shared library libdw.so.1: No such file or directory (needed by /usr/bin/strace)
+Error relocating /usr/bin/strace: dwfl_frame_thread: symbol not found
+Error relocating /usr/bin/strace: dwfl_thread_dwfl: symbol not found
+Error relocating /usr/bin/strace: dwfl_module_getsrc: symbol not found
+Error relocating /usr/bin/strace: dwfl_report_end: symbol not found
+Error relocating /usr/bin/strace: dwfl_standard_find_debuginfo: symbol not found
+Error relocating /usr/bin/strace: dwfl_frame_pc: symbol not found
+Error relocating /usr/bin/strace: dwfl_errmsg: symbol not found
+Error relocating /usr/bin/strace: dwfl_linux_proc_report: symbol not found
+Error relocating /usr/bin/strace: dwfl_lineinfo: symbol not found
+Error relocating /usr/bin/strace: dwfl_begin: symbol not found
+Error relocating /usr/bin/strace: dwfl_module_info: symbol not found
+Error relocating /usr/bin/strace: dwfl_module_addrinfo: symbol not found
+Error relocating /usr/bin/strace: dwfl_addrmodule: symbol not found
+Error relocating /usr/bin/strace: dwfl_linux_proc_find_elf: symbol not found
+Error relocating /usr/bin/strace: dwfl_linux_proc_attach: symbol not found
+Error relocating /usr/bin/strace: dwfl_getthread_frames: symbol not found
+Error relocating /usr/bin/strace: dwfl_end: symbol not found
+Error relocating /usr/bin/strace: dwfl_module_relocate_address: symbol not found
+Error relocating /usr/bin/strace: dwfl_linux_proc_find_elf: symbol not found
+Error relocating /usr/bin/strace: dwfl_standard_find_debuginfo: symbol not found

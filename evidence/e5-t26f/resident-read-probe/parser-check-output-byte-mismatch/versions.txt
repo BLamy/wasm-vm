@@ -1,0 +1,11 @@
+BusyBox v1.36.1 (2025-11-23 14:32:18 UTC) multi-call binary.
+strace -- version 6.9
+Copyright (c) 1991-2024 The strace developers <https://strace.io>.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Optional features enabled: stack-trace=libdw stack-demangle no-m32-mpers
+Linux 063cded6ff36 6.8.0-117-generic #117-Ubuntu SMP PREEMPT_DYNAMIC Thu May  7 17:26:37 UTC 2026 aarch64 Linux
+b9d035e89b4c0575872bade852c34ccc5a4a1ee4bdd105bb445eb16c9aeba1ba  /bin/busybox
+8d7b13d30761a08476806783409072471de9dbf24e2bc90b973bc592204a3352  /usr/bin/strace
+ff640c09cf2ef4fb4ef3713b0ab03403ff9d82ff5b48f93d94610df3779ad80b  /work/run.sh

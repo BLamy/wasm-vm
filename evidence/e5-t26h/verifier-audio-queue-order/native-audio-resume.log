@@ -1,0 +1,245 @@
+^D    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/desktop_machine_audio_resume.rs (target/debug/deps/desktop_machine_audio_resume-f2d6e0d1632a19bd)
+
+running 4 tests
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-0-released-false-source.wav
+envelope-true-rx-false-frames-480-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-0-released-false-source.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-false-source.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-false-source.wav
+envelope-false-rx-false-frames-480-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+envelope-true-rx-true-frames-480-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+envelope-false-rx-true-frames-480-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+
+thread 'fresh_pcm_sink_after_whole_machine_and_desktop_envelope_restore' (15384616) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'strict_fresh_machine_pcm_sink_after_whole_machine_resume' (15384617) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-0-released-true-source.wav
+envelope-true-rx-false-frames-480-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-0-released-true-source.wav
+envelope-false-rx-false-frames-480-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-false-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15384615) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-false-fresh.wav
+
+thread 'configured_unused_rx_preserves_pcm_through_desktop_envelope_too' (15384614) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-true-source.wav
+envelope-true-rx-true-frames-480-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-true-source.wav
+envelope-false-rx-true-frames-480-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+
+thread 'fresh_pcm_sink_after_whole_machine_and_desktop_envelope_restore' (15384616) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+
+thread 'strict_fresh_machine_pcm_sink_after_whole_machine_resume' (15384617) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-3600000000000-released-false-source.wav
+envelope-true-rx-false-frames-480-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-3600000000000-released-false-source.wav
+envelope-false-rx-false-frames-480-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-true-fresh.wav
+
+thread 'configured_unused_rx_preserves_pcm_through_desktop_envelope_too' (15384614) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-true-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15384615) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+
+thread 'fresh_pcm_sink_after_whole_machine_and_desktop_envelope_restore' (15384616) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+
+thread 'strict_fresh_machine_pcm_sink_after_whole_machine_resume' (15384617) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-false-source.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-false-source.wav
+envelope-false-rx-true-frames-480-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+envelope-true-rx-true-frames-480-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-3600000000000-released-true-source.wav
+envelope-true-rx-false-frames-480-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-3600000000000-released-true-source.wav
+envelope-false-rx-false-frames-480-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+
+thread 'fresh_pcm_sink_after_whole_machine_and_desktop_envelope_restore' (15384616) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+
+thread 'strict_fresh_machine_pcm_sink_after_whole_machine_resume' (15384617) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-false-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15384615) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-false-fresh.wav
+
+thread 'configured_unused_rx_preserves_pcm_through_desktop_envelope_too' (15384614) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-0-released-false-source.wav
+envelope-true-rx-false-frames-2048-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-0-released-false-source.wav
+envelope-false-rx-false-frames-2048-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-true-source.wav
+envelope-true-rx-true-frames-480-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-true-source.wav
+envelope-false-rx-true-frames-480-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+
+thread 'strict_fresh_machine_pcm_sink_after_whole_machine_resume' (15384617) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+
+thread 'fresh_pcm_sink_after_whole_machine_and_desktop_envelope_restore' (15384616) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-0-released-true-source.wav
+envelope-false-rx-false-frames-2048-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-0-released-true-source.wav
+envelope-true-rx-false-frames-2048-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-true-fresh.wav
+
+thread 'configured_unused_rx_preserves_pcm_through_desktop_envelope_too' (15384614) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-true-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15384615) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+
+thread 'strict_fresh_machine_pcm_sink_after_whole_machine_resume' (15384617) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+
+thread 'fresh_pcm_sink_after_whole_machine_and_desktop_envelope_restore' (15384616) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-false-source.wav
+envelope-true-rx-true-frames-2048-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-false-source.wav
+envelope-false-rx-true-frames-2048-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-3600000000000-released-false-source.wav
+envelope-false-rx-false-frames-2048-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-3600000000000-released-false-source.wav
+envelope-true-rx-false-frames-2048-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+
+thread 'strict_fresh_machine_pcm_sink_after_whole_machine_resume' (15384617) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+
+thread 'fresh_pcm_sink_after_whole_machine_and_desktop_envelope_restore' (15384616) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-false-fresh.wav
+
+thread 'configured_unused_rx_preserves_pcm_through_desktop_envelope_too' (15384614) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-false-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15384615) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-3600000000000-released-true-source.wav
+envelope-true-rx-false-frames-2048-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-3600000000000-released-true-source.wav
+envelope-false-rx-false-frames-2048-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-true-source.wav
+envelope-true-rx-true-frames-2048-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-true-source.wav
+envelope-false-rx-true-frames-2048-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+
+thread 'strict_fresh_machine_pcm_sink_after_whole_machine_resume' (15384617) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+
+thread 'strict_fresh_machine_pcm_sink_after_whole_machine_resume' (15384617) panicked at crates/core/tests/desktop_machine_audio_resume.rs:597:5:
+failed native PCM resume cases: [
+    "envelope-false-rx-false-frames-480-clock-0-released-false",
+    "envelope-false-rx-false-frames-480-clock-0-released-true",
+    "envelope-false-rx-false-frames-480-clock-3600000000000-released-false",
+    "envelope-false-rx-false-frames-480-clock-3600000000000-released-true",
+    "envelope-false-rx-false-frames-2048-clock-0-released-false",
+    "envelope-false-rx-false-frames-2048-clock-0-released-true",
+    "envelope-false-rx-false-frames-2048-clock-3600000000000-released-false",
+    "envelope-false-rx-false-frames-2048-clock-3600000000000-released-true",
+]
+test strict_fresh_machine_pcm_sink_after_whole_machine_resume ... FAILED
+
+thread 'fresh_pcm_sink_after_whole_machine_and_desktop_envelope_restore' (15384616) panicked at crates/core/tests/desktop_machine_audio_resume.rs:526:57:
+called `Result::unwrap()` on an `Err` value: BadComponentState { tag: 16 }
+
+thread 'fresh_pcm_sink_after_whole_machine_and_desktop_envelope_restore' (15384616) panicked at crates/core/tests/desktop_machine_audio_resume.rs:597:5:
+failed native PCM resume cases: [
+    "envelope-true-rx-false-frames-480-clock-0-released-false",
+    "envelope-true-rx-false-frames-480-clock-0-released-true",
+    "envelope-true-rx-false-frames-480-clock-3600000000000-released-false",
+    "envelope-true-rx-false-frames-480-clock-3600000000000-released-true",
+    "envelope-true-rx-false-frames-2048-clock-0-released-false",
+    "envelope-true-rx-false-frames-2048-clock-0-released-true",
+    "envelope-true-rx-false-frames-2048-clock-3600000000000-released-false",
+    "envelope-true-rx-false-frames-2048-clock-3600000000000-released-true",
+]
+test fresh_pcm_sink_after_whole_machine_and_desktop_envelope_restore ... FAILED
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-true-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15384615) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-true-fresh.wav
+
+thread 'configured_unused_rx_preserves_pcm_through_desktop_envelope_too' (15384614) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-false-source.wav
+envelope-false-rx-true-frames-2048-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-false-source.wav
+envelope-true-rx-true-frames-2048-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-false-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15384615) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-false-fresh.wav
+
+thread 'configured_unused_rx_preserves_pcm_through_desktop_envelope_too' (15384614) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-true-source.wav
+envelope-false-rx-true-frames-2048-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-true-source.wav
+envelope-true-rx-true-frames-2048-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-true-fresh.wav
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15384615) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+PCM deadline: ordinal=1 queued=2 used=1 status=0xffffffff sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/Documents/Codex/wasm-vm/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-true-fresh.wav
+
+thread 'configured_unused_rx_preserves_pcm_through_desktop_envelope_too' (15384614) panicked at crates/core/tests/desktop_machine_audio_resume.rs:423:9:
+fresh sink PCM mismatch: expected first [165, 6, 91, 249, 166, 6, 90, 249], actual first [73, 0, 183, 255, 74, 0, 182, 255]
+
+thread 'configured_unused_rx_preserves_tx_cursor_and_fresh_pcm' (15384615) panicked at crates/core/tests/desktop_machine_audio_resume.rs:597:5:
+failed native PCM resume cases: [
+    "envelope-false-rx-true-frames-480-clock-0-released-false",
+    "envelope-false-rx-true-frames-480-clock-0-released-true",
+    "envelope-false-rx-true-frames-480-clock-3600000000000-released-false",
+    "envelope-false-rx-true-frames-480-clock-3600000000000-released-true",
+    "envelope-false-rx-true-frames-2048-clock-0-released-false",
+    "envelope-false-rx-true-frames-2048-clock-0-released-true",
+    "envelope-false-rx-true-frames-2048-clock-3600000000000-released-false",
+    "envelope-false-rx-true-frames-2048-clock-3600000000000-released-true",
+]
+
+thread 'configured_unused_rx_preserves_pcm_through_desktop_envelope_too' (15384614) panicked at crates/core/tests/desktop_machine_audio_resume.rs:597:5:
+failed native PCM resume cases: [
+    "envelope-true-rx-true-frames-480-clock-0-released-false",
+    "envelope-true-rx-true-frames-480-clock-0-released-true",
+    "envelope-true-rx-true-frames-480-clock-3600000000000-released-false",
+    "envelope-true-rx-true-frames-480-clock-3600000000000-released-true",
+    "envelope-true-rx-true-frames-2048-clock-0-released-false",
+    "envelope-true-rx-true-frames-2048-clock-0-released-true",
+    "envelope-true-rx-true-frames-2048-clock-3600000000000-released-false",
+    "envelope-true-rx-true-frames-2048-clock-3600000000000-released-true",
+]
+test configured_unused_rx_preserves_tx_cursor_and_fresh_pcm ... FAILED
+test configured_unused_rx_preserves_pcm_through_desktop_envelope_too ... FAILED
+
+failures:
+
+failures:
+    configured_unused_rx_preserves_pcm_through_desktop_envelope_too
+    configured_unused_rx_preserves_tx_cursor_and_fresh_pcm
+    fresh_pcm_sink_after_whole_machine_and_desktop_envelope_restore
+    strict_fresh_machine_pcm_sink_after_whole_machine_resume
+
+test result: FAILED. 0 passed; 4 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+
+error: test failed, to rerun pass `-p wasm-vm-core --test desktop_machine_audio_resume`

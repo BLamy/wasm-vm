@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Host display hotplug · wasm-vm</title>
+<style>
+  body{margin:3rem auto;padding:0 1.5rem;max-width:60rem;background:#11151c;color:#e5edf8;font:16px/1.6 system-ui}
+  h1{font-size:2rem}a{color:#99bfff}label{display:inline-block;margin-right:1rem}
+  button,input,select{font:inherit;padding:.4rem;background:#222c3a;color:inherit;border:1px solid #61748e;border-radius:4px}
+  pre{background:#19212d;padding:1.5rem;white-space:pre-wrap;overflow-wrap:anywhere;min-height:12rem}#status{color:#b7dbb9}
+</style>
+<h1>Host display hotplug</h1>
+<p>This exercises the real WebAssembly GPU and browser controller using a paused, eight-byte
+RISC-V fixture. It does <strong>not</strong> boot Linux or claim compositor resizing.
+The advertised mode and actual guest scanout are reported separately.</p>
+<p><label>Controller <select id="backend"><option value="worker">Module worker</option><option value="direct">Main thread</option></select></label>
+<button id="start">Start fixture</button> <button id="stop" disabled>Stop</button></p>
+<form id="mode">
+<label>Width <input id="width" type="number" min="1" max="4095" value="1367" required></label>
+<label>Height <input id="height" type="number" min="1" max="4095" value="901" required></label>
+<button id="apply" disabled>Request preferred mode</button>
+</form>
+<p id="status" role="status">Fixture stopped.</p><pre id="stats">No device attached.</pre>
+<p>In the main demo, the same APIs are available as <code>wvmDemo.setDisplay(w,h)</code>
+and <code>wvmDemo.displayStats()</code> for the active guest.</p>
+<script type="module" src="./display-hotplug.js"></script>
+</html>

@@ -1,0 +1,245 @@
+{
+  "schema": "wasm-vm.e5-t16a.display-server-workload.v1",
+  "task": "E5-T16a",
+  "environment": "emulator",
+  "architecture": "riscv64",
+  "candidate": {
+    "id": "weston-pixman",
+    "server": "drm",
+    "wm": "weston",
+    "terminal": "foot",
+    "renderer": "pixman",
+    "clipboard": "wl-clipboard"
+  },
+  "image": {
+    "id": "alpine-rootfs.ext4",
+    "sha256": "9176a631e0b2d572f2cb87dde5a8e6916ecca60d4829afb8f1eef6045b92e382"
+  },
+  "sources": {
+    "guestInstructions": "guest-e4-minstret",
+    "uploadedBytes": "guest-t09-vm-stats-gpu-bytesUploaded",
+    "peakRssBytes": "guest-proc-status-vmHWM",
+    "idleWakeups": "guest-proc-interrupts-idle-delta",
+    "cursorqEvents": "guest-virtio-gpu-cursorq-trace"
+  },
+  "plan": {
+    "version": 1,
+    "phases": [
+      {
+        "id": "cold-start",
+        "marker": "E5T16A_COLD_START_DONE"
+      },
+      {
+        "id": "idle",
+        "marker": "E5T16A_IDLE_DONE"
+      },
+      {
+        "id": "open-terminal",
+        "marker": "E5T16A_OPEN_TERMINAL_DONE"
+      },
+      {
+        "id": "type-100",
+        "marker": "E5T16A_TYPE_100_DONE"
+      },
+      {
+        "id": "drag-300",
+        "marker": "E5T16A_DRAG_300_DONE"
+      },
+      {
+        "id": "close",
+        "marker": "E5T16A_CLOSE_DONE"
+      }
+    ],
+    "idle": {
+      "requestedMs": 1000,
+      "minimumMs": 900
+    },
+    "terminal": {
+      "openPhase": "open-terminal",
+      "closePhase": "close",
+      "typedCharacters": 100,
+      "typingText": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:;!?-_abcdefghijklmnopqrstuvwxyzABC",
+      "typingTextSha256": "1c8868568b4eea1c33a76556a1bc9acd4bf56f5c7c2f26b6cd628d61a44f9e68"
+    },
+    "drag": {
+      "phase": "drag-300",
+      "axis": "x",
+      "deltaPx": 300,
+      "from": {
+        "x": 100,
+        "y": 100
+      },
+      "to": {
+        "x": 400,
+        "y": 100
+      },
+      "steps": 30
+    }
+  },
+  "phases": [
+    {
+      "id": "cold-start",
+      "marker": "E5T16A_COLD_START_DONE",
+      "start": {
+        "wallMs": 0,
+        "guestInstructions": 0,
+        "uploadedBytes": 0,
+        "idleWakeups": 0
+      },
+      "end": {
+        "wallMs": 506129.576666,
+        "guestInstructions": 3461922505,
+        "uploadedBytes": 12288064,
+        "idleWakeups": 10365
+      },
+      "peakRssBytes": 1048576,
+      "outcome": "passed",
+      "details": {}
+    },
+    {
+      "id": "idle",
+      "marker": "E5T16A_IDLE_DONE",
+      "start": {
+        "wallMs": 506129.576666,
+        "guestInstructions": 3461922505,
+        "uploadedBytes": 12288064,
+        "idleWakeups": 10365
+      },
+      "end": {
+        "wallMs": 508982.644916,
+        "guestInstructions": 3481319143,
+        "uploadedBytes": 12288064,
+        "idleWakeups": 10792
+      },
+      "peakRssBytes": 1048576,
+      "outcome": "passed",
+      "details": {
+        "measuredMs": 2853.068250000011,
+        "requestedMs": 1000
+      }
+    },
+    {
+      "id": "open-terminal",
+      "marker": "E5T16A_OPEN_TERMINAL_DONE",
+      "start": {
+        "wallMs": 508982.644916,
+        "guestInstructions": 3481319143,
+        "uploadedBytes": 12288064,
+        "idleWakeups": 10792
+      },
+      "end": {
+        "wallMs": 670624.2172910001,
+        "guestInstructions": 4607862075,
+        "uploadedBytes": 20480064,
+        "idleWakeups": 15958
+      },
+      "peakRssBytes": 13107200,
+      "outcome": "passed",
+      "details": {
+        "compositor": "weston",
+        "renderer": "pixman",
+        "terminal": "foot"
+      }
+    },
+    {
+      "id": "type-100",
+      "marker": "E5T16A_TYPE_100_DONE",
+      "start": {
+        "wallMs": 670624.2172910001,
+        "guestInstructions": 4607862075,
+        "uploadedBytes": 20480064,
+        "idleWakeups": 15958
+      },
+      "end": {
+        "wallMs": 746551.7807080001,
+        "guestInstructions": 5142249724,
+        "uploadedBytes": 57344064,
+        "idleWakeups": 17808
+      },
+      "peakRssBytes": 18612224,
+      "outcome": "passed",
+      "details": {
+        "characters": 100,
+        "frames": 200,
+        "rejectedEvents": 0,
+        "textSha256": "1c8868568b4eea1c33a76556a1bc9acd4bf56f5c7c2f26b6cd628d61a44f9e68"
+      }
+    },
+    {
+      "id": "drag-300",
+      "marker": "E5T16A_DRAG_300_DONE",
+      "start": {
+        "wallMs": 746551.7807080001,
+        "guestInstructions": 5142249724,
+        "uploadedBytes": 57344064,
+        "idleWakeups": 17808
+      },
+      "end": {
+        "wallMs": 752792.1469159999,
+        "guestInstructions": 5184643280,
+        "uploadedBytes": 65536664,
+        "idleWakeups": 18614
+      },
+      "peakRssBytes": 18612224,
+      "outcome": "passed",
+      "details": {
+        "axis": "x",
+        "deltaPx": 300,
+        "frames": 32,
+        "rejectedEvents": 0,
+        "steps": 30
+      }
+    },
+    {
+      "id": "close",
+      "marker": "E5T16A_CLOSE_DONE",
+      "start": {
+        "wallMs": 752792.1469159999,
+        "guestInstructions": 5184643280,
+        "uploadedBytes": 65536664,
+        "idleWakeups": 18614
+      },
+      "end": {
+        "wallMs": 774433.3206249999,
+        "guestInstructions": 5332024187,
+        "uploadedBytes": 92863832,
+        "idleWakeups": 21646
+      },
+      "peakRssBytes": 1179648,
+      "outcome": "passed",
+      "details": {
+        "applicationExited": true,
+        "compositorExited": true
+      }
+    }
+  ],
+  "observations": {
+    "cursorqEvents": 0,
+    "cursorqStatus": "capability-gap: weston submitted no cursorq chain during this run",
+    "markerSequence": [
+      "E5T16A_COLD_START_DONE",
+      "E5T16A_IDLE_DONE",
+      "E5T16A_OPEN_TERMINAL_DONE",
+      "E5T16A_TYPE_100_DONE",
+      "E5T16A_DRAG_300_DONE",
+      "E5T16A_CLOSE_DONE"
+    ],
+    "errors": []
+  },
+  "summary": {
+    "guestInstructions": 5332024187,
+    "uploadedBytes": 92863832,
+    "peakRssBytes": 18612224,
+    "idleWakeups": 427,
+    "idleWakeupsPerSecond": 149.66343689815284,
+    "phaseDurationsMs": {
+      "cold-start": 506129.576666,
+      "idle": 2853.068250000011,
+      "open-terminal": 161641.57237500005,
+      "type-100": 75927.563417,
+      "drag-300": 6240.366207999876,
+      "close": 21641.173708999995
+    },
+    "typingUploadedBytes": 36864000
+  }
+}

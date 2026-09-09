@@ -1,0 +1,3 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2802 bytes @ 0x8fffb508, 256 MiB RAM
+wasm-vm: resumed 97734344 bytes from /Users/blamy/Documents/Codex/wasm-vm/target/e5-t17e/runtime/snapshot-two.bin — continuing guest
+wasm-vm: guest exited 0

@@ -1,0 +1,344 @@
+{
+  "command": "node tools/verify/e5-t26f-browser-roundtrip.mjs",
+  "config": {
+    "E5_T26F_REQUIRE_HEAD": "7da050620031145b6e76cf150a894ed2710bd5b2",
+    "E5_T26F_FIXTURE": "resident-aplay-v1",
+    "E5_T26F_DIAGNOSTIC": "create",
+    "E5_T26F_DIAGNOSTIC_PROFILE": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resident-FUBCo4",
+    "E5_T26F_DIAGNOSTIC_PORT": "61631",
+    "E5_T26F_IMAGE": "target/e5-t26f/resident-image-2ae65408-a/alpine-rootfs.ext4",
+    "E5_T26F_IMAGE_INFO": "target/e5-t26f/resident-image-2ae65408-a/desktop-info.json",
+    "E5_T26F_DESKTOP_ASSET_DIR": "target/e5-t26f/chunks/resident-2ae65408",
+    "E5_T26F_TIMEOUT_MS": "1200000",
+    "E5_T26F_OUT": "evidence/e5-t26f/resident-cold-7da05062"
+  }
+}
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T09:14:23.665Z","elapsedMs":0}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-08T09:14:23.984Z","elapsedMs":319}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-08T09:14:23.984Z","elapsedMs":319}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-08T09:14:25.975Z","elapsedMs":2310}
+[e5-t26f] {"phase":"browser:initial-load","event":"start","timestamp":"2026-09-08T09:14:25.975Z","elapsedMs":2310}
+[e5-t26f] {"phase":"browser:initial-load","event":"done","timestamp":"2026-09-08T09:14:26.143Z","elapsedMs":2478}
+[e5-t26f] {"phase":"readiness:initial desktop ready","event":"start","timestamp":"2026-09-08T09:14:26.143Z","elapsedMs":2478}
+[e5-t26f] {"timestamp":"2026-09-08T09:14:55.977Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"nit as init process\r\n\r\n   OpenRC 0.54 is starting up Linux 6.6.63 (riscv64)\r\n\r\n * Mounting /proc ... [ ok ]\r\n * Mounting /run ... [ ok ]\r\n * /run/openrc: creating directory\r\n * /run/lock: creating directory\r\n * /run/lock: correcting owner\r\n","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":773158,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:15:25.978Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":0,"ready":null,"restored":null,"status":"linux: booting","serialTail":"reating directory\r\n * /run/lock: correcting owner\r\n * Caching service dependencies ... [ ok ]\r\n * Remounting devtmpfs on /dev ... [ ok ]\r\n * Mounting /dev/mqueue ... [ ok ]\r\n * Mounting /dev/pts ... [ ok ]\r\n * Mounting /dev/shm ... [ ok ]\r\n","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":1549990,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:15:55.979Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"]\r\n * Mounting security filesystem ... [ ok ]\r\n * Mounting debug filesystem ... [ ok ]\r\n * Starting udev ... [ ok ]\r\n * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ...","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":2326182,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:16:25.981Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":" ok ]\r\n * Mounting debug filesystem ... [ ok ]\r\n * Starting udev ... [ ok ]\r\n * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ... [ ok ]\r\n * Loading hardware drivers ...","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":3102246,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:16:55.983Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":" ok ]\r\n * Mounting debug filesystem ... [ ok ]\r\n * Starting udev ... [ ok ]\r\n * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ... [ ok ]\r\n * Loading hardware drivers ...","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":3878182,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:17:25.985Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":" ok ]\r\n * Mounting debug filesystem ... [ ok ]\r\n * Starting udev ... [ ok ]\r\n * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ... [ ok ]\r\n * Loading hardware drivers ...","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":4653478,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:17:55.988Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"ware clock [UTC] ...hwclock: select() to /dev/rtc0 to wait for clock tick timed out\r\n * Failed to set the system clock\r\n [ !! ]\r\n * Checking local filesystems  ... [ ok ]\r\n * Remounting filesystems ... [ ok ]\r\n * Activating swap devices ...","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":5430054,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:18:25.990Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":0,"ready":null,"restored":null,"status":"linux: booting","serialTail":"ser login records ... [ ok ]\r\n * Cleaning /tmp directory ... [ ok ]\r\n * Setting hostname ... [ ok ]\r\n * Seeding random number generator ... * Saving 256 bits of creditable seed for next boot\r\n [ ok ]\r\n * Starting busybox syslog ... [ ok ]\r\n","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":6206374,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:18:55.993Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"table seed for next boot\r\n [ ok ]\r\n * Starting busybox syslog ... [ ok ]\r\n * Starting seatd ... [ ok ]\r\n * Waiting for uevents to be processed ... [ ok ]\r\n * Starting networking ... *   lo ... [ ok ]\r\n *   eth0 ...udhcpc: started, v1.36.1\r\n","frameCount":4,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":0,"bytesSent":0,"pendingBytes":0},"presentation":{"successfulPresents":4,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":6983206,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:19:25.995Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":13,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":18,"bytesSent":0,"pendingBytes":18},"presentation":{"successfulPresents":13,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":7758886,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:19:55.997Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":14,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":18,"bytesSent":0,"pendingBytes":18},"presentation":{"successfulPresents":14,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":8534182,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:20:25.999Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":14,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":18,"bytesSent":0,"pendingBytes":18},"presentation":{"successfulPresents":14,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":9313446,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:20:56.000Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":14,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":18,"bytesSent":0,"pendingBytes":18},"presentation":{"successfulPresents":14,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":10088742,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:21:26.004Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":2,"ready":null,"restored":null,"status":"linux: booting","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":14,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":18,"bytesSent":0,"pendingBytes":18},"presentation":{"successfulPresents":14,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":10864294,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:21:56.004Z","phase":"readiness:initial desktop ready","event":"sample","probeMs":1,"ready":null,"restored":null,"status":"linux: booting","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":18,"pointerFrames":0,"keyboardFrames":0,"launch":null,"command":null,"focus":null,"agent":{"state":"idle","transportGeneration":0,"bytesReceived":18,"bytesSent":0,"pendingBytes":18},"presentation":{"successfulPresents":18,"scheduler":null},"audio":{"policy":"locked","context":"suspended","renderedFrames":11639846,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"phase":"readiness:initial desktop ready","event":"done","timestamp":"2026-09-08T09:22:08.459Z","elapsedMs":464794}
+[e5-t26f] {"phase":"launch:e5-t26f-terminal-1","event":"start","timestamp":"2026-09-08T09:22:10.474Z","elapsedMs":466809}
+[e5-t26f] {"timestamp":"2026-09-08T09:22:26.006Z","phase":"launch:e5-t26f-terminal-1","event":"sample","probeMs":1,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":26,"pointerFrames":3,"keyboardFrames":0,"launch":{"label":"e5-t26f-terminal-1","marker":null,"accepted":null,"terminalRendered":false,"terminalMarkerSeen":null,"visualDiffPixels":365,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"command":null,"focus":null,"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":26,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":12730534,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:22:56.008Z","phase":"launch:e5-t26f-terminal-1","event":"sample","probeMs":1,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":29,"pointerFrames":3,"keyboardFrames":0,"launch":{"label":"e5-t26f-terminal-1","marker":null,"accepted":null,"terminalRendered":false,"terminalMarkerSeen":null,"visualDiffPixels":344179,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"command":null,"focus":null,"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":29,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":14170918,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"phase":"launch:e5-t26f-terminal-1","event":"done","timestamp":"2026-09-08T09:22:56.096Z","elapsedMs":512431}
+[e5-t26f] {"phase":"focus:terminal-1","event":"start","timestamp":"2026-09-08T09:22:56.096Z","elapsedMs":512431}
+[e5-t26f] {"phase":"focus:terminal-1:first-settle","event":"start","timestamp":"2026-09-08T09:22:57.261Z","elapsedMs":513596}
+[e5-t26f] {"timestamp":"2026-09-08T09:23:26.009Z","phase":"focus:terminal-1:first-settle","event":"sample","probeMs":1,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":34,"pointerFrames":6,"keyboardFrames":0,"launch":{"label":"e5-t26f-terminal-1","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":344187,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":null,"focus":{"label":"terminal-1","marker":null,"accepted":null,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":34,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":15610918,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:23:56.011Z","phase":"focus:terminal-1:first-settle","event":"sample","probeMs":0,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":34,"pointerFrames":6,"keyboardFrames":0,"launch":{"label":"e5-t26f-terminal-1","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":344187,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":null,"focus":{"label":"terminal-1","marker":null,"accepted":null,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":34,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":17051046,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"phase":"focus:terminal-1:first-settle","event":"done","timestamp":"2026-09-08T09:23:57.264Z","elapsedMs":573599}
+[e5-t26f] {"phase":"focus:terminal-1:second-settle","event":"start","timestamp":"2026-09-08T09:23:58.476Z","elapsedMs":574811}
+[e5-t26f] {"timestamp":"2026-09-08T09:24:26.014Z","phase":"focus:terminal-1:second-settle","event":"sample","probeMs":1,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":36,"pointerFrames":9,"keyboardFrames":0,"launch":{"label":"e5-t26f-terminal-1","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":344187,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":null,"focus":{"label":"terminal-1","marker":null,"accepted":null,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":36,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":18491046,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"phase":"focus:terminal-1:second-settle","event":"done","timestamp":"2026-09-08T09:24:28.477Z","elapsedMs":604812}
+[e5-t26f] {"phase":"focus:terminal-1","event":"done","timestamp":"2026-09-08T09:24:28.479Z","elapsedMs":604814}
+[e5-t26f] {"phase":"command:e5t26f-shell-ok:typing","event":"start","timestamp":"2026-09-08T09:24:28.479Z","elapsedMs":604814}
+[e5-t26f] {"phase":"command:e5t26f-shell-ok:typing","event":"done","timestamp":"2026-09-08T09:24:38.792Z","elapsedMs":615127}
+[e5-t26f] {"phase":"command:e5t26f-shell-ok:completion","event":"start","timestamp":"2026-09-08T09:24:38.792Z","elapsedMs":615127}
+[e5-t26f] {"phase":"command:e5t26f-shell-ok:completion","event":"done","timestamp":"2026-09-08T09:24:39.332Z","elapsedMs":615667}
+[e5-t26f] {"phase":"agent:agent channel ready","event":"start","timestamp":"2026-09-08T09:24:39.333Z","elapsedMs":615668}
+[e5-t26f] {"phase":"agent:agent channel ready","event":"done","timestamp":"2026-09-08T09:24:39.334Z","elapsedMs":615669}
+[e5-t26f] {"phase":"command:e5t26f-aplay-ok:typing","event":"start","timestamp":"2026-09-08T09:24:39.334Z","elapsedMs":615669}
+[e5-t26f] {"timestamp":"2026-09-08T09:24:56.021Z","phase":"command:e5t26f-aplay-ok:typing","event":"sample","probeMs":5,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":134,"pointerFrames":9,"keyboardFrames":266,"launch":{"label":"e5-t26f-terminal-1","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":344187,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":{"label":null,"marker":"e5t26f-aplay-ok","accepted":null,"terminalRendered":null,"terminalMarkerSeen":false,"visualDiffPixels":1665,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"focus":{"label":"terminal-1","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":6,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":134,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":19931430,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"phase":"command:e5t26f-aplay-ok:typing","event":"done","timestamp":"2026-09-08T09:25:25.590Z","elapsedMs":661925}
+[e5-t26f] {"phase":"command:e5t26f-aplay-ok:completion","event":"start","timestamp":"2026-09-08T09:25:25.590Z","elapsedMs":661925}
+[e5-t26f] {"timestamp":"2026-09-08T09:25:26.019Z","phase":"command:e5t26f-aplay-ok:completion","event":"sample","probeMs":1,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":251,"pointerFrames":9,"keyboardFrames":556,"launch":{"label":"e5-t26f-terminal-1","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":344187,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":{"label":null,"marker":"e5t26f-aplay-ok","accepted":null,"terminalRendered":null,"terminalMarkerSeen":false,"visualDiffPixels":4404,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"focus":{"label":"terminal-1","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":6,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":251,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":21371430,"pcm":{"available":true,"writeIndex":0,"readIndex":0,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":0,"maxAbs":0}}}
+[e5-t26f] {"phase":"command:e5t26f-aplay-ok:completion","event":"done","timestamp":"2026-09-08T09:25:28.864Z","elapsedMs":665199}
+[e5-t26f] {"phase":"launch:e5-t26f-terminal-2","event":"start","timestamp":"2026-09-08T09:25:28.914Z","elapsedMs":665249}
+[e5-t26f] {"timestamp":"2026-09-08T09:25:56.022Z","phase":"launch:e5-t26f-terminal-2","event":"sample","probeMs":1,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":263,"pointerFrames":12,"keyboardFrames":556,"launch":{"label":"e5-t26f-terminal-2","marker":null,"accepted":null,"terminalRendered":false,"terminalMarkerSeen":null,"visualDiffPixels":451,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"command":{"label":null,"marker":"e5t26f-aplay-ok","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":7628,"guestVisible":null,"pointerFrames":null,"keyboardFrames":454},"focus":{"label":"terminal-1","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":true,"pointerFrames":6,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":263,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":22811046,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":960,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"phase":"launch:e5-t26f-terminal-2","event":"done","timestamp":"2026-09-08T09:26:13.257Z","elapsedMs":709592}
+[e5-t26f] {"phase":"focus:terminal-2","event":"start","timestamp":"2026-09-08T09:26:13.257Z","elapsedMs":709592}
+[e5-t26f] {"phase":"focus:terminal-2:first-settle","event":"start","timestamp":"2026-09-08T09:26:14.321Z","elapsedMs":710656}
+[e5-t26f] {"timestamp":"2026-09-08T09:26:26.025Z","phase":"focus:terminal-2:first-settle","event":"sample","probeMs":2,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":270,"pointerFrames":15,"keyboardFrames":556,"launch":{"label":"e5-t26f-terminal-2","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":297920,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":{"label":null,"marker":"e5t26f-aplay-ok","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":7628,"guestVisible":null,"pointerFrames":null,"keyboardFrames":454},"focus":{"label":"terminal-2","marker":null,"accepted":null,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":270,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":24251558,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":960,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"timestamp":"2026-09-08T09:26:56.027Z","phase":"focus:terminal-2:first-settle","event":"sample","probeMs":2,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":272,"pointerFrames":15,"keyboardFrames":556,"launch":{"label":"e5-t26f-terminal-2","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":297920,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":{"label":null,"marker":"e5t26f-aplay-ok","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":7628,"guestVisible":null,"pointerFrames":null,"keyboardFrames":454},"focus":{"label":"terminal-2","marker":null,"accepted":null,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":272,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":25691430,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":960,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"phase":"focus:terminal-2:first-settle","event":"done","timestamp":"2026-09-08T09:27:14.324Z","elapsedMs":770659}
+[e5-t26f] {"phase":"focus:terminal-2:second-settle","event":"start","timestamp":"2026-09-08T09:27:15.538Z","elapsedMs":771873}
+[e5-t26f] {"timestamp":"2026-09-08T09:27:26.029Z","phase":"focus:terminal-2:second-settle","event":"sample","probeMs":1,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":274,"pointerFrames":18,"keyboardFrames":556,"launch":{"label":"e5-t26f-terminal-2","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":297920,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":{"label":null,"marker":"e5t26f-aplay-ok","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":7628,"guestVisible":null,"pointerFrames":null,"keyboardFrames":454},"focus":{"label":"terminal-2","marker":null,"accepted":null,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":274,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":27131302,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":960,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"phase":"focus:terminal-2:second-settle","event":"done","timestamp":"2026-09-08T09:27:45.539Z","elapsedMs":801874}
+[e5-t26f] {"phase":"focus:terminal-2","event":"done","timestamp":"2026-09-08T09:27:45.543Z","elapsedMs":801878}
+[e5-t26f] {"phase":"resident:prepare-real-player","event":"start","timestamp":"2026-09-08T09:27:45.543Z","elapsedMs":801878}
+[e5-t26f] {"phase":"command:e5t26f-prepared:typing","event":"start","timestamp":"2026-09-08T09:27:45.543Z","elapsedMs":801878}
+[e5-t26f] {"timestamp":"2026-09-08T09:27:56.035Z","phase":"command:e5t26f-prepared:typing","event":"sample","probeMs":5,"ready":"ready","restored":null,"status":"desktop ready: launcher available","serialTail":"hcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ","frameCount":303,"pointerFrames":18,"keyboardFrames":659,"launch":{"label":"e5-t26f-terminal-2","marker":null,"accepted":true,"terminalRendered":true,"terminalMarkerSeen":null,"visualDiffPixels":297920,"guestVisible":null,"pointerFrames":3,"keyboardFrames":null},"command":{"label":null,"marker":"e5t26f-prepared","accepted":null,"terminalRendered":null,"terminalMarkerSeen":false,"visualDiffPixels":1068,"guestVisible":null,"pointerFrames":null,"keyboardFrames":null},"focus":{"label":"terminal-2","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":null,"pointerFrames":6,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":54,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":303,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":28571558,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":960,"maxAbs":0.082000732421875}}}
+[e5-t26f] {"phase":"command:e5t26f-prepared:typing","event":"done","timestamp":"2026-09-08T09:27:57.479Z","elapsedMs":813814}
+[e5-t26f] {"phase":"command:e5t26f-prepared:completion","event":"start","timestamp":"2026-09-08T09:27:57.479Z","elapsedMs":813814}
+[e5-t26f] {"phase":"command:e5t26f-prepared:completion","event":"done","timestamp":"2026-09-08T09:28:05.625Z","elapsedMs":821960}
+[e5-t26f] {"phase":"resident:prepare-real-player","event":"done","timestamp":"2026-09-08T09:28:05.625Z","elapsedMs":821960}
+[e5-t26f] {"phase":"cursor:initial-render","event":"start","timestamp":"2026-09-08T09:28:05.625Z","elapsedMs":821960}
+[e5-t26f] {"phase":"cursor:initial-render","event":"done","timestamp":"2026-09-08T09:28:06.649Z","elapsedMs":822984}
+[e5-t26f] {"phase":"snapshot:normal","event":"start","timestamp":"2026-09-08T09:28:06.649Z","elapsedMs":822984}
+[e5-t26f] {"phase":"normal:checkpoint-BeforeReload","event":"start","timestamp":"2026-09-08T09:28:15.266Z","elapsedMs":831601}
+[e5-t26f] {"phase":"normal:checkpoint-BeforeReload","event":"done","timestamp":"2026-09-08T09:28:15.742Z","elapsedMs":832077}
+[e5-t26f] {"phase":"snapshot:normal","event":"done","timestamp":"2026-09-08T09:28:19.759Z","elapsedMs":836094}
+[e5-t26f] {"phase":"diagnostic:checkpoint-seal","event":"start","timestamp":"2026-09-08T09:28:19.759Z","elapsedMs":836094}
+[e5-t26f] {"phase":"diagnostic:checkpoint-seal","event":"done","timestamp":"2026-09-08T09:28:20.298Z","elapsedMs":836633}
+{
+  "schema": "wasm-vm.e5-t26f.diagnostic-iteration.v1",
+  "acceptance": false,
+  "milestones": {
+    "run": {
+      "kind": "diagnostic-iteration",
+      "acceptance": false,
+      "diagnostic": {
+        "mode": "create",
+        "directory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resident-FUBCo4",
+        "port": 61631,
+        "origin": "http://127.0.0.1:61631",
+        "command": null,
+        "keyDelayMs": 0,
+        "latency": false,
+        "cpu": false,
+        "guestClock": null,
+        "jit": null,
+        "residency": null,
+        "complete": false,
+        "icountDivider": null
+      },
+      "postRestoreCommand": "play",
+      "postRestoreKeyDelayMs": 5,
+      "fixture": {
+        "kind": "resident-aplay-v1",
+        "helperSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh"
+      },
+      "binding": {
+        "head": "7da050620031145b6e76cf150a894ed2710bd5b2",
+        "runtimeSha256": "42aced7a2dfc4d0a69e1ea5a15685f5d9a605f797f8df1c5db89f95051ba0425",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "27c2e8f2789b18efac214837c295dbfb22559beea350fb5788f71edfdc0f0a8e",
+        "imageBytes": 1073741824,
+        "manifestSha256": "2245a4d8b8b804bb200079c1ce00dee868762324f18627fa5d2b11fe032639ef",
+        "origin": "http://127.0.0.1:61631",
+        "fixture": {
+          "kind": "resident-aplay-v1",
+          "helperSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+          "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh"
+        }
+      },
+      "profile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resident-FUBCo4/checkpoint-profile",
+      "checkpointFile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resident-FUBCo4/normal-checkpoint.json",
+      "creatorHead": "7da050620031145b6e76cf150a894ed2710bd5b2",
+      "currentHead": "7da050620031145b6e76cf150a894ed2710bd5b2",
+      "profileSha256": "59f3f2483c95331fad64c5cf6014a60f42b3b9fb89a50ec7b2d1c8853d9c70b5"
+    },
+    "initialReadiness": {
+      "completedAt": "2026-09-08T09:22:08.459Z"
+    },
+    "shellProbe": {
+      "command": "true; printf '\\033[42;30me5t26f-shell-ok\\033[0m\\n'",
+      "marker": "e5t26f-shell-ok",
+      "beforeFrame": 36,
+      "keyboardStart": 0,
+      "domEventStart": 0,
+      "visualDiffPixels": 2484,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 1,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 73,
+      "redMarkerSeen": false,
+      "keyboardFrames": 102,
+      "domEvents": 102,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "agentProbe": {
+      "state": "ready",
+      "negotiatedVersion": 1,
+      "transportGeneration": 2,
+      "bytesReceived": 54,
+      "bytesSent": 36,
+      "pendingBytes": 0
+    },
+    "initialAplay": {
+      "command": "yes \"$(printf '\\001\\000\\377\\177')\"|head -c3840 >/tmp/p;printf 'aplay -Dhw:0,0 --period-size=480 --buffer-size=960 -f S16_LE -t raw -r48000 -c2 /tmp/p&&printf \"\\033[42me5t26f-aplay\\033[0m\\n\"' >/tmp/a;sh /tmp/a",
+      "marker": "e5t26f-aplay-ok",
+      "beforeFrame": 73,
+      "keyboardStart": 102,
+      "domEventStart": 102,
+      "visualDiffPixels": 7628,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 128,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 257,
+      "redMarkerSeen": false,
+      "keyboardFrames": 454,
+      "domEvents": 454,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "initialAudio": {
+      "before": {
+        "available": true,
+        "writeIndex": 0,
+        "readIndex": 0,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 4096,
+        "inspectedFrames": 4096,
+        "nonSilentFrames": 0,
+        "maxAbs": 0
+      },
+      "after": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 960,
+        "maxAbs": 0.082000732421875
+      },
+      "outputAttached": true,
+      "observedAt": 662923.8049999475
+    },
+    "twoWindows": {
+      "completedAt": "2026-09-08T09:27:45.543Z"
+    },
+    "residentCheckpoint": {
+      "fixture": {
+        "kind": "resident-aplay-v1",
+        "helperSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh"
+      },
+      "prepared": {
+        "command": ". /usr/libexec/wasm-vm/e5t26f-resident.sh && e5_prepare",
+        "marker": "e5t26f-prepared",
+        "beforeFrame": 274,
+        "keyboardStart": 556,
+        "domEventStart": 556,
+        "visualDiffPixels": 13470,
+        "terminalMarkerSeen": true,
+        "greenPixelsBefore": 240,
+        "redPixelsBefore": 0,
+        "visualChange": true,
+        "afterFrame": 319,
+        "redMarkerSeen": false,
+        "keyboardFrames": 118,
+        "domEvents": 118,
+        "inputSequenceMatch": true,
+        "inputTraceSha256": null,
+        "accepted": true
+      },
+      "sound": {
+        "envelopeSha256": "b2e057ccf0150eb892ed4ae53c0642e5757d8d52293306776d52dd4bf94b86b9",
+        "soundSha256": "330d02f9e91a4e67239bd3386715f87ca45cb0ea8052c387276a6c5450eeeafc",
+        "state": 2,
+        "paramsPresent": 1,
+        "parameterRequest": 257,
+        "streamId": 0,
+        "bufferBytes": 3840,
+        "periodBytes": 1920,
+        "channels": 2,
+        "format": 5,
+        "rate": 7,
+        "pendingTransfers": 0,
+        "pendingBytes": 0,
+        "releasePending": 0,
+        "nextXrunPresent": 0,
+        "eventCount": 0,
+        "events": [],
+        "kicked": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "resetPending": 0
+      },
+      "screenshot": {
+        "file": "evidence/e5-t26f/resident-cold-7da05062/resident-prepared.png",
+        "sha256": "4364d8fc74137f098cc633c33bd829a011637ff130a5b2b9115d01b47eb8758f"
+      }
+    },
+    "initialCursor": {
+      "frame": {
+        "atMs": 819713,
+        "sequence": 19,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 18431
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 17612
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 18431,
+          "y": 17612
+        }
+      },
+      "rendered": {
+        "x": 720,
+        "y": 430,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      }
+    },
+    "normalSnapshotPause": {
+      "at": 820687.0399999619,
+      "isPaused": true
+    },
+    "normalSnapshot": {
+      "sha256": "b2e057ccf0150eb892ed4ae53c0642e5757d8d52293306776d52dd4bf94b86b9",
+      "byteLength": 2818926,
+      "preFrontBufferCrc": "940993e9",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "940993e9",
+        "overlayGeneration": 626
+      }
+    },
+    "normalCheckpointBeforeReload": {
+      "status": "passed",
+      "snapshotSha256": "b2e057ccf0150eb892ed4ae53c0642e5757d8d52293306776d52dd4bf94b86b9",
+      "observed": {
+        "at": 829751.5449999571,
+        "isPaused": true,
+        "generation": 626,
+        "decision": "resume",
+        "envelopeSha256": "b2e057ccf0150eb892ed4ae53c0642e5757d8d52293306776d52dd4bf94b86b9",
+        "stillPaused": true,
+        "finalGeneration": 626
+      }
+    }
+  },
+  "errors": {
+    "browser": [],
+    "http": []
+  }
+}

@@ -142,12 +142,21 @@ impl PendingData {
 pub struct ConsoleState {
     kicked: [bool; NUM_QUEUES as usize],
     reset_pending: bool,
+    /// A malformed saved TX ring has no safe old-session frontier. Only a transport reset or
+    /// another whole-machine restore may retry it; host drains must not reconstruct cursor zero.
+    resume_agent_tx_blocked: bool,
     driver_ready: bool,
     agent_announced: bool,
     guest_ready: bool,
     host_connected: bool,
     guest_connected: bool,
     generation: u64,
+    /// Count of application-level HELLO intersections reported by the host Channel.  The
+    /// virtio port being open is only the transport fence; desktop restore consumes a fresh
+    /// application HELLO so an old READY bit cannot attest a new session.
+    application_hello_generation: u64,
+    /// Application HELLO generation consumed by the last successful desktop restore.
+    restored_application_hello_generation: u64,
     pending_control: VecDeque<PendingControl>,
     pending_control_bytes: usize,
     agent_input: VecDeque<PendingData>,
@@ -171,10 +180,11 @@ pub struct ConsoleState {
 }
 
 impl ConsoleState {
-    fn new() -> Self {
+    pub(crate) fn new() -> Self {
         Self {
             kicked: [false; NUM_QUEUES as usize],
             reset_pending: false,
+            resume_agent_tx_blocked: false,
             driver_ready: false,
             agent_announced: false,
             guest_ready: false,
@@ -183,6 +193,8 @@ impl ConsoleState {
             host_connected: true,
             guest_connected: false,
             generation: 0,
+            application_hello_generation: 0,
+            restored_application_hello_generation: 0,
             pending_control: VecDeque::new(),
             pending_control_bytes: 0,
             agent_input: VecDeque::new(),
@@ -207,6 +219,25 @@ impl ConsoleState {
         self.host_connected && self.guest_connected
     }
 
+    /// True only when the virtio-console device and named agent port completed the transport
+    /// readiness handshake. This is deliberately weaker than [`Self::agent_ready_for_restore`]:
+    /// a live port can still be carrying an old application session.
+    pub fn agent_ready_for_host(&self) -> bool {
+        !self.resume_agent_tx_blocked
+            && self.driver_ready
+            && self.agent_announced
+            && self.guest_ready
+            && self.agent_open()
+    }
+
+    /// True only when the transport is live *and* the host-side T23d Channel has reported a fresh
+    /// application HELLO since the previous successful restore. Transport-open alone is not a
+    /// restore proof.
+    pub fn agent_ready_for_restore(&self) -> bool {
+        self.agent_ready_for_host()
+            && self.application_hello_generation != self.restored_application_hello_generation
+    }
+
     pub fn agent_announced(&self) -> bool {
         self.agent_announced
     }
@@ -223,6 +254,25 @@ impl ConsoleState {
     /// cheap way to discard handles or in-flight application state from an older port incarnation.
     pub fn generation(&self) -> u64 {
         self.generation
+    }
+
+    /// Record one completed host-side T23d HELLO intersection. The host must call this only after
+    /// the Channel has reached READY on a fresh transport generation; calling it while the named
+    /// port is closed is rejected so a stale callback cannot arm desktop restore.
+    pub fn mark_application_hello(&mut self) -> Option<u64> {
+        if !self.agent_ready_for_host() {
+            return None;
+        }
+        self.application_hello_generation = self.application_hello_generation.wrapping_add(1);
+        if self.application_hello_generation == 0 {
+            self.application_hello_generation = 1;
+        }
+        Some(self.application_hello_generation)
+    }
+
+    /// Host-side application HELLO count, exposed for diagnostics and exact restore evidence.
+    pub fn application_hello_generation(&self) -> u64 {
+        self.application_hello_generation
     }
 
     pub fn pending_control_messages(&self) -> usize {
@@ -259,6 +309,8 @@ impl ConsoleState {
         }
         self.host_connected = connected;
         self.guest_connected = false;
+        self.application_hello_generation = 0;
+        self.restored_application_hello_generation = 0;
         self.clear_agent_data();
         if self.driver_ready && self.agent_announced && self.guest_ready {
             self.queue_control(PendingControl::new(
@@ -279,10 +331,112 @@ impl ConsoleState {
         self.agent_announced = false;
         self.guest_ready = false;
         self.guest_connected = false;
+        self.application_hello_generation = 0;
+        self.restored_application_hello_generation = 0;
         self.clear_agent_data();
         self.pending_control.clear();
         self.pending_control_bytes = 0;
         self.announce_agent_if_ready();
+    }
+
+    /// Re-fence a live agent channel at a desktop restore commit. The endpoint stays open, but
+    /// pre-restore application bytes are discarded and a fresh generation plus close/open control
+    /// pair tells the guest agent to restart its session-level HELLO handling.
+    pub fn restore_rehandshake(&mut self) -> Option<u64> {
+        if !self.agent_ready_for_restore() {
+            return None;
+        }
+        self.restored_application_hello_generation = self.application_hello_generation;
+        self.generation = self.generation.wrapping_add(1);
+        self.clear_agent_data();
+        self.pending_control.clear();
+        self.pending_control_bytes = 0;
+        self.queue_control(PendingControl::new(
+            ConsoleControl::new(AGENT_PORT_ID, VIRTIO_CONSOLE_PORT_OPEN, 0),
+            Vec::new(),
+        ));
+        self.queue_control(PendingControl::new(
+            ConsoleControl::new(AGENT_PORT_ID, VIRTIO_CONSOLE_PORT_OPEN, 1),
+            Vec::new(),
+        ));
+        Some(self.generation)
+    }
+
+    /// Serialize the guest-visible lifecycle bits that are not part of the virtio-mmio transport
+    /// register file. The application bytes and host Channel bookkeeping are deliberately omitted:
+    /// a browser reload gets a new host endpoint and must perform a fresh application HELLO.
+    pub(crate) fn snapshot_resume(&self, out: &mut Vec<u8>) {
+        out.push(self.driver_ready as u8);
+        out.push(self.agent_announced as u8);
+        out.push(self.guest_ready as u8);
+        out.push(self.host_connected as u8);
+        out.push(self.guest_connected as u8);
+        out.extend_from_slice(&self.generation.to_le_bytes());
+    }
+
+    /// Restore the guest-visible lifecycle bits at a whole-machine resume boundary. Host-owned
+    /// application queues are dropped and the transport generation advances, so no bytes or HELLO
+    /// from the pre-reload Channel can be mistaken for the new host session.
+    pub(crate) fn restore_resume(
+        &mut self,
+        reader: &mut crate::resume::Reader<'_>,
+    ) -> Result<(), crate::resume::SnapshotError> {
+        let driver_ready = reader.bool()?;
+        let agent_announced = reader.bool()?;
+        let guest_ready = reader.bool()?;
+        let host_connected = reader.bool()?;
+        let guest_connected = reader.bool()?;
+        let generation = reader.u64()?;
+
+        // These lifecycle bits are a compact wire representation, but they still have the same
+        // ordering constraints as the live control protocol. Reject impossible combinations before
+        // touching the target, so a forged section cannot manufacture a half-open agent session.
+        if (agent_announced && !driver_ready)
+            || (guest_ready && !agent_announced)
+            || (guest_connected && !guest_ready)
+        {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::VIRTIO_CONSOLE,
+            });
+        }
+
+        self.kicked = [false; NUM_QUEUES as usize];
+        self.reset_pending = false;
+        self.resume_agent_tx_blocked = false;
+        self.driver_ready = driver_ready;
+        self.agent_announced = agent_announced;
+        self.guest_ready = guest_ready;
+        self.host_connected = host_connected;
+        self.guest_connected = guest_connected;
+        self.generation = generation.wrapping_add(1);
+        self.application_hello_generation = 0;
+        self.restored_application_hello_generation = 0;
+        self.pending_control.clear();
+        self.pending_control_bytes = 0;
+        self.clear_agent_data();
+
+        // Guest control/serial work remains valid across host sessions. Re-arm those rings so
+        // a QueueNotify just before save is not lost. Agent TX needs a stronger boundary: Machine
+        // discards and completes its old available descriptors before letting the guest run.
+        for queue in [PORT0_TRANSMIT_QUEUE, CONTROL_TRANSMIT_QUEUE] {
+            self.mark_queue_kick(queue);
+        }
+
+        // The guest driver is still live in restored RAM, but the browser-side host endpoint was
+        // recreated. A close/open pair makes the guest agent revisit its session boundary before
+        // the new Channel's HELLO arrives; the transport remains logically open so bounded input
+        // cannot be dropped during that handoff.
+        if self.driver_ready && self.agent_announced && self.guest_ready && self.agent_open() {
+            self.queue_control(PendingControl::new(
+                ConsoleControl::new(AGENT_PORT_ID, VIRTIO_CONSOLE_PORT_OPEN, 0),
+                Vec::new(),
+            ));
+            self.queue_control(PendingControl::new(
+                ConsoleControl::new(AGENT_PORT_ID, VIRTIO_CONSOLE_PORT_OPEN, 1),
+                Vec::new(),
+            ));
+        }
+        Ok(())
     }
 
     /// Enqueue host-to-guest bytes.  A partial final chunk is accepted only up to the bounded
@@ -524,12 +678,15 @@ impl ConsoleState {
     fn reset(&mut self) {
         self.kicked = [false; NUM_QUEUES as usize];
         self.reset_pending = true;
+        self.resume_agent_tx_blocked = false;
         self.driver_ready = false;
         self.agent_announced = false;
         self.guest_ready = false;
         self.host_connected = true;
         self.guest_connected = false;
         self.generation = self.generation.wrapping_add(1);
+        self.application_hello_generation = 0;
+        self.restored_application_hello_generation = 0;
         self.pending_control.clear();
         self.pending_control_bytes = 0;
         self.clear_agent_data();
@@ -856,12 +1013,54 @@ fn service_serial_tx(
     Ok(completed)
 }
 
+/// Complete old-session agent TX descriptors without reading or forwarding their application
+/// payload. Machine calls this only after restoring all RAM/transport/cursors and before the guest
+/// can execute: the available ring is therefore the saved session's frontier, even across u16
+/// wrap. At most one ring's capacity (<= 256 chains) is consumed. This also drains descriptors
+/// parked by host backpressure or a closed port, and needs no extra snapshot field.
+pub(crate) fn discard_resume_agent_tx(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<ConsoleState>>,
+    bus: &mut SystemBus,
+) {
+    let mut discard = || -> Result<bool, ()> {
+        if !prepare_queue(slot, vq, AGENT_TRANSMIT_QUEUE)? {
+            return Ok(false);
+        }
+        let queue = vq.as_mut().expect("agent transmit queue was prepared");
+        let mut completed = false;
+        for _ in 0..queue.size() {
+            let Some(chain) = queue.pop(bus).map_err(|_| ())? else {
+                break;
+            };
+            queue.push_used(bus, chain.head, 0).map_err(|_| ())?;
+            completed = true;
+        }
+        Ok(completed && queue.interrupt_needed(bus))
+    };
+    match discard() {
+        Ok(true) => slot.borrow_mut().raise_used_irq(),
+        Ok(false) => {}
+        Err(()) => {
+            // This is malformed guest DMA, not a snapshot-codec refusal. Apply the ordinary
+            // ring-violation policy instead of returning an error after the restore committed.
+            slot.borrow_mut().protocol_violation();
+            state.borrow_mut().resume_agent_tx_blocked = true;
+            *vq = None;
+        }
+    }
+}
+
 fn service_agent_tx(
     slot: &Rc<RefCell<VirtioMmio>>,
     vq: &mut Option<Virtqueue>,
     state: &Rc<RefCell<ConsoleState>>,
     bus: &mut SystemBus,
 ) -> Result<bool, ()> {
+    if state.borrow().resume_agent_tx_blocked {
+        return Ok(false);
+    }
     if !prepare_queue(slot, vq, AGENT_TRANSMIT_QUEUE)? {
         return Ok(false);
     }
@@ -1444,6 +1643,7 @@ mod tests {
             state.agent_announced = true;
             state.guest_ready = true;
             state.guest_connected = true;
+            assert!(state.mark_application_hello().is_some());
             state.agent_input.push_back(PendingData::new(vec![1, 2, 3]));
             state.agent_input_bytes = 3;
             state.agent_output.push_back(vec![4, 5, 6]);
@@ -1464,5 +1664,33 @@ mod tests {
         );
         assert!(!state.borrow().agent_announced());
         assert_eq!(state.borrow().pending_control_messages(), 0);
+    }
+
+    #[test]
+    fn restore_rehandshake_requires_live_agent_and_fences_old_application_bytes() {
+        let (_slot, state, _bus) = fixture();
+        assert!(!state.borrow().agent_ready_for_restore());
+        assert_eq!(state.borrow_mut().restore_rehandshake(), None);
+
+        {
+            let mut state = state.borrow_mut();
+            state.driver_ready = true;
+            state.agent_announced = true;
+            state.guest_ready = true;
+            state.guest_connected = true;
+            assert!(state.mark_application_hello().is_some());
+            state.agent_input.push_back(PendingData::new(vec![1, 2, 3]));
+            state.agent_input_bytes = 3;
+            state.agent_output.push_back(vec![4, 5, 6]);
+            state.agent_output_bytes = 3;
+        }
+        let before = state.borrow().generation();
+        assert!(state.borrow().agent_ready_for_restore());
+        assert_eq!(state.borrow_mut().restore_rehandshake(), Some(before + 1));
+        assert!(state.borrow().agent_ready_for_host());
+        assert!(!state.borrow().agent_ready_for_restore());
+        assert_eq!(state.borrow().agent_input_bytes, 0);
+        assert_eq!(state.borrow().agent_output_bytes, 0);
+        assert_eq!(state.borrow().pending_control_messages(), 2);
     }
 }

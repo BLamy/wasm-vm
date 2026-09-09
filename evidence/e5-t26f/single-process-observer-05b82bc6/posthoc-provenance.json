@@ -1,0 +1,18 @@
+{
+  "acceptance": false,
+  "fVerified": false,
+  "operation": "postprocess original closed failure; no browser replay",
+  "originalHead": "05b82bc688a34e6a1abef7b6c761c01bf4a3f7c6",
+  "originalWrapperExit": 1,
+  "originalCollectorSha256": "4bc9e00027a42465a37364cad1b707c87da78806a1c0d20d5729109728004d04",
+  "command": "node tools/verify/e5-t26f-compile-queue-observation.mjs evidence/e5-t26f/single-process-observer-05b82bc6/reuse/failure-post-restore-interaction-checks.json 1 evidence/e5-t26f/single-process-observer-05b82bc6/posthoc-observation.json",
+  "postprocessingExit": 0,
+  "rawSha256": "0881a4aa55808bd0884b5a6ef2f05af4da9601b119e188390cef94b4c667002a",
+  "outputSha256": "7a0ec6b45330319c6a49457365f968538bbda0ce78bf6fad38565f984d01dc50",
+  "sourceBindings": {
+    "tools/verify/e5-t26f-discovery-observation.mjs": "423019e85fc480cb3badf91c412a558a1f7ffaf44ac54c033eac31e5c0f1380f",
+    "tools/verify/e5-t26f-compile-queue-observation.mjs": "fff0cf5e7bbbf9c822bbe6b62cb2dcf936076da1eeb3d455d3cdd7a915c02dcc",
+    "tools/verify/e5-t26f-resident-proof.mjs": "d5615b185536f0f0af3da7d4b133ec28ec9e2c62962d22b3cd57e8c24f5a5810"
+  },
+  "limits": "Collector repair was uncommitted when run; hashes identify exact postprocessing bytes. Output head identifies original browser evidence, not a second browser execution. Original raw bytes and failed wrapper transcript remain unchanged."
+}

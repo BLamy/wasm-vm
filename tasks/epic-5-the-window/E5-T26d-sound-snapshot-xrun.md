@@ -1,0 +1,136 @@
+---
+id: E5-T26d
+epic: 5
+title: Virtio-snd stream snapshot and XRUN restore
+priority: 526.4
+status: verified
+depends_on: [E5-T26c]
+estimate: S
+risk: high
+capstone: false
+---
+
+## Goal
+
+Persist virtio-snd stream configuration and restore running playback through the explicit XRUN
+path while keeping host SAB audio rings ephemeral.
+
+## Boundary
+
+Own stream state, period/ring metadata, restore-time XRUN signaling, and empty-ring recovery.
+Do not redesign the AudioWorklet, autoplay policy, or the desktop browser flow.
+
+## Acceptance criteria
+
+- Stopped, prepared, and running streams serialize with versioned state and restore to the same
+  configuration; running streams restore as XRUN-pending rather than pretending DAC time survived.
+- Restored SAB rings are empty, the guest receives the XRUN/report, and one subsequent user
+  gesture plus `speaker-test`/reference ramp produces valid audio with no hang or duplicate block.
+- Invalid stream ids, rates, formats, and ring lengths fail closed without affecting other streams.
+
+## Verification command
+
+make verify-E5-T26d
+
+## Adversarial verification
+
+Checkpoint during `aplay` with a partially consumed period and during a 500 ms producer stall;
+restore repeatedly and require a bounded XRUN recovery or clean failure, never a hung stream.
+
+## Verification log
+
+### 2026-09-07 — worker — STARTED
+- Activated on `codex/e5-t26d-sound-snapshot-xrun` above verified T26c (`9a0186ad`).
+- Risk: high. The implementation must preserve stopped/prepared/running stream configuration,
+  discard host audio-ring contents on restore, and drive a bounded guest-visible XRUN recovery
+  without allowing invalid stream metadata to mutate another stream.
+
+### 2026-09-07 — worker — IMPLEMENTED
+- Implementation commit: `ca002004650f0f4ec6acf302db871d2308318350`.
+- Exact-head evidence: `evidence/e5-t26d/native-final.json`, SHA-256
+  `8f8bcf3f3f84b9c6adfe64b9368aec83760b2cfaf27b4118bc7907d7613d6c19`.
+- Command: `make verify-E5-T26d` (exit 0). The gate passed format, both GPU-trace clippy
+  checks, 5 snapshot tests, 7 control tests, 8 playback tests, 5 queue tests, 9 capture tests,
+  4 capture-config tests, 4 machine tests, and the no-default-features `wasm32-unknown-unknown`
+  build.
+- The versioned `WVSND001` payload stores validated output/capture lifecycle configuration and
+  bounded queue metadata while omitting host descriptor chains, PCM frames, and SAB-backed audio
+  buffers. Restore validates all fields before mutation, empties both host queues, marks running
+  streams for lifecycle rescheduling, and prepends one bounded guest-visible XRUN per running
+  stream. The end-to-end playback fixture checkpoints a partially queued ramp, proves the old
+  block is never pushed or completed, then posts a fresh ramp that completes exactly once; the
+  snapshot unit suite covers stopped/running round-trips, capture repair, malformed params, and
+  event-budget atomic refusal.
+
+### 2026-09-07 — verifier — VERDICT: refuted
+- P6 invalid ring lengths — FAILED. Predicted a snapshot with one pending transfer and one pending
+  byte would be rejected because the decoded playback/capture configuration has a 4096-byte period.
+  Both output and capture payloads were accepted, returned a one-transfer discard report, and
+  replaced a distinctive prepared target (`target_unchanged=false`). The mutation points are
+  `evidence/e5-t26d/verifier/src/main.rs:275-282` and `:306-313`; the insufficient check is
+  `crates/core/src/dev/virtio/snd/snapshot.rs:602-615`, followed by mutation at `:356-378`.
+  Validate `pending_bytes == pending_count * decoded_period_bytes` with checked arithmetic for both
+  streams before assignment, then rerun the prescribed gate and verifier harness.
+- P1/P2/P3/P4/P5/P7/P8 — HELD where unchanged. The scrubbed `make verify-E5-T26d` gate passed; the
+  public-API harness preserved prepared/stopped/running and duplex configuration, emptied restored
+  host queues, emitted bounded repair XRUNs, rejected 40 other malformed ID/rate/format/header/event
+  cases atomically, and completed 64 restore/service cycles after a 500 ms clock advance with one
+  fresh 1024-frame ramp and no duplicate audio.
+- COVERAGE — the Makefile target, direct/device wrappers, lifecycle encode/restore, header/stream/
+  queue/event decoder classes, all five new unit tests, and the partial-playback integration test
+  executed. Fixed-bound arithmetic/allocation failure arms and invalid in-memory encoder states are
+  waived as unreachable defensive paths; the queue validation hunk executed and was refuted.
+- Evidence: `evidence/e5-t26d/verifier/attack-plan.md`, `results.md`, and the locked Rust harness.
+  Exact implementation `ca002004650f0f4ec6acf302db871d2308318350`; inspected branch head
+  `7e436d99d1b0cdf4b1f50295b055433908a51e16`; worker evidence SHA-256
+  `8f8bcf3f3f84b9c6adfe64b9368aec83760b2cfaf27b4118bc7907d7613d6c19`.
+- SUITE: retain the verifier harness as the remediation regression. No implementation test promoted
+  until the semantic refutation clears. Host rr, independent-machine, and WebKit runs waived by
+  repository policy and user direction.
+- Supplemental checks: a pristine local clone at `7e436d99` passed the scrubbed prescribed gate;
+  `cargo run --offline --locked --manifest-path evidence/e5-t26d/verifier/Cargo.toml --bin
+  post_restore_stall` rejected all 184 strict prefixes and direct event count 257 atomically, then
+  bounded a post-restore 500 ms empty-ring stall to 23 elapsed XRUNs. A temporary-clone sabotage
+  forcing `output_running = false` made the partial-playback regression fail at
+  `crates/core/tests/virtio_snd_playback.rs:355`, proving that test detects loss of repair XRUN.
+
+### 2026-09-07 — worker — REMEDIATION SUBMITTED
+- Remediation commit: `2a501be6626035a6a38b75e36aa95dea0442e451`. Snapshot encode/decode now
+  validates pending bytes against `pending_count * configured_period_bytes` with checked arithmetic
+  for both output and capture before any restore assignment; the promoted unit regression proves
+  one-byte metadata is rejected atomically in both directions.
+- Exact-head evidence was replaced at `evidence/e5-t26d/native-final.json`, SHA-256
+  `3263508ab45253fee95e6087811b1063c8bf2653aaa083e55963422db72a3684`.
+- Scrubbed command: `env -u RUSTFLAGS -u RUSTDOCFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR
+  -u CARGO_BUILD_TARGET -u RUST_LOG make verify-E5-T26d` (exit 0). The gate passed format, both
+  GPU-trace clippy checks, 6 snapshot tests, 7 control tests, 8 playback tests, 5 queue tests,
+  9 capture tests, 4 capture-config tests, 4 machine tests, and the no-default-features
+  `wasm32-unknown-unknown` build.
+- The verifier's locked public-API harness remains committed under `evidence/e5-t26d/verifier/`
+  for the fresh recheck. The remediation directly closes its only failed prediction while
+  preserving the held lifecycle, 500 ms stall, bounded XRUN, empty-ring, and no-duplicate-audio
+  results; a fresh Daybreak terminal verdict is required before marking this task verified.
+- Fresh remediation harness results: `e5-t26d-verifier` exited 0 with 42 mutation cases and zero
+  mutation failures; `post_restore_stall` exited 0 with 184 strict-prefix refusals, direct event
+  cap refusal, and 23 elapsed XRUNs after a 500 ms empty-ring stall. No implementation code was
+  changed by the verifier harness.
+
+### 2026-09-07 — verifier — VERDICT: verified
+- P6 remediation HELD: the locked public-API harness rejected all 42/42 malformed payloads
+  atomically, including the formerly accepted output/capture one-byte totals. The validator now
+  compares pending bytes with `count * configured_period_bytes` before restore assignment.
+- The bounded novel `count=2, bytes=one-period` mutation was rejected atomically for output and
+  capture. The 64-cycle loop after a 500 ms stall retained empty host rings, one replacement repair
+  XRUN per running stream, no stale completion, one fresh 1024-frame ramp, and no duplicate audio.
+- Scrubbed `make verify-E5-T26d` exited 0 with 6 snapshot, 7 control, 8 playback, 5 queue, 9
+  capture, 4 capture-config, and 4 machine tests plus the wasm32 build. `post_restore_stall` also
+  passed 184 strict-prefix refusals, event count 257 refusal, and bounded empty-ring service.
+- Provenance: implementation `2a501be6626035a6a38b75e36aa95dea0442e451`; submission
+  `fc78300294fb4e92e5d1965500f200a0fa091e4e`; submitted evidence SHA-256
+  `3263508ab45253fee95e6087811b1063c8bf2653aaa083e55963422db72a3684`; remediation diff SHA-256
+  `e89426545ce61539ebe32be7bf47b7d5f160a768d5da181e14471c9a55576d69`.
+- Prior lifecycle, ring-discard, versioning, event-budget, wrapper, malformed-input, partial-audio,
+  and coverage predictions are carried forward HELD because their implementation/dependency
+  boundary did not change. Full evidence: `evidence/e5-t26d/verifier/remediation-results.md`.
+- SUITE: retain the locked harness and novel verifier probe; the worker-promoted exact-period unit
+  regression remains in the permanent suite. Independent machines, WebKit, and host rr are waived.

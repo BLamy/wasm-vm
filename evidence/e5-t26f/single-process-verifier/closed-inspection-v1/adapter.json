@@ -1,0 +1,12 @@
+{
+  "command": "/bin/sh",
+  "args": [
+    "-c",
+    ". \"$1\"\ne5_pid=111 e5_parent=222\ne5_observe || exit 91\nprintf '%s\\n' \"$e5_seen\"\ne5_print_observation post",
+    "adapter",
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-verifier/closed-inspection-v1/adapter-extracted.sh"
+  ],
+  "status": 0,
+  "signal": null,
+  "error": null
+}

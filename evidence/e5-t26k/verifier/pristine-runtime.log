@@ -1,0 +1,539 @@
+{"label":"runtime","command":["make","verify-E5-T26k-runtime"],"cwd":"/private/tmp/e5-t26k-verifier-SrjasM/repo","startedAt":"2026-09-08T11:58:32.986Z","log":"pristine-runtime.log"}
+cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+cargo clippy -p wasm-vm-core --lib --tests --features trace,gpu-trace -- -D warnings
+   Compiling libc v0.2.186
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+    Checking cfg-if v1.0.4
+   Compiling zerocopy v0.8.52
+   Compiling version_check v0.9.5
+   Compiling serde_core v1.0.228
+   Compiling getrandom v0.3.4
+    Checking typenum v1.20.1
+   Compiling crossbeam-utils v0.8.21
+    Checking bitflags v2.13.0
+   Compiling zmij v1.0.21
+   Compiling getrandom v0.4.3
+   Compiling autocfg v1.5.1
+   Compiling serde v1.0.228
+   Compiling rustix v1.1.4
+    Checking regex-syntax v0.8.11
+    Checking either v1.16.0
+   Compiling generic-array v0.14.7
+   Compiling serde_json v1.0.150
+   Compiling num-traits v0.2.19
+    Checking once_cell v1.21.4
+    Checking fastrand v2.4.1
+   Compiling rayon-core v1.13.0
+    Checking memchr v2.8.2
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+    Checking ciborium-io v0.2.2
+    Checking itoa v1.0.18
+    Checking clap_lex v1.1.0
+    Checking anstyle v1.0.14
+    Checking regex-automata v0.4.14
+    Checking clap_builder v4.6.0
+    Checking itertools v0.10.5
+    Checking same-file v1.0.6
+    Checking smallvec v1.15.2
+    Checking bit-vec v0.8.0
+    Checking crossbeam-epoch v0.9.18
+    Checking cast v0.3.0
+    Checking fnv v1.0.7
+    Checking quick-error v1.2.3
+    Checking bit-set v0.8.0
+    Checking criterion-plot v0.5.0
+    Checking clap v4.6.1
+    Checking crossbeam-deque v0.8.6
+    Checking walkdir v2.5.0
+    Checking regex v1.12.4
+    Checking unarray v0.1.4
+    Checking oorandom v11.1.5
+    Checking log v0.4.33
+    Checking anes v0.1.6
+   Compiling syn v2.0.118
+    Checking errno v0.3.14
+    Checking wait-timeout v0.2.1
+    Checking cpufeatures v0.2.17
+    Checking is-terminal v0.4.17
+    Checking rand_core v0.9.5
+    Checking rand_xorshift v0.4.0
+    Checking rand v0.9.4
+    Checking tempfile v3.27.0
+    Checking rusty-fork v0.3.1
+   Compiling zerocopy-derive v0.8.52
+   Compiling serde_derive v1.0.228
+    Checking block-buffer v0.10.4
+    Checking crypto-common v0.1.7
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+    Checking wasm-vm-core v0.0.1 (/private/tmp/e5-t26k-verifier-SrjasM/repo/crates/core)
+    Checking rayon v1.12.0
+    Checking tinytemplate v1.2.1
+    Checking half v2.7.1
+    Checking ppv-lite86 v0.2.21
+    Checking rand_chacha v0.9.0
+    Checking ciborium-ll v0.2.2
+    Checking proptest v1.11.0
+    Checking ciborium v0.2.2
+    Checking criterion v0.5.1
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.72s
+cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
+   Compiling unicode-ident v1.0.24
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+    Checking cfg-if v1.0.4
+   Compiling version_check v0.9.5
+   Compiling rustversion v1.0.22
+   Compiling bumpalo v3.20.3
+    Checking typenum v1.20.1
+    Checking once_cell v1.21.4
+    Checking futures-core v0.3.32
+    Checking slab v0.4.12
+    Checking futures-task v0.3.32
+    Checking pin-project-lite v0.2.17
+   Compiling serde_core v1.0.228
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling heapless v0.9.3
+    Checking log v0.4.33
+    Checking bitflags v2.13.0
+    Checking byteorder v1.5.0
+   Compiling zmij v1.0.21
+    Checking futures-util v0.3.32
+    Checking smallvec v1.15.2
+   Compiling serde_json v1.0.150
+   Compiling smoltcp v0.13.1
+    Checking tinyvec_macros v0.1.1
+    Checking hash32 v0.3.1
+    Checking stable_deref_trait v1.2.1
+   Compiling serde v1.0.228
+    Checking tinyvec v1.12.0
+   Compiling generic-array v0.14.7
+    Checking itoa v1.0.18
+    Checking managed v0.8.0
+    Checking memchr v2.8.2
+    Checking bitflags v1.3.2
+    Checking unicode-normalization v0.1.25
+    Checking wasm-vm-wasm-emit v0.0.1 (/private/tmp/e5-t26k-verifier-SrjasM/repo/crates/wasm-emit)
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+    Checking block-buffer v0.10.4
+    Checking crypto-common v0.1.7
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+    Checking wasm-vm-core v0.0.1 (/private/tmp/e5-t26k-verifier-SrjasM/repo/crates/core)
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+   Compiling wasm-bindgen-macro v0.2.126
+    Checking wasm-vm-jit-translate v0.0.1 (/private/tmp/e5-t26k-verifier-SrjasM/repo/crates/jit-translate)
+    Checking wasm-vm-slirp v0.0.0 (/private/tmp/e5-t26k-verifier-SrjasM/repo/crates/slirp)
+    Checking wasm-vm-storage v0.0.1 (/private/tmp/e5-t26k-verifier-SrjasM/repo/crates/storage)
+    Checking js-sys v0.3.103
+    Checking console_error_panic_hook v0.1.7
+    Checking web-sys v0.3.103
+    Checking wasm-bindgen-futures v0.4.76
+    Checking getrandom v0.2.17
+    Checking console_log v1.0.0
+    Checking wasm-vm-wasm v0.0.1 (/private/tmp/e5-t26k-verifier-SrjasM/repo/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 11.88s
+cargo test -p wasm-vm-core --features trace,gpu-trace --lib decoded_cache_capacity_tests -- --nocapture
+   Compiling cfg-if v1.0.4
+   Compiling typenum v1.20.1
+   Compiling bitflags v2.13.0
+   Compiling libc v0.2.186
+   Compiling serde_core v1.0.228
+   Compiling crossbeam-utils v0.8.21
+   Compiling either v1.16.0
+   Compiling once_cell v1.21.4
+   Compiling regex-syntax v0.8.11
+   Compiling zmij v1.0.21
+   Compiling anstyle v1.0.14
+   Compiling memchr v2.8.2
+   Compiling itoa v1.0.18
+   Compiling clap_lex v1.1.0
+   Compiling fastrand v2.4.1
+   Compiling zerocopy v0.8.52
+   Compiling ciborium-io v0.2.2
+   Compiling num-traits v0.2.19
+   Compiling itertools v0.10.5
+   Compiling cast v0.3.0
+   Compiling same-file v1.0.6
+   Compiling clap_builder v4.6.0
+   Compiling bit-vec v0.8.0
+   Compiling fnv v1.0.7
+   Compiling quick-error v1.2.3
+   Compiling walkdir v2.5.0
+   Compiling anes v0.1.6
+   Compiling unarray v0.1.4
+   Compiling crossbeam-epoch v0.9.18
+   Compiling smallvec v1.15.2
+   Compiling getrandom v0.3.4
+   Compiling errno v0.3.14
+   Compiling getrandom v0.4.3
+   Compiling rand_core v0.9.5
+   Compiling rustix v1.1.4
+   Compiling wait-timeout v0.2.1
+   Compiling crossbeam-deque v0.8.6
+   Compiling is-terminal v0.4.17
+   Compiling cpufeatures v0.2.17
+   Compiling bit-set v0.8.0
+   Compiling generic-array v0.14.7
+   Compiling rand v0.9.4
+   Compiling rand_xorshift v0.4.0
+   Compiling oorandom v11.1.5
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling log v0.4.33
+   Compiling rayon-core v1.13.0
+   Compiling criterion-plot v0.5.0
+   Compiling rayon v1.12.0
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling tempfile v3.27.0
+   Compiling regex-automata v0.4.14
+   Compiling rusty-fork v0.3.1
+   Compiling clap v4.6.1
+   Compiling serde v1.0.228
+   Compiling serde_json v1.0.150
+   Compiling tinytemplate v1.2.1
+   Compiling regex v1.12.4
+   Compiling half v2.7.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.9.0
+   Compiling ciborium-ll v0.2.2
+   Compiling proptest v1.11.0
+   Compiling ciborium v0.2.2
+   Compiling criterion v0.5.1
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26k-verifier-SrjasM/repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.87s
+     Running unittests src/lib.rs (/private/tmp/e5-t26k-verifier-SrjasM/target/debug/deps/wasm_vm_core-048f7c055d42ac1c)
+
+running 7 tests
+E5-T26k hostile SMC trace: legacy hash=568b64d33599f3f5 retired=20
+test decoded_cache_capacity_tests::default_and_legacy_pathological_sizes_report_actual_slots ... ok
+E5-T26k capacity=4096: trace/retirement/snapshot identical to legacy
+test decoded_cache_capacity_tests::both_sizes_recheck_revoked_pmp_for_live_cached_interior ... ok
+test decoded_cache_capacity_tests::both_sizes_keep_physical_aliases_and_page_write_cursor_invalidation ... ok
+E5-T26k capacity=16384: trace/retirement/snapshot identical to legacy
+test decoded_cache_capacity_tests::hostile_guest_store_patches_next_cached_op_with_legacy_trace_parity ... ok
+test decoded_cache_capacity_tests::real_resize_clears_live_cursor_and_discovery_but_preserves_architecture_and_handles ... ok
+test decoded_cache_capacity_tests::invalid_and_same_actual_size_preserve_cursor_blocks_discovery_devices_and_snapshot ... ok
+test decoded_cache_capacity_tests::restore_and_existing_cache_reset_hold_host_selection_without_new_snapshot_fields ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 325 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-core --features trace,gpu-trace --test predecode_diff --test predecode_smc_diff --test cpu_resume --test desktop_machine_resume -- --nocapture
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26k-verifier-SrjasM/repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.27s
+     Running tests/cpu_resume.rs (/private/tmp/e5-t26k-verifier-SrjasM/target/debug/deps/cpu_resume-68a77ce20b744117)
+
+running 6 tests
+test malformed_cpu_payload_is_rejected_and_leaves_hart_unchanged ... ok
+test resume_places_the_timer_interrupt_identically ... ok
+test virtio_blk_and_net_sections_round_trip_at_machine_level ... ok
+test whole_machine_resume_round_trips ... ok
+test restore_over_dirty_state_is_byte_identical ... ok
+test resume_trace_matches_continuation ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.44s
+
+     Running tests/desktop_machine_resume.rs (/private/tmp/e5-t26k-verifier-SrjasM/target/debug/deps/desktop_machine_resume-ec5a7d5c88959d0d)
+
+running 7 tests
+test malformed_saved_agent_dma_blocks_tx_until_transport_reset ... ok
+test headless_resume_remains_compatible_without_desktop_sections ... ok
+test every_fallible_legacy_section_refuses_before_live_state_or_host_callbacks_change ... ok
+test agent_resume_frontier_wraps_and_allows_fresh_tx_before_first_guest_step ... ok
+test malformed_desktop_section_and_missing_device_refuse_without_partial_restore ... ok
+test pending_console_transmits_survive_while_stale_host_session_is_discarded ... ok
+desktop resume continuation: hash=9865e79b681ad970, retired=1
+test desktop_devices_resume_with_ring_continuity_and_fresh_host_state ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+
+     Running tests/predecode_diff.rs (/private/tmp/e5-t26k-verifier-SrjasM/target/debug/deps/predecode_diff-f297b2f2c6e21231)
+
+running 2 tests
+hello: 83 retires, outcome Exited(0), hash 0xec6e61a286135dfd
+loops: 48 retires, outcome Exited(0), hash 0xb39f666fdc661b5d
+memops: 117 retires, outcome Exited(0), hash 0x7b228482bdef09dd
+test cache_on_is_byte_identical_to_cache_off ... ok
+test riscv_tests_cache_on_is_byte_identical has been running for over 60 seconds
+riscv-tests differential: 127 ELFs byte-identical cache-on vs cache-off
+test riscv_tests_cache_on_is_byte_identical ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 81.07s
+
+     Running tests/predecode_smc_diff.rs (/private/tmp/e5-t26k-verifier-SrjasM/target/debug/deps/predecode_smc_diff-83338df0adba474b)
+
+running 1 test
+test smc_store_patches_cached_block_is_byte_identical ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.66s
+
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+   Compiling typenum v1.20.1
+   Compiling cfg-if v1.0.4
+   Compiling bitflags v2.13.0
+   Compiling smallvec v1.15.2
+   Compiling log v0.4.33
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling generic-array v0.14.7
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26k-verifier-SrjasM/repo/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.39s
+node --check tools/verify/e5-t26k-browser-capacity.mjs
+node --check tools/verify/e5-t26f-browser-roundtrip.mjs
+node --test web/tests/e5-t26k-decoded-cache.test.mjs web/tests/e5-t26j-icount-divider.test.mjs web/tests/e5-t26i-guest-clock.test.mjs web/tests/e4-t32-worker-protocol.test.mjs
+✔ loader task quiescence joins held persistence and permanently closes scheduling (0.795459ms)
+✔ explicit surface, FIFO input/RPC, exact transferable ownership, Tailscale, and stop order (4.673459ms)
+✔ every explicit controller method crosses the runtime and no-provider Tailscale is false/nonfatal (3.027834ms)
+✔ guestClock boot data and current machine state traverse the paired worker protocol without rounding or caching (4.139458ms)
+✔ worker forwards an invalid clock label to validation and propagates refusal before machine mutation (0.330833ms)
+✔ capture PCM_START lifecycle notification crosses the worker boundary (1.678583ms)
+✔ display FrameSink projections cross the worker boundary with private pixel ownership (1.71ms)
+✔ display clear controls cross the worker boundary without a pixel payload (1.878167ms)
+✔ cursor-plane update and move projections keep MOVE payloads empty and privately owned (3.187375ms)
+✔ RPC ids correlate out-of-order results and arbitrary methods are not exposed (0.239458ms)
+✔ version mismatch/fatal rejects boot, pending and future calls exactly once (0.170042ms)
+✔ fatal after ready rejects pending, whenDone, stats, and future RPCs once (0.13825ms)
+✔ worker rejects an unknown method without executing it and propagates controller rejections (3.150792ms)
+✔ unknown frames fail closed and Tailscale events remain versioned (1.716709ms)
+✔ DONE rejects pending RPCs and DONE-before-READY rejects boot (0.264958ms)
+✔ byte RPC encoding errors reject asynchronously (0.178042ms)
+✔ silent termination is detected before and after READY and rejects pending work (56.511334ms)
+✔ heartbeat bypasses long async RPCs and visibility suspension shifts its deadline (84.895959ms)
+✔ visibility suspension pauses the pre-READY boot deadline (62.481625ms)
+✔ stateDigest gets method-scoped heartbeat grace and the controller remains live afterward (60.497ms)
+✔ every bulk snapshot RPC emits BUSY/IDLE and survives the scoped heartbeat grace (426.209792ms)
+✔ natural completion emits a scoped terminal digest before DONE (1.69725ms)
+✔ natural completion waits behind a held snapshot RPC before terminal BUSY and cleanup (1.585041ms)
+✔ fatal input during natural cleanup wins over clean DONE (1.6075ms)
+✔ stop and fatal cleanup are bounded when a dependency never settles (33.32725ms)
+✔ stop timeout fails closed without releasing storage under a live loader pump (26.344125ms)
+✔ Tailscale UI exceptions are non-fatal (2.081125ms)
+✔ backend-neutral stop closes main storage but does not RPC after worker termination (0.274958ms)
+✔ omitted/icount mode never reads a host clock, including on legacy machines (0.837417ms)
+✔ only exact clock labels pass, before accessing the realm or machine (0.253875ms)
+✔ wall validation samples the injected performance source once with its receiver (0.06625ms)
+✔ wall validation refuses missing, noncallable, nonfinite and negative sources (0.168459ms)
+✔ every wall API must exist before setGuestClock can mutate the machine (0.166542ms)
+✔ selection happens once, resume only rebases wall, and state is the current machine result (0.373792ms)
+✔ machine selection, rebase and state exceptions propagate without fabricated success (0.101417ms)
+✔ loader resume rebases before unpausing/scheduling and refuses all later mutations on error (0.783083ms)
+✔ loader resumeAfterQuota rebases before unpausing/scheduling and refuses all later mutations on error (0.532666ms)
+✔ loader continueReadOnly rebases before unpausing/scheduling and refuses all later mutations on error (0.528417ms)
+✔ all 1..1024 numbers and exact decimal strings validate; undefined alone omits (0.671375ms)
+✔ invalid syntax, types, ranges and explicit incompatible modes refuse before machine access (0.873834ms)
+✔ omission preserves the old mode call without divider/state reads or a fabricated selection (0.429417ms)
+✔ both explicit APIs are validated before the first read or mutation (0.140291ms)
+✔ actual pre-selection state must be ICount and valid; no implicit wall conversion (0.189375ms)
+✔ explicit selection reads stored state, sets once, reads actual result, and never resets mode/time on resume (0.157959ms)
+✔ setter/read exceptions and changed time or wrong actual divider refuse without retry/fallback (0.218833ms)
+✔ receipt is immutable history, returns independent scalar-only copies, and never rereads live state (0.084334ms)
+✔ loader validates before its first fetch and selects after restore branches but before execution (1.160792ms)
+✔ desktop query preserves omission versus exact raw string, including invalid empty input (1.1935ms)
+✔ raw divider boot data and real lifecycle receipt traverse the paired worker protocol (8.482334ms)
+✔ only 4096/16384 numbers and exact decimal strings validate; omission alone is undefined (0.7015ms)
+✔ omission never touches cache APIs or overrides an already configured machine (0.300666ms)
+✔ same-size selection only reads actual capacity; changed size calls strict numeric setter and verifies (0.188833ms)
+✔ both APIs are required before any read/mutation, including explicit same-size selection (0.511834ms)
+✔ malformed actual capacities and wrong post-set capacity fail closed without retry or echoed success (0.319208ms)
+✔ actual loader preflight rejects malformed options before fetch/restore/construction/execution (7.180292ms)
+✔ cold/stored/Alpine/initramfs restore branches apply after restoration but before actual first pump (3.902208ms)
+✔ missing API or wrong actual capacity after a cold/stored restore never enters the pump or JIT fallback (1.947792ms)
+✔ actual desktop options preserve exact raw query values, including omission and malformed empty strings (1.516875ms)
+✔ real page host plus linked worker protocol clone raw boot option and forward actual capacity through existing jitStats (21.501375ms)
+✔ real worker boot rejects malformed input, missing methods and wrong actual capacity before execution (1.402125ms)
+ℹ tests 60
+ℹ suites 0
+ℹ pass 60
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 823.314584
+node --test tools/verify/e5-t26k-decoded-cache.test.mjs tools/verify/e5-t26k-browser-capacity.test.mjs tools/verify/e5-t26f-resident-proof.test.mjs tools/verify/e5-t26f-quiet-text-probe.test.mjs tools/verify/e5-t26f-browser-roundtrip.test.mjs tools/verify/e5-t26f-completion.test.mjs tools/verify/e5-t26f-residency-comparison.test.mjs
+✔ make verify-E5-T26f refuses diagnostic create before any build or browser command (18.941916ms)
+✔ make verify-E5-T26f refuses diagnostic reuse before any build or browser command (14.021666ms)
+✔ cold playback fixture keeps errors and conditional success without verbose parameter dumping (0.753875ms)
+✔ one unresolved progress probe prevents subsequent timer ticks from piling up (1.776167ms)
+✔ public sample is bounded and excludes pixels, full records and guest control (0.54475ms)
+✔ navigation rejection frees the probe; stopped sampling suppresses late results (0.381459ms)
+✔ failure artifacts retain phase, error and milestones before browser capture (0.57325ms)
+✔ failure capture retains producer PCM even when the command never completes (0.709708ms)
+✔ failure capture does not issue requests behind a stuck progress probe (0.719167ms)
+✔ cursor timeout uses only the unspent original two-second budget (0.756125ms)
+✔ cursor waits through missing/stale pixels, returns matching sample and disposes its handle (0.471125ms)
+✔ exhausted cursor budget fails before polling; a polling timeout remains a failure (0.493208ms)
+✔ pointer motion precedes the full delayed gesture; no click or physical key occurs early (1.085084ms)
+✔ premature audio unlock during the delay fails before the click or command (0.619959ms)
+✔ overlapped motion spends the original deadline; late command completion still fails (1.252917ms)
+✔ residency selection is exact, reuse-only and requires explicit JIT=1 without auto-enabling it (13.325959ms)
+✔ residency metadata and cold/restore query are explicit; omission leaves existing URLs unchanged (4.552292ms)
+✔ omitted residency adds no policy access or extra RPC to either existing JIT arm (1.2815ms)
+✔ all three residency policies require actual mapped caps at both existing JIT endpoints (0.930166ms)
+✔ missing or mismatched actual residency policy/cap refuses at either endpoint and preserves raw failure evidence (16.696542ms)
+✔ JIT comparison is exact-string/reuse-only and rejects profiling or command overrides (6.504583ms)
+✔ JIT query selection is explicit; omitted acceptance/create/reuse retain jit=1 without state RPCs (2.984875ms)
+✔ both JIT arms read actual state before physical input and charge the RPC to the original cursor budget (2.295541ms)
+✔ JIT policy mismatches, missing APIs and RPC errors refuse with actual failure milestones (1.752333ms)
+✔ JIT measurement rejects stale, reversed and malformed retirement counts without replacing the evidence (1.544292ms)
+✔ both JIT arms capture PCM and freeze postRestoreEnd before the second RPC; the original cap still fails (2.993167ms)
+✔ clock comparison is reuse-only, unprofiled, explicit, and preserves F input/deadline (4.156458ms)
+✔ latency opt-in is exactly 1, reuse-only, and never changes the command or key pacing (2.194167ms)
+✔ CPU profiling requires exact 1 and reuse, independently of latency and unchanged input (3.249667ms)
+✔ default acceptance, create, and latency-only reuse never attach a CPU profiler (2.110541ms)
+✔ CPU host adapter uses the owned page session only when Browser is absent (0.424666ms)
+✔ CPU artifact retains exact worker, head/runtime binding, original T0 and byte digest; closes once (0.9395ms)
+✔ CPU stop/write failures are bounded metadata, preserve T0, and still attempt close once (2.122167ms)
+✔ CPU setup failure is captured before finally collection without replacing original error or T0 (0.972417ms)
+✔ CPU collection follows frozen PCM/end and precedes the unchanged cap even when collection stalls (1.11875ms)
+✔ probes register before physical typing but a stalled RPC cannot delay typing or completion cleanup (0.786417ms)
+✔ first non-silent PCM precedes a separately timed existing marker read without extra pixel reads (0.629333ms)
+✔ one held scheduler RPC survives a rejected local-stat read without overlap, even at the time limit (1.45525ms)
+✔ JIT RPC follows scheduler settlement and holds the whole sample until completion (0.755166ms)
+✔ stopping with JIT pending retains scheduler evidence and ignores late success or failure (0.802042ms)
+✔ scheduler settlement after stop or the original deadline never requests JIT (1.646625ms)
+✔ JIT observations copy only named scalar fields and record a missing API as unavailable (0.70525ms)
+✔ without the latency flag neither default nor reuse interaction requests diagnostic JIT stats (1.023333ms)
+✔ sampling is capped at 120 PCM/marker records and 24 spaced scheduler reads within the original restore window (5.33275ms)
+✔ missing diagnostic APIs are recorded as unavailable without fallback calls (0.412333ms)
+✔ latency samples survive the unchanged two-second failure before any failure pixel capture (0.589292ms)
+✔ failure is written before a stalled latency collection; timeout persists and never piles up or accepts late data (0.514ms)
+✔ command override refuses acceptance/create and rejects unbounded or multiline input (1.383375ms)
+✔ without override all modes keep the exact sh /tmp/a command (1.09325ms)
+✔ diagnostic key pacing is bounded, reuse-only, recorded, and inside the original deadline (2.571ms)
+✔ reuse override is recorded verbatim in nonacceptance metadata and the physical command record (0.886959ms)
+✔ top-level catch captures the phase before finally cleanup and rethrows the original error (0.358917ms)
+✔ a held restore-receipt read starts after timed interaction and must finish before the next save (0.673583ms)
+✔ diagnostics require explicit mode, absolute scratch and stable port; default remains fresh acceptance (5.876709ms)
+✔ profile creation never overwrites existing data and reuse requires the task marker and completed seal (2.65225ms)
+✔ every runtime/kernel/image/origin binding mismatch refuses reuse before copying any profile (3.742042ms)
+✔ harness-only HEAD changes permit reuse while preserving creator and current provenance (5.657542ms)
+✔ runtime binding hashes actual served JS/WASM/kernel bytes, including uncommitted changes (8.264875ms)
+✔ reuse enters autoRestore directly without cold setup or resetting the restored timing boundary (0.577708ms)
+✔ reuse cold-boot fallback fails on its first readiness sample instead of waiting for another boot (0.501625ms)
+✔ reuse copies a sealed profile, preserves actual envelope/metadata and retains separate failed iterations (5.189083ms)
+✔ tampered profile bytes or desktop envelope/normal metadata cannot be reused (2.279709ms)
+✔ profile ownership refuses symlinks instead of traversing or overwriting an external profile (2.24325ms)
+✔ checkpoint hydration seeds exact bytes once on an inert same-origin bootstrap, never on later navigation (1.545041ms)
+✔ checkpoint hydration accepts an identical current envelope but refuses to clobber different data (1.635833ms)
+✔ checkpoint hydration refuses any different exact origin before mutation and removes its route (1.887334ms)
+✔ checkpoint hydration cleans up its exact route after navigation or evaluation failure (2.856542ms)
+✔ completion console capture uses existing listeners, caps text/count, and leaves default error arrays unchanged (0.971667ms)
+✔ optional completion generation observations follow drag saves without changing frozen timing (1.766208ms)
+✔ completion generation diagnostics retain returned resume before reads and never fabricate unavailable state (0.282584ms)
+✔ persistent Chromium identity uses public CDP when browser() is null and always detaches (1.189208ms)
+✔ zero PCM and completion attachment/timestamps reach failure milestones before the PCM assertion (1.268875ms)
+✔ stale or mismatched actual restore receipt fails after timing and survives in failure milestones (1.147084ms)
+✔ legitimate post-restore disk progress never replaces the actual load-time generation (0.594584ms)
+✔ missing, unattempted or malformed initial restore evidence cannot borrow a fallback's restored flag (5.778375ms)
+✔ post-restore generation cannot move backwards or become unavailable (2.202583ms)
+✔ second restore performs the real coherence audit after display/button checks and before evidence (0.0735ms)
+✔ completion is absent by default and requires exact string 1 plus reuse (2.002083ms)
+✔ completion rejects every tuning/instrumentation/command flag, including empty values (0.330417ms)
+✔ completion permits existing bounded key delay without altering the command or tuning defaults (0.163208ms)
+✔ only the dedicated cap AssertionError with valid original boundaries can be retained (3.367917ms)
+✔ completion executes real normal audit, drag phases and second restore, persists diagnostics then rethrows original cap (2.543208ms)
+✔ completion at the exact cap stays diagnostic and never takes the normal artifact path (0.893875ms)
+✔ missing guest release proof blocks functional completion and retains the original timing cap with the later error (0.875833ms)
+✔ F1: completed evidence rethrows the exact cap without a duplicate failed phase or failure artifact (1.268833ms)
+✔ F1: only the identical successfully reported cap bypasses outer failure reporting (1.528708ms)
+✔ F1: the original cap thrown by an incomplete final write must not be treated as already reported (2.069542ms)
+✔ F1: a different error from final stdout reporting remains captured after successful completion writes (0.812625ms)
+✔ ordinary reuse keeps its original cap failure and early diagnostic-only success (0.790916ms)
+✔ functional assertions fail fast, including an unrelated failure with the cap's identical shape (4.063042ms)
+✔ later {"failAudit":"normal"} failure retains timing evidence and refuses completion success (0.515833ms)
+✔ later {"failAudit":"drag"} failure retains timing evidence and refuses completion success (1.28075ms)
+✔ later {"failRestore":true} failure retains timing evidence and refuses completion success (0.8525ms)
+✔ persistent-context identity uses CDP with no Browser object and always detaches (0.473333ms)
+✔ finish refuses a dropped cap or contradictory metadata before writing any completion success (11.929125ms)
+✔ observed drag translation accepts only finite same-row rightward 64..96px geometry (0.580583ms)
+✔ drag translation permits only the exact 32px panel clamp or same-row rounding with unchanged height (0.396708ms)
+✔ drag proof polls read-only geometry before pausing and independently rechecks the paused titlebar (0.42ms)
+✔ missing, stale, wrong-direction and wrong-window drag evidence expires at 15s without pausing or saving (2.975042ms)
+✔ pause refusal or a superseded paused titlebar cannot satisfy drag proof or publish a checkpoint (1.04575ms)
+✔ F2: default normal snapshot confirms pause, saves, and audits the frozen pair before declaring normal ready (0.701084ms)
+✔ F2: an unconfirmed default normal pause refuses before any snapshot save (0.477291ms)
+✔ F2: default normal publication refuses a generation advance and retains the actual failed audit (0.46575ms)
+✔ frozen checkpoint audit reads both pause/generation endpoints and the actual session envelope in order (0.696042ms)
+✔ frozen checkpoint audit refuses stale, advancing, unpaused or mismatched-envelope state and retains raw observations (8.687166ms)
+✔ a failed frozen audit at publication or before reload stays fail-fast and preserves the original timing failure (1.890417ms)
+✔ completion output guard permits only new/empty output and runs before browser or failure capture (1.253334ms)
+✔ pin the actual native PNG and reviewed raster; upper ROI excludes the real old marker (7.385542ms)
+✔ actual helper accepts a fresh exact raster plus physical play sequence; stores raw evidence before result (11.7265ms)
+✔ same-size wrong glyph, clipped partial, and unchanged old-token-only canvas cannot finish (46.016792ms)
+✔ stale baseline raster refuses before physical typing; a raster on an unadvanced frame also refuses (10.455125ms)
+✔ missing topmost window and actual changed window pixels refuse (7.844917ms)
+✔ two exact matches in the active ROI refuse ambiguity (8.57375ms)
+✔ missing or reordered keyup/down frame/event sequences refuse despite an exact glyph (53.062334ms)
+✔ baseline focus, completion focus, and recorded window focus are independently required (33.293875ms)
+✔ new red failure marker cannot be overridden by an exact success glyph (10.944333ms)
+✔ physical 5ms play is charged to the original restore T0; literal two-second cap remains exact (9.132792ms)
+✔ actual scratch admission is resident reuse only and rejects every profiling/tuning/command flag, even empty (9.29125ms)
+✔ actual frozen browser counters produce exact within-run deltas, including nested host entries (1.452583ms)
+✔ nested host entries are authoritative and missing nested data cannot fall back to fabricated flat values (2.141542ms)
+✔ every counter rejects missing, nonnumeric, fractional, negative or unsafe endpoint values (82.559ms)
+✔ every counter rejects decreasing safe nonnegative values (2.953125ms)
+✔ zero deltas are valid except guestRetired and retiredViaJit, which must each advance (3.052459ms)
+✔ child-failure admission allows only exit 1 with the exact F timing-cap message (4.967417ms)
+✔ resident options are exact opt-in and require all explicit checkpoint/image/info/asset/port inputs (1.470166ms)
+✔ actual child environment scrubs all inherited task/compiler flags; resident arms carry only exact policy controls (0.616167ms)
+✔ resident children preserve sealed headless mode despite inherited HEADED; legacy stays headed (0.431417ms)
+✔ omission preserves legacy paths, optional checkpoint creation and explicit legacy ICount/5-ms arm settings (1.48275ms)
+✔ actual resident preflight refuses missing/symlink checkpoint and incorrect explicit fixture metadata before any arm (1.863209ms)
+✔ unit-only resident policy fixtures execute actual collector with exact retained deltas and no invented clock receipts (1.106833ms)
+✔ resident collector rejects wrong fixture, policy, command, pacing and every conflicting diagnostic override (3.535458ms)
+✔ resident collector requires actual fresh physical input, current green, restored CRC/no boot and fresh positive PCM (6.690458ms)
+✔ resident counters, original endpoint ordering and any existing clock observations fail closed (15.486958ms)
+✔ all four unit-only ABBA arms must preserve actual fixture, source/profile/snapshot/config bindings (4.448208ms)
+✔ resident arms cannot turn a non-cap failure into data or accept successful exit with failed original timing (1.160583ms)
+✔ actual orchestration preserves ABBA, guards cold creation, and refuses existing arm output before spawn (0.539084ms)
+✔ resident fixture is exact opt-in; unmatched tuning overrides refuse (2.054792ms)
+✔ resident repack-off requires isolated explicit JIT=1 reuse; actual URLs retain play/5ms (1.336ms)
+✔ resident cap-256 requires isolated explicit JIT=1 reuse; actual URLs retain play/5ms (0.596125ms)
+✔ resident residency rejects missing counterparts and malformed/coerced labels in both admission layers (8.893875ms)
+✔ resident residency refuses cold/normal/COMPLETE and every coexisting override, including empty (29.772167ms)
+✔ actual quiet scratch selection remains stricter and rejects both newly admitted resident policies (1.055709ms)
+✔ outside the paired opt-in, existing resident observation rules and nonresident policy selection stay intact (0.976083ms)
+✔ admitted residency still requires actual executor/policy/cap and fresh before/after RPC state (3.50875ms)
+✔ resident accounting presets use fixed 100-ms physical edges only for admitted reuse commands (10.45875ms)
+✔ read-only resident profiling is exact reuse-only and can never enter cold, normal acceptance or COMPLETE (1.709917ms)
+✔ actual runner keeps normal, cold, reuse and COMPLETE resident play at 5-ms edges (1.852667ms)
+✔ the same command text without resident opt-in does not override existing diagnostic pacing (2.224542ms)
+✔ resident image binding checks frozen helper, original base and actual install path (0.313958ms)
+✔ actual envelope authenticates prepared stereo parameters and empty TX metadata (0.622875ms)
+✔ fully rehashed sound-state and queue mutations fail, so valid hashes cannot stand in for empty prepared playback (1.664292ms)
+✔ capture XRUN and unrelated kicks are retained without claiming they contain playback PCM (0.16775ms)
+✔ queued playback XRUN refuses even with rehashed envelope, no scheduled XRUN and only event kick (0.198166ms)
+✔ digest, format, missing/duplicate sections, bounds and malformed sound event lengths refuse (0.727083ms)
+✔ fresh host ring requires actual zero indices, silence and suspended locked context (0.488083ms)
+✔ resident pre-gesture checks execute inside original T0, twice before real down/up and refuse early PCM (3.049709ms)
+✔ resident mode uses the protected output guard even without diagnostic completion (0.505ms)
+✔ actual preparation requires physical command acceptance and fresh green without red before snapshot (0.994ms)
+✔ reuse authenticates exact saved sound bytes and retained screenshot, not a worker's prepared summary (3.063167ms)
+✔ actual setup scrubs tuning/compiler environment and authenticates a new headless seal by default (1.716ms)
+✔ existing evidence refuses before invocation writes or browser spawning (0.518417ms)
+✔ actual arm loop first cold-creates then emits only ABBA selection with immutable transcripts (0.172666ms)
+✔ exact resident reuse capacity selection reaches actual runner query with unchanged play/5ms (3.624916ms)
+✔ capacity comparison rejects malformed inputs, nonresident/cold/COMPLETE and every other tuning flag (11.39425ms)
+✔ actual capacity, JIT and clock are mandatory; endpoint deltas are monotone and correctly bounded (4.85ms)
+✔ read-only observer preserves a received raw failure and charges the real interval unchanged (0.291416ms)
+✔ observer executes the real page callback with sequential actual controller RPCs (0.644291ms)
+✔ collector rejects non-cap failure, wrong policy/input/CRC/audio/error and retains original timing failure (3.311459ms)
+ℹ tests 168
+ℹ suites 0
+ℹ pass 168
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 291.346417
+{"label":"runtime","command":["make","verify-E5-T26k-runtime"],"cwd":"/private/tmp/e5-t26k-verifier-SrjasM/repo","startedAt":"2026-09-08T11:58:32.986Z","log":"pristine-runtime.log","code":0,"signal":null,"endedAt":"2026-09-08T12:00:29.896Z"}

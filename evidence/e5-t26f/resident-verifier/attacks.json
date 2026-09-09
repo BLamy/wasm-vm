@@ -1,0 +1,92 @@
+{
+  "head": "7da050620031145b6e76cf150a894ed2710bd5b2",
+  "node": "v24.20.0",
+  "scratch": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5t26f-resident-critic-wDA9rs",
+  "browserRun": false,
+  "sharedSourcesUnchanged": true,
+  "sourceSha256": {
+    "tools/guest/e5-t26f-resident-aplay.sh": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+    "tools/verify/e5-t26f-browser-roundtrip.mjs": "c5735ac2e1558288af334ed09eefa31cadee7f8d9c7f3d91d9156e4f9b098c40",
+    "tools/verify/e5-t26f-resident-proof.test.mjs": "75d5451efb9f226579e2ddafbb683e1401e1a6224d715d4d1ef870fc5b8b5f3c",
+    "tools/verify/e5-t26f-resident-proof.mjs": "68f22e02fb8f9341a8017cf44c9e2b9dfbe163422a46195b87e56684a6739896",
+    "tools/verify/e5-t26f-resident-aplay.test.mjs": "031868b1512f11f6a7e568e1e9997d5828c626dfea770651817c20cca329bbbc",
+    "tools/verify/e5-t26f-resident-image.test.mjs": "7a06c621cf9c28455d1e91240bc6a5f243171be787a4e9e9b5fb6e0cbc466048",
+    "tools/verify/e5-t26f-resident-image.mjs": "6c00973a0462847cab200a857b1946a9c54669569785dd2406d06478da5d1481"
+  },
+  "baseline": {
+    "exit": 0,
+    "log": "focused.log",
+    "sha256": "c28f50a8ff288ccdefeb6a2f872c38b8d973d96416f316c8b5497497c5bb2728"
+  },
+  "novel": {
+    "acceptedCaptureEvents": 256,
+    "refusedOverflow": 257,
+    "refusedLastPlaybackIndex": 255,
+    "reorderedSections": [
+      4,
+      3,
+      1,
+      2
+    ],
+    "nonSoundPayloads": "opaque placeholders; this tests only the sound-proof reader, not restoration",
+    "envelopeSha256": {
+      "bound": "8cb8cdad4944190bed0259281a912da30c0338cf6410a7f9d3e604cc9cae4ce7",
+      "overflow": "498c9e46d558c37c5b851eade79cdfa090a431bbd4d0720270b6c33a888409df",
+      "lastPlayback": "a307d1c41cbbdd5e92a4dc28770c61865db45f2f08a6681670698bc1e11484b0"
+    }
+  },
+  "sabotage": [
+    {
+      "name": "playback-event",
+      "file": "tools/verify/e5-t26f-resident-proof.mjs",
+      "from": "    assert.notEqual(event.stream, 0, \"prepared checkpoint has a queued playback XRUN\");",
+      "to": "    // SABOTAGE: allow queued playback event.",
+      "pattern": "queued playback XRUN refuses",
+      "test": "tools/verify/e5-t26f-resident-proof.test.mjs",
+      "originalSha256": "68f22e02fb8f9341a8017cf44c9e2b9dfbe163422a46195b87e56684a6739896",
+      "mutatedSha256": "23e849b3f07f80c96f38a1c5062ae59df73bc0cfe745d74bc1e0342d0e1e8c8a",
+      "exit": 1,
+      "log": "sabotage-playback-event.log",
+      "sha256": "0b53efeb89e361b3af6ecce67a6123b5abb2b307576ba630e27c7dff79a59501",
+      "semanticWitness": {
+        "code": 273,
+        "stream": 0
+      }
+    },
+    {
+      "name": "child-exit",
+      "file": "tools/guest/e5-t26f-resident-aplay.sh",
+      "from": "    if wait \"$e5_pid\"; then",
+      "to": "    if :; then # SABOTAGE: green without waiting for same child",
+      "pattern": "nonzero original child exit",
+      "test": "tools/verify/e5-t26f-resident-aplay.test.mjs",
+      "originalSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+      "mutatedSha256": "d9f56792f7f1ff7a889f7b12b76b004fda7064ded94e288c08f31b2bc928211a",
+      "exit": 1,
+      "log": "sabotage-child-exit.log",
+      "sha256": "f042d8002a55fd64405b6615ca24473bffb1d84cf7b9de558a131cfc6edd1361",
+      "semanticWitness": null
+    },
+    {
+      "name": "image-readback",
+      "file": "tools/verify/e5-t26f-resident-image.mjs",
+      "from": "    assert.deepEqual(await io.readFile(path.join(destination, \"resident-readback.sh\")), helperBytes, \"installed helper readback differs\");",
+      "to": "    // SABOTAGE: accept different installed bytes after zero-exit Docker.",
+      "pattern": "zero-exit Docker",
+      "test": "tools/verify/e5-t26f-resident-image.test.mjs",
+      "originalSha256": "6c00973a0462847cab200a857b1946a9c54669569785dd2406d06478da5d1481",
+      "mutatedSha256": "1e290a822286acce85f00c6cdd7077c36902ef636e31662b20b44e2e16dc7f6b",
+      "exit": 1,
+      "log": "sabotage-image-readback.log",
+      "sha256": "0089553979392af3c822578e479368e51fd66d96d572cee53e4e3698cd710f34",
+      "semanticWitness": null
+    }
+  ],
+  "scrubbed": [
+    "RUSTFLAGS",
+    "RUST_LOG",
+    "CARGO_*",
+    "NODE_OPTIONS"
+  ],
+  "scriptSha256": "272a88649c11d9bb47b6af74de894e6edeb3c85c92ed00a7082d49071ff979bc"
+}

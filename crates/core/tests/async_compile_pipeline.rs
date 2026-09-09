@@ -617,3 +617,250 @@ fn profiling_enabled_charges_outer_final_pump_to_total_time_exactly_once() {
         "the outer final pump belongs in prof_total_ns once, without omission or double-counting"
     );
 }
+
+// E5-T26l: actual Machine discovery/pump integration, not public queue composition. The executor
+// remains deliberately stalled so later guest entries really are interpreted while work is pending.
+fn priority_workload(blocks: usize) -> (Machine, Machine, Rc<RefCell<Vec<(u64, Vec<u8>)>>>, u64) {
+    let mut program = vec![enc_jal(0, 4); blocks - 1];
+    program.extend([
+        enc_addi(5, 5, 1),
+        (5 << 20) | (10 << 15) | (3 << 12) | 0x23, // sd x5, 0(x10), non-code RAM
+        enc_jal(0, -8),
+    ]);
+    let hot_pc = DRAM_BASE + ((blocks - 1) * 4) as u64;
+    let mut oracle = Machine::new(64 * 1024);
+    let mut bounded = Machine::new(64 * 1024);
+    for machine in [&mut oracle, &mut bounded] {
+        poke(machine, DRAM_BASE, &program);
+        machine.hart_mut().regs.pc = DRAM_BASE;
+        machine.hart_mut().regs.write(10, DRAM_BASE + 0x1000);
+    }
+    let installs = Rc::new(RefCell::new(Vec::new()));
+    enable_jit(
+        &mut bounded,
+        StalledExecutor {
+            installs: Rc::clone(&installs),
+            run_budget: 8,
+            staging_budget: 64,
+            install_timer: None,
+        },
+    );
+    (oracle, bounded, installs, hot_pc)
+}
+
+fn advance_priority_pair(oracle: &mut Machine, bounded: &mut Machine, work: u64) {
+    let before = bounded.irq_stats().retired;
+    assert_eq!(oracle.run(work), bounded.run(work));
+    assert_eq!(bounded.irq_stats().retired - before, work);
+    assert_eq!(state(oracle), state(bounded));
+    assert_eq!(oracle.snapshot(), bounded.snapshot()); // Exact registers/PC and full-RAM digest.
+    assert_eq!(oracle.irq_stats().retired, bounded.irq_stats().retired);
+    assert_eq!(oracle.irq_stats().exc, bounded.irq_stats().exc);
+    assert_eq!(oracle.irq_stats().int, bounded.irq_stats().int);
+}
+
+#[test]
+fn later_hot_resident_wins_cross_pump_with_zero_new_nominations_and_digest_parity() {
+    let (mut oracle, mut bounded, installs, hot_pc) = priority_workload(32);
+    // The first pump stages 32 equal-priority entries and exhausts eight attempts. The last block
+    // then accrues 1,000 MORE interpreted loop entries while the other 24 jobs remain resident.
+    advance_priority_pair(&mut oracle, &mut bounded, 31 + 3 * 1001);
+    assert_eq!(bounded.hart().regs.read(5), 1001);
+    assert_eq!(bounded.bus_mut().load64(DRAM_BASE + 0x1000).unwrap(), 1001);
+    assert_eq!(
+        installs
+            .borrow()
+            .iter()
+            .map(|(pc, _)| *pc)
+            .collect::<Vec<_>>(),
+        (0..8).map(|i| DRAM_BASE + i * 4).collect::<Vec<_>>()
+    );
+    let first = bounded.prof_report(0, 0).jit_pause;
+    assert_eq!(first.last_run_attempted_blocks, 8);
+    assert_eq!(first.last_run_submitted_blocks, 8);
+    assert_eq!(first.last_run_staged_nominations, 32);
+    let discovery = bounded.discovery_stats();
+    assert_eq!(discovery.queue_depth, 0);
+    assert_eq!(discovery.nominated, 32);
+    assert_eq!(discovery.deduped, 1000);
+    assert_eq!(discovery.dropped_overflow, 0);
+
+    advance_priority_pair(&mut oracle, &mut bounded, 3);
+    let second = bounded.prof_report(0, 0).jit_pause;
+    assert_eq!(
+        second.last_run_staged_nominations, 0,
+        "must refresh existing backlog alone"
+    );
+    assert_eq!(second.last_run_attempted_blocks, 8);
+    assert_eq!(second.last_run_submitted_blocks, 8);
+    assert!(second.max_run_staged_nominations <= 64);
+    assert!(second.max_run_attempted_blocks <= 8);
+    assert!(second.max_run_submitted_blocks <= 8);
+    assert_eq!(bounded.discovery_stats().generation, discovery.generation);
+    assert_eq!(bounded.discovery_stats().nominated, discovery.nominated);
+    assert_eq!(bounded.discovery_stats().deduped, discovery.deduped + 1);
+    assert_eq!(installs.borrow().len(), 16);
+    assert_eq!(
+        installs.borrow()[8].0,
+        hot_pc,
+        "later-hot resident must be selected first"
+    );
+    assert_eq!(bounded.hart().regs.read(5), 1002);
+    println!(
+        "cross-pump: staged=32 then 0; attempts=8 then 8; late-hot first={hot_pc:#x}; RAM digest={}",
+        bounded.snapshot().hex_digest()
+    );
+}
+
+#[test]
+fn cross_pump_stale_resident_and_fifo_cancel_preserving_fresh_same_pc_bytes() {
+    let (mut oracle, mut bounded, installs, hot_pc) = priority_workload(40);
+    advance_priority_pair(&mut oracle, &mut bounded, 39 + 3 * 1001);
+    assert_eq!(installs.borrow().len(), 8);
+    let before = bounded.discovery_stats();
+    assert_eq!(before.nominated, 40);
+    assert_eq!(before.queue_depth, 8); // 24 resident jobs PLUS eight not-yet-staged FIFO requests.
+    assert_eq!(
+        bounded
+            .prof_report(0, 0)
+            .jit_pause
+            .last_run_staged_nominations,
+        32
+    );
+    for machine in [&mut oracle, &mut bounded] {
+        poke(machine, hot_pc, &[enc_addi(5, 5, 2)]);
+    }
+    advance_priority_pair(&mut oracle, &mut bounded, 3);
+    let after = bounded.discovery_stats();
+    assert!(after.generation > before.generation);
+    assert_eq!(after.nominated, before.nominated + 1);
+    assert_eq!(after.queue_depth, 0);
+    let pump = bounded.prof_report(0, 0).jit_pause;
+    assert_eq!(
+        pump.last_run_staged_nominations, 9,
+        "old FIFO plus fresh same-PC request"
+    );
+    assert_eq!(
+        pump.last_run_attempted_blocks, 1,
+        "stale resident and incoming jobs cancelled"
+    );
+    assert_eq!(pump.last_run_submitted_blocks, 1);
+    let recorded = installs.borrow();
+    assert_eq!(recorded.len(), 9);
+    assert_eq!(recorded[8].0, hot_pc);
+    assert_eq!(&recorded[8].1[..4], &enc_addi(5, 5, 2).to_le_bytes());
+    drop(recorded);
+    // Cancellation/refresh must not erase the new generation's same-PC dedup state.
+    advance_priority_pair(&mut oracle, &mut bounded, 3);
+    assert_eq!(bounded.discovery_stats().nominated, after.nominated);
+    assert_eq!(bounded.discovery_stats().deduped, after.deduped + 1);
+    assert_eq!(installs.borrow().len(), 9);
+    assert_eq!(bounded.hart().regs.read(5), 1005);
+    println!(
+        "stale cross-pump: staged=9 cancelled-before-selection; fresh install={hot_pc:#x}; RAM digest={}",
+        bounded.snapshot().hex_digest()
+    );
+}
+
+#[test]
+fn disabled_missing_and_zero_attempt_executor_leave_existing_backlog_unsubmitted() {
+    for mode in ["disabled", "missing", "zero-attempt"] {
+        let (mut oracle, mut bounded, installs, _) = priority_workload(32);
+        advance_priority_pair(&mut oracle, &mut bounded, 31 + 3 * 1001);
+        assert_eq!(installs.borrow().len(), 8);
+        match mode {
+            "disabled" => bounded.set_jit(false),
+            "missing" => {
+                bounded.take_executor().unwrap();
+            }
+            "zero-attempt" => bounded.set_executor(Box::new(StalledExecutor {
+                installs: Rc::clone(&installs),
+                run_budget: 0,
+                staging_budget: 64,
+                install_timer: None,
+            })),
+            _ => unreachable!(),
+        }
+        let before = bounded.discovery_stats();
+        advance_priority_pair(&mut oracle, &mut bounded, 3);
+        assert_eq!(
+            installs.borrow().len(),
+            8,
+            "{mode} submitted existing backlog"
+        );
+        let after = bounded.discovery_stats();
+        assert_eq!(after.generation, before.generation);
+        assert_eq!(after.nominated, before.nominated);
+        assert_eq!(after.queue_depth, 0);
+        assert_eq!(after.deduped, before.deduped + 1);
+        if mode != "disabled" {
+            let pump = bounded.prof_report(0, 0).jit_pause;
+            assert_eq!(pump.last_run_attempted_blocks, 0);
+            assert_eq!(pump.last_run_submitted_blocks, 0);
+            assert_eq!(pump.last_run_staged_nominations, 0);
+        }
+    }
+}
+
+// Verifier-only addition to async_compile_pipeline.rs; relies on its unchanged local helpers.
+#[test]
+fn verifier_outer_scope_zero_work_final_pump_refreshes_only_after_budget_renewal() {
+    let (mut oracle, mut bounded, installs, hot_pc) = priority_workload(32);
+    bounded.begin_cooperative_run();
+    advance_priority_pair(&mut oracle, &mut bounded, 31 + 3 * 2);
+    assert_eq!(installs.borrow().len(), 8);
+    for work in [3 * 11, 3 * 37, 3 * 131, 0] {
+        advance_priority_pair(&mut oracle, &mut bounded, work);
+        assert_eq!(
+            installs.borrow().len(),
+            8,
+            "internal run reopened exhausted budget"
+        );
+    }
+    bounded.end_cooperative_run(wasm_vm_core::RunOutcome::MaxInstrs);
+    assert_eq!(
+        installs.borrow().len(),
+        8,
+        "outer close reopened exhausted budget"
+    );
+    let first = bounded.prof_report(0, 0).jit_pause;
+    assert_eq!(first.last_run_attempted_blocks, 8);
+    assert_eq!(first.last_run_submitted_blocks, 8);
+    assert_eq!(first.last_run_staged_nominations, 32);
+    assert_eq!(first.last_final_pumps, 0);
+    assert_eq!(bounded.hart().regs.read(5), 181);
+    assert_eq!(bounded.discovery_stats().queue_depth, 0);
+    let before = bounded.snapshot();
+    let retired = bounded.irq_stats().retired;
+    let generation = bounded.discovery_stats().generation;
+    let deduped = bounded.discovery_stats().deduped;
+
+    // Renew only the outer host scope: no guest entry and no new nomination can supply a refresh.
+    bounded.begin_cooperative_run();
+    advance_priority_pair(&mut oracle, &mut bounded, 0);
+    assert_eq!(installs.borrow().len(), 8);
+    bounded.end_cooperative_run(wasm_vm_core::RunOutcome::MaxInstrs);
+    let second = bounded.prof_report(0, 0).jit_pause;
+    assert_eq!(second.last_run_staged_nominations, 0);
+    assert_eq!(second.last_run_attempted_blocks, 8);
+    assert_eq!(second.last_run_submitted_blocks, 8);
+    assert_eq!(second.last_final_pumps, 1);
+    assert_eq!(second.last_final_attempted_blocks, 8);
+    assert!(second.max_run_attempted_blocks <= 8);
+    assert!(second.max_run_staged_nominations <= 64);
+    assert_eq!(installs.borrow().len(), 16);
+    assert_eq!(
+        installs.borrow()[8].0,
+        hot_pc,
+        "zero-work final pump used stale priority"
+    );
+    assert_eq!(bounded.snapshot(), before);
+    assert_eq!(bounded.snapshot(), oracle.snapshot());
+    assert_eq!(bounded.irq_stats().retired, retired);
+    assert_eq!(bounded.discovery_stats().generation, generation);
+    assert_eq!(bounded.discovery_stats().deduped, deduped);
+    println!(
+        "L critic outer scope: inner runs stay at8; renewed zero-work final pump stages0/submits8; first={hot_pc:#x}; retired={retired}; RAM={}",
+        bounded.snapshot().hex_digest()
+    );
+}

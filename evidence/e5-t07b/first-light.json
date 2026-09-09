@@ -1,0 +1,709 @@
+{
+  "task": "E5-T07b",
+  "schema": 1,
+  "command": "node tools/verify/e5-t07b-first-light.mjs",
+  "generatedAt": "2026-09-04T12:38:50.202Z",
+  "gitHead": "d4f352938bc12c8b02d791672a723b678eddc097",
+  "base": "http://127.0.0.1:59185",
+  "browser": {
+    "name": "Chromium",
+    "version": "131.0.6778.33",
+    "executablePath": "Playwright Chromium"
+  },
+  "sourceDistParity": {
+    "equal": true,
+    "files": [
+      "web/dist/first-light.html",
+      "web/dist/first-light.js",
+      "web/dist/roadmap.js"
+    ]
+  },
+  "artifacts": {
+    "manifestSha256": "9e28ead1264e08a806ef7fd3159813163ca26d4caf85071923b20467f3fa35dc",
+    "kernel": {
+      "url": "releases/kernel/6.6.63/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "size": 24208896,
+      "actualSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "initramfs": {
+      "url": "releases/initramfs/initramfs.cpio.gz",
+      "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563",
+      "size": 1151596,
+      "actualSha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563"
+    },
+    "webBundle": {
+      "sha256": "42da4aa15cc317df0acf7e978aecfc1315a41629879b4705b0849d1bd39e1be5",
+      "files": [
+        "web/first-light.html",
+        "web/first-light.js",
+        "web/loader.js",
+        "web/src/sink/presentation.js",
+        "web/src/sink/canvas2d.js",
+        "web/src/sink/present-backend.js",
+        "web/pkg/wasm_vm_wasm_bg.wasm"
+      ]
+    }
+  },
+  "defaultCanvas2d": {
+    "label": "normal Canvas2D default",
+    "proof": {
+      "route": "first-light",
+      "requestedBackend": "canvas2d",
+      "webgl2Disabled": false,
+      "selectedBackend": "canvas2d",
+      "canvas": {
+        "width": 1280,
+        "height": 800
+      },
+      "frameCount": 5,
+      "firstFrame": {
+        "format": 2,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "nonZeroWords": 0,
+        "nonBlackWords": 0,
+        "asymmetricPixel": false,
+        "sample": null
+      },
+      "firstVisibleFrame": {
+        "format": 2,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "nonZeroWords": 28392,
+        "nonBlackWords": 28392,
+        "asymmetricPixel": false,
+        "sample": {
+          "index": 2562,
+          "word": 11184810,
+          "expectedRgba": [
+            170,
+            170,
+            170,
+            255
+          ],
+          "observedRgba": [
+            170,
+            170,
+            170,
+            255
+          ],
+          "finalRgba": [
+            170,
+            170,
+            170,
+            255
+          ]
+        }
+      },
+      "colorSample": {
+        "format": 2,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "nonZeroWords": 28392,
+        "nonBlackWords": 28392,
+        "asymmetricPixel": false,
+        "sample": {
+          "index": 2562,
+          "word": 11184810,
+          "expectedRgba": [
+            170,
+            170,
+            170,
+            255
+          ],
+          "observedRgba": [
+            170,
+            170,
+            170,
+            255
+          ],
+          "finalRgba": [
+            170,
+            170,
+            170,
+            255
+          ]
+        }
+      },
+      "colorChannelOrderHeld": true,
+      "nonBlackPixels": 1024000,
+      "canvasRgbaSha256": "1c8bf254b6815ca09debe983149d871402816b613e00311acbe940caab440fd1",
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "framesReceived": 5,
+        "successfulPresents": 5,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        },
+        "errors": []
+      },
+      "markers": {
+        "virtioGpu": true,
+        "drm": true,
+        "fbcon": true
+      },
+      "serialMarkerLines": [
+        "[    2.614719] [drm] features: -virgl +edid -resource_blob -host_visible",
+        "[    2.614773] [drm] features: -context_init",
+        "[    2.616005] [drm] number of scanouts: 1",
+        "[    2.616212] [drm] number of cap sets: 0",
+        "[    2.621400] [drm] Initialized virtio_gpu 0.1.0 0 for 10008000.virtio_mmio on minor 0",
+        "[    2.910873] virtio-mmio 10008000.virtio_mmio: [drm] fb0: virtio_gpudrmfb frame buffer device"
+      ],
+      "serialLogSha256": "7c2513a5905bad236fa6de45c63f273fbe23eb78a19f62f194e255f44776c0f3",
+      "serialBytes": 9940,
+      "bootElapsedMs": 18480,
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 611,
+        "totalSliceMs": 18330.1550000906,
+        "averageSliceMs": 30.000253682636004,
+        "maxSliceMs": 73.25,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 364
+          },
+          {
+            "leMs": 64,
+            "count": 246
+          },
+          {
+            "leMs": 128,
+            "count": 1
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 73.60000002384186,
+        "requestedInstructions": 305500000,
+        "retiredInstructions": 305489125,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 51,
+        "outputBytes": 9940,
+        "inputCalls": 0,
+        "inputBytes": 0,
+        "yieldMode": "message-channel",
+        "schedulerYields": 0,
+        "timerYields": 0,
+        "mainThreadYields": 612
+      },
+      "paused": true
+    },
+    "errors": {
+      "console": [],
+      "page": [],
+      "requests": []
+    },
+    "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t07b/first-light.png",
+    "url": "http://127.0.0.1:59185/first-light.html"
+  },
+  "webgl2DisabledFallback": {
+    "label": "WebGL2-disabled fallback",
+    "proof": {
+      "route": "first-light",
+      "requestedBackend": "webgl2",
+      "webgl2Disabled": true,
+      "selectedBackend": "canvas2d",
+      "canvas": {
+        "width": 1280,
+        "height": 800
+      },
+      "frameCount": 5,
+      "firstFrame": {
+        "format": 2,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "nonZeroWords": 0,
+        "nonBlackWords": 0,
+        "asymmetricPixel": false,
+        "sample": null
+      },
+      "firstVisibleFrame": {
+        "format": 2,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "nonZeroWords": 28392,
+        "nonBlackWords": 28392,
+        "asymmetricPixel": false,
+        "sample": {
+          "index": 2562,
+          "word": 11184810,
+          "expectedRgba": [
+            170,
+            170,
+            170,
+            255
+          ],
+          "observedRgba": [
+            170,
+            170,
+            170,
+            255
+          ],
+          "finalRgba": [
+            170,
+            170,
+            170,
+            255
+          ]
+        }
+      },
+      "colorSample": {
+        "format": 2,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "nonZeroWords": 28392,
+        "nonBlackWords": 28392,
+        "asymmetricPixel": false,
+        "sample": {
+          "index": 2562,
+          "word": 11184810,
+          "expectedRgba": [
+            170,
+            170,
+            170,
+            255
+          ],
+          "observedRgba": [
+            170,
+            170,
+            170,
+            255
+          ],
+          "finalRgba": [
+            170,
+            170,
+            170,
+            255
+          ]
+        }
+      },
+      "colorChannelOrderHeld": true,
+      "nonBlackPixels": 1024000,
+      "canvasRgbaSha256": "1c8bf254b6815ca09debe983149d871402816b613e00311acbe940caab440fd1",
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "webgl2",
+        "width": 1280,
+        "height": 800,
+        "framesReceived": 5,
+        "successfulPresents": 5,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 1,
+        "listenerCount": 2,
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        },
+        "errors": [
+          "webgl2: WebGL2 is not available for this canvas"
+        ]
+      },
+      "markers": {
+        "virtioGpu": true,
+        "drm": true,
+        "fbcon": true
+      },
+      "serialMarkerLines": [
+        "[    2.614719] [drm] features: -virgl +edid -resource_blob -host_visible",
+        "[    2.614773] [drm] features: -context_init",
+        "[    2.616005] [drm] number of scanouts: 1",
+        "[    2.616212] [drm] number of cap sets: 0",
+        "[    2.621400] [drm] Initialized virtio_gpu 0.1.0 0 for 10008000.virtio_mmio on minor 0",
+        "[    2.910873] virtio-mmio 10008000.virtio_mmio: [drm] fb0: virtio_gpudrmfb frame buffer device"
+      ],
+      "serialLogSha256": "7c2513a5905bad236fa6de45c63f273fbe23eb78a19f62f194e255f44776c0f3",
+      "serialBytes": 9940,
+      "bootElapsedMs": 18445,
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 611,
+        "totalSliceMs": 18297.349999547005,
+        "averageSliceMs": 29.946563010715227,
+        "maxSliceMs": 63.610000014305115,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 364
+          },
+          {
+            "leMs": 64,
+            "count": 247
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 63.91500002145767,
+        "requestedInstructions": 305500000,
+        "retiredInstructions": 305489125,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 51,
+        "outputBytes": 9940,
+        "inputCalls": 0,
+        "inputBytes": 0,
+        "yieldMode": "message-channel",
+        "schedulerYields": 0,
+        "timerYields": 0,
+        "mainThreadYields": 612
+      },
+      "paused": true
+    },
+    "errors": {
+      "console": [],
+      "page": [],
+      "requests": []
+    },
+    "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t07b/first-light-webgl2-disabled.png",
+    "url": "http://127.0.0.1:59185/first-light.html?backend=webgl2&disableWebGL2=1"
+  },
+  "reload": {
+    "label": "reload during boot",
+    "proof": {
+      "route": "first-light",
+      "requestedBackend": "canvas2d",
+      "webgl2Disabled": false,
+      "selectedBackend": "canvas2d",
+      "canvas": {
+        "width": 1280,
+        "height": 800
+      },
+      "frameCount": 5,
+      "firstFrame": {
+        "format": 2,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "nonZeroWords": 0,
+        "nonBlackWords": 0,
+        "asymmetricPixel": false,
+        "sample": null
+      },
+      "firstVisibleFrame": {
+        "format": 2,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "nonZeroWords": 28392,
+        "nonBlackWords": 28392,
+        "asymmetricPixel": false,
+        "sample": {
+          "index": 2562,
+          "word": 11184810,
+          "expectedRgba": [
+            170,
+            170,
+            170,
+            255
+          ],
+          "observedRgba": [
+            170,
+            170,
+            170,
+            255
+          ],
+          "finalRgba": [
+            170,
+            170,
+            170,
+            255
+          ]
+        }
+      },
+      "colorSample": {
+        "format": 2,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800,
+        "nonZeroWords": 28392,
+        "nonBlackWords": 28392,
+        "asymmetricPixel": false,
+        "sample": {
+          "index": 2562,
+          "word": 11184810,
+          "expectedRgba": [
+            170,
+            170,
+            170,
+            255
+          ],
+          "observedRgba": [
+            170,
+            170,
+            170,
+            255
+          ],
+          "finalRgba": [
+            170,
+            170,
+            170,
+            255
+          ]
+        }
+      },
+      "colorChannelOrderHeld": true,
+      "nonBlackPixels": 1024000,
+      "canvasRgbaSha256": "1c8bf254b6815ca09debe983149d871402816b613e00311acbe940caab440fd1",
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "framesReceived": 5,
+        "successfulPresents": 5,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        },
+        "errors": []
+      },
+      "markers": {
+        "virtioGpu": true,
+        "drm": true,
+        "fbcon": true
+      },
+      "serialMarkerLines": [
+        "[    2.614719] [drm] features: -virgl +edid -resource_blob -host_visible",
+        "[    2.614773] [drm] features: -context_init",
+        "[    2.616005] [drm] number of scanouts: 1",
+        "[    2.616212] [drm] number of cap sets: 0",
+        "[    2.621400] [drm] Initialized virtio_gpu 0.1.0 0 for 10008000.virtio_mmio on minor 0",
+        "[    2.910873] virtio-mmio 10008000.virtio_mmio: [drm] fb0: virtio_gpudrmfb frame buffer device"
+      ],
+      "serialLogSha256": "7c2513a5905bad236fa6de45c63f273fbe23eb78a19f62f194e255f44776c0f3",
+      "serialBytes": 9940,
+      "bootElapsedMs": 18422,
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 611,
+        "totalSliceMs": 18280.685000419617,
+        "averageSliceMs": 29.91928805305993,
+        "maxSliceMs": 64.27500003576279,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 364
+          },
+          {
+            "leMs": 64,
+            "count": 246
+          },
+          {
+            "leMs": 128,
+            "count": 1
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 64.60000002384186,
+        "requestedInstructions": 305500000,
+        "retiredInstructions": 305489125,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 51,
+        "outputBytes": 9940,
+        "inputCalls": 0,
+        "inputBytes": 0,
+        "yieldMode": "message-channel",
+        "schedulerYields": 0,
+        "timerYields": 0,
+        "mainThreadYields": 612
+      },
+      "paused": true
+    },
+    "errors": {
+      "console": [],
+      "page": [],
+      "requests": []
+    },
+    "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t07b/first-light-reload.png",
+    "url": "http://127.0.0.1:59185/first-light.html?reloadProbe=1"
+  },
+  "errors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  }
+}

@@ -1,0 +1,7 @@
+Fresh stress configuration: current metadata head 6793e0ef926c9ef6dbdea2faf96820ce9362a53d, headed Chrome, DPR 2, E5_T25B_TIMEOUT_MS=120000, hostile inherited RUSTFLAGS/RUST_LOG/CARGO_*.
+Initial sandboxed attempt could not bind 127.0.0.1 (`listen EPERM`); it did not reach Chrome and is not a product observation.
+Approved local-server/Chrome attempt launched and ended with:
+page.waitForFunction: Timeout 120000ms exceeded.
+at /Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t25b-browser.mjs:111:14
+No drag ran and evidence/e5-t25b/verifier-r2/fresh-dpr2/drag-fps.json is absent.
+Classification: desktop-readiness environment limitation, not a runtime refutation. Because DPR 2 did not reach readiness, busy-guest and 4x-throttle legs were not attempted; no stress behavior is claimed. Retained baseline remains DPR 1 and unthrottled.

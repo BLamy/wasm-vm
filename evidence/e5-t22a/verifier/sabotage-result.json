@@ -1,0 +1,8 @@
+{
+  "originalHarnessSha256": "b5d976b7f1ed72d384551f0ce3cad5c224d6b87fff32f68afb491d442c4211d2",
+  "injectedHarnessSha256": "88c026220d351180600f70f1c9375dfd41df822e3c9d5328a24fb379d0394d83",
+  "mutation": "HTTP loader.js: setDisplay returns !stopped without calling WasmLinux",
+  "exitCode": 1,
+  "expected": "1280 !== 1367",
+  "logSha256": "ebb40d53ddee3a838376d209e1a1087d1a44881f25bb33cee77611912033651b"
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "label": "cold-21",
+    "status": "desktop ready: launcher available",
+    "frames": 27,
+    "retired": 4961654626
+  },
+  {
+    "label": "cold-22",
+    "status": "desktop ready: launcher available",
+    "frames": 30,
+    "retired": 5027152522
+  },
+  {
+    "label": "cold-24",
+    "status": "desktop ready: launcher available",
+    "frames": 32,
+    "retired": 5035652578
+  },
+  {
+    "label": "cold-25",
+    "status": "desktop ready: launcher available",
+    "frames": 31,
+    "retired": 5032152446
+  }
+]

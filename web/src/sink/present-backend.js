@@ -1,7 +1,8 @@
 // E5-T06a: browser-side presentation contract shared by the Canvas2D and WebGL backends.
 //
-// The core FrameSink exposes little-endian B8G8R8A8 words.  Channel conversion belongs at this
-// boundary; the core remains browser-independent and never knows about RGBA ImageData bytes.
+// The core FrameSink exposes little-endian B8G8R8A8-compatible words. Channel conversion belongs
+// at this boundary; the core remains browser-independent and never knows about RGBA ImageData
+// bytes. The presentation controller normalizes B8G8R8X8's unused byte before delivery.
 
 /**
  * Minimal presentation contract for a browser-backed scanout.
@@ -11,6 +12,11 @@
  * the canvas bounds and source stride used to validate subsequent presents.
  */
 export class PresentBackend {
+  /** Whether a successful present wrote pixels to a real display surface. */
+  drawsPixels() {
+    return true;
+  }
+
   present(_rect, _pixels) {
     throw new Error("PresentBackend.present must be implemented by a concrete backend");
   }

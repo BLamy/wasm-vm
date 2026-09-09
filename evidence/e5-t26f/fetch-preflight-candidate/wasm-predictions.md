@@ -1,0 +1,13 @@
+# Preregistered WASM artifact and performance-scope predictions
+
+Recorded before opening the new `wasm-probe` results or either probe adapter. Scope is the completed synthetic comparison only; no build or benchmark will be rerun.
+
+1. **Actual module identities.** Build and timing records will identify two distinct actual WebAssembly modules with SHA-256 values that can be independently matched to the local artifacts. Their baseline/candidate identity will be traceable to the stated inputs; labels alone will not establish identity.
+2. **Build and input symmetry.** The two adapter source files will be byte-identical. The recorded build commands, target, profile, features, compiler environment/flags, and workload parameters will be symmetric except for the intended core-library candidate change and variant-specific paths/names. Any provenance the records cannot establish will be called out as a limitation.
+3. **Actual execution and observed order.** The runner will instantiate/execute WebAssembly for both variants with identical workload inputs. Timing records will establish the exact observed warmup/measured ordering, rather than merely an intended schedule. If results use quartets, each quartet will contain the documented variant order and balanced inputs.
+4. **Arithmetic.** Means, quartet comparisons, and reported percentage changes will recompute from recorded raw timings with explicit denominators and grouping. Reported speedup and elapsed-time reduction will not be treated as interchangeable percentages.
+5. **Engine and flags.** The evidence will identify the executing engine/version and flags sufficiently to bound the result to that execution environment. The review will distinguish explicitly recorded settings from ambient or unrecorded settings.
+6. **Checksum scope.** The adapter's output checksum will cover only its explicitly hashed state. Equality will support identical observed checksum outputs for this workload, not full architectural equivalence, complete memory coverage, or an independent correctness oracle. Manifest checksums will likewise be limited to their listed artifacts.
+7. **Performance claim boundary.** The result will support, at most, a synthetic comparison of the uncompiled fetch-preflight fallback in actual WASM. It will not establish BrowserExecutor execution, production performance, browser performance, Omarchy/F acceptance, task verification, or adoption.
+
+Decision rule: sound support for the bounded proposal only if artifact identity, symmetric recorded setup, execution evidence, and arithmetic support the comparison and its limitations remain explicit. Record each prediction as HELD, FAILED, or NEEDS EVIDENCE; do not rewrite an incorrect prediction after inspection.

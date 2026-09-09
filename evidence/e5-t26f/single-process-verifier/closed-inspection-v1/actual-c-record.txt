@@ -1,0 +1,1 @@
+e5-observe-v1/111/777/4/0100000/5/0100002/|rchar:	100|wchar: 89 |syscr: 19|syscw: 5

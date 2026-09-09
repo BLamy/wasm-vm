@@ -1,0 +1,60 @@
+{
+  "source": "evidence/e5-t22c/iteration-v5/2560x1600.png",
+  "sourceSha256": "9f127e7e56ae79fd21550d407baf6901cf98c83ce2878a0a5b14513e6ac87ef2",
+  "bounds": {
+    "x": 20,
+    "y": 186,
+    "width": 2560,
+    "height": 1600,
+    "imageWidth": 2800,
+    "imageHeight": 1900
+  },
+  "edges": {
+    "width": 2560,
+    "height": 1600,
+    "complete": false,
+    "samples": [
+      {
+        "x": 4,
+        "y": 4,
+        "painted": 16
+      },
+      {
+        "x": 1280,
+        "y": 4,
+        "painted": 0
+      },
+      {
+        "x": 2552,
+        "y": 4,
+        "painted": 0
+      },
+      {
+        "x": 4,
+        "y": 800,
+        "painted": 0
+      },
+      {
+        "x": 2552,
+        "y": 800,
+        "painted": 0
+      },
+      {
+        "x": 4,
+        "y": 1592,
+        "painted": 0
+      },
+      {
+        "x": 1280,
+        "y": 1592,
+        "painted": 0
+      },
+      {
+        "x": 2552,
+        "y": 1592,
+        "painted": 0
+      }
+    ]
+  },
+  "claim": "offline detection of recorded black padding only; not a live guest test"
+}

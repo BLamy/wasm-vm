@@ -1,0 +1,35 @@
+{
+  "schema": "wasm-vm.e5-t26f.single-process-quiet-verifier.v1",
+  "verdict": "closed-original-cap-failure",
+  "acceptance": false,
+  "fVerified": false,
+  "head": "001e80864911863145f2127192bae5df8186e68b",
+  "rawSha256": "0d56d45f82d6982a52368ca5dc63499d26ce07409712d460b0cb178ab60363bf",
+  "generatedSourceSha256": "58b735d6a2225cd6614c192af898d7b4878ae1124f39d2244867274684b3fa73",
+  "elapsedMs": 4101.870000004768,
+  "originalCapMs": 2000,
+  "preparedIdentityFromVisualReview": {
+    "pid": 1000,
+    "start": 31468
+  },
+  "restoredSnapshotSha256": "569f4689a2f9082688159c47347480dac022873bd79227f1effb39ceb6c0b6cc",
+  "restoredCrc32": "af15247a",
+  "freshRaster": {
+    "text": "e5t26f-aplay",
+    "match": {
+      "x": 557,
+      "y": 195
+    },
+    "physicalEdges": 10
+  },
+  "freshPcm": {
+    "writtenFrames": 1440,
+    "nonSilentFrames": 1440,
+    "maxAbs": 0.999969482421875
+  },
+  "pngSha256": {
+    "quietPrepared": "9538a1c58c531ed7315b2e68c9204149b50e9dc739c4b44642d8cf7f68238431",
+    "postRestoreAndFailure": "80c5b4057a6c89ec7bd33f41995c390e0577ae1d90bd376c0756db77f60cd478"
+  },
+  "limitation": "Closes only the one authorized print-suppression hypothesis; no F acceptance or speedup claim."
+}

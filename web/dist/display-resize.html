@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Viewport resize · wasm-vm</title>
+<style>
+body{margin:2rem;background:#11151c;color:#e5edf8;font:16px/1.5 system-ui}
+h1{margin-bottom:.5rem}p{max-width:75rem}button{font:inherit;padding:.4rem .8rem;margin-right:1rem}
+#viewport{position:relative;resize:both;overflow:hidden;width:641px;height:481px;max-width:100%;
+  background:#000;box-shadow:0 0 0 1px #6b7b92;margin-top:1.5rem}
+canvas{position:absolute;left:0;top:0;display:block;image-rendering:auto}
+pre{white-space:pre-wrap;font-size:12px;max-width:70rem}#status{color:#bce4bc}
+</style>
+<h1>Viewport resize and stale-frame safety</h1>
+<p>Drag the lower-right corner or zoom the browser. The real GPU receives a preferred
+mode after a 250 ms pause. The colored frame is a <strong>synthetic pixel fixture</strong>,
+not a guest desktop. It stays at native pixel size until “Match frame” supplies a new
+fixture at the requested size. Linux compositor adaptation remains a separate test.</p>
+<button id="match">Match frame</button><button id="dispose">Dispose viewport</button>
+<span id="status" role="status">Starting paused real GPU…</span>
+<div id="viewport"><canvas id="canvas" width="641" height="481" aria-label="Native pixel resize fixture"></canvas></div>
+<pre id="state"></pre>
+<script type="module" src="./display-resize.js"></script>
+</html>

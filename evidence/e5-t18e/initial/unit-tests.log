@@ -1,0 +1,32 @@
+✔ neutral wallpaper with a contrasting panel counts as a desktop (12.0215ms)
+✔ black and flat-gray scanouts do not claim desktop readiness (5.848208ms)
+✔ sparse login text is not confused with a desktop (4.5745ms)
+✔ all chunk positions, including duplicate objects, reconstruct the image (51.061542ms)
+✔ one mutated published byte is rejected (6.539292ms)
+✔ a mutated published manifest is rejected (9.703083ms)
+✔ missing published object fails closed (4.619167ms)
+✔ self-consistent manifest cannot change required dimensions (11.963584ms)
+✔ reordered valid chunks cannot claim the original full-image hash (3.764167ms)
+▶ verifier: full publication rejects stale image, locks, metadata and chunk bytes
+  ✔ positive control reconstructs all 8192 positions (2770.368334ms)
+  ✔ one raw-image byte changed after publication is rejected (1877.838833ms)
+  ✔ output MANIFEST.txt changed after publication is rejected (1798.869708ms)
+  ✔ output FILE-MANIFEST.txt changed after publication is rejected (1698.5285ms)
+  ✔ committed input MANIFEST.txt changed after publication is rejected (1747.75025ms)
+  ✔ committed input FILE-MANIFEST.txt changed after publication is rejected (1685.313167ms)
+  ✔ changed served manifest is rejected (2318.340334ms)
+  ✔ changed chunk object is rejected through the full publication API (2006.858792ms)
+  ✔ stale builder image metadata is rejected (2436.761458ms)
+  ✔ builder profile cannot silently change boundedRecovery (2096.187708ms)
+  ✔ builder profile cannot silently change backend (1618.509542ms)
+  ✔ builder profile cannot silently change renderer (1807.084416ms)
+  ✔ restored fixture still passes, excluding cross-case contamination (2627.702ms)
+✔ verifier: full publication rejects stale image, locks, metadata and chunk bytes (27225.473625ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 27415.413333

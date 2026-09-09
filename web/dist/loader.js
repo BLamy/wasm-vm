@@ -26,6 +26,8 @@ import init, {
 import { decideBootPath, deriveBootSnapshotBaseId } from "./boot-path.js";
 import { deriveOverlaySeedIdentity } from "./overlay-seed-identity.js";
 import { createTaskQuiescence } from "./task-quiescence.js";
+import { validateGuestClock, validateICountDivider, createGuestClockLifecycle } from "./guest-clock.js";
+import { validateDecodedCacheEntries, applyDecodedCacheEntries } from "./decoded-cache.js";
 
 // Responsiveness: a near-zero-delay "yield to the main thread" for rescheduling the run loop. The VM
 // runs on the main thread (a Web Worker offload is a larger follow-up), so a long synchronous run slice
@@ -197,6 +199,9 @@ export async function startLinuxBoot(opts = {}) {
     onState = () => {},
     onProgress = () => {},
     onOutput = () => {},
+    // E5-T26f: guest-to-host frames from the named virtio-console agent port. The callback is
+    // page-owned on direct boots and copied through the whole-machine worker protocol otherwise.
+    onAgentOutput = () => {},
     onError = () => {},
     // E3-T09: called with { readOnly: bool } once the writer Web Lock is resolved for a
     // persistent boot — the UI shows the RO banner / retry-as-writer affordance on it.
@@ -211,6 +216,12 @@ export async function startLinuxBoot(opts = {}) {
     // E5-T21d: emitted once per successful guest capture PCM_START edge. The page owns the
     // permission adapter; this callback is only a lifecycle notification and never opens media.
     onCaptureStart = () => {},
+    // E5-T06d: synchronous virtio-gpu FrameSink projection. The callback must copy the temporary
+    // pixels view before returning; the page PresentationController owns that copy/replay policy.
+    onDisplayFrame = null,
+    // E5-T15c: cursor-plane callbacks share the synchronous GPU seam but are dispatched separately
+    // so MOVE_CURSOR never enters the framebuffer presentation scheduler.
+    onCursorState = null,
     // Instructions per synchronous run slice. Kept modest so a slice is only a few ms of main-thread
     // time — short enough that the browser paints/handles input between slices (smooth page/animation).
     // Combined with the no-clamp MessageChannel yield (see yieldToMain), throughput stays high. A larger
@@ -219,6 +230,12 @@ export async function startLinuxBoot(opts = {}) {
     // E4-T30: the production interpreter uses the predecoded entry cache plus bounded (<=128 retire)
     // interrupt/device batching. `false` is the byte-identical legacy A/B path for diagnosis.
     fastInterpreter = true,
+    // E5-T26i: explicit experiment; deterministic instruction time remains the default.
+    guestClock = "icount",
+    // Explicit experiment only. Omission preserves the constructed or restored divider.
+    icountDivider = undefined,
+    // E5-T26k: explicit 4096/16384-entry experiment; omission preserves the existing capacity.
+    decodedCacheEntries = undefined,
     // E4-T32: policy is selected by the page and passed as data to a whole-machine worker. Undefined
     // preserves direct-loader compatibility; the page makes the production default explicit.
     jit = undefined,
@@ -270,6 +287,9 @@ export async function startLinuxBoot(opts = {}) {
   const baseUrl = opts.baseUrl ?? imageManifestUrl.replace(/[^/]*$/, "");
 
   try {
+    validateDecodedCacheEntries(decodedCacheEntries);
+    validateGuestClock(guestClock);
+    validateICountDivider(icountDivider, guestClock);
     const manifest = await fetchJsonAsset(manifestUrl, "boot manifest");
     const km = manifest.artifacts.kernel;
     // E4 restore-on-load artifacts (busybox: bootSnapshot only; Alpine chunked: bootSnapshot RAM +
@@ -373,11 +393,15 @@ export async function startLinuxBoot(opts = {}) {
       setSlirpNet(!!opts.slirpNet || network.provider !== "offline" || !!slirpDoh);
     } catch { /* keep the default backend */ }
 
-    onState("booting");
     // disk → in-memory virtio-blk backend (whole image); chunked → a ChunkedBackend that lazily
     // HTTP-fetches chunks under baseUrl (+ E3-T05 persist: writes survive reload via IndexedDB);
     // initramfs → the image as the initrd.
     const usePersist = isChunked && persist;
+    // A persistent boot may resume a whole-machine snapshot immediately after the machine is
+    // constructed. Do not label that path as a fresh guest boot; the state is emitted below only
+    // after the stored/build-time resume candidates have been rejected. This makes the browser
+    // evidence distinguish construction of the host wrapper from Linux actually executing its
+    // cold probe sequence.
     // E3-T08: dirty-bytes threshold that forces a drain before more guest work (default 16 MiB;
     // tests set it tiny via the persistMax option to prove the backpressure path).
     const maxDirtyBytes = opts.persistMax ?? 16 * 1024 * 1024;
@@ -498,6 +522,24 @@ export async function startLinuxBoot(opts = {}) {
       machine = WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, emitOutput, enableMic);
     } else {
       machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, emitOutput, enableMic);
+    }
+
+    // E5-T06d: attach the page-owned display sink only after the complete machine exists. This
+    // leaves the core's headless NullSink as the safe constructor default and keeps the same
+    // callback seam available to direct and whole-machine-worker boot paths.
+    if ((typeof onDisplayFrame === "function" || typeof onCursorState === "function")
+        && typeof machine.attachDisplay === "function") {
+      // Older/custom device layouts may have consumed both optional virtio slots. The display is
+      // an enhancement in that case; preserve boot and the guest queue instead of turning an
+      // unavailable optional sink into a machine-fatal attach error.
+      machine.attachDisplay((frame) => {
+        const type = frame?.type;
+        if (type === "cursor-update" || type === "cursor-move") {
+          onCursorState?.(frame);
+        } else {
+          onDisplayFrame?.(frame);
+        }
+      });
     }
 
     // E5-T20e: swap the assembly's default NullSink for the page-owned AudioWorklet producer only
@@ -630,9 +672,19 @@ export async function startLinuxBoot(opts = {}) {
     // out of JS; a missing, stale, corrupt, or foreign result leaves the freshly constructed machine
     // untouched and the normal fallback paths below decide what to do.
     let restoredFromStoredSnapshot = false;
+    // Retain the actual load-time decision, before the guest can advance its disk. A later
+    // snapshotDecision() intentionally answers a different question: can the OLD checkpoint
+    // still be reused against the now-current overlay? Never use that live query as history.
+    let storedSnapshotRestoreObservation = Object.freeze({
+      attempted: false, decision: null, overlayGeneration: null,
+    });
     if (usePersist && typeof machine.restoreStoredSnapshot === "function") {
       try {
         const decision = await machine.restoreStoredSnapshot();
+        let overlayGeneration = null;
+        // Evidence collection must not change an already completed restore into a fallback.
+        try { overlayGeneration = machine.overlayGeneration(); } catch { /* unavailable evidence */ }
+        storedSnapshotRestoreObservation = Object.freeze({ attempted: true, decision, overlayGeneration });
         if (decision === "resume") {
           restoredFromStoredSnapshot = true;
           onState("restored");
@@ -640,6 +692,9 @@ export async function startLinuxBoot(opts = {}) {
           console.warn(`wasm-vm: stored snapshot not coherent (${decision}) — cold booting`);
         }
       } catch (e) {
+        storedSnapshotRestoreObservation = Object.freeze({
+          attempted: true, decision: "error", overlayGeneration: null,
+        });
         // A storage read failure is a cold-boot fallback, never a partially restored machine.
         console.warn("wasm-vm: stored snapshot restore failed, cold booting:", e?.message || e);
       }
@@ -742,6 +797,14 @@ export async function startLinuxBoot(opts = {}) {
         restoredFromBootSnapshot = false;
       }
     }
+
+    // All initial resume candidates are settled; selection must survive restore and precede execution.
+    applyDecodedCacheEntries(machine, decodedCacheEntries);
+    const guestClockLifecycle = createGuestClockLifecycle(machine, guestClock, icountDivider);
+
+    // No resume candidate was coherent, so this machine is about to execute its cold guest boot.
+    // Persistent resume success intentionally reaches the scheduler without a booting state.
+    if (!restoredFromBootSnapshot) onState("booting");
 
     let stopped = false;
     let paused = Boolean(startPaused);
@@ -896,6 +959,10 @@ export async function startLinuxBoot(opts = {}) {
         if (lastSliceStart) stretchMaxMs = Math.max(stretchMaxMs, sliceStart - lastSliceStart);
         lastSliceStart = sliceStart;
         res = machine.runChunk(runQuantum, usePersist ? maxDirtyBytes : undefined);
+        if (typeof machine.takeAgentOutput === "function") {
+          const agentBytes = machine.takeAgentOutput();
+          if (agentBytes?.byteLength) onAgentOutput(agentBytes);
+        }
         observeCaptureStart();
         const sliceMs = (typeof performance !== "undefined" ? performance.now() : Date.now()) - sliceStart;
         sliceCount += 1;
@@ -988,12 +1055,20 @@ export async function startLinuxBoot(opts = {}) {
 
     return {
       backend: "main-thread",
+      // Host hotplug is separate from guest mode adoption; stats come from the actual GPU map.
+      setDisplay: (width, height) => !stopped && machine.setDisplay(width, height),
+      displayStats: () => stopped ? null : machine.displayStats(),
       sendInput: (bytes) => {
         if (!stopped) {
           inputCalls += 1;
           inputBytes += bytes?.byteLength ?? bytes?.length ?? 0;
           machine.sendInput(bytes);
         }
+      },
+      // E5-T26f: the T23d page Channel writes framed bytes through the named virtio-console port.
+      sendAgentInput: (bytes) => {
+        if (stopped || typeof machine.sendAgentInput !== "function") return 0;
+        return machine.sendAgentInput(bytes);
       },
       // E5-T12b: the DOM keyboard bridge publishes physical evdev frames through the same
       // controller on both the direct and whole-machine-worker paths. Worker RPC ordering keeps
@@ -1041,23 +1116,24 @@ export async function startLinuxBoot(opts = {}) {
         settleFinished();
         return whenDone;
       },
-      // E2-T23: pause/resume the executor. Because guest `mtime` is a DETERMINISTIC retire-count
-      // clock (not a wall clock), pausing simply stops retiring instructions → guest monotonic
-      // time freezes and continues seamlessly on resume. No slew clamp, catch-up storm, or
-      // deadline reconciliation is possible — the "giant jump on resume" that wall-clock designs
-      // fear cannot occur here. The goldfish RTC (Date.now) keeps true wall time across the pause,
-      // so on resume `date` is correct while `uptime` reflects only executed time. See
-      // docs/timekeeping.md. main.js drives these from `visibilitychange` to idle a hidden tab.
+      // Explicit execution pauses freeze both clock modes. Wall mode resets its host anchor
+      // before rescheduling; unpaused background throttling retains the core gap/slew policy.
+      // The RTC remains separate. main.js's explicit visibility pause still freezes execution;
+      // the desktop worker route does not pause on visibility changes.
       pause: () => { paused = true; },
       resume: () => {
         if (paused && !stopped) {
+          guestClockLifecycle.resume();
           paused = false;
           schedule(); // idempotent — never spawns a second loop even if a tick is still pending
         }
       },
       isPaused: () => paused,
+      guestClockState: () => guestClockLifecycle.state(),
+      icountDividerSelection: () => guestClockLifecycle.dividerSelection(),
       // E4: true when this boot skipped the Linux boot by restoring a shipped boot snapshot.
       restoredFromBootSnapshot: () => restoredFromBootSnapshot,
+      storedSnapshotRestoreEvidence: () => ({ ...storedSnapshotRestoreObservation }),
       overlaySeedIdentity: () => overlaySeedIdentity,
       audioOutputReady: () => (
         typeof machine.audioOutputReady === "function" ? machine.audioOutputReady() : false
@@ -1076,6 +1152,28 @@ export async function startLinuxBoot(opts = {}) {
           : false
       ),
       stateDigest: () => machine.stateDigest(),
+      // E5-T26e: the page-side T23d Channel calls confirmAgentHello only after a fresh peer HELLO;
+      // the wasm seam then arms the core's application-generation fence for one restore attempt.
+      confirmAgentHello: () => {
+        if (typeof machine.confirmAgentHello !== "function") return false;
+        return machine.confirmAgentHello();
+      },
+      // E5-T26f: serialize the live composite desktop envelope through the same controller
+      // surface used by the page in both direct and whole-machine-worker boot modes.
+      saveDesktopSnapshot: () => {
+        if (typeof machine.saveDesktopSnapshot !== "function") {
+          throw new Error("desktop snapshot save is unavailable in this wasm build");
+        }
+        return machine.saveDesktopSnapshot();
+      },
+      // E5-T26e: restore the actual composite envelope through the production Machine boundary.
+      // The browser bridge applies the returned hostViewport through T22's PresentationController.
+      restoreDesktopSnapshot: (bytes, width, height) => {
+        if (typeof machine.restoreDesktopSnapshot !== "function") {
+          throw new Error("desktop restore is unavailable in this wasm build");
+        }
+        return machine.restoreDesktopSnapshot(bytes, width, height);
+      },
       jitStats: () => (typeof machine.jitStats === "function" ? machine.jitStats() : null),
       profileStats: () => (typeof machine.getProfile === "function" ? machine.getProfile() : null),
       schedulerStats: () => ({
@@ -1136,12 +1234,17 @@ export async function startLinuxBoot(opts = {}) {
       // "Free browser storage & retry": clear the quota pause and resume — the still-pending
       // writes retry on the next tick (succeed once origin storage is available, else re-dialog).
       // Deleting guest files does not shrink this block overlay until discard/TRIM exists.
-      resumeAfterQuota: () => { quotaPaused = false; schedule(); },
+      resumeAfterQuota: () => {
+        if (quotaPaused && !stopped) guestClockLifecycle.resume();
+        quotaPaused = false;
+        schedule();
+      },
       // "Continue read-only": refuse every future guest write and resolve the ONE parked,
       // unacknowledged WRITE with EIO. The persist pump may keep retrying its RAM-only bytes after
       // space is freed, but page close is allowed to lose those bytes because the guest never saw
       // S_OK for that descriptor. Existing durable data is intact.
       continueReadOnly: () => {
+        if (quotaPaused && !stopped) guestClockLifecycle.resume();
         try { machine.setDiskReadOnly(); } catch {}
         quotaReadOnly = true;
         quotaPaused = false;

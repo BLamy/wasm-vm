@@ -339,6 +339,46 @@ fn sink_failure_completes_the_period_with_io_error_and_no_reported_frames() {
 }
 
 #[test]
+fn snapshot_restore_drops_partial_period_and_xruns_before_fresh_audio() {
+    let mut rig = Rig::new();
+    rig.start();
+    let mut sink = NullSink::new();
+    let clock = ManualAudioClock::new();
+    let old_status = rig.post(&ramp(0));
+    assert_eq!(rig.service(&clock, &mut sink).queued, 1);
+    assert_eq!(rig.state.borrow().playback_pending_count(), 1);
+
+    let payload = rig.state.borrow().to_snapshot().unwrap();
+    let restore = rig.state.borrow_mut().restore_snapshot(&payload).unwrap();
+    assert!(restore.host_audio_rings_discarded);
+    assert_eq!(restore.discarded_playback_transfers, 1);
+    assert_eq!(restore.xrun_events, 1);
+    assert_eq!(rig.state.borrow().playback_pending_count(), 0);
+    assert_eq!(rig.state.borrow().pending_event_count(), 1);
+    assert_eq!(rig.ring.used_idx(&mut rig.bus), 0);
+    assert_eq!(rig.bus.load64(old_status).unwrap(), u64::MAX);
+
+    let fresh_status = rig.post(&ramp(10_000));
+    let report = rig.service(&clock, &mut sink);
+    assert_eq!(report.queued, 1);
+    assert_eq!(report.completed, 0);
+    assert_eq!(sink.frames_pushed(), 0);
+
+    clock.advance_ns(PERIOD_NS);
+    let report = rig.service_without_kick(&clock, &mut sink);
+    assert_eq!(report.completed, 1);
+    assert_eq!(report.frames_pushed, PERIOD_FRAMES as u64);
+    assert_eq!(rig.ring.used_idx(&mut rig.bus), 1);
+    assert_eq!(rig.ring.used_elem(&mut rig.bus, 0), (3, 8));
+    assert_eq!(rig.status(fresh_status).status, snd::SndStatus::Ok);
+    assert_eq!(sink.frames_pushed(), PERIOD_FRAMES as u64);
+
+    assert_eq!(rig.service_without_kick(&clock, &mut sink).completed, 0);
+    assert_eq!(sink.frames_pushed(), PERIOD_FRAMES as u64);
+    assert_eq!(rig.state.borrow().pending_event_count(), 1);
+}
+
+#[test]
 fn stop_start_resumes_pending_ramp_once_and_wav_sink_is_bit_exact() {
     let path = "target/e5-t19b-ramp.wav";
     prepare_scratch_path(path);

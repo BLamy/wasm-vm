@@ -25,6 +25,12 @@ pub const KEYBOARD_DEVIDS: InputDevids = InputDevids {
 /// Stable virtio-mmio slot used by the keyboard when the standard slots are attached.
 pub const KEYBOARD_VIRTIO_SLOT: usize = 3;
 
+/// Bounded host-side queue budget for interactive keyboard clients. A browser key transition is
+/// one EV_KEY event plus one SYN_REPORT, so the default transport budget of 256 events covers only
+/// 128 transitions. Keep a larger but finite budget for terminal bursts and the native display
+/// workload's 100-character proof without changing the conservative default for generic devices.
+pub const INTERACTIVE_PENDING_EVENT_BUDGET: usize = 2_048;
+
 /// Linux input-event-codes.h: the canonical `KEY_A` make/break code.
 pub const KEY_A: u16 = 30;
 /// Linux input-event-codes.h: an edge code used by keyboard-map adversarial fixtures.
@@ -53,6 +59,29 @@ pub struct KeyboardLedState {
 pub type KeyboardLedHandle = Rc<RefCell<KeyboardLedState>>;
 
 impl KeyboardLedState {
+    /// Encode the three guest-controlled LED indicators for a desktop checkpoint.
+    pub const fn to_snapshot_bytes(self) -> [u8; 3] {
+        [
+            if self.num_lock { 1 } else { 0 },
+            if self.caps_lock { 1 } else { 0 },
+            if self.scroll_lock { 1 } else { 0 },
+        ]
+    }
+
+    /// Decode the compact LED checkpoint payload, rejecting non-boolean bytes.
+    pub fn from_snapshot_bytes(bytes: &[u8; 3]) -> Result<Self, super::InputSnapshotError> {
+        if bytes.iter().any(|byte| *byte > 1) {
+            return Err(super::InputSnapshotError::InvalidBoolean {
+                field: "keyboard_led",
+            });
+        }
+        Ok(Self {
+            num_lock: bytes[0] == 1,
+            caps_lock: bytes[1] == 1,
+            scroll_lock: bytes[2] == 1,
+        })
+    }
+
     /// Apply one canonical `EV_LED` status event. Unknown event types/codes and non-boolean LED
     /// values are ignored so malformed guest input cannot change the host indicator.
     pub fn apply_status_event(&mut self, event: InputEvent) -> bool {
@@ -208,6 +237,47 @@ mod tests {
                 .apply_status_event(InputEvent::new(EV_LED, LED_CAPSL, 2))
         );
         assert!(!state.borrow().caps_lock);
+    }
+
+    #[test]
+    fn keyboard_led_snapshot_round_trip_rejects_non_boolean_bytes() {
+        let expected = KeyboardLedState {
+            num_lock: true,
+            caps_lock: false,
+            scroll_lock: true,
+        };
+        assert_eq!(
+            KeyboardLedState::from_snapshot_bytes(&expected.to_snapshot_bytes()).unwrap(),
+            expected
+        );
+        assert_eq!(
+            KeyboardLedState::from_snapshot_bytes(&[1, 2, 0]),
+            Err(super::super::InputSnapshotError::InvalidBoolean {
+                field: "keyboard_led"
+            })
+        );
+    }
+
+    #[test]
+    fn verifier_led_bytes_and_fresh_post_restore_status_are_exact() {
+        let before = KeyboardLedState {
+            num_lock: true,
+            caps_lock: false,
+            scroll_lock: true,
+        };
+        assert_eq!(before.to_snapshot_bytes(), [1, 0, 1]);
+        assert_eq!(
+            KeyboardLedState::from_snapshot_bytes(&[1, 2, 0]),
+            Err(super::super::InputSnapshotError::InvalidBoolean {
+                field: "keyboard_led"
+            })
+        );
+        assert_eq!(before.to_snapshot_bytes(), [1, 0, 1]);
+
+        let mut restored =
+            KeyboardLedState::from_snapshot_bytes(&before.to_snapshot_bytes()).unwrap();
+        assert!(restored.apply_status_event(InputEvent::new(EV_LED, LED_CAPSL, 1)));
+        assert_eq!(restored.to_snapshot_bytes(), [1, 1, 1]);
     }
 
     #[test]

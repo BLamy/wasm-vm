@@ -24,6 +24,9 @@ path = "src/bin/wvrelay.rs"
 # subcommand — which needs the S-mode/SBI methods zicsr-stub compiles out — is cfg'd off
 # consistently instead of calling methods that no longer exist. See src/boot.rs.
 zicsr-stub = ["wasm-vm-core/zicsr-stub"]
+# E5-T07a: expose the bounded native virtio-gpu controlq recorder used by the first-light
+# acceptance harness. It remains runtime-disabled unless `boot --gpu-trace` is supplied.
+gpu-trace = ["wasm-vm-core/gpu-trace"]
 
 [dependencies]
 wasm-vm-core = { workspace = true, features = ["std", "trace"] }

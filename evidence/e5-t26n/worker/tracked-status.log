@@ -1,0 +1,8 @@
+ M Makefile
+ M crates/wasm/src/jit_browser.rs
+ M crates/wasm/tests/jit_browser_parity.rs
+ M tasks/epic-6-transcendence/E6-T22-developer-image-riscv64.md
+ M tools/build-rootfs.sh
+ M tools/verify/e5-t22c-guest-mode.mjs
+ M web/dist/artifacts-node-alpine.json
+ M web/dist/artifacts.json

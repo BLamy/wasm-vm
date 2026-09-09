@@ -1,0 +1,27 @@
+{
+  "acceptance": false,
+  "scope": "Offline parser validation only; attacks are synthetic copies, not new native runs.",
+  "rawPreserved": true,
+  "results": [
+    {
+      "name": "valid",
+      "passed": true,
+      "parserExit": 0
+    },
+    {
+      "name": "output-byte-mismatch",
+      "passed": true,
+      "parserExit": 1
+    },
+    {
+      "name": "returned-byte-mismatch",
+      "passed": true,
+      "parserExit": 1
+    },
+    {
+      "name": "missing-read",
+      "passed": true,
+      "parserExit": 1
+    }
+  ]
+}

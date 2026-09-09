@@ -1,0 +1,44 @@
+#!/sbin/openrc-run
+description="Prepare the desktop runtime and reset the compositor budget once per boot"
+
+depend() {
+  need seatd
+  after udev udev-trigger
+}
+
+start() {
+  # A fixed, opt-in cold-boot fault changes only the disposable guest overlay.
+  case " $(cat /proc/cmdline) " in
+    *' wasmvm.desktop_test=1 '*)
+      case " $(cat /proc/cmdline) " in
+        *' wasmvm.desktop_fault=config '*)
+          if [ -f /etc/xdg/weston/weston.ini ]; then
+            mv /etc/xdg/weston/weston.ini /etc/xdg/weston/weston.ini.disabled
+          fi
+          ;;
+      esac
+      ;;
+  esac
+  mkdir -p /run/user/1000
+  chmod 700 /run/user/1000
+  chown 1000:1000 /run/user/1000
+  # The state directory is user-owned. Never remove/write through it with root privileges.
+  # Bound the whole user-owned initialization, including malformed persisted filesystem nodes.
+  if ! timeout -s KILL 30 runuser -u desktop -- /bin/sh -c '
+    umask 077
+    mkdir -p /home/desktop/.local/state/wasm-vm
+    rm -f /home/desktop/.local/state/wasm-vm/desktop.failed \
+      /home/desktop/.local/state/wasm-vm/desktop.attempts \
+      /home/desktop/.local/state/wasm-vm/desktop.ready \
+      /home/desktop/.local/state/wasm-vm/weston.pid
+    log=/home/desktop/.local/state/wasm-vm/desktop.log
+    if [ -L "$log" ] || { [ -e "$log" ] && [ ! -f "$log" ]; }; then
+      rm -f "$log" || exit 1
+    fi
+    printf "%s E5T18D event=boot-runtime-ready\n" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+      >>"$log"
+  '; then
+    printf '%s\n' 'E5T18D_RUNTIME_STATE_UNAVAILABLE: continuing to recovery login'
+  fi
+  return 0
+}

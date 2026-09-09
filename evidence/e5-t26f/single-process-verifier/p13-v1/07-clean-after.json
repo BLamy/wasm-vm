@@ -1,0 +1,12 @@
+{
+  "name": "07-clean-after",
+  "command": "git",
+  "args": [
+    "status",
+    "--porcelain"
+  ],
+  "cwd": "/private/tmp/e5-t26f-single-process-p13.j00WpJ/repo",
+  "code": 0,
+  "signal": null,
+  "error": null
+}

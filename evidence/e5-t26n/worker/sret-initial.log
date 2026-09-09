@@ -1,0 +1,10 @@
+[INFO]: 🎯  Checking for the Wasm target...
+error: unexpected argument 'browser_guest_sret' found
+
+Usage: cargo build [OPTIONS]
+
+For more information, try '--help'.
+Error: Compilation of your program failed
+Caused by: Compilation of your program failed
+Caused by: failed to execute `cargo build`: exited with exit status: 1
+  full command: cd "crates/wasm" && CARGO_BUILD_TARGET="wasm32-unknown-unknown" "cargo" "build" "--tests" "--lib" "browser_guest_sret"

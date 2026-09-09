@@ -1,0 +1,13 @@
+{
+  "name": "06-collector-tests",
+  "command": "node",
+  "args": [
+    "--test",
+    "tools/verify/e5-t26f-discovery-observation.test.mjs",
+    "tools/verify/e5-t26f-compile-queue-observation.test.mjs"
+  ],
+  "cwd": "/private/tmp/e5-t26f-single-process-p13.j00WpJ/repo",
+  "code": 0,
+  "signal": null,
+  "error": null
+}

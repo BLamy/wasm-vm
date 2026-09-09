@@ -1,0 +1,10 @@
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-t26l-verifier.WIYRcw/repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.92s
+     Running tests/async_compile_pipeline.rs (/private/tmp/e5-t26l-verifier.WIYRcw/cargo-target/debug/deps/async_compile_pipeline-e3f49c4eb252aacf)
+
+running 1 test
+L critic outer scope: inner runs stay at8; renewed zero-work final pump stages0/submits8; first=0x8000007c; retired=574; RAM=4c2b6fc6fa51b0a242cd1d99da043e7fc21d37139208f8114ccace42d413f920
+test verifier_outer_scope_zero_work_final_pump_refreshes_only_after_budget_renewal ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.04s
+

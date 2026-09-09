@@ -1,0 +1,104 @@
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 11.08s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.11s
+     Running tests/jit_browser_parity.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_browser_parity-6cc578c42c9ecada.wasm)
+running 35 tests
+test browser_handles_remain_bounded_across_retranslation_churn ... ignored, long browser externref/eviction churn; run explicitly for E4-T33 evidence
+Invoking test: unexpected_js_exception_fails_closed_without_commit_and_cleans_host
+test unexpected_js_exception_fails_closed_without_commit_and_cleans_host ... ok
+Invoking test: production_browser_budget_stays_below_measured_instance_cliff
+test production_browser_budget_stays_below_measured_instance_cliff ... ok
+Invoking test: page_write_invalidates_compiled_block
+test page_write_invalidates_compiled_block ... ok
+Invoking test: execute_miss_preserves_public_guard_and_guest_state
+test execute_miss_preserves_public_guard_and_guest_state ... ok
+Invoking test: directed_eviction_through_the_single_ordered_path
+test directed_eviction_through_the_single_ordered_path ... ok
+Invoking test: compile_instantiate_and_cache_by_phys_pc
+test compile_instantiate_and_cache_by_phys_pc ... ok
+Invoking test: chain_edge_links_and_unlinks_on_invalidation
+test chain_edge_links_and_unlinks_on_invalidation ... ok
+Invoking test: bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault
+test bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault ... ok
+Invoking test: browser_run_chunk_scope_caps_all_internal_subruns_to_eight_installs
+test browser_run_chunk_scope_caps_all_internal_subruns_to_eight_installs ... ok
+Invoking test: browser_jit_six_op_loop_is_exactly_budgeted
+test browser_jit_six_op_loop_is_exactly_budgeted ... ok
+Invoking test: browser_jit_matches_interpreter_m_block
+test browser_jit_matches_interpreter_m_block ... ok
+Invoking test: browser_jit_matches_interpreter_i_block
+test browser_jit_matches_interpreter_i_block ... ok
+Invoking test: browser_jit_matches_interpreter_a_block
+test browser_jit_matches_interpreter_a_block ... ok
+Invoking test: browser_inline_tlb_matches_interpreter_for_ram_loop
+test browser_inline_tlb_matches_interpreter_for_ram_loop ... ok
+Invoking test: browser_inline_static_link_unlinks_and_rearms_after_target_reinstall
+test browser_inline_static_link_unlinks_and_rearms_after_target_reinstall ... ok
+Invoking test: browser_inline_static_link_refuses_after_execute_permission_change
+test browser_inline_static_link_refuses_after_execute_permission_change ... ok
+Invoking test: browser_inline_static_guard_rejects_remapped_target_page
+test browser_inline_static_guard_rejects_remapped_target_page ... ok
+Invoking test: browser_inline_static_cross_page_tail_refuses_before_target_entry
+test browser_inline_static_cross_page_tail_refuses_before_target_entry ... ok
+Invoking test: browser_inline_static_cross_batch_target_fault_is_precise
+test browser_inline_static_cross_batch_target_fault_is_precise ... ok
+Invoking test: browser_inline_static_cross_batch_load_store_matches_interpreter
+test browser_inline_static_cross_batch_load_store_matches_interpreter ... ok
+Invoking test: browser_inline_static_cross_batch_link_executes_and_misses_safely
+test browser_inline_static_cross_batch_link_executes_and_misses_safely ... ok
+Invoking test: browser_inline_static_code_store_cuts_link_before_target_reuse
+test browser_inline_static_code_store_cuts_link_before_target_reuse ... ok
+Invoking test: browser_inline_static_chain_reaches_five_blocks_in_one_engine_call
+test browser_inline_static_chain_reaches_five_blocks_in_one_engine_call ... ok
+Invoking test: browser_inline_raw_store_to_compiled_page_aborts_before_successor
+test browser_inline_raw_store_to_compiled_page_aborts_before_successor ... ok
+Invoking test: browser_inline_raw_store_commits_reservation_and_code_log
+test browser_inline_raw_store_commits_reservation_and_code_log ... ok
+Invoking test: browser_inline_dynamic_jalr_links_switch_and_unlinks
+test browser_inline_dynamic_jalr_links_switch_and_unlinks ... ok
+Invoking test: browser_inline_direct_chain_reports_bounded_retirement
+test browser_inline_direct_chain_reports_bounded_retirement ... ok
+Invoking test: browser_inline_direct_chain_honors_depth_budget
+test browser_inline_direct_chain_honors_depth_budget ... ok
+Invoking test: browser_inline_data_store_stays_chained_but_atomic_successor_waits_for_commit
+test browser_inline_data_store_stays_chained_but_atomic_successor_waits_for_commit ... ok
+Invoking test: browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault
+test browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault ... ok
+Invoking test: browser_handoff_refreshes_after_outer_growth_during_compiled_call
+test browser_handoff_refreshes_after_outer_growth_during_compiled_call ... ok
+Invoking test: browser_dispatch_reuses_memory_views_without_subarray_allocation
+test browser_dispatch_reuses_memory_views_without_subarray_allocation ... ok
+Invoking test: browser_clean_dispatch_reuses_cached_outer_view_without_constructor
+test browser_clean_dispatch_reuses_cached_outer_view_without_constructor ... ok
+Invoking test: browser_batch_skips_unsupported_members_without_fragmenting_valid_blocks
+test browser_batch_skips_unsupported_members_without_fragmenting_valid_blocks ... ok
+
+test result: ok. 34 passed; 0 failed; 1 ignored; 0 filtered out; finished in 5.66s
+
+     Running tests/pmp_privilege_audit.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/pmp_privilege_audit-abd02abbb7b31b49.wasm)
+running 3 tests
+Invoking test: su_snapshot_and_host_sequence
+test su_snapshot_and_host_sequence ... ok
+Invoking test: su_revision_revocation
+test su_revision_revocation ... ok
+Invoking test: su_guest_trace_parity
+test su_guest_trace_parity ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 1.35s
+

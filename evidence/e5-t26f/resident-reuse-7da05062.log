@@ -1,0 +1,1457 @@
+{
+  "command": "node tools/verify/e5-t26f-browser-roundtrip.mjs",
+  "config": {
+    "E5_T26F_REQUIRE_HEAD": "7da050620031145b6e76cf150a894ed2710bd5b2",
+    "E5_T26F_FIXTURE": "resident-aplay-v1",
+    "E5_T26F_DIAGNOSTIC": "reuse",
+    "E5_T26F_DIAGNOSTIC_COMPLETE": "1",
+    "E5_T26F_DIAGNOSTIC_PROFILE": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resident-FUBCo4",
+    "E5_T26F_DIAGNOSTIC_PORT": "61631",
+    "E5_T26F_IMAGE": "target/e5-t26f/resident-image-2ae65408-a/alpine-rootfs.ext4",
+    "E5_T26F_IMAGE_INFO": "target/e5-t26f/resident-image-2ae65408-a/desktop-info.json",
+    "E5_T26F_DESKTOP_ASSET_DIR": "target/e5-t26f/chunks/resident-2ae65408",
+    "E5_T26F_TIMEOUT_MS": "1200000",
+    "E5_T26F_OUT": "evidence/e5-t26f/resident-reuse-7da05062"
+  }
+}
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-08T09:29:15.145Z","elapsedMs":1}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-08T09:29:16.079Z","elapsedMs":934}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-08T09:29:16.079Z","elapsedMs":934}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-08T09:29:18.782Z","elapsedMs":3637}
+[e5-t26f] {"phase":"reload:normal","event":"start","timestamp":"2026-09-08T09:29:18.787Z","elapsedMs":3642}
+[e5-t26f] {"phase":"reload:normal","event":"done","timestamp":"2026-09-08T09:29:18.936Z","elapsedMs":3791}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"start","timestamp":"2026-09-08T09:29:18.936Z","elapsedMs":3791}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"done","timestamp":"2026-09-08T09:29:20.257Z","elapsedMs":5112}
+[e5-t26f] {"phase":"restore:normal:completion","event":"start","timestamp":"2026-09-08T09:29:20.257Z","elapsedMs":5112}
+[e5-t26f] {"phase":"restore:normal:completion","event":"done","timestamp":"2026-09-08T09:29:20.264Z","elapsedMs":5119}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"start","timestamp":"2026-09-08T09:29:20.264Z","elapsedMs":5119}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"done","timestamp":"2026-09-08T09:29:20.266Z","elapsedMs":5121}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"start","timestamp":"2026-09-08T09:29:20.266Z","elapsedMs":5121}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"done","timestamp":"2026-09-08T09:29:20.266Z","elapsedMs":5121}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"start","timestamp":"2026-09-08T09:29:20.266Z","elapsedMs":5121}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"done","timestamp":"2026-09-08T09:29:20.661Z","elapsedMs":5516}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"start","timestamp":"2026-09-08T09:29:20.661Z","elapsedMs":5516}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"done","timestamp":"2026-09-08T09:29:20.825Z","elapsedMs":5680}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"start","timestamp":"2026-09-08T09:29:20.825Z","elapsedMs":5680}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"done","timestamp":"2026-09-08T09:29:20.828Z","elapsedMs":5683}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"start","timestamp":"2026-09-08T09:29:20.828Z","elapsedMs":5683}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"done","timestamp":"2026-09-08T09:29:20.908Z","elapsedMs":5763}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"start","timestamp":"2026-09-08T09:29:20.908Z","elapsedMs":5763}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"done","timestamp":"2026-09-08T09:29:24.689Z","elapsedMs":9544}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"start","timestamp":"2026-09-08T09:29:24.690Z","elapsedMs":9545}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"done","timestamp":"2026-09-08T09:29:24.736Z","elapsedMs":9591}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"start","timestamp":"2026-09-08T09:29:24.736Z","elapsedMs":9591}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"timing-failed-continuing","timestamp":"2026-09-08T09:29:24.807Z","elapsedMs":9662}
+[e5-t26f] {"phase":"restore:normal:coherence-audit","event":"start","timestamp":"2026-09-08T09:29:24.807Z","elapsedMs":9662}
+[e5-t26f] {"phase":"restore:normal:coherence-audit","event":"done","timestamp":"2026-09-08T09:29:24.877Z","elapsedMs":9732}
+[e5-t26f] {"phase":"drag:prepare","event":"start","timestamp":"2026-09-08T09:29:24.877Z","elapsedMs":9732}
+[e5-t26f] {"phase":"drag:prepare","event":"done","timestamp":"2026-09-08T09:29:24.984Z","elapsedMs":9839}
+[e5-t26f] {"phase":"snapshot:drag-before","event":"start","timestamp":"2026-09-08T09:29:24.984Z","elapsedMs":9839}
+[e5-t26f] {"phase":"snapshot:drag-before","event":"done","timestamp":"2026-09-08T09:29:33.328Z","elapsedMs":18183}
+[e5-t26f] {"phase":"snapshot:drag-held","event":"start","timestamp":"2026-09-08T09:29:33.328Z","elapsedMs":18183}
+[e5-t26f] {"phase":"snapshot:drag-held","event":"done","timestamp":"2026-09-08T09:29:41.568Z","elapsedMs":26423}
+[e5-t26f] {"phase":"snapshot:drag-moving","event":"start","timestamp":"2026-09-08T09:29:41.568Z","elapsedMs":26423}
+[e5-t26f] {"phase":"drag:guest-translation","event":"start","timestamp":"2026-09-08T09:29:41.569Z","elapsedMs":26424}
+[e5-t26f] {"phase":"drag:guest-translation","event":"done","timestamp":"2026-09-08T09:29:42.882Z","elapsedMs":27737}
+[e5-t26f] {"phase":"drag:checkpoint-Published","event":"start","timestamp":"2026-09-08T09:29:51.972Z","elapsedMs":36827}
+[e5-t26f] {"phase":"drag:checkpoint-Published","event":"done","timestamp":"2026-09-08T09:29:52.460Z","elapsedMs":37315}
+[e5-t26f] {"phase":"snapshot:drag-moving","event":"done","timestamp":"2026-09-08T09:29:52.460Z","elapsedMs":37315}
+[e5-t26f] {"phase":"snapshot:drag-released","event":"start","timestamp":"2026-09-08T09:29:52.460Z","elapsedMs":37315}
+[e5-t26f] {"timestamp":"2026-09-08T09:30:00.474Z","phase":"snapshot:drag-released","event":"sample","probeMs":5664,"ready":"ready","restored":"ready","status":"desktop ready: launcher available","serialTail":"","frameCount":17,"pointerFrames":7,"keyboardFrames":10,"launch":null,"command":{"label":null,"marker":"e5t26f-post-aplay","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":8420,"guestVisible":null,"pointerFrames":null,"keyboardFrames":10},"focus":{"label":"post-restore-focus","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":true,"pointerFrames":3,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":36,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":17,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":1684685,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":1440,"maxAbs":0.999969482421875}}}
+[e5-t26f] {"phase":"snapshot:drag-released","event":"done","timestamp":"2026-09-08T09:30:00.474Z","elapsedMs":45329}
+[e5-t26f] {"phase":"drag:checkpoint-BeforeReload","event":"start","timestamp":"2026-09-08T09:30:00.474Z","elapsedMs":45329}
+[e5-t26f] {"phase":"drag:checkpoint-BeforeReload","event":"done","timestamp":"2026-09-08T09:30:00.920Z","elapsedMs":45775}
+[e5-t26f] {"phase":"reload:drag","event":"start","timestamp":"2026-09-08T09:30:00.920Z","elapsedMs":45775}
+[e5-t26f] {"phase":"reload:drag","event":"done","timestamp":"2026-09-08T09:30:00.934Z","elapsedMs":45789}
+[e5-t26f] {"phase":"readiness:drag:desktop ready","event":"start","timestamp":"2026-09-08T09:30:00.934Z","elapsedMs":45789}
+[e5-t26f] {"phase":"readiness:drag:desktop ready","event":"done","timestamp":"2026-09-08T09:30:02.199Z","elapsedMs":47054}
+[e5-t26f] {"phase":"restore:drag:completion","event":"start","timestamp":"2026-09-08T09:30:02.199Z","elapsedMs":47054}
+[e5-t26f] {"phase":"restore:drag:completion","event":"done","timestamp":"2026-09-08T09:30:02.203Z","elapsedMs":47058}
+[e5-t26f] {"phase":"restore:drag:first-present","event":"start","timestamp":"2026-09-08T09:30:02.203Z","elapsedMs":47058}
+[e5-t26f] {"phase":"restore:drag:first-present","event":"done","timestamp":"2026-09-08T09:30:02.205Z","elapsedMs":47060}
+[e5-t26f] {"phase":"restore:drag:display-and-button-checks","event":"start","timestamp":"2026-09-08T09:30:02.205Z","elapsedMs":47060}
+[e5-t26f] {"phase":"restore:drag:display-and-button-checks","event":"done","timestamp":"2026-09-08T09:30:02.206Z","elapsedMs":47061}
+[e5-t26f] {"phase":"restore:drag:coherence-audit","event":"start","timestamp":"2026-09-08T09:30:02.206Z","elapsedMs":47061}
+[e5-t26f] {"phase":"restore:drag:coherence-audit","event":"done","timestamp":"2026-09-08T09:30:02.297Z","elapsedMs":47152}
+[e5-t26f] {"phase":"restore:drag:guest-release","event":"start","timestamp":"2026-09-08T09:30:02.297Z","elapsedMs":47152}
+[e5-t26f] {"phase":"restore:drag:guest-release","event":"done","timestamp":"2026-09-08T09:30:03.853Z","elapsedMs":48708}
+[e5-t26f] {"phase":"evidence:write","event":"start","timestamp":"2026-09-08T09:30:03.853Z","elapsedMs":48708}
+[e5-t26f] {"phase":"diagnostic:completion-evidence","event":"done","timestamp":"2026-09-08T09:30:03.922Z","elapsedMs":48777}
+{
+  "schema": "wasm-vm.e5-t26f.diagnostic-completion.v1",
+  "task": "E5-T26f",
+  "head": "7da050620031145b6e76cf150a894ed2710bd5b2",
+  "acceptance": false,
+  "functionalChecksPassed": true,
+  "timingPassed": false,
+  "checksPassed": false,
+  "browser": {
+    "name": "chromium",
+    "version": "Chrome/152.0.7977.76",
+    "headless": true
+  },
+  "milestones": {
+    "run": {
+      "kind": "diagnostic-iteration",
+      "acceptance": false,
+      "diagnostic": {
+        "mode": "reuse",
+        "directory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resident-FUBCo4",
+        "port": 61631,
+        "origin": "http://127.0.0.1:61631",
+        "command": null,
+        "keyDelayMs": 0,
+        "latency": false,
+        "cpu": false,
+        "guestClock": null,
+        "jit": null,
+        "residency": null,
+        "complete": true,
+        "icountDivider": null
+      },
+      "postRestoreCommand": "play",
+      "postRestoreKeyDelayMs": 5,
+      "fixture": {
+        "kind": "resident-aplay-v1",
+        "helperSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh"
+      },
+      "binding": {
+        "head": "7da050620031145b6e76cf150a894ed2710bd5b2",
+        "runtimeSha256": "42aced7a2dfc4d0a69e1ea5a15685f5d9a605f797f8df1c5db89f95051ba0425",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "27c2e8f2789b18efac214837c295dbfb22559beea350fb5788f71edfdc0f0a8e",
+        "imageBytes": 1073741824,
+        "manifestSha256": "2245a4d8b8b804bb200079c1ce00dee868762324f18627fa5d2b11fe032639ef",
+        "origin": "http://127.0.0.1:61631",
+        "fixture": {
+          "kind": "resident-aplay-v1",
+          "helperSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+          "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh"
+        }
+      },
+      "profile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resident-FUBCo4/iteration-JLM1XI/profile",
+      "checkpointFile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-resident-FUBCo4/normal-checkpoint.json",
+      "creatorHead": "7da050620031145b6e76cf150a894ed2710bd5b2",
+      "currentHead": "7da050620031145b6e76cf150a894ed2710bd5b2",
+      "checkpointCreatedAt": "2026-09-08T09:28:19.897Z",
+      "profileSha256": "59f3f2483c95331fad64c5cf6014a60f42b3b9fb89a50ec7b2d1c8853d9c70b5"
+    },
+    "normalSnapshot": {
+      "sha256": "b2e057ccf0150eb892ed4ae53c0642e5757d8d52293306776d52dd4bf94b86b9",
+      "byteLength": 2818926,
+      "preFrontBufferCrc": "940993e9",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "940993e9",
+        "overlayGeneration": 626
+      }
+    },
+    "residentCheckpoint": {
+      "fixture": {
+        "kind": "resident-aplay-v1",
+        "helperSha256": "2ae65408985f18be8b1287521bad23803282d652bb8f98421a135a351dac213c",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh"
+      },
+      "prepared": {
+        "command": ". /usr/libexec/wasm-vm/e5t26f-resident.sh && e5_prepare",
+        "marker": "e5t26f-prepared",
+        "beforeFrame": 274,
+        "keyboardStart": 556,
+        "domEventStart": 556,
+        "visualDiffPixels": 13470,
+        "terminalMarkerSeen": true,
+        "greenPixelsBefore": 240,
+        "redPixelsBefore": 0,
+        "visualChange": true,
+        "afterFrame": 319,
+        "redMarkerSeen": false,
+        "keyboardFrames": 118,
+        "domEvents": 118,
+        "inputSequenceMatch": true,
+        "inputTraceSha256": null,
+        "accepted": true
+      },
+      "sound": {
+        "envelopeSha256": "b2e057ccf0150eb892ed4ae53c0642e5757d8d52293306776d52dd4bf94b86b9",
+        "soundSha256": "330d02f9e91a4e67239bd3386715f87ca45cb0ea8052c387276a6c5450eeeafc",
+        "state": 2,
+        "paramsPresent": 1,
+        "parameterRequest": 257,
+        "streamId": 0,
+        "bufferBytes": 3840,
+        "periodBytes": 1920,
+        "channels": 2,
+        "format": 5,
+        "rate": 7,
+        "pendingTransfers": 0,
+        "pendingBytes": 0,
+        "releasePending": 0,
+        "nextXrunPresent": 0,
+        "eventCount": 0,
+        "events": [],
+        "kicked": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "resetPending": 0
+      },
+      "screenshot": {
+        "file": "evidence/e5-t26f/resident-cold-7da05062/resident-prepared.png",
+        "sha256": "4364d8fc74137f098cc633c33bd829a011637ff130a5b2b9115d01b47eb8758f"
+      }
+    },
+    "completionConsole": [
+      {
+        "timestamp": "2026-09-08T09:29:18.940Z",
+        "phase": "readiness:normal:desktop ready",
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)"
+      },
+      {
+        "timestamp": "2026-09-08T09:29:23.807Z",
+        "phase": "command:e5t26f-post-aplay:completion",
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)"
+      }
+    ],
+    "normalRestore": {
+      "result": {
+        "snapshotSha256": "b2e057ccf0150eb892ed4ae53c0642e5757d8d52293306776d52dd4bf94b86b9",
+        "snapshotBytes": 2818926,
+        "completedAt": 1215.4900000095367,
+        "report": {
+          "boundaryId": 9388156017,
+          "scanout": {
+            "width": 1280,
+            "height": 800
+          },
+          "hostViewport": {
+            "width": 1280,
+            "height": 800
+          },
+          "viewport": "native",
+          "agentRehandshake": true,
+          "inputReleaseEvents": 0,
+          "soundXrunEvents": 0,
+          "fullRepairFrame": true
+        },
+        "handshake": {
+          "generation": 2,
+          "version": 1,
+          "capabilities": "1"
+        },
+        "observation": {
+          "baseSuccessfulPresents": 1,
+          "firstPresent": {
+            "successfulPresents": 2,
+            "crc32": "940993e9"
+          }
+        },
+        "bootStates": [
+          {
+            "state": "fetching",
+            "atMs": 128
+          },
+          {
+            "state": "instantiating",
+            "atMs": 149
+          },
+          {
+            "state": "restored",
+            "atMs": 789
+          }
+        ],
+        "diagnostics": [
+          {
+            "atMs": 883,
+            "reason": "agent-channel",
+            "error": "desktop restore requested a fresh agent HELLO",
+            "channelState": "disconnected",
+            "transportGeneration": 0
+          }
+        ],
+        "machineResume": {
+          "persisted": true,
+          "paused": true,
+          "preFrontBufferCrc": "940993e9",
+          "overlayGeneration": 626
+        },
+        "preFrontBufferCrc": "940993e9",
+        "resume": {
+          "restored": true,
+          "snapshotDecision": "resume",
+          "overlayGeneration": 626
+        },
+        "coherenceAudit": {
+          "status": "passed",
+          "startedAt": "2026-09-08T09:29:24.807Z",
+          "restoreBoundary": {
+            "attempted": true,
+            "decision": "resume",
+            "overlayGeneration": 626
+          },
+          "currentOverlayGeneration": 626,
+          "completedAt": "2026-09-08T09:29:24.877Z"
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "fixedViewport": true,
+          "sizeMismatch": false,
+          "framesReceived": 2,
+          "successfulPresents": 2,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "scheduler": null,
+          "gpu": {
+            "framesReceived": 2,
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "successfulPresents": 2,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 0,
+            "uploadedBytes": 8192000,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "width": 1280,
+            "height": 800
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 800
+          },
+          "errors": []
+        }
+      },
+      "displayChecksPassed": true,
+      "checksPassed": false,
+      "functionalChecksPassed": true
+    },
+    "postRestoreStart": 1215.4900000095367,
+    "residentBeforeGesture": [
+      {
+        "observedAt": 1496.945000052452,
+        "policy": "locked",
+        "context": "suspended",
+        "pcm": {
+          "available": true,
+          "writeIndex": 0,
+          "readIndex": 0,
+          "fillFrames": 0,
+          "capacityFrames": 4096,
+          "writtenFrames": 0,
+          "inspectedFrames": 0,
+          "nonSilentFrames": 0,
+          "maxAbs": 0
+        }
+      },
+      {
+        "observedAt": 1865.4350000619888,
+        "policy": "locked",
+        "context": "suspended",
+        "pcm": {
+          "available": true,
+          "writeIndex": 0,
+          "readIndex": 0,
+          "fillFrames": 0,
+          "capacityFrames": 4096,
+          "writtenFrames": 0,
+          "inspectedFrames": 0,
+          "nonSilentFrames": 0,
+          "maxAbs": 0
+        }
+      }
+    ],
+    "postRestoreCursor": {
+      "frame": {
+        "atMs": 1576,
+        "sequence": 1,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 17510
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 16056
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 17510,
+          "y": 16056
+        }
+      },
+      "rendered": {
+        "x": 684,
+        "y": 392,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      },
+      "observedAt": 2034.0500000715256,
+      "elapsedMs": 818.5600000619888
+    },
+    "postRestoreAudioBefore": {
+      "policy": "unlocked",
+      "renderedFrames": 45517,
+      "writeIndex": 0
+    },
+    "postRestoreAplay": {
+      "command": "play",
+      "marker": "e5t26f-post-aplay",
+      "beforeFrame": 4,
+      "keyboardStart": 0,
+      "domEventStart": 0,
+      "visualDiffPixels": 8420,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 369,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 11,
+      "redMarkerSeen": false,
+      "keyboardFrames": 10,
+      "domEvents": 10,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "postRestorePcmAtCompletion": {
+      "observedAt": 5901.495000004768,
+      "pcm": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.999969482421875
+      },
+      "elapsedMs": 4686.004999995232
+    },
+    "postRestoreOutputAttached": {
+      "outputAttached": true,
+      "observedAt": 5945.259999990463
+    },
+    "postRestoreAudioAfter": {
+      "policy": "unlocked",
+      "context": "running",
+      "renderedFrames": 233037,
+      "pcm": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.999969482421875
+      },
+      "pcmObservedAt": 5901.495000004768,
+      "writeIndex": 0,
+      "guestAttached": true,
+      "guestAttachedObservedAt": 5945.259999990463
+    },
+    "postRestoreEnd": 5947.375,
+    "postRestoreInteraction": {
+      "elapsedMs": 4732.264999985695,
+      "pointerFrames": 3,
+      "keyboardFrames": 10,
+      "heldButtons": [],
+      "audio": {
+        "policy": "unlocked",
+        "context": "running",
+        "renderedFrames": 233037
+      }
+    },
+    "postRestoreInteractionChecks": {
+      "functionalChecksPassed": true,
+      "timingPassed": false,
+      "checksPassed": false
+    },
+    "deferredInteractionCap": {
+      "kind": "timing-cap",
+      "acceptance": false,
+      "capturedAt": "2026-09-08T09:29:24.737Z",
+      "postRestoreStart": 1215.4900000095367,
+      "postRestoreEnd": 5947.375,
+      "elapsedMs": 4731.884999990463,
+      "limitMs": 2000,
+      "error": {
+        "name": "AssertionError",
+        "message": "post-restore interaction exceeded 2 seconds",
+        "code": "ERR_ASSERTION",
+        "actual": false,
+        "expected": true,
+        "operator": "==",
+        "stack": "AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1902:12"
+      }
+    },
+    "dragMapping": {
+      "canvasBox": {
+        "x": 80,
+        "y": 84,
+        "width": 1280,
+        "height": 800
+      },
+      "start": {
+        "x": 737,
+        "y": 120
+      },
+      "end": {
+        "x": 817,
+        "y": 120
+      },
+      "guestStart": {
+        "x": 657,
+        "y": 36
+      },
+      "guestEnd": {
+        "x": 737,
+        "y": 36
+      }
+    },
+    "dragBeforeSnapshot": {
+      "sha256": "78c38fc606bbf2d014c0f9a8a48d0bfeeb614570ebd7a347631c28b691dfe45f",
+      "byteLength": 2907813,
+      "machineResume": null,
+      "generationObservation": {
+        "requestedAt": 14508.164999961853,
+        "observedAt": 14538.639999985695,
+        "status": "observed",
+        "snapshotGeneration": 626
+      }
+    },
+    "dragHeldSnapshot": {
+      "sha256": "ef8e28be271221fb5dc0bbd32a2d1f9a2c5aaeec9d10c4d9e559e62c41b5be2d",
+      "byteLength": 2930205,
+      "machineResume": null,
+      "generationObservation": {
+        "requestedAt": 22771.430000066757,
+        "observedAt": 22778.045000076294,
+        "status": "observed",
+        "snapshotGeneration": 626
+      }
+    },
+    "dragMovement": {
+      "before": {
+        "left": 557,
+        "right": 1253,
+        "top": 13,
+        "bottom": 39
+      },
+      "status": "passed",
+      "observed": {
+        "at": 24047.399999976158,
+        "titlebar": {
+          "left": 637,
+          "right": 1280,
+          "top": 32,
+          "bottom": 58
+        }
+      },
+      "translation": {
+        "deltaX": 80,
+        "displacementPx": 80
+      },
+      "paused": {
+        "at": 24090.625,
+        "isPaused": true,
+        "titlebar": {
+          "left": 637,
+          "right": 1280,
+          "top": 32,
+          "bottom": 58
+        }
+      },
+      "pausedTranslation": {
+        "deltaX": 80,
+        "displacementPx": 80
+      }
+    },
+    "dragSnapshot": {
+      "sha256": "caa94ba1711151785c669c8c78e2fc76d41918b91adc2d3a72b541f515590922",
+      "byteLength": 2955407,
+      "preFrontBufferCrc": "27b1022b",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "27b1022b",
+        "overlayGeneration": 626
+      },
+      "generationObservation": {
+        "requestedAt": 33182.205000042915,
+        "observedAt": 33182.330000042915,
+        "status": "observed",
+        "snapshotGeneration": 626
+      }
+    },
+    "dragCheckpointPublished": {
+      "status": "passed",
+      "snapshotSha256": "caa94ba1711151785c669c8c78e2fc76d41918b91adc2d3a72b541f515590922",
+      "observed": {
+        "at": 33670.50999999046,
+        "isPaused": true,
+        "generation": 626,
+        "decision": "resume",
+        "envelopeSha256": "caa94ba1711151785c669c8c78e2fc76d41918b91adc2d3a72b541f515590922",
+        "stillPaused": true,
+        "finalGeneration": 626
+      }
+    },
+    "dragReleasedSnapshot": {
+      "sha256": "caa94ba1711151785c669c8c78e2fc76d41918b91adc2d3a72b541f515590922",
+      "byteLength": 2955407,
+      "machineResume": null,
+      "generationObservation": {
+        "requestedAt": 41684.175000071526,
+        "observedAt": 41684.28999996185,
+        "status": "observed",
+        "snapshotGeneration": 626
+      }
+    },
+    "beforeSecondReload": {
+      "generationObservation": {
+        "requestedAt": 41684.66499996185,
+        "observedAt": 41684.71500003338,
+        "status": "observed",
+        "snapshotGeneration": 626
+      }
+    },
+    "dragCheckpointBeforeReload": {
+      "status": "passed",
+      "snapshotSha256": "caa94ba1711151785c669c8c78e2fc76d41918b91adc2d3a72b541f515590922",
+      "observed": {
+        "at": 42129.705000042915,
+        "isPaused": true,
+        "generation": 626,
+        "decision": "resume",
+        "envelopeSha256": "caa94ba1711151785c669c8c78e2fc76d41918b91adc2d3a72b541f515590922",
+        "stillPaused": true,
+        "finalGeneration": 626
+      }
+    },
+    "dragRestore": {
+      "result": {
+        "snapshotSha256": "caa94ba1711151785c669c8c78e2fc76d41918b91adc2d3a72b541f515590922",
+        "snapshotBytes": 2955407,
+        "completedAt": 992.5899999141693,
+        "report": {
+          "boundaryId": 252805239,
+          "scanout": {
+            "width": 1280,
+            "height": 800
+          },
+          "hostViewport": {
+            "width": 1280,
+            "height": 800
+          },
+          "viewport": "native",
+          "agentRehandshake": true,
+          "inputReleaseEvents": 0,
+          "soundXrunEvents": 0,
+          "fullRepairFrame": true
+        },
+        "handshake": {
+          "generation": 2,
+          "version": 1,
+          "capabilities": "1"
+        },
+        "observation": {
+          "baseSuccessfulPresents": 1,
+          "firstPresent": {
+            "successfulPresents": 2,
+            "crc32": "27b1022b"
+          }
+        },
+        "bootStates": [
+          {
+            "state": "fetching",
+            "atMs": 15
+          },
+          {
+            "state": "instantiating",
+            "atMs": 34
+          },
+          {
+            "state": "restored",
+            "atMs": 646
+          }
+        ],
+        "diagnostics": [
+          {
+            "atMs": 746,
+            "reason": "agent-channel",
+            "error": "desktop restore requested a fresh agent HELLO",
+            "channelState": "disconnected",
+            "transportGeneration": 0
+          }
+        ],
+        "machineResume": {
+          "persisted": true,
+          "paused": true,
+          "preFrontBufferCrc": "27b1022b",
+          "overlayGeneration": 626
+        },
+        "preFrontBufferCrc": "27b1022b",
+        "resume": {
+          "restored": true,
+          "snapshotDecision": "resume",
+          "overlayGeneration": 626
+        },
+        "coherenceAudit": {
+          "status": "passed",
+          "startedAt": "2026-09-08T09:30:02.206Z",
+          "restoreBoundary": {
+            "attempted": true,
+            "decision": "resume",
+            "overlayGeneration": 626
+          },
+          "currentOverlayGeneration": 626,
+          "completedAt": "2026-09-08T09:30:02.297Z"
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "fixedViewport": true,
+          "sizeMismatch": false,
+          "framesReceived": 3,
+          "successfulPresents": 3,
+          "drawnPresents": 3,
+          "drawnBytes": 12288000,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "scheduler": null,
+          "gpu": {
+            "framesReceived": 3,
+            "enqueued": 3,
+            "coalesced": 0,
+            "presented": 3,
+            "successfulPresents": 3,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 0,
+            "uploadedBytes": 12288000,
+            "drawnPresents": 3,
+            "drawnBytes": 12288000,
+            "width": 1280,
+            "height": 800
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 800
+          },
+          "errors": []
+        }
+      },
+      "displayChecksPassed": true,
+      "checksPassed": false,
+      "functionalChecksPassed": true
+    },
+    "dragGuestRelease": {
+      "status": "passed",
+      "samples": [
+        {
+          "at": 1398.0049999952316,
+          "pointerFrames": 0,
+          "heldButtons": [],
+          "frame": null,
+          "rendered": null,
+          "titlebar": {
+            "left": 637,
+            "right": 1280,
+            "top": 32,
+            "bottom": 58
+          }
+        },
+        {
+          "at": 1654.7549999952316,
+          "pointerFrames": 1,
+          "heldButtons": [],
+          "frame": {
+            "atMs": 1500,
+            "sequence": 1,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 17126
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 2253
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 17126,
+              "y": 2253
+            }
+          },
+          "rendered": null,
+          "titlebar": {
+            "left": 637,
+            "right": 1280,
+            "top": 32,
+            "bottom": 58
+          }
+        },
+        {
+          "at": 1908.704999923706,
+          "pointerFrames": 1,
+          "heldButtons": [],
+          "frame": {
+            "atMs": 1500,
+            "sequence": 1,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 17126
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 2253
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 17126,
+              "y": 2253
+            }
+          },
+          "rendered": {
+            "x": 669,
+            "y": 55,
+            "hotX": 1,
+            "hotY": 1,
+            "matchedPixels": 94
+          },
+          "titlebar": {
+            "left": 637,
+            "right": 1280,
+            "top": 32,
+            "bottom": 58
+          }
+        },
+        {
+          "at": 2163.149999976158,
+          "pointerFrames": 1,
+          "heldButtons": [],
+          "frame": {
+            "atMs": 1500,
+            "sequence": 1,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 17126
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 2253
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 17126,
+              "y": 2253
+            }
+          },
+          "rendered": {
+            "x": 669,
+            "y": 55,
+            "hotX": 1,
+            "hotY": 1,
+            "matchedPixels": 94
+          },
+          "titlebar": {
+            "left": 637,
+            "right": 1280,
+            "top": 32,
+            "bottom": 58
+          }
+        },
+        {
+          "at": 2417.3249999284744,
+          "pointerFrames": 1,
+          "heldButtons": [],
+          "frame": {
+            "atMs": 1500,
+            "sequence": 1,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 17126
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 2253
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 17126,
+              "y": 2253
+            }
+          },
+          "rendered": {
+            "x": 669,
+            "y": 55,
+            "hotX": 1,
+            "hotY": 1,
+            "matchedPixels": 94
+          },
+          "titlebar": {
+            "left": 637,
+            "right": 1280,
+            "top": 32,
+            "bottom": 58
+          }
+        },
+        {
+          "at": 2671.5,
+          "pointerFrames": 1,
+          "heldButtons": [],
+          "frame": {
+            "atMs": 1500,
+            "sequence": 1,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 17126
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 2253
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 17126,
+              "y": 2253
+            }
+          },
+          "rendered": {
+            "x": 669,
+            "y": 55,
+            "hotX": 1,
+            "hotY": 1,
+            "matchedPixels": 94
+          },
+          "titlebar": {
+            "left": 637,
+            "right": 1280,
+            "top": 32,
+            "bottom": 58
+          }
+        },
+        {
+          "at": 2925.444999933243,
+          "pointerFrames": 1,
+          "heldButtons": [],
+          "frame": {
+            "atMs": 1500,
+            "sequence": 1,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 17126
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 2253
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 17126,
+              "y": 2253
+            }
+          },
+          "rendered": {
+            "x": 669,
+            "y": 55,
+            "hotX": 1,
+            "hotY": 1,
+            "matchedPixels": 94
+          },
+          "titlebar": {
+            "left": 637,
+            "right": 1280,
+            "top": 32,
+            "bottom": 58
+          }
+        }
+      ],
+      "before": {
+        "at": 1374.1899999380112,
+        "titlebar": {
+          "left": 637,
+          "right": 1280,
+          "top": 32,
+          "bottom": 58
+        }
+      },
+      "point": {
+        "x": 669,
+        "y": 55
+      },
+      "initial": {
+        "at": 1374.75,
+        "pointerFrames": 0,
+        "heldButtons": [],
+        "frame": null,
+        "rendered": null
+      },
+      "client": {
+        "x": 749,
+        "y": 139
+      },
+      "acknowledgedAt": 1908.704999923706,
+      "observed": {
+        "at": 2925.444999933243,
+        "pointerFrames": 1,
+        "heldButtons": [],
+        "frame": {
+          "atMs": 1500,
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 17126
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 2253
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 17126,
+            "y": 2253
+          }
+        },
+        "rendered": {
+          "x": 669,
+          "y": 55,
+          "hotX": 1,
+          "hotY": 1,
+          "matchedPixels": 94
+        },
+        "titlebar": {
+          "left": 637,
+          "right": 1280,
+          "top": 32,
+          "bottom": 58
+        }
+      }
+    }
+  },
+  "final": {
+    "terminal": {
+      "desktopReady": true,
+      "frameCount": 6,
+      "serialText": "",
+      "pointerFrames": 1,
+      "pointerFrameSample": [
+        {
+          "atMs": 1500,
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 17126
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 2253
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 17126,
+            "y": 2253
+          }
+        }
+      ],
+      "keyboardFrames": 0,
+      "keyboardEvents": 0,
+      "keyboardFrameSample": [],
+      "keyboardEventSample": [],
+      "surface": {
+        "nonBlackRatio": 0.9999140625,
+        "darkRatio": 0.5880555555555556,
+        "greenPixels": 477,
+        "redPixels": 0
+      },
+      "agent": {
+        "state": "ready",
+        "negotiatedVersion": 1,
+        "transportGeneration": 2,
+        "bytesReceived": 36,
+        "bytesSent": 36,
+        "pendingBytes": 0
+      },
+      "diagnostics": [
+        {
+          "atMs": 746,
+          "reason": "agent-channel",
+          "error": "desktop restore requested a fresh agent HELLO",
+          "channelState": "disconnected",
+          "transportGeneration": 0
+        }
+      ],
+      "readiness": {
+        "desktopReady": true,
+        "inspection": {
+          "wallpaper": true,
+          "panel": {
+            "ready": true,
+            "position": "top",
+            "top": 0,
+            "height": 80,
+            "mean": [
+              114,
+              111,
+              110
+            ],
+            "difference": 157
+          },
+          "menu": true,
+          "nonBlackRatio": 0.9999140625,
+          "background": [
+            60,
+            59,
+            58
+          ],
+          "menuDetails": {
+            "ready": true,
+            "inkPixels": 21656,
+            "runs": 1344
+          }
+        },
+        "agentState": "ready"
+      },
+      "bootStates": [
+        {
+          "state": "fetching",
+          "atMs": 15
+        },
+        {
+          "state": "instantiating",
+          "atMs": 34
+        },
+        {
+          "state": "restored",
+          "atMs": 646
+        }
+      ],
+      "launches": [],
+      "focuses": [],
+      "commands": [],
+      "closes": [],
+      "active": {
+        "launch": null,
+        "command": null,
+        "close": null
+      }
+    },
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 800,
+      "fixedViewport": true,
+      "sizeMismatch": false,
+      "framesReceived": 6,
+      "successfulPresents": 6,
+      "drawnPresents": 6,
+      "drawnBytes": 17878068,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": null,
+      "gpu": {
+        "framesReceived": 6,
+        "enqueued": 6,
+        "coalesced": 0,
+        "presented": 6,
+        "successfulPresents": 6,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 17878068,
+        "drawnPresents": 6,
+        "drawnBytes": 17878068,
+        "width": 1280,
+        "height": 800
+      },
+      "latest": {
+        "rect": {
+          "x": 668,
+          "y": 36,
+          "width": 77,
+          "height": 34
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800
+      },
+      "errors": []
+    },
+    "cursor": {
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1280,
+        "height": 800,
+        "cssRect": {
+          "left": 80,
+          "top": 84,
+          "width": 1280,
+          "height": 800
+        }
+      },
+      "pointer": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "pointerLockRequested": false,
+        "heldButtons": [],
+        "wheelRemainders": {
+          "horizontal": 0,
+          "vertical": 0
+        },
+        "modeChanges": 0,
+        "pointerLockChanges": 0,
+        "reason": "state",
+        "diagnostics": [
+          {
+            "atMs": 746,
+            "reason": "agent-channel",
+            "error": "desktop restore requested a fresh agent HELLO",
+            "channelState": "disconnected",
+            "transportGeneration": 0
+          }
+        ]
+      },
+      "chrome": {
+        "window": {
+          "left": 115,
+          "top": 32,
+          "right": 1280,
+          "bottom": 745
+        },
+        "titlebar": {
+          "top": 32,
+          "bottom": 58,
+          "left": 115,
+          "right": 1280
+        },
+        "controls": [
+          {
+            "name": "minimize",
+            "left": 1202,
+            "top": 32,
+            "right": 1228,
+            "bottom": 58,
+            "x": 1215,
+            "y": 45
+          },
+          {
+            "name": "maximize",
+            "left": 1228,
+            "top": 32,
+            "right": 1254,
+            "bottom": 58,
+            "x": 1241,
+            "y": 45
+          },
+          {
+            "name": "close",
+            "left": 1254,
+            "top": 32,
+            "right": 1280,
+            "bottom": 58,
+            "x": 1267,
+            "y": 45
+          }
+        ],
+        "samples": {
+          "minimize": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "maximize": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "close": [
+            255,
+            255,
+            255,
+            255
+          ]
+        }
+      },
+      "hovers": [],
+      "maximizes": [],
+      "closes": [],
+      "active": {
+        "hover": null,
+        "button": null
+      }
+    },
+    "restore": {
+      "report": {
+        "boundaryId": 252805239,
+        "scanout": {
+          "width": 1280,
+          "height": 800
+        },
+        "hostViewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "viewport": "native",
+        "agentRehandshake": true,
+        "inputReleaseEvents": 0,
+        "soundXrunEvents": 0,
+        "fullRepairFrame": true
+      },
+      "handshake": {
+        "version": 1,
+        "capabilities": "1n",
+        "peerVersion": 1,
+        "peerCapabilities": "1n",
+        "generation": 2
+      },
+      "appliedViewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "snapshotSha256": "caa94ba1711151785c669c8c78e2fc76d41918b91adc2d3a72b541f515590922",
+      "snapshotBytes": 2955407,
+      "preFrontBufferCrc": "27b1022b",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "27b1022b",
+        "overlayGeneration": 626
+      },
+      "completedAt": 992.5899999141693
+    }
+  },
+  "errors": {
+    "browser": [],
+    "http": []
+  },
+  "elapsedMs": 48777
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds
+    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1902:12 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

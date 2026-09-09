@@ -1,0 +1,32 @@
+{
+  "schema": "wasm-vm.e5-t09c.present-scheduler.v1",
+  "task": "E5-T09c",
+  "status": "passed",
+  "gitHead": "c8ca9213fa1fc6fbbc18be47b3a7c6867fcfc6e1",
+  "commands": [
+    {
+      "command": "node --test web/tests/e5-t09c-present-scheduler.test.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 71,
+      "outputSha256": "c74c15cb7117bc2a0f97d0dc2feca065330cf3194ef4197bd399d8b3067f5931",
+      "outputTail": "✔ latest-wins enqueue is idempotently scheduled and bounded to one pending plan (0.79925ms)\n✔ a 240-plans/sec producer with a 4x-slow backend never grows the queue (0.315542ms)\n✔ reentrant enqueue records one overrun and keeps one rAF chain (0.081125ms)\n✔ pause/resume preserves only the latest plan and stale callbacks cannot revive a chain (0.106583ms)\n✔ dispose drops pending work and makes both queued and stale callbacks inert (0.194ms)\n✔ false or throwing backend delivery is skipped, never counted as presented (0.109125ms)\n✔ scheduled PresentationController presents only on rAF and retires resized work (0.503167ms)\nℹ tests 7\nℹ suites 0\nℹ pass 7\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 41.940417\n",
+      "error": null
+    }
+  ],
+  "proofFiles": {
+    "Makefile": "f4ef31cb799e129d108616a0fcf5057db0e751ca4aa94a9c2a6a37c4ae7a2760",
+    "web/main.js": "bf9c172688476492609ac76e45c82a12b088c1e9ecce3f9acdadf39321068db2",
+    "web/src/sink/frame-scheduler.js": "4ab11b844262f32bf3c1f6e0cfa36a866f241273c36e66d1aa8c4679f770e54d",
+    "web/src/sink/frame-scheduler.ts": "a8707e63d993782665ea285c5709cc830c5b5adecfa5ed02e41ed99d8994459e",
+    "web/src/sink/presentation.js": "b8ce2b4a6f9b15865fe0437ed213365a72142e01fb31cd56e9327169a1954fdd",
+    "web/tests/e5-t09c-present-scheduler.test.mjs": "a12e29d1aee1b0c5842f46151e42f16bdde7c9530800db3fbee382711209956f",
+    "tools/verify/e5-t09c-present-scheduler.mjs": "ed2062e1d9b2f9b8e5d7cf6ce7e7bc574125e5840f0365b4a1392d2ebafc9c83"
+  },
+  "scope": {
+    "independentMachines": false,
+    "webkit": false,
+    "hostRr": false
+  }
+}

@@ -1,0 +1,568 @@
+{
+  "schema": "wasm-vm.e5-t26f.browser-roundtrip.v1",
+  "task": "E5-T26f",
+  "head": "8ce1db0e26a1cc038d3264182c74d61b33b6f4b8",
+  "scope": {
+    "browser": "local Chromium",
+    "webkit": false,
+    "independentMachines": false,
+    "hostRr": false
+  },
+  "browser": {
+    "name": "chromium",
+    "version": "152.0.7977.76",
+    "headless": true
+  },
+  "image": {
+    "imagePath": "target/e5-t26f/desktop-image-aplay-noresize/alpine-rootfs.ext4",
+    "imageSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+    "imageBytes": 1073741824,
+    "manifestPath": "target/e5-t26f/chunks/desktop-aplay-noresize/manifest.json",
+    "manifestSha256": "b6257e6c0e6789dee28a4f0a7eae1089193fcec545d467d8a70d245226bb9592",
+    "chunkCount": 8192,
+    "chunkSize": 131072
+  },
+  "snapshots": {
+    "normal": {
+      "sha256": "c3874e27bee49b4e38595c2b369425b705d4240c28f9510b111173f96585ece4",
+      "byteLength": 2597758,
+      "preFrontBufferCrc": "77f31714",
+      "preSuccessfulPresents": 114
+    },
+    "duringDrag": {
+      "sha256": "40c7af27b2c5ac14384e4fcf1989854de3898b001694569554549fef3b0f7478",
+      "byteLength": 2597758,
+      "preFrontBufferCrc": "77f31714"
+    }
+  },
+  "restores": {
+    "normal": {
+      "snapshotSha256": "c3874e27bee49b4e38595c2b369425b705d4240c28f9510b111173f96585ece4",
+      "snapshotBytes": 2597758,
+      "completedAt": 486524.37999999523,
+      "report": {
+        "boundaryId": 8719576544,
+        "scanout": {
+          "width": 1280,
+          "height": 800
+        },
+        "hostViewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "viewport": "native",
+        "agentRehandshake": true,
+        "inputReleaseEvents": 0,
+        "soundXrunEvents": 0,
+        "fullRepairFrame": true
+      },
+      "handshake": {
+        "generation": 2,
+        "version": 1,
+        "capabilities": "1"
+      },
+      "observation": {
+        "baseSuccessfulPresents": 18,
+        "firstPresent": {
+          "successfulPresents": 19,
+          "crc32": "77f31714"
+        }
+      },
+      "bootStates": [
+        {
+          "state": "fetching",
+          "atMs": 15
+        },
+        {
+          "state": "instantiating",
+          "atMs": 41
+        },
+        {
+          "state": "booting",
+          "atMs": 45
+        }
+      ],
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": false,
+        "framesReceived": 19,
+        "successfulPresents": 19,
+        "drawnPresents": 19,
+        "drawnBytes": 41207360,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": null,
+        "gpu": {
+          "framesReceived": 19,
+          "enqueued": 19,
+          "coalesced": 0,
+          "presented": 19,
+          "successfulPresents": 19,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 0,
+          "uploadedBytes": 41207360,
+          "drawnPresents": 19,
+          "drawnBytes": 41207360,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        },
+        "errors": []
+      }
+    },
+    "duringDrag": {
+      "snapshotSha256": "40c7af27b2c5ac14384e4fcf1989854de3898b001694569554549fef3b0f7478",
+      "snapshotBytes": 2597758,
+      "completedAt": 488677.5749999285,
+      "report": {
+        "boundaryId": 5712786136,
+        "scanout": {
+          "width": 1280,
+          "height": 800
+        },
+        "hostViewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "viewport": "native",
+        "agentRehandshake": true,
+        "inputReleaseEvents": 0,
+        "soundXrunEvents": 0,
+        "fullRepairFrame": true
+      },
+      "handshake": {
+        "generation": 2,
+        "version": 1,
+        "capabilities": "1"
+      },
+      "observation": {
+        "baseSuccessfulPresents": 19,
+        "firstPresent": {
+          "successfulPresents": 20,
+          "crc32": "77f31714"
+        }
+      },
+      "bootStates": [
+        {
+          "state": "fetching",
+          "atMs": 34
+        },
+        {
+          "state": "instantiating",
+          "atMs": 58
+        },
+        {
+          "state": "booting",
+          "atMs": 62
+        }
+      ],
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": false,
+        "framesReceived": 20,
+        "successfulPresents": 20,
+        "drawnPresents": 20,
+        "drawnBytes": 41224316,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": null,
+        "gpu": {
+          "framesReceived": 20,
+          "enqueued": 20,
+          "coalesced": 0,
+          "presented": 20,
+          "successfulPresents": 20,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 0,
+          "uploadedBytes": 41224316,
+          "drawnPresents": 20,
+          "drawnBytes": 41224316,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        },
+        "errors": []
+      }
+    }
+  },
+  "interactions": {
+    "shellProbe": {
+      "command": "true; printf '\\033[42;30me5t26f-shell-ok\\033[0m\\n'",
+      "marker": "e5t26f-shell-ok",
+      "beforeFrame": 36,
+      "keyboardStart": 0,
+      "domEventStart": 0,
+      "visualDiffPixels": 2432,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 1,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 55,
+      "redMarkerSeen": false,
+      "keyboardFrames": 102,
+      "domEvents": 102,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "agentProbe": {
+      "state": "ready",
+      "negotiatedVersion": 1,
+      "transportGeneration": 2,
+      "bytesReceived": 54,
+      "bytesSent": 36,
+      "pendingBytes": 0
+    },
+    "firstCommand": {
+      "command": "if timeout 10 aplay -f S16_LE -t raw -d1 -r48000 -c2 /dev/zero;then printf '\\033[42mok\\033[0m\\n';fi",
+      "marker": "e5t26f-aplay-ok",
+      "beforeFrame": 55,
+      "keyboardStart": 102,
+      "domEventStart": 102,
+      "visualDiffPixels": 3909,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 128,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 96,
+      "redMarkerSeen": false,
+      "keyboardFrames": 208,
+      "domEvents": 208,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "cursor": {
+      "frame": {
+        "atMs": 788800,
+        "sequence": 19,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 18431
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 17612
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 18431,
+          "y": 17612
+        }
+      },
+      "rendered": {
+        "x": 720,
+        "y": 430,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      }
+    },
+    "postRestore": {
+      "elapsedMs": 115.11499989032745,
+      "pointerFrames": 1,
+      "keyboardFrames": 38,
+      "heldButtons": [],
+      "audio": {
+        "policy": "unlocked",
+        "context": "running",
+        "renderedFrames": 13594612
+      }
+    },
+    "postRestoreAudioBefore": {
+      "policy": "unlocked",
+      "renderedFrames": 13594612
+    },
+    "postRestoreElapsedMeasuredMs": 108.9099999666214,
+    "dragButtonReleased": true
+  },
+  "final": {
+    "terminal": {
+      "desktopReady": true,
+      "frameCount": 20,
+      "serialText": " * Caching service dependencies ... [ ok ]\r\n * Remounting devtmpfs on /dev ... [ ok ]\r\n * Mounting /dev/mqueue ... [ ok ]\r\n * Mounting /dev/pts ... [ ok ]\r\n * Mounting /dev/shm ... [ ok ]\r\n * Mounting /sys ... [ ok ]\r\n * Mounting security filesystem ... [ ok ]\r\n * Mounting debug filesystem ... [ ok ]\r\n * Starting udev ... [ ok ]\r\n * Generating a rule to create a /dev/root symlink ... [ ok ]\r\n * Populating /dev with existing devices through uevents ... [ ok ]\r\n * Loading hardware drivers ...modprobe: can't change directory to '/lib/modules': No such file or directory\r\n [ ok ]\r\n * Loading modules ...modprobe: can't change directory to '/lib/modules': No such file or directory\r\nmodprobe: can't change directory to '/lib/modules': No such file or directory\r\n [ ok ]\r\n * Setting system clock using the hardware clock [UTC] ...hwclock: select() to /dev/rtc0 to wait for clock tick timed out\r\n * Failed to set the system clock\r\n [ !! ]\r\n * Checking local filesystems  ... [ ok ]\r\n * Remounting filesystems ... [ ok ]\r\n * Activating swap devices ... [ ok ]\r\n * Mounting local filesystems ... [ ok ]\r\n * Migrating /var/lock to /run/lock ... [ ok ]\r\n * Creating user login records ... [ ok ]\r\n * Cleaning /tmp directory ... [ ok ]\r\n * Setting hostname ... [ ok ]\r\n * Seeding random number generator ... * Saving 256 bits of creditable seed for next boot\r\n [ ok ]\r\n * Starting busybox syslog ... [ ok ]\r\n * Starting seatd ... [ ok ]\r\n * Waiting for uevents to be processed ... [ ok ]\r\n * Starting networking ... *   lo ... [ ok ]\r\n *   eth0 ...udhcpc: started, v1.36.1\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc: broadcasting discover\r\nudhcpc failed to get a DHCP lease\r\nudhcpc: no lease, forking to background\r\n [ ok ]\r\n * Starting wasm-vm file transfer agent ... [ ok ]\r\n * Starting wasm-vm virtio agent ... [ ok ]\r\n\r\r\nWelcome to Alpine Linux 3.20\r\n\rKernel 6.6.63 on an riscv64 (/dev/ttyS0)\r\n\r\r\n\rwasm-vm login: ",
+      "pointerFrames": 0,
+      "pointerFrameSample": [],
+      "keyboardFrames": 0,
+      "keyboardEvents": 0,
+      "keyboardFrameSample": [],
+      "keyboardEventSample": [],
+      "surface": {
+        "nonBlackRatio": 0.99990625,
+        "darkRatio": 0.6123611111111111,
+        "greenPixels": 141,
+        "redPixels": 0
+      },
+      "agent": {
+        "state": "ready",
+        "negotiatedVersion": 1,
+        "transportGeneration": 2,
+        "bytesReceived": 54,
+        "bytesSent": 36,
+        "pendingBytes": 0
+      },
+      "diagnostics": [
+        {
+          "reason": "agent-channel",
+          "error": "desktop restore requested a fresh agent HELLO"
+        }
+      ],
+      "bootStates": [
+        {
+          "state": "fetching",
+          "atMs": 34
+        },
+        {
+          "state": "instantiating",
+          "atMs": 58
+        },
+        {
+          "state": "booting",
+          "atMs": 62
+        }
+      ],
+      "launches": [],
+      "focuses": [],
+      "commands": [],
+      "closes": [],
+      "active": {
+        "launch": null,
+        "command": null,
+        "close": null
+      }
+    },
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 800,
+      "fixedViewport": true,
+      "sizeMismatch": false,
+      "framesReceived": 20,
+      "successfulPresents": 20,
+      "drawnPresents": 20,
+      "drawnBytes": 41224316,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": null,
+      "gpu": {
+        "framesReceived": 20,
+        "enqueued": 20,
+        "coalesced": 0,
+        "presented": 20,
+        "successfulPresents": 20,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 41224316,
+        "drawnPresents": 20,
+        "drawnBytes": 41224316,
+        "width": 1280,
+        "height": 800
+      },
+      "latest": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800
+      },
+      "errors": []
+    },
+    "cursor": {
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1280,
+        "height": 800,
+        "cssRect": {
+          "left": 80,
+          "top": 84,
+          "width": 1280,
+          "height": 800
+        }
+      },
+      "pointer": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "pointerLockRequested": false,
+        "heldButtons": [],
+        "wheelRemainders": {
+          "horizontal": 0,
+          "vertical": 0
+        },
+        "modeChanges": 0,
+        "pointerLockChanges": 0,
+        "reason": "state",
+        "diagnostics": [
+          {
+            "reason": "agent-channel",
+            "error": "desktop restore requested a fresh agent HELLO"
+          }
+        ]
+      },
+      "chrome": {
+        "window": {
+          "left": 115,
+          "top": 13,
+          "right": 1253,
+          "bottom": 745
+        },
+        "titlebar": {
+          "top": 13,
+          "bottom": 39,
+          "left": 115,
+          "right": 1253
+        },
+        "controls": [
+          {
+            "name": "minimize",
+            "left": 1175,
+            "top": 32,
+            "right": 1201,
+            "bottom": 39,
+            "x": 1188,
+            "y": 35
+          },
+          {
+            "name": "maximize",
+            "left": 1201,
+            "top": 32,
+            "right": 1227,
+            "bottom": 39,
+            "x": 1214,
+            "y": 35
+          },
+          {
+            "name": "close",
+            "left": 1227,
+            "top": 32,
+            "right": 1253,
+            "bottom": 39,
+            "x": 1240,
+            "y": 35
+          }
+        ],
+        "samples": {
+          "minimize": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "maximize": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "close": [
+            255,
+            255,
+            255,
+            255
+          ]
+        }
+      },
+      "hovers": [],
+      "maximizes": [],
+      "closes": [],
+      "active": {
+        "hover": null,
+        "button": null
+      }
+    },
+    "restore": {
+      "report": {
+        "boundaryId": 5712786136,
+        "scanout": {
+          "width": 1280,
+          "height": 800
+        },
+        "hostViewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "viewport": "native",
+        "agentRehandshake": true,
+        "inputReleaseEvents": 0,
+        "soundXrunEvents": 0,
+        "fullRepairFrame": true
+      },
+      "handshake": {
+        "version": 1,
+        "capabilities": "1n",
+        "peerVersion": 1,
+        "peerCapabilities": "1n",
+        "generation": 2
+      },
+      "appliedViewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "snapshotSha256": "40c7af27b2c5ac14384e4fcf1989854de3898b001694569554549fef3b0f7478",
+      "snapshotBytes": 2597758,
+      "completedAt": 488677.5749999285
+    }
+  },
+  "errors": {
+    "browser": [],
+    "http": []
+  },
+  "elapsedMs": 1781328
+}

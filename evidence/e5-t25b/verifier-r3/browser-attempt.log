@@ -1,0 +1,21 @@
+Head: 6fca89a7463ee5bb932a615d62986fafadb26068
+Result: ENVIRONMENT-LIMITED; no drag executed and no output artifact was written.
+
+Command:
+env RUSTFLAGS='--cfg verifier_hostile' RUST_LOG='trace' \
+  CARGO_HOME='/tmp/e5-t25b-verifier-r3-cargo-home' \
+  CARGO_TARGET_DIR='/tmp/e5-t25b-verifier-r3-target' \
+  E5_T25B_TIMEOUT_MS=240000 \
+  E5_T25B_REQUIRE_HEAD=6fca89a7463ee5bb932a615d62986fafadb26068 \
+  E5_T25B_OUT=evidence/e5-t25b/verifier-r3/browser-baseline \
+  node tools/verify/e5-t25b-browser.mjs
+
+Observed exit: 1
+Observed error:
+page.waitForFunction: Timeout 240000ms exceeded.
+  at tools/verify/e5-t25b-browser.mjs:112:14
+
+Line 112 is the `document.documentElement.dataset.desktopReady === "ready"` wait. The run
+therefore did not reach `__desktopPerf.ready`, Foot launch/readiness (line 129), the five-run loop,
+or `assertWindowMoved`. `evidence/e5-t25b/verifier-r3/browser-baseline` contains no files.
+DPR 2, busy-guest, and 4x-throttle legs were not attempted after baseline readiness failed.

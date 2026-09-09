@@ -3,17 +3,47 @@ id: E5-T18
 epic: 5
 title: Boot-to-desktop bring-up — seat/udev/permissions debugged, playbook written
 priority: 518
-status: pending
-depends_on: [E5-T08, E5-T15, E5-T17]
+status: cancelled
+depends_on: [E5-T08, E5-T15d, E5-T17e]
 estimate: L
+risk: high
 capstone: false
+decomposed_into: [E5-T18a, E5-T18b, E5-T18c, E5-T18d, E5-T18e]
 ---
 
 ## Goal
+
+> **DECOMPOSED 2026-09-05.** This L-sized bring-up container is cancelled before
+> implementation as required by task policy and replaced by five ordered S slices. E5-T18a
+> freezes the local cold-boot desktop contract, E5-T18b proves WM terminal/input, E5-T18c
+> proves cursor/focus/DPR hit-testing, E5-T18d hardens compositor restart/getty fallback, and
+> E5-T18e consolidates the debug playbook and final boot proof.
+
 Cold page load boots all the way into the T17 desktop with a working cursor, focusable
 windows, and a terminal launchable from the WM menu — plus a written debugging playbook
 capturing every failure mode found on the way (this task *is* mostly debugging; the
 playbook is how that work compounds).
+
+## Execution slices
+
+This L-sized desktop bring-up container is cancelled before implementation and replaced by five
+ordered S tickets. Each child owns one falsifiable boundary and one deterministic
+make verify-E5-T18* command; the final child carries the reviewed playbook and rebuilt-artifact
+sign-off.
+
+1. **E5-T18a — local cold-boot desktop contract.** Prove that the committed T17 artifact and
+   local Chromium page reach the wallpaper, panel, and WM menu on a clean cold load, including
+   cold/warm boot timing and the repeated boot harness.
+2. **E5-T18b — WM terminal and keyboard input.** Prove menu-to-terminal launch, focus, typed
+   commands, and correctly rendered ls output through the existing T12 input path.
+3. **E5-T18c — cursor, hover, and DPR hit-testing.** Prove host/guest cursor alignment,
+   hover-highlight state, and close/maximize button hit-tests at DPR 1 and DPR 2.
+4. **E5-T18d — compositor restart and getty fallback.** Harden start-desktop logging, bounded
+   compositor restarts, and the visible tty1 fallback after three crashes, using reproducible
+   broken-configuration and serial kill hooks.
+5. **E5-T18e — bring-up playbook and final proof.** Record every failure mode encountered by
+   the preceding slices, publish the symptom/diagnosis/fix playbook, rebuild from the committed
+   image manifest, and run the final local cold-boot gauntlet.
 
 ## Context
 Everything exists; now it must agree. The classic failure chain, each a known suspect:
@@ -62,4 +92,11 @@ rebuild the T17 image from the committed manifest and re-run the 25-boot gauntle
 the rebuilt artifact.
 
 ## Verification log
-(empty)
+
+### 2026-09-05 — coordinator — decomposed
+
+This L-sized bring-up planning container is cancelled before implementation as required by task
+policy and replaced by five ordered S tickets. The dependency chain is cold boot → terminal/input
+→ cursor and DPR hit-testing → compositor recovery → playbook and rebuilt-artifact proof. The
+children use local Chromium/native guest evidence only, consistent with the user waiver for
+independent machines, WebKit, and host rr.

@@ -1,0 +1,36 @@
+{
+  "exactHead": "0da96f6a5c7f323b986fe41b6f6bfb2508eec834",
+  "queryTruthTable": [
+    {
+      "query": "noAutoBoot=1",
+      "requested": false
+    },
+    {
+      "query": "noAutoBoot=1&testHooks=1",
+      "requested": false
+    },
+    {
+      "query": "noAutoBoot=1&perfHooks=1",
+      "requested": false
+    },
+    {
+      "query": "noAutoBoot=1&testHooks=1&perfHooks=1",
+      "requested": true
+    }
+  ],
+  "checks": {
+    "sourceDistMainByteEqual": true,
+    "exactDualGateDefinition": true,
+    "noProductionHelperImport": true,
+    "guestCallbackDualGated": true,
+    "samplerInstallInsideDualGate": true,
+    "samplerInstallUnique": true,
+    "samplerCleanupPresent": true,
+    "perfSurfaceInsideDualGate": true,
+    "queryTruthTable": true,
+    "retainedBrowserEngines": true,
+    "retainedBrowserCallsComplete": true
+  },
+  "allHeld": true,
+  "qualification": "The 50 ms retired-instruction sampler and presentation callback are installed only when both URL gates are present. The pre-existing window.__schedulerStats function remains available on all pages; on normal pages no timer, perf callback, or __desktopPerf surface is installed."
+}

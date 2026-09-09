@@ -1,0 +1,15 @@
+Commands: cargo fmt --check -p wasm-vm-core
+          rustfmt --edition 2024 --check crates/core/src/dev/virtio/gpu/reset_verifier_tests.rs
+          cargo test -p wasm-vm-core --lib --features gpu-trace display_reset_verifier_reconfigured_rings_reject_stale_resources -- --nocapture
+Worker claim HEAD: 4915d0556e77626520c82e4aeaf2c861124131eb; runtime remains frozen 779efb7d.
+Only test include and independent test promoted into shared checkout.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.26s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 1 test
+E5-T22e verifier latched=false: double reset retained 1373x907/60/128 EDID bytes; new rings completed 5 control + 2 cursor; stale id rejected then recreated; old rings/responses unchanged; fresh devices isolated
+E5-T22e verifier latched=true: double reset retained 1373x907/60/128 EDID bytes; new rings completed 5 control + 2 cursor; stale id rejected then recreated; old rings/responses unchanged; fresh devices isolated
+test dev::virtio::gpu::tests::display_reset_verifier_reconfigured_rings_reject_stale_resources ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 269 filtered out; finished in 0.02s
+Exit status: 0
