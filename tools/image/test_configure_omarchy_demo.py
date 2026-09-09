@@ -93,6 +93,11 @@ class ConfigureOmarchyDemoTests(unittest.TestCase):
         self.assertIn("omarchy-launch-shell", startup.read_text())
         self.assertIn("/usr/local/bin/omarchy-demo-session", startup.read_text())
         self.assertNotIn("omarchy-provision-first-run", startup.read_text())
+        hyprland = (self.root / "home/omarchy/.config/hypr/hyprland.lua").read_text()
+        self.assertIn("omarchy_preinstalled_bindings = false", hyprland)
+        self.assertLess(hyprland.index("omarchy_preinstalled_bindings = false"),
+                        hyprland.index('require("default.hypr.omarchy")'))
+        self.assertNotIn("omarchy_default_bindings = false", hyprland)
         self.assertFalse((self.root / "home/omarchy/.local/state/omarchy/done").exists())
         self.assertEqual(os.readlink(self.root / "etc/systemd/system/serial-getty@hvc0.service"), "/dev/null")
         self.assertEqual((self.root / "usr/local/bin/omarchy-demo-session").stat().st_mode & 0o777, 0o755)
