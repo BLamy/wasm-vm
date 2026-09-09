@@ -18,9 +18,12 @@ esac
 [ "${OMARCHY_PATH:-}" = "/usr/share/omarchy" ] || fail "unexpected OMARCHY_PATH"
 [ -n "${WAYLAND_DISPLAY:-}" ] || fail "WAYLAND_DISPLAY is required"
 
-command -v id >/dev/null 2>&1 || fail "id is unavailable"
-uid="$(id -u)" || fail "could not determine uid"
-[ "$uid" = 1000 ] || fail "must run as uid 1000"
+# Reject an imported environment variable masquerading as Bash's readonly integer.
+case "$(declare -p EUID)" in
+    'declare -ir EUID='*|'declare -irx EUID='*) ;;
+    *) fail "must run as uid 1000 (Bash readonly EUID required)" ;;
+esac
+[ "$EUID" = 1000 ] || fail "must run as uid 1000"
 
 command -v foot >/dev/null 2>&1 || fail "Foot is not installed"
 

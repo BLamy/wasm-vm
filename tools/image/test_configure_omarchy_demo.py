@@ -96,6 +96,11 @@ class ConfigureOmarchyDemoTests(unittest.TestCase):
         self.assertFalse((self.root / "home/omarchy/.local/state/omarchy/done").exists())
         self.assertEqual(os.readlink(self.root / "etc/systemd/system/serial-getty@hvc0.service"), "/dev/null")
         self.assertEqual((self.root / "usr/local/bin/omarchy-demo-session").stat().st_mode & 0o777, 0o755)
+        self.assertEqual((self.root / "usr/local/bin/omarchy-demo-session").read_bytes(),
+                         MODULE_PATH.with_name("omarchy-demo-session.sh").read_bytes())
+        self.assertFalse((self.root / "etc/systemd/system/serial-getty@.service").is_symlink())
+        self.assertFalse((self.root / "etc/systemd/system/serial-getty@ttyS0.service").is_symlink())
+        self.assertIn("--autologin omarchy", (self.root / "etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf").read_text())
         self.assertEqual(tree_snapshot(source), before)
 
     def test_source_tree_is_immutable_after_configuration(self) -> None:

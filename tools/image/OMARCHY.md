@@ -39,6 +39,12 @@ in public provenance. Keep staging directories private with no concurrent writer
 Build the pinned `omarchy.Dockerfile` tooling image. In the rootful, networkless
 Linux preparation container, with `/tools` read-only and output in a private volume:
 
+The container needs `CAP_SYS_ADMIN` for its temporary `/dev` and `/proc` mounts.
+On an AppArmor-enabled Docker host, permit these container-local mounts with
+`--security-opt apparmor=unconfined`; retain `--network none`, a read-only input
+volume, and a separate output volume. No source VM or host filesystem is needed
+in the builder. A failed mount is a failed build, not permission to skip caches.
+
 ```sh
 python3 /tools/build-omarchy-image.py /work/assembled /work/candidate \
   --selection /work/package-selection.json \

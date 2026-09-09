@@ -36,7 +36,80 @@ class BootCacheTests(unittest.TestCase):
     def test_caches_precede_completion(self):
         self.write("etc/ld.so.cache")
         builder.prepare_boot_caches(self.root, self.command)
-        self.assertEqual([Path(c[2]).name for c in self.calls], ["systemd-hwdb", "journalctl", "systemd-update-done"])
+        self.assertEqual(self.calls, [
+            ("chroot", self.root, "/usr/bin/systemd-hwdb", "update", "--usr", "--strict"),
+            ("chroot", self.root, "/usr/bin/journalctl", "--update-catalog"),
+            ("chroot", self.root, "/usr/lib/systemd/systemd-update-done"),
+        ])
+
+    def test_each_cache_and_stamp_rejects_missing_empty_directory_or_symlink(self):
+        caches = ("etc/ld.so.cache", "usr/lib/udev/hwdb.bin", "var/lib/systemd/catalog/database")
+        stamps = ("etc/.updated", "var/.updated")
+        for relative in caches + stamps:
+            for fault in ("missing", "empty", "directory", "symlink"):
+                with self.subTest(path=relative, fault=fault), tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory).resolve()
+                    calls = []
+                    for name in caches:
+                        path = root / name
+                        path.parent.mkdir(parents=True, exist_ok=True)
+                        path.write_bytes(b"independent cache fixture\n")
+
+                    def corrupt():
+                        path = root / relative
+                        path.unlink()
+                        if fault == "empty":
+                            path.touch()
+                        elif fault == "directory":
+                            path.mkdir()
+                        elif fault == "symlink":
+                            target = root / "outside-sentinel"
+                            target.write_bytes(b"sentinel\n")
+                            path.symlink_to(target)
+
+                    if relative in caches:
+                        corrupt()
+
+                    def run(*args):
+                        calls.append(args)
+                        if args[2] == "/usr/lib/systemd/systemd-update-done":
+                            for name in stamps:
+                                path = root / name
+                                path.parent.mkdir(parents=True, exist_ok=True)
+                                path.write_bytes(b"completed\n")
+                            if relative in stamps:
+                                corrupt()
+
+                    message = "required package cache" if relative in caches else "completion was not recorded"
+                    with self.assertRaisesRegex(ValueError, message):
+                        builder.prepare_boot_caches(root, run)
+                    if relative in caches:
+                        self.assertEqual(len(calls), 2)
+                        self.assertFalse((root / "etc/.updated").exists())
+                        self.assertFalse((root / "var/.updated").exists())
+                    if fault == "symlink":
+                        self.assertEqual((root / "outside-sentinel").read_bytes(), b"sentinel\n")
+
+    def test_failure_at_each_command_stops_the_sequence(self):
+        for failed_index in range(3):
+            with self.subTest(failed_index=failed_index), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                for name in ("etc/ld.so.cache", "usr/lib/udev/hwdb.bin", "var/lib/systemd/catalog/database"):
+                    path = root / name
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_bytes(b"cache\n")
+                calls = []
+
+                def run(*args):
+                    calls.append(args)
+                    if len(calls) == failed_index + 1:
+                        raise RuntimeError("injected command failure")
+
+                with self.assertRaisesRegex(RuntimeError, "injected command failure"):
+                    builder.prepare_boot_caches(root, run)
+                self.assertEqual(len(calls), failed_index + 1)
+                self.assertFalse((root / "etc/.updated").exists())
+                self.assertFalse((root / "var/.updated").exists())
 
     def test_missing_or_empty_cache_never_stamps_success(self):
         for empty in [False, True]:
