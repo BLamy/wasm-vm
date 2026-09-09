@@ -40,6 +40,30 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — coordinator — bounded fetch-preflight proposal, not adopted
+
+The user requires a fresh, optimized release without production compatibility
+branches for earlier demos. E5-T28a now records that entry-point contract;
+architectural semantics, integrity checks and existing user data are not waived.
+No current runtime code changes with that requirement update.
+
+A separate Luna scratch candidate reuses one successful physical translation
+after an ordinary uncompiled JIT miss. Three interleaved B/C/C/B quartets in
+one pinned Node/V8 process compare actual WASM core probes, not the production
+module or BrowserExecutor. All-miss elapsed mean decreases12.602%, while the
+JIT-off control changes+0.164%. Equal digests cover only integer registers,
+PC and MINSTRET; they do not prove full architectural equivalence. Raw timing
+SHA256 `fc54cc6a86ee23297da423d8a0d2d09d719f77ef12da5b3bdc87e67706256c27`.
+
+The exact modules, scripts, sources, controls, raw records and source-only
+Daybreak review are retained in
+`evidence/e5-t26f/fetch-preflight-candidate/README.md` and its authenticated
+bundle. Source review gives GO for a bounded proposal, not adoption or task
+verification. A focused semantic/TLB matrix and the applicable exact-source
+gates are still required. No browser rerun, new runtime task, merge, deployment,
+Omarchy image mutation or Epic6 work occurred. The ordinary F restore-time
+failure remains3591.965ms>2000; the synthetic probe does not satisfy F.
+
 ### 2026-09-08 — coordinator — post-capture screen, profile and functional completion
 
 Frozen producer `415db223733214b6c6e7b69b0ad331150969be56` runs
