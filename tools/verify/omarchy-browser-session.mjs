@@ -29,9 +29,10 @@ node tools/verify/omarchy-browser-session.mjs \\
 
 Required inputs also accept OMARCHY_IMAGE, OMARCHY_IMAGE_SHA256, OMARCHY_CHUNKS,
 OMARCHY_MANIFEST_SHA256 and OMARCHY_OUTPUT_DIR. --out must not already exist.
-Optional: --timeout-ms 1800000 --ram-mib 2048 --port 0 --chrome PATH --headed
+Optional: --timeout-ms 1800000 --ram-mib 1024 --port 0 --chrome PATH --headed
+          --icount-divider INTEGER (1..1024, optional; e.g. 64; omitted preserves the core default)
           --keyboard none|auto (default none) --poll-ms 30000 --probe-timeout-ms 120000
-          --shell-namespace NAME (exact additional Quickshell layer namespace)
+          --shell-namespace NAME (optional layer filter; package process PID still required)
           --check-only (integrity checks, no browser or guest)
           --self-test (synthetic parser/guard tests; no guest)
           --smoke-test (real Chromium imports/canvas only; NO worker/guest boot)
@@ -52,7 +53,8 @@ export function options(argv = process.argv.slice(2), env = process.env) {
     "manifest-sha256": { type: "string", default: env.OMARCHY_MANIFEST_SHA256 },
     out: { type: "string", default: env.OMARCHY_OUTPUT_DIR },
     "timeout-ms": { type: "string", default: env.OMARCHY_TIMEOUT_MS || "1800000" },
-    "ram-mib": { type: "string", default: "2048" },
+    "ram-mib": { type: "string", default: "1024" },
+    "icount-divider": { type: "string" },
     "poll-ms": { type: "string", default: "30000" },
     "probe-timeout-ms": { type: "string", default: "120000" },
     port: { type: "string", default: "0" }, chrome: { type: "string", default: env.OMARCHY_CHROME_PATH },
@@ -60,6 +62,12 @@ export function options(argv = process.argv.slice(2), env = process.env) {
     headed: { type: "boolean" }, "check-only": { type: "boolean" },
     "self-test": { type: "boolean" }, "smoke-test": { type: "boolean" }, help: { type: "boolean" },
   } });
+  // Validate before every early return: malformed clock input must never reach browser startup.
+  if (values["icount-divider"] !== undefined) {
+    assert.match(values["icount-divider"], /^[1-9][0-9]{0,3}$/u, "invalid --icount-divider (integer 1..1024)");
+    values["icount-divider"] = Number(values["icount-divider"]);
+    assert.ok(values["icount-divider"] <= 1024, "invalid --icount-divider (integer 1..1024)");
+  }
   if (values.help || values["self-test"] || values["smoke-test"]) return values;
   for (const key of ["image", "image-sha256", "chunks", "manifest-sha256", "out"]) {
     assert.ok(values[key], `--${key} is required`);
@@ -172,6 +180,13 @@ function layersIn(value) {
     ...Object.values(value).filter((v) => v && typeof v === "object").flatMap(layersIn)];
 }
 
+export function parseInstances(result) {
+  if (result.status !== 0) return [];
+  const list = JSON.parse(result.output);
+  assert.ok(Array.isArray(list), "hyprctl instances must be an array");
+  return list;
+}
+
 export function desktopObservation(clients, layers, processes, extraNamespace = "") {
   assert.ok(Array.isArray(clients), "hyprctl clients must return an array");
   assert.ok(layers && typeof layers === "object" && !Array.isArray(layers), "hyprctl layers must return an object");
@@ -180,12 +195,17 @@ export function desktopObservation(clients, layers, processes, extraNamespace = 
     && /^0x[0-9a-f]+$/iu.test(c.address || "") && c.size?.length === 2 && c.size.every((n) => n > 0));
   const shellProcesses = processes.split("\n").flatMap((line) => {
     const match = line.match(/^\s*(\d+)\s+(quickshell|qs)\s+(.+)$/u);
-    return match ? [{ pid: Number(match[1]), command: match[2], args: match[3] }] : [];
+    if (!match || Number(match[1]) <= 0) return [];
+    const args = match[3];
+    if (!/^(?:\/usr\/bin\/)?(?:quickshell|qs)(?:\s|$)/u.test(args)) return [];
+    // Require exactly one explicit package-shell path; reject prefix matches and overrides.
+    const paths = [...args.matchAll(/(?:^|\s)(?:-p\s+|--path(?:\s+|=))(\S+)/gu)];
+    if (paths.length !== 1 || paths[0][1] !== "/usr/share/omarchy/shell") return [];
+    return [{ pid: Number(match[1]), command: match[2], args }];
   });
   const shellLayers = layersIn(layers).filter((layer) => layer.w > 0 && layer.h > 0
-    && (shellProcesses.some((p) => p.pid === layer.pid)
-      || /quickshell|omarchy/iu.test(layer.namespace)
-      || (extraNamespace && layer.namespace === extraNamespace)));
+    && shellProcesses.some((p) => p.pid === layer.pid)
+    && (!extraNamespace || layer.namespace === extraNamespace));
   const shellClients = clients.filter((c) => c.mapped === true && c.hidden !== true
     && shellProcesses.some((p) => p.pid === c.pid));
   return { foot: foot || null, shellProcesses, shellLayers, shellClients,
@@ -195,12 +215,16 @@ export function desktopObservation(clients, layers, processes, extraNamespace = 
 
 // Executed only in Chromium. No manufactured frame or readiness state is ever supplied here.
 async function diagnosticPage(config) {
-  const [{ startLinuxBootWorker }, { PresentationController }, { evdevForCode }] = await Promise.all([
+  const [{ startLinuxBootWorker }, { PresentationController }, { evdevForCode }, { createLinuxTerminal }] = await Promise.all([
     import("/linux-worker-host.js"), import("/src/sink/presentation.js"), import("/src/input/keymap.js"),
+    import("/terminal.js"),
   ]);
   const canvas = document.getElementById("screen");
   const status = document.getElementById("status");
   const serialView = document.getElementById("serial");
+  // Use the demo's real terminal bridge: systemd/agetty issue cursor/size queries.
+  // A raw text sink cannot answer those queries and adds avoidable startup waits.
+  const terminal = createLinuxTerminal(document.getElementById("terminal"));
   const presentation = new PresentationController(canvas, {
     defaultBackend: "canvas2d", canvas2dOptions: { contextAttributes: { willReadFrequently: true } },
   });
@@ -250,7 +274,9 @@ async function diagnosticPage(config) {
       return { ...api.state(), paused, rgbaSha256: await digest(pixels), sampledColors: colors.size,
         stateDigest: controller ? await controller.stateDigest() : null,
         scheduler: controller ? await controller.schedulerStats() : null,
-        fetchStats: controller ? await controller.fetchStats() : null };
+        fetchStats: controller ? await controller.fetchStats() : null,
+        guestClockState: await controller?.guestClockState?.() ?? null,
+        icountDividerSelection: await controller?.icountDividerSelection?.() ?? null };
     },
     async start() {
       if (!config.allowBoot) throw new Error("no guest boot is permitted in browser smoke-test mode");
@@ -263,10 +289,12 @@ async function diagnosticPage(config) {
           manifestUrl: "/omarchy-kernel.json", mode: "chunked",
           imageManifestUrl: "/e5t18a-desktop/manifest.json", baseUrl: "/e5t18a-desktop/",
           bootProfileUrl: null, ramMib: config.ramMib,
+          guestClock: config.guestClock, icountDivider: config.icountDivider,
           bootargs: "root=/dev/vda rw console=ttyS0 earlycon=sbi",
           bootSnapshot: false, persist: false, slirpNet: false, fastInterpreter: true,
           jit: true, quantum: 500000, workerBootTimeoutMs: config.timeoutMs,
           onOutput(bytes) {
+            terminal.write(bytes);
             const text = decoder.decode(bytes, { stream: true });
             serial = (serial + text).slice(-4 * 1024 * 1024); state.serialBytes += bytes.length;
             serialView.textContent = serial.slice(-12000);
@@ -291,6 +319,10 @@ async function diagnosticPage(config) {
           onError: fail,
         });
         window.__omarchyController = controller;
+        terminal.attachSink((bytes) => {
+          if (!controller.sendInput(bytes)) return fail("terminal serial transport unavailable");
+          emit({ type: "terminal-input", bytes: Array.from(bytes) });
+        });
         emit({ type: "controller-ready", backend: controller.backend });
       } catch (error) { fail(error); }
     },
@@ -303,10 +335,15 @@ export function pageHTML(config) {
   return `<!doctype html><meta charset="utf-8"><title>Omarchy guest diagnostics</title>
 <link rel="icon" href="data:,"><style>body{background:#151922;color:#eee;font:14px monospace;margin:16px}
 canvas{display:block;max-width:100%;border:1px solid #555}pre{white-space:pre-wrap;max-height:260px;overflow:auto}
-input{width:75%}</style><h1>Omarchy guest diagnostics</h1><p id="status">Loading diagnostic modules</p>
+input{width:75%}#terminal{height:240px}</style>
+<link rel="stylesheet" href="/node_modules/@xterm/xterm/css/xterm.css">
+<script src="/node_modules/@xterm/xterm/lib/xterm.js"></script>
+<script src="/node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
+<h1>Omarchy guest diagnostics</h1><p id="status">Loading diagnostic modules</p>
 <canvas id="screen" width="1280" height="800" tabindex="0" aria-label="Real guest display"></canvas>
 <p>Click canvas for evdev keyboard input. Serial control:</p><form id="serial-form"><input id="command"
-aria-label="Serial command" autocomplete="off"><button>Send serial</button></form><pre id="serial"></pre>
+aria-label="Serial command" autocomplete="off"><button>Send serial</button></form>
+<div id="terminal" aria-label="Guest serial terminal"></div><pre id="serial"></pre>
 <script type="module">(${diagnosticPage.toString()})(${json}).catch(e=>{document.getElementById('status').textContent=String(e);console.error(e)});</script>`;
 }
 
@@ -367,6 +404,7 @@ async function browserSession(opts, base, publication, record, serialOutput) {
       headers: { "Content-Type": "text/html", "Cross-Origin-Opener-Policy": "same-origin",
         "Cross-Origin-Embedder-Policy": "require-corp" },
       body: pageHTML({ allowBoot: !opts["smoke-test"], ramMib: opts["ram-mib"], timeoutMs: opts["timeout-ms"],
+        guestClock: "icount", icountDivider: opts["icount-divider"],
         imageSha256: opts["image-sha256"], manifestSha256: opts["manifest-sha256"] }) }));
     await context.route(`${base}/omarchy-kernel.json`, (route) => route.fulfill({
       contentType: "application/json", body: JSON.stringify(publication?.bootManifest || {}) }));
@@ -428,13 +466,16 @@ async function observeGuest(session, opts, record, getSerial) {
   const identity = await probe("stty -echo; /usr/bin/id -u; printf '%s\\n' \"$HOME\"");
   assert.equal(identity.status, 0, "serial identity query failed");
   assert.equal(identity.output, "1000\n/home/omarchy", "serial shell is not the generic UID-1000 account");
-  let observed, instance;
+  let observed, instance, missingInstanceJournalCaptured = false;
   while (Date.now() < deadline) {
-    const instances = await probe("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances");
-    if (instances.status === 0) {
-      const list = JSON.parse(instances.output);
-      assert.ok(Array.isArray(list), "hyprctl instances must be an array");
-      instance = list.find((v) => /^[A-Za-z0-9_.-]+$/u.test(v.instance || "") && v.pid > 0);
+    // This package emits invalid JSON when no Hyprland process exists. Avoid that query;
+    // a successful command with malformed output still fails strict JSON parsing.
+    const instances = await probe("/usr/bin/pgrep -u 1000 -x Hyprland >/dev/null && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances");
+    instance = parseInstances(instances).find((v) => /^[A-Za-z0-9_.-]+$/u.test(v.instance || "") && v.pid > 0);
+    if (!instance && !missingInstanceJournalCaptured) {
+      missingInstanceJournalCaptured = true;
+      const journal = await probe("journalctl --user --no-pager -n 40 -o short-monotonic");
+      record({ type: "missing-instance-journal", ...journal });
     }
     if (instance) {
       const ctl = `XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i ${quote(instance.instance)}`;
@@ -526,6 +567,17 @@ async function run(opts) {
     assert.deepEqual(report.capture.errors, []);
     assert.deepEqual(report.capture.presentation.errors, []);
     assert.deepEqual(session.errors, []);
+    if (opts["icount-divider"] !== undefined) {
+      assert.equal(report.capture.guestClockState?.mode, "icount");
+      assert.equal(report.capture.guestClockState?.clockDiv, opts["icount-divider"]);
+      const selection = report.capture.icountDividerSelection;
+      assert.equal(selection?.requested, opts["icount-divider"]);
+      assert.equal(selection?.before?.mode, "icount");
+      assert.equal(selection?.after?.clockDiv, opts["icount-divider"]);
+      assert.match(selection?.before?.mtime, /^[0-9]+$/u);
+      assert.equal(selection?.after?.mtime, selection?.before?.mtime);
+      assert.ok(BigInt(report.capture.guestClockState.mtime) > BigInt(selection.after.mtime));
+    }
     report.result = opts.keyboard === "auto" ? "desktop-and-keyboard-observed" : "desktop-observed-keyboard-unverified";
   } catch (error) {
     report.result = "failed"; report.error = String(error.stack || error); process.exitCode = 1;
@@ -576,6 +628,13 @@ function selfTest() {
   assert.deepEqual(parseProbe(`${wire}\r\n${token}_begin\r\n1000\r\n${token}_end:0\r\n`, token)?.output, "1000");
   assert.equal(parseProbe(`\n${token}_begin\npermission denied\n${token}_end:41\n`, token)?.status, 41);
   assert.throws(() => probeCommand("echo ok\nexit", token));
+  assert.deepEqual(parseInstances({ status: 1, output: "" }), []);
+  assert.deepEqual(parseInstances({ status: 1, output: "\n]\n\n" }), []);
+  assert.deepEqual(parseInstances({ status: 0, output: "[]" }), []);
+  assert.throws(() => parseInstances({ status: 0, output: "\n]\n\n" }), SyntaxError);
+  assert.throws(() => parseInstances({ status: 0, output: "{}" }), /must be an array/u);
+  assert.deepEqual(parseInstances({ status: 0, output: '[{"instance":"actual_1","pid":267}]' }),
+    [{ instance: "actual_1", pid: 267 }]);
   const client = { address: "0x123", class: "foot", pid: 9, mapped: true, hidden: false, size: [800, 600] };
   const layers = { monitor: { levels: { 2: [{ namespace: "omarchy-bar", pid: 12, w: 1280, h: 30 }] } } };
   const processes = "12 quickshell /usr/bin/quickshell -p /usr/share/omarchy/shell";
@@ -585,14 +644,39 @@ function selfTest() {
   assert.equal(desktopObservation([client], layers, "").quickshellObserved, false);
   assert.equal(desktopObservation([client], {}, processes).quickshellObserved, false);
   assert.equal(desktopObservation([client], layers, "99 sh echo quickshell").quickshellObserved, false);
+  // BH3: neither a process name nor an Omarchy-looking namespace proves package ownership.
+  for (const wrong of [
+    "12 quickshell /tmp/not-the-package-shell",
+    "12 quickshell /usr/bin/quickshell -p /tmp/not-the-package-shell",
+    "12 quickshell /usr/bin/quickshell -p /usr/share/omarchy/shell-impostor",
+    "12 quickshell /usr/bin/quickshell -p /usr/share/omarchy/shell --path /tmp/override",
+    "12 quickshell /tmp/impostor -p /usr/share/omarchy/shell",
+  ]) assert.equal(desktopObservation([client], layers, wrong).quickshellObserved, false);
+  const impostor = { monitor: { levels: { 2: [{ namespace: "omarchy-impostor", pid: 777, w: 1280, h: 30 }] } } };
+  assert.equal(desktopObservation([client], impostor, processes).quickshellObserved, false);
+  assert.equal(desktopObservation([client], impostor, processes, "omarchy-impostor").quickshellObserved, false);
+  assert.equal(desktopObservation([client], impostor, "12 quickshell /tmp/not-the-package-shell").quickshellObserved, false);
+  assert.equal(desktopObservation([client, { ...client, class: "quickshell", pid: 777 }], {}, processes).quickshellObserved, false);
+  assert.equal(desktopObservation([client, { ...client, class: "quickshell", pid: 12 }], {}, processes).quickshellObserved, true);
+  assert.equal(desktopObservation([client], layers, "12 quickshell /usr/bin/quickshell --path=/usr/share/omarchy/shell").quickshellObserved, true);
   assert.throws(() => options([], {}), /required/u);
   const args = ["--image", "/tmp/image", "--chunks", "/tmp/chunks", "--out", "/tmp/new",
     "--image-sha256", "a".repeat(64), "--manifest-sha256", "b".repeat(64)];
-  assert.equal(options(args, {})["ram-mib"], 2048);
+  assert.equal(options(args, {})["ram-mib"], 1024);
+  assert.equal(options(args, {})["icount-divider"], undefined);
+  for (const divider of ["1", "64", "1024"]) {
+    assert.equal(options([...args, "--icount-divider", divider], {})["icount-divider"], Number(divider));
+  }
+  for (const bad of ["0", "-1", "1025", "1.5", "1e2", "0x40", "NaN", "Infinity", "", " 64", "064"]) {
+    assert.throws(() => options([...args, "--icount-divider", bad], {}), /icount-divider/u);
+    assert.throws(() => options(["--smoke-test", "--icount-divider", bad], {}), /icount-divider/u);
+  }
+  assert.throws(() => options([...args, "--icount-divider"], {}));
+  assert.equal(options(["--self-test", "--icount-divider", "64"], {})["icount-divider"], 64);
   assert.throws(() => options([...args, "--keyboard", "fake"], {}));
   assert.throws(() => options([...args, "--image-sha256", "bad"], {}));
   assert.ok(!pageHTML({}).includes("Weston"));
-  console.log("OMARCHY_SELF_TEST passed: echoed/incomplete replies, failed commands, missing/hidden clients, missing shell surfaces/processes, CLI guards; no guest boot");
+  console.log("OMARCHY_SELF_TEST passed: serial/physical-key guards, BH3 package-path/PID sabotage, RAM default, icount-divider bounds/early rejection; no guest boot");
 }
 
 async function smokeTest(opts) {
