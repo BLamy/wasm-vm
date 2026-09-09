@@ -69,6 +69,7 @@ web/artifacts-alpine.json
 
 # E3-T02 local-only chunked Alpine image (built by `wasm-vm chunk`; derived from the ext4)
 releases/chunked-alpine/
+releases/chunked-omarchy/
 
 releases/wvseccomp-riscv64
 
