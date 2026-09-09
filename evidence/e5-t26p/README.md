@@ -1,11 +1,13 @@
-# E5-T26p evidence index — implemented
+# E5-T26p evidence index — verified
 
 The static-code gate is admitted by fresh Daybreak in
 `verifier/artifact-verdict.md` (SHA256
 `19e852e324a1db3beb1c1f977306d22b29a4e35d30a2caedcda2cc3142e2b6df`).
 The subsequent canonical semantic comparison passes 266 cases/modes with
 byte-identical old-source native, candidate native, and actual-WASM output.
-This is not a completed verifier verdict, browser latency result, or release claim.
+The final independent verdict is `verifier/final-verdict.md`, SHA256
+`154e61bd84cfd98011d5214fefba0157818720045aaa2b4e068796068665bc45`.
+This is not a browser latency result or release claim.
 The final clone below passes; no F boot, merge, or deployment is represented here.
 
 - `artifact-notes.md` and `artifact-index.json`: actual native and authenticated
@@ -83,4 +85,4 @@ Both checkout checks are clean, with no object alternates and fresh target outpu
 the scrubbed task gate passes 75 native and 82 WASM tests, the canonical producer,
 checks/builds and detector selftest. `main-gates/06-final-clone.log` SHA256
 `661b13b6656bbbece2131a0c982b79d78b13e3a67016f251d28a5ee55c513c9d`.
-No second clone or semantic change was made. Final critic verdict is pending.
+No second clone or semantic change was made. Daybreak's final verdict is verified.

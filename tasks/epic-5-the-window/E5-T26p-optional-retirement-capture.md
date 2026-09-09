@@ -3,7 +3,7 @@ id: E5-T26p
 epic: 5
 title: Specialize optional interpreter retirement metadata without changing effects
 priority: 526.5996
-status: implemented
+status: verified
 depends_on: [E0-T16, E1-T04, E5-T26o]
 estimate: S
 risk: high
@@ -208,3 +208,34 @@ inputs, without relying on the worker's output directory or uncommitted fixtures
 All runtime pins and the single demo's admitted WASM digest remain unchanged.
 Status is implemented pending fresh Daybreak's final verdict; F, Epic5 completion,
 merge and Omarchy deployment are not claimed.
+
+### 2026-09-08 — verifier — VERDICT: verified
+
+- Artifact elimination — HELD. Fresh compiled-code review A1–A7 identifies actual
+  native and authenticated production-WASM unit ordinary/cached callers with
+  retirement-metadata return work removed, while recording callers remain a positive
+  control. The disclosed result is net artifact growth, not a speed or shrink claim.
+- Architectural semantics — HELD. The independently executed old/candidate native
+  producer outputs are byte-identical across 266 cases, actual WASM matches the
+  retained old-source golden, and the promoted false-sink x0/MMIO attack passes on
+  both targets. The isolated successful-store overlap sabotage fails its first seeded
+  assertion while SC pre-fault reservation consumption remains independent.
+- Coverage and gates — HELD. Every owned production runtime hunk is covered; the
+  scoped gate passes, including 75 native and 82 WASM tests, direct unit FenceI/WFI,
+  both 266-case producer invocations, format/clippy/build checks and zero-cost
+  positive control. The one unchanged E4-T33 long-churn ignore is outside this task.
+- Demo and portability — HELD. The sole built demo reports 126/0 with admitted
+  production WASM `a3ce0252…`. The one non-local clone at frozen source commit
+  `078500ebbef1c5d90adf973790ad68b7579a5879` starts and ends clean with no object
+  alternates and exits zero; log SHA256
+  `661b13b6656bbbece2131a0c982b79d78b13e3a67016f251d28a5ee55c513c9d`.
+- SUITE: retain the focused native/WASM capture tests, independent verifier tests,
+  old-source semantic golden/producer, artifact index, and `verify-E5-T26p` recipe.
+  No rerun or additional evidence is required.
+
+Full independent verdict: `evidence/e5-t26p/verifier/final-verdict.md`, SHA256
+`154e61bd84cfd98011d5214fefba0157818720045aaa2b4e068796068665bc45`.
+Implemented-proof commit `9186874841ce39df380a3cf36f17b0eca01e63b8`
+preserves all admitted runtime, test, gate, verifier-report, and production-WASM
+pins over the cloned source commit. No F latency, Linux/Omarchy boot, Epic5
+completion, merge, or deployment claim is made.
