@@ -1,0 +1,21 @@
+E5-T19c verifier attack transcript
+tested_head=a2abe48
+
+commands:
+  cargo test -p wasm-vm-core --test virtio_snd_queue --release -- --nocapture
+  for n in {1..25}; do cargo test -p wasm-vm-core --test virtio_snd_queue --quiet; done
+
+observed:
+  optimized queue suite: 5 passed, 0 failed
+  repeated debug queue suite: 25 consecutive invocations, 5 passed and 0 failed in every invocation
+  malformed txq descriptors completed in order with IO_ERR or zero used length as appropriate;
+    the later valid period reached the sink
+  missed-period XRUN notifications were FIFO, bounded at 256 pending records, and overflow was
+    counted without additional event allocation
+  short and wrongly-directed eventq buffers were reclaimed with used.len=0 while the event stayed
+    pending for the later valid buffer
+  fifty STOP/RELEASE/reset/re-setup cycles left zero playback/event records pending and reset both
+    ring views
+  novel compatibility attack: the legacy tx-only service left a posted eventq buffer untouched;
+    the event-aware service then delivered the pending XRUN exactly once
+  findings: none

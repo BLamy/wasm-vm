@@ -88,6 +88,77 @@
       "spread": 0.0,
       "unit": "seconds",
       "vm_build": "release"
+    },
+    {
+      "baseline": "level3-interpreter",
+      "bench": "coremark",
+      "commit": "62ba23233cd6015b1cba1a26471ff7f9df730375",
+      "config": {
+        "binary_sha256": "4db593b8110e588b4fba7e526d3b838365cc5ad50ae6cd1592be2dc483a08937",
+        "block_cache": false,
+        "evidence": "evidence/e4-t05/ab-2026-09-01/",
+        "flags": "-static -O2 -g0 -march=rv64gc -mabi=lp64d",
+        "gcc": "gcc-13-riscv64-linux-gnu 13.3.0",
+        "host_wall_median_s": 233.492,
+        "host_wall_samples_s": [
+          233.492,
+          237.263,
+          233.249,
+          237.901,
+          229.824
+        ],
+        "interrupt_batching": false,
+        "iterations": 6000,
+        "machine": "Apple M4 Max 16c/128GB, macOS 26.6.2, rustc 1.96.0",
+        "note": "E4-T05 AC1 debt payoff: guest score is instruction-derived (config-invariant); the uplift is the host wall-clock ratio, median of 5 alternating samples per arm",
+        "ram_mib": 256,
+        "rootfs_sha256": "dfdb7b7ce950d8ff85489a27ce5313583d7ce555809eb3c1ea74f5ea50f78302",
+        "vm_build": "release"
+      },
+      "date": "2026-09-01T18:49:13+00:00",
+      "engine": "native",
+      "higher_is_better": true,
+      "prev_sha256": "5f7e56a8b0d00cb69153ec0ab922550a3770ec44236cde2e6ad9b2087c0265b5",
+      "score": 261.746,
+      "spread": 0.0001,
+      "unit": "iterations/sec",
+      "vm_build": "release"
+    },
+    {
+      "baseline": "level3-interpreter",
+      "bench": "coremark",
+      "commit": "62ba23233cd6015b1cba1a26471ff7f9df730375",
+      "config": {
+        "binary_sha256": "4db593b8110e588b4fba7e526d3b838365cc5ad50ae6cd1592be2dc483a08937",
+        "block_cache": true,
+        "evidence": "evidence/e4-t05/ab-2026-09-01/",
+        "flags": "-static -O2 -g0 -march=rv64gc -mabi=lp64d",
+        "gcc": "gcc-13-riscv64-linux-gnu 13.3.0",
+        "host_uplift_vs_cache_off": 2.3934,
+        "host_wall_median_s": 97.558,
+        "host_wall_samples_s": [
+          98.057,
+          97.558,
+          97.275,
+          97.73,
+          95.345
+        ],
+        "interrupt_batching": true,
+        "iterations": 6000,
+        "machine": "Apple M4 Max 16c/128GB, macOS 26.6.2, rustc 1.96.0",
+        "note": "E4-T05 AC1 debt payoff: guest score is instruction-derived (config-invariant); the uplift is the host wall-clock ratio, median of 5 alternating samples per arm",
+        "ram_mib": 256,
+        "rootfs_sha256": "dfdb7b7ce950d8ff85489a27ce5313583d7ce555809eb3c1ea74f5ea50f78302",
+        "vm_build": "release"
+      },
+      "date": "2026-09-01T18:49:13+00:00",
+      "engine": "native",
+      "higher_is_better": true,
+      "prev_sha256": "11e24a9181b77eb80b266f8ef922e25ea978166bcf6cb62fe9ce70bed6f25eef",
+      "score": 261.746,
+      "spread": 0.0,
+      "unit": "iterations/sec",
+      "vm_build": "release"
     }
   ],
   "schema_version": 1

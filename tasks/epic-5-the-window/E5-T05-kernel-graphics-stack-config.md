@@ -3,10 +3,12 @@ id: E5-T05
 epic: 5
 title: Kernel rebuild with the graphics/input/sound/console driver stack
 priority: 505
-status: pending
+status: cancelled
 depends_on: [E4]
 estimate: M
+risk: high
 capstone: false
+decomposed_into: [E5-T05a, E5-T05b, E5-T05c]
 ---
 
 ## Goal
@@ -55,4 +57,11 @@ mismatch (hand-patched artifact) is a refutation. Confirm compliance suite still
 under JIT with the new kernel image in the boot-bench harness.
 
 ## Verification log
-(empty)
+
+### 2026-09-03 — coordinator — decomposed
+
+This M-sized kernel/config container is cancelled before implementation as required by task policy.
+The work is split into ordered S tickets: E5-T05a owns the reviewed Epic 5 config fragment,
+E5-T05b owns the reproducible kernel artifact/manifest rebuild, and E5-T05c owns the headless boot
+and final config/provenance regression. The replacements preserve the deferred T07/T11/T19 device
+checks without putting config editing, cross-compilation, and boot proof in one active lane.

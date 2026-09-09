@@ -1,0 +1,207 @@
+{
+  "task": "E5-T13c",
+  "generatedAt": "2026-09-03T22:49:44.831Z",
+  "gitHead": "5655c3c3edb06cbd14b3dc1257cb53966e7e9ee4",
+  "command": "node tools/verify/e5-t13c-focus-hardening-proof.mjs",
+  "base": "http://127.0.0.1:60898",
+  "url": "http://127.0.0.1:60898/?guest=busybox&nosw=1&testHooks=1&noAutoBoot=1&jit=0#ide",
+  "browser": {
+    "name": "chromium",
+    "version": "unknown"
+  },
+  "staticAudit": {
+    "parity": [
+      {
+        "source": "web/main.js",
+        "dist": "web/dist/main.js",
+        "equal": true,
+        "sha256": "ac2189b914beca39655a2ce4b3310b351999538468c13a1e325208e1c7017b4b"
+      },
+      {
+        "source": "web/ide.js",
+        "dist": "web/dist/ide.js",
+        "equal": true,
+        "sha256": "ef977d21130862b614d1e8cdddd0fa4e6e99076c41cf4ac47e6b36a5f39a34d5"
+      },
+      {
+        "source": "web/loader.js",
+        "dist": "web/dist/loader.js",
+        "equal": true,
+        "sha256": "ab0549f9ccb45e5fcbfe5b2bed2cc1229208506cd8343d118f8d0fb5b55d41e9"
+      },
+      {
+        "source": "web/linux-worker-protocol.js",
+        "dist": "web/dist/linux-worker-protocol.js",
+        "equal": true,
+        "sha256": "9010a83d2a6abae1cb558e63faece70b018f14577d16996ed92a77be1eaf1ce9"
+      },
+      {
+        "source": "web/src/input/capture.js",
+        "dist": "web/dist/src/input/capture.js",
+        "equal": true,
+        "sha256": "ae0a676d181ec9118118378e5767f755ae89ff8890f60ef9bd45a4f6ed70f369"
+      },
+      {
+        "source": "web/src/input/keyboard.js",
+        "dist": "web/dist/src/input/keyboard.js",
+        "equal": true,
+        "sha256": "53a664fed275830498b04d02f6a118ce33702589744e170a1a5749c2f1fa4a67"
+      },
+      {
+        "source": "web/src/input/held-keys.js",
+        "dist": "web/dist/src/input/held-keys.js",
+        "equal": true,
+        "sha256": "9f652d8fd99b75a8a0eaa10401030af0110e6da9d38172ed32c560975f531f0a"
+      },
+      {
+        "source": "web/src/input/reconciliation.js",
+        "dist": "web/dist/src/input/reconciliation.js",
+        "equal": true,
+        "sha256": "6ff57347fd7818531e17ca1b00456192258d76532299ba642422f057582fe36d"
+      }
+    ],
+    "docsPolicy": true,
+    "deploySourceTree": true
+  },
+  "stages": {
+    "boot": {
+      "ok": true,
+      "elapsedMs": 17978
+    },
+    "blur": {
+      "heldAfter": [],
+      "releaseFrames": [
+        {
+          "code": "F1",
+          "value": 0
+        },
+        {
+          "code": "AltLeft",
+          "value": 0
+        }
+      ],
+      "plainA": [
+        {
+          "code": "KeyA",
+          "value": 1
+        },
+        {
+          "code": "KeyA",
+          "value": 0
+        }
+      ]
+    },
+    "visibilityControlTrue": {
+      "releaseFrames": [
+        {
+          "code": "F2",
+          "value": 0
+        },
+        {
+          "code": "ControlLeft",
+          "value": 0
+        }
+      ],
+      "repairedFrames": [
+        {
+          "code": "ControlLeft",
+          "value": 1
+        },
+        {
+          "code": "F3",
+          "value": 1
+        }
+      ],
+      "stats": {
+        "held": [],
+        "modifierRepairs": 1,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 2,
+        "lastReleaseReason": "visibility-hidden",
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      }
+    },
+    "visibilityControlFalse": {
+      "frames": [
+        {
+          "code": "F5",
+          "value": 1
+        },
+        {
+          "code": "F5",
+          "value": 0
+        }
+      ]
+    },
+    "panic": {
+      "framesBefore": 24,
+      "releaseFrames": [
+        {
+          "code": "F6",
+          "value": 0
+        },
+        {
+          "code": "ShiftLeft",
+          "value": 0
+        }
+      ],
+      "repeatedReleaseHeld": []
+    },
+    "restart": {
+      "retired": true,
+      "heldAfterRetire": [],
+      "rebootMs": 18267
+    },
+    "randomizedFlaps": {
+      "iterations": 500,
+      "seed": 3648984033,
+      "held": [],
+      "frames": 512,
+      "diagnostics": [
+        {
+          "reason": "modifier-reconciled-down",
+          "kind": "Control",
+          "code": "ControlLeft",
+          "source": "keyboard-reconciler"
+        }
+      ]
+    },
+    "postRecoveryTyping": {
+      "marker": "E5_T13C_RECOVER_42",
+      "debug": "Held: none · repairs: 0",
+      "held": []
+    }
+  },
+  "errors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "final": {
+    "debug": "Held: none · repairs: 0",
+    "held": [],
+    "stats": {
+      "held": [],
+      "modifierRepairs": 0,
+      "lockRepairs": 0,
+      "pendingLockRepairs": [],
+      "releaseCount": 505,
+      "lastReleaseReason": "blur",
+      "leds": {
+        "numLock": false,
+        "capsLock": false,
+        "scrollLock": false
+      }
+    },
+    "terminalTail": "[fast-boot: restoring host from a build-time snapshot instead of booting Linux][execution: whole-machine-worker; fast interpreter; JIT forced off by ?jit=0; quantum 500000][    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024[    0.000000] Machine model: riscv-virtio,qemu[    0.000000] SBI specification v2.0 detected[    0.000000] SBI implementation ID=0x574d Version=0x100[    0.000000] SBI TIME extension detected[    0.000000] SBI IPI extension detected[    0.000000] SBI RFENCE extension detected[    0.000000] SBI SRST extension detected[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')[    0.000000] printk: bootconsole [sbi0] enabled[    0.000000] efi: UEFI not found.[    0.000000] Zone ranges:[    0.000000]   DMA32    [mem 0x0000000080000000-0x000000008fffffff]"
+  },
+  "screenshot": {
+    "path": "evidence/e5-t13c/focus-hardening-2026-09-03.png",
+    "sha256": "cf89b0e905d4f6327d5de7209353f17c96ef1287e7c1a844f6503d326a36eb4b"
+  }
+}

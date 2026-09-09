@@ -1,0 +1,83 @@
+{
+  "task": "E5-T06b",
+  "recorded_at": "2026-09-04",
+  "implementation_head": "0883afd53df9909c3adf374cf96c804026dee7d7",
+  "commits": [
+    "e80e941 chore(e5-t06b): activate WebGL2 presentation slice",
+    "15d9244 feat(e5-t06b): add WebGL2 presentation backend",
+    "0883afd test(e5-t06b): harden WebGL upload assertions"
+  ],
+  "commands": [
+    "env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS make verify-E5-T06b",
+    "local Chromium with --use-angle=swiftshader: import /src/sink/webgl.js, present full and partial frames, readPixels, compare RGBA, inspect gl.getError() and console/page errors",
+    "git diff --check HEAD; cmp web/src/sink/webgl.js web/src/sink/webgl.ts; cmp web/src/sink/webgl.js web/dist/src/sink/webgl.js"
+  ],
+  "deterministic_result": {
+    "node_checks": 2,
+    "tests": 10,
+    "passed": 10,
+    "failed": 0,
+    "make_target": "verify-E5-T06b (WebGL2 presentation backend): OK"
+  },
+  "browser_result": {
+    "browser": "Chromium headless with SwiftShader",
+    "webgl2": true,
+    "full_and_partial_readback_matches": true,
+    "alpha_zero": 0,
+    "gl_error": 0,
+    "console_or_page_errors": [],
+    "presents": 2,
+    "staging_bytes_before_dispose": 112,
+    "staging_bytes_after_dispose": 0
+  },
+  "predictions": [
+    {
+      "prediction": "Raw little-endian BGRA bytes are converted to RGBA without a JavaScript per-pixel swizzle.",
+      "observed": "Five independent readback patterns match the RGBA oracle; the fragment shader contains the .bgra swizzle and the upload source is a bulk Uint8Array copy."
+    },
+    {
+      "prediction": "The guest's row zero appears at the visual top rather than being vertically inverted.",
+      "observed": "The multi-row and odd-width patterns match after bottom-up readPixels normalization, and real Chromium readback matches the top-down oracle."
+    },
+    {
+      "prediction": "A partial rectangle uses the full resource width and UNPACK_SKIP_* state, changing only its target texture pixels.",
+      "observed": "The x=1 width=3 non-power-of-two case and the full-frame background read back with all surrounding pixels unchanged; row/skip state is reset to zero after upload."
+    },
+    {
+      "prediction": "Transparent alpha bytes remain zero and shared guest memory never crosses into WebGL as the upload source.",
+      "observed": "Alternating alpha-zero/opaque patterns read back exactly, the Chromium alpha-zero byte is 0, and SAB input is bulk-copied into a regular Uint8Array."
+    },
+    {
+      "prediction": "Resize and disposal do not retain unbounded staging or stale GL objects.",
+      "observed": "1,000 alternating 1x1/17x9/128x64 cycles remain at or below width*height*4 staging, and dispose deletes exactly one texture, buffer, VAO, and program and clears staging."
+    }
+  ],
+  "coverage": {
+    "web/src/sink/webgl.js": "initialization, shader compile/link, fullscreen quad, texture configuration/allocation, full-frame byte staging, row/skip damage upload, draw, resize, disposal, context-unavailable and non-Uint32 rejection are exercised; low-level shader/program allocation-failure guards are defensive fail-closed branches outside the acceptance claim",
+    "web/src/sink/webgl.ts": "byte-identical projection verified",
+    "web/dist/src/sink/webgl.js": "byte-identical deployable projection verified",
+    "web/dist/src/sink/webgl.ts": "byte-identical deployable TypeScript projection verified",
+    "web/src/sink/present-backend.js": "shared validation and contract were verified by E5-T06a and consumed by this exact head"
+  },
+  "adversarial": {
+    "one_pixel_canvas": "1x1 golden pattern",
+    "odd_width_partial": "7x4 canvas, x=1 width=3 y=1 height=2",
+    "alpha_matrix": "alternating transparent and opaque full-frame words",
+    "shared_memory": "Uint32Array backed by SharedArrayBuffer",
+    "resize_delete_cycles": 1000,
+    "gl_validation": "fake context getError() is NO_ERROR and real Chromium gl.getError() is 0"
+  },
+  "environment": {
+    "proof_layer": "local deterministic WebGL2 harness plus local Chromium",
+    "independent_machines": "waived by user",
+    "webkit": "waived by user",
+    "host_rr": "waived by repository evidence policy"
+  },
+  "sha256": {
+    "web/src/sink/webgl.js": "508adc4d731afc6fe100b4970eef969c52c350ee296c4bb7bb87b88c8c85f4b4",
+    "web/src/sink/webgl.ts": "508adc4d731afc6fe100b4970eef969c52c350ee296c4bb7bb87b88c8c85f4b4",
+    "web/tests/e5-t06b-webgl.test.mjs": "eb7786d81815605e81a3c346cc7d3945c471de81ae0b4635463e893d86a3ef53",
+    "web/dist/src/sink/webgl.js": "508adc4d731afc6fe100b4970eef969c52c350ee296c4bb7bb87b88c8c85f4b4",
+    "web/dist/src/sink/webgl.ts": "508adc4d731afc6fe100b4970eef969c52c350ee296c4bb7bb87b88c8c85f4b4"
+  }
+}

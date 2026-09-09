@@ -1,0 +1,44 @@
+{
+  "kind": "e4-t22b-isolation-fallback",
+  "recordedAt": "2026-09-03T07:56:33Z",
+  "sourceHead": "177039e",
+  "testCommand": "PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8134 PLAYWRIGHT_REUSE_SERVER=1 E4T22B_NOHEADERS_URL=http://localhost:8135 ./node_modules/.bin/playwright test tests/e4-t22b-isolation-fallback.spec.js",
+  "nodeSelectionTests": {
+    "command": "node --test web/tests/cpu-isolation.test.mjs",
+    "passed": 16,
+    "failed": 0
+  },
+  "browser": {
+    "backend": "Chromium",
+    "passed": 3,
+    "failed": 0,
+    "consoleErrors": 0,
+    "headerful": {
+      "headers": {
+        "cross-origin-opener-policy": "same-origin",
+        "cross-origin-embedder-policy": "require-corp"
+      },
+      "crossOriginIsolated": true,
+      "selection": "worker-shared",
+      "wasmVariant": "shared"
+    },
+    "headerlessWithoutShim": {
+      "crossOriginIsolated": false,
+      "selection": "single-thread",
+      "wasmVariant": "fallback",
+      "serviceWorkers": "blocked"
+    },
+    "headerlessWithShim": {
+      "crossOriginIsolated": true,
+      "selection": "worker-shared",
+      "serviceWorkerController": true,
+      "loadCount": 2
+    }
+  },
+  "screenshot": {
+    "path": "evidence/e4-t22b/isolation-selection.png",
+    "sha256": "f634226c16ef61fc25c6625ce65ddf949f630c33ed4e6956a56a11b56f2a8340",
+    "dimensions": "1283x10698"
+  },
+  "change": "Bound service-worker registration/activation waits to 5 seconds and dynamically load main.js only after the isolation/fallback decision."
+}

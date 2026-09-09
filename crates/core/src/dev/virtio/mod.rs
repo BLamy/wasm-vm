@@ -4,10 +4,14 @@
 //! backend is pure device logic.
 
 pub mod blk;
+pub mod console;
+pub mod gpu;
+pub mod input;
 pub mod mmio;
 pub mod net;
 pub mod queue;
 pub mod rng;
+pub mod snd;
 
 /// Standard virtio feature bit the transport ALWAYS offers (spec 1.2 §6.1): bit 32,
 /// "this device complies with virtio 1.x" — mandatory for non-legacy operation.
@@ -43,6 +47,12 @@ pub trait VirtioDevice {
     /// E2-T09; the transport records the kick so backends/tests can observe it.
     fn queue_notify(&mut self, queue: u32) {
         let _ = queue;
+    }
+    /// Consume a backend-originated configuration-change request.  The transport latches the
+    /// request into `InterruptStatus.CONFIG_CHANGE` at its next host/device boundary, keeping
+    /// backend host APIs independent of transport pointers.
+    fn take_config_irq(&mut self) -> bool {
+        false
     }
     /// Full device reset (Status write of 0): drop in-flight state.
     fn reset(&mut self) {}

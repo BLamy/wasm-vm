@@ -4,7 +4,7 @@ epic: 5
 title: Damage-rect coalescing, dirty tiling, and rAF-paced presentation
 priority: 509
 status: pending
-depends_on: [E5-T06, E5-T07]
+depends_on: [E5-T06d, E5-T07]
 estimate: L
 capstone: false
 ---

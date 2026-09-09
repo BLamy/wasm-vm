@@ -3,8 +3,8 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: verification-debt
-depends_on: [E3-T12c]
+status: verified
+depends_on: [E3-T12c1, E3-T12c2, E3-T12c3, E3-T12c4]
 estimate: S
 risk: high
 capstone: false
@@ -79,11 +79,619 @@ loss, whole-RAM duplicate allocation, or ambiguous fallback refutes.
    chunked-Alpine persistent boot (busybox is initramfs-only, no persistence), which is the ~37-min
    OS-reaping Alpine browser boot. Run the spec on `dev`: `make web-build && (cd web && npx playwright
    test tests/e3-t12d-snapshot-restore.spec.js)` — same host constraint as E3-T19.
-2. **Overlay-generation cross-reload liveness (real correctness gap, not just testing).** The live
-   `overlay_generation` resets to 0 on every fresh boot and is NOT persisted with the overlay, so after a
-   reload a snapshot taken at gen 0 validates as `resume` even if the guest persisted newer writes in
-   between — the stale guard (AC2's silent-corruption case) does not actually fire across a real reload.
-   The mechanism is proven (the in-memory `advanceOverlayGeneration → "stale"` path is exercised), but to
-   make the guard LIVE in-browser the persist pump must advance the generation on each durable commit AND
-   persist it (e.g. in `OverlayMeta`) so a reopen reconstructs the true generation. Tracked as the next
-   increment; the decision/store layer is coherent independent of it.
+2. **Overlay-generation cross-reload liveness — reworked in `33fc230`.** The durable overlay metadata
+   now carries the commit generation; block writes and the next metadata generation commit in one
+   strict IndexedDB transaction; and a reopened machine reconstructs that value before the snapshot
+   coherence guard runs. The exact-head controller-ready recording is
+   `evidence/epic-3-t12d/node-alpine-overlay-generation-2026-08-30.json`; the full cold-userland file
+   read remains unrecorded on this Mac because the modified-overlay boot exceeded the local watchdog.
+
+### 2026-08-29 — worker diagnostic — truncated import accepted as resume
+
+Ran the persistent snapshot hooks against the locally served restored `node-alpine` guest in Google
+Chrome `152.0.7977.65` at `?guest=node-alpine&profile=1&jit=0`. The first boot restored the shipped
+snapshot in `1,687.660ms`; before saving, `__snapshotDecision()` returned `missing`. A successful
+`__snapshotSave()` took `1,751.800ms`, and the exported snapshot was `138,257,790` bytes with SHA-256
+`238214f0e8976cf94d2e021cdbd231fa01530152661d1af7f4da54dd20dad73c`; its decision was `resume`.
+
+For the adversarial truncation check, imported a copy with exactly one final byte removed
+(`138,257,789` bytes). `__snapshotDecision()` still returned `resume`; the expected typed result is
+`corrupt`. Re-importing the original returned `resume`, and the live guest control check
+`echo T12D_LIVE_$((6*7))` produced `T12D_LIVE_42` with exit 0. Raw evidence is
+`evidence/epic-3-t12d/node-alpine-snapshot-corruption-2026-08-29.json`.
+
+This is a concrete acceptance failure, not a verification claim: the import path appears to describe
+the supplied blob as its own complete snapshot, leaving the restore decision without an independent
+expected-length or integrity check. The task remains verification-debt and needs implementation work
+before a fresh verifier can sign off. The same exploratory run's reload probe timed out at 180 seconds
+while the guest was booting; that result is recorded but no root cause is assigned here.
+
+### 2026-08-29 — fresh verifier — VERDICT: refuted
+
+- **Prediction:** Importing a snapshot with exactly one final byte removed must yield typed decision
+  `corrupt` under AC2.
+- **Observed:** The original snapshot was `138257790` bytes; the imported truncation was `138257789`
+  bytes; `decisionAfterTruncatedImport` was `resume`, not `corrupt`, in
+  `evidence/epic-3-t12d/node-alpine-snapshot-corruption-2026-08-29.json`.
+- **Finding:** This violates the requirement that every invalid snapshot falls back to cold boot with
+  a typed reason. The exercised path is `importStoredSnapshot` (`crates/wasm/src/lib.rs`), and the
+  store creates metadata from the supplied blob length (`crates/wasm/src/snapshot_store.rs`), so the
+  decision lacks an independent expected-length or integrity check.
+- **Additional gap:** The same exploratory reload probe timed out after 180 seconds, so end-to-end
+  reload evidence remains incomplete.
+
+This is a verifier refutation requiring implementation rework and a fresh recording; no verified
+status is claimed.
+
+### 2026-08-30 — worker — rework started
+
+The task is back in the active lane to repair the independently identified import-integrity gap.
+The implementation slice will bind imported data to the already-persisted valid snapshot when one
+exists, surface a typed `corrupt` decision on mismatch, preserve the live overlay, and add a
+deterministic regression before a fresh browser recording.
+
+### 2026-08-30 — worker — framing-integrity rework — implemented
+
+- Commit: `86afb33373170bd7b91d527ca2eebe44b4e7b0aa`.
+- Changes: `RestoreDecision::decide` now consumes the full section framing before returning `resume`;
+  `importStoredSnapshot` rejects framing-corrupt input into a committed zero-length corrupt marker;
+  the marker keeps the machine and overlay untouched and makes the next decision typed `corrupt`.
+  The native regression covers a final-section truncation.
+- Gates: `cargo fmt --all -- --check`; `cargo test -p wasm-vm-core --test restore_decision`; `cargo test
+  -p wasm-vm-core --lib`; `cargo clippy -p wasm-vm-core -p wasm-vm-wasm --all-targets -- -D warnings`;
+  `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`; `wasm-pack test --node crates/wasm
+  --test resume`; `make web-dist`; and `make verify-E3-T12d` — all passed. The known unrelated
+  `crates/wasm/tests/hart_ctrl.rs` unused-import warning remains outside this diff.
+- Exact-head browser evidence: `evidence/epic-3-t12d/node-alpine-snapshot-corruption-2026-08-30.json`,
+  SHA-256 `8762f8227c370c6aef5a56fb6d61310a06670dad3efdfdd1596d6f6c41b01708`. It records the restored production
+  Node guest at `86afb33`, a 138,279,943-byte snapshot, one-byte truncation → `corrupt`, original
+  re-import → `resume`, live output `T12D_LIVE_42`, and zero console errors. The page screenshot is
+  `/private/tmp/e3-t12d-browser-verification-2026-08-30.png`.
+
+This implementation claim clears the refuted truncation behavior. It does not claim the separate
+production-sized reload, quota/crash, two-tab race, or full export/import digest acceptance until a
+fresh verifier records those paths.
+
+### 2026-08-30 — fresh verifier — VERDICT: refuted
+
+- **Prediction:** A payload-byte mutation that preserves section framing must not be accepted as a
+  resumable snapshot under AC2.
+- **Observed:** The exact-head recording clears the one-byte tail truncation (`corrupt`) and restores
+  the original (`resume`), but `validate_container` only checks section headers, lengths, and tags.
+  A same-length payload mutation can therefore pass `importStoredSnapshot` and reach
+  `RestoreDecision::Resume` without an independent content check.
+- **Finding:** AC2 remains refuted. Add an independent stored content digest or full semantic
+  validation, and record a fresh attack proving the mutated payload returns typed `corrupt` while the
+  original can still be re-imported.
+- **Evidence gaps:** The recording does not prove production-sized save→reload→restore, memory bound,
+  quota/crash, two-tab race, overlay-generation persistence, or export/import digest acceptance.
+- **Provenance gap:** The evidence records runtime head `86afb33`; the evidence commit is `3fb54c0`.
+  Re-record or explicitly bind the final evidence to the exact committed head before claiming
+  verification.
+
+This verdict returns the task to `refuted`; no verified status is claimed.
+
+### 2026-08-30 — worker — payload-integrity rework started
+
+The second rework slice adds a content digest to the durable snapshot metadata, verifies it on
+reassembly, and preserves the expected digest in a corrupt marker so the bad import is reported as
+`corrupt` while a subsequent import of the original snapshot can recover to `resume`. The browser
+recording will be rerun after the final evidence commit with both truncation and same-length payload
+mutation attacks.
+
+### 2026-08-30 — worker — payload-integrity rework — implemented
+
+- Runtime commit: `6d2b1244352e8963a2877f671d10eaf8c561968e`.
+- Evidence: `evidence/epic-3-t12d/node-alpine-snapshot-integrity-2026-08-30.json` (SHA-256
+  `a7e26fe8361e18f64538f0d6c48bf38f885eac5d84dd136e6bce58bb4468e866`; the recording's
+  runtime head is the commit above; this follow-on commit contains only evidence/task metadata and
+  the regenerated queue).
+- Exact production-sized browser recording: a restored `node-alpine` whole-machine worker persisted
+  a 138,252,418-byte snapshot; truncation and a same-length final-payload-byte mutation both produced
+  typed `corrupt`; re-importing the original produced `resume`; export/import SHA-256 was identical;
+  reload produced `resume`; advancing overlay generation produced `stale`; the live guest computed
+  `T12D_LIVE_42` with exit 0; console errors were empty. Screenshot:
+  `/private/tmp/e3-t12d-browser-verification-2026-08-30-digest.png`.
+- Gates: `make verify-E3-T12d`; `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`;
+  `wasm-pack test --node crates/wasm --test resume`; and `make web-dist` — all passed. The repository
+  Playwright spec now carries the same truncation, payload-mutation, round-trip digest, reload, and
+  stale-generation assertions; the direct run used the local Node/Playwright harness because the
+  normal runner's large-artifact path is not available on this checkout.
+- This clears the fresh verifier's payload-integrity refutation. Production-sized reload memory-bound
+  instrumentation, quota/crash interruption, two-tab race, and persisted overlay-generation evidence
+  remain separate verification debt; this worker entry does not claim them verified.
+
+### 2026-08-30 — fresh verifier — VERDICT: needs-evidence
+
+- **Payload-integrity slice — HELD.** The exact recording shows one-byte truncation and a same-length
+  payload mutation returning typed `corrupt`, while re-importing the original returns `resume`; the
+  content digest is independently equal before and after export/import. No refutation found in the
+  repaired runtime path (`crates/wasm/src/snapshot_store.rs` and `crates/wasm/src/lib.rs`).
+- **AC1 — NEEDS EVIDENCE.** The 138,252,418-byte recording proves production-sized save/reload/
+  decision behavior, but does not measure peak memory against the documented bound. Record memory
+  instrumentation during save and reload, not just the blob size.
+- **High-risk adversarial coverage — NEEDS EVIDENCE.** The recording does not cover tab termination
+  during clear/chunk/meta phases, quota exhaustion, object swapping, or two-tab races, nor does it
+  assert that the live overlay remains intact after each attack. Record bounded independent attacks
+  for the omitted phases before verification.
+- **Overlay-generation persistence — NEEDS EVIDENCE.** The current spec proves only in-memory
+  `advanceOverlayGeneration()` → `stale`; it does not prove a reload after a durable overlay write
+  reconstructs the generation and refuses the old snapshot.
+- **Provenance/coverage — HELD with a portability gap.** The evidence SHA matches the committed
+  evidence file, `runtimeHead` is an ancestor of `HEAD`, and no runtime files changed afterward.
+  The repository Playwright spec remains skipped on this checkout because the chunked-Alpine manifest
+  is absent; the referenced screenshot is not a guest-terminal view. Preserve a portable browser
+  recording bundle or rerun the spec on the artifact-bearing verifier host.
+- Commands checked: `make verify-E3-T12d` (fmt, wasm32 clippy, 11 restore-decision tests, 11 snapmeta
+  tests). Verdict: the payload-integrity refutation is cleared, but the task is not verified until the
+  listed acceptance and adversarial evidence exists.
+
+### 2026-08-30 — worker — overlay-generation persistence rework started
+
+The fresh verifier identified a live correctness gap: a durable guest overlay write did not advance
+the snapshot coherence generation, and a reopened machine therefore reset to generation 0. This
+slice adds the generation to the persisted overlay metadata, commits it with each successful block
+flush, reconstructs the machine from that metadata on reopen, and adds a reload-after-write proof.
+
+### 2026-08-30 — worker — overlay-generation persistence — implemented
+
+- Runtime commit: `33fc2308a2516f19191c255e4a1e6fec3831022c`.
+- Changes: `OverlayMeta` now serializes a durable generation (while reading legacy generation-less
+  metadata as generation 0); a persistent flush writes blocks and the next generation in one strict
+  IndexedDB transaction; persistent reopen stamps the machine with the stored generation; and the
+  worker protocol exposes the generation for evidence. The browser spec pauses/drains before taking
+  a snapshot, then exercises a real guest write, stale selection, and post-reload reconstruction.
+- Exact-head evidence: `evidence/epic-3-t12d/node-alpine-overlay-generation-2026-08-30.json`,
+  SHA-256 `c90bd19314794f36965eb8ba7bd7c70cb6664c1b60b76985f0bf78e9c4c635d1`. It records generation
+  `0` at snapshot time, `0 → 16` after the durable guest write, `stale` before reload, and generation
+  `16` plus `stale` at persistent-controller readiness after reload, with zero console errors.
+- Gates: `make verify-E3-T12d`; `cargo test -p wasm-vm-storage --lib` (106/106); `cargo test -p
+  wasm-vm-core --test snapshot_coherence` (5/5); `cargo check -p wasm-vm-wasm --target
+  wasm32-unknown-unknown`; and `make web-dist` — all passed. The repository Playwright spec remains
+  artifact-gated on this checkout; the full cold-userland file-read continuation exceeded the local
+  1,800,000 ms watchdog and is not claimed here.
+
+The worker claim is limited to the generation-persistence slice. The task remains subject to fresh
+verifier review and the previously listed memory-bound, crash/quota, two-tab, and portability proof
+gaps.
+
+### 2026-08-30 — fresh verifier — VERDICT: needs-evidence
+
+- **Durable generation atomicity — HELD for implementation, NEEDS EVIDENCE for failure behavior.**
+  Prediction: a successful overlay flush must write changed blocks and the next generation in one
+  strict transaction, and advance the in-memory generation only after that transaction completes.
+  The diff satisfies this at `crates/wasm/src/idb_store.rs:128-138,188-216` and
+  `crates/wasm/src/lib.rs:1814-1859`; the narrow gate and focused metadata test passed. The supplied
+  recording shows the successful path (`evidence/epic-3-t12d/node-alpine-overlay-generation-2026-08-30.json:21-27`),
+  but has no abort, quota, or tab-kill observation, so atomicity under interruption remains unproven.
+- **Reopen generation reconstruction — HELD.** Prediction: after a durable write, reopening must
+  read the stored metadata generation before snapshot coherence is evaluated. The code does so at
+  `crates/wasm/src/lib.rs:1090-1116,1223-1241`; the recording observes `0 → 16`, then generation `16`
+  and `stale` after reload (`evidence/...overlay-generation-2026-08-30.json:21-32`). This proves the
+  generation path, but not that the changed block bytes were also reconstructed: the record explicitly
+  disclaims the post-reload shell/file read (`evidence/...overlay-generation-2026-08-30.json:34`).
+- **AC1 and adversarial coverage — NEEDS EVIDENCE.** Peak memory versus the documented bound,
+  interruption during clear/chunk/meta phases, quota exhaustion, two-tab races, and preservation of
+  the live overlay are absent. Portability is also open: `make verify-E3-T12d` does not run the browser
+  leg (`Makefile:544-550`), and the artifact-gated repository spec's post-reload file assertion at
+  `web/tests/e3-t12d-snapshot-restore.spec.js:140-149` is not represented in this recording. Record
+  bounded independent attacks and a portable artifact-bearing browser run, including the post-reload
+  file read and memory instrumentation.
+- **Payload integrity — HELD and carried forward.** The prior verifier's exact-head truncation,
+  same-length mutation, typed `corrupt`, original re-import, and export/import digest results are not
+  re-litigated.
+- **Provenance/coverage — HELD with proof gaps.** The evidence SHA-256 is exactly
+  `c90bd19314794f36965eb8ba7bd7c70cb6664c1b60b76985f0bf78e9c4c635d1`, `runtimeHead` is
+  `33fc2308a2516f19191c255e4a1e6fec3831022c`, and only evidence/task files changed after that runtime
+  commit. The changed Rust success path is exercised indirectly by the generation transition; the
+  unrecorded post-reload file-read hunk and all fault/race paths remain unproven.
+
+Commands: `make verify-E3-T12d`; `cargo test -p wasm-vm-storage meta_round_trips_a_durable_generation_and_reads_legacy_as_zero`;
+`git diff --check 6d2b1244352e8963a2877f671d10eaf8c561968e 33fc2308a2516f19191c255e4a1e6fec3831022c`;
+`shasum -a 256 evidence/epic-3-t12d/node-alpine-overlay-generation-2026-08-30.json`.
+
+### 2026-08-30 — worker — parked as verification debt
+
+Fresh verification remains `needs-evidence`, not `verified`. The durable generation commit and
+reopen reconstruction are held, but the exact-head evidence still lacks peak-memory instrumentation,
+interruption/quota/two-tab attacks, a portable artifact-bearing browser run, and the post-reload file
+read that proves changed block bytes and metadata survive together. T12d is therefore leaving the
+active lane with the verifier report preserved; it must return only when those named proof artifacts
+can be recorded.
+
+### 2026-08-30 — worker — resumed verification-debt clearance
+
+The decomposed E3-T12c prerequisites (T12c1–T12c4) are all verified, so the stale parent
+dependency was replaced with the verified leaves and T12d returned to the active lane. This
+slice will record the missing browser proof: peak-memory instrumentation, bounded interruption
+and quota attacks with overlay-preservation checks, a two-tab race, and the post-reload guest
+file read. No implementation claim is made until the fresh recording covers those paths.
+
+### 2026-08-30 — worker — browser verification-debt recording — implemented
+
+- Runtime/evidence head: `e9664e557eb0b368887b852a8b991c1a4a10a88f`.
+- Exact command: `make verify-E3-T12d` — fmt check, wasm32 clippy, 11 restore-decision tests,
+  11 snapmeta tests, `make web-build`, and the headed raw-Playwright browser proof; all passed in
+  `80,537ms`.
+- Evidence: [`evidence/epic-3-t12d/browser-storage-2026-08-30.json`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json),
+  SHA-256 `9baf83a964200bea93e0fbf107fab4f287bb3296dba01fc695ac19418270a852`; screenshot
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.png`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.png),
+  SHA-256 `ea8b95a72685157cd11fab7f7a3163bd26643660aa3dc22f9bf157a100af7e7c`.
+- The production whole-machine Worker saved a `60,430,185`-byte snapshot and reloaded it with
+  `missing → resume`. The main-thread memory leg measured `15,822,259` bytes overhead against the
+  `33,554,432`-byte bound across 66 samples and observed `save-start`, clear, chunk, and meta
+  commit callbacks. Fresh disposable contexts killed the tab during clear, chunk, and meta phases;
+  each left the overlay intact and selected a safe `corrupt`/`stale` result. The quota attack
+  raised a typed `QuotaExceededError`, left the overlay intact, and a live guest still returned
+  `T12D_QUOTA_LIVE`. The two-tab race fenced the contender read-only (`persistResult: 0`), preserved
+  the overlay, and allowed writer takeover after the first tab closed.
+- After a real guest write, the modified overlay selected `stale` on reload; a proof-only Alpine
+  main-thread JIT boot into `/bin/sh` then read `/root/t12d-reload-file` as
+  `T12D_RELOAD_FILE` with exit 0. The clean save/restore leg remained the production Worker path;
+  the fast-init override only avoids the unrelated local OpenRC startup cost for the changed-block
+  read. All recorded browser contexts had zero console errors and no bad HTTP responses (the local
+  server's absent favicon is the explicitly allowed 404).
+
+This is a worker submission only; a fresh verifier must interrogate this exact recording and set the
+terminal `verified` status.
+
+### 2026-08-30 — worker — deployment attempt
+
+`bash tools/deploy-cloudflare.sh` successfully verified the existing R2 objects and staged the
+small boot artifacts, but Wrangler 4.127.1 stopped before the Pages publish because this
+non-interactive environment has no `CLOUDFLARE_API_TOKEN`. The live Pages site is therefore not
+claimed as updated; rerun the command after authenticating Wrangler or supplying that token.
+
+### 2026-08-30 — fresh verifier — VERDICT: refuted
+
+- **Provenance — HELD.** Prediction: the supplied recording must name the worker's exact runtime
+  commit, have the claimed SHA-256, and include the screenshot. Observed `runtimeHead` is
+  `e9664e557eb0b368887b852a8b991c1a4a10a88f` at
+  `evidence/epic-3-t12d/browser-storage-2026-08-30.json:3`; its SHA-256 is
+  `9baf83a964200bea93e0fbf107fab4f287bb3296dba01fc695ac19418270a852`, the screenshot exists and
+  hashes to `ea8b95a72685157cd11fab7f7a3163bd26643660aa3dc22f9bf157a100af7e7c`, and `e9664e5` is
+  an ancestor of current `HEAD` `8d12ef886b02e663235875bddba574c0775afeee`. The post-runtime diff
+  contains evidence/task metadata and generated `web/dist` outputs, not a later runtime source edit.
+- **AC1 / whole-blob load — FAILED.** Prediction: production-sized reload/restore must stay within
+  the `33,554,432`-byte bound and must not hold a second whole snapshot allocation. The supplied
+  memory record samples only the main-thread save callbacks (`...browser-storage-2026-08-30.json:18-33`),
+  while `SnapshotStore::load` obtains all IndexedDB values and copies every chunk into a Rust map
+  (`crates/wasm/src/snapshot_store.rs:279-290`), then `reassemble` allocates a full `total_len` output
+  while that map still owns the chunk payloads (`crates/storage/src/snapmeta.rs:174-190`), followed by
+  another JS `Uint8Array` copy at `crates/wasm/src/lib.rs:1927-1933`. For the recorded ~60 MB blob,
+  this is a whole-payload map plus a whole-payload reassembly (and boundary copy), directly
+  contradicting the deliverable's no-whole-blob-duplication requirement. The clean decision calls
+  exercise `load`, but no load/reload memory sample exists in the harness (`tools/verify/e3-t12d-browser-proof.mjs:305-350`). Rework the load path to a genuinely bounded representation or record a design that proves the bound for the actual load/restore path.
+- **Two-tab snapshot fencing — FAILED / INSUFFICIENT.** Prediction: a read-only contender must be
+  unable to save or import a snapshot while another tab owns the persistent writer lease. The
+  persistent constructor sets `snapshot_base` for read-only and writer tabs alike
+  (`crates/wasm/src/lib.rs:1223-1234`), while `persist_snapshot` checks only that optional base and
+  calls `store.save` without checking read-only ownership (`crates/wasm/src/lib.rs:1888-1908`); the
+  import path can likewise write the store (`crates/wasm/src/lib.rs:1943-1989`). The recorded
+  contender only calls overlay `__persist`, yielding `persistResult: 0`, and never races
+  `snapshotSave`/`snapshotImport` (`...browser-storage-2026-08-30.json:551-567`,
+  `tools/verify/e3-t12d-browser-proof.mjs:485-518`). Gate snapshot writes on the same ownership
+  state and record a two-tab snapshot-store race.
+- **AC2 attacks — PARTIALLY HELD, object-swap proof missing.** Prediction: killing clear/chunk/meta
+  or exhausting quota must never select a half-published snapshot and must preserve the overlay. The
+  recording observes clear/chunk/meta kills selecting `corrupt`/`stale` with `overlayPreserved: true`
+  (`...browser-storage-2026-08-30.json:499-535`) and a typed `QuotaExceededError`, preserved overlay,
+  and live guest marker (`:537-549`). The exact-head payload evidence independently holds truncation
+  and same-length mutation as typed `corrupt`, original re-import as `resume`, and identical export /
+  import digest (`evidence/epic-3-t12d/node-alpine-snapshot-integrity-2026-08-30.json:21-40`; its
+  SHA-256 is unchanged and its runtime head is an ancestor). No recorded attack swaps complete
+  snapshot objects/chunks or metadata between generations/bases, so that explicit high-risk angle
+  remains `NEEDS EVIDENCE`.
+- **Durable-generation and post-reload file — HELD within their stated scope.** Prediction: a durable
+  overlay write must advance the generation, reconstruct it after reload, select `stale` for the old
+  RAM snapshot, and preserve readable changed bytes. The prior exact-head generation record observes
+  `0 → 16`, reconstructed generation `16`, and `stale` (`evidence/epic-3-t12d/node-alpine-overlay-generation-2026-08-30.json:21-32`); the current continuation observes
+  `stale` and reads `T12D_RELOAD_FILE` with exit 0 (`...browser-storage-2026-08-30.json:569-579`).
+  The Alpine `jit=1`, `init=/bin/sh`, single-user continuation is sufficient for this narrow
+  changed-overlay IndexedDB/file-read assertion because it uses the same persistent chunked path; it
+  is not evidence of a production OpenRC boot. The clean save/reload leg is correctly recorded as
+  `whole-machine-worker` (`...browser-storage-2026-08-30.json:7-16`), but its `resume` decision does
+  not repair the failed load-memory proof above.
+- **Coverage and gates.** The current post-runtime hunks are either the evidence record, task/queue
+  metadata, or generated deployment artifacts; `git diff --check` passed. Narrow checks passed:
+  `cargo fmt --check -p wasm-vm-core -p wasm-vm-storage -p wasm-vm-wasm`; wasm32 clippy with
+  `-D warnings`; restore-decision (11/11); snapmeta (11/11); storage lib (106/106); snapshot
+  coherence (5/5); and `node --check` for the proof, loader, and main scripts. These gates do not
+  establish the missing load bound or read-only snapshot fencing. Status returns to `in-progress`
+  for runtime rework and a fresh exact-head recording; no merge or push performed.
+
+### 2026-08-30 — worker — rework started after fresh verifier refutation
+
+The verifier's evidence audit identified two runtime proof gaps rather than a generic test failure:
+the browser load path still materialized all chunks plus a second whole-blob reassembly, and a
+read-only persistent tab was not fenced from snapshot save/import. This slice replaces load with
+sequential bounded chunk assembly, adds a direct wasm restore path that avoids the export copy, gates
+both snapshot writes on writer ownership, and extends the browser recording with reload-memory,
+snapshot-write fencing, and a cross-generation metadata-swap attack. The task remains `in-progress`
+until a new exact-head recording is reviewed by a fresh verifier.
+
+### 2026-08-30 — worker — snapshot proof rework — implemented
+
+- Runtime/harness commit: `3d96209f22b24200385d84bb5a17861f3cf27742` (the preceding runtime rework is
+  `db19a1e71e78dc4bf08fe3479eaf1da9b4bf625b`). The wasm loader now reassembles IndexedDB snapshots
+  sequentially into one Rust buffer, restores directly inside wasm before fetching the shipped Alpine
+  RAM fallback, and fences snapshot save/import to the persistent writer tab. The browser harness now
+  records the explicit same-writer export/import round-trip as well as the high-risk storage attacks.
+- Exact-head evidence: `evidence/epic-3-t12d/browser-storage-2026-08-30.json`, SHA-256
+  `731eb9348a285947ba33b219f01e4faa3891729eb8effe3ecd3f20056448c8f4`; screenshot
+  `evidence/epic-3-t12d/browser-storage-2026-08-30.png`, SHA-256
+  `ea8b95a72685157cd11fab7f7a3163bd26643660aa3dc22f9bf157a100af7e7c`.
+- `make verify-E3-T12d` passed at the exact head: the production whole-machine Worker saved
+  60,430,185 bytes and reloaded with `resume`; export/import preserved the identical digest; the
+  main-thread save overhead was 16,811,975 bytes under the 33,554,432-byte bound; the reload load
+  staging overhead was 2,168,093 bytes under the same bound. Clear/chunk/meta interruption selected
+  `corrupt`/`corrupt`/`stale`, quota surfaced `QuotaExceededError`, and every path preserved the
+  overlay. The second tab was `read_only` and both snapshot save/import calls returned `read_only`;
+  the cross-generation metadata swap selected `corrupt`; the modified-overlay reload selected
+  `stale` and read `T12D_RELOAD_FILE` with exit 0. All recorded browser contexts had zero console
+  errors and no disallowed HTTP responses (the missing favicon 404 is explicitly allowed).
+- Supporting gates: `cargo fmt --all -- --check`; wasm32 clippy with `-D warnings`; restore-decision
+  (11/11); snapmeta (11/11); `cargo test -p wasm-vm-storage` (106/106); wasm32 check; and JavaScript
+  syntax checks. This is a worker submission only; a fresh verifier must interrogate this exact
+  recording and set the terminal status.
+
+### 2026-08-30 — worker — deployment attempt
+
+`bash tools/deploy-cloudflare.sh` verified/staged the existing R2 boot objects but Wrangler 4.127.1
+stopped before the Pages publish because this non-interactive environment has no
+`CLOUDFLARE_API_TOKEN`. The live Pages site is not claimed as updated; rerun after authenticating
+Wrangler or supplying that token.
+
+### 2026-08-30 — fresh verifier — VERDICT: refuted
+
+- **Provenance — HELD.** Prediction: the submitted recording must identify the exact runtime head,
+  match its claimed digest, and include the named screenshot. Observed `runtimeHead` is
+  `3d96209f22b24200385d84bb5a17861f3cf27742` at
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.json:3`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json),
+  the committed JSON SHA-256 is
+  `731eb9348a285947ba33b219f01e4faa3891729eb8effe3ecd3f20056448c8f4`, and the named screenshot
+  exists with SHA-256 `ea8b95a72685157cd11fab7f7a3163bd26643660aa3dc22f9bf157a100af7e7c`.
+  `3d96209` is an ancestor of exact current `HEAD` `18bec4efff5a7c02f816f2a1e006467e1cb1bae1`;
+  the source/runtime diff under review is `3fd720a..3d96209`. The screenshot was inspected and is a
+  roadmap overview, so the JSON—not the screenshot—is relied on for the behavioral values.
+- **AC1 — HELD for the recorded paths.** Prediction: a production-sized snapshot must save, reload,
+  and restore without a second whole-payload staging allocation. The clean whole-machine Worker
+  saved `60,430,185` bytes and kept the exact digest across export/import at
+  [`browser-storage-2026-08-30.json:7-26`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json);
+  the save probe measured `16,811,975 <= 33,554,432` bytes over 66 samples at
+  [`:28-43`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json). The production-sized
+  reload load path separately measured raw overhead `62,603,490`, payload `60,435,397`, and residual
+  staging overhead `2,168,093 <= 33,554,432` at [`:596-611`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json).
+- **AC2 named interruption/quota/object attacks — HELD.** Prediction: clear, chunk, meta, quota, and
+  object-swap faults must never select a half-published resume and must preserve the overlay. The
+  committed record observes `clear -> corrupt`, `chunk -> corrupt`, `meta -> stale`, all with
+  `overlayPreserved: true`, at [`:509-545`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json);
+  quota surfaces `QuotaExceededError`, the live guest exits 0 with `T12D_QUOTA_LIVE`, and the overlay
+  remains intact at [`:547-559`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json). The
+  cross-generation metadata swap selects `corrupt` with `overlayPreserved: true` at
+  [`:581-587`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json). A fresh bounded browser
+  probe also replaced a chunk with a plain object and observed the decision API resolve to the typed
+  value `corrupt`.
+- **AC3 — HELD.** Prediction: export/import must preserve the container byte count and SHA-256.
+  Observed `60,430,185` bytes and digest
+  `27f2f7a954763682fa18b206ba8503cf08f37917cffcbc683cb9f2ab233f67cc` before and after import at
+  [`:11-23`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json).
+- **Two-tab ownership after lease release — FAILED; this refutes the task.** Prediction: once a tab
+  relinquishes the writer lease and another tab acquires it, the old live controller must be unable
+  to mutate the shared snapshot namespace; otherwise the claimed single-writer fence permits a stale
+  writer to destroy a newer owner's snapshot. In a fresh bounded whole-machine-Worker probe, the first
+  controller reported `{backend: "whole-machine-worker", readOnly: false}`, explicitly released its
+  writer lock, and the second controller acquired `{backend: "whole-machine-worker", readOnly: false}`.
+  The old first controller then successfully resolved `snapshotImport(new Uint8Array([1,2,3]))` to
+  `true`; the second controller's decision immediately changed to `corrupt`. The guard only checks
+  the boot-time `lockReadOnly` closure at [`web/loader.js:960-962`](../../web/loader.js) and
+  [`web/loader.js:987-989`](../../web/loader.js), while `releaseWriterLock` clears the release
+  callback but never invalidates that flag at [`web/loader.js:996-1002`](../../web/loader.js). The
+  wasm guards likewise use the construction-time `snapshot_read_only` field at
+  [`crates/wasm/src/lib.rs:1900-1902`](../../crates/wasm/src/lib.rs) and
+  [`crates/wasm/src/lib.rs:2003-2007`](../../crates/wasm/src/lib.rs). Demand that lease relinquishment
+  retire or dynamically fence the old controller, then re-record the two-tab attack.
+- **Coverage — NEEDS EVIDENCE.** The sequential `SnapshotStore::load`, direct wasm restore,
+  read-only save/import, cleanup handlers, and the named browser attack helpers were exercised by the
+  exact-head recording; the independent gates also passed `cargo fmt --all -- --check`, restore
+  decision `11/11`, snapmeta `11/11`, snapshot coherence `5/5`, wasm32 check, and JavaScript syntax
+  checks. The added `snapshotRestore` protocol allow-list/grace entries at
+  [`web/linux-worker-protocol.js:18-25`](../../web/linux-worker-protocol.js) and
+  [`:54-64`](../../web/linux-worker-protocol.js), plus the page hook at
+  [`web/main.js:1371`](../../web/main.js), were not directly called by the submitted harness (the
+  clean reload exercises the loader's internal restore instead). They are declarative/test-surface
+  changes rather than a separate refutation, but remain unproven until an explicit Worker RPC restore
+  call is recorded or the unused surface is removed.
+- **Status:** remains `in-progress` after refutation; no runtime implementation files were changed.
+
+Commands: `cargo fmt --all -- --check`; `cargo test -p wasm-vm-core --test restore_decision`
+(`11/11`); `cargo test -p wasm-vm-storage snapmeta` (`11/11`);
+`cargo test -p wasm-vm-core --test snapshot_coherence` (`5/5`);
+`cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`; JavaScript syntax checks; fresh
+raw-Playwright replay and bounded whole-machine-Worker lease/object probes. No merge or push.
+
+### 2026-08-30 — worker — rework resubmitted after lease-fencing refutation
+
+- Runtime and harness commits: `3238913` fences a released controller in both JS and wasm before
+  relinquishing the Web Lock; `9025134` seeds a baseline snapshot before the takeover race;
+  `75aec71` asserts that a rejected stale-writer import leaves the takeover decision unchanged;
+  `9213b82` refreshes the tracked `web/dist` bundle. The exact recorded runtime head is
+  `9213b821b2655bf559da548ca7c6748e2b6b0219`.
+- Exact-head evidence: `evidence/epic-3-t12d/browser-storage-2026-08-30.json`, SHA-256
+  `7b98c136a06c1353c894405dc9a80ec843bf6b9297b022c5ce4a75990dfccb8d`; screenshot SHA-256
+  `ea8b95a72685157cd11fab7f7a3163bd26643660aa3dc22f9bf157a100af7e7c`.
+- `make verify-E3-T12d` passed at that exact head: the production whole-machine Worker saved and
+  reloaded `60,430,185` bytes with digest
+  `27f2f7a954763682fa18b206ba8503cf08f37917cffcbc683cb9f2ab233f67cc`; the same-writer
+  export/import round trip preserved the byte count and digest; the main-thread save overhead was
+  `16,811,975 <= 33,554,432` bytes and the reload staging overhead was `2,169,357 <= 33,554,432`.
+  The explicit Worker `snapshotRestore` RPC returned `resume` after reload.
+- The recorded interruption cases selected `corrupt`/`corrupt`/`stale` for clear/chunk/meta;
+  quota surfaced `QuotaExceededError` and preserved the overlay; metadata swapping between
+  generations selected `corrupt` and preserved the overlay. The contender tab was `read_only`,
+  and both snapshot save/import calls were rejected with `read_only`. After lease handoff, the old
+  controller's import was rejected and the takeover decision remained `stale` before and after the
+  attempted write. The modified-overlay Alpine reload selected `stale` and read
+  `T12D_RELOAD_FILE` with exit 0. All recorded browser contexts had zero console errors and no
+  disallowed HTTP responses (the favicon 404 is allowed by the gate).
+- Supporting gates passed: wasm32 clippy with `-D warnings`, restore-decision (`11/11`), snapmeta
+  (`11/11`), JavaScript/browser syntax checks, and the browser build. This is a worker submission;
+  a fresh verifier must interrogate this exact recording and set the terminal status.
+
+### 2026-08-30 — worker — deployment attempt
+
+`bash tools/deploy-cloudflare.sh` confirmed/staged the R2 boot artifacts, then Wrangler attempted
+OAuth because this environment has no `CLOUDFLARE_API_TOKEN`. The login was stopped before the
+Cloudflare Pages publish; the live Pages site is not claimed as updated. The R2 manifest URL
+changes made by the staging step were reverted locally.
+
+### 2026-08-30 — fresh verifier — VERDICT: refuted
+
+- **Provenance — HELD.** Prediction: the submitted recording must name runtime head
+  `9213b821b2655bf559da548ca7c6748e2b6b0219`, match the requested JSON and screenshot digests, and
+  have no runtime source changes after that head. Observed `runtimeHead` is exactly that value at
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.json:1-5`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json);
+  the JSON SHA-256 is `7b98c136a06c1353c894405dc9a80ec843bf6b9297b022c5ce4a75990dfccb8d`, the
+  screenshot SHA-256 is `ea8b95a72685157cd11fab7f7a3163bd26643660aa3dc22f9bf157a100af7e7c`,
+  `9213b82` is an ancestor of exact `HEAD` `bb7d60c9a3c89ee934ba79d1c636e0d947e8ce20`, and
+  `git diff 9213b82..bb7d60c` contains only evidence/task/queue metadata.
+- **AC1 — HELD within the recorded paths.** Prediction: a production-sized save/reload/restore
+  must remain within the documented 32 MiB staging bound. The recording has a 60,430,185-byte
+  Worker snapshot with `afterReload: "resume"` at
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.json:7-27`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json),
+  save overhead `16,811,975 <= 33,554,432` at
+  [`...json:29-507`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json), and reload residual
+  overhead `2,169,357 <= 33,554,432` at
+  [`...json:596-617`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json).
+- **AC2 interruption/quota/object paths — HELD, but lease safety is refuted below.** Prediction:
+  clear/chunk/meta interruption, quota, and mixed-generation object faults must select only a safe
+  typed result and preserve the overlay. The exact record observes `corrupt`/`corrupt`/`stale` with
+  `overlayPreserved: true` for the three interruption phases, typed `QuotaExceededError` plus a live
+  guest marker, and metadata swap → `corrupt`, all at
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.json:510-594`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json).
+  A fresh current-head object probe additionally observed truncation → `corrupt`, original re-import
+  → `resume`, same-length payload mutation → `corrupt`, and original re-import → `resume`. The prior
+  integrity record independently contains the same attack at
+  [`node-alpine-snapshot-integrity-2026-08-30.json:21-40`](../../evidence/epic-3-t12d/node-alpine-snapshot-integrity-2026-08-30.json).
+- **AC3 — HELD.** Prediction: export/import must preserve the exact container byte count and digest.
+  The recording has equal `60,430,185`-byte before/after values and digest
+  `27f2f7a954763682fa18b206ba8503cf08f37917cffcbc683cb9f2ab233f67cc` at
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.json:11-23`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json).
+- **Explicit Worker `snapshotRestore` RPC — HELD.** Prediction: the named restore operation must
+  cross the Worker protocol and return `resume`, not merely be inferred from boot's internal restore.
+  The exact record reports `workerRestore: "resume"` at
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.json:25-27`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json).
+  A fresh raw Playwright Worker probe independently observed backend `whole-machine-worker`,
+  `restore: "resume"`, and RPC stats `calls/completed: 3 → 4` with `pending: 0`; the protocol's
+  allow-list and dispatch are at [`web/linux-worker-protocol.js:29-72`](../../web/linux-worker-protocol.js)
+  and [`web/linux-worker-protocol.js:668-718`](../../web/linux-worker-protocol.js).
+- **Stale-writer fence — FAILED (P1).** Prediction: after a writer starts a snapshot save, releases
+  its Web Lock, and a second tab acquires the namespace, the old controller must not perform any
+  further snapshot-store mutation; otherwise it can overwrite or invalidate the takeover owner's
+  snapshot. Fresh bounded raw Playwright attack command (served exact `web/`, URL
+  `?noAutoBoot=1&persist=1&worker=0&testHooks=1`) saved a baseline, advanced the old machine's
+  generation, started `snapshotSave`, waited for the first new chunk put, then released the old
+  controller at `performance.now() = 3298.0599999949336` with `readOnly: true`. The same in-flight
+  save subsequently issued 43 snapshot chunk puts and a commit-marker `meta` put at
+  `3584.210000000894`, then resolved. A new tab acquired the writer role with
+  `readOnly: false` and observed final snapshot decision `stale` (the baseline decision had been
+  `resume`), proving the old operation changed the shared namespace after lease release. The old
+  controller's later JS `snapshotSave`/`snapshotImport` and direct wasm
+  `persistSnapshot`/`importStoredSnapshot` calls all returned `read_only`, so the synchronous fence
+  works but does not cancel or invalidate an operation that passed its check before an `await`.
+  The gap is visible at [`crates/wasm/src/lib.rs:1894-1917`](../../crates/wasm/src/lib.rs):
+  `snapshot_read_only` is checked once, then `SnapshotStore::open`/`save` run asynchronously; the
+  new fence only flips the flag at [`crates/wasm/src/lib.rs:1921-1930`](../../crates/wasm/src/lib.rs)
+  and [`web/loader.js:998-1007`](../../web/loader.js). Demand cancellation/serialization or a
+  lease-generation token revalidated before each transaction and at commit, plus a fresh takeover
+  recording that races an already-started save.
+- **Coverage — INSUFFICIENT for the new failure mode.** The submitted two-tab record exercises
+  post-release stale `snapshotImport` rejection and unchanged takeover decision at
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.json:562-586`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json),
+  but not an already-started `snapshotSave`; the fresh bounded attack above covers that omitted
+  path and refutes it. No runtime implementation was edited by this verifier.
+
+Commands: `git diff --check 46ea6df..bb7d60c`; exact-head `sha256sum` for the requested JSON and
+screenshot; `cargo fmt --all -- --check`; `cargo test -p wasm-vm-core --test restore_decision`
+(11/11); `cargo test -p wasm-vm-storage snapmeta` (11/11); `cargo test -p wasm-vm-core --test
+snapshot_coherence` (5/5); wasm32 clippy/check; JavaScript syntax checks; independent evidence
+assertions; fresh raw Playwright stale-save/lease-handoff probe; fresh raw Playwright Worker RPC
+probe; fresh current-head truncation/payload-mutation probe. Status returns to `in-progress` for
+runtime rework and a new exact-head recording. No merge or push.
+
+### 2026-08-30 — worker — rework resubmitted after in-flight-save refutation
+
+- Runtime fix commit: `7956aae70b4e57e61ec02f75cf284dac3884096f` serializes snapshot-writer
+  relinquishment with active IndexedDB snapshot writes. `releaseWriterLock()` first fences the
+  wasm controller read-only, then waits for active snapshot writes to drain before releasing the
+  Web Lock. The race harness now starts a save, releases at the first chunk, and asserts release
+  cannot settle before `meta-committed`; the save completed without error and the takeover decision
+  stayed `stale` before and after the old controller's rejected import.
+- Tracked browser bundle commit: `4c4d7ee30e2b9a6b91f6271bb1df9db226edb94b`. The final exact-head
+  recording was run with `E3_T12D_HEADLESS=1 make verify-E3-T12d`, which passed all format,
+  wasm32 clippy, native restore/snapmeta tests, browser build, and Playwright assertions.
+- Evidence: `evidence/epic-3-t12d/browser-storage-2026-08-30.json`, SHA-256
+  `a8083c2d4eb3bc9e12515d7f947ea5a3c409edbeb590abb8101f4467beeab08b`; screenshot SHA-256
+  `5058e36cc3776e1a5c7635c0c2fc9d8c9e825d6066c75efd41579a4be36fee64`.
+- The production whole-machine Worker saved/reloaded `60,430,185` bytes with identical digest
+  `27f2f7a954763682fa18b206ba8503cf08f37917cffcbc683cb9f2ab233f67cc`; the explicit Worker
+  restore RPC returned `resume`. Main-thread save overhead was `16,811,947 <= 33,554,432` bytes,
+  and reload staging overhead was `2,167,785 <= 33,554,432`. Clear/chunk/meta interruption
+  selected `corrupt`/`corrupt`/`stale`, quota raised typed `QuotaExceededError`, and metadata swap
+  selected `corrupt`; every case preserved the overlay. All browser contexts had zero console
+  errors and no disallowed HTTP responses. The modified-overlay reload read `T12D_RELOAD_FILE`
+  with exit 0. This is a worker submission; a fresh verifier must interrogate this exact head and
+  set the terminal status.
+
+Commands: `E3_T12D_HEADLESS=1 make verify-E3-T12d`; `shasum -a 256` for the evidence JSON and
+screenshot. No merge or push.
+
+### 2026-08-30 — fresh verifier — VERDICT: verified
+
+- **Provenance — HELD.** Prediction: the submitted recording must bind to runtime/dist head
+  `4c4d7ee30e2b9a6b91f6271bb1df9db226edb94b`, match both claimed digests, and contain no runtime
+  edits after that head. The committed evidence reports that runtime head at lines 1–3; its
+  SHA-256 is `a8083c2d4eb3bc9e12515d7f947ea5a3c409edbeb590abb8101f4467beeab08b`, and the screenshot
+  SHA-256 is `5058e36cc3776e1a5c7635c0c2fc9d8c9e825d6066c75efd41579a4be36fee64`. `4c4d7ee` is an
+  ancestor of submission `66f51f7`; the reviewed runtime/harness diff is the post-refutation
+  change from `bf75360^` through `4c4d7ee`.
+- **AC1 — HELD.** Prediction: a production-sized snapshot must save, reload, restore, and remain
+  within the documented 32 MiB staging bound. The record shows a 60,430,185-byte whole-machine
+  Worker snapshot, identical export/import digest, reload `resume`, and Worker restore `resume`
+  (lines 7–27). Save overhead is 16,811,947 <= 33,554,432 over 66 samples, including clear,
+  chunk, and meta phases (lines 28–502); reload staging overhead is 2,167,785 <= 33,554,432
+  with sequential load chunks and completion (lines 604–1050).
+- **AC2 and high-risk attacks — HELD.** Prediction: every invalid or interrupted publication,
+  quota failure, mixed-generation object set, or competing-tab write must select a typed safe
+  result and preserve the overlay. Clear/chunk/meta interruption yields `corrupt`/`corrupt`/`stale`
+  with `overlayPreserved: true` (lines 511–545); quota surfaces `QuotaExceededError`, yields the
+  live marker with exit 0, and preserves the overlay (lines 547–560); metadata swap yields
+  `corrupt` with the overlay preserved (lines 597–602). The two-tab record shows read-only save
+  and import rejection, takeover, and unchanged stale decision (lines 565–602). Crucially, the
+  in-flight save starts release at the first chunk, completes with no error, records
+  `metaCommitted: true`, and records `releaseSettledBeforeMeta: false` (lines 581–588).
+  The implementation increments the shared write counter before asynchronous IndexedDB work and
+  decrements it on completion (`crates/wasm/src/lib.rs:1935-1966,2067-2119`); relinquishment fences
+  new writes and waits with timer-yielding until the counter drains before releasing Web Lock
+  (`crates/wasm/src/lib.rs:1975-1983`, `web/loader.js:1000-1008`). The harness assertion is
+  explicit at `tools/verify/e3-t12d-browser-proof.mjs:623-666`, so the prior stale-save window is
+  exercised rather than merely inferred.
+- **AC3 and overlay restore — HELD.** Prediction: export/import preserves the exact container
+  bytes and digest, while a durable overlay modification survives reload and makes the old
+  snapshot stale. Equal 60,430,185-byte digests and `workerRestore: resume` are recorded at
+  lines 11–27; the modified-overlay reload selects `stale` and reads `T12D_RELOAD_FILE` with exit
+  0 at lines 604–1055.
+- **Coverage/gates — HELD.** The changed runtime/harness paths are covered by the exact recording,
+  including clear/chunk/meta/quota/truncation/payload-integrity (carried-forward exact-head
+  evidence), metadata swap, two-tab ownership and in-flight save release, Worker restore, bounded
+  save/load memory, and post-reload overlay file read. The committed JSON diagnostics contain 14
+  browser contexts with empty console-error arrays. Bounded checks passed: `node --check
+  tools/verify/e3-t12d-browser-proof.mjs`; `cargo test -p wasm-vm-core --test restore_decision`
+  (11/11); `cargo test -p wasm-vm-storage snapmeta` (11/11); and `cargo check -p wasm-vm-wasm
+  --target wasm32-unknown-unknown`. No headed make run, Alpine wait, runtime edit, merge, or push
+  was performed by this verifier.
+
+Commands: `sha256sum evidence/epic-3-t12d/browser-storage-2026-08-30.json evidence/epic-3-t12d/browser-storage-2026-08-30.png`;
+`git diff --check bf75360^..4c4d7ee -- crates/wasm/src/lib.rs web/loader.js tools/verify/e3-t12d-browser-proof.mjs`;
+`node --check tools/verify/e3-t12d-browser-proof.mjs`; `cargo test -p wasm-vm-core --test restore_decision`;
+`cargo test -p wasm-vm-storage snapmeta`; `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`.

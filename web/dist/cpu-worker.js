@@ -6,10 +6,13 @@
 //   { type:"boot", wasmModule, sharedMemory, controlSab, bootParams }
 //     wasmModule    – a WebAssembly.Module compiled main-side (structured-cloneable) OR a URL to
 //                     compile in-worker via WebAssembly.compileStreaming.
-//     sharedMemory  – the shared WebAssembly.Memory (guest RAM + CpuState + TLBs live in its SAB).
+//     sharedMemory  – a descriptor {initial, maximum, shared:true}. Chromium does not clone a
+//                     WebAssembly.Memory object, so the worker constructs the imported memory and
+//                     returns its SAB in `ready.memoryBuffer` for host-side views.
 //     controlSab    – the small control-block SharedArrayBuffer (IRQ / MMIO cells).
 //     bootParams    – kernel/initramfs/dtb offsets, RAM size, etc.
-// Replies (worker → main): {type:"ready"}, {type:"log"}, {type:"halted"}, {type:"fatal",error}.
+// Replies (worker → main): {type:"ready",memoryBuffer}, {type:"log"}, {type:"halted"},
+// {type:"fatal",error}.
 //
 // Atomics.wait is legal on this thread — WFI parks here (cpu-control-block.wfiPark). The single-
 // threaded fallback path never loads this file.
@@ -21,11 +24,14 @@ import {
   mmioRequest,
   CELL,
   STATE,
+  CONTROL_BYTES,
 } from "./cpu-control-block.js";
 import { selectJitBackend, probeIsolation } from "./cpu-isolation.js";
 
 let cells = null;
 let running = false;
+let bootStarted = false;
+let terminal = false;
 // E4-T29 Phase 2: the JIT gate for this worker, decided ONCE at boot from the isolation snapshot.
 let jitPlan = { jit: false, threshold: 0, reason: "undecided" };
 
@@ -38,15 +44,30 @@ self.addEventListener("message", (event) => {
 self.addEventListener("messageerror", () => fatal(new Error("worker got an un-clonable message")));
 
 async function boot({ wasmModule, wasmUrl, sharedMemory, controlSab, bootParams }) {
+  if (bootStarted) throw new Error("duplicate CPU worker boot");
+  bootStarted = true;
+  if (terminal) throw new Error("CPU worker is already terminal");
+
+  if (!(controlSab instanceof SharedArrayBuffer) || controlSab.byteLength < CONTROL_BYTES) {
+    throw new Error(`invalid CPU control block: expected a SharedArrayBuffer of at least ${CONTROL_BYTES} bytes`);
+  }
   cells = attachControlBlock(controlSab);
   Atomics.store(cells, CELL.STATE, STATE.BOOT);
 
+  if (!(wasmModule instanceof WebAssembly.Module) && typeof wasmUrl !== "string") {
+    throw new Error("CPU worker boot requires a cloned WebAssembly.Module or wasmUrl");
+  }
+  const memory = createImportedSharedMemory(sharedMemory);
+
   // Compile worker-side if given a URL; otherwise use the pre-compiled Module. Instantiate against
-  // the IMPORTED shared memory — the module's `env.memory` import (see tools/build-web-shared.sh).
+  // the worker-owned IMPORTED shared memory — the module's `env.memory` import (see
+  // tools/build-web-shared.sh). Its SAB is returned in the ready message because a WebAssembly.Memory
+  // object itself is not structured-cloneable in Chromium.
   const module =
     wasmModule ?? (await WebAssembly.compileStreaming(fetch(wasmUrl)));
-  const imports = makeImports(sharedMemory);
+  const imports = makeImports(memory);
   const instance = await WebAssembly.instantiate(module, imports);
+  if (terminal) return;
 
   // E4-T29 Phase 2: decide the JIT gate. The worker only runs at all when the page is cross-origin
   // isolated (E4-T22), so `selectJitBackend` returns jit:true here unless the guest opted out
@@ -69,9 +90,38 @@ async function boot({ wasmModule, wasmUrl, sharedMemory, controlSab, bootParams 
   // The wasm-bindgen glue for the shared build initialises against this same instance/memory.
   // (Wiring the generated `initSync(module, memory)` entry point is done by the loader that
   // imports the shared pkg; here we hold the raw instance for the dispatch loop.)
-  self.postMessage({ type: "ready", jit: jitPlan.jit, jitReason: jitPlan.reason });
+  self.postMessage({
+    type: "ready",
+    protocol: 1,
+    dispatchExport: bootParams?.dispatchExport ?? "run_slice",
+    memoryShared: true,
+    memoryInitial: memory.buffer.byteLength / 65_536,
+    memoryBuffer: memory.buffer,
+    jit: jitPlan.jit,
+    jitReason: jitPlan.reason,
+  });
 
-  runLoop(instance, bootParams);
+  runLoop(instance, bootParams ?? {});
+}
+
+function createImportedSharedMemory(descriptor) {
+  if (!descriptor || descriptor.shared !== true) {
+    throw new Error("CPU worker requires a shareable memory descriptor");
+  }
+  const { initial, maximum } = descriptor;
+  if (!Number.isInteger(initial) || initial < 0 || !Number.isInteger(maximum) || maximum < initial) {
+    throw new Error("CPU worker received invalid shared memory limits");
+  }
+  let memory;
+  try {
+    memory = new WebAssembly.Memory({ initial, maximum, shared: true });
+  } catch (err) {
+    throw new Error(`CPU worker could not create shared memory: ${err?.message || err}`);
+  }
+  if (!(memory.buffer instanceof SharedArrayBuffer)) {
+    throw new Error("CPU worker created a non-shareable WebAssembly.Memory");
+  }
+  return memory;
 }
 
 // Minimal import object. The shared memory is injected as env.memory; MMIO traps route through the
@@ -105,6 +155,7 @@ function makeImports(sharedMemory) {
 // (or the slice budget is exhausted with nothing to do), parks in Atomics.wait until the next timer
 // deadline or an interrupt notify. This keeps an idle guest at ~0% host CPU (AC: <2% idle).
 function runLoop(instance, bootParams) {
+  if (terminal) return;
   running = true;
   Atomics.store(cells, CELL.STATE, STATE.RUNNING);
   const step = () => {
@@ -119,6 +170,7 @@ function runLoop(instance, bootParams) {
     }
     if (status < 0) {
       running = false;
+      terminal = true;
       Atomics.store(cells, CELL.STATE, STATE.BOOT);
       self.postMessage({ type: "halted" });
       return;
@@ -136,18 +188,27 @@ function runLoop(instance, bootParams) {
   step();
 }
 
-// Placeholder for the core's sliced-execution export. The real symbol name/signature is finalised
-// when the shared pkg's dispatch entry point is exposed (E4-T10/T11); until then the loop above is
-// exercised by the host handshake + WFI tests and the browser boot leg on `dev`.
-function runSlice(instance, _bootParams) {
-  const fn = instance.exports.run_slice;
+// The raw worker ABI is intentionally tiny: a synchronous export returns 0 to continue, a positive
+// timeout in milliseconds to park for WFI, and a negative value to halt. A caller can name an
+// equivalent export while the generated WasmLinux glue is being wired, but the default is the
+// stable `run_slice` fixture/core ABI.
+function runSlice(instance, bootParams) {
+  const exportName = bootParams?.dispatchExport ?? "run_slice";
+  const fn = instance.exports[exportName];
   if (typeof fn !== "function") {
-    throw new Error("shared core module exposes no run_slice export yet (E4-T10/T11)");
+    throw new Error(`shared core module exposes no ${exportName} dispatch export`);
   }
-  return fn();
+  const budget = bootParams?.sliceInstrs;
+  const result = Number.isInteger(budget) && budget > 0 ? fn(budget) : fn();
+  if (!Number.isFinite(result) || !Number.isInteger(result)) {
+    throw new Error(`dispatch export ${exportName} returned a non-integer status`);
+  }
+  return result;
 }
 
 function fatal(err) {
+  if (terminal) return;
+  terminal = true;
   running = false;
   if (cells) Atomics.store(cells, CELL.STATE, STATE.FATAL);
   self.postMessage({ type: "fatal", error: String(err && err.stack ? err.stack : err) });

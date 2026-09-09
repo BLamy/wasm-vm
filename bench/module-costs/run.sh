@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # E4-T19 cost matrix — ONE command from a clean checkout. Installs the Playwright browsers if needed,
 # then runs the compile/instantiate/instance-cliff matrix on Chromium + Firefox + WebKit, writing
-# results/<engine>.json. Live capture is DEV work (this mac OS-reaps long browser runs); on the Linux
-# dev box this reproduces the committed cost matrix. No numbers are fabricated: results/ ships empty.
+# results/<engine>.json. The optional separately installed Chrome screen is documented in README.md;
+# it is deliberately not part of this clean-checkout three-engine command.
 set -euo pipefail
 cd "$(dirname "$0")"
 

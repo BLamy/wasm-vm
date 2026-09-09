@@ -1,0 +1,20 @@
+E5-T19a native deterministic control-plane proof
+commit=ae3d641
+command=cargo test -p wasm-vm-core --test virtio_snd -- --nocapture
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/virtio_snd.rs (target/debug/deps/virtio_snd-d6262d42cec1c36c)
+
+running 6 tests
+test device_identity_config_and_queue_markers_are_spec_shaped ... ok
+test exhaustive_six_request_five_state_oracle_is_stable ... ok
+test info_queries_return_exact_one_item_capabilities_and_zero_padding ... ok
+test invalid_params_cover_ids_sizes_alignment_features_and_caps ... ok
+test malformed_and_unsupported_queries_are_deterministic_and_non_mutating ... ok
+test set_params_rejects_96khz_without_poisoning_the_next_legal_setup ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+coverage=identity/config/queue reset; independent JACK_INFO/PCM_INFO/CHMAP_INFO bytes;
+coverage=malformed/truncated/unsupported selectors; boundary validation; 96 kHz rejection;
+coverage=legal SET_PARAMS/PREPARE/START/STOP/START/STOP/RELEASE lifecycle

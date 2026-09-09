@@ -86,6 +86,10 @@ impl DescriptorChain {
     pub fn readable(&self) -> impl Iterator<Item = &Segment> {
         self.segments.iter().filter(|s| !s.writable)
     }
+    /// Total device-readable capacity in bytes.
+    pub fn readable_len(&self) -> u64 {
+        self.readable().map(|s| u64::from(s.len)).sum()
+    }
     /// Device-writable segments (read payloads, status bytes).
     pub fn writable(&self) -> impl Iterator<Item = &Segment> {
         self.segments.iter().filter(|s| s.writable)
@@ -128,6 +132,17 @@ impl Virtqueue {
 
     pub fn size(&self) -> u16 {
         self.size
+    }
+
+    /// Whether this view still points at the transport queue configuration supplied by the
+    /// driver. Devices use this to discard a stale ring view when a guest re-sets up a queue
+    /// without first tearing down the backend object.
+    pub fn matches_state(&self, qs: &QueueState) -> bool {
+        qs.ready
+            && u32::from(self.size) == qs.num
+            && self.desc == qs.desc
+            && self.avail == qs.driver
+            && self.used == qs.device
     }
 
     /// E3-T12c1: the device's ring position — `(last_avail_idx, used_idx)` — the free-running shadows

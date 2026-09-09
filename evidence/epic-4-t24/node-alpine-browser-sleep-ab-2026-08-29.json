@@ -1,0 +1,90 @@
+{
+  "schema": "wasm-vm.browser-evidence.v1",
+  "task": "E4-T24",
+  "recordedAt": "2026-08-29",
+  "head": "9ddcea22f195668d10e50f33228a10590ad0492b",
+  "host": {
+    "platform": "macOS",
+    "browser": "Google Chrome",
+    "browserVersion": "152.0.7977.65",
+    "executable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+  },
+  "server": {
+    "command": "bash tools/serve-dev.sh 8131",
+    "url": "http://127.0.0.1:8131/?guest=node-alpine&profile=1&jit=0|1"
+  },
+  "guest": {
+    "snapshot": "node-alpine",
+    "command": "time sleep 1",
+    "backend": "worker",
+    "arms": [
+      {
+        "name": "interpreter",
+        "jit": false,
+        "readyMs": 2695,
+        "commandElapsedMs": 1881.935,
+        "output": "real    0m 1.01s\nuser    0m 0.00s\nsys     0m 0.00s",
+        "exitCode": 0,
+        "jitStatsBefore": {
+          "compiledBlocks": 0,
+          "executedBlocks": 0,
+          "retiredViaJit": 0
+        },
+        "jitStatsAfter": {
+          "compiledBlocks": 0,
+          "executedBlocks": 0,
+          "retiredViaJit": 0
+        },
+        "scheduler": {
+          "slices": 24,
+          "totalSliceMs": 1298.725,
+          "maxSliceMs": 240.04,
+          "requestedInstructions": 12000000,
+          "retiredInstructions": 11998071,
+          "fetchWaits": 1,
+          "fetchRequestedChunks": 2,
+          "fetchWaitTotalMs": 763.845,
+          "fetchWaitMaxMs": 763.845,
+          "maxStretchGapMs": 1003.925
+        }
+      },
+      {
+        "name": "jit",
+        "jit": true,
+        "readyMs": 4208,
+        "commandElapsedMs": 2874.4,
+        "output": "real    0m 1.01s\nuser    0m 0.00s\nsys     0m 0.00s",
+        "exitCode": 0,
+        "jitStatsBefore": {
+          "compiledBlocks": 0,
+          "executedBlocks": 23637,
+          "retiredViaJit": 165459
+        },
+        "jitStatsAfter": {
+          "compiledBlocks": 0,
+          "executedBlocks": 167355,
+          "retiredViaJit": 1056024
+        },
+        "scheduler": {
+          "slices": 24,
+          "totalSliceMs": 1303.28,
+          "maxSliceMs": 183.05,
+          "requestedInstructions": 12000000,
+          "retiredInstructions": 11998071,
+          "fetchWaits": 1,
+          "fetchRequestedChunks": 2,
+          "fetchWaitTotalMs": 1769.01,
+          "fetchWaitMaxMs": 1769.01,
+          "maxStretchGapMs": 1952.215
+        }
+      }
+    ]
+  },
+  "browserConsole": {
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (File not found)"
+    ],
+    "allowed": "This is the known /favicon.ico 404 from tools/serve-dev.sh; no other console error was observed."
+  },
+  "interpretation": "Both real worker-backed Node runs exited 0 and reported guest real time of 1.01s, which is within the E4-T24 AC1 tolerance for the implemented deterministic/WFI path. This bounded restored-guest check does not prove the unimplemented WallClock mode, the 10-minute throttle/resume behavior, the CoreMark p99 histogram, or the ICount trace-determinism acceptance criterion. Host command elapsed time includes browser startup, fetch, and worker scheduling overhead and is therefore not treated as guest wall-clock evidence."
+}

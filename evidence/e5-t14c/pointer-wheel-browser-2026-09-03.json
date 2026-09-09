@@ -1,0 +1,984 @@
+{
+  "task": "E5-T14c",
+  "generatedAt": "2026-09-04T00:05:03.935Z",
+  "gitHead": "bc9b69ba0e0c23902c3389e20fa75e64c170f2d8",
+  "command": "node tools/verify/e5-t14c-pointer-wheel-browser-proof.mjs",
+  "base": "http://127.0.0.1:57513",
+  "url": "http://127.0.0.1:57513/?guest=busybox&nosw=1&testHooks=1&noAutoBoot=1&jit=0#ide",
+  "browser": {
+    "name": "chromium",
+    "version": "unknown"
+  },
+  "staticAudit": {
+    "parity": [
+      {
+        "source": "web/main.js",
+        "dist": "web/dist/main.js",
+        "equal": true,
+        "sha256": "08491024564608b2242eacba6b05989e816e0437b0292aba4c090a74bcf1225d"
+      },
+      {
+        "source": "web/ide.js",
+        "dist": "web/dist/ide.js",
+        "equal": true,
+        "sha256": "ab71ce1cb15a5f3bb5609683b0f397a249d87bebfa34a266c218130abf076265"
+      },
+      {
+        "source": "web/loader.js",
+        "dist": "web/dist/loader.js",
+        "equal": true,
+        "sha256": "378813e0a8fbe6d743771238f4a4568df787ac8c3d9c3062a78ec12cfb98bb1b"
+      },
+      {
+        "source": "web/linux-worker-protocol.js",
+        "dist": "web/dist/linux-worker-protocol.js",
+        "equal": true,
+        "sha256": "b201e1f14bffcecd173203661285c783ecc7be890501ebce6737e1c83f8fac7c"
+      },
+      {
+        "source": "web/roadmap.js",
+        "dist": "web/dist/roadmap.js",
+        "equal": true,
+        "sha256": "ff1aa08e6cc8f86d1e8b4e94e0efd182c8c05f6b8d5b3e60b587c9edf4bb8da3"
+      },
+      {
+        "source": "web/src/input/pointer.js",
+        "dist": "web/dist/src/input/pointer.js",
+        "equal": true,
+        "sha256": "5c37b988c296ada1ce7d2fa1c2d1c6fedb8d8bfa365ce106e9130f20c49a43b4"
+      },
+      {
+        "source": "web/src/input/pointer.ts",
+        "dist": "web/dist/src/input/pointer.ts",
+        "equal": true,
+        "sha256": "5c37b988c296ada1ce7d2fa1c2d1c6fedb8d8bfa365ce106e9130f20c49a43b4"
+      }
+    ],
+    "guestTranscript": true,
+    "guestTranscriptSha256": "a3cd5f1d311a9c5b23da1897f848533be521dc1c1c677ade5f591883918f119e"
+  },
+  "stages": {
+    "initial": {
+      "pointer": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "pointerLockRequested": false,
+        "heldButtons": [],
+        "wheelRemainders": {
+          "horizontal": 0,
+          "vertical": 0
+        },
+        "modeChanges": 0,
+        "pointerLockChanges": 0,
+        "reason": "state"
+      },
+      "toggle": "Pointer: absolute"
+    },
+    "boot": {
+      "ok": true,
+      "elapsedMs": 18357
+    },
+    "coordinateMatrix": [
+      {
+        "dpr": 1,
+        "zoom": 0.8,
+        "rect": {
+          "left": 0,
+          "top": 11057,
+          "width": 1600,
+          "height": 239
+        },
+        "coordinates": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 32767,
+            "y": 0
+          },
+          {
+            "x": 0,
+            "y": 32767
+          },
+          {
+            "x": 32767,
+            "y": 32767
+          },
+          {
+            "x": 16384,
+            "y": 16384
+          }
+        ]
+      },
+      {
+        "dpr": 1,
+        "zoom": 1.25,
+        "rect": {
+          "left": 0,
+          "top": 11057,
+          "width": 1600,
+          "height": 239
+        },
+        "coordinates": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 32767,
+            "y": 0
+          },
+          {
+            "x": 0,
+            "y": 32767
+          },
+          {
+            "x": 32767,
+            "y": 32767
+          },
+          {
+            "x": 16384,
+            "y": 16384
+          }
+        ]
+      },
+      {
+        "dpr": 1.5,
+        "zoom": 0.8,
+        "rect": {
+          "left": 0,
+          "top": 11057,
+          "width": 1600,
+          "height": 239
+        },
+        "coordinates": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 32767,
+            "y": 0
+          },
+          {
+            "x": 0,
+            "y": 32767
+          },
+          {
+            "x": 32767,
+            "y": 32767
+          },
+          {
+            "x": 16384,
+            "y": 16384
+          }
+        ]
+      },
+      {
+        "dpr": 1.5,
+        "zoom": 1.25,
+        "rect": {
+          "left": 0,
+          "top": 11057,
+          "width": 1600,
+          "height": 239
+        },
+        "coordinates": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 32767,
+            "y": 0
+          },
+          {
+            "x": 0,
+            "y": 32767
+          },
+          {
+            "x": 32767,
+            "y": 32767
+          },
+          {
+            "x": 16384,
+            "y": 16384
+          }
+        ]
+      },
+      {
+        "dpr": 2,
+        "zoom": 0.8,
+        "rect": {
+          "left": 0,
+          "top": 11057,
+          "width": 1600,
+          "height": 239
+        },
+        "coordinates": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 32767,
+            "y": 0
+          },
+          {
+            "x": 0,
+            "y": 32767
+          },
+          {
+            "x": 32767,
+            "y": 32767
+          },
+          {
+            "x": 16384,
+            "y": 16384
+          }
+        ]
+      },
+      {
+        "dpr": 2,
+        "zoom": 1.25,
+        "rect": {
+          "left": 0,
+          "top": 11057,
+          "width": 1600,
+          "height": 239
+        },
+        "coordinates": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 32767,
+            "y": 0
+          },
+          {
+            "x": 0,
+            "y": 32767
+          },
+          {
+            "x": 32767,
+            "y": 32767
+          },
+          {
+            "x": 16384,
+            "y": 16384
+          }
+        ]
+      }
+    ],
+    "dragOutside": {
+      "frames": [
+        {
+          "sequence": 32,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 33,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 41
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 41,
+            "y": 0
+          }
+        },
+        {
+          "sequence": 34,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "held": [],
+      "buttonValues": [
+        1,
+        0
+      ]
+    },
+    "wheel": {
+      "frames": [
+        {
+          "sequence": 37,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 1,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 38,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 39,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 40,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 41,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 42,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 43,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 44,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 45,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 46,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 47,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 48,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 49,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 50,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 51,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 52,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 53,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 54,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 55,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 56,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 57,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 58,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 59,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 60,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 61,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        },
+        {
+          "sequence": 62,
+          "device": "mouse",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 8,
+              "value": -1
+            }
+          ],
+          "sync": 0,
+          "source": "wheel",
+          "deltaMode": 0,
+          "detents": {
+            "horizontal": 0,
+            "vertical": -1
+          }
+        }
+      ],
+      "remainder": {
+        "horizontal": 0,
+        "vertical": 0
+      },
+      "debug": "Buttons: none · frames: 62 · wheel: 0/0"
+    },
+    "recovery": {
+      "states": [
+        {
+          "path": "pointerlockchange",
+          "state": {
+            "mode": "absolute",
+            "pointerLocked": false,
+            "pointerLockRequested": false,
+            "heldButtons": [],
+            "wheelRemainders": {
+              "horizontal": 0,
+              "vertical": 0
+            },
+            "modeChanges": 2,
+            "pointerLockChanges": 1,
+            "reason": "state"
+          }
+        },
+        {
+          "path": "blur",
+          "state": {
+            "mode": "absolute",
+            "pointerLocked": false,
+            "pointerLockRequested": false,
+            "heldButtons": [],
+            "wheelRemainders": {
+              "horizontal": 0,
+              "vertical": 0
+            },
+            "modeChanges": 4,
+            "pointerLockChanges": 1,
+            "reason": "state"
+          }
+        },
+        {
+          "path": "view-toggle",
+          "state": {
+            "mode": "absolute",
+            "pointerLocked": false,
+            "pointerLockRequested": false,
+            "heldButtons": [],
+            "wheelRemainders": {
+              "horizontal": 0,
+              "vertical": 0
+            },
+            "modeChanges": 6,
+            "pointerLockChanges": 1,
+            "reason": "state"
+          }
+        },
+        {
+          "path": "escape-cancel",
+          "state": {
+            "mode": "absolute",
+            "pointerLocked": false,
+            "pointerLockRequested": false,
+            "heldButtons": [],
+            "wheelRemainders": {
+              "horizontal": 0,
+              "vertical": 0
+            },
+            "modeChanges": 8,
+            "pointerLockChanges": 1,
+            "reason": "state"
+          }
+        },
+        {
+          "path": "pointercancel",
+          "state": {
+            "mode": "absolute",
+            "pointerLocked": false,
+            "pointerLockRequested": false,
+            "heldButtons": [],
+            "wheelRemainders": {
+              "horizontal": 0,
+              "vertical": 0
+            },
+            "modeChanges": 10,
+            "pointerLockChanges": 1,
+            "reason": "state"
+          }
+        },
+        {
+          "path": "denied",
+          "state": {
+            "mode": "absolute",
+            "pointerLocked": false,
+            "pointerLockRequested": false,
+            "heldButtons": [],
+            "wheelRemainders": {
+              "horizontal": 0,
+              "vertical": 0
+            },
+            "modeChanges": 12,
+            "pointerLockChanges": 1,
+            "reason": "state"
+          }
+        }
+      ],
+      "diagnostics": [
+        {
+          "reason": "pointerlock-denied",
+          "mode": "relative",
+          "error": "browser-proof-denied"
+        }
+      ],
+      "held": [],
+      "keyboardHeld": [],
+      "lockElementIsHost": false
+    }
+  },
+  "errors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "final": {
+    "pointer": {
+      "mode": "absolute",
+      "pointerLocked": false,
+      "pointerLockRequested": false,
+      "heldButtons": [],
+      "wheelRemainders": {
+        "horizontal": 0,
+        "vertical": 0
+      },
+      "modeChanges": 12,
+      "pointerLockChanges": 1,
+      "reason": "state"
+    },
+    "keyboardHeld": [],
+    "stateText": "Pointer: absolute",
+    "debugText": "Buttons: none · frames: 72 · wheel: 0/0"
+  },
+  "screenshot": {
+    "path": "evidence/e5-t14c/pointer-wheel-browser-2026-09-03.png",
+    "sha256": "bbb6145092b9512c55db8d8f71eebcd13bc1f8c9170eabfa62283bcc58d9c7bd"
+  },
+  "guestEvtest": {
+    "path": "evidence/e5-t14c/guest-evtest-2026-09-03.txt",
+    "sha256": "a3cd5f1d311a9c5b23da1897f848533be521dc1c1c677ade5f591883918f119e"
+  }
+}

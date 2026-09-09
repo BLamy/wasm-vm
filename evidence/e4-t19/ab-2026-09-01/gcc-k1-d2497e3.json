@@ -1,0 +1,54 @@
+{
+  "bench": "gcc",
+  "score": 164.0,
+  "unit": "seconds",
+  "higher_is_better": false,
+  "runs": [
+    164.0
+  ],
+  "spread": 0.0,
+  "noise_warning": false,
+  "engine": "native",
+  "commit": "d2497e36ccdea05db79b2d4665864a987e0c3079",
+  "config": {
+    "workload": "miniz-3.0.2 miniz.c (amalgamated, ~9.3 kLoC)",
+    "compile_cmd": "/mnt/usr/bin/gcc --sysroot=/mnt -B/mnt/usr/bin -O2 -frandom-seed=miniz -c /mnt/src/miniz.c -o /tmp/miniz.o",
+    "gcc_package": "gcc-13.2.1_git20240309-r1",
+    "source_date_epoch": 1704067200,
+    "o_size_bytes": 302904,
+    "o_sizes_all": [
+      302904
+    ],
+    "o_sha256": "97198b27557042fb84de54881c5fb577505b4ee77c41bc056612be6173e5faca",
+    "gcc_ext4_sha256": "f53445f65b5e32b9fe3c47e0f84c52c850da2c747edae0abca60e9592a758c4a",
+    "vm_build": "release",
+    "ram_mib": 768,
+    "max_instrs": 300000000000,
+    "run_timeout_s": 5400.0,
+    "jit": true,
+    "boot_extra": "--jit-batch-size 1 --profile",
+    "jit_pause_timed": true
+  },
+  "date": "2026-09-02T09:21:15.892544+00:00",
+  "timing_check": {
+    "note": "score is in-guest seconds (from /proc/uptime, instruction-count-derived guest clock \u2014 host-independent). host_elapsed is recorded only for the honest host/guest ratio, never to alter the score. The .o is byte-stable (SOURCE_DATE_EPOCH + -frandom-seed); its sha256 is the anti-drift anchor.",
+    "guest_elapsed_s": 164.0,
+    "host_elapsed_s": 1853.322,
+    "ratio": 11.301,
+    "jit_compile_stall_ns": 942132397625,
+    "jit_compile_stall_s": 942.132398
+  },
+  "jit_stats": {
+    "blocks_compiled": 219,
+    "blocks_executed": 892464516,
+    "retired_via_jit": 4626422444,
+    "links_made": 1147447,
+    "dispatch_entries": 175449773,
+    "installs": 3132247,
+    "evictions": 3132025,
+    "jit_pause_count": 1727115,
+    "jit_pause_sum_ns": 942132397625,
+    "jit_pause_max_ns": 33259709,
+    "jit_pause_over_target": 29315
+  }
+}

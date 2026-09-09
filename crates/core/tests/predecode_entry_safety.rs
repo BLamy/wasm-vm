@@ -228,6 +228,42 @@ fn privilege_change_invalidates_cached_interior_permission() {
 }
 
 #[test]
+fn mode_change_with_full_grant_retains_cached_code() {
+    // A full-address R/W/X grant has identical execute permission in M and S mode. The cache
+    // should retain its physically keyed block across that mode transition instead of paying a
+    // whole-generation flush on every Linux privilege boundary.
+    const ADDI_X5_ONE: u32 = (1 << 20) | (5 << 7) | 0x13;
+    const ADDI_X6_ONE: u32 = (1 << 20) | (6 << 7) | 0x13;
+    const JAL_BACK_8: u32 = 0xff9f_f06f;
+
+    let mut m = Machine::new(8 * 1024 * 1024);
+    m.bus_mut().store32(DRAM_BASE, ADDI_X5_ONE).unwrap();
+    m.bus_mut().store32(DRAM_BASE + 4, ADDI_X6_ONE).unwrap();
+    m.bus_mut().store32(DRAM_BASE + 8, JAL_BACK_8).unwrap();
+    m.hart_mut().csr.pmp.allow_all();
+    m.hart_mut().regs.pc = DRAM_BASE;
+    m.set_block_cache(true);
+
+    assert_eq!(m.run(3), RunOutcome::MaxInstrs);
+    let before = m.block_cache_entry_stats();
+    let flushes = m.discovery_stats().cache_flushes;
+
+    m.hart_mut().csr.mode = Priv::S;
+    m.hart_mut().regs.pc = DRAM_BASE;
+    assert_eq!(m.run(3), RunOutcome::MaxInstrs);
+    assert_eq!(
+        m.block_cache_entry_stats().1,
+        before.1,
+        "mode change rebuilt code"
+    );
+    assert!(
+        m.block_cache_entry_stats().0 > before.0,
+        "mode change did not reuse the cached entry"
+    );
+    assert_eq!(m.discovery_stats().cache_flushes, flushes);
+}
+
+#[test]
 fn guest_mret_invalidates_cached_interior_permission_before_successor() {
     // Novel verifier attack: unlike a host mutation between run chunks, MRET changes privilege
     // *inside* one run. Because xRET is a block terminator, the successor boundary must observe the

@@ -7,7 +7,7 @@
 // `FitAddon` (@xterm/addon-fit).
 
 import { createOsc52Handler } from "./osc52.js";
-import { framePaste } from "./paste.js";
+import { BRACKET_END, BRACKET_START, framePaste } from "./paste.js";
 
 // Bytes handed to the guest per drain tick. Bounds a single JS→wasm copy so a huge paste never
 // becomes one giant allocation; the guest's RX FIFO paces the actual consumption underneath.
@@ -59,6 +59,7 @@ export function createLinuxTerminal(containerEl) {
   // path (it respects rx_free and never drops on a full FIFO — only genuine overrun sets OE).
   // This JS queue bounds per-call copy size for big pastes and exposes a high-water metric.
   const queue = []; // Uint8Array chunks, FIFO
+  let pendingBracketedPaste = null; // Uint8Array chunks held until an explicit Enter or Ctrl-C
   let queued = 0;
   let highWater = 0;
   let draining = false;
@@ -93,7 +94,41 @@ export function createLinuxTerminal(containerEl) {
     if (!draining) pump();
   }
 
-  term.onData((str) => feed(enc.encode(str)));
+  // Busybox ash (the fast guest used by the demo) does not consume DECSET-2004 markers itself. Hold a
+  // bracketed paste in the host until the user supplies a terminating Enter, then release the sanitized
+  // body as one ordered input sequence. Ctrl-C cancels the held paste. Guests with a bracket-aware line
+  // editor get the same user-visible guarantee; the host hold is a compatibility fallback, not a second
+  // framing layer. Ordinary typed bytes while a paste is held are buffered in order and released with it.
+  function typeBytes(bytes) {
+    if (!pendingBracketedPaste) {
+      feed(bytes);
+      return;
+    }
+    let boundary = -1;
+    for (let index = 0; index < bytes.length; index += 1) {
+      if (bytes[index] === 0x03 || bytes[index] === 0x0a || bytes[index] === 0x0d) {
+        boundary = index;
+        break;
+      }
+    }
+    if (boundary < 0) {
+      if (bytes.length > 0) pendingBracketedPaste.push(bytes.slice());
+      return;
+    }
+    if (boundary > 0) pendingBracketedPaste.push(bytes.slice(0, boundary));
+    const control = bytes[boundary];
+    if (control === 0x03) {
+      pendingBracketedPaste = null;
+      feed(bytes.subarray(boundary));
+      return;
+    }
+    const held = pendingBracketedPaste;
+    pendingBracketedPaste = null;
+    for (const chunk of held) feed(chunk);
+    feed(bytes.subarray(boundary));
+  }
+
+  term.onData((str) => typeBytes(enc.encode(str)));
 
   // E3-T22a: OSC 52 clipboard copy. A guest `ESC]52;c;<base64>` sets the host clipboard; a rejected
   // write (denied permission / no transient activation / insecure context) surfaces a non-destructive
@@ -113,15 +148,33 @@ export function createLinuxTerminal(containerEl) {
     onCopyBlocked: (text) => { if (onCopyBlocked) onCopyBlocked(text); },
     respond: (payload) => feed(enc.encode(`\x1b]52;${payload}\x07`)),
   });
-  // xterm strips the `ESC]52;` framing and passes the handler the data string.
-  try { term.registerOscHandler(52, oscHandler); } catch { /* older xterm without OSC hooks */ }
+  // xterm strips the `ESC]52;` framing and passes the handler the data string. In xterm.js 5.x the
+  // parser owns this API (`term.parser.registerOscHandler`); retain the terminal-level fallback for
+  // older builds. A silent no-op here would turn every guest OSC 52 copy into an unobservable drop.
+  try {
+    if (term.parser && typeof term.parser.registerOscHandler === "function") {
+      term.parser.registerOscHandler(52, oscHandler);
+    } else if (typeof term.registerOscHandler === "function") {
+      term.registerOscHandler(52, oscHandler);
+    }
+  } catch { /* xterm without OSC hooks — deterministic handler tests still cover the pure path */ }
 
   // E3-T22b: frame + inject a paste. `bracketed` is snapshotted from the guest's live DECSET-2004
-  // state ONCE per paste (no torn half-bracket if the guest toggles mid-paste). feed() then chunks it
-  // through the same backpressure queue as typed input.
+  // state ONCE per paste (no torn half-bracket if the guest toggles mid-paste). Unbracketed input feeds
+  // the same backpressure queue immediately; bracketed input holds the sanitized body until Enter.
   function pasteText(text) {
     const bracketed = !!(term.modes && term.modes.bracketedPasteMode);
-    feed(enc.encode(framePaste(String(text ?? ""), { bracketed })));
+    const value = String(text ?? "");
+    if (!bracketed) {
+      feed(enc.encode(framePaste(value, { bracketed: false })));
+      return;
+    }
+    const framed = framePaste(value, { bracketed: true });
+    // Keep framePaste's newline normalization and end-marker neutralization, but remove the wrapper:
+    // the host hold supplies the no-early-execute boundary for ash, which does not parse the markers.
+    const body = enc.encode(framed.slice(BRACKET_START.length, -BRACKET_END.length));
+    if (pendingBracketedPaste) pendingBracketedPaste.push(body);
+    else pendingBracketedPaste = [body];
   }
   // Own the paste at the DOM level (capture phase → before xterm's textarea handler), so our framing
   // is the only framing and the injection defense is enforced. `ignoreBracketedPasteMode` above keeps
@@ -148,7 +201,7 @@ export function createLinuxTerminal(containerEl) {
     fitNow() { try { fit.fit(); } catch { /* ignore */ } return { cols: term.cols, rows: term.rows }; },
     sttyHint() { return `stty rows ${term.rows} cols ${term.cols}`; },
     highWater: () => highWater,
-    typeBytes: (u8) => feed(u8),
+    typeBytes,
     // xterm only captures keystrokes while its hidden textarea is focused. Nothing focuses
     // it implicitly, so manual typing silently goes nowhere until this is called (after boot
     // and whenever the Terminal tab is (re)shown from a display:none panel).

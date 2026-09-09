@@ -4,7 +4,7 @@ epic: 5
 title: Hardware cursor plane — cursorq UPDATE/MOVE_CURSOR with DOM-overlay presentation
 priority: 515
 status: pending
-depends_on: [E5-T03, E5-T14]
+depends_on: [E5-T03, E5-T14c]
 estimate: M
 capstone: false
 ---

@@ -1,0 +1,26 @@
+diff --git a/crates/cli/src/boot.rs b/crates/cli/src/boot.rs
+index 5c7fb19..1d9a5cb 100644
+--- a/crates/cli/src/boot.rs
++++ b/crates/cli/src/boot.rs
+@@ -148,6 +148,11 @@ pub struct BootArgs {
+     /// meaningful with `--jit`; unset keeps the core default.
+     #[arg(long)]
+     pub jit_threshold: Option<u32>,
++    /// E4-T18 A/B: with `--jit`, disable direct block→block chaining (chaining defaults ON under
++    /// the JIT). The dispatch loop then returns after every compiled block (the E4-T10 behavior),
++    /// so `--jit` vs `--jit --no-chain` measures the chaining uplift on the same binary.
++    #[arg(long, requires = "jit")]
++    pub no_chain: bool,
+     /// E2-T25: emit a boot phase-timing table (wall ms, retired, MIPS per phase) + per-device
+     /// MMIO access counts, as pretty text + JSON, when the boot reaches userland (or at exit).
+     #[arg(long)]
+@@ -777,6 +782,9 @@ fn assemble(
+         }
+         m.set_jit(true);
+         m.set_interrupt_batching(true);
++        if a.no_chain {
++            m.set_chaining(false); // E4-T18 A/B: chain-following off, dispatch per block
++        }
+     }
+     if a.profile {
+         m.set_host_timer(Rc::new(MonotonicTimer::new())); // E4-T01: arms profiling + injects the timer

@@ -3,7 +3,7 @@ id: E4-T20
 epic: 4
 title: JIT cache management — memory and module budgets, eviction, and stats
 priority: 420
-status: verification-debt
+status: verified
 depends_on: [E4-T17, E4-T19]
 estimate: M
 capstone: false
@@ -67,6 +67,16 @@ of the decision record); (5) run E4-T17's SMC torture concurrently with forced e
 churn (budget=tiny) — bitmap/interval-list desync under combined invalidation refutes.
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+Commit: `069c4ee`.
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T20.
+
 
 ### 2026-08-06 — implementation + correctness gates (native, mac)
 

@@ -1,0 +1,252 @@
+{
+  "task": "E5-T14b",
+  "generatedAt": "2026-09-03T23:48:50.878Z",
+  "gitHead": "2c8c23713b2f91eab8cc0e64b90d4280305326a3",
+  "command": "node tools/verify/e5-t14b-pointer-mode-proof.mjs",
+  "base": "http://127.0.0.1:53956",
+  "url": "http://127.0.0.1:53956/?guest=busybox&nosw=1&testHooks=1&noAutoBoot=1&jit=0#ide",
+  "browser": {
+    "name": "chromium",
+    "version": "unknown"
+  },
+  "stages": {
+    "initial": {
+      "mode": "absolute",
+      "state": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "pointerLockRequested": false,
+        "heldButtons": [],
+        "modeChanges": 0,
+        "pointerLockChanges": 0,
+        "reason": "state"
+      },
+      "toggle": "Pointer: absolute"
+    },
+    "boot": {
+      "ok": true,
+      "elapsedMs": 18150
+    },
+    "routing": {
+      "rect": {
+        "left": 0,
+        "top": 11057,
+        "width": 1600,
+        "height": 239
+      },
+      "frames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 0
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 32767
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 32767,
+            "y": 0
+          }
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 0
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 32767
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 0,
+            "y": 32767
+          }
+        },
+        {
+          "sequence": 4,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 32767
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 32767
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 32767,
+            "y": 32767
+          }
+        },
+        {
+          "sequence": 5,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 16384
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 16384
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 16384,
+            "y": 16384
+          }
+        },
+        {
+          "sequence": 6,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 275,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 3,
+          "evdev": 275
+        },
+        {
+          "sequence": 7,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 275,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 3,
+          "evdev": 275
+        },
+        {
+          "sequence": 8,
+          "device": "mouse",
+          "mode": "relative",
+          "events": [
+            {
+              "eventType": 2,
+              "code": 0,
+              "value": 11
+            },
+            {
+              "eventType": 2,
+              "code": 1,
+              "value": -5
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove"
+        }
+      ],
+      "diagnostics": [
+        {
+          "reason": "pointerlock-denied",
+          "mode": "relative",
+          "error": "browser-proof-denied"
+        }
+      ],
+      "state": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "pointerLockRequested": false,
+        "heldButtons": [],
+        "modeChanges": 2,
+        "pointerLockChanges": 0,
+        "reason": "state"
+      },
+      "ui": {
+        "state": "Pointer: absolute",
+        "debug": "Buttons: none · frames: 8",
+        "toggle": "Pointer: absolute"
+      },
+      "lockElementIsHost": false
+    }
+  },
+  "errors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "final": {
+    "pointer": {
+      "mode": "absolute",
+      "pointerLocked": false,
+      "pointerLockRequested": false,
+      "heldButtons": [],
+      "modeChanges": 2,
+      "pointerLockChanges": 0,
+      "reason": "state"
+    },
+    "stateText": "Pointer: absolute",
+    "debugText": "Buttons: none · frames: 8",
+    "terminalTail": "[fast-boot: restoring host from a build-time snapshot instead of booting Linux][execution: whole-machine-worker; fast interpreter; JIT forced off by ?jit=0; quantum 500000][    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024[    0.000000] Machine model: riscv-virtio,qemu[    0.000000] SBI specification v2.0 detected[    0.000000] SBI implementation ID=0x574d Version=0x100[    0.000000] SBI TIME extension detected[    0.000000] SBI IPI extension detected[    0.000000] SBI RFENCE extension detected[    0.000000] SBI SRST extension detected[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')[    0.000000] printk: bootconsole [sbi0] enabled[    0.000000] efi: UEFI not found.[    0.000000] Zone ranges:[    0.000000]   DMA32    [mem 0x0000000080000000-0x000000008fffffff]"
+  },
+  "screenshot": {
+    "path": "evidence/e5-t14b/pointer-mode-browser-2026-09-03.png",
+    "sha256": "74e34310eb098b1663a76aa7e3070d0bee456fc86e2fb1236cf78079dd789261"
+  }
+}

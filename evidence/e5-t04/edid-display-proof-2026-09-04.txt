@@ -1,0 +1,58 @@
+E5-T04 final guest/native proof
+Date: 2026-09-04
+Runtime head: a2742e9bfa93dc67cc68a5a8b3204bfe8fd450b4
+
+Environment
+-----------
+Host-layer rr/independent-machine proof was waived by repository policy and the user's explicit
+instruction. The recorded proof used the local native core, local wasm32/wasm-bindgen Node runner,
+and a Debian bookworm Docker consumer for edid-decode.
+
+Deterministic gate
+------------------
+Command:
+  env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS make verify-E5-T04
+Result:
+  PASS — cargo fmt check; cargo clippy -p wasm-vm-core --lib --tests -- -D warnings;
+  249 native wasm-vm-core library tests; wasm32 no-default-features build; and 4 wasm GPU tests.
+  The wasm-pack run emitted one pre-existing unused-import warning in crates/wasm/tests/hart_ctrl.rs;
+  its task-local gpu_protocol test still completed 4/4 with zero failures.
+
+Real EDID consumer
+------------------
+The canonical generated block was 128 bytes, SHA-256
+46db74fa6b83d3a2fef9ae062be195860d220f4175a2f16b988d871c6833593c.
+edid-decode --check reported EDID conformity: PASS for 1280x800@60, with no Warnings: or
+Failures: section.
+
+The adversarial 20-block sweep also passed with no warnings or failures:
+1023x768 1280x800 1365x768 1366x769 1440x900 1600x900 1680x1050 1920x1080
+1921x1081 2048x1152 2560x1440 2560x1600 2777x1555 3440x1440 3840x1600
+3840x2160 3841x2161 640x480 641x480 800x600.
+
+Behavior covered
+-----------------
+- The checked-in EDID_1280X800_60 fixture compares byte-for-byte with regeneration.
+- A 50-size native sweep checks EDID checksum zero and exact preferred DTD active dimensions,
+  including odd widths and 3840x2160.
+- GET_EDID returns the current 128-byte block only after F_EDID negotiation, rejects scanout 1
+  with RESP_ERR_INVALID_SCANOUT_ID, and returns RESP_ERR_UNSPEC without negotiation.
+- GET_DISPLAY_INFO reads the current host dimensions; the split-header test verifies 1601x901.
+- events_clear is write-one-to-clear and preserves bits not written.
+- 1000 set_display/transport-sync/interrupt-ack/events-clear cycles retain the final mode and
+  produce exactly 1000 config interrupts, so the IRQ count is no greater than the set count.
+- Reset restores the default 1280x800 mode, EDID, and clear event state.
+
+Built-page Chromium smoke
+-------------------------
+Command: `make web-dist`, then a fresh Chromium Playwright load of `http://127.0.0.1:8141/`.
+The test switched the built Roadmap page to Kanban and found E5-T04 with title
+"EDID blocks and display-info config events (hotplug plumbing)", class `rm-card st-verified`,
+and badge `VERIFIED`. It recorded zero console errors and zero request failures. Screenshot:
+`evidence/e5-t04/roadmap-browser.png`, SHA-256
+771b232f0918ec2e1c821b0229253a95e9222fce1ab6732882c399b81c849a6e.
+
+Evidence digest
+---------------
+The JSON companion is the structured record for this run; its SHA-256 is recorded in the task's
+Verification log after this file was added.

@@ -1,0 +1,305 @@
+{
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.7922.34 Safari/537.36",
+  "hardwareConcurrency": 8,
+  "hasPerfMemory": true,
+  "reps": 15,
+  "cliffTargets": [
+    1000,
+    5000,
+    10000
+  ],
+  "firstExecution": {
+    "reps": 31,
+    "targetMs": 5,
+    "samples": [
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0.09999999403953552,
+        "executeMs": 0,
+        "totalMs": 0.09999999403953552
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0.09999999403953552,
+        "executeMs": 0,
+        "totalMs": 0.09999999403953552
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0.10000000894069672,
+        "executeMs": 0,
+        "totalMs": 0.10000000894069672
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0.09999999403953552,
+        "executeMs": 0,
+        "totalMs": 0.09999999403953552
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0.10000000894069672,
+        "executeMs": 0,
+        "totalMs": 0.10000000894069672
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0.09999999403953552,
+        "executeMs": 0,
+        "totalMs": 0.09999999403953552
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      }
+    ],
+    "maxMs": 0.10000000894069672
+  },
+  "compile": [
+    {
+      "funcs": 1,
+      "bytes": 73,
+      "ms": 0.09999999403953552
+    },
+    {
+      "funcs": 2,
+      "bytes": 110,
+      "ms": 0.09999999403953552
+    },
+    {
+      "funcs": 4,
+      "bytes": 184,
+      "ms": 0.09999999403953552
+    },
+    {
+      "funcs": 8,
+      "bytes": 333,
+      "ms": 0.09999999403953552
+    },
+    {
+      "funcs": 16,
+      "bytes": 635,
+      "ms": 0.09999999403953552
+    },
+    {
+      "funcs": 32,
+      "bytes": 1244,
+      "ms": 0.09999999403953552
+    },
+    {
+      "funcs": 64,
+      "bytes": 2460,
+      "ms": 0.09999999403953552
+    },
+    {
+      "funcs": 128,
+      "bytes": 4924,
+      "ms": 0.09999999403953552
+    },
+    {
+      "funcs": 256,
+      "bytes": 10044,
+      "ms": 0.09999999403953552
+    }
+  ],
+  "instantiate": [
+    {
+      "funcs": 1,
+      "bytes": 73,
+      "ms": 0
+    },
+    {
+      "funcs": 2,
+      "bytes": 110,
+      "ms": 0
+    },
+    {
+      "funcs": 4,
+      "bytes": 184,
+      "ms": 0
+    },
+    {
+      "funcs": 8,
+      "bytes": 333,
+      "ms": 0
+    },
+    {
+      "funcs": 16,
+      "bytes": 635,
+      "ms": 0
+    },
+    {
+      "funcs": 32,
+      "bytes": 1244,
+      "ms": 0
+    },
+    {
+      "funcs": 64,
+      "bytes": 2460,
+      "ms": 0
+    },
+    {
+      "funcs": 128,
+      "bytes": 4924,
+      "ms": 0
+    },
+    {
+      "funcs": 256,
+      "bytes": 10044,
+      "ms": 0.09999999403953552
+    }
+  ],
+  "cliff": [
+    {
+      "target": 1000,
+      "live": 123,
+      "failedAt": 123,
+      "error": {
+        "name": "RangeError",
+        "message": "WebAssembly.instantiate(): Out of memory: Cannot allocate Wasm memory for new instance"
+      },
+      "ms": 8.700000002980232,
+      "usedJSHeapSize": 10000000
+    },
+    {
+      "target": 5000,
+      "live": 123,
+      "failedAt": 123,
+      "error": {
+        "name": "RangeError",
+        "message": "WebAssembly.instantiate(): Out of memory: Cannot allocate Wasm memory for new instance"
+      },
+      "ms": 9.100000008940697,
+      "usedJSHeapSize": 10000000
+    },
+    {
+      "target": 10000,
+      "live": 123,
+      "failedAt": 123,
+      "error": {
+        "name": "RangeError",
+        "message": "WebAssembly.instantiate(): Out of memory: Cannot allocate Wasm memory for new instance"
+      },
+      "ms": 10.099999994039536,
+      "usedJSHeapSize": 10000000
+    }
+  ],
+  "generatedAt": "2026-09-02T15:09:05.038Z",
+  "project": "chromium",
+  "playwrightBrowserVersion": "151.0.7922.34"
+}

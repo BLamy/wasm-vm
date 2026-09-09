@@ -1,0 +1,49 @@
+{
+  "task": "E5-T04",
+  "recordedAt": "2026-09-04",
+  "runtimeHead": "a2742e9bfa93dc67cc68a5a8b3204bfe8fd450b4",
+  "hostLayer": "waived per repository policy and user instruction; proof is guest/native/wasm plus a real EDID consumer",
+  "commands": [
+    {
+      "command": "env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS make verify-E5-T04",
+      "result": "PASS: fmt, core clippy, 249 native core tests, wasm32 core build, and 4 wasm GPU tests"
+    },
+    {
+      "command": "docker run --rm -v $PWD/.wrangler/e5-t04-edid-final:/edids:ro debian:bookworm-slim sh -c 'apt-get update -qq && apt-get install -y -qq edid-decode >/dev/null && for file in /edids/*.bin; do edid-decode --check $file; done'",
+      "result": "PASS: 20/20 blocks; every block reported EDID conformity: PASS with no Warnings: or Failures: section"
+    }
+  ],
+  "canonical": {
+    "mode": "1280x800@60",
+    "sha256": "46db74fa6b83d3a2fef9ae062be195860d220f4175a2f16b988d871c6833593c",
+    "bytes": 128,
+    "preferredTiming": "1280x800",
+    "decoder": "edid-decode from debian:bookworm-slim"
+  },
+  "decoderSweep": [
+    "1023x768", "1280x800", "1365x768", "1366x769", "1440x900", "1600x900",
+    "1680x1050", "1920x1080", "1921x1081", "2048x1152", "2560x1440", "2560x1600",
+    "2777x1555", "3440x1440", "3840x1600", "3840x2160", "3841x2161", "640x480",
+    "641x480", "800x600"
+  ],
+  "stress": {
+    "setDisplayCalls": 1000,
+    "configIrqs": 1000,
+    "eventClears": 1000,
+    "finalModeRetained": true,
+    "irqBoundHeld": true
+  },
+  "browser": {
+    "browser": "Chromium Playwright",
+    "url": "http://127.0.0.1:8141/",
+    "builtPage": true,
+    "kanbanCard": "E5-T04",
+    "cardClass": "rm-card st-verified",
+    "badge": "VERIFIED",
+    "consoleErrors": 0,
+    "requestFailures": 0,
+    "screenshot": "evidence/e5-t04/roadmap-browser.png",
+    "screenshotSha256": "771b232f0918ec2e1c821b0229253a95e9222fce1ab6732882c399b81c849a6e"
+  },
+  "claim": "The run proves deterministic EDID 1.4 generation with byte-stable 1280x800@60 output, valid checksums and preferred timings across odd and large dimensions, negotiated and scanout-indexed GET_EDID responses, dynamic GET_DISPLAY_INFO pmode data, W1C event semantics, and coalesced config-change interrupts that retain the final host mode."
+}

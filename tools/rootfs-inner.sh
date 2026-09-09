@@ -164,6 +164,12 @@ for s in modules hwclock swap hostname bootmisc syslog seedrng; do link_svc boot
 link_svc default networking
 for s in killprocs savecache mount-ro; do link_svc shutdown "$s"; done
 
+# E5-T23c: the static virtio-console agent. It owns only the named agent port and retries inside
+# the process when the kernel removes/recreates that port; no serial-console service is changed.
+install -Dm755 /wasmvm-agent-riscv64 "$ROOT/usr/libexec/wasm-vm/wasmvm-agent"
+install -Dm755 /wasmvm-agent.initd "$ROOT/etc/init.d/wasmvm-agent"
+link_svc default wasmvm-agent
+
 # 2g. E3-T21b2c WVFT agent. Every path is fixed at image-build time. The guest service opens two
 # outbound connections to the VM-private slirp endpoint; it does not listen on any interface.
 install -Dm755 /wvft-agent-riscv64 "$ROOT/usr/libexec/wasm-vm/wvft-agent"
@@ -179,8 +185,10 @@ link_svc default wasm-vm-file-agent
 # directory paths so the host-side drift gate can reject an unreviewed image capability change.
 {
   for path in \
+    /etc/init.d/wasmvm-agent \
     /etc/init.d/wasm-vm-file-agent \
     /etc/wasm-vm/file-transfer.conf \
+    /usr/libexec/wasm-vm/wasmvm-agent \
     /usr/libexec/wasm-vm/wvft-agent \
     /usr/bin/vm-download \
     /usr/local/bin/osc52-copy \

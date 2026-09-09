@@ -1,0 +1,56 @@
+{
+  "schema": "e5-t10a-virtio-input-config-v1",
+  "task": "E5-T10a",
+  "status": "pass",
+  "implementation_commit": "ea342ce",
+  "recorded_at": "2026-09-03",
+  "native": {
+    "acceptance_command": "cargo test -p wasm-vm-core --lib dev::virtio::input",
+    "acceptance_result": "3 passed, 0 failed",
+    "coverage": [
+      "The fixture reads ID_NAME, ID_DEVIDS, PROP_BITS, EV_BITS, and ABS_INFO through the virtio-mmio config window and compares the exact little-endian payload bytes.",
+      "Unsupported EV_BITS, unknown selectors, maximum subselectors, and reads beyond the 136-byte config surface return zero without leaking a previous union payload.",
+      "A width-2 selector write updates select/subsel byte-for-byte, and reset returns the selector state to UNSET.",
+      "InputDeviceSpec bounds property/event bit and ABS-axis setters to fixed host-owned arrays; the new device advertises virtio id 18 and two queues."
+    ],
+    "regression": {
+      "command": "cargo test -p wasm-vm-core --lib --quiet",
+      "result": "222 passed, 0 failed"
+    },
+    "virtio_regression": {
+      "command": "cargo test -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet",
+      "result": "22 passed, 0 failed"
+    },
+    "clippy": {
+      "command": "cargo clippy -p wasm-vm-core --lib -- -D warnings",
+      "result": "pass"
+    },
+    "format": {
+      "commands": [
+        "cargo fmt --all -- --check",
+        "git diff --check"
+      ],
+      "result": "pass"
+    }
+  },
+  "wasm32": {
+    "core_build": {
+      "command": "cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown",
+      "result": "pass"
+    },
+    "core_clippy": {
+      "command": "cargo clippy -p wasm-vm-core --target wasm32-unknown-unknown --no-default-features --lib -- -D warnings",
+      "result": "pass"
+    },
+    "runner": {
+      "command": "wasm-pack test --node crates/wasm --test input_config",
+      "result": "1 passed, 0 failed",
+      "coverage": "The wasm32 runner compares the same name, devids, property, event-bitmap, and ABS_INFO fixture bytes and zero-payload behavior."
+    }
+  },
+  "claim": "At commit ea342ce, VirtioInput provides a bounded, little-endian virtio-input configuration state machine built from InputDeviceSpec, with exact ID/devids/bitmap/ABS payloads, zeroed unsupported queries, device id 18, and native/wasm32 parity.",
+  "scope_notes": [
+    "Eventq/statusq transport and host injection are intentionally deferred to E5-T10b and E5-T10c.",
+    "No independent-machine, WebKit, or host-layer rr run was used, per the user's direction and the repository's current evidence policy."
+  ]
+}

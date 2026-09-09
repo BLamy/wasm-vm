@@ -134,6 +134,21 @@ const PROF_STRIDE_BASE: u32 = 1021;
 #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
 const PROF_STRIDE_JITTER: u32 = 128;
 
+/// Persistent queue views for the six-queue virtio-console multiport device.  Keeping the views
+/// in the Machine (rather than rebuilding them on every instruction) preserves the shared
+/// virtqueue shadows across bounded run calls while reset/reconfiguration can explicitly discard
+/// them through the console service.
+struct VirtioConsoleService {
+    slot_index: usize,
+    state: alloc::rc::Rc<core::cell::RefCell<dev::virtio::console::ConsoleState>>,
+    port0_receiveq: Option<dev::virtio::queue::Virtqueue>,
+    port0_transmitq: Option<dev::virtio::queue::Virtqueue>,
+    control_receiveq: Option<dev::virtio::queue::Virtqueue>,
+    control_transmitq: Option<dev::virtio::queue::Virtqueue>,
+    agent_receiveq: Option<dev::virtio::queue::Virtqueue>,
+    agent_transmitq: Option<dev::virtio::queue::Virtqueue>,
+}
+
 pub struct Machine {
     hart: Hart,
     bus: SystemBus,
@@ -276,6 +291,52 @@ pub struct Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::rng::RngState>>,
         Option<dev::virtio::queue::Virtqueue>,
     )>,
+    /// E5-T11b: virtio-input keyboard queue state (eventq + statusq), installed in slot 3 with
+    /// a host-owned LED sink. Serviced at every instruction boundary after guest queue kicks.
+    #[allow(clippy::type_complexity)]
+    keyboard: Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+        Option<dev::virtio::queue::Virtqueue>,
+    )>,
+    /// E5-T11b: retained handle for the host/UI's NumLock/CapsLock/ScrollLock indicator state.
+    keyboard_leds: Option<dev::virtio::input::keyboard::KeyboardLedHandle>,
+    /// E5-T14a: absolute tablet queue state, installed in slot 4 alongside the keyboard.
+    #[allow(clippy::type_complexity)]
+    tablet: Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+        Option<dev::virtio::queue::Virtqueue>,
+    )>,
+    /// E5-T14a: relative mouse queue state, installed in slot 5 alongside the tablet.
+    #[allow(clippy::type_complexity)]
+    mouse: Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+        Option<dev::virtio::queue::Virtqueue>,
+    )>,
+    /// E5-T19d: guest-facing virtio-snd state. The control/event/playback ring views are kept
+    /// across instruction boundaries just like the other virtio devices; the injected clock and
+    /// sink keep pacing deterministic while allowing native WavSink and browser sinks to share
+    /// the same Machine assembly seam. The capture source is the corresponding host-owned rxq
+    /// adapter; the default is deterministic silence until a browser permission session replaces
+    /// it with a shared-ring consumer.
+    #[allow(clippy::type_complexity)]
+    snd: Option<(
+        usize,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::snd::SndState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+        Option<dev::virtio::queue::Virtqueue>,
+        Option<dev::virtio::queue::Virtqueue>,
+        Option<dev::virtio::queue::Virtqueue>,
+        alloc::rc::Rc<dyn dev::virtio::snd::AudioClock>,
+        alloc::boxed::Box<dyn dev::virtio::snd::AudioSink>,
+        alloc::boxed::Box<dyn dev::virtio::snd::AudioCaptureSource>,
+    )>,
+    /// E5-T23b: virtio-console port-0/control/agent ring views and the bounded host-side channel.
+    /// The agent uses port 1 (queues 4 and 5); the UART/SBI console is intentionally not routed
+    /// through this state.
+    console: Option<VirtioConsoleService>,
     /// E3-T12c3: the snapshot coherence binding — the base disk image this machine is running against
     /// (`base_image_hash`), the emulator build (`core_hash`), and the monotonic overlay-commit
     /// generation. `save_resume` stamps all three into the blob header; `load_resume` validates them
@@ -354,6 +415,11 @@ pub struct Machine {
     /// scope; browser `runChunk` opens it around all of its internal UART/persistence sub-runs.
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     jit_run_scope_active: bool,
+    /// True when the active scope was opened by the browser/host wrapper rather than by an
+    /// unscoped `run` call. Host-owned terminal scopes preserve queued translations for a later
+    /// quantum; an ordinary `run` may flush its final warmed translation before returning.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    jit_run_scope_external: bool,
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     jit_run_submissions_before: u64,
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
@@ -399,6 +465,10 @@ enum BlockStep {
     /// A `Trap` exit (precise mem-fault / `ecall` / `ebreak`); `retired` body ops committed before
     /// the faulting instruction, which consumes one work slot but does not retire.
     Trapped { trap: Trap, retired: u64 },
+    /// The browser's bounded in-module chain stopped before entering its next successor. The
+    /// committed prefix is returned to the outer loop so it can observe the normal boundary before
+    /// another compiled call begins.
+    Budget { retired: u64 },
 }
 
 /// E4-T31: one bounded JIT dispatch result. `work_used` is the exact number of outer-loop work
@@ -457,6 +527,12 @@ const JIT_PUMP_INTERVAL: u32 = 64;
 #[cfg(not(feature = "zicsr-stub"))]
 const JIT_INSTALL_BUDGET: usize = 64;
 
+/// E4-T34: maximum guest-work fuel handed to one browser in-module chain. This keeps a direct wasm
+/// call chain bounded even when the outer `run` quantum is large, preserving the existing batched
+/// interrupt/device observation window while replacing dozens of JS dispatches with one call.
+#[cfg(not(feature = "zicsr-stub"))]
+const JIT_DIRECT_CHAIN_FUEL: u64 = 128;
+
 /// E4-T19: the static successor PHYSICAL PCs of a decoded block — `[edge0, edge1]` where edge 0 is
 /// the taken / sole / fall-through successor and edge 1 is a conditional branch's not-taken side.
 /// A successor is returned ONLY when it lies on the SAME physical page as the block, so its physical
@@ -506,7 +582,12 @@ fn static_successors(b: &dispatch::DecodedBlock) -> [Option<u64>; 2] {
 /// components of the undirected static-edge graph, then split any component larger than `k` into
 /// chunks of ≤ `k`. A union-find over the block set; edges are the same-page static successors that
 /// land on another drained block. Splitting an oversized component only turns some intra-batch edges
-/// into cross-batch ones (still correct), so `k` is a hard cap on module size.
+/// into cross-batch ones (still correct), so `k` is a hard cap on module size. Once components have
+/// been split to that cap, adjacent disconnected chunks may share a module:
+/// `intra_edges_for_group` only emits calls for real same-batch edges, so coalescing them changes
+/// compilation granularity, not guest control flow. The executors retain unaffected members when a
+/// page-granular SMC invalidation touches only part of such a batch; a batch is dropped atomically
+/// only when all of its members are on the invalidated page.
 #[cfg(not(feature = "zicsr-stub"))]
 fn group_into_batches(
     blocks: &[dispatch::DecodedBlock],
@@ -547,12 +628,25 @@ fn group_into_batches(
         let r = find(&mut parent, i);
         comps.entry(r).or_default().push(i);
     }
-    // Emit components, chunking oversized ones to the batch-size cap.
+    // Emit components, chunking oversized ones to the batch-size cap. Pack consecutive chunks from
+    // disconnected components together where there is room. The old one-component-per-module
+    // policy made a large compile drain create many tiny Wasm instances for code with no static
+    // relationship, which increased instance/LRU churn without adding any direct-call edges.
     let mut out = alloc::vec::Vec::new();
+    let mut current = alloc::vec::Vec::new();
     for (_, members) in comps {
         for chunk in members.chunks(k) {
-            out.push(chunk.to_vec());
+            if !current.is_empty() && current.len() + chunk.len() > k {
+                out.push(core::mem::take(&mut current));
+            }
+            current.extend_from_slice(chunk);
+            if current.len() == k {
+                out.push(core::mem::take(&mut current));
+            }
         }
+    }
+    if !current.is_empty() {
+        out.push(current);
     }
     out
 }
@@ -625,6 +719,12 @@ impl Machine {
             net: None,
             net_backend: None,
             rng: None,
+            keyboard: None,
+            keyboard_leds: None,
+            tablet: None,
+            mouse: None,
+            snd: None,
+            console: None,
             coherence: SnapshotCoherence::default(),
             // E4-T05: default the toggle to the `predecode` feature (OFF in the normal build);
             // the differential harness flips it at runtime via `set_block_cache`.
@@ -644,6 +744,7 @@ impl Machine {
             jit_run_attempt_remaining: 0,
             jit_run_staging_remaining: 0,
             jit_run_scope_active: false,
+            jit_run_scope_external: false,
             jit_run_submissions_before: 0,
             jit_run_staged_nominations: 0,
             jit_run_attempted_blocks: 0,
@@ -696,16 +797,41 @@ impl Machine {
         (self.block_entry_hits, self.block_builds)
     }
 
-    /// PMP regions may split a physical page, while decoded/JIT caches are page-keyed. Any
-    /// effective PMP CSR or privilege change therefore invalidates all cached code before another
-    /// block runs; rechecking only the entry parcel would let a denied interior instruction replay
-    /// from a cursor. These changes are rare, so this stays off the steady-state path except for two
-    /// integer comparisons at block/run boundaries.
+    /// PMP regions may split a physical page, while decoded/JIT caches are page-keyed. An effective
+    /// PMP CSR change therefore invalidates all cached code before another block runs. A privilege
+    /// change is cheaper to audit: if every cached instruction has the same execute permission in
+    /// the old and new modes, the physically keyed code remains valid and can be retained. This is
+    /// the common full-grant case used by Linux; a split or mode-sensitive PMP map still takes the
+    /// conservative flush path. The check stays off the steady-state path except at mode changes.
     #[cfg(not(feature = "zicsr-stub"))]
     fn sync_pmp_code_permissions(&mut self) {
         let revision = self.hart.csr.pmp.revision();
         let mode = self.hart.csr.mode;
         if revision == self.pmp_revision_seen && mode == self.pmp_mode_seen {
+            return;
+        }
+        if revision == self.pmp_revision_seen
+            && mode != self.pmp_mode_seen
+            && self.block_cache.live_blocks().all(|block| {
+                let mut pc = block.phys_start;
+                block.ops.iter().all(|op| {
+                    let len = u64::from(op.len);
+                    let old_ok = self.hart.csr.pmp_ok(
+                        pc,
+                        len,
+                        crate::pmp::PmpAccess::Exec,
+                        self.pmp_mode_seen,
+                    );
+                    let new_ok = self
+                        .hart
+                        .csr
+                        .pmp_ok(pc, len, crate::pmp::PmpAccess::Exec, mode);
+                    pc = pc.wrapping_add(len);
+                    old_ok == new_ok
+                })
+            })
+        {
+            self.pmp_mode_seen = mode;
             return;
         }
         self.pmp_revision_seen = revision;
@@ -836,6 +962,14 @@ impl Machine {
         }
     }
 
+    /// E4-T39: independently enable or disable generated dynamic-return (`jalr`) chaining. This
+    /// keeps the static region-chain control available for a separate entry-path comparison.
+    pub fn set_dynamic_chaining(&mut self, on: bool) {
+        if let Some(e) = self.executor.as_mut() {
+            e.set_dynamic_chaining(on);
+        }
+    }
+
     /// E4-T18: set the chain-depth budget (max links per chain before a mandatory dispatch return;
     /// clamped to ≥ 1, where 1 is the degenerate "no chaining past one link" mode). No-op without an
     /// executor.
@@ -956,8 +1090,25 @@ impl Machine {
     /// `save_resume` stamps these into the header and `load_resume` refuses a snapshot whose header
     /// disagrees — a resume onto a different image or a stale build is rejected before any mutation.
     pub fn set_snapshot_identity(&mut self, core_hash: [u8; 32], base_image_hash: [u8; 32]) {
+        self.set_snapshot_identity_with_generation(
+            core_hash,
+            base_image_hash,
+            self.coherence.generation,
+        );
+    }
+
+    /// E3-T12d: bind this machine to a base disk image, emulator build, and generation recovered
+    /// from the durable overlay metadata. The persistent browser boot uses this on reopen so the
+    /// resume guard sees the same generation that was committed with the loaded blocks.
+    pub fn set_snapshot_identity_with_generation(
+        &mut self,
+        core_hash: [u8; 32],
+        base_image_hash: [u8; 32],
+        generation: u64,
+    ) {
         self.coherence.core_hash = core_hash;
         self.coherence.base_image_hash = base_image_hash;
+        self.coherence.generation = generation;
     }
 
     /// E3-T12c3: the current overlay-commit generation the next `save_resume` will bind.
@@ -1029,6 +1180,18 @@ impl Machine {
     /// Size of guest RAM in bytes.
     pub fn ram_len(&self) -> usize {
         self.bus.ram().len()
+    }
+
+    /// Linear-memory address of the guest RAM allocation. This is an integration seam for the
+    /// wasm browser JIT's imported-memory fast path; callers must use the value only while this
+    /// machine owns the allocation (the `Vec` is not resized during execution).
+    pub fn ram_host_ptr(&self) -> usize {
+        self.bus.ram().as_bytes().as_ptr() as usize
+    }
+
+    /// Guest physical base address of the RAM allocation.
+    pub fn ram_base(&self) -> u64 {
+        self.bus.ram().base()
     }
 
     /// E2-T07: attach the ns16550a UART at [`platform::virt::UART0_BASE`], wired to PLIC
@@ -1222,6 +1385,332 @@ impl Machine {
         (alloc::rc::Rc::clone(&self.virtio[2].0), state)
     }
 
+    /// E5-T11b: attach the concrete virtio-input keyboard in slot 3. The standard eight slots
+    /// must already exist (`enable_virtio_slots`/`enable_virtio_blk` first); slot 3 is reserved
+    /// for the keyboard so GPU slot 0, net slot 1, and rng slot 2 retain their established shape.
+    /// Returns the slot, event/status queue state, and host-owned LED indicator handle.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_keyboard(
+        &mut self,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>,
+        dev::virtio::input::keyboard::KeyboardLedHandle,
+    ) {
+        let slot_index = dev::virtio::input::keyboard::KEYBOARD_VIRTIO_SLOT;
+        assert!(
+            self.virtio.len() > slot_index,
+            "enable_virtio_slots/enable_virtio_blk before enable_virtio_keyboard"
+        );
+        let leds = alloc::rc::Rc::new(core::cell::RefCell::new(
+            dev::virtio::input::keyboard::KeyboardLedState::default(),
+        ));
+        let sink = alloc::boxed::Box::new(dev::virtio::input::keyboard::KeyboardLedSink::new(
+            alloc::rc::Rc::clone(&leds),
+        ));
+        let (device, state) = dev::virtio::input::VirtioInput::new_with_status_sink_state(
+            dev::virtio::input::keyboard::keyboard_spec(),
+            sink,
+        );
+        assert!(
+            self.virtio[slot_index]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(device))
+                .is_ok(),
+            "virtio slot {slot_index} already has a device"
+        );
+        self.keyboard = Some((alloc::rc::Rc::clone(&state), None, None));
+        self.keyboard_leds = Some(alloc::rc::Rc::clone(&leds));
+        (
+            alloc::rc::Rc::clone(&self.virtio[slot_index].0),
+            state,
+            leds,
+        )
+    }
+
+    /// Current host-side keyboard LED state, if the virtio-input keyboard is attached.
+    pub fn keyboard_leds(&self) -> Option<dev::virtio::input::keyboard::KeyboardLedHandle> {
+        self.keyboard_leds.as_ref().map(alloc::rc::Rc::clone)
+    }
+
+    /// Host/UI handle for injecting framed keyboard events into the guest-facing eventq. The
+    /// caller appends one or more events with
+    /// [`dev::virtio::input::InputState::inject_event`] and closes the frame with
+    /// [`dev::virtio::input::InputState::sync`], matching the transport contract used by the
+    /// browser keymap.
+    pub fn keyboard_input(
+        &self,
+    ) -> Option<alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>> {
+        self.keyboard
+            .as_ref()
+            .map(|(state, _, _)| alloc::rc::Rc::clone(state))
+    }
+
+    /// E5-T14a: attach the absolute tablet in slot 4 and relative mouse in slot 5. The standard
+    /// eight slots must already exist; both queue states stay independent so the host can route a
+    /// selected pointer mode without changing the keyboard's slot or pending frames. Returns
+    /// `(tablet_slot, tablet_state, mouse_slot, mouse_state)`.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_pointer(
+        &mut self,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>,
+    ) {
+        let tablet_slot = dev::virtio::input::pointer::TABLET_VIRTIO_SLOT;
+        let mouse_slot = dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT;
+        assert!(
+            self.virtio.len() > mouse_slot,
+            "enable_virtio_slots/enable_virtio_blk before enable_virtio_pointer"
+        );
+
+        let (tablet, tablet_state) = dev::virtio::input::VirtioInput::new_with_state(
+            dev::virtio::input::pointer::tablet_spec(),
+        );
+        assert!(
+            self.virtio[tablet_slot]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(tablet))
+                .is_ok(),
+            "virtio slot {tablet_slot} already has a device"
+        );
+        self.tablet = Some((alloc::rc::Rc::clone(&tablet_state), None, None));
+
+        let (mouse, mouse_state) = dev::virtio::input::VirtioInput::new_with_state(
+            dev::virtio::input::pointer::mouse_spec(),
+        );
+        assert!(
+            self.virtio[mouse_slot]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(mouse))
+                .is_ok(),
+            "virtio slot {mouse_slot} already has a device"
+        );
+        self.mouse = Some((alloc::rc::Rc::clone(&mouse_state), None, None));
+
+        (
+            alloc::rc::Rc::clone(&self.virtio[tablet_slot].0),
+            tablet_state,
+            alloc::rc::Rc::clone(&self.virtio[mouse_slot].0),
+            mouse_state,
+        )
+    }
+
+    /// Host/UI handle for injecting framed absolute tablet events.
+    pub fn tablet_input(
+        &self,
+    ) -> Option<alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>> {
+        self.tablet
+            .as_ref()
+            .map(|(state, _, _)| alloc::rc::Rc::clone(state))
+    }
+
+    /// Host/UI handle for injecting framed relative mouse events.
+    pub fn mouse_input(
+        &self,
+    ) -> Option<alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>> {
+        self.mouse
+            .as_ref()
+            .map(|(state, _, _)| alloc::rc::Rc::clone(state))
+    }
+
+    /// E5-T19d: attach the four-queue virtio-snd device to the first free sound slot. Slot 6 is
+    /// the standard location after keyboard/tablet/mouse; slot 7 is used only when an optional
+    /// secondary disk already occupies slot 6. Existing virtio slots are never replaced.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_snd(
+        &mut self,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::snd::SndState>>,
+    ) {
+        let clock = alloc::rc::Rc::new(dev::virtio::snd::ManualAudioClock::new());
+        self.enable_virtio_snd_with_audio_and_capture(
+            clock,
+            alloc::boxed::Box::new(dev::virtio::snd::NullSink::new()),
+            false,
+        )
+    }
+
+    /// Attach the deterministic headless sound device with an explicit microphone advertisement
+    /// gate. `enable_mic` changes only the guest-visible PCM configuration; it never opens a host
+    /// device or requests permission.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_snd_with_capture(
+        &mut self,
+        enable_mic: bool,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::snd::SndState>>,
+    ) {
+        let clock = alloc::rc::Rc::new(dev::virtio::snd::ManualAudioClock::new());
+        self.enable_virtio_snd_with_audio_and_capture(
+            clock,
+            alloc::boxed::Box::new(dev::virtio::snd::NullSink::new()),
+            enable_mic,
+        )
+    }
+
+    /// Attach virtio-snd with a host-provided monotonic clock and output sink. The core owns both
+    /// for the life of the Machine, so a native WavSink, a browser ring sink, and the default
+    /// headless NullSink all exercise the same guest transport path.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_snd_with_audio(
+        &mut self,
+        clock: alloc::rc::Rc<dyn dev::virtio::snd::AudioClock>,
+        sink: alloc::boxed::Box<dyn dev::virtio::snd::AudioSink>,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::snd::SndState>>,
+    ) {
+        self.enable_virtio_snd_with_audio_and_capture(clock, sink, false)
+    }
+
+    /// Attach virtio-snd with host-provided playback timing and an explicit microphone
+    /// advertisement gate. The gate is applied while the device is created, before it is
+    /// installed into a virtio-mmio slot, and does not create a host capture handle.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_snd_with_audio_and_capture(
+        &mut self,
+        clock: alloc::rc::Rc<dyn dev::virtio::snd::AudioClock>,
+        sink: alloc::boxed::Box<dyn dev::virtio::snd::AudioSink>,
+        enable_mic: bool,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::snd::SndState>>,
+    ) {
+        assert!(
+            self.virtio.len() > dev::virtio::snd::VIRTIO_SND_SLOT,
+            "enable_virtio_slots/enable_virtio_blk before enable_virtio_snd"
+        );
+        assert!(self.snd.is_none(), "virtio-snd is already enabled");
+        let slot_index = (dev::virtio::snd::VIRTIO_SND_SLOT..self.virtio.len())
+            .find(|&index| self.virtio[index].0.borrow().device_id() == 0)
+            .expect("no free virtio slot for virtio-snd");
+        let (device, state) = dev::virtio::snd::VirtioSnd::new_with_capture(enable_mic);
+        assert!(
+            self.virtio[slot_index]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(device))
+                .is_ok(),
+            "virtio slot {slot_index} already has a device"
+        );
+        self.snd = Some((
+            slot_index,
+            alloc::rc::Rc::clone(&state),
+            None,
+            None,
+            None,
+            None,
+            clock,
+            sink,
+            alloc::boxed::Box::new(dev::virtio::snd::NullCaptureSource),
+        ));
+        (alloc::rc::Rc::clone(&self.virtio[slot_index].0), state)
+    }
+
+    /// Replace the host-side sound clock and sink after the platform has been assembled. The
+    /// browser constructs the machine before it can transfer its AudioWorklet SharedArrayBuffers;
+    /// narrowing the advertised PCM rate here keeps the subsequent guest probe consistent with
+    /// the already-negotiated AudioContext.
+    pub fn replace_virtio_snd_audio(
+        &mut self,
+        clock: alloc::rc::Rc<dyn dev::virtio::snd::AudioClock>,
+        sink: alloc::boxed::Box<dyn dev::virtio::snd::AudioSink>,
+        sample_rate_hz: u32,
+    ) -> bool {
+        let Some((_, state, _, _, _, _, current_clock, current_sink, _)) = self.snd.as_mut() else {
+            return false;
+        };
+        if !state.borrow_mut().set_output_sample_rate(sample_rate_hz) {
+            return false;
+        }
+        *current_clock = clock;
+        *current_sink = sink;
+        true
+    }
+
+    /// Replace the host-side sound capture source after the platform has been assembled. The
+    /// default source is deterministic silence; a browser installs its shared SAB consumer only
+    /// after the guest has successfully issued input PCM_START and the page has a media stream.
+    pub fn replace_virtio_snd_capture(
+        &mut self,
+        source: alloc::boxed::Box<dyn dev::virtio::snd::AudioCaptureSource>,
+    ) -> bool {
+        let Some((_, _, _, _, _, _, _, _, current_source)) = self.snd.as_mut() else {
+            return false;
+        };
+        *current_source = source;
+        true
+    }
+
+    /// Current guest-visible virtio-snd slot and shared state, if sound was assembled.
+    #[allow(clippy::type_complexity)]
+    pub fn virtio_snd(
+        &self,
+    ) -> Option<(
+        usize,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::snd::SndState>>,
+    )> {
+        self.snd
+            .as_ref()
+            .map(|(slot, state, _, _, _, _, _, _, _)| (*slot, alloc::rc::Rc::clone(state)))
+    }
+
+    /// E5-T23b: attach the six-queue virtio-console device (DeviceID 3) in the reserved final
+    /// slot.  Port 0 keeps the standard virtio-console queue pair; port 1 is the named
+    /// `org.wasmvm.agent` channel.  The existing UART/SBI console remains at its original MMIO
+    /// address and has no shared queue or buffer with this device.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_console(
+        &mut self,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::console::ConsoleState>>,
+    ) {
+        let slot_index = dev::virtio::console::VIRTIO_CONSOLE_SLOT;
+        assert!(
+            self.virtio.len() > slot_index,
+            "enable_virtio_slots/enable_virtio_blk before enable_virtio_console"
+        );
+        assert!(self.console.is_none(), "virtio-console is already enabled");
+        let (device, state) = dev::virtio::console::VirtioConsole::new_with_state();
+        assert!(
+            self.virtio[slot_index]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(device))
+                .is_ok(),
+            "virtio slot {slot_index} already has a device"
+        );
+        self.console = Some(VirtioConsoleService {
+            slot_index,
+            state: alloc::rc::Rc::clone(&state),
+            port0_receiveq: None,
+            port0_transmitq: None,
+            control_receiveq: None,
+            control_transmitq: None,
+            agent_receiveq: None,
+            agent_transmitq: None,
+        });
+        (alloc::rc::Rc::clone(&self.virtio[slot_index].0), state)
+    }
+
+    /// Current guest-facing virtio-console state, if the E5 agent transport is assembled.
+    pub fn virtio_console(
+        &self,
+    ) -> Option<alloc::rc::Rc<core::cell::RefCell<dev::virtio::console::ConsoleState>>> {
+        self.console
+            .as_ref()
+            .map(|console| alloc::rc::Rc::clone(&console.state))
+    }
+
     /// E2-T16: attach the goldfish RTC at [`platform::virt::RTC_BASE`], wired to PLIC IRQ 11,
     /// with `clock` as its wall-clock source (`SystemTime` in the CLI, `Date.now()` in wasm, a
     /// mock in tests). Matches the `google,goldfish-rtc` node the DTB advertises — without it
@@ -1284,6 +1773,13 @@ impl Machine {
     /// CPU-by-subtraction accounting. Zero when no [`Self::set_host_timer`] was injected.
     pub fn prof_total_ns(&self) -> u64 {
         self.prof_total_ns
+    }
+
+    /// E4-T38: the JIT compile-pause ledger without constructing the full ranked profile. Browser
+    /// policy screens poll this alongside cache residency, so keep the read path allocation-free
+    /// and make the pause counters share the profiler's single source of truth.
+    pub fn jit_pause_stats(&self) -> prof::JitPauseStats {
+        self.prof.jit_pause()
     }
 
     /// E4-T01: the accumulated profile as a ranked [`prof::ProfReport`]. `total_ns` is the profiled
@@ -2293,12 +2789,19 @@ impl Machine {
     /// and closes its own scope automatically.
     pub fn begin_cooperative_run(&mut self) {
         #[cfg(not(feature = "zicsr-stub"))]
+        self.begin_cooperative_run_mode(true);
+    }
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn begin_cooperative_run_mode(&mut self, external: bool) {
+        #[cfg(not(feature = "zicsr-stub"))]
         {
             assert!(
                 !self.jit_run_scope_active,
                 "cooperative run scopes must not nest"
             );
             self.jit_run_scope_active = true;
+            self.jit_run_scope_external = external;
             self.jit_run_submissions_before = self.prof.jit_pause().total_submitted_blocks;
             self.jit_run_staged_nominations = 0;
             self.jit_run_attempted_blocks = 0;
@@ -2334,12 +2837,18 @@ impl Machine {
                 self.jit_run_scope_active,
                 "no cooperative run scope is active"
             );
-            // Only the host-visible MaxInstrs boundary gets a final pump. Internal UART/persistence
-            // sub-runs do not flush independently, and a terminal trap/exit/reset does not compile
-            // dead backlog. The final pump sits outside run_traced's timer, so explicitly fold its
-            // measured pause into total_ns.
+            // Only host-visible completion boundaries get a final pump. Internal UART/persistence
+            // sub-runs do not flush independently, and a host-owned terminal scope preserves its
+            // backlog for a later quantum. An escaped trap can still be resumed after the host
+            // repairs the faulting state, so publish that warmed translation for the precise-fault
+            // path. An ordinary unscoped run also flushes on a normal exit so short programs can
+            // prove their compiled path before returning. The final pump sits outside run_traced's
+            // timer, so explicitly fold its measured pause into total_ns.
+            let terminal_exit_flush =
+                !self.jit_run_scope_external && matches!(_outcome, RunOutcome::Exited(_));
             if self.jit_enabled
-                && _outcome == RunOutcome::MaxInstrs
+                && (matches!(_outcome, RunOutcome::MaxInstrs | RunOutcome::Trapped(_))
+                    || terminal_exit_flush)
                 && self.jit_run_attempt_remaining > 0
                 && (!self.compile_queue.is_empty()
                     || (self.jit_run_staging_remaining > 0 && self.discovery.queue_len() > 0))
@@ -2371,6 +2880,7 @@ impl Machine {
                 );
             }
             self.jit_run_scope_active = false;
+            self.jit_run_scope_external = false;
             self.jit_run_attempt_remaining = 0;
             self.jit_run_staging_remaining = 0;
         }
@@ -2395,7 +2905,7 @@ impl Machine {
         let owns_cooperative_scope = !self.jit_run_scope_active;
         #[cfg(not(feature = "zicsr-stub"))]
         if owns_cooperative_scope {
-            self.begin_cooperative_run();
+            self.begin_cooperative_run_mode(false);
         }
         let outcome = self.run_traced_inner(max_instrs, sink);
         // One timer read at exit; accumulate the total profiled span. The device+walk time timed on
@@ -2809,14 +3319,20 @@ impl Machine {
         }
         let chaining = self.executor.as_ref()?.chaining();
         let budget = self.executor.as_ref()?.chain_depth_budget().max(1);
+        let (direct_chain_budget, allow_direct_chaining) = self.direct_chain_budget(remaining_work);
         let mut depth: u32 = 0;
         let mut work_used = 0u64;
         let mut ran_any = false;
         // The edge just traversed to reach `phys` (from_phys, edge) — linked lazily on arrival.
-        let mut pending_link: Option<(u64, u8)> = None;
+        let mut pending_link: Option<(u64, u8, u64)> = None;
         let result = loop {
             let block_budget = remaining_work - work_used;
-            let Some(step) = self.run_one_jit_block(phys, block_budget) else {
+            let Some(step) = self.run_one_jit_block(
+                phys,
+                block_budget,
+                direct_chain_budget.min(block_budget),
+                allow_direct_chaining,
+            ) else {
                 // The first block left the hart untouched, so the caller can interpret it. If a
                 // LATER block refused the short tail or hit a defensive pre-call metadata miss,
                 // prior blocks already committed: return their progress and let the next dispatch
@@ -2827,12 +3343,15 @@ impl Machine {
                 });
             };
             ran_any = true;
-            // Link only after the successor really ran. A short-tail refusal or defensive pre-call
-            // cache miss must not publish an edge as though it executed.
-            if let (Some((from, edge)), Some(e)) = (pending_link.take(), self.executor.as_mut()) {
-                e.link_edge(from, edge, phys);
-            }
             match step {
+                BlockStep::Budget { retired } => {
+                    debug_assert!(retired > 0 && retired <= block_budget);
+                    work_used += retired;
+                    break Some(JitProgress {
+                        result: Ok(()),
+                        work_used,
+                    });
+                }
                 BlockStep::Trapped { trap, retired } => {
                     let step_work = retired
                         .checked_add(1)
@@ -2845,6 +3364,13 @@ impl Machine {
                     });
                 }
                 BlockStep::Committed { edge, retired } => {
+                    // Link only after the successor really ran. A short-tail refusal or defensive
+                    // pre-call cache miss must not publish an edge as though it executed.
+                    if let (Some((from, edge, to_virtual)), Some(e)) =
+                        (pending_link.take(), self.executor.as_mut())
+                    {
+                        e.link_edge_authorized(from, edge, to_virtual, phys);
+                    }
                     debug_assert!(retired > 0 && retired <= block_budget);
                     work_used += retired;
                     // The block ran clean; PC now sits at its successor's entry.
@@ -2894,7 +3420,8 @@ impl Machine {
                     // Follow the edge only if the successor is itself compiled; otherwise return to
                     // dispatch (which will interpret / compile it).
                     let from = phys;
-                    let next_phys = match self.hart.fetch_phys(&mut self.bus, self.hart.regs.pc) {
+                    let next_virtual = self.hart.regs.pc;
+                    let next_phys = match self.hart.fetch_phys(&mut self.bus, next_virtual) {
                         Ok(p) => p,
                         Err(_) => {
                             break Some(JitProgress {
@@ -2903,11 +3430,20 @@ impl Machine {
                             });
                         }
                     };
-                    if !self
+                    let next_compiled = self
                         .executor
                         .as_ref()
-                        .is_some_and(|e| e.is_compiled(next_phys))
-                    {
+                        .is_some_and(|e| e.is_compiled(next_phys));
+                    if next_compiled {
+                        // Dynamic `jalr` targets still use the virtual-target cache. Static edges
+                        // are published into the source/edge-local slot when the successor arrives;
+                        // this removes the hash/key probe and keeps invalidation source-local.
+                        if edge.is_none()
+                            && let Some(e) = self.executor.as_mut()
+                        {
+                            e.link_dynamic_target(next_virtual, next_phys);
+                        }
+                    } else {
                         break Some(JitProgress {
                             result: Ok(()),
                             work_used,
@@ -2915,7 +3451,7 @@ impl Machine {
                     }
                     // Record the edge to link on arrival (only static edges carry an `edge`; a
                     // dynamic `jalr` target has `edge == None` — followed but never linked).
-                    pending_link = edge.map(|e| (from, e));
+                    pending_link = edge.map(|e| (from, e, next_virtual));
                     phys = next_phys;
                 }
             }
@@ -2927,16 +3463,61 @@ impl Machine {
         result
     }
 
+    /// Compute the fuel for one browser in-module chain. Direct chaining is only enabled with the
+    /// existing Phase-C interrupt batching contract: that contract already permits observation to
+    /// lag by one bounded block, while the fuel keeps a chain from spanning an arbitrary outer run
+    /// quantum. In deterministic ICount mode, trim the fuel so a chain cannot retire past a future
+    /// CLINT/SBI timer deadline; wall-clock mode keeps the conservative dispatch path because time
+    /// can advance independently of guest retirement.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn direct_chain_budget(&self, remaining_work: u64) -> (u64, bool) {
+        let mut budget = remaining_work.clamp(1, JIT_DIRECT_CHAIN_FUEL);
+        if !self.interrupt_batching() || self.wall_time.is_some() {
+            return (remaining_work, false);
+        }
+
+        let mut deadline = None;
+        if let Some(clint) = &self.clint {
+            let state = clint.borrow();
+            if state.mtimecmp != u64::MAX && state.mtimecmp > state.mtime {
+                deadline = Some(state.mtimecmp);
+            }
+            if self.builtin_sbi
+                && self.sbi_state.stimecmp != u64::MAX
+                && self.sbi_state.stimecmp > state.mtime
+            {
+                deadline = Some(
+                    deadline.map_or(self.sbi_state.stimecmp, |d| d.min(self.sbi_state.stimecmp)),
+                );
+            }
+            if let Some(deadline) = deadline {
+                let ticks = u128::from(deadline - state.mtime);
+                let need = ticks
+                    .saturating_mul(u128::from(self.clock_div.max(1)))
+                    .saturating_sub(u128::from(self.tick_accum));
+                budget = budget.min(u64::try_from(need.max(1)).unwrap_or(u64::MAX));
+            }
+        }
+        (budget.max(1), true)
+    }
+
     /// E4-T18: execute exactly ONE compiled block at physical entry `phys` (the former body of
     /// `try_jit_block`), committing its registers / PC / retire clock. Returns:
-    /// * `None` — the block did not run (metadata vanished or it cannot fit in the remaining tail),
-    ///   so the caller may interpret it from entry.
+    /// * `None` — the block did not run (metadata vanished, it cannot fit in the remaining tail,
+    ///   or its first instruction cannot fit in the direct-chain fuel), so the caller may interpret
+    ///   it from entry.
     /// * `Some(BlockStep::Committed { edge, retired })` — a clean exit and its exact retirement
     ///   span; `edge` identifies a static successor for chaining.
     /// * `Some(BlockStep::Trapped { trap, retired })` — a precise trap plus the body prefix that
     ///   committed before the faulting instruction.
     #[cfg(not(feature = "zicsr-stub"))]
-    fn run_one_jit_block(&mut self, phys: u64, remaining_work: u64) -> Option<BlockStep> {
+    fn run_one_jit_block(
+        &mut self,
+        phys: u64,
+        remaining_work: u64,
+        direct_chain_budget: u64,
+        allow_direct_chaining: bool,
+    ) -> Option<BlockStep> {
         // Op count + terminator from the physically-keyed decoded block. A block too large for the
         // remaining host tail is refused BEFORE touching executor/hart state, so the interpreter can
         // consume exactly the remaining instruction attempts without overshoot.
@@ -2953,7 +3534,14 @@ impl Machine {
         let entry_pc = self.hart.regs.pc;
         // Take the executor out so it can borrow hart + bus for the duration of the call.
         let mut exec = self.executor.take().expect("compiled ⇒ executor present");
-        let exit = exec.execute(phys, &mut self.hart, &mut self.bus);
+        let exit = exec.execute_with_budget(
+            phys,
+            &mut self.hart,
+            &mut self.bus,
+            remaining_work,
+            direct_chain_budget,
+            allow_direct_chaining,
+        );
         self.executor = Some(exec);
         // `None` is exclusively a defensive pre-call executor metadata miss; compiled code did not
         // run, so interpreting from entry is replay-safe. Recorded faults return `Some(Trap)`, and
@@ -2965,7 +3553,12 @@ impl Machine {
         match exit.code {
             jit::ExitCode::Fallthrough | jit::ExitCode::BranchTaken => {
                 self.hart.regs.pc = exit.next_pc;
-                self.account_jit_retired(nops);
+                let retired = if exit.retired == 0 {
+                    nops
+                } else {
+                    exit.retired
+                };
+                debug_assert!(retired > 0 && retired <= remaining_work);
                 // E4-T17: a JIT block ending in `fence.i` orders the fetch stream the SAME near-free
                 // way `step_cached` does — the block's own stores were logged and are drained
                 // page-granularly below, so any page this block wrote (incl. its own, the self-write
@@ -2976,10 +3569,26 @@ impl Machine {
                     self.block_cache.note_fence_i();
                 }
                 self.drain_code_writes();
+                self.account_jit_retired(retired);
                 Some(BlockStep::Committed {
-                    edge: chain_edge(terminator, exit.code),
-                    retired: nops,
+                    edge: (retired == nops)
+                        .then(|| chain_edge(terminator, exit.code))
+                        .flatten(),
+                    retired,
                 })
+            }
+            jit::ExitCode::Budget => {
+                let retired = exit.retired;
+                if retired == 0 {
+                    // The first block did not fit the direct-chain fuel. No architectural state
+                    // was changed by the prologue, so the caller can safely interpret it.
+                    return None;
+                }
+                debug_assert!(retired <= remaining_work);
+                self.hart.regs.pc = exit.next_pc;
+                self.account_jit_retired(retired);
+                self.drain_code_writes();
+                Some(BlockStep::Budget { retired })
             }
             jit::ExitCode::Trap => {
                 // E4-T12: a PRECISE mid-block memory fault carries the interpreter-produced `Trap`
@@ -2997,7 +3606,9 @@ impl Machine {
                     // Sv39 aliases account the exact prefix too. The executor writes only a static
                     // per-op PC from this trusted block; an out-of-block value is an internal ABI
                     // violation and must fail closed rather than fabricate architectural counters.
-                    let retired = {
+                    let retired = if exit.retired != 0 {
+                        exit.retired
+                    } else {
                         let block = self
                             .block_cache
                             .get(phys)
@@ -3014,6 +3625,8 @@ impl Machine {
                             .expect("JIT precise-trap PC must name an op in its decoded block")
                             as u64
                     };
+                    debug_assert!(retired < nops || exit.retired != 0);
+                    debug_assert!(retired <= remaining_work);
                     self.account_jit_retired(retired);
                     self.hart.regs.pc = faulting_pc;
                     // A store before the fault may have hit a code page (SMC/DMA-into-code); drain
@@ -3024,25 +3637,28 @@ impl Machine {
                 }
                 // Otherwise: the trapping terminator (`ecall`/`ebreak`) retires NOTHING; only the
                 // `nops-1` body ops did. Advance the clock for those.
-                let retired = nops.saturating_sub(1);
+                let retired = if exit.retired != 0 {
+                    exit.retired
+                } else {
+                    nops.saturating_sub(1)
+                };
+                debug_assert!(retired <= remaining_work);
                 self.account_jit_retired(retired);
                 // Leave PC at the faulting instruction and derive the trap from the CURRENT
                 // privilege mode (the block cannot know it) so the cause matches the interpreter.
                 self.hart.regs.pc = exit.next_pc;
-                let trap = match terminator {
-                    Some(crate::decode::Instr::Ecall) => Trap {
+                let trap = match exit.exit_info as i64 {
+                    3 => Trap {
+                        cause: hart::Exception::Breakpoint,
+                        tval: exit.next_pc,
+                    },
+                    _ => Trap {
                         cause: match self.hart.csr.mode {
                             crate::csr::Priv::U => hart::Exception::EcallFromU,
                             crate::csr::Priv::S => hart::Exception::EcallFromS,
                             crate::csr::Priv::M => hart::Exception::EcallFromM,
                         },
                         tval: 0,
-                    },
-                    _ => Trap {
-                        // `ebreak` (the only other trapping terminator the translator emits):
-                        // Breakpoint with tval = the faulting PC (matches the interpreter).
-                        cause: hart::Exception::Breakpoint,
-                        tval: exit.next_pc,
                     },
                 };
                 Some(BlockStep::Trapped { trap, retired })
@@ -3111,6 +3727,13 @@ impl Machine {
             // just-crossed timer fires and a raised `mtimecmp` clears MTIP with no CSR access.
             #[cfg(not(feature = "zicsr-stub"))]
             if sample_boundary {
+                // E5-T04: host-owned virtio devices may have requested a config change through a
+                // retained state handle (for example a GPU canvas resize).  Latch those requests
+                // before mirroring InterruptStatus into the PLIC so the guest sees one precise
+                // config IRQ at this boundary, even when no queue was kicked.
+                for (slot, _) in &self.virtio {
+                    slot.borrow_mut().sync_backend_config_irq();
+                }
                 // E4-T24: in WallClock mode, recompute `mtime` from the host clock BEFORE sync_clint
                 // samples the MTIP level, so a just-elapsed wall deadline fires this boundary. No-op on
                 // the default ICount path.
@@ -3153,6 +3776,67 @@ impl Machine {
                 if let Some((state, vq)) = &mut self.rng {
                     let slot = alloc::rc::Rc::clone(&self.virtio[2].0);
                     dev::virtio::rng::service(&slot, vq, state, &mut self.bus);
+                }
+                // E5-T11b: service keyboard eventq/statusq on slot 3. The status sink retains
+                // guest LED changes in the host-owned indicator before the next boundary.
+                if let Some((state, eventq, statusq)) = &mut self.keyboard {
+                    let slot = alloc::rc::Rc::clone(
+                        &self.virtio[dev::virtio::input::keyboard::KEYBOARD_VIRTIO_SLOT].0,
+                    );
+                    dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
+                }
+                // E5-T14a: service the absolute tablet and relative mouse independently. The
+                // browser may select either host route, but both guest-visible devices remain
+                // present and their bounded frames cannot consume one another's queues.
+                if let Some((state, eventq, statusq)) = &mut self.tablet {
+                    let slot = alloc::rc::Rc::clone(
+                        &self.virtio[dev::virtio::input::pointer::TABLET_VIRTIO_SLOT].0,
+                    );
+                    dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
+                }
+                if let Some((state, eventq, statusq)) = &mut self.mouse {
+                    let slot = alloc::rc::Rc::clone(
+                        &self.virtio[dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT].0,
+                    );
+                    dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
+                }
+                // E5-T19d: service sound controlq before eventq/txq so a Linux snd_virtio probe
+                // receives its QEMU-shaped responses at the same guest-visible boundary that it
+                // kicks the queue. Playback then uses the injected host clock/sink without changing
+                // any of the established blk/net/input slots.
+                if let Some((slot_index, state, controlq, eventq, rxq, txq, clock, sink, source)) =
+                    &mut self.snd
+                {
+                    let slot = alloc::rc::Rc::clone(&self.virtio[*slot_index].0);
+                    dev::virtio::snd::service_with_control_eventq_and_capture(
+                        &slot,
+                        controlq,
+                        eventq,
+                        Some(rxq),
+                        Some(source.as_mut()),
+                        txq,
+                        state,
+                        clock.as_ref(),
+                        sink.as_mut(),
+                        &mut self.bus,
+                    );
+                }
+                // E5-T23b: service the independent virtio-console port-0/control/agent queues.
+                // Control transitions run before agent data so a freshly opened port can carry
+                // bytes at this same device boundary; the UART/SBI path above remains untouched.
+                if let Some(console) = &mut self.console {
+                    let slot = alloc::rc::Rc::clone(&self.virtio[console.slot_index].0);
+                    dev::virtio::console::service(
+                        &slot,
+                        &mut console.port0_receiveq,
+                        &mut console.port0_transmitq,
+                        &mut console.control_receiveq,
+                        &mut console.control_transmitq,
+                        &mut console.agent_receiveq,
+                        &mut console.agent_transmitq,
+                        &console.state,
+                        &mut self.bus,
+                    );
                 }
                 // E2-T08: mirror each virtio slot's InterruptStatus level into the PLIC.
                 for (slot, line) in &self.virtio {
@@ -3443,5 +4127,54 @@ mod tests {
     fn machine_tolerates_zero_ram() {
         let m = Machine::new(0);
         assert_eq!(m.ram_len(), 0);
+    }
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[test]
+    fn group_batches_coalesces_disconnected_chunks() {
+        let blocks: alloc::vec::Vec<_> = (0..5)
+            .map(|i| {
+                dispatch::DecodedBlock::new(
+                    0x8000_0000 + i * 8,
+                    alloc::vec![dispatch::MicroOp {
+                        instr: decode::Instr::Addi {
+                            rd: 1,
+                            rs1: 1,
+                            imm: 1,
+                        },
+                        len: 4,
+                        raw: 0,
+                    }],
+                    4,
+                )
+            })
+            .collect();
+
+        assert_eq!(
+            group_into_batches(&blocks, 2),
+            alloc::vec![alloc::vec![0, 1], alloc::vec![2, 3], alloc::vec![4]]
+        );
+
+        let pages: alloc::vec::Vec<_> = (0..3)
+            .map(|i| {
+                dispatch::DecodedBlock::new(
+                    0x9000_0000 + i * dispatch::PAGE,
+                    alloc::vec![dispatch::MicroOp {
+                        instr: decode::Instr::Addi {
+                            rd: 1,
+                            rs1: 1,
+                            imm: 1,
+                        },
+                        len: 4,
+                        raw: 0,
+                    }],
+                    4,
+                )
+            })
+            .collect();
+        assert_eq!(
+            group_into_batches(&pages, 2),
+            alloc::vec![alloc::vec![0, 1], alloc::vec![2]]
+        );
     }
 }

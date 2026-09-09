@@ -1,0 +1,47 @@
+{
+  "kind": "e4-t22e-threaded-demo-integration",
+  "recordedAt": "2026-09-03T08:33:13Z",
+  "sourceHead": "74a2f4bc64eccdb0c5c7bc54efb9ee20b98285c0",
+  "commands": [
+    "node --check web/main.js web/playwright.config.js web/tests/e4-t22-cpu-worker-integration.spec.js",
+    "make web-dist",
+    "PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 npx playwright test tests/e4-t22-cpu-worker-integration.spec.js --project=chromium",
+    "make web-test-cpu-worker",
+    "PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8135 PLAYWRIGHT_REUSE_SERVER=0 npx playwright test tests/e4-t32-whole-worker.spec.js --project=chromium --grep \"worker protocol failure\""
+  ],
+  "suite": {
+    "integrationTests": 2,
+    "integrationPassed": 2,
+    "integrationFailed": 0,
+    "chromium": true,
+    "consoleErrors": 0,
+    "workerHarnessNodeTests": 33,
+    "workerHarnessNodePassed": 33,
+    "workerHarnessNodeFailed": 0,
+    "placementAudit": "OK",
+    "workerBootstrapChromiumTests": 5,
+    "workerBootstrapChromiumPassed": 5,
+    "workerBootstrapChromiumFailed": 0
+  },
+  "predictions": {
+    "backendParity": "A restored whole-machine worker and ?singlethread=1 main-thread fallback expose the same paused guest digest, shell result, controller semantics, and snapshot operation.",
+    "jitPolicy": "jit=1 attaches a translated executor only when cross-origin isolation is available; jit=0 reports forced-off with no executor.",
+    "workerFailure": "Terminating the worker rejects pending and future controller calls, clears guest readiness, and leaves no active boot or stale controller state."
+  },
+  "observations": {
+    "backendParity": "HELD: worker and fallback restored the same digest, both returned exit 0 with E4T22E_ORACLE_42, and persistence/read-only/file-transfer/snapshot/overlay identity results matched.",
+    "jitPolicy": "HELD: the isolated local browser reported enabled policy with an executor; the restored parity path reported forced-off with no executor.",
+    "workerFailure": "HELD: both pending calls rejected, resume rejected with heartbeat timed out, guestUp was false, boot.active was null, and guestReady was false."
+  },
+  "sourceHashes": {
+    "web/main.js": "cc1c8786ea91193fa431804d9f19eba90012f4e84c7dc82de19e6513ae32457e",
+    "web/dist/main.js": "cc1c8786ea91193fa431804d9f19eba90012f4e84c7dc82de19e6513ae32457e",
+    "web/playwright.config.js": "e9f80e4461e78a131c20c9d67fd413c570181a2d352e4f58578afee9ecbe72bc",
+    "web/tests/e4-t22-cpu-worker-integration.spec.js": "54f3650b61acec9dc919caf777fd8ec25f1874647ee1e28aa8cd8a4c7d1e095a"
+  },
+  "screenshot": {
+    "path": "evidence/e4-t22e/cpu-worker-integration-2026-09-03.png",
+    "sha256": "ee6c53d30448c3456d973caf2f774a9c5b033a5ba4f046ad95fda3a330008a61"
+  },
+  "coverage": "The final Chromium run exercised the whole-machine worker restore, explicit single-thread fallback alias, shared shell oracle, controller parity reads, snapshot save, forced-off interpreter mode, isolated JIT attachment, and worker termination cleanup. The retained 33-case worker/control/device suite and five-case bootstrap suite cover the transfer/ring, MMIO, interrupt, WFI, placement, malformed boot, duplicate boot, and killed-before-ready paths. The generated dist copy of main.js matched source. WebKit and independent-machine legs were not used per the user's explicit direction and current evidence policy."
+}

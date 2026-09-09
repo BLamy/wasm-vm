@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Embed wasm-vm</title>
+  <meta name="description" content="Embed the wasm-vm browser machine and understand the separate agent-wasm host packages." />
+  <link rel="stylesheet" href="./docs.css" />
+</head>
+<body>
+  <header class="docs-header">
+    <div class="docs-header-inner">
+      <a class="docs-brand" href="./docs.html">wasm-vm <span>documentation</span></a>
+      <nav class="docs-top-nav" aria-label="Documentation navigation">
+        <a href="./docs.html">Overview</a>
+        <a href="./docs-embedding.html" aria-current="page">Embed</a>
+        <a href="./docs-guest.html">Guest</a>
+        <a href="./docs-containers.html">Containers</a>
+        <a href="./docs-verification.html">Verification</a>
+        <a href="./docs-explainers.html">Explainers</a>
+        <a class="launch" href="./app.html">Launch demo →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="docs-shell">
+    <div class="breadcrumbs"><a href="./docs.html">Docs</a> / Embed</div>
+    <div class="doc-layout">
+      <aside class="doc-rail">
+        <p class="rail-title">On this site</p>
+        <ul class="rail-links">
+          <li><a href="./docs.html">Overview</a></li>
+          <li><a href="./docs-embedding.html" aria-current="page">Embed</a></li>
+          <li><a href="./docs-guest.html">Guest</a></li>
+          <li><a href="./docs-containers.html">Containers</a></li>
+          <li><a href="./docs-verification.html">Verification</a></li>
+          <li><a href="./docs-explainers.html">Explainers</a></li>
+        </ul>
+        <div class="rail-source">
+          Source:
+          <a href="https://github.com/BLamy/wasm-vm/blob/main/docs/embedding-guide.md" target="_blank" rel="noopener">docs/embedding-guide.md</a>
+        </div>
+      </aside>
+
+      <article class="doc-content">
+        <span class="eyebrow">Host boundary</span>
+        <h1>Embed the real machine.</h1>
+        <p class="lede">
+          This page documents the browser-facing boundary that exists in this repository. The
+          loader fetches checked artifacts, constructs <code>WasmLinux</code>, and returns a
+          controller. The published agent libraries are a separate host-side layer described
+          further below.
+        </p>
+        <div class="page-meta">
+          <span class="badge live">loader.js is shipped here</span>
+          <span class="badge separate">@agent-wasm is published elsewhere</span>
+        </div>
+
+        <div class="flow">
+          <div class="flow-step"><strong>Your app</strong>terminal, UI, or worker</div>
+          <div class="flow-step"><strong>loader.js</strong>fetch and integrity boundary</div>
+          <div class="flow-step"><strong>WasmLinux</strong>virt platform + guest</div>
+          <div class="flow-step"><strong>Linux</strong>kernel and userland</div>
+        </div>
+
+        <h2>Browser Linux controller</h2>
+        <p>
+          Import the loader from the built web directory. The default path is the public
+          initramfs boot. The callback receives output in chunks, so a terminal adapter should
+          decode each chunk and append it rather than assume one callback per character.
+        </p>
+        <pre><code>import { startLinuxBoot } from "./loader.js";
+
+const terminal = document.querySelector("#terminal");
+const decoder = new TextDecoder();
+
+const controller = await startLinuxBoot({
+  manifestUrl: "./artifacts.json",
+  ramMib: 256,
+  onState: (state) =&gt; console.log("boot:", state),
+  onOutput: (bytes) =&gt; {
+    terminal.textContent += decoder.decode(bytes, { stream: true });
+  },
+  onError: (error) =&gt; console.error("wasm-vm:", error),
+});
+
+// Queue host keystrokes with controller.sendInput(new Uint8Array(...)).
+const finalState = await controller.whenDone;
+console.log("guest finished:", finalState);</code></pre>
+
+        <p>
+          The controller also exposes <code>stop()</code>, <code>sendInput(bytes)</code>, and
+          <code>whenDone</code>. The loader's options include <code>onState</code>,
+          <code>onProgress</code>, <code>onOutput</code>, <code>onError</code>, <code>ramMib</code>,
+          <code>quantum</code>, and the storage/network controls described on the guest page.
+        </p>
+
+        <h2>Boot modes exposed by the loader</h2>
+        <table class="data-table">
+          <thead><tr><th>Mode</th><th>What it does</th><th>Availability</th></tr></thead>
+          <tbody>
+            <tr><td><code>initramfs</code></td><td>Passes the manifest's initramfs to <code>new WasmLinux</code>.</td><td>Default public demo path.</td></tr>
+            <tr><td><code>disk</code></td><td>Downloads the manifest's rootfs and passes it to <code>WasmLinux.newDisk</code>.</td><td>Large disk assets are local-only in this checkout.</td></tr>
+            <tr><td><code>chunked</code></td><td>Uses a chunk manifest and fetches disk chunks on demand.</td><td>Use the local serving workflow; see the guest page.</td></tr>
+            <tr><td><code>persist: true</code></td><td>Enables the IndexedDB overlay for a chunked boot.</td><td>Only meaningful with <code>chunked</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Low-level bare-metal wrapper</h2>
+        <p>
+          For an ELF rather than Linux, the generated wasm-bindgen module exports
+          <code>WasmMachine</code>. This is a relative build artifact under <code>web/pkg</code>;
+          it is not an npm package published by this repository.
+        </p>
+        <pre><code>import init, { WasmMachine } from "./pkg/wasm_vm_wasm.js";
+
+await init();
+const machine = new WasmMachine(64);
+machine.setConsole((byte) =&gt; processByte(byte));
+machine.loadElf(elfBytes);
+
+const result = machine.run(100_000);
+// result.kind is "exited", "trapped", or "max".
+console.log(result, machine.stateDigest());</code></pre>
+        <p>
+          The generated type declarations also expose <code>step</code>, architectural
+          <code>registers</code>, canonical tracing, stats, and JIT counters. Use the source
+          declarations as the contract for the exact generated build you are consuming.
+        </p>
+
+        <h2>Published host-side agent libraries</h2>
+        <p>
+          These packages are published from
+          <a href="https://github.com/BLamy/agent-wasm" target="_blank" rel="noopener">BLamy/agent-wasm</a>,
+          not from this repository. The table is a registry snapshot checked on 2026-08-30.
+          Versions and exports can change; the npm links are the release records.
+        </p>
+        <table class="data-table">
+          <thead><tr><th>Package</th><th>Version</th><th>Verified README-backed surface</th></tr></thead>
+          <tbody>
+            <tr><td><a href="https://www.npmjs.com/package/@agent-wasm/core" target="_blank" rel="noopener"><code>@agent-wasm/core</code></a></td><td class="version">0.4.0</td><td>Browser Node runtime: <code>createContainer</code>, runtime/sandbox workers, virtual filesystem, package manager, and Vite/Next dev-server bridges. Exports include the root, <code>./internal</code>, <code>./vite</code>, and <code>./next</code>.</td></tr>
+            <tr><td><a href="https://www.npmjs.com/package/@agent-wasm/sdk" target="_blank" rel="noopener"><code>@agent-wasm/sdk</code></a></td><td class="version">0.1.0</td><td>Workspace lifecycle and agent harness APIs: <code>createWorkspace</code>, snapshots, <code>AgentAdapter</code>, <code>AgentSession</code>, templates, and plugins. Exports include the root, <code>./auth</code>, and <code>./plugins</code>.</td></tr>
+            <tr><td><a href="https://www.npmjs.com/package/@agent-wasm/react" target="_blank" rel="noopener"><code>@agent-wasm/react</code></a></td><td class="version">0.1.0</td><td>React workbench, chat, and UI components: provider/hooks, editor/preview/terminal panes, and subpaths <code>./workbench</code>, <code>./chat</code>, and <code>./ui</code>.</td></tr>
+            <tr><td><a href="https://www.npmjs.com/package/@agent-wasm/chat-core" target="_blank" rel="noopener"><code>@agent-wasm/chat-core</code></a></td><td class="version">0.1.0</td><td>Dependency-free chat domain, tool-call, and session APIs. The README does not make it a React or VM package.</td></tr>
+            <tr><td><a href="https://www.npmjs.com/package/@agent-wasm/code" target="_blank" rel="noopener"><code>@agent-wasm/code</code></a></td><td class="version">0.1.0</td><td>Claude Code incremental JSONL transcript integration, including <code>claudeToolUseToToolCall</code>.</td></tr>
+            <tr><td><a href="https://www.npmjs.com/package/@agent-wasm/vscode" target="_blank" rel="noopener"><code>@agent-wasm/vscode</code></a></td><td class="version">0.1.0</td><td>VS Code-shaped shell and React integration: <code>createVSCodeShell</code>, <code>&lt;VSCode&gt;</code>, and <code>useVSCodeShell</code>.</td></tr>
+            <tr><td><a href="https://www.npmjs.com/package/@agent-wasm/keychain" target="_blank" rel="noopener"><code>@agent-wasm/keychain</code></a></td><td class="version">0.1.0</td><td>WebAuthn-PRF-backed AES-GCM vault with <code>Keychain</code> and <code>CredentialMirror</code>; it is not the guest disk.</td></tr>
+            <tr><td><a href="https://www.npmjs.com/package/@agent-wasm/codex" target="_blank" rel="noopener"><code>@agent-wasm/codex</code></a></td><td class="version">0.1.0</td><td>Codex agent compiled to WebAssembly for the browser, with MessageChannel/worker subpaths.</td></tr>
+            <tr><td><a href="https://www.npmjs.com/package/@agent-wasm/tailscale-connect" target="_blank" rel="noopener"><code>@agent-wasm/tailscale-connect</code></a></td><td class="version">1.39.98-t02582083d</td><td>Published Tailscale Connect browser package. Its current README is sparse, so this page makes no broader API claim.</td></tr>
+          </tbody>
+        </table>
+        <pre><code>npm install @agent-wasm/core@0.4.0 @agent-wasm/sdk@0.1.0</code></pre>
+
+        <div class="note danger">
+          <p><strong>Do not copy this install line for the VM.</strong> There is no verified
+          <code>@wasm-vm/sdk</code> npm release in this checkout. Build the wasm module locally
+          with <code>make web-build</code>, or consume the generated relative assets from a
+          deployed web build.</p>
+        </div>
+
+        <h2>Useful source contracts</h2>
+        <ul class="source-list">
+          <li><a href="https://github.com/BLamy/wasm-vm/blob/main/web/loader.js" target="_blank" rel="noopener"><code>web/loader.js</code></a> — actual browser loader and controller lifecycle.</li>
+          <li><a href="https://github.com/BLamy/wasm-vm/blob/main/crates/wasm/src/lib.rs" target="_blank" rel="noopener"><code>crates/wasm/src/lib.rs</code></a> — wasm-bindgen boundary.</li>
+          <li><a href="https://github.com/BLamy/wasm-vm/blob/main/docs/embedding-guide.md" target="_blank" rel="noopener"><code>docs/embedding-guide.md</code></a> — source-side integration notes.</li>
+        </ul>
+      </article>
+    </div>
+  </main>
+
+  <footer class="docs-footer">
+    <div class="docs-footer-inner">
+      <span><strong>wasm-vm</strong> · host boundary</span>
+      <nav aria-label="Footer navigation">
+        <a href="./docs.html">Docs overview</a>
+        <a href="./docs-guest.html">Guest</a>
+        <a href="./app.html">Demo</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

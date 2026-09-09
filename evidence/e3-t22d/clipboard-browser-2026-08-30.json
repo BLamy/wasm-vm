@@ -1,0 +1,212 @@
+{
+  "schema": "e3-t22d-browser-clipboard-v1",
+  "capturedOn": "2026-08-30 America/New_York",
+  "runtimeHead": "450c25108240d1221a3e1ea88e3ca426cb886dc7",
+  "recording": {
+    "url": "http://127.0.0.1:8123/?noAutoBoot&jit=1",
+    "browser": "Playwright Chromium headed",
+    "browserVersion": "131.0.6778.33",
+    "sequence": "busybox boot → OSC 52 copy → multiline paste → 1 MiB sha256 → DECSET 2004 held/Enter",
+    "durationSeconds": 105.2,
+    "consoleErrors": [],
+    "rawConsoleErrors": [
+      {
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+        "location": {
+          "url": "http://127.0.0.1:8123/favicon.ico",
+          "lineNumber": 0,
+          "columnNumber": 0
+        }
+      },
+      {
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+        "location": {
+          "url": "http://127.0.0.1:8123/favicon.ico",
+          "lineNumber": 0,
+          "columnNumber": 0
+        }
+      }
+    ],
+    "resource404ConsoleErrors": [
+      {
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+        "location": {
+          "url": "http://127.0.0.1:8123/favicon.ico",
+          "lineNumber": 0,
+          "columnNumber": 0
+        }
+      },
+      {
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+        "location": {
+          "url": "http://127.0.0.1:8123/favicon.ico",
+          "lineNumber": 0,
+          "columnNumber": 0
+        }
+      }
+    ],
+    "allowedConsole404s": [
+      {
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+        "location": {
+          "url": "http://127.0.0.1:8123/favicon.ico",
+          "lineNumber": 0,
+          "columnNumber": 0
+        }
+      },
+      {
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+        "location": {
+          "url": "http://127.0.0.1:8123/favicon.ico",
+          "lineNumber": 0,
+          "columnNumber": 0
+        }
+      }
+    ],
+    "networkErrors": [
+      {
+        "requestId": "39273.37",
+        "status": 404,
+        "url": "http://127.0.0.1:8123/favicon.ico"
+      },
+      {
+        "requestId": "39273.36",
+        "status": 404,
+        "url": "http://127.0.0.1:8123/favicon.ico"
+      }
+    ],
+    "allowedHttpErrors": [
+      {
+        "requestId": "39273.37",
+        "status": 404,
+        "url": "http://127.0.0.1:8123/favicon.ico"
+      },
+      {
+        "requestId": "39273.36",
+        "status": 404,
+        "url": "http://127.0.0.1:8123/favicon.ico"
+      }
+    ],
+    "faviconProbe": {
+      "status": 404,
+      "url": "http://127.0.0.1:8123/favicon.ico"
+    },
+    "keyboardCoverage": {
+      "path": "focused xterm textarea via Playwright keyboard/insertText",
+      "totalOnDataEvents": 621,
+      "heldCancel": {
+        "ordinaryBytes": [
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              67
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              65
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              78
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              67
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              69
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              76
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              76
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              69
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              68
+            ]
+          }
+        ],
+        "ctrlC": [
+          {
+            "phase": "held-cancel-control",
+            "bytes": [
+              3
+            ]
+          }
+        ]
+      },
+      "heldRelease": {
+        "ordinaryBytesPlusEnter": [
+          {
+            "phase": "held-release-mixed",
+            "bytes": [
+              116,
+              114,
+              117,
+              101,
+              13
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "copy": {
+    "copied": "hi",
+    "blocked": null,
+    "clipboard": "hi"
+  },
+  "multiline": {
+    "expectedLines": [
+      "alpha",
+      "bravo",
+      "charlie"
+    ],
+    "observed": true
+  },
+  "oneMiB": {
+    "path": "/root/paste.txt",
+    "payloadBytes": 1000000,
+    "fileSize": 1000000,
+    "guestFileSize": 1000000,
+    "expectedSha": "630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733",
+    "observedSha": "630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733",
+    "highWater": 1000000
+  },
+  "bracketedPaste": {
+    "modeEnabled": true,
+    "heldUntilEnter": true,
+    "executedAfterEnter": true
+  },
+  "screenshot": "evidence/e3-t22d/clipboard-browser-2026-08-30.png",
+  "supportingGates": [
+    "node --test web/tests/osc52.test.mjs web/tests/paste.test.mjs",
+    "make web-build",
+    "git diff --check"
+  ]
+}

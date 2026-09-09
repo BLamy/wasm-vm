@@ -186,6 +186,10 @@ export async function startLinuxBoot(opts = {}) {
     bootProfileUrl = "./releases/chunked-alpine/boot-profile.json",
     // E3-T03 block-cache byte budget in MiB (0 → 256 MiB default). Set low to exercise eviction.
     cacheBudgetMib = 0,
+    // E4-T28e: optional fully resident read-only secondary virtio-blk image. Production Alpine
+    // boots leave this unset; the browser GCC proof supplies the pinned local overlay explicitly.
+    extraDiskUrl = null,
+    extraDiskSha256 = null,
     // E3-T05: persist the copy-on-write overlay to IndexedDB (writes survive a tab reload). Only
     // meaningful in "chunked" mode; the driver flushes via machine.persistPending() each tick.
     persist = false,
@@ -204,6 +208,9 @@ export async function startLinuxBoot(opts = {}) {
     // is PAUSED before returning; the UI shows the dialog and calls the returned controller's
     // resumeAfterQuota()/continueReadOnly()/resetDisk() to act.
     onQuota = () => {},
+    // E5-T21d: emitted once per successful guest capture PCM_START edge. The page owns the
+    // permission adapter; this callback is only a lifecycle notification and never opens media.
+    onCaptureStart = () => {},
     // Instructions per synchronous run slice. Kept modest so a slice is only a few ms of main-thread
     // time — short enough that the browser paints/handles input between slices (smooth page/animation).
     // Combined with the no-clamp MessageChannel yield (see yieldToMain), throughput stays high. A larger
@@ -216,6 +223,13 @@ export async function startLinuxBoot(opts = {}) {
     // preserves direct-loader compatibility; the page makes the production default explicit.
     jit = undefined,
     jitThreshold = undefined,
+    // E4-T39: independent entry-path controls. `jitJalr=false` disables generated dynamic-return
+    // probes; `jitRegion=false` returns after each compiled block while retaining JIT translation.
+    jitJalr = undefined,
+    jitRegion = undefined,
+    // E4-T38: one explicit live-module screen per boot. `repack-off` is the current conservative
+    // single-pass batcher; the cap variants change only the live batch budget.
+    jitResidency = undefined,
     profile = undefined,
     // Deterministic parity/test seam: restore the machine but do not execute the first scheduler
     // slice until the owner explicitly resumes it. Production callers leave this false.
@@ -223,6 +237,20 @@ export async function startLinuxBoot(opts = {}) {
     // Dedicated workers use timer tasks between slices so Worker "message" tasks (input/RPC/fetch
     // completions) cannot be starved by a self-perpetuating MessageChannel task source.
     workerMode = false,
+    // E5-T20e: the page-owned AudioWorklet ring and render clock are transferred into the guest
+    // before its first run slice. Null keeps direct-loader/headless callers on the NullSink path.
+    audioSharedBuffer = null,
+    audioClockBuffer = null,
+    audioCapacityFrames = 0,
+    audioSampleRateHz = 0,
+    // E5-T21d: the reversed capture SAB is attached before the first guest run slice. It carries
+    // PCM only; getUserMedia remains page-owned and is requested lazily from onCaptureStart.
+    captureSharedBuffer = null,
+    captureCapacityFrames = 0,
+    captureSampleRateHz = 0,
+    // E5-T21b: opt into the guest-visible input PCM stream at VM creation time. This flag only
+    // changes device configuration; permission and host capture belong to later slices.
+    enableMic = false,
   } = opts;
   let outputCalls = 0;
   let outputBytes = 0;
@@ -246,7 +274,8 @@ export async function startLinuxBoot(opts = {}) {
     const km = manifest.artifacts.kernel;
     // E4 restore-on-load artifacts (busybox: bootSnapshot only; Alpine chunked: bootSnapshot RAM +
     // overlayDelta). Hoisted so both the pre-construction overlay seed and the post-construction RAM
-    // restore can see them. `alpineRamBlob` is the RAM blob to restore once the chunked machine exists.
+    // restore can see them. `alpineRamBlob` is fetched only after a durable user snapshot gets a
+    // chance to restore, so a reload never holds both whole snapshot representations needlessly.
     const bootSnap = manifest.artifacts?.bootSnapshot;
     const overlayDeltaEntry = manifest.artifacts?.overlayDelta;
     // The exact RAM+disk pair identity is also the durable-overlay namespace. This keeps a new
@@ -256,6 +285,7 @@ export async function startLinuxBoot(opts = {}) {
       ? await deriveOverlaySeedIdentity(bootSnap.sha256, overlayDeltaEntry.sha256)
       : null;
     let alpineRamBlob = null;
+    let alpineOverlaySeeded = false;
 
     onState("fetching");
     // The kernel is always fetched whole (small). The rootfs is fetched whole for disk/initramfs
@@ -292,6 +322,18 @@ export async function startLinuxBoot(opts = {}) {
         const got = await sha256hex(bytes);
         if (got !== want) {
           throw new Error(`integrity check failed for ${name}: expected ${want}, got ${got} — refusing to boot corrupt bytes`);
+        }
+      }
+    }
+    let extraDiskBytes = null;
+    if (extraDiskUrl) {
+      extraDiskBytes = await fetchWithProgress(extraDiskUrl, (l, t) => onProgress("extraDisk", l, t));
+      if (extraDiskSha256) {
+        const got = await sha256hex(extraDiskBytes);
+        if (got !== extraDiskSha256) {
+          throw new Error(
+            `integrity check failed for extra disk: expected ${extraDiskSha256}, got ${got}`,
+          );
         }
       }
     }
@@ -412,13 +454,11 @@ export async function startLinuxBoot(opts = {}) {
           const dgz = await fetchWithProgress(overlayDeltaEntry.url, (l, t) => onProgress("overlayDelta", l, t));
           if ((await sha256hex(dgz)) !== overlayDeltaEntry.sha256) throw new Error("overlay delta integrity");
           const deltaBytes = await gunzip(dgz);
-          const rgz = await fetchWithProgress(bootSnap.url, (l, t) => onProgress("bootSnapshot", l, t));
-          if ((await sha256hex(rgz)) !== bootSnap.sha256) throw new Error("boot snapshot integrity");
-          const ramBytes = await gunzip(rgz);
           const seeded = await seedOverlayDelta(imageManifestText, deltaBytes, overlaySeedIdentity);
-          // Arm RAM only when disk equality has already been proven. The post-construction
-          // restoreDecisionCode remains the independent core-hash + base + generation guard.
-          alpineRamBlob = seeded ? ramBytes : null;
+          // Arm the shipped RAM fallback only after the persistent machine has had a chance to
+          // restore a user snapshot directly from IndexedDB. The post-construction coherence guard
+          // remains independent of this disk-equality check.
+          alpineOverlaySeeded = seeded;
           if (!seeded) {
             console.warn(
               "wasm-vm: active warm-release disk has user changes; preserving it and cold booting",
@@ -427,18 +467,73 @@ export async function startLinuxBoot(opts = {}) {
           }
         } catch (e) {
           console.warn("wasm-vm: Alpine overlay-delta seed failed, cold booting:", e?.message || e);
+          alpineOverlaySeeded = false;
           alpineRamBlob = null;
           onState("booting");
         }
       }
       // Async: opens IndexedDB, reconciles the base binding, loads any previously persisted blocks.
-      machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, lockReadOnly, emitOutput, overlaySeedIdentity);
+      machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, lockReadOnly, emitOutput, overlaySeedIdentity, enableMic);
     } else if (isChunked) {
-      machine = WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, emitOutput);
+      if (extraDiskBytes) {
+        if (typeof WasmLinux.newChunkedDiskWithExtra !== "function") {
+          throw new Error("browser wasm build lacks E4-T28e secondary-drive support");
+        }
+        machine = WasmLinux.newChunkedDiskWithExtra(
+          ramMib,
+          kernel,
+          imageManifestText,
+          baseUrl,
+          cacheBudgetMib,
+          bootProfile,
+          extraDiskBytes,
+          bootargs,
+          emitOutput,
+          enableMic,
+        );
+      } else {
+        machine = WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, emitOutput, enableMic);
+      }
     } else if (mode === "disk") {
-      machine = WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, emitOutput);
+      machine = WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, emitOutput, enableMic);
     } else {
-      machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, emitOutput);
+      machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, emitOutput, enableMic);
+    }
+
+    // E5-T20e: swap the assembly's default NullSink for the page-owned AudioWorklet producer only
+    // after the machine exists. This works identically on the main thread and in the whole-machine
+    // worker because SharedArrayBuffers survive structured cloning without a page callback.
+    const audioRequested = audioSharedBuffer !== null
+      || audioClockBuffer !== null
+      || audioCapacityFrames > 0
+      || audioSampleRateHz > 0;
+    if (audioRequested) {
+      if (audioSharedBuffer === null || audioClockBuffer === null
+        || audioCapacityFrames < 1 || audioSampleRateHz < 1
+        || typeof machine.attachAudioOutput !== "function") {
+        throw new Error("browser wasm build lacks a complete audio output bridge");
+      }
+      machine.attachAudioOutput(
+        audioSharedBuffer,
+        audioClockBuffer,
+        audioCapacityFrames,
+        audioSampleRateHz,
+      );
+    }
+    const captureRequested = captureSharedBuffer !== null
+      || captureCapacityFrames > 0
+      || captureSampleRateHz > 0;
+    if (captureRequested) {
+      if (captureSharedBuffer === null || captureCapacityFrames < 1
+        || captureSampleRateHz < 1
+        || typeof machine.attachAudioCapture !== "function") {
+        throw new Error("browser wasm build lacks a complete audio capture bridge");
+      }
+      machine.attachAudioCapture(
+        captureSharedBuffer,
+        captureCapacityFrames,
+        captureSampleRateHz,
+      );
     }
 
     // E4-T30: remove the old browser default that left the proven 2.24x block-boundary batching win
@@ -462,7 +557,8 @@ export async function startLinuxBoot(opts = {}) {
     // WasmLinux directly (not the cpu-worker), so the JIT is dark unless enabled HERE. Gate on
     // cross-origin isolation (runtime WebAssembly codegen is only sound/allowed there) exactly like
     // web/cpu-isolation.js selectJitBackend; `?jit=0` forces interpreter-only for an A/B. The
-    // interpreter stays the oracle — enableJit only arms tier-up of hot blocks.
+    // interpreter stays the oracle for fallback and differential checks — enableJit only arms
+    // tier-up of hot blocks.
     try {
       // `?jit=0` forces interpreter-only; `?jitThreshold=N` tunes the hotness count before a block is
       // nominated for compilation (default 512). Lower = compile more aggressively at the cost of
@@ -473,17 +569,45 @@ export async function startLinuxBoot(opts = {}) {
       const _jitQ = jit ?? (_q.get("jit") === "1" ? true : _q.get("jit") === "0" ? false : undefined);
       const _thrRaw = jitThreshold ?? _q.get("jitThreshold");
       const _threshold = Math.max(1, Number(_thrRaw) || 512);
-      // E4-T33 proved bounded browser handles and repaired the bulk handoff. Cold Node startup still
-      // measures faster in the fast interpreter, so JIT is an explicit experiment until the runtime
-      // work in E4-T34 changes that result.
-      const _wantJit = (_jitQ ?? false) && globalThis.crossOriginIsolated === true;
+      const _residency = jitResidency ?? _q.get("jitResidency") ?? "repack-off";
+      const _jalrQ = jitJalr ?? (_q.get("jalr") === "1" ? true : _q.get("jalr") === "0" ? false : undefined);
+      const _regionQ = jitRegion ?? (_q.get("region") === "1" ? true : _q.get("region") === "0" ? false : undefined);
+      const _jalr = _jalrQ ?? true;
+      const _region = _regionQ ?? true;
+      // E4-T33 proved bounded browser handles and repaired the bulk handoff. The restored-Node screen
+      // is faster with JIT at the shipping threshold, so isolated browser workers opt in by default;
+      // `?jit=0` remains the explicit interpreter rollback/A-B.
+      const _wantJit = (_jitQ ?? true) && globalThis.crossOriginIsolated === true;
       if (_wantJit && typeof machine.enableJit === "function") {
-        machine.enableJit(_threshold);
-        try { window.__jit = { enabled: true, threshold: _threshold }; } catch { /* worker scope */ }
-        console.info("wasm-vm: browser JIT enabled (crossOriginIsolated, threshold=" + _threshold + ")");
+        if (typeof machine.enableJitWithPolicy === "function") {
+          machine.enableJitWithPolicy(_threshold, _residency);
+        } else {
+          machine.enableJit(_threshold);
+        }
+        if (typeof machine.setDynamicChaining === "function") {
+          machine.setDynamicChaining(_jalr);
+        }
+        if (typeof machine.setChaining === "function") {
+          machine.setChaining(_region);
+        }
+        try {
+          window.__jit = {
+            enabled: true,
+            threshold: _threshold,
+            residency: _residency,
+            jalr: _jalr,
+            region: _region,
+          };
+        } catch { /* worker scope */ }
+        console.info(
+          "wasm-vm: browser JIT enabled (crossOriginIsolated, threshold=" + _threshold +
+          ", residency=" + _residency + ", jalr=" + _jalr + ", region=" + _region + ")",
+        );
       } else {
         const reason = _jitQ === false ? "forced-off" : (globalThis.crossOriginIsolated ? "no-enableJit" : "not-cross-origin-isolated");
-        try { window.__jit = { enabled: false, reason }; } catch { /* worker scope */ }
+        try {
+          window.__jit = { enabled: false, reason, jalr: _jalr, region: _region };
+        } catch { /* worker scope */ }
         console.info("wasm-vm: browser JIT NOT enabled —", reason);
       }
     } catch (e) {
@@ -501,6 +625,42 @@ export async function startLinuxBoot(opts = {}) {
     }
     try { window.__machine = machine; } catch { /* worker scope: profiling is still armed above */ }
 
+    // E3-T12d persistent snapshot restore: load the durable user snapshot directly inside wasm before
+    // considering the shipped build-time RAM snapshot. `restoreStoredSnapshot` keeps the large blob
+    // out of JS; a missing, stale, corrupt, or foreign result leaves the freshly constructed machine
+    // untouched and the normal fallback paths below decide what to do.
+    let restoredFromStoredSnapshot = false;
+    if (usePersist && typeof machine.restoreStoredSnapshot === "function") {
+      try {
+        const decision = await machine.restoreStoredSnapshot();
+        if (decision === "resume") {
+          restoredFromStoredSnapshot = true;
+          onState("restored");
+        } else if (decision !== "missing") {
+          console.warn(`wasm-vm: stored snapshot not coherent (${decision}) — cold booting`);
+        }
+      } catch (e) {
+        // A storage read failure is a cold-boot fallback, never a partially restored machine.
+        console.warn("wasm-vm: stored snapshot restore failed, cold booting:", e?.message || e);
+      }
+    }
+
+    // The shipped Alpine RAM image is only a fallback for a fresh/equal warm overlay. Fetch it after
+    // the durable user snapshot attempt so a normal reload does not retain two whole snapshots while
+    // the bounded IndexedDB loader is assembling its one Rust buffer.
+    if (!restoredFromStoredSnapshot && alpineOverlaySeeded && bootSnap && opts.bootSnapshot !== false) {
+      try {
+        onState("restoring");
+        const rgz = await fetchWithProgress(bootSnap.url, (l, t) => onProgress("bootSnapshot", l, t));
+        if ((await sha256hex(rgz)) !== bootSnap.sha256) throw new Error("boot snapshot integrity");
+        alpineRamBlob = await gunzip(rgz);
+      } catch (e) {
+        console.warn("wasm-vm: Alpine RAM fallback fetch failed, cold booting:", e?.message || e);
+        alpineRamBlob = null;
+        onState("booting");
+      }
+    }
+
     // E4 restore-on-first-load (busybox/initramfs path): instead of executing the ~40 s Linux boot,
     // restore a shipped, build-time boot snapshot into the just-constructed machine and go straight to
     // the run loop. The machine already cold-booted in its constructor (place_and_boot), so ANY failure
@@ -514,13 +674,13 @@ export async function startLinuxBoot(opts = {}) {
     // (crypto.getRandomValues) are LIVE browser-backed sources read on demand, not frozen snapshot
     // state, so wall-clock time and entropy self-reseed after restore; a fresh DHCP lease is a slirp
     // (Alpine) concern, N/A for the offline busybox default.
-    let restoredFromBootSnapshot = false;
+    let restoredFromBootSnapshot = restoredFromStoredSnapshot;
     // E4 Alpine (chunked/persistent) restore: the overlay was already seeded with the post-boot disk
     // delta BEFORE construction; now restore the paired RAM blob. The persistent machine's snapshot
     // identity is already the chunk manifest's base_hash (set in newChunkedDiskPersistent), so
     // restoreDecisionCode enforces the core-hash + base + overlay-generation triple. A foreign/stale
     // RAM blob (or a generation mismatch) is rejected → the machine keeps its fresh chunked cold boot.
-    if (alpineRamBlob) {
+    if (!restoredFromStoredSnapshot && alpineRamBlob) {
       try {
         const decision = machine.restoreDecisionCode(alpineRamBlob, machine.overlayGeneration());
         if (decision === "resume") {
@@ -585,6 +745,17 @@ export async function startLinuxBoot(opts = {}) {
 
     let stopped = false;
     let paused = Boolean(startPaused);
+    let observedCaptureStartCount = 0;
+    const observeCaptureStart = () => {
+      if (typeof machine.virtioSndCaptureState !== "function") return;
+      let snapshot;
+      try { snapshot = machine.virtioSndCaptureState(); } catch { return; }
+      if (!snapshot || snapshot.enabled !== true) return;
+      const startCount = Number(snapshot.startCount);
+      if (!Number.isSafeInteger(startCount) || startCount <= observedCaptureStartCount) return;
+      observedCaptureStartCount = startCount;
+      try { onCaptureStart({ ...snapshot }); } catch (error) { onError(error); }
+    };
     // E4-T32: a worker is still one JS event loop. A 20M-instruction slice made every input/RPC and
     // output flush wait behind seconds of synchronous runChunk work. Keep the page-selected slice at
     // <=500k. Do not shrink from one slow JIT compilation: that work is not proportional to the retire
@@ -725,6 +896,7 @@ export async function startLinuxBoot(opts = {}) {
         if (lastSliceStart) stretchMaxMs = Math.max(stretchMaxMs, sliceStart - lastSliceStart);
         lastSliceStart = sliceStart;
         res = machine.runChunk(runQuantum, usePersist ? maxDirtyBytes : undefined);
+        observeCaptureStart();
         const sliceMs = (typeof performance !== "undefined" ? performance.now() : Date.now()) - sliceStart;
         sliceCount += 1;
         sliceTotalMs += sliceMs;
@@ -762,6 +934,14 @@ export async function startLinuxBoot(opts = {}) {
             fetchWaits += 1;
             fetchRequestedChunks += pending.length;
             await machine.fetchPending();
+            // A permanent demand-chunk failure is recorded by the wasm fetch layer while the
+            // parked guest read remains pending. Stop the controller at that boundary instead of
+            // re-running the same failed read forever (and leaving callers with an apparently
+            // healthy Alpine boot whose runtime probe can never become true).
+            const fetchStats = machine.fetchStats?.();
+            if (fetchStats?.error) {
+              throw new Error(`lazy chunk fetch failed: ${fetchStats.error}`);
+            }
             const fetchMs = (typeof performance !== "undefined" ? performance.now() : Date.now()) - fetchStart;
             fetchWaitTotalMs += fetchMs;
             fetchWaitMaxMs = Math.max(fetchWaitMaxMs, fetchMs);
@@ -815,6 +995,46 @@ export async function startLinuxBoot(opts = {}) {
           machine.sendInput(bytes);
         }
       },
+      // E5-T12b: the DOM keyboard bridge publishes physical evdev frames through the same
+      // controller on both the direct and whole-machine-worker paths. Worker RPC ordering keeps
+      // sendKeyboardEvent immediately ahead of its matching syncKeyboard frame.
+      sendKeyboardEvent: (eventType, code, value) => {
+        if (stopped) return false;
+        machine.sendKeyboardEvent(eventType, code, value);
+        return true;
+      },
+      syncKeyboard: () => {
+        if (stopped) return false;
+        machine.syncKeyboard();
+        return true;
+      },
+      // E5-T14b: the DOM pointer bridge keeps tablet and mouse frames on separate controller
+      // methods, preserving T14a's independent slot/queue contract in both boot backends.
+      sendTabletEvent: (eventType, code, value) => {
+        if (stopped) return false;
+        machine.sendTabletEvent(eventType, code, value);
+        return true;
+      },
+      syncTablet: () => {
+        if (stopped) return false;
+        machine.syncTablet();
+        return true;
+      },
+      sendMouseEvent: (eventType, code, value) => {
+        if (stopped) return false;
+        machine.sendMouseEvent(eventType, code, value);
+        return true;
+      },
+      syncMouse: () => {
+        if (stopped) return false;
+        machine.syncMouse();
+        return true;
+      },
+      // E5-T13c: expose the guest's host-owned LED feedback so the page can reconcile lock keys
+      // after focus recovery without reading or mutating guest state through an ad-hoc path.
+      keyboardLedState: () => (
+        typeof machine.keyboardLedState === "function" ? machine.keyboardLedState() : null
+      ),
       stop: async () => {
         finish("stopped");
         await taskQuiescence.stop();
@@ -839,6 +1059,22 @@ export async function startLinuxBoot(opts = {}) {
       // E4: true when this boot skipped the Linux boot by restoring a shipped boot snapshot.
       restoredFromBootSnapshot: () => restoredFromBootSnapshot,
       overlaySeedIdentity: () => overlaySeedIdentity,
+      audioOutputReady: () => (
+        typeof machine.audioOutputReady === "function" ? machine.audioOutputReady() : false
+      ),
+      audioCaptureReady: () => (
+        typeof machine.audioCaptureReady === "function" ? machine.audioCaptureReady() : false
+      ),
+      captureState: () => (
+        typeof machine.virtioSndCaptureState === "function"
+          ? machine.virtioSndCaptureState()
+          : null
+      ),
+      notifyCaptureEvent: (event) => (
+        typeof machine.notifyCaptureEvent === "function"
+          ? machine.notifyCaptureEvent(event)
+          : false
+      ),
       stateDigest: () => machine.stateDigest(),
       jitStats: () => (typeof machine.jitStats === "function" ? machine.jitStats() : null),
       profileStats: () => (typeof machine.getProfile === "function" ? machine.getProfile() : null),
@@ -920,7 +1156,10 @@ export async function startLinuxBoot(opts = {}) {
       // Resolves when the store's commit-marker meta transaction completes. No-op off the persistent
       // path (persistSnapshot returns "not_persistent"); swallowed to a rejected Promise the caller
       // handles.
-      snapshotSave: () => machine.persistSnapshot(),
+      snapshotSave: () => {
+        if (lockReadOnly) return Promise.reject(new Error("read_only"));
+        return machine.persistSnapshot();
+      },
       // The reassembled persisted snapshot blob (Uint8Array), or null if none / non-persistent.
       snapshotRead: () => machine.readStoredSnapshot(),
       // The header-level resume-vs-cold-boot verdict for the persisted snapshot against THIS boot's
@@ -933,18 +1172,36 @@ export async function startLinuxBoot(opts = {}) {
       // Advance the overlay commit generation — a durable-commit event that invalidates (→ "stale")
       // any snapshot taken before it. Returns the new generation.
       snapshotAdvanceGen: () => machine.advanceOverlayGeneration(),
+      // Current durable-overlay generation reconstructed by the persistent boot. This is a test
+      // and evidence hook so a reload-after-write can distinguish persisted advancement from the
+      // in-memory-only advance hook above.
+      snapshotGeneration: () => machine.overlayGeneration(),
       // AC3 export/import: raw stored-blob bytes out, and persist an external blob into this base's
       // snapshot store (still coherence-guarded on restore).
       snapshotExport: () => machine.readStoredSnapshot(),
-      snapshotImport: (bytes) => machine.importStoredSnapshot(bytes),
+      snapshotRestore: () => {
+        if (!usePersist || typeof machine.restoreStoredSnapshot !== "function") return Promise.resolve("missing");
+        return machine.restoreStoredSnapshot();
+      },
+      snapshotImport: (bytes) => {
+        if (lockReadOnly) return Promise.reject(new Error("read_only"));
+        return machine.importStoredSnapshot(bytes);
+      },
       // Current {usage, quota} for the storage indicator.
       storageEstimate: () => (navigator.storage?.estimate ? navigator.storage.estimate() : Promise.resolve({})),
       // E3-T10 (critic BUG-4): close the IndexedDB connection so reset-disk's deleteDatabase can
       // actually delete (our open handle would otherwise block it forever). Call before wiping.
       closeStorage: () => { try { machine.closeStorage(); } catch {} },
       // E3-T09: explicitly release the writer lock (poweroff/stop paths; close/crash releases
-      // it automatically via Web Locks semantics).
-      releaseWriterLock: () => {
+      // it automatically via Web Locks semantics). The wasm barrier fences new writes immediately,
+      // then waits for any snapshot operation that already passed its ownership check before the
+      // Web Lock promise is resolved.
+      releaseWriterLock: async () => {
+        // The controller can outlive the Web Lock promise. Fence both JS and wasm before releasing
+        // the lock so a stale controller cannot save/import into the namespace after a new tab owns
+        // it. This is one-way: reacquiring requires constructing a new machine.
+        lockReadOnly = true;
+        try { await machine.relinquishSnapshotWriter?.(); } catch {}
         if (releaseLock) {
           releaseLock();
           releaseLock = null;

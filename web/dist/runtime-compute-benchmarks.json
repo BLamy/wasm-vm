@@ -1,0 +1,960 @@
+{
+  "schema": 1,
+  "kind": "node-steady-state-compute-comparison-v1",
+  "publicationStatus": "partial",
+  "generatedAt": "2026-09-01T16:00:27.922Z",
+  "campaign": {
+    "id": "runtime-compute-v1",
+    "scope": "native Node and deployed wasm-vm browser executor modes",
+    "method": "same portable Node script, explicit single-user deployed Node guest, deterministic checksums, warmups, repeated samples, compute loop timed separately from startup",
+    "workloadIds": [
+      "integer-mix",
+      "branch-mix",
+      "memory-mix"
+    ],
+    "source": "./bench-runtime-compute.mjs",
+    "scriptSha256": "378e4841d50b8165fdee7d15ffe8daf0d2e6a40145982e8525b161696342d8d7"
+  },
+  "fixture": {
+    "id": "runtime-compute-v1",
+    "iterations": 1000000,
+    "memoryWords": 16384,
+    "memoryPasses": 32,
+    "expectedChecksums": {
+      "integer-mix": 1986867034,
+      "branch-mix": 2619934272,
+      "memory-mix": 2070041300
+    }
+  },
+  "policy": {
+    "samples": 7,
+    "warmups": 2,
+    "timedRegion": "steady-state loop only; one long-lived process per run",
+    "description": "process startup and memory preparation are excluded from the timed region",
+    "browserCapture": "explicit single-user /bin/sh init with persist=0; not default restored-startup timing"
+  },
+  "environments": [
+    {
+      "id": "native-node",
+      "label": "Native Node",
+      "status": "measured",
+      "environment": {
+        "id": "native-node",
+        "nodeVersion": "v24.20.0",
+        "versions": {
+          "node": "24.20.0",
+          "acorn": "8.18.0",
+          "ada": "4.0.0",
+          "amaro": "1.1.11",
+          "ares": "1.34.8",
+          "brotli": "1.2.0",
+          "cldr": "48.0",
+          "icu": "78.3",
+          "llhttp": "9.4.3",
+          "merve": "1.2.2",
+          "modules": "137",
+          "napi": "10",
+          "nbytes": "0.1.4",
+          "ncrypto": "0.0.1",
+          "nghttp2": "1.70.0",
+          "nghttp3": "",
+          "ngtcp2": "",
+          "openssl": "3.5.7",
+          "simdjson": "4.6.6",
+          "simdutf": "6.4.0",
+          "sqlite": "3.53.4",
+          "tz": "2026c",
+          "undici": "7.29.0",
+          "unicode": "17.0",
+          "uv": "1.52.1",
+          "uvwasi": "0.0.23",
+          "v8": "13.6.233.17-node.53",
+          "zlib": "1.3.2.1-motley-42c2f19",
+          "zstd": "1.5.7"
+        },
+        "platform": "darwin",
+        "arch": "arm64",
+        "osRelease": "25.6.0",
+        "execPath": "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "logicalCpus": 16
+      },
+      "runner": {
+        "source": "web/bench-runtime-compute.mjs",
+        "scriptSha256": "378e4841d50b8165fdee7d15ffe8daf0d2e6a40145982e8525b161696342d8d7",
+        "command": [
+          "node",
+          "web/bench-runtime-compute.mjs",
+          "--environment=native-node",
+          "--samples=7",
+          "--warmups=2",
+          "--output=/tmp/native-runtime-compute-current.json"
+        ]
+      },
+      "browser": null,
+      "workloads": [
+        {
+          "id": "integer-mix",
+          "label": "Integer mix",
+          "operation": "dependency-heavy Math.imul + 32-bit arithmetic loop",
+          "unitLabel": "loop iterations",
+          "workloadClass": "steady-state-compute",
+          "timedRegion": "compute loop only; process startup and memory preparation excluded",
+          "status": "measured",
+          "expectedChecksum": 1986867034,
+          "samples": [
+            {
+              "sample": 0,
+              "elapsedMs": 9.774,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 1,
+              "elapsedMs": 10.202,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 2,
+              "elapsedMs": 10.051,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 3,
+              "elapsedMs": 10.205,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 4,
+              "elapsedMs": 10.086,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 5,
+              "elapsedMs": 10.146,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 6,
+              "elapsedMs": 10.147,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "sampleCount": 7,
+            "minMs": 9.774,
+            "maxMs": 10.205,
+            "meanMs": 10.087,
+            "medianMs": 10.146,
+            "p95Ms": 10.205,
+            "stdevMs": 0.138,
+            "workUnits": 1000000,
+            "workUnitsPerSec": 98561009.265
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        },
+        {
+          "id": "branch-mix",
+          "label": "Branch mix",
+          "operation": "deterministic data-dependent branches + rotates",
+          "unitLabel": "loop iterations",
+          "workloadClass": "steady-state-compute",
+          "timedRegion": "compute loop only; process startup and memory preparation excluded",
+          "status": "measured",
+          "expectedChecksum": 2619934272,
+          "samples": [
+            {
+              "sample": 0,
+              "elapsedMs": 3.307,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 1,
+              "elapsedMs": 3.291,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 2,
+              "elapsedMs": 3.237,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 3,
+              "elapsedMs": 3.26,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 4,
+              "elapsedMs": 3.372,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 5,
+              "elapsedMs": 3.275,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 6,
+              "elapsedMs": 3.268,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "sampleCount": 7,
+            "minMs": 3.237,
+            "maxMs": 3.372,
+            "meanMs": 3.287,
+            "medianMs": 3.275,
+            "p95Ms": 3.372,
+            "stdevMs": 0.04,
+            "workUnits": 1000000,
+            "workUnitsPerSec": 305343511.45
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        },
+        {
+          "id": "memory-mix",
+          "label": "Memory mix",
+          "operation": "Uint32Array indexed read/modify/write loop",
+          "unitLabel": "typed-array updates",
+          "workloadClass": "steady-state-compute",
+          "timedRegion": "compute loop only; process startup and memory preparation excluded",
+          "status": "measured",
+          "expectedChecksum": 2070041300,
+          "samples": [
+            {
+              "sample": 0,
+              "elapsedMs": 2.506,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 1,
+              "elapsedMs": 2.555,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 2,
+              "elapsedMs": 2.506,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 3,
+              "elapsedMs": 2.503,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 4,
+              "elapsedMs": 2.499,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 5,
+              "elapsedMs": 2.507,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 6,
+              "elapsedMs": 2.548,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "sampleCount": 7,
+            "minMs": 2.499,
+            "maxMs": 2.555,
+            "meanMs": 2.518,
+            "medianMs": 2.506,
+            "p95Ms": 2.555,
+            "stdevMs": 0.022,
+            "workUnits": 524288,
+            "workUnitsPerSec": 209213088.587
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "wasm-vm-worker-jit",
+      "label": "wasm-vm · worker + JIT",
+      "status": "measured",
+      "generatedAt": "2026-09-01T16:00:27.922Z",
+      "environment": {
+        "id": "wasm-vm-worker-jit",
+        "nodeVersion": "v20.15.1",
+        "platform": "linux",
+        "arch": "riscv64",
+        "osRelease": "6.6.63",
+        "execPath": "node",
+        "logicalCpus": null,
+        "versions": {
+          "node": "20.15.1",
+          "acorn": "8.11.3",
+          "ada": "2.7.8",
+          "ares": "1.28.1",
+          "base64": "0.5.2",
+          "brotli": "1.1.0",
+          "cjs_module_lexer": "1.2.2",
+          "cldr": "44.1",
+          "icu": "74.2",
+          "llhttp": "8.1.2",
+          "modules": "115",
+          "napi": "9",
+          "nghttp2": "1.62.1",
+          "openssl": "3.3.1",
+          "simdutf": "5.2.8",
+          "tz": "2023c",
+          "undici": "6.13.0",
+          "unicode": "15.1",
+          "uv": "1.46.0",
+          "uvwasi": "0.0.21",
+          "v8": "11.3.244.8-node.23",
+          "zlib": "1.3.1"
+        }
+      },
+      "runner": {
+        "source": "./bench-runtime-compute.mjs",
+        "scriptSha256": "378e4841d50b8165fdee7d15ffe8daf0d2e6a40145982e8525b161696342d8d7",
+        "command": [
+          "node",
+          "/tmp/bench-runtime-compute.mjs",
+          "--environment=wasm-vm-worker-jit",
+          "--samples=7",
+          "--warmups=2",
+          "--output=/tmp/runtime-compute.json"
+        ]
+      },
+      "browser": {
+        "adapter": "terminal-ui-capture",
+        "variant": "worker-jit",
+        "url": "https://wasm-vm.pages.dev/app?guest=node-alpine&nosw=&persist=0&diagnosticStats=1&worker=1&jit=1&e3t12dSingleUser=1&capture=jit-single-user-1788243590933#ide",
+        "bootMode": "explicit single-user /bin/sh init",
+        "persist": false,
+        "guestReady": true,
+        "backend": "whole-machine-worker",
+        "jitPolicy": "enabled",
+        "jitThreshold": 512,
+        "interpreter": "fast",
+        "manifest": "./artifacts-node-alpine.json",
+        "consoleErrors": []
+      },
+      "workloads": [
+        {
+          "id": "integer-mix",
+          "label": "Integer mix",
+          "operation": "dependency-heavy Math.imul + 32-bit arithmetic loop",
+          "unitLabel": "loop iterations",
+          "workUnits": 1000000,
+          "workloadClass": "steady-state-compute",
+          "timedRegion": "compute loop only; process startup and memory preparation excluded",
+          "status": "measured",
+          "expectedChecksum": 1986867034,
+          "samples": [
+            {
+              "sample": 0,
+              "elapsedMs": 262.847,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 1,
+              "elapsedMs": 262.859,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 2,
+              "elapsedMs": 263.004,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 3,
+              "elapsedMs": 262.724,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 4,
+              "elapsedMs": 262.851,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 5,
+              "elapsedMs": 263.144,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 6,
+              "elapsedMs": 262.878,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "meanMs": 262.901,
+            "medianMs": 262.859,
+            "p95Ms": 263.144,
+            "stdevMs": 0.125,
+            "workUnitsPerSec": 3804320.948,
+            "workUnits": 1000000,
+            "sampleCount": 7
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        },
+        {
+          "id": "branch-mix",
+          "label": "Branch mix",
+          "operation": "deterministic data-dependent branches + rotates",
+          "unitLabel": "loop iterations",
+          "workUnits": 1000000,
+          "workloadClass": "steady-state-compute",
+          "timedRegion": "compute loop only; process startup and memory preparation excluded",
+          "status": "measured",
+          "expectedChecksum": 2619934272,
+          "samples": [
+            {
+              "sample": 0,
+              "elapsedMs": 267.77,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 1,
+              "elapsedMs": 267.964,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 2,
+              "elapsedMs": 268.059,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 3,
+              "elapsedMs": 267.772,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 4,
+              "elapsedMs": 267.866,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 5,
+              "elapsedMs": 267.855,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 6,
+              "elapsedMs": 268.118,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "meanMs": 267.915,
+            "medianMs": 267.866,
+            "p95Ms": 268.118,
+            "stdevMs": 0.126,
+            "workUnitsPerSec": 3733209.889,
+            "workUnits": 1000000,
+            "sampleCount": 7
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        },
+        {
+          "id": "memory-mix",
+          "label": "Memory mix",
+          "operation": "Uint32Array indexed read/modify/write loop",
+          "unitLabel": "typed-array updates",
+          "workUnits": 524288,
+          "workloadClass": "steady-state-compute",
+          "timedRegion": "compute loop only; process startup and memory preparation excluded",
+          "status": "measured",
+          "expectedChecksum": 2070041300,
+          "samples": [
+            {
+              "sample": 0,
+              "elapsedMs": 774.176,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 1,
+              "elapsedMs": 734.382,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 2,
+              "elapsedMs": 734.393,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 3,
+              "elapsedMs": 734.644,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 4,
+              "elapsedMs": 734.221,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 5,
+              "elapsedMs": 734.391,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 6,
+              "elapsedMs": 734.468,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "meanMs": 740.096,
+            "medianMs": 734.393,
+            "p95Ms": 774.176,
+            "stdevMs": 13.913,
+            "workUnitsPerSec": 713906.587,
+            "workUnits": 524288,
+            "sampleCount": 7
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "wasm-vm-worker-interpreter",
+      "label": "wasm-vm · worker interpreter",
+      "status": "measured",
+      "generatedAt": "2026-09-01T14:54:01.434Z",
+      "environment": {
+        "id": "wasm-vm-worker-interpreter",
+        "nodeVersion": "v20.15.1",
+        "platform": "linux",
+        "arch": "riscv64",
+        "osRelease": "6.6.63",
+        "execPath": "node",
+        "logicalCpus": null,
+        "versions": {
+          "node": "20.15.1",
+          "acorn": "8.11.3",
+          "ada": "2.7.8",
+          "ares": "1.28.1",
+          "base64": "0.5.2",
+          "brotli": "1.1.0",
+          "cjs_module_lexer": "1.2.2",
+          "cldr": "44.1",
+          "icu": "74.2",
+          "llhttp": "8.1.2",
+          "modules": "115",
+          "napi": "9",
+          "nghttp2": "1.62.1",
+          "openssl": "3.3.1",
+          "simdutf": "5.2.8",
+          "tz": "2023c",
+          "undici": "6.13.0",
+          "unicode": "15.1",
+          "uv": "1.46.0",
+          "uvwasi": "0.0.21",
+          "v8": "11.3.244.8-node.23",
+          "zlib": "1.3.1"
+        }
+      },
+      "runner": {
+        "source": "./bench-runtime-compute.mjs",
+        "scriptSha256": "378e4841d50b8165fdee7d15ffe8daf0d2e6a40145982e8525b161696342d8d7",
+        "command": [
+          "node",
+          "/tmp/bench-runtime-compute.mjs",
+          "--environment=wasm-vm-worker-interpreter",
+          "--samples=7",
+          "--warmups=2",
+          "--output=/tmp/runtime-compute.json"
+        ]
+      },
+      "browser": {
+        "adapter": "terminal-ui-capture",
+        "variant": "worker-interpreter",
+        "url": "https://wasm-vm.pages.dev/app?guest=node-alpine&nosw=&persist=0&diagnosticStats=1&worker=1&jit=0&e3t12dSingleUser=1&capture=worker-interpreter-single-user-1788278442000#ide",
+        "bootMode": "explicit single-user /bin/sh init",
+        "persist": false,
+        "guestReady": true,
+        "backend": "whole-machine-worker",
+        "jitPolicy": "forced-off",
+        "jitThreshold": 512,
+        "interpreter": "fast",
+        "manifest": "./artifacts-node-alpine.json",
+        "consoleErrors": []
+      },
+      "workloads": [
+        {
+          "id": "integer-mix",
+          "label": "Integer mix",
+          "operation": "dependency-heavy Math.imul + 32-bit arithmetic loop",
+          "unitLabel": "loop iterations",
+          "workUnits": 1000000,
+          "workloadClass": "steady-state-compute",
+          "timedRegion": "compute loop only; process startup and memory preparation excluded",
+          "status": "measured",
+          "expectedChecksum": 1986867034,
+          "samples": [
+            {
+              "sample": 0,
+              "elapsedMs": 262.895,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 1,
+              "elapsedMs": 262.834,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 2,
+              "elapsedMs": 262.988,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 3,
+              "elapsedMs": 262.765,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 4,
+              "elapsedMs": 263.02,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 5,
+              "elapsedMs": 262.999,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 6,
+              "elapsedMs": 262.816,
+              "checksum": 1986867034,
+              "workUnits": 1000000,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "meanMs": 262.902,
+            "medianMs": 262.895,
+            "p95Ms": 263.02,
+            "stdevMs": 0.094,
+            "workUnitsPerSec": 3803799.996,
+            "workUnits": 1000000,
+            "sampleCount": 7
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        },
+        {
+          "id": "branch-mix",
+          "label": "Branch mix",
+          "operation": "deterministic data-dependent branches + rotates",
+          "unitLabel": "loop iterations",
+          "workUnits": 1000000,
+          "workloadClass": "steady-state-compute",
+          "timedRegion": "compute loop only; process startup and memory preparation excluded",
+          "status": "measured",
+          "expectedChecksum": 2619934272,
+          "samples": [
+            {
+              "sample": 0,
+              "elapsedMs": 267.874,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 1,
+              "elapsedMs": 267.911,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 2,
+              "elapsedMs": 267.942,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 3,
+              "elapsedMs": 267.863,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 4,
+              "elapsedMs": 267.946,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 5,
+              "elapsedMs": 267.875,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            },
+            {
+              "sample": 6,
+              "elapsedMs": 267.869,
+              "checksum": 2619934272,
+              "workUnits": 1000000,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "meanMs": 267.897,
+            "medianMs": 267.875,
+            "p95Ms": 267.946,
+            "stdevMs": 0.033,
+            "workUnitsPerSec": 3733084.461,
+            "workUnits": 1000000,
+            "sampleCount": 7
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        },
+        {
+          "id": "memory-mix",
+          "label": "Memory mix",
+          "operation": "Uint32Array indexed read/modify/write loop",
+          "unitLabel": "typed-array updates",
+          "workUnits": 524288,
+          "workloadClass": "steady-state-compute",
+          "timedRegion": "compute loop only; process startup and memory preparation excluded",
+          "status": "measured",
+          "expectedChecksum": 2070041300,
+          "samples": [
+            {
+              "sample": 0,
+              "elapsedMs": 296.971,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 1,
+              "elapsedMs": 296.807,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 2,
+              "elapsedMs": 296.868,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 3,
+              "elapsedMs": 296.882,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 4,
+              "elapsedMs": 296.776,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 5,
+              "elapsedMs": 296.912,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            },
+            {
+              "sample": 6,
+              "elapsedMs": 296.824,
+              "checksum": 2070041300,
+              "workUnits": 524288,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "meanMs": 296.863,
+            "medianMs": 296.868,
+            "p95Ms": 296.971,
+            "stdevMs": 0.062,
+            "workUnitsPerSec": 1766064.379,
+            "workUnits": 524288,
+            "sampleCount": 7
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "wasm-vm-main-interpreter",
+      "label": "wasm-vm · main interpreter",
+      "status": "notRun",
+      "environment": null,
+      "runner": {
+        "source": "./bench-runtime-compute.mjs",
+        "scriptSha256": "378e4841d50b8165fdee7d15ffe8daf0d2e6a40145982e8525b161696342d8d7"
+      },
+      "browser": {
+        "variant": "main-interpreter",
+        "url": "https://wasm-vm.pages.dev/app?guest=node-alpine&nosw=&persist=0&diagnosticStats=1&worker=0&jit=0&e3t12dSingleUser=1&capture=main-interpreter-single-user-1788278442000#ide",
+        "bootMode": "explicit single-user /bin/sh init",
+        "persist": false,
+        "consoleErrors": [
+          "dropped a terminal input chunk: re-entrant call into WasmMachine (a console callback cannot drive the machine)"
+        ]
+      },
+      "reason": "Control run produced checksum-valid samples but is not published as valid browser evidence: one main-thread terminal interaction logged a re-entrant WasmMachine console error.",
+      "workloads": []
+    }
+  ],
+  "diagnostics": {
+    "id": "native-jit-handoff-v1",
+    "status": "measured",
+    "source": "crates/jit-runtime/tests/perf_handoff.rs",
+    "method": "separate native release diagnostic; it is not interchangeable with the browser compute campaign",
+    "policy": {
+      "samples": 5,
+      "warmups": 1,
+      "unit": "MIPS"
+    },
+    "workloads": [
+      {
+        "id": "six-op",
+        "label": "Six-op boundary loop",
+        "interpreterMips": 77.018,
+        "jitMips": 97.403,
+        "ratio": 1.265,
+        "budget": 6000000
+      },
+      {
+        "id": "64-op",
+        "label": "64-op hot loop",
+        "interpreterMips": 107.125,
+        "jitMips": 725.329,
+        "ratio": 6.771,
+        "budget": 6400000
+      }
+    ]
+  }
+}

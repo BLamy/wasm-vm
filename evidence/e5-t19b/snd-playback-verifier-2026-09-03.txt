@@ -1,0 +1,14 @@
+E5-T19b verifier attack transcript
+tested_head=2d4e77ab034d734bc3487788c45ffc396a722c8d
+
+commands:
+  cargo test -p wasm-vm-core --test virtio_snd_playback --release -- --nocapture
+  for n in {1..25}; do cargo test -p wasm-vm-core --test virtio_snd_playback --quiet; done
+
+observed:
+  optimized playback suite: 7 passed, 0 failed
+  repeated debug playback suite: 25 consecutive invocations, 7 passed and 0 failed in every invocation
+  exercised cases: held mock clock with multiple txq descriptors, 0.5x/1x/2x pacing,
+    used-ring FIFO/status latency, bit-exact STOP/START ramp, 8-second 440 Hz sine/FFT,
+    wrong stream and sink errors, and RELEASE flushing
+  findings: none

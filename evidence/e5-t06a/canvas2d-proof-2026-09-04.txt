@@ -1,0 +1,25 @@
+E5-T06a Canvas2D presentation proof
+Recorded exact head: 6688beaeae0ff73af0021159ef0459ddf949cdd3
+
+Command:
+  env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS make verify-E5-T06a
+
+Result:
+  node --check present-backend.js: PASS
+  node --check canvas2d.js: PASS
+  node --test web/tests/e5-t06a-canvas2d.test.mjs: 10 passed, 0 failed
+  make target: OK
+
+The recording proves that the Canvas2D backend consumes the T03 full resource-sized BGRA word
+view, extracts a damage rectangle with the resource width as its stride, converts each word to
+ImageData RGBA bytes, and writes only the requested destination rectangle. Five golden patterns
+cover a 1x1 frame, multi-row data, transparent/opaque alpha, odd-width full-frame data, and a
+non-zero-origin partial update. A separate x=1 width=3 check verifies untouched surrounding
+pixels; a right-edge x=6 width=3 rectangle spans every row boundary; and a 1,000-iteration resize
+stress alternates 1x1, 17x9, and 128x64 while asserting stagingCapacity <= width*height*4 on every
+present. Invalid origins, outside rectangles, and short full-frame pixel views fail before a
+Canvas2D write.
+
+The JavaScript sources, plain .ts projections, and deployable web/dist projections are byte
+identical. Independent-machine, WebKit, and host-layer rr runs are excluded per the user's
+direction and the repository's current evidence policy.

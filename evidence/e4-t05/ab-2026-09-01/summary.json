@@ -1,0 +1,75 @@
+{
+  "date": "2026-09-01",
+  "commit": "2d092b4b22761fc416914ddb37ad5e281a7b6c12",
+  "machine": {
+    "cpu": "Apple M4 Max",
+    "cores": 16,
+    "ram_bytes": 137438953472,
+    "os": "macOS 26.6.2 (25G83)",
+    "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)"
+  },
+  "note": "guest CoreMark score is instruction-count-derived (identical across configs); the emulator uplift is the HOST wall-clock ratio of the benchmark region, median of 5 alternating back-to-back samples per config on an idle machine.",
+  "cache_off": {
+    "host_elapsed_samples_s": [
+      233.492,
+      237.263,
+      233.249,
+      237.901,
+      229.824
+    ],
+    "median_host_s": 233.492,
+    "guest_elapsed_s": [
+      22.923,
+      22.923,
+      22.923,
+      22.925,
+      22.924
+    ],
+    "scores": [
+      261.746,
+      261.746,
+      261.746,
+      261.723,
+      261.734
+    ],
+    "files": [
+      "evidence/e4-t05/ab-2026-09-01/coremark-cacheoff-s1.json",
+      "evidence/e4-t05/ab-2026-09-01/coremark-cacheoff-s2.json",
+      "evidence/e4-t05/ab-2026-09-01/coremark-cacheoff-s3.json",
+      "evidence/e4-t05/ab-2026-09-01/coremark-cacheoff-s4.json",
+      "evidence/e4-t05/ab-2026-09-01/coremark-cacheoff-s5.json"
+    ]
+  },
+  "cache_batched": {
+    "host_elapsed_samples_s": [
+      98.057,
+      97.558,
+      97.275,
+      97.73,
+      95.345
+    ],
+    "median_host_s": 97.558,
+    "guest_elapsed_s": [
+      22.923,
+      22.923,
+      22.923,
+      22.923,
+      22.922
+    ],
+    "scores": [
+      261.746,
+      261.746,
+      261.746,
+      261.746,
+      261.757
+    ],
+    "files": [
+      "evidence/e4-t05/ab-2026-09-01/coremark-cache-batched-s1.json",
+      "evidence/e4-t05/ab-2026-09-01/coremark-cache-batched-s2.json",
+      "evidence/e4-t05/ab-2026-09-01/coremark-cache-batched-s3.json",
+      "evidence/e4-t05/ab-2026-09-01/coremark-cache-batched-s4.json",
+      "evidence/e4-t05/ab-2026-09-01/coremark-cache-batched-s5.json"
+    ]
+  },
+  "uplift_host_wall": 2.3934
+}

@@ -1,0 +1,45 @@
+{
+  "task": "E5-T11c",
+  "date": "2026-09-03",
+  "implementation_commit": "ba49df3",
+  "kernel": {
+    "path": "releases/kernel/6.6.63/Image",
+    "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+  },
+  "rootfs": {
+    "path": "releases/rootfs/alpine-rootfs.ext4",
+    "sha256": "6ce14d44f4bf6f6ef8c28303da431342608310c620664779946f20fdadc8a51c"
+  },
+  "device": {
+    "path": "/dev/input/event0",
+    "name": "wasm-vm virtio keyboard",
+    "bus": "0006",
+    "vendor": "feed",
+    "product": "0001",
+    "version": "0100",
+    "ev_bitmap": "20013",
+    "led_bitmap": "7",
+    "msc_bitmap": "10",
+    "ev_rep": false
+  },
+  "stream": [
+    { "type": "EV_KEY", "code": "KEY_A", "value": 1 },
+    { "type": "EV_SYN", "code": "SYN_REPORT", "value": 0 },
+    { "type": "EV_KEY", "code": "KEY_A", "value": 0 },
+    { "type": "EV_SYN", "code": "SYN_REPORT", "value": 0 }
+  ],
+  "hold_policy": {
+    "injected_key_down_frames": 1,
+    "guest_key_events": 1,
+    "repeat_events": 0
+  },
+  "commands": {
+    "native_guest": "tools/verify/e5-t11c-keyboard-evdev.sh",
+    "native_stream": "cargo test -p wasm-vm-core --test virtio_keyboard_guest_stream",
+    "wasm_stream": "wasm-pack test --node crates/wasm --test keyboard_guest_stream"
+  },
+  "fixture": {
+    "path": "evidence/e5-t11c/keyboard-evdev-serial.txt",
+    "sha256": "1f6e85bac3d506eeede576457177c87288be65da96c18f503393095ef7665429"
+  }
+}

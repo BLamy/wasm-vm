@@ -1,0 +1,41 @@
+E5-T20b exact-head worker/verifier evidence
+============================================
+
+Recorded: 2026-09-03
+Repository: /Users/blamy/Documents/Codex/wasm-vm
+Commit: c96bd1ef2458c9d5d7f3eb516a6a72d04b006a14
+
+Command:
+  env -i PATH="$PATH" node --test web/tests/audio-worklet.test.mjs web/tests/audio-ring.test.mjs
+
+Result: exit 0
+  13 tests passed, 0 failed.
+  The five worklet cases cover full, one-frame-short, empty, quantum-boundary wrap, and
+  alternating starvation across 10,000 simulated process calls. The eight ring cases cover the
+  inherited SPSC contract plus atomic underrun-cell initialization and malformed inputs.
+
+Worklet repeat:
+  env -i PATH="$PATH" node --test web/tests/audio-worklet.test.mjs
+  result: 5 passed, 0 failed
+  for i in {1..20}; do node --test --test-reporter=dot web/tests/audio-worklet.test.mjs; done
+  result: worklet-repeat-runs=20 exit=0
+
+Packaging:
+  cmp web/src/audio/ring.js web/dist/src/audio/ring.js
+  cmp web/src/audio/worklet.js web/dist/src/audio/worklet.js
+  result: both source/deploy pairs identical
+
+SHA-256:
+  web/src/audio/ring.js          2bc77d769c90fef81c9e866e38b71b034d56573281a70bac811f93da997f73eb
+  web/src/audio/worklet.js       bdbee7d3b403d594ac56a9d38c02314984a904172eeef26b2cd82965a08e359f
+  web/tests/audio-ring.test.mjs  1ec16983f661c68e35fbbb91c793180676fbc442f0f45e369e7bb0b1dbcf58fb
+  web/tests/audio-worklet.test.mjs 0d0b4e04b06ca82f7a644f4ae6a191595f611b0cdc775e4007c902b939595444
+  docs/audio.md                  64b90addf6198dc82079cca868ecc5eaecfd77e634d2c4c5f296f3da893c4724
+  web/dist/src/audio/ring.js     2bc77d769c90fef81c9e866e38b71b034d56573281a70bac811f93da997f73eb
+  web/dist/src/audio/worklet.js  bdbee7d3b403d594ac56a9d38c02314984a904172eeef26b2cd82965a08e359f
+
+The recording demonstrates that a real processor process() invocation drains at most one 128-frame
+quantum, copies interleaved stereo f32 into the supplied planar channels, zero-fills every missing
+frame, and increments the shared atomic underrun cell exactly once for each starved quantum. It
+also demonstrates no blocking primitive or allocation helper in the render path and preserves the
+T20a ordering contract through the dependent ring tests.

@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Containers · wasm-vm</title>
+  <meta name="description" content="The current OCI and wvrun container scope inside wasm-vm." />
+  <link rel="stylesheet" href="./docs.css" />
+</head>
+<body>
+  <header class="docs-header">
+    <div class="docs-header-inner">
+      <a class="docs-brand" href="./docs.html">wasm-vm <span>documentation</span></a>
+      <nav class="docs-top-nav" aria-label="Documentation navigation">
+        <a href="./docs.html">Overview</a>
+        <a href="./docs-embedding.html">Embed</a>
+        <a href="./docs-guest.html">Guest</a>
+        <a href="./docs-containers.html" aria-current="page">Containers</a>
+        <a href="./docs-verification.html">Verification</a>
+        <a href="./docs-explainers.html">Explainers</a>
+        <a class="launch" href="./app.html">Launch demo →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="docs-shell">
+    <div class="breadcrumbs"><a href="./docs.html">Docs</a> / Containers</div>
+    <div class="doc-layout">
+      <aside class="doc-rail">
+        <p class="rail-title">On this site</p>
+        <ul class="rail-links">
+          <li><a href="./docs.html">Overview</a></li>
+          <li><a href="./docs-embedding.html">Embed</a></li>
+          <li><a href="./docs-guest.html">Guest</a></li>
+          <li><a href="./docs-containers.html" aria-current="page">Containers</a></li>
+          <li><a href="./docs-verification.html">Verification</a></li>
+          <li><a href="./docs-explainers.html">Explainers</a></li>
+        </ul>
+        <div class="rail-source">
+          Source:
+          <a href="https://github.com/BLamy/wasm-vm/blob/main/docs/containers.md" target="_blank" rel="noopener">docs/containers.md</a> ·
+          <a href="https://github.com/BLamy/wasm-vm/blob/main/docs/container-matrix.md" target="_blank" rel="noopener">matrix</a>
+        </div>
+      </aside>
+
+      <article class="doc-content">
+        <span class="eyebrow">OCI workloads in the guest</span>
+        <h1>Containers, with the boundary visible.</h1>
+        <p class="lede">
+          wasm-vm is not Docker Engine in a tab. The current work is an OCI image pipeline plus a
+          small guest-side runner named <code>wvrun</code>. The page separates what has been
+          exercised from what is still a boot-gated capstone.
+        </p>
+        <div class="page-meta">
+          <span class="badge live">OCI import and validation</span>
+          <span class="badge live">wvrun lifecycle and exec logic</span>
+          <span class="badge caution">public busybox build has no wvrun</span>
+        </div>
+
+        <div class="note warn">
+          <p><strong>Public-demo caveat.</strong> The default public manifest is the small busybox
+          initramfs. It does not imply that the deployed page includes the local-only Alpine
+          container bundles or that the container UI is a live Docker daemon.</p>
+        </div>
+
+        <h2>What the pipeline does</h2>
+        <div class="flow">
+          <div class="flow-step"><strong>OCI layout</strong>registry blobs + index</div>
+          <div class="flow-step"><strong>Verify</strong>digest each blob</div>
+          <div class="flow-step"><strong>Unpack</strong>safe rootfs bundle</div>
+          <div class="flow-step"><strong>wvrun</strong>guest namespaces + exec</div>
+        </div>
+        <p>
+          The native CLI can turn a verified OCI layout into a bundle with
+          <code>wasm-vm oci unpack &lt;layout&gt; --out &lt;bundle&gt;</code>. The bundle contains
+          a root filesystem, <code>run.json</code>, and flat configuration files so the guest
+          runner does not need a JSON parser.
+        </p>
+        <pre><code>wasm-vm oci unpack &lt;layout&gt; --out &lt;bundle&gt;
+wvrun &lt;bundle&gt;
+wvrun --interactive &lt;bundle&gt;</code></pre>
+
+        <h2>Kernel capabilities that were audited</h2>
+        <p>
+          The pinned riscv kernel configuration enables the primitives needed by the current
+          runner shape: PID, mount, network, UTS, user, and IPC namespaces; cgroup v2 controls;
+          overlayfs; tmpfs; veth/bridge networking; and loop devices. The in-guest smoke test is
+          important because a config symbol alone is not proof that the emulator implements the
+          corresponding syscall and device path.
+        </p>
+        <table class="data-table">
+          <thead><tr><th>Capability</th><th>Used for</th><th>Current proof</th></tr></thead>
+          <tbody>
+            <tr><td>Namespaces</td><td>PID, mount, UTS, IPC, network, and user isolation.</td><td>Kernel audit plus in-guest smoke coverage.</td></tr>
+            <tr><td>cgroup v2</td><td>Memory, PID, and CPU resource boundaries.</td><td>Memory limit/OOM event is checked by the smoke test.</td></tr>
+            <tr><td>overlayfs + tmpfs</td><td>Read-only bundle lower layer and writable upper layer.</td><td>Override and whiteout behavior are exercised.</td></tr>
+            <tr><td>veth + bridge</td><td>Guest-side container network plumbing.</td><td>Cross-network-namespace ping is exercised in the audit.</td></tr>
+            <tr><td>seccomp</td><td>Future runc-style syscall filtering.</td><td>Config is enabled; the current <code>wvrun</code> runner does not install the filter yet.</td></tr>
+          </tbody>
+        </table>
+
+        <h2>What <code>wvrun</code> actually provides</h2>
+        <p>
+          The runner creates an overlay, enters PID/mount/UTS/IPC namespaces, mounts fresh
+          <code>/proc</code> and <code>/dev</code>, pivots into the bundle root, applies the bundle's
+          argv/environment/cwd/user, and executes the image command with exit-code passthrough.
+          Its lifecycle surface also includes detached runs, listing, logs, stop/remove, and
+          <code>exec</code> into a running container.
+        </p>
+        <pre><code>wvrun run -d --name c1 &lt;bundle&gt;
+wvrun ps
+wvrun logs c1
+wvrun stop c1
+wvrun rm c1
+wvrun exec -it c1 sh</code></pre>
+        <p>
+          Those commands describe the guest runner's checked-in interface. They are not a promise
+          that every public page has a container-capable image or that all Docker CLI behavior is
+          supported.
+        </p>
+
+        <h2>Image matrix: architecture, not service uptime</h2>
+        <p>
+          The current matrix records 9 of 9 surveyed riscv64 images passing digest-verified
+          unpacking, entrypoint resolution, and whole-rootfs ELF purity: Alpine, BusyBox, nginx,
+          httpd, Caddy, HAProxy, Redis, Memcached, and Postgres. This is a static pipeline result.
+          It does not say that all nine have been booted and served successfully inside the emulator.
+        </p>
+        <div class="note good">
+          <p><strong>Read the result correctly.</strong> “9/9 passed” means the image bundle is
+          structurally runnable and every ELF is riscv64 according to the matrix checks. The
+          boot-and-service leg remains the E3.5-T05 capstone.</p>
+        </div>
+
+        <h2>Current gaps</h2>
+        <ul>
+          <li>The public busybox image does not ship <code>wvrun</code>; the container-capable Alpine image is a local-only path.</li>
+          <li>Seccomp is enabled in the kernel configuration but is not yet installed by the current runner.</li>
+          <li>The full booted image/service matrix is deferred to the E3.5-T05 capstone and should not be inferred from the native fast path.</li>
+          <li>Unsupported architectures are rejected by the image validation path rather than translated into riscv64.</li>
+        </ul>
+
+        <h2>Source records</h2>
+        <ul class="source-list">
+          <li><a href="https://github.com/BLamy/wasm-vm/blob/main/docs/containers.md" target="_blank" rel="noopener"><code>docs/containers.md</code></a> — kernel audit, smoke test, and runner contract.</li>
+          <li><a href="https://github.com/BLamy/wasm-vm/blob/main/docs/container-matrix.md" target="_blank" rel="noopener"><code>docs/container-matrix.md</code></a> — 9-image static matrix and adversarial self-test.</li>
+          <li><a href="https://github.com/BLamy/wasm-vm/blob/main/tasks/epic-3.5-oci-workloads/E3.5-T05-container-capstone.md" target="_blank" rel="noopener"><code>E3.5-T05</code></a> — the remaining boot-gated acceptance.</li>
+          <li><a href="https://github.com/BLamy/wasm-vm/tree/main/tools/guest" target="_blank" rel="noopener"><code>tools/guest</code></a> — runner and guest smoke scripts.</li>
+        </ul>
+      </article>
+    </div>
+  </main>
+
+  <footer class="docs-footer">
+    <div class="docs-footer-inner">
+      <span><strong>wasm-vm</strong> · container boundary</span>
+      <nav aria-label="Footer navigation">
+        <a href="./docs.html">Docs overview</a>
+        <a href="./docs-guest.html">Guest</a>
+        <a href="./app.html">Demo</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

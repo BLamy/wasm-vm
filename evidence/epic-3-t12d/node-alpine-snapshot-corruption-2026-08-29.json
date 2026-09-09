@@ -1,0 +1,52 @@
+{
+  "schema": "e3-t12d-local-node-browser-v1",
+  "capturedOn": "2026-08-29 America/New_York",
+  "gitHead": "8314bee3f68a966e1ae342559548113a14a25bbe",
+  "server": "bash tools/serve-dev.sh 8132",
+  "browser": {
+    "engine": "Google Chrome",
+    "version": "152.0.7977.65",
+    "executable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "headless": true
+  },
+  "guest": {
+    "kind": "node-alpine",
+    "urlQuery": "?guest=node-alpine&profile=1&jit=0",
+    "readyMeans": "restoredFromBootSnapshot() && isGuestReady()",
+    "firstBoot": {
+      "readyMs": 1687.66,
+      "restored": true,
+      "initialSnapshotDecision": "missing"
+    },
+    "snapshot": {
+      "saveReturned": true,
+      "saveMs": 1751.8,
+      "exportedBytes": 138257790,
+      "exportedSha256": "238214f0e8976cf94d2e021cdbd231fa01530152661d1af7f4da54dd20dad73c",
+      "decisionAfterSave": "resume"
+    },
+    "truncationAttack": {
+      "originalBytes": 138257790,
+      "truncatedBytes": 138257789,
+      "mutation": "imported a copy with exactly the final byte removed",
+      "decisionAfterTruncatedImport": "resume",
+      "expectedDecision": "corrupt",
+      "decisionAfterReimportingOriginal": "resume"
+    },
+    "liveGuestControl": {
+      "command": "echo T12D_LIVE_$((6*7))",
+      "stdout": "T12D_LIVE_42",
+      "exit": 0
+    },
+    "reloadProbe": {
+      "result": "timed_out",
+      "timeoutMs": 180000,
+      "terminalTail": "* /run/lock: correcting owner * Caching service dependencies ... [ ok ] * Remounting devtmpfs on /dev ... [ ok ] * Mounting /dev/mqueue ... [ ok ] * Mounting /dev/pts ... [ ok ] * Mounting /dev/shm ... [ ok ] * Mounting /sys ... [ ok ] * Mounting security filesystem ... [ ok ] * Starting busybox mdev .../lib/rc/sh/openrc-run.sh: line 15: can't create /proc/sys/kernel/hotplug: nonexistent directory [ !! ]"
+    }
+  },
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ],
+  "consoleErrorDisposition": "The development-server log identifies this single error as /favicon.ico, allowed by the browser gate; no pageerror was observed.",
+  "finding": "A one-byte-truncated imported snapshot was accepted by the browser restore decision as resume. The import path appears to write metadata describing the supplied blob, so the header-level decision has no independent expected-length or content-integrity check. This is an acceptance failure for the E3-T12d invalid-snapshot fallback criterion and requires implementation work before verification. The reload timeout is recorded separately and is not used to infer a root cause."
+}

@@ -1,0 +1,38 @@
+{
+  "kind": "e4-t22a-shared-memory-build",
+  "recordedAt": "2026-09-03T07:49:32Z",
+  "sourceHead": "8fbffd5",
+  "commands": [
+    "bash -lc 'bash tools/build-web-shared.sh && cargo build -p wasm-vm-wasm --release --target wasm32-unknown-unknown'",
+    "wasm-objdump -x -j Import crates/wasm/pkg-shared/wasm_vm_wasm.wasm",
+    "wasm-objdump -x -j Memory target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm",
+    "repeat build from env -u RUSTFLAGS -u CARGO_BUILD_TARGET -u RUST_LOG and assert the shared artifact SHA-256"
+  ],
+  "toolchain": {
+    "sharedRustc": "rustc 1.100.0-nightly (2e2b193f8 2026-09-02)",
+    "fallbackRustc": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "wasmObjdump": "1.0.41"
+  },
+  "shared": {
+    "path": "crates/wasm/pkg-shared/wasm_vm_wasm.wasm",
+    "bytes": 37652103,
+    "sha256": "b49488580899e9e6a4d8f6e84c67a0734cc330e46fb1a3ea878ff8dde28d9947",
+    "memory": "memory[0] pages: initial=19 max=32768 shared <- env.memory"
+  },
+  "fallback": {
+    "path": "target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm",
+    "bytes": 30504196,
+    "sha256": "cb7e81f62c22c2057ad002820a35e925981947c6b94503c345412cc5a176e64c",
+    "memory": "memory[0] pages: initial=19",
+    "importsSharedMemory": false
+  },
+  "repeat": {
+    "sharedSha256": "b49488580899e9e6a4d8f6e84c67a0734cc330e46fb1a3ea878ff8dde28d9947",
+    "sameAsFirstRun": true,
+    "environmentScrubbed": ["RUSTFLAGS", "CARGO_BUILD_TARGET", "RUST_LOG"]
+  },
+  "bindgen": {
+    "generated": false,
+    "reason": "version-matched wasm-bindgen 0.2.126 CLI absent; raw module proof remains complete"
+  }
+}

@@ -3,7 +3,7 @@ id: E4-T21
 epic: 4
 title: JIT compilation off the hot path — compile queue, async installs, pause targets
 priority: 421
-status: verification-debt
+status: verified
 depends_on: [E4-T20]
 estimate: M
 capstone: false
@@ -65,6 +65,16 @@ and a deliberately laggy compiler (install delay 100 ms) — stale code executin
 periphery when both are queued (priority inversion = refutation of the ordering claim).
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+Commit: `069c4ee`.
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T21.
+
 
 ### 2026-08-06 — partially-verified (headless gates green; booted-guest ACs deferred to dev)
 

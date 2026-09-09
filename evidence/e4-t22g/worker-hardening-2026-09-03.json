@@ -1,0 +1,595 @@
+{
+  "task": "E4-T22g",
+  "sourceHead": "84ff4841b35e3f6a705ed8864493f09e0bed5b87",
+  "recordedAt": "2026-09-03T09:29:30.625Z",
+  "browser": {
+    "name": "chromium",
+    "version": "131.0.6778.33"
+  },
+  "origin": "http://localhost:8133",
+  "controls": {
+    "guest": "busybox",
+    "worker": "default whole-machine worker",
+    "jit": 0,
+    "startPaused": true,
+    "nosw": true,
+    "testHooks": true,
+    "quantum": 20000,
+    "stressChunkBytes": 100,
+    "stressChunkIntervalMs": 10
+  },
+  "runtimeDigest": "e0b1980799c77ece81f2ddb97b493d5223c1212d1b25f1e1bc94d10f74aafbf3",
+  "firstCommandBoundary": {
+    "command": "stty -icanon -echo min 1 time 0; printf '\\n__E4T22G_READY_%s\\n' \"$((6*7))\"; hash=$(dd bs=1 count=10000 2>/dev/null | sha256sum | cut -d' ' -f1); stty sane; printf '__E4T22G_RESULT_%s\\n' \"$hash\"",
+    "readyMarker": "__E4T22G_READY_42",
+    "resultMarker": "__E4T22G_RESULT_4c207598af7a20db0e3334dd044399a40e467cb81b37f7ba05a4f76dcbd8fd59",
+    "runtimeDigest": "e0b1980799c77ece81f2ddb97b493d5223c1212d1b25f1e1bc94d10f74aafbf3",
+    "pausedScheduler": {
+      "quantum": 20000,
+      "maxQuantum": 20000,
+      "slices": 0,
+      "totalSliceMs": 0,
+      "averageSliceMs": 0,
+      "maxSliceMs": 0,
+      "sliceHistogram": [
+        {
+          "leMs": 4,
+          "count": 0
+        },
+        {
+          "leMs": 8,
+          "count": 0
+        },
+        {
+          "leMs": 16,
+          "count": 0
+        },
+        {
+          "leMs": 32,
+          "count": 0
+        },
+        {
+          "leMs": 64,
+          "count": 0
+        },
+        {
+          "leMs": 128,
+          "count": 0
+        },
+        {
+          "leMs": 256,
+          "count": 0
+        },
+        {
+          "leMs": 512,
+          "count": 0
+        },
+        {
+          "leMs": 1000,
+          "count": 0
+        },
+        {
+          "leMs": null,
+          "count": 0
+        }
+      ],
+      "maxStretchGapMs": 0,
+      "requestedInstructions": 0,
+      "retiredInstructions": 0,
+      "fetchWaits": 0,
+      "fetchRequestedChunks": 0,
+      "fetchWaitTotalMs": 0,
+      "fetchWaitMaxMs": 0,
+      "outputCalls": 0,
+      "outputBytes": 0,
+      "inputCalls": 2,
+      "inputBytes": 56,
+      "yieldMode": "scheduler.postTask",
+      "schedulerYields": 0,
+      "timerYields": 0,
+      "mainThreadYields": 0
+    }
+  },
+  "stress": {
+    "expectedBytes": 10000,
+    "expectedSha256": "4c207598af7a20db0e3334dd044399a40e467cb81b37f7ba05a4f76dcbd8fd59",
+    "checksum": "4c207598af7a20db0e3334dd044399a40e467cb81b37f7ba05a4f76dcbd8fd59",
+    "chunkBytes": 100,
+    "chunkIntervalMs": 10,
+    "result": {
+      "result": {
+        "stdout": "hash=$(dd bs=1 count=10000 2>/dev/null | sha256sum | cut -d' ' -f1); stty sane; \nprintf '__E4T22G_RESULT_%s\\n' \"$hash\"; printf '\\n__WVEND_mtlbpe341_%s\\n' \"$?\"\n\n__E4T22G_READY_42\n__E4T22G_RESULT_4c207598af7a20db0e3334dd044399a40e467cb81b37f7ba05a4f76dcbd8fd59\n\n",
+        "exit": 0
+      },
+      "bytesSent": 10000,
+      "chunkBytes": 100,
+      "chunkIntervalMs": 10,
+      "inputDurationMs": 1179.1449999809265,
+      "durationMs": 15664.479999989271,
+      "approximateBytesPerSecond": 8480.721200668075,
+      "markerTail": "ls -la '/root'; printf '\\n__WVEND_mtlbpdab0_%s\\n' \"$?\"\r\n~ # \r\n~ # ls -la '/root'; printf '\\n__WVEND_mtlbpdab0_%s\\n' \"$?\"\r\ntotal 0\r\ndrwx------    2 0        0               40 Nov 14  2024 \u001b[1;34m.\u001b[m\r\ndrwxrwxrwt    8 0        0              200 Aug  6 19:46 \u001b[1;34m..\u001b[m\r\n\r\n__WVEND_mtlbpdab0_0\r\n~ # stty -icanon -echo min 1 time 0; printf '\\n__E4T22G_READY_%s\\n' \"$((6*7))\"; \r\r\nhash=$(dd bs=1 count=10000 2>/dev/null | sha256sum | cut -d' ' -f1); stty sane; \r\r\nprintf '__E4T22G_RESULT_%s\\n' \"$hash\"; printf '\\n__WVEND_mtlbpe341_%s\\n' \"$?\"\r\n\r\n__E4T22G_READY_42\r\n__E4T22G_RESULT_4c207598af7a20db0e3334dd044399a40e467cb81b37f7ba05a4f76dcbd8fd59\r\n\r\n__WVEND_mtlbpe341_0\r\n"
+    }
+  },
+  "lifecycle": {
+    "first": {
+      "stdout": "tlbpqnk2_%s\\n' \"$?\"\n~ # echo E4T22G_BEFORE_$((6*7)); printf '\\n__WVEND_mtlbpqnk2_%s\\n' \"$?\"\nE4T22G_BEFORE_42\n\n",
+      "exit": 0
+    },
+    "paused": {
+      "scheduler": {
+        "quantum": 20000,
+        "maxQuantum": 20000,
+        "slices": 5254,
+        "totalSliceMs": 16920.749999523163,
+        "averageSliceMs": 3.220546250385071,
+        "maxSliceMs": 6.040000021457672,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 4109
+          },
+          {
+            "leMs": 8,
+            "count": 1145
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 0
+          },
+          {
+            "leMs": 64,
+            "count": 0
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 6.1500000059604645,
+        "requestedInstructions": 105080000,
+        "retiredInstructions": 105052856,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 253,
+        "outputBytes": 813,
+        "inputCalls": 105,
+        "inputBytes": 10359,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 5255,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "rpc": {
+        "calls": 7,
+        "completed": 7,
+        "pending": 0,
+        "averageMs": 66.42142857398305,
+        "maxMs": 460.7950000166893
+      }
+    },
+    "stillPaused": {
+      "quantum": 20000,
+      "maxQuantum": 20000,
+      "slices": 5254,
+      "totalSliceMs": 16920.749999523163,
+      "averageSliceMs": 3.220546250385071,
+      "maxSliceMs": 6.040000021457672,
+      "sliceHistogram": [
+        {
+          "leMs": 4,
+          "count": 4109
+        },
+        {
+          "leMs": 8,
+          "count": 1145
+        },
+        {
+          "leMs": 16,
+          "count": 0
+        },
+        {
+          "leMs": 32,
+          "count": 0
+        },
+        {
+          "leMs": 64,
+          "count": 0
+        },
+        {
+          "leMs": 128,
+          "count": 0
+        },
+        {
+          "leMs": 256,
+          "count": 0
+        },
+        {
+          "leMs": 512,
+          "count": 0
+        },
+        {
+          "leMs": 1000,
+          "count": 0
+        },
+        {
+          "leMs": null,
+          "count": 0
+        }
+      ],
+      "maxStretchGapMs": 6.1500000059604645,
+      "requestedInstructions": 105080000,
+      "retiredInstructions": 105052856,
+      "fetchWaits": 0,
+      "fetchRequestedChunks": 0,
+      "fetchWaitTotalMs": 0,
+      "fetchWaitMaxMs": 0,
+      "outputCalls": 253,
+      "outputBytes": 813,
+      "inputCalls": 105,
+      "inputBytes": 10359,
+      "yieldMode": "scheduler.postTask",
+      "schedulerYields": 5255,
+      "timerYields": 0,
+      "mainThreadYields": 0
+    },
+    "resumed": {
+      "stdout": "E4T22G_AFTER_42\n\n",
+      "exit": 0
+    },
+    "reloaded": {
+      "result": {
+        "stdout": "E4T22G_RELOAD_42\n\n",
+        "exit": 0
+      },
+      "backend": "whole-machine-worker",
+      "restored": true,
+      "scheduler": {
+        "quantum": 20000,
+        "maxQuantum": 20000,
+        "slices": 269,
+        "totalSliceMs": 697.2000000178814,
+        "averageSliceMs": 2.5918215614047635,
+        "maxSliceMs": 5.3499999940395355,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 259
+          },
+          {
+            "leMs": 8,
+            "count": 10
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 0
+          },
+          {
+            "leMs": 64,
+            "count": 0
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 5.354999989271164,
+        "requestedInstructions": 5380000,
+        "retiredInstructions": 5379011,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 95,
+        "outputBytes": 411,
+        "inputCalls": 3,
+        "inputBytes": 124,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 270,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "rpc": {
+        "calls": 3,
+        "completed": 3,
+        "pending": 0,
+        "averageMs": 1.3816666702429454,
+        "maxMs": 3.8400000035762787
+      },
+      "persist": {
+        "pendingBlocks": 0,
+        "pendingBytes": 0,
+        "flushWaiting": false,
+        "writeWaiting": false
+      }
+    }
+  },
+  "kill": {
+    "killed": {
+      "settlements": [
+        {
+          "status": "rejected",
+          "reason": {
+            "name": "Error"
+          }
+        },
+        {
+          "status": "rejected",
+          "reason": {
+            "name": "Error"
+          }
+        }
+      ],
+      "future": "Linux worker heartbeat timed out after 318ms",
+      "guestUp": false,
+      "workers": {
+        "constructed": 1,
+        "terminated": 2
+      }
+    },
+    "fallback": {
+      "result": {
+        "stdout": "E4T22G_FALLBACK_42\n\n",
+        "exit": 0
+      },
+      "backend": "main-thread",
+      "jitPolicy": "forced-off",
+      "workers": {
+        "constructed": 0,
+        "terminated": 0
+      },
+      "rpc": null
+    }
+  },
+  "finalState": {
+    "backend": "main-thread",
+    "guest": "busybox",
+    "digest": "c90b6c6dc44b4f5ad3671894be516a7cbae9c2d56f8fcd3c2026383f9ed0587b",
+    "scheduler": {
+      "quantum": 500000,
+      "maxQuantum": 500000,
+      "slices": 32,
+      "totalSliceMs": 1606.2899998426437,
+      "averageSliceMs": 50.19656249508262,
+      "maxSliceMs": 80.5,
+      "sliceHistogram": [
+        {
+          "leMs": 4,
+          "count": 0
+        },
+        {
+          "leMs": 8,
+          "count": 0
+        },
+        {
+          "leMs": 16,
+          "count": 0
+        },
+        {
+          "leMs": 32,
+          "count": 0
+        },
+        {
+          "leMs": 64,
+          "count": 29
+        },
+        {
+          "leMs": 128,
+          "count": 3
+        },
+        {
+          "leMs": 256,
+          "count": 0
+        },
+        {
+          "leMs": 512,
+          "count": 0
+        },
+        {
+          "leMs": 1000,
+          "count": 0
+        },
+        {
+          "leMs": null,
+          "count": 0
+        }
+      ],
+      "maxStretchGapMs": 80.59000000357628,
+      "requestedInstructions": 16000000,
+      "retiredInstructions": 15996842,
+      "fetchWaits": 0,
+      "fetchRequestedChunks": 0,
+      "fetchWaitTotalMs": 0,
+      "fetchWaitMaxMs": 0,
+      "outputCalls": 8,
+      "outputBytes": 419,
+      "inputCalls": 3,
+      "inputBytes": 126,
+      "yieldMode": "message-channel",
+      "schedulerYields": 0,
+      "timerYields": 0,
+      "mainThreadYields": 33
+    },
+    "persist": {
+      "pendingBlocks": 0,
+      "pendingBytes": 0,
+      "flushWaiting": false,
+      "writeWaiting": false
+    }
+  },
+  "diagnostics": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "httpErrors": []
+  },
+  "assertions": {
+    "orderedTenKilobyteInput": true,
+    "backgroundForegroundStable": true,
+    "reloadLeavesNoPendingRpcOrOverlayWrites": true,
+    "workerKillRejectsPendingAndFutureCalls": true,
+    "mainThreadFallbackUsable": true
+  },
+  "deployArtifactIdentity": {
+    "servedManifest": {
+      "path": "web/artifacts.json",
+      "bytes": 591,
+      "sha256": "46b0201e3565d5c391f53eb4b8bc467f167ddeae735dcb5b4005f346b3c3a223",
+      "generated": "content-hashed; regenerate with tools/gen-web-manifest.sh",
+      "artifacts": {
+        "kernel": {
+          "url": "releases/kernel/6.6.63/Image",
+          "sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58",
+          "size": 22097408
+        },
+        "initramfs": {
+          "url": "releases/initramfs/initramfs.cpio.gz",
+          "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563",
+          "size": 1151596
+        },
+        "bootSnapshot": {
+          "url": "releases/boot-snapshot/busybox-ready.snap.gz",
+          "sha256": "ba3168696638db573173b4d266f5234acd01fb2fabe452cc5a1dfde483a61d33",
+          "size": 10983666
+        }
+      }
+    },
+    "manifests": [
+      {
+        "path": "web/dist/artifacts.json",
+        "bytes": 677,
+        "sha256": "07e1e6672ad0d2d7aaa0fa4a878e0e27caa39cfd3a553941ea99f63d93c1f4d6",
+        "generated": "content-hashed; regenerate with tools/gen-web-manifest.sh",
+        "artifacts": {
+          "kernel": {
+            "url": "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev/kernel/6.6.63/Image",
+            "sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58",
+            "size": 22097408
+          },
+          "initramfs": {
+            "url": "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev/initramfs/initramfs.cpio.gz",
+            "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563",
+            "size": 1151596
+          },
+          "bootSnapshot": {
+            "url": "releases/boot-snapshot/busybox-ready.snap.gz",
+            "sha256": "ba3168696638db573173b4d266f5234acd01fb2fabe452cc5a1dfde483a61d33",
+            "size": 10983666
+          }
+        }
+      },
+      {
+        "path": "web/dist/artifacts-alpine.json",
+        "bytes": 863,
+        "sha256": "e58395a95fc8bc9e51bc9defe4bcb49295b1ade54ff33c4f11c247e743cd6845",
+        "generated": "LOCAL-ONLY production Alpine manifest (tools/gen-alpine-manifest.sh)",
+        "artifacts": {
+          "kernel": {
+            "url": "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev/kernel/6.6.63/Image",
+            "sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58",
+            "size": 22097408
+          },
+          "rootfs": {
+            "url": "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev/rootfs/alpine-rootfs.ext4",
+            "sha256": "f1b544d459a2e347ead9d7620aee931d593dd930f7681ea6cfe415d839d7a9cd",
+            "size": 805306368
+          },
+          "bootSnapshot": {
+            "url": "releases/boot-snapshot/alpine-ready.snap.gz",
+            "sha256": "827c4962709be827c98a020802188e33f59f9c17137129954576da3c70a854ba",
+            "size": 15292188
+          },
+          "overlayDelta": {
+            "url": "releases/boot-snapshot/alpine-overlay-delta.bin.gz",
+            "sha256": "117a82c0e4a301eb92dbaa3339428f4555f5effb7da47cb93320dc1b73dea23c",
+            "size": 303356
+          }
+        }
+      },
+      {
+        "path": "web/dist/artifacts-node-alpine.json",
+        "bytes": 1087,
+        "sha256": "af4475d7e9e49bc4fcf45511c2c090121aa01369e6568f95c604f1b726a139a3",
+        "generated": "LOCAL-ONLY node-preinstalled Alpine manifest (tools/gen-node-alpine-manifest.sh)",
+        "artifacts": {
+          "kernel": {
+            "url": "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev/kernel/6.6.63/Image",
+            "sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58",
+            "size": 22097408
+          },
+          "rootfs": {
+            "url": "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev/rootfs/alpine-rootfs.ext4",
+            "sha256": "f1b544d459a2e347ead9d7620aee931d593dd930f7681ea6cfe415d839d7a9cd",
+            "size": 805306368
+          },
+          "bootSnapshot": {
+            "url": "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev/boot-snapshot/sha256/f28f90de26bbe35d927a3f53767b3c0469964d1803d0ab21f2c4d5f008dce37f/node-alpine-ready.snap.gz",
+            "sha256": "f28f90de26bbe35d927a3f53767b3c0469964d1803d0ab21f2c4d5f008dce37f",
+            "size": 36865908
+          },
+          "overlayDelta": {
+            "url": "releases/boot-snapshot/node-alpine-overlay-delta.bin.gz",
+            "sha256": "aaa8a967e7191f8dfbf3033646a18e354dced181c0afa0720c1672918fac57a6",
+            "size": 20341
+          }
+        }
+      }
+    ],
+    "serviceWorker": {
+      "path": "web/dist/sw.js",
+      "bytes": 5053,
+      "sha256": "cfef0866bf643111d2b648ee827d4c260f39abd256fe1ff406ea408d4e5c7b14"
+    },
+    "tasks": {
+      "path": "web/dist/tasks.json",
+      "bytes": 2310019,
+      "sha256": "893f624704731b57550b62a10c0498c02c10c9061ac0d3a0d0c26eebc6447a2d"
+    }
+  },
+  "waivers": [
+    "WebKit is outside this directed proof.",
+    "Independent-machine execution is outside this directed proof.",
+    "The current whole-machine worker does not use a shared guest-memory control block; E4-T22d covers the raw shared-buffer/WFI proof."
+  ]
+}

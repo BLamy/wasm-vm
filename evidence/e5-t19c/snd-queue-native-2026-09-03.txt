@@ -1,0 +1,26 @@
+E5-T19c worker final validation
+tested_head=70f45cfb7c6244a5a40ceb272d324b568a6805e3
+
+commands:
+  cargo fmt --all -- --check
+  cargo test -p wasm-vm-core --test virtio_snd --quiet
+  cargo test -p wasm-vm-core --test virtio_snd_playback --quiet
+  cargo test -p wasm-vm-core --test virtio_snd_queue --quiet
+  cargo test -p wasm-vm-core --lib --quiet
+  cargo clippy -p wasm-vm-core --all-targets -- -D warnings
+  cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release
+  cargo check -p wasm-vm-core --no-default-features
+  git diff --check
+
+results:
+  virtio_snd: 6 passed, 0 failed
+  virtio_snd_playback: 7 passed, 0 failed
+  virtio_snd_queue: 4 passed, 0 failed
+  core library: 238 passed, 0 failed
+  clippy, release wasm build, no-default-features check, and diff check: passed
+
+coverage:
+  The queue fixture exercises exact event wire bytes, truncated and header-only/zero-PCM
+  transfers, undersized status, wrong stream recovery, later valid playback, three missed-period
+  XRUN delivery, 256-event bounded backlog with overflow accounting, short and wrong-direction
+  event buffers, and fifty STOP/RELEASE/reset/re-setup cycles.

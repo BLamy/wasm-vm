@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guest boot and storage · wasm-vm</title>
+  <meta name="description" content="How wasm-vm fetches, boots, verifies, and persists a Linux guest in the browser." />
+  <link rel="stylesheet" href="./docs.css" />
+</head>
+<body>
+  <header class="docs-header">
+    <div class="docs-header-inner">
+      <a class="docs-brand" href="./docs.html">wasm-vm <span>documentation</span></a>
+      <nav class="docs-top-nav" aria-label="Documentation navigation">
+        <a href="./docs.html">Overview</a>
+        <a href="./docs-embedding.html">Embed</a>
+        <a href="./docs-guest.html" aria-current="page">Guest</a>
+        <a href="./docs-containers.html">Containers</a>
+        <a href="./docs-verification.html">Verification</a>
+        <a href="./docs-explainers.html">Explainers</a>
+        <a class="launch" href="./app.html">Launch demo →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="docs-shell">
+    <div class="breadcrumbs"><a href="./docs.html">Docs</a> / Guest</div>
+    <div class="doc-layout">
+      <aside class="doc-rail">
+        <p class="rail-title">On this site</p>
+        <ul class="rail-links">
+          <li><a href="./docs.html">Overview</a></li>
+          <li><a href="./docs-embedding.html">Embed</a></li>
+          <li><a href="./docs-guest.html" aria-current="page">Guest</a></li>
+          <li><a href="./docs-containers.html">Containers</a></li>
+          <li><a href="./docs-verification.html">Verification</a></li>
+          <li><a href="./docs-explainers.html">Explainers</a></li>
+        </ul>
+        <div class="rail-source">
+          Sources:
+          <a href="https://github.com/BLamy/wasm-vm/blob/main/web/loader.js" target="_blank" rel="noopener">loader.js</a> ·
+          <a href="https://github.com/BLamy/wasm-vm/blob/main/docs/design/chunked-image.md" target="_blank" rel="noopener">storage notes</a>
+        </div>
+      </aside>
+
+      <article class="doc-content">
+        <span class="eyebrow">Guest, artifacts, and state</span>
+        <h1>Boot a guest without pretending the bytes are free.</h1>
+        <p class="lede">
+          The browser loader treats the kernel, initramfs, disk image, and snapshot as explicit
+          artifacts. It fetches them, verifies the manifest hashes, then constructs the wasm
+          Linux wrapper. Large disk paths are separate from the small public default.
+        </p>
+        <div class="page-meta">
+          <span class="badge live">manifest integrity checks</span>
+          <span class="badge live">WasmLinux wrapper</span>
+          <span class="badge caution">large disk modes are local-only</span>
+        </div>
+
+        <div class="flow">
+          <div class="flow-step"><strong>Manifest</strong>URLs, sizes, SHA-256</div>
+          <div class="flow-step"><strong>Fetch</strong>streamed bytes + progress</div>
+          <div class="flow-step"><strong>Verify</strong>reject a mismatch</div>
+          <div class="flow-step"><strong>Boot</strong>runChunk drives Linux</div>
+        </div>
+
+        <h2>The public default</h2>
+        <p>
+          The checked-in <a href="./artifacts.json"><code>artifacts.json</code></a> contains a
+          kernel, an initramfs, and a compressed boot snapshot. The loader's default
+          <code>mode</code> is <code>initramfs</code>, so the public path does not download the
+          512 MiB Alpine disk image. A matching boot snapshot can shorten a repeat boot; an
+          incompatible or missing snapshot falls back to a cold boot.
+        </p>
+        <table class="data-table">
+          <thead><tr><th>Manifest entry</th><th>Current checked-in size</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td><code>kernel</code></td><td class="version">22,097,408 bytes</td><td>Linux <code>Image</code>; always fetched for a boot.</td></tr>
+            <tr><td><code>initramfs</code></td><td class="version">1,151,596 bytes</td><td>Default root filesystem passed to the Linux wrapper.</td></tr>
+            <tr><td><code>bootSnapshot</code></td><td class="version">10,983,666 bytes</td><td>Optional compressed resume state; identity checks decide whether it can be used.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          The exact URLs and SHA-256 values are the manifest contract; this page intentionally
+          does not duplicate them. If the manifest and bytes disagree, <code>loader.js</code>
+          raises an integrity error before boot.
+        </p>
+
+        <h2>Three ways to provide storage</h2>
+        <table class="data-table">
+          <thead><tr><th>Path</th><th>Construction</th><th>What is actually downloaded</th></tr></thead>
+          <tbody>
+            <tr><td><code>initramfs</code></td><td><code>new WasmLinux(ram, kernel, initrd, bootargs, output, enableMic)</code></td><td>Kernel and initramfs; <code>enableMic</code> opts into the guest input stream without requesting permission.</td></tr>
+            <tr><td><code>disk</code></td><td><code>WasmLinux.newDisk(..., enableMic)</code></td><td>Kernel and the complete rootfs image before construction.</td></tr>
+            <tr><td><code>chunked</code></td><td><code>WasmLinux.newChunkedDisk(..., enableMic)</code></td><td>Kernel first; disk chunks are fetched only when guest reads park on them.</td></tr>
+            <tr><td><code>chunked + persist</code></td><td><code>newChunkedDiskPersistent(..., enableMic)</code></td><td>Chunked base plus an IndexedDB copy-on-write overlay.</td></tr>
+          </tbody>
+        </table>
+        <div class="note warn">
+          <p><strong>Availability matters.</strong> The disk and chunked Alpine manifests are
+          local-only artifacts in this checkout. The public Pages deploy carries the small default
+          manifest and staged boot artifacts, not every large development image.</p>
+        </div>
+
+        <h2>Lazy chunks and integrity</h2>
+        <p>
+          In chunked mode, a missing block read parks the virtio request. The host asks
+          <code>pendingChunks()</code> which indices are needed, <code>fetchPending()</code>
+          retrieves them, and the wasm chunk store verifies each chunk before inserting it into
+          the cache. There is no full-image download hidden behind the chunked label.
+        </p>
+        <pre><code>const controller = await startLinuxBoot({
+  mode: "chunked",
+  imageManifestUrl: "./releases/chunked-alpine/manifest.json",
+  cacheBudgetMib: 256,
+  bootProfileUrl: "./releases/chunked-alpine/boot-profile.json",
+  onProgress: (role, loaded, total) =&gt; showProgress(role, loaded, total),
+});</code></pre>
+        <p>
+          A boot profile is an ordered first-touch list used for readahead. It is an optimization
+          hint, not a replacement for per-chunk verification. Cache metrics are available through
+          the Linux wrapper's <code>fetchStats()</code> surface.
+        </p>
+
+        <h2>Durable overlay and snapshots</h2>
+        <p>
+          <code>persist: true</code> is meaningful only on the chunked path. Guest writes are kept
+          as 4 KiB copy-on-write blocks and flushed to an image-namespaced IndexedDB store. The
+          loader uses a Web Lock for a single writer; another tab can be forced read-only. A
+          durable flush resolves only after the IndexedDB transaction completes.
+        </p>
+        <pre><code>const controller = await startLinuxBoot({
+  mode: "chunked",
+  persist: true,
+  onWriterStatus: ({ readOnly }) =&gt; {
+    console.log(readOnly ? "read-only guest" : "writer guest");
+  },
+});</code></pre>
+        <p>
+          Resume state has a separate coherence check. The build identity, base image binding, and
+          overlay generation must agree before a stored snapshot is applied. A stale, foreign, or
+          corrupt blob is reported as a typed cold-boot reason rather than silently restoring the
+          wrong disk.
+        </p>
+
+        <h2>Network selection is explicit</h2>
+        <p>
+          The loader configures the guest's virtio network before construction. The default can be
+          loopback; <code>slirpNet</code> selects the browser-local stack, while relay or Tailscale
+          settings select their own provider. DNS-over-HTTPS, DHCP lease, MTU, relay credentials,
+          and provider lifecycle commands are separate options and are not smuggled through an
+          artifact URL.
+        </p>
+
+        <h2>Local development</h2>
+        <pre><code>make web-build
+bash tools/serve-dev.sh
+# open the printed local URL and choose the disk/chunked path</code></pre>
+        <p>
+          Use <code>make web-dist</code> for the deployable static tree. The small default path is
+          the one to use when testing the public demo; local-only manifests are useful for storage
+          and Alpine acceptance work but should not be described as public assets.
+        </p>
+
+        <h2>Source contracts</h2>
+        <ul class="source-list">
+          <li><a href="https://github.com/BLamy/wasm-vm/blob/main/web/artifacts.json" target="_blank" rel="noopener"><code>web/artifacts.json</code></a> — checked-in public artifact manifest.</li>
+          <li><a href="https://github.com/BLamy/wasm-vm/blob/main/web/loader.js" target="_blank" rel="noopener"><code>web/loader.js</code></a> — fetch, verify, construct, pump, and persistence logic.</li>
+          <li><a href="https://github.com/BLamy/wasm-vm/blob/main/docs/design/chunked-image.md" target="_blank" rel="noopener"><code>docs/design/chunked-image.md</code></a> — chunk format and cold-cache evidence.</li>
+          <li><a href="https://github.com/BLamy/wasm-vm/blob/main/docs/design/cow-overlay.md" target="_blank" rel="noopener"><code>docs/design/cow-overlay.md</code></a> — overlay design and recovery boundaries.</li>
+          <li><a href="https://github.com/BLamy/wasm-vm/blob/main/docs/timekeeping.md" target="_blank" rel="noopener"><code>docs/timekeeping.md</code></a> — guest time and deterministic run-loop notes.</li>
+        </ul>
+      </article>
+    </div>
+  </main>
+
+  <footer class="docs-footer">
+    <div class="docs-footer-inner">
+      <span><strong>wasm-vm</strong> · guest boundary</span>
+      <nav aria-label="Footer navigation">
+        <a href="./docs.html">Docs overview</a>
+        <a href="./docs-embedding.html">Embed</a>
+        <a href="./app.html">Demo</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

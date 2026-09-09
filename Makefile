@@ -4,7 +4,8 @@
 
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
-        bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc
+        bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc bench-runtime-workloads bench-runtime-compute bench-runtime-workloads-browser bench-runtime-compute-browser \
+        web-test-cpu-worker
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -37,12 +38,14 @@ wasm:
 wasm-shared:
 	bash tools/build-web-shared.sh
 
-# E4-T22: node unit tests for the CPU-backend isolation probe + shared control-block signalling
-# (headless; the browser worker-boot leg is Playwright web/tests/e4-t22-*.spec.js, run on dev).
+# E4-T22: node unit tests for the CPU-backend isolation probe + shared control-block signalling,
+# worker-side placement audit, and the local Chromium worker-boot leg.
 web-test-cpu-worker:
 	node --test web/tests/cpu-isolation.test.mjs web/tests/cpu-control-block.test.mjs web/tests/device-proxy.test.mjs
 	# E4-T23 adversarial #5: worker-side device code must not reach a main-thread-only API.
 	node tools/worker-device-audit.mjs
+	cd web && PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8139 PLAYWRIGHT_REUSE_SERVER=0 \
+		./node_modules/.bin/playwright test tests/e4-t22d-worker-bootstrap.spec.js --workers=1
 
 # Explicit {std,trace} powerset natively + the two no_std combos on wasm32 (E0-T15),
 # mirroring ci.yml's `features` + `features-wasm` jobs.
@@ -175,15 +178,25 @@ hooks:
 	git config core.hooksPath tools/git-hooks
 	@echo "hooks installed: core.hooksPath = tools/git-hooks (pre-commit rebuilds web/dist)"
 
-# Interpreter MIPS baseline (E0-T24). Regenerates the native rows of docs/baselines.md;
-# the node/browser rows come from web/bench-node.mjs and the demo page's Bench button.
+# Interpreter MIPS baseline (E0-T24).
 bench:
 	cargo bench -p wasm-vm-cli --bench interp
 
-# Refresh the homepage's native-host-relative Node baseline. Browser-only rows remain explicitly
-# pending until their adapter captures the same fixture; this avoids publishing incomparable values.
-bench-node-runtimes:
-	node tools/run-node-benchmarks.mjs --output web/benchmarks.json
+# Portable Node system workload suite. Override the script flags when collecting
+# a slower guest run; the output keeps every sample and verification digest.
+bench-runtime-workloads:
+	node web/bench-runtime-workloads.mjs --environment=native-node --output /tmp/wasm-vm-runtime-workloads.json
+
+# Portable steady-state Node compute suite. This is a separate campaign from the system/I/O
+# workload matrix so translation and dispatch amortization are visible without hiding boundary cost.
+bench-runtime-compute:
+	node web/bench-runtime-compute.mjs --environment=native-node --output /tmp/wasm-vm-runtime-compute.json
+
+bench-runtime-workloads-browser:
+	node tools/run-runtime-workload-browser.mjs --variant=$(RUNTIME_BENCH_VARIANT) --output /tmp/wasm-vm-runtime-$(RUNTIME_BENCH_VARIANT).json
+
+bench-runtime-compute-browser:
+	node tools/run-runtime-compute-browser.mjs --variant=$(RUNTIME_BENCH_VARIANT) --output /tmp/wasm-vm-runtime-compute-$(RUNTIME_BENCH_VARIANT).json
 
 # E4-T03: in-guest CoreMark/Dhrystone harness. `bench-guest-build` rebuilds the pinned riscv64
 # ELFs + the ext4 overlay inside the pinned Docker toolchain (needs Docker); the run targets boot
@@ -405,6 +418,90 @@ verify-E3-T21d:
 	cd web && npx playwright test tests/e3-t21d-durability.spec.js --trace retain-on-failure
 	@echo "verify-E3-T21d (frozen guest round trip + reboot durability): OK"
 
+.PHONY: verify-E5-T23c
+verify-E5-T23c:
+	bash tools/verify/e5-t23c-static-agent.sh
+	@echo "verify-E5-T23c (static virtio-console guest agent + rootfs service): OK"
+
+.PHONY: verify-E5-T23d
+verify-E5-T23d:
+	node --test web/tests/agent-channel.test.mjs
+	@echo "verify-E5-T23d (host agent Channel lifecycle + reconnect): OK"
+
+.PHONY: verify-E5-T23e
+verify-E5-T23e:
+	cargo fmt --check -p wasm-vm-agent-protocol -p wasm-vm-guest-agent -p wasm-vm-cli
+	cargo clippy -p wasm-vm-agent-protocol -p wasm-vm-guest-agent -p wasm-vm-cli --bin wasm-vm -- -D warnings
+	cargo test -p wasm-vm-agent-protocol
+	cargo test -p wasm-vm-guest-agent
+	cargo test -p wasm-vm-core virtio_console
+	node --test web/tests/agent-channel.test.mjs
+	cargo build --release -p wasm-vm-cli
+	$(MAKE) web-dist
+	node tools/verify/e5-t23e-agent-channel-proof.mjs
+	@echo "verify-E5-T23e (end-to-end guest agent channel proof): OK"
+
+.PHONY: verify-E5-T24a
+verify-E5-T24a:
+	cargo test -p wasm-vm-agent-protocol
+	node --test web/tests/agent-channel.test.mjs
+	@echo "verify-E5-T24a (bounded clipboard protocol): OK"
+
+.PHONY: verify-E5-T24b
+verify-E5-T24b:
+	cargo fmt --check -p wasm-vm-agent-protocol -p wasm-vm-guest-agent
+	cargo clippy -p wasm-vm-agent-protocol -p wasm-vm-guest-agent --all-targets -- -D warnings
+	cargo test -p wasm-vm-agent-protocol
+	cargo test -p wasm-vm-guest-agent -- --nocapture
+	@echo "verify-E5-T24b (bounded guest clipboard bridge): OK"
+
+.PHONY: verify-E5-T24c
+verify-E5-T24c:
+	node --check web/clipboard-service.js
+	node --check web/agent-channel.js
+	node --test web/tests/clipboard-service.test.mjs
+	@echo "verify-E5-T24c (host clipboard permissions and gesture ordering): OK"
+
+.PHONY: verify-E5-T24d
+verify-E5-T24d:
+	node --check tools/verify/e5-t24d-clipboard-proof.mjs
+	node --test web/tests/clipboard-service.test.mjs
+	node tools/verify/e5-t24d-clipboard-proof.mjs
+	@echo "verify-E5-T24d (bidirectional clipboard browser and guest proof): OK"
+
+.PHONY: verify-E5-T04
+verify-E5-T04:
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib --tests -- -D warnings
+	cargo test -p wasm-vm-core --lib
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	@command -v wasm-pack >/dev/null 2>&1 || { \
+		echo "error: wasm-pack is not installed."; \
+		echo "  install with: cargo install wasm-pack   (or: brew install wasm-pack)"; \
+		exit 1; }
+	wasm-pack test --node crates/wasm --test gpu_protocol
+	@echo "verify-E5-T04 (EDID, display info, and hotplug events): OK"
+
+.PHONY: verify-E5-T06a
+verify-E5-T06a:
+	node --check web/src/sink/present-backend.js
+	node --check web/src/sink/canvas2d.js
+	node --test web/tests/e5-t06a-canvas2d.test.mjs
+	@echo "verify-E5-T06a (Canvas2D presentation backend and contract): OK"
+
+.PHONY: verify-E5-T06b
+verify-E5-T06b:
+	node --check web/src/sink/present-backend.js
+	node --check web/src/sink/webgl.js
+	node --test web/tests/e5-t06b-webgl.test.mjs
+	@echo "verify-E5-T06b (WebGL2 presentation backend): OK"
+
+.PHONY: verify-E5-T06c
+verify-E5-T06c:
+	node --check tools/verify/e5-t06c-present-bench.mjs
+	node tools/verify/e5-t06c-present-bench.mjs
+	@echo "verify-E5-T06c (measured Canvas2D/WebGL2 presentation benchmark): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
@@ -454,17 +551,26 @@ verify-E3-T24a:
 
 .PHONY: verify-E3-T22d
 verify-E3-T22d:
-	# Clipboard browser E2E: a content-exact multi-line paste through the real OSC/paste terminal wiring
-	# against a live in-page busybox boot (PROVEN green). The OSC 52 COPY test (AC1) and the 1 MB paste
-	# (AC3) are test.skip'd here — headless Chromium never settles a programmatic clipboard write without
-	# a transient activation, and the 1 MB cold-boot drain gets OS-reaped on a contended machine. Both
-	# skips are documented in the spec; the copy decode/cap/gate is proven by web/tests/osc52.test.mjs
-	# and the paste framing + no-loss by web/tests/paste.test.mjs + E2-T22's 100 KB bulk-input test.
+	# Clipboard browser E2E: headed Chromium drives the real in-page busybox guest and proves OSC 52
+	# copy, content-exact multiline paste, a 1 MiB /root/paste.txt sha256, and DECSET-2004 hold/Enter.
 	# First prove the deterministic cores (fast, no browser):
 	cd web && node --test tests/osc52.test.mjs tests/paste.test.mjs
-	# Then the browser paste capstone (heavy — one cold busybox boot):
+	# Then the exact browser proof. The raw Playwright API is used because this host's Node 24 deadlocks
+	# the @playwright/test runner before discovery; the script starts/reuses the local server.
 	$(MAKE) web-build
-	cd web && npx playwright test tests/e3-t22-clipboard.spec.js --reporter=list
+	@if curl -fsS http://127.0.0.1:8123/artifacts.json >/dev/null 2>&1; then \
+		E3_T22D_QUERY='noAutoBoot&jit=1' node tools/verify/e3-t22d-browser-proof.mjs; \
+	else \
+		bash tools/serve-dev.sh 8123 >/dev/null 2>&1 & server_pid=$$!; \
+		trap 'kill "$$server_pid" 2>/dev/null || true' EXIT INT TERM; \
+		ready=0; \
+		for attempt in $$(seq 1 30); do \
+			if curl -fsS http://127.0.0.1:8123/artifacts.json >/dev/null 2>&1; then ready=1; break; fi; \
+			sleep 1; \
+		done; \
+		test "$$ready" = 1; \
+		E3_T22D_QUERY='noAutoBoot&jit=1' node tools/verify/e3-t22d-browser-proof.mjs; \
+	fi
 	@echo "verify-E3-T22d (clipboard browser paste E2E + copy/paste node cores): OK"
 
 .PHONY: verify-E3-T12c1
@@ -541,13 +647,25 @@ verify-E3-T12d:
 	# foreign_build/foreign_image/stale/resume) and the snapshot chunk meta + reassembly codec.
 	cargo test -p wasm-vm-core --test restore_decision
 	cargo test -p wasm-vm-storage snapmeta
-	# The browser leg (save → reload → decision "resume"; advance generation → decision "stale") is a
-	# Playwright spec. It needs a PERSISTENT boot — the only shape that owns a snapshot store — which
-	# today is the chunked-Alpine image; busybox is initramfs-only (no persistence). That boot OS-reaps
-	# on this mac and its artifacts are gitignored, so the spec SKIPs without them (never in CI, exactly
-	# like idb-persist). NOT run here — run explicitly on a box that can sustain the boot:
-	#   $(MAKE) web-build && cd web && npx playwright test tests/e3-t12d-snapshot-restore.spec.js
+	# The raw browser harness records the production whole-machine Worker save/reload path, a main-thread
+	# memory-bound run, transaction interruption/quota attacks, two-tab writer fencing, and the guest file
+	# read after a modified-overlay reload. It starts an ephemeral local server and uses the public R2
+	# chunk manifest plus the checked-in kernel/warm snapshot artifacts.
+	$(MAKE) web-build
+	# The modified-overlay continuation uses a proof-only main-thread JIT boot into /bin/sh. This keeps
+	# the storage assertion independent of the much slower OpenRC startup; the clean save/restore proof
+	# above remains the production whole-machine Worker path.
+	E3_T12D_FILE_RELOAD_JIT=1 E3_T12D_FILE_RELOAD_SINGLE_USER=1 node tools/verify/e3-t12d-browser-proof.mjs
 	@echo "verify-E3-T12d : OK"
+
+.PHONY: verify-E3-T12e
+verify-E3-T12e:
+	# Docker-tab instant resume: the local Chromium proof exercises the visible Save resume control,
+	# a real guest file across reload, the reload timing budget, and the stale-overlay cold-path label.
+	# Independent machines and WebKit are intentionally outside this local acceptance gate.
+	$(MAKE) web-build
+	node tools/verify/e3-t12e-browser-proof.mjs
+	@echo "verify-E3-T12e : OK"
 
 .PHONY: verify-E3-T24c
 verify-E3-T24c:

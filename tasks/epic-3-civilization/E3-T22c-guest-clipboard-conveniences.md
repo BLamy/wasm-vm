@@ -3,7 +3,8 @@ id: E3-T22c
 epic: 3
 title: Guest image clipboard conveniences — vim OSC52 yank, tmux set-clipboard
 priority: 322.3
-status: verification-debt
+status: blocked
+blocked_on: [local Linux/container builder]
 depends_on: [E3-T22a]
 estimate: S
 risk: low
@@ -28,6 +29,22 @@ clipboard. Image/rootfs work (coordinates with the E3-T11 image pipeline).
 - [ ] tmux copy-mode yank routes through OSC 52.
 
 ## Verification log
+- 2026-08-30 — **worker — blocked on the image builder after exhausting local prerequisites.** The
+  package change is ready in `tools/build-rootfs.sh`, and the official Alpine v3.20 riscv64 index
+  contains both `vim` and `tmux`. After installing the pinned Rust target
+  (`riscv64gc-unknown-linux-musl`) and temporarily provisioning/checksum-verifying Zig 0.16.0, the
+  exact acceptance build command `bash tools/build-rootfs.sh` compiled both guest helper binaries and
+  then stopped at `tools/build-rootfs.sh:54: docker: command not found`. This Mac has no Docker,
+  Podman, QEMU, `apk`, or `mke2fs`, and `ssh dev` is not resolvable, so no modified ext4/chunked image
+  or real vim/tmux boot evidence can be produced here. Unblock by providing a Linux/container build
+  host; then rerun the rootfs lock, image/chunk pipeline, guest OSC 52 checks, and browser proof.
+
+- 2026-08-30 — **worker — started image-defaults rework.** T22a is verified, so this low-risk slice
+  is eligible. The prior proof established the helper and inert configs only; the acceptance gap is
+  that the served image does not yet install `vim` and `tmux`. I will replace the baseline `nano`
+  package with `vim`, add `tmux`, rebuild the locked riscv64 rootfs, and record guest/browser evidence
+  for both real applications before submitting the task to a fresh verifier.
+
 - 2026-08-03 — **helper deterministically verified + wired into the image; the vim/tmux-in-image AC is
   boot-gated debt.** Delivered the ticket's "yank-to-OSC52 helper" branch with NO new packages (busybox
   base64+printf), so it works in the default image:

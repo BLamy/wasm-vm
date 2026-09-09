@@ -109,7 +109,7 @@ test("explicit isolated JIT actually executes translated blocks in the whole-mac
   expect(errors).toEqual([]);
 });
 
-test("default fastest interpreter keeps whole-machine BusyBox rAF/input responsive", async ({ page }) => {
+test("default JIT keeps whole-machine BusyBox rAF/input responsive", async ({ page }) => {
   test.setTimeout(240_000);
   const errors = [];
   page.on("console", (message) => {
@@ -163,8 +163,8 @@ test("default fastest interpreter keeps whole-machine BusyBox rAF/input responsi
     jit: window.__jit,
   }));
   expect(policy.backend).toBe("whole-machine-worker");
-  expect(policy.jitPolicy).toBe("interpreter-faster-for-cold-start");
-  expect(policy.jit.enabled).toBe(false);
+  expect(policy.jitPolicy).toBe("enabled");
+  expect(policy.jit.enabled).toBe(true);
   expect(policy.jit.threshold).toBe(512);
 
   // Drive the actual page buttons through the explicit whole-worker command method. An offline

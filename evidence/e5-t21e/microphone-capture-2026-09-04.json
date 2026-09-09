@@ -1,0 +1,569 @@
+{
+  "task": "E5-T21e",
+  "command": "node tools/verify/e5-t21e-microphone-capture-proof.mjs",
+  "generatedAt": "2026-09-04T05:34:51.706Z",
+  "gitHead": "19759fe38a708b5f75d624993bf033c3ca5c3590",
+  "native": "running 9 tests\n.........\ntest result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s",
+  "browser": {
+    "name": "chromium",
+    "version": "152.0.7977.76",
+    "headless": true
+  },
+  "sourceDist": {
+    "parity": [
+      {
+        "source": "web/main.js",
+        "dist": "web/dist/main.js",
+        "sourceSha256": "d0452782e6ebaf922114d2e15bfd8d0c1cc9611acafb7744e281a563074bd868",
+        "distSha256": "d0452782e6ebaf922114d2e15bfd8d0c1cc9611acafb7744e281a563074bd868",
+        "equal": true
+      },
+      {
+        "source": "web/loader.js",
+        "dist": "web/dist/loader.js",
+        "sourceSha256": "cd7649aa8a5eed0c2598949fd638209b1a6ddfce8a73ae34cc738a2b8b56f07a",
+        "distSha256": "cd7649aa8a5eed0c2598949fd638209b1a6ddfce8a73ae34cc738a2b8b56f07a",
+        "equal": true
+      },
+      {
+        "source": "web/linux-worker-protocol.js",
+        "dist": "web/dist/linux-worker-protocol.js",
+        "sourceSha256": "c5d41c86563820760429a70597f3f1256ac127fb7fcbdeadd35e8ed08082118a",
+        "distSha256": "c5d41c86563820760429a70597f3f1256ac127fb7fcbdeadd35e8ed08082118a",
+        "equal": true
+      },
+      {
+        "source": "web/roadmap.js",
+        "dist": "web/dist/roadmap.js",
+        "sourceSha256": "d74328c1218ee4f64b1a42d590aea7f3654ec0e96ec979ec7fdd3c270b30e075",
+        "distSha256": "d74328c1218ee4f64b1a42d590aea7f3654ec0e96ec979ec7fdd3c270b30e075",
+        "equal": true
+      },
+      {
+        "source": "web/src/audio/capture-ring.js",
+        "dist": "web/dist/src/audio/capture-ring.js",
+        "sourceSha256": "d9d1bcd50e2c7d6b6019aa15e77d4a9e01edd1167929f096c47c7b7c5eed1176",
+        "distSha256": "d9d1bcd50e2c7d6b6019aa15e77d4a9e01edd1167929f096c47c7b7c5eed1176",
+        "equal": true
+      },
+      {
+        "source": "web/src/audio/capture-worklet.js",
+        "dist": "web/dist/src/audio/capture-worklet.js",
+        "sourceSha256": "1254466ad6982f51b14c48e265b42a555daf95791ad1d349120d702562d3698a",
+        "distSha256": "1254466ad6982f51b14c48e265b42a555daf95791ad1d349120d702562d3698a",
+        "equal": true
+      },
+      {
+        "source": "web/src/audio/capture-recorder.js",
+        "dist": "web/dist/src/audio/capture-recorder.js",
+        "sourceSha256": "7b5eaea7e28f75ca054eeb517bfb72f59c9cd8c8c0df9d474833ac8dca56d47a",
+        "distSha256": "7b5eaea7e28f75ca054eeb517bfb72f59c9cd8c8c0df9d474833ac8dca56d47a",
+        "equal": true
+      },
+      {
+        "source": "web/src/audio/microphone.js",
+        "dist": "web/dist/src/audio/microphone.js",
+        "sourceSha256": "db52dd5c778109e14cf2b758b54482a845aa3fc244b95af5723d70375c2cc0ee",
+        "distSha256": "db52dd5c778109e14cf2b758b54482a845aa3fc244b95af5723d70375c2cc0ee",
+        "equal": true
+      }
+    ],
+    "generated": [
+      {
+        "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+        "sha256": "77fa82fb9d50bf98215b47bd46d6d82c962536e206cb6d07e8a258754ef02014",
+        "bytes": 1379940
+      }
+    ]
+  },
+  "ok": true,
+  "url": "http://127.0.0.1:53812/index.html?noAutoBoot=1&nosw=1&enableMic&audioCapture=1&testHooks=1#ide",
+  "errors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "stages": {
+    "delayed": {
+      "delayedPermissionMs": 30000,
+      "stateBeforeGrant": "off",
+      "pending": true,
+      "calls": 1,
+      "ringFillFrames": 0,
+      "duplicateSharesPromise": true
+    },
+    "granted": {
+      "start": {
+        "ok": true,
+        "state": "live",
+        "reason": "granted",
+        "startCount": 1
+      },
+      "preStart": {
+        "enabled": true,
+        "state": "off",
+        "pending": false,
+        "startCount": 0,
+        "getUserMediaCalls": 0,
+        "listenerCount": 0,
+        "streamActive": false,
+        "trackReadyState": null,
+        "trackMuted": false,
+        "ringFillFrames": 0,
+        "ringDroppedFrames": 0,
+        "notifyCount": 0,
+        "transitionCount": 0,
+        "lastError": null
+      },
+      "pending": {
+        "enabled": true,
+        "state": "off",
+        "pending": true,
+        "startCount": 1,
+        "getUserMediaCalls": 1,
+        "listenerCount": 0,
+        "streamActive": false,
+        "trackReadyState": null,
+        "trackMuted": false,
+        "ringFillFrames": 0,
+        "ringDroppedFrames": 0,
+        "notifyCount": 0,
+        "transitionCount": 0,
+        "lastError": null
+      },
+      "capture": {
+        "recording": {
+          "targetFrames": 240000,
+          "frames": 240000,
+          "elapsedMs": 5322.504999995232,
+          "sampleRateHz": 48000,
+          "durationNs": 5000000000,
+          "durationSeconds": 5,
+          "framesRead": 240000,
+          "silenceFrames": 0,
+          "shortPeriods": 0,
+          "periods": 500,
+          "usedBytes": 964000,
+          "droppedFrames": 0
+        },
+        "header": {
+          "riff": "RIFF",
+          "wave": "WAVE",
+          "sampleRateHz": 48000,
+          "channels": 2,
+          "dataBytes": 960000,
+          "wavBytes": 960044,
+          "durationSeconds": 5
+        },
+        "digest": "4ccfad53649a8c847a6d8936207b653ef2a8b46285a7c68c4ab5f6e1789465c6",
+        "analysis": {
+          "inspectedFrames": 8192,
+          "nonZeroFrames": 8179,
+          "peakHz": 440,
+          "peakToNeighborDb": 16.70730247718153
+        }
+      },
+      "ringDroppedFrames": 0
+    },
+    "mute": {
+      "state": {
+        "enabled": true,
+        "state": "revoked",
+        "pending": false,
+        "startCount": 1,
+        "getUserMediaCalls": 1,
+        "listenerCount": 3,
+        "streamActive": true,
+        "trackReadyState": "live",
+        "trackMuted": true,
+        "ringFillFrames": 0,
+        "ringDroppedFrames": 0,
+        "notifyCount": 1,
+        "transitionCount": 2,
+        "lastError": null
+      },
+      "capture": {
+        "recording": {
+          "targetFrames": 12000,
+          "frames": 12000,
+          "elapsedMs": 255.9800000190735,
+          "sampleRateHz": 48000,
+          "durationNs": 250000000,
+          "durationSeconds": 0.25,
+          "framesRead": 11520,
+          "silenceFrames": 480,
+          "shortPeriods": 1,
+          "periods": 25,
+          "usedBytes": 48200,
+          "droppedFrames": 0
+        },
+        "header": {
+          "riff": "RIFF",
+          "wave": "WAVE",
+          "sampleRateHz": 48000,
+          "channels": 2,
+          "dataBytes": 48000,
+          "wavBytes": 48044,
+          "durationSeconds": 0.25
+        },
+        "digest": "bb918147fe10391b43adeba4bd21b9ef32e5bd6c5076c3517733a05ed6dd0569",
+        "analysis": {
+          "inspectedFrames": 8192,
+          "nonZeroFrames": 0,
+          "peakHz": 400,
+          "peakToNeighborDb": null
+        }
+      },
+      "notifications": [
+        "muted"
+      ]
+    },
+    "unmute": {
+      "state": {
+        "enabled": true,
+        "state": "live",
+        "pending": false,
+        "startCount": 1,
+        "getUserMediaCalls": 1,
+        "listenerCount": 3,
+        "streamActive": true,
+        "trackReadyState": "live",
+        "trackMuted": false,
+        "ringFillFrames": 1024,
+        "ringDroppedFrames": 0,
+        "notifyCount": 1,
+        "transitionCount": 3,
+        "lastError": null
+      },
+      "capture": {
+        "recording": {
+          "targetFrames": 12000,
+          "frames": 12000,
+          "elapsedMs": 256.18000000715256,
+          "sampleRateHz": 48000,
+          "durationNs": 250000000,
+          "durationSeconds": 0.25,
+          "framesRead": 12000,
+          "silenceFrames": 0,
+          "shortPeriods": 0,
+          "periods": 25,
+          "usedBytes": 48200,
+          "droppedFrames": 0
+        },
+        "header": {
+          "riff": "RIFF",
+          "wave": "WAVE",
+          "sampleRateHz": 48000,
+          "channels": 2,
+          "dataBytes": 48000,
+          "wavBytes": 48044,
+          "durationSeconds": 0.25
+        },
+        "digest": "1ef8bcd11b3454036f58c32148726c80662bec769f2c5f6fc59f2ee584b47c0f",
+        "analysis": {
+          "inspectedFrames": 8192,
+          "nonZeroFrames": 7168,
+          "peakHz": 440,
+          "peakToNeighborDb": 15.272707839555142
+        }
+      }
+    },
+    "fullDuplex": {
+      "outputBefore": 284032,
+      "output": {
+        "acceptedFrames": 16800,
+        "droppedFrames": 0,
+        "renderedFrames": 302208,
+        "elapsedMs": 380.9699999690056
+      },
+      "capture": {
+        "recording": {
+          "targetFrames": 14400,
+          "frames": 14400,
+          "elapsedMs": 309.55500000715256,
+          "sampleRateHz": 48000,
+          "durationNs": 300000000,
+          "durationSeconds": 0.3,
+          "framesRead": 14400,
+          "silenceFrames": 0,
+          "shortPeriods": 0,
+          "periods": 30,
+          "usedBytes": 57840,
+          "droppedFrames": 0
+        },
+        "header": {
+          "riff": "RIFF",
+          "wave": "WAVE",
+          "sampleRateHz": 48000,
+          "channels": 2,
+          "dataBytes": 57600,
+          "wavBytes": 57644,
+          "durationSeconds": 0.3
+        },
+        "digest": "98516dfdfdc5788cea4d77caf79d78d36c6324648ed4810ec575892edde21f05",
+        "analysis": {
+          "inspectedFrames": 8192,
+          "nonZeroFrames": 8192,
+          "peakHz": 440,
+          "peakToNeighborDb": 16.719124942304337
+        }
+      },
+      "sinkStats": {
+        "latency_ms": 29.333333333333332,
+        "underruns": 4759,
+        "fill": 0,
+        "sampleRateHz": 48000,
+        "baseLatency": 0.005333333333333333,
+        "outputLatency": 0.024
+      }
+    },
+    "ended": {
+      "enabled": true,
+      "state": "revoked",
+      "pending": false,
+      "startCount": 1,
+      "getUserMediaCalls": 1,
+      "listenerCount": 0,
+      "streamActive": false,
+      "trackReadyState": null,
+      "trackMuted": false,
+      "ringFillFrames": 0,
+      "ringDroppedFrames": 0,
+      "notifyCount": 2,
+      "transitionCount": 4,
+      "lastError": "track-ended"
+    },
+    "retry": {
+      "capture": {
+        "recording": {
+          "targetFrames": 12000,
+          "frames": 12000,
+          "elapsedMs": 255.90499997138977,
+          "sampleRateHz": 48000,
+          "durationNs": 250000000,
+          "durationSeconds": 0.25,
+          "framesRead": 11776,
+          "silenceFrames": 224,
+          "shortPeriods": 1,
+          "periods": 25,
+          "usedBytes": 48200,
+          "droppedFrames": 0
+        },
+        "header": {
+          "riff": "RIFF",
+          "wave": "WAVE",
+          "sampleRateHz": 48000,
+          "channels": 2,
+          "dataBytes": 48000,
+          "wavBytes": 48044,
+          "durationSeconds": 0.25
+        },
+        "digest": "7b92544f3b055743b4deaad0d1eb2f682248385b4fe4a9ea7a550fa74e632896",
+        "analysis": {
+          "inspectedFrames": 8192,
+          "nonZeroFrames": 7955,
+          "peakHz": 440,
+          "peakToNeighborDb": 16.60902349310038
+        }
+      },
+      "final": {
+        "enabled": true,
+        "state": "live",
+        "pending": false,
+        "startCount": 2,
+        "getUserMediaCalls": 2,
+        "listenerCount": 3,
+        "streamActive": true,
+        "trackReadyState": "live",
+        "trackMuted": false,
+        "ringFillFrames": 1280,
+        "ringDroppedFrames": 0,
+        "notifyCount": 2,
+        "transitionCount": 5,
+        "lastError": null
+      },
+      "oldTrackListeners": 0
+    },
+    "denied": {
+      "start": {
+        "ok": false,
+        "state": "denied",
+        "reason": "denied",
+        "startCount": 1
+      },
+      "capture": {
+        "recording": {
+          "targetFrames": 240000,
+          "frames": 240000,
+          "elapsedMs": 5322.459999978542,
+          "sampleRateHz": 48000,
+          "durationNs": 5000000000,
+          "durationSeconds": 5,
+          "framesRead": 0,
+          "silenceFrames": 240000,
+          "shortPeriods": 500,
+          "periods": 500,
+          "usedBytes": 964000,
+          "droppedFrames": 0
+        },
+        "header": {
+          "riff": "RIFF",
+          "wave": "WAVE",
+          "sampleRateHz": 48000,
+          "channels": 2,
+          "dataBytes": 960000,
+          "wavBytes": 960044,
+          "durationSeconds": 5
+        },
+        "digest": "b9163d03c43083a18e6101539b555cb5e363eed61fa4b3a3b54f50ae60eb5b52",
+        "analysis": {
+          "inspectedFrames": 8192,
+          "nonZeroFrames": 0,
+          "peakHz": 400,
+          "peakToNeighborDb": null
+        }
+      },
+      "notifications": [
+        "denied"
+      ],
+      "digestIsSilence": true
+    },
+    "rate44100": {
+      "start": {
+        "ok": true,
+        "state": "live",
+        "reason": "granted",
+        "startCount": 1
+      },
+      "actualContextRate": 44100,
+      "capture": {
+        "recording": {
+          "targetFrames": 44100,
+          "frames": 44100,
+          "elapsedMs": 1055.9399999976158,
+          "sampleRateHz": 44100,
+          "durationNs": 1000000000,
+          "durationSeconds": 1,
+          "framesRead": 43915,
+          "silenceFrames": 185,
+          "shortPeriods": 1,
+          "periods": 100,
+          "usedBytes": 177200,
+          "droppedFrames": 0
+        },
+        "header": {
+          "riff": "RIFF",
+          "wave": "WAVE",
+          "sampleRateHz": 44100,
+          "channels": 2,
+          "dataBytes": 176400,
+          "wavBytes": 176444,
+          "durationSeconds": 1
+        },
+        "digest": "6251f08e10d5977555a697090fcfdde12f754d4ef165a3be63e990748f02afc4",
+        "analysis": {
+          "inspectedFrames": 8192,
+          "nonZeroFrames": 8003,
+          "peakHz": 440,
+          "peakToNeighborDb": 17.3542910797325
+        }
+      }
+    },
+    "periods": {
+      "small": {
+        "periodBytes": 16,
+        "frameCount": 4,
+        "readFrames": 0,
+        "silenceFrames": 4,
+        "statusBytes": 8,
+        "usedBytes": 24,
+        "status": "ok"
+      },
+      "large": {
+        "periodBytes": 1048576,
+        "frameCount": 262144,
+        "readFrames": 0,
+        "silenceFrames": 262144,
+        "statusBytes": 8,
+        "usedBytes": 1048584,
+        "status": "ok"
+      },
+      "canariesIntact": true,
+      "canaryBytes": {
+        "small": [
+          165,
+          165,
+          165,
+          165,
+          165,
+          165,
+          165,
+          165,
+          165,
+          165,
+          165,
+          165,
+          165,
+          165,
+          165,
+          165
+        ],
+        "large": [
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90,
+          90
+        ]
+      }
+    },
+    "crossOriginIsolated": true,
+    "flagOff": {
+      "state": {
+        "enabled": false,
+        "state": "off",
+        "pending": false,
+        "startCount": 0,
+        "getUserMediaCalls": 0,
+        "listenerCount": 0,
+        "streamActive": false,
+        "trackReadyState": null,
+        "trackMuted": false,
+        "ringFillFrames": 0,
+        "ringDroppedFrames": 0,
+        "notifyCount": 0,
+        "transitionCount": 0,
+        "lastError": null
+      },
+      "captureRing": false,
+      "indicator": "Microphone: off"
+    }
+  }
+}

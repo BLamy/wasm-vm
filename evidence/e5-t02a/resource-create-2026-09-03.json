@@ -1,0 +1,58 @@
+{
+  "schema": "e5-t02a-virtio-gpu-resource-create-v1",
+  "task": "E5-T02a",
+  "status": "pass",
+  "implementation_commit": "923e9f2",
+  "recorded_at": "2026-09-03",
+  "native": {
+    "acceptance_command": "cargo test -p wasm-vm-core --lib gpu_resources_create",
+    "acceptance_result": "7 passed, 0 failed",
+    "coverage": [
+      "ResourceMap stores all six supported 32-bit formats with an empty backing list and exact width*height*4 accounting.",
+      "Duplicate ids, id 0, zero dimensions, format 0, format 99, 0x10000 dimensions, and the 16384x16384 1 GiB request are rejected before insertion/allocation.",
+      "A 32-byte aggregate-budget boundary proves the third insert leaves count and accounted bytes unchanged.",
+      "100,000 unique 4096x4096 requests stop at the default 512 MiB budget with exactly eight live resources and no further accounting growth.",
+      "A real split control-queue chain decodes RESOURCE_CREATE_2D, returns RESP_OK_NODATA with fence echo, and returns RESP_ERR_INVALID_PARAMETER for an unsupported format without inserting it."
+    ],
+    "regression": {
+      "command": "cargo test -p wasm-vm-core --lib",
+      "result": "191 passed, 0 failed"
+    },
+    "virtio_regression": {
+      "commands": [
+        "cargo test -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test virtio_net_critic"
+      ],
+      "result": "22 passed, 0 failed"
+    },
+    "clippy": {
+      "command": "cargo clippy -p wasm-vm-core --lib -- -D warnings",
+      "result": "pass"
+    },
+    "format": {
+      "commands": [
+        "cargo fmt --all -- --check",
+        "git diff --check"
+      ],
+      "result": "pass"
+    }
+  },
+  "wasm32": {
+    "core_build": {
+      "command": "cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown",
+      "result": "pass"
+    },
+    "core_clippy": {
+      "command": "cargo clippy -p wasm-vm-core --target wasm32-unknown-unknown --no-default-features --lib -- -D warnings",
+      "result": "pass"
+    },
+    "existing_gpu_runner": {
+      "command": "wasm-pack test --node crates/wasm --test gpu_protocol",
+      "result": "2 passed, 0 failed"
+    }
+  },
+  "claim": "At commit 923e9f2, CREATE_2D has a typed 40-byte little-endian request, a host-owned ResourceMap, checked dimensions/formats/size arithmetic, a 256 MiB per-resource cap, a 512 MiB default aggregate cap, and deferred control-queue responses. Every rejected case in the acceptance matrix leaves the map unchanged; valid resources are zeroed, detached, and accounted exactly.",
+  "scope_notes": [
+    "ATTACH_BACKING/DETACH_BACKING and UNREF/scanout cleanup remain owned by E5-T02b and E5-T02c.",
+    "No independent-machine, WebKit, or host-layer rr run was used, per the user's direction and current repository evidence policy."
+  ]
+}

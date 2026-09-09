@@ -101,6 +101,19 @@ WRAP
     mke2fs -q -t ext4 -O ^metadata_csum -L gcc -U "$FS_UUID" \
       -E "root_owner=0:0,hash_seed=$FS_UUID" \
       -d "$ROOT" gcc.ext4 "$IMG_SIZE"
+
+    # mke2fs preserves the source tree inode ctime. `touch` above fixes atime/mtime/crtime,
+    # but ctime cannot be set through the normal filesystem API and would otherwise encode the
+    # wall-clock time of every rebuild. Normalize it in the image so the manifest hash is stable
+    # across clean-checkout rebuilds as promised by this fixture.
+    inode_count="$(debugfs -R stats gcc.ext4 2>&1 \
+      | grep "^Inode count:" | cut -d: -f2 | tr -d "[:space:]")"
+    test -n "$inode_count"
+    seq 1 "$inode_count" \
+      | while read -r inode; do
+          printf "set_inode_field <%s> ctime %s\n" "$inode" "$SOURCE_DATE_EPOCH"
+        done \
+      | debugfs -w -f - gcc.ext4 >/dev/null 2>&1
     rm -rf "$ROOT"
   '
 

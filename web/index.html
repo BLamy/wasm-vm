@@ -63,6 +63,28 @@
         font: 12px ui-monospace, monospace;
         white-space: nowrap;
       }
+      .audio-autoplay-badge {
+        max-width: min(390px, 34vw);
+        padding: 4px 8px;
+        border: 1px solid rgba(242, 201, 76, 0.45);
+        border-radius: 6px;
+        color: var(--amber);
+        background: rgba(242, 201, 76, 0.08);
+        font: 11px ui-monospace, monospace;
+        line-height: 1.35;
+        text-align: right;
+      }
+      .audio-autoplay-badge[data-audio-state="unlocking"] {
+        border-color: rgba(83, 212, 255, 0.45);
+        color: var(--cyan);
+        background: rgba(83, 212, 255, 0.08);
+      }
+      .audio-autoplay-badge[data-audio-state="unavailable"] {
+        border-color: rgba(248, 81, 73, 0.45);
+        color: var(--red);
+        background: rgba(248, 81, 73, 0.08);
+      }
+      .audio-autoplay-badge[hidden] { display: none; }
       main {
         display: grid;
         grid-template-columns: minmax(420px, 1fr) minmax(360px, 44vw);
@@ -1001,6 +1023,9 @@
         <button class="tab" data-tab="ide" role="tab" aria-selected="false">Demo</button>
         <button class="tab" data-tab="docs" role="tab" aria-selected="false">Docs</button>
       </nav>
+      <span id="audio-autoplay-badge" class="audio-autoplay-badge" role="status" aria-live="polite">
+        Audio muted until interaction — click or press a key to enable sound.
+      </span>
       <span id="version" class="version">initializing...</span>
     </header>
 
@@ -1227,7 +1252,18 @@
     <script type="module" src="./tabs.js"></script>
     <script type="module" src="./ide.js"></script>
     <script type="module" src="./docs-mount.js"></script>
-    <script type="module" src="./main.js"></script>
+    <!-- E4-T22b: establish isolation/fallback before main.js evaluates any backend or wasm imports.
+         The shim may reload once on a headerless static host; if it cannot establish isolation,
+         chooseCpuBackend records the clean single-thread decision and main.js still loads normally. -->
+    <script type="module">
+      import { ensureCrossOriginIsolated } from "./coi-serviceworker-register.js";
+      import { chooseCpuBackend } from "./cpu-isolation.js";
+      await ensureCrossOriginIsolated();
+      const selection = chooseCpuBackend(globalThis);
+      globalThis.__cpuBackendSelection = selection;
+      document.documentElement.dataset.cpuBackend = selection.backend;
+      await import("./main.js");
+    </script>
     <!-- Embed mode (?embed): used by the landing page's live-boot iframe. Strips the chrome (see the
          html.embed CSS), forces the IDE/terminal view, and boots the fast busybox userland. Pair with
          &noAutoBoot so the background Alpine auto-boot doesn't grab the single guest slot first. -->

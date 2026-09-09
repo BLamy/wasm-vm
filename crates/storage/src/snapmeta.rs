@@ -19,7 +19,7 @@ use alloc::vec::Vec;
 pub const SNAPSHOT_DB_VERSION: u32 = 1;
 
 /// The `meta`-record format version (the byte layout below). Bumped on a layout change.
-pub const SNAPSHOT_META_FORMAT: u32 = 1;
+pub const SNAPSHOT_META_FORMAT: u32 = 2;
 
 /// The streaming chunk size: 1 MiB. Large enough that a ~60 MiB snapshot is ~60 puts (cheap), small
 /// enough that a single chunk (and the per-put JS copy) is a bounded, modest allocation — never the
@@ -27,8 +27,9 @@ pub const SNAPSHOT_META_FORMAT: u32 = 1;
 pub const SNAPSHOT_CHUNK: usize = 1 << 20;
 
 const META_MAGIC: &[u8; 4] = b"wvsn";
-/// Serialized [`SnapshotMeta`]: magic(4) + format(4) + chunk_size(4) + total_len(8) + chunk_count(8) + binding(32).
-const META_LEN: usize = 4 + 4 + 4 + 8 + 8 + 32;
+/// Serialized [`SnapshotMeta`]: magic(4) + format(4) + chunk_size(4) + total_len(8) + chunk_count(8)
+/// + binding(32) + blob_sha256(32).
+const META_LEN: usize = 4 + 4 + 4 + 8 + 8 + 32 + 32;
 
 /// A typed failure reassembling a stored snapshot from its chunks — always a reason to cold-boot,
 /// never a panic. Distinct from a coherence rejection (that is decided from the blob header once
@@ -67,17 +68,22 @@ pub struct SnapshotMeta {
     /// The base image binding ([`crate::ImageManifest::base_hash`]) this snapshot rides — the same
     /// namespacing as the overlay store, so a snapshot can never be reassembled against a foreign base.
     pub base_binding: [u8; 32],
+    /// SHA-256 of the complete reassembled snapshot blob. This is independent of the chunk lengths,
+    /// so a same-sized payload mutation cannot be accepted as a resumable snapshot.
+    pub blob_sha256: [u8; 32],
 }
 
 impl SnapshotMeta {
-    /// The meta for a blob of `total_len` bytes chunked at [`SNAPSHOT_CHUNK`] for `base_binding`.
-    pub fn new(total_len: u64, base_binding: [u8; 32]) -> SnapshotMeta {
+    /// The meta for a blob of `total_len` bytes chunked at [`SNAPSHOT_CHUNK`] for `base_binding` and
+    /// identified by `blob_sha256`.
+    pub fn new(total_len: u64, base_binding: [u8; 32], blob_sha256: [u8; 32]) -> SnapshotMeta {
         SnapshotMeta {
             format_version: SNAPSHOT_META_FORMAT,
             chunk_size: SNAPSHOT_CHUNK as u32,
             total_len,
             chunk_count: chunk_count_for(total_len, SNAPSHOT_CHUNK as u64),
             base_binding,
+            blob_sha256,
         }
     }
 
@@ -90,6 +96,7 @@ impl SnapshotMeta {
         b.extend_from_slice(&self.total_len.to_le_bytes());
         b.extend_from_slice(&self.chunk_count.to_le_bytes());
         b.extend_from_slice(&self.base_binding);
+        b.extend_from_slice(&self.blob_sha256);
         b
     }
 
@@ -108,6 +115,8 @@ impl SnapshotMeta {
         let chunk_count = u64::from_le_bytes(bytes[20..28].try_into().unwrap());
         let mut base_binding = [0u8; 32];
         base_binding.copy_from_slice(&bytes[28..60]);
+        let mut blob_sha256 = [0u8; 32];
+        blob_sha256.copy_from_slice(&bytes[60..92]);
         // A zero chunk_size can't describe any layout; and the count must be exactly what the length
         // implies — a doctored meta that disagrees is refused before we trust it to bound a read.
         if chunk_size == 0 || chunk_count != chunk_count_for(total_len, chunk_size as u64) {
@@ -119,6 +128,7 @@ impl SnapshotMeta {
             total_len,
             chunk_count,
             base_binding,
+            blob_sha256,
         })
     }
 

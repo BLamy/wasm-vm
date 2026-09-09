@@ -1,0 +1,23 @@
+E5-T24a deterministic acceptance evidence
+===========================================
+
+Recorded: 2026-09-04
+Repository: /Users/blamy/Documents/Codex/wasm-vm
+Exact implementation head: 309d2e680f38c13cae42388c89a7de9e5d6a0ef4
+
+Command (scrubbed environment):
+  env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR \
+    -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS make verify-E5-T24a
+
+Result: exit 0
+
+Observed results:
+  - wasm-vm-agent-protocol: 11 unit tests passed, 0 failed; 0 doc-tests failed.
+  - web/tests/agent-channel.test.mjs: 14 tests passed, 0 failed, 0 skipped.
+  - verify-E5-T24a (bounded clipboard protocol): OK
+
+The Rust and JavaScript tests exercise the shared CLIP_SET/CLIP_GET type numbers and empty/raw
+payload shapes, CAP_CLIPBOARD negotiation, exact UTF-8 bytes including CRLF and emoji, the exact
+256 KiB boundary, oversize and invalid-UTF-8 rejection, lone-surrogate rejection, one-byte
+dribble, ten-message coalescing, malformed CLIP_GET, and a PING-only peer that NAKs clipboard
+traffic while continuing to answer PING.

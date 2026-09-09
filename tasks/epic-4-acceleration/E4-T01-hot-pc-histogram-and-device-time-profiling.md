@@ -3,7 +3,7 @@ id: E4-T01
 epic: 4
 title: Profiling infrastructure — hot-PC histograms and per-device time accounting
 priority: 401
-status: verification-debt
+status: verified
 depends_on: [E3]
 estimate: M
 capstone: false
@@ -61,6 +61,16 @@ _Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
 - **Phase-6 browser evidence** (AC1 Alpine-symbol leg + AC4 native-vs-wasm profile diff) — the Alpine-in-browser boot OS-reaps on this mac. Run on `dev` via `getProfile()` against a live Alpine boot; diff native vs wasm reports.
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+Commit: `069c4ee`.
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T01.
+
 - 2026-08-05 — **Browser profiling INFRA ready on `dev`; the live capture is still debt.** Wired `web/loader.js` `?profile=1` (arms `setProfiling` from instruction 0 + exposes `window.__machine`), `web/main.js` boot hooks, `tools/e4-browser-profile.mjs` (pulls `getProfile()` post-login); the symbolize pipeline is verified against `System.map` (native hot PCs → memset / raid6 / memmap_init). Fixed a real driver bug (waiting on xterm's `.xterm-rows` viewport misses scrolled-off boot lines → now polls `window.__consoleBytes`). BUT the in-browser boot didn't reach `login:` in the window (~35 min uncontended, and it was sharing the 2-core box with the gcc compile) → `getProfile` NOT captured. Remaining debt: a SOLO in-browser boot on dev to grab the report + native-vs-wasm diff. commit `710089a`.
 - 2026-08-04 — **Design + phased plan (opens Epic 4's measurement backbone).** Precedents to mirror:
   `crates/core/src/diag/irqstats.rs` (always-on no_std fixed-array counters + `dump()`), `trace.rs` (the
@@ -137,6 +147,32 @@ _Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
   returning the same `{ totalNs, sampleCount, walkCount, collisions, regions, subsystems }` shape as the
   native report / `getStats` (pc as hex string). web-sys `Performance` feature enabled. Compiles clean for
   wasm32 (clippy `-D warnings`).
+- 2026-09-01 — **worker checkpoint — the [[browser-alpine-boot-reaped-on-mac]] blocker is CLEARED on the
+  new hardware (Apple M4 Max, 16 cores, 128 GB), and the AC1 browser-profile leg is captured.** Three
+  consecutive FULL COLD in-browser Alpine boots (`?guest=alpine&noSnapshot&persist=0&profile=1` — no
+  RAM-snapshot restore, no persistent-overlay fast path; default whole-machine worker + browser JIT,
+  page from `tools/serve-dev.sh 8123`, disk chunks lazy-fetched from R2, headless Chromium via the
+  repo's Playwright) each reached getty `login:` in **4.59 min** (275.2 s; kernel banner t+5.1 s, OpenRC
+  t+30.1 s; ~179 lazy chunk fetches), then logged in as root and ran `echo COLD_BOOT_$((6*7))_OK; uname
+  -a` → `COLD_BOOT_42_OK` / `riscv64` — **zero console errors** in all three runs. The old machine's
+  ~35-min death-before-login does not reproduce: no OS reap, no crash, and the boot is ~8x faster than
+  the old interpreted pace. Driver + evidence: `evidence/e4-t01/browser-alpine-boot-2026-09-01/`
+  (`run-boot.mjs`, `result.json`, `console-transcript.txt`, `login-screenshot.png`,
+  `process-monitor.log`; repeats under `repeat-run/` and `terminal-screenshot-run/`, whose
+  `shell-screenshot.png` shows the live terminal at the root shell). **AC1 browser leg:** `?profile=1`
+  armed from instruction 0; at login `__linuxCtl.profileStats()` (the worker-mode proxy of
+  `getProfile()`) returned 657,272 samples / 10 regions / 11 subsystems
+  (`browser-alpine-profile.json`); top regions symbolized against `releases/kernel/6.6.63/System.map`
+  (`browser-alpine-profile-symbolized.json`) are identifiable kernel symbols — `percpu_counter_add_batch`,
+  `_save_context`, `raid6_int8_xor_syndrome`, `handle_exception`, `strncpy_from_user`, `memset` — the
+  trap/memory-path shape AC1 asks for. Caveats for the verifier: (a) this was a JIT-enabled boot, so the
+  hot-PC histogram samples the traced retire path (JIT-covered blocks may be under-represented vs a pure
+  interpreter run); (b) the AC4 native-vs-wasm report diff is NOT run here — still owed; (c) a first
+  attempt (preserved as `run1-harness-bug-*`) waited on `window.__consoleBytes`, which the Linux console
+  never feeds (it is the riscv-tests ELF-runner tap — the guest console is `wvmDemo.onConsole()`), saw 0
+  bytes for 49.5 min and ended in a renderer `Target crashed` at RSS ~2.6 GB (100% CPU, 1.9% of system
+  RAM, browser processes alive throughout per `process-monitor.log`) — a harness bug plus an eventual
+  page crash at idle, NOT a macOS reap; the three corrected runs supersede it.
 - **The full profiler is implemented across phases 1–5** (engine + native CLI + wasm surface), native-
   verified end-to-end. **Verification debt (phase 6):** the in-browser evidence — an Alpine boot's top-5
   kernel symbols via `getProfile` + a native-vs-wasm report diff (**AC1 Alpine-symbol leg + AC4**) — is

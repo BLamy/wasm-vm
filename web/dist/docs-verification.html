@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Verification and status · wasm-vm</title>
+  <meta name="description" content="How wasm-vm records evidence and how to read current status." />
+  <link rel="stylesheet" href="./docs.css" />
+</head>
+<body>
+  <header class="docs-header">
+    <div class="docs-header-inner">
+      <a class="docs-brand" href="./docs.html">wasm-vm <span>documentation</span></a>
+      <nav class="docs-top-nav" aria-label="Documentation navigation">
+        <a href="./docs.html">Overview</a>
+        <a href="./docs-embedding.html">Embed</a>
+        <a href="./docs-guest.html">Guest</a>
+        <a href="./docs-containers.html">Containers</a>
+        <a href="./docs-verification.html" aria-current="page">Verification</a>
+        <a href="./docs-explainers.html">Explainers</a>
+        <a class="launch" href="./app.html">Launch demo →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="docs-shell">
+    <div class="breadcrumbs"><a href="./docs.html">Docs</a> / Verification</div>
+    <div class="doc-layout">
+      <aside class="doc-rail">
+        <p class="rail-title">On this site</p>
+        <ul class="rail-links">
+          <li><a href="./docs.html">Overview</a></li>
+          <li><a href="./docs-embedding.html">Embed</a></li>
+          <li><a href="./docs-guest.html">Guest</a></li>
+          <li><a href="./docs-containers.html">Containers</a></li>
+          <li><a href="./docs-verification.html" aria-current="page">Verification</a></li>
+          <li><a href="./docs-explainers.html">Explainers</a></li>
+        </ul>
+        <div class="rail-source">
+          Sources:
+          <a href="https://github.com/BLamy/wasm-vm/blob/main/AGENTS.md" target="_blank" rel="noopener">AGENTS.md</a> ·
+          <a href="https://github.com/BLamy/wasm-vm/blob/main/docs/RELEASE_ASSURANCE.md" target="_blank" rel="noopener">release boundary</a>
+        </div>
+      </aside>
+
+      <article class="doc-content">
+        <span class="eyebrow">Evidence before status</span>
+        <h1>Read the proof, then read the claim.</h1>
+        <p class="lede">
+          A green-looking page is not the verification system. Tasks move to
+          <code>verified</code> only after a fresh verifier interrogates recorded evidence against
+          the diff. This page is the short version of that contract and the current status that
+          follows from it.
+        </p>
+        <div class="page-meta">
+          <span class="badge live">guest/browser evidence</span>
+          <span class="badge live">task ledger</span>
+          <span class="badge caution">unfinished work stays labeled</span>
+        </div>
+
+        <h2>The worker/verifier loop</h2>
+        <div class="flow">
+          <div class="flow-step"><strong>Worker</strong>implements one task</div>
+          <div class="flow-step"><strong>Evidence</strong>records the final run</div>
+          <div class="flow-step"><strong>Verifier</strong>tries to refute it</div>
+          <div class="flow-step"><strong>Status</strong>verified or reworked</div>
+        </div>
+        <p>
+          The worker's summary is a claim. The evidence is the replayable record: deterministic
+          command output, guest traces and digests, browser assertions, and rr or rr-soft when
+          the host-layer risk requires it. A verifier also audits changed lines for coverage. An
+          unexecuted behavior is a proof gap, not a green check.
+        </p>
+
+        <h2>What the repository has recorded</h2>
+        <table class="data-table">
+          <thead><tr><th>Boundary</th><th>Recorded result</th><th>Read the full record</th></tr></thead>
+          <tbody>
+            <tr><td>Level 1 architecture</td><td>395 RISCOF cases passed, 0 failed, and no exclusions in the frozen report; native/WASM equality is part of the gate.</td><td><a href="https://github.com/BLamy/wasm-vm/blob/main/docs/level1-report.md" target="_blank" rel="noopener">Level 1 report</a></td></tr>
+            <tr><td>Release boundary</td><td>The named v0.1 boundary is the verified Epic 3 capstone plus the Level 1 and Level 2 foundations. Later acceleration, GUI, SMP, and sharing work is outside that claim.</td><td><a href="https://github.com/BLamy/wasm-vm/blob/main/docs/RELEASE_ASSURANCE.md" target="_blank" rel="noopener">Release assurance</a></td></tr>
+            <tr><td>Browser compliance record</td><td>Recent exact-head evidence records a browser compliance run at 126 passed / 0 failed with zero console errors for that tested build.</td><td><a href="https://github.com/BLamy/wasm-vm/blob/main/tasks/epic-4-acceleration/E4-T33-bulk-jit-state-handoff.md" target="_blank" rel="noopener">E4-T33 evidence log</a></td></tr>
+            <tr><td>OCI container path</td><td>The image matrix and runner sub-capstones have evidence, while the full boot-gated container capstone remains separately tracked.</td><td><a href="./docs-containers.html">Container page</a></td></tr>
+          </tbody>
+        </table>
+
+        <h2>Current status that matters</h2>
+        <div class="card-grid">
+          <article class="card">
+            <h3><span class="badge live">verified</span> Architecture and core browser boundary</h3>
+            <p>Use the Level 1 report and generated wasm declarations for the claims that are actually frozen and replayed.</p>
+          </article>
+          <article class="card">
+            <h3><span class="badge caution">in progress</span> E4-T34 short-block JIT</h3>
+            <p>The task still requires the real restored Node workload, wall-time thresholds, boundary-rate improvement, and adversarial exactness. The retrospective explicitly does not claim completion.</p>
+          </article>
+          <article class="card">
+            <h3><span class="badge caution">pending</span> Boot-gated container capstone</h3>
+            <p>Static image validation is not the same as booting every image and watching its service run inside the emulator.</p>
+          </article>
+          <article class="card">
+            <h3><span class="badge separate">proposal</span> ProofMesh product layer</h3>
+            <p>Product, market, encrypted-volume, and distributed-delivery pages describe roadmap contracts, not current VM APIs.</p>
+          </article>
+        </div>
+
+        <h2>Local gates</h2>
+        <p>
+          This repository's operating manual keeps verification local and deploys the static web
+          output to Cloudflare Pages. Run the narrowest affected gate while iterating, then the
+          risk-tier submission at the frozen head.
+        </p>
+        <pre><code>cargo fmt --all -- --check
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+cargo test --workspace
+make web-build
+make web-dist
+bash tools/deploy-cloudflare.sh</code></pre>
+        <p>
+          Browser-facing changes also need a built-page assertion: load the generated page, check
+          the affected behavior, check console errors, and record the result. The public deploy
+          is not proof by itself; it is the artifact that must match the evidence.
+        </p>
+
+        <div class="note warn">
+          <p><strong>Host-layer evidence.</strong> macOS can provide native tests and guest/browser
+          evidence, but rr is a Linux tool. The repository's rr-soft workflow uses
+          <code>ssh dev</code> for replayable host traces when a high-risk task needs them. This
+          docs rewrite does not change runtime behavior or require a new rr recording.</p>
+        </div>
+
+        <h2>Source records</h2>
+        <ul class="source-list">
+          <li><a href="https://github.com/BLamy/wasm-vm/blob/main/AGENTS.md" target="_blank" rel="noopener"><code>AGENTS.md</code></a> — roles, evidence doctrine, risk tiers, and deployment rules.</li>
+          <li><a href="https://github.com/BLamy/wasm-vm/tree/main/tasks" target="_blank" rel="noopener"><code>tasks/</code></a> — authoritative per-task status and verification logs.</li>
+          <li><a href="https://github.com/BLamy/wasm-vm/blob/main/docs/perf/e4-t34-jit-retrospective.md" target="_blank" rel="noopener"><code>docs/perf/e4-t34-jit-retrospective.md</code></a> — why the JIT speedup claim remains open.</li>
+          <li><a href="https://github.com/BLamy/wasm-vm/blob/main/tasks/QUEUE.md" target="_blank" rel="noopener"><code>tasks/QUEUE.md</code></a> — generated queue view.</li>
+        </ul>
+      </article>
+    </div>
+  </main>
+
+  <footer class="docs-footer">
+    <div class="docs-footer-inner">
+      <span><strong>wasm-vm</strong> · verification boundary</span>
+      <nav aria-label="Footer navigation">
+        <a href="./docs.html">Docs overview</a>
+        <a href="./docs-containers.html">Containers</a>
+        <a href="./app.html">Demo</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

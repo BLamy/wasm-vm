@@ -1,0 +1,21 @@
+E5-T19b native deterministic playback proof
+commit=2d4e77a
+command=cargo test -p wasm-vm-core --test virtio_snd_playback -- --nocapture
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/virtio_snd_playback.rs (target/debug/deps/virtio_snd_playback-ce21ead06dc788b5)
+
+running 7 tests
+test release_flushes_pending_periods_with_error_status_without_sending_audio ... ok
+test sink_failure_completes_the_period_with_io_error_and_no_reported_frames ... ok
+test wrong_stream_id_is_completed_with_io_error_without_reaching_the_sink ... ok
+test arrival_alone_never_completes_an_unripe_period ... ok
+test stop_start_resumes_pending_ramp_once_and_wav_sink_is_bit_exact ... ok
+test half_real_and_double_real_clock_scales_change_completion_rate_without_changing_audio ... ok
+test eight_second_440hz_sine_capture_has_expected_peak_and_clean_period_joins ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s
+
+coverage=clock-held periods; 0.5x/1x/2x completion cadence; used-ring order and latency_bytes
+coverage=bit-exact STOP/START ramp through WavSink; RELEASE flush; wrong stream and sink errors
+coverage=8 seconds at 48 kHz; exact samples; FFT peak within 1 Hz of 440 Hz; period joins <= 1 LSB

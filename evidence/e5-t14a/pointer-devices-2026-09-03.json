@@ -1,0 +1,55 @@
+{
+  "task": "E5-T14a",
+  "generatedAt": "2026-09-03",
+  "gitHead": "64ce03fa1845cc5af60352dfb8422f4b30f9c2bd",
+  "implementation": {
+    "tabletSlot": 4,
+    "mouseSlot": 5,
+    "firstFreeSlot": 6,
+    "tabletIdentity": "wasm-vm virtio tablet",
+    "mouseIdentity": "wasm-vm virtio mouse",
+    "tabletAbsRange": [0, 32767],
+    "tabletButtons": [272, 273, 274, 275, 276],
+    "mouseRelativeAxes": [0, 1, 6, 8]
+  },
+  "native": {
+    "command": "cargo test -p wasm-vm-core --test virtio_pointer",
+    "passed": 2,
+    "failed": 0,
+    "observed": [
+      "slots 4 and 5 report virtio-input DeviceID 18 while keyboard slot 3 remains intact",
+      "permuted tablet/mouse config selectors return isolated identities, bitmaps, and ABS_INFO",
+      "tablet frame has ABS_X, ABS_Y, BTN_LEFT, SYN_REPORT and mouse frame has REL_X, REL_Y, REL_WHEEL, REL_HWHEEL, BTN_RIGHT, SYN_REPORT",
+      "unsupported codes, caller-supplied SYN, invalid button values, and out-of-range ABS values are rejected",
+      "100 interleaved frames per pointer remain bounded at four pending events per device and keyboard pending state is unchanged"
+    ]
+  },
+  "inputUnit": {
+    "command": "cargo test -p wasm-vm-core --lib dev::virtio::input",
+    "passed": 19,
+    "failed": 0
+  },
+  "qualityGates": [
+    "cargo fmt --all -- --check",
+    "cargo clippy -p wasm-vm-core --all-targets -- -D warnings",
+    "cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release",
+    "make web-build",
+    "make web-dist",
+    "git diff --check 64ce03f^ 64ce03f"
+  ],
+  "browser": {
+    "command": "Chromium direct Playwright API against a clean local server on port 8133",
+    "guest": "busybox",
+    "guestReady": true,
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "requestFailures": 0,
+    "screenshot": "evidence/e5-t14a/pointer-browser-2026-09-03.png",
+    "screenshotSha256": "c4150f9e8deac6fb0584be46aed095ddf8e0e8d2e2b777a5b943074a016f0d28"
+  },
+  "knownUnrelated": "The unfiltered cargo test --all-targets wall also reaches the pre-existing no_stdout_in_core failure for println!/eprintln! in crates/core/src/dev/virtio/gpu/resources.rs; it is outside this diff. The integration/library pointer and affected input gates pass.",
+  "waivers": [
+    "Host rr/ssh evidence is waived by the repository policy dated 2026-09-01.",
+    "WebKit and independent-machine runs were omitted per user direction; Chromium local proof was retained."
+  ]
+}

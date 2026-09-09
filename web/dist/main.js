@@ -11,11 +11,14 @@ import { startLinuxBootWorker, stopLinuxController } from "./linux-worker-host.j
 import { resolveOverlayResetSeedIdentity } from "./overlay-reset-target.js";
 
 // E4-T32: the complete machine runs in a worker by default. This path needs no SAB/COOP headers;
-// `?worker=0` is the explicit main-thread differential/fallback. If Worker is genuinely unavailable,
-// fall back once with a visible warning; a worker boot failure itself never starts a second machine.
-const _workerQuery = new URLSearchParams(location.search).get("worker");
+// `?worker=0` and the older `?singlethread=1` spelling are explicit main-thread
+// differential/fallback switches. If Worker is genuinely unavailable, fall back once with a visible
+// warning; a worker boot failure itself never starts a second machine.
+const _startupQuery = new URLSearchParams(location.search);
+const _workerQuery = _startupQuery.get("worker");
+const _singleThreadForced = _workerQuery === "0" || _startupQuery.get("singlethread") === "1";
 const _workerAvailable = typeof globalThis.Worker === "function";
-const _workerRequested = _workerQuery !== "0";
+const _workerRequested = !_singleThreadForced;
 const _useCpuWorker = _workerRequested && _workerAvailable;
 if (_workerRequested && !_workerAvailable) {
   console.warn("wasm-vm: whole-machine Worker unavailable; using the main-thread fallback");
@@ -24,6 +27,21 @@ const _bootLinux = _useCpuWorker ? startLinuxBootWorker : startLinuxBoot;
 import { createLinuxTerminal } from "./terminal.js";
 import { createFileTransferUI } from "./file-transfer.js";
 import { createBootProgressSurface } from "./boot-progress.js";
+import { createFencedRpc, formatRpcCommand } from "./guest-rpc.js";
+import { createKeyboardBridge, createWasmKeyboardAdapter } from "./src/input/keyboard.js";
+import { attachKeyboardCapture, createKeyboardCapturePolicy } from "./src/input/capture.js";
+import { attachHeldKeyLifecycle } from "./src/input/held-keys.js";
+import { createKeyboardReconciler } from "./src/input/reconciliation.js";
+import { createAutoplayPolicy } from "./src/audio/autoplay.js";
+import { AudioSink } from "./src/audio/sink.js";
+import { AudioCaptureRingBuffer } from "./src/audio/capture-ring.js";
+import { createMicrophonePermissionController } from "./src/audio/microphone.js";
+import {
+  attachPointerBridge,
+  createPointerBridge,
+  createWasmPointerAdapter,
+  POINTER_MODES,
+} from "./src/input/pointer.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
@@ -262,6 +280,125 @@ document.getElementById("tailscale-logout")?.addEventListener("click", async () 
 // in terminal.js. `term` is the raw xterm.js instance the ELF-console paths keep writing to.
 const ui = createLinuxTerminal(document.getElementById("term"));
 const term = ui.term;
+
+// E5-T20d: construct the shared audio context/ring early so guest PCM can be discarded while the
+// browser keeps the context suspended. T20e connects the same sink to the guest's producer path;
+// this layer owns only the visible autoplay state and the one gesture → resume transition.
+const audioAutoplayBadge = document.getElementById("audio-autoplay-badge");
+const audioCaptureEnabled = new URLSearchParams(location.search).has("audioCapture");
+// E5-T21b: the query opt-in only changes the guest device's creation-time PCM advertisement. It
+// does not request microphone permission or start a host capture pipeline.
+const micEnabled = new URLSearchParams(location.search).has("enableMic");
+const audioRateQuery = Number(new URLSearchParams(location.search).get("audioRate"));
+const audioRequestedSampleRateHz = [44_100, 48_000].includes(audioRateQuery)
+  ? audioRateQuery
+  : 48_000;
+const audioCaptureBlocks = [];
+let audioSink = null;
+let audioAutoplayPolicy = null;
+let audioReady = Promise.resolve(false);
+let audioPipelineReady = false;
+const microphoneSampleRateHz = 48_000;
+let microphoneRing = null;
+if (micEnabled && typeof globalThis.SharedArrayBuffer === "function") {
+  try {
+    microphoneRing = AudioCaptureRingBuffer.allocate({ capacityFrames: 16_384 });
+  } catch { /* the UI remains honest: a missing SAB path cannot claim live capture */ }
+}
+
+function showAudioAutoplayUnavailable() {
+  if (!audioAutoplayBadge) return;
+  audioAutoplayBadge.dataset.audioState = "unavailable";
+  audioAutoplayBadge.textContent = "Audio unavailable — use a browser with AudioContext support.";
+  audioAutoplayBadge.hidden = false;
+}
+
+function publishAudioGlobals() {
+  window.__audioAutoplayPolicy = audioAutoplayPolicy;
+  window.__audioSink = audioSink;
+  window.__audioCapture = audioCaptureBlocks;
+  window.__audioCaptureRing = microphoneRing;
+}
+
+function installContextOnlyAudioPolicy(context = null) {
+  audioSink = null;
+  audioPipelineReady = false;
+  try {
+    const fallbackContext = context ?? new globalThis.AudioContext({ sampleRate: 48_000 });
+    audioAutoplayPolicy = createAutoplayPolicy({
+      context: fallbackContext,
+      sampleRateHz: Number(fallbackContext.sampleRate) || 48_000,
+      badge: audioAutoplayBadge,
+      target: document,
+    });
+    audioAutoplayPolicy.start();
+    audioReady = Promise.resolve(false);
+  } catch {
+    audioAutoplayPolicy = null;
+    audioReady = Promise.resolve(false);
+    showAudioAutoplayUnavailable();
+  }
+  publishAudioGlobals();
+}
+
+function installAudioAutoplayPolicy() {
+  if (typeof globalThis.AudioContext !== "function") {
+    showAudioAutoplayUnavailable();
+    audioReady = Promise.resolve(false);
+    publishAudioGlobals();
+    return;
+  }
+  try {
+    const candidate = new AudioSink({
+      requestedSampleRateHz: audioRequestedSampleRateHz,
+      capture: audioCaptureEnabled,
+      onCapture: (block) => {
+        // Capture is a bounded test-only observability seam. Production pages leave it disabled;
+        // proof pages retain enough cloned worklet quanta for sample/spectrum checks without an
+        // unbounded message queue.
+        if (audioCaptureBlocks.length < 32_000 && block?.samples instanceof Float32Array) {
+          audioCaptureBlocks.push({ frames: Number(block.frames) || 0, samples: block.samples });
+        }
+      },
+    });
+    audioSink = candidate;
+    audioAutoplayPolicy = createAutoplayPolicy({
+      context: candidate.context,
+      ring: candidate.ring,
+      sampleRateHz: candidate.sampleRateHz,
+      clockBuffer: candidate.clockBuffer,
+      onUnlocked: async () => {
+        // Resume can resolve before the next page task (including a guest's first PCM fill). Wait
+        // briefly for that first published block so the AudioWorklet cannot burn an unobservable
+        // empty quantum between the gesture and the producer; an actually silent guest still gets
+        // a bounded attach rather than waiting indefinitely.
+        const deadline = performance.now() + 50;
+        while (candidate.ring.fillFrames === 0 && performance.now() < deadline) {
+          await new Promise((resolve) => setTimeout(resolve, 1));
+        }
+        await candidate.connect();
+      },
+      badge: audioAutoplayBadge,
+      target: document,
+    });
+    audioAutoplayPolicy.start();
+    // Constructing an AudioWorkletNode can run its process callback even when Chrome reports the
+    // context as running before a user gesture. Keep the node absent while locked; the policy's
+    // post-resume hook creates it on the gesture that actually unlocks audio.
+    audioReady = Promise.resolve().then(() => {
+      audioPipelineReady = true;
+      publishAudioGlobals();
+      return true;
+    });
+  } catch {
+    // A browser may expose AudioContext but no SharedArrayBuffer support. Keep the unlock UX honest
+    // and omit the audio bridge instead of silently pretending that PCM is playing.
+    installContextOnlyAudioPolicy();
+  }
+}
+
+installAudioAutoplayPolicy();
+publishAudioGlobals();
 const fileTransferUI = createFileTransferUI({
   root: document.getElementById("file-transfer"),
   FileSha256,
@@ -270,6 +407,178 @@ if (new URLSearchParams(location.search).has("testHooks")) {
   globalThis.__wasmVmFileTransferUI = fileTransferUI;
   globalThis.__wasmVmFileSha256 = FileSha256;
 }
+
+// E5-T12c: the terminal owns a visible keyboard-capture policy. The policy runs on the terminal
+// host in capture phase, ahead of xterm's handlers, while leaving the existing serial onData path
+// intact. Physical transitions additionally flow through the T11 evdev bridge once a guest boots;
+// the serial getty remains the byte-oriented foreground console used by the demo.
+const keyboardHost = document.getElementById("term");
+const keyboardStateEl = document.getElementById("ide-keyboard-state");
+const keyboardToggle = document.getElementById("ide-keyboard-toggle");
+const keyboardReleaseButton = document.getElementById("ide-keyboard-release");
+const keyboardDebugEl = document.getElementById("ide-keyboard-debug");
+const keyboardDiagnostics = [];
+const keyboardFrames = [];
+let reservedViewToggleCount = 0;
+let keyboardBridge = null;
+let keyboardReconciler = null;
+let keyboardLedState = { numLock: false, capsLock: false, scrollLock: false };
+let keyboardLedPollTimer = null;
+let keyboardReleaseCount = 0;
+let keyboardLastReleaseReason = null;
+let keyboardSuppressLateKeyups = false;
+
+function setKeyboardIndicator(captured) {
+  const mode = captured ? "captured" : "browser";
+  if (keyboardStateEl) {
+    keyboardStateEl.textContent = `Keyboard: ${mode}`;
+    keyboardStateEl.dataset.captured = String(captured);
+  }
+  if (keyboardToggle) {
+    keyboardToggle.textContent = `Capture: ${captured ? "on" : "off"}`;
+    keyboardToggle.setAttribute("aria-pressed", String(captured));
+  }
+  document.documentElement.dataset.keyboardCapture = captured ? "on" : "off";
+}
+
+function keyboardDebugSnapshot() {
+  const held = keyboardBridge?.heldCodes?.() ?? [];
+  const stats = keyboardReconciler?.stats?.() ?? {
+    modifierRepairs: 0,
+    lockRepairs: 0,
+    pendingLockRepairs: [],
+  };
+  return {
+    held,
+    modifierRepairs: stats.modifierRepairs ?? 0,
+    lockRepairs: stats.lockRepairs ?? 0,
+    pendingLockRepairs: stats.pendingLockRepairs ?? [],
+    releaseCount: keyboardReleaseCount,
+    lastReleaseReason: keyboardLastReleaseReason,
+    leds: { ...keyboardLedState },
+  };
+}
+
+function updateKeyboardDebug() {
+  const snapshot = keyboardDebugSnapshot();
+  const repairs = snapshot.modifierRepairs + snapshot.lockRepairs;
+  if (keyboardDebugEl) {
+    keyboardDebugEl.textContent = `Held: ${snapshot.held.length ? snapshot.held.join(", ") : "none"} · repairs: ${repairs}`;
+    keyboardDebugEl.dataset.heldCount = String(snapshot.held.length);
+    keyboardDebugEl.dataset.modifierRepairs = String(snapshot.modifierRepairs);
+    keyboardDebugEl.dataset.lockRepairs = String(snapshot.lockRepairs);
+    keyboardDebugEl.dataset.pendingLocks = snapshot.pendingLockRepairs.map((entry) => entry.kind).join(",");
+    keyboardDebugEl.title = snapshot.pendingLockRepairs.length > 0
+      ? `Pending lock feedback: ${snapshot.pendingLockRepairs.map((entry) => entry.kind).join(", ")}`
+      : "No pending lock-key feedback";
+  }
+  try { window.__keyboardDebug = snapshot; } catch { /* page-only diagnostics */ }
+}
+
+const keyboardCapture = createKeyboardCapturePolicy({
+  initialCaptured: true,
+  // xterm's printable ASCII path intentionally waits for keypress/input after keydown. Let that
+  // target keep its native sequence for letters and Space; xterm cancels it after converting to
+  // serial bytes. Canvas and other guest surfaces still receive the ordinary capture decision.
+  preserveDefault: (event) => event?.target?.classList?.contains("xterm-helper-textarea") && (
+    event?.code === "Space" || /^[A-Za-z]$/.test(event?.key || "")
+  ),
+  onGuestEvent: (event) => {
+    // A lifecycle release can race the browser's queued keyup for the physical keys that were
+    // just cleared. Ignore that tail until the next real keydown; otherwise reconciliation would
+    // observe a still-down host modifier on the late dependent keyup and immediately re-press it.
+    if (event?.type === "keydown") keyboardSuppressLateKeyups = false;
+    if (event?.type === "keyup" && keyboardSuppressLateKeyups) {
+      return { forwarded: false, reason: "lifecycle-keyup-suppressed" };
+    }
+    return keyboardReconciler?.handleKeyEvent(event) ?? keyboardBridge?.handleKeyEvent(event);
+  },
+  onReserved: (event) => {
+    reservedViewToggleCount += 1;
+    try { window.__keyboardReservedToggles = reservedViewToggleCount; } catch { /* page-only hook */ }
+    try {
+      window.dispatchEvent(new CustomEvent("wvm:reserved-view-toggle", {
+        detail: { code: event?.code || "Backquote" },
+      }));
+    } catch { /* the hook is optional in non-browser fixtures */ }
+  },
+  onDiagnostic: (entry) => {
+    keyboardDiagnostics.push(entry);
+    if (keyboardDiagnostics.length > 256) keyboardDiagnostics.shift();
+  },
+  onStateChange: setKeyboardIndicator,
+});
+if (keyboardHost) attachKeyboardCapture(keyboardHost, keyboardCapture, { capture: true });
+
+function stopKeyboardLedPoll() {
+  if (keyboardLedPollTimer !== null) {
+    clearTimeout(keyboardLedPollTimer);
+    keyboardLedPollTimer = null;
+  }
+}
+
+function startKeyboardLedPoll(controller) {
+  stopKeyboardLedPoll();
+  const poll = async () => {
+    if (linuxCtl !== controller || !keyboardReconciler) return;
+    try {
+      const state = await controller.keyboardLedState?.();
+      if (state && typeof state === "object") {
+        keyboardLedState = {
+          numLock: state.numLock === true,
+          capsLock: state.capsLock === true,
+          scrollLock: state.scrollLock === true,
+        };
+        updateKeyboardDebug();
+      }
+    } catch {
+      // LED polling is advisory; the next KeyboardEvent still supplies host modifier state.
+    }
+    if (linuxCtl === controller && keyboardReconciler) {
+      keyboardLedPollTimer = setTimeout(() => void poll(), 250);
+    }
+  };
+  void poll();
+}
+
+function releaseKeyboardState(reason = "manual") {
+  keyboardReleaseCount += 1;
+  keyboardLastReleaseReason = reason;
+  keyboardSuppressLateKeyups = true;
+  try { keyboardBridge?.releaseAll?.(); } catch { /* teardown may race a stopped controller */ }
+  keyboardCapture.clearTransientState();
+  updateKeyboardDebug();
+}
+
+function setKeyboardCaptured(value) {
+  const next = keyboardCapture.setCaptured(value);
+  if (!next) releaseKeyboardState("capture-off");
+  updateKeyboardDebug();
+  return next;
+}
+
+keyboardToggle?.addEventListener("click", () => setKeyboardCaptured(!keyboardCapture.isCaptured()));
+keyboardReleaseButton?.addEventListener("click", () => releaseKeyboardState("panic-button"));
+const detachKeyboardLifecycle = attachHeldKeyLifecycle({ releaseAll: releaseKeyboardState });
+try {
+  window.__keyboardCapture = {
+    isCaptured: () => keyboardCapture.isCaptured(),
+    setCaptured: setKeyboardCaptured,
+    toggle: () => setKeyboardCaptured(!keyboardCapture.isCaptured()),
+    heldCodes: () => keyboardBridge?.heldCodes?.() ?? [],
+    heldSnapshot: () => keyboardBridge?.heldSnapshot?.() ?? [],
+    releaseAll: () => releaseKeyboardState("manual"),
+    stats: keyboardDebugSnapshot,
+    lastReleaseReason: () => keyboardLastReleaseReason,
+    pendingModifierCodes: () => keyboardCapture.pendingModifierCodes(),
+    passthroughCodes: () => keyboardCapture.passthroughCodes(),
+    reservedCodes: () => keyboardCapture.reservedCodes(),
+    diagnostics: () => [...keyboardDiagnostics],
+    frames: () => [...keyboardFrames],
+  };
+  window.__keyboardReservedToggles = reservedViewToggleCount;
+} catch { /* page-only diagnostics */ }
+updateKeyboardDebug();
 
 const runBtn = document.getElementById("run");
 const resetBtn = document.getElementById("reset");
@@ -293,8 +602,151 @@ let linuxBootPromise = null;
 let linuxBootRequest = null;
 let linuxActiveRequest = null;
 let linuxBootGeneration = 0;
+let diagnosticJitStatsTimer = null;
 const linuxControllerTeardowns = new WeakMap();
 const bootBtns = [bootLinuxBtn, bootAlpineBtn, bootAlpineFullBtn];
+const microphoneStateEl = document.getElementById("ide-microphone-state");
+const pendingMicrophoneEvents = [];
+
+function updateMicrophoneIndicator(snapshot = microphoneCapture?.snapshot?.()) {
+  if (!snapshot) return;
+  const state = snapshot.state || "off";
+  const text = state === "live"
+    ? "Microphone: live"
+    : state === "denied"
+      ? "Microphone: denied — retry capture"
+      : state === "revoked"
+        ? "Microphone: revoked — retry capture"
+        : snapshot.pending
+          ? "Microphone: off — permission pending"
+          : "Microphone: off";
+  if (microphoneStateEl) {
+    microphoneStateEl.textContent = text;
+    microphoneStateEl.dataset.state = state;
+    microphoneStateEl.dataset.pending = String(Boolean(snapshot.pending));
+  }
+  document.documentElement.dataset.microphoneState = state;
+  document.documentElement.dataset.microphonePending = String(Boolean(snapshot.pending));
+}
+
+function notifyMicrophoneGuest(event) {
+  const controller = linuxCtl;
+  if (!controller) {
+    pendingMicrophoneEvents.push(event);
+    return null;
+  }
+  try { return controller.notifyCaptureEvent?.(event); } catch { return null; }
+}
+
+function flushMicrophoneGuestEvents(controller) {
+  if (!controller || pendingMicrophoneEvents.length === 0) return;
+  const events = pendingMicrophoneEvents.splice(0);
+  for (const event of events) {
+    try {
+      const result = controller.notifyCaptureEvent?.(event);
+      result?.catch?.(() => {});
+    } catch { /* an owner replacement can retire the guest during notification */ }
+  }
+}
+
+const microphoneCapture = createMicrophonePermissionController({
+  enabled: micEnabled,
+  ring: microphoneRing,
+  sampleRateHz: microphoneSampleRateHz,
+  notifyGuest: notifyMicrophoneGuest,
+  onStateChange: updateMicrophoneIndicator,
+});
+updateMicrophoneIndicator();
+try {
+  window.__microphone = {
+    state: () => microphoneCapture.snapshot(),
+    onPcmStart: (info) => microphoneCapture.onPcmStart(info),
+    retry: () => microphoneCapture.retry(),
+    reset: () => microphoneCapture.reset(),
+  };
+} catch { /* page-only diagnostics */ }
+
+// E5-T14b: route the terminal/desktop pointer surface to the two guest-visible T14a devices. The
+// adapter is deliberately dynamic because the controller is replaced on every boot and may be a
+// direct WasmLinux object or a whole-machine Worker proxy. Pointer frames remain no-ops before a
+// guest is live, while the mode/Pointer Lock state remains inspectable for UI and tests.
+const pointerHost = document.getElementById("term");
+const pointerStateEl = document.getElementById("ide-pointer-state");
+const pointerToggle = document.getElementById("ide-pointer-toggle");
+const pointerDebugEl = document.getElementById("ide-pointer-debug");
+const pointerDiagnostics = [];
+const pointerFrames = [];
+const pointerControllerProxy = {
+  sendTabletEvent: (...args) => linuxCtl?.sendTabletEvent?.(...args),
+  syncTablet: () => linuxCtl?.syncTablet?.(),
+  sendMouseEvent: (...args) => linuxCtl?.sendMouseEvent?.(...args),
+  syncMouse: () => linuxCtl?.syncMouse?.(),
+};
+
+function updatePointerIndicator(snapshot = pointerBridge?.state?.()) {
+  if (!snapshot) return;
+  const relative = snapshot.mode === POINTER_MODES.RELATIVE;
+  if (pointerStateEl) {
+    pointerStateEl.textContent = `Pointer: ${relative ? "relative" : "absolute"}`;
+    pointerStateEl.dataset.mode = snapshot.mode;
+    pointerStateEl.dataset.locked = String(snapshot.pointerLocked);
+  }
+  if (pointerToggle) {
+    pointerToggle.textContent = relative ? "Pointer: relative" : "Pointer: absolute";
+    pointerToggle.setAttribute("aria-pressed", String(relative));
+    pointerToggle.disabled = !linuxCtl;
+  }
+  if (pointerDebugEl) {
+    const wheel = snapshot.wheelRemainders || { horizontal: 0, vertical: 0 };
+    pointerDebugEl.textContent = `Buttons: ${snapshot.heldButtons.length || "none"} · frames: ${pointerFrames.length} · wheel: ${wheel.horizontal}/${wheel.vertical}`;
+    pointerDebugEl.dataset.heldCount = String(snapshot.heldButtons.length);
+    pointerDebugEl.dataset.frameCount = String(pointerFrames.length);
+    pointerDebugEl.dataset.wheelHorizontal = String(wheel.horizontal);
+    pointerDebugEl.dataset.wheelVertical = String(wheel.vertical);
+    pointerDebugEl.dataset.locked = String(snapshot.pointerLocked);
+  }
+  document.documentElement.dataset.pointerMode = snapshot.mode;
+}
+
+const pointerBridge = createPointerBridge(createWasmPointerAdapter(pointerControllerProxy), {
+  target: pointerHost,
+  documentTarget: document,
+  isReady: () => Boolean(linuxCtl),
+  getRect: () => pointerHost?.getBoundingClientRect?.() ?? null,
+  onDiagnostic: (entry) => {
+    pointerDiagnostics.push(entry);
+    if (pointerDiagnostics.length > 256) pointerDiagnostics.shift();
+  },
+  onFrame: (frame) => {
+    pointerFrames.push(frame);
+    if (pointerFrames.length > 512) pointerFrames.shift();
+    updatePointerIndicator();
+  },
+  onStateChange: updatePointerIndicator,
+});
+const detachPointerBridge = pointerHost
+  ? attachPointerBridge(pointerHost, pointerBridge, { documentTarget: document, windowTarget: window })
+  : () => {};
+pointerToggle?.addEventListener("click", () => {
+  if (linuxCtl) pointerBridge.toggleMode();
+});
+try {
+  window.__pointer = {
+    mode: () => pointerBridge.mode(),
+    state: () => pointerBridge.state(),
+    setMode: (mode, options) => pointerBridge.setMode(mode, options),
+    toggle: () => pointerBridge.toggleMode(),
+    requestRelative: () => pointerBridge.requestRelative(),
+    exitRelative: () => pointerBridge.exitRelative(),
+    handleWheel: (event) => pointerBridge.handleWheel(event),
+    handleFocusLoss: (reason) => pointerBridge.handleFocusLoss(reason),
+    heldButtons: () => pointerBridge.heldButtons(),
+    wheelRemainders: () => pointerBridge.wheelRemainders(),
+    diagnostics: () => [...pointerDiagnostics],
+    frames: () => [...pointerFrames],
+  };
+} catch { /* page-only diagnostics */ }
+updatePointerIndicator();
 
 function teardownLinuxController(controller, { natural = false } = {}) {
   if (!controller) return Promise.resolve();
@@ -311,8 +763,31 @@ function teardownLinuxController(controller, { natural = false } = {}) {
 }
 
 function clearLinuxOwnerUi({ clearBootError = true } = {}) {
+  cancelActiveStream?.();
+  rejectPendingGuestExecs();
+  // The controller has already been stopped by the time owner UI is cleared. Drop the bridge
+  // without sending post-termination key-up RPCs; the capture policy resets transient state when
+  // the next boot installs a fresh bridge.
+  stopKeyboardLedPoll();
+  try { keyboardBridge?.resetHeld?.(); } catch { /* a failed controller may already be gone */ }
+  keyboardBridge = null;
+  keyboardReconciler = null;
+  keyboardLedState = { numLock: false, capsLock: false, scrollLock: false };
+  keyboardCapture.clearTransientState();
+  keyboardSuppressLateKeyups = false;
+  keyboardLastReleaseReason = "controller-retired";
+  updateKeyboardDebug();
+  pendingMicrophoneEvents.length = 0;
+  microphoneCapture.reset();
+  updateMicrophoneIndicator();
+  try { pointerBridge?.reset?.({ emit: false, exitLock: true }); } catch { /* pointer lock may already be gone */ }
+  updatePointerIndicator();
   ui.detachSink();
   fileTransferUI.attachController(null);
+  if (diagnosticJitStatsTimer !== null) {
+    clearInterval(diagnosticJitStatsTimer);
+    diagnosticJitStatsTimer = null;
+  }
   // Quota/read-only controls are controller capabilities, not ordinary page chrome. Destroy their
   // children and generation marker when the owner retires so a visible or retained old button can
   // never act on whichever controller happens to occupy the global slot next.
@@ -325,7 +800,9 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
     if (id === "quota-dialog") delete control.dataset.hits;
   }
   try { window.__linuxOwnerUiForTest = null; } catch { /* page-only diagnostic */ }
-  for (const key of ["linuxManifest", "linuxBackend", "jitPolicy", "jitThreshold", "interpreter"]) {
+  for (const key of [
+    "linuxManifest", "linuxBackend", "jitPolicy", "jitResidency", "jitThreshold", "jitJalr", "jitRegion", "interpreter", "jitStats",
+  ]) {
     delete document.documentElement.dataset[key];
   }
   try {
@@ -558,6 +1035,10 @@ function runLinuxBoot(opts, banner, { requestKey = opts.manifestUrl, onClaim = n
 async function runLinuxBootOwned(opts, banner, request) {
   bootBtns.forEach((b) => b && (b.disabled = true));
   term.reset();
+  // E5-T20e: do not let the guest probe virtio-snd before the AudioWorklet module has either
+  // connected successfully or been explicitly downgraded to the context-only fallback.
+  await audioReady;
+  const audioBootEnabled = audioPipelineReady && audioSink !== null;
   if (_workerRequested && !_workerAvailable) {
     term.writeln("\x1b[33m[whole-machine Worker unavailable; using explicit main-thread fallback]\x1b[0m");
   }
@@ -576,7 +1057,7 @@ async function runLinuxBootOwned(opts, banner, request) {
     ? false
     : jitQuery === "1"
       ? true
-      : (opts.jit ?? false);
+      : (opts.jit ?? true);
   const thresholdCandidate = query.has("jitThreshold")
     ? Number(query.get("jitThreshold"))
     : Number(opts.jitThreshold ?? 512);
@@ -585,6 +1066,13 @@ async function runLinuxBootOwned(opts, banner, request) {
   const selectedJitThreshold = Number.isFinite(thresholdCandidate) && thresholdCandidate >= 1
     ? Math.floor(thresholdCandidate)
     : 512;
+  const selectedJitResidency = query.get("jitResidency") ?? opts.jitResidency ?? "repack-off";
+  const selectedJitJalr = query.has("jalr")
+    ? query.get("jalr") !== "0"
+    : (opts.jitJalr ?? true);
+  const selectedJitRegion = query.has("region")
+    ? query.get("region") !== "0"
+    : (opts.jitRegion ?? true);
   const selectedProfile = query.has("profile")
     ? query.get("profile") === "1"
     : Boolean(opts.profile);
@@ -648,11 +1136,14 @@ async function runLinuxBootOwned(opts, banner, request) {
       // instruction-at-a-time A/B path. Pass it as DATA so the whole-machine worker sees the page's
       // choice instead of trying to read the worker script URL.
       fastInterpreter: selectedFastInterpreter,
-      // E4-T33 bounded compiled handles make JIT safe to request, but the measured cold Node process
-      // is still faster in the interpreter even at threshold 512. Keep the fastest measured policy
-      // as the default; `?jit=1` opts into a truthful JIT experiment and `?jit=0` is an explicit A/B.
+      // E4-T33 bounded compiled handles make JIT safe to request, and the restored-Node screen is
+      // faster with JIT at the shipping threshold. Keep it on for the isolated production path;
+      // `?jit=0` remains the explicit interpreter A/B and rollback switch.
       jit: selectedJit,
       jitThreshold: selectedJitThreshold,
+      jitResidency: selectedJitResidency,
+      jitJalr: selectedJitJalr,
+      jitRegion: selectedJitRegion,
       profile: selectedProfile,
       quantum: selectedQuantum,
       startPaused: query.has("testHooks") && query.has("startPaused"),
@@ -662,7 +1153,9 @@ async function runLinuxBootOwned(opts, banner, request) {
         ? (worker) => { window.__linuxWorkerForTest = worker; }
         : undefined,
       workerHeartbeatIntervalMs: query.has("testHooks") ? 50 : undefined,
-      workerHeartbeatTimeoutMs: query.has("testHooks") ? 300 : undefined,
+      workerHeartbeatTimeoutMs: query.has("workerHeartbeatTimeoutMs")
+        ? Math.max(1, Number(query.get("workerHeartbeatTimeoutMs")) || 1)
+        : query.has("testHooks") ? 300 : undefined,
       workerBootTimeoutMs: query.has("workerBootTimeoutMs")
         ? Math.max(1, Number(query.get("workerBootTimeoutMs")) || 1)
         : undefined,
@@ -680,6 +1173,19 @@ async function runLinuxBootOwned(opts, banner, request) {
       slirpDoh,
       slirpLeaseSecs: opts.slirpLeaseSecs ?? query.get("slirpLeaseSecs") ?? 86400,
       slirpMtu: opts.slirpMtu ?? query.get("slirpMtu") ?? 1500,
+      // E5-T20e: these SABs are the only audio state crossing into the whole-machine worker. The
+      // loader omits the bridge entirely on the context-only fallback path.
+      audioSharedBuffer: audioBootEnabled ? audioSink.ring.sharedBuffer : null,
+      audioClockBuffer: audioBootEnabled ? audioSink.clockBuffer : null,
+      audioCapacityFrames: audioBootEnabled ? audioSink.ring.capacityFrames : 0,
+      audioSampleRateHz: audioBootEnabled ? audioSink.sampleRateHz : 0,
+      captureSharedBuffer: microphoneRing?.sharedBuffer ?? null,
+      captureCapacityFrames: microphoneRing?.capacityFrames ?? 0,
+      captureSampleRateHz: microphoneRing ? microphoneSampleRateHz : 0,
+      enableMic: opts.enableMic ?? micEnabled,
+      onCaptureStart: (info) => {
+        void microphoneCapture.onPcmStart(info);
+      },
       onState: (s) => {
         // E4 restore-on-first-load: a visible stopwatch instead of the "booting" progress bar when
         // the shipped boot snapshot is being restored.
@@ -717,7 +1223,11 @@ async function runLinuxBootOwned(opts, banner, request) {
           const s = new TextDecoder().decode(u8);
           bootProgress.scanOutput(s);
           promptTail = (promptTail + s).slice(-200);
-          if (/[\w][\w.-]*:~#\s*$/.test(promptTail) || /\/ #\s*$/.test(promptTail)) markGuestReady();
+          // xterm answers the guest's cursor-position query with a CSI sequence (for example
+          // ESC[6n) immediately after the prompt. Strip terminal control sequences before matching
+          // the visible shell suffix so that a usable prompt cannot be masked by its own reply.
+          const promptText = promptTail.replace(/\x1b(?:\[[0-?]*[ -/]*[@-~]|[ -/]*[@-~])/g, "");
+          if (/[^\w][\w.-]*:~#\s*$/.test(promptText) || /[~\/]\s*#\s*$/.test(promptText)) markGuestReady();
         } catch {}
       },
       onError: (e) => {
@@ -753,8 +1263,32 @@ async function runLinuxBootOwned(opts, banner, request) {
       onWriterStatus: ownerUi.onWriterStatus,
     });
     linuxCtl = bootController;
-    linuxActiveRequest = request;
+    flushMicrophoneGuestEvents(linuxCtl);
+    updatePointerIndicator();
     const ctlForRelease = bootController;
+    keyboardBridge = createKeyboardBridge(createWasmKeyboardAdapter(linuxCtl), {
+      onDiagnostic: (entry) => {
+        keyboardDiagnostics.push({ ...entry, source: "evdev-bridge" });
+        if (keyboardDiagnostics.length > 256) keyboardDiagnostics.shift();
+        updateKeyboardDebug();
+      },
+      onFrame: (frame) => {
+        keyboardFrames.push(frame);
+        if (keyboardFrames.length > 512) keyboardFrames.shift();
+        updateKeyboardDebug();
+      },
+    });
+    linuxActiveRequest = request;
+    keyboardReconciler = createKeyboardReconciler(keyboardBridge, {
+      getGuestLedState: () => keyboardLedState,
+      onDiagnostic: (entry) => {
+        keyboardDiagnostics.push({ ...entry, source: "keyboard-reconciler" });
+        if (keyboardDiagnostics.length > 256) keyboardDiagnostics.shift();
+      },
+      onStatsChange: updateKeyboardDebug,
+    });
+    startKeyboardLedPoll(ctlForRelease);
+    updateKeyboardDebug();
     let settlementHandled = false;
     const finalizeSettlement = async (state, error = null) => {
       if (settlementHandled) return;
@@ -804,14 +1338,18 @@ async function runLinuxBootOwned(opts, banner, request) {
     }
     const initialJit = await linuxCtl.jitStats?.() ?? null;
     const jitPolicy = !selectedJit
-      ? (query.get("jit") === "0" ? "forced-off" : "interpreter-faster-for-cold-start")
+      ? (query.get("jit") === "0" ? "forced-off" : "disabled-by-caller")
       : initialJit?.hasExecutor
         ? "enabled"
         : globalThis.crossOriginIsolated ? "unavailable-no-executor" : "unavailable-no-isolation";
     const backend = linuxCtl.backend ?? "main-thread";
     const interpreter = selectedFastInterpreter ? "fast" : "legacy";
     document.documentElement.dataset.jitPolicy = jitPolicy;
+    document.documentElement.dataset.jitResidency = initialJit?.jitResidencyPolicy
+      ?? selectedJitResidency;
     document.documentElement.dataset.jitThreshold = String(selectedJitThreshold);
+    document.documentElement.dataset.jitJalr = String(selectedJitJalr);
+    document.documentElement.dataset.jitRegion = String(selectedJitRegion);
     document.documentElement.dataset.interpreter = interpreter;
     window.__jit = {
       enabled: Boolean(initialJit?.hasExecutor),
@@ -823,7 +1361,10 @@ async function runLinuxBootOwned(opts, banner, request) {
       backend,
       interpreter,
       jit: jitPolicy,
+      jitResidency: document.documentElement.dataset.jitResidency,
       jitThreshold: selectedJitThreshold,
+      jitJalr: selectedJitJalr,
+      jitRegion: selectedJitRegion,
       quantum: selectedQuantum,
     };
     const jitLabel = jitPolicy === "enabled"
@@ -834,11 +1375,27 @@ async function runLinuxBootOwned(opts, banner, request) {
           ? (jitPolicy === "unavailable-no-isolation"
               ? "JIT requested but unavailable without cross-origin isolation"
               : "JIT requested but this machine exposes no compiled executor")
-          : "JIT off: measured fast interpreter wins cold process startup";
+          : "JIT disabled by caller";
     term.writeln(`\x1b[90m[execution: ${backend}; ${interpreter} interpreter; ${jitLabel}; quantum ${selectedQuantum}]\x1b[0m`);
     window.__jitStats = async () => await linuxCtl?.jitStats?.() ?? null;
     window.__schedulerStats = async () => await linuxCtl?.schedulerStats?.() ?? null;
     window.__workerRpcStats = async () => await linuxCtl?.workerRpcStats?.() ?? null;
+    // Test-only bridge for the worker's existing stats RPC. The browser automation surface runs
+    // in an isolated world and cannot read page-owned expando functions such as __jitStats, so a
+    // diagnostic run may mirror the same returned object into a DOM data attribute. This is inert
+    // unless both query flags are present and never participates in execution or UI policy.
+    if (query.has("testHooks") && query.has("diagnosticStats")) {
+      document.documentElement.dataset.jitStats = JSON.stringify(initialJit ?? {});
+      const publishDiagnosticJitStats = async () => {
+        if (linuxCtl !== ctlForRelease) return;
+        try {
+          const stats = await ctlForRelease.jitStats?.();
+          if (stats) document.documentElement.dataset.jitStats = JSON.stringify(stats);
+        } catch { /* a diagnostic mirror must never affect the guest */ }
+      };
+      void publishDiagnosticJitStats();
+      diagnosticJitStatsTimer = setInterval(() => void publishDiagnosticJitStats(), 500);
+    }
     // A visibilitychange may have happened while _bootLinux was still awaiting READY, when linuxCtl
     // was null and the event handler had nothing to pause. Reconcile once before advertising ready.
     if (document.hidden) {
@@ -1003,6 +1560,27 @@ window.__bootAlpineChunked = () =>
     "E4 browser profiling boot (chunked Alpine, lazy fetch)",
     { requestKey: "alpine", onClaim: () => setGuestChip("alpine") },
   );
+// E4-T28e test-only hook: attach the locally pinned GCC overlay as a real second virtio-blk drive
+// while booting the real Alpine guest. It is deliberately absent from the production UI and only
+// exists when the verifier opts into `?testHooks=1`.
+if (new URLSearchParams(location.search).has("testHooks")) {
+  window.__bootGccInteractive = () =>
+    runLinuxBoot(
+      {
+        manifestUrl: "./artifacts-alpine.json",
+        mode: "chunked",
+        imageManifestUrl: "./releases/chunked-alpine/manifest.json",
+        bootProfileUrl: null,
+        persist: false,
+        bootSnapshot: false,
+        ramMib: 256,
+        extraDiskUrl: "./gcc-overlay/gcc.ext4",
+        extraDiskSha256: "f53445f65b5e32b9fe3c47e0f84c52c850da2c747edae0abca60e9592a758c4a",
+      },
+      "E4-T28e GCC interactive browser proof",
+      { requestKey: "gcc", onClaim: () => setGuestChip("alpine") },
+    );
+}
 // ── Docker tab ⇄ real boot bridge ─────────────────────────────────────────────
 // The Docker "Run" button drives the SAME real boot machinery as this Terminal tab — it never
 // simulates a shell. For busybox we boot the real busybox userland on RISC-V Linux (the initramfs
@@ -1036,43 +1614,73 @@ function emitConsole(u8) {
 }
 // Shared, serialized fenced RPC into the guest — the Docker tab AND the IDE tab use this to run shell
 // commands (`wvrun ps`, `ls`, `cat`, writing files, …) and read their output. Sends `<cmd>; printf
-// '\n__WVEND_<id>_%s\n' $?` and captures stdout between the echoed command and the END marker (matched
-// with a trailing DIGIT so the echoed marker text — ending in `%s` — never false-matches). Requires the
-// guest at a shell (see isGuestReady). Serialized via a promise chain so callers don't interleave.
+// '\n__WVEND_<id>_%s\n' $?` and delegates complete-marker parsing to guest-rpc.js. Requires the guest at
+// a shell (see isGuestReady). Serialized via a promise chain so callers don't interleave.
 let execChain = Promise.resolve();
 let execSeq = 0;
+// A live stream owns the one tty until stop() has proved that the shell is back at a command
+// boundary. Merely queueing Ctrl-C is not enough: a foreground command can still flush output after
+// the callback that requested stop() returns, and the next fenced RPC would then ingest that tail.
+// The barrier resolves only after a private no-op fence has run after Ctrl-C; queued RPCs await it.
+let streamBarrier = Promise.resolve();
+let activeStream = false;
+let cancelActiveStream = null;
 let quietGuestExec = false;
+const pendingGuestExecs = new Set();
+class GuestBridgeError extends Error {
+  constructor(code, message) {
+    super(message);
+    this.name = "GuestBridgeError";
+    this.code = code;
+  }
+}
+function rejectPendingGuestExecs() {
+  const error = new GuestBridgeError("GUEST_STOPPED", "guest stopped while an RPC was pending");
+  for (const pending of [...pendingGuestExecs]) pending.reject(error);
+}
 function guestExec(cmd, timeoutMs = 60000, sendBytes = null, options = {}) {
-  const task = () =>
-    new Promise((resolve, reject) => {
-      if (!linuxCtl) return reject(new Error("guest not up"));
+  const task = async () => {
+    const streamStopError = await streamBarrier;
+    if (streamStopError) throw streamStopError;
+    return new Promise((resolve, reject) => {
+      if (!linuxCtl) return reject(new GuestBridgeError("GUEST_UNAVAILABLE", "guest not up"));
       const quiet = options?.quiet === true;
       if (quiet) quietGuestExec = true;
       const rid = `${Date.now().toString(36)}${execSeq++}`;
-      const endRe = new RegExp(`__WVEND_${rid}_(\\d+)`);
-      const dec = new TextDecoder();
-      let buf = "";
-      const onc = (u8) => {
-        buf += dec.decode(u8, { stream: true }).replace(/\x1b\[[0-9;?]*[ -/]*[@-~]/g, "").replace(/\r/g, "");
-        const m = buf.match(endRe);
-        if (m) {
-          const exit = parseInt(m[1], 10);
-          let out = buf.slice(0, m.index);
-          const nl = out.indexOf("\n");
-          if (nl !== -1) out = out.slice(nl + 1);
-          cleanup();
-          resolve({ stdout: out, exit });
-        }
-      };
+      const parser = createFencedRpc(rid);
+      let timer = null;
+      let sendTimer = null;
+      let settled = false;
+      let entry = null;
+      let onc;
       const cleanup = () => {
-        clearTimeout(timer);
-        consoleSubscribers.delete(onc);
+        if (timer !== null) clearTimeout(timer);
+        if (sendTimer !== null) clearTimeout(sendTimer);
+        if (onc) consoleSubscribers.delete(onc);
+        if (entry) pendingGuestExecs.delete(entry);
         if (quiet) quietGuestExec = false;
       };
+      const finish = (settler) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        settler();
+      };
+      entry = { reject: (error) => finish(() => reject(error)) };
+      pendingGuestExecs.add(entry);
+      onc = (u8) => {
+        const result = parser.feed(u8);
+        if (!result) return;
+        finish(() => resolve(result));
+      };
       consoleSubscribers.add(onc);
-      const timer = setTimeout(() => { cleanup(); reject(new Error("guest command timed out")); }, timeoutMs);
-      setTimeout(() => {
-        const bytes = new TextEncoder().encode(`${cmd}; printf '\\n__WVEND_${rid}_%s\\n' "$?"\r`);
+      timer = setTimeout(
+        () => finish(() => reject(new GuestBridgeError("GUEST_TIMEOUT", "guest command timed out"))),
+        timeoutMs,
+      );
+      sendTimer = setTimeout(() => {
+        sendTimer = null;
+        const bytes = new TextEncoder().encode(formatRpcCommand(cmd, rid));
         // Boot-time cache priming runs before the terminal input sink is attached. It still uses
         // the real controller input bridge, but accepts a direct sender for that one serialized
         // command; normal callers continue through the terminal backpressure queue.
@@ -1080,6 +1688,7 @@ function guestExec(cmd, timeoutMs = 60000, sendBytes = null, options = {}) {
         else ui.typeBytes(bytes);
       }, 0);
     });
+  };
   execChain = execChain.then(task, task);
   return execChain;
 }
@@ -1115,16 +1724,24 @@ function resetGuestReady() {
 // (which names the RAM snapshot + overlay-delta to restore) and the guest chip differ.
 async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl, bootProfileUrl) {
   const _imgManifest = imageManifestUrl || (R2_ASSETS + "/chunked-alpine/manifest.json");
+  // The deployed R2 Alpine release ships its matching ordered first-touch profile. Pass an explicit
+  // value for each caller: Node-Alpine has no restore-bound profile yet, so it intentionally remains
+  // on demand + sequential readahead.
+  const _bootProfile = bootProfileUrl ?? null;
   // Return-visit fast-restore is handled in loader.js: the RAM restore is armed whenever a coherent,
   // unmodified overlay is present (not only on a fresh seed), so reloads restore instead of cold-booting;
   // a MODIFIED overlay is rejected by restoreDecisionCode → cold boot. `?keep`/`?persist=1`/`?noSnapshot`
   // are honored in the loader.
+  const _bootArgs = new URLSearchParams(location.search).has("e3t12dSingleUser")
+    ? "root=/dev/vda rw console=ttyS0 earlycon=sbi init=/bin/sh"
+    : undefined;
   const boot = await runLinuxBoot(
     {
       manifestUrl,
       mode: "chunked",
       imageManifestUrl: _imgManifest,
-      bootProfileUrl,
+      bootProfileUrl: _bootProfile,
+      bootargs: _bootArgs,
       cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
       // The restore needs the persistent (IndexedDB overlay) path: the seeded post-boot disk delta
       // lives in that overlay. Default ON so the shipped RAM snapshot + delta restore in ~1s;
@@ -1157,6 +1774,23 @@ async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl, bootProfile
 
 window.wvmDemo = {
   isGuestUp: () => !!linuxCtl,
+  // E5-T20d/T20e: inspect the real context/ring pair without exposing a second unlock path.
+  audioAutoplay: () => audioAutoplayPolicy,
+  audioSink: () => audioSink,
+  audioReady: () => audioReady,
+  audioPipelineReady: () => audioPipelineReady,
+  microphone: () => microphoneCapture.snapshot(),
+  microphoneStart: (info) => microphoneCapture.onPcmStart(info),
+  microphoneRetry: () => microphoneCapture.retry(),
+  async audioOutputReady() {
+    return Boolean(await linuxCtl?.audioOutputReady?.());
+  },
+  async audioCaptureReady() {
+    return Boolean(await linuxCtl?.audioCaptureReady?.());
+  },
+  async captureState() {
+    return await linuxCtl?.captureState?.() ?? null;
+  },
   // Subscribe to the real guest console stream (Uint8Array chunks). Returns an unsubscribe fn.
   onConsole(fn) { consoleSubscribers.add(fn); return () => consoleSubscribers.delete(fn); },
   // Inject bytes through the REAL terminal input bridge — the same backpressure queue → ttyS0 RX
@@ -1195,7 +1829,12 @@ window.wvmDemo = {
   // { ok:true, already:true } if already up, or { ok:false, error } if the boot refused/failed. Needs
   // the Alpine artifacts to be deployed (artifacts-alpine.json + releases/chunked-alpine/).
   async bootAlpine() {
-    return bootAlpineFlavor("./artifacts-alpine.json", "alpine");
+    return bootAlpineFlavor(
+      "./artifacts-alpine.json",
+      "alpine",
+      undefined,
+      R2_ASSETS + "/chunked-alpine/boot-profile.json",
+    );
   },
   // E3.6-T05: boot the NODE-preinstalled Alpine guest — same chunked base + restore machinery, but the
   // shipped RAM snapshot + overlay-delta land at a shell with `node` already on PATH (no boot, no apk
@@ -1223,6 +1862,83 @@ window.wvmDemo = {
   alpineArtifactsPresent: () => alpineAvailable,
   // True once the booted guest has reached a usable shell prompt (Docker/IDE tabs gate on this).
   isGuestReady: () => guestReady,
+  // E3-T12e: public Docker-tab snapshot surface. The loader already restores a coherent
+  // persistent snapshot before advertising the guest as ready; this wrapper keeps the visible
+  // control on the same real controller and pauses a live guest around the durable save boundary.
+  async snapshotStatus() {
+    const controller = linuxCtl;
+    if (!controller?.snapshotDecision || !controller?.snapshotGeneration) {
+      return { available: false, decision: "missing", generation: null, restored: false };
+    }
+    try {
+      const [decision, generation] = await Promise.all([
+        controller.snapshotDecision(),
+        controller.snapshotGeneration(),
+      ]);
+      return {
+        available: true,
+        decision: String(decision || "missing"),
+        generation: Number(generation),
+        restored: Boolean(controller.restoredFromBootSnapshot?.()),
+      };
+    } catch (error) {
+      return {
+        available: false,
+        decision: "error",
+        generation: null,
+        restored: false,
+        code: "SNAPSHOT_STATUS_FAILED",
+        error: error?.message || String(error),
+      };
+    }
+  },
+  async snapshotSave() {
+    const controller = linuxCtl;
+    if (!controller?.snapshotSave) {
+      return { ok: false, code: "SNAPSHOT_UNAVAILABLE", error: "persistent snapshot support is unavailable" };
+    }
+    const started = performance.now();
+    let wasPaused = false;
+    try { wasPaused = Boolean(await controller.isPaused?.()); } catch {}
+    try {
+      if (!wasPaused) await controller.pause?.();
+      // The snapshot contains RAM/page-cache state while the overlay is the durable disk view.
+      // Flush any guest writes at the same paused boundary first, so the saved generation and the
+      // serialized machine describe one coherent filesystem rather than a RAM-only write.
+      const overlayStable = (stats) => !stats ||
+        (Number(stats.pendingBlocks || 0) === 0 && !stats.flushWaiting && !stats.writeWaiting);
+      if (controller.persist) {
+        for (let attempt = 0; attempt < 20; attempt += 1) {
+          await controller.persist();
+          if (!controller.persistStats) break;
+          const stats = await controller.persistStats();
+          if (overlayStable(stats)) {
+            // A guest WRITE can enqueue its overlay block in the tick that delivered the fenced
+            // command marker. Require a second idle sample after yielding so that late queue work
+            // cannot advance the generation immediately after the snapshot is recorded.
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            if (overlayStable(await controller.persistStats())) break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 25));
+        }
+      }
+      await controller.snapshotSave();
+      const state = await this.snapshotStatus();
+      return { ok: true, elapsedMs: performance.now() - started, ...state };
+    } catch (error) {
+      const raw = error?.message || String(error);
+      const code = raw === "read_only"
+        ? "SNAPSHOT_READ_ONLY"
+        : raw === "not_persistent"
+          ? "SNAPSHOT_NOT_PERSISTENT"
+          : error?.code || "SNAPSHOT_SAVE_FAILED";
+      return { ok: false, code, error: raw, elapsedMs: performance.now() - started };
+    } finally {
+      if (!wasPaused) {
+        try { await controller.resume?.(); } catch {}
+      }
+    }
+  },
   // Run a shell command in the guest, resolve { stdout, exit } (shared, serialized — see guestExec).
   exec: (cmd, timeoutMs, options) => guestExec(cmd, timeoutMs, null, options),
   // E3.5-T05e canonical name: a fenced request/response RPC over the one console. Serialized so
@@ -1234,28 +1950,65 @@ window.wvmDemo = {
   // The public busybox build has neither, so this fails closed there (no pretense of a runtime).
   async hasContainerRuntime() {
     if (!linuxCtl) return false;
-    try {
-      const r = await guestExec(
-        "test -x /usr/local/bin/wvrun && test -f /opt/containers/index.json && echo WVRUN_OK",
-        15000,
-      );
-      return r.exit === 0 && r.stdout.includes("WVRUN_OK");
-    } catch {
-      return false;
+    // The Alpine snapshot resumes before its runtime files' chunks are necessarily resident. The
+    // first probe can therefore observe a guest-side EIO while the demand fetch is being scheduled;
+    // retry the same real in-guest predicate a bounded number of times so callers do not mistake
+    // that transient cache miss for the busybox-only image. A genuinely absent runtime still fails
+    // closed after the bounded attempts.
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      try {
+        const r = await guestExec(
+          "test -x /usr/local/bin/wvrun && test -f /opt/containers/index.json && echo WVRUN_OK",
+          15000,
+        );
+        if (r.exit === 0 && r.stdout.includes("WVRUN_OK")) return true;
+      } catch {
+        return false;
+      }
     }
+    return false;
   },
   // E3.5-T05e: a long-lived STREAMING channel over the same console for `wvrun logs -f <id>` and
   // interactive `exec -it`. Unlike run()/exec() (fenced request/response), this stays open: it taps
   // the real console stream, splits on newlines (ANSI/CR stripped like exec), and calls onLine(line)
   // for each. The returned handle's stop() sends Ctrl-C to end the follow/interactive command WITHOUT
   // killing the guest shell, and send(bytes) feeds the interactive side (-it). A stream monopolizes
-  // the one console until stop() — that is the honest single-tty multiplexing this task requires.
-  stream(cmd, onLine) {
+  // the one console until stop() or the command's private completion fence — that is the honest
+  // single-tty multiplexing this task requires. `options.onEnd` receives { exit, error, natural }.
+  stream(cmd, onLine, options = {}) {
     if (!linuxCtl) throw new Error("guest not up");
+    if (activeStream) throw new Error("a guest stream is already active");
+    activeStream = true;
     const dec = new TextDecoder();
     let buf = "";
     let stopped = false;
     let sawEcho = false;
+    let finished = false;
+    let stopRequested = false;
+    let finishStream;
+    const streamRid = `${Date.now().toString(36)}${execSeq++}`;
+    const streamMarker = `__WVEND_${streamRid}_`;
+    const stoppedAt = new Promise((resolve) => {
+      finishStream = (error = null, exit = null, natural = false) => {
+        if (finished) return;
+        finished = true;
+        stopped = true;
+        consoleSubscribers.delete(onc);
+        if (drainOnc) consoleSubscribers.delete(drainOnc);
+        if (stopTimer) clearTimeout(stopTimer);
+        activeStream = false;
+        cancelActiveStream = null;
+        // Let later callers proceed even when the stop handshake failed; the error is delivered to
+        // the RPC that was waiting on this barrier, and a fresh caller can make its own decision.
+        streamBarrier = Promise.resolve();
+        try { options?.onEnd?.({ error, exit, natural, stopped: stopRequested }); } catch { /* consumer cleanup is best effort */ }
+        resolve(error);
+      };
+    });
+    cancelActiveStream = () => finishStream(new GuestBridgeError("GUEST_STOPPED", "guest stopped during a live stream"));
+    streamBarrier = stoppedAt;
+    let drainOnc = null;
+    let stopTimer = null;
     const onc = (u8) => {
       buf += dec.decode(u8, { stream: true }).replace(/\x1b\[[0-9;?]*[ -/]*[@-~]/g, "").replace(/\r/g, "");
       let nl;
@@ -1267,25 +2020,60 @@ window.wvmDemo = {
           sawEcho = true;
           continue;
         }
+        if (line.startsWith(streamMarker)) {
+          const exitText = line.slice(streamMarker.length);
+          if (/^\d+$/.test(exitText)) {
+            finishStream(null, Number(exitText), true);
+            continue;
+          }
+        }
         if (!stopped) {
           try { onLine(line); } catch { /* a broken consumer must not break the stream */ }
         }
       }
     };
     consoleSubscribers.add(onc);
-    setTimeout(() => ui.typeBytes(new TextEncoder().encode(`${cmd}\r`)), 0);
+    setTimeout(() => ui.typeBytes(new TextEncoder().encode(formatRpcCommand(cmd, streamRid))), 0);
     return {
       // Interactive input for `exec -it`. Deferred via setTimeout(0) because a consumer may call
       // this from inside onLine (which runs in the console-emit loop); driving the machine
       // synchronously from there trips the re-entrancy guard and the bytes get dropped.
-      send: (bytes) => { if (!stopped) setTimeout(() => ui.typeBytes(bytes), 0); },
+      send: (bytes) => { if (!finished) setTimeout(() => ui.typeBytes(bytes), 0); },
       stop: () => {
-        if (stopped) return;
+        if (finished) return stoppedAt;
+        stopRequested = true;
         stopped = true;
-        consoleSubscribers.delete(onc);
+        buf = "";
+        // Keep the stream subscriber attached while the foreground command drains. It is muted by
+        // `stopped`, but retaining it prevents those bytes from becoming the next RPC's input.
+        const stopRid = `${Date.now().toString(36)}${execSeq++}`;
+        const drainParser = createFencedRpc(stopRid);
+        drainOnc = (u8) => {
+          if (drainParser.feed(u8)) finishStream();
+        };
+        consoleSubscribers.add(drainOnc);
+        stopTimer = setTimeout(
+          () => finishStream(new Error("guest stream stop timed out")),
+          10000,
+        );
         // Ctrl-C ends the follow/interactive command. Deferred for the same re-entrancy reason:
-        // stop() is typically called from within onLine (a console callback).
-        setTimeout(() => { try { ui.typeBytes(new Uint8Array([0x03])); } catch { /* best-effort */ } }, 0);
+        // stop() is typically called from within onLine (a console callback). The private fence is
+        // queued after Ctrl-C and can complete only once the shell has accepted the interrupt.
+        setTimeout(() => {
+          try {
+            ui.typeBytes(new Uint8Array([0x03]));
+            setTimeout(() => {
+              try {
+                ui.typeBytes(new TextEncoder().encode(formatRpcCommand(":", stopRid)));
+              } catch (error) {
+                finishStream(error);
+              }
+            }, 0);
+          } catch (error) {
+            finishStream(error);
+          }
+        }, 0);
+        return stoppedAt;
       },
     };
   },
@@ -1347,8 +2135,11 @@ window.__snapshotSave = async () => {
 window.__snapshotDecision = async () => linuxCtl?.snapshotDecision?.() ?? "missing";
 // Advance the overlay commit generation (invalidates a prior snapshot → "stale"). Returns new gen.
 window.__snapshotAdvanceGen = async () => await linuxCtl?.snapshotAdvanceGen?.() ?? 0;
+// Current overlay generation, including the value reconstructed from durable metadata on reopen.
+window.__snapshotGeneration = async () => await linuxCtl?.snapshotGeneration?.() ?? 0;
 // AC3 export/import: raw persisted-blob bytes out, and persist an external blob into this base's store.
 window.__snapshotExport = async () => linuxCtl?.snapshotExport?.() ?? null;
+window.__snapshotRestore = async () => linuxCtl?.snapshotRestore?.() ?? "missing";
 window.__snapshotImport = async (bytes) => {
   if (!linuxCtl?.snapshotImport) return false;
   await linuxCtl.snapshotImport(bytes);
@@ -1750,6 +2541,11 @@ async function runRiscvTest(name) {
     }
     const elf = new Uint8Array(await res.arrayBuffer());
     machine = new WasmMachine(TEST_RAM_MIB);
+    // Keep the live browser suite on the same predecoded/block-cache path as
+    // the Linux demo so it exercises E4-T05's fast interpreter capability.
+    if (typeof machine.setFastInterpreter === "function") {
+      machine.setFastInterpreter(true);
+    }
     machine.loadElf(elf);
     updateSuiteDot(name, { status: "running", retired: null, detail: "running" });
     await yieldToPaint();

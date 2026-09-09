@@ -208,7 +208,7 @@
       .num .big .sfx { color: var(--mint); -webkit-text-fill-color: var(--mint); }
       .num .lbl { color: var(--muted); font-size: 0.92rem; margin-top: 12px; }
 
-      /* ── Runtime benchmark ── */
+      /* ── Node system workload matrix ── */
       .bench-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 18px; }
       .bench-meta { color: var(--muted); font-size: 0.88rem; }
       .bench-meta code, .bench-note code { color: var(--cyan); font-family: var(--mono); font-size: .9em; }
@@ -225,6 +225,23 @@
       .bench-table .ready-def { display: block; color: var(--muted); font: 10px/1.45 var(--mono); margin-top: 6px; max-width: 230px; white-space: normal; }
       .bench-note { color: var(--muted); font-size: .85rem; line-height: 1.6; margin: 16px 0 0; max-width: 900px; }
       .bench-note a { color: var(--cyan); }
+      .workload-bench { margin-top: 46px; padding-top: 40px; border-top: 1px solid var(--line); }
+      .workload-bench h3 { margin: 8px 0 0; font-size: clamp(1.55rem, 3vw, 2.2rem); letter-spacing: -.025em; }
+      .workload-table { min-width: 1120px; table-layout: fixed; }
+      .workload-table th, .workload-table td { padding: 12px 13px; }
+      .workload-table .workload-runtime { width: 175px; min-width: 175px; }
+      .workload-table .workload-runtime strong { display: block; color: var(--ink); }
+      .workload-table .workload-runtime span { display: block; color: var(--muted); font: 10px/1.45 var(--mono); margin-top: 5px; }
+      .workload-table .workload-cell { font-family: var(--mono); white-space: normal; overflow-wrap: anywhere; }
+      .workload-table .workload-cell .workload-p95 { display: block; color: var(--muted); font-size: 10px; line-height: 1.45; margin-top: 4px; white-space: normal; overflow-wrap: anywhere; }
+      .workload-table .workload-cell .workload-throughput { display: block; color: var(--mint); font-size: 10px; margin-top: 4px; }
+      .workload-table .workload-pending { color: var(--muted); font-family: var(--mono); font-size: .82rem; line-height: 1.45; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
+      .compute-bench .workload-table { min-width: 900px; }
+      .compute-diagnostic { margin-top: 30px; padding-top: 26px; border-top: 1px solid var(--line); }
+      .compute-diagnostic h4 { margin: 8px 0 0; font-size: 1.15rem; }
+      .compute-diagnostic .bench-note { margin-top: 12px; }
+      .compute-diagnostic-table { min-width: 680px; }
+      .compute-diagnostic-table .ratio { color: var(--mint); font-family: var(--mono); font-weight: 650; }
 
       /* ── Boot stack (architecture) ── */
       .stack { display: flex; flex-direction: column; gap: 12px; margin-top: 44px; max-width: 760px; }
@@ -282,6 +299,7 @@
           <a href="#benchmarks">Benchmarks</a>
           <a href="#how">How it works</a>
           <a href="./docs.html">Docs</a>
+          <a href="./docs-embedding.html">Host integrations</a>
           <a href="https://github.com/BLamy/wasm-vm" target="_blank" rel="noopener">GitHub</a>
           <a class="btn" href="./index.html">Launch <span class="arrow">→</span></a>
         </div>
@@ -346,30 +364,90 @@
         <div class="wrap">
           <div class="bench-head reveal">
             <div>
-              <span class="kicker">Node mechanism matrix</span>
-              <h2 class="h2">One checksum fixture, five runtime mechanisms.</h2>
-              <p class="sub">Every published row requires seven raw-backed command and readiness samples. Command timing uses submit → checksum marker; responsive readiness uses each runtime’s own fresh-launch → first-response path.</p>
+              <span class="kicker">Node system workload matrix</span>
+              <h2 class="h2">What the Node surface actually costs.</h2>
+              <p class="sub">One portable script measures verified file reads/writes, streaming, server startup, and local HTTP request/response behavior across native Node, wasm-vm, WebContainers, almostnode, and WebVM.</p>
             </div>
-            <div class="bench-meta">Captured <code id="bench-updated">loading…</code></div>
+
+          <div class="workload-bench reveal d1" id="runtime-workloads">
+            <div class="bench-head">
+              <div>
+                <span class="kicker">Measured, per operation</span>
+                <h3>Same fixture, every environment.</h3>
+                <p class="sub">The complete row set is the current source of truth. Unsupported cells remain visible and explained; they are never replaced with a different benchmark or an inferred value.</p>
+              </div>
+              <div class="bench-meta">Captured <code id="workload-updated">loading…</code></div>
+            </div>
+            <div class="bench-wrap">
+              <table class="bench-table workload-table" aria-describedby="workload-note">
+                <thead>
+                  <tr>
+                    <th>Environment</th>
+                    <th>File read</th>
+                    <th>File write</th>
+                    <th>Stream read</th>
+                    <th>Stream copy</th>
+                    <th>Server lifecycle</th>
+                    <th>HTTP round trip</th>
+                  </tr>
+                </thead>
+                <tbody id="workload-rows"><tr><td colspan="7" class="workload-pending">Loading raw workload evidence…</td></tr></tbody>
+              </table>
+            </div>
+            <p class="bench-note" id="workload-note">
+              Each cell shows median time, p95, and throughput where bytes were transferred. The fixture is deterministic,
+              every measured sample checks its output digest, and the raw JSON keeps the individual timings, runtime identity,
+              script digest, sampling policy, and verification results. This is a workload measurement, not a claim that the
+              environments provide identical storage or network isolation. <a href="./bench-runtime-workloads.mjs">Runner</a>
+              · <a href="./runtime-benchmarks.json">Raw comparison →</a>
+            </p>
           </div>
-          <div class="bench-wrap reveal d1">
-            <table class="bench-table" aria-describedby="bench-note">
-              <thead><tr><th>Runtime</th><th>Execution model</th><th>Command median</th><th>First command</th><th>Per-runtime responsive readiness</th><th>vs native</th></tr></thead>
-              <tbody id="bench-rows"><tr><td colspan="6" class="model">Loading raw benchmark evidence…</td></tr></tbody>
-            </table>
+
+          <div class="workload-bench compute-bench reveal d2" id="runtime-compute">
+            <div class="bench-head">
+              <div>
+                <span class="kicker">Measured, steady-state compute</span>
+                <h3>Where a JIT can actually amortize.</h3>
+                <p class="sub">This is a separate campaign from filesystem, stream, and HTTP boundaries. It keeps one process alive and times only deterministic arithmetic, branching, and typed-array loops.</p>
+              </div>
+              <div class="bench-meta">Captured <code id="compute-updated">loading…</code></div>
+            </div>
+            <div class="bench-wrap">
+              <table class="bench-table workload-table" aria-describedby="compute-note">
+                <thead>
+                  <tr>
+                    <th>Environment</th>
+                    <th>Integer mix</th>
+                    <th>Branch mix</th>
+                    <th>Memory mix</th>
+                  </tr>
+                </thead>
+                <tbody id="compute-rows"><tr><td colspan="4" class="workload-pending">Loading steady-state compute evidence…</td></tr></tbody>
+              </table>
+            </div>
+            <p class="bench-note" id="compute-note">
+              Each measured cell shows median time, p95, and verified work rate. The fixture uses fixed checksums;
+              process startup and memory preparation are excluded from timing. Measured browser rows come from the
+              deployed Node guest; any remaining unmeasured row includes its reason. <a href="./bench-runtime-compute.mjs">Runner</a>
+              · <a href="./runtime-compute-benchmarks.json">Raw compute comparison →</a>
+            </p>
+            <div class="compute-diagnostic" id="compute-diagnostic">
+              <span class="kicker">Separate native JIT diagnostic</span>
+              <h4>Hot blocks win; boundary blocks barely do.</h4>
+              <div class="bench-wrap">
+                <table class="bench-table compute-diagnostic-table" aria-describedby="compute-diagnostic-note">
+                  <thead>
+                    <tr><th>Workload</th><th>Interpreter</th><th>JIT</th><th>JIT / interpreter</th></tr>
+                  </thead>
+                  <tbody id="compute-diagnostic-rows"><tr><td colspan="4" class="workload-pending">Loading JIT diagnostic…</td></tr></tbody>
+                </table>
+              </div>
+              <p class="bench-note" id="compute-diagnostic-note">
+                This release-only handoff diagnostic is not substituted into the comparable browser table:
+                six-op measures dispatch-bound behavior, while 64-op measures hot-block amortization.
+              </p>
+            </div>
           </div>
-          <p class="bench-note" id="bench-note">
-            Fixture: a stateful, non-foldable 2,000,000-iteration <code>Math.imul</code> recurrence;
-            every sample must print <code>RUNTIME_BENCH_v1_76363d7f_79d1baaf</code>.
-            Command medians cover each mechanism's seven declared fresh-command population and stop at the exact
-            checksum marker; wasm-vm uses the first genuine Node command in each fresh restored VM. Responsive
-            readiness is reported separately, stops at the first exact probe response, and
-            displays the runtime-specific launch mechanism—including snapshot restore versus process launch.
-            Each row preserves its own capture revision, timestamp, browser mode, source, and collector; the
-            comparison does not pretend they came from one campaign. It is a mechanism comparison, not a
-            normalized cold-boot or isolation-equivalence claim.
-            <a href="./benchmarks.json">Raw samples and provenance →</a>
-          </p>
         </div>
       </section>
 
@@ -450,6 +528,7 @@ hello from a container
         <div class="foot-links">
           <a href="./index.html">Demo</a>
           <a href="./docs.html">Docs</a>
+          <a href="./docs-embedding.html">Host integrations</a>
           <a href="https://github.com/BLamy/wasm-vm" target="_blank" rel="noopener">GitHub</a>
         </div>
       </div>
@@ -485,410 +564,358 @@ hello from a container
       }, { threshold: 0.6 });
       document.querySelectorAll("[data-count]").forEach((el) => cio.observe(el));
 
-      // Publish raw-sample-derived runtime results. This browser-side contract deliberately duplicates the
-      // structural verifier used by tools/node-runtime-benchmark.mjs: parseable partial evidence must fail as
-      // one unavailable table, never as plausible-looking incomplete rows.
-      const benchmarkRows = document.getElementById("bench-rows");
-      const benchmarkDate = document.getElementById("bench-updated");
-      const benchmarkRuntimeIds = ["native-node", "wasm-vm", "webvm", "almostnode", "webcontainers"];
-      const benchmarkLabels = {
-        "native-node": "Native Node",
-        "wasm-vm": "wasm-vm",
-        webvm: "WebVM",
-        almostnode: "almostnode",
-        webcontainers: "WebContainers",
-      };
-      const benchmarkChecksum = "RUNTIME_BENCH_v1_76363d7f_79d1baaf";
-      const benchmarkProgramSha256 = "47f8dd7007d8d52015d7e29e0964dafd759e917e486b46c25daccde9521a6b12";
-      const benchmarkSampleCount = 7;
-      const maximumWasmToWebvmCommandRatio = 1.10;
+      // The system-workload matrix is produced by one portable Node script and keeps raw
+      // samples per environment. Invalid or partial captures render as unavailable instead of
+      // plausible data.
       const sha256Pattern = /^[0-9a-f]{64}$/;
-      const closeEnough = (actual, expected) => Number.isFinite(actual) && Number.isFinite(expected)
-        && Math.abs(actual - expected) <= Math.max(1e-6, Math.abs(expected) * 1e-9);
-      const median = (values) => [...values].sort((left, right) => left - right)[3];
-      const requireBenchmark = (condition, message) => {
-        if (!condition) throw new Error(`invalid benchmark evidence: ${message}`);
-      };
-      const nonEmpty = (value) => typeof value === "string" && value.trim().length > 0;
+      const nonEmpty = (value) => typeof value === "string" && value.trim() !== "";
       const sameJson = (left, right) => JSON.stringify(left) === JSON.stringify(right);
-      const sha256Hex = async (bytes) => [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))]
-        .map((byte) => byte.toString(16).padStart(2, "0")).join("");
-      const sha256Text = (value) => sha256Hex(new TextEncoder().encode(value));
-      const validateMetric = (metric, expected, label) => {
-        requireBenchmark(metric && typeof metric === "object", `${label} metric is missing`);
-        for (const [field, value] of Object.entries(expected)) {
-          requireBenchmark(metric[field] === value, `${label}.${field} must be ${value}`);
-        }
-        requireBenchmark(nonEmpty(metric.mechanism), `${label} mechanism is missing`);
+      const requireBenchmark = (condition, message) => {
+        if (!condition) throw new Error(message);
       };
-      const validateEvidence = (row) => {
-        const evidence = row.evidence;
-        requireBenchmark(evidence && typeof evidence === "object", `${row.runtime} evidence is missing`);
-        requireBenchmark(evidence.artifact?.path === `web/benchmark-${row.runtime}.json`,
-          `${row.runtime} artifact path is not canonical`);
-        requireBenchmark(sha256Pattern.test(evidence.artifact?.sha256), `${row.runtime} artifact digest is invalid`);
-        const provenance = evidence.provenance;
-        requireBenchmark(provenance && sha256Pattern.test(provenance.captureId),
-          `${row.runtime} capture ID is invalid`);
-        requireBenchmark(nonEmpty(provenance.collector?.path)
-          && provenance.collector.runtime === row.runtime
-          && sha256Pattern.test(provenance.collector?.sha256), `${row.runtime} collector evidence is invalid`);
-        requireBenchmark(Array.isArray(provenance.captures) && provenance.captures.length > 0,
-          `${row.runtime} capture provenance is missing`);
-        requireBenchmark(Array.isArray(row.rawEvidence?.artifacts)
-          && row.rawEvidence.artifacts.length > 0
-          && row.rawEvidence.artifacts.every((reference) => nonEmpty(reference.path)
-            && sha256Pattern.test(reference.sha256)), `${row.runtime} raw evidence is missing`);
-        return provenance;
+      const workloadRows = document.getElementById("workload-rows");
+      const workloadDate = document.getElementById("workload-updated");
+      const workloadRuntimeLabels = {
+        "native-node": "Native Node",
+        "wasm-vm-worker-jit": "wasm-vm · worker + JIT",
+        "wasm-vm-worker-interpreter": "wasm-vm · worker interpreter",
+        "wasm-vm-main-interpreter": "wasm-vm · main interpreter",
+        "webcontainers": "WebContainers",
+        "almostnode": "almostnode",
+        "webvm": "WebVM",
       };
-      const validateRunRecords = (row) => {
-        requireBenchmark(Array.isArray(row.commandRuns) && row.commandRuns.length === benchmarkSampleCount,
-          `${row.runtime} requires seven command oracle records`);
-        requireBenchmark(Array.isArray(row.readyRuns) && row.readyRuns.length === benchmarkSampleCount,
-          `${row.runtime} requires seven readiness oracle records`);
-        const ids = [...row.commandRuns, ...row.readyRuns].map((record) => record?.id);
-        requireBenchmark(ids.every((id) => sha256Pattern.test(id))
-          && new Set(ids).size === benchmarkSampleCount * 2,
-          `${row.runtime} oracle IDs must be unique`);
-        const oracleDigests = [...row.commandRuns, ...row.readyRuns]
-          .map((record) => record?.oracleSha256);
-        requireBenchmark(oracleDigests.every((value) => sha256Pattern.test(value))
-          && new Set(oracleDigests).size === benchmarkSampleCount * 2,
-        `${row.runtime} execution oracle digests must be unique`);
-        row.commandRuns.forEach((record, index) => {
-          requireBenchmark(record.index === index && record.elapsedMs === row.samplesMs[index]
-            && record.checksum === row.checksums[index] && record.id === record.oracleSha256
-            && sha256Pattern.test(record.rawArtifactSha256) && nonEmpty(record.locator),
-          `${row.runtime} command oracle ${index} does not derive its sample`);
-        });
-        row.readyRuns.forEach((record, index) => {
-          requireBenchmark(record.index === index && record.elapsedMs === row.readySamplesMs[index]
-            && record.id === record.oracleSha256 && sha256Pattern.test(record.rawArtifactSha256)
-            && nonEmpty(record.locator),
-          `${row.runtime} readiness oracle ${index} does not derive its sample`);
-        });
+      const workloadIds = ["file-read", "file-write", "stream-read", "stream-copy", "server-lifecycle", "http-roundtrip"];
+      const workloadShortLabels = {
+        "file-read": "File read",
+        "file-write": "File write",
+        "stream-read": "Stream read",
+        "stream-copy": "Stream copy",
+        "server-lifecycle": "Server lifecycle",
+        "http-roundtrip": "HTTP round trip",
       };
-      const oracleRecord = async (runtime, kind, index, reference, locator, elapsedMs, checksum, completeMs) => {
-        const oracle = {
-          runtime, kind, index, rawArtifactSha256: reference.sha256, locator, elapsedMs,
-          ...(checksum === undefined ? {} : { checksum }),
-        };
-        const oracleSha256 = await sha256Text(JSON.stringify(oracle));
-        return {
-          id: oracleSha256, index, elapsedMs,
-          ...(Number.isFinite(completeMs) ? { completeMs } : {}),
-          ...(checksum === undefined ? {} : { checksum }),
-          rawArtifactSha256: reference.sha256, locator, oracleSha256,
-        };
-      };
-      const normalizedProgramSha256 = (program) => sha256Text(program.replace(/;/g, ""));
-      const captureMetadata = (runtime, raw, reference) => {
-        const shared = { captureId: reference.sha256, source: raw.source ?? null };
-        if (runtime === "native-node") return {
-          ...shared,
-          capturedAt: { startedAt: raw.startedAt, finishedAt: raw.finishedAt },
-          revision: { node: raw.version, executableSha256: raw.runtimeArtifactSha256 },
-          browser: null,
-        };
-        if (runtime === "webvm") return {
-          ...shared,
-          capturedAt: { startedAt: raw.startedAt, finishedAt: raw.finishedAt },
-          revision: { guestNode: raw.nodeVersion, image: "webvm.io/alpine.html" },
-          browser: { name: "chromium", version: null, mode: "headless" },
-        };
-        if (runtime === "webcontainers") return {
-          ...shared,
-          capturedAt: { startedAt: raw.measuredAt, finishedAt: raw.measuredAt },
-          revision: { api: raw.apiVersion, guestNode: raw.guestNodeVersion },
-          browser: { name: "chromium", version: raw.browserVersion, mode: "headless" },
-        };
-        if (runtime === "almostnode") return {
-          ...shared,
-          capturedAt: { startedAt: raw.measuredAt, finishedAt: raw.measuredAt },
-          revision: {
-            package: raw.packageVersion,
-            sourceCommit: raw.sourceCommit,
-            emulatedNode: raw.emulatedNodeVersion,
-          },
-          browser: { name: "chromium", version: raw.browserVersion, mode: "headless" },
-        };
-        if (runtime === "wasm-vm") return {
-          ...shared,
-          capturedAt: { startedAt: raw.generatedAt, finishedAt: raw.generatedAt },
-          revision: {
-            commit: raw.publicationProvenance?.commit,
-            node: raw.version,
-            runtimeArtifactSha256: raw.publicationProvenance?.runtimeArtifactSha256,
-          },
-          browser: raw.publicationProvenance?.browser ?? null,
-        };
-        throw new Error(`unsupported runtime ${runtime}`);
-      };
-      const validateFixtureBinding = async (runtime, raw) => {
-        if (runtime === "native-node") {
-          requireBenchmark(raw.programSha256 === benchmarkProgramSha256,
-            `${runtime} raw fixture digest differs`);
-        } else if (runtime === "webvm") {
-          requireBenchmark(await normalizedProgramSha256(raw.workload)
-            === await normalizedProgramSha256(`const n=2000000;let x=0x12345678>>>0,y=0x9e3779b9>>>0;for(let i=0;i<n;i++){x=(Math.imul((x^i)>>>0,1664525)+y)>>>0;y=(Math.imul((y+x)>>>0,22695477)+1)>>>0;}console.log("RUNTIME_BENCH_v1_"+x.toString(16).padStart(8,"0")+"_"+y.toString(16).padStart(8,"0"));`),
-          `${runtime} raw fixture tokens differ`);
-        } else if (runtime === "wasm-vm") {
-          requireBenchmark(raw.fixture?.programSha256 === benchmarkProgramSha256,
-            `${runtime} raw fixture digest differs`);
-        } else {
-          requireBenchmark(raw.programSha256 === benchmarkProgramSha256,
-            `${runtime} raw fixture digest differs`);
-        }
-      };
-      const extractRawRuns = async (runtime, raws, references) => {
-        await Promise.all(raws.map((raw) => validateFixtureBinding(runtime, raw)));
-        if (runtime === "native-node") return {
-          commandRuns: await Promise.all(raws[0].commandSamples.map((sample, index) => oracleRecord(
-            runtime, "command", index, references[0], `commandSamples[${index}]`,
-            sample.markerMs, sample.output, sample.completeMs,
-          ))),
-          readyRuns: await Promise.all(raws[0].readySamples.map((sample, index) => oracleRecord(
-            runtime, "ready", index, references[0], `readySamples[${index}]`,
-            sample.markerMs, undefined, sample.completeMs,
-          ))),
-        };
-        if (runtime === "wasm-vm") {
-          const raw = raws[0];
-          requireBenchmark(raws.length === 1
-            && raw.schema === 1 && raw.kind === "wasm-vm-runtime-benchmark-capture-v1",
-          `${runtime} raw capture contract is invalid`);
-          requireBenchmark(!Object.hasOwn(raw.provenance ?? {}, "runtimeRuns")
-            && !Object.hasOwn(raw.provenance ?? {}, "responsiveTerminalSessions"),
-          `${runtime} legacy warm intra-session population is forbidden`);
-          const sessions = raw.provenance?.freshRuntimeSessions;
-          requireBenchmark(Array.isArray(sessions) && sessions.length === benchmarkSampleCount,
-            `${runtime} requires seven fresh paired sessions`);
-          sessions.forEach((session, index) => {
-            requireBenchmark(session.index === index && session.freshBrowserContext === true
-              && session.restoredVm === true && session.firstNodeProcessAfterRestore === true,
-            `${runtime} session ${index} is not a fresh first-Node sample`);
-            requireBenchmark(session.nodeRun?.checksum === benchmarkChecksum
-              && Number.isFinite(session.nodeRun?.elapsedMs) && session.nodeRun.elapsedMs > 0
-              && Number.isFinite(session.readiness?.elapsedMs) && session.readiness.elapsedMs > 0,
-            `${runtime} session ${index} is missing its paired command/readiness oracle`);
-            requireBenchmark(session.nodeIdentity?.execPath === "/usr/bin/node"
-              && session.nodeIdentity?.nodeRealPath === "/usr/bin/node"
-              && session.nodeIdentity?.nodeMagic === "7f454c46"
-              && session.nodeIdentity?.nodeSize > 1000000,
-            `${runtime} session ${index} does not prove a genuine Node ELF`);
+      const validateRuntimeWorkloads = (data) => {
+        requireBenchmark(data?.schema === 1, "workload schema must be 1");
+        requireBenchmark(data.kind === "node-system-workload-comparison-v1", "workload kind is invalid");
+        requireBenchmark(data.publicationStatus === "complete" || data.publicationStatus === "partial",
+          "workload publication status is invalid");
+        requireBenchmark(Number.isFinite(Date.parse(data.generatedAt)), "workload generatedAt is invalid");
+        requireBenchmark(data.campaign?.id === "runtime-workloads-v1", "workload campaign ID drifted");
+        requireBenchmark(data.campaign?.source === "./bench-runtime-workloads.mjs"
+          && sha256Pattern.test(data.campaign?.scriptSha256), "workload runner provenance is invalid");
+        requireBenchmark(data.fixture?.id === "runtime-workloads-v1"
+          && Number.isInteger(data.fixture.payloadBytes) && data.fixture.payloadBytes > 0
+          && sha256Pattern.test(data.fixture.payloadSha256)
+          && Number.isInteger(data.fixture.httpBodyBytes) && data.fixture.httpBodyBytes > 0
+          && sha256Pattern.test(data.fixture.httpBodySha256), "workload fixture is invalid");
+        requireBenchmark(Number.isInteger(data.policy?.samples) && data.policy.samples > 0
+          && Number.isInteger(data.policy?.warmups) && data.policy.warmups > 0
+          && Number.isInteger(data.policy?.httpRequests) && data.policy.httpRequests > 0,
+        "workload sampling policy is invalid");
+        requireBenchmark(Array.isArray(data.environments) && data.environments.length > 0,
+          "workload environments are missing");
+        const ids = data.environments.map((environment) => environment?.id);
+        requireBenchmark(ids.every(nonEmpty) && new Set(ids).size === ids.length,
+          "workload environment IDs must be unique");
+        data.environments.forEach((environment) => {
+          requireBenchmark(environment.status === "measured" || environment.status === "partial",
+            `${environment.id} workload capture status is invalid`);
+          requireBenchmark(environment.runner?.scriptSha256 === data.campaign.scriptSha256,
+            `${environment.id} runner digest differs`);
+          requireBenchmark(Array.isArray(environment.workloads)
+            && sameJson(environment.workloads.map((workload) => workload.id), workloadIds),
+          `${environment.id} workload IDs/order are incomplete`);
+          environment.workloads.forEach((workload) => {
+            if (workload.status === "measured") {
+              requireBenchmark(workload.verification?.passed === true,
+                `${environment.id}/${workload.id} is not verified`);
+              requireBenchmark(Array.isArray(workload.samples)
+                && workload.samples.length === data.policy.samples,
+              `${environment.id}/${workload.id} sample count is invalid`);
+              requireBenchmark(workload.samples.every((sample) => sample.verification === "passed"
+                && Number.isFinite(sample.elapsedMs) && sample.elapsedMs >= 0),
+              `${environment.id}/${workload.id} sample verification is invalid`);
+              requireBenchmark(Number.isFinite(workload.summary?.medianMs)
+                && Number.isFinite(workload.summary?.p95Ms)
+                && workload.summary.p95Ms >= workload.summary.medianMs
+                && workload.summary.sampleCount === data.policy.samples,
+              `${environment.id}/${workload.id} summary is invalid`);
+            } else if (workload.status === "unsupported") {
+              requireBenchmark(nonEmpty(workload.reason),
+                `${environment.id}/${workload.id} unsupported result needs a reason`);
+              requireBenchmark(Array.isArray(workload.samples) && workload.samples.length === 0
+                && workload.summary === null,
+              `${environment.id}/${workload.id} unsupported result contains timings`);
+            } else {
+              throw new Error(`${environment.id}/${workload.id} has invalid status ${workload.status}`);
+            }
           });
+        });
+        requireBenchmark(Array.isArray(data.notRun), "workload notRun list is invalid");
+        return data;
+      };
+      const compactWorkloadReason = (reason) => {
+        const firstLine = String(reason ?? "capture unavailable").split(/\r?\n/, 1)[0].replace(/^Error:\s*/i, "");
+        if (firstLine.includes("EADDRINUSE")) return "loopback listener collision; bounded retry timed out";
+        if (firstLine.includes("stream is not async iterable")) return "stream API is not async iterable";
+        if (firstLine.includes("HTTP response status 403")) return "HTTP response returned 403";
+        if (firstLine.includes("ENOENT")) return "output capture file unavailable (ENOENT)";
+        return firstLine.length > 96 ? `${firstLine.slice(0, 93)}…` : firstLine;
+      };
+      const formatWorkloadMetric = (workload) => {
+        if (workload.status !== "measured" || !workload.summary) {
           return {
-            commandRuns: await Promise.all(sessions.map((session, index) => oracleRecord(
-              runtime, "command", index, references[0],
-              `provenance.freshRuntimeSessions[${index}].nodeRun`,
-              session.nodeRun.elapsedMs, session.nodeRun.checksum, session.nodeRun.completeMs,
-            ))),
-            readyRuns: await Promise.all(sessions.map((session, index) => oracleRecord(
-              runtime, "ready", index, references[0],
-              `provenance.freshRuntimeSessions[${index}].readiness`,
-              session.readiness.elapsedMs, undefined, session.readiness.completionElapsedMs,
-            ))),
+            text: "not measured",
+            detail: `unsupported — ${compactWorkloadReason(workload.reason)}`,
+            reason: workload.reason ?? "capture unavailable",
+            throughput: null,
           };
         }
-        if (runtime === "webvm") return {
-          commandRuns: await Promise.all(raws.map((raw, index) => oracleRecord(
-            runtime, "command", index, references[index], "samples[0]",
-            raw.samples[0].wallMs, raw.samples[0].checksum,
-          ))),
-          readyRuns: await Promise.all(raws.map((raw, index) => oracleRecord(
-            runtime, "ready", index, references[index], "shellReadyMs", raw.shellReadyMs,
-          ))),
-        };
+        const summary = workload.summary;
         return {
-          commandRuns: await Promise.all(raws.map((raw, index) => oracleRecord(
-            runtime, "command", index, references[index], "samples[0]",
-            raw.samples[0].wallMs, raw.samples[0].checksum,
-          ))),
-          readyRuns: await Promise.all(raws.map((raw, index) => oracleRecord(
-            runtime, "ready", index, references[index],
-            runtime === "webcontainers" ? "readyMs" : "commandReadyMs",
-            runtime === "webcontainers" ? raw.readyMs : raw.commandReadyMs,
-          ))),
+          text: `${summary.medianMs.toFixed(1)} ms`,
+          detail: `p95 ${summary.p95Ms.toFixed(1)} ms`,
+          throughput: summary.throughputMiBPerSec == null
+            ? null : `${summary.throughputMiBPerSec.toFixed(1)} MiB/s`,
         };
       };
-      const fetchHashedEvidence = async (reference, label) => {
-        requireBenchmark(nonEmpty(reference?.path) && reference.path.startsWith("web/")
-          && sha256Pattern.test(reference.sha256), `${label} reference is invalid`);
-        const response = await fetch(`./${reference.path.slice("web/".length)}`, { cache: "no-store" });
-        requireBenchmark(response.ok, `${label} HTTP ${response.status}`);
-        const bytes = await response.arrayBuffer();
-        requireBenchmark(await sha256Hex(bytes) === reference.sha256, `${label} digest differs`);
-        return bytes;
-      };
-      const validateDeployedArtifact = async (row) => {
-        const bytes = await fetchHashedEvidence(row.evidence.artifact, `${row.runtime} artifact`);
-        const artifact = JSON.parse(new TextDecoder().decode(bytes));
-        requireBenchmark(artifact.schema === 2 && artifact.kind === "node-runtime-benchmark-row-v2",
-          `${row.runtime} deployed artifact contract is invalid`);
-        for (const field of [
-          "runtime", "label", "status", "version", "executionModel", "source", "programSha256",
-          "samplesMs", "checksums", "firstMs", "medianMs", "relativeToNative", "readySamplesMs",
-          "readyMs", "commandMetric", "readyMetric", "commandRuns", "readyRuns", "rawEvidence",
-        ]) {
-          requireBenchmark(sameJson(row[field], artifact[field]),
-            `${row.runtime} ${field} differs from deployed artifact`);
-        }
-        requireBenchmark(sameJson(row.evidence.provenance, artifact.publicationProvenance),
-          `${row.runtime} provenance differs from deployed artifact`);
-        await fetchHashedEvidence(row.evidence.provenance.collector, `${row.runtime} collector`);
-        const rawBytes = await Promise.all(row.rawEvidence.artifacts.map((reference, index) =>
-          fetchHashedEvidence(reference, `${row.runtime} raw ${index}`)));
-        const raws = rawBytes.map((raw) => JSON.parse(new TextDecoder().decode(raw)));
-        const expectedCaptureId = await sha256Text(JSON.stringify({
-          runtime: row.runtime,
-          artifacts: row.rawEvidence.artifacts.map((reference) => reference.sha256),
-          collector: row.evidence.provenance.collector.sha256,
-        }));
-        requireBenchmark(row.evidence.provenance.captureId === expectedCaptureId,
-          `${row.runtime} capture ID does not bind raw bytes`);
-        requireBenchmark(sameJson(row.evidence.provenance.captures,
-          raws.map((raw, index) => captureMetadata(row.runtime, raw, row.rawEvidence.artifacts[index]))),
-        `${row.runtime} capture metadata differs from raw evidence`);
-        const expectedRuns = await extractRawRuns(row.runtime, raws, row.rawEvidence.artifacts);
-        requireBenchmark(sameJson(row.commandRuns, expectedRuns.commandRuns),
-          `${row.runtime} command samples are not raw-derived`);
-        requireBenchmark(sameJson(row.readyRuns, expectedRuns.readyRuns),
-          `${row.runtime} readiness samples are not raw-derived`);
-      };
-      const validateBenchmarkData = async (data) => {
-        requireBenchmark(data?.schema === 3, "schema must be 3");
-        requireBenchmark(data.kind === "node-runtime-benchmark-comparison-v3", "comparison kind is invalid");
-        const candidateOnly = data.publicationStatus === "competitor-candidate";
-        requireBenchmark(candidateOnly || data.publicationStatus === "complete",
-          "benchmark publication is not complete");
-        requireBenchmark(Number.isFinite(Date.parse(data.updatedAt)), "updatedAt is invalid");
-        requireBenchmark(data.fixture?.id === "runtime-bench-v1-2m-imul", "fixture ID drifted");
-        requireBenchmark(data.fixture?.iterations === 2000000, "fixture iteration count drifted");
-        requireBenchmark(data.fixture?.sampleCount === benchmarkSampleCount, "fixture sample count drifted");
-        requireBenchmark(data.fixture?.expectedChecksum === benchmarkChecksum, "fixture checksum drifted");
-        requireBenchmark(data.fixture?.programSha256 === benchmarkProgramSha256, "fixture source hash drifted");
-        requireBenchmark(sha256Pattern.test(data.comparisonId), "comparison ID is invalid");
-        requireBenchmark(data.native && Array.isArray(data.runtimes)
-          && data.runtimes.length === (candidateOnly ? 3 : 4),
-        candidateOnly ? "competitor candidate must contain four measured rows"
-          : "exactly five runtime rows are required");
-        const rows = [data.native, ...data.runtimes];
-        const ids = rows.map((row) => row?.runtime);
-        const expectedIds = candidateOnly
-          ? ["native-node", "webvm", "almostnode", "webcontainers"] : benchmarkRuntimeIds;
-        requireBenchmark(sameJson(ids, expectedIds), "runtime IDs/order are incomplete or duplicated");
-        requireBenchmark(new Set(ids).size === expectedIds.length, "runtime IDs must be unique");
-        const nativeMedian = data.native.medianMs;
-        requireBenchmark(Number.isFinite(nativeMedian) && nativeMedian > 0, "native median is invalid");
-        rows.forEach((row) => {
-          requireBenchmark(row.label === benchmarkLabels[row.runtime], `${row.runtime} label is not canonical`);
-          requireBenchmark(row.status === "measured", `${row.runtime} is not measured`);
-          requireBenchmark(nonEmpty(row.version) && nonEmpty(row.executionModel),
-            `${row.runtime} identity is incomplete`);
-          requireBenchmark(nonEmpty(row.source) && /^https:\/\//.test(row.source),
-            `${row.runtime} source must be HTTPS`);
-          requireBenchmark(row.programSha256 === benchmarkProgramSha256,
-            `${row.runtime} source hash differs`);
-          requireBenchmark(Array.isArray(row.samplesMs) && row.samplesMs.length === benchmarkSampleCount
-            && row.samplesMs.every((value) => Number.isFinite(value) && value > 0),
-          `${row.runtime} requires seven positive command samples`);
-          requireBenchmark(Array.isArray(row.checksums) && row.checksums.length === benchmarkSampleCount
-            && row.checksums.every((value) => value === benchmarkChecksum),
-          `${row.runtime} checksum evidence is invalid`);
-          requireBenchmark(row.firstMs === row.samplesMs[0], `${row.runtime} firstMs is not sample zero`);
-          requireBenchmark(closeEnough(row.medianMs, median(row.samplesMs)),
-            `${row.runtime} command median is invalid`);
-          requireBenchmark(closeEnough(row.relativeToNative, median(row.samplesMs) / nativeMedian),
-            `${row.runtime} native ratio is invalid`);
-          validateMetric(row.commandMetric, {
-            start: "command-submitted",
-            stop: "checksum-marker-observed",
-            freshness: "fresh-command-in-ready-runtime",
-          }, `${row.runtime} command`);
-          requireBenchmark(Array.isArray(row.readySamplesMs)
-            && row.readySamplesMs.length === benchmarkSampleCount
-            && row.readySamplesMs.every((value) => Number.isFinite(value) && value > 0),
-          `${row.runtime} requires seven positive readiness samples`);
-          requireBenchmark(closeEnough(row.readyMs, median(row.readySamplesMs)),
-            `${row.runtime} readiness median is invalid`);
-          validateMetric(row.readyMetric, {
-            start: "runtime-launch-requested",
-            stop: "first-probe-response-observed",
-            freshness: "fresh-runtime-session",
-          }, `${row.runtime} readiness`);
-          validateRunRecords(row);
-          validateEvidence(row);
-        });
-        requireBenchmark(data.native.relativeToNative === 1, "native ratio must be exactly 1");
-        const wasmMedian = rows.find((row) => row.runtime === "wasm-vm")?.medianMs;
-        const webvmMedian = rows.find((row) => row.runtime === "webvm")?.medianMs;
-        if (!candidateOnly) {
-          requireBenchmark(Number.isFinite(wasmMedian) && Number.isFinite(webvmMedian)
-            && wasmMedian <= webvmMedian * maximumWasmToWebvmCommandRatio,
-          "wasm-vm command median exceeds the WebVM +10% publication budget");
-        }
-        const expectedComparisonId = await sha256Text(JSON.stringify({
-          fixture: data.fixture,
-          artifacts: rows.map((row) => ({ runtime: row.runtime, sha256: row.evidence.artifact.sha256 })),
-        }));
-        requireBenchmark(data.comparisonId === expectedComparisonId,
-          "comparison ID does not bind the fixture and ordered artifacts");
-        return rows;
-      };
-      const formatMs = (value) => `${value.toFixed(1)} ms`;
-      const formatRatio = (value) => `${value.toFixed(2)}×`;
-      const makeCell = (text, className = "") => {
-        const td = document.createElement("td");
-        td.className = className;
-        td.textContent = text;
-        return td;
-      };
-      const makeReadyCell = (row) => {
-        const td = makeCell(formatMs(row.readyMs), "number");
-        const definition = document.createElement("span");
-        definition.className = "ready-def";
-        definition.textContent = row.readyMetric.mechanism;
-        td.append(definition);
-        return td;
-      };
-      const renderBenchmarks = async (data) => {
-        const rows = await validateBenchmarkData(data);
-        if (data.publicationStatus === "complete") await Promise.all(rows.map(validateDeployedArtifact));
-        benchmarkDate.textContent = new Date(data.updatedAt).toLocaleString(undefined, {
+      const renderRuntimeWorkloads = (data) => {
+        validateRuntimeWorkloads(data);
+        workloadDate.textContent = new Date(data.generatedAt).toLocaleString(undefined, {
           year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
         });
-        const renderedRows = rows.map((row) => {
+        const renderedRows = data.environments.map((environment) => {
           const tr = document.createElement("tr");
-          const runtime = makeCell("", "runtime");
-          const link = document.createElement("a");
-          link.textContent = row.label;
-          link.href = row.source;
-          if (/^https?:/.test(row.source)) { link.target = "_blank"; link.rel = "noopener"; }
-          runtime.append(link);
-          tr.append(
-            runtime,
-            makeCell(row.executionModel, "model"),
-            makeCell(formatMs(row.medianMs), "number"),
-            makeCell(formatMs(row.firstMs), "number"),
-            makeReadyCell(row),
-            makeCell(formatRatio(row.relativeToNative), "ratio"),
-          );
+          const runtime = document.createElement("td");
+          runtime.className = "workload-runtime";
+          const title = document.createElement("strong");
+          title.textContent = workloadRuntimeLabels[environment.id] ?? environment.id;
+          const identity = document.createElement("span");
+          identity.textContent = `${environment.environment?.nodeVersion ?? "Node-compatible"} · ${environment.environment?.platform ?? "unknown"}/${environment.environment?.arch ?? "unknown"}`;
+          runtime.append(title, identity);
+          tr.append(runtime);
+          for (const workloadId of workloadIds) {
+            const workload = environment.workloads.find((item) => item.id === workloadId);
+            const metric = formatWorkloadMetric(workload);
+            const cell = document.createElement("td");
+            cell.className = "workload-cell";
+            cell.setAttribute("data-workload", workloadShortLabels[workloadId]);
+            cell.textContent = metric.text;
+            if (metric.reason) {
+              cell.classList.add("workload-unavailable");
+              cell.title = metric.reason;
+            }
+            const p95 = document.createElement("span");
+            p95.className = "workload-p95";
+            p95.textContent = metric.detail;
+            cell.append(p95);
+            if (metric.throughput) {
+              const throughput = document.createElement("span");
+              throughput.className = "workload-throughput";
+              throughput.textContent = metric.throughput;
+              cell.append(throughput);
+            }
+            tr.append(cell);
+          }
           return tr;
         });
-        if (data.publicationStatus === "competitor-candidate") {
-          const pending = document.createElement("tr");
-          pending.innerHTML = '<td class="runtime">wasm-vm</td><td class="model" colspan="4">Seven fresh wasm-vm samples are being re-run; no timing is shown until the raw-backed publication gate passes.</td><td class="number">pending</td>';
-          renderedRows.push(pending);
-        }
-        benchmarkRows.replaceChildren(...renderedRows);
+        data.notRun.forEach((unavailable) => {
+          const tr = document.createElement("tr");
+          const runtime = document.createElement("td");
+          runtime.className = "workload-runtime";
+          const title = document.createElement("strong");
+          title.textContent = workloadRuntimeLabels[unavailable.id] ?? unavailable.id;
+          runtime.append(title);
+          const reason = document.createElement("td");
+          reason.className = "workload-pending workload-unavailable-summary";
+          reason.colSpan = workloadIds.length;
+          reason.title = unavailable.reason;
+          reason.textContent = `not measured — ${compactWorkloadReason(unavailable.reason)}`;
+          tr.append(runtime, reason);
+          renderedRows.push(tr);
+        });
+        workloadRows.replaceChildren(...renderedRows);
       };
-      fetch("./benchmarks.json", { cache: "no-store" }).then((response) => {
-        if (!response.ok) throw new Error(`benchmark data HTTP ${response.status}`);
+      const runtimeBenchmarkRevision = "__RUNTIME_BENCHMARK_VERSION__";
+      fetch(`./runtime-benchmarks.json?rev=${runtimeBenchmarkRevision}`, { cache: "no-store" }).then((response) => {
+        if (!response.ok) throw new Error(`runtime workload data HTTP ${response.status}`);
         return response.json();
-      }).then(renderBenchmarks).catch((error) => {
-        benchmarkDate.textContent = "unavailable";
-        benchmarkRows.innerHTML = `<tr><td colspan="6" class="model">Benchmark evidence unavailable.</td></tr>`;
-        console.error("benchmark table failed:", error);
+      }).then(renderRuntimeWorkloads).catch((error) => {
+        workloadDate.textContent = "unavailable";
+        workloadRows.innerHTML = `<tr><td colspan="7" class="workload-pending">Runtime workload evidence unavailable.</td></tr>`;
+        console.error("runtime workload table failed:", error);
+      });
+
+      // Steady-state compute is a separate campaign. Keep its comparable rows and the native
+      // handoff diagnostic explicit so a hot-loop win cannot be mistaken for an I/O win.
+      const computeRows = document.getElementById("compute-rows");
+      const computeDate = document.getElementById("compute-updated");
+      const computeDiagnosticRows = document.getElementById("compute-diagnostic-rows");
+      const computeWorkloadIds = ["integer-mix", "branch-mix", "memory-mix"];
+      const computeWorkloadLabels = {
+        "integer-mix": "Integer mix",
+        "branch-mix": "Branch mix",
+        "memory-mix": "Memory mix",
+      };
+      const validateRuntimeCompute = (data) => {
+        requireBenchmark(data?.schema === 1, "compute schema must be 1");
+        requireBenchmark(data.kind === "node-steady-state-compute-comparison-v1", "compute kind is invalid");
+        requireBenchmark(data.publicationStatus === "complete" || data.publicationStatus === "partial",
+          "compute publication status is invalid");
+        requireBenchmark(Number.isFinite(Date.parse(data.generatedAt)), "compute generatedAt is invalid");
+        requireBenchmark(data.campaign?.id === "runtime-compute-v1"
+          && data.campaign?.source === "./bench-runtime-compute.mjs"
+          && sha256Pattern.test(data.campaign?.scriptSha256), "compute runner provenance is invalid");
+        requireBenchmark(Array.isArray(data.campaign?.workloadIds)
+          && sameJson(data.campaign.workloadIds, computeWorkloadIds), "compute workload IDs drifted");
+        requireBenchmark(data.fixture?.id === "runtime-compute-v1"
+          && data.fixture.iterations === 1_000_000
+          && data.fixture.memoryWords === 16_384
+          && data.fixture.memoryPasses === 32
+          && Object.keys(data.fixture.expectedChecksums ?? {}).length === computeWorkloadIds.length,
+        "compute fixture is invalid");
+        requireBenchmark(Number.isInteger(data.policy?.samples) && data.policy.samples > 0
+          && Number.isInteger(data.policy?.warmups) && data.policy.warmups > 0,
+        "compute sampling policy is invalid");
+        requireBenchmark(Array.isArray(data.environments) && data.environments.length > 0,
+          "compute environments are missing");
+        const ids = data.environments.map((environment) => environment?.id);
+        requireBenchmark(ids.every(nonEmpty) && new Set(ids).size === ids.length,
+          "compute environment IDs must be unique");
+        data.environments.forEach((environment) => {
+          requireBenchmark(environment.status === "measured" || environment.status === "notRun",
+            `${environment.id} compute capture status is invalid`);
+          requireBenchmark(nonEmpty(environment.label), `${environment.id} compute label is missing`);
+          if (environment.status === "notRun") {
+            requireBenchmark(nonEmpty(environment.reason)
+              && Array.isArray(environment.workloads) && environment.workloads.length === 0,
+            `${environment.id} compute pending result is invalid`);
+            return;
+          }
+          requireBenchmark(environment.runner?.scriptSha256 === data.campaign.scriptSha256,
+            `${environment.id} compute runner digest differs`);
+          requireBenchmark(Array.isArray(environment.workloads)
+            && sameJson(environment.workloads.map((workload) => workload.id), computeWorkloadIds),
+          `${environment.id} compute workload IDs/order are incomplete`);
+          environment.workloads.forEach((workload) => {
+            requireBenchmark(workload.status === "measured" && nonEmpty(workload.unitLabel),
+              `${environment.id}/${workload.id} compute result is invalid`);
+            requireBenchmark(Number.isInteger(workload.expectedChecksum),
+              `${environment.id}/${workload.id} checksum is invalid`);
+            requireBenchmark(Array.isArray(workload.samples)
+              && workload.samples.length === data.policy.samples
+              && workload.samples.every((sample) => sample.verification === "passed"
+                && sample.checksum === workload.expectedChecksum
+                && Number.isFinite(sample.elapsedMs) && sample.elapsedMs >= 0),
+            `${environment.id}/${workload.id} sample verification is invalid`);
+            requireBenchmark(Number.isFinite(workload.summary?.medianMs)
+              && Number.isFinite(workload.summary?.p95Ms)
+              && workload.summary.p95Ms >= workload.summary.medianMs
+              && Number.isFinite(workload.summary?.workUnitsPerSec)
+              && workload.summary.workUnitsPerSec > 0
+              && workload.summary.sampleCount === data.policy.samples,
+            `${environment.id}/${workload.id} compute summary is invalid`);
+            requireBenchmark(data.fixture.expectedChecksums[workload.id] === workload.expectedChecksum,
+              `${environment.id}/${workload.id} checksum differs from fixture`);
+          });
+        });
+        requireBenchmark(data.diagnostics?.status === "measured"
+          && Array.isArray(data.diagnostics.workloads)
+          && data.diagnostics.workloads.length === 2,
+        "native JIT diagnostic is missing");
+        data.diagnostics.workloads.forEach((workload) => {
+          requireBenchmark(nonEmpty(workload.label)
+            && Number.isFinite(workload.interpreterMips)
+            && Number.isFinite(workload.jitMips)
+            && Number.isFinite(workload.ratio),
+          `diagnostic ${workload.id} is invalid`);
+        });
+        return data;
+      };
+      const formatComputeRate = (workload) => {
+        const rate = workload.summary.workUnitsPerSec;
+        const compact = rate >= 1_000_000
+          ? `${(rate / 1_000_000).toFixed(1)}M`
+          : rate >= 1_000 ? `${(rate / 1_000).toFixed(1)}K` : rate.toFixed(1);
+        return `${compact} ${workload.unitLabel}/s`;
+      };
+      const formatComputeMetric = (workload) => ({
+        text: `${workload.summary.medianMs.toFixed(2)} ms`,
+        detail: `p95 ${workload.summary.p95Ms.toFixed(2)} ms`,
+        throughput: formatComputeRate(workload),
+      });
+      const renderRuntimeCompute = (data) => {
+        validateRuntimeCompute(data);
+        computeDate.textContent = new Date(data.generatedAt).toLocaleString(undefined, {
+          year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+        });
+        const renderedRows = data.environments.map((environment) => {
+          const tr = document.createElement("tr");
+          const runtime = document.createElement("td");
+          runtime.className = "workload-runtime";
+          const title = document.createElement("strong");
+          title.textContent = environment.label;
+          const identity = document.createElement("span");
+          identity.textContent = environment.status === "measured"
+            ? `${environment.environment?.nodeVersion ?? "Node-compatible"} · ${environment.environment?.platform ?? "unknown"}/${environment.environment?.arch ?? "unknown"}`
+            : "not measured";
+          runtime.append(title, identity);
+          tr.append(runtime);
+          if (environment.status === "notRun") {
+            const reason = document.createElement("td");
+            reason.className = "workload-pending workload-unavailable-summary";
+            reason.colSpan = computeWorkloadIds.length;
+            reason.title = environment.reason;
+            reason.textContent = `not measured — ${compactWorkloadReason(environment.reason)}`;
+            tr.append(reason);
+            return tr;
+          }
+          for (const workloadId of computeWorkloadIds) {
+            const workload = environment.workloads.find((item) => item.id === workloadId);
+            const metric = formatComputeMetric(workload);
+            const cell = document.createElement("td");
+            cell.className = "workload-cell";
+            cell.setAttribute("data-workload", computeWorkloadLabels[workloadId]);
+            cell.textContent = metric.text;
+            const p95 = document.createElement("span");
+            p95.className = "workload-p95";
+            p95.textContent = metric.detail;
+            cell.append(p95);
+            const throughput = document.createElement("span");
+            throughput.className = "workload-throughput";
+            throughput.textContent = metric.throughput;
+            cell.append(throughput);
+            tr.append(cell);
+          }
+          return tr;
+        });
+        computeRows.replaceChildren(...renderedRows);
+        const diagnostics = data.diagnostics.workloads.map((workload) => {
+          const tr = document.createElement("tr");
+          const label = document.createElement("td");
+          label.textContent = workload.label;
+          const interpreter = document.createElement("td");
+          interpreter.className = "number";
+          interpreter.textContent = `${workload.interpreterMips.toFixed(3)} MIPS`;
+          const jit = document.createElement("td");
+          jit.className = "number";
+          jit.textContent = `${workload.jitMips.toFixed(3)} MIPS`;
+          const ratio = document.createElement("td");
+          ratio.className = "ratio";
+          ratio.textContent = `${workload.ratio.toFixed(3)}×`;
+          tr.append(label, interpreter, jit, ratio);
+          return tr;
+        });
+        computeDiagnosticRows.replaceChildren(...diagnostics);
+      };
+      const computeBenchmarkRevision = "__RUNTIME_COMPUTE_BENCHMARK_VERSION__";
+      fetch(`./runtime-compute-benchmarks.json?rev=${computeBenchmarkRevision}`, { cache: "no-store" }).then((response) => {
+        if (!response.ok) throw new Error(`runtime compute data HTTP ${response.status}`);
+        return response.json();
+      }).then(renderRuntimeCompute).catch((error) => {
+        computeDate.textContent = "unavailable";
+        computeRows.innerHTML = `<tr><td colspan="4" class="workload-pending">Steady-state compute evidence unavailable.</td></tr>`;
+        computeDiagnosticRows.innerHTML = `<tr><td colspan="4" class="workload-pending">JIT diagnostic unavailable.</td></tr>`;
+        console.error("runtime compute table failed:", error);
       });
 
       // Live boot: lazily swap the mock terminal for a REAL chrome-free busybox boot (the app in

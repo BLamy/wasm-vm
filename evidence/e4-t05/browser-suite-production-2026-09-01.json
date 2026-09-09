@@ -1,0 +1,14 @@
+{
+  "date": "2026-09-01",
+  "deployment": "https://49aca2ec.wasm-vm.pages.dev",
+  "production_url": "https://wasm-vm.pages.dev/app?noAutoBoot=1&testHooks=1&diagnosticStats=1&nosw=1",
+  "browser": "Codex in-app browser",
+  "total": 126,
+  "passed": 126,
+  "failed": 0,
+  "done": 126,
+  "status": "complete in 31.9s",
+  "progress": "100%",
+  "console_errors": [],
+  "notes": "The /app.html request normalized to /app; the suite waited for the published wasm bundle to become ready before clicking Run tests."
+}

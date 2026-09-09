@@ -1,0 +1,11 @@
+Sanity check that --no-chain reaches the executor (truncated 300M-instr Alpine boots, same
+patched release binary, JIT summary from stderr):
+
+$ wasm-vm boot ... --jit --no-chain   (2026-09-01, commit 62ba232 + no-chain-flag.diff)
+chaining: links_made=0 links_cut=0 dispatch_entries=26388714 max_chain_depth=0 links_followed=0
+
+$ wasm-vm boot ... --jit
+chaining: links_made=13288 links_cut=9977 dispatch_entries=2343896 max_chain_depth=32 links_followed=26539439
+
+With chaining ON the same 300M-instruction boot re-enters the dispatch loop ~11x less often
+(2.34M vs 26.4M entries) and follows 26.5M direct links at the default depth budget 32.

@@ -1,0 +1,34 @@
+boot pid 56612
+=== 2026-09-01T18:16:42Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+56612 56610   1.0  0.0   1024 410178448 RN     00:00 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+=== 2026-09-01T18:17:42Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+56612 56610   0.0  0.1 107184 436353616 SN     01:00 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+56620   0.0  0.1  99040 SNs    01:00
+56621   0.0  0.1  76928 SN     01:00
+56622   0.0  0.1  68176 SN     01:00
+56624 102.6  0.7 979776 RN     01:00
+=== 2026-09-01T18:18:42Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+56612 56610   0.0  0.1  90192 436323664 SN     02:00 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+56620   0.0  0.1  99168 SNs    02:00
+56621   0.0  0.1  76960 SN     02:00
+56622   0.0  0.1  69280 SN     02:00
+56624 105.0  1.1 1427712 RN     02:00
+=== 2026-09-01T18:19:42Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+56612 56610   0.0  0.1  91024 436324688 SN     03:00 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+56620   0.0  0.1  99440 SNs    03:00
+56621   0.0  0.1  77648 SN     03:00
+56622   0.0  0.1  69424 SN     03:00
+56624 100.3  1.2 1664288 RN     03:00
+=== 2026-09-01T18:20:42Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+56612 56610   0.0  0.1  90656 436324688 SN     04:00 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+56620   0.0  0.1  99440 SNs    04:00
+56621   0.0  0.1  77648 SN     04:00
+56622   0.0  0.1  70640 SN     04:00
+56624 101.4  1.3 1801104 RN     04:00
+=== boot process exited at 2026-09-01T18:21:42Z
+exit code 0

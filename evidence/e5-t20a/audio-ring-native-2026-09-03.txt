@@ -1,0 +1,41 @@
+E5-T20a exact-head worker evidence
+===================================
+
+Recorded: 2026-09-03
+Repository: /Users/blamy/Documents/Codex/wasm-vm
+Commit: 6eb6d9da3ad5ec5ae46f9b4a9be10fd02e65264d
+
+Command:
+  node --test web/tests/audio-ring.test.mjs
+
+Result: exit 0
+  ✔ header cells are initialized and empty reads do not manufacture frames
+  ✔ partial writes, exact fill, full-ring backpressure, and wrap preserve samples
+  ✔ a 4095-frame ring drains 128-frame quanta across repeated non-power-of-two wraps
+  ✔ uint32 counters cross 2^32 without changing the payload order
+  ✔ capacity metadata is immutable and cannot silently desynchronize endpoints
+  ✔ concurrent worker producer and consumer never lose or duplicate an index
+  ✔ consumer copies into caller-owned storage without allocation helpers
+  ℹ tests 7
+  ℹ pass 7
+  ℹ fail 0
+  ℹ cancelled 0
+
+Adversarial repeat:
+  for i in {1..20}; do node --test --test-reporter=dot web/tests/audio-ring.test.mjs; done
+  repeat-runs=20 exit=0
+
+Packaging checks:
+  cmp web/src/audio/ring.js web/dist/src/audio/ring.js
+  result: identical
+
+SHA-256:
+  web/src/audio/ring.js       b0bef33c0d873951324eec3c59ba136bac493738a5a7f73b0ac2ddb1410f2592
+  web/tests/audio-ring.test.mjs 4d333590ce5fc200179bc62d0eee5d60928762fbd13642b2f2bbf3530b119623
+  docs/audio.md               596880911185edf0545052abdc1985fd4298ce8a608a8d70ba68da7f6b79652f
+  web/dist/src/audio/ring.js  b0bef33c0d873951324eec3c59ba136bac493738a5a7f73b0ac2ddb1410f2592
+
+The run covers the default 4096-frame contract, exact-fill/backpressure, empty and partial
+reads, repeated 128-frame drains on a 4095-frame ring, a logical counter crossing 2^32 on a
+7-frame ring, capacity-metadata mutation fail-closed behavior, an actual Node worker producer
+racing the consumer for 30,000 frames, and the allocation-free consumer source guard.

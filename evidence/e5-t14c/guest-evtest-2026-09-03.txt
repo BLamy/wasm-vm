@@ -1,0 +1,13 @@
+# E5-T14c deterministic guest-side virtio-input transcript
+# Fixture: crates/core/tests/virtio_pointer.rs::pointer_wheel_evtest_fixture_has_signed_detents_and_balanced_buttons
+# Device: wasm-vm virtio mouse (virtio-mmio slot 5)
+
+EV_REL REL_HWHEEL 1
+EV_REL REL_WHEEL -1
+EV_KEY BTN_SIDE 1
+EV_SYN SYN_REPORT 0
+
+EV_KEY BTN_SIDE 0
+EV_SYN SYN_REPORT 0
+
+# Expected eventq result: 6 events, 2 complete frames, zero pending events, no stuck button.

@@ -1,0 +1,11 @@
+{
+  "schema": "e5-t23e-agent-channel-corpus-v1",
+  "seed": 2654435769,
+  "cases": [
+    { "name": "valid-byte-dribble", "frames": 10, "split": "one-byte" },
+    { "name": "valid-coalesced", "frames": 10, "split": "single-buffer" },
+    { "name": "garbage-is-reset", "frames": 1, "split": "oversized-header" },
+    { "name": "partial-close-open", "frames": 1, "split": "all-header-cuts" },
+    { "name": "exact-payload-boundary", "frames": 1, "split": "single-buffer", "payload": 1048576 }
+  ]
+}

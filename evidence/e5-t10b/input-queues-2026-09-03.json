@@ -1,0 +1,63 @@
+{
+  "schema": "e5-t10b-virtio-input-queues-v1",
+  "task": "E5-T10b",
+  "status": "pass",
+  "implementation_commit": "b6c840f",
+  "recorded_at": "2026-09-03",
+  "native": {
+    "acceptance_command": "cargo test -p wasm-vm-core --lib dev::virtio::input",
+    "acceptance_result": "8 passed, 0 failed",
+    "coverage": [
+      "InputEvent encodes and decodes the fixed eight-byte little-endian type/code/value layout, including negative values.",
+      "A split eventq chain receives one complete event and publishes used.len = 8; a hostile guest used.idx does not redirect the device-owned completion shadow.",
+      "A four-byte eventq buffer is completed with used.len = 0 without modifying its bytes or consuming the pending event, then a later ring entry receives the complete event and advances used.idx again.",
+      "Short and wrongly-directed statusq chains advance the used ring without invoking the host callback; a split eight-byte status event reaches the callback exactly once with the original fields.",
+      "A non-power-of-two queue size is rejected through the existing bounded NEEDS_RESET protocol-violation path without a panic or an unbounded service loop.",
+      "QueueNotify records deferred eventq/statusq kicks, reset clears queue-service state, and the shared state keeps descriptor walking outside the guest MMIO borrow."
+    ],
+    "regression": {
+      "command": "cargo test -p wasm-vm-core --lib --quiet",
+      "result": "227 passed, 0 failed"
+    },
+    "virtio_regression": {
+      "command": "cargo test -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet",
+      "result": "22 passed, 0 failed"
+    },
+    "clippy": {
+      "command": "cargo clippy -p wasm-vm-core --lib -- -D warnings",
+      "result": "pass"
+    },
+    "format": {
+      "commands": [
+        "cargo fmt --all -- --check",
+        "git diff --check"
+      ],
+      "result": "pass"
+    }
+  },
+  "wasm32": {
+    "core_build": {
+      "command": "cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown",
+      "result": "pass"
+    },
+    "core_clippy": {
+      "command": "cargo clippy -p wasm-vm-core --target wasm32-unknown-unknown --no-default-features --lib -- -D warnings",
+      "result": "pass"
+    },
+    "config_runner": {
+      "command": "wasm-pack test --node crates/wasm --test input_config",
+      "result": "1 passed, 0 failed",
+      "coverage": "The existing wasm32 config fixture continues to exercise the same VirtioInput constructor and config state after queue state was added."
+    },
+    "queue_runner": {
+      "command": "wasm-pack test --node crates/wasm --test input_queues",
+      "result": "1 passed, 0 failed",
+      "coverage": "The wasm32 runner compares positive and negative InputEvent bytes and round-trips both through the fixed decoder."
+    }
+  },
+  "claim": "At commit b6c840f, VirtioInput provides bounded eventq/statusq transport service on the existing virtio-mmio chassis: complete eight-byte events cross split writable/readable descriptor chains in little-endian order, short or wrongly-directed chains make ring progress without partial writes or callbacks, malformed queue shapes request reset, and host status events preserve their original fields.",
+  "scope_notes": [
+    "Pending-event framing, inject_event/sync, bounded whole-frame dropping, and machine run-loop attachment remain intentionally deferred to E5-T10c.",
+    "No independent-machine, WebKit, or host-layer rr run was used, per the user's direction and the repository's current evidence policy."
+  ]
+}

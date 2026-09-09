@@ -3,13 +3,22 @@ id: E5-T20
 epic: 5
 title: AudioWorklet playback — SAB ring buffer, underrun accounting, autoplay unlock
 priority: 520
-status: pending
-depends_on: [E5-T19]
+status: cancelled
+depends_on: [E5-T19d]
 estimate: M
+risk: high
 capstone: false
+decomposed_into: [E5-T20a, E5-T20b, E5-T20c, E5-T20d, E5-T20e]
 ---
 
 ## Goal
+
+> **DECOMPOSED 2026-09-03.** This M-sized AudioWorklet container is cancelled before
+> implementation as required by task policy and replaced by five ordered S slices. E5-T20a owns
+> the atomic ring contract, E5-T20b owns the real-time worklet consumer and underrun accounting,
+> E5-T20c owns the producer/clock/latency integration, E5-T20d owns autoplay unlock and pre-unlock
+> policy, and E5-T20e owns the final guest-to-tab playback proof. E5-T21 is rewired to E5-T20e.
+
 Guest PCM reaches the speakers: an `AudioSink` implementation that pushes T19's frames
 into a SharedArrayBuffer ring buffer consumed by an `AudioWorkletProcessor`, with the
 audio clock fed back as the device's pacing source, measured latency, counted
@@ -69,4 +78,11 @@ share/corrupt rings. Any `process()` call taking > 128-frame budget (perf-marked
 under load refutes the no-blocking claim.
 
 ## Verification log
-(empty)
+
+### 2026-09-03 — coordinator — decomposed
+
+This M-sized AudioWorklet planning container is cancelled before implementation and replaced by five
+ordered S tasks with one boundary and one deterministic acceptance command each. The children split
+the lock-free ring protocol, worklet consumer/underrun accounting, producer and AudioContext clock,
+autoplay policy, and final measured guest playback proof. E5-T21 now depends on E5-T20e, the final
+AudioWorklet sign-off slice.

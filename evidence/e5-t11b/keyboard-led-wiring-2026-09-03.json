@@ -1,0 +1,77 @@
+{
+  "schema": "e5-t11b-virtio-keyboard-led-wiring-v1",
+  "task": "E5-T11b",
+  "status": "pass",
+  "implementation_commit": "95fd672",
+  "recorded_at": "2026-09-03",
+  "native": {
+    "input_unit": {
+      "command": "cargo test -p wasm-vm-core --lib dev::virtio::input",
+      "result": "15 passed, 0 failed",
+      "coverage": "The keyboard sink accepts canonical EV_LED values, ignores malformed/non-LED events, and the existing virtio-input config, eventq, statusq, reset, and bounded-frame tests remain green."
+    },
+    "registration_and_led": {
+      "command": "cargo test -p wasm-vm-core --test virtio_keyboard",
+      "result": "2 passed, 0 failed",
+      "coverage": [
+        "Machine registration installs DeviceID 18 in reserved slot 3 while preserving the GPU in slot 0 and empty slots 1 and 2.",
+        "The real Machine run-loop statusq path delivers 100 alternating LED updates in order, retains the final host state, resets the transport, re-sets the queue, and delivers the next callback without loss."
+      ]
+    },
+    "regression": {
+      "command": "cargo test -p wasm-vm-core --lib",
+      "result": "234 passed, 0 failed"
+    },
+    "virtio_regression": {
+      "command": "cargo test -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet",
+      "result": "12 passed, 2 passed, 8 passed; 22 total, 0 failed"
+    },
+    "clippy": {
+      "commands": [
+        "cargo clippy -p wasm-vm-core --lib -- -D warnings",
+        "cargo clippy -p wasm-vm-core --test virtio_keyboard -- -D warnings"
+      ],
+      "result": "pass"
+    },
+    "format": {
+      "commands": [
+        "cargo fmt --all -- --check",
+        "git diff --check"
+      ],
+      "result": "pass"
+    }
+  },
+  "wasm32": {
+    "core_build": {
+      "command": "cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown",
+      "result": "pass"
+    },
+    "core_clippy": {
+      "command": "cargo clippy -p wasm-vm-core --target wasm32-unknown-unknown --no-default-features --lib -- -D warnings",
+      "result": "pass"
+    },
+    "registration_config_runner": {
+      "command": "wasm-pack test --node crates/wasm --test keyboard_registration",
+      "result": "1 passed, 0 failed",
+      "coverage": "The wasm32 Machine fixture verifies slot-3 registration alongside a GPU, exact keyboard identity, EV_KEY/EV_LED/EV_MSC/EV_SYN payloads, and an empty EV_REP bitmap."
+    },
+    "keyboard_config_runner": {
+      "command": "wasm-pack test --node crates/wasm --test keyboard_spec",
+      "result": "1 passed, 0 failed"
+    },
+    "config_regression": {
+      "command": "wasm-pack test --node crates/wasm --test input_config",
+      "result": "1 passed, 0 failed"
+    },
+    "queue_regression": {
+      "command": "wasm-pack test --node crates/wasm --test input_queues",
+      "result": "2 passed, 0 failed"
+    }
+  },
+  "claim": "At commit 95fd672, Machine::enable_virtio_keyboard installs the T11a keyboard in slot 3 with a shared eventq/statusq state and a host-owned KeyboardLedState sink. The normal Machine boundary services both queues; 100 ordered EV_LED status events update the indicator, and a transport reset followed by queue re-setup preserves the sink and delivers the next update. Native and wasm32 registration/config fixtures confirm the keyboard remains alongside existing GPU/headless slot layouts.",
+  "scope_notes": [
+    "Guest evdev boot/repeat proof and host key injection remain E5-T11c; DOM key translation remains E5-T12.",
+    "No independent-machine, WebKit, or host-layer rr run was used, per the user's direction and the repository's current evidence policy.",
+    "wasm-pack reports the pre-existing unused Exception import in crates/wasm/tests/hart_ctrl.rs and its normal local wasm-bindgen installation fallback; neither is in this diff."
+  ]
+}

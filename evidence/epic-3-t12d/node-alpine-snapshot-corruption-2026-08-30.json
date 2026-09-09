@@ -1,0 +1,43 @@
+{
+  "schema": "e3-t12d-local-node-browser-v2",
+  "capturedOn": "2026-08-30 America/New_York",
+  "gitHead": "86afb33373170bd7b91d527ca2eebe44b4e7b0aa",
+  "server": "bash tools/serve-dev.sh 8132",
+  "browser": {
+    "engine": "Playwright Chromium headless",
+    "version": "131.0.6778.33",
+    "headless": true
+  },
+  "guest": {
+    "kind": "node-alpine",
+    "urlQuery": "?guest=node-alpine&nosw&jit=0&noAutoBoot=1",
+    "readyMeans": "window.wvmDemo.isGuestReady()",
+    "restored": true,
+    "backend": "whole-machine-worker"
+  },
+  "snapshot": {
+    "before": "missing",
+    "saveReturned": true,
+    "saveMs": 1636.065000001341,
+    "originalBytes": 138279943,
+    "originalSha256": "a2809bfb0a5b8e0d0c2a61f56e0284ac2a61fdf566e34ce81a6ae7914dcc290b",
+    "decisionAfterSave": "resume"
+  },
+  "truncationAttack": {
+    "originalBytes": 138279943,
+    "truncatedBytes": 138279942,
+    "mutation": "imported a view with exactly the final byte removed",
+    "importReturned": true,
+    "importMs": 381.68000000342727,
+    "decisionAfterTruncatedImport": "corrupt",
+    "reimportReturned": true,
+    "decisionAfterReimportingOriginal": "resume"
+  },
+  "liveGuestControl": {
+    "command": "echo T12D_LIVE_$((6*7))",
+    "stdout": "T12D_LIVE_42\n\n",
+    "exit": 0
+  },
+  "consoleErrors": [],
+  "pageScreenshot": "/private/tmp/e3-t12d-browser-verification-2026-08-30.png"
+}

@@ -1,0 +1,28 @@
+E5-T06b WebGL2 presentation proof
+Recorded exact head: 0883afd53df9909c3adf374cf96c804026dee7d7
+
+Command:
+  env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS make verify-E5-T06b
+
+Result:
+  node --check present-backend.js: PASS
+  node --check webgl.js: PASS
+  node --test web/tests/e5-t06b-webgl.test.mjs: 10 passed, 0 failed
+  make target: OK
+
+The deterministic WebGL2 harness compiles the backend's shaders, verifies five golden patterns,
+checks top-row orientation through bottom-up readPixels normalization, exercises full-resource
+stride uploads for x=1 width=3 damage, preserves alpha-zero bytes, bulk-copies SAB-backed guest
+words into private staging, rejects unavailable WebGL2 and non-Uint32 sources, and runs 1,000
+alternating texture resize/present cycles. It asserts UNPACK_ROW_LENGTH and UNPACK_SKIP_* cleanup,
+no GL error, exact object disposal, and staging capacity no larger than the current canvas byte
+budget.
+
+Local Chromium (headless SwiftShader) independently loaded /src/sink/webgl.js and rendered a 7x4
+background plus partial x=1 width=3 update. Readback matched the top-down RGBA oracle, alpha-zero
+was 0, gl.getError() was 0, there were no console/page errors, and staging fell from 112 bytes to
+0 on dispose.
+
+The JavaScript source, plain .ts projection, and deployable web/dist projections are byte
+identical. Independent-machine, WebKit, and host-layer rr runs are excluded per the user's
+direction and the repository's current evidence policy.

@@ -1,0 +1,97 @@
+{
+  "generatedAt": "2026-09-02T21:42:00.355Z",
+  "base": "http://127.0.0.1:8123",
+  "browser": {
+    "name": "chromium",
+    "version": "152.0.7977.75"
+  },
+  "localAlpineAssets": true,
+  "scenarios": {
+    "busyboxDegraded": {
+      "state": {
+        "runtime": "unavailable",
+        "error": "The booted guest has no executable /usr/local/bin/wvrun and no /opt/containers/index.json.",
+        "code": "RUNTIME_ABSENT",
+        "booting": false,
+        "provider": "offline",
+        "ready": true,
+        "guestUp": true,
+        "alpineAssets": true,
+        "alpineStatus": "present"
+      },
+      "bootConflict": {
+        "runtime": "error",
+        "error": "busybox boot already owns the VM",
+        "code": "GUEST_CONFLICT",
+        "booting": false,
+        "provider": "offline",
+        "ready": true,
+        "guestUp": true,
+        "alpineAssets": true,
+        "alpineStatus": "present"
+      },
+      "providerSwitch": {
+        "relayState": {
+          "runtime": "unavailable",
+          "error": "The booted guest has no executable /usr/local/bin/wvrun and no /opt/containers/index.json.",
+          "code": "RUNTIME_ABSENT",
+          "booting": false,
+          "provider": "relay",
+          "ready": true,
+          "guestUp": true,
+          "alpineAssets": true,
+          "alpineStatus": "present"
+        },
+        "relayText": "GUEST RUNTIME\nRuntime absent in this guest — the catalog remains available, but lifecycle controls are disabled.\nThe booted guest has no executable /usr/local/bin/wvrun and no /opt/containers/index.json.\nBoot Alpine guestPull\nNetwork provider relay is selected, but live registry pull is not part of this bootstrap slice; no pull was attempted and no progress is shown.",
+        "offlineState": {
+          "runtime": "unavailable",
+          "error": "The booted guest has no executable /usr/local/bin/wvrun and no /opt/containers/index.json.",
+          "code": "RUNTIME_ABSENT",
+          "booting": false,
+          "provider": "offline",
+          "ready": true,
+          "guestUp": true,
+          "alpineAssets": true,
+          "alpineStatus": "present"
+        }
+      },
+      "consoleErrors": [],
+      "failedRequests": []
+    },
+    "publicBusybox": {
+      "state": {
+        "runtime": "unknown",
+        "error": "",
+        "code": "",
+        "booting": false,
+        "provider": "offline",
+        "ready": false,
+        "guestUp": false,
+        "alpineAssets": false,
+        "alpineStatus": "absent"
+      },
+      "consoleErrors": [],
+      "expectedConsoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "failedRequests": []
+    },
+    "alpineInTab": {
+      "state": {
+        "runtime": "available",
+        "error": "",
+        "code": "",
+        "booting": false,
+        "provider": "offline",
+        "ready": true,
+        "guestUp": true,
+        "alpineAssets": true,
+        "alpineStatus": "present"
+      },
+      "consoleErrors": [],
+      "failedRequests": []
+    }
+  },
+  "screenshot": "evidence/e3-t05f1/docker-bootstrap-browser.png"
+}

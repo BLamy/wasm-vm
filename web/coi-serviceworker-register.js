@@ -10,6 +10,15 @@
 // partially-started threaded backend.
 
 const RELOAD_FLAG = "__coi_reloaded";
+const SW_READY_TIMEOUT_MS = 5_000;
+
+function withTimeout(promise, label) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`${label} timed out`)), SW_READY_TIMEOUT_MS);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
 
 /**
  * Ensure the page is cross-origin isolated, registering the shim if needed.
@@ -30,8 +39,11 @@ export async function ensureCrossOriginIsolated(opts = {}) {
   }
 
   try {
-    const reg = await navigator.serviceWorker.register(swUrl, { scope: "./" });
-    await navigator.serviceWorker.ready;
+    const reg = await withTimeout(
+      navigator.serviceWorker.register(swUrl, { scope: "./" }),
+      "service-worker registration",
+    );
+    await withTimeout(navigator.serviceWorker.ready, "service-worker activation");
     // If the SW is now controlling this client, a reload will be served through its headers.
     if (navigator.serviceWorker.controller && allowReload) {
       sessionStorage.setItem(RELOAD_FLAG, "1");

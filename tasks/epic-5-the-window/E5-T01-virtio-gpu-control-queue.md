@@ -3,10 +3,12 @@ id: E5-T01
 epic: 5
 title: virtio-gpu device skeleton, control queue, and GET_DISPLAY_INFO
 priority: 501
-status: pending
+status: cancelled
 depends_on: [E4]
 estimate: M
+risk: high
 capstone: false
+decomposed_into: [E5-T01a, E5-T01b, E5-T01c]
 ---
 
 ## Goal
@@ -55,4 +57,12 @@ the byte-layout fixture test under wasm32 and native and diff outputs. Any host 
 guest-memory write outside the provided descriptors, or fixture mismatch is a refutation.
 
 ## Verification log
-(empty)
+
+### 2026-09-03 — coordinator — decomposed
+
+This M-sized planning container is cancelled before implementation as required by the task policy.
+The work is split into three ordered S tickets, each with one protocol boundary and one native
+acceptance command: E5-T01a owns the device/config/protocol types, E5-T01b owns the display-info
+control queue and fence path, and E5-T01c owns malformed-chain hardening and the final device
+regression. The replacements preserve the original virtio-gpu acceptance criteria without putting
+the whole GPU device in one active lane.

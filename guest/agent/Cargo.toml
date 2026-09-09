@@ -1,0 +1,18 @@
+[package]
+name = "wasm-vm-guest-agent"
+description = "Static poll-driven guest agent for the wasm-vm virtio-console port"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[lib]
+name = "wasm_vm_guest_agent"
+
+[[bin]]
+name = "wasmvm-agent"
+path = "src/main.rs"
+
+[dependencies]
+wasm-vm-agent-protocol = { path = "../../crates/agent-protocol" }

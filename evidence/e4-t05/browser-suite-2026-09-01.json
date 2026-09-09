@@ -1,0 +1,15 @@
+{
+  "date": "2026-09-01",
+  "source_head": "c8b8baf",
+  "url": "http://127.0.0.1:8000/?noAutoBoot=1&testHooks=1&diagnosticStats=1",
+  "browser": "Codex in-app browser",
+  "mode": "testHooks; WasmMachine.setFastInterpreter(true) in runRiscvTest",
+  "total": 126,
+  "passed": 126,
+  "failed": 0,
+  "done": 126,
+  "status": "complete in 6.5s",
+  "progress": "100%",
+  "console_errors": [],
+  "screenshot": "evidence/e4-t05/browser-suite-2026-09-01.png"
+}

@@ -1,0 +1,11 @@
+keyboard-evdev-proof-v1
+device=/dev/input/event0
+B: EV=20013
+B: LED=7
+B: MSC=10
+EV_REP=absent
+EV_KEY KEY_A 1
+EV_SYN SYN_REPORT 0
+EV_KEY KEY_A 0
+EV_SYN SYN_REPORT 0
+HOLD KEY_A_DOWN events=1 repeat=0

@@ -3,7 +3,7 @@ id: E4-T25
 epic: 4
 title: Lockstep interpreter-vs-JIT differential verification and randomized fuzzing
 priority: 425
-status: verification-debt
+status: verified
 depends_on: [E4-T13, E4-T14, E4-T15, E4-T18]
 estimate: L
 capstone: false
@@ -69,6 +69,16 @@ refutes E4-T15/T09 claims; (5) burn real hours: a 4-hour fresh-seed fuzz session
 new divergence is, definitionally, a refutation of the epic's correctness story to date.
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+Commit: `069c4ee`.
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T25.
+
 
 ### 2026-08-06 — interrupt-free lockstep core + fuzzer + minimizer (partially-verified)
 

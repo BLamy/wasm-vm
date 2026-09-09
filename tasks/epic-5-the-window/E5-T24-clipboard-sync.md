@@ -3,8 +3,8 @@ id: E5-T24
 epic: 5
 title: Bidirectional clipboard sync through the guest agent
 priority: 524
-status: pending
-depends_on: [E5-T18, E5-T23]
+status: cancelled
+depends_on: [E5-T18, E5-T23e]
 estimate: M
 capstone: false
 ---
@@ -66,6 +66,17 @@ clipboard, not keystrokes). Binary/invalid-UTF8 in the guest clipboard (wl-copy 
 /dev/urandom bytes): host must reject/sanitize per doc, never throw. Verify nothing
 syncs while the canvas lacks focus (privacy: no background host-clipboard reads —
 audit via a clipboard-read spy).
+
+## Decomposition
+
+This M-sized planning container is cancelled and replaced by the following ordered S slices. The
+children keep one protocol or product boundary per task and one deterministic acceptance command;
+the final child owns the cross-browser proof and `docs/clipboard.md`.
+
+- `E5-T24a` — freeze bounded CLIP_SET/CLIP_GET protocol types and UTF-8/size policy.
+- `E5-T24b` — add the guest clipboard bridge and bounded child-process recovery.
+- `E5-T24c` — add host clipboard permissions, gesture staging, paste ordering, and echo guards.
+- `E5-T24d` — prove both directions, hostile ordering, permission denial, and document browser policy.
 
 ## Verification log
 (empty)

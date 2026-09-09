@@ -353,8 +353,8 @@ impl ColdBootReason {
 }
 
 /// E3-T12d: the resume-vs-cold-boot decision for a persisted snapshot. `Resume` means the stored
-/// blob's header is coherent with the live machine identity and it is safe to hand to
-/// [`crate::Machine::load_resume`]; `ColdBoot` carries the typed reason it was rejected.
+/// blob's complete section framing is coherent with the live machine identity and it is safe to hand
+/// to [`crate::Machine::load_resume`]; `ColdBoot` carries the typed reason it was rejected.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum RestoreDecision {
     Resume,
@@ -362,12 +362,11 @@ pub enum RestoreDecision {
 }
 
 impl RestoreDecision {
-    /// Decide from a stored blob (`None` = nothing persisted) against the live machine identity. This
-    /// is the *header-level* gate — cheap, no section walk — mirroring exactly the guard
-    /// [`crate::Machine::load_resume`] runs first, so a `Resume` verdict here means the coherence
-    /// guard will not be what rejects the subsequent load. A blob whose header does not even parse is
-    /// [`ColdBootReason::Corrupt`]. The final section-level integrity is still enforced by
-    /// `load_resume` itself (map its error via [`ColdBootReason::from_snapshot_error`]).
+    /// Decide from a stored blob (`None` = nothing persisted) against the live machine identity. The
+    /// fixed header and every section boundary/tag are checked before the identity guards, so a
+    /// truncated or framing-corrupt blob cannot receive a false `Resume` verdict. Component payload
+    /// semantics remain enforced by `load_resume` itself (map its error via
+    /// [`ColdBootReason::from_snapshot_error`]).
     pub fn decide(
         stored: Option<&[u8]>,
         expected_core_hash: &[u8; 32],
@@ -377,12 +376,20 @@ impl RestoreDecision {
         let Some(blob) = stored else {
             return RestoreDecision::ColdBoot(ColdBootReason::Missing);
         };
-        let header = match SnapshotHeader::parse(blob) {
-            Ok((header, _)) => header,
+        let (header, sections) = match SectionReader::new(blob) {
+            Ok(parsed) => parsed,
             Err(err) => {
                 return RestoreDecision::ColdBoot(ColdBootReason::from_snapshot_error(&err));
             }
         };
+        // Walk the entire TLV framing before accepting the identity. In particular, removing the
+        // final byte from a valid snapshot must be classified as corrupt even when the IndexedDB
+        // metadata was rebuilt from that shortened input.
+        for section in sections {
+            if let Err(err) = section {
+                return RestoreDecision::ColdBoot(ColdBootReason::from_snapshot_error(&err));
+            }
+        }
         match header.validate_for(
             expected_core_hash,
             expected_base_image_hash,
@@ -514,6 +521,17 @@ impl<'a> Iterator for SectionReader<'a> {
             payload: &self.blob[body..end],
         }))
     }
+}
+
+/// Validate the complete container framing without allocating or mutating machine state. This is
+/// the persistence boundary's independent check: a store may describe any supplied byte length, but
+/// it cannot make a missing section byte satisfy that section's declared length.
+pub fn validate_container(blob: &[u8]) -> Result<(), SnapshotError> {
+    let (_, reader) = SectionReader::new(blob)?;
+    for section in reader {
+        section?;
+    }
+    Ok(())
 }
 
 // ── RAM zero-elision codec ───────────────────────────────────────────────────

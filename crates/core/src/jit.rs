@@ -44,9 +44,58 @@ pub mod abi {
     pub const HANDOFF_END: u32 = ENTRY_PC + 8;
     /// Exact byte length of the one-call CPU-state handoff.
     pub const HANDOFF_LEN: usize = (HANDOFF_END - XREG_BASE) as usize;
-    /// E4-T19 intra-module chaining flag. It is deliberately outside [`HANDOFF_END`]: executors
-    /// currently leave it zero and perform bounded chaining in the host dispatch loop.
+    /// E4-T34: total retired instructions committed by the current in-module chain. This lives
+    /// immediately after the frozen handoff and is not copied to/from the private SoftMMU state
+    /// view; browser inline-memory executors use it as a shared chain accumulator.
+    pub const CHAIN_RETIRED: u32 = HANDOFF_END;
+    /// E4-T34: remaining guest-work fuel for an in-module chain. A successor that cannot fit
+    /// returns [`super::ExitCode::Budget`] without executing an instruction.
+    pub const CHAIN_BUDGET: u32 = CHAIN_RETIRED + 8;
+    /// E4-T34: import-side side-effect barrier. A load that resolves to MMIO/misaligned memory,
+    /// a host-visible store/atomic import, or a raw inline-RAM store that targets a live compiled
+    /// page sets this byte so the current block returns to Rust before a successor can be called
+    /// directly. Pending raw data-page stores are guarded separately before LR/SC/AMO operations.
+    pub const CHAIN_ABORT: u32 = CHAIN_BUDGET + 8;
+    /// E4-T34: exact guest-register write mask accumulated by generated direct-chain functions.
+    /// It occupies the upper half of the abort word so the existing byte-sized abort flag and all
+    /// later auxiliary offsets remain frozen.
+    pub const CHAIN_REG_DIRTY: u32 = CHAIN_ABORT + 4;
+    /// E4-T19/E4-T34 intra-module chaining flag. It is deliberately outside [`HANDOFF_END`]: the
+    /// native executor leaves it zero, while the browser inline-memory executor enables it only for
+    /// a bounded, interrupt-safe chain.
     pub const CHAIN_ENABLED: u32 = 0x250;
+    /// E4-T34: count of raw inline-RAM stores waiting for the host-side reservation and code-write
+    /// commit. Stored as an i64 so generated code can update it without widening/narrowing.
+    pub const CHAIN_STORE_COUNT: u32 = CHAIN_ENABLED + 8;
+    /// E4-T34: remaining compiled-block entries allowed in the current direct chain. The browser
+    /// executor initializes this from `CompiledBlockExecutor::chain_depth_budget` and decrements it
+    /// at each generated-function entry, so the in-module call stack observes the same bound as the
+    /// native dispatch loop.
+    pub const CHAIN_DEPTH: u32 = CHAIN_STORE_COUNT + 8;
+    /// E4-T34: first `{virtual address, physical address, width}` raw-store record.
+    pub const CHAIN_STORE_BASE: u32 = CHAIN_DEPTH + 8;
+    /// E4-T34: byte size of one raw-store record.
+    pub const CHAIN_STORE_ENTRY_BYTES: u32 = 24;
+    /// E4-T34: bounded number of raw stores a direct-chain call can record. The direct-chain fuel is
+    /// currently no larger than this, so a full log always takes the exact imported slow path.
+    pub const CHAIN_STORE_CAPACITY: u32 = 128;
+    /// E4-T37: number of generated dynamic-return probes in the current direct chain.
+    pub const CHAIN_DYNAMIC_ATTEMPTS: u32 =
+        CHAIN_STORE_BASE + CHAIN_STORE_ENTRY_BYTES * CHAIN_STORE_CAPACITY;
+    /// E4-T37: number of dynamic-return probes that passed every generated guard and entered a
+    /// cached target.
+    pub const CHAIN_DYNAMIC_HITS: u32 = CHAIN_DYNAMIC_ATTEMPTS + 8;
+    /// E4-T37: number of dynamic-return probes refused by the generated guards.
+    pub const CHAIN_DYNAMIC_REFUSALS: u32 = CHAIN_DYNAMIC_HITS + 8;
+    /// E4-T39: runtime switch for generated dynamic-return probes. The browser writes this before
+    /// each entry so the same compiled module can provide a JALR-off control without recompiling.
+    pub const CHAIN_DYNAMIC_ENABLED: u32 = CHAIN_DYNAMIC_REFUSALS + 8;
+    /// E4-T39: generated indirect table calls (static and dynamic) in the current direct chain.
+    pub const CHAIN_INDIRECT_DISPATCHES: u32 = CHAIN_DYNAMIC_ENABLED + 8;
+    /// E4-T39: generated EXEC-TLB/authority predicates evaluated in the current direct chain.
+    pub const CHAIN_AUTHORITY_CHECKS: u32 = CHAIN_INDIRECT_DISPATCHES + 8;
+    /// Exclusive end of the auxiliary chain state retained beside the frozen handoff.
+    pub const CHAIN_STATE_END: u32 = CHAIN_AUTHORITY_CHECKS + 8;
 }
 
 /// Reusable transport buffer spanning the compiled module's frozen handoff byte range.
@@ -55,16 +104,22 @@ pub mod abi {
 /// exit header on return. Reserved gaps inside the 568-byte range are transported but intentionally
 /// carry no architectural claim. The buffer uses words rather than a `repr(C)` field struct so its
 /// byte view stays alignment-independent and little-endian-correct on every Rust host.
+#[repr(C)]
 pub struct CpuStateHandoff {
     // Stored as little-endian words so common little-endian hosts can marshal the whole register
     // file with one native slice copy. Byte accessors expose the identical frozen ABI image.
     words: [u64; abi::HANDOFF_LEN / 8],
+    /// E4-T34 browser-only chain state. Keeping this in the same allocation makes the pointer passed
+    /// to an imported-memory module cover both the frozen handoff and the auxiliary state while
+    /// preserving [`Self::as_bytes`] and its exact 568-byte contract.
+    chain: [u64; ((abi::CHAIN_STATE_END - abi::HANDOFF_END) / 8) as usize],
 }
 
 impl Default for CpuStateHandoff {
     fn default() -> Self {
         Self {
             words: [0; abi::HANDOFF_LEN / 8],
+            chain: [0; ((abi::CHAIN_STATE_END - abi::HANDOFF_END) / 8) as usize],
         }
     }
 }
@@ -73,6 +128,14 @@ impl CpuStateHandoff {
     /// Marshal the live integer registers and virtual entry PC. Reserved gaps and the prior exit
     /// header need not be initialized because generated code never consumes them on entry.
     pub fn prepare(&mut self, hart: &Hart) {
+        self.prepare_registers(hart);
+        self.set_entry_pc(hart.regs.pc);
+    }
+
+    /// Marshal only the live integer-register image. The browser executor uses this separately so
+    /// it can skip the 32-word copy when the hart still has the version it committed on the prior
+    /// compiled call; the entry PC is independent and is refreshed for every invocation.
+    pub fn prepare_registers(&mut self, hart: &Hart) {
         #[cfg(target_endian = "little")]
         self.words[..32].copy_from_slice(hart.regs.jit_words());
         #[cfg(target_endian = "big")]
@@ -82,7 +145,11 @@ impl CpuStateHandoff {
                 hart.regs.read(register),
             );
         }
-        self.put_u64(abi::ENTRY_PC, hart.regs.pc);
+    }
+
+    /// Refresh the guest virtual PC consumed by the next generated block entry.
+    pub fn set_entry_pc(&mut self, pc: u64) {
+        self.put_u64(abi::ENTRY_PC, pc);
     }
 
     /// Commit the compiled module's integer-register image. `x0` is intentionally skipped so the
@@ -96,6 +163,23 @@ impl CpuStateHandoff {
                 register,
                 self.get_u64(abi::XREG_BASE + u32::from(register) * 8),
             );
+        }
+    }
+
+    /// Commit only registers named by a generated direct-chain write mask. This is an optimization
+    /// of the browser handoff; the full [`Self::commit_registers`] path remains the compatibility
+    /// fallback for the frozen non-chaining ABI.
+    pub fn commit_registers_mask(&self, hart: &mut Hart, mask: u32) {
+        #[cfg(target_endian = "little")]
+        hart.regs.jit_commit_words_mask(&self.words[..32], mask);
+        #[cfg(target_endian = "big")]
+        for register in 1..32u8 {
+            if mask & (1_u32 << u32::from(register)) != 0 {
+                hart.regs.write(
+                    register,
+                    self.get_u64(abi::XREG_BASE + u32::from(register) * 8),
+                );
+            }
         }
     }
 
@@ -138,6 +222,124 @@ impl CpuStateHandoff {
         let index = ((offset - abi::XREG_BASE) / 8) as usize;
         u64::from_le(self.words[index])
     }
+
+    fn put_chain_u64(&mut self, offset: u32, value: u64) {
+        debug_assert_eq!(offset % 8, 0);
+        debug_assert!((abi::HANDOFF_END..abi::CHAIN_STATE_END).contains(&offset));
+        let index = ((offset - abi::HANDOFF_END) / 8) as usize;
+        self.chain[index] = value.to_le();
+    }
+
+    fn chain_u64(&self, offset: u32) -> u64 {
+        debug_assert_eq!(offset % 8, 0);
+        debug_assert!((abi::HANDOFF_END..abi::CHAIN_STATE_END).contains(&offset));
+        let index = ((offset - abi::HANDOFF_END) / 8) as usize;
+        u64::from_le(self.chain[index])
+    }
+
+    /// Initialize the browser-only bounded direct-chain header before one compiled invocation.
+    /// The frozen register/exit handoff remains unchanged and is still the only state copied into
+    /// private SoftMMU memories.
+    pub fn begin_chain(&mut self, enabled: bool, budget: u64, depth: u64) {
+        self.put_chain_u64(abi::CHAIN_RETIRED, 0);
+        self.put_chain_u64(abi::CHAIN_BUDGET, budget);
+        self.put_chain_u64(abi::CHAIN_ABORT, 0);
+        self.put_chain_u64(abi::CHAIN_DEPTH, depth);
+        self.put_chain_u64(abi::CHAIN_ENABLED, enabled as u64);
+        self.put_chain_u64(abi::CHAIN_STORE_COUNT, 0);
+        self.put_chain_u64(abi::CHAIN_DYNAMIC_ATTEMPTS, 0);
+        self.put_chain_u64(abi::CHAIN_DYNAMIC_HITS, 0);
+        self.put_chain_u64(abi::CHAIN_DYNAMIC_REFUSALS, 0);
+        self.put_chain_u64(abi::CHAIN_DYNAMIC_ENABLED, 1);
+        self.put_chain_u64(abi::CHAIN_INDIRECT_DISPATCHES, 0);
+        self.put_chain_u64(abi::CHAIN_AUTHORITY_CHECKS, 0);
+    }
+
+    /// Enable or disable generated dynamic-return probes for the next direct-chain call.
+    pub fn set_dynamic_chain_enabled(&mut self, enabled: bool) {
+        self.put_chain_u64(abi::CHAIN_DYNAMIC_ENABLED, enabled as u64);
+    }
+
+    /// Total retired instructions recorded by the current direct chain.
+    pub fn chain_retired(&self) -> u64 {
+        self.chain_u64(abi::CHAIN_RETIRED)
+    }
+
+    /// Remaining generated-function entries allowed in the current browser direct chain.
+    ///
+    /// The browser executor uses this diagnostic to distinguish one host-side engine entry from
+    /// the number of compiled functions that actually ran before the chain returned. It is kept
+    /// outside the frozen handoff and has no architectural effect.
+    pub fn chain_depth_remaining(&self) -> u64 {
+        self.chain_u64(abi::CHAIN_DEPTH)
+    }
+
+    /// Number of generated dynamic-return probes in the current direct chain.
+    pub fn dynamic_link_attempts(&self) -> u64 {
+        self.chain_u64(abi::CHAIN_DYNAMIC_ATTEMPTS)
+    }
+
+    /// Number of generated dynamic-return probes that entered a cached target.
+    pub fn dynamic_link_hits(&self) -> u64 {
+        self.chain_u64(abi::CHAIN_DYNAMIC_HITS)
+    }
+
+    /// Number of generated dynamic-return probes refused by the cache or authority guard.
+    pub fn dynamic_link_refusals(&self) -> u64 {
+        self.chain_u64(abi::CHAIN_DYNAMIC_REFUSALS)
+    }
+
+    /// Number of generated static/dynamic calls through the imported funcref table in the current
+    /// direct chain.
+    pub fn indirect_dispatches(&self) -> u64 {
+        self.chain_u64(abi::CHAIN_INDIRECT_DISPATCHES)
+    }
+
+    /// Number of generated EXEC-TLB/authority predicates evaluated in the current direct chain.
+    pub fn authority_checks(&self) -> u64 {
+        self.chain_u64(abi::CHAIN_AUTHORITY_CHECKS)
+    }
+
+    /// Whether an import-side barrier stopped the current direct chain.
+    pub fn chain_was_aborted(&self) -> bool {
+        self.chain_u64(abi::CHAIN_ABORT) & 1 != 0
+    }
+
+    /// Registers written by the current generated direct chain, as a bit mask over x0..x31.
+    pub fn chain_reg_dirty(&self) -> u32 {
+        (self.chain_u64(abi::CHAIN_ABORT) >> 32) as u32
+    }
+
+    /// Pointer to the byte-sized import-side abort flag in the auxiliary chain header.
+    pub fn chain_abort_ptr(&mut self) -> *mut u8 {
+        // SAFETY: `chain` is a live, aligned array in this allocation and the selected word is
+        // addressable for the entire duration of the compiled call.
+        self.chain.as_mut_ptr().cast::<u8>().wrapping_add(16)
+    }
+
+    /// Number of raw inline-RAM stores recorded by the current compiled call.
+    pub fn jit_store_count(&self) -> u64 {
+        self.chain_u64(abi::CHAIN_STORE_COUNT)
+    }
+
+    /// Read one raw inline-RAM store record as `(virtual_addr, physical_addr, width_bytes)`.
+    pub fn jit_store_record(&self, index: u64) -> Option<(u64, u64, u64)> {
+        if index >= self.jit_store_count() || index >= u64::from(abi::CHAIN_STORE_CAPACITY) {
+            return None;
+        }
+        let index = u32::try_from(index).ok()?;
+        let base = abi::CHAIN_STORE_BASE + index * abi::CHAIN_STORE_ENTRY_BYTES;
+        Some((
+            self.chain_u64(base),
+            self.chain_u64(base + 8),
+            self.chain_u64(base + 16),
+        ))
+    }
+
+    /// Drop the raw-store records after the host has applied their architectural side effects.
+    pub fn clear_jit_store_log(&mut self) {
+        self.put_chain_u64(abi::CHAIN_STORE_COUNT, 0);
+    }
 }
 
 /// The frozen exit-code enum (`docs/jit-architecture.md` §3.3). The E4-T09 translator emits only
@@ -151,10 +353,13 @@ pub enum ExitCode {
     BranchTaken,
     /// A guest trap (`ecall`/`ebreak`) must be delivered at `next_pc`.
     Trap,
-    /// Any reserved variant (MMIO/MMU_MISS/CALL_INTERP/NOT_COMPILED/BUDGET/INTERRUPT_POLL) — not
-    /// produced by the E4-T09 translator; treated as a benign unlinked fall-through because the
-    /// module register image has already been committed.
+    /// Any reserved variant (MMIO/MMU_MISS/CALL_INTERP/NOT_COMPILED/INTERRUPT_POLL) — not produced
+    /// by the current translator; treated as a benign unlinked fall-through because the module
+    /// register image has already been committed.
     Reserved(i32),
+    /// The browser direct-chain fuel was exhausted before the next successor began. The compiled
+    /// prefix has already committed and `JitExit::retired` reports its exact span.
+    Budget,
 }
 
 impl ExitCode {
@@ -164,6 +369,7 @@ impl ExitCode {
             0 => ExitCode::Fallthrough,
             1 => ExitCode::BranchTaken,
             2 => ExitCode::Trap,
+            8 => ExitCode::Budget,
             other => ExitCode::Reserved(other),
         }
     }
@@ -193,6 +399,10 @@ pub struct JitExit {
     /// region is architecturally precise as of the instruction BEFORE the faulting one, and the
     /// runtime has already synced it back into `hart.regs`.
     pub trap: Option<crate::hart::Trap>,
+    /// E4-T34: exact number of guest instructions retired by the compiled call, including any
+    /// direct in-module successors. Zero means the legacy one-block executor did not provide the
+    /// optional count; the core then derives the count from the decoded block as before.
+    pub retired: u64,
 }
 
 /// E4-T20: the translation-cache budget (`docs/jit-architecture.md` §7 D10). Enforced at install
@@ -280,6 +490,55 @@ pub struct JitCacheStats {
     /// The eviction/invalidation generation counter (E4-T08); bumped on every evict/flush so any
     /// stale cached reference is refused.
     pub generation: u64,
+}
+
+/// E4-T37: cumulative browser dynamic-return PIC telemetry plus its bounded live state.
+///
+/// The default is deliberately zero so native and mock executors remain source-compatible; the
+/// browser executor reports generated probe outcomes and its Rust-owned publication ledger.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct DynamicLinkStats {
+    /// Generated dynamic-return probes.
+    pub attempts: u64,
+    /// Probes that passed the cache, chain, and EXEC-TLB authority guards.
+    pub hits: u64,
+    /// Probes that returned to the dispatcher instead of calling an indirect target.
+    pub refusals: u64,
+    /// Actual replacement of an existing live PIC entry after hysteresis was satisfied.
+    pub retargets: u64,
+    /// Current number of live virtual-target entries in the bounded PIC.
+    pub live_entries: u64,
+    /// Actual PIC entry publications, including replacements.
+    pub installs: u64,
+}
+
+/// E4-T39: bounded entry-path cost ledger exported by a compiled-block executor.
+///
+/// The counters are deterministic guest-path observations. The nanosecond fields are optional
+/// browser-side samples (zero for executors without a host timer), so the ledger can separate
+/// structural work from the wall-clock controls without putting a host clock in `no_std` core.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct JitEntryCostStats {
+    /// Host-side compiled-engine entries.
+    pub host_entries: u64,
+    /// State/register synchronization operations at those entries.
+    pub state_copy_calls: u64,
+    /// Bytes moved by state/register synchronization operations.
+    pub state_copy_bytes: u64,
+    /// Monotonic time spent in state/register synchronization, when sampled.
+    pub state_copy_ns: u64,
+    /// Monotonic time spent inside compiled engine entries, when sampled.
+    pub engine_entry_ns: u64,
+    /// Generated static/dynamic calls through the imported funcref table.
+    pub indirect_table_dispatches: u64,
+    /// Generated EXEC-TLB/authority predicates.
+    pub authority_checks: u64,
+    /// Host entries whose direct chain was stopped by an imported memory/device boundary.
+    pub memory_split_exits: u64,
+    /// Imported accesses resolved outside the inline guest-RAM fast path.
+    pub device_boundaries: u64,
+    /// Monotonic time spent in those device-boundary imports, when sampled.
+    pub device_boundary_ns: u64,
 }
 
 impl JitCacheStats {
@@ -372,8 +631,38 @@ pub trait CompiledBlockExecutor {
     /// imported access may already have changed RAM, MMIO, or reservation state.
     fn execute(&mut self, phys_pc: u64, hart: &mut Hart, bus: &mut SystemBus) -> Option<JitExit>;
 
+    /// Execute a compiled block with an optional bounded in-module chain. The default preserves the
+    /// historical one-block call for native and test executors; the browser inline-memory executor
+    /// overrides it to pass the remaining outer work budget and report an exact retired span that
+    /// may include direct same-module successors.
+    fn execute_with_budget(
+        &mut self,
+        phys_pc: u64,
+        hart: &mut Hart,
+        bus: &mut SystemBus,
+        _remaining_work: u64,
+        _chain_budget: u64,
+        _allow_chaining: bool,
+    ) -> Option<JitExit> {
+        self.execute(phys_pc, hart, bus)
+    }
+
     /// Drop every compiled block (`fence.i` / whole-cache flush / reset / snapshot restore).
     fn invalidate_all(&mut self);
+
+    /// Publish a guarded virtual `jalr` target after the core has resolved it to a compiled
+    /// physical block. Native executors keep the historical dispatch path; the browser imported
+    /// memory executor may use the publication to call a matching funcref directly on a later hit.
+    fn link_dynamic_target(&mut self, _virtual_pc: u64, _phys_pc: u64) {}
+
+    /// Publish a statically-known edge together with the virtual-to-physical fetch observation that
+    /// authorized it. The default preserves the historical three-argument link API for executors
+    /// that do not need a generated EXEC-TLB guard; the browser executor overrides this to retain
+    /// the exact virtual target alongside its physical page.
+    fn link_edge_authorized(&mut self, from_phys: u64, edge: u8, to_virtual: u64, to_phys: u64) {
+        let _ = to_virtual;
+        self.link_edge(from_phys, edge, to_phys);
+    }
 
     /// Drop every compiled block whose physical page frame is `frame` (SMC / DMA-into-code).
     fn invalidate_page(&mut self, frame: u64);
@@ -387,6 +676,32 @@ pub trait CompiledBlockExecutor {
     /// Count of guest instructions retired inside JIT-executed blocks (numerator of the
     /// translated-instruction ratio).
     fn retired_via_jit(&self) -> u64;
+
+    /// Number of generated compiled-function entries made inside browser direct-chain calls.
+    /// Native and non-chaining executors use the default zero; the browser implementation uses
+    /// this to expose the actual logical-blocks-per-host-entry ledger.
+    fn direct_chain_entries(&self) -> u64 {
+        0
+    }
+
+    /// Number of in-module successor calls made by browser direct chaining. This is the function
+    /// entry count minus the outer host-side entries, exposed separately so a verifier can check
+    /// the boundary reduction without inferring it from unrelated dispatch statistics.
+    fn direct_chain_links(&self) -> u64 {
+        0
+    }
+
+    /// E4-T37: dynamic-return PIC telemetry. Native and non-browser executors do not publish a
+    /// browser funcref cache and therefore retain the zero default.
+    fn dynamic_link_stats(&self) -> DynamicLinkStats {
+        DynamicLinkStats::default()
+    }
+
+    /// E4-T39: snapshot of the compiled entry-path cost ledger. Native and simple executors retain
+    /// the zero default; the browser executor reports bounded counters and optional timer samples.
+    fn entry_cost_stats(&self) -> JitEntryCostStats {
+        JitEntryCostStats::default()
+    }
 
     /// E4-T31: record the exact retirement count the core committed for a compiled exit. The core,
     /// not the executor, owns this count because it can distinguish a clean block from a precise
@@ -440,6 +755,15 @@ pub trait CompiledBlockExecutor {
 
     /// Whether chaining is currently enabled.
     fn chaining(&self) -> bool {
+        false
+    }
+
+    /// E4-T39: enable/disable generated dynamic-return (`jalr`) chaining independently from static
+    /// region chaining. The default is a no-op for executors without a generated PIC.
+    fn set_dynamic_chaining(&mut self, _on: bool) {}
+
+    /// Whether generated dynamic-return chaining is enabled.
+    fn dynamic_chaining(&self) -> bool {
         false
     }
 
@@ -554,6 +878,8 @@ mod tests {
         assert_eq!(abi::HANDOFF_END, 0x238);
         assert_eq!(abi::HANDOFF_LEN, 568);
         const { assert!(abi::HANDOFF_END < abi::CHAIN_ENABLED) };
+        assert_eq!(abi::CHAIN_DEPTH, 0x260);
+        assert_eq!(abi::CHAIN_STORE_BASE, 0x268);
 
         let mut hart = Hart::default();
         hart.regs.pc = 0x0123_4567_89ab_cdef;

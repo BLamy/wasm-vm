@@ -1,0 +1,53 @@
+E5-T21a exact-head verification evidence
+Date: 2026-09-04 America/New_York
+Implementation commit: a41c4bd49fbdeef792f32c2296b9cb916479c863
+
+Acceptance command
+------------------
+$ cargo test -p wasm-vm-core --test virtio_snd_capture -- --test-threads=1
+running 6 tests
+test capture_rxq_completes_full_buffer_and_preserves_canaries ... ok
+test capture_transitions_are_stream_local_and_release_flushes_pending_rxq ... ok
+test capture_xrun_events_stay_within_the_bounded_event_budget ... ok
+test malformed_rxq_buffers_complete_bounded_and_next_valid_buffer_recovers ... ok
+test one_megabyte_period_is_bounded_by_the_posted_writable_buffer ... ok
+test short_capture_source_zero_fills_and_delivers_input_xrun_event ... ok
+test result: ok. 6 passed; 0 failed
+
+Adversarial repeat
+------------------
+$ for i in {1..25}; do cargo test -p wasm-vm-core --test virtio_snd_capture --quiet || exit 1; done
+25 consecutive invocations completed successfully; each reported 6 passed, 0 failed.
+
+Risk-tier gates
+---------------
+$ cargo fmt --all -- --check
+passed
+$ cargo clippy -p wasm-vm-core --all-targets -- -D warnings
+passed
+$ cargo test -p wasm-vm-core --lib --quiet
+test result: ok. 238 passed; 0 failed
+$ cargo test -p wasm-vm-core --test virtio_snd --test virtio_snd_machine --test virtio_snd_playback --test virtio_snd_queue --quiet
+test results: 7 + 4 + 7 + 5 passed; 0 failed
+$ cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release
+passed
+$ cargo check -p wasm-vm-core --no-default-features
+passed
+$ git diff HEAD^ HEAD --check
+passed
+
+Changed-file digests at the implementation head
+-------------------------------------------------
+243f801ce4f168d157e449d3e759fdf9b1b6e806e14490ea180b8d209c114deb  crates/core/src/dev/virtio/snd/mod.rs
+15753c19867f2f3d348d6e67a1e54e23bfcc47a8ce742d013669bca2ecf61160  crates/core/tests/virtio_snd_capture.rs
+
+What this run demonstrates
+--------------------------
+The deterministic native virtio-mmio fixture enables the optional input stream, queries both PCM
+directions, negotiates mono and stereo S16 capture, and drives the rxq through the posted
+stream-id/header, writable PCM payload, and status tail. It proves clock-held full-period
+completion, actual used length, source ramp bytes, both-sided canaries, bounded malformed and
+undersized buffers, 1 MiB period rejection without an oversized write, STOP/START/RELEASE stream
+locality, recovery on the next valid descriptor, eventq XRUN delivery, and the fixed 256-event
+budget. Existing playback and queue suites pass unchanged; host microphone, permissions, and
+browser media remain outside this slice.

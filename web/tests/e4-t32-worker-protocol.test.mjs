@@ -43,6 +43,13 @@ function fakeController(events, done) {
     whenDone: done,
     restoredFromBootSnapshot: () => true,
     sendInput(bytes) { events.push(["input", [...bytes]]); },
+    sendKeyboardEvent: (eventType, code, value) => events.push(["keyboard", eventType, code, value]),
+    syncKeyboard: () => events.push("keyboard-sync"),
+    sendTabletEvent: (eventType, code, value) => events.push(["tablet", eventType, code, value]),
+    syncTablet: () => events.push("tablet-sync"),
+    sendMouseEvent: (eventType, code, value) => events.push(["mouse", eventType, code, value]),
+    syncMouse: () => events.push("mouse-sync"),
+    keyboardLedState: () => ({ numLock: false, capsLock: false, scrollLock: false }),
     pause: () => events.push("pause"),
     resume: () => events.push("resume"),
     isPaused: () => false,
@@ -64,6 +71,10 @@ function fakeController(events, done) {
     persistStats: () => ({ pendingBytes: 0 }),
     readOnly: () => false,
     overlaySeedIdentity: () => "d".repeat(64),
+    audioOutputReady: () => true,
+    audioCaptureReady: () => true,
+    captureState: () => ({ enabled: true, state: "running", startCount: 1 }),
+    notifyCaptureEvent: (event) => { events.push(["capture", event]); return true; },
     resumeAfterQuota: () => true,
     continueReadOnly: () => true,
     hasUnpersisted: () => false,
@@ -71,7 +82,9 @@ function fakeController(events, done) {
     snapshotRead: () => Uint8Array.of(1, 2),
     snapshotDecision: () => "resume",
     snapshotAdvanceGen: () => 2,
+    snapshotGeneration: () => 2,
     snapshotExport: () => Uint8Array.of(3, 4),
+    snapshotRestore: () => "resume",
     snapshotImport: (bytes) => { events.push(["snapshot", [...bytes]]); return true; },
     storageEstimate: () => ({ usage: 1, quota: 2 }),
     jitStats: () => ({ compiledBlocks: 2, executedBlocks: 3, retiredViaJit: 4 }),
@@ -202,6 +215,13 @@ test("every explicit controller method crosses the runtime and no-provider Tails
   invoked.length = 0;
   try {
     const args = {
+      sendKeyboardEvent: [1, 30, 1],
+      syncKeyboard: [],
+      sendTabletEvent: [3, 0, 12],
+      syncTablet: [],
+      sendMouseEvent: [2, 0, -2],
+      syncMouse: [],
+      keyboardLedState: [],
       fileTransferReady: [0],
       setFileDownloadReady: [true],
       beginFileUpload: [0, "all-methods.bin", 3, "sha256"],
@@ -213,6 +233,7 @@ test("every explicit controller method crosses the runtime and no-provider Tails
       takeFileDownloadChunk: [9],
       dismissFileDownload: [9],
       snapshotImport: [Uint8Array.of(4, 5)],
+      notifyCaptureEvent: ["muted"],
       tailscaleCommand: ["status"],
     };
     const results = new Map();
@@ -220,6 +241,7 @@ test("every explicit controller method crosses the runtime and no-provider Tails
       results.set(method, await controller[method](...(args[method] ?? [])));
     }
     assert.deepEqual([...invoked], LINUX_CONTROLLER_METHODS);
+    assert.deepEqual(events.slice(0, 2), [["keyboard", 1, 30, 1], "keyboard-sync"]);
     assert.equal(results.get("tailscaleCommand"), false);
     assert.deepEqual([...results.get("takeFileDownloadChunk")], [9, 10]);
     assert.deepEqual([...results.get("snapshotRead")], [1, 2]);
@@ -229,6 +251,28 @@ test("every explicit controller method crosses the runtime and no-provider Tails
     resolveDone("stopped");
     await controller.whenDone;
   }
+});
+
+test("capture PCM_START lifecycle notification crosses the worker boundary", async () => {
+  const events = [];
+  const { page, worker } = endpointPair(events);
+  let resolveDone;
+  const done = new Promise((resolve) => { resolveDone = resolve; });
+  let resolveCapture;
+  const capture = new Promise((resolve) => { resolveCapture = resolve; });
+  createLinuxWorkerRuntime(worker, {
+    startBoot: async (opts) => {
+      opts.onCaptureStart({ enabled: true, state: "running", startCount: 3 });
+      return fakeController(events, done);
+    },
+  });
+  const client = createLinuxWorkerClient(page, {
+    onCaptureStart: (info) => resolveCapture(info),
+  });
+  const controller = await client.boot({});
+  assert.deepEqual(await capture, { enabled: true, state: "running", startCount: 3 });
+  resolveDone("stopped");
+  await controller.whenDone;
 });
 
 test("RPC ids correlate out-of-order results and arbitrary methods are not exposed", async () => {

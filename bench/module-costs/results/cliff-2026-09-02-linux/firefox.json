@@ -1,0 +1,305 @@
+{
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0",
+  "hardwareConcurrency": 8,
+  "hasPerfMemory": false,
+  "reps": 15,
+  "cliffTargets": [
+    1000,
+    5000,
+    10000
+  ],
+  "firstExecution": {
+    "reps": 31,
+    "targetMs": 5,
+    "samples": [
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      }
+    ],
+    "maxMs": 0
+  },
+  "compile": [
+    {
+      "funcs": 1,
+      "bytes": 73,
+      "ms": 0
+    },
+    {
+      "funcs": 2,
+      "bytes": 110,
+      "ms": 0
+    },
+    {
+      "funcs": 4,
+      "bytes": 184,
+      "ms": 0
+    },
+    {
+      "funcs": 8,
+      "bytes": 333,
+      "ms": 0
+    },
+    {
+      "funcs": 16,
+      "bytes": 635,
+      "ms": 0
+    },
+    {
+      "funcs": 32,
+      "bytes": 1244,
+      "ms": 0
+    },
+    {
+      "funcs": 64,
+      "bytes": 2460,
+      "ms": 0
+    },
+    {
+      "funcs": 128,
+      "bytes": 4924,
+      "ms": 0
+    },
+    {
+      "funcs": 256,
+      "bytes": 10044,
+      "ms": 1
+    }
+  ],
+  "instantiate": [
+    {
+      "funcs": 1,
+      "bytes": 73,
+      "ms": 0
+    },
+    {
+      "funcs": 2,
+      "bytes": 110,
+      "ms": 0
+    },
+    {
+      "funcs": 4,
+      "bytes": 184,
+      "ms": 0
+    },
+    {
+      "funcs": 8,
+      "bytes": 333,
+      "ms": 0
+    },
+    {
+      "funcs": 16,
+      "bytes": 635,
+      "ms": 0
+    },
+    {
+      "funcs": 32,
+      "bytes": 1244,
+      "ms": 0
+    },
+    {
+      "funcs": 64,
+      "bytes": 2460,
+      "ms": 0
+    },
+    {
+      "funcs": 128,
+      "bytes": 4924,
+      "ms": 0
+    },
+    {
+      "funcs": 256,
+      "bytes": 10044,
+      "ms": 0
+    }
+  ],
+  "cliff": [
+    {
+      "target": 1000,
+      "live": 999,
+      "failedAt": 999,
+      "error": {
+        "name": "string",
+        "message": "out of memory"
+      },
+      "ms": 249,
+      "usedJSHeapSize": null
+    },
+    {
+      "target": 5000,
+      "live": 999,
+      "failedAt": 999,
+      "error": {
+        "name": "string",
+        "message": "out of memory"
+      },
+      "ms": 236,
+      "usedJSHeapSize": null
+    },
+    {
+      "target": 10000,
+      "live": 999,
+      "failedAt": 999,
+      "error": {
+        "name": "string",
+        "message": "out of memory"
+      },
+      "ms": 232,
+      "usedJSHeapSize": null
+    }
+  ],
+  "generatedAt": "2026-09-02T15:09:06.653Z",
+  "project": "firefox",
+  "playwrightBrowserVersion": "153.0"
+}

@@ -12,9 +12,11 @@
 
 const TABS = ["roadmap", "ide", "docs"];
 
-// Under Playwright (navigator.webdriver === true) reveal every panel so the existing element-level
-// specs — which click #suite-run, etc. by ID — stay actionable no matter which tab is "active".
-if (navigator.webdriver) {
+// Under Playwright or the explicit test-hooks URL, reveal every panel so the existing
+// element-level specs — which click #suite-run, etc. by ID — stay actionable no matter which tab
+// is "active". The in-app browser does not always expose navigator.webdriver, so testHooks is the
+// deterministic opt-in for that environment.
+if (navigator.webdriver || new URLSearchParams(location.search).has("testHooks")) {
   document.documentElement.classList.add("e2e-showall");
 }
 

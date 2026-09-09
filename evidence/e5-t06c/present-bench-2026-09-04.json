@@ -1,0 +1,1240 @@
+{
+  "task": "E5-T06c",
+  "schema": 1,
+  "command": "node tools/verify/e5-t06c-present-bench.mjs",
+  "generatedAt": "2026-09-04T10:44:21.046Z",
+  "gitHead": "5e1cb046b1076cdb5e7df5c6311922ecc540c1ce",
+  "base": "http://127.0.0.1:52427",
+  "browser": {
+    "name": "Chromium",
+    "version": "131.0.6778.33",
+    "executablePath": "Playwright Chromium"
+  },
+  "baseline": {
+    "benchmark": {
+      "schema": 1,
+      "kind": "present-path-benchmark-v1",
+      "generatedAt": "2026-09-04T10:44:28.742Z",
+      "profile": "baseline",
+      "browser": {
+        "name": "Chromium",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/131.0.6778.33 Safari/537.36",
+        "platform": "MacIntel",
+        "devicePixelRatio": 1,
+        "visibilityState": "visible",
+        "hardwareConcurrency": 16
+      },
+      "policy": {
+        "warmupFrames": 30,
+        "sampleFrames": 300,
+        "timer": "performance.now around present and WebGL finish",
+        "damageRect": {
+          "x": 1,
+          "y": 1,
+          "width": 64,
+          "height": 64
+        },
+        "copiesPerFrame": 2,
+        "source": "one deterministic full resource-sized BGRA Uint32Array per cell"
+      },
+      "cells": [
+        {
+          "id": "1280x800-canvas2d-full-frame",
+          "width": 1280,
+          "height": 800,
+          "browser": "Chromium",
+          "devicePixelRatio": 1,
+          "backend": "canvas2d",
+          "workload": "full-frame",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "warmupFrames": 30,
+          "sampleCount": 300,
+          "copiesPerFrame": 2,
+          "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+          "timer": "performance.now around present and WebGL finish",
+          "status": "ok",
+          "minMs": 1.635,
+          "maxMs": 4.305,
+          "meanMs": 1.898,
+          "p50Ms": 1.74,
+          "p95Ms": 3.025,
+          "stdevMs": 0.442,
+          "totalMs": 569.52
+        },
+        {
+          "id": "1280x800-canvas2d-damage-64x64",
+          "width": 1280,
+          "height": 800,
+          "browser": "Chromium",
+          "devicePixelRatio": 1,
+          "backend": "canvas2d",
+          "workload": "damage-64x64",
+          "rect": {
+            "x": 1,
+            "y": 1,
+            "width": 64,
+            "height": 64
+          },
+          "warmupFrames": 30,
+          "sampleCount": 300,
+          "copiesPerFrame": 2,
+          "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+          "timer": "performance.now around present and WebGL finish",
+          "status": "ok",
+          "minMs": 0.005,
+          "maxMs": 0.025,
+          "meanMs": 0.01,
+          "p50Ms": 0.01,
+          "p95Ms": 0.015,
+          "stdevMs": 0.003,
+          "totalMs": 3.085
+        },
+        {
+          "id": "1280x800-webgl2-full-frame",
+          "width": 1280,
+          "height": 800,
+          "browser": "Chromium",
+          "devicePixelRatio": 1,
+          "backend": "webgl2",
+          "workload": "full-frame",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "warmupFrames": 30,
+          "sampleCount": 300,
+          "copiesPerFrame": 2,
+          "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+          "timer": "performance.now around present and WebGL finish",
+          "status": "ok",
+          "minMs": 1.055,
+          "maxMs": 1.855,
+          "meanMs": 1.296,
+          "p50Ms": 1.275,
+          "p95Ms": 1.545,
+          "stdevMs": 0.126,
+          "totalMs": 388.91
+        },
+        {
+          "id": "1280x800-webgl2-damage-64x64",
+          "width": 1280,
+          "height": 800,
+          "browser": "Chromium",
+          "devicePixelRatio": 1,
+          "backend": "webgl2",
+          "workload": "damage-64x64",
+          "rect": {
+            "x": 1,
+            "y": 1,
+            "width": 64,
+            "height": 64
+          },
+          "warmupFrames": 30,
+          "sampleCount": 300,
+          "copiesPerFrame": 2,
+          "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+          "timer": "performance.now around present and WebGL finish",
+          "status": "ok",
+          "minMs": 0.05,
+          "maxMs": 0.845,
+          "meanMs": 0.062,
+          "p50Ms": 0.06,
+          "p95Ms": 0.07,
+          "stdevMs": 0.046,
+          "totalMs": 18.6
+        },
+        {
+          "id": "2560x1600-canvas2d-full-frame",
+          "width": 2560,
+          "height": 1600,
+          "browser": "Chromium",
+          "devicePixelRatio": 1,
+          "backend": "canvas2d",
+          "workload": "full-frame",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 2560,
+            "height": 1600
+          },
+          "warmupFrames": 30,
+          "sampleCount": 300,
+          "copiesPerFrame": 2,
+          "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+          "timer": "performance.now around present and WebGL finish",
+          "status": "ok",
+          "minMs": 6.52,
+          "maxMs": 21.8,
+          "meanMs": 7.549,
+          "p50Ms": 7.205,
+          "p95Ms": 8.94,
+          "stdevMs": 1.359,
+          "totalMs": 2264.795
+        },
+        {
+          "id": "2560x1600-canvas2d-damage-64x64",
+          "width": 2560,
+          "height": 1600,
+          "browser": "Chromium",
+          "devicePixelRatio": 1,
+          "backend": "canvas2d",
+          "workload": "damage-64x64",
+          "rect": {
+            "x": 1,
+            "y": 1,
+            "width": 64,
+            "height": 64
+          },
+          "warmupFrames": 30,
+          "sampleCount": 300,
+          "copiesPerFrame": 2,
+          "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+          "timer": "performance.now around present and WebGL finish",
+          "status": "ok",
+          "minMs": 0,
+          "maxMs": 0.025,
+          "meanMs": 0.009,
+          "p50Ms": 0.01,
+          "p95Ms": 0.015,
+          "stdevMs": 0.003,
+          "totalMs": 2.61
+        },
+        {
+          "id": "2560x1600-webgl2-full-frame",
+          "width": 2560,
+          "height": 1600,
+          "browser": "Chromium",
+          "devicePixelRatio": 1,
+          "backend": "webgl2",
+          "workload": "full-frame",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 2560,
+            "height": 1600
+          },
+          "warmupFrames": 30,
+          "sampleCount": 300,
+          "copiesPerFrame": 2,
+          "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+          "timer": "performance.now around present and WebGL finish",
+          "status": "ok",
+          "minMs": 3.845,
+          "maxMs": 6.23,
+          "meanMs": 5.054,
+          "p50Ms": 5.075,
+          "p95Ms": 5.685,
+          "stdevMs": 0.47,
+          "totalMs": 1516.24
+        },
+        {
+          "id": "2560x1600-webgl2-damage-64x64",
+          "width": 2560,
+          "height": 1600,
+          "browser": "Chromium",
+          "devicePixelRatio": 1,
+          "backend": "webgl2",
+          "workload": "damage-64x64",
+          "rect": {
+            "x": 1,
+            "y": 1,
+            "width": 64,
+            "height": 64
+          },
+          "warmupFrames": 30,
+          "sampleCount": 300,
+          "copiesPerFrame": 2,
+          "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+          "timer": "performance.now around present and WebGL finish",
+          "status": "ok",
+          "minMs": 0.205,
+          "maxMs": 0.29,
+          "meanMs": 0.224,
+          "p50Ms": 0.22,
+          "p95Ms": 0.25,
+          "stdevMs": 0.013,
+          "totalMs": 67.14
+        }
+      ],
+      "decision": {
+        "metric": "p50Ms",
+        "tieBreaker": "meanMs",
+        "resolution": {
+          "width": 1280,
+          "height": 800
+        },
+        "workload": "damage-64x64",
+        "defaultBackend": "canvas2d",
+        "fallbackOrder": [
+          "canvas2d",
+          "webgl2"
+        ],
+        "fasterMs": 0.01,
+        "slowerMs": 0.06,
+        "marginMs": 0.05,
+        "marginPercent": 83.333,
+        "variance": {
+          "defaultStdevMs": 0.003,
+          "fallbackStdevMs": 0.046
+        },
+        "fallbackConditions": [
+          "Use the fallback when the default context is unavailable or creation fails.",
+          "A context-loss or upload failure must dispose the failed backend before fallback."
+        ]
+      },
+      "elapsedMs": 7278.08
+    },
+    "observation": {
+      "requestedDevicePixelRatio": 1,
+      "observedDevicePixelRatio": 1,
+      "backgroundRequested": false,
+      "backgroundedObserved": false,
+      "visibilityState": "visible",
+      "cpuThrottleRate": 1
+    },
+    "errors": {
+      "console": [],
+      "page": [],
+      "requests": []
+    },
+    "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t06c/present-bench-baseline.png"
+  },
+  "adversarial": {
+    "dpr2": {
+      "benchmark": {
+        "schema": 1,
+        "kind": "present-path-benchmark-v1",
+        "generatedAt": "2026-09-04T10:44:37.909Z",
+        "profile": "dpr2",
+        "browser": {
+          "name": "Chromium",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/131.0.6778.33 Safari/537.36",
+          "platform": "MacIntel",
+          "devicePixelRatio": 2,
+          "visibilityState": "visible",
+          "hardwareConcurrency": 16
+        },
+        "policy": {
+          "warmupFrames": 30,
+          "sampleFrames": 300,
+          "timer": "performance.now around present and WebGL finish",
+          "damageRect": {
+            "x": 1,
+            "y": 1,
+            "width": 64,
+            "height": 64
+          },
+          "copiesPerFrame": 2,
+          "source": "one deterministic full resource-sized BGRA Uint32Array per cell"
+        },
+        "cells": [
+          {
+            "id": "1280x800-canvas2d-full-frame",
+            "width": 1280,
+            "height": 800,
+            "browser": "Chromium",
+            "devicePixelRatio": 2,
+            "backend": "canvas2d",
+            "workload": "full-frame",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 1.58,
+            "maxMs": 3.945,
+            "meanMs": 1.827,
+            "p50Ms": 1.68,
+            "p95Ms": 3.025,
+            "stdevMs": 0.423,
+            "totalMs": 548.07
+          },
+          {
+            "id": "1280x800-canvas2d-damage-64x64",
+            "width": 1280,
+            "height": 800,
+            "browser": "Chromium",
+            "devicePixelRatio": 2,
+            "backend": "canvas2d",
+            "workload": "damage-64x64",
+            "rect": {
+              "x": 1,
+              "y": 1,
+              "width": 64,
+              "height": 64
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 0.005,
+            "maxMs": 0.05,
+            "meanMs": 0.01,
+            "p50Ms": 0.01,
+            "p95Ms": 0.015,
+            "stdevMs": 0.005,
+            "totalMs": 3.15
+          },
+          {
+            "id": "1280x800-webgl2-full-frame",
+            "width": 1280,
+            "height": 800,
+            "browser": "Chromium",
+            "devicePixelRatio": 2,
+            "backend": "webgl2",
+            "workload": "full-frame",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 0.82,
+            "maxMs": 1.7,
+            "meanMs": 1.066,
+            "p50Ms": 1.02,
+            "p95Ms": 1.34,
+            "stdevMs": 0.182,
+            "totalMs": 319.895
+          },
+          {
+            "id": "1280x800-webgl2-damage-64x64",
+            "width": 1280,
+            "height": 800,
+            "browser": "Chromium",
+            "devicePixelRatio": 2,
+            "backend": "webgl2",
+            "workload": "damage-64x64",
+            "rect": {
+              "x": 1,
+              "y": 1,
+              "width": 64,
+              "height": 64
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 0.05,
+            "maxMs": 0.095,
+            "meanMs": 0.062,
+            "p50Ms": 0.06,
+            "p95Ms": 0.065,
+            "stdevMs": 0.005,
+            "totalMs": 18.475
+          },
+          {
+            "id": "2560x1600-canvas2d-full-frame",
+            "width": 2560,
+            "height": 1600,
+            "browser": "Chromium",
+            "devicePixelRatio": 2,
+            "backend": "canvas2d",
+            "workload": "full-frame",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 2560,
+              "height": 1600
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 6.66,
+            "maxMs": 9.8,
+            "meanMs": 7.412,
+            "p50Ms": 7.255,
+            "p95Ms": 8.82,
+            "stdevMs": 0.614,
+            "totalMs": 2223.65
+          },
+          {
+            "id": "2560x1600-canvas2d-damage-64x64",
+            "width": 2560,
+            "height": 1600,
+            "browser": "Chromium",
+            "devicePixelRatio": 2,
+            "backend": "canvas2d",
+            "workload": "damage-64x64",
+            "rect": {
+              "x": 1,
+              "y": 1,
+              "width": 64,
+              "height": 64
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 0,
+            "maxMs": 0.025,
+            "meanMs": 0.01,
+            "p50Ms": 0.01,
+            "p95Ms": 0.015,
+            "stdevMs": 0.004,
+            "totalMs": 2.85
+          },
+          {
+            "id": "2560x1600-webgl2-full-frame",
+            "width": 2560,
+            "height": 1600,
+            "browser": "Chromium",
+            "devicePixelRatio": 2,
+            "backend": "webgl2",
+            "workload": "full-frame",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 2560,
+              "height": 1600
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 2.435,
+            "maxMs": 5.395,
+            "meanMs": 4.106,
+            "p50Ms": 4.145,
+            "p95Ms": 4.595,
+            "stdevMs": 0.331,
+            "totalMs": 1231.74
+          },
+          {
+            "id": "2560x1600-webgl2-damage-64x64",
+            "width": 2560,
+            "height": 1600,
+            "browser": "Chromium",
+            "devicePixelRatio": 2,
+            "backend": "webgl2",
+            "workload": "damage-64x64",
+            "rect": {
+              "x": 1,
+              "y": 1,
+              "width": 64,
+              "height": 64
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 0.205,
+            "maxMs": 0.68,
+            "meanMs": 0.228,
+            "p50Ms": 0.225,
+            "p95Ms": 0.26,
+            "stdevMs": 0.031,
+            "totalMs": 68.54
+          }
+        ],
+        "decision": {
+          "metric": "p50Ms",
+          "tieBreaker": "meanMs",
+          "resolution": {
+            "width": 1280,
+            "height": 800
+          },
+          "workload": "damage-64x64",
+          "defaultBackend": "canvas2d",
+          "fallbackOrder": [
+            "canvas2d",
+            "webgl2"
+          ],
+          "fasterMs": 0.01,
+          "slowerMs": 0.06,
+          "marginMs": 0.05,
+          "marginPercent": 83.333,
+          "variance": {
+            "defaultStdevMs": 0.005,
+            "fallbackStdevMs": 0.005
+          },
+          "fallbackConditions": [
+            "Use the fallback when the default context is unavailable or creation fails.",
+            "A context-loss or upload failure must dispose the failed backend before fallback."
+          ]
+        },
+        "elapsedMs": 7825.475
+      },
+      "observation": {
+        "requestedDevicePixelRatio": 2,
+        "observedDevicePixelRatio": 2,
+        "backgroundRequested": false,
+        "backgroundedObserved": false,
+        "visibilityState": "visible",
+        "cpuThrottleRate": 1
+      },
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      },
+      "screenshot": null
+    },
+    "backgrounded": {
+      "benchmark": {
+        "schema": 1,
+        "kind": "present-path-benchmark-v1",
+        "generatedAt": "2026-09-04T10:44:45.920Z",
+        "profile": "backgrounded",
+        "browser": {
+          "name": "Chromium",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/131.0.6778.33 Safari/537.36",
+          "platform": "MacIntel",
+          "devicePixelRatio": 1,
+          "visibilityState": "visible",
+          "hardwareConcurrency": 16
+        },
+        "policy": {
+          "warmupFrames": 30,
+          "sampleFrames": 300,
+          "timer": "performance.now around present and WebGL finish",
+          "damageRect": {
+            "x": 1,
+            "y": 1,
+            "width": 64,
+            "height": 64
+          },
+          "copiesPerFrame": 2,
+          "source": "one deterministic full resource-sized BGRA Uint32Array per cell"
+        },
+        "cells": [
+          {
+            "id": "1280x800-canvas2d-full-frame",
+            "width": 1280,
+            "height": 800,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "canvas2d",
+            "workload": "full-frame",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 1.585,
+            "maxMs": 5.43,
+            "meanMs": 1.845,
+            "p50Ms": 1.68,
+            "p95Ms": 2.905,
+            "stdevMs": 0.474,
+            "totalMs": 553.575
+          },
+          {
+            "id": "1280x800-canvas2d-damage-64x64",
+            "width": 1280,
+            "height": 800,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "canvas2d",
+            "workload": "damage-64x64",
+            "rect": {
+              "x": 1,
+              "y": 1,
+              "width": 64,
+              "height": 64
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 0.005,
+            "maxMs": 0.015,
+            "meanMs": 0.01,
+            "p50Ms": 0.01,
+            "p95Ms": 0.015,
+            "stdevMs": 0.003,
+            "totalMs": 2.975
+          },
+          {
+            "id": "1280x800-webgl2-full-frame",
+            "width": 1280,
+            "height": 800,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "webgl2",
+            "workload": "full-frame",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 0.14,
+            "maxMs": 2.22,
+            "meanMs": 1.062,
+            "p50Ms": 1.005,
+            "p95Ms": 1.33,
+            "stdevMs": 0.198,
+            "totalMs": 318.735
+          },
+          {
+            "id": "1280x800-webgl2-damage-64x64",
+            "width": 1280,
+            "height": 800,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "webgl2",
+            "workload": "damage-64x64",
+            "rect": {
+              "x": 1,
+              "y": 1,
+              "width": 64,
+              "height": 64
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 0.05,
+            "maxMs": 0.11,
+            "meanMs": 0.059,
+            "p50Ms": 0.06,
+            "p95Ms": 0.065,
+            "stdevMs": 0.006,
+            "totalMs": 17.695
+          },
+          {
+            "id": "2560x1600-canvas2d-full-frame",
+            "width": 2560,
+            "height": 1600,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "canvas2d",
+            "workload": "full-frame",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 2560,
+              "height": 1600
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 6.53,
+            "maxMs": 9.5,
+            "meanMs": 7.372,
+            "p50Ms": 7.24,
+            "p95Ms": 8.43,
+            "stdevMs": 0.571,
+            "totalMs": 2211.6
+          },
+          {
+            "id": "2560x1600-canvas2d-damage-64x64",
+            "width": 2560,
+            "height": 1600,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "canvas2d",
+            "workload": "damage-64x64",
+            "rect": {
+              "x": 1,
+              "y": 1,
+              "width": 64,
+              "height": 64
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 0,
+            "maxMs": 0.845,
+            "meanMs": 0.013,
+            "p50Ms": 0.01,
+            "p95Ms": 0.015,
+            "stdevMs": 0.056,
+            "totalMs": 4.005
+          },
+          {
+            "id": "2560x1600-webgl2-full-frame",
+            "width": 2560,
+            "height": 1600,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "webgl2",
+            "workload": "full-frame",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 2560,
+              "height": 1600
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 2.905,
+            "maxMs": 5.455,
+            "meanMs": 4.157,
+            "p50Ms": 4.165,
+            "p95Ms": 4.615,
+            "stdevMs": 0.285,
+            "totalMs": 1247.22
+          },
+          {
+            "id": "2560x1600-webgl2-damage-64x64",
+            "width": 2560,
+            "height": 1600,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "webgl2",
+            "workload": "damage-64x64",
+            "rect": {
+              "x": 1,
+              "y": 1,
+              "width": 64,
+              "height": 64
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 0.205,
+            "maxMs": 0.31,
+            "meanMs": 0.221,
+            "p50Ms": 0.215,
+            "p95Ms": 0.255,
+            "stdevMs": 0.015,
+            "totalMs": 66.285
+          }
+        ],
+        "decision": {
+          "metric": "p50Ms",
+          "tieBreaker": "meanMs",
+          "resolution": {
+            "width": 1280,
+            "height": 800
+          },
+          "workload": "damage-64x64",
+          "defaultBackend": "canvas2d",
+          "fallbackOrder": [
+            "canvas2d",
+            "webgl2"
+          ],
+          "fasterMs": 0.01,
+          "slowerMs": 0.06,
+          "marginMs": 0.05,
+          "marginPercent": 83.333,
+          "variance": {
+            "defaultStdevMs": 0.003,
+            "fallbackStdevMs": 0.006
+          },
+          "fallbackConditions": [
+            "Use the fallback when the default context is unavailable or creation fails.",
+            "A context-loss or upload failure must dispose the failed backend before fallback."
+          ]
+        },
+        "elapsedMs": 7744.27
+      },
+      "observation": {
+        "requestedDevicePixelRatio": 1,
+        "observedDevicePixelRatio": 1,
+        "backgroundRequested": true,
+        "backgroundedObserved": false,
+        "visibilityState": "visible",
+        "cpuThrottleRate": 1
+      },
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      },
+      "screenshot": null
+    },
+    "cpu4x": {
+      "benchmark": {
+        "schema": 1,
+        "kind": "present-path-benchmark-v1",
+        "generatedAt": "2026-09-04T10:45:02.257Z",
+        "profile": "cpu4x",
+        "browser": {
+          "name": "Chromium",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/131.0.6778.33 Safari/537.36",
+          "platform": "MacIntel",
+          "devicePixelRatio": 1,
+          "visibilityState": "visible",
+          "hardwareConcurrency": 16
+        },
+        "policy": {
+          "warmupFrames": 30,
+          "sampleFrames": 300,
+          "timer": "performance.now around present and WebGL finish",
+          "damageRect": {
+            "x": 1,
+            "y": 1,
+            "width": 64,
+            "height": 64
+          },
+          "copiesPerFrame": 2,
+          "source": "one deterministic full resource-sized BGRA Uint32Array per cell"
+        },
+        "cells": [
+          {
+            "id": "1280x800-canvas2d-full-frame",
+            "width": 1280,
+            "height": 800,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "canvas2d",
+            "workload": "full-frame",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 6.02,
+            "maxMs": 14.305,
+            "meanMs": 7.27,
+            "p50Ms": 6.975,
+            "p95Ms": 10.005,
+            "stdevMs": 1.216,
+            "totalMs": 2181.105
+          },
+          {
+            "id": "1280x800-canvas2d-damage-64x64",
+            "width": 1280,
+            "height": 800,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "canvas2d",
+            "workload": "damage-64x64",
+            "rect": {
+              "x": 1,
+              "y": 1,
+              "width": 64,
+              "height": 64
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 0,
+            "maxMs": 4.205,
+            "meanMs": 0.053,
+            "p50Ms": 0.01,
+            "p95Ms": 0.265,
+            "stdevMs": 0.266,
+            "totalMs": 15.985
+          },
+          {
+            "id": "1280x800-webgl2-full-frame",
+            "width": 1280,
+            "height": 800,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "webgl2",
+            "workload": "full-frame",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 0.11,
+            "maxMs": 2.605,
+            "meanMs": 0.899,
+            "p50Ms": 0.915,
+            "p95Ms": 1.555,
+            "stdevMs": 0.421,
+            "totalMs": 269.825
+          },
+          {
+            "id": "1280x800-webgl2-damage-64x64",
+            "width": 1280,
+            "height": 800,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "webgl2",
+            "workload": "damage-64x64",
+            "rect": {
+              "x": 1,
+              "y": 1,
+              "width": 64,
+              "height": 64
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 0.055,
+            "maxMs": 3.255,
+            "meanMs": 0.272,
+            "p50Ms": 0.065,
+            "p95Ms": 0.835,
+            "stdevMs": 0.325,
+            "totalMs": 81.515
+          },
+          {
+            "id": "2560x1600-canvas2d-full-frame",
+            "width": 2560,
+            "height": 1600,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "canvas2d",
+            "workload": "full-frame",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 2560,
+              "height": 1600
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 26.72,
+            "maxMs": 42.835,
+            "meanMs": 29.907,
+            "p50Ms": 29.065,
+            "p95Ms": 35.1,
+            "stdevMs": 2.505,
+            "totalMs": 8972.015
+          },
+          {
+            "id": "2560x1600-canvas2d-damage-64x64",
+            "width": 2560,
+            "height": 1600,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "canvas2d",
+            "workload": "damage-64x64",
+            "rect": {
+              "x": 1,
+              "y": 1,
+              "width": 64,
+              "height": 64
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private RGBA staging -> ImageData; putImageData transfers the damage to Canvas2D",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 0,
+            "maxMs": 2.425,
+            "meanMs": 0.048,
+            "p50Ms": 0.01,
+            "p95Ms": 0.16,
+            "stdevMs": 0.197,
+            "totalMs": 14.44
+          },
+          {
+            "id": "2560x1600-webgl2-full-frame",
+            "width": 2560,
+            "height": 1600,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "webgl2",
+            "workload": "full-frame",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 2560,
+              "height": 1600
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 2.48,
+            "maxMs": 5.31,
+            "meanMs": 3.765,
+            "p50Ms": 3.76,
+            "p95Ms": 4.885,
+            "stdevMs": 0.583,
+            "totalMs": 1129.515
+          },
+          {
+            "id": "2560x1600-webgl2-damage-64x64",
+            "width": 2560,
+            "height": 1600,
+            "browser": "Chromium",
+            "devicePixelRatio": 1,
+            "backend": "webgl2",
+            "workload": "damage-64x64",
+            "rect": {
+              "x": 1,
+              "y": 1,
+              "width": 64,
+              "height": 64
+            },
+            "warmupFrames": 30,
+            "sampleCount": 300,
+            "copiesPerFrame": 2,
+            "copyModel": "source BGRA Uint32Array -> private Uint8Array staging -> texSubImage2D; fragment shader performs .bgra swizzle",
+            "timer": "performance.now around present and WebGL finish",
+            "status": "ok",
+            "minMs": 0.245,
+            "maxMs": 1.775,
+            "meanMs": 1.068,
+            "p50Ms": 1.05,
+            "p95Ms": 1.54,
+            "stdevMs": 0.29,
+            "totalMs": 320.4
+          }
+        ],
+        "decision": {
+          "metric": "p50Ms",
+          "tieBreaker": "meanMs",
+          "resolution": {
+            "width": 1280,
+            "height": 800
+          },
+          "workload": "damage-64x64",
+          "defaultBackend": "canvas2d",
+          "fallbackOrder": [
+            "canvas2d",
+            "webgl2"
+          ],
+          "fasterMs": 0.01,
+          "slowerMs": 0.065,
+          "marginMs": 0.055,
+          "marginPercent": 84.615,
+          "variance": {
+            "defaultStdevMs": 0.266,
+            "fallbackStdevMs": 0.325
+          },
+          "fallbackConditions": [
+            "Use the fallback when the default context is unavailable or creation fails.",
+            "A context-loss or upload failure must dispose the failed backend before fallback."
+          ]
+        },
+        "elapsedMs": 16827.85
+      },
+      "observation": {
+        "requestedDevicePixelRatio": 1,
+        "observedDevicePixelRatio": 1,
+        "backgroundRequested": false,
+        "backgroundedObserved": false,
+        "visibilityState": "visible",
+        "cpuThrottleRate": 4
+      },
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      },
+      "screenshot": null
+    }
+  },
+  "ranking": {
+    "baseline": {
+      "defaultBackend": "canvas2d",
+      "fallbackBackend": "webgl2",
+      "marginMs": 0.05,
+      "marginPercent": 83.333
+    },
+    "adversarial": {
+      "dpr2": {
+        "defaultBackend": "canvas2d",
+        "fallbackBackend": "webgl2",
+        "marginMs": 0.05,
+        "marginPercent": 83.333,
+        "rankingChanged": false
+      },
+      "backgrounded": {
+        "defaultBackend": "canvas2d",
+        "fallbackBackend": "webgl2",
+        "marginMs": 0.05,
+        "marginPercent": 83.333,
+        "rankingChanged": false
+      },
+      "cpu4x": {
+        "defaultBackend": "canvas2d",
+        "fallbackBackend": "webgl2",
+        "marginMs": 0.055,
+        "marginPercent": 84.615,
+        "rankingChanged": false
+      }
+    }
+  },
+  "errors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "distParity": {
+    "equal": true,
+    "source": "web/bench/present-bench.html",
+    "dist": "web/dist/bench/present-bench.html"
+  }
+}

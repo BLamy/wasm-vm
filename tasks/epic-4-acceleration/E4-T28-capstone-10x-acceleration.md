@@ -3,11 +3,28 @@ id: E4-T28
 epic: 4
 title: "Capstone: interactive/fast Node.js (Bun stretch), 10x CoreMark, sub-5s boot, zero regressions"
 priority: 429
-status: pending
+status: cancelled
+decomposed_into: [E4-T28a, E4-T28b, E4-T28c, E4-T28d, E4-T28e, E4-T28f]
 depends_on: [E4-T24, E4-T26, E4-T27, E4-T29, E4-T30, E4-T31, E4-T33, E4-T32]
 estimate: L
-capstone: true
+risk: high
+capstone: false
 ---
+
+> **DECOMPOSED 2026-09-03.** This L-sized capstone planning container is cancelled and replaced by
+> six ordered S tasks. The children own the reproducible harness, each measurable performance
+> boundary, and the final same-head cold-start sign-off; E4-T28f is the executable capstone finale.
+>
+> - **E4-T28a** — freeze the capstone harness, baseline provenance, controls, and deploy-artifact
+>   identity.
+> - **E4-T28b** — prove interactive Node.js/V8 JIT behavior, HTTP throughput, and the non-gating Bun
+>   attempt or documented gap.
+> - **E4-T28c** — measure browser CoreMark against the ledgered Level-3 interpreter denominator and
+>   cross-check guest time against host time.
+> - **E4-T28d** — measure cold OpenSBI-to-login boot time from three fresh browser contexts.
+> - **E4-T28e** — measure the in-guest gcc compile and independent interactive-echo latency.
+> - **E4-T28f** — rerun the compliance/lockstep gates and publish the one-build, one-commit Level-4
+>   capstone result and demo record.
 
 ## Goal
 The Level 4 threshold demonstrated end-to-end from a cold start. The headline named target
@@ -97,4 +114,11 @@ the guest's first data byte, so the server's idle timer starts with data already
 but the durable fix is speed. See the E3-T19 task and `web/tests/e3-t19-guest-https.spec.js`.
 
 ## Verification log
-(empty)
+
+### 2026-09-03 — coordinator — decomposed
+
+The original L-sized task is a planning container, so it is cancelled before implementation as
+required by the task policy. The six S children separate harness integrity, Node interactivity,
+CoreMark uplift, cold boot timing, gcc/keypress latency, and final compliance/sign-off. Each child
+has one primary deterministic acceptance command and the final child depends on every preceding
+measurement. No child claims the parent capstone until its own exact-head evidence is recorded.

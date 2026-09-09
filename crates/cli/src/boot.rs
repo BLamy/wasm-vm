@@ -26,6 +26,8 @@ use wasm_vm_core::{Machine, RunOutcome, platform};
 
 use crate::file_backend;
 
+mod agent_proof;
+
 /// E4-T15: an opt-in retirement sink that counts the DYNAMIC share of F/D floating-point
 /// instructions in a real guest run, to ground the JIT FP-translation policy decision in a
 /// measured number rather than an assertion. Enabled only when `WASM_VM_FP_HISTOGRAM` is set in
@@ -97,8 +99,9 @@ pub struct BootArgs {
     #[arg(long, default_value = "console=ttyS0 earlycon=sbi")]
     pub append: String,
     /// Attach a virtio-blk drive: `file=IMG` or `file=IMG,ro` (mmap-backed). The first `--drive`
-    /// claims slot 0 (`/dev/vda`); repeat the flag to attach further drives into the next empty
-    /// slots (`/dev/vdb`, …) — the E4-T03 bench harness attaches its read-only overlay this way.
+    /// claims slot 0 (`/dev/vda`); repeat the flag to attach further drives after the reserved
+    /// net/rng/keyboard slots (`/dev/vdb`, …) — the E4-T03 bench harness attaches its read-only
+    /// overlay this way.
     #[arg(long)]
     pub drive: Vec<String>,
     /// Guest RAM size in MiB (DTB places itself near the top of DRAM).
@@ -113,6 +116,14 @@ pub struct BootArgs {
     /// Do not read host stdin (headless boot: prove the dmesg parade, don't drive the shell).
     #[arg(long)]
     pub no_input: bool,
+    /// E5-T21b: advertise the deterministic virtio-snd input stream. This selects guest-visible
+    /// PCM configuration only; host microphone capture and permission handling are separate.
+    #[arg(long)]
+    pub enable_mic: bool,
+    /// E5-T11c: arm the deterministic serial evdev proof hook. When the guest prints the
+    /// echo-proof `WVM_KB_INJECT` marker, inject one KEY_A make frame followed by one break frame.
+    #[arg(long)]
+    pub keyboard_proof: bool,
     /// On a guest reboot, exit (QEMU `-no-reboot` style) instead of re-booting a fresh machine.
     #[arg(long)]
     pub no_reboot: bool,
@@ -148,6 +159,16 @@ pub struct BootArgs {
     /// meaningful with `--jit`; unset keeps the core default.
     #[arg(long)]
     pub jit_threshold: Option<u32>,
+    /// E4-T18 A/B: with `--jit`, disable direct block→block chaining (chaining defaults ON under
+    /// the JIT). The dispatch loop then returns after every compiled block (the E4-T10 behavior),
+    /// so `--jit` vs `--jit --no-chain` measures the chaining uplift on the same binary.
+    #[arg(long, requires = "jit")]
+    pub no_chain: bool,
+    /// E4-T19 A/B: cap the number of translated blocks packed into one JIT module. `1` forces
+    /// one-block-per-module (unbatched); the default executor value is 64. Only meaningful with
+    /// `--jit`.
+    #[arg(long, requires = "jit", value_parser = parse_positive_usize)]
+    pub jit_batch_size: Option<usize>,
     /// E2-T25: emit a boot phase-timing table (wall ms, retired, MIPS per phase) + per-device
     /// MMIO access counts, as pretty text + JSON, when the boot reaches userland (or at exit).
     #[arg(long)]
@@ -196,6 +217,11 @@ pub struct BootArgs {
     /// of long Linux boots where a full multi-billion-line canonical trace is impractical.
     #[arg(long)]
     pub evidence: Option<PathBuf>,
+    /// E5-T23e: run the bounded native end-to-end agent proof and write its JSON report here.
+    /// This is a proof harness flag; normal boots do not assemble virtio-console or drive the
+    /// guest service unless it is present.
+    #[arg(long, value_name = "PATH")]
+    pub agent_proof: Option<PathBuf>,
     /// E3-T12c4: take a whole-machine resume snapshot (`Machine::save_resume`) the first time the
     /// guest console prints `--snapshot-trigger`, write it to this path, and exit 0. The snapshot
     /// quiesces the virtio-blk in-flight set first (E3-T12c2) and refuses (exit 103, no file) if it
@@ -227,6 +253,16 @@ pub struct BootArgs {
 
 /// Decode exactly 32 bytes from a 64-char lowercase/uppercase hex string (the snapshot identity
 /// stamp). Returns a clear message on any malformed input.
+fn parse_positive_usize(value: &str) -> Result<usize, String> {
+    let parsed = value
+        .parse::<usize>()
+        .map_err(|e| format!("expected a positive integer: {e}"))?;
+    if parsed == 0 {
+        return Err("expected a positive integer, got 0".to_string());
+    }
+    Ok(parsed)
+}
+
 fn parse_id32(hex: &str) -> Result<[u8; 32], String> {
     let hex = hex.trim();
     if hex.len() != 64 {
@@ -300,6 +336,15 @@ impl MonotonicTimer {
 }
 
 impl wasm_vm_core::prof::HostTimer for MonotonicTimer {
+    fn now_ns(&self) -> u64 {
+        self.start.elapsed().as_nanos() as u64
+    }
+}
+
+/// E5-T19d: use the same monotonic source for native virtio-snd pacing. The sink remains
+/// host-independent here until the CLI grows an explicit capture/output policy; tests inject the
+/// native WavSink through `Machine::enable_virtio_snd_with_audio`.
+impl wasm_vm_core::dev::virtio::snd::AudioClock for MonotonicTimer {
     fn now_ns(&self) -> u64 {
         self.start.elapsed().as_nanos() as u64
     }
@@ -406,6 +451,7 @@ pub fn print_jit_stats(m: &Machine) {
     let d = m.discovery_stats();
     let chain = m.chain_stats();
     let cache = m.jit_cache_stats();
+    let pause = m.prof_report(0, 0).jit_pause;
     let (modules, est_bytes) = m.jit_registry();
     let (executed, retired_via_jit) = m
         .executor()
@@ -442,9 +488,13 @@ pub fn print_jit_stats(m: &Machine) {
         cache.flushes,
         cache.generation,
     );
+    eprintln!(
+        "jit_pause: samples={} sum_ns={} max_ns={} over_target={}",
+        pause.count, pause.sum_ns, pause.max_ns, pause.over_target,
+    );
     // Machine-readable one-liner for the bench harness / CI to scrape.
     eprintln!(
-        "JIT_STATS_JSON {{\"blocks_compiled\":{},\"blocks_executed\":{},\"retired_via_jit\":{},\"links_made\":{},\"dispatch_entries\":{},\"installs\":{},\"evictions\":{}}}",
+        "JIT_STATS_JSON {{\"blocks_compiled\":{},\"blocks_executed\":{},\"retired_via_jit\":{},\"links_made\":{},\"dispatch_entries\":{},\"installs\":{},\"evictions\":{},\"jit_pause_count\":{},\"jit_pause_sum_ns\":{},\"jit_pause_max_ns\":{},\"jit_pause_over_target\":{}}}",
         compiled,
         executed,
         retired_via_jit,
@@ -452,6 +502,10 @@ pub fn print_jit_stats(m: &Machine) {
         chain.dispatch_entries,
         cache.installs,
         cache.evictions,
+        pause.count,
+        pause.sum_ns,
+        pause.max_ns,
+        pause.over_target,
     );
 }
 
@@ -496,6 +550,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
         (Some(out), Some(trigger)) => Some(SnapshotOnMarker::new(trigger.clone(), out.clone())),
         _ => None,
     };
+    let mut keyboard_proof = a.keyboard_proof.then(KeyboardProof::new);
 
     let mut boot_num = 0u32;
     loop {
@@ -503,10 +558,19 @@ pub fn boot(a: BootArgs) -> ExitCode {
         if boot_num > 1 {
             eprintln!("wasm-vm: --- reboot #{} ---", boot_num - 1);
         }
-        let (mut m, uart) = match assemble(&a, &kernel, &initrd, &console) {
+        let (mut m, uart, agent_state) = match assemble(&a, &kernel, &initrd, &console) {
             Ok(v) => v,
             Err(code) => return code,
         };
+        let mut agent_proof = agent_state.map(|state| {
+            agent_proof::AgentProof::new(
+                state,
+                a.agent_proof
+                    .as_ref()
+                    .expect("agent proof state requires an output path")
+                    .clone(),
+            )
+        });
         // E3-T12c4: restore a snapshot into the freshly-assembled machine BEFORE running — the
         // coherence header is validated first (E3-T12c3); RAM/CPU/CLINT/virtio transport are
         // overwritten from the blob (the cold kernel placement above is discarded, intentionally).
@@ -573,6 +637,8 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 &mut pending,
                 profiler.as_mut().filter(|_| boot_num == 1),
                 snap.as_mut(),
+                keyboard_proof.as_mut(),
+                agent_proof.as_mut(),
                 &mut fp,
             );
             let pct = if fp.total == 0 {
@@ -595,6 +661,8 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 &mut pending,
                 profiler.as_mut().filter(|_| boot_num == 1),
                 snap.as_mut(),
+                keyboard_proof.as_mut(),
+                agent_proof.as_mut(),
                 &mut hash,
             )
         } else {
@@ -608,6 +676,8 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 &mut pending,
                 profiler.as_mut().filter(|_| boot_num == 1),
                 snap.as_mut(),
+                keyboard_proof.as_mut(),
+                agent_proof.as_mut(),
                 &mut null,
             )
         };
@@ -674,6 +744,17 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 );
                 return ExitCode::from(74);
             }
+        }
+
+        if let Some(proof) = agent_proof.as_mut()
+            && !proof.finish(&outcome)
+        {
+            return ExitCode::from(1);
+        }
+
+        if a.keyboard_proof && keyboard_proof.as_ref().is_some_and(|proof| !proof.injected) {
+            eprintln!("wasm-vm: keyboard proof ended before the WVM_KB_INJECT marker was observed");
+            return ExitCode::from(1);
         }
 
         match outcome {
@@ -748,18 +829,18 @@ fn open_drive_backend(spec: &str) -> Result<Box<dyn wasm_vm_core::block::BlockBa
     })
 }
 
+type AssembledMachine = (
+    Machine,
+    Rc<std::cell::RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
+    Option<Rc<std::cell::RefCell<wasm_vm_core::dev::virtio::console::ConsoleState>>>,
+);
+
 fn assemble(
     a: &BootArgs,
     kernel: &[u8],
     initrd: &Option<Vec<u8>>,
     console: &SharedStdout,
-) -> Result<
-    (
-        Machine,
-        Rc<std::cell::RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
-    ),
-    ExitCode,
-> {
+) -> Result<AssembledMachine, ExitCode> {
     let ram_bytes = a.ram_mib.saturating_mul(1024 * 1024);
     let mut m = Machine::new(ram_bytes);
     m.set_storm_detect(!a.no_storm_detect); // E2-T20
@@ -772,11 +853,17 @@ fn assemble(
     // byte-identical to the interpreter oracle.
     if a.jit {
         m.set_executor(Box::new(jit_runtime::WasmtimeExecutor::new()));
+        if let Some(k) = a.jit_batch_size {
+            m.set_batch_size(k); // E4-T19 A/B: k=1 is the unbatched control
+        }
         if let Some(t) = a.jit_threshold {
             m.set_hotness_threshold(t);
         }
         m.set_jit(true);
         m.set_interrupt_batching(true);
+        if a.no_chain {
+            m.set_chaining(false); // E4-T18 A/B: chain-following off, dispatch per block
+        }
     }
     if a.profile {
         m.set_host_timer(Rc::new(MonotonicTimer::new())); // E4-T01: arms profiling + injects the timer
@@ -789,19 +876,20 @@ fn assemble(
     m.enable_syscon(); // E2-T17: poweroff/reboot finisher at TEST_BASE
     let uart = m.enable_uart16550();
     // virtio: a real blk device if --drive was given, else the 8 empty mmio slots the DTB
-    // advertises (the kernel probes each address; an unbacked window would fault).
+    // advertises (the kernel probes each address; an unbacked window would fault). Slots 1–3 are
+    // reserved for net, rng, and the E5-T11 keyboard, so additional disks begin at slot 4. Linux
+    // still enumerates the block devices in probe order as /dev/vda, /dev/vdb, … despite the
+    // unused virtio-mmio windows between them.
     if a.drive.is_empty() {
         let _ = m.enable_virtio_slots(None);
     } else {
-        // First drive claims slot 0 (/dev/vda); each subsequent --drive installs into the next
-        // empty slot (/dev/vdb, …). E4-T03 attaches the read-only bench overlay as a 2nd drive.
-        for (i, spec) in a.drive.iter().enumerate() {
+        // First drive claims slot 0 (/dev/vda). E4-T03's extra drive and any later drives use the
+        // first slots after the keyboard reservation.
+        let first = open_drive_backend(&a.drive[0])?;
+        let _ = m.enable_virtio_blk(first);
+        for (slot, spec) in (4..).zip(a.drive.iter().skip(1)) {
             let backend = open_drive_backend(spec)?;
-            if i == 0 {
-                let _ = m.enable_virtio_blk(backend);
-            } else {
-                let _ = m.enable_virtio_blk_at(i, backend);
-            }
+            let _ = m.enable_virtio_blk_at(slot, backend);
         }
         if a.blk_log {
             m.enable_blk_log(); // E2-T19: trace requests to stderr
@@ -836,6 +924,18 @@ fn assemble(
         // virtio-rng in slot 2, backed by the OS CSPRNG — seeds the guest CRNG promptly.
         let _ = m.enable_virtio_rng(Box::new(crate::os_entropy::OsEntropy));
     }
+    // E5-T11c: the concrete keyboard is present on every native Linux boot, so the rebuilt guest
+    // can bind /dev/input/event0 before the host's first key injection.
+    let _ = m.enable_virtio_keyboard();
+    // E5-T19d: reserve a free post-input virtio slot for the guest's four-queue sound device. The
+    // native default is headless, but it is still paced by a monotonic clock so `aplay` exercises
+    // the same non-bursting completion path as the later capture sink.
+    let _ = m.enable_virtio_snd_with_audio_and_capture(
+        Rc::new(MonotonicTimer::new()),
+        Box::new(wasm_vm_core::dev::virtio::snd::NullSink::new()),
+        a.enable_mic,
+    );
+    let agent_state = a.agent_proof.as_ref().map(|_| m.enable_virtio_console().1);
 
     // Built-in SBI firmware + its console channel (earlycon=sbi / legacy putchar).
     m.enable_builtin_sbi();
@@ -886,7 +986,7 @@ fn assemble(
         layout.dtb_addr,
         a.ram_mib,
     );
-    Ok((m, uart))
+    Ok((m, uart, agent_state))
 }
 
 /// Run one assembled machine to its terminal [`RunOutcome`], executing in quanta while pumping
@@ -1027,6 +1127,71 @@ impl BootProfiler {
     }
 }
 
+/// E5-T11c: deterministic host hook for the serial evdev proof. The guest-side command prints
+/// the marker only after it has opened `/dev/input/event0`; the next machine boundary then carries
+/// one make frame and one break frame through the real virtio-input eventq.
+struct KeyboardProof {
+    tail: String,
+    injected: bool,
+    last_pending_events: Option<usize>,
+}
+
+impl KeyboardProof {
+    const MARKER: &'static str = "WVM_KB_INJECT";
+
+    fn new() -> Self {
+        Self {
+            tail: String::new(),
+            injected: false,
+            last_pending_events: None,
+        }
+    }
+
+    fn feed(&mut self, out: &[u8], machine: &mut Machine) {
+        if self.injected || out.is_empty() {
+            return;
+        }
+        self.tail.push_str(&String::from_utf8_lossy(out));
+        if self.tail.contains(Self::MARKER) {
+            let Some(state) = machine.keyboard_input() else {
+                eprintln!("wasm-vm: keyboard proof marker observed without a keyboard device");
+                self.injected = true;
+                return;
+            };
+            let mut state = state.borrow_mut();
+            use wasm_vm_core::dev::virtio::input::EV_KEY;
+            use wasm_vm_core::dev::virtio::input::keyboard::KEY_A;
+            state.inject_event(EV_KEY, KEY_A, 1);
+            state.sync();
+            state.inject_event(EV_KEY, KEY_A, 0);
+            state.sync();
+            self.injected = true;
+            eprintln!("wasm-vm: keyboard proof injected KEY_A make/break frames");
+        }
+        if self.tail.len() > 512 {
+            let mut cut = self.tail.len() - 256;
+            while cut < self.tail.len() && !self.tail.is_char_boundary(cut) {
+                cut += 1;
+            }
+            self.tail = self.tail.split_off(cut);
+        }
+    }
+
+    fn observe(&mut self, machine: &Machine) {
+        if !self.injected {
+            return;
+        }
+        let Some(state) = machine.keyboard_input() else {
+            return;
+        };
+        let pending = state.borrow().pending_events();
+        if self.last_pending_events != Some(pending) {
+            eprintln!("wasm-vm: keyboard proof pending events={pending}");
+            self.last_pending_events = Some(pending);
+        }
+    }
+}
+
 // These references are the long-lived boot-loop state; bundling them into a one-use context solely
 // to satisfy the argument-count style lint would obscure their ownership and widen unrelated churn.
 #[allow(clippy::too_many_arguments)]
@@ -1039,6 +1204,8 @@ fn run_machine<T: TraceSink>(
     pending: &mut std::collections::VecDeque<u8>,
     profiler: Option<&mut BootProfiler>,
     mut snap: Option<&mut SnapshotOnMarker>,
+    mut keyboard_proof: Option<&mut KeyboardProof>,
+    mut agent_proof: Option<&mut agent_proof::AgentProof>,
     sink: &mut T,
 ) -> RunOutcome {
     let mut profiler = profiler;
@@ -1052,6 +1219,13 @@ fn run_machine<T: TraceSink>(
         // Drain UART output → stdout every quantum so the boot log streams live.
         let out = uart.borrow_mut().take_output();
         console.write_bytes(&out);
+        if let Some(proof) = keyboard_proof.as_deref_mut() {
+            proof.feed(&out, m);
+            proof.observe(m);
+        }
+        if let Some(proof) = agent_proof.as_deref_mut() {
+            proof.pump(&out, uart);
+        }
         // E2-T25: feed the console stream + retired count to the profiler so it can stamp the
         // wall time + retired count at each guest phase marker's first sighting.
         if let Some(p) = profiler.as_deref_mut() {

@@ -1,0 +1,57 @@
+{
+  "schema": "e5-t02b-virtio-gpu-resource-backing-v1",
+  "task": "E5-T02b",
+  "status": "pass",
+  "implementation_commit": "6785dc0",
+  "recorded_at": "2026-09-03",
+  "native": {
+    "acceptance_command": "cargo test -p wasm-vm-core --lib gpu_resources_backing",
+    "acceptance_result": "4 passed, 0 failed",
+    "coverage": [
+      "A split readable descriptor stream decodes RESOURCE_ATTACH_BACKING across the fixed header and entry, publishes the exact guest address/length pair, and DETACH returns the resource to an empty backing list.",
+      "A valid two-entry attach returns RESP_OK_NODATA; an out-of-RAM entry is rejected atomically; a zero-entry attach succeeds as explicitly backing-less.",
+      "nents=0x10000000 is rejected before entry reservation/parsing, and a truncated sglist is rejected without mutation.",
+      "Guest address u64::MAX with a nonzero length is rejected without a bus read; identical backing values on two resources are independent when one is detached."
+    ],
+    "regression": {
+      "command": "cargo test -p wasm-vm-core --lib",
+      "result": "195 passed, 0 failed"
+    },
+    "virtio_regression": {
+      "commands": [
+        "cargo test -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test virtio_net_critic"
+      ],
+      "result": "22 passed, 0 failed"
+    },
+    "clippy": {
+      "command": "cargo clippy -p wasm-vm-core --lib -- -D warnings",
+      "result": "pass"
+    },
+    "format": {
+      "commands": [
+        "cargo fmt --all -- --check",
+        "git diff --check"
+      ],
+      "result": "pass"
+    }
+  },
+  "wasm32": {
+    "core_build": {
+      "command": "cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown",
+      "result": "pass"
+    },
+    "core_clippy": {
+      "command": "cargo clippy -p wasm-vm-core --target wasm32-unknown-unknown --no-default-features --lib -- -D warnings",
+      "result": "pass"
+    },
+    "existing_gpu_runner": {
+      "command": "wasm-pack test --node crates/wasm --test gpu_protocol",
+      "result": "2 passed, 0 failed"
+    }
+  },
+  "claim": "At commit 6785dc0, ATTACH_BACKING decodes a bounded scatter-gather list, rejects oversized/truncated/overflowing or out-of-RAM entries, and only replaces the resource backing after all entries validate. DETACH clears the selected resource, zero entries remain explicitly detached, and separate resources own independent entry vectors.",
+  "scope_notes": [
+    "RESOURCE_UNREF and scanout cleanup remain owned by E5-T02c; pixel transfer remains E5-T03.",
+    "No independent-machine, WebKit, or host-layer rr run was used, per the user's direction and current repository evidence policy."
+  ]
+}

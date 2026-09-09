@@ -1,0 +1,568 @@
+{
+  "schema": "e5-t23e-agent-channel-proof-v1",
+  "exact_head": "eefdca2e8d3dff8b7cb6ad4245cb5d1ea543c911",
+  "policy": {
+    "independent_machines": false,
+    "webkit": false,
+    "host_rr": false
+  },
+  "commands": {
+    "verifier": "node tools/verify/e5-t23e-agent-channel-proof.mjs",
+    "native_boot": "target/release/wasm-vm boot --agent-proof ... --no-input --no-reboot",
+    "browser": "http://127.0.0.1:8123/?noAutoBoot=1 (Chromium, two simultaneous pages)"
+  },
+  "static_agent": {
+    "artifact": "releases/wasmvm-agent-riscv64",
+    "size": 378536,
+    "sha256": "c5feb0c04db680d1ae813d0fd85bd599ee29adb51fdc64dc329f66793d1f6851",
+    "file": "/Users/blamy/Documents/Codex/wasm-vm/releases/wasmvm-agent-riscv64: ELF 64-bit LSB pie executable, UCB RISC-V, RVC, double-float ABI, version 1 (SYSV), static-pie linked, stripped",
+    "dependency_tree": "wasm-vm-guest-agent v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/guest/agent)\n└── wasm-vm-agent-protocol v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/agent-protocol)",
+    "manifest_match": true
+  },
+  "framing": {
+    "schema": "e5-t23e-agent-channel-corpus-v1",
+    "cases": [
+      "valid-byte-dribble",
+      "valid-coalesced",
+      "garbage-is-reset",
+      "partial-close-open",
+      "exact-payload-boundary"
+    ],
+    "dribble_frames": 10,
+    "coalesced_frames": 10,
+    "fuzz_frames": 512,
+    "fuzz_digest": "a5b044401054134a1b6d1bb5287ab43423119325e440d29dc2dcaef8f55a1b8a",
+    "exact_boundary_payload": 1048576,
+    "oversized_payload_capacity": 0,
+    "truncated_policy": "connection-reset",
+    "unknown_policy": "NAK_1"
+  },
+  "channels": {
+    "tabs": [
+      {
+        "label": "tab-a",
+        "negotiated_version": 1,
+        "unknown_nak": true,
+        "ping_count": 3,
+        "ten_thousand_flow_control": {
+          "attempted": 10000,
+          "fulfilled_at_bound": 64,
+          "backpressured": 9936
+        },
+        "listener_count_after_reconnect": 0,
+        "transport_listener_count_before_close": 0,
+        "reconnect_cycles": 100,
+        "serial_console_scope": "native boot proof"
+      },
+      {
+        "label": "tab-b",
+        "negotiated_version": 1,
+        "unknown_nak": true,
+        "ping_count": 3,
+        "ten_thousand_flow_control": {
+          "attempted": 10000,
+          "fulfilled_at_bound": 64,
+          "backpressured": 9936
+        },
+        "listener_count_after_reconnect": 0,
+        "transport_listener_count_before_close": 0,
+        "reconnect_cycles": 100,
+        "serial_console_scope": "native boot proof"
+      }
+    ],
+    "digest": "afc28c4ff49b989d3d315afc665d73fd83b85903e2f5b03f1f0b87a214f851ae",
+    "stale_inflight_policy": "DisconnectedError; no implicit retry"
+  },
+  "native": {
+    "report": {
+      "attacks": {
+        "one_mib_boundary_nak": true,
+        "one_mib_boundary_payload": 1048576,
+        "partial_inflight_discarded": true,
+        "unknown_nak": true
+      },
+      "bounds": {
+        "max_agent_input_bytes": 16384,
+        "max_agent_output_bytes": 80,
+        "max_pending_pings": 10000,
+        "protocol_payload_limit": 1048576
+      },
+      "elapsed_ms": 510423.055834,
+      "failures": [],
+      "hello": {
+        "capabilities": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "count": 5,
+        "latency_ms": 23.765917,
+        "reconnect_seen": true,
+        "reconnected_negotiation": true,
+        "version_bump_accepted": true,
+        "versions": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "within_2s": true
+      },
+      "named_port": "/dev/virtio-ports/org.wasmvm.agent",
+      "outcome": "exited:0",
+      "ping": {
+        "basic_count": 8,
+        "basic_pongs": 8,
+        "flood_attempted": 10000,
+        "flood_pongs": 10000,
+        "p50_ms": 18.844,
+        "under_20ms": true
+      },
+      "port_open_seen": true,
+      "schema": "e5-t23e-agent-channel-proof-v1",
+      "serial": {
+        "port_marker": true,
+        "saturation_command_sent": true,
+        "usable_under_saturation": true
+      },
+      "stage": "Stopping",
+      "success": true
+    },
+    "stdout": "evidence/e5-t23e/native-agent-proof.stdout.log",
+    "stderr": "evidence/e5-t23e/native-agent-proof.stderr.log",
+    "guest_evidence": "evidence/e5-t23e/native-agent-guest-evidence.txt"
+  },
+  "browser": {
+    "pages": [
+      {
+        "ready": true,
+        "negotiated_version": 1,
+        "pending": 0,
+        "listeners": 1,
+        "transport_listeners": 1,
+        "state_transitions": 3,
+        "console_marker": "E5_T23E_BROWSER_SERIAL_OK"
+      },
+      {
+        "ready": true,
+        "negotiated_version": 1,
+        "pending": 0,
+        "listeners": 1,
+        "transport_listeners": 1,
+        "state_transitions": 3,
+        "console_marker": "E5_T23E_BROWSER_SERIAL_OK"
+      }
+    ],
+    "captures": [
+      {
+        "console_errors": [],
+        "page_errors": [],
+        "http_errors": [],
+        "requests": [
+          {
+            "url": "http://127.0.0.1:8123/?noAutoBoot=1",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/node_modules/@xterm/xterm/css/xterm.css",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/node_modules/@xterm/addon-fit/lib/addon-fit.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/docs-mount.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/tabs.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/ide.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/node_modules/@xterm/xterm/lib/xterm.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/coi-serviceworker-register.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/cpu-isolation.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/main.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/riscv-tests.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/roadmap.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/loader.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/linux-worker-host.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/pkg/wasm_vm_wasm.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/overlay-reset-target.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/terminal.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/file-transfer.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/boot-progress.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/guest-rpc.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/input/keyboard.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/input/capture.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/input/held-keys.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/input/reconciliation.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/audio/autoplay.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/audio/sink.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/audio/capture-ring.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/audio/microphone.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/input/pointer.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/overlay-seed-identity.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/agent-channel.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/boot-path.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/task-quiescence.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/linux-worker-protocol.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/osc52.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/paste.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/progress.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/input/keymap.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/audio/ring.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/audio/worklet.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/audio/capture-worklet.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/tasks.json",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/pkg/wasm_vm_wasm_bg.wasm",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/assets/hello.elf",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/artifacts-alpine.json",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/artifacts-node-alpine.json",
+            "status": 200
+          }
+        ]
+      },
+      {
+        "console_errors": [],
+        "page_errors": [],
+        "http_errors": [],
+        "requests": [
+          {
+            "url": "http://127.0.0.1:8123/?noAutoBoot=1",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/node_modules/@xterm/xterm/css/xterm.css",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/node_modules/@xterm/addon-fit/lib/addon-fit.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/tabs.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/docs-mount.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/ide.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/node_modules/@xterm/xterm/lib/xterm.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/coi-serviceworker-register.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/cpu-isolation.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/main.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/riscv-tests.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/pkg/wasm_vm_wasm.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/overlay-reset-target.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/linux-worker-host.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/roadmap.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/loader.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/terminal.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/boot-progress.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/guest-rpc.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/input/keyboard.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/input/held-keys.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/file-transfer.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/input/capture.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/input/reconciliation.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/audio/capture-ring.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/audio/autoplay.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/audio/sink.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/audio/microphone.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/input/pointer.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/agent-channel.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/linux-worker-protocol.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/boot-path.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/overlay-seed-identity.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/task-quiescence.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/osc52.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/paste.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/progress.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/input/keymap.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/audio/ring.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/audio/worklet.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/src/audio/capture-worklet.js",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/tasks.json",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/pkg/wasm_vm_wasm_bg.wasm",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/assets/hello.elf",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/artifacts-alpine.json",
+            "status": 200
+          },
+          {
+            "url": "http://127.0.0.1:8123/artifacts-node-alpine.json",
+            "status": 200
+          }
+        ]
+      }
+    ],
+    "screenshot": "evidence/e5-t23e/agent-channel-browser-2026-09-04.png"
+  },
+  "source_sha256": {
+    "crates/agent-protocol/src/lib.rs": "bc29b52cba08bd9266974f6228be87adc2211f09f4f6a9bf1c17a596f105f566",
+    "guest/agent/src/lib.rs": "1281d9890772d7d26a1f40786bfc240fd46d1fb5f36faabed0a6cbfb7640060b",
+    "crates/cli/src/boot.rs": "1fb2264195e2a85c7b0e56c67244046ba2be271dbd69a32653cf0409ceaf8b3a",
+    "crates/cli/src/boot/agent_proof.rs": "95e8fb189369da3f5c1d250b6515129950f540a213e7acc67300b5af7d6a9802",
+    "web/agent-channel.js": "68e244304f024cb5d2edd79484139312a0e9e046b329d4963d991e0db084e2b9",
+    "docs/agent-protocol.md": "f4e4495bd625a1fb2d7aab0014bc3cbf502691a79aab83bc48ad49a96deef034",
+    "tools/verify/e5-t23e-agent-channel-proof.mjs": "e641e795d83e390495867261ac71f885984508d8ed1a02959769e1f2de7d97aa",
+    "tools/verify/e5-t23e-agent-channel-corpus.json": "17b8ddc284cc2139985953a34e259d92a2a0998f0649508b802383905acb7393"
+  },
+  "dist_sha256": {
+    "web/dist/agent-channel.js": "68e244304f024cb5d2edd79484139312a0e9e046b329d4963d991e0db084e2b9",
+    "web/dist/roadmap.js": "39820990fea5a9abacad5719beb3d9faac2f18e7dfe6483c48e344d55ca38381",
+    "web/dist/tasks.json": "7f6b94cca1c9a29518f7509bfde23acf5775bc58fa9517872685244f811431c6"
+  }
+}

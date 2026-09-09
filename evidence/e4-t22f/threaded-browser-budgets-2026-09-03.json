@@ -1,0 +1,1388 @@
+{
+  "task": "E4-T22f",
+  "sourceHead": "7929c427ba1aaea703bfaba92165862ca97010cc",
+  "recordedAt": "2026-09-03T09:06:39.313Z",
+  "browser": {
+    "name": "chromium",
+    "version": "131.0.6778.33"
+  },
+  "origin": "http://localhost:8133",
+  "controls": [
+    {
+      "control": "interpreter",
+      "boot": {
+        "backend": "whole-machine-worker",
+        "guest": "alpine",
+        "manifest": "./artifacts-alpine.json",
+        "interpreter": "fast",
+        "jitPolicy": "forced-off",
+        "isolated": true,
+        "restored": true,
+        "paused": true,
+        "ready": true,
+        "execution": {
+          "backend": "whole-machine-worker",
+          "interpreter": "fast",
+          "jit": "forced-off",
+          "jitResidency": "disabled",
+          "jitThreshold": 512,
+          "jitJalr": true,
+          "jitRegion": true,
+          "quantum": 20000
+        },
+        "digest": "28ace7ecbab3b61829d383bb9ff3e585926d462d23795a23c97881320af9072a",
+        "scheduler": {
+          "quantum": 20000,
+          "maxQuantum": 20000,
+          "slices": 0,
+          "totalSliceMs": 0,
+          "averageSliceMs": 0,
+          "maxSliceMs": 0,
+          "sliceHistogram": [
+            {
+              "leMs": 4,
+              "count": 0
+            },
+            {
+              "leMs": 8,
+              "count": 0
+            },
+            {
+              "leMs": 16,
+              "count": 0
+            },
+            {
+              "leMs": 32,
+              "count": 0
+            },
+            {
+              "leMs": 64,
+              "count": 0
+            },
+            {
+              "leMs": 128,
+              "count": 0
+            },
+            {
+              "leMs": 256,
+              "count": 0
+            },
+            {
+              "leMs": 512,
+              "count": 0
+            },
+            {
+              "leMs": 1000,
+              "count": 0
+            },
+            {
+              "leMs": null,
+              "count": 0
+            }
+          ],
+          "maxStretchGapMs": 0,
+          "requestedInstructions": 0,
+          "retiredInstructions": 0,
+          "fetchWaits": 0,
+          "fetchRequestedChunks": 0,
+          "fetchWaitTotalMs": 0,
+          "fetchWaitMaxMs": 0,
+          "outputCalls": 0,
+          "outputBytes": 0,
+          "inputCalls": 2,
+          "inputBytes": 56,
+          "yieldMode": "scheduler.postTask",
+          "schedulerYields": 0,
+          "timerYields": 0,
+          "mainThreadYields": 0
+        },
+        "jit": {
+          "hasExecutor": false,
+          "compiledBlocks": 0,
+          "executedBlocks": 0,
+          "retiredViaJit": 0,
+          "directChainEntries": 0,
+          "directChainLinks": 0,
+          "dynamicLinkAttempts": 0,
+          "dynamicLinkHits": 0,
+          "dynamicLinkRefusals": 0,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 0,
+          "dynamicLinkInstalls": 0,
+          "entryCost": {
+            "hostEntries": 0,
+            "stateCopyCalls": 0,
+            "stateCopyBytes": 0,
+            "stateCopyNs": 0,
+            "engineEntryNs": 0,
+            "indirectTableDispatches": 0,
+            "authorityChecks": 0,
+            "memorySplitExits": 0,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "jitRegionChaining": false,
+          "jitDynamicChaining": false,
+          "guestRetired": 0,
+          "jitEngineCalls": 0,
+          "jitLogicalBlocksPerEngineCall": 0,
+          "jitRetiredShare": 0,
+          "chainLinksMade": 0,
+          "chainLinksCut": 0,
+          "chainDispatchEntries": 0,
+          "chainMaxDepth": 0,
+          "chainLinksFollowed": 0,
+          "jitResidencyPolicy": "disabled",
+          "jitResidencyCap": 0,
+          "jitSubmittedMembers": 0,
+          "jitCompilePauseNs": 0,
+          "jitCompilePauseMaxNs": 0,
+          "jitCompilePauseSamples": 0,
+          "jitCacheInstalls": 0,
+          "jitCacheRetranslations": 0,
+          "jitCacheEvictions": 0,
+          "jitCacheBatches": 0,
+          "jitCacheCodeBytes": 0,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 2,
+          "discoveryGeneration": 3,
+          "blockEntryHits": 0,
+          "blockBuilds": 0
+        },
+        "profile": {
+          "totalNs": 0,
+          "sampleCount": 0,
+          "walkCount": 0,
+          "collisions": 0,
+          "regions": [],
+          "subsystems": [
+            {
+              "name": "cpu_interp",
+              "ns": 0
+            },
+            {
+              "name": "mmu_walk",
+              "ns": 0
+            },
+            {
+              "name": "clint",
+              "ns": 0
+            },
+            {
+              "name": "plic",
+              "ns": 0
+            },
+            {
+              "name": "uart",
+              "ns": 0
+            },
+            {
+              "name": "virtio_blk",
+              "ns": 0
+            },
+            {
+              "name": "virtio_net",
+              "ns": 0
+            },
+            {
+              "name": "virtio_rng",
+              "ns": 0
+            },
+            {
+              "name": "rtc",
+              "ns": 0
+            },
+            {
+              "name": "syscon",
+              "ns": 0
+            },
+            {
+              "name": "other",
+              "ns": 0
+            }
+          ],
+          "jitPause": {
+            "count": 0,
+            "maxNs": 0,
+            "sumNs": 0,
+            "overTarget": 0,
+            "maxAttemptedBlocks": 0,
+            "totalAttemptedBlocks": 0,
+            "maxSubmittedBlocks": 0,
+            "maxSubmittedBytes": 0,
+            "totalSubmittedBlocks": 0,
+            "runCount": 0,
+            "lastRunAttemptedBlocks": 0,
+            "maxRunAttemptedBlocks": 0,
+            "lastRunSubmittedBlocks": 0,
+            "maxRunSubmittedBlocks": 0,
+            "lastRunStagedNominations": 0,
+            "maxRunStagedNominations": 0,
+            "lastFinalPumps": 0,
+            "maxFinalPumps": 0,
+            "lastFinalAttemptedBlocks": 0,
+            "maxFinalAttemptedBlocks": 0,
+            "lastFinalSubmittedBlocks": 0,
+            "maxFinalSubmittedBlocks": 0
+          }
+        },
+        "fetch": {
+          "fetches": 0,
+          "bytes": 0,
+          "error": null,
+          "cache": {
+            "hits": 0,
+            "misses": 0,
+            "evictions": 0,
+            "residentBytes": 0,
+            "budgetBytes": 268435456
+          },
+          "prefetch": {
+            "issued": 0,
+            "used": 0,
+            "profileEntries": 100,
+            "accuracyPct": 0
+          }
+        },
+        "rpc": {
+          "calls": 7,
+          "completed": 3,
+          "pending": 4,
+          "averageMs": 0.3333333333333333,
+          "maxMs": 0.7750000059604645
+        },
+        "snapshot": {
+          "available": true,
+          "decision": "missing",
+          "generation": 0,
+          "restored": true
+        },
+        "status": "linux: restored",
+        "terminalTail": "[storage: 0% of 8132MB, persist=false][storage warning: best-effort; private/incognito changes are temporary][fast-boot: restoring host from a build-time snapshot instead of booting Linux][fast-boot: restoring host from a build-time snapshot instead of booting Linux][fast-boot: host ready in 0.71s (restored, no Linux boot)][execution: whole-machine-worker; fast interpreter; JIT forced off by ?jit=0; quantum 20000] "
+      },
+      "oracle": {
+        "command": "echo E4T22F_ORACLE_$((6*7))",
+        "stdout": "E4T22F_ORACLE_42\n",
+        "exit": 0,
+        "sha256": "6eab5c9e1d90a64ddefee006cf0fc9343e334d8ee94868251a2fe6213814538a",
+        "elapsedMs": 588,
+        "runtimeDigest": "28ace7ecbab3b61829d383bb9ff3e585926d462d23795a23c97881320af9072a",
+        "postCommandDigest": "448668d3a0a6836705294c7d7d66af584f55cf1369ef472814ce9e40830836ba"
+      },
+      "busy": {
+        "result": {
+          "stdout": "ead x; printf '__E4T22F_INPUT_%s\\n' \"$x\"; sleep 1; kill $p; wait $p 2>/dev/null;\n echo __E4T22F_DONE; printf '\\n__WVEND_mtlaw1502_%s\\n' \"$?\"\n\n__E4T22F_READY_42\nawake\n__E4T22F_INPUT_awake\n__E4T22F_DONE\n\n",
+          "exit": 0
+        },
+        "inputWakeMs": 2.844999998807907,
+        "inputDispatch": {
+          "quantum": 20000,
+          "maxQuantum": 20000,
+          "slices": 375,
+          "totalSliceMs": 1130.4500002264977,
+          "averageSliceMs": 3.0145333339373273,
+          "maxSliceMs": 8.075000017881393,
+          "sliceHistogram": [
+            {
+              "leMs": 4,
+              "count": 366
+            },
+            {
+              "leMs": 8,
+              "count": 8
+            },
+            {
+              "leMs": 16,
+              "count": 1
+            },
+            {
+              "leMs": 32,
+              "count": 0
+            },
+            {
+              "leMs": 64,
+              "count": 0
+            },
+            {
+              "leMs": 128,
+              "count": 0
+            },
+            {
+              "leMs": 256,
+              "count": 0
+            },
+            {
+              "leMs": 512,
+              "count": 0
+            },
+            {
+              "leMs": 1000,
+              "count": 0
+            },
+            {
+              "leMs": null,
+              "count": 0
+            }
+          ],
+          "maxStretchGapMs": 474.75,
+          "requestedInstructions": 7500000,
+          "retiredInstructions": 7498223,
+          "fetchWaits": 0,
+          "fetchRequestedChunks": 0,
+          "fetchWaitTotalMs": 0,
+          "fetchWaitMaxMs": 0,
+          "outputCalls": 236,
+          "outputBytes": 765,
+          "inputCalls": 6,
+          "inputBytes": 347,
+          "yieldMode": "scheduler.postTask",
+          "schedulerYields": 377,
+          "timerYields": 0,
+          "mainThreadYields": 0
+        },
+        "inputLatencyMs": 46.21500000357628,
+        "raf": {
+          "p99Ms": 16.670000000000073,
+          "maxMs": 16.670000000000073,
+          "samples": 120
+        },
+        "markerTail": "yes >/dev/null & p=$!; printf '\\n__E4T22F_READY_%s\\n' \"$((6 * 7))\"; r\r\r\nead x; printf '__E4T22F_INPUT_%s\\n' \"$x\"; sleep 1; kill $p; wait $p 2>/dev/null;\r\r\n echo __E4T22F_DONE; printf '\\n__WVEND_mtlaw1502_%s\\n' \"$?\"\r\n\r\n__E4T22F_READY_42\r\nawake\r\n__E4T22F_INPUT_awake\r\n__E4T22F_DONE\r\n\r\n__WVEND_mtlaw1502_0\r\n"
+      },
+      "guestTime": {
+        "stdout": "1786066130\n\n",
+        "guestSeconds": 1786066130,
+        "hostStartedAt": 1788426388816,
+        "hostFinishedAt": 1788426389135,
+        "withinHostWindow": false
+      },
+      "runtime": {
+        "digest": "1502ad5a60a7934c52bde316bb91f9f00d63ef967196b369e85ba9c8ea666d4d",
+        "scheduler": {
+          "quantum": 20000,
+          "maxQuantum": 20000,
+          "slices": 5652,
+          "totalSliceMs": 11492.740001112223,
+          "averageSliceMs": 2.0333934892272154,
+          "maxSliceMs": 8.075000017881393,
+          "sliceHistogram": [
+            {
+              "leMs": 4,
+              "count": 5621
+            },
+            {
+              "leMs": 8,
+              "count": 30
+            },
+            {
+              "leMs": 16,
+              "count": 1
+            },
+            {
+              "leMs": 32,
+              "count": 0
+            },
+            {
+              "leMs": 64,
+              "count": 0
+            },
+            {
+              "leMs": 128,
+              "count": 0
+            },
+            {
+              "leMs": 256,
+              "count": 0
+            },
+            {
+              "leMs": 512,
+              "count": 0
+            },
+            {
+              "leMs": 1000,
+              "count": 0
+            },
+            {
+              "leMs": null,
+              "count": 0
+            }
+          ],
+          "maxStretchGapMs": 474.75,
+          "requestedInstructions": 113040000,
+          "retiredInstructions": 113034813,
+          "fetchWaits": 0,
+          "fetchRequestedChunks": 0,
+          "fetchWaitTotalMs": 0,
+          "fetchWaitMaxMs": 0,
+          "outputCalls": 286,
+          "outputBytes": 1043,
+          "inputCalls": 7,
+          "inputBytes": 396,
+          "yieldMode": "scheduler.postTask",
+          "schedulerYields": 5654,
+          "timerYields": 0,
+          "mainThreadYields": 0
+        },
+        "jit": {
+          "hasExecutor": false,
+          "compiledBlocks": 0,
+          "executedBlocks": 0,
+          "retiredViaJit": 0,
+          "directChainEntries": 0,
+          "directChainLinks": 0,
+          "dynamicLinkAttempts": 0,
+          "dynamicLinkHits": 0,
+          "dynamicLinkRefusals": 0,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 0,
+          "dynamicLinkInstalls": 0,
+          "entryCost": {
+            "hostEntries": 0,
+            "stateCopyCalls": 0,
+            "stateCopyBytes": 0,
+            "stateCopyNs": 0,
+            "engineEntryNs": 0,
+            "indirectTableDispatches": 0,
+            "authorityChecks": 0,
+            "memorySplitExits": 0,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "jitRegionChaining": false,
+          "jitDynamicChaining": false,
+          "guestRetired": 113054809,
+          "jitEngineCalls": 0,
+          "jitLogicalBlocksPerEngineCall": 0,
+          "jitRetiredShare": 0,
+          "chainLinksMade": 0,
+          "chainLinksCut": 0,
+          "chainDispatchEntries": 0,
+          "chainMaxDepth": 0,
+          "chainLinksFollowed": 0,
+          "jitResidencyPolicy": "disabled",
+          "jitResidencyCap": 0,
+          "jitSubmittedMembers": 0,
+          "jitCompilePauseNs": 0,
+          "jitCompilePauseMaxNs": 0,
+          "jitCompilePauseSamples": 0,
+          "jitCacheInstalls": 0,
+          "jitCacheRetranslations": 0,
+          "jitCacheEvictions": 0,
+          "jitCacheBatches": 0,
+          "jitCacheCodeBytes": 0,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 2,
+          "discoveryGeneration": 3,
+          "blockEntryHits": 23997040,
+          "blockBuilds": 1648719
+        },
+        "profile": {
+          "totalNs": 11476670037,
+          "sampleCount": 104253,
+          "walkCount": 832864,
+          "collisions": 4243,
+          "regions": [
+            {
+              "pc": "0x00007fffb4deeac0",
+              "samples": 10760,
+              "pct": 10.321045917143872
+            },
+            {
+              "pc": "0x00007fffb4deea00",
+              "samples": 9397,
+              "pct": 9.01364948730492
+            },
+            {
+              "pc": "0x00007fffb4dee280",
+              "samples": 8784,
+              "pct": 8.425656815631205
+            },
+            {
+              "pc": "0x00007fffb4df5ac0",
+              "samples": 8233,
+              "pct": 7.89713485463248
+            },
+            {
+              "pc": "0x00007fffb4deea80",
+              "samples": 7433,
+              "pct": 7.129770845922899
+            },
+            {
+              "pc": "0x00007fffb4df5a80",
+              "samples": 6839,
+              "pct": 6.560003069456035
+            },
+            {
+              "pc": "0x00007fffb4defa80",
+              "samples": 4503,
+              "pct": 4.319300164024057
+            },
+            {
+              "pc": "0x00007fffb4df4c40",
+              "samples": 3436,
+              "pct": 3.2958284174076526
+            },
+            {
+              "pc": "0x00007fffb4deeb00",
+              "samples": 2840,
+              "pct": 2.724142230919014
+            },
+            {
+              "pc": "0x00007fffb4dee2c0",
+              "samples": 2525,
+              "pct": 2.421992652489617
+            }
+          ],
+          "subsystems": [
+            {
+              "name": "cpu_interp",
+              "ns": 11418395099
+            },
+            {
+              "name": "mmu_walk",
+              "ns": 57809940
+            },
+            {
+              "name": "clint",
+              "ns": 0
+            },
+            {
+              "name": "plic",
+              "ns": 160000
+            },
+            {
+              "name": "uart",
+              "ns": 304998
+            },
+            {
+              "name": "virtio_blk",
+              "ns": 0
+            },
+            {
+              "name": "virtio_net",
+              "ns": 0
+            },
+            {
+              "name": "virtio_rng",
+              "ns": 0
+            },
+            {
+              "name": "rtc",
+              "ns": 0
+            },
+            {
+              "name": "syscon",
+              "ns": 0
+            },
+            {
+              "name": "other",
+              "ns": 0
+            }
+          ],
+          "jitPause": {
+            "count": 0,
+            "maxNs": 0,
+            "sumNs": 0,
+            "overTarget": 0,
+            "maxAttemptedBlocks": 0,
+            "totalAttemptedBlocks": 0,
+            "maxSubmittedBlocks": 0,
+            "maxSubmittedBytes": 0,
+            "totalSubmittedBlocks": 0,
+            "runCount": 0,
+            "lastRunAttemptedBlocks": 0,
+            "maxRunAttemptedBlocks": 0,
+            "lastRunSubmittedBlocks": 0,
+            "maxRunSubmittedBlocks": 0,
+            "lastRunStagedNominations": 0,
+            "maxRunStagedNominations": 0,
+            "lastFinalPumps": 0,
+            "maxFinalPumps": 0,
+            "lastFinalAttemptedBlocks": 0,
+            "maxFinalAttemptedBlocks": 0,
+            "lastFinalSubmittedBlocks": 0,
+            "maxFinalSubmittedBlocks": 0
+          }
+        },
+        "rpc": {
+          "calls": 20,
+          "completed": 20,
+          "pending": 0,
+          "averageMs": 69.63825000226498,
+          "maxMs": 461.1050000190735
+        },
+        "status": "linux: restored",
+        "terminalTail": "__E4T22F_READY_42awake__E4T22F_INPUT_awake__E4T22F_DONE__WVEND_mtlaw1502_0[1]+  Terminated                 yes 1>/dev/nulldate +%s; printf '\\n__WVEND_mtlaw9cj3_%s\\n' \"$?\"^Mwasm-vm:~# date +%s; printf '\\n__WVEND_mtlaw9cj3_%s\\n' \"$?\"1786066130__WVEND_mtlaw9cj3_0 "
+      },
+      "execution": {
+        "policy": {
+          "backend": "whole-machine-worker",
+          "interpreter": "fast",
+          "jit": "forced-off",
+          "jitResidency": "disabled",
+          "jitThreshold": 512,
+          "jitJalr": true,
+          "jitRegion": true,
+          "quantum": 20000
+        },
+        "jit": {
+          "enabled": false,
+          "threshold": 512,
+          "reason": "forced-off",
+          "hasExecutor": false,
+          "compiledBlocks": 0,
+          "executedBlocks": 0,
+          "retiredViaJit": 0,
+          "directChainEntries": 0,
+          "directChainLinks": 0,
+          "dynamicLinkAttempts": 0,
+          "dynamicLinkHits": 0,
+          "dynamicLinkRefusals": 0,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 0,
+          "dynamicLinkInstalls": 0,
+          "entryCost": {
+            "hostEntries": 0,
+            "stateCopyCalls": 0,
+            "stateCopyBytes": 0,
+            "stateCopyNs": 0,
+            "engineEntryNs": 0,
+            "indirectTableDispatches": 0,
+            "authorityChecks": 0,
+            "memorySplitExits": 0,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "jitRegionChaining": false,
+          "jitDynamicChaining": false,
+          "guestRetired": 0,
+          "jitEngineCalls": 0,
+          "jitLogicalBlocksPerEngineCall": 0,
+          "jitRetiredShare": 0,
+          "chainLinksMade": 0,
+          "chainLinksCut": 0,
+          "chainDispatchEntries": 0,
+          "chainMaxDepth": 0,
+          "chainLinksFollowed": 0,
+          "jitResidencyPolicy": "disabled",
+          "jitResidencyCap": 0,
+          "jitSubmittedMembers": 0,
+          "jitCompilePauseNs": 0,
+          "jitCompilePauseMaxNs": 0,
+          "jitCompilePauseSamples": 0,
+          "jitCacheInstalls": 0,
+          "jitCacheRetranslations": 0,
+          "jitCacheEvictions": 0,
+          "jitCacheBatches": 0,
+          "jitCacheCodeBytes": 0,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 2,
+          "discoveryGeneration": 3,
+          "blockEntryHits": 0,
+          "blockBuilds": 0
+        }
+      },
+      "diagnostics": {
+        "consoleErrors": [],
+        "pageErrors": [],
+        "failedRequests": [],
+        "httpErrors": []
+      }
+    },
+    {
+      "control": "jit",
+      "boot": {
+        "backend": "whole-machine-worker",
+        "guest": "alpine",
+        "manifest": "./artifacts-alpine.json",
+        "interpreter": "fast",
+        "jitPolicy": "enabled",
+        "isolated": true,
+        "restored": true,
+        "paused": true,
+        "ready": true,
+        "execution": {
+          "backend": "whole-machine-worker",
+          "interpreter": "fast",
+          "jit": "enabled",
+          "jitResidency": "repack-off",
+          "jitThreshold": 512,
+          "jitJalr": true,
+          "jitRegion": true,
+          "quantum": 20000
+        },
+        "digest": "28ace7ecbab3b61829d383bb9ff3e585926d462d23795a23c97881320af9072a",
+        "scheduler": {
+          "quantum": 20000,
+          "maxQuantum": 20000,
+          "slices": 0,
+          "totalSliceMs": 0,
+          "averageSliceMs": 0,
+          "maxSliceMs": 0,
+          "sliceHistogram": [
+            {
+              "leMs": 4,
+              "count": 0
+            },
+            {
+              "leMs": 8,
+              "count": 0
+            },
+            {
+              "leMs": 16,
+              "count": 0
+            },
+            {
+              "leMs": 32,
+              "count": 0
+            },
+            {
+              "leMs": 64,
+              "count": 0
+            },
+            {
+              "leMs": 128,
+              "count": 0
+            },
+            {
+              "leMs": 256,
+              "count": 0
+            },
+            {
+              "leMs": 512,
+              "count": 0
+            },
+            {
+              "leMs": 1000,
+              "count": 0
+            },
+            {
+              "leMs": null,
+              "count": 0
+            }
+          ],
+          "maxStretchGapMs": 0,
+          "requestedInstructions": 0,
+          "retiredInstructions": 0,
+          "fetchWaits": 0,
+          "fetchRequestedChunks": 0,
+          "fetchWaitTotalMs": 0,
+          "fetchWaitMaxMs": 0,
+          "outputCalls": 0,
+          "outputBytes": 0,
+          "inputCalls": 2,
+          "inputBytes": 56,
+          "yieldMode": "scheduler.postTask",
+          "schedulerYields": 0,
+          "timerYields": 0,
+          "mainThreadYields": 0
+        },
+        "jit": {
+          "hasExecutor": true,
+          "compiledBlocks": 0,
+          "executedBlocks": 0,
+          "retiredViaJit": 0,
+          "directChainEntries": 0,
+          "directChainLinks": 0,
+          "dynamicLinkAttempts": 0,
+          "dynamicLinkHits": 0,
+          "dynamicLinkRefusals": 0,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 0,
+          "dynamicLinkInstalls": 0,
+          "entryCost": {
+            "hostEntries": 0,
+            "stateCopyCalls": 0,
+            "stateCopyBytes": 0,
+            "stateCopyNs": 0,
+            "engineEntryNs": 0,
+            "indirectTableDispatches": 0,
+            "authorityChecks": 0,
+            "memorySplitExits": 0,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "jitRegionChaining": true,
+          "jitDynamicChaining": true,
+          "guestRetired": 0,
+          "jitEngineCalls": 0,
+          "jitLogicalBlocksPerEngineCall": 0,
+          "jitRetiredShare": 0,
+          "chainLinksMade": 0,
+          "chainLinksCut": 0,
+          "chainDispatchEntries": 0,
+          "chainMaxDepth": 0,
+          "chainLinksFollowed": 0,
+          "jitResidencyPolicy": "repack-off",
+          "jitResidencyCap": 24,
+          "jitSubmittedMembers": 0,
+          "jitCompilePauseNs": 0,
+          "jitCompilePauseMaxNs": 0,
+          "jitCompilePauseSamples": 0,
+          "jitCacheInstalls": 0,
+          "jitCacheRetranslations": 0,
+          "jitCacheEvictions": 0,
+          "jitCacheBatches": 0,
+          "jitCacheCodeBytes": 0,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 4,
+          "discoveryGeneration": 5,
+          "blockEntryHits": 0,
+          "blockBuilds": 0
+        },
+        "profile": {
+          "totalNs": 0,
+          "sampleCount": 0,
+          "walkCount": 0,
+          "collisions": 0,
+          "regions": [],
+          "subsystems": [
+            {
+              "name": "cpu_interp",
+              "ns": 0
+            },
+            {
+              "name": "mmu_walk",
+              "ns": 0
+            },
+            {
+              "name": "clint",
+              "ns": 0
+            },
+            {
+              "name": "plic",
+              "ns": 0
+            },
+            {
+              "name": "uart",
+              "ns": 0
+            },
+            {
+              "name": "virtio_blk",
+              "ns": 0
+            },
+            {
+              "name": "virtio_net",
+              "ns": 0
+            },
+            {
+              "name": "virtio_rng",
+              "ns": 0
+            },
+            {
+              "name": "rtc",
+              "ns": 0
+            },
+            {
+              "name": "syscon",
+              "ns": 0
+            },
+            {
+              "name": "other",
+              "ns": 0
+            }
+          ],
+          "jitPause": {
+            "count": 0,
+            "maxNs": 0,
+            "sumNs": 0,
+            "overTarget": 0,
+            "maxAttemptedBlocks": 0,
+            "totalAttemptedBlocks": 0,
+            "maxSubmittedBlocks": 0,
+            "maxSubmittedBytes": 0,
+            "totalSubmittedBlocks": 0,
+            "runCount": 0,
+            "lastRunAttemptedBlocks": 0,
+            "maxRunAttemptedBlocks": 0,
+            "lastRunSubmittedBlocks": 0,
+            "maxRunSubmittedBlocks": 0,
+            "lastRunStagedNominations": 0,
+            "maxRunStagedNominations": 0,
+            "lastFinalPumps": 0,
+            "maxFinalPumps": 0,
+            "lastFinalAttemptedBlocks": 0,
+            "maxFinalAttemptedBlocks": 0,
+            "lastFinalSubmittedBlocks": 0,
+            "maxFinalSubmittedBlocks": 0
+          }
+        },
+        "fetch": {
+          "fetches": 0,
+          "bytes": 0,
+          "error": null,
+          "cache": {
+            "hits": 0,
+            "misses": 0,
+            "evictions": 0,
+            "residentBytes": 0,
+            "budgetBytes": 268435456
+          },
+          "prefetch": {
+            "issued": 0,
+            "used": 0,
+            "profileEntries": 100,
+            "accuracyPct": 0
+          }
+        },
+        "rpc": {
+          "calls": 7,
+          "completed": 3,
+          "pending": 4,
+          "averageMs": 0.36666666467984516,
+          "maxMs": 0.8400000035762787
+        },
+        "snapshot": {
+          "available": true,
+          "decision": "missing",
+          "generation": 0,
+          "restored": true
+        },
+        "status": "linux: restored",
+        "terminalTail": "[storage: 0% of 7794MB, persist=false][storage warning: best-effort; private/incognito changes are temporary][fast-boot: restoring host from a build-time snapshot instead of booting Linux][fast-boot: restoring host from a build-time snapshot instead of booting Linux][fast-boot: host ready in 0.66s (restored, no Linux boot)][execution: whole-machine-worker; fast interpreter; JIT enabled, threshold 512; quantum 20000] "
+      },
+      "oracle": {
+        "command": "echo E4T22F_ORACLE_$((6*7))",
+        "stdout": "E4T22F_ORACLE_42\n",
+        "exit": 0,
+        "sha256": "6eab5c9e1d90a64ddefee006cf0fc9343e334d8ee94868251a2fe6213814538a",
+        "elapsedMs": 640,
+        "runtimeDigest": "28ace7ecbab3b61829d383bb9ff3e585926d462d23795a23c97881320af9072a",
+        "postCommandDigest": "93becb8c49bdd4a64d989dfd63d8bcb07f7def32dc90ad20bb09ae4dfa076f07"
+      },
+      "busy": {
+        "result": {
+          "stdout": "ead x; printf '__E4T22F_INPUT_%s\\n' \"$x\"; sleep 1; kill $p; wait $p 2>/dev/null;\n echo __E4T22F_DONE; printf '\\n__WVEND_mtlawc6i2_%s\\n' \"$?\"\n\n__E4T22F_READY_42\nawake\n__E4T22F_INPUT_awake\n__E4T22F_DONE\n\n",
+          "exit": 0
+        },
+        "inputWakeMs": 3.1800000071525574,
+        "inputDispatch": {
+          "quantum": 20000,
+          "maxQuantum": 20000,
+          "slices": 375,
+          "totalSliceMs": 1274.285000115633,
+          "averageSliceMs": 3.398093333641688,
+          "maxSliceMs": 8.604999989271164,
+          "sliceHistogram": [
+            {
+              "leMs": 4,
+              "count": 292
+            },
+            {
+              "leMs": 8,
+              "count": 82
+            },
+            {
+              "leMs": 16,
+              "count": 1
+            },
+            {
+              "leMs": 32,
+              "count": 0
+            },
+            {
+              "leMs": 64,
+              "count": 0
+            },
+            {
+              "leMs": 128,
+              "count": 0
+            },
+            {
+              "leMs": 256,
+              "count": 0
+            },
+            {
+              "leMs": 512,
+              "count": 0
+            },
+            {
+              "leMs": 1000,
+              "count": 0
+            },
+            {
+              "leMs": null,
+              "count": 0
+            }
+          ],
+          "maxStretchGapMs": 480.34999999403954,
+          "requestedInstructions": 7500000,
+          "retiredInstructions": 7498223,
+          "fetchWaits": 0,
+          "fetchRequestedChunks": 0,
+          "fetchWaitTotalMs": 0,
+          "fetchWaitMaxMs": 0,
+          "outputCalls": 236,
+          "outputBytes": 765,
+          "inputCalls": 6,
+          "inputBytes": 347,
+          "yieldMode": "scheduler.postTask",
+          "schedulerYields": 377,
+          "timerYields": 0,
+          "mainThreadYields": 0
+        },
+        "inputLatencyMs": 55.96500000357628,
+        "raf": {
+          "p99Ms": 16.670000000000073,
+          "maxMs": 16.670000000000073,
+          "samples": 120
+        },
+        "markerTail": "yes >/dev/null & p=$!; printf '\\n__E4T22F_READY_%s\\n' \"$((6 * 7))\"; r\r\r\nead x; printf '__E4T22F_INPUT_%s\\n' \"$x\"; sleep 1; kill $p; wait $p 2>/dev/null;\r\r\n echo __E4T22F_DONE; printf '\\n__WVEND_mtlawc6i2_%s\\n' \"$?\"\r\n\r\n__E4T22F_READY_42\r\nawake\r\n__E4T22F_INPUT_awake\r\n__E4T22F_DONE\r\n\r\n__WVEND_mtlawc6i2_0\r\n"
+      },
+      "guestTime": {
+        "stdout": "1786066130\n\n",
+        "guestSeconds": 1786066130,
+        "hostStartedAt": 1788426398040,
+        "hostFinishedAt": 1788426398417,
+        "withinHostWindow": false
+      },
+      "runtime": {
+        "digest": "3ae8e5df55034b1dc92b564ee1d52e4c11bfef54c3cd50d6333479570be0ff34",
+        "scheduler": {
+          "quantum": 20000,
+          "maxQuantum": 20000,
+          "slices": 5651,
+          "totalSliceMs": 6516.809999793768,
+          "averageSliceMs": 1.1532135904784584,
+          "maxSliceMs": 8.604999989271164,
+          "sliceHistogram": [
+            {
+              "leMs": 4,
+              "count": 5439
+            },
+            {
+              "leMs": 8,
+              "count": 211
+            },
+            {
+              "leMs": 16,
+              "count": 1
+            },
+            {
+              "leMs": 32,
+              "count": 0
+            },
+            {
+              "leMs": 64,
+              "count": 0
+            },
+            {
+              "leMs": 128,
+              "count": 0
+            },
+            {
+              "leMs": 256,
+              "count": 0
+            },
+            {
+              "leMs": 512,
+              "count": 0
+            },
+            {
+              "leMs": 1000,
+              "count": 0
+            },
+            {
+              "leMs": null,
+              "count": 0
+            }
+          ],
+          "maxStretchGapMs": 480.34999999403954,
+          "requestedInstructions": 113020000,
+          "retiredInstructions": 113014818,
+          "fetchWaits": 0,
+          "fetchRequestedChunks": 0,
+          "fetchWaitTotalMs": 0,
+          "fetchWaitMaxMs": 0,
+          "outputCalls": 285,
+          "outputBytes": 1028,
+          "inputCalls": 7,
+          "inputBytes": 396,
+          "yieldMode": "scheduler.postTask",
+          "schedulerYields": 5653,
+          "timerYields": 0,
+          "mainThreadYields": 0
+        },
+        "jit": {
+          "hasExecutor": true,
+          "compiledBlocks": 37,
+          "executedBlocks": 4173863,
+          "retiredViaJit": 93741500,
+          "directChainEntries": 21769989,
+          "directChainLinks": 17596151,
+          "dynamicLinkAttempts": 4047112,
+          "dynamicLinkHits": 3906754,
+          "dynamicLinkRefusals": 140358,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 2,
+          "dynamicLinkInstalls": 69637,
+          "entryCost": {
+            "hostEntries": 4173863,
+            "stateCopyCalls": 8347726,
+            "stateCopyBytes": 472036920,
+            "stateCopyNs": 397554947,
+            "engineEntryNs": 1452564966,
+            "indirectTableDispatches": 8340200,
+            "authorityChecks": 12114925,
+            "memorySplitExits": 21481,
+            "deviceBoundaries": 664,
+            "deviceBoundaryNs": 145003
+          },
+          "jitRegionChaining": true,
+          "jitDynamicChaining": true,
+          "guestRetired": 113034813,
+          "jitEngineCalls": 4173863,
+          "jitLogicalBlocksPerEngineCall": 5.215789066387661,
+          "jitRetiredShare": 0.8293153012957167,
+          "chainLinksMade": 655,
+          "chainLinksCut": 652,
+          "chainDispatchEntries": 775997,
+          "chainMaxDepth": 128,
+          "chainLinksFollowed": 3361963,
+          "jitResidencyPolicy": "repack-off",
+          "jitResidencyCap": 24,
+          "jitSubmittedMembers": 3128,
+          "jitCompilePauseNs": 246474977,
+          "jitCompilePauseMaxNs": 1745000,
+          "jitCompilePauseSamples": 1055,
+          "jitCacheInstalls": 3126,
+          "jitCacheRetranslations": 1925,
+          "jitCacheEvictions": 1008,
+          "jitCacheBatches": 18,
+          "jitCacheCodeBytes": 1245487,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 4,
+          "discoveryGeneration": 5,
+          "blockEntryHits": 2783037,
+          "blockBuilds": 1103918
+        },
+        "profile": {
+          "totalNs": 6504159903,
+          "sampleCount": 17805,
+          "walkCount": 693885,
+          "collisions": 569,
+          "regions": [
+            {
+              "pc": "0x00007fffb4defa80",
+              "samples": 1008,
+              "pct": 5.661331086773378
+            },
+            {
+              "pc": "0x00007fffb4df4c00",
+              "samples": 490,
+              "pct": 2.7520359449592813
+            },
+            {
+              "pc": "0x00007fffb4deea00",
+              "samples": 137,
+              "pct": 0.7694467846110643
+            },
+            {
+              "pc": "0x00007fffb4df5ac0",
+              "samples": 127,
+              "pct": 0.7132827857343443
+            },
+            {
+              "pc": "0x00007fffb4df4d00",
+              "samples": 122,
+              "pct": 0.6852007862959842
+            },
+            {
+              "pc": "0x00007fffb4df5a80",
+              "samples": 120,
+              "pct": 0.6739679865206403
+            },
+            {
+              "pc": "0xffffffff80984580",
+              "samples": 115,
+              "pct": 0.6458859870822803
+            },
+            {
+              "pc": "0x00007fffb4deeac0",
+              "samples": 113,
+              "pct": 0.6346531873069362
+            },
+            {
+              "pc": "0xffffffff800750c0",
+              "samples": 112,
+              "pct": 0.6290367874192643
+            },
+            {
+              "pc": "0x00007fffb4dee280",
+              "samples": 109,
+              "pct": 0.6121875877562483
+            }
+          ],
+          "subsystems": [
+            {
+              "name": "cpu_interp",
+              "ns": 6454474944
+            },
+            {
+              "name": "mmu_walk",
+              "ns": 49069964
+            },
+            {
+              "name": "clint",
+              "ns": 0
+            },
+            {
+              "name": "plic",
+              "ns": 249998
+            },
+            {
+              "name": "uart",
+              "ns": 364997
+            },
+            {
+              "name": "virtio_blk",
+              "ns": 0
+            },
+            {
+              "name": "virtio_net",
+              "ns": 0
+            },
+            {
+              "name": "virtio_rng",
+              "ns": 0
+            },
+            {
+              "name": "rtc",
+              "ns": 0
+            },
+            {
+              "name": "syscon",
+              "ns": 0
+            },
+            {
+              "name": "other",
+              "ns": 0
+            }
+          ],
+          "jitPause": {
+            "count": 1055,
+            "maxNs": 1745000,
+            "sumNs": 246474977,
+            "overTarget": 0,
+            "maxAttemptedBlocks": 8,
+            "totalAttemptedBlocks": 3234,
+            "maxSubmittedBlocks": 8,
+            "maxSubmittedBytes": 310,
+            "totalSubmittedBlocks": 3128,
+            "runCount": 5653,
+            "lastRunAttemptedBlocks": 0,
+            "maxRunAttemptedBlocks": 8,
+            "lastRunSubmittedBlocks": 0,
+            "maxRunSubmittedBlocks": 8,
+            "lastRunStagedNominations": 0,
+            "maxRunStagedNominations": 53,
+            "lastFinalPumps": 0,
+            "maxFinalPumps": 1,
+            "lastFinalAttemptedBlocks": 0,
+            "maxFinalAttemptedBlocks": 7,
+            "lastFinalSubmittedBlocks": 0,
+            "maxFinalSubmittedBlocks": 7
+          }
+        },
+        "rpc": {
+          "calls": 20,
+          "completed": 20,
+          "pending": 0,
+          "averageMs": 70.45900000035763,
+          "maxMs": 463.5149999856949
+        },
+        "status": "linux: restored",
+        "terminalTail": "__E4T22F_READY_42awake__E4T22F_INPUT_awake__E4T22F_DONE__WVEND_mtlawc6i2_0[1]+  Terminated                 yes 1>/dev/nulldate +%s; printf '\\n__WVEND_mtlawggs3_%s\\n' \"$?\"^Mwasm-vm:~# date +%s; printf '\\n__WVEND_mtlawggs3_%s\\n' \"$?\"1786066130__WVEND_mtlawggs3_0 "
+      },
+      "execution": {
+        "policy": {
+          "backend": "whole-machine-worker",
+          "interpreter": "fast",
+          "jit": "enabled",
+          "jitResidency": "repack-off",
+          "jitThreshold": 512,
+          "jitJalr": true,
+          "jitRegion": true,
+          "quantum": 20000
+        },
+        "jit": {
+          "enabled": true,
+          "threshold": 512,
+          "reason": "enabled",
+          "hasExecutor": true,
+          "compiledBlocks": 0,
+          "executedBlocks": 0,
+          "retiredViaJit": 0,
+          "directChainEntries": 0,
+          "directChainLinks": 0,
+          "dynamicLinkAttempts": 0,
+          "dynamicLinkHits": 0,
+          "dynamicLinkRefusals": 0,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 0,
+          "dynamicLinkInstalls": 0,
+          "entryCost": {
+            "hostEntries": 0,
+            "stateCopyCalls": 0,
+            "stateCopyBytes": 0,
+            "stateCopyNs": 0,
+            "engineEntryNs": 0,
+            "indirectTableDispatches": 0,
+            "authorityChecks": 0,
+            "memorySplitExits": 0,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "jitRegionChaining": true,
+          "jitDynamicChaining": true,
+          "guestRetired": 0,
+          "jitEngineCalls": 0,
+          "jitLogicalBlocksPerEngineCall": 0,
+          "jitRetiredShare": 0,
+          "chainLinksMade": 0,
+          "chainLinksCut": 0,
+          "chainDispatchEntries": 0,
+          "chainMaxDepth": 0,
+          "chainLinksFollowed": 0,
+          "jitResidencyPolicy": "repack-off",
+          "jitResidencyCap": 24,
+          "jitSubmittedMembers": 0,
+          "jitCompilePauseNs": 0,
+          "jitCompilePauseMaxNs": 0,
+          "jitCompilePauseSamples": 0,
+          "jitCacheInstalls": 0,
+          "jitCacheRetranslations": 0,
+          "jitCacheEvictions": 0,
+          "jitCacheBatches": 0,
+          "jitCacheCodeBytes": 0,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 4,
+          "discoveryGeneration": 5,
+          "blockEntryHits": 0,
+          "blockBuilds": 0
+        }
+      },
+      "diagnostics": {
+        "consoleErrors": [],
+        "pageErrors": [],
+        "failedRequests": [],
+        "httpErrors": []
+      }
+    }
+  ],
+  "assertions": {
+    "restoredAlpineWorker": true,
+    "crossOriginIsolated": true,
+    "rAFP99BudgetMs": 20,
+    "inputWakeBudgetMs": 20,
+    "commandSha256": "6eab5c9e1d90a64ddefee006cf0fc9343e334d8ee94868251a2fe6213814538a",
+    "initialDigestParity": true,
+    "runtimeDigestParity": true,
+    "postCommandDigestsRecorded": true,
+    "jitOnlyTranslatedExecution": true
+  },
+  "waivers": [
+    "WebKit is outside this directed proof.",
+    "Independent-machine execution is outside this directed proof.",
+    "The raw Atomics.wait WFI parked-worker proof is retained in E4-T22d; this production whole-machine-worker capture measures the live postMessage input-wake path."
+  ]
+}

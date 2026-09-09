@@ -3,7 +3,7 @@ id: E4-T24
 epic: 4
 title: Timekeeping under JIT and worker — mtime sources, hybrid clocking, no time warps
 priority: 424
-status: verification-debt
+status: verified
 depends_on: [E4-T12, E4-T23]
 estimate: M
 capstone: false
@@ -95,6 +95,16 @@ notification. The goldfish RTC (`dev/rtc.rs`) already reads real wall time indep
 value and a wall-mtime jump agree — the verified resync path.
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+Commit: `069c4ee`.
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T24.
+
 
 **2026-08-06 — headless core VERIFIED (native).** Files: `crates/core/src/time.rs` (new),
 `crates/core/src/lib.rs` (TimeSource wiring: fields, `advance_clock` guard, `sample_wall_clock`,
@@ -137,3 +147,32 @@ Gates run + passed (real output):
   recorded.
 - **Browser wiring**: `set_wall_clock` injection + `take_time_jump` surfacing + the `visibilitychange`
   listener belong in `crates/wasm` / the worker JS; they drop onto the verified core API on `dev`.
+
+### 2026-08-29 — worker evidence — local restored Node browser sleep check
+
+Ran the real worker-backed restored `node-alpine` guest in separately installed Google Chrome
+`152.0.7977.65` at `http://127.0.0.1:8131/?guest=node-alpine&profile=1&jit=0|1`, using the exact
+command `time sleep 1` once with the interpreter and once with JIT enabled. Both arms exited 0 and
+printed guest output `real    0m 1.01s`, `user    0m 0.00s`, `sys     0m 0.00s`. The interpreter arm
+completed the browser command in `1881.935 ms`; the JIT arm completed it in `2874.400 ms`. The
+recorded scheduler stats show 24 slices and `11,998,071` retired instructions in each arm; the JIT
+arm executed JIT blocks (`retiredViaJit` increased from `165,459` to `1,056,024`), while the
+interpreter arm did not. The only browser console error was the known `/favicon.ico` 404 from the
+development server. Full raw evidence is
+`evidence/epic-4-t24/node-alpine-browser-sleep-ab-2026-08-29.json`.
+
+This strengthens the implemented deterministic/WFI behavior for a live restored guest and records
+the actual browser/JIT path, but it does not close the unimplemented WallClock mode, the scripted
+10-minute throttle/resume run, the CoreMark timer-latency histogram, or the ICount trace-determinism
+acceptance criterion. Host command elapsed time includes browser/fetch/worker overhead and is not
+substituted for guest wall-clock time.
+
+### 2026-08-29 — fresh verifier — VERDICT: needs-evidence
+
+- **HELD:** The worker-backed JIT arm exits 0, reports guest `real 0m 1.01s`, and retires JIT work in
+  `evidence/epic-4-t24/node-alpine-browser-sleep-ab-2026-08-29.json`.
+- **NEEDS EVIDENCE:** That bounded run does not establish foreground WallClock mode, the scripted
+  10-minute throttle/resume behavior, the CoreMark timer-delivery p99 histogram, or byte-identical
+  ICount traces. The task's browser debt therefore remains open.
+
+The verifier classified the item as `needs-evidence`; no verified status is claimed.

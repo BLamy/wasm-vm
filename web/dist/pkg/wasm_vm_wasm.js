@@ -1,6 +1,6 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
+import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js';
 import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
-import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
 
 
 /**
@@ -97,6 +97,60 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return ret[0];
+    }
+    /**
+     * E5-T21d: attach the page-owned microphone ring as the guest's capture source. The ring is
+     * allocated before boot but contains no host media handle; permission remains lazy until the
+     * guest emits its first successful capture PCM_START edge.
+     * @param {SharedArrayBuffer} shared_buffer
+     * @param {number} capacity_frames
+     * @param {number} sample_rate_hz
+     */
+    attachAudioCapture(shared_buffer, capacity_frames, sample_rate_hz) {
+        const ret = wasm.wasmlinux_attachAudioCapture(this.__wbg_ptr, shared_buffer, capacity_frames, sample_rate_hz);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * E5-T20e: connect this assembled guest to the page-owned AudioWorklet ring and render clock.
+     * The buffers are validated against the T20a header before ownership crosses into the core;
+     * an invalid or missing sound device is a hard boot-configuration error rather than silent
+     * playback loss.
+     * @param {SharedArrayBuffer} shared_buffer
+     * @param {SharedArrayBuffer} clock_buffer
+     * @param {number} capacity_frames
+     * @param {number} sample_rate_hz
+     */
+    attachAudioOutput(shared_buffer, clock_buffer, capacity_frames, sample_rate_hz) {
+        const ret = wasm.wasmlinux_attachAudioOutput(this.__wbg_ptr, shared_buffer, clock_buffer, capacity_frames, sample_rate_hz);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * E5-T21d: report whether this guest owns the page-provided capture ring.
+     * @returns {boolean}
+     */
+    audioCaptureReady() {
+        const ret = wasm.wasmlinux_audioCaptureReady(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] !== 0;
+    }
+    /**
+     * E5-T20e: report whether this guest owns the page-provided ring sink. Kept separate from
+     * `AudioWorkletSink.stats()` so a browser proof can distinguish an attached guest bridge from
+     * a standalone synthetic ring producer.
+     * @returns {boolean}
+     */
+    audioOutputReady() {
+        const ret = wasm.wasmlinux_audioOutputReady(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] !== 0;
     }
     /**
      * @param {number} slot
@@ -204,6 +258,20 @@ export class WasmLinux {
         }
     }
     /**
+     * E4-T38: enable the Linux browser JIT under one explicit residency policy. See
+     * [`WasmMachine::enable_jit_with_policy`] for the policy labels and cap semantics.
+     * @param {number} threshold
+     * @param {string} residency_policy
+     */
+    enableJitWithPolicy(threshold, residency_policy) {
+        const ptr0 = passStringToWasm0(residency_policy, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_enableJitWithPolicy(this.__wbg_ptr, threshold, ptr0, len0);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
      * the next `runChunk` completes the parked reads. Resolves to the number of chunks newly made
      * resident. No-op (0) for a non-chunked boot. Must not run concurrently with `runChunk` (both
@@ -298,7 +366,11 @@ export class WasmLinux {
     /**
      * Persist an externally supplied snapshot blob (AC3 import) into the snapshot store for THIS boot's
      * base image. The blob is bound to this base's namespace; a foreign blob imported here still fails
-     * the coherence guard on restore. Error `"not_persistent"` off the persistent path.
+     * the coherence guard on restore. Framing-corrupt input is replaced by a corrupt marker, and a
+     * same-size payload mutation is checked against the digest of the previously published snapshot;
+     * both paths make the next decision typed `"corrupt"` rather than falsely `"resume"`. The live
+     * machine and overlay are not mutated. The write counter keeps lease release behind this full
+     * namespace mutation. Error `"not_persistent"` off the persistent path.
      * @param {Uint8Array} blob
      * @returns {Promise<void>}
      */
@@ -317,6 +389,18 @@ export class WasmLinux {
      */
     jitStats() {
         const ret = wasm.wasmlinux_jitStats(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Return the latest host-owned LED state reported by the guest keyboard driver. A null
+     * result means that this machine was assembled without the virtio-input keyboard capability.
+     * @returns {any}
+     */
+    keyboardLedState() {
+        const ret = wasm.wasmlinux_keyboardLedState(this.__wbg_ptr);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -345,15 +429,16 @@ export class WasmLinux {
      * @param {Uint8Array} initrd
      * @param {string} bootargs
      * @param {Function} output
+     * @param {boolean} enable_mic
      */
-    constructor(ram_mib, kernel, initrd, bootargs, output) {
+    constructor(ram_mib, kernel, initrd, bootargs, output, enable_mic) {
         const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passArray8ToWasm0(initrd, wasm.__wbindgen_malloc);
         const len1 = WASM_VECTOR_LEN;
         const ptr2 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len2 = WASM_VECTOR_LEN;
-        const ret = wasm.wasmlinux_new(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, output);
+        const ret = wasm.wasmlinux_new(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, output, enable_mic);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -374,9 +459,10 @@ export class WasmLinux {
      * @param {Uint32Array} boot_profile
      * @param {string} bootargs
      * @param {Function} output
+     * @param {boolean} enable_mic
      * @returns {WasmLinux}
      */
-    static newChunkedDisk(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, boot_profile, bootargs, output) {
+    static newChunkedDisk(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, boot_profile, bootargs, output, enable_mic) {
         const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -387,7 +473,7 @@ export class WasmLinux {
         const len3 = WASM_VECTOR_LEN;
         const ptr4 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len4 = WASM_VECTOR_LEN;
-        const ret = wasm.wasmlinux_newChunkedDisk(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, ptr4, len4, output);
+        const ret = wasm.wasmlinux_newChunkedDisk(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, ptr4, len4, output, enable_mic);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -408,10 +494,11 @@ export class WasmLinux {
      * @param {string} bootargs
      * @param {boolean} read_only
      * @param {Function} output
-     * @param {string | null} [seed_identity]
+     * @param {string | null | undefined} seed_identity
+     * @param {boolean} enable_mic
      * @returns {Promise<WasmLinux>}
      */
-    static newChunkedDiskPersistent(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, boot_profile, bootargs, read_only, output, seed_identity) {
+    static newChunkedDiskPersistent(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, boot_profile, bootargs, read_only, output, seed_identity, enable_mic) {
         const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -424,8 +511,45 @@ export class WasmLinux {
         const len4 = WASM_VECTOR_LEN;
         var ptr5 = isLikeNone(seed_identity) ? 0 : passStringToWasm0(seed_identity, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len5 = WASM_VECTOR_LEN;
-        const ret = wasm.wasmlinux_newChunkedDiskPersistent(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, ptr4, len4, read_only, output, ptr5, len5);
+        const ret = wasm.wasmlinux_newChunkedDiskPersistent(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, ptr4, len4, read_only, output, ptr5, len5, enable_mic);
         return ret;
+    }
+    /**
+     * E4-T28e: boot the normal lazy Alpine root disk with one additional read-only virtio-blk
+     * image. The extra image is passed by value so the fetched overlay becomes one resident Rust
+     * buffer; it is never compiled or transformed on the host. The first free slot after browser
+     * Linux's net/rng/keyboard/tablet/mouse reservation is used, leaving `/dev/vdb` as the second
+     * block device.
+     * @param {number} ram_mib
+     * @param {Uint8Array} kernel
+     * @param {string} manifest_json
+     * @param {string} base_url
+     * @param {number} cache_budget_mib
+     * @param {Uint32Array} boot_profile
+     * @param {Uint8Array} extra_disk
+     * @param {string} bootargs
+     * @param {Function} output
+     * @param {boolean} enable_mic
+     * @returns {WasmLinux}
+     */
+    static newChunkedDiskWithExtra(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, boot_profile, extra_disk, bootargs, output, enable_mic) {
+        const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(base_url, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ptr3 = passArray32ToWasm0(boot_profile, wasm.__wbindgen_malloc);
+        const len3 = WASM_VECTOR_LEN;
+        const ptr4 = passArray8ToWasm0(extra_disk, wasm.__wbindgen_malloc);
+        const len4 = WASM_VECTOR_LEN;
+        const ptr5 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len5 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_newChunkedDiskWithExtra(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, ptr4, len4, ptr5, len5, output, enable_mic);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return WasmLinux.__wrap(ret[0]);
     }
     /**
      * E2-T26 capstone: boot from a virtio-blk DISK image (e.g. the Alpine ext4 rootfs) instead of
@@ -437,16 +561,17 @@ export class WasmLinux {
      * @param {Uint8Array} disk
      * @param {string} bootargs
      * @param {Function} output
+     * @param {boolean} enable_mic
      * @returns {WasmLinux}
      */
-    static newDisk(ram_mib, kernel, disk, bootargs, output) {
+    static newDisk(ram_mib, kernel, disk, bootargs, output, enable_mic) {
         const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passArray8ToWasm0(disk, wasm.__wbindgen_malloc);
         const len1 = WASM_VECTOR_LEN;
         const ptr2 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len2 = WASM_VECTOR_LEN;
-        const ret = wasm.wasmlinux_newDisk(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, output);
+        const ret = wasm.wasmlinux_newDisk(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, output, enable_mic);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -463,6 +588,22 @@ export class WasmLinux {
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
+    }
+    /**
+     * E5-T21d: turn a host capture lifecycle failure into the existing bounded virtio-snd input
+     * XRUN event. The event is delivered through the guest's eventq at the next run boundary;
+     * PCM rxq buffers continue to complete with zero-filled, clock-paced data.
+     * @param {string} event
+     * @returns {boolean}
+     */
+    notifyCaptureEvent(event) {
+        const ptr0 = passStringToWasm0(event, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_notifyCaptureEvent(this.__wbg_ptr, ptr0, len0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] !== 0;
     }
     /**
      * The current overlay commit generation (the snapshot coherence's third binding). `u64` fits
@@ -507,8 +648,9 @@ export class WasmLinux {
     /**
      * Convenience: take a resume snapshot AND durably persist it to the snapshot IndexedDB store in one
      * call. The `RefCell` borrow is scoped to `save_resume` + reading `snapshot_base`; the store I/O
-     * runs after it is dropped, never across the borrow. No-op error `"not_persistent"` off the
-     * persistent path (there is no snapshot store to write to).
+     * runs after it is dropped, never across the borrow. The write counter keeps a lease release
+     * from handing the namespace to another tab until this async operation has committed. No-op
+     * error `"not_persistent"` off the persistent path (there is no snapshot store to write to).
      * @returns {Promise<void>}
      */
     persistSnapshot() {
@@ -547,12 +689,26 @@ export class WasmLinux {
     }
     /**
      * Read the persisted snapshot blob back (reassembled), or `null` if none is stored / not on the
-     * persistent path. Async (IndexedDB). The JS restore-decision hook feeds this into
-     * [`Self::restore_decision_code`] and, on a `"resume"` verdict, into [`Self::load_snapshot_blob`].
+     * persistent path. Async (IndexedDB). This is the export/debug surface; production restore uses
+     * [`Self::restore_stored_snapshot`] so the blob never crosses the wasm/JS boundary as a second
+     * whole-payload copy.
      * @returns {Promise<any>}
      */
     readStoredSnapshot() {
         const ret = wasm.wasmlinux_readStoredSnapshot(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * Permanently relinquish this machine's snapshot-writer role. Web Locks releases are dynamic:
+     * another tab may acquire the same namespace while this controller is still alive, so the
+     * construction-time read-only bit alone is not a sufficient fence for a stale controller. New
+     * writes are fenced immediately, while writes that already passed the check are allowed to
+     * finish before this method resolves. There is intentionally no inverse operation; a new
+     * machine must acquire the writer lock before it can save or import snapshots.
+     * @returns {Promise<void>}
+     */
+    relinquishSnapshotWriter() {
+        const ret = wasm.wasmlinux_relinquishSnapshotWriter(this.__wbg_ptr);
         return ret;
     }
     /**
@@ -583,6 +739,18 @@ export class WasmLinux {
         } finally {
             wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
         }
+    }
+    /**
+     * Load and, only when coherent, apply the persisted snapshot directly inside wasm. The stored
+     * blob is held by one Rust allocation while the coherence header is checked and the machine is
+     * restored; unlike `readStoredSnapshot` this path does not create a JS `Uint8Array` boundary copy.
+     * Returns the same typed decision code as `restoreDecisionCode`, with no machine mutation for a
+     * missing, corrupt, foreign, or stale snapshot.
+     * @returns {Promise<string>}
+     */
+    restoreStoredSnapshot() {
+        const ret = wasm.wasmlinux_restoreStoredSnapshot(this.__wbg_ptr);
+        return ret;
     }
     /**
      * Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
@@ -631,6 +799,56 @@ export class WasmLinux {
         }
     }
     /**
+     * Queue one guest-visible evdev keyboard event. Call `syncKeyboard` after the host's
+     * keydown/keyup event (or after a batch of related events) to publish the frame with its
+     * `SYN_REPORT`; browser repeat events must not call this method as key-downs.
+     * @param {number} event_type
+     * @param {number} code
+     * @param {number} value
+     */
+    sendKeyboardEvent(event_type, code, value) {
+        const ret = wasm.wasmlinux_sendKeyboardEvent(this.__wbg_ptr, event_type, code, value);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * Queue one guest-visible relative-mouse event. Call `syncMouse` after the complete DOM
+     * pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
+     * @param {number} event_type
+     * @param {number} code
+     * @param {number} value
+     */
+    sendMouseEvent(event_type, code, value) {
+        const ret = wasm.wasmlinux_sendMouseEvent(this.__wbg_ptr, event_type, code, value);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * Queue one guest-visible absolute-tablet event. Call `syncTablet` after the complete DOM
+     * pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
+     * @param {number} event_type
+     * @param {number} code
+     * @param {number} value
+     */
+    sendTabletEvent(event_type, code, value) {
+        const ret = wasm.wasmlinux_sendTabletEvent(this.__wbg_ptr, event_type, code, value);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * E4-T39: toggle static region chaining without rebuilding the generated modules.
+     * @param {boolean} on
+     */
+    setChaining(on) {
+        const ret = wasm.wasmlinux_setChaining(this.__wbg_ptr, on);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E3-T10: flip the disk to read-only at runtime — the "continue read-only" choice after a
      * storage-quota hit. Subsequent guest writes get EIO (VIRTIO_BLK_F_RO / BlockError::ReadOnly)
      * so the guest sees an honest I/O error instead of a silently-undurable write. No-op off the
@@ -643,6 +861,16 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return ret[0] !== 0;
+    }
+    /**
+     * E4-T39: toggle generated dynamic-return (`jalr`) chaining independently of static regions.
+     * @param {boolean} on
+     */
+    setDynamicChaining(on) {
+        const ret = wasm.wasmlinux_setDynamicChaining(this.__wbg_ptr, on);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
     }
     /**
      * E4-T30: select the production interpreter fast path for a browser Linux guest. It combines
@@ -725,11 +953,64 @@ export class WasmLinux {
         }
     }
     /**
+     * Publish the current host keyboard frame by appending `EV_SYN/SYN_REPORT`.
+     */
+    syncKeyboard() {
+        const ret = wasm.wasmlinux_syncKeyboard(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * Publish the current host relative-mouse frame with `EV_SYN/SYN_REPORT`.
+     */
+    syncMouse() {
+        const ret = wasm.wasmlinux_syncMouse(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * Publish the current host absolute-tablet frame with `EV_SYN/SYN_REPORT`.
+     */
+    syncTablet() {
+        const ret = wasm.wasmlinux_syncTablet(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * @param {number} id
      * @returns {Uint8Array}
      */
     takeFileDownloadChunk(id) {
         const ret = wasm.wasmlinux_takeFileDownloadChunk(this.__wbg_ptr, id);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * E5-T21d: expose the input PCM lifecycle edge to the page. `startCount` increments only for
+     * successful guest PCM_START requests; the page uses it to make getUserMedia lazy and to
+     * re-request after a later guest retry without polling host media state speculatively.
+     * @returns {any}
+     */
+    virtioSndCaptureState() {
+        const ret = wasm.wasmlinux_virtioSndCaptureState(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * E5-T21b: expose the assembled sound configuration for browser diagnostics. This is a
+     * read-only construction proof; the input stream metadata comes from the same core state that
+     * answers guest PCM_INFO, and no host capture handle is created by reading it.
+     * @returns {any}
+     */
+    virtioSndConfig() {
+        const ret = wasm.wasmlinux_virtioSndConfig(this.__wbg_ptr);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -764,6 +1045,23 @@ export class WasmMachine {
      */
     enableJit(threshold) {
         const ret = wasm.wasmmachine_enableJit(this.__wbg_ptr, threshold);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * E4-T38: attach the browser JIT with one explicit residency screen. `repack-off` is the
+     * current single-pass batcher with the conservative 24-module browser cap; `cap-256` and
+     * `cap-1024` retain the same translator and eviction policy while changing only the live-batch
+     * cap. Validate and apply the policy before publishing the executor so a bad benchmark label
+     * cannot leave a partially initialized machine.
+     * @param {number} threshold
+     * @param {string} residency_policy
+     */
+    enableJitWithPolicy(threshold, residency_policy) {
+        const ptr0 = passStringToWasm0(residency_policy, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmmachine_enableJitWithPolicy(this.__wbg_ptr, threshold, ptr0, len0);
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
@@ -860,11 +1158,31 @@ export class WasmMachine {
         return takeFromExternrefTable0(ret[0]);
     }
     /**
+     * E4-T39: toggle static region chaining without rebuilding the generated modules.
+     * @param {boolean} on
+     */
+    setChaining(on) {
+        const ret = wasm.wasmmachine_setChaining(this.__wbg_ptr, on);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * Install (or replace) the per-byte console callback: `fn(byte: number)`.
      * @param {Function} cb
      */
     setConsole(cb) {
         const ret = wasm.wasmmachine_setConsole(this.__wbg_ptr, cb);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * E4-T39: toggle generated dynamic-return (`jalr`) chaining independently of static regions.
+     * @param {boolean} on
+     */
+    setDynamicChaining(on) {
+        const ret = wasm.wasmmachine_setDynamicChaining(this.__wbg_ptr, on);
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
@@ -1211,6 +1529,10 @@ function __wbg_get_imports() {
         __wbg_abort_8bae0f33e7833997: function(arg0) {
             arg0.abort();
         },
+        __wbg_add_2bf30d748e613446: function() { return handleError(function (arg0, arg1, arg2) {
+            const ret = Atomics.add(arg0, arg1 >>> 0, arg2);
+            return ret;
+        }, arguments); },
         __wbg_apply_23dd4d2439189415: function() { return handleError(function (arg0, arg1, arg2) {
             const ret = Reflect.apply(arg0, arg1, arg2);
             return ret;
@@ -1227,12 +1549,20 @@ function __wbg_get_imports() {
             const ret = arg0.byteLength;
             return ret;
         },
+        __wbg_byteLength_b449ddccf9a5f01d: function(arg0) {
+            const ret = arg0.byteLength;
+            return ret;
+        },
         __wbg_call_8a2dd23819f8a60a: function() { return handleError(function (arg0, arg1) {
             const ret = arg0.call(arg1);
             return ret;
         }, arguments); },
         __wbg_call_a6e5c5dce5018821: function() { return handleError(function (arg0, arg1, arg2) {
             const ret = arg0.call(arg1, arg2);
+            return ret;
+        }, arguments); },
+        __wbg_call_e3b662382210db98: function() { return handleError(function (arg0, arg1, arg2, arg3) {
+            const ret = arg0.call(arg1, arg2, arg3);
             return ret;
         }, arguments); },
         __wbg_clear_772d79d5d3e7307a: function() { return handleError(function (arg0) {
@@ -1244,6 +1574,10 @@ function __wbg_get_imports() {
         },
         __wbg_close_c65ca0257e895318: function() { return handleError(function (arg0) {
             arg0.close();
+        }, arguments); },
+        __wbg_count_4b5216babe494538: function() { return handleError(function (arg0) {
+            const ret = arg0.count();
+            return ret;
         }, arguments); },
         __wbg_createObjectStore_ff668af6e79f0433: function() { return handleError(function (arg0, arg1, arg2) {
             const ret = arg0.createObjectStore(getStringFromWasm0(arg1, arg2));
@@ -1321,10 +1655,18 @@ function __wbg_get_imports() {
             const ret = arg0.get(arg1);
             return ret;
         }, arguments); },
+        __wbg_get_index_f41c626c6a06ea79: function(arg0, arg1) {
+            const ret = arg0[arg1 >>> 0];
+            return ret;
+        },
         __wbg_get_unchecked_6e0ad6d2a41b06f6: function(arg0, arg1) {
             const ret = arg0[arg1 >>> 0];
             return ret;
         },
+        __wbg_grow_921bb12f163cfe6c: function() { return handleError(function (arg0, arg1) {
+            const ret = arg0.grow(arg1 >>> 0);
+            return ret;
+        }, arguments); },
         __wbg_headers_7b59c5203c8c475d: function(arg0) {
             const ret = arg0.headers;
             return ret;
@@ -1430,6 +1772,10 @@ function __wbg_get_imports() {
             const ret = result;
             return ret;
         },
+        __wbg_invokeJitBlock_99121dda606f7308: function(arg0, arg1, arg2) {
+            const ret = invokeJitBlock(arg0, arg1 >>> 0, arg2 >>> 0);
+            return ret;
+        },
         __wbg_length_1f0964f4a5e2c6d8: function(arg0) {
             const ret = arg0.length;
             return ret;
@@ -1438,6 +1784,14 @@ function __wbg_get_imports() {
             const ret = arg0.length;
             return ret;
         },
+        __wbg_length_81804e6c5f144937: function(arg0) {
+            const ret = arg0.length;
+            return ret;
+        },
+        __wbg_load_209206003cdf5be2: function() { return handleError(function (arg0, arg1) {
+            const ret = Atomics.load(arg0, arg1 >>> 0);
+            return ret;
+        }, arguments); },
         __wbg_log_d267660666346fb3: function(arg0) {
             console.log(arg0);
         },
@@ -1452,6 +1806,10 @@ function __wbg_get_imports() {
             getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true);
             getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
         },
+        __wbg_new_0dc07b435d476dbd: function() { return handleError(function (arg0) {
+            const ret = new WebAssembly.Table(arg0);
+            return ret;
+        }, arguments); },
         __wbg_new_227d7c05414eb861: function() {
             const ret = new Error();
             return ret;
@@ -1524,6 +1882,14 @@ function __wbg_get_imports() {
                 state0.a = 0;
             }
         },
+        __wbg_new_with_byte_offset_and_length_1715a6d19433f257: function(arg0, arg1, arg2) {
+            const ret = new Int32Array(arg0, arg1 >>> 0, arg2 >>> 0);
+            return ret;
+        },
+        __wbg_new_with_byte_offset_and_length_1fdfe3033ce1dccd: function(arg0, arg1, arg2) {
+            const ret = new Float32Array(arg0, arg1 >>> 0, arg2 >>> 0);
+            return ret;
+        },
         __wbg_new_with_byte_offset_and_length_54c7724ee3ec7d82: function(arg0, arg1, arg2) {
             const ret = new Uint8Array(arg0, arg1 >>> 0, arg2 >>> 0);
             return ret;
@@ -1560,6 +1926,10 @@ function __wbg_get_imports() {
             const ret = arg0.objectStore(getStringFromWasm0(arg1, arg2));
             return ret;
         }, arguments); },
+        __wbg_of_5f1b88183ddb5d94: function(arg0, arg1) {
+            const ret = Array.of(arg0, arg1);
+            return ret;
+        },
         __wbg_of_b0cd2e09b31a9684: function(arg0, arg1, arg2) {
             const ret = Array.of(arg0, arg1, arg2);
             return ret;
@@ -1637,6 +2007,9 @@ function __wbg_get_imports() {
         __wbg_set_4d7dd76f3dae2926: function(arg0, arg1, arg2) {
             arg0.set(getArrayU8FromWasm0(arg1, arg2));
         },
+        __wbg_set_5d8eaa6b2caf4444: function() { return handleError(function (arg0, arg1, arg2) {
+            arg0.set(arg1 >>> 0, arg2);
+        }, arguments); },
         __wbg_set_61e45ae8061eca11: function(arg0, arg1, arg2) {
             arg0.set(arg1, arg2 >>> 0);
         },
@@ -1650,8 +2023,14 @@ function __wbg_get_imports() {
         __wbg_set_body_029f2d171e0a005f: function(arg0, arg1) {
             arg0.body = arg1;
         },
+        __wbg_set_eeaf6f49bd2bf077: function() { return handleError(function (arg0, arg1, arg2) {
+            arg0.set(arg1 >>> 0, arg2);
+        }, arguments); },
         __wbg_set_index_c0ab70cbaf022bbb: function(arg0, arg1, arg2) {
             arg0[arg1 >>> 0] = BigInt.asUintN(64, arg2);
+        },
+        __wbg_set_index_f15f4feb1d940b8c: function(arg0, arg1, arg2) {
+            arg0[arg1 >>> 0] = arg2;
         },
         __wbg_set_method_5532d59b92d76467: function(arg0, arg1, arg2) {
             arg0.method = getStringFromWasm0(arg1, arg2);
@@ -1735,6 +2114,14 @@ function __wbg_get_imports() {
             const ret = arg0.status;
             return ret;
         },
+        __wbg_store_d936663b08dcfdea: function() { return handleError(function (arg0, arg1, arg2) {
+            const ret = Atomics.store(arg0, arg1 >>> 0, arg2);
+            return ret;
+        }, arguments); },
+        __wbg_sub_935ae32d3e4fb0d1: function() { return handleError(function (arg0, arg1, arg2) {
+            const ret = Atomics.sub(arg0, arg1 >>> 0, arg2);
+            return ret;
+        }, arguments); },
         __wbg_subarray_3ed232c8a6baee09: function(arg0, arg1, arg2) {
             const ret = arg0.subarray(arg1 >>> 0, arg2 >>> 0);
             return ret;
@@ -1770,52 +2157,52 @@ function __wbg_get_imports() {
             return ret;
         },
         __wbindgen_cast_0000000000000001: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 376, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 419, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h1dbcf2b5dd15a422);
             return ret;
         },
         __wbindgen_cast_0000000000000002: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I32], shim_idx: 222, ret: I64, inner_ret: Some(I64) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I32], shim_idx: 252, ret: I64, inner_ret: Some(I64) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h3c376d590f4b7628);
             return ret;
         },
         __wbindgen_cast_0000000000000003: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I64, I32, I32], shim_idx: 224, ret: I64, inner_ret: Some(I64) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I64, I32, I32], shim_idx: 254, ret: I64, inner_ret: Some(I64) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__hccc6447b5e5e2a92);
             return ret;
         },
         __wbindgen_cast_0000000000000004: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I64, I32], shim_idx: 217, ret: I64, inner_ret: Some(I64) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I64, I32], shim_idx: 247, ret: I64, inner_ret: Some(I64) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__hb536c899e9023450);
             return ret;
         },
         __wbindgen_cast_0000000000000005: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I64, I32], shim_idx: 227, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I64, I32], shim_idx: 257, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__hf96fc87adc256ad8);
             return ret;
         },
         __wbindgen_cast_0000000000000006: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 219, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 249, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4);
             return ret;
         },
         __wbindgen_cast_0000000000000007: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 219, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 249, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_6);
             return ret;
         },
         __wbindgen_cast_0000000000000008: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 219, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 249, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_7);
             return ret;
         },
         __wbindgen_cast_0000000000000009: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 219, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 249, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_8);
             return ret;
         },
         __wbindgen_cast_000000000000000a: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 215, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 245, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h880302392ebe5c09);
             return ret;
         },
@@ -1848,7 +2235,6 @@ function __wbg_get_imports() {
         __proto__: null,
         "./wasm_vm_wasm_bg.js": import0,
         "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js": import1,
-        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js": import2,
     };
 }
 

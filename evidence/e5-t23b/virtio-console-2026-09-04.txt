@@ -1,0 +1,51 @@
+E5-T23b exact-head verification evidence
+=========================================
+
+Implementation commit: 8aefa5e (feat(e5-t23b): add virtio-console agent transport)
+
+Acceptance command
+------------------
+
+Command: cargo test -p wasm-vm-core virtio_console
+Result: PASS
+- 4 core virtio-console unit tests passed.
+- 1 real-Machine virtio-console integration test passed.
+- All other workspace test binaries completed with zero matching failures.
+
+Additional local gates
+----------------------
+
+- cargo fmt --all -- --check: PASS
+- cargo clippy -p wasm-vm-core --lib --tests -- -D warnings: PASS
+- cargo check -p wasm-vm-core --target wasm32-unknown-unknown --quiet: PASS
+- cargo test -p wasm-vm-core --lib virtio::mmio: 10 passed, 0 failed
+- cargo test -p wasm-vm-core --test virtio_mmio_slots: 2 passed, 0 failed
+- cargo test -p wasm-vm-core --test virtio_snd_machine: 4 passed, 0 failed
+- cargo test -p wasm-vm-core --test snapshot: 8 passed, 0 failed
+- cargo test -p wasm-vm-core --test snapshot_coherence: 5 passed, 0 failed
+- cargo test -p wasm-vm-core --test virtio_blk --test virtio_net_machine --test virtio_snd_machine:
+  18 passed, 0 failed
+- git diff --check and untracked-file diff checks: PASS
+
+What the recording demonstrates
+--------------------------------
+
+The focused native run exercises the negotiated DeviceID 3 multiport device, six-queue layout,
+DEVICE_READY -> PORT_ADD/PORT_NAME -> PORT_READY -> PORT_OPEN control lifecycle, split writable
+agent receive chains, agent transmit byte preservation, bounded output backpressure, and a posted
+descriptor retained while the agent buffer is full.  The same Machine boundary writes through the
+existing UART and observes its byte independently, proving that agent saturation does not consume
+or alias serial-console state.  Unit attacks cover dribbled control descriptors, malformed
+control payloads, coalesced data, 10,000 bounded payload attempts, deterministic restart, and a
+full MMIO reset that clears stale agent state and announcements.
+
+Coverage disposition
+--------------------
+
+- console.rs: device declaration, control codec/state, queue validation, all five exercised
+  service paths, backpressure, lifecycle, and reset are covered by the focused unit/integration
+  tests.
+- mmio.rs: MAX_QUEUES expansion is covered by the MMIO unit suite, eight-slot probe, snapshots,
+  and existing block/network/sound Machine tests.
+- lib.rs: Machine registration and run-loop servicing are covered by the real-Machine test.
+- No browser/WebKit or independent-machine run is required for this native-only boundary.

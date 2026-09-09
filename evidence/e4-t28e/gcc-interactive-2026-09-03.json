@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "schema": "e4-t28e-gcc-interactive-v1",
+  "date": "2026-09-03",
+  "status": "gap",
+  "candidate": {
+    "commit": "6af49f25e22a5a9e9f6ad91c9713bc0ba8484ac8",
+    "exactHead": true
+  },
+  "command": "PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 npx playwright test tests/e4-t28-gcc-interactive.spec.js --project=chromium",
+  "browser": {
+    "engine": "Chromium",
+    "requestErrors": [],
+    "consoleErrors": [],
+    "independentMachines": "excluded by owner direction",
+    "webkit": "excluded by owner direction"
+  },
+  "workload": {
+    "id": "e4-t28e-pinned-gcc-miniz-v1",
+    "command": "SOURCE_DATE_EPOCH=1704067200 /mnt/gcc-wrap -O2 -frandom-seed=miniz -c /mnt/src/miniz.c -o /tmp/miniz.o",
+    "sourcePath": "/mnt/src/miniz.c",
+    "sourceBytes": 322549,
+    "sourceSha256": "0fcdc9888cb3a29ca8f176bac087e5fe6c7258a6ab06b1c271c1e109a11d3740",
+    "gccPackage": "gcc-13.2.1_git20240309-r1",
+    "hostCompiler": false
+  },
+  "overlay": {
+    "path": "bench/guest/gcc.ext4",
+    "url": "/gcc-overlay/gcc.ext4",
+    "sizeBytes": 536870912,
+    "sha256": "f53445f65b5e32b9fe3c47e0f84c52c850da2c747edae0abca60e9592a758c4a",
+    "manifestPath": "bench/guest/gcc-MANIFEST.txt"
+  },
+  "attempts": [
+    {
+      "setupMount": "mount -o ro,noload /dev/vdb /mnt",
+      "setupTimeoutMs": 180000,
+      "overlayHttpStatus": 200,
+      "outcome": "setup RPC timed out while mounting /dev/vdb"
+    },
+    {
+      "setupMount": "mount -o ro,noload /dev/vdb /mnt",
+      "setupTimeoutMs": 900000,
+      "overlayHttpStatus": 200,
+      "outcome": "setup RPC timed out while mounting /dev/vdb"
+    }
+  ],
+  "compile": null,
+  "interaction": null,
+  "runtime": {
+    "guestCompileReached": false,
+    "stateDigest": null,
+    "jitSelected": true,
+    "jitExecutionEvidence": null
+  },
+  "historicalNativeReference": {
+    "path": "evidence/e4-t19/ab-2026-09-01/gcc-k64-d2497e3.json",
+    "guestSeconds": 163.96,
+    "objectSha256": "97198b27557042fb84de54881c5fb577505b4ee77c41bc056612be6173e5faca",
+    "browserSubstitution": false
+  },
+  "scope": {
+    "ownerDirectedDebtClosure": true,
+    "hostRR": "waived by repository policy"
+  }
+}

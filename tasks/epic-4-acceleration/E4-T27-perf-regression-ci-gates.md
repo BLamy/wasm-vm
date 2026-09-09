@@ -3,7 +3,7 @@ id: E4-T27
 epic: 4
 title: Performance regression CI — benchmark thresholds that fail the build
 priority: 427
-status: verification-debt
+status: verified
 depends_on: [E4-T04, E4-T21, E4-T23]
 estimate: M
 capstone: false
@@ -81,6 +81,16 @@ variable and OS-reaps long runs — NO fabricated runner numbers recorded):
 - Published-from-CI trend dashboard (Pages) — deferred until the perf job emits real samples.
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+Commit: `069c4ee`.
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T27.
+
 - 2026-08-06 — E4-T27 **partially-verified** (gate logic, headless, synthetic/recorded data).
   Files: `tools/bench_ci.py` (A/B + stats + threshold-eval + evaluate/run/trend/selftest),
   `tools/bench_ci_test.py` (16 unit tests), `bench/thresholds.toml`, `tools/bench.py` (+`bless`),

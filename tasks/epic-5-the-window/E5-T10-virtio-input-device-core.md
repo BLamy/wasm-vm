@@ -3,9 +3,11 @@ id: E5-T10
 epic: 5
 title: virtio-input device core — config space, eventq/statusq, event injection API
 priority: 510
-status: pending
-depends_on: [E5-T05]
+status: cancelled
+depends_on: [E5-T05c]
 estimate: M
+risk: high
+decomposed_into: [E5-T10a, E5-T10b, E5-T10c]
 capstone: false
 ---
 
@@ -58,4 +60,18 @@ attached and prove `virtio_input` binds and `/dev/input/event0` appears with the
 capabilities in `/proc/bus/input/devices` — any capability-bitmap mismatch refutes.
 
 ## Verification log
-(empty)
+
+### 2026-09-03 — planning — decomposed
+
+E5-T10 is an M-sized shared device chassis with three independently testable boundaries. It is
+cancelled as an executable task and replaced by these ordered S-sized slices:
+
+- **E5-T10a** — declarative input spec, virtio-input wire types, device identity, and the
+  select/subsel configuration query state machine.
+- **E5-T10b** — eventq/statusq transport plumbing, 8-byte event delivery, and the host status
+  callback seam.
+- **E5-T10c** — `inject_event()`/`sync()`, bounded pending-frame buffering and drop accounting,
+  frame-integrity hardening, and the final native/wasm integration proof.
+
+The keyboard and pointer tasks now depend on E5-T10c, the final chassis slice. Each replacement
+has one boundary and one deterministic acceptance command before the next layer can begin.

@@ -36,6 +36,12 @@ done
 
 # App subdirectories that are real source (worker, tailscale connect assets).
 [ -d web/tailscale-connect ] && cp -R web/tailscale-connect "$DIST/tailscale-connect"
+# The presentation benchmark is a deployable browser page rather than app-shell source. Keep it
+# beside the source tree so the recorded matrix can be rerun from the published bundle too.
+[ -d web/bench ] && cp -R web/bench "$DIST/bench"
+# The app shell imports the no-bundler input modules from ./src/. Keep that source tree in the
+# deployable bundle; omitting it leaves the generated main.js with a production-only 404.
+[ -d web/src ] && cp -R web/src "$DIST/src"
 
 # The built wasm ES module (from make web-build).
 cp -R web/pkg "$DIST/pkg"
@@ -91,10 +97,22 @@ if [ -e "$DIST/landing.html" ] && [ -e "$DIST/index.html" ]; then
       "$DIST/index.html" > "$DIST/index.html.tmp" && mv "$DIST/index.html.tmp" "$DIST/index.html"
   # Other pages that link to the app or marketing landing by their dev names must point at the
   # deploy-time locations too. Keep the source tree's simple relative links for local serving.
-  for f in docs.html products.html work-market.html security.html roadmap.html; do
+  for f in docs.html docs-embedding.html docs-guest.html docs-containers.html docs-verification.html docs-explainers.html products.html work-market.html security.html roadmap.html; do
     [ -e "$DIST/$f" ] && sed -e 's#\./index\.html#./app.html#g' -e 's#\./landing\.html#./#g' "$DIST/$f" > "$DIST/$f.tmp" && mv "$DIST/$f.tmp" "$DIST/$f"
   done
   echo "[web-dist] deploy root: / = landing, /app.html = app"
+fi
+
+# The workload comparison is fetched by the landing page. Give each deployed JSON revision a
+# content-derived URL so a browser or service worker cannot reuse a prior campaign's response.
+if [ -e "$DIST/runtime-benchmarks.json" ] && [ -e "$DIST/index.html" ]; then
+  workload_ver=$(shasum -a 256 "$DIST/runtime-benchmarks.json" | cut -c1-12)
+  sed -e "s/__RUNTIME_BENCHMARK_VERSION__/${workload_ver}/g" "$DIST/index.html" > "$DIST/index.html.tmp" && mv "$DIST/index.html.tmp" "$DIST/index.html"
+fi
+
+if [ -e "$DIST/runtime-compute-benchmarks.json" ] && [ -e "$DIST/index.html" ]; then
+  compute_ver=$(shasum -a 256 "$DIST/runtime-compute-benchmarks.json" | cut -c1-12)
+  sed -e "s/__RUNTIME_COMPUTE_BENCHMARK_VERSION__/${compute_ver}/g" "$DIST/index.html" > "$DIST/index.html.tmp" && mv "$DIST/index.html.tmp" "$DIST/index.html"
 fi
 
 # artifacts.json (relative ./releases/… URLs; poor-mans-ci fills web/dist/releases at deploy).
@@ -105,9 +123,10 @@ fi
 # drops the old cache (no half-old/half-new asset set). MUST hash EVERY shell asset that can change,
 # not just wasm+main.js — hashing only those meant a loader.js/linux-worker*.js/sw.js-only change did
 # NOT bump the version, so the SW kept serving the STALE module from cache (the "deploy didn't take"
-# bug). Hash all top-level shell JS + the wasm so any shell change busts the cache.
+# bug). Include top-level HTML/JSON as well because the landing page and published comparison are
+# shell-owned resources too.
 if [ -e "$DIST/sw.js" ]; then
-  ver=$( { cat "$DIST"/pkg/*_bg.wasm "$DIST"/*.js 2>/dev/null; } | { shasum -a 256 2>/dev/null || sha256sum; } | cut -c1-12 )
+  ver=$( { cat "$DIST"/pkg/*_bg.wasm "$DIST"/*.js "$DIST"/*.html "$DIST"/*.json 2>/dev/null; } | { shasum -a 256 2>/dev/null || sha256sum; } | cut -c1-12 )
   sed -e "s/__SW_VERSION__/${ver}/g" "$DIST/sw.js" > "$DIST/sw.js.tmp" && mv "$DIST/sw.js.tmp" "$DIST/sw.js"
   echo "[web-dist] stamped sw.js app-shell version=${ver}"
 fi

@@ -362,17 +362,18 @@ E4-T19 batching.) Rationale and the rejected alternatives:
 |---|---|---|
 | Max translated-code bytes (code cache) | **32 MiB** of emitted WASM | LRU-evict whole modules (§5 eviction row); evicted blocks fall back to T1 |
 | Blocks per module | **~64** | — (the batching unit; smaller only raises Module count) |
-| Max live Modules / Instances per tab | **256** (≈16 k blocks at 64/module) | over cap → evict LRU module before compiling a new batch |
+| Max live Modules / Instances per tab | **24 production-browser batches** (native parity default: 256) | over cap → evict LRU module before compiling a new batch |
 | Compile queue depth | **32** pending batches | queue full → skip promotion this pass, block stays T1 (no starvation: it stays correct + fast-ish) |
 | JIT-attributable pause target | **< 5 ms** per main-thread stall | compile is off the hot loop (worker requests, main-thread compiles async, E4-T21); a compile that would exceed budget is chunked or deferred |
 
 **Budget arithmetic for a gcc working set (adversarial #4).** gcc's hot working set is on the order of
-low-thousands of basic blocks. At 64 blocks/module that is ~40–120 modules — well under the 256 cap —
-and, at a conservative few-hundred bytes of emitted WASM per block, low-single-digit MiB — well under
-the 32 MiB code cache. So a gcc-sized set **fits without eviction**; eviction is the defined fallback
-for pathological or multi-workload sessions, not the common case. (gcc's own ledger row is still
-*deferred* per the Level-3 baseline — the arithmetic here is bounded by block counts, not a measured
-gcc run, and is flagged as a hypothesis to confirm when E4-T04's gcc bench lands.)
+low-thousands of basic blocks. At 64 blocks/module that is ~40–120 modules — above the conservative
+24 production-browser cap but within the native parity default of 256 — and, at a conservative
+few-hundred bytes of emitted WASM per block, low-single-digit MiB — well under the 32 MiB code cache.
+The browser therefore uses defined LRU eviction for a gcc-sized or multi-workload set; native parity
+can retain the larger working set. (gcc's own ledger row is still *deferred* per the Level-3 baseline —
+the arithmetic here is bounded by block counts, not a measured gcc run, and is flagged as a hypothesis
+to confirm when E4-T04's gcc bench lands.)
 
 **E4-T19 amendment (batching as built).** The compile queue is drained in GROUPS: newly-hot blocks
 accumulate, then union into connected components of the observed same-page static-edge graph, each
@@ -387,8 +388,11 @@ browser form (determinism validated by the E4-T25 differential harness). **Parti
 retires the WHOLE batch atomically** (`invalidate_page` → drop the Module/Instance), so no stale intra-
 batch direct call can run dead bytes; survivors fall back to T1 and recompile. A per-Module/Instance
 registry (count + estimated bytes) is the raw material for the E4-T20 budgets. Cross-browser
-compile/instantiate/instance-cliff costs are measured by `bench/module-costs/` (harness committed;
-live capture is dev debt — the mac reaps long browser runs).
+compile/instantiate/instance-cliff costs are measured by `bench/module-costs/` (canonical three-engine
+capture committed, with corrected actual-instance rows: Chromium failed at 122–123, Firefox at 999,
+and WebKit exceeded 25,000 in the bounded follow-up. Production `BrowserExecutor` uses a 24-batch cap,
+leaving more than a 4x margin below the smallest observed cliff; the WebKit failure point and an
+independent-machine rerun remain verification debt).
 
 **Native backend may differ.** Natively (the CLI) we are not bound by `WebAssembly.compile` caps and
 could use Cranelift or direct machine-code emission; but to keep **one** codegen path audited against
@@ -420,9 +424,10 @@ The design is engineered to be *refuted by the ledger*, not defended by argument
   261.734 in the ledger, or the epic has not met its goal.
 
 **Honest hypothesis-vs-measured ledger:** *measured* = the E4-T02 hotspot shares, the E4-T05 2.24×
-native uplift, the Level-3 baseline numbers, the browser 89%/47%/7.1% split. *Hypothesis* (flagged,
-each owned by a task) = the `N=64` threshold, the ~64 blocks/module and 32 MiB/256-Module budgets, the
-gcc working-set arithmetic (gcc bench deferred), and that single-tier T2 suffices for 10×.
+native uplift, the Level-3 baseline numbers, the browser 89%/47%/7.1% split, and the measured browser
+instance limits in `bench/module-costs/results/`. *Hypothesis* (flagged, each owned by a task) = the
+`N=64` threshold, the ~64 blocks/module and 32 MiB/256-native-parity budget, the gcc working-set
+arithmetic (gcc bench deferred), and that single-tier T2 suffices for 10×.
 
 ---
 
@@ -464,7 +469,7 @@ gcc working-set arithmetic (gcc bench deferred), and that single-tier T2 suffice
 | D7 | Precise side-exits; writeback before any trapping op | precise-state correctness; no rollback tier | E4-T12 |
 | D8 | Physical-PC keying; invalidation matrix §5; SMC via `has_code` bitmap | E4-T05 `predecode_diff` byte-identity; TCG tb_phys_hash | E4-T16/T17 |
 | D9 | Emit real WASM, batch ~64 blocks/module, funcref-table chaining | `WebAssembly.compile` caps; no post-instantiation patching | E4-T07/T18/T19 |
-| D10 | Budgets: 32 MiB cache / 256 Modules / 32 queue / <5 ms pause, LRU eviction | browser hard target; gcc-set fits | E4-T20/T21/T27 |
+| D10 | Budgets: 32 MiB cache / 24 production-browser Modules (256 native parity) / 32 queue / <5 ms pause, LRU eviction | browser cliff margin; gcc-set evicts by policy | E4-T20/T21/T27 |
 | D11 | CPU worker + SAB + Atomics; compile on main thread async | browser threading; `performance.now()` 7.1% tax | E4-T22/T23/T24 |
 
 **Open questions, each assigned:**
@@ -522,9 +527,11 @@ budget arithmetic. Review comments + resolutions are appended here on completion
 ## 12. Runtime integration (E4-T29) — attaching the executor to the runnable VM
 
 Sections 1–11 prove the JIT correct as a *component*; this section is how it is *attached* so a real
-booted guest runs translated blocks. The contract is **default = interpreter oracle**: the executor is
-opt-in and, when absent, the run loop's `try_jit_block` hook is a no-op, so every determinism /
-differential / boot-anchor gate is byte-identical to a no-JIT build.
+booted guest runs translated blocks. The interpreter remains the oracle and the clean fallback. Native
+CLI runs keep the executor opt-in, while the production browser path enables the bounded executor by
+default only on a cross-origin-isolated whole-machine worker; `?jit=0` forces the interpreter. When the
+executor is absent, the run loop's `try_jit_block` hook is a no-op, so every determinism / differential /
+boot-anchor gate remains byte-identical to a no-JIT build.
 
 ### 12.1 Native (Phase 1 — landed)
 

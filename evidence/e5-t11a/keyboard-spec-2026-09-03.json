@@ -1,0 +1,65 @@
+{
+  "schema": "e5-t11a-virtio-keyboard-spec-v1",
+  "task": "E5-T11a",
+  "status": "pass",
+  "implementation_commit": "916ee8f",
+  "recorded_at": "2026-09-03",
+  "native": {
+    "acceptance_command": "cargo test -p wasm-vm-core --lib dev::virtio::input",
+    "acceptance_result": "14 passed, 0 failed",
+    "coverage": [
+      "keyboard_spec() declares EV_KEY codes 1..=248 and the native fixture rejects KEY_RESERVED, every code above 248, and any changed edge byte.",
+      "The native keyboard_config_fixture reads the keyboard name, devids, and every declared event bitmap through VirtioMmio configuration space.",
+      "The native fixture fixes the complete EV_LED bitmap to LED_NUML, LED_CAPSL, and LED_SCROLLL only, and fixes MSC_SCAN in EV_MSC.",
+      "The native fixture asserts the empty EV_REP bitmap and the stable keyboard name, BUS_VIRTUAL device IDs, and SYN_REPORT capability."
+    ],
+    "regression": {
+      "command": "cargo test -p wasm-vm-core --lib",
+      "result": "233 passed, 0 failed"
+    },
+    "virtio_regression": {
+      "command": "cargo test -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet",
+      "result": "12 passed, 2 passed, 8 passed; 22 total, 0 failed"
+    },
+    "clippy": {
+      "command": "cargo clippy -p wasm-vm-core --lib -- -D warnings",
+      "result": "pass"
+    },
+    "format": {
+      "commands": [
+        "cargo fmt --all -- --check",
+        "git diff --check"
+      ],
+      "result": "pass"
+    }
+  },
+  "wasm32": {
+    "core_build": {
+      "command": "cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown",
+      "result": "pass"
+    },
+    "core_clippy": {
+      "command": "cargo clippy -p wasm-vm-core --target wasm32-unknown-unknown --no-default-features --lib -- -D warnings",
+      "result": "pass"
+    },
+    "keyboard_config_runner": {
+      "command": "wasm-pack test --node crates/wasm --test keyboard_spec",
+      "result": "1 passed, 0 failed",
+      "coverage": "The wasm32 fixture reads the exact name and devids, the full zero-padded EV_KEY/EV_LED/EV_MSC/EV_SYN payloads, trimmed bitmap sizes, and the empty EV_REP payload through VirtioMmio configuration space."
+    },
+    "config_regression": {
+      "command": "wasm-pack test --node crates/wasm --test input_config",
+      "result": "1 passed, 0 failed"
+    },
+    "queue_regression": {
+      "command": "wasm-pack test --node crates/wasm --test input_queues",
+      "result": "2 passed, 0 failed"
+    }
+  },
+  "claim": "At commit 916ee8f, the reusable virtio-input keyboard specification advertises exactly the declared PC-105 key range 1..=248, LED NumLock/CapsLock/ScrollLock, optional MSC_SCAN, and SYN_REPORT while leaving EV_REP empty. Native and wasm32 configuration-space fixtures independently assert the stable identity and byte-exact capability payloads, including the highest advertised key and the first undeclared code.",
+  "scope_notes": [
+    "This slice is the declarative capability map only; concrete Machine registration, LED status callback state, and guest evdev boot proof remain E5-T11b and E5-T11c.",
+    "No independent-machine, WebKit, or host-layer rr run was used, per the user's direction and the repository's current evidence policy.",
+    "The wasm-pack run also reports the pre-existing unused Exception import in crates/wasm/tests/hart_ctrl.rs and its normal local wasm-bindgen installation fallback; neither is in this diff."
+  ]
+}

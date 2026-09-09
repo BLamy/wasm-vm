@@ -244,6 +244,17 @@ impl BlockCache {
         None
     }
 
+    /// Iterate the blocks that belong to the current cache generation. This is intentionally a
+    /// read-only view for boundary audits such as the PMP privilege-transition check; callers must
+    /// not infer that a missing block is an architectural failure because a cache miss is always a
+    /// legal rebuild.
+    pub(crate) fn live_blocks(&self) -> impl Iterator<Item = &DecodedBlock> {
+        self.slots.iter().filter_map(|slot| match slot {
+            Some(block) if block.block_gen == self.generation => Some(block),
+            _ => None,
+        })
+    }
+
     /// Insert `block` (stamped with the current generation), replacing a stale/empty slot on
     /// its probe chain, or — if the chain is full of live entries — the head slot (simple
     /// replacement; correctness is unaffected).

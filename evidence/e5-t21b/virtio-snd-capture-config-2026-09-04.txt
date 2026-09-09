@@ -1,0 +1,71 @@
+E5-T21b exact-head verification evidence
+Date: 2026-09-04 America/New_York
+Implementation commit: 306c598412dcc4e2a49ac11110a70f82564a03f6
+
+Acceptance command
+------------------
+$ cargo test -p wasm-vm-core --test virtio_snd_capture_config -- --test-threads=1
+running 4 tests
+test flag_off_keeps_playback_only_config_and_existing_slot_numbering ... ok
+test flag_on_exposes_one_fixed_input_stream_in_any_query_order ... ok
+test reset_and_repeated_creation_preserve_the_selected_gate_without_host_capture ... ok
+test unsupported_capture_values_and_malformed_selectors_do_not_mutate_state ... ok
+test result: ok. 4 passed; 0 failed
+
+Adversarial repeat
+------------------
+$ for i in {1..25}; do cargo test -p wasm-vm-core --test virtio_snd_capture_config --quiet || exit 1; done
+25 consecutive invocations completed successfully; each reported 4 passed, 0 failed.
+
+Risk-tier gates
+---------------
+$ cargo fmt --all -- --check
+passed
+$ cargo clippy -p wasm-vm-core --all-targets -- -D warnings
+passed
+$ cargo clippy -p wasm-vm-cli --all-targets -- -D warnings
+passed
+$ cargo test -p wasm-vm-core --test virtio_snd --test virtio_snd_capture --test virtio_snd_machine --test virtio_snd_playback --test virtio_snd_queue --quiet
+7 + 6 + 4 + 7 + 5 tests passed; 0 failed.
+$ cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+passed
+$ cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release
+passed
+$ cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings
+passed
+$ git diff HEAD^ HEAD --check
+passed
+
+Browser construction proof
+--------------------------
+$ PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8149 PLAYWRIGHT_REUSE_SERVER=0 ./node_modules/.bin/playwright test tests/e5-t21b-capture-config.spec.js --workers=1
+1 passed (1.7s), Chromium.
+The test assembled the real built WASM module paused with `enableMic:true`, asserted all five
+constructor surfaces carry the boolean, observed virtio-snd at slot 6 with `streamCount=2`, and
+observed INPUT metadata `{ formats: 32 (S16), rates: 128 (48 kHz), channelsMin: 1,
+channelsMax: 2 }`. The `getUserMedia` spy recorded 0 calls and the page recorded 0 unexpected
+console errors. Screenshot: `virtio-snd-capture-config-2026-09-04.png`, SHA-256
+`4bb34fec0022480402c61a4e6479524822541db8efbfb3a6ec74d4639985365d`.
+
+Changed-file digests at the implementation head
+-------------------------------------------------
+5309f2172153588e3bf5e77eb5a460ae353f7359f517650c64299dbc9b961de9  crates/cli/src/boot.rs
+e958f5d3142ba225f7d1d0eb5fe14d11d6a758d0d6f6a48936dcc39fa1b6737a  crates/core/src/dev/virtio/snd/mod.rs
+c6d2810b695e15d1d6d1d9ab29752ea6f3a0c025a6f787957879cc7632bf6426  crates/core/src/lib.rs
+ae931ae2290b1abf32cbaa4c21bed81dfcd2bb9ef428ae5aff0ec47deee32adb  crates/core/tests/virtio_snd_capture_config.rs
+84ccd35a4713063e52b1ea380c96606bbe8ec740f41a5f572531badbbac6a36f  crates/wasm/src/lib.rs
+eacb6da066ace236ccc1fce12478dd6f5919d71c809f8677f6ec057e4fbdfa64  web/docs-guest.html
+ee901d5f2d7f5b0d31e8a9d2c00d1c3c25299959d8c4410ebb59af90ae3d1bf9  web/loader.js
+e6c6da333ce746fc07b99350231a5e8eb7ca70e79fa03b10b129b222f7efd7ee  web/main.js
+75650e3cd473bae0029d87ecf4bf27018b97748e1cd339f213aad7500dd46624  web/roadmap.js
+b254d2b34d0376f69266a754eb0f51acc82f126c89612c33c7674ee00cbbe776  web/tests/e5-t21b-capture-config.spec.js
+
+What this run demonstrates
+--------------------------
+The creation-time boolean is applied before the sound device enters its virtio-mmio slot. False
+preserves the existing one-output-stream contract and slot numbering; true adds exactly stream 1,
+with fixed S16 mono/stereo and 48 kHz input truth. Query order and malformed ranges do not mutate
+state, unsupported input rates/channels are rejected without mutation, and a virtio reset retains
+the selected advertisement while clearing lifecycle state. Native, wasm32, CLI, and Chromium all
+exercise the same gate. No host capture source, permission API, capture ring, or permission UI is
+created in this slice.

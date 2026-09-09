@@ -31,6 +31,29 @@ export class WasmLinux {
      * invalidates a now-inconsistent CPU/RAM snapshot.
      */
     advanceOverlayGeneration(): number;
+    /**
+     * E5-T21d: attach the page-owned microphone ring as the guest's capture source. The ring is
+     * allocated before boot but contains no host media handle; permission remains lazy until the
+     * guest emits its first successful capture PCM_START edge.
+     */
+    attachAudioCapture(shared_buffer: SharedArrayBuffer, capacity_frames: number, sample_rate_hz: number): void;
+    /**
+     * E5-T20e: connect this assembled guest to the page-owned AudioWorklet ring and render clock.
+     * The buffers are validated against the T20a header before ownership crosses into the core;
+     * an invalid or missing sound device is a hard boot-configuration error rather than silent
+     * playback loss.
+     */
+    attachAudioOutput(shared_buffer: SharedArrayBuffer, clock_buffer: SharedArrayBuffer, capacity_frames: number, sample_rate_hz: number): void;
+    /**
+     * E5-T21d: report whether this guest owns the page-provided capture ring.
+     */
+    audioCaptureReady(): boolean;
+    /**
+     * E5-T20e: report whether this guest owns the page-provided ring sink. Kept separate from
+     * `AudioWorkletSink.stats()` so a browser proof can distinguish an attached guest bridge from
+     * a standalone synthetic ring producer.
+     */
+    audioOutputReady(): boolean;
     beginFileUpload(slot: number, name: string, total: number, sha256_hex: string): number;
     /**
      * E3-T03 dev-mode recorder: the ordered first-touch chunk-access list of this boot as a JSON
@@ -54,6 +77,11 @@ export class WasmLinux {
      * the caller gates this on `crossOriginIsolated`.
      */
     enableJit(threshold: number): void;
+    /**
+     * E4-T38: enable the Linux browser JIT under one explicit residency policy. See
+     * [`WasmMachine::enable_jit_with_policy`] for the policy labels and cap semantics.
+     */
+    enableJitWithPolicy(threshold: number, residency_policy: string): void;
     /**
      * E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
      * the next `runChunk` completes the parked reads. Resolves to the number of chunks newly made
@@ -85,7 +113,11 @@ export class WasmLinux {
     /**
      * Persist an externally supplied snapshot blob (AC3 import) into the snapshot store for THIS boot's
      * base image. The blob is bound to this base's namespace; a foreign blob imported here still fails
-     * the coherence guard on restore. Error `"not_persistent"` off the persistent path.
+     * the coherence guard on restore. Framing-corrupt input is replaced by a corrupt marker, and a
+     * same-size payload mutation is checked against the digest of the previously published snapshot;
+     * both paths make the next decision typed `"corrupt"` rather than falsely `"resume"`. The live
+     * machine and overlay are not mutated. The write counter keeps lease release behind this full
+     * namespace mutation. Error `"not_persistent"` off the persistent path.
      */
     importStoredSnapshot(blob: Uint8Array): Promise<void>;
     /**
@@ -95,6 +127,11 @@ export class WasmLinux {
      * that `enableJit` was called). `hasExecutor:false` means no JIT is attached at all.
      */
     jitStats(): any;
+    /**
+     * Return the latest host-owned LED state reported by the guest keyboard driver. A null
+     * result means that this machine was assembled without the virtio-input keyboard capability.
+     */
+    keyboardLedState(): any;
     /**
      * Restore machine state from a resume blob (all-or-nothing; the coherence header is validated
      * FIRST). A rejected blob is mapped through [`resume::ColdBootReason`] so the JS boundary gets the
@@ -106,14 +143,14 @@ export class WasmLinux {
      * Assemble the platform and boot. `initrd` empty = none; `bootargs` empty = the default
      * `console=ttyS0 earlycon=sbi`. `output(bytes: Uint8Array)` receives console output.
      */
-    constructor(ram_mib: number, kernel: Uint8Array, initrd: Uint8Array, bootargs: string, output: Function);
+    constructor(ram_mib: number, kernel: Uint8Array, initrd: Uint8Array, bootargs: string, output: Function, enable_mic: boolean);
     /**
      * E3-T02: boot from a CHUNKED image fetched lazily over HTTP. Instead of a full disk `Vec`, take
      * the image `manifest` JSON and the `base_url` its chunks live under (must end in `/`). A guest
      * disk read of an absent chunk parks (deferred virtio-blk completion) until `fetchPending`
      * retrieves and hash-verifies that chunk. No full-image download ever happens.
      */
-    static newChunkedDisk(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, output: Function): WasmLinux;
+    static newChunkedDisk(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, output: Function, enable_mic: boolean): WasmLinux;
     /**
      * E3-T05: like [`Self::new_chunked_disk`], but the copy-on-write overlay is persisted to
      * IndexedDB — guest writes survive a tab reload. Async: opens the image-namespaced DB (checking
@@ -121,14 +158,22 @@ export class WasmLinux {
      * silent reuse), loads any previously persisted blocks, and boots over them. Call `persistPending`
      * to flush new writes durably (its Promise resolves on the IndexedDB transaction `complete`).
      */
-    static newChunkedDiskPersistent(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, read_only: boolean, output: Function, seed_identity?: string | null): Promise<WasmLinux>;
+    static newChunkedDiskPersistent(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, read_only: boolean, output: Function, seed_identity: string | null | undefined, enable_mic: boolean): Promise<WasmLinux>;
+    /**
+     * E4-T28e: boot the normal lazy Alpine root disk with one additional read-only virtio-blk
+     * image. The extra image is passed by value so the fetched overlay becomes one resident Rust
+     * buffer; it is never compiled or transformed on the host. The first free slot after browser
+     * Linux's net/rng/keyboard/tablet/mouse reservation is used, leaving `/dev/vdb` as the second
+     * block device.
+     */
+    static newChunkedDiskWithExtra(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, extra_disk: Uint8Array, bootargs: string, output: Function, enable_mic: boolean): WasmLinux;
     /**
      * E2-T26 capstone: boot from a virtio-blk DISK image (e.g. the Alpine ext4 rootfs) instead of
      * an initramfs. `disk` is MOVED into an in-memory `BlockBackend` (one wasm-side copy — the T21
      * single-copy discipline; a `&[u8]` + `.to_vec()` would double-allocate 512 MB). Default
      * bootargs mount `/dev/vda` as root.
      */
-    static newDisk(ram_mib: number, kernel: Uint8Array, disk: Uint8Array, bootargs: string, output: Function): WasmLinux;
+    static newDisk(ram_mib: number, kernel: Uint8Array, disk: Uint8Array, bootargs: string, output: Function, enable_mic: boolean): WasmLinux;
     /**
      * E3-T21d: the persistent driver calls this right after `persistPending` so a durable IndexedDB
      * flush pause — during which the guest is frozen and cannot ACK or heartbeat an in-flight file
@@ -136,6 +181,12 @@ export class WasmLinux {
      * transferring or off the slirp path.
      */
     noteFileTransferPersist(): void;
+    /**
+     * E5-T21d: turn a host capture lifecycle failure into the existing bounded virtio-snd input
+     * XRUN event. The event is delivered through the guest's eventq at the next run boundary;
+     * PCM rxq buffers continue to complete with zero-filled, clock-paced data.
+     */
+    notifyCaptureEvent(event: string): boolean;
     /**
      * The current overlay commit generation (the snapshot coherence's third binding). `u64` fits
      * exactly in an `f64` for every realistic generation count.
@@ -159,8 +210,9 @@ export class WasmLinux {
     /**
      * Convenience: take a resume snapshot AND durably persist it to the snapshot IndexedDB store in one
      * call. The `RefCell` borrow is scoped to `save_resume` + reading `snapshot_base`; the store I/O
-     * runs after it is dropped, never across the borrow. No-op error `"not_persistent"` off the
-     * persistent path (there is no snapshot store to write to).
+     * runs after it is dropped, never across the borrow. The write counter keeps a lease release
+     * from handing the namespace to another tab until this async operation has committed. No-op
+     * error `"not_persistent"` off the persistent path (there is no snapshot store to write to).
      */
     persistSnapshot(): Promise<void>;
     /**
@@ -174,10 +226,20 @@ export class WasmLinux {
     pushFileUpload(stream: number, bytes: Uint8Array, finished: boolean): number;
     /**
      * Read the persisted snapshot blob back (reassembled), or `null` if none is stored / not on the
-     * persistent path. Async (IndexedDB). The JS restore-decision hook feeds this into
-     * [`Self::restore_decision_code`] and, on a `"resume"` verdict, into [`Self::load_snapshot_blob`].
+     * persistent path. Async (IndexedDB). This is the export/debug surface; production restore uses
+     * [`Self::restore_stored_snapshot`] so the blob never crosses the wasm/JS boundary as a second
+     * whole-payload copy.
      */
     readStoredSnapshot(): Promise<any>;
+    /**
+     * Permanently relinquish this machine's snapshot-writer role. Web Locks releases are dynamic:
+     * another tab may acquire the same namespace while this controller is still alive, so the
+     * construction-time read-only bit alone is not a sufficient fence for a stale controller. New
+     * writes are fenced immediately, while writes that already passed the check are allowed to
+     * finish before this method resolves. There is intentionally no inverse operation; a new
+     * machine must acquire the writer lock before it can save or import snapshots.
+     */
+    relinquishSnapshotWriter(): Promise<void>;
     /**
      * The header-level resume-vs-cold-boot verdict for `stored` (the reassembled blob, or `None`),
      * against THIS boot's build identity + base binding + `current_generation`. Returns the stable
@@ -185,6 +247,14 @@ export class WasmLinux {
      * persistent path (no base binding) there is no snapshot to resume: always `"missing"`.
      */
     restoreDecisionCode(stored: Uint8Array | null | undefined, current_generation: number): string;
+    /**
+     * Load and, only when coherent, apply the persisted snapshot directly inside wasm. The stored
+     * blob is held by one Rust allocation while the coherence header is checked and the machine is
+     * restored; unlike `readStoredSnapshot` this path does not create a JS `Uint8Array` boundary copy.
+     * Returns the same typed decision code as `restoreDecisionCode`, with no machine mutation for a
+     * missing, corrupt, foreign, or stale snapshot.
+     */
+    restoreStoredSnapshot(): Promise<string>;
     /**
      * Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
      * 16550 RX, and return `{ done: bool, state: string|null, retired: number }`. A persistent caller may pass
@@ -208,12 +278,36 @@ export class WasmLinux {
      */
     sendInput(bytes: Uint8Array): void;
     /**
+     * Queue one guest-visible evdev keyboard event. Call `syncKeyboard` after the host's
+     * keydown/keyup event (or after a batch of related events) to publish the frame with its
+     * `SYN_REPORT`; browser repeat events must not call this method as key-downs.
+     */
+    sendKeyboardEvent(event_type: number, code: number, value: number): void;
+    /**
+     * Queue one guest-visible relative-mouse event. Call `syncMouse` after the complete DOM
+     * pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
+     */
+    sendMouseEvent(event_type: number, code: number, value: number): void;
+    /**
+     * Queue one guest-visible absolute-tablet event. Call `syncTablet` after the complete DOM
+     * pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
+     */
+    sendTabletEvent(event_type: number, code: number, value: number): void;
+    /**
+     * E4-T39: toggle static region chaining without rebuilding the generated modules.
+     */
+    setChaining(on: boolean): void;
+    /**
      * E3-T10: flip the disk to read-only at runtime — the "continue read-only" choice after a
      * storage-quota hit. Subsequent guest writes get EIO (VIRTIO_BLK_F_RO / BlockError::ReadOnly)
      * so the guest sees an honest I/O error instead of a silently-undurable write. No-op off the
      * persistent path. Returns true if a disk flag was flipped.
      */
     setDiskReadOnly(): boolean;
+    /**
+     * E4-T39: toggle generated dynamic-return (`jalr`) chaining independently of static regions.
+     */
+    setDynamicChaining(on: boolean): void;
     /**
      * E4-T30: select the production interpreter fast path for a browser Linux guest. It combines
      * physical-entry predecode reuse with the proven <=128-retire interrupt/device batching. The
@@ -246,7 +340,31 @@ export class WasmLinux {
      * native snapshot contract; registers and device state are intentionally not encoded here.
      */
     stateDigest(): string;
+    /**
+     * Publish the current host keyboard frame by appending `EV_SYN/SYN_REPORT`.
+     */
+    syncKeyboard(): void;
+    /**
+     * Publish the current host relative-mouse frame with `EV_SYN/SYN_REPORT`.
+     */
+    syncMouse(): void;
+    /**
+     * Publish the current host absolute-tablet frame with `EV_SYN/SYN_REPORT`.
+     */
+    syncTablet(): void;
     takeFileDownloadChunk(id: number): Uint8Array;
+    /**
+     * E5-T21d: expose the input PCM lifecycle edge to the page. `startCount` increments only for
+     * successful guest PCM_START requests; the page uses it to make getUserMedia lazy and to
+     * re-request after a later guest retry without polling host media state speculatively.
+     */
+    virtioSndCaptureState(): any;
+    /**
+     * E5-T21b: expose the assembled sound configuration for browser diagnostics. This is a
+     * read-only construction proof; the input stream metadata comes from the same core state that
+     * answers guest PCM_INFO, and no host capture handle is created by reading it.
+     */
+    virtioSndConfig(): any;
 }
 
 /**
@@ -265,6 +383,14 @@ export class WasmMachine {
      * on `crossOriginIsolated` (E4-T22 `selectJitBackend`) — see `web/cpu-isolation.js`.
      */
     enableJit(threshold: number): void;
+    /**
+     * E4-T38: attach the browser JIT with one explicit residency screen. `repack-off` is the
+     * current single-pass batcher with the conservative 24-module browser cap; `cap-256` and
+     * `cap-1024` retain the same translator and eviction policy while changing only the live-batch
+     * cap. Validate and apply the policy before publishing the executor so a bad benchmark label
+     * cannot leave a partially initialized machine.
+     */
+    enableJitWithPolicy(threshold: number, residency_policy: string): void;
     /**
      * E2-T20: the interrupt/trap counters + storm/WFI diagnosis as a JS object
      * `{ retired, wfi, exceptions:[16], interrupts:[16], claims:[32], storm:bool, wfiReport:string|null }`.
@@ -304,9 +430,17 @@ export class WasmMachine {
      */
     run(max_instrs: number): any;
     /**
+     * E4-T39: toggle static region chaining without rebuilding the generated modules.
+     */
+    setChaining(on: boolean): void;
+    /**
      * Install (or replace) the per-byte console callback: `fn(byte: number)`.
      */
     setConsole(cb: Function): void;
+    /**
+     * E4-T39: toggle generated dynamic-return (`jalr`) chaining independently of static regions.
+     */
+    setDynamicChaining(on: boolean): void;
     /**
      * Enable or disable canonical instruction tracing (appended to an internal buffer;
      * drain it with `takeTrace`).
@@ -439,6 +573,10 @@ export interface InitOutput {
     readonly seedOverlayDelta: (a: number, b: number, c: number, d: number, e: number, f: number) => any;
     readonly version: () => [number, number];
     readonly wasmlinux_advanceOverlayGeneration: (a: number) => [number, number, number];
+    readonly wasmlinux_attachAudioCapture: (a: number, b: any, c: number, d: number) => [number, number];
+    readonly wasmlinux_attachAudioOutput: (a: number, b: any, c: any, d: number, e: number) => [number, number];
+    readonly wasmlinux_audioCaptureReady: (a: number) => [number, number, number];
+    readonly wasmlinux_audioOutputReady: (a: number) => [number, number, number];
     readonly wasmlinux_beginFileUpload: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number, number];
     readonly wasmlinux_bootProfile: (a: number) => [number, number, number, number];
     readonly wasmlinux_cancelFileDownload: (a: number, b: number) => [number, number];
@@ -447,6 +585,7 @@ export interface InitOutput {
     readonly wasmlinux_dismissFileDownload: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_dismissFileUpload: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_enableJit: (a: number, b: number) => [number, number];
+    readonly wasmlinux_enableJitWithPolicy: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_fetchPending: (a: number) => any;
     readonly wasmlinux_fetchStats: (a: number) => [number, number, number];
     readonly wasmlinux_fileTransferReady: (a: number, b: number) => [number, number, number];
@@ -456,12 +595,15 @@ export interface InitOutput {
     readonly wasmlinux_hasUnpersisted: (a: number) => [number, number, number];
     readonly wasmlinux_importStoredSnapshot: (a: number, b: number, c: number) => any;
     readonly wasmlinux_jitStats: (a: number) => [number, number, number];
+    readonly wasmlinux_keyboardLedState: (a: number) => [number, number, number];
     readonly wasmlinux_loadSnapshotBlob: (a: number, b: number, c: number) => [number, number];
-    readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
-    readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any) => [number, number, number];
-    readonly wasmlinux_newChunkedDiskPersistent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: any, o: number, p: number) => any;
-    readonly wasmlinux_newDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
+    readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: number) => [number, number, number];
+    readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any, n: number) => [number, number, number];
+    readonly wasmlinux_newChunkedDiskPersistent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: any, o: number, p: number, q: number) => any;
+    readonly wasmlinux_newChunkedDiskWithExtra: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: any, p: number) => [number, number, number];
+    readonly wasmlinux_newDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: number) => [number, number, number];
     readonly wasmlinux_noteFileTransferPersist: (a: number) => [number, number];
+    readonly wasmlinux_notifyCaptureEvent: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmlinux_overlayGeneration: (a: number) => [number, number, number];
     readonly wasmlinux_pendingChunks: (a: number) => [number, number, number, number];
     readonly wasmlinux_persistPending: (a: number) => any;
@@ -469,18 +611,31 @@ export interface InitOutput {
     readonly wasmlinux_persistStats: (a: number) => [number, number, number];
     readonly wasmlinux_pushFileUpload: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
     readonly wasmlinux_readStoredSnapshot: (a: number) => any;
+    readonly wasmlinux_relinquishSnapshotWriter: (a: number) => any;
     readonly wasmlinux_restoreDecisionCode: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+    readonly wasmlinux_restoreStoredSnapshot: (a: number) => any;
     readonly wasmlinux_runChunk: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmlinux_saveSnapshot: (a: number) => [number, number, number];
     readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
+    readonly wasmlinux_sendKeyboardEvent: (a: number, b: number, c: number, d: number) => [number, number];
+    readonly wasmlinux_sendMouseEvent: (a: number, b: number, c: number, d: number) => [number, number];
+    readonly wasmlinux_sendTabletEvent: (a: number, b: number, c: number, d: number) => [number, number];
+    readonly wasmlinux_setChaining: (a: number, b: number) => [number, number];
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
+    readonly wasmlinux_setDynamicChaining: (a: number, b: number) => [number, number];
     readonly wasmlinux_setFastInterpreter: (a: number, b: number) => [number, number];
     readonly wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];
     readonly wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_stateDigest: (a: number) => [number, number, number, number];
+    readonly wasmlinux_syncKeyboard: (a: number) => [number, number];
+    readonly wasmlinux_syncMouse: (a: number) => [number, number];
+    readonly wasmlinux_syncTablet: (a: number) => [number, number];
     readonly wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_virtioSndCaptureState: (a: number) => [number, number, number];
+    readonly wasmlinux_virtioSndConfig: (a: number) => [number, number, number];
     readonly wasmmachine_enableJit: (a: number, b: number) => [number, number];
+    readonly wasmmachine_enableJitWithPolicy: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmmachine_getStats: (a: number) => [number, number, number];
     readonly wasmmachine_jitStats: (a: number) => [number, number, number];
     readonly wasmmachine_loadElf: (a: number, b: number, c: number) => [number, number];
@@ -488,7 +643,9 @@ export interface InitOutput {
     readonly wasmmachine_ramLen: (a: number) => [number, number, number];
     readonly wasmmachine_registers: (a: number) => [number, number, number];
     readonly wasmmachine_run: (a: number, b: number) => [number, number, number];
+    readonly wasmmachine_setChaining: (a: number, b: number) => [number, number];
     readonly wasmmachine_setConsole: (a: number, b: any) => [number, number];
+    readonly wasmmachine_setDynamicChaining: (a: number, b: number) => [number, number];
     readonly wasmmachine_setTrace: (a: number, b: number) => [number, number];
     readonly wasmmachine_stateDigest: (a: number) => [number, number, number, number];
     readonly wasmmachine_step: (a: number, b: number) => [number, number, number];

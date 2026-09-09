@@ -1,843 +1,140 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>wasm-vm — Embedding Guide</title>
-<style>
-  :root {
-    color-scheme: dark;
-    --bg: #090b0f;
-    --panel: #10141b;
-    --panel-2: #151a22;
-    --line: #242b36;
-    --text: #eef2f7;
-    --muted: #9aa6b2;
-    --green: #2ea043;
-    --red: #f85149;
-    --amber: #f2c94c;
-    --cyan: #53d4ff;
-    --code-bg: #0c0f14;
-    --sans: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
-    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-  body { -webkit-tap-highlight-color: transparent; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    line-height: 1.6;
-    font-size: 15px;
-    position: relative;
-  }
-  /* Ambient glow so the page isn't a flat black — matches the landing's atmosphere. */
-  body::before {
-    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-    background:
-      radial-gradient(60% 40% at 78% -5%, rgba(83, 212, 255, 0.08), transparent 60%),
-      radial-gradient(45% 35% at -5% 8%, rgba(46, 160, 67, 0.06), transparent 60%);
-  }
-  a { color: var(--cyan); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-
-  header.top {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    padding: 12px 22px;
-    background: linear-gradient(to bottom, rgba(13, 16, 21, 0.86), rgba(13, 16, 21, 0.6));
-    backdrop-filter: blur(12px) saturate(140%);
-    border-bottom: 1px solid var(--line);
-  }
-  header.top .brand { font-weight: 650; font-size: 15px; display: inline-flex; align-items: center; white-space: nowrap; }
-  header.top .brand .bn { color: var(--text); }
-  header.top .brand .brand-sub { color: var(--muted); font-weight: 400; margin-left: 6px; }
-  header.top .brand:hover { text-decoration: none; }
-  header.top .brand .dot {
-    width: 9px; height: 9px; border-radius: 50%; margin-right: 9px;
-    background: radial-gradient(circle at 30% 30%, #d6f4ff, var(--cyan));
-    box-shadow: 0 0 12px var(--cyan), 0 0 26px rgba(83, 212, 255, 0.5);
-  }
-  header.top .meta { color: var(--muted); font: 12px var(--mono); }
-  header.top a.back {
-    color: #04141c; font-size: 13px; font-weight: 600;
-    background: linear-gradient(180deg, #a8ecff, var(--cyan));
-    border-radius: 9px; padding: 7px 14px;
-    box-shadow: 0 8px 24px -12px rgba(83, 212, 255, 0.8);
-    transition: transform .18s, box-shadow .25s;
-  }
-  header.top a.back:hover { text-decoration: none; transform: translateY(-1px); box-shadow: 0 0 30px -8px rgba(83, 212, 255, 0.8); }
-
-  .layout {
-    display: grid;
-    grid-template-columns: 250px minmax(0, 1fr);
-    max-width: 1180px;
-    margin: 0 auto;
-  }
-
-  nav.toc {
-    position: sticky;
-    top: 53px;
-    align-self: start;
-    height: calc(100vh - 53px);
-    overflow-y: auto;
-    padding: 26px 14px 40px 22px;
-    border-right: 1px solid var(--line);
-    font-size: 13.5px;
-  }
-  nav.toc .label {
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    font-size: 11px;
-    color: var(--muted);
-    margin: 0 0 10px;
-  }
-  nav.toc ol { list-style: none; margin: 0; padding: 0; }
-  nav.toc li { margin: 2px 0; }
-  nav.toc a {
-    display: block;
-    color: var(--muted);
-    padding: 4px 10px;
-    border-radius: 6px;
-    border-left: 2px solid transparent;
-  }
-  nav.toc a:hover { color: var(--text); background: rgba(120, 160, 200, 0.07); text-decoration: none; }
-  nav.toc a.active {
-    color: var(--cyan); border-left-color: var(--cyan);
-    background: linear-gradient(90deg, rgba(83, 212, 255, 0.12), transparent);
-  }
-
-  main {
-    padding: 30px 44px 120px;
-    min-width: 0;
-  }
-  section { scroll-margin-top: 70px; padding-top: 8px; }
-  section + section { margin-top: 46px; border-top: 1px solid var(--line); padding-top: 34px; }
-
-  h1 {
-    font-size: 34px; margin: 6px 0 6px; letter-spacing: -.02em; font-weight: 800; line-height: 1.1;
-    background: linear-gradient(100deg, #eaf7ff 0%, #cfeaff 55%, var(--cyan) 100%);
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .lede { color: var(--muted); font-size: 16.5px; margin: 0 0 22px; max-width: 62ch; }
-  h2 {
-    font-size: 21px;
-    margin: 0 0 4px;
-    letter-spacing: -.01em;
-  }
-  .kicker {
-    text-transform: uppercase;
-    letter-spacing: .1em;
-    font-size: 11px;
-    color: var(--cyan);
-    font-weight: 600;
-    margin: 0 0 6px;
-  }
-  h3 { font-size: 15.5px; margin: 26px 0 8px; }
-  p { margin: 10px 0; max-width: 74ch; }
-  ul, ol.body { max-width: 74ch; padding-left: 22px; }
-  li { margin: 5px 0; }
-  strong { color: #fff; font-weight: 620; }
-  code {
-    font-family: var(--mono);
-    font-size: .86em;
-    background: var(--panel-2);
-    border: 1px solid var(--line);
-    border-radius: 5px;
-    padding: 1px 5px;
-    color: #cfe8ff;
-  }
-
-  .codeblock { position: relative; margin: 14px 0; }
-  .codeblock pre {
-    margin: 0;
-    background: linear-gradient(180deg, #0e131a, var(--code-bg));
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 16px 17px;
-    overflow-x: auto;
-    font-family: var(--mono);
-    font-size: 12.9px;
-    line-height: 1.62;
-    color: #d7e2ee;
-    box-shadow: 0 18px 40px -30px rgba(0, 0, 0, 0.9);
-  }
-  .codeblock .lang {
-    position: absolute; top: 8px; right: 46px;
-    font: 10.5px var(--mono); color: var(--muted);
-    text-transform: uppercase; letter-spacing: .08em;
-    pointer-events: none;
-  }
-  .codeblock button.copy {
-    position: absolute; top: 7px; right: 7px;
-    font: 11px var(--sans);
-    background: var(--panel-2);
-    color: var(--muted);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 3px 9px;
-    cursor: pointer;
-  }
-  .codeblock button.copy:hover { color: var(--text); border-color: var(--cyan); }
-  .codeblock button.copy.ok { color: var(--green); border-color: var(--green); }
-
-  pre .c { color: #6b7684; }         /* comment */
-  pre .k { color: #ff9ac1; }         /* keyword */
-  pre .s { color: #a5e075; }         /* string */
-  pre .f { color: var(--cyan); }     /* function/ident */
-  pre .n { color: #f2c97d; }         /* number/const */
-
-  .callout {
-    border: 1px solid var(--line);
-    border-left: 3px solid var(--cyan);
-    background: var(--panel);
-    border-radius: 8px;
-    padding: 12px 16px;
-    margin: 16px 0;
-    font-size: 14px;
-  }
-  .callout.warn { border-left-color: var(--amber); }
-  .callout .tag { font-weight: 640; color: var(--cyan); }
-  .callout.warn .tag { color: var(--amber); }
-
-  table.api {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 14px 0;
-    font-size: 13.3px;
-  }
-  table.api th, table.api td {
-    text-align: left;
-    padding: 8px 10px;
-    border-bottom: 1px solid var(--line);
-    vertical-align: top;
-  }
-  table.api th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: .05em; }
-  table.api td code { white-space: nowrap; background: transparent; border: 0; padding: 0; color: #cfe8ff; }
-  table.api td.desc { color: var(--muted); }
-  table.api td.desc code { white-space: normal; }
-
-  .filetree {
-    font-family: var(--mono);
-    font-size: 12.6px;
-    background: var(--code-bg);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 15px 18px;
-    color: #b9c6d3;
-    line-height: 1.7;
-    overflow-x: auto;
-  }
-  .filetree .d { color: var(--cyan); }
-  .filetree .cm { color: #6b7684; }
-
-  footer {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 22px 44px 60px;
-    color: var(--muted);
-    font-size: 12.5px;
-    border-top: 1px solid var(--line);
-  }
-
-  @media (max-width: 820px) {
-    .layout { grid-template-columns: 1fr; }
-    nav.toc { display: none; }
-    main { padding: 24px 20px 90px; }
-    .layout, main, section { min-width: 0; max-width: 100%; overflow-x: hidden; }
-    .codeblock pre { max-width: 100%; }
-    header.top { padding: 11px 16px; }
-    header.top .meta { display: none; }               /* the middle tagline crowds the bar on phones */
-    header.top .brand-sub { display: none; }           /* keep just "● wasm-vm" on phones */
-    header.top .brand { font-size: 14px; }
-    header.top a.back { padding: 7px 12px; white-space: nowrap; }
-    h1 { font-size: 27px; }
-    footer { padding: 20px 20px 60px; }
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>wasm-vm documentation</title>
+  <meta name="description" content="Current documentation for the wasm-vm browser RISC-V machine." />
+  <link rel="stylesheet" href="./docs.css" />
 </head>
 <body>
+  <header class="docs-header">
+    <div class="docs-header-inner">
+      <a class="docs-brand" href="./docs.html">wasm-vm <span>documentation</span></a>
+      <nav class="docs-top-nav" aria-label="Documentation navigation">
+        <a href="./docs.html" aria-current="page">Overview</a>
+        <a href="./docs-embedding.html">Embed</a>
+        <a href="./docs-guest.html">Guest</a>
+        <a href="./docs-containers.html">Containers</a>
+        <a href="./docs-verification.html">Verification</a>
+        <a href="./docs-explainers.html">Explainers</a>
+        <a class="launch" href="./index.html">Launch demo →</a>
+      </nav>
+    </div>
+  </header>
 
-<header class="top">
-  <a class="brand" href="./"><span class="dot"></span> <span class="bn">wasm-vm</span> <span class="brand-sub">· embedding guide</span></a>
-  <span class="meta">RISC-V Linux + OCI, client-side wasm</span>
-  <a class="back" href="./index.html">Launch the machine →</a>
-</header>
-
-<div class="layout">
-  <nav class="toc" aria-label="Table of contents">
-    <p class="label">On this page</p>
-    <ol>
-      <li><a href="#overview">Overview</a></li>
-      <li><a href="#host">What you host</a></li>
-      <li><a href="#boot">Boot a guest</a></li>
-      <li><a href="#containers">Run containers</a></li>
-      <li><a href="#byoi">Bring your own image</a></li>
-      <li><a href="#frontend">Build your own frontend</a></li>
-      <li><a href="#media">VizPlayer + Docstream embeds</a></li>
-      <li><a href="#product-contract">ProofMesh product contract</a></li>
-      <li><a href="#caveats">Caveats &amp; limits</a></li>
-    </ol>
-  </nav>
-
-  <main>
-    <section id="overview">
-      <p class="kicker">Embedding guide</p>
-      <h1>Embed wasm-vm in your own frontend</h1>
+  <main class="docs-shell">
+    <div class="breadcrumbs"><a href="./docs.html">Docs</a> / Overview</div>
+    <section class="docs-home">
+      <span class="eyebrow">Current repository docs</span>
+      <h1>Understand the machine before you embed it.</h1>
       <p class="lede">
-        wasm-vm boots an <strong>unmodified RISC-V Linux</strong> guest and runs
-        <strong>real OCI/Docker containers</strong> entirely client-side in WebAssembly — no server,
-        no VM host, no backend. This page describes the intended integration model for consuming
-        it as a library in a page of your own.
+        These docs describe what this checkout actually ships: a Rust RV64 machine compiled to
+        WebAssembly, the browser loader around it, and the guest-side paths that have evidence.
+        Each subject has its own page. Detailed implementation records remain in the repository
+        source docs linked from those pages.
       </p>
-
-      <div class="callout warn">
-        <span class="tag">Theoretical consumption model.</span>
-        wasm-vm is <strong>not yet a published npm package</strong>. The code shapes below are real —
-        they mirror the module's actual exports (<code>web/loader.js</code>) and in-guest tooling —
-        but you consume them today by vendoring the built <code>pkg/</code> ES module and the
-        loader into your own static site, not by <code>npm install</code>.
+      <div class="page-meta">
+        <span class="badge live">source-backed</span>
+        <span class="badge separate">host libraries are separate</span>
+        <span class="badge caution">planned work is labeled</span>
       </div>
 
-      <div class="callout">
-        <span class="tag">Product design first.</span>
-        The next product layer is documented as a future-facing contract: passkey-owned encrypted
-        volumes, verified block sources, and a builder/critic work market. Read the
-        <a href="./products.html">product suite</a>,
-        <a href="./work-market.html">work-market protocol</a>, and
-        <a href="./security.html">security model</a> before integrating against implementation
-        details. The canonical proposal is tracked in the repository's
-        <a href="https://github.com/BLamy/wasm-vm/tree/main/docs/product" target="_blank" rel="noopener">product docs</a>.
+      <div class="note warn">
+        <p><strong>Scope boundary.</strong> The published <code>@agent-wasm/*</code> libraries are
+        host-side packages from <a href="https://github.com/BLamy/agent-wasm" target="_blank" rel="noopener">a
+        separate repository</a>. This repository's wasm module is generated and served as a
+        relative asset by the demo; it is not documented here as an installable
+        <code>@wasm-vm/*</code> npm package.</p>
       </div>
 
-      <h3>What it gives you</h3>
-      <ul>
-        <li><strong>A real Linux guest.</strong> An unmodified RISC-V (RV64GC) kernel boots to a
-          shell over an emulated serial console (<code>ttyS0</code>). You feed it keystrokes and
-          receive console bytes — exactly a terminal.</li>
-        <li><strong>Real containers.</strong> Inside the Alpine guest, <code>wvrun</code> runs
-          unpacked OCI images with genuine isolation: <code>unshare</code> (pid/mount/uts/ipc
-          namespaces) + an overlay rootfs + <code>pivot_root</code> + a seccomp filter + per-container
-          cgroup leaves. It is a small slice of runc, not a simulation.</li>
-        <li><strong>No server.</strong> The CPU, MMU, virtio-blk disk, and virtio-net stack all run
-          in wasm on the main thread. Everything you serve is a static file.</li>
-      </ul>
-      <p>
-        The point: you can build an in-browser IDE, a Docker-style playground, a
-        reproducible-environment sandbox, or a teaching tool — with a genuine Linux/container
-        backend that lives entirely in the user's tab.
-      </p>
-    </section>
-
-    <section id="host">
-      <p class="kicker">Step 1</p>
-      <h2>What you host</h2>
-      <p>
-        Everything is <strong>static</strong> — Cloudflare Pages / R2, GitHub Pages, S3, or any CDN.
-        There are four kinds of artifact.
-      </p>
-
-      <h3>1. The wasm ES module</h3>
-      <p>Built with <code>wasm-pack</code>, targeting the browser (no bundler required):</p>
-      <div class="codeblock" data-lang="sh"><pre><span class="c"># produces web/pkg/wasm_vm_wasm.js + wasm_vm_wasm_bg.wasm — an ES module you import directly</span>
-wasm-pack build crates/wasm --target web --out-dir ../../web/pkg</pre></div>
-      <p>
-        The loader (<code>web/loader.js</code>) imports from this package and calls its
-        <code>init()</code> (which does <code>WebAssembly.instantiateStreaming</code> under the hood).
-        Vendor both <code>loader.js</code> and <code>pkg/</code> into your site.
-      </p>
-
-      <h3>2. The kernel image + the rootfs manifest</h3>
-      <p>
-        A tiny <strong>boot manifest</strong> (JSON) names the kernel <code>Image</code> and the
-        rootfs, each pinned by <code>sha256</code>. The loader fetches the manifest first, then the
-        kernel, and integrity-checks bytes before boot — a corrupt image never boots. This is
-        <code>web/artifacts-alpine.json</code>:
-      </p>
-      <div class="codeblock" data-lang="json"><pre>{
-  <span class="s">"artifacts"</span>: {
-    <span class="s">"kernel"</span>: { <span class="s">"url"</span>: <span class="s">"releases/kernel/6.6.63/Image"</span>, <span class="s">"sha256"</span>: <span class="s">"08caa7…"</span>, <span class="s">"size"</span>: <span class="n">22097408</span> },
-    <span class="s">"rootfs"</span>: { <span class="s">"url"</span>: <span class="s">"releases/rootfs/alpine-rootfs.ext4"</span>, <span class="s">"sha256"</span>: <span class="s">"e7db52…"</span>, <span class="s">"size"</span>: <span class="n">536870912</span> }
-  }
-}</pre></div>
-
-      <h3>3. The chunked ext4 rootfs (content-addressed, lazy-fetched)</h3>
-      <p>
-        The Alpine image is 512&nbsp;MiB — far too big to download whole. Instead
-        <code>wasm-vm chunk</code> splits it into fixed-size (128&nbsp;KiB) blocks named by their
-        <code>sha256</code>. Boot touches only a fraction of the image, so the guest pulls only the
-        chunks it actually reads, one at a time over plain HTTP. A separate
-        <strong>image manifest</strong> lists the chunk hashes in order; identical blocks
-        (all-zero regions, duplicated data) collapse to one file:
-      </p>
-      <div class="codeblock" data-lang="json"><pre><span class="c">// releases/chunked-alpine/manifest.json</span>
-{
-  <span class="s">"version"</span>: <span class="n">1</span>,
-  <span class="s">"image_len"</span>: <span class="n">536870912</span>,
-  <span class="s">"chunk_size"</span>: <span class="n">131072</span>,
-  <span class="s">"layout"</span>: <span class="s">"split"</span>,
-  <span class="s">"chunks"</span>: [ <span class="s">"509bb0f1…"</span>, <span class="s">"7ba7026c…"</span>, <span class="s">"a7810773…"</span>, <span class="c">/* one sha256 per 128 KiB block */</span> ]
-}</pre></div>
-      <p>
-        Each chunk is served as a static file at <code>chunks/&lt;hash&gt;.bin</code> under the
-        manifest's directory. Chunks are <strong>verified in wasm on insert</strong> (per-chunk hash
-        check), which is why the full-image <code>sha256</code> can safely be skipped in chunked mode —
-        integrity is enforced block-by-block. An optional <code>boot-profile.json</code> (an ordered
-        list of chunk indices) lets you prefetch the boot working set up front.
-      </p>
-      <div class="filetree">
-<span class="cm"># your static host, at any origin</span>
-/pkg/wasm_vm_wasm.js          <span class="cm"># + _bg.wasm — the wasm-pack module</span>
-/loader.js                    <span class="cm"># the boot engine (vendored)</span>
-/artifacts-alpine.json        <span class="cm"># boot manifest (kernel + rootfs sha256)</span>
-/releases/kernel/6.6.63/<span class="d">Image</span>  <span class="cm"># the RISC-V kernel (~22 MiB)</span>
-/releases/chunked-alpine/
-    manifest.json             <span class="cm"># chunk list + geometry</span>
-    boot-profile.json         <span class="cm"># optional: prefetch order</span>
-    chunks/&lt;hash&gt;.bin          <span class="cm"># content-addressed 128 KiB blocks</span></div>
-
-      <h3>4. Pre-baked container bundles</h3>
-      <p>
-        OCI images unpacked to riscv64 bundles are baked <em>into</em> the Alpine rootfs at
-        <code>/opt/containers/&lt;name&gt;</code>, so <code>wvrun /opt/containers/nginx</code> works
-        offline the moment the guest is up. (See <a href="#byoi">Bring your own image</a>.)
-      </p>
-      <div class="callout warn">
-        <span class="tag">Cloudflare Pages caps files at 25 MiB.</span>
-        The kernel and each 128&nbsp;KiB chunk are fine, but the <em>full</em>
-        <code>alpine-rootfs.ext4</code> is not — serve big monolithic artifacts from R2 (or any
-        object store) and keep Pages for the small stuff. Chunked mode sidesteps this entirely.
+      <div class="card-grid home-grid">
+        <article class="card">
+          <h2>Embed the machine</h2>
+          <p>Use <code>startLinuxBoot</code> for a browser Linux controller, or the lower-level
+          <code>WasmMachine</code> wrapper for a bare-metal ELF.</p>
+          <a class="card-link" href="./docs-embedding.html">Read the host boundary →</a>
+        </article>
+        <article class="card">
+          <h2>Guest, boot, and storage</h2>
+          <p>See the real manifest flow, boot modes, hash checks, chunked disks, and the
+          IndexedDB copy-on-write path.</p>
+          <a class="card-link" href="./docs-guest.html">Read the guest docs →</a>
+        </article>
+        <article class="card">
+          <h2>Containers</h2>
+          <p>Understand the audited kernel capabilities, the current <code>wvrun</code> scope,
+          and where the booted capstone is still pending.</p>
+          <a class="card-link" href="./docs-containers.html">Read the container docs →</a>
+        </article>
+        <article class="card">
+          <h2>Verification and status</h2>
+          <p>Find the Level 1 evidence, local gates, release boundary, and the honest status of
+          unfinished acceleration work.</p>
+          <a class="card-link" href="./docs-verification.html">Read the verification docs →</a>
+        </article>
+        <article class="card">
+          <h2>Explainers and media</h2>
+          <p>Embed the real VizEngine and Docstream surfaces, with two hosted Orly explainers and
+          direct-link fallbacks.</p>
+          <a class="card-link" href="./docs-explainers.html">Read the explainer docs →</a>
+        </article>
+        <article class="card">
+          <h2>Source notes</h2>
+          <p>Implementation detail belongs in Markdown beside the code: containers, storage,
+          timing, release assurance, and the embedding guide.</p>
+          <a class="card-link" href="https://github.com/BLamy/wasm-vm/tree/main/docs" target="_blank" rel="noopener">Browse repository docs →</a>
+        </article>
       </div>
-    </section>
 
-    <section id="boot">
-      <p class="kicker">Step 2</p>
-      <h2>Boot a guest</h2>
-      <p>
-        <code>startLinuxBoot(opts)</code> is the whole boot engine. It fetches + verifies artifacts,
-        instantiates the wasm module, boots Linux, and returns a <strong>controller</strong> that
-        drives the running machine. You wire two things: console bytes <em>out</em> to a terminal, and
-        keystrokes <em>in</em> via <code>sendInput</code>.
-      </p>
-      <div class="codeblock" data-lang="js"><pre><span class="k">import</span> { startLinuxBoot } <span class="k">from</span> <span class="s">"./loader.js"</span>;
-<span class="c">// Any terminal emulator works; xterm.js is what the reference demo uses.</span>
-<span class="k">const</span> term = <span class="k">new</span> <span class="f">Terminal</span>();
-term.<span class="f">open</span>(<span class="f">document</span>.<span class="f">getElementById</span>(<span class="s">"term"</span>));
-
-<span class="k">const</span> ctl = <span class="k">await</span> <span class="f">startLinuxBoot</span>({
-  manifestUrl:      <span class="s">"./artifacts-alpine.json"</span>,          <span class="c">// kernel + rootfs sha256</span>
-  mode:             <span class="s">"chunked"</span>,                          <span class="c">// lazy per-chunk fetch (the production path)</span>
-  imageManifestUrl: <span class="s">"./releases/chunked-alpine/manifest.json"</span>,
-  ramMib:           <span class="n">256</span>,
-  persist:          <span class="k">false</span>,                              <span class="c">// true → CoW overlay saved to IndexedDB (survives reload)</span>
-
-  <span class="c">// Console bytes from the guest's ttyS0 → your terminal.</span>
-  onOutput: (u8) => term.<span class="f">write</span>(u8),
-  <span class="c">// Lifecycle: "fetching" | "verifying" | "instantiating" | "booting" | "done" | "error".</span>
-  onState:  (s)  => <span class="f">console</span>.<span class="f">debug</span>(<span class="s">"boot:"</span>, s),
-  <span class="c">// Per-artifact byte progress; total is null when the server sends no Content-Length.</span>
-  onProgress: (role, loaded, total) => {},
-  <span class="c">// A specific, surfaced failure (HTTP status / hash mismatch / boot error).</span>
-  onError:  (e)  => term.<span class="f">write</span>(<span class="s">`\r\nboot error: ${e.message}\r\n`</span>),
-});
-
-<span class="c">// Keystrokes → the guest's serial RX. This is exactly how a human types.</span>
-term.<span class="f">onData</span>((str) => ctl.<span class="f">sendInput</span>(<span class="k">new</span> <span class="f">TextEncoder</span>().<span class="f">encode</span>(str)));</pre></div>
-
-      <p>The controller exposes the running machine:</p>
-      <table class="api">
-        <thead><tr><th>Member</th><th>What it does</th></tr></thead>
+      <p class="section-kicker">What is live, separate, or unfinished</p>
+      <table class="data-table">
+        <thead><tr><th>Surface</th><th>Current truth</th><th>Evidence or next step</th></tr></thead>
         <tbody>
-          <tr><td><code>sendInput(bytes)</code></td><td class="desc">Push bytes into the guest serial console (Uint8Array).</td></tr>
-          <tr><td><code>pause()</code> / <code>resume()</code></td><td class="desc">Idle / resume the executor. Guest monotonic time is a deterministic retire-count clock, so it freezes and continues seamlessly — no catch-up storm. The demo drives these from <code>visibilitychange</code>.</td></tr>
-          <tr><td><code>persist()</code></td><td class="desc">Force a durable flush of the CoW overlay to IndexedDB; resolves to blocks written. No-op unless <code>persist:true</code> and this tab holds the writer lock.</td></tr>
-          <tr><td><code>stop()</code></td><td class="desc">Halt the run loop.</td></tr>
-          <tr><td><code>stateDigest()</code></td><td class="desc">SHA-256 fingerprint of architectural machine state (evidence / stale-run detection).</td></tr>
-          <tr><td><code>fetchStats()</code></td><td class="desc"><code>{ fetches, bytes, error }</code> for chunked boots — how much of the image has actually been pulled. <code>null</code> otherwise.</td></tr>
-          <tr><td><code>whenDone</code></td><td class="desc">A <code>Promise&lt;string&gt;</code> resolving on a terminal outcome (<code>"poweroff"</code>, <code>"reboot"</code>, <code>"stopped"</code>, <code>"error"</code>).</td></tr>
+          <tr>
+            <td>RV64GC + privileged machine</td>
+            <td><span class="badge live">verified boundary</span> The Level 1 report records native and WASM compliance results.</td>
+            <td><a href="https://github.com/BLamy/wasm-vm/blob/main/docs/level1-report.md" target="_blank" rel="noopener">Level 1 report</a></td>
+          </tr>
+          <tr>
+            <td>Default public browser demo</td>
+            <td><span class="badge live">live</span> The checked-in public manifest supplies the kernel, initramfs, and boot snapshot for the default path.</td>
+            <td><a href="./index.html">Launch the demo</a> · <a href="./docs-guest.html">boot details</a></td>
+          </tr>
+          <tr>
+            <td>Agent host libraries</td>
+            <td><span class="badge separate">separate project</span> Published <code>@agent-wasm/*</code> versions and exports are listed on the embedding page.</td>
+            <td><a href="./docs-embedding.html">host integration page</a></td>
+          </tr>
+          <tr>
+            <td>OCI containers</td>
+            <td><span class="badge caution">bounded</span> The image pipeline and kernel audit have evidence; the booted container capstone is not presented as complete.</td>
+            <td><a href="./docs-containers.html">container scope</a></td>
+          </tr>
+          <tr>
+            <td>Short-block JIT for restored Node</td>
+            <td><span class="badge caution">in progress</span> E4-T34 is still in progress because its real workload acceptance is not met.</td>
+            <td><a href="https://github.com/BLamy/wasm-vm/blob/main/docs/perf/e4-t34-jit-retrospective.md" target="_blank" rel="noopener">retrospective</a></td>
+          </tr>
+          <tr>
+            <td>ProofMesh product surfaces</td>
+            <td><span class="badge separate">proposal</span> Product, market, and distributed-storage pages are roadmap material, not current VM APIs.</td>
+            <td><a href="./roadmap.html">Roadmap</a> · <a href="./products.html">Products</a></td>
+          </tr>
         </tbody>
       </table>
-      <p>
-        Other modes: <code>mode:"initramfs"</code> (a small busybox rootfs as the initrd — works
-        anywhere, including size-limited hosts) and <code>mode:"disk"</code> (the whole ext4 image
-        downloaded up front over virtio-blk). Chunked is the production default. When
-        <code>persist:true</code>, a single-writer <strong>Web Lock</strong> guarantees exactly one tab
-        can write the overlay; other tabs boot read-only (surfaced via <code>onWriterStatus</code>),
-        and <code>onStorage</code>/<code>onQuota</code> callbacks let you show storage usage and handle
-        an out-of-quota disk.
-      </p>
-    </section>
-
-    <section id="containers">
-      <p class="kicker">Step 3</p>
-      <h2>Run containers</h2>
-      <p>
-        Containers are a <strong>guest-side</strong> concern: the Alpine rootfs ships
-        <code>wvrun</code>, a small POSIX-sh OCI runner. You drive it exactly like a user typing at the
-        shell — there is no separate container API. To do it programmatically, run a shell command in
-        the guest and capture its stdout with a <strong>fenced RPC</strong> over the serial console.
-      </p>
-
-      <h3>The fenced-RPC pattern</h3>
-      <p>
-        Type <code>&lt;cmd&gt;; printf '\n__END_%s\n' "$?"</code> into the console, then read output
-        bytes until the unique end-marker appears — everything between the echoed command and the
-        marker is stdout, and the marker captures the exit code. This is exactly what the reference
-        demo's <code>wvmDemo.exec()</code> does (serialized so calls don't interleave):
-      </p>
-      <div class="codeblock" data-lang="js"><pre><span class="c">// A minimal exec() over the boot controller. Real code (main.js) strips ANSI and</span>
-<span class="c">// serializes concurrent calls on a promise chain; this is the essence.</span>
-<span class="k">function</span> <span class="f">exec</span>(ctl, subscribe, cmd, timeoutMs = <span class="n">60000</span>) {
-  <span class="k">return</span> <span class="k">new</span> <span class="f">Promise</span>((resolve, reject) => {
-    <span class="k">const</span> id  = <span class="f">Math</span>.<span class="f">random</span>().<span class="f">toString</span>(<span class="n">36</span>).<span class="f">slice</span>(<span class="n">2</span>);
-    <span class="k">const</span> end = <span class="k">new</span> <span class="f">RegExp</span>(<span class="s">`__END_${id}_(\\d+)`</span>);
-    <span class="k">let</span> buf = <span class="s">""</span>;
-    <span class="k">const</span> off = <span class="f">subscribe</span>((u8) => {                <span class="c">// tap the console byte stream</span>
-      buf += <span class="k">new</span> <span class="f">TextDecoder</span>().<span class="f">decode</span>(u8, { stream: <span class="k">true</span> });
-      <span class="k">const</span> m = buf.<span class="f">match</span>(end);
-      <span class="k">if</span> (m) {
-        <span class="f">off</span>();
-        <span class="k">let</span> out = buf.<span class="f">slice</span>(<span class="n">0</span>, m.index);
-        out = out.<span class="f">slice</span>(out.<span class="f">indexOf</span>(<span class="s">"\n"</span>) + <span class="n">1</span>);  <span class="c">// drop the echoed command line</span>
-        <span class="f">resolve</span>({ stdout: out, exit: <span class="f">parseInt</span>(m[<span class="n">1</span>], <span class="n">10</span>) });
-      }
-    });
-    ctl.<span class="f">sendInput</span>(<span class="k">new</span> <span class="f">TextEncoder</span>().<span class="f">encode</span>(<span class="s">`${cmd}; printf '\\n__END_${id}_%s\\n' "$?"\r`</span>));
-    <span class="f">setTimeout</span>(() => { <span class="f">off</span>(); <span class="f">reject</span>(<span class="k">new</span> <span class="f">Error</span>(<span class="s">"timeout"</span>)); }, timeoutMs);
-  });
-}</pre></div>
-
-      <h3>Driving <code>wvrun</code></h3>
-      <p>Once you have <code>exec()</code>, the container lifecycle is just shell commands. Bundles live at <code>/opt/containers/&lt;name&gt;</code>.</p>
-      <div class="codeblock" data-lang="js"><pre><span class="c">// Start nginx detached; wvrun prints the container id.</span>
-<span class="k">const</span> { stdout: id } = <span class="k">await</span> <span class="f">exec</span>(ctl, subscribe,
-  <span class="s">"wvrun run -d --name web /opt/containers/nginx"</span>);
-
-<span class="c">// List running containers — `ps` emits one JSON object per line.</span>
-<span class="k">const</span> { stdout: ps } = <span class="k">await</span> <span class="f">exec</span>(ctl, subscribe, <span class="s">"wvrun ps"</span>);
-<span class="k">const</span> containers = ps.<span class="f">trim</span>().<span class="f">split</span>(<span class="s">"\n"</span>).<span class="f">filter</span>(<span class="f">Boolean</span>).<span class="f">map</span>(<span class="f">JSON</span>.parse);
-<span class="c">// → [{ id, name:"web", image:"nginx", status:"running", started, exit }]</span>
-
-<span class="c">// Tail its captured stdout/stderr, run a command inside it, then stop + remove.</span>
-<span class="k">await</span> <span class="f">exec</span>(ctl, subscribe, <span class="s">"wvrun logs web"</span>);
-<span class="k">await</span> <span class="f">exec</span>(ctl, subscribe, <span class="s">"wvrun exec web sh -c 'nginx -v'"</span>);
-<span class="k">await</span> <span class="f">exec</span>(ctl, subscribe, <span class="s">"wvrun stop web"</span>);
-<span class="k">await</span> <span class="f">exec</span>(ctl, subscribe, <span class="s">"wvrun rm web"</span>);</pre></div>
-
-      <table class="api">
-        <thead><tr><th>Command</th><th>Behavior</th></tr></thead>
-        <tbody>
-          <tr><td><code>wvrun &lt;bundle&gt;</code></td><td class="desc">Run to exit (foreground). Add <code>--interactive</code> for a shell, <code>--memory&nbsp;B</code> / <code>--pids&nbsp;N</code> for cgroup limits.</td></tr>
-          <tr><td><code>wvrun run -d --name N &lt;bundle&gt;</code></td><td class="desc">Run detached; prints the container id. State is tracked under <code>/run/wvcontainers</code>.</td></tr>
-          <tr><td><code>wvrun ps [-a]</code></td><td class="desc">List containers as <strong>JSON lines</strong> (one object per line). <code>-a</code> includes stopped.</td></tr>
-          <tr><td><code>wvrun logs [-f] &lt;ref&gt;</code></td><td class="desc">Replay (or <code>-f</code> follow) captured stdout+stderr.</td></tr>
-          <tr><td><code>wvrun exec [-it] &lt;ref&gt; &lt;cmd…&gt;</code></td><td class="desc">Enter a running container's namespaces (the real "docker exec").</td></tr>
-          <tr><td><code>wvrun stop &lt;ref&gt;</code> / <code>rm [-f] &lt;ref&gt;</code></td><td class="desc">SIGTERM→<code>cgroup.kill</code>; remove a stopped container.</td></tr>
-        </tbody>
-      </table>
-      <div class="callout">
-        <span class="tag">What "container" means here.</span> For each run, <code>wvrun</code> creates
-        a cgroup leaf, then <code>unshare</code>s pid/mount/uts/ipc namespaces, overlay-mounts the
-        image (ro lower + tmpfs upper), sets up fresh <code>proc</code>/<code>sys</code>/<code>dev</code>,
-        <code>pivot_root</code>s into it, installs a seccomp filter, and execs the image's argv. Honest
-        v1 scope: containers run as root-in-guest and <em>share</em> the guest network namespace.
-      </div>
-    </section>
-
-    <section id="byoi">
-      <p class="kicker">Step 4</p>
-      <h2>Bring your own image</h2>
-      <p>
-        Any public Docker/OCI image with a riscv64 build can become a runnable bundle.
-        <code>tools/build-container-bundle.sh</code> wraps three real steps: pull the image-layout
-        (digest-verifying every blob), <code>wasm-vm oci unpack</code> to flatten the layers into
-        <code>rootfs/</code> + <code>config/</code>, and assert the entry binary is genuinely an ELF for
-        the target arch — no fake bundles slip through.
-      </p>
-      <div class="codeblock" data-lang="sh"><pre><span class="c"># pull + digest-verify + unpack → a riscv64 bundle. Works with any standard v2</span>
-<span class="c"># registry: Docker Hub, ghcr.io, quay.io, gcr.io, … (anonymous pull).</span>
-tools/build-container-bundle.sh nginx        ./nginx-bundle   riscv64
-tools/build-container-bundle.sh busybox      ./busybox-bundle riscv64
-
-<span class="c"># The bundle is: rootfs/ + config/{argv,env,cwd,user}. Run it in-guest:</span>
-<span class="c">#   wvrun ./nginx-bundle</span></pre></div>
-      <p>
-        Then <strong>bake the bundle into the rootfs</strong> at <code>/opt/containers/&lt;name&gt;</code>
-        before you run <code>wasm-vm chunk</code>, so it ships with the image and is available offline.
-        (Alternatively, transfer a bundle into a running guest via the file-transfer channel exposed on
-        the controller.) Rebuild the chunk manifest after baking so the new blocks are addressable.
-      </p>
-      <div class="callout warn">
-        <span class="tag">riscv64 only.</span> The guest is RISC-V, so an image must publish a
-        <code>linux/riscv64</code> manifest. Many do (nginx, redis, postgres, busybox, alpine); some
-        (e.g. official node, python) currently do not — the build script fails loudly with
-        "no riscv64 manifest in the index" rather than baking a wrong-arch rootfs.
-      </div>
-    </section>
-
-    <section id="frontend">
-      <p class="kicker">Step 5</p>
-      <h2>Build your own frontend</h2>
-      <p>
-        Tying it together: boot the guest, wire a terminal, and add a "Run nginx" button that waits
-        for the shell then drives <code>wvrun</code>. This is a compact but realistic sketch against
-        the real API.
-      </p>
-      <div class="codeblock" data-lang="js"><pre><span class="k">import</span> { startLinuxBoot } <span class="k">from</span> <span class="s">"./loader.js"</span>;
-
-<span class="c">// --- a tiny console fan-out so both the terminal and exec() can read guest bytes ---</span>
-<span class="k">const</span> subscribers = <span class="k">new</span> <span class="f">Set</span>();
-<span class="k">const</span> subscribe = (fn) => { subscribers.<span class="f">add</span>(fn); <span class="k">return</span> () => subscribers.<span class="f">delete</span>(fn); };
-
-<span class="k">const</span> term = <span class="k">new</span> <span class="f">Terminal</span>();
-term.<span class="f">open</span>(<span class="f">document</span>.<span class="f">getElementById</span>(<span class="s">"term"</span>));
-
-<span class="k">const</span> ctl = <span class="k">await</span> <span class="f">startLinuxBoot</span>({
-  manifestUrl:      <span class="s">"./artifacts-alpine.json"</span>,
-  mode:             <span class="s">"chunked"</span>,
-  imageManifestUrl: <span class="s">"./releases/chunked-alpine/manifest.json"</span>,
-  ramMib: <span class="n">256</span>,
-  onOutput: (u8) => { term.<span class="f">write</span>(u8); <span class="k">for</span> (<span class="k">const</span> fn <span class="k">of</span> subscribers) <span class="f">fn</span>(u8); },
-});
-term.<span class="f">onData</span>((s) => ctl.<span class="f">sendInput</span>(<span class="k">new</span> <span class="f">TextEncoder</span>().<span class="f">encode</span>(s)));
-
-<span class="c">// --- wait for a usable shell prompt before scripting the guest ---</span>
-<span class="k">function</span> <span class="f">whenReady</span>() {
-  <span class="k">return</span> <span class="k">new</span> <span class="f">Promise</span>((res) => {
-    <span class="k">let</span> tail = <span class="s">""</span>;
-    <span class="k">const</span> off = <span class="f">subscribe</span>((u8) => {
-      tail = (tail + <span class="k">new</span> <span class="f">TextDecoder</span>().<span class="f">decode</span>(u8)).<span class="f">slice</span>(-<span class="n">200</span>);
-      <span class="k">if</span> (/[\w.-]+:~#\s*$|\/ #\s*$/.<span class="f">test</span>(tail)) { <span class="f">off</span>(); <span class="f">res</span>(); }
-    });
-  });
-}
-
-<span class="c">// --- the button ---</span>
-<span class="f">document</span>.<span class="f">getElementById</span>(<span class="s">"run-nginx"</span>).<span class="f">onclick</span> = <span class="k">async</span> () => {
-  <span class="k">await</span> <span class="f">whenReady</span>();
-  <span class="k">const</span> { stdout: id } = <span class="k">await</span> <span class="f">exec</span>(ctl, subscribe,
-    <span class="s">"wvrun run -d --name web /opt/containers/nginx"</span>);
-  <span class="f">console</span>.<span class="f">log</span>(<span class="s">"nginx up:"</span>, id.<span class="f">trim</span>());
-  <span class="k">const</span> { stdout: ps } = <span class="k">await</span> <span class="f">exec</span>(ctl, subscribe, <span class="s">"wvrun ps"</span>);
-  <span class="f">renderTable</span>(ps.<span class="f">trim</span>().<span class="f">split</span>(<span class="s">"\n"</span>).<span class="f">map</span>(<span class="f">JSON</span>.parse));
-};</pre></div>
-      <p>
-        That is the entire shape of an in-browser Docker frontend: a terminal bound to the controller,
-        a readiness gate, and <code>exec()</code> calls that parse <code>wvrun</code> output. Everything
-        else — tabs, a container table, log panes — is ordinary UI on top of these primitives.
-      </p>
-    </section>
-
-    <section id="media">
-      <p class="kicker">Step 6</p>
-      <h2>Publish explainers and replayable docs</h2>
-      <p>
-        The VM loader remains the runtime boundary. The presentation layer can use the same
-        package set as the rest of the docs stack: <code>@brett_lamy/viz-engine</code>
-        owns the declarative timeline engine and <code>VizPlayer</code>, while
-        <code>@brett_lamy/docstream</code> renders markdown embeds with its built-in
-        <code>ReplayPreview</code> and the engine's <code>VideoEmbed</code>.
-      </p>
-
-      <h3>Author a narrated scene with <code>VizPlayer</code></h3>
-      <p>
-        Use <code>VizPlayer</code> for an authored SVG explainer: the timeline is seekable,
-        loopable, and can follow narration audio. It is independent of the VM boot path, so a
-        docs page can explain boot, paging, OCI layers, or a network packet flow without coupling
-        the animation to the guest's wall-clock speed.
-      </p>
-      <div class="codeblock" data-lang="tsx"><pre><span class="k">import</span> { Timeline, VizPlayer } <span class="k">from</span> <span class="s">"@brett_lamy/viz-engine"</span>;
-<span class="k">import</span> <span class="s">"@brett_lamy/viz-engine/styles.css"</span>;
-
-<span class="k">const</span> timeline = <span class="k">new</span> <span class="f">Timeline</span>();
-<span class="k">const</span> opacity = timeline.<span class="f">channel</span>(<span class="s">"opacity"</span>, <span class="n">0</span>);
-timeline.<span class="f">tween</span>(opacity, <span class="n">1</span>, { at: <span class="n">0</span>, dur: <span class="n">0.5</span> });
-
-<span class="k">export function</span> <span class="f">BootExplainer</span>() {
-  <span class="k">return</span> (
-    &lt;<span class="f">VizPlayer</span>
-      scene={{
-        timeline,
-        render: (state) =&gt; &lt;<span class="f">circle</span> cx=<span class="s">"640"</span> cy=<span class="s">"360"</span> r=<span class="s">"80"</span>
-          opacity={state.<span class="f">get</span>(opacity)} /&gt;,
-      }}
-      loop
-    /&gt;
-  );
-}</pre></div>
-
-      <h3>Use Docstream for markdown embeds</h3>
-      <p>
-        Once the package releases are available, install them in a React documentation app. The
-        editor and renderer preserve the portable GitBook-style <code>embed</code> block; no
-        player-specific component has to be serialized into the document.
-      </p>
-      <div class="codeblock" data-lang="sh"><pre>npm install @brett_lamy/viz-engine @brett_lamy/docstream @brett_lamy/docstream-editor</pre></div>
-      <div class="codeblock" data-lang="tsx"><pre><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
-<span class="k">import</span> { GitbookStreamdown } <span class="k">from</span> <span class="s">"@brett_lamy/docstream"</span>;
-<span class="k">import</span> { GitbookEditor } <span class="k">from</span> <span class="s">"@brett_lamy/docstream-editor"</span>;
-<span class="k">import</span> <span class="s">"@brett_lamy/docstream/styles.css"</span>;
-<span class="k">import</span> <span class="s">"@brett_lamy/docstream-editor/styles.css"</span>;
-
-<span class="k">const</span> markdown = <span class="s">`# Boot trace
-
-{% embed url="https://loop-qa.replay.io/projects/project-id/journeys/journey-id" /%}
-
-{% embed url="https://cdn.example.com/wasm-vm-boot.mp4" /%}`</span>;
-
-<span class="k">export function</span> <span class="f">ReadOnlyDoc</span>() {
-  <span class="k">return</span> &lt;<span class="f">GitbookStreamdown</span> markdown={markdown} /&gt;;
-}
-
-<span class="k">export function</span> <span class="f">EditableDoc</span>() {
-  <span class="k">const</span> [value, setValue] = <span class="f">useState</span>(markdown);
-  <span class="k">return</span> &lt;<span class="f">GitbookEditor</span> markdown={value} onChange={setValue} /&gt;;
-}</pre></div>
-
-      <p>For a custom layout, the same media boundary is available directly:</p>
-      <div class="codeblock" data-lang="tsx"><pre><span class="k">import</span> { VideoEmbed } <span class="k">from</span> <span class="s">"@brett_lamy/viz-engine"</span>;
-
-&lt;<span class="f">VideoEmbed</span> src=<span class="s">"./recordings/wasm-vm-boot.mp4"</span> title=<span class="s">"wasm-vm boot"</span> /&gt;</pre></div>
-
-      <h3>Embed a replay directly</h3>
-      <p>
-        When a page needs a custom layout instead of a markdown block, import
-        <code>ReplayPreview</code> from Docstream. Public project URLs for tasks,
-        explorations, journeys, and test runs are converted to Loop QA's chrome-free public
-        route automatically. Native rrweb event arrays and CORS-enabled event endpoints are also
-        supported.
-      </p>
-      <div class="codeblock" data-lang="tsx"><pre><span class="k">import</span> { ReplayPreview } <span class="k">from</span> <span class="s">"@brett_lamy/docstream"</span>;
-
-&lt;<span class="f">ReplayPreview</span>
-  source=<span class="s">"https://loop-qa.replay.io/projects/project-id/tasks/task-id"</span>
-  title=<span class="s">"wasm-vm browser run"</span>
-/&gt;</pre></div>
-
-      <div class="callout">
-        <span class="tag">Choose the right surface.</span>
-        Use <code>VizPlayer</code> for authored timeline scenes, <code>VideoEmbed</code> for a
-        direct <code>.mp4</code>/<code>.webm</code>/<code>.ogg</code> asset or hosted player, and
-        <code>ReplayPreview</code> for a public Loop QA recording. Replay URLs must be publicly
-        viewable and iframe-embeddable; private or localhost assets are not exposed by the preview.
-      </div>
-    </section>
-
-    <section id="product-contract">
-      <p class="kicker">Future-facing contract</p>
-      <h2>ProofMesh: storage, peers, and verifiable work</h2>
-      <p>
-        The current embedding guide explains the live machine. The product roadmap adds a second
-        layer: a passkey-owned encrypted volume, verified content-addressed block sources, and a
-        builder/critic market for reproducible software improvements.
-      </p>
-      <ul>
-        <li><strong>Identity:</strong> WebAuthn authenticates the user; a feature-detected PRF and
-          recovery slots may unlock a locally generated volume key.</li>
-        <li><strong>Storage:</strong> immutable base blocks stay deduplicated while user writes
-          become authenticated encrypted generations.</li>
-        <li><strong>Work:</strong> a frozen ticket commits the source, benchmark, verifier, and
-          acceptance rule before a builder or critic starts.</li>
-        <li><strong>Settlement:</strong> independent critics return signed attestations; a quorum
-          and challenge window decide whether the artifact is accepted.</li>
-      </ul>
-      <p>
-        These are proposed product APIs, not claims about every live export. Read the
-        <a href="./products.html">product suite</a>,
-        <a href="./work-market.html">work-market protocol</a>,
-        <a href="./security.html">security model</a>, and
-        <a href="./roadmap.html">roadmap</a> for the intended boundary.
-      </p>
-    </section>
-
-    <section id="caveats">
-      <p class="kicker">Honest limits</p>
-      <h2>Caveats &amp; limits</h2>
-      <ul>
-        <li><strong>The CPU is interpreted, so it is slow.</strong> Booting Alpine to a login prompt
-          is a <em>minutes</em>-scale operation, and heavy workloads crawl. A JIT (dynamic binary
-          translation to wasm) is a later epic — it is what makes things like Node.js interactive —
-          but it is not here yet. Set expectations accordingly in your UI.</li>
-        <li><strong>Single-threaded, no special headers.</strong> The run loop drives itself off
-          <code>setTimeout</code> on the main thread. There is <em>no</em> requirement for
-          <code>SharedArrayBuffer</code> or cross-origin isolation (COOP/COEP) — it runs on ordinary
-          static hosting. (Workers/SAB are a future optimization, not a prerequisite.)</li>
-        <li><strong>Mind file-size caps.</strong> Cloudflare Pages rejects files over 25&nbsp;MiB.
-          The kernel and 128&nbsp;KiB chunks are fine; serve any large monolithic artifact
-          (e.g. the full <code>.ext4</code>) from R2 or another object store.</li>
-        <li><strong>Containers are riscv64 and honest-v1.</strong> Images need a
-          <code>linux/riscv64</code> build; containers run as root-in-guest and share the guest network
-          namespace. The guest itself is the sandbox.</li>
-        <li><strong>This is a theoretical consumption model.</strong> wasm-vm is not published to npm.
-          You integrate today by vendoring the built <code>pkg/</code> module and <code>loader.js</code>
-          into your own static site. The API names here are real; the packaging is aspirational.</li>
-      </ul>
-      <p style="margin-top:22px;color:var(--muted);">
-        See the <a href="./index.html">live demo</a> for a working reference frontend (terminal +
-        Docker + IDE tabs) built on exactly these primitives.
-      </p>
     </section>
   </main>
-</div>
 
-<footer>
-  wasm-vm — an unmodified RISC-V Linux guest and real OCI containers, running client-side in
-  WebAssembly. This embedding guide describes the intended library-consumption model; API shapes
-  mirror <code>web/loader.js</code> and the in-guest <code>wvrun</code> runner.
-</footer>
-
-<script>
-  // Copy buttons for every code block (tiny, no deps).
-  for (const block of document.querySelectorAll(".codeblock")) {
-    const pre = block.querySelector("pre");
-    const lang = block.dataset.lang;
-    if (lang) {
-      const tag = document.createElement("span");
-      tag.className = "lang";
-      tag.textContent = lang;
-      block.appendChild(tag);
-    }
-    const btn = document.createElement("button");
-    btn.className = "copy";
-    btn.type = "button";
-    btn.textContent = "copy";
-    btn.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(pre.innerText);
-        btn.textContent = "copied";
-        btn.classList.add("ok");
-        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("ok"); }, 1400);
-      } catch {
-        btn.textContent = "select all";
-        const r = document.createRange();
-        r.selectNodeContents(pre);
-        const sel = getSelection();
-        sel.removeAllRanges();
-        sel.addRange(r);
-      }
-    });
-    block.appendChild(btn);
-  }
-
-  // Scroll-spy: highlight the active TOC entry.
-  const links = [...document.querySelectorAll("nav.toc a")];
-  const byId = new Map(links.map((a) => [a.getAttribute("href").slice(1), a]));
-  const spy = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (e.isIntersecting) {
-        links.forEach((l) => l.classList.remove("active"));
-        byId.get(e.target.id)?.classList.add("active");
-      }
-    }
-  }, { rootMargin: "-15% 0px -70% 0px", threshold: 0 });
-  document.querySelectorAll("main section[id]").forEach((s) => spy.observe(s));
-</script>
+  <footer class="docs-footer">
+    <div class="docs-footer-inner">
+      <span><strong>wasm-vm</strong> · docs for the browser machine</span>
+      <nav aria-label="Footer navigation">
+        <a href="./index.html">Demo</a>
+        <a href="https://github.com/BLamy/wasm-vm" target="_blank" rel="noopener">GitHub</a>
+        <a href="./roadmap.html">Roadmap</a>
+      </nav>
+    </div>
+  </footer>
 </body>
 </html>

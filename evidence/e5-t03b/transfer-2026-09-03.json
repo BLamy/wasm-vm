@@ -1,0 +1,60 @@
+{
+  "schema": "e5-t03b-virtio-gpu-transfer-v1",
+  "task": "E5-T03b",
+  "status": "pass",
+  "implementation_commit": "d4f1326",
+  "recorded_at": "2026-09-03",
+  "native": {
+    "acceptance_command": "cargo test -p wasm-vm-core --lib gpu_transfer",
+    "acceptance_result": "7 passed, 0 failed",
+    "coverage": [
+      "The little-endian TRANSFER_TO_HOST_2D wire fixture round-trips all fields and the control-queue test echoes a fenced response.",
+      "Full and partial copies match the reference across SG boundaries, including an odd-x partial rectangle and a 64x64 frame backed by one-byte entries.",
+      "Checked rectangle, offset, stride, row-span, and backing-range arithmetic rejects detached backing, out-of-bounds rectangles, offset u64::MAX, and backing_len - 1 with a two-byte span before shadow mutation.",
+      "The randomized model-oracle test executes 10,000 cases under each of three independent seeds (30,000 total) and compares every resulting shadow pixel.",
+      "Guest source bytes are snapshotted before and after transfer; no transfer path mutates the backing source. The SG reader advances by contiguous spans and row gaps, not per pixel."
+    ],
+    "performance": {
+      "command": "cargo test -p wasm-vm-core --release --lib gpu_transfer_full_frame_native_budget -- --nocapture",
+      "result": "1280x800 transfer: 418.584µs; passed under 5 ms"
+    },
+    "regression": {
+      "command": "cargo test -p wasm-vm-core --lib",
+      "result": "212 passed, 0 failed"
+    },
+    "virtio_regression": {
+      "command": "cargo test -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test virtio_net_critic",
+      "result": "22 passed, 0 failed"
+    },
+    "clippy": {
+      "command": "cargo clippy -p wasm-vm-core --lib -- -D warnings",
+      "result": "pass"
+    },
+    "format": {
+      "commands": [
+        "cargo fmt --all -- --check",
+        "git diff --check"
+      ],
+      "result": "pass"
+    }
+  },
+  "wasm32": {
+    "core_build": {
+      "command": "cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown",
+      "result": "pass"
+    },
+    "core_clippy": {
+      "command": "cargo clippy -p wasm-vm-core --target wasm32-unknown-unknown --no-default-features --lib -- -D warnings",
+      "result": "pass"
+    },
+    "existing_gpu_runner": {
+      "command": "wasm-pack test --node crates/wasm --test gpu_protocol",
+      "result": "2 passed, 0 failed"
+    }
+  },
+  "claim": "At commit d4f1326, TRANSFER_TO_HOST_2D performs a checked read-only copy from a resource's linear guest SG backing into its host shadow, correctly handles row gaps and arbitrary SG boundaries, rejects invalid arithmetic before mutation, and stays under 5 ms for a native 1280x800 frame in release mode.",
+  "scope_notes": [
+    "SET_SCANOUT binding is owned by E5-T03a; RESOURCE_FLUSH and golden presentation integration remain owned by E5-T03c.",
+    "No independent-machine, WebKit, or host-layer rr run was used, per the user's direction and current repository evidence policy."
+  ]
+}

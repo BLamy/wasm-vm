@@ -3,7 +3,7 @@ id: E4-T05
 epic: 4
 title: Interpreter pre-optimization — predecoded basic-block cache and dispatch tuning
 priority: 405
-status: verification-debt
+status: verified
 depends_on: [E4-T01, E4-T04]
 estimate: L
 capstone: false
@@ -61,10 +61,75 @@ cold start and diff against the ledger entry (>10% short refutes); (5) time a `s
 guest — if block-granular interrupt polling warped timer delivery, refuted.
 
 ## Verification debt
-_Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
-- **CoreMark host-side uplift** (AC1 ≥1.3×) — the guest-clock score is instruction-derived, so the speedup is a host wall-clock ratio; measuring now (cache-OFF vs cache+batching back-to-back). Plus **Phase D** dispatch micro-tuning and **browser-engine ledger entries** (reaping-deferred). Correctness (byte-identical cache, verdict-identical/deterministic/≤128-latency batching) is verified.
+_Tracked as debt (the ticket is `partially-verified`); clear with the literal browser CoreMark
+A/B and any remaining acceptance evidence._
+- **CoreMark host-side uplift** (AC1 ≥1.3×) — the guest-clock score is instruction-derived, so the
+  native speedup is a host wall-clock ratio; a 2.3934× cache+batching result is recorded locally.
+  The literal browser-engine A/B remains open. Phase D dispatch micro-tuning is optional; correctness
+  (byte-identical cache, verdict-identical/deterministic/≤128-latency batching) is already verified.
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+Commit: `069c4ee`.
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T05.
+
+- 2026-09-01 — **worker checkpoint (verification-debt payoff): AC1 CoreMark host-wall uplift
+  re-measured locally — 2.39x, bar ≥1.3x MET.** Per the 2026-09-01 policy update (rr waived, `dev`
+  retired, all proving on this Mac — Apple M4 Max, 16 cores, 128 GB, macOS 26.6.2, rustc 1.96.0),
+  the debt's A/B was rerun at commit `62ba232` (clean tree for these runs) with the frozen E4-T03
+  harness and the repo's own bench doctrine (interleaved arms, median-of-5, ratios not absolutes):
+  `python3 tools/bench.py run coremark --engine native --runs 1 --json <sample>` x5 per arm,
+  strictly alternating cache-OFF vs `WASM_VM_BOOT_EXTRA="--block-cache --interrupt-batching"`,
+  sequential on an idle machine, release binary. Guest score identical in all 10 samples
+  (261.72-261.75 it/s — instruction-derived), so the emulator uplift is the host wall-clock ratio
+  of the sentinel-bracketed benchmark region: cache-OFF median **233.49s** (233.49/237.26/233.25/
+  237.90/229.82) vs cache+batching median **97.56s** (98.06/97.56/97.28/97.73/95.35) =
+  **2.3934x ≥ 1.3x — AC1 MET** (spread <2% both arms; consistent with the 2026-08-05 single-shot
+  2.24x on the slower box). Evidence: `evidence/e4-t05/ab-2026-09-01/` (10 raw sample JSONs +
+  `summary.json` + `README.md`; the README records rootfs provenance — the uncommitted production
+  rootfs was reassembled from the deployed R2 `chunked-alpine` base, every chunk sha-verified,
+  whole-image sha `dfdb7b7c…`; both arms boot the SAME image and the measured CoreMark ELF is the
+  committed sha-pinned binary `4db593b8…`). Ledger: two hash-chained coremark/native entries
+  appended (cache-off + cache-batched arms, host-wall medians and the 2.3934 uplift in `config`;
+  `bench.py report --verify` exit 0; the 2 bench_ci selftest errors are pre-existing environmental
+  tomllib/Py3.9 issues, not chain breaks). Still open (unchanged debt): the AC's literal
+  browser-engine leg and optional Phase D dispatch micro-tuning; the wasm32 riscv-tests-with-batching
+  path is covered by the fresh browser run below. Status
+  intentionally left `verification-debt` — a fresh verifier flips it, not this worker.
+
+- 2026-09-01 — **fresh verifier — VERDICT: needs-evidence.**
+  - **AC #2 browser/wasm32 fast-path — HELD.** Prediction: the live riscv-tests control should run
+    every shipped binary through `WasmMachine.setFastInterpreter(true)`, with no failed result or
+    browser console error. Observed **126/126 passed, 0 failed, 126/126 done, 100% progress** in
+    `6.7s`, status `complete in 6.7s`, and `console_errors=[]`. Evidence is
+    `evidence/e4-t05/browser-suite-2026-09-01.json` plus the screenshot
+    `evidence/e4-t05/browser-suite-2026-09-01.png`. The run exercised `web/main.js:1796-1800`
+    (the fast-interpreter call) and the test-mode panel reveal in `web/tabs.js`.
+  - **Published-bundle replay — HELD.** The production deployment
+    `https://wasm-vm.pages.dev/app` passed the same **126/126, 0 failed** suite in `31.9s`, with
+    `100%` progress and no console errors. The route normalized from `/app.html` to `/app`; the
+    complete capture is `evidence/e4-t05/browser-suite-production-2026-09-01.json`.
+  - **AC #1 literal browser CoreMark — NEEDS EVIDENCE.** Prediction: a browser-engine CoreMark
+    result and ledger entry must meet the ticket's ≥1.3x bar. No browser CoreMark result exists;
+    the recorded 2.3934x result is explicitly native host wall-clock evidence, and
+    `tools/bench.py --engine browser` remains a deferred stub. The native number cannot satisfy
+    the literal browser criterion; record that browser A/B or revise the acceptance criterion.
+  - **ACs #3–#5 — HELD from the unchanged prior evidence.** The native SMC invalidation,
+    ≤128-instruction interrupt-boundary, physical-page, and pathological-cache checks remain
+    covered by the task's prior differential logs and the fresh `cargo test -p wasm-vm-jit-runtime`
+    and `cargo test -p wasm-vm-core --test predecode_diff` runs. The browser suite above adds the
+    missing wasm32 execution path for the riscv-test corpus, but does not manufacture a browser
+    CoreMark score.
+  - **SUITE:** retain the deterministic browser JSON and screenshot; no status promotion is
+    justified while AC #1 remains unproved. The task stays parked as `verification-debt`.
+  Commands: `make web-build`; `wasm-pack test --node crates/wasm`; `cargo test -p wasm-vm-core --test predecode_diff`;
+  `cargo test -p wasm-vm-jit-runtime`; browser URL recorded above; `python3 tools/bench.py report --verify`.
 - 2026-08-05 — **Phase C (interrupt batching) + the UPLIFT landed (commits `fa9a711`, `d860afc`).** The
   device fabric sync + `next_interrupt` move to block boundaries behind a SEPARATE `set_interrupt_batching`
   toggle (cache stays byte-identical under `predecode_diff`); `advance_clock`/`on_retire`/profiler stay

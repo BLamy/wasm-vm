@@ -1,0 +1,24 @@
+E5-T23a shared guest-agent protocol/framing proof
+commit: 8204ab8
+
+commands:
+  cargo test -p wasm-vm-agent-protocol
+  cargo check -p wasm-vm-agent-protocol --target wasm32-unknown-unknown --quiet
+  cargo tree -p wasm-vm-agent-protocol -e normal
+
+result:
+  9 unit tests passed, 0 failed
+  0 doc-tests passed, 0 failed
+  wasm32-unknown-unknown no_std check passed
+  normal dependency tree contains only wasm-vm-agent-protocol (no runtime dependencies)
+
+coverage:
+  - little-endian header and payload round-trip
+  - one-byte dribble and ten-frame coalescing equivalence
+  - truncated frame reported at finish and reset
+  - len=0xffffffff rejected before payload allocation
+  - zero-length frame emitted when the header is the whole write
+  - unknown type retained for NAK handling
+  - HELLO version minimum/capability intersection and no-common-version rejection
+  - fixed HELLO/PING/NAK payload encoding and decoding
+  - exact 1 MiB payload acceptance

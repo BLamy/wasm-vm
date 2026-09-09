@@ -1,0 +1,286 @@
+127.0.0.1 - - [01/Sep/2026 13:17:49] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:17:49] "GET /artifacts-alpine.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:17:49] "GET /releases/kernel/6.6.63/Image HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /?guest=alpine&noSnapshot&persist=0&profile=1 HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /node_modules/@xterm/xterm/lib/xterm.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /node_modules/@xterm/xterm/css/xterm.css HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /node_modules/@xterm/addon-fit/lib/addon-fit.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /tabs.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /ide.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /docs-mount.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /main.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /loader.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /roadmap.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /linux-worker-host.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /riscv-tests.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /overlay-reset-target.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /terminal.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /file-transfer.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /boot-progress.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /linux-worker-protocol.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /boot-path.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /task-quiescence.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /overlay-seed-identity.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /osc52.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /paste.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /progress.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /tasks.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /pkg/wasm_vm_wasm_bg.wasm HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /sw.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /assets/hello.elf HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /artifacts-alpine.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /artifacts-node-alpine.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /linux-worker.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /loader.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /linux-worker-protocol.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /boot-path.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /overlay-seed-identity.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /task-quiescence.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:01] "GET /releases/kernel/6.6.63/Image HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 13:18:02] "GET /pkg/wasm_vm_wasm_bg.wasm HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /?guest=alpine&noSnapshot&persist=0&profile=1 HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /node_modules/@xterm/addon-fit/lib/addon-fit.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /node_modules/@xterm/xterm/css/xterm.css HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /node_modules/@xterm/xterm/lib/xterm.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /tabs.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /ide.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /main.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /docs-mount.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /loader.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /roadmap.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /riscv-tests.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /linux-worker-host.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /overlay-reset-target.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /terminal.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /file-transfer.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /boot-progress.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /boot-path.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /overlay-seed-identity.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /task-quiescence.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /linux-worker-protocol.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /osc52.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /paste.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /progress.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /tasks.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /pkg/wasm_vm_wasm_bg.wasm HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /sw.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /assets/hello.elf HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /artifacts-alpine.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:00] "GET /artifacts-node-alpine.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:01] "GET /linux-worker.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:01] "GET /loader.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:01] "GET /linux-worker-protocol.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:01] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:01] "GET /boot-path.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:01] "GET /overlay-seed-identity.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:01] "GET /task-quiescence.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:01] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:01] "GET /releases/kernel/6.6.63/Image HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:09:01] "GET /pkg/wasm_vm_wasm_bg.wasm HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /?guest=alpine&noSnapshot&persist=0&profile=1 HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /node_modules/@xterm/xterm/css/xterm.css HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /node_modules/@xterm/xterm/lib/xterm.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /ide.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /docs-mount.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /node_modules/@xterm/addon-fit/lib/addon-fit.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /tabs.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /main.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /riscv-tests.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /loader.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /linux-worker-host.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /roadmap.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /overlay-reset-target.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /terminal.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /file-transfer.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /boot-progress.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /overlay-seed-identity.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /boot-path.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /task-quiescence.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /osc52.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /linux-worker-protocol.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /paste.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /progress.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /tasks.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /pkg/wasm_vm_wasm_bg.wasm HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /sw.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /assets/hello.elf HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /artifacts-alpine.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /artifacts-node-alpine.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /linux-worker.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /loader.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /linux-worker-protocol.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /boot-path.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /overlay-seed-identity.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /task-quiescence.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:42] "GET /releases/kernel/6.6.63/Image HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:16:43] "GET /pkg/wasm_vm_wasm_bg.wasm HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:17:54] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:44] "GET /?guest=alpine&noSnapshot&persist=0&profile=1 HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:44] "GET /node_modules/@xterm/addon-fit/lib/addon-fit.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:44] "GET /tabs.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:44] "GET /node_modules/@xterm/xterm/lib/xterm.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:44] "GET /node_modules/@xterm/xterm/css/xterm.css HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:44] "GET /docs-mount.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:44] "GET /ide.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:44] "GET /main.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /riscv-tests.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /roadmap.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /loader.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /overlay-reset-target.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /linux-worker-host.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /terminal.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /file-transfer.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /boot-progress.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /boot-path.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /overlay-seed-identity.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /task-quiescence.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /linux-worker-protocol.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /osc52.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /paste.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /progress.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /tasks.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /pkg/wasm_vm_wasm_bg.wasm HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /sw.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /assets/hello.elf HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /artifacts-alpine.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /artifacts-node-alpine.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /linux-worker.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /loader.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /linux-worker-protocol.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /overlay-seed-identity.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /boot-path.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /task-quiescence.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /releases/kernel/6.6.63/Image HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:22:45] "GET /pkg/wasm_vm_wasm_bg.wasm HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /?guest=alpine&noSnapshot&persist=0&profile=1 HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /node_modules/@xterm/addon-fit/lib/addon-fit.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /ide.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /node_modules/@xterm/xterm/lib/xterm.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /node_modules/@xterm/xterm/css/xterm.css HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /tabs.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /docs-mount.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /main.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /loader.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /riscv-tests.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /roadmap.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /linux-worker-host.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /overlay-reset-target.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /overlay-seed-identity.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /terminal.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /file-transfer.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /boot-path.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /boot-progress.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /task-quiescence.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /linux-worker-protocol.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /paste.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /progress.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /osc52.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /tasks.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /pkg/wasm_vm_wasm_bg.wasm HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /sw.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /assets/hello.elf HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /artifacts-alpine.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:33] "GET /artifacts-node-alpine.json HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:34] "GET /linux-worker.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:34] "GET /loader.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:34] "GET /linux-worker-protocol.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:34] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:34] "GET /boot-path.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:34] "GET /overlay-seed-identity.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:34] "GET /task-quiescence.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:34] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:34] "GET /releases/kernel/6.6.63/Image HTTP/1.1" 200 -
+127.0.0.1 - - [01/Sep/2026 14:28:34] "GET /pkg/wasm_vm_wasm_bg.wasm HTTP/1.1" 200 -
+tools/serve-dev.sh: line 87: 57166 Terminated: 15          python3 - "$PORT"  <<'PY'
+import http.server, os, re, sys, functools
+PORT = int(sys.argv[1])
+ROOT = os.getcwd()
+NODE_ASSET_ROOT = os.environ.get("E4T32_NODE_ASSET_DIR", "").strip()
+if NODE_ASSET_ROOT:
+    NODE_ASSET_ROOT = os.path.realpath(NODE_ASSET_ROOT)
+    if not os.path.isfile(os.path.join(NODE_ASSET_ROOT, "manifest.json")):
+        raise SystemExit(f"E4T32_NODE_ASSET_DIR has no manifest.json: {NODE_ASSET_ROOT}")
+    if not os.path.isdir(os.path.join(NODE_ASSET_ROOT, "chunks")):
+        raise SystemExit(f"E4T32_NODE_ASSET_DIR has no chunks/: {NODE_ASSET_ROOT}")
+WARM_ASSET_ROOT = os.environ.get("E4T34_WARM_ASSET_DIR", "").strip()
+if WARM_ASSET_ROOT:
+    WARM_ASSET_ROOT = os.path.realpath(WARM_ASSET_ROOT)
+    for name in ("candidate.snap.gz", "candidate.overlay-delta.bin.gz"):
+        if not os.path.isfile(os.path.join(WARM_ASSET_ROOT, name)):
+            raise SystemExit(f"E4T34_WARM_ASSET_DIR has no {name}: {WARM_ASSET_ROOT}")
+
+class Handler(http.server.SimpleHTTPRequestHandler):
+    def log_message(self, format, *args):
+        # A single Node process touches hundreds of verified chunks. Keep Playwright evidence
+        # readable while retaining manifest/page/error requests in the server transcript.
+        if self.path.split("?", 1)[0].startswith(
+            "/e4t32-node-assets/chunked-node-alpine/chunks/"
+        ):
+            return
+        super().log_message(format, *args)
+
+    # Map / -> web/ and /releases/* -> releases/* (artifacts live outside web/).
+    def translate_path(self, path):
+        p = path.split("?", 1)[0].split("#", 1)[0]
+        # E4-T32 CPU-parity evidence serves a verified immutable copy of the deployed Node chunk
+        # store from the same origin. Keep this route deliberately closed: only the manifest and
+        # content-addressed chunk names can escape into the external cache directory.
+        node_prefix = "/e4t32-node-assets/chunked-node-alpine/"
+        if NODE_ASSET_ROOT and p.startswith(node_prefix):
+            rel = p[len(node_prefix):]
+            if rel == "manifest.json" or re.fullmatch(r"chunks/[0-9a-f]{64}\.bin", rel):
+                return os.path.join(NODE_ASSET_ROOT, *rel.split("/"))
+            return os.path.join(NODE_ASSET_ROOT, ".not-found")
+        warm_prefix = "/e4t34-warm-assets/"
+        if WARM_ASSET_ROOT and p.startswith(warm_prefix):
+            rel = p[len(warm_prefix):]
+            if rel in ("candidate.snap.gz", "candidate.overlay-delta.bin.gz"):
+                return os.path.join(WARM_ASSET_ROOT, rel)
+            return os.path.join(WARM_ASSET_ROOT, ".not-found")
+        if p.startswith("/releases/"):
+            return os.path.join(ROOT, p.lstrip("/"))
+        return os.path.join(ROOT, "web", p.lstrip("/"))
+
+    def end_headers(self):
+        # Cross-origin isolation (no-op today; SAB needs it in Epic 4).
+        self.send_header("Cross-Origin-Opener-Policy", "same-origin")
+        self.send_header("Cross-Origin-Embedder-Policy", "require-corp")
+        path = self.path.split("?", 1)[0]
+        # guess_type() below already emits the one authoritative Content-Type. Adding it here too
+        # produces a comma-joined duplicate that Chromium rejects for instantiateStreaming().
+        # Content-hashed artifacts + the wasm bundle are immutable → cache hard.
+        if path.startswith(("/releases/", "/e4t32-node-assets/", "/e4t34-warm-assets/")) or path.endswith((".wasm", "_bg.wasm")):
+            self.send_header("Cache-Control", "public, max-age=31536000, immutable")
+        super().end_headers()
+
+    def guess_type(self, path):
+        if path.endswith(".wasm"):
+            return "application/wasm"
+        if path.endswith(".mjs") or path.endswith(".js"):
+            return "text/javascript"
+        return super().guess_type(path)
+
+httpd = http.server.ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
+extra = f" + E4-T32 Node assets from {NODE_ASSET_ROOT}" if NODE_ASSET_ROOT else ""
+if WARM_ASSET_ROOT:
+    extra += f" + E4-T34 warm candidate from {WARM_ASSET_ROOT}"
+print(f"serving web/ (+ /releases){extra} at http://localhost:{PORT}/  (Ctrl-C to stop)")
+httpd.serve_forever()
+PY
+

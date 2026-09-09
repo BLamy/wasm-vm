@@ -1,0 +1,343 @@
+{
+  "generatedAt": "2026-09-02T23:48:34.001Z",
+  "base": "http://127.0.0.1:8130",
+  "assetBase": "page default release base",
+  "browser": {
+    "name": "chromium",
+    "version": "152.0.7977.75"
+  },
+  "containerName": "t05f5-exec-tkqw9dz",
+  "guestSecret": "/root/t05f5-guest-secret",
+  "stages": {
+    "detachedRun": {
+      "command": "wvrun run -d --name 't05f5-exec-tkqw9dz' '/opt/containers/busybox' /bin/sh -c 'hostname t05f5-ctr; while :; do sleep 1; done'",
+      "result": {
+        "stdout": "in/sh -c 'hostname t05f5-ctr; while :; do sleep 1; done'; printf '\\n__WVEND_mtkq\nwots12_%s\\n' \"$?\"\n6912d9099b16\n\n",
+        "exit": 0
+      },
+      "id": "6912d9099b16"
+    },
+    "marker": {
+      "execActive": true,
+      "output": "wvrun ps -a; printf '\\n__WVEND_mtkqx43316_%s\\n' \"$?\"\n$ echo INEXEC_$((6*7))\necho INEXEC_$((6*7))^M{\"id\":\"6912d9099b16\",\"name\":\"t05f5-exec-tkqw9dz\",\"image\":\"busybox\",\"status\":\"running\",\"started\":\"1786066131\",\"exit\":\"\"}\n\n__WVEND_mtkqx43316_0\n\"$?\"\n/ # echo INEXEC_$((6*7))\nINEXEC_42\n"
+    },
+    "provenance": {
+      "hostname": true,
+      "pid1": "sh",
+      "secretIsolation": true,
+      "command": "wvrun exec -it '6912d9099b16' sh"
+    },
+    "exit": {
+      "rpc": {
+        "stdout": "\"\nAFTER_EXEC_EXIT_42\n\n",
+        "exit": 0
+      },
+      "ps": {
+        "stdout": "{\"id\":\"6912d9099b16\",\"name\":\"t05f5-exec-tkqw9dz\",\"image\":\"busybox\",\"status\":\"running\",\"started\":\"1786066131\",\"exit\":\"\"}\n\n",
+        "exit": 0
+      },
+      "id": "6912d9099b16"
+    },
+    "race": {
+      "id": "6912d9099b16",
+      "name": "t05f5-exec-tkqw9dz",
+      "image": "busybox",
+      "command": "wvrun exec -it '6912d9099b16' sh",
+      "active": false,
+      "starting": false,
+      "stopping": false,
+      "generation": 3,
+      "status": "exited",
+      "code": "",
+      "error": "",
+      "output": "\"$?\"\n"
+    },
+    "typedError": {
+      "state": {
+        "id": "6912d9099b16",
+        "name": "t05f5-exec-tkqw9dz",
+        "image": "busybox",
+        "command": "wvrun exec -it '6912d9099b16' sh",
+        "active": false,
+        "starting": false,
+        "stopping": false,
+        "generation": 4,
+        "status": "error",
+        "code": "EXEC_TARGET_NOT_RUNNING",
+        "error": "\"$?\" wvrun exec: container 6912d9099b16 is not running (exited)",
+        "output": "\"$?\"\nwvrun exec: container 6912d9099b16 is not running (exited)\n\n"
+      },
+      "rpc": {
+        "stdout": "?\"\nAFTER_EXEC_ERROR_42\n\n",
+        "exit": 0
+      }
+    },
+    "absentError": {
+      "state": {
+        "id": "deadbeefdead",
+        "name": "t05f5-absent",
+        "image": "busybox",
+        "command": "wvrun exec -it 'deadbeefdead' sh",
+        "active": false,
+        "starting": false,
+        "stopping": false,
+        "generation": 1,
+        "status": "error",
+        "code": "EXEC_CONTAINER_NOT_FOUND",
+        "error": "\"$?\" wvrun exec: no such container: deadbeefdead",
+        "output": "\"$?\"\nwvrun exec: no such container: deadbeefdead\n\n"
+      },
+      "rpc": {
+        "stdout": "$?\"\nAFTER_EXEC_ABSENT_42\n\n",
+        "exit": 0
+      }
+    }
+  },
+  "state": {
+    "runtime": "available",
+    "error": "",
+    "code": "",
+    "booting": false,
+    "provider": "offline",
+    "ready": true,
+    "guestUp": true,
+    "alpineAssets": true,
+    "alpineStatus": "present",
+    "generation": 2,
+    "catalogStatus": "available",
+    "catalogGeneration": 2,
+    "catalogLoading": false,
+    "catalogError": "",
+    "catalog": [
+      {
+        "key": "alpine:alpine:0",
+        "name": "alpine",
+        "repo": "alpine",
+        "tag": "latest",
+        "ref": "alpine",
+        "arch": "riscv64",
+        "libc": "musl",
+        "manifestDigest": "",
+        "rootfsBytes": 7132998,
+        "rootfsEntries": 514,
+        "entry": "/bin/sh",
+        "configArgv": "/bin/sh",
+        "bundlePresent": true,
+        "bundleError": "",
+        "entryElf": "",
+        "bundlePath": "/opt/containers/alpine",
+        "smokeCommand": "",
+        "runStatus": "",
+        "runnable": true,
+        "desc": "Guest catalog entry",
+        "raw": {
+          "name": "alpine",
+          "ref": "alpine",
+          "arch": "riscv64",
+          "libc": "musl",
+          "rootfsBytes": 7132998,
+          "rootfsEntries": 514
+        }
+      },
+      {
+        "key": "busybox:busybox (alpine musl):1",
+        "name": "busybox",
+        "repo": "busybox",
+        "tag": "latest",
+        "ref": "busybox (alpine musl)",
+        "arch": "riscv64",
+        "libc": "musl",
+        "manifestDigest": "",
+        "rootfsBytes": 1438112,
+        "rootfsEntries": 16,
+        "entry": "sh",
+        "configArgv": "sh",
+        "bundlePresent": true,
+        "bundleError": "",
+        "entryElf": "",
+        "bundlePath": "/opt/containers/busybox",
+        "smokeCommand": "",
+        "runStatus": "",
+        "runnable": true,
+        "desc": "Guest catalog entry",
+        "raw": {
+          "name": "busybox",
+          "ref": "busybox (alpine musl)",
+          "arch": "riscv64",
+          "libc": "musl",
+          "rootfsBytes": 1438112,
+          "rootfsEntries": 16
+        }
+      },
+      {
+        "key": "redis:redis:alpine:2",
+        "name": "redis",
+        "repo": "redis",
+        "tag": "alpine",
+        "ref": "redis:alpine",
+        "arch": "riscv64",
+        "libc": "musl",
+        "manifestDigest": "",
+        "rootfsBytes": 125124534,
+        "rootfsEntries": 1157,
+        "entry": "docker-entrypoint.sh\nredis-server",
+        "configArgv": "docker-entrypoint.sh\nredis-server",
+        "bundlePresent": true,
+        "bundleError": "",
+        "entryElf": "",
+        "bundlePath": "/opt/containers/redis",
+        "smokeCommand": "",
+        "runStatus": "",
+        "runnable": true,
+        "desc": "Guest catalog entry",
+        "raw": {
+          "name": "redis",
+          "ref": "redis:alpine",
+          "arch": "riscv64",
+          "libc": "musl",
+          "rootfsBytes": 125124534,
+          "rootfsEntries": 1157
+        }
+      },
+      {
+        "key": "memcached:memcached:alpine:3",
+        "name": "memcached",
+        "repo": "memcached",
+        "tag": "alpine",
+        "ref": "memcached:alpine",
+        "arch": "riscv64",
+        "libc": "musl",
+        "manifestDigest": "",
+        "rootfsBytes": 11694583,
+        "rootfsEntries": 558,
+        "entry": "docker-entrypoint.sh\nmemcached",
+        "configArgv": "docker-entrypoint.sh\nmemcached",
+        "bundlePresent": true,
+        "bundleError": "",
+        "entryElf": "",
+        "bundlePath": "/opt/containers/memcached",
+        "smokeCommand": "",
+        "runStatus": "",
+        "runnable": true,
+        "desc": "Guest catalog entry",
+        "raw": {
+          "name": "memcached",
+          "ref": "memcached:alpine",
+          "arch": "riscv64",
+          "libc": "musl",
+          "rootfsBytes": 11694583,
+          "rootfsEntries": 558
+        }
+      },
+      {
+        "key": "debian:debian:trixie-slim:4",
+        "name": "debian",
+        "repo": "debian",
+        "tag": "trixie-slim",
+        "ref": "debian:trixie-slim",
+        "arch": "riscv64",
+        "libc": "glibc",
+        "manifestDigest": "",
+        "rootfsBytes": 70742016,
+        "rootfsEntries": 3245,
+        "entry": "bash",
+        "configArgv": "bash",
+        "bundlePresent": true,
+        "bundleError": "",
+        "entryElf": "",
+        "bundlePath": "/opt/containers/debian",
+        "smokeCommand": "",
+        "runStatus": "",
+        "runnable": true,
+        "desc": "Guest catalog entry",
+        "raw": {
+          "name": "debian",
+          "ref": "debian:trixie-slim",
+          "arch": "riscv64",
+          "libc": "glibc",
+          "rootfsBytes": 70742016,
+          "rootfsEntries": 3245
+        }
+      },
+      {
+        "key": "busybox-glibc:busybox:latest (glibc):5",
+        "name": "busybox-glibc",
+        "repo": "busybox-glibc",
+        "tag": "latest (glibc)",
+        "ref": "busybox:latest (glibc)",
+        "arch": "riscv64",
+        "libc": "glibc",
+        "manifestDigest": "",
+        "rootfsBytes": 3334144,
+        "rootfsEntries": 448,
+        "entry": "sh",
+        "configArgv": "sh",
+        "bundlePresent": true,
+        "bundleError": "",
+        "entryElf": "",
+        "bundlePath": "/opt/containers/busybox-glibc",
+        "smokeCommand": "",
+        "runStatus": "",
+        "runnable": true,
+        "desc": "Guest catalog entry",
+        "raw": {
+          "name": "busybox-glibc",
+          "ref": "busybox:latest (glibc)",
+          "arch": "riscv64",
+          "libc": "glibc",
+          "rootfsBytes": 3334144,
+          "rootfsEntries": 448
+        }
+      }
+    ],
+    "lastRun": null,
+    "containersStatus": "ready",
+    "containersError": "",
+    "containersCode": "",
+    "containers": [
+      {
+        "id": "6912d9099b16",
+        "name": "t05f5-exec-tkqw9dz",
+        "image": "busybox",
+        "status": "exited",
+        "started": "1786066131",
+        "exit": "137"
+      }
+    ],
+    "containerAction": null,
+    "containerLastCommand": "wvrun ps -a"
+  },
+  "exec": [
+    {
+      "id": "6912d9099b16",
+      "name": "t05f5-exec-tkqw9dz",
+      "image": "busybox",
+      "command": "wvrun exec -it '6912d9099b16' sh",
+      "active": false,
+      "starting": false,
+      "stopping": false,
+      "generation": 6,
+      "status": "exited",
+      "code": "",
+      "error": "",
+      "output": "\"$?\"\nwvrun exec: container 6912d9099b16 is not running (exited)\n\n"
+    },
+    {
+      "id": "deadbeefdead",
+      "name": "t05f5-absent",
+      "image": "busybox",
+      "command": "wvrun exec -it 'deadbeefdead' sh",
+      "active": false,
+      "starting": false,
+      "stopping": false,
+      "generation": 1,
+      "status": "error",
+      "code": "EXEC_CONTAINER_NOT_FOUND",
+      "error": "\"$?\" wvrun exec: no such container: deadbeefdead",
+      "output": "\"$?\"\nwvrun exec: no such container: deadbeefdead\n\n"
+    }
+  ],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "screenshot": "evidence/e3-t05f5/docker-exec-pane-browser.png"
+}

@@ -1,0 +1,75 @@
+{
+  "note": "top hot regions of the in-browser cold Alpine boot profile, symbolized against releases/kernel/6.6.63/System.map (nearest preceding text symbol)",
+  "regions": [
+    {
+      "pc": "0xffffffff80560200",
+      "samples": 5527,
+      "pct": 0.8408999622682847,
+      "symbol": "percpu_counter_add_batch",
+      "offset": "0x3c"
+    },
+    {
+      "pc": "0xffffffff8099db00",
+      "samples": 5199,
+      "pct": 0.7909967258608309,
+      "symbol": "_save_context",
+      "offset": "0x22"
+    },
+    {
+      "pc": "0xffffffff805601c0",
+      "samples": 3717,
+      "pct": 0.5655192979466644,
+      "symbol": "raid6_int8_xor_syndrome",
+      "offset": "0x634"
+    },
+    {
+      "pc": "0xffffffff8099db80",
+      "samples": 3445,
+      "pct": 0.5241361262917027,
+      "symbol": "_save_context",
+      "offset": "0xa2"
+    },
+    {
+      "pc": "0xffffffff8099dac0",
+      "samples": 3248,
+      "pct": 0.4941637556445429,
+      "symbol": "handle_exception",
+      "offset": "0x4"
+    },
+    {
+      "pc": "0xffffffff80562f40",
+      "samples": 2434,
+      "pct": 0.3703185287065325,
+      "symbol": "strncpy_from_user",
+      "offset": "0xa0"
+    },
+    {
+      "pc": "0xffffffff8004dac0",
+      "samples": 2417,
+      "pct": 0.36773208047809736,
+      "symbol": "__might_resched",
+      "offset": "0x4a"
+    },
+    {
+      "pc": "0xffffffff801ae4c0",
+      "samples": 2240,
+      "pct": 0.3408025900996848,
+      "symbol": "kmem_cache_alloc",
+      "offset": "0x96"
+    },
+    {
+      "pc": "0xffffffff809845c0",
+      "samples": 2115,
+      "pct": 0.32178458842001484,
+      "symbol": "memset",
+      "offset": "0xb8"
+    },
+    {
+      "pc": "0xffffffff801e8e80",
+      "samples": 1780,
+      "pct": 0.27081634391849946,
+      "symbol": "mntput_no_expire",
+      "offset": "0x44"
+    }
+  ]
+}

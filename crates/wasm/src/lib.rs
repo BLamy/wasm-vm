@@ -17,12 +17,15 @@ use core::sync::atomic::{AtomicBool, Ordering};
 use wasm_bindgen::prelude::*;
 // E4-T29 Phase 2: the in-wasm (browser) compiled-block executor.
 mod jit_browser;
-pub use jit_browser::BrowserExecutor;
+pub use jit_browser::{BROWSER_MAX_BATCHES, BrowserExecutor};
 use wasm_vm_core::bus::mmap::{UART0_BASE, UART0_LEN};
 use wasm_vm_core::dev::console::{ConsoleSink, Uart0Stub};
+use wasm_vm_core::jit::CompiledBlockExecutor;
 use wasm_vm_core::trace::{TraceRecord, TraceSink, fmt_canonical};
 use wasm_vm_core::{Machine, RunOutcome};
 // E3-T12d: the resume-snapshot format + coherence/restore-decision types (browser persistence glue).
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+use sha2::{Digest, Sha256};
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 use wasm_vm_core::resume;
 
@@ -493,25 +496,106 @@ fn reentrant() -> JsError {
 }
 
 /// Shared JS shape for both bare-metal and Linux wrappers' proof that translated code actually ran.
+const JIT_RESIDENCY_REPACK_OFF: &str = "repack-off";
+const JIT_RESIDENCY_CAP_256: &str = "cap-256";
+const JIT_RESIDENCY_CAP_1024: &str = "cap-1024";
+
+fn jit_residency_cap(policy: &str) -> Result<usize, JsError> {
+    match policy {
+        JIT_RESIDENCY_REPACK_OFF => Ok(jit_browser::BROWSER_MAX_BATCHES),
+        JIT_RESIDENCY_CAP_256 => Ok(256),
+        JIT_RESIDENCY_CAP_1024 => Ok(1024),
+        other => Err(JsError::new(&format!(
+            "unknown JIT residency policy {other:?}; expected repack-off, cap-256, or cap-1024"
+        ))),
+    }
+}
+
+fn jit_residency_label(has_executor: bool, max_batches: usize) -> &'static str {
+    if !has_executor {
+        return "disabled";
+    }
+    match max_batches {
+        jit_browser::BROWSER_MAX_BATCHES => JIT_RESIDENCY_REPACK_OFF,
+        256 => JIT_RESIDENCY_CAP_256,
+        1024 => JIT_RESIDENCY_CAP_1024,
+        _ => "custom",
+    }
+}
+
+/// Attach the production browser executor with one explicit residency policy. The policy is
+/// validated before mutating the machine, then applied before the executor is published, so an
+/// invalid benchmark URL cannot leave a half-configured JIT attached.
+fn enable_browser_jit(
+    machine: &mut Machine,
+    threshold: u32,
+    residency_policy: &str,
+) -> Result<(), JsError> {
+    let max_batches = jit_residency_cap(residency_policy)?;
+    let mut executor = jit_browser::BrowserExecutor::new_inline(machine).map_err(JsError::new)?;
+    let mut budget = executor.jit_cache_stats().budget;
+    budget.max_batches = max_batches;
+    executor.set_jit_budget(budget);
+    machine.set_executor(Box::new(executor));
+    machine.set_block_cache(true);
+    machine.set_interrupt_batching(true);
+    machine.set_hotness_threshold(threshold.max(1));
+    machine.set_jit(true);
+    Ok(())
+}
+
 fn jit_stats_object(machine: &Machine) -> JsValue {
     let obj = js_sys::Object::new();
     let set = |k: &str, v: &JsValue| {
         let _ = js_sys::Reflect::set(&obj, &JsValue::from_str(k), v);
     };
+    let guest_retired = machine.irq_stats().retired;
+    let mut has_executor = false;
+    let mut executed_blocks = 0u64;
+    let mut retired_via_jit = 0u64;
+    let mut direct_chain_entries = 0u64;
     match machine.executor() {
         Some(e) => {
+            has_executor = true;
+            executed_blocks = e.executed_blocks();
+            retired_via_jit = e.retired_via_jit();
+            direct_chain_entries = e.direct_chain_entries();
             set("hasExecutor", &JsValue::from_bool(true));
             set(
                 "compiledBlocks",
                 &JsValue::from_f64(e.compiled_count() as f64),
             );
+            set("executedBlocks", &JsValue::from_f64(executed_blocks as f64));
+            set("retiredViaJit", &JsValue::from_f64(retired_via_jit as f64));
             set(
-                "executedBlocks",
-                &JsValue::from_f64(e.executed_blocks() as f64),
+                "directChainEntries",
+                &JsValue::from_f64(direct_chain_entries as f64),
             );
             set(
-                "retiredViaJit",
-                &JsValue::from_f64(e.retired_via_jit() as f64),
+                "directChainLinks",
+                &JsValue::from_f64(e.direct_chain_links() as f64),
+            );
+            let dynamic = e.dynamic_link_stats();
+            set(
+                "dynamicLinkAttempts",
+                &JsValue::from_f64(dynamic.attempts as f64),
+            );
+            set("dynamicLinkHits", &JsValue::from_f64(dynamic.hits as f64));
+            set(
+                "dynamicLinkRefusals",
+                &JsValue::from_f64(dynamic.refusals as f64),
+            );
+            set(
+                "dynamicLinkRetargets",
+                &JsValue::from_f64(dynamic.retargets as f64),
+            );
+            set(
+                "dynamicLinkLiveEntries",
+                &JsValue::from_f64(dynamic.live_entries as f64),
+            );
+            set(
+                "dynamicLinkInstalls",
+                &JsValue::from_f64(dynamic.installs as f64),
             );
         }
         None => {
@@ -519,8 +603,152 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
             set("compiledBlocks", &JsValue::from_f64(0.0));
             set("executedBlocks", &JsValue::from_f64(0.0));
             set("retiredViaJit", &JsValue::from_f64(0.0));
+            set("directChainEntries", &JsValue::from_f64(0.0));
+            set("directChainLinks", &JsValue::from_f64(0.0));
+            set("dynamicLinkAttempts", &JsValue::from_f64(0.0));
+            set("dynamicLinkHits", &JsValue::from_f64(0.0));
+            set("dynamicLinkRefusals", &JsValue::from_f64(0.0));
+            set("dynamicLinkRetargets", &JsValue::from_f64(0.0));
+            set("dynamicLinkLiveEntries", &JsValue::from_f64(0.0));
+            set("dynamicLinkInstalls", &JsValue::from_f64(0.0));
         }
     }
+    let entry_cost = machine
+        .executor()
+        .map(|e| e.entry_cost_stats())
+        .unwrap_or_default();
+    let entry_cost_obj = js_sys::Object::new();
+    let set_entry_cost = |k: &str, v: u64| {
+        let _ = js_sys::Reflect::set(
+            &entry_cost_obj,
+            &JsValue::from_str(k),
+            &JsValue::from_f64(v as f64),
+        );
+    };
+    set_entry_cost("hostEntries", entry_cost.host_entries);
+    set_entry_cost("stateCopyCalls", entry_cost.state_copy_calls);
+    set_entry_cost("stateCopyBytes", entry_cost.state_copy_bytes);
+    set_entry_cost("stateCopyNs", entry_cost.state_copy_ns);
+    set_entry_cost("engineEntryNs", entry_cost.engine_entry_ns);
+    set_entry_cost(
+        "indirectTableDispatches",
+        entry_cost.indirect_table_dispatches,
+    );
+    set_entry_cost("authorityChecks", entry_cost.authority_checks);
+    set_entry_cost("memorySplitExits", entry_cost.memory_split_exits);
+    set_entry_cost("deviceBoundaries", entry_cost.device_boundaries);
+    set_entry_cost("deviceBoundaryNs", entry_cost.device_boundary_ns);
+    set("entryCost", &entry_cost_obj.into());
+    set(
+        "jitRegionChaining",
+        &JsValue::from_bool(machine.executor().is_some_and(|e| e.chaining())),
+    );
+    set(
+        "jitDynamicChaining",
+        &JsValue::from_bool(machine.executor().is_some_and(|e| e.dynamic_chaining())),
+    );
+    let logical_blocks_per_engine_call = if !has_executor || executed_blocks == 0 {
+        0.0
+    } else if direct_chain_entries == 0 {
+        1.0
+    } else {
+        direct_chain_entries as f64 / executed_blocks as f64
+    };
+    let jit_retired_share = if guest_retired == 0 {
+        0.0
+    } else {
+        retired_via_jit as f64 / guest_retired as f64
+    };
+    set("guestRetired", &JsValue::from_f64(guest_retired as f64));
+    set("jitEngineCalls", &JsValue::from_f64(executed_blocks as f64));
+    set(
+        "jitLogicalBlocksPerEngineCall",
+        &JsValue::from_f64(logical_blocks_per_engine_call),
+    );
+    set("jitRetiredShare", &JsValue::from_f64(jit_retired_share));
+    // Keep the original proof counters above stable while exposing the cumulative mechanics that
+    // explain a browser benchmark: how often the outer dispatch loop was re-entered, how many
+    // links a compiled chain actually followed, whether the compiled cache is churning, and how
+    // often the physical predecode cache was reused. These are diagnostics only; none participates
+    // in execution or acceptance decisions.
+    let chain = machine.chain_stats();
+    set(
+        "chainLinksMade",
+        &JsValue::from_f64(chain.links_made as f64),
+    );
+    set("chainLinksCut", &JsValue::from_f64(chain.links_cut as f64));
+    set(
+        "chainDispatchEntries",
+        &JsValue::from_f64(chain.dispatch_entries as f64),
+    );
+    set(
+        "chainMaxDepth",
+        &JsValue::from_f64(chain.max_chain_depth as f64),
+    );
+    set(
+        "chainLinksFollowed",
+        &JsValue::from_f64(chain.total_links_followed() as f64),
+    );
+    let cache = machine.jit_cache_stats();
+    let pause = machine.jit_pause_stats();
+    set(
+        "jitResidencyPolicy",
+        &JsValue::from_str(jit_residency_label(has_executor, cache.budget.max_batches)),
+    );
+    set(
+        "jitResidencyCap",
+        &JsValue::from_f64(if has_executor {
+            cache.budget.max_batches as f64
+        } else {
+            0.0
+        }),
+    );
+    set(
+        "jitSubmittedMembers",
+        &JsValue::from_f64(pause.total_submitted_blocks as f64),
+    );
+    set("jitCompilePauseNs", &JsValue::from_f64(pause.sum_ns as f64));
+    set(
+        "jitCompilePauseMaxNs",
+        &JsValue::from_f64(pause.max_ns as f64),
+    );
+    set(
+        "jitCompilePauseSamples",
+        &JsValue::from_f64(pause.count as f64),
+    );
+    set(
+        "jitCacheInstalls",
+        &JsValue::from_f64(cache.installs as f64),
+    );
+    set(
+        "jitCacheRetranslations",
+        &JsValue::from_f64(cache.retranslations as f64),
+    );
+    set(
+        "jitCacheEvictions",
+        &JsValue::from_f64(cache.evictions as f64),
+    );
+    set("jitCacheBatches", &JsValue::from_f64(cache.batches as f64));
+    set(
+        "jitCacheCodeBytes",
+        &JsValue::from_f64(cache.code_bytes as f64),
+    );
+    let discovery = machine.discovery_stats();
+    set(
+        "decodedBlocksDiscarded",
+        &JsValue::from_f64(discovery.blocks_discarded as f64),
+    );
+    set(
+        "decodedCacheFlushes",
+        &JsValue::from_f64(discovery.cache_flushes as f64),
+    );
+    set(
+        "discoveryGeneration",
+        &JsValue::from_f64(discovery.generation as f64),
+    );
+    let (entry_hits, builds) = machine.block_cache_entry_stats();
+    set("blockEntryHits", &JsValue::from_f64(entry_hits as f64));
+    set("blockBuilds", &JsValue::from_f64(builds as f64));
     obj.into()
 }
 
@@ -605,13 +833,37 @@ impl WasmMachine {
     #[wasm_bindgen(js_name = enableJit)]
     pub fn enable_jit(&self, threshold: u32) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        inner
-            .machine
-            .set_executor(Box::new(jit_browser::BrowserExecutor::new()));
-        inner.machine.set_block_cache(true);
-        inner.machine.set_interrupt_batching(true);
-        inner.machine.set_hotness_threshold(threshold.max(1));
-        inner.machine.set_jit(true);
+        enable_browser_jit(&mut inner.machine, threshold, JIT_RESIDENCY_REPACK_OFF)
+    }
+
+    /// E4-T38: attach the browser JIT with one explicit residency screen. `repack-off` is the
+    /// current single-pass batcher with the conservative 24-module browser cap; `cap-256` and
+    /// `cap-1024` retain the same translator and eviction policy while changing only the live-batch
+    /// cap. Validate and apply the policy before publishing the executor so a bad benchmark label
+    /// cannot leave a partially initialized machine.
+    #[wasm_bindgen(js_name = enableJitWithPolicy)]
+    pub fn enable_jit_with_policy(
+        &self,
+        threshold: u32,
+        residency_policy: String,
+    ) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        enable_browser_jit(&mut inner.machine, threshold, &residency_policy)
+    }
+
+    /// E4-T39: toggle static region chaining without rebuilding the generated modules.
+    #[wasm_bindgen(js_name = setChaining)]
+    pub fn set_chaining(&self, on: bool) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_chaining(on);
+        Ok(())
+    }
+
+    /// E4-T39: toggle generated dynamic-return (`jalr`) chaining independently of static regions.
+    #[wasm_bindgen(js_name = setDynamicChaining)]
+    pub fn set_dynamic_chaining(&self, on: bool) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_dynamic_chaining(on);
         Ok(())
     }
 
@@ -826,7 +1078,7 @@ pub struct JsHostTimer {
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 impl JsHostTimer {
     /// `None` if no global exposes a `performance` object (then profiling can't be armed here).
-    fn new() -> Option<JsHostTimer> {
+    pub(crate) fn new() -> Option<JsHostTimer> {
         use wasm_bindgen::JsCast;
         let global = js_sys::global();
         let perf = if let Some(w) = global.dyn_ref::<web_sys::Window>() {
@@ -850,6 +1102,350 @@ impl wasm_vm_core::prof::HostTimer for JsHostTimer {
         } else {
             (ms * 1_000_000.0) as u64
         }
+    }
+}
+
+/// E5-T19d: the browser's monotonic performance clock also drives virtio-snd queue pacing. It is
+/// deliberately the same realm-local source used by profiling, so a guest playback transfer can
+/// never be completed in a burst merely because the emulator yielded to JavaScript.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl wasm_vm_core::dev::virtio::snd::AudioClock for JsHostTimer {
+    fn now_ns(&self) -> u64 {
+        let ms = self.perf.now();
+        if ms <= 0.0 {
+            0
+        } else {
+            (ms * 1_000_000.0) as u64
+        }
+    }
+}
+
+/// E5-T20e: the browser-side producer for the AudioWorklet ring. The guest transport still calls
+/// the core `AudioSink` trait with interleaved S16 frames; this adapter only marshals those frames
+/// into the already-established f32 SPSC ring and never calls back into page JavaScript.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+struct SharedAudioSink {
+    header: js_sys::Int32Array,
+    samples: js_sys::Float32Array,
+    capacity_frames: u32,
+    sample_rate_hz: u32,
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl SharedAudioSink {
+    const HEADER_WORDS: u32 = 10;
+    const HEADER_BYTES: u32 = Self::HEADER_WORDS * 4;
+    const CHANNELS: u32 = 2;
+    const MAGIC: i32 = 0x4155_5247;
+    const VERSION: i32 = 1;
+    const WRITE_INDEX: u32 = 0;
+    const READ_INDEX: u32 = 1;
+    const FILL_FRAMES: u32 = 2;
+    const CAPACITY_FRAMES: u32 = 3;
+    const WRITE_SLOT: u32 = 4;
+    const READ_SLOT: u32 = 5;
+    const MAGIC_INDEX: u32 = 6;
+    const VERSION_INDEX: u32 = 7;
+    const CHANNELS_INDEX: u32 = 8;
+
+    fn invalid(message: &str) -> JsError {
+        JsError::new(message)
+    }
+
+    fn load(header: &js_sys::Int32Array, index: u32) -> Result<i32, JsError> {
+        js_sys::Atomics::load(header, index)
+            .map_err(|_| Self::invalid("audio ring atomic load failed"))
+    }
+
+    fn new(
+        shared_buffer: js_sys::SharedArrayBuffer,
+        capacity_frames: u32,
+        sample_rate_hz: u32,
+    ) -> Result<Self, JsError> {
+        if capacity_frames == 0 || capacity_frames > i32::MAX as u32 {
+            return Err(Self::invalid(
+                "audio ring capacity is outside the supported range",
+            ));
+        }
+        if !matches!(sample_rate_hz, 44_100 | 48_000) {
+            return Err(Self::invalid(
+                "audio ring sample rate must be 44100 or 48000 Hz",
+            ));
+        }
+        let payload_bytes = capacity_frames
+            .checked_mul(Self::CHANNELS)
+            .and_then(|samples| samples.checked_mul(4))
+            .ok_or_else(|| Self::invalid("audio ring payload size overflow"))?;
+        let expected_bytes = Self::HEADER_BYTES
+            .checked_add(payload_bytes)
+            .ok_or_else(|| Self::invalid("audio ring byte length overflow"))?;
+        if shared_buffer.byte_length() != expected_bytes {
+            return Err(Self::invalid(
+                "audio ring byte length does not match capacity",
+            ));
+        }
+
+        let buffer: JsValue = shared_buffer.into();
+        let header =
+            js_sys::Int32Array::new_with_byte_offset_and_length(&buffer, 0, Self::HEADER_WORDS);
+        if Self::load(&header, Self::MAGIC_INDEX)? != Self::MAGIC
+            || Self::load(&header, Self::VERSION_INDEX)? != Self::VERSION
+            || Self::load(&header, Self::CHANNELS_INDEX)? != Self::CHANNELS as i32
+            || Self::load(&header, Self::CAPACITY_FRAMES)? != capacity_frames as i32
+        {
+            return Err(Self::invalid("audio ring header metadata does not match"));
+        }
+
+        let fill = Self::load(&header, Self::FILL_FRAMES)?;
+        let write_slot = Self::load(&header, Self::WRITE_SLOT)?;
+        let read_slot = Self::load(&header, Self::READ_SLOT)?;
+        if fill < 0
+            || fill as u32 > capacity_frames
+            || write_slot < 0
+            || write_slot as u32 >= capacity_frames
+            || read_slot < 0
+            || read_slot as u32 >= capacity_frames
+        {
+            return Err(Self::invalid("audio ring cursors are outside their bounds"));
+        }
+        let write_index = Self::load(&header, Self::WRITE_INDEX)? as u32;
+        let read_index = Self::load(&header, Self::READ_INDEX)? as u32;
+        let distance = write_index.wrapping_sub(read_index);
+        if (fill as u32 != capacity_frames && distance != fill as u32)
+            || (fill as u32 == capacity_frames && distance != 0 && distance != capacity_frames)
+        {
+            return Err(Self::invalid("audio ring counters do not match fill"));
+        }
+
+        let samples = js_sys::Float32Array::new_with_byte_offset_and_length(
+            &buffer,
+            Self::HEADER_BYTES,
+            capacity_frames
+                .checked_mul(Self::CHANNELS)
+                .ok_or_else(|| Self::invalid("audio ring sample length overflow"))?,
+        );
+        Ok(Self {
+            header,
+            samples,
+            capacity_frames,
+            sample_rate_hz,
+        })
+    }
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl wasm_vm_core::dev::virtio::snd::AudioSink for SharedAudioSink {
+    fn push(
+        &mut self,
+        frames: &[i16],
+        sample_rate_hz: u32,
+    ) -> Result<(), wasm_vm_core::dev::virtio::snd::AudioSinkError> {
+        use wasm_vm_core::dev::virtio::snd::AudioSinkError;
+
+        if sample_rate_hz != self.sample_rate_hz || !frames.len().is_multiple_of(2) {
+            return Err(AudioSinkError::Failed);
+        }
+        let frame_count = frames.len() / 2;
+        if frame_count == 0 {
+            return Ok(());
+        }
+        let Ok(fill) = js_sys::Atomics::load(&self.header, Self::FILL_FRAMES) else {
+            return Err(AudioSinkError::Failed);
+        };
+        if fill < 0 || fill as u32 > self.capacity_frames {
+            return Err(AudioSinkError::Failed);
+        }
+        let frame_count = match u32::try_from(frame_count) {
+            Ok(count) if count <= self.capacity_frames.saturating_sub(fill as u32) => count,
+            _ => return Err(AudioSinkError::Failed),
+        };
+        let Ok(mut write_slot) = js_sys::Atomics::load(&self.header, Self::WRITE_SLOT) else {
+            return Err(AudioSinkError::Failed);
+        };
+        if write_slot < 0 || write_slot as u32 >= self.capacity_frames {
+            return Err(AudioSinkError::Failed);
+        }
+
+        for frame in 0..frame_count as usize {
+            let sample_index = write_slot as u32 * Self::CHANNELS;
+            self.samples
+                .set_index(sample_index, frames[frame * 2] as f32 / 32_768.0);
+            self.samples
+                .set_index(sample_index + 1, frames[frame * 2 + 1] as f32 / 32_768.0);
+            write_slot += 1;
+            if write_slot as u32 == self.capacity_frames {
+                write_slot = 0;
+            }
+        }
+
+        let Ok(write_index) = js_sys::Atomics::load(&self.header, Self::WRITE_INDEX) else {
+            return Err(AudioSinkError::Failed);
+        };
+        if js_sys::Atomics::store(&self.header, Self::WRITE_SLOT, write_slot).is_err()
+            || js_sys::Atomics::store(
+                &self.header,
+                Self::WRITE_INDEX,
+                write_index.wrapping_add(frame_count as i32),
+            )
+            .is_err()
+            || js_sys::Atomics::add(&self.header, Self::FILL_FRAMES, frame_count as i32).is_err()
+        {
+            return Err(AudioSinkError::Failed);
+        }
+        Ok(())
+    }
+}
+
+/// E5-T21d: consumer-side adapter for the reversed microphone ring. The AudioWorklet publishes
+/// stereo f32 frames; the guest-facing virtio-snd contract consumes bounded interleaved S16 frames.
+/// This adapter performs the conversion in the wasm run loop without calling back into JavaScript,
+/// and a short ring read is deliberately reported as a paced XRUN so the core zero-fills the rest.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+struct SharedAudioCapture {
+    header: js_sys::Int32Array,
+    samples: js_sys::Float32Array,
+    capacity_frames: u32,
+    sample_rate_hz: u32,
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl SharedAudioCapture {
+    fn new(
+        shared_buffer: js_sys::SharedArrayBuffer,
+        capacity_frames: u32,
+        sample_rate_hz: u32,
+    ) -> Result<Self, JsError> {
+        // Reuse the production ring validator, then move its typed views into the reversed-role
+        // adapter. Both playback and capture therefore reject the same malformed SAB header.
+        let ring = SharedAudioSink::new(shared_buffer, capacity_frames, sample_rate_hz)?;
+        Ok(Self {
+            header: ring.header,
+            samples: ring.samples,
+            capacity_frames: ring.capacity_frames,
+            sample_rate_hz: ring.sample_rate_hz,
+        })
+    }
+
+    fn sample_to_s16(sample: f32) -> i16 {
+        if !sample.is_finite() {
+            return 0;
+        }
+        (sample.clamp(-1.0, 0.999_969_5) * 32_768.0).round() as i16
+    }
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl wasm_vm_core::dev::virtio::snd::AudioCaptureSource for SharedAudioCapture {
+    fn pull(
+        &mut self,
+        frames: &mut [i16],
+        sample_rate_hz: u32,
+        channels: u8,
+    ) -> Result<usize, wasm_vm_core::dev::virtio::snd::AudioCaptureError> {
+        use wasm_vm_core::dev::virtio::snd::AudioCaptureError;
+
+        if sample_rate_hz != self.sample_rate_hz
+            || !matches!(channels, 1 | 2)
+            || !frames.len().is_multiple_of(usize::from(channels))
+        {
+            return Err(AudioCaptureError::Failed);
+        }
+        let requested_frames = frames.len() / usize::from(channels);
+        if requested_frames == 0 {
+            return Ok(0);
+        }
+        let Ok(fill) = js_sys::Atomics::load(&self.header, SharedAudioSink::FILL_FRAMES) else {
+            return Err(AudioCaptureError::Failed);
+        };
+        if fill < 0 || fill as u32 > self.capacity_frames {
+            return Err(AudioCaptureError::Failed);
+        }
+        let count = requested_frames.min(fill as usize);
+        if count == 0 {
+            return Ok(0);
+        }
+        let Ok(mut read_slot) = js_sys::Atomics::load(&self.header, SharedAudioSink::READ_SLOT)
+        else {
+            return Err(AudioCaptureError::Failed);
+        };
+        if read_slot < 0 || read_slot as u32 >= self.capacity_frames {
+            return Err(AudioCaptureError::Failed);
+        }
+        let Ok(read_index) = js_sys::Atomics::load(&self.header, SharedAudioSink::READ_INDEX)
+        else {
+            return Err(AudioCaptureError::Failed);
+        };
+        for frame in 0..count {
+            let sample_index = read_slot as u32 * SharedAudioSink::CHANNELS;
+            let left = Self::sample_to_s16(self.samples.get_index(sample_index));
+            if channels == 1 {
+                frames[frame] = left;
+            } else {
+                frames[frame * 2] = left;
+                frames[frame * 2 + 1] =
+                    Self::sample_to_s16(self.samples.get_index(sample_index + 1));
+            }
+            read_slot += 1;
+            if read_slot as u32 == self.capacity_frames {
+                read_slot = 0;
+            }
+        }
+        if js_sys::Atomics::store(&self.header, SharedAudioSink::READ_SLOT, read_slot).is_err()
+            || js_sys::Atomics::store(
+                &self.header,
+                SharedAudioSink::READ_INDEX,
+                read_index.wrapping_add(count as i32),
+            )
+            .is_err()
+            || js_sys::Atomics::sub(&self.header, SharedAudioSink::FILL_FRAMES, count as i32)
+                .is_err()
+        {
+            return Err(AudioCaptureError::Failed);
+        }
+        Ok(count)
+    }
+}
+
+/// E5-T20e: a render-clock view shared by the guest pacing service and the AudioWorklet. The
+/// worklet advances the frame cell after each render quantum; using the delta from attachment
+/// avoids treating the shared uint32 counter as an absolute wall-clock value.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+struct SharedAudioClock {
+    frames: js_sys::Int32Array,
+    origin_frames: u32,
+    sample_rate_hz: u32,
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl SharedAudioClock {
+    fn new(clock_buffer: js_sys::SharedArrayBuffer, sample_rate_hz: u32) -> Result<Self, JsError> {
+        if !matches!(sample_rate_hz, 44_100 | 48_000) || clock_buffer.byte_length() < 4 {
+            return Err(JsError::new("audio clock buffer or sample rate is invalid"));
+        }
+        let buffer: JsValue = clock_buffer.into();
+        let frames = js_sys::Int32Array::new_with_byte_offset_and_length(&buffer, 0, 1);
+        let origin_frames = js_sys::Atomics::load(&frames, 0)
+            .map_err(|_| JsError::new("audio clock atomic load failed"))?
+            as u32;
+        Ok(Self {
+            frames,
+            origin_frames,
+            sample_rate_hz,
+        })
+    }
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl wasm_vm_core::dev::virtio::snd::AudioClock for SharedAudioClock {
+    fn now_ns(&self) -> u64 {
+        let current = js_sys::Atomics::load(&self.frames, 0)
+            .map(|frames| frames as u32)
+            .unwrap_or(self.origin_frames);
+        let elapsed_frames = current.wrapping_sub(self.origin_frames) as u64;
+        elapsed_frames
+            .saturating_mul(1_000_000_000)
+            .checked_div(u64::from(self.sample_rate_hz))
+            .unwrap_or(u64::MAX)
     }
 }
 
@@ -882,6 +1478,8 @@ fn build_core_hash() -> [u8; 32] {
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 struct LinuxInner {
     machine: Machine,
+    audio_attached: bool,
+    capture_attached: bool,
     uart: std::rc::Rc<RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
     out: std::rc::Rc<RefCell<Vec<u8>>>,
     output: js_sys::Function,
@@ -891,8 +1489,13 @@ struct LinuxInner {
     /// an `Rc` so `fetchPending` can clone it out and `await` without keeping the inner borrow.
     fetch: Option<std::rc::Rc<http_fetch::FetchState>>,
     /// E3-T05 durable-persistence state, present only for a `newChunkedDiskPersistent` boot: the
-    /// IndexedDB store (`Clone`) + the shared persist queue the overlay records writes into.
-    persist: Option<(idb_store::IdbStore, wasm_vm_storage::SharedPersistQueue)>,
+    /// IndexedDB store (`Clone`), the shared persist queue the overlay records writes into, and the
+    /// immutable metadata identity used to stamp the next durable generation.
+    persist: Option<(
+        idb_store::IdbStore,
+        wasm_vm_storage::SharedPersistQueue,
+        wasm_vm_storage::OverlayMeta,
+    )>,
     /// E3-T10: the chunked backend's shared read-only flag, so `setDiskReadOnly` can flip the
     /// disk live (the "continue read-only" choice after a storage-quota hit). `None` off the
     /// persistent path.
@@ -905,6 +1508,48 @@ struct LinuxInner {
     /// the restore-decision guard needs it as the expected `base_image_hash`. Off the persistent path
     /// there is no snapshot store, so the decision is always `"missing"`.
     snapshot_base: Option<[u8; 32]>,
+    /// E3-T12d: the persistent tab's Web Lock ownership. Read-only contenders may inspect the
+    /// snapshot store, but must never save or import into the writer's namespace.
+    snapshot_read_only: bool,
+    /// E3-T12d: storage writes that passed the ownership check and are still awaiting IndexedDB.
+    /// Lease relinquishment fences new operations, then waits for this counter before releasing
+    /// the Web Lock so an already-started save cannot outlive its writer.
+    snapshot_write_count: std::rc::Rc<std::cell::Cell<u32>>,
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+fn finish_snapshot_write(count: &std::rc::Rc<std::cell::Cell<u32>>) {
+    count.set(count.get().saturating_sub(1));
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+async fn wait_for_snapshot_writes(count: std::rc::Rc<std::cell::Cell<u32>>) {
+    use wasm_bindgen::JsCast;
+    use wasm_bindgen_futures::JsFuture;
+
+    while count.get() != 0 {
+        // A timer yield lets the IndexedDB task that owns the in-flight transaction run. A
+        // Promise.resolve loop would remain in the microtask queue and could starve that event.
+        let promise = js_sys::Promise::new(&mut |resolve, _reject| {
+            let global = js_sys::global();
+            let callback = resolve.unchecked_ref::<js_sys::Function>();
+            let scheduled = if let Some(window) = global.dyn_ref::<web_sys::Window>() {
+                window
+                    .set_timeout_with_callback_and_timeout_and_arguments_0(callback, 0)
+                    .is_ok()
+            } else if let Some(scope) = global.dyn_ref::<web_sys::WorkerGlobalScope>() {
+                scope
+                    .set_timeout_with_callback_and_timeout_and_arguments_0(callback, 0)
+                    .is_ok()
+            } else {
+                false
+            };
+            if !scheduled {
+                let _ = resolve.call0(&JsValue::UNDEFINED);
+            }
+        });
+        let _ = JsFuture::from(promise).await;
+    }
 }
 
 /// Which block device (if any) backs the boot: none (initramfs), an in-memory image, or a lazily
@@ -921,6 +1566,17 @@ enum DiskChoice {
         /// E3-T03 boot profile: ordered chunks to prefetch (empty if none).
         profile: Vec<usize>,
     },
+    /// E4-T28e: a lazy Alpine root disk plus a read-only, fully resident secondary virtio-blk
+    /// drive. The browser proof uses this for the pinned GCC overlay; it lives after the stable
+    /// net/rng/keyboard/tablet/mouse slots, while Linux still enumerates the only two block devices
+    /// as `/dev/vda` and `/dev/vdb`.
+    ChunkedWithExtra {
+        manifest: wasm_vm_storage::ImageManifest,
+        base_url: String,
+        budget: u64,
+        profile: Vec<usize>,
+        extra_disk: Vec<u8>,
+    },
     /// E3-T05: like `Chunked`, but the overlay is a `WriteBackOverlay` (loaded from IndexedDB, sharing
     /// a persist queue) so guest writes survive a reload.
     ChunkedPersistent {
@@ -932,6 +1588,8 @@ enum DiskChoice {
         loaded: alloc_map::BlockMap,
         idb: idb_store::IdbStore,
         queue: wasm_vm_storage::SharedPersistQueue,
+        /// Generation read from the durable overlay metadata on reopen.
+        generation: u64,
         /// E3-T09: another tab holds the writer Web Lock — reject writes at the backend seam,
         /// advertise VIRTIO_BLK_F_RO, and register NO persist pump.
         read_only: bool,
@@ -968,6 +1626,7 @@ impl WasmLinux {
         initrd: &[u8],
         bootargs: String,
         output: js_sys::Function,
+        enable_mic: bool,
     ) -> Result<WasmLinux, JsError> {
         let initrd_opt = if initrd.is_empty() {
             None
@@ -979,7 +1638,15 @@ impl WasmLinux {
         } else {
             bootargs
         };
-        Self::assemble(ram_mib, kernel, initrd_opt, DiskChoice::None, &args, output)
+        Self::assemble(
+            ram_mib,
+            kernel,
+            initrd_opt,
+            DiskChoice::None,
+            &args,
+            output,
+            enable_mic,
+        )
     }
 
     /// E2-T26 capstone: boot from a virtio-blk DISK image (e.g. the Alpine ext4 rootfs) instead of
@@ -993,13 +1660,22 @@ impl WasmLinux {
         disk: Vec<u8>,
         bootargs: String,
         output: js_sys::Function,
+        enable_mic: bool,
     ) -> Result<WasmLinux, JsError> {
         let args = if bootargs.is_empty() {
             "root=/dev/vda rw console=ttyS0 earlycon=sbi".to_string()
         } else {
             bootargs
         };
-        Self::assemble(ram_mib, kernel, None, DiskChoice::Mem(disk), &args, output)
+        Self::assemble(
+            ram_mib,
+            kernel,
+            None,
+            DiskChoice::Mem(disk),
+            &args,
+            output,
+            enable_mic,
+        )
     }
 
     /// E3-T02: boot from a CHUNKED image fetched lazily over HTTP. Instead of a full disk `Vec`, take
@@ -1017,6 +1693,7 @@ impl WasmLinux {
         boot_profile: Vec<u32>,
         bootargs: String,
         output: js_sys::Function,
+        enable_mic: bool,
     ) -> Result<WasmLinux, JsError> {
         let manifest = wasm_vm_storage::ImageManifest::from_json(manifest_json)
             .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
@@ -1047,6 +1724,58 @@ impl WasmLinux {
             },
             &args,
             output,
+            enable_mic,
+        )
+    }
+
+    /// E4-T28e: boot the normal lazy Alpine root disk with one additional read-only virtio-blk
+    /// image. The extra image is passed by value so the fetched overlay becomes one resident Rust
+    /// buffer; it is never compiled or transformed on the host. The first free slot after browser
+    /// Linux's net/rng/keyboard/tablet/mouse reservation is used, leaving `/dev/vdb` as the second
+    /// block device.
+    #[wasm_bindgen(js_name = newChunkedDiskWithExtra)]
+    #[allow(clippy::too_many_arguments)]
+    pub fn new_chunked_disk_with_extra(
+        ram_mib: u32,
+        kernel: &[u8],
+        manifest_json: &str,
+        base_url: String,
+        cache_budget_mib: u32,
+        boot_profile: Vec<u32>,
+        extra_disk: Vec<u8>,
+        bootargs: String,
+        output: js_sys::Function,
+        enable_mic: bool,
+    ) -> Result<WasmLinux, JsError> {
+        let manifest = wasm_vm_storage::ImageManifest::from_json(manifest_json)
+            .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
+        let args = if bootargs.is_empty() {
+            "root=/dev/vda rw console=ttyS0 earlycon=sbi".to_string()
+        } else {
+            bootargs
+        };
+        let budget = if cache_budget_mib == 0 {
+            256
+        } else {
+            cache_budget_mib
+        } as u64
+            * 1024
+            * 1024;
+        let profile: Vec<usize> = boot_profile.into_iter().map(|c| c as usize).collect();
+        Self::assemble(
+            ram_mib,
+            kernel,
+            None,
+            DiskChoice::ChunkedWithExtra {
+                manifest,
+                base_url,
+                budget,
+                profile,
+                extra_disk,
+            },
+            &args,
+            output,
+            enable_mic,
         )
     }
 
@@ -1068,6 +1797,7 @@ impl WasmLinux {
         read_only: bool,
         output: js_sys::Function,
         seed_identity: Option<String>,
+        enable_mic: bool,
     ) -> Result<WasmLinux, JsError> {
         let manifest = wasm_vm_storage::ImageManifest::from_json(&manifest_json)
             .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
@@ -1078,7 +1808,7 @@ impl WasmLinux {
         let idb = idb_store::IdbStore::open(&base_binding, seed_identity.as_ref())
             .await
             .map_err(|e| JsError::new(&format!("IndexedDB open: {e:?}")))?;
-        match idb
+        let overlay_generation = match idb
             .read_meta()
             .await
             .map_err(|e| JsError::new(&format!("IndexedDB read meta: {e:?}")))?
@@ -1088,6 +1818,7 @@ impl WasmLinux {
                     .map_err(|e| JsError::new(&format!("overlay meta: {e:?}")))?;
                 meta.check(&manifest)
                     .map_err(|e| JsError::new(&format!("overlay/base mismatch: {e:?}")))?;
+                meta.generation
             }
             None => {
                 // E3-T09: an RO tab must not write ANYTHING — not even the meta record of a
@@ -1097,8 +1828,9 @@ impl WasmLinux {
                         .await
                         .map_err(|e| JsError::new(&format!("IndexedDB write meta: {e:?}")))?;
                 }
+                0
             }
-        }
+        };
         let loaded = idb
             .load_blocks()
             .await
@@ -1141,10 +1873,12 @@ impl WasmLinux {
                 loaded,
                 idb,
                 queue,
+                generation: overlay_generation,
                 read_only,
             },
             &args,
             output,
+            enable_mic,
         )
     }
 
@@ -1157,6 +1891,7 @@ impl WasmLinux {
         disk: DiskChoice,
         bootargs: &str,
         output: js_sys::Function,
+        enable_mic: bool,
     ) -> Result<WasmLinux, JsError> {
         init_diagnostics();
         let bytes = (ram_mib as usize).saturating_mul(1024 * 1024);
@@ -1175,6 +1910,7 @@ impl WasmLinux {
         // E3-T12d: the base binding for the durable resume-snapshot store — stamped only on the
         // persistent path (where a snapshot can be taken and restored). `None` elsewhere.
         let mut snapshot_base: Option<[u8; 32]> = None;
+        let mut snapshot_read_only = false;
         match disk {
             // Alpine over virtio-blk: the image is owned by an in-memory BlockBackend in slot 0.
             DiskChoice::Mem(image) => {
@@ -1195,6 +1931,28 @@ impl WasmLinux {
                     manifest, base_url, store, profile,
                 )));
             }
+            DiskChoice::ChunkedWithExtra {
+                manifest,
+                base_url,
+                budget,
+                profile,
+                extra_disk,
+            } => {
+                let store =
+                    std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
+                let backend = chunked::ChunkedBackend::new(&manifest, store.clone());
+                machine.enable_virtio_blk(Box::new(backend));
+                // Keep slots 1/2 available for net/rng, slot 3 for the keyboard, and slots 4/5 for
+                // the tablet/mouse pair. Linux's block-major enumeration still names this second
+                // block device `/dev/vdb`.
+                machine.enable_virtio_blk_at(
+                    wasm_vm_core::dev::virtio::input::pointer::FIRST_FREE_VIRTIO_SLOT,
+                    Box::new(wasm_vm_core::block::MemBackend::new_read_only(extra_disk)),
+                );
+                fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
+                    manifest, base_url, store, profile,
+                )));
+            }
             // E3-T05 durable chunked image: the overlay is a WriteBackOverlay (reopened blocks +
             // shared persist queue) so guest writes survive a reload; base chunks still lazily fetched.
             DiskChoice::ChunkedPersistent {
@@ -1205,16 +1963,22 @@ impl WasmLinux {
                 loaded,
                 idb,
                 queue,
+                generation,
                 read_only,
             } => {
                 // E3-T12d: bind the resume snapshot to this base image + stamp the machine's coherence
                 // header, so a snapshot taken here fails the guard if reloaded against a foreign build
                 // or a foreign base image. `base_hash()` is the same binding the snapshot store is
-                // namespaced by. Overlay generation starts at the machine default (0) and advances only
-                // on an explicit commit.
+                // namespaced by. Reconstruct the generation committed with the durable blocks so a
+                // resume snapshot cannot silently ride over writes made before this boot.
                 let base_binding = manifest.base_hash();
-                machine.set_snapshot_identity(build_core_hash(), base_binding);
+                machine.set_snapshot_identity_with_generation(
+                    build_core_hash(),
+                    base_binding,
+                    generation,
+                );
                 snapshot_base = Some(base_binding);
+                snapshot_read_only = read_only;
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
                 let overlay = wasm_vm_storage::WriteBackOverlay::with_shared_queue(
@@ -1224,6 +1988,7 @@ impl WasmLinux {
                 );
                 let disk = wasm_vm_storage::OverlayDisk::attach(overlay, &manifest)
                     .map_err(|e| JsError::new(&format!("overlay attach: {e:?}")))?;
+                let overlay_meta = wasm_vm_storage::OverlayMeta::new(&manifest);
                 let mut backend =
                     chunked::ChunkedBackend::from_persistent_disk(disk, store.clone());
                 if read_only {
@@ -1244,7 +2009,7 @@ impl WasmLinux {
                     manifest, base_url, store, profile,
                 )));
                 if !read_only {
-                    persist = Some((idb, queue));
+                    persist = Some((idb, queue, overlay_meta));
                 }
             }
             // Busybox initramfs: the 8 empty virtio slots the DTB advertises.
@@ -1311,6 +2076,29 @@ impl WasmLinux {
         // scavenges entropy from interrupt jitter for many seconds, long enough that the first TLS
         // ClientHello's `RAND_bytes` stalls or fails (the E3-T19 guest-HTTPS flakiness).
         let _ = machine.enable_virtio_rng(Box::new(crypto_entropy::CryptoEntropy));
+        // E5-T11c: attach the guest-visible keyboard on every browser boot. The host keymap can
+        // inject make/break frames through WasmLinux::sendKeyboardEvent/syncKeyboard.
+        let _ = machine.enable_virtio_keyboard();
+        // E5-T14a: keep both pointer devices guest-visible on every browser boot. T14b selects
+        // which state receives DOM frames; the tablet and relative mouse remain stable peers.
+        let _ = machine.enable_virtio_pointer();
+        // E5-T19d: expose the four-queue virtio-snd device after the established input slots. The
+        // browser sink is intentionally NullSink until E5-T20's AudioWorklet bridge, but the
+        // guest-facing controlq and real-time pacing already run through the production assembly.
+        let audio_clock = JsHostTimer::new()
+            .map(|clock| {
+                std::rc::Rc::new(clock)
+                    as std::rc::Rc<dyn wasm_vm_core::dev::virtio::snd::AudioClock>
+            })
+            .unwrap_or_else(|| {
+                std::rc::Rc::new(wasm_vm_core::dev::virtio::snd::ManualAudioClock::new())
+                    as std::rc::Rc<dyn wasm_vm_core::dev::virtio::snd::AudioClock>
+            });
+        let _ = machine.enable_virtio_snd_with_audio_and_capture(
+            audio_clock,
+            Box::new(wasm_vm_core::dev::virtio::snd::NullSink::new()),
+            enable_mic,
+        );
         machine.enable_builtin_sbi();
         let out = std::rc::Rc::new(RefCell::new(Vec::new()));
         machine.sbi_set_console(Box::new(BufSink { buf: out.clone() }));
@@ -1320,6 +2108,8 @@ impl WasmLinux {
         Ok(WasmLinux {
             inner: RefCell::new(LinuxInner {
                 machine,
+                audio_attached: false,
+                capture_attached: false,
                 uart,
                 out,
                 output,
@@ -1330,8 +2120,180 @@ impl WasmLinux {
                 disk_ro,
                 file_transfers,
                 snapshot_base,
+                snapshot_read_only,
+                snapshot_write_count: std::rc::Rc::new(std::cell::Cell::new(0)),
             }),
         })
+    }
+
+    /// E5-T20e: connect this assembled guest to the page-owned AudioWorklet ring and render clock.
+    /// The buffers are validated against the T20a header before ownership crosses into the core;
+    /// an invalid or missing sound device is a hard boot-configuration error rather than silent
+    /// playback loss.
+    #[wasm_bindgen(js_name = attachAudioOutput)]
+    pub fn attach_audio_output(
+        &self,
+        shared_buffer: js_sys::SharedArrayBuffer,
+        clock_buffer: js_sys::SharedArrayBuffer,
+        capacity_frames: u32,
+        sample_rate_hz: u32,
+    ) -> Result<(), JsError> {
+        let sink = SharedAudioSink::new(shared_buffer, capacity_frames, sample_rate_hz)?;
+        let clock = SharedAudioClock::new(clock_buffer, sample_rate_hz)?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.machine.replace_virtio_snd_audio(
+            std::rc::Rc::new(clock),
+            Box::new(sink),
+            sample_rate_hz,
+        ) {
+            inner.audio_attached = true;
+            Ok(())
+        } else {
+            Err(JsError::new("virtio-snd is not assembled"))
+        }
+    }
+
+    /// E5-T20e: report whether this guest owns the page-provided ring sink. Kept separate from
+    /// `AudioWorkletSink.stats()` so a browser proof can distinguish an attached guest bridge from
+    /// a standalone synthetic ring producer.
+    #[wasm_bindgen(js_name = audioOutputReady)]
+    pub fn audio_output_ready(&self) -> Result<bool, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner.audio_attached)
+    }
+
+    /// E5-T21d: attach the page-owned microphone ring as the guest's capture source. The ring is
+    /// allocated before boot but contains no host media handle; permission remains lazy until the
+    /// guest emits its first successful capture PCM_START edge.
+    #[wasm_bindgen(js_name = attachAudioCapture)]
+    pub fn attach_audio_capture(
+        &self,
+        shared_buffer: js_sys::SharedArrayBuffer,
+        capacity_frames: u32,
+        sample_rate_hz: u32,
+    ) -> Result<(), JsError> {
+        let source = SharedAudioCapture::new(shared_buffer, capacity_frames, sample_rate_hz)?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.machine.replace_virtio_snd_capture(Box::new(source)) {
+            inner.capture_attached = true;
+            Ok(())
+        } else {
+            Err(JsError::new("virtio-snd capture is not assembled"))
+        }
+    }
+
+    /// E5-T21d: report whether this guest owns the page-provided capture ring.
+    #[wasm_bindgen(js_name = audioCaptureReady)]
+    pub fn audio_capture_ready(&self) -> Result<bool, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner.capture_attached)
+    }
+
+    /// E5-T21d: expose the input PCM lifecycle edge to the page. `startCount` increments only for
+    /// successful guest PCM_START requests; the page uses it to make getUserMedia lazy and to
+    /// re-request after a later guest retry without polling host media state speculatively.
+    #[wasm_bindgen(js_name = virtioSndCaptureState)]
+    pub fn virtio_snd_capture_state(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some((_, state)) = inner.machine.virtio_snd() else {
+            return Ok(JsValue::NULL);
+        };
+        let state = state.borrow();
+        let state_name = match state.capture_stream_state() {
+            wasm_vm_core::dev::virtio::snd::PcmState::Released => "released",
+            wasm_vm_core::dev::virtio::snd::PcmState::SetParams => "set-params",
+            wasm_vm_core::dev::virtio::snd::PcmState::Prepared => "prepared",
+            wasm_vm_core::dev::virtio::snd::PcmState::Running => "running",
+            wasm_vm_core::dev::virtio::snd::PcmState::Stopped => "stopped",
+        };
+        let snapshot = js_sys::Object::new();
+        let set = |key: &str, value: &JsValue| {
+            let _ = js_sys::Reflect::set(&snapshot, &JsValue::from_str(key), value);
+        };
+        set("enabled", &JsValue::from_bool(state.capture_enabled()));
+        set("state", &JsValue::from_str(state_name));
+        set(
+            "startCount",
+            &JsValue::from_f64(state.capture_start_count() as f64),
+        );
+        set(
+            "lifecycleEpoch",
+            &JsValue::from_f64(state.capture_lifecycle_epoch() as f64),
+        );
+        set(
+            "pendingBuffers",
+            &JsValue::from_f64(state.capture_pending_count() as f64),
+        );
+        set(
+            "pendingEvents",
+            &JsValue::from_f64(state.pending_event_count() as f64),
+        );
+        set(
+            "captureAttached",
+            &JsValue::from_bool(inner.capture_attached),
+        );
+        Ok(snapshot.into())
+    }
+
+    /// E5-T21d: turn a host capture lifecycle failure into the existing bounded virtio-snd input
+    /// XRUN event. The event is delivered through the guest's eventq at the next run boundary;
+    /// PCM rxq buffers continue to complete with zero-filled, clock-paced data.
+    #[wasm_bindgen(js_name = notifyCaptureEvent)]
+    pub fn notify_capture_event(&self, event: String) -> Result<bool, JsError> {
+        if !matches!(event.as_str(), "denied" | "revoked" | "muted") {
+            return Err(JsError::new("unsupported capture lifecycle event"));
+        }
+        let inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let Some((_, state)) = inner.machine.virtio_snd() else {
+            return Ok(false);
+        };
+        let mut state = state.borrow_mut();
+        if !state.capture_enabled() {
+            return Ok(false);
+        }
+        state.notify_capture_xrun();
+        Ok(true)
+    }
+
+    /// E5-T21b: expose the assembled sound configuration for browser diagnostics. This is a
+    /// read-only construction proof; the input stream metadata comes from the same core state that
+    /// answers guest PCM_INFO, and no host capture handle is created by reading it.
+    #[wasm_bindgen(js_name = virtioSndConfig)]
+    pub fn virtio_snd_config(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some((slot, state)) = inner.machine.virtio_snd() else {
+            return Err(JsError::new("virtio-snd is not assembled"));
+        };
+        let state = state.borrow();
+        let config = js_sys::Object::new();
+        let set = |key: &str, value: &JsValue| {
+            let _ = js_sys::Reflect::set(&config, &JsValue::from_str(key), value);
+        };
+        set("slot", &JsValue::from_f64(slot as f64));
+        set(
+            "captureEnabled",
+            &JsValue::from_bool(state.capture_enabled()),
+        );
+        set(
+            "streamCount",
+            &JsValue::from_f64(state.pcm_stream_count() as f64),
+        );
+        if state.capture_enabled() {
+            let input = js_sys::Object::new();
+            let set_input = |key: &str, value: &JsValue| {
+                let _ = js_sys::Reflect::set(&input, &JsValue::from_str(key), value);
+            };
+            let info = wasm_vm_core::dev::virtio::snd::PcmInfo::input();
+            set_input("direction", &JsValue::from_f64(info.direction as f64));
+            set_input("formats", &JsValue::from_f64(info.formats as f64));
+            set_input("rates", &JsValue::from_f64(info.rates as f64));
+            set_input("channelsMin", &JsValue::from_f64(info.channels_min as f64));
+            set_input("channelsMax", &JsValue::from_f64(info.channels_max as f64));
+            set("input", &input.into());
+        } else {
+            set("input", &JsValue::NULL);
+        }
+        Ok(config.into())
     }
 
     /// E4-T30: select the production interpreter fast path for a browser Linux guest. It combines
@@ -1352,13 +2314,34 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = enableJit)]
     pub fn enable_jit(&self, threshold: u32) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        inner
-            .machine
-            .set_executor(Box::new(jit_browser::BrowserExecutor::new()));
-        inner.machine.set_block_cache(true);
-        inner.machine.set_interrupt_batching(true);
-        inner.machine.set_hotness_threshold(threshold.max(1));
-        inner.machine.set_jit(true);
+        enable_browser_jit(&mut inner.machine, threshold, JIT_RESIDENCY_REPACK_OFF)
+    }
+
+    /// E4-T38: enable the Linux browser JIT under one explicit residency policy. See
+    /// [`WasmMachine::enable_jit_with_policy`] for the policy labels and cap semantics.
+    #[wasm_bindgen(js_name = enableJitWithPolicy)]
+    pub fn enable_jit_with_policy(
+        &self,
+        threshold: u32,
+        residency_policy: String,
+    ) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        enable_browser_jit(&mut inner.machine, threshold, &residency_policy)
+    }
+
+    /// E4-T39: toggle static region chaining without rebuilding the generated modules.
+    #[wasm_bindgen(js_name = setChaining)]
+    pub fn set_chaining(&self, on: bool) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_chaining(on);
+        Ok(())
+    }
+
+    /// E4-T39: toggle generated dynamic-return (`jalr`) chaining independently of static regions.
+    #[wasm_bindgen(js_name = setDynamicChaining)]
+    pub fn set_dynamic_chaining(&self, on: bool) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_dynamic_chaining(on);
         Ok(())
     }
 
@@ -1430,7 +2413,7 @@ impl WasmLinux {
                     && (inner.machine.blk_write_waiting()
                         || persist_max_dirty_bytes.is_some_and(|limit| {
                             limit > 0
-                                && inner.persist.as_ref().is_some_and(|(_, queue)| {
+                                && inner.persist.as_ref().is_some_and(|(_, queue, _)| {
                                     queue
                                         .borrow()
                                         .unpersisted_count()
@@ -1609,6 +2592,117 @@ impl WasmLinux {
     pub fn send_input(&self, bytes: &[u8]) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         inner.pending.extend(bytes.iter().copied());
+        Ok(())
+    }
+
+    /// Queue one guest-visible evdev keyboard event. Call `syncKeyboard` after the host's
+    /// keydown/keyup event (or after a batch of related events) to publish the frame with its
+    /// `SYN_REPORT`; browser repeat events must not call this method as key-downs.
+    #[wasm_bindgen(js_name = sendKeyboardEvent)]
+    pub fn send_keyboard_event(
+        &self,
+        event_type: u16,
+        code: u16,
+        value: i32,
+    ) -> Result<(), JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let state = inner
+            .machine
+            .keyboard_input()
+            .ok_or_else(|| JsError::new("keyboard input is not attached"))?;
+        state.borrow_mut().inject_event(event_type, code, value);
+        Ok(())
+    }
+
+    /// Return the latest host-owned LED state reported by the guest keyboard driver. A null
+    /// result means that this machine was assembled without the virtio-input keyboard capability.
+    #[wasm_bindgen(js_name = keyboardLedState)]
+    pub fn keyboard_led_state(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some(leds) = inner.machine.keyboard_leds() else {
+            return Ok(JsValue::NULL);
+        };
+        let state = leds
+            .try_borrow()
+            .map_err(|_| JsError::new("keyboard LED state busy"))?;
+        let object = js_sys::Object::new();
+        let _ = js_sys::Reflect::set(
+            &object,
+            &JsValue::from_str("numLock"),
+            &JsValue::from_bool(state.num_lock),
+        );
+        let _ = js_sys::Reflect::set(
+            &object,
+            &JsValue::from_str("capsLock"),
+            &JsValue::from_bool(state.caps_lock),
+        );
+        let _ = js_sys::Reflect::set(
+            &object,
+            &JsValue::from_str("scrollLock"),
+            &JsValue::from_bool(state.scroll_lock),
+        );
+        Ok(object.into())
+    }
+
+    /// Publish the current host keyboard frame by appending `EV_SYN/SYN_REPORT`.
+    #[wasm_bindgen(js_name = syncKeyboard)]
+    pub fn sync_keyboard(&self) -> Result<(), JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let state = inner
+            .machine
+            .keyboard_input()
+            .ok_or_else(|| JsError::new("keyboard input is not attached"))?;
+        state.borrow_mut().sync();
+        Ok(())
+    }
+
+    /// Queue one guest-visible absolute-tablet event. Call `syncTablet` after the complete DOM
+    /// pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
+    #[wasm_bindgen(js_name = sendTabletEvent)]
+    pub fn send_tablet_event(&self, event_type: u16, code: u16, value: i32) -> Result<(), JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let state = inner
+            .machine
+            .tablet_input()
+            .ok_or_else(|| JsError::new("tablet input is not attached"))?;
+        state.borrow_mut().inject_event(event_type, code, value);
+        Ok(())
+    }
+
+    /// Publish the current host absolute-tablet frame with `EV_SYN/SYN_REPORT`.
+    #[wasm_bindgen(js_name = syncTablet)]
+    pub fn sync_tablet(&self) -> Result<(), JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let state = inner
+            .machine
+            .tablet_input()
+            .ok_or_else(|| JsError::new("tablet input is not attached"))?;
+        state.borrow_mut().sync();
+        Ok(())
+    }
+
+    /// Queue one guest-visible relative-mouse event. Call `syncMouse` after the complete DOM
+    /// pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
+    #[wasm_bindgen(js_name = sendMouseEvent)]
+    pub fn send_mouse_event(&self, event_type: u16, code: u16, value: i32) -> Result<(), JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let state = inner
+            .machine
+            .mouse_input()
+            .ok_or_else(|| JsError::new("mouse input is not attached"))?;
+        state.borrow_mut().inject_event(event_type, code, value);
+        Ok(())
+    }
+
+    /// Publish the current host relative-mouse frame with `EV_SYN/SYN_REPORT`.
+    #[wasm_bindgen(js_name = syncMouse)]
+    pub fn sync_mouse(&self) -> Result<(), JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let state = inner
+            .machine
+            .mouse_input()
+            .ok_or_else(|| JsError::new("mouse input is not attached"))?;
+        state.borrow_mut().sync();
         Ok(())
     }
 
@@ -1793,10 +2887,15 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = persistPending)]
     pub async fn persist_pending(&self) -> Result<u32, JsError> {
         // Clone the store handle + shared queue out under a brief borrow; never hold it across await.
-        let (idb, queue) = {
+        let (idb, queue, overlay_meta, current_generation) = {
             let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
             match &inner.persist {
-                Some((idb, q)) => (idb.clone(), q.clone()),
+                Some((idb, q, meta)) => (
+                    idb.clone(),
+                    q.clone(),
+                    *meta,
+                    inner.machine.overlay_generation(),
+                ),
                 None => return Ok(0),
             }
         };
@@ -1806,7 +2905,12 @@ impl WasmLinux {
         }
         let blocks: Vec<(u64, [u8; wasm_vm_storage::OVERLAY_BLOCK])> =
             batch.iter().map(|(b, _, bytes)| (*b, *bytes)).collect();
-        if let Err(e) = idb.persist(&blocks).await {
+        let next_generation = current_generation.saturating_add(1);
+        let next_meta = overlay_meta.with_generation(next_generation);
+        if let Err(e) = idb
+            .persist_overlay_batch(&blocks, &next_meta.to_bytes())
+            .await
+        {
             // E3-T10: classify the failure. On QuotaExceeded we DELIBERATELY do NOT
             // mark_persisted — the dirty blocks stay pending and the persistent virtio WRITE that
             // produced them remains outside the used ring. Freeing space + retry may complete it;
@@ -1822,6 +2926,13 @@ impl WasmLinux {
         // Mark exactly what was flushed (generation-guarded) — a mid-flush re-write stays pending.
         let pairs: Vec<(u64, u64)> = batch.iter().map(|(b, g, _)| (*b, *g)).collect();
         queue.borrow_mut().mark_persisted(&pairs);
+        // The IndexedDB transaction committed both the blocks and this generation. Advance the
+        // machine only after that strict durability barrier; a reload can therefore never observe
+        // a newer in-memory generation whose disk bytes did not commit.
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.machine.overlay_generation() == current_generation {
+            inner.machine.advance_overlay_generation();
+        }
         Ok(batch.len() as u32)
     }
 
@@ -1847,36 +2958,65 @@ impl WasmLinux {
 
     /// Convenience: take a resume snapshot AND durably persist it to the snapshot IndexedDB store in one
     /// call. The `RefCell` borrow is scoped to `save_resume` + reading `snapshot_base`; the store I/O
-    /// runs after it is dropped, never across the borrow. No-op error `"not_persistent"` off the
-    /// persistent path (there is no snapshot store to write to).
+    /// runs after it is dropped, never across the borrow. The write counter keeps a lease release
+    /// from handing the namespace to another tab until this async operation has committed. No-op
+    /// error `"not_persistent"` off the persistent path (there is no snapshot store to write to).
     #[wasm_bindgen(js_name = persistSnapshot)]
     pub async fn persist_snapshot(&self) -> Result<(), JsError> {
-        let (blob, base) = {
+        let (blob, base, write_count) = {
             let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
             let Some(base) = inner.snapshot_base else {
                 return Err(JsError::new("not_persistent"));
             };
+            if inner.snapshot_read_only {
+                return Err(JsError::new("read_only"));
+            }
             let blob = inner.machine.save_resume().map_err(|e| match e {
                 resume::SnapshotError::NotQuiesced { reason, in_flight } => {
                     JsError::new(&format!("not_quiesced: {reason:?} in_flight={in_flight}"))
                 }
                 other => JsError::new(&format!("save_error: {other:?}")),
             })?;
-            (blob, base)
+            let write_count = inner.snapshot_write_count.clone();
+            write_count.set(write_count.get().saturating_add(1));
+            (blob, base, write_count)
         };
-        let store = snapshot_store::SnapshotStore::open(&base)
-            .await
-            .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
-        store
-            .save(&blob, &base)
-            .await
-            .map_err(|e| JsError::new(&format!("snapshot save: {e:?}")))?;
+        let result = async {
+            let store = snapshot_store::SnapshotStore::open(&base)
+                .await
+                .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
+            store
+                .save(&blob, &base)
+                .await
+                .map_err(|e| JsError::new(&format!("snapshot save: {e:?}")))?;
+            Ok(())
+        }
+        .await;
+        finish_snapshot_write(&write_count);
+        result
+    }
+
+    /// Permanently relinquish this machine's snapshot-writer role. Web Locks releases are dynamic:
+    /// another tab may acquire the same namespace while this controller is still alive, so the
+    /// construction-time read-only bit alone is not a sufficient fence for a stale controller. New
+    /// writes are fenced immediately, while writes that already passed the check are allowed to
+    /// finish before this method resolves. There is intentionally no inverse operation; a new
+    /// machine must acquire the writer lock before it can save or import snapshots.
+    #[wasm_bindgen(js_name = relinquishSnapshotWriter)]
+    pub async fn relinquish_snapshot_writer(&self) -> Result<(), JsError> {
+        let write_count = {
+            let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+            inner.snapshot_read_only = true;
+            inner.snapshot_write_count.clone()
+        };
+        wait_for_snapshot_writes(write_count).await;
         Ok(())
     }
 
     /// Read the persisted snapshot blob back (reassembled), or `null` if none is stored / not on the
-    /// persistent path. Async (IndexedDB). The JS restore-decision hook feeds this into
-    /// [`Self::restore_decision_code`] and, on a `"resume"` verdict, into [`Self::load_snapshot_blob`].
+    /// persistent path. Async (IndexedDB). This is the export/debug surface; production restore uses
+    /// [`Self::restore_stored_snapshot`] so the blob never crosses the wasm/JS boundary as a second
+    /// whole-payload copy.
     #[wasm_bindgen(js_name = readStoredSnapshot)]
     pub async fn read_stored_snapshot(&self) -> Result<JsValue, JsError> {
         let base = {
@@ -1899,26 +3039,120 @@ impl WasmLinux {
         }
     }
 
-    /// Persist an externally supplied snapshot blob (AC3 import) into the snapshot store for THIS boot's
-    /// base image. The blob is bound to this base's namespace; a foreign blob imported here still fails
-    /// the coherence guard on restore. Error `"not_persistent"` off the persistent path.
-    #[wasm_bindgen(js_name = importStoredSnapshot)]
-    pub async fn import_stored_snapshot(&self, blob: Vec<u8>) -> Result<(), JsError> {
+    /// Load and, only when coherent, apply the persisted snapshot directly inside wasm. The stored
+    /// blob is held by one Rust allocation while the coherence header is checked and the machine is
+    /// restored; unlike `readStoredSnapshot` this path does not create a JS `Uint8Array` boundary copy.
+    /// Returns the same typed decision code as `restoreDecisionCode`, with no machine mutation for a
+    /// missing, corrupt, foreign, or stale snapshot.
+    #[wasm_bindgen(js_name = restoreStoredSnapshot)]
+    pub async fn restore_stored_snapshot(&self) -> Result<String, JsError> {
         let base = {
             let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
             match inner.snapshot_base {
                 Some(base) => base,
-                None => return Err(JsError::new("not_persistent")),
+                None => return Ok("missing".to_string()),
             }
         };
         let store = snapshot_store::SnapshotStore::open(&base)
             .await
             .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
-        store
-            .save(&blob, &base)
+        let Some(blob) = store
+            .load()
             .await
-            .map_err(|e| JsError::new(&format!("snapshot import: {e:?}")))?;
-        Ok(())
+            .map_err(|e| JsError::new(&format!("snapshot load: {e:?}")))?
+        else {
+            return Ok("missing".to_string());
+        };
+
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        // The identity is immutable for the lifetime of a machine, but re-check it at the commit
+        // point so an unusual concurrent host callback cannot restore into a different namespace.
+        let Some(current_base) = inner.snapshot_base else {
+            return Ok("missing".to_string());
+        };
+        if current_base != base {
+            return Ok("foreign_image".to_string());
+        }
+        let decision = resume::RestoreDecision::decide(
+            Some(&blob),
+            &build_core_hash(),
+            &base,
+            inner.machine.overlay_generation(),
+        );
+        if decision.is_resume() {
+            inner.machine.load_resume(&blob).map_err(|e| {
+                JsError::new(resume::ColdBootReason::from_snapshot_error(&e).code())
+            })?;
+        }
+        Ok(decision.code().to_string())
+    }
+
+    /// Persist an externally supplied snapshot blob (AC3 import) into the snapshot store for THIS boot's
+    /// base image. The blob is bound to this base's namespace; a foreign blob imported here still fails
+    /// the coherence guard on restore. Framing-corrupt input is replaced by a corrupt marker, and a
+    /// same-size payload mutation is checked against the digest of the previously published snapshot;
+    /// both paths make the next decision typed `"corrupt"` rather than falsely `"resume"`. The live
+    /// machine and overlay are not mutated. The write counter keeps lease release behind this full
+    /// namespace mutation. Error `"not_persistent"` off the persistent path.
+    #[wasm_bindgen(js_name = importStoredSnapshot)]
+    pub async fn import_stored_snapshot(&self, blob: Vec<u8>) -> Result<(), JsError> {
+        let (base, current_generation, write_count) = {
+            let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            if inner.snapshot_read_only {
+                return Err(JsError::new("read_only"));
+            }
+            let base = match inner.snapshot_base {
+                Some(base) => base,
+                None => return Err(JsError::new("not_persistent")),
+            };
+            let write_count = inner.snapshot_write_count.clone();
+            write_count.set(write_count.get().saturating_add(1));
+            (base, inner.machine.overlay_generation(), write_count)
+        };
+        let result = async {
+            let store = snapshot_store::SnapshotStore::open(&base)
+                .await
+                .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
+            let previous = store
+                .read_meta()
+                .await
+                .map_err(|e| JsError::new(&format!("snapshot metadata: {e:?}")))?
+                .and_then(|bytes| wasm_vm_storage::SnapshotMeta::from_bytes(&bytes).ok())
+                .filter(|meta| meta.base_binding == base && meta.total_len > 0);
+            if resume::validate_container(&blob).is_err() {
+                store
+                    .mark_corrupt(&base)
+                    .await
+                    .map_err(|e| JsError::new(&format!("snapshot corrupt marker: {e:?}")))?;
+                return Ok(());
+            }
+            let imported_digest: [u8; 32] = Sha256::digest(&blob).into();
+            let decision = resume::RestoreDecision::decide(
+                Some(&blob),
+                &build_core_hash(),
+                &base,
+                current_generation,
+            );
+            if decision.is_resume()
+                && previous.is_some_and(|meta| {
+                    meta.total_len != blob.len() as u64 || meta.blob_sha256 != imported_digest
+                })
+            {
+                store
+                    .mark_corrupt(&base)
+                    .await
+                    .map_err(|e| JsError::new(&format!("snapshot corrupt marker: {e:?}")))?;
+                return Ok(());
+            }
+            store
+                .save(&blob, &base)
+                .await
+                .map_err(|e| JsError::new(&format!("snapshot import: {e:?}")))?;
+            Ok(())
+        }
+        .await;
+        finish_snapshot_write(&write_count);
+        result
     }
 
     /// The current overlay commit generation (the snapshot coherence's third binding). `u64` fits
@@ -2006,7 +3240,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = closeStorage)]
     pub fn close_storage(&self) -> Result<(), JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
-        if let Some((idb, _)) = &inner.persist {
+        if let Some((idb, _, _)) = &inner.persist {
             idb.close();
         }
         Ok(())
@@ -2037,7 +3271,7 @@ impl WasmLinux {
         Ok(inner
             .persist
             .as_ref()
-            .is_some_and(|(_, q)| !q.borrow().is_empty()))
+            .is_some_and(|(_, q, _)| !q.borrow().is_empty()))
     }
 
     /// E3-T08/E3-T10 persistence pressure —
@@ -2050,7 +3284,7 @@ impl WasmLinux {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
         let obj = js_sys::Object::new();
         let (blocks, flush_waiting, write_waiting) = match &inner.persist {
-            Some((_, q)) => {
+            Some((_, q, _)) => {
                 let n = q.borrow().unpersisted_count();
                 (
                     n,

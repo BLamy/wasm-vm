@@ -1,0 +1,66 @@
+E5-T23c final exact-head evidence
+Date: 2026-09-04
+Implementation head: d1bb52a9a615f987a5c9af5115f16c32effe0029
+
+Focused gates
+-------------
+- `cargo fmt --all -- --check` — passed.
+- `cargo clippy -p wasm-vm-agent-protocol -p wasm-vm-guest-agent --all-targets -- -D warnings` — passed.
+- `cargo test -p wasm-vm-agent-protocol -- --nocapture` — 9 passed, 0 failed.
+- `cargo test -p wasm-vm-guest-agent -- --nocapture` — 7 passed, 0 failed.
+- `bash -n tools/build-rootfs.sh tools/rootfs-inner.sh tools/build-agent.sh tools/verify/e3-t21b2c-rootfs.sh tools/verify/e5-t23c-static-agent.sh` — passed.
+- `sh -n tools/rootfs/wasmvm-agent.initd` — passed.
+- `python3 tools/check_task_policy.py` — `task-policy: OK (active=E5-T23c)`.
+
+Exact acceptance command
+------------------------
+`bash tools/verify/e5-t23c-static-agent.sh` at implementation head d1bb52a — passed.
+
+The same command built the host test binary and launched the real service entrypoint five times
+against the absent fixed port; each process was terminated and reaped with no lingering child.
+
+The command performed two clean cross-builds in separate target directories. Both produced:
+
+- SHA-256: `c5feb0c04db680d1ae813d0fd85bd599ee29adb51fdc64dc329f66793d1f6851`
+- Size: `378536` bytes (under the 1 MiB limit)
+- `file`: `ELF 64-bit LSB pie executable, UCB RISC-V, RVC, double-float ABI, version 1 (SYSV), static-pie linked, stripped`
+- RISC-V Alpine `ldd`: `statically linked`
+
+The command also rebuilt the T17 Alpine image with the pinned package/custom manifests, inspected
+the ext4 read-only with debugfs, and passed the source/install assertions. The image SHA-256 was
+`ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8`; the custom manifest SHA-256
+was `39c25610a5c8ae1978afb340e951282a7539b5fa9d596732050826b99d58f46b`. The actual image contained
+the agent at `/usr/libexec/wasm-vm/wasmvm-agent` with mode 0755 and the exact agent SHA above, plus
+`/etc/runlevels/default/wasmvm-agent` as a symlink to `/etc/init.d/wasmvm-agent`.
+
+The service bytes are tracked at `a417aa7b622f81634ca4af63d7514a1d5de6efd5c77b0a7b262f0b99c13f99ec`
+with `respawn_delay=1`, `respawn_max=5`, and `respawn_period=60`. The image's `/etc/inittab` still
+contains the unchanged `ttyS0::respawn:/sbin/getty -L 115200 ttyS0 vt100` path.
+
+Complete-image reproducibility
+------------------------------
+`bash tools/verify/e3-t21b2c-repro.sh target/e5-t23c-rootfs-repro` — passed. Both complete 512 MiB
+images were byte-identical and hashed to `ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8`.
+Retained logs/artifacts:
+
+- `target/e5-t23c-rootfs-repro/build-a.log`
+- `target/e5-t23c-rootfs-repro/build-b.log`
+- `target/e5-t23c-rootfs-repro/rootfs-a.ext4`
+- `target/e5-t23c-rootfs-repro/rootfs-b.ext4`
+- `target/e5-t23c-rootfs-repro/result.txt`
+
+Coverage and scope
+------------------
+The seven agent tests exercise HELLO negotiation, PING/PONG, unknown-type NAK, byte-dribbled input,
+oversized/malformed frames, bounded output under an unknown-frame storm, in-flight reset, retry
+backoff, the writable flush adapter, empty-port EOF through `poll(2)`, and malformed-port
+termination. The release build compiles the production fixed-path service loop; the ext4 inspection
+proves its installed binary, service file, default link, and serial-console isolation. The infinite
+OpenRC entrypoint itself is intentionally not launched by the native fixture; its finite poll and
+restart bounds are directly asserted in source and in the installed service configuration. No
+browser surface or host rr trace is part of this slice under the current evidence policy.
+
+Note: `cargo check --workspace --all-targets` was also attempted and remains blocked by the existing
+macOS-only `crates/wvseccomp/src/main.rs` libc API errors (`prctl`, `PR_SET_NO_NEW_PRIVS`,
+`SYS_seccomp`, and syscall argument type). T23c's affected crates, cross-release builds, and the
+rootfs builder all pass; no T23c source is involved in that pre-existing diagnostic.

@@ -1,0 +1,45 @@
+{
+  "schema": "e5-t01b-virtio-gpu-display-info-v1",
+  "task": "E5-T01b",
+  "status": "pass",
+  "implementation_commit": "0df7111",
+  "recorded_at": "2026-09-03",
+  "native": {
+    "acceptance_command": "cargo test -p wasm-vm-core --lib virtio_gpu_display_info",
+    "acceptance_result": "3 passed, 0 failed",
+    "tests": [
+      "virtio_gpu_display_info_contiguous_fenced: 408-byte response, enabled 1280x800 mode, fence flag/id echo, used-ring publication",
+      "virtio_gpu_display_info_split_header_unfenced: two readable 12-byte descriptors parse as one header; response fence flag/id are zero",
+      "virtio_gpu_display_info_short_tail_is_bounded: 32-byte writable tail truncates safely and leaves the following sentinel untouched"
+    ],
+    "regression": {
+      "command": "cargo test -p wasm-vm-core --lib",
+      "result": "182 passed, 0 failed"
+    },
+    "clippy": {
+      "command": "cargo clippy -p wasm-vm-core --lib -- -D warnings",
+      "result": "pass"
+    }
+  },
+  "wasm32": {
+    "core_build": {
+      "command": "cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown",
+      "result": "pass"
+    },
+    "protocol_device_runner": {
+      "command": "wasm-pack test --node crates/wasm --test gpu_protocol",
+      "result": "2 passed, 0 failed"
+    }
+  },
+  "coverage": [
+    "VirtioDevice::queue_notify marks deferred work while the MMIO bus is borrowed.",
+    "The control queue is built from the existing split-virtqueue engine and drains the used ring after each request.",
+    "Headers are copied through readable descriptors without assuming descriptor boundaries; responses are copied only through validated writable descriptors.",
+    "Fence responses retain FLAG_FENCE and fence_id only when requested, while preserving ctx_id/ring_idx and zeroing response padding.",
+    "The short-tail test verifies no write escapes the provided writable descriptor."
+  ],
+  "scope_notes": [
+    "Unsupported-command error responses and malformed-chain policy remain owned by E5-T01c.",
+    "No independent-machine or WebKit run was used, per the user's direction."
+  ]
+}

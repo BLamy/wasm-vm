@@ -10,25 +10,26 @@
 //! so f64 is exact) and `meta` (the single [`SnapshotMeta`] record under key 0).
 //!
 //! **Commit contract.** `meta` is written LAST, after every chunk's strict transaction has committed,
-//! so `meta present ⇒ all chunks present`. A tab that dies mid-save leaves chunks but no meta; the load
-//! side reads no meta and cold-boots (never resumes a half-published store). Before writing the new
-//! chunk set, `save` CLEARS the old chunks so a smaller new snapshot can't leave stale trailing chunks
-//! from a larger prior one that would fail reassembly's exact-length check.
+//! so a normally published meta record means all chunks are present and match its digest. A tab that
+//! dies mid-save leaves chunks but no new meta; the load side either reads no meta or detects the old
+//! meta's missing/mismatched chunks and cold-boots (never resumes a half-published store). The corrupt
+//! marker path may deliberately preserve an old meta digest while clearing chunks; load treats that
+//! state as an explicit corrupt marker, and a later import must match the preserved digest to recover.
+//! Before writing the new chunk set, `save` CLEARS the old chunks so a smaller new snapshot can't leave
+//! stale trailing chunks from a larger prior one that would fail reassembly's exact-length check.
 //!
 //! Mirrors [`crate::idb_store`] deliberately — same `await_request`/`await_transaction` helpers, same
 //! `rw_strict` durability, same global-scope factory lookup and versionchange auto-close.
 
-use js_sys::{Array, Uint8Array};
+use js_sys::Uint8Array;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{IdbDatabase, IdbObjectStore, IdbRequest, IdbTransaction};
 
-use std::collections::BTreeMap;
-
-use wasm_vm_storage::{
-    SNAPSHOT_CHUNK, SNAPSHOT_DB_VERSION, SnapshotMeta, reassemble, snapshot_store_name,
-};
+use core::cell::RefCell;
+use sha2::{Digest, Sha256};
+use wasm_vm_storage::{SNAPSHOT_CHUNK, SNAPSHOT_DB_VERSION, SnapshotMeta, snapshot_store_name};
 
 const CHUNKS: &str = "chunks";
 const META: &str = "meta";
@@ -37,11 +38,32 @@ const META_KEY: f64 = 0.0;
 /// 1 MiB `SNAPSHOT_CHUNK`) so a single txn is never the whole multi-tens-of-MiB blob.
 const CHUNKS_PER_TXN: usize = 16;
 
+/// E3-T12d evidence seam. The callback is absent in production, so this is inert; when a browser
+/// proof installs `globalThis.__e3t12dSnapshotProbe`, each boundary records the JS heap sample and
+/// storage phase from the same execution. The callback is deliberately best-effort and can never
+/// affect snapshot semantics.
+fn proof_probe(phase: &str, value: usize) {
+    let global = js_sys::global();
+    let Ok(callback) = js_sys::Reflect::get(&global, &JsValue::from_str("__e3t12dSnapshotProbe"))
+    else {
+        return;
+    };
+    let Some(callback) = callback.dyn_ref::<js_sys::Function>() else {
+        return;
+    };
+    let _ = callback.call2(
+        &global,
+        &JsValue::from_str(phase),
+        &JsValue::from_f64(value as f64),
+    );
+}
+
 /// A handle to the opened snapshot database. `Clone` (the `IdbDatabase` is a cheap JS handle) so the
 /// async persist/restore drivers can clone it and `await` without holding a `RefCell` borrow.
 #[derive(Clone)]
 pub struct SnapshotStore {
     db: IdbDatabase,
+    base_binding: [u8; 32],
 }
 
 impl SnapshotStore {
@@ -95,7 +117,10 @@ impl SnapshotStore {
         });
         db.set_onversionchange(Some(on_vc.as_ref().unchecked_ref()));
         on_vc.forget();
-        Ok(SnapshotStore { db })
+        Ok(SnapshotStore {
+            db,
+            base_binding: *base_binding,
+        })
     }
 
     /// The stored meta record bytes (`None` if no snapshot is persisted / a brand-new DB).
@@ -128,6 +153,15 @@ impl SnapshotStore {
         js_sys::Reflect::apply(&txn_fn, &self.db, &args)?.dyn_into::<IdbTransaction>()
     }
 
+    /// Clear the chunk object store while leaving the meta commit marker untouched. `mark_corrupt`
+    /// uses this to invalidate the currently published chunks without throwing away the digest of a
+    /// previously valid snapshot, so a later re-import can prove it is restoring that exact payload.
+    async fn clear_chunks(&self) -> Result<(), JsValue> {
+        let txn = self.rw_strict(CHUNKS)?;
+        txn.object_store(CHUNKS)?.clear()?;
+        await_transaction(&txn).await
+    }
+
     /// Persist `blob` as the resume snapshot for `base_binding`. Order matters for crash safety:
     /// 1. CLEAR the old chunks (strict txn) so a smaller new snapshot leaves no stale trailing chunk.
     /// 2. Write the chunks in batched strict `readwrite` transactions (`CHUNKS_PER_TXN` per txn).
@@ -136,16 +170,17 @@ impl SnapshotStore {
     /// Only chunk slices of `blob` are copied into JS (via `Uint8Array::from`); no second whole-blob
     /// copy is ever held. On a `QuotaExceededError` the underlying transaction rejects with that name.
     pub async fn save(&self, blob: &[u8], base_binding: &[u8; 32]) -> Result<(), JsValue> {
-        let meta = SnapshotMeta::new(blob.len() as u64, *base_binding);
+        if *base_binding != self.base_binding {
+            return Err(JsValue::from_str("foreign_image"));
+        }
+        let digest: [u8; 32] = Sha256::digest(blob).into();
+        let meta = SnapshotMeta::new(blob.len() as u64, *base_binding, digest);
+        proof_probe("save-start", blob.len());
 
         // 1. Drop any prior chunk set first — a shorter new snapshot must not inherit stale trailing
         //    chunks that reassembly's exact-count/length check would then trip on.
-        {
-            let txn = self.rw_strict(CHUNKS)?;
-            let store = txn.object_store(CHUNKS)?;
-            store.clear()?;
-            await_transaction(&txn).await?;
-        }
+        self.clear_chunks().await?;
+        proof_probe("clear-committed", blob.len());
 
         // 2. Stream the blob as 1 MiB chunks, batching CHUNKS_PER_TXN puts per strict transaction so a
         //    single txn is bounded rather than the whole blob.
@@ -160,6 +195,7 @@ impl SnapshotStore {
                 in_batch = 0;
             }
             let arr = Uint8Array::from(chunk);
+            proof_probe("chunk-before-put", index);
             store
                 .as_ref()
                 .unwrap()
@@ -168,6 +204,7 @@ impl SnapshotStore {
             if in_batch == CHUNKS_PER_TXN {
                 // Commit this batch (strict complete = durably flushed) before opening the next.
                 await_transaction(batch_start.as_ref().unwrap()).await?;
+                proof_probe("chunk-committed", index);
                 batch_start = None;
                 store = None;
             }
@@ -175,10 +212,40 @@ impl SnapshotStore {
         // Flush a partial trailing batch.
         if let Some(txn) = batch_start.as_ref() {
             await_transaction(txn).await?;
+            proof_probe(
+                "chunk-committed",
+                blob.len().div_ceil(SNAPSHOT_CHUNK).saturating_sub(1),
+            );
         }
 
         // 3. The commit marker: meta present ⇒ every chunk above committed.
-        self.write_meta(&meta.to_bytes()).await
+        proof_probe("meta-before", blob.len());
+        self.write_meta(&meta.to_bytes()).await?;
+        proof_probe("meta-committed", blob.len());
+        Ok(())
+    }
+
+    /// Invalidate the stored snapshot after an externally supplied blob fails framing or content
+    /// validation. If a previously valid snapshot exists, preserve its length + digest in `meta` but
+    /// clear its chunks; the next load then returns a typed corrupt marker, while a later import can
+    /// restore the old snapshot only if its complete payload matches that digest. With no usable prior
+    /// record, write a zero-length marker. The live machine and overlay are never mutated.
+    pub async fn mark_corrupt(&self, base_binding: &[u8; 32]) -> Result<(), JsValue> {
+        if *base_binding != self.base_binding {
+            return Err(JsValue::from_str("foreign_image"));
+        }
+        let prior = self
+            .read_meta()
+            .await?
+            .and_then(|bytes| SnapshotMeta::from_bytes(&bytes).ok())
+            .filter(|meta| meta.base_binding == self.base_binding && meta.total_len > 0);
+        self.clear_chunks().await?;
+        if prior.is_none() {
+            let empty_digest: [u8; 32] = Sha256::digest([]).into();
+            self.write_meta(&SnapshotMeta::new(0, self.base_binding, empty_digest).to_bytes())
+                .await?;
+        }
+        Ok(())
     }
 
     /// Write (or replace) the meta record (strict durability). The snapshot's commit marker.
@@ -191,31 +258,95 @@ impl SnapshotStore {
     }
 
     /// Reassemble the persisted snapshot blob, or `Ok(None)` if none is stored (no meta record). A
-    /// malformed meta or a torn/half-published chunk set is surfaced as a JsValue string carrying the
-    /// reason (`"corrupt"` / the storage-integrity fault) so the JS boundary maps it to a cold boot.
-    /// Produces exactly one `Vec` of `total_len` bytes — the chunk map is consumed as it is copied out.
+    /// malformed meta, a torn/half-published chunk set, a base mismatch, or a payload digest mismatch
+    /// is returned as `Some(Vec::new())`: an explicit corrupt marker that the JS boundary maps to a
+    /// typed cold boot instead of treating a storage fault as an API error.
+    ///
+    /// The load path is deliberately sequential and bounded: it checks the object-store count, then
+    /// opens a short read-only transaction for each chunk, copies only that chunk into a temporary
+    /// Rust buffer, hashes it, and appends it to the one final output allocation. It never asks
+    /// IndexedDB for all values and never constructs a second whole-blob map or reassembly buffer.
     pub async fn load(&self) -> Result<Option<Vec<u8>>, JsValue> {
         let Some(meta_bytes) = self.read_meta().await? else {
             return Ok(None);
         };
-        let meta =
-            SnapshotMeta::from_bytes(&meta_bytes).map_err(|_| JsValue::from_str("corrupt"))?;
-
-        let txn = self.db.transaction_with_str(CHUNKS)?;
-        let store = txn.object_store(CHUNKS)?;
-        let keys: Array = await_request(&store.get_all_keys()?).await?.into();
-        let vals: Array = await_request(&store.get_all()?).await?.into();
-        let mut map: BTreeMap<u64, Vec<u8>> = BTreeMap::new();
-        for i in 0..keys.length() {
-            let k = keys.get(i).as_f64().unwrap_or(-1.0);
-            if k < 0.0 {
-                continue;
-            }
-            map.insert(k as u64, Uint8Array::new(&vals.get(i)).to_vec());
+        let Ok(meta) = SnapshotMeta::from_bytes(&meta_bytes) else {
+            return Ok(Some(Vec::new()));
+        };
+        if meta.base_binding != self.base_binding {
+            return Ok(Some(Vec::new()));
         }
-        // A torn/short/missing chunk is a storage-integrity fault → cold boot. Surface the debug
-        // reason so JS can log it; it maps every store fault to "corrupt".
-        let blob = reassemble(&meta, map).map_err(|e| JsValue::from_str(&format!("{e:?}")))?;
+
+        // This schema writes SNAPSHOT_CHUNK-sized chunks. Refuse a doctored meta before trusting its
+        // shape to drive any reads; the returned empty marker is an explicit typed `corrupt` result.
+        if meta.chunk_size as usize != SNAPSHOT_CHUNK {
+            return Ok(Some(Vec::new()));
+        }
+
+        let total_len = match usize::try_from(meta.total_len) {
+            Ok(value) => value,
+            Err(_) => return Ok(Some(Vec::new())),
+        };
+
+        // A complete published snapshot has exactly the meta-declared number of chunks. This also
+        // catches stale trailing objects without requesting all values into a JS array.
+        let stored_count = {
+            let txn = self.db.transaction_with_str(CHUNKS)?;
+            let store = txn.object_store(CHUNKS)?;
+            await_request(&store.count()?)
+                .await?
+                .as_f64()
+                .filter(|count| count.is_finite() && count.fract() == 0.0)
+        };
+        if stored_count != Some(meta.chunk_count as f64) {
+            return Ok(Some(Vec::new()));
+        }
+
+        proof_probe("load-start", total_len);
+        let mut blob = Vec::with_capacity(total_len);
+        let mut digest = Sha256::new();
+        for index in 0..meta.chunk_count {
+            // IndexedDB transactions become inactive after an await. Keep each get in its own
+            // short transaction rather than holding a transaction across the previous request.
+            let value = {
+                let txn = self.db.transaction_with_str(CHUNKS)?;
+                let store = txn.object_store(CHUNKS)?;
+                let value = await_request(&store.get(&JsValue::from_f64(index as f64))?).await?;
+                // Do not advance to another record while this request's transaction still owns the
+                // structured-clone result. The completion barrier releases that ownership before the
+                // next 1 MiB value is fetched, keeping delayed browser GC from looking like a growing
+                // whole-snapshot allocation.
+                await_transaction(&txn).await?;
+                value
+            };
+            if value.is_undefined() || value.is_null() {
+                return Ok(Some(Vec::new()));
+            }
+            // IndexedDB stores these records as Uint8Arrays. Reusing the result object as a typed
+            // view is important: `Uint8Array::new(&value)` would clone every 1 MiB record before we
+            // copied it into Rust, and delayed JS GC would turn that bounded algorithm into a large
+            // host-heap staircase.
+            let chunk = Uint8Array::unchecked_from_js(value);
+            let Some(expected) = meta.expected_chunk_len(index) else {
+                return Ok(Some(Vec::new()));
+            };
+            if chunk.length() as usize != expected {
+                return Ok(Some(Vec::new()));
+            }
+            let mut bytes = vec![0u8; expected];
+            chunk.copy_to(&mut bytes);
+            digest.update(&bytes);
+            blob.extend_from_slice(&bytes);
+            proof_probe("load-chunk", index as usize);
+        }
+        if blob.len() != total_len {
+            return Ok(Some(Vec::new()));
+        }
+        let actual_digest: [u8; 32] = digest.finalize().into();
+        if actual_digest != meta.blob_sha256 {
+            return Ok(Some(Vec::new()));
+        }
+        proof_probe("load-complete", blob.len());
         Ok(Some(blob))
     }
 
@@ -223,9 +354,7 @@ impl SnapshotStore {
     /// (The discard-on-foreign/stale UI wiring is a follow-up; present now as the store primitive.)
     #[allow(dead_code)]
     pub async fn clear(&self) -> Result<(), JsValue> {
-        let txn = self.rw_strict(CHUNKS)?;
-        txn.object_store(CHUNKS)?.clear()?;
-        await_transaction(&txn).await?;
+        self.clear_chunks().await?;
         let txn = self.rw_strict(META)?;
         txn.object_store(META)?.clear()?;
         await_transaction(&txn).await
@@ -236,56 +365,97 @@ impl SnapshotStore {
 /// (mirrors idb_store::await_request).
 async fn await_request(req: &IdbRequest) -> Result<JsValue, JsValue> {
     let req = req.clone();
+    let resolve_slot = std::rc::Rc::new(RefCell::new(None::<js_sys::Function>));
+    let reject_slot = std::rc::Rc::new(RefCell::new(None::<js_sys::Function>));
+    let resolve_for_executor = resolve_slot.clone();
+    let reject_for_executor = reject_slot.clone();
     let promise = js_sys::Promise::new(&mut |resolve, reject| {
-        let reject2 = reject.clone();
-        let r_ok = req.clone();
-        let onsuccess = Closure::<dyn FnMut(web_sys::Event)>::new(move |_e| match r_ok.result() {
-            Ok(v) => {
-                let _ = resolve.call1(&JsValue::NULL, &v);
-            }
-            Err(e) => {
-                let _ = reject.call1(&JsValue::NULL, &e);
-            }
-        });
-        let r_err = req.clone();
-        let onerror = Closure::<dyn FnMut(web_sys::Event)>::new(move |_e| {
-            let e = r_err
-                .error()
-                .ok()
-                .flatten()
-                .map(JsValue::from)
-                .unwrap_or_else(|| JsValue::from_str("IndexedDB request error"));
-            let _ = reject2.call1(&JsValue::NULL, &e);
-        });
-        req.set_onsuccess(Some(onsuccess.as_ref().unchecked_ref()));
-        req.set_onerror(Some(onerror.as_ref().unchecked_ref()));
-        onsuccess.forget();
-        onerror.forget();
+        *resolve_for_executor.borrow_mut() = Some(resolve);
+        *reject_for_executor.borrow_mut() = Some(reject);
     });
-    JsFuture::from(promise).await
+    let resolve_for_success = resolve_slot.clone();
+    let reject_for_success = reject_slot.clone();
+    let r_ok = req.clone();
+    let onsuccess = Closure::<dyn FnMut(web_sys::Event)>::new(move |_e| match r_ok.result() {
+        Ok(value) => {
+            reject_for_success.borrow_mut().take();
+            if let Some(resolve) = resolve_for_success.borrow_mut().take() {
+                let _ = resolve.call1(&JsValue::NULL, &value);
+            }
+        }
+        Err(error) => {
+            resolve_for_success.borrow_mut().take();
+            if let Some(reject) = reject_for_success.borrow_mut().take() {
+                let _ = reject.call1(&JsValue::NULL, &error);
+            }
+        }
+    });
+    let resolve_for_error = resolve_slot.clone();
+    let reject_for_error = reject_slot.clone();
+    let r_err = req.clone();
+    let onerror = Closure::<dyn FnMut(web_sys::Event)>::new(move |_e| {
+        let e = r_err
+            .error()
+            .ok()
+            .flatten()
+            .map(JsValue::from)
+            .unwrap_or_else(|| JsValue::from_str("IndexedDB request error"));
+        resolve_for_error.borrow_mut().take();
+        if let Some(reject) = reject_for_error.borrow_mut().take() {
+            let _ = reject.call1(&JsValue::NULL, &e);
+        }
+    });
+    req.set_onsuccess(Some(onsuccess.as_ref().unchecked_ref()));
+    req.set_onerror(Some(onerror.as_ref().unchecked_ref()));
+    let result = JsFuture::from(promise).await;
+    req.set_onsuccess(None);
+    req.set_onerror(None);
+    drop(onsuccess);
+    drop(onerror);
+    result
 }
 
 /// Await an `IdbTransaction`, resolving on `complete` or rejecting on `error`/`abort`. On abort the
 /// DOMException NAME (esp. `QuotaExceededError`) is surfaced so the boundary can classify quota
 /// exhaustion vs a generic failure (mirrors idb_store::await_transaction).
 async fn await_transaction(txn: &IdbTransaction) -> Result<(), JsValue> {
+    let resolve_slot = std::rc::Rc::new(RefCell::new(None::<js_sys::Function>));
+    let reject_slot = std::rc::Rc::new(RefCell::new(None::<js_sys::Function>));
+    let resolve_for_executor = resolve_slot.clone();
+    let reject_for_executor = reject_slot.clone();
     let promise = js_sys::Promise::new(&mut |resolve, reject| {
-        let oncomplete = Closure::<dyn FnMut(web_sys::Event)>::new(move |_e| {
-            let _ = resolve.call0(&JsValue::NULL);
-        });
-        let txn_err = txn.clone();
-        let onerror = Closure::<dyn FnMut(web_sys::Event)>::new(move |_e| {
-            let name = txn_err
-                .error()
-                .map(|e| e.name())
-                .unwrap_or_else(|| "IndexedDB transaction failed".to_string());
-            let _ = reject.call1(&JsValue::NULL, &JsValue::from_str(&name));
-        });
-        txn.set_oncomplete(Some(oncomplete.as_ref().unchecked_ref()));
-        txn.set_onerror(Some(onerror.as_ref().unchecked_ref()));
-        txn.set_onabort(Some(onerror.as_ref().unchecked_ref()));
-        oncomplete.forget();
-        onerror.forget();
+        *resolve_for_executor.borrow_mut() = Some(resolve);
+        *reject_for_executor.borrow_mut() = Some(reject);
     });
-    JsFuture::from(promise).await.map(|_| ())
+    let resolve_for_complete = resolve_slot.clone();
+    let reject_for_complete = reject_slot.clone();
+    let oncomplete = Closure::<dyn FnMut(web_sys::Event)>::new(move |_e| {
+        reject_for_complete.borrow_mut().take();
+        if let Some(resolve) = resolve_for_complete.borrow_mut().take() {
+            let _ = resolve.call0(&JsValue::NULL);
+        }
+    });
+    let resolve_for_error = resolve_slot.clone();
+    let reject_for_error = reject_slot.clone();
+    let txn_err = txn.clone();
+    let onerror = Closure::<dyn FnMut(web_sys::Event)>::new(move |_e| {
+        let name = txn_err
+            .error()
+            .map(|e| e.name())
+            .unwrap_or_else(|| "IndexedDB transaction failed".to_string());
+        resolve_for_error.borrow_mut().take();
+        if let Some(reject) = reject_for_error.borrow_mut().take() {
+            let _ = reject.call1(&JsValue::NULL, &JsValue::from_str(&name));
+        }
+    });
+    txn.set_oncomplete(Some(oncomplete.as_ref().unchecked_ref()));
+    txn.set_onerror(Some(onerror.as_ref().unchecked_ref()));
+    txn.set_onabort(Some(onerror.as_ref().unchecked_ref()));
+    let result = JsFuture::from(promise).await.map(|_| ());
+    txn.set_oncomplete(None);
+    txn.set_onerror(None);
+    txn.set_onabort(None);
+    drop(oncomplete);
+    drop(onerror);
+    result
 }

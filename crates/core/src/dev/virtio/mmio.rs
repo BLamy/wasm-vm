@@ -70,8 +70,10 @@ pub const STATUS_FAILED: u32 = 128;
 pub const INT_USED_RING: u32 = 1;
 pub const INT_CONFIG_CHANGE: u32 = 2;
 
-/// The most queues any backend may expose through one slot.
-pub const MAX_QUEUES: usize = 4;
+/// The most queues any backend may expose through one slot.  Virtio-console multiport uses
+/// queues 0..=5 (port 0, the control pair, and one additional port); the extra two entries keep
+/// that device from aliasing its agent queues onto the sound device's four-queue ceiling.
+pub const MAX_QUEUES: usize = 8;
 
 /// Per-virtqueue transport state (addresses become *usable* only while `ready`).
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
@@ -126,6 +128,15 @@ impl VirtioMmio {
         Ok(())
     }
 
+    /// Device id currently installed in this slot, or zero for an empty slot. Machine assembly
+    /// uses this read-only view to place optional devices without disturbing established slots.
+    pub fn device_id(&self) -> u32 {
+        self.dev
+            .as_ref()
+            .map(|device| device.device_id())
+            .unwrap_or(0)
+    }
+
     fn with_backend(dev: Option<Box<dyn VirtioDevice>>) -> Self {
         Self {
             dev,
@@ -150,6 +161,29 @@ impl VirtioMmio {
     /// Level for the slot's PLIC line: high while any InterruptStatus bit is pending.
     pub fn irq_level(&self) -> bool {
         self.int_status != 0
+    }
+
+    /// Whether the driver has successfully negotiated all bits in `feature`.
+    pub fn driver_has_feature(&self, feature: u64) -> bool {
+        self.status & STATUS_FEATURES_OK != 0 && self.driver_features & feature == feature
+    }
+
+    /// The raw feature set last written by the driver, exposed for deterministic device tests.
+    pub fn driver_features(&self) -> u64 {
+        self.driver_features
+    }
+
+    /// Latch a backend-originated configuration change into the transport's config interrupt.
+    /// Returns `true` exactly when this call consumed a pending backend request.
+    pub fn sync_backend_config_irq(&mut self) -> bool {
+        let pending = self
+            .dev
+            .as_mut()
+            .is_some_and(|device| device.take_config_irq());
+        if pending {
+            self.raise_config_irq();
+        }
+        pending
     }
 
     /// Backend signal: buffers were used → interrupt the driver (E2-T09+ calls this).
