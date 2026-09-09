@@ -1884,7 +1884,7 @@ let lastBootError = null;
 // `releases/…` URLs are rewritten to this base at deploy time (tools/deploy-cloudflare.sh).
 const R2_ASSETS =
   new URLSearchParams(location.search).get("assetBase") ||
-  "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev";
+  "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev";
 // Whether the Alpine (container-capable) artifacts are deployed — set by the load-time probe below.
 let alpineAvailable = false;
 // E3.6-T05: whether the node-preinstalled Alpine artifacts are deployed (the default flavor).

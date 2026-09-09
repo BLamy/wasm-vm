@@ -23,7 +23,7 @@ fi
 # `bash tools/deploy-r2.sh`. Here we only ship the small manifests and REWRITE their relative
 # `releases/…` URLs to the R2 public base (kernel/initramfs/rootfs/chunked-alpine). The chunked-image
 # manifest URL is set to R2 directly in web/main.js (R2_ASSETS).
-R2_PUBLIC="https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev"
+R2_PUBLIC="${R2_PUBLIC:-https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev}"
 R2_BUCKET="${R2_BUCKET:-wasm-vm}"
 PAGES_FILE_LIMIT=$((25 * 1024 * 1024))
 MANIFEST_NAMES=(artifacts.json artifacts-alpine.json artifacts-node-alpine.json)
