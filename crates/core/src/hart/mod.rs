@@ -478,18 +478,31 @@ fn xlate_amo(
 // page is a PAGE FAULT, not `*AddrMisaligned`. Only atomics (AMO/LR/SC) still require natural
 // alignment and raise `*AddrMisaligned` (they pre-check it themselves and never reach here).
 //
-// Handled accesses are byte-decomposed over a range first proven to be CONTIGUOUS RAM, so a
-// misaligned store never partially writes before discovering a fault, and a misaligned access
-// never partially touches a device (device-silence preserved).
+// Scalar accesses span at most two virtual pages. Validate both physical fragments before
+// byte decomposition: adjacent virtual pages need not have adjacent physical frames. This
+// preserves all-or-nothing data stores and prevents even partial device accesses.
 
-/// Supportability gate shared by misaligned load and store: translate the first and last byte
-/// of `[a, a+len)`, PROPAGATING any translation fault (page/access) — a misaligned-supporting
-/// machine reports the real fault, never a misaligned exception. On success returns the RAM
-/// physical base iff the range is contiguous RAM that PMP permits, or `None` meaning "reached
-/// a non-RAM / non-contiguous region" (the caller reports that as an access fault, not
-/// misaligned).
+struct MisalignedRam {
+    first: u64,
+    second: u64,
+    first_len: u64,
+}
+
+impl MisalignedRam {
+    #[inline]
+    fn byte_address(&self, index: u64) -> u64 {
+        if index < self.first_len {
+            self.first + index
+        } else {
+            self.second + (index - self.first_len)
+        }
+    }
+}
+
+/// Translate and validate every physical fragment before any data access. Faults
+/// identify the failing virtual fragment, including the second page boundary.
 #[inline]
-fn misaligned_ram_base(
+fn misaligned_ram_plan(
     csr: &Csrs,
     tlb: &mut Tlb,
     bus: &mut impl Bus,
@@ -497,25 +510,49 @@ fn misaligned_ram_base(
     len: u64,
     access: Access,
     pmp: PmpAccess,
-) -> Result<Option<u64>, Trap> {
+) -> Result<MisalignedRam, Trap> {
     let eff = csr.data_priv();
-    let a_last = a.wrapping_add(len - 1);
-    // `?` PROPAGATES a page/access fault from translation — this is the §3.7.1 fix.
+    let fault = |tval| Trap {
+        cause: match access {
+            Access::Load => Exception::LoadAccessFault,
+            _ => Exception::StoreAccessFault,
+        },
+        tval,
+    };
+    a.checked_add(len - 1).ok_or_else(|| fault(a))?;
     let pa0 = mmu::translate_cached(csr, tlb, bus, a, access, eff)?;
-    let pa_last = mmu::translate_cached(csr, tlb, bus, a_last, access, eff)?;
-    if pa_last == pa0.wrapping_add(len - 1)
-        && bus.ram_contains(pa0, len)
-        && csr.pmp_ok(pa0, len, pmp, eff)
-    {
-        Ok(Some(pa0))
-    } else {
-        Ok(None)
+    let first_len = len.min(4096 - (a & 4095));
+    let second_len = len - first_len;
+    if !bus.ram_contains(pa0, first_len) || !csr.pmp_ok(pa0, first_len, pmp, eff) {
+        return Err(fault(a));
     }
+    let second = if second_len == 0 {
+        pa0
+    } else {
+        let va = a + first_len;
+        let pa = mmu::translate_cached(csr, tlb, bus, va, access, eff)?;
+        if !bus.ram_contains(pa, second_len) || !csr.pmp_ok(pa, second_len, pmp, eff) {
+            return Err(fault(va));
+        }
+        pa
+    };
+    if second_len != 0 && pa0.checked_add(first_len) == Some(second) {
+        // Retain whole-access PMP matching when physical memory is contiguous;
+        // two separate PMP entries must not accidentally authorize one range.
+        if !bus.ram_contains(pa0, len) || !csr.pmp_ok(pa0, len, pmp, eff) {
+            return Err(fault(a));
+        }
+    }
+    Ok(MisalignedRam {
+        first: pa0,
+        second,
+        first_len,
+    })
 }
 
-/// Handle a misaligned LOAD: assemble `len` little-endian bytes from the contiguous RAM range.
+/// Handle a misaligned LOAD: assemble `len` little-endian bytes from validated RAM fragments.
 /// Returns the raw value in a `u64` (caller truncates + sign/zero-extends). A translation
-/// fault propagates as page/access fault; a non-RAM/non-contiguous range is a `LoadAccessFault`
+/// fault propagates as page/access fault; a non-RAM/PMP-denied range is a `LoadAccessFault`
 /// (never `LoadAddrMisaligned`, since misaligned is supported).
 #[inline]
 fn misaligned_load(
@@ -525,21 +562,19 @@ fn misaligned_load(
     a: u64,
     len: u64,
 ) -> Result<u64, Trap> {
-    let pa0 =
-        misaligned_ram_base(csr, tlb, bus, a, len, Access::Load, PmpAccess::Read)?.ok_or(Trap {
-            cause: Exception::LoadAccessFault,
-            tval: a,
-        })?;
+    let plan = misaligned_ram_plan(csr, tlb, bus, a, len, Access::Load, PmpAccess::Read)?;
     let mut val = 0u64;
     for i in 0..len {
-        let b = bus.load8(pa0 + i).map_err(|f| load_fault(f, a))?;
+        let b = bus
+            .load8(plan.byte_address(i))
+            .map_err(|f| load_fault(f, a + i))?;
         val |= u64::from(b) << (8 * i);
     }
     Ok(val)
 }
 
-/// Handle a misaligned STORE: write `len` little-endian bytes of `v` to the contiguous RAM
-/// range. A translation fault propagates as page/access fault; a non-RAM/non-contiguous range
+/// Handle a misaligned STORE: write `len` little-endian bytes of `v` to validated RAM
+/// fragments. A translation fault propagates as page/access fault; a non-RAM/PMP-denied range
 /// is a `StoreAccessFault`. Because the gate runs BEFORE any byte is written, a faulting store
 /// mutates nothing (no partial write).
 #[inline]
@@ -550,20 +585,17 @@ fn misaligned_store(
     a: u64,
     len: u64,
     v: u64,
-) -> Result<u64, Trap> {
-    let pa0 = misaligned_ram_base(csr, tlb, bus, a, len, Access::Store, PmpAccess::Write)?.ok_or(
-        Trap {
-            cause: Exception::StoreAccessFault,
-            tval: a,
-        },
-    )?;
-    // The range is proven contiguous RAM, so these byte stores cannot partially fault — no
+) -> Result<Option<u64>, Trap> {
+    let plan = misaligned_ram_plan(csr, tlb, bus, a, len, Access::Store, PmpAccess::Write)?;
+    // Both fragments are proven RAM, so these byte stores cannot partially fault — no
     // partial write is observable (the gate ran before any store).
     for i in 0..len {
-        bus.store8(pa0 + i, (v >> (8 * i)) as u8)
-            .map_err(|f| store_fault(f, a))?;
+        bus.store8(plan.byte_address(i), (v >> (8 * i)) as u8)
+            .map_err(|f| store_fault(f, a + i))?;
     }
-    Ok(pa0)
+    // A cross-page store must exit a browser JIT chain before the next instruction:
+    // its single-physical-page hint cannot describe both entries in the write log.
+    Ok((plan.first_len == len).then_some(plan.first))
 }
 
 macro_rules! checked_load {
@@ -620,7 +652,7 @@ macro_rules! checked_store {
             }
             // `is_multiple_of` avoids the `& 0` mask for the byte case (`$len == 1`).
             if !a.is_multiple_of($len) {
-                return misaligned_store(csr, tlb, bus, a, $len, v as u64).map(Some);
+                return misaligned_store(csr, tlb, bus, a, $len, v as u64);
             }
             let pa = xlate_store(csr, tlb, bus, a, $len)?;
             bus.$busfn(pa, v).map_err(|f| store_fault(f, a))?;

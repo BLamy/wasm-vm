@@ -8,6 +8,7 @@ export const RISCV_TESTS = [
   "rv64mi-p-csr",
   "rv64mi-p-illegal",
   "rv64mi-p-ld-misaligned",
+  "rv64mi-p-misaligned-virtual-pages",
   "rv64mi-p-lh-misaligned",
   "rv64mi-p-lw-misaligned",
   "rv64mi-p-ma_addr",
