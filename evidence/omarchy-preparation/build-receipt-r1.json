@@ -1,0 +1,159 @@
+{
+  "accounts": "locked root, nobody, omarchy plus fresh package systemd-sysusers identities",
+  "commands": [
+    [
+      "mount",
+      "-t",
+      "tmpfs",
+      "-o",
+      "nosuid,noexec,size=4m",
+      "tmpfs",
+      "/work/candidate-r1/root/dev"
+    ],
+    [
+      "mount",
+      "-t",
+      "proc",
+      "-o",
+      "ro,nosuid,nodev,noexec",
+      "proc",
+      "/work/candidate-r1/root/proc"
+    ],
+    [
+      "chroot",
+      "/work/candidate-r1/root",
+      "/usr/bin/pacman",
+      "-Dk"
+    ],
+    [
+      "chroot",
+      "/work/candidate-r1/root",
+      "/usr/bin/systemd-sysusers"
+    ],
+    [
+      "chroot",
+      "/work/candidate-r1/root",
+      "/usr/bin/systemd-tmpfiles",
+      "--create",
+      "--boot",
+      "--exclude-prefix=/dev",
+      "--exclude-prefix=/proc",
+      "--exclude-prefix=/sys",
+      "--exclude-prefix=/run"
+    ],
+    [
+      "chroot",
+      "/work/candidate-r1/root",
+      "/usr/bin/ldconfig"
+    ],
+    [
+      "chroot",
+      "/work/candidate-r1/root",
+      "/usr/bin/update-ca-trust"
+    ],
+    [
+      "chroot",
+      "/work/candidate-r1/root",
+      "/usr/bin/glib-compile-schemas",
+      "/usr/share/glib-2.0/schemas"
+    ],
+    [
+      "chroot",
+      "/work/candidate-r1/root",
+      "/usr/bin/update-mime-database",
+      "/usr/share/mime"
+    ],
+    [
+      "chroot",
+      "/work/candidate-r1/root",
+      "/usr/bin/update-desktop-database",
+      "/usr/share/applications"
+    ],
+    [
+      "chroot",
+      "/work/candidate-r1/root",
+      "/usr/bin/gio-querymodules",
+      "/usr/lib/gio/modules"
+    ],
+    [
+      "chroot",
+      "/work/candidate-r1/root",
+      "/usr/bin/gdk-pixbuf-query-loaders",
+      "--update-cache"
+    ],
+    [
+      "chroot",
+      "/work/candidate-r1/root",
+      "/usr/bin/fc-cache",
+      "-fs"
+    ],
+    [
+      "chroot",
+      "/work/candidate-r1/root",
+      "/usr/bin/setpriv",
+      "--reuid=1000",
+      "--regid=1000",
+      "--clear-groups",
+      "/usr/bin/env",
+      "HOME=/home/omarchy",
+      "USER=omarchy",
+      "LOGNAME=omarchy",
+      "OMARCHY_PATH=/usr/share/omarchy",
+      "OMARCHY_THEME_HEADLESS=1",
+      "/usr/bin/omarchy-theme-set",
+      "Tokyo Night"
+    ],
+    [
+      "umount",
+      "/work/candidate-r1/root/proc"
+    ],
+    [
+      "umount",
+      "/work/candidate-r1/root/dev"
+    ],
+    [
+      "mke2fs",
+      "-q",
+      "-t",
+      "ext4",
+      "-b",
+      "4096",
+      "-m",
+      "0",
+      "-L",
+      "omarchy-demo",
+      "-E",
+      "lazy_itable_init=0,lazy_journal_init=0",
+      "-O",
+      "^metadata_csum_seed,^orphan_file",
+      "-d",
+      "/work/candidate-r1/root",
+      "/work/candidate-r1/omarchy.ext4"
+    ],
+    [
+      "e2fsck",
+      "-fn",
+      "/work/candidate-r1/omarchy.ext4"
+    ]
+  ],
+  "desktopVerified": false,
+  "image": {
+    "name": "omarchy.ext4",
+    "sha256": "99df926c5ae1f199d52b2ab13344839b45e8e848b4f28ba0e4c17e4f62071f2a",
+    "size": 4294967296
+  },
+  "inputDigests": {
+    "assembly": "85171469dc4302680f6a0df454c92e43dc64240b1c82443764cda901b81f32cb",
+    "builder": "854e81258be72adc6fbcfb496b900a32ce3a54aac84d2b1488ee628a9731d368",
+    "configurator": "c2957d479f16154b2700ef4b8744b1ffca751d5706fd672629b9436215e424f2",
+    "demoOverlay": "8f714fbe33e3f3f49e126b40a6ae33d15dd8c8b625f303270de3b667977996e9",
+    "packages": "d5ffded6a15515582a5450b54d4bd6366615b628f6f054ac7b48bb3cf36260a5",
+    "reviewedSourceOverlays": "4d8ea0a83a70ccd3246724a3b246b3a137922c2110a92b3bf62a6424d2761314",
+    "sanitizer": "affd9c9c33d817e3f2f7b4bd95c04d3793d734c40d00318e60f0910841c27598",
+    "selection": "661f8f550e0cf223cae8602ccd46033a6195bc0816645182dc1ff4b0410f8e32"
+  },
+  "machineIdentity": "empty machine-id; systemd generates a new identity on first boot",
+  "population": "fresh ext4 populated only from sanitized package tree plus generated demo configuration",
+  "schema": 1,
+  "timestamps": "not a bit-reproducible build contract"
+}

@@ -443,7 +443,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 
-- [~] `525.01` [E5.5-T01a](epic-5.5-omarchy/E5.5-T01a-prepared-vm-image.md) — Prepare a clean Omarchy image candidate from the existing RISC-V VM *(deps: E5-T05c)*
+- [?] `525.01` [E5.5-T01a](epic-5.5-omarchy/E5.5-T01a-prepared-vm-image.md) — Prepare a clean Omarchy image candidate from the existing RISC-V VM *(deps: E5-T05c)*
 
 ## Epic 5 — `epic-5-the-window`
 

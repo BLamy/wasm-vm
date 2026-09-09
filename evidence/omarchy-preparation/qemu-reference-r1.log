@@ -1,0 +1,301 @@
+
+OpenSBI v1.8.1
+   ____                    _____ ____ _____
+  / __ \                  / ____|  _ \_   _|
+ | |  | |_ __   ___ _ __ | (___ | |_) || |
+ | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
+ | |__| | |_) |  __/ | | |____) | |_) || |_
+  \____/| .__/ \___|_| |_|_____/|____/_____|
+        | |
+        |_|
+
+Platform Name               : riscv-virtio,qemu
+Platform Features           : medeleg
+Platform HART Count         : 1
+Platform HART Protection    : pmp
+Platform IPI Device         : aclint-mswi
+Platform Timer Device       : aclint-mtimer @ 10000000Hz
+Platform Console Device     : uart8250
+Platform HSM Device         : ---
+Platform PMU Device         : ---
+Platform Reboot Device      : syscon-reboot
+Platform Shutdown Device    : syscon-poweroff
+Platform Suspend Device     : ---
+Platform CPPC Device        : ---
+Firmware Base               : 0x80000000
+Firmware Size               : 321 KB
+Firmware RW Offset          : 0x40000
+Firmware RW Size            : 65 KB
+Firmware Heap Offset        : 0x47000
+Firmware Heap Size          : 37 KB (total), 0 KB (reserved), 12 KB (used), 23 KB (free)
+Firmware Scratch Size       : 4096 B (total), 1464 B (used), 2632 B (free)
+Runtime SBI Version         : 3.0
+Standard SBI Extensions     : time,rfnc,ipi,base,hsm,srst,pmu,dbcn,fwft,legacy,dbtr,sse
+Experimental SBI Extensions : none
+
+Domain0 Name                : root
+Domain0 Boot HART           : 0
+Domain0 HARTs               : 0*
+Domain0 Region00            : 0x0000000080040000-0x000000008005ffff M: (F,R,W) S/U: ()
+Domain0 Region01            : 0x0000000080000000-0x000000008003ffff M: (F,R,X) S/U: ()
+Domain0 Region02            : 0x0000000000100000-0x0000000000100fff M: (I,R,W) S/U: (R,W)
+Domain0 Region03            : 0x0000000010000000-0x0000000010000fff M: (I,R,W) S/U: (R,W)
+Domain0 Region04            : 0x0000000002000000-0x000000000200ffff M: (I,R,W) S/U: ()
+Domain0 Region05            : 0x000000000c400000-0x000000000c5fffff M: (I,R,W) S/U: (R,W)
+Domain0 Region06            : 0x000000000c000000-0x000000000c3fffff M: (I,R,W) S/U: (R,W)
+Domain0 Region07            : 0x0000000000000000-0xffffffffffffffff M: () S/U: (R,W,X)
+Domain0 Next Address        : 0x0000000080200000
+Domain0 Next Arg1           : 0x00000000ffe00000
+Domain0 Next Mode           : S-mode
+Domain0 SysReset            : yes
+Domain0 SysSuspend          : yes
+
+Boot HART ID                : 0
+Boot HART Domain            : root
+Boot HART Priv Version      : v1.12
+Boot HART Base ISA          : rv64imafdch
+Boot HART ISA Extensions    : sstc,zicntr,zihpm,zicboz,zicbom,sdtrig,svadu
+Boot HART PMP Count         : 16
+Boot HART PMP Granularity   : 2 bits
+Boot HART PMP Address Bits  : 54
+Boot HART MHPM Info         : 16 (0x0007fff8)
+Boot HART Debug Triggers    : 2 triggers
+Boot HART MIDELEG           : 0x0000000000001666
+Boot HART MEDELEG           : 0x0000000000f4b509
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] random: crng init done
+[    0.000000] Kernel command line: console=ttyS0 root=/dev/vda rw rootwait loglevel=6 systemd.show_status=1
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]       fixmap : 0xff1bfffffea00000 - 0xff1bffffff000000   (6144 kB)
+[    0.000000]       pci io : 0xff1bffffff000000 - 0xff1c000000000000   (  16 MB)
+[    0.000000]      vmemmap : 0xff1c000000000000 - 0xff20000000000000   (1024 TB)
+[    0.000000]      vmalloc : 0xff20000000000000 - 0xff60000000000000   (16384 TB)
+[    0.000000]      modules : 0xffffffff0179e000 - 0xffffffff80000000   (2024 MB)
+[    0.000000]       lowmem : 0xff60000000000000 - 0xff60000080000000   (2048 MB)
+[    0.000000]       kernel : 0xffffffff80000000 - 0xffffffffffffffff   (2047 MB)
+[    0.057751] audit: type=2000 audit(0.036:1): state=initialized audit_enabled=0 res=1
+[    0.088867] cpu0: rdtime lacks granularity needed to measure unaligned access speed
+[    0.550445] SCSI subsystem initialized
+[    0.588785] NFS: Registering the id_resolver key type
+[    0.589305] Key type id_resolver registered
+[    0.589326] Key type id_legacy registered
+[    0.710445] virtio_blk virtio0: [vda] 8388608 512-byte logical blocks (4.29 GB/4.00 GiB)
+[    0.730816] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+[    0.731231] syscon-poweroff: probe of poweroff failed with error -16
+[    0.747866] Bridge firewalling registered
+[    0.749001] Key type dns_resolver registered
+P+q6E616D65\[18t[!p]104\[0m[?7h[1G[0J
+[0;1;39mWelcome to [0m[38;2;23;147;209mArch Linux[0m[0;1;39m![0m
+
+]3008;start=2b336c6a535d410bb4345639cbe36870;user=root;hostname=omarchy-demo;machineid=c834c9c0af8e48cba39f36e8ca33415b;bootid=8fcaecba7cb6476fa7bd5f19d6e265c8;pid=1;comm=systemd;type=boot\[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/dirmngr[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent-browser[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent-extra[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent-ssh[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/keyboxd[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/modprobe[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/serial-getty[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mUser and Session Slice[0m.
+[[0;32m  OK  [0m] Started [0;1;39mForward Password Requests to Wall Directory Watch[0m.
+         Expecting device [0;1;39m/dev/hvc0[0m...
+         Expecting device [0;1;39m/dev/ttyS0[0m...
+[[0;32m  OK  [0m] Reached target [0;1;39mImage Downloads[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal Integrity Protected Volumes[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mSlice Units[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mSwaps[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal Verity Protected Volumes[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mDevice-mapper event daemon FIFOs[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mQuery the User Interactively for a Password[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mProcess Core Dump Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mCredential Encryption/Decryption[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mFactory Reset Management[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mHostname Service Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mJournal Socket (/dev/log)[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mJournal Sockets[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mConsole Output Muting Service Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mDisk Repartitioning Service Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mSimple Block Device Backed Storage Provider[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mSimple File System Backed Storage Provider[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mudev Control Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mudev Kernel Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mudev Varlink Socket[0m.
+         Mounting [0;1;39mHuge Pages File System[0m...
+         Mounting [0;1;39mPOSIX Message Queue File System[0m...
+         Mounting [0;1;39mKernel Debug File System[0m...
+         Mounting [0;1;39mTemporary Directory /tmp[0m...
+         Starting [0;1;39mLoad Kernel Module configfs[0m...
+         Starting [0;1;39mLoad Kernel Module fuse[0m...
+         Starting [0;1;39mJournal Service[0m...
+         Starting [0;1;39mRemount Root and Kernel File Systems[0m...
+         Starting [0;1;39mApply Kernel Variables[0m...
+         Starting [0;1;39mCreate Static Device Nodes in /dev gracefully[0m...
+         Starting [0;1;39mLoad udev Rules from Credentials[0m...
+         Starting [0;1;39mColdplug All udev Devices[0m...
+         Starting [0;1;39mVirtual Console Setup[0m...
+[[0;32m  OK  [0m] Mounted [0;1;39mHuge Pages File System[0m.
+[[0;32m  OK  [0m] Mounted [0;1;39mPOSIX Message Queue File System[0m.
+[[0;32m  OK  [0m] Mounted [0;1;39mKernel Debug File System[0m.
+[[0;32m  OK  [0m] Mounted [0;1;39mTemporary Directory /tmp[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad Kernel Module configfs[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad Kernel Module fuse[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mApply Kernel Variables[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mRemount Root and Kernel File Systems[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad udev Rules from Credentials[0m.
+         Starting [0;1;39mRebuild Hardware Database[0m...
+         Starting [0;1;39mLoad/Save OS Random Seed[0m...
+[    5.817164] loadkeys[85]: memfd_create() called without MFD_EXEC or MFD_NOEXEC_SEAL set
+[[0;32m  OK  [0m] Started [0;1;39mJournal Service[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mVirtual Console Setup[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad/Save OS Random Seed[0m.
+         Starting [0;1;39mFlush Journal to Persistent Storage[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mCreate Static Device Nodes in /dev gracefully[0m.
+         Starting [0;1;39mCreate System Users[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mFlush Journal to Persistent Storage[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mCreate System Users[0m.
+         Starting [0;1;39mJournal Log Access Socket[0m...
+         Starting [0;1;39mCreate Static Device Nodes in /dev[0m...
+[[0;32m  OK  [0m] Listening on [0;1;39mJournal Log Access Socket[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mCreate Static Device Nodes in /dev[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mPreparation for Local File Systems[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal File Systems[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mBoot Loader Control Service Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mDisk Image Download Service Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mSystem Extension Image Management[0m.
+         Starting [0;1;39mTell Plymouth To Write Out Runtime Data[0m...
+         Starting [0;1;39mCreate System Files and Directories[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mTell Plymouth To Write Out Runtime Data[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mCreate System Files and Directories[0m.
+         Starting [0;1;39mRebuild Dynamic Linker Cache[0m...
+         Starting [0;1;39mRebuild Journal Catalog[0m...
+         Starting [0;1;39mRecord System Boot/Shutdown in UTMP[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mRecord System Boot/Shutdown in UTMP[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mRebuild Journal Catalog[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mColdplug All udev Devices[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mRebuild Dynamic Linker Cache[0m.
+[[0m[0;31m*     [0m] (1 of 3) A start job is running for /dev/hvc0 (11s / 1min 30s)
+M[K[[0;32m  OK  [0m] Finished [0;1;39mRebuild Hardware Database[0m.
+[K         Starting [0;1;39mRule-based Manager for Device Events and Files[0m...
+         Starting [0;1;39mUpdate is Completed[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mUpdate is Completed[0m.
+[[0;32m  OK  [0m] Started [0;1;39mRule-based Manager for Device Events and Files[0m.
+         Starting [0;1;39mShow Plymouth Boot Screen[0m...
+[[0;32m  OK  [0m] Started [0;1;39mShow Plymouth Boot Screen[0m.
+[[0;32m  OK  [0m] Started [0;1;39mForward Password Requests to Plymouth Directory Watch[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal Encrypted Volumes[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mPath Units[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mSystem Initialization[0m.
+[[0;32m  OK  [0m] Started [0;1;39mRefresh existing PGP keys of archlinux-keyring regularly[0m.
+[[0;32m  OK  [0m] Started [0;1;39mDaily verification of password and group files[0m.
+[[0;32m  OK  [0m] Started [0;1;39mDaily Cleanup of Temporary Directories[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mTimer Units[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mD-Bus System Message Bus Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mAuthorization Manager Agent Helper[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mOpenSSH Server Socket…temd-ssh-generator, AF_UNIX Local)[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mUser Login Management Varlink Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mVirtual Machine and C…tainer Registration Service Socket[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mSocket Units[0m.
+         Starting [0;1;39mD-Bus System Message Bus[0m...
+[[0;32m  OK  [0m] Started [0;1;39mD-Bus System Message Bus[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mBasic System[0m.
+         Starting [0;1;39mNetwork Manager[0m...
+         Starting [0;1;39mUser Login Management[0m...
+[[0;32m  OK  [0m] Found device [0;1;39m/dev/hvc0[0m.
+[[0;32m  OK  [0m] Found device [0;1;39m/dev/ttyS0[0m.
+[[0;32m  OK  [0m] Started [0;1;39mUser Login Management[0m.
+[[0;1;31m*[0m[0;31m*    [0m] A start job is running for Network Manager (18s / 10min 13s)
+M[K[[0;31m*[0;1;31m*[0m[0;31m*   [0m] A start job is running for Network Manager (19s / 10min 13s)
+M[K[ [0;31m*[0;1;31m*[0m[0;31m*  [0m] A start job is running for Network Manager (19s / 10min 13s)
+M[K[  [0;31m*[0;1;31m*[0m[0;31m* [0m] A start job is running for Network Manager (20s / 10min 13s)
+M[K[   [0;31m*[0;1;31m*[0m[0;31m*[0m] A start job is running for Network Manager (20s / 10min 13s)
+M[K[    [0;31m*[0;1;31m*[0m] A start job is running for Network Manager (20s / 10min 13s)
+M[K[     [0;31m*[0m] A start job is running for Network Manager (21s / 10min 13s)
+M[K[    [0;31m*[0;1;31m*[0m] A start job is running for Network Manager (21s / 10min 13s)
+M[K         Starting [0;1;39mHostname Service[0m...
+[K[[0;32m  OK  [0m] Stopped [0;1;39mVirtual Console Setup[0m.
+         Stopping [0;1;39mVirtual Console Setup[0m...
+         Starting [0;1;39mVirtual Console Setup[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mVirtual Console Setup[0m.
+[[0;32m  OK  [0m] Started [0;1;39mHostname Service[0m.
+[[0;32m  OK  [0m] Started [0;1;39mNetwork Manager[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mNetwork[0m.
+         Starting [0;1;39mPermit User Sessions[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mPermit User Sessions[0m.
+         Starting [0;1;39mHold until boot process finishes up[0m...
+         Starting [0;1;39mTerminate Plymouth Boot Screen[0m...
+[!p]104\[0m[?7h[1G[0J7[32766;32766H[6n8[!p]104\[0m[?7h[1G[0J7[32766;32766H[6n8[!p]104\[0m[?7h[1G[0J7[32766;32766H[6n8^[[1;1R]3008;start=8e1d1fa71b6047a09d2a0b23839e8269;user=root;hostname=omarchy-demo;machineid=c834c9c0af8e48cba39f36e8ca33415b;bootid=8fcaecba7cb6476fa7bd5f19d6e265c8;pid=175;comm=(agetty);servicename=serial-getty@ttyS0.service;invocationid=07d52185e37c4a659df657a6b1ed6578;type=service\[!p]104\[0m[?7h[1G[0J7[32766;32766H[6n8^[[1;1RP+q6E616D65\]3008;start=d4a7ebacefd94f6691f46308331a5f93;user=root;hostname=omarchy-demo;machineid=c834c9c0af8e48cba39f36e8ca33415b;bootid=8fcaecba7cb6476fa7bd5f19d6e265c8;pid=174;comm=(agetty);servicename=serial-getty@hvc0.service;invocationid=113f7c15fccd420ebc69d25663ba4446;type=service\P+q6E616D65\
+Arch Linux 6.6.63 (ttyS0)
+
+omarchy-demo login: omarchy (automatic login)
+
+Omarchy RISC-V browser demo candidate
+Optional applications and toolchains are not bundled.
+No personal accounts, credentials or VM session state were imported.
+Desktop/browser verification is recorded separately.
+
+Arch Linux 6.6.63 (hvc0)
+
+omarchy-demo login: ]3008;start=fc039125b87b48609a836155d13767fd;user=root;hostname=omarchy-demo;machineid=c834c9c0af8e48cba39f36e8ca33415b;bootid=8fcaecba7cb6476fa7bd5f19d6e265c8;pid=175;comm=login;targetuser=omarchy;sessionid=1;type=session\]3008;start=89640b96-0d8b-4b79-8a88-a0f5e8c02368;machineid=c834c9c0af8e48cba39f36e8ca33415b;user=omarchy;hostname=omarchy-demo;bootid=8fcaecba-7cb6-476f-a7bd-5f19d6e265c8;pid=00000000000000000189;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ systemctl --no-pager --failed; systemctl --no-pager status sddm; pgrep -a Hyprland; pgrep -a quickshell; id
+[?2004l]3008;start=e0d4e1f3-c2a2-417d-b56f-c92662dc2b18;machineid=c834c9c0af8e48cba39f36e8ca33415b;user=omarchy;hostname=omarchy-demo;bootid=8fcaecba-7cb6-476f-a7bd-5f19d6e265c8;pid=00000000000000000189;type=command;cwd=/home/omarchy\[4m [0m[4m [0m[4mUNIT[0m[4m [0m[4mLOAD[0m[4m [0m[4mACTIVE[0m[4m [0m[4mSUB[0m[4m [0m[4mDESCRIPTION[0m
+
+0 loaded units listed.
+[0;1;32m●[0m sddm.service - Simple Desktop Display Manager
+     Loaded: loaded (]8;;file://omarchy-demo/usr/lib/systemd/system/sddm.service\/usr/lib/systemd/system/sddm.service]8;;\; [0;1;32menabled[0m; preset: [0;1;38:5:185mdisabled[0m)
+     Active: [0;1;32mactive (running)[0m since Wed 2026-09-09 03:38:41 UTC; 1min 36s ago
+ Invocation: 704501f726234573a5a9955faf56528d
+       Docs: ]8;;man:sddm(1)\man:sddm(1)]8;;\
+             ]8;;man:sddm.conf(5)\man:sddm.conf(5)]8;;\
+   Main PID: 173 (sddm)
+      Tasks: 2[0;38:5:245m (limit: 2366)[0m
+     Memory: 11.9M (peak: 12.2M)
+        CPU: 388ms
+     CGroup: /system.slice/sddm.service
+             └─[0;38:5:245m173 /usr/bin/sddm[0m
+
+Warning: some journal files were not opened due to insufficient permissions.
+uid=1000(omarchy) gid=1000(omarchy) groups=1000(omarchy)
+]3008;end=e0d4e1f3-c2a2-417d-b56f-c92662dc2b18;exit=success\]3008;start=89640b96-0d8b-4b79-8a88-a0f5e8c02368;machineid=c834c9c0af8e48cba39f36e8ca33415b;user=omarchy;hostname=omarchy-demo;bootid=8fcaecba-7cb6-476f-a7bd-5f19d6e265c8;pid=00000000000000000189;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ ls -l /dev/dri /dev/tty0; loginctl seat-status seat0 --no-pager; journalctl --user -b --no-pager -n 30
+[?2004l]3008;start=47864104-6489-4374-989a-000fe302d250;machineid=c834c9c0af8e48cba39f36e8ca33415b;user=omarchy;hostname=omarchy-demo;bootid=8fcaecba-7cb6-476f-a7bd-5f19d6e265c8;pid=00000000000000000189;type=command;cwd=/home/omarchy\ls: cannot access '/dev/dri': No such file or directory
+crw------- 1 root tty 4, 0 Sep  9 03:38 /dev/tty0
+[0;1;39mseat0[0m
+[0;94mDevices:[0m [0;38:5:245mn/a[0m
+         └─(none)
+Sep 09 03:38:45 omarchy-demo systemd[180]: Queued start job for default target Main User Target.
+Sep 09 03:38:45 omarchy-demo systemd[180]: Created slice User Application Slice.
+Sep 09 03:38:45 omarchy-demo systemd[180]: Reached target Paths.
+Sep 09 03:38:45 omarchy-demo systemd[180]: Reached target Timers.
+Sep 09 03:38:45 omarchy-demo systemd[180]: Starting D-Bus User Message Bus Socket...
+Sep 09 03:38:45 omarchy-demo systemd[180]: Listening on GnuPG network certificate management daemon.
+Sep 09 03:38:45 omarchy-demo systemd[180]: Listening on GnuPG cryptographic agent and passphrase cache (access for web browsers).
+Sep 09 03:38:45 omarchy-demo systemd[180]: Listening on GnuPG cryptographic agent and passphrase cache (restricted).
+Sep 09 03:38:45 omarchy-demo systemd[180]: Listening on GnuPG cryptographic agent (ssh-agent emulation).
+Sep 09 03:38:45 omarchy-demo systemd[180]: Listening on GnuPG cryptographic agent and passphrase cache.
+Sep 09 03:38:45 omarchy-demo systemd[180]: Listening on GnuPG public key management service.
+Sep 09 03:38:45 omarchy-demo systemd[180]: Listening on Query the User Interactively for a Password.
+Sep 09 03:38:45 omarchy-demo systemd[180]: Listening on Disk Image Download Service Socket.
+Sep 09 03:38:45 omarchy-demo systemd[180]: Listening on Journal Log Access Socket.
+Sep 09 03:38:45 omarchy-demo systemd[180]: Listening on Virtual Machine and Container Registration Service Socket.
+Sep 09 03:38:45 omarchy-demo systemd[180]: Listening on Simple File System Backed Storage Provider.
+Sep 09 03:38:46 omarchy-demo systemd[180]: Listening on D-Bus User Message Bus Socket.
+Sep 09 03:38:46 omarchy-demo systemd[180]: Reached target Sockets.
+Sep 09 03:38:46 omarchy-demo systemd[180]: Reached target Basic System.
+Sep 09 03:38:46 omarchy-demo systemd[180]: Reached target Main User Target.
+Sep 09 03:38:46 omarchy-demo systemd[180]: Startup finished in 2.897s.
+]3008;end=47864104-6489-4374-989a-000fe302d250;exit=success\]3008;start=89640b96-0d8b-4b79-8a88-a0f5e8c02368;machineid=c834c9c0af8e48cba39f36e8ca33415b;user=omarchy;hostname=omarchy-demo;bootid=8fcaecba-7cb6-476f-a7bd-5f19d6e265c8;pid=00000000000000000189;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ for d in /sys/bus/virtio/devices/*; do echo "$d $(cat "$d/device")"; readlink "$d/driver"; done; ls /sys/bus/virtio/drivers; ls /sys/class/drm
+[?2004l]3008;start=c61f90fd-fa37-417b-9260-04d616205b3c;machineid=c834c9c0af8e48cba39f36e8ca33415b;user=omarchy;hostname=omarchy-demo;bootid=8fcaecba-7cb6-476f-a7bd-5f19d6e265c8;pid=00000000000000000189;type=command;cwd=/home/omarchy\/sys/bus/virtio/devices/virtio0 0x0002
+../../../../../bus/virtio/drivers/virtio_blk
+/sys/bus/virtio/devices/virtio1 0x0010
+/sys/bus/virtio/devices/virtio2 0x0004
+../../../../../bus/virtio/drivers/virtio_rng
+9pnet_virtio	virtio_console	virtio_input  virtio_rpmsg_bus	   virtio_snd
+virtio_balloon	virtio_crypto	virtio_net    virtio_rproc_serial
+virtio_blk	virtio_gpu	virtio_rng    virtio_scsi
+version
+]3008;end=c61f90fd-fa37-417b-9260-04d616205b3c;exit=success\]3008;start=89640b96-0d8b-4b79-8a88-a0f5e8c02368;machineid=c834c9c0af8e48cba39f36e8ca33415b;user=omarchy;hostname=omarchy-demo;bootid=8fcaecba-7cb6-476f-a7bd-5f19d6e265c8;pid=00000000000000000189;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ systemctl poweroff
+[?2004l]3008;start=32f27642-abf0-4d52-b660-1d494516d354;machineid=c834c9c0af8e48cba39f36e8ca33415b;user=omarchy;hostname=omarchy-demo;bootid=8fcaecba-7cb6-476f-a7bd-5f19d6e265c8;pid=00000000000000000189;type=command;cwd=/home/omarchy\[1;31m==== AUTHENTICATING FOR org.freedesktop.login1.power-off ====
+[0mAuthentication is required to power off the system.
+Authenticating as: root
+Password: [0;1;31mCall to PowerOff failed: Connection timed out[0m
+[0;1;31mFailed to start poweroff.target: Connection timed out[0m
+[0;1;31mSee system logs and 'systemctl status poweroff.target' for details.[0m
+[0;1;39mIt is possible to perform action directly, see discussion of --force --force in man:systemctl(1).[0m
+]3008;end=32f27642-abf0-4d52-b660-1d494516d354;exit=failure;status=1\]3008;start=89640b96-0d8b-4b79-8a88-a0f5e8c02368;machineid=c834c9c0af8e48cba39f36e8ca33415b;user=omarchy;hostname=omarchy-demo;bootid=8fcaecba-7cb6-476f-a7bd-5f19d6e265c8;pid=00000000000000000189;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ x
