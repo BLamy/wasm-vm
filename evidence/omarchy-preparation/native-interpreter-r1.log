@@ -1,0 +1,74 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2946 bytes @ 0xffffb478, 2048 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.000000] Kernel command line: console=ttyS0 earlycon=sbi root=/dev/vda rw rootwait loglevel=6 systemd.show_status=1
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]       fixmap : 0xff1bfffffea00000 - 0xff1bffffff000000   (6144 kB)
+[    0.000000]       pci io : 0xff1bffffff000000 - 0xff1c000000000000   (  16 MB)
+[    0.000000]      vmemmap : 0xff1c000000000000 - 0xff20000000000000   (1024 TB)
+[    0.000000]      vmalloc : 0xff20000000000000 - 0xff60000000000000   (16384 TB)
+[    0.000000]      modules : 0xffffffff0179e000 - 0xffffffff80000000   (2024 MB)
+[    0.000000]       lowmem : 0xff60000000000000 - 0xff60000080000000   (2048 MB)
+[    0.000000]       kernel : 0xffffffff80000000 - 0xffffffffffffffff   (2047 MB)
+[    0.052877] audit: type=2000 audit(0.048:1): state=initialized audit_enabled=0 res=1
+[    0.449244] SCSI subsystem initialized
+[    0.604697] NFS: Registering the id_resolver key type
+[    0.605140] Key type id_resolver registered
+[    0.605217] Key type id_legacy registered
+[    2.265324] random: crng init done
+[    2.600840] virtio_blk virtio0: [vda] 8388608 512-byte logical blocks (4.29 GB/4.00 GiB)
+[    2.630566] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+[    2.630813] syscon-poweroff: probe of poweroff failed with error -16
+[    2.664732] Bridge firewalling registered
+[    2.665976] Key type dns_resolver registered
+P+q6E616D65\[18t7[32766;32766H[6n8[!p]104\[0m[?7h[1G[0J
+[0;1;39mWelcome to [0m[38;2;23;147;209mArch Linux[0m[0;1;39m![0m
+
+]3008;start=5f4e014922054dcd8ba66fa4d44d01a8;user=root;hostname=omarchy-demo;machineid=cd45c341efd342bbad4ce77bffca3603;bootid=f024eacabfb840739324cf9de43edbcf;pid=1;comm=systemd;type=boot\[    4.534274] CPU: 0 PID: 1 Comm: systemd Not tainted 6.6.63 #1
+[    4.534404] Hardware name: riscv-virtio,qemu (DT)
+[    4.534493] epc : 00007fffad7aa5de ra : 00007fffacd136bc sp : 00007fffe973eda0
+[    4.534622]  gp : 000055558930d800 tp : 00007fffad667220 t0 : 0000013d000001f0
+[    4.534750]  t1 : 00007fffad742c1c t2 : 0000013d000001f8 s0 : 00007fffe973ee60
+[    4.534879]  s1 : 000000000000006c a0 : 000055558931bf28 a1 : 00007fffe973f004
+[    4.535005]  a2 : 000055558931bf94 a3 : 000055558931bf90 a4 : 0000000611000000
+[    4.535133]  a5 : 00007fffe973f000 a6 : 000055558931bf90 a7 : 0000000000000060
+[    4.535259]  s2 : 0000000000000092 s3 : 000055558931bf10 s4 : 000000000000000e
+[    4.535382]  s5 : 00007fffae16bce0 s6 : 00007fffe973ef98 s7 : 00007fffacd2ff40
+[    4.535511]  s8 : 0000000000000000 s9 : 000055558931aaa0 s10: 0000000000000000
+[    4.535633]  s11: 000055558931bfb0 t3 : 00007fffad7aa4f4 t4 : 0000013d00000208
+[    4.535762]  t5 : 0001203600000000 t6 : 0000013d00000210
+[    4.535866] status: 0000000200004020 badaddr: 00007fffe973effc cause: 0000000000000005
+[    4.540953] systemd[1]: Caught <SEGV>.
+[    4.565627] systemd[1]: Caught <SEGV>, dumped core as pid 42.
+[    4.565813] systemd[1]: Freezing execution.
+
+=== E2-T25 boot profile ===
+phase              wall_ms   d_wall_ms   d_retired      phase_MIPS
+total: 83864 ms, 1499903053 retired, overall 17.88 MIPS
+
+per-device MMIO accesses:
+  clint                     0  (@ 0x2000000)
+  plic                   1421  (@ 0xc000000)
+  goldfish-rtc              9  (@ 0x101000)
+  other                     0  (@ 0x100000)
+  uart16550              2726  (@ 0x10000000)
+  virtio-mmio             728  (@ 0x10001000)
+  virtio-mmio               3  (@ 0x10002000)
+  virtio-mmio             379  (@ 0x10003000)
+  virtio-mmio             153  (@ 0x10004000)
+  virtio-mmio               3  (@ 0x10005000)
+  virtio-mmio               3  (@ 0x10006000)
+  virtio-mmio              79  (@ 0x10007000)
+  virtio-mmio              71  (@ 0x10008000)
+  other                     3  (@ 0x10009000)
+
+PROFILE_JSON {"total_ms":83864,"total_retired":1499903053,"overall_mips":17.88,"phases":[],"devices":[{"device":"clint","base":"0x2000000","accesses":0},{"device":"plic","base":"0xc000000","accesses":1421},{"device":"goldfish-rtc","base":"0x101000","accesses":9},{"device":"other","base":"0x100000","accesses":0},{"device":"uart16550","base":"0x10000000","accesses":2726},{"device":"virtio-mmio","base":"0x10001000","accesses":728},{"device":"virtio-mmio","base":"0x10002000","accesses":3},{"device":"virtio-mmio","base":"0x10003000","accesses":379},{"device":"virtio-mmio","base":"0x10004000","accesses":153},{"device":"virtio-mmio","base":"0x10005000","accesses":3},{"device":"virtio-mmio","base":"0x10006000","accesses":3},{"device":"virtio-mmio","base":"0x10007000","accesses":79},{"device":"virtio-mmio","base":"0x10008000","accesses":71},{"device":"other","base":"0x10009000","accesses":3}]}
+wasm-vm: reached --max-instrs 1500000000

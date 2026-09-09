@@ -1,0 +1,51 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2946 bytes @ 0xffffb478, 2048 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.000000] Kernel command line: console=ttyS0 earlycon=sbi root=/dev/vda rw rootwait loglevel=6 systemd.show_status=1
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]       fixmap : 0xff1bfffffea00000 - 0xff1bffffff000000   (6144 kB)
+[    0.000000]       pci io : 0xff1bffffff000000 - 0xff1c000000000000   (  16 MB)
+[    0.000000]      vmemmap : 0xff1c000000000000 - 0xff20000000000000   (1024 TB)
+[    0.000000]      vmalloc : 0xff20000000000000 - 0xff60000000000000   (16384 TB)
+[    0.000000]      modules : 0xffffffff0179e000 - 0xffffffff80000000   (2024 MB)
+[    0.000000]       lowmem : 0xff60000000000000 - 0xff60000080000000   (2048 MB)
+[    0.000000]       kernel : 0xffffffff80000000 - 0xffffffffffffffff   (2047 MB)
+[    0.052877] audit: type=2000 audit(0.048:1): state=initialized audit_enabled=0 res=1
+[    0.449244] SCSI subsystem initialized
+[    0.604697] NFS: Registering the id_resolver key type
+[    0.605140] Key type id_resolver registered
+[    0.605217] Key type id_legacy registered
+[    2.265324] random: crng init done
+[    2.600840] virtio_blk virtio0: [vda] 8388608 512-byte logical blocks (4.29 GB/4.00 GiB)
+[    2.630566] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+[    2.630814] syscon-poweroff: probe of poweroff failed with error -16
+[    2.664733] Bridge firewalling registered
+[    2.666116] Key type dns_resolver registered
+P+q6E616D65\[18t7[32766;32766H[6n8[!p]104\[0m[?7h[1G[0J
+[0;1;39mWelcome to [0m[38;2;23;147;209mArch Linux[0m[0;1;39m![0m
+
+]3008;start=5008217367314941a8be138e2e1d2abc;user=root;hostname=omarchy-demo;machineid=2720dcd383c840c7a71ad9adece9b6ff;bootid=d91182d1c47e434f9fb824461cb9868b;pid=1;comm=systemd;type=boot\[    4.542397] CPU: 0 PID: 1 Comm: systemd Not tainted 6.6.63 #1
+[    4.542528] Hardware name: riscv-virtio,qemu (DT)
+[    4.542617] epc : 00007fffabed45de ra : 00007fffab43d6bc sp : 00007fffeeb40da0
+[    4.542745]  gp : 000055558d190800 tp : 00007fffabd91220 t0 : 0000013d000001f0
+[    4.542874]  t1 : 00007fffabe6cc1c t2 : 0000013d000001f8 s0 : 00007fffeeb40e60
+[    4.543002]  s1 : 000000000000006c a0 : 000055558d19ef28 a1 : 00007fffeeb41004
+[    4.543129]  a2 : 000055558d19ef94 a3 : 000055558d19ef90 a4 : 0000000611000000
+[    4.543256]  a5 : 00007fffeeb41000 a6 : 000055558d19ef90 a7 : 0000000000000060
+[    4.543383]  s2 : 0000000000000092 s3 : 000055558d19ef10 s4 : 000000000000000e
+[    4.543506]  s5 : 00007fffac895ce0 s6 : 00007fffeeb40f98 s7 : 00007fffab459f40
+[    4.543634]  s8 : 0000000000000000 s9 : 000055558d19daa0 s10: 0000000000000000
+[    4.543757]  s11: 000055558d19efb0 t3 : 00007fffabed44f4 t4 : 0000013d00000208
+[    4.543885]  t5 : 0001203600000000 t6 : 0000013d00000210
+[    4.543989] status: 0000000200004020 badaddr: 00007fffeeb40ffc cause: 0000000000000005
+[    4.549129] systemd[1]: Caught <SEGV>.
+[    4.574053] systemd[1]: Caught <SEGV>, dumped core as pid 42.
+[    4.574239] systemd[1]: Freezing execution.

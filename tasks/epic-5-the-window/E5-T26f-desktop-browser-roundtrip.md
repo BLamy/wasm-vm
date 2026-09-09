@@ -3,7 +3,7 @@ id: E5-T26f
 epic: 5
 title: Browser desktop snapshot round-trip and interaction smoke
 priority: 526.6
-status: in-progress
+status: pending
 depends_on: [E5-T26e, E5-T26h, E5-T19a, E5-T26i, E5-T26j, E5-T26k, E5-T26l, E5-T26m, E5-T26n, E5-T26o, E5-T26p]
 estimate: S
 risk: high
@@ -39,6 +39,13 @@ Save at each drag phase, reload twice, and restore once with a delayed user gest
 stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
+
+### 2026-09-09 — coordinator — user prioritizes Omarchy image preparation
+
+The user requested “get omardchy ready” after the all-PR merge. Return this task
+to pending while E5.5-T01a prepares the existing Omarchy VM image. This is a
+priority change, not a verification verdict or a waiver: the 3591.965 ms result
+still exceeds the 2000 ms acceptance limit, and all retained evidence stands.
 
 ### 2026-09-08 — coordinator — bounded fetch-preflight proposal, not adopted
 

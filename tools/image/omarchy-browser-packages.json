@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "description": "Omarchy desktop runtime closure from the prepared RISC-V VM; build toolchains and optional large applications are not seeded.",
+  "seeds": [
+    "base", "omarchy", "foot", "xdg-terminal-exec", "mesa",
+    "networkmanager", "bash-completion", "xdg-utils", "wl-clipboard",
+    "noto-fonts", "noto-fonts-emoji", "hyprsunset", "brightnessctl",
+    "udiskie", "ufw", "xdg-desktop-portal-gtk"
+  ],
+  "providers": {"ttf-font": "noto-fonts"},
+  "notes": [
+    "Package selection is dependency-closed; version constraints must also pass pacman database checking on the assembled image.",
+    "Chromium, LibreOffice, Electron applications and compiler toolchains remain optional installs, not bundled browser-demo claims.",
+    "playerctl is absent from the prepared VM and is not claimed as an available command.",
+    "This profile does not waive functional Omarchy boot or browser performance verification."
+  ]
+}

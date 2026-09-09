@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "entries": [
+    {
+      "path": "/usr/lib/gstreamer-1.0/gst-ptp-helper",
+      "sha256": "270b4d7b7fe5b0300b3d81b02aa0c612d7f7511a594b219a81081e4b45de909f",
+      "xattrs": {"security.capability": "AQAAAgAUAAAAAAAAAAAAAAAAAAA="},
+      "reason": "Content exactly matches the package mtree. Preserve its installed CAP_NET_BIND_SERVICE and CAP_NET_ADMIN file capabilities, rather than silently losing the PTP helper's metadata."
+    },
+    {
+      "path": "/usr/share/omarchy/install/config/firewall.sh",
+      "sha256": "4421fd4303a02ed05c79e937f2894c12defd6c4924f832492a2083ede26a9611",
+      "reason": "Claude's prepared RISC-V guard calls ufw-docker only when installed; the remaining package firewall rules are preserved. No personal firewall state is imported."
+    },
+    {
+      "path": "/usr/share/omarchy/install/config/snapper.sh",
+      "sha256": "3370aed6af07be2cd13b39c668bc0bef5fb0d2fd8ab7dfbbbc971b45eb58b061",
+      "reason": "The prepared VM uses ext4; the three-line script performs no snapper setup on a non-btrfs root."
+    },
+    {
+      "path": "/usr/share/omarchy/install/hardware/apple/fix-spi-keyboard.sh",
+      "sha256": "12deb18fa84a0f9ac7225bb6762cdff9d1ae171fb7138c4b1f5d78f15423b402",
+      "reason": "Missing DMI product_name is tolerated on RISC-V. The Apple-only driver branch remains inactive on this platform."
+    },
+    {
+      "path": "/usr/share/omarchy/install/hardware/fix-surface-keyboard.sh",
+      "sha256": "d201cb0899fddc8cff74e833c16bc5209e92252aba93dc7501b940bb99b43642",
+      "reason": "Missing DMI product_name is tolerated on RISC-V. No user or machine-specific value is embedded."
+    },
+    {
+      "path": "/usr/share/omarchy/install/user/mise-work.sh",
+      "sha256": "c790d007e2ed23fe29739635d9740a6d3c8bdba7b5046b321ba9d0a2b6573c20",
+      "reason": "The prepared RISC-V runtime branch uses the distro Node via node@system. This is reviewed installed code, not imported user Work state; executing full user provisioning is separately unproven."
+    }
+  ]
+}
