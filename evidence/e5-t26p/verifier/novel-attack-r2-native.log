@@ -1,0 +1,10 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.42s
+     Running tests/retirement_capture_verifier.rs (target/debug/deps/retirement_capture_verifier-10f98d48f95100fc)
+
+running 2 tests
+test direct_x0_mmio_read_and_fault_keep_effects_and_callbacks ... ok
+test ordinary_and_cached_x0_mmio_read_and_fault_keep_effects_and_callbacks ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

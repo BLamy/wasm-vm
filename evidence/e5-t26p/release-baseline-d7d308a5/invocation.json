@@ -1,0 +1,15 @@
+{
+  "phase": "baseline",
+  "before": {
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26p/baseline/rust-web.wasm": {
+      "bytes": 35040709,
+      "sha256": "d2cd30aa88cbae55539e820577dad401695d911df499bbe05fa13c126b870381"
+    },
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26p/baseline/release-web.wasm": {
+      "bytes": 1549483,
+      "sha256": "20f58e0d44cc94f9d0629478789680e4a87345ba800162aa0737ddc763bfd238"
+    }
+  },
+  "builderSha256": "07f36a59f3592c4fda63e0ba5879942c64781d02718bec3c35bcd363d88b4ba6",
+  "limitation": "Only authenticated production code identity and function names, not runtime or performance evidence."
+}

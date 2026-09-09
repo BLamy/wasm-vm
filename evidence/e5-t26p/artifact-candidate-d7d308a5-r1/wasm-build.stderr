@@ -1,0 +1,15 @@
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling smallvec v1.15.2
+   Compiling bitflags v2.13.0
+   Compiling cfg-if v1.0.4
+   Compiling log v0.4.33
+   Compiling generic-array v0.14.7
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling retirement-capture-probes v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26p/probe-crate)
+    Finished `release` profile [optimized + debuginfo] target(s) in 8.25s

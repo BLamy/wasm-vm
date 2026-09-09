@@ -667,6 +667,87 @@ fn fetch_xlate(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, va: u64) -> Result
     Ok(pa)
 }
 
+/// Private retirement capture strategy used by the interpreter boundary.  The unit strategy
+/// still runs the same instruction match and architectural commit, but never materializes
+/// retirement metadata.  Recording remains the only path that constructs a `MemOp`.
+pub(crate) trait RetirementCapture {
+    type Output;
+    fn load(&mut self, addr: u64, len: u8);
+    fn store(&mut self, addr: u64, len: u8, value: u64);
+    fn finish(&mut self, rd: u8, value: u64) -> Self::Output;
+    fn retire(&mut self, output: Self::Output, pc: u64, insn: u32);
+}
+
+pub(crate) struct UnitCapture;
+
+impl RetirementCapture for UnitCapture {
+    type Output = ();
+
+    #[inline(always)]
+    fn load(&mut self, _addr: u64, _len: u8) {}
+
+    #[inline(always)]
+    fn store(&mut self, _addr: u64, _len: u8, _value: u64) {}
+
+    #[inline(always)]
+    fn finish(&mut self, _rd: u8, _value: u64) {}
+
+    #[inline(always)]
+    fn retire(&mut self, _output: (), _pc: u64, _insn: u32) {}
+}
+
+pub(crate) struct RecordingCapture<'a, T: crate::trace::TraceSink> {
+    sink: &'a mut T,
+    mem: Option<crate::trace::MemOp>,
+}
+
+impl<'a, T: crate::trace::TraceSink> RecordingCapture<'a, T> {
+    #[inline(always)]
+    pub(crate) fn new(sink: &'a mut T) -> Self {
+        Self { sink, mem: None }
+    }
+}
+
+impl<T: crate::trace::TraceSink> RetirementCapture for RecordingCapture<'_, T> {
+    type Output = (u8, u64, Option<crate::trace::MemOp>);
+
+    #[inline(always)]
+    fn load(&mut self, addr: u64, len: u8) {
+        self.mem = Some(crate::trace::MemOp {
+            addr,
+            len,
+            is_store: false,
+            value: 0,
+        });
+    }
+
+    #[inline(always)]
+    fn store(&mut self, addr: u64, len: u8, value: u64) {
+        self.mem = Some(crate::trace::MemOp {
+            addr,
+            len,
+            is_store: true,
+            value,
+        });
+    }
+
+    #[inline(always)]
+    fn finish(&mut self, rd: u8, value: u64) -> Self::Output {
+        (rd, value, self.mem.take())
+    }
+
+    #[inline(always)]
+    fn retire(&mut self, output: Self::Output, pc: u64, insn: u32) {
+        let (rd, value, mem) = output;
+        self.sink.retire(&crate::trace::TraceRecord {
+            pc,
+            insn,
+            rd: (rd != 0).then_some((rd, value)),
+            mem,
+        });
+    }
+}
+
 impl Hart {
     /// A hart in the spec reset state, PC at the `virt`/Spike vector `DRAM_BASE`.
     pub fn new() -> Self {
@@ -702,16 +783,17 @@ impl Hart {
     /// retired and PC advanced. On `Err(trap)`, PC and all registers are exactly
     /// as they were before the call (trap purity — asserted by tests).
     ///
-    /// Non-generic and unchanged for all callers: it is exactly [`step_traced`] with
-    /// the zero-cost [`NullSink`], which the optimizer erases the hook from.
+    /// Non-generic and unchanged for all callers: it uses the private unit capture so the
+    /// interpreter does not construct returned retirement metadata.
     #[inline]
     pub fn step(&mut self, bus: &mut impl Bus) -> Result<(), Trap> {
-        self.step_traced(bus, &mut crate::trace::NullSink)
+        self.step_with_capture(bus, UnitCapture)
     }
 
     /// Like [`step`], plus a [`TraceSink`] hook fired AFTER a successful retirement
     /// (never on a trapping step — a faulting instruction produces no retire record).
-    /// With `sink = &mut NullSink` this monomorphizes to exactly the old `step`.
+    /// Even a sink whose `wants_records()` is false remains an observing public traced path;
+    /// only [`Self::step`] selects the private unit capture.
     ///
     /// [`step`]: Self::step
     /// [`TraceSink`]: crate::trace::TraceSink
@@ -720,6 +802,15 @@ impl Hart {
         &mut self,
         bus: &mut impl Bus,
         sink: &mut T,
+    ) -> Result<(), Trap> {
+        self.step_with_capture(bus, RecordingCapture::new(sink))
+    }
+
+    #[inline]
+    fn step_with_capture<C: RetirementCapture>(
+        &mut self,
+        bus: &mut impl Bus,
+        mut capture: C,
     ) -> Result<(), Trap> {
         // E1-T14: arm the Zicntr counter-write suppression for this instruction — only a
         // `csrw mcycle`/`csrw minstret` performed during THIS step's execute suppresses its own
@@ -753,32 +844,27 @@ impl Hart {
                     if let Some((rd, value)) =
                         crate::zicsr_stub::execute(&mut self.regs, &mut self.csrs, insn)
                     {
-                        sink.retire(&crate::trace::TraceRecord {
-                            pc,
-                            insn,
-                            rd: (rd != 0).then_some((rd, value)),
-                            mem: None,
-                        });
+                        let output = capture.finish(rd, value);
+                        capture.retire(output, pc, insn);
                         return Ok(());
                     }
                 }
                 return Err(trap);
             }
         };
-        let (rd, value, mem) = self.execute(bus, op.instr, u64::from(op.len), u64::from(op.raw))?;
+        let output = self.execute(
+            bus,
+            op.instr,
+            u64::from(op.len),
+            u64::from(op.raw),
+            &mut capture,
+        )?;
         // E1-T14: the instruction retired (execute returned Ok) — advance mcycle/minstret AFTER
         // execute, so a `csrr` that just read them observed the pre-retire count (matches Spike).
         self.csr.retire_tick();
         // Retirement hook — reached only when execute() returns Ok, so no record is
-        // emitted for a faulting instruction (trap-purity contract). Built and passed
-        // generically; with NullSink the optimizer erases all of this (E0-T15 proof).
-        sink.retire(&crate::trace::TraceRecord {
-            pc,
-            insn: op.raw,
-            // x0 / no-write instructions omit the register field.
-            rd: (rd != 0).then_some((rd, value)),
-            mem,
-        });
+        // emitted for a faulting instruction (trap-purity contract).
+        capture.retire(output, pc, op.raw);
         Ok(())
     }
 
@@ -1208,14 +1294,12 @@ impl Hart {
         Ok(old)
     }
 
-    /// Execute a decoded instruction. Returns the retire info `(rd, value, mem)` for the
-    /// trace record — `(rd, value)` is what was written to the register file (rd == 0
-    /// meaning no architectural write) and `mem` the memory op if any. Every arm either
-    /// fully retires (writeback + PC advance) or returns a trap having touched nothing.
+    /// Execute a decoded instruction with a private retirement capture strategy. Every arm
+    /// either fully retires (writeback + PC advance) or returns a trap having touched nothing.
     ///
     /// `pub(crate)` so the E4-T05 block-cache executor ([`crate::Machine::step_cached`]) can
     /// feed a memoized micro-op into the SAME execute the legacy path uses.
-    pub(crate) fn execute(
+    pub(crate) fn execute<C: RetirementCapture>(
         &mut self,
         bus: &mut impl Bus,
         instr: Instr,
@@ -1227,8 +1311,8 @@ impl Hart {
         // 2-byte parcel, not the expansion. (Compressed ops never expand to CSR/xRET, so the
         // CSR-access sites below where this equals `insn` are unaffected.)
         raw_insn: u64,
-    ) -> Result<(u8, u64, Option<crate::trace::MemOp>), Trap> {
-        use crate::trace::MemOp;
+        capture: &mut C,
+    ) -> Result<C::Output, Trap> {
         use Instr::*;
         // F/D: every FP instruction requires mstatus.FS != Off (E1-T06). Checked before any
         // architectural read, so an FS=Off trap leaves fflags and the f-registers untouched.
@@ -1239,8 +1323,9 @@ impl Hart {
             });
         }
         let r = &mut self.regs;
-        // Memory op captured by the load/store arms; None for everything else.
-        let mut mem: Option<MemOp> = None;
+        // This effect is independent of optional retirement metadata. It is set only after a
+        // store succeeds, and is the sole input to reservation invalidation below.
+        let mut successful_store: Option<(u64, u8)> = None;
         let pc = r.pc;
         let pc_next = pc.wrapping_add(insn_len);
         // Per-op result and successor PC; applied at the single retirement point
@@ -1432,12 +1517,7 @@ impl Hart {
                 }
                 let v = cload32(&self.csr, &mut self.tlb, bus, a)?;
                 self.resv = Some((a, 4));
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 4,
-                    is_store: false,
-                    value: 0,
-                });
+                capture.load(a, 4);
                 (rd, sext32(v), pc_next)
             }
             LrD { rd, rs1, .. } => {
@@ -1450,12 +1530,7 @@ impl Hart {
                 }
                 let v = cload64(&self.csr, &mut self.tlb, bus, a)?;
                 self.resv = Some((a, 8));
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 8,
-                    is_store: false,
-                    value: 0,
-                });
+                capture.load(a, 8);
                 (rd, v, pc_next)
             }
             // SC succeeds only against a valid reservation for the SAME address AND width
@@ -1476,12 +1551,8 @@ impl Hart {
                 if success {
                     let val = r.read(rs2);
                     cstore32(&self.csr, &mut self.tlb, bus, a, val as u32)?;
-                    mem = Some(MemOp {
-                        addr: a,
-                        len: 4,
-                        is_store: true,
-                        value: val,
-                    });
+                    successful_store = Some((a, 4));
+                    capture.store(a, 4, val);
                     (rd, 0, pc_next)
                 } else {
                     (rd, 1, pc_next)
@@ -1500,12 +1571,8 @@ impl Hart {
                 if success {
                     let val = r.read(rs2);
                     cstore64(&self.csr, &mut self.tlb, bus, a, val)?;
-                    mem = Some(MemOp {
-                        addr: a,
-                        len: 8,
-                        is_store: true,
-                        value: val,
-                    });
+                    successful_store = Some((a, 8));
+                    capture.store(a, 8, val);
                     (rd, 0, pc_next)
                 } else {
                     (rd, 1, pc_next)
@@ -1527,12 +1594,8 @@ impl Hart {
                 let old = camoload32(&self.csr, &mut self.tlb, bus, a)?;
                 let new = amo_w(op, old, r.read(rs2) as u32);
                 cstore32(&self.csr, &mut self.tlb, bus, a, new)?;
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 4,
-                    is_store: true,
-                    value: new as u64,
-                });
+                successful_store = Some((a, 4));
+                capture.store(a, 4, new as u64);
                 (rd, sext32(old), pc_next)
             }
             AmoD {
@@ -1548,12 +1611,8 @@ impl Hart {
                 let old = camoload64(&self.csr, &mut self.tlb, bus, a)?;
                 let new = amo_d(op, old, r.read(rs2));
                 cstore64(&self.csr, &mut self.tlb, bus, a, new)?;
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 8,
-                    is_store: true,
-                    value: new,
-                });
+                successful_store = Some((a, 8));
+                capture.store(a, 8, new);
                 (rd, old, pc_next)
             }
 
@@ -1567,97 +1626,45 @@ impl Hart {
             // untouched on fault. LB/LH/LW sign-extend; LBU/LHU/LWU zero-extend.
             Lb { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 1,
-                    is_store: false,
-                    value: 0,
-                });
-                (
-                    rd,
-                    cload8(&self.csr, &mut self.tlb, bus, a)? as i8 as i64 as u64,
-                    pc_next,
-                )
+                let v = cload8(&self.csr, &mut self.tlb, bus, a)?;
+                capture.load(a, 1);
+                (rd, v as i8 as i64 as u64, pc_next)
             }
             Lh { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 2,
-                    is_store: false,
-                    value: 0,
-                });
-                (
-                    rd,
-                    cload16(&self.csr, &mut self.tlb, bus, a)? as i16 as i64 as u64,
-                    pc_next,
-                )
+                let v = cload16(&self.csr, &mut self.tlb, bus, a)?;
+                capture.load(a, 2);
+                (rd, v as i16 as i64 as u64, pc_next)
             }
             Lw { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 4,
-                    is_store: false,
-                    value: 0,
-                });
-                (
-                    rd,
-                    cload32(&self.csr, &mut self.tlb, bus, a)? as i32 as i64 as u64,
-                    pc_next,
-                )
+                let v = cload32(&self.csr, &mut self.tlb, bus, a)?;
+                capture.load(a, 4);
+                (rd, v as i32 as i64 as u64, pc_next)
             }
             Ld { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 8,
-                    is_store: false,
-                    value: 0,
-                });
-                (rd, cload64(&self.csr, &mut self.tlb, bus, a)?, pc_next)
+                let v = cload64(&self.csr, &mut self.tlb, bus, a)?;
+                capture.load(a, 8);
+                (rd, v, pc_next)
             }
             Lbu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 1,
-                    is_store: false,
-                    value: 0,
-                });
-                (
-                    rd,
-                    u64::from(cload8(&self.csr, &mut self.tlb, bus, a)?),
-                    pc_next,
-                )
+                let v = cload8(&self.csr, &mut self.tlb, bus, a)?;
+                capture.load(a, 1);
+                (rd, u64::from(v), pc_next)
             }
             Lhu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 2,
-                    is_store: false,
-                    value: 0,
-                });
-                (
-                    rd,
-                    u64::from(cload16(&self.csr, &mut self.tlb, bus, a)?),
-                    pc_next,
-                )
+                let v = cload16(&self.csr, &mut self.tlb, bus, a)?;
+                capture.load(a, 2);
+                (rd, u64::from(v), pc_next)
             }
             Lwu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 4,
-                    is_store: false,
-                    value: 0,
-                });
-                (
-                    rd,
-                    u64::from(cload32(&self.csr, &mut self.tlb, bus, a)?),
-                    pc_next,
-                )
+                let v = cload32(&self.csr, &mut self.tlb, bus, a)?;
+                capture.load(a, 4);
+                (rd, u64::from(v), pc_next)
             }
 
             // Stores (E0-T08): cause 6/7 with tval = effective address. A faulting
@@ -1665,46 +1672,34 @@ impl Hart {
             // bus write IS the side effect and retirement is a no-op write to x0.
             Sb { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 1,
-                    is_store: true,
-                    value: r.read(rs2),
-                });
-                cstore8(&self.csr, &mut self.tlb, bus, a, r.read(rs2) as u8)?;
+                let v = r.read(rs2);
+                cstore8(&self.csr, &mut self.tlb, bus, a, v as u8)?;
+                successful_store = Some((a, 1));
+                capture.store(a, 1, v);
                 (0, 0, pc_next)
             }
             Sh { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 2,
-                    is_store: true,
-                    value: r.read(rs2),
-                });
-                cstore16(&self.csr, &mut self.tlb, bus, a, r.read(rs2) as u16)?;
+                let v = r.read(rs2);
+                cstore16(&self.csr, &mut self.tlb, bus, a, v as u16)?;
+                successful_store = Some((a, 2));
+                capture.store(a, 2, v);
                 (0, 0, pc_next)
             }
             Sw { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 4,
-                    is_store: true,
-                    value: r.read(rs2),
-                });
-                cstore32(&self.csr, &mut self.tlb, bus, a, r.read(rs2) as u32)?;
+                let v = r.read(rs2);
+                cstore32(&self.csr, &mut self.tlb, bus, a, v as u32)?;
+                successful_store = Some((a, 4));
+                capture.store(a, 4, v);
                 (0, 0, pc_next)
             }
             Sd { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 8,
-                    is_store: true,
-                    value: r.read(rs2),
-                });
-                cstore64(&self.csr, &mut self.tlb, bus, a, r.read(rs2))?;
+                let v = r.read(rs2);
+                cstore64(&self.csr, &mut self.tlb, bus, a, v)?;
+                successful_store = Some((a, 8));
+                capture.store(a, 8, v);
                 (0, 0, pc_next)
             }
 
@@ -1917,13 +1912,8 @@ impl Hart {
             // only). rm-carrying ops resolve the rounding mode and trap on a reserved value.
             Flw { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 4,
-                    is_store: false,
-                    value: 0,
-                });
                 let v = cload32(&self.csr, &mut self.tlb, bus, a)?;
+                capture.load(a, 4);
                 self.fregs.write_f32(rd, v);
                 self.csr.mark_fp_dirty();
                 (0, 0, pc_next)
@@ -1931,13 +1921,9 @@ impl Hart {
             Fsw { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
                 let v = self.fregs.read_raw(rs2) as u32; // raw low 32 bits
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 4,
-                    is_store: true,
-                    value: u64::from(v),
-                });
                 cstore32(&self.csr, &mut self.tlb, bus, a, v)?;
+                successful_store = Some((a, 4));
+                capture.store(a, 4, u64::from(v));
                 (0, 0, pc_next)
             }
             FpArithS {
@@ -2113,13 +2099,8 @@ impl Hart {
             // f64 fills the register (NO NaN-boxing); operands/results use read_raw/write_raw.
             Fld { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 8,
-                    is_store: false,
-                    value: 0,
-                });
                 let v = cload64(&self.csr, &mut self.tlb, bus, a)?;
+                capture.load(a, 8);
                 self.fregs.write_raw(rd, v);
                 self.csr.mark_fp_dirty();
                 (0, 0, pc_next)
@@ -2127,13 +2108,9 @@ impl Hart {
             Fsd { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
                 let v = self.fregs.read_raw(rs2);
-                mem = Some(MemOp {
-                    addr: a,
-                    len: 8,
-                    is_store: true,
-                    value: v,
-                });
                 cstore64(&self.csr, &mut self.tlb, bus, a, v)?;
+                successful_store = Some((a, 8));
+                capture.store(a, 8, v);
                 (0, 0, pc_next)
             }
             FpArithD {
@@ -2328,21 +2305,18 @@ impl Hart {
                 (0, 0, pc_next)
             }
         };
-        // A-extension reservation invalidation (E1-T04): a *successful* store that
-        // overlaps the reservation granule clears it. Centralized here so every store
-        // path (ordinary SB..SD and the AMO writes) is covered once; runs only on Ok, so
-        // a faulting store never invalidates. SC manages its own reservation inside its
-        // arm (and its successful store also lands here, harmlessly re-clearing None).
-        if let (Some(m), Some((ra, rw))) = (&mem, self.resv)
-            && m.is_store
-            && overlaps(m.addr, m.len as u64, ra, rw as u64)
+        // A-extension reservation invalidation (E1-T04): a *successful* store that overlaps
+        // the reservation granule clears it. This explicit effect remains independent of
+        // optional trace metadata, and runs only after the instruction match returned Ok.
+        if let (Some((addr, len)), Some((ra, rw))) = (successful_store, self.resv)
+            && overlaps(addr, u64::from(len), ra, u64::from(rw))
         {
             self.resv = None;
         }
         // Single retirement point: x0-discard is enforced by XRegs::write.
         r.write(rd, value);
         r.pc = next_pc;
-        Ok((rd, value, mem))
+        Ok(capture.finish(rd, value))
     }
 
     /// E4-T09 JIT differential oracle. Executes ONE decoded instruction and applies its
@@ -2357,6 +2331,9 @@ impl Hart {
         insn_len: u64,
         raw_insn: u64,
     ) -> Result<(), Trap> {
-        self.execute(bus, instr, insn_len, raw_insn).map(|_| ())
+        let mut sink = crate::trace::NullSink;
+        let mut capture = RecordingCapture::new(&mut sink);
+        self.execute(bus, instr, insn_len, raw_insn, &mut capture)
+            .map(|_| ())
     }
 }

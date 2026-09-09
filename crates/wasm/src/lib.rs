@@ -3128,7 +3128,6 @@ impl WasmLinux {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         let retired_before = inner.machine.irq_stats().retired;
         if inner.finished.is_none() {
-            let mut sink = wasm_vm_core::trace::NullSink;
             // Interleave RX refills with execution. The 16550 RX FIFO is 16 bytes; feeding it only
             // once per budget caps host→guest throughput at ~16 bytes per chunk and wastes the rest
             // of the budget on a near-empty FIFO. Instead, when input is queued, run in short slices
@@ -3165,7 +3164,7 @@ impl WasmLinux {
                 } else {
                     remaining
                 };
-                let oc = inner.machine.run_traced(step, &mut sink);
+                let oc = inner.machine.run(step);
                 remaining -= step;
                 let persistence_due = persistence_bounded
                     && (inner.machine.blk_write_waiting()

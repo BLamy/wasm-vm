@@ -1,0 +1,15 @@
+{
+  "phase": "candidate",
+  "before": {
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26p/production-candidate-r1/rust-web.wasm": {
+      "bytes": 34940147,
+      "sha256": "cddcc25c2c0c5c1e79cae5e768395aa739c044d29afacddfbf0c8ed5f32c414b"
+    },
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26p/production-candidate-r1/release-web.wasm": {
+      "bytes": 1555346,
+      "sha256": "a3ce02529ae2e6ec175066f4c838451ca7d1472b5f6bd2f5b2d5cbff805c8b42"
+    }
+  },
+  "builderSha256": "07f36a59f3592c4fda63e0ba5879942c64781d02718bec3c35bcd363d88b4ba6",
+  "limitation": "Only authenticated production code identity and function names, not runtime or performance evidence."
+}

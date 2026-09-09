@@ -1,0 +1,39 @@
+{
+  "before": {
+    "Cargo.toml": "fc7cbaedc583510a98e1ce66875c32af7fe9aa43bc80cb16b298168dd0c61479",
+    "Cargo.lock": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7",
+    "rust-toolchain.toml": "0a7758acebb8cbcc2ba66675476f1c4dff67d31c5d662fccca504f19d2e6aef9",
+    ".cargo/config.toml": "693000886a9f8195d7dbfbba41d9ffa19147b18233b83f52c4626d92a54c2b7b",
+    "crates/core/Cargo.toml": "828e4d59f7f29f2cbfa98b3cdea67e530cc4b3f51132e4e0d9fc22de280c4c6c",
+    "crates/wasm/Cargo.toml": "ee9a0e90a0d447f06571fe203772a51bd4b491d3d42dfabb81befee2516b3d69",
+    "crates/core/src/hart/mod.rs": "ab15c6a854441fc99f28a3c2e34d60fea3c5d2450d2db3577f1b185a7be7cd39",
+    "crates/core/src/lib.rs": "9e2d235163d528112ab0375886e2bdf4e602c0dbdceaf7e486abad0b6d78b053",
+    "crates/wasm/src/lib.rs": "676941521e8882e17b242384ce7d2a737918750b46ec6b302f120d5cfaa92034"
+  },
+  "command": "wasm-pack",
+  "args": [
+    "build",
+    "crates/wasm",
+    "--target",
+    "web"
+  ],
+  "builderSha256": "6db5951c0ba47f1748d7c70c65ac18233de92cceca072525b9cf4235d43a5fb1",
+  "head": "d7d308a58825e6856db532822e36e1681230027a",
+  "runtimeDiffSha256": "f941c441bd0be5938a45abd9db36994be5ee451f999894e42cdd37581ccfe989",
+  "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: aarch64-apple-darwin\nrelease: 1.96.0\nLLVM version: 22.1.2\n",
+  "cargo": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "wasmPack": "wasm-pack 0.15.0",
+  "scrubbed": "CARGO_*, E5_*, RUSTFLAGS, RUSTDOCFLAGS, RUST_LOG; repository profile and wasm-pack packaging unchanged",
+  "artifacts": {
+    "rust-web.wasm": {
+      "source": "target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm",
+      "bytes": 34940147,
+      "sha256": "cddcc25c2c0c5c1e79cae5e768395aa739c044d29afacddfbf0c8ed5f32c414b"
+    },
+    "release-web.wasm": {
+      "source": "crates/wasm/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1555346,
+      "sha256": "a3ce02529ae2e6ec175066f4c838451ca7d1472b5f6bd2f5b2d5cbff805c8b42"
+    }
+  }
+}

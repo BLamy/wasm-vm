@@ -1,0 +1,32 @@
+{
+  "phase": "baseline",
+  "source": "/private/tmp/e5-t26p-baseline.T3zMuW",
+  "oldHead": "d7d308a58825e6856db532822e36e1681230027a",
+  "before": {
+    "Cargo.toml": "fc7cbaedc583510a98e1ce66875c32af7fe9aa43bc80cb16b298168dd0c61479",
+    "Cargo.lock": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7",
+    ".cargo/config.toml": "693000886a9f8195d7dbfbba41d9ffa19147b18233b83f52c4626d92a54c2b7b",
+    "rust-toolchain.toml": "0a7758acebb8cbcc2ba66675476f1c4dff67d31c5d662fccca504f19d2e6aef9",
+    "crates/core/Cargo.toml": "828e4d59f7f29f2cbfa98b3cdea67e530cc4b3f51132e4e0d9fc22de280c4c6c",
+    "crates/core/src/hart/mod.rs": "c3b4fc40bc3240de652a510efc5dd5822c79e02c41664324c2fbb6a2419653ad",
+    "crates/core/src/lib.rs": "7ff782fec3aa18b1b3729ac57e96dd999162b5c92b6fa36ef080cd9953bc2d3c",
+    "crates/core/examples/retirement_capture_baseline.rs": "62ce60205676c1ed59b2e11395c36337278cdd65d6fd9d4f56be4a4e13e7c5c9"
+  },
+  "fixtureDigest": "62ce60205676c1ed59b2e11395c36337278cdd65d6fd9d4f56be4a4e13e7c5c9",
+  "command": "cargo",
+  "args": [
+    "run",
+    "--locked",
+    "--offline",
+    "--release",
+    "-p",
+    "wasm-vm-core",
+    "--features",
+    "trace",
+    "--example",
+    "retirement_capture_baseline"
+  ],
+  "builderSha256": "a7d4914f582ac3a365991c88a089a9bc8e8417e317b0369cb4c684ac77574a52",
+  "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: aarch64-apple-darwin\nrelease: 1.96.0\nLLVM version: 22.1.2\n",
+  "cargo": "cargo 1.96.0 (30a34c682 2026-05-25)"
+}

@@ -1,4 +1,4 @@
-# Narrowed candidate contract (not activated or implemented)
+# Narrowed candidate contract (initial pre-implementation design)
 
 The objective is optional **returned retirement metadata**, not optional architectural
 effects or suppressed arbitrary sink callbacks. No timing cause or benefit is established.
@@ -21,6 +21,13 @@ effects or suppressed arbitrary sink callbacks. No timing cause or benefit is es
    entry point; it is not an independent candidate oracle. No duplicate instruction match.
 5. Cache draining still runs unconditionally after successful cached retirement; preserve
    bus physical-page logging, FenceI cursor behavior, DMA and cross-page ordering.
+
+Addendum approved by the fresh E5-T26p critic: `Emulator` above refers to the actual
+`Machine` type. In `WasmLinux::run_chunk`, remove its local NullSink and replace only
+`inner.machine.run_traced(step, &mut sink)` with `inner.machine.run(step)` so the
+Linux browser caller reaches the existing untraced API. Keep the outer cooperative
+scope and all UART/persistence slicing, outcomes, output and JIT admission unchanged.
+See `evidence/e5-t26p/verifier/caller-preflight.md`; no other WASM source delta.
 
 Before adoption, require matched optimized baseline/candidate native and actual-WASM
 callee/caller evidence: source/toolchain/flags/digests, return-buffer and metadata stores,

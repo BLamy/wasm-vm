@@ -64,6 +64,40 @@ use loader::ElfError;
 use mmio::SystemBus;
 use ram::Ram;
 
+/// Private run-loop dispatch. Public traced runs always keep their recording capture, even for
+/// sinks that decline JIT records; only `Machine::run` selects the unit retirement capture.
+enum RunCapture<'a, T: trace::TraceSink> {
+    Unit,
+    Traced(&'a mut T),
+}
+
+impl<T: trace::TraceSink> RunCapture<'_, T> {
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
+    fn wants_records(&self) -> bool {
+        match self {
+            Self::Unit => false,
+            Self::Traced(sink) => sink.wants_records(),
+        }
+    }
+
+    #[inline]
+    fn step(&mut self, machine: &mut Machine, cached: bool) -> Result<(), Trap> {
+        #[cfg(feature = "zicsr-stub")]
+        let _ = cached;
+        match self {
+            #[cfg(not(feature = "zicsr-stub"))]
+            Self::Unit if cached => machine.step_cached_with_capture(hart::UnitCapture),
+            Self::Unit => machine.hart.step(&mut machine.bus),
+            #[cfg(not(feature = "zicsr-stub"))]
+            Self::Traced(sink) if cached => {
+                machine.step_cached_with_capture(hart::RecordingCapture::new(*sink))
+            }
+            Self::Traced(sink) => machine.hart.step_traced(&mut machine.bus, *sink),
+        }
+    }
+}
+
 /// The crate version, sourced from `Cargo.toml`.
 pub fn version() -> &'static str {
     env!("CARGO_PKG_VERSION")
@@ -3343,8 +3377,8 @@ impl Machine {
 
     /// Step one instruction with a [`trace::TraceSink`] hook (E0-T16). Does NOT consult
     /// HTIF — the caller drives termination (e.g. via [`Self::htif_exit`]); use this to
-    /// trace a run instruction-by-instruction. `step_traced(&mut NullSink)` is exactly
-    /// [`Self::run`]'s per-step behavior.
+    /// trace a run instruction-by-instruction. The untraced [`Self::step`] path uses the
+    /// private unit capture; this method always retains public retirement records.
     pub fn step_traced<T: trace::TraceSink>(&mut self, sink: &mut T) -> Result<(), hart::Trap> {
         self.hart.step_traced(&mut self.bus, sink)
     }
@@ -3355,7 +3389,7 @@ impl Machine {
     /// run loop layers delivery on top; this is the primitive tests use to inspect a raw
     /// trap or prove execute-purity.
     pub fn step(&mut self) -> Result<(), hart::Trap> {
-        self.hart.step_traced(&mut self.bus, &mut trace::NullSink)
+        self.hart.step(&mut self.bus)
     }
 
     /// If HTIF is armed and `tohost` currently requests exit, the exit code; else `None`.
@@ -3372,12 +3406,9 @@ impl Machine {
     /// on the first guest exit, the first escaping trap, or after exactly
     /// `max_instrs` retirements — whichever comes first.
     ///
-    /// Zero-cost: delegates to [`Self::run_traced`] with a [`trace::NullSink`], whose
-    /// empty `#[inline(always)]` `retire` erases the hook entirely (same monomorphization
-    /// the E0-T16 zero-cost proof covers), so this is identical to a hand-written
-    /// `hart.step` loop.
+    /// Selects the private unit retirement capture through the ordinary/cached dispatch below.
     pub fn run(&mut self, max_instrs: u64) -> RunOutcome {
-        self.run_traced(max_instrs, &mut trace::NullSink)
+        self.run_with_capture::<trace::NullSink>(max_instrs, RunCapture::Unit)
     }
 
     /// E1-T12: mirror the CLINT interrupt LEVELS into `mip`. MTIP (bit 7) tracks
@@ -3822,6 +3853,14 @@ impl Machine {
     /// entry→exit delta accumulates into `prof_total_ns`, the span CPU-interp time is later derived
     /// from by subtraction. The `_inner` body holds the actual loop and is untouched by profiling.
     pub fn run_traced<T: trace::TraceSink>(&mut self, max_instrs: u64, sink: &mut T) -> RunOutcome {
+        self.run_with_capture(max_instrs, RunCapture::Traced(sink))
+    }
+
+    fn run_with_capture<T: trace::TraceSink>(
+        &mut self,
+        max_instrs: u64,
+        mut capture: RunCapture<'_, T>,
+    ) -> RunOutcome {
         // One timer read at entry (cold, once per run) — only when profiling armed with a timer.
         let t0 = if self.profiling {
             self.host_timer.as_ref().map(|t| t.now_ns())
@@ -3834,7 +3873,7 @@ impl Machine {
         if owns_cooperative_scope {
             self.begin_cooperative_run_mode(false);
         }
-        let outcome = self.run_traced_inner(max_instrs, sink);
+        let outcome = self.run_capture_inner(max_instrs, &mut capture);
         // One timer read at exit; accumulate the total profiled span. The device+walk time timed on
         // the cold paths is a SUBSET of this span, so `total − (device + walk)` is the interpreter's.
         if let (Some(t0), Some(t)) = (t0, self.host_timer.as_ref()) {
@@ -3857,7 +3896,10 @@ impl Machine {
     /// memoized. Called once per outer-loop iteration, so the loop's per-op device sync +
     /// interrupt sampling stay per-retire (interrupt batching is Phase C).
     #[cfg(not(feature = "zicsr-stub"))]
-    fn step_cached<T: trace::TraceSink>(&mut self, sink: &mut T) -> Result<(), Trap> {
+    fn step_cached_with_capture<C: hart::RetirementCapture>(
+        &mut self,
+        mut capture: C,
+    ) -> Result<(), Trap> {
         // Same ordering as `step_traced`: arm counters, then the execute-address trigger check,
         // BEFORE obtaining the instruction.
         self.hart.csr.arm_counters();
@@ -3878,19 +3920,15 @@ impl Machine {
         // bumps its revision and flushes this cursor at the next block boundary. A miss (re)builds
         // the block at pc's physical address, reproducing any fetch/decode trap.
         let op = self.next_micro_op(pc)?;
-        let (rd, value, mem) = self.hart.execute(
+        let output = self.hart.execute(
             &mut self.bus,
             op.instr,
             u64::from(op.len),
             u64::from(op.raw),
+            &mut capture,
         )?;
         self.hart.csr.retire_tick();
-        sink.retire(&trace::TraceRecord {
-            pc,
-            insn: op.raw,
-            rd: (rd != 0).then_some((rd, value)),
-            mem,
-        });
+        capture.retire(output, pc, op.raw);
         // E4-T17 page-granular invalidation (supersedes E4-T16's conservative fence.i flush):
         //  - a store (this op's `mem.is_store`, incl. SC/AMO) reached RAM via the bus, which
         //    recorded its physical frame(s). Drain that log through PAGE-GRANULAR invalidation:
@@ -4609,10 +4647,10 @@ impl Machine {
         }
     }
 
-    fn run_traced_inner<T: trace::TraceSink>(
+    fn run_capture_inner<T: trace::TraceSink>(
         &mut self,
         max_instrs: u64,
-        sink: &mut T,
+        capture: &mut RunCapture<'_, T>,
     ) -> RunOutcome {
         // A host/device can mutate RAM through `bus_mut()` while execution is yielded between
         // bounded run calls. Drain once before even considering a saved mid-block cursor: waiting
@@ -4847,7 +4885,7 @@ impl Machine {
             // via the executor INSTEAD of interpreting. `try_jit_block` commits the retire clock for
             // the block's ops itself (so the per-op accounting below is skipped for a JIT run).
             #[cfg(not(feature = "zicsr-stub"))]
-            let jit_attempt = if self.jit_active() && sample_boundary && !sink.wants_records() {
+            let jit_attempt = if self.jit_active() && sample_boundary && !capture.wants_records() {
                 self.try_jit_block(remaining_work)
             } else {
                 None
@@ -4855,11 +4893,10 @@ impl Machine {
             #[cfg(not(feature = "zicsr-stub"))]
             let (step_result, ran_via_jit, work_used) = match jit_attempt {
                 Some(progress) => (progress.result, true, progress.work_used),
-                None if self.block_cache_enabled => (self.step_cached(sink), false, 1),
-                None => (self.hart.step_traced(&mut self.bus, sink), false, 1),
+                None => (capture.step(self, self.block_cache_enabled), false, 1),
             };
             #[cfg(feature = "zicsr-stub")]
-            let (step_result, work_used) = (self.hart.step_traced(&mut self.bus, sink), 1u64);
+            let (step_result, work_used) = (capture.step(self, false), 1u64);
             debug_assert!(work_used > 0 && work_used <= remaining_work);
             remaining_work -= work_used;
             // E1-T12: an instruction retired iff the step succeeded — advance the deterministic

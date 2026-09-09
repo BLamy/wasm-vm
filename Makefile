@@ -1243,6 +1243,20 @@ verify-E5-T26o:
 	@echo "verify-E5-T26o (sparse PLIC selection, not F latency acceptance): OK"
 
 .PHONY: verify-E5-T26k verify-E5-T26k-runtime
+.PHONY: verify-E5-T26p
+verify-E5-T26p:
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --test retirement_capture --test retirement_capture_verifier --example retirement_capture_baseline --features trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --test retirement_capture --test retirement_capture_baseline --test retirement_capture_verifier --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --features trace --test retirement_capture --test retirement_capture_verifier --test hart_memory --test trace_mem_exec --test trace_retire --test rv64a --test rv64f --test rv64d --test predecode_diff --test predecode_smc_diff --test zicntr --test privilege -- --nocapture
+	cargo test -p wasm-vm-core --features trace --test csr fence_i_and_wfi_retire_as_noops -- --exact --nocapture
+	cargo run --release -p wasm-vm-core --features trace --example retirement_capture_baseline
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+	wasm-pack test --node crates/wasm --test retirement_capture --test retirement_capture_baseline --test retirement_capture_verifier --test hart_mem --test hart_ctrl --test jit_browser_parity --test rv64a --test rv64f --test rv64d --test mmio --test icount_divider --test discovery_stats --test wrapper -- --nocapture
+	bash tools/check-zero-cost.sh --selftest
+	@echo "verify-E5-T26p (optional retirement capture; not F latency or Omarchy acceptance): OK"
+
 verify-E5-T26k-runtime:
 	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
 	cargo clippy -p wasm-vm-core --lib --tests --features trace,gpu-trace -- -D warnings
