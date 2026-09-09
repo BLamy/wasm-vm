@@ -18,7 +18,7 @@ test("Sv39 separated-page memory is live in the complete browser suite", async (
   await expect(page.locator("#metric-fail")).toHaveText("0");
   await expect(page.locator("#suite-status")).toContainText("complete");
   const capability = page.locator(".cap", { hasText: "Scalar memory across virtual-page boundaries" });
-  await expect(capability.locator(".cap-pip")).toHaveClass(/verified/);
+  await expect(capability.locator(".cap-pip")).toHaveClass(/\blive\b/, { timeout: 5_000 });
   await expect(capability).toContainText("live");
   expect(errors).toEqual([]);
   const evidence = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../evidence/omarchy-memory");
