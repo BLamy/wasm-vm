@@ -31,6 +31,7 @@ Required inputs also accept OMARCHY_IMAGE, OMARCHY_IMAGE_SHA256, OMARCHY_CHUNKS,
 OMARCHY_MANIFEST_SHA256 and OMARCHY_OUTPUT_DIR. --out must not already exist.
 Optional: --timeout-ms 1800000 --ram-mib 1024 --port 0 --chrome PATH --headed
           --icount-divider INTEGER (1..1024, optional; e.g. 64; omitted preserves the core default)
+          --bootargs STRING (explicit guest kernel command line, recorded verbatim)
           --keyboard none|auto (default none) --poll-ms 30000 --probe-timeout-ms 120000
           --shell-namespace NAME (optional layer filter; package process PID still required)
           --check-only (integrity checks, no browser or guest)
@@ -55,6 +56,7 @@ export function options(argv = process.argv.slice(2), env = process.env) {
     "timeout-ms": { type: "string", default: env.OMARCHY_TIMEOUT_MS || "1800000" },
     "ram-mib": { type: "string", default: "1024" },
     "icount-divider": { type: "string" },
+    bootargs: { type: "string", default: "root=/dev/vda rw console=ttyS0 earlycon=sbi" },
     "poll-ms": { type: "string", default: "30000" },
     "probe-timeout-ms": { type: "string", default: "120000" },
     port: { type: "string", default: "0" }, chrome: { type: "string", default: env.OMARCHY_CHROME_PATH },
@@ -79,6 +81,8 @@ export function options(argv = process.argv.slice(2), env = process.env) {
     assert.ok(Number.isSafeInteger(values[key]) && values[key] >= min && values[key] <= max, `invalid --${key}`);
   }
   assert.ok(["none", "auto"].includes(values.keyboard), "--keyboard must be none or auto");
+  assert.ok(values.bootargs.length > 0 && values.bootargs.length < 4096 && !/[\x00\r\n]/u.test(values.bootargs),
+    "invalid --bootargs");
   for (const key of ["image", "chunks", "out"]) values[key] = path.resolve(values[key]);
   return values;
 }
@@ -198,6 +202,7 @@ export function desktopObservation(clients, layers, processes, extraNamespace = 
     if (!match || Number(match[1]) <= 0) return [];
     const args = match[3];
     if (!/^(?:\/usr\/bin\/)?(?:quickshell|qs)(?:\s|$)/u.test(args)) return [];
+    if (/(?:^|\s)--(?:\s|$)/u.test(args)) return [];
     // Require exactly one explicit package-shell path; reject prefix matches and overrides.
     const paths = [...args.matchAll(/(?:^|\s)(?:-p\s+|--path(?:\s+|=))(\S+)/gu)];
     if (paths.length !== 1 || paths[0][1] !== "/usr/share/omarchy/shell") return [];
@@ -207,6 +212,7 @@ export function desktopObservation(clients, layers, processes, extraNamespace = 
     && shellProcesses.some((p) => p.pid === layer.pid)
     && (!extraNamespace || layer.namespace === extraNamespace));
   const shellClients = clients.filter((c) => c.mapped === true && c.hidden !== true
+    && c.size?.length === 2 && c.size.every((n) => Number.isFinite(n) && n > 0)
     && shellProcesses.some((p) => p.pid === c.pid));
   return { foot: foot || null, shellProcesses, shellLayers, shellClients,
     mappedFoot: Boolean(foot), quickshellObserved: shellProcesses.length > 0
@@ -290,7 +296,7 @@ async function diagnosticPage(config) {
           imageManifestUrl: "/e5t18a-desktop/manifest.json", baseUrl: "/e5t18a-desktop/",
           bootProfileUrl: null, ramMib: config.ramMib,
           guestClock: config.guestClock, icountDivider: config.icountDivider,
-          bootargs: "root=/dev/vda rw console=ttyS0 earlycon=sbi",
+          bootargs: config.bootargs,
           bootSnapshot: false, persist: false, slirpNet: false, fastInterpreter: true,
           jit: true, quantum: 500000, workerBootTimeoutMs: config.timeoutMs,
           onOutput(bytes) {
@@ -405,6 +411,7 @@ async function browserSession(opts, base, publication, record, serialOutput) {
         "Cross-Origin-Embedder-Policy": "require-corp" },
       body: pageHTML({ allowBoot: !opts["smoke-test"], ramMib: opts["ram-mib"], timeoutMs: opts["timeout-ms"],
         guestClock: "icount", icountDivider: opts["icount-divider"],
+        bootargs: opts.bootargs,
         imageSha256: opts["image-sha256"], manifestSha256: opts["manifest-sha256"] }) }));
     await context.route(`${base}/omarchy-kernel.json`, (route) => route.fulfill({
       contentType: "application/json", body: JSON.stringify(publication?.bootManifest || {}) }));
@@ -651,6 +658,7 @@ function selfTest() {
     "12 quickshell /usr/bin/quickshell -p /usr/share/omarchy/shell-impostor",
     "12 quickshell /usr/bin/quickshell -p /usr/share/omarchy/shell --path /tmp/override",
     "12 quickshell /tmp/impostor -p /usr/share/omarchy/shell",
+    "12 quickshell /usr/bin/quickshell -- --path=/usr/share/omarchy/shell",
   ]) assert.equal(desktopObservation([client], layers, wrong).quickshellObserved, false);
   const impostor = { monitor: { levels: { 2: [{ namespace: "omarchy-impostor", pid: 777, w: 1280, h: 30 }] } } };
   assert.equal(desktopObservation([client], impostor, processes).quickshellObserved, false);
@@ -658,11 +666,19 @@ function selfTest() {
   assert.equal(desktopObservation([client], impostor, "12 quickshell /tmp/not-the-package-shell").quickshellObserved, false);
   assert.equal(desktopObservation([client, { ...client, class: "quickshell", pid: 777 }], {}, processes).quickshellObserved, false);
   assert.equal(desktopObservation([client, { ...client, class: "quickshell", pid: 12 }], {}, processes).quickshellObserved, true);
+  for (const size of [[0, 0], [0, 30], [1280, 0], [-1, 30], [1280], [NaN, 30]]) {
+    assert.equal(desktopObservation([client, { ...client, class: "quickshell", pid: 12, size }], {}, processes).quickshellObserved, false);
+  }
   assert.equal(desktopObservation([client], layers, "12 quickshell /usr/bin/quickshell --path=/usr/share/omarchy/shell").quickshellObserved, true);
   assert.throws(() => options([], {}), /required/u);
   const args = ["--image", "/tmp/image", "--chunks", "/tmp/chunks", "--out", "/tmp/new",
     "--image-sha256", "a".repeat(64), "--manifest-sha256", "b".repeat(64)];
   assert.equal(options(args, {})["ram-mib"], 1024);
+  assert.equal(options([...args, "--bootargs", "root=/dev/vda plymouth.enable=0"], {}).bootargs,
+    "root=/dev/vda plymouth.enable=0");
+  for (const bad of ["", "bad\narg", "bad\0arg", "x".repeat(4096)]) {
+    assert.throws(() => options([...args, "--bootargs", bad], {}), /bootargs/u);
+  }
   assert.equal(options(args, {})["icount-divider"], undefined);
   for (const divider of ["1", "64", "1024"]) {
     assert.equal(options([...args, "--icount-divider", divider], {})["icount-divider"], Number(divider));
