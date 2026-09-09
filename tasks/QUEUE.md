@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5.5-T03a** — Prepare the clean Omarchy browser desktop session
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -446,7 +445,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 - [x] `525.01` [E5.5-T01a](epic-5.5-omarchy/E5.5-T01a-prepared-vm-image.md) — Prepare a clean Omarchy image candidate from the existing RISC-V VM *(deps: E5-T05c)*
 - [x] `525.02` [E5.5-T02a](epic-5.5-omarchy/E5.5-T02a-misaligned-virtual-pages.md) — Support misaligned scalar memory across noncontiguous virtual pages *(deps: E5.5-T01a)*
-- [ ] `525.03` [E5.5-T03a](epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md) — Prepare the clean Omarchy browser desktop session *(deps: E5.5-T02a)*
+- [~] `525.03` [E5.5-T03a](epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md) — Prepare the clean Omarchy browser desktop session *(deps: E5.5-T02a)*
 
 ## Epic 5 — `epic-5-the-window`
 
