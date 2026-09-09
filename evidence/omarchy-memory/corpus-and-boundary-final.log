@@ -1,0 +1,25 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.75s
+     Running tests/riscv_tests_suite.rs (target/debug/deps/riscv_tests_suite-b4455c879038da2e)
+
+running 5 tests
+test empty_dir_is_not_a_green_run ... ok
+test discovered_suite_counts_match_manifest ... ok
+test fail_exit_code_is_reported_as_fail ... ok
+test corrupted_binary_does_not_pass ... ok
+test riscv_tests_suite_matches_allowlist ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 28.73s
+
+     Running tests/verifier_e0t08_attacks.rs (target/debug/deps/verifier_e0t08_attacks-f30395796065eb38)
+
+running 6 tests
+test negative_offset_straddling_device_edge_faults_without_invoking_device ... ok
+test device_load_lands_in_rd_masked_and_extended ... ok
+test negative_offset_unmapped_faults_with_exact_tval ... ok
+test device_write_error_propagates_as_store_access_fault_pure ... ok
+test every_memory_fault_shape_leaves_full_dump_untouched ... ok
+test boundary_sweep_verifier_bases ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
