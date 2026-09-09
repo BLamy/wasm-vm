@@ -59,6 +59,22 @@ and public package-manager key initialization remain separate integration checks
 The image is not a bit-reproducible upstream rebuild; timestamps are outside that
 contract. Only fresh caches generated during this build may remain.
 
+The `lean-browser-session-v1` overlay retains Omarchy's package-owned shell,
+tiling and Tokyo Night theme. Its user-local `default.hypr.autostart` module
+selects the demo session initializer instead of the upstream developer-app
+first-run installer. It does not mark upstream user provisioning complete or
+grant administrator access. Optional preinstalled-application bindings are off;
+Foot is the selected terminal. The nonexistent hvc0 serial-getty instance is
+masked; ttyS0 remains available.
+
+The builder generates the hardware database with strict parsing, updates the
+journal catalog, and requires nonempty regular cache files before running
+`systemd-update-done`. This records real completion of package cache jobs, not
+desktop readiness. The session initializer has its own separate marker and
+starts the initial Foot window only after its local setup succeeds. Its exact
+script digest is included in the frozen input receipt. A fresh guest boot is
+still required before this profile can be described as ready.
+
 ## Chunk integrity and tests
 
 ```sh

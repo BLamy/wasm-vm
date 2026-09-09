@@ -88,6 +88,14 @@ class ConfigureOmarchyDemoTests(unittest.TestCase):
         overlay = json.loads((self.root / "etc/wasm-vm/demo-overlay.json").read_text())
         self.assertEqual(overlay["configurationSource"], "package-verified usr/share/omarchy/config")
         self.assertFalse(overlay["desktopVerified"])
+        self.assertFalse(overlay["upstreamFullUserProvisioning"])
+        startup = self.root / "home/omarchy/.config/default/hypr/autostart.lua"
+        self.assertIn("omarchy-launch-shell", startup.read_text())
+        self.assertIn("/usr/local/bin/omarchy-demo-session", startup.read_text())
+        self.assertNotIn("omarchy-provision-first-run", startup.read_text())
+        self.assertFalse((self.root / "home/omarchy/.local/state/omarchy/done").exists())
+        self.assertEqual(os.readlink(self.root / "etc/systemd/system/serial-getty@hvc0.service"), "/dev/null")
+        self.assertEqual((self.root / "usr/local/bin/omarchy-demo-session").stat().st_mode & 0o777, 0o755)
         self.assertEqual(tree_snapshot(source), before)
 
     def test_source_tree_is_immutable_after_configuration(self) -> None:

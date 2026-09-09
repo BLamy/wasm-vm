@@ -66,6 +66,26 @@ def configure(root):
     write("home/omarchy/.config/hypr/looknfeel.lua", "-- Browser software-rendering profile.\nhl.config({ animations = { enabled = false }, decoration = { blur = { enabled = false }, shadow = { enabled = false } } })\n")
     write("home/omarchy/.config/xdg-terminals.list", "foot.desktop\n")
     write("home/omarchy/.config/uwsm/env", "export OMARCHY_PATH=/usr/share/omarchy\nexport LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe LP_NUM_THREADS=1 AQ_NO_MODIFIERS=1 QT_QUICK_BACKEND=software\n")
+    # Omarchy's bootstrap searches ~/.config before package defaults. Replace
+    # only the startup module; keep the package's shell, tiling and theme code.
+    # The full upstream first-run installs/configures omitted developer apps.
+    write("home/omarchy/.config/default/hypr/autostart.lua", '''-- Explicit lean browser session; upstream package files stay untouched.
+hl.on("hyprland.start", function()
+  hl.exec_cmd("omarchy-launch-shell")
+  hl.exec_cmd("/usr/local/bin/omarchy-demo-session")
+end)
+''')
+    write("home/omarchy/.config/hypr/hyprland.lua", '''dofile((os.getenv("OMARCHY_PATH") or "/usr/share/omarchy") .. "/default/hypr/bootstrap.lua")
+omarchy_preinstalled_bindings = false
+require("default.hypr.omarchy")
+require("hypr.monitors")
+require("hypr.input")
+require("hypr.bindings")
+require("hypr.looknfeel")
+require("hypr.autostart")
+require("default.hypr.toggles")
+''')
+    write("usr/local/bin/omarchy-demo-session", Path(__file__).with_name("omarchy-demo-session.sh").read_text(), 0o755)
     write("etc/motd", "Omarchy RISC-V browser demo candidate\nOptional applications and toolchains are not bundled.\nNo personal accounts, credentials or VM session state were imported.\nDesktop/browser verification is recorded separately.\n")
 
     links = {
@@ -73,6 +93,8 @@ def configure(root):
         "etc/systemd/system/display-manager.service": "/usr/lib/systemd/system/sddm.service",
         "etc/systemd/system/multi-user.target.wants/NetworkManager.service": "/usr/lib/systemd/system/NetworkManager.service",
         "etc/systemd/system/dbus-org.freedesktop.NetworkManager.service": "/usr/lib/systemd/system/NetworkManager.service",
+        # The demo has ttyS0, not a configured virtio-console hvc0 port.
+        "etc/systemd/system/serial-getty@hvc0.service": "/dev/null",
         "etc/resolv.conf": "/run/NetworkManager/resolv.conf",
     }
     for relative, target in links.items():
@@ -88,6 +110,8 @@ def configure(root):
         os.lchown(entry, 1000, 1000)
     # Keep an explicit overlay identity separate from upstream package identity.
     write("etc/wasm-vm/demo-overlay.json", json.dumps({"schema": 1, "files": changes,
+        "profile": "lean-browser-session-v1",
+        "upstreamFullUserProvisioning": False,
         "configurationSource": "package-verified usr/share/omarchy/config",
         "desktopVerified": False}, indent=2, sort_keys=True) + "\n")
     return changes
