@@ -1,4 +1,4 @@
-# E5-T26p evidence index — in progress
+# E5-T26p evidence index — implemented
 
 The static-code gate is admitted by fresh Daybreak in
 `verifier/artifact-verdict.md` (SHA256
@@ -6,7 +6,7 @@ The static-code gate is admitted by fresh Daybreak in
 The subsequent canonical semantic comparison passes 266 cases/modes with
 byte-identical old-source native, candidate native, and actual-WASM output.
 This is not a completed verifier verdict, browser latency result, or release claim.
-No final clone, F boot, merge, or deployment is represented here yet.
+The final clone below passes; no F boot, merge, or deployment is represented here.
 
 - `artifact-notes.md` and `artifact-index.json`: actual native and authenticated
   production-WASM caller/callee analysis, exact function bodies and size tradeoffs.
@@ -73,4 +73,14 @@ This proves the demo ISA suite, not a Linux/Omarchy boot or performance budget.
 canonical semantics, the promoted native/WASM x0-MMIO false-sink attack, and
 one executed reservation-effect sabotage in a separate archive. The sabotage
 fails the first seeded overlap assertion as required; scratch and real runtime
-hashes are restored/unchanged. The final clean-clone proof remains outstanding.
+hashes are restored/unchanged.
+
+## Sole final clone
+
+`bash evidence/e5-t26p/run-final-clone.sh 078500ebbef1c5d90adf973790ad68b7579a5879`
+passes in `/private/tmp/e5-t26p-final.NtmIRa0D/repo` at that exact committed head.
+Both checkout checks are clean, with no object alternates and fresh target output;
+the scrubbed task gate passes 75 native and 82 WASM tests, the canonical producer,
+checks/builds and detector selftest. `main-gates/06-final-clone.log` SHA256
+`661b13b6656bbbece2131a0c982b79d78b13e3a67016f251d28a5ee55c513c9d`.
+No second clone or semantic change was made. Final critic verdict is pending.

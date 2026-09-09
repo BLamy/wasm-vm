@@ -3,7 +3,7 @@ id: E5-T26p
 epic: 5
 title: Specialize optional interpreter retirement metadata without changing effects
 priority: 526.5996
-status: in-progress
+status: implemented
 depends_on: [E0-T16, E1-T04, E5-T26o]
 estimate: S
 risk: high
@@ -186,3 +186,25 @@ This submission demonstrates equivalent architectural effects with optional
 retirement metadata on the admitted native/WASM paths. The sole exact-commit
 clean clone and final verdict are next; no F speedup, Linux/Omarchy boot, merge
 or deployment is claimed. The task remains in progress until that proof completes.
+
+### 2026-09-08 — worker — implemented, exact-head clean clone passed
+
+Frozen source/tests/bundle/evidence commit:
+`078500ebbef1c5d90adf973790ad68b7579a5879`. Command:
+`bash evidence/e5-t26p/run-final-clone.sh 078500ebbef1c5d90adf973790ad68b7579a5879`.
+The sole pristine local clone is retained at
+`/private/tmp/e5-t26p-final.NtmIRa0D/repo`, detached at that exact commit, with
+no object alternates, scrubbed build settings, fresh target directories and clean
+initial/final checkout. `make verify-E5-T26p` exits zero: 75 native tests,
+82 actual-WASM tests, canonical 266-case native producer and WASM old-golden
+comparison, prescribed checks/builds and detector selftest all pass.
+`evidence/e5-t26p/main-gates/06-final-clone.log` SHA256
+`661b13b6656bbbece2131a0c982b79d78b13e3a67016f251d28a5ee55c513c9d`.
+The already-held hunk ledger digest is
+`7df1d78113331c5a180982720d3c2db4d24de2ff7889717301f285ee1ebbb06b`.
+
+The final clone reproduces the bounded optional-capture claim from committed
+inputs, without relying on the worker's output directory or uncommitted fixtures.
+All runtime pins and the single demo's admitted WASM digest remain unchanged.
+Status is implemented pending fresh Daybreak's final verdict; F, Epic5 completion,
+merge and Omarchy deployment are not claimed.
