@@ -1,0 +1,1478 @@
+{"config":{"E5_T26F_REQUIRE_HEAD":"415db223733214b6c6e7b69b0ad331150969be56","E5_T26F_HEADED":"0","E5_T26F_FIXTURE":"resident-observer-v1","E5_T26F_DIAGNOSTIC_PROFILE":"/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-Us7LU1","E5_T26F_DIAGNOSTIC_PORT":"61637","E5_T26F_TIMEOUT_MS":"1800000","E5_T26F_IMAGE":"target/e5-t26f/resident-image-single-process-observer-v1/alpine-rootfs.ext4","E5_T26F_IMAGE_INFO":"target/e5-t26f/resident-image-single-process-observer-v1/desktop-info.json","E5_T26F_DESKTOP_ASSET_DIR":"target/e5-t26f/chunks/resident-single-process-observer-v1","E5_T26F_DIAGNOSTIC":"reuse","E5_T26F_DIAGNOSTIC_COMPLETE":"1","E5_T26F_OUT":"/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t26f/single-process-observer-415db223/completion/record"}}
+[e5-t26f] {"phase":"server:startup","event":"start","timestamp":"2026-09-09T00:43:33.946Z","elapsedMs":1}
+[e5-t26f] DIAGNOSTIC ITERATION ONLY — not acceptance; retained profiles are never deleted
+[e5-t26f] {"phase":"server:startup","event":"done","timestamp":"2026-09-09T00:43:34.841Z","elapsedMs":895}
+[e5-t26f] {"phase":"browser:launch","event":"start","timestamp":"2026-09-09T00:43:34.841Z","elapsedMs":895}
+[e5-t26f] {"phase":"browser:launch","event":"done","timestamp":"2026-09-09T00:43:36.457Z","elapsedMs":2511}
+[e5-t26f] {"phase":"reload:normal","event":"start","timestamp":"2026-09-09T00:43:36.463Z","elapsedMs":2517}
+[e5-t26f] {"phase":"reload:normal","event":"done","timestamp":"2026-09-09T00:43:36.609Z","elapsedMs":2663}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"start","timestamp":"2026-09-09T00:43:36.609Z","elapsedMs":2663}
+[e5-t26f] {"phase":"readiness:normal:desktop ready","event":"done","timestamp":"2026-09-09T00:43:37.885Z","elapsedMs":3939}
+[e5-t26f] {"phase":"restore:normal:completion","event":"start","timestamp":"2026-09-09T00:43:37.885Z","elapsedMs":3939}
+[e5-t26f] {"phase":"restore:normal:completion","event":"done","timestamp":"2026-09-09T00:43:37.893Z","elapsedMs":3947}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"start","timestamp":"2026-09-09T00:43:37.893Z","elapsedMs":3947}
+[e5-t26f] {"phase":"restore:normal:first-present","event":"done","timestamp":"2026-09-09T00:43:37.895Z","elapsedMs":3949}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"start","timestamp":"2026-09-09T00:43:37.895Z","elapsedMs":3949}
+[e5-t26f] {"phase":"restore:normal:display-checks","event":"done","timestamp":"2026-09-09T00:43:37.895Z","elapsedMs":3949}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"start","timestamp":"2026-09-09T00:43:37.895Z","elapsedMs":3949}
+[e5-t26f] {"phase":"post-restore:focus-and-gesture","event":"done","timestamp":"2026-09-09T00:43:38.271Z","elapsedMs":4325}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"start","timestamp":"2026-09-09T00:43:38.271Z","elapsedMs":4325}
+[e5-t26f] {"phase":"post-restore:cursor-render","event":"done","timestamp":"2026-09-09T00:43:38.386Z","elapsedMs":4440}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"start","timestamp":"2026-09-09T00:43:38.386Z","elapsedMs":4440}
+[e5-t26f] {"phase":"post-restore:audio-unlock","event":"done","timestamp":"2026-09-09T00:43:38.389Z","elapsedMs":4443}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"start","timestamp":"2026-09-09T00:43:38.389Z","elapsedMs":4443}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:typing","event":"done","timestamp":"2026-09-09T00:43:38.450Z","elapsedMs":4504}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"start","timestamp":"2026-09-09T00:43:38.450Z","elapsedMs":4504}
+[e5-t26f] {"phase":"command:e5t26f-post-aplay:completion","event":"done","timestamp":"2026-09-09T00:43:41.611Z","elapsedMs":7665}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"start","timestamp":"2026-09-09T00:43:41.612Z","elapsedMs":7666}
+[e5-t26f] {"phase":"post-restore:audio-pcm-and-render","event":"done","timestamp":"2026-09-09T00:43:41.646Z","elapsedMs":7700}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"start","timestamp":"2026-09-09T00:43:41.646Z","elapsedMs":7700}
+[e5-t26f] {"phase":"post-restore:interaction-checks","event":"timing-failed-continuing","timestamp":"2026-09-09T00:43:41.701Z","elapsedMs":7755}
+[e5-t26f] {"phase":"restore:normal:coherence-audit","event":"start","timestamp":"2026-09-09T00:43:41.701Z","elapsedMs":7755}
+[e5-t26f] {"phase":"restore:normal:coherence-audit","event":"done","timestamp":"2026-09-09T00:43:41.765Z","elapsedMs":7819}
+[e5-t26f] {"phase":"drag:prepare","event":"start","timestamp":"2026-09-09T00:43:41.765Z","elapsedMs":7819}
+[e5-t26f] {"phase":"drag:prepare","event":"done","timestamp":"2026-09-09T00:43:41.871Z","elapsedMs":7925}
+[e5-t26f] {"phase":"snapshot:drag-before","event":"start","timestamp":"2026-09-09T00:43:41.871Z","elapsedMs":7925}
+[e5-t26f] {"phase":"snapshot:drag-before","event":"done","timestamp":"2026-09-09T00:43:50.112Z","elapsedMs":16166}
+[e5-t26f] {"phase":"snapshot:drag-held","event":"start","timestamp":"2026-09-09T00:43:50.112Z","elapsedMs":16166}
+[e5-t26f] {"phase":"snapshot:drag-held","event":"done","timestamp":"2026-09-09T00:43:58.101Z","elapsedMs":24155}
+[e5-t26f] {"phase":"snapshot:drag-moving","event":"start","timestamp":"2026-09-09T00:43:58.101Z","elapsedMs":24155}
+[e5-t26f] {"phase":"drag:guest-translation","event":"start","timestamp":"2026-09-09T00:43:58.103Z","elapsedMs":24157}
+[e5-t26f] {"phase":"drag:guest-translation","event":"done","timestamp":"2026-09-09T00:43:59.376Z","elapsedMs":25430}
+[e5-t26f] {"phase":"drag:checkpoint-Published","event":"start","timestamp":"2026-09-09T00:44:08.213Z","elapsedMs":34267}
+[e5-t26f] {"phase":"drag:checkpoint-Published","event":"done","timestamp":"2026-09-09T00:44:08.691Z","elapsedMs":34745}
+[e5-t26f] {"phase":"snapshot:drag-moving","event":"done","timestamp":"2026-09-09T00:44:08.691Z","elapsedMs":34745}
+[e5-t26f] {"phase":"snapshot:drag-released","event":"start","timestamp":"2026-09-09T00:44:08.691Z","elapsedMs":34745}
+[e5-t26f] {"timestamp":"2026-09-09T00:44:16.503Z","phase":"snapshot:drag-released","event":"sample","probeMs":2259,"ready":"ready","restored":"ready","status":"desktop ready: launcher available","serialTail":"","frameCount":18,"pointerFrames":7,"keyboardFrames":10,"launch":null,"command":{"label":null,"marker":"e5t26f-post-aplay","accepted":true,"terminalRendered":null,"terminalMarkerSeen":true,"visualDiffPixels":8517,"guestVisible":null,"pointerFrames":null,"keyboardFrames":10},"focus":{"label":"post-restore-focus","marker":null,"accepted":true,"terminalRendered":null,"terminalMarkerSeen":null,"visualDiffPixels":null,"guestVisible":true,"pointerFrames":2,"keyboardFrames":null},"agent":{"state":"ready","transportGeneration":2,"bytesReceived":36,"bytesSent":36,"pendingBytes":0},"presentation":{"successfulPresents":18,"scheduler":null},"audio":{"policy":"unlocked","context":"running","renderedFrames":1870776,"pcm":{"available":true,"writeIndex":1440,"readIndex":1440,"fillFrames":0,"capacityFrames":4096,"writtenFrames":4096,"inspectedFrames":4096,"nonSilentFrames":1440,"maxAbs":0.999969482421875}}}
+[e5-t26f] {"phase":"snapshot:drag-released","event":"done","timestamp":"2026-09-09T00:44:16.503Z","elapsedMs":42557}
+[e5-t26f] {"phase":"drag:checkpoint-BeforeReload","event":"start","timestamp":"2026-09-09T00:44:16.503Z","elapsedMs":42557}
+[e5-t26f] {"phase":"drag:checkpoint-BeforeReload","event":"done","timestamp":"2026-09-09T00:44:16.934Z","elapsedMs":42988}
+[e5-t26f] {"phase":"reload:drag","event":"start","timestamp":"2026-09-09T00:44:16.934Z","elapsedMs":42988}
+[e5-t26f] {"phase":"reload:drag","event":"done","timestamp":"2026-09-09T00:44:16.950Z","elapsedMs":43004}
+[e5-t26f] {"phase":"readiness:drag:desktop ready","event":"start","timestamp":"2026-09-09T00:44:16.950Z","elapsedMs":43004}
+[e5-t26f] {"phase":"readiness:drag:desktop ready","event":"done","timestamp":"2026-09-09T00:44:18.257Z","elapsedMs":44311}
+[e5-t26f] {"phase":"restore:drag:completion","event":"start","timestamp":"2026-09-09T00:44:18.257Z","elapsedMs":44311}
+[e5-t26f] {"phase":"restore:drag:completion","event":"done","timestamp":"2026-09-09T00:44:18.261Z","elapsedMs":44315}
+[e5-t26f] {"phase":"restore:drag:first-present","event":"start","timestamp":"2026-09-09T00:44:18.261Z","elapsedMs":44315}
+[e5-t26f] {"phase":"restore:drag:first-present","event":"done","timestamp":"2026-09-09T00:44:18.263Z","elapsedMs":44317}
+[e5-t26f] {"phase":"restore:drag:display-and-button-checks","event":"start","timestamp":"2026-09-09T00:44:18.263Z","elapsedMs":44317}
+[e5-t26f] {"phase":"restore:drag:display-and-button-checks","event":"done","timestamp":"2026-09-09T00:44:18.264Z","elapsedMs":44318}
+[e5-t26f] {"phase":"restore:drag:coherence-audit","event":"start","timestamp":"2026-09-09T00:44:18.264Z","elapsedMs":44318}
+[e5-t26f] {"phase":"restore:drag:coherence-audit","event":"done","timestamp":"2026-09-09T00:44:18.322Z","elapsedMs":44376}
+[e5-t26f] {"phase":"restore:drag:guest-release","event":"start","timestamp":"2026-09-09T00:44:18.322Z","elapsedMs":44376}
+[e5-t26f] {"phase":"restore:drag:guest-release","event":"done","timestamp":"2026-09-09T00:44:19.893Z","elapsedMs":45947}
+[e5-t26f] {"phase":"evidence:write","event":"start","timestamp":"2026-09-09T00:44:19.893Z","elapsedMs":45947}
+[e5-t26f] {"phase":"diagnostic:completion-evidence","event":"done","timestamp":"2026-09-09T00:44:19.984Z","elapsedMs":46038}
+{
+  "schema": "wasm-vm.e5-t26f.diagnostic-completion.v1",
+  "task": "E5-T26f",
+  "head": "415db223733214b6c6e7b69b0ad331150969be56",
+  "acceptance": false,
+  "functionalChecksPassed": true,
+  "timingPassed": false,
+  "checksPassed": false,
+  "browser": {
+    "name": "chromium",
+    "version": "Chrome/152.0.7977.76",
+    "headless": true
+  },
+  "milestones": {
+    "run": {
+      "kind": "diagnostic-iteration",
+      "acceptance": false,
+      "diagnostic": {
+        "mode": "reuse",
+        "directory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-Us7LU1",
+        "port": 61637,
+        "origin": "http://127.0.0.1:61637",
+        "command": null,
+        "keyDelayMs": 0,
+        "latency": false,
+        "cpu": false,
+        "guestClock": null,
+        "jit": null,
+        "residency": null,
+        "complete": true,
+        "icountDivider": null
+      },
+      "postRestoreCommand": "play",
+      "postRestoreKeyDelayMs": 5,
+      "fixture": {
+        "kind": "resident-observer-v1",
+        "helperSha256": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh",
+        "observer": {
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-observe",
+          "sourcePath": "tools/guest/e5-t26f-observer.c",
+          "sourceSha256": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+          "binaryPath": "target/e5-t26f/observer-build-v1/e5t26f-observe",
+          "sha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+          "size": 30960,
+          "mode": "0555",
+          "buildInfoPath": "target/e5-t26f/observer-build-v1/build-info.json",
+          "buildInfoSha256": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+          "readbackSha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350"
+        }
+      },
+      "binding": {
+        "head": "415db223733214b6c6e7b69b0ad331150969be56",
+        "runtimeSha256": "21dce9b435890a40278d8935800accbccc0d0c3d59676fe3ce6b47d136471926",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "imageSha256": "d2fc4eab9bc1b5fe528a2956b58faefb20fcf18e2505c499ecafa8824d390f72",
+        "imageBytes": 1073741824,
+        "manifestSha256": "e02a9af547773f9d54e47151419ab3b118c55d3a4c90b25dcc434487db8dc9f5",
+        "origin": "http://127.0.0.1:61637",
+        "fixture": {
+          "kind": "resident-observer-v1",
+          "helperSha256": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+          "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh",
+          "observer": {
+            "guestPath": "/usr/libexec/wasm-vm/e5t26f-observe",
+            "sourcePath": "tools/guest/e5-t26f-observer.c",
+            "sourceSha256": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+            "binaryPath": "target/e5-t26f/observer-build-v1/e5t26f-observe",
+            "sha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+            "size": 30960,
+            "mode": "0555",
+            "buildInfoPath": "target/e5-t26f/observer-build-v1/build-info.json",
+            "buildInfoSha256": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+            "readbackSha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350"
+          }
+        }
+      },
+      "profile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-Us7LU1/iteration-t8y28a/profile",
+      "checkpointFile": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5-t26f-single-process-observer-Us7LU1/normal-checkpoint.json",
+      "creatorHead": "415db223733214b6c6e7b69b0ad331150969be56",
+      "currentHead": "415db223733214b6c6e7b69b0ad331150969be56",
+      "checkpointCreatedAt": "2026-09-09T00:34:29.504Z",
+      "profileSha256": "e6df3a0abc0f65583a74d6cc7e43a4226022e7297fc0f4c2067d099bc168f8dc"
+    },
+    "normalSnapshot": {
+      "sha256": "e53e5a3936ef2d35e6ae5e09676dba51cfc59d63ed37dbc56c94998810e6ac9f",
+      "byteLength": 2810500,
+      "preFrontBufferCrc": "fe94d179",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "fe94d179",
+        "overlayGeneration": 628
+      }
+    },
+    "residentCheckpoint": {
+      "fixture": {
+        "kind": "resident-observer-v1",
+        "helperSha256": "5807b908fc1bd84ff19c96e269df6b69ac86d3a62412a032f476dc8ea7f581d9",
+        "baseSha256": "5530d6585776cf61fcedb98f7a2e75b4293d5f805809e5107cc181fa5dc62550",
+        "guestPath": "/usr/libexec/wasm-vm/e5t26f-resident.sh",
+        "observer": {
+          "guestPath": "/usr/libexec/wasm-vm/e5t26f-observe",
+          "sourcePath": "tools/guest/e5-t26f-observer.c",
+          "sourceSha256": "4ce161e7c1d82c19d2bd924c5f93d3d097c93a1ab6c53cec397e8ec1d2ee30e9",
+          "binaryPath": "target/e5-t26f/observer-build-v1/e5t26f-observe",
+          "sha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350",
+          "size": 30960,
+          "mode": "0555",
+          "buildInfoPath": "target/e5-t26f/observer-build-v1/build-info.json",
+          "buildInfoSha256": "04bb3b3ca42ca5efdc71ffb1b7c7587b73e3499ebc690b9f7c76eb7810fcda3b",
+          "readbackSha256": "cdb72cc93a20ec360f3fb63a23911b77059feaa4230ad84d6963a92e25809350"
+        }
+      },
+      "prepared": {
+        "command": ". /usr/libexec/wasm-vm/e5t26f-resident.sh && e5_prepare",
+        "marker": "e5t26f-prepared",
+        "beforeFrame": 307,
+        "keyboardStart": 556,
+        "domEventStart": 556,
+        "visualDiffPixels": 13664,
+        "terminalMarkerSeen": true,
+        "greenPixelsBefore": 240,
+        "redPixelsBefore": 0,
+        "visualChange": true,
+        "afterFrame": 354,
+        "redMarkerSeen": false,
+        "keyboardFrames": 118,
+        "domEvents": 118,
+        "inputSequenceMatch": true,
+        "inputTraceSha256": null,
+        "accepted": true
+      },
+      "sound": {
+        "envelopeSha256": "e53e5a3936ef2d35e6ae5e09676dba51cfc59d63ed37dbc56c94998810e6ac9f",
+        "soundSha256": "42dfc147f4ad0d0b98490c3cb39bb8f3932f785a8266335fcd151de18b56858f",
+        "state": 2,
+        "paramsPresent": 1,
+        "parameterRequest": 257,
+        "streamId": 0,
+        "bufferBytes": 3840,
+        "periodBytes": 1920,
+        "channels": 2,
+        "format": 5,
+        "rate": 7,
+        "pendingTransfers": 0,
+        "pendingBytes": 0,
+        "releasePending": 0,
+        "nextXrunPresent": 0,
+        "eventCount": 0,
+        "events": [],
+        "kicked": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "resetPending": 0
+      },
+      "screenshot": {
+        "file": "evidence/e5-t26f/single-process-observer-415db223/cold/resident-prepared.png",
+        "sha256": "ec4777379032f308fe09e8954858561b81facc34734c696e95149c7360a9d225"
+      }
+    },
+    "completionConsole": [
+      {
+        "timestamp": "2026-09-09T00:43:36.613Z",
+        "phase": "readiness:normal:desktop ready",
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)"
+      },
+      {
+        "timestamp": "2026-09-09T00:43:40.635Z",
+        "phase": "command:e5t26f-post-aplay:completion",
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)"
+      }
+    ],
+    "normalRestore": {
+      "result": {
+        "snapshotSha256": "e53e5a3936ef2d35e6ae5e09676dba51cfc59d63ed37dbc56c94998810e6ac9f",
+        "snapshotBytes": 2810500,
+        "completedAt": 1126.2799999713898,
+        "report": {
+          "boundaryId": 9906193319,
+          "scanout": {
+            "width": 1280,
+            "height": 800
+          },
+          "hostViewport": {
+            "width": 1280,
+            "height": 800
+          },
+          "viewport": "native",
+          "agentRehandshake": true,
+          "inputReleaseEvents": 0,
+          "soundXrunEvents": 0,
+          "fullRepairFrame": true
+        },
+        "handshake": {
+          "generation": 2,
+          "version": 1,
+          "capabilities": "1"
+        },
+        "observation": {
+          "baseSuccessfulPresents": 1,
+          "firstPresent": {
+            "successfulPresents": 2,
+            "crc32": "fe94d179"
+          }
+        },
+        "bootStates": [
+          {
+            "state": "fetching",
+            "atMs": 129
+          },
+          {
+            "state": "instantiating",
+            "atMs": 149
+          },
+          {
+            "state": "restored",
+            "atMs": 749
+          }
+        ],
+        "diagnostics": [
+          {
+            "atMs": 835,
+            "reason": "agent-channel",
+            "error": "desktop restore requested a fresh agent HELLO",
+            "channelState": "disconnected",
+            "transportGeneration": 0
+          }
+        ],
+        "machineResume": {
+          "persisted": true,
+          "paused": true,
+          "preFrontBufferCrc": "fe94d179",
+          "overlayGeneration": 628
+        },
+        "preFrontBufferCrc": "fe94d179",
+        "resume": {
+          "restored": true,
+          "snapshotDecision": "resume",
+          "overlayGeneration": 628
+        },
+        "coherenceAudit": {
+          "status": "passed",
+          "startedAt": "2026-09-09T00:43:41.701Z",
+          "restoreBoundary": {
+            "attempted": true,
+            "decision": "resume",
+            "overlayGeneration": 628
+          },
+          "currentOverlayGeneration": 628,
+          "completedAt": "2026-09-09T00:43:41.765Z"
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "fixedViewport": true,
+          "sizeMismatch": false,
+          "framesReceived": 2,
+          "successfulPresents": 2,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "scheduler": null,
+          "gpu": {
+            "framesReceived": 2,
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "successfulPresents": 2,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 0,
+            "uploadedBytes": 8192000,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "width": 1280,
+            "height": 800
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 800
+          },
+          "errors": []
+        }
+      },
+      "displayChecksPassed": true,
+      "checksPassed": false,
+      "functionalChecksPassed": true
+    },
+    "postRestoreStart": 1126.2799999713898,
+    "residentBeforeGesture": [
+      {
+        "observedAt": 1449.039999961853,
+        "policy": "locked",
+        "context": "suspended",
+        "pcm": {
+          "available": true,
+          "writeIndex": 0,
+          "readIndex": 0,
+          "fillFrames": 0,
+          "capacityFrames": 4096,
+          "writtenFrames": 0,
+          "inspectedFrames": 0,
+          "nonSilentFrames": 0,
+          "maxAbs": 0
+        }
+      },
+      {
+        "observedAt": 1803.9249999523163,
+        "policy": "locked",
+        "context": "suspended",
+        "pcm": {
+          "available": true,
+          "writeIndex": 0,
+          "readIndex": 0,
+          "fillFrames": 0,
+          "capacityFrames": 4096,
+          "writtenFrames": 0,
+          "inspectedFrames": 0,
+          "nonSilentFrames": 0,
+          "maxAbs": 0
+        }
+      }
+    ],
+    "postRestoreCursor": {
+      "frame": {
+        "atMs": 1521,
+        "sequence": 1,
+        "device": "tablet",
+        "mode": "absolute",
+        "events": [
+          {
+            "eventType": 3,
+            "code": 0,
+            "value": 17510
+          },
+          {
+            "eventType": 3,
+            "code": 1,
+            "value": 16056
+          }
+        ],
+        "sync": 0,
+        "source": "pointermove",
+        "coordinates": {
+          "x": 17510,
+          "y": 16056
+        }
+      },
+      "rendered": {
+        "x": 684,
+        "y": 392,
+        "hotX": 1,
+        "hotY": 1,
+        "matchedPixels": 94
+      },
+      "observedAt": 1920.1900000572205,
+      "elapsedMs": 793.9100000858307
+    },
+    "postRestoreAudioBefore": {
+      "policy": "unlocked",
+      "renderedFrames": 41400,
+      "writeIndex": 0
+    },
+    "postRestoreAplay": {
+      "command": "play",
+      "marker": "e5t26f-post-aplay",
+      "beforeFrame": 4,
+      "keyboardStart": 0,
+      "domEventStart": 0,
+      "visualDiffPixels": 8517,
+      "terminalMarkerSeen": true,
+      "greenPixelsBefore": 369,
+      "redPixelsBefore": 0,
+      "visualChange": true,
+      "afterFrame": 12,
+      "redMarkerSeen": false,
+      "keyboardFrames": 10,
+      "domEvents": 10,
+      "inputSequenceMatch": true,
+      "inputTraceSha256": null,
+      "accepted": true
+    },
+    "postRestorePcmAtCompletion": {
+      "observedAt": 5148.580000042915,
+      "pcm": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.999969482421875
+      },
+      "elapsedMs": 4022.3000000715256
+    },
+    "postRestoreOutputAttached": {
+      "outputAttached": true,
+      "observedAt": 5180.039999961853
+    },
+    "postRestoreAudioAfter": {
+      "policy": "unlocked",
+      "context": "running",
+      "renderedFrames": 197560,
+      "pcm": {
+        "available": true,
+        "writeIndex": 1440,
+        "readIndex": 1440,
+        "fillFrames": 0,
+        "capacityFrames": 4096,
+        "writtenFrames": 1440,
+        "inspectedFrames": 1440,
+        "nonSilentFrames": 1440,
+        "maxAbs": 0.999969482421875
+      },
+      "pcmObservedAt": 5148.580000042915,
+      "writeIndex": 0,
+      "guestAttached": true,
+      "guestAttachedObservedAt": 5180.039999961853
+    },
+    "postRestoreEnd": 5182.024999976158,
+    "postRestoreInteraction": {
+      "elapsedMs": 4056.2000000476837,
+      "pointerFrames": 3,
+      "keyboardFrames": 10,
+      "heldButtons": [],
+      "audio": {
+        "policy": "unlocked",
+        "context": "running",
+        "renderedFrames": 197560
+      }
+    },
+    "postRestoreInteractionChecks": {
+      "functionalChecksPassed": true,
+      "timingPassed": false,
+      "checksPassed": false
+    },
+    "deferredInteractionCap": {
+      "kind": "timing-cap",
+      "acceptance": false,
+      "capturedAt": "2026-09-09T00:43:41.647Z",
+      "postRestoreStart": 1126.2799999713898,
+      "postRestoreEnd": 5182.024999976158,
+      "elapsedMs": 4055.7450000047684,
+      "limitMs": 2000,
+      "error": {
+        "name": "AssertionError",
+        "message": "post-restore interaction exceeded 2 seconds",
+        "code": "ERR_ASSERTION",
+        "actual": false,
+        "expected": true,
+        "operator": "==",
+        "stack": "AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1930:12"
+      }
+    },
+    "dragMapping": {
+      "canvasBox": {
+        "x": 80,
+        "y": 84,
+        "width": 1280,
+        "height": 800
+      },
+      "start": {
+        "x": 737,
+        "y": 120
+      },
+      "end": {
+        "x": 817,
+        "y": 120
+      },
+      "guestStart": {
+        "x": 657,
+        "y": 36
+      },
+      "guestEnd": {
+        "x": 737,
+        "y": 36
+      }
+    },
+    "dragBeforeSnapshot": {
+      "sha256": "62cdde9c27a7c031a65f34dea0e2aea38450a49a993957cc25ffefd0c30ecda2",
+      "byteLength": 2900151,
+      "machineResume": null,
+      "generationObservation": {
+        "requestedAt": 13614.245000004768,
+        "observedAt": 13647.799999952316,
+        "status": "observed",
+        "snapshotGeneration": 628
+      }
+    },
+    "dragHeldSnapshot": {
+      "sha256": "ec6b4d4b8bf6da2325b77f1842665c383594b62d1fd7638abc8a831b2ef4cf73",
+      "byteLength": 2922543,
+      "machineResume": null,
+      "generationObservation": {
+        "requestedAt": 21602.90999996662,
+        "observedAt": 21636.625,
+        "status": "observed",
+        "snapshotGeneration": 628
+      }
+    },
+    "dragMovement": {
+      "before": {
+        "left": 557,
+        "right": 1253,
+        "top": 13,
+        "bottom": 39
+      },
+      "status": "passed",
+      "observed": {
+        "at": 22908.985000014305,
+        "titlebar": {
+          "left": 637,
+          "right": 1280,
+          "top": 32,
+          "bottom": 58
+        }
+      },
+      "translation": {
+        "deltaX": 80,
+        "displacementPx": 80
+      },
+      "paused": {
+        "at": 22909.87000000477,
+        "isPaused": true,
+        "titlebar": {
+          "left": 637,
+          "right": 1280,
+          "top": 32,
+          "bottom": 58
+        }
+      },
+      "pausedTranslation": {
+        "deltaX": 80,
+        "displacementPx": 80
+      }
+    },
+    "dragSnapshot": {
+      "sha256": "aaa029fa9347873e4626b281855f607fd133a216cb8c5c102c51052da936885a",
+      "byteLength": 2947491,
+      "preFrontBufferCrc": "ab6a2f0d",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "ab6a2f0d",
+        "overlayGeneration": 628
+      },
+      "generationObservation": {
+        "requestedAt": 31744.00499999523,
+        "observedAt": 31744.12999999523,
+        "status": "observed",
+        "snapshotGeneration": 628
+      }
+    },
+    "dragCheckpointPublished": {
+      "status": "passed",
+      "snapshotSha256": "aaa029fa9347873e4626b281855f607fd133a216cb8c5c102c51052da936885a",
+      "observed": {
+        "at": 32226.274999976158,
+        "isPaused": true,
+        "generation": 628,
+        "decision": "resume",
+        "envelopeSha256": "aaa029fa9347873e4626b281855f607fd133a216cb8c5c102c51052da936885a",
+        "stillPaused": true,
+        "finalGeneration": 628
+      }
+    },
+    "dragReleasedSnapshot": {
+      "sha256": "aaa029fa9347873e4626b281855f607fd133a216cb8c5c102c51052da936885a",
+      "byteLength": 2947491,
+      "machineResume": null,
+      "generationObservation": {
+        "requestedAt": 40038.10000002384,
+        "observedAt": 40038.200000047684,
+        "status": "observed",
+        "snapshotGeneration": 628
+      }
+    },
+    "beforeSecondReload": {
+      "generationObservation": {
+        "requestedAt": 40038.81000006199,
+        "observedAt": 40038.85500001907,
+        "status": "observed",
+        "snapshotGeneration": 628
+      }
+    },
+    "dragCheckpointBeforeReload": {
+      "status": "passed",
+      "snapshotSha256": "aaa029fa9347873e4626b281855f607fd133a216cb8c5c102c51052da936885a",
+      "observed": {
+        "at": 40469.60500001907,
+        "isPaused": true,
+        "generation": 628,
+        "decision": "resume",
+        "envelopeSha256": "aaa029fa9347873e4626b281855f607fd133a216cb8c5c102c51052da936885a",
+        "stillPaused": true,
+        "finalGeneration": 628
+      }
+    },
+    "dragRestore": {
+      "result": {
+        "snapshotSha256": "aaa029fa9347873e4626b281855f607fd133a216cb8c5c102c51052da936885a",
+        "snapshotBytes": 2947491,
+        "completedAt": 1062.9350000619888,
+        "report": {
+          "boundaryId": 284279998,
+          "scanout": {
+            "width": 1280,
+            "height": 800
+          },
+          "hostViewport": {
+            "width": 1280,
+            "height": 800
+          },
+          "viewport": "native",
+          "agentRehandshake": true,
+          "inputReleaseEvents": 0,
+          "soundXrunEvents": 0,
+          "fullRepairFrame": true
+        },
+        "handshake": {
+          "generation": 2,
+          "version": 1,
+          "capabilities": "1"
+        },
+        "observation": {
+          "baseSuccessfulPresents": 2,
+          "firstPresent": {
+            "successfulPresents": 3,
+            "crc32": "ab6a2f0d"
+          }
+        },
+        "bootStates": [
+          {
+            "state": "fetching",
+            "atMs": 11
+          },
+          {
+            "state": "instantiating",
+            "atMs": 30
+          },
+          {
+            "state": "restored",
+            "atMs": 699
+          }
+        ],
+        "diagnostics": [
+          {
+            "atMs": 794,
+            "reason": "agent-channel",
+            "error": "desktop restore requested a fresh agent HELLO",
+            "channelState": "disconnected",
+            "transportGeneration": 0
+          }
+        ],
+        "machineResume": {
+          "persisted": true,
+          "paused": true,
+          "preFrontBufferCrc": "ab6a2f0d",
+          "overlayGeneration": 628
+        },
+        "preFrontBufferCrc": "ab6a2f0d",
+        "resume": {
+          "restored": true,
+          "snapshotDecision": "resume",
+          "overlayGeneration": 628
+        },
+        "coherenceAudit": {
+          "status": "passed",
+          "startedAt": "2026-09-09T00:44:18.264Z",
+          "restoreBoundary": {
+            "attempted": true,
+            "decision": "resume",
+            "overlayGeneration": 628
+          },
+          "currentOverlayGeneration": 628,
+          "completedAt": "2026-09-09T00:44:18.322Z"
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "fixedViewport": true,
+          "sizeMismatch": false,
+          "framesReceived": 4,
+          "successfulPresents": 4,
+          "drawnPresents": 4,
+          "drawnBytes": 13771596,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "scheduler": null,
+          "gpu": {
+            "framesReceived": 4,
+            "enqueued": 4,
+            "coalesced": 0,
+            "presented": 4,
+            "successfulPresents": 4,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 0,
+            "uploadedBytes": 13771596,
+            "drawnPresents": 4,
+            "drawnBytes": 13771596,
+            "width": 1280,
+            "height": 800
+          },
+          "latest": {
+            "rect": {
+              "x": 557,
+              "y": 13,
+              "width": 723,
+              "height": 513
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 800
+          },
+          "errors": []
+        }
+      },
+      "displayChecksPassed": true,
+      "checksPassed": false,
+      "functionalChecksPassed": true
+    },
+    "dragGuestRelease": {
+      "status": "passed",
+      "samples": [
+        {
+          "at": 1395.3950001001358,
+          "pointerFrames": 0,
+          "heldButtons": [],
+          "frame": null,
+          "rendered": null,
+          "titlebar": {
+            "left": 637,
+            "right": 1280,
+            "top": 32,
+            "bottom": 58
+          }
+        },
+        {
+          "at": 1652.2050000429153,
+          "pointerFrames": 1,
+          "heldButtons": [],
+          "frame": {
+            "atMs": 1495,
+            "sequence": 1,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 17126
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 2253
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 17126,
+              "y": 2253
+            }
+          },
+          "rendered": null,
+          "titlebar": {
+            "left": 637,
+            "right": 1280,
+            "top": 32,
+            "bottom": 58
+          }
+        },
+        {
+          "at": 1906.7700001001358,
+          "pointerFrames": 1,
+          "heldButtons": [],
+          "frame": {
+            "atMs": 1495,
+            "sequence": 1,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 17126
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 2253
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 17126,
+              "y": 2253
+            }
+          },
+          "rendered": {
+            "x": 669,
+            "y": 55,
+            "hotX": 1,
+            "hotY": 1,
+            "matchedPixels": 94
+          },
+          "titlebar": {
+            "left": 637,
+            "right": 1280,
+            "top": 32,
+            "bottom": 58
+          }
+        },
+        {
+          "at": 2162.5250000953674,
+          "pointerFrames": 1,
+          "heldButtons": [],
+          "frame": {
+            "atMs": 1495,
+            "sequence": 1,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 17126
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 2253
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 17126,
+              "y": 2253
+            }
+          },
+          "rendered": {
+            "x": 669,
+            "y": 55,
+            "hotX": 1,
+            "hotY": 1,
+            "matchedPixels": 94
+          },
+          "titlebar": {
+            "left": 637,
+            "right": 1280,
+            "top": 32,
+            "bottom": 58
+          }
+        },
+        {
+          "at": 2418.1750000715256,
+          "pointerFrames": 1,
+          "heldButtons": [],
+          "frame": {
+            "atMs": 1495,
+            "sequence": 1,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 17126
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 2253
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 17126,
+              "y": 2253
+            }
+          },
+          "rendered": {
+            "x": 669,
+            "y": 55,
+            "hotX": 1,
+            "hotY": 1,
+            "matchedPixels": 94
+          },
+          "titlebar": {
+            "left": 637,
+            "right": 1280,
+            "top": 32,
+            "bottom": 58
+          }
+        },
+        {
+          "at": 2672.8300000429153,
+          "pointerFrames": 1,
+          "heldButtons": [],
+          "frame": {
+            "atMs": 1495,
+            "sequence": 1,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 17126
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 2253
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 17126,
+              "y": 2253
+            }
+          },
+          "rendered": {
+            "x": 669,
+            "y": 55,
+            "hotX": 1,
+            "hotY": 1,
+            "matchedPixels": 94
+          },
+          "titlebar": {
+            "left": 637,
+            "right": 1280,
+            "top": 32,
+            "bottom": 58
+          }
+        },
+        {
+          "at": 2929.4150000810623,
+          "pointerFrames": 1,
+          "heldButtons": [],
+          "frame": {
+            "atMs": 1495,
+            "sequence": 1,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 17126
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 2253
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 17126,
+              "y": 2253
+            }
+          },
+          "rendered": {
+            "x": 669,
+            "y": 55,
+            "hotX": 1,
+            "hotY": 1,
+            "matchedPixels": 94
+          },
+          "titlebar": {
+            "left": 637,
+            "right": 1280,
+            "top": 32,
+            "bottom": 58
+          }
+        }
+      ],
+      "before": {
+        "at": 1386.0750000476837,
+        "titlebar": {
+          "left": 637,
+          "right": 1280,
+          "top": 32,
+          "bottom": 58
+        }
+      },
+      "point": {
+        "x": 669,
+        "y": 55
+      },
+      "initial": {
+        "at": 1386.6800000667572,
+        "pointerFrames": 0,
+        "heldButtons": [],
+        "frame": null,
+        "rendered": null
+      },
+      "client": {
+        "x": 749,
+        "y": 139
+      },
+      "acknowledgedAt": 1906.7700001001358,
+      "observed": {
+        "at": 2929.4150000810623,
+        "pointerFrames": 1,
+        "heldButtons": [],
+        "frame": {
+          "atMs": 1495,
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 17126
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 2253
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 17126,
+            "y": 2253
+          }
+        },
+        "rendered": {
+          "x": 669,
+          "y": 55,
+          "hotX": 1,
+          "hotY": 1,
+          "matchedPixels": 94
+        },
+        "titlebar": {
+          "left": 637,
+          "right": 1280,
+          "top": 32,
+          "bottom": 58
+        }
+      }
+    }
+  },
+  "final": {
+    "terminal": {
+      "desktopReady": true,
+      "frameCount": 6,
+      "serialText": "",
+      "pointerFrames": 1,
+      "pointerFrameSample": [
+        {
+          "atMs": 1495,
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 17126
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 2253
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 17126,
+            "y": 2253
+          }
+        }
+      ],
+      "keyboardFrames": 0,
+      "keyboardEvents": 0,
+      "keyboardFrameSample": [],
+      "keyboardEventSample": [],
+      "surface": {
+        "nonBlackRatio": 0.99990625,
+        "darkRatio": 0.588125,
+        "greenPixels": 477,
+        "redPixels": 0
+      },
+      "agent": {
+        "state": "ready",
+        "negotiatedVersion": 1,
+        "transportGeneration": 2,
+        "bytesReceived": 36,
+        "bytesSent": 36,
+        "pendingBytes": 0
+      },
+      "diagnostics": [
+        {
+          "atMs": 794,
+          "reason": "agent-channel",
+          "error": "desktop restore requested a fresh agent HELLO",
+          "channelState": "disconnected",
+          "transportGeneration": 0
+        }
+      ],
+      "readiness": {
+        "desktopReady": true,
+        "inspection": {
+          "wallpaper": true,
+          "panel": {
+            "ready": true,
+            "position": "top",
+            "top": 0,
+            "height": 80,
+            "mean": [
+              114,
+              111,
+              110
+            ],
+            "difference": 158
+          },
+          "menu": true,
+          "nonBlackRatio": 0.99990625,
+          "background": [
+            60,
+            59,
+            58
+          ],
+          "menuDetails": {
+            "ready": true,
+            "inkPixels": 21612,
+            "runs": 1366
+          }
+        },
+        "agentState": "ready"
+      },
+      "bootStates": [
+        {
+          "state": "fetching",
+          "atMs": 11
+        },
+        {
+          "state": "instantiating",
+          "atMs": 30
+        },
+        {
+          "state": "restored",
+          "atMs": 699
+        }
+      ],
+      "launches": [],
+      "focuses": [],
+      "commands": [],
+      "closes": [],
+      "active": {
+        "launch": null,
+        "command": null,
+        "close": null
+      }
+    },
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 800,
+      "fixedViewport": true,
+      "sizeMismatch": false,
+      "framesReceived": 6,
+      "successfulPresents": 6,
+      "drawnPresents": 6,
+      "drawnBytes": 17878068,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": null,
+      "gpu": {
+        "framesReceived": 6,
+        "enqueued": 6,
+        "coalesced": 0,
+        "presented": 6,
+        "successfulPresents": 6,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 17878068,
+        "drawnPresents": 6,
+        "drawnBytes": 17878068,
+        "width": 1280,
+        "height": 800
+      },
+      "latest": {
+        "rect": {
+          "x": 668,
+          "y": 36,
+          "width": 77,
+          "height": 34
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800
+      },
+      "errors": []
+    },
+    "cursor": {
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1280,
+        "height": 800,
+        "cssRect": {
+          "left": 80,
+          "top": 84,
+          "width": 1280,
+          "height": 800
+        }
+      },
+      "pointer": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "pointerLockRequested": false,
+        "heldButtons": [],
+        "wheelRemainders": {
+          "horizontal": 0,
+          "vertical": 0
+        },
+        "modeChanges": 0,
+        "pointerLockChanges": 0,
+        "reason": "state",
+        "diagnostics": [
+          {
+            "atMs": 794,
+            "reason": "agent-channel",
+            "error": "desktop restore requested a fresh agent HELLO",
+            "channelState": "disconnected",
+            "transportGeneration": 0
+          }
+        ]
+      },
+      "chrome": {
+        "window": {
+          "left": 115,
+          "top": 32,
+          "right": 1280,
+          "bottom": 745
+        },
+        "titlebar": {
+          "top": 32,
+          "bottom": 58,
+          "left": 115,
+          "right": 1280
+        },
+        "controls": [
+          {
+            "name": "minimize",
+            "left": 1202,
+            "top": 32,
+            "right": 1228,
+            "bottom": 58,
+            "x": 1215,
+            "y": 45
+          },
+          {
+            "name": "maximize",
+            "left": 1228,
+            "top": 32,
+            "right": 1254,
+            "bottom": 58,
+            "x": 1241,
+            "y": 45
+          },
+          {
+            "name": "close",
+            "left": 1254,
+            "top": 32,
+            "right": 1280,
+            "bottom": 58,
+            "x": 1267,
+            "y": 45
+          }
+        ],
+        "samples": {
+          "minimize": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "maximize": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "close": [
+            255,
+            255,
+            255,
+            255
+          ]
+        }
+      },
+      "hovers": [],
+      "maximizes": [],
+      "closes": [],
+      "active": {
+        "hover": null,
+        "button": null
+      }
+    },
+    "restore": {
+      "report": {
+        "boundaryId": 284279998,
+        "scanout": {
+          "width": 1280,
+          "height": 800
+        },
+        "hostViewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "viewport": "native",
+        "agentRehandshake": true,
+        "inputReleaseEvents": 0,
+        "soundXrunEvents": 0,
+        "fullRepairFrame": true
+      },
+      "handshake": {
+        "version": 1,
+        "capabilities": "1n",
+        "peerVersion": 1,
+        "peerCapabilities": "1n",
+        "generation": 2
+      },
+      "appliedViewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "snapshotSha256": "aaa029fa9347873e4626b281855f607fd133a216cb8c5c102c51052da936885a",
+      "snapshotBytes": 2947491,
+      "preFrontBufferCrc": "ab6a2f0d",
+      "machineResume": {
+        "persisted": true,
+        "paused": true,
+        "preFrontBufferCrc": "ab6a2f0d",
+        "overlayGeneration": 628
+      },
+      "completedAt": 1062.9350000619888
+    }
+  },
+  "errors": {
+    "browser": [],
+    "http": []
+  },
+  "elapsedMs": 46037
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: post-restore interaction exceeded 2 seconds
+    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t26f-browser-roundtrip.mjs:1930:12 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

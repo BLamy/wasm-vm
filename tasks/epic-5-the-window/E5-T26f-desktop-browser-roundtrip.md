@@ -40,6 +40,53 @@ stuck button, stale cursor, CRC mismatch, or audio hang.
 
 ## Verification log
 
+### 2026-09-08 — coordinator — post-capture screen, profile and functional completion
+
+Frozen producer `415db223733214b6c6e7b69b0ad331150969be56` runs
+`env -u RUSTDOCFLAGS node tools/verify/e5-t26f-browser-single-process-observer.mjs`.
+Cold0/reuse1/outer0 preserves a failed diagnostic: restore T0
+`1146.9800000190735` to frozen end `4738.945000052452` is
+**3591.9650000333786ms >2000ms**. Raw SHA256
+`1d64b878e1bb426d22dfb94eb75e45dd727dfeb061d36674ae3a7e15c304c90d`.
+Fresh checkpoint `e53e5a3936ef2d35e6ae5e09676dba51cfc59d63ed37dbc56c94998810e6ac9f`
+restores CRC `fe94d179`, the same prepared PID1000/start30070, physical
+play/cursor/focus and1440 fresh non-silent PCM frames. Daybreak's independent
+screen review SHA256 is
+`2044899d4945ea5cd79c5c61c5f08f308b17aa85b9ee2ef932fa34d6c86170b1`.
+
+One separate same-head CPU diagnostic (`run-cpu.mjs` under the evidence root
+below) retains a3820.980ms cap failure; profile SHA256
+`bff1fb08d40163cc40805dfffd548158d154b41355b75564c6e3e0b8bbf6bbbc`,
+2050 samples/3054874us summed weight. Existing symbolization binds all11
+non-custom sections of P's already-authenticated named companion to actual
+release WASM `a3ce02529ae2e6ec175066f4c838451ca7d1472b5f6bd2f5b2d5cbff805c8b42`.
+Machine.run has20.47% self weight; this does not localize inlined work or prove
+a cause. Daybreak's profile-integrity/scope review SHA256 is
+`c4b11a5069181492c14c7cf633a37cef2523d0b3d25c7a49e4074728a2876352`.
+
+The existing completion diagnostic (`run-completion.mjs`) then reaches the
+previously deferred functional phases on a new same-head checkpoint copy.
+Original T0/end produce4055.745ms>2000; the original assertion is retained
+and rethrown after full evidence writing, child1/outer0. Full report SHA256
+`3aa6d97fc51ece6422e6b04a886ffc124c29f7be6458258169e65ac8ef1ba529`
+records functional true, timing/checks/acceptance false. Normal and drag audits
+pass at generation628, four drag-phase snapshots execute, the titlebar moves
+80px, the moving snapshot restores exact CRC `ab6a2f0d` on the second reload,
+and guest-release hover passes without a stuck button or guest reboot.
+Complete browser/HTTP error arrays are empty. Main viewed the completion PNG.
+
+Commands, immutable inputs, all raw records/PNGs and limitations:
+`evidence/e5-t26f/single-process-observer-415db223/README.md`.
+Fresh reviews: `evidence/e5-t26f/capture-runtime-verifier/`, including the
+separate completion adjudication (SHA256
+`a4575b85f55be9d980d927447e82d8dad0263323b5908f62800dcf1898f14fce`):
+all six preregistered completion predictions hold as supplemental functional
+coverage, while timing remains failed. F remains in progress because its mandatory
+two-second limit failed; diagnostic completion cannot verify it. P and unchanged
+image/helper proofs carry forward. No runtime change, merge, deployment,
+Omarchy mutation or Epic6 work occurred. Any later HEAD/runtime change invalidates
+this seal for another run; never rebind it.
+
 ### 2026-09-08 — coordinator — resume after verified optional capture
 
 E5-T26p is independently verified at
