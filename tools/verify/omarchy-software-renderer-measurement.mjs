@@ -19,6 +19,7 @@ import {
   BASE_SHA256, BASE_SIZE, DECLARED_FILES, NEW_VALUE, OLD_VALUE,
 } from "./omarchy-softpipe-candidate.mjs";
 import { parseProbe } from "./omarchy-browser-session.mjs";
+import { validateObserverCommand, validateObserverTraffic } from "./omarchy-observer-guard.mjs";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const execFile = promisify(execFileCallback);
@@ -44,11 +45,33 @@ export const RUNTIME_FILES = [
   "tools/verify/omarchy-renderer-log.mjs",
   "tools/verify/omarchy-softpipe-candidate.mjs",
   "tools/verify/omarchy-software-renderer-measurement.mjs",
+  "tools/verify/omarchy-observer-guard.mjs",
   "web/pkg/wasm_vm_wasm_bg.wasm",
   "web/pkg/wasm_vm_wasm.js",
   "web/loader.js",
   "web/linux-worker-host.js",
+  "web/linux-worker.js",
   "web/linux-worker-protocol.js",
+  "web/boot-asset-cache.js",
+  "web/boot-path.js",
+  "web/decoded-cache.js",
+  "web/guest-clock.js",
+  "web/node_modules/@xterm/addon-fit/lib/addon-fit.js",
+  "web/node_modules/@xterm/xterm/lib/xterm.js",
+  "web/osc52.js",
+  "web/overlay-seed-identity.js",
+  "web/paste.js",
+  "web/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+  "web/src/input/keymap.js",
+  "web/src/sink/canvas2d.js",
+  "web/src/sink/frame-scheduler.js",
+  "web/src/sink/present-backend.js",
+  "web/src/sink/presentation.js",
+  "web/src/sink/viewport.js",
+  "web/src/sink/visibility-scheduler.js",
+  "web/src/sink/webgl.js",
+  "web/task-quiescence.js",
+  "web/terminal.js",
   "tools/serve-dev.sh",
   "releases/kernel/6.6.63/Image",
 ];
@@ -238,6 +261,7 @@ export function validateProbeEvents(events, serial, { allowOutstanding = false }
     if (event.type === "probe-sent") {
       assert.match(event.token, SAFE_TOKEN);
       assert.equal(typeof event.command, "string");
+      validateObserverCommand(event.command);
       assert.ok(!/[\r\n]/u.test(event.command));
       assert.ok(Number.isSafeInteger(event.serialCharacterOffset) && event.serialCharacterOffset >= 0
         && event.serialCharacterOffset <= serial.length);
@@ -287,6 +311,7 @@ export function validateOutcome(report, events = null) {
     assert.doesNotMatch(String(negative.cause), /aquamarine|timeout|timed out/iu,
       "generic renderer error/timeout is not a negative compatibility result");
     if (events) {
+      validateObserverTraffic(events);
       const sent = new Map(events.filter(event => event.type === "probe-sent")
         .map(event => [event.token, event.command]));
       assert.match(negative.environmentProbeToken, SAFE_TOKEN, "environmentProbeToken is invalid");
@@ -406,6 +431,7 @@ export async function verifyEvidence(recordRoot) {
   assert.equal(report.browser?.freshContext, true);
   assert.equal(report.sourceUnchanged, true);
   assert.equal(report.capture?.paused, true);
+  assert.equal(report.capture?.keys, 0);
   requireSha(report.capture?.stateDigest, "paused guest state");
   assert.ok(report.elapsedMs > 0 && report.elapsedMs <= RECORD_TIMEOUT_MS, "cold result exceeded startup budget");
   assert.equal(report.publication?.kernel?.sha256, KERNEL_SHA256);

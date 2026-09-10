@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import fs from "node:fs";
+import { parseProbe, probeCommand } from "./omarchy-browser-session.mjs";
+import { validateObserverCommand, validateObserverTraffic } from "./omarchy-observer-guard.mjs";
 
 import {
   INPUT_DEADLINE_MS,
@@ -111,4 +113,32 @@ test("offline Make acceptance never reseals or records its evidence", () => {
   const recipe = makefile.split("verify-E5.5-T03f:\n")[1].split(".PHONY:")[0];
   assert.match(recipe, /measurement\.mjs verify/u);
   assert.doesNotMatch(recipe, /measurement\.mjs (?:seal|record)/u);
+});
+
+test("observer-issued ABRT with valid serial framing cannot establish a spontaneous crash", () => {
+  const events = structuredClone(recordedEvents);
+  const original = fs.readFileSync(new URL("cold-wasm/serial.log", fixture), "utf8");
+  const token = "critic_kill";
+  const serial = `${original}\n${token}_begin\n\n${token}_end:0\n`;
+  const result = parseProbe(serial.slice(original.length), token);
+  assert.equal(result.status, 0, "sabotage is structurally a completed serial probe");
+  const at = events.findIndex(event => event.type === "probe-sent" && event.token === sealed.claims.negative.coredumpProbeToken);
+  events.splice(at, 0,
+    { type: "probe-sent", token, command: "kill -ABRT 486", serialCharacterOffset: original.length },
+    { type: "serial-input", text: probeCommand("kill -ABRT 486", token) },
+    { type: "probe-result", token, ...result });
+  assert.throws(() => validateProbeEvents(events, serial, { allowOutstanding: true }), /approved read-only/iu);
+  assert.throws(() => validateOutcome(sealed.claims, events), /approved read-only/iu);
+});
+
+test("observer whitelist rejects alternate mutators, shell composition, and unframed input", () => {
+  for (const command of ["/bin/kill -6 486", "pkill Hyprland", "systemctl --user stop wayland-wm@hyprland.desktop.service",
+    "python3 -c 'import os; os.kill(486, 6)'", "id -u; kill -ABRT 486", "id -u $(kill -ABRT 486)",
+    "id -u > /proc/486/mem", "journalctl --user --no-pager -n 99999 -o short-monotonic"]) {
+    assert.throws(() => validateObserverCommand(command), /approved read-only/iu);
+  }
+  validateObserverTraffic(recordedEvents);
+  assert.throws(() => validateObserverTraffic([{ type: "serial-input", text: "kill -6 486\r" }]), /unframed/iu);
+  assert.throws(() => validateObserverTraffic([{ type: "terminal-input", bytes: [3] }]), /cursor-position/iu);
+  assert.throws(() => validateObserverTraffic([{ type: "dom-key", code: "Escape" }]), /physical input/iu);
 });

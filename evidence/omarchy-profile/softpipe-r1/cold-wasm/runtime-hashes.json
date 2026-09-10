@@ -22,8 +22,14 @@
     {
       "scope": "repo",
       "path": "tools/verify/omarchy-software-renderer-measurement.mjs",
-      "size": 37438,
-      "sha256": "38bb3765206e6a19305732c4e42de1d5d92699832fe26cae3cef8b55a2580869"
+      "size": 38384,
+      "sha256": "54c6639a750b9d8d41cb8f505a499314dfd044039b042bc717edb97538d68936"
+    },
+    {
+      "scope": "repo",
+      "path": "tools/verify/omarchy-observer-guard.mjs",
+      "size": 4760,
+      "sha256": "196d93142755f4b97c1113072feb53f1d7ae7cb579b43fd223fb97032304457b"
     },
     {
       "scope": "repo",
@@ -51,9 +57,135 @@
     },
     {
       "scope": "repo",
+      "path": "web/linux-worker.js",
+      "size": 1188,
+      "sha256": "7783b4aecb74b83882a2ca3495ed46932ed7930543d0cab72f4035ccfc13e4b9"
+    },
+    {
+      "scope": "repo",
       "path": "web/linux-worker-protocol.js",
       "size": 30708,
       "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "scope": "repo",
+      "path": "web/boot-asset-cache.js",
+      "size": 9253,
+      "sha256": "ec667f890abdb796cf67df4b042a63dd4374d175157b9224c80a927c00bdfdbe"
+    },
+    {
+      "scope": "repo",
+      "path": "web/boot-path.js",
+      "size": 2867,
+      "sha256": "63ebc850add4cea7fb79ddc1a7cd46651cf05c3442e51803a0454475528f7d47"
+    },
+    {
+      "scope": "repo",
+      "path": "web/decoded-cache.js",
+      "size": 1412,
+      "sha256": "92eb0ef85b5b2580ef1b574b103993d7969b5f1a5cf9d59b8430e5ab300f06ae"
+    },
+    {
+      "scope": "repo",
+      "path": "web/guest-clock.js",
+      "size": 3818,
+      "sha256": "7381e6869674f1fc92880ad6757ffc831f7a37a0e06e192cc4bb085ecdec9133"
+    },
+    {
+      "scope": "repo",
+      "path": "web/node_modules/@xterm/addon-fit/lib/addon-fit.js",
+      "size": 1497,
+      "sha256": "bdaefa370b1bfc42ee88d46fe6072400902a4d4b2d45cd93438dda9b23c97089"
+    },
+    {
+      "scope": "repo",
+      "path": "web/node_modules/@xterm/xterm/lib/xterm.js",
+      "size": 289441,
+      "sha256": "1f991ac3b4b283ebf96e60ae23a00a52765dd3a2e46fa6fdda9f1aab032f7495"
+    },
+    {
+      "scope": "repo",
+      "path": "web/osc52.js",
+      "size": 6183,
+      "sha256": "89132eee9f4ca5ca1cc45596518b4cef77ee7bb8f773ac37cf98839fbeb3e18c"
+    },
+    {
+      "scope": "repo",
+      "path": "web/overlay-seed-identity.js",
+      "size": 692,
+      "sha256": "e7ae8d22f14e55791b70163254f304fc9fa999029952eba595d592c7fd389c4d"
+    },
+    {
+      "scope": "repo",
+      "path": "web/paste.js",
+      "size": 2256,
+      "sha256": "9cd015e36130f8b4bcb18a91b8cc06f32a2199ce32527abf65bb433bafeaeff7"
+    },
+    {
+      "scope": "repo",
+      "path": "web/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "size": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "scope": "repo",
+      "path": "web/src/input/keymap.js",
+      "size": 13680,
+      "sha256": "e6a3e893fadd7d288b6eabd4d59c01930498cee7923a682e9ae5d614ec939ada"
+    },
+    {
+      "scope": "repo",
+      "path": "web/src/sink/canvas2d.js",
+      "size": 3751,
+      "sha256": "719b95ae13dbda214ed8b123ae6a72cdf459f88806c0d52832f56e6a96233936"
+    },
+    {
+      "scope": "repo",
+      "path": "web/src/sink/frame-scheduler.js",
+      "size": 6059,
+      "sha256": "4ab11b844262f32bf3c1f6e0cfa36a866f241273c36e66d1aa8c4679f770e54d"
+    },
+    {
+      "scope": "repo",
+      "path": "web/src/sink/present-backend.js",
+      "size": 4367,
+      "sha256": "8bf892f96f3710dd9050d7a16c38bda87daa17dcaa024560c4ecc97aeecb24f7"
+    },
+    {
+      "scope": "repo",
+      "path": "web/src/sink/presentation.js",
+      "size": 22791,
+      "sha256": "21a3004137a46720b8a10f9392a48e6e8b3166c98dbc83b9ae931e6ade048819"
+    },
+    {
+      "scope": "repo",
+      "path": "web/src/sink/viewport.js",
+      "size": 11016,
+      "sha256": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8"
+    },
+    {
+      "scope": "repo",
+      "path": "web/src/sink/visibility-scheduler.js",
+      "size": 5475,
+      "sha256": "c878ce43e806975368e63adce8157ead3a579c4246a770202047a3be3c46ca80"
+    },
+    {
+      "scope": "repo",
+      "path": "web/src/sink/webgl.js",
+      "size": 9381,
+      "sha256": "508adc4d731afc6fe100b4970eef969c52c350ee296c4bb7bb87b88c8c85f4b4"
+    },
+    {
+      "scope": "repo",
+      "path": "web/task-quiescence.js",
+      "size": 942,
+      "sha256": "7e567ffb550d23c97d027d9e36333e9f6786fbacbc9d388cae5c838ec9a4fe86"
+    },
+    {
+      "scope": "repo",
+      "path": "web/terminal.js",
+      "size": 11452,
+      "sha256": "fca4f0c080aad34b5d38121ffe9160275869a279f98fa28a20f6ea1c27b55eae"
     },
     {
       "scope": "repo",

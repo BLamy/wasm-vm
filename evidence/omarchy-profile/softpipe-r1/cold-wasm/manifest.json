@@ -87,8 +87,8 @@
     "runtimeHashes": {
       "scope": "root",
       "path": "runtime-hashes.json",
-      "size": 2148,
-      "sha256": "688488986f520ee73a45e997f6086b2b0d2a9ca7859aae548fdb98e85885235a"
+      "size": 6196,
+      "sha256": "afef320e5d5ac906b5c3816d07b3c36ec17c6651dc7e6e62e0099b6ef42cc0f0"
     },
     "screenshot1": {
       "scope": "root",
