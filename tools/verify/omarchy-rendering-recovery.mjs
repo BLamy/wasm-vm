@@ -412,7 +412,10 @@ async function main() {
         evidenceKind: "actual-worker resource timings plus fail-closed restore; not captured response bodies" });
       for (const asset of manifestAssets.values()) {
         const resource = resources.find((entry) => urlKey(entry.name) === urlKey(asset.url));
-        assert.ok(resource && resource.duration > 0, `${phase}: ${asset.role} lacks an actual-worker completion timing`);
+        assert.ok(resource && resource.duration > 0 && resource.responseStatus === 200,
+          `${phase}: ${asset.role} lacks an actual-worker successful completion timing`);
+        if (resource.encodedBodySize) assert.equal(resource.encodedBodySize, asset.descriptor.size,
+          `${phase}: actual-worker ${asset.role} transfer size mismatch`);
       }
       const assets = [...manifestAssets.values(), {
         role: "workerScript", url: workers[0].url(),
@@ -452,6 +455,7 @@ async function main() {
       }
       assertPhaseAssets(report.provenanceFetches, manifestAssets, phase);
       const inputDevice = await page.evaluate(() => window.__linuxCtl?.inputDeviceStats?.());
+      assert.ok(inputDevice && Number.isFinite(inputDevice.pendingEventBudget), `${phase}: input-device diagnostics unavailable`);
       report.observations.push({ phase, inputDevice, evidenceKind: "read-only actual input-device counters; not interaction proof" });
     }
     async function desktopObservation(label) {
@@ -585,12 +589,18 @@ async function main() {
       // Keep the failed-transfer observation. This is a three-leg inference, not a fake
       // captured body: actual worker completion + integrity-passed restore + full-byte fetch.
       const unavailable = report.observerLimitations.some((record) => record.url === failure.url && record.phase === failure.phase);
+      const descriptor = manifestAssets.get(urlKey(failure.url))?.descriptor;
+      const observedExact = descriptor && report.responseHashes.some((record) => record.url === failure.url
+        && record.phase === failure.phase && record.status === 200
+        && record.sha256 === descriptor.sha256 && record.bytes === descriptor.size);
       const provenance = report.provenanceFetches.some((record) => record.url === failure.url && record.phase === failure.phase);
       const completion = report.workerCompletions.some((record) => record.phase === failure.phase
-        && record.resources.some((entry) => entry.name === failure.url && entry.duration > 0));
-      assert.ok(failure.failure === "net::ERR_ABORTED" && unavailable && provenance && completion,
+        && record.resources.some((entry) => entry.name === failure.url && entry.duration > 0 && entry.responseStatus === 200));
+      assert.ok(failure.failure === "net::ERR_ABORTED" && (unavailable || observedExact) && provenance && completion,
         `unclassified request failure: ${JSON.stringify(failure)}`);
-      failure.resolution = "observer transfer unavailable; separate worker completion + integrity-passed restore + full-byte provenance recorded";
+      failure.resolution = observedExact
+        ? "inspector reported abort despite a complete exact response body; worker completion + integrity-passed restore + independent full-byte provenance also recorded"
+        : "observer transfer unavailable; separate worker completion + integrity-passed restore + full-byte provenance recorded";
     }
     progress("complete", { screenshots: report.screenshots.length });
     report.status = "passed";
