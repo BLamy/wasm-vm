@@ -1602,5 +1602,5 @@ verify-E5.5-T03e:
 	@test -f web/dist/app.html || { echo "Build web/dist first" >&2; exit 1; }
 	npm --prefix web ci --no-audit --no-fund
 	node tools/fetch-omarchy-snapshot.mjs
-	node --test web/tests/boot-asset-cache.test.mjs web/tests/omarchy-startup-state.test.mjs web/tests/omarchy-seeded-loader.test.mjs
+	node --test web/tests/boot-asset-cache.test.mjs web/tests/omarchy-startup-state.test.mjs web/tests/omarchy-seeded-loader.test.mjs web/tests/e5.5-t03e-critic.test.mjs web/tests/e5.5-t03e-critic-ui.test.mjs
 	node tools/verify/omarchy-boot-cache.mjs "$(OMARCHY_CACHE_URL)" "$(OMARCHY_CACHE_EVIDENCE_DIR)"

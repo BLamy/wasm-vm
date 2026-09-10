@@ -86,6 +86,7 @@ export function createOmarchyStartupLifecycle({
   let timer = null;
   let generation = 0;
   let desktopReady = false;
+  let terminal = false;
 
   const cancelWait = () => {
     generation += 1;
@@ -94,37 +95,58 @@ export function createOmarchyStartupLifecycle({
   };
 
   const armGuestResponseWait = () => {
-    if (desktopReady) return;
+    if (desktopReady || terminal) return;
     if (timer !== null) clearTimeoutFn(timer);
     generation += 1;
     const token = generation;
     timer = setTimeoutFn(() => {
       timer = null;
-      if (token !== generation || desktopReady) return;
+      if (token !== generation || desktopReady || terminal) return;
       onWaiting();
     }, waitMs);
+  };
+
+  const finish = () => {
+    terminal = true;
+    desktopReady = false;
+    cancelWait();
   };
 
   return {
     booting() {
       desktopReady = false;
+      terminal = false;
       cancelWait();
     },
     state(state) {
+      if (terminal) return false;
+      if (state === "done") {
+        finish();
+        return true;
+      }
+      if (desktopReady) return false;
       if (state === "restored") armGuestResponseWait();
+      return true;
     },
     guestReady() {
+      if (desktopReady || terminal) return false;
       armGuestResponseWait();
+      return true;
     },
     desktopReady() {
+      if (desktopReady || terminal) return false;
       desktopReady = true;
       cancelWait();
+      return true;
     },
     error() {
-      cancelWait();
+      finish();
     },
     halted() {
-      cancelWait();
+      finish();
+    },
+    isPending() {
+      return !desktopReady && !terminal;
     },
     isDesktopReady() {
       return desktopReady;

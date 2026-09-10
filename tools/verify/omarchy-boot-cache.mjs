@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Actual built Omarchy + actual CacheStorage. No mocked VM, lifecycle, cache or pixels.
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { createReadStream } from "node:fs";
 import fs from "node:fs/promises";
@@ -14,16 +15,27 @@ const repo = process.cwd();
 const out = path.resolve(directory);
 await fs.mkdir(out, { recursive: false });
 const hash = bytes => createHash("sha256").update(bytes).digest("hex");
+const sourceFiles = ["loader.js", "ide.js", "boot-asset-cache.js", "omarchy-startup-state.js", "sw.js", "pkg/wasm_vm_wasm_bg.wasm"];
+const scopedPaths = [
+  "tools/verify/omarchy-boot-cache.mjs",
+  "web/artifacts-omarchy.json",
+  ...sourceFiles.map(name => `web/${name}`),
+  ...sourceFiles.map(name => `web/dist/${name}`),
+];
+const git = args => execFileSync("git", args, { cwd: repo, encoding: "utf8" }).trim();
 const report = { status: "running", claim: "immutable asset caching and restore status only",
-  interactive: false, phases: [], requests: [], errors: [], screenshots: [], sourceHashes: {} };
+  interactive: false, phases: [], requests: [], errors: [], screenshots: [], sourceHashes: {},
+  sourceBinding: { gitHead: git(["rev-parse", "HEAD"]), scopedPaths,
+    scopedDirty: git(["status", "--short", "--", ...scopedPaths]) } };
 let phase = "initial", browser, server, page;
 const manifest = JSON.parse(await fs.readFile("web/artifacts-omarchy.json", "utf8"));
 const assetPaths = new Set(Object.values(manifest.artifacts).map(a => `/${a.url}`));
 assetPaths.add(`/${manifest.chunkedImage.key}`);
-for (const name of ["loader.js", "ide.js", "boot-asset-cache.js", "omarchy-startup-state.js", "sw.js", "pkg/wasm_vm_wasm_bg.wasm"]) {
+for (const name of sourceFiles) {
   report.sourceHashes[name] = hash(await fs.readFile(path.join("web/dist", name)));
 }
 try {
+  assert.equal(report.sourceBinding.scopedDirty, "", "freeze the source/dist before recording acceptance");
   let url = destination;
   if (destination === "local") {
     server = createServer(async (request, response) => {
@@ -51,6 +63,27 @@ try {
     url = `${origin}/app?guest=omarchy&desktop=1&omarchyAssetBase=${encodeURIComponent(origin)}#ide`;
   }
   report.url = url;
+  if (destination !== "local") {
+    const origin = new URL(destination).origin;
+    const proofQuery = `omarchy-source-proof=${encodeURIComponent(report.sourceBinding.gitHead)}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    report.sourceBinding.remote = [];
+    for (const name of sourceFiles) {
+      const sourceUrl = new URL(name, `${origin}/`);
+      sourceUrl.search = proofQuery;
+      const expected = report.sourceHashes[name];
+      const entry = { name, url: sourceUrl.href, status: null, digest: null, expected };
+      report.sourceBinding.remote.push(entry);
+      try {
+        const response = await fetch(sourceUrl, { cache: "no-store", signal: AbortSignal.timeout(30_000) });
+        entry.status = response.status;
+        entry.digest = hash(new Uint8Array(await response.arrayBuffer()));
+      } catch (error) {
+        entry.error = String(error);
+      }
+      assert.equal(entry.status, 200, `production source fetch failed for ${name}`);
+      assert.equal(entry.digest, expected, `production source digest mismatch for ${name}`);
+    }
+  }
   browser = await chromium.launch({ headless: true,
     executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, serviceWorkers: "allow" });
@@ -76,7 +109,9 @@ try {
       || (e.type === "wvm:guest-state" && e.detail?.state === "restored")), null, { timeout: 240_000 });
     assert.deepEqual(await page.evaluate(() => window.__cacheProof.filter(e => e.type === "wvm:guest-error")), [], "guest restore failed");
     const restoredMs = Date.now() - startedAt;
-    await page.screenshot({ path: path.join(out, `${phase}-restored.png`) });
+    const restoredName = `${phase}-restored.png`;
+    await page.screenshot({ path: path.join(out, restoredName) });
+    report.screenshots.push({ name: restoredName, sha256: hash(await fs.readFile(path.join(out, restoredName))) });
     await page.waitForFunction(() => window.__cacheProof?.some(e => e.type === "wvm:desktop-ready"
       || e.type === "wvm:guest-error"), null, { timeout: 300_000 });
     assert.deepEqual(await page.evaluate(() => window.__cacheProof.filter(e => e.type === "wvm:guest-error")), [], "guest desktop failed");
@@ -87,6 +122,9 @@ try {
       display: window.__presentation?.state(), caches: await caches.keys(),
       entries: await Promise.all((await caches.keys()).filter(k => k === "wasm-vm-boot-assets-v1")
         .map(async k => ({ name: k, keys: (await (await caches.open(k)).keys()).map(r => r.url) }))),
+      loadedSources: performance.getEntriesByType("resource").map(entry => entry.name)
+        .filter(name => /\/(?:loader|ide|boot-asset-cache|omarchy-startup-state|sw)\.js(?:\?|$)|\/pkg\/wasm_vm_wasm_bg\.wasm(?:\?|$)/.test(name)),
+      serviceWorker: navigator.serviceWorker?.controller?.scriptURL || null,
     }));
     assert.equal(data.overlayHidden, true);
     assert.equal(data.progressHidden, true, "completed download bar must be cleared");

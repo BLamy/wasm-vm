@@ -122,3 +122,31 @@ test("desktop readiness is sticky against later generic lifecycle traffic until 
   clock.advance(15_000);
   assert.equal(waiting, 1);
 });
+
+test("terminal events reject late readiness and progress until a new boot", () => {
+  for (const finish of [l => l.state("done"), l => l.error(), l => l.halted()]) {
+    const clock = fakeTimers();
+    let waiting = 0;
+    const lifecycle = createOmarchyStartupLifecycle({
+      setTimeoutFn: clock.setTimeout, clearTimeoutFn: clock.clearTimeout,
+      onWaiting: () => { waiting += 1; },
+    });
+    lifecycle.state("restored");
+    finish(lifecycle);
+    assert.equal(clock.pending(), 0);
+    assert.equal(lifecycle.isPending(), false);
+    assert.equal(lifecycle.guestReady(), false);
+    assert.equal(lifecycle.desktopReady(), false);
+    assert.equal(lifecycle.state("restored"), false);
+    clock.advance(30_000);
+    assert.equal(waiting, 0);
+    lifecycle.booting();
+    assert.equal(lifecycle.isPending(), true);
+    assert.equal(lifecycle.guestReady(), true);
+    clock.advance(15_000);
+    assert.equal(waiting, 1);
+    assert.equal(lifecycle.desktopReady(), true);
+    finish(lifecycle);
+    assert.equal(lifecycle.isDesktopReady(), false);
+  }
+});
