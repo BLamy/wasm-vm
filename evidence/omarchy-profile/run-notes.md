@@ -1,5 +1,39 @@
 # Omarchy lean-session worker run — in progress
 
+## 2026-09-10 — screenshot and interaction follow-up (not verified)
+
+The real native RAM/disk pair restores a composed Omarchy bar and Foot window in
+the built browser, but that is not sufficient for desktop acceptance. The
+`gpu-rearm-desktop` and `cold-clone-r1` recordings fail physical-keyboard nonce
+readback. Their failure screenshots are retained; no production deployment or
+task-verification claim follows from them.
+
+The full-line RPC BEGIN fence also now protects streamed output from wrapped
+shell echoes. `cli-regression-fixed/report.json` records actual BusyBox arithmetic,
+serialized calls, wrong-nonce output, streaming cancellation and recovery with no
+browser errors. The 14 RPC unit tests pass.
+
+A separate GPU resume regression preserves pending queue wakeups, with explicit
+second-boundary and reset checks. Eight desktop resume integration tests pass;
+the 338 core and 31 Wasm library tests also pass, as does targeted Clippy. Daybreak
+independently established that the actual Omarchy candidate had **zero** pending
+GPU descriptors, so this hardening fix does not explain its slow desktop.
+
+`fp-profile/report.json` records an actual 60-second browser window: 1.651 billion
+guest instructions, 712 million via JIT, approximately 59.64 seconds charged to
+CPU execution and 88.5 milliseconds to MMU walks. The hot regions are anonymous
+executable guest mappings used by the software renderer. This profile has no
+dynamic FP-specific counter and does not establish an FP-operation percentage.
+
+`input-diagnostic-r2`, `input-divider1` and `input-interpreter` retain the bounded
+clock/JIT comparisons and screenshots. Neither changing the clock divider nor
+disabling JIT established usable keyboard input. The interpreter diagnostic
+applied the package-supported SDR color-management setting, then stopped its
+owned graphical session while testing a compositor restart; that session is not
+release evidence. All diagnostic browsers were closed. A new sanitized SDR image
+is being prepared separately; existing image, release pair and public manifests
+have not been replaced by that candidate.
+
 Frozen image tools: `0fbca4d5976b193449f16324727b933d4329d15a`.
 This is an interim run record, not a verification verdict or production claim.
 

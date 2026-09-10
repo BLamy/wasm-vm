@@ -1,0 +1,2480 @@
+[
+  {
+    "time": "2026-09-10T02:01:50.878Z",
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [],
+      "keyboardDiagnostics": [],
+      "pointerFrames": [],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 246,
+        "completed": 245,
+        "pending": 1,
+        "averageMs": 12.70955101811156,
+        "maxMs": 80.81500005722046
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 1,
+        "successfulPresents": 1,
+        "drawnPresents": 1,
+        "drawnBytes": 4096000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 1,
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "successfulPresents": 1,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 4096000,
+          "drawnPresents": 1,
+          "drawnBytes": 4096000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 832
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1105210653",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 1956,
+        "totalSliceMs": 47229.754997849464,
+        "averageSliceMs": 24.146091512192978,
+        "maxSliceMs": 80.12000000476837,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 1622
+          },
+          {
+            "leMs": 64,
+            "count": 333
+          },
+          {
+            "leMs": 128,
+            "count": 1
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 80.57500004768372,
+        "requestedInstructions": 978000000,
+        "retiredInstructions": 977985490,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 21,
+        "outputBytes": 3165,
+        "inputCalls": 3,
+        "inputBytes": 218,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 1957,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": false,
+        "compiledBlocks": 0,
+        "executedBlocks": 0,
+        "retiredViaJit": 0,
+        "directChainEntries": 0,
+        "directChainLinks": 0,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 0,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 0,
+          "stateCopyCalls": 0,
+          "stateCopyBytes": 0,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 0,
+          "authorityChecks": 0,
+          "memorySplitExits": 0,
+          "deviceBoundaries": 0,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": false,
+        "jitDynamicChaining": false,
+        "guestRetired": 978485490,
+        "jitEngineCalls": 0,
+        "jitLogicalBlocksPerEngineCall": 0,
+        "jitRetiredShare": 0,
+        "chainLinksMade": 0,
+        "chainLinksCut": 0,
+        "chainDispatchEntries": 0,
+        "chainMaxDepth": 0,
+        "chainLinksFollowed": 0,
+        "jitResidencyPolicy": "disabled",
+        "jitResidencyCap": 0,
+        "jitSubmittedMembers": 0,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 0,
+        "jitCacheInstalls": 0,
+        "jitCacheRetranslations": 0,
+        "jitCacheEvictions": 0,
+        "jitCacheBatches": 0,
+        "jitCacheCodeBytes": 0,
+        "compileQueue": {
+          "admitted": 0,
+          "droppedBackpressure": 0,
+          "cancelledStale": 0,
+          "popped": 0,
+          "queueHighWater": 0,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 4096,
+          "deduped": 64655424,
+          "droppedStale": 0,
+          "droppedOverflow": 12184,
+          "countsDropped": 0,
+          "excluded": 240,
+          "queueDepth": 4096,
+          "queueHighWater": 4096,
+          "candidates": 49877,
+          "generation": 3
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 2,
+        "discoveryGeneration": 3,
+        "blockEntryHits": 62671001,
+        "blockBuilds": 3912218
+      }
+    }
+  },
+  {
+    "time": "2026-09-10T02:01:50.895Z",
+    "request": {
+      "op": "click",
+      "x": 300,
+      "y": 200
+    },
+    "result": "sent"
+  },
+  {
+    "time": "2026-09-10T02:01:57.456Z",
+    "request": {
+      "op": "type",
+      "text": "printf 'abc' > /tmp/omarchy-diagnostic-keys",
+      "delay": 150,
+      "enter": true
+    },
+    "result": "sent"
+  },
+  {
+    "time": "2026-09-10T02:02:03.069Z",
+    "request": {
+      "op": "exec",
+      "command": "cat /tmp/omarchy-diagnostic-keys; cat /proc/uptime"
+    },
+    "result": {
+      "stdout": "cat: /tmp/omarchy-diagnostic-keys: No such file or directory\n110.84 0.96\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:02:03.098Z",
+    "request": {
+      "op": "screenshot",
+      "name": "keys.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-interpreter/keys.png"
+  },
+  {
+    "time": "2026-09-10T02:02:03.156Z",
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyF",
+          "evdev": 33,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyF",
+          "evdev": 33,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Quote",
+          "evdev": 40,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Quote",
+          "evdev": 40,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyB",
+          "evdev": 48,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyB",
+          "evdev": 48,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Quote",
+          "evdev": 40,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Quote",
+          "evdev": 40,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyY",
+          "evdev": 21,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyY",
+          "evdev": 21,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyD",
+          "evdev": 32,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyD",
+          "evdev": 32,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyS",
+          "evdev": 31,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyS",
+          "evdev": 31,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyK",
+          "evdev": 37,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyK",
+          "evdev": 37,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyY",
+          "evdev": 21,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyY",
+          "evdev": 21,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyS",
+          "evdev": 31,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyS",
+          "evdev": 31,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 7680
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 8192
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 7680,
+            "y": 8192
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 497,
+        "completed": 497,
+        "pending": 0,
+        "averageMs": 11.407333997653524,
+        "maxMs": 80.81500005722046
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 1,
+        "successfulPresents": 1,
+        "drawnPresents": 1,
+        "drawnBytes": 4096000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 1,
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "successfulPresents": 1,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 4096000,
+          "drawnPresents": 1,
+          "drawnBytes": 4096000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 832
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1109116854",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 2456,
+        "totalSliceMs": 59481.21499979496,
+        "averageSliceMs": 24.218735749102184,
+        "maxSliceMs": 80.12000000476837,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 2036
+          },
+          {
+            "leMs": 64,
+            "count": 419
+          },
+          {
+            "leMs": 128,
+            "count": 1
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 80.57500004768372,
+        "requestedInstructions": 1228000000,
+        "retiredInstructions": 1227982346,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 26,
+        "outputBytes": 3712,
+        "inputCalls": 4,
+        "inputBytes": 343,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 2457,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": false,
+        "compiledBlocks": 0,
+        "executedBlocks": 0,
+        "retiredViaJit": 0,
+        "directChainEntries": 0,
+        "directChainLinks": 0,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 0,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 0,
+          "stateCopyCalls": 0,
+          "stateCopyBytes": 0,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 0,
+          "authorityChecks": 0,
+          "memorySplitExits": 0,
+          "deviceBoundaries": 0,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": false,
+        "jitDynamicChaining": false,
+        "guestRetired": 1228482346,
+        "jitEngineCalls": 0,
+        "jitLogicalBlocksPerEngineCall": 0,
+        "jitRetiredShare": 0,
+        "chainLinksMade": 0,
+        "chainLinksCut": 0,
+        "chainDispatchEntries": 0,
+        "chainMaxDepth": 0,
+        "chainLinksFollowed": 0,
+        "jitResidencyPolicy": "disabled",
+        "jitResidencyCap": 0,
+        "jitSubmittedMembers": 0,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 0,
+        "jitCacheInstalls": 0,
+        "jitCacheRetranslations": 0,
+        "jitCacheEvictions": 0,
+        "jitCacheBatches": 0,
+        "jitCacheCodeBytes": 0,
+        "compileQueue": {
+          "admitted": 0,
+          "droppedBackpressure": 0,
+          "cancelledStale": 0,
+          "popped": 0,
+          "queueHighWater": 0,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 4096,
+          "deduped": 82087932,
+          "droppedStale": 0,
+          "droppedOverflow": 13232,
+          "countsDropped": 0,
+          "excluded": 257,
+          "queueDepth": 4096,
+          "queueHighWater": 4096,
+          "candidates": 49797,
+          "generation": 3
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 2,
+        "discoveryGeneration": 3,
+        "blockEntryHits": 79289592,
+        "blockBuilds": 4955075
+      }
+    }
+  },
+  {
+    "time": "2026-09-10T02:04:19.982Z",
+    "request": {
+      "op": "exec",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 eval 'hl.config({ render = { cm_enabled = false } })'"
+    },
+    "result": {
+      "stdout": "ok\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:04:34.213Z",
+    "request": {
+      "op": "exec",
+      "command": "cat /tmp/omarchy-diagnostic-keys; cat /proc/uptime"
+    },
+    "result": {
+      "stdout": "cat: /tmp/omarchy-diagnostic-keys: No such file or directory\n116.00 0.96\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:04:34.235Z",
+    "request": {
+      "op": "screenshot",
+      "name": "cm-disabled.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-interpreter/cm-disabled.png"
+  },
+  {
+    "time": "2026-09-10T02:04:52.914Z",
+    "request": {
+      "op": "click",
+      "x": 300,
+      "y": 200
+    },
+    "result": "sent"
+  },
+  {
+    "time": "2026-09-10T02:04:53.823Z",
+    "request": {
+      "op": "type",
+      "text": "abc",
+      "delay": 300,
+      "enter": true
+    },
+    "result": "sent"
+  },
+  {
+    "time": "2026-09-10T02:06:55.394Z",
+    "request": {
+      "op": "exec",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow; cat /tmp/omarchy-diagnostic-keys; cat /proc/uptime"
+    },
+    "result": {
+      "stdout": "{\n    \"address\": \"0x5555620e10a0\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 524,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}\ncat: /tmp/omarchy-diagnostic-keys: No such file or directory\n120.69 0.96\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:06:55.422Z",
+    "request": {
+      "op": "screenshot",
+      "name": "cm-keys.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-interpreter/cm-keys.png"
+  },
+  {
+    "time": "2026-09-10T02:07:07.600Z",
+    "request": {
+      "op": "exec",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus systemctl --user list-units 'wayland-wm@*' --plain --no-legend"
+    },
+    "result": {
+      "stdout": "wayland-wm@hyprland.desktop.service loaded active running Main service for Hyprl\nand, An intelligent dynamic tiling Wayland compositor\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:08:30.897Z",
+    "request": {
+      "op": "exec",
+      "command": "printf '\\n%s\\n' 'hl.config({ render = { cm_enabled = false } })' >> /home/omarchy/.config/hypr/looknfeel.lua; XDG_RUNTIME_DIR=/run/user/1000 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus systemctl --user restart --no-block wayland-wm@hyprland.desktop.service"
+    },
+    "result": {
+      "stdout": "\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:09:53.329Z",
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyF",
+          "evdev": 33,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyF",
+          "evdev": 33,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Quote",
+          "evdev": 40,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Quote",
+          "evdev": 40,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyB",
+          "evdev": 48,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyB",
+          "evdev": 48,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Quote",
+          "evdev": 40,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Quote",
+          "evdev": 40,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyY",
+          "evdev": 21,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyY",
+          "evdev": 21,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyD",
+          "evdev": 32,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyD",
+          "evdev": 32,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyS",
+          "evdev": 31,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyS",
+          "evdev": 31,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyK",
+          "evdev": 37,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyK",
+          "evdev": 37,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyY",
+          "evdev": 21,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyY",
+          "evdev": 21,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyS",
+          "evdev": 31,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyS",
+          "evdev": 31,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyB",
+          "evdev": 48,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyB",
+          "evdev": 48,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 7680
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 8192
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 7680,
+            "y": 8192
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 4,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 7680
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 8192
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 7680,
+            "y": 8192
+          }
+        },
+        {
+          "sequence": 5,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 6,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 2869,
+        "completed": 2869,
+        "pending": 0,
+        "averageMs": 13.061406412038208,
+        "maxMs": 142.4099999666214
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 7,
+        "successfulPresents": 7,
+        "drawnPresents": 7,
+        "drawnBytes": 28672000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 7,
+          "coalesced": 0,
+          "presented": 7,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 7,
+          "enqueued": 7,
+          "coalesced": 0,
+          "presented": 7,
+          "successfulPresents": 7,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 28672000,
+          "drawnPresents": 7,
+          "drawnBytes": 28672000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 299,
+            "y": 200,
+            "width": 355,
+            "height": 223
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1259662656",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 21726,
+        "totalSliceMs": 516218.6200091839,
+        "averageSliceMs": 23.760407806737728,
+        "maxSliceMs": 216.52999997138977,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 18725
+          },
+          {
+            "leMs": 64,
+            "count": 2991
+          },
+          {
+            "leMs": 128,
+            "count": 6
+          },
+          {
+            "leMs": 256,
+            "count": 4
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 1584.6050000190735,
+        "requestedInstructions": 10863000000,
+        "retiredInstructions": 10862913712,
+        "fetchWaits": 40,
+        "fetchRequestedChunks": 42,
+        "fetchWaitTotalMs": 12683.615000009537,
+        "fetchWaitMaxMs": 1470.2350000143051,
+        "outputCalls": 67,
+        "outputBytes": 9604,
+        "inputCalls": 9,
+        "inputBytes": 1389,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 21727,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": false,
+        "compiledBlocks": 0,
+        "executedBlocks": 0,
+        "retiredViaJit": 0,
+        "directChainEntries": 0,
+        "directChainLinks": 0,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 0,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 0,
+          "stateCopyCalls": 0,
+          "stateCopyBytes": 0,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 0,
+          "authorityChecks": 0,
+          "memorySplitExits": 0,
+          "deviceBoundaries": 0,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": false,
+        "jitDynamicChaining": false,
+        "guestRetired": 10863413710,
+        "jitEngineCalls": 0,
+        "jitLogicalBlocksPerEngineCall": 0,
+        "jitRetiredShare": 0,
+        "chainLinksMade": 0,
+        "chainLinksCut": 0,
+        "chainDispatchEntries": 0,
+        "chainMaxDepth": 0,
+        "chainLinksFollowed": 0,
+        "jitResidencyPolicy": "disabled",
+        "jitResidencyCap": 0,
+        "jitSubmittedMembers": 0,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 0,
+        "jitCacheInstalls": 0,
+        "jitCacheRetranslations": 0,
+        "jitCacheEvictions": 0,
+        "jitCacheBatches": 0,
+        "jitCacheCodeBytes": 0,
+        "compileQueue": {
+          "admitted": 0,
+          "droppedBackpressure": 0,
+          "cancelledStale": 0,
+          "popped": 0,
+          "queueHighWater": 0,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 4096,
+          "deduped": 665685834,
+          "droppedStale": 0,
+          "droppedOverflow": 47212,
+          "countsDropped": 18416750,
+          "excluded": 458,
+          "queueDepth": 4096,
+          "queueHighWater": 4096,
+          "candidates": 65536,
+          "generation": 3
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 2,
+        "discoveryGeneration": 3,
+        "blockEntryHits": 652913205,
+        "blockBuilds": 40160249
+      }
+    }
+  },
+  {
+    "time": "2026-09-10T02:10:07.261Z",
+    "request": {
+      "op": "exec",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus systemctl --user list-units 'wayland-wm@*' --plain --no-legend; pgrep -a Hyprland; cat /proc/uptime"
+    },
+    "result": {
+      "stdout": "wayland-wm@hyprland.desktop.service loaded deactivating \u001b[0\n;1;39mstop-sigterm restart Main service for Hyprland, An intelligent dynamic \ntiling Wayland compositor\n439 Hyprland --watchdog-fd 4\n126.27 0.96\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:10:07.285Z",
+    "request": {
+      "op": "screenshot",
+      "name": "restarting.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-interpreter/restarting.png"
+  },
+  {
+    "time": "2026-09-10T02:11:32.298Z",
+    "request": {
+      "op": "exec",
+      "command": "grep -E '7fffa[2345]|gallium|LLVM' /proc/439/maps; od -An -tx4 -N128 -j 0x7fffa4229000 /proc/439/mem"
+    },
+    "result": {
+      "stdout": "7fffa0021000-7fffa4000000 ---p 00000000 00:00 0 \n7fffa409d000-7fffa412d000 rw-s 00000000 00:01 87                         /memfd:wayland-cursor (deleted)\n7fffa41bd000-7fffa41be000 r--p 00000000 00:00 0 \n7fffa41be000-7fffa41bf000 r-xp 00000000 00:00 0 \n7fffa41f8000-7fffa4219000 rw-s 00000000 00:01 139                        /memfd:wayland-shm (deleted)\n7fffa4219000-7fffa421a000 r--p 00000000 00:00 0 \n7fffa421a000-7fffa421b000 r-xp 00000000 00:00 0 \n7fffa421b000-7fffa421c000 r--p 00000000 00:00 0 \n7fffa421c000-7fffa421d000 r-xp 00000000 00:00 0 \n7fffa421d000-7fffa421e000 r--p 00000000 00:00 0 \n7fffa421e000-7fffa4228000 r-xp 00000000 00:00 0 \n7fffa4228000-7fffa4229000 r--p 00000000 00:00 0 \n7fffa4229000-7fffa422d000 r-xp 00000000 00:00 0 \n7fffa422d000-7fffa422e000 r--p 00000000 00:00 0 \n7fffa422e000-7fffa422f000 r-xp 00000000 00:00 0 \n7fffa422f000-7fffa4230000 r--p 00000000 00:00 0 \n7fffa4230000-7fffa4235000 r-xp 00000000 00:00 0 \n7fffa4235000-7fffa4236000 r--p 00000000 00:00 0 \n7fffa4236000-7fffa4237000 r-xp 00000000 00:00 0 \n7fffa4237000-7fffa4238000 r--p 00000000 00:00 0 \n7fffa4238000-7fffa423d000 r-xp 00000000 00:00 0 \n7fffa423d000-7fffa4356000 r--s 00000000 fe:00 58449                      /var/cache/fontconfig/923e285e415b1073c8df160bee08820f-le64.cache-12\n7fffa4356000-7fffa4359000 r--s 00000000 fe:00 58458                      /var/cache/fontconfig/f6b893a7224233d96cb72fd88691c0b4-le64.cache-12\n7fffa4359000-7fffa4365000 r--s 00000000 fe:00 58441                      /var/cache/fontconfig/4b31aef11cb0687b6d280d34cbe23592-le64.cache-12\n7fffa4365000-7fffa4366000 ---p 00000000 00:00 0 \n7fffa4366000-7fffa4c77000 rw-p 00000000 00:00 0 \n7fffa4c77000-7fffa4c78000 ---p 00000000 00:00 0 \n7fffa4c78000-7fffa5478000 rw-p 00000000 00:00 0 \n7fffa5478000-7fffa5479000 r--p 00000000 00:00 0 \n7fffa5479000-7fffa547a000 r-xp 00000000 00:00 0 \n7fffa547a000-7fffa547b000 r--p 00000000 00:00 0 \n7fffa547b000-7fffa547c000 r-xp 00000000 00:00 0 \n7fffa547c000-7fffa547d000 r--p 00000000 00:00 0 \n7fffa547d000-7fffa547e000 r-xp 00000000 00:00 0 \n7fffa547e000-7fffa547f000 ---p 00000000 00:00 0 \n7fffa547f000-7fffa5c7f000 rw-p 00000000 00:00 0 \n7fffa5c7f000-7fffa5c80000 r--p 00000000 00:00 0 \n7fffa5c80000-7fffa5c81000 r-xp 00000000 00:00 0 \n7fffa5c81000-7fffa5c82000 r--s 00000000 fe:00 58433                      /var/cache/fontconfig/061e4bb214a55cfecd58789ba388a75a-le64.cache-12\n7fffa5c82000-7fffa5c83000 r--p 00000000 fe:00 131124                     /home/omarchy/.config/dconf/user\n7fffa5c83000-7fffa5c84000 r--s 00000000 00:25 93                         /run/user/1000/dconf/user\n7fffa5c84000-7fffa5c90000 r-xp 00000000 fe:00 19693                      /usr/lib/gio/modules/libdconfsettings.so\n7fffa5c90000-7fffa5c91000 r--p 0000b000 fe:00 19693                      /usr/lib/gio/modules/libdconfsettings.so\n7fffa5c91000-7fffa5c92000 rw-p 0000c000 fe:00 19693                      /usr/lib/gio/modules/libdconfsettings.so\n7fffa5c92000-7fffa5c9d000 r--p 00000000 fe:00 35025                      /usr/share/glib-2.0/schemas/gschemas.compiled\n7fffa5c9d000-7fffa5c9e000 r--p 00000000 00:00 0 \n7fffa5c9e000-7fffa5c9f000 r-xp 00000000 00:00 0 \n7fffa5c9f000-7fffa5ca0000 r--p 00000000 00:00 0 \n7fffa5ca0000-7fffa5ca1000 r-xp 00000000 00:00 0 \n7fffa5ca1000-7fffa5ca2000 r--p 00000000 00:00 0 \n7fffa5ca2000-7fffa5ca3000 r-xp 00000000 00:00 0 \n7fffa5ca3000-7fffa5ca4000 r--p 00000000 00:00 0 \n7fffa5ca4000-7fffa5ca5000 r-xp 00000000 00:00 0 \n7fffa5ca5000-7fffa5d08000 rw-p 00000000 00:00 0 \n7fffa5d08000-7fffa5d09000 r--p 00000000 00:00 0 \n7fffa5d09000-7fffa5d0a000 r-xp 00000000 00:00 0 \n7fffa5d0a000-7fffa5d0b000 r--p 00000000 00:00 0 \n7fffa5d0b000-7fffa5d0c000 r-xp 00000000 00:00 0 \n7fffa5d0c000-7fffa5e4c000 rw-p 00000000 00:00 0 \n7fffa5e4c000-7fffa5e4d000 ---p 00000000 00:00 0 \n7fffa5e4d000-7fffa664d000 rw-p 00000000 00:00 0 \n7fffa79e4000-7fffb11d5000 r-xp 00000000 fe:00 20559                      /usr/lib/libLLVM.so.22.1\n7fffb11d5000-7fffb1414000 r--p 097f0000 fe:00 20559                      /usr/lib/libLLVM.so.22.1\n7fffb1414000-7fffb1437000 rw-p 09a2f000 fe:00 20559                      /usr/lib/libLLVM.so.22.1\n7fffb1500000-7fffb4580000 r-xp 00000000 fe:00 21546                      /usr/lib/libgallium-26.2.2-arch1.1.so\n7fffb4580000-7fffb470c000 r--p 0307f000 fe:00 21546                      /usr/lib/libgallium-26.2.2-arch1.1.so\n7fffb470c000-7fffb474a000 rw-p 0320b000 fe:00 21546                      /usr/lib/libgallium-26.2.2-arch1.1.so\nod: /proc/439/mem: Input/output error\n\n",
+      "exit": 1
+    }
+  },
+  {
+    "time": "2026-09-10T02:12:26.861Z",
+    "request": {
+      "op": "exec",
+      "command": "kill -KILL 439; XDG_RUNTIME_DIR=/run/user/1000 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus systemctl --user list-units 'wayland-wm@*' --plain --no-legend"
+    },
+    "result": {
+      "stdout": "wayland-wm@hyprland.desktop.service loaded deactivating \u001b[0\n;1;39mstop-sigterm restart Main service for Hyprland, An intelligent dynamic \ntiling Wayland compositor\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:13:20.196Z",
+    "request": {
+      "op": "exec",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus systemctl --user kill --kill-whom=all --signal=KILL wayland-wm@hyprland.desktop.service"
+    },
+    "result": {
+      "stdout": "\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:13:20.211Z",
+    "request": {
+      "op": "screenshot",
+      "name": "cm-restart.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-interpreter/cm-restart.png"
+  },
+  {
+    "time": "2026-09-10T02:15:07.934Z",
+    "request": {
+      "op": "exec",
+      "command": "pgrep -a Hyprland; XDG_RUNTIME_DIR=/run/user/1000 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus systemctl --user list-units 'wayland-wm@*' --plain --no-legend; cat /proc/uptime"
+    },
+    "result": {
+      "stdout": "133.29 0.96\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:15:07.959Z",
+    "request": {
+      "op": "screenshot",
+      "name": "cm-status.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-interpreter/cm-status.png"
+  }
+]

@@ -326,6 +326,117 @@ async function readGuestFileEventually(targetPage, filename, expected, label) {
   }
   throw new Error(`${label}: timed out waiting for physical keyboard nonce file`);
 }
+function layerRecords(value, records = []) {
+  if (Array.isArray(value)) {
+    for (const item of value) layerRecords(item, records);
+  } else if (value && typeof value === "object") {
+    if (typeof value.namespace === "string") records.push(value);
+    for (const item of Object.values(value)) layerRecords(item, records);
+  }
+  return records;
+}
+function layerFingerprint(layer) {
+  return JSON.stringify({
+    namespace: layer.namespace,
+    x: layer.x, y: layer.y, w: layer.w, h: layer.h,
+    pid: layer.pid, address: layer.address,
+  });
+}
+async function presentationProof(targetPage, previous = null) {
+  return targetPage.evaluate((previousPixels) => {
+    const state = window.__presentation?.state?.() || null;
+    const pixels = window.__presentation?.readPixels?.();
+    if (!pixels?.length) return { state, hasDesktopPixels: false, pixelHash: null, changedSamples: 0 };
+    let hash = 2166136261;
+    const samples = [];
+    const sampleCount = Math.min(4096, Math.floor(pixels.length / 4));
+    for (let index = 0; index < sampleCount; index++) {
+      const offset = Math.floor(index * pixels.length / sampleCount / 4) * 4;
+      const rgba = [pixels[offset], pixels[offset + 1], pixels[offset + 2], pixels[offset + 3]];
+      samples.push(rgba);
+      for (const byte of rgba) hash = Math.imul(hash ^ byte, 16777619);
+    }
+    const colors = new Set(), stride = Math.max(1, Math.floor(pixels.length / 4 / 8192)) * 4;
+    let visible = 0, sampled = 0;
+    for (let offset = 0; offset < pixels.length; offset += stride) {
+      sampled++;
+      if (pixels[offset + 3] > 0 && Math.max(pixels[offset], pixels[offset + 1], pixels[offset + 2]) > 12) {
+        visible++; colors.add((pixels[offset] << 16) | (pixels[offset + 1] << 8) | pixels[offset + 2]);
+      }
+    }
+    let changedSamples = 0;
+    if (previousPixels?.samples) {
+      changedSamples = samples.reduce((count, rgba, index) => count +
+        (JSON.stringify(rgba) === JSON.stringify(previousPixels.samples[index]) ? 0 : 1), 0);
+    }
+    return {
+      state,
+      hasDesktopPixels: visible > sampled / 4 && colors.size >= 8,
+      pixelHash: hash >>> 0,
+      sampleCount: samples.length,
+      samples,
+      changedSamples,
+    };
+  }, previous);
+}
+async function proveCalendarOnSecondTab() {
+  const command = "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers";
+  const beforeResult = await exec(command, secondPage, "calendar:layers-before");
+  assert.equal(beforeResult.exit, 0, "calendar proof: initial layers query failed");
+  const beforeText = beforeResult.stdout;
+  const before = JSON.parse(beforeText);
+  const beforeFingerprints = new Set(layerRecords(before).map(layerFingerprint));
+  const expectedNamespace = "omarchy-keyboard-panel";
+  const beforePresentation = await presentationProof(secondPage);
+  assert.ok(beforePresentation.hasDesktopPixels, "calendar proof: before-click desktop pixels missing");
+  await secondPage.locator("#ide-display-canvas").click({ position: { x: 640, y: 13 } });
+
+  const deadline = Date.now() + Number(process.env.OMARCHY_CALENDAR_TIMEOUT_MS || 300000);
+  let afterResult = null;
+  let after = null;
+  let newPanel = [];
+  let afterPresentation = null;
+  while (Date.now() < deadline) {
+    afterResult = await exec(command, secondPage, "calendar:layers-after-click");
+    assert.equal(afterResult.exit, 0, "calendar proof: layers query failed after physical click");
+    after = JSON.parse(afterResult.stdout);
+    newPanel = layerRecords(after).filter((layer) => {
+      return layer.namespace === expectedNamespace && Number(layer.pid) > 0
+        && Number(layer.w) > 0 && Number(layer.h) > 0
+        && !beforeFingerprints.has(layerFingerprint(layer));
+    });
+    if (newPanel.length) {
+      afterPresentation = await presentationProof(secondPage, beforePresentation);
+      if (afterPresentation.hasDesktopPixels && afterPresentation.changedSamples > 0) break;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+  assert.ok(newPanel.length, `calendar proof: no newly rendered primary panel layer for ${expectedNamespace}`);
+
+  afterPresentation ||= await presentationProof(secondPage, beforePresentation);
+  assert.ok(afterPresentation.hasDesktopPixels, "calendar proof: after-click desktop pixels missing");
+  assert.ok(afterPresentation.changedSamples > 0, "calendar proof: physical click did not change displayed pixels");
+  const displayProof = await secondPage.evaluate(() => ({
+    url: location.href,
+    canvas: { width: document.querySelector("#ide-display-canvas")?.width, height: document.querySelector("#ide-display-canvas")?.height },
+    presentation: window.__presentation?.state?.() || null,
+    viewport: window.__presentation?.viewport?.() || null,
+  }));
+  await fs.writeFile(path.join(out, "desktop-calendar-layers.stdout"), `${beforeText}\n--- after physical clock click ---\n${afterResult.stdout}`);
+  await fs.writeFile(path.join(out, "desktop-calendar-displayproof.stdout"), JSON.stringify({
+    click: { x: 640, y: 13, input: "physical canvas click" },
+    expectedNamespace,
+    newPanel,
+    presentationBefore: { state: beforePresentation.state, presentCount: beforePresentation.state?.successfulPresents ?? null, hasDesktopPixels: beforePresentation.hasDesktopPixels, pixelHash: beforePresentation.pixelHash },
+    presentationAfter: { state: afterPresentation.state, presentCount: afterPresentation.state?.successfulPresents ?? null, hasDesktopPixels: afterPresentation.hasDesktopPixels, pixelHash: afterPresentation.pixelHash, changedSamples: afterPresentation.changedSamples },
+    displayProof,
+  }, null, 2) + "\n");
+  report.calendar = { click: { x: 640, y: 13 }, expectedNamespace, newPanel,
+    presentationBefore: { state: beforePresentation.state, presentCount: beforePresentation.state?.successfulPresents ?? null, hasDesktopPixels: beforePresentation.hasDesktopPixels, pixelHash: beforePresentation.pixelHash },
+    presentationAfter: { state: afterPresentation.state, presentCount: afterPresentation.state?.successfulPresents ?? null, hasDesktopPixels: afterPresentation.hasDesktopPixels, pixelHash: afterPresentation.pixelHash, changedSamples: afterPresentation.changedSamples },
+    displayProof };
+  await screenshot("desktop-calendar.png", secondPage);
+}
 async function capturePair() {
   await page.evaluate(() => window.__linux.pause());
   await page.evaluate(() => window.__persist());
@@ -468,6 +579,7 @@ try {
     report.secondTabFoot = await mappedFoot(secondPage, "second tab");
     await assertNoOmarchyPersistentIdb(secondPage, "second tab");
     await screenshot("desktop-second-tab.png", secondPage);
+    await proveCalendarOnSecondTab();
   }
   assert.deepEqual(report.errors, []);
   report.result = mode === "verify"

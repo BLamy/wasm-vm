@@ -1,0 +1,940 @@
+{
+  "result": "captured",
+  "scope": "bounded diagnostic only; not desktop acceptance",
+  "realVm": true,
+  "url": "http://127.0.0.1:58944/app.html?guest=omarchy&desktop=1&profile=1&jit=1&omarchyDivider=64#ide",
+  "requested": {
+    "profile": true,
+    "jit": true,
+    "divider": 64,
+    "profileWindowMs": 60000
+  },
+  "startedAt": "2026-09-10T02:07:26.891Z",
+  "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-profile/omarchy-fp-profile.png",
+  "sourceHashes": {
+    "main.js": {
+      "bytes": 148307,
+      "sha256": "977c202af7b4eafc90420408bb06a9301c89c61a2017cfb31cdfb117c67444f8"
+    },
+    "loader.js": {
+      "bytes": 75536,
+      "sha256": "1b8b93adf89c4d1660ef87c1235be021343d721a38011a62864c038f918c2e0b"
+    },
+    "guest-rpc.js": {
+      "bytes": 3995,
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+    },
+    "pkg/wasm_vm_wasm_bg.wasm": {
+      "bytes": 1564689,
+      "sha256": "8c80663ea4ad6a6bac8b47627ff011d98d9306af2b802bc4bdc8754851cfe2fc"
+    }
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:58944/releases/kernel/6.6.63/Image",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "url": "http://127.0.0.1:58944/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "failure": "net::ERR_ABORTED"
+    }
+  ],
+  "machineReadyAt": "2026-09-10T02:07:54.710Z",
+  "executionPolicy": {
+    "dataset": {
+      "backend": "whole-machine-worker",
+      "jitPolicy": "enabled",
+      "jitThreshold": "512",
+      "interpreter": "fast"
+    },
+    "execution": {
+      "backend": "whole-machine-worker",
+      "interpreter": "fast",
+      "jit": "enabled",
+      "jitResidency": "repack-off",
+      "jitThreshold": 512,
+      "jitJalr": true,
+      "jitRegion": true,
+      "quantum": 500000
+    },
+    "jit": {
+      "enabled": true,
+      "threshold": 512,
+      "reason": "enabled",
+      "hasExecutor": true,
+      "compiledBlocks": 8,
+      "executedBlocks": 1560,
+      "retiredViaJit": 14703,
+      "directChainEntries": 3590,
+      "directChainLinks": 2030,
+      "dynamicLinkAttempts": 918,
+      "dynamicLinkHits": 0,
+      "dynamicLinkRefusals": 918,
+      "dynamicLinkRetargets": 0,
+      "dynamicLinkLiveEntries": 0,
+      "dynamicLinkInstalls": 1,
+      "entryCost": {
+        "timingEnabled": true,
+        "timerReads": 9448,
+        "hostEntries": 1560,
+        "stateCopyCalls": 3120,
+        "stateCopyBytes": 317088,
+        "stateCopyNs": 264997,
+        "engineEntryNs": 1599994,
+        "indirectTableDispatches": 507,
+        "authorityChecks": 2067,
+        "memorySplitExits": 0,
+        "deviceBoundaries": 0,
+        "deviceBoundaryNs": 0
+      },
+      "jitRegionChaining": true,
+      "jitDynamicChaining": true,
+      "guestRetired": 499986,
+      "jitEngineCalls": 1560,
+      "jitLogicalBlocksPerEngineCall": 2.301282051282051,
+      "jitRetiredShare": 0.02940682339105495,
+      "chainLinksMade": 1,
+      "chainLinksCut": 0,
+      "chainDispatchEntries": 1019,
+      "chainMaxDepth": 3,
+      "chainLinksFollowed": 1560,
+      "jitResidencyPolicy": "repack-off",
+      "jitResidencyCap": 24,
+      "jitSubmittedMembers": 8,
+      "jitCompilePauseNs": 2499998,
+      "jitCompilePauseMaxNs": 1770000,
+      "jitCompilePauseSamples": 5,
+      "jitCacheInstalls": 8,
+      "jitCacheRetranslations": 0,
+      "jitCacheEvictions": 0,
+      "jitCacheBatches": 5,
+      "jitCacheCodeBytes": 339317,
+      "compileQueue": {
+        "admitted": 8,
+        "droppedBackpressure": 0,
+        "cancelledStale": 0,
+        "popped": 8,
+        "queueHighWater": 2,
+        "queueDepth": 0,
+        "capacity": 256
+      },
+      "discovery": {
+        "nominated": 9,
+        "deduped": 57,
+        "droppedStale": 0,
+        "droppedOverflow": 0,
+        "countsDropped": 0,
+        "excluded": 0,
+        "queueDepth": 1,
+        "queueHighWater": 2,
+        "candidates": 5700,
+        "generation": 5
+      },
+      "decodedCacheEntries": 4096,
+      "decodedBlocksDiscarded": 0,
+      "decodedCacheFlushes": 4,
+      "discoveryGeneration": 5,
+      "blockEntryHits": 83946,
+      "blockBuilds": 6722
+    }
+  },
+  "before": {
+    "label": "before",
+    "capturedAt": "2026-09-10T02:07:54.740Z",
+    "profile": {
+      "totalNs": 22005839995,
+      "sampleCount": 258582,
+      "walkCount": 1980806,
+      "collisions": 18222,
+      "regions": [
+        {
+          "pc": "0x00007fffa4233380",
+          "samples": 3404,
+          "pct": 1.3164102683094723
+        },
+        {
+          "pc": "0x00007fffa4233400",
+          "samples": 3306,
+          "pct": 1.2785112652852866
+        },
+        {
+          "pc": "0x00007fffa4233600",
+          "samples": 3297,
+          "pct": 1.275030744599392
+        },
+        {
+          "pc": "0x00007fffa42333c0",
+          "samples": 3196,
+          "pct": 1.2359715680132415
+        },
+        {
+          "pc": "0x00007fffa42334c0",
+          "samples": 3186,
+          "pct": 1.232104322806692
+        },
+        {
+          "pc": "0x00007fffa4233680",
+          "samples": 3137,
+          "pct": 1.213154821294599
+        },
+        {
+          "pc": "0x00007fffa4233480",
+          "samples": 3056,
+          "pct": 1.1818301351215474
+        },
+        {
+          "pc": "0x00007fffa4233940",
+          "samples": 2936,
+          "pct": 1.1354231926429528
+        },
+        {
+          "pc": "0x00007fffa4233900",
+          "samples": 2842,
+          "pct": 1.099071087701387
+        },
+        {
+          "pc": "0x00007fffa42336c0",
+          "samples": 2716,
+          "pct": 1.0503437980988624
+        }
+      ],
+      "subsystems": [
+        {
+          "name": "cpu_interp",
+          "ns": 21846499956
+        },
+        {
+          "name": "mmu_walk",
+          "ns": 158800041
+        },
+        {
+          "name": "clint",
+          "ns": 0
+        },
+        {
+          "name": "plic",
+          "ns": 75001
+        },
+        {
+          "name": "uart",
+          "ns": 335000
+        },
+        {
+          "name": "virtio_blk",
+          "ns": 0
+        },
+        {
+          "name": "virtio_net",
+          "ns": 0
+        },
+        {
+          "name": "virtio_rng",
+          "ns": 0
+        },
+        {
+          "name": "rtc",
+          "ns": 0
+        },
+        {
+          "name": "syscon",
+          "ns": 0
+        },
+        {
+          "name": "other",
+          "ns": 129997
+        }
+      ],
+      "jitPause": {
+        "count": 731,
+        "maxNs": 1770000,
+        "sumNs": 194814995,
+        "overTarget": 0,
+        "maxAttemptedBlocks": 8,
+        "totalAttemptedBlocks": 5488,
+        "maxSubmittedBlocks": 8,
+        "maxSubmittedBytes": 2510,
+        "totalSubmittedBlocks": 3535,
+        "runCount": 823,
+        "lastRunAttemptedBlocks": 8,
+        "maxRunAttemptedBlocks": 8,
+        "lastRunSubmittedBlocks": 3,
+        "maxRunSubmittedBlocks": 8,
+        "lastRunStagedNominations": 28,
+        "maxRunStagedNominations": 64,
+        "lastFinalPumps": 0,
+        "maxFinalPumps": 0,
+        "lastFinalAttemptedBlocks": 0,
+        "maxFinalAttemptedBlocks": 0,
+        "lastFinalSubmittedBlocks": 0,
+        "maxFinalSubmittedBlocks": 0
+      }
+    },
+    "jit": {
+      "hasExecutor": true,
+      "compiledBlocks": 97,
+      "executedBlocks": 4288450,
+      "retiredViaJit": 131045842,
+      "directChainEntries": 12514660,
+      "directChainLinks": 8226257,
+      "dynamicLinkAttempts": 2932878,
+      "dynamicLinkHits": 2075110,
+      "dynamicLinkRefusals": 857768,
+      "dynamicLinkRetargets": 0,
+      "dynamicLinkLiveEntries": 2,
+      "dynamicLinkInstalls": 109501,
+      "entryCost": {
+        "timingEnabled": true,
+        "timerReads": 26205378,
+        "hostEntries": 4288450,
+        "stateCopyCalls": 8576900,
+        "stateCopyBytes": 872459208,
+        "stateCopyNs": 456039939,
+        "engineEntryNs": 1967999781,
+        "indirectTableDispatches": 4460260,
+        "authorityChecks": 8174417,
+        "memorySplitExits": 87953,
+        "deviceBoundaries": 39326,
+        "deviceBoundaryNs": 3479993
+      },
+      "jitRegionChaining": true,
+      "jitDynamicChaining": true,
+      "guestRetired": 411487174,
+      "jitEngineCalls": 4288450,
+      "jitLogicalBlocksPerEngineCall": 2.9182245333395516,
+      "jitRetiredShare": 0.31846883762165573,
+      "chainLinksMade": 903,
+      "chainLinksCut": 897,
+      "chainDispatchEntries": 2663316,
+      "chainMaxDepth": 128,
+      "chainLinksFollowed": 3624066,
+      "jitResidencyPolicy": "repack-off",
+      "jitResidencyCap": 24,
+      "jitSubmittedMembers": 3535,
+      "jitCompilePauseNs": 194814995,
+      "jitCompilePauseMaxNs": 1770000,
+      "jitCompilePauseSamples": 731,
+      "jitCacheInstalls": 3252,
+      "jitCacheRetranslations": 2220,
+      "jitCacheEvictions": 658,
+      "jitCacheBatches": 24,
+      "jitCacheCodeBytes": 2208648,
+      "compileQueue": {
+        "admitted": 10959,
+        "droppedBackpressure": 14027,
+        "cancelledStale": 0,
+        "popped": 5488,
+        "queueHighWater": 256,
+        "queueDepth": 244,
+        "capacity": 256
+      },
+      "discovery": {
+        "nominated": 19868,
+        "deduped": 14717566,
+        "droppedStale": 0,
+        "droppedOverflow": 0,
+        "countsDropped": 0,
+        "excluded": 102,
+        "queueDepth": 109,
+        "queueHighWater": 562,
+        "candidates": 61824,
+        "generation": 5
+      },
+      "decodedCacheEntries": 4096,
+      "decodedBlocksDiscarded": 0,
+      "decodedCacheFlushes": 4,
+      "discoveryGeneration": 5,
+      "blockEntryHits": 25823721,
+      "blockBuilds": 2356519
+    },
+    "scheduler": {
+      "quantum": 500000,
+      "maxQuantum": 500000,
+      "slices": 823,
+      "totalSliceMs": 22033.20000052452,
+      "averageSliceMs": 26.771810450212055,
+      "maxSliceMs": 89.00999999046326,
+      "sliceHistogram": [
+        {
+          "leMs": 4,
+          "count": 0
+        },
+        {
+          "leMs": 8,
+          "count": 7
+        },
+        {
+          "leMs": 16,
+          "count": 4
+        },
+        {
+          "leMs": 32,
+          "count": 579
+        },
+        {
+          "leMs": 64,
+          "count": 232
+        },
+        {
+          "leMs": 128,
+          "count": 1
+        },
+        {
+          "leMs": 256,
+          "count": 0
+        },
+        {
+          "leMs": 512,
+          "count": 0
+        },
+        {
+          "leMs": 1000,
+          "count": 0
+        },
+        {
+          "leMs": null,
+          "count": 0
+        }
+      ],
+      "maxStretchGapMs": 89.58999991416931,
+      "requestedInstructions": 411500000,
+      "retiredInstructions": 411487174,
+      "fetchWaits": 0,
+      "fetchRequestedChunks": 0,
+      "fetchWaitTotalMs": 0,
+      "fetchWaitMaxMs": 0,
+      "outputCalls": 19,
+      "outputBytes": 2904,
+      "inputCalls": 3,
+      "inputBytes": 218,
+      "yieldMode": "scheduler.postTask",
+      "schedulerYields": 824,
+      "timerYields": 0,
+      "mainThreadYields": 0
+    }
+  },
+  "after": {
+    "label": "after",
+    "capturedAt": "2026-09-10T02:08:54.756Z",
+    "profile": {
+      "totalNs": 81734245003,
+      "sampleCount": 1124138,
+      "walkCount": 2867417,
+      "collisions": 184635,
+      "regions": [
+        {
+          "pc": "0x00007fffa4229b40",
+          "samples": 13469,
+          "pct": 1.1981625031802146
+        },
+        {
+          "pc": "0x00007fffa42292c0",
+          "samples": 12519,
+          "pct": 1.11365330591084
+        },
+        {
+          "pc": "0x00007fffa4229b00",
+          "samples": 12400,
+          "pct": 1.103067416989729
+        },
+        {
+          "pc": "0x00007fffa4229b80",
+          "samples": 12385,
+          "pct": 1.1017330612433704
+        },
+        {
+          "pc": "0x00007fffa4229c40",
+          "samples": 12376,
+          "pct": 1.1009324477955553
+        },
+        {
+          "pc": "0x00007fffa4229e80",
+          "samples": 11330,
+          "pct": 1.0078833737494863
+        },
+        {
+          "pc": "0x00007fffa4229300",
+          "samples": 10753,
+          "pct": 0.9565551560395611
+        },
+        {
+          "pc": "0x00007fffa4229ec0",
+          "samples": 10746,
+          "pct": 0.9559324566912603
+        },
+        {
+          "pc": "0x00007fffa4229280",
+          "samples": 10236,
+          "pct": 0.9105643613150699
+        },
+        {
+          "pc": "0x00007fffa4229c00",
+          "samples": 10220,
+          "pct": 0.909141048518954
+        }
+      ],
+      "subsystems": [
+        {
+          "name": "cpu_interp",
+          "ns": 81486360038
+        },
+        {
+          "name": "mmu_walk",
+          "ns": 247279966
+        },
+        {
+          "name": "clint",
+          "ns": 0
+        },
+        {
+          "name": "plic",
+          "ns": 85001
+        },
+        {
+          "name": "uart",
+          "ns": 365000
+        },
+        {
+          "name": "virtio_blk",
+          "ns": 0
+        },
+        {
+          "name": "virtio_net",
+          "ns": 20001
+        },
+        {
+          "name": "virtio_rng",
+          "ns": 0
+        },
+        {
+          "name": "rtc",
+          "ns": 0
+        },
+        {
+          "name": "syscon",
+          "ns": 0
+        },
+        {
+          "name": "other",
+          "ns": 134997
+        }
+      ],
+      "jitPause": {
+        "count": 4314,
+        "maxNs": 1770000,
+        "sumNs": 750705043,
+        "overTarget": 0,
+        "maxAttemptedBlocks": 8,
+        "totalAttemptedBlocks": 13906,
+        "maxSubmittedBlocks": 8,
+        "maxSubmittedBytes": 2510,
+        "totalSubmittedBlocks": 10532,
+        "runCount": 4125,
+        "lastRunAttemptedBlocks": 7,
+        "maxRunAttemptedBlocks": 8,
+        "lastRunSubmittedBlocks": 7,
+        "maxRunSubmittedBlocks": 8,
+        "lastRunStagedNominations": 5,
+        "maxRunStagedNominations": 64,
+        "lastFinalPumps": 0,
+        "maxFinalPumps": 1,
+        "lastFinalAttemptedBlocks": 0,
+        "maxFinalAttemptedBlocks": 1,
+        "lastFinalSubmittedBlocks": 0,
+        "maxFinalSubmittedBlocks": 1
+      }
+    },
+    "jit": {
+      "hasExecutor": true,
+      "compiledBlocks": 26,
+      "executedBlocks": 14074546,
+      "retiredViaJit": 843323815,
+      "directChainEntries": 29820266,
+      "directChainLinks": 15745967,
+      "dynamicLinkAttempts": 3576455,
+      "dynamicLinkHits": 2434454,
+      "dynamicLinkRefusals": 1142001,
+      "dynamicLinkRetargets": 0,
+      "dynamicLinkLiveEntries": 4,
+      "dynamicLinkInstalls": 125659,
+      "entryCost": {
+        "timingEnabled": true,
+        "timerReads": 85380546,
+        "hostEntries": 14074546,
+        "stateCopyCalls": 28149092,
+        "stateCopyBytes": 3399466272,
+        "stateCopyNs": 1497234348,
+        "engineEntryNs": 7847303833,
+        "indirectTableDispatches": 7153997,
+        "authorityChecks": 17893907,
+        "memorySplitExits": 101231,
+        "deviceBoundaries": 42892,
+        "deviceBoundaryNs": 3794989
+      },
+      "jitRegionChaining": true,
+      "jitDynamicChaining": true,
+      "guestRetired": 2062483571,
+      "jitEngineCalls": 14074546,
+      "jitLogicalBlocksPerEngineCall": 2.118737329076192,
+      "jitRetiredShare": 0.40888753096399816,
+      "chainLinksMade": 2539,
+      "chainLinksCut": 2533,
+      "chainDispatchEntries": 9588737,
+      "chainMaxDepth": 128,
+      "chainLinksFollowed": 11056765,
+      "jitResidencyPolicy": "repack-off",
+      "jitResidencyCap": 24,
+      "jitSubmittedMembers": 10532,
+      "jitCompilePauseNs": 750705043,
+      "jitCompilePauseMaxNs": 1770000,
+      "jitCompilePauseSamples": 4314,
+      "jitCacheInstalls": 9702,
+      "jitCacheRetranslations": 7562,
+      "jitCacheEvictions": 4039,
+      "jitCacheBatches": 19,
+      "jitCacheCodeBytes": 1724128,
+      "compileQueue": {
+        "admitted": 20308,
+        "droppedBackpressure": 17735,
+        "cancelledStale": 0,
+        "popped": 13906,
+        "queueHighWater": 256,
+        "queueDepth": 0,
+        "capacity": 256
+      },
+      "discovery": {
+        "nominated": 31641,
+        "deduped": 57702581,
+        "droppedStale": 0,
+        "droppedOverflow": 0,
+        "countsDropped": 2390572,
+        "excluded": 128,
+        "queueDepth": 0,
+        "queueHighWater": 562,
+        "candidates": 65536,
+        "generation": 5
+      },
+      "decodedCacheEntries": 4096,
+      "decodedBlocksDiscarded": 0,
+      "decodedCacheFlushes": 4,
+      "discoveryGeneration": 5,
+      "blockEntryHits": 75476615,
+      "blockBuilds": 5445615
+    },
+    "scheduler": {
+      "quantum": 500000,
+      "maxQuantum": 500000,
+      "slices": 4125,
+      "totalSliceMs": 81845.11999893188,
+      "averageSliceMs": 19.841241211862275,
+      "maxSliceMs": 89.00999999046326,
+      "sliceHistogram": [
+        {
+          "leMs": 4,
+          "count": 0
+        },
+        {
+          "leMs": 8,
+          "count": 8
+        },
+        {
+          "leMs": 16,
+          "count": 931
+        },
+        {
+          "leMs": 32,
+          "count": 2891
+        },
+        {
+          "leMs": 64,
+          "count": 294
+        },
+        {
+          "leMs": 128,
+          "count": 1
+        },
+        {
+          "leMs": 256,
+          "count": 0
+        },
+        {
+          "leMs": 512,
+          "count": 0
+        },
+        {
+          "leMs": 1000,
+          "count": 0
+        },
+        {
+          "leMs": null,
+          "count": 0
+        }
+      ],
+      "maxStretchGapMs": 89.58999991416931,
+      "requestedInstructions": 2062500000,
+      "retiredInstructions": 2062483571,
+      "fetchWaits": 0,
+      "fetchRequestedChunks": 0,
+      "fetchWaitTotalMs": 0,
+      "fetchWaitMaxMs": 0,
+      "outputCalls": 21,
+      "outputBytes": 3165,
+      "inputCalls": 3,
+      "inputBytes": 218,
+      "yieldMode": "scheduler.postTask",
+      "schedulerYields": 4126,
+      "timerYields": 0,
+      "mainThreadYields": 0
+    }
+  },
+  "screenshotSha256": "b14847d65422248d0debc702066c5dac039431afc48be61ac380767c0573b4d1",
+  "findings": {
+    "dynamicFpCounters": {
+      "available": false,
+      "before": {},
+      "after": {},
+      "note": "The sampled built profile/JIT/scheduler surfaces expose no FP-specific numeric counter."
+    },
+    "profileCost": {
+      "totalNsDelta": 59728405008,
+      "sampleCountDelta": 865556,
+      "walkCountDelta": 886611,
+      "subsystemNsDelta": [
+        {
+          "name": "cpu_interp",
+          "ns": 59639860082
+        },
+        {
+          "name": "mmu_walk",
+          "ns": 88479925
+        },
+        {
+          "name": "plic",
+          "ns": 10000
+        },
+        {
+          "name": "uart",
+          "ns": 30000
+        },
+        {
+          "name": "virtio_net",
+          "ns": 20001
+        },
+        {
+          "name": "other",
+          "ns": 5000
+        }
+      ],
+      "numericDeltas": {
+        "totalNs": 59728405008,
+        "sampleCount": 865556,
+        "walkCount": 886611,
+        "collisions": 166413,
+        "regions[0].samples": 10065,
+        "regions[0].pct": -0.11824776512925772,
+        "regions[1].samples": 9213,
+        "regions[1].pct": -0.16485795937444658,
+        "regions[2].samples": 9103,
+        "regions[2].pct": -0.17196332760966304,
+        "regions[3].samples": 9189,
+        "regions[3].pct": -0.13423850676987104,
+        "regions[4].samples": 9190,
+        "regions[4].pct": -0.13117187501113658,
+        "regions[5].samples": 8193,
+        "regions[5].pct": -0.20527144754511273,
+        "regions[6].samples": 7697,
+        "regions[6].pct": -0.22527497908198635,
+        "regions[7].samples": 7810,
+        "regions[7].pct": -0.17949073595169251,
+        "regions[8].samples": 7394,
+        "regions[8].pct": -0.18850672638631705,
+        "regions[9].samples": 7504,
+        "regions[9].pct": -0.1412027495799083,
+        "subsystems[0].ns": 59639860082,
+        "subsystems[1].ns": 88479925,
+        "subsystems[2].ns": 0,
+        "subsystems[3].ns": 10000,
+        "subsystems[4].ns": 30000,
+        "subsystems[5].ns": 0,
+        "subsystems[6].ns": 20001,
+        "subsystems[7].ns": 0,
+        "subsystems[8].ns": 0,
+        "subsystems[9].ns": 0,
+        "subsystems[10].ns": 5000,
+        "jitPause.count": 3583,
+        "jitPause.maxNs": 0,
+        "jitPause.sumNs": 555890048,
+        "jitPause.overTarget": 0,
+        "jitPause.maxAttemptedBlocks": 0,
+        "jitPause.totalAttemptedBlocks": 8418,
+        "jitPause.maxSubmittedBlocks": 0,
+        "jitPause.maxSubmittedBytes": 0,
+        "jitPause.totalSubmittedBlocks": 6997,
+        "jitPause.runCount": 3302,
+        "jitPause.lastRunAttemptedBlocks": -1,
+        "jitPause.maxRunAttemptedBlocks": 0,
+        "jitPause.lastRunSubmittedBlocks": 4,
+        "jitPause.maxRunSubmittedBlocks": 0,
+        "jitPause.lastRunStagedNominations": -23,
+        "jitPause.maxRunStagedNominations": 0,
+        "jitPause.lastFinalPumps": 0,
+        "jitPause.maxFinalPumps": 1,
+        "jitPause.lastFinalAttemptedBlocks": 0,
+        "jitPause.maxFinalAttemptedBlocks": 1,
+        "jitPause.lastFinalSubmittedBlocks": 0,
+        "jitPause.maxFinalSubmittedBlocks": 1
+      }
+    },
+    "hotRegions": [
+      {
+        "pc": "0x00007fffa4229b40",
+        "samples": 13469
+      },
+      {
+        "pc": "0x00007fffa42292c0",
+        "samples": 12519
+      },
+      {
+        "pc": "0x00007fffa4229b00",
+        "samples": 12400
+      },
+      {
+        "pc": "0x00007fffa4229b80",
+        "samples": 12385
+      },
+      {
+        "pc": "0x00007fffa4229c40",
+        "samples": 12376
+      },
+      {
+        "pc": "0x00007fffa4229e80",
+        "samples": 11330
+      },
+      {
+        "pc": "0x00007fffa4229300",
+        "samples": 10753
+      },
+      {
+        "pc": "0x00007fffa4229ec0",
+        "samples": 10746
+      },
+      {
+        "pc": "0x00007fffa4229280",
+        "samples": 10236
+      },
+      {
+        "pc": "0x00007fffa4229c00",
+        "samples": 10220
+      }
+    ],
+    "jitDeltas": {
+      "compiledBlocks": -71,
+      "executedBlocks": 9786096,
+      "retiredViaJit": 712277973,
+      "directChainEntries": 17305606,
+      "directChainLinks": 7519710,
+      "dynamicLinkAttempts": 643577,
+      "dynamicLinkHits": 359344,
+      "dynamicLinkRefusals": 284233,
+      "dynamicLinkRetargets": 0,
+      "dynamicLinkLiveEntries": 2,
+      "dynamicLinkInstalls": 16158,
+      "entryCost.timerReads": 59175168,
+      "entryCost.hostEntries": 9786096,
+      "entryCost.stateCopyCalls": 19572192,
+      "entryCost.stateCopyBytes": 2527007064,
+      "entryCost.stateCopyNs": 1041194409,
+      "entryCost.engineEntryNs": 5879304052,
+      "entryCost.indirectTableDispatches": 2693737,
+      "entryCost.authorityChecks": 9719490,
+      "entryCost.memorySplitExits": 13278,
+      "entryCost.deviceBoundaries": 3566,
+      "entryCost.deviceBoundaryNs": 314996,
+      "guestRetired": 1650996397,
+      "jitEngineCalls": 9786096,
+      "jitLogicalBlocksPerEngineCall": -0.7994872042633596,
+      "jitRetiredShare": 0.09041869334234243,
+      "chainLinksMade": 1636,
+      "chainLinksCut": 1636,
+      "chainDispatchEntries": 6925421,
+      "chainMaxDepth": 0,
+      "chainLinksFollowed": 7432699,
+      "jitResidencyCap": 0,
+      "jitSubmittedMembers": 6997,
+      "jitCompilePauseNs": 555890048,
+      "jitCompilePauseMaxNs": 0,
+      "jitCompilePauseSamples": 3583,
+      "jitCacheInstalls": 6450,
+      "jitCacheRetranslations": 5342,
+      "jitCacheEvictions": 3381,
+      "jitCacheBatches": -5,
+      "jitCacheCodeBytes": -484520,
+      "compileQueue.admitted": 9349,
+      "compileQueue.droppedBackpressure": 3708,
+      "compileQueue.cancelledStale": 0,
+      "compileQueue.popped": 8418,
+      "compileQueue.queueHighWater": 0,
+      "compileQueue.queueDepth": -244,
+      "compileQueue.capacity": 0,
+      "discovery.nominated": 11773,
+      "discovery.deduped": 42985015,
+      "discovery.droppedStale": 0,
+      "discovery.droppedOverflow": 0,
+      "discovery.countsDropped": 2390572,
+      "discovery.excluded": 26,
+      "discovery.queueDepth": -109,
+      "discovery.queueHighWater": 0,
+      "discovery.candidates": 3712,
+      "discovery.generation": 0,
+      "decodedCacheEntries": 0,
+      "decodedBlocksDiscarded": 0,
+      "decodedCacheFlushes": 0,
+      "discoveryGeneration": 0,
+      "blockEntryHits": 49652894,
+      "blockBuilds": 3089096
+    },
+    "schedulerDeltas": {
+      "quantum": 0,
+      "maxQuantum": 0,
+      "slices": 3302,
+      "totalSliceMs": 59811.919998407364,
+      "averageSliceMs": -6.930569238349779,
+      "maxSliceMs": 0,
+      "sliceHistogram[0].leMs": 0,
+      "sliceHistogram[0].count": 0,
+      "sliceHistogram[1].leMs": 0,
+      "sliceHistogram[1].count": 1,
+      "sliceHistogram[2].leMs": 0,
+      "sliceHistogram[2].count": 927,
+      "sliceHistogram[3].leMs": 0,
+      "sliceHistogram[3].count": 2312,
+      "sliceHistogram[4].leMs": 0,
+      "sliceHistogram[4].count": 62,
+      "sliceHistogram[5].leMs": 0,
+      "sliceHistogram[5].count": 0,
+      "sliceHistogram[6].leMs": 0,
+      "sliceHistogram[6].count": 0,
+      "sliceHistogram[7].leMs": 0,
+      "sliceHistogram[7].count": 0,
+      "sliceHistogram[8].leMs": 0,
+      "sliceHistogram[8].count": 0,
+      "sliceHistogram[9].count": 0,
+      "maxStretchGapMs": 0,
+      "requestedInstructions": 1651000000,
+      "retiredInstructions": 1650996397,
+      "fetchWaits": 0,
+      "fetchRequestedChunks": 0,
+      "fetchWaitTotalMs": 0,
+      "fetchWaitMaxMs": 0,
+      "outputCalls": 2,
+      "outputBytes": 261,
+      "inputCalls": 0,
+      "inputBytes": 0,
+      "schedulerYields": 3302,
+      "timerYields": 0,
+      "mainThreadYields": 0
+    }
+  },
+  "finishedAt": "2026-09-10T02:08:54.836Z"
+}

@@ -154,3 +154,65 @@ The harness source contains no `runChunk`, scheduler creation, or other guest ex
 Visual inspection of the original-resolution PNG independently confirms an actual composed Omarchy desktop rather than a blank/uniform repair buffer: top workspace bar and status icons, centered clock, bordered mapped Foot terminal at `(12,38)` with an `omarchy@omarchy-demo` prompt and cursor, and the expected dark desktop background. The visible layout is consistent with the native readiness observation (Foot 1256x750, bar 1280x26, background 1280x800).
 
 Result: **HELD.** This closes the prior native-to-WASM immediate GPU repaint evidence gap for the cited frozen pair/WASM/harness. It does not yet prove post-resume guest liveness, keyboard input, resize behavior, service-worker publication, or same-tab reload; those remain assigned to the running complete built-demo proof.
+
+## 2026-09-10 actual-candidate GPU pending-notify falsification
+
+Hypothesis under attack: the native snapshot may have captured a GPU descriptor after Linux advanced `avail.idx` but before the emulator serviced the queue, then lost the non-serialized `GpuState.kicked` bit on restore. Prediction if true: for controlq or cursorq, RAM-resident `avail.idx` would differ from the serialized service cursor `last_avail_idx` before any restored execution.
+
+Method: an owned temporary Node parser read the exact frozen gzip directly, verified snapshot SHA-256 `db34afb6f4e0e40b9e8e932cc934847bc254935c374487d521cb2e5a1d704e72` and kernel SHA-256 `af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce`, decoded the `WVMRESU1` envelope, parsed GPU tag 12's fixed MMIO transport and queue-shadow prefix, and walked the sparse RAM section only far enough to read each queue's `avail.idx`. It did not construct or execute a guest. Temporary parser SHA-256: `4cbed8dd938165bc1a0a13c41a12d408bf9cc3a240f5b8ab5cef14de1d52968b`.
+
+Exact command:
+
+```text
+cd /Users/blamy/Documents/Codex/wasm-vm
+node --max-old-space-size=4096 /tmp/omarchy-gpu-queue-probe.mjs
+```
+
+Observed queue state before execution:
+
+```json
+{
+  "snapshotSha256": "db34afb6f4e0e40b9e8e932cc934847bc254935c374487d521cb2e5a1d704e72",
+  "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+  "rawBytes": 892194253,
+  "transport": {
+    "status": 15,
+    "driverFeatures": "4294967298",
+    "queueSel": 1,
+    "intStatus": 0,
+    "lastNotify": 0,
+    "notifyCount": "108",
+    "hasNotify": true
+  },
+  "queues": [
+    {
+      "index": 0,
+      "num": 256,
+      "ready": true,
+      "desc": "0x826f0000",
+      "driver": "0x826f1000",
+      "device": "0x826f2000",
+      "hasView": true,
+      "lastAvail": 232,
+      "usedShadow": 232,
+      "guestAvail": 232,
+      "pending": 0
+    },
+    {
+      "index": 1,
+      "num": 256,
+      "ready": true,
+      "desc": "0x826f4000",
+      "driver": "0x826f5000",
+      "device": "0x826f6000",
+      "hasView": false,
+      "lastAvail": 0,
+      "usedShadow": 0,
+      "guestAvail": 0,
+      "pending": 0
+    }
+  ]
+}
+```
+
+Result: **Prediction FAILED; actual lost-kick hypothesis falsified.** Controlq was fully consumed (`232 == 232`) and cursorq was empty (`0 == 0`) at capture. No saved GPU descriptor depended on a missing notification, so lost GPU kick state cannot explain this candidate's repair-only display. The structural omission remains worth deterministic regression coverage, but it is not the observed candidate failure.

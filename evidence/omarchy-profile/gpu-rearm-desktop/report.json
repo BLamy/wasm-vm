@@ -1,0 +1,1220 @@
+{
+  "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+  "mode": "verify",
+  "startedAt": "2026-09-10T01:44:58.906Z",
+  "errors": [],
+  "observations": [
+    {
+      "layout": {
+        "label": "initial",
+        "e2eShowall": false,
+        "visiblePanels": [
+          "panel-ide"
+        ],
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide"
+      }
+    },
+    {
+      "serviceWorker": {
+        "label": "initial",
+        "controllerScriptURL": "http://127.0.0.1:57555/sw.js",
+        "registrationActiveURL": "http://127.0.0.1:57555/sw.js"
+      }
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/gpu-rearm-desktop/latest.png",
+      "sha256": "ded713df8707d9f2712f4a423b632c6e520c31d04c6f78fa7a967ec32a88329d"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/gpu-rearm-desktop/latest.png",
+      "sha256": "0f17960e3dbcaf8f4f7899d9e262b8808d5ce448763408c9930774d9ab8f0873"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/gpu-rearm-desktop/desktop.png",
+      "sha256": "b14847d65422248d0debc702066c5dac039431afc48be61ac380767c0573b4d1"
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:46:17.825Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+        "stdout": "[{\n    \"address\": \"0x5555620e10a0\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 524,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}]\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "indexedDb": {
+        "label": "initial desktop",
+        "names": [],
+        "omarchyPersistent": []
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:46:34.647Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow",
+        "stdout": "{\n    \"address\": \"0x5555620e10a0\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 524,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-before",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-p",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-r",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-i",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-n",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-t",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-f",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after- ",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-'",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-9",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-7",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-8",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-4",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-f",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-0",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-0",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-4",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-8",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-6",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-a",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-2",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-9",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-b",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-2",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-0",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-'",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after- ",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after->",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after- ",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-/",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-t",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-m",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-p",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-/",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-d",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-e",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-s",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-k",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-t",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-o",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-p",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after--",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-k",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-e",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-y",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-s",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after--",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-9",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-7",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-8",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-4",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-f",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-0",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-0",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-4",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-8",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-6",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-a",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-2",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-9",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-b",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-2",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-0",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "focus": {
+        "label": "physical-keyboard-after-enter",
+        "activeId": "ide-display-canvas",
+        "activeTag": "CANVAS",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:46:40.291Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:46:45.305Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:46:50.549Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:46:55.886Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:47:01.120Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:47:06.359Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:47:12.046Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:47:17.348Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:47:22.548Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:47:27.863Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:47:33.104Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:47:38.477Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:47:43.704Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:47:48.936Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:47:54.552Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:47:59.830Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:48:05.213Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:48:10.359Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:48:15.596Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:48:21.076Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:48:26.447Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:48:32.558Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T01:48:40.429Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+        "command": "if [ -f '/tmp/desktop-keys-9784f00486a29b20' ]; then cat '/tmp/desktop-keys-9784f00486a29b20'; else (exit 75); fi",
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/gpu-rearm-desktop/failure.png",
+      "sha256": "043c039aef29c780bb1984c019882e55dc8445f9c787bf92a54fa2dae4a2ea9b"
+    }
+  ],
+  "identities": {
+    "entryUrl": "http://127.0.0.1:57555/app.html?guest=omarchy&desktop=1#ide",
+    "files": {
+      "main.js": {
+        "url": "http://127.0.0.1:57555/main.js",
+        "status": 200,
+        "contentType": "text/javascript; charset=utf-8",
+        "size": 148307,
+        "sha256": "977c202af7b4eafc90420408bb06a9301c89c61a2017cfb31cdfb117c67444f8"
+      },
+      "ide.js": {
+        "url": "http://127.0.0.1:57555/ide.js",
+        "status": 200,
+        "contentType": "text/javascript; charset=utf-8",
+        "size": 133147,
+        "sha256": "8ed392a107702ee7e53a1bf17e994fe38ee4107273c9e0e1ba90b8d3f6320c2d"
+      },
+      "roadmap.js": {
+        "url": "http://127.0.0.1:57555/roadmap.js",
+        "status": 200,
+        "contentType": "text/javascript; charset=utf-8",
+        "size": 48820,
+        "sha256": "90a5f557fb892c6a6be23d1669b18f6ef391564dd180af7ae8f78fdc9a572efd"
+      },
+      "loader.js": {
+        "url": "http://127.0.0.1:57555/loader.js",
+        "status": 200,
+        "contentType": "text/javascript; charset=utf-8",
+        "size": 75536,
+        "sha256": "1b8b93adf89c4d1660ef87c1235be021343d721a38011a62864c038f918c2e0b"
+      },
+      "guest-rpc.js": {
+        "url": "http://127.0.0.1:57555/guest-rpc.js",
+        "status": 200,
+        "contentType": "text/javascript; charset=utf-8",
+        "size": 3995,
+        "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+      },
+      "pkg/wasm_vm_wasm_bg.wasm": {
+        "url": "http://127.0.0.1:57555/pkg/wasm_vm_wasm_bg.wasm",
+        "status": 200,
+        "contentType": "application/wasm",
+        "size": 1564689,
+        "sha256": "8c80663ea4ad6a6bac8b47627ff011d98d9306af2b802bc4bdc8754851cfe2fc"
+      },
+      "artifacts-omarchy.json": {
+        "url": "http://127.0.0.1:57555/artifacts-omarchy.json",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "size": 625,
+        "sha256": "36e62a465cc2e3706f0b71103bba340b069ec6455431e0857bafc564f82eb4f0"
+      }
+    }
+  },
+  "restored": true,
+  "foot": {
+    "address": "0x5555620e10a0",
+    "mapped": true,
+    "hidden": false,
+    "visible": true,
+    "acceptsInput": true,
+    "at": [
+      12,
+      38
+    ],
+    "size": [
+      1256,
+      750
+    ],
+    "workspace": {
+      "id": 1,
+      "name": "1"
+    },
+    "floating": false,
+    "monitor": 0,
+    "class": "foot",
+    "title": "omarchy@omarchy-demo:~",
+    "initialClass": "foot",
+    "initialTitle": "foot",
+    "pid": 524,
+    "xwayland": false,
+    "pinned": false,
+    "pinFullscreened": false,
+    "fullscreen": 0,
+    "fullscreenClient": 0,
+    "fullscreenHandler": "default",
+    "allowedOverFullscreen": true,
+    "grouped": [],
+    "tags": [
+      "default-opacity*",
+      "terminal*"
+    ],
+    "swallowing": "0x0",
+    "focusHistoryID": 0,
+    "inhibitingIdle": false,
+    "xdgTag": "",
+    "xdgDescription": "",
+    "contentType": "none",
+    "tearingHint": false,
+    "stableId": "18000000"
+  },
+  "result": "failed",
+  "error": "Error: physical keyboard: timed out waiting for physical keyboard nonce file\n    at readGuestFileEventually (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:327:9)\n    at async file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:541:3",
+  "events": [
+    {
+      "type": "wvm:guest-booting",
+      "ms": 891.5099999904633
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "fetching"
+      },
+      "ms": 908.4900000095367
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "instantiating"
+      },
+      "ms": 1650.4399999380112
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "restoring"
+      },
+      "ms": 1654.4950000047684
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "restoring"
+      },
+      "ms": 1796.6499999761581
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "restored"
+      },
+      "ms": 5454.975000023842
+    },
+    {
+      "type": "wvm:guest-ready",
+      "ms": 5591.1050000190735
+    },
+    {
+      "type": "wvm:desktop-ready",
+      "detail": {},
+      "ms": 34862.375
+    }
+  ],
+  "finishedAt": "2026-09-10T01:48:41.458Z"
+}

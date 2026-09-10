@@ -2284,7 +2284,7 @@ window.wvmDemo = {
     const dec = new TextDecoder();
     let buf = "";
     let stopped = false;
-    let sawEcho = false;
+    let sawBegin = false;
     let finished = false;
     let stopRequested = false;
     let finishStream;
@@ -2317,12 +2317,13 @@ window.wvmDemo = {
       while ((nl = buf.indexOf("\n")) !== -1) {
         const line = buf.slice(0, nl);
         buf = buf.slice(nl + 1);
-        // Swallow the shell's echo of our own command line so onLine only sees guest output.
-        if (!sawEcho && line.includes(cmd)) {
-          sawEcho = true;
+        // The shell echo can wrap at arbitrary terminal widths, so it is not a reliable boundary.
+        // Discard every line until the exact guest-emitted nonce BEGIN fence, then expose only the
+        // stream payload before the existing nonce END fence.
+        if (!sawBegin) {
+          if (line === `__WVBEGIN_${streamRid}`) sawBegin = true;
           continue;
         }
-        if (line === `__WVBEGIN_${streamRid}`) continue;
         if (line.startsWith(streamMarker)) {
           const exitText = line.slice(streamMarker.length);
           if (/^\d+$/.test(exitText)) {

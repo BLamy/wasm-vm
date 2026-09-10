@@ -271,6 +271,14 @@ pub(crate) fn restore(state: &mut GpuState, bytes: &[u8]) -> Result<(), GpuSnaps
     state.scanout_resource = scanout_resource;
     state.cursor_states = cursor_states;
     state.commands_served = parsed.commands_served;
+    // QueueNotify is only a host-side wake-up hint, not part of the GPU payload. A snapshot can
+    // contain a published descriptor whose notification preceded the capture but whose service
+    // boundary did not. Re-arm both queues against their restored cursors/RAM; an empty ring is
+    // harmless, whereas losing this wake-up can strand a guest waiting on a GPU fence forever.
+    // Do not carry an unrelated reset request from the destination machine across this restore.
+    state.kicked = true;
+    state.cursor_kicked = true;
+    state.reset_pending = false;
 
     if let Some(resource_id) = scanout_resource {
         // The reference was checked against the detached map before the commit point above.  A
