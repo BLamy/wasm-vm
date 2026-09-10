@@ -871,3 +871,17 @@ c4b5bcb99dc3128579c0847289be0f164bed9bac4f835a58c34d488ee728d5c7  desktop-960x60
 Direct visual prediction — production displays the complete real Omarchy bar and Foot surface initially, at all three aspect/size projections, and after reload without top-left crop or black recurrence — **HELD**. Portrait has symmetric vertical letterboxing; 1920x1080 has side margins and intact right edges; initial/reload are pixel-identical. No production rendering contradiction was found.
 
 This production evidence satisfies the remaining deployed-origin boundary for E5.5-T03c as scoped. It does not prove responsive input, guest modeset adoption, a usable desktop, E5.5-T03a/T03d, or Epic completion. Final status remains deferred solely until the worker appends its frozen final claim for the verifier to hold against the task.
+
+## 2026-09-10 final scoped verdict — E5.5-T03c
+
+**VERDICT: verified.** The worker's final claim is present at status `implemented`, binds implementation `7c6fc874560e807d312b7d3657aadeec42356f05` and recording head `e05d12abe3dd7210082a2825f1ef1a679ff5bb5c`, and makes only the rendering-recovery claim supported by the carried evidence.
+
+- Artifact/pair integrity — **HELD** through raw immutable manifest binding, coherent RAM/delta headers, fail-closed sabotage tests, cold clone, and both production phases.
+- Immediate restored repaint — **HELD** for current WASM `c48e9c2d...b9305`: callback 0→1 before any guest run, real nonuniform 1280x832 frame, inspected bar/Foot screenshot.
+- Initial/reload/viewport rendering — **HELD** in built local, pristine exact-head clone, and deployed production. The critic directly inspected every final clone and production PNG at original detail; complete desktop edges remain visible at all sizes and after reload.
+- Pointer normalization — **HELD** for real host frames at 25/50/75% across all fitted canvases, without claiming guest processing.
+- Regression and portability — **HELD** by 41/41 focused exact-head tests, 126/0 built browser capability suite, affected lint/format/UI gates, scrubbed clone and fresh RAM fetch. The disclosed broad macOS/all-features failures are outside and pre-existing.
+- Publication — **HELD** at the actual user URL with production report SHA-256 `f6c0ba4064b0dc4c544471370cc1ef747b8117a9d3c9f3ac5153e75b0ca70795`, active SW `347161e9e2b8`, exact WASM/source/artifact provenance, real worker HTTP-200 completions, and empty runtime/browser error arrays.
+- Scope — **HELD** only for visible black-screen recovery, immutable publication and host-side fitting. Responsive input, guest modesetting, general desktop usability, E5.5-T03a/T03d and Epic completion remain unverified.
+
+Permanent acceptance artifact: `make verify-E5.5-T03c` plus the frozen immediate, cold-clone and production reports/screenshots under `evidence/omarchy-profile/rendering-recovery-r1/`. No merge or additional deployment was performed by the verifier.
