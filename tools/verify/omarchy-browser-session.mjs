@@ -34,6 +34,7 @@ Optional: --timeout-ms 1800000 --ram-mib 1024 --port 0 --chrome PATH --headed
           --icount-divider INTEGER (1..1024, optional; e.g. 64; omitted preserves the core default)
           --bootargs STRING (explicit guest kernel command line, recorded verbatim)
           --control-stdin (JSON lines {"command":"guest command"}; same recorded serial probe)
+            Send {"op":"stop-diagnostic"} to capture state/screenshots and close with a non-passing result.
           --keyboard none|auto (default none) --poll-ms 30000 --probe-timeout-ms 120000
           --shell-namespace NAME (optional layer filter; package process PID still required)
           --check-only (integrity checks, no browser or guest)
@@ -564,6 +565,8 @@ async function run(opts) {
   const started = Date.now(), report = { schema: "wasm-vm.omarchy-browser-session.v1", task: "E5.5-T03a",
     taskVerified: false, startedAt: new Date().toISOString(), options: opts, result: "incomplete" };
   let serial = "", serialBytes = 0, io = Promise.resolve(), ioError, server, session, input, controlProbe;
+  let stopDiagnostic;
+  const stopped = new Promise((_, reject) => { stopDiagnostic = reject; });
   const append = (filename, bytes) => { io = io.then(() => fs.appendFile(path.join(opts.out, filename), bytes))
     .catch((error) => { ioError = error; }); };
   const record = (event) => append("events.jsonl", `${JSON.stringify({ hostMs: Date.now() - started, ...event })}\n`);
@@ -588,6 +591,12 @@ async function run(opts) {
         void (async () => {
           try {
             const value = JSON.parse(line);
+            if (value.op === "stop-diagnostic") {
+              assert.ok(controlProbe, "cannot stop a diagnostic before its identity probe is ready");
+              record({ type: "diagnostic-stop-request" });
+              stopDiagnostic(new Error("diagnostic stopped by operator; not an acceptance pass"));
+              return;
+            }
             assert.equal(typeof value.command, "string");
             assert.ok(controlProbe, "serial control is not ready before the identity probe");
             record({ type: "manual-probe-request", command: value.command });
@@ -600,8 +609,8 @@ async function run(opts) {
         })();
       });
     }
-    report.observations = await within(observeGuest(session, opts, record, () => serial,
-      (probe) => { controlProbe = probe; if (probe) console.log("OMARCHY_SERIAL_READY"); }), opts["timeout-ms"], "guest proof");
+    report.observations = await within(Promise.race([observeGuest(session, opts, record, () => serial,
+      (probe) => { controlProbe = probe; if (probe) console.log("OMARCHY_SERIAL_READY"); }), stopped]), opts["timeout-ms"], "guest proof");
     report.capture = await within(session.page.evaluate(() => window.__omarchyProof.capture()), 90000, "paused capture");
     assert.equal(report.capture.paused, true);
     assert.match(report.capture.stateDigest, SHA);
