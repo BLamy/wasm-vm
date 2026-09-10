@@ -1,0 +1,78 @@
+npm --prefix web ci --no-audit --no-fund
+
+added 7 packages in 4s
+npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn install-scripts   fsevents@2.3.2 (install: (install scripts present))
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+npm notice
+npm notice New major version of npm available! 11.19.0 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+node tools/fetch-omarchy-snapshot.mjs
+Downloaded and verified Omarchy snapshot: 2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5
+node --test tools/gen-omarchy-manifest.test.mjs tools/verify/omarchy-rendering-recovery.test.mjs web/tests/omarchy-seeded-loader.test.mjs web/tests/omarchy-desktop-readiness.test.mjs web/tests/e5-t22b-viewport.test.mjs web/tests/pointer.test.mjs
+✔ generator binds chunkedImage to pretty JSON raw bytes, not canonical identity (183.732ms)
+✔ generator rejects a mixed RAM/delta pair before rewriting output (324.330834ms)
+omarchy-rendering-recovery: focused source/syntax checks passed
+✔ tools/verify/omarchy-rendering-recovery.test.mjs (148.138792ms)
+✔ CSS/DPR rounding and minimum/maximum clamps are finite, hidden panes do not hotplug (1.089083ms)
+✔ desktopViewportPixelMode keeps a fixed bounded backing and CSS-contain fits each viewport (0.227542ms)
+✔ fixed desktop backing continues CSS resizing without a redundant hotplug or clear (0.50725ms)
+✔ pointer inverse uses the actual centered CSS canvas rect (0.266ms)
+✔ 50 resizes/5 seconds send one trailing request at exactly 250ms, DPR listener rearms and disposes (1.584084ms)
+✔ in-flight requests serialize latest intent, stale replies and disposed completions cannot restore old state (0.188583ms)
+✔ scalar fallback detects silent DPR changes without CSS or media-query notification (0.175375ms)
+✔ controller replacement ignores old completion, initial binding has no duplicate timer, errors recover (0.2515ms)
+✔ native fit keeps odd resource stride and independently checks every clipped/padded pixel (0.314791ms)
+✔ presentation keeps fixed viewport on pending old frame and later matching frame (0.898708ms)
+✔ requires a mapped Omarchy bar and background, not a process or login banner (0.419875ms)
+✔ a black or solid framebuffer is not rendered desktop evidence (2.337958ms)
+✔ freshDesktop rejects a missing RAM/delta pair instead of cold-falling back (4.28225ms)
+✔ Omarchy production resolution rejects a missing or malformed immutable descriptor (1.282041ms)
+✔ Omarchy immutable chunk manifest hash mismatch fails closed (0.416666ms)
+✔ Omarchy hashes corrupt raw manifest bytes before decoding (0.891208ms)
+✔ Omarchy rejects a BOM even when the decoded manifest text is equivalent (0.362583ms)
+✔ Omarchy validates an explicitly empty manifest base instead of falling back (0.346958ms)
+✔ Omarchy uses the descriptor for persistent and noSnapshot diagnostics (0.733125ms)
+✔ Alpine-style chunked caller remains on its explicit imageManifestUrl (0.33725ms)
+✔ freshDesktop rejects an overlay-delta integrity mismatch instead of cold-falling back (0.370917ms)
+✔ freshDesktop rejects a RAM snapshot coherence mismatch instead of cold-falling back (1.034125ms)
+✔ freshDesktop rejects RAM snapshot fetch and integrity failures instead of cold-falling back (1.669334ms)
+✔ freshDesktop rejects persistent mode before any asset fetch (0.324083ms)
+✔ persistent caller reaches the persistent constructor branch (runtime sentinel) (0.35475ms)
+✔ TypeScript source and no-bundler pointer projection stay byte-identical (0.90225ms)
+✔ absolute coordinates use the current CSS rect and clamp independently of DPR/backing pixels (0.438542ms)
+✔ browser button numbers map to the documented evdev codes (0.150208ms)
+✔ absolute moves target the tablet while relative moves target only the mouse (0.489875ms)
+✔ mode changes release old-device buttons before routing the next button pair (0.2365ms)
+✔ an absolute desktop can keep tablet motion and route buttons through the mouse seat (0.122875ms)
+✔ pixel and line wheel detents use signed per-axis accumulators (0.194666ms)
+✔ 1000 small pixel wheel deltas stay bounded and never change emitted sign (1.308042ms)
+✔ wheel accumulators cancel across direction changes and reject invalid modes (0.162791ms)
+✔ Pointer Lock success is accepted and denial/loss returns to neutral absolute mode (3.608833ms)
+✔ legacy Pointer Lock retries without options and explicit errors fail closed (0.234167ms)
+✔ attached surface captures buttons and suppresses the browser context menu (0.597041ms)
+✔ Wasm pointer adapter requires the complete four-method transport surface (0.271791ms)
+ℹ tests 41
+ℹ suites 0
+ℹ pass 41
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 550.683666
+node tools/verify/omarchy-rendering-recovery.mjs "local" "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/rendering-recovery-r1/cold-clone"
+OMARCHY_RENDERING_PROGRESS {"stage":"goto","at":"2026-09-10T06:21:35.724Z","url":"http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide"}
+OMARCHY_RENDERING_PROGRESS {"stage":"domcontentloaded","at":"2026-09-10T06:21:35.840Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"runtime-hooks-ready","at":"2026-09-10T06:21:36.073Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"desktop-ready","at":"2026-09-10T06:22:35.731Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"viewport-captured","at":"2026-09-10T06:22:37.631Z","viewport":"960x600"}
+OMARCHY_RENDERING_PROGRESS {"stage":"viewport-captured","at":"2026-09-10T06:22:37.825Z","viewport":"600x900"}
+OMARCHY_RENDERING_PROGRESS {"stage":"viewport-captured","at":"2026-09-10T06:22:38.100Z","viewport":"1920x1080"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-start","at":"2026-09-10T06:22:38.102Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-domcontentloaded","at":"2026-09-10T06:22:38.141Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-runtime-hooks-ready","at":"2026-09-10T06:22:38.194Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-desktop-ready","at":"2026-09-10T06:23:37.096Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"complete","at":"2026-09-10T06:23:38.547Z","screenshots":5}

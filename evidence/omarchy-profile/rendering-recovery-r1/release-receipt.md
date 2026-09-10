@@ -1,8 +1,9 @@
-# Rendering-recovery release preparation
+# Rendering-recovery release receipt
 
 This record concerns visible desktop pixels and host-side fitting only. Guest
-interaction is still too slow; E5.5-T03a/T03d are not verified. No production
-Pages deployment is claimed by this preparation receipt.
+interaction is still too slow; E5.5-T03a/T03d are not verified. Preparation and
+publication are recorded separately below; production browser acceptance is in
+`production/report.json`, not inferred from the uploader's success message.
 
 ## Source artifacts
 
@@ -41,3 +42,23 @@ The generator now uses the release's base manifest, not a stale R2 candidate
 directory. Local artifact validation and both generator tests passed after the
 paired replacement. The failed mixed-region runtime change was removed and its
 tests/diff/screenshots were archived at planning commit `ddfd00d7`.
+
+## Cloudflare Pages production publication
+
+From frozen head `e05d12abe3dd7210082a2825f1ef1a679ff5bb5c`,
+`bash tools/deploy-cloudflare.sh` exited 0. `deploy.log` records exact local
+artifact validation, full-byte public R2 checks for all referenced large
+artifacts, and the production upload: 18 files uploaded, 279 reused.
+
+- Existing Pages project: `wasm-vm`, production branch `main`.
+- Deployment URL: `https://9c404b04.wasm-vm.pages.dev`.
+- Production app: `https://wasm-vm.pages.dev/app?guest=omarchy&desktop=1#ide`.
+- Omarchy kernel/RAM and the other distributions' large objects were already
+  exact and reused. The small R3 Omarchy delta shipped in Pages staging.
+- No bucket was created or removed; no R2 object was deleted; no PR was merged.
+
+The staged manifests rewrite relative large-artifact URLs to their exact
+content-addressed R2 objects. Source manifests and the committed dist retain
+their reproducible source-form URLs; the production report records the actual
+rewritten descriptor and hashes. The runtime and SW bytes are unchanged from
+the clean-clone proof at `e05d12ab` (see `frozen-head.md`).

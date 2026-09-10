@@ -445,7 +445,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 - [x] `525.01` [E5.5-T01a](epic-5.5-omarchy/E5.5-T01a-prepared-vm-image.md) — Prepare a clean Omarchy image candidate from the existing RISC-V VM *(deps: E5-T05c)*
 - [x] `525.02` [E5.5-T02a](epic-5.5-omarchy/E5.5-T02a-misaligned-virtual-pages.md) — Support misaligned scalar memory across noncontiguous virtual pages *(deps: E5.5-T01a)*
-- [~] `525.024` [E5.5-T03c](epic-5.5-omarchy/E5.5-T03c-desktop-rendering-recovery.md) — Recover visible Omarchy desktop pixels and fit the browser viewport *(deps: E5.5-T02a)*
+- [?] `525.024` [E5.5-T03c](epic-5.5-omarchy/E5.5-T03c-desktop-rendering-recovery.md) — Recover visible Omarchy desktop pixels and fit the browser viewport *(deps: E5.5-T02a)*
 - [-] `525.025` [E5.5-T03b](epic-5.5-omarchy/E5.5-T03b-mixed-renderer-blocks.md) — Keep integer renderer regions JIT-eligible around interpreted floating point *(deps: E4-T15, E4-T34, E5.5-T02a)*
 - [ ] `525.026` [E5.5-T03d](epic-5.5-omarchy/E5.5-T03d-desktop-responsiveness.md) — Resolve measured Omarchy post-restore desktop input latency *(deps: E5.5-T02a, E5.5-T03c)*
 - [b] `525.03` [E5.5-T03a](epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md) — Prepare the clean Omarchy browser desktop session *(deps: E5.5-T02a, E5.5-T03d)*
