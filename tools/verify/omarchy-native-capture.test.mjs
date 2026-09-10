@@ -19,6 +19,7 @@ const fs = require("node:fs");
 const log = process.env.FAKE_LOG;
 const pid = process.env.FAKE_PID || "123";
 const renderer = process.env.FAKE_RENDERER || "softpipe";
+const lpThreads = process.env.FAKE_LP_NUM_THREADS || "";
 const threads = process.env.FAKE_THREADS || "Hyprland\nrender-worker";
 const mode = process.env.FAKE_MODE || "valid";
 const record = (value) => fs.appendFileSync(log, value.replaceAll("\n", "\\n") + "\n");
@@ -63,7 +64,7 @@ process.stdin.on("data", (bytes) => {
     } else if (command.includes("ps -u 1000")) {
       output = "222 quickshell /usr/bin/quickshell --path=/usr/share/omarchy/shell";
     } else if (command.includes("/proc/") && command.includes("environ")) {
-      output = "GALLIUM_DRIVER=" + renderer + "\nLIBGL_ALWAYS_SOFTWARE=1";
+      output = "GALLIUM_DRIVER=" + renderer + "\nLIBGL_ALWAYS_SOFTWARE=1" + (lpThreads ? "\nLP_NUM_THREADS=" + lpThreads : "");
     } else if (command.includes("ps -T -p")) output = threads;
     else if (command.includes("hyprland.log")) output = "GL_RENDERER: synthetic-" + renderer;
     setTimeout(() => reply(token, 0, output), 5);
@@ -135,6 +136,23 @@ test("requested softpipe rejects a synthetic llvmpipe thread", async () => {
     });
     assert.notEqual(result.code, 0);
     assert.match(result.stderr, /llvmpipe/u);
+  });
+});
+
+test("explicit LP0 validates the same synthetic PID environment before snapshot", async () => {
+  await withTempDirectory(async directory => {
+    const result = await runHelper(directory, {
+      OMARCHY_EXPECT_LP_NUM_THREADS: "0",
+      FAKE_RENDERER: "llvmpipe",
+      FAKE_LP_NUM_THREADS: "0",
+    });
+    const commands = await fs.readFile(result.log, "utf8");
+    assert.equal(result.code, 0, `${result.stderr}\nstdout:\n${result.stdout}`);
+    assert.match(result.stdout, /"expectedLpNumThreads":"0"/u);
+    assert.match(result.stdout, /"configurationObserved":"lp0-configuration-observed"/u);
+    assert.match(commands, /\/proc\/123\/environ/u);
+    assert.match(commands, /LP_NUM_THREADS/u);
+    assert.match(commands, /sync && printf/u);
   });
 });
 

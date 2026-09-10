@@ -61,6 +61,15 @@ test("renderer proof binds current Hyprland PID and instance before physical inp
     < source.indexOf("physical-keyboard-before"));
 });
 
+test("LP0 is configuration-only evidence and is checked before physical input", () => {
+  assert.ok(source.includes("OMARCHY_EXPECT_LP_NUM_THREADS"));
+  assert.ok(source.includes("lp0-configuration-observed"));
+  assert.ok(source.includes("activeRendererValidated: false"));
+  assert.ok(source.includes("validateExpectedLpEnvironment"));
+  assert.ok(source.indexOf("proveHyprlandRenderer(page, \"initial desktop\")")
+    < source.indexOf("physical-keyboard-before"));
+});
+
 test("renderer log parser accepts the real DEBUG suffix labels", () => {
   assert.deepEqual(parseHyprlandRendererLog(
     "[ 125.755907] omarchy-demo uwsm_hyprland.desktop[478]: DEBUG ]: Renderer: llvmpipe (LLVM 19.1.7, 256 bits)\nDEBUG ]: Vendor: Mesa/X.org",

@@ -12,6 +12,7 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "../../web/node_modules/playwright/index.mjs";
 import { physicalStroke } from "./omarchy-browser-session.mjs";
 import { observeHyprlandRenderer } from "./omarchy-renderer-log.mjs";
+import { parseExpectedLpNumThreads, validateExpectedLpEnvironment } from "./omarchy-thread-setting.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -41,9 +42,13 @@ assert.equal(Boolean(candidatePairEnv), Boolean(candidateChunksEnv),
 const candidateRequested = Boolean(candidatePairEnv);
 if (candidateRequested) assert.ok(urlArg === "local" || urlArg === "selftest",
   "local-only candidate inputs require URL argument local or selftest");
-const expectedRenderer = process.env.OMARCHY_EXPECT_RENDERER || null;
-if (expectedRenderer) assert.match(expectedRenderer, /^(?:softpipe|llvmpipe)$/u,
+const requestedRenderer = process.env.OMARCHY_EXPECT_RENDERER || null;
+if (requestedRenderer) assert.match(requestedRenderer, /^(?:softpipe|llvmpipe)$/u,
   "OMARCHY_EXPECT_RENDERER must be softpipe or llvmpipe");
+const expectedLpNumThreads = parseExpectedLpNumThreads(process.env.OMARCHY_EXPECT_LP_NUM_THREADS);
+if (expectedLpNumThreads !== null) assert.equal(requestedRenderer || "llvmpipe", "llvmpipe",
+  "OMARCHY_EXPECT_LP_NUM_THREADS requires llvmpipe renderer expectation");
+const expectedRenderer = requestedRenderer || (expectedLpNumThreads === null ? null : "llvmpipe");
 if (candidateRequested) assert.ok(expectedRenderer,
   "local-only candidate capture requires OMARCHY_EXPECT_RENDERER for positive renderer proof");
 const out = path.resolve(output);
@@ -552,20 +557,28 @@ async function proveHyprlandRenderer(targetPage, label) {
     `tr '\\000' '\\n' < /proc/${pid}/environ | sed -n '/^GALLIUM_DRIVER=/p;/^LIBGL_ALWAYS_SOFTWARE=/p;/^LP_NUM_THREADS=/p'`,
     targetPage, `${label}:environment`);
   assert.equal(environment.exit, 0, `${label}: /proc environment probe failed`);
-  const gallium = environment.stdout.split("\n").filter((line) => line.startsWith("GALLIUM_DRIVER="));
-  assert.equal(gallium.length, 1, `${label}: GALLIUM_DRIVER is absent or ambiguous`);
-  assert.equal(gallium[0], `GALLIUM_DRIVER=${expectedRenderer}`, `${label}: GALLIUM_DRIVER mismatch`);
+  if (expectedLpNumThreads === null) {
+    const gallium = environment.stdout.split("\n").filter((line) => line.startsWith("GALLIUM_DRIVER="));
+    assert.equal(gallium.length, 1, `${label}: GALLIUM_DRIVER is absent or ambiguous`);
+    assert.equal(gallium[0], `GALLIUM_DRIVER=${expectedRenderer}`, `${label}: GALLIUM_DRIVER mismatch`);
+  }
   const threads = await exec(`ps -T -p ${pid} -o comm=`, targetPage, `${label}:threads`);
   assert.equal(threads.exit, 0, `${label}: Hyprland thread probe failed`);
   assert.ok(threads.stdout.trim(), `${label}: Hyprland thread list is empty`);
+  const validatedThreadSetting = expectedLpNumThreads === null ? null
+    : validateExpectedLpEnvironment({ environment: environment.stdout, threads: threads.stdout, lpNumThreads: expectedLpNumThreads });
   if (expectedRenderer === "softpipe") assert.doesNotMatch(threads.stdout, /llvmpipe/u,
     `${label}: llvmpipe worker present for softpipe`);
   const log = await exec(
     `sed -n '/DEBUG ]: Renderer:/p;/DEBUG ]: Vendor:/p' /run/user/1000/hypr/${instance.instance}/hyprland.log`,
     targetPage, `${label}:log`);
   assert.equal(log.exit, 0, `${label}: Hyprland renderer log probe failed`);
-  const parsedLog = observeHyprlandRenderer({ log: log.stdout, threads: threads.stdout, expectedRenderer });
-  const observation = { expectedRenderer, instance, environment, threads, log, parsedLog };
+  const parsedLog = expectedLpNumThreads === "0" && log.stdout.trim() === ""
+    ? { kind: "lp0-configuration-observed", glLabelAvailable: false, activeRendererValidated: false }
+    : observeHyprlandRenderer({ log: log.stdout, threads: threads.stdout, expectedRenderer });
+  const observation = { expectedRenderer, expectedLpNumThreads, instance, environment, threads, log,
+    threadSetting: validatedThreadSetting, parsedLog,
+    activeRendererValidated: parsedLog.positivelyMatched === true };
   report.observations.push({ renderer: { label, ...observation } });
   return observation;
 }

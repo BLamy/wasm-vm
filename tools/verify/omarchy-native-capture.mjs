@@ -5,11 +5,16 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { plainTerminal, parseProbe, probeCommand, parseInstances, desktopObservation } from "./omarchy-browser-session.mjs";
 import { hasOmarchyDesktopLayers } from "../../web/omarchy-desktop-readiness.js";
+import { parseExpectedLpNumThreads, validateExpectedLpEnvironment } from "./omarchy-thread-setting.mjs";
 
 const [binary, ...args] = process.argv.slice(2);
 assert.ok(binary && args.length, "usage: omarchy-native-capture.mjs BINARY boot ARGS...");
-const expectedRenderer = process.env.OMARCHY_EXPECT_RENDERER;
-if (expectedRenderer) assert.match(expectedRenderer, /^(softpipe|llvmpipe)$/u);
+const requestedRenderer = process.env.OMARCHY_EXPECT_RENDERER;
+if (requestedRenderer) assert.match(requestedRenderer, /^(softpipe|llvmpipe)$/u);
+const expectedLpNumThreads = parseExpectedLpNumThreads(process.env.OMARCHY_EXPECT_LP_NUM_THREADS);
+if (expectedLpNumThreads !== null) assert.equal(requestedRenderer || "llvmpipe", "llvmpipe",
+  "OMARCHY_EXPECT_LP_NUM_THREADS requires llvmpipe renderer expectation");
+const expectedRenderer = requestedRenderer || (expectedLpNumThreads === null ? null : "llvmpipe");
 const child = spawn(binary, args, { stdio: ["pipe", "pipe", "inherit"] });
 let serial = "", exited = false;
 const observers = new Set();
@@ -67,13 +72,17 @@ try {
         const observed = desktopObservation(JSON.parse(clients.output), JSON.parse(layers.output), processes.output);
         console.log(`\nOMARCHY_DESKTOP_OBSERVATION ${JSON.stringify(observed)}`);
         if (observed.mappedFoot && observed.quickshellObserved && hasOmarchyDesktopLayers(JSON.parse(layers.output))) {
-          if (expectedRenderer) {
+          if (expectedRenderer || expectedLpNumThreads !== null) {
             const environment = await probe(`tr '\\000' '\\n' < /proc/${instance.pid}/environ | sed -n '/GALLIUM_DRIVER/p;/LIBGL_ALWAYS_SOFTWARE/p;/LP_NUM_THREADS/p'`);
             const threads = await probe(`ps -T -p ${instance.pid} -o comm=`);
-            const log = await probe(`sed -n '/GL_RENDERER/p;/GL_VENDOR/p;/GL_VERSION/p;/OpenGL renderer/p' /run/user/1000/hypr/${instance.instance}/hyprland.log`);
-            console.log(`\nOMARCHY_RENDERER_OBSERVATION ${JSON.stringify({ expectedRenderer, instance, environment, threads, log })}`);
+            const log = await probe(`sed -n '/DEBUG ]: Renderer:/p;/DEBUG ]: Vendor:/p;/GL_RENDERER/p;/GL_VENDOR/p;/GL_VERSION/p;/OpenGL renderer/p' /run/user/1000/hypr/${instance.instance}/hyprland.log`);
+            const threadSetting = expectedLpNumThreads === null ? null
+              : validateExpectedLpEnvironment({ environment: environment.output, threads: threads.output, lpNumThreads: expectedLpNumThreads });
+            console.log(`\nOMARCHY_RENDERER_OBSERVATION ${JSON.stringify({ expectedRenderer, expectedLpNumThreads, instance, environment, threads, log, threadSetting })}`);
             assert.equal(environment.status, 0);
-            assert.ok(environment.output.split("\n").includes(`GALLIUM_DRIVER=${expectedRenderer}`));
+            if (expectedLpNumThreads === null) {
+              assert.ok(environment.output.split("\n").includes(`GALLIUM_DRIVER=${expectedRenderer}`));
+            }
             assert.equal(threads.status, 0);
             if (expectedRenderer === "softpipe") assert.doesNotMatch(threads.output, /llvmpipe/u);
             // Preserve the actual GL log for independent driver validation. An absent
