@@ -11,6 +11,7 @@ import { createWriteStream } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { chromium } from "../../web/node_modules/playwright/index.mjs";
 import { physicalStroke } from "./omarchy-browser-session.mjs";
+import { parseHyprlandRendererLog } from "./omarchy-renderer-log.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -33,12 +34,25 @@ if (urlArg === "--selftest-presentation") {
 }
 assert.ok(urlArg && output, "usage: omarchy-desktop-live.mjs URL|local|selftest NEW_OUTPUT_DIR [capture|verify]");
 assert.ok(mode === "capture" || mode === "verify", `invalid mode: ${mode}`);
+const candidatePairEnv = process.env.OMARCHY_CANDIDATE_PAIR_DIR || "";
+const candidateChunksEnv = process.env.OMARCHY_CANDIDATE_CHUNKS || "";
+assert.equal(Boolean(candidatePairEnv), Boolean(candidateChunksEnv),
+  "OMARCHY_CANDIDATE_PAIR_DIR and OMARCHY_CANDIDATE_CHUNKS must be supplied together");
+const candidateRequested = Boolean(candidatePairEnv);
+if (candidateRequested) assert.ok(urlArg === "local" || urlArg === "selftest",
+  "local-only candidate inputs require URL argument local or selftest");
+const expectedRenderer = process.env.OMARCHY_EXPECT_RENDERER || null;
+if (expectedRenderer) assert.match(expectedRenderer, /^(?:softpipe|llvmpipe)$/u,
+  "OMARCHY_EXPECT_RENDERER must be softpipe or llvmpipe");
+if (candidateRequested) assert.ok(expectedRenderer,
+  "local-only candidate capture requires OMARCHY_EXPECT_RENDERER for positive renderer proof");
 const out = path.resolve(output);
 await fs.mkdir(out, { recursive: false });
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const distRoot = path.join(repoRoot, "web", "dist");
 const releaseRoot = path.join(repoRoot, "releases");
 let ownedServer = null;
+let candidate = null;
 
 const MIME_TYPES = new Map([
   [".css", "text/css; charset=utf-8"],
@@ -49,6 +63,87 @@ const MIME_TYPES = new Map([
   [".wasm", "application/wasm"],
 ]);
 const inside = (root, candidate) => candidate === root || candidate.startsWith(`${root}${path.sep}`);
+async function candidateRegularFile(filename, label, root) {
+  const absolute = path.resolve(filename);
+  assert.ok(inside(root, absolute), `${label} escapes candidate root`);
+  const info = await fs.lstat(absolute).catch(() => null);
+  assert.ok(info?.isFile(), `${label} is not a regular file: ${absolute}`);
+  assert.equal(info.isSymbolicLink(), false, `${label} must not be a symlink: ${absolute}`);
+  return absolute;
+}
+async function candidateDirectory(filename, label) {
+  const absolute = path.resolve(filename);
+  const info = await fs.lstat(absolute).catch(() => null);
+  assert.ok(info?.isDirectory(), `${label} is not a directory: ${absolute}`);
+  assert.equal(info.isSymbolicLink(), false, `${label} must not be a symlink: ${absolute}`);
+  return absolute;
+}
+async function hashFile(filename) {
+  const bytes = await fs.readFile(filename);
+  return { size: bytes.length, sha256: createHash("sha256").update(bytes).digest("hex") };
+}
+async function prepareLocalCandidate() {
+  if (!candidateRequested) return null;
+  const pairDirectory = await candidateDirectory(candidatePairEnv, "candidate pair directory");
+  const chunkRoot = await candidateDirectory(candidateChunksEnv, "candidate chunk directory");
+  const chunkDirectory = (await fs.lstat(path.join(chunkRoot, "chunks")).catch(() => null))?.isDirectory()
+    ? path.join(chunkRoot, "chunks") : chunkRoot;
+  const manifestPath = await candidateRegularFile(path.join(chunkRoot, "manifest.json"), "candidate chunk manifest", chunkRoot);
+  const pairSnapshot = await candidateRegularFile(path.join(pairDirectory, "omarchy-ready.snap.gz"), "candidate boot snapshot", pairDirectory);
+  const pairDelta = await candidateRegularFile(path.join(pairDirectory, "omarchy-overlay-delta.bin.gz"), "candidate overlay delta", pairDirectory);
+  const template = JSON.parse(await fs.readFile(path.join(repoRoot, "web", "artifacts-omarchy.json"), "utf8"));
+  const kernelPath = await candidateRegularFile(path.resolve(repoRoot, template.artifacts.kernel.url), "candidate kernel", path.join(repoRoot, "releases"));
+  const manifestBytes = await fs.readFile(manifestPath);
+  let imageManifest;
+  try { imageManifest = JSON.parse(manifestBytes); } catch (error) { throw Error(`invalid candidate chunk manifest: ${error}`); }
+  assert.ok(Number.isSafeInteger(imageManifest.image_len) && imageManifest.image_len > 0, "candidate image_len is invalid");
+  assert.ok(Number.isSafeInteger(imageManifest.chunk_size) && imageManifest.chunk_size > 0, "candidate chunk_size is invalid");
+  assert.equal(imageManifest.layout, "split", "candidate chunk layout must be split");
+  assert.ok(Array.isArray(imageManifest.chunks) && imageManifest.chunks.length > 0
+    && imageManifest.chunks.every((name) => typeof name === "string" && /^[0-9a-f]{64}$/u.test(name)),
+  "candidate chunk manifest must contain lowercase content hashes");
+  const chunkFiles = {};
+  for (const name of new Set(imageManifest.chunks)) {
+    const filename = await candidateRegularFile(path.join(chunkDirectory, `${name}.bin`), `candidate chunk ${name}`, chunkDirectory);
+    chunkFiles[name] = filename;
+  }
+  const files = {
+    kernel: { filename: kernelPath, route: "/candidate/kernel" },
+    bootSnapshot: { filename: pairSnapshot, route: "/candidate/boot-snapshot" },
+    overlayDelta: { filename: pairDelta, route: "/candidate/overlay-delta" },
+  };
+  for (const entry of Object.values(files)) {
+    const identity = await hashFile(entry.filename);
+    entry.size = identity.size; entry.sha256 = identity.sha256;
+  }
+  const manifestSha256 = createHash("sha256").update(manifestBytes).digest("hex");
+  const manifestKey = `chunked-omarchy/manifest-${manifestSha256}.json`;
+  const source = {
+    kind: "local-only-candidate",
+    pairDirectory,
+    chunkDirectory,
+    chunkManifest: { filename: manifestPath, size: manifestBytes.length, sha256: manifestSha256 },
+    kernel: { filename: files.kernel.filename, size: files.kernel.size, sha256: files.kernel.sha256 },
+    bootSnapshot: { filename: files.bootSnapshot.filename, size: files.bootSnapshot.size, sha256: files.bootSnapshot.sha256 },
+    overlayDelta: { filename: files.overlayDelta.filename, size: files.overlayDelta.size, sha256: files.overlayDelta.sha256 },
+    image: { imageLen: imageManifest.image_len, chunkSize: imageManifest.chunk_size, chunkCount: imageManifest.chunks.length },
+  };
+  return {
+    source,
+    manifestPath,
+    manifestBytes,
+    chunkFiles,
+    manifest: {
+      generated: "LOCAL-ONLY diagnostic candidate (not a release claim)",
+      artifacts: {
+        kernel: { url: files.kernel.route, sha256: files.kernel.sha256, size: files.kernel.size },
+        bootSnapshot: { url: files.bootSnapshot.route, sha256: files.bootSnapshot.sha256, size: files.bootSnapshot.size },
+        overlayDelta: { url: files.overlayDelta.route, sha256: files.overlayDelta.sha256, size: files.overlayDelta.size },
+      },
+      chunkedImage: { key: manifestKey, sha256: manifestSha256, size: manifestBytes.length },
+    },
+  };
+}
 function localPath(pathname) {
   let decoded;
   try {
@@ -82,6 +177,35 @@ async function serveLocal(request, response) {
     response.writeHead(405, { Allow: "GET, HEAD" }); response.end(); return;
   }
   const pathname = new URL(request.url || "/", "http://127.0.0.1").pathname;
+  if (candidate) {
+    let candidateFile = null;
+    let candidateBytes = null;
+    if (pathname === "/artifacts-omarchy.json") candidateBytes = Buffer.from(JSON.stringify(candidate.manifest));
+    else if (pathname === `/${candidate.manifest.chunkedImage.key}`) candidateBytes = candidate.manifestBytes;
+    else if (pathname === "/candidate/kernel") candidateFile = candidate.source.kernel.filename;
+    else if (pathname === "/candidate/boot-snapshot") candidateFile = candidate.source.bootSnapshot.filename;
+    else if (pathname === "/candidate/overlay-delta") candidateFile = candidate.source.overlayDelta.filename;
+    else {
+      const match = pathname.match(/^\/chunked-omarchy\/chunks\/([0-9a-f]{64})\.bin$/u);
+      if (match) candidateFile = candidate.chunkFiles[match[1]] || null;
+      else if (pathname.startsWith("/chunked-omarchy/")) {
+        response.writeHead(404); response.end("not found"); return;
+      }
+    }
+    if (candidateBytes || candidateFile) {
+      const bytes = candidateBytes || await fs.readFile(candidateFile);
+      response.writeHead(200, {
+        "Content-Length": bytes.length,
+        "Content-Type": pathname.endsWith(".json") ? "application/json" : "application/octet-stream",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Resource-Policy": "same-origin",
+        "Cache-Control": "no-store",
+      });
+      if (request.method === "HEAD") response.end(); else response.end(bytes);
+      return;
+    }
+  }
   const resolved = localPath(pathname);
   if (resolved.status) { response.writeHead(resolved.status); response.end(resolved.body); return; }
   if (!inside(resolved.root, path.resolve(resolved.path))) {
@@ -135,7 +259,9 @@ async function startLocalServer() {
   return { server, url: `http://127.0.0.1:${address.port}/app.html?guest=omarchy&desktop=1#ide` };
 }
 async function runHttpSelfTest(baseUrl) {
-  const manifest = JSON.parse(await fs.readFile(path.join(distRoot, "artifacts.json"), "utf8"));
+  const manifest = candidate
+    ? await (await fetch(`${baseUrl}/artifacts-omarchy.json`)).json()
+    : JSON.parse(await fs.readFile(path.join(distRoot, "artifacts.json"), "utf8"));
   const expectedKernel = manifest.artifacts.kernel;
   const app = await fetch(`${baseUrl}/app.html`);
   assert.equal(app.status, 200, "app.html must be served");
@@ -147,11 +273,22 @@ async function runHttpSelfTest(baseUrl) {
   assert.equal(wasm.status, 200, "Wasm must be served");
   assert.equal(wasm.headers.get("content-type"), "application/wasm");
 
-  const kernel = await fetch(new URL(expectedKernel.url, `${baseUrl}/`));
+  const kernel = await fetch(candidate ? `${baseUrl}/candidate/kernel` : new URL(expectedKernel.url, `${baseUrl}/`));
   assert.equal(kernel.status, 200, "kernel must be served from repository releases");
   const kernelBytes = Buffer.from(await kernel.arrayBuffer());
   assert.equal(kernelBytes.length, expectedKernel.size, "kernel size must match manifest");
   assert.equal(createHash("sha256").update(kernelBytes).digest("hex"), expectedKernel.sha256, "kernel hash must match manifest");
+  if (candidate) {
+    const chunkManifest = await fetch(`${baseUrl}/${manifest.chunkedImage.key}`);
+    assert.equal(chunkManifest.status, 200, "candidate chunk manifest must be served");
+    const chunkBytes = Buffer.from(await chunkManifest.arrayBuffer());
+    assert.equal(createHash("sha256").update(chunkBytes).digest("hex"), manifest.chunkedImage.sha256,
+      "candidate chunk manifest hash must match its content-addressed key");
+    const firstChunk = JSON.parse(chunkBytes.toString("utf8")).chunks[0];
+    const chunk = await fetch(`${baseUrl}/chunked-omarchy/chunks/${firstChunk}.bin`);
+    assert.equal(chunk.status, 200, "candidate content-addressed chunk must be served");
+    assert.equal((await chunk.arrayBuffer()).byteLength > 0, true, "candidate chunk must not be empty");
+  }
 
   const traversal = await fetch(`${baseUrl}/releases/%2F..%2F..%2Fprivate-file`);
   assert.equal(traversal.status, 403, "encoded release traversal must be rejected");
@@ -165,10 +302,14 @@ async function runHttpSelfTest(baseUrl) {
   };
 }
 
+candidate = await prepareLocalCandidate();
 const local = urlArg === "local" || urlArg === "selftest" ? await startLocalServer() : null;
 ownedServer = local?.server || null;
-const url = local?.url || urlArg;
+const localUrl = local ? new URL(local.url) : null;
+if (localUrl && candidate) localUrl.searchParams.set("omarchyAssetBase", localUrl.origin);
+const url = localUrl?.href || urlArg;
 const report = { url, mode, startedAt: new Date().toISOString(), errors: [], observations: [] };
+if (candidate) report.candidate = { localOnly: true, source: candidate.source, manifest: candidate.manifest };
 const pageQuery = new URL(url).searchParams;
 const prewarmTimeoutMs = mode === "capture"
   ? Number(process.env.OMARCHY_PREWARM_TIMEOUT_MS || 120000)
@@ -256,8 +397,10 @@ function installEvidence(targetContext) {
 }
 trackPage(page, "primary");
 await installEvidence(context);
-const exec = async (command, targetPage = page, stage = "guest-exec") => {
-  const result = await targetPage.evaluate((command) => window.wvmDemo.exec(command, 300000, { quiet: true }), command);
+const exec = async (command, targetPage = page, stage = "guest-exec", timeoutMs = 300000) => {
+  assert.ok(Number.isSafeInteger(timeoutMs) && timeoutMs > 0, `${stage}: invalid guest RPC timeout`);
+  const result = await targetPage.evaluate(({ command, timeoutMs }) => window.wvmDemo.exec(command, timeoutMs, { quiet: true }),
+    { command, timeoutMs });
   const context = pageLabels.get(targetPage) || "unknown";
   report.observations.push({
     exec: {
@@ -393,6 +536,39 @@ async function mappedFoot(targetPage, label) {
   assert.ok(foot && foot.size.every((value) => value > 0), `${label}: no mapped Foot window`);
   return foot;
 }
+async function proveHyprlandRenderer(targetPage, label) {
+  assert.ok(expectedRenderer, `${label}: OMARCHY_EXPECT_RENDERER is required for renderer proof`);
+  const instances = await exec("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances", targetPage, `${label}:instances`);
+  assert.equal(instances.exit, 0, `${label}: hyprctl instances failed`);
+  let rows;
+  try { rows = JSON.parse(instances.stdout); } catch (error) { throw Error(`${label}: invalid instances JSON: ${error}`); }
+  assert.ok(Array.isArray(rows) && rows.length === 1, `${label}: Hyprland instance is absent or ambiguous`);
+  const instance = rows[0];
+  assert.ok(typeof instance.instance === "string" && /^[A-Za-z0-9_.-]+$/u.test(instance.instance),
+    `${label}: unsafe Hyprland instance name`);
+  assert.ok(Number.isSafeInteger(instance.pid) && instance.pid > 0, `${label}: unsafe Hyprland PID`);
+  const pid = instance.pid;
+  const environment = await exec(
+    `tr '\\000' '\\n' < /proc/${pid}/environ | sed -n '/^GALLIUM_DRIVER=/p;/^LIBGL_ALWAYS_SOFTWARE=/p;/^LP_NUM_THREADS=/p'`,
+    targetPage, `${label}:environment`);
+  assert.equal(environment.exit, 0, `${label}: /proc environment probe failed`);
+  const gallium = environment.stdout.split("\n").filter((line) => line.startsWith("GALLIUM_DRIVER="));
+  assert.equal(gallium.length, 1, `${label}: GALLIUM_DRIVER is absent or ambiguous`);
+  assert.equal(gallium[0], `GALLIUM_DRIVER=${expectedRenderer}`, `${label}: GALLIUM_DRIVER mismatch`);
+  const threads = await exec(`ps -T -p ${pid} -o comm=`, targetPage, `${label}:threads`);
+  assert.equal(threads.exit, 0, `${label}: Hyprland thread probe failed`);
+  assert.ok(threads.stdout.trim(), `${label}: Hyprland thread list is empty`);
+  if (expectedRenderer === "softpipe") assert.doesNotMatch(threads.stdout, /llvmpipe/u,
+    `${label}: llvmpipe worker present for softpipe`);
+  const log = await exec(
+    `sed -n '/DEBUG ]: Renderer:/p;/DEBUG ]: Vendor:/p' /run/user/1000/hypr/${instance.instance}/hyprland.log`,
+    targetPage, `${label}:log`);
+  assert.equal(log.exit, 0, `${label}: Hyprland renderer log probe failed`);
+  const parsedLog = parseHyprlandRendererLog(log.stdout, expectedRenderer);
+  const observation = { expectedRenderer, instance, environment, threads, log, parsedLog };
+  report.observations.push({ renderer: { label, ...observation } });
+  return observation;
+}
 async function assertNoOmarchyPersistentIdb(targetPage, label) {
   const names = await targetPage.evaluate(async () => (await indexedDB.databases()).map((db) => db.name).filter(Boolean));
   const omarchy = names.filter((name) => name.startsWith("wasm-vm-disk-"));
@@ -403,13 +579,17 @@ async function readGuestFileEventually(targetPage, filename, expected, label, ti
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     // Read-only polling: the physical keyboard is the only writer of the nonce file.
-    const result = await exec(`if [ -f '${filename}' ]; then cat '${filename}'; else (exit 75); fi`, targetPage, `${label}:nonce-readback`);
+    const remaining = deadline - Date.now();
+    if (remaining <= 0) break;
+    const result = await exec(`if [ -f '${filename}' ]; then cat '${filename}'; else (exit 75); fi`, targetPage,
+      `${label}:nonce-readback`, Math.min(300000, remaining));
+    if (Date.now() > deadline) throw new Error(`${label}: nonce readback completed after deadline`);
     if (result.exit === 0) {
       assert.equal(result.stdout.trim(), expected, `${label}: nonce readback mismatch`);
       return result.stdout.trim();
     }
     assert.equal(result.exit, 75, `${label}: nonce readback failed: ${result.stderr || result.stdout}`);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, Math.min(1000, Math.max(1, deadline - Date.now()))));
   }
   throw new Error(`${label}: timed out waiting for physical keyboard nonce file`);
 }
@@ -725,6 +905,7 @@ try {
   const foot = await mappedFoot(page, "initial desktop");
   report.foot = foot;
   if (mode === "verify") await assertNoOmarchyPersistentIdb(page, "initial desktop");
+  if (expectedRenderer) await proveHyprlandRenderer(page, "initial desktop");
   // The initial full-screen Foot is focused in the packaged desktop. Physical DOM keys, never
   // serial injection, create the nonce file; a separate serial command reads it back.
   const prewarmStartedAt = mode === "capture" ? Date.now() : null;
