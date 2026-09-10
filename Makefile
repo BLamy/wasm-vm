@@ -1571,3 +1571,14 @@ verify-E3.5-T03:
 	cargo build --release -p wasm-vm-cli
 	cargo test --release -p wasm-vm-cli --test boot_wvrun -- --ignored --nocapture
 	@echo "verify-E3.5-T03 (tiny OCI runner — wvrun runs a bundle + isolates + propagates exit): OK"
+
+# The committed dist is the release under test. Do not silently rebuild it or
+# reuse old evidence. Override OMARCHY_EVIDENCE_DIR with a new path for each run.
+OMARCHY_EVIDENCE_DIR ?= evidence/omarchy-profile/acceptance
+.PHONY: verify-E5.5-T04a
+verify-E5.5-T04a:
+	@test -f web/dist/app.html || { echo "Build web/dist first" >&2; exit 1; }
+	npm --prefix web ci --no-audit --no-fund
+	node tools/fetch-omarchy-snapshot.mjs
+	node --test web/tests/guest-rpc.test.mjs web/tests/e5-t22b-viewport.test.mjs web/tests/omarchy-desktop-readiness.test.mjs web/tests/omarchy-seeded-loader.test.mjs
+	node tools/verify/omarchy-desktop-live.mjs local "$(OMARCHY_EVIDENCE_DIR)" verify

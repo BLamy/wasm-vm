@@ -785,6 +785,9 @@ function wireControls() {
   timelineBtn?.classList.toggle("active", state.view === "timeline");
   timelineBtn?.setAttribute("aria-selected", String(state.view === "timeline"));
   document.addEventListener("keydown", (e) => {
+    // A guest canvas owns its keyboard. Never steal a captured slash (or Escape)
+    // for the host roadmap, including when explicit UI-test hooks reveal panels.
+    if (e.defaultPrevented || document.documentElement.dataset.wvmDesktop === "omarchy") return;
     if (e.key === "Escape") closeDetail();
     if (e.key === "/" && document.activeElement !== search && !document.getElementById("rm-detail")?.hidden === false) {
       // focus search unless typing in a field

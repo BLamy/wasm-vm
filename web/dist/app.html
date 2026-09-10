@@ -536,7 +536,7 @@
       .panel.active { display: block; }
       /* Under automation (Playwright) reveal every panel so existing element-level e2e specs stay
          actionable regardless of the active tab; real users get the tabbed UI (see tabs.js). */
-      :root.e2e-showall .panel { display: block !important; }
+      :root.e2e-showall:not([data-wvm-desktop="omarchy"]) .panel { display: block !important; }
       :root.e2e-showall .tests-layout { min-height: 0; }
       main { min-height: calc(100vh - 51px); }
 

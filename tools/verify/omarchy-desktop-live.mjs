@@ -210,18 +210,20 @@ function installEvidence(targetContext) {
 }
 trackPage(page, "primary");
 await installEvidence(context);
-const exec = async (command, targetPage = page) => {
+const exec = async (command, targetPage = page, stage = "guest-exec") => {
   const result = await targetPage.evaluate((command) => window.wvmDemo.exec(command, 300000, { quiet: true }), command);
+  const context = pageLabels.get(targetPage) || "unknown";
   report.observations.push({
     exec: {
       timestamp: new Date().toISOString(),
-      context: pageLabels.get(targetPage) || "unknown",
+      context,
       url: targetPage.url(),
       command,
       stdout: result?.stdout ?? "",
       exit: result?.exit ?? null,
     },
   });
+  console.log(`OMARCHY_EXEC ${JSON.stringify({ stage, context, exit: result?.exit ?? null })}`);
   return result;
 };
 async function screenshot(name, targetPage = page) {
@@ -242,6 +244,53 @@ async function observeServiceWorker(targetPage, label) {
   report.observations.push({ serviceWorker: { label, ...observation } });
   return observation;
 }
+async function observeFocus(targetPage, label) {
+  const observation = await targetPage.evaluate(() => ({
+    activeId: document.activeElement?.id || null,
+    activeTag: document.activeElement?.tagName || null,
+    url: location.href,
+    scroll: { x: window.scrollX, y: window.scrollY },
+  }));
+  report.observations.push({ focus: { label, ...observation } });
+  return observation;
+}
+async function assertCanvasFocus(targetPage, label, expectedUrl) {
+  const observation = await observeFocus(targetPage, label);
+  assert.equal(observation.activeId, "ide-display-canvas", `${label}: host stole focus from canvas`);
+  assert.equal(observation.url, expectedUrl, `${label}: URL changed while typing on desktop`);
+  return observation;
+}
+async function assertRealOmarchyLayout(targetPage, label) {
+  const observation = await targetPage.evaluate(() => ({
+    e2eShowall: document.documentElement.classList.contains("e2e-showall"),
+    visiblePanels: [...document.querySelectorAll(".panel")]
+      .filter((panel) => getComputedStyle(panel).display !== "none")
+      .map((panel) => panel.id),
+    url: location.href,
+  }));
+  report.observations.push({ layout: { label, ...observation } });
+  assert.equal(observation.e2eShowall, false, `${label}: e2e-showall must not be enabled in live capture`);
+  assert.deepEqual(observation.visiblePanels, ["panel-ide"], `${label}: only Omarchy IDE panel may be visible`);
+  return observation;
+}
+async function recordBuildIdentities() {
+  const files = ["main.js", "ide.js", "roadmap.js", "loader.js", "guest-rpc.js", "pkg/wasm_vm_wasm_bg.wasm", "artifacts-omarchy.json"];
+  const identities = {};
+  for (const file of files) {
+    const resourceUrl = new URL(`/${file}`, new URL(url).origin).href;
+    const response = await fetch(resourceUrl);
+    assert.equal(response.status, 200, `identity fetch failed for ${resourceUrl}`);
+    const bytes = Buffer.from(await response.arrayBuffer());
+    identities[file] = {
+      url: resourceUrl,
+      status: response.status,
+      contentType: response.headers.get("content-type"),
+      size: bytes.length,
+      sha256: createHash("sha256").update(bytes).digest("hex"),
+    };
+  }
+  report.identities = { entryUrl: url, files: identities };
+}
 async function waitForDesktopReady(targetPage, label) {
   await targetPage.waitForFunction(() => window.__omarchyLiveEvidence?.ready === true, null, { timeout: 300000 });
   const evidence = await targetPage.evaluate(() => window.__omarchyLiveEvidence);
@@ -251,7 +300,7 @@ async function waitForDesktopReady(targetPage, label) {
   return evidence;
 }
 async function mappedFoot(targetPage, label) {
-  const clients = await exec("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients", targetPage);
+  const clients = await exec("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients", targetPage, `${label}:hyprctl-clients`);
   assert.equal(clients.exit, 0, `${label}: hyprctl clients failed`);
   const foot = JSON.parse(clients.stdout).find((client) => client.class === "foot" && client.mapped && !client.hidden);
   assert.ok(foot && foot.size.every((value) => value > 0), `${label}: no mapped Foot window`);
@@ -267,7 +316,7 @@ async function readGuestFileEventually(targetPage, filename, expected, label) {
   const deadline = Date.now() + 120000;
   while (Date.now() < deadline) {
     // Read-only polling: the physical keyboard is the only writer of the nonce file.
-    const result = await exec(`if [ -f '${filename}' ]; then cat '${filename}'; else (exit 75); fi`, targetPage);
+    const result = await exec(`if [ -f '${filename}' ]; then cat '${filename}'; else (exit 75); fi`, targetPage, `${label}:nonce-readback`);
     if (result.exit === 0) {
       assert.equal(result.stdout.trim(), expected, `${label}: nonce readback mismatch`);
       return result.stdout.trim();
@@ -341,6 +390,9 @@ async function capturePair() {
 try {
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
   await page.waitForFunction(() => window.wvmDemo, null, { timeout: 30000 });
+  assert.equal(new URL(url).searchParams.has("testHooks"), false, "live capture requires the actual URL without testHooks");
+  await assertRealOmarchyLayout(page, "initial");
+  await recordBuildIdentities();
   await observeServiceWorker(page, "initial");
   const deadline = Date.now() + Number(process.env.OMARCHY_BROWSER_TIMEOUT_MS || 7_200_000);
   while (Date.now() < deadline && !await page.evaluate(() => window.__omarchyLiveEvidence.ready)) {
@@ -360,17 +412,21 @@ try {
   if (mode === "capture") await capturePair();
   // The initial full-screen Foot is focused in the packaged desktop. Physical DOM keys, never
   // serial injection, create the nonce file; a separate serial command reads it back.
-  const active = await exec("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow");
+  const active = await exec("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow", page, "initial:hyprctl-activewindow");
   assert.equal(JSON.parse(active.stdout).address, foot.address);
   await page.locator("#ide-display-canvas").click({ position: { x: 300, y: 200 } });
+  const keyboardUrl = page.url();
+  await assertCanvasFocus(page, "physical-keyboard-before", keyboardUrl);
   const nonce = randomBytes(8).toString("hex"), guestFile = `/tmp/desktop-keys-${nonce}`;
   for (const character of `printf '${nonce}' > ${guestFile}`) {
     const { code, shift } = physicalStroke(character);
     if (shift) await page.keyboard.down("ShiftLeft");
     await page.keyboard.press(code, { delay: 40 });
     if (shift) await page.keyboard.up("ShiftLeft");
+    await assertCanvasFocus(page, `physical-keyboard-after-${character}`, keyboardUrl);
   }
   await page.keyboard.press("Enter");
+  await assertCanvasFocus(page, "physical-keyboard-after-enter", keyboardUrl);
   await readGuestFileEventually(page, guestFile, nonce, "physical keyboard");
   report.keyboard = { verified: true, nonce };
   await screenshot("desktop-keyboard.png");
@@ -387,6 +443,7 @@ try {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.reload({ waitUntil: "domcontentloaded", timeout: 30000 });
     await page.waitForFunction(() => window.wvmDemo && window.__linux, null, { timeout: 300000 });
+    await assertRealOmarchyLayout(page, "reload");
     await observeServiceWorker(page, "reload");
     report.reloadEvidence = await waitForDesktopReady(page, "desktop reload");
     report.reloadedRestored = await page.evaluate(() => window.__linux.restoredFromBootSnapshot());
@@ -404,6 +461,7 @@ try {
     assert.equal(new URL(secondPage.url()).origin, new URL(url).origin, "second tab must use the same origin");
     report.secondTabContext = "same-browser-context-shared-origin-storage";
     await secondPage.waitForFunction(() => window.wvmDemo && window.__linux, null, { timeout: 300000 });
+    await assertRealOmarchyLayout(secondPage, "second-tab");
     await observeServiceWorker(secondPage, "second-tab");
     report.secondTabEvidence = await waitForDesktopReady(secondPage, "second tab");
     report.secondTabRestored = await secondPage.evaluate(() => window.__linux.restoredFromBootSnapshot());

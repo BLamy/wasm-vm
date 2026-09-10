@@ -98,6 +98,22 @@ async function main() {
     await page.locator("#ide-display-canvas").click({ position: { x: 300, y: 200 } });
     assert.equal(await page.locator(".ide-display-head").evaluate((el) => getComputedStyle(el).display), "none",
       "Omarchy hides the host display debug header after canvas focus");
+    const focusUrl = page.url();
+    const focusScroll = await page.evaluate(() => ({ x: window.scrollX, y: window.scrollY }));
+    for (const key of ["/", "r", "1", "2", "0"]) {
+      // Browser-level keyboard input is intentional here; no guest or serial input is involved.
+      await page.keyboard.press(key);
+      const focus = await page.evaluate(() => ({
+        activeId: document.activeElement?.id || null,
+        url: location.href,
+        scroll: { x: window.scrollX, y: window.scrollY },
+      }));
+      assert.equal(focus.activeId, "ide-display-canvas", `desktop canvas lost focus after ${key}`);
+      assert.equal(focus.url, focusUrl, `desktop URL changed after ${key}`);
+      assert.deepEqual(focus.scroll, focusScroll, `desktop page scrolled after ${key}`);
+      assert.equal(await page.locator("#rm-search").evaluate((el) => document.activeElement === el), false,
+        `roadmap search stole focus after ${key}`);
+    }
     assert.equal(await page.locator("#omarchy-desktop-status").textContent(), "desktop · ready · drag to resize");
     await dispatch(page, "wvm:guest-output", { text: "late serial after desktop ready\n" });
     assert.equal(await page.locator("#omarchy-desktop-status").textContent(), "desktop · ready · drag to resize",
