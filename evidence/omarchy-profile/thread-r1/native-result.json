@@ -1,0 +1,35 @@
+{
+  "schema": "wasm-vm.e5.5-t03g.native-attempt.v1",
+  "result": "unproven-startup-observation-timeout",
+  "productFixed": false,
+  "taskVerified": false,
+  "nativeCaptureHead": "0d3e609629e45021357b0e07f09ab70f9765edf8",
+  "launchAt": "2026-09-10T15:14:20Z",
+  "finalLogMtime": "2026-09-10T16:16:33Z",
+  "finalLogMtimeIsNotAnExactProcessExitTimestamp": true,
+  "startupBudgetMs": 5400000,
+  "perProbeBudgetMs": 300000,
+  "exitCode": 1,
+  "lastCompletedProbe": "capture_51",
+  "lastCompletedStatus": 6,
+  "lastCompletedOutput": "Hyprland IPC didn't respond in time\n\nCouldn't read (6)",
+  "incompleteProbe": "capture_52",
+  "lastObservedHyprlandPid": 407,
+  "lastObservedInstance": "efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549",
+  "mappedDesktopProven": false,
+  "pairedSnapshotCreated": false,
+  "builtInputRunPerformed": false,
+  "lp0ScreenshotCaptured": false,
+  "assets": [
+    {
+      "path": "evidence/omarchy-profile/thread-r1/native-capture.log",
+      "size": 82843,
+      "sha256": "ba9dd459635fbf74cdefa0e4d407e9798f9feb324000abab49c6809e2ee1b8be"
+    },
+    {
+      "path": "evidence/omarchy-profile/thread-r1/native-serial.log",
+      "size": 82025,
+      "sha256": "6d19707401401eb5a5a9878165f8341879cb0398115d7d87fa20c4c3bae8c65a"
+    }
+  ]
+}

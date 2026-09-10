@@ -1,0 +1,38 @@
+✔ actual preparation receipt validates (2.985792ms)
+✔ held LP1 baseline validates at its frozen digest (2.5ms)
+✔ synthetic wire fixture classifies negative input without claiming a product fix (10.874166ms)
+✔ seals deduplicate immutable chunks but reject conflicting/reference identities (0.829667ms)
+✔ the actual incomplete LP0 native capture remains unproven (9.656625ms)
+✔ native synthetic fixture is not promoted without host renderer binding (0.282667ms)
+✔ rejects incomplete trusted DOM sequence (2.7165ms)
+✔ rejects wrong evdev worker arguments (2.65725ms)
+✔ rejects reused nonce filename (1.979625ms)
+✔ rejects blank GL log claimed as active-renderer validation (1.184333ms)
+✔ rejects changed renderer PID (1.106917ms)
+✔ rejects readback deadline that is not bound to the recorded timer (1.876042ms)
+T03g pair validator harness-only tests: focused assertions passed
+✔ tools/verify/omarchy-thread-pair.test.mjs (70.119041ms)
+T03g runtime identity helper tests: bounded hashes, frozen closures, and rejection cases passed
+✔ real repository collection is frozen and validates without rebuilding (566.18325ms)
+✔ synthetic parameterization validates exact records and rejects omission, extras, and traversal (632.3075ms)
+✔ validation binds current harness bytes to git show and rejects corruption or role swaps (381.138542ms)
+✔ actual built RPC schema: split fences, app readiness, and last remaining-deadline timeout (6.416541ms)
+✔ complete physical nonce stays provisional, wire result binds renderer (2.582458ms)
+✔ reject serial-written split nonce (2.151542ms)
+✔ reject missing outgoing RPC (1.981708ms)
+✔ reject invented result (2.632916ms)
+✔ reject wrong response fence (2.041583ms)
+✔ reject wrong renderer PID (2.414958ms)
+✔ reject early timeout hidden by late failure time (1.924208ms)
+✔ reject unsafe unframed input (1.96775ms)
+✔ reject missing timestamp (1.191417ms)
+✔ reject observer paused the guest (1.60625ms)
+✔ reject same-instance renderer result not matching actual wire (2.313208ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1623.772
