@@ -34,22 +34,22 @@ export function viewportPixelMode(cssWidth, cssHeight, dpr) {
  * 16:10 desktop mode bounded, then scale it to the available CSS box. Input remains normalized
  * against the canvas rectangle, so the CSS scaling is transparent to the guest.
  */
-export function desktopViewportPixelMode(cssWidth, cssHeight, _dpr, {
-  aspectRatio = 16 / 10,
+export function desktopViewportPixelMode(cssWidth, cssHeight, dpr, {
   maxWidth = 1280,
   maxHeight = 800,
 } = {}) {
-  if (![cssWidth, cssHeight, aspectRatio, maxWidth, maxHeight].every(Number.isFinite) ||
-      cssWidth < 0 || cssHeight < 0 || aspectRatio <= 0 || maxWidth < 1 || maxHeight < 1) {
+  if (![cssWidth, cssHeight, dpr, maxWidth, maxHeight].every(Number.isFinite) ||
+      cssWidth < 0 || cssHeight < 0 || dpr <= 0 ||
+      !Number.isInteger(maxWidth) || !Number.isInteger(maxHeight) ||
+      maxWidth < DISPLAY_MIN_WIDTH || maxHeight < DISPLAY_MIN_HEIGHT ||
+      maxWidth > DISPLAY_MAX_DIMENSION || maxHeight > DISPLAY_MAX_DIMENSION) {
     throw new RangeError("desktop viewport dimensions and limits must be finite and positive");
   }
   if (cssWidth === 0 || cssHeight === 0) return null;
+  const aspectRatio = maxWidth / maxHeight;
   const fitWidth = Math.min(cssWidth, cssHeight * aspectRatio);
   const fitHeight = fitWidth / aspectRatio;
-  const scale = Math.min(1, maxWidth / fitWidth, maxHeight / fitHeight);
-  const width = Math.max(DISPLAY_MIN_WIDTH, Math.round(fitWidth * scale));
-  const height = Math.max(DISPLAY_MIN_HEIGHT, Math.round(fitHeight * scale));
-  return { width, height, dpr: 1, cssWidth: fitWidth, cssHeight: fitHeight };
+  return { width: maxWidth, height: maxHeight, dpr: 1, cssWidth: fitWidth, cssHeight: fitHeight };
 }
 
 /** Native-pixel top-left fit. Input has already passed the full-resource frame validator. */

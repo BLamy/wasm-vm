@@ -478,7 +478,7 @@ if (root) {
     </div>
     <div class="omarchy-desktop-toolbar" id="omarchy-desktop-toolbar" hidden>
       <span class="brand">Omarchy</span>
-      <span class="status" id="omarchy-desktop-status">desktop · resizable</span>
+      <span class="status" id="omarchy-desktop-status">desktop · fit to window</span>
       <span class="sp"></span>
       <button id="omarchy-fullscreen" type="button">Full screen</button>
       <button id="omarchy-exit" type="button">Exit desktop</button>
@@ -713,7 +713,7 @@ if (root) {
     window.addEventListener("wvm:desktop-ready", () => {
       if (bootErrorLatched) return;
       if (bootOverlay) bootOverlay.hidden = true;
-      if (desktopStatus) desktopStatus.textContent = "desktop · ready · drag to resize";
+      if (desktopStatus) desktopStatus.textContent = "desktop visible · input is slow";
       if (desktopToolbar) desktopToolbar.dataset.state = "ready";
     });
     updateFullscreenLabel();

@@ -184,6 +184,10 @@ export async function startLinuxBoot(opts = {}) {
     // E3-T02 chunked mode: URL of the image manifest.json produced by `wasm-vm chunk`. `baseUrl`
     // (the directory chunks live under) defaults to the manifest's directory.
     imageManifestUrl = "./releases/chunked-alpine/manifest.json",
+    // Omarchy production passes only its asset base. Resolve the immutable manifest descriptor from
+    // the boot manifest already fetched below, so persist/noSnapshot diagnostics cannot race a second
+    // metadata fetch or fall back to the mutable candidate key.
+    requestImageManifestBaseUrl = null,
     // E3-T03 boot-profile URL (ordered chunk indices to prefetch up front); missing → readahead-only.
     bootProfileUrl = "./releases/chunked-alpine/boot-profile.json",
     // E3-T03 block-cache byte budget in MiB (0 → 256 MiB default). Set low to exercise eviction.
@@ -272,6 +276,30 @@ export async function startLinuxBoot(opts = {}) {
     // changes device configuration; permission and host capture belong to later slices.
     enableMic = false,
   } = opts;
+  const resolveOmarchyChunkedImage = (manifest, requestImageManifestBaseUrl) => {
+    const descriptor = manifest?.chunkedImage;
+    if (!descriptor || typeof descriptor !== "object" || Array.isArray(descriptor)) {
+      throw new Error("Omarchy chunked image descriptor is missing");
+    }
+    const key = descriptor.key;
+    const sha256 = descriptor.sha256;
+    const size = descriptor.size;
+    const keyMatch = typeof key === "string"
+      ? key.match(/^chunked-omarchy\/manifest-([0-9a-f]{64})\.json$/u)
+      : null;
+    if (!keyMatch || typeof sha256 !== "string" || !/^[0-9a-f]{64}$/u.test(sha256) || keyMatch[1] !== sha256) {
+      throw new Error("Omarchy chunked image descriptor is invalid");
+    }
+    if (!Number.isSafeInteger(size) || size <= 0) throw new Error("Omarchy chunked image descriptor size is invalid");
+    if (typeof requestImageManifestBaseUrl !== "string" || !requestImageManifestBaseUrl.trim()) {
+      throw new Error("Omarchy chunked image manifest base URL is missing");
+    }
+    return {
+      url: `${requestImageManifestBaseUrl.replace(/\/+$/u, "")}/${key}`,
+      sha256,
+      size,
+    };
+  };
   let outputCalls = 0;
   let outputBytes = 0;
   const emitOutput = (bytes) => {
@@ -287,7 +315,9 @@ export async function startLinuxBoot(opts = {}) {
   // Disk/chunked modes leave bootargs empty so WasmLinux supplies `root=/dev/vda rw …`.
   const bootargs = opts.bootargs ?? (mode === "initramfs" ? "console=ttyS0 earlycon=sbi" : "");
   const role = mode === "disk" ? "rootfs" : "initramfs";
-  const baseUrl = opts.baseUrl ?? imageManifestUrl.replace(/[^/]*$/, "");
+  const requestedImageManifestUrl = imageManifestUrl;
+  let resolvedImageManifestUrl = requestedImageManifestUrl;
+  let baseUrl = opts.baseUrl ?? null;
 
   try {
     validateDecodedCacheEntries(decodedCacheEntries);
@@ -297,6 +327,11 @@ export async function startLinuxBoot(opts = {}) {
       throw new Error("fresh desktop requires an ephemeral chunked warm boot");
     }
     const manifest = await fetchJsonAsset(manifestUrl, "boot manifest");
+    const omarchyImage = requestImageManifestBaseUrl != null
+      ? resolveOmarchyChunkedImage(manifest, requestImageManifestBaseUrl)
+      : null;
+    if (omarchyImage) resolvedImageManifestUrl = omarchyImage.url;
+    if (!baseUrl) baseUrl = resolvedImageManifestUrl.replace(/[^/]*$/, "");
     const km = manifest.artifacts.kernel;
     // E4 restore-on-load artifacts (busybox: bootSnapshot only; Alpine chunked: bootSnapshot RAM +
     // overlayDelta). Hoisted so both the pre-construction overlay seed and the post-construction RAM
@@ -327,7 +362,25 @@ export async function startLinuxBoot(opts = {}) {
     if (isChunked) {
       // The chunked image manifest (JSON text handed to wasm as-is). Clear error if the local-only
       // asset is missing rather than a cryptic parse failure later.
-      imageManifestText = await fetchAsset(imageManifestUrl, "chunked image manifest");
+      if (omarchyImage) {
+        // Hash the bytes as received. Decoding first can erase a BOM or replace malformed UTF-8,
+        // allowing bytes other than the publisher-verified immutable object to reach the VM.
+        const imageManifestBytes = await fetchWithProgress(
+          resolvedImageManifestUrl,
+          (l, t) => onProgress("chunkManifest", l, t),
+        );
+        const imageManifestSha = await sha256hex(imageManifestBytes);
+        if (imageManifestBytes.byteLength !== omarchyImage.size || imageManifestSha !== omarchyImage.sha256) {
+          throw new Error("Omarchy chunked image manifest integrity check failed");
+        }
+        try {
+          imageManifestText = new TextDecoder("utf-8", { fatal: true }).decode(imageManifestBytes);
+        } catch {
+          throw new Error("Omarchy chunked image manifest is not valid UTF-8");
+        }
+      } else {
+        imageManifestText = await fetchAsset(resolvedImageManifestUrl, "chunked image manifest");
+      }
       // E3-T03: an optional boot-profile.json (ordered chunk indices) prefetched up front. Best-
       // effort — a missing profile just means no boot-profile prefetch (readahead still applies).
       if (bootProfileUrl) {
@@ -1129,6 +1182,9 @@ export async function startLinuxBoot(opts = {}) {
       // after focus recovery without reading or mutating guest state through an ad-hoc path.
       keyboardLedState: () => (
         typeof machine.keyboardLedState === "function" ? machine.keyboardLedState() : null
+      ),
+      inputDeviceStats: () => (
+        typeof machine.inputDeviceStats === "function" ? machine.inputDeviceStats() : null
       ),
       stop: async () => {
         finish("stopped");

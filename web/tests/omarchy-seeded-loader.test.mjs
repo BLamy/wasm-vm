@@ -14,12 +14,21 @@ const startSource = loader
   .slice(startAt, endAt)
   .replace("export async function startLinuxBoot(", "async function startLinuxBoot(");
 
+const CHUNK_MANIFEST_TEXT = '{"version":1}';
+const CHUNK_MANIFEST_SHA256 = "2430f1a2ad2982d0067885488a4c89e21ad1d7c83b115ba8f1b20acc88dfaea8";
+const CHUNK_MANIFEST_BYTES = new TextEncoder().encode(CHUNK_MANIFEST_TEXT);
+
 function warmManifest() {
   return {
     artifacts: {
       kernel: { url: "kernel", sha256: "kernel-ok" },
       bootSnapshot: { url: "snapshot", sha256: "snapshot-ok" },
       overlayDelta: { url: "delta", sha256: "delta-ok" },
+    },
+    chunkedImage: {
+      key: `chunked-omarchy/manifest-${CHUNK_MANIFEST_SHA256}.json`,
+      sha256: CHUNK_MANIFEST_SHA256,
+      size: CHUNK_MANIFEST_TEXT.length,
     },
   };
 }
@@ -29,9 +38,13 @@ async function runFresh({
   deltaDigest = "delta-ok",
   snapshotDigest = "snapshot-ok",
   snapshotFailure = null,
+  chunkManifestDigest = CHUNK_MANIFEST_SHA256,
   decision = "stale",
   freshDesktop = true,
   persist = false,
+  bootSnapshot = undefined,
+  imageManifestBaseUrl = "https://assets.test",
+  chunkManifestBytes = CHUNK_MANIFEST_BYTES,
 } = {}) {
   const calls = [];
   const states = [];
@@ -52,6 +65,10 @@ async function runFresh({
       calls.push(["newChunkedDiskPersistent", args]);
       throw new Error("persistent-factory-sentinel");
     },
+    newChunkedDisk: (...args) => {
+      calls.push(["newChunkedDisk", args]);
+      throw new Error("cold-factory-sentinel");
+    },
   };
   const sandbox = {
     WasmLinux,
@@ -68,7 +85,7 @@ async function runFresh({
     },
     fetchAsset: async (url) => {
       calls.push(["fetchAsset", url]);
-      return '{"version":1}';
+      return CHUNK_MANIFEST_TEXT;
     },
     fetchJsonAsset: async (url) => {
       calls.push(["fetchJsonAsset", url]);
@@ -82,6 +99,7 @@ async function runFresh({
         if (snapshotFailure) throw new Error(snapshotFailure);
         return Uint8Array.of(3);
       }
+      if (url === `https://assets.test/${warmManifest().chunkedImage.key}`) return chunkManifestBytes;
       throw new Error(`unexpected asset: ${url}`);
     },
     gunzip: async (bytes) => Uint8Array.of(bytes[0] + 10),
@@ -106,11 +124,16 @@ async function runFresh({
       if (bytes[0] === 1) return "kernel-ok";
       if (bytes[0] === 2) return deltaDigest;
       if (bytes[0] === 3) return snapshotDigest;
+      if (bytes.length === CHUNK_MANIFEST_BYTES.length && bytes.every((byte, i) => byte === CHUNK_MANIFEST_BYTES[i])) {
+        return chunkManifestDigest;
+      }
       return "unexpected-digest";
     },
     validateDecodedCacheEntries: () => {},
     validateGuestClock: () => {},
     validateICountDivider: () => {},
+    TextEncoder,
+    TextDecoder,
     URLSearchParams,
     location: { search: "" },
     navigator: {
@@ -130,6 +153,8 @@ async function runFresh({
       manifestUrl: "manifest",
       mode: "chunked",
       persist,
+      ...(bootSnapshot === undefined ? {} : { bootSnapshot }),
+      requestImageManifestBaseUrl: imageManifestBaseUrl,
       onError: sandbox.onError,
       onState: sandbox.onState,
     });
@@ -157,6 +182,70 @@ test("freshDesktop rejects a missing RAM/delta pair instead of cold-falling back
     assert.match(result.errors.at(-1), /Omarchy desktop snapshot is not published/, missing);
     assert.equal(result.states.includes("booting"), false, missing);
   }
+});
+
+test("Omarchy production resolution rejects a missing or malformed immutable descriptor", async () => {
+  for (const mutate of [
+    (manifest) => { delete manifest.chunkedImage; },
+    (manifest) => { manifest.chunkedImage.key = "chunked-omarchy/manifest-wrong.json"; },
+    (manifest) => { manifest.chunkedImage.sha256 = "f".repeat(64); },
+    (manifest) => { manifest.chunkedImage.size = 0; },
+  ]) {
+    const manifest = warmManifest();
+    mutate(manifest);
+    const result = await runFresh({ manifest });
+    assert.equal(result.rejected, true);
+    assert.equal(result.calls.some((call) => Array.isArray(call) && call[0] === "fetchWithProgress"), false);
+    assert.match(result.errors.at(-1), /Omarchy chunked image descriptor (is missing|is invalid|size is invalid)/u);
+  }
+});
+
+test("Omarchy immutable chunk manifest hash mismatch fails closed", async () => {
+  const result = await runFresh({ chunkManifestDigest: "f".repeat(64) });
+  assert.equal(result.rejected, true);
+  assert.equal(result.calls.some((call) => Array.isArray(call) && call[0] === "newChunkedDiskSeeded"), false);
+  assert.match(result.errors.at(-1), /chunked image manifest integrity check failed/u);
+});
+
+test("Omarchy hashes corrupt raw manifest bytes before decoding", async () => {
+  const corrupt = Uint8Array.from(CHUNK_MANIFEST_BYTES);
+  corrupt[corrupt.length - 2] ^= 1;
+  const result = await runFresh({ chunkManifestBytes: corrupt });
+  assert.equal(result.rejected, true);
+  assert.equal(result.calls.some((call) => Array.isArray(call) && call[0] === "newChunkedDiskSeeded"), false);
+  assert.match(result.errors.at(-1), /chunked image manifest integrity check failed/u);
+});
+
+test("Omarchy rejects a BOM even when the decoded manifest text is equivalent", async () => {
+  const bom = Uint8Array.from([0xef, 0xbb, 0xbf, ...CHUNK_MANIFEST_BYTES]);
+  const result = await runFresh({ chunkManifestBytes: bom });
+  assert.equal(result.rejected, true);
+  assert.match(result.errors.at(-1), /chunked image manifest integrity check failed/u);
+});
+
+test("Omarchy validates an explicitly empty manifest base instead of falling back", async () => {
+  const result = await runFresh({ imageManifestBaseUrl: "" });
+  assert.equal(result.rejected, true);
+  assert.equal(result.calls.some((call) => Array.isArray(call) && call[0] === "fetchWithProgress"), false);
+  assert.match(result.errors.at(-1), /chunked image manifest base URL is missing/u);
+});
+
+test("Omarchy uses the descriptor for persistent and noSnapshot diagnostics", async () => {
+  const persistent = await runFresh({ freshDesktop: false, persist: true });
+  const imageUrl = `https://assets.test/${warmManifest().chunkedImage.key}`;
+  const persistentFetch = persistent.calls.find((call) => Array.isArray(call) && call[0] === "fetchWithProgress" && call[1] === imageUrl);
+  assert.equal(persistentFetch?.[1], imageUrl);
+
+  const noSnapshot = await runFresh({ freshDesktop: false, persist: false, bootSnapshot: false });
+  const noSnapshotFetch = noSnapshot.calls.find((call) => Array.isArray(call) && call[0] === "fetchWithProgress" && call[1] === imageUrl);
+  assert.equal(noSnapshotFetch?.[1], imageUrl);
+});
+
+test("Alpine-style chunked caller remains on its explicit imageManifestUrl", async () => {
+  const result = await runFresh({ freshDesktop: false, persist: false, imageManifestBaseUrl: null });
+  const imageFetch = result.calls.find((call) => Array.isArray(call) && call[0] === "fetchAsset");
+  assert.equal(imageFetch?.[1], "image-manifest");
+  assert.match(result.errors.at(-1), /cold-factory-sentinel/u);
 });
 
 test("freshDesktop rejects an overlay-delta integrity mismatch instead of cold-falling back", async () => {

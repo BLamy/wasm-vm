@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 302,
-    "total": 473
+    "total": 476
   },
   "epics": [
     {
@@ -60,7 +60,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-09-09"
+    "end": "2026-09-10"
   },
   "tasks": [
     {
@@ -22355,9 +22355,10 @@
       "epicKey": "5.5",
       "title": "Prepare the clean Omarchy browser desktop session",
       "priority": null,
-      "status": "in-progress",
+      "status": "blocked",
       "depends_on": [
-        "E5.5-T02a"
+        "E5.5-T02a",
+        "E5.5-T03d"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -22366,7 +22367,7 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-09 — coordinator — follow-up from real boot\n\nE5.5-T02a removes the systemd memory fault. Its accepted image reaches startup\nservices but rebuilds hardware/linker/catalog caches and waits for `/dev/hvc0`.\nThe QEMU pre-check reaches Hyprland/Quickshell/Foot; full upstream first-run\nprovisioning still assumes omitted developer applications and starts absent\nfcitx5. Those observations define this profile task; they do not establish a\ncomplete browser desktop or waive the remaining production acceptance.\n\n### 2026-09-09 — worker — clean image and incomplete browser evidence\n\nImage tools are frozen at `0fbca4d5976b193449f16324727b933d4329d15a`.\nThe fresh 4 GiB image SHA-256 is\n`47584cba39876ee958ea8fa39d3432488277d230abb2997b5999e54b8defe13e`;\nthe 256 KiB split manifest SHA-256 is\n`ec1bc2601b104cfb6d6875c091377ccfd0654d5b6aab71c6a08ae37263f1c391`.\nBuild commands, receipt, exact image/chunk verification, and the 105-test\nLinux/macOS tool results are recorded in `evidence/omarchy-profile/run-notes.md`\nand its cited files. Daybreak's earlier held image-boundary checks remain\napplicable; this entry does not set a verdict.\n\nThe frozen browser harness at `297b003ca1f1104dd539b9e79e023622b06bb9c1`\nrecords real xterm serial traffic, guest display frames, nonce-fenced commands,\nand a separate physical-keyboard acceptance path. The supported divider-64\nclock and `plymouth.enable=0` kernel argument allow this image to pass the\nearlier UWSM reload deadline and reach Hyprland. Neither package deadlines nor\nintegrity checks were bypassed. `browser-r2-div64-nosplash-r2/report.json`\nrecords the 40-minute attempt: state SHA-256\n`57e90975fa01b7aab64856328b88c2b380efddaba439b91c312b3fc04a62690a`,\n41,518,097,356 retirements, and zero browser/worker errors. It reached the\nnon-root compositor, Quickshell and Foot processes, but timed out before mapped\ndesktop surfaces and physical keyboard acceptance. Its pointer/background\nscreenshot is not sufficient proof. A longer cold run is in progress with\nunchanged runtime/image inputs. Status remains `in-progress`.",
+      "verificationLog": "### 2026-09-09 — coordinator — follow-up from real boot\n\nE5.5-T02a removes the systemd memory fault. Its accepted image reaches startup\nservices but rebuilds hardware/linker/catalog caches and waits for `/dev/hvc0`.\nThe QEMU pre-check reaches Hyprland/Quickshell/Foot; full upstream first-run\nprovisioning still assumes omitted developer applications and starts absent\nfcitx5. Those observations define this profile task; they do not establish a\ncomplete browser desktop or waive the remaining production acceptance.\n\n### 2026-09-09 — worker — clean image and incomplete browser evidence\n\nImage tools are frozen at `0fbca4d5976b193449f16324727b933d4329d15a`.\nThe fresh 4 GiB image SHA-256 is\n`47584cba39876ee958ea8fa39d3432488277d230abb2997b5999e54b8defe13e`;\nthe 256 KiB split manifest SHA-256 is\n`ec1bc2601b104cfb6d6875c091377ccfd0654d5b6aab71c6a08ae37263f1c391`.\nBuild commands, receipt, exact image/chunk verification, and the 105-test\nLinux/macOS tool results are recorded in `evidence/omarchy-profile/run-notes.md`\nand its cited files. Daybreak's earlier held image-boundary checks remain\napplicable; this entry does not set a verdict.\n\nThe frozen browser harness at `297b003ca1f1104dd539b9e79e023622b06bb9c1`\nrecords real xterm serial traffic, guest display frames, nonce-fenced commands,\nand a separate physical-keyboard acceptance path. The supported divider-64\nclock and `plymouth.enable=0` kernel argument allow this image to pass the\nearlier UWSM reload deadline and reach Hyprland. Neither package deadlines nor\nintegrity checks were bypassed. `browser-r2-div64-nosplash-r2/report.json`\nrecords the 40-minute attempt: state SHA-256\n`57e90975fa01b7aab64856328b88c2b380efddaba439b91c312b3fc04a62690a`,\n41,518,097,356 retirements, and zero browser/worker errors. It reached the\nnon-root compositor, Quickshell and Foot processes, but timed out before mapped\ndesktop surfaces and physical keyboard acceptance. Its pointer/background\nscreenshot is not sufficient proof. A longer cold run is in progress with\nunchanged runtime/image inputs. Status remains `in-progress`.\n\n### 2026-09-10 — coordinator — renderer execution dependency\n\nThe coherent SDR R3 pair now restores an actual desktop before executing the guest;\n`evidence/omarchy-profile/sdr-build-r3/final-pair-receipt.md` and\n`sdr-r3-immediate-repaint/report.json` bind that narrow result. Fresh Daybreak review\nheld the repaint claim, not interactive acceptance. The recorded physical command\nin `sdr-r3-input/diagnostic.json` (04:16:38–43 UTC input, 04:24:33.553 UTC independent\nfile check) did not complete; screenshots show partial input. See the diagnostic\nphase notes for later, explicitly excluded serial-shell contamination.\n\nExact exploratory reproduction:\n\n```sh\nnode tools/verify/omarchy-input-diagnostic.mjs evidence/omarchy-profile/sdr-r3-hotpc-profile 64 1 --pair-directory target/omarchy-sdr-r3-snapshot --chunk-manifest target/omarchy-profile-chunks-sdr-r3-256k/manifest.json --profile\n```\n\nAt 04:40:40.188 UTC the real browser sampled interpreter hot PCs within the guest\n`llvmpipe` anonymous executable mapping at `0x7fff6c080000`. The following recorded\nguest `/proc/417/mem` reads expose large integer sequences mixed with FP moves;\nthe existing translator refuses a whole block containing any FP operation. This\nis a runtime boundary, not something the image overlay may silently change. The\nnew atomic E5.5-T03b slice must prove its proposed remedy before this image task\nreturns to the active lane. No Epic 6 GPU work is started and no desktop task is\nmarked verified.\n\n### 2026-09-10 — coordinator — unsuccessful renderer mitigation\n\nE5.5-T03b was cancelled after real-browser measurements failed to show useful\ninteraction improvement. Its diagnostic command above, with the archived\npartition applied, still reproduces the failed physical-command acceptance; see\n`evidence/omarchy-profile/mixed-renderer-candidate-r1/browser/diagnostic.json`\nand the fresh critic's screenshot inspection in `desktop-fix-critic.md`.\nThe original image/session acceptance remains blocked on E5.5-T03d. The separate\nE5.5-T03c rendering-recovery hotfix may restore visible pixels and CSS fitting,\nbut must not turn this task or the complete Omarchy capability to verified.",
       "adversarial": "Inspect before/after accounts and file provenance. Reject any build that ignores\na failed cache command, marks incomplete setup successful, mutates the accepted\nsource image, or enables absent executables. Inspect a fresh session with no\nprevious home, runtime, display cache or writable disk overlay.",
       "file": "tasks/epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md",
       "activity": [
@@ -22378,11 +22379,122 @@
             "Start the lean Omarchy desktop profile",
             "Plan the lean Omarchy desktop session profile"
           ]
+        },
+        {
+          "date": "2026-09-10",
+          "commits": 2,
+          "labels": [
+            "plan(omarchy): isolate rendering recovery from failed throughput mitigation",
+            "plan(omarchy): isolate mixed-renderer execution follow-up"
+          ]
         }
       ],
       "firstActivity": "2026-09-09",
-      "lastActivity": "2026-09-09",
-      "commitCount": 3
+      "lastActivity": "2026-09-10",
+      "commitCount": 5
+    },
+    {
+      "id": "E5.5-T03b",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Keep integer renderer regions JIT-eligible around interpreted floating point",
+      "priority": null,
+      "status": "cancelled",
+      "depends_on": [
+        "E4-T15",
+        "E4-T34",
+        "E5.5-T02a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Remove whole-block FP exclusion as an avoidable obstacle to the Omarchy software\nrenderer while preserving every FP operation on the existing interpreter.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-10 — coordinator — bounded renderer follow-up\n\nCreated from the exact SDR R3 diagnostics cited in E5.5-T03a. This is a\ntestable proposed remedy, not a claim that the runtime bottleneck or black\nproduction desktop is already fixed. Work remains before Epic 6.\n\n### 2026-09-10 — coordinator — mitigation rejected, trial archived\n\nThe partition passed thirteen focused architectural tests in worker and fresh\nDaybreak debug/release runs, but did not materially improve actual desktop input.\nThe physical `x` in `mixed-renderer-candidate-r1/browser/diagnostic.json` appeared\nonly after `(434.201, 637.777]` seconds; a physical echo command still had no result\nafter seventeen minutes. The larger-cache and eager-admission trials did not\nestablish a remedy. The full evidence and critic findings are retained under\n`evidence/omarchy-profile/`; the proposed runtime diff and tests are archived in\n`mixed-renderer-candidate-r1/partition.diff` and `mixed_fp_regions.rs`.\n\nThe runtime partition has been removed from the working candidate. Cancellation\nis a product decision, not an architectural refutation or verified verdict.\nE5.5-T03c isolates the user's immediate black-screen/host-fit repair; E5.5-T03d\nis the unresolved responsiveness planning container. No Epic 6 work is started.",
+      "adversarial": "Attack the integer-to-FP and FP-to-integer handoff separately. Reject duplicate\nor skipped instructions, stale register writeback, a changed FP-off/fault PC,\nlost fflags, new compiled FP code, or a changed page/SMC authority boundary.\nCheck entry into the middle of a region, alternating FP/integer instructions,\ncompressed FP loads/stores, and repeated executions at tiny cache sizes.\nRequire real browser evidence for any responsiveness claim and preserve held\nunrelated snapshot/integrity findings incrementally.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03b-mixed-renderer-blocks.md",
+      "activity": [
+        {
+          "date": "2026-09-10",
+          "commits": 2,
+          "labels": [
+            "plan(omarchy): isolate rendering recovery from failed throughput mitigation",
+            "plan(omarchy): isolate mixed-renderer execution follow-up"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-10",
+      "lastActivity": "2026-09-10",
+      "commitCount": 2
+    },
+    {
+      "id": "E5.5-T03c",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Recover visible Omarchy desktop pixels and fit the browser viewport",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5.5-T02a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "Selected explicitly for the user's black-screen repair and screenshot request.\nThe wider keyboard-usable desktop remains blocked in E5.5-T03a/E5.5-T03d.",
+      "adversarial": "Reject stale/mismatched artifacts, a painted imitation, serial-only proof,\ntop-left cropping, incorrect pointer normalization, test-only UI overrides,\nconcealed boot failures, or presentation screenshots relabeled as interactivity.\nObserve actual service-worker reload behavior and bound all served/uploaded bytes.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03c-desktop-rendering-recovery.md",
+      "activity": [
+        {
+          "date": "2026-09-10",
+          "commits": 1,
+          "labels": [
+            "plan(omarchy): isolate rendering recovery from failed throughput mitigation"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-10",
+      "lastActivity": "2026-09-10",
+      "commitCount": 1
+    },
+    {
+      "id": "E5.5-T03d",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Resolve measured Omarchy post-restore desktop input latency",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5.5-T02a",
+        "E5.5-T03c"
+      ],
+      "decomposed_into": [],
+      "estimate": "M",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "Unresolved follow-up, not implemented or verified. E5.5-T03c only repairs the\nseparate visible-frame and host-side fitting failures.",
+      "adversarial": "",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03d-desktop-responsiveness.md",
+      "activity": [
+        {
+          "date": "2026-09-10",
+          "commits": 1,
+          "labels": [
+            "plan(omarchy): isolate rendering recovery from failed throughput mitigation"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-10",
+      "lastActivity": "2026-09-10",
+      "commitCount": 1
     },
     {
       "id": "E5.5-T04a",

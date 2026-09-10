@@ -14,7 +14,9 @@ function rig({ delay, modeForRect, setDisplay = async () => true } = {}) {
     observe() { this.connected = true; }
     disconnect() { this.connected = false; }
   }
+  let clearCalls = 0;
   const presentation = { canvas: { style: {} }, setViewport: (...size) => sizes.push(size),
+    clear: () => { clearCalls++; },
     snapshot: () => ({ latest: { resourceWidth: 800, resourceHeight: 600 } }) };
   const viewport = new DisplayViewportController({ container: { getBoundingClientRect: () => rect },
     presentation, controller: { setDisplay }, ResizeObserverClass: Observer, modeForRect,
@@ -37,7 +39,7 @@ function rig({ delay, modeForRect, setDisplay = async () => true } = {}) {
     }
     now = until; await flush();
   };
-  return { viewport, timers, media, observers, sizes, presentation, tick,
+  return { viewport, timers, media, observers, sizes, presentation, tick, clearCalls: () => clearCalls,
     resize(width, height) { rect = { ...rect, width, height }; observers[0].callback(); },
     dpr(value) { dpr = value; for (const callback of [...media.at(-1).listeners]) callback(); },
     dprWithoutEvent(value) { dpr = value; },
@@ -57,29 +59,74 @@ test("CSS/DPR rounding and minimum/maximum clamps are finite, hidden panes do no
   assert.throws(() => rig({ delay: 1 }), /zero-delay/);
 });
 
-test("desktopViewportPixelMode fits a bounded 16:10 guest surface instead of mirroring DPR", () => {
-  assert.deepEqual(desktopViewportPixelMode(1100, 1081, 2), {
-    width: 1100, height: 688, dpr: 1, cssWidth: 1100, cssHeight: 687.5,
-  });
-  assert.deepEqual(desktopViewportPixelMode(1440, 900, 2), {
-    width: 1280, height: 800, dpr: 1, cssWidth: 1440, cssHeight: 900,
-  });
+test("desktopViewportPixelMode keeps a fixed bounded backing and CSS-contain fits each viewport", () => {
+  for (const dpr of [1, 2]) {
+    assert.deepEqual(desktopViewportPixelMode(960, 600, dpr), {
+      width: 1280, height: 800, dpr: 1, cssWidth: 960, cssHeight: 600,
+    });
+    assert.deepEqual(desktopViewportPixelMode(600, 900, dpr), {
+      width: 1280, height: 800, dpr: 1, cssWidth: 600, cssHeight: 375,
+    });
+    assert.deepEqual(desktopViewportPixelMode(1920, 1080, dpr), {
+      width: 1280, height: 800, dpr: 1, cssWidth: 1728, cssHeight: 1080,
+    });
+  }
   assert.equal(desktopViewportPixelMode(0, 400, 2), null);
+  assert.equal(desktopViewportPixelMode(400, 0, 2), null);
+  assert.deepEqual(desktopViewportPixelMode(1920, 1080, 1, { maxWidth: 1024, maxHeight: 640 }), {
+    width: 1024, height: 640, dpr: 1, cssWidth: 1728, cssHeight: 1080,
+  });
+  assert.deepEqual(desktopViewportPixelMode(600, 16000, 2), {
+    width: 1280, height: 800, dpr: 1, cssWidth: 600, cssHeight: 375,
+  });
+  const extreme = desktopViewportPixelMode(Number.MAX_VALUE, Number.MAX_VALUE, 2,
+    { maxWidth: 4095, maxHeight: 320 });
+  assert.ok(Object.values(extreme).every(Number.isFinite), "extreme finite inputs stay finite");
+  for (const options of [
+    { maxWidth: 319 }, { maxHeight: 239 },
+    { maxWidth: 4096 }, { maxHeight: 4096 }, { maxWidth: 1280.5 },
+  ]) assert.throws(() => desktopViewportPixelMode(640, 480, 1, options));
+  assert.throws(() => desktopViewportPixelMode(640, 480, 0));
 });
 
-test("capped desktop continues resizing visually without a redundant guest hotplug", async () => {
+test("fixed desktop backing continues CSS resizing without a redundant hotplug or clear", async () => {
   const calls = [];
   const r = rig({ modeForRect: desktopViewportPixelMode, setDisplay: async (...args) => { calls.push(args); return true; } });
-  r.resize(1440, 900); await r.tick(250);
+  r.resize(960, 600); await r.tick(250);
   assert.deepEqual(calls, [[1280, 800]]);
-  assert.equal(r.presentation.canvas.style.width, "1440px");
+  assert.equal(r.presentation.canvas.style.width, "960px");
+  assert.equal(r.presentation.canvas.style.height, "600px");
   const clears = r.sizes.length;
-  r.resize(1920, 1200); await r.tick(250);
-  assert.equal(r.presentation.canvas.style.width, "1920px");
-  assert.equal(r.presentation.canvas.style.height, "1200px");
+  r.resize(600, 900); await r.tick(250);
+  assert.equal(r.presentation.canvas.style.width, "600px");
+  assert.equal(r.presentation.canvas.style.height, "375px");
+  r.resize(1920, 1080); await r.tick(250);
+  assert.equal(r.presentation.canvas.style.width, "1728px");
+  assert.equal(r.presentation.canvas.style.height, "1080px");
+  r.dpr(2); await r.tick(250);
+  assert.equal(r.presentation.canvas.style.width, "1728px");
+  r.resize(0, 0); await r.tick(250);
   assert.equal(r.sizes.length, clears);
+  assert.equal(r.clearCalls(), 0);
   assert.deepEqual(calls, [[1280, 800]]);
   r.viewport.dispose();
+});
+
+test("pointer inverse uses the actual centered CSS canvas rect", () => {
+  const mode = desktopViewportPixelMode(600, 900, 2);
+  const canvasRect = { left: 100, top: 302.5, width: mode.cssWidth, height: mode.cssHeight };
+  assert.deepEqual(
+    absoluteCoordinatesFromEvent({ clientX: 400, clientY: 490 }, canvasRect),
+    { x: 16384, y: 16384 },
+  );
+  assert.deepEqual(
+    absoluteCoordinatesFromEvent({ clientX: 100, clientY: 302.5 }, canvasRect),
+    { x: 0, y: 0 },
+  );
+  assert.deepEqual(
+    absoluteCoordinatesFromEvent({ clientX: 700, clientY: 677.5 }, canvasRect),
+    { x: 32767, y: 32767 },
+  );
 });
 
 test("50 resizes/5 seconds send one trailing request at exactly 250ms, DPR listener rearms and disposes", async () => {

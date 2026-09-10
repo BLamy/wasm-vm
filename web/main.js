@@ -2021,10 +2021,11 @@ async function bootOmarchy() {
     {
       manifestUrl: "./artifacts-omarchy.json",
       mode: "chunked",
-      imageManifestUrl: assetBase.replace(/\/+$/, "") + "/chunked-omarchy/manifest.json",
+      requestImageManifestBaseUrl: assetBase.replace(/\/+$/, ""),
       bootProfileUrl: null,
       bootargs: "root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0",
       cacheBudgetMib: Number(query.get("omarchyCacheMib")) || 256,
+      decodedCacheEntries: query.get("decodedCacheEntries") ?? "4096",
       // Explicit cold/persistent options are diagnostic capture tools; the launcher's default is
       // an independent in-memory copy of the shipped desktop, including on repeat visits.
       persist: query.get("persist") === "1",

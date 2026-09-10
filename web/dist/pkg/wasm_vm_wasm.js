@@ -444,6 +444,19 @@ export class WasmLinux {
         return ret;
     }
     /**
+     * Inspect the actual host-side keyboard input queue and its bounded-drop counters.
+     * A null result means that this machine was assembled without the virtio-input keyboard.
+     * This is diagnostic-only: it does not drain, resize, or otherwise mutate the device.
+     * @returns {any}
+     */
+    inputDeviceStats() {
+        const ret = wasm.wasmlinux_inputDeviceStats(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * E4-T29: the "JIT actually ran" proof for the browser Linux guest. Returns
      * `{hasExecutor, compiledBlocks, executedBlocks, retiredViaJit}` read straight from the installed
      * executor — `executedBlocks > 0` is the definitive evidence translated code executed (not merely

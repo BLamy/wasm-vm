@@ -148,6 +148,12 @@ export class WasmLinux {
      */
     importStoredSnapshot(blob: Uint8Array): Promise<void>;
     /**
+     * Inspect the actual host-side keyboard input queue and its bounded-drop counters.
+     * A null result means that this machine was assembled without the virtio-input keyboard.
+     * This is diagnostic-only: it does not drain, resize, or otherwise mutate the device.
+     */
+    inputDeviceStats(): any;
+    /**
      * E4-T29: the "JIT actually ran" proof for the browser Linux guest. Returns
      * `{hasExecutor, compiledBlocks, executedBlocks, retiredViaJit}` read straight from the installed
      * executor — `executedBlocks > 0` is the definitive evidence translated code executed (not merely
@@ -684,6 +690,7 @@ export interface InitOutput {
     readonly wasmlinux_guestClockState: (a: number) => [number, number, number];
     readonly wasmlinux_hasUnpersisted: (a: number) => [number, number, number];
     readonly wasmlinux_importStoredSnapshot: (a: number, b: number, c: number) => any;
+    readonly wasmlinux_inputDeviceStats: (a: number) => [number, number, number];
     readonly wasmlinux_jitStats: (a: number) => [number, number, number];
     readonly wasmlinux_keyboardLedState: (a: number) => [number, number, number];
     readonly wasmlinux_loadSnapshotBlob: (a: number, b: number, c: number) => [number, number];

@@ -38,6 +38,7 @@ export const wasmlinux_getProfile: (a: number) => [number, number, number];
 export const wasmlinux_guestClockState: (a: number) => [number, number, number];
 export const wasmlinux_hasUnpersisted: (a: number) => [number, number, number];
 export const wasmlinux_importStoredSnapshot: (a: number, b: number, c: number) => any;
+export const wasmlinux_inputDeviceStats: (a: number) => [number, number, number];
 export const wasmlinux_jitStats: (a: number) => [number, number, number];
 export const wasmlinux_keyboardLedState: (a: number) => [number, number, number];
 export const wasmlinux_loadSnapshotBlob: (a: number, b: number, c: number) => [number, number];

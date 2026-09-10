@@ -1582,3 +1582,15 @@ verify-E5.5-T04a:
 	node tools/fetch-omarchy-snapshot.mjs
 	node --test web/tests/guest-rpc.test.mjs web/tests/e5-t22b-viewport.test.mjs web/tests/omarchy-desktop-readiness.test.mjs web/tests/omarchy-seeded-loader.test.mjs
 	node tools/verify/omarchy-desktop-live.mjs local "$(OMARCHY_EVIDENCE_DIR)" verify
+
+# E5.5-T03c proves visible pixels and host-side viewport fitting only. The separate
+# T04a physical-keyboard acceptance above deliberately keeps its stronger contract.
+OMARCHY_RENDER_URL ?= local
+OMARCHY_RENDER_EVIDENCE_DIR ?= evidence/omarchy-profile/rendering-recovery-acceptance
+.PHONY: verify-E5.5-T03c
+verify-E5.5-T03c:
+	@test -f web/dist/app.html || { echo "Build web/dist first" >&2; exit 1; }
+	npm --prefix web ci --no-audit --no-fund
+	node tools/fetch-omarchy-snapshot.mjs
+	node --test tools/gen-omarchy-manifest.test.mjs tools/verify/omarchy-rendering-recovery.test.mjs web/tests/omarchy-seeded-loader.test.mjs web/tests/omarchy-desktop-readiness.test.mjs web/tests/e5-t22b-viewport.test.mjs web/tests/pointer.test.mjs
+	node tools/verify/omarchy-rendering-recovery.mjs "$(OMARCHY_RENDER_URL)" "$(OMARCHY_RENDER_EVIDENCE_DIR)"

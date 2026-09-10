@@ -1,0 +1,19 @@
+✔ candidate diagnostic binds its actual manifest to an immutable alias (277.208875ms)
+✔ jit residency flag is strict and exposes only existing A/B policies (373.432708ms)
+✔ jit residency is recorded in the served URL and source receipt (0.20025ms)
+✔ decoded cache entries are strict and forwarded through Omarchy query options (368.562208ms)
+✔ jit threshold is strict and forwarded through the existing query control (566.643291ms)
+✔ diagnostic profiler and clock controls remain capability-gated (0.216042ms)
+✔ diagnostic stats expose the read-only keyboard device counters (1.665541ms)
+✔ worker CPU profile operation is bounded, file-safe, and targets linux-worker (140.495792ms)
+✔ diagnostic exec is subshell-wrapped and failures are retained in history (0.291958ms)
+omarchy-rendering-recovery: focused source/syntax checks passed
+✔ tools/verify/omarchy-rendering-recovery.test.mjs (167.4585ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1769.374167

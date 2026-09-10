@@ -114,9 +114,9 @@ async function main() {
       assert.equal(await page.locator("#rm-search").evaluate((el) => document.activeElement === el), false,
         `roadmap search stole focus after ${key}`);
     }
-    assert.equal(await page.locator("#omarchy-desktop-status").textContent(), "desktop · ready · drag to resize");
+    assert.equal(await page.locator("#omarchy-desktop-status").textContent(), "desktop visible · input is slow");
     await dispatch(page, "wvm:guest-output", { text: "late serial after desktop ready\n" });
-    assert.equal(await page.locator("#omarchy-desktop-status").textContent(), "desktop · ready · drag to resize",
+    assert.equal(await page.locator("#omarchy-desktop-status").textContent(), "desktop visible · input is slow",
       "serial output does not change desktop-ready label");
 
     await page.locator("#omarchy-exit").click();
@@ -124,7 +124,7 @@ async function main() {
     await page.locator("#os-launcher").waitFor({ state: "visible" });
     assert.equal(await page.locator("#ide-root").isVisible(), false, "Exit desktop returns to OS selector");
 
-    for (const guest of ["alpine", "busybox"]) {
+    for (const guest of ["alpine", "busybox", "node-alpine"]) {
       await page.goto(normalUrl(guest), { waitUntil: "domcontentloaded" });
       await page.locator("#panel-ide").waitFor();
       assert.equal(await page.locator("html").getAttribute("data-wvm-desktop"), null,

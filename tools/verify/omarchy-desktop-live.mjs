@@ -278,6 +278,20 @@ async function screenshot(name, targetPage = page) {
   report.observations.push({ screenshot: filename, sha256: createHash("sha256").update(await fs.readFile(filename)).digest("hex") });
   console.log(`OMARCHY_SCREENSHOT ${filename}`);
 }
+async function runtimeDiagnostics(targetPage, label) {
+  const state = await targetPage.evaluate(async () => {
+    const controller = window.__linuxCtl;
+    const read = async (method) => typeof controller?.[method] === "function"
+      ? controller[method]() : null;
+    const [inputDevice, jit, scheduler, clock] = await Promise.all([
+      read("inputDeviceStats"), read("jitStats"), read("schedulerStats"), read("guestClockState"),
+    ]);
+    return { inputDevice, jit, scheduler, clock, presentation: window.__presentation?.state?.() ?? null };
+  });
+  report.observations.push({ runtime: { label, timestamp: new Date().toISOString(),
+    context: pageLabels.get(targetPage) || "unknown", ...state } });
+  return state;
+}
 async function observeServiceWorker(targetPage, label) {
   const observation = await targetPage.evaluate(async () => {
     if (!("serviceWorker" in navigator)) return { controllerScriptURL: null, registrationActiveURL: null };
@@ -720,6 +734,8 @@ try {
   const keyboardUrl = page.url();
   await assertCanvasFocus(page, "physical-keyboard-before", keyboardUrl);
   const nonce = randomBytes(8).toString("hex"), guestFile = `/tmp/desktop-keys-${nonce}`;
+  await runtimeDiagnostics(page, "physical-keyboard-before");
+  report.keyboard = { verified: false, nonce, startedAt: new Date().toISOString() };
   for (const character of `printf '${nonce}' > ${guestFile}`) {
     const { code, shift } = physicalStroke(character);
     if (shift) await page.keyboard.down("ShiftLeft");
@@ -729,9 +745,15 @@ try {
   }
   await page.keyboard.press("Enter");
   await assertCanvasFocus(page, "physical-keyboard-after-enter", keyboardUrl);
-  await readGuestFileEventually(page, guestFile, nonce, "physical keyboard",
-    mode === "capture" ? prewarmTimeoutMs : 120000);
-  report.keyboard = { verified: true, nonce };
+  report.keyboard.typedAt = new Date().toISOString();
+  try {
+    await readGuestFileEventually(page, guestFile, nonce, "physical keyboard",
+      mode === "capture" ? prewarmTimeoutMs : 120000);
+    report.keyboard.verified = true;
+    report.keyboard.completedAt = new Date().toISOString();
+  } finally {
+    await runtimeDiagnostics(page, "physical-keyboard-after-readback");
+  }
   await screenshot("desktop-keyboard.png");
   if (mode === "capture") {
     const calendarProof = await proveCalendar(page, "capture-prewarm-calendar", "desktop-prewarm-calendar.png", prewarmTimeoutMs);

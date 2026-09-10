@@ -1,0 +1,18 @@
+✔ CSS/DPR rounding and minimum/maximum clamps are finite, hidden panes do not hotplug (1.076709ms)
+✔ desktopViewportPixelMode keeps a fixed bounded backing and CSS-contain fits each viewport (0.226583ms)
+✔ fixed desktop backing continues CSS resizing without a redundant hotplug or clear (0.747416ms)
+✔ pointer inverse uses the actual centered CSS canvas rect (0.174625ms)
+✔ 50 resizes/5 seconds send one trailing request at exactly 250ms, DPR listener rearms and disposes (1.435917ms)
+✔ in-flight requests serialize latest intent, stale replies and disposed completions cannot restore old state (0.229084ms)
+✔ scalar fallback detects silent DPR changes without CSS or media-query notification (0.184917ms)
+✔ controller replacement ignores old completion, initial binding has no duplicate timer, errors recover (0.254917ms)
+✔ native fit keeps odd resource stride and independently checks every clipped/padded pixel (0.340334ms)
+✔ presentation keeps fixed viewport on pending old frame and later matching frame (1.063125ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 56.16125

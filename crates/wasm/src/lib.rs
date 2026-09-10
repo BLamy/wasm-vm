@@ -3537,6 +3537,38 @@ impl WasmLinux {
         Ok(object.into())
     }
 
+    /// Inspect the actual host-side keyboard input queue and its bounded-drop counters.
+    /// A null result means that this machine was assembled without the virtio-input keyboard.
+    /// This is diagnostic-only: it does not drain, resize, or otherwise mutate the device.
+    #[wasm_bindgen(js_name = inputDeviceStats)]
+    pub fn input_device_stats(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some(state) = inner.machine.keyboard_input() else {
+            return Ok(JsValue::NULL);
+        };
+        let state = state
+            .try_borrow()
+            .map_err(|_| JsError::new("keyboard input stats busy"))?;
+        let object = js_sys::Object::new();
+        let set = |key: &str, value: JsValue| {
+            let _ = js_sys::Reflect::set(&object, &JsValue::from_str(key), &value);
+        };
+        set(
+            "pendingEventBudget",
+            (state.pending_event_budget() as f64).into(),
+        );
+        set("pendingEvents", (state.pending_events() as f64).into());
+        set("pendingFrames", (state.pending_frames() as f64).into());
+        set("droppedFrames", (state.dropped_frames as f64).into());
+        set("droppedEvents", (state.dropped_events as f64).into());
+        set(
+            "statusEventsServed",
+            (state.status_events_served as f64).into(),
+        );
+        set("rejectedEvents", (state.rejected_events as f64).into());
+        Ok(object.into())
+    }
+
     /// Publish the current host keyboard frame by appending `EV_SYN/SYN_REPORT`.
     #[wasm_bindgen(js_name = syncKeyboard)]
     pub fn sync_keyboard(&self) -> Result<(), JsError> {
