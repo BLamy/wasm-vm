@@ -1,0 +1,10 @@
+{"chunk_count":16384,"chunk_size":262144,"ext4_block_size":4096,"ext4_logical_bytes":4294967296,"image_len":4294967296,"image_sha256":"2b4143df63085141f7cf017ed2d11c9808bd38dd30925bc86c4a15b4a64cf83c","manifest_sha256":"5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44","scope":"image/chunk integrity and ext4 superblock bounds only; not sanitization or browser boot","status":"integrity-verified"}
+hashes:
+2b4143df63085141f7cf017ed2d11c9808bd38dd30925bc86c4a15b4a64cf83c  target/omarchy-profile-sdr-r3.ext4
+5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44  target/omarchy-profile-chunks-sdr-r3-256k/manifest.json
+febe0c338c6468d0782691e1e9af1d3ee4afee63d86433fd2939f0be8f905ba2  evidence/omarchy-profile/sdr-build-r3/build-receipt-r3.json
+sizes:
+ 4294967296 target/omarchy-profile-sdr-r3.ext4
+ 1097812 target/omarchy-profile-chunks-sdr-r3-256k/manifest.json
+    4419 evidence/omarchy-profile/sdr-build-r3/build-receipt-r3.json
+ 4296069527 total

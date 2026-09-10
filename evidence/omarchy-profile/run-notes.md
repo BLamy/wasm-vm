@@ -1,5 +1,50 @@
 # Omarchy lean-session worker run — in progress
 
+## 2026-09-10 — physical keys eventually render; SDR candidate isolated
+
+The default built-page diagnostic `input-held-baseline/diagnostic.json` uses
+the real `db34afb6…` RAM/`d9ac25c5…` delta pair and Wasm SHA-256
+`8c80663ea4ad6a6bac8b47627ff011d98d9306af2b802bc4bdc8754851cfe2fc`.
+Command: `node tools/verify/omarchy-input-diagnostic.mjs
+evidence/omarchy-profile/input-held-baseline 64 1 --click-delay-ms 5000`.
+The harness SHA-256 is
+`fd11f05672e240d2285f90ace9ce050d1bba4f9f42082fc6ba69240bb5b73a6b`.
+
+Physical A and B key presses completed at 02:38:04.798Z and 02:42:22.001Z.
+The screenshot at 02:50:36.660Z visibly contains `ab` in the mapped Foot
+terminal. Its filename is `held-input-after-thirteen-minutes.png`, SHA-256
+`fde9836660aafda6d447dd9baca75d9a42c33df75bbaf17bb9558687703a5c7d`.
+The JSON timestamps, not rounded screenshot filenames, are authoritative:
+the earlier file named `held-key-after-five-minutes.png` was actually taken
+three minutes after A. No guest command synthesized these characters.
+Hyprland also reports the real pointer at 300,200, its main US keyboard,
+and Foot accepting input. The diagnostic browser was closed afterward.
+
+This disproves total keyboard loss, but does **not** establish acceptable
+interaction: the earlier 120-second nonce tests still failed. Hyprland's
+main thread waits on a runnable `llvmpipe-0`; its log records delayed libinput
+button dispatch. A separate shell-side event reader fails with permission
+denied, as expected for a non-root serial session outside group `input`;
+Hyprland already holds the input descriptors through the active graphical
+seat. No account groups or permissions were changed.
+
+The SDR image build at `dd39c73c` is separate from all published defaults:
+image SHA-256 `2b4143df63085141f7cf017ed2d11c9808bd38dd30925bc86c4a15b4a64cf83c`,
+manifest SHA-256 `5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44`.
+Its receipt and actual builder output are in `sdr-build-r3/`. The native
+capture uses explicit `OMARCHY_IMAGE=target/omarchy-profile-sdr-r3.ext4`,
+`OMARCHY_CHUNKS=target/omarchy-profile-chunks-sdr-r3-256k`,
+`OMARCHY_SNAPSHOT_DIR=target/omarchy-sdr-r3-snapshot`, and
+`OMARCHY_BOOT_LOG=evidence/omarchy-profile/sdr-build-r3/native-desktop-capture.log`
+with `bash tools/build-omarchy-snapshot.sh`. This entry records an in-progress
+capture, not a completed snapshot, verified desktop, or production release.
+
+Both real-browser diagnostic harnesses now accept explicit candidate pairs
+and chunk manifests without modifying release pins. Their `--check-only`
+commands against the existing release pair and canonical r2-256k chunks pass;
+both pass `node --check`. `gpu-rearm-demo-suite/` independently records the
+built browser's 126 passed, 0 failed ISA suite with zero console errors.
+
 ## 2026-09-10 — screenshot and interaction follow-up (not verified)
 
 The real native RAM/disk pair restores a composed Omarchy bar and Foot window in

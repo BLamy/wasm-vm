@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:60016/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.84",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5.5-T03a\nIN PROGRESS\n✕ Close\nPrepare the clean Omarchy browser desktop session\nEpic\nE5.5 — 5.5\nStatus\nin progress\nEstimate\nS\nDepends on\nE5.5-T02a\nGOAL\n\nTurn the verified package image into a ready-to-use, deliberately lean Omarchy\ndesktop profile. Preserve package-owned Hyprland, Quickshell and Foot; initialize\nonly the selected demo capabilities and retain no personal or legacy VM state.\n\nVERIFICATION LOG — EVIDENCE\n### 2026-09-09 — coordinator — follow-up from real boot\n\nE5.5-T02a removes the systemd memory fault. Its accepted image reaches startup\nservices but rebuilds hardware/linker/catalog caches and waits for `/dev/hvc0`.\nThe QEMU pre-check reaches Hyprland/Quickshell/Foot; full upstream first-run\nprovisioning still assumes omitted developer applications and starts absent\nfcitx5. Those observations define this profile task; they do not establish a\ncomplete browser desktop or waive the remaining production acceptance.\n\n### 2026-09-09 — worker — clean image and incomplete browser evidence\n\nImage tools are frozen at `0fbca4d5976b193449f16324727b933d4329d15a`.\nThe fresh 4 GiB image SHA-256 is\n`47584cba39876ee958ea8fa39d3432488277d230abb2997b5999e54b8defe13e`;\nthe 256 KiB split manifest SHA-256 is\n`ec1bc2601b104cfb6d6875c091377ccfd0654d5b6aab71c6a08ae37263f1c391`.\nBuild commands, receipt, exact image/chunk verification, and the 105-test\nLinux/macOS tool results are recorded in `evidence/omarchy-profile/run-notes.md`\nand its cited files. Daybreak's earlier held image-boundary checks remain\napplicable; this entry does not set a verdict.\n\nThe frozen browser harness at `297b003ca1f1104dd539b9e79e023622b06bb9c1`\nrecords real xterm serial traffic, guest display frames, nonce-fenced commands,\nand a separate physical-keyboard acceptance path. The supported divider-64\nclock and `plymouth.enable=0` kernel argument allow this image to pass the\nearlier UWSM reload deadline and reach Hyprland. Neither package deadlines nor\nintegrity checks were bypassed. `browser-r2-div64-nosplash-r2/report.json`\nrecords the 40-minute attempt: state SHA-256\n`57e90975fa01b7aab64856328b88c2b380efddaba439b91c312b3fc04a62690a`,\n41,518,097,356 retirements, and zero browser/worker errors. It reached the\nnon-root compositor, Quickshell and Foot processes, but timed out before mapped\ndesktop surfaces and physical keyboard acceptance. Its pointer/background\nscreenshot is not sufficient proof. A longer cold run is in progress with\nunchanged runtime/image inputs. Status remains `in-progress`.\nADVERSARIAL VERIFICATION\nInspect before/after accounts and file provenance. Reject any build that ignores\na failed cache command, marks incomplete setup successful, mutates the accepted\nsource image, or enables absent executables. Inspect a fresh session with no\nprevious home, runtime, display cache or writable disk overlay.\nsource: tasks/epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:60016/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:60016/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:60016/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:60016/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:60016/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:60016/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:60016/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:60016/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:60016/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:60016/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:60016/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:60016/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "312d975147d817ad88480dc5a0bb9fa7d331989caccb8f6ebd5c47fe132b6ace"
+}

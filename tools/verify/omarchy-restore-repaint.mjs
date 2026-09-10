@@ -10,11 +10,52 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "../../web/node_modules/playwright/index.mjs";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const out = path.resolve(process.argv[2] || "evidence/omarchy-profile/immediate-repaint");
-const pairDirectory = path.resolve(process.argv[3] || "releases/boot-snapshot");
+const positional = [];
+const options = {};
+for (let i = 2; i < process.argv.length; i += 1) {
+  const arg = process.argv[i];
+  if (!arg.startsWith("--")) { positional.push(arg); continue; }
+  const key = arg.slice(2).replaceAll("-", "");
+  if (key === "checkonly") { options[key] = true; continue; }
+  if (!["pairdirectory", "chunkmanifest", "chunkdir"].includes(key)) throw Error(`unknown repaint option: ${arg}`);
+  const value = process.argv[++i];
+  if (!value || value.startsWith("--")) throw Error(`missing value for ${arg}`);
+  options[key] = value;
+}
+const out = path.resolve(positional[0] || "evidence/omarchy-profile/immediate-repaint");
+const pairDirectory = path.resolve(options.pairdirectory || positional[1] || "releases/boot-snapshot");
+const statFile = async (filename, label) => {
+  const info = await fs.stat(filename).catch(() => null);
+  if (!info?.isFile()) throw Error(`${label} is not a regular file: ${filename}`);
+  return filename;
+};
+const statDir = async (filename, label) => {
+  const info = await fs.stat(filename).catch(() => null);
+  if (!info?.isDirectory()) throw Error(`${label} is not a directory: ${filename}`);
+  return filename;
+};
+await statDir(pairDirectory, "candidate pair directory");
+let chunkManifest = path.resolve(options.chunkmanifest || (options.chunkdir ? path.join(options.chunkdir, "manifest.json") : "target/omarchy-profile-chunks-r2-256k/manifest.json"));
+const chunkManifestInfo = await fs.stat(chunkManifest).catch(() => null);
+if (chunkManifestInfo?.isDirectory()) chunkManifest = path.join(chunkManifest, "manifest.json");
+await statFile(chunkManifest, "candidate chunk manifest");
+const chunkDir = path.resolve(options.chunkdir || path.dirname(chunkManifest));
+await statDir(chunkDir, "candidate chunk directory");
+const nestedChunkDir = path.join(chunkDir, "chunks");
+const chunkFilesDir = (await fs.stat(nestedChunkDir).catch(() => null))?.isDirectory() ? nestedChunkDir : chunkDir;
+const chunkManifestBytes = await fs.readFile(chunkManifest);
+let chunkManifestObject;
+try { chunkManifestObject = JSON.parse(chunkManifestBytes); } catch (error) { throw Error(`invalid candidate chunk manifest: ${error}`); }
+if (!Array.isArray(chunkManifestObject.chunks) || !chunkManifestObject.chunks.length ||
+    !chunkManifestObject.chunks.every((name) => typeof name === "string" && /^[0-9a-f]{64}$/u.test(name))) {
+  throw Error("candidate chunk manifest has no valid content-hash chunks");
+}
+const chunkNames = new Set(await fs.readdir(chunkFilesDir));
+const missingChunk = chunkManifestObject.chunks.find((name) => !chunkNames.has(`${name}.bin`));
+if (missingChunk) throw Error(`candidate chunk is missing: ${path.join(chunkFilesDir, `${missingChunk}.bin`)}`);
 const files = new Map([
   ["/candidate/kernel", path.join(repo, "releases/kernel/6.6.63/Image")],
-  ["/candidate/manifest", path.join(repo, "target/omarchy-profile-chunks-r2-256k/manifest.json")],
+  ["/candidate/manifest", chunkManifest],
   ["/candidate/snapshot", path.join(pairDirectory, "omarchy-ready.snap.gz")],
   ["/candidate/delta", path.join(pairDirectory, "omarchy-overlay-delta.bin.gz")],
 ]);
@@ -25,6 +66,10 @@ for (const [url, filename] of files) {
   inputs[url] = { filename, size: bytes.length, sha256: hash(bytes) };
 }
 inputs.wasm = { sha256: hash(await fs.readFile(path.join(repo, "web/dist/pkg/wasm_vm_wasm_bg.wasm"))) };
+if (options.checkonly) {
+  console.log(JSON.stringify({ result: "candidate-source-check-pass", label: "LOCAL-ONLY candidate immediate repaint diagnostic (real bytes; not a release claim)", inputs }));
+  process.exit(0);
+}
 await fs.mkdir(out, { recursive: false });
 const server = createServer(async (request, response) => {
   const url = new URL(request.url, "http://localhost");
@@ -49,7 +94,12 @@ const server = createServer(async (request, response) => {
 });
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
 const browser = await chromium.launch({ executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", headless: true });
-const report = { inputs, startedAt: new Date().toISOString(), errors: [] };
+const report = {
+  label: "LOCAL-ONLY candidate immediate repaint diagnostic (real bytes; not a release claim)",
+  source: { pairDirectory, chunkManifest, chunkDir: chunkFilesDir },
+  inputs: { ...inputs, chunkManifest: { filename: chunkManifest, size: chunkManifestBytes.length, sha256: hash(chunkManifestBytes) } },
+  startedAt: new Date().toISOString(), errors: [],
+};
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 }, serviceWorkers: "block" });
   page.on("pageerror", (error) => report.errors.push(String(error)));
