@@ -63,7 +63,15 @@ def configure(root):
     write("etc/sddm.conf.d/10-omarchy-demo.conf", "[Autologin]\nUser=omarchy\nSession=hyprland-uwsm.desktop\nRelogin=false\n\n[General]\nDisplayServer=wayland\n\n[Wayland]\nCompositorCommand=Hyprland\n")
     write("etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf", "[Service]\nExecStart=\nExecStart=-/usr/bin/agetty --autologin omarchy --noclear --keep-baud 115200,38400,9600 - $TERM\n")
     write("home/omarchy/.config/hypr/monitors.lua", 'hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 })\nhl.env("GDK_SCALE", "1")\n')
-    write("home/omarchy/.config/hypr/looknfeel.lua", "-- Browser software-rendering profile.\nhl.config({ animations = { enabled = false }, decoration = { blur = { enabled = false }, shadow = { enabled = false } } })\n")
+    write("home/omarchy/.config/hypr/looknfeel.lua", """-- Browser software-rendering profile.
+-- The demo is SDR-only: disable Hyprland's color-management pipeline so
+-- llvmpipe does not run an unnecessary per-pixel transfer-function pass.
+hl.config({
+  animations = { enabled = false },
+  decoration = { blur = { enabled = false }, shadow = { enabled = false } },
+  render = { cm_enabled = false },
+})
+""")
     write("home/omarchy/.config/xdg-terminals.list", "foot.desktop\n")
     write("home/omarchy/.config/uwsm/env", "export OMARCHY_PATH=/usr/share/omarchy\nexport LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe LP_NUM_THREADS=1 AQ_NO_MODIFIERS=1 QT_QUICK_BACKEND=software\n")
     # Omarchy's bootstrap searches ~/.config before package defaults. Replace

@@ -12,7 +12,7 @@ KERNEL="${KERNEL:-releases/kernel/6.6.63/Image}"
 IMAGE="${OMARCHY_IMAGE:-target/omarchy-profile-r2.ext4}"
 CHUNKS="${OMARCHY_CHUNKS:-target/omarchy-profile-chunks-r2-256k}"
 MANIFEST="$CHUNKS/manifest.json"
-OUT_DIR="releases/boot-snapshot"
+OUT_DIR="${OMARCHY_SNAPSHOT_DIR:-releases/boot-snapshot}"
 RAM_GZ="$OUT_DIR/omarchy-ready.snap.gz"
 DELTA_GZ="$OUT_DIR/omarchy-overlay-delta.bin.gz"
 MAX_INSTRS="${MAX_INSTRS:-150000000000}"
@@ -129,4 +129,8 @@ gzip -9 -c "$RAW_SNAP" > "$RAM_GZ"
 gzip -9 -c "$RAW_DELTA" > "$DELTA_GZ"
 echo "[omarchy-snapshot] RAM raw=$(wc -c <"$RAW_SNAP")B gz=$(wc -c <"$RAM_GZ")B sha256=$(shasum -a256 "$RAM_GZ" | awk '{print $1}')"
 echo "[omarchy-snapshot] delta raw=$(wc -c <"$RAW_DELTA")B gz=$(wc -c <"$DELTA_GZ")B sha256=$(shasum -a256 "$DELTA_GZ" | awk '{print $1}')"
-bash tools/gen-omarchy-manifest.sh
+if [ "$OUT_DIR" = "releases/boot-snapshot" ]; then
+  bash tools/gen-omarchy-manifest.sh
+else
+  echo "[omarchy-snapshot] candidate kept in $OUT_DIR; release manifest unchanged"
+fi

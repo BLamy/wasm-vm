@@ -108,6 +108,15 @@ class ConfigureOmarchyDemoTests(unittest.TestCase):
         self.assertIn("--autologin omarchy", (self.root / "etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf").read_text())
         self.assertEqual(tree_snapshot(source), before)
 
+    def test_browser_looknfeel_disables_color_management_and_effects(self) -> None:
+        configure_omarchy_demo.configure(self.root)
+
+        profile = (self.root / "home/omarchy/.config/hypr/looknfeel.lua").read_text()
+        self.assertIn("animations = { enabled = false }", profile)
+        self.assertIn("blur = { enabled = false }", profile)
+        self.assertIn("shadow = { enabled = false }", profile)
+        self.assertIn("render = { cm_enabled = false }", profile)
+
     def test_source_tree_is_immutable_after_configuration(self) -> None:
         source = self.root / "usr/share/omarchy/config"
         before = tree_snapshot(source)
