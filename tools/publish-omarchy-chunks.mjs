@@ -17,12 +17,17 @@ export const DEFAULT_PUBLIC_BASE = "https://pub-c7188e40d3a0463183db72f9dd03cae2
 export const DEFAULT_BUCKET = "wasm-vm";
 export const CHUNK_SIZE = 256 * 1024;
 export const CONCURRENCY = 4;
+export const PUBLIC_CONCURRENCY = 16;
 export const PUBLIC_TIMEOUT_MS = 20_000;
+export const PUBLIC_RETRY_BACKOFF_MS = [500, 1_000];
+export const PUBLIC_MAX_ATTEMPTS = 3;
 export const UPLOAD_TIMEOUT_MS = 5 * 60_000;
 export const CHUNK_PREFIX = "chunked-omarchy/chunks/";
 export const MANIFEST_PREFIX = "chunked-omarchy/manifest-";
 const SHA256 = /^[0-9a-f]{64}$/u;
 const execFile = promisify(execFileCallback);
+
+class NonRetryablePublicError extends Error {}
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -181,32 +186,64 @@ async function disposeResponseBody(response) {
   }
 }
 
-async function readResponseDigest(response, limit) {
-  if (!response.body || typeof response.body.getReader !== "function") fail("public GET response has no streaming body");
+async function disposeResponseBodyBounded(response, timeoutMs) {
+  let timer;
+  try {
+    await Promise.race([
+      disposeResponseBody(response),
+      new Promise((resolve) => { timer = setTimeout(resolve, timeoutMs); }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function readResponseDigest(response, limit, signal = null, timeoutError = null) {
+  if (!response.body || typeof response.body.getReader !== "function") {
+    throw new NonRetryablePublicError("public GET response has no streaming body");
+  }
   const reader = response.body.getReader();
   const hash = createHash("sha256");
   let size = 0;
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    const length = value?.byteLength ?? 0;
-    size += length;
-    if (size > limit) {
-      await reader.cancel().catch(() => {});
-      return { size, sha256: null, tooLarge: true };
-    }
-    hash.update(value);
+  let aborted;
+  let onAbort;
+  if (signal) {
+    aborted = new Promise((_, reject) => {
+      onAbort = () => {
+        void Promise.resolve(reader.cancel?.()).catch(() => {});
+        reject(timeoutError || new Error("public GET aborted"));
+      };
+      if (signal.aborted) onAbort();
+      else signal.addEventListener("abort", onAbort, { once: true });
+    });
   }
-  return { size, sha256: hash.digest("hex"), tooLarge: false };
+  try {
+    while (true) {
+      const read = reader.read();
+      const { done, value } = aborted ? await Promise.race([read, aborted]) : await read;
+      if (done) break;
+      const length = value?.byteLength ?? 0;
+      size += length;
+      if (size > limit) {
+        await reader.cancel().catch(() => {});
+        return { size, sha256: null, tooLarge: true };
+      }
+      hash.update(value);
+    }
+    return { size, sha256: hash.digest("hex"), tooLarge: false };
+  } finally {
+    if (signal && onAbort) signal.removeEventListener("abort", onAbort);
+  }
 }
 
-export async function checkPublicObject({ fetchImpl, publicBase, key, expectedSize, expectedSha, timeoutMs = PUBLIC_TIMEOUT_MS }) {
+async function checkPublicObjectAttempt({ fetchImpl, publicBase, key, expectedSize, expectedSha, timeoutMs }) {
   const controller = new AbortController();
   let timer;
+  const timeoutError = new Error(`public GET timed out for ${key}`);
   const timeout = new Promise((_, reject) => {
     timer = setTimeout(() => {
       controller.abort();
-      reject(new Error(`public GET timed out for ${key}`));
+      reject(timeoutError);
     }, timeoutMs);
   });
   try {
@@ -216,20 +253,52 @@ export async function checkPublicObject({ fetchImpl, publicBase, key, expectedSi
     ]);
     if (response.status === 404) {
       controller.abort();
-      await Promise.race([disposeResponseBody(response), timeout]);
+      await disposeResponseBodyBounded(response, timeoutMs);
       return { state: "missing", status: 404 };
     }
     if (response.status !== 200) {
       controller.abort();
-      await Promise.race([disposeResponseBody(response), timeout]);
-      return { state: "error", status: response.status };
+      await disposeResponseBodyBounded(response, timeoutMs);
+      return { state: "error", status: response.status, retryable: response.status === 429 || (response.status >= 500 && response.status <= 599) };
     }
-    const digest = await Promise.race([readResponseDigest(response, expectedSize), timeout]);
+    const digestPromise = readResponseDigest(response, expectedSize, controller.signal, timeoutError);
+    digestPromise.catch(() => {});
+    const digest = await Promise.race([digestPromise, timeout]);
     const exact = !digest.tooLarge && digest.size === expectedSize && digest.sha256 === expectedSha;
     return { state: exact ? "exact" : "mismatch", status: 200, size: digest.size, sha256: digest.sha256 };
   } finally {
     clearTimeout(timer);
   }
+}
+
+const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+export async function checkPublicObject({
+  fetchImpl,
+  publicBase,
+  key,
+  expectedSize,
+  expectedSha,
+  timeoutMs = PUBLIC_TIMEOUT_MS,
+  retryDelaysMs = PUBLIC_RETRY_BACKOFF_MS,
+  maxAttempts = PUBLIC_MAX_ATTEMPTS,
+}) {
+  let lastError;
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    try {
+      const result = await checkPublicObjectAttempt({ fetchImpl, publicBase, key, expectedSize, expectedSha, timeoutMs });
+      if (!result.retryable || attempt + 1 >= maxAttempts) {
+        const { retryable: _retryable, ...publicResult } = result;
+        return publicResult;
+      }
+    } catch (error) {
+      lastError = error;
+      if (error instanceof NonRetryablePublicError) throw error;
+      if (attempt + 1 >= maxAttempts) throw error;
+    }
+    await sleep(retryDelaysMs[attempt] ?? retryDelaysMs.at(-1) ?? 0);
+  }
+  throw lastError || new Error(`public GET failed for ${key}`);
 }
 
 function runWranglerUpload({ bucket, key, sourcePath, timeoutMs = UPLOAD_TIMEOUT_MS, spawnImpl = spawn }) {
@@ -319,8 +388,17 @@ async function stageManifest(validated) {
   }
 }
 
-async function ensureUploaded({ object, bucket, publicBase, fetchImpl, uploader, timeoutMs }) {
-  const before = await checkPublicObject({ fetchImpl, publicBase, key: object.key, expectedSize: object.size, expectedSha: object.hash, timeoutMs });
+async function ensureUploaded({ object, bucket, publicBase, fetchImpl, uploader, timeoutMs, retryDelaysMs, maxAttempts }) {
+  const before = await checkPublicObject({
+    fetchImpl,
+    publicBase,
+    key: object.key,
+    expectedSize: object.size,
+    expectedSha: object.hash,
+    timeoutMs,
+    retryDelaysMs,
+    maxAttempts,
+  });
   if (before.state === "error") fail(`public GET failed for ${object.key}: HTTP ${before.status}`);
   if (before.state === "exact") return { state: "existing", status: before.status };
   if (before.state === "mismatch") fail(`public object exists with mismatched bytes; refusing to overwrite ${object.key}`);
@@ -328,7 +406,16 @@ async function ensureUploaded({ object, bucket, publicBase, fetchImpl, uploader,
   const stage = await stageChunk(object);
   try {
     await uploader({ bucket, key: object.key, sourcePath: stage.path });
-    const after = await checkPublicObject({ fetchImpl, publicBase, key: object.key, expectedSize: object.size, expectedSha: object.hash, timeoutMs });
+    const after = await checkPublicObject({
+      fetchImpl,
+      publicBase,
+      key: object.key,
+      expectedSize: object.size,
+      expectedSha: object.hash,
+      timeoutMs,
+      retryDelaysMs,
+      maxAttempts,
+    });
     if (after.state !== "exact") fail(`post-upload public verification failed for ${object.key}: ${after.state} HTTP ${after.status}`);
     return { state: "uploaded", status: after.status };
   } finally {
@@ -336,17 +423,24 @@ async function ensureUploaded({ object, bucket, publicBase, fetchImpl, uploader,
   }
 }
 
-async function mapLimit(items, limit, worker) {
+export async function mapLimit(items, limit, worker) {
   const results = new Array(items.length);
   let next = 0;
+  let fatalError = null;
   async function consume() {
-    while (true) {
+    while (fatalError === null) {
       const index = next++;
       if (index >= items.length) return;
-      results[index] = await worker(items[index], index);
+      try {
+        results[index] = await worker(items[index], index);
+      } catch (error) {
+        if (fatalError === null) fatalError = error;
+        return;
+      }
     }
   }
   await Promise.all(Array.from({ length: Math.min(limit, items.length) }, consume));
+  if (fatalError) throw fatalError;
   return results;
 }
 
@@ -362,6 +456,8 @@ export async function publishChunks({
   fetchImpl = globalThis.fetch,
   uploader = runWranglerUpload,
   publicTimeoutMs = PUBLIC_TIMEOUT_MS,
+  publicRetryDelaysMs = PUBLIC_RETRY_BACKOFF_MS,
+  publicMaxAttempts = PUBLIC_MAX_ATTEMPTS,
   validatedManifest = null,
   provenance = null,
   onProgress = () => {},
@@ -397,7 +493,7 @@ export async function publishChunks({
 
   // Preflight every public object before the first write. A concurrent 403/5xx must not allow a
   // different 404 object to upload and leave a partially published set behind.
-  const preflight = await mapLimit(validated.objects, CONCURRENCY, async (object, index) => {
+  const preflight = await mapLimit(validated.objects, PUBLIC_CONCURRENCY, async (object, index) => {
     const check = await checkPublicObject({
       fetchImpl,
       publicBase,
@@ -405,6 +501,8 @@ export async function publishChunks({
       expectedSize: object.size,
       expectedSha: object.hash,
       timeoutMs: publicTimeoutMs,
+      retryDelaysMs: publicRetryDelaysMs,
+      maxAttempts: publicMaxAttempts,
     });
     if (check.state === "error") fail(`public GET failed for ${object.key}: HTTP ${check.status}`);
     onProgress({ phase: "preflight", processed: index + 1, total: validated.objects.length, state: check.state });
@@ -427,7 +525,16 @@ export async function publishChunks({
     pending,
     CONCURRENCY,
     async ({ object }) => {
-      const outcome = await ensureUploaded({ object, bucket, publicBase, fetchImpl, uploader, timeoutMs: publicTimeoutMs });
+      const outcome = await ensureUploaded({
+        object,
+        bucket,
+        publicBase,
+        fetchImpl,
+        uploader,
+        timeoutMs: publicTimeoutMs,
+        retryDelaysMs: publicRetryDelaysMs,
+        maxAttempts: publicMaxAttempts,
+      });
       processed += 1;
       if (outcome.state === "uploaded") result.uploaded += 1;
       else if (outcome.state === "existing") result.racedExisting += 1;
@@ -446,6 +553,8 @@ export async function publishChunks({
     expectedSize: finalBytes.length,
     expectedSha: validated.rawSha,
     timeoutMs: publicTimeoutMs,
+    retryDelaysMs: publicRetryDelaysMs,
+    maxAttempts: publicMaxAttempts,
   });
   if (final.state === "error") fail(`public GET failed for immutable manifest ${finalKey}: HTTP ${final.status}`);
   if (final.state === "mismatch") fail(`immutable manifest already exists with different bytes: ${finalKey}`);
@@ -462,6 +571,8 @@ export async function publishChunks({
         expectedSize: finalBytes.length,
         expectedSha: validated.rawSha,
         timeoutMs: publicTimeoutMs,
+        retryDelaysMs: publicRetryDelaysMs,
+        maxAttempts: publicMaxAttempts,
       });
       if (verified.state !== "exact") fail(`post-upload immutable manifest verification failed: ${finalKey}`);
       result.finalManifest = "uploaded-verified";

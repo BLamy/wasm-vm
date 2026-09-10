@@ -10,6 +10,7 @@ import {
   CHUNK_PREFIX,
   CHUNK_SIZE,
   checkPublicObject,
+  mapLimit,
   publishChunks,
   validateLocalManifest,
 } from "./publish-omarchy-chunks.mjs";
@@ -205,6 +206,7 @@ test("headers-then-stalled-body is bounded by the streaming GET timeout", async 
       fetchImpl: async (url) => keyFromUrl(url) === stalledKey
         ? streamingResponse(Buffer.alloc(0), { stall: true })
         : missingResponse(),
+      publicRetryDelaysMs: [0, 0],
       uploader: async () => { throw new Error("must not upload after stalled preflight"); },
     }),
     /public GET timed out/u,
@@ -225,6 +227,77 @@ test("streaming verification hashes split body chunks without retaining the resp
   assert.equal(result.size, bytes.length);
 });
 
+test("transient public GET failures retry and recover", async () => {
+  const bytes = Buffer.from("retry-success");
+  let calls = 0;
+  const result = await checkPublicObject({
+    fetchImpl: async () => {
+      calls += 1;
+      if (calls === 1) return streamingResponse(Buffer.from("busy"), { status: 503 });
+      if (calls === 2) throw new Error("temporary socket failure");
+      return streamingResponse(bytes);
+    },
+    publicBase: "http://publisher.test",
+    key: "chunked-omarchy/chunks/retry.bin",
+    expectedSize: bytes.length,
+    expectedSha: sha256(bytes),
+    retryDelaysMs: [0, 0],
+  });
+  assert.equal(calls, 3);
+  assert.equal(result.state, "exact");
+});
+
+test("mismatches and fatal statuses never retry", async () => {
+  let mismatchCalls = 0;
+  const mismatch = await checkPublicObject({
+    fetchImpl: async () => {
+      mismatchCalls += 1;
+      return streamingResponse(Buffer.from("wrong"));
+    },
+    publicBase: "http://publisher.test",
+    key: "chunked-omarchy/chunks/mismatch.bin",
+    expectedSize: 5,
+    expectedSha: sha256(Buffer.from("right")),
+    retryDelaysMs: [0, 0],
+  });
+  assert.equal(mismatch.state, "mismatch");
+  assert.equal(mismatchCalls, 1);
+
+  let forbiddenCalls = 0;
+  const forbidden = await checkPublicObject({
+    fetchImpl: async () => {
+      forbiddenCalls += 1;
+      return { status: 403 };
+    },
+    publicBase: "http://publisher.test",
+    key: "chunked-omarchy/chunks/forbidden.bin",
+    expectedSize: 0,
+    expectedSha: sha256(Buffer.alloc(0)),
+    retryDelaysMs: [0, 0],
+  });
+  assert.deepEqual(forbidden, { state: "error", status: 403 });
+  assert.equal(forbiddenCalls, 1);
+});
+
+test("mapLimit stops assigning work after the first fatal worker and drains in-flight work", async () => {
+  const assigned = [];
+  const settled = [];
+  await assert.rejects(
+    mapLimit([0, 1, 2, 3, 4, 5], 3, async (item) => {
+      assigned.push(item);
+      if (item === 0) {
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        throw new Error("fatal preflight");
+      }
+      await new Promise((resolve) => setTimeout(resolve, 15));
+      settled.push(item);
+    }),
+    /fatal preflight/u,
+  );
+  assert.deepEqual(assigned.sort((a, b) => a - b), [0, 1, 2]);
+  assert.deepEqual(settled.sort((a, b) => a - b), [1, 2]);
+});
+
 test("streaming verification cancels and rejects an oversized body at the cap", async () => {
   const response = streamingResponse(Buffer.from("too-large"));
   const result = await checkPublicObject({
@@ -233,6 +306,7 @@ test("streaming verification cancels and rejects an oversized body at the cap", 
     key: "chunked-omarchy/chunks/example.bin",
     expectedSize: 3,
     expectedSha: sha256(Buffer.from("abc")),
+    retryDelaysMs: [0, 0],
   });
   assert.equal(result.state, "mismatch");
   assert.equal(result.size, 4);
@@ -248,6 +322,7 @@ test("404 and non-200 responses cancel their bodies before returning", async () 
       key: `chunked-omarchy/status-${status}.bin`,
       expectedSize: 4,
       expectedSha: sha256(Buffer.from("body")),
+      retryDelaysMs: [0, 0],
     });
     assert.equal(result.state, status === 404 ? "missing" : "error");
     assert.equal(response.body.cancelled, true, `status ${status} body was not cancelled`);
@@ -256,20 +331,18 @@ test("404 and non-200 responses cancel their bodies before returning", async () 
 
 test("stalled status-body disposal is bounded by the request timeout", async () => {
   const started = Date.now();
-  await assert.rejects(
-    checkPublicObject({
-      fetchImpl: async () => ({
-        status: 404,
-        body: { getReader: () => ({ cancel: () => new Promise(() => {}) }) },
-      }),
-      publicBase: "http://publisher.test",
-      key: "chunked-omarchy/stalled-status.bin",
-      expectedSize: 0,
-      expectedSha: sha256(Buffer.alloc(0)),
-      timeoutMs: 25,
+  const result = await checkPublicObject({
+    fetchImpl: async () => ({
+      status: 404,
+      body: { getReader: () => ({ cancel: () => new Promise(() => {}) }) },
     }),
-    /public GET timed out/u,
-  );
+    publicBase: "http://publisher.test",
+    key: "chunked-omarchy/stalled-status.bin",
+    expectedSize: 0,
+    expectedSha: sha256(Buffer.alloc(0)),
+    timeoutMs: 25,
+  });
+  assert.deepEqual(result, { state: "missing", status: 404 });
   assert.ok(Date.now() - started < 1_000, "stalled status-body disposal exceeded the bounded timeout");
 });
 
