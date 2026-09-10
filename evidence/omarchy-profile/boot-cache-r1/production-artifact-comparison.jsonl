@@ -1,0 +1,4 @@
+{"name":"artifacts.json","status":200,"unchanged":true,"remoteSha256":"c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404"}
+{"name":"artifacts-alpine.json","status":200,"unchanged":true,"remoteSha256":"a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"}
+{"name":"artifacts-node-alpine.json","status":200,"unchanged":true,"remoteSha256":"ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"}
+{"name":"artifacts-omarchy.json","status":200,"unchanged":true,"remoteSha256":"f9167b5f37964ffc614e3c5dc4bce99f2bf8a804a226fb02181c6a42761203e0"}

@@ -1,0 +1,21 @@
+[codex/omarchy-desktop-profile af206380] fix(omarchy): cache verified boot artifacts and show restore phases
+ Committer: Brett Lamy <blamy@Bretts-MacBook-Pro.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly:
+
+    git config --global user.name "Your Name"
+    git config --global user.email you@example.com
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 18 files changed, 1620 insertions(+), 75 deletions(-)
+ create mode 100644 tools/verify/omarchy-boot-cache.mjs
+ create mode 100644 web/boot-asset-cache.js
+ create mode 100644 web/dist/boot-asset-cache.js
+ create mode 100644 web/dist/omarchy-startup-state.js
+ create mode 100644 web/omarchy-startup-state.js
+ create mode 100644 web/tests/boot-asset-cache.test.mjs
+ create mode 100644 web/tests/omarchy-startup-state.test.mjs
