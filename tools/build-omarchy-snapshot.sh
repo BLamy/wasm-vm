@@ -16,6 +16,8 @@ OUT_DIR="${OMARCHY_SNAPSHOT_DIR:-releases/boot-snapshot}"
 RAM_GZ="$OUT_DIR/omarchy-ready.snap.gz"
 DELTA_GZ="$OUT_DIR/omarchy-overlay-delta.bin.gz"
 MAX_INSTRS="${MAX_INSTRS:-150000000000}"
+KEEP_WORK="${OMARCHY_KEEP_WORK:-0}"
+case "$KEEP_WORK" in 0|1) ;; *) echo "OMARCHY_KEEP_WORK must be 0 or 1" >&2; exit 1 ;; esac
 
 for f in "$BIN" "$KERNEL" "$IMAGE" "$MANIFEST"; do
   [ -f "$f" ] || { echo "build-omarchy-snapshot: missing $f" >&2; exit 1; }
@@ -47,7 +49,11 @@ RAW_DELTA="$WORK_DIR/omarchy-overlay-delta.bin"
 BOOTLOG="${OMARCHY_BOOT_LOG:-evidence/omarchy-profile/native-desktop-capture.log}"
 mkdir -p "$(dirname "$BOOTLOG")"
 cleanup() {
-  rm -rf "$WORK_DIR"
+  if [ "$KEEP_WORK" = "1" ]; then
+    echo "[omarchy-snapshot] diagnostic working image preserved in $WORK_DIR"
+  else
+    rm -rf "$WORK_DIR"
+  fi
 }
 trap cleanup EXIT
 

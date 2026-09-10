@@ -8,6 +8,8 @@ import { hasOmarchyDesktopLayers } from "../../web/omarchy-desktop-readiness.js"
 
 const [binary, ...args] = process.argv.slice(2);
 assert.ok(binary && args.length, "usage: omarchy-native-capture.mjs BINARY boot ARGS...");
+const expectedRenderer = process.env.OMARCHY_EXPECT_RENDERER;
+if (expectedRenderer) assert.match(expectedRenderer, /^(softpipe|llvmpipe)$/u);
 const child = spawn(binary, args, { stdio: ["pipe", "pipe", "inherit"] });
 let serial = "", exited = false;
 const observers = new Set();
@@ -55,7 +57,7 @@ try {
   while (Date.now() < deadline) {
     const instances = parseInstances(await probe("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances"));
     assert.ok(instances.length <= 1, "warm desktop requires one Hyprland instance");
-    const instance = instances.find((v) => /^[A-Za-z0-9_.-]+$/u.test(v.instance || "") && v.pid > 0);
+    const instance = instances.find((v) => /^[A-Za-z0-9_.-]+$/u.test(v.instance || "") && Number.isSafeInteger(v.pid) && v.pid > 0);
     if (instance) {
       const ctl = `XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i ${instance.instance}`;
       const clients = await probe(`${ctl} -j clients`);
@@ -65,6 +67,18 @@ try {
         const observed = desktopObservation(JSON.parse(clients.output), JSON.parse(layers.output), processes.output);
         console.log(`\nOMARCHY_DESKTOP_OBSERVATION ${JSON.stringify(observed)}`);
         if (observed.mappedFoot && observed.quickshellObserved && hasOmarchyDesktopLayers(JSON.parse(layers.output))) {
+          if (expectedRenderer) {
+            const environment = await probe(`tr '\\000' '\\n' < /proc/${instance.pid}/environ | sed -n '/GALLIUM_DRIVER/p;/LIBGL_ALWAYS_SOFTWARE/p;/LP_NUM_THREADS/p'`);
+            const threads = await probe(`ps -T -p ${instance.pid} -o comm=`);
+            const log = await probe(`sed -n '/GL_RENDERER/p;/GL_VENDOR/p;/GL_VERSION/p;/OpenGL renderer/p' /run/user/1000/hypr/${instance.instance}/hyprland.log`);
+            console.log(`\nOMARCHY_RENDERER_OBSERVATION ${JSON.stringify({ expectedRenderer, instance, environment, threads, log })}`);
+            assert.equal(environment.status, 0);
+            assert.ok(environment.output.split("\n").includes(`GALLIUM_DRIVER=${expectedRenderer}`));
+            assert.equal(threads.status, 0);
+            if (expectedRenderer === "softpipe") assert.doesNotMatch(threads.output, /llvmpipe/u);
+            // Preserve the actual GL log for independent driver validation. An absent
+            // log is not replaced by a claim based solely on requested environment.
+          }
           // Concatenated arguments ensure the trigger cannot appear in the echoed input command.
           // sync runs before the marker, pairing the mmap disk with the RAM page cache.
           child.stdin.write("sync && printf '\\n%s%s\\n' 'WVM_OMARCHY_DESKTOP_' 'READY'\r");
