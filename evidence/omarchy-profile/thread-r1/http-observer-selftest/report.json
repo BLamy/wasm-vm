@@ -1,0 +1,53 @@
+{
+  "url": "http://127.0.0.1:54591/app.html?guest=omarchy&desktop=1#ide",
+  "mode": "verify",
+  "startedAt": "2026-09-10T15:23:17.684Z",
+  "errors": [],
+  "observations": [],
+  "resourceIdentities": [
+    {
+      "pathname": "/app.html",
+      "method": "GET",
+      "status": 200,
+      "size": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "repoPath": "web/dist/app.html",
+      "timestamp": "2026-09-10T15:23:17.693Z"
+    },
+    {
+      "pathname": "/pkg/wasm_vm_wasm_bg.wasm",
+      "method": "GET",
+      "status": 200,
+      "size": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305",
+      "repoPath": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "timestamp": "2026-09-10T15:23:17.700Z"
+    },
+    {
+      "pathname": "/releases/kernel/6.6.63/Image",
+      "method": "GET",
+      "status": 200,
+      "size": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "repoPath": "releases/kernel/6.6.63/Image",
+      "timestamp": "2026-09-10T15:23:17.717Z"
+    }
+  ],
+  "browserRequests": [],
+  "serialCommands": [],
+  "inputEvents": [],
+  "workerTraffic": [],
+  "httpSelfTest": {
+    "app": true,
+    "wasmMime": "application/wasm",
+    "kernel": {
+      "size": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "traversalStatus": 403,
+    "coop": "same-origin",
+    "coep": "require-corp"
+  },
+  "result": "http-selftest-passed",
+  "finishedAt": "2026-09-10T15:23:17.749Z"
+}

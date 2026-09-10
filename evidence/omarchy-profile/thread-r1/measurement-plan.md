@@ -50,6 +50,18 @@ The commit containing this plan freezes the modified native/built harness and
 its thread-setting helper. The capture's accompanying launch record names the
 full commit and executable hashes before starting the process.
 
+Native capture launched at `2026-09-10T15:14:20Z` from
+`0d3e609629e45021357b0e07f09ab70f9765edf8`; its helper, dependencies and native
+executable remain unchanged during execution. Before any built restore, the
+browser-only recording additions were frozen at
+`91a45c236b07974a9d7c87a0f8fa66f37e6f7e15`. They record all locally served
+resource bytes, browser requests, physical DOM keys, unmodified worker serial
+traffic (including quiet RPC output), and input acknowledgements. The browser
+nonce's lookup filename now uses an independent same-length random identifier;
+the nonce content never enters serial input. Exact start/deadline/failure times
+come from the existing 120-second readback window. This is instrumentation,
+not a changed guest, renderer, input timeout, or production build.
+
 ```sh
 OMARCHY_IMAGE=target/omarchy-thread-r1/omarchy-profile-lp0.ext4 \
 OMARCHY_CHUNKS=target/omarchy-thread-r1/chunked \
