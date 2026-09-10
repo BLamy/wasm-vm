@@ -4,7 +4,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { parseHyprlandRendererLog } from "./omarchy-renderer-log.mjs";
+import { observeHyprlandRenderer, parseHyprlandRendererLog } from "./omarchy-renderer-log.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const source = await fs.readFile(path.join(here, "omarchy-desktop-live.mjs"), "utf8");
@@ -55,7 +55,7 @@ test("renderer proof binds current Hyprland PID and instance before physical inp
   assert.ok(source.includes("/proc/${pid}/environ"));
   assert.ok(source.includes("ps -T -p ${pid} -o comm="));
   assert.ok(source.includes("DEBUG ]: Renderer:"));
-  assert.ok(source.includes("parseHyprlandRendererLog(log.stdout, expectedRenderer)"));
+  assert.ok(source.includes("observeHyprlandRenderer({ log: log.stdout, threads: threads.stdout, expectedRenderer })"));
   assert.ok(source.includes("llvmpipe worker present for softpipe"));
   assert.ok(source.indexOf("proveHyprlandRenderer(page, \"initial desktop\")")
     < source.indexOf("physical-keyboard-before"));
@@ -96,4 +96,27 @@ test("nonce readback caps every guest RPC by the remaining 120-second deadline",
   assert.ok(source.includes("Math.min(300000, remaining)"));
   assert.ok(source.includes("nonce readback completed after deadline"));
   assert.ok(source.includes("Math.min(1000, Math.max(1, deadline - Date.now()))"));
+});
+
+test("unlogged baseline worker evidence is explicitly weaker than a GL label", () => {
+  assert.deepEqual(observeHyprlandRenderer({
+    log: "\n", threads: "Hyprland\nllvmpipe-0\n", expectedRenderer: "llvmpipe",
+  }), {
+    kind: "llvmpipe-worker-observed", glLabelAvailable: false,
+    note: "GL label unavailable; current compositor PID has a named llvmpipe worker",
+  });
+  for (const threads of ["Hyprland\n", "not-llvmpipe-0\n", "llvmpipe-0-extra\n"]) {
+    assert.throws(() => observeHyprlandRenderer({ log: "", threads, expectedRenderer: "llvmpipe" }));
+  }
+  assert.throws(() => observeHyprlandRenderer({
+    log: "", threads: "Hyprland\nllvmpipe-0\n", expectedRenderer: "softpipe",
+  }));
+  assert.throws(() => observeHyprlandRenderer({
+    log: "DEBUG ]: Renderer: zink (llvmpipe)\nDEBUG ]: Vendor: Mesa",
+    threads: "llvmpipe-0\n", expectedRenderer: "llvmpipe",
+  }));
+  assert.equal(observeHyprlandRenderer({
+    log: "DEBUG ]: Renderer: softpipe\nDEBUG ]: Vendor: Mesa/X.org",
+    threads: "Hyprland\n", expectedRenderer: "softpipe",
+  }).kind, "gl-renderer-label-observed");
 });

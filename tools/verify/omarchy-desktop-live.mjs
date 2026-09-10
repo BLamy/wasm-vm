@@ -11,7 +11,7 @@ import { createWriteStream } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { chromium } from "../../web/node_modules/playwright/index.mjs";
 import { physicalStroke } from "./omarchy-browser-session.mjs";
-import { parseHyprlandRendererLog } from "./omarchy-renderer-log.mjs";
+import { observeHyprlandRenderer } from "./omarchy-renderer-log.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -564,7 +564,7 @@ async function proveHyprlandRenderer(targetPage, label) {
     `sed -n '/DEBUG ]: Renderer:/p;/DEBUG ]: Vendor:/p' /run/user/1000/hypr/${instance.instance}/hyprland.log`,
     targetPage, `${label}:log`);
   assert.equal(log.exit, 0, `${label}: Hyprland renderer log probe failed`);
-  const parsedLog = parseHyprlandRendererLog(log.stdout, expectedRenderer);
+  const parsedLog = observeHyprlandRenderer({ log: log.stdout, threads: threads.stdout, expectedRenderer });
   const observation = { expectedRenderer, instance, environment, threads, log, parsedLog };
   report.observations.push({ renderer: { label, ...observation } });
   return observation;

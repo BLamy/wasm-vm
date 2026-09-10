@@ -52,3 +52,32 @@ diagnostic evidence only and will never be reused as an input to another arm.
    a measured speedup for this candidate.
 5. No production files, permissions, release pins, or guest packages change in
    this measurement. A fresh critic owns the final verification decision.
+
+## Baseline observability correction (before the repeated input test)
+
+The first actual built baseline at `8f2051b0` stopped **before physical input**:
+the current PID environment requested llvmpipe and its thread list contained
+`llvmpipe-0`, but the expected GL labels were absent. This is an evidence gap,
+not a new product failure or an input timing result. `baseline-built/report.json`
+retains the original failure and those PID-bound environment/thread records.
+
+The independent, read-only `renderer-label-inspection/diagnostic.json` records
+the same restored artifact's current PID/instance, bounded unfiltered instance
+log, system information, journal queries, and
+`hyprctl -i 0 getoption debug:disable_logs` returning `bool: true` (default).
+Neither file, journal nor rolling log contains the startup GL labels. The
+renderer parser's spelling was correct; those DEBUG records were disabled.
+The actual `renderer-desktop.png` was inspected: it contains the Hyprland bar
+and mapped Foot, without the startup overlay. It does not prove usable input.
+
+Before repeating the baseline input test, the fresh critic accepted a precisely
+weaker baseline observation: **llvmpipe-worker-observed; GL label unavailable**.
+Only the current compositor PID's literal driver-specific worker name can
+support it; requested environment alone cannot. Present contradictory or
+ambiguous GL labels remain failures. This fallback is forbidden for softpipe.
+Both comparison arms still use the same input harness and 120-second deadline.
+
+The baseline also logs the Aquamarine renderer-state errors seen in the QEMU
+precheck, despite having a live compositor and desktop. Those errors alone
+cannot establish a candidate compatibility failure. The fresh target-WASM run
+must provide a causally linked terminal failure, or remain unproven.

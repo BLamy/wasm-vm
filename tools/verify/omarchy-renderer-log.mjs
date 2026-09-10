@@ -27,3 +27,25 @@ export function parseHyprlandRendererLog(text, expectedRenderer) {
     positivelyMatched: true,
   };
 }
+
+// The shipped baseline disables Hyprland's DEBUG logs before OpenGL starts.
+// Its named Mesa worker is independent process evidence, but it is NOT a GL
+// renderer-label observation. Never extend this fallback to softpipe or use it
+// to hide a present but contradictory/ambiguous GL record.
+export function observeHyprlandRenderer({ log, threads, expectedRenderer }) {
+  assert.equal(typeof log, "string");
+  assert.equal(typeof threads, "string");
+  if (expectedRenderer === "llvmpipe" && log.trim() === "" &&
+      threads.split("\n").some(line => /^llvmpipe-[0-9]+$/u.test(line.trim()))) {
+    return {
+      kind: "llvmpipe-worker-observed",
+      glLabelAvailable: false,
+      note: "GL label unavailable; current compositor PID has a named llvmpipe worker",
+    };
+  }
+  return {
+    kind: "gl-renderer-label-observed",
+    glLabelAvailable: true,
+    ...parseHyprlandRendererLog(log, expectedRenderer),
+  };
+}
