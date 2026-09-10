@@ -1594,3 +1594,13 @@ verify-E5.5-T03c:
 	node tools/fetch-omarchy-snapshot.mjs
 	node --test tools/gen-omarchy-manifest.test.mjs tools/verify/omarchy-rendering-recovery.test.mjs web/tests/omarchy-seeded-loader.test.mjs web/tests/omarchy-desktop-readiness.test.mjs web/tests/e5-t22b-viewport.test.mjs web/tests/pointer.test.mjs
 	node tools/verify/omarchy-rendering-recovery.mjs "$(OMARCHY_RENDER_URL)" "$(OMARCHY_RENDER_EVIDENCE_DIR)"
+
+OMARCHY_CACHE_URL ?= local
+OMARCHY_CACHE_EVIDENCE_DIR ?= evidence/omarchy-profile/boot-cache-acceptance
+.PHONY: verify-E5.5-T03e
+verify-E5.5-T03e:
+	@test -f web/dist/app.html || { echo "Build web/dist first" >&2; exit 1; }
+	npm --prefix web ci --no-audit --no-fund
+	node tools/fetch-omarchy-snapshot.mjs
+	node --test web/tests/boot-asset-cache.test.mjs web/tests/omarchy-startup-state.test.mjs web/tests/omarchy-seeded-loader.test.mjs
+	node tools/verify/omarchy-boot-cache.mjs "$(OMARCHY_CACHE_URL)" "$(OMARCHY_CACHE_EVIDENCE_DIR)"

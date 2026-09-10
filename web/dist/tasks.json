@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 302,
-    "total": 476
+    "verified": 303,
+    "total": 477
   },
   "epics": [
     {
@@ -22435,7 +22435,7 @@
       "epicKey": "5.5",
       "title": "Recover visible Omarchy desktop pixels and fit the browser viewport",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5.5-T02a"
       ],
@@ -22446,21 +22446,24 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "Selected explicitly for the user's black-screen repair and screenshot request.\nThe wider keyboard-usable desktop remains blocked in E5.5-T03a/E5.5-T03d.",
+      "verificationLog": "Selected explicitly for the user's black-screen repair and screenshot request.\nThe wider keyboard-usable desktop remains blocked in E5.5-T03a/E5.5-T03d.\n\n### 2026-09-10 — worker — rendering candidate, not yet verified\n\nThe candidate removes the unsuccessful mixed-renderer experiment and uses the\ncoherent SDR R3 release. The immutable base manifest is pinned by raw-byte SHA-256\nand length before UTF-8 decoding; RAM/delta generation verifies their matching\nbase and generation. Desktop resizing preserves a 1280x800 backing and changes\nonly the centered CSS projection. The source and built page disclose slow input.\n\nEvidence is under `evidence/omarchy-profile/rendering-recovery-r1/`:\n\n- `immediate/report.json` and `immediate/restored-before-execution.png`: real\n  restore, `guestRunCalls=0`, a presented 1280x832 resource, 413 sampled colors;\n  the worker inspected the actual Omarchy bar and Foot window screenshot.\n- `local/report.json` and five `local/desktop-*.png` files: actual built Chrome\n  page, normal Omarchy auto-restore, service workers enabled, no boot overrides\n  or readiness injection. Initial/reload both reached real desktop readiness in\n  about 60 seconds. The worker inspected the whole bar/window at 1280x800,\n  960x600, 600x900 and 1920x1080, and after reload; the real pointer frames\n  mapped 25/50/75% positions exactly. There were no console or page errors.\n  **This run is not an overall PASS:** the recorder could not retrieve the large\n  kernel/RAM bodies and a service-worker-served worker script through the\n  inspector body cache; aborted-transfer observations were retained. Corrected\n  provenance recording and final cold-clone\n  acceptance are still required, without relabeling these errors as success.\n- `demo/demo-suite.json` and its inspected screenshot: built browser ISA suite\n  126 passed, 0 failed. `desktop-ui-final.log`: separate synthetic lifecycle/layout\n  regression (not guest proof), including BusyBox, Alpine and Node-Alpine/Docker.\n- `coherence-input-tests.log`, `viewport-tests.log`, `helper-tests.log`, `fmt.log`\n  and `affected-clippy.log`: focused tests, formatting and affected core/wasm\n  library lint passed. `make-ci.log` records the pre-existing macOS seccomp and\n  unchanged all-features dead-code gate failures; full `make ci` is not green.\n- `release-receipt.md`: exact R3 byte identities, recoverable local backup and\n  the immutable R2 RAM publication/full public GET. No Pages deployment yet.\n\nCommands: `make web-dist`; `node tools/verify/omarchy-restore-repaint.mjs\nevidence/omarchy-profile/rendering-recovery-r1/immediate --pair-directory\nreleases/boot-snapshot --chunk-manifest releases/chunked-omarchy/manifest.json\n--chunk-dir target/omarchy-profile-chunks-sdr-r3-256k`;\n`node tools/verify/omarchy-rendering-recovery.mjs local\nevidence/omarchy-profile/rendering-recovery-r1/local`;\n`node tools/verify/omarchy-desktop-ui.mjs`; and the focused commands recorded in\nthe corresponding logs. Runtime WASM SHA-256 is\n`c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305`.\nThe final exact-head cold clone, independent verdict and production captures\nremain outstanding. Responsive input and guest modesets are not claimed.\n\n### 2026-09-10 — worker — final clean-clone and production rendering submission\n\nFrozen implementation is `7c6fc874560e807d312b7d3657aadeec42356f05`;\nrecording-only correction/final acceptance head is\n`e05d12abe3dd7210082a2825f1ef1a679ff5bb5c`. Runtime and built bytes did not\nchange between them. The separate clone's porcelain status was empty; no dirty\nworkspace inputs were copied. `frozen-head.md` records the scrubbed environment\nand exact command. `make verify-E5.5-T03c` passed there: 41 focused tests, a\nfresh digest-verified R2 RAM download, and the actual built desktop at all four\nsizes and after reload. Cold-clone report SHA-256:\n`70804743b8265df27d281d56215245581b0e637d68c84504e8ad8ce2254ca806`.\n\n`bash tools/deploy-cloudflare.sh` then exited 0 and published deployment\n`9c404b04.wasm-vm.pages.dev` to the existing production project. All referenced\nlarge R2 objects were checked by full public GET and reused; 18 Pages files\nwere uploaded. The built tree was returned to its committed source-form\nmanifests after archiving `published-omarchy.json`; this did not modify the\ndeployed origin or runtime bytes. No buckets/objects were deleted or PRs merged.\n\nProduction acceptance command (exit 0):\n\n```sh\nnode tools/verify/omarchy-rendering-recovery.mjs 'https://wasm-vm.pages.dev/app?guest=omarchy&desktop=1#ide' evidence/omarchy-profile/rendering-recovery-r1/production\n```\n\nProduction report: `evidence/omarchy-profile/rendering-recovery-r1/production/report.json`,\nSHA-256 `f6c0ba4064b0dc4c544471370cc1ef747b8117a9d3c9f3ac5153e75b0ca70795`.\nThe run records five screenshots, genuine restore and desktop-ready events,\nsuccessful presentations/nonuniform pixels, exact physical host pointer frames,\nten separately labeled full-byte provenance fetches, actual worker HTTP-200\nresource completions, and executing SW build `347161e9e2b8` in both phases.\nErrors, console errors, page errors and request failures are empty. Six inspector\nbody limitations are retained explicitly; no unavailable worker response body\nwas fabricated or substituted by an independently fetched body.\n\nThe worker opened and inspected every production PNG. Omarchy's full bar,\nworkspace indicators, clock, right icons, Foot border and prompt remain visible\nat 1280x800, 960x600, centered 600x375 inside 600x900, and centered 1728x1080\ninside 1920x1080. Reload is also complete and pixel-identical. Screenshot digests:\n\n- Initial/reload: `97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`.\n- 960x600: `c4b5bcb99dc3128579c0847289be0f164bed9bac4f835a58c34d488ee728d5c7`.\n- 600x900: `406cda33e04527d15c940507c117c9330a5e04c314deb0ce8a27c6e4559f421a`.\n- 1920x1080: `4eb985843ec4c3da315e37e806eb3586bf59ce291c45f5b0f680025bda5d650a`.\n\nProduction HTML, loader, main, viewport and WASM match the frozen build; the\npublished manifest's expected URL rewrite has SHA-256\n`f9167b5f37964ffc614e3c5dc4bce99f2bf8a804a226fb02181c6a42761203e0`.\nThe active SW's executed VERSION/CACHE is checked in its own worker context,\nnot inferred only from a network fetch. The corrected per-phase/active-build\nchecks include missing-reload-artifact and stale-controller sabotage fixtures.\n\nClaim: black-screen recovery and host-side fitting are implemented and shipped,\nwith reproducible recorded production GUI evidence. The public run took about\n173 seconds to first desktop readiness and 149 seconds after reload. This is\nnot a fast-boot, responsive-input, guest-modeset, full Omarchy or Epic 6 claim.\nThe prior broad `make ci` platform failures remain disclosed above; the fresh\nverifier decides only the scoped rendering task's status.\n\n### 2026-09-10 — verifier — VERDICT: verified\n\n- **Artifact/pair integrity — HELD.** Frozen R3 kernel, immutable base manifest,\n  RAM and delta identities match the immediate, exact-head cold-clone and\n  deployed production reports. Raw-manifest, mixed-pair and missing/corrupt\n  artifact attacks fail closed without a mutable fallback or durable guest\n  state.\n- **Immediate restored repaint — HELD.** `immediate/report.json` binds current\n  WASM `c48e9c2d...b9305` and the exact R3 pair; display callback count advances\n  0→1 with `guestRunCalls=0`, 413 sampled colors and 96.1489% visible pixels.\n  The verifier carried the directly inspected real bar/Foot screenshot.\n- **Built page, reload and fitting — HELD.** The exact-head scrubbed cold clone\n  (`e05d12abe3dd7210082a2825f1ef1a679ff5bb5c`) passed 41 focused tests and the\n  real browser capture. Initial/reload and 960x600, portrait 600x900 and large\n  1920x1080 screenshots were independently opened at original detail: the full\n  bar and Foot border remain visible, portrait/large are centered with correct\n  letterboxing, and no right-edge crop or black recurrence appears.\n- **Pointer transform — HELD.** Deterministic geometry tests and actual Chrome\n  pointer frames map 25/50/75% of each centered canvas to exact tablet values\n  8192/16384/24575. This proves host mapping only, as claimed.\n- **Regression boundary — HELD.** Focused image/coherence, viewport/input,\n  helper, UI, formatting and affected clippy gates pass; the built capability\n  suite records 126 passed, 0 failed. Disclosed broad `make ci` failures are the\n  pre-existing macOS seccomp and unchanged all-features dead-code walls, not a\n  contradiction in this task's changed boundary.\n- **Production — HELD.** Deployment `9c404b04.wasm-vm.pages.dev` reached the\n  existing production project. The actual user URL report SHA-256 is\n  `f6c0ba4064b0dc4c544471370cc1ef747b8117a9d3c9f3ac5153e75b0ca70795`:\n  both phases restore/present real nonuniform pixels, ten full provenance\n  records and both worker HTTP-200 completions bind the artifacts, and active\n  SW execution is `347161e9e2b8`. Errors, console/page errors and request\n  failures are empty; six inspector-body limitations remain honestly recorded.\n  The verifier directly inspected all five production PNGs, whose hashes equal\n  the cold-clone images.\n- **Scope — HELD.** This verdict verifies only black-screen rendering recovery,\n  immutable publication and host-side fitting. It does not verify responsive\n  input, guest modeset adoption, a usable/full Omarchy desktop, E5.5-T03a/T03d,\n  or Epic 6.\n\nCritic record: `evidence/omarchy-profile/desktop-fix-critic.md`. Promoted suite:\n`make verify-E5.5-T03c`. No merge was performed.",
       "adversarial": "Reject stale/mismatched artifacts, a painted imitation, serial-only proof,\ntop-left cropping, incorrect pointer normalization, test-only UI overrides,\nconcealed boot failures, or presentation screenshots relabeled as interactivity.\nObserve actual service-worker reload behavior and bound all served/uploaded bytes.",
       "file": "tasks/epic-5.5-omarchy/E5.5-T03c-desktop-rendering-recovery.md",
       "activity": [
         {
           "date": "2026-09-10",
-          "commits": 1,
+          "commits": 4,
           "labels": [
+            "verify E5.5-T03c rendering recovery",
+            "test(omarchy): record clean-clone and production desktop proof",
+            "fix(omarchy): restore coherent desktop and preserve viewport pixels",
             "plan(omarchy): isolate rendering recovery from failed throughput mitigation"
           ]
         }
       ],
       "firstActivity": "2026-09-10",
       "lastActivity": "2026-09-10",
-      "commitCount": 1
+      "commitCount": 4
     },
     {
       "id": "E5.5-T03d",
@@ -22489,6 +22492,39 @@
           "commits": 1,
           "labels": [
             "plan(omarchy): isolate rendering recovery from failed throughput mitigation"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-10",
+      "lastActivity": "2026-09-10",
+      "commitCount": 1
+    },
+    {
+      "id": "E5.5-T03e",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Cache immutable Omarchy boot bytes and report actual restore phases",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5.5-T03c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-10 — worker — selected from explicit user repair request\n\nLive production HEAD checks found the 205,050,833-byte RAM snapshot has no\nCache-Control header, while the kernel is immutable-cacheable. The service\nworker excludes R2 and release bytes; the loader uses only ordinary HTTP cache\nbehavior for every launch. The serial output handler replaces restore status\nwith \"boot continues\" and retains the previous transfer's completed bar.\nImplementation and recorded browser proof are pending.",
+      "adversarial": "A fresh verifier attacks stale hashes, corrupted/truncated/oversized bodies,\nstorage failure, repeated reloads, deployment-version cache independence,\ncross-session state leakage and false progress/readiness claims. Preserve the\nunchanged guest-input acceptance; this task does not mark T03d complete.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03e-immutable-boot-cache.md",
+      "activity": [
+        {
+          "date": "2026-09-10",
+          "commits": 1,
+          "labels": [
+            "plan(omarchy): isolate immutable boot caching and restore status"
           ]
         }
       ],

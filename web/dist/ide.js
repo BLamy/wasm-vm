@@ -13,6 +13,12 @@
 // HONESTY: every byte shown comes from the real guest via window.wvmDemo.exec(). Saving is
 // byte-exact (base64 in JS → `base64 -d` in-guest). Container logs/exec use the real wvrun CLI.
 
+import {
+  createOmarchyStartupLifecycle,
+  formatOmarchyProgress,
+  omarchyGuestStateLabel,
+} from "./omarchy-startup-state.js";
+
 const ROOT = "/root";
 const _ideQuery = new URLSearchParams(location.search);
 const _ideGuest = (_ideQuery.get("guest") || _ideQuery.get("boot") || _ideQuery.get("os") || "").toLowerCase();
@@ -580,6 +586,13 @@ if (root) {
     if (bootOverlay) bootOverlay.hidden = false;
     let bootOutput = "";
     let bootErrorLatched = false;
+    const startupLifecycle = createOmarchyStartupLifecycle({
+      onWaiting: () => {
+        if (!bootErrorLatched && !startupLifecycle.isDesktopReady()) {
+          setBootStatus("Downloads complete. The guest is responding slowly; waiting for the desktop…");
+        }
+      },
+    });
     const formatBytes = (value) => {
       if (!Number.isFinite(value) || value < 0) return null;
       if (value < 1024) return `${Math.round(value)} B`;
@@ -632,6 +645,7 @@ if (root) {
     exitButton?.addEventListener("click", exitDesktop);
     window.addEventListener("wvm:guest-booting", () => {
       bootErrorLatched = false;
+      startupLifecycle.booting();
       bootOutput = "";
       if (bootLog) bootLog.textContent = "No serial output yet.";
       if (bootLog) bootLog.hidden = true;
@@ -650,46 +664,45 @@ if (root) {
       if (bootOverlay) bootOverlay.hidden = false;
     });
     window.addEventListener("wvm:guest-progress", (event) => {
-      if (bootErrorLatched) return;
+      if (bootErrorLatched || startupLifecycle.isDesktopReady()) return;
       const detail = event.detail || {};
-      const phase = detail.phase ? String(detail.phase) : "Loading guest…";
-      const loaded = Number(detail.loaded);
-      const total = Number(detail.total);
+      const progress = formatOmarchyProgress(detail);
+      const loaded = progress.loaded;
+      const total = progress.total;
       const loadedText = formatBytes(loaded);
       const totalText = formatBytes(total);
-      setBootStatus(`${phase}${loadedText ? ` · ${loadedText}${totalText ? ` / ${totalText}` : ""}` : ""}`);
+      setBootStatus(`${progress.text}${loadedText ? ` · ${loadedText}${totalText ? ` / ${totalText}` : ""}` : ""}`);
       if (bootProgress) {
-        const determinate = Number.isFinite(total) && total > 0 && Number.isFinite(loaded) && loaded >= 0;
-        bootProgress.hidden = !determinate;
-        if (determinate) bootProgress.value = Math.min(total, loaded);
-        if (determinate) bootProgress.max = total;
+        bootProgress.hidden = !progress.determinate;
+        if (progress.determinate) bootProgress.value = Math.min(total, loaded);
+        if (progress.determinate) bootProgress.max = total;
       }
     });
     window.addEventListener("wvm:guest-output", (event) => {
       if (bootErrorLatched) return;
       appendBootOutput(event.detail?.text);
-      if (event.detail?.text != null) setBootStatus("Serial output received; boot continues…");
     });
     window.addEventListener("wvm:guest-state", (event) => {
-      if (bootErrorLatched) return;
+      if (bootErrorLatched || startupLifecycle.isDesktopReady()) return;
       if (!desktopStatus) return;
       const state = event.detail?.state;
-      const labels = {
-        fetching: "fetching Omarchy image…",
-        instantiating: "starting Omarchy VM…",
-        restoring: "restoring Omarchy desktop…",
-        booting: "booting Omarchy…",
-        verifying: "verifying Omarchy image…",
-      };
-      if (labels[state]) {
-        desktopStatus.textContent = `desktop · ${labels[state]}`;
-        setBootStatus(labels[state]);
+      startupLifecycle.state(state);
+      if (bootProgress && (omarchyGuestStateLabel(state) || state === "booting")) {
+        bootProgress.hidden = true;
+        bootProgress.value = 0;
+        bootProgress.max = 1;
+      }
+      const label = omarchyGuestStateLabel(state);
+      if (label) {
+        desktopStatus.textContent = `desktop · ${label}`;
+        setBootStatus(label);
       }
       if (desktopToolbar && state !== "error" && state !== "done") desktopToolbar.dataset.state = "booting";
     });
     window.addEventListener("wvm:guest-error", (event) => {
       const message = event.detail?.message || "unknown error";
       bootErrorLatched = true;
+      startupLifecycle.error();
       if (desktopStatus) desktopStatus.textContent = `desktop · boot error: ${message}`;
       setBootStatus(`Boot error: ${message}`, "error");
       appendBootOutput(`[boot error] ${message}\n`);
@@ -699,19 +712,22 @@ if (root) {
     window.addEventListener("wvm:guest-halted", (event) => {
       const message = event.detail?.message || "guest stopped";
       bootErrorLatched = true;
+      startupLifecycle.halted();
       if (desktopStatus) desktopStatus.textContent = `desktop · halted: ${message}`;
       setBootStatus(`Guest halted: ${message}`, "error");
       if (bootOverlay) bootOverlay.hidden = false;
       if (desktopToolbar) desktopToolbar.dataset.state = "halted";
     });
     window.addEventListener("wvm:guest-ready", () => {
-      if (bootErrorLatched) return;
+      if (bootErrorLatched || startupLifecycle.isDesktopReady()) return;
+      startupLifecycle.guestReady();
       if (desktopStatus) desktopStatus.textContent = "desktop · guest ready · waiting for desktop";
       setBootStatus("Guest shell ready; waiting for desktop readiness…");
       if (desktopToolbar) desktopToolbar.dataset.state = "booting";
     });
     window.addEventListener("wvm:desktop-ready", () => {
       if (bootErrorLatched) return;
+      startupLifecycle.desktopReady();
       if (bootOverlay) bootOverlay.hidden = true;
       if (desktopStatus) desktopStatus.textContent = "desktop visible · input is slow";
       if (desktopToolbar) desktopToolbar.dataset.state = "ready";

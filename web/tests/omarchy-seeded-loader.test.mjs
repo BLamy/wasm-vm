@@ -91,6 +91,9 @@ async function runFresh({
       calls.push(["fetchJsonAsset", url]);
       return manifest;
     },
+    // Asset-cache integrity is exercised with real bytes in boot-asset-cache.test.mjs.
+    // This boundary test retains the loader's independent coherence/digest checks.
+    fetchVerifiedBootAsset: async ({ url }) => sandbox.fetchWithProgress(url),
     fetchWithProgress: async (url) => {
       calls.push(["fetchWithProgress", url]);
       if (url === "kernel") return Uint8Array.of(1);

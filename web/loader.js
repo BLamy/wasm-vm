@@ -28,6 +28,7 @@ import { deriveOverlaySeedIdentity } from "./overlay-seed-identity.js";
 import { createTaskQuiescence } from "./task-quiescence.js";
 import { validateGuestClock, validateICountDivider, createGuestClockLifecycle } from "./guest-clock.js";
 import { validateDecodedCacheEntries, applyDecodedCacheEntries } from "./decoded-cache.js";
+import { fetchVerifiedBootAsset } from "./boot-asset-cache.js";
 
 // Responsiveness: a near-zero-delay "yield to the main thread" for rescheduling the run loop. The VM
 // runs on the main thread (a Web Worker offload is a larger follow-up), so a long synchronous run slice
@@ -350,12 +351,28 @@ export async function startLinuxBoot(opts = {}) {
       : null;
     let alpineRamBlob = null;
     let alpineOverlaySeeded = false;
+    // Cache immutable release bytes, never the mutable RAM/disk of a running guest. This
+    // cache survives shell upgrades and fresh sessions; each read still verifies its hash.
+    const readBootAsset = async (name, entry) => {
+      if (!omarchyImage) return fetchWithProgress(entry.url, (l, t) => onProgress(name, l, t));
+      let phase = `${name}: downloading`;
+      let cacheUnavailable = false;
+      return fetchVerifiedBootAsset({ ...entry, role: name }, {
+        onCacheStatus: ({ source }) => {
+          if (source === "unavailable") cacheUnavailable = true;
+          phase = source === "cache" ? `${name}: reading cache`
+            : `${name}: downloading${cacheUnavailable ? " (cache unavailable)" : ""}`;
+          onProgress(phase, 0, entry.size);
+        },
+        onProgress: (loaded, total) => onProgress(phase, loaded, total),
+      });
+    };
 
     onState("fetching");
     // The kernel is always fetched whole (small). The rootfs is fetched whole for disk/initramfs
     // modes; in chunked mode it is NOT — only the image manifest is fetched now, and its chunks are
     // pulled lazily during boot by WasmLinux.fetchPending.
-    const kernel = await fetchWithProgress(km.url, (l, t) => onProgress("kernel", l, t));
+    const kernel = await readBootAsset("kernel", km);
     let secondaryBytes = null;
     let imageManifestText = null;
     let bootProfile = new Uint32Array(0);
@@ -365,10 +382,7 @@ export async function startLinuxBoot(opts = {}) {
       if (omarchyImage) {
         // Hash the bytes as received. Decoding first can erase a BOM or replace malformed UTF-8,
         // allowing bytes other than the publisher-verified immutable object to reach the VM.
-        const imageManifestBytes = await fetchWithProgress(
-          resolvedImageManifestUrl,
-          (l, t) => onProgress("chunkManifest", l, t),
-        );
+        const imageManifestBytes = await readBootAsset("chunkManifest", omarchyImage);
         const imageManifestSha = await sha256hex(imageManifestBytes);
         if (imageManifestBytes.byteLength !== omarchyImage.size || imageManifestSha !== omarchyImage.sha256) {
           throw new Error("Omarchy chunked image manifest integrity check failed");
@@ -480,8 +494,9 @@ export async function startLinuxBoot(opts = {}) {
     let lastPersistRetry = 0; // throttle pending-byte retries while quotaReadOnly
     if (freshDesktop) {
       onState("restoring");
-      const dgz = await fetchWithProgress(overlayDeltaEntry.url, (l, t) => onProgress("overlayDelta", l, t));
+      const dgz = await readBootAsset("overlayDelta", overlayDeltaEntry);
       if ((await sha256hex(dgz)) !== overlayDeltaEntry.sha256) throw new Error("desktop overlay delta integrity check failed");
+      onProgress("overlayDelta: unpacking", null, null);
       const delta = await gunzip(dgz);
       machine = WasmLinux.newChunkedDiskSeeded(ramMib, kernel, imageManifestText, baseUrl,
         cacheBudgetMib, bootProfile, bootargs, emitOutput, enableMic, delta);
@@ -545,7 +560,7 @@ export async function startLinuxBoot(opts = {}) {
       if (!lockReadOnly && bootSnap && overlayDeltaEntry && opts.bootSnapshot !== false) {
         try {
           onState("restoring");
-          const dgz = await fetchWithProgress(overlayDeltaEntry.url, (l, t) => onProgress("overlayDelta", l, t));
+          const dgz = await readBootAsset("overlayDelta", overlayDeltaEntry);
           if ((await sha256hex(dgz)) !== overlayDeltaEntry.sha256) throw new Error("overlay delta integrity");
           const deltaBytes = await gunzip(dgz);
           const seeded = await seedOverlayDelta(imageManifestText, deltaBytes, overlaySeedIdentity);
@@ -776,8 +791,9 @@ export async function startLinuxBoot(opts = {}) {
     if (!restoredFromStoredSnapshot && alpineOverlaySeeded && bootSnap && opts.bootSnapshot !== false) {
       try {
         onState("restoring");
-        const rgz = await fetchWithProgress(bootSnap.url, (l, t) => onProgress("bootSnapshot", l, t));
+        const rgz = await readBootAsset("bootSnapshot", bootSnap);
         if ((await sha256hex(rgz)) !== bootSnap.sha256) throw new Error("boot snapshot integrity");
+        if (omarchyImage) onProgress("bootSnapshot: unpacking", null, null);
         alpineRamBlob = await gunzip(rgz);
       } catch (e) {
         if (freshDesktop) throw e;
