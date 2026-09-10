@@ -13,6 +13,7 @@
 //! interactive. Nothing here is a new device — it is glue over [`wasm_vm_core`].
 
 use std::cell::Cell;
+use std::collections::{BTreeMap, HashMap};
 #[cfg(feature = "gpu-trace")]
 use std::fmt::Write as _;
 use std::io::{self, Read, Write};
@@ -45,15 +46,50 @@ mod agent_proof;
 /// "recompute the F/D share independently" cross-check (E4-T15 verification §1). It handles both
 /// 32-bit and RVC 16-bit encodings (in RV64 the only compressed FP ops are C.FLD/C.FSD/C.FLDSP/
 /// C.FSDSP — double load/store).
-#[derive(Default)]
 struct FpShareSink {
     total: u64,
     fp: u64,
     fp_ldst: u64,
     fp_compute: u64,
+    opcode7: [u64; 128],
+    op_fp_funct7: [u64; 128],
+    fma_opcode7: [u64; 128],
+    pair_hist: HashMap<(u64, u32), u64>,
+    pair_hist_dropped: u64,
+    region64: BTreeMap<u64, RegionCounts>,
+    region64_dropped: u64,
+    hash: HashSink,
+}
+
+#[derive(Default)]
+struct RegionCounts {
+    total: u64,
+    fp_compute: u64,
+}
+
+impl Default for FpShareSink {
+    fn default() -> Self {
+        Self {
+            total: 0,
+            fp: 0,
+            fp_ldst: 0,
+            fp_compute: 0,
+            opcode7: [0; 128],
+            op_fp_funct7: [0; 128],
+            fma_opcode7: [0; 128],
+            pair_hist: HashMap::new(),
+            pair_hist_dropped: 0,
+            region64: BTreeMap::new(),
+            region64_dropped: 0,
+            hash: HashSink::default(),
+        }
+    }
 }
 
 impl FpShareSink {
+    const MAX_PAIR_HIST: usize = 65_536;
+    const MAX_REGION_HIST: usize = 65_536;
+
     /// `true` iff the raw retired instruction bits are an F/D op. Standard RISC-V opcode map:
     /// 32-bit LOAD-FP(0x07)/STORE-FP(0x27)/MADD(0x43)/MSUB(0x47)/NMSUB(0x4b)/NMADD(0x4f)/
     /// OP-FP(0x53); RVC quadrant-0 funct3=001/101 (C.FLD/C.FSD) and quadrant-2 funct3=001/101
@@ -81,16 +117,120 @@ impl FpShareSink {
 impl TraceSink for FpShareSink {
     #[inline]
     fn retire(&mut self, r: &wasm_vm_core::trace::TraceRecord) {
+        self.hash.retire(r);
         self.total += 1;
+        self.opcode7[(r.insn & 0x7f) as usize] += 1;
+        if let Some(count) = self.pair_hist.get_mut(&(r.pc, r.insn)) {
+            *count += 1;
+        } else if self.pair_hist.len() < Self::MAX_PAIR_HIST {
+            self.pair_hist.insert((r.pc, r.insn), 1);
+        } else {
+            self.pair_hist_dropped += 1;
+        }
         let (is_fp, is_ldst) = Self::is_fp(r.insn);
+        let mut region = if let Some(region) = self.region64.get_mut(&(r.pc & !0x3f)) {
+            Some(region)
+        } else if self.region64.len() < Self::MAX_REGION_HIST {
+            Some(self.region64.entry(r.pc & !0x3f).or_default())
+        } else {
+            self.region64_dropped += 1;
+            None
+        };
+        if let Some(region) = region.as_deref_mut() {
+            region.total += 1;
+        }
         if is_fp {
             self.fp += 1;
             if is_ldst {
                 self.fp_ldst += 1;
             } else {
                 self.fp_compute += 1;
+                if let Some(region) = region {
+                    region.fp_compute += 1;
+                }
+                match r.insn & 0x7f {
+                    0x53 => self.op_fp_funct7[((r.insn >> 25) & 0x7f) as usize] += 1,
+                    0x43 | 0x47 | 0x4b | 0x4f => self.fma_opcode7[(r.insn & 0x7f) as usize] += 1,
+                    _ => {}
+                }
             }
         }
+    }
+}
+
+impl FpShareSink {
+    fn pair_counts_json(&self, fp_only: bool) -> String {
+        let mut pairs: Vec<_> = self
+            .pair_hist
+            .iter()
+            .filter(|((_, insn), _)| !fp_only || Self::is_fp(*insn).0)
+            .map(|(&(pc, insn), &count)| (pc, insn, count))
+            .collect();
+        pairs.sort_by(|a, b| {
+            b.2.cmp(&a.2)
+                .then_with(|| a.0.cmp(&b.0))
+                .then_with(|| a.1.cmp(&b.1))
+        });
+        let mut out = String::from("[");
+        for (index, (pc, insn, count)) in pairs.into_iter().take(32).enumerate() {
+            if index != 0 {
+                out.push(',');
+            }
+            out.push_str(&format!(
+                "{{\"pc\":\"0x{pc:016x}\",\"insn\":\"0x{insn:08x}\",\"count\":{count}}}"
+            ));
+        }
+        out.push(']');
+        out
+    }
+
+    fn regions_json(&self) -> String {
+        let mut out = String::from("[");
+        for (index, (&pc, counts)) in self.region64.iter().enumerate() {
+            if index != 0 {
+                out.push(',');
+            }
+            out.push_str(&format!(
+                "{{\"pc\":\"0x{pc:016x}\",\"total\":{},\"fp_compute\":{}}}",
+                counts.total, counts.fp_compute
+            ));
+        }
+        out.push(']');
+        out
+    }
+
+    fn sparse_counts(counts: &[u64; 128]) -> String {
+        let mut out = String::from("{");
+        let mut first = true;
+        for (value, count) in counts.iter().enumerate().filter(|(_, count)| **count != 0) {
+            if !first {
+                out.push(',');
+            }
+            first = false;
+            out.push_str(&format!("\"0x{value:02x}\":{count}"));
+        }
+        out.push('}');
+        out
+    }
+
+    fn trace_hash(&self) -> u64 {
+        self.hash.hash()
+    }
+
+    fn trace_retired(&self) -> u64 {
+        self.hash.retired()
+    }
+}
+
+fn evidence_mode(fp_hist: bool, jit: bool, display_workload: bool) -> (&'static str, bool) {
+    if fp_hist {
+        ("retirement-records", false)
+    } else if jit {
+        ("jit-retired-counter-only", true)
+    } else if display_workload {
+        ("display-retired-counter-only", true)
+    } else {
+        ("retirement-records", false)
     }
 }
 
@@ -732,6 +872,8 @@ pub fn boot(a: BootArgs) -> ExitCode {
         // the JIT FP-translation policy. Off by default (production path uses NullSink below).
         let fp_hist = std::env::var("WASM_VM_FP_HISTOGRAM").is_ok();
         let mut hash = HashSink::new();
+        let mut fp_trace_hash = None;
+        let mut fp_trace_retired = None;
         let outcome = if fp_hist {
             let mut fp = FpShareSink::default();
             let o = run_machine(
@@ -753,22 +895,39 @@ pub fn boot(a: BootArgs) -> ExitCode {
             } else {
                 100.0 * fp.fp as f64 / fp.total as f64
             };
+            fp_trace_hash = Some(fp.trace_hash());
+            fp_trace_retired = Some(fp.trace_retired());
             eprintln!(
-                "FP_SHARE_JSON {{\"total_retired\":{},\"fp\":{},\"fp_ldst\":{},\"fp_compute\":{},\"fp_pct\":{:.6}}}",
-                fp.total, fp.fp, fp.fp_ldst, fp.fp_compute, pct
+                "FP_SHARE_JSON {{\"total_retired\":{},\"fp\":{},\"fp_ldst\":{},\"fp_compute\":{},\"fp_pct\":{:.6},\"trace_fnv64\":\"{:016x}\",\"trace_retired\":{},\"opcode7\":{},\"op_fp_funct7\":{},\"fma_opcode7\":{},\"pair_hist_distinct\":{},\"pair_hist_dropped\":{},\"pc_insn_top32\":{},\"fp_pc_insn_top32\":{},\"fp_region64_distinct\":{},\"fp_region64_dropped\":{},\"fp_region64\":{}}}",
+                fp.total,
+                fp.fp,
+                fp.fp_ldst,
+                fp.fp_compute,
+                pct,
+                fp.trace_hash(),
+                fp.trace_retired(),
+                FpShareSink::sparse_counts(&fp.opcode7),
+                FpShareSink::sparse_counts(&fp.op_fp_funct7),
+                FpShareSink::sparse_counts(&fp.fma_opcode7),
+                fp.pair_hist.len(),
+                fp.pair_hist_dropped,
+                fp.pair_counts_json(false),
+                fp.pair_counts_json(true),
+                fp.region64.len(),
+                fp.region64_dropped,
+                fp.regions_json()
             );
             o
         } else if a.evidence.is_some() {
             // A concrete retirement sink deliberately keeps the interpreter path active: the
             // compiled-block executor cannot reconstruct one TraceRecord per JIT-retired
-            // instruction. The display workload only needs the authoritative guest-instruction
-            // counter from m.irq_stats().retired, so it also uses the zero-record sink to avoid
-            // making a macro boot pay the per-retirement hashing cost. Keep the evidence file
-            // honest by labeling both opt-in paths as counter-only below.
+            // instruction. The FP diagnostic is the exception in reporting terms: it explicitly
+            // requests that record sink, so its hash/count are record-based even when --jit is
+            // also supplied. The display workload remains counter-only.
             #[cfg(feature = "gpu-trace")]
-            let counter_only_evidence = a.jit || a.display_workload;
+            let counter_only_evidence = !fp_hist && (a.jit || a.display_workload);
             #[cfg(not(feature = "gpu-trace"))]
-            let counter_only_evidence = a.jit;
+            let counter_only_evidence = !fp_hist && a.jit;
             if counter_only_evidence {
                 let mut jit_evidence = NullSink;
                 run_machine(
@@ -900,26 +1059,19 @@ pub fn boot(a: BootArgs) -> ExitCode {
         }
         if let Some(path) = &a.evidence {
             #[cfg(feature = "gpu-trace")]
-            let counter_only_evidence = a.jit || a.display_workload;
+            let display_workload_enabled = a.display_workload;
             #[cfg(not(feature = "gpu-trace"))]
-            let counter_only_evidence = a.jit;
+            let display_workload_enabled = false;
+            let (evidence_mode, counter_only_evidence) =
+                evidence_mode(fp_hist, a.jit, display_workload_enabled);
             let evidence_retired = if counter_only_evidence {
                 m.irq_stats().retired
             } else {
-                hash.retired()
-            };
-            let evidence_mode = if counter_only_evidence {
-                if a.jit {
-                    "jit-retired-counter-only"
-                } else {
-                    "display-retired-counter-only"
-                }
-            } else {
-                "retirement-records"
+                fp_trace_retired.unwrap_or_else(|| hash.retired())
             };
             let evidence = format!(
                 "wasm-vm boot evidence v1\ntrace fnv64={:016x}\ntrace retired={}\ntrace mode={evidence_mode}\n{}\noutcome={outcome:?}\n",
-                hash.hash(),
+                fp_trace_hash.unwrap_or_else(|| hash.hash()),
                 evidence_retired,
                 m.snapshot().state_sha256_line(),
             );
@@ -2290,6 +2442,103 @@ mod cli_config_tests {
             .try_get_matches_from(["boot", "--kernel", "Image", "--icount-divider", "0"])
             .expect_err("zero divider must be rejected");
         assert!(error.to_string().contains("nonzero"));
+    }
+}
+
+#[cfg(test)]
+mod fp_share_sink_tests {
+    use super::FpShareSink;
+    use wasm_vm_core::trace::{HashSink, TraceRecord, TraceSink};
+
+    #[test]
+    fn composite_sink_counts_fp_and_hashes_the_same_records() {
+        let records = [
+            TraceRecord {
+                pc: 0x8000,
+                insn: 0x0000_0053,
+                rd: Some((1, 7)),
+                mem: None,
+            },
+            TraceRecord {
+                pc: 0x8004,
+                insn: 0x0000_0007,
+                rd: Some((2, 9)),
+                mem: None,
+            },
+            TraceRecord {
+                pc: 0x8008,
+                insn: 0x0000_0043,
+                rd: Some((3, 11)),
+                mem: None,
+            },
+            TraceRecord {
+                pc: 0x800c,
+                insn: 0x0000_0033,
+                rd: Some((4, 13)),
+                mem: None,
+            },
+            TraceRecord {
+                pc: 0x8010,
+                insn: 0x0000_0024,
+                rd: None,
+                mem: None,
+            },
+        ];
+        let mut combined = FpShareSink::default();
+        let mut expected_hash = HashSink::new();
+        for record in &records {
+            combined.retire(record);
+            expected_hash.retire(record);
+        }
+
+        assert_eq!(combined.total, records.len() as u64);
+        assert_eq!(combined.fp, 3);
+        assert_eq!(combined.fp_ldst, 1);
+        assert_eq!(combined.fp_compute, 2);
+        assert_eq!(combined.opcode7[0x53], 1);
+        assert_eq!(combined.op_fp_funct7[0], 1);
+        assert_eq!(combined.fma_opcode7[0x43], 1);
+        assert_eq!(combined.fma_opcode7[0x24], 0);
+        assert_eq!(combined.trace_retired(), expected_hash.retired());
+        assert_eq!(combined.trace_hash(), expected_hash.hash());
+    }
+
+    #[test]
+    fn evidence_mode_matrix_marks_fp_histogram_as_record_based() {
+        assert_eq!(
+            super::evidence_mode(false, false, false),
+            ("retirement-records", false)
+        );
+        assert_eq!(
+            super::evidence_mode(false, true, false),
+            ("jit-retired-counter-only", true)
+        );
+        assert_eq!(
+            super::evidence_mode(false, false, true),
+            ("display-retired-counter-only", true)
+        );
+        assert_eq!(
+            super::evidence_mode(true, true, true),
+            ("retirement-records", false)
+        );
+    }
+
+    #[test]
+    fn pc_instruction_histogram_is_bounded_and_counts_dropped_pairs() {
+        let mut sink = FpShareSink::default();
+        for index in 0..=FpShareSink::MAX_PAIR_HIST {
+            sink.retire(&TraceRecord {
+                pc: 0x8000 + index as u64 * 64,
+                insn: 0x33,
+                rd: None,
+                mem: None,
+            });
+        }
+
+        assert_eq!(sink.pair_hist.len(), FpShareSink::MAX_PAIR_HIST);
+        assert_eq!(sink.pair_hist_dropped, 1);
+        assert_eq!(sink.region64.len(), FpShareSink::MAX_REGION_HIST);
+        assert_eq!(sink.region64_dropped, 1);
     }
 }
 
