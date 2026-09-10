@@ -13,6 +13,24 @@ import { chromium } from "../../web/node_modules/playwright/index.mjs";
 import { physicalStroke } from "./omarchy-browser-session.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
+if (urlArg === "--selftest-presentation") {
+  const staleSequence = [{ framesReceived: 12, successfulPresents: 8 }];
+  let staleIndex = 0;
+  await assert.rejects(
+    waitForFreshPresentation(async () => staleSequence[staleIndex++],
+      { framesReceived: 12, successfulPresents: 7 }, 50, "stale presentation self-test"),
+    /timed out waiting/u,
+  );
+  const sequence = [
+    { framesReceived: 12, successfulPresents: 8 },
+    { framesReceived: 13, successfulPresents: 8 },
+  ];
+  let index = 0;
+  await waitForFreshPresentation(async () => sequence[index++],
+    { framesReceived: 12, successfulPresents: 7 }, 100, "presentation self-test");
+  assert.equal(index, 2, "presentation self-test must consume the post-marker frame");
+  process.exit(0);
+}
 assert.ok(urlArg && output, "usage: omarchy-desktop-live.mjs URL|local|selftest NEW_OUTPUT_DIR [capture|verify]");
 assert.ok(mode === "capture" || mode === "verify", `invalid mode: ${mode}`);
 const out = path.resolve(output);
@@ -151,6 +169,27 @@ const local = urlArg === "local" || urlArg === "selftest" ? await startLocalServ
 ownedServer = local?.server || null;
 const url = local?.url || urlArg;
 const report = { url, mode, startedAt: new Date().toISOString(), errors: [], observations: [] };
+const pageQuery = new URL(url).searchParams;
+const prewarmTimeoutMs = mode === "capture"
+  ? Number(process.env.OMARCHY_PREWARM_TIMEOUT_MS || 120000)
+  : 120000;
+if (mode === "capture") {
+  try {
+    assert.equal(pageQuery.get("persist"), "1", "capture mode requires explicit persist=1");
+    assert.ok(Number.isSafeInteger(prewarmTimeoutMs) && prewarmTimeoutMs >= 1000 && prewarmTimeoutMs <= 1_800_000,
+      "OMARCHY_PREWARM_TIMEOUT_MS must be an integer from 1000 to 1800000 in capture mode");
+    assert.equal(pageQuery.has("testHooks"), false, "capture mode requires a production URL without testHooks");
+  } catch (error) {
+    if (ownedServer) await new Promise((resolve) => ownedServer.close(resolve));
+    throw error;
+  }
+  report.capturePolicy = {
+    freshContext: true,
+    prewarm: true,
+    timeoutMs: prewarmTimeoutMs,
+    timeoutLabel: "capture-only prewarm timeout; not a verify-mode timeout",
+  };
+}
 if (urlArg === "selftest") {
   let failure = null;
   try {
@@ -184,6 +223,13 @@ const context = await browser.newContext({ viewport: { width: 1280, height: 800 
 const page = await context.newPage();
 let secondPage = null;
 let failurePage = page;
+let loaderManifestResponse = null;
+if (mode === "capture") context.on("response", (response) => {
+  if (loaderManifestResponse || !/\/chunked-omarchy\/manifest(?:-[0-9a-f]{64})?\.json(?:\?|$)/iu.test(response.url())) return;
+  loaderManifestResponse = response.body()
+    .then((body) => ({ url: response.url(), status: response.status(), body, error: null }))
+    .catch((error) => ({ url: response.url(), status: response.status(), body: null, error: String(error) }));
+});
 const pageLabels = new WeakMap([[page, "primary"]]);
 function trackPage(targetPage, label) {
   targetPage.on("pageerror", (error) => report.errors.push(`${label}: ${String(error)}`));
@@ -243,6 +289,33 @@ async function observeServiceWorker(targetPage, label) {
   });
   report.observations.push({ serviceWorker: { label, ...observation } });
   return observation;
+}
+async function observeLoaderIdentity(label) {
+  assert.ok(loaderManifestResponse, `${label}: actual loader chunk manifest response was not observed`);
+  const captured = await loaderManifestResponse;
+  assert.equal(captured.error, null, `${label}: actual loader chunk manifest body failed: ${captured.error}`);
+  assert.equal(captured.status, 200, `${label}: chunk manifest response failed`);
+  const text = captured.body.toString("utf8");
+  const manifest = JSON.parse(text);
+  const canonical = JSON.stringify({
+    version: manifest.version,
+    image_len: manifest.image_len,
+    chunk_size: manifest.chunk_size,
+    layout: manifest.layout,
+    chunks: manifest.chunks,
+  });
+  const identity = {
+    url: captured.url,
+    rawSha256: createHash("sha256").update(captured.body).digest("hex"),
+    baseBinding: createHash("sha256").update(canonical).digest("hex"),
+    version: manifest.version,
+    imageLen: manifest.image_len,
+    chunkSize: manifest.chunk_size,
+    layout: manifest.layout,
+    chunkCount: manifest.chunks?.length ?? 0,
+  };
+  report.observations.push({ loaderIdentity: { label, ...identity } });
+  return identity;
 }
 async function observeFocus(targetPage, label) {
   const observation = await targetPage.evaluate(() => ({
@@ -312,8 +385,8 @@ async function assertNoOmarchyPersistentIdb(targetPage, label) {
   assert.deepEqual(omarchy, [], `${label}: Omarchy created persistent IndexedDB: ${omarchy.join(", ")}`);
   report.observations.push({ indexedDb: { label, names, omarchyPersistent: omarchy } });
 }
-async function readGuestFileEventually(targetPage, filename, expected, label) {
-  const deadline = Date.now() + 120000;
+async function readGuestFileEventually(targetPage, filename, expected, label, timeoutMs = 120000) {
+  const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     // Read-only polling: the physical keyboard is the only writer of the nonce file.
     const result = await exec(`if [ -f '${filename}' ]; then cat '${filename}'; else (exit 75); fi`, targetPage, `${label}:nonce-readback`);
@@ -325,6 +398,95 @@ async function readGuestFileEventually(targetPage, filename, expected, label) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
   throw new Error(`${label}: timed out waiting for physical keyboard nonce file`);
+}
+async function typePhysical(targetPage, text) {
+  for (const character of text) {
+    const { code, shift } = physicalStroke(character);
+    if (shift) await targetPage.keyboard.down("ShiftLeft");
+    await targetPage.keyboard.press(code, { delay: 40 });
+    if (shift) await targetPage.keyboard.up("ShiftLeft");
+  }
+}
+async function removeGuestFilePhysically(targetPage, filename, label, timeoutMs = 120000) {
+  const keyboardUrl = targetPage.url();
+  await assertCanvasFocus(targetPage, `${label}:before`, keyboardUrl);
+  await typePhysical(targetPage, `rm -f '${filename}'`);
+  await targetPage.keyboard.press("Enter");
+  await assertCanvasFocus(targetPage, `${label}:after`, keyboardUrl);
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const result = await exec(`if [ ! -e '${filename}' ]; then (exit 0); else (exit 1); fi`, targetPage, `${label}:verify`);
+    if (result.exit === 0) {
+      report.observations.push({ nonceCleanup: { label, filename, verified: true } });
+      return;
+    }
+    assert.equal(result.exit, 1, `${label}: cleanup failed: ${result.stderr || result.stdout}`);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+  throw new Error(`${label}: timed out waiting for nonce cleanup`);
+}
+async function syncAndClearTerminalPhysically(targetPage, label, timeoutMs = 120000) {
+  const keyboardUrl = targetPage.url();
+  const marker = `WVM_PREWARM_SYNC_${randomBytes(6).toString("hex")}`;
+  const markerFile = `/tmp/omarchy-prewarm-sync-${randomBytes(8).toString("hex")}`;
+  const physicalCommand = `history -c && clear && sync && printf '${marker}' > '${markerFile}'`;
+  await assertCanvasFocus(targetPage, `${label}:before`, keyboardUrl);
+  await typePhysical(targetPage, physicalCommand);
+  await targetPage.keyboard.press("Enter");
+  await assertCanvasFocus(targetPage, `${label}:after`, keyboardUrl);
+  await readGuestFileEventually(targetPage, markerFile, marker, `${label}:marker`, timeoutMs);
+  const afterMarkerPresentation = await presentationProof(targetPage);
+  const markerBaseline = {
+    framesReceived: Number(afterMarkerPresentation.state?.framesReceived ?? 0),
+    successfulPresents: Number(afterMarkerPresentation.state?.successfulPresents ?? 0),
+  };
+  assert.ok(Number.isFinite(markerBaseline.framesReceived) && Number.isFinite(markerBaseline.successfulPresents),
+    `${label}: invalid post-marker presentation counters`);
+  // A real pointer transition gives the compositor a fresh opportunity to present after
+  // marker readback; frames emitted while typing cannot satisfy this post-marker gate.
+  await targetPage.locator("#ide-display-canvas").hover({ position: { x: 301, y: 201 } });
+  const freshState = await waitForFreshPresentation(
+    () => targetPage.evaluate(() => window.__presentation?.state?.()),
+    markerBaseline,
+    timeoutMs,
+    `${label}:post-marker-frame`,
+  );
+  const afterPresentation = await presentationProof(targetPage, afterMarkerPresentation);
+  assert.ok(Number(freshState.framesReceived) > markerBaseline.framesReceived
+    && Number(freshState.successfulPresents) > markerBaseline.successfulPresents,
+  `${label}: post-marker presentation counters did not both advance`);
+  assert.ok(afterPresentation.hasDesktopPixels, `${label}: clear did not leave real desktop pixels presented`);
+  await assertCanvasFocus(targetPage, `${label}:frame`, keyboardUrl);
+  const foot = await mappedFoot(targetPage, `${label}:Foot`);
+  const active = await exec("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow", targetPage, `${label}:activewindow`);
+  assert.equal(active.exit, 0, `${label}: activewindow query failed`);
+  assert.equal(JSON.parse(active.stdout).address, foot.address, `${label}: clear frame is not focused Foot`);
+  const cleanup = await exec(`rm -f -- '${markerFile}' && sync`, targetPage, `${label}:marker-cleanup`);
+  assert.equal(cleanup.exit, 0, `${label}: owned marker cleanup failed: ${cleanup.stderr || cleanup.stdout}`);
+  const absent = await exec(`if [ ! -e '${markerFile}' ]; then (exit 0); else (exit 1); fi`, targetPage, `${label}:marker-absent`);
+  assert.equal(absent.exit, 0, `${label}: owned marker remained after cleanup`);
+  report.observations.push({ terminalCleanup: {
+    label,
+    physicalCommand,
+    markerFile,
+    markerVerifiedViaSerialReadback: true,
+    cleanupExit: cleanup.exit,
+    markerAbsent: true,
+    clearAndHistoryRequested: true,
+    clearAndHistoryProvenByMarker: false,
+    newRealFramePresented: true,
+    focusedFoot: true,
+  } });
+}
+async function waitForFreshPresentation(readState, baseline, timeoutMs, label) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const state = await readState();
+    if (Number(state?.framesReceived) > baseline.framesReceived
+      && Number(state?.successfulPresents) > baseline.successfulPresents) return state;
+    await new Promise((resolve) => setTimeout(resolve, 25));
+  }
+  throw new Error(`${label}: timed out waiting for presentation after baseline ${JSON.stringify(baseline)}`);
 }
 function layerRecords(value, records = []) {
   if (Array.isArray(value)) {
@@ -341,6 +503,10 @@ function layerFingerprint(layer) {
     x: layer.x, y: layer.y, w: layer.w, h: layer.h,
     pid: layer.pid, address: layer.address,
   });
+}
+function layerIsVisible(layer) {
+  if (layer.visible === false || layer.mapped === false) return false;
+  return typeof layer.alpha !== "number" || layer.alpha > 0.01;
 }
 async function presentationProof(targetPage, previous = null) {
   return targetPage.evaluate((previousPixels) => {
@@ -379,51 +545,52 @@ async function presentationProof(targetPage, previous = null) {
     };
   }, previous);
 }
-async function proveCalendarOnSecondTab() {
+async function proveCalendar(targetPage, label, screenshotName, timeoutMs = 300000, fileStem = label) {
   const command = "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers";
-  const beforeResult = await exec(command, secondPage, "calendar:layers-before");
+  const beforeResult = await exec(command, targetPage, `${label}:layers-before`);
   assert.equal(beforeResult.exit, 0, "calendar proof: initial layers query failed");
   const beforeText = beforeResult.stdout;
   const before = JSON.parse(beforeText);
   const beforeFingerprints = new Set(layerRecords(before).map(layerFingerprint));
   const expectedNamespace = "omarchy-keyboard-panel";
-  const beforePresentation = await presentationProof(secondPage);
+  const beforePresentation = await presentationProof(targetPage);
   assert.ok(beforePresentation.hasDesktopPixels, "calendar proof: before-click desktop pixels missing");
-  await secondPage.locator("#ide-display-canvas").click({ position: { x: 640, y: 13 } });
+  await targetPage.locator("#ide-display-canvas").click({ position: { x: 640, y: 13 } });
 
-  const deadline = Date.now() + Number(process.env.OMARCHY_CALENDAR_TIMEOUT_MS || 300000);
+  const deadline = Date.now() + timeoutMs;
   let afterResult = null;
   let after = null;
   let newPanel = [];
   let afterPresentation = null;
   while (Date.now() < deadline) {
-    afterResult = await exec(command, secondPage, "calendar:layers-after-click");
+    afterResult = await exec(command, targetPage, `${label}:layers-after-click`);
     assert.equal(afterResult.exit, 0, "calendar proof: layers query failed after physical click");
     after = JSON.parse(afterResult.stdout);
     newPanel = layerRecords(after).filter((layer) => {
       return layer.namespace === expectedNamespace && Number(layer.pid) > 0
         && Number(layer.w) > 0 && Number(layer.h) > 0
+        && layerIsVisible(layer)
         && !beforeFingerprints.has(layerFingerprint(layer));
     });
     if (newPanel.length) {
-      afterPresentation = await presentationProof(secondPage, beforePresentation);
+      afterPresentation = await presentationProof(targetPage, beforePresentation);
       if (afterPresentation.hasDesktopPixels && afterPresentation.changedSamples > 0) break;
     }
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
   assert.ok(newPanel.length, `calendar proof: no newly rendered primary panel layer for ${expectedNamespace}`);
 
-  afterPresentation ||= await presentationProof(secondPage, beforePresentation);
+  afterPresentation ||= await presentationProof(targetPage, beforePresentation);
   assert.ok(afterPresentation.hasDesktopPixels, "calendar proof: after-click desktop pixels missing");
   assert.ok(afterPresentation.changedSamples > 0, "calendar proof: physical click did not change displayed pixels");
-  const displayProof = await secondPage.evaluate(() => ({
+  const displayProof = await targetPage.evaluate(() => ({
     url: location.href,
     canvas: { width: document.querySelector("#ide-display-canvas")?.width, height: document.querySelector("#ide-display-canvas")?.height },
     presentation: window.__presentation?.state?.() || null,
     viewport: window.__presentation?.viewport?.() || null,
   }));
-  await fs.writeFile(path.join(out, "desktop-calendar-layers.stdout"), `${beforeText}\n--- after physical clock click ---\n${afterResult.stdout}`);
-  await fs.writeFile(path.join(out, "desktop-calendar-displayproof.stdout"), JSON.stringify({
+  await fs.writeFile(path.join(out, `${fileStem}-layers.stdout`), `${beforeText}\n--- after physical clock click ---\n${afterResult.stdout}`);
+  await fs.writeFile(path.join(out, `${fileStem}-displayproof.stdout`), JSON.stringify({
     click: { x: 640, y: 13, input: "physical canvas click" },
     expectedNamespace,
     newPanel,
@@ -431,13 +598,34 @@ async function proveCalendarOnSecondTab() {
     presentationAfter: { state: afterPresentation.state, presentCount: afterPresentation.state?.successfulPresents ?? null, hasDesktopPixels: afterPresentation.hasDesktopPixels, pixelHash: afterPresentation.pixelHash, changedSamples: afterPresentation.changedSamples },
     displayProof,
   }, null, 2) + "\n");
-  report.calendar = { click: { x: 640, y: 13 }, expectedNamespace, newPanel,
+  report[label.replaceAll(/[^a-z0-9_-]/giu, "_")] = { click: { x: 640, y: 13 }, expectedNamespace, newPanel,
     presentationBefore: { state: beforePresentation.state, presentCount: beforePresentation.state?.successfulPresents ?? null, hasDesktopPixels: beforePresentation.hasDesktopPixels, pixelHash: beforePresentation.pixelHash },
     presentationAfter: { state: afterPresentation.state, presentCount: afterPresentation.state?.successfulPresents ?? null, hasDesktopPixels: afterPresentation.hasDesktopPixels, pixelHash: afterPresentation.pixelHash, changedSamples: afterPresentation.changedSamples },
     displayProof };
-  await screenshot("desktop-calendar.png", secondPage);
+  await screenshot(screenshotName, targetPage);
+  return { expectedNamespace, newPanel, beforePresentation, afterPresentation };
 }
-async function capturePair() {
+async function closeCalendar(targetPage, proof, label, timeoutMs = 300000) {
+  const command = "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers";
+  const openFingerprints = new Set(proof.newPanel.map(layerFingerprint));
+  const keyboardUrl = targetPage.url();
+  await assertCanvasFocus(targetPage, `${label}:before`, keyboardUrl);
+  await targetPage.locator("#ide-display-canvas").click({ position: { x: 640, y: 13 } });
+  await assertCanvasFocus(targetPage, `${label}:after`, keyboardUrl);
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const result = await exec(command, targetPage, `${label}:layers-after-close`);
+    assert.equal(result.exit, 0, `${label}: layers query failed after close`);
+    const layers = layerRecords(JSON.parse(result.stdout));
+    if (!layers.some((layer) => openFingerprints.has(layerFingerprint(layer)) && layerIsVisible(layer))) {
+      report.observations.push({ calendarClosed: { label, verified: true } });
+      return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+  throw new Error(`${label}: calendar primary panel did not close after real click`);
+}
+async function capturePair(baseBinding) {
   await page.evaluate(() => window.__linux.pause());
   await page.evaluate(() => window.__persist());
   const stats = await page.evaluate(() => window.__persistStats());
@@ -462,7 +650,8 @@ async function capturePair() {
   }
   gzip.end(); await once(destination, "close");
   await page.evaluate(() => { delete window.__omarchyExport; });
-  const base = "ec1bc2601b104cfb6d6875c091377ccfd0654d5b6aab71c6a08ae37263f1c391";
+  const base = baseBinding;
+  assert.match(base, /^[0-9a-f]{64}$/u, "actual loader base binding must be lowercase SHA-256");
   const generation = await page.evaluate(() => window.__snapshotGeneration());
   const count = await page.evaluate(async (base) => {
     const names = (await indexedDB.databases()).filter((db) => db.name.includes(base));
@@ -517,12 +706,14 @@ try {
   await screenshot("desktop.png");
   report.restored = await page.evaluate(() => window.__linux.restoredFromBootSnapshot());
   if (mode === "verify") assert.equal(report.restored, true, "production must use the desktop warm snapshot");
+  const loaderIdentity = mode === "capture" ? await observeLoaderIdentity("desktop-ready") : null;
+  if (loaderIdentity) report.loaderIdentity = loaderIdentity;
   const foot = await mappedFoot(page, "initial desktop");
   report.foot = foot;
   if (mode === "verify") await assertNoOmarchyPersistentIdb(page, "initial desktop");
-  if (mode === "capture") await capturePair();
   // The initial full-screen Foot is focused in the packaged desktop. Physical DOM keys, never
   // serial injection, create the nonce file; a separate serial command reads it back.
+  const prewarmStartedAt = mode === "capture" ? Date.now() : null;
   const active = await exec("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow", page, "initial:hyprctl-activewindow");
   assert.equal(JSON.parse(active.stdout).address, foot.address);
   await page.locator("#ide-display-canvas").click({ position: { x: 300, y: 200 } });
@@ -538,9 +729,40 @@ try {
   }
   await page.keyboard.press("Enter");
   await assertCanvasFocus(page, "physical-keyboard-after-enter", keyboardUrl);
-  await readGuestFileEventually(page, guestFile, nonce, "physical keyboard");
+  await readGuestFileEventually(page, guestFile, nonce, "physical keyboard",
+    mode === "capture" ? prewarmTimeoutMs : 120000);
   report.keyboard = { verified: true, nonce };
   await screenshot("desktop-keyboard.png");
+  if (mode === "capture") {
+    const calendarProof = await proveCalendar(page, "capture-prewarm-calendar", "desktop-prewarm-calendar.png", prewarmTimeoutMs);
+    await closeCalendar(page, calendarProof, "capture-prewarm-calendar-close", prewarmTimeoutMs);
+    await removeGuestFilePhysically(page, guestFile, "capture-prewarm-nonce-cleanup", prewarmTimeoutMs);
+    await syncAndClearTerminalPhysically(page, "capture-prewarm-sync", prewarmTimeoutMs);
+    const cleanFoot = await mappedFoot(page, "capture prewarm clean Foot");
+    const cleanActive = await exec("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow", page, "capture-prewarm:activewindow");
+    assert.equal(cleanActive.exit, 0, "capture prewarm: activewindow query failed");
+    assert.equal(JSON.parse(cleanActive.stdout).address, cleanFoot.address,
+      "capture prewarm: clean Foot is not the active desktop window");
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.waitForFunction(() => {
+      const state = window.__presentation.state();
+      return state.width === 1280 && state.height === 800 && state.successfulPresents > 0;
+    }, null, { timeout: prewarmTimeoutMs });
+    await screenshot("desktop-prewarm.png");
+    report.capturePrewarm = {
+      startedAt: new Date(prewarmStartedAt).toISOString(),
+      elapsedMs: Date.now() - prewarmStartedAt,
+      timeoutMs: prewarmTimeoutMs,
+      physicalNonceVerified: true,
+      calendarOpenedAndClosed: true,
+      nonceCleaned: true,
+      syncVerified: true,
+      cleanFoot,
+      viewport: { width: 1280, height: 800 },
+      loaderBaseBinding: loaderIdentity.baseBinding,
+    };
+    await capturePair(loaderIdentity.baseBinding);
+  }
   await page.setViewportSize({ width: 1024, height: 768 });
   await page.waitForFunction(() => {
     const s = window.__presentation.state();
@@ -579,7 +801,8 @@ try {
     report.secondTabFoot = await mappedFoot(secondPage, "second tab");
     await assertNoOmarchyPersistentIdb(secondPage, "second tab");
     await screenshot("desktop-second-tab.png", secondPage);
-    await proveCalendarOnSecondTab();
+    await proveCalendar(secondPage, "calendar", "desktop-calendar.png",
+      Number(process.env.OMARCHY_CALENDAR_TIMEOUT_MS || 300000), "desktop-calendar");
   }
   assert.deepEqual(report.errors, []);
   report.result = mode === "verify"

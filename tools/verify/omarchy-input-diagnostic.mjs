@@ -15,7 +15,7 @@ for (let i = 2; i < process.argv.length; i += 1) {
   if (!arg.startsWith("--")) { positional.push(arg); continue; }
   const key = arg.slice(2).replaceAll("-", "");
   if (key === "checkonly") { options[key] = true; continue; }
-  if (!["pairdirectory", "chunkmanifest", "chunkdir", "clickdelayms"].includes(key)) {
+  if (!["pairdirectory", "chunkmanifest", "chunkdir", "clickdelayms", "jitresidency"].includes(key)) {
     throw Error(`unknown diagnostic option: ${arg}`);
   }
   const value = process.argv[++i];
@@ -27,6 +27,13 @@ const divider = positional[1] || "64";
 if (!/^(1|2|4|8|16|32|64)$/u.test(divider)) throw Error("invalid diagnostic divider");
 const jit = positional[2] || "1";
 if (!/^[01]$/u.test(jit)) throw Error("invalid diagnostic JIT selector");
+const jitResidency = options.jitresidency;
+if (jitResidency !== undefined && !["repack-off", "cap-256"].includes(jitResidency)) {
+  throw Error("invalid --jit-residency; expected repack-off or cap-256");
+}
+if (jitResidency !== undefined && positional[2] !== "1") {
+  throw Error("--jit-residency requires the explicit diagnostic JIT selector 1");
+}
 if (!output && !options.checkonly) throw Error("diagnostic output directory is required");
 const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const regularFile = async (filename, label) => {
@@ -86,11 +93,21 @@ if (candidateMode) {
         bootSnapshot: { url: "/candidate/boot-snapshot", sha256: source.bootSnapshot.sha256, size: source.bootSnapshot.size },
         overlayDelta: { url: "/candidate/overlay-delta", sha256: source.overlayDelta.sha256, size: source.overlayDelta.size },
       },
+      chunkedImage: {
+        key: `chunked-omarchy/manifest-${source.chunkManifest.sha256}.json`,
+        sha256: source.chunkManifest.sha256,
+        size: source.chunkManifest.size,
+      },
     },
   };
 }
 if (options.checkonly) {
-  console.log(JSON.stringify({ result: "candidate-source-check-pass", label: candidate.manifest.generated, source: candidate.source }));
+  console.log(JSON.stringify({
+    result: "candidate-source-check-pass",
+    label: candidate.manifest.generated,
+    chunkManifestKey: candidate.manifest.chunkedImage.key,
+    source: candidate.source,
+  }));
   process.exit(0);
 }
 await fs.mkdir(output, { recursive: false });
@@ -104,7 +121,7 @@ const server = createServer(async (request, response) => {
   if (candidate && pathname === "/candidate/kernel") filename = candidate.source.kernel.filename;
   else if (candidate && pathname === "/candidate/boot-snapshot") filename = candidate.source.bootSnapshot.filename;
   else if (candidate && pathname === "/candidate/overlay-delta") filename = candidate.source.overlayDelta.filename;
-  else if (candidate && pathname === "/chunked-omarchy/manifest.json") filename = candidate.chunkManifest;
+  else if (candidate && pathname === `/${candidate.manifest.chunkedImage.key}`) filename = candidate.chunkManifest;
   else if (candidate && pathname.startsWith("/chunked-omarchy/")) {
     const relative = pathname.slice("/chunked-omarchy/".length);
     const name = relative.startsWith("chunks/") ? relative.slice("chunks/".length).replace(/\.bin$/u, "") : "";
@@ -133,9 +150,15 @@ if (defaultClickDelay !== undefined && (!Number.isInteger(defaultClickDelay) || 
 const lines = createInterface({ input: process.stdin });
 try {
   const assetOverride = candidate ? `&omarchyAssetBase=${encodeURIComponent(`http://127.0.0.1:${port}`)}` : "";
-  await page.goto(`http://127.0.0.1:${port}/app.html?guest=omarchy&desktop=1&omarchyDivider=${divider}&jit=${jit}${assetOverride}#ide`);
+  const residencyOverride = jitResidency === undefined ? "" : `&jitResidency=${encodeURIComponent(jitResidency)}`;
+  await page.goto(`http://127.0.0.1:${port}/app.html?guest=omarchy&desktop=1&omarchyDivider=${divider}&jit=${jit}${residencyOverride}${assetOverride}#ide`);
   await page.waitForFunction(() => window.wvmDemo?.isGuestReady?.(), null, { timeout: 120000 });
-  console.log(JSON.stringify({ ready: "INPUT_DIAGNOSTIC_READY", mode: candidate ? "local-candidate-diagnostic" : "default", source: candidate?.source ?? null }));
+  const pageUrl = page.url();
+  const sourceReceipt = candidate?.source ?? { kind: "web-dist", root: path.join(repo, "web/dist"), candidate: false };
+  const sessionReceipt = { pageUrl, sourceReceipt, jitResidency: jitResidency ?? null };
+  history.push({ time: new Date().toISOString(), event: "ready", ...sessionReceipt });
+  await fs.writeFile(path.join(output, "diagnostic.json"), JSON.stringify(history, null, 2));
+  console.log(JSON.stringify({ ready: "INPUT_DIAGNOSTIC_READY", mode: candidate ? "local-candidate-diagnostic" : "default", ...sessionReceipt }));
   for await (const line of lines) {
     try {
       const request = JSON.parse(line);
@@ -175,7 +198,7 @@ try {
         await page.screenshot({ path: path.join(output, request.name) });
         result = path.join(output, request.name);
       }
-      const entry = { time: new Date().toISOString(), request, result: result ?? "sent" };
+      const entry = { time: new Date().toISOString(), ...sessionReceipt, request, result: result ?? "sent" };
       history.push(entry);
       await fs.writeFile(path.join(output, "diagnostic.json"), JSON.stringify(history, null, 2));
       console.log(JSON.stringify(entry));
