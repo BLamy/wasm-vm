@@ -72,6 +72,11 @@ releases/chunked-alpine/
 releases/chunked-omarchy/
 releases/chunked-node-alpine/
 
+# The 192 MiB Omarchy desktop RAM snapshot exceeds GitHub's file limit. Its
+# exact bytes are pinned in web/artifacts-omarchy.json and hosted immutably on R2.
+# Restore it for local acceptance/deployment with tools/fetch-omarchy-snapshot.mjs.
+releases/boot-snapshot/omarchy-ready.snap.gz
+
 releases/wvseccomp-riscv64
 
 # Container bundles baked into the Alpine rootfs (rebuild: tools/build-container-bundle.sh <img>).

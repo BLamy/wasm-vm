@@ -49,10 +49,11 @@ import {
   POINTER_MODES,
 } from "./src/input/pointer.js";
 import { PresentationController } from "./src/sink/presentation.js";
-import { DisplayViewportController } from "./src/sink/viewport.js";
+import { DisplayViewportController, desktopViewportPixelMode } from "./src/sink/viewport.js";
 import { CursorController } from "./src/sink/cursor-controller.js";
 import { createDesktopAgentBridge } from "./desktop-agent-bridge.js";
 import { restoreDesktopThroughHost } from "./desktop-restore.js";
+import { hasOmarchyDesktopLayers, hasDesktopPixels } from "./omarchy-desktop-readiness.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
@@ -101,6 +102,7 @@ if (displayCanvas) {
 const displayViewportEl = document.getElementById("ide-display-viewport");
 if (presentation && displayViewportEl) {
   displayViewport = new DisplayViewportController({ container: displayViewportEl, presentation,
+    modeForRect: _omarchyDesktopMode ? desktopViewportPixelMode : undefined,
     onState: (state) => {
       if (displayStatusEl && state.error) displayStatusEl.textContent = "display: " + state.error;
     },
@@ -125,6 +127,11 @@ function handleDisplayFrame(frame) {
     }
     return false;
   }
+}
+
+function emitGuestLifecycleEvent(type, detail = {}) {
+  if (!_omarchyDesktopMode) return;
+  try { window.dispatchEvent(new CustomEvent(type, { detail })); } catch { /* UI diagnostics only */ }
 }
 try {
   window.__presentation = {
@@ -1349,6 +1356,7 @@ async function runLinuxBootOwned(opts, banner, request) {
         }
       },
       onState: (s) => {
+        emitGuestLifecycleEvent("wvm:guest-state", { state: s });
         // E4 restore-on-first-load: a visible stopwatch instead of the "booting" progress bar when
         // the shipped boot snapshot is being restored.
         if (s === "restoring") {
@@ -1370,6 +1378,7 @@ async function runLinuxBootOwned(opts, banner, request) {
         bootProgress.onState(s);
       },
       onProgress: (role, loaded, total) => {
+        emitGuestLifecycleEvent("wvm:guest-progress", { phase: role, loaded, total });
         pct[role] = total ? `${((loaded / total) * 100) | 0}%` : `${(loaded / 1048576).toFixed(1)}MB`;
         bootProgressEl.textContent = Object.entries(pct).map(([k, v]) => `${k} ${v}`).join("  ");
         bootProgress.onProgress(role, loaded, total);
@@ -1383,6 +1392,7 @@ async function runLinuxBootOwned(opts, banner, request) {
         // E3-T24a: the honest 100% signal is a usable prompt, detected in the guest console stream.
         try {
           const s = new TextDecoder().decode(u8);
+          if (!quietGuestExec) emitGuestLifecycleEvent("wvm:guest-output", { text: s });
           bootProgress.scanOutput(s);
           promptTail = (promptTail + s).slice(-200);
           // xterm answers the guest's cursor-position query with a CSI sequence (for example
@@ -1398,8 +1408,10 @@ async function runLinuxBootOwned(opts, banner, request) {
       },
       onAgentOutput,
       onError: (e) => {
-        term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`);
-        bootProgress.fail(e?.message || String(e));
+        const message = e?.message || String(e);
+        term.writeln(`\x1b[31mboot error: ${message}\x1b[0m`);
+        bootProgress.fail(message);
+        emitGuestLifecycleEvent("wvm:guest-error", { message });
       },
       // E3-T10: storage indicator (usage/quota/persist grant) at boot.
       onStorage: ({ usage, quota, granted }) => {
@@ -1488,6 +1500,7 @@ async function runLinuxBootOwned(opts, banner, request) {
         const message = error?.message || String(error);
         setStatus(`linux worker fatal: ${message} — reload with ?worker=0 for the main-thread fallback`);
         term.writeln(`\r\n\x1b[31mwhole-machine worker stopped: ${message} — use ?worker=0 for the main-thread fallback\x1b[0m`);
+        emitGuestLifecycleEvent("wvm:guest-error", { message });
         return;
       }
       // E2-T26: surface the T17 terminal ExitReason as a distinct HALTED state, not just a status
@@ -1499,6 +1512,7 @@ async function runLinuxBootOwned(opts, banner, request) {
       if (reason) {
         setStatus(`⏻ machine halted — ${reason}`);
         term.writeln(`\r\n\x1b[7m machine halted (${reason}) — click "Boot Linux"/"Boot Alpine" to boot a fresh machine \x1b[0m`);
+        emitGuestLifecycleEvent("wvm:guest-halted", { message: reason });
       } else {
         setStatus(`linux: ${state}`);
       }
@@ -1693,6 +1707,7 @@ async function runLinuxBootOwned(opts, banner, request) {
     }
     lastBootError = e.message || String(e); // surfaced to the Docker tab's typed-error path
     term.writeln(`\x1b[31mcannot boot: ${e.message || e}\x1b[0m`);
+    emitGuestLifecycleEvent("wvm:guest-error", { message: lastBootError });
     setStatus(_useCpuWorker
       ? `linux worker fatal: ${lastBootError} — reload with ?worker=0 for the main-thread fallback`
       : `cannot boot: ${lastBootError}`);
@@ -1908,12 +1923,37 @@ let omarchyAvailable = false;
 // gate on this; a `wvm:guest-ready` window event fires once per boot. Reset when a new boot starts.
 let guestReady = false;
 let promptTail = "";
+let desktopReadinessGeneration = 0;
+let desktopReadinessTimer = null;
+function watchOmarchyDesktop() {
+  if (!_omarchyDesktopMode) return;
+  const generation = desktopReadinessGeneration;
+  const check = async () => {
+    if (generation !== desktopReadinessGeneration || !guestReady) return;
+    try {
+      // This is the real compositor's IPC, through the existing serialized guest console bridge.
+      // A boot/restoration event alone must never hide the loading/error surface.
+      const result = await guestExec("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers", 300000, null, { quiet: true });
+      if (generation !== desktopReadinessGeneration || !guestReady) return;
+      if (result.exit === 0 && hasOmarchyDesktopLayers(JSON.parse(result.stdout))
+        && presentation?.snapshot().successfulPresents > 0 && hasDesktopPixels(presentation.readPixels())) {
+        emitGuestLifecycleEvent("wvm:desktop-ready");
+        return;
+      }
+    } catch { /* A compositor that is still starting is not a successful desktop. */ }
+    if (generation === desktopReadinessGeneration && guestReady) desktopReadinessTimer = setTimeout(check, 5000);
+  };
+  desktopReadinessTimer = setTimeout(check, 1000);
+}
 function markGuestReady() {
   if (guestReady) return;
   guestReady = true;
   try { window.dispatchEvent(new Event("wvm:guest-ready")); } catch {}
+  watchOmarchyDesktop();
 }
 function resetGuestReady() {
+  desktopReadinessGeneration++;
+  clearTimeout(desktopReadinessTimer);
   guestReady = false;
   promptTail = "";
   try { window.dispatchEvent(new Event("wvm:guest-booting")); } catch {}
@@ -1972,9 +2012,8 @@ async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl, bootProfile
     : { ok: false, error: lastBootError || "boot failed" };
 }
 
-// E5.5-T03a: Omarchy is an immutable graphical guest, not an Alpine overlay. Keep its boot
-// contract explicit so it cannot accidentally inherit Alpine persistence, a stale warm snapshot,
-// or file-transfer/network devices that are not part of the published desktop image.
+// Omarchy is a fresh graphical demo session on every launch. Its paired warm image is restored
+// into memory; it never reuses/mutates an Alpine disk or waits for another tab's writer lock.
 async function bootOmarchy() {
   const query = new URLSearchParams(location.search);
   const assetBase = query.get("omarchyAssetBase") || R2_ASSETS;
@@ -1986,10 +2025,10 @@ async function bootOmarchy() {
       bootProfileUrl: null,
       bootargs: "root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0",
       cacheBudgetMib: Number(query.get("omarchyCacheMib")) || 256,
-      // Omarchy ships a paired RAM snapshot + overlay delta just like the Alpine flavors. Keep
-      // both enabled by default so the desktop resumes at the captured Hyprland/Foot session;
-      // `?persist=0`/`?noSnapshot` remain explicit cold-boot diagnostics.
-      persist: query.get("persist") !== "0",
+      // Explicit cold/persistent options are diagnostic capture tools; the launcher's default is
+      // an independent in-memory copy of the shipped desktop, including on repeat visits.
+      persist: query.get("persist") === "1",
+      freshDesktop: !query.has("noSnapshot") && !query.has("persist"),
       bootSnapshot: !query.has("noSnapshot"),
       ramMib: 1024,
       imageLen: 4 * 1024 * 1024 * 1024,
@@ -2283,6 +2322,7 @@ window.wvmDemo = {
           sawEcho = true;
           continue;
         }
+        if (line === `__WVBEGIN_${streamRid}`) continue;
         if (line.startsWith(streamMarker)) {
           const exitText = line.slice(streamMarker.length);
           if (/^\d+$/.test(exitText)) {

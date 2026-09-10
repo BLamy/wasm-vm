@@ -282,19 +282,17 @@ html[data-wvm-desktop="omarchy"] .ide-display-pane {
 html[data-wvm-desktop="omarchy"] .ide-editor-area { display: flex; }
 html[data-wvm-desktop="omarchy"] .ide-display-pane { flex: 1 1 auto; border: 0; }
 html[data-wvm-desktop="omarchy"] .ide-display-head {
-  position: absolute; top: 0; left: 0; right: 0; z-index: 3; opacity: 0;
-  transition: opacity .16s ease;
+  display: none !important;
 }
-html[data-wvm-desktop="omarchy"] .ide-display-pane:hover .ide-display-head,
-html[data-wvm-desktop="omarchy"] .ide-display-pane:focus-within .ide-display-head {
-  opacity: 1;
+html[data-wvm-desktop="omarchy"] .ide-display-viewport {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
 }
-html[data-wvm-desktop="omarchy"] .ide-display-viewport { width: 100%; height: 100%; }
 html[data-wvm-desktop="omarchy"] .ide-display-canvas {
-  width: 100%; height: 100%; image-rendering: auto; touch-action: none; outline: none;
+  position: relative; left: auto; top: auto; flex: 0 0 auto;
+  image-rendering: auto; touch-action: none; outline: none;
 }
 .omarchy-desktop-toolbar {
-  position: absolute; top: 12px; left: 12px; right: 12px; z-index: 10;
+  position: absolute; bottom: 12px; left: 12px; right: 12px; z-index: 10;
   display: flex; align-items: center; gap: 9px; min-height: 38px; padding: 6px 9px;
   color: #d6deeb; background: rgba(10, 13, 19, .88); border: 1px solid rgba(83, 212, 255, .28);
   border-radius: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, .35); backdrop-filter: blur(8px);
@@ -302,11 +300,33 @@ html[data-wvm-desktop="omarchy"] .ide-display-canvas {
 }
 html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar:hover,
 html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar:focus-within { opacity: 1; }
+html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar[data-state="error"],
+html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar[data-state="halted"] { opacity: 1; }
 .omarchy-desktop-toolbar[hidden] { display: none; }
 .omarchy-desktop-toolbar .brand { color: #fff; font-weight: 700; }
 .omarchy-desktop-toolbar .status { color: #9fb0c7; font-size: 11px; }
 .omarchy-desktop-toolbar .sp { flex: 1 1 auto; }
 .omarchy-desktop-toolbar button { min-height: 27px; padding: 3px 9px; font-size: 11px; }
+.omarchy-boot-overlay {
+  position: absolute; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
+  padding: 20px; background: rgba(0, 0, 0, .72); color: #d6deeb; pointer-events: auto;
+}
+.omarchy-boot-overlay[hidden] { display: none; }
+.omarchy-boot-card {
+  width: min(520px, 100%); padding: 18px; border: 1px solid rgba(83, 212, 255, .32);
+  border-radius: 10px; background: rgba(10, 13, 19, .95); box-shadow: 0 14px 38px rgba(0, 0, 0, .5);
+}
+.omarchy-boot-card h1 { margin: 0 0 8px; color: #fff; font: 600 16px ui-sans-serif, system-ui, sans-serif; }
+.omarchy-boot-status { min-height: 1.4em; color: #9fb0c7; line-height: 1.45; }
+.omarchy-boot-status[data-state="error"] { color: #ffb4b4; }
+.omarchy-boot-progress { width: 100%; height: 7px; margin: 13px 0 8px; accent-color: #53d4ff; }
+.omarchy-boot-progress[hidden] { display: none; }
+.omarchy-boot-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.omarchy-boot-actions button { min-height: 30px; padding: 5px 10px; font: inherit; font-size: 11px; }
+.omarchy-boot-log { max-height: min(38vh, 260px); overflow: auto; margin: 12px 0 0; padding: 9px;
+  border: 1px solid var(--line, #232a35); border-radius: 6px; background: #05070a; color: #cdd6f4;
+  white-space: pre-wrap; word-break: break-word; font-size: 11px; line-height: 1.45; }
+.omarchy-boot-log[hidden] { display: none; }
 `;
 const style = document.createElement("style");
 style.textContent = css;
@@ -444,6 +464,18 @@ const containerLedger = {
 const root = document.getElementById("ide-root");
 if (root) {
   root.innerHTML = `
+    <div class="omarchy-boot-overlay" id="omarchy-boot-overlay" hidden>
+      <div class="omarchy-boot-card" role="status" aria-live="polite">
+        <h1>Starting Omarchy desktop</h1>
+        <div class="omarchy-boot-status" id="omarchy-boot-status">Waiting for boot events…</div>
+        <progress class="omarchy-boot-progress" id="omarchy-boot-progress" max="1" value="0" hidden></progress>
+        <div class="omarchy-boot-actions">
+          <button id="omarchy-boot-log-toggle" type="button" aria-expanded="false">View boot log</button>
+          <button id="omarchy-boot-exit" type="button">Exit desktop</button>
+        </div>
+        <pre class="omarchy-boot-log" id="omarchy-boot-log" hidden>No serial output yet.</pre>
+      </div>
+    </div>
     <div class="omarchy-desktop-toolbar" id="omarchy-desktop-toolbar" hidden>
       <span class="brand">Omarchy</span>
       <span class="status" id="omarchy-desktop-status">desktop · resizable</span>
@@ -534,11 +566,54 @@ if (root) {
   const dkEl = q("#ide-dk");
 
   if (OMARCHY_DESKTOP_MODE) {
+    const bootOverlay = q("#omarchy-boot-overlay");
+    const bootStatus = q("#omarchy-boot-status");
+    const bootProgress = q("#omarchy-boot-progress");
+    const bootLogToggle = q("#omarchy-boot-log-toggle");
+    const bootExit = q("#omarchy-boot-exit");
+    const bootLog = q("#omarchy-boot-log");
     const desktopToolbar = q("#omarchy-desktop-toolbar");
     const desktopStatus = q("#omarchy-desktop-status");
     const fullscreenButton = q("#omarchy-fullscreen");
     const exitButton = q("#omarchy-exit");
     if (desktopToolbar) desktopToolbar.hidden = false;
+    if (bootOverlay) bootOverlay.hidden = false;
+    let bootOutput = "";
+    let bootErrorLatched = false;
+    const formatBytes = (value) => {
+      if (!Number.isFinite(value) || value < 0) return null;
+      if (value < 1024) return `${Math.round(value)} B`;
+      if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KiB`;
+      return `${(value / (1024 * 1024)).toFixed(1)} MiB`;
+    };
+    const setBootStatus = (text, state = "booting") => {
+      if (bootStatus) {
+        bootStatus.textContent = text;
+        bootStatus.dataset.state = state;
+      }
+    };
+    const appendBootOutput = (text) => {
+      if (text == null || text === "") return;
+      bootOutput += String(text);
+      if (bootOutput.length > 16000) bootOutput = bootOutput.slice(-16000);
+      if (bootLog) bootLog.textContent = bootOutput;
+    };
+    const exitDesktop = () => {
+      const next = new URL(location.href);
+      next.searchParams.delete("desktop");
+      next.searchParams.delete("guest");
+      next.searchParams.delete("boot");
+      next.searchParams.delete("os");
+      next.hash = "ide";
+      location.assign(next.href);
+    };
+    bootLogToggle?.addEventListener("click", () => {
+      if (!bootLog) return;
+      bootLog.hidden = !bootLog.hidden;
+      bootLogToggle.textContent = bootLog.hidden ? "View boot log" : "Hide boot log";
+      bootLogToggle.setAttribute("aria-expanded", String(!bootLog.hidden));
+    });
+    bootExit?.addEventListener("click", exitDesktop);
     const updateFullscreenLabel = () => {
       if (fullscreenButton) fullscreenButton.textContent = document.fullscreenElement
         ? "Exit full screen"
@@ -554,20 +629,92 @@ if (root) {
       updateFullscreenLabel();
     });
     document.addEventListener("fullscreenchange", updateFullscreenLabel);
-    exitButton?.addEventListener("click", () => {
-      const next = new URL(location.href);
-      next.searchParams.delete("desktop");
-      next.searchParams.delete("guest");
-      next.searchParams.delete("boot");
-      next.searchParams.delete("os");
-      next.hash = "ide";
-      location.assign(next.href);
-    });
+    exitButton?.addEventListener("click", exitDesktop);
     window.addEventListener("wvm:guest-booting", () => {
+      bootErrorLatched = false;
+      bootOutput = "";
+      if (bootLog) bootLog.textContent = "No serial output yet.";
+      if (bootLog) bootLog.hidden = true;
+      if (bootLogToggle) {
+        bootLogToggle.textContent = "View boot log";
+        bootLogToggle.setAttribute("aria-expanded", "false");
+      }
+      if (bootProgress) {
+        bootProgress.hidden = true;
+        bootProgress.value = 0;
+        bootProgress.max = 1;
+      }
       if (desktopStatus) desktopStatus.textContent = "desktop · booting Omarchy…";
+      if (desktopToolbar) desktopToolbar.dataset.state = "booting";
+      setBootStatus("Booting Omarchy…");
+      if (bootOverlay) bootOverlay.hidden = false;
+    });
+    window.addEventListener("wvm:guest-progress", (event) => {
+      if (bootErrorLatched) return;
+      const detail = event.detail || {};
+      const phase = detail.phase ? String(detail.phase) : "Loading guest…";
+      const loaded = Number(detail.loaded);
+      const total = Number(detail.total);
+      const loadedText = formatBytes(loaded);
+      const totalText = formatBytes(total);
+      setBootStatus(`${phase}${loadedText ? ` · ${loadedText}${totalText ? ` / ${totalText}` : ""}` : ""}`);
+      if (bootProgress) {
+        const determinate = Number.isFinite(total) && total > 0 && Number.isFinite(loaded) && loaded >= 0;
+        bootProgress.hidden = !determinate;
+        if (determinate) bootProgress.value = Math.min(total, loaded);
+        if (determinate) bootProgress.max = total;
+      }
+    });
+    window.addEventListener("wvm:guest-output", (event) => {
+      if (bootErrorLatched) return;
+      appendBootOutput(event.detail?.text);
+      if (event.detail?.text != null) setBootStatus("Serial output received; boot continues…");
+    });
+    window.addEventListener("wvm:guest-state", (event) => {
+      if (bootErrorLatched) return;
+      if (!desktopStatus) return;
+      const state = event.detail?.state;
+      const labels = {
+        fetching: "fetching Omarchy image…",
+        instantiating: "starting Omarchy VM…",
+        restoring: "restoring Omarchy desktop…",
+        booting: "booting Omarchy…",
+        verifying: "verifying Omarchy image…",
+      };
+      if (labels[state]) {
+        desktopStatus.textContent = `desktop · ${labels[state]}`;
+        setBootStatus(labels[state]);
+      }
+      if (desktopToolbar && state !== "error" && state !== "done") desktopToolbar.dataset.state = "booting";
+    });
+    window.addEventListener("wvm:guest-error", (event) => {
+      const message = event.detail?.message || "unknown error";
+      bootErrorLatched = true;
+      if (desktopStatus) desktopStatus.textContent = `desktop · boot error: ${message}`;
+      setBootStatus(`Boot error: ${message}`, "error");
+      appendBootOutput(`[boot error] ${message}\n`);
+      if (bootOverlay) bootOverlay.hidden = false;
+      if (desktopToolbar) desktopToolbar.dataset.state = "error";
+    });
+    window.addEventListener("wvm:guest-halted", (event) => {
+      const message = event.detail?.message || "guest stopped";
+      bootErrorLatched = true;
+      if (desktopStatus) desktopStatus.textContent = `desktop · halted: ${message}`;
+      setBootStatus(`Guest halted: ${message}`, "error");
+      if (bootOverlay) bootOverlay.hidden = false;
+      if (desktopToolbar) desktopToolbar.dataset.state = "halted";
     });
     window.addEventListener("wvm:guest-ready", () => {
+      if (bootErrorLatched) return;
+      if (desktopStatus) desktopStatus.textContent = "desktop · guest ready · waiting for desktop";
+      setBootStatus("Guest shell ready; waiting for desktop readiness…");
+      if (desktopToolbar) desktopToolbar.dataset.state = "booting";
+    });
+    window.addEventListener("wvm:desktop-ready", () => {
+      if (bootErrorLatched) return;
+      if (bootOverlay) bootOverlay.hidden = true;
       if (desktopStatus) desktopStatus.textContent = "desktop · ready · drag to resize";
+      if (desktopToolbar) desktopToolbar.dataset.state = "ready";
     });
     updateFullscreenLabel();
   }

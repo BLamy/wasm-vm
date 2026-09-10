@@ -165,6 +165,9 @@ pub struct BootArgs {
     /// Instructions per I/O-service quantum (stdin→UART, UART→stdout drain cadence).
     #[arg(long, default_value_t = 200_000)]
     pub quantum: u64,
+    /// Retired instructions per CLINT `mtime` tick. Defaults to the historical native divider.
+    #[arg(long, default_value_t = 10, value_parser = parse_nonzero_u64)]
+    pub icount_divider: u64,
     /// Do not read host stdin (headless boot: prove the dmesg parade, don't drive the shell).
     #[arg(long)]
     pub no_input: bool,
@@ -328,6 +331,16 @@ fn parse_positive_usize(value: &str) -> Result<usize, String> {
         .map_err(|e| format!("expected a positive integer: {e}"))?;
     if parsed == 0 {
         return Err("expected a positive integer, got 0".to_string());
+    }
+    Ok(parsed)
+}
+
+fn parse_nonzero_u64(value: &str) -> Result<u64, String> {
+    let parsed = value
+        .parse::<u64>()
+        .map_err(|e| format!("expected a nonzero integer: {e}"))?;
+    if parsed == 0 {
+        return Err("expected a nonzero integer, got 0".to_string());
     }
     Ok(parsed)
 }
@@ -1051,7 +1064,7 @@ fn assemble(
     }
 
     // --- devices, in dependency order (PLIC before its consumers) ---
-    m.enable_clint(10);
+    m.enable_clint(a.icount_divider);
     m.enable_plic();
     m.enable_rtc(Box::new(SystemClock));
     m.enable_syscon(); // E2-T17: poweroff/reboot finisher at TEST_BASE
@@ -2245,6 +2258,38 @@ mod e4t01_symbolizer_tests {
         let t = table();
         assert_eq!(symbolize(&t, 0x7FFF_FFFF), None);
         assert_eq!(symbolize(&[], 0x8000_0000), None);
+    }
+}
+
+#[cfg(test)]
+mod cli_config_tests {
+    use super::BootArgs;
+    use clap::{Args as _, Command, FromArgMatches};
+
+    fn parse(args: &[&str]) -> BootArgs {
+        let command = BootArgs::augment_args(Command::new("boot"));
+        let matches = command
+            .try_get_matches_from(args)
+            .expect("boot arguments should parse");
+        BootArgs::from_arg_matches(&matches).expect("boot config should parse")
+    }
+
+    #[test]
+    fn icount_divider_defaults_to_ten_and_accepts_omarchy_sixty_four() {
+        assert_eq!(parse(&["boot", "--kernel", "Image"]).icount_divider, 10);
+        assert_eq!(
+            parse(&["boot", "--kernel", "Image", "--icount-divider", "64"]).icount_divider,
+            64
+        );
+    }
+
+    #[test]
+    fn icount_divider_rejects_zero() {
+        let command = BootArgs::augment_args(Command::new("boot"));
+        let error = command
+            .try_get_matches_from(["boot", "--kernel", "Image", "--icount-divider", "0"])
+            .expect_err("zero divider must be rejected");
+        assert!(error.to_string().contains("nonzero"));
     }
 }
 

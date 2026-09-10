@@ -1380,6 +1380,47 @@ mod guest_clock_tests {
             saved_mtime + 10_000
         );
     }
+
+    #[cfg(target_arch = "wasm32")]
+    #[wasm_bindgen_test::wasm_bindgen_test]
+    fn seeded_linux_wrapper_uses_raw_resume_identity_without_snapshot_store() {
+        use wasm_vm_storage::{ImageManifest, Layout, OverlayDelta};
+
+        let manifest = ImageManifest::from_image(&[], 4096, Layout::Split).unwrap();
+        let base = manifest.base_hash();
+        let delta = OverlayDelta {
+            image_len: manifest.image_len,
+            base_binding: base,
+            generation: 23,
+            blocks: Vec::new(),
+        };
+        let vm = WasmLinux::new_chunked_disk_seeded(
+            8,
+            &0x0000_006fu32.to_le_bytes(),
+            &manifest.to_json(),
+            String::new(),
+            0,
+            Vec::new(),
+            String::new(),
+            js_sys::Function::new_no_args(""),
+            false,
+            delta.to_bytes(),
+        )
+        .unwrap();
+
+        assert!(vm.inner.borrow().snapshot_base.is_none());
+        assert_eq!(vm.inner.borrow().resume_base, Some(base));
+        let blob = js_sys::Uint8Array::new(&vm.save_snapshot().unwrap()).to_vec();
+        assert_eq!(
+            vm.restore_decision_code(Some(blob.clone()), 23.0).unwrap(),
+            "resume"
+        );
+        assert_eq!(
+            vm.restore_decision_code(Some(blob.clone()), 22.0).unwrap(),
+            "stale"
+        );
+        vm.load_snapshot_blob(blob).unwrap();
+    }
 }
 
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
@@ -1797,11 +1838,15 @@ struct LinuxInner {
     /// E3-T21c: bounded browser producer/consumer queues plus the shared slirp backend handle.
     /// Present only for slirp boots; the emulator still owns the sole `NetBackend` adapter.
     file_transfers: Option<browser_file_transfer::BrowserFileTransfers>,
-    /// E3-T12d: the base-image binding for the durable resume-snapshot store, present only for a
-    /// `newChunkedDiskPersistent` boot (`None` otherwise). The snapshot DB is namespaced by it, and
-    /// the restore-decision guard needs it as the expected `base_image_hash`. Off the persistent path
-    /// there is no snapshot store, so the decision is always `"missing"`.
+    /// E3-T12d: the base-image binding for the durable resume-snapshot store. Persistent snapshot
+    /// APIs use this field for their namespace and expected `base_image_hash`; raw whole-machine
+    /// resume wrappers use `resume_base` instead, so seeded in-memory boots can restore without
+    /// enabling the persistent snapshot store.
     snapshot_base: Option<[u8; 32]>,
+    /// Raw whole-machine resume identity, independent of the IndexedDB snapshot namespace. Seeded
+    /// in-memory boots populate this while keeping `snapshot_base` unset, so raw resume wrappers
+    /// work without enabling persistence APIs.
+    resume_base: Option<[u8; 32]>,
     /// E3-T12d: the persistent tab's Web Lock ownership. Read-only contenders may inspect the
     /// snapshot store, but must never save or import into the writer's namespace.
     snapshot_read_only: bool,
@@ -1859,6 +1904,16 @@ enum DiskChoice {
         budget: u64,
         /// E3-T03 boot profile: ordered chunks to prefetch (empty if none).
         profile: Vec<usize>,
+    },
+    /// A fresh in-memory COW disk whose overlay is populated from a validated shipped delta.
+    /// Unlike `ChunkedPersistent`, this path never opens IndexedDB or carries persistence state.
+    ChunkedSeeded {
+        manifest: wasm_vm_storage::ImageManifest,
+        base_url: String,
+        budget: u64,
+        profile: Vec<usize>,
+        overlay: wasm_vm_storage::MemOverlay,
+        generation: u64,
     },
     /// E4-T28e: a lazy Alpine root disk plus a read-only, fully resident secondary virtio-blk
     /// drive. The browser proof uses this for the pinned GCC overlay; it lives after the stable
@@ -2176,6 +2231,69 @@ impl WasmLinux {
         )
     }
 
+    /// Boot from a chunked base image plus a validated, in-memory `WVOD1` copy-on-write seed.
+    /// The delta is bound to the manifest's base hash and image length, and its generation is
+    /// stamped into the whole-machine resume coherence header. This constructor never opens or
+    /// writes IndexedDB; `saveSnapshot` remains the raw in-memory resume surface while the
+    /// persisted snapshot APIs stay `not_persistent`.
+    #[wasm_bindgen(js_name = newChunkedDiskSeeded)]
+    #[allow(clippy::too_many_arguments)]
+    pub fn new_chunked_disk_seeded(
+        ram_mib: u32,
+        kernel: &[u8],
+        manifest_json: &str,
+        base_url: String,
+        cache_budget_mib: u32,
+        boot_profile: Vec<u32>,
+        bootargs: String,
+        output: js_sys::Function,
+        enable_mic: bool,
+        delta_bytes: Vec<u8>,
+    ) -> Result<WasmLinux, JsError> {
+        let manifest = wasm_vm_storage::ImageManifest::from_json(manifest_json)
+            .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
+        let delta = wasm_vm_storage::OverlayDelta::from_bytes(&delta_bytes)
+            .map_err(|e| JsError::new(&format!("overlay delta parse: {e:?}")))?;
+        let overlay = chunked::seeded_overlay(&manifest, &delta).map_err(|e| {
+            let message = match e {
+                chunked::SeededOverlayError::BaseMismatch
+                | chunked::SeededOverlayError::ImageLengthMismatch => "delta_base_mismatch",
+                chunked::SeededOverlayError::BlockOutOfBounds { .. } => "delta_block_out_of_bounds",
+                chunked::SeededOverlayError::DuplicateBlock { .. } => "delta_duplicate_block",
+            };
+            JsError::new(message)
+        })?;
+        let args = if bootargs.is_empty() {
+            "root=/dev/vda rw console=ttyS0 earlycon=sbi".to_string()
+        } else {
+            bootargs
+        };
+        let budget = if cache_budget_mib == 0 {
+            256
+        } else {
+            cache_budget_mib
+        } as u64
+            * 1024
+            * 1024;
+        let profile: Vec<usize> = boot_profile.into_iter().map(|c| c as usize).collect();
+        Self::assemble(
+            ram_mib,
+            kernel,
+            None,
+            DiskChoice::ChunkedSeeded {
+                manifest,
+                base_url,
+                budget,
+                profile,
+                overlay,
+                generation: delta.generation,
+            },
+            &args,
+            output,
+            enable_mic,
+        )
+    }
+
     /// E4-T28e: boot the normal lazy Alpine root disk with one additional read-only virtio-blk
     /// image. The extra image is passed by value so the fetched overlay becomes one resident Rust
     /// buffer; it is never compiled or transformed on the host. The first free slot after browser
@@ -2355,9 +2473,11 @@ impl WasmLinux {
         let mut persist = None;
         let mut disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>> = None;
         let mut file_transfers = None;
-        // E3-T12d: the base binding for the durable resume-snapshot store — stamped only on the
-        // persistent path (where a snapshot can be taken and restored). `None` elsewhere.
+        // E3-T12d: the base binding for the durable resume-snapshot store. Raw in-memory resume
+        // wrappers use the separate `resume_base`; this remains None until a persistent namespace
+        // (or an explicitly stamped boot-snapshot identity) is selected.
         let mut snapshot_base: Option<[u8; 32]> = None;
+        let mut resume_base: Option<[u8; 32]> = None;
         let mut snapshot_read_only = false;
         match disk {
             // Alpine over virtio-blk: the image is owned by an in-memory BlockBackend in slot 0.
@@ -2374,6 +2494,31 @@ impl WasmLinux {
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
                 let backend = chunked::ChunkedBackend::new(&manifest, store.clone());
+                machine.enable_virtio_blk(Box::new(backend));
+                fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
+                    manifest, base_url, store, profile,
+                )));
+            }
+            DiskChoice::ChunkedSeeded {
+                manifest,
+                base_url,
+                budget,
+                profile,
+                overlay,
+                generation,
+            } => {
+                let base_binding = manifest.base_hash();
+                machine.set_snapshot_identity_with_generation(
+                    build_core_hash(),
+                    base_binding,
+                    generation,
+                );
+                resume_base = Some(base_binding);
+                let store =
+                    std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
+                let backend =
+                    chunked::ChunkedBackend::with_overlay(overlay, &manifest, store.clone())
+                        .map_err(|e| JsError::new(&format!("overlay attach: {e:?}")))?;
                 machine.enable_virtio_blk(Box::new(backend));
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
                     manifest, base_url, store, profile,
@@ -2425,6 +2570,7 @@ impl WasmLinux {
                     base_binding,
                     generation,
                 );
+                resume_base = Some(base_binding);
                 snapshot_base = Some(base_binding);
                 snapshot_read_only = read_only;
                 let store =
@@ -2586,6 +2732,7 @@ impl WasmLinux {
                 disk_ro,
                 file_transfers,
                 snapshot_base,
+                resume_base,
                 snapshot_read_only,
                 snapshot_write_count: std::rc::Rc::new(std::cell::Cell::new(0)),
             }),
@@ -3920,8 +4067,8 @@ impl WasmLinux {
 
     /// The header-level resume-vs-cold-boot verdict for `stored` (the reassembled blob, or `None`),
     /// against THIS boot's build identity + base binding + `current_generation`. Returns the stable
-    /// code (`"resume"`/`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`). Off the
-    /// persistent path (no base binding) there is no snapshot to resume: always `"missing"`.
+    /// code (`"resume"`/`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`). The
+    /// raw resume decision uses the in-memory resume identity, independent of IndexedDB.
     #[wasm_bindgen(js_name = restoreDecisionCode)]
     pub fn restore_decision_code(
         &self,
@@ -3929,7 +4076,7 @@ impl WasmLinux {
         current_generation: f64,
     ) -> Result<String, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
-        let Some(base) = inner.snapshot_base else {
+        let Some(base) = inner.resume_base else {
             return Ok("missing".to_string());
         };
         let core = build_core_hash();
@@ -3956,8 +4103,8 @@ impl WasmLinux {
     }
 
     /// E4 restore-on-first-load (busybox boot-snapshot): stamp THIS machine's coherence identity so a
-    /// shipped, build-time boot snapshot can be restored on the initramfs path (which otherwise sets no
-    /// snapshot identity — `snapshot_base` stays `None` and every restore verdict is `"missing"`).
+    /// shipped, build-time boot snapshot can be restored on the initramfs path (which otherwise has no
+    /// snapshot identity). This explicitly stamps the raw resume identity and the snapshot namespace.
     ///
     /// The core identity is [`build_core_hash`] (the crate version), so a snapshot produced by a
     /// DIFFERENT build fails the `CoreHashMismatch` guard and the caller falls back to a cold boot —
@@ -3976,6 +4123,7 @@ impl WasmLinux {
         base.copy_from_slice(base_id);
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         inner.machine.set_snapshot_identity(build_core_hash(), base);
+        inner.resume_base = Some(base);
         inner.snapshot_base = Some(base);
         Ok(())
     }

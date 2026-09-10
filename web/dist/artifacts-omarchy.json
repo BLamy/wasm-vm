@@ -1,10 +1,8 @@
 {
-  "generated": "LOCAL-ONLY Omarchy desktop manifest (kernel + remote chunked disk)",
+  "generated": "content-hashed Omarchy desktop (kernel + paired RAM snapshot/disk delta)",
   "artifacts": {
-    "kernel": {
-      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image",
-      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
-      "size": 24208896
-    }
+    "kernel": { "url": "releases/kernel/6.6.63/Image", "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce", "size": 24208896 },
+    "bootSnapshot": { "url": "releases/boot-snapshot/omarchy-ready.snap.gz", "sha256": "db34afb6f4e0e40b9e8e932cc934847bc254935c374487d521cb2e5a1d704e72", "size": 201816185 },
+    "overlayDelta": { "url": "releases/boot-snapshot/omarchy-overlay-delta.bin.gz", "sha256": "d9ac25c5caa8887773f6d8484c85b5c3662c5dd009971522f60cd733ab8e05ed", "size": 1207113 }
   }
 }

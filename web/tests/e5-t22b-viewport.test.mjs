@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { DisplayViewportController, viewportPixelMode, fitFrameToViewport, nativeContentRect } from "../src/sink/viewport.js";
+import { DisplayViewportController, viewportPixelMode, desktopViewportPixelMode, fitFrameToViewport, nativeContentRect } from "../src/sink/viewport.js";
 import { PresentationController } from "../src/sink/presentation.js";
 import { absoluteCoordinatesFromEvent } from "../src/input/pointer.js";
 
 const flush = async () => { await Promise.resolve(); await Promise.resolve(); await Promise.resolve(); };
-function rig({ delay, setDisplay = async () => true } = {}) {
+function rig({ delay, modeForRect, setDisplay = async () => true } = {}) {
   let now = 0, nextId = 0, dpr = 1;
   let rect = { left: 10, top: 20, width: 641, height: 481 };
   const timers = new Map(), media = [], observers = [], sizes = [];
@@ -17,7 +17,7 @@ function rig({ delay, setDisplay = async () => true } = {}) {
   const presentation = { canvas: { style: {} }, setViewport: (...size) => sizes.push(size),
     snapshot: () => ({ latest: { resourceWidth: 800, resourceHeight: 600 } }) };
   const viewport = new DisplayViewportController({ container: { getBoundingClientRect: () => rect },
-    presentation, controller: { setDisplay }, ResizeObserverClass: Observer,
+    presentation, controller: { setDisplay }, ResizeObserverClass: Observer, modeForRect,
     getDpr: () => dpr,
     matchMedia: (query) => {
       const item = { query, listeners: new Set(), addEventListener(_type, fn) { this.listeners.add(fn); },
@@ -55,6 +55,31 @@ test("CSS/DPR rounding and minimum/maximum clamps are finite, hidden panes do no
   for (const bad of [0, NaN, -Infinity, -1]) assert.throws(() => viewportPixelMode(640, 480, bad));
   assert.throws(() => viewportPixelMode(640, 480, Number.MIN_VALUE));
   assert.throws(() => rig({ delay: 1 }), /zero-delay/);
+});
+
+test("desktopViewportPixelMode fits a bounded 16:10 guest surface instead of mirroring DPR", () => {
+  assert.deepEqual(desktopViewportPixelMode(1100, 1081, 2), {
+    width: 1100, height: 688, dpr: 1, cssWidth: 1100, cssHeight: 687.5,
+  });
+  assert.deepEqual(desktopViewportPixelMode(1440, 900, 2), {
+    width: 1280, height: 800, dpr: 1, cssWidth: 1440, cssHeight: 900,
+  });
+  assert.equal(desktopViewportPixelMode(0, 400, 2), null);
+});
+
+test("capped desktop continues resizing visually without a redundant guest hotplug", async () => {
+  const calls = [];
+  const r = rig({ modeForRect: desktopViewportPixelMode, setDisplay: async (...args) => { calls.push(args); return true; } });
+  r.resize(1440, 900); await r.tick(250);
+  assert.deepEqual(calls, [[1280, 800]]);
+  assert.equal(r.presentation.canvas.style.width, "1440px");
+  const clears = r.sizes.length;
+  r.resize(1920, 1200); await r.tick(250);
+  assert.equal(r.presentation.canvas.style.width, "1920px");
+  assert.equal(r.presentation.canvas.style.height, "1200px");
+  assert.equal(r.sizes.length, clears);
+  assert.deepEqual(calls, [[1280, 800]]);
+  r.viewport.dispose();
 });
 
 test("50 resizes/5 seconds send one trailing request at exactly 250ms, DPR listener rearms and disposes", async () => {

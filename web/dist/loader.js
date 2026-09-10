@@ -195,6 +195,9 @@ export async function startLinuxBoot(opts = {}) {
     // E3-T05: persist the copy-on-write overlay to IndexedDB (writes survive a tab reload). Only
     // meaningful in "chunked" mode; the driver flushes via machine.persistPending() each tick.
     persist = false,
+    // A demo desktop always starts from the shipped RAM+disk pair in memory. No shared writer
+    // lock, durable user overlay, or long cold boot on the next visit.
+    freshDesktop = false,
     ramMib = 256,
     onState = () => {},
     onProgress = () => {},
@@ -290,6 +293,9 @@ export async function startLinuxBoot(opts = {}) {
     validateDecodedCacheEntries(decodedCacheEntries);
     validateGuestClock(guestClock);
     validateICountDivider(icountDivider, guestClock);
+    if (freshDesktop && (!isChunked || persist || extraDiskUrl || opts.bootSnapshot === false)) {
+      throw new Error("fresh desktop requires an ephemeral chunked warm boot");
+    }
     const manifest = await fetchJsonAsset(manifestUrl, "boot manifest");
     const km = manifest.artifacts.kernel;
     // E4 restore-on-load artifacts (busybox: bootSnapshot only; Alpine chunked: bootSnapshot RAM +
@@ -298,6 +304,9 @@ export async function startLinuxBoot(opts = {}) {
     // chance to restore, so a reload never holds both whole snapshot representations needlessly.
     const bootSnap = manifest.artifacts?.bootSnapshot;
     const overlayDeltaEntry = manifest.artifacts?.overlayDelta;
+    if (freshDesktop && (!bootSnap || !overlayDeltaEntry)) {
+      throw new Error("Omarchy desktop snapshot is not published; please try again after deployment");
+    }
     // The exact RAM+disk pair identity is also the durable-overlay namespace. This keeps a new
     // shipped warm image independent from the legacy per-base DB (and every older snapshot), even
     // when a RAM-only release changes while its disk delta happens to remain byte-identical.
@@ -416,7 +425,15 @@ export async function startLinuxBoot(opts = {}) {
     // resume the VM behind the dialog. It gates the pump/run independently of `paused`.
     let quotaPaused = false;
     let lastPersistRetry = 0; // throttle pending-byte retries while quotaReadOnly
-    if (usePersist) {
+    if (freshDesktop) {
+      onState("restoring");
+      const dgz = await fetchWithProgress(overlayDeltaEntry.url, (l, t) => onProgress("overlayDelta", l, t));
+      if ((await sha256hex(dgz)) !== overlayDeltaEntry.sha256) throw new Error("desktop overlay delta integrity check failed");
+      const delta = await gunzip(dgz);
+      machine = WasmLinux.newChunkedDiskSeeded(ramMib, kernel, imageManifestText, baseUrl,
+        cacheBudgetMib, bootProfile, bootargs, emitOutput, enableMic, delta);
+      alpineOverlaySeeded = true;
+    } else if (usePersist) {
       // E3-T09 single-writer discipline: exactly one tab may open the overlay writable. The
       // exclusive Web Lock (auto-released on tab close/crash — no heartbeats) is acquired
       // BEFORE the writable store opens; a second tab probes with ifAvailable (queueing would
@@ -710,6 +727,7 @@ export async function startLinuxBoot(opts = {}) {
         if ((await sha256hex(rgz)) !== bootSnap.sha256) throw new Error("boot snapshot integrity");
         alpineRamBlob = await gunzip(rgz);
       } catch (e) {
+        if (freshDesktop) throw e;
         console.warn("wasm-vm: Alpine RAM fallback fetch failed, cold booting:", e?.message || e);
         alpineRamBlob = null;
         onState("booting");
@@ -743,9 +761,11 @@ export async function startLinuxBoot(opts = {}) {
           restoredFromBootSnapshot = true;
           onState("restored");
         } else {
+          if (freshDesktop) throw new Error(`Omarchy desktop snapshot is not coherent: ${decision}`);
           console.warn(`wasm-vm: Alpine boot snapshot not coherent (${decision}) — cold booting`);
         }
       } catch (e) {
+        if (freshDesktop) throw e;
         console.warn("wasm-vm: Alpine RAM restore failed, cold booting:", e?.message || e);
         restoredFromBootSnapshot = false;
       }
