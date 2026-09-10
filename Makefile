@@ -1604,3 +1604,18 @@ verify-E5.5-T03e:
 	node tools/fetch-omarchy-snapshot.mjs
 	node --test web/tests/boot-asset-cache.test.mjs web/tests/omarchy-startup-state.test.mjs web/tests/omarchy-seeded-loader.test.mjs web/tests/e5.5-t03e-critic.test.mjs web/tests/e5.5-t03e-critic-ui.test.mjs
 	node tools/verify/omarchy-boot-cache.mjs "$(OMARCHY_CACHE_URL)" "$(OMARCHY_CACHE_EVIDENCE_DIR)"
+
+# T03f has two deliberately separate lanes: deterministic offline inspection of
+# a completed run, and a fresh unique cold-WASM record. The latter is never an
+# implicit prerequisite of the former and never writes release/prod assets.
+OMARCHY_T03F_RECORD_DIR ?= evidence/omarchy-profile/softpipe-r1/cold-wasm
+OMARCHY_T03F_RECORD_ROOT ?= evidence/omarchy-profile/softpipe-runs
+.PHONY: verify-E5.5-T03f
+verify-E5.5-T03f:
+	node --check tools/verify/omarchy-software-renderer-measurement.mjs
+	node --test tools/verify/omarchy-software-renderer-measurement.test.mjs tools/verify/omarchy-softpipe-candidate.test.mjs
+	node tools/verify/omarchy-software-renderer-measurement.mjs verify "$(OMARCHY_T03F_RECORD_DIR)"
+
+.PHONY: record-E5.5-T03f
+record-E5.5-T03f:
+	OMARCHY_T03F_RECORD_ROOT="$(OMARCHY_T03F_RECORD_ROOT)" node tools/verify/omarchy-software-renderer-measurement.mjs record

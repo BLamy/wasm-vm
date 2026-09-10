@@ -1,0 +1,71 @@
+{
+  "schema": "wasm-vm.e5.5-t03f.runtime-hashes.v1",
+  "files": [
+    {
+      "scope": "repo",
+      "path": "tools/verify/omarchy-browser-session.mjs",
+      "size": 47036,
+      "sha256": "f9967cc75edceae78d0e3cf65d8b8fbc7bcb8f5fa34173d8065d8bee8c9fe1f8"
+    },
+    {
+      "scope": "repo",
+      "path": "tools/verify/omarchy-renderer-log.mjs",
+      "size": 2406,
+      "sha256": "dff6ff9d534efbb6afa3b0fd549d7b903f38ce999f2e6981673ec7efccad8bbc"
+    },
+    {
+      "scope": "repo",
+      "path": "tools/verify/omarchy-softpipe-candidate.mjs",
+      "size": 23076,
+      "sha256": "09c53053218b52041ccc2cacc2e09de220af63d0451fedd1c28371788047f331"
+    },
+    {
+      "scope": "repo",
+      "path": "tools/verify/omarchy-software-renderer-measurement.mjs",
+      "size": 37438,
+      "sha256": "38bb3765206e6a19305732c4e42de1d5d92699832fe26cae3cef8b55a2580869"
+    },
+    {
+      "scope": "repo",
+      "path": "web/pkg/wasm_vm_wasm_bg.wasm",
+      "size": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "scope": "repo",
+      "path": "web/pkg/wasm_vm_wasm.js",
+      "size": 117849,
+      "sha256": "6842b5065a78cf0128a88f71671461bf271fa9af7fc7be4523a16c76b13c9e7e"
+    },
+    {
+      "scope": "repo",
+      "path": "web/loader.js",
+      "size": 79246,
+      "sha256": "26a4c9fa0284a99c39e2bd2f3f6457b77aebb4724e026bad2a2dc7d7f1d0d6a3"
+    },
+    {
+      "scope": "repo",
+      "path": "web/linux-worker-host.js",
+      "size": 3208,
+      "sha256": "fb6e9b2c0517e463e75c534dc12792ded532ca1050139fc0346cf08e7df52d82"
+    },
+    {
+      "scope": "repo",
+      "path": "web/linux-worker-protocol.js",
+      "size": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "scope": "repo",
+      "path": "tools/serve-dev.sh",
+      "size": 9423,
+      "sha256": "406a0f8577ad468932ccdf1087c9e23581aa3f224382b0b665431f5821b1d63f"
+    },
+    {
+      "scope": "repo",
+      "path": "releases/kernel/6.6.63/Image",
+      "size": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    }
+  ]
+}

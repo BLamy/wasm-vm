@@ -113,3 +113,47 @@ The largest self-time entries are `Machine::run` (19.968%), `Hart::execute`
 runtime bucket is 4.773%; the data does not support calling floating-point
 arithmetic the dominant cost. These are host CPU samples, not guest-instruction
 counts or proof that a particular optimization will fix responsiveness.
+
+## Completed cold-WASM candidate: launch-crash, not a performance result
+
+The fresh cold run used tool head `e27673f2` and the same c48 WASM / af7 kernel
+identified above. Its report binds the eight-byte candidate and chunk manifest;
+no snapshot, delta, persistent overlay, or reused worker entered this session.
+It ran for 2,727,258 ms, within the separately declared 5,400,000 ms startup
+budget. The 120-second physical-input acceptance was never attempted because
+the desktop did not map.
+
+The actual compositor was PID 486, `Hyprland --watchdog-fd 4`, in fresh boot
+`670725d30d7b46958f53e2b2f6c2399c`. `cold-wasm/events.jsonl` lines 2058/2079
+bind its live environment to `GALLIUM_DRIVER=softpipe`,
+`LIBGL_ALWAYS_SOFTWARE=1`, and `LP_NUM_THREADS=1`. This proves requested
+configuration only: there is no positive actual GL-renderer label.
+
+Line 2519 records this PID with `CoreDumping: 1`. After the dump completed,
+the separately successful `coredumpctl --no-pager info 486` at lines 2741/2753
+records Signal 6 (ABRT), UID 1000, the same boot ID, the actual executable,
+and a stored 6.1 MB core. Lines 2754/2767 then record `/proc/486` absent and
+the user unit inactive/dead with MainPID 0 in that same boot. The wrapper's
+`Result=success` is not the child's exit status and does not erase its ABRT.
+Only after those terminal observations did line 2780 request a diagnostic
+stop. The stop intentionally returns a failed report, never an acceptance pass.
+
+The final screenshot was opened and visually inspected: a black console with
+a small top-left cursor, not a mapped desktop. The 408 presentation calls
+are not evidence of GUI readiness. The paused guest-state digest is
+`444fface33168192651b46af89999d22240257b747191bcfe8163aa7da495d37`.
+The serial log independently contains the token-delimited probe output used
+above; the evidence gate must reparse it rather than trust the event captions.
+
+Final file SHA-256 bindings:
+
+- `cold-wasm/report.json`: `d3c1a6b179ab5d932f04bc3c30f3ca0e8d658222c5f9ecbe41576b37cd65ea44`
+- `cold-wasm/events.jsonl`: `1b8aae8394a9aa1be9ab898f356c5b5595a67708fdaadd2aa3ecde6b0b4a2775`
+- `cold-wasm/serial.log`: `c04e692a0f41a7371a674adac01607697665f91422d2b42c717b1e8bb484233d`
+- `cold-wasm/guest.png`: `0d462e9383c68586effb38220c9b1bcd32e4d0cb0e1c3a6301d1f89dc660a672`
+- `cold-wasm/input-integrity.json`: `26ff777eba176058b4ff1bb652eb24f10a63080cac6401aeaa01153c67e5eaea`
+
+Conclusion: this exact isolated candidate suffered a compositor launch crash.
+Neither the generic Aquamarine messages, missing GL label, nor the final black
+pixels independently identifies the underlying EGL cause. No renderer-speed
+conclusion, usable-desktop claim, permission change, or production change follows.
