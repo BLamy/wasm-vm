@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5.5-T03g** — Measure the isolated Omarchy renderer-thread setting
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -450,7 +449,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [-] `525.025` [E5.5-T03b](epic-5.5-omarchy/E5.5-T03b-mixed-renderer-blocks.md) — Keep integer renderer regions JIT-eligible around interpreted floating point *(deps: E4-T15, E4-T34, E5.5-T02a)*
 - [x] `525.025` [E5.5-T03e](epic-5.5-omarchy/E5.5-T03e-immutable-boot-cache.md) — Cache immutable Omarchy boot bytes and report actual restore phases *(deps: E5.5-T03c)*
 - [x] `525.0257` [E5.5-T03f](epic-5.5-omarchy/E5.5-T03f-software-renderer-measurement.md) — Measure a clean-session alternate Omarchy software renderer *(deps: E5.5-T03c, E5.5-T03e)*
-- [ ] `525.0258` [E5.5-T03g](epic-5.5-omarchy/E5.5-T03g-single-threaded-renderer-measurement.md) — Measure the isolated Omarchy renderer-thread setting *(deps: E5.5-T03f)*
+- [~] `525.0258` [E5.5-T03g](epic-5.5-omarchy/E5.5-T03g-single-threaded-renderer-measurement.md) — Measure the isolated Omarchy renderer-thread setting *(deps: E5.5-T03f)*
 - [ ] `525.026` [E5.5-T03d](epic-5.5-omarchy/E5.5-T03d-desktop-responsiveness.md) — Resolve measured Omarchy post-restore desktop input latency *(deps: E5.5-T02a, E5.5-T03c, E5.5-T03f, E5.5-T03g)*
 - [b] `525.03` [E5.5-T03a](epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md) — Prepare the clean Omarchy browser desktop session *(deps: E5.5-T02a, E5.5-T03d)*
 - [ ] `525.04` [E5.5-T04a](epic-5.5-omarchy/E5.5-T04a-browser-demo.md) — Make the verified Omarchy desktop the browser demo *(deps: E5.5-T03a)*
