@@ -179,3 +179,47 @@ SCOPED VERDICT: HELD; final overall verdict still awaits production
 
 All earlier HELD results are carried forward unchanged. Production source-binding and initial/reload
 behavior remain the sole outstanding acceptance evidence.
+
+## 2026-09-10 — final production review
+
+VERDICT: verified
+
+- **P1–P5, P12 — HELD.** The previously recorded focused, independent, and sabotage checks remain
+  unchanged at frozen runtime `408422d4b319f8267071d0bd47d46c90a81e1af3`. Exact stream size and
+  SHA-256 are enforced for cache and network bytes; stale hashes are isolated; corrupt exact keys
+  are evicted and verified-refetched; storage failure cannot bypass verification or claim
+  persistence. Disabling either integrity oracle broke the promoted test.
+- **P6–P8 — HELD.** The promoted pure-helper and actual-IDE tests retain the repaired terminal
+  lifecycle behavior: done/error/halt cancel the current generation and reject late
+  ready/desktop-ready/state/progress; stale determinate bars are cleared; serial diagnostics do not
+  replace restore phases; only a new boot resets the terminal latch. All 35 frozen focused/promoted
+  tests passed in the pristine clone.
+- **P9 — HELD.** `production/report.json` records one initial request and zero reload requests for
+  each of the kernel, immutable chunk manifest, disk delta, and compressed RAM snapshot. The same
+  four exact content-addressed CacheStorage keys survive reload. Initial restore/readiness were
+  61805/126006 ms; reload restore/readiness were 3408/66429 ms. No browser, guest, or display errors
+  were recorded.
+- **P10 — HELD.** Before browser launch, six uniquely queried `cache: no-store` production fetches
+  returned HTTP 200 and matched the frozen local dist hashes. The report records clean scoped status,
+  loaded module URLs, controlling service-worker URL, source hashes, actual requests, cache entries,
+  phases, and four screenshot digests. Report SHA-256 is
+  `8b00c337fcba476e519f6d96ecf443eab97deb604f54dce319eeb554b5d719ff`.
+  The prior wrong-byte loopback sabotage remains a passing fail-fast attack.
+- **P11 — HELD.** Frozen WASM remains
+  `c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305`; real BusyBox CLI evidence
+  passed, and the built ISA suite recorded 126 passed, 0 failed. Normal deployment reused the
+  already verified R2 objects without upload or deletion. The four production PNGs match the
+  pristine-clone restored (`5f53bd95…a139`) and desktop (`97fc180d…f3f`) digests and were visually
+  inspected as actual Hyprland/Foot output. Pixels and presents do not establish physical-input
+  responsiveness; E5.5-T03d remains outside this verdict.
+- **COVERAGE — HELD.** Deterministic tests cover integrity, tamper, storage and event-order paths;
+  real no-store initial/reload runs cover network and persistent-cache paths; frozen pristine-clone
+  and production runs close portability, source-binding and deployment coverage. Declarative
+  manifest/dist output is covered by exact byte/hash comparisons.
+- **SUITE:** retain `web/tests/e5.5-t03e-critic.test.mjs` and
+  `web/tests/e5.5-t03e-critic-ui.test.mjs`. No verifier runtime edits were made.
+
+Final sources: worker submission `c2fa94e081ad55683d38fde7d5306c7026a4bbfa`; frozen runtime
+`408422d4b319f8267071d0bd47d46c90a81e1af3`; `cold-clone/report.json` and
+`production/report.json` plus their four captures each; `cli/report.json`;
+`demo-terminal-fix/demo-suite.json`; `production-artifact-comparison.jsonl`.
