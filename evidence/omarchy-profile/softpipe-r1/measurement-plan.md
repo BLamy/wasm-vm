@@ -81,3 +81,35 @@ The baseline also logs the Aquamarine renderer-state errors seen in the QEMU
 precheck, despite having a live compositor and desktop. Those errors alone
 cannot establish a candidate compatibility failure. The fresh target-WASM run
 must provide a causally linked terminal failure, or remain unproven.
+
+## Corrected baseline physical-input result
+
+`baseline-built-r2/report.json` binds the actual built demo and unchanged R3
+pair at harness head `461ec122`. SHA-256:
+`88496d6e239c36348e72d3c62a41c66b342071c3a4c08c81a8586de69e63ccc7`.
+The PID-bound observation is `llvmpipe-worker-observed`, not a GL-label claim.
+Physical typing started at `14:01:13.007Z` and completed at `14:01:15.668Z`.
+Read-only nonce checks returned exit 75 (file absent), including the last
+completed check at `14:03:11.972Z`. The next RPC hit the remaining-deadline
+timeout; the final observation was captured at `14:03:15.700Z`. This is a
+failed 120-second input measurement, not a product pass.
+
+The final device observation reports zero pending, dropped or rejected input
+events. Canvas focus and URL remained correct. Four actual presentations had
+arrived, but `desktop.png` and `failure.png` are visibly unchanged bar/Foot
+pixels; both were opened and inspected. The failure PNG SHA-256 is
+`97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`.
+The run closed cleanly after preserving the failed report. No candidate image
+or runtime change was published.
+
+## Bound CPU profile (read-only follow-up)
+
+`symbols/report.json` binds a name-bearing companion to all 11 executable
+sections of the existing c48 WASM, byte for byte. No guest was rerun under
+different code to produce the names. `symbols/profile-analysis.json` and its
+Markdown companion aggregate the original 6,716 samples across exact symbols.
+The largest self-time entries are `Machine::run` (19.968%), `Hart::execute`
+(15.084%), `next_micro_op` (5.932%), and `BlockCache::get` (5.605%). The numeric
+runtime bucket is 4.773%; the data does not support calling floating-point
+arithmetic the dominant cost. These are host CPU samples, not guest-instruction
+counts or proof that a particular optimization will fix responsiveness.
