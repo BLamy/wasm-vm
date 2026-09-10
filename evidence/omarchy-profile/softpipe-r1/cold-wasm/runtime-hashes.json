@@ -28,8 +28,8 @@
     {
       "scope": "repo",
       "path": "tools/verify/omarchy-observer-guard.mjs",
-      "size": 4760,
-      "sha256": "196d93142755f4b97c1113072feb53f1d7ae7cb579b43fd223fb97032304457b"
+      "size": 4756,
+      "sha256": "3b33af50db0dcf6366a3633eb71e794072d905f0de1fb21d16a9faf4c6ad5e26"
     },
     {
       "scope": "repo",

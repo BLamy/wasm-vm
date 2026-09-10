@@ -141,4 +141,5 @@ test("observer whitelist rejects alternate mutators, shell composition, and unfr
   assert.throws(() => validateObserverTraffic([{ type: "serial-input", text: "kill -6 486\r" }]), /unframed/iu);
   assert.throws(() => validateObserverTraffic([{ type: "terminal-input", bytes: [3] }]), /cursor-position/iu);
   assert.throws(() => validateObserverTraffic([{ type: "dom-key", code: "Escape" }]), /physical input/iu);
+  assert.throws(() => validateObserverTraffic([{ type: "evdev", code: 56, value: 1 }]), /physical input/iu);
 });

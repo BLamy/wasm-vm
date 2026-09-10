@@ -66,6 +66,6 @@ export function validateObserverTraffic(events) {
       assert.match(Buffer.from(event.bytes).toString("ascii"), /^\x1b\[[1-9][0-9]*;[1-9][0-9]*R$/u,
         "terminal input is not a cursor-position response");
     }
-    assert.ok(!["dom-key", "evdev-key"].includes(event.type), "physical input is not part of a launch-crash measurement");
+    assert.ok(!["dom-key", "evdev"].includes(event.type), "physical input is not part of a launch-crash measurement");
   }
 }
