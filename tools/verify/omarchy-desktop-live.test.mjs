@@ -70,6 +70,17 @@ test("LP0 is configuration-only evidence and is checked before physical input", 
     < source.indexOf("physical-keyboard-before"));
 });
 
+test("actual built recording covers served resources and pre-send RPCs, even timed-out ones", () => {
+  assert.ok(source.includes("context.addInitScript(installWireEvidence)"));
+  assert.ok(source.indexOf("context.addInitScript(installWireEvidence)") < source.indexOf("const page = await context.newPage()"));
+  assert.ok(source.includes("resourceIdentities.push(servedIdentity"));
+  assert.ok(source.includes('context.on("request"'));
+  const rpc = source.slice(source.indexOf("const exec = async"), source.indexOf("async function collectWireEvidence"));
+  assert.ok(rpc.indexOf("report.serialCommands.push") < rpc.indexOf("await targetPage.evaluate"));
+  assert.ok(source.includes('await collectWireEvidence(page, "before-reload")'));
+  assert.ok(source.includes('await collectWireEvidence(page, "final")'));
+});
+
 test("renderer log parser accepts the real DEBUG suffix labels", () => {
   assert.deepEqual(parseHyprlandRendererLog(
     "[ 125.755907] omarchy-demo uwsm_hyprland.desktop[478]: DEBUG ]: Renderer: llvmpipe (LLVM 19.1.7, 256 bits)\nDEBUG ]: Vendor: Mesa/X.org",
@@ -105,6 +116,11 @@ test("nonce readback caps every guest RPC by the remaining 120-second deadline",
   assert.ok(source.includes("Math.min(300000, remaining)"));
   assert.ok(source.includes("nonce readback completed after deadline"));
   assert.ok(source.includes("Math.min(1000, Math.max(1, deadline - Date.now()))"));
+  assert.ok(source.includes("deadlineMs: timeoutMs, deadlineAt: new Date(deadline).toISOString()"));
+  assert.ok(source.includes("120000, report.keyboard"));
+  assert.ok(source.includes("report.keyboard.failedAt = new Date().toISOString()"));
+  assert.ok(source.includes("guestFile.includes(nonce), false"));
+  assert.doesNotMatch(source, /guestFile = `\/tmp\/desktop-keys-\$\{nonce\}`/u);
 });
 
 test("unlogged baseline worker evidence is explicitly weaker than a GL label", () => {

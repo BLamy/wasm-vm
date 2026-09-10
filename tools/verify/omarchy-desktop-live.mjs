@@ -13,6 +13,7 @@ import { chromium } from "../../web/node_modules/playwright/index.mjs";
 import { physicalStroke } from "./omarchy-browser-session.mjs";
 import { observeHyprlandRenderer } from "./omarchy-renderer-log.mjs";
 import { parseExpectedLpNumThreads, validateExpectedLpEnvironment } from "./omarchy-thread-setting.mjs";
+import { servedIdentity, installWireEvidence } from "./omarchy-live-recording.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -58,6 +59,7 @@ const distRoot = path.join(repoRoot, "web", "dist");
 const releaseRoot = path.join(repoRoot, "releases");
 let ownedServer = null;
 let candidate = null;
+const resourceIdentities = [];
 
 const MIME_TYPES = new Map([
   [".css", "text/css; charset=utf-8"],
@@ -199,6 +201,8 @@ async function serveLocal(request, response) {
     }
     if (candidateBytes || candidateFile) {
       const bytes = candidateBytes || await fs.readFile(candidateFile);
+      resourceIdentities.push(servedIdentity({ pathname, method: request.method,
+        filename: candidateFile, bytes, repoRoot }));
       response.writeHead(200, {
         "Content-Length": bytes.length,
         "Content-Type": pathname.endsWith(".json") ? "application/json" : "application/octet-stream",
@@ -244,9 +248,12 @@ async function serveLocal(request, response) {
     "Cross-Origin-Resource-Policy": "same-origin",
     "Cache-Control": "no-store",
   };
+  const bytes = await fs.readFile(filePath);
+  resourceIdentities.push(servedIdentity({ pathname, method: request.method,
+    filename: realFile, bytes, repoRoot }));
   response.writeHead(200, headers);
   if (request.method === "HEAD") response.end();
-  else response.end(await fs.readFile(filePath));
+  else response.end(bytes);
 }
 async function startLocalServer() {
   const server = createServer((request, response) => {
@@ -313,7 +320,8 @@ ownedServer = local?.server || null;
 const localUrl = local ? new URL(local.url) : null;
 if (localUrl && candidate) localUrl.searchParams.set("omarchyAssetBase", localUrl.origin);
 const url = localUrl?.href || urlArg;
-const report = { url, mode, startedAt: new Date().toISOString(), errors: [], observations: [] };
+const report = { url, mode, startedAt: new Date().toISOString(), errors: [], observations: [],
+  resourceIdentities, browserRequests: [], serialCommands: [], inputEvents: [], workerTraffic: [] };
 if (candidate) report.candidate = { localOnly: true, source: candidate.source, manifest: candidate.manifest };
 const pageQuery = new URL(url).searchParams;
 const prewarmTimeoutMs = mode === "capture"
@@ -366,6 +374,9 @@ try {
 }
 const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1,
   serviceWorkers: mode === "verify" ? "allow" : "block" });
+context.on("request", request => report.browserRequests.push({ timestamp: new Date().toISOString(),
+  url: request.url(), method: request.method(), resourceType: request.resourceType() }));
+await context.addInitScript(installWireEvidence);
 const page = await context.newPage();
 let secondPage = null;
 let failurePage = page;
@@ -404,6 +415,8 @@ trackPage(page, "primary");
 await installEvidence(context);
 const exec = async (command, targetPage = page, stage = "guest-exec", timeoutMs = 300000) => {
   assert.ok(Number.isSafeInteger(timeoutMs) && timeoutMs > 0, `${stage}: invalid guest RPC timeout`);
+  report.serialCommands.push({ timestamp: new Date().toISOString(),
+    context: pageLabels.get(targetPage) || "unknown", stage, command, timeoutMs });
   const result = await targetPage.evaluate(({ command, timeoutMs }) => window.wvmDemo.exec(command, timeoutMs, { quiet: true }),
     { command, timeoutMs });
   const context = pageLabels.get(targetPage) || "unknown";
@@ -420,10 +433,19 @@ const exec = async (command, targetPage = page, stage = "guest-exec", timeoutMs 
   console.log(`OMARCHY_EXEC ${JSON.stringify({ stage, context, exit: result?.exit ?? null })}`);
   return result;
 };
+async function collectWireEvidence(targetPage, epoch) {
+  const evidence = await targetPage.evaluate(() => window.__omarchyWireEvidence);
+  assert.ok(evidence, "browser wire observer was not installed");
+  const context = pageLabels.get(targetPage) || "unknown";
+  for (const key of ["inputEvents", "workerTraffic"]) {
+    report[key].push(...evidence[key].map(entry => ({ context, epoch, ...entry })));
+  }
+}
 async function screenshot(name, targetPage = page) {
   const filename = path.join(out, name);
   await targetPage.screenshot({ path: filename, timeout: 20000 });
-  report.observations.push({ screenshot: filename, sha256: createHash("sha256").update(await fs.readFile(filename)).digest("hex") });
+  report.observations.push({ screenshot: filename, timestamp: new Date().toISOString(),
+    sha256: createHash("sha256").update(await fs.readFile(filename)).digest("hex") });
   console.log(`OMARCHY_SCREENSHOT ${filename}`);
 }
 async function runtimeDiagnostics(targetPage, label) {
@@ -588,8 +610,10 @@ async function assertNoOmarchyPersistentIdb(targetPage, label) {
   assert.deepEqual(omarchy, [], `${label}: Omarchy created persistent IndexedDB: ${omarchy.join(", ")}`);
   report.observations.push({ indexedDb: { label, names, omarchyPersistent: omarchy } });
 }
-async function readGuestFileEventually(targetPage, filename, expected, label, timeoutMs = 120000) {
-  const deadline = Date.now() + timeoutMs;
+async function readGuestFileEventually(targetPage, filename, expected, label, timeoutMs = 120000, timing = null) {
+  const started = Date.now(), deadline = started + timeoutMs;
+  if (timing) Object.assign(timing, { readbackStartedAt: new Date(started).toISOString(),
+    readbackTimeoutMs: timeoutMs, deadlineMs: timeoutMs, deadlineAt: new Date(deadline).toISOString() });
   while (Date.now() < deadline) {
     // Read-only polling: the physical keyboard is the only writer of the nonce file.
     const remaining = deadline - Date.now();
@@ -927,9 +951,11 @@ try {
   await page.locator("#ide-display-canvas").click({ position: { x: 300, y: 200 } });
   const keyboardUrl = page.url();
   await assertCanvasFocus(page, "physical-keyboard-before", keyboardUrl);
-  const nonce = randomBytes(8).toString("hex"), guestFile = `/tmp/desktop-keys-${nonce}`;
+  const nonce = randomBytes(8).toString("hex");
+  const guestFile = `/tmp/desktop-keys-${randomBytes(8).toString("hex")}`;
+  assert.equal(guestFile.includes(nonce), false, "nonce and read-only lookup filename must be independent");
   await runtimeDiagnostics(page, "physical-keyboard-before");
-  report.keyboard = { verified: false, nonce, startedAt: new Date().toISOString() };
+  report.keyboard = { verified: false, nonce, guestFile, startedAt: new Date().toISOString() };
   for (const character of `printf '${nonce}' > ${guestFile}`) {
     const { code, shift } = physicalStroke(character);
     if (shift) await page.keyboard.down("ShiftLeft");
@@ -942,9 +968,13 @@ try {
   report.keyboard.typedAt = new Date().toISOString();
   try {
     await readGuestFileEventually(page, guestFile, nonce, "physical keyboard",
-      mode === "capture" ? prewarmTimeoutMs : 120000);
+      mode === "capture" ? prewarmTimeoutMs : 120000, report.keyboard);
     report.keyboard.verified = true;
     report.keyboard.completedAt = new Date().toISOString();
+  } catch (error) {
+    report.keyboard.failedAt = new Date().toISOString();
+    report.keyboard.error = String(error);
+    throw error;
   } finally {
     await runtimeDiagnostics(page, "physical-keyboard-after-readback");
   }
@@ -990,6 +1020,7 @@ try {
   if (mode === "verify") {
     failurePage = page;
     await page.setViewportSize({ width: 1280, height: 800 });
+    await collectWireEvidence(page, "before-reload");
     await page.reload({ waitUntil: "domcontentloaded", timeout: 30000 });
     await page.waitForFunction(() => window.wvmDemo && window.__linux, null, { timeout: 300000 });
     await assertRealOmarchyLayout(page, "reload");
@@ -1029,6 +1060,14 @@ try {
   try { await screenshot("failure.png", failurePage); } catch {}
   console.error(report.error);
 } finally {
+  try { await collectWireEvidence(page, "final"); } catch (error) {
+    report.errors.push(`wire evidence: ${error}`); report.result = "failed"; process.exitCode = 1;
+  }
+  if (secondPage) {
+    try { await collectWireEvidence(secondPage, "final"); } catch (error) {
+      report.errors.push(`second-tab wire evidence: ${error}`); report.result = "failed"; process.exitCode = 1;
+    }
+  }
   try {
     const evidence = await page.evaluate(() => window.__omarchyLiveEvidence);
     await fs.writeFile(path.join(out, "serial.log"), evidence.serial);
