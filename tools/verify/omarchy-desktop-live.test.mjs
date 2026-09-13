@@ -1,10 +1,14 @@
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import path from "node:path";
+import os from "node:os";
+import vm from "node:vm";
+import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { observeHyprlandRenderer, parseHyprlandRendererLog } from "./omarchy-renderer-log.mjs";
+import { COLD_BLANK_PATH, coldPairUrl, assertEmptyOriginStorage, assertColdRestore, remainingStartupMs } from "./omarchy-cold-pair.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const source = await fs.readFile(path.join(here, "omarchy-desktop-live.mjs"), "utf8");
@@ -76,7 +80,8 @@ test("actual built recording covers served resources and pre-send RPCs, even tim
   assert.ok(source.includes("resourceIdentities.push(servedIdentity"));
   assert.ok(source.includes('context.on("request"'));
   const rpc = source.slice(source.indexOf("const exec = async"), source.indexOf("async function collectWireEvidence"));
-  assert.ok(rpc.indexOf("report.serialCommands.push") < rpc.indexOf("await targetPage.evaluate"));
+  assert.ok(rpc.indexOf("targetPage.evaluate") >= 0);
+  assert.ok(rpc.indexOf("report.serialCommands.push") < rpc.indexOf("targetPage.evaluate"));
   assert.ok(source.includes('await collectWireEvidence(page, "before-reload")'));
   assert.ok(source.includes('await collectWireEvidence(page, "final")'));
 });
@@ -144,4 +149,129 @@ test("unlogged baseline worker evidence is explicitly weaker than a GL label", (
     log: "DEBUG ]: Renderer: softpipe\nDEBUG ]: Vendor: Mesa/X.org",
     threads: "Hyprland\n", expectedRenderer: "softpipe",
   }).kind, "gl-renderer-label-observed");
+});
+
+test("harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser", async (t) => {
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), "omarchy-cold-http-test-"));
+  t.after(() => fs.rm(directory, { recursive: true, force: true }));
+  const chunk = Buffer.alloc(262144);
+  const digest = createHash("sha256").update(chunk).digest("hex");
+  // Synthetic repeated-zero disk manifest: HTTP coverage only, never an LP0 image claim.
+  await fs.writeFile(path.join(directory, `${digest}.bin`), chunk);
+  await fs.writeFile(path.join(directory, "manifest.json"), JSON.stringify({ version: 1,
+    image_len: 4294967296, chunk_size: 262144, layout: "split", chunks: Array(16384).fill(digest) }));
+  const output = path.join(directory, "result");
+  const run = spawnSync(process.execPath, [path.join(here, "omarchy-desktop-live.mjs"), "selftest", output, "cold-pair"], {
+    encoding: "utf8", timeout: 20000,
+    env: { ...process.env, OMARCHY_CANDIDATE_CHUNKS: directory, OMARCHY_CANDIDATE_PAIR_DIR: "",
+      OMARCHY_EXPECT_RENDERER: "llvmpipe", OMARCHY_EXPECT_LP_NUM_THREADS: "0", OMARCHY_BROWSER_TIMEOUT_MS: "5400000" },
+  });
+  assert.equal(run.status, 0, run.stderr || run.stdout);
+  const report = JSON.parse(await fs.readFile(path.join(output, "report.json"), "utf8"));
+  assert.equal(report.result, "http-selftest-passed");
+  assert.deepEqual(Object.keys(report.candidate.manifest.artifacts), ["kernel"]);
+  assert.equal(report.candidate.source.bootSnapshot, undefined);
+  assert.equal(report.candidate.source.overlayDelta, undefined);
+  assert.equal(report.candidate.source.cold, true);
+  assert.equal(new URL(report.url).searchParams.get("noSnapshot"), "1");
+  assert.equal(new URL(report.url).searchParams.get("persist"), "1");
+  assert.equal((await fs.stat(output)).mode & 0o777, 0o700);
+  assert.equal(report.browserRequests.length, 0);
+  assert.ok(report.resourceIdentities.some(row => row.pathname === COLD_BLANK_PATH && row.status === 200));
+});
+
+test("harness-only actual cold orchestration inspects storage before app and returns after pair without input", async () => {
+  const trace = [];
+  const report = { errors: [] };
+  const url = coldPairUrl("http://127.0.0.1:4321/app.html?guest=omarchy&desktop=1#ide").href;
+  let location = new URL("http://127.0.0.1:4321/");
+  const page = {
+    async goto(next) { location = new URL(next); trace.push(location.pathname); },
+    async waitForFunction() {},
+    async evaluate(fn) {
+      const result = await vm.runInNewContext(`(${fn.toString()})()`, {
+        location, window: { __omarchyLiveEvidence: { ready: true }, __omarchyWireEvidence: { workerTraffic: [] },
+          __linux: { restoredFromBootSnapshot: () => false },
+          ...(location.pathname === "/app.html" ? { __linuxCtl: { storedSnapshotRestoreEvidence: () =>
+            ({ attempted: true, decision: "missing", overlayGeneration: 0 }) } } : {}) },
+        indexedDB: { databases: async () => [] }, caches: { keys: async () => [] },
+        navigator: { serviceWorker: { getRegistrations: async () => [], controller: null } },
+        localStorage: {}, sessionStorage: {},
+      });
+      return result === undefined ? undefined : JSON.parse(JSON.stringify(result));
+    },
+    setViewportSize() { assert.fail("cold-pair entered resize/input path"); },
+  };
+  const bindings = {
+    coldPair: true, coldDeadline: null, coldStartupMs: 5400000, COLD_BLANK_PATH, page, report, url,
+    URL, Date, assert, remainingStartupMs, assertColdRestore,
+    assertEmptyOriginStorage(state, origin) { assertEmptyOriginStorage(state, origin); trace.push("empty-origin"); },
+    startupCall: op => op(), assertRealOmarchyLayout: async () => {}, recordBuildIdentities: async () => {},
+    observeServiceWorker: async () => {}, screenshot: async name => trace.push(name), mode: "cold-pair",
+    observeLoaderIdentity: async () => ({ baseBinding: "a".repeat(64) }),
+    proveHyprlandRenderer: async () => { trace.push("renderer"); return { instance: { instance: "fixture_123", pid: 123 } }; },
+    exec: async command => { trace.push(command); return { exit: 0, stdout: command.includes("instances") ? '[{"instance":"fixture_123","pid":123}]' : "[]" }; },
+    assertColdDesktop: observation => { assert.equal(observation.renderer.instance.pid, 123); trace.push("desktop-proof"); return { foot: { pid: 234 } }; },
+    capturePair: async () => { trace.push("capture"); report.pair = { synthetic: true }; },
+  };
+  const start = source.indexOf("async function runLive() {");
+  const end = source.indexOf("\ntry {\n  await runLive();", start);
+  assert.ok(start >= 0 && end > start);
+  const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+  await new AsyncFunction(...Object.keys(bindings), `${source.slice(start, end)}\nreturn runLive();`)(...Object.values(bindings));
+  assert.deepEqual(trace.slice(0, 3), [COLD_BLANK_PATH, "empty-origin", "/app.html"]);
+  assert.ok(trace.indexOf("renderer") < trace.indexOf("desktop-proof"));
+  assert.ok(trace.indexOf("desktop-proof") < trace.indexOf("capture"));
+  assert.equal(trace.at(-1), "capture");
+  assert.ok(trace.includes("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i fixture_123 -j clients"));
+  assert.equal(report.keyboard, undefined);
+  assert.equal(report.capturePrewarm, undefined);
+  assert.equal(report.result, "cold-pair-captured-input-unverified");
+});
+
+test("harness-only capture selects exact overlay when both overlay and snapshot databases exist", async () => {
+  const base = "a".repeat(64);
+  const startToken = "const count = await page.evaluate(";
+  const start = source.indexOf(startToken, source.indexOf("async function capturePair(")) + startToken.length;
+  const end = source.indexOf("}, { base, coldPair });", start) + 1;
+  assert.ok(start >= startToken.length && end > start);
+  const callback = source.slice(start, end);
+  async function run(names, hasBlocks = true) {
+    const opened = [], state = {};
+    let closed = false;
+    const request = result => {
+      const r = { result };
+      queueMicrotask(() => r.onsuccess());
+      return r;
+    };
+    const db = {
+      objectStoreNames: { contains: name => name === "blocks" && hasBlocks },
+      close: () => { closed = true; },
+      transaction(name) {
+        assert.equal(name, "blocks");
+        return { objectStore(store) {
+          assert.equal(store, "blocks");
+          return { getAllKeys: () => request([5, 9]) };
+        } };
+      },
+    };
+    const execute = vm.runInNewContext(`(${callback})`, {
+      window: state,
+      indexedDB: { databases: async () => names.map(name => ({ name })),
+        open: name => { opened.push(name); return request(db); } },
+    });
+    try {
+      const count = await execute({ base, coldPair: true });
+      assert.equal(count, 2);
+      assert.deepEqual(opened, [`wvov-${base}`]);
+      assert.equal(state.__omarchyExportDb, db);
+    } catch (error) {
+      if (!hasBlocks) assert.equal(closed, true, "invalid overlay must be closed");
+      else assert.deepEqual(opened, [], "missing overlay must not open a snapshot or create a database");
+      throw error;
+    }
+  }
+  await run([`wvsn-${base}`, `wvov-${base}`, `wvov-${base}-unrelated`]);
+  await assert.rejects(run([`wvsn-${base}`, `wvov-${base}-unrelated`]), /expected one fresh overlay/u);
+  await assert.rejects(run([`wvsn-${base}`, `wvov-${base}`], false), /no blocks store/u);
 });

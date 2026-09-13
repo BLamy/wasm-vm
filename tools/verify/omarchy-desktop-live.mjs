@@ -14,6 +14,9 @@ import { physicalStroke } from "./omarchy-browser-session.mjs";
 import { observeHyprlandRenderer } from "./omarchy-renderer-log.mjs";
 import { parseExpectedLpNumThreads, validateExpectedLpEnvironment } from "./omarchy-thread-setting.mjs";
 import { servedIdentity, installWireEvidence } from "./omarchy-live-recording.mjs";
+import { COLD_BLANK_PATH, COLD_KERNEL_SHA256, coldPairOptions, coldPairUrl,
+  assertEmptyOriginStorage, assertColdRestore, assertColdDesktop, remainingStartupMs,
+  withinStartupDeadline } from "./omarchy-cold-pair.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -34,13 +37,14 @@ if (urlArg === "--selftest-presentation") {
   assert.equal(index, 2, "presentation self-test must consume the post-marker frame");
   process.exit(0);
 }
-assert.ok(urlArg && output, "usage: omarchy-desktop-live.mjs URL|local|selftest NEW_OUTPUT_DIR [capture|verify]");
-assert.ok(mode === "capture" || mode === "verify", `invalid mode: ${mode}`);
+assert.ok(urlArg && output, "usage: omarchy-desktop-live.mjs URL|local|selftest NEW_OUTPUT_DIR [capture|verify|cold-pair]");
+assert.ok(["capture", "verify", "cold-pair"].includes(mode), `invalid mode: ${mode}`);
+const coldPair = mode === "cold-pair";
 const candidatePairEnv = process.env.OMARCHY_CANDIDATE_PAIR_DIR || "";
 const candidateChunksEnv = process.env.OMARCHY_CANDIDATE_CHUNKS || "";
-assert.equal(Boolean(candidatePairEnv), Boolean(candidateChunksEnv),
+if (!coldPair) assert.equal(Boolean(candidatePairEnv), Boolean(candidateChunksEnv),
   "OMARCHY_CANDIDATE_PAIR_DIR and OMARCHY_CANDIDATE_CHUNKS must be supplied together");
-const candidateRequested = Boolean(candidatePairEnv);
+const candidateRequested = Boolean(candidateChunksEnv);
 if (candidateRequested) assert.ok(urlArg === "local" || urlArg === "selftest",
   "local-only candidate inputs require URL argument local or selftest");
 const requestedRenderer = process.env.OMARCHY_EXPECT_RENDERER || null;
@@ -52,8 +56,10 @@ if (expectedLpNumThreads !== null) assert.equal(requestedRenderer || "llvmpipe",
 const expectedRenderer = requestedRenderer || (expectedLpNumThreads === null ? null : "llvmpipe");
 if (candidateRequested) assert.ok(expectedRenderer,
   "local-only candidate capture requires OMARCHY_EXPECT_RENDERER for positive renderer proof");
+const coldStartupMs = coldPair ? coldPairOptions({ urlArg, pair: candidatePairEnv, chunks: candidateChunksEnv,
+  renderer: expectedRenderer, lp: expectedLpNumThreads, timeout: process.env.OMARCHY_BROWSER_TIMEOUT_MS }) : null;
 const out = path.resolve(output);
-await fs.mkdir(out, { recursive: false });
+await fs.mkdir(out, { recursive: false, ...(coldPair ? { mode: 0o700 } : {}) });
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const distRoot = path.join(repoRoot, "web", "dist");
 const releaseRoot = path.join(repoRoot, "releases");
@@ -76,6 +82,7 @@ async function candidateRegularFile(filename, label, root) {
   const info = await fs.lstat(absolute).catch(() => null);
   assert.ok(info?.isFile(), `${label} is not a regular file: ${absolute}`);
   assert.equal(info.isSymbolicLink(), false, `${label} must not be a symlink: ${absolute}`);
+  assert.ok(inside(await fs.realpath(root), await fs.realpath(absolute)), `${label} resolves outside candidate root`);
   return absolute;
 }
 async function candidateDirectory(filename, label) {
@@ -91,13 +98,13 @@ async function hashFile(filename) {
 }
 async function prepareLocalCandidate() {
   if (!candidateRequested) return null;
-  const pairDirectory = await candidateDirectory(candidatePairEnv, "candidate pair directory");
+  const pairDirectory = coldPair ? null : await candidateDirectory(candidatePairEnv, "candidate pair directory");
   const chunkRoot = await candidateDirectory(candidateChunksEnv, "candidate chunk directory");
   const chunkDirectory = (await fs.lstat(path.join(chunkRoot, "chunks")).catch(() => null))?.isDirectory()
     ? path.join(chunkRoot, "chunks") : chunkRoot;
   const manifestPath = await candidateRegularFile(path.join(chunkRoot, "manifest.json"), "candidate chunk manifest", chunkRoot);
-  const pairSnapshot = await candidateRegularFile(path.join(pairDirectory, "omarchy-ready.snap.gz"), "candidate boot snapshot", pairDirectory);
-  const pairDelta = await candidateRegularFile(path.join(pairDirectory, "omarchy-overlay-delta.bin.gz"), "candidate overlay delta", pairDirectory);
+  const pairSnapshot = coldPair ? null : await candidateRegularFile(path.join(pairDirectory, "omarchy-ready.snap.gz"), "candidate boot snapshot", pairDirectory);
+  const pairDelta = coldPair ? null : await candidateRegularFile(path.join(pairDirectory, "omarchy-overlay-delta.bin.gz"), "candidate overlay delta", pairDirectory);
   const template = JSON.parse(await fs.readFile(path.join(repoRoot, "web", "artifacts-omarchy.json"), "utf8"));
   const kernelPath = await candidateRegularFile(path.resolve(repoRoot, template.artifacts.kernel.url), "candidate kernel", path.join(repoRoot, "releases"));
   const manifestBytes = await fs.readFile(manifestPath);
@@ -116,12 +123,23 @@ async function prepareLocalCandidate() {
   }
   const files = {
     kernel: { filename: kernelPath, route: "/candidate/kernel" },
+    ...(!coldPair ? {
     bootSnapshot: { filename: pairSnapshot, route: "/candidate/boot-snapshot" },
     overlayDelta: { filename: pairDelta, route: "/candidate/overlay-delta" },
+    } : {}),
   };
   for (const entry of Object.values(files)) {
     const identity = await hashFile(entry.filename);
     entry.size = identity.size; entry.sha256 = identity.sha256;
+  }
+  if (coldPair) {
+    assert.equal(template.artifacts.kernel.sha256, COLD_KERNEL_SHA256, "cold-pair kernel manifest is not pinned af7");
+    assert.equal(files.kernel.sha256, COLD_KERNEL_SHA256, "cold-pair kernel bytes are not pinned af7");
+    assert.equal(files.kernel.size, template.artifacts.kernel.size);
+    assert.equal(imageManifest.image_len, 4294967296, "cold-pair requires the 4 GiB candidate");
+    assert.equal(imageManifest.chunk_size, 262144);
+    assert.equal(imageManifest.chunks.length, 16384);
+    await candidateDirectory(chunkDirectory, "candidate chunk files directory");
   }
   const manifestSha256 = createHash("sha256").update(manifestBytes).digest("hex");
   const manifestKey = `chunked-omarchy/manifest-${manifestSha256}.json`;
@@ -131,8 +149,10 @@ async function prepareLocalCandidate() {
     chunkDirectory,
     chunkManifest: { filename: manifestPath, size: manifestBytes.length, sha256: manifestSha256 },
     kernel: { filename: files.kernel.filename, size: files.kernel.size, sha256: files.kernel.sha256 },
-    bootSnapshot: { filename: files.bootSnapshot.filename, size: files.bootSnapshot.size, sha256: files.bootSnapshot.sha256 },
-    overlayDelta: { filename: files.overlayDelta.filename, size: files.overlayDelta.size, sha256: files.overlayDelta.sha256 },
+    ...(!coldPair ? {
+      bootSnapshot: { filename: files.bootSnapshot.filename, size: files.bootSnapshot.size, sha256: files.bootSnapshot.sha256 },
+      overlayDelta: { filename: files.overlayDelta.filename, size: files.overlayDelta.size, sha256: files.overlayDelta.sha256 },
+    } : { cold: true }),
     image: { imageLen: imageManifest.image_len, chunkSize: imageManifest.chunk_size, chunkCount: imageManifest.chunks.length },
   };
   return {
@@ -142,11 +162,8 @@ async function prepareLocalCandidate() {
     chunkFiles,
     manifest: {
       generated: "LOCAL-ONLY diagnostic candidate (not a release claim)",
-      artifacts: {
-        kernel: { url: files.kernel.route, sha256: files.kernel.sha256, size: files.kernel.size },
-        bootSnapshot: { url: files.bootSnapshot.route, sha256: files.bootSnapshot.sha256, size: files.bootSnapshot.size },
-        overlayDelta: { url: files.overlayDelta.route, sha256: files.overlayDelta.sha256, size: files.overlayDelta.size },
-      },
+      artifacts: Object.fromEntries(Object.entries(files).map(([role, entry]) =>
+        [role, { url: entry.route, sha256: entry.sha256, size: entry.size }])),
       chunkedImage: { key: manifestKey, sha256: manifestSha256, size: manifestBytes.length },
     },
   };
@@ -184,14 +201,26 @@ async function serveLocal(request, response) {
     response.writeHead(405, { Allow: "GET, HEAD" }); response.end(); return;
   }
   const pathname = new URL(request.url || "/", "http://127.0.0.1").pathname;
+  if (coldPair && pathname === COLD_BLANK_PATH) {
+    const bytes = Buffer.from("<!doctype html><meta charset=utf-8><title>Cold origin storage inspection</title>");
+    resourceIdentities.push(servedIdentity({ pathname, method: request.method, bytes, repoRoot }));
+    response.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Content-Length": bytes.length,
+      "Cache-Control": "no-store", "Content-Security-Policy": "default-src 'none'",
+      "Cross-Origin-Opener-Policy": "same-origin", "Cross-Origin-Embedder-Policy": "require-corp" });
+    response.end(request.method === "HEAD" ? undefined : bytes); return;
+  }
+  if (coldPair && (pathname.startsWith("/candidate/") && pathname !== "/candidate/kernel"
+    || pathname.startsWith("/releases/"))) {
+    response.writeHead(404); response.end("not part of cold candidate"); return;
+  }
   if (candidate) {
     let candidateFile = null;
     let candidateBytes = null;
     if (pathname === "/artifacts-omarchy.json") candidateBytes = Buffer.from(JSON.stringify(candidate.manifest));
     else if (pathname === `/${candidate.manifest.chunkedImage.key}`) candidateBytes = candidate.manifestBytes;
     else if (pathname === "/candidate/kernel") candidateFile = candidate.source.kernel.filename;
-    else if (pathname === "/candidate/boot-snapshot") candidateFile = candidate.source.bootSnapshot.filename;
-    else if (pathname === "/candidate/overlay-delta") candidateFile = candidate.source.overlayDelta.filename;
+    else if (pathname === "/candidate/boot-snapshot") candidateFile = candidate.source.bootSnapshot?.filename;
+    else if (pathname === "/candidate/overlay-delta") candidateFile = candidate.source.overlayDelta?.filename;
     else {
       const match = pathname.match(/^\/chunked-omarchy\/chunks\/([0-9a-f]{64})\.bin$/u);
       if (match) candidateFile = candidate.chunkFiles[match[1]] || null;
@@ -301,9 +330,19 @@ async function runHttpSelfTest(baseUrl) {
     assert.equal(chunk.status, 200, "candidate content-addressed chunk must be served");
     assert.equal((await chunk.arrayBuffer()).byteLength > 0, true, "candidate chunk must not be empty");
   }
+  if (coldPair) {
+    assert.deepEqual(Object.keys(manifest.artifacts), ["kernel"]);
+    for (const route of ["/candidate/boot-snapshot", "/candidate/overlay-delta", "/releases/boot-snapshot/omarchy-ready.snap.gz"]) {
+      assert.equal((await fetch(`${baseUrl}${route}`)).status, 404, "cold server must refuse pair artifacts");
+    }
+    const blank = await fetch(`${baseUrl}${COLD_BLANK_PATH}`);
+    assert.equal(blank.status, 200);
+    assert.match(blank.headers.get("content-type"), /^text\/html/u);
+    assert.doesNotMatch(await blank.text(), /<script|<iframe|<link/iu);
+  }
 
   const traversal = await fetch(`${baseUrl}/releases/%2F..%2F..%2Fprivate-file`);
-  assert.equal(traversal.status, 403, "encoded release traversal must be rejected");
+  assert.equal(traversal.status, coldPair ? 404 : 403, "encoded release traversal must be rejected");
   return {
     app: true,
     wasmMime: wasm.headers.get("content-type"),
@@ -317,12 +356,14 @@ async function runHttpSelfTest(baseUrl) {
 candidate = await prepareLocalCandidate();
 const local = urlArg === "local" || urlArg === "selftest" ? await startLocalServer() : null;
 ownedServer = local?.server || null;
-const localUrl = local ? new URL(local.url) : null;
+const localUrl = local ? (coldPair ? coldPairUrl(local.url) : new URL(local.url)) : null;
 if (localUrl && candidate) localUrl.searchParams.set("omarchyAssetBase", localUrl.origin);
 const url = localUrl?.href || urlArg;
 const report = { url, mode, startedAt: new Date().toISOString(), errors: [], observations: [],
   resourceIdentities, browserRequests: [], serialCommands: [], inputEvents: [], workerTraffic: [] };
 if (candidate) report.candidate = { localOnly: true, source: candidate.source, manifest: candidate.manifest };
+if (coldPair) report.capturePolicy = { freshContext: true, prewarm: false, physicalInput: false,
+  noSnapshot: true, persist: true, serviceWorkers: "block", startupTimeoutMs: coldStartupMs };
 const pageQuery = new URL(url).searchParams;
 const prewarmTimeoutMs = mode === "capture"
   ? Number(process.env.OMARCHY_PREWARM_TIMEOUT_MS || 120000)
@@ -381,7 +422,7 @@ const page = await context.newPage();
 let secondPage = null;
 let failurePage = page;
 let loaderManifestResponse = null;
-if (mode === "capture") context.on("response", (response) => {
+if (mode === "capture" || coldPair) context.on("response", (response) => {
   if (loaderManifestResponse || !/\/chunked-omarchy\/manifest(?:-[0-9a-f]{64})?\.json(?:\?|$)/iu.test(response.url())) return;
   loaderManifestResponse = response.body()
     .then((body) => ({ url: response.url(), status: response.status(), body, error: null }))
@@ -413,12 +454,15 @@ function installEvidence(targetContext) {
 }
 trackPage(page, "primary");
 await installEvidence(context);
+let coldDeadline = null;
+const startupCall = (operation) => coldDeadline === null ? operation() : withinStartupDeadline(operation, coldDeadline);
 const exec = async (command, targetPage = page, stage = "guest-exec", timeoutMs = 300000) => {
+  if (coldDeadline !== null) timeoutMs = remainingStartupMs(coldDeadline);
   assert.ok(Number.isSafeInteger(timeoutMs) && timeoutMs > 0, `${stage}: invalid guest RPC timeout`);
   report.serialCommands.push({ timestamp: new Date().toISOString(),
     context: pageLabels.get(targetPage) || "unknown", stage, command, timeoutMs });
-  const result = await targetPage.evaluate(({ command, timeoutMs }) => window.wvmDemo.exec(command, timeoutMs, { quiet: true }),
-    { command, timeoutMs });
+  const result = await startupCall(() => targetPage.evaluate(({ command, timeoutMs }) => window.wvmDemo.exec(command, timeoutMs, { quiet: true }),
+    { command, timeoutMs }));
   const context = pageLabels.get(targetPage) || "unknown";
   report.observations.push({
     exec: {
@@ -858,9 +902,17 @@ async function closeCalendar(targetPage, proof, label, timeoutMs = 300000) {
 }
 async function capturePair(baseBinding) {
   await page.evaluate(() => window.__linux.pause());
+  if (coldPair) assert.equal(await page.evaluate(() => window.__linux.isPaused()), true);
   await page.evaluate(() => window.__persist());
   const stats = await page.evaluate(() => window.__persistStats());
   assert.equal(stats.pendingBlocks, 0); assert.equal(stats.flushWaiting, false); assert.equal(stats.writeWaiting, false);
+  if (coldPair) {
+    // pause is an execution flag; require a second idle persistence sample after outstanding pump work.
+    await new Promise(resolve => setTimeout(resolve, 50));
+    const settled = await page.evaluate(() => window.__persistStats());
+    assert.equal(settled.pendingBlocks, 0); assert.equal(settled.flushWaiting, false); assert.equal(settled.writeWaiting, false);
+    report.capturePersistence = { stats, settled, timestamp: new Date().toISOString() };
+  }
   assert.equal(await page.evaluate(() => window.__snapshotSave()), true);
   const size = await page.evaluate(async () => {
     window.__omarchyExport = await window.__snapshotExport();
@@ -868,7 +920,8 @@ async function capturePair(baseBinding) {
   });
   assert.ok(size > 1024 * 1024);
   const gzip = createGzip({ level: 9 });
-  const destination = createWriteStream(path.join(out, "omarchy-ready.snap.gz"));
+  const snapshotFile = path.join(out, "omarchy-ready.snap.gz");
+  const destination = createWriteStream(snapshotFile, { flags: "wx" });
   gzip.pipe(destination);
   for (let offset = 0; offset < size; offset += 262144) {
     const encoded = await page.evaluate(({ offset }) => {
@@ -880,21 +933,34 @@ async function capturePair(baseBinding) {
     if (!gzip.write(Buffer.from(encoded, "base64"))) await once(gzip, "drain");
   }
   gzip.end(); await once(destination, "close");
+  const snapshotHeader = coldPair ? Buffer.from(await page.evaluate(() => Array.from(window.__omarchyExport.subarray(0, 84)))) : null;
   await page.evaluate(() => { delete window.__omarchyExport; });
   const base = baseBinding;
   assert.match(base, /^[0-9a-f]{64}$/u, "actual loader base binding must be lowercase SHA-256");
   const generation = await page.evaluate(() => window.__snapshotGeneration());
-  const count = await page.evaluate(async (base) => {
-    const names = (await indexedDB.databases()).filter((db) => db.name.includes(base));
+  if (coldPair) {
+    assert.equal(snapshotHeader.subarray(0, 8).toString("ascii"), "WVMRESU1");
+    assert.equal(snapshotHeader.readUInt32LE(8), 1);
+    assert.equal(snapshotHeader.subarray(44, 76).toString("hex"), base);
+    assert.equal(snapshotHeader.readBigUInt64LE(76), BigInt(generation));
+  }
+  const count = await page.evaluate(async ({ base, coldPair }) => {
+    const names = (await indexedDB.databases()).filter((db) =>
+      coldPair ? db.name === `wvov-${base}` : db.name.includes(base));
     if (names.length !== 1) throw new Error(`expected one fresh overlay, found ${names.length}`);
     const db = await new Promise((resolve, reject) => { const r = indexedDB.open(names[0].name); r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error); });
+    if (!db.objectStoreNames.contains("blocks")) {
+      db.close();
+      throw new Error("selected overlay database has no blocks store");
+    }
     window.__omarchyExportDb = db;
     const store = db.transaction("blocks").objectStore("blocks");
     window.__omarchyExportKeys = await new Promise((resolve, reject) => { const r = store.getAllKeys(); r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error); });
     return window.__omarchyExportKeys.length;
-  }, base);
+  }, { base, coldPair });
   const delta = createGzip({ level: 9 });
-  const disk = createWriteStream(path.join(out, "omarchy-overlay-delta.bin.gz")); delta.pipe(disk);
+  const deltaFile = path.join(out, "omarchy-overlay-delta.bin.gz");
+  const disk = createWriteStream(deltaFile, { flags: "wx" }); delta.pipe(disk);
   const header = Buffer.alloc(61); header.write("WVOD1"); header.writeUInt32LE(4096, 5);
   header.writeBigUInt64LE(4294967296n, 9); Buffer.from(base, "hex").copy(header, 17);
   header.writeBigUInt64LE(BigInt(generation), 49); header.writeUInt32LE(count, 57); delta.write(header);
@@ -908,6 +974,8 @@ async function capturePair(baseBinding) {
     }, start);
     for (const block of blocks) {
       const bytes = Buffer.from(block.bytes, "base64"); assert.equal(bytes.length, 4096);
+      assert.ok(Number.isSafeInteger(block.key) && block.key >= 0 && block.key < 4294967296 / 4096,
+        "overlay block index outside candidate image");
       const index = Buffer.alloc(8); index.writeBigUInt64LE(BigInt(block.key));
       if (!delta.write(Buffer.concat([index, bytes]))) await once(delta, "drain");
     }
@@ -915,30 +983,82 @@ async function capturePair(baseBinding) {
   delta.end(); await once(disk, "close");
   await page.evaluate(() => { window.__omarchyExportDb.close(); delete window.__omarchyExportDb; delete window.__omarchyExportKeys; });
   report.pair = { snapshotBytes: size, blocks: count, generation, base };
-  console.log(`OMARCHY_PAIR ${JSON.stringify(report.pair)}`);
-  await page.evaluate(() => window.__linux.resume());
-}
-try {
-  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
-  await page.waitForFunction(() => window.wvmDemo, null, { timeout: 30000 });
-  assert.equal(new URL(url).searchParams.has("testHooks"), false, "live capture requires the actual URL without testHooks");
-  await assertRealOmarchyLayout(page, "initial");
-  await recordBuildIdentities();
-  await observeServiceWorker(page, "initial");
-  const deadline = Date.now() + Number(process.env.OMARCHY_BROWSER_TIMEOUT_MS || 7_200_000);
-  while (Date.now() < deadline && !await page.evaluate(() => window.__omarchyLiveEvidence.ready)) {
-    await screenshot("latest.png");
-    const status = await page.locator("#omarchy-boot-status").textContent();
-    console.log(`OMARCHY_PROGRESS ${JSON.stringify({ status, state: await page.evaluate(() => window.__presentation?.state()) })}`);
-    assert.equal(report.errors.length, 0, JSON.stringify(report.errors));
-    await new Promise((resolve) => setTimeout(resolve, 30000));
+  if (coldPair) {
+    assert.equal(await page.evaluate(() => window.__linux.isPaused()), true);
+    assert.equal(await page.evaluate(() => window.__snapshotGeneration()), generation);
+    report.pair.snapshot = { filename: snapshotFile, ...await hashFile(snapshotFile) };
+    report.pair.delta = { filename: deltaFile, ...await hashFile(deltaFile) };
+    report.pair.coreId = snapshotHeader.subarray(12, 44).toString("hex");
+    report.pair.capturedAt = new Date().toISOString();
+    report.pair.paused = true;
   }
-  assert.equal(await page.evaluate(() => window.__omarchyLiveEvidence.ready), true, "desktop never rendered");
-  await screenshot("desktop.png");
-  report.restored = await page.evaluate(() => window.__linux.restoredFromBootSnapshot());
+  console.log(`OMARCHY_PAIR ${JSON.stringify(report.pair)}`);
+  if (!coldPair) await page.evaluate(() => window.__linux.resume());
+}
+async function runLive() {
+  if (coldPair) {
+    await page.goto(new URL(COLD_BLANK_PATH, url).href, { waitUntil: "domcontentloaded", timeout: 30000 });
+    report.initialStorage = await page.evaluate(async () => ({
+      timestamp: new Date().toISOString(), origin: location.origin, pathname: location.pathname,
+      databases: (await indexedDB.databases()).map(db => ({ name: db.name, version: db.version })),
+      caches: await caches.keys(),
+      serviceWorkers: (await navigator.serviceWorker.getRegistrations()).map(reg => reg.scope),
+      serviceWorkerController: navigator.serviceWorker.controller?.scriptURL || null,
+      localStorage: Object.keys(localStorage), sessionStorage: Object.keys(sessionStorage),
+      vmPresent: Boolean(window.wvmDemo || window.__linuxCtl),
+      workerMessages: window.__omarchyWireEvidence?.workerTraffic?.length ?? -1,
+    }));
+    assertEmptyOriginStorage(report.initialStorage, new URL(url).origin);
+    const started = Date.now();
+    coldDeadline = started + coldStartupMs;
+    report.startup = { startedAt: new Date(started).toISOString(), timeoutMs: coldStartupMs,
+      deadlineAt: new Date(coldDeadline).toISOString() };
+  }
+  await startupCall(() => page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 }));
+  await startupCall(() => page.waitForFunction(() => window.wvmDemo, null, { timeout: 30000 }));
+  assert.equal(new URL(url).searchParams.has("testHooks"), false, "live capture requires the actual URL without testHooks");
+  await startupCall(() => assertRealOmarchyLayout(page, "initial"));
+  await startupCall(() => recordBuildIdentities());
+  await startupCall(() => observeServiceWorker(page, "initial"));
+  const deadline = coldDeadline ?? Date.now() + Number(process.env.OMARCHY_BROWSER_TIMEOUT_MS || 7_200_000);
+  while (Date.now() < deadline && !await startupCall(() => page.evaluate(() => window.__omarchyLiveEvidence.ready))) {
+    await startupCall(() => screenshot("latest.png"));
+    const status = await startupCall(() => page.locator("#omarchy-boot-status").textContent());
+    console.log(`OMARCHY_PROGRESS ${JSON.stringify({ status, state: await startupCall(() => page.evaluate(() => window.__presentation?.state())) })}`);
+    assert.equal(report.errors.length, 0, JSON.stringify(report.errors));
+    await new Promise((resolve) => setTimeout(resolve, Math.min(30000, Math.max(1, deadline - Date.now()))));
+  }
+  assert.equal(await startupCall(() => page.evaluate(() => window.__omarchyLiveEvidence.ready)), true, "desktop never rendered");
+  await startupCall(() => screenshot("desktop.png"));
+  report.restored = await startupCall(() => page.evaluate(() => window.__linux.restoredFromBootSnapshot()));
   if (mode === "verify") assert.equal(report.restored, true, "production must use the desktop warm snapshot");
-  const loaderIdentity = mode === "capture" ? await observeLoaderIdentity("desktop-ready") : null;
+  const loaderIdentity = mode === "capture" || coldPair ? await startupCall(() => observeLoaderIdentity("desktop-ready")) : null;
   if (loaderIdentity) report.loaderIdentity = loaderIdentity;
+  if (coldPair) {
+    report.restoreOutcomes = await startupCall(() => page.evaluate(async () => ({
+      shipped: window.__linux.restoredFromBootSnapshot(),
+      stored: await window.__linuxCtl.storedSnapshotRestoreEvidence(),
+    })));
+    assertColdRestore(report.restoreOutcomes);
+    report.restoreOutcomes.storedRestored = false;
+    const renderer = await proveHyprlandRenderer(page, "cold-pair ready");
+    const ctl = `XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i ${renderer.instance.instance}`;
+    const clients = await exec(`${ctl} -j clients`, page, "cold-pair:clients");
+    const layers = await exec(`${ctl} -j layers`, page, "cold-pair:layers");
+    const processes = await exec("ps -u 1000 -o pid=,comm=,args=", page, "cold-pair:processes");
+    const current = await exec("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances", page, "cold-pair:confirm-instance");
+    for (const result of [clients, layers, processes, current]) assert.equal(result.exit, 0, "cold-pair desktop probe failed");
+    report.coldDesktop = assertColdDesktop({ renderer, clients: JSON.parse(clients.stdout),
+      layers: JSON.parse(layers.stdout), processes: processes.stdout, confirmedInstances: JSON.parse(current.stdout) });
+    report.foot = report.coldDesktop.foot;
+    remainingStartupMs(coldDeadline);
+    report.startup.readyProvenAt = new Date().toISOString();
+    coldDeadline = null;
+    await capturePair(loaderIdentity.baseBinding);
+    assert.deepEqual(report.errors, []);
+    report.result = "cold-pair-captured-input-unverified";
+    return;
+  }
   const foot = await mappedFoot(page, "initial desktop");
   report.foot = foot;
   if (mode === "verify") await assertNoOmarchyPersistentIdb(page, "initial desktop");
@@ -1055,8 +1175,13 @@ try {
   report.result = mode === "verify"
     ? "desktop-rendered-keyboard-resize-reload-and-second-tab-verified"
     : "desktop-rendered-keyboard-and-resize-verified";
+}
+try {
+  await runLive();
 } catch (error) {
+  coldDeadline = null;
   report.result = "failed"; report.error = error.stack || String(error); process.exitCode = 1;
+  if (coldPair) report.classification = "UNPROVEN";
   try { await screenshot("failure.png", failurePage); } catch {}
   console.error(report.error);
 } finally {
