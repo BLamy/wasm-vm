@@ -1,0 +1,38 @@
+✔ harness-only cold mode requires local LP0 chunks, no pair, and exactly 90 minutes (10.445708ms)
+✔ harness-only origin check refuses inherited storage or app/worker execution (2.540625ms)
+✔ harness-only cold proof rejects stored restore even with shipped restore false (2.639125ms)
+✔ harness-only desktop proof accepts mapped LP0 with blank log or a strict actual label (15.192334ms)
+✔ harness-only desktop proof rejects stale PID, worker, duplicate environment, and false GL claims (3.723959ms)
+✔ harness-only outer deadline includes queued operations and rejects expired success (28.373834ms)
+✔ prewarm sync proof rejects cross-TTY marker evidence (1.084708ms)
+✔ prewarm clear proof requires a new real frame and focused Foot (0.496708ms)
+✔ post-marker presentation helper rejects typing frames (873.917042ms)
+✔ candidate mode is explicitly local-only and hash-bound (0.632166ms)
+✔ renderer proof binds current Hyprland PID and instance before physical input (1.131958ms)
+✔ LP0 is configuration-only evidence and is checked before physical input (0.268917ms)
+✔ actual built recording covers served resources and pre-send RPCs, even timed-out ones (0.647209ms)
+✔ renderer log parser accepts the real DEBUG suffix labels (3.185833ms)
+✔ renderer log parser rejects wrong, missing, ambiguous, and misleading records (2.471667ms)
+✔ nonce readback caps every guest RPC by the remaining 120-second deadline (0.385125ms)
+✔ unlogged baseline worker evidence is explicitly weaker than a GL label (0.837875ms)
+✔ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (1167.064542ms)
+✔ harness-only actual cold orchestration inspects storage before app and returns after pair without input (12.86075ms)
+✔ harness-only capture selects exact overlay when both overlay and snapshot databases exist (4.088916ms)
+✔ harness-only cold progress TimeoutError is recorded before startup continues to mandatory desktop capture (3.116875ms)
+✔ harness-only progress catch propagates non-Playwright errors and verify-mode timeouts (1.953625ms)
+✔ harness-only final desktop TimeoutError remains fatal after a tolerated progress timeout (0.526666ms)
+✔ harness-only screenshot helper forwards the supplied timeout and keeps the 20-second default (0.749417ms)
+✔ wire observer preserves transferred serial bytes and original transport behavior (59.376625ms)
+✔ wire observer distinguishes workers, physical events and actual input acknowledgements (4.964417ms)
+✔ server identities bind exactly the bytes served and their repository path (0.871917ms)
+✔ T03g LP setting accepts only 0 or 1 and preserves unset behavior (6.213667ms)
+✔ T03g LP0 requires exact same-PID environment values and no exact worker (10.263375ms)
+✔ T03g LP1 validates the setting but does not claim an active renderer (1.772292ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2740.770334

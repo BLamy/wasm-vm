@@ -66,3 +66,16 @@ Positive improvement remains provisional until the predeclared matched clean
 LP1/LP0 logging-enabled arms identify the actual compositor renderer, with
 identical logging disabled before input timing. No production, R2, PR merge,
 runtime architecture, or Epic 6 change is part of this recording.
+
+## Rerun after progress-capture timeout
+
+The first `cold-built` attempt and its `preflight.json` are retained unchanged;
+see `RESULT.md`. The next run uses the same commands and inputs with output
+directory `cold-built-r2` and a fresh `preflight-rerun.json` binding the corrected
+harness commit. If it produces a pair, use that exact new directory as
+`OMARCHY_CANDIDATE_PAIR_DIR` for `restored-built-r2`.
+
+Only a cold progress `latest.png` Playwright TimeoutError may be recorded and
+tolerated. It does not alter the outer deadline. Other progress failures still
+fail, and the final `desktop.png` is mandatory within the remaining startup
+budget. No screenshot is inferred or replaced with synthetic pixels.

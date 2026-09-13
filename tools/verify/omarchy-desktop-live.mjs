@@ -9,7 +9,7 @@ import { createGzip } from "node:zlib";
 import { once } from "node:events";
 import { createWriteStream } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { chromium } from "../../web/node_modules/playwright/index.mjs";
+import { chromium, errors as playwrightErrors } from "../../web/node_modules/playwright/index.mjs";
 import { physicalStroke } from "./omarchy-browser-session.mjs";
 import { observeHyprlandRenderer } from "./omarchy-renderer-log.mjs";
 import { parseExpectedLpNumThreads, validateExpectedLpEnvironment } from "./omarchy-thread-setting.mjs";
@@ -361,6 +361,7 @@ if (localUrl && candidate) localUrl.searchParams.set("omarchyAssetBase", localUr
 const url = localUrl?.href || urlArg;
 const report = { url, mode, startedAt: new Date().toISOString(), errors: [], observations: [],
   resourceIdentities, browserRequests: [], serialCommands: [], inputEvents: [], workerTraffic: [] };
+if (coldPair) report.progressCaptureErrors = [];
 if (candidate) report.candidate = { localOnly: true, source: candidate.source, manifest: candidate.manifest };
 if (coldPair) report.capturePolicy = { freshContext: true, prewarm: false, physicalInput: false,
   noSnapshot: true, persist: true, serviceWorkers: "block", startupTimeoutMs: coldStartupMs };
@@ -485,9 +486,9 @@ async function collectWireEvidence(targetPage, epoch) {
     report[key].push(...evidence[key].map(entry => ({ context, epoch, ...entry })));
   }
 }
-async function screenshot(name, targetPage = page) {
+async function screenshot(name, targetPage = page, timeoutMs = 20000) {
   const filename = path.join(out, name);
-  await targetPage.screenshot({ path: filename, timeout: 20000 });
+  await targetPage.screenshot({ path: filename, timeout: timeoutMs });
   report.observations.push({ screenshot: filename, timestamp: new Date().toISOString(),
     sha256: createHash("sha256").update(await fs.readFile(filename)).digest("hex") });
   console.log(`OMARCHY_SCREENSHOT ${filename}`);
@@ -1022,14 +1023,21 @@ async function runLive() {
   await startupCall(() => observeServiceWorker(page, "initial"));
   const deadline = coldDeadline ?? Date.now() + Number(process.env.OMARCHY_BROWSER_TIMEOUT_MS || 7_200_000);
   while (Date.now() < deadline && !await startupCall(() => page.evaluate(() => window.__omarchyLiveEvidence.ready))) {
-    await startupCall(() => screenshot("latest.png"));
+    try {
+      await startupCall(() => screenshot("latest.png"));
+    } catch (error) {
+      if (!coldPair || !(error instanceof playwrightErrors.TimeoutError)) throw error;
+      const observation = { timestamp: new Date().toISOString(), name: "latest.png", error: String(error) };
+      report.progressCaptureErrors.push(observation);
+      console.warn(`OMARCHY_PROGRESS_CAPTURE_ERROR ${JSON.stringify(observation)}`);
+    }
     const status = await startupCall(() => page.locator("#omarchy-boot-status").textContent());
     console.log(`OMARCHY_PROGRESS ${JSON.stringify({ status, state: await startupCall(() => page.evaluate(() => window.__presentation?.state())) })}`);
     assert.equal(report.errors.length, 0, JSON.stringify(report.errors));
     await new Promise((resolve) => setTimeout(resolve, Math.min(30000, Math.max(1, deadline - Date.now()))));
   }
   assert.equal(await startupCall(() => page.evaluate(() => window.__omarchyLiveEvidence.ready)), true, "desktop never rendered");
-  await startupCall(() => screenshot("desktop.png"));
+  await startupCall(() => screenshot("desktop.png", page, coldPair ? remainingStartupMs(coldDeadline) : 20000));
   report.restored = await startupCall(() => page.evaluate(() => window.__linux.restoredFromBootSnapshot()));
   if (mode === "verify") assert.equal(report.restored, true, "production must use the desktop warm snapshot");
   const loaderIdentity = mode === "capture" || coldPair ? await startupCall(() => observeLoaderIdentity("desktop-ready")) : null;

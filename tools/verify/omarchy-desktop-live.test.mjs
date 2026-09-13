@@ -9,6 +9,7 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { observeHyprlandRenderer, parseHyprlandRendererLog } from "./omarchy-renderer-log.mjs";
 import { COLD_BLANK_PATH, coldPairUrl, assertEmptyOriginStorage, assertColdRestore, remainingStartupMs } from "./omarchy-cold-pair.mjs";
+import { errors as playwrightErrors } from "../../web/node_modules/playwright/index.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const source = await fs.readFile(path.join(here, "omarchy-desktop-live.mjs"), "utf8");
@@ -274,4 +275,89 @@ test("harness-only capture selects exact overlay when both overlay and snapshot 
   await run([`wvsn-${base}`, `wvov-${base}`, `wvov-${base}-unrelated`]);
   await assert.rejects(run([`wvsn-${base}`, `wvov-${base}-unrelated`]), /expected one fresh overlay/u);
   await assert.rejects(run([`wvsn-${base}`, `wvov-${base}`], false), /no blocks store/u);
+});
+
+// Execute the actual readiness-loop source with synthetic page responses and immediate polling sleeps.
+// The only manufactured failures here are harness fixtures, never recorded guest evidence.
+async function screenshotSequence({ cold = true, progressError = null, desktopError = null }) {
+  const trace = [], diagnostics = [];
+  const report = { errors: [], progressCaptureErrors: [] };
+  const deadline = Date.now() + 400000;
+  const ready = [false, true, true];
+  const page = {
+    evaluate: async fn => fn.toString().includes("__omarchyLiveEvidence.ready") ? ready.shift() : {},
+    locator: () => ({ textContent: async () => { trace.push("progress-status"); return "Linux booting"; } }),
+  };
+  const bindings = { coldPair: cold, coldDeadline: cold ? deadline : null, page, report, Date, assert, remainingStartupMs,
+    playwrightErrors, process: { env: {} }, startupCall: op => op(), setTimeout: callback => callback(),
+    console: { warn: value => diagnostics.push(value), log: () => {} },
+    screenshot: async (name, targetPage, timeoutMs = 20000) => {
+      trace.push({ name, timeoutMs });
+      if (name === "latest.png" && progressError) throw progressError;
+      if (name === "desktop.png" && desktopError) throw desktopError;
+    },
+  };
+  const start = source.indexOf("  const deadline = coldDeadline ??", source.indexOf("async function runLive()"));
+  const end = source.indexOf("  report.restored =", start);
+  assert.ok(start >= 0 && end > start);
+  const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+  let error = null;
+  try { await new AsyncFunction(...Object.keys(bindings), source.slice(start, end))(...Object.values(bindings)); }
+  catch (caught) { error = caught; }
+  return { trace, diagnostics, report, error };
+}
+
+test("harness-only cold progress TimeoutError is recorded before startup continues to mandatory desktop capture", async () => {
+  const failure = new playwrightErrors.TimeoutError("page.screenshot: Timeout 20000ms exceeded");
+  const run = await screenshotSequence({ progressError: failure });
+  assert.equal(run.error, null);
+  assert.deepEqual(run.trace.slice(0, 2), [{ name: "latest.png", timeoutMs: 20000 }, "progress-status"]);
+  assert.equal(run.trace[2].name, "desktop.png");
+  assert.ok(run.trace[2].timeoutMs > 300000 && run.trace[2].timeoutMs <= 400000);
+  assert.deepEqual(run.report.errors, []);
+  assert.equal(run.report.progressCaptureErrors.length, 1);
+  const row = run.report.progressCaptureErrors[0];
+  assert.equal(row.name, "latest.png");
+  assert.equal(row.error, String(failure));
+  assert.ok(Number.isFinite(Date.parse(row.timestamp)));
+  assert.equal(run.diagnostics[0], `OMARCHY_PROGRESS_CAPTURE_ERROR ${JSON.stringify(row)}`);
+});
+
+test("harness-only progress catch propagates non-Playwright errors and verify-mode timeouts", async () => {
+  const errors = [new Error("page closed"), Object.assign(new Error("outer deadline exceeded"), { name: "TimeoutError" })];
+  for (const progressError of errors) {
+    const run = await screenshotSequence({ progressError });
+    assert.equal(run.error, progressError);
+    assert.equal(run.trace.length, 1);
+    assert.deepEqual(run.report.progressCaptureErrors, []);
+  }
+  const timeout = new playwrightErrors.TimeoutError("verify progress timeout");
+  const verify = await screenshotSequence({ cold: false, progressError: timeout });
+  assert.equal(verify.error, timeout);
+  assert.equal(verify.trace.length, 1);
+  assert.deepEqual(verify.report.progressCaptureErrors, []);
+  const ordinary = await screenshotSequence({ cold: false });
+  assert.equal(ordinary.error, null);
+  assert.equal(ordinary.trace[2].timeoutMs, 20000);
+});
+
+test("harness-only final desktop TimeoutError remains fatal after a tolerated progress timeout", async () => {
+  const desktopError = new playwrightErrors.TimeoutError("mandatory desktop timed out");
+  const run = await screenshotSequence({ progressError: new playwrightErrors.TimeoutError("progress timed out"), desktopError });
+  assert.equal(run.error, desktopError);
+  assert.equal(run.trace.at(-1).name, "desktop.png");
+  assert.equal(run.report.progressCaptureErrors.length, 1);
+});
+
+test("harness-only screenshot helper forwards the supplied timeout and keeps the 20-second default", async () => {
+  const calls = [], report = { observations: [] };
+  const bindings = { path, out: "/synthetic", page: { screenshot: async options => calls.push(options) }, report,
+    fs: { readFile: async () => Buffer.from("synthetic screenshot bytes") }, createHash, console: { log() {} } };
+  const start = source.indexOf("async function screenshot(");
+  const end = source.indexOf("async function runtimeDiagnostics(", start);
+  const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+  await new AsyncFunction(...Object.keys(bindings), `${source.slice(start, end)}
+    await screenshot("latest.png"); await screenshot("desktop.png", page, 321000);`)(...Object.values(bindings));
+  assert.deepEqual(calls, [{ path: "/synthetic/latest.png", timeout: 20000 }, { path: "/synthetic/desktop.png", timeout: 321000 }]);
+  assert.equal(report.observations.length, 2);
 });
