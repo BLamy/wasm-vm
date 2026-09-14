@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5.5-T03i** — Test timer-rate sensitivity of the restored Omarchy desktop
 1. **E5.5-T03d** — Resolve measured Omarchy post-restore desktop input latency **[DECOMPOSE BEFORE START]**
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
@@ -453,7 +452,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.0257` [E5.5-T03f](epic-5.5-omarchy/E5.5-T03f-software-renderer-measurement.md) — Measure a clean-session alternate Omarchy software renderer *(deps: E5.5-T03c, E5.5-T03e)*
 - [-] `525.0258` [E5.5-T03g](epic-5.5-omarchy/E5.5-T03g-single-threaded-renderer-measurement.md) — Measure the isolated Omarchy renderer-thread setting *(deps: E5.5-T03f)*
 - [x] `525.0259` [E5.5-T03h](epic-5.5-omarchy/E5.5-T03h-desktop-latency-boundary.md) — Locate the stalled Omarchy desktop input boundary *(deps: E5.5-T02a, E5.5-T03c, E5.5-T03f)*
-- [ ] `525.02595` [E5.5-T03i](epic-5.5-omarchy/E5.5-T03i-desktop-timer-sensitivity.md) — Test timer-rate sensitivity of the restored Omarchy desktop *(deps: E5.5-T03h)*
+- [~] `525.02595` [E5.5-T03i](epic-5.5-omarchy/E5.5-T03i-desktop-timer-sensitivity.md) — Test timer-rate sensitivity of the restored Omarchy desktop *(deps: E5.5-T03h)*
 - [ ] `525.026` [E5.5-T03d](epic-5.5-omarchy/E5.5-T03d-desktop-responsiveness.md) — Resolve measured Omarchy post-restore desktop input latency *(deps: E5.5-T02a, E5.5-T03c, E5.5-T03f, E5.5-T03h)*
 - [b] `525.03` [E5.5-T03a](epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md) — Prepare the clean Omarchy browser desktop session *(deps: E5.5-T02a, E5.5-T03d)*
 - [ ] `525.04` [E5.5-T04a](epic-5.5-omarchy/E5.5-T04a-browser-demo.md) — Make the verified Omarchy desktop the browser demo *(deps: E5.5-T03a)*
