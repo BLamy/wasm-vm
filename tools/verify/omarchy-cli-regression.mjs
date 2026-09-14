@@ -11,7 +11,8 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "../../web/node_modules/playwright/index.mjs";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const baseUrl = "http://127.0.0.1:8000/?noAutoBoot=1&testHooks=1";
+// Public app APIs suffice; testHooks would install a test-only300ms worker watchdog.
+const baseUrl = "http://127.0.0.1:8000/?noAutoBoot=1#ide";
 const chromePath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const outputArg = process.argv[2] || "evidence/omarchy-profile/cli-regression-rerun";
 const evidenceDir = path.resolve(repo, outputArg);
@@ -61,6 +62,7 @@ async function ensureServer() {
   if (await serverIsUp()) return;
   ownedServer = spawn("bash", ["tools/serve-dev.sh", "8000"], {
     cwd: repo,
+    detached: true, // Own the shell and its Python child as one disposable process group.
     stdio: ["ignore", "pipe", "pipe"],
   });
   ownedServer.stdout.on("data", (chunk) => process.stderr.write(`[serve-dev] ${chunk}`));
@@ -213,8 +215,11 @@ async function run() {
   report.result = "PASS";
 }
 
+let runDeadline;
 try {
-  await run();
+  await Promise.race([run(), new Promise((_, reject) => {
+    runDeadline = setTimeout(() => reject(new Error("CLI regression exceeded five-minute deadline")), remaining());
+  })]);
 } catch (error) {
   report.result = "FAIL";
   report.error = error?.stack || String(error);
@@ -223,14 +228,28 @@ try {
   }
   throw error;
 } finally {
+  clearTimeout(runDeadline);
   report.finishedAt = new Date().toISOString();
   await fs.writeFile(reportPath, JSON.stringify(report, null, 2) + "\n");
   if (browser) await browser.close().catch(() => {});
   if (ownedServer && ownedServer.exitCode === null && !ownedServer.killed) {
-    await new Promise((resolve) => {
-      ownedServer.once("close", resolve);
-      ownedServer.kill("SIGTERM");
-    });
+    // Killing only bash leaves Python holding the pipes open, so ChildProcess.close never fires.
+    const closed = new Promise((resolve) => ownedServer.once("close", resolve));
+    try { process.kill(-ownedServer.pid, "SIGTERM"); } catch (error) {
+      if (error.code !== "ESRCH") throw error;
+    }
+    let cleanupTimer;
+    const closedNormally = await Promise.race([
+      closed.then(() => true), new Promise((resolve) => { cleanupTimer = setTimeout(() => resolve(false), 5000); }),
+    ]);
+    clearTimeout(cleanupTimer);
+    if (!closedNormally) {
+      try { process.kill(-ownedServer.pid, "SIGKILL"); } catch (error) {
+        if (error.code !== "ESRCH") throw error;
+      }
+      ownedServer.stdout.destroy(); ownedServer.stderr.destroy(); ownedServer.unref();
+      throw new Error("CLI recorder server did not close within five seconds");
+    }
   }
 }
 

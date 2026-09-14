@@ -52,3 +52,16 @@ success-path helpers. It now awaits an explicit command-entry barrier and
 rejects the pending command deliberately after retirement. `ide-final-r4.log`
 passes8/8 and proves the intended stale-error/finally boundary without relying
 on an accidental fixture exception. Runtime and dist remain unchanged.
+
+`cli-r2/report.json` records a real18-second boot failure, not an Explorer
+failure: `Linux worker heartbeat timed out after301ms`. The existing recorder
+URL enabled `testHooks`, which `main.js` uses to install this artificial300ms
+watchdog. The public CLI APIs require no test hooks. The recorder now uses
+`?noAutoBoot=1#ide`, with normal production watchdog settings and the same
+five-minute whole-run limit. This does not change application timeouts.
+
+The failure report and actual full-page screenshot were saved before recorder
+cleanup hung. Killing bash alone left its descendant pipes open; the harness
+now owns/terminates the server process group with a five-second cleanup bound.
+The stale recorder60766 had no remaining browser/child and was terminated;
+its failure files remain intact. The next attempt uses a fresh directory.
