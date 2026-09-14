@@ -290,6 +290,7 @@ function actionFixture() {
       rawSession = { key: "alpine", generation: 83 };
     },
     resolve(value) { response.resolve(value); },
+    reject(error) { response.reject(error); },
     waitForCommand() { return commandEntered; },
     context,
   };
@@ -456,7 +457,7 @@ test("retired container action completion cannot apply to the next session", asy
     "action fixture must enter the deferred guest command before retirement");
   const initialRepaints = action.calls.filter((call) => call === "repaintContainerList").length;
   action.retireAndReplace();
-  action.resolve({ exit: 0, stdout: "" });
+  action.reject(new Error("retired action"));
   await pending;
   assert.equal(action.calls.filter((call) => call === "repaintContainerList").length, initialRepaints);
   assert.equal(action.context.containerLedger.error, "");

@@ -46,3 +46,9 @@ readiness GET (`cli.log`), before Chrome or the guest started and before a
 report could be written. The headers-only readiness probe now uses HEAD to
 avoid leaving the HTML response body unread. The failed attempt is retained;
 rerun in a new directory. No runtime or acceptance deadline changed.
+
+The action fixture's successful resolution subsequently fell through absent
+success-path helpers. It now awaits an explicit command-entry barrier and
+rejects the pending command deliberately after retirement. `ide-final-r4.log`
+passes8/8 and proves the intended stale-error/finally boundary without relying
+on an accidental fixture exception. Runtime and dist remain unchanged.
