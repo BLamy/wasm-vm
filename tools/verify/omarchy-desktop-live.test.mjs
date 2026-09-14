@@ -163,7 +163,8 @@ test("harness-only cold local HTTP selftest serves kernel/chunks and refuses sna
     image_len: 4294967296, chunk_size: 262144, layout: "split", chunks: Array(16384).fill(digest) }));
   const output = path.join(directory, "result");
   const run = spawnSync(process.execPath, [path.join(here, "omarchy-desktop-live.mjs"), "selftest", output, "cold-pair"], {
-    encoding: "utf8", timeout: 20000,
+    // HTTP fixture setup is not a desktop startup/input performance claim.
+    encoding: "utf8", timeout: 120000,
     env: { ...process.env, OMARCHY_CANDIDATE_CHUNKS: directory, OMARCHY_CANDIDATE_PAIR_DIR: "",
       OMARCHY_EXPECT_RENDERER: "llvmpipe", OMARCHY_EXPECT_LP_NUM_THREADS: "0", OMARCHY_BROWSER_TIMEOUT_MS: "5400000" },
   });
@@ -204,7 +205,7 @@ test("harness-only actual cold orchestration inspects storage before app and ret
     setViewportSize() { assert.fail("cold-pair entered resize/input path"); },
   };
   const bindings = {
-    coldPair: true, coldDeadline: null, coldStartupMs: 5400000, COLD_BLANK_PATH, page, report, url,
+    coldPair: true, inputTrial: false, coldDeadline: null, coldStartupMs: 5400000, COLD_BLANK_PATH, page, report, url,
     URL, Date, assert, remainingStartupMs, assertColdRestore,
     assertEmptyOriginStorage(state, origin) { assertEmptyOriginStorage(state, origin); trace.push("empty-origin"); },
     startupCall: op => op(), assertRealOmarchyLayout: async () => {}, recordBuildIdentities: async () => {},

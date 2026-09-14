@@ -365,6 +365,10 @@ export class WasmLinux {
      */
     setChaining(on: boolean): void;
     /**
+     * Select after restore, before execution; not a general Worker mutation RPC.
+     */
+    setColdCounterRecycling(enabled: boolean): boolean;
+    /**
      * E5-T26k: select one bounded decoded-cache capacity, without coercing JavaScript values.
      */
     setDecodedCacheEntries(value: any): void;
@@ -527,6 +531,10 @@ export class WasmMachine {
      * E4-T39: toggle static region chaining without rebuilding the generated modules.
      */
     setChaining(on: boolean): void;
+    /**
+     * Explicit local admission trial selection; no implicit JIT/profiling/timer change.
+     */
+    setColdCounterRecycling(enabled: boolean): boolean;
     /**
      * Install (or replace) the per-byte console callback: `fn(byte: number)`.
      */
@@ -732,6 +740,7 @@ export interface InitOutput {
     readonly wasmlinux_sendTabletEvent: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_setAdmissionProbe: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_setChaining: (a: number, b: number) => [number, number];
+    readonly wasmlinux_setColdCounterRecycling: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_setDecodedCacheEntries: (a: number, b: any) => [number, number];
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
     readonly wasmlinux_setDisplay: (a: number, b: any, c: any) => [number, number, number];
@@ -761,6 +770,7 @@ export interface InitOutput {
     readonly wasmmachine_run: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_setAdmissionProbe: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_setChaining: (a: number, b: number) => [number, number];
+    readonly wasmmachine_setColdCounterRecycling: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_setConsole: (a: number, b: any) => [number, number];
     readonly wasmmachine_setDynamicChaining: (a: number, b: number) => [number, number];
     readonly wasmmachine_setProfiling: (a: number, b: number) => [number, number, number];

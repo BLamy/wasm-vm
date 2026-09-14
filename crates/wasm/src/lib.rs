@@ -553,6 +553,39 @@ fn admission_translator_supported(row: &wasm_vm_core::dispatch::AdmissionWitness
     jit_translate::is_translatable(&block)
 }
 
+fn select_cold_counter_recycling(machine: &mut Machine, enabled: bool) -> bool {
+    machine.set_cold_counter_recycling(enabled);
+    machine.cold_counter_recycling_stats().enabled
+}
+
+fn cold_counter_recycling_fields(
+    stats: wasm_vm_core::dispatch::ColdCounterRecyclingStats,
+) -> (bool, String, String, u32, usize) {
+    (
+        stats.enabled,
+        stats.epochs.to_string(),
+        stats.discarded_counters.to_string(),
+        stats.threshold,
+        stats.capacity,
+    )
+}
+
+fn cold_counter_recycling_object(machine: &Machine) -> JsValue {
+    let (enabled, epochs, discarded, threshold, capacity) =
+        cold_counter_recycling_fields(machine.cold_counter_recycling_stats());
+    let obj = js_sys::Object::new();
+    for (key, value) in [
+        ("enabled", JsValue::from(enabled)),
+        ("epochs", JsValue::from(epochs)),
+        ("discardedCounters", JsValue::from(discarded)),
+        ("threshold", JsValue::from(threshold)),
+        ("capacity", JsValue::from(capacity as f64)),
+    ] {
+        let _ = js_sys::Reflect::set(&obj, &key.into(), &value);
+    }
+    obj.into()
+}
+
 fn admission_probe_object(machine: &Machine) -> JsValue {
     let stats = machine.admission_probe_stats();
     // false = disabled. Ordinary jitStats must not allocate any probe JS payload.
@@ -679,6 +712,61 @@ fn admission_probe_object(machine: &Machine) -> JsValue {
     }
     set(&obj, "records", records.into());
     obj.into()
+}
+
+#[cfg(test)]
+mod cold_counter_recycling_tests {
+    use super::{cold_counter_recycling_fields, select_cold_counter_recycling};
+    use wasm_vm_core::{Machine, dispatch::ColdCounterRecyclingStats};
+
+    #[test]
+    fn cold_counter_recycling_wrapper_selection_and_lossless_stats_fields() {
+        // Native adapter test of the shared selection/serialization helpers used by
+        // both wrappers; this does not pretend to execute JS or boot WasmLinux.
+        let mut machine = Machine::new(4096);
+        let before = machine.snapshot();
+        let discovery = machine.discovery_stats();
+        assert_eq!(
+            cold_counter_recycling_fields(machine.cold_counter_recycling_stats()),
+            (false, "0".into(), "0".into(), 64, 65536)
+        );
+        for enabled in [true, true, false] {
+            assert_eq!(
+                select_cold_counter_recycling(&mut machine, enabled),
+                enabled
+            );
+            assert_eq!(
+                cold_counter_recycling_fields(machine.cold_counter_recycling_stats()),
+                (enabled, "0".into(), "0".into(), 64, 65536)
+            );
+            assert_eq!(machine.discovery_stats(), discovery);
+            assert_eq!(machine.snapshot(), before);
+            assert!(!machine.jit_active());
+            assert!(!machine.admission_probe_stats().enabled);
+        }
+        assert_eq!(
+            cold_counter_recycling_fields(ColdCounterRecyclingStats {
+                enabled: true,
+                epochs: u64::MAX,
+                discarded_counters: (1 << 53) + 1,
+                threshold: 512,
+                capacity: 65536,
+            }),
+            (
+                true,
+                "18446744073709551615".into(),
+                "9007199254740993".into(),
+                512,
+                65536
+            )
+        );
+        machine.set_hotness_threshold(512);
+        assert_eq!(
+            cold_counter_recycling_fields(machine.cold_counter_recycling_stats()),
+            (false, "0".into(), "0".into(), 512, 65536)
+        );
+        assert!(!machine.admission_probe_stats().enabled);
+    }
 }
 
 #[cfg(test)]
@@ -977,11 +1065,22 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
     set("blockEntryHits", &JsValue::from_f64(entry_hits as f64));
     set("blockBuilds", &JsValue::from_f64(builds as f64));
     set("admissionProbe", &admission_probe_object(machine));
+    set(
+        "coldCounterRecycling",
+        &cold_counter_recycling_object(machine),
+    );
     obj.into()
 }
 
 #[wasm_bindgen]
 impl WasmMachine {
+    /// Explicit local admission trial selection; no implicit JIT/profiling/timer change.
+    #[wasm_bindgen(js_name = setColdCounterRecycling)]
+    pub fn set_cold_counter_recycling(&self, enabled: bool) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        Ok(select_cold_counter_recycling(&mut inner.machine, enabled))
+    }
+
     /// Explicit boot diagnostic only; does not enable profiling or change JIT policy.
     #[wasm_bindgen(js_name = setAdmissionProbe)]
     pub fn set_admission_probe(&self, enabled: bool) -> Result<bool, JsError> {
@@ -2308,6 +2407,13 @@ impl wasm_vm_core::dev::virtio::gpu::FrameSink for JsFrameSink {
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 #[wasm_bindgen]
 impl WasmLinux {
+    /// Select after restore, before execution; not a general Worker mutation RPC.
+    #[wasm_bindgen(js_name = setColdCounterRecycling)]
+    pub fn set_cold_counter_recycling(&self, enabled: bool) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        Ok(select_cold_counter_recycling(&mut inner.machine, enabled))
+    }
+
     /// Arm after restore, before execution; not exposed as a general Worker mutation RPC.
     #[wasm_bindgen(js_name = setAdmissionProbe)]
     pub fn set_admission_probe(&self, enabled: bool) -> Result<bool, JsError> {

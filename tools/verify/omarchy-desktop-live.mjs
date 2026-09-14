@@ -9,6 +9,7 @@ import { createGzip } from "node:zlib";
 import { once } from "node:events";
 import { createWriteStream } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { execFileSync } from "node:child_process";
 import { chromium, errors as playwrightErrors } from "../../web/node_modules/playwright/index.mjs";
 import { physicalStroke } from "./omarchy-browser-session.mjs";
 import { observeHyprlandRenderer } from "./omarchy-renderer-log.mjs";
@@ -17,14 +18,18 @@ import { servedIdentity, installWireEvidence } from "./omarchy-live-recording.mj
 import { COLD_BLANK_PATH, COLD_KERNEL_SHA256, coldPairOptions, coldPairUrl,
   assertEmptyOriginStorage, assertColdRestore, assertColdDesktop, remainingStartupMs,
   withinStartupDeadline } from "./omarchy-cold-pair.mjs";
+import { inputTrialOptions, inputTrialUrl, assertInputTrialSource, assertInputTrialRuntime,
+  remainingTrialMs, withinTrialDeadline } from "./omarchy-input-trial.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
+  let now = 0;
+  const clock = { now: () => now, sleep: async ms => { now += ms; } };
   const staleSequence = [{ framesReceived: 12, successfulPresents: 8 }];
   let staleIndex = 0;
   await assert.rejects(
     waitForFreshPresentation(async () => staleSequence[staleIndex++],
-      { framesReceived: 12, successfulPresents: 7 }, 50, "stale presentation self-test"),
+      { framesReceived: 12, successfulPresents: 7 }, 50, "stale presentation self-test", clock),
     /timed out waiting/u,
   );
   const sequence = [
@@ -33,13 +38,14 @@ if (urlArg === "--selftest-presentation") {
   ];
   let index = 0;
   await waitForFreshPresentation(async () => sequence[index++],
-    { framesReceived: 12, successfulPresents: 7 }, 100, "presentation self-test");
+    { framesReceived: 12, successfulPresents: 7 }, 100, "presentation self-test", clock);
   assert.equal(index, 2, "presentation self-test must consume the post-marker frame");
   process.exit(0);
 }
-assert.ok(urlArg && output, "usage: omarchy-desktop-live.mjs URL|local|selftest NEW_OUTPUT_DIR [capture|verify|cold-pair]");
-assert.ok(["capture", "verify", "cold-pair"].includes(mode), `invalid mode: ${mode}`);
+assert.ok(urlArg && output, "usage: omarchy-desktop-live.mjs URL|local|selftest NEW_OUTPUT_DIR [capture|verify|cold-pair|input-trial]");
+assert.ok(["capture", "verify", "cold-pair", "input-trial"].includes(mode), `invalid mode: ${mode}`);
 const coldPair = mode === "cold-pair";
+const inputTrial = mode === "input-trial";
 const candidatePairEnv = process.env.OMARCHY_CANDIDATE_PAIR_DIR || "";
 const candidateChunksEnv = process.env.OMARCHY_CANDIDATE_CHUNKS || "";
 if (!coldPair) assert.equal(Boolean(candidatePairEnv), Boolean(candidateChunksEnv),
@@ -54,8 +60,13 @@ const expectedLpNumThreads = parseExpectedLpNumThreads(process.env.OMARCHY_EXPEC
 if (expectedLpNumThreads !== null) assert.equal(requestedRenderer || "llvmpipe", "llvmpipe",
   "OMARCHY_EXPECT_LP_NUM_THREADS requires llvmpipe renderer expectation");
 const expectedRenderer = requestedRenderer || (expectedLpNumThreads === null ? null : "llvmpipe");
-if (candidateRequested) assert.ok(expectedRenderer,
+if (candidateRequested && !inputTrial) assert.ok(expectedRenderer,
   "local-only candidate capture requires OMARCHY_EXPECT_RENDERER for positive renderer proof");
+const trial = inputTrial ? inputTrialOptions({ urlArg, pair: candidatePairEnv, chunks: candidateChunksEnv,
+  arm: process.env.OMARCHY_INPUT_TRIAL_ARM, renderer: expectedRenderer, lp: expectedLpNumThreads,
+  timeout: process.env.OMARCHY_BROWSER_TIMEOUT_MS }) : null;
+if (!inputTrial) assert.equal(process.env.OMARCHY_INPUT_TRIAL_ARM, undefined,
+  "OMARCHY_INPUT_TRIAL_ARM requires input-trial mode");
 const coldStartupMs = coldPair ? coldPairOptions({ urlArg, pair: candidatePairEnv, chunks: candidateChunksEnv,
   renderer: expectedRenderer, lp: expectedLpNumThreads, timeout: process.env.OMARCHY_BROWSER_TIMEOUT_MS }) : null;
 const out = path.resolve(output);
@@ -354,14 +365,31 @@ async function runHttpSelfTest(baseUrl) {
 }
 
 candidate = await prepareLocalCandidate();
+if (inputTrial) assertInputTrialSource(candidate.source);
 const local = urlArg === "local" || urlArg === "selftest" ? await startLocalServer() : null;
 ownedServer = local?.server || null;
-const localUrl = local ? (coldPair ? coldPairUrl(local.url) : new URL(local.url)) : null;
+const localUrl = local ? (coldPair ? coldPairUrl(local.url)
+  : inputTrial ? inputTrialUrl(local.url, trial) : new URL(local.url)) : null;
 if (localUrl && candidate) localUrl.searchParams.set("omarchyAssetBase", localUrl.origin);
 const url = localUrl?.href || urlArg;
 const report = { url, mode, startedAt: new Date().toISOString(), errors: [], observations: [],
   resourceIdentities, browserRequests: [], serialCommands: [], inputEvents: [], workerTraffic: [] };
 if (coldPair) report.progressCaptureErrors = [];
+if (inputTrial) {
+  const scope = ["tools/verify/omarchy-desktop-live.mjs", "tools/verify/omarchy-input-trial.mjs",
+    "tools/verify/omarchy-recycling-ab.mjs",
+    "tools/verify/omarchy-owned-trial.mjs",
+    "tools/verify/omarchy-browser-session.mjs", "tools/verify/omarchy-live-recording.mjs",
+    "crates/core/src/dispatch.rs", "crates/core/src/lib.rs", "crates/wasm/src/lib.rs",
+    "web/loader.js", "web/main.js", "web/cold-counter-recycling.js", "web/dist"];
+  report.trial = { ...trial, rendererEvidence: "unchanged pinned R3 LP1; no new renderer claim",
+    head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repoRoot, encoding: "utf8" }).trim(),
+    scopedStatus: execFileSync("git", ["status", "--short", "--", ...scope], { cwd: repoRoot, encoding: "utf8" }),
+    helpers: Object.fromEntries(await Promise.all(scope.filter(file => file.startsWith("tools/")).map(async file =>
+      [file, await hashFile(path.join(repoRoot, file))]))),
+    profilingRequested: false, admissionProbeRequested: false };
+  assert.equal(report.trial.scopedStatus, "", "input-trial requires a frozen committed runtime and recorder");
+}
 if (candidate) report.candidate = { localOnly: true, source: candidate.source, manifest: candidate.manifest };
 if (coldPair) report.capturePolicy = { freshContext: true, prewarm: false, physicalInput: false,
   noSnapshot: true, persist: true, serviceWorkers: "block", startupTimeoutMs: coldStartupMs };
@@ -406,10 +434,18 @@ if (urlArg === "selftest") {
   process.exit(0);
 }
 let browser;
+let browserServer = null;
 try {
-  browser = await chromium.launch({ headless: true,
+  const launchOptions = { headless: !inputTrial,
   executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-  args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
+  args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] };
+  if (inputTrial) {
+    browserServer = await chromium.launchServer(launchOptions);
+    const ownedBrowserPid = browserServer.process().pid;
+    process.send?.({ kind: "input-trial-owned-browser", pid: ownedBrowserPid });
+    browserServer.process().once("exit", () => process.send?.({ kind: "input-trial-browser-exited", pid: ownedBrowserPid }));
+    browser = await chromium.connect(browserServer.wsEndpoint());
+  } else browser = await chromium.launch(launchOptions);
 } catch (error) {
   if (ownedServer) await new Promise((resolve) => ownedServer.close(resolve));
   throw error;
@@ -423,7 +459,7 @@ const page = await context.newPage();
 let secondPage = null;
 let failurePage = page;
 let loaderManifestResponse = null;
-if (mode === "capture" || coldPair) context.on("response", (response) => {
+if (mode === "capture" || coldPair || inputTrial) context.on("response", (response) => {
   if (loaderManifestResponse || !/\/chunked-omarchy\/manifest(?:-[0-9a-f]{64})?\.json(?:\?|$)/iu.test(response.url())) return;
   loaderManifestResponse = response.body()
     .then((body) => ({ url: response.url(), status: response.status(), body, error: null }))
@@ -456,9 +492,11 @@ function installEvidence(targetContext) {
 trackPage(page, "primary");
 await installEvidence(context);
 let coldDeadline = null;
-const startupCall = (operation) => coldDeadline === null ? operation() : withinStartupDeadline(operation, coldDeadline);
+let trialCaptureDeadline = null;
+const startupCall = (operation) => coldDeadline === null ? operation()
+  : inputTrial ? withinTrialDeadline(operation, coldDeadline, "input-trial startup") : withinStartupDeadline(operation, coldDeadline);
 const exec = async (command, targetPage = page, stage = "guest-exec", timeoutMs = 300000) => {
-  if (coldDeadline !== null) timeoutMs = remainingStartupMs(coldDeadline);
+  if (coldDeadline !== null) timeoutMs = inputTrial ? remainingTrialMs(coldDeadline) : remainingStartupMs(coldDeadline);
   assert.ok(Number.isSafeInteger(timeoutMs) && timeoutMs > 0, `${stage}: invalid guest RPC timeout`);
   report.serialCommands.push({ timestamp: new Date().toISOString(),
     context: pageLabels.get(targetPage) || "unknown", stage, command, timeoutMs });
@@ -656,15 +694,16 @@ async function assertNoOmarchyPersistentIdb(targetPage, label) {
   report.observations.push({ indexedDb: { label, names, omarchyPersistent: omarchy } });
 }
 async function readGuestFileEventually(targetPage, filename, expected, label, timeoutMs = 120000, timing = null) {
-  const started = Date.now(), deadline = started + timeoutMs;
+  const started = inputTrial && timing?.enteredAtMs ? timing.enteredAtMs : Date.now(), deadline = started + timeoutMs;
   if (timing) Object.assign(timing, { readbackStartedAt: new Date(started).toISOString(),
     readbackTimeoutMs: timeoutMs, deadlineMs: timeoutMs, deadlineAt: new Date(deadline).toISOString() });
   while (Date.now() < deadline) {
     // Read-only polling: the physical keyboard is the only writer of the nonce file.
     const remaining = deadline - Date.now();
     if (remaining <= 0) break;
-    const result = await exec(`if [ -f '${filename}' ]; then cat '${filename}'; else (exit 75); fi`, targetPage,
+    const read = () => exec(`if [ -f '${filename}' ]; then cat '${filename}'; else (exit 75); fi`, targetPage,
       `${label}:nonce-readback`, Math.min(300000, remaining));
+    const result = inputTrial ? await withinTrialDeadline(read, deadline, `${label}:readback`) : await read();
     if (Date.now() > deadline) throw new Error(`${label}: nonce readback completed after deadline`);
     if (result.exit === 0) {
       assert.equal(result.stdout.trim(), expected, `${label}: nonce readback mismatch`);
@@ -754,13 +793,14 @@ async function syncAndClearTerminalPhysically(targetPage, label, timeoutMs = 120
     focusedFoot: true,
   } });
 }
-async function waitForFreshPresentation(readState, baseline, timeoutMs, label) {
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
+async function waitForFreshPresentation(readState, baseline, timeoutMs, label,
+  clock = { now: Date.now, sleep: ms => new Promise(resolve => setTimeout(resolve, ms)) }) {
+  const deadline = clock.now() + timeoutMs;
+  while (clock.now() < deadline) {
     const state = await readState();
     if (Number(state?.framesReceived) > baseline.framesReceived
       && Number(state?.successfulPresents) > baseline.successfulPresents) return state;
-    await new Promise((resolve) => setTimeout(resolve, 25));
+    await clock.sleep(25);
   }
   throw new Error(`${label}: timed out waiting for presentation after baseline ${JSON.stringify(baseline)}`);
 }
@@ -997,6 +1037,12 @@ async function capturePair(baseBinding) {
   if (!coldPair) await page.evaluate(() => window.__linux.resume());
 }
 async function runLive() {
+  if (inputTrial) {
+    const started = Date.now(); coldDeadline = started + trial.startupMs;
+    process.send?.({ kind: "input-trial-navigation", startedAtMs: started });
+    report.startup = { startedAt: new Date(started).toISOString(), timeoutMs: trial.startupMs,
+      deadlineAt: new Date(coldDeadline).toISOString() };
+  }
   if (coldPair) {
     await page.goto(new URL(COLD_BLANK_PATH, url).href, { waitUntil: "domcontentloaded", timeout: 30000 });
     report.initialStorage = await page.evaluate(async () => ({
@@ -1039,8 +1085,8 @@ async function runLive() {
   assert.equal(await startupCall(() => page.evaluate(() => window.__omarchyLiveEvidence.ready)), true, "desktop never rendered");
   await startupCall(() => screenshot("desktop.png", page, coldPair ? remainingStartupMs(coldDeadline) : 20000));
   report.restored = await startupCall(() => page.evaluate(() => window.__linux.restoredFromBootSnapshot()));
-  if (mode === "verify") assert.equal(report.restored, true, "production must use the desktop warm snapshot");
-  const loaderIdentity = mode === "capture" || coldPair ? await startupCall(() => observeLoaderIdentity("desktop-ready")) : null;
+  if (mode === "verify" || inputTrial) assert.equal(report.restored, true, "desktop must use the warm snapshot");
+  const loaderIdentity = mode === "capture" || coldPair || inputTrial ? await startupCall(() => observeLoaderIdentity("desktop-ready")) : null;
   if (loaderIdentity) report.loaderIdentity = loaderIdentity;
   if (coldPair) {
     report.restoreOutcomes = await startupCall(() => page.evaluate(async () => ({
@@ -1075,26 +1121,46 @@ async function runLive() {
   // serial injection, create the nonce file; a separate serial command reads it back.
   const prewarmStartedAt = mode === "capture" ? Date.now() : null;
   const active = await exec("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow", page, "initial:hyprctl-activewindow");
+  assert.equal(active.exit, 0, "active window query failed");
   assert.equal(JSON.parse(active.stdout).address, foot.address);
-  await page.locator("#ide-display-canvas").click({ position: { x: 300, y: 200 } });
+  await startupCall(() => page.locator("#ide-display-canvas").click({ position: { x: 300, y: 200 } }));
   const keyboardUrl = page.url();
-  await assertCanvasFocus(page, "physical-keyboard-before", keyboardUrl);
+  await startupCall(() => assertCanvasFocus(page, "physical-keyboard-before", keyboardUrl));
   const nonce = randomBytes(8).toString("hex");
   const guestFile = `/tmp/desktop-keys-${randomBytes(8).toString("hex")}`;
   assert.equal(guestFile.includes(nonce), false, "nonce and read-only lookup filename must be independent");
-  await runtimeDiagnostics(page, "physical-keyboard-before");
+  const beforeInput = await startupCall(() => runtimeDiagnostics(page, "physical-keyboard-before"));
+  if (inputTrial) {
+    assertInputTrialRuntime(beforeInput, trial);
+    remainingTrialMs(coldDeadline);
+    report.startup.readyProvenAt = new Date().toISOString();
+    report.startup.elapsedMs = Date.now() - Date.parse(report.startup.startedAt);
+    report.trial.presentationBaseline = beforeInput.presentation;
+    coldDeadline = null;
+  }
   report.keyboard = { verified: false, nonce, guestFile, startedAt: new Date().toISOString() };
+  const typingDeadline = inputTrial ? Date.now() + trial.typingMs : null;
+  const typingCall = operation => inputTrial ? withinTrialDeadline(operation, typingDeadline, "physical typing") : operation();
   for (const character of `printf '${nonce}' > ${guestFile}`) {
     const { code, shift } = physicalStroke(character);
-    if (shift) await page.keyboard.down("ShiftLeft");
-    await page.keyboard.press(code, { delay: 40 });
-    if (shift) await page.keyboard.up("ShiftLeft");
-    await assertCanvasFocus(page, `physical-keyboard-after-${character}`, keyboardUrl);
+    if (shift) await typingCall(() => page.keyboard.down("ShiftLeft"));
+    await typingCall(() => page.keyboard.press(code, { delay: 40 }));
+    if (shift) await typingCall(() => page.keyboard.up("ShiftLeft"));
+    await typingCall(() => assertCanvasFocus(page, `physical-keyboard-after-${character}`, keyboardUrl));
   }
-  await page.keyboard.press("Enter");
-  await assertCanvasFocus(page, "physical-keyboard-after-enter", keyboardUrl);
+  await typingCall(() => page.keyboard.press("Enter"));
+  report.keyboard.enteredAtMs = Date.now();
   report.keyboard.typedAt = new Date().toISOString();
+  report.keyboard.typingMs = report.keyboard.enteredAtMs - Date.parse(report.keyboard.startedAt);
+  if (inputTrial) Object.assign(report.keyboard, { readbackStartedAt: report.keyboard.typedAt,
+    readbackTimeoutMs: trial.readbackMs, deadlineMs: trial.readbackMs,
+    deadlineAt: new Date(report.keyboard.enteredAtMs + trial.readbackMs).toISOString() });
   try {
+    report.keyboard.stage = "post-enter-focus";
+    if (inputTrial) await withinTrialDeadline(() => assertCanvasFocus(page, "physical-keyboard-after-enter", keyboardUrl),
+      report.keyboard.enteredAtMs + trial.readbackMs, "post-enter focus/readback");
+    else await assertCanvasFocus(page, "physical-keyboard-after-enter", keyboardUrl);
+    report.keyboard.stage = "readback";
     await readGuestFileEventually(page, guestFile, nonce, "physical keyboard",
       mode === "capture" ? prewarmTimeoutMs : 120000, report.keyboard);
     report.keyboard.verified = true;
@@ -1104,7 +1170,22 @@ async function runLive() {
     report.keyboard.error = String(error);
     throw error;
   } finally {
-    await runtimeDiagnostics(page, "physical-keyboard-after-readback");
+    if (!inputTrial) await runtimeDiagnostics(page, "physical-keyboard-after-readback");
+  }
+  if (inputTrial) {
+    const captureDeadline = trialCaptureDeadline = Date.now() + trial.captureMs;
+    const after = await withinTrialDeadline(() => waitForFreshPresentation(
+      () => page.evaluate(() => window.__presentation?.state?.()), beforeInput.presentation,
+      remainingTrialMs(captureDeadline), "input-trial fresh presentation"), captureDeadline, "input-trial capture");
+    report.trial.presentationAfter = after;
+    await withinTrialDeadline(() => screenshot("desktop-keyboard.png", page, remainingTrialMs(captureDeadline)),
+      captureDeadline, "input-trial capture");
+    report.trial.runtimeAfter = await withinTrialDeadline(() => runtimeDiagnostics(page, "physical-keyboard-after-readback"),
+      captureDeadline, "input-trial capture");
+    assertInputTrialRuntime(report.trial.runtimeAfter, trial);
+    assert.deepEqual(report.errors, []);
+    report.result = "input-trial-physical-nonce-and-fresh-presentation";
+    return;
   }
   await screenshot("desktop-keyboard.png");
   if (mode === "capture") {
@@ -1190,9 +1271,53 @@ try {
   coldDeadline = null;
   report.result = "failed"; report.error = error.stack || String(error); process.exitCode = 1;
   if (coldPair) report.classification = "UNPROVEN";
-  try { await screenshot("failure.png", failurePage); } catch {}
+  if (inputTrial) {
+    const failureDeadline = trialCaptureDeadline ??= Date.now() + trial.captureMs;
+    report.classification = "UNPROVEN";
+    report.trial.outcome = !report.keyboard ? "startup-failed-input-not-tested"
+      : !report.keyboard.typedAt ? "typing-failed-input-sequence-incomplete"
+      : report.keyboard.verified ? "nonce-passed-presentation-unproven" : "nonce-readback-failed";
+    try {
+      await withinTrialDeadline(() => Promise.all([
+        screenshot("failure.png", failurePage, remainingTrialMs(failureDeadline)),
+        runtimeDiagnostics(failurePage, "input-trial-failure"),
+      ]), failureDeadline, "failure capture");
+    } catch (captureError) { report.failureCaptureError = String(captureError); }
+  } else try { await screenshot("failure.png", failurePage); } catch {}
   console.error(report.error);
 } finally {
+  if (inputTrial) {
+    // Every browser object here belongs to this single trial. No shared/user browser is killed.
+    const cleanupDeadline = Date.now() + trial.cleanupMs;
+    report.cleanup = { startedAt: new Date().toISOString(), timeoutMs: trial.cleanupMs, closed: false };
+    try {
+      await withinTrialDeadline(async () => {
+        await collectWireEvidence(page, "final");
+        const evidence = await page.evaluate(() => window.__omarchyLiveEvidence);
+        report.events = evidence?.events ?? [];
+        await fs.writeFile(path.join(out, "serial.log"), evidence?.serial ?? "");
+      }, Math.min(cleanupDeadline, Date.now() + 10000), "cleanup evidence");
+    } catch (error) {
+      report.errors.push(`wire evidence: ${error}`); report.result = "failed"; process.exitCode = 1;
+    }
+    // Preserve a receipt even if browser shutdown subsequently stalls.
+    await fs.writeFile(path.join(out, "report.json"), JSON.stringify(report, null, 2) + "\n");
+    try {
+      await withinTrialDeadline(() => browserServer.close(), Math.min(cleanupDeadline, Date.now() + 10000), "browser close");
+      report.cleanup.closed = true;
+    } catch (error) {
+      report.cleanup.closeError = String(error);
+      try {
+        await withinTrialDeadline(() => browserServer.kill(), cleanupDeadline, "owned browser kill");
+        report.cleanup.closed = true; report.cleanup.forceKilled = true;
+      } catch (killError) { report.cleanup.killError = String(killError); }
+    }
+    ownedServer?.closeAllConnections();
+    if (ownedServer) ownedServer.close();
+    if (!report.cleanup.closed) { report.result = "failed"; process.exitCode = 1; }
+    report.finishedAt = new Date().toISOString();
+    await fs.writeFile(path.join(out, "report.json"), JSON.stringify(report, null, 2) + "\n");
+  } else {
   try { await collectWireEvidence(page, "final"); } catch (error) {
     report.errors.push(`wire evidence: ${error}`); report.result = "failed"; process.exitCode = 1;
   }
@@ -1213,4 +1338,5 @@ try {
   await fs.writeFile(path.join(out, "report.json"), JSON.stringify(report, null, 2) + "\n");
   await browser.close();
   if (ownedServer) await new Promise((resolve) => ownedServer.close(resolve));
+  }
 }

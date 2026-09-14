@@ -325,6 +325,8 @@ pub const MAX_QUEUE: usize = 4096;
 /// full, new keys are not tracked (counted as `counts_dropped`) rather than growing
 /// without bound. Nominated blocks leave this map, so it only ever holds sub-threshold
 /// candidates.
+/// The explicit cold-counter recycling trial instead clears only this map when a
+/// new key encounters the bound, then counts that entry normally.
 pub const MAX_COUNTS: usize = 1 << 16;
 
 /// The classified block terminator, captured in a [`TranslationRequest`] so the
@@ -633,6 +635,20 @@ pub struct DiscoveryStats {
     pub fence_i: u64,
 }
 
+/// Lifetime accounting for the default-off cold-counter recycling trial. Toggling
+/// selection, discovery reset, and code invalidation do not erase this accounting.
+/// Epochs count map clears, not code generations; discarded counters count keys,
+/// not the execution counts stored in those keys. Both totals saturate.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct ColdCounterRecyclingStats {
+    pub enabled: bool,
+    pub epochs: u64,
+    pub discarded_counters: u64,
+    /// Current selection, filled from discovery at report time (not an observer).
+    pub threshold: u32,
+    pub capacity: usize,
+}
+
 /// The E4-T08 block-discovery front end: hotness counters, the dedup state machine, the
 /// bounded nomination FIFO, the invalidation generation, and the observable stats. Owned by
 /// the `Machine` alongside the [`BlockCache`]; driven only when the block cache is enabled.
@@ -660,6 +676,7 @@ pub struct BlockDiscovery {
     threshold: u32,
     /// No allocation, byte comparison, or guest-memory access while absent (the default).
     admission_probe: Option<AdmissionProbeStats>,
+    cold_counter_recycling: ColdCounterRecyclingStats,
 }
 
 impl Default for BlockDiscovery {
@@ -690,6 +707,21 @@ impl BlockDiscovery {
             counts_cap: counts_cap.max(1),
             threshold: HOT_THRESHOLD,
             admission_probe: None,
+            cold_counter_recycling: ColdCounterRecyclingStats::default(),
+        }
+    }
+
+    /// Select the experiment without changing any current counter, queue, decision,
+    /// threshold, or generation. Only a later full-map new entry can recycle.
+    pub fn set_cold_counter_recycling(&mut self, enabled: bool) {
+        self.cold_counter_recycling.enabled = enabled;
+    }
+
+    pub fn cold_counter_recycling_stats(&self) -> ColdCounterRecyclingStats {
+        ColdCounterRecyclingStats {
+            threshold: self.threshold,
+            capacity: self.counts_cap,
+            ..self.cold_counter_recycling
         }
     }
 
@@ -829,9 +861,20 @@ impl BlockDiscovery {
             }
             None => {
                 if self.counts.len() >= self.counts_cap {
-                    // Counter map full: stop tracking new cold blocks (flood bound).
-                    self.stats.counts_dropped = self.stats.counts_dropped.saturating_add(1);
-                    return AdmissionReason::CountsFull;
+                    if !self.cold_counter_recycling.enabled {
+                        // Unselected control: preserve the existing refusal and observer reason.
+                        self.stats.counts_dropped = self.stats.counts_dropped.saturating_add(1);
+                        return AdmissionReason::CountsFull;
+                    }
+                    // Bounded by counts_cap. Do not reset discovery: decisions, queued-hit
+                    // priorities, exact FIFO requests, and generation must all survive.
+                    self.cold_counter_recycling.epochs =
+                        self.cold_counter_recycling.epochs.saturating_add(1);
+                    self.cold_counter_recycling.discarded_counters = self
+                        .cold_counter_recycling
+                        .discarded_counters
+                        .saturating_add(self.counts.len() as u64);
+                    self.counts.clear();
                 }
                 self.counts.insert(phys, 1);
                 1
@@ -936,6 +979,209 @@ impl BlockDiscovery {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn cold_counter_recycling_disabled_parity_including_admission_observer() {
+        let mut control = BlockDiscovery::with_bounds(4, 3);
+        let mut explicit_off = BlockDiscovery::with_bounds(4, 3);
+        explicit_off.set_cold_counter_recycling(true);
+        explicit_off.set_cold_counter_recycling(false);
+        for d in [&mut control, &mut explicit_off] {
+            d.set_threshold(4);
+            d.set_admission_probe(true);
+        }
+        let ops = block();
+        for phys in (0..80).map(|i| (i % 11) * 4096) {
+            control.on_block_entry(phys, &ops);
+            explicit_off.on_block_entry(phys, &ops);
+            assert_eq!(control.stats(), explicit_off.stats());
+            assert_eq!(control.counts, explicit_off.counts);
+            assert_eq!(control.state, explicit_off.state);
+            assert_eq!(control.queued_hits, explicit_off.queued_hits);
+            assert_eq!(control.queue, explicit_off.queue);
+            assert_eq!(
+                control.admission_probe_stats(),
+                explicit_off.admission_probe_stats()
+            );
+        }
+        assert!(control.stats().counts_dropped > 0);
+        assert!(control.admission_probe_stats().full_map_refusals > 0);
+        assert_eq!(
+            control.cold_counter_recycling_stats(),
+            ColdCounterRecyclingStats {
+                threshold: 4,
+                capacity: 3,
+                ..ColdCounterRecyclingStats::default()
+            }
+        );
+        assert_eq!(
+            control.cold_counter_recycling_stats(),
+            explicit_off.cold_counter_recycling_stats()
+        );
+    }
+
+    #[test]
+    fn cold_counter_recycling_finite_real_capacity_flood_then_hot_512() {
+        // Exercise both the core default and the shipped browser's unchanged threshold.
+        for threshold in [HOT_THRESHOLD, 512] {
+            for enabled in [false, true] {
+                let mut d = BlockDiscovery::new();
+                d.set_threshold(threshold);
+                d.set_cold_counter_recycling(enabled);
+                let ops = block();
+                for phys in 0..MAX_COUNTS as u64 {
+                    d.on_block_entry(phys * 16, &ops);
+                }
+                assert_eq!(d.counts.len(), MAX_COUNTS);
+                // An already counted key at capacity must not start a new epoch.
+                d.on_block_entry(0, &ops);
+                assert_eq!(d.cold_counter_recycling_stats().epochs, 0);
+                let hot = (MAX_COUNTS as u64 + 1) * 16;
+                let generation = d.generation();
+                for _ in 1..threshold {
+                    d.on_block_entry(hot, &ops);
+                    assert!(
+                        d.queue.is_empty(),
+                        "never nominate before the exact threshold"
+                    );
+                    assert!(d.counts.len() <= MAX_COUNTS);
+                }
+                d.on_block_entry(hot, &ops);
+                assert_eq!(d.generation(), generation);
+                assert_eq!(d.threshold(), threshold);
+                if enabled {
+                    assert_eq!(d.stats().nominated, 1);
+                    assert_eq!(d.queue.front().unwrap().phys_pc, hot);
+                    assert_eq!(d.stats().counts_dropped, 0);
+                    assert_eq!(
+                        d.cold_counter_recycling_stats(),
+                        ColdCounterRecyclingStats {
+                            enabled: true,
+                            epochs: 1,
+                            discarded_counters: MAX_COUNTS as u64,
+                            threshold,
+                            capacity: MAX_COUNTS,
+                        }
+                    );
+                } else {
+                    assert!(d.queue.is_empty());
+                    assert_eq!(d.stats().counts_dropped, u64::from(threshold));
+                    assert_eq!(d.cold_counter_recycling_stats().epochs, 0);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn cold_counter_recycling_preserves_decisions_fifo_priority_generation_and_observer() {
+        let mut d = BlockDiscovery::with_bounds(2, 3);
+        d.set_threshold(512);
+        d.set_admission_probe(true);
+        let ops = block();
+        let excluded = [MicroOp {
+            instr: Instr::Wfi,
+            raw: 0x1050_0073,
+            len: 4,
+        }];
+        for (phys, bytes) in [
+            (0, &ops[..]),
+            (16, &ops[..]),
+            (32, &ops[..]),
+            (48, &excluded[..]),
+        ] {
+            for _ in 0..512 {
+                d.on_block_entry(phys, bytes);
+            }
+        }
+        for _ in 0..7 {
+            d.on_block_entry(16, &ops);
+        }
+        for phys in [64, 80, 96] {
+            d.on_block_entry(phys, &ops);
+        }
+        d.on_block_entry(112, &ops); // Retain an actual refusal before selection.
+        let state = d.state.clone();
+        let hits = d.queued_hits.clone();
+        let fifo = d.queue.clone();
+        let before = d.stats();
+        let probe = d.admission_probe_stats();
+        let counters = d.counts.clone();
+        d.set_cold_counter_recycling(true);
+        assert_eq!(
+            d.counts, counters,
+            "selection itself does not clear history"
+        );
+        // Revisit an observed identity, then enough new cold keys for four epochs.
+        for phys in (112..272).step_by(16) {
+            d.on_block_entry(phys, &ops);
+            assert!(d.counts.len() <= 3);
+        }
+        assert_eq!(d.state, state); // Includes Queued-on-overflow and policy Excluded.
+        assert_eq!(d.queued_hits, hits);
+        assert_eq!(d.queue, fifo);
+        assert_eq!(d.queued_hotness(16), 519);
+        assert_eq!(d.generation(), before.generation);
+        assert_eq!(d.threshold(), 512);
+        assert_eq!(d.stats().nominated, before.nominated);
+        assert_eq!(d.stats().excluded, before.excluded);
+        assert_eq!(d.stats().dropped_overflow, 1);
+        assert_eq!(d.stats().counts_dropped, before.counts_dropped);
+        assert_eq!(
+            d.cold_counter_recycling_stats(),
+            ColdCounterRecyclingStats {
+                enabled: true,
+                epochs: 4,
+                discarded_counters: 12,
+                threshold: 512,
+                capacity: 3,
+            }
+        );
+        let after = d.admission_probe_stats();
+        assert_eq!(after.generation, probe.generation);
+        assert_eq!(after.generation_resets, probe.generation_resets);
+        assert_eq!(after.full_map_refusals, probe.full_map_refusals);
+        assert_eq!(after.records.len(), 1);
+        assert_eq!(after.records[0].reasons.counting, 1);
+        // Full map is irrelevant to already decided entries: no recycling or re-nomination.
+        let epochs = d.cold_counter_recycling_stats();
+        d.on_block_entry(32, &ops);
+        d.on_block_entry(48, &excluded);
+        assert_eq!(d.cold_counter_recycling_stats(), epochs);
+        assert_eq!(d.queue, fifo);
+    }
+
+    #[test]
+    fn cold_counter_recycling_saturating_lifetime_accounting_and_toggle() {
+        let mut d = BlockDiscovery::with_bounds(1, 1);
+        d.set_cold_counter_recycling(true);
+        d.cold_counter_recycling.epochs = u64::MAX - 1;
+        d.cold_counter_recycling.discarded_counters = u64::MAX - 1;
+        for phys in 0..4 {
+            d.on_block_entry(phys, &block());
+        }
+        assert_eq!(d.cold_counter_recycling_stats().epochs, u64::MAX);
+        assert_eq!(
+            d.cold_counter_recycling_stats().discarded_counters,
+            u64::MAX
+        );
+        let before = d.cold_counter_recycling_stats();
+        d.set_cold_counter_recycling(true);
+        d.on_invalidate();
+        d.reset();
+        assert_eq!(d.cold_counter_recycling_stats(), before);
+        d.on_block_entry(0, &block());
+        d.set_cold_counter_recycling(false);
+        d.on_block_entry(1, &block());
+        assert_eq!(d.counts.len(), 1);
+        assert_eq!(d.stats().counts_dropped, 1);
+        assert_eq!(
+            d.cold_counter_recycling_stats(),
+            ColdCounterRecyclingStats {
+                enabled: false,
+                ..before
+            }
+        );
+    }
     use crate::decode::Instr;
 
     #[test]

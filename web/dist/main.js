@@ -53,6 +53,7 @@ import { DisplayViewportController, desktopViewportPixelMode } from "./src/sink/
 import { CursorController } from "./src/sink/cursor-controller.js";
 import { createDesktopAgentBridge } from "./desktop-agent-bridge.js";
 import { restoreDesktopThroughHost } from "./desktop-restore.js";
+import { isLoopbackOrigin } from "./cold-counter-recycling.js";
 import { hasOmarchyDesktopLayers, hasDesktopPixels } from "./omarchy-desktop-readiness.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
@@ -957,7 +958,7 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   }
   try { window.__linuxOwnerUiForTest = null; } catch { /* page-only diagnostic */ }
   for (const key of [
-    "linuxManifest", "linuxBackend", "jitPolicy", "jitResidency", "jitThreshold", "jitJalr", "jitRegion", "interpreter", "jitStats",
+    "linuxManifest", "linuxBackend", "jitPolicy", "jitResidency", "jitThreshold", "jitJalr", "jitRegion", "jitColdCounterRecycling", "interpreter", "jitStats",
   ]) {
     delete document.documentElement.dataset[key];
   }
@@ -1541,6 +1542,9 @@ async function runLinuxBootOwned(opts, banner, request) {
     document.documentElement.dataset.jitPolicy = jitPolicy;
     document.documentElement.dataset.jitResidency = initialJit?.jitResidencyPolicy
       ?? selectedJitResidency;
+    document.documentElement.dataset.jitColdCounterRecycling = String(
+      Boolean(initialJit?.coldCounterRecycling?.enabled),
+    );
     document.documentElement.dataset.jitThreshold = String(selectedJitThreshold);
     document.documentElement.dataset.jitJalr = String(selectedJitJalr);
     document.documentElement.dataset.jitRegion = String(selectedJitRegion);
@@ -1555,6 +1559,7 @@ async function runLinuxBootOwned(opts, banner, request) {
       backend,
       interpreter,
       jit: jitPolicy,
+      jitColdCounterRecycling: initialJit?.coldCounterRecycling ?? null,
       jitResidency: document.documentElement.dataset.jitResidency,
       jitThreshold: selectedJitThreshold,
       jitJalr: selectedJitJalr,
@@ -2040,6 +2045,7 @@ async function bootOmarchy() {
       guestClock: "icount",
       icountDivider: Number(query.get("omarchyDivider")) || 64,
       jitAdmissionProbe: query.get("jitAdmissionProbe") === "1",
+      jitColdCounterRecycling: query.get("jitColdCounterRecycling") === "1" && isLoopbackOrigin(location),
       fastInterpreter: true,
       jit: true,
       quantum: 500_000,

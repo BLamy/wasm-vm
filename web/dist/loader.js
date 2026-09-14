@@ -30,6 +30,7 @@ import { validateGuestClock, validateICountDivider, createGuestClockLifecycle } 
 import { validateDecodedCacheEntries, applyDecodedCacheEntries } from "./decoded-cache.js";
 import { fetchVerifiedBootAsset } from "./boot-asset-cache.js";
 import { applyAdmissionProbe } from "./admission-probe.js";
+import { applyColdCounterRecycling, isLoopbackOrigin } from "./cold-counter-recycling.js";
 
 // Responsiveness: a near-zero-delay "yield to the main thread" for rescheduling the run loop. The VM
 // runs on the main thread (a Web Worker offload is a larger follow-up), so a long synchronous run slice
@@ -258,6 +259,8 @@ export async function startLinuxBoot(opts = {}) {
     jitResidency = undefined,
     // T03j: default-off bounded admission observation; not performance profiling.
     jitAdmissionProbe = false,
+    // T03k: default-off local-only bounded cold-counter recycling trial.
+    jitColdCounterRecycling = false,
     profile = undefined,
     // Deterministic parity/test seam: restore the machine but do not execute the first scheduler
     // slice until the owner explicitly resumes it. Production callers leave this false.
@@ -327,6 +330,15 @@ export async function startLinuxBoot(opts = {}) {
     if (typeof jitAdmissionProbe !== "boolean") throw new TypeError("jitAdmissionProbe must be boolean");
     if (jitAdmissionProbe && jit !== true) throw new Error("jitAdmissionProbe requires explicit JIT");
     validateDecodedCacheEntries(decodedCacheEntries);
+    if (typeof jitColdCounterRecycling !== "boolean") {
+      throw new TypeError("jitColdCounterRecycling must be boolean");
+    }
+    if (jitColdCounterRecycling && jit !== true) {
+      throw new Error("jitColdCounterRecycling requires explicit JIT");
+    }
+    if (jitColdCounterRecycling && !isLoopbackOrigin(globalThis.location)) {
+      throw new Error("jitColdCounterRecycling is restricted to a loopback origin");
+    }
     validateGuestClock(guestClock);
     validateICountDivider(icountDivider, guestClock);
     if (freshDesktop && (!isChunked || persist || extraDiskUrl || opts.bootSnapshot === false)) {
@@ -896,6 +908,7 @@ export async function startLinuxBoot(opts = {}) {
     applyDecodedCacheEntries(machine, decodedCacheEntries);
     const guestClockLifecycle = createGuestClockLifecycle(machine, guestClock, icountDivider);
     if (jitAdmissionProbe) applyAdmissionProbe(machine, jitAdmissionProbe);
+    if (jitColdCounterRecycling) applyColdCounterRecycling(machine, jitColdCounterRecycling);
 
     // No resume candidate was coherent, so this machine is about to execute its cold guest boot.
     // Persistent resume success intentionally reaches the scheduler without a booting state.

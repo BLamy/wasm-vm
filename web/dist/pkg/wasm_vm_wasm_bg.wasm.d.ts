@@ -72,6 +72,7 @@ export const wasmlinux_sendMouseEvent: (a: number, b: number, c: number, d: numb
 export const wasmlinux_sendTabletEvent: (a: number, b: number, c: number, d: number) => [number, number];
 export const wasmlinux_setAdmissionProbe: (a: number, b: number) => [number, number, number];
 export const wasmlinux_setChaining: (a: number, b: number) => [number, number];
+export const wasmlinux_setColdCounterRecycling: (a: number, b: number) => [number, number, number];
 export const wasmlinux_setDecodedCacheEntries: (a: number, b: any) => [number, number];
 export const wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
 export const wasmlinux_setDisplay: (a: number, b: any, c: any) => [number, number, number];
@@ -101,6 +102,7 @@ export const wasmmachine_registers: (a: number) => [number, number, number];
 export const wasmmachine_run: (a: number, b: number) => [number, number, number];
 export const wasmmachine_setAdmissionProbe: (a: number, b: number) => [number, number, number];
 export const wasmmachine_setChaining: (a: number, b: number) => [number, number];
+export const wasmmachine_setColdCounterRecycling: (a: number, b: number) => [number, number, number];
 export const wasmmachine_setConsole: (a: number, b: any) => [number, number];
 export const wasmmachine_setDynamicChaining: (a: number, b: number) => [number, number];
 export const wasmmachine_setProfiling: (a: number, b: number) => [number, number, number];
