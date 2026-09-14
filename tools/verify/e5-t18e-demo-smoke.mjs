@@ -9,6 +9,10 @@ import { createHash } from "node:crypto";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const root = path.join(repo, "web/dist");
+// Read the built inventory, not a stale count or a transient intermediate metric.
+const { RISCV_TESTS } = await import(pathToFileURL(path.join(root, "riscv-tests.js")));
+assert.ok(RISCV_TESTS.length > 0);
+const expectedTotal = String(RISCV_TESTS.length);
 const task = process.env.E5_DEMO_TASK || "E5-T18e";
 const out = path.resolve(process.env.E5_DEMO_OUT || process.env.E5_T18E_EVIDENCE_DIR || path.join(repo, "evidence/e5-t18e"));
 let server;
@@ -45,9 +49,10 @@ try {
   await page.goto(`${base}/app.html?noAutoBoot=1`);
   await page.waitForFunction(() => document.getElementById("suite-run")?.disabled === false, null, { timeout: 60_000 });
   await page.locator("#suite-run").evaluate((element) => element.click());
-  await page.waitForFunction(() => document.querySelector("#metric-done")?.textContent.trim() === "126", null, { timeout: 120_000 });
+  await page.waitForFunction((total) => document.querySelector("#metric-done")?.textContent.trim() === total
+    && document.getElementById("suite-run")?.disabled === false, expectedTotal, { timeout: 120_000 });
   const metrics = await page.evaluate(() => Object.fromEntries(["metric-pass", "metric-fail", "metric-done"].map((id) => [id, document.getElementById(id)?.textContent.trim()])));
-  assert.deepEqual(metrics, { "metric-pass": "126", "metric-fail": "0", "metric-done": "126" });
+  assert.deepEqual(metrics, { "metric-pass": expectedTotal, "metric-fail": "0", "metric-done": expectedTotal });
   await page.locator("#rm-search").fill(task);
   await page.locator(".rm-g-label").filter({ hasText: task }).click();
   await page.locator("#rm-detail").waitFor({ state: "visible" });
