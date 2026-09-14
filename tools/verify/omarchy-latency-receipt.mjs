@@ -262,7 +262,17 @@ export function validateObservations({ identities, wire, diagnostic }) {
     }
     if (result.status === "sampled") {
       assert.ok(result.elapsedMs <= plan.timeoutMs, "process sample completed after outer deadline");
-      assert.ok(at(result.before.completedAt) <= at(result.rpc.submittedAt) && at(result.rpc.completedAt) <= at(result.after.startedAt));
+      const phases = [result.startedMs, at(result.before.startedAt), at(result.before.completedAt),
+        at(result.rpc.startedAt), at(declaration.time), at(result.rpc.submittedAt),
+        at(record.sentAt), at(record.completedAt), at(result.rpc.completedAt),
+        at(result.after.startedAt), at(result.after.completedAt), result.finishedMs];
+      assert.ok(phases.every((value, i) => i === 0 || value >= phases[i - 1]),
+        "process timing order escapes the outer sample envelope");
+      assert.ok(Number.isSafeInteger(result.rpc.timeoutMs) && result.rpc.timeoutMs > 0 &&
+        at(result.rpc.submittedAt) + result.rpc.timeoutMs <= result.startedMs + plan.timeoutMs,
+      "RPC remaining deadline exceeds the outer sample deadline");
+      assert.ok(at(result.rpc.completedAt) <= at(result.rpc.submittedAt) + result.rpc.timeoutMs,
+        "completed RPC exceeds its remaining deadline");
       assert.deepEqual(result.process, parseProcessSample(plan, result.rpc.raw), "parsed process identity mismatch");
       checkStats(result.before.values); checkStats(result.after.values);
     } else {

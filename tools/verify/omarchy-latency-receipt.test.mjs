@@ -58,3 +58,23 @@ test("captured-real mutation: extra explicit serial command is rejected", () => 
     bytes: [...Buffer.from(formatRpcCommand("touch /tmp/receipt-mutation", "receiptattack1"))] });
   assert.throws(() => validateObservations(data), /unapproved serial command/iu);
 });
+
+test("captured-real mutation: a long completed RPC cannot fit a forged 1000ms sample envelope", () => {
+  const data = fixture();
+  const sample = data.diagnostic.find(row => row.request?.op === "process-sample" && row.result?.status === "sampled").result;
+  assert.ok(Date.parse(sample.rpc.completedAt) - Date.parse(sample.rpc.submittedAt) > 1000);
+  // Change the first sample only; leave RPC, wire, observations and deltas untouched.
+  sample.startedMs = sample.finishedMs - 1000;
+  sample.startedAt = new Date(sample.startedMs).toISOString();
+  sample.elapsedMs = 1000;
+  assert.throws(() => validateObservations(data), /timing|order|deadline|envelope/iu);
+});
+
+test("captured-real mutation: RPC remaining timeout cannot exceed the outer deadline", () => {
+  const data = fixture();
+  const sample = data.diagnostic.find(row => row.request?.op === "process-sample" && row.result?.status === "sampled").result;
+  const remainingMs = sample.startedMs + sample.timeoutMs - Date.parse(sample.rpc.submittedAt);
+  assert.ok(Number.isSafeInteger(remainingMs) && remainingMs > 0);
+  sample.rpc.timeoutMs = remainingMs + 1;
+  assert.throws(() => validateObservations(data), /timing|order|deadline|envelope/iu);
+});
