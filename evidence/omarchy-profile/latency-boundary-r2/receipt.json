@@ -1,0 +1,481 @@
+{
+  "kind": "diagnostic-only",
+  "desktopAcceptance": false,
+  "guestConsumptionProven": false,
+  "input": {
+    "code": "KeyX",
+    "downAt": "2026-09-14T03:15:57.833Z",
+    "upAt": "2026-09-14T03:15:57.939Z",
+    "trueAcknowledgements": 4,
+    "observationMs": 140811
+  },
+  "before": {
+    "at": "2026-09-14T03:15:57.101Z",
+    "inputDevice": {
+      "pendingEventBudget": 256,
+      "pendingEvents": 0,
+      "pendingFrames": 0,
+      "droppedFrames": 0,
+      "droppedEvents": 0,
+      "statusEventsServed": 1,
+      "rejectedEvents": 0
+    },
+    "retiredInstructions": 284487652,
+    "mtime": "1344898082",
+    "framesReceived": 1,
+    "successfulPresents": 1
+  },
+  "immediate": {
+    "at": "2026-09-14T03:15:58.366Z",
+    "inputDevice": {
+      "pendingEventBudget": 256,
+      "pendingEvents": 0,
+      "pendingFrames": 0,
+      "droppedFrames": 0,
+      "droppedEvents": 0,
+      "statusEventsServed": 1,
+      "rejectedEvents": 0
+    },
+    "retiredInstructions": 291487572,
+    "mtime": "1345007455",
+    "framesReceived": 1,
+    "successfulPresents": 1
+  },
+  "end": {
+    "at": "2026-09-14T03:18:18.750Z",
+    "inputDevice": {
+      "pendingEventBudget": 256,
+      "pendingEvents": 0,
+      "pendingFrames": 0,
+      "droppedFrames": 0,
+      "droppedEvents": 0,
+      "statusEventsServed": 1,
+      "rejectedEvents": 0
+    },
+    "retiredInstructions": 1363486133,
+    "mtime": "1361757433",
+    "framesReceived": 1,
+    "successfulPresents": 1
+  },
+  "opaqueAgentMessages": 727,
+  "process": [
+    {
+      "status": "sampled",
+      "startedAt": "2026-09-14T03:18:19.163Z",
+      "finishedAt": "2026-09-14T03:19:09.216Z",
+      "process": {
+        "bootId": "450d9a5f-1fc8-440a-9d2a-21bff69195d1",
+        "clockTicks": "100",
+        "uptimeBefore": "136.44",
+        "uptimeAfter": "136.51",
+        "tasks": [
+          {
+            "pid": 417,
+            "tid": 417,
+            "available": true,
+            "leaderStarttime": "3468",
+            "statBefore": {
+              "id": 417,
+              "comm": "Hyprland",
+              "state": "S",
+              "utime": "1784",
+              "stime": "88",
+              "threads": "13",
+              "starttime": "3468",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 417,
+              "comm": "Hyprland",
+              "state": "S",
+              "utime": "1784",
+              "stime": "88",
+              "threads": "13",
+              "starttime": "3468",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "futex_wait_queue",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-417-417-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          },
+          {
+            "pid": 417,
+            "tid": 462,
+            "available": true,
+            "leaderStarttime": "3468",
+            "statBefore": {
+              "id": 462,
+              "comm": "llvmpipe-0",
+              "state": "R",
+              "utime": "4552",
+              "stime": "3",
+              "threads": "13",
+              "starttime": "3695",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 462,
+              "comm": "llvmpipe-0",
+              "state": "R",
+              "utime": "4552",
+              "stime": "3",
+              "threads": "13",
+              "starttime": "3695",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "0",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-417-462-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          },
+          {
+            "pid": 503,
+            "tid": 503,
+            "available": true,
+            "leaderStarttime": "3846",
+            "statBefore": {
+              "id": 503,
+              "comm": "foot",
+              "state": "S",
+              "utime": "40",
+              "stime": "9",
+              "threads": "1",
+              "starttime": "3846",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 503,
+              "comm": "foot",
+              "state": "S",
+              "utime": "40",
+              "stime": "9",
+              "threads": "1",
+              "starttime": "3846",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "do_epoll_wait",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-503-503-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          },
+          {
+            "pid": 504,
+            "tid": 504,
+            "available": true,
+            "leaderStarttime": "3872",
+            "statBefore": {
+              "id": 504,
+              "comm": "quickshell",
+              "state": "S",
+              "utime": "279",
+              "stime": "34",
+              "threads": "12",
+              "starttime": "3872",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 504,
+              "comm": "quickshell",
+              "state": "S",
+              "utime": "279",
+              "stime": "34",
+              "threads": "12",
+              "starttime": "3872",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "poll_schedule_timeout.constprop.0",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-504-504-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          }
+        ]
+      },
+      "deltas": {
+        "available": false,
+        "reason": "no consecutive successful samples"
+      }
+    },
+    {
+      "status": "sampled",
+      "startedAt": "2026-09-14T03:24:12.920Z",
+      "finishedAt": "2026-09-14T03:24:48.278Z",
+      "process": {
+        "bootId": "450d9a5f-1fc8-440a-9d2a-21bff69195d1",
+        "clockTicks": "100",
+        "uptimeBefore": "139.92",
+        "uptimeAfter": "139.98",
+        "tasks": [
+          {
+            "pid": 417,
+            "tid": 417,
+            "available": true,
+            "leaderStarttime": "3468",
+            "statBefore": {
+              "id": 417,
+              "comm": "Hyprland",
+              "state": "S",
+              "utime": "1785",
+              "stime": "89",
+              "threads": "13",
+              "starttime": "3468",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 417,
+              "comm": "Hyprland",
+              "state": "S",
+              "utime": "1785",
+              "stime": "89",
+              "threads": "13",
+              "starttime": "3468",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "futex_wait_queue",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-417-417-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          },
+          {
+            "pid": 417,
+            "tid": 462,
+            "available": true,
+            "leaderStarttime": "3468",
+            "statBefore": {
+              "id": 462,
+              "comm": "llvmpipe-0",
+              "state": "R",
+              "utime": "4884",
+              "stime": "3",
+              "threads": "13",
+              "starttime": "3695",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 462,
+              "comm": "llvmpipe-0",
+              "state": "R",
+              "utime": "4884",
+              "stime": "3",
+              "threads": "13",
+              "starttime": "3695",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "0",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-417-462-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          },
+          {
+            "pid": 503,
+            "tid": 503,
+            "available": true,
+            "leaderStarttime": "3846",
+            "statBefore": {
+              "id": 503,
+              "comm": "foot",
+              "state": "S",
+              "utime": "41",
+              "stime": "9",
+              "threads": "1",
+              "starttime": "3846",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 503,
+              "comm": "foot",
+              "state": "S",
+              "utime": "41",
+              "stime": "9",
+              "threads": "1",
+              "starttime": "3846",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "do_epoll_wait",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-503-503-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          },
+          {
+            "pid": 504,
+            "tid": 504,
+            "available": true,
+            "leaderStarttime": "3872",
+            "statBefore": {
+              "id": 504,
+              "comm": "quickshell",
+              "state": "S",
+              "utime": "279",
+              "stime": "34",
+              "threads": "12",
+              "starttime": "3872",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 504,
+              "comm": "quickshell",
+              "state": "S",
+              "utime": "279",
+              "stime": "34",
+              "threads": "12",
+              "starttime": "3872",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "poll_schedule_timeout.constprop.0",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-504-504-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          }
+        ]
+      },
+      "deltas": {
+        "available": true,
+        "hostElapsedMs": 339062,
+        "guestElapsedNs": "3470000000",
+        "tasks": [
+          {
+            "pid": 417,
+            "tid": 417,
+            "available": true,
+            "utimeTicks": "1",
+            "stimeTicks": "1",
+            "cpuMs": 20,
+            "schedstat": null,
+            "schedstatError": null
+          },
+          {
+            "pid": 417,
+            "tid": 462,
+            "available": true,
+            "utimeTicks": "332",
+            "stimeTicks": "0",
+            "cpuMs": 3320,
+            "schedstat": null,
+            "schedstatError": null
+          },
+          {
+            "pid": 503,
+            "tid": 503,
+            "available": true,
+            "utimeTicks": "1",
+            "stimeTicks": "0",
+            "cpuMs": 10,
+            "schedstat": null,
+            "schedstatError": null
+          },
+          {
+            "pid": 504,
+            "tid": 504,
+            "available": true,
+            "utimeTicks": "0",
+            "stimeTicks": "0",
+            "cpuMs": 0,
+            "schedstat": null,
+            "schedstatError": null
+          }
+        ],
+        "counters": {
+          "inputDevice": {
+            "pendingEvents": 0,
+            "pendingFrames": 0,
+            "droppedEvents": 0,
+            "droppedFrames": 0,
+            "rejectedEvents": 0
+          },
+          "display": {
+            "framesReceived": 1,
+            "successfulPresents": 1,
+            "replayedFrames": 0
+          },
+          "scheduler": {
+            "retiredInstructions": 2226985777,
+            "slices": 4454
+          }
+        },
+        "gpuFramesPerHostSecond": 0.0029493131049778505,
+        "pendingEventsNetChangePerHostSecond": 0,
+        "limitation": "Sequential observations, not atomic. Backlog changes are not guest-consumption rates; zero schedstat may mean accounting disabled. No current-PC or currently-scheduled-PID claim."
+      }
+    }
+  ],
+  "processEvidence": "see explicit per-sample availability",
+  "screenshots": [
+    {
+      "name": "before-input.png",
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/latency-boundary-r2/before-input.png",
+      "timestamp": "2026-09-14T03:15:57.795Z",
+      "size": 28781,
+      "sha256": "e9e97d1afcbaf32fba419933c1ac580983d21901d6d195e9c710258776533ee9"
+    },
+    {
+      "name": "after-input-immediate.png",
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/latency-boundary-r2/after-input-immediate.png",
+      "timestamp": "2026-09-14T03:15:58.548Z",
+      "size": 28776,
+      "sha256": "eb4b181dc1480935a2ef49f1480d082eeb8371d5229dbef13a473b1c05c3da3e"
+    },
+    {
+      "name": "after-input-window.png",
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/latency-boundary-r2/after-input-window.png",
+      "timestamp": "2026-09-14T03:18:19.009Z",
+      "size": 28776,
+      "sha256": "eb4b181dc1480935a2ef49f1480d082eeb8371d5229dbef13a473b1c05c3da3e"
+    },
+    {
+      "name": "final-process-state.png",
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/latency-boundary-r2/final-process-state.png",
+      "timestamp": "2026-09-14T03:25:13.298Z",
+      "size": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    }
+  ],
+  "limitations": [
+    "Queue counters are observations, not proof of Linux/compositor input consumption.",
+    "Sequential proc reads do not identify the currently scheduled PID/PC; missing schedstat is not zero wait.",
+    "Repeated agent traffic is length-only in the frozen observer; no byte-level agent-payload claim or sampler-free guest claim.",
+    "Screenshot hashes bind files at audit time; the recorder did not hash at capture. Visual review is separate."
+  ],
+  "frozenHead": "ea77bfa1c3d50b9b08ecd381025bbfc393741b52",
+  "resources": {
+    "servedRows": 84,
+    "uniquePaths": 70
+  },
+  "digests": {
+    "identities.json": {
+      "size": 51923,
+      "sha256": "10b6842465078ea73faaa6ef890697c5cfc8a1a5c4e9872608753e8da548eced"
+    },
+    "wire.json": {
+      "size": 512359,
+      "sha256": "c68b0478a371de9818398efaebd1b00d67c5dab359e867072837c41e083a8ffa"
+    },
+    "diagnostic.json": {
+      "size": 125256,
+      "sha256": "d489c680d72ab5310ed9b3a8ac4324df369f47a43cef6d3a40b7386b5d4682c8"
+    },
+    "before-input.png": {
+      "size": 28781,
+      "sha256": "e9e97d1afcbaf32fba419933c1ac580983d21901d6d195e9c710258776533ee9"
+    },
+    "after-input-immediate.png": {
+      "size": 28776,
+      "sha256": "eb4b181dc1480935a2ef49f1480d082eeb8371d5229dbef13a473b1c05c3da3e"
+    },
+    "after-input-window.png": {
+      "size": 28776,
+      "sha256": "eb4b181dc1480935a2ef49f1480d082eeb8371d5229dbef13a473b1c05c3da3e"
+    },
+    "final-process-state.png": {
+      "size": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    }
+  }
+}
