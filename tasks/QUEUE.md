@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5.5-T03l** — Keep CLI IDE guest services out of Omarchy desktop sessions
 1. **E5.5-T03d** — Resolve measured Omarchy post-restore desktop input latency **[DECOMPOSE BEFORE START]**
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
@@ -456,7 +455,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.02595` [E5.5-T03i](epic-5.5-omarchy/E5.5-T03i-desktop-timer-sensitivity.md) — Test timer-rate sensitivity of the restored Omarchy desktop *(deps: E5.5-T03h)*
 - [x] `525.02598` [E5.5-T03j](epic-5.5-omarchy/E5.5-T03j-jit-admission-witness.md) — Record bounded per-block JIT admission refusal witnesses *(deps: E5.5-T03i)*
 - [x] `525.02599` [E5.5-T03k](epic-5.5-omarchy/E5.5-T03k-cold-counter-recycling-trial.md) — Test bounded cold-counter recycling against actual desktop input *(deps: E5.5-T03j)*
-- [ ] `525.025995` [E5.5-T03l](epic-5.5-omarchy/E5.5-T03l-desktop-service-isolation.md) — Keep CLI IDE guest services out of Omarchy desktop sessions *(deps: E5.5-T03k)*
+- [~] `525.025995` [E5.5-T03l](epic-5.5-omarchy/E5.5-T03l-desktop-service-isolation.md) — Keep CLI IDE guest services out of Omarchy desktop sessions *(deps: E5.5-T03k)*
 - [ ] `525.026` [E5.5-T03d](epic-5.5-omarchy/E5.5-T03d-desktop-responsiveness.md) — Resolve measured Omarchy post-restore desktop input latency *(deps: E5.5-T02a, E5.5-T03c, E5.5-T03f, E5.5-T03h)*
 - [b] `525.03` [E5.5-T03a](epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md) — Prepare the clean Omarchy browser desktop session *(deps: E5.5-T02a, E5.5-T03d)*
 - [ ] `525.04` [E5.5-T04a](epic-5.5-omarchy/E5.5-T04a-browser-demo.md) — Make the verified Omarchy desktop the browser demo *(deps: E5.5-T03a)*
