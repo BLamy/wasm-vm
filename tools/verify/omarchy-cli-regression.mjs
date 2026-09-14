@@ -118,6 +118,9 @@ async function run() {
     return {
       main: { url: new URL("main.js", location.href).href, sha256: await hash("main.js") },
       guestRpc: { url: new URL("guest-rpc.js", location.href).href, sha256: await hash("guest-rpc.js") },
+      ide: { url: new URL("ide.js", location.href).href, sha256: await hash("ide.js") },
+      agentSession: { url: new URL("desktop-agent-session.js", location.href).href,
+        sha256: await hash("desktop-agent-session.js") },
     };
   });
   report.servedSourceHashes = servedSourceHashes;
@@ -130,6 +133,19 @@ async function run() {
     timeout: remaining(),
   });
   record("isGuestReady", "window.wvmDemo.isGuestReady()", true);
+  await page.waitForFunction(() => Boolean(document.querySelector("#ide-explorer > .ide-tree")), undefined,
+    { timeout: remaining() });
+  const services = await page.evaluate(() => ({
+    session: window.wvmDemo.guestSession(),
+    explorer: document.querySelector("#ide-explorer")?.innerText,
+    treePresent: Boolean(document.querySelector("#ide-explorer > .ide-tree")),
+  }));
+  record("cliServices", "actual winning session and completed Explorer tree", services);
+  assert.equal(services.session?.key, "busybox");
+  assert.ok(Number.isSafeInteger(services.session.generation) && services.session.generation > 0);
+  assert.equal(services.treePresent, true);
+  assert.match(services.explorer, /\/root/u);
+  assert.doesNotMatch(services.explorer, /Could not list|services are disabled/u);
 
   const rpc = await page.evaluate(() => window.wvmDemo.run("echo RPC_$((6*7))"));
   record("arithmetic", "run echo RPC_$((6*7))", rpc);

@@ -748,9 +748,42 @@ if (root) {
 
   const api = () => window.wvmDemo;
   const ready = () => !!(api() && api().isGuestReady && api().isGuestReady());
+  function guestSession() {
+    const session = api()?.guestSession?.();
+    if (!session || typeof session !== "object") return null;
+    const key = typeof session.key === "string" ? session.key : "";
+    const generation = Number(session.generation);
+    if (!key || !Number.isSafeInteger(generation) || generation < 1) return null;
+    return { key, generation };
+  }
+  function sameGuestSession(expected) {
+    const current = guestSession();
+    return Boolean(expected && current && expected.key === current.key && expected.generation === current.generation);
+  }
+  function cliGuestServicesSession() {
+    const session = guestSession();
+    // The visual desktop flag selects CSS and boot status only. The live request identity is the
+    // authority for whether the current guest is the Omarchy desktop or a CLI-capable session.
+    if (!session || session.key === "omarchy") return null;
+    return session;
+  }
+  function guestServiceError(code, message) {
+    const error = new Error(message);
+    error.code = code;
+    return error;
+  }
   // Explorer/Docker RPCs are control-plane work. Keep their fenced shell echo and marker out of
   // the user's foreground terminal; the returned stdout is rendered in the owning pane instead.
-  const bgExec = (cmd, timeoutMs) => api().exec(cmd, timeoutMs, { quiet: true });
+  const bgExec = (cmd, timeoutMs) => {
+    const session = cliGuestServicesSession();
+    if (!session) return Promise.reject(guestServiceError("IDE_GUEST_SERVICES_DISABLED", "guest IDE services are disabled for this session"));
+    return Promise.resolve(api().exec(cmd, timeoutMs, { quiet: true })).then((result) => {
+      if (!sameGuestSession(session)) {
+        throw guestServiceError("IDE_GUEST_SESSION_STALE", "guest IDE request belongs to a retired session");
+      }
+      return result;
+    });
+  };
 
   function selectedProvider() {
     const value = document.getElementById("network-provider")?.value;
@@ -777,6 +810,8 @@ if (root) {
   // the short window in which a real local manifest is still being fetched. This independent
   // manifest check is still fail-closed: only a valid artifacts object counts as present.
   function probeAlpineAssets() {
+    if (guestSession()?.key === "omarchy") return Promise.resolve(false);
+    const session = guestSession();
     if (dockerRuntime.alpineStatus === "present") return Promise.resolve(true);
     if (dockerRuntime.alpineStatus === "absent") return Promise.resolve(false);
     if (dockerRuntime.alpineProbe) return dockerRuntime.alpineProbe;
@@ -795,6 +830,10 @@ if (root) {
       .catch(() => false);
     dockerRuntime.alpineProbe = probe;
     void probe.then((present) => {
+      if (session && !sameGuestSession(session)) {
+        dockerRuntime.alpineProbe = null;
+        return;
+      }
       dockerRuntime.alpineProbe = null;
       dockerRuntime.alpineStatus = present ? "present" : "absent";
       if (sideView === "docker") renderDocker();
@@ -803,7 +842,7 @@ if (root) {
   }
 
   function runtimeReady() {
-    return ready() && dockerRuntime.status === "available";
+    return Boolean(cliGuestServicesSession()) && ready() && dockerRuntime.status === "available";
   }
 
   function resetDockerCatalog() {
@@ -953,10 +992,13 @@ if (root) {
   }
 
   async function loadGuestBundleMetadata(entries, generation) {
+    const session = cliGuestServicesSession();
+    if (!session) return false;
     for (const image of entries) {
-      if (generation !== dockerRuntime.generation) return false;
+      if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return false;
       try {
         const res = await bgExec(bundleMetadataCommand(image.bundlePath), 30000);
+        if (!sameGuestSession(session)) return false;
         const metadata = res.exit === 0 ? parseBundleMetadata(res.stdout) : null;
         if (metadata) {
           image.bundlePresent = true;
@@ -970,6 +1012,7 @@ if (root) {
             `guest exited ${res.exit}`;
         }
       } catch (error) {
+        if (!sameGuestSession(session)) return false;
         image.bundlePresent = false;
         image.runnable = false;
         image.bundleError = error?.message || String(error);
@@ -979,7 +1022,8 @@ if (root) {
   }
 
   function loadDockerCatalog() {
-    if (!runtimeReady()) return Promise.resolve(false);
+    const session = cliGuestServicesSession();
+    if (!session || !runtimeReady()) return Promise.resolve(false);
     if (dockerCatalog.status === "available") return Promise.resolve(true);
     if (dockerCatalog.status === "error") return Promise.resolve(false);
     if (dockerCatalog.promise) return dockerCatalog.promise;
@@ -990,7 +1034,7 @@ if (root) {
     const request = Promise.resolve()
       .then(() => bgExec("cat /opt/containers/index.json", 30000))
       .then(async (res) => {
-        if (generation !== dockerRuntime.generation) return false;
+        if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return false;
         if (res.exit !== 0) throw new Error(res.stdout?.trim() || `cat exited ${res.exit}`);
         const raw = parseGuestJson(res.stdout);
         const entries = normalizeCatalog(raw);
@@ -1003,7 +1047,7 @@ if (root) {
         return true;
       })
       .catch((error) => {
-        if (generation === dockerRuntime.generation) {
+        if (generation === dockerRuntime.generation && sameGuestSession(session)) {
           dockerCatalog.status = "error";
           dockerCatalog.code = "CATALOG_LOAD_FAILED";
           dockerCatalog.error = error?.message || String(error);
@@ -1014,7 +1058,7 @@ if (root) {
     void request.then(() => {
       if (generation !== dockerRuntime.generation) return;
       dockerCatalog.promise = null;
-      if (sideView === "docker") renderDocker();
+      if (sameGuestSession(session) && sideView === "docker") renderDocker();
     });
     return request;
   }
@@ -1041,7 +1085,8 @@ if (root) {
 
   async function refreshDockerSnapshot() {
     const current = api();
-    if (!current || typeof current.snapshotStatus !== "function") {
+    const session = cliGuestServicesSession();
+    if (!session || !current || typeof current.snapshotStatus !== "function") {
       dockerRuntime.snapshot = {
         ...dockerRuntime.snapshot, status: "unavailable", code: "SNAPSHOT_UNAVAILABLE",
         error: "This guest does not expose persistent resume snapshots.",
@@ -1053,7 +1098,7 @@ if (root) {
     dockerRuntime.snapshot = { ...dockerRuntime.snapshot, status: "checking", code: "", error: "" };
     try {
       const state = await current.snapshotStatus();
-      if (generation !== dockerRuntime.generation) return false;
+      if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return false;
       dockerRuntime.snapshot = {
         ...dockerRuntime.snapshot,
         status: state?.available ? "ready" : "unavailable",
@@ -1065,26 +1110,27 @@ if (root) {
       };
       return Boolean(state?.available);
     } catch (error) {
-      if (generation !== dockerRuntime.generation) return false;
+      if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return false;
       dockerRuntime.snapshot = {
         ...dockerRuntime.snapshot, status: "error", code: "SNAPSHOT_STATUS_FAILED",
         error: error?.message || String(error),
       };
       return false;
     } finally {
-      if (generation === dockerRuntime.generation && sideView === "docker") renderDocker();
+      if (generation === dockerRuntime.generation && sameGuestSession(session) && sideView === "docker") renderDocker();
     }
   }
 
   async function saveDockerSnapshot() {
     const current = api();
-    if (!runtimeReady() || typeof current?.snapshotSave !== "function" || dockerRuntime.snapshot.status === "saving") return;
+    const session = cliGuestServicesSession();
+    if (!session || !runtimeReady() || typeof current?.snapshotSave !== "function" || dockerRuntime.snapshot.status === "saving") return;
     const generation = dockerRuntime.generation;
     dockerRuntime.snapshot = { ...dockerRuntime.snapshot, status: "saving", code: "", error: "" };
     renderDocker();
     try {
       const saved = await current.snapshotSave();
-      if (generation !== dockerRuntime.generation) return;
+      if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return;
       if (!saved?.ok) {
         dockerRuntime.snapshot = {
           ...dockerRuntime.snapshot, status: "error", code: saved?.code || "SNAPSHOT_SAVE_FAILED",
@@ -1099,19 +1145,20 @@ if (root) {
         elapsedMs: saved.elapsedMs ?? null, code: "", error: "",
       };
     } catch (error) {
-      if (generation !== dockerRuntime.generation) return;
+      if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return;
       dockerRuntime.snapshot = {
         ...dockerRuntime.snapshot, status: "error", code: "SNAPSHOT_SAVE_FAILED",
         error: error?.message || String(error),
       };
     } finally {
-      if (generation === dockerRuntime.generation && sideView === "docker") renderDocker();
+      if (generation === dockerRuntime.generation && sameGuestSession(session) && sideView === "docker") renderDocker();
     }
   }
 
   function probeDockerRuntime() {
     const current = api();
-    if (!current || typeof current.hasContainerRuntime !== "function") {
+    const session = cliGuestServicesSession();
+    if (!session || !current || typeof current.hasContainerRuntime !== "function") {
       setDockerError("DOCKER_BRIDGE_UNAVAILABLE", "The guest bridge is still loading; container capability is unknown.");
       return Promise.resolve(false);
     }
@@ -1129,7 +1176,7 @@ if (root) {
     const probe = Promise.resolve()
       .then(() => current.hasContainerRuntime())
       .then((present) => {
-        if (generation !== dockerRuntime.generation) return false;
+        if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return false;
         dockerRuntime.status = present ? "available" : "unavailable";
         dockerRuntime.code = present ? "" : "RUNTIME_ABSENT";
         dockerRuntime.error = present
@@ -1138,7 +1185,7 @@ if (root) {
         return present;
       })
       .catch((error) => {
-        if (generation === dockerRuntime.generation) {
+        if (generation === dockerRuntime.generation && sameGuestSession(session)) {
           setDockerError("RUNTIME_PROBE_FAILED", error?.message || String(error));
         }
         return false;
@@ -1147,7 +1194,7 @@ if (root) {
     void probe.then(() => {
       if (generation !== dockerRuntime.generation) return;
       dockerRuntime.probe = null;
-      if (sideView === "docker") {
+      if (sameGuestSession(session) && sideView === "docker") {
         renderDocker();
         if (runtimeReady()) startPsPoll();
         else stopPsPoll();
@@ -1158,6 +1205,7 @@ if (root) {
 
   function bootAlpineFromDocker() {
     const current = api();
+    if (guestSession()?.key === "omarchy") return;
     if (dockerRuntime.booting) return;
     if (!current || typeof current.bootAlpine !== "function") {
       setDockerError("ALPINE_BRIDGE_UNAVAILABLE", "The Alpine boot bridge is still loading.");
@@ -1341,6 +1389,7 @@ if (root) {
   const sideEl = q("#ide-side");
   const sideTitle = q("#ide-side-title");
   let sideView = "files"; // files | docker
+  let initializedGuestServices = null;
   function selectSideView(view) {
     sideView = view;
     if (sideEl.classList.contains("collapsed")) sideEl.classList.remove("collapsed");
@@ -1349,7 +1398,10 @@ if (root) {
     q("#ide-view-files").classList.toggle("active", view === "files");
     q("#ide-view-docker").classList.toggle("active", view === "docker");
     sideTitle.textContent = view === "files" ? "Explorer" : "Docker";
-    if (view === "docker") { renderDocker(); startPsPoll(); } else { stopPsPoll(); }
+    if (view === "docker") {
+      if (guestSession()?.key !== "omarchy") { renderDocker(); startPsPoll(); }
+      else stopPsPoll();
+    } else { stopPsPoll(); }
   }
   q("#ide-act-files").addEventListener("click", () => selectSideView("files"));
   q("#ide-act-docker").addEventListener("click", () => selectSideView("docker"));
@@ -1580,6 +1632,7 @@ if (root) {
     return rows;
   }
   async function listDir(dir) {
+    if (!cliGuestServicesSession()) throw guestServiceError("IDE_GUEST_SERVICES_DISABLED", "guest IDE services are disabled for this session");
     const res = await bgExec("ls -la " + shq(dir), 30000);
     if (res.exit !== 0) throw new Error(res.stdout.trim() || ("cannot read " + dir));
     return parseLs(res.stdout);
@@ -1608,12 +1661,17 @@ if (root) {
           return;
         }
         tw.innerHTML = '<span class="ide-spin">◠</span>';
+        const session = cliGuestServicesSession();
+        if (!session) { tw.textContent = "▸"; return; }
         try {
           const kids = await listDir(path);
+          if (!sameGuestSession(session)) return;
           childUl = document.createElement("ul"); childUl.className = "ide-tree";
           for (const k of kids) childUl.appendChild(makeNode(k, path, depth + 1));
           li.appendChild(childUl); tw.textContent = "▾";
-        } catch (err) { tw.textContent = "▸"; setStatus(String(err.message || err), "err"); }
+        } catch (err) {
+          if (sameGuestSession(session)) { tw.textContent = "▸"; setStatus(String(err.message || err), "err"); }
+        }
       } else {
         openFile(path, row);
       }
@@ -1622,9 +1680,12 @@ if (root) {
   }
 
   async function loadTree() {
+    const session = cliGuestServicesSession();
+    if (!session) return;
     explorerEl.innerHTML = `<div class="ide-explorer-ph"><span class="ide-spin">◠</span> Loading ${ROOT}…</div>`;
     try {
       const entries = await listDir(ROOT);
+      if (!sameGuestSession(session)) return;
       const ul = document.createElement("ul"); ul.className = "ide-tree";
       for (const e of entries) ul.appendChild(makeNode(e, ROOT, 0));
       explorerEl.innerHTML = "";
@@ -1633,11 +1694,15 @@ if (root) {
       head.innerHTML = `<span class="tw"></span><span class="ic">🗂️</span><span class="nm">${ROOT}</span>`;
       explorerEl.append(head, ul);
     } catch (err) {
+      if (err?.code === "IDE_GUEST_SESSION_STALE" || err?.code === "IDE_GUEST_SERVICES_DISABLED"
+        || !sameGuestSession(session)) return;
       explorerEl.innerHTML = `<div class="ide-explorer-ph">Could not list <b>${ROOT}</b>:<br>${String(err.message || err)}</div>`;
     }
   }
 
   async function openFile(path, rowEl) {
+    const session = cliGuestServicesSession();
+    if (!session) return;
     const key = "file:" + path;
     for (const n of explorerEl.querySelectorAll(".ide-node.sel")) n.classList.remove("sel");
     if (rowEl) rowEl.classList.add("sel");
@@ -1656,7 +1721,9 @@ if (root) {
       }
       refreshSave();
     } catch (err) {
-      if (activeKey === key) { setStatus(String(err.message || err), "err"); taEl.disabled = false; }
+      if (sameGuestSession(session) && activeKey === key) {
+        setStatus(String(err.message || err), "err"); taEl.disabled = false;
+      }
     }
   }
 
@@ -1668,7 +1735,8 @@ if (root) {
   }
   async function save() {
     const t = activeTab();
-    if (!t || t.type !== "file" || !ready()) return;
+    const session = cliGuestServicesSession();
+    if (!t || t.type !== "file" || !ready() || !session) return;
     saveBtn.disabled = true; setStatus("saving…");
     try {
       const b64 = toB64(taEl.value);
@@ -1677,7 +1745,11 @@ if (root) {
       if (res.exit !== 0) throw new Error(res.stdout.trim() || ("write failed (exit " + res.exit + ")"));
       t.savedText = taEl.value; t.value = taEl.value;
       refreshSave(); setStatus("saved ✓", "ok");
-    } catch (err) { setStatus(String(err.message || err), "err"); saveBtn.disabled = false; }
+    } catch (err) {
+      if (sameGuestSession(session)) {
+        setStatus(String(err.message || err), "err"); saveBtn.disabled = false;
+      }
+    }
   }
   saveBtn.addEventListener("click", save);
   taEl.addEventListener("keydown", (e) => {
@@ -1988,6 +2060,8 @@ if (root) {
 
   async function startExecStream(t) {
     if (!t || t.type !== "container") return null;
+    const session = cliGuestServicesSession();
+    if (!session) return null;
     if (t.execStream) return t.execStream;
     if (t.execStartPromise) return t.execStartPromise;
     if (t.execStopPromise) await t.execStopPromise;
@@ -2007,13 +2081,13 @@ if (root) {
         if (t.logRefreshPromise) await t.logRefreshPromise;
         await stopLogStream(t, "exec");
         if (t.stopPromise) await t.stopPromise;
-        if (t.execGeneration !== generation || t.execStopping) return null;
+        if (t.execGeneration !== generation || t.execStopping || !sameGuestSession(session)) return null;
         handle = api().stream(command, (line) => {
-          if (t.execGeneration !== generation || !t.execStream) return;
+          if (t.execGeneration !== generation || !t.execStream || !sameGuestSession(session)) return;
           appendExecOutput(t, line);
         }, {
           onEnd: ({ error, exit, natural }) => {
-            if (t.execGeneration !== generation) return;
+            if (t.execGeneration !== generation || !sameGuestSession(session)) return;
             if (t.execStream === handle) t.execStream = null;
             t.execStarting = false;
             t.execStopping = false;
@@ -2046,7 +2120,7 @@ if (root) {
             }
           },
         });
-        if (t.execGeneration !== generation || t.execStopping) {
+        if (t.execGeneration !== generation || t.execStopping || !sameGuestSession(session)) {
           await handle.stop();
           return null;
         }
@@ -2054,7 +2128,7 @@ if (root) {
         t.execStatus = "active";
         return handle;
       } catch (error) {
-        if (t.execGeneration === generation) {
+        if (t.execGeneration === generation && sameGuestSession(session)) {
           const failure = error?.code?.startsWith?.("EXEC_")
             ? error
             : execCommandFailure(command, t.execOutput, error?.exit, "EXEC_START_FAILED");
@@ -2064,7 +2138,7 @@ if (root) {
         }
         return null;
       } finally {
-        if (t.execGeneration === generation) {
+        if (t.execGeneration === generation && sameGuestSession(session)) {
           t.execStarting = false;
           renderContainerLogs(t);
         }
@@ -2078,9 +2152,11 @@ if (root) {
 
   async function startLogStream(t) {
     if (!t || t.type !== "container" || !t.follow || t.stream || t.streamStarting) return;
+    const session = cliGuestServicesSession();
+    if (!session) return;
     if (t.logRefreshPromise) await t.logRefreshPromise;
     if (t.stopPromise) await t.stopPromise;
-    if (!t.follow || t.stream) return;
+    if (!t.follow || t.stream || !sameGuestSession(session)) return;
     const generation = ++t.streamGeneration;
     const command = `wvrun logs -f ${shq(t.id)}`;
     t.streamStarting = true;
@@ -2094,11 +2170,11 @@ if (root) {
     let handle = null;
     try {
       handle = api().stream(command, (line) => {
-        if (t.streamGeneration !== generation || !t.follow) return;
+        if (t.streamGeneration !== generation || !t.follow || !sameGuestSession(session)) return;
         appendContainerLogLine(t, line);
       }, {
         onEnd: ({ error, exit, natural }) => {
-          if (t.streamGeneration !== generation) return;
+          if (t.streamGeneration !== generation || !sameGuestSession(session)) return;
           if (t.stream === handle) t.stream = null;
           t.streamStarting = false;
           t.streamStopping = false;
@@ -2116,24 +2192,30 @@ if (root) {
           if (natural) void refreshContainers({ force: true });
         },
       });
-      if (t.streamGeneration !== generation || !t.follow) {
+      if (t.streamGeneration !== generation || !t.follow || !sameGuestSession(session)) {
         await handle.stop();
         return;
       }
       t.stream = handle;
     } catch (error) {
-      t.logsCode = error?.code || "STREAM_START_FAILED";
-      t.logsError = error?.message || String(error);
-      t.follow = false;
-      if (t.followEl) t.followEl.checked = false;
+      if (sameGuestSession(session)) {
+        t.logsCode = error?.code || "STREAM_START_FAILED";
+        t.logsError = error?.message || String(error);
+        t.follow = false;
+        if (t.followEl) t.followEl.checked = false;
+      }
     } finally {
-      t.streamStarting = false;
-      renderContainerLogs(t);
+      if (sameGuestSession(session)) {
+        t.streamStarting = false;
+        renderContainerLogs(t);
+      }
     }
   }
 
   async function refreshContainerLogs(t) {
     if (!t || t.type !== "container") return;
+    const session = cliGuestServicesSession();
+    if (!session) return;
     if (t.logRefreshPromise) return t.logRefreshPromise;
     const request = (async () => {
       await stopLogStream(t, "refresh");
@@ -2145,9 +2227,11 @@ if (root) {
       renderContainerLogs(t);
       try {
         const res = await bgExec(command, 30000);
+        if (!sameGuestSession(session)) return;
         if (!res || Number(res.exit) !== 0) throw guestCommandFailure(command, res, "LOGS_FAILED");
         replaceContainerLogs(t, res.stdout);
       } catch (error) {
+        if (!sameGuestSession(session)) return;
         t.logsLoading = false;
         t.logsCode = error?.code || "LOGS_FAILED";
         t.logsError = error?.message || String(error);
@@ -2203,7 +2287,9 @@ if (root) {
   }
 
   async function runContainerAction(row, kind) {
-    if (!runtimeReady() || containerLedger.action) return;
+    const session = cliGuestServicesSession();
+    if (!session || !runtimeReady() || containerLedger.action) return;
+    const generation = dockerRuntime.generation;
     let confirmed = containerLedger.rows.find((item) => item.id === row.id);
     if (!confirmed) return;
     const name = confirmed.name || confirmed.id;
@@ -2302,12 +2388,15 @@ if (root) {
         throw failure;
       }
     } catch (error) {
+      if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return;
       containerLedger.code = error?.code || "ACTION_FAILED";
       containerLedger.error = error?.message || String(error);
       if (error?.command) containerLedger.lastCommand = error.command;
     } finally {
-      containerLedger.action = null;
-      repaintContainerList();
+      if (generation === dockerRuntime.generation && sameGuestSession(session)) {
+        containerLedger.action = null;
+        repaintContainerList();
+      }
     }
   }
 
@@ -2359,6 +2448,10 @@ if (root) {
 
   function renderDocker() {
     dkEl.replaceChildren();
+    if (guestSession()?.key === "omarchy") {
+      dkEl.appendChild(mk("div", "ide-dk-note", "Docker services are unavailable for this guest session."));
+      return;
+    }
     void probeAlpineAssets();
     if (ready() && dockerRuntime.status === "unknown") probeDockerRuntime();
     if (runtimeReady()) void loadDockerCatalog();
@@ -2451,7 +2544,8 @@ if (root) {
   }
 
   async function runImage(img) {
-    if (!runtimeReady() || dockerCatalog.status !== "available" || !img.bundlePath ||
+    const session = cliGuestServicesSession();
+    if (!session || !runtimeReady() || dockerCatalog.status !== "available" || !img.bundlePath ||
       img.bundlePresent === false || dockerCatalog.lastRun?.status === "starting") return;
     const { name, cmd } = wvrunRunCmd(img);
     dockerCatalog.lastRun = {
@@ -2461,6 +2555,7 @@ if (root) {
     renderDocker();
     try {
       const res = await bgExec(cmd, 60000);
+      if (!sameGuestSession(session)) return;
       const exit = Number(res?.exit);
       if (!Number.isFinite(exit) || exit !== 0) {
         const raw = String(res?.stdout || "").trim();
@@ -2495,6 +2590,7 @@ if (root) {
       renderDocker();
       await refreshContainers();
     } catch (error) {
+      if (!sameGuestSession(session)) return;
       dockerCatalog.lastRun = {
         ...dockerCatalog.lastRun, status: "failed", code: error?.code || "RUN_FAILED",
         exit: error?.exit ?? null, error: error?.message || String(error), stdout: error?.stdout || "",
@@ -2504,7 +2600,8 @@ if (root) {
   }
 
   async function refreshContainers({ force = false } = {}) {
-    if (sideView !== "docker" || !runtimeReady()) return null;
+    const session = cliGuestServicesSession();
+    if (!session || sideView !== "docker" || !runtimeReady()) return null;
     if (containerLedger.action && !force) return null;
     if (containerRefreshPromise) return containerRefreshPromise;
     const list = document.getElementById("ide-dk-clist");
@@ -2516,6 +2613,7 @@ if (root) {
     const request = (async () => {
       try {
         const res = await bgExec("wvrun ps -a", 30000);
+        if (!sameGuestSession(session)) return null;
         if (!res || Number(res.exit) !== 0) throw guestCommandFailure("wvrun ps -a", res, "PS_FAILED");
         const rows = parsePs(res.stdout);
         containerLedger.rows = rows;
@@ -2524,13 +2622,14 @@ if (root) {
         containerLedger.code = "";
         return rows;
       } catch (error) {
+        if (!sameGuestSession(session)) return null;
         containerLedger.status = "error";
         containerLedger.code = error?.code || "PS_FAILED";
         containerLedger.error = error?.message || String(error);
         return null;
       } finally {
         containerRefreshPromise = null;
-        repaintContainerList();
+        if (sameGuestSession(session)) repaintContainerList();
       }
     })();
     containerRefreshPromise = request;
@@ -2721,6 +2820,7 @@ if (root) {
   function showBooting(event = null) {
     // The initial noAutoBoot render is offline, not an in-flight boot. Only the real lifecycle
     // event (or a Docker-tab boot already claimed by this UI) should lock the Alpine affordance.
+    initializedGuestServices = null;
     void stopAllLogStreams("boot");
     resetDockerRuntime(event?.type === "wvm:guest-booting" || dockerRuntime.booting ? "booting" : "unknown");
     explorerEl.innerHTML =
@@ -2731,11 +2831,21 @@ if (root) {
     if (sideView === "docker") renderDocker();
   }
   function showReady() {
-    resetDockerRuntime("unknown");
-    loadTree();
+    const session = cliGuestServicesSession();
+    const firstReadyForSession = session && !sameGuestSession(initializedGuestServices);
+    if (!session) {
+      initializedGuestServices = null;
+      resetDockerRuntime("unknown");
+      explorerEl.innerHTML = '<div class="ide-explorer-ph">Explorer services are disabled for the Omarchy desktop session.</div>';
+    } else if (firstReadyForSession) {
+      initializedGuestServices = session;
+      resetDockerRuntime("unknown");
+      loadTree();
+    }
     if (!tabs.length) showNoTab();
     refreshGuestStatus();
-    if (sideView === "docker") { renderDocker(); startPsPoll(); }
+    if (firstReadyForSession && sideView === "docker") { renderDocker(); startPsPoll(); }
+    else if (!session) stopPsPoll();
   }
 
   window.addEventListener("wvm:guest-ready", showReady);

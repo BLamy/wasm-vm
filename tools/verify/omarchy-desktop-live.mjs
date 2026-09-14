@@ -378,10 +378,11 @@ if (coldPair) report.progressCaptureErrors = [];
 if (inputTrial) {
   const scope = ["tools/verify/omarchy-desktop-live.mjs", "tools/verify/omarchy-input-trial.mjs",
     "tools/verify/omarchy-recycling-ab.mjs",
+    "tools/verify/omarchy-desktop-services.mjs",
     "tools/verify/omarchy-owned-trial.mjs",
     "tools/verify/omarchy-browser-session.mjs", "tools/verify/omarchy-live-recording.mjs",
     "crates/core/src/dispatch.rs", "crates/core/src/lib.rs", "crates/wasm/src/lib.rs",
-    "web/loader.js", "web/main.js", "web/cold-counter-recycling.js", "web/dist"];
+    "web"];
   report.trial = { ...trial, rendererEvidence: "unchanged pinned R3 LP1; no new renderer claim",
     head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repoRoot, encoding: "utf8" }).trim(),
     scopedStatus: execFileSync("git", ["status", "--short", "--", ...scope], { cwd: repoRoot, encoding: "utf8" }),
@@ -539,7 +540,8 @@ async function runtimeDiagnostics(targetPage, label) {
     const [inputDevice, jit, scheduler, clock] = await Promise.all([
       read("inputDeviceStats"), read("jitStats"), read("schedulerStats"), read("guestClockState"),
     ]);
-    return { inputDevice, jit, scheduler, clock, presentation: window.__presentation?.state?.() ?? null };
+    return { inputDevice, jit, scheduler, clock, guestSession: window.wvmDemo?.guestSession?.() ?? null,
+      presentation: window.__presentation?.state?.() ?? null };
   });
   report.observations.push({ runtime: { label, timestamp: new Date().toISOString(),
     context: pageLabels.get(targetPage) || "unknown", ...state } });

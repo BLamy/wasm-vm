@@ -51,7 +51,7 @@ import {
 import { PresentationController } from "./src/sink/presentation.js";
 import { DisplayViewportController, desktopViewportPixelMode } from "./src/sink/viewport.js";
 import { CursorController } from "./src/sink/cursor-controller.js";
-import { createDesktopAgentBridge } from "./desktop-agent-bridge.js";
+import { createDesktopAgentSession } from "./desktop-agent-session.js";
 import { restoreDesktopThroughHost } from "./desktop-restore.js";
 import { isLoopbackOrigin } from "./cold-counter-recycling.js";
 import { hasOmarchyDesktopLayers, hasDesktopPixels } from "./omarchy-desktop-readiness.js";
@@ -710,20 +710,20 @@ let linuxActiveRequest = null;
 let linuxBootGeneration = 0;
 let diagnosticJitStatsTimer = null;
 const linuxControllerTeardowns = new WeakMap();
+const linuxRetiringRequests = new WeakSet();
 const bootBtns = [bootLinuxBtn, bootAlpineBtn, bootAlpineFullBtn];
 const microphoneStateEl = document.getElementById("ide-microphone-state");
 const pendingMicrophoneEvents = [];
-let desktopAgentBridge = null;
-const pendingAgentOutput = [];
+let desktopAgentSession = null;
 
-function onAgentOutput(bytes) {
-  const value = bytes instanceof Uint8Array ? bytes.slice() : Uint8Array.from(bytes || []);
-  if (!value.byteLength) return;
-  if (desktopAgentBridge) desktopAgentBridge.receive(value);
-  else {
-    pendingAgentOutput.push(value);
-    if (pendingAgentOutput.length > 128) pendingAgentOutput.shift();
-  }
+function guestSession() {
+  const request = linuxActiveRequest ?? linuxBootRequest;
+  return linuxRequestIsCurrent(request) ? { key: request.key, generation: request.generation } : null;
+}
+
+function linuxRequestIsCurrent(request) {
+  return Boolean(request) && (linuxActiveRequest ?? linuxBootRequest) === request &&
+    !linuxRetiringRequests.has(request);
 }
 
 function updateMicrophoneIndicator(snapshot = microphoneCapture?.snapshot?.()) {
@@ -913,9 +913,8 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   // without sending post-termination key-up RPCs; the capture policy resets transient state when
   // the next boot installs a fresh bridge.
   stopKeyboardLedPoll();
-  try { desktopAgentBridge?.close("desktop controller retired"); } catch { /* teardown may already be closed */ }
-  desktopAgentBridge = null;
-  pendingAgentOutput.length = 0;
+  try { desktopAgentSession?.close("desktop controller retired"); } catch { /* teardown may already be closed */ }
+  desktopAgentSession = null;
   try {
     if (window.__agentChannel) window.__agentChannel = null;
     if (window.__desktopAgentChannel) window.__desktopAgentChannel = null;
@@ -999,6 +998,12 @@ function clearLinuxBootClaim(request) {
 }
 
 async function retireLinuxController(controller, { natural = false } = {}) {
+  // Fence agent writes immediately, including reconnect timers while teardown is still pending.
+  if (controller && linuxCtl === controller) {
+    const request = linuxActiveRequest ?? linuxBootRequest;
+    if (request) linuxRetiringRequests.add(request);
+    desktopAgentSession?.close("desktop controller retiring");
+  }
   let cleanupError = null;
   try {
     await teardownLinuxController(controller, { natural });
@@ -1276,6 +1281,12 @@ async function runLinuxBootOwned(opts, banner, request) {
   const imageLen = opts.imageLen ?? 536870912; // chunked image length; for byte-fraction honesty
   let bootController = null;
   let setupFailed = false;
+  const agentSession = createDesktopAgentSession({
+    request,
+    isCurrent: () => desktopAgentSession === agentSession && linuxRequestIsCurrent(request),
+    onError: (error) => console.warn("wasm-vm: desktop agent channel:", error?.message || error),
+  });
+  desktopAgentSession = agentSession;
   const ownerUi = {
     onQuota: (detail) => renderLinuxQuotaDialog(request, () => bootController, detail),
     onWriterStatus: (detail) => renderLinuxWriterStatus(request, () => bootController, detail),
@@ -1357,6 +1368,7 @@ async function runLinuxBootOwned(opts, banner, request) {
         }
       },
       onState: (s) => {
+        if (!linuxRequestIsCurrent(request)) return;
         emitGuestLifecycleEvent("wvm:guest-state", { state: s });
         // E4 restore-on-first-load: a visible stopwatch instead of the "booting" progress bar when
         // the shipped boot snapshot is being restored.
@@ -1379,12 +1391,14 @@ async function runLinuxBootOwned(opts, banner, request) {
         bootProgress.onState(s);
       },
       onProgress: (role, loaded, total) => {
+        if (!linuxRequestIsCurrent(request)) return;
         emitGuestLifecycleEvent("wvm:guest-progress", { phase: role, loaded, total });
         pct[role] = total ? `${((loaded / total) * 100) | 0}%` : `${(loaded / 1048576).toFixed(1)}MB`;
         bootProgressEl.textContent = Object.entries(pct).map(([k, v]) => `${k} ${v}`).join("  ");
         bootProgress.onProgress(role, loaded, total);
       },
       onOutput: (u8) => {
+        if (!linuxRequestIsCurrent(request)) return;
         // Background control-plane RPCs (container ps/logs/exec and restore-time cache priming)
         // still flow through the real console subscriber, but never leak their shell echo or
         // fencing marker into the user's terminal. Foreground guest input remains unchanged.
@@ -1407,8 +1421,9 @@ async function runLinuxBootOwned(opts, banner, request) {
           }
         } catch {}
       },
-      onAgentOutput,
+      onAgentOutput: (bytes) => agentSession.receive(bytes),
       onError: (e) => {
+        if (!linuxRequestIsCurrent(request)) return;
         const message = e?.message || String(e);
         term.writeln(`\x1b[31mboot error: ${message}\x1b[0m`);
         bootProgress.fail(message);
@@ -1442,18 +1457,18 @@ async function runLinuxBootOwned(opts, banner, request) {
       // the Web Lock is re-probed — succeeds once the writer tab is gone).
       onWriterStatus: ownerUi.onWriterStatus,
     });
+    if (!agentSession.isCurrent()) {
+      await teardownLinuxController(bootController);
+      return;
+    }
     linuxCtl = bootController;
     try {
-      desktopAgentBridge = createDesktopAgentBridge(bootController, {
-        onError: (error) => console.warn("wasm-vm: desktop agent channel:", error?.message || error),
-      });
-      desktopAgentBridge.start();
-      for (const bytes of pendingAgentOutput.splice(0)) desktopAgentBridge.receive(bytes);
-      window.__agentChannel = desktopAgentBridge.channel;
-      window.__desktopAgentChannel = desktopAgentBridge.channel;
+      agentSession.attach(bootController);
+      window.__agentChannel = agentSession.channel;
+      window.__desktopAgentChannel = agentSession.channel;
     } catch (error) {
       console.warn("wasm-vm: desktop agent bridge unavailable:", error?.message || error);
-      pendingAgentOutput.length = 0;
+      agentSession.close("desktop agent unavailable");
     }
     displayViewport?.setController(bootController);
     flushMicrophoneGuestEvents(linuxCtl);
@@ -2072,6 +2087,7 @@ async function bootOmarchy() {
 }
 
 window.wvmDemo = {
+  guestSession,
   isGuestUp: () => !!linuxCtl,
   async setDisplay(width, height) { return await linuxCtl?.setDisplay?.(width, height) ?? false; },
   async displayStats() { return await linuxCtl?.displayStats?.() ?? null; },
@@ -2429,7 +2445,7 @@ window.__linux = {
 window.__desktopRestore = (snapshot, hostViewport, agentChannel) =>
   restoreDesktopThroughHost({
     controller: linuxCtl,
-    agentChannel: agentChannel ?? desktopAgentBridge?.channel,
+    agentChannel: agentChannel ?? desktopAgentSession?.channel,
     presentation,
     viewportController: displayViewport,
   }, snapshot, hostViewport);
