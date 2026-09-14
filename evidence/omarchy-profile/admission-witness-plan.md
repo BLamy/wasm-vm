@@ -50,3 +50,28 @@ unchanged 120-second physical nonce/readback and personally inspected GUI.
 The built-page ISA suite is a separate smoke check: 126 passing, zero failing,
 zero console errors other than the permitted favicon request, and a retained
 screenshot. It must not be substituted for the real Omarchy observation.
+
+## R1 result and bounded R2 follow-up — 2026-09-14 UTC
+
+R1 completed normally at frozen head `4065dd0b` (observer runtime `5ee8ed60`).
+The 121.042-second initial-to-final window recorded enabled generation5 data,
+but the map only reached 59,520 / 65,536 counters. All three reports have zero
+full-map refusals and zero retained identities. This is missing-boundary
+evidence, not an admission-fault finding. Both actual screenshots were opened;
+the bar/Foot and readiness overlay remain visible. No input acceptance occurred.
+
+R2 uses `node evidence/omarchy-profile/record-admission-boundary.mjs`, with the
+same recorder, R3 pair, core, divider64 and default policies. After readiness,
+observe stats at roughly ten-second intervals for at most 300 seconds. Only
+an actual positive `fullMapRefusals` report starts the 120-second measurement
+window (middle at +60, final at +120; hard ceiling +180). Retain warm-up reports,
+both screenshots and the exact first-positive boundary timestamp. If the
+boundary never occurs, close with an explicitly inconclusive result. Do not
+alter the admission cap/threshold, renderer, guest clock, image or GUI acceptance.
+This is the only follow-up arm in this task, not permission for open-ended runs.
+
+Native validation may overlap this observation: no host throughput, GUI latency
+or observer-free performance conclusion may be derived from it. The full local
+`make ci` attempt remains failed on the already documented macOS seccomp and
+all-features dead-code walls. Scoped affected gates and the clean-clone proof
+are recorded separately, not relabelled as a full-gauntlet pass.
