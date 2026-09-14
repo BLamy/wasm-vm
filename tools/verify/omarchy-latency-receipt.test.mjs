@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { validateObservations } from "./omarchy-latency-receipt.mjs";
 import { formatRpcCommand } from "../../web/guest-rpc.js";
+import { processSampleDeltas } from "./omarchy-process-sample.mjs";
 
 const capturedReal = Object.fromEntries(["identities", "wire", "diagnostic"].map(name => [name,
   JSON.parse(readFileSync(new URL(`../../evidence/omarchy-profile/latency-boundary-r2/${name}.json`, import.meta.url), "utf8"))]));
@@ -77,4 +78,23 @@ test("captured-real mutation: RPC remaining timeout cannot exceed the outer dead
   assert.ok(Number.isSafeInteger(remainingMs) && remainingMs > 0);
   sample.rpc.timeoutMs = remainingMs + 1;
   assert.throws(() => validateObservations(data), /timing|order|deadline|envelope/iu);
+});
+
+test("verifier P7: forged 1000ms budget and early finish cannot hide unchanged 49488ms RPC", () => {
+  const data = fixture();
+  const declarations = data.diagnostic.filter(row => row.event === "process-sample-rpc-before-submit");
+  const samples = data.diagnostic.filter(row => row.request?.op === "process-sample" && !row.event);
+  const first = samples[0].result;
+  assert.equal(Date.parse(first.rpc.completedAt) - Date.parse(first.rpc.submittedAt), 49488);
+  declarations[0].request.timeoutMs = 1000;
+  samples[0].request.timeoutMs = 1000;
+  first.timeoutMs = 1000;
+  first.finishedMs = first.startedMs + 1000;
+  first.finishedAt = new Date(first.finishedMs).toISOString();
+  first.elapsedMs = 1000;
+  // Keep derived deltas internally consistent so only the raw timing binding rejects.
+  first.deltas = processSampleDeltas(null, first);
+  samples[1].result.deltas = processSampleDeltas(first, samples[1].result);
+  // All RPC/wire timestamps, stdout and actual before/after observations stay untouched.
+  assert.throws(() => validateObservations(data), /timing order escapes the outer sample envelope/u);
 });
