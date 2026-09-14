@@ -29,3 +29,20 @@ Actual built ISA, BusyBox Explorer/RPC and the one R3 desktop recording follow
 the frozen commit. The CLI recorder additionally checks the actual session,
 completed Explorer tree and served IDE/agent-helper identities. No production
 deployment or completed usability claim is made here.
+
+## Evidence-only corrections after source freeze
+
+The built ISA run passed127/0 with no page/console/HTTP errors. The actual
+`demo/demo-suite.png` was opened and inspected; the live task entry correctly
+remains in progress. Runtime source/dist is frozen at `ed550aa8`.
+
+Daybreak found the action fixture lacked `shq` and never entered its deferred
+guest command. The fixture now supplies it and asserts command entry before
+retirement/settlement; all8 tests pass in `ide-final-r3.log`. This supersedes
+the action-completion coverage claim in the earlier passing run.
+
+The first CLI attempt aborted in Node24's HTTP parser during the server
+readiness GET (`cli.log`), before Chrome or the guest started and before a
+report could be written. The headers-only readiness probe now uses HEAD to
+avoid leaving the HTML response body unread. The failed attempt is retained;
+rerun in a new directory. No runtime or acceptance deadline changed.

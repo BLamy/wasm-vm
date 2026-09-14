@@ -48,7 +48,9 @@ function remaining() {
 
 async function serverIsUp() {
   try {
-    const response = await fetch(baseUrl, { signal: AbortSignal.timeout(3_000) });
+    // Readiness needs headers only. Leaving the large HTML body unread can abort Node's
+    // HTTP parser on connection close before the browser or the evidence writer starts.
+    const response = await fetch(baseUrl, { method: "HEAD", signal: AbortSignal.timeout(3_000) });
     return response.ok;
   } catch {
     return false;

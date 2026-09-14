@@ -256,6 +256,8 @@ function actionFixture() {
   const calls = [];
   let rawSession = { key: "alpine", generation: 81 };
   const response = deferred();
+  let resolveCommandEntered;
+  const commandEntered = new Promise((resolve) => { resolveCommandEntered = resolve; });
   const context = {
     cliGuestServicesSession: () => rawSession?.key === "omarchy" ? null : rawSession,
     sameGuestSession: (expected) => Boolean(expected && rawSession &&
@@ -268,8 +270,13 @@ function actionFixture() {
     },
     containerRefreshPromise: null,
     stopContainerStreams: async () => {},
+    shq: (value) => `'${value}'`,
     setContainerActionCommand: (command) => calls.push(`command:${command}`),
-    runGuestContainerCommand: () => response.promise,
+    runGuestContainerCommand: () => {
+      calls.push("runGuestContainerCommand");
+      resolveCommandEntered();
+      return response.promise;
+    },
     repaintContainerList: () => calls.push("repaintContainerList"),
   };
   const fn = sourceFunction(ide, "  async function runContainerAction(row, kind) {", "\n\n  function renderImageInspect");
@@ -283,6 +290,7 @@ function actionFixture() {
       rawSession = { key: "alpine", generation: 83 };
     },
     resolve(value) { response.resolve(value); },
+    waitForCommand() { return commandEntered; },
     context,
   };
 }
@@ -443,7 +451,9 @@ test("retired catalog/probe/snapshot/container completions cannot repaint a repl
 test("retired container action completion cannot apply to the next session", async () => {
   const action = actionFixture();
   const pending = action.start();
-  await Promise.resolve();
+  await action.waitForCommand();
+  assert.equal(action.calls.includes("runGuestContainerCommand"), true,
+    "action fixture must enter the deferred guest command before retirement");
   const initialRepaints = action.calls.filter((call) => call === "repaintContainerList").length;
   action.retireAndReplace();
   action.resolve({ exit: 0, stdout: "" });

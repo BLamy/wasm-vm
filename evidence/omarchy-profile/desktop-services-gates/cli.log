@@ -1,0 +1,23 @@
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:34:17] "GET /?noAutoBoot=1&testHooks=1 HTTP/1.1" 200 -
+node:internal/assert/utils:77
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert(!this.paused)
+
+    at Parser.finish (node:internal/deps/undici/undici:7388:9)
+    at Socket.onHttpSocketEnd (node:internal/deps/undici/undici:7827:34)
+    at Socket.emit (node:events:526:24)
+    at endReadableNT (node:internal/streams/readable:1757:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.20.0
