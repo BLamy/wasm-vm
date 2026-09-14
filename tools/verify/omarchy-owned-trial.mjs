@@ -45,6 +45,9 @@ export function watchOwnedTrial(child, { killGroup = pid => process.kill(-pid, "
       }
     };
     child.on("message", message);
+    // `exit` can precede `close` when a descendant still holds a stdio pipe.
+    // Remember it immediately so a later watchdog cannot signal a recycled recorder PID.
+    child.once("exit", () => { recorderClosed = true; });
     child.once("error", error => {
       recorderClosed = true;
       if (browserPid !== null) expire(`recorder-error-before-browser-exit: ${error}`);

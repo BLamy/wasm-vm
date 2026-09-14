@@ -57,3 +57,12 @@ test("recorder exit cannot orphan its browser or kill an already-exited recorder
     assert.equal(result.closed, true, "OS group absence confirms cleanup, not trial acceptance");
   }
 });
+test("exit before stdio close never sends a later watchdog signal to the exited recorder", async () => {
+  const f = fixture({ groupAlive: () => true });
+  f.child.emit("message", { kind: "input-trial-owned-browser", pid: 456 });
+  f.child.emit("exit", 1, null); // No close: inherited stdio remains open.
+  f.timers[0].fn();
+  assert.deepEqual(f.killed, [456]);
+  f.timers[1].fn();
+  assert.equal((await f.result).closed, false);
+});

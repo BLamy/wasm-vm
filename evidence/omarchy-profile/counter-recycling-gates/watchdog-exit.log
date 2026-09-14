@@ -1,0 +1,20 @@
+✔ trial is local, explicit, fixed-budget and does not accept renderer/timeout tuning (229.921916ms)
+✔ arm URLs have exactly one policy difference and forbid inherited query tuning (3.991083ms)
+✔ all four R3 source bindings and image layout must match (0.959042ms)
+✔ actual runtime must match the selected arm with observer/timing off (128.768459ms)
+✔ deadline accounts for queue delay and rejects late completion without starting expired work (192.917125ms)
+✔ real recorder retains physical-only writing, fixed deadlines, fresh presentation and owned shutdown (36.486792ms)
+✔ owned watchdog caps setup and navigation once, and normal close cancels timers (92.194833ms)
+✔ stalled owned browser/recorder is killed and missing close settles as unconfirmed (20.951459ms)
+✔ already exited browser is not killed; watchdog intervention never looks like a normal pass (44.401542ms)
+✔ future/invalid navigation cannot extend setup (0.3685ms)
+✔ recorder exit cannot orphan its browser or kill an already-exited recorder group (0.355541ms)
+✔ exit before stdio close never sends a later watchdog signal to the exited recorder (0.197792ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2955.838791
