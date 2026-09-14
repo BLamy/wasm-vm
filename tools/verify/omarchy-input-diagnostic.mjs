@@ -4,8 +4,11 @@ import path from "node:path";
 import { createHash } from "node:crypto";
 import { createServer } from "node:http";
 import { createInterface } from "node:readline";
+import { execFileSync } from "node:child_process";
 import { chromium } from "../../web/node_modules/playwright/index.mjs";
 import { physicalStroke } from "./omarchy-browser-session.mjs";
+import { installWireEvidence, servedIdentity } from "./omarchy-live-recording.mjs";
+import { processSamplePlan, sampleProcesses } from "./omarchy-process-sample.mjs";
 
 const repo = process.cwd();
 const wrapDiagnosticExec = (command) => `( ${String(command)}\n )`;
@@ -15,7 +18,7 @@ for (let i = 2; i < process.argv.length; i += 1) {
   const arg = process.argv[i];
   if (!arg.startsWith("--")) { positional.push(arg); continue; }
   const key = arg.slice(2).replaceAll("-", "");
-  if (key === "checkonly" || key === "profile" || key === "selftestcpuprofile") { options[key] = true; continue; }
+  if (key === "checkonly" || key === "profile" || key === "selftestcpuprofile" || key === "headed") { options[key] = true; continue; }
   if (!["pairdirectory", "chunkmanifest", "chunkdir", "clickdelayms", "jitresidency", "decodedcacheentries", "jitthreshold"].includes(key)) {
     throw Error(`unknown diagnostic option: ${arg}`);
   }
@@ -259,11 +262,14 @@ if (options.checkonly) {
   process.exit(0);
 }
 await fs.mkdir(output, { recursive: false });
+const resourceIdentities = [];
 const server = createServer(async (request, response) => {
   const pathname = new URL(request.url, "http://localhost").pathname;
   if (candidate && pathname === "/artifacts-omarchy.json") {
+    const bytes = Buffer.from(JSON.stringify(candidate.manifest));
+    resourceIdentities.push(servedIdentity({ pathname, method: request.method, filename: null, bytes, repoRoot: repo }));
     response.writeHead(200, { "Content-Type": "application/json", "Cross-Origin-Opener-Policy": "same-origin", "Cross-Origin-Embedder-Policy": "require-corp" });
-    response.end(JSON.stringify(candidate.manifest)); return;
+    response.end(bytes); return;
   }
   let filename;
   if (candidate && pathname === "/candidate/kernel") filename = candidate.source.kernel.filename;
@@ -282,6 +288,7 @@ const server = createServer(async (request, response) => {
   }
   try {
     const bytes = await fs.readFile(filename);
+    resourceIdentities.push(servedIdentity({ pathname, method: request.method, filename, bytes, repoRoot: repo }));
     response.writeHead(200, { "Content-Type": filename.endsWith(".js") ? "text/javascript"
       : filename.endsWith(".json") ? "application/json" : filename.endsWith(".wasm") ? "application/wasm" : filename.endsWith(".html") ? "text/html" : "application/octet-stream",
       "Cross-Origin-Opener-Policy": "same-origin", "Cross-Origin-Embedder-Policy": "require-corp" });
@@ -289,9 +296,69 @@ const server = createServer(async (request, response) => {
   } catch { response.writeHead(404).end(); }
 });
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
-const browser = await chromium.launch({ headless: true, executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
+const browser = await chromium.launch({ headless: !options.headed, executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
 const page = await browser.newPage({ viewport: { width: 1280, height: 800 }, serviceWorkers: "block" });
+await page.addInitScript(installWireEvidence);
 const history = [];
+const harnessPaths = ["tools/verify/omarchy-input-diagnostic.mjs", "tools/verify/omarchy-process-sample.mjs",
+  "tools/verify/omarchy-live-recording.mjs", "tools/verify/omarchy-browser-session.mjs"];
+const identities = {
+  headed: Boolean(options.headed),
+  head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(),
+  scopedStatus: execFileSync("git", ["status", "--short", "--", ...harnessPaths], { cwd: repo, encoding: "utf8" }),
+  harness: await Promise.all(harnessPaths.map(async filename => {
+    const bytes = await fs.readFile(path.join(repo, filename));
+    return { path: filename, size: bytes.length, sha256: hash(bytes) };
+  })),
+  resourceIdentities, browserRequests: [], errors: [],
+};
+page.on("request", request => identities.browserRequests.push({ timestamp: new Date().toISOString(),
+  url: request.url(), method: request.method(), resourceType: request.resourceType() }));
+let previousProcessSample = null;
+let outstandingProcessRpc = null;
+function submitProcessRpc(command, timeoutMs) {
+  if (outstandingProcessRpc) throw Error("process-sample RPC still outstanding; refusing another serial RPC");
+  const record = identities.processSampleRpc = { command, timeoutMs,
+    submittedAt: new Date().toISOString(), pending: true };
+  const pending = page.evaluate(({ command, timeoutMs }) =>
+    window.wvmDemo.exec(command, timeoutMs, { quiet: true }), { command, timeoutMs });
+  outstandingProcessRpc = pending;
+  // An outer timeout cannot cancel a queued guestExec. Keep serial ops blocked until this exact
+  // promise settles; late results are observations only, never retroactive successful samples.
+  const settle = () => {
+    record.pending = false; record.settledAt = new Date().toISOString();
+    if (outstandingProcessRpc === pending) outstandingProcessRpc = null;
+  };
+  pending.then(raw => { record.raw = raw; settle(); }, error => { record.error = String(error); settle(); });
+  return pending;
+}
+async function collectEvidence() {
+  try {
+    const evidence = await page.evaluate(() => ({
+      pageUrl: location.href, timeOrigin: performance.timeOrigin,
+      collectedAt: new Date().toISOString(), ...window.__omarchyWireEvidence,
+    }));
+    if (!Array.isArray(evidence.inputEvents) || !Array.isArray(evidence.workerTraffic)) throw Error("wire observer unavailable");
+    await fs.writeFile(path.join(output, "wire.json"), JSON.stringify(evidence));
+  } catch (error) {
+    const entry = { time: new Date().toISOString(), event: "wire-observer-error", error: String(error) };
+    identities.errors.push(entry);
+    console.error(JSON.stringify(entry));
+  }
+  identities.collectedAt = new Date().toISOString();
+  await fs.writeFile(path.join(output, "identities.json"), JSON.stringify(identities, null, 2));
+}
+async function readStats() {
+  return page.evaluate(async () => ({
+    focus: document.activeElement?.id, keyboard: window.__keyboardCapture?.stats(),
+    keyboardFrames: window.__keyboardCapture?.frames(), keyboardDiagnostics: window.__keyboardCapture?.diagnostics(),
+    inputDevice: await window.__linuxCtl?.inputDeviceStats?.(),
+    pointerFrames: window.__pointer?.frames(), pointerDiagnostics: window.__pointer?.diagnostics(),
+    cursor: window.__cursor?.state(), rpc: await window.__workerRpcStats?.(),
+    display: window.__presentation?.state(),
+    clock: await window.__linuxCtl?.guestClockState?.(), scheduler: await window.__schedulerStats?.(), jit: await window.__jitStats?.(),
+  }));
+}
 const port = server.address().port;
 const defaultClickDelay = options.clickdelayms === undefined ? undefined : Number(options.clickdelayms);
 if (defaultClickDelay !== undefined && (!Number.isInteger(defaultClickDelay) || defaultClickDelay < 0)) throw Error("invalid --click-delay-ms");
@@ -304,6 +371,14 @@ try {
   const profileOverride = options.profile ? "&profile=1" : "";
   await page.goto(`http://127.0.0.1:${port}/app.html?guest=omarchy&desktop=1&omarchyDivider=${divider}&jit=${jit}${residencyOverride}${decodedCacheOverride}${thresholdOverride}${profileOverride}${assetOverride}#ide`);
   await page.waitForFunction(() => window.wvmDemo?.isGuestReady?.(), null, { timeout: 120000 });
+  identities.ready = await page.evaluate(async () => ({
+    startedAt: new Date().toISOString(), pageUrl: location.href,
+    restoredFromBootSnapshot: window.__linux?.restoredFromBootSnapshot?.() ?? null,
+    storedSnapshotRestoreEvidence: await window.__linuxCtl?.storedSnapshotRestoreEvidence?.() ?? null,
+    clock: await window.__linuxCtl?.guestClockState?.() ?? null,
+    jit: await window.__jitStats?.() ?? null,
+    completedAt: new Date().toISOString(),
+  }));
   const pageUrl = page.url();
   const sourceReceipt = candidate?.source ?? { kind: "web-dist", root: path.join(repo, "web/dist"), candidate: false };
   const controllerCapabilities = await page.evaluate(() => {
@@ -318,11 +393,13 @@ try {
     };
   });
   const sessionReceipt = {
+    headed: Boolean(options.headed),
     pageUrl, sourceReceipt, jitResidency: jitResidency ?? null,
     decodedCacheEntries: decodedCacheEntries ?? null, jitThreshold: jitThreshold ?? null,
     profileRequested: Boolean(options.profile), controllerCapabilities,
   };
   history.push({ time: new Date().toISOString(), event: "ready", ...sessionReceipt });
+  await collectEvidence();
   await fs.writeFile(path.join(output, "diagnostic.json"), JSON.stringify(history, null, 2));
   console.log(JSON.stringify({ ready: "INPUT_DIAGNOSTIC_READY", mode: candidate ? "local-candidate-diagnostic" : "default", ...sessionReceipt }));
   for await (const line of lines) {
@@ -332,6 +409,9 @@ try {
       request = JSON.parse(line);
       let result;
       if (request.op === "quit") break;
+      if (["exec", "process-sample"].includes(request.op) && outstandingProcessRpc) {
+        throw Error("process-sample RPC still outstanding (possibly queued); serial ops blocked until it settles; stats/screenshots remain available");
+      }
       if (request.op === "profile") {
         if (!["start", "stop", "top"].includes(request.action)) throw Error("profile action must be start, stop, or top");
         result = await page.evaluate(async (action) => {
@@ -380,6 +460,18 @@ try {
         actualCommand = wrapDiagnosticExec(request.command);
         result = await page.evaluate((cmd) => window.wvmDemo.exec(cmd, 300000, { quiet: true }), actualCommand);
       }
+      if (request.op === "process-sample") {
+        actualCommand = processSamplePlan(request).command;
+        result = await sampleProcesses({ request, previous: previousProcessSample, stats: readStats,
+          beforeRpc: async record => {
+            history.push({ time: new Date().toISOString(), event: "process-sample-rpc-before-submit",
+              request, ...record });
+            await fs.writeFile(path.join(output, "diagnostic.json"), JSON.stringify(history, null, 2));
+          },
+          exec: submitProcessRpc,
+        });
+        previousProcessSample = result;
+      }
       if (request.op === "click") {
         const delay = request.delayMs ?? request.delay ?? defaultClickDelay;
         await page.locator("#ide-display-canvas").click({ position: { x: request.x, y: request.y }, timeout: 300000, ...(delay === undefined ? {} : { delay }) });
@@ -400,15 +492,7 @@ try {
         }
         if (request.enter) await page.keyboard.press("Enter");
       }
-      if (request.op === "stats") result = await page.evaluate(async () => ({
-        focus: document.activeElement?.id, keyboard: window.__keyboardCapture?.stats(),
-        keyboardFrames: window.__keyboardCapture?.frames(), keyboardDiagnostics: window.__keyboardCapture?.diagnostics(),
-        inputDevice: await window.__linuxCtl?.inputDeviceStats?.(),
-        pointerFrames: window.__pointer?.frames(), pointerDiagnostics: window.__pointer?.diagnostics(),
-        cursor: window.__cursor?.state(), rpc: await window.__workerRpcStats?.(),
-        display: window.__presentation?.state(),
-        clock: await window.__linuxCtl?.guestClockState?.(), scheduler: await window.__schedulerStats?.(), jit: await window.__jitStats?.(),
-      }));
+      if (request.op === "stats") result = await readStats();
       if (request.op === "screenshot") {
         if (!/^[a-z0-9-]+\.png$/u.test(request.name)) throw Error("invalid screenshot name");
         await page.screenshot({ path: path.join(output, request.name) });
@@ -419,18 +503,22 @@ try {
         ...(actualCommand === null ? {} : { actualCommand }), result: result ?? "sent",
       };
       history.push(entry);
+      await collectEvidence();
       await fs.writeFile(path.join(output, "diagnostic.json"), JSON.stringify(history, null, 2));
       console.log(JSON.stringify(entry));
     } catch (error) {
+      if (request?.op === "process-sample") previousProcessSample = null;
       const errorEntry = {
         time: new Date().toISOString(), ...sessionReceipt, request,
         ...(actualCommand === null ? {} : { actualCommand }), error: String(error),
       };
       history.push(errorEntry);
+      await collectEvidence();
       await fs.writeFile(path.join(output, "diagnostic.json"), JSON.stringify(history, null, 2));
       console.error(JSON.stringify(errorEntry));
     }
   }
 } finally {
+  await collectEvidence();
   lines.close(); await browser.close(); server.close();
 }
