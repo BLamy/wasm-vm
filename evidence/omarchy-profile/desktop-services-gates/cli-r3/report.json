@@ -1,0 +1,18 @@
+{
+  "result": "FAIL",
+  "url": "http://127.0.0.1:8000/?noAutoBoot=1#ide",
+  "realVm": true,
+  "browser": {
+    "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+  },
+  "commands": [],
+  "observations": {},
+  "consoleErrors": [],
+  "pageErrors": [],
+  "failedRequests": [],
+  "servedSourceHashes": null,
+  "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/desktop-services-gates/cli-r3/busybox-rpc-regression.png",
+  "startedAt": "2026-09-14T08:42:49.519Z",
+  "error": "Error: owned dev server did not become ready\n    at ensureServer (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-cli-regression.mjs:72:48)\n    at async run (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-cli-regression.mjs:84:3)\n    at async file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-cli-regression.mjs:220:3",
+  "finishedAt": "2026-09-14T08:43:05.565Z"
+}

@@ -1,0 +1,172 @@
+{
+  "head": "3f80aa9cd0843662d4c1764a425d051ec8efb489",
+  "wasmSha256": "9405d6c38be9a170ef5a2e5e0bacdcbec6deace7de48c8e002bc3caea76dfb2b",
+  "serviceIsolation": true,
+  "desktopAcceptance": false,
+  "inputOutcome": "startup-failed-input-not-tested",
+  "serial": [
+    {
+      "rid": "mu102ksa0",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+      "sentAt": "2026-09-14T08:47:46.618Z",
+      "completedAt": "2026-09-14T08:51:03.276Z",
+      "response": {
+        "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x55555eda5da0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 504\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x55555ee5f9d0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 504\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "rid": "mu1075lu1",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+      "sentAt": "2026-09-14T08:51:20.227Z",
+      "completedAt": null,
+      "response": null
+    }
+  ],
+  "keyboard": null,
+  "guestSession": {
+    "key": "omarchy",
+    "generation": 1
+  },
+  "presentation": {
+    "backend": "canvas2d",
+    "defaultBackend": "canvas2d",
+    "width": 1280,
+    "height": 800,
+    "fixedViewport": true,
+    "sizeMismatch": true,
+    "framesReceived": 2,
+    "successfulPresents": 2,
+    "drawnPresents": 2,
+    "drawnBytes": 8192000,
+    "replayedFrames": 0,
+    "droppedFrames": 0,
+    "contextLosses": 0,
+    "contextRestores": 0,
+    "fallbacks": 0,
+    "listenerCount": 2,
+    "scheduler": {
+      "enqueued": 2,
+      "coalesced": 0,
+      "presented": 2,
+      "skipped": 0,
+      "overruns": 0,
+      "pending": 0,
+      "maxPending": 1,
+      "paused": false,
+      "disposed": false,
+      "scheduled": false,
+      "hidden": false,
+      "mode": "raf",
+      "timerMs": 250
+    },
+    "gpu": {
+      "framesReceived": 2,
+      "enqueued": 2,
+      "coalesced": 0,
+      "presented": 2,
+      "successfulPresents": 2,
+      "skipped": 0,
+      "droppedFrames": 0,
+      "overruns": 0,
+      "pending": 0,
+      "maxPending": 1,
+      "uploadedBytes": 8192000,
+      "drawnPresents": 2,
+      "drawnBytes": 8192000,
+      "width": 1280,
+      "height": 800
+    },
+    "latest": {
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 800
+      },
+      "resourceWidth": 1280,
+      "resourceHeight": 832
+    },
+    "errors": []
+  },
+  "note": "Absence of hidden service traffic is not sufficient evidence of interactive input.",
+  "reportSha256": "904c0125317ca9b8093768223050c085ac861a1565ec2d316c88af8237ad9aa1",
+  "screenshots": {
+    "desktop.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+    "failure.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+  },
+  "servedResponses": 93,
+  "browserRequests": 86,
+  "desktopReadyMs": 211897.93000006676,
+  "scheduler": {
+    "quantum": 500000,
+    "maxQuantum": 500000,
+    "slices": 4224,
+    "totalSliceMs": 285075.4550027847,
+    "averageSliceMs": 67.48945430937138,
+    "maxSliceMs": 382.7300000190735,
+    "sliceHistogram": [
+      {
+        "leMs": 4,
+        "count": 0
+      },
+      {
+        "leMs": 8,
+        "count": 0
+      },
+      {
+        "leMs": 16,
+        "count": 3
+      },
+      {
+        "leMs": 32,
+        "count": 6
+      },
+      {
+        "leMs": 64,
+        "count": 2584
+      },
+      {
+        "leMs": 128,
+        "count": 1414
+      },
+      {
+        "leMs": 256,
+        "count": 213
+      },
+      {
+        "leMs": 512,
+        "count": 4
+      },
+      {
+        "leMs": 1000,
+        "count": 0
+      },
+      {
+        "leMs": null,
+        "count": 0
+      }
+    ],
+    "maxStretchGapMs": 383.835000038147,
+    "requestedInstructions": 2112000000,
+    "retiredInstructions": 2111984581,
+    "fetchWaits": 0,
+    "fetchRequestedChunks": 0,
+    "fetchWaitTotalMs": 0,
+    "fetchWaitMaxMs": 0,
+    "outputCalls": 17,
+    "outputBytes": 2715,
+    "inputCalls": 3,
+    "inputBytes": 258,
+    "yieldMode": "scheduler.postTask",
+    "schedulerYields": 4225,
+    "timerYields": 0,
+    "mainThreadYields": 0
+  },
+  "jitRetiredShare": 0.38193318230480017,
+  "limitations": [
+    "No physical input was attempted: startup qualification failed at300s.",
+    "Removed hidden traffic does not prove a performance improvement or resolve T03d.",
+    "Coordinator personally viewed the actual desktop and failure screenshots."
+  ]
+}

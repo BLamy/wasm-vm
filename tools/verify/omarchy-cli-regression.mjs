@@ -9,6 +9,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "../../web/node_modules/playwright/index.mjs";
+import { finishCliRecording, stopCliServerGroup } from "./omarchy-cli-lifecycle.mjs";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 // Public app APIs suffice; testHooks would install a test-only300ms worker watchdog.
@@ -38,6 +39,7 @@ const report = {
 };
 
 let ownedServer = null;
+let ownedServerClosed = null;
 let browser = null;
 let page = null;
 
@@ -60,15 +62,19 @@ async function serverIsUp() {
 
 async function ensureServer() {
   if (await serverIsUp()) return;
+  remaining(); // A late readiness check must not spawn a server after deadline cleanup.
   ownedServer = spawn("bash", ["tools/serve-dev.sh", "8000"], {
     cwd: repo,
     detached: true, // Own the shell and its Python child as one disposable process group.
     stdio: ["ignore", "pipe", "pipe"],
   });
+  ownedServerClosed = new Promise(resolve => ownedServer.once("close", resolve));
+  ownedServer.on("error", error => { report.serverError = String(error); });
   ownedServer.stdout.on("data", (chunk) => process.stderr.write(`[serve-dev] ${chunk}`));
   ownedServer.stderr.on("data", (chunk) => process.stderr.write(`[serve-dev] ${chunk}`));
   const startedBy = Date.now();
   while (!(await serverIsUp())) {
+    remaining();
     if (Date.now() - startedBy > 15_000) throw new Error("owned dev server did not become ready");
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
@@ -85,6 +91,7 @@ async function run() {
   browser = await chromium.launch({
     executablePath: chromePath,
     headless: true,
+    timeout: remaining(),
     args: ["--disable-dev-shm-usage"],
   });
   const context = await browser.newContext({
@@ -211,46 +218,18 @@ async function run() {
   assert.deepEqual(report.consoleErrors, []);
   assert.deepEqual(report.pageErrors, []);
   assert.deepEqual(report.failedRequests, []);
-  await page.screenshot({ path: screenshotPath, fullPage: true });
-  report.result = "PASS";
+  await page.screenshot({ path: screenshotPath, fullPage: true, timeout: remaining() });
 }
 
-let runDeadline;
-try {
-  await Promise.race([run(), new Promise((_, reject) => {
-    runDeadline = setTimeout(() => reject(new Error("CLI regression exceeded five-minute deadline")), remaining());
-  })]);
-} catch (error) {
-  report.result = "FAIL";
-  report.error = error?.stack || String(error);
-  if (page) {
-    try { await page.screenshot({ path: screenshotPath, fullPage: true }); } catch {}
-  }
-  throw error;
-} finally {
-  clearTimeout(runDeadline);
-  report.finishedAt = new Date().toISOString();
-  await fs.writeFile(reportPath, JSON.stringify(report, null, 2) + "\n");
-  if (browser) await browser.close().catch(() => {});
-  if (ownedServer && ownedServer.exitCode === null && !ownedServer.killed) {
-    // Killing only bash leaves Python holding the pipes open, so ChildProcess.close never fires.
-    const closed = new Promise((resolve) => ownedServer.once("close", resolve));
-    try { process.kill(-ownedServer.pid, "SIGTERM"); } catch (error) {
-      if (error.code !== "ESRCH") throw error;
-    }
-    let cleanupTimer;
-    const closedNormally = await Promise.race([
-      closed.then(() => true), new Promise((resolve) => { cleanupTimer = setTimeout(() => resolve(false), 5000); }),
-    ]);
-    clearTimeout(cleanupTimer);
-    if (!closedNormally) {
-      try { process.kill(-ownedServer.pid, "SIGKILL"); } catch (error) {
-        if (error.code !== "ESRCH") throw error;
-      }
-      ownedServer.stdout.destroy(); ownedServer.stderr.destroy(); ownedServer.unref();
-      throw new Error("CLI recorder server did not close within five seconds");
-    }
-  }
-}
+await finishCliRecording({
+  report, run, deadlineAt,
+  captureFailure: async () => {
+    if (page) await page.screenshot({ path: screenshotPath, fullPage: true, timeout: 5000 });
+    return true;
+  },
+  closeBrowser: async () => { if (browser) await browser.close(); return true; },
+  closeServer: () => stopCliServerGroup(ownedServer, ownedServerClosed),
+  writeReport: value => fs.writeFile(reportPath, JSON.stringify(value, null, 2) + "\n"),
+});
 
 console.log(`OMARCHY_CLI_REGRESSION_PASS ${reportPath}`);
