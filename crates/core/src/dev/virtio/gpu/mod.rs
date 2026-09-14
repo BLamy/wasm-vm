@@ -2387,6 +2387,7 @@ mod tests {
             },
         ];
         assert_eq!(sink.cursor_records(), expected_callbacks);
+        #[cfg(feature = "gpu-trace")]
         assert_eq!(state.borrow().cursorq_commands(), requests.len() as u64);
         assert_eq!(state.borrow().cursor_state(0), Some(expected_callbacks[2]));
         assert_eq!(state.borrow().cursor_state(1), None);

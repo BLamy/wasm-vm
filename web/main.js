@@ -2039,6 +2039,7 @@ async function bootOmarchy() {
       enableMic: false,
       guestClock: "icount",
       icountDivider: Number(query.get("omarchyDivider")) || 64,
+      jitAdmissionProbe: query.get("jitAdmissionProbe") === "1",
       fastInterpreter: true,
       jit: true,
       quantum: 500_000,

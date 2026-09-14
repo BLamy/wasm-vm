@@ -357,6 +357,10 @@ export class WasmLinux {
      */
     sendTabletEvent(event_type: number, code: number, value: number): void;
     /**
+     * Arm after restore, before execution; not exposed as a general Worker mutation RPC.
+     */
+    setAdmissionProbe(enabled: boolean): boolean;
+    /**
      * E4-T39: toggle static region chaining without rebuilding the generated modules.
      */
     setChaining(on: boolean): void;
@@ -515,6 +519,10 @@ export class WasmMachine {
      * `{ kind: "exited"|"trapped"|"max", code?, cause?, tval?, retired }`.
      */
     run(max_instrs: number): any;
+    /**
+     * Explicit boot diagnostic only; does not enable profiling or change JIT policy.
+     */
+    setAdmissionProbe(enabled: boolean): boolean;
     /**
      * E4-T39: toggle static region chaining without rebuilding the generated modules.
      */
@@ -722,6 +730,7 @@ export interface InitOutput {
     readonly wasmlinux_sendKeyboardEvent: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_sendMouseEvent: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_sendTabletEvent: (a: number, b: number, c: number, d: number) => [number, number];
+    readonly wasmlinux_setAdmissionProbe: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_setChaining: (a: number, b: number) => [number, number];
     readonly wasmlinux_setDecodedCacheEntries: (a: number, b: any) => [number, number];
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
@@ -750,6 +759,7 @@ export interface InitOutput {
     readonly wasmmachine_ramLen: (a: number) => [number, number, number];
     readonly wasmmachine_registers: (a: number) => [number, number, number];
     readonly wasmmachine_run: (a: number, b: number) => [number, number, number];
+    readonly wasmmachine_setAdmissionProbe: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_setChaining: (a: number, b: number) => [number, number];
     readonly wasmmachine_setConsole: (a: number, b: any) => [number, number];
     readonly wasmmachine_setDynamicChaining: (a: number, b: number) => [number, number];

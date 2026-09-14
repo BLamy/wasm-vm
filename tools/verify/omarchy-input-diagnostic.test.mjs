@@ -8,6 +8,20 @@ import test from "node:test";
 const execFileAsync = promisify(execFile);
 const manifestSha256 = "ec1bc2601b104cfb6d6875c091377ccfd0654d5b6aab71c6a08ae37263f1c391";
 
+test("admission recorder flag forbids policy/profiler changes and exposes actual opt-in", () => {
+  for (const args of [[], ["unused", "1", "1"], ["unused", "64", "0"],
+    ["unused", "64", "1", "--profile"], ["unused", "64", "1", "--jit-threshold", "1"],
+    ["unused", "64", "1", "--jit-residency", "cap-256"]]) {
+    const result = spawnSync(process.execPath, ["tools/verify/omarchy-input-diagnostic.mjs",
+      "--check-only", "--admission-probe", ...args], { encoding: "utf8" });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /admission probe requires explicit JIT 1/u);
+  }
+  const source = readFileSync("tools/verify/omarchy-input-diagnostic.mjs", "utf8");
+  assert.match(source, /options\.admissionprobe \? "&jitAdmissionProbe=1" : ""/u);
+  assert.match(source, /admissionProbeRequested: Boolean\(options\.admissionprobe\)/u);
+});
+
 const candidateInputsPresent = [
   "releases/kernel/6.6.63/Image",
   "releases/boot-snapshot/omarchy-ready.snap.gz",

@@ -544,6 +544,185 @@ fn enable_browser_jit(
     Ok(())
 }
 
+fn admission_translator_supported(row: &wasm_vm_core::dispatch::AdmissionWitness) -> bool {
+    let block = wasm_vm_core::dispatch::DecodedBlock::new(
+        row.request.phys_pc,
+        row.ops.clone(),
+        row.request.code_bytes.len() as u64,
+    );
+    jit_translate::is_translatable(&block)
+}
+
+fn admission_probe_object(machine: &Machine) -> JsValue {
+    let stats = machine.admission_probe_stats();
+    // false = disabled. Ordinary jitStats must not allocate any probe JS payload.
+    if !stats.enabled {
+        return JsValue::FALSE;
+    }
+    let obj = js_sys::Object::new();
+    let set = |o: &js_sys::Object, key: &str, value: JsValue| {
+        let _ = js_sys::Reflect::set(o, &key.into(), &value);
+    };
+    set(&obj, "enabled", stats.enabled.into());
+    set(
+        &obj,
+        "capacity",
+        (wasm_vm_core::dispatch::MAX_ADMISSION_WITNESSES as u32).into(),
+    );
+    set(
+        &obj,
+        "selection",
+        "first-seen-full-map-refusals-per-generation".into(),
+    );
+    set(
+        &obj,
+        "entryScope",
+        "interpreted-discovery-entries-only".into(),
+    );
+    for (key, value) in [
+        ("generation", stats.generation),
+        ("generationResets", stats.generation_resets),
+        ("observedEntries", stats.observed_entries),
+        ("fullMapRefusals", stats.full_map_refusals),
+        ("overflowRefusals", stats.overflow_refusals),
+        ("invalidBlocks", stats.invalid_blocks),
+    ] {
+        set(&obj, key, value.to_string().into());
+    }
+    set(&obj, "countsLen", (stats.counts_len as u32).into());
+    set(
+        &obj,
+        "countsCapacity",
+        (stats.counts_capacity as u32).into(),
+    );
+    set(&obj, "threshold", stats.threshold.into());
+    let records = js_sys::Array::new();
+    for row in &stats.records {
+        let record = js_sys::Object::new();
+        set(
+            &record,
+            "physPc",
+            format!("{:#x}", row.request.phys_pc).into(),
+        );
+        let mut bytes = String::with_capacity(row.request.code_bytes.len() * 2);
+        for byte in &row.request.code_bytes {
+            let _ = write!(bytes, "{byte:02x}");
+        }
+        set(&record, "codeBytes", bytes.into());
+        let lengths: js_sys::Array = row
+            .request
+            .op_lens
+            .iter()
+            .map(|n| JsValue::from(*n))
+            .collect();
+        set(&record, "opLens", lengths.into());
+        set(
+            &record,
+            "terminator",
+            format!("{:?}", row.request.terminator).into(),
+        );
+        for (key, value) in [
+            ("generation", row.request.generation),
+            ("entries", row.entries),
+            ("firstEntry", row.first_entry),
+            ("lastEntry", row.last_entry),
+        ] {
+            set(&record, key, value.to_string().into());
+        }
+        set(
+            &record,
+            "firstCountsLen",
+            (row.first_counts_len as u32).into(),
+        );
+        set(
+            &record,
+            "lastCountsLen",
+            (row.last_counts_len as u32).into(),
+        );
+        let reasons = js_sys::Object::new();
+        for (key, value) in [
+            ("countsFull", row.reasons.counts_full),
+            ("counting", row.reasons.counting),
+            ("nominated", row.reasons.nominated),
+            ("excluded", row.reasons.excluded),
+            ("dedupQueued", row.reasons.dedup_queued),
+            ("dedupExcluded", row.reasons.dedup_excluded),
+            ("fifoOverflow", row.reasons.fifo_overflow),
+        ] {
+            set(&reasons, key, value.to_string().into());
+        }
+        set(&record, "reasons", reasons.into());
+        set(&record, "discoveryQueued", row.discovery_queued.into());
+        set(&record, "compileQueued", row.compile_queued.into());
+        set(
+            &record,
+            "executorResidentAtReport",
+            row.executor_resident_at_report
+                .map(JsValue::from)
+                .unwrap_or(JsValue::NULL),
+        );
+        set(
+            &record,
+            "residencyScope",
+            "physical-pc-at-report-not-historical-install-or-byte-identity".into(),
+        );
+        let supported = admission_translator_supported(row);
+        let excluded = row.request.terminator.is_excluded();
+        set(&record, "translatorSupported", supported.into());
+        set(&record, "policyExcluded", excluded.into());
+        set(
+            &record,
+            "translationEligible",
+            (supported && !excluded).into(),
+        );
+        records.push(&record);
+    }
+    set(&obj, "records", records.into());
+    obj.into()
+}
+
+#[cfg(test)]
+mod admission_probe_tests {
+    use super::admission_translator_supported;
+    use wasm_vm_core::dispatch::{BlockDiscovery, MicroOp};
+
+    #[test]
+    fn admission_probe_real_translator_integer_fp_move_and_csr_contrasts() {
+        let op = |raw| MicroOp {
+            instr: wasm_vm_core::decode::decode(raw).unwrap(),
+            raw,
+            len: 4,
+        };
+        let integer = [op(0x0010_8093), op(0x0000_006f)];
+        let fp_move = [op(0xf000_0053), op(0x0000_006f)]; // FMV.W.X, not a guessed FP bucket.
+        let csr = [op(0x3000_1073)]; // CSRRW mstatus: discovery-policy exclusion.
+        let mut discovery = BlockDiscovery::with_bounds(4, 1);
+        discovery.set_admission_probe(true);
+        discovery.on_block_entry(0, &integer);
+        for (phys, ops) in [
+            (4096, &integer[..]),
+            (8192, &fp_move[..]),
+            (12288, &csr[..]),
+        ] {
+            for _ in 0..3 {
+                discovery.on_block_entry(phys, ops);
+            }
+        }
+        let records = discovery.admission_probe_stats().records;
+        assert_eq!(records.len(), 3);
+        assert!(admission_translator_supported(&records[0]));
+        assert!(!admission_translator_supported(&records[1]));
+        assert!(!records[1].request.terminator.is_excluded());
+        assert!(!admission_translator_supported(&records[2]));
+        assert!(records[2].request.terminator.is_excluded());
+        assert!(records.iter().all(|row| row.reasons.counts_full == 3));
+        assert_eq!(
+            records[1].request.code_bytes[..4],
+            0xf000_0053u32.to_le_bytes()
+        );
+    }
+}
+
 fn jit_stats_object(machine: &Machine) -> JsValue {
     let obj = js_sys::Object::new();
     let set = |k: &str, v: &JsValue| {
@@ -797,11 +976,20 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
     let (entry_hits, builds) = machine.block_cache_entry_stats();
     set("blockEntryHits", &JsValue::from_f64(entry_hits as f64));
     set("blockBuilds", &JsValue::from_f64(builds as f64));
+    set("admissionProbe", &admission_probe_object(machine));
     obj.into()
 }
 
 #[wasm_bindgen]
 impl WasmMachine {
+    /// Explicit boot diagnostic only; does not enable profiling or change JIT policy.
+    #[wasm_bindgen(js_name = setAdmissionProbe)]
+    pub fn set_admission_probe(&self, enabled: bool) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_admission_probe(enabled);
+        Ok(enabled)
+    }
+
     /// Construct a machine with `ram_mib` MiB of zeroed guest RAM and a UART0 console
     /// wired to a (initially unset) JS callback. A `ram_mib` too large to allocate throws
     /// a catchable `JsError` — never a wasm `unreachable` abort that would poison the
@@ -2120,6 +2308,14 @@ impl wasm_vm_core::dev::virtio::gpu::FrameSink for JsFrameSink {
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 #[wasm_bindgen]
 impl WasmLinux {
+    /// Arm after restore, before execution; not exposed as a general Worker mutation RPC.
+    #[wasm_bindgen(js_name = setAdmissionProbe)]
+    pub fn set_admission_probe(&self, enabled: bool) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_admission_probe(enabled);
+        Ok(enabled)
+    }
+
     /// Assemble the platform and boot. `initrd` empty = none; `bootargs` empty = the default
     /// `console=ttyS0 earlycon=sbi`. `output(bytes: Uint8Array)` receives console output.
     #[wasm_bindgen(constructor)]

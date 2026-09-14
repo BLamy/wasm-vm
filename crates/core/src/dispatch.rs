@@ -462,6 +462,139 @@ enum NomState {
     Excluded,
 }
 
+/// Diagnostic first-seen refusal sample, never an admission-policy capacity.
+pub const MAX_ADMISSION_WITNESSES: usize = 32;
+
+/// Mutually exclusive decisions at an actual interpreted block entry.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum AdmissionReason {
+    CountsFull,
+    Counting,
+    Nominated,
+    Excluded,
+    DedupQueued,
+    DedupExcluded,
+    FifoOverflow,
+}
+
+/// Entry counts since this exact identity's first retained full-map refusal.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct AdmissionReasons {
+    pub counts_full: u64,
+    pub counting: u64,
+    pub nominated: u64,
+    pub excluded: u64,
+    pub dedup_queued: u64,
+    pub dedup_excluded: u64,
+    pub fifo_overflow: u64,
+}
+
+impl AdmissionReasons {
+    fn record(&mut self, reason: AdmissionReason) {
+        let counter = match reason {
+            AdmissionReason::CountsFull => &mut self.counts_full,
+            AdmissionReason::Counting => &mut self.counting,
+            AdmissionReason::Nominated => &mut self.nominated,
+            AdmissionReason::Excluded => &mut self.excluded,
+            AdmissionReason::DedupQueued => &mut self.dedup_queued,
+            AdmissionReason::DedupExcluded => &mut self.dedup_excluded,
+            AdmissionReason::FifoOverflow => &mut self.fifo_overflow,
+        };
+        *counter = counter.saturating_add(1);
+    }
+}
+
+/// Exact retained entry identity. Ops are retained for the outer translator's predicate;
+/// observation never re-reads guest memory or decides whether to nominate/compile.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AdmissionWitness {
+    pub request: TranslationRequest,
+    pub ops: Vec<MicroOp>,
+    pub entries: u64,
+    pub first_entry: u64,
+    pub last_entry: u64,
+    pub first_counts_len: usize,
+    pub last_counts_len: usize,
+    pub reasons: AdmissionReasons,
+    /// Exact request membership at report time, NOT NomState::Queued.
+    pub discovery_queued: bool,
+    pub compile_queued: bool,
+    /// PC-only residency at report time. None means no executor; never an install receipt.
+    pub executor_resident_at_report: Option<bool>,
+}
+
+/// Bounded, generation-local diagnostic data. Overflow counts refused ENTRIES, not
+/// distinct identities; the first-seen sample cannot establish absence/heavy hitters.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct AdmissionProbeStats {
+    pub enabled: bool,
+    pub generation: u64,
+    pub generation_resets: u64,
+    pub observed_entries: u64,
+    pub full_map_refusals: u64,
+    pub overflow_refusals: u64,
+    pub invalid_blocks: u64,
+    pub counts_len: usize,
+    pub counts_capacity: usize,
+    pub threshold: u32,
+    pub records: Vec<AdmissionWitness>,
+}
+
+impl AdmissionProbeStats {
+    fn observe(&mut self, phys: u64, ops: &[MicroOp], reason: AdmissionReason, counts_len: usize) {
+        self.observed_entries = self.observed_entries.saturating_add(1);
+        if reason == AdmissionReason::CountsFull {
+            self.full_map_refusals = self.full_map_refusals.saturating_add(1);
+        }
+        if reason != AdmissionReason::CountsFull && self.records.is_empty() {
+            return;
+        }
+        // Real walked blocks meet these bounds. Fail closed for malformed diagnostic/test calls,
+        // without changing the underlying discovery decision or allocating for invalid input.
+        if ops.is_empty()
+            || ops.len() > MAX_BLOCK_OPS
+            || ops.iter().any(|op| !matches!(op.len, 2 | 4))
+        {
+            self.invalid_blocks = self.invalid_blocks.saturating_add(1);
+            return;
+        }
+        let index = self.records.iter().position(|row| {
+            row.request.phys_pc == phys
+                && row.request.generation == self.generation
+                && row.ops == ops
+        });
+        let index = match index {
+            Some(index) => index,
+            None if reason != AdmissionReason::CountsFull => return,
+            None if self.records.len() == MAX_ADMISSION_WITNESSES => {
+                self.overflow_refusals = self.overflow_refusals.saturating_add(1);
+                return;
+            }
+            None => {
+                self.records.push(AdmissionWitness {
+                    request: TranslationRequest::from_block(phys, ops, self.generation),
+                    ops: ops.to_vec(),
+                    entries: 0,
+                    first_entry: self.observed_entries,
+                    last_entry: self.observed_entries,
+                    first_counts_len: counts_len,
+                    last_counts_len: counts_len,
+                    reasons: AdmissionReasons::default(),
+                    discovery_queued: false,
+                    compile_queued: false,
+                    executor_resident_at_report: None,
+                });
+                self.records.len() - 1
+            }
+        };
+        let row = &mut self.records[index];
+        row.entries = row.entries.saturating_add(1);
+        row.last_entry = self.observed_entries;
+        row.last_counts_len = counts_len;
+        row.reasons.record(reason);
+    }
+}
+
 /// A snapshot of the discovery counters, exported through the profiling stats (E4-T01).
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct DiscoveryStats {
@@ -525,6 +658,8 @@ pub struct BlockDiscovery {
     /// Promotion threshold (defaults to [`HOT_THRESHOLD`]). Runtime-tunable — E4-T08 owns the
     /// swept value; the design-doc number is the starting point, falsifiable by a ledger regression.
     threshold: u32,
+    /// No allocation, byte comparison, or guest-memory access while absent (the default).
+    admission_probe: Option<AdmissionProbeStats>,
 }
 
 impl Default for BlockDiscovery {
@@ -554,7 +689,50 @@ impl BlockDiscovery {
             queue_cap: queue_cap.max(1),
             counts_cap: counts_cap.max(1),
             threshold: HOT_THRESHOLD,
+            admission_probe: None,
         }
+    }
+
+    /// Explicit diagnostic toggle only. Repeated enable preserves the current window;
+    /// disabling discards it. Does not reset discovery, queues, profiler, or guest state.
+    pub fn set_admission_probe(&mut self, enabled: bool) {
+        if enabled && self.admission_probe.is_none() {
+            self.admission_probe = Some(AdmissionProbeStats {
+                enabled: true,
+                generation: self.generation,
+                ..AdmissionProbeStats::default()
+            });
+        } else if !enabled {
+            self.admission_probe = None;
+        }
+    }
+
+    fn reset_admission_generation(&mut self) {
+        if let Some(probe) = self.admission_probe.as_mut() {
+            *probe = AdmissionProbeStats {
+                enabled: true,
+                generation: self.generation,
+                generation_resets: probe.generation_resets.saturating_add(1),
+                ..AdmissionProbeStats::default()
+            };
+        }
+    }
+
+    /// Read-only exact-request lookup; never removes/reorders queued work.
+    pub fn contains_request(&self, request: &TranslationRequest) -> bool {
+        self.queue.iter().any(|queued| queued == request)
+    }
+
+    pub fn admission_probe_stats(&self) -> AdmissionProbeStats {
+        let mut result = self.admission_probe.clone().unwrap_or_default();
+        result.generation = self.generation;
+        result.counts_len = self.counts.len();
+        result.counts_capacity = self.counts_cap;
+        result.threshold = self.threshold;
+        for row in &mut result.records {
+            row.discovery_queued = self.contains_request(&row.request);
+        }
+        result
     }
 
     /// Set the promotion threshold (minimum 1). Used to sweep the tunable and to exercise
@@ -573,6 +751,7 @@ impl BlockDiscovery {
     pub fn reset(&mut self) {
         let hwm = self.stats.queue_hwm;
         self.generation = self.generation.wrapping_add(1);
+        self.reset_admission_generation();
         self.counts.clear();
         self.state.clear();
         self.queued_hits.clear();
@@ -604,6 +783,7 @@ impl BlockDiscovery {
     /// small maps.
     pub fn on_invalidate(&mut self) {
         self.generation = self.generation.wrapping_add(1);
+        self.reset_admission_generation();
         self.stats.generation = self.generation;
         self.counts.clear();
         self.state.clear();
@@ -616,6 +796,18 @@ impl BlockDiscovery {
     /// immediately. This is the hot-path hook — cheap for the common (already-decided or
     /// still-cold) block: one map probe plus, while cold, one increment.
     pub fn on_block_entry(&mut self, phys: u64, ops: &[MicroOp]) {
+        if self.admission_probe.is_none() {
+            self.on_block_entry_decision(phys, ops);
+            return;
+        }
+        let counts_len = self.counts.len();
+        let reason = self.on_block_entry_decision(phys, ops);
+        if let Some(probe) = self.admission_probe.as_mut() {
+            probe.observe(phys, ops, reason, counts_len);
+        }
+    }
+
+    fn on_block_entry_decision(&mut self, phys: u64, ops: &[MicroOp]) -> AdmissionReason {
         // Already decided (nominated or excluded): dedup — never re-enqueue.
         if let Some(st) = self.state.get(&phys) {
             self.stats.deduped = self.stats.deduped.saturating_add(1);
@@ -624,7 +816,11 @@ impl BlockDiscovery {
                 let h = self.queued_hits.entry(phys).or_insert(0);
                 *h = h.saturating_add(1);
             }
-            return;
+            return if *st == NomState::Queued {
+                AdmissionReason::DedupQueued
+            } else {
+                AdmissionReason::DedupExcluded
+            };
         }
         let count = match self.counts.get_mut(&phys) {
             Some(c) => {
@@ -635,35 +831,36 @@ impl BlockDiscovery {
                 if self.counts.len() >= self.counts_cap {
                     // Counter map full: stop tracking new cold blocks (flood bound).
                     self.stats.counts_dropped = self.stats.counts_dropped.saturating_add(1);
-                    return;
+                    return AdmissionReason::CountsFull;
                 }
                 self.counts.insert(phys, 1);
                 1
             }
         };
         if count == self.threshold {
-            self.nominate(phys, ops);
+            return self.nominate(phys, ops);
         }
+        AdmissionReason::Counting
     }
 
     /// Transition a block past the threshold: drop it from the counter map, then either exclude
     /// it (CSR/wfi terminator) or push a fresh [`TranslationRequest`]. Marks the block Queued/
     /// Excluded so it never re-nominates within this generation (dedup). Fires EXACTLY once per
     /// block per generation because the caller only reaches here on `count == HOT_THRESHOLD`.
-    fn nominate(&mut self, phys: u64, ops: &[MicroOp]) {
+    fn nominate(&mut self, phys: u64, ops: &[MicroOp]) -> AdmissionReason {
         self.counts.remove(&phys);
         let term = TerminatorKind::of_block(ops);
         if term.is_excluded() {
             self.state.insert(phys, NomState::Excluded);
             self.stats.excluded = self.stats.excluded.saturating_add(1);
-            return;
+            return AdmissionReason::Excluded;
         }
         // Mark Queued regardless of whether the push succeeds, so an overflow-dropped block does
         // not re-nominate every subsequent execution (no renomination storm).
         self.state.insert(phys, NomState::Queued);
         if self.queue.len() >= self.queue_cap {
             self.stats.dropped_overflow = self.stats.dropped_overflow.saturating_add(1);
-            return;
+            return AdmissionReason::FifoOverflow;
         }
         self.queue
             .push_back(TranslationRequest::from_block(phys, ops, self.generation));
@@ -671,6 +868,7 @@ impl BlockDiscovery {
         if self.queue.len() > self.stats.queue_hwm {
             self.stats.queue_hwm = self.queue.len();
         }
+        AdmissionReason::Nominated
     }
 
     /// Validate a request at (mock) install time. Returns `true` iff it is safe to install:
@@ -739,6 +937,185 @@ impl BlockDiscovery {
 mod tests {
     use super::*;
     use crate::decode::Instr;
+
+    #[test]
+    fn admission_probe_recurring_full_refusal_exact_identity() {
+        let mut d = BlockDiscovery::with_bounds(2, 1);
+        d.set_admission_probe(true);
+        let ops = block();
+        d.on_block_entry(0x1000, &ops);
+        for _ in 0..100 {
+            d.on_block_entry(u64::MAX - 4095, &ops);
+        }
+        let stats = d.admission_probe_stats();
+        assert!(stats.enabled);
+        assert_eq!(stats.observed_entries, 101);
+        assert_eq!(stats.full_map_refusals, 100);
+        assert_eq!(stats.records.len(), 1);
+        let row = &stats.records[0];
+        assert_eq!(
+            row.request,
+            TranslationRequest::from_block(u64::MAX - 4095, &ops, 1)
+        );
+        assert_eq!(row.entries, 100);
+        assert_eq!(row.reasons.counts_full, 100);
+        assert_eq!((row.first_entry, row.last_entry), (2, 101));
+        assert_eq!((row.first_counts_len, row.last_counts_len), (1, 1));
+        assert!(!row.discovery_queued && !row.compile_queued);
+        assert_eq!(d.stats().nominated, 0);
+    }
+
+    #[test]
+    fn admission_probe_separates_changed_bytes_lengths_and_generation() {
+        let mut d = BlockDiscovery::with_bounds(2, 1);
+        d.set_admission_probe(true);
+        let a = [body(0x0010_0093)];
+        let b = [body(0x0020_0093)];
+        let c = [MicroOp { len: 2, ..a[0] }];
+        d.on_block_entry(0, &a);
+        for ops in [&a[..], &b[..], &c[..], &a[..]] {
+            d.on_block_entry(4096, ops);
+        }
+        let stats = d.admission_probe_stats();
+        assert_eq!(stats.records.len(), 3);
+        assert_eq!(
+            stats.records.iter().map(|r| r.entries).collect::<Vec<_>>(),
+            [2, 1, 1]
+        );
+        assert_ne!(
+            stats.records[0].request.code_bytes,
+            stats.records[1].request.code_bytes
+        );
+        assert_eq!(stats.records[2].request.op_lens, [2]);
+        d.on_invalidate();
+        assert!(d.admission_probe_stats().records.is_empty());
+        d.on_block_entry(0, &a);
+        d.on_block_entry(4096, &a);
+        let stats = d.admission_probe_stats();
+        assert_eq!(stats.generation_resets, 1);
+        assert_eq!(stats.records[0].request.generation, 2);
+        assert_eq!(stats.records[0].entries, 1);
+        assert_eq!(stats.full_map_refusals, 1);
+        d.reset();
+        assert_eq!(d.admission_probe_stats().generation_resets, 2);
+        assert!(d.admission_probe_stats().records.is_empty());
+    }
+
+    #[test]
+    fn admission_probe_cap_and_invalid_blocks_are_bounded() {
+        let mut d = BlockDiscovery::with_bounds(2, 1);
+        d.set_admission_probe(true);
+        let ops = alloc::vec![body(0x0010_0093); MAX_BLOCK_OPS];
+        d.on_block_entry(0, &ops);
+        for phys in 1..=40 {
+            d.on_block_entry(phys * 4096, &ops);
+        }
+        // An unretained identity stays unretained; overflow counts entries, not unique keys.
+        d.on_block_entry(40 * 4096, &ops);
+        d.on_block_entry(4096, &ops);
+        let stats = d.admission_probe_stats();
+        assert_eq!(stats.records.len(), MAX_ADMISSION_WITNESSES);
+        assert_eq!(stats.records.last().unwrap().request.phys_pc, 32 * 4096);
+        assert_eq!(stats.overflow_refusals, 9);
+        assert_eq!(stats.records[0].entries, 2);
+        assert!(
+            stats
+                .records
+                .iter()
+                .all(|r| r.request.code_bytes.len() == 512)
+        );
+        d.on_block_entry(100 * 4096, &alloc::vec![ops[0]; MAX_BLOCK_OPS + 1]);
+        d.on_block_entry(100 * 4096, &[]);
+        d.on_block_entry(100 * 4096, &[MicroOp { len: 8, ..ops[0] }]);
+        assert_eq!(d.admission_probe_stats().invalid_blocks, 3);
+        assert_eq!(d.admission_probe_stats().records.len(), 32);
+    }
+
+    #[test]
+    fn admission_probe_reasons_and_exact_fifo_membership_not_nominal_queued() {
+        for (excluded, overflow) in [(false, false), (false, true), (true, false)] {
+            let mut d = BlockDiscovery::with_bounds(1, 1);
+            d.set_threshold(2);
+            d.set_admission_probe(true);
+            let cold = block();
+            let watched = if excluded {
+                alloc::vec![MicroOp {
+                    instr: Instr::Wfi,
+                    raw: 0x1050_0073,
+                    len: 4
+                }]
+            } else {
+                cold.to_vec()
+            };
+            d.on_block_entry(0, &cold);
+            d.on_block_entry(4096, &watched);
+            // Free a counter slot by an ordinary nomination. Optionally leave FIFO full.
+            d.on_block_entry(0, &cold);
+            if !overflow {
+                d.take_requests();
+            }
+            for _ in 0..3 {
+                d.on_block_entry(4096, &watched);
+            }
+            let row = d.admission_probe_stats().records.remove(0);
+            assert_eq!(row.entries, 4);
+            assert_eq!(row.reasons.counts_full, 1);
+            assert_eq!(row.reasons.counting, 1);
+            assert_eq!(row.reasons.excluded, u64::from(excluded));
+            assert_eq!(row.reasons.fifo_overflow, u64::from(overflow));
+            assert_eq!(row.reasons.nominated, u64::from(!excluded && !overflow));
+            assert_eq!(row.reasons.dedup_queued, u64::from(!excluded));
+            assert_eq!(row.reasons.dedup_excluded, u64::from(excluded));
+            assert_eq!(row.discovery_queued, !excluded && !overflow);
+            if row.discovery_queued {
+                for field in 0..4 {
+                    let mut wrong = row.request.clone();
+                    match field {
+                        0 => wrong.phys_pc += 2,
+                        1 => wrong.generation += 1,
+                        2 => wrong.code_bytes[0] ^= 1,
+                        _ => wrong.op_lens[0] = 2,
+                    }
+                    assert!(!d.contains_request(&wrong));
+                }
+                d.take_requests();
+                assert!(!d.admission_probe_stats().records[0].discovery_queued);
+                assert_eq!(d.state.get(&4096), Some(&NomState::Queued));
+            }
+        }
+    }
+
+    #[test]
+    fn admission_probe_default_off_and_decision_parity() {
+        let mut off = BlockDiscovery::with_bounds(2, 2);
+        let mut on = BlockDiscovery::with_bounds(2, 2);
+        on.set_admission_probe(true);
+        for d in [&mut off, &mut on] {
+            d.set_threshold(3);
+        }
+        let ops = block();
+        for phys in [
+            0, 4096, 8192, 8192, 0, 0, 8192, 8192, 8192, 4096, 4096, 12288, 12288, 12288,
+        ] {
+            off.on_block_entry(phys, &ops);
+            on.on_block_entry(phys, &ops);
+            assert_eq!(off.stats(), on.stats());
+            assert_eq!(off.counts, on.counts);
+            assert_eq!(off.state, on.state);
+            assert_eq!(off.queue, on.queue);
+            assert_eq!(off.queued_hits, on.queued_hits);
+            assert!(off.admission_probe.is_none());
+        }
+        assert!(!off.admission_probe_stats().enabled);
+        assert_eq!(off.admission_probe_stats().records.capacity(), 0);
+        assert!(!on.admission_probe_stats().records.is_empty());
+        let retained = on.admission_probe_stats();
+        on.set_admission_probe(true);
+        assert_eq!(retained, on.admission_probe_stats());
+        on.set_admission_probe(false);
+        assert!(on.admission_probe.is_none());
+        assert_eq!(off.take_requests(), on.take_requests());
+    }
 
     /// A non-terminator body op (`addi`), 4 bytes, with a distinguishable raw word.
     fn body(raw: u32) -> MicroOp {

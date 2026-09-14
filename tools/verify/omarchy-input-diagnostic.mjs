@@ -18,7 +18,7 @@ for (let i = 2; i < process.argv.length; i += 1) {
   const arg = process.argv[i];
   if (!arg.startsWith("--")) { positional.push(arg); continue; }
   const key = arg.slice(2).replaceAll("-", "");
-  if (key === "checkonly" || key === "profile" || key === "selftestcpuprofile" || key === "headed") { options[key] = true; continue; }
+  if (key === "checkonly" || key === "profile" || key === "selftestcpuprofile" || key === "headed" || key === "admissionprobe") { options[key] = true; continue; }
   if (!["pairdirectory", "chunkmanifest", "chunkdir", "clickdelayms", "jitresidency", "decodedcacheentries", "jitthreshold"].includes(key)) {
     throw Error(`unknown diagnostic option: ${arg}`);
   }
@@ -43,6 +43,10 @@ if (decodedCacheEntries !== undefined && !["4096", "16384"].includes(decodedCach
   throw Error("invalid --decoded-cache-entries; expected 4096 or 16384");
 }
 const jitThreshold = options.jitthreshold;
+if (options.admissionprobe && (positional[2] !== "1" || divider !== "64" || options.profile ||
+    jitResidency !== undefined || decodedCacheEntries !== undefined || jitThreshold !== undefined)) {
+  throw Error("admission probe requires explicit JIT 1, divider 64, default caches/threshold and no profiling");
+}
 if (jitThreshold !== undefined && !["1", "64", "512"].includes(jitThreshold)) {
   throw Error("invalid --jit-threshold; expected 1, 64, or 512");
 }
@@ -369,7 +373,8 @@ try {
   const decodedCacheOverride = decodedCacheEntries === undefined ? "" : `&decodedCacheEntries=${encodeURIComponent(decodedCacheEntries)}`;
   const thresholdOverride = jitThreshold === undefined ? "" : `&jitThreshold=${encodeURIComponent(jitThreshold)}`;
   const profileOverride = options.profile ? "&profile=1" : "";
-  await page.goto(`http://127.0.0.1:${port}/app.html?guest=omarchy&desktop=1&omarchyDivider=${divider}&jit=${jit}${residencyOverride}${decodedCacheOverride}${thresholdOverride}${profileOverride}${assetOverride}#ide`);
+  const admissionOverride = options.admissionprobe ? "&jitAdmissionProbe=1" : "";
+  await page.goto(`http://127.0.0.1:${port}/app.html?guest=omarchy&desktop=1&omarchyDivider=${divider}&jit=${jit}${residencyOverride}${decodedCacheOverride}${thresholdOverride}${profileOverride}${admissionOverride}${assetOverride}#ide`);
   await page.waitForFunction(() => window.wvmDemo?.isGuestReady?.(), null, { timeout: 120000 });
   identities.ready = await page.evaluate(async () => ({
     startedAt: new Date().toISOString(), pageUrl: location.href,
@@ -397,6 +402,7 @@ try {
     pageUrl, sourceReceipt, jitResidency: jitResidency ?? null,
     decodedCacheEntries: decodedCacheEntries ?? null, jitThreshold: jitThreshold ?? null,
     profileRequested: Boolean(options.profile), controllerCapabilities,
+    admissionProbeRequested: Boolean(options.admissionprobe),
   };
   history.push({ time: new Date().toISOString(), event: "ready", ...sessionReceipt });
   await collectEvidence();

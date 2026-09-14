@@ -29,6 +29,7 @@ import { createTaskQuiescence } from "./task-quiescence.js";
 import { validateGuestClock, validateICountDivider, createGuestClockLifecycle } from "./guest-clock.js";
 import { validateDecodedCacheEntries, applyDecodedCacheEntries } from "./decoded-cache.js";
 import { fetchVerifiedBootAsset } from "./boot-asset-cache.js";
+import { applyAdmissionProbe } from "./admission-probe.js";
 
 // Responsiveness: a near-zero-delay "yield to the main thread" for rescheduling the run loop. The VM
 // runs on the main thread (a Web Worker offload is a larger follow-up), so a long synchronous run slice
@@ -255,6 +256,8 @@ export async function startLinuxBoot(opts = {}) {
     // E4-T38: one explicit live-module screen per boot. `repack-off` is the current conservative
     // single-pass batcher; the cap variants change only the live batch budget.
     jitResidency = undefined,
+    // T03j: default-off bounded admission observation; not performance profiling.
+    jitAdmissionProbe = false,
     profile = undefined,
     // Deterministic parity/test seam: restore the machine but do not execute the first scheduler
     // slice until the owner explicitly resumes it. Production callers leave this false.
@@ -321,6 +324,8 @@ export async function startLinuxBoot(opts = {}) {
   let baseUrl = opts.baseUrl ?? null;
 
   try {
+    if (typeof jitAdmissionProbe !== "boolean") throw new TypeError("jitAdmissionProbe must be boolean");
+    if (jitAdmissionProbe && jit !== true) throw new Error("jitAdmissionProbe requires explicit JIT");
     validateDecodedCacheEntries(decodedCacheEntries);
     validateGuestClock(guestClock);
     validateICountDivider(icountDivider, guestClock);
@@ -890,6 +895,7 @@ export async function startLinuxBoot(opts = {}) {
     // All initial resume candidates are settled; selection must survive restore and precede execution.
     applyDecodedCacheEntries(machine, decodedCacheEntries);
     const guestClockLifecycle = createGuestClockLifecycle(machine, guestClock, icountDivider);
+    if (jitAdmissionProbe) applyAdmissionProbe(machine, jitAdmissionProbe);
 
     // No resume candidate was coherent, so this machine is about to execute its cold guest boot.
     // Persistent resume success intentionally reaches the scheduler without a booting state.

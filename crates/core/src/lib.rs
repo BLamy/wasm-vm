@@ -1076,6 +1076,25 @@ impl Machine {
         s
     }
 
+    /// Default-off admission witness observer. Never enables profiling or changes JIT policy.
+    pub fn set_admission_probe(&mut self, enabled: bool) {
+        self.discovery.set_admission_probe(enabled);
+    }
+
+    /// One immutable host observation of exact queue membership and PC-only executor residency.
+    /// The latter is deliberately not evidence of an exact historical installation.
+    pub fn admission_probe_stats(&self) -> dispatch::AdmissionProbeStats {
+        let mut stats = self.discovery.admission_probe_stats();
+        for row in &mut stats.records {
+            row.compile_queued = self.compile_queue.contains_request(&row.request);
+            row.executor_resident_at_report = self
+                .executor
+                .as_ref()
+                .map(|e| e.is_compiled(row.request.phys_pc));
+        }
+        stats
+    }
+
     /// Immutable compile-queue accounting, resident depth and capacity from the same borrow.
     /// These are lifetime queue counters, independent of discovery's generation/reset counters.
     pub fn compile_queue_stats(&self) -> (compile_queue::CompileQueueStats, usize, usize) {
@@ -5074,6 +5093,62 @@ mod decoded_cache_capacity_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[test]
+    fn admission_probe_enabled_disabled_trace_state_and_nomination_parity() {
+        use crate::bus::{Bus, mmap::DRAM_BASE};
+        use crate::resume::ComponentSnapshot;
+        use crate::trace::HashSink;
+        let run = |enabled| {
+            let mut m = Machine::new(64 * 1024);
+            // 100 iterations nominate the first loop. One fall-through jump then fills the
+            // one-slot counter map; the final recurring loop is actually refused while full.
+            let words = [
+                0xfff1_0113,
+                0xfe01_1ee3,
+                0x0040_006f,
+                0x0010_8093,
+                0xffdf_f06f,
+            ];
+            for (i, word) in words.into_iter().enumerate() {
+                m.bus_mut().store32(DRAM_BASE + i as u64 * 4, word).unwrap();
+            }
+            m.hart.regs.pc = DRAM_BASE;
+            m.hart.regs.write(2, 100);
+            m.set_block_cache(true);
+            m.set_interrupt_batching(true);
+            m.discovery = dispatch::BlockDiscovery::with_bounds(4, 1);
+            m.set_hotness_threshold(8);
+            m.set_admission_probe(enabled);
+            assert!(!m.profiling);
+            assert!(m.host_timer.is_none());
+            let mut trace = HashSink::new();
+            let outcome = m.run_traced(1000, &mut trace);
+            let probe = m.admission_probe_stats();
+            assert_eq!(probe.enabled, enabled);
+            if enabled {
+                assert_eq!(probe.records.len(), 1);
+                assert_eq!(probe.records[0].request.phys_pc, DRAM_BASE + 12);
+                assert!(probe.records[0].reasons.counts_full > 100);
+                assert_eq!(probe.records[0].executor_resident_at_report, None);
+                assert_eq!(probe, m.admission_probe_stats(), "report must be read-only");
+            } else {
+                assert!(probe.records.is_empty());
+            }
+            assert_eq!(m.discovery_stats().nominated, 1);
+            (
+                trace.hash(),
+                trace.retired(),
+                outcome,
+                m.snapshot(),
+                m.hart.to_snapshot(),
+                m.discovery_stats(),
+                m.take_translation_requests(),
+            )
+        };
+        assert_eq!(run(false), run(true));
+    }
 
     #[test]
     fn kernel_footprint_honours_image_size() {
