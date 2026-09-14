@@ -1,0 +1,25 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   'metric-done': '127',
+-   'metric-done': '126',
+    'metric-fail': '0',
++   'metric-pass': '127'
+-   'metric-pass': '126'
+  }
+
+    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t18e-demo-smoke.mjs:50:10 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: { 'metric-pass': '127', 'metric-fail': '0', 'metric-done': '127' },
+  expected: { 'metric-pass': '126', 'metric-fail': '0', 'metric-done': '126' },
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

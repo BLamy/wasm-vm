@@ -1,0 +1,7 @@
+clone=/private/tmp/wasm-vm-t03j-cold.QWTTKg/repo
+head=5ee8ed607027731bd9a50a132205c7bb42574e69
+target=/private/tmp/wasm-vm-t03j-cold.QWTTKg/target
+core_exit=101
+wasm_exit=0
+final_git_status:
+finished_utc=2026-09-14T05:03:00Z
