@@ -1115,16 +1115,21 @@ async function runLive() {
     report.result = "cold-pair-captured-input-unverified";
     return;
   }
-  const foot = await mappedFoot(page, "initial desktop");
-  report.foot = foot;
+  let foot;
+  if (!inputTrial) {
+    foot = await mappedFoot(page, "initial desktop");
+    report.foot = foot;
+  }
   if (mode === "verify") await assertNoOmarchyPersistentIdb(page, "initial desktop");
   if (expectedRenderer) await proveHyprlandRenderer(page, "initial desktop");
   // The initial full-screen Foot is focused in the packaged desktop. Physical DOM keys, never
   // serial injection, create the nonce file; a separate serial command reads it back.
   const prewarmStartedAt = mode === "capture" ? Date.now() : null;
-  const active = await exec("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow", page, "initial:hyprctl-activewindow");
-  assert.equal(active.exit, 0, "active window query failed");
-  assert.equal(JSON.parse(active.stdout).address, foot.address);
+  if (!inputTrial) {
+    const active = await exec("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow", page, "initial:hyprctl-activewindow");
+    assert.equal(active.exit, 0, "active window query failed");
+    assert.equal(JSON.parse(active.stdout).address, foot.address);
+  }
   await startupCall(() => page.locator("#ide-display-canvas").click({ position: { x: 300, y: 200 } }));
   const keyboardUrl = page.url();
   await startupCall(() => assertCanvasFocus(page, "physical-keyboard-before", keyboardUrl));
@@ -1297,6 +1302,17 @@ try {
         await collectWireEvidence(page, "final");
         const evidence = await page.evaluate(() => window.__omarchyLiveEvidence);
         report.events = evidence?.events ?? [];
+        // Observation only, from the same page clock; no extra pre-input RPC or typing delay.
+        if (report.keyboard) {
+          const ready = report.events.find(event => event.type === "wvm:desktop-ready");
+          const firstKey = report.inputEvents.find(event => event.context === pageLabels.get(page)
+            && event.epoch === "final" && event.type === "keydown" && event.trusted === true);
+          if (Number.isFinite(ready?.ms) && Number.isFinite(firstKey?.ms)) {
+            report.keyboard.desktopReadyPageMs = ready.ms;
+            report.keyboard.firstPhysicalKeydownPageMs = firstKey.ms;
+            report.keyboard.readyToFirstPhysicalKeydownMs = firstKey.ms - ready.ms;
+          }
+        }
         await fs.writeFile(path.join(out, "serial.log"), evidence?.serial ?? "");
       }, Math.min(cleanupDeadline, Date.now() + 10000), "cleanup evidence");
     } catch (error) {
