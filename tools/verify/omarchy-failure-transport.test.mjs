@@ -10,7 +10,7 @@ import { createHash } from "node:crypto";
 import { chromium } from "../../web/node_modules/playwright/index.mjs";
 import { pauseFailedInput, exportFailedInput } from "./omarchy-failure-checkpoint.mjs";
 
-test("actual CDP query and bounded loopback stream export one paused synthetic instance", { timeout: 30000 }, async () => {
+test("actual CDP query and bounded loopback stream export one paused synthetic instance", { timeout: 90000 }, async () => {
   const bytes = Buffer.alloc(1024 ** 3); bytes.set(Buffer.from("synthetic-kernel"), 64);
   const digest = createHash("sha256").update(bytes).digest("hex");
   const server = createServer((req, res) => {
@@ -29,9 +29,11 @@ test("actual CDP query and bounded loopback stream export one paused synthetic i
   });
   await new Promise(resolve => server.listen(0, "127.0.0.1", resolve));
   const out = await fs.mkdtemp(path.join(os.tmpdir(), "omarchy-endpoint-transport-"));
-  let browser;
+  let browser, browserServer;
   try {
-    browser = await chromium.launch({ headless: true });
+    browserServer = await chromium.launchServer({ headless: true,
+      executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
+    browser = await chromium.connect(browserServer.wsEndpoint());
     const page = await browser.newPage();
     await page.goto(`http://127.0.0.1:${server.address().port}`);
     await page.waitForFunction(() => window.ready);
@@ -44,5 +46,10 @@ test("actual CDP query and bounded loopback stream export one paused synthetic i
     assert.equal(await page.evaluate(() => window.paused), true);
     const actual = gunzipSync(await fs.readFile(report.failureCheckpoint.snapshot.file));
     assert.deepEqual(actual, bytes);
-  } finally { await browser?.close(); server.closeAllConnections(); server.close(); await fs.rm(out, { recursive: true }); }
+  } finally {
+    const closing = Date.now();
+    await browser?.close(); await browserServer?.close();
+    assert.ok(Date.now() - closing < 5000, "owned debugger client/server close exceeded its budget");
+    server.closeAllConnections(); server.close(); await fs.rm(out, { recursive: true });
+  }
 });

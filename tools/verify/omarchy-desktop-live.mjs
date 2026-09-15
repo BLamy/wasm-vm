@@ -1335,6 +1335,14 @@ try {
     }
     // Preserve a receipt even if browser shutdown subsequently stalls.
     await fs.writeFile(path.join(out, "report.json"), JSON.stringify(report, null, 2) + "\n");
+    // Disconnect the recorder's Playwright client as well as closing the owned
+    // browser server; debugger sessions must not retain its websocket transport.
+    if (failureCheckpoint) {
+      try {
+        await withinTrialDeadline(() => browser.close(), Math.min(cleanupDeadline, Date.now() + 5000), "browser client close");
+        report.cleanup.clientClosed = true;
+      } catch (error) { report.cleanup.clientCloseError = String(error); }
+    }
     try {
       await withinTrialDeadline(() => browserServer.close(), Math.min(cleanupDeadline, Date.now() + 10000), "browser close");
       report.cleanup.closed = true;

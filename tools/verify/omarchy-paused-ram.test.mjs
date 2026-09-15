@@ -21,7 +21,7 @@ test("pinned RAM adapter preserves the earlier decoder and excludes current-task
   assert.equal(result.context.pc, undefined);
   const flag = Number(BigInt(result.context.pagingFlags[0].physical) - 0x80000000n);
   ram[flag] = 0; assert.throws(() => inspectPausedRam(ram, image, map, layout), /not the pinned Sv57/u); ram[flag] = 1;
-  const bashCpu = Number(result.current.task - 0xff60000000000000n - 0x80000000n + 0x80000000n) + layout.offsets.TASK_ON_CPU;
+  const bashCpu = Number(result.current.task - 0xff60000000000000n) + layout.offsets.TASK_ON_CPU;
   const renderCpu = result.targets[1].fields.TASK_ON_CPU.ramOffset;
   ram.writeUInt32LE(1, renderCpu);
   assert.throws(() => inspectPausedRam(ram, image, map, layout), /ambiguous/u);

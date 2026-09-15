@@ -76,6 +76,9 @@ releases/chunked-node-alpine/
 # Restore it for local acceptance/deployment with tools/fetch-omarchy-snapshot.mjs.
 releases/boot-snapshot/omarchy-ready.snap.gz
 
+# Full paused guest RAM is local replay evidence; committed receipts pin its SHA-256.
+evidence/omarchy-profile/input-wait-r*/desktop/failed-input.ram.gz
+
 releases/wvseccomp-riscv64
 
 # Container bundles baked into the Alpine rootfs (rebuild: tools/build-container-bundle.sh <img>).
