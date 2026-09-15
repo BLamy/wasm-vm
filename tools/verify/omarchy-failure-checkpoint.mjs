@@ -6,12 +6,19 @@ import fs from "node:fs/promises";
 import { createHash, randomBytes } from "node:crypto";
 import { createGzip } from "node:zlib";
 import { Transform } from "node:stream";
+import { once } from "node:events";
 import { pipeline } from "node:stream/promises";
 import path from "node:path";
 import { withinTrialDeadline } from "./omarchy-input-trial.mjs";
 
 export const FAILURE_CHECKPOINT_MS = 180000;
 const LIMIT = 2 * 1024 ** 3;
+const CHUNK_BYTES = 8 * 1024 ** 2;
+export function chunkLength(rawOffset, received, total) {
+  assert.equal(rawOffset, String(received), "duplicate or out-of-order RAM chunk");
+  assert.ok(received < total, "RAM already complete");
+  return Math.min(CHUNK_BYTES, total - received);
+}
 export function assertFailedInput(report, now = Date.now()) {
   assert.equal(report.mode, "input-trial");
   assert.equal(report.result, "failed");
@@ -123,6 +130,7 @@ export async function exportFailedInput(page, browser, out, report, { ramBytes =
         objectId: objects.objects.objectId, functionDeclaration: selectMachineExpression, returnByValue: true,
       });
       const expectedDigest = digest.result.value;
+      receipt.digestComputedAt = new Date().toISOString();
       assert.match(expectedDigest, /^[0-9a-f]{64}$/u);
       if (!anchor) {
         const kernel = await fs.readFile(new URL("../../releases/kernel/6.6.63/Image", import.meta.url));
@@ -137,36 +145,53 @@ export async function exportFailedInput(page, browser, out, report, { ramBytes =
       });
       receipt.snapshot = { ...saved.result.value, kind: "raw guest RAM; no current CPU registers or device snapshot",
         stateDigestBefore: expectedDigest, anchor, anchorOffset };
+      receipt.regionSelectedAt = new Date().toISOString();
+      await fs.writeFile(path.join(out, "checkpoint-progress.json"), JSON.stringify(receipt, null, 2) + "\n");
       const token = `/${randomBytes(24).toString("hex")}`, filename = path.join(out, "failed-input.ram.gz");
       const hash = createHash("sha256");
-      let accepted = false;
-      let receiveResolve, receiveReject;
-      const received = new Promise((resolve, reject) => { receiveResolve = resolve; receiveReject = reject; });
-      // Attach immediately so an early network/stream failure cannot be unhandled.
-      received.catch(() => {});
+      let receivedBytes = 0, busy = false;
+      const meter = snapshotMeter(receipt.snapshot.bytes, hash);
+      const received = pipeline(meter, createGzip({ level: 1 }), createWriteStream(filename, { flags: "wx" }), { signal: abort.signal });
+      received.catch(() => {}); // Error is awaited below; never an unhandled rejection.
       server = createServer((request, response) => {
-        if (request.url !== token || request.headers.origin !== origin) { response.writeHead(403).end(); return; }
+        if (!request.url.startsWith(`${token}/`) || request.headers.origin !== origin) { response.writeHead(403).end(); return; }
         response.setHeader("Access-Control-Allow-Origin", origin);
         if (request.method === "OPTIONS") {
           response.setHeader("Access-Control-Allow-Methods", "POST");
           response.setHeader("Access-Control-Allow-Headers", "content-type");
+          response.setHeader("Access-Control-Max-Age", "600");
           response.writeHead(204).end(); return;
         }
-        if (request.method !== "POST" || accepted) { response.writeHead(405).end(); return; }
-        accepted = true;
-        pipeline(request, snapshotMeter(receipt.snapshot.bytes, hash), createGzip({ level: 1 }),
-          createWriteStream(filename, { flags: "wx" }), { signal: abort.signal }).then(() => {
-            receipt.snapshot.sha256 = hash.digest("hex");
-            response.writeHead(200).end("captured"); receiveResolve();
-          }, error => { response.destroy(error); receiveReject(error); });
+        if (request.method !== "POST" || busy) { response.writeHead(405).end(); return; }
+        busy = true;
+        (async () => {
+          const expected = chunkLength(request.url.slice(token.length + 1), receivedBytes, receipt.snapshot.bytes);
+          assert.equal(Number(request.headers["content-length"]), expected, "RAM chunk length header");
+          let count = 0;
+          for await (const bytes of request) {
+            count += bytes.length; assert.ok(count <= expected, "oversized RAM chunk");
+            if (!meter.write(bytes)) await once(meter, "drain");
+          }
+          assert.equal(count, expected, "truncated RAM chunk");
+          receivedBytes += count;
+          if (receivedBytes === receipt.snapshot.bytes) {
+            meter.end(); await received; receipt.snapshot.sha256 = hash.digest("hex");
+          }
+          busy = false; response.writeHead(200).end("captured");
+        })().catch(error => { meter.destroy(error); response.destroy(error); });
       });
       await new Promise((resolve, reject) => { server.once("error", reject); server.listen(0, "127.0.0.1", resolve); });
       const destination = `http://127.0.0.1:${server.address().port}${token}`;
       await command("Runtime.evaluate", {
-        expression: `fetch(${JSON.stringify(destination)}, {method:'POST',headers:{'Content-Type':'application/octet-stream'},body:globalThis.__omarchyFailureSnapshot}).then(r=>{if(!r.ok)throw Error('snapshot upload '+r.status);return r.text();})`,
+        expression: `(async()=>{const bytes=globalThis.__omarchyFailureSnapshot;
+          for(let offset=0;offset<bytes.length;offset+=${CHUNK_BYTES}){
+            const r=await fetch(${JSON.stringify(destination)}+'/'+offset,{method:'POST',headers:{'Content-Type':'application/octet-stream'},body:bytes.subarray(offset,offset+${CHUNK_BYTES})});
+            if(!r.ok)throw Error('RAM chunk upload '+r.status);await r.text();
+          }return bytes.length;})()`,
         awaitPromise: true, returnByValue: true,
       });
       await received;
+      receipt.streamedAt = new Date().toISOString();
       const after = await command("Runtime.evaluate", { expression: "globalThis.__omarchyFailureMachine.stateDigest()", returnByValue: true });
       receipt.snapshot.stateDigestAfter = after.result.value;
       assert.equal(receipt.snapshot.sha256, expectedDigest);

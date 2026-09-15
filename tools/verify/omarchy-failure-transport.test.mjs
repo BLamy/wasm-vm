@@ -11,11 +11,11 @@ import { chromium } from "../../web/node_modules/playwright/index.mjs";
 import { pauseFailedInput, exportFailedInput } from "./omarchy-failure-checkpoint.mjs";
 
 test("actual CDP query and bounded loopback stream export one paused synthetic instance", { timeout: 30000 }, async () => {
-  const bytes = Buffer.alloc(1048576); bytes.set(Buffer.from("synthetic-kernel"), 64);
+  const bytes = Buffer.alloc(1024 ** 3); bytes.set(Buffer.from("synthetic-kernel"), 64);
   const digest = createHash("sha256").update(bytes).digest("hex");
   const server = createServer((req, res) => {
     res.setHeader("Content-Type", "text/javascript");
-    if (req.url === "/pkg/wasm_vm_wasm.js") res.end(`const memory=new WebAssembly.Memory({initial:16});
+    if (req.url === "/pkg/wasm_vm_wasm.js") res.end(`const memory=new WebAssembly.Memory({initial:16384});
       new Uint8Array(memory.buffer).set(new TextEncoder().encode('synthetic-kernel'),64);
       export default ()=>({memory}); export class WasmLinux {
       constructor(){this.__wbg_ptr=1;}
@@ -38,7 +38,7 @@ test("actual CDP query and bounded loopback stream export one paused synthetic i
     const report = { mode: "input-trial", result: "failed", trial: { outcome: "nonce-readback-failed", readbackMs: 120000 },
       keyboard: { typedAt: new Date(1000).toISOString(), enteredAtMs: 1000, deadlineAt: new Date(121000).toISOString(), verified: false } };
     await pauseFailedInput(page, report);
-    await exportFailedInput(page, browser, out, report, { ramBytes: 1048576, anchorOffset: 64, anchor: [...Buffer.from("synthetic-kernel")] });
+    await exportFailedInput(page, browser, out, report, { ramBytes: bytes.length, anchorOffset: 64, anchor: [...Buffer.from("synthetic-kernel")] });
     assert.equal(report.result, "failed"); assert.equal(report.keyboard.verified, false);
     assert.equal(report.failureCheckpoint.status, "captured");
     assert.equal(await page.evaluate(() => window.paused), true);

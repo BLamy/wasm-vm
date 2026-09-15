@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { Readable, Writable } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import { assertFailedInput, snapshotMeter, selectMachineExpression, findGuestRam, pauseFailedInput } from "./omarchy-failure-checkpoint.mjs";
+import { assertFailedInput, snapshotMeter, selectMachineExpression, findGuestRam, chunkLength, pauseFailedInput } from "./omarchy-failure-checkpoint.mjs";
 
 function report() { return { mode: "input-trial", result: "failed", trial: { outcome: "nonce-readback-failed", readbackMs: 120000 },
   keyboard: { typedAt: new Date(1000).toISOString(), enteredAtMs: 1000, deadlineAt: new Date(121000).toISOString(), verified: false } }; }
@@ -49,4 +49,10 @@ test("snapshot stream hashes exact bytes and rejects short/oversized bodies", as
   assert.equal(hash.digest("hex"), createHash("sha256").update(bytes).digest("hex"));
   for (const size of [bytes.length - 1, bytes.length + 1]) await assert.rejects(
     pipeline(Readable.from([Buffer.alloc(size)]), snapshotMeter(bytes.length, createHash("sha256")), sink()), /truncated|exceeds/u);
+});
+test("bounded RAM chunks require contiguous offsets and stop exactly at the end", () => {
+  assert.equal(chunkLength("0", 0, 10000000), 8388608);
+  assert.equal(chunkLength("8388608", 8388608, 10000000), 1611392);
+  for (const offset of ["0", "8388609", "08388608", "8388608?x"]) assert.throws(() => chunkLength(offset, 8388608, 10000000));
+  assert.throws(() => chunkLength("10000000", 10000000, 10000000), /complete/u);
 });
