@@ -460,7 +460,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.025999` [E5.5-T03o](epic-5.5-omarchy/E5.5-T03o-input-wait-capture.md) — Capture coherent Omarchy guest state after the fixed input deadline *(deps: E5.5-T03n)*
 - [-] `525.026` [E5.5-T03d](epic-5.5-omarchy/E5.5-T03d-desktop-responsiveness.md) — Resolve measured Omarchy post-restore desktop input latency *(deps: E5.5-T02a, E5.5-T03c, E5.5-T03f, E5.5-T03h)*
 - [x] `525.026` [E5.5-T03p](epic-5.5-omarchy/E5.5-T03p-render-budget-trial.md) — Measure Omarchy physical input with a smaller guest scanout *(deps: E5.5-T03o)*
-- [~] `525.0265` [E5.5-T03r](epic-5.5-omarchy/E5.5-T03r-compositor-mode-trial.md) — Request the smaller Omarchy mode explicitly in Hyprland *(deps: E5.5-T03p)*
+- [?] `525.0265` [E5.5-T03r](epic-5.5-omarchy/E5.5-T03r-compositor-mode-trial.md) — Request the smaller Omarchy mode explicitly in Hyprland *(deps: E5.5-T03p)*
 - [ ] `525.027` [E5.5-T03q](epic-5.5-omarchy/E5.5-T03q-responsive-mode-release.md) — Publish a validated responsive Omarchy desktop mode *(deps: E5.5-T03r)*
 - [b] `525.03` [E5.5-T03a](epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md) — Prepare the clean Omarchy browser desktop session *(deps: E5.5-T02a, E5.5-T03q)*
 - [ ] `525.04` [E5.5-T04a](epic-5.5-omarchy/E5.5-T04a-browser-demo.md) — Make the verified Omarchy desktop the browser demo *(deps: E5.5-T03a)*
