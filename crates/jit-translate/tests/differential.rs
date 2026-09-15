@@ -1879,7 +1879,7 @@ fn fp_ops_are_unsupported() {
         },
         FclassS { rd: 1, rs1: 2 },
         FcvtToIntS {
-            width: FpIntWidth::W,
+            width: FpIntWidth::L,
             rd: 1,
             rs1: 2,
             rm: 7,

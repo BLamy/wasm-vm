@@ -789,12 +789,13 @@ export interface InitOutput {
     readonly slirpDhcpStats: () => [number, number];
     readonly slirpTailscaleCommand: (a: number, b: number) => number;
     readonly wasm_bindgen__convert__closures_____invoke__h51bf15f977a2556e: (a: number, b: number, c: number, d: number, e: number, f: number) => bigint;
+    readonly wasm_bindgen__convert__closures_____invoke__h20dc1d34b08df2ca: (a: number, b: number, c: number, d: number, e: number) => bigint;
     readonly wasm_bindgen__convert__closures_____invoke__h1dbcf2b5dd15a422: (a: number, b: number, c: any) => [number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h8c3f0668a05de02f: (a: number, b: number, c: any, d: any) => void;
     readonly wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_8: (a: number, b: number, c: any) => void;
     readonly wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_9: (a: number, b: number, c: any) => void;
     readonly wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_10: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_11: (a: number, b: number, c: any) => void;
     readonly wasm_bindgen__convert__closures_____invoke__h396b34def069612b: (a: number, b: number, c: bigint, d: number, e: number) => bigint;
     readonly wasm_bindgen__convert__closures_____invoke__h3c376d590f4b7628: (a: number, b: number, c: bigint, d: number) => bigint;
     readonly wasm_bindgen__convert__closures_____invoke__hccc6447b5e5e2a92: (a: number, b: number, c: bigint, d: bigint, e: number, f: number) => bigint;

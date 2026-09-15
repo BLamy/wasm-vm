@@ -1,7 +1,7 @@
 # JIT F/D floating-point policy — the measured decision (E4-T15)
 
 **Status:** accepted · **Date:** 2026-08-05 · **Epic:** 4 (acceleration) · **Depends on:** E4-T06 §9.4,
-E4-T12 · **Original decision:** side-exit-all (option a); measured Omarchy subsets in §§6–8
+E4-T12 · **Original decision:** side-exit-all (option a); measured Omarchy subsets in §§6–11
 
 `docs/jit-architecture.md` §9.4 flags FP as "the one place 'fast' and 'provably identical' conflict"
 and defers it to *this* measured decision. The three options were (a) side-exit every F/D op to the
@@ -243,3 +243,31 @@ batch exports and direct calls already use their allocated function indices.
 Integer-only and arithmetic-only modules retain their existing layout. Other
 conversion directions and FP families keep their established admission policy.
 This capability does not establish physical desktop responsiveness.
+
+## 11. Measured float-to-word conversions (E5.5-T03y)
+
+The renderer recording contains 426,264 single-precision float-to-integer
+retirements, without separating destination widths. The saved renderer page
+contains eight FCVT.W.S/RTZ encodings. FCVT.W.S and FCVT.WU.S now call the pure
+`env.fp_to_word_s(i32 bits, i32 unsigned, i32 resolved_rm) -> i64` helper through
+the existing integer-only `softfloat::f32_to_int` backend. Low result bits and
+new flags fit the existing packed word; L/LU destinations stay interpreted.
+The helper receives no execution context and has no memory/device side effect.
+
+Generated code checks FS, validates the resolved rounding mode and canonicalizes
+malformed NaN boxes before the call. It sign-extends the returned low 32 bits
+for both W and WU, writes the integer destination and accrues flags/FS Dirty
+without writing any FPR or its dirty-mask bits. An exact result discarded into
+x0 still dirties FS. Integer batch write masks include the destination so a
+direct successor consumes the current value. The optional helper is allocated
+after arithmetic and from-integer imports; its actual index is retained at
+every call site, and all defined functions use their allocated indices.
+
+The [RISC-V F conversion rules](https://docs.riscv.org/reference/isa/v20260120/unpriv/f-st-ext.html)
+require clipping according to the rounded result and suppress new NX when NV
+is raised. This includes negative fractions that can round to unsigned zero
+without invalidity. Independent literal tests cover these distinctions, word
+sign extension, NaNs, flags, reserved modes and fault prefixes. The software
+backend, decoder and interpreter remain unchanged. Desktop responsiveness is
+still judged by physical input, independent nonce readback and real pixels at
+the original deadline.

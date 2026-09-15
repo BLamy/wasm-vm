@@ -55,6 +55,22 @@ pub fn fp_from_int_s(value: u64, width: u8, rm: u8) -> u64 {
     u64::from(bits) | (u64::from(flags.0) << 32)
 }
 
+/// Pure FCVT.W[U].S helper. The caller checks the source NaN box and validates
+/// rounding before entry. Return low word bits in 0..31 and flags in 32..36;
+/// the generated caller sign-extends the word for both signed and unsigned W.
+pub fn fp_to_word_s(bits: u32, unsigned: bool, rm: u8) -> u64 {
+    use crate::decode::FpIntWidth;
+    use crate::softfloat::{RoundMode, f32_to_int};
+    let width = if unsigned {
+        FpIntWidth::Wu
+    } else {
+        FpIntWidth::W
+    };
+    let round = RoundMode::from_bits(rm).expect("generated FP helper requires validated rounding");
+    let (word, flags) = f32_to_int(bits, width, round);
+    u64::from(word as u32) | (u64::from(flags.0) << 32)
+}
+
 /// The frozen `CpuState` linear-memory offsets (`docs/jit-architecture.md` §3.1). These MUST match
 /// `jit_translate::Abi::FROZEN`; the executor syncs guest registers to `XREG_BASE` and reads the
 /// exit protocol back from `EXIT_*`.

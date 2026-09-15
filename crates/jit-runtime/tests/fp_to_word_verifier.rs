@@ -1,4 +1,4 @@
-#[path = "../../../tests/support/jit_fp_from_integer_verifier.rs"]
+#[path = "../../../tests/support/jit_fp_to_word_verifier.rs"]
 mod proof;
 
 fn native(_: &wasm_vm_core::Machine) -> Box<dyn wasm_vm_core::jit::CompiledBlockExecutor> {
@@ -7,21 +7,21 @@ fn native(_: &wasm_vm_core::Machine) -> Box<dyn wasm_vm_core::jit::CompiledBlock
 #[test]
 fn verifier_native_conversion_literals() {
     eprintln!(
-        "CRITIC_NATIVE_FROM_INT_LITERALS {:?}",
+        "CRITIC_NATIVE_TO_WORD_LITERALS {:?}",
         proof::literal_goldens(native, false)
     );
 }
 #[test]
 fn verifier_native_conversion_seeded_aliases_and_illegal() {
     eprintln!(
-        "CRITIC_NATIVE_FROM_INT_SEEDED {:?}",
+        "CRITIC_NATIVE_TO_WORD_SEEDED {:?}",
         proof::seeded_aliases_and_illegal(native, false)
     );
 }
 #[test]
 fn verifier_native_conversion_control_and_faults() {
     eprintln!(
-        "CRITIC_NATIVE_FROM_INT_CONTROL {:?}",
+        "CRITIC_NATIVE_TO_WORD_CONTROL {:?}",
         proof::control_and_faults(native, false)
     );
 }
@@ -30,6 +30,7 @@ fn verifier_native_conversion_control_and_faults() {
 struct Probe {
     conversions: Vec<[i64; 3]>,
     arithmetic: Vec<[i32; 4]>,
+    to_words: Vec<[i32; 3]>,
 }
 fn instrumented_linker(engine: &wasmtime::Engine) -> wasmtime::Linker<Probe> {
     let mut linker = wasmtime::Linker::new(engine);
@@ -57,6 +58,21 @@ fn instrumented_linker(engine: &wasmtime::Engine) -> wasmtime::Linker<Probe> {
         .func_wrap("env", "sc", |_: i64, _: i64, _: i32| -> i64 {
             panic!("conversion touched reservation state")
         })
+        .unwrap();
+    linker
+        .func_wrap(
+            "env",
+            "fp_to_word_s",
+            |mut caller: wasmtime::Caller<'_, Probe>, bits: i32, unsigned: i32, rm: i32| -> i64 {
+                assert!(
+                    (0..2).contains(&unsigned),
+                    "invalid signedness reached helper"
+                );
+                assert!((0..5).contains(&rm), "invalid rounding reached helper");
+                caller.data_mut().to_words.push([bits, unsigned, rm]);
+                wasm_vm_core::jit::fp_to_word_s(bits as u32, unsigned != 0, rm as u8) as i64
+            },
+        )
         .unwrap();
     linker
         .func_wrap(
@@ -111,52 +127,15 @@ fn function_imports(bytes: &[u8]) -> Vec<(String, String)> {
     imports
 }
 fn probe_golden(kind: u8, source: u64, rm: usize) -> (u64, u64) {
-    if source == 0 {
-        return (0, 0);
-    }
     match (kind, source) {
-        (0 | 2, u64::MAX) => (0xbf80_0000, 0),
-        (1, u64::MAX) => (
-            [
-                0x4f80_0000,
-                0x4f7f_ffff,
-                0x4f7f_ffff,
-                0x4f80_0000,
-                0x4f80_0000,
-            ][rm],
-            1,
-        ),
-        (3, u64::MAX) => (
-            [
-                0x5f80_0000,
-                0x5f7f_ffff,
-                0x5f7f_ffff,
-                0x5f80_0000,
-                0x5f80_0000,
-            ][rm],
-            1,
-        ),
-        (0 | 1, 0x8000_0000_0000_0001) => (0x3f80_0000, 0),
-        (2, 0x8000_0000_0000_0001) => (
-            [
-                0xdf00_0000,
-                0xdeff_ffff,
-                0xdf00_0000,
-                0xdeff_ffff,
-                0xdf00_0000,
-            ][rm],
-            1,
-        ),
-        (3, 0x8000_0000_0000_0001) => (
-            [
-                0x5f00_0000,
-                0x5f00_0000,
-                0x5f00_0000,
-                0x5f00_0001,
-                0x5f00_0000,
-            ][rm],
-            1,
-        ),
+        (0, 0xffff_ffff_bf00_0000) => ([0, 0, u64::MAX, 0, u64::MAX][rm], 1),
+        (1, 0xffff_ffff_bf00_0000) => (0, [1, 1, 16, 1, 16][rm]),
+        (0, 0xffff_ffff_4f7f_ffff) => (0x7fff_ffff, 16),
+        (1, 0xffff_ffff_4f7f_ffff) => (0xffff_ffff_ffff_ff00, 0),
+        (0, 0xffff_fffe_bf00_0000) => (0x7fff_ffff, 16),
+        (1, 0xffff_fffe_bf00_0000) => (u64::MAX, 16),
+        (0, 0xffff_ffff_cf00_0000) => (0xffff_ffff_8000_0000, 0),
+        (1, 0xffff_ffff_cf00_0000) => (0, 16),
         _ => panic!("missing independent literal"),
     }
 }
@@ -170,12 +149,13 @@ fn verifier_generated_conversion_helper_counts_and_purity() {
     let linker = instrumented_linker(&engine);
     let mut cases = 0;
     let mut calls = 0;
-    for kind in 0..4 {
+    for kind in 0..2 {
         for rm in 0..8 {
             for (rs, rd, input) in [
-                (31, 0, u64::MAX),
-                (0, 31, u64::MAX),
-                (31, 31, 0x8000_0000_0000_0001),
+                (31, 0, 0xffff_ffff_bf00_0000),
+                (0, 31, 0xffff_ffff_4f7f_ffff),
+                (31, 31, 0xffff_fffe_bf00_0000),
+                (1, 1, 0xffff_ffff_cf00_0000),
             ] {
                 let raw = proof::conversion(kind, rd, rs, rm);
                 let bytes = translate_block(
@@ -185,7 +165,7 @@ fn verifier_generated_conversion_helper_counts_and_purity() {
                 .unwrap();
                 assert_eq!(
                     function_imports(&bytes),
-                    ["load", "store", "amo", "lr", "sc", "fp_from_int_s"]
+                    ["load", "store", "amo", "lr", "sc", "fp_to_word_s"]
                         .map(|s| ("env".to_string(), s.to_string()))
                 );
                 let mut sites = 0;
@@ -230,16 +210,13 @@ fn verifier_generated_conversion_helper_counts_and_purity() {
                                 proof::SENTINEL ^ r as u64,
                             );
                         }
-                        if rs != 0 {
-                            write_word(memory, &mut store, rs as usize * 8, input);
-                        }
-                        let source = if rs == 0 { 0 } else { input };
+                        write_word(memory, &mut store, 0x108 + rs as usize * 8, input);
                         let control = 8 | (u64::from(frm) << 5) | if fs == 0 { 0 } else { 0x100 };
                         write_word(memory, &mut store, 0x208, control);
                         write_word(memory, &mut store, 0x230, proof::PC);
                         write_word(memory, &mut store, 0x250, 0);
                         let before = memory.data(&store).to_vec();
-                        let old_calls = store.data().conversions.len();
+                        let old_calls = store.data().to_words.len();
                         let resolved = if rm == 7 { frm } else { rm };
                         let legal = fs != 0 && resolved < 5;
                         let exit = run.call(&mut store, 0).unwrap();
@@ -251,11 +228,11 @@ fn verifier_generated_conversion_helper_counts_and_purity() {
                                 ExitCode::IllegalInstruction
                             }
                         );
-                        assert_eq!(
-                            store.data().conversions.len() - old_calls,
-                            usize::from(legal)
+                        assert_eq!(store.data().to_words.len() - old_calls, usize::from(legal));
+                        assert!(
+                            store.data().arithmetic.is_empty()
+                                && store.data().conversions.is_empty()
                         );
-                        assert!(store.data().arithmetic.is_empty());
                         assert_eq!(
                             read_word(memory, &store, 12 * 8),
                             proof::SENTINEL.wrapping_add(1)
@@ -271,32 +248,46 @@ fn verifier_generated_conversion_helper_counts_and_purity() {
                         if legal {
                             calls += 1;
                             assert_eq!(
-                                store.data().conversions[old_calls],
-                                [source as i64, i64::from(kind), i64::from(resolved)]
+                                store.data().to_words[old_calls],
+                                [
+                                    if input >> 32 == 0xffff_ffff {
+                                        input as i32
+                                    } else {
+                                        0x7fc0_0000
+                                    },
+                                    i32::from(kind),
+                                    i32::from(resolved)
+                                ]
                             );
-                            let (bits, flags) = probe_golden(kind, source, resolved as usize);
+                            let (result, flags) = probe_golden(kind, input, resolved as usize);
                             assert_eq!(
-                                read_word(memory, &store, 0x108 + rd as usize * 8),
-                                proof::BOX | bits
+                                read_word(memory, &store, rd as usize * 8),
+                                if rd == 0 { 0 } else { result }
                             );
                             assert_eq!(
                                 read_word(memory, &store, 0x208),
-                                control | flags | 0x200 | (1_u64 << (32 + rd))
+                                control | flags | 0x200,
+                                "no FPR dirty bits may be added"
                             );
                         } else {
                             assert_eq!(read_word(memory, &store, 0x228), u64::from(raw));
                             assert_eq!(
-                                read_word(memory, &store, 0x108 + rd as usize * 8),
-                                proof::SENTINEL ^ u64::from(rd)
+                                read_word(memory, &store, rd as usize * 8),
+                                if rd == 0 { 0 } else { proof::SENTINEL }
                             );
                             assert_eq!(read_word(memory, &store, 0x208), control);
                         }
+                        assert_eq!(
+                            &before[0x108..0x208],
+                            &memory.data(&store)[0x108..0x208],
+                            "all source FPR bytes remain intact"
+                        );
                         for (offset, (&old, &new)) in
                             before.iter().zip(memory.data(&store)).enumerate()
                         {
-                            let freg = 0x108 + rd as usize * 8;
+                            let xreg = rd as usize * 8;
                             let allowed = (96..112).contains(&offset)
-                                || (freg..freg + 8).contains(&offset)
+                                || (xreg..xreg + 8).contains(&offset)
                                 || (0x208..0x210).contains(&offset)
                                 || (0x218..0x230).contains(&offset);
                             if !allowed {
@@ -309,30 +300,35 @@ fn verifier_generated_conversion_helper_counts_and_purity() {
             }
         }
     }
-    assert_eq!(cases, 3072);
-    assert_eq!(calls, 1620);
+    assert_eq!(cases, 2048);
+    assert_eq!(calls, 1080);
     eprintln!(
-        "CRITIC_FROM_INT_PURITY cases={cases} legal_helper_calls={calls} illegal_helper_calls=0 import_index=5 integer_wasm_only=true"
+        "CRITIC_TO_WORD_PURITY cases={cases} legal_helper_calls={calls} illegal_helper_calls=0 import_index=5 integer_wasm_only=true"
     );
 }
 
 #[test]
-fn verifier_mixed_conversion_arithmetic_function_indices() {
+fn verifier_mixed_optional_indices_and_integer_behavior() {
     use jit_translate::{Abi, translate_batch, translate_block};
     use wasm_vm_core::bus::mmap::DRAM_BASE;
     let root = proof::block(DRAM_BASE, &[0x001f_8f93, 0x0040_006f]);
-    let convert = proof::block(
-        DRAM_BASE + 8,
-        &[proof::conversion(3, 0, 31, 3), 0x0040_006f],
-    );
+    let convert = proof::block(DRAM_BASE + 8, &[0xd00f_8053, 0x0040_006f]); // fcvt.s.w f0,x31,rne
     let arithmetic = proof::block(DRAM_BASE + 16, &[0x0000_00d3, 0x0040_006f]); // fadd.s f1,f0,f0
-    let tail = proof::block(DRAM_BASE + 24, &[proof::conversion(0, 31, 0, 0)]);
+    let tail = proof::block(
+        DRAM_BASE + 24,
+        &[proof::conversion(1, 31, 1, 0), 0x001f_8f13],
+    ); // x30=x31+1
     let abi = Abi {
         direct_chain: true,
         ..Abi::FROZEN
     };
     let bytes = translate_batch(
-        &[root.clone(), convert.clone(), arithmetic.clone(), tail],
+        &[
+            root.clone(),
+            convert.clone(),
+            arithmetic.clone(),
+            tail.clone(),
+        ],
         &abi,
         &[
             [Some(1), None],
@@ -351,7 +347,8 @@ fn verifier_mixed_conversion_arithmetic_function_indices() {
             "lr",
             "sc",
             "fp_arith_s",
-            "fp_from_int_s"
+            "fp_from_int_s",
+            "fp_to_word_s"
         ]
         .map(|s| ("env".to_string(), s.to_string()))
     );
@@ -380,26 +377,26 @@ fn verifier_mixed_conversion_arithmetic_function_indices() {
     assert_eq!(
         exports,
         [
-            ("run0".to_string(), 7),
-            ("run1".to_string(), 8),
-            ("run2".to_string(), 9),
-            ("run3".to_string(), 10)
+            ("run0".to_string(), 8),
+            ("run1".to_string(), 9),
+            ("run2".to_string(), 10),
+            ("run3".to_string(), 11)
         ]
     );
-    for index in [5, 6, 8, 9, 10] {
+    for index in [5, 6, 7, 9, 10, 11] {
         assert!(
             call_indices.contains(&index),
             "missing actual generated call to {index}"
         );
     }
     let engine = wasmtime::Engine::default();
-    let module = wasmtime::Module::new(&engine, &bytes).unwrap();
     let linker = instrumented_linker(&engine);
+    let module = wasmtime::Module::new(&engine, &bytes).unwrap();
     let mut store = wasmtime::Store::new(&engine, Probe::default());
     let instance = linker.instantiate(&mut store, &module).unwrap();
     let memory = instance.get_memory(&mut store, "mem").unwrap();
     for (offset, value) in [
-        (31 * 8, 1 << 24),
+        (31 * 8, 2),
         (0x208, 0x108),
         (0x230, proof::PC),
         (0x250, 1),
@@ -408,44 +405,110 @@ fn verifier_mixed_conversion_arithmetic_function_indices() {
     ] {
         write_word(memory, &mut store, offset, value);
     }
-    let run = instance
+    instance
         .get_typed_func::<(i32, i32, i64), i32>(&mut store, "run0")
+        .unwrap()
+        .call(&mut store, (0, 1, 0))
         .unwrap();
-    run.call(&mut store, (0, 1, 0)).unwrap();
-    assert_eq!(store.data().conversions, [[0x0100_0001, 3, 3], [0, 0, 0]]);
-    assert_eq!(store.data().arithmetic, [[0x4b80_0001, 0x4b80_0001, 0, 0]]);
-    assert_eq!(read_word(memory, &store, 31 * 8), 0x0100_0001);
-    assert_eq!(read_word(memory, &store, 0x108), proof::BOX | 0x4b80_0001);
-    assert_eq!(read_word(memory, &store, 0x110), proof::BOX | 0x4c00_0001);
-    assert_eq!(read_word(memory, &store, 0x108 + 31 * 8), proof::BOX);
-    assert_eq!(read_word(memory, &store, 0x208) & 0xff, 9);
-    assert_eq!(read_word(memory, &store, 0x220), proof::PC + 28);
-    for (block, names) in [
-        (root, vec!["load", "store", "amo", "lr", "sc"]),
-        (
-            convert,
-            vec!["load", "store", "amo", "lr", "sc", "fp_from_int_s"],
-        ),
-        (
-            arithmetic,
-            vec!["load", "store", "amo", "lr", "sc", "fp_arith_s"],
-        ),
-    ] {
-        let single = translate_block(&block, &Abi::FROZEN).unwrap();
-        let batch = translate_batch(&[block], &Abi::FROZEN, &[[None, None]]).unwrap();
-        let want = names
-            .into_iter()
-            .map(|name| ("env".to_string(), name.to_string()))
-            .collect::<Vec<_>>();
-        assert_eq!(function_imports(&single), want);
-        assert_eq!(function_imports(&batch), want);
+    assert_eq!(store.data().conversions, [[3, 0, 0]]);
+    assert_eq!(store.data().arithmetic, [[0x4040_0000, 0x4040_0000, 0, 0]]);
+    assert_eq!(store.data().to_words, [[0x40c0_0000, 1, 0]]);
+    assert_eq!(read_word(memory, &store, 31 * 8), 6);
+    assert_eq!(read_word(memory, &store, 30 * 8), 7);
+    assert_eq!(read_word(memory, &store, 0x108), proof::BOX | 0x4040_0000);
+    assert_eq!(read_word(memory, &store, 0x110), proof::BOX | 0x40c0_0000);
+    assert_eq!(read_word(memory, &store, 0x208) & 0xff, 8);
+    assert_eq!(read_word(memory, &store, 0x220), proof::PC + 32);
+    assert_eq!(
+        read_word(memory, &store, 0x248) >> 32,
+        0xc000_0000,
+        "only x30/x31 belong in the mixed chain integer write mask"
+    );
+
+    // Exercise every optional ordering, not merely the all-helper module.
+    for mask in 0..4 {
+        let mut words = vec![];
+        let mut names = vec!["load", "store", "amo", "lr", "sc"];
+        if mask & 1 != 0 {
+            words.push(0x0000_00d3);
+            names.push("fp_arith_s");
+        }
+        if mask & 2 != 0 {
+            words.push(0xd00f_8153);
+            names.push("fp_from_int_s");
+        }
+        words.push(proof::conversion(1, 30, 0, 0));
+        names.push("fp_to_word_s");
+        let block = proof::block(DRAM_BASE, &words);
+        for (bytes, name) in [
+            (translate_block(&block, &Abi::FROZEN).unwrap(), "run"),
+            (
+                translate_batch(&[block], &Abi::FROZEN, &[[None, None]]).unwrap(),
+                "run0",
+            ),
+        ] {
+            assert_eq!(
+                function_imports(&bytes),
+                names
+                    .iter()
+                    .map(|s| ("env".to_string(), s.to_string()))
+                    .collect::<Vec<_>>()
+            );
+            let module = wasmtime::Module::new(&engine, &bytes).unwrap();
+            let mut store = wasmtime::Store::new(&engine, Probe::default());
+            let instance = linker.instantiate(&mut store, &module).unwrap();
+            let memory = instance.get_memory(&mut store, "mem").unwrap();
+            for (offset, value) in [
+                (31 * 8, 3),
+                (0x108, proof::BOX | 0x3fc0_0000),
+                (0x208, 0x100),
+                (0x230, proof::PC),
+            ] {
+                write_word(memory, &mut store, offset, value);
+            }
+            instance
+                .get_typed_func::<i32, i32>(&mut store, name)
+                .unwrap()
+                .call(&mut store, 0)
+                .unwrap();
+            assert_eq!(store.data().to_words, [[0x3fc0_0000, 1, 0]]);
+            assert_eq!(read_word(memory, &store, 30 * 8), 2);
+            assert_eq!(read_word(memory, &store, 0x208) & 31, 1);
+            assert_eq!(store.data().arithmetic.len(), usize::from(mask & 1 != 0));
+            assert_eq!(store.data().conversions.len(), usize::from(mask & 2 != 0));
+        }
     }
+    let bytes = translate_block(&root, &Abi::FROZEN).unwrap();
+    assert_eq!(
+        function_imports(&bytes),
+        ["load", "store", "amo", "lr", "sc"].map(|s| ("env".to_string(), s.to_string()))
+    );
+    let module = wasmtime::Module::new(&engine, &bytes).unwrap();
+    let mut store = wasmtime::Store::new(&engine, Probe::default());
+    let instance = linker.instantiate(&mut store, &module).unwrap();
+    let memory = instance.get_memory(&mut store, "mem").unwrap();
+    write_word(memory, &mut store, 31 * 8, u64::MAX);
+    write_word(memory, &mut store, 0x230, proof::PC);
+    instance
+        .get_typed_func::<i32, i32>(&mut store, "run")
+        .unwrap()
+        .call(&mut store, 0)
+        .unwrap();
+    assert_eq!(read_word(memory, &store, 31 * 8), 0);
+    assert_eq!(read_word(memory, &store, 0x220), proof::PC + 8);
+    assert!(
+        store.data().to_words.is_empty()
+            && store.data().arithmetic.is_empty()
+            && store.data().conversions.is_empty()
+    );
     for raw in [
+        0xc020_0053,
+        0xc030_0053,
+        0xc200_0053,
+        0xd200_0053,
         0x0800_0053,
         0x1800_0053,
         0x0200_0053,
-        0xc020_0053, // FCVT.L.S remains unsupported after the W/WU slice.
-        0xd200_0053,
         0x0000_0043,
     ] {
         assert!(
@@ -454,6 +517,6 @@ fn verifier_mixed_conversion_arithmetic_function_indices() {
         );
     }
     eprintln!(
-        "CRITIC_FROM_INT_INDICES imports=7 exports=run0:7,run1:8,run2:9,run3:10 actual_integer_conversion_arithmetic_conversion_chain=true integer_imports=5 unsupported_families=6"
+        "CRITIC_TO_WORD_INDICES imports=8 exports=run0:8,run1:9,run2:10,run3:11 all_optional_combinations=4 mixed_chain_executed=true integer_imports=5 unsupported_families=8"
     );
 }
