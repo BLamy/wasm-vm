@@ -1,0 +1,278 @@
+cargo fmt --all --check
+cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling unicode-ident v1.0.24
+   Compiling serde_core v1.0.228
+   Compiling serde v1.0.228
+   Compiling log v0.4.33
+   Compiling cranelift-srcgen v0.122.0
+   Compiling cfg-if v1.0.4
+   Compiling foldhash v0.1.5
+   Compiling libc v0.2.186
+   Compiling equivalent v1.0.2
+   Compiling hashbrown v0.17.1
+   Compiling cranelift-bitset v0.122.0
+   Compiling libm v0.2.16
+   Compiling bitflags v2.13.0
+   Compiling cranelift-isle v0.122.0
+   Compiling target-lexicon v0.13.5
+   Compiling cranelift-codegen-shared v0.122.0
+   Compiling version_check v0.9.5
+   Compiling anyhow v1.0.104
+   Compiling allocator-api2 v0.2.21
+   Compiling crc32fast v1.5.0
+   Compiling rustc-hash v2.1.3
+   Compiling thiserror v2.0.18
+   Compiling cranelift-assembler-x64-meta v0.122.0
+   Compiling generic-array v0.14.7
+   Compiling typenum v1.20.1
+   Compiling bumpalo v3.20.3
+   Compiling arbitrary v1.4.2
+   Compiling object v0.36.7
+   Compiling semver v1.0.28
+   Compiling wasmparser v0.235.0
+   Compiling wasm-encoder v0.235.0
+   Compiling memchr v2.8.2
+   Compiling shlex v2.0.1
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling termcolor v1.4.1
+   Compiling find-msvc-tools v0.1.9
+   Compiling leb128fmt v0.1.0
+   Compiling rustix v1.1.4
+   Compiling cc v1.2.65
+   Compiling either v1.16.0
+   Compiling wasmtime-internal-unwinder v35.0.0
+   Compiling wasmparser v0.240.0
+   Compiling syn v2.0.118
+   Compiling cpufeatures v0.2.17
+   Compiling errno v0.3.14
+   Compiling itertools v0.14.0
+   Compiling mach2 v0.4.3
+   Compiling wasmtime-internal-jit-icache-coherence v35.0.0
+   Compiling wasmtime-internal-asm-macros v35.0.0
+   Compiling once_cell v1.21.4
+   Compiling wasmtime-internal-slab v35.0.0
+   Compiling wasm-vm-wasm-emit v0.0.1 (/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo/crates/wasm-emit)
+   Compiling cranelift-control v0.122.0
+   Compiling wasmtime-internal-math v35.0.0
+   Compiling cranelift-assembler-x64 v0.122.0
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling indexmap v2.14.0
+   Compiling gimli v0.31.1
+   Compiling serde_derive v1.0.228
+   Compiling pulley-macros v35.0.0
+   Compiling thiserror-impl v2.0.18
+   Compiling wasmtime-internal-versioned-export-macros v35.0.0
+   Compiling wasmtime v35.0.0
+   Compiling pulley-interpreter v35.0.0
+   Compiling cobs v0.3.0
+   Compiling cranelift-codegen-meta v0.122.0
+   Compiling smallvec v1.15.2
+   Compiling hashbrown v0.15.5
+   Compiling postcard v1.1.3
+   Compiling cranelift-entity v0.122.0
+   Compiling cranelift-bforest v0.122.0
+   Compiling regalloc2 v0.12.2
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo/crates/core)
+   Compiling cranelift-codegen v0.122.0
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo/crates/jit-translate)
+   Compiling wasmprinter v0.235.0
+   Compiling wasmtime-environ v35.0.0
+   Compiling cranelift-frontend v0.122.0
+   Compiling cranelift-native v0.122.0
+   Compiling wasmtime-internal-cranelift v35.0.0
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 00s
+     Running tests/differential.rs (target/debug/deps/differential-4beb98fc58a0b674)
+
+running 1 test
+test fp_ops_are_unsupported ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-jit-runtime --test fp_from_integer --test fp_from_integer_verifier -- --nocapture
+   Compiling log v0.4.33
+   Compiling wasmparser v0.235.0
+   Compiling pulley-interpreter v35.0.0
+   Compiling regalloc2 v0.12.2
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo/crates/core)
+   Compiling cranelift-codegen-meta v0.122.0
+   Compiling cranelift-codegen v0.122.0
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo/crates/jit-translate)
+   Compiling wasmprinter v0.235.0
+   Compiling wasmtime-environ v35.0.0
+   Compiling cranelift-frontend v0.122.0
+   Compiling cranelift-native v0.122.0
+   Compiling wasmtime-internal-unwinder v35.0.0
+   Compiling wasmtime-internal-cranelift v35.0.0
+   Compiling wasmtime v35.0.0
+   Compiling wasm-vm-jit-runtime v0.0.1 (/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 19s
+     Running tests/fp_from_integer.rs (target/debug/deps/fp_from_integer-b5d7d2f21caafbd4)
+
+running 3 tests
+FP_FROM_INT runloop FS-off/invalid-rm prefix=1 bytes=2 later-fault-flags=3
+test from_integer_native_runloop ... ok
+FP_FROM_INT CSR/source-update/later-fault/invalid-prefix cases=384
+test from_integer_native_handoff_and_faults ... ok
+FP_FROM_INT corpus cases=21504 register_flags_fnv=55175ee7c3836290
+test from_integer_native_corpus ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.23s
+
+     Running tests/fp_from_integer_verifier.rs (target/debug/deps/fp_from_integer_verifier-67e5884b32d05f97)
+
+running 5 tests
+CRITIC_FROM_INT_INDICES imports=7 exports=run0:7,run1:8,run2:9,run3:10 actual_integer_conversion_arithmetic_conversion_chain=true integer_imports=5 unsupported_families=6
+test verifier_mixed_conversion_arithmetic_function_indices ... ok
+CRITIC_NATIVE_FROM_INT_CONTROL Receipt { cases: 12, illegal: 0, digest: 5904181122689446553 }
+test verifier_native_conversion_control_and_faults ... ok
+CRITIC_NATIVE_FROM_INT_LITERALS Receipt { cases: 12672, illegal: 0, digest: 11332523716468034169 }
+test verifier_native_conversion_literals ... ok
+CRITIC_NATIVE_FROM_INT_SEEDED Receipt { cases: 3584, illegal: 1736, digest: 8412752937936467894 }
+test verifier_native_conversion_seeded_aliases_and_illegal ... ok
+CRITIC_FROM_INT_PURITY cases=3072 legal_helper_calls=1620 illegal_helper_calls=0 import_index=5 integer_wasm_only=true
+test verifier_generated_conversion_helper_counts_and_purity ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.21s
+
+wasm-pack test --node crates/wasm --test jit_fp_from_integer --test jit_fp_from_integer_verifier -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling cfg-if v1.0.4
+   Compiling rustversion v1.0.22
+   Compiling version_check v0.9.5
+   Compiling bumpalo v3.20.3
+   Compiling typenum v1.20.1
+   Compiling once_cell v1.21.4
+   Compiling futures-core v0.3.32
+   Compiling slab v0.4.12
+   Compiling futures-task v0.3.32
+   Compiling pin-project-lite v0.2.17
+   Compiling serde_core v1.0.228
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling zmij v1.0.21
+   Compiling smallvec v1.15.2
+   Compiling serde v1.0.228
+   Compiling byteorder v1.5.0
+   Compiling futures-util v0.3.32
+   Compiling bitflags v2.13.0
+   Compiling serde_json v1.0.150
+   Compiling log v0.4.33
+   Compiling heapless v0.9.3
+   Compiling hash32 v0.3.1
+   Compiling libm v0.2.16
+   Compiling tinyvec_macros v0.1.1
+   Compiling smoltcp v0.13.1
+   Compiling autocfg v1.5.1
+   Compiling memchr v2.8.2
+   Compiling generic-array v0.14.7
+   Compiling stable_deref_trait v1.2.1
+   Compiling itoa v1.0.18
+   Compiling tinyvec v1.12.0
+   Compiling bitflags v1.3.2
+   Compiling managed v0.8.0
+   Compiling wasm-vm-wasm-emit v0.0.1 (/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo/crates/wasm-emit)
+   Compiling wasm-bindgen-test-shared v0.2.126
+   Compiling cast v0.3.0
+   Compiling oorandom v11.1.5
+   Compiling nu-ansi-term v0.50.3
+   Compiling unicode-normalization v0.1.25
+   Compiling num-traits v0.2.19
+   Compiling wasm-bindgen v0.2.126
+   Compiling syn v2.0.118
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo/crates/core)
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+   Compiling async-trait v0.1.89
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling wasm-vm-slirp v0.0.0 (/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo/crates/slirp)
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo/crates/jit-translate)
+   Compiling wasm-bindgen-macro v0.2.126
+   Compiling wasm-vm-storage v0.0.1 (/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo/crates/storage)
+   Compiling js-sys v0.3.103
+   Compiling console_error_panic_hook v0.1.7
+   Compiling web-sys v0.3.103
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling getrandom v0.2.17
+   Compiling wasm-bindgen-test v0.3.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 33s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+     Running tests/jit_fp_from_integer.rs (/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo/target/wasm32-unknown-unknown/debug/deps/jit_fp_from_integer-b81a6ce18aad00aa.wasm)
+running 2 tests
+Invoking test: from_integer_browser_private
+test from_integer_browser_private ... ok
+Invoking test: from_integer_browser_inline
+test from_integer_browser_inline ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 27.05s
+
+     Running tests/jit_fp_from_integer_verifier.rs (/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo/target/wasm32-unknown-unknown/debug/deps/jit_fp_from_integer_verifier-bce268b8315f4cd6.wasm)
+running 6 tests
+Invoking test: verifier_shared_conversion_memory_growth
+CRITIC_FROM_INT_GROWTH inline=true fault=None pc=0000000040009c18 retired=6 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+CRITIC_FROM_INT_GROWTH inline=true fault=Store pc=0000000040009c04 retired=1 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+CRITIC_FROM_INT_GROWTH inline=true fault=Load pc=0000000040009c10 retired=4 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+test verifier_shared_conversion_memory_growth ... ok
+Invoking test: verifier_shared_conversion
+CRITIC_SHARED_FROM_INT_LITERALS Receipt { cases: 12672, illegal: 0, digest: 11332523716468034169 }
+CRITIC_SHARED_FROM_INT_SEEDED Receipt { cases: 3584, illegal: 1736, digest: 8412752937936467894 }
+CRITIC_SHARED_FROM_INT_CONTROL Receipt { cases: 12, illegal: 0, digest: 5904181122689446553 }
+test verifier_shared_conversion ... ok
+Invoking test: verifier_same_module_conversion_successors
+CRITIC_FROM_INT_CHAIN same=true fault=false budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FROM_INT_CHAIN same=true fault=false budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=true fault=false budget=5 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=true fault=false budget=6 retired=6 entries=2 links=1 pc=0000000080000018 flags=09
+CRITIC_FROM_INT_CHAIN same=true fault=true budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FROM_INT_CHAIN same=true fault=true budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=true fault=true budget=5 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=true fault=true budget=6 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_same_module_conversion_successors ... ok
+Invoking test: verifier_private_conversion_memory_growth
+CRITIC_FROM_INT_GROWTH inline=false fault=None pc=0000000040009c18 retired=0 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+CRITIC_FROM_INT_GROWTH inline=false fault=Store pc=0000000040009c04 retired=0 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+CRITIC_FROM_INT_GROWTH inline=false fault=Load pc=0000000040009c10 retired=0 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+test verifier_private_conversion_memory_growth ... ok
+Invoking test: verifier_private_conversion
+CRITIC_PRIVATE_FROM_INT_LITERALS Receipt { cases: 12672, illegal: 0, digest: 11332523716468034169 }
+CRITIC_PRIVATE_FROM_INT_SEEDED Receipt { cases: 3584, illegal: 1736, digest: 8412752937936467894 }
+CRITIC_PRIVATE_FROM_INT_CONTROL Receipt { cases: 12, illegal: 0, digest: 5904181122689446553 }
+test verifier_private_conversion ... ok
+Invoking test: verifier_cross_module_conversion_successors
+CRITIC_FROM_INT_CHAIN same=false fault=false budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FROM_INT_CHAIN same=false fault=false budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=false fault=false budget=5 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=false fault=false budget=6 retired=6 entries=2 links=1 pc=0000000080000018 flags=09
+CRITIC_FROM_INT_CHAIN same=false fault=true budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FROM_INT_CHAIN same=false fault=true budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=false fault=true budget=5 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=false fault=true budget=6 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_cross_module_conversion_successors ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 3.52s
+
+node tools/verify/omarchy-fp-from-integer-browser.mjs /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-from-integer-r1/cold/browser
+{"passed":true,"wasmSha256":"0ce4a5a304d82574b5f4118725bcffc2547121605e49304d280153eae4a5d312","digest":"5df84ec4c17598ab2c56293bb5b78338947ce9991af18e0ef795aa4a07d2df44","jitStats":{"hasExecutor":true,"compiledBlocks":4,"executedBlocks":30,"retiredViaJit":3611,"directChainEntries":1469,"directChainLinks":1439,"dynamicLinkAttempts":0,"dynamicLinkHits":0,"dynamicLinkRefusals":0,"dynamicLinkRetargets":0,"dynamicLinkLiveEntries":1,"dynamicLinkInstalls":1,"entryCost":{"timingEnabled":false,"timerReads":0,"hostEntries":30,"stateCopyCalls":60,"stateCopyBytes":6304,"stateCopyNs":0,"engineEntryNs":0,"indirectTableDispatches":0,"authorityChecks":1,"memorySplitExits":0,"deviceBoundaries":0,"deviceBoundaryNs":0},"jitRegionChaining":true,"jitDynamicChaining":true,"guestRetired":4000,"jitEngineCalls":30,"jitLogicalBlocksPerEngineCall":48.96666666666667,"jitRetiredShare":0.90275,"chainLinksMade":0,"chainLinksCut":0,"chainDispatchEntries":25,"chainMaxDepth":1,"chainLinksFollowed":6,"jitResidencyPolicy":"repack-off","jitResidencyCap":24,"jitSubmittedMembers":4,"jitCompilePauseNs":0,"jitCompilePauseMaxNs":0,"jitCompilePauseSamples":3,"jitCacheInstalls":4,"jitCacheRetranslations":0,"jitCacheEvictions":0,"jitCacheBatches":3,"jitCacheCodeBytes":208207,"compileQueue":{"admitted":4,"droppedBackpressure":0,"cancelledStale":0,"popped":4,"queueHighWater":2,"queueDepth":0,"capacity":256},"discovery":{"nominated":4,"deduped":103,"droppedStale":0,"droppedOverflow":0,"countsDropped":0,"excluded":6,"queueDepth":0,"queueHighWater":2,"candidates":0,"generation":3},"decodedCacheEntries":4096,"decodedBlocksDiscarded":0,"decodedCacheFlushes":2,"discoveryGeneration":3,"blockEntryHits":103,"blockBuilds":10,"admissionProbe":false,"coldCounterRecycling":{"enabled":false,"epochs":"0","discardedCounters":"0","threshold":1,"capacity":65536}}}

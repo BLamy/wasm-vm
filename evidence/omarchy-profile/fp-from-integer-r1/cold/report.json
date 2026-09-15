@@ -1,0 +1,60 @@
+{
+  "head": "5f759ef96773b93e2b1faff27183bf6e66213fea",
+  "clone": "/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo",
+  "scrubbedNames": [
+    "RUST_LOG"
+  ],
+  "policy": "RUSTFLAGS/RUSTDOCFLAGS/RUST_LOG and all CARGO_* unset; trusted PATH; no shell profiles",
+  "commands": [
+    {
+      "args": [
+        "git",
+        "clone",
+        "--quiet",
+        "/Users/blamy/Documents/Codex/wasm-vm",
+        "/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i",
+      "startedAt": "2026-09-15T22:52:22Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T22:52:34Z"
+    },
+    {
+      "args": [
+        "git",
+        "checkout",
+        "--quiet",
+        "5f759ef96773b93e2b1faff27183bf6e66213fea"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo",
+      "startedAt": "2026-09-15T22:52:34Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T22:52:34Z"
+    },
+    {
+      "args": [
+        "make",
+        "web-dist"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo",
+      "startedAt": "2026-09-15T22:52:34Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T22:54:36Z"
+    },
+    {
+      "args": [
+        "make",
+        "verify-E5_5-T03x",
+        "FP_FROM_INTEGER_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-from-integer-r1/cold/browser"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-from-integer-cold-u7q5211i/repo",
+      "startedAt": "2026-09-15T22:54:36Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T23:01:04Z"
+    }
+  ],
+  "pristineBeforeBuild": true,
+  "committedWasmSha256": "0ce4a5a304d82574b5f4118725bcffc2547121605e49304d280153eae4a5d312",
+  "rebuiltWasmSha256": "0ce4a5a304d82574b5f4118725bcffc2547121605e49304d280153eae4a5d312",
+  "passed": true
+}
