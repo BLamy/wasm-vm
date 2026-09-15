@@ -1,0 +1,55 @@
+{
+  "submissionSourceHead": "6b76f786cbffd1a76bf05534da2ef6b9211666cc",
+  "runtimeHead": "2e7cd66994e63c1ca39f492d49c5764a31c87739",
+  "acceptanceHead": "2e7cd66994e63c1ca39f492d49c5764a31c87739",
+  "coldHead": "6b76f786cbffd1a76bf05534da2ef6b9211666cc",
+  "runtimeWasmSha256": "4e1dae976924fb1857a70fc1a8ec357e18475e15f4a8f74ef2980838d0a089dd",
+  "runtimeFiles": {
+    "crates/jit-translate/src/lib.rs": "6dd59d0c6270fd65ecc32a32de5583f50ebf61b157ac94611bd8c036e4fe32ec",
+    "crates/core/src/jit.rs": "48dbb6fe6eb4d87e241b18fc26954b45c56c425476c6980e6b22e985ed22acd1"
+  },
+  "broadCiPassed": false,
+  "affectedCommandsPassed": true,
+  "focusedAcceptancePassed": true,
+  "coldClonePassed": true,
+  "publicBytesMatched": true,
+  "desktopResponsive": false,
+  "completedTests": {
+    "core-handoff.log": {
+      "targets": 1,
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    "fp-regression.log": {
+      "targets": 3,
+      "passed": 12,
+      "failed": 0,
+      "ignored": 0
+    },
+    "native-fp-isa.log": {
+      "targets": 1,
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    "wasm-native-lib.log": {
+      "targets": 1,
+      "passed": 33,
+      "failed": 0,
+      "ignored": 0
+    },
+    "acceptance.log": {
+      "targets": 5,
+      "passed": 15,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "sealedAt": "2026-09-15T21:00:06Z",
+  "notes": [
+    "Prescribed broad make ci outcomes are retained in full; no failing gate is relabeled green.",
+    "Physical trial outcome is separate from instruction correctness.",
+    "All post-runtime changes are tests, metadata, evidence or content-addressed deployment manifests."
+  ]
+}

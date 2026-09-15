@@ -850,7 +850,7 @@ fn block_register_masks(block: &DecodedBlock) -> (u32, u32) {
                 // the FP store source belongs in the integer batch globals.
                 add_register_mask(&mut reads, rs1);
             }
-            FmvXW { rd, .. } => add_register_mask(&mut writes, rd),
+            FmvXW { rd, .. } | FpCmpS { rd, .. } => add_register_mask(&mut writes, rd),
             FmvWX { rs1, .. } => add_register_mask(&mut reads, rs1),
             Lui { rd, .. } | Auipc { rd, .. } | Jal { rd, .. } => {
                 add_register_mask(&mut writes, rd);
@@ -1957,6 +1957,7 @@ fn supported(instr: &Instr) -> bool {
             | FsgnjS { .. }
             | FmvWX { .. }
             | FmvXW { .. }
+            | FpCmpS { .. }
             | Flw { .. }
             | Fld { .. }
             | Fsw { .. }
@@ -1974,6 +1975,7 @@ fn is_fp(instr: &Instr) -> bool {
         Instr::FsgnjS { .. }
             | Instr::FmvWX { .. }
             | Instr::FmvXW { .. }
+            | Instr::FpCmpS { .. }
             | Instr::Flw { .. }
             | Instr::Fld { .. }
             | Instr::Fsw { .. }
@@ -2040,6 +2042,115 @@ fn set_freg(f: &mut FuncBuilder, abi: &Abi, register: u8) {
     f.local_get(STATE_BASE);
     f.i64_load(ALIGN8, abi.fp_state);
     f.i64_const(((1_u64 << (32 + u32::from(register))) | wasm_vm_core::jit::abi::FP_DIRTY) as i64);
+    f.i64_or();
+    f.i64_store(ALIGN8, abi.fp_state);
+}
+
+/// IEEE single-precision comparisons using only integer bit operations. NaN
+/// boxes are checked before classifying the operands. Signed zeros compare
+/// equal; negative finite values reverse the unsigned bit-pattern ordering.
+fn emit_fp_compare(
+    f: &mut FuncBuilder,
+    regs: &mut Regs,
+    abi: &Abi,
+    op: wasm_vm_core::decode::FpCmpOp,
+    rd: u8,
+    rs1: u8,
+    rs2: u8,
+) {
+    use wasm_vm_core::decode::FpCmpOp;
+    let a = f.local(ValType::I32);
+    let b = f.local(ValType::I32);
+    let nan_a = f.local(ValType::I32);
+    let nan_b = f.local(ValType::I32);
+    let invalid = f.local(ValType::I32);
+    for (register, bits, nan) in [(rs1, a, nan_a), (rs2, b, nan_b)] {
+        push_boxed_f32(f, abi, register);
+        f.i32_wrap_i64();
+        f.local_tee(bits);
+        f.i32_const(0x7fff_ffff);
+        f.i32_and();
+        f.i32_const(0x7f80_0000);
+        f.i32_gt_u();
+        f.local_set(nan);
+    }
+    f.local_get(nan_a);
+    f.local_get(nan_b);
+    f.i32_or();
+    f.if_(BlockType::Value(ValType::I32));
+    if op == FpCmpOp::Eq {
+        // Quiet equality raises NV only for a signaling NaN. A malformed box
+        // has already become canonical quiet NaN, regardless of its low bits.
+        for (bits, nan) in [(a, nan_a), (b, nan_b)] {
+            f.local_get(nan);
+            f.local_get(bits);
+            f.i32_const(0x0040_0000);
+            f.i32_and();
+            f.i32_eqz();
+            f.i32_and();
+        }
+        f.i32_or();
+    } else {
+        f.i32_const(1);
+    }
+    f.local_set(invalid);
+    f.i32_const(0); // Every comparison with NaN is false.
+    f.else_();
+    f.local_get(a);
+    f.local_get(b);
+    f.i32_eq();
+    f.local_get(a);
+    f.local_get(b);
+    f.i32_or();
+    f.i32_const(0x7fff_ffff);
+    f.i32_and();
+    f.i32_eqz();
+    f.i32_or(); // Same encoding or either signed-zero pair.
+    if op != FpCmpOp::Eq {
+        f.if_(BlockType::Value(ValType::I32));
+        f.i32_const(if op == FpCmpOp::Le { 1 } else { 0 });
+        f.else_();
+        f.local_get(a);
+        f.local_get(b);
+        f.i32_xor();
+        f.i32_const(0);
+        f.i32_lt_s();
+        f.if_(BlockType::Value(ValType::I32));
+        f.local_get(a);
+        f.i32_const(0);
+        f.i32_lt_s(); // Opposite signs: negative operand is smaller.
+        f.else_();
+        f.local_get(a);
+        f.i32_const(0);
+        f.i32_lt_s();
+        f.if_(BlockType::Value(ValType::I32));
+        f.local_get(a);
+        f.local_get(b);
+        f.i32_gt_u(); // Same negative sign: larger magnitude is smaller.
+        f.else_();
+        f.local_get(a);
+        f.local_get(b);
+        f.i32_lt_u();
+        f.end();
+        f.end();
+        f.end();
+    }
+    f.end();
+    f.i64_extend_i32_u();
+    set_reg(f, regs, rd);
+
+    // Comparisons dirty FP control state even with x0 as destination. Accrue
+    // flags immediately in the shared handoff so successors and fault exits
+    // retain them without writing any FPR or changing frm.
+    f.local_get(STATE_BASE);
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.fp_state);
+    f.i64_const(wasm_vm_core::jit::abi::FP_DIRTY as i64);
+    f.i64_or();
+    f.local_get(invalid);
+    f.i64_extend_i32_u();
+    f.i64_const(4);
+    f.i64_shl();
     f.i64_or();
     f.i64_store(ALIGN8, abi.fp_state);
 }
@@ -2222,6 +2333,7 @@ fn emit_alu(
             f.i64_extend_i32_s();
             set_reg(f, regs, rd);
         }
+        FpCmpS { op, rd, rs1, rs2 } => emit_fp_compare(f, regs, abi, op, rd, rs1, rs2),
         // ── U-type ──
         Lui { rd, imm } => {
             f.i64_const(imm);

@@ -1,0 +1,15 @@
+COMMAND: cargo test -p wasm-vm-jit-runtime --test fp_comparisons_verifier -- --nocapture
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.23s
+     Running tests/fp_comparisons_verifier.rs (target/debug/deps/fp_comparisons_verifier-073b91c4b53e5e62)
+
+running 3 tests
+CRITIC_NATIVE_CONTROL Receipt { cases: 10, disabled: 0, digest: 14645582373884930759 }
+test verifier_native_control_handoff_and_faults ... ok
+CRITIC_NATIVE_GOLDENS Receipt { cases: 2016, disabled: 0, digest: 4642228140795119653 }
+test verifier_native_literal_comparison_goldens ... ok
+CRITIC_NATIVE_SEEDED Receipt { cases: 4608, disabled: 1152, digest: 5348346956590961504 }
+test verifier_native_seeded_comparisons_and_fs ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.80s
+

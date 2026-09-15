@@ -1,0 +1,23 @@
+{
+  "stopped_at": "2026-09-15T20:28:34.273256+00:00",
+  "reason": "Worker tests printed 2 passed but Node process did not exit or release runner; not a successful process result. Parent authorized stopping only owned process tree.",
+  "processes_before": "  PID  PPID ELAPSED  %CPU COMMAND\n39956 39955   04:32   0.0 wasm-pack test --node crates/wasm --test jit_fp_comparisons --test jit_fp_comparisons_verifier -- --nocapture\n40593 39956   03:53   0.0 /Users/blamy/.rustup/toolchains/1.96.0-aarch64-apple-darwin/bin/cargo test --target wasm32-unknown-unknown --test jit_fp_comparisons --test jit_fp_comparisons_verifier -- --nocapture\n40595 40593   03:53   0.0 /Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner /Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_comparisons-2cabeaf3666bd552.wasm --nocapture\n40666 40595   03:46   0.0 node --expose-gc /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpjdi0El/run.cjs\n",
+  "signals": [
+    {
+      "pid": 40666,
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 40595,
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 40593,
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 39956,
+      "signal": "SIGTERM"
+    }
+  ]
+}

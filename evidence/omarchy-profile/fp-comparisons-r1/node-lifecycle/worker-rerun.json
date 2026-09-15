@@ -1,0 +1,16 @@
+{
+  "command": [
+    "wasm-pack",
+    "test",
+    "--node",
+    "crates/wasm",
+    "--test",
+    "jit_fp_comparisons",
+    "--",
+    "--nocapture"
+  ],
+  "elapsedSeconds": 15.283531904220581,
+  "code": 0,
+  "timedOut": false,
+  "diagnostic": "Three unreferenced timers inspect resources only; no forced successful process exit"
+}

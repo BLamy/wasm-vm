@@ -1642,3 +1642,11 @@ verify-E5_5-T03u:
 	cargo test -p wasm-vm-jit-runtime --test fp_memory --test fp_memory_verifier -- --nocapture
 	wasm-pack test --node crates/wasm --test jit_fp_memory --test jit_fp_memory_critic --test jit_fp_memory_growth_critic --test jit_fp_memory_verifier -- --nocapture
 	node tools/verify/omarchy-fp-memory-browser.mjs $(or $(FP_MEMORY_OUT),evidence/omarchy-profile/fp-memory-browser)
+
+.PHONY: verify-E5_5-T03v
+verify-E5_5-T03v:
+	cargo fmt --all --check
+	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+	cargo test -p wasm-vm-jit-runtime --test fp_comparisons --test fp_comparisons_verifier -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_fp_comparisons --test jit_fp_comparisons_verifier -- --nocapture
+	node tools/verify/omarchy-fp-comparisons-browser.mjs $(or $(FP_COMPARISONS_OUT),evidence/omarchy-profile/fp-comparisons-browser)

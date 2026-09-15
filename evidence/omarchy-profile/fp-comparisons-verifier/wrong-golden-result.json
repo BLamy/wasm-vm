@@ -1,0 +1,22 @@
+{
+  "mutation": "Only isolated critic expected FEQ(+0,-0) changed from 1 to 0; implementation untouched",
+  "runtime_sha256": {
+    "crates/core/src/jit.rs": "48dbb6fe6eb4d87e241b18fc26954b45c56c425476c6980e6b22e985ed22acd1",
+    "crates/jit-translate/src/lib.rs": "6dd59d0c6270fd65ecc32a32de5583f50ebf61b157ac94611bd8c036e4fe32ec"
+  },
+  "runs": [
+    {
+      "phase": "wrong",
+      "returncode": 101,
+      "support_sha256": "5d72d70b8a180e2ab5829ad1f9f0d24b7040fcbd87ab7a2200bf8fb910d6747f",
+      "log": "evidence/omarchy-profile/fp-comparisons-verifier/wrong-golden-wrong.log"
+    },
+    {
+      "phase": "restored",
+      "returncode": 0,
+      "support_sha256": "3b3eaa22c75f2ccc235090307b5714815063bc37b50f8a1eee5307da806c5feb",
+      "log": "evidence/omarchy-profile/fp-comparisons-verifier/wrong-golden-restored.log"
+    }
+  ],
+  "passed": true
+}
