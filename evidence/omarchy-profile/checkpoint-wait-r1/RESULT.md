@@ -44,21 +44,21 @@ anchors in actual snapshot RAM before following task fields.
 ## Observed bytes
 
 `checkpoint.json:49` records actual saved SATP `0xa00ca000000848b0`: Sv57,
-root physical `0x848b0000`. The actual current task is Bash PID174, on_cpu1.
-Reciprocal list traversal finds82 process groups and144 unique tasks.
+root physical `0x848b0000`. The actual current task is Bash PID174, on_cpu 1.
+Reciprocal list traversal finds 82 process groups and 144 unique tasks.
 
-- Hyprland417/417 at task `0xff60000004793c00` has state `0x2001`, on_cpu0.
+- Hyprland 417/417 at task `0xff60000004793c00` has state `0x2001`, on_cpu 0.
   Its saved switch stack traverses `__schedule`, `schedule`, `futex_wait_queue`,
   `futex_wait`, `do_futex`, `__riscv_sys_futex`, `do_trap_ecall_u`, then
   `ret_from_exception`. Every saved FP/RA includes physical bytes and a page
   table walk (`checkpoint.json:3894` onward).
-- Its top-of-stack trap has cause8 and user SPP, original a0
+- Its top-of-stack trap has cause 8 and user SPP, original a0
   `0x55555efbb948`, a1 `0x189`, a2 `0`, a3 `0`, a5 `0xffffffff`, a7 `0x62`.
   Original a0 is physically at `0x8e44dff8` (`checkpoint.json:5353`). The
   futex word maps through Hyprland's own page tables to `0x87e2d948`, and is
   zero (`checkpoint.json:5454`). The saved user continuation is
   `0x7fff81815bd8`; no library or condition-variable owner is inferred.
-- Renderer462/417 is `llvmpipe-0`, state0, on_cpu0. Its saved stack comes
+- Renderer 462/417 is `llvmpipe-0`, state0, on_cpu 0. Its saved stack comes
   from the interrupt return/reschedule path, with saved user EPC
   `0x7fff6c08ac7e` and interrupt cause `0x8000000000000005`
   (`checkpoint.json:5497` onward). Its EPC maps to executable user bytes at
@@ -70,7 +70,7 @@ Reciprocal list traversal finds82 process groups and144 unique tasks.
 
 - Compressed R3 snapshot:
   `2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5`.
-- Decoded RAM,1073741824 bytes:
+- Decoded RAM, 1073741824 bytes:
   `7b4695440b7bb6bfaa07b19e90afb758692627bd571fa2d6dd40d2e68e37616b`.
 - Kernel layout receipt:
   `0ee696d2e47cf290bf57d1648a7cbe99144f2dff95e4aa3b2a7844e0bd405d82`.
@@ -87,5 +87,5 @@ T03m, identify the userspace caller/wake dependency, or demonstrate a remedy.
 
 The next causal probe must observe the same PID/starttime and stack/wait address
 during the later failed input interval, then bind the userspace caller and
-renderer work. Preserve the unchanged120-second physical nonce test and all
+renderer work. Preserve the unchanged 120-second physical nonce test and all
 prior HELD negative results. T03d responsiveness remains unresolved.
