@@ -265,6 +265,38 @@ pub fn handoff_reuse(executor: &mut dyn CompiledBlockExecutor) {
         executor.execute(DRAM_BASE, &mut hart, &mut bus).unwrap();
         assert_eq!(hart.regs.read(3), bits as u32 as i32 as i64 as u64);
         assert_eq!(hart.csr.fs(), 2, "read-only FMV.X.W preserves FS");
+
+        // Isolate identity from numeric version: the preceding read-only move
+        // left the cached FPR version at one. Replace only that register file.
+        let previous_stamp = hart.fregs.jit_version();
+        let integer_version = hart.regs.jit_version();
+        let replacement = bits ^ 0x40000000;
+        hart.fregs = Default::default();
+        hart.fregs.write_raw(1, replacement);
+        assert_eq!(hart.fregs.jit_version().1, previous_stamp.1);
+        assert_ne!(hart.fregs.jit_version().0, previous_stamp.0);
+        assert_eq!(hart.regs.jit_version(), integer_version);
+        hart.regs.pc = DRAM_BASE;
+        executor.execute(DRAM_BASE, &mut hart, &mut bus).unwrap();
+        assert_eq!(
+            hart.regs.read(3),
+            replacement as u32 as i32 as i64 as u64,
+            "equal numeric FPR versions cannot alias different register files"
+        );
+
+        // Changing only FS must refresh control even when both register-bank
+        // versions match the state committed by the preceding compiled call.
+        set_fs(&mut hart, 0);
+        hart.regs.pc = DRAM_BASE;
+        let before_disabled = state(&mut hart);
+        let exit = executor.execute(DRAM_BASE, &mut hart, &mut bus).unwrap();
+        assert_eq!(exit.code, ExitCode::IllegalInstruction);
+        assert_eq!(exit.exit_info, u64::from(fp(0x70, 0, 3, 1, 0)));
+        assert_eq!(exit.next_pc, DRAM_BASE);
+        assert_eq!(exit.retired, 0);
+        assert_eq!(state(&mut hart), before_disabled);
+        set_fs(&mut hart, 2);
+
         // An interpreted FP-only mutation must invalidate retained FPR bytes.
         hart.regs.write(1, bits ^ 0xffffffff);
         hart.exec_oracle(
@@ -282,6 +314,7 @@ pub fn handoff_reuse(executor: &mut dyn CompiledBlockExecutor) {
         );
         assert_eq!(hart.fregs.read_raw(1) >> 32, 0xffffffff);
     }
+    eprintln!("FP_MOVES handoff equal-version replacements=4 CSR-only FS-Off rechecks=4");
 }
 
 pub fn runloop(mut executor: Box<dyn CompiledBlockExecutor>) {

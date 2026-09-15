@@ -1,0 +1,43 @@
+[INFO]: 🎯  Checking for the Wasm target...
+    Blocking waiting for file lock on build directory
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2m 42s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.88s
+     Running tests/jit_fp_moves.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_moves-9b684554d9513150.wasm)
+running 6 tests
+Invoking test: fp_moves_browser_same_module_chain
+FP_MOVES chain same_module=true fs=0 budget=64 retired=2 pc=0000000080000008
+FP_MOVES chain same_module=true fs=2 budget=4 retired=2 pc=0000000080000008
+FP_MOVES chain same_module=true fs=1 budget=64 retired=6 pc=0000000080000018
+FP_MOVES chain same_module=true fs=2 budget=64 retired=6 pc=0000000080000018
+test fp_moves_browser_same_module_chain ... ok
+Invoking test: fp_moves_browser_precise_runloop
+test fp_moves_browser_precise_runloop ... ok
+Invoking test: fp_moves_browser_handoff_reuse
+test fp_moves_browser_handoff_reuse ... ok
+Invoking test: fp_moves_browser_fp_prefix_survives_chained_memory_fault
+FP_MOVES chained fault same_module=true retired=4 pc=0000000080000010 f31=ffffffffffa01234
+FP_MOVES chained fault same_module=false retired=4 pc=0000000080000010 f31=ffffffffffa01234
+test fp_moves_browser_fp_prefix_survives_chained_memory_fault ... ok
+Invoking test: fp_moves_browser_directed
+test fp_moves_browser_directed ... ok
+Invoking test: fp_moves_browser_cross_module_chain
+FP_MOVES chain same_module=false fs=0 budget=64 retired=2 pc=0000000080000008
+FP_MOVES chain same_module=false fs=2 budget=4 retired=2 pc=0000000080000008
+FP_MOVES chain same_module=false fs=1 budget=64 retired=6 pc=0000000080000018
+FP_MOVES chain same_module=false fs=2 budget=64 retired=6 pc=0000000080000018
+test fp_moves_browser_cross_module_chain ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 3.96s
+

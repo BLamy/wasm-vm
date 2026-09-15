@@ -59,3 +59,32 @@ The final review will pin all changed sources and evidence digests, inspect
 the actual browser screenshot and recorded suite/FP fixture, run the bounded
 independent attacks and sabotage once, and inspect the pristine-clone result.
 The physical input outcome remains independent of the ISA support verdict.
+
+## Incremental proof correction before final verdict
+
+The first shared `handoff_reuse` fixture alternates a fresh register file at
+numeric version 1 with an interpreted mutation to version 2. Its next fresh
+replacement therefore differs numerically from the retained cache key. That
+sequence did not isolate P11's equal-version/different-identity case, although
+the inspected implementation compares the complete identity/version pair.
+
+The critic promoted a test-only insertion immediately after the read-only
+FMV.X.W: replace only FRegs at the same address, assert its numeric version
+matches and identity differs, leave integer state/version untouched, and require
+the next compiled result to use the replacement's different low bits. Next,
+change only FS to Off and require the same compiled entry to trap with zero
+retirement and untouched architectural state. The prediction is that all four
+raw payloads pass both isolated checks under the native and wasm executors.
+This is a missing-proof repair; runtime bytes and the frozen cold build remain
+unchanged. Results will be cited after those focused fixtures run.
+
+The incremental checks passed without runtime changes:
+`identity-native.log:7`–`:10` records all four equal-version replacements and all
+four CSR-only disabled rechecks, 1 passed/0 failed; `identity-wasm.log:27`–`:28`
+records the same shared fixture in BrowserExecutor, and `:42` records all six
+browser executor tests passed. Shared fixture SHA-256 is
+`1ac32191be33cb86d413bfe37717793cb4b61c5ca93829c11146d920c711057f`.
+Native log SHA-256 is
+`01943cae4773bb96f02ad6bb59053088b17b8c85f0fc91e6518ccbdedc003a45`;
+wasm log SHA-256 is
+`9ea3aacadf822d658a1f85999377fe5eea9afa56bff7f4671688956031852403`.
