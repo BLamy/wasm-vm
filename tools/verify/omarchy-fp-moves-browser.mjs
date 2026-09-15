@@ -61,7 +61,9 @@ try {
   page.on("pageerror",error => report.errors.push(String(error)));
   page.on("console",message => { if(message.type()==="error" && !message.location().url.endsWith("/favicon.ico")) report.errors.push(message.text()); });
   page.on("response",response => { if(response.status()>=400 && !response.url().endsWith("/favicon.ico")) report.errors.push(`${response.status()} ${response.url()}`); });
-  await page.goto(`http://127.0.0.1:${server.address().port}/app.html?noAutoBoot=1`);
+  // The existing testHooks layout reveals the actual compliance panel. This
+  // fixture does not boot the desktop; its physical-input trial forbids hooks.
+  await page.goto(`http://127.0.0.1:${server.address().port}/app.html?noAutoBoot=1&testHooks=1`);
   report.runs = await withinTrialDeadline(() => page.evaluate(async bytes => {
     const {default:init,WasmMachine} = await import("./pkg/wasm_vm_wasm.js"); await init();
     if(!crossOriginIsolated) throw Error("isolated production browser path required");
@@ -98,6 +100,13 @@ try {
   const capability = page.locator(".cap", {hasText:"Single-precision FP moves"});
   assert.match(await capability.locator(".cap-pip").getAttribute("class"), /\blive\b/u);
   report.capability = await capability.innerText();
+  const suiteScreenshot = await page.locator("#panel-tests").screenshot({path:path.join(out,"suite.png")});
+  report.suiteScreenshotSha256 = sha(suiteScreenshot);
+  // Inspection capture of the legacy computed capability: reveal its existing
+  // container without changing the suite result, text, classes or pip state.
+  await page.locator("#legacy-roadmap").evaluate(element => { element.hidden=false; element.removeAttribute("aria-hidden"); });
+  const capabilityScreenshot = await capability.screenshot({path:path.join(out,"capability-inspection.png")});
+  report.capabilityInspection = { description:"Legacy computed capability, container revealed for inspection only", sha256:sha(capabilityScreenshot) };
   await page.locator("#rm-search").fill("E5.5-T03t");
   await page.locator(".rm-g-label").filter({hasText:"E5.5-T03t"}).click();
   await page.locator("#rm-detail").waitFor({state:"visible"});
