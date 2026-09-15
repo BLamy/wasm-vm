@@ -1639,6 +1639,6 @@ verify-E5_5-T03t:
 verify-E5_5-T03u:
 	cargo fmt --all --check
 	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
-	cargo test -p wasm-vm-jit-runtime --test fp_memory -- --nocapture
-	wasm-pack test --node crates/wasm --test jit_fp_memory --test jit_fp_memory_critic -- --nocapture
+	cargo test -p wasm-vm-jit-runtime --test fp_memory --test fp_memory_verifier -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_fp_memory --test jit_fp_memory_critic --test jit_fp_memory_growth_critic --test jit_fp_memory_verifier -- --nocapture
 	node tools/verify/omarchy-fp-memory-browser.mjs $(or $(FP_MEMORY_OUT),evidence/omarchy-profile/fp-memory-browser)
