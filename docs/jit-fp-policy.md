@@ -218,3 +218,28 @@ NX only; the original rounded result is retained. The independent reference is
 [Berkeley SoftFloat rounding](https://github.com/ucb-bar/berkeley-softfloat-3/blob/master/source/s_roundPackToF32.c),
 which raises OF|NX for overflow even when directed rounding returns the maximum
 finite value. No other arithmetic family or format changes in this slice.
+
+## 10. Measured integer-to-float conversions (E5.5-T03x)
+
+The same renderer recording contains 985,870 FCVT.S.W/WU/L/LU retirements.
+These four instructions now call `env.fp_from_int_s(i64 value, i32 width,
+i32 resolved_rm) -> i64`, backed by the existing integer-only
+`softfloat::f32_from_int`. Width codes 0/1/2/3 denote W/WU/L/LU. The full source
+integer crosses the helper boundary; the backend truncates and interprets its
+signedness. Raw f32 bits and new flags use the existing packed helper result.
+No hart, memory, device or scheduler reference is passed.
+
+The generated FS and per-instruction rounding checks precede the helper call.
+Integer source registers participate in the existing batch read masks, so a
+direct predecessor's updated integer value is visible. FPR destinations use
+the separate boxed FPR/dirty-mask path, including writable f0; x0 stays zero.
+Publishing the packed result and ORing flags is shared with arithmetic and
+does not modify frm. Reserved modes retain the original parcel and virtual
+fault PC after any completed prefix.
+
+The optional conversion import is index 5 when no arithmetic helper is present,
+or 6 after that helper. Generated bodies retain its actual allocated index;
+batch exports and direct calls already use their allocated function indices.
+Integer-only and arithmetic-only modules retain their existing layout. Other
+conversion directions and FP families keep their established admission policy.
+This capability does not establish physical desktop responsiveness.

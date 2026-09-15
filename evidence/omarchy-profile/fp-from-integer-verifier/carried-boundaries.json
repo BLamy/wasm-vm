@@ -1,0 +1,94 @@
+{
+  "from": "51dd9864",
+  "frozen_source": "b587faf6",
+  "boundaries": [
+    {
+      "path": "Cargo.lock",
+      "unchanged": true,
+      "sha256": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7"
+    },
+    {
+      "path": "crates/core/src/softfloat.rs",
+      "unchanged": true,
+      "sha256": "32da95fe87b74a10879e8729ee4da3f949e376cfdd02df9db4a22521368afe25"
+    },
+    {
+      "path": "crates/core/src/hart/fregs.rs",
+      "unchanged": true,
+      "sha256": "6aae345a355710bea5811be6710b90c7036bcd7189ce125858b9ee3c2b63feea"
+    },
+    {
+      "path": "crates/core/src/csr.rs",
+      "unchanged": true,
+      "sha256": "789275a310c8e1fe4e59ead4a1de62c3e0cd93c2747a5b1dc0b3b4ba7b42a001"
+    },
+    {
+      "path": "crates/core/src/hart/mod.rs",
+      "unchanged": true,
+      "sha256": "259846d4adfdd4eb33397271ba5bae5b1cac08343a7037ac13f220093073bb97"
+    },
+    {
+      "path": "crates/core/src/mmio.rs",
+      "unchanged": true,
+      "sha256": "aaa8073ab783af181e48057dcb1240d9c6319bd182ada8baea96f3c627770d97"
+    },
+    {
+      "path": "crates/core/src/ram.rs",
+      "unchanged": true,
+      "sha256": "dea0fe6981d199c89b2af5e5f4fafc6d1f1f7aefa7222129685d292c99926742"
+    },
+    {
+      "path": "tests/support/jit_fp_moves.rs",
+      "unchanged": true,
+      "sha256": "1ac32191be33cb86d413bfe37717793cb4b61c5ca93829c11146d920c711057f"
+    },
+    {
+      "path": "tests/support/jit_fp_memory_verifier.rs",
+      "unchanged": true,
+      "sha256": "8cd995f7b7c37576e777872bef0fbd27c71b23b80cde11a96f0e495042c44816"
+    },
+    {
+      "path": "tests/support/jit_fp_comparisons_verifier.rs",
+      "unchanged": true,
+      "sha256": "3b3eaa22c75f2ccc235090307b5714815063bc37b50f8a1eee5307da806c5feb"
+    },
+    {
+      "path": "tests/support/jit_fp_arithmetic_verifier.rs",
+      "unchanged": true,
+      "sha256": "45a1cd7affca31ce44a386f2c5e842c8345f4b283aaa97bf2a73946883162641"
+    },
+    {
+      "path": "crates/jit-runtime/tests/fp_arithmetic_verifier.rs",
+      "unchanged": true,
+      "sha256": "5a7460cf52cf7060fa5494854c165dd9d7a7b840fe02e9879d6ac047e8f7eeeb"
+    },
+    {
+      "path": "crates/wasm/tests/jit_fp_arithmetic_verifier.rs",
+      "unchanged": true,
+      "sha256": "19937657f3564a432c465bc3e38074d917aca90cebf6945dc8d6431ed141157f"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-arithmetic-r1/sha256.txt",
+      "unchanged": true,
+      "sha256": "4dc96dbb22a288fcf33d5839a45c8783dfafd641342f32d217a08b34ad07a2b2"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-arithmetic-verifier/final-audit.json",
+      "unchanged": true,
+      "sha256": "7deb38980fc143a40ff59c0aa1451ae19de1c7795c45921101d559498c644956"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-arithmetic-verifier/carried-boundaries.json",
+      "unchanged": true,
+      "sha256": "3e9aaf93850a62bba9c9c4757d0c31ed918dde06004ca69352490fca5202db62"
+    },
+    {
+      "path": "crates/core/src/jit.rs",
+      "boundary": "pub mod abi onward: old handoff/executor implementation",
+      "unchanged": true,
+      "sha256": "fe50a9e884a0dade948d570faec1c404d5d6c81df245e595e5e36f774635cafa"
+    }
+  ],
+  "arithmetic_packed_result_extraction_token_identical": true,
+  "extracted_body_sha256": "7bdd670bf5c751f7e1f9ab2bc08f8c5c8d5469530bbf26d9160ad1df739e1829"
+}

@@ -124,9 +124,10 @@ export const wasm_bindgen__convert__closures_____invoke__h51bf15f977a2556e: (a: 
 export const wasm_bindgen__convert__closures_____invoke__h1dbcf2b5dd15a422: (a: number, b: number, c: any) => [number, number];
 export const wasm_bindgen__convert__closures_____invoke__h8c3f0668a05de02f: (a: number, b: number, c: any, d: any) => void;
 export const wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4: (a: number, b: number, c: any) => void;
-export const wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_7: (a: number, b: number, c: any) => void;
 export const wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_8: (a: number, b: number, c: any) => void;
 export const wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_9: (a: number, b: number, c: any) => void;
+export const wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_10: (a: number, b: number, c: any) => void;
+export const wasm_bindgen__convert__closures_____invoke__h396b34def069612b: (a: number, b: number, c: bigint, d: number, e: number) => bigint;
 export const wasm_bindgen__convert__closures_____invoke__h3c376d590f4b7628: (a: number, b: number, c: bigint, d: number) => bigint;
 export const wasm_bindgen__convert__closures_____invoke__hccc6447b5e5e2a92: (a: number, b: number, c: bigint, d: bigint, e: number, f: number) => bigint;
 export const wasm_bindgen__convert__closures_____invoke__hb536c899e9023450: (a: number, b: number, c: bigint, d: bigint, e: number) => bigint;

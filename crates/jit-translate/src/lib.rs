@@ -753,6 +753,7 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
     if uses_fp_arithmetic(block) {
         add_fp_arithmetic_import(&mut m);
     }
+    let fp_from_int_import = uses_fp_from_int(block).then(|| add_fp_from_int_import(&mut m));
 
     let (reads, writes) = block_register_masks(block);
     let global_info = if abi.direct_chain {
@@ -819,6 +820,7 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
         global_info,
         global_info.map(|_| 1),
         writes,
+        fp_from_int_import,
     )?;
     m.add_code(f.finish());
     Ok(m.finish())
@@ -842,6 +844,23 @@ fn add_fp_arithmetic_import(m: &mut ModuleBuilder) {
     let ty = m.add_type(FuncType::new(&[ValType::I32; 4], &[ValType::I64]));
     let index = m.import_func("env", "fp_arith_s", ty);
     debug_assert_eq!(index, FP_ARITH_IMPORT);
+}
+
+fn uses_fp_from_int(block: &DecodedBlock) -> bool {
+    block
+        .ops
+        .iter()
+        .any(|op| matches!(op.instr, Instr::FcvtFromIntS { .. }))
+}
+
+/// Index 5 in conversion-only modules; 6 when the arithmetic helper precedes
+/// it. Retain the allocated index rather than assuming a fixed import layout.
+fn add_fp_from_int_import(m: &mut ModuleBuilder) -> u32 {
+    let ty = m.add_type(FuncType::new(
+        &[ValType::I64, ValType::I32, ValType::I32],
+        &[ValType::I64],
+    ));
+    m.import_func("env", "fp_from_int_s", ty)
 }
 /// The third parameter in the browser direct-chain function signature. Host and cross-module
 /// entries pass zero here and load the virtual entry PC from the shared handoff; same-module direct
@@ -869,7 +888,7 @@ fn block_register_masks(block: &DecodedBlock) -> (u32, u32) {
                 add_register_mask(&mut reads, rs1);
             }
             FmvXW { rd, .. } | FpCmpS { rd, .. } => add_register_mask(&mut writes, rd),
-            FmvWX { rs1, .. } => add_register_mask(&mut reads, rs1),
+            FmvWX { rs1, .. } | FcvtFromIntS { rs1, .. } => add_register_mask(&mut reads, rs1),
             Lui { rd, .. } | Auipc { rd, .. } | Jal { rd, .. } => {
                 add_register_mask(&mut writes, rd);
             }
@@ -1212,6 +1231,10 @@ pub fn translate_batch_with_static_slots(
     if blocks.iter().any(uses_fp_arithmetic) {
         add_fp_arithmetic_import(&mut m);
     }
+    let fp_from_int_import = blocks
+        .iter()
+        .any(uses_fp_from_int)
+        .then(|| add_fp_from_int_import(&mut m));
 
     let (entry_mask, writeback_mask) = blocks.iter().fold((0, 0), |(entry, writeback), block| {
         let (reads, writes) = block_register_masks(block);
@@ -1338,6 +1361,7 @@ pub fn translate_batch_with_static_slots(
             global_info,
             global_info.map(|_| 1),
             writes,
+            fp_from_int_import,
         )?;
         m.add_code(f.finish());
     }
@@ -1379,6 +1403,7 @@ fn emit_body(
     global_info: Option<GlobalInfo>,
     root_local: Option<u32>,
     block_write_mask: u32,
+    fp_from_int_import: Option<u32>,
 ) -> Result<(), TranslateError> {
     // Pre-flight: reject any out-of-scope op before emitting a single byte, so a partially-emitted
     // module can never escape (the caller gets a clean Unsupported and keeps interpreting).
@@ -1437,7 +1462,7 @@ fn emit_body(
             emit_fp_guard(f, &regs, abi, pc, op.raw, i as u64);
             fp_checked = true;
         }
-        if let Instr::FpArithS { rm, .. } = op.instr {
+        if let Instr::FpArithS { rm, .. } | Instr::FcvtFromIntS { rm, .. } = op.instr {
             push_rounding_mode(f, abi, rm);
             f.i32_const(4);
             f.i32_gt_u();
@@ -1469,7 +1494,15 @@ fn emit_body(
             );
             terminated = true;
         } else {
-            emit_alu(f, &mut regs, abi, op.instr, pc, pc_next, i as u64);
+            emit_alu(
+                f,
+                &mut regs,
+                abi,
+                op.instr,
+                pc,
+                fp_from_int_import,
+                i as u64,
+            );
         }
         pc = pc_next;
     }
@@ -1985,6 +2018,7 @@ fn supported(instr: &Instr) -> bool {
             | FmvXW { .. }
             | FpCmpS { .. }
             | FpArithS { op: FpArithOp::Add | FpArithOp::Mul, .. }
+            | FcvtFromIntS { .. }
             | Flw { .. }
             | Fld { .. }
             | Fsw { .. }
@@ -2007,6 +2041,7 @@ fn is_fp(instr: &Instr) -> bool {
                 op: FpArithOp::Add | FpArithOp::Mul,
                 ..
             }
+            | Instr::FcvtFromIntS { .. }
             | Instr::Flw { .. }
             | Instr::Fld { .. }
             | Instr::Fsw { .. }
@@ -2056,6 +2091,25 @@ fn push_rounding_mode(f: &mut FuncBuilder, abi: &Abi, rm: u8) {
     } else {
         f.i32_const(i32::from(rm));
     }
+}
+
+/// Both pure helpers leave a packed result/flags word on the stack. Publish
+/// the boxed FPR and sticky flags immediately so every later exit observes it.
+fn emit_fp_packed_result(f: &mut FuncBuilder, abi: &Abi, rd: u8) {
+    let packed = f.local(ValType::I64);
+    f.local_tee(packed);
+    box_f32(f);
+    set_freg(f, abi, rd);
+    f.local_get(STATE_BASE);
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.fp_state);
+    f.local_get(packed);
+    f.i64_const(32);
+    f.i64_shr_u();
+    f.i64_const(31);
+    f.i64_and();
+    f.i64_or();
+    f.i64_store(ALIGN8, abi.fp_state);
 }
 
 fn push_freg(f: &mut FuncBuilder, abi: &Abi, register: u8) {
@@ -2347,7 +2401,7 @@ fn emit_alu(
     abi: &Abi,
     instr: Instr,
     pc: u64,
-    _pc_next: u64,
+    fp_from_int_import: Option<u32>,
     retired_before: u64,
 ) {
     use Instr::*;
@@ -2406,20 +2460,20 @@ fn emit_alu(
             f.i32_const(i32::from(op == FpArithOp::Mul));
             push_rounding_mode(f, abi, rm);
             f.call(FP_ARITH_IMPORT);
-            let packed = f.local(ValType::I64);
-            f.local_tee(packed);
-            box_f32(f);
-            set_freg(f, abi, rd);
-            f.local_get(STATE_BASE);
-            f.local_get(STATE_BASE);
-            f.i64_load(ALIGN8, abi.fp_state);
-            f.local_get(packed);
-            f.i64_const(32);
-            f.i64_shr_u();
-            f.i64_const(31);
-            f.i64_and();
-            f.i64_or();
-            f.i64_store(ALIGN8, abi.fp_state);
+            emit_fp_packed_result(f, abi, rd);
+        }
+        FcvtFromIntS { width, rd, rs1, rm } => {
+            use wasm_vm_core::decode::FpIntWidth;
+            push_reg(f, regs, abi, rs1);
+            f.i32_const(match width {
+                FpIntWidth::W => 0,
+                FpIntWidth::Wu => 1,
+                FpIntWidth::L => 2,
+                FpIntWidth::Lu => 3,
+            });
+            push_rounding_mode(f, abi, rm);
+            f.call(fp_from_int_import.expect("selected conversion imports its helper"));
+            emit_fp_packed_result(f, abi, rd);
         }
         // ── U-type ──
         Lui { rd, imm } => {

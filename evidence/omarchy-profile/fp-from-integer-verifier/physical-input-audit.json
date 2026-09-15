@@ -1,0 +1,26 @@
+{
+  "reportSha256": "29b15c67cd97e1d8daac22b4bf449ba7bd35f3ec5fd6703e8a1e8054fdd7f1fa",
+  "head": "b587faf6f1bee5db45c5c9368d0a748f9badaff4",
+  "wasmSha256": "0ce4a5a304d82574b5f4118725bcffc2547121605e49304d280153eae4a5d312",
+  "enteredAt": "2026-09-15T22:38:14.941Z",
+  "deadlineAt": "2026-09-15T22:40:14.941Z",
+  "failedAt": "2026-09-15T22:40:14.943Z",
+  "deadlineMs": 120000,
+  "trustedEvents": 128,
+  "acceptedEvents": 128,
+  "completedReadbacks": 13,
+  "pendingReadbacks": 1,
+  "nonceVerified": false,
+  "serialNonceInjection": false,
+  "imagesInspected": true,
+  "imageFinding": "Both actual Foot captures show the same empty shell prompt and cursor with no typed command or output.",
+  "beforeSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+  "afterSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+  "frames": [
+    2,
+    2
+  ],
+  "pinnedGuestArtifactsUnchangedFromT03w": true,
+  "cleanupClosed": true,
+  "t03qStatus": "pending"
+}

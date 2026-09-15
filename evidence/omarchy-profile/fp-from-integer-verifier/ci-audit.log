@@ -1,0 +1,126 @@
+{
+  "method": "Independent git-show byte identity and recorded diagnostic comparison; no gates rerun",
+  "ciHead": "5f759ef96773b93e2b1faff27183bf6e66213fea",
+  "ciLogSha256": "aad68f99b394628c63567e5bd57495eec2ae6a49279c7849788636d840a238a4",
+  "broadCiPassed": false,
+  "broadCiExitCodes": [
+    2
+  ],
+  "failedTargets": [
+    "clippy",
+    "test",
+    "wasm",
+    "test-riscv",
+    "determinism"
+  ],
+  "sameFailureTargetsAsVerifiedParent": true,
+  "inheritedDiagnosticSignatures": [
+    "cannot find function `prctl`",
+    "cannot find value `PR_SET_NO_NEW_PRIVS`",
+    "cannot find value `SYS_seccomp`",
+    "expected `i32`, found `i64`",
+    "method `live_blocks` is never used",
+    "method `fetch_phys` is never used",
+    "assertion failed: !is_supported_section(section::VIRTIO_RNG)",
+    "no method named `boot_supervisor`",
+    "no method named `enable_builtin_sbi`",
+    "crates/core/src/dev/virtio/gpu/resources.rs:1225:        let started = std::time::Instant::now();"
+  ],
+  "files": [
+    {
+      "path": "crates/wasm/tests/resume.rs",
+      "sourceBase": "51dd9864",
+      "sha256": "fa0b32a25f5c7bbbea6a83d533a7bb62ef2a19e62162526689de80f4e82b4de1",
+      "unchanged": true
+    },
+    {
+      "path": "crates/core/src/resume.rs",
+      "sourceBase": "51dd9864",
+      "sha256": "89cc796fbeec449fb4b3391c554345228a369f071b0706de4feef596b1393190",
+      "unchanged": true
+    },
+    {
+      "path": "crates/core/src/dispatch.rs",
+      "sourceBase": "51dd9864",
+      "sha256": "2d0e0b36f084f4b495fb6bb08184f2a488c3762c7328bbd61e4fec10b27b2d2c",
+      "unchanged": true
+    },
+    {
+      "path": "crates/core/src/hart/mod.rs",
+      "sourceBase": "51dd9864",
+      "sha256": "259846d4adfdd4eb33397271ba5bae5b1cac08343a7037ac13f220093073bb97",
+      "unchanged": true
+    },
+    {
+      "path": "crates/wvseccomp/src/main.rs",
+      "sourceBase": "51dd9864",
+      "sha256": "166934f78790262bc6bd184b5413b114370ffd970e2947b636521c1d191b8899",
+      "unchanged": true
+    },
+    {
+      "path": "tools/ci/determinism-hazards.sh",
+      "sourceBase": "51dd9864",
+      "sha256": "8e6e3a153a2eb2e78a3c9d47ef1436170bcf0383a1e923283ec63bc38b5342cc",
+      "unchanged": true
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/resources.rs",
+      "sourceBase": "51dd9864",
+      "sha256": "af4b47c28b6801fd8ce3816f288be08feb2d3c2db2d562b0a2f6f19e95fbf2bd",
+      "unchanged": true
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "sourceBase": "51dd9864",
+      "sha256": "32bea9ae8c42a11e117c63efd81668d57f5dda51a23a792f21b81bd77d69c409",
+      "unchanged": true
+    },
+    {
+      "path": "Cargo.lock",
+      "sourceBase": "51dd9864",
+      "sha256": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7",
+      "unchanged": true
+    },
+    {
+      "path": "Cargo.toml",
+      "sourceBase": "51dd9864",
+      "sha256": "fc7cbaedc583510a98e1ce66875c32af7fe9aa43bc80cb16b298168dd0c61479",
+      "unchanged": true
+    },
+    {
+      "path": "crates/core/Cargo.toml",
+      "sourceBase": "51dd9864",
+      "sha256": "828e4d59f7f29f2cbfa98b3cdea67e530cc4b3f51132e4e0d9fc22de280c4c6c",
+      "unchanged": true
+    },
+    {
+      "path": "crates/wasm/Cargo.toml",
+      "sourceBase": "51dd9864",
+      "sha256": "ee9a0e90a0d447f06571fe203772a51bd4b491d3d42dfabb81befee2516b3d69",
+      "unchanged": true
+    },
+    {
+      "path": "crates/wvseccomp/Cargo.toml",
+      "sourceBase": "51dd9864",
+      "sha256": "2f8d44763509b653c3f5674e755ffa4aefd6bf63af94dce4f54c2d54826f90d6",
+      "unchanged": true
+    },
+    {
+      "path": "crates/wasm/src/jit_browser.rs",
+      "sourceBase": "51dd9864",
+      "boundary": "complete existing wasm32 test modules after first cfg(test, target_arch=wasm32)",
+      "sha256": "d5802e1a191c22d3b97d989546b71b5dd2b63a48210c979df2ebeaa86a2213dc",
+      "unchanged": true
+    }
+  ],
+  "allIdentical": true,
+  "oldMakeRecipesUnchanged": true,
+  "nativeIsaCompliance": "128/128",
+  "perfSmokeMips": 25.3,
+  "perfSmokeFloorMips": 15,
+  "conversionWasmTestsPassed": {
+    "worker": 2,
+    "verifier": 6
+  },
+  "sourceFindingsIntroducedByT03x": []
+}

@@ -1,0 +1,55 @@
+{
+  "submissionSourceHead": "5f759ef96773b93e2b1faff27183bf6e66213fea",
+  "runtimeSourceHead": "b587faf6f1bee5db45c5c9368d0a748f9badaff4",
+  "artifactHead": "b587faf6f1bee5db45c5c9368d0a748f9badaff4",
+  "coldHead": "5f759ef96773b93e2b1faff27183bf6e66213fea",
+  "runtimeWasmSha256": "0ce4a5a304d82574b5f4118725bcffc2547121605e49304d280153eae4a5d312",
+  "runtimeFiles": {
+    "crates/core/src/jit.rs": "d1e8aabe61ef0ce5558aa39d440031c8ef1bb03a11db07a110380149b6925af0",
+    "crates/jit-translate/src/lib.rs": "836fa6bd342f24e85cc07e570ab96caf1f27de5b3207feed79526f2465a32ffe",
+    "crates/jit-runtime/src/lib.rs": "4a72cad3c319ad6ebf41a67be9b41e545f0fab91c99454468a478ad61ce9eef7",
+    "crates/wasm/src/jit_browser.rs": "5997c537a67e66342077aebfc582195b6f58de196cfa7fa22f276bb0cd583f2f"
+  },
+  "focusedAcceptancePassed": true,
+  "coldClonePassed": true,
+  "publicBytesMatched": true,
+  "broadCiPassed": false,
+  "desktopResponsive": false,
+  "completedTests": {
+    "core-handoff": {
+      "targets": 1,
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    "fp-regression": {
+      "targets": 6,
+      "passed": 23,
+      "failed": 0,
+      "ignored": 0
+    },
+    "native-fp-isa": {
+      "targets": 1,
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    "wasm-native-lib": {
+      "targets": 1,
+      "passed": 33,
+      "failed": 0,
+      "ignored": 0
+    },
+    "acceptance": {
+      "targets": 5,
+      "passed": 17,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "sealedAt": "2026-09-15T23:01:57Z",
+  "notes": [
+    "Full make ci outcomes remain recorded without relabeling failures.",
+    "Physical desktop acceptance is separate from instruction correctness."
+  ]
+}

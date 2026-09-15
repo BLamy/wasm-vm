@@ -1,0 +1,109 @@
+{
+  "auditedAt": "2026-09-15T23:06:44.779048+00:00",
+  "submissionCommit": "e0f2e712050182d956cba83bff23b5a1c104e8cc",
+  "runtimeHead": "b587faf6f1bee5db45c5c9368d0a748f9badaff4",
+  "coldHead": "5f759ef96773b93e2b1faff27183bf6e66213fea",
+  "workerSealSha256": "4cc96e781b67301c1bf3713705818e28f0a168c47956147522834f310ba5731f",
+  "sealedFilesVerified": 46,
+  "runtimeSourceSha256": {
+    "Cargo.lock": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7",
+    "Makefile": "b4f57ba5407e8a5922fac10ece068eecf18dabfc29ae9f51e2960e5e72d919b6",
+    "crates/core/src/jit.rs": "d1e8aabe61ef0ce5558aa39d440031c8ef1bb03a11db07a110380149b6925af0",
+    "crates/core/src/softfloat.rs": "32da95fe87b74a10879e8729ee4da3f949e376cfdd02df9db4a22521368afe25",
+    "crates/jit-translate/src/lib.rs": "836fa6bd342f24e85cc07e570ab96caf1f27de5b3207feed79526f2465a32ffe",
+    "crates/jit-runtime/src/lib.rs": "4a72cad3c319ad6ebf41a67be9b41e545f0fab91c99454468a478ad61ce9eef7",
+    "crates/wasm/src/jit_browser.rs": "5997c537a67e66342077aebfc582195b6f58de196cfa7fa22f276bb0cd583f2f",
+    "crates/jit-translate/tests/differential.rs": "4258902f916f3bea28e958d27a452aac08a121eee58fe5d4a9dfd6c1dbec21b7",
+    "tests/support/jit_fp_from_integer.rs": "16bae604e69be18fd77d9de55e570e78234b381b9d9f009188c4b27bb43a8a1e",
+    "crates/jit-runtime/tests/fp_from_integer.rs": "9671f646223b289a9e1ed58d699d0bd7afea84bc7d72022f508bbb87c9aa92fb",
+    "crates/wasm/tests/jit_fp_from_integer.rs": "3ddd74a81adb1f1f6dba8afc9304afd1fabe3dd578bcf6d4b77eca87cb862ddf",
+    "tests/support/jit_fp_from_integer_verifier.rs": "c2fe4a8b016d2f7d459993316664062e37b77230406ee4e9f9e348bcd70ae54d",
+    "crates/jit-runtime/tests/fp_from_integer_verifier.rs": "9e00896cb2827e87a3d4af328d352925917bdfa2eb79350b0db5e83d3c8f03d9",
+    "crates/wasm/tests/jit_fp_from_integer_verifier.rs": "d1ce0706d0e5a5ea0717ddadd36ce245718f7076f8e934588ef22c8329325e8d",
+    "docs/jit-fp-policy.md": "d8bc3fd5440510c39f6b49f83d6f2f17c1805d6f5f1ce3741002ddcfebf3040c",
+    "tools/verify/omarchy-fp-from-integer-browser.mjs": "a12aa635b7778240eacb2fec611596d9199781037d48798cac6b89bdfbebe1c7",
+    "web/roadmap.js": "fa460a08905f6c80787eab4a4332bdfa409f1770ddfb90268611ff960bf9c6f6"
+  },
+  "runtimeWasmSha256": "0ce4a5a304d82574b5f4118725bcffc2547121605e49304d280153eae4a5d312",
+  "coldPristineBeforeBuild": true,
+  "coldSourceDiffEmpty": true,
+  "coldExactWasmGlueAppRoadmapSw": true,
+  "coldPostBuildManifestOnlyDiff": [
+    "web/dist/artifacts-alpine.json",
+    "web/dist/artifacts-node-alpine.json",
+    "web/dist/artifacts-omarchy.json",
+    "web/dist/artifacts.json"
+  ],
+  "coldAcceptanceExitCodes": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "browsers": [
+    {
+      "report": "browser/report.json",
+      "reportSha256": "50779f7610e217086f697fc50c2e23f9d61a4b28d0515366f3e5aafbbabe584e",
+      "head": "b587faf6f1bee5db45c5c9368d0a748f9badaff4",
+      "retiredViaJit": 3611,
+      "guestRetired": 4000,
+      "guestRamDigest": "5df84ec4c17598ab2c56293bb5b78338947ce9991af18e0ef795aa4a07d2df44",
+      "suite": "127/127",
+      "errors": [],
+      "threeImagesIndependentlyInspected": true
+    },
+    {
+      "report": "cold/browser/report.json",
+      "reportSha256": "22efbc271e2ebafb1ebd307ba5658e145b93cfce2758babe79b14dff3e43f75e",
+      "head": "5f759ef96773b93e2b1faff27183bf6e66213fea",
+      "retiredViaJit": 3611,
+      "guestRetired": 4000,
+      "guestRamDigest": "5df84ec4c17598ab2c56293bb5b78338947ce9991af18e0ef795aa4a07d2df44",
+      "suite": "127/127",
+      "errors": [],
+      "threeImagesIndependentlyInspected": true
+    }
+  ],
+  "workerPublicExactByteReceipts": 8,
+  "independentPublicExactByteReceipts": 8,
+  "physicalInput": {
+    "reportSha256": "29b15c67cd97e1d8daac22b4bf449ba7bd35f3ec5fd6703e8a1e8054fdd7f1fa",
+    "head": "b587faf6f1bee5db45c5c9368d0a748f9badaff4",
+    "wasmSha256": "0ce4a5a304d82574b5f4118725bcffc2547121605e49304d280153eae4a5d312",
+    "enteredAt": "2026-09-15T22:38:14.941Z",
+    "deadlineAt": "2026-09-15T22:40:14.941Z",
+    "failedAt": "2026-09-15T22:40:14.943Z",
+    "deadlineMs": 120000,
+    "trustedEvents": 128,
+    "acceptedEvents": 128,
+    "completedReadbacks": 13,
+    "pendingReadbacks": 1,
+    "nonceVerified": false,
+    "serialNonceInjection": false,
+    "imagesInspected": true,
+    "imageFinding": "Both actual Foot captures show the same empty shell prompt and cursor with no typed command or output.",
+    "beforeSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+    "afterSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+    "frames": [
+      2,
+      2
+    ],
+    "pinnedGuestArtifactsUnchangedFromT03w": true,
+    "cleanupClosed": true,
+    "t03qStatus": "pending"
+  },
+  "desktopResponsive": false,
+  "broadCiPassed": false,
+  "broadCiFailedTargets": [
+    "clippy",
+    "test",
+    "wasm",
+    "test-riscv",
+    "determinism"
+  ],
+  "inheritedGateBoundariesRechecked": 14,
+  "carriedHeldBoundariesRechecked": 17,
+  "wrongGoldenFailedThenRestored": true,
+  "T03qStatus": "pending",
+  "auditPassed": true
+}
