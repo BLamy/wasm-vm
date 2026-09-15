@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 318,
-    "total": 494
+    "verified": 319,
+    "total": 495
   },
   "epics": [
     {
@@ -23006,7 +23006,7 @@
       "priority": null,
       "status": "pending",
       "depends_on": [
-        "E5.5-T03v"
+        "E5.5-T03w"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -23021,18 +23021,18 @@
       "activity": [
         {
           "date": "2026-09-15",
-          "commits": 6,
+          "commits": 7,
           "labels": [
+            "Plan measured FP arithmetic helper after failed desktop input",
             "Keep desktop release gated on measured comparison follow-up",
             "Keep desktop publication gated on measured FP memory follow-up",
-            "Start measured JIT single-precision move slice",
-            "Measure current renderer opcodes before choosing the execution remedy"
+            "Start measured JIT single-precision move slice"
           ]
         }
       ],
       "firstActivity": "2026-09-15",
       "lastActivity": "2026-09-15",
-      "commitCount": 6
+      "commitCount": 7
     },
     {
       "id": "E5.5-T03r",
@@ -23184,7 +23184,7 @@
       "epicKey": "5.5",
       "title": "Compile measured single-precision comparisons with exact accrued flags",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5.5-T03u"
       ],
@@ -23195,22 +23195,59 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-15 — worker — plan the next measured boundary\n\nT03u runtime `7048847fb542d66618b836b965b94c8c9db771d5`, WASM\n`1f989758c67c9dfdf514d2e03c0e4fa2cadb15a2dc0a465f5cb538661446473b`,\npasses the built FP memory guest and 127/127 live ISA suite. Its physical\nkeyboard run entered at `2026-09-15T19:31:51.262Z` and failed at the unchanged\n`2026-09-15T19:33:51.262Z` deadline (callback recorded one millisecond later).\nThe 128 accepted input events produced no nonce or typed text, and presentation\nremained at two frames. See\n`evidence/omarchy-profile/fp-memory-r1/physical-input/desktop/report.json` and\n`failure.png`. This task remains pending until T03u is independently verified.\nThe original histogram is\n`evidence/omarchy-profile/renderer-opcodes-r1/report.json`, `recount.opFpFunct7`.\n\n### 2026-09-15 — worker — activate measured comparison boundary\n\nT03u is independently verified at `0cc4c0c62540928301dcd8a56618d3b059f6c7ab`\nand published as open draft PR #389. Its exact FP memory, permission, cold-build\nand artifact proofs carry forward for unchanged code. Its actual desktop input\ntrial failed at 120 seconds, so T03q remains pending. This task is the first\neligible queue entry. A fresh comparison verifier is preparing predictions\nbefore implementation; the original measured renderer page includes FLE.S\nalongside the now supported moves and transfers.",
+      "verificationLog": "### 2026-09-15 — worker — plan the next measured boundary\n\nT03u runtime `7048847fb542d66618b836b965b94c8c9db771d5`, WASM\n`1f989758c67c9dfdf514d2e03c0e4fa2cadb15a2dc0a465f5cb538661446473b`,\npasses the built FP memory guest and 127/127 live ISA suite. Its physical\nkeyboard run entered at `2026-09-15T19:31:51.262Z` and failed at the unchanged\n`2026-09-15T19:33:51.262Z` deadline (callback recorded one millisecond later).\nThe 128 accepted input events produced no nonce or typed text, and presentation\nremained at two frames. See\n`evidence/omarchy-profile/fp-memory-r1/physical-input/desktop/report.json` and\n`failure.png`. This task remains pending until T03u is independently verified.\nThe original histogram is\n`evidence/omarchy-profile/renderer-opcodes-r1/report.json`, `recount.opFpFunct7`.\n\n### 2026-09-15 — worker — activate measured comparison boundary\n\nT03u is independently verified at `0cc4c0c62540928301dcd8a56618d3b059f6c7ab`\nand published as open draft PR #389. Its exact FP memory, permission, cold-build\nand artifact proofs carry forward for unchanged code. Its actual desktop input\ntrial failed at 120 seconds, so T03q remains pending. This task is the first\neligible queue entry. A fresh comparison verifier is preparing predictions\nbefore implementation; the original measured renderer page includes FLE.S\nalongside the now supported moves and transfers.\n\n### 2026-09-15 — worker — freeze comparison implementation for submission\n\nThe candidate emits FEQ.S/FLT.S/FLE.S with integer bit operations, valid NaN-box\nclassification and immediate sticky invalid flags in the existing handoff.\nNative worker cases and independent literal/seeded/fault/growth/direct-successor\nchecks hold; see the fresh verifier's `provisional-review.md`. The combined\npre-freeze Node run printed successful worker tests but did not exit and was\nstopped as incomplete evidence. A bounded worker-only diagnostic rerun exited\nnormally in 15.28 seconds without a source change or forced success. The cause\nof that earlier stall is not established; final ordinary acceptance must exit\nnormally. Source formatting passes, and the locally built WASM is\n`4e1dae976924fb1857a70fc1a8ec357e18475e15f4a8f74ef2980838d0a089dd`\n(1,592,252 bytes). High-risk final commands, actual physical-input retry,\npristine build and deployment remain outstanding. This is not a responsiveness\nclaim.\n\n\n### 2026-09-15 — worker — implemented; actual desktop input remains failed\n\nRuntime and acceptance head `2e7cd66994e63c1ca39f492d49c5764a31c87739`;\nfinal pristine/deployment-manifest head `6b76f786cbffd1a76bf05534da2ef6b9211666cc`.\nWASM SHA-256 `4e1dae976924fb1857a70fc1a8ec357e18475e15f4a8f74ef2980838d0a089dd`.\nThe complete claim and command map are in\n`evidence/omarchy-profile/fp-comparisons-r1/README.md` and `submission.json`.\nIts 46-file evidence index, `sha256.txt`, has SHA-256\n`c216dcd2c648a654abadbefa8307f8a4e3a4c5d56baabdff491e058055b82ef6`.\n\nCommands: `python3 evidence/omarchy-profile/fp-comparisons-r1/record-submission.py affected`\n(all seven commands exit0, including `make verify-E5_5-T03v`), the same recorder\nwith `ci` (`make -k ci`, exit2 with preserved pre-existing/platform failures),\n`python3 evidence/omarchy-profile/fp-comparisons-r1/cold/runner.py` (pristine\nsource, scrubbed build environment, exact-byte rebuild and acceptance exit0),\n`bash tools/deploy-cloudflare.sh`, and the TLS-verified `verify-public.py`.\nNative ISA128/128 and perf25.6MIPS against the15MIPS floor pass; broad CI is\nnot relabeled green. Source identity for known failed boundaries is recorded.\nThe final ordinary combined Node comparison run exits normally; the earlier\nincomplete pre-freeze process remains archived, without an invented cause.\n\nThe worker corpus records7,648 cases (FNV5d33ab4828b8874f),80 control/fault\ncases and precise run-loop prefixes. Promoted independent fixtures add2,016\nliteral/all-flags cases,4,608 seeded cases including1,152 FS-Off exits,ten\ncontrol/fault cases, actual direct links and real memory growth. Their exact\nstate digests agree across native/private/shared modules. The isolated wrong\nFEQ(+0,-0) golden fails before restoration. Changed generated paths and flag\nhandoff execute in those recordings; unchanged FPR/memory authority proofs\ncarry forward from T03t/T03u.\n\nBuilt and pristine browser recordings both pass127/127 live tests with zero\nerrors and a live1/1 comparison capability. The comparison ELF retires3,621\nof4,000 instructions viaJIT and matches interpreter integer registers, FPR\nspills, flags/frm/FS, statistics and RAM digest\n`02de371a30fadf1337684a3e37cdeef855f7783c15e77632fe6e6b05b3cc565e`.\nScreenshots are retained and inspected. Both the immutable deployment\n`https://fb8fea2d.wasm-vm.pages.dev` and production serve the exact tested\nWASM/glue/roadmap/app bytes (eight recorded checks).\n\nThe actual physical input trial is a failure: Enter20:41:37.042Z to the original\n20:43:37.042Z deadline,128 trusted accepted events,13 completed readbacks exit75\nand one pending,frames2→2,no typed text. Browser cleanup is normal, with no\ncompeting build during the window. Full report SHA-256\n`5c09fcb09292d86025ccb0f9c950697e3a8d2f7b3064dc72f99c5858308c145f`.\nThis is exact comparison support, not a latency or usable-desktop claim. T03q\nstays pending, and T03w plans the next measured addition/multiplication boundary.\nA fresh verifier owns the final verdict.\n\n\n### 2026-09-15 — verifier — VERDICT: verified\n\nIndependent review of submission `971ab43cbbb05dfdf7c0a012103ce919db5470ab`:\n`evidence/omarchy-profile/fp-comparisons-verifier/final-review.md`.\nThe bounded final audit is `final-audit.json` in that directory, SHA-256\n`7fa05d19b6f5b309986f3c3e5e4f3cdb965389c69a28b6b7f78f91febe2a376e`.\n\n- P1–P7 — HELD. Carry forward the provisional independent state/hunk review;\n  final `fp-comparisons-r1/acceptance.log:30–103` confirms three native and six\n  WASM verifier tests, matching golden/seeded/control receipts, direct links,\n  precise faults and actual memory growth, with normal process exits.\n- P8 — HELD. Isolated wrong FEQ golden fails (101), restoration passes (0).\n  Final audit validates the worker's 46-file seal, source/WASM identity and\n  unchanged T03t/T03u proof boundaries; no implementation edits by verifier.\n- P9 — HELD. Pristine head `6b76f786cbffd1a76bf05534da2ef6b9211666cc`\n  rebuilds identical WASM and passes full acceptance. Built/cold suites both\n  pass 127/127 with zero errors; eight public receipts match tested bytes.\n  See `fp-comparisons-r1/cold/report.json` and `cloudflare-public.json`.\n- Actual desktop retry remains FAILED: unchanged 120 seconds, 128 trusted\n  events, no nonce or visible response, frames 2→2. Final audit binds the\n  report and inspected identical before/failure screenshots. T03q stays pending.\n- COVERAGE/SUITE: changed runtime hunks covered; independent native/WASM tests\n  promoted. Existing T03t/T03u HELD results carried forward. Broad CI's recorded\n  unchanged/platform failures remain failures. No unresolved comparison finding.\n\nFinalization commands: `python3 tools/check_task_policy.py`, then\n`python3 tools/build_queue.py`; no unrelated regression gates repeated.",
       "adversarial": "A fresh verifier predicts the zero/sign/NaN ordering and sticky invalid flag\nbefore inspecting evidence. Independently vary operand seeds, signs, register\naliases, FS and frm. Test comparison flags immediately followed by another\ncompiled block, an interpreted CSR operation, a precise fault, and a memory\nview refresh. Check every changed hunk, test a deliberate wrong golden value,\nand inspect the pristine clone. Carry unchanged T03t/T03u proofs forward.",
       "file": "tasks/epic-5.5-omarchy/E5.5-T03v-jit-fp-comparisons.md",
       "activity": [
         {
           "date": "2026-09-15",
-          "commits": 2,
+          "commits": 5,
           "labels": [
-            "Start measured renderer FP comparison task",
-            "Keep desktop release gated on measured comparison follow-up"
+            "Verify compiled floating-point comparison boundary",
+            "Record comparison acceptance and unchanged desktop input failure",
+            "Compile single-precision comparisons with sticky guest flags",
+            "Start measured renderer FP comparison task"
           ]
         }
       ],
       "firstActivity": "2026-09-15",
       "lastActivity": "2026-09-15",
-      "commitCount": 2
+      "commitCount": 5
+    },
+    {
+      "id": "E5.5-T03w",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Keep measured FP addition and multiplication in compiled renderer blocks",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5.5-T03v"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-15 — coordinator — next measured renderer boundary\n\nT03v comparison acceptance passes on native/private/shared generated modules,\nand the actual built page runs 127/127 ISA tests with zero errors. Its physical\ninput run entered at `2026-09-15T20:41:37.042Z`, reached the unchanged deadline\nat `2026-09-15T20:43:37.042Z`, and produced no independently read nonce or typed\nterminal response. Full receipt:\n`evidence/omarchy-profile/fp-comparisons-r1/physical-input/desktop/report.json`,\nSHA-256 `5c09fcb09292d86025ccb0f9c950697e3a8d2f7b3064dc72f99c5858308c145f`.\nThe original dynamic operation counts remain in\n`evidence/omarchy-profile/renderer-opcodes-r1/report.json`, `recount.opFpFunct7`.\nUse the existing audited software arithmetic rather than introducing a second\nrounded-arithmetic implementation. No Epic 6 work is activated.",
+      "adversarial": "A fresh critic predicts rounded results and flags before reading evidence,\nuses independent operand seeds and rounding cases, checks helper-call counts\non success and illegal exits, and attacks stale FPR/flag state across a direct\nsuccessor and interpreted CSR operation. Audit every changed import/handoff\nhunk; sabotage one literal expected value in an isolated test copy. Carry\nunchanged T03t/T03u/T03v evidence forward and inspect final cold/public bytes.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03w-jit-fp-arithmetic-helper.md",
+      "activity": [
+        {
+          "date": "2026-09-15",
+          "commits": 3,
+          "labels": [
+            "Compile measured FADD.S and FMUL.S through pure software arithmetic",
+            "Start measured renderer FP arithmetic helper slice",
+            "Plan measured FP arithmetic helper after failed desktop input"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-15",
+      "lastActivity": "2026-09-15",
+      "commitCount": 3
     },
     {
       "id": "E5.5-T04a",

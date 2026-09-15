@@ -123,6 +123,24 @@ pub trait SoftFloat {
     fn canonical_nan() -> Self::Bits;
 }
 
+/// The pinned APFloat backend omits OF when overflow saturates to a finite
+/// value. For F32 add/mul, an inexact largest result needs OF iff the exact
+/// magnitude reaches 2^128. Recompute only this rare flag check with the same
+/// software backend widened to binary64; never replace the rounded F32 result.
+/// Products need at most 48 significant bits. A sum near 2^128 differs from
+/// that boundary by at least 2^80, well above binary64's 2^75 spacing below it.
+fn f32_saturating_overflow(a: u32, b: u32, multiply: bool) -> bool {
+    let mut loses = false;
+    let x: Double = Single::from_bits(u128::from(a)).convert(&mut loses).value;
+    let y: Double = Single::from_bits(u128::from(b)).convert(&mut loses).value;
+    let exact = if multiply {
+        x.mul_r(y, Round::NearestTiesToEven).value
+    } else {
+        x.add_r(y, Round::NearestTiesToEven).value
+    };
+    exact.ilogb() >= 128
+}
+
 /// Generate the [`SoftFloat`] impl for one format from its apfloat type + geometry.
 macro_rules! impl_softfloat {
     ($marker:ident, $ap:ty, $bits:ty, $mant:expr, $exp:expr, $bias:expr) => {
@@ -145,6 +163,26 @@ macro_rules! impl_softfloat {
                     f.to_bits() as $bits
                 }
             }
+
+            fn arithmetic_flags(
+                a: $bits,
+                b: $bits,
+                value: $ap,
+                status: Status,
+                multiply: bool,
+            ) -> Flags {
+                let mut flags = Flags::from_status(status);
+                // Keep the correction scoped to the selected single-precision
+                // operations. Other formats and arithmetic families are unchanged.
+                if $mant == 23
+                    && status == Status::INEXACT
+                    && value.is_largest()
+                    && f32_saturating_overflow(a as u32, b as u32, multiply)
+                {
+                    flags.0 |= Flags::OF;
+                }
+                flags
+            }
         }
 
         impl SoftFloat for $marker {
@@ -152,7 +190,10 @@ macro_rules! impl_softfloat {
 
             fn add(a: $bits, b: $bits, rm: RoundMode) -> ($bits, Flags) {
                 let r = Float::add_r(Self::of(a), Self::of(b), rm.to_apfloat());
-                (Self::bits(r.value), Flags::from_status(r.status))
+                (
+                    Self::bits(r.value),
+                    Self::arithmetic_flags(a, b, r.value, r.status, false),
+                )
             }
             fn sub(a: $bits, b: $bits, rm: RoundMode) -> ($bits, Flags) {
                 let r = Float::sub_r(Self::of(a), Self::of(b), rm.to_apfloat());
@@ -160,7 +201,10 @@ macro_rules! impl_softfloat {
             }
             fn mul(a: $bits, b: $bits, rm: RoundMode) -> ($bits, Flags) {
                 let r = Float::mul_r(Self::of(a), Self::of(b), rm.to_apfloat());
-                (Self::bits(r.value), Flags::from_status(r.status))
+                (
+                    Self::bits(r.value),
+                    Self::arithmetic_flags(a, b, r.value, r.status, true),
+                )
             }
             fn div(a: $bits, b: $bits, rm: RoundMode) -> ($bits, Flags) {
                 let r = Float::div_r(Self::of(a), Self::of(b), rm.to_apfloat());

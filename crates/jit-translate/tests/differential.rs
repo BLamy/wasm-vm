@@ -1852,7 +1852,7 @@ fn fp_ops_are_unsupported() {
     // Every remaining unsupported family stays behind the measured-policy gate.
     let fp_ops = [
         FpArithS {
-            op: FpArithOp::Add,
+            op: FpArithOp::Sub,
             rd: 1,
             rs1: 2,
             rs2: 3,

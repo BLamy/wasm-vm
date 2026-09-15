@@ -1,0 +1,51 @@
+[
+  {
+    "path": "crates/wasm/tests/resume.rs",
+    "base": "f0833e1cb9c7945aa7e3e050b5a7ae1ed901965d",
+    "baseSha256": "fa0b32a25f5c7bbbea6a83d533a7bb62ef2a19e62162526689de80f4e82b4de1",
+    "currentSha256": "fa0b32a25f5c7bbbea6a83d533a7bb62ef2a19e62162526689de80f4e82b4de1",
+    "identical": true
+  },
+  {
+    "path": "crates/core/src/resume.rs",
+    "base": "f0833e1cb9c7945aa7e3e050b5a7ae1ed901965d",
+    "baseSha256": "89cc796fbeec449fb4b3391c554345228a369f071b0706de4feef596b1393190",
+    "currentSha256": "89cc796fbeec449fb4b3391c554345228a369f071b0706de4feef596b1393190",
+    "identical": true
+  },
+  {
+    "path": "crates/core/src/dispatch.rs",
+    "base": "f0833e1cb9c7945aa7e3e050b5a7ae1ed901965d",
+    "baseSha256": "2d0e0b36f084f4b495fb6bb08184f2a488c3762c7328bbd61e4fec10b27b2d2c",
+    "currentSha256": "2d0e0b36f084f4b495fb6bb08184f2a488c3762c7328bbd61e4fec10b27b2d2c",
+    "identical": true
+  },
+  {
+    "path": "crates/core/src/hart/mod.rs",
+    "base": "f0833e1cb9c7945aa7e3e050b5a7ae1ed901965d",
+    "baseSha256": "259846d4adfdd4eb33397271ba5bae5b1cac08343a7037ac13f220093073bb97",
+    "currentSha256": "259846d4adfdd4eb33397271ba5bae5b1cac08343a7037ac13f220093073bb97",
+    "identical": true
+  },
+  {
+    "path": "crates/wvseccomp/src/main.rs",
+    "base": "f0833e1cb9c7945aa7e3e050b5a7ae1ed901965d",
+    "baseSha256": "166934f78790262bc6bd184b5413b114370ffd970e2947b636521c1d191b8899",
+    "currentSha256": "166934f78790262bc6bd184b5413b114370ffd970e2947b636521c1d191b8899",
+    "identical": true
+  },
+  {
+    "path": "tools/ci/determinism-hazards.sh",
+    "base": "f0833e1cb9c7945aa7e3e050b5a7ae1ed901965d",
+    "baseSha256": "8e6e3a153a2eb2e78a3c9d47ef1436170bcf0383a1e923283ec63bc38b5342cc",
+    "currentSha256": "8e6e3a153a2eb2e78a3c9d47ef1436170bcf0383a1e923283ec63bc38b5342cc",
+    "identical": true
+  },
+  {
+    "path": "crates/core/src/dev/virtio/gpu/resources.rs",
+    "base": "f0833e1cb9c7945aa7e3e050b5a7ae1ed901965d",
+    "baseSha256": "af4b47c28b6801fd8ce3816f288be08feb2d3c2db2d562b0a2f6f19e95fbf2bd",
+    "currentSha256": "af4b47c28b6801fd8ce3816f288be08feb2d3c2db2d562b0a2f6f19e95fbf2bd",
+    "identical": true
+  }
+]

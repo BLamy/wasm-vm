@@ -1,0 +1,132 @@
+cargo fmt --all --check
+cargo test -p wasm-vm-core --test fp_arithmetic_flags -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.17s
+     Running tests/fp_arithmetic_flags.rs (target/debug/deps/fp_arithmetic_flags-8e2ae6cd531cef83)
+
+running 1 test
+FP_ARITH backend literal overflow/threshold/tininess cases=45
+test single_add_mul_finite_overflow_and_threshold_flags ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.74s
+     Running tests/differential.rs (target/debug/deps/differential-4beb98fc58a0b674)
+
+running 1 test
+test fp_ops_are_unsupported ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-jit-runtime --test fp_arithmetic --test fp_arithmetic_verifier -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.19s
+     Running tests/fp_arithmetic.rs (target/debug/deps/fp_arithmetic-6cb5755871e4271a)
+
+running 3 tests
+FP_ARITH runloop FS-off/invalid-rm prefix=1 bytes=2 later-fault-flags=3
+test arithmetic_native_runloop ... ok
+FP_ARITH handoff/fault/invalid-prefix/same-source cases=80
+test arithmetic_native_handoff_and_faults ... ok
+FP_ARITH corpus cases=17664 register_flags_fnv=0303711512bb0d8a
+test arithmetic_native_corpus ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.73s
+
+     Running tests/fp_arithmetic_verifier.rs (target/debug/deps/fp_arithmetic_verifier-1e9215b6d7d1823d)
+
+running 5 tests
+CRITIC_ARITHMETIC_INDICES imports=6 exports=run0:6,run1:7,run2:8 actual_chain=true integer_imports=5 unsupported_families=5
+test verifier_mixed_batch_function_indices_and_unselected_fallbacks ... ok
+CRITIC_NATIVE_ARITHMETIC_CONTROL Receipt { cases: 11, disabled: 0, digest: 12235252711163659176 }
+test verifier_native_arithmetic_control_handoff_and_faults ... ok
+CRITIC_NATIVE_ARITHMETIC_GOLDENS Receipt { cases: 8832, disabled: 0, digest: 17621813032391191516 }
+test verifier_native_literal_arithmetic_goldens ... ok
+CRITIC_NATIVE_ARITHMETIC_SEEDED Receipt { cases: 3072, disabled: 1488, digest: 12643572604827571813 }
+test verifier_native_seeded_arithmetic_aliases_and_illegal ... ok
+CRITIC_ARITHMETIC_IMPORT cases=1024 legal_helper_calls=540 illegal_helper_calls=0 import_index=5 integer_wasm_only=true
+test verifier_generated_arithmetic_helper_counts_and_purity ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.52s
+
+wasm-pack test --node crates/wasm --test jit_fp_arithmetic --test jit_fp_arithmetic_verifier -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.20s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running tests/jit_fp_arithmetic.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_arithmetic-850992f292214c98.wasm)
+running 2 tests
+Invoking test: arithmetic_browser_private
+test arithmetic_browser_private ... ok
+Invoking test: arithmetic_browser_inline
+test arithmetic_browser_inline ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 21.44s
+
+     Running tests/jit_fp_arithmetic_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_arithmetic_verifier-92334c500db83fe3.wasm)
+running 6 tests
+Invoking test: verifier_shared_arithmetic_survives_growth
+CRITIC_ARITHMETIC_GROWTH inline=true fault=None pc=0000000040007814 retired=5 writes=1 flags_before=9 flags_after=17
+CRITIC_ARITHMETIC_GROWTH inline=true fault=Store pc=0000000040007804 retired=1 writes=1 flags_before=9 flags_after=17
+CRITIC_ARITHMETIC_GROWTH inline=true fault=Load pc=000000004000780c retired=3 writes=1 flags_before=9 flags_after=17
+test verifier_shared_arithmetic_survives_growth ... ok
+Invoking test: verifier_shared_arithmetic
+CRITIC_SHARED_ARITHMETIC_GOLDENS Receipt { cases: 8832, disabled: 0, digest: 17621813032391191516 }
+CRITIC_SHARED_ARITHMETIC_SEEDED Receipt { cases: 3072, disabled: 1488, digest: 12643572604827571813 }
+CRITIC_SHARED_ARITHMETIC_CONTROL Receipt { cases: 11, disabled: 0, digest: 12235252711163659176 }
+test verifier_shared_arithmetic ... ok
+Invoking test: verifier_same_module_arithmetic_successors
+CRITIC_ARITHMETIC_CHAIN same=true fault=false budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_ARITHMETIC_CHAIN same=true fault=false budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=09
+CRITIC_ARITHMETIC_CHAIN same=true fault=false budget=6 retired=6 entries=2 links=1 pc=0000000080000018 flags=09
+CRITIC_ARITHMETIC_CHAIN same=true fault=true budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_ARITHMETIC_CHAIN same=true fault=true budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=09
+CRITIC_ARITHMETIC_CHAIN same=true fault=true budget=6 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_same_module_arithmetic_successors ... ok
+Invoking test: verifier_private_arithmetic_survives_growth
+CRITIC_ARITHMETIC_GROWTH inline=false fault=None pc=0000000040007814 retired=0 writes=1 flags_before=9 flags_after=17
+CRITIC_ARITHMETIC_GROWTH inline=false fault=Store pc=0000000040007804 retired=0 writes=1 flags_before=9 flags_after=17
+CRITIC_ARITHMETIC_GROWTH inline=false fault=Load pc=000000004000780c retired=0 writes=1 flags_before=9 flags_after=17
+test verifier_private_arithmetic_survives_growth ... ok
+Invoking test: verifier_private_arithmetic
+CRITIC_PRIVATE_ARITHMETIC_GOLDENS Receipt { cases: 8832, disabled: 0, digest: 17621813032391191516 }
+CRITIC_PRIVATE_ARITHMETIC_SEEDED Receipt { cases: 3072, disabled: 1488, digest: 12643572604827571813 }
+CRITIC_PRIVATE_ARITHMETIC_CONTROL Receipt { cases: 11, disabled: 0, digest: 12235252711163659176 }
+test verifier_private_arithmetic ... ok
+Invoking test: verifier_cross_module_arithmetic_successors
+CRITIC_ARITHMETIC_CHAIN same=false fault=false budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_ARITHMETIC_CHAIN same=false fault=false budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=09
+CRITIC_ARITHMETIC_CHAIN same=false fault=false budget=6 retired=6 entries=2 links=1 pc=0000000080000018 flags=09
+CRITIC_ARITHMETIC_CHAIN same=false fault=true budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_ARITHMETIC_CHAIN same=false fault=true budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=09
+CRITIC_ARITHMETIC_CHAIN same=false fault=true budget=6 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_cross_module_arithmetic_successors ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 2.51s
+
+node tools/verify/omarchy-fp-arithmetic-browser.mjs /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-arithmetic-r1/acceptance-browser
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('.rm-g-label').filter({ hasText: 'E5.5-T03w' })[22m
+
+    at /Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-fp-arithmetic-browser.mjs:121:67 {
+  name: 'TimeoutError'
+}
+
+Node.js v24.20.0
+make: *** [verify-E5_5-T03w] Error 1

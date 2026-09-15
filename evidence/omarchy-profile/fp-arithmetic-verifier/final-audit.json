@@ -1,0 +1,92 @@
+{
+  "audited_at": "2026-09-15T22:11:56.747548+00:00",
+  "submission_commit": "ef007bfe80bcad2bb1ea80b312cc2ffcc5c973bb",
+  "worker_seal_sha256": "4dc96dbb22a288fcf33d5839a45c8783dfafd641342f32d217a08b34ad07a2b2",
+  "sealed_files_verified": 56,
+  "runtime_head": "357dd1a0f9f984747f3f92ad83b0ae556e6689f5",
+  "repair_head": "d64b037b362b36490d58b82663a448ac0532b025",
+  "runtime_source_sha256": {
+    "crates/core/src/jit.rs": "19db210c7d97ad31e166d1f561135b7decdc651bcf97843feb3bb968936d3d1b",
+    "crates/core/src/softfloat.rs": "32da95fe87b74a10879e8729ee4da3f949e376cfdd02df9db4a22521368afe25",
+    "crates/jit-translate/src/lib.rs": "8780bc7bcfe6e70bee04fb6a3a892fcf69f13684d63d1cf1a8a735a3a345426c",
+    "crates/jit-runtime/src/lib.rs": "4c558baefc70dd712ede41d1696feeda06d0cb473867234f0d585f97133c6905",
+    "crates/wasm/src/jit_browser.rs": "be5520ee7f215db4f82e3e08f00b627e6520629462d935d3bde237396f3bbcb5",
+    "tests/support/jit_fp_arithmetic_verifier.rs": "45a1cd7affca31ce44a386f2c5e842c8345f4b283aaa97bf2a73946883162641",
+    "crates/jit-runtime/tests/fp_arithmetic_verifier.rs": "5a7460cf52cf7060fa5494854c165dd9d7a7b840fe02e9879d6ac047e8f7eeeb",
+    "crates/wasm/tests/jit_fp_arithmetic_verifier.rs": "19937657f3564a432c465bc3e38074d917aca90cebf6945dc8d6431ed141157f",
+    "tools/verify/omarchy-fp-arithmetic-browser.mjs": "952b2396878e8bb9df62c55de44fc5df82870c3f11516f0c45c9e50a820ed8e9",
+    "Makefile": "35afd6a0c0452cbe1a5a7da90bbe1785977a7a6b0bca40a020eab35824b1edb1",
+    "crates/wasm/src/lib.rs": "7245c9fe1814d67eda6b9311dadf9784bbe973322aff89ba06c0f6e6cc557ca0"
+  },
+  "runtime_wasm_sha256": "e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4",
+  "cold_head": "f494ef51de1763d3a7f78d11f96d6afc50fc46e0",
+  "cold_pristine_before_build": true,
+  "cold_source_diff_empty": true,
+  "cold_acceptance_exit_codes": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "browsers": [
+    {
+      "report": "browser-final/report.json",
+      "sha256": "13adeb8c79ea7bbcdeac8b72bca9b2e5f5a1325bef411f9d7945a4db0ad3b61d",
+      "head": "d64b037b362b36490d58b82663a448ac0532b025",
+      "guest_ram_digest": "7583c9377630eaa1af54c7eafb05d5ba5d3c9f708e5d6f1ef47cbd45dc6debf8",
+      "retired_via_jit": 3649,
+      "suite": "127/127"
+    },
+    {
+      "report": "cold/browser/report.json",
+      "sha256": "48f3c5ce35ce838e1c546da0f35e9ea89ab80189f721b78a80e0278f193dbd0b",
+      "head": "f494ef51de1763d3a7f78d11f96d6afc50fc46e0",
+      "guest_ram_digest": "7583c9377630eaa1af54c7eafb05d5ba5d3c9f708e5d6f1ef47cbd45dc6debf8",
+      "retired_via_jit": 3649,
+      "suite": "127/127"
+    }
+  ],
+  "public_exact_byte_receipts": 8,
+  "independent_public_exact_byte_receipts": 8,
+  "physical_input": {
+    "reportSha256": "c20fe7de2adb79c581367529f52d942b535d43f4d15e257dfa58cb4ee8cc8b85",
+    "head": "d64b037b362b36490d58b82663a448ac0532b025",
+    "wasmSha256": "e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4",
+    "enteredAt": "2026-09-15T21:44:39.143Z",
+    "deadlineAt": "2026-09-15T21:46:39.143Z",
+    "failedAt": "2026-09-15T21:46:39.144Z",
+    "deadlineMs": 120000,
+    "trustedEvents": 128,
+    "acceptedEvents": 128,
+    "completedReadbacks": 13,
+    "pendingReadbacks": 1,
+    "nonceVerified": false,
+    "imagesInspected": true,
+    "imageFinding": "Identical initial shell prompt and cursor; no command, output, or visible typed text.",
+    "beforeSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+    "afterSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+    "frames": [
+      2,
+      2
+    ],
+    "cleanupClosed": true,
+    "t03qStatus": "pending"
+  },
+  "desktop_responsive": false,
+  "broad_ci_passed": false,
+  "broad_ci_exit_codes": [
+    2
+  ],
+  "broad_ci_failed_targets": [
+    "clippy",
+    "test",
+    "wasm",
+    "test-riscv",
+    "determinism"
+  ],
+  "inherited_gate_files_rechecked": 7,
+  "carried_held_boundaries_rechecked": 12,
+  "wrong_golden_failed_then_restored": true,
+  "T03q_status": "pending",
+  "audit_passed": true
+}

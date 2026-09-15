@@ -1,0 +1,4 @@
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Checking wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+    Checking wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.95s

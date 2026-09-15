@@ -1,0 +1,18 @@
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.89s
+     Running tests/fp_arithmetic_verifier.rs (target/debug/deps/fp_arithmetic_verifier-1e9215b6d7d1823d)
+
+running 5 tests
+CRITIC_ARITHMETIC_INDICES imports=6 exports=run0:6,run1:7,run2:8 actual_chain=true integer_imports=5 unsupported_families=5
+test verifier_mixed_batch_function_indices_and_unselected_fallbacks ... ok
+CRITIC_NATIVE_ARITHMETIC_CONTROL Receipt { cases: 11, disabled: 0, digest: 12235252711163659176 }
+test verifier_native_arithmetic_control_handoff_and_faults ... ok
+CRITIC_NATIVE_ARITHMETIC_GOLDENS Receipt { cases: 8832, disabled: 0, digest: 17621813032391191516 }
+test verifier_native_literal_arithmetic_goldens ... ok
+CRITIC_NATIVE_ARITHMETIC_SEEDED Receipt { cases: 3072, disabled: 1488, digest: 12643572604827571813 }
+test verifier_native_seeded_arithmetic_aliases_and_illegal ... ok
+CRITIC_ARITHMETIC_IMPORT cases=1024 legal_helper_calls=540 illegal_helper_calls=0 import_index=5 integer_wasm_only=true
+test verifier_generated_arithmetic_helper_counts_and_purity ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.08s
+

@@ -1,0 +1,52 @@
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+error[E0277]: the trait bound `!: WasmTy` is not satisfied
+   --> crates/jit-runtime/tests/fp_arithmetic_verifier.rs:45:36
+    |
+ 45 |           .func_wrap("env", "store", |_: i64, _: i64, _: i32| {
+    |  __________---------_________________^
+    | |          |
+    | |          required by a bound introduced by this call
+ 46 | |             panic!("arithmetic touched guest memory")
+ 47 | |         })
+    | |_________^ the trait `WasmTy` is not implemented for `!`
+    |
+    = help: the following other types implement trait `WasmTy`:
+              NoneRef
+              f32
+              f64
+              i32
+              i64
+              std::option::Option<NoneRef>
+              std::option::Option<wasmtime::Func>
+              std::option::Option<wasmtime::NoExtern>
+            and 7 others
+    = note: required for `!` to implement `WasmRet`
+    = note: required for `{closure@crates/jit-runtime/tests/fp_arithmetic_verifier.rs:45:36: 45:60}` to implement `IntoFunc<Probe, (i64, i64, i32), !>`
+note: required by a bound in `Linker::<T>::func_wrap`
+   --> /Users/blamy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-35.0.0/src/runtime/linker.rs:542:20
+    |
+538 |     pub fn func_wrap<Params, Args>(
+    |            --------- required by a bound in this associated function
+...
+542 |         func: impl IntoFunc<T, Params, Args>,
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `Linker::<T>::func_wrap`
+
+error[E0605]: non-primitive cast: `wasm_vm_core::jit::ExitCode` as `i32`
+   --> crates/jit-runtime/tests/fp_arithmetic_verifier.rs:201:33
+    |
+201 | ...                   ExitCode::Fallthrough as i32
+    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ an `as` expression can be used to convert enum types to numeric types only if the enum type is unit-only or field-less
+    |
+    = note: see https://doc.rust-lang.org/reference/items/enumerations.html#casting for more information
+
+error[E0605]: non-primitive cast: `wasm_vm_core::jit::ExitCode` as `i32`
+   --> crates/jit-runtime/tests/fp_arithmetic_verifier.rs:203:33
+    |
+203 | ...                   ExitCode::IllegalInstruction as i32
+    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ an `as` expression can be used to convert enum types to numeric types only if the enum type is unit-only or field-less
+    |
+    = note: see https://doc.rust-lang.org/reference/items/enumerations.html#casting for more information
+
+Some errors have detailed explanations: E0277, E0605.
+For more information about an error, try `rustc --explain E0277`.
+error: could not compile `wasm-vm-jit-runtime` (test "fp_arithmetic_verifier") due to 3 previous errors

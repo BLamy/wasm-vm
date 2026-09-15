@@ -1,0 +1,34 @@
+{
+  "head": "d64b037b362b36490d58b82663a448ac0532b025",
+  "wasmSha256": "e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4",
+  "phase": "repair",
+  "commands": [
+    {
+      "label": "wasm-native-lib-final",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-wasm",
+        "--lib"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T21:41:10Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T21:41:10Z"
+    },
+    {
+      "label": "browser-final",
+      "args": [
+        "node",
+        "tools/verify/omarchy-fp-arithmetic-browser.mjs",
+        "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-arithmetic-r1/browser-final"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T21:41:10Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T21:41:27Z"
+    }
+  ],
+  "allPassed": true
+}
