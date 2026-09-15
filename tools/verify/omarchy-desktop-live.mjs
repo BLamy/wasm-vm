@@ -482,12 +482,27 @@ const page = await context.newPage();
 let secondPage = null;
 let failurePage = page;
 let loaderManifestResponse = null;
-if (mode === "capture" || coldPair || inputTrial) context.on("response", (response) => {
-  if (loaderManifestResponse || !/\/chunked-omarchy\/manifest(?:-[0-9a-f]{64})?\.json(?:\?|$)/iu.test(response.url())) return;
-  loaderManifestResponse = response.body()
-    .then((body) => ({ url: response.url(), status: response.status(), body, error: null }))
-    .catch((error) => ({ url: response.url(), status: response.status(), body: null, error: String(error) }));
-});
+if (mode === "capture" || coldPair || inputTrial) {
+  // Retain the exact response delivered to the actual loader. Chrome can discard
+  // a worker request's CDP body while the large snapshot is downloading, even
+  // when response.body() was requested at the response event. APIResponse owns
+  // its bytes; forwarding that same body avoids a second-fetch identity claim.
+  await context.route(/\/chunked-omarchy\/manifest(?:-[0-9a-f]{64})?\.json(?:\?|$)/iu, async (route) => {
+    if (loaderManifestResponse) { await route.continue(); return; }
+    loaderManifestResponse = (async () => {
+      try {
+        const response = await route.fetch();
+        const body = await response.body();
+        await route.fulfill({ response, body });
+        return { url: response.url(), status: response.status(), body, error: null };
+      } catch (error) {
+        await route.abort().catch(() => {});
+        return { url: route.request().url(), status: null, body: null, error: String(error) };
+      }
+    })();
+    await loaderManifestResponse;
+  });
+}
 const pageLabels = new WeakMap([[page, "primary"]]);
 function trackPage(targetPage, label) {
   targetPage.on("pageerror", (error) => report.errors.push(`${label}: ${String(error)}`));
