@@ -114,6 +114,7 @@ export const ROADMAP = [
       { name: "Fast predecoded interpreter", status: "verified", evidence: "E4-T30: exact-entry hit path, differential corpus, and live busybox proof" },
       { name: "Exact bounded JIT work + retirement", status: "verified", evidence: "E4-T31: budgets, traps, counters, trace gating, CLI, and Wasm wrapper" },
       { name: "Single-precision FP moves", status: "partial", group: "rv64uf-p", filter: ["move"], evidence: "Live ISA move suite; E5.5-T03t adds integer-only JIT moves with separate native/browser state proof. Desktop response remains unresolved." },
+      { name: "Floating-point memory transfers", status: "partial", group: "rv64u", filter: ["ldst"], evidence: "Live F/D memory suites; E5.5-T03u adds checked JIT FP transfers, exact faults and page permissions. Desktop response remains unresolved." },
       { name: "Bulk JIT state handoff + bounded browser handles", status: "verified", evidence: "E4-T33: one 568-byte transfer each way; exact fault state; 4,096-cycle externref/eviction stress" },
       { name: "Default whole-machine Web Worker", status: "verified", evidence: "E4-T32: fresh verifier held exact raw-frame Node matrix plus unchanged browser/rr proof" },
       { name: "Bounded multi-target JALR return PIC", status: "verified", evidence: "E4-T37: four-way same-set Node parity, hysteretic replacement, generated EXEC-TLB authority, fuel, invalidation, and telemetry proof" },

@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 316,
-    "total": 492
+    "verified": 317,
+    "total": 493
   },
   "epics": [
     {
@@ -23006,7 +23006,7 @@
       "priority": null,
       "status": "pending",
       "depends_on": [
-        "E5.5-T03t"
+        "E5.5-T03u"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -23021,18 +23021,18 @@
       "activity": [
         {
           "date": "2026-09-15",
-          "commits": 4,
+          "commits": 5,
           "labels": [
+            "Keep desktop publication gated on measured FP memory follow-up",
             "Start measured JIT single-precision move slice",
             "Measure current renderer opcodes before choosing the execution remedy",
-            "Plan an explicit Hyprland mode trial before desktop promotion",
-            "Split desktop responsiveness into a rendering trial and proven mode release"
+            "Plan an explicit Hyprland mode trial before desktop promotion"
           ]
         }
       ],
       "firstActivity": "2026-09-15",
       "lastActivity": "2026-09-15",
-      "commitCount": 4
+      "commitCount": 5
     },
     {
       "id": "E5.5-T03r",
@@ -23112,7 +23112,7 @@
       "epicKey": "5.5",
       "title": "Translate single-precision FP moves through the JIT state boundary",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5.5-T03s"
       ],
@@ -23123,21 +23123,58 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-15 — worker — activate measured single-precision move slice\n\nT03s is verified at `37c7ffa1`: the current R3 renderer retires 13.425016% FP\ncompute and 3,545,385 FSGNJ.S-family operations in its fixed instruction window.\nThe measured policy reopening condition is met. This slice establishes exact\nFPR handoff semantics and the first bit-operation subset before considering\nloads/comparisons or rounded arithmetic. Physical input remains unresolved.\n\n### 2026-09-15 — fresh critic — predictions before evidence\n\nIndependent verifier `/root/fp_moves_critic` recorded P1–P17 in\n`evidence/omarchy-profile/fp-moves-critic/predictions.md` before running acceptance\nor inspecting implementation evidence. The predictions cover the selected raw\ninstruction encodings, boxed/malformed NaNs and aliases, unchanged flags/rounding,\nprecise FS-disabled and memory-fault prefixes, native/browser/direct successors,\nFPR-only interpreted mutations, a novel equal-version/different-register-file\nattack, elision and artifact/cold-clone provenance. All remain NEEDS EVIDENCE.\nNo status change or implementation edit was made by this critic.",
+      "verificationLog": "### 2026-09-15 — worker — activate measured single-precision move slice\n\nT03s is verified at `37c7ffa1`: the current R3 renderer retires 13.425016% FP\ncompute and 3,545,385 FSGNJ.S-family operations in its fixed instruction window.\nThe measured policy reopening condition is met. This slice establishes exact\nFPR handoff semantics and the first bit-operation subset before considering\nloads/comparisons or rounded arithmetic. Physical input remains unresolved.\n\n### 2026-09-15 — fresh critic — predictions before evidence\n\nIndependent verifier `/root/fp_moves_critic` recorded P1–P17 in\n`evidence/omarchy-profile/fp-moves-critic/predictions.md` before running acceptance\nor inspecting implementation evidence. The predictions cover the selected raw\ninstruction encodings, boxed/malformed NaNs and aliases, unchanged flags/rounding,\nprecise FS-disabled and memory-fault prefixes, native/browser/direct successors,\nFPR-only interpreted mutations, a novel equal-version/different-register-file\nattack, elision and artifact/cold-clone provenance. All remain NEEDS EVIDENCE.\nNo status change or implementation edit was made by this critic.\n\n### 2026-09-15 — worker — implemented; desktop input remains unresolved\n\nSubmission source head `ac7735490c86c652a147434ccf421958fb611de6`; runtime frozen\nat `c7a3c38b84d462eba585c9f7081c70c88cdd2534`. Evidence index:\n`evidence/omarchy-profile/fp-moves-r1/SHA256.json`, SHA-256\n`460e804565625a55486874da9f6ab50172b2699f55839252fddaf1f0757700b5`.\nThe adjacent README and submission.json record exact commands, failure\nclassifications, incremental heads, screenshots, payload identities and logs.\n\n`make verify-E5_5-T03t` passes on the frozen code and in a pristine clone at\n`b4b7c70d`: 1,984 worker cases (state FNV `dc6031f4c37c7ec3`), the independent\n3,840-case/960-trap corpus (state FNV `ba4ecacfdc4b9707`), and six actual browser\nexecutor fixtures. Late test-only repairs at `3a068128`, `9e89c516` and\n`ac773549` pass their focused checks and carry the unchanged cold/runtime proof\nforward. The full affected native JIT/runtime/translator tests pass; the native\nwasm admission fixture's obsolete FMV.W.X rejection was repaired and rerun\nseparately (1/1). Browser JIT regression: 38 passed, one existing ignored;\nFP browser tests: 6/6. Format and affected production-crate Clippy pass.\n\n`make -k ci` was run once and is explicitly not green: unchanged macOS/Linux\nhelper incompatibility, broad all-feature/CLI warnings, stale zicsr-stub helpers,\nand lexical scans of old test clocks/prints are documented with source-diff\nexclusions. The Mac-compatible workspace run passed 680 tests before its old\nlexical failure; an extra unrelated interpreter sweep is recorded as incomplete,\nnot passing. The contended performance failures were investigated using the\nunchanged verified baseline. Final sequential B-C-C-B samples all pass the\n15 MIPS floor: baseline 26.0/25.4; candidate 25.7/25.8. Binary hashes and exact\ncommands are in perf-comparison.json.\n\nThe built Chrome fixture retires 3,639 of 4,000 instructions through generated\ncode, preserving the interpreter's full register/statistics result and guest\nRAM SHA `2292761e0dadbc7ba225714d941fed3c585352ccd3b6912882818ae22b213661`.\nThe old-bundle negative control fails compiled-retirement coverage as intended.\nThe built live ISA suite is 127/127 with zero console/page/HTTP errors and the\nFP move capability live at 1/1. `make web-dist` in the pristine clone rebuilds\nWASM `55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40`\nexactly. Cloudflare deployment `2a2104a3.wasm-vm.pages.dev` and production\n`wasm-vm.pages.dev` return HTTP 200 and those exact bytes; JS, roadmap and app\nidentities also match. The deployed artifact URL manifests are committed.\n\nThe required physical input trial at recorder head `6910e795` used the unchanged\nR3 pair/default mode and actual delivered manifest identity. It accepted 128\ntrusted key events, but the nonce was not created: Enter at 17:45:39.762Z,\nreadback failure at 17:47:39.762Z, exactly 120 seconds. Frames stayed 2 → 2 and\nthe real Foot screenshot contains no typed text. The browser closed cleanly;\nthere was no serial nonce injection or deadline change. The submission demonstrates\nits bounded instruction/state claim; physical responsiveness is unproven. T03q remains\ngated; T03u is pending the fresh verifier's decision on this submission.\n\n### 2026-09-15 — fresh critic — final decision\n\nVERDICT: verified\n\nIndependent verifier `/root/fp_moves_critic` audited worker submission\n`2987f02611826382bf10250323da8a559e64c31b` against predictions recorded before\nevidence. The six runtime source files remain identical to frozen `c7a3c38b`;\nthe later wasm-lib change is confined to its admission test module. All 71\nworker evidence entries rehash to the submitted index above. The critic index\n`evidence/omarchy-profile/fp-moves-critic/SHA256.json` has SHA-256\n`01e2581dbac5eb1089c2c1a769110a8f432a916424d37563251a7e71add1bee4`.\nIt binds the independent observations, hunk map, test/sabotage logs, source and\npublic-artifact audits. No runtime implementation was edited by this verifier.\n\n- **P1–P7 — HELD.** The independent 3,840-case corpus includes 960 FS-Off\n  traps and produces full-register FNV `ba4ecacfdc4b9707`\n  (`fp-moves-critic/independent-native.log:13`). Exact golden f0/x31 are\n  `ffffffffff812345`; raw-move x7/f31 are `ffffffff81234567` (`:11`).\n  All five encodings, both register banks, aliases, malformed boxes, flags,\n  rounding fields and FS states agree. The parsed generated module has 194\n  integer/control/memory operations and no FP WASM operations (`:8`). Native\n  precise retirement preserves only the prefix: PC `80000004`, retired 1,\n  cause 2, raw mtval `20209053` (`fp-moves-r1/acceptance.log:43`).\n- **P8–P13 — HELD.** Same-/cross-module disabled successors retain exactly\n  two retired root instructions; enabled successors retire six; refused\n  successors preserve their destinations (`acceptance.log:69–88`). A root FP\n  write consumed by a successor before its memory fault preserves f31\n  `ffffffffffa01234`, retired 4 and PC `80000010` (`:79–80`). The native fault\n  likewise preserves only the committed FP prefix (`:44`). Test-only proof\n  repair `9e89c516` isolates equal-version, different-identity FRegs replacement\n  at the same address and CSR-only FS refresh with both register versions fixed;\n  native and all six browser fixtures pass (`identity-native.log:7–10`,\n  `identity-wasm.log:28–42`). Actual copy/elision, masks, f31 and the unchanged\n  568-byte ABI are asserted by handoff units (`acceptance.log:5–10`).\n- **P14 — HELD; SUITE promoted.** Independent golden/corpus/operator/identity\n  tests are committed in `ac6bcc8b` and the recurring acceptance target. A\n  scratch-only low-bit sabotage fails at the intended golden assertion, observed\n  `...2345` versus deliberately wrong `...2344`, exit 101\n  (`fp-moves-critic/sabotage.log:12–16`). The clean tests pass locally and in\n  the cold clone (`cold/acceptance.log:208–217`). The stale input-capability\n  fixture repair `3a068128` passes both wasm tests without changing runtime.\n- **P15 — HELD with explicit limits.** `fp-moves-critic/coverage.md` maps each\n  runtime boundary to executed deterministic evidence and gives narrow waivers\n  for unreachable identity exhaustion, the unclaimed big-endian branch and\n  declarative code. Pristine `b4b7c70d`, with Cargo/Rust environment scrubbed,\n  rebuilds the identical WASM and passes complete acceptance (`cold/report.json`,\n  `cold/acceptance.log:328`). Later harness-only repairs retain that proof under\n  the incremental policy. The stale native admission expectation repaired in\n  `ac773549` passes its focused gate (`admission-fixture.log:8–10`). The full\n  affected JIT/runtime/translator tests pass. The recorded broad `make -k ci`\n  and native workspace aggregates remain failed: pre-existing macOS/Linux\n  helper incompatibility, all-feature/CLI warnings, zicsr-stub helper mismatch,\n  and lexical scans of old test clocks/prints. The extra interpreter sweep is\n  explicitly incomplete. These unchanged boundaries are enumerated in the\n  coverage map. After contention ended, sequential baseline/candidate/candidate/\n  baseline measurements are 26.0/25.7/25.8/25.4 MIPS, all above the unchanged\n  15 floor (`perf-comparison.json`); both binaries and baseline source/dependency\n  provenance were independently rehashed.\n- **P16 — HELD.** Actual Chrome and cold Chrome show 127/127, zero errors,\n  3,639/4,000 JIT retirements and matching guest RAM/spill SHA\n  `2292761e0dadbc7ba225714d941fed3c585352ccd3b6912882818ae22b213661`.\n  The old bundle fails the same compiled-coverage gate at 441 retirements.\n  Suite and explicitly labeled capability-inspection screenshots were inspected.\n  Independent TLS-verified public requests return HTTP 200 and the exact tested\n  production/immutable WASM `55557d7a…9a0c40` (`public-audit.json`).\n- **P17 — HELD as an honest failure.** The physical trace has 128 trusted\n  keyboard transitions and 256 true acknowledgements, but 13 completed nonce\n  readbacks report no file and the last request is incomplete. The failure is\n  exactly 120,000 ms after Enter; the nonce never appears in serial input\n  (`artifact-audit.json`). Desktop responsiveness remains unresolved. T03q stays\n  gated; T03u is now eligible as the next measured execution slice.\n\nAll short evidence paths above are under `evidence/omarchy-profile/`, with\nunqualified worker logs under `fp-moves-r1/` and independent logs under\n`fp-moves-critic/`. `observations.md` retains one concrete citation per P1–P17.\nFinal audit command: `node evidence/omarchy-profile/fp-moves-critic/audit.mjs`\n(exit 0 at submission head); a separate SHA-256 sweep verified all 71 worker\nfiles. Recurring semantic/browser reproduction: `make verify-E5_5-T03t`.",
       "adversarial": "A fresh critic records predictions before evidence, checks every changed hunk,\nattacks malformed NaN boxes, f0/x0 and destination aliases, FS=Off at root and\nsuccessor entry, integer prefix then FP-disabled trap, FP prefix then memory\nfault, and interpreted FPR mutation between compiled calls. Independently vary\nseeds, sabotage one exact assertion, and audit the final cold clone. Carry\nunchanged held results forward after harness-only proof repairs.",
       "file": "tasks/epic-5.5-omarchy/E5.5-T03t-jit-fp-moves.md",
       "activity": [
         {
           "date": "2026-09-15",
-          "commits": 1,
+          "commits": 4,
           "labels": [
+            "verify E5.5-T03t FP move state boundary with independent evidence",
+            "Submit FP move evidence and keep desktop response gated",
+            "Translate single-precision FP moves across the compiled state boundary",
             "Start measured JIT single-precision move slice"
           ]
         }
       ],
       "firstActivity": "2026-09-15",
       "lastActivity": "2026-09-15",
-      "commitCount": 1
+      "commitCount": 4
+    },
+    {
+      "id": "E5.5-T03u",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Carry floating-point memory transfers through the compiled memory boundary",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5.5-T03t"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-15 — worker — plan next measured transfer slice\n\nT03t runtime `c7a3c38b`, WASM\n`55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40`,\npassed its directed/browser move proof. The physical retry at recorder head\n`6910e795` sent 128 trusted key events, but nonce readback expired exactly at\n`2026-09-15T17:47:39.762Z`; frames remained 2. Evidence:\n`evidence/omarchy-profile/fp-moves-r1/physical-input-r2/desktop/report.json`.\nThis task remains pending until T03t is independently verified.\n\n### 2026-09-15 — worker — activate measured FP memory boundary\n\nT03t is independently verified at `b86f55887e50c3975a8142d7d1ff46a11cab3a55`\nand published as open draft PR #388. Its instruction, handoff, cold-build and\nartifact evidence carries forward for unchanged code; its physical desktop\ntrial still failed at 120 seconds. This slice adds only FP memory transfers to\nthe existing checked integer memory paths, then repeats the actual input gate.\n\nFresh verifier `/root/fp_memory_critic` recorded 22 predictions before any T03u\nimplementation in `evidence/omarchy-profile/fp-memory-critic/predictions.md`.\nThey include raw parcels/payloads, precise FS and memory faults, noncontiguous\npages, compressed f0 handling, store barriers and browser memory growth.",
+      "adversarial": "A fresh critic predicts exact raw transfer values, FS precedence and compressed\nmtval before inspecting evidence. Attack aliasing, malformed boxes, page/PMP\nfaults, misaligned crossings, partial stores, MMIO exactly-once behavior,\ninterpreter/FPR alternation and direct-successor unwinding. Independently vary\nseeds, sabotage one exact assertion, audit changed-hunk coverage and the cold\nclone. Carry unchanged T03t handoff evidence forward.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03u-jit-fp-memory.md",
+      "activity": [
+        {
+          "date": "2026-09-15",
+          "commits": 2,
+          "labels": [
+            "Start measured JIT floating-point memory transfers",
+            "Keep desktop publication gated on measured FP memory follow-up"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-15",
+      "lastActivity": "2026-09-15",
+      "commitCount": 2
     },
     {
       "id": "E5.5-T04a",

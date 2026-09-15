@@ -1632,3 +1632,13 @@ verify-E5_5-T03t:
 	cargo test -p wasm-vm-wasm --lib admission_probe_tests
 	wasm-pack test --node crates/wasm --test jit_fp_moves -- --nocapture
 	node tools/verify/omarchy-fp-moves-browser.mjs $(or $(FP_MOVES_OUT),evidence/omarchy-profile/fp-moves-browser)
+
+# E5.5-T03u: actual compiled FP memory, precise faults and page-wide authority.
+# Build web/dist once before this acceptance target.
+.PHONY: verify-E5_5-T03u
+verify-E5_5-T03u:
+	cargo fmt --all --check
+	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+	cargo test -p wasm-vm-jit-runtime --test fp_memory -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_fp_memory --test jit_fp_memory_critic -- --nocapture
+	node tools/verify/omarchy-fp-memory-browser.mjs $(or $(FP_MEMORY_OUT),evidence/omarchy-profile/fp-memory-browser)
