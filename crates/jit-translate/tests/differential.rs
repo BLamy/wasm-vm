@@ -1842,7 +1842,7 @@ fn a_extension_randomized() {
 }
 
 // The original E4-T15 policy remains for every operation outside the measured
-// E5.5-T03t moves and T03u memory transfers. Those encodings have their own
+// measured E5.5-T03t..T03x single-precision subsets. Those encodings have their own
 // native/browser differential tests, including FPR state and exact FS traps.
 #[test]
 fn fp_ops_are_unsupported() {
@@ -1884,7 +1884,7 @@ fn fp_ops_are_unsupported() {
             rs1: 2,
             rm: 7,
         },
-        FcvtFromIntS {
+        FcvtFromIntD {
             width: FpIntWidth::W,
             rd: 1,
             rs1: 2,

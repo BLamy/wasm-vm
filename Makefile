@@ -1659,3 +1659,11 @@ verify-E5_5-T03w:
 	cargo test -p wasm-vm-jit-runtime --test fp_arithmetic --test fp_arithmetic_verifier -- --nocapture
 	wasm-pack test --node crates/wasm --test jit_fp_arithmetic --test jit_fp_arithmetic_verifier -- --nocapture
 	node tools/verify/omarchy-fp-arithmetic-browser.mjs $(or $(FP_ARITHMETIC_OUT),evidence/omarchy-profile/fp-arithmetic-browser)
+
+.PHONY: verify-E5_5-T03x
+verify-E5_5-T03x:
+	cargo fmt --all --check
+	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+	cargo test -p wasm-vm-jit-runtime --test fp_from_integer --test fp_from_integer_verifier -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_fp_from_integer --test jit_fp_from_integer_verifier -- --nocapture
+	node tools/verify/omarchy-fp-from-integer-browser.mjs $(or $(FP_FROM_INTEGER_OUT),evidence/omarchy-profile/fp-from-integer-browser)

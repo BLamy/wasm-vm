@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 319,
-    "total": 495
+    "verified": 320,
+    "total": 496
   },
   "epics": [
     {
@@ -23006,7 +23006,7 @@
       "priority": null,
       "status": "pending",
       "depends_on": [
-        "E5.5-T03w"
+        "E5.5-T03x"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -23021,18 +23021,18 @@
       "activity": [
         {
           "date": "2026-09-15",
-          "commits": 7,
+          "commits": 8,
           "labels": [
+            "Plan measured integer-to-float boundary after failed desktop input",
             "Plan measured FP arithmetic helper after failed desktop input",
             "Keep desktop release gated on measured comparison follow-up",
-            "Keep desktop publication gated on measured FP memory follow-up",
-            "Start measured JIT single-precision move slice"
+            "Keep desktop publication gated on measured FP memory follow-up"
           ]
         }
       ],
       "firstActivity": "2026-09-15",
       "lastActivity": "2026-09-15",
-      "commitCount": 7
+      "commitCount": 8
     },
     {
       "id": "E5.5-T03r",
@@ -23220,7 +23220,7 @@
       "epicKey": "5.5",
       "title": "Keep measured FP addition and multiplication in compiled renderer blocks",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5.5-T03v"
       ],
@@ -23231,23 +23231,58 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-15 — coordinator — next measured renderer boundary\n\nT03v comparison acceptance passes on native/private/shared generated modules,\nand the actual built page runs 127/127 ISA tests with zero errors. Its physical\ninput run entered at `2026-09-15T20:41:37.042Z`, reached the unchanged deadline\nat `2026-09-15T20:43:37.042Z`, and produced no independently read nonce or typed\nterminal response. Full receipt:\n`evidence/omarchy-profile/fp-comparisons-r1/physical-input/desktop/report.json`,\nSHA-256 `5c09fcb09292d86025ccb0f9c950697e3a8d2f7b3064dc72f99c5858308c145f`.\nThe original dynamic operation counts remain in\n`evidence/omarchy-profile/renderer-opcodes-r1/report.json`, `recount.opFpFunct7`.\nUse the existing audited software arithmetic rather than introducing a second\nrounded-arithmetic implementation. No Epic 6 work is activated.",
+      "verificationLog": "### 2026-09-15 — coordinator — next measured renderer boundary\n\nT03v comparison acceptance passes on native/private/shared generated modules,\nand the actual built page runs 127/127 ISA tests with zero errors. Its physical\ninput run entered at `2026-09-15T20:41:37.042Z`, reached the unchanged deadline\nat `2026-09-15T20:43:37.042Z`, and produced no independently read nonce or typed\nterminal response. Full receipt:\n`evidence/omarchy-profile/fp-comparisons-r1/physical-input/desktop/report.json`,\nSHA-256 `5c09fcb09292d86025ccb0f9c950697e3a8d2f7b3064dc72f99c5858308c145f`.\nThe original dynamic operation counts remain in\n`evidence/omarchy-profile/renderer-opcodes-r1/report.json`, `recount.opFpFunct7`.\nUse the existing audited software arithmetic rather than introducing a second\nrounded-arithmetic implementation. No Epic 6 work is activated.\n\n### 2026-09-15 — worker — frozen arithmetic submission\n\nRuntime and promoted fixtures: `357dd1a0f9f984747f3f92ad83b0ae556e6689f5`.\nThe test-only admission/roadmap repair is\n`d64b037b362b36490d58b82663a448ac0532b025`; final source, deployment manifest\nand pristine-clone head is `f494ef51de1763d3a7f78d11f96d6afc50fc46e0`.\nEvidence: `evidence/omarchy-profile/fp-arithmetic-r1/README.md`, command receipts,\ncomplete logs, actual browser/physical captures, cold clone and public hashes.\nThe 56-file index `sha256.txt` has SHA-256\n`4dc96dbb22a288fcf33d5839a45c8783dfafd641342f32d217a08b34ad07a2b2`.\nThe final WASM SHA-256 is\n`e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4`.\n\nCommands (all with `DEVELOPER_DIR=/Library/Developer/CommandLineTools`):\n`python3 evidence/omarchy-profile/fp-arithmetic-r1/record-submission.py affected`,\nthen the scoped `repair` phase, then `ci` (`make -k ci`);\n`python3 evidence/omarchy-profile/fp-arithmetic-r1/run-cold.py`;\n`node tools/verify/omarchy-desktop-services.mjs evidence/omarchy-profile/fp-arithmetic-r1/physical-input`;\n`bash tools/deploy-cloudflare.sh`; `check-public.py`; and `seal.py` in the\nworker evidence directory. Every exact command and exit code is retained.\n\nThe worker's actual native/private/shared modules agree with independent\nliteral goldens and the interpreter across 17,664 arithmetic cases (register /\nflags FNV `0303711512bb0d8a`), 80 handoff/fault cases and three real run-loop\nprefix traps. The 45-case backend fixture proves the inherited finite-overflow\nflag correction and nearby non-overflow cases. Fresh critic tests additionally\nexercise 8,832 literal/all-flag cases, 3,072 seeded cases including 1,488 illegal\nexits, 11 control cases, 1,024 instrumented modules, shifted actual function\nindices, direct successors, fuel limits, memory growth and isolated sabotage.\nTheir independent predictions and receipts are in `fp-arithmetic-verifier/`.\n\nOriginal submission failures are preserved: an obsolete native FADD admission\nassertion and a missing generated roadmap task row. Scoped repairs pass 33/33\nnative library tests and the repeated browser command. That rebuild changed\nWASM bytes, so no artifact equivalence is claimed with the earlier build.\nFinal browser, physical, pristine clone and public checks bind the new bytes.\nThe cold clone rebuild is exact and `make verify-E5_5-T03w` exits 0. Both final\nand cold browser guests execute 3,649/4,000 instructions via JIT, match registers\nand actual FPR spills, and match RAM-only digest\n`7583c9377630eaa1af54c7eafb05d5ba5d3c9f708e5d6f1ef47cbd45dc6debf8`.\nBoth live suites pass 127/127 with zero errors and the arithmetic pip live 1/1;\nscreenshots were inspected. Deployment `52209836.wasm-vm.pages.dev` and the\nproduction alias match all eight checked asset hashes.\n\nFull `make -k ci` remains exit 2 on the recorded existing macOS seccomp,\nall-feature dead-code, stale VIRTIO_RNG assertion, zicsr-stub test-build and\ntest-clock scanner failures. The underlying source identities are retained;\nno broad pass is claimed. Its arithmetic worker and critic WASM tests pass,\nnative ISA compliance passes 128/128 and the uncontended performance smoke\npasses at 25.3 MIPS against the 15 MIPS floor.\n\nThe actual desktop trial **failed**: 128 trusted accepted events, no nonce by\nthe unchanged deadline `2026-09-15T21:46:39.143Z`, and frames 2→2. Root inspected\nthe unchanged real Foot prompt. The physical report SHA-256 is\n`c20fe7de2adb79c581367529f52d942b535d43f4d15e257dfa58cb4ee8cc8b85`.\nThis submission proves the selected arithmetic boundary, not desktop usability.\nT03q remains gated; T03x is pending independent verification of this task.\n\n### 2026-09-15 — verifier — VERDICT: verified\n\nIndependent review: `evidence/omarchy-profile/fp-arithmetic-verifier/final-review.md`.\nSubmission `ef007bfe80bcad2bb1ea80b312cc2ffcc5c973bb`; runtime `357dd1a0`,\nscoped repair `d64b037b`, pristine/deployed source `f494ef51`.\n`final-audit.json` SHA-256 `7deb38980fc143a40ff59c0aa1451ae19de1c7795c45921101d559498c644956`\nchecks all 56 sealed worker files against index SHA-256\n`4dc96dbb22a288fcf33d5839a45c8783dfafd641342f32d217a08b34ad07a2b2`.\nNo implementation edits were made by the verifier.\n\n- P1–P3/P7 — HELD. Independent literal/all-flag corpus: 8,832 cases per\n  native/private/shared path, receipt `17621813032391191516`; seeded exact\n  integer/alias corpus: 3,072 cases, receipt `12643572604827571813`. Literal\n  overflow/non-overflow threshold attacks prove the shared F32 status correction.\n- P4–P6 — HELD. 1,024 actual instrumented modules make exactly 540 legal helper\n  calls and zero illegal calls; 1,488 seeded illegal exits preserve exact parcel,\n  virtual PC and prefix state. Eleven CSR/dependency/fault cases retain receipt\n  `12235252711163659176`. Shifted mixed-module indices, actual same-/cross-module\n  successors, fuel exits and private/shared memory growth pass.\n- P8 — HELD. An isolated wrong half-ulp golden fails with exit 101; restoration\n  passes with exit 0, with the shared fixture unchanged. See the named assertion\n  in `wrong-golden-wrong.log:10–15` and `wrong-golden-result.json`.\n- P9 — HELD. The pristine clone is initially clean, scrubs Rust/Cargo overrides,\n  rebuilds exact WASM `e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4`\n  and passes `make verify-E5_5-T03w`. Final/cold browsers pass 127/127 with zero\n  errors and 3,649/4,000 guest instructions via JIT. Registers, actual FPR spills,\n  FP control and RAM digest match; actual screenshots were independently viewed.\n  Eight independent TLS fetches match the tested bytes on both public origins.\n- P10 — HELD for measurement/gating; actual desktop response FAILED. At the\n  unchanged 120-second deadline there were 128 trusted accepted events, no nonce,\n  frames 2→2 and byte-identical initial/failure Foot images. Report SHA-256\n  `c20fe7de2adb79c581367529f52d942b535d43f4d15e257dfa58cb4ee8cc8b85`.\n  T03q stays pending; this verdict makes no usability claim.\n- COVERAGE/SUITE: changed hunks are executed or explicitly statically waived in\n  `provisional-review.md`; 12 unchanged T03t/T03u/T03v proof boundaries carry\n  forward. Three independent fixture files and the acceptance target are\n  promoted. The final audit retains full CI exit 2 and independently checks the\n  unchanged failure boundaries; native ISA 128/128 and 25.3 MIPS smoke pass.\n  Earlier harness/admission/task-data failures and the changed rebuild bytes\n  remain recorded. No unresolved arithmetic finding remains.\n\nCommands: independent native and WASM fixture commands in the recorded logs;\nisolated `wrong-golden-check.py`; eight exact public-byte checks;\n`DEVELOPER_DIR=/Library/Developer/CommandLineTools python3\nevidence/omarchy-profile/fp-arithmetic-verifier/final-audit.py`;\npolicy check, queue regeneration and verifier evidence commit.",
       "adversarial": "A fresh critic predicts rounded results and flags before reading evidence,\nuses independent operand seeds and rounding cases, checks helper-call counts\non success and illegal exits, and attacks stale FPR/flag state across a direct\nsuccessor and interpreted CSR operation. Audit every changed import/handoff\nhunk; sabotage one literal expected value in an isolated test copy. Carry\nunchanged T03t/T03u/T03v evidence forward and inspect final cold/public bytes.",
       "file": "tasks/epic-5.5-omarchy/E5.5-T03w-jit-fp-arithmetic-helper.md",
       "activity": [
         {
           "date": "2026-09-15",
-          "commits": 3,
+          "commits": 5,
           "labels": [
+            "Verify compiled single-precision arithmetic boundary",
+            "Record frozen arithmetic evidence and failed desktop trial",
             "Compile measured FADD.S and FMUL.S through pure software arithmetic",
-            "Start measured renderer FP arithmetic helper slice",
-            "Plan measured FP arithmetic helper after failed desktop input"
+            "Start measured renderer FP arithmetic helper slice"
           ]
         }
       ],
       "firstActivity": "2026-09-15",
       "lastActivity": "2026-09-15",
-      "commitCount": 3
+      "commitCount": 5
+    },
+    {
+      "id": "E5.5-T03x",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Keep measured integer-to-float conversions in compiled renderer blocks",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5.5-T03w"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-15 — coordinator — next measured renderer boundary\n\nT03w's built guest executes 3,649/4,000 instructions via JIT, matches interpreter\nregisters and spilled FP results, and passes 127/127 live ISA tests. The actual\ndesktop at source `d64b037b362b36490d58b82663a448ac0532b025` and WASM\n`e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4`\naccepted 128 trusted input events but failed the unchanged deadline at\n`2026-09-15T21:46:39.143Z`. Frames remained2→2 and the real Foot image stayed\nat an empty prompt. Receipt:\n`evidence/omarchy-profile/fp-arithmetic-r1/physical-input/desktop/report.json`,\nSHA-256 `c20fe7de2adb79c581367529f52d942b535d43f4d15e257dfa58cb4ee8cc8b85`.\nUse the original T03s measured counts; no speedup is inferred from this trial.\n\n### 2026-09-15 — worker — activated after independent arithmetic verification\n\nT03w is independently verified at `51dd9864` and published as open draft\nPR #391. Its actual desktop input result remains failed. This slice begins\nthe four measured FCVT.S.W/WU/L/LU operations through the existing software\nbackend, with a fresh critic session and the original physical-input deadline.",
+      "adversarial": "A fresh critic predicts independent literal rounded bits/flags before viewing\nevidence; vary signs, high integer bits, rounding, aliases and prior flags.\nCount helper calls on legal versus illegal instructions, attack X-register\nhandoff before a direct conversion successor and stale flags after a CSR clear,\naudit every changed import/ABI hunk, and sabotage one expected literal in an\nisolated test copy. Carry unchanged HELD FP evidence forward. Inspect the final\npristine rebuild, public artifact bytes and actual physical trial separately.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03x-jit-fp-from-integer.md",
+      "activity": [
+        {
+          "date": "2026-09-15",
+          "commits": 2,
+          "labels": [
+            "Start measured integer-to-float JIT conversion slice",
+            "Plan measured integer-to-float boundary after failed desktop input"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-15",
+      "lastActivity": "2026-09-15",
+      "commitCount": 2
     },
     {
       "id": "E5.5-T04a",

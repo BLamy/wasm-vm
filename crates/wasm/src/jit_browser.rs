@@ -975,7 +975,7 @@ const STUB: u32 = u32::MAX;
 
 /// The browser (`WebAssembly.compile`/`instantiate`) [`CompiledBlockExecutor`].
 pub struct BrowserExecutor {
-    /// Shared memory/atomic imports and the pure `fp_arith_s` arithmetic helper.
+    /// Shared memory/atomic imports and pure software FP helpers.
     /// Inline-TLB instances additionally import the outer wasm memory as `env.mem`.
     imports: Object,
     /// The import closures, kept alive for the executor's lifetime (dropping them would invalidate
@@ -986,6 +986,7 @@ pub struct BrowserExecutor {
     _closures_lr: Closure<dyn FnMut(i64, i32) -> i64>,
     _closures_sc: Closure<dyn FnMut(i64, i64, i32) -> i64>,
     _closures_fp_arith_s: Closure<dyn FnMut(i32, i32, i32, i32) -> i64>,
+    _closures_fp_from_int_s: Closure<dyn FnMut(i64, i32, i32) -> i64>,
     /// Box-stable Rust image plus one cached outer-wasm view. The view is part of the executor's
     /// fixed externref floor and is refreshed only if outer memory growth detached it.
     handoff: BrowserHandoff,
@@ -1166,6 +1167,10 @@ impl BrowserExecutor {
             Closure::new(|a: i32, b: i32, mul: i32, rm: i32| {
                 wasm_vm_core::jit::fp_arith_s(a as u32, b as u32, mul != 0, rm as u8) as i64
             });
+        let fp_from_int_s: Closure<dyn FnMut(i64, i32, i32) -> i64> =
+            Closure::new(|value: i64, width: i32, rm: i32| {
+                wasm_vm_core::jit::fp_from_int_s(value as u64, width as u8, rm as u8) as i64
+            });
 
         let env = Object::new();
         set_fn(&env, "load", &load);
@@ -1181,6 +1186,7 @@ impl BrowserExecutor {
         set_fn(&env, "lr", &lr);
         set_fn(&env, "sc", &sc);
         set_fn(&env, "fp_arith_s", &fp_arith_s);
+        set_fn(&env, "fp_from_int_s", &fp_from_int_s);
         if inline_tlb.is_some() {
             let memory = wasm_bindgen::memory();
             Reflect::set(&env, &JsValue::from_str("mem"), &memory).unwrap_throw();
@@ -1199,6 +1205,7 @@ impl BrowserExecutor {
             _closures_lr: lr,
             _closures_sc: sc,
             _closures_fp_arith_s: fp_arith_s,
+            _closures_fp_from_int_s: fp_from_int_s,
             handoff: BrowserHandoff::new(),
             abi,
             inline_tlb,

@@ -36,6 +36,25 @@ pub fn fp_arith_s(a: u32, b: u32, multiply: bool, rm: u8) -> u64 {
     u64::from(bits) | (u64::from(flags.0) << 32)
 }
 
+/// Pure FCVT.S.{W,WU,L,LU} helper. The generated caller validates `rm` and
+/// selects width 0=W, 1=WU, 2=L or 3=LU. The full integer source crosses this
+/// boundary unchanged; the software backend applies width and signedness.
+/// Return raw f32 bits in 0..31 and new flags in 32..36, as for `fp_arith_s`.
+pub fn fp_from_int_s(value: u64, width: u8, rm: u8) -> u64 {
+    use crate::decode::FpIntWidth;
+    use crate::softfloat::{RoundMode, f32_from_int};
+    let width = match width {
+        0 => FpIntWidth::W,
+        1 => FpIntWidth::Wu,
+        2 => FpIntWidth::L,
+        3 => FpIntWidth::Lu,
+        _ => panic!("generated FP helper requires a decoded integer width"),
+    };
+    let round = RoundMode::from_bits(rm).expect("generated FP helper requires validated rounding");
+    let (bits, flags) = f32_from_int(value, width, round);
+    u64::from(bits) | (u64::from(flags.0) << 32)
+}
+
 /// The frozen `CpuState` linear-memory offsets (`docs/jit-architecture.md` §3.1). These MUST match
 /// `jit_translate::Abi::FROZEN`; the executor syncs guest registers to `XREG_BASE` and reads the
 /// exit protocol back from `EXIT_*`.
