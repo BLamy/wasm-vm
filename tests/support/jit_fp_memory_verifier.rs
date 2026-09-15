@@ -310,19 +310,21 @@ pub fn pmp_interior(make: Factory, inline: bool) {
 pub fn mprv_revokes_warm_page(make: Factory, inline: bool) {
     for write in [false, true] {
         let mut m = Machine::new(64 * 1024);
+        let fs = if write { 2 } else { 3 };
         // Unlocked whole-page denial is permitted in M but denied in effective S.
         m.hart_mut().csr.pmp.write_addr(0, (DATA >> 2) | 511);
         m.hart_mut().csr.pmp.write_cfg(0, 0x18);
         let mut e = install(make, &m, &[if write { 0x0002_b027 } else { 0x0002_b007 }]);
         m.hart_mut().regs.write(5, DATA);
         for _ in 0..3 {
-            status(&mut m, 3 << 13);
+            status(&mut m, fs << 13);
             m.hart_mut().regs.pc = PC;
             m.hart_mut().fregs.write_raw(0, SENTINEL);
             m.bus_mut().store64(DATA, 0x7ff0_0000_0000_1234).unwrap();
             assert_eq!(execute(e.as_mut(), &mut m).code, ExitCode::Fallthrough);
         }
-        status(&mut m, (2 << 13) | (1 << 17) | (1 << 11));
+        // Keep FS identical: only effective privilege may revoke the warm tag.
+        status(&mut m, (fs << 13) | (1 << 17) | (1 << 11));
         m.hart_mut().regs.pc = PC + 0x1000;
         m.hart_mut().fregs.write_raw(0, SENTINEL);
         m.bus_mut().store64(DATA, 0x7ff0_0000_0000_5678).unwrap();
@@ -343,7 +345,7 @@ pub fn mprv_revokes_warm_page(make: Factory, inline: bool) {
         );
         assert_eq!(m.hart().fregs.read_raw(0), SENTINEL);
         assert_eq!(m.bus_mut().load64(DATA).unwrap(), 0x7ff0_0000_0000_5678);
-        assert_eq!(m.hart().csr.fs(), 2);
+        assert_eq!(m.hart().csr.fs(), fs as u8);
     }
     eprintln!("VERIFIER MPRV warm permission revocation inline={inline} cases=2");
 }
