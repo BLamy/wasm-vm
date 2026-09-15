@@ -1,0 +1,6 @@
+{
+  "root": "/private/tmp/fp-moves-critic-sabotage-l_1ykwrj",
+  "sourceSha256": "d72e743bb8be36e838f358212651947f1566730e10d6dd30a755d9672f14570b",
+  "sabotageSha256": "4d04440cc47a9d9bf7983654196bfd76807e4ef7e478c220a01500b1e778a178",
+  "mutation": "Golden FSGNJ.S expected low payload bit toggled from 1 to 0; implementation unchanged."
+}

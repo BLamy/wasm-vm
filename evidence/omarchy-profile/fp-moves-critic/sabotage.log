@@ -1,0 +1,26 @@
+    Blocking waiting for file lock on build directory
+   Compiling wasm-vm-wasm-emit v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm-emit)
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+   Compiling fp-moves-critic-sabotage v0.0.0 (/private/tmp/fp-moves-critic-sabotage-l_1ykwrj)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10m 10s
+     Running sabotage.rs (target/debug/deps/sabotage-4d3aeb3306979d88)
+
+running 1 test
+
+thread 'critic_exact_nan_payload_and_raw_move_golden' (25504625) panicked at sabotage.rs:85:5:
+assertion `left == right` failed: CRITIC_GOLDEN_SIGNALING_PAYLOAD
+  left: 18446744073701237573
+ right: 18446744073701237572
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test critic_exact_nan_payload_and_raw_move_golden ... FAILED
+
+failures:
+
+failures:
+    critic_exact_nan_payload_and_raw_move_golden
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.44s
+
+error: test failed, to rerun pass `--test sabotage`

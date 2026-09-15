@@ -1,0 +1,94 @@
+{
+  "task": "E5.5-T03t",
+  "workerSubmissionHead": "2987f02611826382bf10250323da8a559e64c31b",
+  "runtimeHead": "c7a3c38b84d462eba585c9f7081c70c88cdd2534",
+  "coldHead": "b4b7c70da8b28a274cfd53860a6723480deee7ff",
+  "runtimeWasmSha256": "55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40",
+  "workerIndex": {
+    "path": "evidence/omarchy-profile/fp-moves-r1/SHA256.json",
+    "sha256": "460e804565625a55486874da9f6ab50172b2699f55839252fddaf1f0757700b5",
+    "verifiedEntries": 71
+  },
+  "files": {
+    "evidence/omarchy-profile/fp-moves-critic/artifact-audit.json": {
+      "size": 11939,
+      "sha256": "234f38be6284c867e85cb146c5c880b2601151f46e6de1be2bb61bd04ed309ac"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/artifact-audit.log": {
+      "size": 767,
+      "sha256": "2dde33d757d50578437921d25ce6f09d1ed03f488c4ad21ea47f0f9832815c85"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/audit.mjs": {
+      "size": 12354,
+      "sha256": "c930bfa4ec436560d4ea1aa732a7024167e2a15ae36d4ac648267bbf09728876"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/coverage.md": {
+      "size": 12778,
+      "sha256": "8bd70052a80ddc7c6324b88428a2db6ba95a8fc44594c91c6d1d26361eb0f9b9"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/identity-native.log": {
+      "size": 530,
+      "sha256": "01943cae4773bb96f02ad6bb59053088b17b8c85f0fc91e6518ccbdedc003a45"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/identity-wasm.log": {
+      "size": 2575,
+      "sha256": "9ea3aacadf822d658a1f85999377fe5eea9afa56bff7f4671688956031852403"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/independent-native.log": {
+      "size": 1199,
+      "sha256": "eb72aeb25d952c500cf9436659854c610fddaf4d37545f727c4cce8576220b8c"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/input-fixture-repair.log": {
+      "size": 1404,
+      "sha256": "dc0ab5d7d77c6856578d43c90e838233e4b48534e38a19b9e7b7a486e4761617"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/input-fixture-repair.md": {
+      "size": 2300,
+      "sha256": "37e8800ab27d755178e5288a73a42db093511763276db12dc323f4db167d4f3a"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/observations.md": {
+      "size": 8051,
+      "sha256": "333057ac4ef36c942bd63f336c27b2df9b6fb46c9490f248084d3851202a2d02"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/perf-baseline-source-audit.json": {
+      "size": 29025,
+      "sha256": "df56771448aea7d3376ebb67b3729a920af14adcac6babeabc3caee933750a2c"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/predictions.md": {
+      "size": 9318,
+      "sha256": "83f2fb12bf3aebb169986b91c4709c1ebf3dbcf9e5097bd00ac0d90efadd7e04"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/public-audit.json": {
+      "size": 1190,
+      "sha256": "29f09fc44b1b201d5bf0b286639011423c89d72e37fa00c3f7b96acef96137ea"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/sabotage-plan.json": {
+      "size": 341,
+      "sha256": "c7bab7ad8950e45463ac4e25fa50f3a7b7015a18b3ed4d8ddf4a6941f7541b40"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/sabotage.log": {
+      "size": 1270,
+      "sha256": "6db6679aadba41e4769e5b6ea7c9a104fbffb4264761496b3e86ace2b6d4bf9b"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/source-audit.md": {
+      "size": 5384,
+      "sha256": "db02284c1e7817b8d291ab9fdc231688382ce3a371c0d83c724b8505df7e816a"
+    },
+    "evidence/omarchy-profile/fp-moves-critic/submission-index-audit.json": {
+      "size": 223,
+      "sha256": "4db6494b9561479c747977529da2302e2c03e7cbb089598b494ca96f8e555475"
+    },
+    "crates/jit-runtime/tests/fp_moves_critic.rs": {
+      "size": 12017,
+      "sha256": "d72e743bb8be36e838f358212651947f1566730e10d6dd30a755d9672f14570b"
+    },
+    "tests/support/jit_fp_moves.rs": {
+      "size": 14752,
+      "sha256": "1ac32191be33cb86d413bfe37717793cb4b61c5ca93829c11146d920c711057f"
+    },
+    "crates/wasm/tests/input_queues.rs": {
+      "size": 3555,
+      "sha256": "def66484b756f1771156f8648001f8fe3779ef9fec6da016e022d0170665b768"
+    }
+  }
+}

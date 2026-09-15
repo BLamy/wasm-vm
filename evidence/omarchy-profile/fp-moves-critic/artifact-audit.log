@@ -1,0 +1,21 @@
+{
+  "runtimeHead": "c7a3c38b84d462eba585c9f7081c70c88cdd2534",
+  "wasm": "55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40",
+  "browserRuns": 3,
+  "helpersVerified": 13,
+  "physical": {
+    "head": "6910e7952ef215463de9982d20c42fa26869cbfb",
+    "trustedTransitions": 128,
+    "acknowledgements": 256,
+    "typedText": "printf 'e37cfe7e316c23e8' > /tmp/desktop-keys-ff13ff801bbf7950\n",
+    "serialNonceAbsent": true,
+    "readbacksCompletedAbsent": 13,
+    "readbacksIncomplete": 1,
+    "enteredAt": "2026-09-15T17:45:39.762Z",
+    "failedAt": "2026-09-15T17:47:39.762Z",
+    "deadlineMs": 120000,
+    "desktopAcceptance": false,
+    "manifestSha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+  },
+  "artifactDigests": 33
+}

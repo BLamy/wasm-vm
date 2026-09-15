@@ -1,0 +1,17 @@
+    Blocking waiting for file lock on build directory
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.32s
+     Running tests/fp_moves_critic.rs (target/debug/deps/fp_moves_critic-93c14129d64b559e)
+
+running 4 tests
+CRITIC_IDENTITIES threads=4 allocated=1024 unique=1024
+CRITIC_WASM bytes=649 instructions=194 operations={"Drop", "Else", "End", "I32Const", "I32WrapI64", "I64Add", "I64And", "I64Const", "I64Eq", "I64Eqz", "I64ExtendI32S", "I64Load", "I64Or", "I64ShrU", "I64Store", "I64Xor", "If", "LocalGet", "LocalSet", "LocalTee", "Return"}
+test critic_freg_identities_remain_distinct_under_concurrent_creation ... ok
+test critic_generated_fp_subset_contains_only_integer_wasm_operations ... ok
+CRITIC_GOLDEN f0=ffffffffff812345 x31=ffffffffff812345 x7=ffffffff81234567 f31=ffffffff81234567
+test critic_exact_nan_payload_and_raw_move_golden ... ok
+CRITIC_CASES cases=3840 disabled=960 state_fnv64=ba4ecacfdc4b9707
+test critic_aliases_independent_seeds_and_all_first_op_traps ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.42s
+

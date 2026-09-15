@@ -122,4 +122,12 @@ file/line and digest. All selected instructions are 32-bit encodings.
 
 ## Findings and evidence
 
-Pending worker frozen-head submission. No acceptance output has been inspected.
+P1–P17 are **HELD** with the narrow coverage waivers and the honest recorded
+regression-wall failures in `observations.md` and `coverage.md`. Those files
+preserve each predicted boundary, exact observed states, file/line citations,
+source provenance and the incremental test-only proof repairs. The cold clone
+and live deployment contain the unchanged runtime WASM SHA-256
+`55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40`.
+
+The physical deadline failure is held as an honest outcome, not as desktop
+success. The task's final Verification log records the verifier's verdict.
