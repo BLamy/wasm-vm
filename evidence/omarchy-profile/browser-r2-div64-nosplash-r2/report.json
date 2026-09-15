@@ -1,0 +1,241 @@
+{
+  "schema": "wasm-vm.omarchy-browser-session.v1",
+  "task": "E5.5-T03a",
+  "taskVerified": false,
+  "startedAt": "2026-09-09T06:22:48.290Z",
+  "options": {
+    "image": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-r2.ext4",
+    "image-sha256": "47584cba39876ee958ea8fa39d3432488277d230abb2997b5999e54b8defe13e",
+    "chunks": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-r2-256k",
+    "manifest-sha256": "ec1bc2601b104cfb6d6875c091377ccfd0654d5b6aab71c6a08ae37263f1c391",
+    "out": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/browser-r2-div64-nosplash-r2",
+    "ram-mib": 1024,
+    "icount-divider": 64,
+    "bootargs": "root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0",
+    "keyboard": "auto",
+    "control-stdin": true,
+    "timeout-ms": 2400000,
+    "probe-timeout-ms": 240000,
+    "poll-ms": 30000,
+    "port": 0,
+    "shell-namespace": ""
+  },
+  "result": "failed",
+  "publication": {
+    "image": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-r2.ext4",
+    "chunks": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-r2-256k",
+    "integrity": {
+      "chunk_count": 16384,
+      "chunk_size": 262144,
+      "ext4_block_size": 4096,
+      "ext4_logical_bytes": 4294967296,
+      "image_len": 4294967296,
+      "image_sha256": "47584cba39876ee958ea8fa39d3432488277d230abb2997b5999e54b8defe13e",
+      "manifest_sha256": "ec1bc2601b104cfb6d6875c091377ccfd0654d5b6aab71c6a08ae37263f1c391",
+      "scope": "image/chunk integrity and ext4 superblock bounds only; not sanitization or browser boot",
+      "status": "integrity-verified"
+    },
+    "kernel": {
+      "url": "releases/kernel/6.6.63/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "size": 24208896,
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image"
+    },
+    "bootManifest": {
+      "artifacts": {
+        "kernel": {
+          "url": "/releases/kernel/6.6.63/Image",
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "size": 24208896
+        }
+      }
+    },
+    "harnessSha256": "6e6e112fd975debd7768c721da14e01685d442e6bda76abc663172bebe082192"
+  },
+  "browser": {
+    "name": "Chromium",
+    "version": "152.0.7977.84",
+    "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "freshContext": true,
+    "serviceWorkers": "block",
+    "httpCacheDisabled": true
+  },
+  "error": "Error: guest proof timed out after 2400000 ms\n    at Timeout.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-browser-session.mjs:103:39)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)",
+  "browserErrors": [],
+  "capture": {
+    "bootStarted": true,
+    "bootState": "booting",
+    "frames": 412,
+    "serialBytes": 115398,
+    "keys": 0,
+    "errors": [],
+    "imageSha256": "47584cba39876ee958ea8fa39d3432488277d230abb2997b5999e54b8defe13e",
+    "manifestSha256": "ec1bc2601b104cfb6d6875c091377ccfd0654d5b6aab71c6a08ae37263f1c391",
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 832,
+      "fixedViewport": false,
+      "sizeMismatch": false,
+      "framesReceived": 412,
+      "successfulPresents": 412,
+      "drawnPresents": 412,
+      "drawnBytes": 49187536,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": null,
+      "gpu": {
+        "framesReceived": 412,
+        "enqueued": 412,
+        "coalesced": 0,
+        "presented": 412,
+        "successfulPresents": 412,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 49187536,
+        "drawnPresents": 412,
+        "drawnBytes": 49187536,
+        "width": 1280,
+        "height": 832
+      },
+      "latest": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 832
+      },
+      "errors": []
+    },
+    "paused": true,
+    "rgbaSha256": "cd7a1b5fc43df9fad16a4cd1afe6b938966001c79e3252a864f9a59486361014",
+    "sampledColors": 43,
+    "stateDigest": "57e90975fa01b7aab64856328b88c2b380efddaba439b91c312b3fc04a62690a",
+    "scheduler": {
+      "quantum": 500000,
+      "maxQuantum": 500000,
+      "slices": 83039,
+      "totalSliceMs": 2392136.7050049305,
+      "averageSliceMs": 28.807388155022707,
+      "maxSliceMs": 607.1799999475479,
+      "sliceHistogram": [
+        {
+          "leMs": 4,
+          "count": 567
+        },
+        {
+          "leMs": 8,
+          "count": 362
+        },
+        {
+          "leMs": 16,
+          "count": 10704
+        },
+        {
+          "leMs": 32,
+          "count": 36495
+        },
+        {
+          "leMs": 64,
+          "count": 34171
+        },
+        {
+          "leMs": 128,
+          "count": 435
+        },
+        {
+          "leMs": 256,
+          "count": 202
+        },
+        {
+          "leMs": 512,
+          "count": 96
+        },
+        {
+          "leMs": 1000,
+          "count": 7
+        },
+        {
+          "leMs": null,
+          "count": 0
+        }
+      ],
+      "maxStretchGapMs": 609.6599999666214,
+      "requestedInstructions": 41519500000,
+      "retiredInstructions": 41518097356,
+      "fetchWaits": 1447,
+      "fetchRequestedChunks": 1575,
+      "fetchWaitTotalMs": 4592.474997758865,
+      "fetchWaitMaxMs": 27.28000009059906,
+      "outputCalls": 753,
+      "outputBytes": 115398,
+      "inputCalls": 59,
+      "inputBytes": 15206,
+      "yieldMode": "scheduler.postTask",
+      "schedulerYields": 83040,
+      "timerYields": 0,
+      "mainThreadYields": 0
+    },
+    "fetchStats": {
+      "fetches": 1729,
+      "bytes": 453246976,
+      "error": null,
+      "cache": {
+        "hits": 214620245,
+        "misses": 250508329,
+        "evictions": 705,
+        "residentBytes": 268435456,
+        "budgetBytes": 268435456
+      },
+      "prefetch": {
+        "issued": 154,
+        "used": 89,
+        "profileEntries": 0,
+        "accuracyPct": 57
+      }
+    },
+    "guestClockState": {
+      "mode": "icount",
+      "mtime": "1551407785",
+      "timebaseHz": 10000000,
+      "clockDiv": 64
+    },
+    "icountDividerSelection": {
+      "requested": 64,
+      "before": {
+        "mode": "icount",
+        "clockDiv": 10,
+        "timebaseHz": 10000000,
+        "mtime": "0"
+      },
+      "after": {
+        "mode": "icount",
+        "clockDiv": 64,
+        "timebaseHz": 10000000,
+        "mtime": "0"
+      }
+    }
+  },
+  "screenshot": {
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/browser-r2-div64-nosplash-r2/guest.png",
+    "sha256": "9a9df0dcca409343902ce568495491dd0989b45e17f5e95a91ba9fc04e06e852"
+  },
+  "sourceUnchanged": true,
+  "serial": {
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/browser-r2-div64-nosplash-r2/serial.log",
+    "bytes": 115398,
+    "sha256": "a894e0cb09fc343b2f7880e2123df1e34bf77105fd35090a737ce7f945759b40"
+  },
+  "elapsedMs": 2411011
+}

@@ -76,7 +76,10 @@ trap 'rm -f "$WORK" "$RAW_SNAP" "$RAW_DELTA" "$FIFO" "$BOOTLOG"' EXIT
   # running (no live V8 heap), so the snapshot is a small Alpine RAM image (~15 MB gz, like bare
   # Alpine) rather than a fat 55 MB one; the node files are lazy-loaded from the re-chunked base on
   # cache-miss disk reads after restore.
-  sleep 3; printf 'udhcpc -i eth0 2>&1; apk update 2>&1; apk add nodejs npm 2>&1; node --version && npm --version && sync && echo 3 > /proc/sys/vm/drop_caches && echo WVSNAP"READY"\n' >&3
+  # The minimal Alpine image does not ship a resolv.conf managed by OpenRC in this deterministic
+  # boot. slirp's DHCP resolver is 10.0.2.3; make it explicit so the package install cannot stall
+  # on a DNS lookup while the network itself is healthy.
+  sleep 3; printf 'udhcpc -i eth0 2>&1; echo nameserver 10.0.2.3 > /etc/resolv.conf; apk update 2>&1; apk add nodejs npm 2>&1; node --version && npm --version && sync && echo 3 > /proc/sys/vm/drop_caches && echo WVSNAP"READY"\n' >&3
   sleep 5400                          # keep the FIFO writer alive across the boot + apk install
 ) &
 WRITER=$!
@@ -90,6 +93,7 @@ WRITER=$!
   --drive "file=$WORK" \
   --net-slirp \
   --virtio-rng \
+  --browser-topology \
   --append "root=/dev/vda rw console=ttyS0 earlycon=sbi" \
   --max-instrs 1500000000000 \
   --snapshot-trigger "WVSNAPREADY" \

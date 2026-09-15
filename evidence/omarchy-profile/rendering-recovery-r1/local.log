@@ -1,0 +1,13 @@
+OMARCHY_RENDERING_PROGRESS {"stage":"goto","at":"2026-09-10T06:03:30.778Z","url":"http://127.0.0.1:63440/app.html?guest=omarchy&desktop=1#ide"}
+OMARCHY_RENDERING_PROGRESS {"stage":"domcontentloaded","at":"2026-09-10T06:03:31.116Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"runtime-hooks-ready","at":"2026-09-10T06:03:31.361Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"desktop-ready","at":"2026-09-10T06:04:31.121Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"viewport-captured","at":"2026-09-10T06:04:31.448Z","viewport":"960x600"}
+OMARCHY_RENDERING_PROGRESS {"stage":"viewport-captured","at":"2026-09-10T06:04:31.631Z","viewport":"600x900"}
+OMARCHY_RENDERING_PROGRESS {"stage":"viewport-captured","at":"2026-09-10T06:04:31.851Z","viewport":"1920x1080"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-start","at":"2026-09-10T06:04:31.854Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-domcontentloaded","at":"2026-09-10T06:04:31.880Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-runtime-hooks-ready","at":"2026-09-10T06:04:31.951Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-desktop-ready","at":"2026-09-10T06:05:31.403Z"}
+AssertionError [ERR_ASSERTION]: kernel response did not match boot-manifest digest and size
+    at main (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-rendering-recovery.mjs:445:14)

@@ -69,6 +69,10 @@ class BuildGuardTests(unittest.TestCase):
             (destination / relative).mkdir(parents=True)
         (destination / "etc/machine-id").write_bytes(b"")
         (destination / "etc/shadow").write_text("root:!:::::::\nomarchy:!:::::::\n", encoding="utf-8")
+        for relative in ("etc/ld.so.cache", "usr/lib/udev/hwdb.bin", "var/lib/systemd/catalog/database", "etc/.updated", "var/.updated"):
+            path = destination / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(b"synthetic cache or update stamp\n")
         theme = destination / "home/omarchy/.local/state/omarchy/current/theme"
         theme.mkdir(parents=True)
         for name in ("foot.ini", "hyprland.lua", "colors.toml"):

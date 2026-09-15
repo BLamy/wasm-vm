@@ -1,0 +1,71 @@
+cwd=/private/tmp/wasm-vm-t03j-cold.QWTTKg/repo
+head=5ee8ed607027731bd9a50a132205c7bb42574e69
+target=/private/tmp/wasm-vm-t03j-cold.QWTTKg/target
+started_utc=2026-09-14T04:58:59Z
+command: cargo test -p wasm-vm-wasm --lib admission_probe
+   Compiling unicode-ident v1.0.24
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling rustversion v1.0.22
+   Compiling libc v0.2.186
+   Compiling bumpalo v3.20.3
+   Compiling once_cell v1.21.4
+   Compiling futures-core v0.3.32
+   Compiling pin-project-lite v0.2.17
+   Compiling serde_core v1.0.228
+   Compiling futures-task v0.3.32
+   Compiling slab v0.4.12
+   Compiling serde_json v1.0.150
+   Compiling serde v1.0.228
+   Compiling bitflags v2.13.0
+   Compiling byteorder v1.5.0
+   Compiling heapless v0.9.3
+   Compiling proc-macro2 v1.0.106
+   Compiling log v0.4.33
+   Compiling libm v0.2.16
+   Compiling num-traits v0.2.19
+   Compiling tinyvec_macros v0.1.1
+   Compiling futures-util v0.3.32
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling hash32 v0.3.1
+   Compiling memchr v2.8.2
+   Compiling stable_deref_trait v1.2.1
+   Compiling smoltcp v0.13.1
+   Compiling tinyvec v1.12.0
+   Compiling managed v0.8.0
+   Compiling bitflags v1.3.2
+   Compiling nu-ansi-term v0.50.3
+   Compiling wasm-bindgen-test-shared v0.2.126
+   Compiling wasm-vm-wasm-emit v0.0.1 (/private/tmp/wasm-vm-t03j-cold.QWTTKg/repo/crates/wasm-emit)
+   Compiling quote v1.0.46
+   Compiling unicode-normalization v0.1.25
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+   Compiling cpufeatures v0.2.17
+   Compiling getrandom v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/wasm-vm-t03j-cold.QWTTKg/repo/crates/core)
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling async-trait v0.1.89
+   Compiling wasm-vm-slirp v0.0.0 (/private/tmp/wasm-vm-t03j-cold.QWTTKg/repo/crates/slirp)
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/tmp/wasm-vm-t03j-cold.QWTTKg/repo/crates/jit-translate)
+   Compiling wasm-bindgen-macro v0.2.126
+   Compiling wasm-vm-storage v0.0.1 (/private/tmp/wasm-vm-t03j-cold.QWTTKg/repo/crates/storage)
+   Compiling js-sys v0.3.103
+   Compiling console_error_panic_hook v0.1.7
+   Compiling web-sys v0.3.103
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling wasm-bindgen-test v0.3.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/private/tmp/wasm-vm-t03j-cold.QWTTKg/repo/crates/wasm)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3m 57s
+     Running unittests src/lib.rs (/private/tmp/wasm-vm-t03j-cold.QWTTKg/target/debug/deps/wasm_vm_wasm-7fc2a5cef18649f1)
+
+running 1 test
+test admission_probe_tests::admission_probe_real_translator_integer_fp_move_and_csr_contrasts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 31 filtered out; finished in 0.04s
+
+exit_code=0
+finished_utc=2026-09-14T05:02:58Z

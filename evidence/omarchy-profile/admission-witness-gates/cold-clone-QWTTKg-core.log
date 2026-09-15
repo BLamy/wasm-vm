@@ -1,0 +1,102 @@
+cwd=/private/tmp/wasm-vm-t03j-cold.QWTTKg/repo
+head=5ee8ed607027731bd9a50a132205c7bb42574e69
+target=/private/tmp/wasm-vm-t03j-cold.QWTTKg/target
+started_utc=2026-09-14T04:41:15Z
+command: cargo test -p wasm-vm-core admission_probe
+   Compiling libc v0.2.186
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling cfg-if v1.0.4
+   Compiling unicode-ident v1.0.24
+   Compiling zerocopy v0.8.52
+   Compiling version_check v0.9.5
+   Compiling getrandom v0.3.4
+   Compiling serde_core v1.0.228
+   Compiling typenum v1.20.1
+   Compiling bitflags v2.13.0
+   Compiling crossbeam-utils v0.8.21
+   Compiling serde v1.0.228
+   Compiling autocfg v1.5.1
+   Compiling rustix v1.1.4
+   Compiling getrandom v0.4.3
+   Compiling zmij v1.0.21
+   Compiling regex-syntax v0.8.11
+   Compiling once_cell v1.21.4
+   Compiling either v1.16.0
+   Compiling serde_json v1.0.150
+   Compiling clap_lex v1.1.0
+   Compiling anstyle v1.0.14
+   Compiling generic-array v0.14.7
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling fastrand v2.4.1
+   Compiling memchr v2.8.2
+   Compiling num-traits v0.2.19
+   Compiling itoa v1.0.18
+   Compiling ciborium-io v0.2.2
+   Compiling rayon-core v1.13.0
+   Compiling itertools v0.10.5
+   Compiling clap_builder v4.6.0
+   Compiling quick-error v1.2.3
+   Compiling bit-vec v0.8.0
+   Compiling fnv v1.0.7
+   Compiling same-file v1.0.6
+   Compiling smallvec v1.15.2
+   Compiling cast v0.3.0
+   Compiling oorandom v11.1.5
+   Compiling log v0.4.33
+   Compiling walkdir v2.5.0
+   Compiling unarray v0.1.4
+   Compiling bit-set v0.8.0
+   Compiling anes v0.1.6
+   Compiling crossbeam-epoch v0.9.18
+   Compiling errno v0.3.14
+   Compiling wait-timeout v0.2.1
+   Compiling cpufeatures v0.2.17
+   Compiling is-terminal v0.4.17
+   Compiling crossbeam-deque v0.8.6
+   Compiling rand_core v0.9.5
+   Compiling syn v2.0.118
+   Compiling rand v0.9.4
+   Compiling rand_xorshift v0.4.0
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling rayon v1.12.0
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/wasm-vm-t03j-cold.QWTTKg/repo/crates/core)
+   Compiling criterion-plot v0.5.0
+   Compiling regex-automata v0.4.14
+   Compiling tempfile v3.27.0
+   Compiling rusty-fork v0.3.1
+   Compiling clap v4.6.1
+   Compiling regex v1.12.4
+   Compiling zerocopy-derive v0.8.52
+   Compiling serde_derive v1.0.228
+   Compiling tinytemplate v1.2.1
+   Compiling half v2.7.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.9.0
+   Compiling ciborium-ll v0.2.2
+   Compiling proptest v1.11.0
+   Compiling ciborium v0.2.2
+   Compiling criterion v0.5.1
+error[E0432]: unresolved import `wasm_vm_core::trace::VecSink`
+   --> crates/core/tests/support/plic_sparse_cases.rs:8:5
+    |
+  8 | use wasm_vm_core::trace::VecSink;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ no `VecSink` in `trace`
+    |
+note: found an item that was configured out
+   --> crates/core/src/trace.rs:190:12
+    |
+188 | #[cfg(feature = "trace")]
+    |       ----------------- the item is gated behind the `trace` feature
+189 | #[derive(Default)]
+190 | pub struct VecSink {
+    |            ^^^^^^^
+
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `wasm-vm-core` (test "plic_sparse") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+exit_code=101
+finished_utc=2026-09-14T04:58:59Z

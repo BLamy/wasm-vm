@@ -97,24 +97,27 @@ test("E3.5-T05e: fenced RPC, serialization, streaming & fail-closed runtime (bus
     () =>
       new Promise((resolve) => {
         const got = [];
+        const all = [];
         const h = window.wvmDemo.stream(
           "i=0; while [ $i -lt 8 ]; do echo STREAM_$i; i=$((i+1)); sleep 1; done",
           (line) => {
+            all.push(line);
             if (line.includes("STREAM_")) got.push(line);
             if (got.length >= 3) {
               h.stop();
-              resolve(got);
+              resolve({ got, all });
             }
           },
         );
         setTimeout(() => {
           h.stop();
-          resolve(got);
+          resolve({ got, all });
         }, 90_000);
       }),
   );
-  expect(lines.length).toBeGreaterThanOrEqual(3);
-  expect(lines[0]).toContain("STREAM_0"); // successive, in order — no reordering/duplication
+  expect(lines.got.length).toBeGreaterThanOrEqual(3);
+  expect(lines.got[0]).toContain("STREAM_0"); // successive, in order — no reordering/duplication
+  expect(lines.all.join("\n")).not.toContain("__WVBEGIN_");
 
   // The guest survived stop() — a fresh fenced RPC still works after the stream ended.
   const after = await page.evaluate(() => window.wvmDemo.run("echo ALIVE_$((5+5))"));

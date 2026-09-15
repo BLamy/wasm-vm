@@ -11,11 +11,12 @@ use wasm_vm_core::dev::virtio::console::{
     ConsoleControl, PORT0_TRANSMIT_QUEUE, VIRTIO_CONSOLE_DEVICE_READY, VIRTIO_CONSOLE_PORT_OPEN,
     VIRTIO_CONSOLE_PORT_READY,
 };
-use wasm_vm_core::dev::virtio::gpu::FrameSink;
 use wasm_vm_core::dev::virtio::gpu::protocol::{
-    CMD_GET_DISPLAY_INFO, CMD_RESOURCE_FLUSH, CTRL_HDR_SIZE, CtrlHeader,
-    DISPLAY_INFO_RESPONSE_SIZE, RESOURCE_FLUSH_SIZE, Rect, ResourceFlush,
+    CMD_GET_DISPLAY_INFO, CMD_RESOURCE_FLUSH, CMD_UPDATE_CURSOR, CTRL_HDR_SIZE, CtrlHeader,
+    CursorPos, DISPLAY_INFO_RESPONSE_SIZE, RESOURCE_FLUSH_SIZE, RESP_OK_NODATA, Rect,
+    ResourceFlush, UPDATE_CURSOR_SIZE, UpdateCursor,
 };
+use wasm_vm_core::dev::virtio::gpu::{FrameSink, TestSink};
 use wasm_vm_core::dev::virtio::input::EV_KEY;
 use wasm_vm_core::dev::virtio::rng::EntropySource;
 use wasm_vm_core::dev::virtio::snd::{JACK_INFO_SIZE, QueryInfo, VIRTIO_SND_R_JACK_INFO};
@@ -582,6 +583,213 @@ fn desktop_devices_resume_with_ring_continuity_and_fresh_host_state() {
             .agent_ready_for_restore()
     );
     drop(source);
+}
+
+#[test]
+fn gpu_queued_control_and_cursor_notifications_survive_resume_without_rekick() {
+    let source_sink = TestSink::new();
+    let mut source = desktop_machine(0x1122_3344, Box::new(source_sink.clone())).0;
+    configure_all_queues(&mut source);
+
+    let (_, gpu) = source.virtio_gpu().expect("GPU handle");
+    {
+        let mut gpu_state = gpu.borrow_mut();
+        let resource = gpu_state
+            .resources
+            .create(
+                1,
+                wasm_vm_core::dev::virtio::gpu::protocol::FORMAT_B8G8R8A8_UNORM,
+                2,
+                2,
+            )
+            .expect("small GPU resource");
+        resource.host_pixels.fill(0x1122_3344);
+        gpu_state.scanout_resource = Some(1);
+    }
+
+    // Queue one frame-producing control command, but leave it unserviced.  QueueNotify is the
+    // only wake-up for this pending ring work; no later target-side kick is allowed in this test.
+    let (_, _, control_used, gpu_buffer) = queue_addresses(7, 0);
+    let flush_request = gpu_buffer + 0x100;
+    let flush_response = gpu_buffer + 0x180;
+    let flush = ResourceFlush {
+        header: CtrlHeader {
+            ty: CMD_RESOURCE_FLUSH,
+            ..CtrlHeader::default()
+        },
+        rect: Rect {
+            x: 0,
+            y: 0,
+            width: 2,
+            height: 2,
+        },
+        resource_id: 1,
+        padding: 0,
+    }
+    .to_bytes();
+    for (offset, byte) in flush.into_iter().enumerate() {
+        source
+            .bus_mut()
+            .store8(flush_request + offset as u64, byte)
+            .unwrap();
+    }
+    write_descriptor(
+        &mut source,
+        7,
+        0,
+        0,
+        flush_request,
+        RESOURCE_FLUSH_SIZE as u32,
+        DESC_NEXT,
+        1,
+    );
+    write_descriptor(
+        &mut source,
+        7,
+        0,
+        1,
+        flush_response,
+        CTRL_HDR_SIZE as u32,
+        DESC_WRITE,
+        0,
+    );
+    post_descriptor(&mut source, 7, 0, 0, 0);
+
+    // Queue one cursor update in the independent cursorq, also unserviced.  UPDATE_CURSOR uses
+    // the restored scanout resource and provides a concrete cursor callback after the resume.
+    let (_, _, cursor_used, cursor_buffer) = queue_addresses(7, 1);
+    let cursor_request = cursor_buffer + 0x100;
+    let cursor_response = cursor_buffer + 0x180;
+    let update_cursor = UpdateCursor {
+        header: CtrlHeader {
+            ty: CMD_UPDATE_CURSOR,
+            ..CtrlHeader::default()
+        },
+        pos: CursorPos {
+            scanout_id: 0,
+            x: 37,
+            y: 41,
+            padding: 0,
+        },
+        resource_id: 1,
+        hot_x: 0,
+        hot_y: 0,
+        padding: 0,
+    }
+    .to_bytes();
+    assert_eq!(update_cursor.len(), UPDATE_CURSOR_SIZE);
+    for (offset, byte) in update_cursor.into_iter().enumerate() {
+        source
+            .bus_mut()
+            .store8(cursor_request + offset as u64, byte)
+            .unwrap();
+    }
+    write_descriptor(
+        &mut source,
+        7,
+        1,
+        0,
+        cursor_request,
+        UPDATE_CURSOR_SIZE as u32,
+        DESC_NEXT,
+        1,
+    );
+    write_descriptor(
+        &mut source,
+        7,
+        1,
+        1,
+        cursor_response,
+        CTRL_HDR_SIZE as u32,
+        DESC_WRITE,
+        0,
+    );
+    post_descriptor(&mut source, 7, 1, 0, 0);
+
+    for offset in (0..32).step_by(4) {
+        source
+            .bus_mut()
+            .store32(virt::DRAM_BASE + offset, 0x0000_0013)
+            .expect("NOP");
+    }
+    kick(&mut source, 7, 0);
+    kick(&mut source, 7, 1);
+    assert_eq!(source.bus_mut().load16(control_used + 2), Ok(0));
+    assert_eq!(source.bus_mut().load16(cursor_used + 2), Ok(0));
+    assert!(source_sink.records().is_empty());
+    assert!(source_sink.cursor_records().is_empty());
+
+    let blob = source.save_resume().expect("desktop resume save");
+
+    let target_sink = TestSink::new();
+    let (mut target, _) = desktop_machine(0xaabb_ccdd, Box::new(target_sink.clone()));
+    target.load_resume(&blob).expect("desktop resume load");
+
+    // Restore keeps both guest rings pending and the fresh sink's repair frame is separate from
+    // the frame/cursor callbacks caused by servicing those restored notifications.
+    assert_eq!(target.bus_mut().load16(control_used + 2), Ok(0));
+    assert_eq!(target.bus_mut().load16(cursor_used + 2), Ok(0));
+    let frames_before_service = target_sink.records().len();
+    let cursors_before_service = target_sink.cursor_records().len();
+
+    assert_eq!(target.run(1), RunOutcome::MaxInstrs);
+    assert_eq!(target.bus_mut().load16(control_used + 2), Ok(1));
+    assert_eq!(target.bus_mut().load16(cursor_used + 2), Ok(1));
+    assert_eq!(target.bus_mut().load32(flush_response), Ok(RESP_OK_NODATA));
+    assert_eq!(target.bus_mut().load32(cursor_response), Ok(RESP_OK_NODATA));
+
+    let frames = target_sink.records();
+    assert_eq!(frames.len(), frames_before_service + 1);
+    assert_eq!(frames.last().unwrap().scanout, Some(0));
+    assert_eq!(frames.last().unwrap().rect.width, 2);
+    assert_eq!(frames.last().unwrap().rect.height, 2);
+
+    let cursors = target_sink.cursor_records();
+    assert_eq!(cursors.len(), cursors_before_service + 1);
+    assert_eq!(cursors.last().unwrap().resource_id, 1);
+    assert_eq!(cursors.last().unwrap().pos.x, 37);
+    assert_eq!(cursors.last().unwrap().pos.y, 41);
+
+    // A second service boundary without a new QueueNotify must not replay either restored
+    // descriptor.  Keep both used indices and both host callback streams pinned at the first
+    // completion; this is the post-restore double-completion boundary.
+    let frames_after_first_service = frames.len();
+    let cursors_after_first_service = cursors.len();
+    assert_eq!(target.run(1), RunOutcome::MaxInstrs);
+    assert_eq!(target.bus_mut().load16(control_used + 2), Ok(1));
+    assert_eq!(target.bus_mut().load16(cursor_used + 2), Ok(1));
+    assert_eq!(target_sink.records().len(), frames_after_first_service);
+    assert_eq!(
+        target_sink.cursor_records().len(),
+        cursors_after_first_service
+    );
+
+    // Reset the restored device, configure fresh empty rings, and service twice.  There is no
+    // saved work in this cross-flow, so reset/reconfigure must not resurrect the old completions.
+    target
+        .bus_mut()
+        .store32(Platform::virtio_base(7) + STATUS, 0)
+        .unwrap();
+    let cursors_after_reset = target_sink.cursor_records().len();
+    assert_eq!(
+        cursors_after_reset,
+        cursors_after_first_service + 1,
+        "reset publishes exactly one hide-cursor state for the active cursor"
+    );
+    configure_queue(&mut target, 7, 0);
+    configure_queue(&mut target, 7, 1);
+    kick(&mut target, 7, 0);
+    kick(&mut target, 7, 1);
+    assert_eq!(target.run(1), RunOutcome::MaxInstrs);
+    assert_eq!(target.bus_mut().load16(control_used + 2), Ok(0));
+    assert_eq!(target.bus_mut().load16(cursor_used + 2), Ok(0));
+    assert_eq!(target_sink.records().len(), frames_after_first_service);
+    assert_eq!(target_sink.cursor_records().len(), cursors_after_reset);
+    assert_eq!(target.run(1), RunOutcome::MaxInstrs);
+    assert_eq!(target.bus_mut().load16(control_used + 2), Ok(0));
+    assert_eq!(target.bus_mut().load16(cursor_used + 2), Ok(0));
+    assert_eq!(target_sink.records().len(), frames_after_first_service);
+    assert_eq!(target_sink.cursor_records().len(), cursors_after_reset);
 }
 
 #[test]

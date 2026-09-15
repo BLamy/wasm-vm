@@ -544,6 +544,273 @@ fn enable_browser_jit(
     Ok(())
 }
 
+fn admission_translator_supported(row: &wasm_vm_core::dispatch::AdmissionWitness) -> bool {
+    let block = wasm_vm_core::dispatch::DecodedBlock::new(
+        row.request.phys_pc,
+        row.ops.clone(),
+        row.request.code_bytes.len() as u64,
+    );
+    jit_translate::is_translatable(&block)
+}
+
+fn select_cold_counter_recycling(machine: &mut Machine, enabled: bool) -> bool {
+    machine.set_cold_counter_recycling(enabled);
+    machine.cold_counter_recycling_stats().enabled
+}
+
+fn cold_counter_recycling_fields(
+    stats: wasm_vm_core::dispatch::ColdCounterRecyclingStats,
+) -> (bool, String, String, u32, usize) {
+    (
+        stats.enabled,
+        stats.epochs.to_string(),
+        stats.discarded_counters.to_string(),
+        stats.threshold,
+        stats.capacity,
+    )
+}
+
+fn cold_counter_recycling_object(machine: &Machine) -> JsValue {
+    let (enabled, epochs, discarded, threshold, capacity) =
+        cold_counter_recycling_fields(machine.cold_counter_recycling_stats());
+    let obj = js_sys::Object::new();
+    for (key, value) in [
+        ("enabled", JsValue::from(enabled)),
+        ("epochs", JsValue::from(epochs)),
+        ("discardedCounters", JsValue::from(discarded)),
+        ("threshold", JsValue::from(threshold)),
+        ("capacity", JsValue::from(capacity as f64)),
+    ] {
+        let _ = js_sys::Reflect::set(&obj, &key.into(), &value);
+    }
+    obj.into()
+}
+
+fn admission_probe_object(machine: &Machine) -> JsValue {
+    let stats = machine.admission_probe_stats();
+    // false = disabled. Ordinary jitStats must not allocate any probe JS payload.
+    if !stats.enabled {
+        return JsValue::FALSE;
+    }
+    let obj = js_sys::Object::new();
+    let set = |o: &js_sys::Object, key: &str, value: JsValue| {
+        let _ = js_sys::Reflect::set(o, &key.into(), &value);
+    };
+    set(&obj, "enabled", stats.enabled.into());
+    set(
+        &obj,
+        "capacity",
+        (wasm_vm_core::dispatch::MAX_ADMISSION_WITNESSES as u32).into(),
+    );
+    set(
+        &obj,
+        "selection",
+        "first-seen-full-map-refusals-per-generation".into(),
+    );
+    set(
+        &obj,
+        "entryScope",
+        "interpreted-discovery-entries-only".into(),
+    );
+    for (key, value) in [
+        ("generation", stats.generation),
+        ("generationResets", stats.generation_resets),
+        ("observedEntries", stats.observed_entries),
+        ("fullMapRefusals", stats.full_map_refusals),
+        ("overflowRefusals", stats.overflow_refusals),
+        ("invalidBlocks", stats.invalid_blocks),
+    ] {
+        set(&obj, key, value.to_string().into());
+    }
+    set(&obj, "countsLen", (stats.counts_len as u32).into());
+    set(
+        &obj,
+        "countsCapacity",
+        (stats.counts_capacity as u32).into(),
+    );
+    set(&obj, "threshold", stats.threshold.into());
+    let records = js_sys::Array::new();
+    for row in &stats.records {
+        let record = js_sys::Object::new();
+        set(
+            &record,
+            "physPc",
+            format!("{:#x}", row.request.phys_pc).into(),
+        );
+        let mut bytes = String::with_capacity(row.request.code_bytes.len() * 2);
+        for byte in &row.request.code_bytes {
+            let _ = write!(bytes, "{byte:02x}");
+        }
+        set(&record, "codeBytes", bytes.into());
+        let lengths: js_sys::Array = row
+            .request
+            .op_lens
+            .iter()
+            .map(|n| JsValue::from(*n))
+            .collect();
+        set(&record, "opLens", lengths.into());
+        set(
+            &record,
+            "terminator",
+            format!("{:?}", row.request.terminator).into(),
+        );
+        for (key, value) in [
+            ("generation", row.request.generation),
+            ("entries", row.entries),
+            ("firstEntry", row.first_entry),
+            ("lastEntry", row.last_entry),
+        ] {
+            set(&record, key, value.to_string().into());
+        }
+        set(
+            &record,
+            "firstCountsLen",
+            (row.first_counts_len as u32).into(),
+        );
+        set(
+            &record,
+            "lastCountsLen",
+            (row.last_counts_len as u32).into(),
+        );
+        let reasons = js_sys::Object::new();
+        for (key, value) in [
+            ("countsFull", row.reasons.counts_full),
+            ("counting", row.reasons.counting),
+            ("nominated", row.reasons.nominated),
+            ("excluded", row.reasons.excluded),
+            ("dedupQueued", row.reasons.dedup_queued),
+            ("dedupExcluded", row.reasons.dedup_excluded),
+            ("fifoOverflow", row.reasons.fifo_overflow),
+        ] {
+            set(&reasons, key, value.to_string().into());
+        }
+        set(&record, "reasons", reasons.into());
+        set(&record, "discoveryQueued", row.discovery_queued.into());
+        set(&record, "compileQueued", row.compile_queued.into());
+        set(
+            &record,
+            "executorResidentAtReport",
+            row.executor_resident_at_report
+                .map(JsValue::from)
+                .unwrap_or(JsValue::NULL),
+        );
+        set(
+            &record,
+            "residencyScope",
+            "physical-pc-at-report-not-historical-install-or-byte-identity".into(),
+        );
+        let supported = admission_translator_supported(row);
+        let excluded = row.request.terminator.is_excluded();
+        set(&record, "translatorSupported", supported.into());
+        set(&record, "policyExcluded", excluded.into());
+        set(
+            &record,
+            "translationEligible",
+            (supported && !excluded).into(),
+        );
+        records.push(&record);
+    }
+    set(&obj, "records", records.into());
+    obj.into()
+}
+
+#[cfg(test)]
+mod cold_counter_recycling_tests {
+    use super::{cold_counter_recycling_fields, select_cold_counter_recycling};
+    use wasm_vm_core::{Machine, dispatch::ColdCounterRecyclingStats};
+
+    #[test]
+    fn cold_counter_recycling_wrapper_selection_and_lossless_stats_fields() {
+        // Native adapter test of the shared selection/serialization helpers used by
+        // both wrappers; this does not pretend to execute JS or boot WasmLinux.
+        let mut machine = Machine::new(4096);
+        let before = machine.snapshot();
+        let discovery = machine.discovery_stats();
+        assert_eq!(
+            cold_counter_recycling_fields(machine.cold_counter_recycling_stats()),
+            (false, "0".into(), "0".into(), 64, 65536)
+        );
+        for enabled in [true, true, false] {
+            assert_eq!(
+                select_cold_counter_recycling(&mut machine, enabled),
+                enabled
+            );
+            assert_eq!(
+                cold_counter_recycling_fields(machine.cold_counter_recycling_stats()),
+                (enabled, "0".into(), "0".into(), 64, 65536)
+            );
+            assert_eq!(machine.discovery_stats(), discovery);
+            assert_eq!(machine.snapshot(), before);
+            assert!(!machine.jit_active());
+            assert!(!machine.admission_probe_stats().enabled);
+        }
+        assert_eq!(
+            cold_counter_recycling_fields(ColdCounterRecyclingStats {
+                enabled: true,
+                epochs: u64::MAX,
+                discarded_counters: (1 << 53) + 1,
+                threshold: 512,
+                capacity: 65536,
+            }),
+            (
+                true,
+                "18446744073709551615".into(),
+                "9007199254740993".into(),
+                512,
+                65536
+            )
+        );
+        machine.set_hotness_threshold(512);
+        assert_eq!(
+            cold_counter_recycling_fields(machine.cold_counter_recycling_stats()),
+            (false, "0".into(), "0".into(), 512, 65536)
+        );
+        assert!(!machine.admission_probe_stats().enabled);
+    }
+}
+
+#[cfg(test)]
+mod admission_probe_tests {
+    use super::admission_translator_supported;
+    use wasm_vm_core::dispatch::{BlockDiscovery, MicroOp};
+
+    #[test]
+    fn admission_probe_real_translator_integer_fp_move_and_csr_contrasts() {
+        let op = |raw| MicroOp {
+            instr: wasm_vm_core::decode::decode(raw).unwrap(),
+            raw,
+            len: 4,
+        };
+        let integer = [op(0x0010_8093), op(0x0000_006f)];
+        let fp_move = [op(0xf000_0053), op(0x0000_006f)]; // FMV.W.X, not a guessed FP bucket.
+        let csr = [op(0x3000_1073)]; // CSRRW mstatus: discovery-policy exclusion.
+        let mut discovery = BlockDiscovery::with_bounds(4, 1);
+        discovery.set_admission_probe(true);
+        discovery.on_block_entry(0, &integer);
+        for (phys, ops) in [
+            (4096, &integer[..]),
+            (8192, &fp_move[..]),
+            (12288, &csr[..]),
+        ] {
+            for _ in 0..3 {
+                discovery.on_block_entry(phys, ops);
+            }
+        }
+        let records = discovery.admission_probe_stats().records;
+        assert_eq!(records.len(), 3);
+        assert!(admission_translator_supported(&records[0]));
+        assert!(!admission_translator_supported(&records[1]));
+        assert!(!records[1].request.terminator.is_excluded());
+        assert!(!admission_translator_supported(&records[2]));
+        assert!(records[2].request.terminator.is_excluded());
+        assert!(records.iter().all(|row| row.reasons.counts_full == 3));
+        assert_eq!(
+            records[1].request.code_bytes[..4],
+            0xf000_0053u32.to_le_bytes()
+        );
+    }
+}
+
 fn jit_stats_object(machine: &Machine) -> JsValue {
     let obj = js_sys::Object::new();
     let set = |k: &str, v: &JsValue| {
@@ -797,11 +1064,31 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
     let (entry_hits, builds) = machine.block_cache_entry_stats();
     set("blockEntryHits", &JsValue::from_f64(entry_hits as f64));
     set("blockBuilds", &JsValue::from_f64(builds as f64));
+    set("admissionProbe", &admission_probe_object(machine));
+    set(
+        "coldCounterRecycling",
+        &cold_counter_recycling_object(machine),
+    );
     obj.into()
 }
 
 #[wasm_bindgen]
 impl WasmMachine {
+    /// Explicit local admission trial selection; no implicit JIT/profiling/timer change.
+    #[wasm_bindgen(js_name = setColdCounterRecycling)]
+    pub fn set_cold_counter_recycling(&self, enabled: bool) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        Ok(select_cold_counter_recycling(&mut inner.machine, enabled))
+    }
+
+    /// Explicit boot diagnostic only; does not enable profiling or change JIT policy.
+    #[wasm_bindgen(js_name = setAdmissionProbe)]
+    pub fn set_admission_probe(&self, enabled: bool) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_admission_probe(enabled);
+        Ok(enabled)
+    }
+
     /// Construct a machine with `ram_mib` MiB of zeroed guest RAM and a UART0 console
     /// wired to a (initially unset) JS callback. A `ram_mib` too large to allocate throws
     /// a catchable `JsError` — never a wasm `unreachable` abort that would poison the
@@ -1380,6 +1667,47 @@ mod guest_clock_tests {
             saved_mtime + 10_000
         );
     }
+
+    #[cfg(target_arch = "wasm32")]
+    #[wasm_bindgen_test::wasm_bindgen_test]
+    fn seeded_linux_wrapper_uses_raw_resume_identity_without_snapshot_store() {
+        use wasm_vm_storage::{ImageManifest, Layout, OverlayDelta};
+
+        let manifest = ImageManifest::from_image(&[], 4096, Layout::Split).unwrap();
+        let base = manifest.base_hash();
+        let delta = OverlayDelta {
+            image_len: manifest.image_len,
+            base_binding: base,
+            generation: 23,
+            blocks: Vec::new(),
+        };
+        let vm = WasmLinux::new_chunked_disk_seeded(
+            8,
+            &0x0000_006fu32.to_le_bytes(),
+            &manifest.to_json(),
+            String::new(),
+            0,
+            Vec::new(),
+            String::new(),
+            js_sys::Function::new_no_args(""),
+            false,
+            delta.to_bytes(),
+        )
+        .unwrap();
+
+        assert!(vm.inner.borrow().snapshot_base.is_none());
+        assert_eq!(vm.inner.borrow().resume_base, Some(base));
+        let blob = js_sys::Uint8Array::new(&vm.save_snapshot().unwrap()).to_vec();
+        assert_eq!(
+            vm.restore_decision_code(Some(blob.clone()), 23.0).unwrap(),
+            "resume"
+        );
+        assert_eq!(
+            vm.restore_decision_code(Some(blob.clone()), 22.0).unwrap(),
+            "stale"
+        );
+        vm.load_snapshot_blob(blob).unwrap();
+    }
 }
 
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
@@ -1797,11 +2125,15 @@ struct LinuxInner {
     /// E3-T21c: bounded browser producer/consumer queues plus the shared slirp backend handle.
     /// Present only for slirp boots; the emulator still owns the sole `NetBackend` adapter.
     file_transfers: Option<browser_file_transfer::BrowserFileTransfers>,
-    /// E3-T12d: the base-image binding for the durable resume-snapshot store, present only for a
-    /// `newChunkedDiskPersistent` boot (`None` otherwise). The snapshot DB is namespaced by it, and
-    /// the restore-decision guard needs it as the expected `base_image_hash`. Off the persistent path
-    /// there is no snapshot store, so the decision is always `"missing"`.
+    /// E3-T12d: the base-image binding for the durable resume-snapshot store. Persistent snapshot
+    /// APIs use this field for their namespace and expected `base_image_hash`; raw whole-machine
+    /// resume wrappers use `resume_base` instead, so seeded in-memory boots can restore without
+    /// enabling the persistent snapshot store.
     snapshot_base: Option<[u8; 32]>,
+    /// Raw whole-machine resume identity, independent of the IndexedDB snapshot namespace. Seeded
+    /// in-memory boots populate this while keeping `snapshot_base` unset, so raw resume wrappers
+    /// work without enabling persistence APIs.
+    resume_base: Option<[u8; 32]>,
     /// E3-T12d: the persistent tab's Web Lock ownership. Read-only contenders may inspect the
     /// snapshot store, but must never save or import into the writer's namespace.
     snapshot_read_only: bool,
@@ -1859,6 +2191,16 @@ enum DiskChoice {
         budget: u64,
         /// E3-T03 boot profile: ordered chunks to prefetch (empty if none).
         profile: Vec<usize>,
+    },
+    /// A fresh in-memory COW disk whose overlay is populated from a validated shipped delta.
+    /// Unlike `ChunkedPersistent`, this path never opens IndexedDB or carries persistence state.
+    ChunkedSeeded {
+        manifest: wasm_vm_storage::ImageManifest,
+        base_url: String,
+        budget: u64,
+        profile: Vec<usize>,
+        overlay: wasm_vm_storage::MemOverlay,
+        generation: u64,
     },
     /// E4-T28e: a lazy Alpine root disk plus a read-only, fully resident secondary virtio-blk
     /// drive. The browser proof uses this for the pinned GCC overlay; it lives after the stable
@@ -2065,6 +2407,21 @@ impl wasm_vm_core::dev::virtio::gpu::FrameSink for JsFrameSink {
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 #[wasm_bindgen]
 impl WasmLinux {
+    /// Select after restore, before execution; not a general Worker mutation RPC.
+    #[wasm_bindgen(js_name = setColdCounterRecycling)]
+    pub fn set_cold_counter_recycling(&self, enabled: bool) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        Ok(select_cold_counter_recycling(&mut inner.machine, enabled))
+    }
+
+    /// Arm after restore, before execution; not exposed as a general Worker mutation RPC.
+    #[wasm_bindgen(js_name = setAdmissionProbe)]
+    pub fn set_admission_probe(&self, enabled: bool) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_admission_probe(enabled);
+        Ok(enabled)
+    }
+
     /// Assemble the platform and boot. `initrd` empty = none; `bootargs` empty = the default
     /// `console=ttyS0 earlycon=sbi`. `output(bytes: Uint8Array)` receives console output.
     #[wasm_bindgen(constructor)]
@@ -2169,6 +2526,69 @@ impl WasmLinux {
                 base_url,
                 budget,
                 profile,
+            },
+            &args,
+            output,
+            enable_mic,
+        )
+    }
+
+    /// Boot from a chunked base image plus a validated, in-memory `WVOD1` copy-on-write seed.
+    /// The delta is bound to the manifest's base hash and image length, and its generation is
+    /// stamped into the whole-machine resume coherence header. This constructor never opens or
+    /// writes IndexedDB; `saveSnapshot` remains the raw in-memory resume surface while the
+    /// persisted snapshot APIs stay `not_persistent`.
+    #[wasm_bindgen(js_name = newChunkedDiskSeeded)]
+    #[allow(clippy::too_many_arguments)]
+    pub fn new_chunked_disk_seeded(
+        ram_mib: u32,
+        kernel: &[u8],
+        manifest_json: &str,
+        base_url: String,
+        cache_budget_mib: u32,
+        boot_profile: Vec<u32>,
+        bootargs: String,
+        output: js_sys::Function,
+        enable_mic: bool,
+        delta_bytes: Vec<u8>,
+    ) -> Result<WasmLinux, JsError> {
+        let manifest = wasm_vm_storage::ImageManifest::from_json(manifest_json)
+            .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
+        let delta = wasm_vm_storage::OverlayDelta::from_bytes(&delta_bytes)
+            .map_err(|e| JsError::new(&format!("overlay delta parse: {e:?}")))?;
+        let overlay = chunked::seeded_overlay(&manifest, &delta).map_err(|e| {
+            let message = match e {
+                chunked::SeededOverlayError::BaseMismatch
+                | chunked::SeededOverlayError::ImageLengthMismatch => "delta_base_mismatch",
+                chunked::SeededOverlayError::BlockOutOfBounds { .. } => "delta_block_out_of_bounds",
+                chunked::SeededOverlayError::DuplicateBlock { .. } => "delta_duplicate_block",
+            };
+            JsError::new(message)
+        })?;
+        let args = if bootargs.is_empty() {
+            "root=/dev/vda rw console=ttyS0 earlycon=sbi".to_string()
+        } else {
+            bootargs
+        };
+        let budget = if cache_budget_mib == 0 {
+            256
+        } else {
+            cache_budget_mib
+        } as u64
+            * 1024
+            * 1024;
+        let profile: Vec<usize> = boot_profile.into_iter().map(|c| c as usize).collect();
+        Self::assemble(
+            ram_mib,
+            kernel,
+            None,
+            DiskChoice::ChunkedSeeded {
+                manifest,
+                base_url,
+                budget,
+                profile,
+                overlay,
+                generation: delta.generation,
             },
             &args,
             output,
@@ -2355,9 +2775,11 @@ impl WasmLinux {
         let mut persist = None;
         let mut disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>> = None;
         let mut file_transfers = None;
-        // E3-T12d: the base binding for the durable resume-snapshot store — stamped only on the
-        // persistent path (where a snapshot can be taken and restored). `None` elsewhere.
+        // E3-T12d: the base binding for the durable resume-snapshot store. Raw in-memory resume
+        // wrappers use the separate `resume_base`; this remains None until a persistent namespace
+        // (or an explicitly stamped boot-snapshot identity) is selected.
         let mut snapshot_base: Option<[u8; 32]> = None;
+        let mut resume_base: Option<[u8; 32]> = None;
         let mut snapshot_read_only = false;
         match disk {
             // Alpine over virtio-blk: the image is owned by an in-memory BlockBackend in slot 0.
@@ -2374,6 +2796,31 @@ impl WasmLinux {
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
                 let backend = chunked::ChunkedBackend::new(&manifest, store.clone());
+                machine.enable_virtio_blk(Box::new(backend));
+                fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
+                    manifest, base_url, store, profile,
+                )));
+            }
+            DiskChoice::ChunkedSeeded {
+                manifest,
+                base_url,
+                budget,
+                profile,
+                overlay,
+                generation,
+            } => {
+                let base_binding = manifest.base_hash();
+                machine.set_snapshot_identity_with_generation(
+                    build_core_hash(),
+                    base_binding,
+                    generation,
+                );
+                resume_base = Some(base_binding);
+                let store =
+                    std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
+                let backend =
+                    chunked::ChunkedBackend::with_overlay(overlay, &manifest, store.clone())
+                        .map_err(|e| JsError::new(&format!("overlay attach: {e:?}")))?;
                 machine.enable_virtio_blk(Box::new(backend));
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
                     manifest, base_url, store, profile,
@@ -2425,6 +2872,7 @@ impl WasmLinux {
                     base_binding,
                     generation,
                 );
+                resume_base = Some(base_binding);
                 snapshot_base = Some(base_binding);
                 snapshot_read_only = read_only;
                 let store =
@@ -2586,6 +3034,7 @@ impl WasmLinux {
                 disk_ro,
                 file_transfers,
                 snapshot_base,
+                resume_base,
                 snapshot_read_only,
                 snapshot_write_count: std::rc::Rc::new(std::cell::Cell::new(0)),
             }),
@@ -3390,6 +3839,38 @@ impl WasmLinux {
         Ok(object.into())
     }
 
+    /// Inspect the actual host-side keyboard input queue and its bounded-drop counters.
+    /// A null result means that this machine was assembled without the virtio-input keyboard.
+    /// This is diagnostic-only: it does not drain, resize, or otherwise mutate the device.
+    #[wasm_bindgen(js_name = inputDeviceStats)]
+    pub fn input_device_stats(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some(state) = inner.machine.keyboard_input() else {
+            return Ok(JsValue::NULL);
+        };
+        let state = state
+            .try_borrow()
+            .map_err(|_| JsError::new("keyboard input stats busy"))?;
+        let object = js_sys::Object::new();
+        let set = |key: &str, value: JsValue| {
+            let _ = js_sys::Reflect::set(&object, &JsValue::from_str(key), &value);
+        };
+        set(
+            "pendingEventBudget",
+            (state.pending_event_budget() as f64).into(),
+        );
+        set("pendingEvents", (state.pending_events() as f64).into());
+        set("pendingFrames", (state.pending_frames() as f64).into());
+        set("droppedFrames", (state.dropped_frames as f64).into());
+        set("droppedEvents", (state.dropped_events as f64).into());
+        set(
+            "statusEventsServed",
+            (state.status_events_served as f64).into(),
+        );
+        set("rejectedEvents", (state.rejected_events as f64).into());
+        Ok(object.into())
+    }
+
     /// Publish the current host keyboard frame by appending `EV_SYN/SYN_REPORT`.
     #[wasm_bindgen(js_name = syncKeyboard)]
     pub fn sync_keyboard(&self) -> Result<(), JsError> {
@@ -3920,8 +4401,8 @@ impl WasmLinux {
 
     /// The header-level resume-vs-cold-boot verdict for `stored` (the reassembled blob, or `None`),
     /// against THIS boot's build identity + base binding + `current_generation`. Returns the stable
-    /// code (`"resume"`/`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`). Off the
-    /// persistent path (no base binding) there is no snapshot to resume: always `"missing"`.
+    /// code (`"resume"`/`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`). The
+    /// raw resume decision uses the in-memory resume identity, independent of IndexedDB.
     #[wasm_bindgen(js_name = restoreDecisionCode)]
     pub fn restore_decision_code(
         &self,
@@ -3929,7 +4410,7 @@ impl WasmLinux {
         current_generation: f64,
     ) -> Result<String, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
-        let Some(base) = inner.snapshot_base else {
+        let Some(base) = inner.resume_base else {
             return Ok("missing".to_string());
         };
         let core = build_core_hash();
@@ -3956,8 +4437,8 @@ impl WasmLinux {
     }
 
     /// E4 restore-on-first-load (busybox boot-snapshot): stamp THIS machine's coherence identity so a
-    /// shipped, build-time boot snapshot can be restored on the initramfs path (which otherwise sets no
-    /// snapshot identity — `snapshot_base` stays `None` and every restore verdict is `"missing"`).
+    /// shipped, build-time boot snapshot can be restored on the initramfs path (which otherwise has no
+    /// snapshot identity). This explicitly stamps the raw resume identity and the snapshot namespace.
     ///
     /// The core identity is [`build_core_hash`] (the crate version), so a snapshot produced by a
     /// DIFFERENT build fails the `CoreHashMismatch` guard and the caller falls back to a cold boot —
@@ -3976,6 +4457,7 @@ impl WasmLinux {
         base.copy_from_slice(base_id);
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         inner.machine.set_snapshot_identity(build_core_hash(), base);
+        inner.resume_base = Some(base);
         inner.snapshot_base = Some(base);
         Ok(())
     }

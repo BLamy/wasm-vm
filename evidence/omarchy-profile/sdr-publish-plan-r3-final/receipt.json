@@ -1,0 +1,28 @@
+{
+  "mode": "plan",
+  "publicBase": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev",
+  "bucket": "wasm-vm",
+  "manifestPath": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+  "manifestSha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+  "imageSha256": "2b4143df63085141f7cf017ed2d11c9808bd38dd30925bc86c4a15b4a64cf83c",
+  "imageLength": 4294967296,
+  "provenance": {
+    "scriptPath": "/Users/blamy/Documents/Codex/wasm-vm/tools/publish-omarchy-chunks.mjs",
+    "scriptSha256": "7d6554c37c5b8b0b49673676c82ce407fa2ef787537712190e873ef46b1c644a",
+    "frozenHead": "ec24b0e573a67d48700ffba3ab5abf250c4d29c1"
+  },
+  "manifestKey": "chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+  "totalUniqueObjects": 10535,
+  "totalManifestChunks": 16384,
+  "totalBytes": 2761687040,
+  "verifiedExisting": 0,
+  "racedExisting": 0,
+  "uploaded": 0,
+  "finalManifest": "not-published",
+  "receiptDir": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/sdr-publish-plan-r3-final",
+  "sampleKeys": [
+    "chunked-omarchy/chunks/769f8c9ed6c011158969d9682ab23b833f8c674c99f81ddef72a9de9e24c3aad.bin",
+    "chunked-omarchy/chunks/bbfd266653fef80c8373b82d494d3966d48cf64b0212114879a870620839082b.bin",
+    "chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json"
+  ]
+}

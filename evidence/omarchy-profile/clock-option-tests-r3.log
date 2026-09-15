@@ -1,0 +1,29 @@
+✔ omitted/icount mode never reads a host clock, including on legacy machines (0.850375ms)
+✔ only exact clock labels pass, before accessing the realm or machine (0.260292ms)
+✔ wall validation samples the injected performance source once with its receiver (0.071333ms)
+✔ wall validation refuses missing, noncallable, nonfinite and negative sources (0.165208ms)
+✔ every wall API must exist before setGuestClock can mutate the machine (0.136958ms)
+✔ selection happens once, resume only rebases wall, and state is the current machine result (0.48525ms)
+✔ machine selection, rebase and state exceptions propagate without fabricated success (0.097625ms)
+✔ loader resume rebases before unpausing/scheduling and refuses all later mutations on error (0.832166ms)
+✔ loader resumeAfterQuota rebases before unpausing/scheduling and refuses all later mutations on error (0.525542ms)
+✔ loader continueReadOnly rebases before unpausing/scheduling and refuses all later mutations on error (0.518458ms)
+✔ all 1..1024 numbers and exact decimal strings validate; undefined alone omits (0.781333ms)
+✔ invalid syntax, types, ranges and explicit incompatible modes refuse before machine access (0.840875ms)
+✔ omission preserves the old mode call without divider/state reads or a fabricated selection (0.389375ms)
+✔ both explicit APIs are validated before the first read or mutation (0.126666ms)
+✔ actual pre-selection state must be ICount and valid; no implicit wall conversion (0.171375ms)
+✔ explicit selection reads stored state, sets once, reads actual result, and never resets mode/time on resume (0.148292ms)
+✔ setter/read exceptions and changed time or wrong actual divider refuse without retry/fallback (0.212708ms)
+✔ receipt is immutable history, returns independent scalar-only copies, and never rereads live state (0.074125ms)
+✔ loader validates before its first fetch and selects after restore branches but before execution (1.331125ms)
+✔ desktop query preserves omission versus exact raw string, including invalid empty input (1.221542ms)
+✔ raw divider boot data and real lifecycle receipt traverse the paired worker protocol (8.51125ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 50.699333

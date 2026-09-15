@@ -148,6 +148,12 @@ export class WasmLinux {
      */
     importStoredSnapshot(blob: Uint8Array): Promise<void>;
     /**
+     * Inspect the actual host-side keyboard input queue and its bounded-drop counters.
+     * A null result means that this machine was assembled without the virtio-input keyboard.
+     * This is diagnostic-only: it does not drain, resize, or otherwise mutate the device.
+     */
+    inputDeviceStats(): any;
+    /**
      * E4-T29: the "JIT actually ran" proof for the browser Linux guest. Returns
      * `{hasExecutor, compiledBlocks, executedBlocks, retiredViaJit}` read straight from the installed
      * executor — `executedBlocks > 0` is the definitive evidence translated code executed (not merely
@@ -186,6 +192,14 @@ export class WasmLinux {
      * to flush new writes durably (its Promise resolves on the IndexedDB transaction `complete`).
      */
     static newChunkedDiskPersistent(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, read_only: boolean, output: Function, seed_identity: string | null | undefined, enable_mic: boolean): Promise<WasmLinux>;
+    /**
+     * Boot from a chunked base image plus a validated, in-memory `WVOD1` copy-on-write seed.
+     * The delta is bound to the manifest's base hash and image length, and its generation is
+     * stamped into the whole-machine resume coherence header. This constructor never opens or
+     * writes IndexedDB; `saveSnapshot` remains the raw in-memory resume surface while the
+     * persisted snapshot APIs stay `not_persistent`.
+     */
+    static newChunkedDiskSeeded(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, output: Function, enable_mic: boolean, delta_bytes: Uint8Array): WasmLinux;
     /**
      * E4-T28e: boot the normal lazy Alpine root disk with one additional read-only virtio-blk
      * image. The extra image is passed by value so the fetched overlay becomes one resident Rust
@@ -274,8 +288,8 @@ export class WasmLinux {
     /**
      * The header-level resume-vs-cold-boot verdict for `stored` (the reassembled blob, or `None`),
      * against THIS boot's build identity + base binding + `current_generation`. Returns the stable
-     * code (`"resume"`/`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`). Off the
-     * persistent path (no base binding) there is no snapshot to resume: always `"missing"`.
+     * code (`"resume"`/`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`). The
+     * raw resume decision uses the in-memory resume identity, independent of IndexedDB.
      */
     restoreDecisionCode(stored: Uint8Array | null | undefined, current_generation: number): string;
     /**
@@ -343,9 +357,17 @@ export class WasmLinux {
      */
     sendTabletEvent(event_type: number, code: number, value: number): void;
     /**
+     * Arm after restore, before execution; not exposed as a general Worker mutation RPC.
+     */
+    setAdmissionProbe(enabled: boolean): boolean;
+    /**
      * E4-T39: toggle static region chaining without rebuilding the generated modules.
      */
     setChaining(on: boolean): void;
+    /**
+     * Select after restore, before execution; not a general Worker mutation RPC.
+     */
+    setColdCounterRecycling(enabled: boolean): boolean;
     /**
      * E5-T26k: select one bounded decoded-cache capacity, without coercing JavaScript values.
      */
@@ -391,8 +413,8 @@ export class WasmLinux {
     setProfiling(on: boolean): boolean;
     /**
      * E4 restore-on-first-load (busybox boot-snapshot): stamp THIS machine's coherence identity so a
-     * shipped, build-time boot snapshot can be restored on the initramfs path (which otherwise sets no
-     * snapshot identity — `snapshot_base` stays `None` and every restore verdict is `"missing"`).
+     * shipped, build-time boot snapshot can be restored on the initramfs path (which otherwise has no
+     * snapshot identity). This explicitly stamps the raw resume identity and the snapshot namespace.
      *
      * The core identity is [`build_core_hash`] (the crate version), so a snapshot produced by a
      * DIFFERENT build fails the `CoreHashMismatch` guard and the caller falls back to a cold boot —
@@ -502,9 +524,17 @@ export class WasmMachine {
      */
     run(max_instrs: number): any;
     /**
+     * Explicit boot diagnostic only; does not enable profiling or change JIT policy.
+     */
+    setAdmissionProbe(enabled: boolean): boolean;
+    /**
      * E4-T39: toggle static region chaining without rebuilding the generated modules.
      */
     setChaining(on: boolean): void;
+    /**
+     * Explicit local admission trial selection; no implicit JIT/profiling/timer change.
+     */
+    setColdCounterRecycling(enabled: boolean): boolean;
     /**
      * Install (or replace) the per-byte console callback: `fn(byte: number)`.
      */
@@ -676,12 +706,14 @@ export interface InitOutput {
     readonly wasmlinux_guestClockState: (a: number) => [number, number, number];
     readonly wasmlinux_hasUnpersisted: (a: number) => [number, number, number];
     readonly wasmlinux_importStoredSnapshot: (a: number, b: number, c: number) => any;
+    readonly wasmlinux_inputDeviceStats: (a: number) => [number, number, number];
     readonly wasmlinux_jitStats: (a: number) => [number, number, number];
     readonly wasmlinux_keyboardLedState: (a: number) => [number, number, number];
     readonly wasmlinux_loadSnapshotBlob: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: number) => [number, number, number];
     readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any, n: number) => [number, number, number];
     readonly wasmlinux_newChunkedDiskPersistent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: any, o: number, p: number, q: number) => any;
+    readonly wasmlinux_newChunkedDiskSeeded: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any, n: number, o: number, p: number) => [number, number, number];
     readonly wasmlinux_newChunkedDiskWithExtra: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: any, p: number) => [number, number, number];
     readonly wasmlinux_newDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: number) => [number, number, number];
     readonly wasmlinux_noteFileTransferPersist: (a: number) => [number, number];
@@ -706,7 +738,9 @@ export interface InitOutput {
     readonly wasmlinux_sendKeyboardEvent: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_sendMouseEvent: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_sendTabletEvent: (a: number, b: number, c: number, d: number) => [number, number];
+    readonly wasmlinux_setAdmissionProbe: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_setChaining: (a: number, b: number) => [number, number];
+    readonly wasmlinux_setColdCounterRecycling: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_setDecodedCacheEntries: (a: number, b: any) => [number, number];
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
     readonly wasmlinux_setDisplay: (a: number, b: any, c: any) => [number, number, number];
@@ -734,7 +768,9 @@ export interface InitOutput {
     readonly wasmmachine_ramLen: (a: number) => [number, number, number];
     readonly wasmmachine_registers: (a: number) => [number, number, number];
     readonly wasmmachine_run: (a: number, b: number) => [number, number, number];
+    readonly wasmmachine_setAdmissionProbe: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_setChaining: (a: number, b: number) => [number, number];
+    readonly wasmmachine_setColdCounterRecycling: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_setConsole: (a: number, b: any) => [number, number];
     readonly wasmmachine_setDynamicChaining: (a: number, b: number) => [number, number];
     readonly wasmmachine_setProfiling: (a: number, b: number) => [number, number, number];

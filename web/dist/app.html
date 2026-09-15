@@ -536,7 +536,7 @@
       .panel.active { display: block; }
       /* Under automation (Playwright) reveal every panel so existing element-level e2e specs stay
          actionable regardless of the active tab; real users get the tabbed UI (see tabs.js). */
-      :root.e2e-showall .panel { display: block !important; }
+      :root.e2e-showall:not([data-wvm-desktop="omarchy"]) .panel { display: block !important; }
       :root.e2e-showall .tests-layout { min-height: 0; }
       main { min-height: calc(100vh - 51px); }
 
@@ -685,6 +685,87 @@
         margin: 6px 0; padding: 8px 12px; border-radius: 8px;
         background: #143c31; border: 1px solid #287555; color: #d6ffe6;
         font-size: 12.5px; line-height: 1.5;
+      }
+      /* OS picker: the Demo tab is a real guest launcher, not an implicit boot into whichever
+         artifact happened to be present on the host. Keep the picker visible until a choice owns
+         the VM, then let the existing IDE/terminal surface take over. */
+      .os-launcher {
+        padding: 28px clamp(18px, 4vw, 56px) 34px;
+        border-bottom: 1px solid var(--line);
+        background:
+          radial-gradient(circle at 12% 0%, rgba(83, 212, 255, .12), transparent 34%),
+          linear-gradient(180deg, #101720, #0c1016 72%);
+      }
+      .os-launcher[hidden] { display: none; }
+      .os-launcher-kicker {
+        margin: 0 0 8px;
+        color: var(--cyan);
+        font: 11px ui-monospace, monospace;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+      }
+      .os-launcher h2 { margin: 0; font-size: 24px; text-transform: none; }
+      .os-launcher-copy {
+        max-width: 760px;
+        margin: 9px 0 20px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+      .os-options {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        max-width: 1120px;
+      }
+      .os-option {
+        display: flex;
+        min-height: 148px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 15px;
+        border: 1px solid #2c3744;
+        border-radius: 11px;
+        background: rgba(16, 20, 27, .86);
+        color: var(--text);
+        text-align: left;
+        transition: border-color .16s, transform .16s, background .16s;
+      }
+      .os-option:hover:not(:disabled) {
+        border-color: var(--cyan);
+        background: #151f2b;
+        transform: translateY(-1px);
+      }
+      .os-option:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+      .os-option[data-os="omarchy"] {
+        border-color: #6b54a8;
+        background: linear-gradient(145deg, rgba(57, 37, 89, .68), rgba(16, 20, 27, .9));
+      }
+      .os-option[data-os="omarchy"]:hover:not(:disabled) { border-color: #c59cff; }
+      .os-option-title { font-size: 15px; font-weight: 700; }
+      .os-option-detail { color: var(--muted); font-size: 12px; line-height: 1.4; }
+      .os-option-meta {
+        margin-top: auto;
+        color: var(--green);
+        font: 11px ui-monospace, monospace;
+      }
+      .os-option-meta[data-state="checking"] { color: var(--amber); }
+      .os-option-meta[data-state="unavailable"] { color: var(--red); }
+      .os-launcher-status {
+        min-height: 18px;
+        margin: 15px 0 0;
+        color: var(--muted);
+        font: 12px ui-monospace, monospace;
+      }
+      #panel-ide:not([data-os-selected="true"]) #ide-root,
+      #panel-ide:not([data-os-selected="true"]) .console { display: none; }
+      @media (max-width: 980px) {
+        .os-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 560px) {
+        .os-options { grid-template-columns: 1fr; }
+        .os-launcher h2 { font-size: 21px; }
       }
       .network-config {
         display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 8px;
@@ -1123,6 +1204,40 @@
 
     <!-- ══ TERMINAL TAB ════════════════════════════════════════════════════ -->
     <div id="panel-ide" class="panel" role="tabpanel">
+      <section id="os-launcher" class="os-launcher" aria-labelledby="os-launcher-title">
+        <p class="os-launcher-kicker">RISC-V guest launcher</p>
+        <h2 id="os-launcher-title">Choose an operating system</h2>
+        <p class="os-launcher-copy">
+          Each option boots a real guest in this browser. Warm images restore in seconds when their
+          identity matches the current kernel and disk; Omarchy is the graphical desktop image and
+          uses its own immutable chunk set.
+        </p>
+        <div class="os-options" role="list" aria-label="Operating system choices">
+          <button class="os-option" type="button" data-os="omarchy" role="listitem">
+            <span class="os-option-title">Omarchy</span>
+            <span class="os-option-detail">Open the Hyprland desktop with Foot and the Omarchy shell, fitted to your window. Experimental software rendering: input can take minutes to appear.</span>
+            <span class="os-option-meta" data-os-meta="omarchy" data-state="checking">checking image…</span>
+          </button>
+          <button class="os-option" type="button" data-os="node-alpine" role="listitem">
+            <span class="os-option-title">Alpine + Node.js</span>
+            <span class="os-option-detail">Container-capable Alpine with Node and npm already installed.</span>
+            <span class="os-option-meta" data-os-meta="node-alpine" data-state="checking">checking image…</span>
+          </button>
+          <button class="os-option" type="button" data-os="alpine" role="listitem">
+            <span class="os-option-title">Alpine Linux</span>
+            <span class="os-option-detail">Small container-capable Alpine host with lazy disk chunks and persistence.</span>
+            <span class="os-option-meta" data-os-meta="alpine" data-state="checking">checking image…</span>
+          </button>
+          <button class="os-option" type="button" data-os="busybox" role="listitem">
+            <span class="os-option-title">BusyBox Linux</span>
+            <span class="os-option-detail">Minimal initramfs shell with a verified fast restore and no disk download.</span>
+            <span class="os-option-meta" data-os-meta="busybox">ready · fast restore</span>
+          </button>
+        </div>
+        <p id="os-launcher-status" class="os-launcher-status" role="status" aria-live="polite">
+          Select a guest to start the shared VM.
+        </p>
+      </section>
       <!-- IDE layout (explorer + editor + embedded terminal) is assembled by ide.js, which
            re-parents the existing .console section (with its #term xterm) into the bottom pane. -->
       <div id="ide-root"><!-- built by ide.js --></div>

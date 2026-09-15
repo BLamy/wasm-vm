@@ -88,7 +88,34 @@ class ConfigureOmarchyDemoTests(unittest.TestCase):
         overlay = json.loads((self.root / "etc/wasm-vm/demo-overlay.json").read_text())
         self.assertEqual(overlay["configurationSource"], "package-verified usr/share/omarchy/config")
         self.assertFalse(overlay["desktopVerified"])
+        self.assertFalse(overlay["upstreamFullUserProvisioning"])
+        startup = self.root / "home/omarchy/.config/default/hypr/autostart.lua"
+        self.assertIn("omarchy-launch-shell", startup.read_text())
+        self.assertIn("/usr/local/bin/omarchy-demo-session", startup.read_text())
+        self.assertNotIn("omarchy-provision-first-run", startup.read_text())
+        hyprland = (self.root / "home/omarchy/.config/hypr/hyprland.lua").read_text()
+        self.assertIn("omarchy_preinstalled_bindings = false", hyprland)
+        self.assertLess(hyprland.index("omarchy_preinstalled_bindings = false"),
+                        hyprland.index('require("default.hypr.omarchy")'))
+        self.assertNotIn("omarchy_default_bindings = false", hyprland)
+        self.assertFalse((self.root / "home/omarchy/.local/state/omarchy/done").exists())
+        self.assertEqual(os.readlink(self.root / "etc/systemd/system/serial-getty@hvc0.service"), "/dev/null")
+        self.assertEqual((self.root / "usr/local/bin/omarchy-demo-session").stat().st_mode & 0o777, 0o755)
+        self.assertEqual((self.root / "usr/local/bin/omarchy-demo-session").read_bytes(),
+                         MODULE_PATH.with_name("omarchy-demo-session.sh").read_bytes())
+        self.assertFalse((self.root / "etc/systemd/system/serial-getty@.service").is_symlink())
+        self.assertFalse((self.root / "etc/systemd/system/serial-getty@ttyS0.service").is_symlink())
+        self.assertIn("--autologin omarchy", (self.root / "etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf").read_text())
         self.assertEqual(tree_snapshot(source), before)
+
+    def test_browser_looknfeel_disables_color_management_and_effects(self) -> None:
+        configure_omarchy_demo.configure(self.root)
+
+        profile = (self.root / "home/omarchy/.config/hypr/looknfeel.lua").read_text()
+        self.assertIn("animations = { enabled = false }", profile)
+        self.assertIn("blur = { enabled = false }", profile)
+        self.assertIn("shadow = { enabled = false }", profile)
+        self.assertIn("render = { cm_enabled = false }", profile)
 
     def test_source_tree_is_immutable_after_configuration(self) -> None:
         source = self.root / "usr/share/omarchy/config"

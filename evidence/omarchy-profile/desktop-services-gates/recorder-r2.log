@@ -1,0 +1,41 @@
+✔ prewarm sync proof rejects cross-TTY marker evidence (7.367542ms)
+✔ prewarm clear proof requires a new real frame and focused Foot (0.714792ms)
+✔ post-marker presentation helper rejects typing frames (7186.446917ms)
+✔ candidate mode is explicitly local-only and hash-bound (1.912458ms)
+✔ renderer proof binds current Hyprland PID and instance before physical input (2.091125ms)
+✔ LP0 is configuration-only evidence and is checked before physical input (17.913917ms)
+✔ actual built recording covers served resources and pre-send RPCs, even timed-out ones (0.431458ms)
+✔ renderer log parser accepts the real DEBUG suffix labels (5.319542ms)
+✔ renderer log parser rejects wrong, missing, ambiguous, and misleading records (25.087375ms)
+✔ nonce readback caps every guest RPC by the remaining 120-second deadline (16.376625ms)
+✔ unlogged baseline worker evidence is explicitly weaker than a GL label (2.393375ms)
+✔ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (19325.939542ms)
+✔ harness-only actual cold orchestration inspects storage before app and returns after pair without input (416.819958ms)
+✔ harness-only capture selects exact overlay when both overlay and snapshot databases exist (75.662125ms)
+✔ harness-only cold progress TimeoutError is recorded before startup continues to mandatory desktop capture (58.346083ms)
+✔ harness-only progress catch propagates non-Playwright errors and verify-mode timeouts (59.795375ms)
+✔ harness-only final desktop TimeoutError remains fatal after a tolerated progress timeout (1.914667ms)
+✔ harness-only screenshot helper forwards the supplied timeout and keeps the 20-second default (30.756625ms)
+✔ service-isolated startup failure is retained without claiming input acceptance (322.640333ms)
+✔ rejects unsolicited agent frames, hidden Explorer and Docker calls (76.45125ms)
+✔ does not accept a success label without physical input, timing and fresh frames (260.313458ms)
+✔ trial is local, explicit, fixed-budget and does not accept renderer/timeout tuning (610.889ms)
+✔ arm URLs have exactly one policy difference and forbid inherited query tuning (5.903666ms)
+✔ all four R3 source bindings and image layout must match (4.524167ms)
+✔ actual runtime must match the selected arm with observer/timing off (220.607791ms)
+✔ deadline accounts for queue delay and rejects late completion without starting expired work (239.426708ms)
+✔ real recorder retains physical-only writing, fixed deadlines, fresh presentation and owned shutdown (340.498709ms)
+✔ owned watchdog caps setup and navigation once, and normal close cancels timers (302.776959ms)
+✔ stalled owned browser/recorder is killed and missing close settles as unconfirmed (171.988417ms)
+✔ already exited browser is not killed; watchdog intervention never looks like a normal pass (297.665041ms)
+✔ future/invalid navigation cannot extend setup (0.378833ms)
+✔ recorder exit cannot orphan its browser or kill an already-exited recorder group (0.451875ms)
+✔ exit before stdio close never sends a later watchdog signal to the exited recorder (0.302083ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 41106.483042

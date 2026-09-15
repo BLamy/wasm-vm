@@ -108,6 +108,7 @@ WRITER=$!
   --drive "file=$WORK" \
   --net \
   --virtio-rng \
+  --browser-topology \
   --append "root=/dev/vda rw console=ttyS0 earlycon=sbi" \
   --max-instrs 60000000000 \
   --snapshot-trigger "WVSNAPREADY" \

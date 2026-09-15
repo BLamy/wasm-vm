@@ -1,0 +1,34 @@
+✔ harness-only cold mode requires local LP0 chunks, no pair, and exactly 90 minutes (23.029709ms)
+✔ harness-only origin check refuses inherited storage or app/worker execution (5.465417ms)
+✔ harness-only cold proof rejects stored restore even with shipped restore false (1.047333ms)
+✔ harness-only desktop proof accepts mapped LP0 with blank log or a strict actual label (2.699167ms)
+✔ harness-only desktop proof rejects stale PID, worker, duplicate environment, and false GL claims (6.339375ms)
+✔ harness-only outer deadline includes queued operations and rejects expired success (26.987709ms)
+✔ prewarm sync proof rejects cross-TTY marker evidence (5.031083ms)
+✔ prewarm clear proof requires a new real frame and focused Foot (0.292416ms)
+✔ post-marker presentation helper rejects typing frames (1007.346917ms)
+✔ candidate mode is explicitly local-only and hash-bound (0.58875ms)
+✔ renderer proof binds current Hyprland PID and instance before physical input (0.308875ms)
+✔ LP0 is configuration-only evidence and is checked before physical input (0.267208ms)
+✔ actual built recording covers served resources and pre-send RPCs, even timed-out ones (0.249375ms)
+✔ renderer log parser accepts the real DEBUG suffix labels (4.157292ms)
+✔ renderer log parser rejects wrong, missing, ambiguous, and misleading records (2.333375ms)
+✔ nonce readback caps every guest RPC by the remaining 120-second deadline (0.797542ms)
+✔ unlogged baseline worker evidence is explicitly weaker than a GL label (0.933417ms)
+✔ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (2089.5215ms)
+✔ harness-only actual cold orchestration inspects storage before app and returns after pair without input (28.554042ms)
+✔ harness-only capture selects exact overlay when both overlay and snapshot databases exist (14.209583ms)
+✔ wire observer preserves transferred serial bytes and original transport behavior (46.600125ms)
+✔ wire observer distinguishes workers, physical events and actual input acknowledgements (4.695083ms)
+✔ server identities bind exactly the bytes served and their repository path (5.436125ms)
+✔ T03g LP setting accepts only 0 or 1 and preserves unset behavior (5.3705ms)
+✔ T03g LP0 requires exact same-PID environment values and no exact worker (20.244166ms)
+✔ T03g LP1 validates the setting but does not claim an active renderer (0.331709ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3488.941792

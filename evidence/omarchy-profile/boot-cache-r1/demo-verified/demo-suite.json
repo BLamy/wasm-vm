@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:61438/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.84",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5.5-T03e\nVERIFIED\n✕ Close\nCache immutable Omarchy boot bytes and report actual restore phases\nEpic\nE5.5 — 5.5\nStatus\nverified\nEstimate\nS\nDepends on\nE5.5-T03c\nVERIFICATION LOG — EVIDENCE\n### 2026-09-10 — worker — selected from explicit user repair request\n\nLive production HEAD checks found the 205,050,833-byte RAM snapshot has no\nCache-Control header, while the kernel is immutable-cacheable. The service\nworker excludes R2 and release bytes; the loader uses only ordinary HTTP cache\nbehavior for every launch. The serial output handler replaces restore status\nwith \"boot continues\" and retains the previous transfer's completed bar.\nImplementation and recorded browser proof are pending.\n\n### 2026-09-10 — worker — frozen cache/status submission\n\nRuntime and harness head: `408422d4b319f8267071d0bd47d46c90a81e1af3`.\nThe diff starts at `66cf844c` and includes `af206380` plus the critic-driven\nterminal-lifecycle repair. Evidence root: `evidence/omarchy-profile/boot-cache-r1/`.\n\n- `make web-dist` passed (`build-terminal-fix.log`), producing app-shell version\n  `bd110684de37`. WASM remains exactly\n  `c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305`;\n  the E5.5-T03c guest/runtime evidence boundary is unchanged.\n- `node --test web/tests/boot-asset-cache.test.mjs web/tests/omarchy-startup-state.test.mjs web/tests/omarchy-seeded-loader.test.mjs web/tests/e5.5-t03e-critic.test.mjs web/tests/e5.5-t03e-critic-ui.test.mjs`\n  passed 35 tests. The independent terminal-state refutation and subsequent\n  promoted late-event attacks are retained in `critic.md`.\n- Pristine clone: `/private/tmp/wasm-vm-omarchy-cache.P3C7j4/repo`, cloned without\n  hardlinks at the frozen head. From that directory:\n  `env -i PATH=\"$PATH\" TMPDIR=/private/tmp npm_config_cache=/private/tmp/wasm-vm-omarchy-cache.P3C7j4/npm-cache make verify-E5.5-T03e OMARCHY_CACHE_EVIDENCE_DIR=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/boot-cache-r1/cold-clone`\n  exited zero, including a fresh pinned snapshot download, all 35 tests, and the\n  actual no-store-server initial/reload proof. Each of the four immutable assets\n  had one initial request and zero reload requests. Restore/desktop-check times\n  were 4308/67309 ms initially and 3125/64514 ms on reload. Report SHA-256:\n  `d327837e93981f5035ff684ff82a08c4c0c663698af34a7cf0f3252a33abb041`.\n- `E5_DEMO_TASK=E5.5-T03e E5_DEMO_OUT=evidence/omarchy-profile/boot-cache-r1/demo-terminal-fix node tools/verify/e5-t18e-demo-smoke.mjs`\n  passed `126 passed, 0 failed`, zero console/HTTP errors, and captured the task\n  panel. `node tools/verify/omarchy-cli-regression.mjs evidence/omarchy-profile/boot-cache-r1/cli`\n  passed real BusyBox boot/RPC checks. `node tools/verify/omarchy-desktop-ui.mjs`\n  passed the separate synthetic desktop-versus-CLI layout/lifecycle regression\n  (`ui-terminal-fix.log`); it is not guest-rendering evidence.\n- `bash tools/deploy-cloudflare.sh` succeeded on its normal retry, reusing all\n  exact existing R2 objects and publishing Pages deployment `2ba45d70` to\n  `https://wasm-vm.pages.dev`. The first attempt's stalled unrelated Alpine\n  download and rejected oversized re-upload are retained in `deploy.log`;\n  `deploy-retry.log` records successful full size/SHA checks and publication.\n  No R2 object was uploaded or deleted. All four published artifact manifests\n  remain semantically identical to the prior production manifests\n  (`production-artifact-comparison.jsonl`).\n- `node tools/verify/omarchy-boot-cache.mjs 'https://wasm-vm.pages.dev/app?guest=omarchy&desktop=1#ide' evidence/omarchy-profile/boot-cache-r1/production`\n  exited zero. Six no-store, uniquely queried production source files match the\n  frozen dist SHA-256 values. Normal service-worker operation is retained.\n  Initial restore/desktop-check were 61805/126006 ms; reload was 3408/66429 ms\n  with **zero requests for the four boot artifacts**. No browser/guest errors.\n  Production report SHA-256:\n  `8b00c337fcba476e519f6d96ecf443eab97deb604f54dce319eeb554b5d719ff`.\n\nThe coordinator inspected all four cold-clone and all four production PNGs.\nThey show the actual Hyprland bar and Foot window, an honest restore-wait phase\nwithout a stale completed progress bar, and the visible desktop after its\nexisting compositor check. Cache entries contain only verified compressed\nrelease bytes, not mutable guest state. These results prove caching and startup\nreporting only: post-restore input is still slow, and E5.5-T03d remains pending.\nNo merge or Epic 6 work was performed.\n\n### 2026-09-10 — verifier — VERDICT: verified\n\n- P1–P5 and P12 HELD under the focused suite and the independent promoted\n  attacks: exact size/hash enforcement rejects truncated, oversized and\n  same-length-corrupt streams; content hashes isolate releases; corrupt exact\n  keys are evicted and verified-refetched; storage failures preserve only an\n  honestly labelled, verified network boot. Deliberately disabling either the\n  hash or final-size oracle made the critic test fail.\n- P6–P8 HELD after the terminal-lifecycle repair at\n  `408422d4b319f8267071d0bd47d46c90a81e1af3`. The actual IDE handlers reject\n  late ready/desktop-ready/state/progress after done/error/halt, cancel stale\n  wait generations, clear completed bars, preserve serial diagnostics, and\n  permit only a new boot to reset the latch. The prior refutation is retained\n  in `critic.md`; its promoted regression tests now pass.\n- P9–P10 HELD at the pristine clone and production origin. Both reports bind\n  the six served browser sources to the frozen clean-scoped runtime and record\n  four exact content-addressed cache keys. Each immutable asset was requested\n  exactly once initially and zero times on reload. The production report\n  passed with SHA-256\n  `8b00c337fcba476e519f6d96ecf443eab97deb604f54dce319eeb554b5d719ff`;\n  remote source hashes match the frozen dist, with no browser/guest/display\n  errors. Initial restore/readiness were 61805/126006 ms and reload\n  3408/66429 ms.\n- P11 HELD within the task boundary. The WASM remains exactly\n  `c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305`;\n  the real CLI regression passed and the built demo recorded 126 passed, 0\n  failed. The four cold-clone and four production captures preserve the same\n  Hyprland/Foot pixels and honest restore-wait UI. They are not evidence of\n  physical-input responsiveness, and E5.5-T03d remains unresolved.\n- COVERAGE HELD. Focused/promoted tests exercise integrity, storage failure,\n  source transitions and lifecycle orderings; real initial/reload runs execute\n  network and cache paths; pristine-clone and production runs close the\n  environment/source-binding coverage. Declarative manifest/dist stamping is\n  covered by byte/hash equality rather than runtime line execution.\n- SUITE: retained `web/tests/e5.5-t03e-critic.test.mjs` and\n  `web/tests/e5.5-t03e-critic-ui.test.mjs` as deterministic regressions.\n\nEvidence: `evidence/omarchy-profile/boot-cache-r1/critic.md`,\n`cold-clone/report.json`, `production/report.json`, `cli/report.json`, and\n`demo-terminal-fix/demo-suite.json`. Worker submission:\n`c2fa94e081ad55683d38fde7d5306c7026a4bbfa`; frozen runtime:\n`408422d4b319f8267071d0bd47d46c90a81e1af3`.\nADVERSARIAL VERIFICATION\nA fresh verifier attacks stale hashes, corrupted/truncated/oversized bodies,\nstorage failure, repeated reloads, deployment-version cache independence,\ncross-session state leakage and false progress/readiness claims. Preserve the\nunchanged guest-input acceptance; this task does not mark T03d complete.\nsource: tasks/epic-5.5-omarchy/E5.5-T03e-immutable-boot-cache.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:61438/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:61438/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:61438/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:61438/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:61438/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:61438/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:61438/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:61438/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:61438/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:61438/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:61438/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:61438/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "c52b0a442741e2a036826a65334c63446b332b2bcb1000d3bac24aa46fb0ded2"
+}

@@ -1,0 +1,65 @@
+{
+  "label": "LOCAL-ONLY candidate immediate repaint diagnostic (real bytes; not a release claim)",
+  "source": {
+    "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot",
+    "chunkManifest": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+    "chunkDir": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/chunks"
+  },
+  "inputs": {
+    "/candidate/kernel": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+      "size": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "/candidate/manifest": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+      "size": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+    },
+    "/candidate/snapshot": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+      "size": 205050833,
+      "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+    },
+    "/candidate/delta": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+      "size": 1209196,
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+    },
+    "wasm": {
+      "sha256": "8c80663ea4ad6a6bac8b47627ff011d98d9306af2b802bc4bdc8754851cfe2fc"
+    },
+    "chunkManifest": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+      "size": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+    }
+  },
+  "startedAt": "2026-09-10T03:41:22.819Z",
+  "errors": [],
+  "repaint": {
+    "attached": true,
+    "beforeLoad": 0,
+    "afterLoad": 1,
+    "decision": "resume",
+    "frames": [
+      {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 832
+        },
+        "width": 1280,
+        "height": 832
+      }
+    ],
+    "restoreMs": 1802.5349999666214,
+    "guestRunCalls": 0,
+    "visibleFraction": 0.9614896334134615,
+    "colors": 413
+  },
+  "screenshotSha256": "c87dabeec3733a3aac5aebed2d73f7d908eedee864b87c37d2754d3eed32b65b",
+  "result": "actual-desktop-repaint-before-execution",
+  "finishedAt": "2026-09-10T03:41:28.719Z"
+}

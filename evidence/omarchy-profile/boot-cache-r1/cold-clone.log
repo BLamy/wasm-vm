@@ -1,0 +1,61 @@
+npm --prefix web ci --no-audit --no-fund
+
+added 7 packages in 4s
+npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn install-scripts   fsevents@2.3.2 (install: (install scripts present))
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+npm notice
+npm notice New major version of npm available! 11.19.0 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+node tools/fetch-omarchy-snapshot.mjs
+Downloaded and verified Omarchy snapshot: 2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5
+node --test web/tests/boot-asset-cache.test.mjs web/tests/omarchy-startup-state.test.mjs web/tests/omarchy-seeded-loader.test.mjs web/tests/e5.5-t03e-critic.test.mjs web/tests/e5.5-t03e-critic-ui.test.mjs
+✔ cold then warm boot loads once and reuses verified bytes (17.518084ms)
+✔ a URL change with the same hash is a cache hit, while a different hash misses (1.549792ms)
+✔ a tampered cached entry is evicted exactly and refetched with HTTP cache reload (1.158709ms)
+✔ a corrupt network response is rejected and never cached (0.5775ms)
+✔ non-200 and opaque network responses are rejected without a cache write (0.396917ms)
+✔ missing and quota-failing storage gracefully fall back to network (0.573541ms)
+✔ network and cached streams reject overflow and truncation (0.6975ms)
+✔ invalid descriptors are rejected before fetch (0.932125ms)
+✔ concurrent same-hash requests do not share buffers or weaken size validation (0.446625ms)
+✔ a throwing default caches property reports unavailable and still fetches (0.529125ms)
+✔ critic: real IDE listeners keep startup phases and terminal readiness sticky (1621.514916ms)
+✔ critic: randomized chunk boundaries preserve exact hash/size enforcement (15.440208ms)
+✔ critic: stale release hash cannot satisfy a new descriptor (1.334208ms)
+✔ critic: every storage failure keeps network verification and honest provenance (0.868041ms)
+✔ critic: failed corrupt-key deletion cannot bypass refetch verification (1.651667ms)
+✔ critic: queued stale timer callbacks cannot regress terminal lifecycle state (0.243167ms)
+✔ critic: done is terminal against pending waits and late ready until reboot (0.087958ms)
+✔ critic: malformed progress cannot present a completed transfer bar (0.251292ms)
+✔ freshDesktop rejects a missing RAM/delta pair instead of cold-falling back (3.338666ms)
+✔ Omarchy production resolution rejects a missing or malformed immutable descriptor (1.642458ms)
+✔ Omarchy immutable chunk manifest hash mismatch fails closed (0.521958ms)
+✔ Omarchy hashes corrupt raw manifest bytes before decoding (1.067583ms)
+✔ Omarchy rejects a BOM even when the decoded manifest text is equivalent (0.629916ms)
+✔ Omarchy validates an explicitly empty manifest base instead of falling back (0.474292ms)
+✔ Omarchy uses the descriptor for persistent and noSnapshot diagnostics (1.095792ms)
+✔ Alpine-style chunked caller remains on its explicit imageManifestUrl (0.571125ms)
+✔ freshDesktop rejects an overlay-delta integrity mismatch instead of cold-falling back (0.50075ms)
+✔ freshDesktop rejects a RAM snapshot coherence mismatch instead of cold-falling back (1.079417ms)
+✔ freshDesktop rejects RAM snapshot fetch and integrity failures instead of cold-falling back (1.999583ms)
+✔ freshDesktop rejects persistent mode before any asset fetch (0.3795ms)
+✔ persistent caller reaches the persistent constructor branch (runtime sentinel) (0.357958ms)
+✔ progress labels are human-friendly and unpacking never exposes a stale bar (0.883792ms)
+✔ guest-response feedback is bounded and cancelled by lifecycle edges (0.343792ms)
+✔ desktop readiness is sticky against later generic lifecycle traffic until a new boot (0.238792ms)
+✔ terminal events reject late readiness and progress until a new boot (0.54325ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1760.428
+node tools/verify/omarchy-boot-cache.mjs "local" "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/boot-cache-r1/cold-clone"
+{"phase":"initial","restoredMs":4308,"readyMs":67309,"entries":[{"name":"wasm-vm-boot-assets-v1","keys":["http://127.0.0.1:60476/__wasm-vm-boot-assets-v1/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce","http://127.0.0.1:60476/__wasm-vm-boot-assets-v1/5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44","http://127.0.0.1:60476/__wasm-vm-boot-assets-v1/1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da","http://127.0.0.1:60476/__wasm-vm-boot-assets-v1/2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"]}]}
+{"phase":"reload","restoredMs":3125,"readyMs":64514,"entries":[{"name":"wasm-vm-boot-assets-v1","keys":["http://127.0.0.1:60476/__wasm-vm-boot-assets-v1/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce","http://127.0.0.1:60476/__wasm-vm-boot-assets-v1/5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44","http://127.0.0.1:60476/__wasm-vm-boot-assets-v1/1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da","http://127.0.0.1:60476/__wasm-vm-boot-assets-v1/2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"]}]}

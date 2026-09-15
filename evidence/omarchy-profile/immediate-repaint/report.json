@@ -1,0 +1,54 @@
+{
+  "inputs": {
+    "/candidate/kernel": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+      "size": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "/candidate/manifest": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-r2-256k/manifest.json",
+      "size": 1097812,
+      "sha256": "ec1bc2601b104cfb6d6875c091377ccfd0654d5b6aab71c6a08ae37263f1c391"
+    },
+    "/candidate/snapshot": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "size": 201816185,
+      "sha256": "db34afb6f4e0e40b9e8e932cc934847bc254935c374487d521cb2e5a1d704e72"
+    },
+    "/candidate/delta": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "size": 1207113,
+      "sha256": "d9ac25c5caa8887773f6d8484c85b5c3662c5dd009971522f60cd733ab8e05ed"
+    },
+    "wasm": {
+      "sha256": "d33299d93ad7c0f8ef39223145c70b52eee77a8baacd92001ab9e775ebcdbca9"
+    }
+  },
+  "startedAt": "2026-09-10T01:03:33.130Z",
+  "errors": [],
+  "repaint": {
+    "attached": true,
+    "beforeLoad": 0,
+    "afterLoad": 1,
+    "decision": "resume",
+    "frames": [
+      {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 832
+        },
+        "width": 1280,
+        "height": 832
+      }
+    ],
+    "restoreMs": 1431.539999961853,
+    "guestRunCalls": 0,
+    "visibleFraction": 0.9614896334134615,
+    "colors": 427
+  },
+  "screenshotSha256": "b40e4b834191a7f2b7b366d07df2392fc97bcbc075fdc771e3730b1883da8411",
+  "result": "actual-desktop-repaint-before-execution",
+  "finishedAt": "2026-09-10T01:03:38.315Z"
+}

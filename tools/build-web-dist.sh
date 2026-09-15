@@ -25,7 +25,7 @@ for f in web/*.js web/*.mjs web/*.html web/*.json web/*.css; do
   [ -e "$f" ] || continue
   b=$(basename "$f")
   case "$b" in
-    package.json | package-lock.json | playwright.config.js | artifacts-alpine.json) continue ;;
+    package.json | package-lock.json | playwright.config.js) continue ;;
   esac
   cp "$f" "$DIST/"
 done

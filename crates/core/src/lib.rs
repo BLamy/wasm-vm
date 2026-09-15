@@ -1076,6 +1076,35 @@ impl Machine {
         s
     }
 
+    /// Default-off admission witness observer. Never enables profiling or changes JIT policy.
+    pub fn set_admission_probe(&mut self, enabled: bool) {
+        self.discovery.set_admission_probe(enabled);
+    }
+
+    /// Explicit default-off admission trial. Does not select JIT, profiling, timers,
+    /// or mutate caches/queues; recycling can occur only on a later full-map entry.
+    pub fn set_cold_counter_recycling(&mut self, enabled: bool) {
+        self.discovery.set_cold_counter_recycling(enabled);
+    }
+
+    pub fn cold_counter_recycling_stats(&self) -> dispatch::ColdCounterRecyclingStats {
+        self.discovery.cold_counter_recycling_stats()
+    }
+
+    /// One immutable host observation of exact queue membership and PC-only executor residency.
+    /// The latter is deliberately not evidence of an exact historical installation.
+    pub fn admission_probe_stats(&self) -> dispatch::AdmissionProbeStats {
+        let mut stats = self.discovery.admission_probe_stats();
+        for row in &mut stats.records {
+            row.compile_queued = self.compile_queue.contains_request(&row.request);
+            row.executor_resident_at_report = self
+                .executor
+                .as_ref()
+                .map(|e| e.is_compiled(row.request.phys_pc));
+        }
+        stats
+    }
+
     /// Immutable compile-queue accounting, resident depth and capacity from the same borrow.
     /// These are lifetime queue counters, independent of discovery's generation/reset counters.
     pub fn compile_queue_stats(&self) -> (compile_queue::CompileQueueStats, usize, usize) {
@@ -5074,6 +5103,277 @@ mod decoded_cache_capacity_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[test]
+    fn cold_counter_recycling_retired_trace_architecture_parity_varied_schedules() {
+        use crate::bus::{Bus, mmap::DRAM_BASE};
+        use crate::resume::ComponentSnapshot;
+        use crate::trace::HashSink;
+        for flood in [4u64, 5, 9, 17] {
+            let run = |enabled: bool, slices: &[u64]| {
+                let mut m = Machine::new(64 * 1024);
+                for i in 0..flood {
+                    m.bus_mut().store32(DRAM_BASE + i * 4, 0x0040_006f).unwrap(); // jal +4
+                }
+                let hot = DRAM_BASE + flood * 4;
+                m.bus_mut().store32(hot, 0x0010_8093).unwrap(); // addi x1,x1,1
+                m.bus_mut().store32(hot + 4, 0xffdf_f06f).unwrap(); // jal -4
+                m.hart.regs.pc = DRAM_BASE;
+                m.set_block_cache(true);
+                m.set_interrupt_batching(true);
+                m.discovery = dispatch::BlockDiscovery::with_bounds(4, 4);
+                m.set_hotness_threshold(512);
+                m.set_cold_counter_recycling(enabled);
+                assert!(!m.profiling && m.host_timer.is_none());
+                // This is actual retired guest execution through discovery, not a claim
+                // that a synthetic executor implements native/browser compiled semantics.
+                assert!(m.executor.is_none());
+                let mut trace = HashSink::new();
+                let total = flood + 2 * (512 + 17);
+                let mut remaining = total;
+                let mut step = 0;
+                while remaining > 0 {
+                    let budget = remaining.min(slices[step % slices.len()]);
+                    assert_eq!(m.run_traced(budget, &mut trace), RunOutcome::MaxInstrs);
+                    remaining -= budget;
+                    step += 1;
+                }
+                assert_eq!(trace.retired(), total);
+                assert_eq!(m.hart.regs.read(1), 529);
+                assert_eq!(m.discovery_stats().nominated, u64::from(enabled));
+                assert_eq!(m.cold_counter_recycling_stats().epochs > 0, enabled);
+                if enabled {
+                    let requests = m.take_translation_requests();
+                    assert_eq!(requests.len(), 1);
+                    assert_eq!(requests[0].phys_pc, hot);
+                } else {
+                    assert!(m.discovery_stats().counts_dropped >= 529);
+                }
+                (
+                    trace.hash(),
+                    trace.retired(),
+                    m.snapshot(),
+                    m.hart.to_snapshot(),
+                )
+            };
+            let control = run(false, &[10_000]);
+            for slices in [&[10_000][..], &[1, 7, 31, 3][..], &[127, 2, 64][..]] {
+                assert_eq!(run(false, slices), control);
+                assert_eq!(run(true, slices), control);
+            }
+        }
+    }
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[test]
+    fn cold_counter_recycling_preserves_compile_queue_cache_and_installed_sentinel() {
+        use crate::bus::mmap::DRAM_BASE;
+        use crate::dispatch::{DecodedBlock, MicroOp};
+        use crate::resume::ComponentSnapshot;
+        // Synthetic residency sentinel: every mutation/execution callback is forbidden.
+        // This tests preservation, not translation or a real JIT execution result.
+        struct InstalledSentinel(u64);
+        impl jit::CompiledBlockExecutor for InstalledSentinel {
+            fn install(&mut self, _: &DecodedBlock) {
+                panic!("unexpected install");
+            }
+            fn is_compiled(&self, pc: u64) -> bool {
+                pc == self.0
+            }
+            fn execute(
+                &mut self,
+                _: u64,
+                _: &mut hart::Hart,
+                _: &mut mmio::SystemBus,
+            ) -> Option<jit::JitExit> {
+                panic!("unexpected execution");
+            }
+            fn invalidate_all(&mut self) {
+                panic!("recycling invalidated installed code");
+            }
+            fn invalidate_page(&mut self, _: u64) {
+                panic!("recycling invalidated a page");
+            }
+            fn compiled_count(&self) -> usize {
+                1
+            }
+            fn executed_blocks(&self) -> u64 {
+                0
+            }
+            fn retired_via_jit(&self) -> u64 {
+                0
+            }
+        }
+        let raw = 0x0000_006f;
+        let ops = [MicroOp {
+            instr: decode::decode(raw).unwrap(),
+            raw,
+            len: 4,
+        }];
+        let mut m = Machine::new(64 * 1024);
+        m.set_block_cache(true);
+        m.discovery = dispatch::BlockDiscovery::with_bounds(4, 2);
+        m.set_hotness_threshold(512);
+        m.block_cache
+            .insert(DecodedBlock::new(DRAM_BASE, ops.to_vec(), 4));
+        m.set_executor(alloc::boxed::Box::new(InstalledSentinel(DRAM_BASE)));
+        for phys in [DRAM_BASE, DRAM_BASE + 16, DRAM_BASE + 32] {
+            for _ in 0..512 {
+                m.discovery.on_block_entry(phys, &ops);
+            }
+        }
+        for _ in 0..9 {
+            m.discovery.on_block_entry(DRAM_BASE + 16, &ops);
+        }
+        let requests = m.discovery.take_requests_bounded(2);
+        for req in &requests {
+            m.compile_queue.push(compile_queue::CompileJob {
+                req: req.clone(),
+                hotness: m.discovery.queued_hotness(req.phys_pc),
+            });
+        }
+        for phys in [DRAM_BASE + 64, DRAM_BASE + 80] {
+            m.discovery.on_block_entry(phys, &ops);
+        }
+        let pending = m.discovery.peek_request().unwrap().clone();
+        let queue = m.compile_queue_stats();
+        let generation = m.discovery.generation();
+        let memory = m.snapshot();
+        let hart = m.hart.to_snapshot();
+        let cache = m.block_cache.invalidation_stats();
+        m.set_cold_counter_recycling(true);
+        m.discovery.on_block_entry(DRAM_BASE + 96, &ops);
+        assert_eq!(m.cold_counter_recycling_stats().epochs, 1);
+        assert_eq!(m.cold_counter_recycling_stats().discarded_counters, 2);
+        assert_eq!(m.discovery.generation(), generation);
+        assert_eq!(m.discovery.peek_request(), Some(&pending));
+        assert_eq!(m.compile_queue_stats(), queue);
+        assert!(
+            requests
+                .iter()
+                .all(|req| m.compile_queue.contains_request(req))
+        );
+        assert!(m.compile_queue.take_recount().is_empty());
+        assert_eq!(m.block_cache.get(DRAM_BASE).unwrap().ops, ops);
+        assert_eq!(m.block_cache.invalidation_stats(), cache);
+        assert!(m.executor().unwrap().is_compiled(DRAM_BASE));
+        assert_eq!(m.executor().unwrap().compiled_count(), 1);
+        assert_eq!(m.snapshot(), memory);
+        assert_eq!(m.hart.to_snapshot(), hart);
+        assert!(!m.profiling && m.host_timer.is_none());
+        let hottest = m.compile_queue.pop_hottest().unwrap();
+        assert_eq!(hottest.req, requests[1]);
+        assert_eq!(hottest.hotness, 521);
+        assert_eq!(m.compile_queue.pop_hottest().unwrap().req, requests[0]);
+    }
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[test]
+    fn cold_counter_recycling_smc_stale_generation_and_live_byte_guards() {
+        use crate::bus::{Bus, mmap::DRAM_BASE};
+        use crate::trace::HashSink;
+        for enabled in [false, true] {
+            let mut m = Machine::new(64 * 1024);
+            m.bus_mut().store32(DRAM_BASE, 0x0010_8093).unwrap();
+            m.bus_mut().store32(DRAM_BASE + 4, 0xffdf_f06f).unwrap();
+            m.hart.regs.pc = DRAM_BASE;
+            m.set_block_cache(true);
+            m.discovery = dispatch::BlockDiscovery::with_bounds(4, 1);
+            m.set_hotness_threshold(512);
+            m.set_cold_counter_recycling(enabled);
+            assert_eq!(
+                m.run_traced(1024, &mut HashSink::new()),
+                RunOutcome::MaxInstrs
+            );
+            let stale = m.take_translation_requests().pop().unwrap();
+            let ops = m.block_cache.get(DRAM_BASE).unwrap().ops.clone();
+            m.discovery.on_block_entry(DRAM_BASE + 4096, &ops);
+            m.discovery.on_block_entry(DRAM_BASE + 8192, &ops);
+            assert_eq!(m.cold_counter_recycling_stats().epochs, u64::from(enabled));
+            assert!(m.discovery_install_check(&stale, &stale.code_bytes));
+            let mut changed = stale.code_bytes.clone();
+            changed[..4].copy_from_slice(&0x0020_8093u32.to_le_bytes());
+            assert!(
+                !m.discovery_install_check(&stale, &changed),
+                "live bytes alone must reject stale work"
+            );
+            m.bus_mut().store32(DRAM_BASE, 0x0020_8093).unwrap();
+            m.drain_code_writes(); // Real code-page write invalidation, not a fabricated generation.
+            assert_eq!(m.discovery.generation(), stale.generation + 1);
+            assert!(m.block_cache.get(DRAM_BASE).is_none());
+            assert!(
+                !m.discovery_install_check(&stale, &stale.code_bytes),
+                "generation alone must reject"
+            );
+            assert!(!m.discovery_install_check(&stale, &changed));
+            assert_eq!(
+                m.run_traced(1024, &mut HashSink::new()),
+                RunOutcome::MaxInstrs
+            );
+            let fresh = m.take_translation_requests().pop().unwrap();
+            assert_eq!(fresh.generation, stale.generation + 1);
+            assert_eq!(fresh.code_bytes, changed);
+            assert!(m.discovery_install_check(&fresh, &changed));
+            assert_eq!(m.hart.regs.read(1), 1536);
+        }
+    }
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[test]
+    fn admission_probe_enabled_disabled_trace_state_and_nomination_parity() {
+        use crate::bus::{Bus, mmap::DRAM_BASE};
+        use crate::resume::ComponentSnapshot;
+        use crate::trace::HashSink;
+        let run = |enabled| {
+            let mut m = Machine::new(64 * 1024);
+            // 100 iterations nominate the first loop. One fall-through jump then fills the
+            // one-slot counter map; the final recurring loop is actually refused while full.
+            let words = [
+                0xfff1_0113,
+                0xfe01_1ee3,
+                0x0040_006f,
+                0x0010_8093,
+                0xffdf_f06f,
+            ];
+            for (i, word) in words.into_iter().enumerate() {
+                m.bus_mut().store32(DRAM_BASE + i as u64 * 4, word).unwrap();
+            }
+            m.hart.regs.pc = DRAM_BASE;
+            m.hart.regs.write(2, 100);
+            m.set_block_cache(true);
+            m.set_interrupt_batching(true);
+            m.discovery = dispatch::BlockDiscovery::with_bounds(4, 1);
+            m.set_hotness_threshold(8);
+            m.set_admission_probe(enabled);
+            assert!(!m.profiling);
+            assert!(m.host_timer.is_none());
+            let mut trace = HashSink::new();
+            let outcome = m.run_traced(1000, &mut trace);
+            let probe = m.admission_probe_stats();
+            assert_eq!(probe.enabled, enabled);
+            if enabled {
+                assert_eq!(probe.records.len(), 1);
+                assert_eq!(probe.records[0].request.phys_pc, DRAM_BASE + 12);
+                assert!(probe.records[0].reasons.counts_full > 100);
+                assert_eq!(probe.records[0].executor_resident_at_report, None);
+                assert_eq!(probe, m.admission_probe_stats(), "report must be read-only");
+            } else {
+                assert!(probe.records.is_empty());
+            }
+            assert_eq!(m.discovery_stats().nominated, 1);
+            (
+                trace.hash(),
+                trace.retired(),
+                outcome,
+                m.snapshot(),
+                m.hart.to_snapshot(),
+                m.discovery_stats(),
+                m.take_translation_requests(),
+            )
+        };
+        assert_eq!(run(false), run(true));
+    }
 
     #[test]
     fn kernel_footprint_honours_image_size() {

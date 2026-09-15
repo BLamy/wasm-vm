@@ -1,0 +1,12 @@
+OMARCHY_SCREENSHOT /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/thread-r2/cold-built/failure.png
+page.screenshot: Timeout 20000ms exceeded.
+Call log:
+[2m  - taking page screenshot[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+
+    at screenshot (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:490:20)
+    at /Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:1025:29
+    at async withinStartupDeadline (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-cold-pair.mjs:80:20)
+    at async runLive (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:1025:5)
+    at /Users/blamy/Documents/Codex/wasm-vm/async file:/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:1180:3

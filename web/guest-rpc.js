@@ -7,37 +7,43 @@
 // deterministically without a browser boot.
 //
 // Protocol: to run `<cmd>` under request id `<rid>`, send
-//   <cmd>; printf '\n__WVEND_<rid>_%s\n' "$?"\r
-// The guest echoes the command line, prints the command's stdout, then the printf emits
-//   __WVEND_<rid>_<exit>
-// The parser accumulates the console byte stream (ANSI escapes + CR stripped), waits for the complete
-// END-marker record bound to THIS rid (the digit run must be newline-terminated, so a split multi-digit
-// exit cannot settle early and the literal `%s` in the echoed printf can never false-match), then
-// returns { stdout, exit } with the leading echoed-command line removed.
+//   printf '\n__WVBEGIN_<rid>\n'; <cmd>; printf '\n__WVEND_<rid>_%s\n' "$?"\r
+// The guest echoes the command line, then emits a full-line BEGIN, the command's stdout, and a
+// full-line END containing the guest-computed exit code. The parser ignores everything before BEGIN
+// (including the shell prompt and echoed command) and returns only the bytes between the two nonce
+// lines. It never heuristically strips a prompt or output line.
 
 // Strip xterm/ANSI control sequences and carriage returns, matching what main.js does before parsing.
 export function stripConsole(text) {
-  return text.replace(/\x1b\[[0-9;?]*[ -/]*[@-~]/g, "").replace(/\r/g, "");
+  return text
+    // systemd/Bash OSC 3008 metadata and terminal DCS replies are not command stdout. Hide a
+    // partial control through the current end; the RPC retains raw bytes for the next feed.
+    .replace(/\x1b\][\s\S]*?(?:\x07|\x1b\\|$)/g, "")
+    .replace(/\x1bP[\s\S]*?(?:\x1b\\|$)/g, "")
+    .replace(/\x1b\[[0-?]*[ -/]*[@-~]/g, "")
+    .replace(/\x1b\[[0-?]*[ -/]*$/g, "")
+    .replace(/\r/g, "");
 }
 
-// The END-marker matcher for a given request id. The trailing `(\d+)\n` is load-bearing: the command's
-// own echoed `printf '…__WVEND_<rid>_%s\n'` ends in `%s`, NOT a digit, and a partial digit run cannot
-// satisfy this before the guest has emitted the complete record.
+// The END-marker matcher for a given request id. Both line boundaries are load-bearing: the command's
+// own echoed `printf '…__WVEND_<rid>_%s\n'` ends in `%s`, NOT a digit, and a marker-looking substring
+// inside ordinary output cannot satisfy this fence.
 export function endMarkerRegex(rid) {
-  return new RegExp(`__WVEND_${escapeRegExp(rid)}_(\\d+)\\n`);
+  return new RegExp(`(?:^|\\n)__WVEND_${escapeRegExp(rid)}_(\\d+)\\n`);
 }
 
-// The exact bytes to send for one fenced RPC (command + fenced END printf + CR). `\r` (CR) is the
-// Enter the tty maps to NL.
+// The exact bytes to send for one fenced RPC. `\r` (CR) is the Enter the tty maps to NL; the leading
+// newline in the END printf makes its marker a complete line even when command output lacks a newline.
 export function formatRpcCommand(cmd, rid) {
-  return `${cmd}; printf '\\n__WVEND_${rid}_%s\\n' "$?"\r`;
+  return `printf '\\n__WVBEGIN_${rid}\\n'; ${cmd}; printf '\\n__WVEND_${rid}_%s\\n' "$?"\r`;
 }
 
 // A stateful parser for ONE in-flight RPC. `feed(chunk)` accepts a string (already UTF-8 decoded) OR a
-// Uint8Array; it accumulates, and returns { stdout, exit } once the fenced END marker for `rid` arrives,
-// or null while still waiting. Byte-stream robust: the marker may arrive split across feeds.
+// Uint8Array; it accumulates, and returns { stdout, exit } once both nonce fences for `rid` arrive, or
+// null while still waiting. Byte-stream robust: markers and OSC metadata may split across feeds.
 export function createFencedRpc(rid, { decoder } = {}) {
   const re = endMarkerRegex(rid);
+  const beginRe = new RegExp(`(?:^|\\n)__WVBEGIN_${escapeRegExp(rid)}\\n`);
   const dec = decoder || (typeof TextDecoder !== "undefined" ? new TextDecoder() : null);
   let buf = "";
   let done = false;
@@ -45,16 +51,19 @@ export function createFencedRpc(rid, { decoder } = {}) {
     feed(chunk) {
       if (done) return null;
       const text = typeof chunk === "string" ? chunk : dec.decode(chunk, { stream: true });
-      buf += stripConsole(text);
-      const m = buf.match(re);
+      buf += text;
+      const plain = stripConsole(buf);
+      const begin = plain.match(beginRe);
+      if (!begin) return null;
+      const bodyStart = begin.index + begin[0].length;
+      const m = plain.slice(bodyStart).match(re);
       if (!m) return null;
       done = true;
       const exit = parseInt(m[1], 10);
-      let out = buf.slice(0, m.index);
-      // Strip the echoed command line (everything up to and including the first newline).
-      const nl = out.indexOf("\n");
-      if (nl !== -1) out = out.slice(nl + 1);
-      return { stdout: out, exit };
+      // The END regex includes its line-start newline when it is not at body start. Keep the
+      // complete payload between marker lines, including any command-output newline before END.
+      const endStart = bodyStart + m.index + (m[0].startsWith("\n") ? 1 : 0);
+      return { stdout: plain.slice(bodyStart, endStart), exit };
     },
     get settled() {
       return done;

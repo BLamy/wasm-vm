@@ -33,6 +33,22 @@ def load(name):
     return module
 
 
+def prepare_boot_caches(root, run):
+    """Complete package cache jobs before admitting update-completion stamps."""
+    run("chroot", root, "/usr/bin/systemd-hwdb", "update", "--usr", "--strict")
+    run("chroot", root, "/usr/bin/journalctl", "--update-catalog")
+    caches = ("etc/ld.so.cache", "usr/lib/udev/hwdb.bin", "var/lib/systemd/catalog/database")
+    for relative in caches:
+        path = root / relative
+        if path.resolve() != path or not path.is_file() or path.stat().st_size == 0:
+            raise ValueError(f"required package cache was not built: {relative}")
+    run("chroot", root, "/usr/lib/systemd/systemd-update-done")
+    for relative in ("etc/.updated", "var/.updated"):
+        path = root / relative
+        if path.resolve() != path or not path.is_file() or path.stat().st_size == 0:
+            raise ValueError(f"package update completion was not recorded: {relative}")
+
+
 def build(source, output, selection, overlays, image_mib=4096):
     if sys.platform != "linux" or os.geteuid() != 0:
         raise ValueError("requires the rootful Linux image tooling container")
@@ -65,6 +81,7 @@ def build(source, output, selection, overlays, image_mib=4096):
         "assembly": assembly_file, "packages": source / "etc/wasm-vm/packages.tsv",
         "sanitizer": Path(sanitizer.__file__),
         "configurator": Path(__file__).with_name("configure-omarchy-demo.py"),
+        "demoSession": Path(__file__).with_name("omarchy-demo-session.sh"),
         "builder": Path(__file__),
     }
     frozen_digests = {key: digest(path) for key, path in input_files.items()}
@@ -116,6 +133,7 @@ def build(source, output, selection, overlays, image_mib=4096):
         for theme_file in ("foot.ini", "hyprland.lua", "colors.toml"):
             if (root / "home/omarchy/.local/state/omarchy/current/theme" / theme_file).stat().st_size == 0:
                 raise ValueError("empty generated theme")
+        prepare_boot_caches(root, run)
     finally:
         # Never populate ext4 while any temporary pseudo-filesystem is mounted.
         cleanup_errors = []

@@ -1571,3 +1571,51 @@ verify-E3.5-T03:
 	cargo build --release -p wasm-vm-cli
 	cargo test --release -p wasm-vm-cli --test boot_wvrun -- --ignored --nocapture
 	@echo "verify-E3.5-T03 (tiny OCI runner — wvrun runs a bundle + isolates + propagates exit): OK"
+
+# The committed dist is the release under test. Do not silently rebuild it or
+# reuse old evidence. Override OMARCHY_EVIDENCE_DIR with a new path for each run.
+OMARCHY_EVIDENCE_DIR ?= evidence/omarchy-profile/acceptance
+.PHONY: verify-E5.5-T04a
+verify-E5.5-T04a:
+	@test -f web/dist/app.html || { echo "Build web/dist first" >&2; exit 1; }
+	npm --prefix web ci --no-audit --no-fund
+	node tools/fetch-omarchy-snapshot.mjs
+	node --test web/tests/guest-rpc.test.mjs web/tests/e5-t22b-viewport.test.mjs web/tests/omarchy-desktop-readiness.test.mjs web/tests/omarchy-seeded-loader.test.mjs
+	node tools/verify/omarchy-desktop-live.mjs local "$(OMARCHY_EVIDENCE_DIR)" verify
+
+# E5.5-T03c proves visible pixels and host-side viewport fitting only. The separate
+# T04a physical-keyboard acceptance above deliberately keeps its stronger contract.
+OMARCHY_RENDER_URL ?= local
+OMARCHY_RENDER_EVIDENCE_DIR ?= evidence/omarchy-profile/rendering-recovery-acceptance
+.PHONY: verify-E5.5-T03c
+verify-E5.5-T03c:
+	@test -f web/dist/app.html || { echo "Build web/dist first" >&2; exit 1; }
+	npm --prefix web ci --no-audit --no-fund
+	node tools/fetch-omarchy-snapshot.mjs
+	node --test tools/gen-omarchy-manifest.test.mjs tools/verify/omarchy-rendering-recovery.test.mjs web/tests/omarchy-seeded-loader.test.mjs web/tests/omarchy-desktop-readiness.test.mjs web/tests/e5-t22b-viewport.test.mjs web/tests/pointer.test.mjs
+	node tools/verify/omarchy-rendering-recovery.mjs "$(OMARCHY_RENDER_URL)" "$(OMARCHY_RENDER_EVIDENCE_DIR)"
+
+OMARCHY_CACHE_URL ?= local
+OMARCHY_CACHE_EVIDENCE_DIR ?= evidence/omarchy-profile/boot-cache-acceptance
+.PHONY: verify-E5.5-T03e
+verify-E5.5-T03e:
+	@test -f web/dist/app.html || { echo "Build web/dist first" >&2; exit 1; }
+	npm --prefix web ci --no-audit --no-fund
+	node tools/fetch-omarchy-snapshot.mjs
+	node --test web/tests/boot-asset-cache.test.mjs web/tests/omarchy-startup-state.test.mjs web/tests/omarchy-seeded-loader.test.mjs web/tests/e5.5-t03e-critic.test.mjs web/tests/e5.5-t03e-critic-ui.test.mjs
+	node tools/verify/omarchy-boot-cache.mjs "$(OMARCHY_CACHE_URL)" "$(OMARCHY_CACHE_EVIDENCE_DIR)"
+
+# T03f has two deliberately separate lanes: deterministic offline inspection of
+# a completed run, and a fresh unique cold-WASM record. The latter is never an
+# implicit prerequisite of the former and never writes release/prod assets.
+OMARCHY_T03F_RECORD_DIR ?= evidence/omarchy-profile/softpipe-r1/cold-wasm
+OMARCHY_T03F_RECORD_ROOT ?= evidence/omarchy-profile/softpipe-runs
+.PHONY: verify-E5.5-T03f
+verify-E5.5-T03f:
+	node --check tools/verify/omarchy-software-renderer-measurement.mjs
+	node --test tools/verify/omarchy-software-renderer-measurement.test.mjs tools/verify/omarchy-softpipe-candidate.test.mjs
+	node tools/verify/omarchy-software-renderer-measurement.mjs verify "$(OMARCHY_T03F_RECORD_DIR)"
+
+.PHONY: record-E5.5-T03f
+record-E5.5-T03f:
+	OMARCHY_T03F_RECORD_ROOT="$(OMARCHY_T03F_RECORD_ROOT)" node tools/verify/omarchy-software-renderer-measurement.mjs record

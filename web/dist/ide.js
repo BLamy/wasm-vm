@@ -13,7 +13,17 @@
 // HONESTY: every byte shown comes from the real guest via window.wvmDemo.exec(). Saving is
 // byte-exact (base64 in JS → `base64 -d` in-guest). Container logs/exec use the real wvrun CLI.
 
+import {
+  createOmarchyStartupLifecycle,
+  formatOmarchyProgress,
+  omarchyGuestStateLabel,
+} from "./omarchy-startup-state.js";
+
 const ROOT = "/root";
+const _ideQuery = new URLSearchParams(location.search);
+const _ideGuest = (_ideQuery.get("guest") || _ideQuery.get("boot") || _ideQuery.get("os") || "").toLowerCase();
+const OMARCHY_DESKTOP_MODE = _ideQuery.get("desktop") === "1" && _ideGuest === "omarchy";
+if (OMARCHY_DESKTOP_MODE) document.documentElement.dataset.wvmDesktop = "omarchy";
 
 // ── styles (injected; no dependency on index.html CSS) ───────────────────────
 const css = `
@@ -245,6 +255,84 @@ const css = `
   box-shadow: 0 10px 30px rgba(0,0,0,.5); padding: 12px; display: none; }
 .ide-net-pop.open { display: block; }
 .ide-net-pop .file, .ide-net-pop h4 { color: #d6deeb; }
+
+/* Omarchy is a desktop session, not an editor session. Keep the same guest display/controller,
+   but promote its viewport to the whole page and remove every VS Code surface around it. */
+html[data-wvm-desktop="omarchy"], html[data-wvm-desktop="omarchy"] body {
+  width: 100%; height: 100%; min-height: 100%; overflow: hidden;
+}
+html[data-wvm-desktop="omarchy"] header,
+html[data-wvm-desktop="omarchy"] .os-launcher,
+html[data-wvm-desktop="omarchy"] .ide-activity,
+html[data-wvm-desktop="omarchy"] .ide-side,
+html[data-wvm-desktop="omarchy"] .ide-vsplit,
+html[data-wvm-desktop="omarchy"] .ide-tabstrip,
+html[data-wvm-desktop="omarchy"] .ide-editor-toolbar,
+html[data-wvm-desktop="omarchy"] .ide-editor-body,
+html[data-wvm-desktop="omarchy"] .ide-hsplit,
+html[data-wvm-desktop="omarchy"] .ide-term-pane,
+html[data-wvm-desktop="omarchy"] .ide-statusbar {
+  display: none !important;
+}
+html[data-wvm-desktop="omarchy"] #panel-ide.active {
+  display: flex; height: 100vh; min-height: 100vh; overflow: hidden;
+}
+html[data-wvm-desktop="omarchy"] #ide-root {
+  position: relative; flex: 1 1 auto; width: 100%; height: 100%; min-height: 0;
+}
+html[data-wvm-desktop="omarchy"] .ide-body,
+html[data-wvm-desktop="omarchy"] .ide-editor-area,
+html[data-wvm-desktop="omarchy"] .ide-display-pane {
+  width: 100%; height: 100%; min-height: 0;
+}
+html[data-wvm-desktop="omarchy"] .ide-editor-area { display: flex; }
+html[data-wvm-desktop="omarchy"] .ide-display-pane { flex: 1 1 auto; border: 0; }
+html[data-wvm-desktop="omarchy"] .ide-display-head {
+  display: none !important;
+}
+html[data-wvm-desktop="omarchy"] .ide-display-viewport {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+}
+html[data-wvm-desktop="omarchy"] .ide-display-canvas {
+  position: relative; left: auto; top: auto; flex: 0 0 auto;
+  image-rendering: auto; touch-action: none; outline: none;
+}
+.omarchy-desktop-toolbar {
+  position: absolute; bottom: 12px; left: 12px; right: 12px; z-index: 10;
+  display: flex; align-items: center; gap: 9px; min-height: 38px; padding: 6px 9px;
+  color: #d6deeb; background: rgba(10, 13, 19, .88); border: 1px solid rgba(83, 212, 255, .28);
+  border-radius: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, .35); backdrop-filter: blur(8px);
+  opacity: 0; transition: opacity .16s ease;
+}
+html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar:hover,
+html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar:focus-within { opacity: 1; }
+html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar[data-state="error"],
+html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar[data-state="halted"] { opacity: 1; }
+.omarchy-desktop-toolbar[hidden] { display: none; }
+.omarchy-desktop-toolbar .brand { color: #fff; font-weight: 700; }
+.omarchy-desktop-toolbar .status { color: #9fb0c7; font-size: 11px; }
+.omarchy-desktop-toolbar .sp { flex: 1 1 auto; }
+.omarchy-desktop-toolbar button { min-height: 27px; padding: 3px 9px; font-size: 11px; }
+.omarchy-boot-overlay {
+  position: absolute; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
+  padding: 20px; background: rgba(0, 0, 0, .72); color: #d6deeb; pointer-events: auto;
+}
+.omarchy-boot-overlay[hidden] { display: none; }
+.omarchy-boot-card {
+  width: min(520px, 100%); padding: 18px; border: 1px solid rgba(83, 212, 255, .32);
+  border-radius: 10px; background: rgba(10, 13, 19, .95); box-shadow: 0 14px 38px rgba(0, 0, 0, .5);
+}
+.omarchy-boot-card h1 { margin: 0 0 8px; color: #fff; font: 600 16px ui-sans-serif, system-ui, sans-serif; }
+.omarchy-boot-status { min-height: 1.4em; color: #9fb0c7; line-height: 1.45; }
+.omarchy-boot-status[data-state="error"] { color: #ffb4b4; }
+.omarchy-boot-progress { width: 100%; height: 7px; margin: 13px 0 8px; accent-color: #53d4ff; }
+.omarchy-boot-progress[hidden] { display: none; }
+.omarchy-boot-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.omarchy-boot-actions button { min-height: 30px; padding: 5px 10px; font: inherit; font-size: 11px; }
+.omarchy-boot-log { max-height: min(38vh, 260px); overflow: auto; margin: 12px 0 0; padding: 9px;
+  border: 1px solid var(--line, #232a35); border-radius: 6px; background: #05070a; color: #cdd6f4;
+  white-space: pre-wrap; word-break: break-word; font-size: 11px; line-height: 1.45; }
+.omarchy-boot-log[hidden] { display: none; }
 `;
 const style = document.createElement("style");
 style.textContent = css;
@@ -382,6 +470,25 @@ const containerLedger = {
 const root = document.getElementById("ide-root");
 if (root) {
   root.innerHTML = `
+    <div class="omarchy-boot-overlay" id="omarchy-boot-overlay" hidden>
+      <div class="omarchy-boot-card" role="status" aria-live="polite">
+        <h1>Starting Omarchy desktop</h1>
+        <div class="omarchy-boot-status" id="omarchy-boot-status">Waiting for boot events…</div>
+        <progress class="omarchy-boot-progress" id="omarchy-boot-progress" max="1" value="0" hidden></progress>
+        <div class="omarchy-boot-actions">
+          <button id="omarchy-boot-log-toggle" type="button" aria-expanded="false">View boot log</button>
+          <button id="omarchy-boot-exit" type="button">Exit desktop</button>
+        </div>
+        <pre class="omarchy-boot-log" id="omarchy-boot-log" hidden>No serial output yet.</pre>
+      </div>
+    </div>
+    <div class="omarchy-desktop-toolbar" id="omarchy-desktop-toolbar" hidden>
+      <span class="brand">Omarchy</span>
+      <span class="status" id="omarchy-desktop-status">desktop · fit to window</span>
+      <span class="sp"></span>
+      <button id="omarchy-fullscreen" type="button">Full screen</button>
+      <button id="omarchy-exit" type="button">Exit desktop</button>
+    </div>
     <div class="ide-body">
       <div class="ide-activity">
         <button class="ide-act-btn active" id="ide-act-files" title="Files">📁</button>
@@ -464,6 +571,173 @@ if (root) {
   const tabstripEl = q("#ide-tabstrip");
   const dkEl = q("#ide-dk");
 
+  if (OMARCHY_DESKTOP_MODE) {
+    const bootOverlay = q("#omarchy-boot-overlay");
+    const bootStatus = q("#omarchy-boot-status");
+    const bootProgress = q("#omarchy-boot-progress");
+    const bootLogToggle = q("#omarchy-boot-log-toggle");
+    const bootExit = q("#omarchy-boot-exit");
+    const bootLog = q("#omarchy-boot-log");
+    const desktopToolbar = q("#omarchy-desktop-toolbar");
+    const desktopStatus = q("#omarchy-desktop-status");
+    const fullscreenButton = q("#omarchy-fullscreen");
+    const exitButton = q("#omarchy-exit");
+    if (desktopToolbar) desktopToolbar.hidden = false;
+    if (bootOverlay) bootOverlay.hidden = false;
+    let bootOutput = "";
+    let bootErrorLatched = false;
+    const startupLifecycle = createOmarchyStartupLifecycle({
+      onWaiting: () => {
+        if (startupLifecycle.isPending()) {
+          setBootStatus("Downloads complete. The guest is responding slowly; waiting for the desktop…");
+        }
+      },
+    });
+    const formatBytes = (value) => {
+      if (!Number.isFinite(value) || value < 0) return null;
+      if (value < 1024) return `${Math.round(value)} B`;
+      if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KiB`;
+      return `${(value / (1024 * 1024)).toFixed(1)} MiB`;
+    };
+    const setBootStatus = (text, state = "booting") => {
+      if (bootStatus) {
+        bootStatus.textContent = text;
+        bootStatus.dataset.state = state;
+      }
+    };
+    const clearBootProgress = () => {
+      if (!bootProgress) return;
+      bootProgress.hidden = true;
+      bootProgress.value = 0;
+      bootProgress.max = 1;
+    };
+    const appendBootOutput = (text) => {
+      if (text == null || text === "") return;
+      bootOutput += String(text);
+      if (bootOutput.length > 16000) bootOutput = bootOutput.slice(-16000);
+      if (bootLog) bootLog.textContent = bootOutput;
+    };
+    const exitDesktop = () => {
+      const next = new URL(location.href);
+      next.searchParams.delete("desktop");
+      next.searchParams.delete("guest");
+      next.searchParams.delete("boot");
+      next.searchParams.delete("os");
+      next.hash = "ide";
+      location.assign(next.href);
+    };
+    bootLogToggle?.addEventListener("click", () => {
+      if (!bootLog) return;
+      bootLog.hidden = !bootLog.hidden;
+      bootLogToggle.textContent = bootLog.hidden ? "View boot log" : "Hide boot log";
+      bootLogToggle.setAttribute("aria-expanded", String(!bootLog.hidden));
+    });
+    bootExit?.addEventListener("click", exitDesktop);
+    const updateFullscreenLabel = () => {
+      if (fullscreenButton) fullscreenButton.textContent = document.fullscreenElement
+        ? "Exit full screen"
+        : "Full screen";
+    };
+    fullscreenButton?.addEventListener("click", async () => {
+      try {
+        if (document.fullscreenElement) await document.exitFullscreen();
+        else await document.documentElement.requestFullscreen();
+      } catch (error) {
+        if (desktopStatus) desktopStatus.textContent = `desktop · fullscreen unavailable: ${error?.message || error}`;
+      }
+      updateFullscreenLabel();
+    });
+    document.addEventListener("fullscreenchange", updateFullscreenLabel);
+    exitButton?.addEventListener("click", exitDesktop);
+    window.addEventListener("wvm:guest-booting", () => {
+      bootErrorLatched = false;
+      startupLifecycle.booting();
+      bootOutput = "";
+      if (bootLog) bootLog.textContent = "No serial output yet.";
+      if (bootLog) bootLog.hidden = true;
+      if (bootLogToggle) {
+        bootLogToggle.textContent = "View boot log";
+        bootLogToggle.setAttribute("aria-expanded", "false");
+      }
+      clearBootProgress();
+      if (desktopStatus) desktopStatus.textContent = "desktop · booting Omarchy…";
+      if (desktopToolbar) desktopToolbar.dataset.state = "booting";
+      setBootStatus("Booting Omarchy…");
+      if (bootOverlay) bootOverlay.hidden = false;
+    });
+    window.addEventListener("wvm:guest-progress", (event) => {
+      if (!startupLifecycle.isPending()) return;
+      const detail = event.detail || {};
+      const progress = formatOmarchyProgress(detail);
+      const loaded = progress.loaded;
+      const total = progress.total;
+      const loadedText = formatBytes(loaded);
+      const totalText = formatBytes(total);
+      setBootStatus(`${progress.text}${loadedText ? ` · ${loadedText}${totalText ? ` / ${totalText}` : ""}` : ""}`);
+      if (bootProgress && progress.determinate) {
+        bootProgress.hidden = false;
+        bootProgress.max = total;
+        bootProgress.value = Math.min(total, loaded);
+      } else {
+        clearBootProgress();
+      }
+    });
+    window.addEventListener("wvm:guest-output", (event) => {
+      if (bootErrorLatched) return;
+      appendBootOutput(event.detail?.text);
+    });
+    window.addEventListener("wvm:guest-state", (event) => {
+      const state = event.detail?.state;
+      if (!startupLifecycle.state(state)) return;
+      const label = omarchyGuestStateLabel(state);
+      if (label) {
+        clearBootProgress();
+        if (desktopStatus) desktopStatus.textContent = `desktop · ${label}`;
+        setBootStatus(label);
+      }
+      if (state === "done") {
+        if (bootOverlay) bootOverlay.hidden = false;
+        if (desktopToolbar) desktopToolbar.dataset.state = "halted";
+      } else if (desktopToolbar && state !== "error") desktopToolbar.dataset.state = "booting";
+    });
+    window.addEventListener("wvm:guest-error", (event) => {
+      const message = event.detail?.message || "unknown error";
+      bootErrorLatched = true;
+      startupLifecycle.error();
+      clearBootProgress();
+      if (desktopStatus) desktopStatus.textContent = `desktop · boot error: ${message}`;
+      setBootStatus(`Boot error: ${message}`, "error");
+      appendBootOutput(`[boot error] ${message}\n`);
+      if (bootOverlay) bootOverlay.hidden = false;
+      if (desktopToolbar) desktopToolbar.dataset.state = "error";
+    });
+    window.addEventListener("wvm:guest-halted", (event) => {
+      const message = event.detail?.message || "guest stopped";
+      bootErrorLatched = true;
+      startupLifecycle.halted();
+      clearBootProgress();
+      if (desktopStatus) desktopStatus.textContent = `desktop · halted: ${message}`;
+      setBootStatus(`Guest halted: ${message}`, "error");
+      if (bootOverlay) bootOverlay.hidden = false;
+      if (desktopToolbar) desktopToolbar.dataset.state = "halted";
+    });
+    window.addEventListener("wvm:guest-ready", () => {
+      if (!startupLifecycle.guestReady()) return;
+      clearBootProgress();
+      if (desktopStatus) desktopStatus.textContent = "desktop · guest ready · waiting for desktop";
+      setBootStatus("Guest shell ready; waiting for desktop readiness…");
+      if (desktopToolbar) desktopToolbar.dataset.state = "booting";
+    });
+    window.addEventListener("wvm:desktop-ready", () => {
+      if (!startupLifecycle.desktopReady()) return;
+      clearBootProgress();
+      if (bootOverlay) bootOverlay.hidden = true;
+      if (desktopStatus) desktopStatus.textContent = "desktop visible · input is slow";
+      if (desktopToolbar) desktopToolbar.dataset.state = "ready";
+    });
+    updateFullscreenLabel();
+  }
+
   // ── Re-parent live DOM nodes (keeps main.js / file-transfer / tailscale wiring intact) ──
   const consoleSection = document.querySelector("#panel-ide > .console");
   if (consoleSection) q("#ide-term-scroll").appendChild(consoleSection);
@@ -474,9 +748,42 @@ if (root) {
 
   const api = () => window.wvmDemo;
   const ready = () => !!(api() && api().isGuestReady && api().isGuestReady());
+  function guestSession() {
+    const session = api()?.guestSession?.();
+    if (!session || typeof session !== "object") return null;
+    const key = typeof session.key === "string" ? session.key : "";
+    const generation = Number(session.generation);
+    if (!key || !Number.isSafeInteger(generation) || generation < 1) return null;
+    return { key, generation };
+  }
+  function sameGuestSession(expected) {
+    const current = guestSession();
+    return Boolean(expected && current && expected.key === current.key && expected.generation === current.generation);
+  }
+  function cliGuestServicesSession() {
+    const session = guestSession();
+    // The visual desktop flag selects CSS and boot status only. The live request identity is the
+    // authority for whether the current guest is the Omarchy desktop or a CLI-capable session.
+    if (!session || session.key === "omarchy") return null;
+    return session;
+  }
+  function guestServiceError(code, message) {
+    const error = new Error(message);
+    error.code = code;
+    return error;
+  }
   // Explorer/Docker RPCs are control-plane work. Keep their fenced shell echo and marker out of
   // the user's foreground terminal; the returned stdout is rendered in the owning pane instead.
-  const bgExec = (cmd, timeoutMs) => api().exec(cmd, timeoutMs, { quiet: true });
+  const bgExec = (cmd, timeoutMs) => {
+    const session = cliGuestServicesSession();
+    if (!session) return Promise.reject(guestServiceError("IDE_GUEST_SERVICES_DISABLED", "guest IDE services are disabled for this session"));
+    return Promise.resolve(api().exec(cmd, timeoutMs, { quiet: true })).then((result) => {
+      if (!sameGuestSession(session)) {
+        throw guestServiceError("IDE_GUEST_SESSION_STALE", "guest IDE request belongs to a retired session");
+      }
+      return result;
+    });
+  };
 
   function selectedProvider() {
     const value = document.getElementById("network-provider")?.value;
@@ -503,6 +810,8 @@ if (root) {
   // the short window in which a real local manifest is still being fetched. This independent
   // manifest check is still fail-closed: only a valid artifacts object counts as present.
   function probeAlpineAssets() {
+    if (guestSession()?.key === "omarchy") return Promise.resolve(false);
+    const session = guestSession();
     if (dockerRuntime.alpineStatus === "present") return Promise.resolve(true);
     if (dockerRuntime.alpineStatus === "absent") return Promise.resolve(false);
     if (dockerRuntime.alpineProbe) return dockerRuntime.alpineProbe;
@@ -521,6 +830,10 @@ if (root) {
       .catch(() => false);
     dockerRuntime.alpineProbe = probe;
     void probe.then((present) => {
+      if (session && !sameGuestSession(session)) {
+        dockerRuntime.alpineProbe = null;
+        return;
+      }
       dockerRuntime.alpineProbe = null;
       dockerRuntime.alpineStatus = present ? "present" : "absent";
       if (sideView === "docker") renderDocker();
@@ -529,7 +842,7 @@ if (root) {
   }
 
   function runtimeReady() {
-    return ready() && dockerRuntime.status === "available";
+    return Boolean(cliGuestServicesSession()) && ready() && dockerRuntime.status === "available";
   }
 
   function resetDockerCatalog() {
@@ -679,10 +992,13 @@ if (root) {
   }
 
   async function loadGuestBundleMetadata(entries, generation) {
+    const session = cliGuestServicesSession();
+    if (!session) return false;
     for (const image of entries) {
-      if (generation !== dockerRuntime.generation) return false;
+      if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return false;
       try {
         const res = await bgExec(bundleMetadataCommand(image.bundlePath), 30000);
+        if (!sameGuestSession(session)) return false;
         const metadata = res.exit === 0 ? parseBundleMetadata(res.stdout) : null;
         if (metadata) {
           image.bundlePresent = true;
@@ -696,6 +1012,7 @@ if (root) {
             `guest exited ${res.exit}`;
         }
       } catch (error) {
+        if (!sameGuestSession(session)) return false;
         image.bundlePresent = false;
         image.runnable = false;
         image.bundleError = error?.message || String(error);
@@ -705,7 +1022,8 @@ if (root) {
   }
 
   function loadDockerCatalog() {
-    if (!runtimeReady()) return Promise.resolve(false);
+    const session = cliGuestServicesSession();
+    if (!session || !runtimeReady()) return Promise.resolve(false);
     if (dockerCatalog.status === "available") return Promise.resolve(true);
     if (dockerCatalog.status === "error") return Promise.resolve(false);
     if (dockerCatalog.promise) return dockerCatalog.promise;
@@ -716,7 +1034,7 @@ if (root) {
     const request = Promise.resolve()
       .then(() => bgExec("cat /opt/containers/index.json", 30000))
       .then(async (res) => {
-        if (generation !== dockerRuntime.generation) return false;
+        if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return false;
         if (res.exit !== 0) throw new Error(res.stdout?.trim() || `cat exited ${res.exit}`);
         const raw = parseGuestJson(res.stdout);
         const entries = normalizeCatalog(raw);
@@ -729,7 +1047,7 @@ if (root) {
         return true;
       })
       .catch((error) => {
-        if (generation === dockerRuntime.generation) {
+        if (generation === dockerRuntime.generation && sameGuestSession(session)) {
           dockerCatalog.status = "error";
           dockerCatalog.code = "CATALOG_LOAD_FAILED";
           dockerCatalog.error = error?.message || String(error);
@@ -740,7 +1058,7 @@ if (root) {
     void request.then(() => {
       if (generation !== dockerRuntime.generation) return;
       dockerCatalog.promise = null;
-      if (sideView === "docker") renderDocker();
+      if (sameGuestSession(session) && sideView === "docker") renderDocker();
     });
     return request;
   }
@@ -767,7 +1085,8 @@ if (root) {
 
   async function refreshDockerSnapshot() {
     const current = api();
-    if (!current || typeof current.snapshotStatus !== "function") {
+    const session = cliGuestServicesSession();
+    if (!session || !current || typeof current.snapshotStatus !== "function") {
       dockerRuntime.snapshot = {
         ...dockerRuntime.snapshot, status: "unavailable", code: "SNAPSHOT_UNAVAILABLE",
         error: "This guest does not expose persistent resume snapshots.",
@@ -779,7 +1098,7 @@ if (root) {
     dockerRuntime.snapshot = { ...dockerRuntime.snapshot, status: "checking", code: "", error: "" };
     try {
       const state = await current.snapshotStatus();
-      if (generation !== dockerRuntime.generation) return false;
+      if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return false;
       dockerRuntime.snapshot = {
         ...dockerRuntime.snapshot,
         status: state?.available ? "ready" : "unavailable",
@@ -791,26 +1110,27 @@ if (root) {
       };
       return Boolean(state?.available);
     } catch (error) {
-      if (generation !== dockerRuntime.generation) return false;
+      if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return false;
       dockerRuntime.snapshot = {
         ...dockerRuntime.snapshot, status: "error", code: "SNAPSHOT_STATUS_FAILED",
         error: error?.message || String(error),
       };
       return false;
     } finally {
-      if (generation === dockerRuntime.generation && sideView === "docker") renderDocker();
+      if (generation === dockerRuntime.generation && sameGuestSession(session) && sideView === "docker") renderDocker();
     }
   }
 
   async function saveDockerSnapshot() {
     const current = api();
-    if (!runtimeReady() || typeof current?.snapshotSave !== "function" || dockerRuntime.snapshot.status === "saving") return;
+    const session = cliGuestServicesSession();
+    if (!session || !runtimeReady() || typeof current?.snapshotSave !== "function" || dockerRuntime.snapshot.status === "saving") return;
     const generation = dockerRuntime.generation;
     dockerRuntime.snapshot = { ...dockerRuntime.snapshot, status: "saving", code: "", error: "" };
     renderDocker();
     try {
       const saved = await current.snapshotSave();
-      if (generation !== dockerRuntime.generation) return;
+      if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return;
       if (!saved?.ok) {
         dockerRuntime.snapshot = {
           ...dockerRuntime.snapshot, status: "error", code: saved?.code || "SNAPSHOT_SAVE_FAILED",
@@ -825,19 +1145,20 @@ if (root) {
         elapsedMs: saved.elapsedMs ?? null, code: "", error: "",
       };
     } catch (error) {
-      if (generation !== dockerRuntime.generation) return;
+      if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return;
       dockerRuntime.snapshot = {
         ...dockerRuntime.snapshot, status: "error", code: "SNAPSHOT_SAVE_FAILED",
         error: error?.message || String(error),
       };
     } finally {
-      if (generation === dockerRuntime.generation && sideView === "docker") renderDocker();
+      if (generation === dockerRuntime.generation && sameGuestSession(session) && sideView === "docker") renderDocker();
     }
   }
 
   function probeDockerRuntime() {
     const current = api();
-    if (!current || typeof current.hasContainerRuntime !== "function") {
+    const session = cliGuestServicesSession();
+    if (!session || !current || typeof current.hasContainerRuntime !== "function") {
       setDockerError("DOCKER_BRIDGE_UNAVAILABLE", "The guest bridge is still loading; container capability is unknown.");
       return Promise.resolve(false);
     }
@@ -855,7 +1176,7 @@ if (root) {
     const probe = Promise.resolve()
       .then(() => current.hasContainerRuntime())
       .then((present) => {
-        if (generation !== dockerRuntime.generation) return false;
+        if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return false;
         dockerRuntime.status = present ? "available" : "unavailable";
         dockerRuntime.code = present ? "" : "RUNTIME_ABSENT";
         dockerRuntime.error = present
@@ -864,7 +1185,7 @@ if (root) {
         return present;
       })
       .catch((error) => {
-        if (generation === dockerRuntime.generation) {
+        if (generation === dockerRuntime.generation && sameGuestSession(session)) {
           setDockerError("RUNTIME_PROBE_FAILED", error?.message || String(error));
         }
         return false;
@@ -873,7 +1194,7 @@ if (root) {
     void probe.then(() => {
       if (generation !== dockerRuntime.generation) return;
       dockerRuntime.probe = null;
-      if (sideView === "docker") {
+      if (sameGuestSession(session) && sideView === "docker") {
         renderDocker();
         if (runtimeReady()) startPsPoll();
         else stopPsPoll();
@@ -884,6 +1205,7 @@ if (root) {
 
   function bootAlpineFromDocker() {
     const current = api();
+    if (guestSession()?.key === "omarchy") return;
     if (dockerRuntime.booting) return;
     if (!current || typeof current.bootAlpine !== "function") {
       setDockerError("ALPINE_BRIDGE_UNAVAILABLE", "The Alpine boot bridge is still loading.");
@@ -1067,6 +1389,7 @@ if (root) {
   const sideEl = q("#ide-side");
   const sideTitle = q("#ide-side-title");
   let sideView = "files"; // files | docker
+  let initializedGuestServices = null;
   function selectSideView(view) {
     sideView = view;
     if (sideEl.classList.contains("collapsed")) sideEl.classList.remove("collapsed");
@@ -1075,7 +1398,10 @@ if (root) {
     q("#ide-view-files").classList.toggle("active", view === "files");
     q("#ide-view-docker").classList.toggle("active", view === "docker");
     sideTitle.textContent = view === "files" ? "Explorer" : "Docker";
-    if (view === "docker") { renderDocker(); startPsPoll(); } else { stopPsPoll(); }
+    if (view === "docker") {
+      if (guestSession()?.key !== "omarchy") { renderDocker(); startPsPoll(); }
+      else stopPsPoll();
+    } else { stopPsPoll(); }
   }
   q("#ide-act-files").addEventListener("click", () => selectSideView("files"));
   q("#ide-act-docker").addEventListener("click", () => selectSideView("docker"));
@@ -1306,6 +1632,7 @@ if (root) {
     return rows;
   }
   async function listDir(dir) {
+    if (!cliGuestServicesSession()) throw guestServiceError("IDE_GUEST_SERVICES_DISABLED", "guest IDE services are disabled for this session");
     const res = await bgExec("ls -la " + shq(dir), 30000);
     if (res.exit !== 0) throw new Error(res.stdout.trim() || ("cannot read " + dir));
     return parseLs(res.stdout);
@@ -1334,12 +1661,17 @@ if (root) {
           return;
         }
         tw.innerHTML = '<span class="ide-spin">◠</span>';
+        const session = cliGuestServicesSession();
+        if (!session) { tw.textContent = "▸"; return; }
         try {
           const kids = await listDir(path);
+          if (!sameGuestSession(session)) return;
           childUl = document.createElement("ul"); childUl.className = "ide-tree";
           for (const k of kids) childUl.appendChild(makeNode(k, path, depth + 1));
           li.appendChild(childUl); tw.textContent = "▾";
-        } catch (err) { tw.textContent = "▸"; setStatus(String(err.message || err), "err"); }
+        } catch (err) {
+          if (sameGuestSession(session)) { tw.textContent = "▸"; setStatus(String(err.message || err), "err"); }
+        }
       } else {
         openFile(path, row);
       }
@@ -1348,9 +1680,12 @@ if (root) {
   }
 
   async function loadTree() {
+    const session = cliGuestServicesSession();
+    if (!session) return;
     explorerEl.innerHTML = `<div class="ide-explorer-ph"><span class="ide-spin">◠</span> Loading ${ROOT}…</div>`;
     try {
       const entries = await listDir(ROOT);
+      if (!sameGuestSession(session)) return;
       const ul = document.createElement("ul"); ul.className = "ide-tree";
       for (const e of entries) ul.appendChild(makeNode(e, ROOT, 0));
       explorerEl.innerHTML = "";
@@ -1359,11 +1694,15 @@ if (root) {
       head.innerHTML = `<span class="tw"></span><span class="ic">🗂️</span><span class="nm">${ROOT}</span>`;
       explorerEl.append(head, ul);
     } catch (err) {
+      if (err?.code === "IDE_GUEST_SESSION_STALE" || err?.code === "IDE_GUEST_SERVICES_DISABLED"
+        || !sameGuestSession(session)) return;
       explorerEl.innerHTML = `<div class="ide-explorer-ph">Could not list <b>${ROOT}</b>:<br>${String(err.message || err)}</div>`;
     }
   }
 
   async function openFile(path, rowEl) {
+    const session = cliGuestServicesSession();
+    if (!session) return;
     const key = "file:" + path;
     for (const n of explorerEl.querySelectorAll(".ide-node.sel")) n.classList.remove("sel");
     if (rowEl) rowEl.classList.add("sel");
@@ -1382,7 +1721,9 @@ if (root) {
       }
       refreshSave();
     } catch (err) {
-      if (activeKey === key) { setStatus(String(err.message || err), "err"); taEl.disabled = false; }
+      if (sameGuestSession(session) && activeKey === key) {
+        setStatus(String(err.message || err), "err"); taEl.disabled = false;
+      }
     }
   }
 
@@ -1394,7 +1735,8 @@ if (root) {
   }
   async function save() {
     const t = activeTab();
-    if (!t || t.type !== "file" || !ready()) return;
+    const session = cliGuestServicesSession();
+    if (!t || t.type !== "file" || !ready() || !session) return;
     saveBtn.disabled = true; setStatus("saving…");
     try {
       const b64 = toB64(taEl.value);
@@ -1403,7 +1745,11 @@ if (root) {
       if (res.exit !== 0) throw new Error(res.stdout.trim() || ("write failed (exit " + res.exit + ")"));
       t.savedText = taEl.value; t.value = taEl.value;
       refreshSave(); setStatus("saved ✓", "ok");
-    } catch (err) { setStatus(String(err.message || err), "err"); saveBtn.disabled = false; }
+    } catch (err) {
+      if (sameGuestSession(session)) {
+        setStatus(String(err.message || err), "err"); saveBtn.disabled = false;
+      }
+    }
   }
   saveBtn.addEventListener("click", save);
   taEl.addEventListener("keydown", (e) => {
@@ -1714,6 +2060,8 @@ if (root) {
 
   async function startExecStream(t) {
     if (!t || t.type !== "container") return null;
+    const session = cliGuestServicesSession();
+    if (!session) return null;
     if (t.execStream) return t.execStream;
     if (t.execStartPromise) return t.execStartPromise;
     if (t.execStopPromise) await t.execStopPromise;
@@ -1733,13 +2081,13 @@ if (root) {
         if (t.logRefreshPromise) await t.logRefreshPromise;
         await stopLogStream(t, "exec");
         if (t.stopPromise) await t.stopPromise;
-        if (t.execGeneration !== generation || t.execStopping) return null;
+        if (t.execGeneration !== generation || t.execStopping || !sameGuestSession(session)) return null;
         handle = api().stream(command, (line) => {
-          if (t.execGeneration !== generation || !t.execStream) return;
+          if (t.execGeneration !== generation || !t.execStream || !sameGuestSession(session)) return;
           appendExecOutput(t, line);
         }, {
           onEnd: ({ error, exit, natural }) => {
-            if (t.execGeneration !== generation) return;
+            if (t.execGeneration !== generation || !sameGuestSession(session)) return;
             if (t.execStream === handle) t.execStream = null;
             t.execStarting = false;
             t.execStopping = false;
@@ -1772,7 +2120,7 @@ if (root) {
             }
           },
         });
-        if (t.execGeneration !== generation || t.execStopping) {
+        if (t.execGeneration !== generation || t.execStopping || !sameGuestSession(session)) {
           await handle.stop();
           return null;
         }
@@ -1780,7 +2128,7 @@ if (root) {
         t.execStatus = "active";
         return handle;
       } catch (error) {
-        if (t.execGeneration === generation) {
+        if (t.execGeneration === generation && sameGuestSession(session)) {
           const failure = error?.code?.startsWith?.("EXEC_")
             ? error
             : execCommandFailure(command, t.execOutput, error?.exit, "EXEC_START_FAILED");
@@ -1790,7 +2138,7 @@ if (root) {
         }
         return null;
       } finally {
-        if (t.execGeneration === generation) {
+        if (t.execGeneration === generation && sameGuestSession(session)) {
           t.execStarting = false;
           renderContainerLogs(t);
         }
@@ -1804,9 +2152,11 @@ if (root) {
 
   async function startLogStream(t) {
     if (!t || t.type !== "container" || !t.follow || t.stream || t.streamStarting) return;
+    const session = cliGuestServicesSession();
+    if (!session) return;
     if (t.logRefreshPromise) await t.logRefreshPromise;
     if (t.stopPromise) await t.stopPromise;
-    if (!t.follow || t.stream) return;
+    if (!t.follow || t.stream || !sameGuestSession(session)) return;
     const generation = ++t.streamGeneration;
     const command = `wvrun logs -f ${shq(t.id)}`;
     t.streamStarting = true;
@@ -1820,11 +2170,11 @@ if (root) {
     let handle = null;
     try {
       handle = api().stream(command, (line) => {
-        if (t.streamGeneration !== generation || !t.follow) return;
+        if (t.streamGeneration !== generation || !t.follow || !sameGuestSession(session)) return;
         appendContainerLogLine(t, line);
       }, {
         onEnd: ({ error, exit, natural }) => {
-          if (t.streamGeneration !== generation) return;
+          if (t.streamGeneration !== generation || !sameGuestSession(session)) return;
           if (t.stream === handle) t.stream = null;
           t.streamStarting = false;
           t.streamStopping = false;
@@ -1842,24 +2192,30 @@ if (root) {
           if (natural) void refreshContainers({ force: true });
         },
       });
-      if (t.streamGeneration !== generation || !t.follow) {
+      if (t.streamGeneration !== generation || !t.follow || !sameGuestSession(session)) {
         await handle.stop();
         return;
       }
       t.stream = handle;
     } catch (error) {
-      t.logsCode = error?.code || "STREAM_START_FAILED";
-      t.logsError = error?.message || String(error);
-      t.follow = false;
-      if (t.followEl) t.followEl.checked = false;
+      if (sameGuestSession(session)) {
+        t.logsCode = error?.code || "STREAM_START_FAILED";
+        t.logsError = error?.message || String(error);
+        t.follow = false;
+        if (t.followEl) t.followEl.checked = false;
+      }
     } finally {
-      t.streamStarting = false;
-      renderContainerLogs(t);
+      if (sameGuestSession(session)) {
+        t.streamStarting = false;
+        renderContainerLogs(t);
+      }
     }
   }
 
   async function refreshContainerLogs(t) {
     if (!t || t.type !== "container") return;
+    const session = cliGuestServicesSession();
+    if (!session) return;
     if (t.logRefreshPromise) return t.logRefreshPromise;
     const request = (async () => {
       await stopLogStream(t, "refresh");
@@ -1871,9 +2227,11 @@ if (root) {
       renderContainerLogs(t);
       try {
         const res = await bgExec(command, 30000);
+        if (!sameGuestSession(session)) return;
         if (!res || Number(res.exit) !== 0) throw guestCommandFailure(command, res, "LOGS_FAILED");
         replaceContainerLogs(t, res.stdout);
       } catch (error) {
+        if (!sameGuestSession(session)) return;
         t.logsLoading = false;
         t.logsCode = error?.code || "LOGS_FAILED";
         t.logsError = error?.message || String(error);
@@ -1929,7 +2287,9 @@ if (root) {
   }
 
   async function runContainerAction(row, kind) {
-    if (!runtimeReady() || containerLedger.action) return;
+    const session = cliGuestServicesSession();
+    if (!session || !runtimeReady() || containerLedger.action) return;
+    const generation = dockerRuntime.generation;
     let confirmed = containerLedger.rows.find((item) => item.id === row.id);
     if (!confirmed) return;
     const name = confirmed.name || confirmed.id;
@@ -2028,12 +2388,15 @@ if (root) {
         throw failure;
       }
     } catch (error) {
+      if (generation !== dockerRuntime.generation || !sameGuestSession(session)) return;
       containerLedger.code = error?.code || "ACTION_FAILED";
       containerLedger.error = error?.message || String(error);
       if (error?.command) containerLedger.lastCommand = error.command;
     } finally {
-      containerLedger.action = null;
-      repaintContainerList();
+      if (generation === dockerRuntime.generation && sameGuestSession(session)) {
+        containerLedger.action = null;
+        repaintContainerList();
+      }
     }
   }
 
@@ -2085,6 +2448,10 @@ if (root) {
 
   function renderDocker() {
     dkEl.replaceChildren();
+    if (guestSession()?.key === "omarchy") {
+      dkEl.appendChild(mk("div", "ide-dk-note", "Docker services are unavailable for this guest session."));
+      return;
+    }
     void probeAlpineAssets();
     if (ready() && dockerRuntime.status === "unknown") probeDockerRuntime();
     if (runtimeReady()) void loadDockerCatalog();
@@ -2177,7 +2544,8 @@ if (root) {
   }
 
   async function runImage(img) {
-    if (!runtimeReady() || dockerCatalog.status !== "available" || !img.bundlePath ||
+    const session = cliGuestServicesSession();
+    if (!session || !runtimeReady() || dockerCatalog.status !== "available" || !img.bundlePath ||
       img.bundlePresent === false || dockerCatalog.lastRun?.status === "starting") return;
     const { name, cmd } = wvrunRunCmd(img);
     dockerCatalog.lastRun = {
@@ -2187,6 +2555,7 @@ if (root) {
     renderDocker();
     try {
       const res = await bgExec(cmd, 60000);
+      if (!sameGuestSession(session)) return;
       const exit = Number(res?.exit);
       if (!Number.isFinite(exit) || exit !== 0) {
         const raw = String(res?.stdout || "").trim();
@@ -2221,6 +2590,7 @@ if (root) {
       renderDocker();
       await refreshContainers();
     } catch (error) {
+      if (!sameGuestSession(session)) return;
       dockerCatalog.lastRun = {
         ...dockerCatalog.lastRun, status: "failed", code: error?.code || "RUN_FAILED",
         exit: error?.exit ?? null, error: error?.message || String(error), stdout: error?.stdout || "",
@@ -2230,7 +2600,8 @@ if (root) {
   }
 
   async function refreshContainers({ force = false } = {}) {
-    if (sideView !== "docker" || !runtimeReady()) return null;
+    const session = cliGuestServicesSession();
+    if (!session || sideView !== "docker" || !runtimeReady()) return null;
     if (containerLedger.action && !force) return null;
     if (containerRefreshPromise) return containerRefreshPromise;
     const list = document.getElementById("ide-dk-clist");
@@ -2242,6 +2613,7 @@ if (root) {
     const request = (async () => {
       try {
         const res = await bgExec("wvrun ps -a", 30000);
+        if (!sameGuestSession(session)) return null;
         if (!res || Number(res.exit) !== 0) throw guestCommandFailure("wvrun ps -a", res, "PS_FAILED");
         const rows = parsePs(res.stdout);
         containerLedger.rows = rows;
@@ -2250,13 +2622,14 @@ if (root) {
         containerLedger.code = "";
         return rows;
       } catch (error) {
+        if (!sameGuestSession(session)) return null;
         containerLedger.status = "error";
         containerLedger.code = error?.code || "PS_FAILED";
         containerLedger.error = error?.message || String(error);
         return null;
       } finally {
         containerRefreshPromise = null;
-        repaintContainerList();
+        if (sameGuestSession(session)) repaintContainerList();
       }
     })();
     containerRefreshPromise = request;
@@ -2447,6 +2820,7 @@ if (root) {
   function showBooting(event = null) {
     // The initial noAutoBoot render is offline, not an in-flight boot. Only the real lifecycle
     // event (or a Docker-tab boot already claimed by this UI) should lock the Alpine affordance.
+    initializedGuestServices = null;
     void stopAllLogStreams("boot");
     resetDockerRuntime(event?.type === "wvm:guest-booting" || dockerRuntime.booting ? "booting" : "unknown");
     explorerEl.innerHTML =
@@ -2457,11 +2831,21 @@ if (root) {
     if (sideView === "docker") renderDocker();
   }
   function showReady() {
-    resetDockerRuntime("unknown");
-    loadTree();
+    const session = cliGuestServicesSession();
+    const firstReadyForSession = session && !sameGuestSession(initializedGuestServices);
+    if (!session) {
+      initializedGuestServices = null;
+      resetDockerRuntime("unknown");
+      explorerEl.innerHTML = '<div class="ide-explorer-ph">Explorer services are disabled for the Omarchy desktop session.</div>';
+    } else if (firstReadyForSession) {
+      initializedGuestServices = session;
+      resetDockerRuntime("unknown");
+      loadTree();
+    }
     if (!tabs.length) showNoTab();
     refreshGuestStatus();
-    if (sideView === "docker") { renderDocker(); startPsPoll(); }
+    if (firstReadyForSession && sideView === "docker") { renderDocker(); startPsPoll(); }
+    else if (!session) stopPsPoll();
   }
 
   window.addEventListener("wvm:guest-ready", showReady);

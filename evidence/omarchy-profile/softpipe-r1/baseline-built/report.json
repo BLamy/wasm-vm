@@ -1,0 +1,314 @@
+{
+  "url": "http://127.0.0.1:64886/app.html?guest=omarchy&desktop=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A64886#ide",
+  "mode": "verify",
+  "startedAt": "2026-09-10T13:35:19.643Z",
+  "errors": [],
+  "observations": [
+    {
+      "layout": {
+        "label": "initial",
+        "e2eShowall": false,
+        "visiblePanels": [
+          "panel-ide"
+        ],
+        "url": "http://127.0.0.1:64886/app.html?guest=omarchy&desktop=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A64886#ide"
+      }
+    },
+    {
+      "serviceWorker": {
+        "label": "initial",
+        "controllerScriptURL": "http://127.0.0.1:64886/sw.js",
+        "registrationActiveURL": "http://127.0.0.1:64886/sw.js"
+      }
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/softpipe-r1/baseline-built/latest.png",
+      "sha256": "d8a2dcbf1c925154e70693c62421487299613348a1558cca9bac6ddbabb8fc41"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/softpipe-r1/baseline-built/latest.png",
+      "sha256": "3e021cc7e35d411e2146a46133622afa996475f4948241e303b1af06d79ae599"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/softpipe-r1/baseline-built/latest.png",
+      "sha256": "3e021cc7e35d411e2146a46133622afa996475f4948241e303b1af06d79ae599"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/softpipe-r1/baseline-built/desktop.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T13:37:25.527Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:64886/app.html?guest=omarchy&desktop=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A64886#ide",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+        "stdout": "[{\n    \"address\": \"0x55555eb73630\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 503,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}]\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "indexedDb": {
+        "label": "initial desktop",
+        "names": [],
+        "omarchyPersistent": []
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T13:37:32.776Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:64886/app.html?guest=omarchy&desktop=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A64886#ide",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances",
+        "stdout": "[\n{\n    \"instance\": \"efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177\",\n    \"time\": 1789006846,\n    \"pid\": 417,\n    \"wl_socket\": \"wayland-1\"\n}\n]\n\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T13:37:40.983Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:64886/app.html?guest=omarchy&desktop=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A64886#ide",
+        "command": "tr '\\000' '\\n' < /proc/417/environ | sed -n '/^GALLIUM_DRIVER=/p;/^LIBGL_ALWAYS_SOFTWARE=/p;/^LP_NUM_THREADS=/p'",
+        "stdout": "LIBGL_ALWAYS_SOFTWARE=1\nGALLIUM_DRIVER=llvmpipe\nLP_NUM_THREADS=1\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T13:37:48.379Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:64886/app.html?guest=omarchy&desktop=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A64886#ide",
+        "command": "ps -T -p 417 -o comm=",
+        "stdout": "Hyprland\nHyprland\nllvmpipe-0\nHyprland\nHyprlan:disk$0\nHyprlan:disk$1\nHyprlan:disk$2\nHyprlan:disk$3\npool-spawner\ngmain\ndconf worker\ngdbus\n[pango] fontcon\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "exec": {
+        "timestamp": "2026-09-10T13:37:55.326Z",
+        "context": "primary",
+        "url": "http://127.0.0.1:64886/app.html?guest=omarchy&desktop=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A64886#ide",
+        "command": "sed -n '/DEBUG ]: Renderer:/p;/DEBUG ]: Vendor:/p' /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177/hyprland.log",
+        "stdout": "\n",
+        "exit": 0
+      }
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/softpipe-r1/baseline-built/failure.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    }
+  ],
+  "candidate": {
+    "localOnly": true,
+    "source": {
+      "kind": "local-only-candidate",
+      "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/releases/boot-snapshot",
+      "chunkDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/chunks",
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      },
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/boot-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "image": {
+        "imageLen": 4294967296,
+        "chunkSize": 262144,
+        "chunkCount": 16384
+      }
+    },
+    "manifest": {
+      "generated": "LOCAL-ONLY diagnostic candidate (not a release claim)",
+      "artifacts": {
+        "kernel": {
+          "url": "/candidate/kernel",
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "size": 24208896
+        },
+        "bootSnapshot": {
+          "url": "/candidate/boot-snapshot",
+          "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5",
+          "size": 205050833
+        },
+        "overlayDelta": {
+          "url": "/candidate/overlay-delta",
+          "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+          "size": 1209196
+        }
+      },
+      "chunkedImage": {
+        "key": "chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+        "size": 1097812
+      }
+    }
+  },
+  "identities": {
+    "entryUrl": "http://127.0.0.1:64886/app.html?guest=omarchy&desktop=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A64886#ide",
+    "files": {
+      "main.js": {
+        "url": "http://127.0.0.1:64886/main.js",
+        "status": 200,
+        "contentType": "text/javascript; charset=utf-8",
+        "size": 148354,
+        "sha256": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757"
+      },
+      "ide.js": {
+        "url": "http://127.0.0.1:64886/ide.js",
+        "status": 200,
+        "contentType": "text/javascript; charset=utf-8",
+        "size": 133580,
+        "sha256": "afe853ea07d6ba97487f011de68197eb53d9d549a0781e569c08d577c8983e93"
+      },
+      "roadmap.js": {
+        "url": "http://127.0.0.1:64886/roadmap.js",
+        "status": 200,
+        "contentType": "text/javascript; charset=utf-8",
+        "size": 49063,
+        "sha256": "05c00a984a464245146a6496483dd97f5ecfca7843e6bb4d90db1f626af31272"
+      },
+      "loader.js": {
+        "url": "http://127.0.0.1:64886/loader.js",
+        "status": 200,
+        "contentType": "text/javascript; charset=utf-8",
+        "size": 79246,
+        "sha256": "26a4c9fa0284a99c39e2bd2f3f6457b77aebb4724e026bad2a2dc7d7f1d0d6a3"
+      },
+      "guest-rpc.js": {
+        "url": "http://127.0.0.1:64886/guest-rpc.js",
+        "status": 200,
+        "contentType": "text/javascript; charset=utf-8",
+        "size": 3995,
+        "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+      },
+      "pkg/wasm_vm_wasm_bg.wasm": {
+        "url": "http://127.0.0.1:64886/pkg/wasm_vm_wasm_bg.wasm",
+        "status": 200,
+        "contentType": "application/wasm",
+        "size": 1566204,
+        "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+      },
+      "artifacts-omarchy.json": {
+        "url": "http://127.0.0.1:64886/artifacts-omarchy.json",
+        "status": 200,
+        "contentType": "application/json",
+        "size": 707,
+        "sha256": "026d773acfcaa8ffa3dc76e5b3e784c370712b7c3dfdb6545748f6f2d726e2aa"
+      }
+    }
+  },
+  "restored": true,
+  "foot": {
+    "address": "0x55555eb73630",
+    "mapped": true,
+    "hidden": false,
+    "visible": true,
+    "acceptsInput": true,
+    "at": [
+      12,
+      38
+    ],
+    "size": [
+      1256,
+      750
+    ],
+    "workspace": {
+      "id": 1,
+      "name": "1"
+    },
+    "floating": false,
+    "monitor": 0,
+    "class": "foot",
+    "title": "omarchy@omarchy-demo:~",
+    "initialClass": "foot",
+    "initialTitle": "foot",
+    "pid": 503,
+    "xwayland": false,
+    "pinned": false,
+    "pinFullscreened": false,
+    "fullscreen": 0,
+    "fullscreenClient": 0,
+    "fullscreenHandler": "default",
+    "allowedOverFullscreen": true,
+    "grouped": [],
+    "tags": [
+      "default-opacity*",
+      "terminal*"
+    ],
+    "swallowing": "0x0",
+    "focusHistoryID": 0,
+    "inhibitingIdle": false,
+    "xdgTag": "",
+    "xdgDescription": "",
+    "contentType": "none",
+    "tearingHint": false,
+    "stableId": "18000000"
+  },
+  "result": "failed",
+  "error": "AssertionError [ERR_ASSERTION]: Renderer log line is absent or ambiguous\n\n0 !== 1\n\n    at parseHyprlandRendererLog (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-renderer-log.mjs:20:10)\n    at proveHyprlandRenderer (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:567:21)\n    at async file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:908:25",
+  "events": [
+    {
+      "type": "wvm:guest-booting",
+      "ms": 710.5149999856949
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "fetching"
+      },
+      "ms": 725.5649999380112
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "instantiating"
+      },
+      "ms": 794.3550000190735
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "restoring"
+      },
+      "ms": 799.0249999761581
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "restoring"
+      },
+      "ms": 919.9800000190735
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "restored"
+      },
+      "ms": 4676.8949999809265
+    },
+    {
+      "type": "wvm:guest-ready",
+      "ms": 4773.860000014305
+    },
+    {
+      "type": "wvm:desktop-ready",
+      "detail": {},
+      "ms": 64080.485000014305
+    }
+  ],
+  "finishedAt": "2026-09-10T13:37:55.360Z"
+}

@@ -1,0 +1,5 @@
+{"path":"sw.js","status":200,"bytes":5053,"sha256":"d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"}
+{"path":"artifacts-omarchy.json","status":200,"bytes":1175,"sha256":"f9167b5f37964ffc614e3c5dc4bce99f2bf8a804a226fb02181c6a42761203e0"}
+{"path":"main.js","status":200,"bytes":148354,"sha256":"a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757"}
+{"path":"loader.js","status":200,"bytes":78394,"sha256":"0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"}
+{"path":"pkg/wasm_vm_wasm_bg.wasm","status":200,"bytes":1566204,"sha256":"c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"}

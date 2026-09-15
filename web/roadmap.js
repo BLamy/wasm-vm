@@ -151,6 +151,7 @@ export const ROADMAP = [
       { name: "Hardware cursor plane mode/lifecycle", status: "verified", evidence: "E5-T15d: independent checkerboard/hotspot, transform-only 500 Hz MOVE, delayed-present coalescing, oversize fallback, hide, and lifecycle proof" },
       { name: "Desktop cold boot — wallpaper/panel/WM menu", status: "verified", evidence: "E5-T18e: manifest-rebuilt image, 25 cache-disabled local Chromium boots plus warm prime/reload; real cursor and Terminal, all worker fetches observed, fresh verifier sign-off" },
       { name: "Desktop Terminal launcher + T12 keyboard", status: "verified", evidence: "E5-T18b: local Chromium menu/open/type/close proof" },
+      { name: "Omarchy full-screen desktop and fresh warm launch", status: "in-progress", evidence: "E5.5-T03c verifies coherent SDR snapshot rendering and host-side viewport fitting. E5.5-T03e verifies hash-checked persistent boot-file caching and accurate restore phases, including zero boot-artifact downloads on production reload. Guest sessions remain ephemeral. E5.5-T03a is blocked on the pending T03d input-latency remedy; responsive desktop and guest modesets are not yet verified." },
       { name: "Desktop cursor alignment + DPR hit-testing", status: "verified", evidence: "E5-T18c: four fresh local Chromium contexts, two window cycles each, exact guest cursor alignment and boundary hit-tests at DPR 1 and 2" },
       { name: "Desktop snapshot reload + interaction round-trip", status: "in-progress", evidence: "E5-T26f: Chromium save/reload/restore CRC, agent re-handshake, drag recovery, keyboard, cursor, and gesture-audio proof" },
       { name: "Opt-in desktop monotonic clock", status: "verified", evidence: "E5-T26i: real worker rdtime and restore/pause lifecycle verified; measured wall mode did not improve interaction latency, so icount remains the default" },
@@ -784,6 +785,9 @@ function wireControls() {
   timelineBtn?.classList.toggle("active", state.view === "timeline");
   timelineBtn?.setAttribute("aria-selected", String(state.view === "timeline"));
   document.addEventListener("keydown", (e) => {
+    // A guest canvas owns its keyboard. Never steal a captured slash (or Escape)
+    // for the host roadmap, including when explicit UI-test hooks reveal panels.
+    if (e.defaultPrevented || document.documentElement.dataset.wvmDesktop === "omarchy") return;
     if (e.key === "Escape") closeDetail();
     if (e.key === "/" && document.activeElement !== search && !document.getElementById("rm-detail")?.hidden === false) {
       // focus search unless typing in a field

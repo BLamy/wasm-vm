@@ -1,0 +1,13 @@
+✔ owned watchdog caps setup and navigation once, and normal close cancels timers (3.924083ms)
+✔ stalled owned browser/recorder is killed and missing close settles as unconfirmed (3.524208ms)
+✔ already exited browser is not killed; watchdog intervention never looks like a normal pass (0.516125ms)
+✔ future/invalid navigation cannot extend setup (0.4535ms)
+✔ recorder exit cannot orphan its browser or kill an already-exited recorder group (0.860458ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3402.611166

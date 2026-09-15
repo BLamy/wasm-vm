@@ -1,0 +1,17 @@
+✔ normal PASS is published only after both owned cleanup steps confirm (19.475667ms)
+✔ deadline failure is irreversible when late run completes during failure PNG (18.799ms)
+✔ completion after absolute deadline fails even before the timer callback executes (2.617625ms)
+✔ hung failure PNG and browser close cannot block server cleanup or FAIL receipt (24.212791ms)
+✔ unconfirmed or hung cleanup turns successful observations into FAIL (37.582542ms)
+✔ server cleanup kills surviving child group even if shell already exited/killed (17.072625ms)
+✔ server group surviving TERM receives KILL and must confirm gone plus child close (40.322542ms)
+✔ pre-existing server is not signaled; invalid group identity fails closed (0.519083ms)
+✔ actual recorder retains public URL/five-minute deadline and delegates final verdict (0.801375ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 435.188959

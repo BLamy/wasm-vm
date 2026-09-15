@@ -1,0 +1,1003 @@
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.000000] efi: UEFI not found.
+[    0.000000] Zone ranges:
+[    0.000000]   DMA32    [mem 0x0000000080000000-0x00000000bfffffff]
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x00000000bfffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000000bfffffff]
+[    0.000000] SBI HSM extension detected
+[    0.000000] Falling back to deprecated "riscv,isa"
+[    0.000000] riscv: base ISA extensions acdfim
+[    0.000000] riscv: ELF capabilities acdfim
+[    0.000000] percpu: Embedded 18 pages/cpu s42104 r0 d31624 u73728
+[    0.000000] Kernel command line: root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0
+[    0.000000] Dentry cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 65536 (order: 7, 524288 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 258048
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]       fixmap : 0xff1bfffffea00000 - 0xff1bffffff000000   (6144 kB)
+[    0.000000]       pci io : 0xff1bffffff000000 - 0xff1c000000000000   (  16 MB)
+[    0.000000]      vmemmap : 0xff1c000000000000 - 0xff20000000000000   (1024 TB)
+[    0.000000]      vmalloc : 0xff20000000000000 - 0xff60000000000000   (16384 TB)
+[    0.000000]      modules : 0xffffffff0179e000 - 0xffffffff80000000   (2024 MB)
+[    0.000000]       lowmem : 0xff60000000000000 - 0xff60000040000000   (1024 MB)
+[    0.000000]       kernel : 0xffffffff80000000 - 0xffffffffffffffff   (2047 MB)
+[    0.000000] Memory: 989528K/1048576K available (10367K kernel code, 5056K rwdata, 4096K rodata, 2201K init, 539K bss, 59048K reserved, 0K cma-reserved)
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=1.
+[    0.000000] rcu: 	RCU debug extended QS entry/exit.
+[    0.000000] 	Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=1
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] riscv-intc: 64 local interrupts mapped
+[    0.000000] plic: plic@c000000: mapped 95 interrupts with 1 handlers for 2 contexts.
+[    0.000000] riscv: providing IPIs using SBI IPI extension
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff max_cycles: 0x24e6a1710, max_idle_ns: 440795202120 ns
+[    0.000000] sched_clock: 64 bits at 10MHz, resolution 100ns, wraps every 4398046511100ns
+[    0.000203] Console: colour dummy device 80x25
+[    0.000234] Calibrating delay loop (skipped), value calculated using timer frequency.. 20.00 BogoMIPS (lpj=40000)
+[    0.000259] pid_max: default: 32768 minimum: 301
+[    0.000338] LSM: initializing lsm=capability,integrity
+[    0.000455] Mount-cache hash table entries: 2048 (order: 2, 16384 bytes, linear)
+[    0.000478] Mountpoint-cache hash table entries: 2048 (order: 2, 16384 bytes, linear)
+[    0.002303] RCU Tasks Trace: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.
+[    0.002413] riscv: ELF compat mode unsupported
+[    0.002425] ASID allocator using 16 bits (65536 entries)
+[    0.002589] rcu: Hierarchical SRCU implementation.
+[    0.002601] rcu: 	Max phase no-delay instances is 1000.
+[    0.002835] EFI services will not be available.
+[    0.002966] smp: Bringing up secondary CPUs ...
+[    0.002983] smp: Brought up 1 node, 1 CPU
+[    0.003459] devtmpfs: initialized
+[    0.005127] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.005151] futex hash table entries: 256 (order: 2, 16384 bytes, linear)
+[    0.005307] pinctrl core: initialized pinctrl subsystem
+[    0.006793] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.007473] DMA: preallocated 128 KiB GFP_KERNEL pool for atomic allocations
+[    0.007506] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    0.007557] audit: initializing netlink subsys (disabled)
+[    0.008102] thermal_sys: Registered thermal governor 'step_wise'
+[    0.008129] audit: type=2000 audit(0.004:1): state=initialized audit_enabled=0 res=1
+[    0.008171] cpuidle: using governor menu
+[    0.032092] cpu0: Ratio of byte access time to unaligned word access is 8.08, unaligned accesses are fast
+[    0.035478] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.035493] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.100171] raid6: int64x8  gen()   268 MB/s
+[    0.168235] raid6: int64x4  gen()   364 MB/s
+[    0.236329] raid6: int64x2  gen()   375 MB/s
+[    0.304409] raid6: int64x1  gen()   332 MB/s
+[    0.304422] raid6: using algorithm int64x2 gen() 375 MB/s
+[    0.372503] raid6: .... xor() 204 MB/s, rmw enabled
+[    0.372516] raid6: using intx1 recovery algorithm
+[    0.372662] ACPI: Interpreter disabled.
+[    0.372786] iommu: Default domain type: Translated
+[    0.372799] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.373338] SCSI subsystem initialized
+[    0.373862] Advanced Linux Sound Architecture Driver Initialized.
+[    0.374832] clocksource: Switched to clocksource riscv_clocksource
+[    0.375169] pnp: PnP ACPI: disabled
+[    0.384729] NET: Registered PF_INET protocol family
+[    0.384971] IP idents hash table entries: 16384 (order: 5, 131072 bytes, linear)
+[    0.389381] tcp_listen_portaddr_hash hash table entries: 512 (order: 2, 16384 bytes, linear)
+[    0.389428] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.389454] TCP established hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.389622] TCP bind hash table entries: 8192 (order: 7, 524288 bytes, linear)
+[    0.390306] TCP: Hash tables configured (established 8192 bind 8192)
+[    0.390380] UDP hash table entries: 512 (order: 3, 49152 bytes, linear)
+[    0.390461] UDP-Lite hash table entries: 512 (order: 3, 49152 bytes, linear)
+[    0.390644] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.391105] RPC: Registered named UNIX socket transport module.
+[    0.391118] RPC: Registered udp transport module.
+[    0.391131] RPC: Registered tcp transport module.
+[    0.391143] RPC: Registered tcp-with-tls transport module.
+[    0.391157] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    0.391208] kvm [1]: hypervisor extension not available
+[    0.392040] workingset: timestamp_bits=46 max_order=18 bucket_order=0
+[    0.392567] NFS: Registering the id_resolver key type
+[    0.392610] Key type id_resolver registered
+[    0.392622] Key type id_legacy registered
+[    0.392654] nfs4filelayout_init: NFSv4 File Layout Driver Registering...
+[    0.392674] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver Registering...
+[    0.392839] 9p: Installing v9fs 9p2000 file system support
+[    0.456192] jitterentropy: Initialization failed with host not compliant with requirements: 9
+[    0.456209] NET: Registered PF_ALG protocol family
+[    0.456225] xor: measuring software checksum speed
+[    0.459152]    8regs           :  1125 MB/sec
+[    0.462078]    8regs_prefetch  :  1126 MB/sec
+[    0.465007]    32regs          :  1125 MB/sec
+[    0.467939]    32regs_prefetch :  1124 MB/sec
+[    0.467952] xor: using function: 8regs_prefetch (1126 MB/sec)
+[    0.468002] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 246)
+[    0.468018] io scheduler mq-deadline registered
+[    0.468031] io scheduler kyber registered
+[    0.468055] io scheduler bfq registered
+[    0.471527] input: wasm-vm virtio keyboard as /devices/platform/soc/10004000.virtio_mmio/virtio3/input/input0
+[    0.471925] input: wasm-vm virtio tablet as /devices/platform/soc/10005000.virtio_mmio/virtio4/input/input1
+[    0.472309] input: wasm-vm virtio mouse as /devices/platform/soc/10006000.virtio_mmio/virtio5/input/input2
+[    0.532098] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+[    0.534204] printk: console [ttyS0] disabled
+[    0.534555] 10000000.serial: ttyS0 at MMIO 0x10000000 (irq = 15, base_baud = 230400) is a 16550A
+[    0.534588] printk: console [ttyS0] enabled
+[    0.534615] printk: bootconsole [sbi0] disabled
+[    0.534588] printk: console [ttyS0] enabled
+[    0.534615] printk: bootconsole [sbi0] disabled
+[    0.535024] SuperH (H)SCI(F) driver initialized
+[    0.537099] random: crng init done
+[    0.538167] [drm] features: -virgl +edid -resource_blob -host_visible
+[    0.538175] [drm] features: -context_init
+[    0.538355] [drm] number of scanouts: 1
+[    0.538373] [drm] number of cap sets: 0
+[    0.539152] [drm] Initialized virtio_gpu 0.1.0 0 for 10008000.virtio_mmio on minor 0
+[    0.565296] Console: switching to colour frame buffer device 160x50
+[    0.583491] virtio-mmio 10008000.virtio_mmio: [drm] fb0: virtio_gpudrmfb frame buffer device
+[    0.588934] loop: module loaded
+[    0.588982] virtio_blk virtio0: 1/0/0 default/read/poll queues
+[    0.589181] virtio_blk virtio0: [vda] 8388608 512-byte logical blocks (4.29 GB/4.00 GiB)
+[    0.593598] mousedev: PS/2 mouse device common for all mice
+[    0.594335] goldfish_rtc 101000.rtc: registered as rtc0
+[    0.594364] goldfish_rtc 101000.rtc: setting system clock to 2026-09-10T15:14:32 UTC (1789053272)
+[    0.594881] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+[    0.594919] syscon-poweroff: probe of poweroff failed with error -16
+[    0.595250] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+[    0.595679] sdhci: Secure Digital Host Controller Interface driver
+[    0.595702] sdhci: Copyright(c) Pierre Ossman
+[    0.595875] sdhci-pltfm: SDHCI platform and OF driver helper
+[    0.597492] IPVS: Registered protocols (TCP, UDP)
+[    0.597517] IPVS: Connection hash table configured (size=4096, memory=32Kbytes)
+[    0.597682] IPVS: ipvs loaded.
+[    0.597699] IPVS: [rr] scheduler registered.
+[    0.597976] Initializing XFRM netlink socket
+[    0.598034] NET: Registered PF_INET6 protocol family
+[    0.598918] Segment Routing with IPv6
+[    0.598962] In-situ OAM (IOAM) with IPv6
+[    0.599104] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    0.599680] NET: Registered PF_PACKET protocol family
+[    0.599737] Bridge firewalling registered
+[    0.599799] 8021q: 802.1Q VLAN Support v1.8
+[    0.599889] 9pnet: Installing 9P2000 support
+[    0.599947] Key type dns_resolver registered
+[    0.634569] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
+[    0.636406] Btrfs loaded, zoned=no, fsverity=no
+[    0.636794] Legacy PMU implementation is available
+[    0.636957] clk: Disabling unused clocks
+[    0.636980] ALSA device list:
+[    0.636995]   #0: VirtIO SoundCard at platform/10007000.virtio_mmio/virtio6
+[    0.640315] EXT4-fs (vda): mounted filesystem d07702aa-4f31-44b2-a5b0-9dbec2511e25 r/w with ordered data mode. Quota mode: disabled.
+[    0.640361] VFS: Mounted root (ext4 filesystem) on device 254:0.
+[    0.640504] devtmpfs: mounted
+[    0.641486] Freeing unused kernel image (initmem) memory: 2200K
+[    0.641512] Run /sbin/init as init process
+P+q6E616D65\[18t7[32766;32766H[6n8[!p]104\[0m[?7h[1G[0J[    1.604106] systemd[1]: systemd 261.2-1-arch running in system mode (+PAM +AUDIT -SELINUX +APPARMOR -IMA +IPE +SMACK +SECCOMP +GCRYPT +GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 +KMOD +LIBCRYPTSETUP +LIBCRYPTSETUP_PLUGINS +LIBFDISK +PCRE2 +PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD +BPF_FRAMEWORK +BTF +XKBCOMMON +UTMP +LIBARCHIVE)
+[    1.604160] systemd[1]: Detected architecture riscv64.
+
+[0;1;39mWelcome to [0m[38;2;23;147;209mArch Linux[0m[0;1;39m![0m
+
+[    1.606536] systemd[1]: Initializing machine ID from random generator.
+[    1.609054] systemd[1]: Hostname set to <omarchy-demo>.
+]3008;start=1674980098c64c91b8f91f883cbbab4e;user=root;hostname=omarchy-demo;machineid=a02af58c7f2345bd88505c0657b4c7c2;bootid=bc2e9d0c97a34361998e7cda29e0d0c0;pid=1;comm=systemd;type=boot\[    2.132142] systemd[1]: bpf-restrict-fs: BPF LSM hook not enabled in the kernel, BPF LSM not supported.
+[    3.408078] systemd[1]: Queued start job for default target Graphical Interface.
+[    3.429674] systemd[1]: Created slice Slice /system/dirmngr.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/dirmngr[0m.
+[    3.432401] systemd[1]: Created slice Slice /system/gpg-agent.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent[0m.
+[    3.435001] systemd[1]: Created slice Slice /system/gpg-agent-browser.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent-browser[0m.
+[    3.437604] systemd[1]: Created slice Slice /system/gpg-agent-extra.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent-extra[0m.
+[    3.440246] systemd[1]: Created slice Slice /system/gpg-agent-ssh.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent-ssh[0m.
+[    3.442908] systemd[1]: Created slice Slice /system/keyboxd.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/keyboxd[0m.
+[    3.445542] systemd[1]: Created slice Slice /system/modprobe.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/modprobe[0m.
+[    3.448158] systemd[1]: Created slice Slice /system/serial-getty.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/serial-getty[0m.
+[    3.449720] systemd[1]: Created slice User and Session Slice.
+[[0;32m  OK  [0m] Created slice [0;1;39mUser and Session Slice[0m.
+[    3.450287] systemd[1]: Started Forward Password Requests to Wall Directory Watch.
+[[0;32m  OK  [0m] Started [0;1;39mForward Password Requests to Wall Directory Watch[0m.
+[    3.450759] systemd[1]: Arbitrary Executable File Formats File System Automount Point skipped, unmet condition check ConditionPathExists=/proc/sys/fs/binfmt_misc
+[    3.450895] systemd[1]: Expecting device /dev/ttyS0...
+         Expecting device [0;1;39m/dev/ttyS0[0m...
+[    3.451375] systemd[1]: Reached target Image Downloads.
+[[0;32m  OK  [0m] Reached target [0;1;39mImage Downloads[0m.
+[    3.451805] systemd[1]: Reached target Local Integrity Protected Volumes.
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal Integrity Protected Volumes[0m.
+[    3.452334] systemd[1]: Reached target Slice Units.
+[[0;32m  OK  [0m] Reached target [0;1;39mSlice Units[0m.
+[    3.452780] systemd[1]: Reached target Swaps.
+[[0;32m  OK  [0m] Reached target [0;1;39mSwaps[0m.
+[    3.453272] systemd[1]: Reached target Local Verity Protected Volumes.
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal Verity Protected Volumes[0m.
+[    3.454023] systemd[1]: Listening on Device-mapper event daemon FIFOs.
+[[0;32m  OK  [0m] Listening on [0;1;39mDevice-mapper event daemon FIFOs[0m.
+[    3.469611] systemd[1]: Listening on Query the User Interactively for a Password.
+[[0;32m  OK  [0m] Listening on [0;1;39mQuery the User Interactively for a Password[0m.
+[    3.483721] systemd[1]: Listening on Process Core Dump Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39mProcess Core Dump Socket[0m.
+[    3.493567] systemd[1]: Listening on Credential Encryption/Decryption.
+[[0;32m  OK  [0m] Listening on [0;1;39mCredential Encryption/Decryption[0m.
+[    3.509411] systemd[1]: Listening on Factory Reset Management.
+[[0;32m  OK  [0m] Listening on [0;1;39mFactory Reset Management[0m.
+[    3.510051] systemd[1]: Listening on Hostname Service Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39mHostname Service Socket[0m.
+[    3.510913] systemd[1]: Listening on Journal Socket (/dev/log).
+[[0;32m  OK  [0m] Listening on [0;1;39mJournal Socket (/dev/log)[0m.
+[    3.511682] systemd[1]: Listening on Journal Sockets.
+[[0;32m  OK  [0m] Listening on [0;1;39mJournal Sockets[0m.
+[    3.527593] systemd[1]: Listening on Console Output Muting Service Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39mConsole Output Muting Service Socket[0m.
+[    3.528112] systemd[1]: TPM PCR Measurements skipped, unmet condition check ConditionSecurity=measured-os
+[    3.528259] systemd[1]: Make TPM PCR Policy skipped, unmet condition check ConditionSecurity=measured-uki
+[    3.538267] systemd[1]: Listening on Disk Repartitioning Service Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39mDisk Repartitioning Service Socket[0m.
+[    3.554238] systemd[1]: Listening on Simple Block Device Backed Storage Provider.
+[[0;32m  OK  [0m] Listening on [0;1;39mSimple Block Device Backed Storage Provider[0m.
+[    3.570426] systemd[1]: Listening on Simple File System Backed Storage Provider.
+[[0;32m  OK  [0m] Listening on [0;1;39mSimple File System Backed Storage Provider[0m.
+[    3.571176] systemd[1]: Listening on udev Control Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39mudev Control Socket[0m.
+[    3.571781] systemd[1]: Listening on udev Kernel Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39mudev Kernel Socket[0m.
+[    3.572427] systemd[1]: Listening on udev Varlink Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39mudev Varlink Socket[0m.
+[    3.579014] systemd[1]: Mounting Huge Pages File System...
+         Mounting [0;1;39mHuge Pages File System[0m...
+[    3.591052] systemd[1]: Mounting POSIX Message Queue File System...
+         Mounting [0;1;39mPOSIX Message Queue File System[0m...
+[    3.606999] systemd[1]: Mounting Kernel Debug File System...
+         Mounting [0;1;39mKernel Debug File System[0m...
+[    3.607905] systemd[1]: Kernel Trace File System skipped, unmet condition check ConditionPathExists=/sys/kernel/tracing
+[    3.608698] systemd[1]: tmp.mount: x-systemd.graceful-option=usrquota specified, but option is not available, suppressing.
+[    3.627006] systemd[1]: Mounting Temporary Directory /tmp...
+         Mounting [0;1;39mTemporary Directory /tmp[0m...
+[    3.627642] systemd[1]: Create List of Static Device Nodes skipped, unmet condition check ConditionFileNotEmpty=/lib/modules/6.6.63/modules.devname
+[    3.651279] systemd[1]: Starting Load Kernel Module configfs...
+         Starting [0;1;39mLoad Kernel Module configfs[0m...
+[    3.651716] systemd[1]: Load Kernel Module drm skipped, unmet condition check ConditionKernelModuleLoaded=!drm
+[    3.715226] systemd[1]: Starting Load Kernel Module fuse...
+         Starting [0;1;39mLoad Kernel Module fuse[0m...
+[    3.716211] systemd[1]: File System Check on Root Device skipped, unmet condition check ConditionPathIsReadWrite=!/
+[    3.716405] systemd[1]: Clear Stale Hibernate Storage Info skipped, unmet condition check ConditionPathExists=/sys/firmware/efi/efivars/HibernateLocation-8cf2644b-4b0b-428f-9387-6d876050dc67
+[    3.799238] systemd[1]: Starting Journal Service...
+         Starting [0;1;39mJournal Service[0m...
+[    3.819709] systemd[1]: Load Kernel Modules skipped, no trigger condition checks were met.
+[    3.819867] systemd[1]: TPM PCR Machine ID Measurement skipped, unmet condition check ConditionSecurity=measured-os
+[    3.820085] systemd[1]: TPM PCR OS Separator skipped, unmet condition check ConditionSecurity=measured-os
+[    3.867291] systemd[1]: Starting Remount Root and Kernel File Systems...
+         Starting [0;1;39mRemount Root and Kernel File Systems[0m...
+[    3.919218] systemd[1]: Starting Apply Kernel Variables...
+         Starting [0;1;39mApply Kernel Variables[0m...
+[    3.967207] systemd[1]: Starting Create Static Device Nodes in /dev gracefully...
+         Starting [0;1;39mCreate Static Device Nodes in /dev gracefully[0m...
+[    3.967680] systemd[1]: Early TPM SRK Setup skipped, unmet condition check ConditionSecurity=measured-os
+[    3.967849] systemd[1]: TPM PCR NvPCR Initialization Separator skipped, unmet condition check ConditionPathExists=/etc/initrd-release
+[    3.968041] systemd[1]: TPM NvPCR Product ID Measurement skipped, unmet condition check ConditionSecurity=measured-os
+[    4.011216] systemd[1]: Starting Load udev Rules from Credentials...
+         Starting [0;1;39mLoad udev Rules from Credentials[0m...
+[    4.047203] systemd[1]: Starting Coldplug All udev Devices...
+         Starting [0;1;39mColdplug All udev Devices[0m...
+[    4.135346] systemd[1]: Starting Virtual Console Setup...
+         Starting [0;1;39mVirtual Console Setup[0m...
+[    4.294525] systemd[1]: Mounted Huge Pages File System.
+[[0;32m  OK  [0m] Mounted [0;1;39mHuge Pages File System[0m.
+[    4.318759] systemd[1]: Mounted POSIX Message Queue File System.
+[[0;32m  OK  [0m] Mounted [0;1;39mPOSIX Message Queue File System[0m.
+[    4.319483] systemd[1]: Mounted Kernel Debug File System.
+[[0;32m  OK  [0m] Mounted [0;1;39mKernel Debug File System[0m.
+[    4.320191] systemd[1]: Mounted Temporary Directory /tmp.
+[[0;32m  OK  [0m] Mounted [0;1;39mTemporary Directory /tmp[0m.
+[    4.321407] systemd[1]: modprobe@configfs.service: Deactivated successfully.
+[    4.345943] systemd[1]: Finished Load Kernel Module configfs.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad Kernel Module configfs[0m.
+[    4.356692] systemd[1]: modprobe@fuse.service: Deactivated successfully.
+[    4.357516] systemd[1]: Finished Load Kernel Module fuse.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad Kernel Module fuse[0m.
+[    4.379087] systemd[1]: Finished Apply Kernel Variables.
+[[0;32m  OK  [0m] Finished [0;1;39mApply Kernel Variables[0m.
+[    4.399218] EXT4-fs (vda): re-mounted d07702aa-4f31-44b2-a5b0-9dbec2511e25 r/w. Quota mode: disabled.
+[    4.401769] systemd[1]: Finished Load udev Rules from Credentials.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad udev Rules from Credentials[0m.
+[    4.423401] systemd[1]: Finished Remount Root and Kernel File Systems.
+[[0;32m  OK  [0m] Finished [0;1;39mRemount Root and Kernel File Systems[0m.
+[    4.432124] systemd[1]: FUSE Control File System skipped, unmet condition check ConditionPathExists=/sys/fs/fuse/connections
+[    4.432779] systemd[1]: Kernel Configuration File System skipped, unmet condition check ConditionPathExists=/sys/kernel/config
+[    4.440263] systemd[1]: Rebuild Hardware Database skipped, unmet condition check ConditionNeedsUpdate=/etc
+[    4.459204] systemd[1]: Starting Load/Save OS Random Seed...
+         Starting [0;1;39mLoad/Save OS Random Seed[0m...
+[    4.459578] systemd[1]: TPM SRK Setup skipped, unmet condition check ConditionSecurity=measured-os
+[    4.603439] systemd-journald[72]: Collecting audit messages is disabled.
+[    4.659962] loadkeys[84]: memfd_create() called without MFD_EXEC or MFD_NOEXEC_SEAL set
+[    4.727087] systemd[1]: Finished Load/Save OS Random Seed.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad/Save OS Random Seed[0m.
+[    4.746018] systemd[1]: Finished Create Static Device Nodes in /dev gracefully.
+[[0;32m  OK  [0m] Finished [0;1;39mCreate Static Device Nodes in /dev gracefully[0m.
+[    4.756504] systemd[1]: Create System Users skipped, no trigger condition checks were met.
+[    4.819000] systemd[1]: Starting Journal Log Access Socket...
+         Starting [0;1;39mJournal Log Access Socket[0m...
+[    4.842236] systemd[1]: Starting Create Static Device Nodes in /dev...
+         Starting [0;1;39mCreate Static Device Nodes in /dev[0m...
+[    4.848994] systemd[1]: Started Journal Service.
+[[0;32m  OK  [0m] Started [0;1;39mJournal Service[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mVirtual Console Setup[0m.
+         Starting [0;1;39mFlush Journal to Persistent Storage[0m...
+[[0;32m  OK  [0m] Listening on [0;1;39mJournal Log Access Socket[0m.
+[    5.151099] systemd-journald[72]: Received client request to flush runtime journal.
+[[0;32m  OK  [0m] Finished [0;1;39mCreate Static Device Nodes in /dev[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mPreparation for Local File Systems[0m.
+         Starting [0;1;39mRule-based Manager for Device Events and Files[0m...
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal File Systems[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mBoot Loader Control Service Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mDisk Image Download Service Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mSystem Extension Image Management[0m.
+         Starting [0;1;39mTell Plymouth To Write Out Runtime Data[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mFlush Journal to Persistent Storage[0m.
+         Starting [0;1;39mCreate System Files and Directories[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mTell Plymouth To Write Out Runtime Data[0m.
+[[0;32m  OK  [0m] Started [0;1;39mRule-based Manager for Device Events and Files[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mCreate System Files and Directories[0m.
+         Starting [0;1;39mRecord System Boot/Shutdown in UTMP[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mRecord System Boot/Shutdown in UTMP[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mColdplug All udev Devices[0m.
+[[0;32m  OK  [0m] Started [0;1;39mDispatch Password Requests to Console Directory Watch[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal Encrypted Volumes[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mPath Units[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mSystem Initialization[0m.
+[[0;32m  OK  [0m] Started [0;1;39mRefresh existing PGP keys of archlinux-keyring regularly[0m.
+[[0;32m  OK  [0m] Started [0;1;39mDaily verification of password and group files[0m.
+[[0;32m  OK  [0m] Started [0;1;39mDaily Cleanup of Temporary Directories[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mTimer Units[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mD-Bus System Message Bus Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mAuthorization Manager Agent Helper[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mOpenSSH Server Socket…temd-ssh-generator, AF_UNIX Local)[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mUser Login Management Varlink Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mVirtual Machine and C…tainer Registration Service Socket[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mSocket Units[0m.
+         Starting [0;1;39mD-Bus System Message Bus[0m...
+[[0;32m  OK  [0m] Started [0;1;39mD-Bus System Message Bus[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mBasic System[0m.
+         Starting [0;1;39mNetwork Manager[0m...
+         Starting [0;1;39mUser Login Management[0m...
+[[0;32m  OK  [0m] Found device [0;1;39m/dev/ttyS0[0m.
+[[0;32m  OK  [0m] Started [0;1;39mUser Login Management[0m.
+[[0m[0;31m*     [0m] A start job is running for Network Manager (8s / 10min 4s)
+M[K[[0;1;31m*[0m[0;31m*    [0m] A start job is running for Network Manager (8s / 10min 4s)
+M[K[[0;31m*[0;1;31m*[0m[0;31m*   [0m] A start job is running for Network Manager (9s / 10min 4s)
+M[K[ [0;31m*[0;1;31m*[0m[0;31m*  [0m] A start job is running for Network Manager (9s / 10min 4s)
+M[K[  [0;31m*[0;1;31m*[0m[0;31m* [0m] A start job is running for Network Manager (9s / 10min 4s)
+M[K[   [0;31m*[0;1;31m*[0m[0;31m*[0m] A start job is running for Network Manager (10s / 10min 4s)
+M[K[    [0;31m*[0;1;31m*[0m] A start job is running for Network Manager (10s / 10min 4s)
+M[K[[0;32m  OK  [0m] Reached target [0;1;39mSound Card[0m.
+[K         Starting [0;1;39mHostname Service[0m...
+[[0;32m  OK  [0m] Stopped [0;1;39mVirtual Console Setup[0m.
+         Stopping [0;1;39mVirtual Console Setup[0m...
+         Starting [0;1;39mVirtual Console Setup[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mVirtual Console Setup[0m.
+[[0;32m  OK  [0m] Started [0;1;39mHostname Service[0m.
+[[0;32m  OK  [0m] Started [0;1;39mNetwork Manager[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mNetwork[0m.
+         Starting [0;1;39mPermit User Sessions[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mPermit User Sessions[0m.
+         Starting [0;1;39mHold until boot process finishes up[0m...
+         Starting [0;1;39mTerminate Plymouth Boot Screen[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mHold until boot process finishes up[0m.
+[[0;32m  OK  [0m] Started [0;1;39mSerial Getty on ttyS0[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mLogin Prompts[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mTerminate Plymouth Boot Screen[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mMulti-User System[0m.
+[[0;32m  OK  [0m] Started [0;1;39mSimple Desktop Display Manager[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mGraphical Interface[0m.
+[!p]104\[0m[?7h[1G[0J7[32766;32766H[6n8[!p]104\[0m[?7h[1G[0J7[32766;32766H[6n8]3008;start=94dfc7946dfb407fb4a2cb58dc876c7f;user=root;hostname=omarchy-demo;machineid=a02af58c7f2345bd88505c0657b4c7c2;bootid=bc2e9d0c97a34361998e7cda29e0d0c0;pid=155;comm=(agetty);servicename=serial-getty@ttyS0.service;invocationid=754abc8a5bc244cb9af7f2c7835ae5b5;type=service\P+q6E616D65\
+Arch Linux 6.6.63 (ttyS0)
+
+omarchy-demo login: omarchy (automatic login)
+
+Omarchy RISC-V browser demo candidate
+Optional applications and toolchains are not bundled.
+No personal accounts, credentials or VM session state were imported.
+Desktop/browser verification is recorded separately.
+]3008;start=ada19ae9a8134875a13e6603accde22c;user=root;hostname=omarchy-demo;machineid=a02af58c7f2345bd88505c0657b4c7c2;bootid=bc2e9d0c97a34361998e7cda29e0d0c0;pid=155;comm=login;targetuser=omarchy;sessionid=2;type=session\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_1_begin'; ( id -u ); wv_rc=$?; printf '\n%s:%s\n' 'capture_1_end' "$wv_rc"
+[?2004l]3008;start=c7c1800e-5a6f-44cd-a828-77d7ef11e215;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_1_begin
+1000
+
+capture_1_end:0
+]3008;end=c7c1800e-5a6f-44cd-a828-77d7ef11e215;exit=success\printf '\n%s\n' 'capture_2_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_2_end' "$wv_rc"
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_2_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_2_end' "$wv_rc"
+[?2004l]3008;start=2748385e-a7f2-4e09-9e0f-060be75db289;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_2_begin
+
+]
+
+
+capture_2_end:0
+]3008;end=2748385e-a7f2-4e09-9e0f-060be75db289;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_3_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_3_end' "$wv_rc"
+[?2004l]3008;start=75de94b1-df39-4842-b0e4-97480bd6bb41;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_3_begin
+
+]
+
+
+capture_3_end:0
+]3008;end=75de94b1-df39-4842-b0e4-97480bd6bb41;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_4_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_4_end' "$wv_rc"
+[?2004l]3008;start=f33b80c7-39c4-4789-b309-54b09251f18e;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_4_begin
+
+]
+
+
+capture_4_end:0
+]3008;end=f33b80c7-39c4-4789-b309-54b09251f18e;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_5_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_5_end' "$wv_rc"
+[?2004l]3008;start=3c9ac7d9-a12e-4a5c-8a7d-593440fe9a80;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_5_begin
+
+]
+
+
+capture_5_end:0
+]3008;end=3c9ac7d9-a12e-4a5c-8a7d-593440fe9a80;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_6_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_6_end' "$wv_rc"
+[?2004l]3008;start=da996b54-eb02-4f58-958b-9c2e5a925bde;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_6_begin
+
+]
+
+
+capture_6_end:0
+]3008;end=da996b54-eb02-4f58-958b-9c2e5a925bde;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_7_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_7_end' "$wv_rc"
+[?2004l]3008;start=99e31138-ec50-4fca-a247-fda3addc32b2;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_7_begin
+
+]
+
+
+capture_7_end:0
+]3008;end=99e31138-ec50-4fca-a247-fda3addc32b2;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_8_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_8_end' "$wv_rc"
+[?2004l]3008;start=76bc8438-c482-4ff4-a9cd-bbc9d3729735;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_8_begin
+
+]
+
+
+capture_8_end:0
+]3008;end=76bc8438-c482-4ff4-a9cd-bbc9d3729735;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_9_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_9_end' "$wv_rc"
+[?2004l]3008;start=99fe9a9a-cee4-4b28-8bf9-88aeb7d53af5;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_9_begin
+
+]
+
+
+capture_9_end:0
+]3008;end=99fe9a9a-cee4-4b28-8bf9-88aeb7d53af5;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_10_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_10_end' "$wv_rc"
+[?2004l]3008;start=1597c492-ed1e-4a99-a726-077323783c94;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_10_begin
+
+]
+
+
+capture_10_end:0
+]3008;end=1597c492-ed1e-4a99-a726-077323783c94;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_11_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_11_end' "$wv_rc"
+[?2004l]3008;start=46d81034-01d4-43e0-8491-f491d9e02015;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_11_begin
+
+]
+
+
+capture_11_end:0
+]3008;end=46d81034-01d4-43e0-8491-f491d9e02015;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_12_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_12_end' "$wv_rc"
+[?2004l]3008;start=983a81ad-c1ed-4834-af73-2c96c496e789;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_12_begin
+
+]
+
+
+capture_12_end:0
+]3008;end=983a81ad-c1ed-4834-af73-2c96c496e789;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_13_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_13_end' "$wv_rc"
+[?2004l]3008;start=53261116-5771-4877-ae30-962c3976e20b;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_13_begin
+
+]
+
+
+capture_13_end:0
+]3008;end=53261116-5771-4877-ae30-962c3976e20b;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_14_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_14_end' "$wv_rc"
+[?2004l]3008;start=1fe66975-f6ca-4287-a0e7-20da45f66f87;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_14_begin
+
+]
+
+
+capture_14_end:0
+]3008;end=1fe66975-f6ca-4287-a0e7-20da45f66f87;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_15_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_15_end' "$wv_rc"
+[?2004l]3008;start=2c5400f8-e3e8-4c69-b039-cfe07e99ea54;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_15_begin
+
+]
+
+
+capture_15_end:0
+]3008;end=2c5400f8-e3e8-4c69-b039-cfe07e99ea54;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_16_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_16_end' "$wv_rc"
+[?2004l]3008;start=154c7941-2f22-49fd-91ef-1d1840a3bda5;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_16_begin
+
+]
+
+
+capture_16_end:0
+]3008;end=154c7941-2f22-49fd-91ef-1d1840a3bda5;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_17_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_17_end' "$wv_rc"
+[?2004l]3008;start=5ebe1489-3bd9-406a-abf8-8a61412c3195;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_17_begin
+
+]
+
+
+capture_17_end:0
+]3008;end=5ebe1489-3bd9-406a-abf8-8a61412c3195;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_18_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_18_end' "$wv_rc"
+[?2004l]3008;start=69943cc6-0a60-4320-bfbf-4a15a7c0466c;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_18_begin
+
+]
+
+
+capture_18_end:0
+]3008;end=69943cc6-0a60-4320-bfbf-4a15a7c0466c;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_19_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_19_end' "$wv_rc"
+[?2004l]3008;start=c4dc24e4-e36f-4635-aa95-2aec27a0d894;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_19_begin
+
+]
+
+
+capture_19_end:0
+]3008;end=c4dc24e4-e36f-4635-aa95-2aec27a0d894;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_20_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_20_end' "$wv_rc"
+[?2004l]3008;start=0a0baec3-5421-40a6-84e0-b4dad61268d4;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_20_begin
+
+]
+
+
+capture_20_end:0
+]3008;end=0a0baec3-5421-40a6-84e0-b4dad61268d4;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_21_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_21_end' "$wv_rc"
+[?2004l]3008;start=27cddf63-678b-4107-a378-c830a82d9f62;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_21_begin
+
+]
+
+
+capture_21_end:0
+]3008;end=27cddf63-678b-4107-a378-c830a82d9f62;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_22_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_22_end' "$wv_rc"
+[?2004l]3008;start=e6ecbcd8-eaae-44b7-a5cd-bbd2a7245f9f;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_22_begin
+
+]
+
+
+capture_22_end:0
+]3008;end=e6ecbcd8-eaae-44b7-a5cd-bbd2a7245f9f;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_23_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_23_end' "$wv_rc"
+[?2004l]3008;start=c98ba7bc-c8bc-48f6-a004-521179f3523b;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_23_begin
+
+]
+
+
+capture_23_end:0
+]3008;end=c98ba7bc-c8bc-48f6-a004-521179f3523b;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_24_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_24_end' "$wv_rc"
+[?2004l]3008;start=cb0f06fd-50b0-43a9-ac09-855e03020ef9;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_24_begin
+
+]
+
+
+capture_24_end:0
+]3008;end=cb0f06fd-50b0-43a9-ac09-855e03020ef9;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_25_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_25_end' "$wv_rc"
+[?2004l]3008;start=abbc3439-1d97-443a-9f15-41008f818210;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_25_begin
+
+]
+
+
+capture_25_end:0
+]3008;end=abbc3439-1d97-443a-9f15-41008f818210;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_26_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_26_end' "$wv_rc"
+[?2004l]3008;start=41bbcb26-51e9-4f60-b3c4-dc1c2d77f8b7;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_26_begin
+
+]
+
+
+capture_26_end:0
+]3008;end=41bbcb26-51e9-4f60-b3c4-dc1c2d77f8b7;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_27_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_27_end' "$wv_rc"
+[?2004l]3008;start=19d8e0f9-5b8d-4a6a-b7c2-cdd2b8e00219;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_27_begin
+
+]
+
+
+capture_27_end:0
+]3008;end=19d8e0f9-5b8d-4a6a-b7c2-cdd2b8e00219;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_28_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_28_end' "$wv_rc"
+[?2004l]3008;start=ac031ce8-9694-40ec-a3e1-bc968aac8781;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_28_begin
+
+]
+
+
+capture_28_end:0
+]3008;end=ac031ce8-9694-40ec-a3e1-bc968aac8781;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_29_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_29_end' "$wv_rc"
+[?2004l]3008;start=ddb41c05-639b-472e-acb2-3dac912c2cc8;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_29_begin
+
+]
+
+
+capture_29_end:0
+]3008;end=ddb41c05-639b-472e-acb2-3dac912c2cc8;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_30_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_30_end' "$wv_rc"
+[?2004l]3008;start=4f84fd15-e24c-4f22-a4b1-416b7149c817;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_30_begin
+
+]
+
+
+capture_30_end:0
+]3008;end=4f84fd15-e24c-4f22-a4b1-416b7149c817;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_31_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_31_end' "$wv_rc"
+[?2004l]3008;start=01fb28af-c673-4ebb-ad9a-ad1a1e355514;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_31_begin
+
+]
+
+
+capture_31_end:0
+]3008;end=01fb28af-c673-4ebb-ad9a-ad1a1e355514;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_32_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_32_end' "$wv_rc"
+[?2004l]3008;start=ee93abfc-861f-4106-9edd-fb3a3548c9e7;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_32_begin
+
+]
+
+
+capture_32_end:0
+]3008;end=ee93abfc-861f-4106-9edd-fb3a3548c9e7;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_33_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_33_end' "$wv_rc"
+[?2004l]3008;start=5933f6b4-7dff-4d62-8fb8-733910768aae;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_33_begin
+
+]
+
+
+capture_33_end:0
+]3008;end=5933f6b4-7dff-4d62-8fb8-733910768aae;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_34_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_34_end' "$wv_rc"
+[?2004l]3008;start=5b49990d-69db-4b08-bd0f-1d657f731a98;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_34_begin
+[
+{
+    "instance": "efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549",
+    "time": 1789053307,
+    "pid": 407,
+    "wl_socket": "wayland-1"
+}
+]
+
+
+capture_34_end:0
+]3008;end=5b49990d-69db-4b08-bd0f-1d657f731a98;exit=success\printf '\n%s\n' 'capture_35_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_35_end' "$wv_rc"
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_35_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_35_end' "$wv_rc"
+[?2004l]3008;start=8e93bd81-9e8f-4ae5-9e11-b389634ea977;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_35_begin
+[]
+
+capture_35_end:0
+]3008;end=8e93bd81-9e8f-4ae5-9e11-b389634ea977;exit=success\printf '\n%s\n' 'capture_36_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_36_end' "$wv_rc"
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_36_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_36_end' "$wv_rc"
+[?2004l]3008;start=01bea4c9-cce2-4fcd-bc3d-e47f06cbb228;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_36_begin
+{
+"Virtual-1": {
+    "levels": {
+
+        "0": [
+],
+        "1": [
+],
+        "2": [
+],
+        "3": [
+]
+    }
+}
+}
+
+
+capture_36_end:0
+]3008;end=01bea4c9-cce2-4fcd-bc3d-e47f06cbb228;exit=success\printf '\n%s\n' 'capture_37_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_37_end' "$wv_rc"
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_37_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_37_end' "$wv_rc"
+[?2004l]3008;start=27498dad-b320-4abc-95af-f49950f05237;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_37_begin
+    164 systemd         /usr/lib/systemd/systemd --user
+    166 (sd-pam)        (sd-pam)
+    174 bash            -bash
+    178 gnome-keyring-d /usr/bin/gnome-keyring-daemon --daemonize --login
+    191 sh              /usr/bin/sh /usr/lib/uwsm/signal-handler.sh wayland-sess
+    239 dbus-broker-lau /usr/bin/dbus-broker-launch --scope user
+    240 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id a02af58
+    296 waitpid         waitpid -e 191
+    297 systemctl       systemctl --user start --wait wayland-session-envelope@h
+    362 start-hyprland  /usr/bin/start-hyprland
+    407 Hyprland        Hyprland --watchdog-fd 4
+    479 dconf-service   /usr/lib/dconf-service
+    489 omarchy-launch- /bin/bash /usr/share/omarchy/bin/omarchy-launch-shell
+    490 foot            foot
+    495 quickshell      quickshell -n -p /usr/share/omarchy/shell
+    542 xdg-desktop-por /usr/lib/xdg-desktop-portal
+    547 xdg-permission- /usr/lib/xdg-permission-store
+    569 xdg-desktop-por /usr/lib/xdg-desktop-portal-gtk
+    690 Xwayland        Xwayland :0 -rootless -core -listenfd 45 -listenfd 46 -d
+    710 ps              ps -u 1000 -o pid=,comm=,args=
+
+capture_37_end:0
+]3008;end=27498dad-b320-4abc-95af-f49950f05237;exit=success\
+OMARCHY_DESKTOP_OBSERVATION {"foot":null,"shellProcesses":[{"pid":495,"command":"quickshell","args":"quickshell -n -p /usr/share/omarchy/shell"}],"shellLayers":[],"shellClients":[],"mappedFoot":false,"quickshellObserved":false}
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_38_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_38_end' "$wv_rc"
+[?2004l]3008;start=6843d479-bdde-48b2-9cd5-152322096440;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_38_begin
+[
+{
+    "instance": "efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549",
+    "time": 1789053307,
+    "pid": 407,
+    "wl_socket": "wayland-1"
+}
+]
+
+
+capture_38_end:0
+]3008;end=6843d479-bdde-48b2-9cd5-152322096440;exit=success\printf '\n%s\n' 'capture_39_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_39_end' "$wv_rc"
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_39_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_39_end' "$wv_rc"
+[?2004l]3008;start=eb66172f-1bc8-43e2-830d-36e7537be0d5;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_39_begin
+[]
+
+capture_39_end:0
+]3008;end=eb66172f-1bc8-43e2-830d-36e7537be0d5;exit=success\printf '\n%s\n' 'capture_40_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_40_end' "$wv_rc"
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_40_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_40_end' "$wv_rc"
+[?2004l]3008;start=0425ef60-d733-4f97-b7ef-90555a9f8938;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_40_begin
+{
+"Virtual-1": {
+    "levels": {
+
+        "0": [
+],
+        "1": [
+],
+        "2": [
+],
+        "3": [
+]
+    }
+}
+}
+
+
+capture_40_end:0
+]3008;end=0425ef60-d733-4f97-b7ef-90555a9f8938;exit=success\printf '\n%s\n' 'capture_41_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_41_end' "$wv_rc"
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_41_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_41_end' "$wv_rc"
+[?2004l]3008;start=90ba2742-4637-42ff-889f-f53987c0acca;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_41_begin
+    164 systemd         /usr/lib/systemd/systemd --user
+    166 (sd-pam)        (sd-pam)
+    174 bash            -bash
+    178 gnome-keyring-d /usr/bin/gnome-keyring-daemon --daemonize --login
+    191 sh              /usr/bin/sh /usr/lib/uwsm/signal-handler.sh wayland-sess
+    239 dbus-broker-lau /usr/bin/dbus-broker-launch --scope user
+    240 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id a02af58
+    296 waitpid         waitpid -e 191
+    297 systemctl       systemctl --user start --wait wayland-session-envelope@h
+    362 start-hyprland  /usr/bin/start-hyprland
+    407 Hyprland        Hyprland --watchdog-fd 4
+    479 dconf-service   /usr/lib/dconf-service
+    489 omarchy-launch- /bin/bash /usr/share/omarchy/bin/omarchy-launch-shell
+    490 foot            foot
+    495 quickshell      quickshell -n -p /usr/share/omarchy/shell
+    542 xdg-desktop-por /usr/lib/xdg-desktop-portal
+    547 xdg-permission- /usr/lib/xdg-permission-store
+    569 xdg-desktop-por /usr/lib/xdg-desktop-portal-gtk
+    690 Xwayland        Xwayland :0 -rootless -core -listenfd 45 -listenfd 46 -d
+    738 bash            /bin/bash
+    753 (at-spi-bus-la) (at-spi-bus-launcher)
+    763 ps              ps -u 1000 -o pid=,comm=,args=
+
+capture_41_end:0
+]3008;end=90ba2742-4637-42ff-889f-f53987c0acca;exit=success\
+OMARCHY_DESKTOP_OBSERVATION {"foot":null,"shellProcesses":[{"pid":495,"command":"quickshell","args":"quickshell -n -p /usr/share/omarchy/shell"}],"shellLayers":[],"shellClients":[],"mappedFoot":false,"quickshellObserved":false}
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_42_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_42_end' "$wv_rc"
+[?2004l]3008;start=7579f8fa-3149-4e9d-8d3e-eebbbd616920;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_42_begin
+[
+{
+    "instance": "efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549",
+    "time": 1789053307,
+    "pid": 407,
+    "wl_socket": "wayland-1"
+}
+]
+
+
+capture_42_end:0
+]3008;end=7579f8fa-3149-4e9d-8d3e-eebbbd616920;exit=success\printf '\n%s\n' 'capture_43_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_43_end' "$wv_rc"
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_43_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_43_end' "$wv_rc"
+[?2004l]3008;start=27a7585a-ba90-4393-9600-77da6a710201;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_43_begin
+Hyprland IPC didn't respond in time
+
+Couldn't read (6)
+
+capture_43_end:6
+]3008;end=27a7585a-ba90-4393-9600-77da6a710201;exit=success\printf '\n%s\n' 'capture_44_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_44_end' "$wv_rc"
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_44_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_44_end' "$wv_rc"
+[?2004l]3008;start=904392ae-c3eb-4cd0-af4e-68b3bb9f7310;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_44_begin
+Hyprland IPC didn't respond in time
+
+Couldn't read (6)
+
+capture_44_end:6
+]3008;end=904392ae-c3eb-4cd0-af4e-68b3bb9f7310;exit=success\printf '\n%s\n' 'capture_45_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_45_end' "$wv_rc"
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_45_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_45_end' "$wv_rc"
+[?2004l]3008;start=a7ed2c34-a847-4900-abe7-1f7836be93c5;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_45_begin
+    164 systemd         /usr/lib/systemd/systemd --user
+    166 (sd-pam)        (sd-pam)
+    174 bash            -bash
+    178 gnome-keyring-d /usr/bin/gnome-keyring-daemon --daemonize --login
+    191 sh              /usr/bin/sh /usr/lib/uwsm/signal-handler.sh wayland-sess
+    239 dbus-broker-lau /usr/bin/dbus-broker-launch --scope user
+    240 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id a02af58
+    296 waitpid         waitpid -e 191
+    297 systemctl       systemctl --user start --wait wayland-session-envelope@h
+    362 start-hyprland  /usr/bin/start-hyprland
+    407 Hyprland        Hyprland --watchdog-fd 4
+    479 dconf-service   /usr/lib/dconf-service
+    489 omarchy-launch- /bin/bash /usr/share/omarchy/bin/omarchy-launch-shell
+    490 foot            foot
+    495 quickshell      quickshell -n -p /usr/share/omarchy/shell
+    542 xdg-desktop-por /usr/lib/xdg-desktop-portal
+    547 xdg-permission- /usr/lib/xdg-permission-store
+    569 xdg-desktop-por /usr/lib/xdg-desktop-portal-gtk
+    690 Xwayland        Xwayland :0 -rootless -core -listenfd 45 -listenfd 46 -d
+    738 bash            /bin/bash
+    753 at-spi-bus-laun /usr/lib/at-spi-bus-launcher
+    773 dbus-broker-lau /usr/bin/dbus-broker-launch --config-file=/usr/share/def
+    774 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id a02af58
+    793 at-spi2-registr /usr/lib/at-spi2-registryd --use-gnome-session
+    805 xdg-desktop-por /usr/lib/xdg-desktop-portal-hyprland
+    811 hyprctl <defunc [hyprctl] <defunct>
+    812 hyprctl <defunc [hyprctl] <defunct>
+    925 ps              ps -u 1000 -o pid=,comm=,args=
+
+capture_45_end:0
+]3008;end=a7ed2c34-a847-4900-abe7-1f7836be93c5;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_46_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_46_end' "$wv_rc"
+[?2004l]3008;start=b22e8ff5-3ddc-4046-a990-6d589bb36409;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_46_begin
+[
+{
+    "instance": "efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549",
+    "time": 1789053307,
+    "pid": 407,
+    "wl_socket": "wayland-1"
+}
+]
+
+
+capture_46_end:0
+]3008;end=b22e8ff5-3ddc-4046-a990-6d589bb36409;exit=success\printf '\n%s\n' 'capture_47_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_47_end' "$wv_rc"
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_47_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_47_end' "$wv_rc"
+[?2004l]3008;start=a8213ed0-a02a-4c7a-9b6e-c82afa0d2a83;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_47_begin
+Hyprland IPC didn't respond in time
+
+Couldn't read (6)
+
+capture_47_end:6
+]3008;end=a8213ed0-a02a-4c7a-9b6e-c82afa0d2a83;exit=success\printf '\n%s\n' 'capture_48_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_48_end' "$wv_rc"
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_48_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_48_end' "$wv_rc"
+[?2004l]3008;start=3a303520-a768-40e2-ba0a-65c5bbbf8d51;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_48_begin
+Hyprland IPC didn't respond in time
+
+Couldn't read (6)
+
+capture_48_end:6
+]3008;end=3a303520-a768-40e2-ba0a-65c5bbbf8d51;exit=success\printf '\n%s\n' 'capture_49_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_49_end' "$wv_rc"
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_49_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_49_end' "$wv_rc"
+[?2004l]3008;start=e4740612-484a-4ffd-8ba5-8939b6f0b655;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_49_begin
+    164 systemd         /usr/lib/systemd/systemd --user
+    166 (sd-pam)        (sd-pam)
+    174 bash            -bash
+    178 gnome-keyring-d /usr/bin/gnome-keyring-daemon --daemonize --login
+    191 sh              /usr/bin/sh /usr/lib/uwsm/signal-handler.sh wayland-sess
+    239 dbus-broker-lau /usr/bin/dbus-broker-launch --scope user
+    240 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id a02af58
+    296 waitpid         waitpid -e 191
+    297 systemctl       systemctl --user start --wait wayland-session-envelope@h
+    362 start-hyprland  /usr/bin/start-hyprland
+    407 Hyprland        Hyprland --watchdog-fd 4
+    479 dconf-service   /usr/lib/dconf-service
+    489 omarchy-launch- /bin/bash /usr/share/omarchy/bin/omarchy-launch-shell
+    490 foot            foot
+    495 quickshell      quickshell -n -p /usr/share/omarchy/shell
+    542 xdg-desktop-por /usr/lib/xdg-desktop-portal
+    547 xdg-permission- /usr/lib/xdg-permission-store
+    569 xdg-desktop-por /usr/lib/xdg-desktop-portal-gtk
+    690 Xwayland        Xwayland :0 -rootless -core -listenfd 45 -listenfd 46 -d
+    738 bash            /bin/bash
+    753 at-spi-bus-laun /usr/lib/at-spi-bus-launcher
+    773 dbus-broker-lau /usr/bin/dbus-broker-launch --config-file=/usr/share/def
+    774 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id a02af58
+    793 at-spi2-registr /usr/lib/at-spi2-registryd --use-gnome-session
+    805 xdg-desktop-por /usr/lib/xdg-desktop-portal-hyprland
+    946 readlink <defun [readlink] <defunct>
+    957 readlink <defun [readlink] <defunct>
+    958 bash <defunct>  [bash] <defunct>
+    959 omarchy-hyprlan [omarchy-hyprlan] <defunct>
+    962 mkdir <defunct> [mkdir] <defunct>
+    964 bash <defunct>  [bash] <defunct>
+    967 hyprctl <defunc [hyprctl] <defunct>
+    968 find <defunct>  [find] <defunct>
+    969 omarchy-voxtype [omarchy-voxtype] <defunct>
+    970 omarchy-reminde [omarchy-reminde] <defunct>
+    972 omarchy-voxtype [omarchy-voxtype] <defunct>
+    974 omarchy-reminde [omarchy-reminde] <defunct>
+    977 pgrep <defunct> [pgrep] <defunct>
+    980 pgrep <defunct> [pgrep] <defunct>
+    982 xkbcli-list     /usr/lib/xkbcommon/xkbcli-list --load-exotic
+    984 hyprctl         /usr/bin/hyprctl -j devices
+    991 omarchy-audio-o [omarchy-audio-o] <defunct>
+    994 omarchy-monitor /bin/bash /usr/share/omarchy/bin/omarchy-monitor-state
+    995 hyprctl         hyprctl monitors all -j
+    996 omarchy-network [omarchy-network] <defunct>
+    997 omarchy-dns <de [omarchy-dns] <defunct>
+    998 omarchy-network [omarchy-network] <defunct>
+   1018 bash            /usr/bin/bash -c awk 1 "$1"/*.json 2>/dev/null || true -
+   1019 bash            /usr/bin/bash -c for img in "$3"/*; do   [[ -e $img ]] |
+   1021 hyprctl         /usr/bin/hyprctl -j getoption decoration:rounding
+   1025 hyprctl         /usr/bin/hyprctl -j getoption general:gaps_out
+   1032 ps              ps -u 1000 -o pid=,comm=,args=
+
+capture_49_end:0
+]3008;end=e4740612-484a-4ffd-8ba5-8939b6f0b655;exit=success\]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_50_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_50_end' "$wv_rc"
+[?2004l]3008;start=2f729080-c23d-4a29-8a04-8c1e29fe43f1;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_50_begin
+[
+{
+    "instance": "efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549",
+    "time": 1789053307,
+    "pid": 407,
+    "wl_socket": "wayland-1"
+}
+]
+
+
+capture_50_end:0
+]3008;end=2f729080-c23d-4a29-8a04-8c1e29fe43f1;exit=success\printf '\n%s\n' 'capture_51_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_51_end' "$wv_rc"
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_51_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_51_end' "$wv_rc"
+[?2004l]3008;start=9d6b6604-59d6-42f0-ae11-a8daa9d46e6a;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_51_begin
+Hyprland IPC didn't respond in time
+
+Couldn't read (6)
+
+capture_51_end:6
+]3008;end=9d6b6604-59d6-42f0-ae11-a8daa9d46e6a;exit=success\printf '\n%s\n' 'capture_52_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_52_end' "$wv_rc"
+]3008;start=0642d34d-43f8-48c1-9836-30438cca7eac;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_52_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789053307_241025549 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_52_end' "$wv_rc"
+[?2004l]3008;start=088aa584-d963-45fa-a193-e3f8c564ba1d;machineid=a02af58c7f2345bd88505c0657b4c7c2;user=omarchy;hostname=omarchy-demo;bootid=bc2e9d0c-97a3-4361-998e-7cda29e0d0c0;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+capture_52_begin

@@ -1,0 +1,5594 @@
+[
+  {
+    "time": "2026-09-10T05:02:22.675Z",
+    "event": "ready",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    }
+  },
+  {
+    "time": "2026-09-10T05:02:51.513Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 150,
+        "completed": 150,
+        "pending": 0,
+        "averageMs": 20.56026666879654,
+        "maxMs": 98.39499998092651
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 1,
+        "successfulPresents": 1,
+        "drawnPresents": 1,
+        "drawnBytes": 4096000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 1,
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "successfulPresents": 1,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 4096000,
+          "drawnPresents": 1,
+          "drawnBytes": 4096000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 832
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1347015264",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 840,
+        "totalSliceMs": 28845.380002856255,
+        "averageSliceMs": 34.3397380986384,
+        "maxSliceMs": 97.65000009536743,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 6
+          },
+          {
+            "leMs": 16,
+            "count": 5
+          },
+          {
+            "leMs": 32,
+            "count": 466
+          },
+          {
+            "leMs": 64,
+            "count": 360
+          },
+          {
+            "leMs": 128,
+            "count": 3
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 98.13999998569489,
+        "requestedInstructions": 420000000,
+        "retiredInstructions": 419987339,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 15,
+        "outputBytes": 2019,
+        "inputCalls": 3,
+        "inputBytes": 218,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 841,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 136,
+        "executedBlocks": 8521843,
+        "retiredViaJit": 186996729,
+        "directChainEntries": 17302954,
+        "directChainLinks": 8781162,
+        "dynamicLinkAttempts": 2717747,
+        "dynamicLinkHits": 2017443,
+        "dynamicLinkRefusals": 700304,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 9,
+        "dynamicLinkInstalls": 67207,
+        "entryCost": {
+          "timingEnabled": true,
+          "timerReads": 51555042,
+          "hostEntries": 8521843,
+          "stateCopyCalls": 17043686,
+          "stateCopyBytes": 1677554616,
+          "stateCopyNs": 994474770,
+          "engineEntryNs": 3783199502,
+          "indirectTableDispatches": 5142485,
+          "authorityChecks": 13046834,
+          "memorySplitExits": 74859,
+          "deviceBoundaries": 46261,
+          "deviceBoundaryNs": 4589998
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 420487339,
+        "jitEngineCalls": 8521843,
+        "jitLogicalBlocksPerEngineCall": 2.0304239352919318,
+        "jitRetiredShare": 0.44471429138559626,
+        "chainLinksMade": 810,
+        "chainLinksCut": 803,
+        "chainDispatchEntries": 7172887,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 7917641,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 4900,
+        "jitCompilePauseNs": 255164994,
+        "jitCompilePauseMaxNs": 1860000,
+        "jitCompilePauseSamples": 849,
+        "jitCacheInstalls": 4633,
+        "jitCacheRetranslations": 3500,
+        "jitCacheEvictions": 791,
+        "jitCacheBatches": 24,
+        "jitCacheCodeBytes": 2199585,
+        "compileQueue": {
+          "admitted": 13721,
+          "droppedBackpressure": 22360,
+          "cancelledStale": 0,
+          "popped": 6728,
+          "queueHighWater": 256,
+          "queueDepth": 234,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 29338,
+          "deduped": 20514603,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 0,
+          "excluded": 98,
+          "queueDepth": 16,
+          "queueHighWater": 521,
+          "candidates": 62439,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 35896854,
+        "blockBuilds": 2979059
+      }
+    }
+  },
+  {
+    "time": "2026-09-10T05:02:51.534Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "startup.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/mixed-renderer-candidate-r1/browser/startup.png"
+  },
+  {
+    "time": "2026-09-10T05:03:48.812Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "click",
+      "x": 200,
+      "y": 160,
+      "delayMs": 100
+    },
+    "result": {
+      "clicked": {
+        "x": 200,
+        "y": 160
+      },
+      "delayMs": 100
+    }
+  },
+  {
+    "time": "2026-09-10T05:03:50.773Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "type",
+      "text": "echo gui > /tmp/gui",
+      "enter": true,
+      "delay": 100
+    },
+    "result": "sent"
+  },
+  {
+    "time": "2026-09-10T05:03:50.913Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 5120
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 6553
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 5120,
+            "y": 6553
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 540,
+        "completed": 540,
+        "pending": 0,
+        "averageMs": 17.12058333379251,
+        "maxMs": 98.39499998092651
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1363444909",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 2943,
+        "totalSliceMs": 88032.31000185013,
+        "averageSliceMs": 29.91243968802247,
+        "maxSliceMs": 97.65000009536743,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 6
+          },
+          {
+            "leMs": 16,
+            "count": 6
+          },
+          {
+            "leMs": 32,
+            "count": 2278
+          },
+          {
+            "leMs": 64,
+            "count": 649
+          },
+          {
+            "leMs": 128,
+            "count": 4
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 98.13999998569489,
+        "requestedInstructions": 1471500000,
+        "retiredInstructions": 1471484592,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 18,
+        "outputBytes": 2904,
+        "inputCalls": 3,
+        "inputBytes": 218,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 2944,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 132,
+        "executedBlocks": 31580303,
+        "retiredViaJit": 796344835,
+        "directChainEntries": 48925884,
+        "directChainLinks": 17345816,
+        "dynamicLinkAttempts": 3239356,
+        "dynamicLinkHits": 2385954,
+        "dynamicLinkRefusals": 853402,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 77044,
+        "entryCost": {
+          "timingEnabled": true,
+          "timerReads": 190184789,
+          "hostEntries": 31580303,
+          "stateCopyCalls": 63160606,
+          "stateCopyBytes": 6066329680,
+          "stateCopyNs": 3603819224,
+          "engineEntryNs": 15651043524,
+          "indirectTableDispatches": 8849009,
+          "authorityChecks": 37092079,
+          "memorySplitExits": 84519,
+          "deviceBoundaries": 49186,
+          "deviceBoundaryNs": 4939994
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 1471984592,
+        "jitEngineCalls": 31580303,
+        "jitLogicalBlocksPerEngineCall": 1.5492531531442242,
+        "jitRetiredShare": 0.5410007953398469,
+        "chainLinksMade": 2343,
+        "chainLinksCut": 2307,
+        "chainDispatchEntries": 28554387,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 29007513,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 20172,
+        "jitCompilePauseNs": 941549949,
+        "jitCompilePauseMaxNs": 1860000,
+        "jitCompilePauseSamples": 3037,
+        "jitCacheInstalls": 19551,
+        "jitCacheRetranslations": 17824,
+        "jitCacheEvictions": 2961,
+        "jitCacheBatches": 24,
+        "jitCacheCodeBytes": 1811415,
+        "compileQueue": {
+          "admitted": 32733,
+          "droppedBackpressure": 29585,
+          "cancelledStale": 0,
+          "popped": 23320,
+          "queueHighWater": 256,
+          "queueDepth": 244,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 53167,
+          "deduped": 63723426,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 6032781,
+          "excluded": 128,
+          "queueDepth": 18,
+          "queueHighWater": 615,
+          "candidates": 65536,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 94455476,
+        "blockBuilds": 6869506
+      }
+    }
+  },
+  {
+    "time": "2026-09-10T05:03:50.928Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "after-typing.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/mixed-renderer-candidate-r1/browser/after-typing.png"
+  },
+  {
+    "time": "2026-09-10T05:03:55.275Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "if [ -f /tmp/gui ]; then cat /tmp/gui; else exit 75; fi"
+    },
+    "actualCommand": "( if [ -f /tmp/gui ]; then cat /tmp/gui; else exit 75; fi\n )",
+    "result": {
+      "stdout": "\n",
+      "exit": 75
+    }
+  },
+  {
+    "time": "2026-09-10T05:04:40.162Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "input-two-minutes.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/mixed-renderer-candidate-r1/browser/input-two-minutes.png"
+  },
+  {
+    "time": "2026-09-10T05:04:40.258Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 5120
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 6553
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 5120,
+            "y": 6553
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 789,
+        "completed": 789,
+        "pending": 0,
+        "averageMs": 16.415925221902487,
+        "maxMs": 98.39499998092651
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1377030775",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 4682,
+        "totalSliceMs": 137223.7600044012,
+        "averageSliceMs": 29.308791115848187,
+        "maxSliceMs": 97.65000009536743,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 7
+          },
+          {
+            "leMs": 16,
+            "count": 7
+          },
+          {
+            "leMs": 32,
+            "count": 3750
+          },
+          {
+            "leMs": 64,
+            "count": 914
+          },
+          {
+            "leMs": 128,
+            "count": 4
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 98.13999998569489,
+        "requestedInstructions": 2341000000,
+        "retiredInstructions": 2340980005,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 27,
+        "outputBytes": 4066,
+        "inputCalls": 4,
+        "inputBytes": 353,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 4683,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 140,
+        "executedBlocks": 51341395,
+        "retiredViaJit": 1260600364,
+        "directChainEntries": 75742538,
+        "directChainLinks": 24401524,
+        "dynamicLinkAttempts": 4224053,
+        "dynamicLinkHits": 3059566,
+        "dynamicLinkRefusals": 1164487,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 16,
+        "dynamicLinkInstalls": 93154,
+        "entryCost": {
+          "timingEnabled": true,
+          "timerReads": 308959850,
+          "hostEntries": 51341395,
+          "stateCopyCalls": 102682790,
+          "stateCopyBytes": 9878486992,
+          "stateCopyNs": 5684253705,
+          "engineEntryNs": 24434822685,
+          "indirectTableDispatches": 12751426,
+          "authorityChecks": 58702239,
+          "memorySplitExits": 111919,
+          "deviceBoundaries": 65047,
+          "deviceBoundaryNs": 6454994
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 2341480005,
+        "jitEngineCalls": 51341395,
+        "jitLogicalBlocksPerEngineCall": 1.475272302203709,
+        "jitRetiredShare": 0.538377590800738,
+        "chainLinksMade": 3668,
+        "chainLinksCut": 3656,
+        "chainDispatchEntries": 46863193,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 47460133,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 32267,
+        "jitCompilePauseNs": 1497479951,
+        "jitCompilePauseMaxNs": 1860000,
+        "jitCompilePauseSamples": 5353,
+        "jitCacheInstalls": 31520,
+        "jitCacheRetranslations": 29513,
+        "jitCacheEvictions": 5271,
+        "jitCacheBatches": 19,
+        "jitCacheCodeBytes": 2380200,
+        "compileQueue": {
+          "admitted": 48866,
+          "droppedBackpressure": 37558,
+          "cancelledStale": 0,
+          "popped": 36758,
+          "queueHighWater": 256,
+          "queueDepth": 242,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 74561,
+          "deduped": 100941291,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 15628001,
+          "excluded": 146,
+          "queueDepth": 3,
+          "queueHighWater": 615,
+          "candidates": 65536,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 149746466,
+        "blockBuilds": 10166874
+      }
+    }
+  },
+  {
+    "time": "2026-09-10T05:04:43.904Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "if [ -f /tmp/gui ]; then cat /tmp/gui; else exit 75; fi"
+    },
+    "actualCommand": "( if [ -f /tmp/gui ]; then cat /tmp/gui; else exit 75; fi\n )",
+    "result": {
+      "stdout": "\n",
+      "exit": 75
+    }
+  },
+  {
+    "time": "2026-09-10T05:04:43.954Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "profile",
+      "action": "top"
+    },
+    "result": {
+      "action": "top",
+      "supported": true,
+      "profile": {
+        "totalNs": 140779095062,
+        "sampleCount": 1031356,
+        "walkCount": 4383168,
+        "collisions": 295373,
+        "regions": [
+          {
+            "pc": "0x00007fff6c080d40",
+            "samples": 10171,
+            "pct": 0.986177420793596
+          },
+          {
+            "pc": "0x00007fff6c080d80",
+            "samples": 9615,
+            "pct": 0.9322678105329295
+          },
+          {
+            "pc": "0x00007fff6c080d00",
+            "samples": 8677,
+            "pct": 0.8413195831507259
+          },
+          {
+            "pc": "0x00007fff6c08a5c0",
+            "samples": 6222,
+            "pct": 0.603283444319905
+          },
+          {
+            "pc": "0x00007fff6c081100",
+            "samples": 5762,
+            "pct": 0.5586819682049651
+          },
+          {
+            "pc": "0x00007fff6c0810c0",
+            "samples": 5613,
+            "pct": 0.5442349683329519
+          },
+          {
+            "pc": "0x00007fff6c081000",
+            "samples": 5455,
+            "pct": 0.5289153308847769
+          },
+          {
+            "pc": "0x00007fff79a4b6c0",
+            "samples": 4984,
+            "pct": 0.48324729773230585
+          },
+          {
+            "pc": "0x00007fff6c08a740",
+            "samples": 4980,
+            "pct": 0.4828594588095672
+          },
+          {
+            "pc": "0x00007fff6c08a780",
+            "samples": 4947,
+            "pct": 0.4796597876969737
+          }
+        ],
+        "subsystems": [
+          {
+            "name": "cpu_interp",
+            "ns": 140386500181
+          },
+          {
+            "name": "mmu_walk",
+            "ns": 391674883
+          },
+          {
+            "name": "clint",
+            "ns": 0
+          },
+          {
+            "name": "plic",
+            "ns": 165002
+          },
+          {
+            "name": "uart",
+            "ns": 584997
+          },
+          {
+            "name": "virtio_blk",
+            "ns": 0
+          },
+          {
+            "name": "virtio_net",
+            "ns": 20000
+          },
+          {
+            "name": "virtio_rng",
+            "ns": 0
+          },
+          {
+            "name": "rtc",
+            "ns": 0
+          },
+          {
+            "name": "syscon",
+            "ns": 0
+          },
+          {
+            "name": "other",
+            "ns": 149999
+          }
+        ],
+        "jitPause": {
+          "count": 5461,
+          "maxNs": 1860000,
+          "sumNs": 1530884950,
+          "overTarget": 0,
+          "maxAttemptedBlocks": 8,
+          "totalAttemptedBlocks": 37622,
+          "maxSubmittedBlocks": 8,
+          "maxSubmittedBytes": 2460,
+          "totalSubmittedBlocks": 32900,
+          "runCount": 4791,
+          "lastRunAttemptedBlocks": 8,
+          "maxRunAttemptedBlocks": 8,
+          "lastRunSubmittedBlocks": 2,
+          "maxRunSubmittedBlocks": 8,
+          "lastRunStagedNominations": 64,
+          "maxRunStagedNominations": 64,
+          "lastFinalPumps": 0,
+          "maxFinalPumps": 0,
+          "lastFinalAttemptedBlocks": 0,
+          "maxFinalAttemptedBlocks": 0,
+          "lastFinalSubmittedBlocks": 0,
+          "maxFinalSubmittedBlocks": 0
+        }
+      },
+      "topPcs": [
+        {
+          "pc": "0x00007fff6c080d40",
+          "samples": 10171,
+          "pct": 0.986177420793596
+        },
+        {
+          "pc": "0x00007fff6c080d80",
+          "samples": 9615,
+          "pct": 0.9322678105329295
+        },
+        {
+          "pc": "0x00007fff6c080d00",
+          "samples": 8677,
+          "pct": 0.8413195831507259
+        },
+        {
+          "pc": "0x00007fff6c08a5c0",
+          "samples": 6222,
+          "pct": 0.603283444319905
+        },
+        {
+          "pc": "0x00007fff6c081100",
+          "samples": 5762,
+          "pct": 0.5586819682049651
+        },
+        {
+          "pc": "0x00007fff6c0810c0",
+          "samples": 5613,
+          "pct": 0.5442349683329519
+        },
+        {
+          "pc": "0x00007fff6c081000",
+          "samples": 5455,
+          "pct": 0.5289153308847769
+        },
+        {
+          "pc": "0x00007fff79a4b6c0",
+          "samples": 4984,
+          "pct": 0.48324729773230585
+        },
+        {
+          "pc": "0x00007fff6c08a740",
+          "samples": 4980,
+          "pct": 0.4828594588095672
+        },
+        {
+          "pc": "0x00007fff6c08a780",
+          "samples": 4947,
+          "pct": 0.4796597876969737
+        }
+      ]
+    }
+  },
+  {
+    "time": "2026-09-10T05:05:39.090Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "desktop-input-followup.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/mixed-renderer-candidate-r1/browser/desktop-input-followup.png"
+  },
+  {
+    "time": "2026-09-10T05:05:42.825Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "if [ -f /tmp/gui ]; then cat /tmp/gui; else exit 75; fi"
+    },
+    "actualCommand": "( if [ -f /tmp/gui ]; then cat /tmp/gui; else exit 75; fi\n )",
+    "result": {
+      "stdout": "\n",
+      "exit": 75
+    }
+  },
+  {
+    "time": "2026-09-10T05:05:43.016Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 5120
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 6553
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 5120,
+            "y": 6553
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 1105,
+        "completed": 1105,
+        "pending": 0,
+        "averageMs": 16.280040723274197,
+        "maxMs": 98.39499998092651
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 3,
+        "successfulPresents": 3,
+        "drawnPresents": 3,
+        "drawnBytes": 12288000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 3,
+          "coalesced": 0,
+          "presented": 3,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 3,
+          "enqueued": 3,
+          "coalesced": 0,
+          "presented": 3,
+          "successfulPresents": 3,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 12288000,
+          "drawnPresents": 3,
+          "drawnBytes": 12288000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1393983782",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 6852,
+        "totalSliceMs": 199779.24500465393,
+        "averageSliceMs": 29.15634048520927,
+        "maxSliceMs": 97.65000009536743,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 7
+          },
+          {
+            "leMs": 16,
+            "count": 11
+          },
+          {
+            "leMs": 32,
+            "count": 5541
+          },
+          {
+            "leMs": 64,
+            "count": 1289
+          },
+          {
+            "leMs": 128,
+            "count": 4
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 98.13999998569489,
+        "requestedInstructions": 3426000000,
+        "retiredInstructions": 3425972395,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 38,
+        "outputBytes": 5333,
+        "inputCalls": 6,
+        "inputBytes": 623,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 6853,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 119,
+        "executedBlocks": 73837842,
+        "retiredViaJit": 1766405213,
+        "directChainEntries": 106547330,
+        "directChainLinks": 32710006,
+        "dynamicLinkAttempts": 5605496,
+        "dynamicLinkHits": 3941954,
+        "dynamicLinkRefusals": 1663542,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 121891,
+        "entryCost": {
+          "timingEnabled": true,
+          "timerReads": 444268538,
+          "hostEntries": 73837842,
+          "stateCopyCalls": 147675684,
+          "stateCopyBytes": 14261303072,
+          "stateCopyNs": 8051593658,
+          "engineEntryNs": 34716667177,
+          "indirectTableDispatches": 17088346,
+          "authorityChecks": 83523893,
+          "memorySplitExits": 143705,
+          "deviceBoundaries": 72866,
+          "deviceBoundaryNs": 7314998
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 3426472390,
+        "jitEngineCalls": 73837842,
+        "jitLogicalBlocksPerEngineCall": 1.4429908447215996,
+        "jitRetiredShare": 0.5155171301409495,
+        "chainLinksMade": 5291,
+        "chainLinksCut": 5270,
+        "chainDispatchEntries": 67398271,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 68761720,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 46595,
+        "jitCompilePauseNs": 2182594941,
+        "jitCompilePauseMaxNs": 1860000,
+        "jitCompilePauseSamples": 8237,
+        "jitCacheInstalls": 45767,
+        "jitCacheRetranslations": 43449,
+        "jitCacheEvictions": 8141,
+        "jitCacheBatches": 21,
+        "jitCacheCodeBytes": 1622749,
+        "compileQueue": {
+          "admitted": 69603,
+          "droppedBackpressure": 50729,
+          "cancelledStale": 0,
+          "popped": 52865,
+          "queueHighWater": 256,
+          "queueDepth": 248,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 104001,
+          "deduped": 146501776,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 30853944,
+          "excluded": 152,
+          "queueDepth": 159,
+          "queueHighWater": 615,
+          "candidates": 65536,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 221906416,
+        "blockBuilds": 14643940
+      }
+    }
+  },
+  {
+    "time": "2026-09-10T05:06:41.707Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "desktop-input-later.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/mixed-renderer-candidate-r1/browser/desktop-input-later.png"
+  },
+  {
+    "time": "2026-09-10T05:06:46.014Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "if [ -f /tmp/gui ]; then cat /tmp/gui; else exit 75; fi"
+    },
+    "actualCommand": "( if [ -f /tmp/gui ]; then cat /tmp/gui; else exit 75; fi\n )",
+    "result": {
+      "stdout": "\n",
+      "exit": 75
+    }
+  },
+  {
+    "time": "2026-09-10T05:07:55.071Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "desktop-input-three-minutes.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/mixed-renderer-candidate-r1/browser/desktop-input-three-minutes.png"
+  },
+  {
+    "time": "2026-09-10T05:07:59.212Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "if [ -f /tmp/gui ]; then cat /tmp/gui; else exit 75; fi"
+    },
+    "actualCommand": "( if [ -f /tmp/gui ]; then cat /tmp/gui; else exit 75; fi\n )",
+    "result": {
+      "stdout": "\n",
+      "exit": 75
+    }
+  },
+  {
+    "time": "2026-09-10T05:08:10.427Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "dd if=/proc/417/mem bs=1 skip=140735005854976 count=384 status=none | od -An -tx1 -v"
+    },
+    "actualCommand": "( dd if=/proc/417/mem bs=1 skip=140735005854976 count=384 status=none | od -An -tx1 -v\n )",
+    "result": {
+      "stdout": " f8 0f 13 74 f8 0f 53 7f 0f 11 d3 fe 0e 11 53 7e\n 0e 11 d3 f8 08 11 53 79 09 11 d3 f4 04 11 53 74\n 04 11 d3 ff 0f 11 d3 79 14 d0 53 fa 14 d0 d3 fa\n 17 d0 53 7b 17 d0 9b d6 86 01 1b 56 86 01 9b d5\n 85 01 1b 55 85 01 53 79 79 10 d3 f4 74 10 d3 ff\n 7f 10 53 74 74 10 53 7f 7f 10 d3 fe 7e 10 d3 f8\n 78 10 53 7e 7e 10 53 7b 0b 11 d3 fa 0a 11 53 7a\n 0a 11 d3 f9 09 11 d3 7b 15 d0 53 fc 15 d0 d3 7c\n 16 d0 53 fd 16 d0 03 3a 01 4a 27 20 fa 01 27 22\n 8a 00 27 24 9a 00 27 26 2a 01 03 39 81 4a 27 20\n 19 01 27 22 c9 01 27 24 d9 01 27 26 e9 01 d3 78\n 0d 11 53 fe 0c 11 d3 7e 0c 11 53 f8 0b 11 53 7f\n 7b 10 d3 ff 7a 10 53 f4 79 10 d3 74 7a 10 d3 f8\n 78 10 53 7e 7e 10 53 78 78 10 d3 f3 7e 10 03 3c\n 01 4b 27 20 8c 00 27 22 9c 00 27 24 fc 01 27 26\n ec 01 03 34 81 4b 27 20 04 01 27 22 74 00 27 24\n c4 01 27 26 14 01 83 39 01 4c 03 3b 81 49 03 36\n 01 49 83 34 81 48 83 36 01 48 03 37 81 47 83 37\n 01 47 03 38 81 46 94 c0 d8 c0 9c c4 23 a6 04 01\n 85 29 41 04 41 0c 41 09 41 0a 41 0b 41 06 c1 04\n 0d 45 63 61 35 3f 94 40 d8 40 9c 44 03 a8 c4 00\n 33 e5 f6 00 b3 65 07 01 4d 8d 71 d5 87 28 06 00\n 07 2f 46 00 07 24 86 00 23 38 c1 48 87 23 c6 00\n 07 2e 0b 00 87 2f 4b 00 07 29 8b 00 07 28 cb 00\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T05:10:37.948Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "before-single-key.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/mixed-renderer-candidate-r1/browser/before-single-key.png"
+  },
+  {
+    "time": "2026-09-10T05:10:38.051Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "type",
+      "text": "x",
+      "enter": false,
+      "delay": 100
+    },
+    "result": "sent"
+  },
+  {
+    "time": "2026-09-10T05:10:38.143Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyX",
+          "evdev": 45,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyX",
+          "evdev": 45,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 2,
+        "pendingFrames": 1,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 5120
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 6553
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 5120,
+            "y": 6553
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 2578,
+        "completed": 2578,
+        "pending": 0,
+        "averageMs": 15.8251881308108,
+        "maxMs": 117.20500004291534
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 6,
+        "successfulPresents": 6,
+        "drawnPresents": 6,
+        "drawnBytes": 24576000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 6,
+          "coalesced": 0,
+          "presented": 6,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 6,
+          "enqueued": 6,
+          "coalesced": 0,
+          "presented": 6,
+          "successfulPresents": 6,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 24576000,
+          "drawnPresents": 6,
+          "drawnBytes": 24576000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1472639726",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 16920,
+        "totalSliceMs": 494080.18499684334,
+        "averageSliceMs": 29.200956560097126,
+        "maxSliceMs": 135.96000003814697,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 12
+          },
+          {
+            "leMs": 16,
+            "count": 21
+          },
+          {
+            "leMs": 32,
+            "count": 13688
+          },
+          {
+            "leMs": 64,
+            "count": 3191
+          },
+          {
+            "leMs": 128,
+            "count": 7
+          },
+          {
+            "leMs": 256,
+            "count": 1
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 141,
+        "requestedInstructions": 8460000000,
+        "retiredInstructions": 8459952906,
+        "fetchWaits": 4,
+        "fetchRequestedChunks": 4,
+        "fetchWaitTotalMs": 15.574999928474426,
+        "fetchWaitMaxMs": 5,
+        "outputCalls": 65,
+        "outputBytes": 9280,
+        "inputCalls": 9,
+        "inputBytes": 1057,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 16921,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 173,
+        "executedBlocks": 189423666,
+        "retiredViaJit": 4534357226,
+        "directChainEntries": 261956912,
+        "directChainLinks": 72534497,
+        "dynamicLinkAttempts": 10135533,
+        "dynamicLinkHits": 7233602,
+        "dynamicLinkRefusals": 2901931,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 10,
+        "dynamicLinkInstalls": 189742,
+        "entryCost": {
+          "timingEnabled": true,
+          "timerReads": 1139270000,
+          "hostEntries": 189423666,
+          "stateCopyCalls": 378847332,
+          "stateCopyBytes": 36774715952,
+          "stateCopyNs": 20847975674,
+          "engineEntryNs": 91578777344,
+          "indirectTableDispatches": 38484095,
+          "authorityChecks": 209469916,
+          "memorySplitExits": 224965,
+          "deviceBoundaries": 113359,
+          "deviceBoundaryNs": 11049998
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 8460452906,
+        "jitEngineCalls": 189423666,
+        "jitLogicalBlocksPerEngineCall": 1.382915437820742,
+        "jitRetiredShare": 0.5359473395075949,
+        "chainLinksMade": 14390,
+        "chainLinksCut": 14379,
+        "chainDispatchEntries": 172769658,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 178539892,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 117216,
+        "jitCompilePauseNs": 5604129982,
+        "jitCompilePauseMaxNs": 1860000,
+        "jitCompilePauseSamples": 20617,
+        "jitCacheInstalls": 116261,
+        "jitCacheRetranslations": 113420,
+        "jitCacheEvictions": 20482,
+        "jitCacheBatches": 23,
+        "jitCacheCodeBytes": 2366534,
+        "compileQueue": {
+          "admitted": 161299,
+          "droppedBackpressure": 85436,
+          "cancelledStale": 0,
+          "popped": 130769,
+          "queueHighWater": 256,
+          "queueDepth": 217,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 216422,
+          "deduped": 355050877,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 79230796,
+          "excluded": 173,
+          "queueDepth": 0,
+          "queueHighWater": 615,
+          "candidates": 65536,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 521324027,
+        "blockBuilds": 33216746
+      }
+    }
+  },
+  {
+    "time": "2026-09-10T05:12:18.141Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "single-key-observation.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/mixed-renderer-candidate-r1/browser/single-key-observation.png"
+  },
+  {
+    "time": "2026-09-10T05:14:26.354Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 getoption render:cm_enabled"
+    },
+    "actualCommand": "( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 getoption render:cm_enabled\n )",
+    "result": {
+      "stdout": "bool: false\nset: true\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T05:14:58.850Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "cat /proc/bus/input/devices; for t in /proc/417/task/*; do printf '%s ' \"$t\"; cat \"$t/comm\" \"$t/wchan\"; done"
+    },
+    "actualCommand": "( cat /proc/bus/input/devices; for t in /proc/417/task/*; do printf '%s ' \"$t\"; cat \"$t/comm\" \"$t/wchan\"; done\n )",
+    "result": {
+      "stdout": "I: Bus=0006 Vendor=feed Product=0001 Version=0100\nN: Name=\"wasm-vm virtio keyboard\"\nP: Phys=virtio3/input0\nS: Sysfs=/devices/platform/soc/10004000.virtio_mmio/virtio3/input/input0\nU: Uniq=\nH: Handlers=kbd event0 \nB: PROP=0\nB: EV=20013\nB: KEY=1ffffffffffffff ffffffffffffffff ffffffffffffffff fffffffffffffffe\nB: MSC=10\nB: LED=7\n\nI: Bus=0006 Vendor=feed Product=0002 Version=0100\nN: Name=\"wasm-vm virtio tablet\"\nP: Phys=virtio4/input0\nS: Sysfs=/devices/platform/soc/10005000.virtio_mmio/virtio4/input/input1\nU: Uniq=\nH: Handlers=mouse0 event1 \nB: PROP=2\nB: EV=b\nB: KEY=1f0000 0 0 0 0\nB: ABS=3\n\nI: Bus=0006 Vendor=feed Product=0003 Version=0100\nN: Name=\"wasm-vm virtio mouse\"\nP: Phys=virtio5/input0\nS: Sysfs=/devices/platform/soc/10006000.virtio_mmio/virtio5/input/input2\nU: Uniq=\nH: Handlers=mouse1 event2 \nB: PROP=0\nB: EV=7\nB: KEY=1f0000 0 0 0 0\nB: REL=143\n\n/proc/417/task/417 Hyprland\nfutex_wait_queue/proc/417/task/441 Hyprland\nfutex_wait_queue/proc/417/task/462 llvmpipe-0\n0/proc/417/task/463 Hyprland\nfutex_wait_queue/proc/417/task/468 Hyprlan:disk$0\nfutex_wait_queue/proc/417/task/469 Hyprlan:disk$1\nfutex_wait_queue/proc/417/task/470 Hyprlan:disk$2\nfutex_wait_queue/proc/417/task/481 Hyprlan:disk$3\nfutex_wait_queue/proc/417/task/482 pool-spawner\nfutex_wait_queue/proc/417/task/483 gmain\npoll_schedule_timeout.constprop.0/proc/417/task/484 dconf worker\npoll_schedule_timeout.constprop.0/proc/417/task/485 gdbus\npoll_schedule_timeout.constprop.0/proc/417/task/589 [pango] fontcon\nfutex_wait_queue\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T05:14:58.877Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "single-key-later.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/mixed-renderer-candidate-r1/browser/single-key-later.png"
+  },
+  {
+    "time": "2026-09-10T05:17:52.252Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "single-key-progress.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/mixed-renderer-candidate-r1/browser/single-key-progress.png"
+  },
+  {
+    "time": "2026-09-10T05:17:52.384Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyX",
+          "evdev": 45,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyX",
+          "evdev": 45,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 5120
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 6553
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 5120,
+            "y": 6553
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 4727,
+        "completed": 4727,
+        "pending": 0,
+        "averageMs": 16.353822719932282,
+        "maxMs": 117.20500004291534
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 11,
+        "successfulPresents": 11,
+        "drawnPresents": 11,
+        "drawnBytes": 45056000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 11,
+          "coalesced": 0,
+          "presented": 11,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 11,
+          "enqueued": 11,
+          "coalesced": 0,
+          "presented": 11,
+          "successfulPresents": 11,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 45056000,
+          "drawnPresents": 11,
+          "drawnBytes": 45056000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 194,
+            "y": 150,
+            "width": 20,
+            "height": 33
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1579100273",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 30547,
+        "totalSliceMs": 927199.0599883795,
+        "averageSliceMs": 30.35319540342356,
+        "maxSliceMs": 135.96000003814697,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 15
+          },
+          {
+            "leMs": 16,
+            "count": 21
+          },
+          {
+            "leMs": 32,
+            "count": 22229
+          },
+          {
+            "leMs": 64,
+            "count": 8266
+          },
+          {
+            "leMs": 128,
+            "count": 15
+          },
+          {
+            "leMs": 256,
+            "count": 1
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 141,
+        "requestedInstructions": 15273500000,
+        "retiredInstructions": 15273427873,
+        "fetchWaits": 4,
+        "fetchRequestedChunks": 4,
+        "fetchWaitTotalMs": 15.574999928474426,
+        "fetchWaitMaxMs": 5,
+        "outputCalls": 109,
+        "outputBytes": 12637,
+        "inputCalls": 11,
+        "inputBytes": 1396,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 30548,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 158,
+        "executedBlocks": 325459656,
+        "retiredViaJit": 7718296517,
+        "directChainEntries": 445144567,
+        "directChainLinks": 119687107,
+        "dynamicLinkAttempts": 16388976,
+        "dynamicLinkHits": 11721593,
+        "dynamicLinkRefusals": 4667383,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 9,
+        "dynamicLinkInstalls": 255380,
+        "entryCost": {
+          "timingEnabled": true,
+          "timerReads": 1957288433,
+          "hostEntries": 325459656,
+          "stateCopyCalls": 650919312,
+          "stateCopyBytes": 63321891664,
+          "stateCopyNs": 36833416713,
+          "engineEntryNs": 164118640509,
+          "indirectTableDispatches": 63012592,
+          "authorityChecks": 356339200,
+          "memorySplitExits": 337256,
+          "deviceBoundaries": 181488,
+          "deviceBoundaryNs": 17950005
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 15273927871,
+        "jitEngineCalls": 325459656,
+        "jitLogicalBlocksPerEngineCall": 1.3677411586768222,
+        "jitRetiredShare": 0.5053249290023442,
+        "chainLinksMade": 25952,
+        "chainLinksCut": 25924,
+        "chainDispatchEntries": 297783260,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 306373739,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 209392,
+        "jitCompilePauseNs": 10701459788,
+        "jitCompilePauseMaxNs": 2980000,
+        "jitCompilePauseSamples": 42452,
+        "jitCacheInstalls": 208322,
+        "jitCacheRetranslations": 204607,
+        "jitCacheEvictions": 42259,
+        "jitCacheBatches": 21,
+        "jitCacheCodeBytes": 2468917,
+        "compileQueue": {
+          "admitted": 279957,
+          "droppedBackpressure": 129994,
+          "cancelledStale": 0,
+          "popped": 233036,
+          "queueHighWater": 256,
+          "queueDepth": 240,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 363300,
+          "deduped": 621307027,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 199481862,
+          "excluded": 213,
+          "queueDepth": 30,
+          "queueHighWater": 615,
+          "candidates": 65536,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 960964217,
+        "blockBuilds": 59971459
+      }
+    }
+  },
+  {
+    "time": "2026-09-10T05:21:15.828Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "single-key-0521.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/mixed-renderer-candidate-r1/browser/single-key-0521.png"
+  },
+  {
+    "time": "2026-09-10T05:21:19.942Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "if [ -f /tmp/gui ]; then cat /tmp/gui; else exit 75; fi"
+    },
+    "actualCommand": "( if [ -f /tmp/gui ]; then cat /tmp/gui; else exit 75; fi\n )",
+    "result": {
+      "stdout": "\n",
+      "exit": 75
+    }
+  },
+  {
+    "time": "2026-09-10T05:23:02.223Z",
+    "pageUrl": "http://127.0.0.1:59993/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&profile=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A59993#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": true,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Period",
+          "evdev": 52,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyM",
+          "evdev": 50,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyP",
+          "evdev": 25,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Slash",
+          "evdev": 53,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyU",
+          "evdev": 22,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyX",
+          "evdev": 45,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyX",
+          "evdev": 45,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 5120
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 6553
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 5120,
+            "y": 6553
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 6263,
+        "completed": 6263,
+        "pending": 0,
+        "averageMs": 16.388780136354317,
+        "maxMs": 117.20500004291534
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 14,
+        "successfulPresents": 14,
+        "drawnPresents": 14,
+        "drawnBytes": 57344000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 14,
+          "coalesced": 0,
+          "presented": 14,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 14,
+          "enqueued": 14,
+          "coalesced": 0,
+          "presented": 14,
+          "successfulPresents": 14,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 57344000,
+          "drawnPresents": 14,
+          "drawnBytes": 57344000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 194,
+            "y": 52,
+            "width": 28,
+            "height": 120
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1654209497",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 40161,
+        "totalSliceMs": 1236256.1999983788,
+        "averageSliceMs": 30.782505415661433,
+        "maxSliceMs": 135.96000003814697,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 15
+          },
+          {
+            "leMs": 16,
+            "count": 23
+          },
+          {
+            "leMs": 32,
+            "count": 27912
+          },
+          {
+            "leMs": 64,
+            "count": 12189
+          },
+          {
+            "leMs": 128,
+            "count": 21
+          },
+          {
+            "leMs": 256,
+            "count": 1
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 141,
+        "requestedInstructions": 20080500000,
+        "retiredInstructions": 20080418263,
+        "fetchWaits": 4,
+        "fetchRequestedChunks": 4,
+        "fetchWaitTotalMs": 15.574999928474426,
+        "fetchWaitMaxMs": 5,
+        "outputCalls": 117,
+        "outputBytes": 13405,
+        "inputCalls": 12,
+        "inputBytes": 1533,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 40162,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 150,
+        "executedBlocks": 422404469,
+        "retiredViaJit": 10052128843,
+        "directChainEntries": 570896141,
+        "directChainLinks": 148494552,
+        "dynamicLinkAttempts": 18135228,
+        "dynamicLinkHits": 12881088,
+        "dynamicLinkRefusals": 5254140,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 15,
+        "dynamicLinkInstalls": 283285,
+        "entryCost": {
+          "timingEnabled": true,
+          "timerReads": 2540045665,
+          "hostEntries": 422404469,
+          "stateCopyCalls": 844808938,
+          "stateCopyBytes": 81942566336,
+          "stateCopyNs": 48534023984,
+          "engineEntryNs": 218796470517,
+          "indirectTableDispatches": 77171053,
+          "authorityChecks": 457039506,
+          "memorySplitExits": 359602,
+          "deviceBoundaries": 188307,
+          "deviceBoundaryNs": 18750005
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 20080918263,
+        "jitEngineCalls": 422404469,
+        "jitLogicalBlocksPerEngineCall": 1.3515390648009455,
+        "jitRetiredShare": 0.5005811343558677,
+        "chainLinksMade": 32947,
+        "chainLinksCut": 32930,
+        "chainDispatchEntries": 387935458,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 396989694,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 275568,
+        "jitCompilePauseNs": 14449614628,
+        "jitCompilePauseMaxNs": 2980000,
+        "jitCompilePauseSamples": 57930,
+        "jitCacheInstalls": 274467,
+        "jitCacheRetranslations": 270602,
+        "jitCacheEvictions": 57680,
+        "jitCacheBatches": 19,
+        "jitCacheCodeBytes": 2112476,
+        "compileQueue": {
+          "admitted": 357587,
+          "droppedBackpressure": 142436,
+          "cancelledStale": 0,
+          "popped": 305335,
+          "queueHighWater": 256,
+          "queueDepth": 211,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 447988,
+          "deduped": 807201680,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 279775006,
+          "excluded": 223,
+          "queueDepth": 6,
+          "queueHighWater": 615,
+          "candidates": 65536,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 1256445182,
+        "blockBuilds": 76757995
+      }
+    }
+  }
+]

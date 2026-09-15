@@ -1,0 +1,3067 @@
+{
+  "url": "http://127.0.0.1:58247/app.html?guest=omarchy&desktop=1&noSnapshot=1&persist=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A58247#ide",
+  "mode": "cold-pair",
+  "startedAt": "2026-09-13T22:37:41.641Z",
+  "errors": [],
+  "observations": [
+    {
+      "layout": {
+        "label": "initial",
+        "e2eShowall": false,
+        "visiblePanels": [
+          "panel-ide"
+        ],
+        "url": "http://127.0.0.1:58247/app.html?guest=omarchy&desktop=1&noSnapshot=1&persist=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A58247#ide"
+      }
+    },
+    {
+      "serviceWorker": {
+        "label": "initial",
+        "controllerScriptURL": null,
+        "registrationActiveURL": null
+      }
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/thread-r2/cold-built/failure.png",
+      "timestamp": "2026-09-13T22:38:08.511Z",
+      "sha256": "6593b2d16c0cae886aa23f8d13b8a56305240c22833f1ddc0c9083463ad37934"
+    }
+  ],
+  "resourceIdentities": [
+    {
+      "pathname": "/__omarchy-cold-pair-blank.html",
+      "method": "GET",
+      "status": 200,
+      "size": 80,
+      "sha256": "18a4960d4751eaa951f999950aee71d8346ac4121503c401b5d9d834213c4e5b",
+      "repoPath": null,
+      "timestamp": "2026-09-13T22:37:45.725Z"
+    },
+    {
+      "pathname": "/app.html",
+      "method": "GET",
+      "status": 200,
+      "size": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "repoPath": "web/dist/app.html",
+      "timestamp": "2026-09-13T22:37:46.817Z"
+    },
+    {
+      "pathname": "/vendor/xterm/xterm.js",
+      "method": "GET",
+      "status": 200,
+      "size": 289441,
+      "sha256": "1f991ac3b4b283ebf96e60ae23a00a52765dd3a2e46fa6fdda9f1aab032f7495",
+      "repoPath": "web/dist/vendor/xterm/xterm.js",
+      "timestamp": "2026-09-13T22:37:46.838Z"
+    },
+    {
+      "pathname": "/vendor/xterm/xterm.css",
+      "method": "GET",
+      "status": 200,
+      "size": 5559,
+      "sha256": "ba8e6985669488981ccf40c0cefe3aba80722cb6c92de7ad628b0bd717faf2b6",
+      "repoPath": "web/dist/vendor/xterm/xterm.css",
+      "timestamp": "2026-09-13T22:37:46.839Z"
+    },
+    {
+      "pathname": "/vendor/xterm/addon-fit.js",
+      "method": "GET",
+      "status": 200,
+      "size": 1497,
+      "sha256": "bdaefa370b1bfc42ee88d46fe6072400902a4d4b2d45cd93438dda9b23c97089",
+      "repoPath": "web/dist/vendor/xterm/addon-fit.js",
+      "timestamp": "2026-09-13T22:37:46.840Z"
+    },
+    {
+      "pathname": "/tabs.js",
+      "method": "GET",
+      "status": 200,
+      "size": 2616,
+      "sha256": "469b2a604cf324fefadbb8be3e19e171951c4ee930d6b51c073c9827c08722bd",
+      "repoPath": "web/dist/tabs.js",
+      "timestamp": "2026-09-13T22:37:46.842Z"
+    },
+    {
+      "pathname": "/ide.js",
+      "method": "GET",
+      "status": 200,
+      "size": 133580,
+      "sha256": "afe853ea07d6ba97487f011de68197eb53d9d549a0781e569c08d577c8983e93",
+      "repoPath": "web/dist/ide.js",
+      "timestamp": "2026-09-13T22:37:46.847Z"
+    },
+    {
+      "pathname": "/docs-mount.js",
+      "method": "GET",
+      "status": 200,
+      "size": 1291,
+      "sha256": "8e2e988bddc36af623154a826d068e0127458d4bbe4d8fc8c60f2426e122c745",
+      "repoPath": "web/dist/docs-mount.js",
+      "timestamp": "2026-09-13T22:37:46.855Z"
+    },
+    {
+      "pathname": "/cpu-isolation.js",
+      "method": "GET",
+      "status": 200,
+      "size": 5756,
+      "sha256": "b4a675d7a5f622d92fa486ae7d4bc0556130f99855772984fe05a0eeff6a092d",
+      "repoPath": "web/dist/cpu-isolation.js",
+      "timestamp": "2026-09-13T22:37:46.921Z"
+    },
+    {
+      "pathname": "/coi-serviceworker-register.js",
+      "method": "GET",
+      "status": 200,
+      "size": 2991,
+      "sha256": "86c5571dc7e1088c3938073e6edc913423030a6dcc90060780278d69f0c8cb4c",
+      "repoPath": "web/dist/coi-serviceworker-register.js",
+      "timestamp": "2026-09-13T22:37:46.922Z"
+    },
+    {
+      "pathname": "/omarchy-startup-state.js",
+      "method": "GET",
+      "status": 200,
+      "size": 4109,
+      "sha256": "fb80a37bc3c1d1c5fce23716dac25e04dee7bc6a43c8c77ec3c62ad0a29c2ac8",
+      "repoPath": "web/dist/omarchy-startup-state.js",
+      "timestamp": "2026-09-13T22:37:46.922Z"
+    },
+    {
+      "pathname": "/main.js",
+      "method": "GET",
+      "status": 200,
+      "size": 148354,
+      "sha256": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757",
+      "repoPath": "web/dist/main.js",
+      "timestamp": "2026-09-13T22:37:46.945Z"
+    },
+    {
+      "pathname": "/riscv-tests.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3087,
+      "sha256": "444101ff3f82a222368b662065d93969aeddaa991151b69cbe03c04dc39886b5",
+      "repoPath": "web/dist/riscv-tests.js",
+      "timestamp": "2026-09-13T22:37:46.955Z"
+    },
+    {
+      "pathname": "/pkg/wasm_vm_wasm.js",
+      "method": "GET",
+      "status": 200,
+      "size": 117849,
+      "sha256": "6842b5065a78cf0128a88f71671461bf271fa9af7fc7be4523a16c76b13c9e7e",
+      "repoPath": "web/dist/pkg/wasm_vm_wasm.js",
+      "timestamp": "2026-09-13T22:37:46.956Z"
+    },
+    {
+      "pathname": "/loader.js",
+      "method": "GET",
+      "status": 200,
+      "size": 79246,
+      "sha256": "26a4c9fa0284a99c39e2bd2f3f6457b77aebb4724e026bad2a2dc7d7f1d0d6a3",
+      "repoPath": "web/dist/loader.js",
+      "timestamp": "2026-09-13T22:37:46.956Z"
+    },
+    {
+      "pathname": "/roadmap.js",
+      "method": "GET",
+      "status": 200,
+      "size": 49063,
+      "sha256": "05c00a984a464245146a6496483dd97f5ecfca7843e6bb4d90db1f626af31272",
+      "repoPath": "web/dist/roadmap.js",
+      "timestamp": "2026-09-13T22:37:46.956Z"
+    },
+    {
+      "pathname": "/overlay-reset-target.js",
+      "method": "GET",
+      "status": 200,
+      "size": 540,
+      "sha256": "2aee312f3dae8544ef21eb284231cc79384260b5484a698d69d24b1549cad098",
+      "repoPath": "web/dist/overlay-reset-target.js",
+      "timestamp": "2026-09-13T22:37:46.957Z"
+    },
+    {
+      "pathname": "/linux-worker-host.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3208,
+      "sha256": "fb6e9b2c0517e463e75c534dc12792ded532ca1050139fc0346cf08e7df52d82",
+      "repoPath": "web/dist/linux-worker-host.js",
+      "timestamp": "2026-09-13T22:37:46.957Z"
+    },
+    {
+      "pathname": "/file-transfer.js",
+      "method": "GET",
+      "status": 200,
+      "size": 26272,
+      "sha256": "d0eed6ba7f0594a166cee9aea832550575709e07a11100504bf7c5c41ff7e646",
+      "repoPath": "web/dist/file-transfer.js",
+      "timestamp": "2026-09-13T22:37:46.981Z"
+    },
+    {
+      "pathname": "/terminal.js",
+      "method": "GET",
+      "status": 200,
+      "size": 11452,
+      "sha256": "fca4f0c080aad34b5d38121ffe9160275869a279f98fa28a20f6ea1c27b55eae",
+      "repoPath": "web/dist/terminal.js",
+      "timestamp": "2026-09-13T22:37:46.982Z"
+    },
+    {
+      "pathname": "/boot-progress.js",
+      "method": "GET",
+      "status": 200,
+      "size": 4127,
+      "sha256": "5e1e5155623204b2e106b3c05087e2188f2341769e05388e9dd272044aa2359e",
+      "repoPath": "web/dist/boot-progress.js",
+      "timestamp": "2026-09-13T22:37:46.984Z"
+    },
+    {
+      "pathname": "/guest-rpc.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3995,
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c",
+      "repoPath": "web/dist/guest-rpc.js",
+      "timestamp": "2026-09-13T22:37:46.985Z"
+    },
+    {
+      "pathname": "/src/input/keyboard.js",
+      "method": "GET",
+      "status": 200,
+      "size": 6948,
+      "sha256": "53a664fed275830498b04d02f6a118ce33702589744e170a1a5749c2f1fa4a67",
+      "repoPath": "web/dist/src/input/keyboard.js",
+      "timestamp": "2026-09-13T22:37:46.985Z"
+    },
+    {
+      "pathname": "/src/input/capture.js",
+      "method": "GET",
+      "status": 200,
+      "size": 11472,
+      "sha256": "ae0a676d181ec9118118378e5767f755ae89ff8890f60ef9bd45a4f6ed70f369",
+      "repoPath": "web/dist/src/input/capture.js",
+      "timestamp": "2026-09-13T22:37:46.987Z"
+    },
+    {
+      "pathname": "/src/input/held-keys.js",
+      "method": "GET",
+      "status": 200,
+      "size": 4516,
+      "sha256": "9f652d8fd99b75a8a0eaa10401030af0110e6da9d38172ed32c560975f531f0a",
+      "repoPath": "web/dist/src/input/held-keys.js",
+      "timestamp": "2026-09-13T22:37:46.993Z"
+    },
+    {
+      "pathname": "/src/input/reconciliation.js",
+      "method": "GET",
+      "status": 200,
+      "size": 6655,
+      "sha256": "6ff57347fd7818531e17ca1b00456192258d76532299ba642422f057582fe36d",
+      "repoPath": "web/dist/src/input/reconciliation.js",
+      "timestamp": "2026-09-13T22:37:46.994Z"
+    },
+    {
+      "pathname": "/src/audio/sink.js",
+      "method": "GET",
+      "status": 200,
+      "size": 12043,
+      "sha256": "1eb73a14bb3b3308e61a793c84d963ac75204c3f03dcb9d2ed220473081f6417",
+      "repoPath": "web/dist/src/audio/sink.js",
+      "timestamp": "2026-09-13T22:37:46.995Z"
+    },
+    {
+      "pathname": "/src/audio/capture-ring.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3268,
+      "sha256": "d9d1bcd50e2c7d6b6019aa15e77d4a9e01edd1167929f096c47c7b7c5eed1176",
+      "repoPath": "web/dist/src/audio/capture-ring.js",
+      "timestamp": "2026-09-13T22:37:46.996Z"
+    },
+    {
+      "pathname": "/src/audio/microphone.js",
+      "method": "GET",
+      "status": 200,
+      "size": 16079,
+      "sha256": "db52dd5c778109e14cf2b758b54482a845aa3fc244b95af5723d70375c2cc0ee",
+      "repoPath": "web/dist/src/audio/microphone.js",
+      "timestamp": "2026-09-13T22:37:46.996Z"
+    },
+    {
+      "pathname": "/src/audio/autoplay.js",
+      "method": "GET",
+      "status": 200,
+      "size": 10547,
+      "sha256": "d6f9982a0310c16a67a9c58d0b65f20c214e35429eb60c286766cfafc6ffa9c2",
+      "repoPath": "web/dist/src/audio/autoplay.js",
+      "timestamp": "2026-09-13T22:37:46.997Z"
+    },
+    {
+      "pathname": "/src/input/pointer.js",
+      "method": "GET",
+      "status": 200,
+      "size": 24902,
+      "sha256": "b5442e60b877e36077ee451eeec6da46da97b246d97afa8a9c94ea4e4cb231d5",
+      "repoPath": "web/dist/src/input/pointer.js",
+      "timestamp": "2026-09-13T22:37:47.004Z"
+    },
+    {
+      "pathname": "/src/sink/presentation.js",
+      "method": "GET",
+      "status": 200,
+      "size": 22791,
+      "sha256": "21a3004137a46720b8a10f9392a48e6e8b3166c98dbc83b9ae931e6ade048819",
+      "repoPath": "web/dist/src/sink/presentation.js",
+      "timestamp": "2026-09-13T22:37:47.004Z"
+    },
+    {
+      "pathname": "/src/sink/viewport.js",
+      "method": "GET",
+      "status": 200,
+      "size": 11016,
+      "sha256": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8",
+      "repoPath": "web/dist/src/sink/viewport.js",
+      "timestamp": "2026-09-13T22:37:47.005Z"
+    },
+    {
+      "pathname": "/src/sink/cursor-controller.js",
+      "method": "GET",
+      "status": 200,
+      "size": 15467,
+      "sha256": "3f3505f27dca24ea5a1f5454905e4a6744f7af58803a8c609e25b7fbff3344e0",
+      "repoPath": "web/dist/src/sink/cursor-controller.js",
+      "timestamp": "2026-09-13T22:37:47.005Z"
+    },
+    {
+      "pathname": "/desktop-agent-bridge.js",
+      "method": "GET",
+      "status": 200,
+      "size": 2993,
+      "sha256": "95ead26788572195db822ffdfe7853ca6cbaf29f4397357d46ef24d63e6fa338",
+      "repoPath": "web/dist/desktop-agent-bridge.js",
+      "timestamp": "2026-09-13T22:37:47.006Z"
+    },
+    {
+      "pathname": "/desktop-restore.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3896,
+      "sha256": "49a1c6e2104b821ce983a447e7d126909a18482288ff5386929bc742c5c46151",
+      "repoPath": "web/dist/desktop-restore.js",
+      "timestamp": "2026-09-13T22:37:47.007Z"
+    },
+    {
+      "pathname": "/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "method": "GET",
+      "status": 200,
+      "size": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804",
+      "repoPath": "web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "timestamp": "2026-09-13T22:37:47.013Z"
+    },
+    {
+      "pathname": "/linux-worker-protocol.js",
+      "method": "GET",
+      "status": 200,
+      "size": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e",
+      "repoPath": "web/dist/linux-worker-protocol.js",
+      "timestamp": "2026-09-13T22:37:47.013Z"
+    },
+    {
+      "pathname": "/omarchy-desktop-readiness.js",
+      "method": "GET",
+      "status": 200,
+      "size": 1256,
+      "sha256": "8c534fe9093db5945f5bec0d6fc06ec4a92a4b8342c6d6f47543e9f2355aaa56",
+      "repoPath": "web/dist/omarchy-desktop-readiness.js",
+      "timestamp": "2026-09-13T22:37:47.014Z"
+    },
+    {
+      "pathname": "/boot-path.js",
+      "method": "GET",
+      "status": 200,
+      "size": 2867,
+      "sha256": "63ebc850add4cea7fb79ddc1a7cd46651cf05c3442e51803a0454475528f7d47",
+      "repoPath": "web/dist/boot-path.js",
+      "timestamp": "2026-09-13T22:37:47.014Z"
+    },
+    {
+      "pathname": "/overlay-seed-identity.js",
+      "method": "GET",
+      "status": 200,
+      "size": 692,
+      "sha256": "e7ae8d22f14e55791b70163254f304fc9fa999029952eba595d592c7fd389c4d",
+      "repoPath": "web/dist/overlay-seed-identity.js",
+      "timestamp": "2026-09-13T22:37:47.015Z"
+    },
+    {
+      "pathname": "/task-quiescence.js",
+      "method": "GET",
+      "status": 200,
+      "size": 942,
+      "sha256": "7e567ffb550d23c97d027d9e36333e9f6786fbacbc9d388cae5c838ec9a4fe86",
+      "repoPath": "web/dist/task-quiescence.js",
+      "timestamp": "2026-09-13T22:37:47.017Z"
+    },
+    {
+      "pathname": "/guest-clock.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3818,
+      "sha256": "7381e6869674f1fc92880ad6757ffc831f7a37a0e06e192cc4bb085ecdec9133",
+      "repoPath": "web/dist/guest-clock.js",
+      "timestamp": "2026-09-13T22:37:47.017Z"
+    },
+    {
+      "pathname": "/decoded-cache.js",
+      "method": "GET",
+      "status": 200,
+      "size": 1412,
+      "sha256": "92eb0ef85b5b2580ef1b574b103993d7969b5f1a5cf9d59b8430e5ab300f06ae",
+      "repoPath": "web/dist/decoded-cache.js",
+      "timestamp": "2026-09-13T22:37:47.018Z"
+    },
+    {
+      "pathname": "/boot-asset-cache.js",
+      "method": "GET",
+      "status": 200,
+      "size": 9253,
+      "sha256": "ec667f890abdb796cf67df4b042a63dd4374d175157b9224c80a927c00bdfdbe",
+      "repoPath": "web/dist/boot-asset-cache.js",
+      "timestamp": "2026-09-13T22:37:47.018Z"
+    },
+    {
+      "pathname": "/osc52.js",
+      "method": "GET",
+      "status": 200,
+      "size": 6183,
+      "sha256": "89132eee9f4ca5ca1cc45596518b4cef77ee7bb8f773ac37cf98839fbeb3e18c",
+      "repoPath": "web/dist/osc52.js",
+      "timestamp": "2026-09-13T22:37:47.018Z"
+    },
+    {
+      "pathname": "/paste.js",
+      "method": "GET",
+      "status": 200,
+      "size": 2256,
+      "sha256": "9cd015e36130f8b4bcb18a91b8cc06f32a2199ce32527abf65bb433bafeaeff7",
+      "repoPath": "web/dist/paste.js",
+      "timestamp": "2026-09-13T22:37:47.018Z"
+    },
+    {
+      "pathname": "/progress.js",
+      "method": "GET",
+      "status": 200,
+      "size": 8163,
+      "sha256": "871b963702d62708622f41a3131003feb670c9e07a160de02ee37b89b5e97167",
+      "repoPath": "web/dist/progress.js",
+      "timestamp": "2026-09-13T22:37:47.026Z"
+    },
+    {
+      "pathname": "/src/audio/worklet.js",
+      "method": "GET",
+      "status": 200,
+      "size": 4123,
+      "sha256": "8e1c3f0d6b05c6a800d78e9912e987a6adc994a7eaa5dbb0916ab7cfa2440b21",
+      "repoPath": "web/dist/src/audio/worklet.js",
+      "timestamp": "2026-09-13T22:37:47.029Z"
+    },
+    {
+      "pathname": "/src/input/keymap.js",
+      "method": "GET",
+      "status": 200,
+      "size": 13680,
+      "sha256": "e6a3e893fadd7d288b6eabd4d59c01930498cee7923a682e9ae5d614ec939ada",
+      "repoPath": "web/dist/src/input/keymap.js",
+      "timestamp": "2026-09-13T22:37:47.029Z"
+    },
+    {
+      "pathname": "/src/audio/ring.js",
+      "method": "GET",
+      "status": 200,
+      "size": 12823,
+      "sha256": "1f56f0b5736c5ea7246b9b92517126171157ad05b949f5650da656dac2895893",
+      "repoPath": "web/dist/src/audio/ring.js",
+      "timestamp": "2026-09-13T22:37:47.030Z"
+    },
+    {
+      "pathname": "/src/audio/capture-worklet.js",
+      "method": "GET",
+      "status": 200,
+      "size": 4322,
+      "sha256": "1254466ad6982f51b14c48e265b42a555daf95791ad1d349120d702562d3698a",
+      "repoPath": "web/dist/src/audio/capture-worklet.js",
+      "timestamp": "2026-09-13T22:37:47.033Z"
+    },
+    {
+      "pathname": "/src/sink/canvas2d.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3751,
+      "sha256": "719b95ae13dbda214ed8b123ae6a72cdf459f88806c0d52832f56e6a96233936",
+      "repoPath": "web/dist/src/sink/canvas2d.js",
+      "timestamp": "2026-09-13T22:37:47.037Z"
+    },
+    {
+      "pathname": "/src/sink/webgl.js",
+      "method": "GET",
+      "status": 200,
+      "size": 9381,
+      "sha256": "508adc4d731afc6fe100b4970eef969c52c350ee296c4bb7bb87b88c8c85f4b4",
+      "repoPath": "web/dist/src/sink/webgl.js",
+      "timestamp": "2026-09-13T22:37:47.040Z"
+    },
+    {
+      "pathname": "/src/sink/frame-scheduler.js",
+      "method": "GET",
+      "status": 200,
+      "size": 6059,
+      "sha256": "4ab11b844262f32bf3c1f6e0cfa36a866f241273c36e66d1aa8c4679f770e54d",
+      "repoPath": "web/dist/src/sink/frame-scheduler.js",
+      "timestamp": "2026-09-13T22:37:47.041Z"
+    },
+    {
+      "pathname": "/src/sink/cursor.js",
+      "method": "GET",
+      "status": 200,
+      "size": 16477,
+      "sha256": "be4619b7f049b4a468bdbfbc20602d4d514775b710d2abc6ccdc370406e63c7b",
+      "repoPath": "web/dist/src/sink/cursor.js",
+      "timestamp": "2026-09-13T22:37:47.041Z"
+    },
+    {
+      "pathname": "/src/sink/visibility-scheduler.js",
+      "method": "GET",
+      "status": 200,
+      "size": 5475,
+      "sha256": "c878ce43e806975368e63adce8157ead3a579c4246a770202047a3be3c46ca80",
+      "repoPath": "web/dist/src/sink/visibility-scheduler.js",
+      "timestamp": "2026-09-13T22:37:47.041Z"
+    },
+    {
+      "pathname": "/agent-channel.js",
+      "method": "GET",
+      "status": 200,
+      "size": 39591,
+      "sha256": "2bd1a2ed1a4afa7bc3ca514afb333b851db76425cc7383462102fae392705ac1",
+      "repoPath": "web/dist/agent-channel.js",
+      "timestamp": "2026-09-13T22:37:47.043Z"
+    },
+    {
+      "pathname": "/src/sink/present-backend.js",
+      "method": "GET",
+      "status": 200,
+      "size": 4367,
+      "sha256": "8bf892f96f3710dd9050d7a16c38bda87daa17dcaa024560c4ecc97aeecb24f7",
+      "repoPath": "web/dist/src/sink/present-backend.js",
+      "timestamp": "2026-09-13T22:37:47.045Z"
+    },
+    {
+      "pathname": "/tasks.json",
+      "method": "GET",
+      "status": 200,
+      "size": 3254218,
+      "sha256": "a7f7e7b058d41c3b6bbe346dd2d55286c86d648add1ee0293bcc705dc4b701a9",
+      "repoPath": "web/dist/tasks.json",
+      "timestamp": "2026-09-13T22:37:47.056Z"
+    },
+    {
+      "pathname": "/pkg/wasm_vm_wasm_bg.wasm",
+      "method": "GET",
+      "status": 200,
+      "size": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305",
+      "repoPath": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "timestamp": "2026-09-13T22:37:47.490Z"
+    },
+    {
+      "pathname": "/assets/hello.elf",
+      "method": "GET",
+      "status": 200,
+      "size": 5536,
+      "sha256": "d562f9ec53be1727d7f4a0cf0f114d282cb18a414f2747579d50836d97373f92",
+      "repoPath": "web/dist/assets/hello.elf",
+      "timestamp": "2026-09-13T22:37:47.532Z"
+    },
+    {
+      "pathname": "/main.js",
+      "method": "GET",
+      "status": 200,
+      "size": 148354,
+      "sha256": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757",
+      "repoPath": "web/dist/main.js",
+      "timestamp": "2026-09-13T22:37:47.533Z"
+    },
+    {
+      "pathname": "/artifacts-alpine.json",
+      "method": "GET",
+      "status": 200,
+      "size": 774,
+      "sha256": "72843b6eebb9b482f1ffba392872d24824ca7465a09d1b4bec257d02a93a1ece",
+      "repoPath": "web/dist/artifacts-alpine.json",
+      "timestamp": "2026-09-13T22:37:47.560Z"
+    },
+    {
+      "pathname": "/ide.js",
+      "method": "GET",
+      "status": 200,
+      "size": 133580,
+      "sha256": "afe853ea07d6ba97487f011de68197eb53d9d549a0781e569c08d577c8983e93",
+      "repoPath": "web/dist/ide.js",
+      "timestamp": "2026-09-13T22:37:47.563Z"
+    },
+    {
+      "pathname": "/artifacts-node-alpine.json",
+      "method": "GET",
+      "status": 200,
+      "size": 795,
+      "sha256": "84dd4084dc7ef21e0054aa819fa3694b744ea93d013d8d8bc2c951cf9b8c8857",
+      "repoPath": "web/dist/artifacts-node-alpine.json",
+      "timestamp": "2026-09-13T22:37:47.574Z"
+    },
+    {
+      "pathname": "/artifacts-omarchy.json",
+      "method": "GET",
+      "status": 200,
+      "size": 423,
+      "sha256": "2a16b23d003f54bf4d487b69d28bfd5b2af6a3f937e27594035af9d2239335bd",
+      "repoPath": null,
+      "timestamp": "2026-09-13T22:37:47.577Z"
+    },
+    {
+      "pathname": "/roadmap.js",
+      "method": "GET",
+      "status": 200,
+      "size": 49063,
+      "sha256": "05c00a984a464245146a6496483dd97f5ecfca7843e6bb4d90db1f626af31272",
+      "repoPath": "web/dist/roadmap.js",
+      "timestamp": "2026-09-13T22:37:47.579Z"
+    },
+    {
+      "pathname": "/loader.js",
+      "method": "GET",
+      "status": 200,
+      "size": 79246,
+      "sha256": "26a4c9fa0284a99c39e2bd2f3f6457b77aebb4724e026bad2a2dc7d7f1d0d6a3",
+      "repoPath": "web/dist/loader.js",
+      "timestamp": "2026-09-13T22:37:47.588Z"
+    },
+    {
+      "pathname": "/guest-rpc.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3995,
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c",
+      "repoPath": "web/dist/guest-rpc.js",
+      "timestamp": "2026-09-13T22:37:47.606Z"
+    },
+    {
+      "pathname": "/pkg/wasm_vm_wasm_bg.wasm",
+      "method": "GET",
+      "status": 200,
+      "size": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305",
+      "repoPath": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "timestamp": "2026-09-13T22:37:47.631Z"
+    },
+    {
+      "pathname": "/artifacts-omarchy.json",
+      "method": "GET",
+      "status": 200,
+      "size": 423,
+      "sha256": "2a16b23d003f54bf4d487b69d28bfd5b2af6a3f937e27594035af9d2239335bd",
+      "repoPath": null,
+      "timestamp": "2026-09-13T22:37:47.641Z"
+    },
+    {
+      "pathname": "/linux-worker.js",
+      "method": "GET",
+      "status": 200,
+      "size": 1188,
+      "sha256": "7783b4aecb74b83882a2ca3495ed46932ed7930543d0cab72f4035ccfc13e4b9",
+      "repoPath": "web/dist/linux-worker.js",
+      "timestamp": "2026-09-13T22:37:50.867Z"
+    },
+    {
+      "pathname": "/loader.js",
+      "method": "GET",
+      "status": 200,
+      "size": 79246,
+      "sha256": "26a4c9fa0284a99c39e2bd2f3f6457b77aebb4724e026bad2a2dc7d7f1d0d6a3",
+      "repoPath": "web/dist/loader.js",
+      "timestamp": "2026-09-13T22:37:50.999Z"
+    },
+    {
+      "pathname": "/linux-worker-protocol.js",
+      "method": "GET",
+      "status": 200,
+      "size": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e",
+      "repoPath": "web/dist/linux-worker-protocol.js",
+      "timestamp": "2026-09-13T22:37:51.000Z"
+    },
+    {
+      "pathname": "/boot-path.js",
+      "method": "GET",
+      "status": 200,
+      "size": 2867,
+      "sha256": "63ebc850add4cea7fb79ddc1a7cd46651cf05c3442e51803a0454475528f7d47",
+      "repoPath": "web/dist/boot-path.js",
+      "timestamp": "2026-09-13T22:37:51.026Z"
+    },
+    {
+      "pathname": "/overlay-seed-identity.js",
+      "method": "GET",
+      "status": 200,
+      "size": 692,
+      "sha256": "e7ae8d22f14e55791b70163254f304fc9fa999029952eba595d592c7fd389c4d",
+      "repoPath": "web/dist/overlay-seed-identity.js",
+      "timestamp": "2026-09-13T22:37:51.027Z"
+    },
+    {
+      "pathname": "/task-quiescence.js",
+      "method": "GET",
+      "status": 200,
+      "size": 942,
+      "sha256": "7e567ffb550d23c97d027d9e36333e9f6786fbacbc9d388cae5c838ec9a4fe86",
+      "repoPath": "web/dist/task-quiescence.js",
+      "timestamp": "2026-09-13T22:37:51.027Z"
+    },
+    {
+      "pathname": "/guest-clock.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3818,
+      "sha256": "7381e6869674f1fc92880ad6757ffc831f7a37a0e06e192cc4bb085ecdec9133",
+      "repoPath": "web/dist/guest-clock.js",
+      "timestamp": "2026-09-13T22:37:51.028Z"
+    },
+    {
+      "pathname": "/pkg/wasm_vm_wasm.js",
+      "method": "GET",
+      "status": 200,
+      "size": 117849,
+      "sha256": "6842b5065a78cf0128a88f71671461bf271fa9af7fc7be4523a16c76b13c9e7e",
+      "repoPath": "web/dist/pkg/wasm_vm_wasm.js",
+      "timestamp": "2026-09-13T22:37:51.028Z"
+    },
+    {
+      "pathname": "/decoded-cache.js",
+      "method": "GET",
+      "status": 200,
+      "size": 1412,
+      "sha256": "92eb0ef85b5b2580ef1b574b103993d7969b5f1a5cf9d59b8430e5ab300f06ae",
+      "repoPath": "web/dist/decoded-cache.js",
+      "timestamp": "2026-09-13T22:37:51.028Z"
+    },
+    {
+      "pathname": "/boot-asset-cache.js",
+      "method": "GET",
+      "status": 200,
+      "size": 9253,
+      "sha256": "ec667f890abdb796cf67df4b042a63dd4374d175157b9224c80a927c00bdfdbe",
+      "repoPath": "web/dist/boot-asset-cache.js",
+      "timestamp": "2026-09-13T22:37:51.048Z"
+    },
+    {
+      "pathname": "/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "method": "GET",
+      "status": 200,
+      "size": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804",
+      "repoPath": "web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "timestamp": "2026-09-13T22:37:51.048Z"
+    },
+    {
+      "pathname": "/artifacts-omarchy.json",
+      "method": "GET",
+      "status": 200,
+      "size": 423,
+      "sha256": "2a16b23d003f54bf4d487b69d28bfd5b2af6a3f937e27594035af9d2239335bd",
+      "repoPath": null,
+      "timestamp": "2026-09-13T22:37:51.059Z"
+    },
+    {
+      "pathname": "/candidate/kernel",
+      "method": "GET",
+      "status": 200,
+      "size": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "repoPath": "releases/kernel/6.6.63/Image",
+      "timestamp": "2026-09-13T22:37:51.243Z"
+    },
+    {
+      "pathname": "/chunked-omarchy/manifest-38e8d3144e2e0be26290763a8fd1a712e93b70fc39f93131d80ed3937cbb09fc.json",
+      "method": "GET",
+      "status": 200,
+      "size": 1179757,
+      "sha256": "38e8d3144e2e0be26290763a8fd1a712e93b70fc39f93131d80ed3937cbb09fc",
+      "repoPath": null,
+      "timestamp": "2026-09-13T22:37:51.586Z"
+    },
+    {
+      "pathname": "/pkg/wasm_vm_wasm_bg.wasm",
+      "method": "GET",
+      "status": 200,
+      "size": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305",
+      "repoPath": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "timestamp": "2026-09-13T22:37:51.828Z"
+    }
+  ],
+  "browserRequests": [
+    {
+      "timestamp": "2026-09-13T22:37:45.731Z",
+      "url": "http://127.0.0.1:58247/__omarchy-cold-pair-blank.html",
+      "method": "GET",
+      "resourceType": "document"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.816Z",
+      "url": "http://127.0.0.1:58247/app.html?guest=omarchy&desktop=1&noSnapshot=1&persist=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A58247",
+      "method": "GET",
+      "resourceType": "document"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.865Z",
+      "url": "http://127.0.0.1:58247/vendor/xterm/xterm.css",
+      "method": "GET",
+      "resourceType": "stylesheet"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.865Z",
+      "url": "http://127.0.0.1:58247/vendor/xterm/xterm.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.865Z",
+      "url": "http://127.0.0.1:58247/vendor/xterm/addon-fit.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.865Z",
+      "url": "http://127.0.0.1:58247/tabs.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.865Z",
+      "url": "http://127.0.0.1:58247/ide.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.865Z",
+      "url": "http://127.0.0.1:58247/docs-mount.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.920Z",
+      "url": "http://127.0.0.1:58247/omarchy-startup-state.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.921Z",
+      "url": "http://127.0.0.1:58247/coi-serviceworker-register.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.921Z",
+      "url": "http://127.0.0.1:58247/cpu-isolation.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.938Z",
+      "url": "http://127.0.0.1:58247/main.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.972Z",
+      "url": "http://127.0.0.1:58247/pkg/wasm_vm_wasm.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.972Z",
+      "url": "http://127.0.0.1:58247/riscv-tests.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.972Z",
+      "url": "http://127.0.0.1:58247/roadmap.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.972Z",
+      "url": "http://127.0.0.1:58247/loader.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.973Z",
+      "url": "http://127.0.0.1:58247/linux-worker-host.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.973Z",
+      "url": "http://127.0.0.1:58247/overlay-reset-target.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.973Z",
+      "url": "http://127.0.0.1:58247/terminal.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.973Z",
+      "url": "http://127.0.0.1:58247/file-transfer.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.973Z",
+      "url": "http://127.0.0.1:58247/boot-progress.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/guest-rpc.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/src/input/keyboard.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/src/input/capture.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/src/input/held-keys.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/src/input/reconciliation.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/src/audio/autoplay.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/src/audio/sink.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/src/audio/capture-ring.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/src/audio/microphone.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/src/input/pointer.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/src/sink/presentation.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/src/sink/viewport.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/src/sink/cursor-controller.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/desktop-agent-bridge.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/desktop-restore.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.979Z",
+      "url": "http://127.0.0.1:58247/omarchy-desktop-readiness.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.980Z",
+      "url": "http://127.0.0.1:58247/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.980Z",
+      "url": "http://127.0.0.1:58247/linux-worker-protocol.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.980Z",
+      "url": "http://127.0.0.1:58247/boot-path.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.980Z",
+      "url": "http://127.0.0.1:58247/overlay-seed-identity.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.980Z",
+      "url": "http://127.0.0.1:58247/task-quiescence.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.980Z",
+      "url": "http://127.0.0.1:58247/guest-clock.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.980Z",
+      "url": "http://127.0.0.1:58247/decoded-cache.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.980Z",
+      "url": "http://127.0.0.1:58247/boot-asset-cache.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.992Z",
+      "url": "http://127.0.0.1:58247/osc52.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.992Z",
+      "url": "http://127.0.0.1:58247/paste.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.992Z",
+      "url": "http://127.0.0.1:58247/progress.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:46.992Z",
+      "url": "http://127.0.0.1:58247/src/input/keymap.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.003Z",
+      "url": "http://127.0.0.1:58247/src/audio/worklet.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.003Z",
+      "url": "http://127.0.0.1:58247/src/audio/ring.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.003Z",
+      "url": "http://127.0.0.1:58247/src/audio/capture-worklet.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.012Z",
+      "url": "http://127.0.0.1:58247/src/sink/canvas2d.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.012Z",
+      "url": "http://127.0.0.1:58247/src/sink/webgl.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.012Z",
+      "url": "http://127.0.0.1:58247/src/sink/frame-scheduler.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.012Z",
+      "url": "http://127.0.0.1:58247/src/sink/visibility-scheduler.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.014Z",
+      "url": "http://127.0.0.1:58247/src/sink/cursor.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.014Z",
+      "url": "http://127.0.0.1:58247/agent-channel.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.040Z",
+      "url": "http://127.0.0.1:58247/src/sink/present-backend.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.480Z",
+      "url": "http://127.0.0.1:58247/tasks.json",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.480Z",
+      "url": "http://127.0.0.1:58247/pkg/wasm_vm_wasm_bg.wasm",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.531Z",
+      "url": "http://127.0.0.1:58247/assets/hello.elf",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.557Z",
+      "url": "http://127.0.0.1:58247/artifacts-alpine.json",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.572Z",
+      "url": "http://127.0.0.1:58247/artifacts-node-alpine.json",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:47.586Z",
+      "url": "http://127.0.0.1:58247/artifacts-omarchy.json",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:50.801Z",
+      "url": "http://127.0.0.1:58247/linux-worker.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:50.915Z",
+      "url": "http://127.0.0.1:58247/loader.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:50.915Z",
+      "url": "http://127.0.0.1:58247/linux-worker-protocol.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:51.022Z",
+      "url": "http://127.0.0.1:58247/pkg/wasm_vm_wasm.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:51.022Z",
+      "url": "http://127.0.0.1:58247/boot-path.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:51.022Z",
+      "url": "http://127.0.0.1:58247/overlay-seed-identity.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:51.022Z",
+      "url": "http://127.0.0.1:58247/task-quiescence.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:51.022Z",
+      "url": "http://127.0.0.1:58247/guest-clock.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:51.022Z",
+      "url": "http://127.0.0.1:58247/decoded-cache.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:51.023Z",
+      "url": "http://127.0.0.1:58247/boot-asset-cache.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:51.046Z",
+      "url": "http://127.0.0.1:58247/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:51.063Z",
+      "url": "http://127.0.0.1:58247/artifacts-omarchy.json",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:51.084Z",
+      "url": "http://127.0.0.1:58247/candidate/kernel",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:51.591Z",
+      "url": "http://127.0.0.1:58247/chunked-omarchy/manifest-38e8d3144e2e0be26290763a8fd1a712e93b70fc39f93131d80ed3937cbb09fc.json",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-09-13T22:37:51.915Z",
+      "url": "http://127.0.0.1:58247/pkg/wasm_vm_wasm_bg.wasm",
+      "method": "GET",
+      "resourceType": "fetch"
+    }
+  ],
+  "serialCommands": [],
+  "inputEvents": [],
+  "workerTraffic": [
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:50.739Z",
+      "ms": 3926.180000066757,
+      "worker": 1,
+      "type": "worker-boot",
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:52.356Z",
+      "ms": 5543.1449999809265,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 1,
+      "method": "setDisplay",
+      "args": [
+        1280,
+        800
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:52.356Z",
+      "ms": 5543.7699999809265,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 2,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:52.356Z",
+      "ms": 5543.8949999809265,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 3,
+      "method": "jitStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:52.357Z",
+      "ms": 5544.3949999809265,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 4,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:52.495Z",
+      "ms": 5682.370000123978,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 5,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:52.637Z",
+      "ms": 5824.789999961853,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 6,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:52.734Z",
+      "ms": 5921.1449999809265,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 7,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:52.734Z",
+      "ms": 5921.295000076294,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 8,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:52.784Z",
+      "ms": 5971.600000143051,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 9,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:52.833Z",
+      "ms": 6021.0650000572205,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:52.867Z",
+      "ms": 6054.27999997139,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 10,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:52.929Z",
+      "ms": 6116.8150000572205,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.000000] Machine model: riscv-virtio,qemu\r\n[    0.000000] SBI specification v2.0 detected\r\n[    0.000000] SBI implementation ID=0x574d Version=0x100\r\n[    0.000000] SBI TIME extension detected\r\n[    0.000000] SBI IPI extension detected\r\n[    0.000000] SBI RFENCE extension detected\r\n[    0.000000] SBI SRST extension detected\r\n[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')\r\n[    0.000000] printk: bootconsole [sbi0] enabled\r\n[    0.000000] efi: UEFI not found.\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:52.994Z",
+      "ms": 6181.545000076294,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 11,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:52.994Z",
+      "ms": 6181.6449999809265,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 12,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:53.092Z",
+      "ms": 6279.410000085831,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 13,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:53.255Z",
+      "ms": 6442.425000190735,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 14,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:53.255Z",
+      "ms": 6442.475000143051,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 15,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:53.514Z",
+      "ms": 6701.365000009537,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 16,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:53.514Z",
+      "ms": 6701.4400000572205,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 17,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:53.523Z",
+      "ms": 6710.525000095367,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 18,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:53.772Z",
+      "ms": 6960.039999961853,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 19,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:53.773Z",
+      "ms": 6960.140000104904,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 20,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:54.143Z",
+      "ms": 7330.265000104904,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.000000] Zone ranges:\r\n[    0.000000]   DMA32    [mem 0x0000000080000000-0x00000000bfffffff]\r\n[    0.000000]   Normal   empty\r\n[    0.000000] Movable zone start for each node\r\n[    0.000000] Early memory node ranges\r\n[    0.000000]   node   0: [mem 0x0000000080000000-0x00000000bfffffff]\r\n[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000000bfffffff]\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:54.195Z",
+      "ms": 7382.455000162125,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 21,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:54.195Z",
+      "ms": 7382.5,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 22,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:54.204Z",
+      "ms": 7391.5,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 23,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:54.517Z",
+      "ms": 7704.7699999809265,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 24,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:54.517Z",
+      "ms": 7704.8550000190735,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 25,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:54.771Z",
+      "ms": 7958.77999997139,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.000000] SBI HSM extension detected\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:54.783Z",
+      "ms": 7971.080000162125,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 26,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:54.784Z",
+      "ms": 7971.150000095367,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 27,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:54.876Z",
+      "ms": 8063.350000143051,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.000000] Falling back to deprecated \"riscv,isa\"\r\n[    0.000000] riscv: base ISA extensions acdfim\r\n[    0.000000] riscv: ELF capabilities acdfim\r\n[    0.000000] percpu: Embedded 18 pages/cpu s42104 r0 d31624 u73728\r\n[    0.000000] Kernel command line: root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0\r\n[    0.000000] Dentry cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)\r\n[    0.000000] Inode-cache hash table entries: 65536 (order: 7, 524288 bytes, linear)\r\n[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 258048\r\n[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:55.067Z",
+      "ms": 8254.91000008583,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 28,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:55.127Z",
+      "ms": 8314.519999980927,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 29,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:55.127Z",
+      "ms": 8314.56500005722,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 30,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:55.400Z",
+      "ms": 8588.019999980927,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 31,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:55.401Z",
+      "ms": 8588.15499997139,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 32,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:55.450Z",
+      "ms": 8637.735000133514,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.000000] Virtual kernel memory layout:\r\n[    0.000000]       fixmap : 0xff1bfffffea00000 - 0xff1bffffff000000   (6144 kB)\r\n[    0.000000]       pci io : 0xff1bffffff000000 - 0xff1c000000000000   (  16 MB)\r\n[    0.000000]      vmemmap : 0xff1c000000000000 - 0xff20000000000000   (1024 TB)\r\n[    0.000000]      vmalloc : 0xff20000000000000 - 0xff60000000000000   (16384 TB)\r\n[    0.000000]      modules : 0xffffffff0179e000 - 0xffffffff80000000   (2024 MB)\r\n[    0.000000]       lowmem : 0xff60000000000000 - 0xff60000040000000   (1024 MB)\r\n[    0.000000]       kernel : 0xffffffff80000000 - 0xffffffffffffffff   (2047 MB)\r\n[    0.000000] Memory: 989528K/1048576K available (10367K kernel code, 5056K rwdata, 4096K rodata, 2201K init, 539K bss, 59048K reserved, 0K cma-reserved)\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:55.637Z",
+      "ms": 8824.795000076294,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1\r\n[    0.000000] rcu: Hierarchical RCU implementation.\r\n[    0.000000] rcu: \tRCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=1.\r\n[    0.000000] rcu: \tRCU debug extended QS entry/exit.\r\n[    0.000000] \tTracing variant of Tasks RCU enabled.\r\n[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.\r\n[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=1\r\n[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:55.704Z",
+      "ms": 8891.545000076294,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 33,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:55.704Z",
+      "ms": 8891.585000038147,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 34,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:55.872Z",
+      "ms": 9059.66000008583,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 35,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:55.926Z",
+      "ms": 9113.519999980927,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.000000] riscv-intc: 64 local interrupts mapped\r\n[    0.000000] plic: plic@c000000: mapped 95 interrupts with 1 handlers for 2 contexts.\r\n[    0.000000] riscv: providing IPIs using SBI IPI extension\r\n[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.\r\n[    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff max_cycles: 0x24e6a1710, max_idle_ns: 440795202120 ns\r\n[    0.000000] sched_clock: 64 bits at 10MHz, resolution 100ns, wraps every 4398046511100ns\r\n[    0.000203] Console: colour dummy device 80x25\r\n[    0.000234] Calibrating delay loop (skipped), value calculated using timer frequency.. 20.00 BogoMIPS (lpj=40000)\r\n[    0.000259] pid_max: default: 32768 minimum: 301\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:56.177Z",
+      "ms": 9364.769999980927,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 36,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:56.177Z",
+      "ms": 9364.91000008583,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 37,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:56.307Z",
+      "ms": 9494.340000152588,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.000338] LSM: initializing lsm=capability,integrity\r\n[    0.000455] Mount-cache hash table entries: 2048 (order: 2, 16384 bytes, linear)\r\n[    0.000478] Mountpoint-cache hash table entries: 2048 (order: 2, 16384 bytes, linear)\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:56.558Z",
+      "ms": 9745.925000190735,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 38,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:56.558Z",
+      "ms": 9746.03500008583,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 39,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:56.728Z",
+      "ms": 9915.335000038147,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 40,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:56.846Z",
+      "ms": 10033.800000190735,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 41,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:56.846Z",
+      "ms": 10033.884999990463,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 42,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:57.047Z",
+      "ms": 10234.630000114441,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.002303] RCU Tasks Trace: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.\r\n[    0.002413] riscv: ELF compat mode unsupported\r\n[    0.002425] ASID allocator using 16 bits (65536 entries)\r\n[    0.002589] rcu: Hierarchical SRCU implementation.\r\n[    0.002601] rcu: \tMax phase no-delay instances is 1000.\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:57.304Z",
+      "ms": 10491.52999997139,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 43,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:57.304Z",
+      "ms": 10491.65499997139,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 44,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:57.728Z",
+      "ms": 10915.275000095367,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.002835] EFI services will not be available.\r\n[    0.002966] smp: Bringing up secondary CPUs ...\r\n[    0.002983] smp: Brought up 1 node, 1 CPU\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:57.852Z",
+      "ms": 11039.630000114441,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 45,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:57.981Z",
+      "ms": 11168.5,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 46,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:57.981Z",
+      "ms": 11168.585000038147,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 47,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:58.074Z",
+      "ms": 11261.185000181198,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.003459] devtmpfs: initialized\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:58.329Z",
+      "ms": 11516.950000047684,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 48,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:58.334Z",
+      "ms": 11521.414999961853,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 49,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:58.551Z",
+      "ms": 11738.170000076294,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.005127] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns\r\n[    0.005151] futex hash table entries: 256 (order: 2, 16384 bytes, linear)\r\n[    0.005307] pinctrl core: initialized pinctrl subsystem\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:58.803Z",
+      "ms": 11990.66000008583,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 50,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:58.803Z",
+      "ms": 11990.740000009537,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 51,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:58.880Z",
+      "ms": 12068.03500008583,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 52,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:59.144Z",
+      "ms": 12331.769999980927,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.006793] NET: Registered PF_NETLINK/PF_ROUTE protocol family\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:59.397Z",
+      "ms": 12585.045000076294,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 53,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:59.397Z",
+      "ms": 12585.140000104904,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 54,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:59.526Z",
+      "ms": 12713.84500002861,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.007473] DMA: preallocated 128 KiB GFP_KERNEL pool for atomic allocations\r\n[    0.007506] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations\r\n[    0.007557] audit: initializing netlink subsys (disabled)\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:59.780Z",
+      "ms": 12968.015000104904,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 55,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:59.783Z",
+      "ms": 12971.019999980927,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.008102] thermal_sys: Registered thermal governor 'step_wise'\r\n[    0.008129] audit: type=2000 audit(0.004:1): state=initialized audit_enabled=0 res=1\r\n[    0.008171] cpuidle: using governor menu\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:59.785Z",
+      "ms": 12972.72000002861,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 56,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:37:59.945Z",
+      "ms": 13133.009999990463,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 57,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:00.038Z",
+      "ms": 13225.509999990463,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 58,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:00.183Z",
+      "ms": 13370.800000190735,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 59,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:00.390Z",
+      "ms": 13577.94000005722,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 60,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:00.520Z",
+      "ms": 13708.115000009537,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 61,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:00.651Z",
+      "ms": 13838.225000143051,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 62,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:00.934Z",
+      "ms": 14121.300000190735,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 63,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:00.934Z",
+      "ms": 14121.380000114441,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 64,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:00.938Z",
+      "ms": 14126.060000181198,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 65,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:01.313Z",
+      "ms": 14500.884999990463,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 66,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:01.313Z",
+      "ms": 14500.950000047684,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 67,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:01.865Z",
+      "ms": 15052.370000123978,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 68,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:01.939Z",
+      "ms": 15126.175000190735,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 69,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:01.939Z",
+      "ms": 15126.22000002861,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 70,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:02.324Z",
+      "ms": 15511.755000114441,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 71,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:02.324Z",
+      "ms": 15511.81500005722,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 72,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:02.682Z",
+      "ms": 15869.920000076294,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 73,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:02.682Z",
+      "ms": 15869.980000019073,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 74,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:02.871Z",
+      "ms": 16058.22000002861,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 75,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:03.062Z",
+      "ms": 16249.965000152588,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 76,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:03.069Z",
+      "ms": 16256.550000190735,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 77,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:03.621Z",
+      "ms": 16808.875,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 78,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:03.621Z",
+      "ms": 16808.914999961853,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 79,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:04.062Z",
+      "ms": 17249.53500008583,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 80,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:04.062Z",
+      "ms": 17249.59500002861,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 81,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:04.174Z",
+      "ms": 17361.25500011444,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 82,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:04.689Z",
+      "ms": 17876.920000076294,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 83,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:04.689Z",
+      "ms": 17876.985000133514,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 84,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:05.097Z",
+      "ms": 18284.955000162125,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 85,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:05.097Z",
+      "ms": 18285.050000190735,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 86,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:05.241Z",
+      "ms": 18428.825000047684,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 87,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:05.354Z",
+      "ms": 18541.615000009537,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 88,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:05.354Z",
+      "ms": 18542.275000095367,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 89,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:05.740Z",
+      "ms": 18927.295000076294,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 90,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:05.740Z",
+      "ms": 18927.384999990463,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 91,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:05.995Z",
+      "ms": 19183.075000047684,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 92,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:05.995Z",
+      "ms": 19183.110000133514,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 93,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:06.036Z",
+      "ms": 19223.650000095367,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.032092] cpu0: Ratio of byte access time to unaligned word access is 8.08, unaligned accesses are fast\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:06.150Z",
+      "ms": 19337.310000181198,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 94,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:06.292Z",
+      "ms": 19479.860000133514,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 95,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:06.292Z",
+      "ms": 19479.94500017166,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 96,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:06.675Z",
+      "ms": 19862.930000066757,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 97,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:06.675Z",
+      "ms": 19863.025000095367,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 98,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:06.943Z",
+      "ms": 20131.009999990463,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.035478] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages\r\n[    0.035493] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:07.027Z",
+      "ms": 20215.140000104904,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 99,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:07.027Z",
+      "ms": 20215.19000005722,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 100,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:07.032Z",
+      "ms": 20219.94500017166,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 101,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:07.321Z",
+      "ms": 20508.28500008583,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 102,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:07.325Z",
+      "ms": 20512.94000005722,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 103,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:07.582Z",
+      "ms": 20769.400000095367,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 104,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:07.582Z",
+      "ms": 20769.525000095367,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 105,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:07.835Z",
+      "ms": 21023.134999990463,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 106,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:07.835Z",
+      "ms": 21023.185000181198,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 107,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:07.874Z",
+      "ms": 21061.275000095367,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 108,
+      "method": "sendAgentInput",
+      "args": [
+        {
+          "binaryBytes": 18
+        }
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:08.090Z",
+      "ms": 21277.35000014305,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 109,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:08.090Z",
+      "ms": 21277.430000066757,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 110,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:08.314Z",
+      "ms": 21502.09500002861,
+      "worker": 1,
+      "type": "serial-output",
+      "text": "[    0.100171] raid6: int64x8  gen()   268 MB/s\r\n"
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:08.348Z",
+      "ms": 21536.025000095367,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 111,
+      "method": "fetchStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-13T22:38:08.348Z",
+      "ms": 21536.075000047684,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 112,
+      "method": "keyboardLedState",
+      "args": [],
+      "sent": true
+    }
+  ],
+  "candidate": {
+    "localOnly": true,
+    "source": {
+      "kind": "local-only-candidate",
+      "pairDirectory": null,
+      "chunkDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-thread-r1/chunked/chunks",
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-thread-r1/chunked/manifest.json",
+        "size": 1179757,
+        "sha256": "38e8d3144e2e0be26290763a8fd1a712e93b70fc39f93131d80ed3937cbb09fc"
+      },
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "cold": true,
+      "image": {
+        "imageLen": 4294967296,
+        "chunkSize": 262144,
+        "chunkCount": 16384
+      }
+    },
+    "manifest": {
+      "generated": "LOCAL-ONLY diagnostic candidate (not a release claim)",
+      "artifacts": {
+        "kernel": {
+          "url": "/candidate/kernel",
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "size": 24208896
+        }
+      },
+      "chunkedImage": {
+        "key": "chunked-omarchy/manifest-38e8d3144e2e0be26290763a8fd1a712e93b70fc39f93131d80ed3937cbb09fc.json",
+        "sha256": "38e8d3144e2e0be26290763a8fd1a712e93b70fc39f93131d80ed3937cbb09fc",
+        "size": 1179757
+      }
+    }
+  },
+  "capturePolicy": {
+    "freshContext": true,
+    "prewarm": false,
+    "physicalInput": false,
+    "noSnapshot": true,
+    "persist": true,
+    "serviceWorkers": "block",
+    "startupTimeoutMs": 5400000
+  },
+  "initialStorage": {
+    "timestamp": "2026-09-13T22:37:46.222Z",
+    "origin": "http://127.0.0.1:58247",
+    "pathname": "/__omarchy-cold-pair-blank.html",
+    "databases": [],
+    "caches": [],
+    "serviceWorkers": [],
+    "serviceWorkerController": null,
+    "localStorage": [],
+    "sessionStorage": [],
+    "vmPresent": false,
+    "workerMessages": 0
+  },
+  "startup": {
+    "startedAt": "2026-09-13T22:37:46.805Z",
+    "timeoutMs": 5400000,
+    "deadlineAt": "2026-09-14T00:07:46.805Z"
+  },
+  "identities": {
+    "entryUrl": "http://127.0.0.1:58247/app.html?guest=omarchy&desktop=1&noSnapshot=1&persist=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A58247#ide",
+    "files": {
+      "main.js": {
+        "url": "http://127.0.0.1:58247/main.js",
+        "status": 200,
+        "contentType": "text/javascript; charset=utf-8",
+        "size": 148354,
+        "sha256": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757"
+      },
+      "ide.js": {
+        "url": "http://127.0.0.1:58247/ide.js",
+        "status": 200,
+        "contentType": "text/javascript; charset=utf-8",
+        "size": 133580,
+        "sha256": "afe853ea07d6ba97487f011de68197eb53d9d549a0781e569c08d577c8983e93"
+      },
+      "roadmap.js": {
+        "url": "http://127.0.0.1:58247/roadmap.js",
+        "status": 200,
+        "contentType": "text/javascript; charset=utf-8",
+        "size": 49063,
+        "sha256": "05c00a984a464245146a6496483dd97f5ecfca7843e6bb4d90db1f626af31272"
+      },
+      "loader.js": {
+        "url": "http://127.0.0.1:58247/loader.js",
+        "status": 200,
+        "contentType": "text/javascript; charset=utf-8",
+        "size": 79246,
+        "sha256": "26a4c9fa0284a99c39e2bd2f3f6457b77aebb4724e026bad2a2dc7d7f1d0d6a3"
+      },
+      "guest-rpc.js": {
+        "url": "http://127.0.0.1:58247/guest-rpc.js",
+        "status": 200,
+        "contentType": "text/javascript; charset=utf-8",
+        "size": 3995,
+        "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+      },
+      "pkg/wasm_vm_wasm_bg.wasm": {
+        "url": "http://127.0.0.1:58247/pkg/wasm_vm_wasm_bg.wasm",
+        "status": 200,
+        "contentType": "application/wasm",
+        "size": 1566204,
+        "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+      },
+      "artifacts-omarchy.json": {
+        "url": "http://127.0.0.1:58247/artifacts-omarchy.json",
+        "status": 200,
+        "contentType": "application/json",
+        "size": 423,
+        "sha256": "2a16b23d003f54bf4d487b69d28bfd5b2af6a3f937e27594035af9d2239335bd"
+      }
+    }
+  },
+  "result": "failed",
+  "error": "page.screenshot: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\n    at screenshot (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:490:20)\n    at /Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:1025:29\n    at async withinStartupDeadline (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-cold-pair.mjs:80:20)\n    at async runLive (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:1025:5)\n    at /Users/blamy/Documents/Codex/wasm-vm/async file:/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:1180:3",
+  "classification": "UNPROVEN",
+  "events": [
+    {
+      "type": "wvm:guest-booting",
+      "ms": 3924.5950000286102
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "fetching"
+      },
+      "ms": 4252.910000085831
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "instantiating"
+      },
+      "ms": 4888.550000190735
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "booting"
+      },
+      "ms": 5541.400000095367
+    }
+  ],
+  "finishedAt": "2026-09-13T22:38:08.562Z"
+}

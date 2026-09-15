@@ -1,0 +1,30 @@
+started_utc=2026-09-14T05:27:07Z
+clone=/private/tmp/wasm-vm-t03j-cold.QWTTKg/repo
+head_expected=5ee8ed607027731bd9a50a132205c7bb42574e69
+selected_CARGO_TARGET_DIR=/private/tmp/wasm-vm-t03j-cold.QWTTKg/target
+scrub_policy=RUSTFLAGS,CARGO_*,RUSTC_WRAPPER,RUSTC_WORKSPACE_WRAPPER,RUSTDOCFLAGS
+removed_names=
+HOME_and_CODEX_HOME=not_modified; registry/toolchain cache uses normal user defaults; target is isolated
+head_actual=5ee8ed607027731bd9a50a132205c7bb42574e69
+initial_status=CLEAN
+cargo 1.96.0 (30a34c682 2026-05-25)
+rustc 1.96.0 (ac68faa20 2026-05-25)
+command: cargo test -p wasm-vm-core --lib --features trace admission_probe
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/wasm-vm-t03j-cold.QWTTKg/repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9m 24s
+     Running unittests src/lib.rs (/private/tmp/wasm-vm-t03j-cold.QWTTKg/target/debug/deps/wasm_vm_core-90e3975c91217361)
+
+running 7 tests
+test compile_queue::tests::admission_probe_compile_membership_is_exact_and_read_only ... ok
+test dispatch::tests::admission_probe_recurring_full_refusal_exact_identity ... ok
+test dispatch::tests::admission_probe_separates_changed_bytes_lengths_and_generation ... ok
+test dispatch::tests::admission_probe_default_off_and_decision_parity ... ok
+test dispatch::tests::admission_probe_reasons_and_exact_fifo_membership_not_nominal_queued ... ok
+test dispatch::tests::admission_probe_cap_and_invalid_blocks_are_bounded ... ok
+test tests::admission_probe_enabled_disabled_trace_state_and_nomination_parity ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 338 filtered out; finished in 0.35s
+
+exit_code=0
+final_git_status:
+finished_utc=2026-09-14T05:36:51Z

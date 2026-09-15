@@ -1,0 +1,80 @@
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:01] "HEAD /?noAutoBoot=1 HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:09] "GET /?noAutoBoot=1 HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:09] "GET /node_modules/@xterm/xterm/css/xterm.css HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:09] "GET /node_modules/@xterm/xterm/lib/xterm.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:09] "GET /node_modules/@xterm/addon-fit/lib/addon-fit.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:09] "GET /tabs.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:09] "GET /ide.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:09] "GET /docs-mount.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:09] "GET /coi-serviceworker-register.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Sep/2026 04:45:09] "GET /cpu-isolation.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:09] "GET /omarchy-startup-state.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:09] "GET /main.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:09] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /riscv-tests.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /roadmap.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /loader.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /overlay-reset-target.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /terminal.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /linux-worker-host.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /file-transfer.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /boot-progress.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /guest-rpc.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/input/keyboard.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/input/capture.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/input/held-keys.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/input/reconciliation.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/audio/autoplay.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/audio/sink.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/audio/capture-ring.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/audio/microphone.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/input/pointer.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/sink/presentation.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/sink/viewport.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/sink/cursor-controller.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /desktop-agent-session.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /desktop-restore.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /cold-counter-recycling.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /omarchy-desktop-readiness.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] code 404, message File not found
+127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /favicon.ico HTTP/1.1" 404 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /boot-path.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /overlay-seed-identity.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /task-quiescence.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /guest-clock.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /decoded-cache.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /boot-asset-cache.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /admission-probe.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /osc52.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /paste.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /linux-worker-protocol.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /progress.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/input/keymap.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/audio/ring.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/audio/worklet.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/audio/capture-worklet.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/sink/canvas2d.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/sink/webgl.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/sink/frame-scheduler.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/sink/cursor.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/sink/visibility-scheduler.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /desktop-agent-bridge.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /src/sink/present-backend.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /agent-channel.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:10] "GET /tasks.json HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:11] "GET /pkg/wasm_vm_wasm_bg.wasm HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:11] "GET /assets/hello.elf HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:11] "GET /artifacts-alpine.json HTTP/1.1" 200 -
+127.0.0.1 - - [14/Sep/2026 04:45:11] "GET /artifacts-node-alpine.json HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:11] "GET /artifacts-omarchy.json HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:11] "GET /main.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:11] "GET /guest-rpc.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:11] "GET /ide.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Sep/2026 04:45:11] "GET /desktop-agent-session.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:11] "GET /linux-worker.js HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:11] "GET /artifacts.json HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:11] "GET /releases/kernel/6.6.63/Image HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:12] "GET /releases/initramfs/initramfs.cpio.gz HTTP/1.1" 200 -
+[serve-dev] 127.0.0.1 - - [14/Sep/2026 04:45:12] "GET /releases/boot-snapshot/busybox-ready.snap.gz HTTP/1.1" 200 -
+OMARCHY_CLI_REGRESSION_PASS /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/desktop-services-gates/cli-r4/report.json

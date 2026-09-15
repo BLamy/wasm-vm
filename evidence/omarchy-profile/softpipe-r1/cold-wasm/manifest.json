@@ -1,0 +1,112 @@
+{
+  "schema": "wasm-vm.e5.5-t03f.measurement.v1",
+  "task": "E5.5-T03f",
+  "runId": "cold-wasm-d3c1a6b179ab5d93",
+  "execution": {
+    "mode": "cold-wasm",
+    "timeoutMs": 5400000,
+    "keyboard": "none",
+    "control": "stdin",
+    "noSnapshot": true,
+    "persistence": false,
+    "captureState": "cold",
+    "reusedWorker": false
+  },
+  "claims": {
+    "negative": {
+      "kind": "same-pid-terminal-crash",
+      "pid": 486,
+      "environmentPid": 486,
+      "terminalPid": 486,
+      "pidDead": true,
+      "samePid": true,
+      "cause": "Hyprland Signal 6 (ABRT) coredump completed",
+      "environmentProbeToken": "omarchy_a507b9dc99702f257b44318ab70af6ab_27",
+      "coredumpProbeToken": "omarchy_a507b9dc99702f257b44318ab70af6ab_59",
+      "absenceProbeToken": "omarchy_a507b9dc99702f257b44318ab70af6ab_60",
+      "terminalProbeTokens": [
+        "omarchy_a507b9dc99702f257b44318ab70af6ab_59",
+        "omarchy_a507b9dc99702f257b44318ab70af6ab_60"
+      ],
+      "bootId": "670725d3-0d7b-4695-8f53-e2b2f6c2399c"
+    }
+  },
+  "bindings": {
+    "receipt": "assets.receipt",
+    "image": "assets.image",
+    "chunkManifest": "assets.chunkManifest",
+    "inputIntegrity": "assets.inputIntegrity",
+    "serial": "assets.serial",
+    "events": "assets.events",
+    "report": "assets.report",
+    "runtimeHashes": "assets.runtimeHashes"
+  },
+  "assets": {
+    "receipt": {
+      "scope": "repo",
+      "path": "evidence/omarchy-profile/softpipe-r1/candidate-receipt.json",
+      "size": 10644,
+      "sha256": "bc2dcd38cae820501d039ae2f6a2e28c2acacf1ff2734a6b9bc79fdee8eeb419"
+    },
+    "image": {
+      "scope": "repo",
+      "path": "target/omarchy-softpipe-r1/omarchy-profile-softpipe.ext4",
+      "size": 4294967296,
+      "sha256": "c8b59adc0f26e10a3de6f7dbeea8f0e4f1445087e47fbc6f6cc449869e43e6d5"
+    },
+    "chunkManifest": {
+      "scope": "repo",
+      "path": "target/omarchy-softpipe-r1/chunked/manifest.json",
+      "size": 1179757,
+      "sha256": "a1fcff5b192b316a10d48c41397974ab4f561ea57caaf95e4f406b3d54b867eb"
+    },
+    "inputIntegrity": {
+      "scope": "root",
+      "path": "input-integrity.json",
+      "size": 1254,
+      "sha256": "26ff777eba176058b4ff1bb652eb24f10a63080cac6401aeaa01153c67e5eaea"
+    },
+    "serial": {
+      "scope": "root",
+      "path": "serial.log",
+      "size": 116181,
+      "sha256": "c04e692a0f41a7371a674adac01607697665f91422d2b42c717b1e8bb484233d"
+    },
+    "events": {
+      "scope": "root",
+      "path": "events.jsonl",
+      "size": 649171,
+      "sha256": "1b8aae8394a9aa1be9ab898f356c5b5595a67708fdaadd2aa3ecde6b0b4a2775"
+    },
+    "report": {
+      "scope": "root",
+      "path": "report.json",
+      "size": 7848,
+      "sha256": "d3c1a6b179ab5d932f04bc3c30f3ca0e8d658222c5f9ecbe41576b37cd65ea44"
+    },
+    "runtimeHashes": {
+      "scope": "root",
+      "path": "runtime-hashes.json",
+      "size": 6196,
+      "sha256": "ad499ac3f2531baa8144d5a5372d24ad989705e2f9e585b854c93eef3c25d15f"
+    },
+    "screenshot1": {
+      "scope": "root",
+      "path": "guest.png",
+      "size": 4871,
+      "sha256": "0d462e9383c68586effb38220c9b1bcd32e4d0cb0e1c3a6301d1f89dc660a672"
+    },
+    "screenshot2": {
+      "scope": "root",
+      "path": "latest.png",
+      "size": 59220,
+      "sha256": "172a51b0ec4c990245410a34f1ae7696a32b7a7b36f3b0f96f5d7b7042e62168"
+    }
+  },
+  "record": {
+    "sourceReportSha256": "d3c1a6b179ab5d932f04bc3c30f3ca0e8d658222c5f9ecbe41576b37cd65ea44",
+    "sourceEventsSha256": "1b8aae8394a9aa1be9ab898f356c5b5595a67708fdaadd2aa3ecde6b0b4a2775",
+    "sourceSerialSha256": "c04e692a0f41a7371a674adac01607697665f91422d2b42c717b1e8bb484233d",
+    "sourceInputIntegritySha256": "26ff777eba176058b4ff1bb652eb24f10a63080cac6401aeaa01153c67e5eaea"
+  }
+}
