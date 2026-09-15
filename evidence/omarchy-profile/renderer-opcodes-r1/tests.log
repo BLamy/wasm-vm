@@ -1,0 +1,20 @@
+✔ pair binding rejects wrong identities and malformed, duplicate or out-of-range records (31.5475ms)
+✔ diagnostic adaptation changes only the explicitly waived 64 identity bytes (1.224958ms)
+✔ raw compute recount and regions reject count drift and preserve truncation (0.446416ms)
+✔ owned recorder preserves native exit/output and terminates a timed-out child (128.448834ms)
+✔ pinned layout rejects a changed task offset even with intact kernel identity (1.227958ms)
+✔ container rejects duplicate, unknown, missing and truncated sections (0.280292ms)
+✔ sparse decoder respects literal, zero, truncation and total-size boundaries (0.422208ms)
+✔ saved-mode page walks cover Sv39/Sv48/Sv57 and noncontiguous page reads (0.396333ms)
+✔ page walks reject invalid/reserved/non-leaf PTEs and misaligned superpages (0.287042ms)
+✔ task-list traversal checks reciprocal closure, cycles and count bounds (0.170625ms)
+✔ kernel unwind stops at the proven trap boundary and keeps saved context labeled (0.138375ms)
+✔ kernel unwind rejects nonincreasing, unaligned, out-of-stack and non-text frames (0.169875ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 199.999625

@@ -1,0 +1,39 @@
+{
+  "head": "fdae798ca28b94cc1551a8dc8a634e5ad99858e7",
+  "command": "node tools/verify/omarchy-renderer-opcodes.mjs evidence/omarchy-profile/renderer-opcodes-r1",
+  "tests": "node --test tools/verify/omarchy-renderer-opcodes.test.mjs tools/verify/omarchy-wait-checkpoint.test.mjs",
+  "files": {
+    "evidence/omarchy-profile/renderer-opcodes-r1/build.stderr": {
+      "size": 1061,
+      "sha256": "63c63da23263be38764c7443e2e92108937b4add0ee48a0019adbb341bdb3b5d"
+    },
+    "evidence/omarchy-profile/renderer-opcodes-r1/build.stdout": {
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/omarchy-profile/renderer-opcodes-r1/guest-evidence.txt": {
+      "size": 203,
+      "sha256": "ec83578007decb94363cb7c023af908beb0141d0c2742f3d055e773579ee228c"
+    },
+    "evidence/omarchy-profile/renderer-opcodes-r1/native.stderr": {
+      "size": 601640,
+      "sha256": "3a587aa44c5510f679eba6b8742b1303df13ecf4b3b51976a4847d4230dfc17c"
+    },
+    "evidence/omarchy-profile/renderer-opcodes-r1/native.stdout": {
+      "size": 323,
+      "sha256": "511639ddf4cbaf6980447586bb4481bcbe3ff76b03756fabdf7731355476d258"
+    },
+    "evidence/omarchy-profile/renderer-opcodes-r1/profile.json": {
+      "size": 973796,
+      "sha256": "5133c92488d51075599604a79eff7f649e5743ada8a6f60fb0bfa506672bc521"
+    },
+    "evidence/omarchy-profile/renderer-opcodes-r1/report.json": {
+      "size": 11657,
+      "sha256": "2adea6e64f36f9719431fe9cbcd7313b4a34e3fc9201bec9f217599dff3c58c7"
+    },
+    "evidence/omarchy-profile/renderer-opcodes-r1/tests.log": {
+      "size": 1237,
+      "sha256": "63838390b3c92aea7ccc16a70a0586ba563c101bb21d1728eefcd3d596d7dbac"
+    }
+  }
+}
