@@ -1,0 +1,20 @@
+{
+  "purpose": "failed-input-guest-state",
+  "head": "904f2a2a63c6b1dffca381700351c144b215f93c",
+  "wasmSha256": "9405d6c38be9a170ef5a2e5e0bacdcbec6deace7de48c8e002bc3caea76dfb2b",
+  "startedAt": "2026-09-15T15:12:01.727Z",
+  "args": [
+    "tools/verify/omarchy-desktop-live.mjs",
+    "local",
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-wait-r2/desktop",
+    "input-trial"
+  ],
+  "exit": {
+    "code": 1,
+    "signal": null,
+    "closed": true,
+    "watchdog": null
+  },
+  "finishedAt": "2026-09-15T15:18:09.112Z",
+  "auditError": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'wire evidence: Error: page.evaluate: Target crashed '\n+ ]\n- []\n"
+}
