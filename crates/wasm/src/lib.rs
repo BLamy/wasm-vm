@@ -775,7 +775,7 @@ mod admission_probe_tests {
     use wasm_vm_core::dispatch::{BlockDiscovery, MicroOp};
 
     #[test]
-    fn admission_probe_real_translator_integer_fp_move_and_csr_contrasts() {
+    fn admission_probe_real_translator_integer_fp_move_arithmetic_and_csr_contrasts() {
         let op = |raw| MicroOp {
             instr: wasm_vm_core::decode::decode(raw).unwrap(),
             raw,
@@ -783,6 +783,7 @@ mod admission_probe_tests {
         };
         let integer = [op(0x0010_8093), op(0x0000_006f)];
         let fp_move = [op(0xf000_0053), op(0x0000_006f)]; // FMV.W.X, not a guessed FP bucket.
+        let fp_arithmetic = [op(0x0020_80d3), op(0x0000_006f)]; // FADD.S remains interpreted.
         let csr = [op(0x3000_1073)]; // CSRRW mstatus: discovery-policy exclusion.
         let mut discovery = BlockDiscovery::with_bounds(4, 1);
         discovery.set_admission_probe(true);
@@ -790,19 +791,22 @@ mod admission_probe_tests {
         for (phys, ops) in [
             (4096, &integer[..]),
             (8192, &fp_move[..]),
-            (12288, &csr[..]),
+            (12288, &fp_arithmetic[..]),
+            (16384, &csr[..]),
         ] {
             for _ in 0..3 {
                 discovery.on_block_entry(phys, ops);
             }
         }
         let records = discovery.admission_probe_stats().records;
-        assert_eq!(records.len(), 3);
+        assert_eq!(records.len(), 4);
         assert!(admission_translator_supported(&records[0]));
-        assert!(!admission_translator_supported(&records[1]));
+        assert!(admission_translator_supported(&records[1]));
         assert!(!records[1].request.terminator.is_excluded());
         assert!(!admission_translator_supported(&records[2]));
-        assert!(records[2].request.terminator.is_excluded());
+        assert!(!records[2].request.terminator.is_excluded());
+        assert!(!admission_translator_supported(&records[3]));
+        assert!(records[3].request.terminator.is_excluded());
         assert!(records.iter().all(|row| row.reasons.counts_full == 3));
         assert_eq!(
             records[1].request.code_bytes[..4],

@@ -1629,5 +1629,6 @@ verify-E5_5-T03t:
 	cargo test -p wasm-vm-core --lib hart::fregs::tests
 	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
 	cargo test -p wasm-vm-jit-runtime --test fp_moves --test fp_moves_critic -- --nocapture
+	cargo test -p wasm-vm-wasm --lib admission_probe_tests
 	wasm-pack test --node crates/wasm --test jit_fp_moves -- --nocapture
 	node tools/verify/omarchy-fp-moves-browser.mjs $(or $(FP_MOVES_OUT),evidence/omarchy-profile/fp-moves-browser)
