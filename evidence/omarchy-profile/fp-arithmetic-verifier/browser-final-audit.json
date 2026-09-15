@@ -1,0 +1,25 @@
+{
+  "head": "d64b037b362b36490d58b82663a448ac0532b025",
+  "wasmSha256": "e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4",
+  "reportSha256": "13adeb8c79ea7bbcdeac8b72bca9b2e5f5a1325bef411f9d7945a4db0ad3b61d",
+  "elfSha256": "3cbc3c840f9b093d5043e998802a41a6089fad4efcf5128b11ce99e77abb58b8",
+  "stateDigest": "7583c9377630eaa1af54c7eafb05d5ba5d3c9f708e5d6f1ef47cbd45dc6debf8",
+  "retired": 4000,
+  "jitRetired": 3649,
+  "suite": {
+    "metric-pass": "127",
+    "metric-fail": "0",
+    "metric-done": "127"
+  },
+  "errors": [],
+  "imagesInspected": [
+    "suite.png:127passed/0failed/127done",
+    "capability-inspection.png:greenlive1/1",
+    "built-page.png:E5.5-T03wdetailvisible,in-progress"
+  ],
+  "sha256": {
+    "suite.png": "55c5f28602adc61d0e575e35d06e791f9fdab98d327f79ab373e8db4ae4e7183",
+    "built-page.png": "750b63ed62a6883ed49830d34125430d21ff4d5fa523e4dd01b61f9194b874f7",
+    "capability-inspection.png": "e71079f9ebaf0d23b06df89822983b59ae3beac08598f6e770b5e1aff0c547a4"
+  }
+}

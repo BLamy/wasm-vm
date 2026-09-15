@@ -1,0 +1,10 @@
+   Compiling wasm-vm-arithmetic-critic-sabotage v0.0.0 (/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5.5-t03w-wrong-golden-k_u9jui_)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.02s
+     Running verifier.rs (target/debug/deps/fp_arithmetic_verifier-926ef4bf58fd89e1)
+
+running 1 test
+CRITIC_NATIVE_ARITHMETIC_GOLDENS Receipt { cases: 8832, disabled: 0, digest: 17621813032391191516 }
+test verifier_native_literal_arithmetic_goldens ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.72s
+

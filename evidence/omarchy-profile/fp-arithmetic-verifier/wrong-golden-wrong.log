@@ -1,0 +1,24 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+   Compiling wasm-vm-arithmetic-critic-sabotage v0.0.0 (/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5.5-t03w-wrong-golden-k_u9jui_)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.77s
+     Running verifier.rs (target/debug/deps/fp_arithmetic_verifier-926ef4bf58fd89e1)
+
+running 1 test
+
+thread 'verifier_native_literal_arithmetic_goldens' (25935688) panicked at proof.rs:489:25:
+assertion `left == right` failed: CRITIC_FADD_HALF_ULP_GOLDEN
+  left: 18446744070479937536
+ right: 18446744070479937537
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test verifier_native_literal_arithmetic_goldens ... FAILED
+
+failures:
+
+failures:
+    verifier_native_literal_arithmetic_goldens
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `--test fp_arithmetic_verifier`
