@@ -1,0 +1,54 @@
+{
+  "audited_at": "2026-09-15T21:03:14.297860+00:00",
+  "submission_commit": "971ab43cbbb05dfdf7c0a012103ce919db5470ab",
+  "worker_seal_sha256": "c216dcd2c648a654abadbefa8307f8a4e3a4c5d56baabdff491e058055b82ef6",
+  "sealed_files_verified": 46,
+  "runtime_source_sha256": {
+    "crates/jit-translate/src/lib.rs": "6dd59d0c6270fd65ecc32a32de5583f50ebf61b157ac94611bd8c036e4fe32ec",
+    "crates/core/src/jit.rs": "48dbb6fe6eb4d87e241b18fc26954b45c56c425476c6980e6b22e985ed22acd1"
+  },
+  "runtime_wasm_sha256": "4e1dae976924fb1857a70fc1a8ec357e18475e15f4a8f74ef2980838d0a089dd",
+  "cold_head": "6b76f786cbffd1a76bf05534da2ef6b9211666cc",
+  "cold_pristine_before_build": true,
+  "cold_source_diff_empty": true,
+  "browsers": [
+    {
+      "report": "acceptance-browser/report.json",
+      "sha256": "01cb2e5184705db66b74e0ae2ddf77a1972fc164f312ef21b5e7ca417ff56151",
+      "head": "2e7cd66994e63c1ca39f492d49c5764a31c87739",
+      "guest_ram_digest": "02de371a30fadf1337684a3e37cdeef855f7783c15e77632fe6e6b05b3cc565e",
+      "retired_via_jit": 3621,
+      "suite": "127/127"
+    },
+    {
+      "report": "cold/browser/report.json",
+      "sha256": "30a753dae11202110238359317b929bfc210b7c316b2bb78cd3a918ae18ac3b3",
+      "head": "6b76f786cbffd1a76bf05534da2ef6b9211666cc",
+      "guest_ram_digest": "02de371a30fadf1337684a3e37cdeef855f7783c15e77632fe6e6b05b3cc565e",
+      "retired_via_jit": 3621,
+      "suite": "127/127"
+    }
+  ],
+  "public_exact_byte_receipts": 8,
+  "physical_report_sha256": "5c09fcb09292d86025ccb0f9c950697e3a8d2f7b3064dc72f99c5858308c145f",
+  "physical_deadline_seconds": 120,
+  "physical_trusted_events": 128,
+  "physical_readback_commands": 14,
+  "physical_completed_readbacks": 13,
+  "desktop_responsive": false,
+  "physical_before_after_screenshot_sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+  "screenshot_observation": "Actual Foot prompt remains empty; failure image is identical to desktop-before image. Built and cold 127/127 suite with live comparison capability.",
+  "unchanged_broad_failure_boundaries": [
+    "crates/wasm/tests/resume.rs",
+    "crates/core/src/resume.rs",
+    "crates/core/src/dispatch.rs",
+    "crates/core/src/hart/mod.rs",
+    "crates/wvseccomp/src/main.rs",
+    "tools/ci/determinism-hazards.sh",
+    "crates/core/src/dev/virtio/gpu/resources.rs"
+  ],
+  "broad_ci_passed": false,
+  "wrong_golden_failed_then_restored": true,
+  "T03q_status": "pending",
+  "audit_passed": true
+}
