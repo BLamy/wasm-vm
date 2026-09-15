@@ -1,8 +1,9 @@
 // Parent-side safety net for one owned detached recorder and its Playwright browser.
 // Playwright's POSIX process launcher also uses a new process group for Chrome.
-export function watchOwnedTrial(child, { killGroup = pid => process.kill(-pid, "SIGKILL"),
+export function watchOwnedTrial(child, { postVerdictCaptureMs = 0, killGroup = pid => process.kill(-pid, "SIGKILL"),
   groupAlive = pid => { try { process.kill(-pid, 0); return true; } catch (error) { if (error.code === "ESRCH") return false; throw error; } },
   now = Date.now, later = setTimeout, cancel = clearTimeout } = {}) {
+  if (![0, 180000].includes(postVerdictCaptureMs)) throw Error("invalid fixed post-verdict capture allowance");
   return new Promise(resolve => {
     let timer, terminationTimer, done = false, navigationSeen = false, browserPid = null, recorderClosed = false;
     let watchdog = null;
@@ -41,7 +42,7 @@ export function watchOwnedTrial(child, { killGroup = pid => process.kill(-pid, "
         const started = value.startedAtMs;
         if (!Number.isSafeInteger(started) || started > now()) { expire("invalid-navigation-receipt"); return; }
         // 300 startup +60 typing +120 readback +20 capture +30 cleanup. Never rearm.
-        timer = later(() => expire("navigation-through-cleanup"), Math.max(0, started + 530000 - now()));
+        timer = later(() => expire("navigation-through-cleanup"), Math.max(0, started + 530000 + postVerdictCaptureMs - now()));
       }
     };
     child.on("message", message);

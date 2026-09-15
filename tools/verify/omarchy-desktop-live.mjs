@@ -20,6 +20,7 @@ import { COLD_BLANK_PATH, COLD_KERNEL_SHA256, coldPairOptions, coldPairUrl,
   withinStartupDeadline } from "./omarchy-cold-pair.mjs";
 import { inputTrialOptions, inputTrialUrl, assertInputTrialSource, assertInputTrialRuntime,
   remainingTrialMs, withinTrialDeadline } from "./omarchy-input-trial.mjs";
+import { pauseFailedInput, exportFailedInput } from "./omarchy-failure-checkpoint.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -46,6 +47,11 @@ assert.ok(urlArg && output, "usage: omarchy-desktop-live.mjs URL|local|selftest 
 assert.ok(["capture", "verify", "cold-pair", "input-trial"].includes(mode), `invalid mode: ${mode}`);
 const coldPair = mode === "cold-pair";
 const inputTrial = mode === "input-trial";
+const failureCheckpoint = process.env.OMARCHY_FAILURE_CHECKPOINT === "1";
+if (process.env.OMARCHY_FAILURE_CHECKPOINT !== undefined) {
+  assert.equal(process.env.OMARCHY_FAILURE_CHECKPOINT, "1");
+  assert.ok(inputTrial, "failure checkpoint requires input-trial");
+}
 const candidatePairEnv = process.env.OMARCHY_CANDIDATE_PAIR_DIR || "";
 const candidateChunksEnv = process.env.OMARCHY_CANDIDATE_CHUNKS || "";
 if (!coldPair) assert.equal(Boolean(candidatePairEnv), Boolean(candidateChunksEnv),
@@ -379,6 +385,7 @@ if (inputTrial) {
   const scope = ["tools/verify/omarchy-desktop-live.mjs", "tools/verify/omarchy-input-trial.mjs",
     "tools/verify/omarchy-recycling-ab.mjs",
     "tools/verify/omarchy-desktop-services.mjs",
+    "tools/verify/omarchy-failure-checkpoint.mjs", "tools/verify/omarchy-input-wait.mjs",
     "tools/verify/omarchy-owned-trial.mjs",
     "tools/verify/omarchy-browser-session.mjs", "tools/verify/omarchy-live-recording.mjs",
     "crates/core/src/dispatch.rs", "crates/core/src/lib.rs", "crates/wasm/src/lib.rs",
@@ -1284,12 +1291,20 @@ try {
     report.trial.outcome = !report.keyboard ? "startup-failed-input-not-tested"
       : !report.keyboard.typedAt ? "typing-failed-input-sequence-incomplete"
       : report.keyboard.verified ? "nonce-passed-presentation-unproven" : "nonce-readback-failed";
+    if (failureCheckpoint && report.trial.outcome === "nonce-readback-failed") {
+      try { await pauseFailedInput(failurePage, report); }
+      catch (captureError) { report.failureCheckpointError = String(captureError); }
+    }
     try {
       await withinTrialDeadline(() => Promise.all([
         screenshot("failure.png", failurePage, remainingTrialMs(failureDeadline)),
         runtimeDiagnostics(failurePage, "input-trial-failure"),
       ]), failureDeadline, "failure capture");
     } catch (captureError) { report.failureCaptureError = String(captureError); }
+    if (failureCheckpoint && report.failureCheckpoint?.paused) {
+      try { await exportFailedInput(failurePage, browser, out, report); }
+      catch (captureError) { report.failureCheckpointError = String(captureError); }
+    }
   } else try { await screenshot("failure.png", failurePage); } catch {}
   console.error(report.error);
 } finally {

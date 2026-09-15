@@ -10,6 +10,7 @@ import { createHash } from "node:crypto";
 import { watchOwnedTrial } from "./omarchy-owned-trial.mjs";
 import { auditSerial } from "./omarchy-latency-receipt.mjs";
 import { assertInputTrialRuntime } from "./omarchy-input-trial.mjs";
+import { FAILURE_CHECKPOINT_MS } from "./omarchy-failure-checkpoint.mjs";
 
 export function auditDesktopServicesReport(report) {
   assert.equal(report.trial.recycling, false, "service test must retain default admission");
@@ -40,13 +41,13 @@ export function auditDesktopServicesReport(report) {
     note: "Absence of hidden service traffic is not sufficient evidence of interactive input." };
 }
 
-async function main(output) {
+export async function main(output, { failureCheckpoint = false } = {}) {
   const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
   assert.ok(output, "usage: omarchy-desktop-services.mjs NEW_OUTPUT_DIR");
   const out = path.resolve(output); await fs.mkdir(out, { recursive: false });
   const head = execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim();
   const wasmSha256 = createHash("sha256").update(await fs.readFile(path.join(repo, "web/dist/pkg/wasm_vm_wasm_bg.wasm"))).digest("hex");
-  const receipt = { purpose: "desktop-service-isolation", head, wasmSha256, startedAt: new Date().toISOString() };
+  const receipt = { purpose: failureCheckpoint ? "failed-input-guest-state" : "desktop-service-isolation", head, wasmSha256, startedAt: new Date().toISOString() };
   const save = () => fs.writeFile(path.join(out, "run.json"), JSON.stringify(receipt, null, 2) + "\n");
   await save();
   const env = { ...process.env };
@@ -54,11 +55,12 @@ async function main(output) {
   Object.assign(env, { OMARCHY_INPUT_TRIAL_ARM: "control",
     OMARCHY_CANDIDATE_PAIR_DIR: path.join(repo, "target/omarchy-sdr-r3-snapshot"),
     OMARCHY_CANDIDATE_CHUNKS: path.join(repo, "target/omarchy-profile-chunks-sdr-r3-256k") });
+  if (failureCheckpoint) env.OMARCHY_FAILURE_CHECKPOINT = "1";
   receipt.args = ["tools/verify/omarchy-desktop-live.mjs", "local", path.join(out, "desktop"), "input-trial"];
   const log = createWriteStream(path.join(out, "desktop.log"), { flags: "wx" });
   const child = spawn(process.execPath, receipt.args, { cwd: repo, env, detached: true, stdio: ["ignore", "pipe", "pipe", "ipc"] });
   child.stdout.pipe(log, { end: false }); child.stderr.pipe(log, { end: false });
-  receipt.exit = await watchOwnedTrial(child);
+  receipt.exit = await watchOwnedTrial(child, { postVerdictCaptureMs: failureCheckpoint ? FAILURE_CHECKPOINT_MS : 0 });
   child.stdout.unpipe(log); child.stderr.unpipe(log);
   await new Promise(resolve => log.end(resolve));
   receipt.finishedAt = new Date().toISOString(); await save();
@@ -75,6 +77,7 @@ async function main(output) {
   finally { await save(); }
   console.log(JSON.stringify(receipt.audit));
   if (!receipt.audit.desktopAcceptance) process.exitCode = 1;
+  return { receipt, report };
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   await main(process.argv[2]);

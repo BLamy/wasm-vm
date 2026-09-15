@@ -3,10 +3,10 @@ import test from "node:test";
 import { EventEmitter } from "node:events";
 import { watchOwnedTrial } from "./omarchy-owned-trial.mjs";
 
-function fixture({ groupAlive = () => false } = {}) {
+function fixture({ groupAlive = () => false, postVerdictCaptureMs = 0 } = {}) {
   const child = new EventEmitter(); child.pid = 123;
   const timers = [], killed = [];
-  const result = watchOwnedTrial(child, { now: () => 1000, killGroup: pid => killed.push(pid), groupAlive,
+  const result = watchOwnedTrial(child, { postVerdictCaptureMs, now: () => 1000, killGroup: pid => killed.push(pid), groupAlive,
     later: (fn, ms) => { const timer = { fn, ms }; timers.push(timer); return timer; },
     cancel: timer => { if (timer) timer.cancelled = true; } });
   return { child, timers, killed, result };
@@ -20,6 +20,16 @@ test("owned watchdog caps setup and navigation once, and normal close cancels ti
   f.child.emit("close", 1, null);
   assert.deepEqual(await f.result, { code: 1, signal: null, closed: true, watchdog: null });
   assert.equal(f.timers[1].cancelled, true); assert.deepEqual(f.killed, []);
+});
+test("post-verdict capture has one fixed extra allowance and messages cannot rearm it", async () => {
+  assert.throws(() => fixture({ postVerdictCaptureMs: 180001 }), /invalid fixed/u);
+  const f = fixture({ postVerdictCaptureMs: 180000 });
+  f.child.emit("message", { kind: "input-trial-navigation", startedAtMs: 900 });
+  assert.equal(f.timers[1].ms, 709900);
+  f.child.emit("message", { kind: "input-trial-navigation", startedAtMs: 1000 });
+  f.child.emit("message", { kind: "input-trial-capture-started", startedAtMs: 1000 });
+  assert.equal(f.timers.length, 2);
+  f.child.emit("close", 1, null); assert.equal((await f.result).watchdog, null);
 });
 test("stalled owned browser/recorder is killed and missing close settles as unconfirmed", async () => {
   const f = fixture({ groupAlive: () => true });
