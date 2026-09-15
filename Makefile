@@ -1650,3 +1650,12 @@ verify-E5_5-T03v:
 	cargo test -p wasm-vm-jit-runtime --test fp_comparisons --test fp_comparisons_verifier -- --nocapture
 	wasm-pack test --node crates/wasm --test jit_fp_comparisons --test jit_fp_comparisons_verifier -- --nocapture
 	node tools/verify/omarchy-fp-comparisons-browser.mjs $(or $(FP_COMPARISONS_OUT),evidence/omarchy-profile/fp-comparisons-browser)
+
+.PHONY: verify-E5_5-T03w
+verify-E5_5-T03w:
+	cargo fmt --all --check
+	cargo test -p wasm-vm-core --test fp_arithmetic_flags -- --nocapture
+	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+	cargo test -p wasm-vm-jit-runtime --test fp_arithmetic --test fp_arithmetic_verifier -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_fp_arithmetic --test jit_fp_arithmetic_verifier -- --nocapture
+	node tools/verify/omarchy-fp-arithmetic-browser.mjs $(or $(FP_ARITHMETIC_OUT),evidence/omarchy-profile/fp-arithmetic-browser)

@@ -41,7 +41,7 @@ use wasm_emit::{
     BlockType, ExportKind, FuncBuilder, FuncType, GlobalType, Limits, MemType, ModuleBuilder,
     Mutability, RefType, TableType, ValType,
 };
-use wasm_vm_core::decode::Instr;
+use wasm_vm_core::decode::{FpArithOp, Instr};
 use wasm_vm_core::dispatch::{DecodedBlock, is_terminator};
 
 // ── E4-T25 test-only mutation hooks ─────────────────────────────────────────
@@ -428,6 +428,7 @@ const STORE_IMPORT: u32 = 1; // env.store(addr i64, val i64, width i32)
 const AMO_IMPORT: u32 = 2; // env.amo(addr i64, val i64, op i32, width i32) -> i64 (old value)
 const LR_IMPORT: u32 = 3; // env.lr(addr i64, width i32) -> i64 (rd value)
 const SC_IMPORT: u32 = 4; // env.sc(addr i64, val i64, width i32) -> i64 (0 success / 1 fail)
+const FP_ARITH_IMPORT: u32 = 5; // optional env.fp_arith_s(a i32, b i32, mul i32, rm i32) -> i64
 const ALIGN8: u32 = 3; // log2(8) memarg alignment hint for i64 loads/stores
 
 /// The `AmoOp` discriminant passed to the `env.amo` import — MUST match the mapping
@@ -749,6 +750,9 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
     debug_assert_eq!(_a, AMO_IMPORT);
     debug_assert_eq!(_lr, LR_IMPORT);
     debug_assert_eq!(_sc, SC_IMPORT);
+    if uses_fp_arithmetic(block) {
+        add_fp_arithmetic_import(&mut m);
+    }
 
     let (reads, writes) = block_register_masks(block);
     let global_info = if abi.direct_chain {
@@ -820,11 +824,25 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
     Ok(m.finish())
 }
 
-/// The wasm function index of the first defined block function in a module: the five `env.*` imports
-/// (`load`, `store`, `amo`, `lr`, `sc`) occupy indices 0..5, so the first `run` function is index 5.
-/// In `InlineTlb` mode the shared memory is imported too, but that lives in a separate index space
-/// and does not shift function indices.
-const RUN_FUNC_BASE: u32 = 5;
+fn uses_fp_arithmetic(block: &DecodedBlock) -> bool {
+    block.ops.iter().any(|op| {
+        matches!(
+            op.instr,
+            Instr::FpArithS {
+                op: FpArithOp::Add | FpArithOp::Mul,
+                ..
+            }
+        )
+    })
+}
+
+/// Keep modules without selected arithmetic byte-identical: only these modules
+/// import the pure helper, after the five established memory/atomic functions.
+fn add_fp_arithmetic_import(m: &mut ModuleBuilder) {
+    let ty = m.add_type(FuncType::new(&[ValType::I32; 4], &[ValType::I64]));
+    let index = m.import_func("env", "fp_arith_s", ty);
+    debug_assert_eq!(index, FP_ARITH_IMPORT);
+}
 /// The third parameter in the browser direct-chain function signature. Host and cross-module
 /// entries pass zero here and load the virtual entry PC from the shared handoff; same-module direct
 /// callers pass their already-computed successor PC and avoid a state-memory round trip.
@@ -1191,6 +1209,9 @@ pub fn translate_batch_with_static_slots(
     m.import_func("env", "amo", amo_ty);
     m.import_func("env", "lr", lr_ty);
     m.import_func("env", "sc", sc_ty);
+    if blocks.iter().any(uses_fp_arithmetic) {
+        add_fp_arithmetic_import(&mut m);
+    }
 
     let (entry_mask, writeback_mask) = blocks.iter().fold((0, 0), |(entry, writeback), block| {
         let (reads, writes) = block_register_masks(block);
@@ -1220,11 +1241,8 @@ pub fn translate_batch_with_static_slots(
         );
         debug_assert_eq!(table, abi.chain_table);
     }
-    // One defined function per block; capture their indices (they are RUN_FUNC_BASE + i).
-    for i in 0..blocks.len() {
-        let idx = m.add_function(run_ty);
-        debug_assert_eq!(idx, RUN_FUNC_BASE + i as u32);
-    }
+    // Capture actual indices: the optional FP helper shifts every definition.
+    let run_indices: Vec<_> = (0..blocks.len()).map(|_| m.add_function(run_ty)).collect();
     match abi.mem {
         MemModel::SoftmmuImports => {
             m.add_memory(MemType {
@@ -1246,21 +1264,21 @@ pub fn translate_batch_with_static_slots(
     }
     // Export each block function under a stable per-index name the executor looks up.
     let mut name = alloc::string::String::new();
-    for i in 0..blocks.len() {
+    for (i, &index) in run_indices.iter().enumerate() {
         use core::fmt::Write;
         name.clear();
         let _ = write!(name, "run{i}");
-        m.export(&name, ExportKind::Func, RUN_FUNC_BASE + i as u32);
+        m.export(&name, ExportKind::Func, index);
     }
     // Emit each block body, resolving its intra-group successors to concrete wasm func indices.
     for (i, block) in blocks.iter().enumerate() {
         let resolved = [
             intra[i][0]
                 .filter(|&l| !abi.direct_chain || !ends_with_fence_i(&blocks[l]))
-                .map(|l| RUN_FUNC_BASE + l as u32),
+                .map(|l| run_indices[l]),
             intra[i][1]
                 .filter(|&l| !abi.direct_chain || !ends_with_fence_i(&blocks[l]))
-                .map(|l| RUN_FUNC_BASE + l as u32),
+                .map(|l| run_indices[l]),
         ];
         let static_dynamic = [
             intra[i][0].is_none() || intra[i][0].is_some_and(|l| !ends_with_fence_i(&blocks[l])),
@@ -1418,6 +1436,14 @@ fn emit_body(
         if is_fp(&op.instr) && !fp_checked {
             emit_fp_guard(f, &regs, abi, pc, op.raw, i as u64);
             fp_checked = true;
+        }
+        if let Instr::FpArithS { rm, .. } = op.instr {
+            push_rounding_mode(f, abi, rm);
+            f.i32_const(4);
+            f.i32_gt_u();
+            f.if_(BlockType::Empty);
+            emit_fp_illegal_exit(f, &regs, abi, pc, op.raw, i as u64);
+            f.end();
         }
         let len = op.len as u64;
         let pc_next = pc.wrapping_add(len);
@@ -1958,6 +1984,7 @@ fn supported(instr: &Instr) -> bool {
             | FmvWX { .. }
             | FmvXW { .. }
             | FpCmpS { .. }
+            | FpArithS { op: FpArithOp::Add | FpArithOp::Mul, .. }
             | Flw { .. }
             | Fld { .. }
             | Fsw { .. }
@@ -1976,6 +2003,10 @@ fn is_fp(instr: &Instr) -> bool {
             | Instr::FmvWX { .. }
             | Instr::FmvXW { .. }
             | Instr::FpCmpS { .. }
+            | Instr::FpArithS {
+                op: FpArithOp::Add | FpArithOp::Mul,
+                ..
+            }
             | Instr::Flw { .. }
             | Instr::Fld { .. }
             | Instr::Fsw { .. }
@@ -1992,6 +2023,18 @@ fn emit_fp_guard(f: &mut FuncBuilder, regs: &Regs, abi: &Abi, pc: u64, raw: u32,
     f.i64_and();
     f.i64_eqz();
     f.if_(BlockType::Empty);
+    emit_fp_illegal_exit(f, regs, abi, pc, raw, retired);
+    f.end();
+}
+
+fn emit_fp_illegal_exit(
+    f: &mut FuncBuilder,
+    regs: &Regs,
+    abi: &Abi,
+    pc: u64,
+    raw: u32,
+    retired: u64,
+) {
     writeback(f, regs, abi);
     write_pc_const(f, regs, abi, pc);
     record_chain_retired(f, regs, abi, retired);
@@ -1999,7 +2042,20 @@ fn emit_fp_guard(f: &mut FuncBuilder, regs: &Regs, abi: &Abi, pc: u64, raw: u32,
     write_reason(f, abi, ExitCode::IllegalInstruction);
     f.i32_const(ExitCode::IllegalInstruction as i32);
     f.return_();
-    f.end();
+}
+
+fn push_rounding_mode(f: &mut FuncBuilder, abi: &Abi, rm: u8) {
+    if rm == 7 {
+        f.local_get(STATE_BASE);
+        f.i64_load(ALIGN8, abi.fp_state);
+        f.i64_const(5);
+        f.i64_shr_u();
+        f.i32_wrap_i64();
+        f.i32_const(7);
+        f.i32_and();
+    } else {
+        f.i32_const(i32::from(rm));
+    }
 }
 
 fn push_freg(f: &mut FuncBuilder, abi: &Abi, register: u8) {
@@ -2334,6 +2390,37 @@ fn emit_alu(
             set_reg(f, regs, rd);
         }
         FpCmpS { op, rd, rs1, rs2 } => emit_fp_compare(f, regs, abi, op, rd, rs1, rs2),
+        FpArithS {
+            op,
+            rd,
+            rs1,
+            rs2,
+            rm,
+        } => {
+            // FS and resolved rm have been checked at this exact guest PC.
+            // The helper sees only boxed operand bits and returns result/flags.
+            push_boxed_f32(f, abi, rs1);
+            f.i32_wrap_i64();
+            push_boxed_f32(f, abi, rs2);
+            f.i32_wrap_i64();
+            f.i32_const(i32::from(op == FpArithOp::Mul));
+            push_rounding_mode(f, abi, rm);
+            f.call(FP_ARITH_IMPORT);
+            let packed = f.local(ValType::I64);
+            f.local_tee(packed);
+            box_f32(f);
+            set_freg(f, abi, rd);
+            f.local_get(STATE_BASE);
+            f.local_get(STATE_BASE);
+            f.i64_load(ALIGN8, abi.fp_state);
+            f.local_get(packed);
+            f.i64_const(32);
+            f.i64_shr_u();
+            f.i64_const(31);
+            f.i64_and();
+            f.i64_or();
+            f.i64_store(ALIGN8, abi.fp_state);
+        }
         // ── U-type ──
         Lui { rd, imm } => {
             f.i64_const(imm);

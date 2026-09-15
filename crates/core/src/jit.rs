@@ -21,6 +21,21 @@ use crate::hart::Hart;
 use crate::mmio::SystemBus;
 use alloc::boxed::Box;
 
+/// Pure generated-code helper for FADD.S / FMUL.S. Operands have already been
+/// NaN-box checked and `rm` resolved/validated (0..=4) by the generated caller.
+/// Low 32 bits are the raw result; bits 32..36 are newly accrued RISC-V flags.
+/// No hart, bus, memory, device or scheduler reference crosses this boundary.
+pub fn fp_arith_s(a: u32, b: u32, multiply: bool, rm: u8) -> u64 {
+    use crate::softfloat::{F32, RoundMode, SoftFloat};
+    let round = RoundMode::from_bits(rm).expect("generated FP helper requires validated rounding");
+    let (bits, flags) = if multiply {
+        F32::mul(a, b, round)
+    } else {
+        F32::add(a, b, round)
+    };
+    u64::from(bits) | (u64::from(flags.0) << 32)
+}
+
 /// The frozen `CpuState` linear-memory offsets (`docs/jit-architecture.md` §3.1). These MUST match
 /// `jit_translate::Abi::FROZEN`; the executor syncs guest registers to `XREG_BASE` and reads the
 /// exit protocol back from `EXIT_*`.
