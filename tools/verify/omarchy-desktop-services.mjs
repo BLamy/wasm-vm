@@ -41,13 +41,14 @@ export function auditDesktopServicesReport(report) {
     note: "Absence of hidden service traffic is not sufficient evidence of interactive input." };
 }
 
-export async function main(output, { failureCheckpoint = false } = {}) {
+export async function main(output, { failureCheckpoint = false, renderBudget = false } = {}) {
+  assert.ok(!failureCheckpoint || !renderBudget, "diagnostics must be isolated");
   const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
   assert.ok(output, "usage: omarchy-desktop-services.mjs NEW_OUTPUT_DIR");
   const out = path.resolve(output); await fs.mkdir(out, { recursive: false });
   const head = execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim();
   const wasmSha256 = createHash("sha256").update(await fs.readFile(path.join(repo, "web/dist/pkg/wasm_vm_wasm_bg.wasm"))).digest("hex");
-  const receipt = { purpose: failureCheckpoint ? "failed-input-guest-state" : "desktop-service-isolation", head, wasmSha256, startedAt: new Date().toISOString() };
+  const receipt = { purpose: failureCheckpoint ? "failed-input-guest-state" : renderBudget ? "smaller-guest-scanout-trial" : "desktop-service-isolation", head, wasmSha256, startedAt: new Date().toISOString() };
   const save = () => fs.writeFile(path.join(out, "run.json"), JSON.stringify(receipt, null, 2) + "\n");
   await save();
   const env = { ...process.env };
@@ -56,6 +57,7 @@ export async function main(output, { failureCheckpoint = false } = {}) {
     OMARCHY_CANDIDATE_PAIR_DIR: path.join(repo, "target/omarchy-sdr-r3-snapshot"),
     OMARCHY_CANDIDATE_CHUNKS: path.join(repo, "target/omarchy-profile-chunks-sdr-r3-256k") });
   if (failureCheckpoint) env.OMARCHY_FAILURE_CHECKPOINT = "1";
+  if (renderBudget) env.OMARCHY_RENDER_BUDGET = "640x400";
   receipt.args = ["tools/verify/omarchy-desktop-live.mjs", "local", path.join(out, "desktop"), "input-trial"];
   const log = createWriteStream(path.join(out, "desktop.log"), { flags: "wx" });
   const child = spawn(process.execPath, receipt.args, { cwd: repo, env, detached: true, stdio: ["ignore", "pipe", "pipe", "ipc"] });
