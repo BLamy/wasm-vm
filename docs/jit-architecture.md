@@ -146,7 +146,7 @@ crossing). A `CpuState` header is reserved at a fixed base `CPU_STATE_BASE` (bel
 | `+0x000` | 32×8 = 256 | `x[0..32]` guest integer registers (`x[0]` reads as 0, never written back) | `hart::regs::XRegs` |
 | `+0x100` | 8 | `pc` | `Hart` |
 | `+0x108` | 32×8 = 256 | `f[0..32]` FP registers (NaN-boxed, FLEN=64) | `hart::fregs::FRegs` |
-| `+0x208` | 8 | `fcsr` | `csr` |
+| `+0x208` | 8 | packed FP control: fcsr low byte, enabled bit 8, dirty bit 9, FPR mask high word (E5.5-T03t) | `csr` + handoff metadata |
 | `+0x210` | 8 | `retired` (instruction retire counter — the E1-T12 clock) | run loop |
 | `+0x218` | 8 | `exit_reason` (the exit-code enum, §3.3, written by the block before it returns) | ABI |
 | `+0x220` | 8 | `exit_pc` (guest PC to resume at — fall-through PC, trap PC, or successor entry) | ABI |
@@ -601,3 +601,5 @@ drop in.
   execution + SMC, per public talks).
 - ADR house style: `docs/adr/0002-sbi-firmware.md`.
 </content>
+
+E5.5-T03t activates the reserved FPR image and adds precise illegal-instruction exit 9. See `jit-fp-policy.md` §6 for the exact transport and commit contract; existing offsets remain stable.

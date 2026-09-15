@@ -1619,3 +1619,15 @@ verify-E5.5-T03f:
 .PHONY: record-E5.5-T03f
 record-E5.5-T03f:
 	OMARCHY_T03F_RECORD_ROOT="$(OMARCHY_T03F_RECORD_ROOT)" node tools/verify/omarchy-software-renderer-measurement.mjs record
+
+# E5.5-T03t: exact FP-move state boundary. Build web/dist first (`make web-dist`)
+# so the final browser leg tests the same deployable bytes that are being submitted.
+.PHONY: verify-E5_5-T03t
+verify-E5_5-T03t:
+	cargo fmt --all --check
+	cargo test -p wasm-vm-core --lib jit::tests
+	cargo test -p wasm-vm-core --lib hart::fregs::tests
+	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+	cargo test -p wasm-vm-jit-runtime --test fp_moves -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_fp_moves -- --nocapture
+	node tools/verify/omarchy-fp-moves-browser.mjs $(or $(FP_MOVES_OUT),evidence/omarchy-profile/fp-moves-browser)

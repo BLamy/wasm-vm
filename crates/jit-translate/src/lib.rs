@@ -144,6 +144,9 @@ fn mutation_is(_m: u8) -> bool {
 pub struct Abi {
     /// Base of the `x[0..32]` guest integer register array (each register is 8 bytes).
     pub xreg_base: u32,
+    /// Raw FLEN=64 register image and packed FP control/dirty metadata.
+    pub freg_base: u32,
+    pub fp_state: u32,
     /// `exit_reason` — the [`ExitCode`] the block wrote before returning.
     pub exit_reason: u32,
     /// `exit_pc` — the guest PC to resume at.
@@ -307,6 +310,8 @@ impl Abi {
     /// executor and the E4-T09 differential harness use this).
     pub const FROZEN: Abi = Abi {
         xreg_base: 0x000,
+        freg_base: 0x108,
+        fp_state: 0x208,
         exit_reason: 0x218,
         exit_pc: 0x220,
         exit_info: 0x228,
@@ -344,6 +349,8 @@ impl Abi {
     /// The frozen layout with the E4-T11 inline-TLB memory model selected.
     pub const INLINE_TLB: Abi = Abi {
         xreg_base: 0x000,
+        freg_base: 0x108,
+        fp_state: 0x208,
         exit_reason: 0x218,
         exit_pc: 0x220,
         exit_info: 0x228,
@@ -393,6 +400,8 @@ pub enum ExitCode {
     CallInterp = 6,
     NotCompiled = 7,
     Budget = 8,
+    /// Precise FS=Off trap; exit_info contains the original instruction bits.
+    IllegalInstruction = 9,
 }
 
 /// Why a block could not be translated. The only case E4-T09 raises is an out-of-scope opcode.
@@ -836,6 +845,8 @@ fn block_register_masks(block: &DecodedBlock) -> (u32, u32) {
     let mut writes = 0;
     for op in &block.ops {
         match op.instr {
+            FmvXW { rd, .. } => add_register_mask(&mut writes, rd),
+            FmvWX { rs1, .. } => add_register_mask(&mut reads, rs1),
             Lui { rd, .. } | Auipc { rd, .. } | Jal { rd, .. } => {
                 add_register_mask(&mut writes, rd);
             }
@@ -1396,8 +1407,13 @@ fn emit_body(
         emit_mark_block_writes(f, &regs, block_write_mask);
     }
     let mut terminated = false;
+    let mut fp_checked = false;
 
     for (i, op) in block.ops.iter().enumerate() {
+        if is_fp_move(&op.instr) && !fp_checked {
+            emit_fp_guard(f, &regs, abi, pc, op.raw, i as u64);
+            fp_checked = true;
+        }
         let len = op.len as u64;
         let pc_next = pc.wrapping_add(len);
         let last = i == n - 1;
@@ -1932,11 +1948,85 @@ fn supported(instr: &Instr) -> bool {
             | ScD { .. }
             | AmoW { .. }
             | AmoD { .. }
+            // Measured non-arithmetic single-precision subset (E5.5-T03t).
+            | FsgnjS { .. }
+            | FmvWX { .. }
+            | FmvXW { .. }
             | Ecall
             | Ebreak
             | Fence { .. }
             | FenceI
     )
+}
+
+fn is_fp_move(instr: &Instr) -> bool {
+    matches!(
+        instr,
+        Instr::FsgnjS { .. } | Instr::FmvWX { .. } | Instr::FmvXW { .. }
+    )
+}
+
+/// FS cannot change inside a translated block (CSR writes terminate interpretation),
+/// so check immediately before its first FP op. Never skip the integer prefix.
+fn emit_fp_guard(f: &mut FuncBuilder, regs: &Regs, abi: &Abi, pc: u64, raw: u32, retired: u64) {
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.fp_state);
+    f.i64_const(wasm_vm_core::jit::abi::FP_ENABLED as i64);
+    f.i64_and();
+    f.i64_eqz();
+    f.if_(BlockType::Empty);
+    writeback(f, regs, abi);
+    write_pc_const(f, regs, abi, pc);
+    record_chain_retired(f, regs, abi, retired);
+    write_info_const(f, abi, i64::from(raw));
+    write_reason(f, abi, ExitCode::IllegalInstruction);
+    f.i32_const(ExitCode::IllegalInstruction as i32);
+    f.return_();
+    f.end();
+}
+
+fn push_freg(f: &mut FuncBuilder, abi: &Abi, register: u8) {
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.freg_base + u32::from(register) * 8);
+}
+
+/// Operand check only. Raw transfers deliberately bypass NaN-box canonicalization.
+fn push_boxed_f32(f: &mut FuncBuilder, abi: &Abi, register: u8) {
+    let raw = f.local(ValType::I64);
+    push_freg(f, abi, register);
+    f.local_tee(raw);
+    f.i64_const(32);
+    f.i64_shr_u();
+    f.i64_const(0xffff_ffff);
+    f.i64_eq();
+    f.if_(BlockType::Value(ValType::I64));
+    f.local_get(raw);
+    f.else_();
+    f.i64_const(0x7fc0_0000);
+    f.end();
+}
+
+fn box_f32(f: &mut FuncBuilder) {
+    f.i64_const(0xffff_ffff);
+    f.i64_and();
+    f.i64_const(0xffff_ffff_0000_0000_u64 as i64);
+    f.i64_or();
+}
+
+/// FPR writes are immediately visible to successors and precise fault exits.
+/// No FP locals survive across a call; the mask records only executed writes.
+fn set_freg(f: &mut FuncBuilder, abi: &Abi, register: u8) {
+    let result = f.local(ValType::I64);
+    f.local_set(result);
+    f.local_get(STATE_BASE);
+    f.local_get(result);
+    f.i64_store(ALIGN8, abi.freg_base + u32::from(register) * 8);
+    f.local_get(STATE_BASE);
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.fp_state);
+    f.i64_const(((1_u64 << (32 + u32::from(register))) | wasm_vm_core::jit::abi::FP_DIRTY) as i64);
+    f.i64_or();
+    f.i64_store(ALIGN8, abi.fp_state);
 }
 
 /// Atomic memory operations are the only translated operations that consume reservation state
@@ -2080,6 +2170,43 @@ fn emit_alu(
 ) {
     use Instr::*;
     match instr {
+        FsgnjS { op, rd, rs1, rs2 } => {
+            use wasm_vm_core::decode::FpSgnjOp;
+            let a = f.local(ValType::I64);
+            push_boxed_f32(f, abi, rs1);
+            f.local_set(a);
+            f.local_get(a);
+            f.i64_const(0x7fff_ffff);
+            f.i64_and();
+            push_boxed_f32(f, abi, rs2);
+            match op {
+                FpSgnjOp::J => {}
+                FpSgnjOp::Jn => {
+                    f.i64_const(-1);
+                    f.i64_xor();
+                }
+                FpSgnjOp::Jx => {
+                    f.local_get(a);
+                    f.i64_xor();
+                }
+            }
+            f.i64_const(0x8000_0000);
+            f.i64_and();
+            f.i64_or();
+            box_f32(f);
+            set_freg(f, abi, rd);
+        }
+        FmvWX { rd, rs1 } => {
+            push_reg(f, regs, abi, rs1);
+            box_f32(f);
+            set_freg(f, abi, rd);
+        }
+        FmvXW { rd, rs1 } => {
+            push_freg(f, abi, rs1);
+            f.i32_wrap_i64();
+            f.i64_extend_i32_s();
+            set_reg(f, regs, rd);
+        }
         // ── U-type ──
         Lui { rd, imm } => {
             f.i64_const(imm);

@@ -910,6 +910,9 @@ impl BrowserHandoff {
             self.register_version = version;
             bytes = bytes.saturating_add(32 * core::mem::size_of::<u64>() as u64);
         }
+        bytes = bytes.saturating_add(self.image.prepare_fp_registers(hart));
+        self.image.prepare_fp_control(hart);
+        bytes = bytes.saturating_add(core::mem::size_of::<u64>() as u64);
         self.image.set_entry_pc(hart.regs.pc);
         bytes
     }
@@ -943,7 +946,8 @@ impl BrowserHandoff {
             self.image.commit_registers(hart);
         }
         self.register_version = hart.regs.jit_version();
-        bytes
+        let fp_bytes = self.image.commit_fp_registers(hart);
+        bytes.saturating_add(fp_bytes)
     }
 }
 

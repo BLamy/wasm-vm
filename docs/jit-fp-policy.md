@@ -1,7 +1,7 @@
 # JIT F/D floating-point policy — the measured decision (E4-T15)
 
 **Status:** accepted · **Date:** 2026-08-05 · **Epic:** 4 (acceleration) · **Depends on:** E4-T06 §9.4,
-E4-T12 · **Ships:** side-exit-all (option a)
+E4-T12 · **Original decision:** side-exit-all (option a); measured Omarchy move subset in §6
 
 `docs/jit-architecture.md` §9.4 flags FP as "the one place 'fast' and 'provably identical' conflict"
 and defers it to *this* measured decision. The three options were (a) side-exit every F/D op to the
@@ -91,4 +91,48 @@ Revisit only if a *measured* target workload shows a materially higher dynamic F
 hybrid — translate only the trivially-identical ops (fld/fsd/fmv/fsgnj, and at most fadd/fmul in RNE
 with a fflags side-exit) and differentially prove each byte-identical (result + fflags + NaN-box)
 over the FP corner set — never a blanket full translation.
-</content>
+
+## 6. Measured Omarchy move subset (E5.5-T03t)
+
+T03s independently recorded the current R3 renderer at 13,424,839 FP-compute
+instructions among 99,998,678 retirements (13.425016%), including 3,545,385
+FSGNJ.S-family operations. Complete 64-byte region counts support the reopening
+condition; the truncated PC/insn pair list is not a full-workload distribution.
+See `evidence/omarchy-profile/renderer-opcodes-r1/` and its critic audit.
+
+The narrow hybrid now emits integer operations for **FSGNJ.S, FSGNJN.S,
+FSGNJX.S, FMV.W.X and FMV.X.W**. Every other F/D operation retains the previous
+interpreter policy. No host floating-point instruction, rounded arithmetic or
+exception synthesis is introduced. This is instruction support, not a measured
+speedup or a responsive-desktop verdict; the original physical-input deadline
+still gates the Omarchy release.
+
+Sign injection checks NaN boxes independently for both operands, preserves the
+payload of a valid box, and boxes its result. FMV.X.W instead uses raw low bits
+and sign-extends them; FMV.W.X boxes raw low integer bits. The sign operations and
+FMV.W.X mark FS Dirty even for an unchanged value; FMV.X.W leaves FS unchanged.
+All five preserve fflags and frm, including reserved frm values since they do
+not round. These rules follow the [F specification](https://github.com/riscv/riscv-isa-manual/blob/main/src/unpriv/f-st-ext.adoc)
+and [D NaN-boxing specification](https://github.com/riscv/riscv-isa-manual/blob/main/src/unpriv/d-st-ext.adoc).
+
+### Handoff and precise exits
+
+The formerly reserved `+0x108..+0x208` range holds all 32 raw FPR words, including
+writable f0. `+0x208` retains fcsr in its low byte and adds host-only metadata:
+bit 8 is FS-enabled, bit 9 records an FP-state write, and bits 32..63 are the
+exact FPR write mask. This packed transport word is never exposed as a guest CSR.
+Other offsets and the 568-byte transfer span stay unchanged. FP writes update
+this memory immediately, so same-module and cross-module successors share it.
+Only executed writes commit back, including an FP prefix before a memory fault.
+
+Each translated block checks FS immediately before its first selected FP op.
+FS cannot change inside the block: CSR instructions remain interpreter boundaries.
+A failed check returns exit code 9 with the exact raw instruction in exit_info,
+the virtual fault PC and the exact retired chain prefix. Core handles it through
+the existing precise-trap path; no prefix instruction is replayed.
+
+Native and browser handoffs skip the FPR copy only while both object identity
+and mutation version agree. Defaults and clones allocate a new non-architectural
+identity; FP writes increment only a local version. Neither stamp is serialized
+or included in architectural equality. This covers equal write counts and
+replacement at the same address without adding an atomic to each FP write.
