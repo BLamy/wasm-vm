@@ -58,6 +58,10 @@ export function diagnosticSnapshot(raw) {
 }
 
 export function recountProfile(profile) {
+  for (const key of ["pair_hist_dropped", "fp_region64_dropped"]) {
+    assert.ok(Number.isSafeInteger(profile[key]) && profile[key] >= 0 && profile[key] <= profile.total_retired,
+      `invalid ${key} count`);
+  }
   const sum = values => values.reduce((a, b) => {
     assert.ok(Number.isSafeInteger(b) && b >= 0, "invalid histogram count"); return a + b;
   }, 0);

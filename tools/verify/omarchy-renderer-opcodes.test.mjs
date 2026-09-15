@@ -62,11 +62,35 @@ test("raw compute recount and regions reject count drift and preserve truncation
     p => { p.fp_region64[0].total++; }, p => { p.fp_region64[0].fp_compute--; },
     p => { p.fp_region64[0].pc = p.fp_region64[1].pc; },
   ]) { const bad = profile(); mutate(bad); assert.throws(() => recountProfile(bad)); }
+  for (const key of ["pair_hist_dropped", "fp_region64_dropped"]) {
+    for (const value of [-1, 0.5, NaN, Infinity, Number.MAX_SAFE_INTEGER + 1, 101, undefined, "0"]) {
+      const bad = profile(); bad[key] = value;
+      if (key === "fp_region64_dropped" && Number.isFinite(value)) bad.fp_region64[0].total -= value;
+      assert.throws(() => recountProfile(bad), new RegExp(`invalid ${key} count`, "u"));
+    }
+  }
   const truncated = profile(); truncated.fp_region64[0].total -= 10; truncated.fp_region64_dropped = 10;
   assert.equal(recountProfile(truncated).truncation.regionSamplesDropped, 10);
   const integer = profile(); integer.opcode7 = { "0x13": 100 }; integer.op_fp_funct7 = {}; integer.fma_opcode7 = {};
   integer.fp = 0; integer.fp_ldst = 0; integer.fp_compute = 0; integer.fp_region64[0].fp_compute = 0;
   assert.equal(recountProfile(integer).policyReopenConditionObserved, false);
+});
+
+test("owned recorder reaps a SIGTERM-resistant child with SIGKILL and records spawn failure", async () => {
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "omarchy-opcode-force-test-"));
+  try {
+    const timeout = await recordProcess(process.execPath,
+      ["-e", "process.on('SIGTERM',()=>{process.stdout.write('ignored SIGTERM');}); process.stdout.write('ready'); setInterval(()=>{},1000)"],
+      path.join(dir, "resistant"), process.env, 1000);
+    assert.equal(timeout.timedOut, true); assert.equal(timeout.signal, "SIGKILL");
+    assert.equal(await fs.readFile(path.join(dir, "resistant.stdout"), "utf8"), "readyignored SIGTERM");
+    assert.throws(() => process.kill(timeout.pid, 0), /ESRCH/u);
+    const missing = await recordProcess(path.join(dir, "missing-executable"), [], path.join(dir, "missing"), process.env, 1000);
+    assert.match(missing.error, /ENOENT/u); assert.equal(missing.timedOut, false);
+    assert.equal(missing.pid, undefined);
+    assert.equal(await fs.readFile(path.join(dir, "missing.stdout"), "utf8"), "");
+    assert.equal(await fs.readFile(path.join(dir, "missing.stderr"), "utf8"), "");
+  } finally { await fs.rm(dir, { recursive: true, force: true }); }
 });
 
 test("owned recorder preserves native exit/output and terminates a timed-out child", async () => {
