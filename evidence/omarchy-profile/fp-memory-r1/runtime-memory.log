@@ -1,0 +1,68 @@
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.51s
+     Running tests/batching.rs (target/debug/deps/batching-50a8e4408193eae9)
+
+running 3 tests
+test batch_execution_is_verdict_identical ... ok
+test registry_accounting_is_accurate_at_k1 ... ok
+recompiled state: [true, true, true, true, true, true, true, false], registry=(2, 132074)
+test partial_batch_invalidation_retires_whole_batch ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+
+     Running tests/chaining.rs (target/debug/deps/chaining-f12841d853c99373)
+
+running 6 tests
+test chain_successor_that_does_not_fit_preserves_prior_progress ... ok
+test store_to_non_code_page_cuts_no_links ... ok
+test chain_depth_budget_forces_dispatch_return ... ok
+test two_block_chain_links_then_unlink_is_complete ... ok
+test interrupt_fires_inside_chained_loop ... ok
+test device_completion_fires_inside_chained_loop ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.72s
+
+     Running tests/fp_moves.rs (target/debug/deps/fp_moves-78690d5eb0fc1409)
+
+running 3 tests
+FP_MOVES handoff equal-version replacements=4 CSR-only FS-Off rechecks=4
+test fp_moves_native_handoff_reuse ... ok
+FP_MOVES precise prefix=1 pc=0000000080000004 cause=2 tval=0000000020209053
+FP_MOVES precise prefix=1 pc=0000000080000104 cause=5 tval=00000000deadbeec
+test fp_moves_native_precise_runloop ... ok
+FP_MOVES cases=1984 guest_state_fnv64=dc6031f4c37c7ec3
+test fp_moves_native_directed ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.88s
+
+     Running tests/invalidation.rs (target/debug/deps/invalidation-6e87f21f4d1e8c08)
+
+running 13 tests
+test store_to_non_code_page_invalidates_nothing ... ok
+test fence_i_is_near_free ... ok
+test page_granular_store_invalidates_only_written_page ... ok
+test fence_i_invalidates_translated_block ... ok
+test two_page_smc_byte_identical_jit_vs_interp ... ok
+test precise_fault_retirement_uses_virtual_entry_pc ... ok
+test sfence_vma_global_page_exempt_from_asid_fence ... ok
+test sfence_vma_reuse_same_phys_new_va ... ok
+test sfence_vma_asid_form_never_underflushes ... ok
+test sfence_vma_remap_to_different_phys ... ok
+test mstatus_sum_change_uses_new_permission_view ... ok
+test sfence_vma_all_four_forms_flush_stale ... ok
+rv64mi verdict-identical under JIT across 18 ELFs
+test rv64mi_suite_verdict_identical_under_jit ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.84s
+
+     Running tests/precise_traps.rs (target/debug/deps/precise_traps-97f1f18b4149f203)
+
+running 5 tests
+test bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault ... ok
+test execute_miss_preserves_public_guard_and_guest_state ... ok
+test mmio_store_then_fault_commits_once ... ok
+test overwritten_base_register_fault ... ok
+test mem_fault_precise_matches_interpreter ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.44s
+

@@ -1,0 +1,60 @@
+{
+  "head": "a593f942a004ee43c1bf5b4c84eeb22522eeeb16",
+  "clone": "/private/tmp/wasm-vm-fp-memory-cold-p1cal399/repo",
+  "scrubbedNames": [
+    "RUST_LOG"
+  ],
+  "policy": "RUSTFLAGS/RUSTDOCFLAGS/RUST_LOG and all CARGO_* unset; trusted PATH; no shell profiles",
+  "commands": [
+    {
+      "args": [
+        "git",
+        "clone",
+        "--quiet",
+        "/Users/blamy/Documents/Codex/wasm-vm",
+        "/private/tmp/wasm-vm-fp-memory-cold-p1cal399/repo"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-memory-cold-p1cal399",
+      "startedAt": "2026-09-15T19:51:18Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T19:51:28Z"
+    },
+    {
+      "args": [
+        "git",
+        "checkout",
+        "--quiet",
+        "a593f942a004ee43c1bf5b4c84eeb22522eeeb16"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-memory-cold-p1cal399/repo",
+      "startedAt": "2026-09-15T19:51:28Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T19:51:29Z"
+    },
+    {
+      "args": [
+        "make",
+        "web-dist"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-memory-cold-p1cal399/repo",
+      "startedAt": "2026-09-15T19:51:29Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T19:53:30Z"
+    },
+    {
+      "args": [
+        "make",
+        "verify-E5_5-T03u",
+        "FP_MEMORY_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-memory-r1/cold/browser"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-memory-cold-p1cal399/repo",
+      "startedAt": "2026-09-15T19:53:30Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T20:00:06Z"
+    }
+  ],
+  "pristineBeforeBuild": true,
+  "committedWasmSha256": "1f989758c67c9dfdf514d2e03c0e4fa2cadb15a2dc0a465f5cb538661446473b",
+  "rebuiltWasmSha256": "1f989758c67c9dfdf514d2e03c0e4fa2cadb15a2dc0a465f5cb538661446473b",
+  "passed": true
+}
