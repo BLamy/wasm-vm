@@ -62,7 +62,7 @@ export function renderBudgetOutcome(report) {
     ? "physical-input-and-presentation-passed" : "physical-input-failed";
 }
 
-export async function requestSmallerScanout(page, deadline, report) {
+export async function requestSmallerScanout(page, deadline, report, { configureCompositor = null } = {}) {
   const call = operation => withinTrialDeadline(operation, deadline, "render mode startup");
   const receipt = report.renderBudget = { mode: RENDER_MODE, deadlineAtMs: deadline,
     startedAt: new Date().toISOString(), status: "requesting", requestCount: 0 };
@@ -78,6 +78,10 @@ export async function requestSmallerScanout(page, deadline, report) {
       window.wvmDemo.setDisplay(width, height), RENDER_MODE));
     receipt.acknowledgedAt = new Date().toISOString();
     assert.equal(receipt.acknowledged, true, "display mode request rejected");
+    if (configureCompositor) {
+      receipt.status = "configuring-compositor";
+      await call(configureCompositor);
+    }
     receipt.status = "awaiting-guest-frame";
     await call(() => page.waitForFunction(({ mode, before }) => {
       const state = window.__presentation.state(), latest = state.latest;
