@@ -23,6 +23,13 @@ test("pause occurs first, once, without changing the verdict", async () => {
   assert.equal(assertFailedInput(r), before); assert.equal(r.failureCheckpoint.paused, true);
   assert.equal(r.failureCheckpoint.timeoutMs, 180000);
 });
+test("pause confirmation cannot complete beyond the fixed diagnostic deadline", async context => {
+  const r = report(); let now = 200000, calls = 0;
+  context.mock.method(Date, "now", () => now);
+  const page = { evaluate: async () => { if (++calls === 2) { now += 180001; return true; } } };
+  await assert.rejects(pauseFailedInput(page, r), /deadline exceeded/u);
+  assert.equal(calls, 2); assert.equal(r.failureCheckpoint.paused, undefined);
+});
 test("debugger expression rejects ambiguous/dead instances and calls the real digest method once", () => {
   const save = Function(`return (${selectMachineExpression})`)();
   for (const instances of [[], [{ __wbg_ptr: 0 }], [{}, {}]]) assert.throws(() => save.call(instances), /ambiguous/u);

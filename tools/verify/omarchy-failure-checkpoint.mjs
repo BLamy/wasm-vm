@@ -97,7 +97,8 @@ export async function pauseFailedInput(page, report) {
   receipt.pauseRequestedAtMs = Date.now();
   await withinTrialDeadline(() => page.evaluate(() => window.__linux.pause()), receipt.deadlineAtMs, "endpoint pause");
   receipt.pauseAcknowledgedAtMs = Date.now();
-  receipt.paused = await page.evaluate(() => window.__linux.isPaused());
+  receipt.paused = await withinTrialDeadline(() => page.evaluate(() => window.__linux.isPaused()),
+    receipt.deadlineAtMs, "endpoint pause confirmation");
   assert.equal(receipt.paused, true);
   assert.equal(assertFailedInput(report), verdict, "capture changed the input verdict");
 }
