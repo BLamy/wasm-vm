@@ -136,3 +136,28 @@ and mutation version agree. Defaults and clones allocate a new non-architectural
 identity; FP writes increment only a local version. Neither stamp is serialized
 or included in architectural equality. This covers equal write counts and
 replacement at the same address without adding an atomic to each FP write.
+
+## 7. Measured FP memory transfers (E5.5-T03u)
+
+FLW/FSW and FLD/FSD, including RV64C's existing FLD/FSD expansions, now use
+exactly the integer JIT memory imports and inline RAM path. FLW boxes its raw
+32-bit result; FLD retains all 64 bits. Both dirty FS only after success. FSW
+stores the raw low 32 bits even for a malformed NaN box; FSD stores all 64 bits.
+Stores preserve FS. All transfers preserve fflags/frm and use the same FS-Off
+guard and original instruction parcel as the measured move subset.
+
+Integer base registers and FP source/destination registers remain separate even
+when their indices alias. Raw stores enter the existing bounded commit log,
+reservation invalidation, atomic barrier and code-page invalidation path. A
+fault preserves the completed prefix and never replays its device side effects.
+
+The independent memory attack found that a successful four-byte PMP check could
+previously publish a whole-page inline tag. Both integer and FP refills now
+require the entire 4 KiB physical page to be ordinary RAM with the required PMP
+permission at the effective data privilege and with triggers idle. Subpage
+permissions remain on checked imports. This changes cache eligibility, not the
+result of the already completed access.
+
+The renderer recorded 4,241,032 FP transfers in a 99,998,678-instruction window.
+This slice removes that measured boundary; physical keyboard readback and a
+visible application response remain the separate desktop acceptance gate.

@@ -1842,7 +1842,7 @@ fn a_extension_randomized() {
 }
 
 // The original E4-T15 policy remains for every operation outside the measured
-// E5.5-T03t single-precision move subset. Those five encodings have their own
+// E5.5-T03t moves and T03u memory transfers. Those encodings have their own
 // native/browser differential tests, including FPR state and exact FS traps.
 #[test]
 fn fp_ops_are_unsupported() {
@@ -1851,16 +1851,6 @@ fn fp_ops_are_unsupported() {
 
     // Every remaining unsupported family stays behind the measured-policy gate.
     let fp_ops = [
-        Flw {
-            rd: 1,
-            rs1: 2,
-            imm: 0,
-        },
-        Fsw {
-            rs1: 2,
-            rs2: 1,
-            imm: 0,
-        },
         FpArithS {
             op: FpArithOp::Add,
             rd: 1,
@@ -1905,16 +1895,6 @@ fn fp_ops_are_unsupported() {
             rd: 1,
             rs1: 2,
             rm: 7,
-        },
-        Fld {
-            rd: 1,
-            rs1: 2,
-            imm: 0,
-        },
-        Fsd {
-            rs1: 2,
-            rs2: 1,
-            imm: 0,
         },
         FpArithD {
             op: FpArithOp::Div,

@@ -773,7 +773,11 @@ fn with_ctx_load(addr: i64, kind: i32) -> i64 {
         if inline {
             if h.csr.triggers_idle() {
                 match h.jit_ram_phys(b, addr, load_width(kind), false) {
-                    Ok(Some(pa)) => publish_inline_tlb(addr, pa, false),
+                    Ok(Some(pa)) => {
+                        if h.jit_can_inline_ram_page(b, pa, false) {
+                            publish_inline_tlb(addr, pa, false);
+                        }
+                    }
                     Ok(None) => {
                         note_device_boundary(started);
                         mark_chain_abort();
@@ -804,7 +808,10 @@ fn with_ctx_store(addr: i64, val: i64, width: i32) {
             && addr
                 .checked_add(u64::from(width as u32))
                 .is_some_and(|end| (addr >> 12) == ((end - 1) >> 12));
-        if aligned && let Some(pa) = ram_phys {
+        if aligned
+            && let Some(pa) = ram_phys
+            && h.jit_can_inline_ram_page(b, pa, true)
+        {
             publish_inline_tlb(addr, pa, true);
         }
         let touches_compiled_page = ram_phys.is_some_and(|pa| {

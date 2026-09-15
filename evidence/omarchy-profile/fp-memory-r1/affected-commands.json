@@ -1,0 +1,162 @@
+{
+  "head": "a593f942a004ee43c1bf5b4c84eeb22522eeeb16",
+  "wasmSha256": "1f989758c67c9dfdf514d2e03c0e4fa2cadb15a2dc0a465f5cb538661446473b",
+  "phase": "affected",
+  "commands": [
+    {
+      "label": "clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-core",
+        "-p",
+        "wasm-vm-jit-translate",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "-p",
+        "wasm-vm-wasm",
+        "--lib",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T19:43:44Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T19:43:45Z"
+    },
+    {
+      "label": "core-memory",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "--features",
+        "trace",
+        "--test",
+        "misaligned_virtual_pages",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T19:43:45Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T19:43:54Z"
+    },
+    {
+      "label": "translator",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-jit-translate",
+        "--test",
+        "inline_tlb",
+        "--test",
+        "batch",
+        "--test",
+        "differential",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T19:43:54Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T19:47:25Z"
+    },
+    {
+      "label": "runtime-memory",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "fp_moves",
+        "--test",
+        "precise_traps",
+        "--test",
+        "batching",
+        "--test",
+        "chaining",
+        "--test",
+        "invalidation",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T19:47:25Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T19:48:19Z"
+    },
+    {
+      "label": "native-fp-isa",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "jit_execution",
+        "fp_suites_verdict_identical_under_jit",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T19:48:19Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T19:48:48Z"
+    },
+    {
+      "label": "wasm-native-lib",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-wasm",
+        "--lib"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T19:48:48Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T19:48:57Z"
+    },
+    {
+      "label": "no-host-float",
+      "args": [
+        "bash",
+        "tools/ci/no-host-float.sh"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T19:48:57Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T19:48:57Z"
+    },
+    {
+      "label": "hazards",
+      "args": [
+        "bash",
+        "tools/ci/determinism-hazards.sh"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T19:48:57Z",
+      "code": 1,
+      "finishedAt": "2026-09-15T19:48:58Z"
+    },
+    {
+      "label": "acceptance",
+      "args": [
+        "make",
+        "verify-E5_5-T03u",
+        "FP_MEMORY_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-memory-r1/acceptance-browser"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T19:48:58Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T19:50:58Z"
+    }
+  ],
+  "allPassed": false
+}
