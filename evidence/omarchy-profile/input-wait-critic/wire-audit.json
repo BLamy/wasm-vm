@@ -1,0 +1,19 @@
+{
+  "result": "input, timing and resource audit passed",
+  "reportSha256": "e17fbceeeff7377eade034c1a8caea57113809938da7f79a8526d7826740cfe8",
+  "physicalEvents": 128,
+  "physicalWorkerCallsAcknowledged": 128,
+  "serialReadCommands": 26,
+  "noncePresentInSerial": false,
+  "pauseCalls": 1,
+  "resumeCalls": 0,
+  "servedRowsHashed": 95,
+  "runtimeFilesComparedWithFrozenGit": 67,
+  "inputDeadlineMs": 1789485904004,
+  "pauseRequestLagMs": 0,
+  "pauseAckLagMs": 14,
+  "captureDurationMs": 44460,
+  "browserCleanupMs": 163,
+  "recorderExitAfterReportFinishedMs": 136207,
+  "note": "The recorder-exit delay is retained as a separate cleanup observation."
+}

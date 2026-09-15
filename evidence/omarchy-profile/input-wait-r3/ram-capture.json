@@ -1,0 +1,9 @@
+{
+  "result": "coherent failed-input diagnostic captured; desktop acceptance remains failed",
+  "ram": {
+    "bytes": 1073741824,
+    "sha256": "834cfec184bc7cf36d883765e68712f16e0e131a01e257efd331c62ada0197f4"
+  },
+  "inputResult": "failed",
+  "limitation": "RAM only. Current CPU registers and device state were not exported; not a reusable snapshot pair."
+}

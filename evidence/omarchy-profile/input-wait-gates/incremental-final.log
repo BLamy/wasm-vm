@@ -1,0 +1,23 @@
+✔ only an already-failed unchanged input deadline permits capture (3.992709ms)
+✔ pause occurs first, once, without changing the verdict (0.299958ms)
+✔ pause confirmation cannot complete beyond the fixed diagnostic deadline (0.289417ms)
+✔ debugger expression rejects ambiguous/dead instances and calls the real digest method once (0.108583ms)
+✔ RAM identity comes from the live digest, not a stale duplicate kernel anchor (2.249042ms)
+✔ snapshot stream hashes exact bytes and rejects short/oversized bodies (3.168667ms)
+✔ bounded RAM chunks require contiguous offsets and stop exactly at the end (0.3045ms)
+✔ owned watchdog caps setup and navigation once, and normal close cancels timers (0.74925ms)
+✔ post-verdict capture has one fixed extra allowance and messages cannot rearm it (0.183708ms)
+✔ stalled owned browser/recorder is killed and missing close settles as unconfirmed (1.01475ms)
+✔ already exited browser is not killed; watchdog intervention never looks like a normal pass (0.128542ms)
+✔ future/invalid navigation cannot extend setup (0.0825ms)
+✔ recorder exit cannot orphan its browser or kill an already-exited recorder group (0.113583ms)
+✔ exit before stdio close never sends a later watchdog signal to the exited recorder (0.074834ms)
+✔ pinned RAM adapter preserves the earlier decoder and excludes current-task stale registers (861.94275ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 908.941667

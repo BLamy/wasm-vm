@@ -1,0 +1,378 @@
+{
+  "purpose": "failed-input-guest-state",
+  "head": "bec706dabac934ce5ee6e945f0939773dd895669",
+  "wasmSha256": "9405d6c38be9a170ef5a2e5e0bacdcbec6deace7de48c8e002bc3caea76dfb2b",
+  "startedAt": "2026-09-15T15:03:45.431Z",
+  "args": [
+    "tools/verify/omarchy-desktop-live.mjs",
+    "local",
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-wait-r1/desktop",
+    "input-trial"
+  ],
+  "exit": {
+    "code": 1,
+    "signal": null,
+    "closed": true,
+    "watchdog": null
+  },
+  "finishedAt": "2026-09-15T15:06:55.085Z",
+  "audit": {
+    "serviceIsolation": true,
+    "desktopAcceptance": false,
+    "inputOutcome": "nonce-readback-failed",
+    "serial": [
+      {
+        "rid": "mu2sy4650",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+        "sentAt": "2026-09-15T15:03:53.501Z",
+        "completedAt": "2026-09-15T15:04:39.943Z",
+        "response": {
+          "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x55555eda5da0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 504\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x55555ee5f9d0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 504\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu2sze8p1",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:04:53.210Z",
+        "completedAt": "2026-09-15T15:04:56.100Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2szh8u2",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:04:57.103Z",
+        "completedAt": "2026-09-15T15:05:00.815Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2szkvu3",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:05:01.818Z",
+        "completedAt": "2026-09-15T15:05:05.403Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2szofa4",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:05:06.406Z",
+        "completedAt": "2026-09-15T15:05:10.111Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2szs215",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:05:11.113Z",
+        "completedAt": "2026-09-15T15:05:14.924Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2szvrr6",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:05:15.927Z",
+        "completedAt": "2026-09-15T15:05:19.678Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2szzft7",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:05:20.681Z",
+        "completedAt": "2026-09-15T15:05:24.493Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t035j8",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:05:25.495Z",
+        "completedAt": "2026-09-15T15:05:29.249Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t06to9",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:05:30.252Z",
+        "completedAt": "2026-09-15T15:05:34.069Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t0ajj10",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:05:35.071Z",
+        "completedAt": "2026-09-15T15:05:38.733Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t0e5311",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:05:39.735Z",
+        "completedAt": "2026-09-15T15:05:43.654Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t0hxs12",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:05:44.656Z",
+        "completedAt": "2026-09-15T15:05:48.286Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t0lii13",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:05:49.290Z",
+        "completedAt": "2026-09-15T15:05:52.958Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t0p4914",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:05:53.961Z",
+        "completedAt": "2026-09-15T15:05:57.812Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t0sv215",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:05:58.814Z",
+        "completedAt": "2026-09-15T15:06:02.549Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t0wim16",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:06:03.550Z",
+        "completedAt": "2026-09-15T15:06:07.200Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t103v17",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:06:08.203Z",
+        "completedAt": "2026-09-15T15:06:11.853Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t13p418",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:06:12.856Z",
+        "completedAt": "2026-09-15T15:06:16.728Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t17gj19",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:06:17.731Z",
+        "completedAt": "2026-09-15T15:06:21.486Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t1b4p20",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:06:22.489Z",
+        "completedAt": "2026-09-15T15:06:26.297Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t1euc21",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:06:27.300Z",
+        "completedAt": "2026-09-15T15:06:31.065Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t1iir22",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:06:32.067Z",
+        "completedAt": "2026-09-15T15:06:36.095Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t1meg23",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:06:37.096Z",
+        "completedAt": "2026-09-15T15:06:40.787Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t1q0u24",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:06:41.790Z",
+        "completedAt": "2026-09-15T15:06:45.442Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t1tm325",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:06:46.443Z",
+        "completedAt": "2026-09-15T15:06:50.262Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu2t1xbz26",
+        "command": "if [ -f '/tmp/desktop-keys-917fcdd1884113cf' ]; then cat '/tmp/desktop-keys-917fcdd1884113cf'; else (exit 75); fi",
+        "sentAt": "2026-09-15T15:06:51.263Z",
+        "completedAt": null,
+        "response": null
+      }
+    ],
+    "keyboard": {
+      "verified": false,
+      "nonce": "9de3a2b9d7e59803",
+      "guestFile": "/tmp/desktop-keys-917fcdd1884113cf",
+      "startedAt": "2026-09-15T15:04:50.558Z",
+      "enteredAtMs": 1789484693208,
+      "typedAt": "2026-09-15T15:04:53.208Z",
+      "typingMs": 2650,
+      "readbackStartedAt": "2026-09-15T15:04:53.208Z",
+      "readbackTimeoutMs": 120000,
+      "deadlineMs": 120000,
+      "deadlineAt": "2026-09-15T15:06:53.208Z",
+      "stage": "readback",
+      "failedAt": "2026-09-15T15:06:53.209Z",
+      "error": "Error: physical keyboard:readback: deadline exceeded (UNPROVEN)",
+      "desktopReadyPageMs": 51645.66499996185,
+      "firstPhysicalKeydownPageMs": 62261.90000009537,
+      "readyToFirstPhysicalKeydownMs": 10616.235000133514
+    },
+    "guestSession": {
+      "key": "omarchy",
+      "generation": 1
+    },
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 800,
+      "fixedViewport": true,
+      "sizeMismatch": true,
+      "framesReceived": 3,
+      "successfulPresents": 3,
+      "drawnPresents": 3,
+      "drawnBytes": 12288000,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": {
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "skipped": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 1,
+        "paused": false,
+        "disposed": false,
+        "scheduled": false,
+        "hidden": false,
+        "mode": "raf",
+        "timerMs": 250
+      },
+      "gpu": {
+        "framesReceived": 3,
+        "enqueued": 3,
+        "coalesced": 0,
+        "presented": 3,
+        "successfulPresents": 3,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 1,
+        "uploadedBytes": 12288000,
+        "drawnPresents": 3,
+        "drawnBytes": 12288000,
+        "width": 1280,
+        "height": 800
+      },
+      "latest": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 832
+      },
+      "errors": []
+    },
+    "note": "Absence of hidden service traffic is not sufficient evidence of interactive input."
+  }
+}
