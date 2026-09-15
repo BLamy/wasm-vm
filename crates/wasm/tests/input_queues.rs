@@ -41,7 +41,10 @@ fn inject_sync_stream_crosses_eventq_on_wasm32() {
     const USED: u64 = DRAM_BASE + 0x3000;
     const BUF: u64 = DRAM_BASE + 0x4000;
 
-    let (device, state) = VirtioInput::new_with_state(InputDeviceSpec::default());
+    let mut spec = InputDeviceSpec::default();
+    assert!(spec.set_event_bit(EV_KEY, 30));
+    assert!(spec.set_event_bit(EV_SYN, SYN_REPORT));
+    let (device, state) = VirtioInput::new_with_state(spec);
     let slot = Rc::new(RefCell::new(VirtioMmio::new(Box::new(device))));
     let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
 
@@ -69,8 +72,8 @@ fn inject_sync_stream_crosses_eventq_on_wasm32() {
     }
     bus.store16(AVAIL + 2, 3).unwrap();
 
-    state.borrow_mut().inject_event(EV_KEY, 30, 1);
-    state.borrow_mut().inject_event(EV_KEY, 30, 0);
+    assert!(state.borrow_mut().inject_event(EV_KEY, 30, 1));
+    assert!(state.borrow_mut().inject_event(EV_KEY, 30, 0));
     state.borrow_mut().sync();
     let mut eventq = None;
     let mut statusq = None;

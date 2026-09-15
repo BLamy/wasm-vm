@@ -1,0 +1,94 @@
+cargo fmt --all --check
+cargo test -p wasm-vm-core --lib jit::tests
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-a59d5c538677c031)
+
+running 2 tests
+test jit::tests::fp_handoff_exact_offsets_dirty_mask_and_copy_elision ... ok
+test jit::tests::cpu_state_handoff_pins_frozen_layout_endian_and_x0 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 352 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-core --lib hart::fregs::tests
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-a59d5c538677c031)
+
+running 5 tests
+test hart::fregs::tests::f0_is_an_ordinary_register ... ok
+test hart::fregs::tests::non_boxed_value_reads_as_canonical_nan ... ok
+test hart::fregs::tests::write_f32_boxes_and_read_f32_unboxes ... ok
+test hart::fregs::tests::jit_stamps_distinguish_creation_clone_and_same_value_write ... ok
+test hart::fregs::tests::registers_are_independent ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 349 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/differential.rs (target/debug/deps/differential-4beb98fc58a0b674)
+
+running 1 test
+test fp_ops_are_unsupported ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-jit-runtime --test fp_moves -- --nocapture
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.74s
+     Running tests/fp_moves.rs (target/debug/deps/fp_moves-78690d5eb0fc1409)
+
+running 3 tests
+test fp_moves_native_handoff_reuse ... ok
+FP_MOVES precise prefix=1 pc=0000000080000004 cause=2 tval=0000000020209053
+FP_MOVES precise prefix=1 pc=0000000080000104 cause=5 tval=00000000deadbeec
+test fp_moves_native_precise_runloop ... ok
+FP_MOVES cases=1984 guest_state_fnv64=dc6031f4c37c7ec3
+test fp_moves_native_directed ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.93s
+
+wasm-pack test --node crates/wasm --test jit_fp_moves -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.16s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running tests/jit_fp_moves.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_moves-9b684554d9513150.wasm)
+running 6 tests
+Invoking test: fp_moves_browser_same_module_chain
+FP_MOVES chain same_module=true fs=0 budget=64 retired=2 pc=0000000080000008
+FP_MOVES chain same_module=true fs=2 budget=4 retired=2 pc=0000000080000008
+FP_MOVES chain same_module=true fs=1 budget=64 retired=6 pc=0000000080000018
+FP_MOVES chain same_module=true fs=2 budget=64 retired=6 pc=0000000080000018
+test fp_moves_browser_same_module_chain ... ok
+Invoking test: fp_moves_browser_precise_runloop
+test fp_moves_browser_precise_runloop ... ok
+Invoking test: fp_moves_browser_handoff_reuse
+test fp_moves_browser_handoff_reuse ... ok
+Invoking test: fp_moves_browser_fp_prefix_survives_chained_memory_fault
+FP_MOVES chained fault same_module=true retired=4 pc=0000000080000010 f31=ffffffffffa01234
+FP_MOVES chained fault same_module=false retired=4 pc=0000000080000010 f31=ffffffffffa01234
+test fp_moves_browser_fp_prefix_survives_chained_memory_fault ... ok
+Invoking test: fp_moves_browser_directed
+test fp_moves_browser_directed ... ok
+Invoking test: fp_moves_browser_cross_module_chain
+FP_MOVES chain same_module=false fs=0 budget=64 retired=2 pc=0000000080000008
+FP_MOVES chain same_module=false fs=2 budget=4 retired=2 pc=0000000080000008
+FP_MOVES chain same_module=false fs=1 budget=64 retired=6 pc=0000000080000018
+FP_MOVES chain same_module=false fs=2 budget=64 retired=6 pc=0000000080000018
+test fp_moves_browser_cross_module_chain ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 2.30s
+
+node tools/verify/omarchy-fp-moves-browser.mjs evidence/omarchy-profile/fp-moves-r1/browser
+{"passed":true,"wasmSha256":"55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40","digest":"2292761e0dadbc7ba225714d941fed3c585352ccd3b6912882818ae22b213661","jitStats":{"hasExecutor":true,"compiledBlocks":1,"executedBlocks":31,"retiredViaJit":3639,"directChainEntries":915,"directChainLinks":884,"dynamicLinkAttempts":0,"dynamicLinkHits":0,"dynamicLinkRefusals":0,"dynamicLinkRetargets":0,"dynamicLinkLiveEntries":1,"dynamicLinkInstalls":1,"entryCost":{"timingEnabled":false,"timerReads":0,"hostEntries":31,"stateCopyCalls":62,"stateCopyBytes":7424,"stateCopyNs":0,"engineEntryNs":0,"indirectTableDispatches":0,"authorityChecks":1,"memorySplitExits":0,"deviceBoundaries":0,"deviceBoundaryNs":0},"jitRegionChaining":true,"jitDynamicChaining":true,"guestRetired":4000,"jitEngineCalls":31,"jitLogicalBlocksPerEngineCall":29.516129032258064,"jitRetiredShare":0.90975,"chainLinksMade":0,"chainLinksCut":0,"chainDispatchEntries":29,"chainMaxDepth":1,"chainLinksFollowed":3,"jitResidencyPolicy":"repack-off","jitResidencyCap":24,"jitSubmittedMembers":3,"jitCompilePauseNs":0,"jitCompilePauseMaxNs":0,"jitCompilePauseSamples":2,"jitCacheInstalls":3,"jitCacheRetranslations":0,"jitCacheEvictions":0,"jitCacheBatches":1,"jitCacheCodeBytes":66178,"compileQueue":{"admitted":5,"droppedBackpressure":0,"cancelledStale":2,"popped":3,"queueHighWater":3,"queueDepth":0,"capacity":256},"discovery":{"nominated":5,"deduped":65,"droppedStale":0,"droppedOverflow":0,"countsDropped":0,"excluded":6,"queueDepth":0,"queueHighWater":3,"candidates":0,"generation":5},"decodedCacheEntries":4096,"decodedBlocksDiscarded":10,"decodedCacheFlushes":2,"discoveryGeneration":5,"blockEntryHits":65,"blockBuilds":11,"admissionProbe":false,"coldCounterRecycling":{"enabled":false,"epochs":"0","discardedCounters":"0","threshold":1,"capacity":65536}}}

@@ -861,6 +861,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                     &mem.data(&batch.store)[abi::XREG_BASE as usize..abi::HANDOFF_END as usize],
                 );
                 self.handoff.commit_registers(hart);
+                self.handoff.commit_fp_registers(hart);
                 let faulting_pc = self.handoff.exit_pc();
                 self.executed_blocks += 1;
                 return Some(JitExit {
@@ -877,6 +878,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
             &mem.data(&batch.store)[abi::XREG_BASE as usize..abi::HANDOFF_END as usize],
         );
         self.handoff.commit_registers(hart);
+        self.handoff.commit_fp_registers(hart);
         let next_pc = self.handoff.exit_pc();
         let exit_info = self.handoff.exit_info();
         // The return value is the authoritative exit code; `exit_reason` in memory mirrors it.

@@ -749,14 +749,9 @@ mod riscv_tests_gate {
         eprintln!("JIT verdict-identical at max_batches=2 across {n} riscv-tests ELFs");
     }
 
-    /// E4-T15 AC: the rv64uf (F) and rv64ud (D) floating-point suites reach the SAME verdict with
-    /// the JIT forced on as under the interpreter — and it must be Pass. Under the measured
-    /// side-exit-all FP policy (`docs/jit-fp-policy.md`) every F/D op keeps its block out of the JIT
-    /// (`translate_block` → `Unsupported`, proven op-by-op in `jit-translate/tests/differential.rs::
-    /// fp_ops_are_unsupported`), so the FP work runs on the interpreter's `rustc_apfloat` softfloat
-    /// and JIT/interp results are identical by construction. This test CONFIRMS that end to end: the
-    /// full ELF (mixed integer + FP blocks, integer blocks compiling under the tiny flapping cache)
-    /// still passes, so no fflags/NaN-box/rounding state is lost across the JIT/interp tier switches.
+    /// The full F/D suites remain verdict-identical across interpreter/JIT switches.
+    /// E5.5-T03t translates only single-precision moves; arithmetic and all other
+    /// FP operations still run through the interpreter's softfloat path.
     #[test]
     fn fp_suites_verdict_identical_under_jit() {
         let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tests/riscv-tests-bin");

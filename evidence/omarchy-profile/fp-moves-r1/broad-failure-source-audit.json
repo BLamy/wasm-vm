@@ -1,0 +1,16 @@
+{
+  "base": "37c7ffa10a06b30f4a6ded9cacb81241c484b1d7",
+  "checkedHead": "0699e65ddf9cdf931ff5698c910a7047f1b88c45",
+  "unchangedFiles": [
+    "crates/wvseccomp",
+    "crates/core/src/dispatch.rs",
+    "crates/core/src/hart/mod.rs",
+    "crates/cli/src/boot.rs",
+    "crates/core/tests/no_stdout_in_core.rs",
+    "crates/core/src/decoded_cache_capacity_tests.rs",
+    "crates/core/src/dev/virtio/gpu/resources.rs",
+    "crates/core/src/dev/virtio/gpu/reset_verifier_tests.rs",
+    "crates/core/tests/perf_baseline.rs"
+  ],
+  "note": "Only a source-change exclusion. Benchmark results are measured separately; unchanged benchmark source alone does not prove unchanged performance."
+}

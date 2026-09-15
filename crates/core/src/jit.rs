@@ -29,6 +29,13 @@ pub mod abi {
     pub const XREG_BASE: u32 = 0x000;
     /// End of the integer-register array.
     pub const XREG_END: u32 = XREG_BASE + 32 * 8;
+    /// Reserved FLEN=64 register range, now consumed by the FP move subset.
+    pub const FREG_BASE: u32 = 0x108;
+    /// Low byte: fcsr; bit 8: FS enabled; bit 9: FP state dirtied; upper word:
+    /// exact FPR write mask. This transport metadata is never a guest CSR value.
+    pub const FP_STATE: u32 = 0x208;
+    pub const FP_ENABLED: u64 = 1 << 8;
+    pub const FP_DIRTY: u64 = 1 << 9;
     /// `exit_reason` — the [`super::ExitCode`] the block wrote before returning.
     pub const EXIT_REASON: u32 = 0x218;
     /// `exit_pc` — the guest PC to resume at.
@@ -100,9 +107,9 @@ pub mod abi {
 
 /// Reusable transport buffer spanning the compiled module's frozen handoff byte range.
 ///
-/// The current translator consumes x0..x31 plus `entry_pc` on entry and produces x0..x31 plus the
-/// exit header on return. Reserved gaps inside the 568-byte range are transported but intentionally
-/// carry no architectural claim. The buffer uses words rather than a `repr(C)` field struct so its
+/// The translator consumes integer/FPR images, FP control and `entry_pc`, producing
+/// changed registers and the exit header. The remaining reserved gaps have no
+/// architectural claim. The buffer uses words rather than a `repr(C)` field struct so its
 /// byte view stays alignment-independent and little-endian-correct on every Rust host.
 #[repr(C)]
 pub struct CpuStateHandoff {
@@ -113,6 +120,8 @@ pub struct CpuStateHandoff {
     /// to an imported-memory module cover both the frozen handoff and the auxiliary state while
     /// preserving [`Self::as_bytes`] and its exact 568-byte contract.
     chain: [u64; ((abi::CHAIN_STATE_END - abi::HANDOFF_END) / 8) as usize],
+    /// Host-only cache key, beyond every generated-code offset and byte view.
+    fp_register_version: Option<(u64, u64)>,
 }
 
 impl Default for CpuStateHandoff {
@@ -120,16 +129,75 @@ impl Default for CpuStateHandoff {
         Self {
             words: [0; abi::HANDOFF_LEN / 8],
             chain: [0; ((abi::CHAIN_STATE_END - abi::HANDOFF_END) / 8) as usize],
+            fp_register_version: None,
         }
     }
 }
 
 impl CpuStateHandoff {
-    /// Marshal the live integer registers and virtual entry PC. Reserved gaps and the prior exit
-    /// header need not be initialized because generated code never consumes them on entry.
+    /// Marshal live registers, FP permission/control and virtual entry PC. An unchanged
+    /// FPR image is reused; the prior exit header is never consumed on entry.
     pub fn prepare(&mut self, hart: &Hart) {
         self.prepare_registers(hart);
+        self.prepare_fp_registers(hart);
+        self.prepare_fp_control(hart);
         self.set_entry_pc(hart.regs.pc);
+    }
+
+    /// Marshal the raw FLEN=64 image, including writable f0. Browser callers may
+    /// elide this copy only while the FRegs mutation stamp remains unchanged.
+    pub fn prepare_fp_registers(&mut self, hart: &Hart) -> u64 {
+        let version = Some(hart.fregs.jit_version());
+        if self.fp_register_version == version {
+            return 0;
+        }
+        #[cfg(target_endian = "little")]
+        self.words[abi::FREG_BASE as usize / 8..abi::FP_STATE as usize / 8]
+            .copy_from_slice(hart.fregs.jit_words());
+        #[cfg(target_endian = "big")]
+        for register in 0..32u8 {
+            self.put_u64(
+                abi::FREG_BASE + u32::from(register) * 8,
+                hart.fregs.read_raw(register),
+            );
+        }
+        self.fp_register_version = version;
+        32 * 8
+    }
+
+    /// Refresh FS permission and fcsr for every invocation, clearing the previous
+    /// invocation's dirty metadata independently of register-copy elision.
+    pub fn prepare_fp_control(&mut self, hart: &Hart) {
+        self.put_u64(
+            abi::FP_STATE,
+            u64::from(hart.csr.fflags | (hart.csr.frm << 5))
+                | if hart.csr.fp_off() {
+                    0
+                } else {
+                    abi::FP_ENABLED
+                },
+        );
+    }
+
+    /// Commit only executed FPR writes. FP-to-integer moves leave FS unchanged;
+    /// the selected operations never alter rounding mode or exception flags.
+    pub fn commit_fp_registers(&mut self, hart: &mut Hart) -> u64 {
+        let state = self.get_u64(abi::FP_STATE);
+        let mut mask = (state >> 32) as u32;
+        let bytes = u64::from(mask.count_ones()) * 8;
+        while mask != 0 {
+            let register = mask.trailing_zeros() as u8;
+            hart.fregs.write_raw(
+                register,
+                self.get_u64(abi::FREG_BASE + u32::from(register) * 8),
+            );
+            mask &= mask - 1;
+        }
+        if state & abi::FP_DIRTY != 0 {
+            hart.csr.mark_fp_dirty();
+        }
+        self.fp_register_version = Some(hart.fregs.jit_version());
+        bytes
     }
 
     /// Marshal only the live integer-register image. The browser executor uses this separately so
@@ -353,6 +421,9 @@ pub enum ExitCode {
     BranchTaken,
     /// A guest trap (`ecall`/`ebreak`) must be delivered at `next_pc`.
     Trap,
+    /// FS=Off at an FP instruction. `exit_info` holds its original instruction
+    /// bits and `next_pc` its precise virtual PC; only the preceding prefix retired.
+    IllegalInstruction,
     /// Any reserved variant (MMIO/MMU_MISS/CALL_INTERP/NOT_COMPILED/INTERRUPT_POLL) — not produced
     /// by the current translator; treated as a benign unlinked fall-through because the module
     /// register image has already been committed.
@@ -369,6 +440,7 @@ impl ExitCode {
             0 => ExitCode::Fallthrough,
             1 => ExitCode::BranchTaken,
             2 => ExitCode::Trap,
+            9 => ExitCode::IllegalInstruction,
             8 => ExitCode::Budget,
             other => ExitCode::Reserved(other),
         }
@@ -881,6 +953,43 @@ impl ChainStats {
 mod tests {
     use super::{CpuStateHandoff, abi};
     use crate::hart::Hart;
+
+    #[test]
+    fn fp_handoff_exact_offsets_dirty_mask_and_copy_elision() {
+        let mut hart = Hart::default();
+        let mut handoff = CpuStateHandoff::default();
+        hart.fregs.write_raw(0, 0x1234);
+        hart.fregs.write_raw(31, 0x9876);
+        assert_eq!(handoff.prepare_fp_registers(&hart), 256);
+        assert_eq!(handoff.prepare_fp_registers(&hart), 0);
+        assert_eq!(handoff.as_bytes()[0x108..0x110], 0x1234_u64.to_le_bytes());
+        assert_eq!(handoff.as_bytes()[0x200..0x208], 0x9876_u64.to_le_bytes());
+        hart.fregs.write_raw(31, 0xabcd);
+        assert_eq!(handoff.prepare_fp_registers(&hart), 256);
+        handoff.prepare_fp_control(&hart);
+        assert_eq!(handoff.get_u64(0x208), 0);
+        handoff.put_u64(0x108, 0xffff_ffff_7fa0_0001);
+        handoff.put_u64(0x200, 0xffff_ffff_8000_0000);
+        handoff.put_u64(0x208, (0x8000_0001_u64 << 32) | (1 << 9));
+        assert_eq!(handoff.commit_fp_registers(&mut hart), 16);
+        assert_eq!(hart.fregs.read_raw(0), 0xffff_ffff_7fa0_0001);
+        assert_eq!(hart.fregs.read_raw(31), 0xffff_ffff_8000_0000);
+        assert_eq!(hart.fregs.read_raw(1), 0);
+        assert_eq!(hart.csr.fs(), 3);
+        assert_eq!(handoff.prepare_fp_registers(&hart), 0);
+        handoff.prepare_fp_control(&hart);
+        assert_eq!(handoff.get_u64(0x208), 1 << 8, "old dirty mask is cleared");
+        let before = hart.fregs.jit_version();
+        assert_eq!(handoff.commit_fp_registers(&mut hart), 0);
+        assert_eq!(hart.fregs.jit_version(), before);
+        hart.fregs = hart.fregs.clone();
+        assert_eq!(
+            handoff.prepare_fp_registers(&hart),
+            256,
+            "clone has a fresh identity"
+        );
+        assert_eq!(handoff.as_bytes().len(), 568);
+    }
 
     #[test]
     fn cpu_state_handoff_pins_frozen_layout_endian_and_x0() {

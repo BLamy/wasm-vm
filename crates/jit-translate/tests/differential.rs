@@ -1841,23 +1841,15 @@ fn a_extension_randomized() {
     }
 }
 
-// ── E4-T15: F/D floating-point side-exit-all policy ─────────────────────────
-//
-// The measured decision (docs/jit-fp-policy.md, evidence/e4-t15/fp-share.md): FP is vanishingly
-// rare (0.0004% of a Linux boot, 0 FP-compute ops; CoreMark/Dhrystone hot loops are 0% FP), so
-// every F/D op SIDE-EXITS to the interpreter's proven softfloat rather than being translated to
-// wasm f32/f64 (whose NaN payloads are engine-nondeterministic and whose fflags/rounding would risk
-// divergence). This is enforced structurally: `translate_block` must report ANY block containing an
-// F/D op as `Unsupported`, so the caller keeps the whole block in the interpreter. FP correctness is
-// then identical to the interpreter BY CONSTRUCTION (there is no second FP implementation).
+// The original E4-T15 policy remains for every operation outside the measured
+// E5.5-T03t single-precision move subset. Those five encodings have their own
+// native/browser differential tests, including FPR state and exact FS traps.
 #[test]
 fn fp_ops_are_unsupported() {
     use jit_translate::TranslateError;
     use wasm_vm_core::decode::{FpArithOp, FpCmpOp, FpFusedOp, FpIntWidth, FpSgnjOp, Instr::*};
 
-    // One representative of every F and D op family — load/store, arith, sqrt, fused, sgnj, minmax,
-    // compare, class, both move directions, every convert. If translation ever silently starts
-    // accepting one of these, this list breaks and forces a re-justification against the policy.
+    // Every remaining unsupported family stays behind the measured-policy gate.
     let fp_ops = [
         Flw {
             rd: 1,
@@ -1889,12 +1881,6 @@ fn fp_ops_are_unsupported() {
             rs3: 4,
             rm: 7,
         },
-        FsgnjS {
-            op: FpSgnjOp::J,
-            rd: 1,
-            rs1: 2,
-            rs2: 3,
-        },
         FminmaxS {
             is_max: false,
             rd: 1,
@@ -1908,8 +1894,6 @@ fn fp_ops_are_unsupported() {
             rs2: 3,
         },
         FclassS { rd: 1, rs1: 2 },
-        FmvXW { rd: 1, rs1: 2 },
-        FmvWX { rd: 1, rs1: 2 },
         FcvtToIntS {
             width: FpIntWidth::W,
             rd: 1,

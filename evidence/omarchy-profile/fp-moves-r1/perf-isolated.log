@@ -1,0 +1,18 @@
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.75s
+     Running tests/perf_baseline.rs (target/release/deps/perf_baseline-192935589b9a066d)
+
+running 1 test
+
+thread 'perf_smoke_alu_above_floor' (25552499) panicked at crates/core/tests/perf_baseline.rs:203:5:
+ALU MIPS 14.3 < floor 15 — an order-of-magnitude perf regression (or genuinely slow CI hardware; re-examine the floor + record the host)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test perf_smoke_alu_above_floor ... FAILED
+
+failures:
+
+failures:
+    perf_smoke_alu_above_floor
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 2 filtered out; finished in 6.50s
+
+error: test failed, to rerun pass `-p wasm-vm-core --test perf_baseline`

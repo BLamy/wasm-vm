@@ -4588,7 +4588,7 @@ impl Machine {
                 self.drain_code_writes();
                 Some(BlockStep::Budget { retired })
             }
-            jit::ExitCode::Trap => {
+            jit::ExitCode::Trap | jit::ExitCode::IllegalInstruction => {
                 // E4-T12: a PRECISE mid-block memory fault carries the interpreter-produced `Trap`
                 // (cause + `mtval`) directly. `exit.next_pc` is the faulting instruction's PC; the
                 // executor already synced the precise register file (as of the instruction before
@@ -4597,7 +4597,15 @@ impl Machine {
                 // the faulting PC), leave PC at the faulting instruction, and hand the trap to the
                 // loop's normal `take_trap` delivery — so mcause/mtval/mepc come from the ONE
                 // trusted implementation and no already-committed side-effect is re-executed.
-                if let Some(trap) = exit.trap {
+                let precise_trap = if exit.code == jit::ExitCode::IllegalInstruction {
+                    Some(Trap {
+                        cause: hart::Exception::IllegalInstruction,
+                        tval: exit.exit_info,
+                    })
+                } else {
+                    exit.trap
+                };
+                if let Some(trap) = precise_trap {
                     let faulting_pc = exit.next_pc;
                     // `exit.next_pc` is a guest VIRTUAL PC. Walking from the physical block key is
                     // accidentally correct only under identity mapping; use the virtual entry PC so

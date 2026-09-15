@@ -1,0 +1,4 @@
+    Blocking waiting for file lock on build directory
+    Checking wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+    Checking wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7m 27s
