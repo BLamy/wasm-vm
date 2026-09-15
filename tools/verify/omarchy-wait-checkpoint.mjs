@@ -210,7 +210,27 @@ export function unwind(memory, { sp, fp, pc, stack, size, trapSize, exceptionRet
 }
 
 export function inspect(ram, cpu, image, map, layout) {
-  const context = cpuContext(cpu), m = new Memory(ram, context.root, context.pagingMode);
+  return inspectContext(ram, cpuContext(cpu), image, map, layout);
+}
+
+// RAM-only endpoint: derive the live paging mode from the matching kernel's own
+// flags. Its on_cpu task marker identifies membership, never current registers.
+export function inspectPausedRam(ram, image, map, layout) {
+  const symbols = symbolsFrom(map), start = symbols.named("_start");
+  const physical = address => 0x80200000n + address - start;
+  const root = physical(symbols.named("swapper_pg_dir"));
+  const m = new Memory(ram, root, 10);
+  const flags = ["pgtable_l5_enabled", "pgtable_l4_enabled"].map(name => {
+    const address = physical(symbols.named(name)), bytes = m.physical(address, 1);
+    assert.equal(bytes[0], 1, "paused RAM is not the pinned Sv57 kernel");
+    return { name, physical: hex(address), bytes: bytes.toString("hex") };
+  });
+  return inspectContext(ram, { source: "paused guest RAM; current CPU registers were not exported",
+    pagingMode: 10, root, currentTask: null, pagingFlags: flags }, image, map, layout, true);
+}
+
+function inspectContext(ram, context, image, map, layout, ramOnly = false) {
+  const m = new Memory(ram, context.root, context.pagingMode);
   const o = layout.offsets, symbols = symbolsFrom(map), kernelStart = symbols.named("_start");
   const anchors = ["_start", "__get_task_comm", "__switch_to", "__get_wchan", "__schedule",
     "futex_wait_queue", "futex_wait", "__riscv_sys_futex", "do_trap_ecall_u", "ret_from_exception"].map(name => {
@@ -244,6 +264,11 @@ export function inspect(ram, cpu, image, map, layout) {
         utimeNs: m.u64(field(task, "TASK_UTIME")), stimeNs: m.u64(field(task, "TASK_STIME")) });
     }
   }
+  if (ramOnly) {
+    const running = records.filter(record => record.onCpu === 1);
+    assert.equal(running.length, 1, "RAM-only current task marker is ambiguous");
+    context.currentTask = running[0].task;
+  }
   const current = records.find(record => record.task === context.currentTask);
   assert.ok(current, "saved current task absent from lists");
   const compositors = records.filter(record => record.pid === record.tgid && record.comm === "Hyprland");
@@ -252,11 +277,17 @@ export function inspect(ram, cpu, image, map, layout) {
   const renderers = records.filter(record => record.tgid === compositor.pid && /^llvmpipe-[0-9]+$/u.test(record.comm));
   assert.equal(renderers.length, 1, "ambiguous renderer identity");
   const targets = [compositor, renderers[0]].map(record => {
-    assert.notEqual(record.task, context.currentTask, "current task has no authoritative saved switch stack");
-    assert.equal(record.onCpu, 0, "target marked on-CPU; saved switch context may be stale");
+    if (!ramOnly) {
+      assert.notEqual(record.task, context.currentTask, "current task has no authoritative saved switch stack");
+      assert.equal(record.onCpu, 0, "target marked on-CPU; saved switch context may be stale");
+    }
     const fields = Object.fromEntries(["TASK_PID", "TASK_TGID", "TASK_GROUP_LEADER", "TASK_STATE", "TASK_ON_CPU",
       "TASK_COMM", "TASK_STACK", "TASK_MM", "TASK_START_BOOTTIME", "TASK_THREAD_RA", "TASK_THREAD_SP", "TASK_THREAD_S0"]
       .map(key => [key, m.witness(field(record.task, key), ["TASK_PID", "TASK_TGID", "TASK_STATE", "TASK_ON_CPU"].includes(key) ? 4 : key === "TASK_COMM" ? 16 : 8)]));
+    if (ramOnly && record.task === context.currentTask) {
+      return { ...record, fields, contextKind: "on-CPU task; saved switch/trap contexts omitted because current registers were not exported" };
+    }
+    assert.equal(record.onCpu, 0, "target marked on-CPU; saved switch context may be stale");
     const chain = unwind(m, { sp: BigInt(fields.TASK_THREAD_SP.value), fp: BigInt(fields.TASK_THREAD_S0.value),
       pc: BigInt(fields.TASK_THREAD_RA.value), stack: BigInt(fields.TASK_STACK.value), size: o.THREAD_SIZE_BYTES,
       trapSize: o.PT_SIZE, exceptionReturn: symbols.named("ret_from_exception") }, symbols.at);
@@ -277,7 +308,8 @@ export function inspect(ram, cpu, image, map, layout) {
       fields, ...chain, trap, userAddressSpace: { pgd, physicalRoot: hex(root) }, userPc, wait };
   });
   return { context, current, anchors, leaderList, groups, tasks: records, targets,
-    limitation: "R3 boot checkpoint predates T03m input. Saved switch/trap contexts are not live execution samples. No userspace caller, futex owner, later wait persistence, latency improvement, or input success is proven.",
+    limitation: ramOnly ? "Paused RAM after a failed physical-input deadline. Current CPU registers were not exported. Saved switch/trap contexts belong only to off-CPU tasks. Matching endpoints cannot prove continuous waiting, ownership, latency improvement or input success."
+      : "R3 boot checkpoint predates T03m input. Saved switch/trap contexts are not live execution samples. No userspace caller, futex owner, later wait persistence, latency improvement, or input success is proven.",
     nextProbe: "Observe the same PID/starttime, stack and wait address during the later failed input interval; bind the userspace caller and renderer work before selecting a remedy." };
 }
 
