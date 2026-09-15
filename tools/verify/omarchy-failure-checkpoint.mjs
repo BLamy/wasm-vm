@@ -23,14 +23,31 @@ export function assertFailedInput(report, now = Date.now()) {
   return JSON.stringify({ result: report.result, outcome: report.trial.outcome, keyboard: report.keyboard });
 }
 
-export const saveMachineExpression = `function () {
+export const selectMachineExpression = `function () {
   if (this.length !== 1 || !this[0].__wbg_ptr) throw Error("ambiguous live WasmLinux instances");
-  globalThis.__omarchyFailureSnapshot = this[0].saveSnapshot();
-  const bytes = globalThis.__omarchyFailureSnapshot;
-  if (!(bytes instanceof Uint8Array) || bytes.length < 1048576 || bytes.length > 2147483648)
-    throw Error("invalid snapshot size");
-  return { bytes: bytes.length, header: Array.from(bytes.subarray(0, 84)) };
+  globalThis.__omarchyFailureMachine = this[0];
+  return this[0].stateDigest();
 }`;
+
+// Code-byte matches are only candidates. The live machine's RAM digest is the authority.
+export async function findGuestRam(memory, anchor, anchorOffset, ramBytes, expectedDigest) {
+  const bytes = new Uint8Array(memory.buffer), candidates = [];
+  for (let index = bytes.indexOf(anchor[0], anchorOffset); index >= 0; index = bytes.indexOf(anchor[0], index + 1)) {
+    const start = index - anchorOffset;
+    if (start + ramBytes > bytes.length) break;
+    if (anchor.every((value, at) => bytes[index + at] === value)) candidates.push(start);
+    if (candidates.length > 16) throw Error("ambiguous kernel anchor candidates");
+  }
+  const matches = [];
+  for (const start of candidates) {
+    const view = new Uint8Array(memory.buffer, start, ramBytes);
+    const digest = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", view)),
+      byte => byte.toString(16).padStart(2, "0")).join("");
+    if (digest === expectedDigest) matches.push(start);
+  }
+  if (matches.length !== 1) throw Error("no unique RAM region matches live stateDigest");
+  return { ramOffset: matches[0], bytes: ramBytes, linearMemoryBytes: memory.buffer.byteLength, candidates };
+}
 
 export function snapshotMeter(expected, hash) {
   let length = 0;
@@ -78,7 +95,8 @@ export async function pauseFailedInput(page, report) {
   assert.equal(assertFailedInput(report), verdict, "capture changed the input verdict");
 }
 
-export async function exportFailedInput(page, browser, out, report) {
+export async function exportFailedInput(page, browser, out, report, { ramBytes = 1024 ** 3,
+  anchorOffset = 0x200000, anchor = null } = {}) {
   const receipt = report.failureCheckpoint, verdict = JSON.stringify(receipt.inputVerdict);
   assert.equal(receipt.paused, true);
   let cdp, sessionId, server;
@@ -101,12 +119,25 @@ export async function exportFailedInput(page, browser, out, report) {
       });
       assert.ok(prototype.result.objectId, "missing live WasmLinux prototype");
       const objects = await command("Runtime.queryObjects", { prototypeObjectId: prototype.result.objectId });
-      const saved = await command("Runtime.callFunctionOn", {
-        objectId: objects.objects.objectId, functionDeclaration: saveMachineExpression, returnByValue: true,
+      const digest = await command("Runtime.callFunctionOn", {
+        objectId: objects.objects.objectId, functionDeclaration: selectMachineExpression, returnByValue: true,
       });
-      receipt.snapshot = saved.result.value;
-      assert.equal(Buffer.from(receipt.snapshot.header).subarray(0, 8).toString(), "WVMRESU1");
-      const token = `/${randomBytes(24).toString("hex")}`, filename = path.join(out, "failed-input.snap.gz");
+      const expectedDigest = digest.result.value;
+      assert.match(expectedDigest, /^[0-9a-f]{64}$/u);
+      if (!anchor) {
+        const kernel = await fs.readFile(new URL("../../releases/kernel/6.6.63/Image", import.meta.url));
+        assert.equal(createHash("sha256").update(kernel).digest("hex"), "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce");
+        anchor = [...kernel.subarray(0, 64)];
+      }
+      const saved = await command("Runtime.evaluate", {
+        expression: `(async()=>{const exports=await import('./pkg/wasm_vm_wasm.js').then(m=>m.default());
+          const info=await (${findGuestRam.toString()})(exports.memory,${JSON.stringify(anchor)},${anchorOffset},${ramBytes},${JSON.stringify(expectedDigest)});
+          globalThis.__omarchyFailureSnapshot=new Uint8Array(exports.memory.buffer,info.ramOffset,info.bytes);return info;})()`,
+        awaitPromise: true, returnByValue: true,
+      });
+      receipt.snapshot = { ...saved.result.value, kind: "raw guest RAM; no current CPU registers or device snapshot",
+        stateDigestBefore: expectedDigest, anchor, anchorOffset };
+      const token = `/${randomBytes(24).toString("hex")}`, filename = path.join(out, "failed-input.ram.gz");
       const hash = createHash("sha256");
       let accepted = false;
       let receiveResolve, receiveReject;
@@ -136,6 +167,10 @@ export async function exportFailedInput(page, browser, out, report) {
         awaitPromise: true, returnByValue: true,
       });
       await received;
+      const after = await command("Runtime.evaluate", { expression: "globalThis.__omarchyFailureMachine.stateDigest()", returnByValue: true });
+      receipt.snapshot.stateDigestAfter = after.result.value;
+      assert.equal(receipt.snapshot.sha256, expectedDigest);
+      assert.equal(after.result.value, expectedDigest, "guest RAM changed during paused capture");
       await command("Runtime.evaluate", { expression: "delete globalThis.__omarchyFailureSnapshot" });
       assert.equal(await page.evaluate(() => window.__linux.isPaused()), true);
       assert.equal(assertFailedInput(report), verdict, "capture changed the input verdict");
