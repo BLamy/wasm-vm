@@ -1,0 +1,26 @@
+{
+  "prediction": "A changed post-export RAM digest must reject before decoded output is written.",
+  "result": "HELD",
+  "originalReportSha256": "e17fbceeeff7377eade034c1a8caea57113809938da7f79a8526d7826740cfe8",
+  "mutation": {
+    "field": "failureCheckpoint.snapshot.stateDigestAfter",
+    "before": "834cfec184bc7cf36d883765e68712f16e0e131a01e257efd331c62ada0197f4",
+    "after": "034cfec184bc7cf36d883765e68712f16e0e131a01e257efd331c62ada0197f4"
+  },
+  "attacks": [
+    {
+      "attempt": 1,
+      "exit": 1,
+      "outputCreated": false,
+      "stderr": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ '034cfec184bc7cf36d883765e68712f16e0e131a01e257efd331c62ada0197f4'\n- '834cfec184bc7cf36d883765e68712f16e0e131a01e257efd331c62ada0197f4'\n\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-input-wait-inspect.mjs:24:59 {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: '034cfec184bc7cf36d883765e68712f16e0e131a01e257efd331c62ada0197f4',\n  expected: '834cfec184bc7cf36d883765e68712f16e0e131a01e257efd331c62ada0197f4',\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.20.0\n"
+    },
+    {
+      "attempt": 2,
+      "exit": 1,
+      "outputCreated": false,
+      "stderr": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ '034cfec184bc7cf36d883765e68712f16e0e131a01e257efd331c62ada0197f4'\n- '834cfec184bc7cf36d883765e68712f16e0e131a01e257efd331c62ada0197f4'\n\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-input-wait-inspect.mjs:24:59 {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: '034cfec184bc7cf36d883765e68712f16e0e131a01e257efd331c62ada0197f4',\n  expected: '834cfec184bc7cf36d883765e68712f16e0e131a01e257efd331c62ada0197f4',\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.20.0\n"
+    }
+  ],
+  "restoredReceiptAccepted": true,
+  "originalReportUnchanged": true
+}
