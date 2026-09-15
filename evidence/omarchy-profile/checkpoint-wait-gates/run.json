@@ -1,0 +1,54 @@
+{
+  "head": "f3e0bba9a84091e64eca56de5dc3b42dd604e2f8",
+  "startedAt": "2026-09-15T14:36:52.077Z",
+  "node": "v24.20.0",
+  "developerDir": "/Library/Developer/CommandLineTools",
+  "commands": [
+    {
+      "command": "node",
+      "args": [
+        "--check",
+        "tools/verify/omarchy-wait-checkpoint.mjs"
+      ],
+      "status": 0,
+      "error": null,
+      "log": "evidence/omarchy-profile/checkpoint-wait-gates/1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "python3",
+      "args": [
+        "-m",
+        "py_compile",
+        "tools/verify/capture-omarchy-kernel-layout.py"
+      ],
+      "status": 0,
+      "error": null,
+      "log": "evidence/omarchy-profile/checkpoint-wait-gates/2.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "node",
+      "args": [
+        "--test",
+        "tools/verify/omarchy-wait-checkpoint.test.mjs"
+      ],
+      "status": 0,
+      "error": null,
+      "log": "evidence/omarchy-profile/checkpoint-wait-gates/3.log",
+      "sha256": "0aab927363fcb513d882232e49d3b42167dd8fd28ce51cc20744f74e8c11969b"
+    },
+    {
+      "command": "node",
+      "args": [
+        "tools/verify/omarchy-wait-checkpoint.mjs",
+        "evidence/omarchy-profile/checkpoint-wait-r1"
+      ],
+      "status": 0,
+      "error": null,
+      "log": "evidence/omarchy-profile/checkpoint-wait-gates/4.log",
+      "sha256": "4938df98bc49013d1d44fc5a745cb38febbe78c50b9e3e9a14a74dabe0d9c013"
+    }
+  ],
+  "finishedAt": "2026-09-15T14:36:55.247Z"
+}
