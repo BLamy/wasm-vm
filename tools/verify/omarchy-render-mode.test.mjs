@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { assertGuestMode, assertModeWire, requestSmallerScanout } from "./omarchy-render-mode.mjs";
+import vm from "node:vm";
+import fs from "node:fs";
+import { assertGuestMode, assertModeWire, requestSmallerScanout, renderBudgetOutcome } from "./omarchy-render-mode.mjs";
 
 const before = { framesReceived: 2, successfulPresents: 2 };
 const observed = () => ({ gpu: { advertisedWidth: 640, advertisedHeight: 400, scanoutWidth: 640, scanoutHeight: 416 },
@@ -59,4 +61,57 @@ test("mode wire proof rejects a superseding resize or mismatched acknowledgement
   const resized = structuredClone(report);
   resized.workerTraffic.push({ ...resized.workerTraffic[0], timestamp: new Date(2000).toISOString() });
   assert.throws(() => assertModeWire(resized), /repeated or superseded/u);
+});
+
+test("synthetic positive orchestration and classification reject late or stale adoption", async t => {
+  t.mock.timers.enable({ apis: ["Date"], now: 1000 });
+  async function run({ stale = false, late = false } = {}) {
+    const report = { startup: { deadlineAt: new Date(2000).toISOString() }, workerTraffic: [] };
+    let requested = false;
+    const page = {
+      async evaluate(_fn, argument) {
+        if (argument) {
+          requested = true;
+          report.workerTraffic.push({ type: "worker-call", method: "setDisplay", worker: 1, id: 1,
+            args: [640, 400], sent: true, timestamp: new Date().toISOString() });
+          report.workerTraffic.push({ type: "input-result", method: "setDisplay", worker: 1, id: 1,
+            result: true, error: null, timestamp: new Date().toISOString() });
+          return true;
+        }
+        if (requested && late) t.mock.timers.tick(1001);
+        return requested ? observed() : { gpu: { scanoutWidth: 1280, scanoutHeight: 832 }, presentation: before };
+      },
+      async waitForFunction(fn, argument) {
+        const state = observed().presentation;
+        if (stale) state.framesReceived = before.framesReceived;
+        const passed = vm.runInNewContext(`(${fn.toString()})(argument)`, {
+          argument, window: { __presentation: { state: () => state } },
+        });
+        if (!passed) throw Error("synthetic stale guest frame");
+      },
+    };
+    try { await requestSmallerScanout(page, 2000, report); }
+    catch (error) { report.caught = String(error); }
+    return report;
+  }
+  const positive = await run();
+  assert.equal(positive.renderBudget.status, "guest-mode-observed");
+  positive.keyboard = { startedAt: new Date().toISOString(), deadlineMs: 120000 };
+  positive.result = "input-trial-physical-nonce-and-fresh-presentation";
+  assert.equal(renderBudgetOutcome(positive), "physical-input-and-presentation-passed");
+  positive.result = "failed";
+  assert.equal(renderBudgetOutcome(positive), "physical-input-failed");
+  const lateReceipt = structuredClone(positive);
+  lateReceipt.renderBudget.observedAt = new Date(2000).toISOString();
+  assert.throws(() => renderBudgetOutcome(lateReceipt));
+  const stale = await run({ stale: true });
+  assert.equal(stale.renderBudget.status, "mode-not-observed"); assert.match(stale.caught, /stale guest frame/u);
+  const late = await run({ late: true });
+  assert.equal(late.renderBudget.status, "mode-not-observed"); assert.match(late.caught, /deadline exceeded/u);
+});
+
+test("final classifier preserves the recorded negative modeset outcome", () => {
+  const report = JSON.parse(fs.readFileSync(new URL("../../evidence/omarchy-profile/render-budget-r1/desktop/report.json", import.meta.url)));
+  assert.equal(renderBudgetOutcome(report), "mode-not-observed-input-not-tested");
+  assert.equal(report.keyboard, undefined);
 });

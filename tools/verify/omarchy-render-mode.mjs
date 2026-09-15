@@ -41,6 +41,27 @@ export function assertModeWire(report) {
   assert.ok(Date.parse(replies[0].timestamp) <= Date.parse(mode.acknowledgedAt));
 }
 
+// Classify a report only after the owning recorder's service/input audit has passed.
+export function renderBudgetOutcome(report) {
+  const mode = report.renderBudget;
+  assert.ok(mode, "no actual modeset attempt was recorded");
+  assert.equal(mode.requestCount, 1);
+  assert.equal(mode.deadlineAtMs, Date.parse(report.startup.deadlineAt));
+  assertModeWire(report);
+  if (mode.status === "mode-not-observed") {
+    assert.equal(report.keyboard, undefined, "input cannot precede mode adoption");
+    assert.equal(report.trial.outcome, "startup-failed-input-not-tested");
+    return "mode-not-observed-input-not-tested";
+  }
+  assert.equal(mode.status, "guest-mode-observed");
+  assertGuestMode(mode.after, mode.before.presentation);
+  assert.ok(Date.parse(mode.observedAt) < mode.deadlineAtMs);
+  assert.ok(Date.parse(report.keyboard.startedAt) >= Date.parse(mode.observedAt));
+  assert.equal(report.keyboard.deadlineMs, 120000);
+  return report.result === "input-trial-physical-nonce-and-fresh-presentation"
+    ? "physical-input-and-presentation-passed" : "physical-input-failed";
+}
+
 export async function requestSmallerScanout(page, deadline, report) {
   const call = operation => withinTrialDeadline(operation, deadline, "render mode startup");
   const receipt = report.renderBudget = { mode: RENDER_MODE, deadlineAtMs: deadline,
