@@ -1,0 +1,20 @@
+{
+  "result": "HELD",
+  "originalEvidenceHead": "fdae798ca28b94cc1551a8dc8a634e5ad99858e7",
+  "incrementalHead": "7830695acf1e7f2aeb9713ce1b718203818af5b9",
+  "allOriginalEvidenceDigestsUnchanged": true,
+  "runtimeDiffBytes": 0,
+  "positiveRecountIdentical": true,
+  "threeAttacksRejected": true,
+  "focusedTests": {
+    "passed": 5,
+    "failed": 0,
+    "ignored": 0
+  },
+  "files": {
+    "tools/verify/omarchy-renderer-opcodes.mjs": "2c430e85274fea30f925071426d726ab14cbee720cfe483ccfd83bdc55388153",
+    "tools/verify/omarchy-renderer-opcodes.test.mjs": "f1cb2b8596baec57c597932d7333a634a057c47f8e1569f821a4a80a72494d59",
+    "evidence/omarchy-profile/renderer-opcodes-critic/incremental-tests.log": "96d8f3cb71a2d42898ac93c1eb78be4906bff489369e8bc5980d1e7af882882e",
+    "evidence/omarchy-profile/renderer-opcodes-critic/count-attacks-after.json": "9d2ea914be7a6fcc45cb0d2a2c9c4802516571371729f97f30572b8aba3397ba"
+  }
+}
