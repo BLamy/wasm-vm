@@ -1,0 +1,41 @@
+{
+  "submissionSourceHead": "ac7735490c86c652a147434ccf421958fb611de6",
+  "runtimeHead": "c7a3c38b84d462eba585c9f7081c70c88cdd2534",
+  "coldHead": "b4b7c70da8b28a274cfd53860a6723480deee7ff",
+  "runtimeWasmSha256": "55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40",
+  "broadCiPassed": false,
+  "desktopResponsive": false,
+  "focusedAdmissionRepairPassed": true,
+  "completedTests": {
+    "native-workspace.log": {
+      "completedTargets": 51,
+      "passed": 680,
+      "failed": 1,
+      "ignored": 15
+    },
+    "native-core-remaining.log": {
+      "completedTargets": 17,
+      "passed": 86,
+      "failed": 0,
+      "ignored": 3
+    },
+    "native-remaining.log": {
+      "completedTargets": 75,
+      "passed": 124,
+      "failed": 1,
+      "ignored": 5
+    },
+    "browser-jit-regression.log": {
+      "completedTargets": 2,
+      "passed": 44,
+      "failed": 0,
+      "ignored": 1
+    }
+  },
+  "notes": [
+    "Broad CI failures and stopped extra pure-interpreter sweep are documented in README.md; they are not passes.",
+    "The sole affected native failure was a stale FP-admission fixture; its committed cfg(test)-only repair passed separately.",
+    "Both final candidate performance runs pass the unchanged 15 MIPS floor.",
+    "All late changes are tests/recorders/metadata; cold and actual physical-input proofs bind unchanged runtime bytes."
+  ]
+}

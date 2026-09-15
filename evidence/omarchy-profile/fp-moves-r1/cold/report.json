@@ -1,0 +1,60 @@
+{
+  "head": "b4b7c70da8b28a274cfd53860a6723480deee7ff",
+  "clone": "/private/tmp/wasm-vm-fp-moves-cold-f6ygwhlu/repo",
+  "scrubbedNames": [
+    "RUST_LOG"
+  ],
+  "policy": "RUSTFLAGS/RUSTDOCFLAGS/RUST_LOG and all CARGO_* unset; trusted PATH; no shell profiles",
+  "commands": [
+    {
+      "args": [
+        "git",
+        "clone",
+        "--quiet",
+        "/Users/blamy/Documents/Codex/wasm-vm",
+        "/private/tmp/wasm-vm-fp-moves-cold-f6ygwhlu/repo"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-moves-cold-f6ygwhlu",
+      "startedAt": "2026-09-15T17:56:46Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T17:57:42Z"
+    },
+    {
+      "args": [
+        "git",
+        "checkout",
+        "--quiet",
+        "b4b7c70da8b28a274cfd53860a6723480deee7ff"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-moves-cold-f6ygwhlu/repo",
+      "startedAt": "2026-09-15T17:57:42Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T17:57:42Z"
+    },
+    {
+      "args": [
+        "make",
+        "web-dist"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-moves-cold-f6ygwhlu/repo",
+      "startedAt": "2026-09-15T17:57:43Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T18:02:28Z"
+    },
+    {
+      "args": [
+        "make",
+        "verify-E5_5-T03t",
+        "FP_MOVES_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-moves-r1/cold/browser"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-moves-cold-f6ygwhlu/repo",
+      "startedAt": "2026-09-15T18:02:28Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T18:16:17Z"
+    }
+  ],
+  "pristineBeforeBuild": true,
+  "committedWasmSha256": "55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40",
+  "rebuiltWasmSha256": "55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40",
+  "passed": true
+}

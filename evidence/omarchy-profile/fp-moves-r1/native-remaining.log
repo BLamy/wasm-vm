@@ -1,0 +1,660 @@
+["cargo", "test", "-p", "wasm-vm-core", "--no-fail-fast", "--test", "perf_baseline", "--test", "plic", "--test", "plic_sparse", "--test", "plic_sparse_verifier", "--test", "pmp", "--test", "pmp_privilege_adversarial", "--test", "pmp_privilege_audit", "--test", "precise_exceptions", "--test", "predecode_batching", "--test", "predecode_diff", "--test", "predecode_entry_safety", "--test", "predecode_smc_diff", "--test", "privilege", "--test", "prof_sampling", "--test", "prof_time_accounting", "--test", "reset", "--test", "restore_decision", "--test", "retirement_capture", "--test", "retirement_capture_verifier", "--test", "riscv_tests", "--test", "riscv_tests_f", "--test", "riscv_tests_mi", "--test", "riscv_tests_suite", "--test", "rv64a", "--test", "rv64c", "--test", "rv64d", "--test", "rv64f", "--test", "rv64m", "--test", "sbi_console", "--test", "sbi_ipi_hsm", "--test", "sbi_rfence_stale_tlb", "--test", "sbi_timer", "--test", "sbi_timer_fuzz", "--test", "sbi_timer_opensbi_diff", "--test", "signature", "--test", "snapshot", "--test", "snapshot_coherence", "--test", "softfloat", "--test", "storm_detection", "--test", "sv39", "--test", "sv39_e2e", "--test", "sv48", "--test", "tlb", "--test", "torture_data", "--test", "trace_golden", "--test", "trace_mem_exec", "--test", "trace_retire", "--test", "triggers", "--test", "uart16550_irq", "--test", "verifier_e0t04", "--test", "verifier_e0t05", "--test", "verifier_e0t06_angles", "--test", "verifier_e0t06_golden", "--test", "verifier_e0t07_angles", "--test", "verifier_e0t07_diff", "--test", "verifier_e0t07_novel", "--test", "verifier_e0t08_attacks", "--test", "verifier_e0t08_diff", "--test", "verifier_e0t09_angles", "--test", "verifier_e0t10", "--test", "verifier_e0t11_attacks", "--test", "verifier_e0t12", "--test", "verifier_e2_sweep", "--test", "verifier_fuzz", "--test", "verifier_genuine", "--test", "virtio_blk", "--test", "virtio_blk_flush", "--test", "virtio_blk_quiesce", "--test", "virtio_blk_torture", "--test", "virtio_console", "--test", "virtio_gpu_machine", "--test", "virtio_keyboard", "--test", "virtio_keyboard_guest_stream", "--test", "virtio_mmio_slots", "--test", "virtio_net", "--test", "virtio_net_critic", "--test", "virtio_net_machine", "--test", "virtio_net_wiring_probes", "--test", "virtio_pointer", "--test", "virtio_snd", "--test", "virtio_snd_capture", "--test", "virtio_snd_capture_config", "--test", "virtio_snd_machine", "--test", "virtio_snd_playback", "--test", "virtio_snd_queue", "--test", "virtio_snd_release_capture", "--test", "virtqueue", "--test", "wfi_fast_forward_critic", "--test", "zicntr"]
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+error[E0432]: unresolved import `wasm_vm_core::trace::VecSink`
+   --> crates/core/tests/support/plic_sparse_cases.rs:8:5
+    |
+  8 | use wasm_vm_core::trace::VecSink;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ no `VecSink` in `trace`
+    |
+note: found an item that was configured out
+   --> crates/core/src/trace.rs:190:12
+    |
+188 | #[cfg(feature = "trace")]
+    |       ----------------- the item is gated behind the `trace` feature
+189 | #[derive(Default)]
+190 | pub struct VecSink {
+    |            ^^^^^^^
+
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `wasm-vm-core` (test "plic_sparse") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+EXIT_CODE=101
+["cargo", "test", "-p", "wasm-vm-jit-translate", "-p", "wasm-vm-jit-runtime", "-p", "wasm-vm-wasm", "--no-fail-fast"]
+   Compiling serde_json v1.0.150
+   Compiling serde v1.0.228
+   Compiling smallvec v1.15.2
+   Compiling hashbrown v0.15.5
+   Compiling cranelift-bitset v0.122.0
+   Compiling postcard v1.1.3
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/storage)
+   Compiling wasm-bindgen-test v0.3.76
+   Compiling cranelift-entity v0.122.0
+   Compiling pulley-interpreter v35.0.0
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling regalloc2 v0.12.2
+   Compiling wasmparser v0.235.0
+   Compiling object v0.36.7
+   Compiling wasmparser v0.240.0
+   Compiling cranelift-bforest v0.122.0
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+   Compiling wasmprinter v0.235.0
+   Compiling cranelift-codegen v0.122.0
+   Compiling wasmtime-environ v35.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+   Compiling cranelift-frontend v0.122.0
+   Compiling cranelift-native v0.122.0
+   Compiling wasmtime-internal-unwinder v35.0.0
+   Compiling wasmtime-internal-cranelift v35.0.0
+   Compiling wasmtime v35.0.0
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4m 59s
+     Running unittests src/lib.rs (target/debug/deps/jit_runtime-2cc25b6ce2e5d278)
+
+running 6 tests
+test tests::keyed_hasher_accumulates_repeated_writes_without_resetting_the_secret ... ok
+test tests::deterministic_jit_hasher_resists_chosen_probe_clusters ... ok
+test tests::independent_executors_do_not_reuse_a_public_fixed_hash_permutation ... ok
+test tests::unexpected_engine_trap_after_mmio_fails_closed_without_register_commit ... ok
+test tests::mixed_jit_maps_survive_aligned_same_low_bit_churn ... ok
+test tests::mapped_dram_pcs_do_not_form_chosen_probe_clusters ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running tests/batching.rs (target/debug/deps/batching-73cba12004f2959f)
+
+running 3 tests
+test batch_execution_is_verdict_identical ... ok
+test registry_accounting_is_accurate_at_k1 ... ok
+test partial_batch_invalidation_retires_whole_batch ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.40s
+
+     Running tests/chaining.rs (target/debug/deps/chaining-4567dbac51a2cd54)
+
+running 6 tests
+test chain_successor_that_does_not_fit_preserves_prior_progress ... ok
+test store_to_non_code_page_cuts_no_links ... ok
+test interrupt_fires_inside_chained_loop ... ok
+test chain_depth_budget_forces_dispatch_return ... ok
+test two_block_chain_links_then_unlink_is_complete ... ok
+test device_completion_fires_inside_chained_loop ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.24s
+
+     Running tests/eviction.rs (target/debug/deps/eviction-66ee5ec8870579aa)
+
+running 3 tests
+test evict_batch_discharges_every_obligation ... ok
+test eviction_under_fire_falls_to_interp_and_retranslates ... ok
+test budget_caps_live_batches ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.00s
+
+     Running tests/fp_moves.rs (target/debug/deps/fp_moves-f43f29c1137e7475)
+
+running 3 tests
+test fp_moves_native_handoff_reuse ... ok
+test fp_moves_native_precise_runloop ... ok
+test fp_moves_native_directed ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.74s
+
+     Running tests/fp_moves_critic.rs (target/debug/deps/fp_moves_critic-c6ae3863fb0c743a)
+
+running 4 tests
+test critic_freg_identities_remain_distinct_under_concurrent_creation ... ok
+test critic_generated_fp_subset_contains_only_integer_wasm_operations ... ok
+test critic_exact_nan_payload_and_raw_move_golden ... ok
+test critic_aliases_independent_seeds_and_all_first_op_traps ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.07s
+
+     Running tests/invalidation.rs (target/debug/deps/invalidation-9025424a8084ad3a)
+
+running 13 tests
+test store_to_non_code_page_invalidates_nothing ... ok
+test fence_i_is_near_free ... ok
+test fence_i_invalidates_translated_block ... ok
+test page_granular_store_invalidates_only_written_page ... ok
+test two_page_smc_byte_identical_jit_vs_interp ... ok
+test precise_fault_retirement_uses_virtual_entry_pc ... ok
+test sfence_vma_reuse_same_phys_new_va ... ok
+test sfence_vma_asid_form_never_underflushes ... ok
+test sfence_vma_global_page_exempt_from_asid_fence ... ok
+test sfence_vma_remap_to_different_phys ... ok
+test mstatus_sum_change_uses_new_permission_view ... ok
+test sfence_vma_all_four_forms_flush_stale ... ok
+test rv64mi_suite_verdict_identical_under_jit ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 52.21s
+
+     Running tests/jit_execution.rs (target/debug/deps/jit_execution-3238e53d0d16c657)
+
+running 20 tests
+test jit_config_matrix::no_waivers_vs_epic1_baseline ... ok
+test compiled_builtin_sbi_ecall_consumes_exact_work_before_resume ... ok
+test pending_interrupt_consumes_only_budget_slot_before_compiled_entry ... ok
+test compiled_first_op_fault_consumes_one_work_and_retires_zero ... ok
+test branch_to_uncompiled_falls_back ... ok
+test smc_invalidates_compiled_block ... ok
+test riscv_tests_gate::hot_m_loop_executes_in_jit ... ok
+test trap_midblock_leaves_precise_state ... ok
+test hot_loop_actually_jit_executes ... ok
+test two_jit_runs_are_deterministic ... ok
+test jit_on_matches_interp_on_programs ... ok
+test six_op_loop_respects_exact_budget_tail_counters_clock_and_trace_gate ... ok
+test jit_config_matrix::matrix_jit_churn has been running for over 60 seconds
+test jit_config_matrix::matrix_jit_default has been running for over 60 seconds
+test jit_config_matrix::matrix_jit_nochain has been running for over 60 seconds
+test jit_config_matrix::matrix_jit_threshold0 has been running for over 60 seconds
+test riscv_tests_gate::fp_suites_verdict_identical_under_jit has been running for over 60 seconds
+test riscv_tests_gate::m_and_c_suites_execute_in_jit_tier has been running for over 60 seconds
+test riscv_tests_gate::riscv_tests_verdict_identical_with_jit has been running for over 60 seconds
+test riscv_tests_gate::riscv_tests_verdict_identical_with_max_batches_2 has been running for over 60 seconds
+test riscv_tests_gate::fp_suites_verdict_identical_under_jit ... ok
+test riscv_tests_gate::m_and_c_suites_execute_in_jit_tier ... ok
+test jit_config_matrix::matrix_jit_default ... ok
+test jit_config_matrix::matrix_jit_churn ... ok
+test riscv_tests_gate::riscv_tests_verdict_identical_with_jit ... ok
+test riscv_tests_gate::riscv_tests_verdict_identical_with_max_batches_2 ... ok
+test jit_config_matrix::matrix_jit_nochain ... ok
+test jit_config_matrix::matrix_jit_threshold0 ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 416.46s
+
+     Running tests/lockstep_fuzz.rs (target/debug/deps/lockstep_fuzz-8b8413d0b7b0d7f3)
+
+running 4 tests
+test fuzz_clean_no_divergence_soak ... ignored, heavy clean soak — run with `cargo test --release -- --ignored`
+test comparator_completeness_audit ... ok
+test corpus::corpus_replays_clean ... ok
+test fuzz_clean_no_divergence_small ... ok
+
+test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 31.26s
+
+     Running tests/perf_handoff.rs (target/debug/deps/perf_handoff-ea8c58081364471d)
+
+running 2 tests
+test bulk_handoff_jit_beats_production_fast_interpreter ... ignored, release performance differential; run explicitly with --ignored --nocapture
+test six_op_boundary_diagnostic ... ignored, release performance differential; run explicitly with --ignored --nocapture
+
+test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/precise_traps.rs (target/debug/deps/precise_traps-29b45c6e53976ea3)
+
+running 5 tests
+test execute_miss_preserves_public_guard_and_guest_state ... ok
+test bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault ... ok
+test overwritten_base_register_fault ... ok
+test mmio_store_then_fault_commits_once ... ok
+test mem_fault_precise_matches_interpreter ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.52s
+
+     Running tests/timekeeping.rs (target/debug/deps/timekeeping-2f65484b51d5bd1f)
+
+running 3 tests
+test icount_lockstep_with_timer_interrupts_byte_identical ... ok
+test icount_two_runs_identical_mtime_trace ... ok
+test clock_monotonic_never_decreases_under_churn has been running for over 60 seconds
+test clock_monotonic_never_decreases_under_churn ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 446.54s
+
+     Running unittests src/lib.rs (target/debug/deps/jit_translate-25abe56b6558ec06)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/batch.rs (target/debug/deps/batch-2901baee5fdcc277)
+
+running 6 tests
+test softmmu_state_memory_is_fixed_for_stable_browser_views ... ok
+test fence_i_successor_keeps_static_edge_on_host_return_path ... ok
+test flat_memory_abi_rejects_static_edge_slots ... ok
+test single_block_batch_matches_translate_block_shape ... ok
+test intra_batch_edge_is_direct_call_not_call_indirect ... ok
+test static_cross_batch_edge_uses_edge_local_funcref_call_when_enabled ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/differential.rs (target/debug/deps/differential-ab837f8d5fc5d1db)
+
+running 12 tests
+test randomized_differential_100k ... ignored, 100k-block full campaign — run with `cargo test --release -- --ignored`
+test randomized_differential_longblocks ... ignored, adversarial long-block campaign — run with --ignored
+test fp_ops_are_unsupported ... ok
+test translation_time_budget ... ok
+test lrsc_directed_sequences ... ok
+test c_extension_pc_arithmetic ... ok
+test m_extension_directed_mines ... ok
+test directed_edge_cases ... ok
+test amo_all_ops_w_and_d_corners ... ok
+test a_extension_randomized has been running for over 60 seconds
+test m_extension_corner_cross_product has been running for over 60 seconds
+test randomized_differential_small has been running for over 60 seconds
+test m_extension_corner_cross_product ... ok
+test a_extension_randomized ... ok
+test randomized_differential_small ... ok
+
+test result: ok. 10 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 189.32s
+
+     Running tests/inline_tlb.rs (target/debug/deps/inline_tlb-d3937efe3506215e)
+
+running 7 tests
+test mmio_is_never_fastpathed ... ok
+test readonly_page_store_faults_like_interpreter ... ok
+test misaligned_and_straddling_match_interpreter ... ok
+test unmapped_access_faults_like_interpreter ... ok
+test aligned_roundtrip_takes_fastpath_on_retry ... ok
+test satp_switch_flushes_the_fast_tlb ... ok
+test tlb_coherence_fuzz ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.69s
+
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_wasm-00ddf60d38e5f388)
+
+running 33 tests
+test chunked::ro_tests::read_only_backend_serves_reads_refuses_writes ... ok
+test chunked::tests::a_read_spanning_present_and_absent_chunks_parks_on_the_absent_one ... ok
+test chunked::ro_tests::ro_backend_with_forged_dirty_queue_would_park_flush_forever ... ok
+test chunked::tests::absent_chunk_parks_then_resident_read_returns_bytes ... ok
+test chunked::tests::bad_requests_are_typed_errors_not_panics ... ok
+test chunked::tests::flush_commits_the_overlay ... ok
+test chunked::tests::overlay_shadows_base_within_a_spanning_read ... ok
+test chunked::tests::partial_block_write_parks_until_its_base_chunk_is_resident ... ok
+test chunked::ro_tests::ro_check_precedes_range_validation_and_reads_never_dirty_queue ... ok
+test admission_probe_tests::admission_probe_real_translator_integer_fp_move_and_csr_contrasts ... FAILED
+test chunked::tests::seeded_delta_blocks_read_without_resident_base_chunks ... ok
+test chunked::critic_e3t10_hostile::quota_failure_then_redirty_then_retry_never_loses_the_newest_bytes ... ok
+test chunked::flush_tests::flush_barrier_over_writeback_overlay ... ok
+test chunked::critic_e3t10_hostile::continue_read_only_flush_parks_until_backlog_drains_then_acks ... ok
+test chunked::tests::seeded_delta_rejects_block_index_multiplication_overflow ... ok
+test chunked::tests::seeded_delta_rejects_duplicate_blocks ... ok
+test chunked::durable_write_ack_tests::persistent_write_waits_for_exact_barrier_then_acks_or_returns_read_only ... ok
+test chunked::tests::seeded_delta_rejects_foreign_length_and_out_of_bounds_blocks ... ok
+test chunked::tests::seeded_overlay_writes_are_isolated_from_the_base_cache ... ok
+test storage_err::critic_e3t10_hostile::legacy_webkit_quota_spelling_is_missed ... ok
+test storage_err::critic_e3t10_hostile::oversized_value_error_is_not_quota ... ok
+test storage_err::tests::other_failures_are_not_quota ... ok
+test storage_err::tests::quota_names_across_engines_classify_as_quota ... ok
+test cold_counter_recycling_tests::cold_counter_recycling_wrapper_selection_and_lossless_stats_fields ... ok
+test chunked::reset_scope_tests::overlay_db_name_is_per_image_and_stable ... ok
+test guest_clock_tests::selection_refuses_invalid_and_unavailable_before_mutating_active_anchor ... ok
+test ws_transport_state::tests::malformed_and_oversized_inbound_messages_fail_closed ... ok
+test ws_transport_state::tests::outbound_aggregate_cap_is_hard_and_clears_retained_frames ... ok
+test ws_transport_state::tests::drain_resets_accounting_and_close_or_error_marks_failed ... ok
+test ws_transport_state::tests::inbound_aggregate_cap_is_hard_and_clears_retained_frames ... ok
+test critic_flush_reset::combined_chunk_and_flush_parks_report_only_the_chunk ... ok
+test critic_flush_reset::stale_flush_barrier_survives_transport_reset_and_acks_early ... ok
+test critic_flush_reset::two_flushes_no_reset_second_flush_covers_newer_write ... ok
+
+failures:
+
+---- admission_probe_tests::admission_probe_real_translator_integer_fp_move_and_csr_contrasts stdout ----
+
+thread 'admission_probe_tests::admission_probe_real_translator_integer_fp_move_and_csr_contrasts' (25606390) panicked at crates/wasm/src/lib.rs:802:9:
+assertion failed: !admission_translator_supported(&records[1])
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    admission_probe_tests::admission_probe_real_translator_integer_fp_move_and_csr_contrasts
+
+test result: FAILED. 32 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+error: test failed, to rerun pass `-p wasm-vm-wasm --lib`
+     Running tests/block.rs (target/debug/deps/block-7895c4749c346140)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/compile_queue_stats.rs (target/debug/deps/compile_queue_stats-3c1f4964934083bc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/console.rs (target/debug/deps/console-f61b1d6d44f1e90a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/csr.rs (target/debug/deps/csr-8b6ff966fe30a58a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/decode.rs (target/debug/deps/decode-853ae905c96aed06)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/decode_props.rs (target/debug/deps/decode_props-2d77cfc963524534)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/decoded_cache_capacity.rs (target/debug/deps/decoded_cache_capacity-08047e2e2bf8e32a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/determinism.rs (target/debug/deps/determinism-28d4ce97d63128f2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/discovery_stats.rs (target/debug/deps/discovery_stats-72cd1d20b906cd87)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/fdt.rs (target/debug/deps/fdt-88960d55ae72c632)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/gpu_protocol.rs (target/debug/deps/gpu_protocol-122e8c8217b5cf5e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/guest_clock.rs (target/debug/deps/guest_clock-bd287893868e1e0c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/hart.rs (target/debug/deps/hart-e0b191124a28cf40)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/hart_ctrl.rs (target/debug/deps/hart_ctrl-a3aa51a4a9b0f2cb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/hart_mem.rs (target/debug/deps/hart_mem-e6ee0ba53bd29b50)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/htif.rs (target/debug/deps/htif-eb6a58839b179b45)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/icount_divider.rs (target/debug/deps/icount_divider-c7224fc91224e5a9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/input_config.rs (target/debug/deps/input_config-f6e46aa05b6556d6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/input_queues.rs (target/debug/deps/input_queues-995059b1d6ae0c56)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/jit_browser_parity.rs (target/debug/deps/jit_browser_parity-aeead33c010adec8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/jit_fp_moves.rs (target/debug/deps/jit_fp_moves-d5092752c68e61a6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/keyboard_guest_stream.rs (target/debug/deps/keyboard_guest_stream-4411580a80ab8316)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/keyboard_registration.rs (target/debug/deps/keyboard_registration-0d64ea7d1ad766e7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/keyboard_spec.rs (target/debug/deps/keyboard_spec-a317918b94f5f6db)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/loader.rs (target/debug/deps/loader-8ed25baffc7f66f5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/mmio.rs (target/debug/deps/mmio-3be39328f402326e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/platform.rs (target/debug/deps/platform-fc0e77b7c3441d7e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/plic_sparse.rs (target/debug/deps/plic_sparse-737d528c18cb4a05)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/plic_sparse_verifier.rs (target/debug/deps/plic_sparse_verifier-ac63fc1ba56af4e6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pmp_privilege_adversarial.rs (target/debug/deps/pmp_privilege_adversarial-5672cac475861532)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pmp_privilege_audit.rs (target/debug/deps/pmp_privilege_audit-b7c6f6b1f3bf6b12)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/privilege.rs (target/debug/deps/privilege-ce7fea2dde43c240)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/ram_bus.rs (target/debug/deps/ram_bus-6ee2302f053b3fd0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/regs.rs (target/debug/deps/regs-8ff4976458db69f8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/reset.rs (target/debug/deps/reset-c76ca3b161b31ca6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/resume.rs (target/debug/deps/resume-80e6e80a7c79834d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/retirement_capture.rs (target/debug/deps/retirement_capture-10108153495241df)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/retirement_capture_baseline.rs (target/debug/deps/retirement_capture_baseline-2c60d7fd14da00fb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/retirement_capture_verifier.rs (target/debug/deps/retirement_capture_verifier-6d963e1789839b9b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/riscv_tests.rs (target/debug/deps/riscv_tests-8892b01a626e1171)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/rv64a.rs (target/debug/deps/rv64a-bcdc176c5681a9d8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/rv64c.rs (target/debug/deps/rv64c-e78a9a04b55d2295)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/rv64d.rs (target/debug/deps/rv64d-fb6c994a046f2a53)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/rv64f.rs (target/debug/deps/rv64f-836cd28475317981)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/rv64m.rs (target/debug/deps/rv64m-a5d0e7f9bd879d2e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sbi.rs (target/debug/deps/sbi-818af6d17f70c3b8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sbi_timer.rs (target/debug/deps/sbi_timer-52413d73291abca7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/snapshot.rs (target/debug/deps/snapshot-657fa031918730af)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/softfloat.rs (target/debug/deps/softfloat-62e5503415e431c8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/trace.rs (target/debug/deps/trace-86193c7fb406630e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/uart16550.rs (target/debug/deps/uart16550-15114120ca87418c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/virtio_blk.rs (target/debug/deps/virtio_blk-9cbaf75cd7e8b326)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/virtio_mmio.rs (target/debug/deps/virtio_mmio-65e11dff6a3008a6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/virtqueue.rs (target/debug/deps/virtqueue-2ad29fadaadfc834)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/wrapper.rs (target/debug/deps/wrapper-44cd2b16814ef3d9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests jit_runtime
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests jit_translate
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests wasm_vm_wasm
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: 1 target failed:
+    `-p wasm-vm-wasm --lib`
+EXIT_CODE=101

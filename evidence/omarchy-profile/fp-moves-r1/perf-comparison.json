@@ -1,0 +1,66 @@
+{
+  "note": "Sequential baseline-candidate-candidate-baseline after task-owned builds and tests finish. Original baseline lock copied, unused graph pruned; retained dependencies audited independently. No desktop responsiveness claim.",
+  "host": "Apple M4 Max",
+  "runs": [
+    {
+      "label": "baseline",
+      "binary": "/private/tmp/wasm-vm-fp-baseline-tpgv0sro/target/release/deps/perf_baseline-192935589b9a066d",
+      "binarySha256": "f5c54d32c3c256b95a324d69a8868247ee142d1e84a243f4817d608745b6cb2a",
+      "command": [
+        "/private/tmp/wasm-vm-fp-baseline-tpgv0sro/target/release/deps/perf_baseline-192935589b9a066d",
+        "perf_smoke_alu_above_floor",
+        "--ignored",
+        "--nocapture"
+      ],
+      "exitCode": 0,
+      "medianMips": 26.0,
+      "log": "perf-comparison-0-baseline.log",
+      "finishedAt": "2026-09-15T18:48:15.327399+00:00"
+    },
+    {
+      "label": "candidate",
+      "binary": "/Users/blamy/Documents/Codex/wasm-vm/target/release/deps/perf_baseline-192935589b9a066d",
+      "binarySha256": "0dad711e72940dc9b35cd038fe4888faa4a03726157352eac3f6bc7dc8e8d8af",
+      "command": [
+        "/Users/blamy/Documents/Codex/wasm-vm/target/release/deps/perf_baseline-192935589b9a066d",
+        "perf_smoke_alu_above_floor",
+        "--ignored",
+        "--nocapture"
+      ],
+      "exitCode": 0,
+      "medianMips": 25.7,
+      "log": "perf-comparison-1-candidate.log",
+      "finishedAt": "2026-09-15T18:48:18.451312+00:00"
+    },
+    {
+      "label": "candidate",
+      "binary": "/Users/blamy/Documents/Codex/wasm-vm/target/release/deps/perf_baseline-192935589b9a066d",
+      "binarySha256": "0dad711e72940dc9b35cd038fe4888faa4a03726157352eac3f6bc7dc8e8d8af",
+      "command": [
+        "/Users/blamy/Documents/Codex/wasm-vm/target/release/deps/perf_baseline-192935589b9a066d",
+        "perf_smoke_alu_above_floor",
+        "--ignored",
+        "--nocapture"
+      ],
+      "exitCode": 0,
+      "medianMips": 25.8,
+      "log": "perf-comparison-2-candidate.log",
+      "finishedAt": "2026-09-15T18:48:21.563951+00:00"
+    },
+    {
+      "label": "baseline",
+      "binary": "/private/tmp/wasm-vm-fp-baseline-tpgv0sro/target/release/deps/perf_baseline-192935589b9a066d",
+      "binarySha256": "f5c54d32c3c256b95a324d69a8868247ee142d1e84a243f4817d608745b6cb2a",
+      "command": [
+        "/private/tmp/wasm-vm-fp-baseline-tpgv0sro/target/release/deps/perf_baseline-192935589b9a066d",
+        "perf_smoke_alu_above_floor",
+        "--ignored",
+        "--nocapture"
+      ],
+      "exitCode": 0,
+      "medianMips": 25.4,
+      "log": "perf-comparison-3-baseline.log",
+      "finishedAt": "2026-09-15T18:48:24.980587+00:00"
+    }
+  ]
+}
