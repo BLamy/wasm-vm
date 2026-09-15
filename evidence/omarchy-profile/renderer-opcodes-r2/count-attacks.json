@@ -1,0 +1,20 @@
+{
+  "profileSha256": "5133c92488d51075599604a79eff7f649e5743ada8a6f60fb0bfa506672bc521",
+  "attacks": [
+    {
+      "name": "balanced-opcode-drift",
+      "outcome": "REJECTED",
+      "error": "AssertionError [ERR_ASSERTION]: OP-FP total drift\n+ actual - expected\n\n+ 12146047\n- 12146048\n         ^\n"
+    },
+    {
+      "name": "negative-region-drop",
+      "outcome": "REJECTED",
+      "error": "AssertionError [ERR_ASSERTION]: invalid fp_region64_dropped count"
+    },
+    {
+      "name": "negative-pair-drop",
+      "outcome": "REJECTED",
+      "error": "AssertionError [ERR_ASSERTION]: invalid pair_hist_dropped count"
+    }
+  ]
+}
