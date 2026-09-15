@@ -1,7 +1,7 @@
 # JIT F/D floating-point policy — the measured decision (E4-T15)
 
 **Status:** accepted · **Date:** 2026-08-05 · **Epic:** 4 (acceleration) · **Depends on:** E4-T06 §9.4,
-E4-T12 · **Original decision:** side-exit-all (option a); measured Omarchy move subset in §6
+E4-T12 · **Original decision:** side-exit-all (option a); measured Omarchy subsets in §§6–8
 
 `docs/jit-architecture.md` §9.4 flags FP as "the one place 'fast' and 'provably identical' conflict"
 and defers it to *this* measured decision. The three options were (a) side-exit every F/D op to the
@@ -161,3 +161,29 @@ result of the already completed access.
 The renderer recorded 4,241,032 FP transfers in a 99,998,678-instruction window.
 This slice removes that measured boundary; physical keyboard readback and a
 visible application response remain the separate desktop acceptance gate.
+
+## 8. Measured single-precision comparisons (E5.5-T03v)
+
+The renderer recording contains 1,713,705 FEQ.S/FLT.S/FLE.S instructions in
+99,998,678 retirements. These three operations now compile with integer bit
+operations. NaN boxing is checked before classifying operands, signed zeros
+compare equal, and negative values reverse the unsigned magnitude ordering.
+There is no host floating-point arithmetic or rounded result in this path.
+
+All comparisons with NaN produce integer zero. FEQ adds NV only for signaling
+NaNs; FLT/FLE add NV for either kind of NaN. A malformed box becomes canonical
+quiet NaN, including when its low bits resemble signaling NaN. These rules
+follow the [F comparison specification](https://docs.riscv.org/reference/isa/v20260120/unpriv/f-st-ext.html)
+and [D NaN-boxing specification](https://docs.riscv.org/reference/isa/v20260120/unpriv/d-st-ext.html).
+
+Generated code ORs accrued flags and the FP dirty marker into the existing
+handoff word immediately. Its FPR write mask and frm bits remain unchanged.
+Native and browser exits accrue those flags before marking FS Dirty, including
+comparisons writing x0 and prefixes before a later memory fault. A fresh entry
+still reloads live fcsr, so an interpreted CSR clear cannot revive stale flags.
+The existing FS-Off guard preserves the exact virtual PC and original word.
+
+All source FPR bits survive. Double-precision comparisons, conversions and
+rounded arithmetic remain interpreted. Exact instruction behavior does not
+establish desktop latency; physical nonce readback and a visible application
+response remain the release gate.

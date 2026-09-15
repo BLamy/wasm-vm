@@ -179,8 +179,8 @@ impl CpuStateHandoff {
         );
     }
 
-    /// Commit only executed FPR writes. FP-to-integer moves leave FS unchanged;
-    /// the selected operations never alter rounding mode or exception flags.
+    /// Commit only executed FPR writes and accrued comparison flags. FP-to-integer
+    /// moves leave FS unchanged; no generated instruction changes rounding mode.
     pub fn commit_fp_registers(&mut self, hart: &mut Hart) -> u64 {
         let state = self.get_u64(abi::FP_STATE);
         let mut mask = (state >> 32) as u32;
@@ -194,6 +194,7 @@ impl CpuStateHandoff {
             mask &= mask - 1;
         }
         if state & abi::FP_DIRTY != 0 {
+            hart.csr.accrue_fflags(state as u8 & 0x1f);
             hart.csr.mark_fp_dirty();
         }
         self.fp_register_version = Some(hart.fregs.jit_version());

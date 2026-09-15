@@ -1877,12 +1877,6 @@ fn fp_ops_are_unsupported() {
             rs1: 2,
             rs2: 3,
         },
-        FpCmpS {
-            op: FpCmpOp::Eq,
-            rd: 1,
-            rs1: 2,
-            rs2: 3,
-        },
         FclassS { rd: 1, rs1: 2 },
         FcvtToIntS {
             width: FpIntWidth::W,

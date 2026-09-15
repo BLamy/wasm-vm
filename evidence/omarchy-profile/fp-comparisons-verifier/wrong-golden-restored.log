@@ -1,0 +1,11 @@
+COMMAND: cargo test --offline --manifest-path /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/fp-comparison-critic-c5sh5_2v/Cargo.toml verifier_native_literal_comparison_goldens -- --nocapture
+   Compiling fp-comparison-critic-sabotage v0.0.0 (/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/fp-comparison-critic-c5sh5_2v)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.73s
+     Running unittests src/lib.rs (target/debug/deps/fp_comparison_critic_sabotage-3df4d1b238da6ec2)
+
+running 1 test
+CRITIC_NATIVE_GOLDENS Receipt { cases: 2016, disabled: 0, digest: 4642228140795119653 }
+test verifier_native_literal_comparison_goldens ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.10s
+

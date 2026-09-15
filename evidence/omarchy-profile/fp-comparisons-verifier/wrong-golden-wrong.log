@@ -1,0 +1,25 @@
+COMMAND: cargo test --offline --manifest-path /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/fp-comparison-critic-c5sh5_2v/Cargo.toml verifier_native_literal_comparison_goldens -- --nocapture
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+   Compiling fp-comparison-critic-sabotage v0.0.0 (/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/fp-comparison-critic-c5sh5_2v)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.67s
+     Running unittests src/lib.rs (target/debug/deps/fp_comparison_critic_sabotage-3df4d1b238da6ec2)
+
+running 1 test
+
+thread 'verifier_native_literal_comparison_goldens' (25808458) panicked at src/proof.rs:205:21:
+assertion `left == right` failed: CRITIC_FEQ_SIGNED_ZERO_GOLDEN
+  left: 1
+ right: 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test verifier_native_literal_comparison_goldens ... FAILED
+
+failures:
+
+failures:
+    verifier_native_literal_comparison_goldens
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `--lib`

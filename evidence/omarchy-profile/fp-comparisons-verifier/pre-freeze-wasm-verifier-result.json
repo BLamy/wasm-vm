@@ -1,0 +1,16 @@
+{
+  "command": [
+    "wasm-pack",
+    "test",
+    "--node",
+    "crates/wasm",
+    "--test",
+    "jit_fp_comparisons_verifier",
+    "--",
+    "--nocapture"
+  ],
+  "returncode": 1,
+  "timed_out": false,
+  "seconds": 2.550703333,
+  "finished": "2026-09-15T20:29:09.790827+00:00"
+}

@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 317,
-    "total": 493
+    "verified": 318,
+    "total": 494
   },
   "epics": [
     {
@@ -23006,7 +23006,7 @@
       "priority": null,
       "status": "pending",
       "depends_on": [
-        "E5.5-T03u"
+        "E5.5-T03v"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -23021,18 +23021,18 @@
       "activity": [
         {
           "date": "2026-09-15",
-          "commits": 5,
+          "commits": 6,
           "labels": [
+            "Keep desktop release gated on measured comparison follow-up",
             "Keep desktop publication gated on measured FP memory follow-up",
             "Start measured JIT single-precision move slice",
-            "Measure current renderer opcodes before choosing the execution remedy",
-            "Plan an explicit Hyprland mode trial before desktop promotion"
+            "Measure current renderer opcodes before choosing the execution remedy"
           ]
         }
       ],
       "firstActivity": "2026-09-15",
       "lastActivity": "2026-09-15",
-      "commitCount": 5
+      "commitCount": 6
     },
     {
       "id": "E5.5-T03r",
@@ -23148,7 +23148,7 @@
       "epicKey": "5.5",
       "title": "Carry floating-point memory transfers through the compiled memory boundary",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5.5-T03t"
       ],
@@ -23159,16 +23159,52 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-15 — worker — plan next measured transfer slice\n\nT03t runtime `c7a3c38b`, WASM\n`55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40`,\npassed its directed/browser move proof. The physical retry at recorder head\n`6910e795` sent 128 trusted key events, but nonce readback expired exactly at\n`2026-09-15T17:47:39.762Z`; frames remained 2. Evidence:\n`evidence/omarchy-profile/fp-moves-r1/physical-input-r2/desktop/report.json`.\nThis task remains pending until T03t is independently verified.\n\n### 2026-09-15 — worker — activate measured FP memory boundary\n\nT03t is independently verified at `b86f55887e50c3975a8142d7d1ff46a11cab3a55`\nand published as open draft PR #388. Its instruction, handoff, cold-build and\nartifact evidence carries forward for unchanged code; its physical desktop\ntrial still failed at 120 seconds. This slice adds only FP memory transfers to\nthe existing checked integer memory paths, then repeats the actual input gate.\n\nFresh verifier `/root/fp_memory_critic` recorded 22 predictions before any T03u\nimplementation in `evidence/omarchy-profile/fp-memory-critic/predictions.md`.\nThey include raw parcels/payloads, precise FS and memory faults, noncontiguous\npages, compressed f0 handling, store barriers and browser memory growth.",
+      "verificationLog": "### 2026-09-15 — worker — plan next measured transfer slice\n\nT03t runtime `c7a3c38b`, WASM\n`55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40`,\npassed its directed/browser move proof. The physical retry at recorder head\n`6910e795` sent 128 trusted key events, but nonce readback expired exactly at\n`2026-09-15T17:47:39.762Z`; frames remained 2. Evidence:\n`evidence/omarchy-profile/fp-moves-r1/physical-input-r2/desktop/report.json`.\nThis task remains pending until T03t is independently verified.\n\n### 2026-09-15 — worker — activate measured FP memory boundary\n\nT03t is independently verified at `b86f55887e50c3975a8142d7d1ff46a11cab3a55`\nand published as open draft PR #388. Its instruction, handoff, cold-build and\nartifact evidence carries forward for unchanged code; its physical desktop\ntrial still failed at 120 seconds. This slice adds only FP memory transfers to\nthe existing checked integer memory paths, then repeats the actual input gate.\n\nFresh verifier `/root/fp_memory_critic` recorded 22 predictions before any T03u\nimplementation in `evidence/omarchy-profile/fp-memory-critic/predictions.md`.\nThey include raw parcels/payloads, precise FS and memory faults, noncontiguous\npages, compressed f0 handling, store barriers and browser memory growth.\n\n### 2026-09-15 — worker — freeze FP memory implementation\n\nThe translator now admits FLW/FSW/FLD/FSD and their existing compressed\nexpansions, using the integer memory imports and inline store accounting.\nNative self-validation passes 1,472 transfer cases, 80 virtual crossings,\n32 MMIO/fault cases and exact run-loop prefixes. Shared/private generated\nmodules pass the same corpus, direct successors, code/atomic barriers and a\n129-store chain that fills the 128-record log. A separate Sv39 counter check\nproves actual warm inline hits for all four transfers (zero new software\ntranslations; private controls each perform one).\n\nThe original fresh critic reproduced an inherited subpage-PMP cache error:\nan allowed four-byte access published a whole-page inline tag. Its independent\nFP and integer controls are preserved in `jit_fp_memory_critic.rs` and\n`evidence/omarchy-profile/fp-memory-critic/pmp-r0-recheck.log`. Both load and\nstore refills now require whole-page RAM/PMP authority; all four regressions\npass. This is part of proving the newly admitted memory boundary. The first\ncritic session was interrupted by a tool safety flag; a fresh verifier is\ncontinuing from its predictions. No independent verdict is claimed yet.\n\n`make tasks-json web-dist` built the candidate locally. Final exact-head\nacceptance, physical input, cold clone and deployment evidence follow below.\nThe actual desktop remains unproven; T03q stays pending.\n\n### 2026-09-15 — worker — implemented, recorded submission\n\nRuntime freeze: `7048847fb542d66618b836b965b94c8c9db771d5`; final test and\npristine-clone head: `a593f942a004ee43c1bf5b4c84eeb22522eeeb16`.\nDeployment manifests: `5d7a313d473fc1e5df084295e445cfc8478a94fb`.\nEvidence root: `evidence/omarchy-profile/fp-memory-r1/`; its 54-file SHA-256\nindex hashes to `1edaa4b1b6d39474962e082ff4255f68b407e5cf55fa52194c28886027e4b822`.\n`submission.json` binds every runtime source file and the exact WASM\n`1f989758c67c9dfdf514d2e03c0e4fa2cadb15a2dc0a465f5cb538661446473b`.\n\nCommands: `python3 evidence/omarchy-profile/fp-memory-r1/record-submission.py ci`\nrecords `make -k ci`; the `affected` phase records production Clippy, core\nvirtual-page cases, complete selected translator/runtime targets, FP ISA\ncomparison, native wasm library, no-host-float, hazards, and\n`make verify-E5_5-T03u FP_MEMORY_OUT=.../acceptance-browser`.\n`cold/runner.py` then clones the final head, scrubs Rust/Cargo variables,\nrebuilds with `make web-dist`, requires identical WASM bytes and reruns that\nacceptance command. All cold commands and the focused acceptance exit zero.\nThe complete gauntlet is not green: existing macOS wvseccomp, feature/dead-code,\nstale resume/zicsr-stub fixture and lexical test-clock failures remain recorded.\nThe unchanged 15 MIPS local floor passes at 25.6; native ISA is 128/128.\n\nThe native/private/shared corpus proves raw FLW/FSW/FLD/FSD values, all FPRs,\nFS/flags/rounding state, precise prefixes, compressed faults, noncontiguous\npages, MMIO exactly once, page-wide authority, actual warm inline hits and\nstore/direct-chain barriers. Independent fixtures add effective-privilege,\ninterior PMP, memory-growth and payload checks. Built-page and cold browser\nruns each retire 3,617 of 4,000 guest instructions through the JIT, matching\ninterpreter registers, spilled FP state and RAM SHA-256\n`164f86c9b0c09c224f19ee8fda70f0877dbb9a5835bdd43aab99d0f40a08cf4b`.\nAll 127 live ISA binaries pass with zero errors and a live 2/2 FP memory pip;\ncorresponding screenshots were visually inspected. The RAM hash is not claimed\nas a complete architectural digest.\n\n`bash tools/deploy-cloudflare.sh` published\n<https://92ad7b7b.wasm-vm.pages.dev>; `verify-public.py` confirms HTTP 200 and\nexact WASM/glue/roadmap/app bytes there and at <https://wasm-vm.pages.dev>.\nNo Actions or merges. The artifact manifests are committed.\n\n**Actual desktop: failed.** The untouched R3 physical-keyboard command is\n`node tools/verify/omarchy-desktop-services.mjs\n evidence/omarchy-profile/fp-memory-r1/physical-input` (exit 1).\nEnter completed at 19:31:51.262Z; its original deadline was 19:33:51.262Z,\nwith the failure callback one millisecond later. All 128 events were trusted,\naccepted and undropped; thirteen completed readbacks found no nonce, with one\npending. Frames stayed 2 to 2, and the actual Foot capture shows no typed text.\nNo serial nonce write or deadline extension was used. T03q remains gated;\nT03v is the next measured boundary only after a fresh T03u verifier verdict.\n\n### 2026-09-15 — fresh verifier — VERDICT: verified\n\nAudited activation `9a963954`, runtime freeze `7048847f`, final acceptance and\npristine-clone head `a593f942`, and worker submission `f95c9dac`. No runtime\nchanges were made by this verifier. Original predictions P1–P22 and additional\nindependent predictions V1–V6 are **HELD**; the complete point citations and\nchanged-hunk audit are in\n`evidence/omarchy-profile/fp-memory-verifier/final-verdict.md` and `coverage.md`.\n\n- Raw bits, malformed boxes, f0/index aliases, FS precedence and original\n  compressed parcels survive the worker corpus and 112 independent cases per\n  engine. The corrected MPRV case holds FS constant across the privilege change\n  and passes native, private-WASM and shared-WASM acceptance\n  (`fp-memory-r1/acceptance.log:28–38,129–136`).\n- Interior and narrow PMP boundaries, noncontiguous pages, exact faults,\n  MMIO-once behavior, warm inline hits, reservation/code-write barriers and\n  store-log fallback are exercised (`acceptance.log:19–24,69–109`). Direct\n  successors and actual memory growth preserve the required prefixes and FPR\n  state (`acceptance.log:59–66,117–124`). Unchanged T03t handoff proof carries\n  forward. Every changed runtime hunk has execution evidence.\n- The isolated expected-bit sabotage fails at the intended assertion with\n  exit 101 (`fp-memory-verifier/sabotage.log:30–32`); runtime hashes are\n  unchanged. The native/private/shared verifier and growth fixtures are\n  permanent tests in `make verify-E5_5-T03u`.\n- The independent recording audit rehashes all 54 worker files, the exact\n  source/WASM/captures, final corrected fixture, clean-clone acceptance and\n  eight matching public asset receipts. Browser runs retain 127/127 ISA,\n  zero errors, live 2/2 capability and 3,617/4,000 JIT retirements with matching\n  exposed registers, spilled FP state and RAM digest. RAM is not a complete\n  architectural digest.\n\nThe full gauntlet remains red for the recorded unchanged macOS seccomp,\nfeature/dead-code, resume/zicsr-stub fixture and lexical test-clock exceptions;\ntheir source provenance was checked. Focused acceptance and cold acceptance\npass, and performance is 25.6 MIPS against the unchanged 15 MIPS floor.\nThe actual 120-second desktop trial **failed**: all 128 events were accepted,\nthirteen completed readbacks found no nonce, one read remained pending, frames\nstayed 2→2, and the inspected Foot capture showed the unchanged prompt. T03q\nremains gated; this verdict does not establish desktop responsiveness.\n\nEvidence seals: worker index SHA-256\n`1edaa4b1b6d39474962e082ff4255f68b407e5cf55fa52194c28886027e4b822`;\nverifier 12-file index SHA-256\n`2e539e99bbce23c82fbcb7f40dcb3106c8c102380c498f86d7f5420e1187d31c`.\nThe verifier index, predictions, source/artifact audit and findings are under\n`evidence/omarchy-profile/fp-memory-verifier/`.",
       "adversarial": "A fresh critic predicts exact raw transfer values, FS precedence and compressed\nmtval before inspecting evidence. Attack aliasing, malformed boxes, page/PMP\nfaults, misaligned crossings, partial stores, MMIO exactly-once behavior,\ninterpreter/FPR alternation and direct-successor unwinding. Independently vary\nseeds, sabotage one exact assertion, audit changed-hunk coverage and the cold\nclone. Carry unchanged T03t handoff evidence forward.",
       "file": "tasks/epic-5.5-omarchy/E5.5-T03u-jit-fp-memory.md",
       "activity": [
         {
           "date": "2026-09-15",
+          "commits": 5,
+          "labels": [
+            "Verify compiled floating-point memory boundary",
+            "Submit recorded FP memory proof and failed desktop input trial",
+            "Compile FP memory transfers through checked page authority",
+            "Start measured JIT floating-point memory transfers"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-15",
+      "lastActivity": "2026-09-15",
+      "commitCount": 5
+    },
+    {
+      "id": "E5.5-T03v",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Compile measured single-precision comparisons with exact accrued flags",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5.5-T03u"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-15 — worker — plan the next measured boundary\n\nT03u runtime `7048847fb542d66618b836b965b94c8c9db771d5`, WASM\n`1f989758c67c9dfdf514d2e03c0e4fa2cadb15a2dc0a465f5cb538661446473b`,\npasses the built FP memory guest and 127/127 live ISA suite. Its physical\nkeyboard run entered at `2026-09-15T19:31:51.262Z` and failed at the unchanged\n`2026-09-15T19:33:51.262Z` deadline (callback recorded one millisecond later).\nThe 128 accepted input events produced no nonce or typed text, and presentation\nremained at two frames. See\n`evidence/omarchy-profile/fp-memory-r1/physical-input/desktop/report.json` and\n`failure.png`. This task remains pending until T03u is independently verified.\nThe original histogram is\n`evidence/omarchy-profile/renderer-opcodes-r1/report.json`, `recount.opFpFunct7`.\n\n### 2026-09-15 — worker — activate measured comparison boundary\n\nT03u is independently verified at `0cc4c0c62540928301dcd8a56618d3b059f6c7ab`\nand published as open draft PR #389. Its exact FP memory, permission, cold-build\nand artifact proofs carry forward for unchanged code. Its actual desktop input\ntrial failed at 120 seconds, so T03q remains pending. This task is the first\neligible queue entry. A fresh comparison verifier is preparing predictions\nbefore implementation; the original measured renderer page includes FLE.S\nalongside the now supported moves and transfers.",
+      "adversarial": "A fresh verifier predicts the zero/sign/NaN ordering and sticky invalid flag\nbefore inspecting evidence. Independently vary operand seeds, signs, register\naliases, FS and frm. Test comparison flags immediately followed by another\ncompiled block, an interpreted CSR operation, a precise fault, and a memory\nview refresh. Check every changed hunk, test a deliberate wrong golden value,\nand inspect the pristine clone. Carry unchanged T03t/T03u proofs forward.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03v-jit-fp-comparisons.md",
+      "activity": [
+        {
+          "date": "2026-09-15",
           "commits": 2,
           "labels": [
-            "Start measured JIT floating-point memory transfers",
-            "Keep desktop publication gated on measured FP memory follow-up"
+            "Start measured renderer FP comparison task",
+            "Keep desktop release gated on measured comparison follow-up"
           ]
         }
       ],
