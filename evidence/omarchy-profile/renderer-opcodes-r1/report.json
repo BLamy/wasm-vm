@@ -1,0 +1,398 @@
+{
+  "purpose": "R3 renderer opcode measurement",
+  "work": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-opcodes-03NX4G",
+  "startedAt": "2026-09-15T16:41:09.163Z",
+  "head": "fdae798ca28b94cc1551a8dc8a634e5ad99858e7",
+  "desktopAcceptance": false,
+  "instructionBudget": 100000000,
+  "environmentPolicy": {
+    "scrubPrefixes": [
+      "CARGO_",
+      "WASM_VM_"
+    ],
+    "scrubExact": [
+      "RUSTFLAGS",
+      "RUST_LOG"
+    ],
+    "buildOverrides": {},
+    "runOverrides": {
+      "WASM_VM_FP_HISTOGRAM": "1"
+    },
+    "developerDirectory": "/Library/Developer/CommandLineTools",
+    "limitations": [
+      "--virtio-rng uses OS entropy if the guest consumes it; this is not cross-run determinism or performance proof.",
+      "The non-null retirement sink selects interpreter execution even when --jit is supplied."
+    ]
+  },
+  "build": {
+    "command": "cargo",
+    "args": [
+      "build",
+      "--offline",
+      "--release",
+      "-p",
+      "wasm-vm-cli",
+      "--bin",
+      "wasm-vm"
+    ],
+    "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+    "pid": 36100,
+    "startedAt": "2026-09-15T16:41:09.189Z",
+    "finishedAt": "2026-09-15T16:41:39.229Z",
+    "timedOut": false,
+    "code": 0,
+    "signal": null
+  },
+  "binary": {
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-opcodes-03NX4G/wasm-vm",
+    "sha256": "d99dc9021240c806aea9fabd6e29069bb298eccbfa5b9b0f4ed5f32bc4a0e203"
+  },
+  "sources": {
+    "kernel": {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+      "size": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "bootSnapshot": {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+      "size": 205050833,
+      "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+    },
+    "overlayDelta": {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+      "size": 1209196,
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+    },
+    "chunkManifest": {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+      "size": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+    },
+    "image": {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4",
+      "size": 4294967296,
+      "sha256": "2b4143df63085141f7cf017ed2d11c9808bd38dd30925bc86c4a15b4a64cf83c"
+    }
+  },
+  "pair": {
+    "base": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+    "core": "302e302e31000000000000000000000000000000000000000000000000000000",
+    "generation": 0,
+    "blocks": 2638
+  },
+  "snapshotClock": {
+    "phase": 7,
+    "divider": 64,
+    "stimecmp": "1340475499"
+  },
+  "snapshotAdaptation": {
+    "changedRange": {
+      "offset": 12,
+      "length": 64
+    },
+    "before": {
+      "prefix": "c624c16c4ec4a6b3031e7110cec56c9bde6d04427ad9b15136fd033b6b234dd2",
+      "suffix": "98b99afc5e31ae9644b3f8a33a8ba9aa24b82689e481a8411ef1abc2630c0458",
+      "sha256": "3426e4e69c7a93f8951655ac56d824ee08d597794b5893f846cae4f1949e799d"
+    },
+    "afterSha256": "587fc31e6ffffda9b523a6a5145cd2ecae78cc170f1dba3ae5da16d81b5a3304",
+    "limitation": "Private native diagnostic only; zero coherence IDs do not prove restore acceptance."
+  },
+  "privateInputs": {
+    "snapshot": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-opcodes-03NX4G/diagnostic-only.snap",
+    "drive": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-opcodes-03NX4G/paired.ext4",
+    "beforeDrive": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-opcodes-03NX4G/paired-before.ext4",
+    "driveSha256": "8e75cc55a33db221e2cb359daa6c6ce53e949c7f57fa7e9f344be1f9a7f2649c"
+  },
+  "run": {
+    "command": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-opcodes-03NX4G/wasm-vm",
+    "args": [
+      "boot",
+      "--kernel",
+      "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+      "--drive",
+      "file=/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-opcodes-03NX4G/paired.ext4",
+      "--ram-mib",
+      "1024",
+      "--net",
+      "--virtio-rng",
+      "--browser-topology",
+      "--icount-divider",
+      "64",
+      "--jit",
+      "--block-cache",
+      "--interrupt-batching",
+      "--quantum",
+      "500000",
+      "--append",
+      "root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0",
+      "--max-instrs",
+      "100000000",
+      "--no-input",
+      "--no-reboot",
+      "--stats",
+      "--resume-from",
+      "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-opcodes-03NX4G/diagnostic-only.snap",
+      "--evidence",
+      "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/renderer-opcodes-r1/guest-evidence.txt"
+    ],
+    "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+    "pid": 36431,
+    "startedAt": "2026-09-15T16:41:48.111Z",
+    "finishedAt": "2026-09-15T16:42:03.220Z",
+    "timedOut": false,
+    "code": 102,
+    "signal": null
+  },
+  "recount": {
+    "compute": 13424839,
+    "computePercent": 13.425016478717849,
+    "reportedFpLoadStore": 4241032,
+    "loadStoreLimitation": "Compressed FP load/store counts cannot be independently reconstructed from low-seven-bit opcode totals.",
+    "opFpFunct7": {
+      "0x00": 1709360,
+      "0x08": 2561888,
+      "0x0c": 213132,
+      "0x10": 3545385,
+      "0x50": 1713705,
+      "0x60": 426264,
+      "0x68": 985870,
+      "0x70": 856832,
+      "0x78": 133611
+    },
+    "hotRegions": [
+      {
+        "pc": "0x00007fff80b78a40",
+        "total": 2944712,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 2.9447509296072893
+      },
+      {
+        "pc": "0x00007fff6c08a1c0",
+        "total": 1471120,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.4711394484635087
+      },
+      {
+        "pc": "0x00007fff6c08a200",
+        "total": 1366040,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.3660580592875438
+      },
+      {
+        "pc": "0x00007fff6c089fc0",
+        "total": 1313500,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.3135173646995613
+      },
+      {
+        "pc": "0x00007fff6c08a000",
+        "total": 1313500,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.3135173646995613
+      },
+      {
+        "pc": "0x00007fff6c08a0c0",
+        "total": 1313500,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.3135173646995613
+      },
+      {
+        "pc": "0x00007fff6c08a180",
+        "total": 1313500,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.3135173646995613
+      },
+      {
+        "pc": "0x00007fff6c08a240",
+        "total": 1313500,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.3135173646995613
+      },
+      {
+        "pc": "0x00007fff6c08a640",
+        "total": 1287230,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.2872470174055701
+      },
+      {
+        "pc": "0x00007fff6c08a040",
+        "total": 1260960,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.2609766701115788
+      },
+      {
+        "pc": "0x00007fff6c08a140",
+        "total": 1260960,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.2609766701115788
+      },
+      {
+        "pc": "0x00007fff6c08a080",
+        "total": 1208420,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.2084359755235965
+      },
+      {
+        "pc": "0x00007fff6c08a100",
+        "total": 1208420,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.2084359755235965
+      },
+      {
+        "pc": "0x00007fff6c08a380",
+        "total": 1208420,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.2084359755235965
+      },
+      {
+        "pc": "0x00007fff6c08a400",
+        "total": 1208420,
+        "fp_compute": 52540,
+        "computePercent": 4.3478260869565215,
+        "sharePercent": 1.2084359755235965
+      },
+      {
+        "pc": "0x00007fff6c089cc0",
+        "total": 1155880,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.155895280935614
+      },
+      {
+        "pc": "0x00007fff6c089dc0",
+        "total": 1155880,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.155895280935614
+      },
+      {
+        "pc": "0x00007fff6c08a3c0",
+        "total": 1155880,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.155895280935614
+      },
+      {
+        "pc": "0x00007fff6c08a600",
+        "total": 1155880,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.155895280935614
+      },
+      {
+        "pc": "0x00007fff6c08a680",
+        "total": 1155880,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.155895280935614
+      },
+      {
+        "pc": "0x00007fff6c089e40",
+        "total": 1103340,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.1033545863476315
+      },
+      {
+        "pc": "0x00007fff6c089ec0",
+        "total": 1103340,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.1033545863476315
+      },
+      {
+        "pc": "0x00007fff6c089f80",
+        "total": 1103340,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.1033545863476315
+      },
+      {
+        "pc": "0x00007fff6c08a480",
+        "total": 1103340,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.1033545863476315
+      },
+      {
+        "pc": "0x00007fff6c08a4c0",
+        "total": 1103340,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.1033545863476315
+      },
+      {
+        "pc": "0x00007fff6c089c40",
+        "total": 1050800,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.050813891759649
+      },
+      {
+        "pc": "0x00007fff6c089d00",
+        "total": 1050800,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.050813891759649
+      },
+      {
+        "pc": "0x00007fff6c089d80",
+        "total": 1050800,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.050813891759649
+      },
+      {
+        "pc": "0x00007fff6c08a940",
+        "total": 1050800,
+        "fp_compute": 105080,
+        "computePercent": 10,
+        "sharePercent": 1.050813891759649
+      },
+      {
+        "pc": "0x00007fff80b78c00",
+        "total": 1018048,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.018061458772485
+      },
+      {
+        "pc": "0x00007fff80b78a80",
+        "total": 1003232,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 1.0032452629023756
+      },
+      {
+        "pc": "0x00007fff6c089c80",
+        "total": 998260,
+        "fp_compute": 0,
+        "computePercent": 0,
+        "sharePercent": 0.9982731971716666
+      }
+    ],
+    "truncation": {
+      "pairSamplesDropped": 90673111,
+      "regionSamplesDropped": 0
+    },
+    "policyReopenConditionObserved": true,
+    "limitation": "Retired opcode mix only; not a throughput, JIT speedup or desktop responsiveness measurement."
+  },
+  "result": "opcode-measurement-complete",
+  "finishedAt": "2026-09-15T16:42:05.298Z"
+}
