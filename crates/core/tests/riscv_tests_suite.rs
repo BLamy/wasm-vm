@@ -342,7 +342,8 @@ fn discovered_suite_counts_match_manifest() {
         ("rv64uf-p-", 11),
         ("rv64ud-p-", 12),
         ("rv64uc-p-", 1),
-        ("rv64mi-p-", 17),
+        // E5.5-T02a adds the repo-owned separated Sv39 page-frame regression.
+        ("rv64mi-p-", 18),
     ];
     for (pfx, want) in expected {
         assert_eq!(

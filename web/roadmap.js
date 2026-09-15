@@ -39,6 +39,7 @@ export const ROADMAP = [
       { name: "Zicntr counters (cycle/time/instret)", status: "verified", evidence: "rv64mi-p-zicntr", group: "rv64mi-p", filter: ["zicntr"] },
       { name: "PMP — 64 entries, WARL, NAPOT/TOR", status: "verified", evidence: "rv64mi-p-pmpaddr + RISCOF pmpm 64-region", group: "rv64mi-p", filter: ["pmpaddr"] },
       { name: "Misaligned scalar load / store", status: "verified", evidence: "rv64mi-p *-misaligned + ma_addr/ma_fetch", group: "rv64mi-p", filter: ["misaligned", "ma_addr", "ma_fetch"] },
+      { name: "Scalar memory across virtual-page boundaries", status: "partial", evidence: "E5.5-T02a Sv39 separated-frame regression", group: "rv64mi-p", filter: ["misaligned-virtual-pages"] },
       { name: "Debug triggers — mcontrol (tdata)", status: "verified", evidence: "rv64mi-p-breakpoint", group: "rv64mi-p", filter: ["breakpoint"] },
       { name: "Sv39 / Sv48 / Sv57 paging + software TLB", capstone: true, status: "verified", evidence: "RISCOF 395/0 vs Sail (vm_sv39/48/57)" },
     ],

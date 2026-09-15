@@ -1,0 +1,21 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.56s
+     Running tests/misaligned_virtual_pages.rs (target/debug/deps/misaligned_virtual_pages-f60b3b555320ac3b)
+
+running 10 tests
+TraceRecord { pc: 4096, insn: 209539, rd: Some((5, 9833440827789222417)), mem: Some(MemOp { addr: 20476, len: 8, is_store: false, value: 0 }) }
+TraceRecord { pc: 4100, insn: 5451811, rd: None, mem: Some(MemOp { addr: 20476, len: 8, is_store: true, value: 18364758544493064720 }) }
+test ld_crosses_noncontiguous_physical_pages ... ok
+test ordinary_aligned_and_one_page_misaligned_hints_remain ... ok
+test first_fragment_pmp_denial_and_wrapping_address_are_silent ... ok
+guest pc+xregs+ram sha256=1a3a00366b7abe8a47f9b62507b03dc88e62787db5a16e5c392d6a1e25f2333c
+test regression_guest_trace_and_state_digest ... ok
+test device_or_unmapped_physical_second_page_is_silent ... ok
+test pmp_denial_and_partial_fragment_match_preflight ... ok
+test second_page_faults_are_precise_and_preflight_all_data ... ok
+test atomics_remain_misaligned_and_preserve_reservation ... ok
+test crossing_load_matrix_interpreter_and_jit ... ok
+test crossing_store_matrix_preserves_other_bytes_and_logs_all_frames ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+

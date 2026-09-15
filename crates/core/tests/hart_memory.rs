@@ -82,7 +82,9 @@ fn misaligned_straddling_out_of_ram_faults_access_not_misaligned_e1t26() {
     let straddle = RAM_END - 1;
     let t = exec(&mut bus, load(0b011, 1, 2, 0), &[(2, straddle)]).unwrap_err(); // ld
     assert_eq!(t.cause, Exception::LoadAccessFault);
-    assert_eq!(t.tval, straddle);
+    // E5.5-T02a: the failing portion starts at the next virtual page, not
+    // the valid last byte of RAM (Privileged ISA, stval fault-portion rule).
+    assert_eq!(t.tval, RAM_END);
     let t = exec(
         &mut bus,
         s_type(0, 3, 2, 0b011),
@@ -90,7 +92,7 @@ fn misaligned_straddling_out_of_ram_faults_access_not_misaligned_e1t26() {
     )
     .unwrap_err(); // sd
     assert_eq!(t.cause, Exception::StoreAccessFault);
-    assert_eq!(t.tval, straddle);
+    assert_eq!(t.tval, RAM_END);
 }
 
 #[test]
@@ -299,13 +301,14 @@ fn boundary_sweep_last_slot_succeeds_one_past_faults() {
                 Exception::LoadAccessFault,
                 "misaligned-straddle w={w}"
             );
-            assert_eq!(t.tval, last + 1);
+            assert_eq!(t.tval, RAM_END);
             let t = exec(&mut bus, s_type(1, 3, 2, sf3), &[(2, last), (3, 7)]).unwrap_err();
             assert_eq!(
                 t.cause,
                 Exception::StoreAccessFault,
                 "misaligned-straddle store w={w}"
             );
+            assert_eq!(t.tval, RAM_END);
         }
     }
 }

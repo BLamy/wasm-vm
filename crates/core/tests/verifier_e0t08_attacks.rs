@@ -330,9 +330,10 @@ fn boundary_sweep_verifier_bases() {
         let t = h.step(&mut bus).unwrap_err();
         // E1-T26 (misaligned SUPPORTED): ea = RAM_END - w + 1 is past the end (and misaligned
         // for w>1). Misaligned raises no exception → the access proceeds and the out-of-range
-        // byte faults ACCESS, at every width. tval = the effective address.
+        // byte faults ACCESS, at every width. E5.5-T02a identifies the failing
+        // virtual fragment at RAM_END (Privileged ISA fault-portion rule).
         assert_eq!(t.cause, Exception::LoadAccessFault, "w={w}");
-        assert_eq!(t.tval, last + 1, "w={w}");
+        assert_eq!(t.tval, RAM_END, "w={w}");
         // store variants
         bus.store32(CODE, s_type(w as i32, 3, 2, sf3)).unwrap();
         let mut h = seeded(CODE);
@@ -347,6 +348,6 @@ fn boundary_sweep_verifier_bases() {
         // E1-T26, mirror of the load: past-end (misaligned for w>1) → StoreAccessFault at
         // every width (misaligned proceeds, the out-of-range byte access-faults).
         assert_eq!(t.cause, Exception::StoreAccessFault, "w={w}");
-        assert_eq!(t.tval, last + 1, "w={w}");
+        assert_eq!(t.tval, RAM_END, "w={w}");
     }
 }

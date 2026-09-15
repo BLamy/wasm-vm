@@ -1,0 +1,766 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.53s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-048f7c055d42ac1c)
+
+running 338 tests
+test block::tests::boundaries_and_errors ... ok
+test compile_queue::tests::cancellation_on_generation_bump_drops_stale ... ok
+test compile_queue::tests::priority_hotter_compiles_first ... ok
+test block::tests::five_gib_sparse_no_truncation ... ok
+test compile_queue::tests::backpressure_drops_and_recounts_never_overflows ... ok
+test compile_queue::tests::refresh_empty_is_inert_and_equal_saturated_scores_keep_order ... ok
+test compile_queue::tests::stale_incoming_admission_and_backpressure_are_not_reordered_by_refresh ... ok
+test compile_queue::tests::staged_stale_resident_and_incoming_cancel_before_refresh_of_fresh_same_pc ... ok
+test compile_queue::tests::refresh_uses_actual_missing_and_recount_reset_hotness_without_changing_discovery ... ok
+test compile_queue::tests::refresh_visits_only_residents_preserving_payload_order_counters_and_recount ... ok
+test desktop_restore::desktop_restore_tests::changed_host_window_keeps_guest_scanout_and_selects_letterbox ... ok
+test desktop_restore::desktop_restore_tests::commit_failure_after_publication_is_cold_booted ... ok
+test desktop_restore::desktop_restore_tests::component_refusal_clears_staging_and_cold_boots_without_commit ... ok
+test desktop_restore::desktop_restore_tests::dropped_agent_channel_never_publishes_viewport_or_device_commit ... ok
+test desktop_restore::desktop_restore_tests::concrete_backend_round_trips_the_t26b_to_d_codecs_and_host_state ... ok
+test desktop_restore::desktop_restore_tests::invalid_host_dimensions_are_rejected_before_callbacks ... ok
+test decoded_cache_capacity_tests::default_and_legacy_pathological_sizes_report_actual_slots ... ok
+test decoded_cache_capacity_tests::both_sizes_recheck_revoked_pmp_for_live_cached_interior ... ok
+test decoded_cache_capacity_tests::both_sizes_keep_physical_aliases_and_page_write_cursor_invalidation ... ok
+test desktop_restore::desktop_restore_tests::missing_or_malformed_composite_never_enters_component_staging ... ok
+test desktop_restore::desktop_restore_tests::valid_composite_restore_stages_in_dependency_order_and_repairs ... ok
+test desktop_restore::desktop_restore_tests::rollback_clears_live_sink_and_uses_power_on_baseline ... ok
+test desktop_snapshot::desktop_snapshot_tests::bad_magic_and_forward_envelope_version_are_machine_readable ... ok
+test desktop_snapshot::desktop_snapshot_tests::builder_rejects_duplicate_unknown_and_forward_sections ... ok
+test desktop_snapshot::desktop_snapshot_tests::empty_envelope_is_byte_exact_and_stably_digested ... ok
+test desktop_snapshot::desktop_snapshot_tests::explicit_abort_is_idempotent_and_invalid_permits_are_rejected ... ok
+test desktop_restore::desktop_restore_tests::viewport_and_repair_failures_use_the_same_clean_fallback ... ok
+test desktop_snapshot::desktop_snapshot_tests::in_flight_timeout_is_bounded_aborts_and_leaves_device_usable ... ok
+test desktop_snapshot::desktop_snapshot_tests::malformed_sections_fail_closed_before_live_state_mutation ... ok
+test desktop_snapshot::desktop_snapshot_tests::parser_rejects_trailing_table_bytes_and_component_digest_tampering ... ok
+test decoded_cache_capacity_tests::hostile_guest_store_patches_next_cached_op_with_legacy_trace_parity ... ok
+test desktop_snapshot::desktop_snapshot_tests::quiesce_waits_for_one_boundary_and_releases_cleanly ... ok
+test desktop_restore::desktop_restore_tests::concrete_backend_refusals_leave_all_devices_in_the_cold_state ... ok
+test desktop_snapshot::desktop_snapshot_tests::populated_envelope_includes_versions_component_digests_and_stable_digest ... ok
+test dev::clint::snapshot_tests::clint_restore_rejects_malformed_payloads_without_mutating ... ok
+test dev::clint::snapshot_tests::clint_state_round_trips_completely ... ok
+test dev::console::tests::lsr_reads_ready_thr_reads_zero_no_faults ... ok
+test dev::console::tests::low_byte_emitted_at_every_write_width ... ok
+test dev::console::tests::other_offset_writes_ignored_and_logged_once ... ok
+test dev::plic::snapshot_tests::plic_behavioural_state_round_trips_and_drops_the_diagnostic_counter ... ok
+test dev::plic::snapshot_tests::plic_restore_rejects_wrong_length_without_mutating ... ok
+test dev::rtc::snapshot_tests::rtc_restore_rejects_malformed_without_mutating ... ok
+test dev::rtc::snapshot_tests::rtc_state_round_trips_completely_and_keeps_the_host_clock ... ok
+test dev::rtc::tests::alarm_fires_raises_irq_and_clears ... ok
+test dev::rtc::tests::alarm_value_readable_after_fire ... ok
+test dev::rtc::tests::guest_set_time_offsets_without_touching_host ... ok
+test dev::rtc::tests::irq_gated_by_enable ... ok
+test dev::rtc::tests::reads_injected_time ... ok
+test dev::rtc::tests::time_set_is_write_order_independent ... ok
+test decoded_cache_capacity_tests::real_resize_clears_live_cursor_and_discovery_but_preserves_architecture_and_handles ... ok
+test compile_queue::tests::never_blocks_execution_thread_under_flood ... ok
+test dev::syscon::tests::reads_return_zero ... ok
+test dev::syscon::tests::first_command_wins ... ok
+test dev::syscon::tests::recognized_commands_decode ... ok
+test dev::syscon::tests::unrecognized_values_are_ignored ... ok
+test dev::uart16550::snapshot_tests::uart_restore_rejects_malformed_payloads_without_mutating ... ok
+test dev::uart16550::snapshot_tests::uart_state_round_trips_completely ... ok
+test dev::uart16550::tests::char_timeout_delivers_short_input ... ok
+test dev::uart16550::tests::dlab_banking ... ok
+test dev::uart16550::tests::iir_priority_order ... ok
+test dev::uart16550::tests::overrun_caps_fifo_and_preserves_contents ... ok
+test dev::uart16550::tests::thre_interrupt_dance ... ok
+test dev::virtio::gpu::damage::tests::clipping_and_empty_input_are_bounded_and_drain_is_empty ... ok
+test dev::virtio::gpu::damage::tests::edge_adjacent_rectangles_union_but_corner_only_rectangles_remain_separate ... ok
+test dev::virtio::gpu::damage::tests::overlapping_rectangles_union_and_contained_rectangles_do_not_expand ... ok
+test decoded_cache_capacity_tests::invalid_and_same_actual_size_preserve_cursor_blocks_discovery_devices_and_snapshot ... ok
+test decoded_cache_capacity_tests::restore_and_existing_cache_reset_hold_host_selection_without_new_snapshot_fields ... ok
+test dev::rtc::tests::low_high_latch_is_coherent_across_2p32_boundary ... ok
+test dev::virtio::gpu::damage::tests::seventeenth_disjoint_rectangle_spills_to_one_bounded_box ... ok
+test dev::virtio::gpu::edid::tests::checksum_and_preferred_mode_cover_odd_and_large_sizes ... ok
+test dev::virtio::gpu::edid::tests::fixture_and_checksum_are_stable ... ok
+test dev::virtio::gpu::edid::tests::out_of_range_inputs_are_bounded ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_enforces_aggregate_budget_without_partial_insert ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_rejects_dimension_and_budget_before_allocation ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_backing_map_replacement_and_detach_are_independent ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_rejects_id_zero_duplicate_and_bad_fields_without_mutation ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_supported_formats_are_detached_and_accounted ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_lifecycle_unref_returns_accounting_to_baseline ... ok
+test dev::uart16550::snapshot_tests::uart_restore_never_panics_on_random_input ... ok
+test decoded_cache_capacity_tests::verifier_pending_code_patch_survives_same_size_and_rejected_selection ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_one_byte_entries_copy_a_full_frame ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_rejects_detached_bounds_and_offset_without_shadow_mutation ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_lifecycle_10k_create_unref_cycles_have_zero_net_growth ... ok
+test dev::virtio::gpu::snapshot::tests::gpu_snapshot_round_trips_resource_scanout_cursor_damage_and_crc ... ok
+test dev::virtio::gpu::snapshot::tests::malformed_resource_metadata_fails_closed_before_live_map_swap ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_tiled_and_full_frame_plans_keep_shadow_bytes_identical ... ok
+test block::tests::mem_backend_matches_reference_model ... ok
+test dev::virtio::gpu::snapshot::tests::malformed_shadow_and_truncation_fail_closed ... ok
+test dev::virtio::gpu::snapshot::tests::missing_scanout_resource_and_bad_format_leave_live_state_unchanged ... ok
+test dev::virtio::gpu::snapshot::tests::valid_restore_presents_one_full_repair_frame ... ok
+test dev::virtio::gpu::snapshot::tests::shadow_codec_reports_bounded_compression_and_rejects_forged_runs ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_tracks_changed_pixel_bounds_until_flush ... ok
+test dev::virtio::gpu::tests::display_event_clear_is_write_one_to_clear ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_scatter_gather_copies_partial_odd_x_rows ... ok
+test dev::virtio::gpu::tests::display_reset_preserves_host_monitor_but_clears_guest_state ... ok
+test dev::virtio::gpu::tests::gpu_cursor_protocol_wire_fixtures_are_little_endian_and_bounded ... ok
+test dev::virtio::gpu::tests::get_edid_requires_negotiation_and_is_scanout_indexed ... ok
+test dev::virtio::gpu::tests::display_reset_mmio_clears_latched_irqs_and_both_cached_queues ... ok
+test dev::virtio::gpu::tests::display_reset_verifier_reconfigured_rings_reject_stale_resources ... ok
+test dev::virtio::gpu::tests::get_edid_without_feature_returns_unspec ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_updates_moves_hides_and_rejects_without_mutation ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_read_only_completion_and_reset_clear_cursor_state ... ok
+test dev::virtio::gpu::tests::gpu_flush_after_unref_rejects_old_resource_without_sink_event ... ok
+test dev::virtio::console::tests::virtio_console_lifecycle_restart_and_reset_drop_stale_agent_state ... ok
+test dev::virtio::console::tests::restore_rehandshake_requires_live_agent_and_fences_old_application_bytes ... ok
+test dev::virtio::gpu::tests::gpu_flush_after_scanout_disable_forwards_old_resource_without_binding ... ok
+test dev::virtio::gpu::tests::gpu_flush_controlq_calls_test_sink_with_resource_crc ... ok
+test dev::virtio::gpu::tests::gpu_flush_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_mmio_identity_features_and_config ... ok
+test dev::virtio::gpu::tests::gpu_protocol_wire_fixtures ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_random_rect_model_oracle_10k_cases ... ok
+test dev::virtio::gpu::tests::gpu_flush_rejects_unknown_short_and_out_of_bounds_requests_without_sink_event ... ok
+test dev::virtio::console::tests::virtio_console_advertises_multiport_device_id_config_and_six_queue_layout ... ok
+test dev::virtio::console::tests::virtio_console_split_control_announcement_and_coalesced_data_are_bounded ... ok
+test dev::virtio::gpu::tests::gpu_resources_create_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_resources_lifecycle_device_reset_releases_resource_state ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_controlq_validates_entries_atomically ... ok
+test dev::virtio::gpu::tests::gpu_flush_tracking_sink_publishes_changed_transfer_bounds ... ok
+test dev::virtio::gpu::tests::gpu_flush_default_null_sink_accepts_headless_path ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_rejects_address_overflow_and_truncated_sglists ... ok
+test dev::virtio::gpu::tests::gpu_resources_create_controlq_dispatches_and_returns_spec_errors ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_split_attach_then_detach_controlq ... ok
+test dev::virtio::gpu::tests::gpu_resources_lifecycle_unref_clears_scanout_and_is_idempotently_rejected ... ok
+test dev::virtio::gpu::tests::gpu_transfer_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_repeated_hide_show_keeps_one_bounded_state_per_scanout ... ok
+test dev::virtio::gpu::tests::set_display_updates_mode_and_coalesces_config_interrupts ... ok
+test dev::virtio::gpu::tests::set_display_stress_preserves_final_mode_and_bounds_config_irqs ... ok
+test dev::virtio::gpu::tests::unsupported_feature_does_not_mutate_config ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_controlq_binds_existing_resource ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_rejects_bad_scanout_and_rect_without_mutation ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_split_request_is_parsed_across_descriptors ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_zero_resource_disables_scanout ... ok
+test dev::virtio::gpu::tiles::tests::flush_intersection_consumes_only_selected_tiles_and_resize_drops_old_state ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_short_request_is_bounded ... ok
+test dev::virtio::gpu::tiles::tests::full_frame_mode_is_a_comparable_bounded_fallback ... ok
+test dev::virtio::gpu::tiles::tests::full_resource_transfer_selects_every_tile_in_row_major_order ... ok
+test dev::virtio::gpu::tiles::tests::one_pixel_transfer_selects_one_full_tile_and_exact_bytes ... ok
+test dev::virtio::gpu::tests::gpu_transfer_controlq_copies_sg_rows_and_echoes_fence ... ok
+test dev::virtio::gpu::tiles::tests::tile_boundaries_and_partial_edges_are_clipped_without_outside_regions ... ok
+test dev::virtio::input::keyboard::tests::keyboard_identity_and_event_bitmap_tail_are_stable ... ok
+test dev::virtio::input::keyboard::tests::keyboard_led_sink_applies_only_canonical_status_events ... ok
+test dev::virtio::input::keyboard::tests::keyboard_config_fixture_is_exact_on_native ... ok
+test dev::virtio::input::keyboard::tests::keyboard_led_snapshot_round_trip_rejects_non_boolean_bytes ... ok
+test dev::virtio::input::keyboard::tests::verifier_led_bytes_and_fresh_post_restore_status_are_exact ... ok
+test dev::virtio::input::pointer::tests::mouse_map_has_only_relative_axes_and_both_wheels ... ok
+test dev::virtio::input::keyboard::tests::pc105_keyboard_bitmap_is_exact_and_repeat_is_absent ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_short_tail_is_bounded ... ok
+test dev::virtio::input::pointer::tests::tablet_absolute_injection_rejects_out_of_range_values ... ok
+test dev::virtio::input::pointer::tests::pointer_config_selectors_do_not_cross_contaminate ... ok
+test dev::virtio::input::pointer::tests::tablet_map_and_absolute_wire_metadata_are_exact ... ok
+test dev::virtio::input::snapshot::tests::direct_release_all_is_protected_from_budget_eviction ... ok
+test dev::virtio::input::snapshot::tests::malformed_ring_lengths_duplicate_events_and_truncation_are_atomic ... ok
+test dev::virtio::input::snapshot::tests::restore_discards_held_key_and_button_state_with_one_protected_release_frame ... ok
+test dev::virtio::input::snapshot::tests::verifier_empty_restore_accepts_fresh_keyboard_tablet_and_mouse_frames ... ok
+test dev::virtio::gpu::tests::virtio_gpu_malformed_guest_address_is_rejected_without_write ... ok
+test dev::virtio::input::snapshot::tests::three_input_devices_round_trip_pending_order_and_partial_indices ... ok
+test dev::virtio::gpu::tests::virtio_gpu_malformed_requests_make_progress_and_recover ... ok
+test dev::virtio::input::snapshot::tests::verifier_multiframe_order_indices_and_staged_work_are_byte_exact ... ok
+test dev::virtio::input::snapshot::tests::verifier_release_all_precedes_saved_work_and_survives_host_pressure ... ok
+test dev::virtio::input::snapshot::tests::verifier_malformed_headers_preserve_unserialized_delivered_ledger ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_split_header_unfenced ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_contiguous_fenced ... ok
+test dev::virtio::input::tests::inject_and_sync_retain_bounded_complete_frames_with_exact_drop_count ... ok
+test dev::virtio::input::tests::input_config_fixture_matches_little_endian_wire_bytes ... ok
+test dev::virtio::gpu::tests::gpu_flush_golden_five_patterns_match_independent_reference ... ok
+test dev::virtio::input::tests::input_config_selector_writes_are_width_preserving_and_resettable ... ok
+test dev::virtio::input::tests::input_event_wire_layout_is_fixed_and_little_endian ... ok
+test dev::virtio::input::tests::input_config_unsupported_queries_are_zero_and_do_not_leak_previous_payload ... ok
+test dev::virtio::input::tests::key_transition_drop_removes_both_separate_frames ... ok
+test dev::virtio::mmio::tests::critic_advisories_pinned ... ok
+test dev::virtio::input::tests::eventq_writes_one_event_across_split_descriptors_and_exact_used_len ... ok
+test dev::virtio::input::tests::injected_frames_cross_eventq_without_boundary_loss ... ok
+test dev::virtio::mmio::tests::driver_ok_without_features_ok_needs_reset ... ok
+test dev::virtio::mmio::tests::empty_slot_answers_and_tolerates ... ok
+test dev::virtio::mmio::tests::interrupt_ack_is_mask_clear ... ok
+test dev::virtio::gpu::tiles::tests::seeded_random_transfer_flush_resize_sequences_match_reference_tiles ... ok
+test dev::virtio::mmio::tests::lifecycle_happy_path ... ok
+test dev::virtio::mmio::tests::protocol_violation_degrades_loudly ... ok
+test dev::virtio::mmio::tests::status_zero_is_full_reset ... ok
+test dev::virtio::mmio::tests::transport_snapshot_round_trips_and_rejects_malformed ... ok
+test dev::virtio::input::tests::unsupported_queue_shape_is_bounded_and_requests_reset ... ok
+test dev::virtio::mmio::tests::unoffered_feature_rejected ... ok
+test dev::virtio::net::switch_tests::replacing_backend_keeps_adapter_identity_and_drops_old_frames ... ok
+test dev::virtio::snd::snapshot::tests::malformed_restore_is_atomic_and_rejects_bad_params ... ok
+test dev::virtio::snd::snapshot::tests::pending_period_metadata_is_exact_and_atomic_for_both_streams ... ok
+test dev::virtio::snd::snapshot::tests::malformed_retained_configuration_is_rejected_before_any_sound_mutation ... ok
+test dev::virtio::snd::snapshot::tests::released_configuration_round_trip_recovers_both_streams_and_reset_forgets_it ... ok
+test dev::virtio::snd::snapshot::tests::running_restore_discards_ephemeral_rings_and_repairs_both_streams ... ok
+test dev::virtio::snd::snapshot::tests::snapshot_header_has_stable_size_before_event_records ... ok
+test dev::virtio::snd::snapshot::tests::running_repair_respects_the_event_budget_before_mutation ... ok
+test dev::virtio::snd::snapshot::tests::stopped_stream_round_trip_preserves_configuration_without_xrun ... ok
+test diag::irqstats::tests::hottest_irq_picks_the_max ... ok
+test dev::virtio::input::tests::statusq_reads_split_event_and_rejects_short_or_wrong_direction ... ok
+test diag::irqstats::tests::naming_uses_the_window_not_the_lifetime_leader ... ok
+test diag::irqstats::tests::storm_fires_after_consecutive_hot_windows ... ok
+test diag::irqstats::tests::quiet_windows_never_fire_and_reset_the_streak ... ok
+test diag::irqstats::tests::wfi_watchdog_fires_once_then_rearms ... ok
+test diag::irqstats::tests::wfi_watchdog_silent_when_making_progress_or_armed ... ok
+test diag::irqstats::tests::window_stays_open_until_enough_retired ... ok
+test dev::virtio::input::tests::short_event_buffer_is_not_partially_written_and_ring_recovers ... ok
+test dispatch::tests::counter_increments_and_fires_exactly_once ... ok
+test dispatch::tests::counter_map_is_bounded_under_cold_flood ... ok
+test dispatch::tests::csr_and_wfi_blocks_are_excluded ... ok
+test dispatch::tests::no_nomination_below_threshold ... ok
+test dispatch::tests::dedup_across_distinct_blocks ... ok
+test dispatch::tests::reset_clears_state_and_bumps_generation ... ok
+test dispatch::tests::requeue_after_invalidation_no_stale_survives ... ok
+test dev::virtio::rng::tests::fills_posted_buffer_with_entropy_and_publishes_used ... ok
+test dispatch::tests::translation_request_shape ... ok
+test dispatch::tests::stale_generation_alone_blocks_install_even_if_bytes_match ... ok
+test dev::virtio::console::tests::virtio_console_agent_and_port0_data_queues_keep_frame_bytes_and_backpressure_separate ... ok
+test fdt::tests::header_is_spec_valid ... ok
+test fdt::tests::dtb_tracks_platform_and_args ... ok
+test fdt::tests::initrd_placement_between_kernel_and_dtb ... ok
+test fdt::tests::placement_top_of_dram_aligned_outside_kernel ... ok
+test hart::fregs::tests::f0_is_an_ordinary_register ... ok
+test hart::fregs::tests::non_boxed_value_reads_as_canonical_nan ... ok
+test hart::fregs::tests::registers_are_independent ... ok
+test fdt::tests::tree_has_every_required_node_and_link ... ok
+test hart::fregs::tests::write_f32_boxes_and_read_f32_unboxes ... ok
+test hart::regs::tests::abi_names_match_psabi ... ok
+test hart::regs::tests::compiled_register_mask_commit_preserves_unmasked_words_and_x0 ... ok
+test hart::regs::tests::default_is_all_zero_including_pc ... ok
+test hart::regs::tests::dump_format_is_byte_stable ... ok
+test hart::regs::tests::jit_version_is_not_architectural_equality ... ok
+test hart::regs::tests::out_of_range_read_panics - should panic ... ok
+test hart::regs::tests::interleavings_vs_oracle_lcg ... ok
+test hart::regs::tests::out_of_range_write_panics - should panic ... ok
+test hart::regs::tests::x0_writes_are_discarded ... ok
+test hart::regs::tests::x1_to_x31_roundtrip_distinct_values ... ok
+test jit::tests::cpu_state_handoff_pins_frozen_layout_endian_and_x0 ... ok
+test mmio::tests::attach_rejects_overlap_with_ram_and_devices ... ok
+test dispatch::tests::queue_overflow_degrades_gracefully ... ok
+test mmio::tests::attach_rejects_zero_length_and_overflow_without_panic ... ok
+test mmio::tests::device_faults_propagate ... ok
+test mmio::tests::device_hits_counts_every_access_that_lands_in_the_window ... ok
+test mmio::tests::device_read_results_are_masked_to_width ... ok
+test mmio::tests::multiple_devices_route_independently ... ok
+test mmio::tests::misaligned_in_window_faults_without_invoking_device ... ok
+test mmio::tests::ram_accesses_pass_through_unchanged ... ok
+test mmio::tests::straddling_window_edge_faults_and_never_invokes_device ... ok
+test mmio::tests::unmapped_hole_faults_access_at_every_width ... ok
+test mmio::tests::zero_size_ram_bus_still_routes_devices ... ok
+test platform::tests::default_platform_is_valid ... ok
+test mmio::tests::window_access_reaches_device_with_offset_width_value ... ok
+test platform::tests::irq_and_virtio_layout ... ok
+test platform::tests::overlap_and_overflow_are_caught ... ok
+test mmio::tests::width_forwarding_is_exact_never_split ... ok
+test platform::tests::region_boundaries ... ok
+test pmp_audit_tests::su_pmp_effective_address_change_cannot_take_shortcut ... ok
+test pmp_audit_tests::su_pmp_ignored_locked_tor_writes_keep_revision_and_zero_work ... ok
+test prof::pause::tests::buckets_bracket_the_target ... ok
+test prof::pause::tests::over_target_and_max_ns ... ok
+test prof::pause::tests::work_bound_tracks_max ... ok
+test pmp_audit_tests::su_pmp_revision_change_flushes_before_shortcut ... ok
+test prof::tests::add_ns_accumulates_per_subsystem ... ok
+test prof::tests::fixed_timer_reflects_set_and_advance_monotonically ... ok
+test prof::tests::records_land_in_expected_64_byte_regions ... ok
+test prof::tests::collisions_are_visible_not_silently_merged ... ok
+test prof::tests::report_computes_pct_and_passes_total_through ... ok
+test prof::tests::report_json_shape_and_contents ... ok
+test prof::tests::report_on_empty_profile_does_not_divide_by_zero ... ok
+test pmp_audit_tests::m_pmp_audit_still_visits_cached_instructions ... ok
+test prof::tests::tight_loop_concentrates ... ok
+test prof::tests::top_is_descending_with_low_pc_tie_break ... ok
+test prof::tests::report_text_contains_pc_and_subsystem_names ... ok
+test ram::resume_snapshot_tests::a_malformed_payload_is_refused_without_mutating ... ok
+test prof::tests::weak_incumbent_is_evicted_by_newcomer ... ok
+test ram::resume_snapshot_tests::ram_round_trips_completely ... ok
+test ram::resume_snapshot_tests::restoring_a_wrong_size_snapshot_is_refused_without_mutating ... ok
+test pmp_audit_tests::su_pmp_audit_work_is_zero_for_populated_caches ... ok
+test ram::tests::default_map_constants ... ok
+test ram::tests::extreme_addresses_fault_without_overflow_panics ... ok
+test ram::tests::faulting_store_leaves_ram_bit_identical ... ok
+test ram::tests::little_endian_byte_order ... ok
+test ram::tests::misaligned_in_range_faults_misaligned_at_every_width ... ok
+test desktop_restore::desktop_restore_tests::machine_refuses_restore_without_the_production_agent_channel ... ok
+test ram::tests::roundtrip_every_width_at_base_and_last_slot ... ok
+test ram::tests::slice_escape_hatch_bounds_and_content ... ok
+test prof::tests::histogram_memory_is_fixed ... ok
+test ram::tests::zero_and_absurd_sizes_fail_cleanly ... ok
+test resume::resume_tests::a_bad_magic_is_rejected ... ok
+test ram::tests::straddling_the_end_is_access_not_panic ... ok
+test resume::resume_tests::a_component_round_trips_through_the_container_format ... ok
+test resume::resume_tests::a_huge_zero_run_length_is_rejected_without_allocating ... ok
+test resume::resume_tests::a_partial_trailing_section_header_is_truncated ... ok
+test resume::resume_tests::a_reserved_but_unimplemented_section_is_refused_as_unsupported ... ok
+test resume::resume_tests::a_section_length_past_the_end_is_rejected_not_over_read ... ok
+test resume::resume_tests::a_too_short_blob_is_truncated_not_a_panic ... ok
+test resume::resume_tests::a_version_mismatch_is_rejected ... ok
+test resume::resume_tests::an_unknown_section_fails_loudly ... ok
+test resume::resume_tests::decode_sparse_rejects_malformed_payloads ... ok
+test resume::resume_tests::header_round_trips_and_sections_read_back_in_order ... ok
+test resume::resume_tests::restore_decision_rejects_a_truncated_final_section ... ok
+test resume::resume_tests::the_coherence_guards_refuse_a_mismatch ... ok
+test resume::resume_tests::zero_elision_round_trips_for_every_shape ... ok
+test sbi::base::tests::ids_and_unknown_fid ... ok
+test sbi::base::tests::probe_extension_per_plan ... ok
+test sbi::base::tests::spec_version_is_2_0 ... ok
+test sbi::dbcn::tests::read_drains_queue_nonblocking_and_write_byte ... ok
+test sbi::dbcn::tests::write_attack_matrix ... ok
+test sbi::dbcn::tests::write_reads_guest_dram_and_reports_count ... ok
+test sbi::hsm::tests::lifecycle_answers_single_hart ... ok
+test resume::resume_tests::a_mostly_zero_buffer_compresses_far_under_ram_size ... ok
+test sbi::ipi::tests::self_ipi_sets_ssip_and_masks_validate ... ok
+test sbi::legacy::tests::getchar_empty_is_minus_one_nonblocking ... ok
+test sbi::legacy::tests::putchar_emits_and_returns_zero ... ok
+test sbi::rfence::tests::fences_flush_and_masks_validate ... ok
+test sbi::srst::tests::shutdown_reboot_and_error_paths ... ok
+test sbi::tests::probe_set_matches_plan ... ok
+test sbi::tests::unknown_and_pending_eids_not_supported ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_ram_snapshot_is_far_under_ram_size ... ok
+test sbi::time::tests::set_timer_replaces_and_cancels ... ok
+test tests::group_batches_coalesces_disconnected_chunks ... ok
+test tests::kernel_footprint_falls_back_to_file_len ... ok
+test tests::kernel_footprint_honours_image_size ... ok
+test tests::machine_allocates_requested_ram ... ok
+test tests::version_matches_manifest ... ok
+test tests::machine_tolerates_zero_ram ... ok
+test time::tests::huge_gap_jumps_with_notification ... ok
+test time::tests::icount_is_pure_function_of_retired ... ok
+test time::tests::respects_software_mtime_write_as_floor ... ok
+test time::tests::wallclock_never_steps_backward_under_jittery_host ... ok
+test resume::resume_tests::decode_sparse_never_panics_on_random_input ... ok
+test time::tests::moderate_gap_slews_at_bounded_rate ... ok
+test resume::resume_tests::the_parser_never_panics_on_any_truncation_or_flip ... ok
+test dev::virtio::mmio::tests::register_fuzz_1e6 ... ok
+test hart::regs::proptests::writes_track_oracle_and_x0_stays_zero ... ok
+test dev::virtio::gpu::damage::tests::seeded_random_rectangles_never_drop_reference_damage ... ok
+test sbi::tests::dispatcher_fuzz_1e6 ... ok
+test dev::virtio::input::snapshot::tests::verifier_release_growth_at_serialized_cap_is_atomic ... ok
+test dev::virtio::input::snapshot::tests::verifier_total_serialized_event_cap_is_atomic_on_encode_and_decode ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_full_frame_native_budget ... ok
+test dev::virtio::input::snapshot::tests::verifier_fully_consumed_records_still_obey_total_serialized_cap ... ok
+test dev::virtio::input::snapshot::tests::verifier_release_growth_that_exactly_reaches_serialized_cap_succeeds ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_repeated_rejections_do_not_grow_map ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_256_mib_ram_encodes_under_15_percent_and_restores_byte_identically ... ok
+
+test result: ok. 338 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.27s
+
+     Running tests/async_compile_pipeline.rs (target/debug/deps/async_compile_pipeline-e3f49c4eb252aacf)
+
+running 12 tests
+test later_hot_resident_wins_cross_pump_with_zero_new_nominations_and_digest_parity ... ok
+test cross_pump_stale_resident_and_fifo_cancel_preserving_fresh_same_pc_bytes ... ok
+test profiling_enabled_charges_outer_final_pump_to_total_time_exactly_once ... ok
+test profiling_disabled_does_not_charge_outer_final_pump_to_total_time ... ok
+test disabled_missing_and_zero_attempt_executor_leave_existing_backlog_unsubmitted ... ok
+test verifier_outer_scope_zero_work_final_pump_refreshes_only_after_budget_renewal ... ok
+test delayed_install_never_installs_stale_bytes ... ok
+test interpreter_progresses_while_compiler_stalled ... ok
+test zero_budget_and_missing_executor_submit_no_compile_work ... ok
+test terminal_outer_scope_skips_final_pump_and_preserves_backlog ... ok
+test decoded_cache_eviction_consumes_attempt_budget_and_eventually_renominates ... ok
+test run_compile_budget_preserves_backlog_and_eventually_drains ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.73s
+
+     Running tests/boot_contract.rs (target/debug/deps/boot_contract-421cda446d855943)
+
+running 2 tests
+test opensbi_fw_dynamic_boots ... ignored, needs fw_dynamic.elf (run tools/adr0002_opensbi_probe.sh)
+test builtin_sbi_first_call_and_reset_state ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.46s
+
+     Running tests/clint.rs (target/debug/deps/clint-2afba2cdf9a2c92d)
+
+running 12 tests
+test mtime_and_mtimecmp_are_readable_writable_memory ... ok
+test clock_does_not_tick_on_a_taken_interrupt ... ok
+test thirty_two_bit_halves_compose_a_64_bit_register ... ok
+test msip_write_sets_and_clears_mip_msip ... ok
+test msip_only_bit0_is_significant ... ok
+test raising_mtimecmp_clears_mtip_without_csr_access ... ok
+test clock_does_not_tick_on_a_delivered_trap ... ok
+test wfi_wakes_when_timer_expires ... ok
+test unsigned_compare_no_interrupt_before_wrap ... ok
+test glitch_free_64bit_program_via_high_low_high_idiom ... ok
+test timer_fires_at_the_expected_retire_boundary ... ok
+test timer_trap_retire_index_is_deterministic ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/console.rs (target/debug/deps/console-50c7a235c9407c96)
+
+running 6 tests
+test binary_safe_no_translation_acceptance ... ok
+test all_256_byte_values_round_trip_exactly_acceptance ... ok
+test one_past_window_is_bus_access_fault_acceptance ... ok
+test every_width_emits_exactly_one_low_byte_acceptance ... ok
+test guest_prints_hello_via_sb_loop ... ok
+test million_byte_flood_completes_device_state_bounded ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/cpu_resume.rs (target/debug/deps/cpu_resume-68a77ce20b744117)
+
+running 6 tests
+test malformed_cpu_payload_is_rejected_and_leaves_hart_unchanged ... ok
+test resume_places_the_timer_interrupt_identically ... ok
+test whole_machine_resume_round_trips ... ok
+test virtio_blk_and_net_sections_round_trip_at_machine_level ... ok
+test restore_over_dirty_state_is_byte_identical ... ok
+test resume_trace_matches_continuation ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.46s
+
+     Running tests/critic_storm_hostile.rs (target/debug/deps/critic_storm_hostile-793f15d9576d65db)
+
+running 3 tests
+test wfi_watchdog_false_positive_waiting_for_uart_input ... ok
+test wfi_watchdog_misses_armed_but_never_deliverable_timer ... ok
+test zero_progress_trap_loop_evades_the_detector ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.77s
+
+     Running tests/csr.rs (target/debug/deps/csr-f0549669b759c358)
+
+running 8 tests
+test side_effect_suppression_matrix ... ok
+test read_only_addresses_trap_on_write ... ok
+test privilege_check_from_address_encoding ... ok
+test unimplemented_csr_traps ... ok
+test warl_write_all_ones_reads_back_only_legal_values ... ok
+test csrrw_x0_performs_no_read_and_csrrs_x0_performs_no_write ... ok
+test fence_i_and_wfi_retire_as_noops ... ok
+test mret_jumps_to_mepc ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/decode_golden.rs (target/debug/deps/decode_golden-d46b0575f3108321)
+
+running 5 tests
+test decode_works_in_const_context ... ok
+test golden_table_decodes_exactly ... ok
+test negative_table_is_all_illegal ... ok
+test compressed_space_is_always_illegal ... ok
+test sweep_never_panics_and_is_total ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/decode_props.rs (target/debug/deps/decode_props-fd42f12d483a05d4)
+
+running 26 tests
+test negative_immediates_decode_to_the_exact_signed_value ... ok
+test roundtrip_op32 ... ok
+test reserved_amo_encodings_are_illegal ... ok
+test reserved_op_fp_is_illegal ... ok
+test reserved_mem_branch_funct3_is_illegal ... ok
+test roundtrip_amo ... ok
+test roundtrip_load ... ok
+test roundtrip_fence ... ok
+test roundtrip_addiw ... ok
+test roundtrip_r_type ... ok
+test roundtrip_fp ... ok
+test roundtrip_fp_d ... ok
+test roundtrip_op_imm ... ok
+test roundtrip_branch ... ok
+test reserved_system_funct3_000_and_100_are_illegal ... ok
+test op_with_undefined_funct7_is_illegal ... ok
+test roundtrip_csr ... ok
+test roundtrip_shifts ... ok
+test roundtrip_store ... ok
+test roundtrip_u_j ... ok
+test slliw_with_bit25_set_is_illegal ... ok
+test value_roundtrip_branch ... ok
+test value_roundtrip_i_imm ... ok
+test value_roundtrip_store ... ok
+test value_roundtrip_j ... ok
+test value_roundtrip_u ... ok
+
+test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.65s
+
+     Running tests/desktop_machine_audio_resume.rs (target/debug/deps/desktop_machine_audio_resume-66e2253513c39dbc)
+
+running 9 tests
+test control_release_completes_pending_io_before_response_and_following_prepare ... ok
+test linux_6_6_63_xrun_stop_release_prepare_recovers_without_set_params ... ok
+test sound_layout_version_does_not_invalidate_container_v1_headless_resume ... ok
+test old_or_unknown_sound_resume_layout_is_rejected_before_live_mutation ... ok
+test released_params_resume_into_fresh_sink_and_clock_without_set_params ... ok
+test fresh_pcm_sink_after_whole_machine_and_desktop_envelope_restore ... ok
+test configured_unused_rx_preserves_tx_cursor_and_fresh_pcm ... ok
+test configured_unused_rx_preserves_pcm_through_desktop_envelope_too ... ok
+test strict_fresh_machine_pcm_sink_after_whole_machine_resume ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+
+     Running tests/desktop_machine_resume.rs (target/debug/deps/desktop_machine_resume-ec5a7d5c88959d0d)
+
+running 7 tests
+test malformed_saved_agent_dma_blocks_tx_until_transport_reset ... ok
+test headless_resume_remains_compatible_without_desktop_sections ... ok
+test every_fallible_legacy_section_refuses_before_live_state_or_host_callbacks_change ... ok
+test agent_resume_frontier_wraps_and_allows_fresh_tx_before_first_guest_step ... ok
+test malformed_desktop_section_and_missing_device_refuse_without_partial_restore ... ok
+test pending_console_transmits_survive_while_stale_host_session_is_discarded ... ok
+test desktop_devices_resume_with_ring_continuity_and_fresh_host_state ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.40s
+
+     Running tests/desktop_machine_resume_verifier.rs (target/debug/deps/desktop_machine_resume_verifier-d8c2331062f93483)
+
+running 9 tests
+test console_control_request_kicked_before_save_completes_once_after_resume ... ok
+test sound_request_kicked_before_save_completes_once_after_resume ... ok
+test pending_old_session_agent_hello_cannot_attest_the_resumed_host ... ok
+test malformed_later_machine_payload_must_not_partially_commit_desktop_state ... ok
+test rng_cursor_wrap_preserves_one_pending_completion_exactly_once ... ok
+test same_topology_in_alternate_assembly_order_restores ... ok
+test machine_save_reconciles_held_keyboard_tablet_and_mouse_state ... ok
+test source_target_topology_mismatch_is_atomic_both_directions ... ok
+test every_new_section_corruption_missing_and_duplicate_are_atomic ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.61s
+
+     Running tests/desktop_snapshot_save.rs (target/debug/deps/desktop_snapshot_save-37888feb038e86e6)
+
+running 2 tests
+test save_refuses_a_malformed_live_input_component ... ok
+test save_reports_each_missing_desktop_participant ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s
+
+     Running tests/determinism.rs (target/debug/deps/determinism-96fc33551327c07d)
+
+running 3 tests
+test full_corpus_is_run_to_run_reproducible ... ignored, full-corpus 2x run; nightly leg via tools/determinism_check.sh --full
+test hash_sink_distinguishes_every_field ... ok
+test pinned_fingerprints_match_golden ... ok
+
+test result: ok. 2 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 3.48s
+
+     Running tests/exhaustive.rs (target/debug/deps/exhaustive-7f9307dc07155629)
+
+running 1 test
+test decode_never_panics_and_legal_count_matches_analytic_tally ... ignored, exhaustive 2^32 sweep — minutes; run with --release --ignored
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/fdt_emit.rs (target/debug/deps/fdt_emit-2bd9f93ec75981bd)
+
+running 1 test
+test emit_dtb_if_requested ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/golden_run.rs (target/debug/deps/golden_run-a7c56a476a3f23c9)
+
+running 4 tests
+test hello_prints_and_exits_zero ... ok
+test memops_prints_done_and_exits_zero ... ok
+test loops_exits_zero_no_output ... ok
+test all_goldens_terminate_within_budget ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.36s
+
+     Running tests/guest_clock.rs (target/debug/deps/guest_clock-5a57f6e3132326d1)
+
+running 5 tests
+test explicit_resume_freezes_pause_but_background_retains_jump_policy ... ok
+test busy_rdtime_tracks_ten_mhz_not_retire_count_and_clamps_jitter ... ok
+test fresh_and_same_machine_restore_rebase_at_restored_mtime_and_preserve_deadline ... ok
+test rejected_resume_preserves_policy_anchor_and_guest_state ... ok
+test icount_rebase_selection_and_restore_preserve_trace_digest_and_subtick_phase ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/hart_control.rs (target/debug/deps/hart_control-b895efedd4e2b210)
+
+running 12 tests
+test countdown_loop_executes_exact_iteration_count ... ok
+test cause_0_vs_cause_1_distinction_at_ram_end ... ok
+test call_return_chain_three_deep ... ok
+test jal_links_and_jumps_acceptance ... ok
+test jalr_rd_equals_rs1_uses_old_value_acceptance ... ok
+test jal_x0_zero_self_loops_forever_acceptance ... ok
+test jal_to_2mod4_target_lands_under_ialign16 ... ok
+test jalr_bit0_clear_to_2mod4_target_lands_under_ialign16 ... ok
+test taken_branch_to_pc_plus_2_lands_not_taken_retires ... ok
+test fence_retires_pc_plus_4_acceptance ... ok
+test branch_and_jal_range_edges ... ok
+test blt_vs_bltu_disagree_exactly_on_sign_boundary_acceptance ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+
+     Running tests/hart_memory.rs (target/debug/deps/hart_memory-235d39146a344be2)
+
+running 13 tests
+test misaligned_ld_sd_in_ram_succeed_e1t26 ... ok
+test store_then_load_roundtrip_through_instructions ... ok
+test store_matrix_verified_bytewise_through_bus ... ok
+test load_with_rd_equals_rs1_writes_loaded_value_acceptance ... ok
+test misaligned_in_ram_succeeds_at_every_width_negative_offset_still_faults ... ok
+test misaligned_straddling_out_of_ram_faults_access_not_misaligned_e1t26 ... ok
+test lw_sign_extends_lwu_zero_extends_acceptance ... ok
+test effective_address_wraps_without_panic_acceptance ... ok
+test extension_matrix_all_widths_all_patterns ... ok
+test pc_unmoved_after_every_memory_fault ... ok
+test faulting_load_leaves_rd_faulting_store_leaves_ram_acceptance ... ok
+test boundary_sweep_last_slot_succeeds_one_past_faults ... ok
+test successful_store_leaves_all_registers_untouched ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/hart_semantics.rs (target/debug/deps/hart_semantics-81bc62775310a92a)
+
+running 15 tests
+test illegal_instruction_cause_and_tval ... ok
+test ecall_ebreak_now_execute_no_placeholders_remain ... ok
+test shift_amount_masking_acceptance ... ok
+test arithmetic_shifts_on_negatives_acceptance ... ok
+test fetch_fault_purity_acceptance ... ok
+test srliw_sign_extends_the_32bit_result ... ok
+test addiw_sign_boundary_acceptance ... ok
+test fence_retires_as_nop ... ok
+test sltu_x0_is_snez_acceptance ... ok
+test lui_auipc_vs_reference ... ok
+test x0_writes_discarded_for_every_computational_op ... ok
+test determinism_checksum_matches_pinned_native_value ... ok
+test shift_imm_matrix_vs_reference ... ok
+test imm_op_matrix_vs_reference ... ok
+test binary_op_matrix_vs_reference ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/hot_path.rs (target/debug/deps/hot_path-61bad2f0a9aa8812)
+
+running 1 test
+test ram_path_overhead_within_budget ... ignored, perf measurement: run explicitly with --release ... -- --ignored --nocapture
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/hotness_discovery.rs (target/debug/deps/hotness_discovery-f2697bdd39f92316)
+
+running 3 tests
+test hot_loop_nominates_once_and_reports ... ok
+test discovery_inert_without_block_cache ... ok
+test self_modified_block_never_installs_stale_bytes ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/htif_run.rs (target/debug/deps/htif_run-e68289d4c30c7f45)
+
+running 10 tests
+test exit_42_acceptance ... ok
+test exit_at_index_0_under_run_1_is_observed ... ok
+test store_to_tohost_plus_4_only_does_not_exit ... ok
+test exit_0_via_sd_of_one_acceptance ... ok
+test loads_elf_fixture_and_arms_htif ... ok
+test no_tohost_symbol_runs_to_max_instrs_not_crash ... ok
+test max_instrs_off_by_one_exact_count ... ok
+test ebreak_purity_full_dump_and_ram_identical ... ok
+test sw_of_odd_value_exits_sd_of_even_logs_once_acceptance ... ok
+test ecall_traps_cause_11_ebreak_cause_3_acceptance ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/icount_divider.rs (target/debug/deps/icount_divider-20ccc25988e93d83)
+
+running 8 tests
+test wall_mode_refuses_even_same_divider_without_touching_the_host_anchor ... ok
+test missing_clint_and_out_of_range_inputs_are_atomic ... ok
+test same_divider_is_byte_exact_and_preserves_pending_irqs_device_and_cache_identity ... ok
+test resume_retains_selected_phase_and_explicit_post_restore_override_maps_it_once ... ok
+test invalid_saved_phases_refuse_before_same_divider_or_any_other_mutation ... ok
+test busy_guest_rdtime_matches_independent_phase_oracle_and_trace_across_cache_modes ... ok
+test huge_prior_dividers_and_resumed_phases_map_with_full_u128_precision ... ok
+test all_small_ratios_and_phases_preserve_state_and_land_the_next_tick_exactly ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s
+
+     Running tests/interrupts.rs (target/debug/deps/interrupts-d5564728ce04aca1)
+
+running 13 tests
+test deleg_and_enable_warl_masks ... ok
+test mip_mtip_software_write_ignored_device_bit_survives ... ok
+test m_mode_with_mie_clear_takes_nothing ... ok
+test full_priority_chain_in_m_with_mie ... ok
+test m_interrupt_not_masked_from_below ... ok
+test delegated_stimer_fires_in_u_not_in_m ... ok
+test higher_priority_but_untakeable_is_skipped ... ok
+test vectored_mtvec_m_interrupt_ssi_enters_at_base_plus_4 ... ok
+test wfi_with_mie_clear_and_mtip_pending_continues_no_trap ... ok
+test interrupt_taken_after_an_instruction_retires_precise_mepc ... ok
+test m_mode_exception_is_never_delegated_downward ... ok
+test delegated_interrupt_delivers_to_stvec_with_scause_and_spp ... ok
+test vectored_stvec_interrupt_enters_at_base_plus_4x_cause ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/isa_scan.rs (target/debug/deps/isa_scan-1a5020d976615673)
+
+running 1 test
+test scan_isa_text ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/jit_entry_timing.rs (target/debug/deps/jit_entry_timing-b4799cc51fc34c2f)
+
+running 1 test
+test profiling_state_follows_executor_lifecycle ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/loader_elf.rs (target/debug/deps/loader_elf-d313abff026ad6e0)
+
+running 6 tests
+test bss_zero_fill_over_preseeded_ram ... ok
+test overflow_attacks_in_program_headers ... ok
+test malformed_battery_returns_precise_errors ... ok
+test fixture_loads_and_matches_committed_readelf_dump ... ok
+test no_partial_writes_when_second_segment_is_bad ... ok
+test mutation_fuzz_100k_no_panics ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+
+     Running tests/misaligned_virtual_pages.rs (target/debug/deps/misaligned_virtual_pages-3639d33b4b7447e2)
+
+running 10 tests
+test ld_crosses_noncontiguous_physical_pages ... ok
+test ordinary_aligned_and_one_page_misaligned_hints_remain ... ok
+test first_fragment_pmp_denial_and_wrapping_address_are_silent ... ok
+test regression_guest_trace_and_state_digest ... ok
+test device_or_unmapped_physical_second_page_is_silent ... ok
+test pmp_denial_and_partial_fragment_match_preflight ... ok
+test second_page_faults_are_precise_and_preflight_all_data ... ok
+test atomics_remain_misaligned_and_preserve_reservation ... ok
+test crossing_load_matrix_interpreter_and_jit ... ok
+test crossing_store_matrix_preserves_other_bytes_and_logs_all_frames ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests/no_stdout_in_core.rs (target/debug/deps/no_stdout_in_core-4e7a53fdf6b9969f)
+
+running 1 test
+test core_has_no_stdout_macros ... FAILED
+
+failures:
+
+---- core_has_no_stdout_macros stdout ----
+
+thread 'core_has_no_stdout_macros' (17883975) panicked at crates/core/tests/no_stdout_in_core.rs:12:5:
+crates/core must use the `log` facade, not stdout/stderr macros. Found:
+/Users/blamy/Documents/Codex/wasm-vm/crates/core/src/decoded_cache_capacity_tests.rs:238: println!
+/Users/blamy/Documents/Codex/wasm-vm/crates/core/src/decoded_cache_capacity_tests.rs:244: println!
+/Users/blamy/Documents/Codex/wasm-vm/crates/core/src/decoded_cache_capacity_tests.rs:287: println!
+/Users/blamy/Documents/Codex/wasm-vm/crates/core/src/dev/virtio/gpu/reset_verifier_tests.rs:243: println!
+/Users/blamy/Documents/Codex/wasm-vm/crates/core/src/dev/virtio/gpu/resources.rs:1239: println!
+/Users/blamy/Documents/Codex/wasm-vm/crates/core/src/dev/virtio/gpu/resources.rs:1239: eprintln!
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    core_has_no_stdout_macros
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `-p wasm-vm-core --test no_stdout_in_core`
