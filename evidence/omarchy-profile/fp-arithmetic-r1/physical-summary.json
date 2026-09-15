@@ -1,0 +1,69 @@
+{
+  "reportSha256": "c20fe7de2adb79c581367529f52d942b535d43f4d15e257dfa58cb4ee8cc8b85",
+  "head": "d64b037b362b36490d58b82663a448ac0532b025",
+  "wasmSha256": "e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4",
+  "responsive": false,
+  "startup": {
+    "startedAt": "2026-09-15T21:42:25.873Z",
+    "timeoutMs": 300000,
+    "deadlineAt": "2026-09-15T21:47:25.873Z",
+    "readyProvenAt": "2026-09-15T21:44:36.321Z",
+    "elapsedMs": 130448
+  },
+  "keyboard": {
+    "verified": false,
+    "nonce": "393dd927e1f616be",
+    "guestFile": "/tmp/desktop-keys-df6d574227d97215",
+    "startedAt": "2026-09-15T21:44:36.321Z",
+    "enteredAtMs": 1789508679143,
+    "typedAt": "2026-09-15T21:44:39.143Z",
+    "typingMs": 2822,
+    "readbackStartedAt": "2026-09-15T21:44:39.143Z",
+    "readbackTimeoutMs": 120000,
+    "deadlineMs": 120000,
+    "deadlineAt": "2026-09-15T21:46:39.143Z",
+    "stage": "readback",
+    "failedAt": "2026-09-15T21:46:39.144Z",
+    "error": "Error: physical keyboard:readback: deadline exceeded (UNPROVEN)",
+    "desktopReadyPageMs": 111616.83999991417,
+    "firstPhysicalKeydownPageMs": 130446.05500006676,
+    "readyToFirstPhysicalKeydownMs": 18829.215000152588
+  },
+  "eventCount": 128,
+  "trustedEvents": 128,
+  "inputDeviceFinal": {
+    "pendingEventBudget": 256,
+    "pendingEvents": 0,
+    "pendingFrames": 0,
+    "droppedFrames": 0,
+    "droppedEvents": 0,
+    "statusEventsServed": 1,
+    "rejectedEvents": 0
+  },
+  "framesBefore": 2,
+  "framesAfter": 2,
+  "guestRetiredBefore": 1658987905,
+  "guestRetiredAfter": 2901938899,
+  "jitShareAfter": 0.4198681355489146,
+  "guestClockBefore": {
+    "mode": "icount",
+    "mtime": "1366382461",
+    "timebaseHz": 10000000,
+    "clockDiv": 64
+  },
+  "guestClockAfter": {
+    "mode": "icount",
+    "mtime": "1385803570",
+    "timebaseHz": 10000000,
+    "clockDiv": 64
+  },
+  "completedReadbackCommands": 13,
+  "pendingReadbackCommands": 1,
+  "errors": [],
+  "cleanup": {
+    "startedAt": "2026-09-15T21:46:39.214Z",
+    "timeoutMs": 30000,
+    "closed": true
+  },
+  "visualInspection": "The actual Foot terminal shows its initial prompt without typed text; failure.png is byte-identical to desktop.png."
+}

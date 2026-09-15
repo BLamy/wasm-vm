@@ -1,0 +1,12 @@
+{
+  "runtimeSourceHead": "357dd1a0f9f984747f3f92ad83b0ae556e6689f5",
+  "repairHead": "d64b037b362b36490d58b82663a448ac0532b025",
+  "originalWasmSha256": "bb9f6a3e1b354f68738a473482e16d44b4c53f77255d2c58e5d0db49a2d309e3",
+  "rebuiltWasmSha256": "e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4",
+  "runtimeBytesUnchanged": false,
+  "repairScope": [
+    "cfg(test) admission expectations",
+    "generated roadmap tasks.json"
+  ],
+  "artifactTreatment": "Byte identity check failed; cause not established. Revalidate new built artifact in browser and final pristine clone."
+}
