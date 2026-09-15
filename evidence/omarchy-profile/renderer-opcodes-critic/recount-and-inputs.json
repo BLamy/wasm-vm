@@ -1,0 +1,184 @@
+{
+  "result": "HELD",
+  "frozenHead": "fdae798ca28b94cc1551a8dc8a634e5ad99858e7",
+  "sources": {
+    "kernel": {
+      "size": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "sourceUnchanged": true
+    },
+    "bootSnapshot": {
+      "size": 205050833,
+      "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5",
+      "sourceUnchanged": true
+    },
+    "overlayDelta": {
+      "size": 1209196,
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+      "sourceUnchanged": true
+    },
+    "chunkManifest": {
+      "size": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "sourceUnchanged": true
+    },
+    "image": {
+      "size": 4294967296,
+      "sha256": "2b4143df63085141f7cf017ed2d11c9808bd38dd30925bc86c4a15b4a64cf83c",
+      "sourceUnchanged": true
+    }
+  },
+  "snapshot": {
+    "rawBytes": 899181735,
+    "rawSha256": "3426e4e69c7a93f8951655ac56d824ee08d597794b5893f846cae4f1949e799d",
+    "privateSha256": "587fc31e6ffffda9b523a6a5145cd2ecae78cc170f1dba3ae5da16d81b5a3304",
+    "actualChangedOffsets": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75
+    ],
+    "equalEveryByteOutside": [
+      12,
+      76
+    ],
+    "clockDivider": 64,
+    "clockPhase": 7,
+    "coreId": "302e302e31000000000000000000000000000000000000000000000000000000",
+    "baseBinding": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+    "generation": 0
+  },
+  "privateDisk": {
+    "everyByteMatched": true,
+    "everyManifestChunkMatched": true,
+    "overlayRecords": 2638,
+    "sha256": "8e75cc55a33db221e2cb359daa6c6ce53e949c7f57fa7e9f344be1f9a7f2649c"
+  },
+  "execution": {
+    "pid": 36431,
+    "elapsedSeconds": 15.109,
+    "exit": 102,
+    "binarySha256": "d99dc9021240c806aea9fabd6e29069bb298eccbfa5b9b0f4ed5f32bc4a0e203",
+    "traceFnv64": "52771248e20ba79f",
+    "finalState": "state sha256=5c2901eb0bf15e8469b0f65d21f7227780f88663cecb417db8e4641cf42c6825"
+  },
+  "counts": {
+    "retired": 99998678,
+    "compute": 13424839,
+    "computePercent": 13.425016478717849,
+    "opFpFunct7": {
+      "0x00": 1709360,
+      "0x08": 2561888,
+      "0x0c": 213132,
+      "0x10": 3545385,
+      "0x50": 1713705,
+      "0x60": 426264,
+      "0x68": 985870,
+      "0x70": 856832,
+      "0x78": 133611
+    },
+    "fmaOpcodes": {
+      "0x43": 1278792
+    },
+    "regionCount": 10893,
+    "hotComputeRegions": [
+      {
+        "pc": "0x00007fff6c08a5c0",
+        "total": 840640,
+        "fp_compute": 630480
+      },
+      {
+        "pc": "0x00007fff6c08a780",
+        "total": 788100,
+        "fp_compute": 630480
+      },
+      {
+        "pc": "0x00007fff6c08a740",
+        "total": 893180,
+        "fp_compute": 577940
+      },
+      {
+        "pc": "0x00007fff6c08a7c0",
+        "total": 840640,
+        "fp_compute": 472860
+      },
+      {
+        "pc": "0x00007fff6c08a880",
+        "total": 893180,
+        "fp_compute": 472860
+      },
+      {
+        "pc": "0x00007fff6c08a540",
+        "total": 840640,
+        "fp_compute": 420320
+      },
+      {
+        "pc": "0x00007fff6c08a6c0",
+        "total": 998260,
+        "fp_compute": 420320
+      },
+      {
+        "pc": "0x00007fff6c08a580",
+        "total": 893180,
+        "fp_compute": 367780
+      }
+    ]
+  },
+  "truncation": {
+    "pairSlots": 65536,
+    "pairDroppedSamples": 90673111,
+    "pairDroppedPercent": 90.67430971437443,
+    "displayedPairLimit": 32,
+    "regionDroppedSamples": 0
+  },
+  "limits": [
+    "No independent compressed FP load/store recount from opcode7 aggregates.",
+    "Zeroed private identity fields are not a restore-coherence claim.",
+    "No native-throughput, browser-JIT-speedup or desktop-input claim.",
+    "OS entropy and browser/native scheduling differences preclude cross-run trace-equivalence claims."
+  ],
+  "evidenceDigests": {
+    "build.stderr": "63c63da23263be38764c7443e2e92108937b4add0ee48a0019adbb341bdb3b5d",
+    "build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "guest-evidence.txt": "ec83578007decb94363cb7c023af908beb0141d0c2742f3d055e773579ee228c",
+    "native.stderr": "3a587aa44c5510f679eba6b8742b1303df13ecf4b3b51976a4847d4230dfc17c",
+    "native.stdout": "511639ddf4cbaf6980447586bb4481bcbe3ff76b03756fabdf7731355476d258",
+    "profile.json": "5133c92488d51075599604a79eff7f649e5743ada8a6f60fb0bfa506672bc521",
+    "report.json": "2adea6e64f36f9719431fe9cbcd7313b4a34e3fc9201bec9f217599dff3c58c7",
+    "submission.json": "764c7c34317c35927bdb09d19e825d300c021214e6a25a0a5de56f5327f858e9",
+    "tests.log": "63838390b3c92aea7ccc16a70a0586ba563c101bb21d1728eefcd3d596d7dbac"
+  }
+}
