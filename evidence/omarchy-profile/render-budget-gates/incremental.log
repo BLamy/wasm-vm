@@ -1,0 +1,30 @@
+✔ trial is local, explicit, fixed-budget and does not accept renderer/timeout tuning (9.361667ms)
+✔ arm URLs have exactly one policy difference and forbid inherited query tuning (2.533708ms)
+✔ all four R3 source bindings and image layout must match (2.178875ms)
+✔ actual runtime must match the selected arm with observer/timing off (16.449042ms)
+✔ deadline accounts for queue delay and rejects late completion without starting expired work (9.519125ms)
+✔ real recorder retains physical-only writing, fixed deadlines, fresh presentation and owned shutdown (4.297875ms)
+✔ wire observer preserves transferred serial bytes and original transport behavior (12.737584ms)
+✔ wire observer distinguishes workers, physical events and actual input acknowledgements (2.757792ms)
+✔ server identities bind exactly the bytes served and their repository path (2.159042ms)
+✔ wire observer binds actual modeset replies without fabricating acknowledgements (4.176917ms)
+✔ advertised mode, CSS resize, stale frames and mismatched scanout never prove guest adoption (8.00125ms)
+✔ expired original startup deadline cannot send a modeset (4.514667ms)
+✔ acknowledgement without a guest frame records failure and sends exactly one request (3.6515ms)
+✔ mode wire proof rejects a superseding resize or mismatched acknowledgement (1.777208ms)
+✔ synthetic positive orchestration and classification reject late or stale adoption (22.983542ms)
+✔ final classifier preserves the recorded negative modeset outcome (6.419833ms)
+✔ synthetic actual input-trial reaches physical keys without mapped-client/active-window RPCs (99.746625ms)
+✔ synthetic capture and verify retain actual mapped-Foot and active-window checks before keys (28.974542ms)
+✔ synthetic missing application readiness or lost canvas focus forbids any key (7.097541ms)
+✔ synthetic actual nonce reader rejects mismatched bytes in a successful RPC response (74.325208ms)
+✔ synthetic late typing/readback and stale presentation cannot publish success (182.152958ms)
+✔ synthetic timing observation uses same-page actual recorded event fields, not probe completion (71.16125ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 713.93875

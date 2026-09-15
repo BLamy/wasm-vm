@@ -21,6 +21,7 @@ import { COLD_BLANK_PATH, COLD_KERNEL_SHA256, coldPairOptions, coldPairUrl,
 import { inputTrialOptions, inputTrialUrl, assertInputTrialSource, assertInputTrialRuntime,
   remainingTrialMs, withinTrialDeadline } from "./omarchy-input-trial.mjs";
 import { pauseFailedInput, exportFailedInput } from "./omarchy-failure-checkpoint.mjs";
+import { requestSmallerScanout } from "./omarchy-render-mode.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -48,6 +49,11 @@ assert.ok(["capture", "verify", "cold-pair", "input-trial"].includes(mode), `inv
 const coldPair = mode === "cold-pair";
 const inputTrial = mode === "input-trial";
 const failureCheckpoint = process.env.OMARCHY_FAILURE_CHECKPOINT === "1";
+const renderBudget = process.env.OMARCHY_RENDER_BUDGET === "640x400";
+if (process.env.OMARCHY_RENDER_BUDGET !== undefined) {
+  assert.ok(renderBudget && inputTrial && !failureCheckpoint, "render budget requires its isolated input trial");
+  assert.equal(process.env.OMARCHY_INPUT_TRIAL_ARM, "control", "render budget preserves default admission");
+}
 if (process.env.OMARCHY_FAILURE_CHECKPOINT !== undefined) {
   assert.equal(process.env.OMARCHY_FAILURE_CHECKPOINT, "1");
   assert.ok(inputTrial, "failure checkpoint requires input-trial");
@@ -380,12 +386,14 @@ if (localUrl && candidate) localUrl.searchParams.set("omarchyAssetBase", localUr
 const url = localUrl?.href || urlArg;
 const report = { url, mode, startedAt: new Date().toISOString(), errors: [], observations: [],
   resourceIdentities, browserRequests: [], serialCommands: [], inputEvents: [], workerTraffic: [] };
+if (renderBudget) report.renderBudgetRequested = true;
 if (coldPair) report.progressCaptureErrors = [];
 if (inputTrial) {
   const scope = ["tools/verify/omarchy-desktop-live.mjs", "tools/verify/omarchy-input-trial.mjs",
     "tools/verify/omarchy-recycling-ab.mjs",
     "tools/verify/omarchy-desktop-services.mjs",
     "tools/verify/omarchy-failure-checkpoint.mjs", "tools/verify/omarchy-input-wait.mjs",
+    "tools/verify/omarchy-render-mode.mjs", "tools/verify/omarchy-render-budget.mjs",
     "tools/verify/omarchy-owned-trial.mjs",
     "tools/verify/omarchy-browser-session.mjs", "tools/verify/omarchy-live-recording.mjs",
     "crates/core/src/dispatch.rs", "crates/core/src/lib.rs", "crates/wasm/src/lib.rs",
@@ -1097,6 +1105,7 @@ async function runLive() {
   if (mode === "verify" || inputTrial) assert.equal(report.restored, true, "desktop must use the warm snapshot");
   const loaderIdentity = mode === "capture" || coldPair || inputTrial ? await startupCall(() => observeLoaderIdentity("desktop-ready")) : null;
   if (loaderIdentity) report.loaderIdentity = loaderIdentity;
+  if (report.renderBudgetRequested) await requestSmallerScanout(page, coldDeadline, report);
   if (coldPair) {
     report.restoreOutcomes = await startupCall(() => page.evaluate(async () => ({
       shipped: window.__linux.restoredFromBootSnapshot(),

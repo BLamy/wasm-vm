@@ -46,7 +46,7 @@ export function installWireEvidence() {
           evidence.workerTraffic.push({ ...stamp(), worker, type: data.type, error: String(data.error) });
         }
       });
-      // Keep a per-worker reference only for associating actual input acknowledgements.
+      // Associate actual input and modeset acknowledgements with their request IDs.
       workers.set(this, { id: worker, calls });
     }
     const tracked = workers.get(this);
@@ -57,7 +57,7 @@ export function installWireEvidence() {
     } else if (message?.type === "call") {
       record = { ...stamp(), worker: id, type: "worker-call", id: message.id,
         method: message.method, args: summarize(message.args) };
-      if (["sendKeyboardEvent", "syncKeyboard", "sendTabletEvent", "syncTablet", "sendMouseEvent", "syncMouse"].includes(message.method)) {
+      if (["sendKeyboardEvent", "syncKeyboard", "sendTabletEvent", "syncTablet", "sendMouseEvent", "syncMouse", "setDisplay"].includes(message.method)) {
         tracked.calls.set(message.id, message.method);
       }
     } else if (message?.type === "boot") {

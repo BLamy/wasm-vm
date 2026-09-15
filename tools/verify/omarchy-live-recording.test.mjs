@@ -66,3 +66,16 @@ test("server identities bind exactly the bytes served and their repository path"
   assert.equal(row.size, bytes.length);
   assert.notEqual(row.sha256, servedIdentity({ pathname: row.pathname, method: "GET", filename: null, bytes: Buffer.from("different"), repoRoot: "/repo" }).sha256);
 });
+
+test("wire observer binds actual modeset replies without fabricating acknowledgements", () => {
+  const { Worker, evidence } = fixture();
+  const worker = new Worker();
+  worker.postMessage({ type: "call", id: 9, method: "setDisplay", args: [640, 400] });
+  assert.equal(evidence.workerTraffic.length, 1);
+  worker.emit({ type: "result", id: 9, result: true });
+  const result = evidence.workerTraffic.at(-1);
+  assert.equal(result.method, "setDisplay"); assert.equal(result.id, 9);
+  assert.equal(result.result, true); assert.equal(result.error, null);
+  worker.emit({ type: "result", id: 9, result: false });
+  assert.equal(evidence.workerTraffic.length, 2, "duplicate unbound reply cannot replace the recorded result");
+});
