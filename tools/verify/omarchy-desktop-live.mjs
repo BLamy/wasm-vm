@@ -22,6 +22,7 @@ import { inputTrialOptions, inputTrialUrl, assertInputTrialSource, assertInputTr
   remainingTrialMs, withinTrialDeadline } from "./omarchy-input-trial.mjs";
 import { pauseFailedInput, exportFailedInput } from "./omarchy-failure-checkpoint.mjs";
 import { requestSmallerScanout } from "./omarchy-render-mode.mjs";
+import { requestCompositorMode } from "./omarchy-compositor-command.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -50,6 +51,10 @@ const coldPair = mode === "cold-pair";
 const inputTrial = mode === "input-trial";
 const failureCheckpoint = process.env.OMARCHY_FAILURE_CHECKPOINT === "1";
 const renderBudget = process.env.OMARCHY_RENDER_BUDGET === "640x400";
+const compositorMode = process.env.OMARCHY_COMPOSITOR_MODE === "640x400";
+if (process.env.OMARCHY_COMPOSITOR_MODE !== undefined) {
+  assert.ok(compositorMode && renderBudget, "compositor mode requires the bounded render trial");
+}
 if (process.env.OMARCHY_RENDER_BUDGET !== undefined) {
   assert.ok(renderBudget && inputTrial && !failureCheckpoint, "render budget requires its isolated input trial");
   assert.equal(process.env.OMARCHY_INPUT_TRIAL_ARM, "control", "render budget preserves default admission");
@@ -387,6 +392,7 @@ const url = localUrl?.href || urlArg;
 const report = { url, mode, startedAt: new Date().toISOString(), errors: [], observations: [],
   resourceIdentities, browserRequests: [], serialCommands: [], inputEvents: [], workerTraffic: [] };
 if (renderBudget) report.renderBudgetRequested = true;
+if (compositorMode) report.compositorModeRequested = true;
 if (coldPair) report.progressCaptureErrors = [];
 if (inputTrial) {
   const scope = ["tools/verify/omarchy-desktop-live.mjs", "tools/verify/omarchy-input-trial.mjs",
@@ -394,6 +400,7 @@ if (inputTrial) {
     "tools/verify/omarchy-desktop-services.mjs",
     "tools/verify/omarchy-failure-checkpoint.mjs", "tools/verify/omarchy-input-wait.mjs",
     "tools/verify/omarchy-render-mode.mjs", "tools/verify/omarchy-render-budget.mjs",
+    "tools/verify/omarchy-compositor-command.mjs", "tools/verify/omarchy-compositor-mode.mjs",
     "tools/verify/omarchy-owned-trial.mjs",
     "tools/verify/omarchy-browser-session.mjs", "tools/verify/omarchy-live-recording.mjs",
     "crates/core/src/dispatch.rs", "crates/core/src/lib.rs", "crates/wasm/src/lib.rs",
@@ -1105,7 +1112,10 @@ async function runLive() {
   if (mode === "verify" || inputTrial) assert.equal(report.restored, true, "desktop must use the warm snapshot");
   const loaderIdentity = mode === "capture" || coldPair || inputTrial ? await startupCall(() => observeLoaderIdentity("desktop-ready")) : null;
   if (loaderIdentity) report.loaderIdentity = loaderIdentity;
-  if (report.renderBudgetRequested) await requestSmallerScanout(page, coldDeadline, report);
+  if (report.renderBudgetRequested) await requestSmallerScanout(page, coldDeadline, report, {
+    configureCompositor: report.compositorModeRequested ? () => requestCompositorMode(
+      (command, timeoutMs) => exec(command, page, "render-mode:configure-compositor", timeoutMs), coldDeadline, report) : null,
+  });
   if (coldPair) {
     report.restoreOutcomes = await startupCall(() => page.evaluate(async () => ({
       shipped: window.__linux.restoredFromBootSnapshot(),
