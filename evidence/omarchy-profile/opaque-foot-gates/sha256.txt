@@ -1,0 +1,14 @@
+0496b5ac0ce61c4112ed6a09cad89cb5210bdc7c78b499b83e2b7b5b24b6a017  affected-harness.log
+2f771f673130e010ef5300ef448c25773e3765098e76d86e2a0a1d58e379d1d3  commands.json
+77eb8f24018daea2278ca8b3164cdf8a666210b2fa7ce9ce2a8607f9caba97f6  freeze.py
+e0b0a909c8e589286a2e8337a3e96f8aa7160cd9b5465afe2c4cd74a1a553b65  frozen.json
+724c85ab549fa02c65953cd028278d061b0d75bede94dcc05e7e3e9530cdb56c  record.py
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  recorder-syntax.log
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  runner-syntax.log
+97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f  ../opaque-foot-r1/desktop/desktop.png
+97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f  ../opaque-foot-r1/desktop/failure.png
+97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f  ../opaque-foot-r1/desktop/latest.png
+9127ede20f15a37205ecb896cfff9cf2b9ed68bc08cf4ddd7f76df12cbaa8b72  ../opaque-foot-r1/desktop/report.json
+5a62aeacff0d5b6bdd48418d741dcfbb6d42b4b4e42d539c86d17456ef3370f7  ../opaque-foot-r1/desktop/serial.log
+633d0f86c6a65291f4a4af23bbdfd931639cbb915795fbb37fdfe9962e1723f2  ../opaque-foot-r1/desktop.log
+611a0d4e8f501526425f6b1540e7eb42e5f2013094e732818898187fdab6e082  ../opaque-foot-r1/run.json

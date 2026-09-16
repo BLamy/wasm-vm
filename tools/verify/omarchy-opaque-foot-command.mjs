@@ -3,7 +3,9 @@ import assert from "node:assert/strict";
 import { remainingTrialMs, withinTrialDeadline } from "./omarchy-input-trial.mjs";
 import { auditSerial } from "./omarchy-latency-receipt.mjs";
 
-export const OPAQUE_FOOT_COMMAND = `XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r --batch 'eval hl.window_rule({ match = { class = "^foot$" }, opacity = "1.0 override 1.0 override 1.0 override", opaque = true, force_rgbx = true }); getprop active opaque; getprop active force_rgbx; getprop active opacity'`;
+// -r refreshes after its request. Querying inside that same request can see the
+// old properties, so the fixed read-only batch follows a completed rule update.
+export const OPAQUE_FOOT_COMMAND = `XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = "^foot$" }, opacity = "1.0 override 1.0 override 1.0 override", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'`;
 
 export function assertOpaqueProperties(response) {
   assert.equal(response?.exit, 0, "Hyprland opaque Foot batch failed");
