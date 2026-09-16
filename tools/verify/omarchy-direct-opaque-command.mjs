@@ -6,7 +6,7 @@ import { auditSerial } from "./omarchy-latency-receipt.mjs";
 const properties = ["opaque", "force_rgbx", "opacity", "opacity_inactive", "opacity_fullscreen",
   "opacity_override", "opacity_inactive_override", "opacity_fullscreen_override"];
 export const DIRECT_OPAQUE_COMMAND = `XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch '${[
-  ...properties.map(prop => `dispatch setprop active ${prop} 1`),
+  ...properties.map(prop => `dispatch hl.dsp.window.set_prop({ prop = "${prop}", value = "1", window = "activewindow" })`),
   ...properties.map(prop => `getprop active ${prop}`), "j/activewindow",
 ].join("; ")}'`;
 

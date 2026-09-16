@@ -24,7 +24,8 @@ test("one synchronous direct batch contains only the specified writes then reads
   assert.doesNotMatch(DIRECT_OPAQUE_COMMAND, /(?: -r |eval|window_rule|reload|nonce|sendkey)/u);
   const batch = DIRECT_OPAQUE_COMMAND.split("--batch '")[1].slice(0,-1).split("; ");
   assert.equal(batch.length,17);
-  assert.ok(batch.slice(0,8).every(row=>row.startsWith("dispatch setprop active ") && row.endsWith(" 1")));
+  assert.ok(batch.slice(0,8).every(row=>/^dispatch hl\.dsp\.window\.set_prop\(\{ prop = "[a-z_]+", value = "1", window = "activewindow" \}\)$/u.test(row)));
+  assert.doesNotMatch(DIRECT_OPAQUE_COMMAND,/dispatch setprop/u,"the guest uses the Lua config dispatcher");
   assert.ok(batch.slice(8,16).every(row=>row.startsWith("getprop active ")));
   assert.equal(batch[16],"j/activewindow");
   assert.deepEqual(assertDirectOpaqueProperties(response),foot);
