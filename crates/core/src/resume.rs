@@ -475,6 +475,14 @@ impl SnapshotWriter {
             .len()
             .try_into()
             .expect("snapshot section exceeds u32::MAX bytes");
+        // A RAM section can approach a GiB. Reserving geometrically again for
+        // its trailing device sections can require a second GiB of unused
+        // capacity and exhaust wasm32 memory while the live RAM is retained.
+        self.buf.reserve_exact(
+            SECTION_HEADER_LEN
+                .checked_add(payload.len())
+                .expect("snapshot section size overflow"),
+        );
         self.buf.extend_from_slice(&tag.to_le_bytes());
         self.buf.extend_from_slice(&len.to_le_bytes());
         self.buf.extend_from_slice(payload);
