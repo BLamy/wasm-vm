@@ -1,0 +1,12 @@
+{
+  "head": "4d3aef8ec125aefe9c00a162619bd9aa0591de36",
+  "guestHead": "545f22ad618fe8f9bd6dea3c4fe4cb6c54cc006e",
+  "args": [
+    "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "--test",
+    "tools/verify/omarchy-mode-capture.test.mjs"
+  ],
+  "code": 0,
+  "captureBodySourceSha256": "7e2d2bb8a6eafd10a789fa0b1212d6ac5be8787485759e7df0a4cff295513d96",
+  "testSha256": "2bcf51a5dde1df4cbfd15a5b06caa0331aeb9a372844fe45313465bdc65654e6"
+}

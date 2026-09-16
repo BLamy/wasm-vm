@@ -1,0 +1,24 @@
+{
+  "claim": "Negative preparation only: actual640x448 scanout, mapped Foot, unanswered focus query at original900000ms deadline, entirely black final image, no input or exported pair.",
+  "imagePersonallyInspected": true,
+  "image": "evidence/omarchy-profile/prepared-mode-r2/desktop/failure.png",
+  "imageSha256": "658bf3e9ddc65742c6a9eb38880568a004a89c9a2b94ce4a5d40d2c1d8ce6587",
+  "reportSha256": "623ce524582b5afe676727a54b0f87879c4273e73a2d76671d486fbd5d5829b2",
+  "head": "545f22ad618fe8f9bd6dea3c4fe4cb6c54cc006e",
+  "result": "preparation-failed-input-untested",
+  "usablePair": false,
+  "pairDirectoryEmpty": true,
+  "startup": {
+    "startedAt": "2026-09-16T03:14:19.640Z",
+    "timeoutMs": 900000,
+    "deadlineAt": "2026-09-16T03:29:19.640Z"
+  },
+  "modeAt": "2026-09-16T03:19:30.619Z",
+  "failedAt": "2026-09-16T03:29:19.643Z",
+  "cleanup": {
+    "startedAt": "2026-09-16T03:29:19.706Z",
+    "timeoutMs": 30000,
+    "closed": true,
+    "clientClosed": true
+  }
+}
