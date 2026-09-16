@@ -1,0 +1,72 @@
+{
+  "raw": {
+    "path": "target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm",
+    "sha256": "ce18449e27ebe815fd8c36117ec5986c916e806e71c7ddf1206955c8e66d9e6b"
+  },
+  "commands": [
+    {
+      "label": "bindgen-version",
+      "args": [
+        "/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen",
+        "--version"
+      ],
+      "startedAt": "2026-09-16T09:59:57Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T09:59:57Z"
+    },
+    {
+      "label": "wasmopt-version",
+      "args": [
+        "/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt",
+        "--version"
+      ],
+      "startedAt": "2026-09-16T09:59:57Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T09:59:57Z"
+    },
+    {
+      "label": "bindgen",
+      "args": [
+        "/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen",
+        "--target",
+        "web",
+        "--out-dir",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-direct-fp-symbols",
+        "--out-name",
+        "wasm_vm_wasm",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm"
+      ],
+      "startedAt": "2026-09-16T09:59:57Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T09:59:57Z"
+    },
+    {
+      "label": "named-companion",
+      "args": [
+        "/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt",
+        "-O",
+        "-g",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-direct-fp-symbols/wasm_vm_wasm_bg.wasm",
+        "-o",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-direct-fp-symbols/named.wasm"
+      ],
+      "startedAt": "2026-09-16T09:59:57Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T09:59:58Z"
+    },
+    {
+      "label": "binding",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/direct-fp-imports-r1/bind-names.mjs"
+      ],
+      "startedAt": "2026-09-16T09:59:58Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T09:59:58Z"
+    }
+  ],
+  "named": {
+    "path": "target/omarchy-direct-fp-symbols/named.wasm",
+    "sha256": "88b943b3ab8f16a523f05df8ce215ff17ab92b3c7bb3ee469ecb7f34a826753a"
+  }
+}

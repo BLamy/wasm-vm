@@ -1,0 +1,60 @@
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 28.47s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/jit_fp_fmadd_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_fmadd_verifier-55cd6bf0bb0624f9.wasm)
+running 6 tests
+Invoking test: verifier_shared_fmadd_memory_growth
+CRITIC_FMADD_GROWTH inline=true fault=None pc=000000004000bc18 retired=6 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_FMADD_GROWTH inline=true fault=Store pc=000000004000bc04 retired=1 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_FMADD_GROWTH inline=true fault=Load pc=000000004000bc10 retired=4 writes=1 bytes_grown=65536 flags_after_clear=16
+test verifier_shared_fmadd_memory_growth ... ok
+Invoking test: verifier_shared_fmadd
+CRITIC_SHARED_FMADD_LITERALS Receipt { cases: 12250, disabled: 0, digest: 12429612730659881582 }
+CRITIC_SHARED_FMADD_SEEDED Receipt { cases: 6144, disabled: 2976, digest: 14112773340705263440 }
+CRITIC_SHARED_FMADD_CONTROL Receipt { cases: 12, disabled: 0, digest: 17336942749834004557 }
+test verifier_shared_fmadd ... ok
+Invoking test: verifier_same_module_fmadd_successors
+CRITIC_FMADD_CHAIN same=true fault=false budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FMADD_CHAIN same=true fault=false budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=true fault=false budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=true fault=false budget=7 retired=7 entries=2 links=1 pc=000000008000001c flags=09
+CRITIC_FMADD_CHAIN same=true fault=true budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FMADD_CHAIN same=true fault=true budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=true fault=true budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=true fault=true budget=7 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_same_module_fmadd_successors ... ok
+Invoking test: verifier_private_fmadd_memory_growth
+CRITIC_FMADD_GROWTH inline=false fault=None pc=000000004000bc18 retired=0 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_FMADD_GROWTH inline=false fault=Store pc=000000004000bc04 retired=0 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_FMADD_GROWTH inline=false fault=Load pc=000000004000bc10 retired=0 writes=1 bytes_grown=65536 flags_after_clear=16
+test verifier_private_fmadd_memory_growth ... ok
+Invoking test: verifier_private_fmadd
+CRITIC_PRIVATE_FMADD_LITERALS Receipt { cases: 12250, disabled: 0, digest: 12429612730659881582 }
+CRITIC_PRIVATE_FMADD_SEEDED Receipt { cases: 6144, disabled: 2976, digest: 14112773340705263440 }
+CRITIC_PRIVATE_FMADD_CONTROL Receipt { cases: 12, disabled: 0, digest: 17336942749834004557 }
+test verifier_private_fmadd ... ok
+Invoking test: verifier_cross_module_fmadd_successors
+CRITIC_FMADD_CHAIN same=false fault=false budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FMADD_CHAIN same=false fault=false budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=false fault=false budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=false fault=false budget=7 retired=7 entries=2 links=1 pc=000000008000001c flags=09
+CRITIC_FMADD_CHAIN same=false fault=true budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FMADD_CHAIN same=false fault=true budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=false fault=true budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=false fault=true budget=7 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_cross_module_fmadd_successors ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 1.34s
+

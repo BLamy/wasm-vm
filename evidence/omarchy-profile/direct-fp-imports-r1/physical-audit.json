@@ -1,0 +1,590 @@
+{
+  "reportSha256": "6ab46d14d2b0b037c59a1c13673609c94590c7432beeb2efbaffedeaa66a75af",
+  "originalAuditFailure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   height: 28,\n+   width: 118,\n+   x: 10,\n+   y: 36\n-   height: 800,\n-   width: 1280,\n-   x: 0,\n-   y: 0\n  }\n",
+  "passed": true,
+  "correction": "Resource::flush_rect narrows later transfers to changed pixels; JsFrameSink tracks damage. Check display/resource dimensions separately from damage bounds.",
+  "source": [
+    "crates/core/src/dev/virtio/gpu/resources.rs:69",
+    "crates/wasm/src/lib.rs:2336"
+  ],
+  "input": {
+    "arm": "candidate",
+    "machineAcceptance": false,
+    "visualInspectionRequired": true,
+    "result": "failed",
+    "outcome": "nonce-readback-failed",
+    "startup": {
+      "startedAt": "2026-09-16T09:54:58.841Z",
+      "timeoutMs": 300000,
+      "deadlineAt": "2026-09-16T09:59:58.841Z",
+      "readyProvenAt": "2026-09-16T09:55:36.949Z",
+      "elapsedMs": 38108
+    },
+    "keyboard": {
+      "verified": false,
+      "nonce": "4faa4d2b61a619df",
+      "guestFile": "/tmp/desktop-keys-676e07aea3ac65fe",
+      "startedAt": "2026-09-16T09:55:36.949Z",
+      "enteredAtMs": 1789552539631,
+      "typedAt": "2026-09-16T09:55:39.631Z",
+      "typingMs": 2682,
+      "readbackStartedAt": "2026-09-16T09:55:39.631Z",
+      "readbackTimeoutMs": 120000,
+      "deadlineMs": 120000,
+      "deadlineAt": "2026-09-16T09:57:39.631Z",
+      "stage": "readback",
+      "failedAt": "2026-09-16T09:57:39.632Z",
+      "error": "Error: physical keyboard: timed out waiting for physical keyboard nonce file",
+      "desktopReadyPageMs": 16429.11999988556,
+      "firstPhysicalKeydownPageMs": 38106.10500001907,
+      "readyToFirstPhysicalKeydownMs": 21676.985000133514
+    },
+    "trustedEvents": 128,
+    "matchedKeyboardCalls": 128,
+    "completedReads": 37,
+    "pendingReads": 0,
+    "readExits": [
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75
+    ],
+    "nonceReplies": 0,
+    "framesBefore": 2,
+    "framesAfter": 3,
+    "intervalRetired": 3544856799,
+    "intervalJitRetired": 2539095415,
+    "intervalJitShare": 0.716275877693078,
+    "discoveryBefore": {
+      "nominated": 20660,
+      "deduped": 7207798,
+      "droppedStale": 0,
+      "droppedOverflow": 0,
+      "countsDropped": 0,
+      "excluded": 109,
+      "queueDepth": 0,
+      "queueHighWater": 429,
+      "candidates": 23490,
+      "generation": 5
+    },
+    "discoveryAfter": {
+      "nominated": 205823,
+      "deduped": 48712561,
+      "droppedStale": 0,
+      "droppedOverflow": 0,
+      "countsDropped": 0,
+      "excluded": 212,
+      "queueDepth": 172,
+      "queueHighWater": 429,
+      "candidates": 51400,
+      "generation": 5
+    },
+    "recyclingBefore": {
+      "enabled": true,
+      "epochs": "4",
+      "discardedCounters": "262144",
+      "threshold": 512,
+      "capacity": 65536
+    },
+    "recyclingAfter": {
+      "enabled": true,
+      "epochs": "5",
+      "discardedCounters": "327680",
+      "threshold": 512,
+      "capacity": 65536
+    },
+    "residency": {
+      "policy": "cap-256",
+      "cap": 256
+    },
+    "cacheBefore": {
+      "blocks": 922,
+      "installs": 6662,
+      "evictions": 1300
+    },
+    "cacheAfter": {
+      "blocks": 1146,
+      "installs": 35609,
+      "evictions": 7735
+    },
+    "serial": [
+      {
+        "rid": "mu3xct350",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+        "sentAt": "2026-09-16T09:55:03.617Z",
+        "completedAt": "2026-09-16T09:55:15.272Z",
+        "response": {
+          "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x55555eda5da0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 504\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x55555ee5f9d0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 504\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3xdeie1",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+        "sentAt": "2026-09-16T09:55:31.382Z",
+        "completedAt": "2026-09-16T09:55:36.866Z",
+        "response": {
+          "stdout": "true\n\n\ntrue\n\n\n1\n\n\n1\n\n\n1\n\n\ntrue\n\n\ntrue\n\n\ntrue\n\n\n{\n    \"address\": \"0x55555eb73630\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 503,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3xdkvm2",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:55:39.634Z",
+        "completedAt": "2026-09-16T09:55:41.734Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xdn9u3",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:55:42.738Z",
+        "completedAt": "2026-09-16T09:55:45.137Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xdpwc4",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:55:46.140Z",
+        "completedAt": "2026-09-16T09:55:48.484Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xdshb5",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:55:49.487Z",
+        "completedAt": "2026-09-16T09:55:51.948Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xdv5j6",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:55:52.951Z",
+        "completedAt": "2026-09-16T09:55:55.195Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xdxnq7",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:55:56.198Z",
+        "completedAt": "2026-09-16T09:55:58.543Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xe08p8",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:55:59.545Z",
+        "completedAt": "2026-09-16T09:56:01.894Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xe2tu9",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:02.898Z",
+        "completedAt": "2026-09-16T09:56:05.138Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xe5bx10",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:06.141Z",
+        "completedAt": "2026-09-16T09:56:08.190Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xe7op11",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:09.193Z",
+        "completedAt": "2026-09-16T09:56:11.462Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xea7l12",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:12.465Z",
+        "completedAt": "2026-09-16T09:56:14.790Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xecs213",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:15.794Z",
+        "completedAt": "2026-09-16T09:56:18.176Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xefe314",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:19.180Z",
+        "completedAt": "2026-09-16T09:56:21.350Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xehu915",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:22.353Z",
+        "completedAt": "2026-09-16T09:56:24.573Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xekbs16",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:25.577Z",
+        "completedAt": "2026-09-16T09:56:27.699Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xemqn17",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:28.703Z",
+        "completedAt": "2026-09-16T09:56:31.041Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xepbh18",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:32.045Z",
+        "completedAt": "2026-09-16T09:56:34.484Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xerz419",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:35.488Z",
+        "completedAt": "2026-09-16T09:56:38.515Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xev3220",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:39.518Z",
+        "completedAt": "2026-09-16T09:56:41.552Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xexfg21",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:42.556Z",
+        "completedAt": "2026-09-16T09:56:44.496Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xezp722",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:45.499Z",
+        "completedAt": "2026-09-16T09:56:47.754Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xf27p23",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:48.758Z",
+        "completedAt": "2026-09-16T09:56:50.600Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xf4er24",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:51.603Z",
+        "completedAt": "2026-09-16T09:56:53.412Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xf6kv25",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:54.415Z",
+        "completedAt": "2026-09-16T09:56:56.299Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xf8t126",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:56:57.301Z",
+        "completedAt": "2026-09-16T09:56:59.241Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xfb2s27",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:57:00.244Z",
+        "completedAt": "2026-09-16T09:57:02.784Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xfdt828",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:57:03.788Z",
+        "completedAt": "2026-09-16T09:57:06.514Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xfgou29",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:57:07.518Z",
+        "completedAt": "2026-09-16T09:57:10.012Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xfjdy30",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:57:11.014Z",
+        "completedAt": "2026-09-16T09:57:13.500Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xfm2w31",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:57:14.504Z",
+        "completedAt": "2026-09-16T09:57:16.934Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xfoq832",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:57:17.936Z",
+        "completedAt": "2026-09-16T09:57:20.236Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xfra033",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:57:21.240Z",
+        "completedAt": "2026-09-16T09:57:23.671Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xftxe34",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:57:24.674Z",
+        "completedAt": "2026-09-16T09:57:26.739Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xfwam35",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:57:27.742Z",
+        "completedAt": "2026-09-16T09:57:29.850Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xfyp136",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:57:30.853Z",
+        "completedAt": "2026-09-16T09:57:33.002Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xg14l37",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:57:34.005Z",
+        "completedAt": "2026-09-16T09:57:36.042Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3xg3h038",
+        "command": "if [ -f '/tmp/desktop-keys-676e07aea3ac65fe' ]; then cat '/tmp/desktop-keys-676e07aea3ac65fe'; else (exit 75); fi",
+        "sentAt": "2026-09-16T09:57:37.044Z",
+        "completedAt": "2026-09-16T09:57:39.399Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      }
+    ]
+  },
+  "configuration": {
+    "configuration": "properties-confirmed",
+    "wire": {
+      "rid": "mu3xdeie1",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+      "sentAt": "2026-09-16T09:55:31.382Z",
+      "completedAt": "2026-09-16T09:55:36.866Z",
+      "response": {
+        "stdout": "true\n\n\ntrue\n\n\n1\n\n\n1\n\n\n1\n\n\ntrue\n\n\ntrue\n\n\ntrue\n\n\n{\n    \"address\": \"0x55555eb73630\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 503,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}\n\n",
+        "exit": 0
+      }
+    },
+    "physicalInputTested": true
+  },
+  "geometry": [
+    {
+      "width": 1280,
+      "height": 800,
+      "resourceWidth": 1280,
+      "resourceHeight": 832,
+      "damage": {
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 800
+      },
+      "frames": 2
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "resourceWidth": 1280,
+      "resourceHeight": 832,
+      "damage": {
+        "x": 10,
+        "y": 36,
+        "width": 118,
+        "height": 28
+      },
+      "frames": 3
+    }
+  ],
+  "rejectedGeometryAttacks": 16,
+  "profile": {
+    "durationMs": 30022.968,
+    "samples": 19977,
+    "nodes": 5211,
+    "sampledUs": 30022150
+  },
+  "postVerdictInput": {
+    "fenceAcknowledgedAt": "2026-09-16T09:55:39.633Z",
+    "noPostVerdictIngress": true
+  },
+  "desktopResponsive": false
+}

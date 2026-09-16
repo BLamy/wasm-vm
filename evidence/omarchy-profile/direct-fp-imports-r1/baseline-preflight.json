@@ -1,0 +1,42 @@
+{
+  "head": "c531ceffb9b7adc8de9f5ebc927d00076a26f1dd",
+  "directory": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-direct-fp-baseline",
+  "files": [
+    {
+      "source": "web/dist/pkg/package.json",
+      "relativePath": "pkg/package.json",
+      "bytes": 492,
+      "sha256": "611a2c672de163ac0371aeceac9875966dc3c6dc1c5c86e64b88b2a73039f438"
+    },
+    {
+      "source": "web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "relativePath": "pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "source": "web/dist/pkg/wasm_vm_wasm.d.ts",
+      "relativePath": "pkg/wasm_vm_wasm.d.ts",
+      "bytes": 49743,
+      "sha256": "f3567f5ad38bf9e043de8f8fb02d85390907c95e0e299314ee6ac0c042fc95b8"
+    },
+    {
+      "source": "web/dist/pkg/wasm_vm_wasm.js",
+      "relativePath": "pkg/wasm_vm_wasm.js",
+      "bytes": 121404,
+      "sha256": "9ebc38864abe582a0f1fe7a3c5af7b7e36e7cb24bf8b56d1d9d8f9069affa940"
+    },
+    {
+      "source": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "relativePath": "pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1600200,
+      "sha256": "0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced"
+    },
+    {
+      "source": "web/dist/pkg/wasm_vm_wasm_bg.wasm.d.ts",
+      "relativePath": "pkg/wasm_vm_wasm_bg.wasm.d.ts",
+      "bytes": 13205,
+      "sha256": "750c1219ac484571c53a6101d7f08d1407fa9479a19e87f6ea2f283f75c49f42"
+    }
+  ]
+}

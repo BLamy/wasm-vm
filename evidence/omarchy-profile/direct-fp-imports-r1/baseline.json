@@ -1,0 +1,41 @@
+{
+  "head": "c531ceffb9b7adc8de9f5ebc927d00076a26f1dd",
+  "files": [
+    {
+      "source": "web/dist/pkg/package.json",
+      "path": "target/omarchy-direct-fp-baseline/pkg/package.json",
+      "sha256": "611a2c672de163ac0371aeceac9875966dc3c6dc1c5c86e64b88b2a73039f438",
+      "bytes": 492
+    },
+    {
+      "source": "web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "path": "target/omarchy-direct-fp-baseline/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804",
+      "bytes": 437
+    },
+    {
+      "source": "web/dist/pkg/wasm_vm_wasm.d.ts",
+      "path": "target/omarchy-direct-fp-baseline/pkg/wasm_vm_wasm.d.ts",
+      "sha256": "f3567f5ad38bf9e043de8f8fb02d85390907c95e0e299314ee6ac0c042fc95b8",
+      "bytes": 49743
+    },
+    {
+      "source": "web/dist/pkg/wasm_vm_wasm.js",
+      "path": "target/omarchy-direct-fp-baseline/pkg/wasm_vm_wasm.js",
+      "sha256": "9ebc38864abe582a0f1fe7a3c5af7b7e36e7cb24bf8b56d1d9d8f9069affa940",
+      "bytes": 121404
+    },
+    {
+      "source": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "path": "target/omarchy-direct-fp-baseline/pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced",
+      "bytes": 1600200
+    },
+    {
+      "source": "web/dist/pkg/wasm_vm_wasm_bg.wasm.d.ts",
+      "path": "target/omarchy-direct-fp-baseline/pkg/wasm_vm_wasm_bg.wasm.d.ts",
+      "sha256": "750c1219ac484571c53a6101d7f08d1407fa9479a19e87f6ea2f283f75c49f42",
+      "bytes": 13205
+    }
+  ]
+}
